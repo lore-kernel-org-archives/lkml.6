@@ -2,101 +2,254 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB781C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 14:39:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B1C6C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 14:39:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6095621757
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 14:39:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="YMornd2o"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6095621757
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
+	by mail.kernel.org (Postfix) with ESMTP id 1C05C21757
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 14:39:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C05C21757
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732503AbeHCQgR (ORCPT
+        id S1732520AbeHCQgc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 12:36:17 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:54904 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732083AbeHCQgR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 12:36:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
-        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=PkAIz1NMlr2Je0QUuW4xWCU0s7LKItHJtmmPPwYN1sQ=;
-        b=YMornd2oxhk3TtNiDLAxjZXP7zLbyhKuJSicIt5Z6NlCt3oAbkQQNoWrT1KRyuSzs83ODM1ZSntZm45dSB8WrYji8QkbucqHcUvJI6DdWHD6G9ZJ9tfwfb18Hl7oad1+jkZ0RmDT0M8sqB8HwM4TEsBMbe3G1bwnM1ZbKNT4bE0=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1flbEu-0007ZT-Mu; Fri, 03 Aug 2018 16:39:36 +0200
-Date:   Fri, 3 Aug 2018 16:39:36 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc:     Stephen Hemminger <stephen@networkplumber.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH v1 3/3] net: WireGuard secure network tunnel
-Message-ID: <20180803143936.GD27445@lunn.ch>
-References: <20180731191102.2434-1-Jason@zx2c4.com>
- <20180731191102.2434-4-Jason@zx2c4.com>
- <20180731132701.522b55e2@xeon-e3>
- <CAHmME9oWYD7TUSkbqAFRFk9kwSWDfC2h-J72gpdxJiw5i1yrXw@mail.gmail.com>
+        Fri, 3 Aug 2018 12:36:32 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44568 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1732083AbeHCQgb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 12:36:31 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 95EF08197012;
+        Fri,  3 Aug 2018 14:39:52 +0000 (UTC)
+Received: from redhat.com (ovpn-125-78.rdu2.redhat.com [10.10.125.78])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 198597C34;
+        Fri,  3 Aug 2018 14:39:45 +0000 (UTC)
+Date:   Fri, 3 Aug 2018 10:39:44 -0400
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Kenneth Lee <liguozhu@hisilicon.com>
+Cc:     "Tian, Kevin" <kevin.tian@intel.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Zaibo Xu <xuzaibo@huawei.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
+        Hao Fang <fanghao11@huawei.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linuxarm@huawei.com" <linuxarm@huawei.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kenneth Lee <nek.in.cn@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        "linux-accelerators@lists.ozlabs.org" 
+        <linux-accelerators@lists.ozlabs.org>
+Subject: Re: [RFC PATCH 0/7] A General Accelerator Framework, WarpDrive
+Message-ID: <20180803143944.GA4079@redhat.com>
+References: <20180801102221.5308-1-nek.in.cn@gmail.com>
+ <20180801165644.GA3820@redhat.com>
+ <AADFC41AFE54684AB9EE6CBC0274A5D191290E1A@SHSMSX101.ccr.corp.intel.com>
+ <20180802040557.GL160746@Turing-Arch-b>
+ <20180802142243.GA3481@redhat.com>
+ <20180803034721.GC91035@Turing-Arch-b>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <CAHmME9oWYD7TUSkbqAFRFk9kwSWDfC2h-J72gpdxJiw5i1yrXw@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180803034721.GC91035@Turing-Arch-b>
+User-Agent: Mutt/1.10.0 (2018-05-17)
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Fri, 03 Aug 2018 14:39:52 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Fri, 03 Aug 2018 14:39:52 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jglisse@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 03, 2018 at 02:35:40AM +0200, Jason A. Donenfeld wrote:
-> On Tue, Jul 31, 2018 at 10:02 PM Andrew Lunn <andrew@lunn.ch> wrote:
-> > I just gave this patch to checkpatch.pl...
-> On Tue, Jul 31, 2018 at 10:22 PM Stephen Hemminger
-> <stephen@networkplumber.org> wrote:
-> > Please break lines at something reasonable like 100 characters.
+On Fri, Aug 03, 2018 at 11:47:21AM +0800, Kenneth Lee wrote:
+> On Thu, Aug 02, 2018 at 10:22:43AM -0400, Jerome Glisse wrote:
+> > Date: Thu, 2 Aug 2018 10:22:43 -0400
+> > From: Jerome Glisse <jglisse@redhat.com>
+> > To: Kenneth Lee <liguozhu@hisilicon.com>
+> > CC: "Tian, Kevin" <kevin.tian@intel.com>, Hao Fang <fanghao11@huawei.com>,
+> >  Alex Williamson <alex.williamson@redhat.com>, Herbert Xu
+> >  <herbert@gondor.apana.org.au>, "kvm@vger.kernel.org"
+> >  <kvm@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, Greg
+> >  Kroah-Hartman <gregkh@linuxfoundation.org>, Zaibo Xu <xuzaibo@huawei.com>,
+> >  "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "Kumar, Sanjay K"
+> >  <sanjay.k.kumar@intel.com>, Kenneth Lee <nek.in.cn@gmail.com>,
+> >  "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+> >  "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+> >  "linuxarm@huawei.com" <linuxarm@huawei.com>,
+> >  "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, Philippe
+> >  Ombredanne <pombredanne@nexb.com>, Thomas Gleixner <tglx@linutronix.de>,
+> >  "David S . Miller" <davem@davemloft.net>,
+> >  "linux-accelerators@lists.ozlabs.org"
+> >  <linux-accelerators@lists.ozlabs.org>
+> > Subject: Re: [RFC PATCH 0/7] A General Accelerator Framework, WarpDrive
+> > User-Agent: Mutt/1.10.0 (2018-05-17)
+> > Message-ID: <20180802142243.GA3481@redhat.com>
+> > 
+> > On Thu, Aug 02, 2018 at 12:05:57PM +0800, Kenneth Lee wrote:
+> > > On Thu, Aug 02, 2018 at 02:33:12AM +0000, Tian, Kevin wrote:
+> > > > Date: Thu, 2 Aug 2018 02:33:12 +0000
+> > > > > From: Jerome Glisse
+> > > > > On Wed, Aug 01, 2018 at 06:22:14PM +0800, Kenneth Lee wrote:
+> > > > > > From: Kenneth Lee <liguozhu@hisilicon.com>
+> > > > > >
+> > > > > > WarpDrive is an accelerator framework to expose the hardware
+> > > > > capabilities
+> > > > > > directly to the user space. It makes use of the exist vfio and vfio-mdev
+> > > > > > facilities. So the user application can send request and DMA to the
+> > > > > > hardware without interaction with the kernel. This remove the latency
+> > > > > > of syscall and context switch.
+> > > > > >
+> > > > > > The patchset contains documents for the detail. Please refer to it for
+> > > > > more
+> > > > > > information.
+> > > > > >
+> > > > > > This patchset is intended to be used with Jean Philippe Brucker's SVA
+> > > > > > patch [1] (Which is also in RFC stage). But it is not mandatory. This
+> > > > > > patchset is tested in the latest mainline kernel without the SVA patches.
+> > > > > > So it support only one process for each accelerator.
+> > > > > >
+> > > > > > With SVA support, WarpDrive can support multi-process in the same
+> > > > > > accelerator device.  We tested it in our SoC integrated Accelerator (board
+> > > > > > ID: D06, Chip ID: HIP08). A reference work tree can be found here: [2].
+> > > > > 
+> > > > > I have not fully inspected things nor do i know enough about
+> > > > > this Hisilicon ZIP accelerator to ascertain, but from glimpsing
+> > > > > at the code it seems that it is unsafe to use even with SVA due
+> > > > > to the doorbell. There is a comment talking about safetyness
+> > > > > in patch 7.
+> > > > > 
+> > > > > Exposing thing to userspace is always enticing, but if it is
+> > > > > a security risk then it should clearly say so and maybe a
+> > > > > kernel boot flag should be necessary to allow such device to
+> > > > > be use.
+> > > > > 
+> > > 
+> > > But doorbell is just a notification. Except for DOS (to make hardware busy) it
+> > > cannot actually take or change anything from the kernel space. And the DOS
+> > > problem can be always taken as the problem that a group of processes share the
+> > > same kernel entity.
+> > > 
+> > > In the coming HIP09 hardware, the doorbell will come with a random number so
+> > > only the process who allocated the queue can knock it correctly.
+> > 
+> > When doorbell is ring the hardware start fetching commands from
+> > the queue and execute them ? If so than a rogue process B might
+> > ring the doorbell of process A which would starts execution of
+> > random commands (ie whatever random memory value there is left
+> > inside the command buffer memory, could be old commands i guess).
+> > 
+> > If this is not how this doorbell works then, yes it can only do
+> > a denial of service i guess. Issue i have with doorbell is that
+> > i have seen 10 differents implementations in 10 differents hw
+> > and each are different as to what ringing or value written to the
+> > doorbell does. It is painfull to track what is what for each hw.
+> > 
 > 
-> If the long lines really truly are dreadful, I have no problem fixing
-> that up for v2.
-
-A very large percentage of the kernel code uses 80 characters maximum.
-So anything which does not makes it look different. It makes it not
-look like kernel code. It is also not just about styling. If you use
-long lines, it makes it easier to use more indentation levels. But
-good readable code tends to have lots of little functions with only
-one or two levels of indentation, and each function does just one
-easily understood thing.
-
-Plus this is pretty much an open invite for kernel newbies to submit
-patches fixing up all these warnings. Maybe you would prefer to do it
-yourself, so you keep some degree of control over it. Also, such white
-space changes make backporting fixes more difficult. So it is better
-if you can get this done before it lands in the kernel and backporting
-becomes necessary.
-
-> On Tue, Jul 31, 2018 at 10:02 PM Andrew Lunn <andrew@lunn.ch> wrote:
-> > > +static __always_inline void swap_endian(u8 *dst, const u8 *src, u8 bits)
-> > There is a general preference to not force the compile to
-> > inline. Leave it to decide.
+> In our implementation, doorbell is simply a notification, just like an interrupt
+> to the accelerator. The command is all about what's in the queue.
 > 
-> I'm aware this is for the most part the case, and I've read the
-> variety of threads and documentation of folks explaining why this is a
-> good policy. In the particular instance of that function, inlining is
-> in fact always the right thing to do. But I'll give it a double check
-> to see if the compiler is already figuring that out on its own.
+> I agree that there is no simple and standard way to track the shared IO space.
+> But I think we have to trust the driver in some way. If the driver is malicious,
+> even a simple ioctl can become an attack.
 
-Well, what compiler are you going to check? I think the minimum
-version of GCC is now v4.5. So you probably want to check 8.2, 7.3,
-6.4, 5.5, 4.9.3 and 4.8. And you might want to check ARM, MIPs, x86
-and amd64. So only 24 versions.
+Trusting kernel space driver is fine, trusting user space driver is
+not in my view. AFAICT every driver developer so far always made
+sure that someone could not abuse its device to do harmfull thing to
+other process.
 
-More realistically, if you have a strong argument why a particular
-function must be inlined, e.g. to avoid a timing attack, make that
-argument.
 
-	Andrew
+> > > > > My more general question is do we want to grow VFIO to become
+> > > > > a more generic device driver API. This patchset adds a command
+> > > > > queue concept to it (i don't think it exist today but i have
+> > > > > not follow VFIO closely).
+> > > > > 
+> > > 
+> > > The thing is, VFIO is the only place to support DMA from user land. If we don't
+> > > put it here, we have to create another similar facility to support the same.
+> > 
+> > No it is not, network device, GPU, block device, ... they all do
+> > support DMA. The point i am trying to make here is that even in
+> 
+> Sorry, wait a minute, are we talking the same thing? I meant "DMA from user
+> land", not "DMA from kernel driver". To do that we have to manipulate the
+> IOMMU(Unit). I think it can only be done by default_domain or vfio domain. Or
+> the user space have to directly access the IOMMU.
+
+GPU do DMA in the sense that you pass to the kernel a valid
+virtual address (kernel driver do all the proper check) and
+then you can use the GPU to copy from or to that range of
+virtual address. Exactly how you want to use this compression
+engine. It does not rely on SVM but SVM going forward would
+still be the prefered option.
+
+
+> > your mechanisms the userspace must have a specific userspace
+> > drivers for each hardware and thus there are virtually no
+> > differences between having this userspace driver open a device
+> > file in vfio or somewhere else in the device filesystem. This is
+> > just a different path.
+> > 
+> 
+> The basic problem WarpDrive want to solve it to avoid syscall. This is important
+> to accelerators. We have some data here:
+> https://www.slideshare.net/linaroorg/progress-and-demonstration-of-wrapdrive-a-accelerator-framework-sfo17317
+> 
+> (see page 3)
+> 
+> The performance is different on using kernel and user drivers.
+
+Yes and example i point to is exactly that. You have a one time setup
+cost (creating command buffer binding PASID with command buffer and
+couple other setup steps). Then userspace no longer have to do any
+ioctl to schedule work on the GPU. It is all down from userspace and
+it use a doorbell to notify hardware when it should go look at command
+buffer for new thing to execute.
+
+My point stands on that. You have existing driver already doing so
+with no new framework and in your scheme you need a userspace driver.
+So i do not see the value add, using one path or the other in the
+userspace driver is litteraly one line to change.
+
+
+> And we also believe the hardware interface can become standard after sometime.
+> Some companies have started to do this (such ARM's Revere). But before that, we
+> should have a software channel for it.
+
+I hope it does, but right now for every single piece of hardware you
+will need a specific driver (i am ignoring backward compatible hardware
+evolution as this is a thing that do exist).
+
+Even if down the road for every class of hardware you can use the same
+driver, i am not sure what the value add is to do it inside VFIO versus
+a class of device driver (like USB, PCIE, DRM aka GPU, ...) ie you would
+have a compression class (/dev/compress/*) a encryption one, ...
+
+
+> > So this is why i do not see any benefit to having all drivers with
+> > SVM (can we please use SVM and not SVA as SVM is what have been use
+> > in more places so far).
+> > 
+> 
+> Personally, we don't care what name to be used. I used SVM when I start this
+> work. And then Jean said SVM had been used by AMD as Secure Virtual Machine. So
+> he called it SVA. And now... who should I follow? :)
+
+I think Intel call it SVM too, i do not have any strong preference
+beside have only one to remember :)
+
+Cheers,
+Jérôme
