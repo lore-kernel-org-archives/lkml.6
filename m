@@ -3,200 +3,192 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDFDAC28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 18:25:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6035C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 18:29:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 974F221770
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 18:25:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 974F221770
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 77FE221770
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 18:29:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77FE221770
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730028AbeHCUXH (ORCPT
+        id S1730070AbeHCU03 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 16:23:07 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56830 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727479AbeHCUXG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 16:23:06 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id F0F0D7A7EF;
-        Fri,  3 Aug 2018 18:25:39 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id A3DEF2026D65;
-        Fri,  3 Aug 2018 18:25:39 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id w73IPduU019515;
-        Fri, 3 Aug 2018 14:25:39 -0400
-Received: from localhost (mpatocka@localhost)
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id w73IPcg4019511;
-        Fri, 3 Aug 2018 14:25:38 -0400
-X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
-Date:   Fri, 3 Aug 2018 14:25:38 -0400 (EDT)
-From:   Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-cc:     Will Deacon <will.deacon@arm.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Joao Pinto <Joao.Pinto@synopsys.com>,
-        Matt Sealey <neko@bakuhatsu.net>,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-pci <linux-pci@vger.kernel.org>
-Subject: Re: framebuffer corruption due to overlapping stp instructions on
- arm64
-In-Reply-To: <CAKv+Gu-aNFh1fsr_05SEwDp99n3pLrguP7=tEcFQPNY53=K7Fw@mail.gmail.com>
-Message-ID: <alpine.LRH.2.02.1808031424140.14030@file01.intranet.prod.int.rdu2.redhat.com>
-References: <alpine.LRH.2.02.1808021242320.31834@file01.intranet.prod.int.rdu2.redhat.com> <CAHCPf3tFGqkYEcWNN4LaWThw_rVqT316pzLv6T7RfxwO-eZ0EA@mail.gmail.com> <alpine.LRH.2.02.1808030212340.17672@file01.intranet.prod.int.rdu2.redhat.com>
- <CAKv+Gu8DeuksZhk1g3q_msSKV_hSY_2e1uzVten9-oGO3j9Sqg@mail.gmail.com> <20180803094129.GB17798@arm.com> <alpine.LRH.2.02.1808031235410.31584@file01.intranet.prod.int.rdu2.redhat.com> <CAKv+Gu-aNFh1fsr_05SEwDp99n3pLrguP7=tEcFQPNY53=K7Fw@mail.gmail.com>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
-MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 03 Aug 2018 18:25:40 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 03 Aug 2018 18:25:40 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mpatocka@redhat.com' RCPT:''
+        Fri, 3 Aug 2018 16:26:29 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37408 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729607AbeHCU03 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 16:26:29 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w73ISed8013175
+        for <linux-kernel@vger.kernel.org>; Fri, 3 Aug 2018 14:29:02 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2kmrwmqxqw-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Aug 2018 14:29:01 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Fri, 3 Aug 2018 19:28:59 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 3 Aug 2018 19:28:54 +0100
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w73ISrGW44564612
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 3 Aug 2018 18:28:53 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 411815204E;
+        Fri,  3 Aug 2018 21:29:03 +0100 (BST)
+Received: from localhost.localdomain (unknown [9.80.98.9])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 9AD7352050;
+        Fri,  3 Aug 2018 21:29:01 +0100 (BST)
+Subject: Re: [PATCH v2 1/2] security/keys/secure_key: Adds the secure key
+ support based on CAAM.
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
+        David Howells <dhowells@redhat.com>,
+        Udit Agarwal <udit.agarwal@nxp.com>
+Cc:     zohar@linux.vnet.ibm.com, jmorris@namei.org, serge@hallyn.com,
+        denkenz@gmail.com, linux-integrity@vger.kernel.org,
+        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, sahil.malhotra@nxp.com,
+        ruchika.gupta@nxp.com, horia.geanta@nxp.com, aymen.sghaier@nxp.com
+Date:   Fri, 03 Aug 2018 14:28:41 -0400
+In-Reply-To: <1533311338.4140.3.camel@HansenPartnership.com>
+References: <20180723111432.26830-1-udit.agarwal@nxp.com>
+         <8060.1533226481@warthog.procyon.org.uk>
+         <1533297482.4337.373.camel@linux.ibm.com>
+         <1533306238.4140.1.camel@HansenPartnership.com>
+         <1533307535.4337.415.camel@linux.ibm.com>
+         <1533311338.4140.3.camel@HansenPartnership.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18080318-4275-0000-0000-000002A35CAE
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18080318-4276-0000-0000-000037AB7BCE
+Message-Id: <1533320921.4337.479.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-03_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808030200
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On Fri, 3 Aug 2018, Ard Biesheuvel wrote:
-
-> (- libc-alpha)
+On Fri, 2018-08-03 at 08:48 -0700, James Bottomley wrote:
+> On Fri, 2018-08-03 at 10:45 -0400, Mimi Zohar wrote:
+> > On Fri, 2018-08-03 at 07:23 -0700, James Bottomley wrote:
+> > > On Fri, 2018-08-03 at 07:58 -0400, Mimi Zohar wrote:
+> > > > On Thu, 2018-08-02 at 17:14 +0100, David Howells wrote:
+> > > > > Udit Agarwal <udit.agarwal@nxp.com> wrote:
+> > > > > 
+> > > > > > +==========
+> > > > > > +Secure Key
+> > > > > > +==========
+> > > > > > +
+> > > > > > +Secure key is the new type added to kernel key ring service.
+> > > > > > +Secure key is a symmetric type key of minimum length 32
+> > > > > > bytes
+> > > > > > +and with maximum possible length to be 128 bytes. It is
+> > > > > > produced
+> > > > > > +in kernel using the CAAM crypto engine. Userspace can only
+> > > > > > see
+> > > > > > +the blob for the corresponding key. All the blobs are
+> > > > > > displayed
+> > > > > > +or loaded in hex ascii.
+> > > > > 
+> > > > > To echo Mimi, this sounds suspiciously like it should have a
+> > > > > generic interface, not one that's specifically tied to one
+> > > > > piece of
+> > > > > hardware - particularly if it's named with generic "secure".
+> > > > > 
+> > > > > Can you convert this into a "symmetric" type and make the
+> > > > > backend
+> > > > > pluggable?
+> > > > 
+> > > > TPM 1.2 didn't support symmetric keys.  For this reason, the TPM
+> > > > "unseals" the random number, used as a symmetric key, and returns
+> > > > the
+> > > > "unsealed" data to the kernel.
+> > > > 
+> > > > Does anyone know if CAAM or TPM 2.0 have support for symmetric
+> > > > keys?
+> > > 
+> > > It depends what you mean by "support".  The answer is technically
+> > > yes,
+> > > it's the TPM2_EncryptDecrypt primitive.  However, the practical
+> > > answer
+> > > is that symmetric keys are mostly used for bulk operations and the
+> > > TPM
+> > > and its bus are way too slow to support that, so the only real,
+> > > practical use case is to have the TPM govern the release conditions
+> > > for
+> > > symmetric keys which are later used by a fast bulk
+> > > encryptor/decryptor
+> > > based in software.
+> > > 
+> > > >  If they have symmetric key support, there would be no need for
+> > > > the
+> > > > symmetric key ever to leave the device in the clear.  The device
+> > > > would unseal/decrypt data, such as an encrypted key.
+> > > > 
+> > > > The "symmetric" key type would be a generic interface for
+> > > > different
+> > > > devices.
+> > > 
+> > > It's possible, but it would only work for a non-bulk use case; do
+> > > we
+> > > have one of those?
+> > 
+> > "trusted" keys are currently being used to decrypt other keys (eg.
+> > encrypted, ecryptfs, ...).
 > 
-> On 3 August 2018 at 19:09, Mikulas Patocka <mpatocka@redhat.com> wrote:
-> >
-> >
-> > On Fri, 3 Aug 2018, Will Deacon wrote:
-> >
-> >> On Fri, Aug 03, 2018 at 09:16:39AM +0200, Ard Biesheuvel wrote:
-> >> > On 3 August 2018 at 08:35, Mikulas Patocka <mpatocka@redhat.com> wrote:
-> >> > >
-> >> > >
-> >> > > On Thu, 2 Aug 2018, Matt Sealey wrote:
-> >> > >
-> >> > >> The easiest explanation for this would be that the memory isn?t mapped
-> >> > >> correctly. You can?t use PCIe memory spaces with anything other than
-> >> > >> Device-nGnRE or stricter mappings. That?s just differences between the
-> >> > >> AMBA and PCIe (posted/unposted) memory models.
-> >> >
-> >> > Whoa hold on there.
-> >> >
-> >> > Are you saying we cannot have PCIe BAR windows with memory semantics on ARM?
-> >> >
-> >> > Most accelerated graphics drivers rely heavily on the ability to map
-> >> > the VRAM normal-non-cacheable (ioremap_wc, basically), and treat it as
-> >> > ordinary memory.
-> >>
-> >> Yeah, I'd expect framebuffers to be mapped as normal NC. That should be
-> >> fine for prefetchable BARs, no?
-> >>
-> >> Will
-> >
-> > So - why does it corrupt data then? I've created this program that
-> > reproduces the data corruption quicky. If I run it on /dev/fb0, I get an
-> > instant failure. Sometimes a few bytes are not written, sometimes a few
-> > bytes are written with a value that should be 16 bytes apart.
-> >
+> Yes, but that's just double encryption: it serves no real security
+> purpose because at the end of the chain, the symmetric key is released
+> into kernel memory to use in software crypto.  Unless you're using a
+> high speed (and high cost) crypto accelerator with HSA, this will
+> always be the case for bulk crypto.
 > 
-> Are we still talking about overlapping unaligned accesses here? Or do
-> you see other failures as well?
+> The other slight problem with this chain of crypto is that I can impose
+> conditions on the key release from the TPM (well TPM2, since TPM1.2 has
+> a very weak policy engine) but if we use intermediate steps, those
+> conditions might not be preserved, so I think the ideal would be a
+> trusted key being released directly to LUKS or ecryptfs because the TPM
+> can then verify the policy at actual unseal time.  I get that for the
+> ecryptfs case you might want one key per file for sharding and sharing,
+> and that's more like a bulk case because the TPM isn't going to keep up
+> with the number of unseal operations required.
 
-Yes - it is caused by overlapping unaligned accesses inside memcpy. When I 
-put "dmb sy" between the overlapping accesses in 
-glibc/sysdeps/aarch64/memcpy.S, this program doesn't detect any memory 
-corruption.
+Agreed.  Yet there are a couple of reasons for having this sort of
+indirection. By having the "encrypted" key encrypted/decrypted by a
+"trusted" key, the "trusted" key could be updated without impacting
+the "encrypted" key.  This could be used, for example, for key
+migration.  Another reason would be to define a single "trusted" key
+sealed to a set of PCRs, which could be used to encrypt/decrypt
+multiple symmetric keys.
 
-> > I tried to run it on system RAM mapped with the NC attribute and I didn't
-> > get any corruption - that suggests the the bug may be in the PCIE
-> > subsystem.
-> >
-> > Jingoo Han and Joao Pinto are maintainers for the designware PCIE
-> > controllers. Could you suggest why does the controller corrupt data when
-> > writing to videoram? Are there any tricks that could be tried to work
-> > around the corruption?
-> >
-> > Mikulas
-> >
-> >
-> >
-> > #include <stdio.h>
-> > #include <stdlib.h>
-> > #include <string.h>
-> > #include <fcntl.h>
-> > #include <unistd.h>
-> > #include <sys/mman.h>
-> >
-> > #define LEN             256
-> > #define PRINT_STRIDE    0x20
-> >
-> > static unsigned char data[LEN];
-> > static unsigned char val = 0;
-> >
-> > static unsigned char prev_data[LEN];
-> >
-> > static unsigned char map_copy[LEN];
-> >
-> > int main(int argc, char *argv[])
-> > {
-> >         unsigned long n = 0;
-> >         int h;
-> >         unsigned char *map;
-> >         unsigned start, end, i;
-> >
-> >         if (argc < 2) fprintf(stderr, "argc\n"), exit(1);
-> >         if (argc >= 4) srandom(atoll(argv[3]));
-> >         h = open(argv[1], O_RDWR | O_DSYNC);
-> >         if (h == -1) perror("open"), exit(1);
-> >         map = mmap(NULL, LEN, PROT_READ | PROT_WRITE, MAP_SHARED, h, argc >= 3 ? strtoull(argv[2], NULL, 16) : 0);
-> >         if (map == MAP_FAILED) perror("mmap"), exit(1);
-> >
-> >         memset(data, 0, LEN);
-> >         memset(prev_data, 0, LEN);
-> >         memset(map, 0, LEN);
-> >
-> >         sleep(1);
-> >
-> >         while (1) {
-> >                 start = (unsigned)random() % (LEN + 1);
-> >                 end = (unsigned)random() % (LEN + 1);
-> >                 if (start > end)
-> >                         continue;
-> >                 for (i = start; i < end; i++)
-> >                         data[i] = val++;
-> >                 memcpy(map + start, data + start, end - start);
-> >                 if (memcmp(map, data, LEN)) {
-> >                         unsigned j;
-> >                         memcpy(map_copy, map, LEN);
-> >                         fprintf(stderr, "mismatch after %lu loops!\n", n);
-> >                         fprintf(stderr, "last copied range: 0x%x - 0x%x (0x%x)\n", start, end, (unsigned)(end - start));
-> >                         for (j = 0; j < LEN; j += PRINT_STRIDE) {
-> >                                 fprintf(stderr, "p[%03x]", j);
-> >                                 for (i = j; i < j + PRINT_STRIDE && i < LEN; i++)
-> >                                         fprintf(stderr, " %s%s%02x\e[0m", !(i % 4) ? " " : "", data[i] != map_copy[i] ? "\e[31m" : "", prev_data[i]);
-> >                                 fprintf(stderr, "\n");
-> >                                 fprintf(stderr, "d[%03x]", j);
-> >                                 for (i = j; i < j + PRINT_STRIDE && i < LEN; i++)
-> >                                         fprintf(stderr, " %s%s%02x\e[0m", !(i % 4) ? " " : "", data[i] != map_copy[i] ? "\e[31m" : "", data[i]);
-> >                                 fprintf(stderr, "\n");
-> >                                 fprintf(stderr, "m[%03x]", j);
-> >                                 for (i = j; i < j + PRINT_STRIDE && i < LEN; i++)
-> >                                         fprintf(stderr, " %s%s%02x\e[0m", !(i % 4) ? " " : "", data[i] != map_copy[i] ? "\e[31m" : "", map_copy[i]);
-> >                                 fprintf(stderr, "\n\n");
-> >                         }
-> >                         exit(1);
-> >                 }
-> >                 memcpy(prev_data, data, LEN);
-> >                 n++;
-> >         }
-> > }
-> 
+Nothing is preventing these subsystems from directly using a "trusted"
+key.
+
+This discussion is the result of Udit Agarwal's posting a "secure" key
+patch. Before defining a new key type, whether it is called "secure"
+or "symmetric", we need to understand how the this new key type is
+going to be used.  Will it have a similar ability to impose conditions
+on the key release as the TPM?  Will it have symmetric key support, so
+that the symmetric key never needs to be released from the HW?
+
+Mimi
+
