@@ -2,96 +2,103 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3804C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 06:16:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A106DC28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 06:18:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9300621700
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 06:16:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9300621700
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 6281F21711
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 06:18:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6281F21711
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728123AbeHCILj (ORCPT
+        id S1728173AbeHCIMw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 04:11:39 -0400
-Received: from mx2.suse.de ([195.135.220.15]:53422 "EHLO mx1.suse.de"
+        Fri, 3 Aug 2018 04:12:52 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:10617 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727680AbeHCILj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 04:11:39 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B2D5EADE8;
-        Fri,  3 Aug 2018 06:16:54 +0000 (UTC)
-Date:   Fri, 3 Aug 2018 08:16:53 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     Tejun Heo <tj@kernel.org>, Roman Gushchin <guro@fb.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        David Rientjes <rientjes@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-mm <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] mm,page_alloc: PF_WQ_WORKER threads must sleep at
- should_reclaim_retry().
-Message-ID: <20180803061653.GB27245@dhcp22.suse.cz>
-References: <9158a23e-7793-7735-e35c-acd540ca59bf@i-love.sakura.ne.jp>
- <20180730144647.GX24267@dhcp22.suse.cz>
- <20180730145425.GE1206094@devbig004.ftw2.facebook.com>
- <0018ac3b-94ee-5f09-e4e0-df53d2cbc925@i-love.sakura.ne.jp>
- <20180730154424.GG1206094@devbig004.ftw2.facebook.com>
- <20180730185110.GB24267@dhcp22.suse.cz>
- <20180730191005.GC24267@dhcp22.suse.cz>
- <6f433d59-4a56-b698-e119-682bb8bf6713@i-love.sakura.ne.jp>
- <20180731050928.GA4557@dhcp22.suse.cz>
- <d11c3aa2-0f14-d882-59c5-6634dc56eed1@i-love.sakura.ne.jp>
+        id S1726792AbeHCIMv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 04:12:51 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 627FDD5902276;
+        Fri,  3 Aug 2018 14:18:04 +0800 (CST)
+Received: from [127.0.0.1] (10.177.16.168) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.399.0; Fri, 3 Aug 2018
+ 14:18:00 +0800
+Subject: Re: [V9fs-developer] [PATCH] net/9p: Modify the problem of BUG_ON
+ judgment
+To:     Dominique Martinet <asmadeus@codewreck.org>
+References: <5B63D5F6.6080109@huawei.com> <20180803042308.GA4618@nautica>
+CC:     Eric Van Hensbergen <ericvh@gmail.com>,
+        Ron Minnich <rminnich@sandia.gov>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        <v9fs-developer@lists.sourceforge.net>, <netdev@vger.kernel.org>
+From:   jiangyiwen <jiangyiwen@huawei.com>
+Message-ID: <5B63F396.3090507@huawei.com>
+Date:   Fri, 3 Aug 2018 14:17:58 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d11c3aa2-0f14-d882-59c5-6634dc56eed1@i-love.sakura.ne.jp>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180803042308.GA4618@nautica>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.16.168]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 03-08-18 07:05:54, Tetsuo Handa wrote:
-> On 2018/07/31 14:09, Michal Hocko wrote:
-> > On Tue 31-07-18 06:01:48, Tetsuo Handa wrote:
-> >> On 2018/07/31 4:10, Michal Hocko wrote:
-> >>> Since should_reclaim_retry() should be a natural reschedule point,
-> >>> let's do the short sleep for PF_WQ_WORKER threads unconditionally in
-> >>> order to guarantee that other pending work items are started. This will
-> >>> workaround this problem and it is less fragile than hunting down when
-> >>> the sleep is missed. E.g. we used to have a sleeping point in the oom
-> >>> path but this has been removed recently because it caused other issues.
-> >>> Having a single sleeping point is more robust.
-> >>
-> >> linux.git has not removed the sleeping point in the OOM path yet. Since removing the
-> >> sleeping point in the OOM path can mitigate CVE-2016-10723, please do so immediately.
-> > 
-> > is this an {Acked,Reviewed,Tested}-by?
-> > 
-> > I will send the patch to Andrew if the patch is ok. 
-> > 
-> >> (And that change will conflict with Roman's cgroup aware OOM killer patchset. But it
-> >> should be easy to rebase.)
-> > 
-> > That is still a WIP so I would lose sleep over it.
-> > 
+On 2018/8/3 12:23, Dominique Martinet wrote:
+> jiangyiwen wrote on Fri, Aug 03, 2018:
+>> Because the value of limit is VIRTQUEUE_NUM, if index is equal to
+>> limit, it will cause sg array out of bounds, so correct the judgement
+>> of BUG_ON.
+>>
+>> Signed-off-by: Yiwen Jiang <jiangyiwen@huawei.com>
 > 
-> Now that Roman's cgroup aware OOM killer patchset will be dropped from linux-next.git ,
-> linux-next.git will get the sleeping point removed. Please send this patch to linux-next.git .
+> I'm not sure you've acted on his mail or if you found this
+> independantly, but this was reported by Dan Carpenter on the list in
+> June.
+> Would you mind if I add a tag for him?
+> Reported-by: Dan Carpenter <dan.carpenter@oracle.com> 
+> 
+> That aside this looks good, I'll take it.
+> 
 
-I still haven't heard any explicit confirmation that the patch works for
-your workload. Should I beg for it? Or you simply do not want to have
-your stamp on the patch? If yes, I can live with that but this playing
-hide and catch is not really a lot of fun.
+Sorry, I didn't see it before, I tested this problem a few days ago.
+It is true that this problem was discovered first by him. Thank you
+for adding him.
 
--- 
-Michal Hocko
-SUSE Labs
+>> ---
+>>  net/9p/trans_virtio.c | 3 ++-
+>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/net/9p/trans_virtio.c b/net/9p/trans_virtio.c
+>> index 6265d1d..08264ba 100644
+>> --- a/net/9p/trans_virtio.c
+>> +++ b/net/9p/trans_virtio.c
+>> @@ -191,7 +191,7 @@ static int pack_sg_list(struct scatterlist *sg, int start,
+>>  		s = rest_of_page(data);
+>>  		if (s > count)
+>>  			s = count;
+>> -		BUG_ON(index > limit);
+>> +		BUG_ON(index >= limit);
+>>  		/* Make sure we don't terminate early. */
+>>  		sg_unmark_end(&sg[index]);
+>>  		sg_set_buf(&sg[index++], data, s);
+>> @@ -236,6 +236,7 @@ static int p9_virtio_cancel(struct p9_client *client, struct p9_req_t *req)
+>>  		s = PAGE_SIZE - data_off;
+>>  		if (s > count)
+>>  			s = count;
+>> +		BUG_ON(index >= limit);
+>>  		/* Make sure we don't terminate early. */
+>>  		sg_unmark_end(&sg[index]);
+>>  		sg_set_page(&sg[index++], pdata[i++], s, data_off);
+> 
+
+
