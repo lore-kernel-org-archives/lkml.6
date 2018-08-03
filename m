@@ -2,127 +2,532 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67214C46469
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 21:29:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C5E6C4646A
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 21:30:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 129C02178D
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 21:29:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F02F217B8
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 21:30:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="XGbr8q1D"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 129C02178D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="m4ZKnC/J"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F02F217B8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732087AbeHCX1Z (ORCPT
+        id S1732124AbeHCX2c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 19:27:25 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:40250 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729660AbeHCX1Y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 19:27:24 -0400
-Received: by mail-wr1-f66.google.com with SMTP id h15-v6so6607807wrs.7
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Aug 2018 14:29:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=l1tAkLcH7lLC/RDYF8Guzuabgc/xwWes/KPNuA5AhRI=;
-        b=XGbr8q1D3QfUbht9WiOxMZ+CELSxGQJaa6dPA6OWSq9pjdDU1TiKuKiHYwOsUdJ4fx
-         wuNB6iBiRjEKHjXb0xjaup4d0mlszEFmBOCaQ89FPRufZB8HLu6OJj7hjaU1OQQq6Ba9
-         IoJU/mDyup8OmULBZHOa8pfhGL+Umf8LmfxXiDiwZp4Wr3dV6WecfaLyXaJCoxQyv/xB
-         vDAHWQ+zsnOVJLVimsfGL5HhaXOyY7/bN6DVtk8gkrG9hvkI0YDKTKWWpQInx4tSVgZM
-         XjpS6+RzY7FsCErK8OTNSPMo9Md1tHmMltHTVkw5R4iMd3y6f0ZGOywiQwSOoCBOfaQS
-         QLLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=l1tAkLcH7lLC/RDYF8Guzuabgc/xwWes/KPNuA5AhRI=;
-        b=fucNZTd2BcUj9hJgQKhcwxxfTzXuFcJbRI9DTzx8d9lPrnTNKd+MFwlxPsbNF85XRn
-         ftnrMF983KUKC8lO5Bbhk69nbEx5Ru6B6qZ1bFXnfULIqJOjCKEDuAusGorh/nxLL8Ma
-         dNXsM2lnXIw9QDMKUkZD8JVSPArD/gqzT6HnXDJIyizdr+hXqpUcWsvMPoPW/FXZTito
-         XFNMagt63Y47OuhHxQFm3csIyHzsHPQoo/WcB+a85UaVnvDRyfvR8ZMP6iwRsKqWfRCZ
-         QidQA5kuJl6Sjwy7Y7k70YKG4LFpFmf6nNCpUel6I7HqTBJhVyK/Qna8jrST38UbAxo3
-         QyRA==
-X-Gm-Message-State: AOUpUlHkYkDGpAiFCT2+zIZGxon5fQ429Ukuw0AS/xIKQmivgVLz/wVE
-        jnc5l72g/aSqEHbHmhIaOjOz587MiGjgFMUm3rOXjQ==
-X-Google-Smtp-Source: AAOMgpfB1mvRmHnkVxJloWGVvSKo9llDapZzeT5BgPa5ikgcFbKaYKxRjSatrpfBoh0PRt6DGyKKTpdaOcWHWVS647w=
-X-Received: by 2002:adf:8325:: with SMTP id 34-v6mr3537290wrd.67.1533331762210;
- Fri, 03 Aug 2018 14:29:22 -0700 (PDT)
+        Fri, 3 Aug 2018 19:28:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33888 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731181AbeHCX2c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 19:28:32 -0400
+Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5476B2178D;
+        Fri,  3 Aug 2018 21:30:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1533331829;
+        bh=4xQKEpFnrldUs/JG4NSmq4wYHM4tvGtSoihzbMicMjw=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=m4ZKnC/JsqEpIKDPB8R3fkkgDHTbEYSZvJiw/qzFtFrsizBG2gqIth+vJJyvVoMp9
+         4TJkx8g4AcSzIg2K6/U19lkW89TBUlqgd+2qbDjR+LyLvly9VYAVjqRmVXpHDbxEt9
+         tYfSkcJn/EQov6iez8NikpyC/6xvHM1MzHV8kxNc=
+Date:   Fri, 3 Aug 2018 22:30:23 +0100
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Stefan Popa <stefan.popa@analog.com>
+Cc:     <broonie@kernel.org>, <lars@metafoo.de>,
+        <Michael.Hennerich@analog.com>, <knaack.h@gmx.de>,
+        <pmeerw@pmeerw.net>, <mark.rutland@arm.com>, <davem@davemloft.net>,
+        <mchehab+samsung@kernel.org>, <gregkh@linuxfoundation.org>,
+        <akpm@linux-foundation.org>, <robh+dt@kernel.org>,
+        <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 4/6] iio:adxl372: Add FIFO and interrupts support
+Message-ID: <20180803223023.65cfbd70@archlinux>
+In-Reply-To: <1533301341-26560-5-git-send-email-stefan.popa@analog.com>
+References: <1533301341-26560-1-git-send-email-stefan.popa@analog.com>
+        <1533301341-26560-5-git-send-email-stefan.popa@analog.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Received: by 2002:a1c:548:0:0:0:0:0 with HTTP; Fri, 3 Aug 2018 14:29:01 -0700 (PDT)
-In-Reply-To: <CAHmME9oThR-dE3gTW0UyqAGZO80qu19ktG4YTb4iL6CNpzNNaw@mail.gmail.com>
-References: <20180801072246.GA15677@sol.localdomain> <CALCETrXD_VyoyW5C1U34o-ySJ4nFcO6PQ+ZNBVYxCpJ-f65CHw@mail.gmail.com>
- <CAHmME9oThR-dE3gTW0UyqAGZO80qu19ktG4YTb4iL6CNpzNNaw@mail.gmail.com>
-From:   Andy Lutomirski <luto@amacapital.net>
-Date:   Fri, 3 Aug 2018 14:29:01 -0700
-Message-ID: <CALCETrVziUpAU4nTaZ=t5ct=1jsWswWOy7KDNxXGPD1L=tMTGQ@mail.gmail.com>
-Subject: Re: [PATCH v1 2/3] zinc: Introduce minimal cryptography library
-To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc:     Eric Biggers <ebiggers3@gmail.com>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Samuel Neves <sneves@dei.uc.pt>,
-        "Daniel J . Bernstein" <djb@cr.yp.to>,
-        Tanja Lange <tanja@hyperelliptic.org>,
-        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>,
-        Karthikeyan Bhargavan <karthik.bhargavan@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 2, 2018 at 7:48 PM, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
-> Hey Andy,
->
-> Thanks too for the feedback. Responses below:
->
-> On Wed, Aug 1, 2018 at 7:09 PM Andy Lutomirski <luto@amacapital.net> wrote:
->> > I think the above changes would also naturally lead to a much saner
->> > patch series where each algorithm is added by its own patch, rather than
->> > one monster patch that adds many algorithms and 24000 lines of code.
->> >
->>
->> Yes, please.
->
-> Ack, will be in v2.
->
->
->> I like this a *lot*.  (But why are you passing have_simd?  Shouldn't
->> that check live in chacha20_arch?  If there's some init code needed,
->> then chacha20_arch() should just return false before the init code
->> runs.  Once the arch does whatever feature detection it needs, it can
->> make chacha20_arch() start returning true.)
->
-> The have_simd stuff is so that the FPU state can be amortized across
-> several calls to the crypto functions. Here's a snippet from
-> WireGuard's send.c:
->
-> void packet_encrypt_worker(struct work_struct *work)
-> {
->     struct crypt_queue *queue = container_of(work, struct
-> multicore_worker, work)->ptr;
->     struct sk_buff *first, *skb, *next;
->     bool have_simd = simd_get();
+On Fri, 3 Aug 2018 16:02:19 +0300
+Stefan Popa <stefan.popa@analog.com> wrote:
 
-Gotcha.  That was very hidden in the 24k lines.  Please make this (and
-any similar goodies) be their own patches.
+> This patch adds support for the adxl372 FIFO. In order to accomplish this,
+> triggered buffers were used.
+> 
+> The number of FIFO samples which trigger the watermark interrupt can be
+> configured by using the buffer watermark. The FIFO format is determined by
+> configuring the scan elements for each axis. The FIFO data is pushed to the
+> IIO device's buffer.
+> 
+> Signed-off-by: Stefan Popa <stefan.popa@analog.com>
+Very nice.  A couple of real nitpicks inline that would be nice to
+tidy up if you have time.  If we hadn't just missed the coming merge window
+(I'm about to go on vacation) I might have taken this anyway.
 
-Also, please consider spelling it differently:
 
-simd_context_t simd_context = simd_get();
+> ---
+>  drivers/iio/accel/adxl372.c | 346 +++++++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 345 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/iio/accel/adxl372.c b/drivers/iio/accel/adxl372.c
+> index 7d5092d..e31e096 100644
+> --- a/drivers/iio/accel/adxl372.c
+> +++ b/drivers/iio/accel/adxl372.c
+> @@ -6,12 +6,19 @@
+>   */
+>  
+>  #include <linux/bitops.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/irq.h>
+>  #include <linux/module.h>
+>  #include <linux/regmap.h>
+>  #include <linux/spi/spi.h>
+>  
+>  #include <linux/iio/iio.h>
+>  #include <linux/iio/sysfs.h>
+> +#include <linux/iio/buffer.h>
+> +#include <linux/iio/events.h>
+> +#include <linux/iio/trigger.h>
+> +#include <linux/iio/trigger_consumer.h>
+> +#include <linux/iio/triggered_buffer.h>
+>  
+>  /* ADXL372 registers definition */
+>  #define ADXL372_DEVID			0x00
+> @@ -123,6 +130,9 @@
+>  #define ADXL372_INT1_MAP_LOW_MSK		BIT(7)
+>  #define ADXL372_INT1_MAP_LOW_MODE(x)		(((x) & 0x1) << 7)
+>  
+> +/* The ADXL372 includes a deep, 512 sample FIFO buffer */
+> +#define ADXL372_FIFO_SIZE			512
+> +
+>  /*
+>   * At +/- 200g with 12-bit resolution, scale is computed as:
+>   * (200 + 200) * 9.81 / (2^12 - 1) = 0.958241
+> @@ -164,6 +174,43 @@ enum adxl372_bandwidth {
+>  	ADXL372_BW_3200HZ,
+>  };
+>  
+> +enum adxl372_fifo_format {
+> +	ADXL372_XYZ_FIFO,
+> +	ADXL372_X_FIFO,
+> +	ADXL372_Y_FIFO,
+> +	ADXL372_XY_FIFO,
+> +	ADXL372_Z_FIFO,
+> +	ADXL372_XZ_FIFO,
+> +	ADXL372_YZ_FIFO,
+> +	ADXL372_XYZ_PEAK_FIFO,
+> +};
+> +
+> +enum adxl372_fifo_mode {
+> +	ADXL372_FIFO_BYPASSED,
+> +	ADXL372_FIFO_STREAMED,
+> +	ADXL372_FIFO_TRIGGERED,
+> +	ADXL372_FIFO_OLD_SAVED
+> +};
+> +
+> +static const int adxl372_samp_freq_tbl[5] = {
+> +	400, 800, 1600, 3200, 6400,
+> +};
+> +
+> +struct adxl372_axis_lookup {
+> +	unsigned int bits;
+> +	enum adxl372_fifo_format fifo_format;
+> +};
+> +
+> +static const struct adxl372_axis_lookup adxl372_axis_lookup_table[] = {
+> +	{ BIT(0), ADXL372_X_FIFO },
+> +	{ BIT(1), ADXL372_Y_FIFO },
+> +	{ BIT(2), ADXL372_Z_FIFO },
+> +	{ BIT(0) | BIT(1), ADXL372_XY_FIFO },
+> +	{ BIT(0) | BIT(2), ADXL372_XZ_FIFO },
+> +	{ BIT(1) | BIT(2), ADXL372_YZ_FIFO },
+> +	{ BIT(0) | BIT(1) | BIT(2), ADXL372_XYZ_FIFO },
+> +};
+> +
+>  #define ADXL372_ACCEL_CHANNEL(index, reg, axis) {			\
+>  	.type = IIO_ACCEL,						\
+>  	.address = reg,							\
+> @@ -171,6 +218,13 @@ enum adxl372_bandwidth {
+>  	.channel2 = IIO_MOD_##axis,					\
+>  	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),			\
+>  	.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE),		\
+> +	.scan_index = index,						\
+> +	.scan_type = {							\
+> +		.sign = 's',						\
+> +		.realbits = 12,						\
+> +		.storagebits = 16,					\
+> +		.shift = 4,						\
+> +	},								\
+>  }
+>  
+>  static const struct iio_chan_spec adxl372_channels[] = {
+> @@ -182,14 +236,37 @@ static const struct iio_chan_spec adxl372_channels[] = {
+>  struct adxl372_state {
+>  	struct spi_device		*spi;
+>  	struct regmap			*regmap;
+> +	struct iio_trigger		*dready_trig;
+> +	enum adxl372_fifo_mode		fifo_mode;
+> +	enum adxl372_fifo_format	fifo_format;
+>  	enum adxl372_op_mode		op_mode;
+>  	enum adxl372_act_proc_mode	act_proc_mode;
+>  	enum adxl372_odr		odr;
+>  	enum adxl372_bandwidth		bw;
+>  	u32				act_time_ms;
+>  	u32				inact_time_ms;
+> +	u8				fifo_set_size;
+> +	u8				int1_bitmask;
+> +	u8				int2_bitmask;
+> +	u16				watermark;
+> +	__be16				fifo_buf[ADXL372_FIFO_SIZE];
+> +};
+> +
+> +static const unsigned long adxl372_channel_masks[] = {
+> +	BIT(0), BIT(1), BIT(2),
+> +	BIT(0) | BIT(1),
+> +	BIT(0) | BIT(2),
+> +	BIT(1) | BIT(2),
+> +	BIT(0) | BIT(1) | BIT(2),
+> +	0
+>  };
+>  
+> +static int adxl372_read_fifo(struct adxl372_state *st, u16 fifo_entries)
+> +{
+> +	return regmap_noinc_read(st->regmap, ADXL372_FIFO_DATA,
+> +				 st->fifo_buf, fifo_entries * sizeof(u16));
 
-Because we'll feel very silly the first time some architecture has
-more than one possible state.  (It wouldn't be entirely insane for x86
-to distinguish between "no SIMD", "XMM only", and "go to town!", for
-example.)
+Nitpick:  Is it worth the wrapper function instead of doing this inline?
+
+> +}
+> +
+>  static int adxl372_read_axis(struct adxl372_state *st, u8 addr)
+>  {
+>  	__be16 regval;
+> @@ -364,6 +441,109 @@ static int adxl372_set_inactivity_time_ms(struct adxl372_state *st,
+>  	return ret;
+>  }
+>  
+> +static int adxl372_set_interrupts(struct adxl372_state *st,
+> +				  unsigned char int1_bitmask,
+> +				  unsigned char int2_bitmask)
+> +{
+> +	int ret;
+> +
+> +	ret = regmap_write(st->regmap, ADXL372_INT1_MAP, int1_bitmask);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	return regmap_write(st->regmap, ADXL372_INT2_MAP, int2_bitmask);
+> +}
+> +
+> +static int adxl372_configure_fifo(struct adxl372_state *st)
+> +{
+> +	unsigned int fifo_samples, fifo_ctl;
+> +	int ret;
+> +
+> +	/* FIFO must be configured while in standby mode */
+> +	ret = adxl372_set_op_mode(st, ADXL372_STANDBY);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	fifo_samples = st->watermark & 0xFF;
+> +	fifo_ctl = ADXL372_FIFO_CTL_FORMAT_MODE(st->fifo_format) |
+> +		   ADXL372_FIFO_CTL_MODE_MODE(st->fifo_mode) |
+> +		   ADXL372_FIFO_CTL_SAMPLES_MODE(st->watermark);
+> +
+> +	ret = regmap_write(st->regmap, ADXL372_FIFO_SAMPLES, fifo_samples);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	ret = regmap_write(st->regmap, ADXL372_FIFO_CTL, fifo_ctl);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	return adxl372_set_op_mode(st, ADXL372_FULL_BW_MEASUREMENT);
+> +}
+> +
+> +static int adxl372_get_status(struct adxl372_state *st,
+> +			      u8 *status1, u8 *status2,
+> +			      u16 *fifo_entries)
+> +{
+> +	__be32 buf;
+> +	u32 val;
+> +	int ret;
+> +
+> +	/* STATUS1, STATUS2, FIFO_ENTRIES2 and FIFO_ENTRIES are adjacent regs */
+> +	ret = regmap_bulk_read(st->regmap, ADXL372_STATUS_1,
+> +			       &buf, sizeof(buf));
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	val = be32_to_cpu(buf);
+> +
+> +	*status1 = (val >> 24) & 0x0F;
+> +	*status2 = (val >> 16) & 0x0F;
+> +	/*
+> +	 * FIFO_ENTRIES contains the least significant byte, and FIFO_ENTRIES2
+> +	 * contains the two most significant bits
+> +	 */
+> +	*fifo_entries = val & 0x3FF;
+> +
+> +	return ret;
+> +}
+> +
+> +static irqreturn_t adxl372_trigger_handler(int irq, void  *p)
+> +{
+> +	struct iio_poll_func *pf = p;
+> +	struct iio_dev *indio_dev = pf->indio_dev;
+> +	struct adxl372_state *st = iio_priv(indio_dev);
+> +	u8 status1, status2;
+> +	u16 fifo_entries;
+> +	int i, ret;
+> +
+> +	ret = adxl372_get_status(st, &status1, &status2, &fifo_entries);
+> +	if (ret < 0)
+> +		goto err;
+> +
+> +	if (st->fifo_mode != ADXL372_FIFO_BYPASSED &&
+> +	    ADXL372_STATUS_1_FIFO_FULL(status1)) {
+> +		/*
+> +		 * When reading data from multiple axes from the FIFO,
+> +		 * to ensure that data is not overwritten and stored out
+> +		 * of order at least one sample set must be left in the
+> +		 * FIFO after every read.
+> +		 */
+> +		fifo_entries -= st->fifo_set_size;
+> +
+> +		ret = adxl372_read_fifo(st, fifo_entries);
+> +		if (ret < 0)
+> +			goto err;
+> +
+> +		/* Each sample is 2 bytes */
+> +		for (i = 0; i < fifo_entries * sizeof(u16);
+> +		     i += st->fifo_set_size * sizeof(u16))
+> +			iio_push_to_buffers(indio_dev, &st->fifo_buf[i]);
+> +	}
+> +err:
+> +	iio_trigger_notify_done(indio_dev->trig);
+> +	return IRQ_HANDLED;
+> +}
+> +
+>  static int adxl372_setup(struct adxl372_state *st)
+>  {
+>  	unsigned int regval;
+> @@ -443,7 +623,12 @@ static int adxl372_read_raw(struct iio_dev *indio_dev,
+>  
+>  	switch (info) {
+>  	case IIO_CHAN_INFO_RAW:
+> +		ret = iio_device_claim_direct_mode(indio_dev);
+> +		if (ret)
+> +			return ret;
+> +
+>  		ret = adxl372_read_axis(st, chan->address);
+> +		iio_device_release_direct_mode(indio_dev);
+>  		if (ret < 0)
+>  			return ret;
+>  
+> @@ -459,9 +644,132 @@ static int adxl372_read_raw(struct iio_dev *indio_dev,
+>  	}
+>  }
+>  
+> +static ssize_t adxl372_get_fifo_enabled(struct device *dev,
+> +					  struct device_attribute *attr,
+> +					  char *buf)
+> +{
+> +	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
+> +	struct adxl372_state *st = iio_priv(indio_dev);
+> +
+> +	return sprintf(buf, "%d\n", st->fifo_mode);
+> +}
+> +
+> +static ssize_t adxl372_get_fifo_watermark(struct device *dev,
+> +					  struct device_attribute *attr,
+> +					  char *buf)
+> +{
+> +	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
+> +	struct adxl372_state *st = iio_priv(indio_dev);
+> +
+> +	return sprintf(buf, "%d\n", st->watermark);
+> +}
+> +
+> +static IIO_CONST_ATTR(hwfifo_watermark_min, "1");
+> +static IIO_CONST_ATTR(hwfifo_watermark_max,
+> +		      __stringify(ADXL372_FIFO_SIZE));
+> +static IIO_DEVICE_ATTR(hwfifo_watermark, 0444,
+> +		       adxl372_get_fifo_watermark, NULL, 0);
+> +static IIO_DEVICE_ATTR(hwfifo_enabled, 0444,
+> +		       adxl372_get_fifo_enabled, NULL, 0);
+> +
+> +static const struct attribute *adxl372_fifo_attributes[] = {
+> +	&iio_const_attr_hwfifo_watermark_min.dev_attr.attr,
+> +	&iio_const_attr_hwfifo_watermark_max.dev_attr.attr,
+> +	&iio_dev_attr_hwfifo_watermark.dev_attr.attr,
+> +	&iio_dev_attr_hwfifo_enabled.dev_attr.attr,
+> +	NULL,
+> +};
+> +
+> +static int adxl372_set_watermark(struct iio_dev *indio_dev, unsigned int val)
+> +{
+> +	struct adxl372_state *st  = iio_priv(indio_dev);
+> +
+> +	if (val > ADXL372_FIFO_SIZE)
+> +		val = ADXL372_FIFO_SIZE;
+> +
+> +	st->watermark = val;
+> +
+> +	return 0;
+> +}
+> +
+> +static int adxl372_buffer_postenable(struct iio_dev *indio_dev)
+> +{
+> +	struct adxl372_state *st = iio_priv(indio_dev);
+> +	unsigned int mask;
+> +	int i, ret;
+> +
+> +	ret = adxl372_set_interrupts(st, ADXL372_INT1_MAP_FIFO_FULL_MSK, 0);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	mask = *indio_dev->active_scan_mask;
+> +
+> +	for (i = 0; i < ARRAY_SIZE(adxl372_axis_lookup_table); i++) {
+> +		if (mask == adxl372_axis_lookup_table[i].bits)
+> +			break;
+> +	}
+> +
+> +	st->fifo_format = adxl372_axis_lookup_table[i].fifo_format;
+> +	st->fifo_set_size = bitmap_weight(indio_dev->active_scan_mask,
+> +					  indio_dev->masklength);
+> +	/*
+> +	 * The 512 FIFO samples can be allotted in several ways, such as:
+> +	 * 170 sample sets of concurrent 3-axis data
+> +	 * 256 sample sets of concurrent 2-axis data (user selectable)
+> +	 * 512 sample sets of single-axis data
+> +	 */
+> +	if ((st->watermark * st->fifo_set_size) > ADXL372_FIFO_SIZE)
+> +		st->watermark = (ADXL372_FIFO_SIZE  / st->fifo_set_size);
+> +
+> +	st->fifo_mode = ADXL372_FIFO_STREAMED;
+> +
+> +	ret = adxl372_configure_fifo(st);
+> +	if (ret < 0) {
+> +		st->fifo_mode = ADXL372_FIFO_BYPASSED;
+> +		adxl372_set_interrupts(st, 0, 0);
+> +		return ret;
+> +	}
+> +
+> +	return iio_triggered_buffer_postenable(indio_dev);
+> +}
+> +
+> +static int adxl372_buffer_predisable(struct iio_dev *indio_dev)
+> +{
+> +	struct adxl372_state *st = iio_priv(indio_dev);
+> +
+> +	adxl372_set_interrupts(st, 0, 0);
+> +	st->fifo_mode = ADXL372_FIFO_BYPASSED;
+> +	adxl372_configure_fifo(st);
+> +
+> +	return iio_triggered_buffer_predisable(indio_dev);
+
+I don't think it actually matters, but a very slight preference for doing this
+before the local changes so the predisable is in the reverse order of the
+postenable and meets my favourite 'obviously right' aim.
+
+> +}
+> +
+> +static const struct iio_buffer_setup_ops adxl372_buffer_ops = {
+> +	.postenable = adxl372_buffer_postenable,
+> +	.predisable = adxl372_buffer_predisable,
+> +};
+> +
+> +static int adxl372_dready_trig_set_state(struct iio_trigger *trig,
+> +					 bool state)
+> +{
+> +	struct iio_dev *indio_dev = iio_trigger_get_drvdata(trig);
+> +	struct adxl372_state *st = iio_priv(indio_dev);
+> +	unsigned long int mask = 0;
+> +
+> +	if (state)
+> +		mask = ADXL372_INT1_MAP_FIFO_FULL_MSK;
+> +
+> +	return adxl372_set_interrupts(st, mask, 0);
+> +}
+> +
+> +static const struct iio_trigger_ops adxl372_trigger_ops = {
+> +	.set_trigger_state = adxl372_dready_trig_set_state,
+> +};
+> +
+>  static const struct iio_info adxl372_info = {
+>  	.read_raw = adxl372_read_raw,
+>  	.debugfs_reg_access = &adxl372_reg_access,
+> +	.hwfifo_set_watermark = adxl372_set_watermark,
+>  };
+>  
+>  static const struct regmap_config adxl372_spi_regmap_config = {
+> @@ -495,10 +803,11 @@ static int adxl372_probe(struct spi_device *spi)
+>  
+>  	indio_dev->channels = adxl372_channels;
+>  	indio_dev->num_channels = ARRAY_SIZE(adxl372_channels);
+> +	indio_dev->available_scan_masks = adxl372_channel_masks;
+>  	indio_dev->dev.parent = &spi->dev;
+>  	indio_dev->name = spi_get_device_id(spi)->name;
+>  	indio_dev->info = &adxl372_info;
+> -	indio_dev->modes = INDIO_DIRECT_MODE;
+> +	indio_dev->modes = INDIO_DIRECT_MODE | INDIO_BUFFER_SOFTWARE;
+>  
+>  	ret = adxl372_setup(st);
+>  	if (ret < 0) {
+> @@ -506,6 +815,41 @@ static int adxl372_probe(struct spi_device *spi)
+>  		return ret;
+>  	}
+>  
+> +	ret = devm_iio_triggered_buffer_setup(&st->spi->dev,
+> +					      indio_dev, NULL,
+> +					      adxl372_trigger_handler,
+> +					      &adxl372_buffer_ops);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	iio_buffer_set_attrs(indio_dev->buffer, adxl372_fifo_attributes);
+> +
+> +	if (st->spi->irq) {
+> +		st->dready_trig = devm_iio_trigger_alloc(&st->spi->dev,
+> +							 "%s-dev%d",
+> +							 indio_dev->name,
+> +							 indio_dev->id);
+> +		if (st->dready_trig == NULL)
+> +			return -ENOMEM;
+> +
+> +		st->dready_trig->ops = &adxl372_trigger_ops;
+> +		st->dready_trig->dev.parent = &st->spi->dev;
+> +		iio_trigger_set_drvdata(st->dready_trig, indio_dev);
+> +		ret = devm_iio_trigger_register(&st->spi->dev, st->dready_trig);
+> +		if (ret < 0)
+> +			return ret;
+> +
+> +		indio_dev->trig = iio_trigger_get(st->dready_trig);
+> +
+> +		ret = devm_request_threaded_irq(&st->spi->dev, st->spi->irq,
+> +					iio_trigger_generic_data_rdy_poll,
+> +					NULL,
+> +					IRQF_TRIGGER_RISING | IRQF_ONESHOT,
+> +					indio_dev->name, st->dready_trig);
+> +		if (ret < 0)
+> +			return ret;
+> +	}
+> +
+>  	return devm_iio_device_register(&st->spi->dev, indio_dev);
+>  }
+>  
+
