@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6DA5C43142
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 00:02:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8358C43142
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 00:02:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 697C021655
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 00:02:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B8B4216C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 00:02:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Icd8y3U7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 697C021655
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UcjPsCYT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B8B4216C4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732378AbeHCB4Z (ORCPT
+        id S1732411AbeHCB41 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 21:56:25 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:40381 "EHLO
+        Thu, 2 Aug 2018 21:56:27 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:45703 "EHLO
         mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729790AbeHCB4W (ORCPT
+        with ESMTP id S1732361AbeHCB40 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 21:56:22 -0400
-Received: by mail-ed1-f66.google.com with SMTP id e19-v6so1554618edq.7
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Aug 2018 17:02:51 -0700 (PDT)
+        Thu, 2 Aug 2018 21:56:26 -0400
+Received: by mail-ed1-f66.google.com with SMTP id s16-v6so1549493edq.12
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Aug 2018 17:02:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=2GAef5pWO8RXdK3FHy3IQOS36IAzEbGM4QxYQPd4xF8=;
-        b=Icd8y3U7RggMicwSMUttwozG7pN3uJJA9kGFPQQeGYKCiGbmXTDkkKgyl9BVVSDVmK
-         At9k6iE5Ee/GYrh+gpIe9oL47TaDZfV/fiO2vS+W8mw+XCAL2Quxuf3432ZY2Dd9HABw
-         Mv1hsD70abou3UU8UbjJSUWSHkSdckvL9K+xJvbl12m7kTDcibTZaZRAJfjm10KRtaDd
-         Sk23j42OMsya5cYOLLcIp2j8/sRRdY9660MlF31qOJpad2p/f2/LsyGa+9z7SEprrzc0
-         gTHkzQHwRHNRF2+4Yo5Jh/puJdcFcO8iK/aH085wCsWzWEG+bI/o2UBaoKtxLV3gbxQq
-         /5Mw==
+        bh=siB86CTYp9jYSongy4BYe46C9JhoD/6wUWxIEtd54HM=;
+        b=UcjPsCYTsRpmQEbBFDcOaVBzxwrKsgQxuB0M670e+qbIG//8PTSxbDC/+Mnpd9h33N
+         +fiGS1EifdhtiTUvaRgszHepKWIuLlD0DYfbizuIZHOhh+K2dLFb/aZmu/nRR5d2GOAJ
+         zzmDIik52hK9nwvstyb7uggoi3miMUHi+pXYD7zX23NyCD+iBGDM3C/IDjYy51Zo4D0z
+         i6gycgZ3Dqy+Es3/yT0PDYPLFoQEImCHzGYYx315wl5DpTMduWIO95hZnK18ZlEDtlgI
+         tjRw53a0RPhpnic/1zCDeNQE7NK3Ir2B8t8TvPLu23auavwkW2zN8jQhzu4v4ElxD6wG
+         mmUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=2GAef5pWO8RXdK3FHy3IQOS36IAzEbGM4QxYQPd4xF8=;
-        b=ZZv/p8GwIGK62VhOifVewF+GTUxuVTD5hYco4ux/5ehMfxrei8KgihByZcMnjbr3V/
-         kvpEzyts8oKCrel40kfgsx4Cot3byjg5T+jpVB7OwxAu9MOpLErbdX8YK2rqg5T4vodr
-         4KguJvaPL84yDk0jX15QKXFH2ySJGXSCfyz/Xuy9lLTgp4xnYZVVYHatNKSrBkCZaO8O
-         pTmgZClmKlvMDa/8wc7BKFG9PiW61S+s0CZ86nvzapRnk+2a/ENYKD7pLDOYpwegLPPn
-         v4WTM2Wh3DNUUmOsvsfqVqC3Knu+wB+xZYeqTMueZpEUgzsc0mvegV79YfcmKQ7z4r0u
-         +2DA==
-X-Gm-Message-State: AOUpUlGL6zbCOFAGQVUlLYPO6mH8KPBI1BWj6wsr6uqUbP1AW9KZs9v1
-        tWvTkIQT4x7Jzf4eHw90FPUqW3e9
-X-Google-Smtp-Source: AAOMgpdKdnQZzJH1xwX/Z/+exa+zmsA7JOF4Vf2X4YQHRcf4LhwiCadGIlT/1dRsQ4jwJ1b230rctg==
-X-Received: by 2002:a50:90e7:: with SMTP id d36-v6mr5041168eda.279.1533254570011;
-        Thu, 02 Aug 2018 17:02:50 -0700 (PDT)
+        bh=siB86CTYp9jYSongy4BYe46C9JhoD/6wUWxIEtd54HM=;
+        b=uHC1lFEIzhagWAc3b4KwwgJvA3Oc/tCks6IRoq0TLb1Fink1pNXn+Xh0t1UeTl1NQ4
+         mXuCHeE7UhRVS4p97Qykv+3+zBg0fVJCSBwobNMwexGEBg7OroUj2/uiU4IhcYHe6Sdx
+         nocr7Hz02i9lL7nDjcvIX483mhvNYg/gswI2nqCasjVW7TaZUVS08cqS5Px0pXmdiR0G
+         4eaWgos72b98YpTqpQhsogteUDrrZ/cB93T+GeBz3/JAE/RqjYUZjjclT5rdA2LcLpQ4
+         z0Y8dkut3t+jWNRcrKouXG41ckE4Pz0/EaX1wCZJQLXgGHpbTPwAfKt8sO/duLDmjZH9
+         0bkg==
+X-Gm-Message-State: AOUpUlHV8nQeSyz8yK5wunhOXnXaLUfUu7ukmwBl0Wc0HAOjEWkUqyBX
+        TopwFDjaNvi1VNKygUYLarx1wemB
+X-Google-Smtp-Source: AAOMgpcoWG56T903oGI1l5Qsch43trrXZeOgQLF+iiKRSvGk/ybxfpYYdFYUSOTMbfPSjEj1z2odNA==
+X-Received: by 2002:a50:e718:: with SMTP id a24-v6mr5133637edn.278.1533254574092;
+        Thu, 02 Aug 2018 17:02:54 -0700 (PDT)
 Received: from localhost.localdomain ([109.78.209.16])
-        by smtp.gmail.com with ESMTPSA id d11-v6sm1310843edo.39.2018.08.02.17.02.48
+        by smtp.gmail.com with ESMTPSA id d11-v6sm1310843edo.39.2018.08.02.17.02.52
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 02 Aug 2018 17:02:49 -0700 (PDT)
+        Thu, 02 Aug 2018 17:02:53 -0700 (PDT)
 From:   John Whitmore <johnfwhitmore@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
         John Whitmore <johnfwhitmore@gmail.com>
-Subject: [PATCH 06/18] staging:rtl8192u: Remove member variable Enable - Style
-Date:   Fri,  3 Aug 2018 01:01:59 +0100
-Message-Id: <20180803000211.10589-7-johnfwhitmore@gmail.com>
+Subject: [PATCH 09/18] staging:rtl8192u: Remove member diff_TH - Style
+Date:   Fri,  3 Aug 2018 01:02:02 +0100
+Message-Id: <20180803000211.10589-10-johnfwhitmore@gmail.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180803000211.10589-1-johnfwhitmore@gmail.com>
 References: <20180803000211.10589-1-johnfwhitmore@gmail.com>
@@ -73,54 +73,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The structure dynamic_rx_path_sel defines a member variable 'Enable'
-which is initialised and later tested. The variable is however never
-changed to the test is redundant and the member variable is then never
-used.
+The member variable diff_TH is assigned a constant value and then used
+in a comparison. The variable is never changed so the comparison can
+as easily be performed directly with the defined constant.
 
-The member variable, initialisation and test have all been removed.
+The member variable has been removed and the defined constant
+RxPathSelection_diff_TH renamed to RX_PATH_SELECTION_DIFF_TH, to clear
+the checkpatch issue with CamelCase naming.
 
-This is a coding style change which should not impact runtime code
-execution.
+These are coding style changes which should have no impact on runtime
+code execution.
 
 Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
 ---
- drivers/staging/rtl8192u/r8192U_dm.c | 3 ---
- drivers/staging/rtl8192u/r8192U_dm.h | 1 -
- 2 files changed, 4 deletions(-)
+ drivers/staging/rtl8192u/r8192U_dm.c | 3 +--
+ drivers/staging/rtl8192u/r8192U_dm.h | 3 +--
+ 2 files changed, 2 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/staging/rtl8192u/r8192U_dm.c b/drivers/staging/rtl8192u/r8192U_dm.c
-index 54390587ba07..611bf3e34bf3 100644
+index f01d2f8d7fd2..d847adf57f60 100644
 --- a/drivers/staging/rtl8192u/r8192U_dm.c
 +++ b/drivers/staging/rtl8192u/r8192U_dm.c
-@@ -2376,8 +2376,6 @@ void dm_rf_pathcheck_workitemcallback(struct work_struct *work)
- 		else
- 			priv->brfpath_rxenable[i] = false;
- 	}
--	if (!DM_RxPathSelTable.Enable)
--		return;
- 
- 	dm_rxpath_sel_byrssi(dev);
- }	/* DM_RFPathCheckWorkItemCallBack */
-@@ -2387,7 +2385,6 @@ static void dm_init_rxpath_selection(struct net_device *dev)
+@@ -2385,7 +2385,6 @@ static void dm_init_rxpath_selection(struct net_device *dev)
  	u8 i;
  	struct r8192_priv *priv = ieee80211_priv(dev);
  
--	DM_RxPathSelTable.Enable = 1;	/* default enabled */
- 	DM_RxPathSelTable.SS_TH_low = RxPathSelection_SS_TH_low;
- 	DM_RxPathSelTable.diff_TH = RxPathSelection_diff_TH;
+-	DM_RxPathSelTable.diff_TH = RxPathSelection_diff_TH;
  	if (priv->CustomerID == RT_CID_819x_Netcore)
+ 		DM_RxPathSelTable.cck_method = CCK_RX_VERSION_2;
+ 	else
+@@ -2555,7 +2554,7 @@ static void dm_rxpath_sel_byrssi(struct net_device *dev)
+ 	}
+ 
+ 	if (tmp_min_rssi < RX_PATH_SELECTION_SS_TH_LOW && disabled_rf_cnt < 2) {
+-		if ((tmp_max_rssi - tmp_min_rssi) >= DM_RxPathSelTable.diff_TH) {
++		if ((tmp_max_rssi - tmp_min_rssi) >= RX_PATH_SELECTION_DIFF_TH) {
+ 			/* record the enabled rssi threshold */
+ 			DM_RxPathSelTable.rf_enable_rssi_th[min_rssi_index] = tmp_max_rssi+5;
+ 			/* disable the BB Rx path, OFDM */
 diff --git a/drivers/staging/rtl8192u/r8192U_dm.h b/drivers/staging/rtl8192u/r8192U_dm.h
-index 06ebd820de52..53daec820ca7 100644
+index 0aaac0fca110..a7cce1fdd626 100644
 --- a/drivers/staging/rtl8192u/r8192U_dm.h
 +++ b/drivers/staging/rtl8192u/r8192U_dm.h
-@@ -129,7 +129,6 @@ enum cck_rx_path_method {
- };
+@@ -38,7 +38,7 @@
+ #define		DM_DIG_MIN_Netcore			0x12
  
- struct dynamic_rx_path_sel {
--	u8		Enable;
+ #define		RX_PATH_SELECTION_SS_TH_LOW		30
+-#define		RxPathSelection_diff_TH			18
++#define		RX_PATH_SELECTION_DIFF_TH			18
+ 
+ #define		RateAdaptiveTH_High			50
+ #define		RateAdaptiveTH_Low_20M		30
+@@ -132,7 +132,6 @@ struct dynamic_rx_path_sel {
  	enum cck_rx_path_method		cck_method;
- 	u8		cck_Rx_path;
+ 	u8		cck_rx_path;
+ 
+-	u8		diff_TH;
+ 	u8		disabledRF;
+ 	u8		reserved;
  
 -- 
 2.18.0
