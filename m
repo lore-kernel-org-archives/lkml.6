@@ -2,88 +2,57 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67FD5C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 05:36:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC10BC28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 05:39:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 134EC21711
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 05:36:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 134EC21711
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 5C0E021711
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 05:39:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C0E021711
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727479AbeHCHbV (ORCPT
+        id S1727414AbeHCHe2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 03:31:21 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:3357 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726829AbeHCHbV (ORCPT
+        Fri, 3 Aug 2018 03:34:28 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40564 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726829AbeHCHe2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 03:31:21 -0400
-X-UUID: 380a02e3174d47e4a40a8507b6572b9b-20180803
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw01.mediatek.com
-        (envelope-from <ck.hu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1955687693; Fri, 03 Aug 2018 13:36:42 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Fri, 3 Aug 2018 13:36:40 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Fri, 3 Aug 2018 13:36:40 +0800
-Message-ID: <1533274600.31144.18.camel@mtksdaap41>
-Subject: Re: [PATCH v2 15/15] drm/mediatek: fix connection from RDMA2 to DSI1
-From:   CK Hu <ck.hu@mediatek.com>
-To:     Stu Hsieh <stu.hsieh@mediatek.com>
-CC:     Philipp Zabel <p.zabel@pengutronix.de>,
-        David Airlie <airlied@linux.ie>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <dri-devel@lists.freedesktop.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <srv_heupstream@mediatek.com>
-Date:   Fri, 3 Aug 2018 13:36:40 +0800
-In-Reply-To: <1533265868-28110-16-git-send-email-stu.hsieh@mediatek.com>
-References: <1533265868-28110-1-git-send-email-stu.hsieh@mediatek.com>
-         <1533265868-28110-16-git-send-email-stu.hsieh@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        Fri, 3 Aug 2018 03:34:28 -0400
+Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4C71A3EE;
+        Fri,  3 Aug 2018 05:39:51 +0000 (UTC)
+Date:   Fri, 3 Aug 2018 07:39:48 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Zhang Ning <ning.a.zhang@intel.com>
+Cc:     kstewart@linuxfoundation.org, pombredanne@nexb.com,
+        yamada.masahiro@socionext.com, markus@trippelsdorf.de,
+        linux-kernel@vger.kernel.org, Ting <ting.li@intel.com>
+Subject: Re: [PATCH] firmware: make sure builtin firmware is page alignment
+Message-ID: <20180803053948.GB1852@kroah.com>
+References: <20180803014521.21527-1-ning.a.zhang@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180803014521.21527-1-ning.a.zhang@intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Stu:
-
-On Fri, 2018-08-03 at 11:11 +0800, Stu Hsieh wrote:
-> This patch fix connection from RDMA2 to DSI1
+On Fri, Aug 03, 2018 at 09:45:21AM +0800, Zhang Ning wrote:
+> when firmware is in filesystem, request_firmware will load it,
+> and copy it to vmalloc memory, that is page align memory.
 > 
-> Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
-
-Reviewed-by: CK Hu <ck.hu@mediatek.com>
-
-> ---
->  drivers/gpu/drm/mediatek/mtk_drm_ddp.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> but when firmware is builtin, it is 8 bytes or 4 bytes alignment.
 > 
-> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-> index 3239f22785fd..546b3e3b300b 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-> @@ -314,7 +314,7 @@ static unsigned int mtk_ddp_sel_in(enum mtk_ddp_comp_id cur,
->  		*addr = DISP_REG_CONFIG_DSIE_SEL_IN;
->  		value = DSI0_SEL_IN_RDMA2;
->  	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DSI1) {
-> -		*addr = DISP_REG_CONFIG_DSIE_SEL_IN;
-> +		*addr = DISP_REG_CONFIG_DSIO_SEL_IN;
->  		value = DSI1_SEL_IN_RDMA2;
->  	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DSI2) {
->  		*addr = DISP_REG_CONFIG_DSIE_SEL_IN;
+> make sure builtin firmware is page algnment, that can simplify algorithm
+> to handle firmware.
 
+How is it simplified?  I don't see any such change like that here :(
 
