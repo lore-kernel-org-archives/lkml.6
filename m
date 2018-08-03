@@ -2,78 +2,202 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E57FC28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 15:41:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF5F3C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 15:43:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFE362176D
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 15:41:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZiU2DZct"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFE362176D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 8312C2148E
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 15:43:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8312C2148E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728147AbeHCRiX (ORCPT
+        id S1727829AbeHCRkh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 13:38:23 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:43484 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727171AbeHCRiW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 13:38:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:References:Cc:To:From:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=N+zge5o1nG5Ys2AFTx+HhqGUCTcB7Xk7+bo8rxfDdFE=; b=ZiU2DZct5lPyYRSLOiAzr2zX3r
-        bzUsyPQnNHt+T+95RuwgZiYc1cejCdSuwVeOOs8T7o3HcbDFac0V1uhhG/KTVwGmjsvz1wdU4yip9
-        WANUHHarSVrhCU/hLe+/woXcoPH3XlCWBRGObx8iD6H59F35G7nc+LVnoY1m8WQ2Zokj3h8q0OYV3
-        XELxC3fTcSrij1zPHwGoUabN0oaQ0gIdHPBzcAO5KEjdmW46Tj/51DuuP7QhuzNnoLcI9e2/ker/v
-        JuWWoCpv/qmrkgb2wrAr5tWIMvPyZI+I5TcyxkU9o6r/q18qj/P0NKdXgSZz1el3hFgathhgSLejs
-        IO4eqzuA==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1flcCm-000715-WE; Fri, 03 Aug 2018 15:41:29 +0000
-Subject: Re: kbuild: ARCH=um archheaders failed
-From:   Randy Dunlap <rdunlap@infradead.org>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kbuild <linux-kbuild@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc:     Richard Weinberger <richard@nod.at>, linux-um@lists.infradead.org
-References: <be4f41de-c27a-abac-4b23-369c400e016e@infradead.org>
-Message-ID: <861c26a6-294c-755d-2396-e5d18b9bbcbf@infradead.org>
-Date:   Fri, 3 Aug 2018 08:41:22 -0700
+        Fri, 3 Aug 2018 13:40:37 -0400
+Received: from foss.arm.com ([217.140.101.70]:44658 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727171AbeHCRkh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 13:40:37 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D842E80D;
+        Fri,  3 Aug 2018 08:43:45 -0700 (PDT)
+Received: from [10.4.12.131] (e110467-lin.Emea.Arm.com [10.4.12.131])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 941E43F2EA;
+        Fri,  3 Aug 2018 08:43:42 -0700 (PDT)
+Subject: Re: [RFC PATCH v1 0/6] Resolve unwanted DMA backing with IOMMU
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Jordan Crouse <jcrouse@codeaurora.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Mikko Perttunen <cyndis@kapsi.fi>,
+        Thierry Reding <thierry.reding@gmail.com>
+Cc:     devicetree@vger.kernel.org, nouveau@lists.freedesktop.org,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Russell King <linux@armlinux.org.uk>,
+        dri-devel@lists.freedesktop.org,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        iommu@lists.linux-foundation.org, Rob Herring <robh+dt@kernel.org>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        linux-tegra@vger.kernel.org, Frank Rowand <frowand.list@gmail.com>,
+        linux-kernel@vger.kernel.org
+References: <20180726231624.21084-1-digetx@gmail.com>
+ <20180727170326.GA21283@jcrouse-lnx.qualcomm.com> <2402373.RyBdR7VSnO@dimapc>
+ <2887450.sPhIOOMKZK@dimapc>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <2e7fab6e-0640-8f48-07b8-2d475538b8ae@arm.com>
+Date:   Fri, 3 Aug 2018 16:43:41 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <be4f41de-c27a-abac-4b23-369c400e016e@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <2887450.sPhIOOMKZK@dimapc>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/02/2018 05:13 PM, Randy Dunlap wrote:
-> Hi Yamada-san,
+On 02/08/18 19:24, Dmitry Osipenko wrote:
+> On Friday, 27 July 2018 20:16:53 MSK Dmitry Osipenko wrote:
+>> On Friday, 27 July 2018 20:03:26 MSK Jordan Crouse wrote:
+>>> On Fri, Jul 27, 2018 at 05:02:37PM +0100, Robin Murphy wrote:
+>>>> On 27/07/18 15:10, Dmitry Osipenko wrote:
+>>>>> On Friday, 27 July 2018 12:03:28 MSK Will Deacon wrote:
+>>>>>> On Fri, Jul 27, 2018 at 10:25:13AM +0200, Joerg Roedel wrote:
+>>>>>>> On Fri, Jul 27, 2018 at 02:16:18AM +0300, Dmitry Osipenko wrote:
+>>>>>>>> The proposed solution adds a new option to the base device driver
+>>>>>>>> structure that allows device drivers to explicitly convey to the
+>>>>>>>> drivers
+>>>>>>>> core that the implicit IOMMU backing for devices must not happen.
+>>>>>>>
+>>>>>>> Why is IOMMU mapping a problem for the Tegra GPU driver?
+>>>>>>>
+>>>>>>> If we add something like this then it should not be the choice of the
+>>>>>>> device driver, but of the user and/or the firmware.
+>>>>>>
+>>>>>> Agreed, and it would still need somebody to configure an identity
+>>>>>> domain
+>>>>>> so
+>>>>>> that transactions aren't aborted immediately. We currently allow the
+>>>>>> identity domain to be used by default via a command-line option, so I
+>>>>>> guess
+>>>>>> we'd need a way for firmware to request that on a per-device basis.
+>>>>>
+>>>>> The IOMMU mapping itself is not a problem, the problem is the
+>>>>> management
+>>>>> of
+>>>>> the IOMMU. For Tegra we don't want anything to intrude into the IOMMU
+>>>>> activities because:
+>>>>>
+>>>>> 1) GPU HW require additional configuration for the IOMMU usage and dumb
+>>>>> mapping of the allocations simply doesn't work.
+>>>>
+>>>> Generally, that's already handled by the DRM drivers allocating
+>>>> their own unmanaged domains. The only problem we really need to
+>>>> solve in that regard is that currently the device DMA ops don't get
+>>>> updated when moving away from the managed domain. That's been OK for
+>>>> the VFIO case where the device is bound to a different driver which
+>>>> we know won't make any explicit DMA API calls, but for the more
+>>>> general case of IOMMU-aware drivers we could certainly do with a bit
+>>>> of cooperation between the IOMMU API, DMA API, and arch code to
+>>>> update the DMA ops dynamically to cope with intermediate subsystems
+>>>> making DMA API calls on behalf of devices they don't know the
+>>>> intimate details of.
+>>>>
+>>>>> 2) Older Tegra generations have a limited resource and capabilities in
+>>>>> regards to IOMMU usage, allocating IOMMU domain per-device is just
+>>>>> impossible for example.
+>>>>>
+>>>>> 3) HW performs context switches and so particular allocations have to
+>>>>> be
+>>>>> assigned to a particular contexts IOMMU domain.
+>>>>
+>>>> I understand Qualcomm SoCs have a similar thing too, and AFAICS that
+>>>> case just doesn't fit into the current API model at all. We need the
+>>>> IOMMU driver to somehow know about the specific details of which
+>>>> devices have magic associations with specific contexts, and we
+>>>> almost certainly need a more expressive interface than
+>>>> iommu_domain_alloc() to have any hope of reliable results.
+>>>
+>>> This is correct for Qualcomm GPUs - The GPU hardware context switching
+>>> requires a specific context and there are some restrictions around
+>>> secure contexts as well.
+>>>
+>>> We don't really care if the DMA attaches to a context just as long as it
+>>> doesn't attach to the one(s) we care about. Perhaps a "valid context" mask
+>>> would work in from the DT or the device struct to give the subsystems a
+>>> clue as to which domains they were allowed to use. I recognize that there
+>>> isn't a one-size-fits-all solution to this problem so I'm open to
+>>> different
+>>> ideas.
+>>
+>> Designating whether implicit IOMMU backing is appropriate for a device via
+>> device-tree property sounds a bit awkward because that will be a kinda
+>> software description (of a custom Linux driver model), while device-tree is
+>> supposed to describe HW.
+>>
+>> What about to grant IOMMU drivers with ability to decide whether the
+>> implicit backing for a device is appropriate? Like this:
+>>
+>> bool implicit_iommu_for_dma_is_allowed(struct device *dev)
+>> {
+>> 	const struct iommu_ops *ops = dev->bus->iommu_ops;
+>> 	struct iommu_group *group;
+>>
+>> 	group = iommu_group_get(dev);
+>> 	if (!group)
+>> 		return NULL;
+>>
+>> 	iommu_group_put(group);
+>>
+>> 	if (!ops->implicit_iommu_for_dma_is_allowed)
+>> 		return true;
+>>
+>> 	return ops->implicit_iommu_for_dma_is_allowed(dev);
+>> }
+>>
+>> Then arch_setup_dma_ops() could have a clue whether implicit IOMMU backing
+>> for a device is appropriate.
 > 
-> I see this every few weeks.  It's not reproducible (it depends
-> on the moon, Mars, etc.).
-> 
-> I'm using O=builddir.  The build log is short (below).
-> 
-> Do you see a makefile problem here?  (nothing to do with mmotm;
-> I see it more frequently with linux-next since I do many daily
-> builds with it)
+> Guys, does it sound good to you or maybe you have something else on your mind?
+> Even if it's not an ideal solution, it fixes the immediate problem and should
+> be good enough for the starter.
 
-BTW, this is just um defconfig with -j4.
+To me that looks like a step ion the wrong direction that won't help at 
+all in actually addressing the underlying issues.
 
--- 
-~Randy
+If the GPU driver wants to explicitly control IOMMU mappings instead of 
+relying on the IOMMU_DOMAIN_DMA abstraction, then it should use its own 
+unmanaged domain. At that point it shouldn't matter if a DMA ops domain 
+was allocated, since the GPU device will no longer be attached to it. 
+Yes, there may be some improvements to make like having unused domains 
+not consume hardware contexts, but that's internal to the relevant IOMMU 
+drivers. If moving in and out of DMA ops domains leaves the actual 
+dma_ops broken, that's already a problem between the IOMMU API and the 
+arch DMA code as I've mentioned before.
+
+Furthermore, given what the example above is trying to do, 
+arch_setup_dma_ops() is way too late to do it - the default domain was 
+already set up in iommu_group_get_for_dev() when the IOMMU driver first 
+saw that device. An "opt-out" mechanism that doesn't actually opt out 
+and just bodges around being opted-in after the fact doesn't strike me 
+as something which can grow to be robust and maintainable.
+
+For the case where  a device has some special hardware relationship with 
+a particular IOMMU context, the IOMMU driver *has* to be completely 
+aware of that, i.e. it needs to be described in DT/ACPI, either via some 
+explicit binding or at least inferred from some SoC/instance-specific 
+IOMMU compatible. Then the IOMMU driver needs to know when the driver 
+for that device is requesting its special domain so that it provide the 
+correct context (and *not* allocate that context for other uses). 
+Anything which just relies on the order in which things currently happen 
+to be allocated is far too fragile long-term.
+
+Robin.
