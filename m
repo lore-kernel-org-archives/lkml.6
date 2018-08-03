@@ -2,90 +2,115 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 915C8C46469
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 21:55:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7571FC4646D
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 22:01:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42A8B217A2
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 21:55:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FOr5oVu1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42A8B217A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 28FB7217B4
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 22:01:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28FB7217B4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732100AbeHCXxa (ORCPT
+        id S1731993AbeHCX7R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 19:53:30 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:43157 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729876AbeHCXxa (ORCPT
+        Fri, 3 Aug 2018 19:59:17 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:38742 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729968AbeHCX7Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 19:53:30 -0400
-Received: by mail-pg1-f195.google.com with SMTP id d17-v6so3415541pgv.10
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Aug 2018 14:55:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=S94Ur3yHnogMUMEauakXvWjD9Q/olz8XW8y6nwg3/8Y=;
-        b=FOr5oVu1m0AeBEpxDhT6rUPmgnCkEEQHicJIr+l3HhevomZrzkVDb2sQaMPFjhGtFX
-         GI/2UR90JOorJca+j83nzX7+xYENs7bwLJQ3LloW0VDJPM83D4bw1xZCNzJ5Inxc9X6f
-         NnqjONqWcGpXYX/aCs/whC51JayteFQ+xSRlkU73MxCQh+F4gDtA+oNY0TzwsL3qsD1p
-         mpn8mIOIwUnwqtYhsKDjHEPq6/6jg/Rnb5eASYpwRrSA00nutKEe3WvL10C4kZMFzOhs
-         /CorpugNdBNOTz6RrXQP3wtxk9dHr3GKmWJ0DWFt5na9rQkjaOvlWQA2FUrBrUOlEOZq
-         FGtw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=S94Ur3yHnogMUMEauakXvWjD9Q/olz8XW8y6nwg3/8Y=;
-        b=YcA+mK1ZGzQfv39a9FENC8Ge+07PZpXgLqpmbxloI/LnjSzFlro/SzK/vLdL8gf0gX
-         W/xag74Vdh8IYWw8A0JhvyE5QV968iTv5IVxRzC8GHE6ensR41lMqJ7nrkLtZYNccSPd
-         DhtcBvLnxbJRgDfVkE6HlRnAsynNgI/C0EVNhBjFo1vABPyLboBm7loYR7BWJn/UghEf
-         GwRa7U5h4KVuZK9Iz2RPM3lrGFKnO+FUvkvtO8U0j8ykfFRkYaDxQP8VIRtskUJKIUS1
-         4+PGNAlt7novsGIOqhmJ3DKMZT9MmhDB9aR4F1AIU6H4kyqIzEOBV3bVro/vST6hGnr0
-         iHZA==
-X-Gm-Message-State: AOUpUlHqdWF36x3H5lhFGAyRCruuX1elZ3WlzQbvUop6ozXZq7SIItmX
-        Hk2mpL79b4x+5obQARWQ0biz7wUxL8sm/4iTge4=
-X-Google-Smtp-Source: AAOMgpdMdcXQixsSWGw5/sGVvP8Rz6LTjfkK7rs8c1pAH0v32c2uH8JGidoO3vB3whEjkkUXxQS9G84i6tZFkJBjhh4=
-X-Received: by 2002:a62:9683:: with SMTP id s3-v6mr6379555pfk.191.1533333322706;
- Fri, 03 Aug 2018 14:55:22 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180728002409.5781-1-xiyou.wangcong@gmail.com>
- <ef0e1185-51d6-0707-cda4-6f2ea987b651@linux.alibaba.com> <CAM_iQpVeK2VQDuahreZC2-L4eEzx0WtD8Bz=oHH68VSAiMqLGQ@mail.gmail.com>
- <fad5ebe6-ec49-c67b-7b4f-78a413723aa8@linux.alibaba.com> <xm26ftzz8h0r.fsf@bsegall-linux.svl.corp.google.com>
- <CAM_iQpXGCqo9AAp2kpSKk9sHx0ZRK7JU_c07sWh4vR9kFQ+LxA@mail.gmail.com> <xm267ela80qn.fsf@bsegall-linux.svl.corp.google.com>
-In-Reply-To: <xm267ela80qn.fsf@bsegall-linux.svl.corp.google.com>
-From:   Cong Wang <xiyou.wangcong@gmail.com>
-Date:   Fri, 3 Aug 2018 14:56:03 -0700
-Message-ID: <CAM_iQpUA8mn_kTGsJJDKBH0gF1tErg3RnuG0bYd6amH2T_YLHw@mail.gmail.com>
-Subject: Re: [PATCH] sched/fair: sync expires_seq in distribute_cfs_runtime()
-To:     Ben Segall <bsegall@google.com>
-Cc:     Xunlei Pang <xlpang@linux.alibaba.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 3 Aug 2018 19:59:16 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w73Ls3bY008270
+        for <linux-kernel@vger.kernel.org>; Fri, 3 Aug 2018 18:01:08 -0400
+Received: from e34.co.us.ibm.com (e34.co.us.ibm.com [32.97.110.152])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2kmudxg8j8-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Aug 2018 18:01:07 -0400
+Received: from localhost
+        by e34.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <bauerman@linux.ibm.com>;
+        Fri, 3 Aug 2018 16:01:07 -0600
+Received: from b03cxnp08028.gho.boulder.ibm.com (9.17.130.20)
+        by e34.co.us.ibm.com (192.168.1.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 3 Aug 2018 16:01:04 -0600
+Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
+        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w73M14Gw6488410
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 3 Aug 2018 15:01:04 -0700
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E42EA7805E;
+        Fri,  3 Aug 2018 16:01:03 -0600 (MDT)
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D4C2878067;
+        Fri,  3 Aug 2018 16:01:01 -0600 (MDT)
+Received: from morokweng.localdomain.com (unknown [9.85.156.5])
+        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Fri,  3 Aug 2018 16:01:01 -0600 (MDT)
+From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
+To:     linux-kselftest@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Prakash Sangappa <prakash.sangappa@oracle.com>,
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>
+Subject: [PATCH v2 0/4] userfaultfd: selftest: Improve behavior with older kernels
+Date:   Fri,  3 Aug 2018 19:00:42 -0300
+X-Mailer: git-send-email 2.14.4
+X-TM-AS-GCONF: 00
+x-cbid: 18080322-0016-0000-0000-00000913571B
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009479; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01069606; UDB=6.00550094; IPR=6.00848261;
+ MB=3.00022492; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-03 22:01:06
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18080322-0017-0000-0000-00003FDE5969
+Message-Id: <20180803220046.4019-1-bauerman@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-03_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808030236
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 1, 2018 at 10:17 AM <bsegall@google.com> wrote:
-> Yes, in practice what's actually going to happen is that the
-> runtime_remaining will be put to 1 by distribute, the cfs_rq will be
-> unthrottled, and then when it runs it will go negative immediately and
-> hit the negative check in expires, so expires_seq being wrong will not
-> actually matter. In addition, the worst thing that will happen if one of
-> the account_cfs_rq_runtime(cfs_rq, 0) paths is hit first is that it will
-> lose 1ns of quota, which also doesn't really matter.
+Hello,
 
-Ah, I see.
+A tester ran the upstream selftest on a distro kernel and sounded the alarm when
+it reported failures for features which aren't included in that kernel.
 
-Thanks!
+This patch set improves the test behavior in that scenario.
+
+Changes since v1:
+
+- Patch "userfaultfd: selftest: Skip test if userfaultfd() syscall
+  not supported"
+  - New patch, suggested by Mke Rapoport.
+
+- Patch "userfaultfd: selftest: Skip test if a feature isn't supported"
+  - Try running other tests even if one (or more) of them returns KSFT_SKIP.
+
+- Patch "userfaultfd: selftest: Cope if shmem doesn't support zeropage"
+  - Ignore lack of UFFDIO_ZEROPAGE in userfaultfd_events_test() and
+    userfaultfd_stress().
+  - Make userfaultfd_zeropage_test() return KSFT_SKIP if UFFDIO_ZEROPAGE
+    isn't supported.
+
+Thiago Jung Bauermann (4):
+  userfaultfd: selftest: Fix checking of userfaultfd_open() result
+  userfaultfd: selftest: Skip test if userfaultfd() syscall not
+    supported
+  userfaultfd: selftest: Skip test if a feature isn't supported
+  userfaultfd: selftest: Cope if shmem doesn't support zeropage
+
+ tools/testing/selftests/vm/userfaultfd.c | 86 ++++++++++++++++++++++++--------
+ 1 file changed, 66 insertions(+), 20 deletions(-)
+
