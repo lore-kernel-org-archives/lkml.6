@@ -2,97 +2,170 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B235C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 16:34:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BED15C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 16:35:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC88021774
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 16:34:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC88021774
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id 7494821777
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 16:35:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7494821777
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728794AbeHCSbd (ORCPT
+        id S1728470AbeHCScd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 14:31:33 -0400
-Received: from gateway31.websitewelcome.com ([192.185.143.46]:27667 "EHLO
-        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727171AbeHCSbd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 14:31:33 -0400
-Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
-        by gateway31.websitewelcome.com (Postfix) with ESMTP id 33AE8CBF6
-        for <linux-kernel@vger.kernel.org>; Fri,  3 Aug 2018 11:34:31 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id ld27f7QKHSjJAld27frHq1; Fri, 03 Aug 2018 11:34:31 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.50.82] (port=51090 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1fld26-003GXS-KA; Fri, 03 Aug 2018 11:34:30 -0500
-Date:   Fri, 3 Aug 2018 11:34:30 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+        Fri, 3 Aug 2018 14:32:33 -0400
+Received: from mga14.intel.com ([192.55.52.115]:11987 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727171AbeHCScc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 14:32:32 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Aug 2018 09:35:30 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,439,1526367600"; 
+   d="scan'208";a="80296287"
+Received: from espoo.fi.intel.com ([10.237.66.147])
+  by orsmga002.jf.intel.com with ESMTP; 03 Aug 2018 09:34:54 -0700
+From:   Gwan-gyeong Mun <gwan-gyeong.mun@intel.com>
 To:     linux-kernel@vger.kernel.org
-Cc:     alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH 7/7] ASoC: core: mark expected switch fall-through
-Message-ID: <9d6ffc4ad5ecbd4287f5787e66aadc70f9168c2f.1533312229.git.gustavo@embeddedor.com>
-References: <cover.1533312229.git.gustavo@embeddedor.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1533312229.git.gustavo@embeddedor.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.50.82
-X-Source-L: No
-X-Exim-ID: 1fld26-003GXS-KA
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.50.82]:51090
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 71
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Cc:     Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Subject: [PATCH] drm/i915: Add detection of changing of edid on between suspend and resume
+Date:   Fri,  3 Aug 2018 19:34:53 +0300
+Message-Id: <20180803163453.7760-1-gwan-gyeong.mun@intel.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-where we are expecting to fall through.
+The hotplug detection routine of i915 uses drm_helper_hpd_irq_event(). This helper
+can detect changing of status of connector, but it can not detect changing of
+edid. Following scenario requires detection of changing of edid.
 
-Addresses-Coverity-ID: 146568 ("Missing break in switch")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+ 1) plug display device to a connector
+ 2) system suspend
+ 3) unplug 1)'s display device and plug the other display device to a connector
+ 4) system resume
+
+It adds edid check routine when a connector status still remains as "connector_status_connected".
+
+Testcase: igt/kms_chamelium/hdmi-edid-change-during-hibernate
+Testcase: igt/kms_chamelium/hdmi-edid-change-during-suspend
+Testcase: igt/kms_chamelium/dp-edid-change-during-hibernate
+Testcase: igt/kms_chamelium/dp-edid-change-during-suspend
+
+Signed-off-by: Gwan-gyeong Mun <gwan-gyeong.mun@intel.com>
 ---
- sound/soc/soc-core.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpu/drm/i915/intel_hotplug.c | 80 +++++++++++++++++++++++++++-
+ 1 file changed, 79 insertions(+), 1 deletion(-)
 
-diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
-index 82eb386..9cfe10d 100644
---- a/sound/soc/soc-core.c
-+++ b/sound/soc/soc-core.c
-@@ -528,6 +528,7 @@ int snd_soc_suspend(struct device *dev)
- 						"ASoC: idle_bias_off CODEC on over suspend\n");
- 					break;
- 				}
-+				/* fall through */
+diff --git a/drivers/gpu/drm/i915/intel_hotplug.c b/drivers/gpu/drm/i915/intel_hotplug.c
+index 648a13c6043c..b92b83d46ccc 100644
+--- a/drivers/gpu/drm/i915/intel_hotplug.c
++++ b/drivers/gpu/drm/i915/intel_hotplug.c
+@@ -507,6 +507,84 @@ void intel_hpd_init(struct drm_i915_private *dev_priv)
+ 	}
+ }
  
- 			case SND_SOC_BIAS_OFF:
- 				if (component->driver->suspend)
++/**
++ * intel_hpd_irq_event - hotplug processing
++ * @dev: drm_device
++ *
++ * Drivers can use this function to run a detect cycle on all connectors which
++ * have the DRM_CONNECTOR_POLL_HPD flag set in their &polled member. All other
++ * connectors are ignored, which is useful to avoid reprobing fixed panels.
++ *
++ * This function is useful for drivers which can't or don't track hotplug interrupts
++ * for each connector. This function is based on drm_helper_hpd_irq_event() helper
++ * function and besides it adds edid check routine when a connector status still
++ * remains as "connector_status_connected".
++ *
++ * Following scenario requires detection of changing of edid.
++ *  1) plug display device to a connector
++ *  2) system suspend
++ *  3) unplug 1)'s display device and plug the other display device to a connector
++ *  4) system resume
++
++ * This function must be called from process context with no mode
++ * setting locks held.
++ *
++ * Note that a connector can be both polled and probed from the hotplug handler,
++ * in case the hotplug interrupt is known to be unreliable.
++ */
++static bool intel_hpd_irq_event(struct drm_device *dev)
++{
++	struct drm_connector *connector;
++	struct drm_connector_list_iter conn_iter;
++	enum drm_connector_status old_status, cur_status;
++	struct edid *old_edid;
++	bool changed = false;
++
++	if (!dev->mode_config.poll_enabled)
++		return false;
++
++	mutex_lock(&dev->mode_config.mutex);
++	drm_connector_list_iter_begin(dev, &conn_iter);
++	drm_for_each_connector_iter(connector, &conn_iter) {
++		/* Only handle HPD capable connectors. */
++		if (!(connector->polled & DRM_CONNECTOR_POLL_HPD))
++			continue;
++
++		old_status = connector->status;
++		old_edid = to_intel_connector(connector)->detect_edid;
++
++		cur_status = drm_helper_probe_detect(connector, NULL, false);
++		DRM_DEBUG_KMS("[CONNECTOR:%d:%s] status updated from %s to %s\n",
++			      connector->base.id, connector->name,
++			      drm_get_connector_status_name(old_status),
++			      drm_get_connector_status_name(cur_status));
++
++		if (old_status != cur_status)
++			changed = true;
++
++		/* Check changing of edid when a connector status still remains
++		 * as "connector_status_connected". */
++		if (old_status == cur_status &&
++		    cur_status == connector_status_connected) {
++			struct edid *cur_edid = to_intel_connector(connector)->detect_edid;
++
++			if (memcmp(old_edid, cur_edid, sizeof(*cur_edid)) != 0) {
++				changed = true;
++				DRM_DEBUG_KMS("[CONNECTOR:%d:%s] edid updated\n",
++					      connector->base.id,
++					      connector->name);
++			}
++		}
++	}
++	drm_connector_list_iter_end(&conn_iter);
++	mutex_unlock(&dev->mode_config.mutex);
++
++	if (changed)
++		drm_kms_helper_hotplug_event(dev);
++
++	return changed;
++}
++
+ static void i915_hpd_poll_init_work(struct work_struct *work)
+ {
+ 	struct drm_i915_private *dev_priv =
+@@ -552,7 +630,7 @@ static void i915_hpd_poll_init_work(struct work_struct *work)
+ 	 * in the middle of disabling polling
+ 	 */
+ 	if (!enabled)
+-		drm_helper_hpd_irq_event(dev);
++		intel_hpd_irq_event(dev);
+ }
+ 
+ /**
 -- 
-2.7.4
+2.18.0
 
