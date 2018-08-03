@@ -2,94 +2,98 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4890C43142
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 01:21:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94512C43142
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 01:22:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B9EB21707
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 01:21:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m/btPmzJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B9EB21707
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	by mail.kernel.org (Postfix) with ESMTP id 4AF2821707
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 01:22:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AF2821707
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732206AbeHCDP3 (ORCPT
+        id S1732255AbeHCDQV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 23:15:29 -0400
-Received: from mail-pg1-f182.google.com ([209.85.215.182]:34210 "EHLO
-        mail-pg1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729765AbeHCDP3 (ORCPT
+        Thu, 2 Aug 2018 23:16:21 -0400
+Received: from smtprelay0036.hostedemail.com ([216.40.44.36]:56355 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1731831AbeHCDQV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 23:15:29 -0400
-Received: by mail-pg1-f182.google.com with SMTP id y5-v6so2046034pgv.1;
-        Thu, 02 Aug 2018 18:21:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=nWpiy2E6FI/4nUo2GghCa9UgehehRyfKV+OhP10TV3s=;
-        b=m/btPmzJ2sXHi4h46QKJk2gFahZMN99k7hZ/HEdi07zkEHYSZ4IDQ5ALrSWrRLyGkp
-         XNXJw8Z89R6DehLUPP/flgIs+VNeNa3U+B0uv7Ni+NofLI/a4oLzJkSPoW4FDcsCUW0y
-         xvaoWwGzIPJUCY1TlNDJZ+Fwk3eY94BJfBO9l80TuKN6KEzZkaSknzNje7cW2LGwlyoK
-         KxzhWbAYKQ7eCqokh+myY42Psw61n/CwHltlUvln5plJLGrEZ766jx2LuFMiAlRcGS4t
-         49EfcuOdc+qMaKWk6x6s3BfXMng66Od5xUP78Ip2AktwNyLwK1ebR7ryT5nlsmZLUC2j
-         guIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=nWpiy2E6FI/4nUo2GghCa9UgehehRyfKV+OhP10TV3s=;
-        b=Y7TQrm/PJPMhnTnhXxQ1hNHDxhcSODX7AHRx0pIHpl/Tu1QfvHcnsTnmFXehBJCAR6
-         +Y3qOnFIWrZQgA1UM98950aei2Nj/qAYx8q/sVxVL+ZnBgaLQ1YgWwQCqXzzLRaiLTX3
-         WeTz8xHPT8+yw3bDeictGNJ6ZxXJZQfFLtGu6vKbkmQWBBpDcFM9b4aWODmcFGV3LdBT
-         e1BG14pf+TS2qDulfMJRaDB53cnrw6PJ0rUSlxOcCetmzbES4Impl136jEpDgQGVd/Ei
-         eoYNCEIwjIUjWyfyMhc86VZZw4mte3uq+LAVNEeDHNvhyKgD8lAMQWV4CJSbj9C6Wl/K
-         6nlA==
-X-Gm-Message-State: AOUpUlFhaWcLTA3PBIkPaEzB6vDOvufyP8rYbcPUuqwgZ20M+ezhFc9p
-        BLSO8NcpFtzI8aFavGcpFsWeNC+t
-X-Google-Smtp-Source: AAOMgpfrHz7auw5MdQ04GZ40aofQ4SSpiUjZlNGWCSUitQHrOtXVLZOUtl8aSPukRv68ars6JgG/Tg==
-X-Received: by 2002:a62:571b:: with SMTP id l27-v6mr1967101pfb.29.1533259302442;
-        Thu, 02 Aug 2018 18:21:42 -0700 (PDT)
-Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id c1-v6sm7922740pfg.25.2018.08.02.18.21.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 02 Aug 2018 18:21:41 -0700 (PDT)
-Subject: Re: [PATCH 4.14 000/246] 4.14.60-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-References: <20180801165011.700991984@linuxfoundation.org>
- <20180802154325.GB5137@roeck-us.net> <20180802182517.GA24531@roeck-us.net>
- <20180802190946.GA25832@roeck-us.net> <20180802194135.GA13901@kroah.com>
- <20180802194536.GA22671@kroah.com>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <387e5d1c-431f-869e-43b2-c33e60bcbfdb@roeck-us.net>
-Date:   Thu, 2 Aug 2018 18:21:39 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180802194536.GA22671@kroah.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 2 Aug 2018 23:16:21 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay01.hostedemail.com (Postfix) with ESMTP id 664FF100E86C0;
+        Fri,  3 Aug 2018 01:22:33 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: night86_3301e0c33983f
+X-Filterd-Recvd-Size: 2628
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf10.hostedemail.com (Postfix) with ESMTPA;
+        Fri,  3 Aug 2018 01:22:30 +0000 (UTC)
+Message-ID: <f6d9bc125a4b8e6cd4358c5dd9656730a7716b23.camel@perches.com>
+Subject: Re: [PATCH v4 5/6] powerpc: Add show_user_instructions()
+From:   Joe Perches <joe@perches.com>
+To:     Murilo Opsfelder Araujo <muriloo@linux.ibm.com>,
+        Christophe LEROY <christophe.leroy@c-s.fr>
+Cc:     linux-kernel@vger.kernel.org,
+        Alastair D'Silva <alastair@d-silva.org>,
+        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Cyril Bur <cyrilbur@gmail.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michael Neuling <mikey@neuling.org>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Simon Guo <wei.guo.simon@gmail.com>,
+        Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>,
+        "Tobin C . Harding" <me@tobin.cc>, linuxppc-dev@lists.ozlabs.org,
+        Segher Boessenkool <segher@kernel.crashing.org>
+Date:   Thu, 02 Aug 2018 18:22:29 -0700
+In-Reply-To: <20180803004201.GA5891@kermit-br-ibm-com>
+References: <20180801213320.11203-1-muriloo@linux.ibm.com>
+         <20180801213320.11203-6-muriloo@linux.ibm.com>
+         <7209fa95-8d40-14ca-f27a-ce3edb64191e@c-s.fr>
+         <20180803004201.GA5891@kermit-br-ibm-com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/02/2018 12:45 PM, Greg Kroah-Hartman wrote:
-[ ... ]
+On Thu, 2018-08-02 at 21:42 -0300, Murilo Opsfelder Araujo wrote:
+> > > diff --git a/arch/powerpc/kernel/process.c b/arch/powerpc/kernel/process.c
+[]
+> > > @@ -1299,6 +1299,46 @@ static void show_instructions(struct pt_regs *regs)
+> > >   	pr_cont("\n");
+> > >   }
+> > > +void show_user_instructions(struct pt_regs *regs)
+> > > +{
+> > > +	int i;
+> > > +	const char *prefix = KERN_INFO "%s[%d]: code: ";
+> > > +	unsigned long pc = regs->nip - (instructions_to_print * 3 / 4 *
+> > > +					sizeof(int));
+> > > +
+> > > +	printk(prefix, current->comm, current->pid);
+> > 
+> > Why not use pr_info() and remove KERN_INFO from *prefix ?
 > 
-> I've pushed out -rc2 releases for all of these with that patch removed.
+> Because it doesn't compile:
 > 
+>   arch/powerpc/kernel/process.c:1317:10: error: expected ‘)’ before ‘prefix’
+>     pr_info(prefix, current->comm, current->pid);
+>             ^
+>   ./include/linux/printk.h:288:21: note: in definition of macro ‘pr_fmt’
+>    #define pr_fmt(fmt) fmt
+>                      ^
 
-Boot tests with updated images passed for all three releases.
+What being suggested is using:
 
-Guenter
+	pr_info("%s[%d]: code: ", current->comm, current->pid);
+
