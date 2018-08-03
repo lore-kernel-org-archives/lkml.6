@@ -5,114 +5,96 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FB19C43142
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 02:25:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFEC6C43142
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 02:29:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C584321717
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 02:25:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C584321717
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 5E35521717
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 02:29:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E35521717
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726981AbeHCETd (ORCPT
+        id S1726472AbeHCEX1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 00:19:33 -0400
-Received: from pide.tip.net.au ([203.10.76.2]:47499 "EHLO pide.tip.net.au"
+        Fri, 3 Aug 2018 00:23:27 -0400
+Received: from ozlabs.org ([203.11.71.1]:42113 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725736AbeHCETc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 00:19:32 -0400
-X-Greylist: delayed 577 seconds by postgrey-1.27 at vger.kernel.org; Fri, 03 Aug 2018 00:19:32 EDT
-Received: from canb.auug.org.au (unknown [122.99.82.10])
+        id S1725731AbeHCEX1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 00:23:27 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by pide.tip.net.au (Postfix) with ESMTPSA id 41hVyn0c6vz9CVx;
-        Fri,  3 Aug 2018 12:16:16 +1000 (AEST)
-Date:   Fri, 3 Aug 2018 12:14:30 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: build failure after merge of the net-next tree
-Message-ID: <20180803121430.25899c83@canb.auug.org.au>
+        by ozlabs.org (Postfix) with ESMTPSA id 41hWFw5W6Qz9ryt;
+        Fri,  3 Aug 2018 12:29:24 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Nicholas Piggin <npiggin@gmail.com>,
+        Laurent Dufour <ldufour@linux.vnet.ibm.com>
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        aneesh.kumar@linux.ibm.com, benh@kernel.crashing.org,
+        paulus@samba.org
+Subject: Re: [resend] [PATCH 0/3] powerpc/pseries: use H_BLOCK_REMOVE
+In-Reply-To: <20180801115514.441eecc8@roar.ozlabs.ibm.com>
+References: <1532699493-10883-1-git-send-email-ldufour@linux.vnet.ibm.com> <20180801115514.441eecc8@roar.ozlabs.ibm.com>
+Date:   Fri, 03 Aug 2018 12:29:20 +1000
+Message-ID: <87tvocgp33.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Fsb4bth4XmH6FhThHKnKa+."; protocol="application/pgp-signature"
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/Fsb4bth4XmH6FhThHKnKa+.
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Nicholas Piggin <npiggin@gmail.com> writes:
+> On Fri, 27 Jul 2018 15:51:30 +0200
+> Laurent Dufour <ldufour@linux.vnet.ibm.com> wrote:
+>> [Resending so everyone is getting the cover letter]
+>> On very large system we could see soft lockup fired when a process is exiting
+>> 
+>> watchdog: BUG: soft lockup - CPU#851 stuck for 21s! [forkoff:215523]
+>> Modules linked in: pseries_rng rng_core xfs raid10 vmx_crypto btrfs libcrc32c xor zstd_decompress zstd_compress xxhash lzo_compress raid6_pq crc32c_vpmsum lpfc crc_t10dif crct10dif_generic crct10dif_common dm_multipath scsi_dh_rdac scsi_dh_alua autofs4
+>> CPU: 851 PID: 215523 Comm: forkoff Not tainted 4.17.0 #1
+>> NIP:  c0000000000b995c LR: c0000000000b8f64 CTR: 000000000000aa18
+>> REGS: c00006b0645b7610 TRAP: 0901   Not tainted  (4.17.0)
+>> MSR:  800000010280b033 <SF,VEC,VSX,EE,FP,ME,IR,DR,RI,LE,TM[E]>  CR: 22042082  XER: 00000000
+>> CFAR: 00000000006cf8f0 SOFTE: 0 
+>> GPR00: 0010000000000000 c00006b0645b7890 c000000000f99200 0000000000000000 
+>> GPR04: 8e000001a5a4de58 400249cf1bfd5480 8e000001a5a4de50 400249cf1bfd5480 
+>> GPR08: 8e000001a5a4de48 400249cf1bfd5480 8e000001a5a4de40 400249cf1bfd5480 
+>> GPR12: ffffffffffffffff c00000001e690800 
+>> NIP [c0000000000b995c] plpar_hcall9+0x44/0x7c
+>> LR [c0000000000b8f64] pSeries_lpar_flush_hash_range+0x324/0x3d0
+>> Call Trace:
+>> [c00006b0645b7890] [8e000001a5a4dd20] 0x8e000001a5a4dd20 (unreliable)
+>> [c00006b0645b7a00] [c00000000006d5b0] flush_hash_range+0x60/0x110
+>> [c00006b0645b7a50] [c000000000072a2c] __flush_tlb_pending+0x4c/0xd0
+>> [c00006b0645b7a80] [c0000000002eaf44] unmap_page_range+0x984/0xbd0
+>> [c00006b0645b7bc0] [c0000000002eb594] unmap_vmas+0x84/0x100
+>> [c00006b0645b7c10] [c0000000002f8afc] exit_mmap+0xac/0x1f0
+>> [c00006b0645b7cd0] [c0000000000f2638] mmput+0x98/0x1b0
+>> [c00006b0645b7d00] [c0000000000fc9d0] do_exit+0x330/0xc00
+>> [c00006b0645b7dc0] [c0000000000fd384] do_group_exit+0x64/0x100
+>> [c00006b0645b7e00] [c0000000000fd44c] sys_exit_group+0x2c/0x30
+>> [c00006b0645b7e30] [c00000000000b960] system_call+0x58/0x6c
+>> Instruction dump:
+>> 60000000 f8810028 7ca42b78 7cc53378 7ce63b78 7d074378 7d284b78 7d495378 
+>> e9410060 e9610068 e9810070 44000022 <7d806378> e9810028 f88c0000 f8ac0008
+>> 
+>> This happens when removing the PTE by calling the hypervisor using the
+>> H_BULK_REMOVE call. This call is processing up to 4 PTEs but is doing a
+>> tlbie for each PTE it is processing. This could lead to long time spent in
+>> the hypervisor (sometimes up to 4s) and soft lockup being raised because
+>> the scheduler is not called in zap_pte_range().
+>> 
+>> Since the Power7's time, the hypervisor is providing a new hcall
+>> H_BLOCK_REMOVE allowing processing up to 8 PTEs with one call to
+>> tlbie. By limiting the amount of tlbie generated, this reduces the time
+>> spent invalidating the PTEs.
+>
+> Oh that's a nice feature. I must have an ancient PAPR because I don't
+> have it.
 
-Hi all,
+The only public document is LoPAPR, which is a stripped down version of
+the 2012 PAPR.
 
-After merging the net-next tree, today's linux-next build (perf) failed
-like this:
-
-In file included from btf.c:10:0:
-btf.h:25:24: error: redundant redeclaration of 'btf__type_by_id' [-Werror=
-=3Dredundant-decls]
- const struct btf_type *btf__type_by_id(const struct btf *btf, __u32 type_i=
-d);
-                        ^~~~~~~~~~~~~~~
-btf.h:20:24: note: previous declaration of 'btf__type_by_id' was here
- const struct btf_type *btf__type_by_id(const struct btf *btf, __u32 id);
-                        ^~~~~~~~~~~~~~~
-btf.c:405:24: error: redefinition of 'btf__type_by_id'
- const struct btf_type *btf__type_by_id(const struct btf *btf,
-                        ^~~~~~~~~~~~~~~
-btf.c:197:24: note: previous definition of 'btf__type_by_id' was here
- const struct btf_type *btf__type_by_id(const struct btf *btf, __u32 type_i=
-d)
-                        ^~~~~~~~~~~~~~~
-btf.c:40:20: error: 'btf_name_by_offset' defined but not used [-Werror=3Dun=
-used-function]
- static const char *btf_name_by_offset(const struct btf *btf, __u32 offset)
-                    ^~~~~~~~~~~~~~~~~~
-mv: cannot stat 'perf/.libbpf.o.tmp': No such file or directory
-tools/build/Makefile.build:96: recipe for target 'perf/libbpf.o' failed
-In file included from libbpf.c:52:0:
-btf.h:25:24: error: redundant redeclaration of 'btf__type_by_id' [-Werror=
-=3Dredundant-decls]
- const struct btf_type *btf__type_by_id(const struct btf *btf, __u32 type_i=
-d);
-                        ^~~~~~~~~~~~~~~
-btf.h:20:24: note: previous declaration of 'btf__type_by_id' was here
- const struct btf_type *btf__type_by_id(const struct btf *btf, __u32 id);
-                        ^~~~~~~~~~~~~~~
-mv: cannot stat 'perf/.libbpf.o.tmp': No such file or directory
-tools/build/Makefile.build:96: recipe for target 'perf/libbpf.o' failed
-
-Caused by commit
-
-  89b1698c93a9 ("Merge ra.kernel.org:/pub/scm/linux/kernel/git/davem/net")
-
-Some of the lines in tools/lib/bpf/btf.[ch] were duplicated (they existed
-on both sides of the merge).
-
-I have used the net-next tree from next-20180802 for today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/Fsb4bth4XmH6FhThHKnKa+.
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltjuoYACgkQAVBC80lX
-0GwN6Qf9Eso6jbVnUyskijANFZoVYQrDwVMvuPsXOJ/+fHfe8hkbQ3FdkNCdLp4W
-6St/e8nLK7B0OR1Oxog2zGagonnO4vePcayHahYhCanSogx95B+p4kGWa5HfxJU9
-SBk1H6QaxxbzXLkHyVVcBCgaOzoRK4i7XP98cqA6QgelbydW4sh0CJ1XMCpojV9n
-UYQRDwxHy8yKCjUNmqbOPwVLrdPvU7urqSjdxZQCBlFird92iGbasVxbAipugiuM
-i10fQ35nZ36bVwDOo9cLqoiFNSY3bKYYU3piZsEuf2mvmJmr6wdPvpS51d+ihX4i
-BdaSXSDsUFtBJZCQECfGlWeFx5Sa6g==
-=F1G7
------END PGP SIGNATURE-----
-
---Sig_/Fsb4bth4XmH6FhThHKnKa+.--
+cheers
