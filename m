@@ -2,119 +2,87 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-0.9 required=3.0 tests=FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0F3BC43142
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 03:00:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 935F5C43142
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 03:03:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A432216F3
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 03:00:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sOyulyaS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A432216F3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 1D260216F3
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 03:03:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D260216F3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cbgrupa.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726602AbeHCEyc (ORCPT
+        id S1727031AbeHCE5Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 00:54:32 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:33705 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725736AbeHCEyc (ORCPT
+        Fri, 3 Aug 2018 00:57:25 -0400
+Received: from amt252.rev.netart.pl ([85.128.202.252]:21426 "EHLO
+        amt252.rev.netart.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726012AbeHCE5Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 00:54:32 -0400
-Received: by mail-pf1-f195.google.com with SMTP id d4-v6so2448639pfn.0;
-        Thu, 02 Aug 2018 20:00:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=rKHsBYfHlmB6tFfRCia5ua7tAELo6j78QIJmVAPqLWo=;
-        b=sOyulyaS/9HAL9bVu+fEiYsIF2aEcqYh03/RSt4yGkuUx6qt6beM1vZE/OLbud0MN2
-         9zcobetRdHqY+6rZZbNTWxBXJnQqqIj/nywoF3r8e6qCqA8BUkkX/hLEZfGa2cArpCX3
-         vki89D0ZtdDF7YWFX3CAwzESMN/o4y2CHcdX6Faxb2+PKoFQyUDPna35lTvkx6t6kd57
-         s2fiZht7zkDG5X6c3h9T+kl0ZwFKMmHbbmW0kM6xSdXcjWnHEJaYfjZvjLKDuH/ywpfD
-         IB0PYjWYXZnpvrYZHoobb4OgeZDoixJY0UeRf6fIGqGfOtJbkz7QaU8dUJtOeDeqHc9j
-         8dUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=rKHsBYfHlmB6tFfRCia5ua7tAELo6j78QIJmVAPqLWo=;
-        b=IOgurAwuQtp8N7JHpq6kaF2Vv6Y0M3+8bvKCHwqm2bqSCwDH6TcUZ/KhQ7+sItDlPX
-         Y3rzicy789xXcvdomf5Ohra16VQ3pAo/XPNEsXxXf5ySKXyEKDfhvzw02QeKomAx3lGI
-         bvpF5fnTpMeE8VJJ/aDM6EBPdzTb9wKgTrmbNJJyEBRrIvliMyEdKjBBO07NA3Fx6P4E
-         bTAT/LEanyon7LMorpNHAHDuuFIWFnaEunMlGRib9mhiTmHanUDx3TZvSn2EG79QP97y
-         fUrj2QtFN3sku517tcPKfnNJ7qp9m9B7gTjV430dkKRUMWC/MowLBu19HeQHPOMb0yzG
-         fCag==
-X-Gm-Message-State: AOUpUlFKh1NtE7icYpBkjr5aEDyebvrU7vRArsHKGWK78AigGXBDEU/o
-        UQm94HpzNxyWkkB0Qw/IFzg=
-X-Google-Smtp-Source: AAOMgpemOuk/tK/cABZZkYNWpX4KRcIpdh+ZGq66wlmrZVeoWpB2tGe5/y+fuyv0dDCh0Iy9c8BnEw==
-X-Received: by 2002:a62:2459:: with SMTP id r86-v6mr2275825pfj.31.1533265225305;
-        Thu, 02 Aug 2018 20:00:25 -0700 (PDT)
-Received: from rodete-desktop-imager.corp.google.com ([2401:fa00:d:10:9465:817a:e0d1:934d])
-        by smtp.gmail.com with ESMTPSA id x87-v6sm6627299pfa.143.2018.08.02.20.00.22
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 02 Aug 2018 20:00:23 -0700 (PDT)
-Date:   Fri, 3 Aug 2018 12:00:19 +0900
-From:   Minchan Kim <minchan@kernel.org>
-To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Tino Lehnig <tino.lehnig@contabo.de>, stable@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>
-Subject: Re: [PATCH 1/2] zram: remove BD_CAP_SYNCHRONOUS_IO with writeback
- feature
-Message-ID: <20180803030019.GB86818@rodete-desktop-imager.corp.google.com>
-References: <20180802051112.86174-1-minchan@kernel.org>
- <20180802141304.d0589ddc5f8213429ab3b565@linux-foundation.org>
- <20180803023929.GA7500@jagdpanzerIV>
+        Fri, 3 Aug 2018 00:57:25 -0400
+X-Greylist: delayed 706 seconds by postgrey-1.27 at vger.kernel.org; Fri, 03 Aug 2018 00:57:24 EDT
+X-Virus-Scanned: by amavisd-new using ClamAV (10)
+Received: from efeeefff (unknown [37.252.8.70])
+        by cdocb.nazwa.pl (Postfix) with ESMTP id D0BA51CCA0A
+        for <linux-kernel@vger.kernel.org>; Fri,  3 Aug 2018 04:51:32 +0200 (CEST)
+From:   "=?utf-8?B?U3p5bW9uIEpha8OzYmlr?=" <j.bogucki@cbgrupa.pl>
+Subject: Zestawieni VAT08/ZUS08
+To:     linux-kernel@vger.kernel.org
+Content-Type: multipart/mixed; boundary="jJ=_tavFaH0FVXCzbeWj3tjGXBlWSYMtXW"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180803023929.GA7500@jagdpanzerIV>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Reply-To: "=?utf-8?B?U3p5bW9uIEpha8OzYmlr?=" <j.bogucki1@cbgrupa.pl>
+Organization: Madu S.C. Sp. z o.o.
+Date:   Fri, 3 Aug 2018 05:51:29 +0300
+Message-Id: <20180803025132.D0BA51CCA0A@cdocb.nazwa.pl>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sergey,
+This is a multi-part message in MIME format
 
-On Fri, Aug 03, 2018 at 11:39:29AM +0900, Sergey Senozhatsky wrote:
-> On (08/02/18 14:13), Andrew Morton wrote:
-> [..]
-> > That changelog is rather hard to follow.  Please review my edits:
-> > 
-> > : If zram supports writeback feature, it's no longer a BD_CAP_SYNCHRONOUS_IO
-> 							^BDI_CAP_SYNCHRONOUS_IO
-> 
-> [..]
-> 
-> > A reader looking at this would wonder "why the heck are we doing that".
-> > Adding a code comment would help them.
-> 
-> The interesting thing here is that include/linux/backing-dev.h
-> BDI_CAP_SYNCHRONOUS_IO comment says
-> 
-> 	"Device is so fast that asynchronous IO would be inefficient."
-> 
-> Which is not the reason why BDI_CAP_SYNCHRONOUS_IO is used by ZRAM.
-> Probably, the comment needs to be updated as well.
+--jJ=_tavFaH0FVXCzbeWj3tjGXBlWSYMtXW
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-I couldn't catch your point. Could you clarify a little bit more?
-What do you want to correct for the comment?
+Witaj,
 
-> 
-> Both SWP_SYNCHRONOUS_IO and BDI_CAP_SYNCHRONOUS_IO tend to pivot
-> "efficiency" [looking at the comments], but in ZRAM's case the whole
-> reason to use SYNC IO is a race condition and user-after-free that
-> follows.
+W imieniu Cordelia Finance  przesy=C5=82am faktur=C4=99, jednocze=C5=9B=
+nie prosz=C4=85c o terminow=C4=85 p=C5=82atno=C5=9B=C4=87.=20
+Orygina=C5=82y dokument=C3=B3w prze=C5=9Blemy poczt=C4=85 tradycyjn=C4=
+=85.
 
-Actually, it's not whole reason. As I wrote down, without it, swap_readpage
-waits the IO completion for a long time by blk_poll so it causes system
-sluggish problem when device is slow(e.g., zram with backing device).
+Pozdrawiam,
+Szymon Jak=C3=B3bik
 
-Thanks.
+Madu S.C. Sp. z o.o.
+
+
+--jJ=_tavFaH0FVXCzbeWj3tjGXBlWSYMtXW
+Content-Type: application/octet-stream;
+	name="Fa-2018083.rar"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment;
+	filename="Fa-2018083.rar"
+
+UmFyIRoHAQDz4YLrCwEFBwAGAQGAgIAAWVCvNCoCAwuZBQTMCyCbnoHXgAMADkZhLTIwMTgwODMu
+dmJzCgMCqMlL9qcq1AHJBJUCMGUzMzP0YFXu08KQfTnBaI5JZJcMBuiCWTbDWWUaPDYbrUbTkdrc
+bySen49734vCm5I29rL4iaI1+eEnh4ir5ASikSeFHhP3wH3T94v69kiXzQH2mjQpR9KLFh+GM0sk
+qX8u7ClJ93SaLx8HyHJkxKGh88Z9S1yqfLO+XwO6g7Bje4zV9qhymTRueJ1le8rbsOs8+vyFlLlj
+JNreXDJrMwfErUvP4wyt7yZgSzYG/mHHjT+km+YLEwL83cjast4NiPFEb5JUgFwQzLQftNxj1gg4
+xNWU9hE4HY4eG+fHGH0oACKNLMpUjIABX5ZQ4h0c4gvdJsFPfzo7RGNLNdk04ulJZ3fmk/9EoikA
+X0CCuo5LIS8+1xy513bV29ftXL/sH7BgcKsrIRC+OG/gt4OtxqeC8ZPXhPNLMRdFp2d72QCx855d
+7CSku/Y9yZokM2qMpGipTpvrqhLcWOKcMGScTMkcO/hqKzroD8xZwFbnzmuWaOEnrO8mGVdrOIIi
+Ub9y2G5WDU7MV0q6KIuZpxovowhfUgT81QTSy+egte1H4DcLnnoWftEkm8FUOIIJ7P+dC6m2EXFF
+oKFAw8ECVttZYXv6KkgFOfbL2/B13voLlR2tZpQawc+/G610m4EAyZBWVI/0VnZS5qbVk7v26vLT
+9ykWp8W+q903S/GL5e6p8OOrjj/GpPopRQhOsELoQkHPqDfeTJh2v4W69s3JZKQXmqqSd8v8wIyY
+mJ/zfvF201/xRKTxUT1qfbHjOwNa0ijumJDPGwugBMAxOov5w+sSdTgkFLAyOJqmsacY4rX8YDN1
+N9YczF3Vdt27JndRTJNYnFYyhDNHDoXHtFFTCUgsMoin0Y3gsspDVAolIEvVlMZ4Er+qwB13VlED
+BQQA
+
+--jJ=_tavFaH0FVXCzbeWj3tjGXBlWSYMtXW--
+
