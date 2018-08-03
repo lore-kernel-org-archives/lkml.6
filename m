@@ -2,154 +2,170 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA70FC28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 16:42:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10D77C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 16:42:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 60BD621774
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 16:42:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60BD621774
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id BDFC321774
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 16:42:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="ggtKs7pl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BDFC321774
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729613AbeHCSjX (ORCPT
+        id S1729792AbeHCSju (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 14:39:23 -0400
-Received: from gateway36.websitewelcome.com ([192.185.193.12]:49935 "EHLO
-        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727566AbeHCSjX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 14:39:23 -0400
-Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
-        by gateway36.websitewelcome.com (Postfix) with ESMTP id A1435400C7A6A
-        for <linux-kernel@vger.kernel.org>; Fri,  3 Aug 2018 10:44:54 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id ld92fZwfAbXuJld9PfzguG; Fri, 03 Aug 2018 11:42:18 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.50.82] (port=32992 helo=[192.168.1.71])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1fld92-003JXr-B2; Fri, 03 Aug 2018 11:41:40 -0500
-To:     valdis.kletnieks@vt.edu
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        patches@opensource.cirrus.com, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>,
-        Mark Brown <broonie@kernel.org>
-References: <cover.1533151956.git.gustavo@embeddedor.com>
- <8e3df79b1dca92d49fd9d5c97391d31814ab40f9.1533151956.git.gustavo@embeddedor.com>
- <30613.1533313609@turing-police.cc.vt.edu>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Subject: Re: [PATCH 11/11] ASoC: wm8994: Mark expected switch fall-through
-Message-ID: <85d918a5-6a14-ead0-4d0e-d63b5e43ad81@embeddedor.com>
-Date:   Fri, 3 Aug 2018 11:41:39 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 3 Aug 2018 14:39:50 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:55064 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727376AbeHCSju (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 14:39:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
+        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=xK22qJ3f5vBwv4zhi/TFCAzXLgiX15hgbETSFVJLkRY=;
+        b=ggtKs7pl/GN7QIpG+ECbhyuxNOAL8SruhpxcxPxrs3wMdnBFYeUQvNTtqePiREPIqI++L3UFEOXI3SpR10UQ8Y8C8YtuzVWENQbq5Lw+huELpm6XgLroC5KmNo57PyV+dtBQbVox7vz6nt+3RX+Ls0dkb/JGNPhE4aESNC4gfo8=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1fld9z-00007U-1U; Fri, 03 Aug 2018 18:42:39 +0200
+Date:   Fri, 3 Aug 2018 18:42:39 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Ioana Radulescu <ruxandra.radulescu@nxp.com>
+Cc:     netdev@vger.kernel.org, davem@davemloft.net,
+        gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, ioana.ciornei@nxp.com,
+        laurentiu.tudor@nxp.com, madalin.bucur@nxp.com,
+        horia.geanta@nxp.com
+Subject: Re: [PATCH net-next] [RFC] dpaa2-eth: Move DPAA2 Ethernet driver
+ from staging to drivers/net
+Message-ID: <20180803164239.GG15029@lunn.ch>
+References: <20180803161221.6322-1-ruxandra.radulescu@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <30613.1533313609@turing-police.cc.vt.edu>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.50.82
-X-Source-L: No
-X-Exim-ID: 1fld92-003JXr-B2
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.71]) [189.250.50.82]:32992
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 82
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180803161221.6322-1-ruxandra.radulescu@nxp.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+> +static int dpaa2_eth_probe(struct fsl_mc_device *dpni_dev)
+> +{
+> +	struct device *dev;
+> +	struct net_device *net_dev = NULL;
+> +	struct dpaa2_eth_priv *priv = NULL;
+> +	int err = 0;
+> +
+> +	dev = &dpni_dev->dev;
+> +
+> +	/* Net device */
+> +	net_dev = alloc_etherdev_mq(sizeof(*priv), DPAA2_ETH_MAX_TX_QUEUES);
+> +	if (!net_dev) {
+> +		dev_err(dev, "alloc_etherdev_mq() failed\n");
+> +		return -ENOMEM;
+> +	}
+> +
+> +	SET_NETDEV_DEV(net_dev, dev);
+> +	dev_set_drvdata(dev, net_dev);
+> +
+> +	priv = netdev_priv(net_dev);
+> +	priv->net_dev = net_dev;
+> +
+> +	priv->iommu_domain = iommu_get_domain_for_dev(dev);
+> +
+> +	/* Obtain a MC portal */
+> +	err = fsl_mc_portal_allocate(dpni_dev, FSL_MC_IO_ATOMIC_CONTEXT_PORTAL,
+> +				     &priv->mc_io);
+> +	if (err) {
+> +		if (err == -ENXIO)
+> +			err = -EPROBE_DEFER;
+> +		else
+> +			dev_err(dev, "MC portal allocation failed\n");
+> +		goto err_portal_alloc;
+> +	}
+> +
+> +	/* MC objects initialization and configuration */
+> +	err = setup_dpni(dpni_dev);
+> +	if (err)
+> +		goto err_dpni_setup;
+> +
+> +	err = setup_dpio(priv);
+> +	if (err)
+> +		goto err_dpio_setup;
+> +
+> +	setup_fqs(priv);
+> +
+> +	err = setup_dpbp(priv);
+> +	if (err)
+> +		goto err_dpbp_setup;
+> +
+> +	err = bind_dpni(priv);
+> +	if (err)
+> +		goto err_bind;
+> +
+> +	/* Add a NAPI context for each channel */
+> +	add_ch_napi(priv);
+> +
+> +	/* Percpu statistics */
+> +	priv->percpu_stats = alloc_percpu(*priv->percpu_stats);
+> +	if (!priv->percpu_stats) {
+> +		dev_err(dev, "alloc_percpu(percpu_stats) failed\n");
+> +		err = -ENOMEM;
+> +		goto err_alloc_percpu_stats;
+> +	}
+> +	priv->percpu_extras = alloc_percpu(*priv->percpu_extras);
+> +	if (!priv->percpu_extras) {
+> +		dev_err(dev, "alloc_percpu(percpu_extras) failed\n");
+> +		err = -ENOMEM;
+> +		goto err_alloc_percpu_extras;
+> +	}
+> +
+> +	err = netdev_init(net_dev);
+> +	if (err)
+> +		goto err_netdev_init;
 
+At the end of netdev_init() you call netdev_register(). From that
+point on, you device is live. Its .ndo's can be called....
 
-On 08/03/2018 11:26 AM, valdis.kletnieks@vt.edu wrote:
-> On Wed, 01 Aug 2018 14:56:16 -0500, "Gustavo A. R. Silva" said:
-> 
->> diff --git a/sound/soc/codecs/wm8994.c b/sound/soc/codecs/wm8994.c
->> index 7fdfdf3..62f8c5b 100644
->> --- a/sound/soc/codecs/wm8994.c
->> +++ b/sound/soc/codecs/wm8994.c
->> @@ -2432,6 +2432,7 @@ static int wm8994_set_dai_sysclk(struct snd_soc_dai *dai,
->>  			snd_soc_component_update_bits(component, WM8994_POWER_MANAGEMENT_2,
->>  					    WM8994_OPCLK_ENA, 0);
->>  		}
->> +		/* fall through */
->>
->>  	default:
->>  		return -EINVAL;
-> 
-> Wait, what? This looks like the sort of bug -Wimplicit-fallthrough is supposed
-> to catch.  Unless for 'case WM8994_SYSCLK_OPCLK:' we actually do want to do a
-> whole bunch of snd_soc_component_update_bits() calls and then return -EINVAL
-> whether or not that case succeeded?
-> 
-> 
+> +
+> +	/* Configure checksum offload based on current interface flags */
+> +	err = set_rx_csum(priv, !!(net_dev->features & NETIF_F_RXCSUM));
+> +	if (err)
+> +		goto err_csum;
+> +
+> +	err = set_tx_csum(priv, !!(net_dev->features &
+> +				   (NETIF_F_IP_CSUM | NETIF_F_IPV6_CSUM)));
+> +	if (err)
+> +		goto err_csum;
+> +
+> +	err = alloc_rings(priv);
+> +	if (err)
+> +		goto err_alloc_rings;
 
-Yeah, it seems like a bug. Can someone confirm this?
+How well does the device work if it has not allocated the rings yet,
+when it is asked to do something?
 
-Notice that this code has been there since 2010.
+> +
+> +	net_dev->ethtool_ops = &dpaa2_ethtool_ops;
+> +
+> +	err = setup_irqs(dpni_dev);
 
-Thanks Valdis for pointing this out.
---
-Gustavo
+How well do it work without interrupts being set up?
+
+> +	if (err) {
+> +		netdev_warn(net_dev, "Failed to set link interrupt, fall back to polling\n");
+> +		priv->poll_thread = kthread_run(poll_link_state, priv,
+> +						"%s_poll_link", net_dev->name);
+> +		if (IS_ERR(priv->poll_thread)) {
+> +			netdev_err(net_dev, "Error starting polling thread\n");
+> +			goto err_poll_thread;
+> +		}
+> +		priv->do_link_poll = true;
+> +	}
+
+Probably the correct place to register the netdev is here.
+
+	 Andrew
