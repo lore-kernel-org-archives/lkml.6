@@ -2,108 +2,117 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 731C3C46469
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 22:34:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41622C4646D
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 22:51:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10CDB217AA
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 22:34:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="L24yqu5C"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10CDB217AA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id E381E217A2
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 22:51:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E381E217A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731993AbeHDAcW (ORCPT
+        id S1732072AbeHDAtj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 20:32:22 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:33030 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731682AbeHDAcW (ORCPT
+        Fri, 3 Aug 2018 20:49:39 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38332 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731846AbeHDAtj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 20:32:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=3g8LMtp7L2orVKXiybY3tn8pSapKfU/I1pTsITWrQSc=; b=L24yqu5CQkAAiWEYuIZ+W88Md
-        O2FWVq5qTdQUT9IX6FvfVe4Cvzo75+IpNpEPRZ5RvSz/xzt1EH/oLCkqTAYWJvCVbobYHoz4zW+Cz
-        qlzyvJYMSIA5Qf/6QnCeb4z3kRqZc43gIkFYejR5IxLF7GAY7AcMlYkAdFfBPqSlPDBJoDVoBdqxy
-        zi+de08Nc/fLeCb34qpWMrmRkL1B1j1oTawi2XZLHfz1E5LiS433XuvIBTEgJpoM7GHkq0Aoupovy
-        8lVv20/kkpXKA2q54J7aiqF4Gvbt6tGIT4LCleVkpFrDZBO65Dqf76i2Dme5QtXKbGbQhma6w7ieW
-        41fgyI/xg==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1flidx-0007aA-D7; Fri, 03 Aug 2018 22:33:57 +0000
-Date:   Fri, 3 Aug 2018 15:33:57 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Christopher Lameter <cl@linux.com>, linux-mm@kvack.org,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@redhat.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        linux-sh@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] slab: __GFP_ZERO is incompatible with a
- constructor
-Message-ID: <20180803223357.GA23284@bombadil.infradead.org>
-References: <20180411060320.14458-1-willy@infradead.org>
- <20180411060320.14458-3-willy@infradead.org>
- <alpine.DEB.2.20.1804110842560.3788@nuc-kabylake>
- <20180411192448.GD22494@bombadil.infradead.org>
- <alpine.DEB.2.20.1804111601090.7458@nuc-kabylake>
- <20180411235652.GA28279@bombadil.infradead.org>
- <alpine.DEB.2.20.1804120907100.11220@nuc-kabylake>
- <20180412142718.GA20398@bombadil.infradead.org>
- <20180412191322.GA21205@bombadil.infradead.org>
- <20180803212257.GA5922@roeck-us.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180803212257.GA5922@roeck-us.net>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Fri, 3 Aug 2018 20:49:39 -0400
+Received: from akpm3.svl.corp.google.com (unknown [104.133.9.92])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0333BBBF;
+        Fri,  3 Aug 2018 22:51:20 +0000 (UTC)
+Date:   Fri, 3 Aug 2018 15:51:20 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc:     vdavydov.dev@gmail.com, mhocko@suse.com, aryabinin@virtuozzo.com,
+        ying.huang@intel.com, penguin-kernel@I-love.SAKURA.ne.jp,
+        willy@infradead.org, shakeelb@google.com, jbacik@fb.com,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm: Use special value SHRINKER_REGISTERING instead
+ list_empty() check
+Message-Id: <20180803155120.0d65511b46c100565b4f8a2c@linux-foundation.org>
+In-Reply-To: <153331055842.22632.9290331685041037871.stgit@localhost.localdomain>
+References: <153331055842.22632.9290331685041037871.stgit@localhost.localdomain>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 03, 2018 at 02:22:57PM -0700, Guenter Roeck wrote:
-> Hi,
+On Fri, 03 Aug 2018 18:36:14 +0300 Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
+
+> The patch introduces a special value SHRINKER_REGISTERING to use instead
+> of list_empty() to detect a semi-registered shrinker.
 > 
-> On Thu, Apr 12, 2018 at 12:13:22PM -0700, Matthew Wilcox wrote:
-> > From: Matthew Wilcox <mawilcox@microsoft.com>
-> > 
-> > __GFP_ZERO requests that the object be initialised to all-zeroes,
-> > while the purpose of a constructor is to initialise an object to a
-> > particular pattern.  We cannot do both.  Add a warning to catch any
-> > users who mistakenly pass a __GFP_ZERO flag when allocating a slab with
-> > a constructor.
-> > 
-> > Fixes: d07dbea46405 ("Slab allocators: support __GFP_ZERO in all allocators")
-> > Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
-> > Acked-by: Johannes Weiner <hannes@cmpxchg.org>
-> > Acked-by: Vlastimil Babka <vbabka@suse.cz>
-> > Acked-by: Michal Hocko <mhocko@suse.com>
+> This should be clearer for a reader since "list is empty"  is not
+> an intuitive state of a shrinker), and this gives a better assembler
+> code:
 > 
-> Seen with v4.18-rc7-139-gef46808 and v4.18-rc7-178-g0b5b1f9a78b5 when
-> booting sh4 images in qemu:
+> Before:
+> callq  <idr_find>
+> mov    %rax,%r15
+> test   %rax,%rax
+> je     <shrink_slab_memcg+0x1d5>
+> mov    0x20(%rax),%rax
+> lea    0x20(%r15),%rdx
+> cmp    %rax,%rdx
+> je     <shrink_slab_memcg+0xbd>
+> mov    0x8(%rsp),%edx
+> mov    %r15,%rsi
+> lea    0x10(%rsp),%rdi
+> callq  <do_shrink_slab>
+> 
+> After:
+> callq  <idr_find>
+> mov    %rax,%r15
+> lea    -0x1(%rax),%rax
+> cmp    $0xfffffffffffffffd,%rax
+> ja     <shrink_slab_memcg+0x1cd>
+> mov    0x8(%rsp),%edx
+> mov    %r15,%rsi
+> lea    0x10(%rsp),%rdi
+> callq  ffffffff810cefd0 <do_shrink_slab>
+> 
+> Also, improve the comment.
 
-Thanks!  It's under discussion here:
+All this isn't terribly nice.  Why can't we avoid installing the
+shrinker into the idr until it is fully initialized?
 
-https://marc.info/?t=153301426900002&r=1&w=2
+Or extend the down_write(shrinker_rwsem) coverage so it protects the
+entire initialization, instead of only in the prealloc_memcg_shrinker()
+part of that initialization.  This is not as good - it would be better
+to do all the initialization locklessly then just install the fully
+initialized thing under the lock.
 
-also reported here with a bogus backtrace:
+> --- a/mm/vmscan.c
+> +++ b/mm/vmscan.c
+> @@ -170,6 +170,21 @@ static LIST_HEAD(shrinker_list);
+>  static DECLARE_RWSEM(shrinker_rwsem);
+>  
+>  #ifdef CONFIG_MEMCG_KMEM
+> +
+> +/*
+> + * There is a window between prealloc_shrinker()
+> + * and register_shrinker_prepared(). We don't want
+> + * to clear bit of a shrinker in such the state
+> + * in shrink_slab_memcg(), since this will impose
+> + * restrictions on a code registering a shrinker
+> + * (they would have to guarantee, their LRU lists
+> + * are empty till shrinker is completely registered).
+> + * So, we use this value to detect the situation,
+> + * when id is assigned, but shrinker is not completely
+> + * registered yet.
+> + */
 
-https://marc.info/?l=linux-sh&m=153305755505935&w=2
+This comment is still quite hard to understand.  Could you please spend
+a little more time over it?
 
-Short version: It's a bug that's been present since 2009 and nobody
-noticed until now.  And nobody's quite sure what the effect of this
-bug is.
+
