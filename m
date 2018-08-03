@@ -2,77 +2,88 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C213FC28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 12:19:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE46CC28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 12:20:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7225C21759
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 12:19:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="SHg/WEV9";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="bXc9DCIU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7225C21759
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 6A0CA21759
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 12:20:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A0CA21759
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731507AbeHCOPq (ORCPT
+        id S1729603AbeHCOQP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 10:15:46 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:47426 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727677AbeHCOPp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 10:15:45 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 099D060AD8; Fri,  3 Aug 2018 12:19:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533298780;
-        bh=AbX2Wxt9sMB9xSEZGFpQnYA1gMroJgQKawrKjz57FCk=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=SHg/WEV9mvKuK+JMAEobhOiyChvSX0Iq29OgI3XciKk0w8Dm6A3QzDz+xBifP6zka
-         Bb/UkCn2yPTB/47f+z7PgthjCh3fZxZB0peIwnO7TXufUm9xalhR9G8I/WITS7C30p
-         JfK1TNCzHgmQ0qhtDkPFseTEfQ/cMQNCm4TmCB5U=
-Received: from [192.168.225.247] (unknown [49.32.113.96])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: tdas@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 83FFD6031A;
-        Fri,  3 Aug 2018 12:19:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533298779;
-        bh=AbX2Wxt9sMB9xSEZGFpQnYA1gMroJgQKawrKjz57FCk=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=bXc9DCIUO2DzFM/xfCN79s0jghUONPGRYdHvHiByjUjs/PiQ0DuEL5Zcx9apPuaoH
-         NJSUWLcEk/9Afm5chY5Vv7RNBDaP3aejvXgUCWVOA2WU1JKmbFEUOC4IGsiyxTMUMd
-         vLlFAwlKRkdKZrEQBkKq38r6Knyel4F0O3PWnYuc=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 83FFD6031A
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: clock: Introduce QCOM LPASS clock
- bindings
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Amit Nischal <anischal@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        rohitkr@codeaurora.org
-References: <1530773721-14668-1-git-send-email-tdas@codeaurora.org>
- <1530773721-14668-2-git-send-email-tdas@codeaurora.org>
- <153092054581.143105.16123786121344421693@swboyd.mtv.corp.google.com>
-From:   Taniya Das <tdas@codeaurora.org>
-Message-ID: <408b3b59-d171-175c-f6da-b5d6f42a954d@codeaurora.org>
-Date:   Fri, 3 Aug 2018 17:49:31 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+        Fri, 3 Aug 2018 10:16:15 -0400
+Received: from mx2.suse.de ([195.135.220.15]:56314 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727677AbeHCOQP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 10:16:15 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D3023AFDE;
+        Fri,  3 Aug 2018 12:20:07 +0000 (UTC)
+Subject: Re: [PATCH v6 2/5] mm: access zone->node via zone_to_nid() and
+ zone_set_nid()
+To:     osalvador@techadventures.net, akpm@linux-foundation.org
+Cc:     mhocko@suse.com, pasha.tatashin@oracle.com,
+        mgorman@techsingularity.net, aaron.lu@intel.com,
+        iamjoonsoo.kim@lge.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, dan.j.williams@intel.com,
+        david@redhat.com, Oscar Salvador <osalvador@suse.de>
+References: <20180801122348.21588-1-osalvador@techadventures.net>
+ <20180801122348.21588-3-osalvador@techadventures.net>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Openpgp: preference=signencrypt
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+ cqmP8roqufIAj+Ohhzs=
+Message-ID: <d25e0b69-db84-5c64-bf26-e4e429e5f510@suse.cz>
+Date:   Fri, 3 Aug 2018 14:20:06 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <153092054581.143105.16123786121344421693@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20180801122348.21588-3-osalvador@techadventures.net>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -80,49 +91,18 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 7/7/2018 5:12 AM, Stephen Boyd wrote:
-> Quoting Taniya Das (2018-07-04 23:55:20)
->> diff --git a/Documentation/devicetree/bindings/clock/qcom,lpasscc.txt b/Documentation/devicetree/bindings/clock/qcom,lpasscc.txt
->> new file mode 100644
->> index 0000000..fe7378b
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/qcom,lpasscc.txt
->> @@ -0,0 +1,22 @@
->> +Qualcomm LPASS Clock Controller Binding
->> +-----------------------------------------------
->> +
->> +Required properties :
->> +- compatible   : shall contain "qcom,sdm845-lpasscc"
->> +- #clock-cells : from common clock binding, shall contain 1.
->> +- reg          : shall contain base register address and size.
->> +- reg-names    : shall contain the register names of LPASS domain
->> +                       "lpass_gcc", "lpass_cc", "lpass_qdsp6ss".
->> +
->> +Example:
->> +
->> +The below node has to be defined in the cases where the LPASS peripheral loader
->> +would bring the subsystem out of reset.
->> +
->> +       lpasscc: clock-controller {
->> +               compatible = "qcom,sdm845-lpasscc";
->> +               reg = <0x00147000 0x20>, <0x17014000 0x1f004>,
+On 08/01/2018 02:23 PM, osalvador@techadventures.net wrote:
+> From: Pavel Tatashin <pasha.tatashin@oracle.com>
 > 
-> This first reg is inside GCC though? Why isn't it added to the gcc
-> sdm845 driver? And then the next two might make sense as a different
-> region, but the reg property ending in 20 looks really weird.
->
-I have moved the GCC registers in the GCC driver with a device tree 
-property flag. And also have mapped the lpass_qdsp6ss CC region.
+> zone->node is configured only when CONFIG_NUMA=y, so it is a good idea to
+> have inline functions to access this field in order to avoid ifdef's in
+> c files.
 
->> +                       <0x17300020 0x20>;
->> +               reg-names = "lpass_gcc", "lpass_cc", "lpass_qdsp6ss";
->> +               #clock-cells = <1>;
->> +       };
+Agreed.
 
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
+> Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
+> Signed-off-by: Oscar Salvador <osalvador@suse.de>
+> Reviewed-by: Oscar Salvador <osalvador@suse.de>
+> Acked-by: Michal Hocko <mhocko@suse.com>
 
---
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
