@@ -2,199 +2,188 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF944C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 14:28:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F4023C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 14:29:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D90E21761
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 14:28:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C12821771
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 14:29:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="P3JAPpoy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D90E21761
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="gZcIw8qP";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Uf8zlbU3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C12821771
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732329AbeHCQYq (ORCPT
+        id S1732359AbeHCQZo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 12:24:46 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:37917 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732090AbeHCQYq (ORCPT
+        Fri, 3 Aug 2018 12:25:44 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:52728 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732090AbeHCQZo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 12:24:46 -0400
-Received: by mail-io0-f195.google.com with SMTP id v26-v6so5126885iog.5
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Aug 2018 07:28:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=FD9yMlAWPygbUY04RhS908gkGVyFDqkZ4jDUfIZqzK0=;
-        b=P3JAPpoyEt6n69z/tU4h4LQAN4lfz37yRMvb6LPyyIOQojCm6sv3Szbq1Vl70dQ9Vr
-         dpAPfHgFr0obDo4dCt+z1PS+ThnAbgBf2tbxqwcjg8sGrBts0+pZZpEwMfVYaq/FxgA4
-         rW7g4TuAI6dZmJ8qKO8U0Wywo2Lf4FrFaeb/A=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=FD9yMlAWPygbUY04RhS908gkGVyFDqkZ4jDUfIZqzK0=;
-        b=czDWVm+BIzLnE4gwOA88wS9b7B0mFAaOmNWXfmRpYa4mdyUSeYCdJ757UNmr1/TieD
-         pHNeXBd2ZrfQEbjt3TfOhBw0dT6YXF4VUuPrHGj1QfJZ3JTPAipuoQbfvI9lgGBFDPI5
-         +/jUyNMa3012xgQpeqlZmxfKbYxJCB8VAleYx/OvC/xVhwI5Q8kZwKg8IqPxRBjveCnw
-         CR6gsR2TWCqzO42B0urNOAHD+lyY4Jr71sHtJruIbx4n/2alcsWo4dO6KXMKKsCPbNwW
-         2U4Jk3qgpDdZgbqT+C3sIjshaQnFBcQ/JDk9GsLJJeZ/maxtXdRnSLOKyqbG3v7kBv+5
-         gi1Q==
-X-Gm-Message-State: AOUpUlHBCkqiDnICS+e+0D31dqDqbX6P9YSSzSjtDXrUCE3OsphJyeIb
-        DFDOfTKgXkzu3iR1s8y52+pdLi7prsputM7X41/PBQ==
-X-Google-Smtp-Source: AA+uWPz1ht20PpxWuKYRISDX2TWkHTDTQok0INTceWRwv58fX62sQCOnAWT9Fb1OXdHWhbcLNKp1lJHLEyUlS3A4xuk=
-X-Received: by 2002:a6b:e403:: with SMTP id u3-v6mr6039571iog.131.1533306490489;
- Fri, 03 Aug 2018 07:28:10 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a02:2b03:0:0:0:0:0 with HTTP; Fri, 3 Aug 2018 07:28:09 -0700 (PDT)
-In-Reply-To: <10360149.m4MlxDWZY5@aspire.rjw.lan>
-References: <20180620172226.15012-1-ulf.hansson@linaro.org>
- <20180620172226.15012-8-ulf.hansson@linaro.org> <3574880.GjmnMm1lMq@aspire.rjw.lan>
- <10360149.m4MlxDWZY5@aspire.rjw.lan>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Fri, 3 Aug 2018 16:28:09 +0200
-Message-ID: <CAPDyKFonHYSq32WxvB1x5PXissXZvraqazgU_ZyLR=tsyD9vAA@mail.gmail.com>
-Subject: Re: [PATCH v8 07/26] PM / Domains: Add genpd governor for CPUs
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Lina Iyer <ilina@codeaurora.org>,
-        Lina Iyer <lina.iyer@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Juri Lelli <juri.lelli@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 3 Aug 2018 12:25:44 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 6B3D86071C; Fri,  3 Aug 2018 14:29:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1533306548;
+        bh=7+xVB9xbQfn1uabWLy7CrlOLIz6Djj+QuHXjJXa93Z8=;
+        h=From:To:Cc:Subject:Date:From;
+        b=gZcIw8qPM4HWhN9ldu19f4M12hTSz6WuyVY1Uo0fQhbfW8N8/yYQsPRC7WMF6bt9M
+         eSVFu2caRfvcRrvVrxcZabiQm++KXOxf0d8SwfL1ndZ4NLeX2kuYt+VG12Gc/kJ2aJ
+         7EkWEq9QPE2AOxrASk+uc8LurKy6nKQQBeJfn6hc=
+Received: from blr-ubuntu-253.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: saiprakash.ranjan@codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 71FB360264;
+        Fri,  3 Aug 2018 14:29:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1533306546;
+        bh=7+xVB9xbQfn1uabWLy7CrlOLIz6Djj+QuHXjJXa93Z8=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Uf8zlbU37cyQq9U+mR9rJDOQbpZaq+cHCbx641vsEuHuuotXJvJ/U7uuGN/BYPC/T
+         h5oSCuaf7zZbiRB4k4cqI3lbtSYDwO3pwcMGGjnQ04C5m3sHiwIcPVfdFEaw/aI6Ow
+         WnamlprBTnOS2d96Xkr+ArvtPRsEomrcoCsNmvkA=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 71FB360264
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
+From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+To:     Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>,
+        Jason Baron <jbaron@akamai.com>,
+        Tony Luck <tony.luck@intel.com>, Arnd Bergmann <arnd@arndb.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Joe Perches <joe@perches.com>,
+        Jim Cromie <jim.cromie@gmail.com>
+Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Sibi Sankar <sibis@codeaurora.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+Subject: [RFC PATCH 0/3] Register read/write tracing with dynamic debug and pstore
+Date:   Fri,  3 Aug 2018 19:58:41 +0530
+Message-Id: <cover.1533211508.git.saiprakash.ranjan@codeaurora.org>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26 July 2018 at 11:14, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
-> On Thursday, July 19, 2018 12:32:52 PM CEST Rafael J. Wysocki wrote:
->> On Wednesday, June 20, 2018 7:22:07 PM CEST Ulf Hansson wrote:
->> > As it's now perfectly possible that a PM domain managed by genpd contains
->> > devices belonging to CPUs, we should start to take into account the
->> > residency values for the idle states during the state selection process.
->> > The residency value specifies the minimum duration of time, the CPU or a
->> > group of CPUs, needs to spend in an idle state to not waste energy entering
->> > it.
->> >
->> > To deal with this, let's add a new genpd governor, pm_domain_cpu_gov, that
->> > may be used for a PM domain that have CPU devices attached or if the CPUs
->> > are attached through subdomains.
->> >
->> > The new governor computes the minimum expected idle duration time for the
->> > online CPUs being attached to the PM domain and its subdomains. Then in the
->> > state selection process, trying the deepest state first, it verifies that
->> > the idle duration time satisfies the state's residency value.
->> >
->> > It should be noted that, when computing the minimum expected idle duration
->> > time, we use the information from tick_nohz_get_next_wakeup(), to find the
->> > next wakeup for the related CPUs. Future wise, this may deserve to be
->> > improved, as there are more reasons to why a CPU may be woken up from idle.
->> >
->> > Cc: Thomas Gleixner <tglx@linutronix.de>
->> > Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
->> > Cc: Lina Iyer <ilina@codeaurora.org>
->> > Cc: Frederic Weisbecker <fweisbec@gmail.com>
->> > Cc: Ingo Molnar <mingo@kernel.org>
->> > Co-developed-by: Lina Iyer <lina.iyer@linaro.org>
->> > Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
->> > ---
->> >  drivers/base/power/domain_governor.c | 58 ++++++++++++++++++++++++++++
->> >  include/linux/pm_domain.h            |  2 +
->> >  2 files changed, 60 insertions(+)
->> >
->> > diff --git a/drivers/base/power/domain_governor.c b/drivers/base/power/domain_governor.c
->> > index 99896fbf18e4..1aad55719537 100644
->> > --- a/drivers/base/power/domain_governor.c
->> > +++ b/drivers/base/power/domain_governor.c
->> > @@ -10,6 +10,9 @@
->> >  #include <linux/pm_domain.h>
->> >  #include <linux/pm_qos.h>
->> >  #include <linux/hrtimer.h>
->> > +#include <linux/cpumask.h>
->> > +#include <linux/ktime.h>
->> > +#include <linux/tick.h>
->> >
->> >  static int dev_update_qos_constraint(struct device *dev, void *data)
->> >  {
->> > @@ -245,6 +248,56 @@ static bool always_on_power_down_ok(struct dev_pm_domain *domain)
->> >     return false;
->> >  }
->> >
->> > +static bool cpu_power_down_ok(struct dev_pm_domain *pd)
->> > +{
->> > +   struct generic_pm_domain *genpd = pd_to_genpd(pd);
->> > +   ktime_t domain_wakeup, cpu_wakeup;
->> > +   s64 idle_duration_ns;
->> > +   int cpu, i;
->> > +
->> > +   if (!(genpd->flags & GENPD_FLAG_CPU_DOMAIN))
->> > +           return true;
->> > +
->> > +   /*
->> > +    * Find the next wakeup for any of the online CPUs within the PM domain
->> > +    * and its subdomains. Note, we only need the genpd->cpus, as it already
->> > +    * contains a mask of all CPUs from subdomains.
->> > +    */
->> > +   domain_wakeup = ktime_set(KTIME_SEC_MAX, 0);
->> > +   for_each_cpu_and(cpu, genpd->cpus, cpu_online_mask) {
->> > +           cpu_wakeup = tick_nohz_get_next_wakeup(cpu);
->> > +           if (ktime_before(cpu_wakeup, domain_wakeup))
->> > +                   domain_wakeup = cpu_wakeup;
->> > +   }
->
-> Here's a concern I have missed before. :-/
->
-> Say, one of the CPUs you're walking here is woken up in the meantime.
+Hi,
 
-Yes, that can happen - when we miss-predicted "next wakeup".
+This patch series adds a new tracing facility for register reads and writes called
+Register Trace Buffer(RTB).
 
->
-> I don't think it is valid to evaluate tick_nohz_get_next_wakeup() for it then
-> to update domain_wakeup.  We really should just avoid the domain power off in
-> that case at all IMO.
+We also add pstore support through which we can save all register read/write logs into a
+persistent ram buffer that can be dumped after reboot.
 
-Correct.
+It can be used to determine from where register was read/written before unclocked
+access or some kind of bus hang or an unexpected reset caused by some buggy driver
+which happens a lot during initial development stages.
 
-However, we also want to avoid locking contentions in the idle path,
-which is what this boils done to.
+In addition to this, we provide dynamic debug support to filter out unwanted logs
+and limit trace to only specific files or directories since there can be aweful
+lot of register events and we will be interested only in specific drivers or subsystems
+which we will be working on. Last few RTB entries will give us the hint for debugging.
+With dynamic debug, we are also reducing the overhead of tracing considerably.
 
->
-> Sure enough, if the domain power off is already started and one of the CPUs
-> in the domain is woken up then, too bad, it will suffer the latency (but in
-> that case the hardware should be able to help somewhat), but otherwise CPU
-> wakeup should prevent domain power off from being carried out.
+Also as a bonus, this tracing can be extended to include IRQ, printk, context switch
+and lot other things with proper hooks. It can be very helpful for real case debug scenarios.
 
-The CPU is not prevented from waking up, as we rely on the FW to deal with that.
+Below is a simple example of identifying cause for bus hang in qcom mdp tested on db410c.
+This hang was intentionally introduced just to show the usecase of RTB.
+The module used can be found here: https://github.com/saiprakash-ranjan/Bus-Hang which does
+an unclocked access and will reset db410c and later logs can be viewed through pstore.
 
-Even if the above computation turns out to wrongly suggest that the
-cluster can be powered off, the FW shall together with the genpd
-backend driver prevent it.
+Note: I just copied bus_hang.c to drivers/soc/qcom and built it.
 
-To cover this case for PSCI, we also use a per cpu variable for the
-CPU's power off state, as can be seen later in the series.
+1) Set bootargs with dyndbg parameter as below:
 
-Hope this clarifies your concern, else tell and will to elaborate a bit more.
+   # dyndbg="file drivers/soc/qcom/* +p"
 
-Kind regards
-Uffe
+2) Bus hang by reading below debugfs entry with bus_hang module.
+
+   # cat /sys/kernel/debug/hang/bus_hang
+
+3) After restart, we can find the cause in last entry i.e. (bus_hang_mdp+0x98/0xb0)
+
+   # cat /sys/fs/pstore/rtb-ramoops-0
+   [LOGK_WRITEL ] ts:1373101930  data:ffff00000cd065a4  <ffff00000867cb44>  qcom_smsm_probe+0x51c/0x668
+   [LOGK_WRITEL ] ts:1373311878  data:ffff00000cd06608  <ffff00000867cb44>  qcom_smsm_probe+0x51c/0x668
+   [LOGK_READL  ] ts:18177142294  data:ffff00000ab85040 <ffff00000867cdc8>  bus_hang_mdp+0x98/0xb0
+
+4) Offending register access found as below:
+
+   # (gdb)
+   # (gdb) list *(bus_hang_mdp+0x98)
+   # 0xffff00000867cdc8 is in bus_hang_mdp (drivers/soc/qcom/bus_hang.c:10).
+   # 5       static int bus_hang_mdp(void *data, u64 *val)
+   # 6       {
+   # 7               void *p = ioremap(0x01a01000, SZ_4K);
+   # 8               unsigned int a;
+   # 9
+   # 10              a = __raw_readl((void *)((unsigned long)p + 0x40));  <----
+   # 11
+   # 12              *val = a;
+   # 13
+   # 14              return 0;
+   # (gdb)
+
+There will be a lot more real usecases where RTB can be used. Maybe we can test on other boards as well.
+
+Patchwise one line description is given below:
+
+This trace module is based on RTB driver in CAF.
+Link: https://source.codeaurora.org/quic/la/kernel/msm-4.9/tree/kernel/trace/msm_rtb.c
+
+Patch 1 provides the api called uncached_logk which can be used to log register accesses.
+
+Patch 2 adds the pstore support for viewing the logs.
+
+Patch 3 adds dynamic debug support to filter the register readl/writel access.
+
+Sai Prakash Ranjan (3):
+  tracing: Add support for logging data to uncached buffer
+  pstore: Add register readl/writel tracing support
+  dynamic_debug: Add support for dynamic register trace
+
+ .../bindings/reserved-memory/ramoops.txt      |   7 +-
+ arch/arm64/include/asm/io.h                   |  93 ++++++++++
+ fs/pstore/Kconfig                             |  12 ++
+ fs/pstore/Makefile                            |   1 +
+ fs/pstore/inode.c                             |  71 +++++++-
+ fs/pstore/internal.h                          |   8 +
+ fs/pstore/platform.c                          |   4 +
+ fs/pstore/ram.c                               |  42 ++++-
+ fs/pstore/rtb.c                               |  45 +++++
+ include/linux/dynamic_debug.h                 |  10 ++
+ include/linux/pstore.h                        |   2 +
+ include/linux/pstore_ram.h                    |   1 +
+ include/linux/rtb.h                           |  31 ++++
+ kernel/trace/Kconfig                          |   8 +
+ kernel/trace/Makefile                         |   2 +
+ kernel/trace/trace_rtb.c                      | 163 ++++++++++++++++++
+ 16 files changed, 495 insertions(+), 5 deletions(-)
+ create mode 100644 fs/pstore/rtb.c
+ create mode 100644 include/linux/rtb.h
+ create mode 100644 kernel/trace/trace_rtb.c
+
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
+
