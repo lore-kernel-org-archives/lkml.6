@@ -3,112 +3,137 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D91FC28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 19:17:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57370C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 19:18:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE023217A2
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 19:17:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE023217A2
+	by mail.kernel.org (Postfix) with ESMTP id 111F8208B2
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 19:18:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 111F8208B2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731507AbeHCVPO (ORCPT
+        id S1731955AbeHCVQP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 17:15:14 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52362 "EHLO mx1.redhat.com"
+        Fri, 3 Aug 2018 17:16:15 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54924 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728324AbeHCVPO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 17:15:14 -0400
+        id S1728324AbeHCVQP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 17:16:15 -0400
 Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 16564818533A;
-        Fri,  3 Aug 2018 19:17:38 +0000 (UTC)
-Received: from redhat.com (ovpn-117-153.ams2.redhat.com [10.36.117.153])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 518732026D65;
-        Fri,  3 Aug 2018 19:17:33 +0000 (UTC)
-Date:   Fri, 3 Aug 2018 22:17:32 +0300
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        aik@ozlabs.ru, robh@kernel.org, joe@perches.com,
-        elfring@users.sourceforge.net, david@gibson.dropbear.id.au,
-        jasowang@redhat.com, mpe@ellerman.id.au, linuxram@us.ibm.com,
-        haren@linux.vnet.ibm.com, paulus@samba.org,
-        srikar@linux.vnet.ibm.com, robin.murphy@arm.com,
-        jean-philippe.brucker@arm.com, marc.zyngier@arm.com
-Subject: Re: [RFC 0/4] Virtio uses DMA API for all devices
-Message-ID: <20180803221634-mutt-send-email-mst@kernel.org>
-References: <20180801081637.GA14438@arm.com>
- <20180801083639.GF26378@infradead.org>
- <26c1d3d50d8e081eed44fe9940fbefed34598cbd.camel@kernel.crashing.org>
- <20180802182959-mutt-send-email-mst@kernel.org>
- <82ccef6ec3d95ee43f3990a4a2d0aea87eb45e89.camel@kernel.crashing.org>
- <20180802200646-mutt-send-email-mst@kernel.org>
- <e9beb6bba5a7d05741e27e85b24a3b23ba7c2762.camel@kernel.crashing.org>
- <20180802225738-mutt-send-email-mst@kernel.org>
- <de4888b6457e220776e16a9c8958ff0886ffc66c.camel@kernel.crashing.org>
- <20180803070507.GA1344@infradead.org>
+        by mx1.redhat.com (Postfix) with ESMTPS id D297C4021CC2;
+        Fri,  3 Aug 2018 19:18:37 +0000 (UTC)
+Received: from [10.40.204.20] (ovpn-204-20.brq.redhat.com [10.40.204.20])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 366752026D65;
+        Fri,  3 Aug 2018 19:18:36 +0000 (UTC)
+Subject: Re: [dm-devel] LVM snapshot broke between 4.14 and 4.16
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Jens Axboe <axboe@kernel.dk>, Sagi Grimberg <sagi@grimberg.me>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>, dm-devel@redhat.com,
+        Ilya Dryomov <idryomov@gmail.com>, wgh@torlan.ru
+References: <226835ba-2197-b850-6e5b-8ba14f7fd016@torlan.ru>
+ <CAOi1vP_tYG77e71CdDiOcszSSEWrp9Vfi+KB7yFAXVQChkjP5A@mail.gmail.com>
+ <93bff248-6897-4867-841b-2dace11597de@torlan.ru>
+ <CA+55aFyAox9BTDpRsqLXiROhHOX60aa45LEZ7Azteaumdu11Fw@mail.gmail.com>
+ <CAOi1vP-SJO4AMK=XD3Lmja++2dQqoiw6Zn8Vgxf8OfvYgnuC6Q@mail.gmail.com>
+ <CA+55aFy2DR9fxHhmGq+azSjX9D71YtLsuFKmoEuYW3uTAUYtJg@mail.gmail.com>
+ <d76415de-2056-c7d6-cc88-b896deaa8ead@torlan.ru>
+ <1ec0a220-d5b0-1c27-e63b-c4d3f4ce9d77@torlan.ru>
+ <CA+55aFyPVQ5-gA93irsaxPC9BNQxnGWrDDHPMUYai2kxKiaKWQ@mail.gmail.com>
+ <b2bbd8ec-ac5b-fa8a-d3f7-8615d87f73c3@redhat.com>
+ <CA+55aFwWZX=CXmWDTkDGb36kf12XmTehmQjbiMPCqCRG2hi9kw@mail.gmail.com>
+From:   Zdenek Kabelac <zkabelac@redhat.com>
+Organization: Red Hat
+Message-ID: <bc71118d-3003-6260-6ab3-ddcc4277aeed@redhat.com>
+Date:   Fri, 3 Aug 2018 21:18:35 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180803070507.GA1344@infradead.org>
+In-Reply-To: <CA+55aFwWZX=CXmWDTkDGb36kf12XmTehmQjbiMPCqCRG2hi9kw@mail.gmail.com>
+Content-Type: text/plain; charset=iso-8859-2; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Fri, 03 Aug 2018 19:17:38 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Fri, 03 Aug 2018 19:17:38 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mst@redhat.com' RCPT:''
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Fri, 03 Aug 2018 19:18:37 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Fri, 03 Aug 2018 19:18:37 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'zkabelac@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 03, 2018 at 12:05:07AM -0700, Christoph Hellwig wrote:
-> On Thu, Aug 02, 2018 at 04:13:09PM -0500, Benjamin Herrenschmidt wrote:
-> > So let's differenciate the two problems of having an IOMMU (real or
-> > emulated) which indeeds adds overhead etc... and using the DMA API.
-> > 
-> > At the moment, virtio does this all over the place:
-> > 
-> > 	if (use_dma_api)
-> > 		dma_map/alloc_something(...)
-> > 	else
-> > 		use_pa
-> > 
-> > The idea of the patch set is to do two, somewhat orthogonal, changes
-> > that together achieve what we want. Let me know where you think there
-> > is "a bunch of issues" because I'm missing it:
-> > 
-> >  1- Replace the above if/else constructs with just calling the DMA API,
-> > and have virtio, at initialization, hookup its own dma_ops that just
-> > "return pa" (roughly) when the IOMMU stuff isn't used.
-> > 
-> > This adds an indirect function call to the path that previously didn't
-> > have one (the else case above). Is that a significant/measurable
-> > overhead ?
+Dne 3.8.2018 v 18:37 Linus Torvalds napsal(a):
+> [ Dammit. I haven't had to shout and curse at people for a while, but
+> this is ABSOLUTELY THE MOST IMPORTANT THING IN THE UNIVERSE WHEN IT
+> COMES TO SOFTWARE DEVELOPMENT ]
 > 
-> If you call it often enough it does:
+> On Fri, Aug 3, 2018 at 6:31 AM Zdenek Kabelac <zkabelac@redhat.com> wrote:
+>>
+>> IMHO (as the author of fixing lvm2 patch) user should not be upgrading kernels
+>> and keep running older lvm2 user-land tool (and there are very good reasons
+>> for this).
 > 
-> https://www.spinics.net/lists/netdev/msg495413.html
+> Yeah, HELL NO!
 > 
-> >  2- Make virtio use the DMA API with our custom platform-provided
-> > swiotlb callbacks when needed, that is when not using IOMMU *and*
-> > running on a secure VM in our case.
+> Guess what? You're wrong. YOU ARE MISSING THE #1 KERNEL RULE.
 > 
-> And total NAK the customer platform-provided part of this.  We need
-> a flag passed in from the hypervisor that the device needs all bus
-> specific dma api treatment, and then just use the normal plaform
-> dma mapping setup.  To get swiotlb you'll need to then use the DT/ACPI
-> dma-range property to limit the addressable range, and a swiotlb
-> capable plaform will use swiotlb automatically.
+> We do not regress, and we do not regress exactly because your are 100% wrong.
+> 
 
-It seems reasonable to teach a platform to override dma-range
-for a specific device e.g. in case it knows about bugs in ACPI.
+Hi Linus
 
--- 
-MST
+Sorry to hear you so crazy about this :) -  but my comment was mainly targeted 
+to 'distribution maintainers'  trying to push the latest kernel and preserving 
+old tools  (not providing upgraded packages).   If it's worth to upgrade 
+kernel - it should be worth to upgrade surrounding packages, especially if 
+they are very tightly bind to work with kernel.
+
+I just think you are overreacting here and you could trust me I personally do 
+A LOT to keep everything as much usable & compatible in lvm2 as we can across 
+all kernels, all distributions and many architectures.
+
+Lvm2 is always tracking individual bugs in kernel and reports them to user or 
+tries to bypass...
+
+>> Kernel had a bug which has been fixed
+> 
+> That is *ENTIRELY* immaterial.
+> 
+> Guys, whether something was buggy or not DOES NOT MATTER.
+> 
+> Why?
+> 
+> Bugs happen. That's a fact of life. Arguing that "we had to break
+> something because we were fixing a bug" is completely insane. We fix
+> tens of bugs every single day, thinking that "fixing a bug" means that
+> we can break something is simply NOT TRUE.
+
+ From my userland POV - leaving kernel write to devices that are supposed to 
+be read-only  'just because' it's kernel is wrong - the fact it has NOT been 
+discover for so long means - there are not many users and not many testers of 
+this combination.
+
+But if kernel people do want to make a big stress case about this - I'm the 
+last one to object - I'm just unsure what kind of bugs are supposed to be 
+preserved and how it's going to be recognized which bugs are usable and which 
+are fixable....
+
+On a funny note - security exploits had also many users - so why fixing them....
+
+
+> So no. Your rule is COMPLETELY wrong. If you cannot upgrade a kernel
+> without upgrading some other random binary, then we have a problem.
+
+It's was not meant as a rule, just recommendation - and I think we can end up 
+this fight over nothing here - there is probably very low number of users of 
+this combination....
+
+
+Regards
+
+
+Zdenek
