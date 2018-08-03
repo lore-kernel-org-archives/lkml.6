@@ -2,150 +2,101 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEFBEC28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 11:09:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80E7DC28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 11:10:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A3D32173F
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 11:09:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A3D32173F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
+	by mail.kernel.org (Postfix) with ESMTP id A5D2E2175D
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 11:10:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5D2E2175D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727473AbeHCNFQ (ORCPT
+        id S1727532AbeHCNGW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 09:05:16 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:40657 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726698AbeHCNFQ (ORCPT
+        Fri, 3 Aug 2018 09:06:22 -0400
+Received: from eu-smtp-delivery-211.mimecast.com ([207.82.80.211]:55562 "EHLO
+        eu-smtp-delivery-211.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727184AbeHCNGW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 09:05:16 -0400
-Received: by mail-lf1-f65.google.com with SMTP id y200-v6so3771223lfd.7;
-        Fri, 03 Aug 2018 04:09:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=9msh/sUMmBfjN3v+w61oDS3q1DpWTifVmR6uNOLYVgI=;
-        b=mCEITFADYnH0+Nt16njNB1AVNsMEevCoRY60HWYHowKdZ9ckeG0QpKnVRr1pE24BNG
-         QDXdP1ct7B9n2IkipmQvBH1wbkxWDe1p8D/TIydrV0iiwlBtt49QSD7g7sVipK4oKl9L
-         ysZQlrMhNo7zfvHLo0c7NyZYpLDR0U4CvaohGYxRfIw0atTirSK4Ff+/ddYKTP7ySXDj
-         p9ph/WcVFhLG8+ZU+CanUrRJWSm/LhtjGmBHlM8noN8FOCN4l2NeFMRUGDGOEFfSyO94
-         7g4tWoIRhjGcasRypXemPRB8vC5lV0MtrUniB+fBsL/ynCyoub4F8ZdyR3T8ynSGS+Mw
-         y+LA==
-X-Gm-Message-State: AOUpUlHcSQG3oX0Nf7cgbfqBe4EB1UC5ccHASQ5QtkEB6CGAZWr3vosU
-        GyIYsoEd1w/D1WJ+5JDi0Ks=
-X-Google-Smtp-Source: AAOMgpdEx28EB3ytRrpz0DwRn2Sy2N2Pd2W8k7dwVdj9nRWlaKICvHxrqXvzp7tXI/QdUorM7CBeuw==
-X-Received: by 2002:a19:6b03:: with SMTP id d3-v6mr4240277lfa.81.1533294564715;
-        Fri, 03 Aug 2018 04:09:24 -0700 (PDT)
-Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id b24-v6sm870809lji.13.2018.08.03.04.09.23
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 03 Aug 2018 04:09:24 -0700 (PDT)
-Date:   Fri, 3 Aug 2018 14:09:12 +0300
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        eballetbo@gmail.com, linus.walleij@linaro.org,
-        mazziesaccount@gmail.com, dmitry.torokhov@gmail.com
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, sboyd@kernel.org, broonie@kernel.org,
-        linux-input@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
-        heikki.haikola@fi.rohmeurope.com
-Subject: [PATCH v12 2/2] mfd: bd71837: Devicetree bindings for ROHM BD71837
- PMIC
-Message-ID: <d053f54e5ce726ffaa95fbd9c20962a49dd1ee07.1533292711.git.matti.vaittinen@fi.rohmeurope.com>
-References: <cover.1533292711.git.matti.vaittinen@fi.rohmeurope.com>
+        Fri, 3 Aug 2018 09:06:22 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by eu-smtp-1.mimecast.com with ESMTP id
+ uk-mta-22-6NjIHZlePjGB6OJdcNaijQ-1; Fri, 03 Aug 2018 12:10:30 +0100
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b::d117) by AcuMS.aculab.com
+ (fd9f:af1c:a25b::d117) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri,
+ 3 Aug 2018 12:12:06 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Fri, 3 Aug 2018 12:12:06 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     "'maninder1.s@samsung.com'" <maninder1.s@samsung.com>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "shuahkh@osg.samsung.com" <shuahkh@osg.samsung.com>
+CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "edumazet@google.com" <edumazet@google.com>,
+        PANKAJ MISHRA <pankaj.m@samsung.com>,
+        AMIT SAHRAWAT <a.sahrawat@samsung.com>,
+        Vaneet Narang <v.narang@samsung.com>
+Subject: RE: [PATCH 1/1] selftest/net: fix FILE_SIZE for 32 bit architecture.
+Thread-Topic: [PATCH 1/1] selftest/net: fix FILE_SIZE for 32 bit architecture.
+Thread-Index: AQHUKtvZkUY9sIl4kkCbZJKY4M717aSt33bA
+Date:   Fri, 3 Aug 2018 11:12:06 +0000
+Message-ID: <4f2c8d694dce4125a609e8d5383ebe36@AcuMS.aculab.com>
+References: <4a412194-99aa-7969-54a4-727368fbf82c@gmail.com>
+        <20180802103616epcas5p48ec1e2ea3568b11683aa7b55254dffb0~HCuTv0d7l2131721317epcas5p4u@epcas5p4.samsung.com>
+        <CGME20180802103616epcas5p48ec1e2ea3568b11683aa7b55254dffb0@epcms5p1>
+ <20180803033159epcms5p1dd2f5a6834268e9a22efa15421795fa0@epcms5p1>
+In-Reply-To: <20180803033159epcms5p1dd2f5a6834268e9a22efa15421795fa0@epcms5p1>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.33]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1533292711.git.matti.vaittinen@fi.rohmeurope.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+X-MC-Unique: 6NjIHZlePjGB6OJdcNaijQ-1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Document devicetree bindings for ROHM BD71837 PMIC MFD.
-
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
----
- .../devicetree/bindings/mfd/rohm,bd71837-pmic.txt  | 62 ++++++++++++++++++++++
- 1 file changed, 62 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
-
-diff --git a/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt b/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
-new file mode 100644
-index 000000000000..3ca56fdb5ffe
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
-@@ -0,0 +1,62 @@
-+* ROHM BD71837 Power Management Integrated Circuit bindings
-+
-+BD71837MWV is a programmable Power Management IC for powering single-core,
-+dual-core, and quad-core SoCs such as NXP-i.MX 8M. It is optimized for
-+low BOM cost and compact solution footprint. It integrates 8 Buck
-+egulators and 7 LDOs to provide all the power rails required by the SoC and
-+the commonly used peripherals.
-+
-+Datasheet for PMIC is available at:
-+https://www.rohm.com/datasheet/BD71837MWV/bd71837mwv-e
-+
-+Required properties:
-+ - compatible		: Should be "rohm,bd71837".
-+ - reg			: I2C slave address.
-+ - interrupt-parent	: Phandle to the parent interrupt controller.
-+ - interrupts		: The interrupt line the device is connected to.
-+ - clocks		: The parent clock connected to PMIC. If this is missing
-+			  32768 KHz clock is assumed.
-+ - #clock-cells		: Should be 0.
-+ - regulators:		: List of child nodes that specify the regulators.
-+			  Please see ../regulator/rohm,bd71837-regulator.txt
-+
-+Optional properties:
-+- clock-output-names	: Should contain name for output clock.
-+
-+Example:
-+
-+	/* external oscillator node */
-+	osc: oscillator {
-+		compatible = "fixed-clock";
-+		#clock-cells = <1>;
-+		clock-frequency  = <32768>;
-+		clock-output-names = "osc";
-+	};
-+
-+	pmic: pmic@4b {
-+		compatible = "rohm,bd71837";
-+		reg = <0x4b>;
-+		interrupt-parent = <&gpio1>;
-+		interrupts = <29 GPIO_ACTIVE_LOW>;
-+		interrupt-names = "irq";
-+		#clock-cells = <0>;
-+		clocks = <&osc 0>;
-+		clock-output-names = "bd71837-32k-out";
-+
-+		regulators {
-+			buck1: BUCK1 {
-+				regulator-name = "buck1";
-+				regulator-min-microvolt = <700000>;
-+				regulator-max-microvolt = <1300000>;
-+				regulator-boot-on;
-+				regulator-ramp-delay = <1250>;
-+			};
-+		};
-+	};
-+
-+	/* Clock consumer node */
-+	rtc@0 {
-+		compatible = "company,my-rtc";
-+		clock-names = "my-clock";
-+		clocks = <&pmic>;
-+	};
--- 
-2.14.3
+RnJvbTogTWFuaW5kZXIgU2luZ2gNCj4gU2VudDogMDMgQXVndXN0IDIwMTggMDQ6MzINCj4gPk9u
+IDA4LzAyLzIwMTggMDM6MzEgQU0sIE1hbmluZGVyIFNpbmdoIHdyb3RlOg0KPiA+PiBGSUxFX1Na
+IGlzIGRlZmluZWQgYXMgKDFVTCA8PCAzNSksIGl0IHdpbGwgb3ZlcmZsb3cNCj4gPj4gZm9yIDMy
+IGJpdCBzeXN0ZW0gYW5kIGxvZ2ljIHdpbGwgYnJlYWsuDQo+ID4+DQo+ID4+IFNpZ25lZC1vZmYt
+Ynk6IE1hbmluZGVyIFNpbmdoIDxtYW5pbmRlcjEuc0BzYW1zdW5nLmNvbT4NCj4gPj4gU2lnbmVk
+LW9mZi1ieTogVmFuZWV0IE5hcmFuZyA8di5uYXJhbmdAc2Ftc3VuZy5jb20+DQo+ID4+IC0tLQ0K
+PiA+PiAgdG9vbHMvdGVzdGluZy9zZWxmdGVzdHMvbmV0L3RjcF9tbWFwLmMgfCA4ICsrKystLS0t
+DQo+ID4+ICAxIGZpbGUgY2hhbmdlZCwgNCBpbnNlcnRpb25zKCspLCA0IGRlbGV0aW9ucygtKQ0K
+PiA+Pg0KPiA+PiBkaWZmIC0tZ2l0IGEvdG9vbHMvdGVzdGluZy9zZWxmdGVzdHMvbmV0L3RjcF9t
+bWFwLmMgYi90b29scy90ZXN0aW5nL3NlbGZ0ZXN0cy9uZXQvdGNwX21tYXAuYw0KPiA+PiBpbmRl
+eCBlOGM1ZGZmLi4xZDZjYTEyIDEwMDY0NA0KPiA+PiAtLS0gYS90b29scy90ZXN0aW5nL3NlbGZ0
+ZXN0cy9uZXQvdGNwX21tYXAuYw0KPiA+PiArKysgYi90b29scy90ZXN0aW5nL3NlbGZ0ZXN0cy9u
+ZXQvdGNwX21tYXAuYw0KPiA+PiBAQCAtODUsNyArODUsNyBAQA0KPiA+PiAgI2RlZmluZSBNU0df
+WkVST0NPUFkgICAgMHg0MDAwMDAwDQo+ID4+ICAjZW5kaWYNCj4gPj4NCj4gPj4gLSNkZWZpbmUg
+RklMRV9TWiAoMVVMIDw8IDM1KQ0KPiA+PiArI2RlZmluZSBGSUxFX1NaICgxVUxMIDw8IDM1KQ0K
+PiANCj4gLi4uDQo+IC4uLg0KPiA+PiBAQCAtNDMxLDcgKzQzMSw3IEBAIGludCBtYWluKGludCBh
+cmdjLCBjaGFyICphcmd2W10pDQo+ID4+ICAgICAgICAgICAgICAgICAgemZsZyA9IDA7DQo+ID4+
+ICAgICAgICAgIH0NCj4gPj4gICAgICAgICAgd2hpbGUgKHRvdGFsIDwgRklMRV9TWikgew0KPiA+
+PiAtICAgICAgICAgICAgICAgIGxvbmcgd3IgPSBGSUxFX1NaIC0gdG90YWw7DQo+ID4+ICsgICAg
+ICAgICAgICAgICAgdW5zaWduZWQgbG9uZyBsb25nIHdyID0gRklMRV9TWiAtIHRvdGFsOw0KPiA+
+Pg0KPiA+PiAgICAgICAgICAgICAgICAgIGlmICh3ciA+IGNodW5rX3NpemUpDQo+ID4+ICAgICAg
+ICAgICAgICAgICAgICAgICAgICB3ciA9IGNodW5rX3NpemU7DQo+ID4+DQo+ID4NCj4gPldoYXQg
+YWJvdXQgdXNpbmcgbW9yZSBjb252ZW50aW9uYWwgc2l6ZV90IGluc3RlYWQgb2YgInVuc2lnbmVk
+IGxvbmcgbG9uZyIgPw0KPiANCj4gc2l6ZV90IGlzIGFsc28gZXF1aXZhbGVudCB0byB1bnNpZ25l
+ZCBsb25nIGFuZCBpdCB3aWxsIG5vdCBob2xkIHZhbHVlIG9mICgxIDw8IDM1KSBmb3IgMzIgYml0
+IHN5c3RlbS4NCj4gU28gd2UgY2FuIGRvIHR3byB0aGluZ3MuDQoNCldvdWxkbid0IHRoZSAnY29y
+cmVjdCcgdHlwZSBiZSBvZmZfdCA/DQpJbiBhbnkgY2FzZSwgSUlSQywgeW91IGhhdmUgdG8gZG8g
+cmVhbGx5IGhvcnJpZCB0aGluZ3MgaW4gTGludXggdG8NCmFjY2VzcyBmaWxlcyBsYXJnZXIgdGhh
+biAyRyBvbiAzMmJpdCBzeXN0ZW1zLg0KDQoJRGF2aWQNCg0KLQ0KUmVnaXN0ZXJlZCBBZGRyZXNz
+IExha2VzaWRlLCBCcmFtbGV5IFJvYWQsIE1vdW50IEZhcm0sIE1pbHRvbiBLZXluZXMsIE1LMSAx
+UFQsIFVLDQpSZWdpc3RyYXRpb24gTm86IDEzOTczODYgKFdhbGVzKQ0K
 
