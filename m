@@ -2,125 +2,119 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84FF2C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 06:40:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FFDDC28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 06:42:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16401216FD
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 06:40:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16401216FD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 4EF6E216FD
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 06:42:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="HztRA7MI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EF6E216FD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728171AbeHCIes (ORCPT
+        id S1728054AbeHCIho (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 04:34:48 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:10619 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726833AbeHCIer (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 04:34:47 -0400
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id A79A747C5AD49;
-        Fri,  3 Aug 2018 14:39:56 +0800 (CST)
-Received: from localhost (10.177.31.96) by DGGEMS405-HUB.china.huawei.com
- (10.3.19.205) with Microsoft SMTP Server id 14.3.399.0; Fri, 3 Aug 2018
- 14:39:51 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <jdike@addtoit.com>, <richard@nod.at>,
-        <anton.ivanov@cambridgegreys.com>, <christophe.jaillet@wanadoo.fr>,
-        <keescook@chromium.org>
-CC:     <linux-kernel@vger.kernel.org>, <linux-um@lists.infradead.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH] um: NULL check before kfree is not needed
-Date:   Fri, 3 Aug 2018 14:39:11 +0800
-Message-ID: <20180803063911.23384-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        Fri, 3 Aug 2018 04:37:44 -0400
+Received: from ozlabs.org ([203.11.71.1]:48199 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726833AbeHCIho (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 04:37:44 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 41hctP0p31z9s2g;
+        Fri,  3 Aug 2018 16:42:53 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1533278573;
+        bh=KCLzCFHO16+QTpfWVWO1SYnPFYEGzMTD7fVCVcOStus=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=HztRA7MIo9VBaCLwZ8dqoTcrHHdzm4ZFO4o6qRX+gvVxSXWLexE+xFMQiqDd6UEVN
+         TEX5FT/kqX/r/z7dSekr7syO/89Y0odfsduQJH0dn47k4nLtAt0Z9XsMcLymBndg/T
+         ktmCIZWZntE3lk+Lm7BHal4dzErgoA/XuK+biZXSEwlJ5fuoFA6IFBGZw9fADYtm+s
+         SYTcfRjeA2G9Jy6VVC9Pqvjc4yQ9YzLfOyjSuK3xNNE8EymFbQupYGk53R92GJWRX2
+         mm52dDS2HM6DMdJIY+OTz0u3oXTOF9moiW7SfHccwpX/Dz0mKdosCuiz6/VoIAFQhQ
+         8WgeL4N/9NLJA==
+Date:   Fri, 3 Aug 2018 16:42:52 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <james.hogan@imgtec.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Paul Burton <paul.burton@mips.com>
+Subject: Re: linux-next: manual merge of the mips tree with the kbuild tree
+Message-ID: <20180803164252.5f519701@canb.auug.org.au>
+In-Reply-To: <20180803064128.GA1715@lst.de>
+References: <20180803092100.7d0fda13@canb.auug.org.au>
+        <20180803064128.GA1715@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_//6Qid3F994UQa5_AbKl8lym"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-kfree(NULL) is safe,so this removes NULL check before freeing the mem
+--Sig_//6Qid3F994UQa5_AbKl8lym
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- arch/um/drivers/vector_kern.c | 15 +++++----------
- arch/um/drivers/vector_user.c |  6 ++----
- arch/um/kernel/irq.c          |  3 +--
- 3 files changed, 8 insertions(+), 16 deletions(-)
+Hi Christoph,
 
-diff --git a/arch/um/drivers/vector_kern.c b/arch/um/drivers/vector_kern.c
-index 50ee3bb..c84133c 100644
---- a/arch/um/drivers/vector_kern.c
-+++ b/arch/um/drivers/vector_kern.c
-@@ -1118,16 +1118,11 @@ static int vector_net_close(struct net_device *dev)
- 		os_close_file(vp->fds->tx_fd);
- 		vp->fds->tx_fd = -1;
- 	}
--	if (vp->bpf != NULL)
--		kfree(vp->bpf);
--	if (vp->fds->remote_addr != NULL)
--		kfree(vp->fds->remote_addr);
--	if (vp->transport_data != NULL)
--		kfree(vp->transport_data);
--	if (vp->header_rxbuffer != NULL)
--		kfree(vp->header_rxbuffer);
--	if (vp->header_txbuffer != NULL)
--		kfree(vp->header_txbuffer);
-+	kfree(vp->bpf);
-+	kfree(vp->fds->remote_addr);
-+	kfree(vp->transport_data);
-+	kfree(vp->header_rxbuffer);
-+	kfree(vp->header_txbuffer);
- 	if (vp->rx_queue != NULL)
- 		destroy_queue(vp->rx_queue);
- 	if (vp->tx_queue != NULL)
-diff --git a/arch/um/drivers/vector_user.c b/arch/um/drivers/vector_user.c
-index 4d6a78e..3d8cdbd 100644
---- a/arch/um/drivers/vector_user.c
-+++ b/arch/um/drivers/vector_user.c
-@@ -267,8 +267,7 @@ static struct vector_fds *user_init_raw_fds(struct arglist *ifspec)
- 		os_close_file(rxfd);
- 	if (txfd >= 0)
- 		os_close_file(txfd);
--	if (result != NULL)
--		kfree(result);
-+	kfree(result);
- 	return NULL;
- }
- 
-@@ -434,8 +433,7 @@ static struct vector_fds *user_init_socket_fds(struct arglist *ifspec, int id)
- 	if (fd >= 0)
- 		os_close_file(fd);
- 	if (result != NULL) {
--		if (result->remote_addr != NULL)
--			kfree(result->remote_addr);
-+		kfree(result->remote_addr);
- 		kfree(result);
- 	}
- 	return NULL;
-diff --git a/arch/um/kernel/irq.c b/arch/um/kernel/irq.c
-index 6b7f382..8360fa3 100644
---- a/arch/um/kernel/irq.c
-+++ b/arch/um/kernel/irq.c
-@@ -244,8 +244,7 @@ static void garbage_collect_irq_entries(void)
- 			to_free = NULL;
- 		}
- 		walk = walk->next;
--		if (to_free != NULL)
--			kfree(to_free);
-+		kfree(to_free);
- 	}
- }
- 
--- 
-2.7.0
+On Fri, 3 Aug 2018 08:41:28 +0200 Christoph Hellwig <hch@lst.de> wrote:
+>
+> On Fri, Aug 03, 2018 at 09:21:00AM +1000, Stephen Rothwell wrote:
+> > I fixed it up (see below) =20
+>=20
+> I can't find any fixup below..
 
+Sorry about that - see below.
 
+--=20
+Cheers,
+Stephen Rothwell
+
+fdd83c534b114febc41ec115449cb25f421e1719
+diff --cc arch/mips/Kconfig
+index 06a633eb9777,642a56e2a1ea..2af13b162e5e
+--- a/arch/mips/Kconfig
++++ b/arch/mips/Kconfig
+@@@ -2990,6 -2988,13 +2984,9 @@@ config PGTABLE_LEVEL
+  	default 3 if 64BIT && !PAGE_SIZE_64KB
+  	default 2
+ =20
++ config MIPS_AUTO_PFN_OFFSET
++ 	bool
++=20
+ -source "init/Kconfig"
+ -
+ -source "kernel/Kconfig.freezer"
+ -
+  menu "Bus options (PCI, PCMCIA, EISA, ISA, TC)"
+ =20
+  config HW_HAS_EISA
+
+--Sig_//6Qid3F994UQa5_AbKl8lym
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltj+WwACgkQAVBC80lX
+0Gx4sAf9GVRiLKOf4m5j4OctetBwbUwBSZp6OJaiDy5qfgqTbyJb0NGZDoDs4mGx
+RWwHJeBdvYfhhv/6Z7QVP7S2MZK96KIsQS/YMI/eFVu5BY+0rFngFwpPT10JOjwG
+IRt2xloJpQ/dc8ZS3xyctEBwtJN9QAnnLSI23/rszc2hikq8HF21kj1nV989wMrJ
+i2n81rXqsGkeE8SxxCPv13lzVEAIxOQoK2ZpQxoVqBzul5ewk3y2rJS6xE1dYYAB
+R21r3C+3OHnTQ/uIqk2xtzQMzVSVdpndXvu/u1vVd1NN5eJS74rLJUSg1T0NUfaK
+50t+BAfo7/IT3TtaRxgjO+0zpzimDg==
+=jdUD
+-----END PGP SIGNATURE-----
+
+--Sig_//6Qid3F994UQa5_AbKl8lym--
