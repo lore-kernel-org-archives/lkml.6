@@ -2,92 +2,68 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BB27C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 07:35:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47474C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 07:39:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E54D02172B
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 07:35:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E765A2172A
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 07:39:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="AuO6g59F"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E54D02172B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="U+ys/918"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E765A2172A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732230AbeHCJ37 (ORCPT
+        id S1728687AbeHCJeU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 05:29:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58116 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727101AbeHCJ37 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 05:29:59 -0400
-Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2C0DE2170A;
-        Fri,  3 Aug 2018 07:34:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1533281699;
-        bh=BYxlrVfCro8D/VK0IdCPrJFDEYv/HJGa8yRGUnaV37c=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=AuO6g59Ff0jqK6jdnYZPjs8lKMBB1TXtCn/lvMirCa+4olTy+mSmSlZGTnBR/6SEa
-         Bk/AQte40XmFVLvS1RTyMy9rQhOLKUw2/BRznNqPppturqpLtYb3k7P9jijRECuYtp
-         cX/TyJPjz6Vc6La2tqvdFvFZloPt814B+mIFLQZ0=
-Date:   Fri, 3 Aug 2018 16:34:55 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Joel Fernandes <joelaf@google.com>
-Cc:     Joel Fernandes <joel@joelfernandes.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Cc: Android Kernel" <kernel-team@android.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Byungchul Park <byungchul.park@lge.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Thomas Glexiner <tglx@linutronix.de>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>
-Subject: Re: [PATCH v12 0/3] tracing: Centralize preemptirq tracepoints and
- unify their usage
-Message-Id: <20180803163455.9c846c2a674819564517de59@kernel.org>
-In-Reply-To: <CAJWu+opoT6Ky-pwAwBbjDkyt0Y_UF1QUnDshu-_vLTU5K87_HQ@mail.gmail.com>
-References: <20180730222423.196630-1-joel@joelfernandes.org>
-        <20180802235527.ddb0d1837154e3f98571b3b0@kernel.org>
-        <CAJWu+opoT6Ky-pwAwBbjDkyt0Y_UF1QUnDshu-_vLTU5K87_HQ@mail.gmail.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Fri, 3 Aug 2018 05:34:20 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:43382 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727101AbeHCJeU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 05:34:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=uZfqkfPSPY14PZTprRR0TovxgMF1kn+T2Px/reWsHEw=; b=U+ys/918R6OzIPikL/I19OWwh
+        2BN5IJy+e/dJjDW1+gGeAq/1Q6cHsgwnHtwaHJmqJusYeAdku0jn88Udq7dQL3t/NCP49GBoMqmOb
+        TdA6byqN+xv0Tq2WuntCz87FkmGPhBbhZxmi/OxBDxPIbbUgxQ/6AxWlsWTwLQs7fvp3KWvEeDFYE
+        +lND4cwp2fkR4sY/HkHR3XrrDUGE/MPGf5X79v9f8XqWpOLiNFuBxlmVPSa5CpIrMVknbemumSdZC
+        /OMEZOvLbNwt6QMu0yeTIIyGmHl8AkbewpgWsDfgk35mdteqKRsCrodKpjNiGttZB0ZpurfPGZkHA
+        YlNQvHPuA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1flUg8-0006xv-Vt; Fri, 03 Aug 2018 07:39:16 +0000
+Date:   Fri, 3 Aug 2018 00:39:16 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Palmer Dabbelt <palmer@sifive.com>
+Cc:     deepa.kernel@gmail.com, zongbox@gmail.com, y2038@lists.linaro.org,
+        tglx@linutronix.de, linux-riscv@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v3 3/7] riscv: Delete asm/compat.h
+Message-ID: <20180803073916.GA19580@infradead.org>
+References: <20180707054247.19802-4-deepa.kernel@gmail.com>
+ <mhng-ca3e24c4-d59b-491d-a9c5-c8466168b638@palmer-si-x1c4>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <mhng-ca3e24c4-d59b-491d-a9c5-c8466168b638@palmer-si-x1c4>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2 Aug 2018 19:57:09 -0700
-Joel Fernandes <joelaf@google.com> wrote:
+On Thu, Aug 02, 2018 at 06:26:58PM -0700, Palmer Dabbelt wrote:
+> I thought we were using this to make uname print "riscv64" (or "riscv32")
+> instead of just "riscv"?  Is there another mechanism to do that?
 
-> Hi Masami,
-> 
-> On Thu, Aug 2, 2018 at 7:55 AM, Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> > Hi Joel,
-> >
-> > I found this caused several issues when testing ftrace.
-> >
-> > #1) ftrace boottest (FTRACE_STARTUP_TEST) fails
-> 
-> This sadly appears to be a real issue. The startup test for
-> "preemptirqsoff" tracer fails, however it passes for only preemptoff
-> or only irqsoff. I tested only the last 2 tracers, not the first one,
-> that's why I didn't catch it. I need to debug this more.
-
-I found that this does not always happen, but 4 out of 5 it happens.
-
-Thank you,
-
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+That is set in the UTS_MACHINE variable in arch/riscv/Makefile
+and doesn't involve compat.h at all except when actually implementing
+32-bit compat on 64 bit, which RISC-V doesn't (at least yet).
