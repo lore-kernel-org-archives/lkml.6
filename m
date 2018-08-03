@@ -2,125 +2,99 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B8ADC28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 05:44:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69AF0C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 05:45:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5D5121717
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 05:44:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E99121717
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 05:45:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I8jhxvaY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5D5121717
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F2sJl8mr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E99121717
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727677AbeHCHjO (ORCPT
+        id S1727581AbeHCHkd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 03:39:14 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:39657 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726799AbeHCHjN (ORCPT
+        Fri, 3 Aug 2018 03:40:33 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:32895 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726829AbeHCHkd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 03:39:13 -0400
-Received: by mail-qt0-f194.google.com with SMTP id q12-v6so4973419qtp.6
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Aug 2018 22:44:35 -0700 (PDT)
+        Fri, 3 Aug 2018 03:40:33 -0400
+Received: by mail-pg1-f196.google.com with SMTP id r5-v6so2328262pgv.0;
+        Thu, 02 Aug 2018 22:45:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=VArV8aFYMVpeL53ZcToIbgMBHqmMvtgBhYvsuoKK+Q8=;
-        b=I8jhxvaYwFwQzIZuMBA38NnbLXMCGarTT8XGgoTyQTlioXzvzvF2hZC7TNDRmeWuRi
-         DRlmYlEXyTPvLy767ZU0/Zx6jjWxCIirFARO5906wh020AkE8j1mTJ6+xprUUU63XDS4
-         2/IMc+yfIMtnUSPhpJhXCWG2CHfm5ZaoUV5F7Wz+ZF+8S6dvvZO0SICaaKWreTRr1pdy
-         Mvv7lPfSMm1TKuGBzAIS3vpxvVztoz7jmb9x6eSKey7XtmTLzIDM+bYws2eYAZ6xGa5A
-         VjRpiOmiDJa9ws1nfDIEtwcB+zufnzHxrHMdQzPf5YyvTWgOibbeRRpcXRl8tXr87BAv
-         ph0A==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=NfoWyfzdIgJNJ+XJFUeUwUA+YMWCRzomMR1Oxcqc5kA=;
+        b=F2sJl8mrsppUUMcZGgQS5H9GHlme/UGOs69l9wz5IjOQv+xDnLr5rdkSeCzysP5BaQ
+         O4Fo+Cgr28f/i23/p9cmckx80Isi0eBzeqCEDxGIWs9pVpd9ua9rG4PQDvHZwQJSWcaL
+         ouwTPWQgk5T/KIBuiMdhf/9L5QhLu8wpp5WSbS9PrbHBy008apZwN/yJukBl5mMeb1NY
+         2ePcEFtXYCN/Cp8c2bexn+08weLymaEh3a8hGKWmI5LF72sszhzaQ0sw+l/SCB9elBPN
+         0WDjjo5ZOcxMH95uen/vVTvdxmA+1EBm9N7Uu9wvorIELvOOgdz6Gy4bSuSZRya040Om
+         nfIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=VArV8aFYMVpeL53ZcToIbgMBHqmMvtgBhYvsuoKK+Q8=;
-        b=T7SY7xo2yLKxchOgqnj56KD4AulN4OR59FrU1dkiU79LN97ppXghAUHq3/L0th5WXh
-         fDGNsE8p6VG8mGBRUNCL3DnZ23CPOYTyAwRhQwF/qTvhV0aUMlqVb1atNCUFU1LrSUKu
-         R9pxGg0tnmQ3nfWXTyx0G9LgFK6BxoCux5d38oX6VWtGSsbtD9ZfCKznRRSH6qrijnn1
-         H486iQr4LRbesKJxVB9CR15nMSpgg0WqnBfAwwyCNoRvDJ2sdkr4394G83S3tJXkMSUw
-         mqeyCY/7zoyGHhyzXaJwLlmLabc+cIJ6+R83Iju3h/DfvsQchmh52KeyUZK+LeAXpqP3
-         poJw==
-X-Gm-Message-State: AOUpUlGvWnSOD73nkJJOE0+0GeOckBClsQuJZD/hG6vWs4cYO6BkUcCE
-        ddMRJYWUg839gAFNzBREL27A6mOKb/EtD61yFVQ=
-X-Google-Smtp-Source: AAOMgpeyF+GV4tLkGHmiczRhqyQZt6mpfT8l0KvmQF4cEfgb1ITaZ685NeLcm10wL9e+H1shAnLGXGZlnA0XAAiyKtw=
-X-Received: by 2002:a0c:afb8:: with SMTP id s53-v6mr2260324qvc.164.1533275075443;
- Thu, 02 Aug 2018 22:44:35 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=NfoWyfzdIgJNJ+XJFUeUwUA+YMWCRzomMR1Oxcqc5kA=;
+        b=qFpiXq9zJdBHnyR2Eg9nL+1DS65S9pHhH9rqC6ETLzZRGcU8+kSOZF/j1c5vql6STj
+         ZRGtsEvJk2fNg6kWc4Z5IiTCFvcx38uAFHIkx+tDrqUTJJL/c7Kw3f9a2ULh2rK0EL5w
+         lt0lZzCEO/9vLZ+aI+uUqPzpodf/y1qL7+zjYfV2+FNRsVzUj9Z+w6kHVpWpDgmTzixl
+         TtK2RYXmEmvOFi/PWgA24T6M7mjZ7uRZx/qyhVacGj0ZV3zZ2qNIyfcx1CI8dm0MKaxR
+         ywDcYuPxTs7Etb+cVba/1c/AcF37HYNiQyagZYV4A/iQKabYpKB5D48ZXtasdTFpijGh
+         LyNg==
+X-Gm-Message-State: AOUpUlGP2qMCi7Mj3iGpJ910OfWosKhd/d+DHdpqp1yNKrNAnv2NsTM7
+        ksk1biyOrAXzxHqL5Kl58sQ=
+X-Google-Smtp-Source: AAOMgpesIbbWE5finW4kn4XGYutmb7e0/iTjcgrdvUw6cru+DFMfXtgT2sfyvsd5nxzfXGnXV6Kufw==
+X-Received: by 2002:a63:4f1a:: with SMTP id d26-v6mr2306160pgb.121.1533275155736;
+        Thu, 02 Aug 2018 22:45:55 -0700 (PDT)
+Received: from localhost ([175.223.10.158])
+        by smtp.gmail.com with ESMTPSA id b67-v6sm6795836pfd.74.2018.08.02.22.45.53
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 02 Aug 2018 22:45:54 -0700 (PDT)
+Date:   Fri, 3 Aug 2018 14:45:51 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc:     Minchan Kim <minchan@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Tino Lehnig <tino.lehnig@contabo.de>, stable@vger.kernel.org,
+        Jens Axboe <axboe@kernel.dk>
+Subject: Re: [PATCH 1/2] zram: remove BD_CAP_SYNCHRONOUS_IO with writeback
+ feature
+Message-ID: <20180803054550.GD502@jagdpanzerIV>
+References: <20180802051112.86174-1-minchan@kernel.org>
+ <20180802141304.d0589ddc5f8213429ab3b565@linux-foundation.org>
+ <20180803023929.GA7500@jagdpanzerIV>
+ <20180803030019.GB86818@rodete-desktop-imager.corp.google.com>
+ <20180803041302.GB502@jagdpanzerIV>
+ <20180803045121.GC86818@rodete-desktop-imager.corp.google.com>
+ <20180803052306.GC502@jagdpanzerIV>
 MIME-Version: 1.0
-Received: by 2002:ac8:3666:0:0:0:0:0 with HTTP; Thu, 2 Aug 2018 22:44:35 -0700 (PDT)
-From:   Dave Airlie <airlied@gmail.com>
-Date:   Fri, 3 Aug 2018 15:44:35 +1000
-Message-ID: <CAPM=9txGDwx1GWbcb=L8Bao1UEaRSdwtg9Kd43Fc70W0PcPy5w@mail.gmail.com>
-Subject: [git pull] drm fixes for 4.18-rc8
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180803052306.GC502@jagdpanzerIV>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On (08/03/18 14:23), Sergey Senozhatsky wrote:
+> 
+> Hmm, any chance a WB device can be async on its own? We add a page
+> to a new bio and submit it to another async device driver. Then we
+> return back to the upper layer (swap), which can free a page before
+> the device picks up a request. Can this happen?
 
-Nothing too major at this late stage,
+Nevermind these questions.
+Sorry for the noise.
 
-adv7511: reset fix
-vc4: scaling fix
-two atomic core fixes
-and one legacy core error handling fix.
-
-I had a bunch of driver fixes from hdlcd but I think I'll leave them
-for -next at this point.
-
-Thanks,
-Dave.
-
-drm-fixes-2018-08-03:
-adv7511 fix, atomic fix, core error path fix
-The following changes since commit acb1872577b346bd15ab3a3f8dff780d6cca4b70:
-
-  Linux 4.18-rc7 (2018-07-29 14:44:52 -0700)
-
-are available in the Git repository at:
-
-  git://anongit.freedesktop.org/drm/drm tags/drm-fixes-2018-08-03
-
-for you to fetch changes up to 51973dc079a9e1e082ae647ee3804f324a258eee:
-
-  Merge tag 'drm-misc-fixes-2018-07-27' of
-git://anongit.freedesktop.org/drm/drm-misc into drm-fixes (2018-08-01
-08:54:35 +1000)
-
-----------------------------------------------------------------
-adv7511 fix, atomic fix, core error path fix
-
-----------------------------------------------------------------
-Boris Brezillon (3):
-      drm/atomic: Check old_plane_state->crtc in drm_atomic_helper_async_check()
-      drm/atomic: Initialize variables in
-drm_atomic_helper_async_check() to make gcc happy
-      drm/vc4: Reset ->{x, y}_scaling[1] when dealing with uniplanar formats
-
-Dave Airlie (1):
-      Merge tag 'drm-misc-fixes-2018-07-27' of
-git://anongit.freedesktop.org/drm/drm-misc into drm-fixes
-
-Nicholas Mc Guire (1):
-      drm: re-enable error handling
-
-Sean Paul (1):
-      drm/bridge: adv7511: Reset registers on hotplug
-
- drivers/gpu/drm/bridge/adv7511/adv7511_drv.c | 12 ++++++++++++
- drivers/gpu/drm/drm_atomic_helper.c          |  8 +++++---
- drivers/gpu/drm/drm_context.c                |  2 +-
- drivers/gpu/drm/vc4/vc4_plane.c              |  3 +++
- 4 files changed, 21 insertions(+), 4 deletions(-)
+	-ss
