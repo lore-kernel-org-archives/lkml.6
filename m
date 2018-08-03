@@ -2,148 +2,196 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 193E8C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 16:56:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2E08C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 16:57:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C93532173F
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 16:56:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C93532173F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id 95BC521764
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 16:57:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="o/b8Hnvq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95BC521764
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728324AbeHCSxX (ORCPT
+        id S1729034AbeHCSyQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 14:53:23 -0400
-Received: from gateway33.websitewelcome.com ([192.185.146.21]:36802 "EHLO
-        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727171AbeHCSxX (ORCPT
+        Fri, 3 Aug 2018 14:54:16 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:44138 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727171AbeHCSyP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 14:53:23 -0400
-Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
-        by gateway33.websitewelcome.com (Postfix) with ESMTP id 20B4932F7
-        for <linux-kernel@vger.kernel.org>; Fri,  3 Aug 2018 11:56:15 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id ldN9ffJUDRPojldN9fAD9M; Fri, 03 Aug 2018 11:56:15 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.50.82] (port=33226 helo=[192.168.1.71])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1fldN8-003QAF-7d; Fri, 03 Aug 2018 11:56:14 -0500
-Subject: Re: [PATCH 11/11] ASoC: wm8994: Mark expected switch fall-through
-To:     Mark Brown <broonie@kernel.org>
-Cc:     valdis.kletnieks@vt.edu, Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        patches@opensource.cirrus.com, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>
-References: <cover.1533151956.git.gustavo@embeddedor.com>
- <8e3df79b1dca92d49fd9d5c97391d31814ab40f9.1533151956.git.gustavo@embeddedor.com>
- <30613.1533313609@turing-police.cc.vt.edu>
- <85d918a5-6a14-ead0-4d0e-d63b5e43ad81@embeddedor.com>
- <20180803164504.GF6591@sirena.org.uk>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- xsFNBFssHAwBEADIy3ZoPq3z5UpsUknd2v+IQud4TMJnJLTeXgTf4biSDSrXn73JQgsISBwG
- 2Pm4wnOyEgYUyJd5tRWcIbsURAgei918mck3tugT7AQiTUN3/5aAzqe/4ApDUC+uWNkpNnSV
- tjOx1hBpla0ifywy4bvFobwSh5/I3qohxDx+c1obd8Bp/B/iaOtnq0inli/8rlvKO9hp6Z4e
- DXL3PlD0QsLSc27AkwzLEc/D3ZaqBq7ItvT9Pyg0z3Q+2dtLF00f9+663HVC2EUgP25J3xDd
- 496SIeYDTkEgbJ7WYR0HYm9uirSET3lDqOVh1xPqoy+U9zTtuA9NQHVGk+hPcoazSqEtLGBk
- YE2mm2wzX5q2uoyptseSNceJ+HE9L+z1KlWW63HhddgtRGhbP8pj42bKaUSrrfDUsicfeJf6
- m1iJRu0SXYVlMruGUB1PvZQ3O7TsVfAGCv85pFipdgk8KQnlRFkYhUjLft0u7CL1rDGZWDDr
- NaNj54q2CX9zuSxBn9XDXvGKyzKEZ4NY1Jfw+TAMPCp4buawuOsjONi2X0DfivFY+ZsjAIcx
- qQMglPtKk/wBs7q2lvJ+pHpgvLhLZyGqzAvKM1sVtRJ5j+ARKA0w4pYs5a5ufqcfT7dN6TBk
- LXZeD9xlVic93Ju08JSUx2ozlcfxq+BVNyA+dtv7elXUZ2DrYwARAQABzSxHdXN0YXZvIEEu
- IFIuIFNpbHZhIDxndXN0YXZvQGVtYmVkZGVkb3IuY29tPsLBfQQTAQgAJwUCWywcDAIbIwUJ
- CWYBgAULCQgHAgYVCAkKCwIEFgIDAQIeAQIXgAAKCRBHBbTLRwbbMZ6tEACk0hmmZ2FWL1Xi
- l/bPqDGFhzzexrdkXSfTTZjBV3a+4hIOe+jl6Rci/CvRicNW4H9yJHKBrqwwWm9fvKqOBAg9
- obq753jydVmLwlXO7xjcfyfcMWyx9QdYLERTeQfDAfRqxir3xMeOiZwgQ6dzX3JjOXs6jHBP
- cgry90aWbaMpQRRhaAKeAS14EEe9TSIly5JepaHoVdASuxklvOC0VB0OwNblVSR2S5i5hSsh
- ewbOJtwSlonsYEj4EW1noQNSxnN/vKuvUNegMe+LTtnbbocFQ7dGMsT3kbYNIyIsp42B5eCu
- JXnyKLih7rSGBtPgJ540CjoPBkw2mCfhj2p5fElRJn1tcX2McsjzLFY5jK9RYFDavez5w3lx
- JFgFkla6sQHcrxH62gTkb9sUtNfXKucAfjjCMJ0iuQIHRbMYCa9v2YEymc0k0RvYr43GkA3N
- PJYd/vf9vU7VtZXaY4a/dz1d9dwIpyQARFQpSyvt++R74S78eY/+lX8wEznQdmRQ27kq7BJS
- R20KI/8knhUNUJR3epJu2YFT/JwHbRYC4BoIqWl+uNvDf+lUlI/D1wP+lCBSGr2LTkQRoU8U
- 64iK28BmjJh2K3WHmInC1hbUucWT7Swz/+6+FCuHzap/cjuzRN04Z3Fdj084oeUNpP6+b9yW
- e5YnLxF8ctRAp7K4yVlvA87BTQRbLBwMARAAsHCE31Ffrm6uig1BQplxMV8WnRBiZqbbsVJB
- H1AAh8tq2ULl7udfQo1bsPLGGQboJSVN9rckQQNahvHAIK8ZGfU4Qj8+CER+fYPp/MDZj+t0
- DbnWSOrG7z9HIZo6PR9z4JZza3Hn/35jFggaqBtuydHwwBANZ7A6DVY+W0COEU4of7CAahQo
- 5NwYiwS0lGisLTqks5R0Vh+QpvDVfuaF6I8LUgQR/cSgLkR//V1uCEQYzhsoiJ3zc1HSRyOP
- otJTApqGBq80X0aCVj1LOiOF4rrdvQnj6iIlXQssdb+WhSYHeuJj1wD0ZlC7ds5zovXh+FfF
- l5qH5RFY/qVn3mNIVxeO987WSF0jh+T5ZlvUNdhedGndRmwFTxq2Li6GNMaolgnpO/CPcFpD
- jKxY/HBUSmaE9rNdAa1fCd4RsKLlhXda+IWpJZMHlmIKY8dlUybP+2qDzP2lY7kdFgPZRU+e
- zS/pzC/YTzAvCWM3tDgwoSl17vnZCr8wn2/1rKkcLvTDgiJLPCevqpTb6KFtZosQ02EGMuHQ
- I6Zk91jbx96nrdsSdBLGH3hbvLvjZm3C+fNlVb9uvWbdznObqcJxSH3SGOZ7kCHuVmXUcqoz
- ol6ioMHMb+InrHPP16aVDTBTPEGwgxXI38f7SUEn+NpbizWdLNz2hc907DvoPm6HEGCanpcA
- EQEAAcLBZQQYAQgADwUCWywcDAIbDAUJCWYBgAAKCRBHBbTLRwbbMdsZEACUjmsJx2CAY+QS
- UMebQRFjKavwXB/xE7fTt2ahuhHT8qQ/lWuRQedg4baInw9nhoPE+VenOzhGeGlsJ0Ys52sd
- XvUjUocKgUQq6ekOHbcw919nO5L9J2ejMf/VC/quN3r3xijgRtmuuwZjmmi8ct24TpGeoBK4
- WrZGh/1hAYw4ieARvKvgjXRstcEqM5thUNkOOIheud/VpY+48QcccPKbngy//zNJWKbRbeVn
- imua0OpqRXhCrEVm/xomeOvl1WK1BVO7z8DjSdEBGzbV76sPDJb/fw+y+VWrkEiddD/9CSfg
- fBNOb1p1jVnT2mFgGneIWbU0zdDGhleI9UoQTr0e0b/7TU+Jo6TqwosP9nbk5hXw6uR5k5PF
- 8ieyHVq3qatJ9K1jPkBr8YWtI5uNwJJjTKIA1jHlj8McROroxMdI6qZ/wZ1ImuylpJuJwCDC
- ORYf5kW61fcrHEDlIvGc371OOvw6ejF8ksX5+L2zwh43l/pKkSVGFpxtMV6d6J3eqwTafL86
- YJWH93PN+ZUh6i6Rd2U/i8jH5WvzR57UeWxE4P8bQc0hNGrUsHQH6bpHV2lbuhDdqo+cM9eh
- GZEO3+gCDFmKrjspZjkJbB5Gadzvts5fcWGOXEvuT8uQSvl+vEL0g6vczsyPBtqoBLa9SNrS
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <684a4fe9-6818-d19c-e7b7-fb8d592a0cee@embeddedor.com>
-Date:   Fri, 3 Aug 2018 11:56:12 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 3 Aug 2018 14:54:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=us6WDSBVfFK9MXOUFs3re4B3d5LTNqnZtZ8/cNrTON0=; b=o/b8HnvqHg/3a8NSDjpfeR3LB
+        /uBc0NQBp0ceNu55U83fcxvbvX7cBRgZzMAJF1xLPFzGPB86WdPEyQjU4lc8vOGheZdOeF4YLaIJB
+        JTPgOoS7GxtP76Z4pCjQpaOOrrlYlYQkxWxtMboBpVCflApu2EaRBdy1KB7j6KzbYjEw4+rEf7V8/
+        gMq528JYuxk9zJdHZEB0BgMjJHOEbjhd1fj0WhqspwqI68AyY8MYLiV/jPm5vkhOqzhEOSYlSxB8P
+        /L3uei7haPxqrWVytdNq3f8IGAABe4YzYSDyDZy6Rq5BX7+UKNijeydqOoAnmddo9riTO9vVCdrve
+        6Kcajhf8A==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fldNc-0007HU-TO; Fri, 03 Aug 2018 16:56:45 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 89ECC20267E51; Fri,  3 Aug 2018 18:56:41 +0200 (CEST)
+Date:   Fri, 3 Aug 2018 18:56:41 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Johannes Weiner <hannes@cmpxchg.org>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Tejun Heo <tj@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Daniel Drake <drake@endlessm.com>,
+        Vinayak Menon <vinmenon@codeaurora.org>,
+        Christopher Lameter <cl@linux.com>,
+        Mike Galbraith <efault@gmx.de>,
+        Shakeel Butt <shakeelb@google.com>,
+        Peter Enderborg <peter.enderborg@sony.com>, linux-mm@kvack.org,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@fb.com
+Subject: Re: [PATCH 8/9] psi: pressure stall information for CPU, memory, and
+ IO
+Message-ID: <20180803165641.GA2476@hirez.programming.kicks-ass.net>
+References: <20180801151958.32590-1-hannes@cmpxchg.org>
+ <20180801151958.32590-9-hannes@cmpxchg.org>
 MIME-Version: 1.0
-In-Reply-To: <20180803164504.GF6591@sirena.org.uk>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.50.82
-X-Source-L: No
-X-Exim-ID: 1fldN8-003QAF-7d
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.71]) [189.250.50.82]:33226
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 91
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180801151958.32590-9-hannes@cmpxchg.org>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Aug 01, 2018 at 11:19:57AM -0400, Johannes Weiner wrote:
+> +static bool test_state(unsigned int *tasks, int cpu, enum psi_states state)
+> +{
+> +	switch (state) {
+> +	case PSI_IO_SOME:
+> +		return tasks[NR_IOWAIT];
+> +	case PSI_IO_FULL:
+> +		return tasks[NR_IOWAIT] && !tasks[NR_RUNNING];
+> +	case PSI_MEM_SOME:
+> +		return tasks[NR_MEMSTALL];
+> +	case PSI_MEM_FULL:
+> +		/*
+> +		 * Since we care about lost potential, things are
+> +		 * fully blocked on memory when there are no other
+> +		 * working tasks, but also when the CPU is actively
+> +		 * being used by a reclaimer and nothing productive
+> +		 * could run even if it were runnable.
+> +		 */
+> +		return tasks[NR_MEMSTALL] &&
+> +			(!tasks[NR_RUNNING] ||
+> +			 cpu_curr(cpu)->flags & PF_MEMSTALL);
 
+I don't think you can do this, there is nothing that guarantees
+cpu_curr() still exists.
 
-On 08/03/2018 11:45 AM, Mark Brown wrote:
-> On Fri, Aug 03, 2018 at 11:41:39AM -0500, Gustavo A. R. Silva wrote:
->> On 08/03/2018 11:26 AM, valdis.kletnieks@vt.edu wrote:
->>> On Wed, 01 Aug 2018 14:56:16 -0500, "Gustavo A. R. Silva" said:
-> 
->>> Wait, what? This looks like the sort of bug -Wimplicit-fallthrough is supposed
->>> to catch.  Unless for 'case WM8994_SYSCLK_OPCLK:' we actually do want to do a
->>> whole bunch of snd_soc_component_update_bits() calls and then return -EINVAL
->>> whether or not that case succeeded?
-> 
->> Yeah, it seems like a bug. Can someone confirm this?
-> 
->> Notice that this code has been there since 2010.
-> 
-> Basically nobody ever uses OPCLK so I'd be susprised if anyone ever
-> noticed.
-> 
+> +	case PSI_CPU_SOME:
+> +		return tasks[NR_RUNNING] > 1;
+> +	case PSI_NONIDLE:
+> +		return tasks[NR_IOWAIT] || tasks[NR_MEMSTALL] ||
+> +			tasks[NR_RUNNING];
+> +	default:
+> +		return false;
+> +	}
+> +}
+> +
+> +static bool psi_update_stats(struct psi_group *group)
+> +{
+> +	u64 deltas[NR_PSI_STATES - 1] = { 0, };
+> +	unsigned long missed_periods = 0;
+> +	unsigned long nonidle_total = 0;
+> +	u64 now, expires, period;
+> +	int cpu;
+> +	int s;
+> +
+> +	mutex_lock(&group->stat_lock);
+> +
+> +	/*
+> +	 * Collect the per-cpu time buckets and average them into a
+> +	 * single time sample that is normalized to wallclock time.
+> +	 *
+> +	 * For averaging, each CPU is weighted by its non-idle time in
+> +	 * the sampling period. This eliminates artifacts from uneven
+> +	 * loading, or even entirely idle CPUs.
+> +	 *
+> +	 * We don't need to synchronize against CPU hotplugging. If we
+> +	 * see a CPU that's online and has samples, we incorporate it.
+> +	 */
+> +	for_each_online_cpu(cpu) {
+> +		struct psi_group_cpu *groupc = per_cpu_ptr(group->pcpu, cpu);
+> +		u32 uninitialized_var(nonidle);
 
-I see. I wonder what's the best approach in this case. Should that code be removed instead of 'fixed'?
+urgh.. I can see why the compiler got confused. Dodgy :-)
 
-Thanks
---
-Gustavo
+> +
+> +		BUILD_BUG_ON(PSI_NONIDLE != NR_PSI_STATES - 1);
+> +
+> +		for (s = PSI_NONIDLE; s >= 0; s--) {
+> +			u32 time, delta;
+> +
+> +			time = READ_ONCE(groupc->times[s]);
+> +			/*
+> +			 * In addition to already concluded states, we
+> +			 * also incorporate currently active states on
+> +			 * the CPU, since states may last for many
+> +			 * sampling periods.
+> +			 *
+> +			 * This way we keep our delta sampling buckets
+> +			 * small (u32) and our reported pressure close
+> +			 * to what's actually happening.
+> +			 */
+> +			if (test_state(groupc->tasks, cpu, s)) {
+> +				/*
+> +				 * We can race with a state change and
+> +				 * need to make sure the state_start
+> +				 * update is ordered against the
+> +				 * updates to the live state and the
+> +				 * time buckets (groupc->times).
+> +				 *
+> +				 * 1. If we observe task state that
+> +				 * needs to be recorded, make sure we
+> +				 * see state_start from when that
+> +				 * state went into effect or we'll
+> +				 * count time from the previous state.
+> +				 *
+> +				 * 2. If the time delta has already
+> +				 * been added to the bucket, make sure
+> +				 * we don't see it in state_start or
+> +				 * we'll count it twice.
+> +				 *
+> +				 * If the time delta is out of
+> +				 * state_start but not in the time
+> +				 * bucket yet, we'll miss it entirely
+> +				 * and handle it in the next period.
+> +				 */
+> +				smp_rmb();
+> +				time += cpu_clock(cpu) - groupc->state_start;
+> +			}
+
+The alternative is adding an update to scheduler_tick(), that would
+ensure you're never more than nr_cpu_ids * TICK_NSEC behind.
+
+> +			delta = time - groupc->times_prev[s];
+> +			groupc->times_prev[s] = time;
+> +
+> +			if (s == PSI_NONIDLE) {
+> +				nonidle = nsecs_to_jiffies(delta);
+> +				nonidle_total += nonidle;
+> +			} else {
+> +				deltas[s] += (u64)delta * nonidle;
+> +			}
+> +		}
+> +	}
