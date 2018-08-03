@@ -2,94 +2,68 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 205A7C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 16:47:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 228EAC28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 16:49:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA04A2177A
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 16:47:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Q0CRj4g6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA04A2177A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 9F67D2177A
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 16:49:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F67D2177A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727819AbeHCSoo (ORCPT
+        id S1728415AbeHCSqS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 14:44:44 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:41875 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727305AbeHCSoo (ORCPT
+        Fri, 3 Aug 2018 14:46:18 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:35234 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727305AbeHCSqS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 14:44:44 -0400
-Received: by mail-io0-f194.google.com with SMTP id q9-v6so5499583ioj.8
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Aug 2018 09:47:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dUTU2/7glytJn3Cx1GLX+NOCH+9NTXeEUpUdiOlcI8E=;
-        b=Q0CRj4g6z4JZF3/GmaEND/Q4gG8fUoSFvC+KHyA2WtxxhHnZsD1ydRyHvw05cf0Mkk
-         JtzAkyT+5tpli/QNup/bMBRiFF9CB7DTp17tpNVG4jFbDmTjzrPuL4PBMOsIyQhIzRZj
-         lgrnSGSeAlvLM4aE9coYteuiwli5gCCS1LLjo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dUTU2/7glytJn3Cx1GLX+NOCH+9NTXeEUpUdiOlcI8E=;
-        b=cvdtZzmDfsaLbicADkSLIL0iHxHbeiYkYmVB55EBokHB4D4fCoW+dmeWPxIbH4GaIY
-         5+b755/9aDWaWZQcuo7m+QDNIQYmlPXgy3CSlM21GP2QZqM+8gnbk/zcsZQ9BIMXEXFs
-         wUt08KOVHcgqsRNeqyWQeaXDUL+r1n/Qte1MrB8ziAH16dFb8p6xvYCmke1OzwklyyW4
-         s0bEBKpfel9q8SNYWA3QNyRvgMbaKbEEbTAS+AJcioRHxn2Xy0cWb6NQsCm04ONHCoCS
-         Pl6sBHxz6RkCPLlnYAg1S6GxWOzIdWOoiR3XQ4T9V4mlRP/EuhoA5g4klCoWnXDpMrz5
-         tc3A==
-X-Gm-Message-State: AOUpUlGjWTmGUTTXjVfxZqkSB227KbgL2luvENI/XyKVrJEtwzbdaHLV
-        Ayn3GXQMyQFqwUfN6/TRIeyhKyu1cVeV3+F4R81vjg==
-X-Google-Smtp-Source: AA+uWPyso2vWTU+l4VMHFPv4I8TMSidZy+wNCzxpC83XoOBP8B5usfN0Gf7yk9H5fSgPg1rMk5myhgi0lDKqNXXYVlw=
-X-Received: by 2002:a6b:4006:: with SMTP id k6-v6mr6299408ioa.277.1533314858830;
- Fri, 03 Aug 2018 09:47:38 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180718235710.18242-1-jmkrzyszt@gmail.com> <20180718235710.18242-7-jmkrzyszt@gmail.com>
-In-Reply-To: <20180718235710.18242-7-jmkrzyszt@gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 3 Aug 2018 18:47:27 +0200
-Message-ID: <CACRpkda8AC9Z635SWmit_RiaYbHA2TrwG-DsSg43vJ8E9Dq4GA@mail.gmail.com>
-Subject: Re: [RFC PATCH 6/8] gpio: omap: Add get/set_multiple() callbacks
-To:     Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        =?UTF-8?Q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>,
-        ext Tony Lindgren <tony@atomide.com>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Mark Vasut <marek.vasut@gmail.com>,
-        linux-mtd@lists.infradead.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux-OMAP <linux-omap@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Artem Bityutskiy <artem.bityutskiy@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 3 Aug 2018 14:46:18 -0400
+Received: from localhost (c-24-20-22-31.hsd1.or.comcast.net [24.20.22.31])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 0CEBF13FEE7E9;
+        Fri,  3 Aug 2018 09:49:13 -0700 (PDT)
+Date:   Fri, 03 Aug 2018 09:49:12 -0700 (PDT)
+Message-Id: <20180803.094912.1010462327820903665.davem@davemloft.net>
+To:     dhowells@redhat.com
+Cc:     netdev@vger.kernel.org, keescook@chromium.org, arnd@arndb.de,
+        linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] rxrpc: Reuse SKCIPHER_REQUEST_ON_STACK buffer
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <153328772507.9245.16028483796299905227.stgit@warthog.procyon.org.uk>
+References: <153328772507.9245.16028483796299905227.stgit@warthog.procyon.org.uk>
+X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 03 Aug 2018 09:49:13 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 19, 2018 at 1:56 AM Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
+From: David Howells <dhowells@redhat.com>
+Date: Fri, 03 Aug 2018 10:15:25 +0100
 
-> This should make applications utilizing whole banks work faster.
->
-> Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+> From: Kees Cook <keescook@chromium.org>
+> 
+> The use of SKCIPHER_REQUEST_ON_STACK() will trigger FRAME_WARN warnings
+> (when less than 2048) once the VLA is no longer hidden from the check:
+> 
+> net/rxrpc/rxkad.c:398:1: warning: the frame size of 1152 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+> net/rxrpc/rxkad.c:242:1: warning: the frame size of 1152 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+> 
+> This passes the initial SKCIPHER_REQUEST_ON_STACK allocation to the leaf
+> functions for reuse. Two requests allocated on the stack is not needed
+> when only one is used at a time.
+> 
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> Acked-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: David Howells <dhowells@redhat.com>
 
-Patch applied with Grygorii's ACK.
-No reason to delay it, if there are any problems we will just revert it.
-
-Yours,
-Linus Walleij
+Applied, thank you.
