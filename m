@@ -3,197 +3,169 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FFF4C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 20:34:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3369BC28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 20:43:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FFAC217AA
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 20:34:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D14472178D
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 20:43:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Faqtio/i"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FFAC217AA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ZUOqcDwC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D14472178D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732017AbeHCWcm (ORCPT
+        id S1731816AbeHCWk4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 18:32:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50766 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729349AbeHCWcm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 18:32:42 -0400
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 20A152178D;
-        Fri,  3 Aug 2018 20:34:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1533328490;
-        bh=XCqlmmLyxDa5tnlatIxPtVGzvaIaTA+H3tDV1eJBr7w=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Faqtio/iQJFULqiF8Ji2kgoYytm8e/p/op1DD3VLGBJ9kwdiWkxESTxvfIEfITwjM
-         /T28EjdGdplDIgZx8xVNHZXM6Jus0wuDNGf17QJTgZISsf4Ywk1QBhb8FtX9n0lPnI
-         pM9WBK9lQ6NlYRY2BcbRozpV3IeYF+GTli/OamGU=
-Date:   Fri, 3 Aug 2018 21:34:43 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Peter Meerwald-Stadler <pmeerw@pmeerw.net>
-Cc:     Parthiban Nallathambi <pn@denx.de>, knaack.h@gmx.de,
-        lars@metafoo.de, robh+dt@kernel.org, linux-iio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, matthias.bgg@gmail.com, wd@denx.de,
-        sbabic@denx.de, hs@denx.de
-Subject: Re: [PATCH v4 1/3] iio: Add modifier for white light
-Message-ID: <20180803213443.3f82ebc8@archlinux>
-In-Reply-To: <alpine.DEB.2.21.1808031323150.13492@vps.pmeerw.net>
-References: <20180802182729.2061830-1-pn@denx.de>
-        <alpine.DEB.2.21.1808022117460.25216@vps.pmeerw.net>
-        <fb30878f-0163-306a-e933-d9fecc996acb@denx.de>
-        <alpine.DEB.2.21.1808031323150.13492@vps.pmeerw.net>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Fri, 3 Aug 2018 18:40:56 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:38450 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729828AbeHCWk4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 18:40:56 -0400
+Received: by mail-it0-f65.google.com with SMTP id v71-v6so10204213itb.3;
+        Fri, 03 Aug 2018 13:43:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=NL4fku+xboNURUcDAdSfUChZ/+fYzGn8CWnuW2juxZY=;
+        b=ZUOqcDwCA6kTWxRYli2SgxXmbe1JvQ4KHBPtj5FJ3O8CzotkM5EtsyE+wwt0+J0hgf
+         VY2LR1HwS8jjiI5nsry+mamKgz75iPOVBOBDl33qptgimOvVpiSYrAqhe/jVu5jOV1MD
+         btisbTjpZ1iV+rLrH+N6bEfMkFlzpf7CDTT3c=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=NL4fku+xboNURUcDAdSfUChZ/+fYzGn8CWnuW2juxZY=;
+        b=HrkkB4mJqY68IvOwNPT8e1lv29sWKmFxZ/N5dVIISGR6LyqnoS8b1rJEbruSoSSZ8j
+         Tw1V2VDeEtI95v4d0a3oZdDTAHk35YsD6qCdDfwd48CJRxGG4tUgHH08xXxdpYsvuyXN
+         7SvNJlikL1flvmOyjrC6ow7kpwPYzYNbJZa4qmW95iYWGppCp1K0nQfkdjhs73VXGGDc
+         wlI4zZxCa2cKcvUknO5lxE+4Az8uymO7IS9xZ3a1XSScUneXCHYxCyr5c4X4h1IxZ4jV
+         vK2kyvxrH+YOhJePgCjP53/M8aZzcz7e53avKZ9EKzT9aIrY9gpk4DJAKIr8YN2686Ap
+         Fncg==
+X-Gm-Message-State: AOUpUlEcFzz/G+m3Be3UfwLBa7UbgkUQKb7ShM5ZFWD41lxJvpGcuPha
+        hjqu2EbMZzO5Q5iWEeqQyo0ZjPINV1cYK0wX8TA=
+X-Google-Smtp-Source: AAOMgpeMb3wORLTLrKxdXnriOhxCd9TnD1ldpWVMEie2t9yan+APzt7Se+0VQhwUwG4/r2S/pcFXWcFgiwH+S68SRAw=
+X-Received: by 2002:a02:1bdc:: with SMTP id 89-v6mr4801610jas.72.1533328983107;
+ Fri, 03 Aug 2018 13:43:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <93bff248-6897-4867-841b-2dace11597de@torlan.ru>
+ <CA+55aFyAox9BTDpRsqLXiROhHOX60aa45LEZ7Azteaumdu11Fw@mail.gmail.com>
+ <CAOi1vP-SJO4AMK=XD3Lmja++2dQqoiw6Zn8Vgxf8OfvYgnuC6Q@mail.gmail.com>
+ <CA+55aFy2DR9fxHhmGq+azSjX9D71YtLsuFKmoEuYW3uTAUYtJg@mail.gmail.com>
+ <d76415de-2056-c7d6-cc88-b896deaa8ead@torlan.ru> <1ec0a220-d5b0-1c27-e63b-c4d3f4ce9d77@torlan.ru>
+ <CA+55aFyPVQ5-gA93irsaxPC9BNQxnGWrDDHPMUYai2kxKiaKWQ@mail.gmail.com>
+ <20180803133102.GA3092@redhat.com> <20180803152034.GD32066@thunk.org>
+ <20180803195636.GA31444@agk-dp.fab.redhat.com> <20180803200817.GB31444@agk-dp.fab.redhat.com>
+In-Reply-To: <20180803200817.GB31444@agk-dp.fab.redhat.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 3 Aug 2018 13:42:52 -0700
+Message-ID: <CA+55aFyFXxN3Qkt+=Ke5Mqctbc3+iX5_HzeH0gHFZK8tDpa=Uw@mail.gmail.com>
+Subject: Re: [dm-devel] LVM snapshot broke between 4.14 and 4.16
+To:     "Theodore Ts'o" <tytso@mit.edu>, Mike Snitzer <snitzer@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>, Sagi Grimberg <sagi@grimberg.me>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>, dm-devel@redhat.com,
+        Ilya Dryomov <idryomov@gmail.com>, wgh@torlan.ru,
+        Zdenek Kabelac <zkabelac@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 3 Aug 2018 13:38:17 +0200 (CEST)
-Peter Meerwald-Stadler <pmeerw@pmeerw.net> wrote:
+On Fri, Aug 3, 2018 at 1:08 PM Alasdair G Kergon <agk@redhat.com> wrote:
+>
+> If taking this approach, it might be better to use the current version
+> i.e.  where we add the kernel-side fix.  IOW anything compiling against
+> a uapi header taken from a kernel up to now will see the old behaviour,
+> but anything newer (after we next increment the kernel dm version) will
+> be required to change its userspace code if it has this problem in it.
 
-> Hello,
-> 
-> > > it is not clear to me why 'white' is needed;
-> > > isn't that the default, i.e. unfiltered light?  
-> > 
-> > Yes, it is. But devices like vcnl4035 veml7700, White LED data one
-> > register and all other sources of light (like fluorescent,
-> > incandescent ,sunlight) in separate register.
-> > 
-> > So in such cases this WHITE modifier is needed. Should it needs to
-> > come under IIO_MOD_LIGHT_CLEAR?  
-This wins the aware for odd.  The sensor is drawn as only have two
-sensing elements, one for Ambient light sensing and one for proximity.
+No, please don't do things like that.
 
-A particular award should be given for using a different axis for
-the white channel in which normalized output is decimal vs all the
-others where it is a percentage ;)
+It's a nightmare. It just means that different people randomly have
+different behavior depending on what development environment they had,
+which is horrible for any situation where you do cross-builds, but
+it's also horrible from a testing standpoint.
 
-Looking closely at those graphs I think this is actually a standard
-sensor combination job.
+And it's a *huge* nightmare for stable releases and backporting fixes.
+Absolutely *no* user space shjould ever care about kernel versions. If
+you want to use a new system call or something, just *use* if, and
+then if it fails, fall back to the old one. Never ever check "what's
+the kernel version" or anything like that.
 
-So 'white' is what we have always called _both in that it reads
-both visible and infrared. The other sensor is infrared.
+Instead, what I suggest we do is:
 
-Ambient is illuminance not intensity (approximate human eye response).
+Case 1: if a user program notice that a new kernel breaks something, then
 
-The only dubious bit about this is that I can see how they managed
-to cancel out some of the signal around 700nm as there is nothing
-much on the infrared and lots on the white.
+ (a) report it to kernel people with a test-case
 
-Alternative is that they actually have a filter that really approximates
-the human eye and the white channel is the sum of the other two?
+ (b) if you notice that the *reason* a new kernel broke something is
+because you had a bug and you can just fix that bug and it will always
+work on all kernels, by all means just fix the bug. Obviously you
+don't want to just keep buggy code around just because it was found by
+a kernel change
 
+ (c) but even if (b) happens, do that report. In fact, you now have a
+perfect test-case for the kernel people you report it to: you can tell
+them *exactly* what changed, and what the two situations were.
 
+ (d) and if whoever you reported the kernel breakage to doesn't seem
+to take it seriously, just escalate it to me.
 
-> 
-> it is a mess already :), there is 
-> _intensity
-> _intensity_ir
-> _intensity_both
-> _intensity_uv
-> _intensity_red
-> _intensity_green
-> _intensity_blue
-> _intensity_clear
-> 
-> I think that ir, uv, red, green, blue are filters for particular ranges 
-> of the spectrum
+Note that for the (d) case, there are situations where even _I_ won't
+necessarily take it seriously. If you're the only user of some
+program, I may just go "Oh, you already fixed your own problem, I
+don't need to worry". Or if it turns out that the breakage wasn't
+"user flow", but some test-suite regression, I will tend to ignore
+those. Test suites are by definition for finding _behavior_, but
+behavior can change - it's actual _breakage_ I worry about.
 
-That is the intent certainly.
+But also notice how none of that "case 1" has any versioning related
+to it.  Yes, you'll have old versions of the user program before the
+bug was fixed, but they will *not* look at kernel versions, and the
+new versions certainly shouldn't either.
 
-> 
-> _intensity_clear might be unfiltered and _intensity might relate to the 
-> human eye photopic curve, I think the proposed white might be the same as 
-> clear?
-> 
-> 'both' means ir + _intensity (not clearly specified)
+Case 2: the kernel side.  We get that breakage reported, but it turns
+out that different versions of the workflow act differently, and maybe
+some versions depend on the new behavior, and some depend on the old
+behavior.
 
-Yup, that's the power of initial assumptions.  There was a time when
-the only light sensors you tended to get were ir and both ir and visible.
-Visible was obtained by taking one from the other.
+And yes, this happens.
 
-One of those things we'd change if doing it again but it's a bit late
-now..
+We have been in the situation where we get a bug-report for something
+we changed three years ago, and by now, all modern user space depends
+on the new "fixed" behavior, but some embedded user who hadn't
+upgraded a kernel in years is unhappy.
 
-Jonathan
+It's happened several times, and if it really is "it's been years",
+even I will go "tough luck, I guess you're stuck on your old kernel".
+Because we can't fix it.
 
+But in a situation like this, where we really want to encourage new
+behavior but we have somebody who reported the breakage in a timely
+manner (ie it's fairly recent), _and_ it's a system tool like lvm2
+that actually gives us a version number, at that point the *kernel*
+might decide "this is an old binary, I will now use some versioning to
+fall back on old behavior".
 
-> 
-> regards, p.
-> 
-> > > > +KernelVersion:	4.18
-> > > > +Contact:	linux-iio@vger.kernel.org
-> > > > +Description:
-> > > > +		Modifier white indicates that measurements contain white LED
-> > > > +		component.
-> > > > +
-> > > >   What:		/sys/.../iio:deviceX/in_intensity_red_integration_time
-> > > >   What:
-> > > > /sys/.../iio:deviceX/in_intensity_green_integration_time
-> > > >   What:
-> > > > /sys/.../iio:deviceX/in_intensity_blue_integration_time
-> > > > diff --git a/drivers/iio/industrialio-core.c
-> > > > b/drivers/iio/industrialio-core.c
-> > > > index 19bdf3d2962a..cb939b9fad16 100644
-> > > > --- a/drivers/iio/industrialio-core.c
-> > > > +++ b/drivers/iio/industrialio-core.c
-> > > > @@ -108,6 +108,7 @@ static const char * const iio_modifier_names[] = {
-> > > >   	[IIO_MOD_LIGHT_GREEN] = "green",
-> > > >   	[IIO_MOD_LIGHT_BLUE] = "blue",
-> > > >   	[IIO_MOD_LIGHT_UV] = "uv",
-> > > > +	[IIO_MOD_LIGHT_WHITE] = "white",
-> > > >   	[IIO_MOD_QUATERNION] = "quaternion",
-> > > >   	[IIO_MOD_TEMP_AMBIENT] = "ambient",
-> > > >   	[IIO_MOD_TEMP_OBJECT] = "object",
-> > > > diff --git a/include/uapi/linux/iio/types.h
-> > > > b/include/uapi/linux/iio/types.h
-> > > > index 4213cdf88e3c..de87a6c7e6de 100644
-> > > > --- a/include/uapi/linux/iio/types.h
-> > > > +++ b/include/uapi/linux/iio/types.h
-> > > > @@ -84,6 +84,7 @@ enum iio_modifier {
-> > > >   	IIO_MOD_CO2,
-> > > >   	IIO_MOD_VOC,
-> > > >   	IIO_MOD_LIGHT_UV,
-> > > > +	IIO_MOD_LIGHT_WHITE,
-> > > >   };
-> > > >     enum iio_event_type {
-> > > > diff --git a/tools/iio/iio_event_monitor.c b/tools/iio/iio_event_monitor.c
-> > > > index b61245e1181d..a2f9c62a79dd 100644
-> > > > --- a/tools/iio/iio_event_monitor.c
-> > > > +++ b/tools/iio/iio_event_monitor.c
-> > > > @@ -96,6 +96,7 @@ static const char * const iio_modifier_names[] = {
-> > > >   	[IIO_MOD_LIGHT_GREEN] = "green",
-> > > >   	[IIO_MOD_LIGHT_BLUE] = "blue",
-> > > >   	[IIO_MOD_LIGHT_UV] = "uv",
-> > > > +	[IIO_MOD_LIGHT_WHITE] = "white",
-> > > >   	[IIO_MOD_QUATERNION] = "quaternion",
-> > > >   	[IIO_MOD_TEMP_AMBIENT] = "ambient",
-> > > >   	[IIO_MOD_TEMP_OBJECT] = "object",
-> > > > @@ -178,6 +179,7 @@ static bool event_is_known(struct iio_event_data
-> > > > *event)
-> > > >   	case IIO_MOD_LIGHT_GREEN:
-> > > >   	case IIO_MOD_LIGHT_BLUE:
-> > > >   	case IIO_MOD_LIGHT_UV:
-> > > > +	case IIO_MOD_LIGHT_WHITE:
-> > > >   	case IIO_MOD_QUATERNION:
-> > > >   	case IIO_MOD_TEMP_AMBIENT:
-> > > >   	case IIO_MOD_TEMP_OBJECT:
-> > > >   
-> > >   
-> > 
-> >   
-> 
+Because for the kernel, the compatibility really is a #1 concern, and
+if we have to check version numbers or infer compatibility issues some
+other way, we'll do it.
 
+But that "different behavior for different application versions" is
+something we generally avoid at all costs. We do have a couple of
+cases where we deduce what people want based on behavior. But it is
+very very rare, and we generally want to avoid it if there is _any_
+other model for it.
+
+So even in case 2, we do try to avoid versioning. More often we add a
+new flag, and say "hey, if you want the new behavior, use the new flag
+to say so". Not versioning, but explicit "I want the new behavior"
+
+Not all system calls take flags, of course.
+
+             Linus
