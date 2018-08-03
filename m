@@ -2,68 +2,117 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 228EAC28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 16:49:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FC63C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 16:51:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F67D2177A
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 16:49:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F67D2177A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id CF3142177A
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 16:51:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF3142177A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728415AbeHCSqS (ORCPT
+        id S1729593AbeHCSsW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 14:46:18 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:35234 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727305AbeHCSqS (ORCPT
+        Fri, 3 Aug 2018 14:48:22 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:36144 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727540AbeHCSsW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 14:46:18 -0400
-Received: from localhost (c-24-20-22-31.hsd1.or.comcast.net [24.20.22.31])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 0CEBF13FEE7E9;
-        Fri,  3 Aug 2018 09:49:13 -0700 (PDT)
-Date:   Fri, 03 Aug 2018 09:49:12 -0700 (PDT)
-Message-Id: <20180803.094912.1010462327820903665.davem@davemloft.net>
-To:     dhowells@redhat.com
-Cc:     netdev@vger.kernel.org, keescook@chromium.org, arnd@arndb.de,
-        linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] rxrpc: Reuse SKCIPHER_REQUEST_ON_STACK buffer
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <153328772507.9245.16028483796299905227.stgit@warthog.procyon.org.uk>
-References: <153328772507.9245.16028483796299905227.stgit@warthog.procyon.org.uk>
-X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 03 Aug 2018 09:49:13 -0700 (PDT)
+        Fri, 3 Aug 2018 14:48:22 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
+        id 1fldIJ-0005V5-Jn; Fri, 03 Aug 2018 16:51:15 +0000
+From:   Al Viro <viro@ZenIV.linux.org.uk>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org
+Subject: [PATCH 3/5] afs_lookup(): switch to d_splice_alias()
+Date:   Fri,  3 Aug 2018 17:51:13 +0100
+Message-Id: <20180803165115.21094-4-viro@ZenIV.linux.org.uk>
+X-Mailer: git-send-email 2.9.5
+In-Reply-To: <20180803165115.21094-1-viro@ZenIV.linux.org.uk>
+References: <20180803165115.21094-1-viro@ZenIV.linux.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Howells <dhowells@redhat.com>
-Date: Fri, 03 Aug 2018 10:15:25 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-> From: Kees Cook <keescook@chromium.org>
-> 
-> The use of SKCIPHER_REQUEST_ON_STACK() will trigger FRAME_WARN warnings
-> (when less than 2048) once the VLA is no longer hidden from the check:
-> 
-> net/rxrpc/rxkad.c:398:1: warning: the frame size of 1152 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-> net/rxrpc/rxkad.c:242:1: warning: the frame size of 1152 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-> 
-> This passes the initial SKCIPHER_REQUEST_ON_STACK allocation to the leaf
-> functions for reuse. Two requests allocated on the stack is not needed
-> when only one is used at a time.
-> 
-> Signed-off-by: Kees Cook <keescook@chromium.org>
-> Acked-by: Arnd Bergmann <arnd@arndb.de>
-> Signed-off-by: David Howells <dhowells@redhat.com>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+---
+ fs/afs/dir.c | 47 ++++++++++++-----------------------------------
+ 1 file changed, 12 insertions(+), 35 deletions(-)
 
-Applied, thank you.
+diff --git a/fs/afs/dir.c b/fs/afs/dir.c
+index 7d623008157f..3099349cedfa 100644
+--- a/fs/afs/dir.c
++++ b/fs/afs/dir.c
+@@ -822,6 +822,7 @@ static struct dentry *afs_lookup(struct inode *dir, struct dentry *dentry,
+ {
+ 	struct afs_vnode *dvnode = AFS_FS_I(dir);
+ 	struct inode *inode;
++	struct dentry *d;
+ 	struct key *key;
+ 	int ret;
+ 
+@@ -862,43 +863,19 @@ static struct dentry *afs_lookup(struct inode *dir, struct dentry *dentry,
+ 
+ 	afs_stat_v(dvnode, n_lookup);
+ 	inode = afs_do_lookup(dir, dentry, key);
+-	if (IS_ERR(inode)) {
+-		ret = PTR_ERR(inode);
+-		if (ret == -ENOENT) {
+-			inode = afs_try_auto_mntpt(dentry, dir);
+-			if (!IS_ERR(inode)) {
+-				key_put(key);
+-				goto success;
+-			}
+-
+-			ret = PTR_ERR(inode);
+-		}
+-
+-		key_put(key);
+-		if (ret == -ENOENT) {
+-			d_add(dentry, NULL);
+-			_leave(" = NULL [negative]");
+-			return NULL;
+-		}
+-		_leave(" = %d [do]", ret);
+-		return ERR_PTR(ret);
++	if (inode == ERR_PTR(-ENOENT)) {
++		inode = afs_try_auto_mntpt(dentry, dir);
++		if (inode == ERR_PTR(-ENOENT))
++			inode = NULL;
++	} else {
++		dentry->d_fsdata =
++			(void *)(unsigned long)dvnode->status.data_version;
+ 	}
+-	dentry->d_fsdata = (void *)(unsigned long)dvnode->status.data_version;
+-
+-	/* instantiate the dentry */
+ 	key_put(key);
+-	if (IS_ERR(inode)) {
+-		_leave(" = %ld", PTR_ERR(inode));
+-		return ERR_CAST(inode);
+-	}
+-
+-success:
+-	d_add(dentry, inode);
+-	_leave(" = 0 { ino=%lu v=%u }",
+-	       d_inode(dentry)->i_ino,
+-	       d_inode(dentry)->i_generation);
+-
+-	return NULL;
++	d = d_splice_alias(inode, dentry);
++	if (!IS_ERR_OR_NULL(d))
++		d->d_fsdata = dentry->d_fsdata;
++	return d;
+ }
+ 
+ /*
+-- 
+2.11.0
+
