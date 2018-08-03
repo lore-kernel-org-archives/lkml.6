@@ -2,94 +2,92 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16F8BC28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 17:13:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24035C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 17:13:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BDD502177A
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 17:13:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="E2f8+mwp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BDD502177A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id C2FD62177F
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 17:13:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2FD62177F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729034AbeHCTKo (ORCPT
+        id S1729830AbeHCTKv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 15:10:44 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:47028 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727473AbeHCTKo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 15:10:44 -0400
-Received: by mail-io0-f195.google.com with SMTP id i18-v6so5540062ioj.13
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Aug 2018 10:13:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=f+/eiTIAMUNTiYRP7GLVg75gn/7q3FAq6YKOFQ1sgLA=;
-        b=E2f8+mwpZbiZBJYz80fNNKEgiwJDsvdnY+cGi+tWz76Zv5QCUir43p3HHqs9gtBuOR
-         H4fja+CiTunmHPkTkUxexg42yGWzx5TZn/35Yv66Wkcx6KtNesu/lRRX+QKpaarv/IeS
-         zSED/vPhryMcCrMDKpfkE6V+QZFbWaxezCzdE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=f+/eiTIAMUNTiYRP7GLVg75gn/7q3FAq6YKOFQ1sgLA=;
-        b=AvGKOWFCKXP2pR34tO5OQXRH9wTEhMelPtD+I8nYM/8a/a6jgPI1RE6Nz3KFGvL2UX
-         n/mgjklB3dYhuYhxfNgpeUuKjFyA5Tnjp5DKaWOdfqqI6QsiGVx7hTfeVYAhG/R1tcR2
-         7ntamq4eVrI3NUnUL8LAFcIOyk1FMWmREQ3Laj6Y0YGRNTJ8MKL44m5iHUeiRchlpg0I
-         729pWfR/bPR9aYpKS+NWUzVoWXTf614BB52mvX8+1oXDSEmB9VcDryBWviYXAvDIM04m
-         bIVGLo+SYAyiovuBkfCCTXJ3pUhggBq947NmRAomtgKV/OBLu2Fbrbyv3YJLRfdci8b3
-         aRNw==
-X-Gm-Message-State: AOUpUlEr0IEGO1l4lpalF1vSm6PKnd/cJRFUQ9P/9c37h944EwBaJvjd
-        OHUiDod9VMNjeZU3veeKAPs9Ep1L8AcJyhORd3WWjA==
-X-Google-Smtp-Source: AA+uWPy3lcQgc9zSP1X9r8rPJifMCFk3SQrmAW9WheoMfZbPkZis1hfhMz0y/oRpkZms8FRbaaGCLwSTfTs+zm+xg9Y=
-X-Received: by 2002:a6b:6306:: with SMTP id p6-v6mr6764510iog.175.1533316412802;
- Fri, 03 Aug 2018 10:13:32 -0700 (PDT)
+        Fri, 3 Aug 2018 15:10:51 -0400
+Received: from mga03.intel.com ([134.134.136.65]:28704 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727809AbeHCTKv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 15:10:51 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Aug 2018 10:13:40 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,439,1526367600"; 
+   d="scan'208";a="80307029"
+Received: from fmsmsx108.amr.corp.intel.com ([10.18.124.206])
+  by orsmga002.jf.intel.com with ESMTP; 03 Aug 2018 10:13:39 -0700
+Received: from fmsmsx151.amr.corp.intel.com (10.18.125.4) by
+ FMSMSX108.amr.corp.intel.com (10.18.124.206) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Fri, 3 Aug 2018 10:13:39 -0700
+Received: from fmsmsx113.amr.corp.intel.com ([169.254.13.40]) by
+ FMSMSX151.amr.corp.intel.com ([169.254.7.207]) with mapi id 14.03.0319.002;
+ Fri, 3 Aug 2018 10:13:39 -0700
+From:   "Verma, Vishal L" <vishal.l.verma@intel.com>
+To:     "Williams, Dan J" <dan.j.williams@intel.com>,
+        "ross.zwisler@linux.intel.com" <ross.zwisler@linux.intel.com>,
+        "oceanhehy@gmail.com" <oceanhehy@gmail.com>,
+        "Jiang, Dave" <dave.jiang@intel.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        "hehy1@lenovo.com" <hehy1@lenovo.com>
+Subject: Re: [PATCH] libnvdimm, bus: check id immediately following
+ ida_simple_get
+Thread-Topic: [PATCH] libnvdimm, bus: check id immediately following
+ ida_simple_get
+Thread-Index: AQHUKyLEcZHHgxcVEUuunj+xgF7dd6SuubSA
+Date:   Fri, 3 Aug 2018 17:13:39 +0000
+Message-ID: <1533316417.8557.72.camel@intel.com>
+References: <1533298113-17495-1-git-send-email-oceanhehy@gmail.com>
+In-Reply-To: <1533298113-17495-1-git-send-email-oceanhehy@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.232.112.133]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <F108586DC8F90E448DF4CB33713BFEE6@intel.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <1533016762-5268-1-git-send-email-djw@t-chip.com.cn> <1533016762-5268-2-git-send-email-djw@t-chip.com.cn>
-In-Reply-To: <1533016762-5268-2-git-send-email-djw@t-chip.com.cn>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 3 Aug 2018 19:13:21 +0200
-Message-ID: <CACRpkdZapWq6t772Hy0COSZ0n4+qR5sd26E9QuQ6_exNeupEXA@mail.gmail.com>
-Subject: Re: [PATCH v4 1/4] gpio: syscon: rockchip: add GRF GPIO support for rk3328
-To:     Levin Du <djw@t-chip.com.cn>
-Cc:     "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Wayne Chou <zxf@t-chip.com.cn>,
-        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 31, 2018 at 8:00 AM <djw@t-chip.com.cn> wrote:
-
-> From: Levin Du <djw@t-chip.com.cn>
->
-> In Rockchip RK3328, the output only GPIO_MUTE pin, originally for codec
-> mute control, can also be used for general purpose. It is manipulated by
-> the GRF_SOC_CON10 register in GRF. Aside from the GPIO_MUTE pin, the HDMI
-> pins can also be set in the same way.
->
-> Currently this GRF GPIO controller only supports the mute pin. If needed
-> in the future, the HDMI pins support can also be added.
->
-> Signed-off-by: Levin Du <djw@t-chip.com.cn>
-
-Patch applied with Rob's and Heiko's ACKs.
-
-Yours,
-Linus Walleij
+DQpPbiBGcmksIDIwMTgtMDgtMDMgYXQgMDg6MDggLTA0MDAsIE9jZWFuIEhlIHdyb3RlOg0KPiBG
+cm9tOiBPY2VhbiBIZSA8aGVoeTFAbGVub3ZvLmNvbT4NCj4gDQo+IFRoZSBpZCBjaGVjayB3YXMg
+bm90IGV4ZWN1dGVkIGltbWVkaWF0ZWx5IGZvbGxvd2luZyBpZGFfc2ltcGxlX2dldC4NCj4gSnVz
+dA0KPiBjaGFuZ2UgdGhlIGNvZGVzIHBvc2l0aW9uLCB3aXRob3V0IGZ1bmN0aW9uIGNoYW5nZS4N
+Cj4gDQo+IFNpZ25lZC1vZmYtYnk6IE9jZWFuIEhlIDxoZWh5MUBsZW5vdm8uY29tPg0KPiAtLS0N
+Cj4gIGRyaXZlcnMvbnZkaW1tL2J1cy5jIHwgNCArKy0tDQo+ICAxIGZpbGUgY2hhbmdlZCwgMiBp
+bnNlcnRpb25zKCspLCAyIGRlbGV0aW9ucygtKQ0KDQpMb29rcyBnb29kLCBmZWVsIGZyZWUgdG8g
+YWRkDQpSZXZpZXdlZC1ieTogVmlzaGFsIFZlcm1hIDx2aXNoYWwubC52ZXJtYUBpbnRlbC5jb20+
+DQoNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL252ZGltbS9idXMuYyBiL2RyaXZlcnMvbnZk
+aW1tL2J1cy5jDQo+IGluZGV4IDI3OTAyYTguLmFiMjhlN2MgMTAwNjQ0DQo+IC0tLSBhL2RyaXZl
+cnMvbnZkaW1tL2J1cy5jDQo+ICsrKyBiL2RyaXZlcnMvbnZkaW1tL2J1cy5jDQo+IEBAIC0zNTAs
+MTIgKzM1MCwxMiBAQCBzdHJ1Y3QgbnZkaW1tX2J1cyAqbnZkaW1tX2J1c19yZWdpc3RlcihzdHJ1
+Y3QNCj4gZGV2aWNlICpwYXJlbnQsDQo+ICAJSU5JVF9MSVNUX0hFQUQoJm52ZGltbV9idXMtPm1h
+cHBpbmdfbGlzdCk7DQo+ICAJaW5pdF93YWl0cXVldWVfaGVhZCgmbnZkaW1tX2J1cy0+cHJvYmVf
+d2FpdCk7DQo+ICAJbnZkaW1tX2J1cy0+aWQgPSBpZGFfc2ltcGxlX2dldCgmbmRfaWRhLCAwLCAw
+LCBHRlBfS0VSTkVMKTsNCj4gLQltdXRleF9pbml0KCZudmRpbW1fYnVzLT5yZWNvbmZpZ19tdXRl
+eCk7DQo+IC0JYmFkcmFuZ2VfaW5pdCgmbnZkaW1tX2J1cy0+YmFkcmFuZ2UpOw0KPiAgCWlmIChu
+dmRpbW1fYnVzLT5pZCA8IDApIHsNCj4gIAkJa2ZyZWUobnZkaW1tX2J1cyk7DQo+ICAJCXJldHVy
+biBOVUxMOw0KPiAgCX0NCj4gKwltdXRleF9pbml0KCZudmRpbW1fYnVzLT5yZWNvbmZpZ19tdXRl
+eCk7DQo+ICsJYmFkcmFuZ2VfaW5pdCgmbnZkaW1tX2J1cy0+YmFkcmFuZ2UpOw0KPiAgCW52ZGlt
+bV9idXMtPm5kX2Rlc2MgPSBuZF9kZXNjOw0KPiAgCW52ZGltbV9idXMtPmRldi5wYXJlbnQgPSBw
+YXJlbnQ7DQo+ICAJbnZkaW1tX2J1cy0+ZGV2LnJlbGVhc2UgPSBudmRpbW1fYnVzX3JlbGVhc2U7
+DQo=
