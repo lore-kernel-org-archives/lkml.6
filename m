@@ -2,77 +2,108 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C913DC28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 12:36:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CD01C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 12:37:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8094421759
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 12:36:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8094421759
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 1A8FE21759
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 12:37:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="BL9qDU68"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A8FE21759
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lightnvm.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730028AbeHCOcX (ORCPT
+        id S1729764AbeHCOdy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 10:32:23 -0400
-Received: from mx2.suse.de ([195.135.220.15]:59532 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728123AbeHCOcX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 10:32:23 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A1C3FACB8;
-        Fri,  3 Aug 2018 12:36:13 +0000 (UTC)
-Date:   Fri, 3 Aug 2018 14:36:12 +0200
-From:   Jean Delvare <jdelvare@suse.de>
-To:     Parth Y Shah <sparth1292@gmail.com>
-Cc:     arnd@arndb.de, gregkh@linuxfoundation.org, bhumirks@gmail.com,
+        Fri, 3 Aug 2018 10:33:54 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:37147 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728171AbeHCOdy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 10:33:54 -0400
+Received: by mail-lf1-f68.google.com with SMTP id j8-v6so3946303lfb.4
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Aug 2018 05:37:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Gh6p0KJdfRQjsfA6TAi38fge0rfft8FJKDYZzw10xAw=;
+        b=BL9qDU68P1YF9126tMzmPMRcwDVjvvWMbQb8FlxH8j/H0iu1+xfNmdkWoiDtjuhBXi
+         D4j5lC+35A4XFetrjfM0B3xHz0ZgSoU8mg8gEHKHcNPM1MeAqOIaF1jsRF5kqQBCQMIz
+         kLFMyETA8+N/am6FeEdPCnR3g/xpClyFiqAkOg9eMgYp+B79peQ6p14mT+CvwtCAtdY6
+         si7U3IqmgXoDdJkp0Eh1OMl9lEXlK1yPiaot0squijmypLATTWpAOMxMFYsvJZuL9Mmt
+         0CB8E5NDllbB4upUq0ifyRuNrteNVfv6mRcafbF430zGAnJ1wKNiWj4UDK+BdCWte7jx
+         98Iw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Gh6p0KJdfRQjsfA6TAi38fge0rfft8FJKDYZzw10xAw=;
+        b=TNv19ny8k78hdRaZqOEcO9y0slJZvXYBcKYxTXg2fNsYgVzj7h5PU+BUYPzsNh09me
+         xjqbxVhNQ7I5VwhPugtw1vDvJY1Srv4lwfMmCjuoudvZtyt2cpie+XEueCd9gDyH8+1Y
+         Vd6WDcFW+xO8hDUWuQqU6tPu9QSa2NxyIEn0n4repFr9f0ZQoPtz/jpuBw0EEPBFyZfh
+         11+dM5QElFTH5M0O0FLbvroIfM+OOn+Hgti3VaHEqk2rTgdCnWje7SNkQARMNLOhj12g
+         tFoIR+Ead2AjUzC9NuTH9hR+D7QIy3TWG09nWISChwq181N3p1HPNqgn9XzkxpdS7zIZ
+         RGvQ==
+X-Gm-Message-State: AOUpUlFtLBPbKw0BPYwYTn4JYGxlHLJRbKKY1h3IUkkiky7I8172wsgH
+        fWp7BUMN5lWCfCdfm/JmpgrxDJ5gSMaC+w==
+X-Google-Smtp-Source: AAOMgpeglgHfA4DAESWMt9tnU8upOFjIekYu3HexGhv3gb2oBX7s9Vnf1rTV0hoRPqcczpRH5q3iTg==
+X-Received: by 2002:a19:c64c:: with SMTP id w73-v6mr4821247lff.2.1533299863408;
+        Fri, 03 Aug 2018 05:37:43 -0700 (PDT)
+Received: from [192.168.0.10] (95-166-82-66-cable.dk.customer.tdc.net. [95.166.82.66])
+        by smtp.googlemail.com with ESMTPSA id j17-v6sm706771lfb.27.2018.08.03.05.37.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 03 Aug 2018 05:37:42 -0700 (PDT)
+Subject: Re: [PATCH] lightnvm: move device L2P detection to core
+To:     javier@cnexlabs.com
+Cc:     igor.j.konopko@intel.com, marcin.dziegielewski@intel.com,
+        hans.holmberg@cnexlabs.com, hlitz@ucsc.edu,
+        youngtack.jin@circuitblvd.com, linux-block@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] misc: eeprom: assignment outside the if statement
-Message-ID: <20180803143612.121fba20@endymion>
-In-Reply-To: <1533288043-19624-1-git-send-email-sparth1292@gmail.com>
-References: <1533288043-19624-1-git-send-email-sparth1292@gmail.com>
-Organization: SUSE Linux
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.31; x86_64-suse-linux-gnu)
+References: <20180803085449.3436-1-mb@lightnvm.io>
+ <31319710-8A72-49DC-9CFA-521CA06843F3@cnexlabs.com>
+From:   =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
+Message-ID: <9349be00-4d14-9b25-ed11-fb9244428d7f@lightnvm.io>
+Date:   Fri, 3 Aug 2018 14:37:41 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <31319710-8A72-49DC-9CFA-521CA06843F3@cnexlabs.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri,  3 Aug 2018 14:50:43 +0530, Parth Y Shah wrote:
-> Assignment of any variable should be kept outside the if statement
-
-Actually there are exceptions to that rule, but this isn't one of them.
-
-> Signed-off-by: Parth Y Shah <sparth1292@gmail.com>
-> ---
->  drivers/misc/eeprom/max6875.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+On 08/03/2018 02:16 PM, Javier Gonzalez wrote:
+>> On 3 Aug 2018, at 10.54, Matias Bjørling <mb@lightnvm.io> wrote:
+>>
+>> A 1.2 device is able to manage the logical to physical mapping
+>> table internally or leave it to the host.
+>>
+>> A target only supports one of those approaches, and therefore must
+>> check on initialization. Move this check to core to avoid each target
+>> implement the check.
+>>
+>> Signed-off-by: Matias Bjørling <mb@lightnvm.io>
+>> ---
 > 
-> diff --git a/drivers/misc/eeprom/max6875.c b/drivers/misc/eeprom/max6875.c
-> index 0e32709..fc0cf9a 100644
-> --- a/drivers/misc/eeprom/max6875.c
-> +++ b/drivers/misc/eeprom/max6875.c
-> @@ -148,7 +148,8 @@ static int max6875_probe(struct i2c_client *client,
->  	if (client->addr & 1)
->  		return -ENODEV;
->  
-> -	if (!(data = kzalloc(sizeof(struct max6875_data), GFP_KERNEL)))
-> +	data = kzalloc(sizeof(struct max6875_data), GFP_KERNEL);
-> +	if (!data)
->  		return -ENOMEM;
->  
->  	/* A fake client is created on the odd address */
+> 
+> I see where you want to go with these changes, but the way targets are
+> layered on top of the LightNVM subsystem does not align with it.
+> LightNVM can support different OCSSD versions and capabilities, but that
+> does not mean that a target (e.g., pblk) does. The way I see it, core
+> should only check for (i) the drive to expose itself in a known revision
+> and (ii) the reported structures to be consistent. However, specific
+> functionality is not for core to check upo.
 
-Reviewed-by: Jean Delvare <jdelvare@suse.de>
+Why try to initialize a target, if we already know that it is incompatible?
 
-Thanks,
--- 
-Jean Delvare
-SUSE L3 Support
+
