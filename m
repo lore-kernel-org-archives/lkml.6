@@ -2,215 +2,160 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12B24C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 18:00:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 966E7C46469
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 18:07:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C442D2177F
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 18:00:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C442D2177F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 54184217B7
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 18:07:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="XQFr64s6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54184217B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729924AbeHCT5m (ORCPT
+        id S1729946AbeHCUEg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 15:57:42 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:43593 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727356AbeHCT5m (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 15:57:42 -0400
-X-UUID: 08720135f7604b099b391c53db0edc21-20180804
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
-        (envelope-from <sean.wang@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 180691104; Sat, 04 Aug 2018 02:00:15 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by mtkexhb01.mediatek.inc
- (172.21.101.102) with Microsoft SMTP Server (TLS) id 15.0.1210.3; Sat, 4 Aug
- 2018 02:00:14 +0800
-Received: from [172.21.77.33] (172.21.77.33) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Sat, 4 Aug 2018 02:00:14 +0800
-Message-ID: <1533319214.3472.187.camel@mtkswgap22>
-Subject: Re: [PATCH v7 2/3] Bluetooth: mediatek: Add protocol support for
- MediaTek serial devices
-From:   Sean Wang <sean.wang@mediatek.com>
-To:     Marcel Holtmann <marcel@holtmann.org>
-CC:     Mark Rutland <mark.rutland@arm.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        <linux-kernel@vger.kernel.org>,
-        "open list:BLUETOOTH DRIVERS" <linux-bluetooth@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Date:   Sat, 4 Aug 2018 02:00:14 +0800
-In-Reply-To: <D2336CD2-B69B-4B5B-8125-F0CAD29E3243@holtmann.org>
-References: <cover.1533056925.git.sean.wang@mediatek.com>
-         <c92ed10cf16f36d9a3b390e864af92e2dfe7b771.1533056925.git.sean.wang@mediatek.com>
-         <1707FFA1-A294-4A95-A3BF-0910CE455232@holtmann.org>
-         <1533192799.3472.122.camel@mtkswgap22>
-         <FF45A90A-F9F1-47CB-AB1F-1E92BF587FBE@holtmann.org>
-         <1533199720.3472.136.camel@mtkswgap22>
-         <9526E5D9-50BA-4D57-80F5-083DB7D28AFE@holtmann.org>
-         <1533205495.3472.144.camel@mtkswgap22>
-         <A6D48D49-52CE-405D-8C5D-C4D54CE67221@holtmann.org>
-         <1533303749.3472.160.camel@mtkswgap22>
-         <D2336CD2-B69B-4B5B-8125-F0CAD29E3243@holtmann.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 8bit
+        Fri, 3 Aug 2018 16:04:36 -0400
+Received: from mail-eopbgr50045.outbound.protection.outlook.com ([40.107.5.45]:14368
+        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727356AbeHCUEg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 16:04:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=I1IhrzxkrGr8VlALkA+DRG8erJ2i7p/uTAR55z6l3EQ=;
+ b=XQFr64s6AdSJcvaSSNh9fGYmPp6dmrv+VA7adeTy+i+OzpGmu7dfMqQJMYYAvJeUeWhJzd461tDsoqovqwqmTIeJvm6KeVPjNmH9I7sOvowy1OW171KX4ot/KJHRZTMiXkFkHrxTRoPcDXn9E/XwqjbiX7UEh60vHoIgxIojLnA=
+Received: from AM0PR04MB4290.eurprd04.prod.outlook.com (52.134.126.145) by
+ AM0PR04MB4337.eurprd04.prod.outlook.com (52.134.126.156) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1017.15; Fri, 3 Aug 2018 18:07:09 +0000
+Received: from AM0PR04MB4290.eurprd04.prod.outlook.com
+ ([fe80::c96b:d6f5:db75:1273]) by AM0PR04MB4290.eurprd04.prod.outlook.com
+ ([fe80::c96b:d6f5:db75:1273%5]) with mapi id 15.20.1017.010; Fri, 3 Aug 2018
+ 18:07:09 +0000
+From:   Leonard Crestez <leonard.crestez@nxp.com>
+To:     "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>
+CC:     Richard Zhu <hongxing.zhu@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "andrew.smirnov@gmail.com" <andrew.smirnov@gmail.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [RFC] PCI: imx: Add multi-pd support
+Thread-Topic: [RFC] PCI: imx: Add multi-pd support
+Thread-Index: AQHUI3qj7YIZZjz5Gkie2VtYh1QPdaSpCxaAgAVXigA=
+Date:   Fri, 3 Aug 2018 18:07:09 +0000
+Message-ID: <53f9f939dbce11e1c96986ff41f29dd6e41b9220.camel@nxp.com>
+References: <8018069bc772376caef29e76280e4d0facffdb68.1532455922.git.leonard.crestez@nxp.com>
+         <CAPDyKFpN99iDYf1mcG-G1=AAkiw8OjoynvK+5cBV8GvCs6WtKg@mail.gmail.com>
+In-Reply-To: <CAPDyKFpN99iDYf1mcG-G1=AAkiw8OjoynvK+5cBV8GvCs6WtKg@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Evolution 3.28.1-2 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=leonard.crestez@nxp.com; 
+x-originating-ip: [95.76.156.53]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM0PR04MB4337;6:70UKBFfFpiC2JnutMzJQBi6hYwP95tfvU/jj+j2k9mDAufmpgmgwAVwi1CVpHGSy14whAbbrKDsaVOWiXFrb+V8JFbjO2w9hTaR1J5tJT/cNDpjkuqk1CD3rLyAVxbFwc/K5Mj7RDhaqUEqTI6fpSbeDsflwIg+ee0Gr1rIbNhzRriFUsPfSwJuCnsV+LEjZ/t4Zhu+TCoZOBsA5dKoYacvVfTJYyIoSJDy/rNB01gyJBwA7J7Dv2brKXWePzKd2wLwVgeZocfub9jB7m95RLFj+Ah4IXFxLQ5+4e8RBhrqU72zwt3LrIQK7p+viJHECKSESmYAj15Taw/0Qx4dy1iF1Ehy9H9hbSizYvOGEJmUl9Tu+wD2rRxv2tSxov6cseFXKu3hppoEcQ1goWNc0yaQsbZEVIh/TaUeyulm/y+18R8OK2xEHgzxWUGYF6/37b+lyp1bdXjVwpnmqVHm0gg==;5:busYd5fv8RhCzlsCxVcy1oGMSfj0tLe+TZOjOqy46qv99SI5cRKreTapZONYkVwrqJ5tOi6gzTdiWjeYniNszsqK2SJPehW/STZ83Xj8LHqIpUPj3wf6dBHDWmnt4/IBX8FnfgQjYG/0VUw61jBWizNB6FVkNIpDuNQaLAxepvs=;7:moQGN/TmHXUQ7ZNIO/tGVj/QxFGC0frXiro9R5glnfGaY7fiSo1DcSxYPT1QIXjzLVVS19Zihs3KDnOveD96GKvks6HcRsZrU06tw44NqvG5XvbmXnXz4Mf9f2R5V7ZukXWjCopTBEr9tv1LXoFs4T4XW0VM2egVAIbvG7v28r+fkh1jYBS71LM3w/4Y2hmfCm6Ud1VilgOUWNVsz1fs5QkdrPANLv1HZ/B1Fz79BjGylNrBpdM9QmgXHUpsuMXh
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: d8724a92-60d3-4a37-0e41-08d5f96bee0b
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600074)(711020)(4618075)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB4337;
+x-ms-traffictypediagnostic: AM0PR04MB4337:
+x-microsoft-antispam-prvs: <AM0PR04MB4337181D913F883777876A4CEE230@AM0PR04MB4337.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(185117386973197);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231311)(944501410)(52105095)(93006095)(93001095)(3002001)(10201501046)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:AM0PR04MB4337;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB4337;
+x-forefront-prvs: 0753EA505A
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(376002)(136003)(346002)(396003)(366004)(189003)(199004)(229853002)(14454004)(66066001)(305945005)(106356001)(3846002)(5640700003)(6486002)(2351001)(6116002)(105586002)(2906002)(6436002)(5250100002)(2501003)(7736002)(478600001)(39060400002)(5660300001)(36756003)(25786009)(44832011)(99286004)(186003)(26005)(8936002)(76176011)(81156014)(6916009)(7416002)(446003)(476003)(2616005)(50226002)(54906003)(316002)(68736007)(2900100001)(86362001)(8676002)(6506007)(53936002)(81166006)(4326008)(6246003)(11346002)(102836004)(14444005)(5024004)(53546011)(118296001)(97736004)(6512007)(256004)(486006)(99106002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4337;H:AM0PR04MB4290.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: F9lBvNuxGLB/0YYl1hf3mEqV0tz30CbR2Juh7jDYJB2ekjOZqkGel7wsO4GWmI/CcH+9jVO/bKw+qbcn56Bi9Y1qzqwimZvl8M4R2WFMMrNhRYFugqvU+LXXYGD2pChfTG0J+H1u34IdkdfCOE8dgCSESa/Ccq0LIC4EEiQDqQbcvEDn5+lzBiNQHN7McUhEYd+wqsPAw7AUQagUfwJa1Pjesnn7dVHyt4eJxHFLfnnkp6XvCU/iTNjURhXU0uHNdtWwo7ktByXydRLkqOK/gV1A0QycFmlII///9PwzpB+RTGAAqb9sU3at6/twNT20CrfyrL8XQbknIW6d7+fCgidR0bsBqqSIvZP2XkHGJrk=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <B04ACE21F8C2A04CB2EE9769B597C5F6@eurprd04.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-X-MTK:  N
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d8724a92-60d3-4a37-0e41-08d5f96bee0b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Aug 2018 18:07:09.1630
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4337
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-08-03 at 19:19 +0200, Marcel Holtmann wrote:
-> Hi Sean,
-> 
-> >>>>>>>>> +
-> >>>>>>>>> +static int mtk_hci_wmt_sync(struct hci_dev *hdev, u8 op, u8 flag, u16 plen,
-> >>>>>>>>> +			    const void *param)
-> >>>>>>>>> +{
-> >>>>>>>>> +	struct mtk_hci_wmt_cmd wc;
-> >>>>>>>>> +	struct mtk_wmt_hdr *hdr;
-> >>>>>>>>> +	struct sk_buff *skb;
-> >>>>>>>>> +	u32 hlen;
-> >>>>>>>>> +
-> >>>>>>>>> +	hlen = sizeof(*hdr) + plen;
-> >>>>>>>>> +	if (hlen > 255)
-> >>>>>>>>> +		return -EINVAL;
-> >>>>>>>>> +
-> >>>>>>>>> +	hdr = (struct mtk_wmt_hdr *)&wc;
-> >>>>>>>>> +	hdr->dir = 1;
-> >>>>>>>>> +	hdr->op = op;
-> >>>>>>>>> +	hdr->dlen = cpu_to_le16(plen + 1);
-> >>>>>>>>> +	hdr->flag = flag;
-> >>>>>>>>> +	memcpy(wc.data, param, plen);
-> >>>>>>>>> +
-> >>>>>>>>> +	atomic_inc(&hdev->cmd_cnt);
-> >>>>>>>> 
-> >>>>>>>> Why are you doing this one. It will need a comment here if really needed. However I doubt that this is needed. You are only using it from hdev->setup and hdev->shutdown callbacks.
-> >>>>>>>> 
-> >>>>>>> 
-> >>>>>>> An increment on cmd_cnt is really needed because hci_cmd_work would check whether cmd_cnt is positive and then has a decrement on cmd_cnt before a packet is being sent out.
-> >>>>>>> 
-> >>>>>>> okay will add a comment.
-> >>>>>> 
-> >>>>>> but you are in ->setup callback this time. So if you need this, then all the other ->setup routines would actually fail as well. Either this is leftover from when you did things in ->probe or ->open or this is some thing we might better fix properly in the core instead of papering over it. Can you recheck if this is really needed.
-> >>>>>> 
-> >>>>> 
-> >>>>> I added a counter print and the counter increments as below
-> >>>>> 
-> >>>>> 	/* atomic_inc(&hdev->cmd_cnt); */
-> >>>>>      pr_info("cmd_cnt = %d\n" , atomic_read(&hdev->cmd_cnt));
-> >>>>> 
-> >>>>>      skb = __hci_cmd_sync_ev(hdev, 0xfc6f, hlen, &wc, HCI_VENDOR_PKT,
-> >>>>>                              HCI_INIT_TIMEOUT);
-> >>>>> 
-> >>>>> and the log show up that 
-> >>>>> 
-> >>>>> 
-> >>>>> [  334.049156] Bluetooth: hci0: command 0xfc6f tx timeout
-> >>>>> [  334.054840] cmd_cnt = 0
-> >>>>> [  336.065076] Bluetooth: hci0: command 0xfc6f tx timeout
-> >>>>> [  336.070795] cmd_cnt = 0
-> >>>>> [  338.080997] Bluetooth: hci0: command 0xfc6f tx timeout
-> >>>>> [  338.086683] cmd_cnt = 0
-> >>>>> [  340.096907] Bluetooth: hci0: command 0xfc6f tx timeout
-> >>>>> [  340.102609] cmd_cnt = 0
-> >>>>> [  342.112824] Bluetooth: hci0: command 0xfc6f tx timeout
-> >>>>> [  342.118520] cmd_cnt = 0
-> >>>>> [  344.128747] Bluetooth: hci0: command 0xfc6f tx timeout
-> >>>>> [  344.134454] cmd_cnt = 0
-> >>>>> [  346.144667] Bluetooth: hci0: command 0xfc6f tx timeout
-> >>>>> [  346.150372] cmd_cnt = 0
-> >>>>> 
-> >>>>> 
-> >>>>> The packet is dropped by hci_cmd_work at [1], so I also wondered why the
-> >>>>> other vendor driver works, it seems the counter needs to be incremented
-> >>>>> before every skb is being queued to cmd_q.
-> >>>>> 
-> >>>>> 4257 static void hci_cmd_work(struct work_struct *work)
-> >>>>> 4258 {
-> >>>>> 4259         struct hci_dev *hdev = container_of(work, struct hci_dev, cmd_work);
-> >>>>> 4260         struct sk_buff *skb;
-> >>>>> 4261
-> >>>>> 4262         BT_DBG("%s cmd_cnt %d cmd queued %d", hdev->name,
-> >>>>> 4263                atomic_read(&hdev->cmd_cnt), skb_queue_len(&hdev->cmd_q));
-> >>>>> 4264
-> >>>>> 4265         /* Send queued commands */
-> >>>>> 
-> >>>>> [1]
-> >>>>> 4266         if (atomic_read(&hdev->cmd_cnt)) { /* dropped when cmd_cnt is zero */
-> >>>>> 4267                 skb = skb_dequeue(&hdev->cmd_q);
-> >>>>> 4268                 if (!skb)
-> >>>>> 4269                         return;
-> >>>>> 4270
-> >>>>> 4271                 kfree_skb(hdev->sent_cmd);
-> >>>>> 4272
-> >>>>> 4273                 hdev->sent_cmd = skb_clone(skb, GFP_KERNEL);
-> >>>>> 4274                 if (hdev->sent_cmd) {
-> >>>>> 4275                         atomic_dec(&hdev->cmd_cnt);  /* cmd_cnt-- */
-> >>>>> 4276                         hci_send_frame(hdev, skb);
-> >>>> 
-> >>>> actually the command also needs to better go via the raw_q anyway since it doesn’t come back with the cmd status or cmd complete. You have it waiting for a vendor event. Maybe with is something we need to consider with __hci_cmd_sync_ev anyway.
-> >>>> 
-> >>>> Johan would know best since he wrote that code. Anyway, we should fix that in the core and not have you hack around it.
-> >>>> 
-> >>> 
-> >>> yes, my case is that received event is neither cmd status nor cmd complete. It is completely a vendor event.
-> >>> 
-> >>> if it wants to be solved by the core layer, do you permit that I remove the hack and then send it in the next version?
-> >> 
-> >> we need to have a __hci_raw_sync_ev that uses the hdev->raw_q and waits for the specified event to come back. I never realized that you are missing the cmd status or cmd complete. So this is similar to the original CSR vendor commands which had the same behavior.
-> >> 
-> >> I have the feeling that you hdev->cmd_cnt increment is just hiding the problem here. If you really think that it is not chains any side effects we can merge the driver with a big warning and fix this up. However the clean way would be for you to create a patch that introduces __hci_raw_sync_ev as describe above.
-> > 
-> > What do you think of this? If I add extra atomic_set 1 on cmd_cnt after driver really got a vendor event back instead of blinding to increment for every packet sent.
-> > 
-> > the behavior is the same to receive a cmd status or complete. it should not have side effects.
-> > 
-> > 96         skb = __hci_cmd_sync_ev(hdev, 0xfc6f, hlen, &wc, HCI_VENDOR_PKT,
-> > 97                                 HCI_INIT_TIMEOUT);
-> > 98
-> > 99         if (IS_ERR(skb)) {
-> > 100                 int err = PTR_ERR(skb);
-> > 101
-> > 102                 bt_dev_err(hdev, "Failed to send wmt cmd (%d)", err);
-> > 103                 return err;
-> > 104         }
-> > 105
-> > 106         if (!test_bit(HCI_RESET, &hdev->flags)) <<<<<<
-> > 107                 atomic_set(&hdev->cmd_cnt, 1);  <<<<<<
-> > 108
-> > 109         kfree_skb(skb);
-> 
-> this is even more hackish since the __hci_cmd_sync_ev command is really meant to get a cmd status first before waiting for that event.
-> 
-
-Understood.
-
-I've stopped the hack in v8. could we merge v8 first ? and then I will a fix up with __hci_raw_sync_ev that uses the hdev->raw_q instead of __hci_cmd_sync_ev in TODO.
-
-> Are all Mediatek vendor commands this way? Or just the ones for loading the firmware? So only the WMT ones?
-> 
-
-Only the WMT ones, WMT commands/events are usually used in system controlling, for example, global function on/off, firmware download, reset and so on. most only appear on device initialization
-
-> Regards
-> 
-> Marcel
-> 
-> 
-> _______________________________________________
-> Linux-mediatek mailing list
-> Linux-mediatek@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-mediatek
-
-
+T24gVHVlLCAyMDE4LTA3LTMxIGF0IDEwOjMyICswMjAwLCBVbGYgSGFuc3NvbiB3cm90ZToNCj4g
+T24gMjQgSnVseSAyMDE4IGF0IDIwOjE3LCBMZW9uYXJkIENyZXN0ZXogPGxlb25hcmQuY3Jlc3Rl
+ekBueHAuY29tPiB3cm90ZToNCj4gPiBPbiBzb21lIGNoaXBzIHRoZSBQQ0lFIGFuZCBQQ0lFX1BI
+WSBibG9ja3MgYXJlIGluIHNlcGFyYXRlIHBvd2VyIGRvbWFpbnMNCj4gPiB3aGljaCBjYW4gYmUg
+cG93ZXItZ2F0ZWQgaW5kZXBlbmRlbnRseS4gVGhlIGRyaXZlciBuZWVkcyB0byBoYW5kbGUgdGhp
+cw0KPiA+IGJ5IGtlZXBpbmcgYm90aCBkb21haW4gYWN0aXZlLg0KPiA+IA0KPiA+IFRoaXMgaXMg
+aW50ZW5kZWQgZm9yIGlteDZzeCB3aGVyZSBQQ0lFIGlzIGluIERJU1BNSVggYW5kIFBDSUVfUEhZ
+IGluDQo+ID4gaXQncyBvd24gZG9tYWluLiBEZWZpbmluZyB0aGUgRElTUE1JWCBkb21haW4gcmVx
+dWlyZXMgYSB3YXkgZm9yIHBjaWUgdG8NCj4gPiBrZWVwIGl0IGFjdGl2ZSBvciBpdCB3aWxsIGJy
+ZWFrIHdoZW4gZGlzcGxheXMgYXJlIG9mZi4NCj4gPiANCj4gPiBUaGUgcG93ZXItZG9tYWlucyBv
+biBpbXg2c3ggYXJlIG1lYW50IHRvIGxvb2sgbGlrZSB0aGlzOg0KPiA+ICAgICAgICAgcG93ZXIt
+ZG9tYWlucyA9IDwmcGRfZGlzcD4sIDwmcGRfcGNpPjsNCj4gPiAgICAgICAgIHBvd2VyLWRvbWFp
+bi1uYW1lcyA9ICJwY2llIiwgInBjaWVfcGh5IjsNCj4gPiANCj4gPiBTaWduZWQtb2ZmLWJ5OiBM
+ZW9uYXJkIENyZXN0ZXogPGxlb25hcmQuY3Jlc3RlekBueHAuY29tPg0KPiBSZXZpZXdlZC1ieTog
+VWxmIEhhbnNzb24gPHVsZi5oYW5zc29uQGxpbmFyby5vcmc+DQoNClRoYW5rcyBmb3IgdGFraW5n
+IHRoZSB0aW1lIHRvIGxvb2sgYXQgdGhpcywgSSB3aWxsIGxpa2VseSByZXBvc3QgdGhpcw0KYXMg
+UEFUQ0ggaW4gYSBzZXJpZXMgbGF0ZXIuDQoNCj4gPiBSaWdodCBub3cgaWYgYSBkZXZpY2UgaGFz
+IGEgc2luZ2xlIHBvd2VyIGRvbWFpbiBpdCB3aWxsIGJlIGFjdGl2YXRlZA0KPiA+IGJlZm9yZSBw
+cm9iZSBidXQgaWYgaXQgaGFzIG11bHRpcGxlIGRvbWFpbnMgdGhleSBuZWVkIHRvIGJlIGV4cGxp
+Y2l0bHkNCj4gPiAiYXR0YWNoZWQiIHRvIGFuZCBjb250cm9sbGVkLiBTdXBwb3J0aW5nIGJvdGgg
+aXMgYSBiaXQgYXdrd2FyZCwgdGhpcw0KPiA+IHBhdGNoIG1ha2VzIHRoZSBkaXN0aW5jdGlvbiBi
+YXNlZCBvbiAoZGV2LT5wbV9kb21haW4gIT0gTlVMTCkuDQo+ID4gDQo+ID4gTWF5YmUgdGhlIFBN
+IGNvcmUgc2hvdWxkIG1ha2UgdGhpcyBkaXN0aW5jdGlvbiBiYXNlZCBvbiBhIGZsYWcgaW4gc3Ry
+dWN0DQo+ID4gZGV2aWNlX2RyaXZlciBpbnN0ZWFkIG9mIG51bWJlciBvZiBwb3dlci1kb21haW5z
+PyBTbyBieSBkZWZhdWx0IHdoZW4gYQ0KPiA+IGRldmljZSBoYXMgbXVsdGlwbGUgcG93ZXIgZG9t
+YWlucyB0aGV5IHdvdWxkIHdvdWxkIGJlIGFjdGl2YXRlZA0KPiA+IHRvZ2V0aGVyIGFuZCB0aGlz
+IHBhdGNoIHdvdWxkIGJlIHVubmVjZXNzYXJ5Lg0KPiANCj4gQWN0aXZhdGlvbiBpcyBkZWxpYmVy
+YXRlbHkgbGVmdCB0byBiZSBtYW5nZWQgYnkgZWFjaCB1c2VyLCBhcyB0aGUgUE0NCj4gY29yZS9n
+ZW5wZCBjYW4ndCBrbm93IHdoZW4gcG93ZXJpbmcgb24gdGhlIFBNIGRvbWFpbnMgbWFrZSBzZW5z
+ZS4NCg0KQnkgZGVmYXVsdCB0aGUgUE0gY29yZSBjb3VsZCB0cmVhdCBhIGxpc3Qgb2YgcG0gZG9t
+YWlucyBqdXN0IGxpa2UgaXQNCnRyZWF0cyBhIGRvbWFpbiBub3cuIE15IHBhdGNoIGRvZXNuJ3Qg
+ZG8gYW55dGhpbmcgcGNpLXNwZWNpZmljLCBpdCBqdXN0DQphdHRhY2hlcyBhbGwgZG9tYWlucyBh
+bmQgY3JlYXRlcyBkZXZpY2UgbGlua3MuIENvdWxkbid0IHRoZSBjb3JlIGRvDQp0aGlzPw0KDQo+
+IFRoZSBtYWluIHJlYXNvbiB0byB3aHkgZ2VucGQgcG93ZXJzIG9uIHRoZSBQTSBkb21haW4gZm9y
+IHRoZSBzaW5nbGUgUE0NCj4gZG9tYWluIGNhc2UsIGlzIGJlY2F1c2Ugb2YgbGVnYWN5IGJlaGF2
+aW9ycyBpbiBkcml2ZXJzLg0KDQpXb3VsZG4ndCBpdCBiZSBuaWNlciB0byBvdXQtb3V0IG9mIHN1
+Y2ggbGVnYWN5IGJlaGF2aW9ycyB3aXRoIGEgZmxhZyBpbg0Kc3RydWN0IGRyaXZlciBpbnN0ZWFk
+IG9mIHNpbmdsZS12ZXJzdXMtbXVsdGlwbGUgZG9tYWlucz8NCg0KPiA+IFRoZSBkZXZpY2VfbGlu
+ayBpcyBtYXJrZWQgYXMgIlNUQVRFTEVTUyIgYmVjYXVzZSBvdGhlcndpc2UgYSB3YXJuaW5nIGlz
+DQo+ID4gdHJpZ2dlcmVkIGluIGRldmljZV9saW5rc19kcml2ZXJfYm91bmQuIFRoaXMgc2VlbXMg
+dG8gaGFwcGVuIGJlY2F1c2UgdGhlDQo+ID4gcGQgZGV2aWNlcyBhcmUgYWx3YXlzIG1hcmtlZCBh
+cyAiRExfREVWX05PX0RSSVZFUiIuIE1heWJlIHRoZXkgc2hvdWxkIGJlDQo+ID4gaW5zdGVhZCBh
+bHdheXMgYmUgbWFya2VkIGFzIERMX0RFVl9EUklWRVJfQk9VTkQ/DQo+IA0KPiBVc2luZyBTVEFU
+RUxFU1MgaXMgY29ycmVjdCwgYmVjYXVzZSB0aGUgc3VwcGxpZXIgZGV2aWNlcywgd2hpY2ggYXJl
+DQo+IG1hbmFnZWQgYnkgZ2VucGQgZG9uJ3QgaGF2ZSBhbnkgZHJpdmVyIGF0dGFjaGVkIHRvIHRo
+ZW0uDQoNCkFzIGZhciBhcyBJIGNhbiB0ZWxsIHRoZXNlIGdlbnBkX2RldiBkZXZpY2VzIG5lZWQg
+dG8gYmUgbWFudWFsbHkNCnVucmVnaXN0ZXJlZCBpbiB0aGUgY29uc3VtZXIncyByZW1vdmUgZnVu
+Y3Rpb24sIHJpZ2h0PyBJZiB0aGV5IHdlcmUNCm1hcmtlZCB3aXRoIERMX0RFVl9EUklWRVJfQk9V
+TkQgdGhlbiB5b3UgY291bGQgdXNlDQpETF9GTEFHX0FVVE9SRU1PVkVfU1VQUExJRVIgb24gdGhl
+bS4NCg0KQXMgZmFyIGFzIEkgY2FuIHRlbGwgdGhlIERMX0RFVl8qIHN0YXRlcyBhcmUgdXNlZCB0
+byBkZWFsIHdpdGggcHJvYmluZw0Kb3JkZXIgYnV0IHNpbmNlIG5vIGRyaXZlciB3aWxsIGV2ZXIg
+YmluZCB0byB0aGVzZSBzdXBwbGllcnMgd2UgY291bGQNCnRyZWF0IHRoZW0gYXMgZWZmZWN0aXZl
+bHkgYWx3YXlzIGJvdW5kcy4NCg0KDQpQZXJoYXBzIHRoaXMgY2FuIGJlIHJldmlzaXRlZCBsYXRl
+ciwgaW14LXBjaSBpcyBub3QgYSB2ZXJ5IGdvb2QgdXNlY2FzZQ0KZm9yIHRoaXMgYmVjYXVzZSBp
+dCBkb2Vzbid0IGV2ZW4gc3VwcG9ydCByZW1vdmUu
