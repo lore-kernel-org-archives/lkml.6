@@ -2,113 +2,131 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2AB6C43142
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 03:15:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5304DC43142
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 03:15:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E91C216EE
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 03:15:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E91C216EE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 0E0E0216EE
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 03:15:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E0E0216EE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727339AbeHCFJL (ORCPT
+        id S1727573AbeHCFJX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 01:09:11 -0400
-Received: from mga05.intel.com ([192.55.52.43]:63817 "EHLO mga05.intel.com"
+        Fri, 3 Aug 2018 01:09:23 -0400
+Received: from foss.arm.com ([217.140.101.70]:37120 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726381AbeHCFJL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 01:09:11 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Aug 2018 20:15:00 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,437,1526367600"; 
-   d="scan'208";a="80111841"
-Received: from voyager.sc.intel.com (HELO voyager) ([10.3.52.149])
-  by orsmga002.jf.intel.com with ESMTP; 02 Aug 2018 20:15:00 -0700
-Date:   Thu, 2 Aug 2018 20:09:47 -0700
-From:   Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Marc Zyngier <marc.zyngier@arm.com>,
-        Julien Thierry <julien.thierry@arm.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCH 1/4] genirq: Provide basic NMI management for interrupt
- lines
-Message-ID: <20180803030947.GA12916@voyager>
-References: <1532430427-57151-1-git-send-email-julien.thierry@arm.com>
- <1532430427-57151-2-git-send-email-julien.thierry@arm.com>
- <20180801030723.GA31383@voyager>
- <df8f9f98-a1d3-e871-eec8-d805ff7cf5b7@arm.com>
- <20180802020320.GC31758@voyager>
- <86tvodw9wz.wl-marc.zyngier@arm.com>
- <alpine.DEB.2.21.1808020841200.1835@nanos.tec.linutronix.de>
- <86r2jhw7a1.wl-marc.zyngier@arm.com>
- <alpine.DEB.2.21.1808021137400.2037@nanos.tec.linutronix.de>
+        id S1727392AbeHCFJX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 01:09:23 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 987D218A;
+        Thu,  2 Aug 2018 20:15:12 -0700 (PDT)
+Received: from [192.168.100.241] (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8FC003F5BA;
+        Thu,  2 Aug 2018 20:15:11 -0700 (PDT)
+Subject: Re: [RFC 0/2] harden alloc_pages against bogus nid
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-mm@kvack.org, cl@linux.com, penberg@kernel.org,
+        rientjes@google.com, iamjoonsoo.kim@lge.com, mhocko@suse.com,
+        vbabka@suse.cz, Punit.Agrawal@arm.com, Lorenzo.Pieralisi@arm.com,
+        linux-arm-kernel@lists.infradead.org, bhelgaas@google.com,
+        linux-kernel@vger.kernel.org
+References: <20180801200418.1325826-1-jeremy.linton@arm.com>
+ <20180801145020.8c76a490c1bf9bef5f87078a@linux-foundation.org>
+ <d9f8e9d1-2fb8-6016-5081-7e3213b23ed4@arm.com>
+ <20180801171414.30e54a106733ccaaa566388d@linux-foundation.org>
+From:   Jeremy Linton <jeremy.linton@arm.com>
+Message-ID: <a38071b1-6068-c5ca-d408-736bdb8e7073@arm.com>
+Date:   Thu, 2 Aug 2018 22:15:10 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1808021137400.2037@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180801171414.30e54a106733ccaaa566388d@linux-foundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 02, 2018 at 11:40:55AM +0200, Thomas Gleixner wrote:
-> On Thu, 2 Aug 2018, Marc Zyngier wrote:
-> > On Thu, 02 Aug 2018 07:55:49 +0100,
-> > Thomas Gleixner <tglx@linutronix.de> wrote:
-> > > 
-> > > On Thu, 2 Aug 2018, Marc Zyngier wrote:
-> > > > 
-> > > > If we need to distinguish between the two, then we need two flags. One
-> > > > that indicates the generation capability, and one that indicates the
-> > > > forwarding capability.
-> > > 
-> > > There is absolutely no reason to expose this on x86, really.
-> > > 
-> > > Why?
-> > > 
-> > > Because NMI is an utter trainwreck on x86. It's a single entry point
-> > > without the ability of differentiation from which source the NMI
-> > > originated. So mapping it to anything generic is just not going to work.
-> > > 
-> > > It has absolutely nothing to do with the normal way of vector based
-> > > interrupt operation and I don't see at all how adding this just because
-> > > would improve anything on x86. In fact it would create more problems than
-> > > it solves.
-> > 
-> > Fair enough. Does it mean Julien can completely ignore the x86
-> > requirements for this and focus on something that fit the need of
-> > architectures where (pseudo-)NMIs can be managed similarly to normal
-> > interrupts (arm, arm64, sparc...)?
+Hi,
+
+On 08/01/2018 07:14 PM, Andrew Morton wrote:
+> On Wed, 1 Aug 2018 17:56:46 -0500 Jeremy Linton <jeremy.linton@arm.com> wrote:
 > 
-> Yes, focussing on "sane" architectures (by some definition of sane) where
-> the NMI mode is just changing the delivery restrictions allows to still
-> differentiate from which source the NMI originates.
+>> Hi,
+>>
+>> On 08/01/2018 04:50 PM, Andrew Morton wrote:
+>>> On Wed,  1 Aug 2018 15:04:16 -0500 Jeremy Linton <jeremy.linton@arm.com> wrote:
+>>>
+>>>> The thread "avoid alloc memory on offline node"
+>>>>
+>>>> https://lkml.org/lkml/2018/6/7/251
+>>>>
+>>>> Asked at one point why the kzalloc_node was crashing rather than
+>>>> returning memory from a valid node. The thread ended up fixing
+>>>> the immediate causes of the crash but left open the case of bad
+>>>> proximity values being in DSDT tables without corrisponding
+>>>> SRAT/SLIT entries as is happening on another machine.
+>>>>
+>>>> Its also easy to fix that, but we should also harden the allocator
+>>>> sufficiently that it doesn't crash when passed an invalid node id.
+>>>> There are a couple possible ways to do this, and i've attached two
+>>>> separate patches which individually fix that problem.
+>>>>
+>>>> The first detects the offline node before calling
+>>>> the new_slab code path when it becomes apparent that the allocation isn't
+>>>> going to succeed. The second actually hardens node_zonelist() and
+>>>> prepare_alloc_pages() in the face of NODE_DATA(nid) returning a NULL
+>>>> zonelist. This latter case happens if the node has never been initialized
+>>>> or is possibly out of range. There are other places (NODE_DATA &
+>>>> online_node) which should be checking if the node id's are > MAX_NUMNODES.
+>>>>
+>>>
+>>> What is it that leads to a caller requesting memory from an invalid
+>>> node?  A race against offlining?  If so then that's a lack of
+>>> appropriate locking, isn't it?
+>>
+>> There were a couple unrelated cases, both having to do with the PXN
+>> associated with a PCI port. The first case AFAIK, the domain wasn't
+>> really invalid if the entire SRAT was parsed and nodes created even when
+>> there weren't associated CPUs. The second case (a different machine) is
+>> simply a PXN value that is completely invalid (no associated
+>> SLIT/SRAT/etc entries) due to firmware making a mistake when a socket
+>> isn't populated.
+>>
+>> There have been a few other suggested or merged patches for the
+>> individual problems above, this set is just an attempt at avoiding a
+>> full crash if/when another similar problem happens.
+> 
+> Please add the above info to the changelog.
 
-Let me assume that one can find a way to reliably identify the source of an
-NMI in x86. If we cannot use the proposed request_nmi() as it does not fit
-x86, is it acceptable to bypass the existing irq framework and directly
-program the delivery mode as NMI in the relevant hardware (e.g., a register
-holding the MSI data)? For instance, in my initial attempt to have the HPET
-timer to generate NMIs [1]. I could directly write to the FSB Interrupt
-Route Register. In my view, it makes sense because, as you say, in x86 NMIs
-are handled separately from the normal vector based interrupts.
+Sure.
 
-I guess this would also imply reserving the relevant hardware so that it
-is not used when calling request_irq().
+> 
+>>
+>>>
+>>> I don't see a problem with emitting a warning and then selecting a
+>>> different node so we can keep running.  But we do want that warning, so
+>>> we can understand the root cause and fix it?
+>>
+>> Yes, we do want to know when an invalid id is passed, i will add the
+>> VM_WARN in the first one.
+>>
+>> The second one I wasn't sure about as failing prepare_alloc_pages()
+>> generates a couple of error messages, but the system then continues
+>> operation.
+>>
+>> I guess my question though is which method (or both/something else?) is
+>> the preferred way to harden this up?
+> 
+> The first patch looked neater.  Can we get a WARN_ON in there as well?
+> 
 
-Thanks and BR,
-Ricardo
+Yes,
 
-[1]. https://lore.kernel.org/patchwork/cover/953394/
-
+Thanks,
