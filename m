@@ -2,71 +2,71 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D10F7C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 13:59:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C2AEC28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 14:03:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8370121761
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 13:59:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8370121761
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 05BAB21709
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 14:03:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05BAB21709
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=torlan.ru
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732188AbeHCP4U (ORCPT
+        id S1732124AbeHCQAP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 11:56:20 -0400
-Received: from orcrist.hmeau.com ([104.223.48.154]:36928 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731699AbeHCP4T (ORCPT
+        Fri, 3 Aug 2018 12:00:15 -0400
+Received: from forward104p.mail.yandex.net ([77.88.28.107]:57521 "EHLO
+        forward104p.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731083AbeHCQAO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 11:56:19 -0400
-Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
-        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1flacJ-0005Lc-IE; Fri, 03 Aug 2018 21:59:43 +0800
-Received: from herbert by gondobar with local (Exim 4.89)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1flacF-00026D-TM; Fri, 03 Aug 2018 21:59:39 +0800
-Date:   Fri, 3 Aug 2018 21:59:39 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Gilad Ben-Yossef <gilad@benyossef.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Ofir Drang <ofir.drang@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/4] crypto: ccree: fixes and cleanups
-Message-ID: <20180803135939.5ccgaifj4kbkfv3n@gondor.apana.org.au>
-References: <1532441567-11694-1-git-send-email-gilad@benyossef.com>
+        Fri, 3 Aug 2018 12:00:14 -0400
+X-Greylist: delayed 456 seconds by postgrey-1.27 at vger.kernel.org; Fri, 03 Aug 2018 12:00:13 EDT
+Received: from mxback3g.mail.yandex.net (mxback3g.mail.yandex.net [IPv6:2a02:6b8:0:1472:2741:0:8b7:164])
+        by forward104p.mail.yandex.net (Yandex) with ESMTP id 3168F182B53;
+        Fri,  3 Aug 2018 16:55:48 +0300 (MSK)
+Received: from smtp4p.mail.yandex.net (smtp4p.mail.yandex.net [2a02:6b8:0:1402::15:6])
+        by mxback3g.mail.yandex.net (nwsmtp/Yandex) with ESMTP id vTeMuC6ksX-tj80sWT5;
+        Fri, 03 Aug 2018 16:55:48 +0300
+Received: by smtp4p.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id PAgvabKeM9-tiRS6BKM;
+        Fri, 03 Aug 2018 16:55:44 +0300
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client certificate not present)
+To:     maarten.lankhorst@linux.intel.com, daniel.vetter@intel.com,
+        jani.nikula@linux.intel.com, gustavo@padovan.org,
+        seanpaul@chromium.org, airlied@linux.ie
+Cc:     dri-devel@lists.freedesktop.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+From:   WGH <wgh@torlan.ru>
+Openpgp: preference=signencrypt
+Subject: xrand --output ... --off no longer turns the screen off on Linux
+ >=4.15
+Message-ID: <74964b4d-b5e0-a544-c8cb-de43bfd9e599@torlan.ru>
+Date:   Fri, 3 Aug 2018 16:55:44 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1532441567-11694-1-git-send-email-gilad@benyossef.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 24, 2018 at 03:12:42PM +0100, Gilad Ben-Yossef wrote:
-> Various code clean ups and fix ups.
-> 
-> Gilad Ben-Yossef (4):
->   crypto: ccree: drop useless type flag during reg
->   crypto: ccree: remove cipher ivgen left overs
->   crypto: ccree: zero all of request ctx before use
->   crypto: ccree: allow bigger than sector XTS op
-> 
->  drivers/crypto/ccree/cc_aead.c       | 16 +---------------
->  drivers/crypto/ccree/cc_buffer_mgr.c |  8 ++------
->  drivers/crypto/ccree/cc_cipher.c     | 36 ++++--------------------------------
->  drivers/crypto/ccree/cc_cipher.h     |  1 -
->  drivers/crypto/ccree/cc_driver.h     |  1 -
->  5 files changed, 7 insertions(+), 55 deletions(-)
+On Linux 4.14 and earlier, running `xrandr --output ${MONITOR} --off`
+will result in screen turning off (the monitor will say "no signal" or so).
 
-All applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Since 4.15, however, the screen will remain black, but turned on
+(backlight and everything).
+
+I'm running xrandr 1.5.0 and X.Org Server 1.20.0.
+
+This is caused by kernel change introduced here:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=846c7dfc1193eb2f9866fe2fa0ae7d45c72f95b9
+
+I've reported this a bug to X.Org as well. 
+https://bugs.freedesktop.org/show_bug.cgi?id=107472
+
