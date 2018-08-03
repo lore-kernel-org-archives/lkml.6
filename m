@@ -3,123 +3,65 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0118FC28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 18:24:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDFDAC28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 18:25:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB7BE21770
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 18:24:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB7BE21770
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id 974F221770
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 18:25:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 974F221770
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729827AbeHCUVz (ORCPT
+        id S1730028AbeHCUXH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 16:21:55 -0400
-Received: from gateway33.websitewelcome.com ([192.185.145.23]:34570 "EHLO
-        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728687AbeHCUVz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 16:21:55 -0400
-Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
-        by gateway33.websitewelcome.com (Postfix) with ESMTP id DDB1D24380
-        for <linux-kernel@vger.kernel.org>; Fri,  3 Aug 2018 13:24:28 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id lekWfgHXhRPojlekWfBATc; Fri, 03 Aug 2018 13:24:28 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.50.82] (port=34558 helo=[192.168.1.71])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1flekW-0047p5-Bh; Fri, 03 Aug 2018 13:24:28 -0500
-To:     valdis.kletnieks@vt.edu
-Cc:     Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        patches@opensource.cirrus.com, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>
-References: <cover.1533151956.git.gustavo@embeddedor.com>
- <8e3df79b1dca92d49fd9d5c97391d31814ab40f9.1533151956.git.gustavo@embeddedor.com>
- <30613.1533313609@turing-police.cc.vt.edu>
- <85d918a5-6a14-ead0-4d0e-d63b5e43ad81@embeddedor.com>
- <20180803164504.GF6591@sirena.org.uk>
- <684a4fe9-6818-d19c-e7b7-fb8d592a0cee@embeddedor.com>
- <39703.1533318918@turing-police.cc.vt.edu>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Subject: Re: [PATCH 11/11] ASoC: wm8994: Mark expected switch fall-through
-Message-ID: <c924218b-6b55-1cb2-9773-02befcfa5882@embeddedor.com>
-Date:   Fri, 3 Aug 2018 13:24:20 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 3 Aug 2018 16:23:07 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56830 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727479AbeHCUXG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 16:23:06 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id F0F0D7A7EF;
+        Fri,  3 Aug 2018 18:25:39 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A3DEF2026D65;
+        Fri,  3 Aug 2018 18:25:39 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id w73IPduU019515;
+        Fri, 3 Aug 2018 14:25:39 -0400
+Received: from localhost (mpatocka@localhost)
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id w73IPcg4019511;
+        Fri, 3 Aug 2018 14:25:38 -0400
+X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
+Date:   Fri, 3 Aug 2018 14:25:38 -0400 (EDT)
+From:   Mikulas Patocka <mpatocka@redhat.com>
+X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+cc:     Will Deacon <will.deacon@arm.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Joao Pinto <Joao.Pinto@synopsys.com>,
+        Matt Sealey <neko@bakuhatsu.net>,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-pci <linux-pci@vger.kernel.org>
+Subject: Re: framebuffer corruption due to overlapping stp instructions on
+ arm64
+In-Reply-To: <CAKv+Gu-aNFh1fsr_05SEwDp99n3pLrguP7=tEcFQPNY53=K7Fw@mail.gmail.com>
+Message-ID: <alpine.LRH.2.02.1808031424140.14030@file01.intranet.prod.int.rdu2.redhat.com>
+References: <alpine.LRH.2.02.1808021242320.31834@file01.intranet.prod.int.rdu2.redhat.com> <CAHCPf3tFGqkYEcWNN4LaWThw_rVqT316pzLv6T7RfxwO-eZ0EA@mail.gmail.com> <alpine.LRH.2.02.1808030212340.17672@file01.intranet.prod.int.rdu2.redhat.com>
+ <CAKv+Gu8DeuksZhk1g3q_msSKV_hSY_2e1uzVten9-oGO3j9Sqg@mail.gmail.com> <20180803094129.GB17798@arm.com> <alpine.LRH.2.02.1808031235410.31584@file01.intranet.prod.int.rdu2.redhat.com> <CAKv+Gu-aNFh1fsr_05SEwDp99n3pLrguP7=tEcFQPNY53=K7Fw@mail.gmail.com>
+User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
 MIME-Version: 1.0
-In-Reply-To: <39703.1533318918@turing-police.cc.vt.edu>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.50.82
-X-Source-L: No
-X-Exim-ID: 1flekW-0047p5-Bh
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.71]) [189.250.50.82]:34558
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 7
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 03 Aug 2018 18:25:40 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 03 Aug 2018 18:25:40 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mpatocka@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -127,32 +69,134 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 08/03/2018 12:55 PM, valdis.kletnieks@vt.edu wrote:
-> On Fri, 03 Aug 2018 11:56:12 -0500, "Gustavo A. R. Silva" said:
->> On 08/03/2018 11:45 AM, Mark Brown wrote:
->>> Basically nobody ever uses OPCLK so I'd be susprised if anyone ever
->>> noticed.
+On Fri, 3 Aug 2018, Ard Biesheuvel wrote:
+
+> (- libc-alpha)
 > 
-> I wonder if nobody uses it because any attempts to do so get an error? :)
+> On 3 August 2018 at 19:09, Mikulas Patocka <mpatocka@redhat.com> wrote:
+> >
+> >
+> > On Fri, 3 Aug 2018, Will Deacon wrote:
+> >
+> >> On Fri, Aug 03, 2018 at 09:16:39AM +0200, Ard Biesheuvel wrote:
+> >> > On 3 August 2018 at 08:35, Mikulas Patocka <mpatocka@redhat.com> wrote:
+> >> > >
+> >> > >
+> >> > > On Thu, 2 Aug 2018, Matt Sealey wrote:
+> >> > >
+> >> > >> The easiest explanation for this would be that the memory isn?t mapped
+> >> > >> correctly. You can?t use PCIe memory spaces with anything other than
+> >> > >> Device-nGnRE or stricter mappings. That?s just differences between the
+> >> > >> AMBA and PCIe (posted/unposted) memory models.
+> >> >
+> >> > Whoa hold on there.
+> >> >
+> >> > Are you saying we cannot have PCIe BAR windows with memory semantics on ARM?
+> >> >
+> >> > Most accelerated graphics drivers rely heavily on the ability to map
+> >> > the VRAM normal-non-cacheable (ioremap_wc, basically), and treat it as
+> >> > ordinary memory.
+> >>
+> >> Yeah, I'd expect framebuffers to be mapped as normal NC. That should be
+> >> fine for prefetchable BARs, no?
+> >>
+> >> Will
+> >
+> > So - why does it corrupt data then? I've created this program that
+> > reproduces the data corruption quicky. If I run it on /dev/fb0, I get an
+> > instant failure. Sometimes a few bytes are not written, sometimes a few
+> > bytes are written with a value that should be 16 bytes apart.
+> >
 > 
->> I see. I wonder what's the best approach in this case. Should that code be
->> removed instead of 'fixed'?
+> Are we still talking about overlapping unaligned accesses here? Or do
+> you see other failures as well?
+
+Yes - it is caused by overlapping unaligned accesses inside memcpy. When I 
+put "dmb sy" between the overlapping accesses in 
+glibc/sysdeps/aarch64/memcpy.S, this program doesn't detect any memory 
+corruption.
+
+> > I tried to run it on system RAM mapped with the NC attribute and I didn't
+> > get any corruption - that suggests the the bug may be in the PCIE
+> > subsystem.
+> >
+> > Jingoo Han and Joao Pinto are maintainers for the designware PCIE
+> > controllers. Could you suggest why does the controller corrupt data when
+> > writing to videoram? Are there any tricks that could be tried to work
+> > around the corruption?
+> >
+> > Mikulas
+> >
+> >
+> >
+> > #include <stdio.h>
+> > #include <stdlib.h>
+> > #include <string.h>
+> > #include <fcntl.h>
+> > #include <unistd.h>
+> > #include <sys/mman.h>
+> >
+> > #define LEN             256
+> > #define PRINT_STRIDE    0x20
+> >
+> > static unsigned char data[LEN];
+> > static unsigned char val = 0;
+> >
+> > static unsigned char prev_data[LEN];
+> >
+> > static unsigned char map_copy[LEN];
+> >
+> > int main(int argc, char *argv[])
+> > {
+> >         unsigned long n = 0;
+> >         int h;
+> >         unsigned char *map;
+> >         unsigned start, end, i;
+> >
+> >         if (argc < 2) fprintf(stderr, "argc\n"), exit(1);
+> >         if (argc >= 4) srandom(atoll(argv[3]));
+> >         h = open(argv[1], O_RDWR | O_DSYNC);
+> >         if (h == -1) perror("open"), exit(1);
+> >         map = mmap(NULL, LEN, PROT_READ | PROT_WRITE, MAP_SHARED, h, argc >= 3 ? strtoull(argv[2], NULL, 16) : 0);
+> >         if (map == MAP_FAILED) perror("mmap"), exit(1);
+> >
+> >         memset(data, 0, LEN);
+> >         memset(prev_data, 0, LEN);
+> >         memset(map, 0, LEN);
+> >
+> >         sleep(1);
+> >
+> >         while (1) {
+> >                 start = (unsigned)random() % (LEN + 1);
+> >                 end = (unsigned)random() % (LEN + 1);
+> >                 if (start > end)
+> >                         continue;
+> >                 for (i = start; i < end; i++)
+> >                         data[i] = val++;
+> >                 memcpy(map + start, data + start, end - start);
+> >                 if (memcmp(map, data, LEN)) {
+> >                         unsigned j;
+> >                         memcpy(map_copy, map, LEN);
+> >                         fprintf(stderr, "mismatch after %lu loops!\n", n);
+> >                         fprintf(stderr, "last copied range: 0x%x - 0x%x (0x%x)\n", start, end, (unsigned)(end - start));
+> >                         for (j = 0; j < LEN; j += PRINT_STRIDE) {
+> >                                 fprintf(stderr, "p[%03x]", j);
+> >                                 for (i = j; i < j + PRINT_STRIDE && i < LEN; i++)
+> >                                         fprintf(stderr, " %s%s%02x\e[0m", !(i % 4) ? " " : "", data[i] != map_copy[i] ? "\e[31m" : "", prev_data[i]);
+> >                                 fprintf(stderr, "\n");
+> >                                 fprintf(stderr, "d[%03x]", j);
+> >                                 for (i = j; i < j + PRINT_STRIDE && i < LEN; i++)
+> >                                         fprintf(stderr, " %s%s%02x\e[0m", !(i % 4) ? " " : "", data[i] != map_copy[i] ? "\e[31m" : "", data[i]);
+> >                                 fprintf(stderr, "\n");
+> >                                 fprintf(stderr, "m[%03x]", j);
+> >                                 for (i = j; i < j + PRINT_STRIDE && i < LEN; i++)
+> >                                         fprintf(stderr, " %s%s%02x\e[0m", !(i % 4) ? " " : "", data[i] != map_copy[i] ? "\e[31m" : "", map_copy[i]);
+> >                                 fprintf(stderr, "\n\n");
+> >                         }
+> >                         exit(1);
+> >                 }
+> >                 memcpy(prev_data, data, LEN);
+> >                 n++;
+> >         }
+> > }
 > 
-> I'm thinking that's a spot that needs a 'break;' added.
-> 
-
-Yep. And I think the patch to fix this should be tagged for stable.
-
-So, it seems we have two options:
-
-1. Revert commit 2cea1542859bc812f1ec51ea71c06e927e5b922e and then apply a fix with the break statement.
-
-or
-
-2. Apply a fix with the break statement and then backport the fix to stable.
-
-am I correct?
-
-Thanks
---
-Gustavo
