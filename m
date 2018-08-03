@@ -2,143 +2,132 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D05A9C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 07:16:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9098C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 07:19:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83800216FD
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 07:16:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 97DEA216FD
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 07:19:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="e8RY2uLi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83800216FD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="gF2SA5BD";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="gF2SA5BD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97DEA216FD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728343AbeHCJLf (ORCPT
+        id S1728412AbeHCJOb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 05:11:35 -0400
-Received: from mail-it0-f51.google.com ([209.85.214.51]:50691 "EHLO
-        mail-it0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727469AbeHCJLf (ORCPT
+        Fri, 3 Aug 2018 05:14:31 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:59552 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727469AbeHCJOb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 05:11:35 -0400
-Received: by mail-it0-f51.google.com with SMTP id j81-v6so5368217ite.0
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Aug 2018 00:16:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=Zzp4ncsuj9rG5qACaSG3GJJvpeFSD00yenJ89qvmnuA=;
-        b=e8RY2uLisnK2e4IgB3CpE+tAJm1aEs/XOACjgo/Oqpivu+F4EK50xR97+zSnBkcAfm
-         uaW5z6PelFjorKa6MIfjomdXP7bDhZF+jJkBeIHbxUX0a3INf9NPrLciV+R9T7ZXVMkG
-         X0FS9SG1L1EhfrsFSQewa1w05Lsj9YhuJIsEI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=Zzp4ncsuj9rG5qACaSG3GJJvpeFSD00yenJ89qvmnuA=;
-        b=D28/mDCdtf573PfRKRQO5ki4+2bcG8V+TJQILYqkA7w6FRiubqHmefi5UV5Q6vCdx3
-         drlyNwVkB+KWd+FzmVN7hpmEzzgQqN8p7pVHbVVCbmJtoMoTdpvJ4P5bLR4jad+hKMsg
-         GJoU+3QvUdARQiuXQYn1ewCwK/Dtht7TzK4EFmyjlK4P9eZFW1lwHGMYsRGoBTrb2j+R
-         hWuxnwZRx5Q44JSesE1wkjt8z7LStKg7bQVgvLEOFtC2DtSE3i4nDjG8iKOnSW3WBnPd
-         LWv0I1WIindzsfpJPuqoYAL2VpTGWxgeGg1eCOof0PV6TMEB0kHxa7qzHWUWTQFCgqql
-         kPpA==
-X-Gm-Message-State: AOUpUlGVHUcGwiz+GsEsdsDuKR/rgCU1ko62MDTjmbq1wdQrVCxX16uQ
-        iHtcSgXbO1PiqNmKzuJ1BFx1TqT44y/PSGvI1fbqgg==
-X-Google-Smtp-Source: AAOMgpcUst+QPtROiTpgs1MH3ibjxByaQtLv+fHVJyUrxM+CkoA+JYY1J51+XUdeBCXVjT3cSmvmoRnwn3p2ykSC23E=
-X-Received: by 2002:a24:148c:: with SMTP id 134-v6mr5340613itg.50.1533280599786;
- Fri, 03 Aug 2018 00:16:39 -0700 (PDT)
+        Fri, 3 Aug 2018 05:14:31 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id E691460B12; Fri,  3 Aug 2018 07:19:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1533280774;
+        bh=v/pdw6BYcjW7SCRw0uPqPaR4/7dPnKwClGrtLTouMoI=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=gF2SA5BDzEMVBBdAA36cQKi8zUQgSWclquKRKozDVRy5ee34zVOHvlyp8k4CSsdkM
+         +Vax+4zhzUp/crf5TimXUJWUC6YexKmlafNTpPUIlCf3rLEUKe2ldXvScGdwEt58l2
+         ay0a1lMuYp8U/MYshN0AMu2SnFuA9VQbwbtoHWnM=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 1E163600ED;
+        Fri,  3 Aug 2018 07:19:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1533280774;
+        bh=v/pdw6BYcjW7SCRw0uPqPaR4/7dPnKwClGrtLTouMoI=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=gF2SA5BDzEMVBBdAA36cQKi8zUQgSWclquKRKozDVRy5ee34zVOHvlyp8k4CSsdkM
+         +Vax+4zhzUp/crf5TimXUJWUC6YexKmlafNTpPUIlCf3rLEUKe2ldXvScGdwEt58l2
+         ay0a1lMuYp8U/MYshN0AMu2SnFuA9VQbwbtoHWnM=
 MIME-Version: 1.0
-Received: by 2002:a6b:ac05:0:0:0:0:0 with HTTP; Fri, 3 Aug 2018 00:16:39 -0700 (PDT)
-In-Reply-To: <alpine.LRH.2.02.1808030212340.17672@file01.intranet.prod.int.rdu2.redhat.com>
-References: <alpine.LRH.2.02.1808021242320.31834@file01.intranet.prod.int.rdu2.redhat.com>
- <CAHCPf3tFGqkYEcWNN4LaWThw_rVqT316pzLv6T7RfxwO-eZ0EA@mail.gmail.com> <alpine.LRH.2.02.1808030212340.17672@file01.intranet.prod.int.rdu2.redhat.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Fri, 3 Aug 2018 09:16:39 +0200
-Message-ID: <CAKv+Gu8DeuksZhk1g3q_msSKV_hSY_2e1uzVten9-oGO3j9Sqg@mail.gmail.com>
-Subject: Re: framebuffer corruption due to overlapping stp instructions on arm64
-To:     Mikulas Patocka <mpatocka@redhat.com>
-Cc:     Matt Sealey <neko@bakuhatsu.net>,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        libc-alpha@sourceware.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Fri, 03 Aug 2018 12:49:34 +0530
+From:   kgunda@codeaurora.org
+To:     bjorn.andersson@linaro.org, jingoohan1@gmail.com,
+        lee.jones@linaro.org, b.zolnierkie@samsung.com,
+        dri-devel@lists.freedesktop.org, daniel.thompson@linaro.org,
+        jacek.anaszewski@gmail.com, pavel@ucw.cz, robh+dt@kernel.org,
+        mark.rutland@arm.com, linux-leds@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     linux-arm-msm@vger.kernel.org, linux-arm-msm-owner@vger.kernel.org
+Subject: Re: [PATCH V4 0/8] backlight: qcom-wled: Support for QCOM wled driver
+In-Reply-To: <1531131741-19971-1-git-send-email-kgunda@codeaurora.org>
+References: <1531131741-19971-1-git-send-email-kgunda@codeaurora.org>
+Message-ID: <519913ec490934931b1c0b3a4539c283@codeaurora.org>
+X-Sender: kgunda@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3 August 2018 at 08:35, Mikulas Patocka <mpatocka@redhat.com> wrote:
->
->
-> On Thu, 2 Aug 2018, Matt Sealey wrote:
->
->> The easiest explanation for this would be that the memory isn?t mapped
->> correctly. You can?t use PCIe memory spaces with anything other than
->> Device-nGnRE or stricter mappings. That?s just differences between the
->> AMBA and PCIe (posted/unposted) memory models.
+Hi Bjorn,
+Can you please help review this patch series ?
 
-Whoa hold on there.
+Pavel, Rob, Daniel reviewed the series except the "auto string 
+detection" patch.
 
-Are you saying we cannot have PCIe BAR windows with memory semantics on ARM?
+Thanks,
+Kiran
 
-Most accelerated graphics drivers rely heavily on the ability to map
-the VRAM normal-non-cacheable (ioremap_wc, basically), and treat it as
-ordinary memory.
-
->
-> I've tried to use Device-nGnRE mapping and I've got unaligned access
-> traps. Gcc have store-merging pass so that it generates unaligned accesses
-> even in code that has none explicit unaligned accesses. Perhaps it would
-> be possible to recompile the kernel without the store-merging pass, but
-> recompiling all the userspace code is impossible.
->
-> Should we catch the unaligned access traps in the kernel and emulate them?
-> There are a lot of instructions that access memory in the ARMv8 ISA, so
-> the emulator would be quite complicated.
->
->> Normal memory (cacheable or uncacheable, which Linux tends to call
->> ?memory? and ?writecombine? respectively) is not a good idea.
->>
->> There are two options; make sure Links maps it?s framebuffer as Device
->> memory, or the driver, or both - and make sure that only aligned
->> accesses happen (otherwise you?ll just get a synchronous exception) and
->> there isn?t a Normal memory alias.
->>
->> Alternatively, tell the PCIe driver that the framebuffer is in system
->> memory
->
-> But how would the graphics card display from it? You'd have to
-> periodically copy the framebuffer from the system memory to the real
-> videoram. I'm not an expert in graphics drivers, I don't know if the
-> graphics drivers have this possibility.
->
->> - you can map it however you like but there?ll be a performance
->> hit if you start to use GPU acceleration, but a significant performance
->> boost from the PoV of the CPU. Only memory accessed from the PCIe master
->> interface (i.e. reads and writes generated by the card itself - telling
->> the GPU to pull from system memory or other DMA) can be in Normal memory
->> and this allows PCIe to be cache coherent with the right interconnect.
->> The slave port on a PCIe root complex (i.e. CPU writes) can?t be used
->> with Normal, or reorderable, and therefore your 2GB of graphics memory
->> is going to be slow from the point of view of the CPU.
->>
->> To find the correct mapping you?ll need to know just how cache coherent
->> the PCIe RC is...
->>
->> Ta,
->> Matt
->
-> Mikulas
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+On 2018-07-09 15:52, Kiran Gunda wrote:
+> This patch series renames the pm8941-wled.c driver to qcom-wled.c to 
+> add
+> the support for multiple PMICs supported by qualcomm. This patch series
+> supports both PM8941 and PMI8998 WLED. The PMI8998 WLED has the support
+> to handle the OVP (over voltage protection) and the SC (short circuit
+> protection)
+> interrupts. It also has the auto string detection algorithm support to
+> configure the right strings if the user specified string configuration
+> is in-correct. These three features are added in this series for 
+> PMI8998.
+> 
+> changes from v1:
+>    - Fixed the commit message for
+>    - backlight: qcom-wled: Rename pm8941-wled.c to qcom-wled.c
+> 
+> Changes from v2:
+>    - Fixed bjorn and other reviewer's comments
+>    - Seperated the device tree bindings
+>    - Splitted out the WLED4 changes in seperate patch
+>    - Merged OVP and auto string detection patch
+> 
+> Changes from v3:
+>   - Added Reviewed-by/Acked-by tags
+>   - Fixed comments from Bjorn/Vinod/Rob
+>   - Splitting the "backlight: qcom-wled: Add support for WLED4 
+> peripheral" patch
+>     to seperate the WLED3 specific restructure.
+> 
+> Kiran Gunda (8):
+>   backlight: qcom-wled: Rename pm8941-wled.c to qcom-wled.c
+>   backlight: qcom-wled: restructure the qcom-wled bindings
+>   backlight: qcom-wled: Add new properties for PMI8998
+>   backlight: qcom-wled: Rename PM8941* to WLED3
+>   backlight: qcom-wled: Restructure the driver for WLED3
+>   backlight: qcom-wled: Add support for WLED4 peripheral
+>   backlight: qcom-wled: add support for short circuit handling
+>   backlight: qcom-wled: Add auto string detection logic
+> 
+>  .../bindings/leds/backlight/pm8941-wled.txt        |   42 -
+>  .../bindings/leds/backlight/qcom-wled.txt          |  150 +++
+>  drivers/video/backlight/Kconfig                    |    8 +-
+>  drivers/video/backlight/Makefile                   |    2 +-
+>  drivers/video/backlight/pm8941-wled.c              |  432 -------
+>  drivers/video/backlight/qcom-wled.c                | 1298 
+> ++++++++++++++++++++
+>  6 files changed, 1453 insertions(+), 479 deletions(-)
+>  delete mode 100644
+> Documentation/devicetree/bindings/leds/backlight/pm8941-wled.txt
+>  create mode 100644
+> Documentation/devicetree/bindings/leds/backlight/qcom-wled.txt
+>  delete mode 100644 drivers/video/backlight/pm8941-wled.c
+>  create mode 100644 drivers/video/backlight/qcom-wled.c
