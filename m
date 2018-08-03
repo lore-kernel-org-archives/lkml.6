@@ -2,112 +2,99 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83172C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 15:18:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82F81C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 15:20:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38CFC205C9
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 15:18:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="MXbZJYec"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38CFC205C9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 1D29221770
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 15:20:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D29221770
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732540AbeHCRPU (ORCPT
+        id S1727677AbeHCRRS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 13:15:20 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:49352 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732347AbeHCRPU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 13:15:20 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w73F9SSn154998;
-        Fri, 3 Aug 2018 15:18:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=47WKTJRSyFBaUHkoqMjXlV3EqvvBIfSQldPN+QqIKuM=;
- b=MXbZJYecr/qchJ9ldO1YaLsNJF/b2j6c4XwUZiUxQO1GjzD+mJvxw+egvzE3TOX2fzKh
- HlV6VNg17kh4ZEFhcrn6dEPier27R/HApADybKUvypoxbB99vTCvtwkmxTha/lvTOehM
- b7anaEGHTSPwB+oWHL1B2qW3LwUxmJ1f8Y90n7R+t4wm3gOpOQCWH3nmk/A1TcAwrUoQ
- qefqBnOBDaisOHLLPq97PT74TndrlPUo3D3o4Ke0TfTd3riRV40nB7Arcc9knLOnfLjR
- 0XfSqPXvt1BGDvbrqcZsmjFiuyC+W20CbGpqmkkygy+n+w0uKCNZrYjBpInGHM1xkSjp OA== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2130.oracle.com with ESMTP id 2kma04jssw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 03 Aug 2018 15:18:33 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w73FIWEc015530
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 3 Aug 2018 15:18:32 GMT
-Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w73FIVLa027522;
-        Fri, 3 Aug 2018 15:18:31 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 03 Aug 2018 08:18:31 -0700
-Date:   Fri, 3 Aug 2018 08:18:30 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Huang Chong <huang.chong@zte.com.cn>
-Cc:     linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        jiang.biao2@zte.com.cn, zhong.weidong@zte.com.cn
-Subject: Re: [PATCH] xfs: fix a comment in xfs_log_reserve
-Message-ID: <20180803151830.GW30972@magnolia>
-References: <1533285093-193140-1-git-send-email-huang.chong@zte.com.cn>
+        Fri, 3 Aug 2018 13:17:18 -0400
+Received: from mga03.intel.com ([134.134.136.65]:22003 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726485AbeHCRRS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 13:17:18 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Aug 2018 08:20:31 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,439,1526367600"; 
+   d="scan'208";a="61855850"
+Received: from rchatre-mobl.amr.corp.intel.com (HELO [10.252.128.249]) ([10.252.128.249])
+  by orsmga007.jf.intel.com with ESMTP; 03 Aug 2018 08:18:10 -0700
+Subject: Re: [PATCH 0/2] x86/intel_rdt and perf/x86: Fix lack of coordination
+ with perf
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Dave Hansen <dave.hansen@intel.com>, tglx@linutronix.de,
+        mingo@redhat.com, fenghua.yu@intel.com, tony.luck@intel.com,
+        vikas.shivappa@linux.intel.com, gavin.hindman@intel.com,
+        jithu.joseph@intel.com, hpa@zytor.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180802123923.GJ2530@hirez.programming.kicks-ass.net>
+ <1af731f8-b5d3-5aca-af02-575802a961b9@intel.com>
+ <20180802161823.GJ2458@hirez.programming.kicks-ass.net>
+ <f990df31-ab75-974e-b142-47af07a33a08@intel.com>
+ <20180802173727.GP2494@hirez.programming.kicks-ass.net>
+ <653e874f-5e77-a9b5-996a-ed9daa3c6d43@intel.com>
+ <20180802195410.GR2494@hirez.programming.kicks-ass.net>
+ <d64f85e8-98ca-a81d-bf2d-13dd72fc411e@intel.com>
+ <20180802201312.GS2494@hirez.programming.kicks-ass.net>
+ <086b93f5-da5b-b5e5-148a-cef25117b963@intel.com>
+ <20180803104956.GU2494@hirez.programming.kicks-ass.net>
+From:   Reinette Chatre <reinette.chatre@intel.com>
+Message-ID: <1eece033-fbae-c904-13ad-1904be91c049@intel.com>
+Date:   Fri, 3 Aug 2018 08:18:09 -0700
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1533285093-193140-1-git-send-email-huang.chong@zte.com.cn>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8973 signatures=668707
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=6 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=563
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1808030168
+In-Reply-To: <20180803104956.GU2494@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 03, 2018 at 04:31:33PM +0800, Huang Chong wrote:
-> From: "Huang Chong" <huang.chong@zte.com.cn>
-> 
-> Fix the comment in xfs_log_reserve to avoid confusing.
-> 
-> Signed-of-by: Huang Chong <huang.chong@zte.com.cn>
+Hi Peter,
 
-Looks ok,
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-
---D
-
-> ---
->  fs/xfs/xfs_log.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+On 8/3/2018 3:49 AM, Peter Zijlstra wrote:
+> On Thu, Aug 02, 2018 at 01:43:42PM -0700, Reinette Chatre wrote:
 > 
-> diff --git a/fs/xfs/xfs_log.c b/fs/xfs/xfs_log.c
-> index 5e56f3b..891ffb1 100644
-> --- a/fs/xfs/xfs_log.c
-> +++ b/fs/xfs/xfs_log.c
-> @@ -410,7 +410,7 @@
->  }
->  
->  /*
-> - * Reserve log space and return a ticket corresponding the reservation.
-> + * Reserve log space and return a ticket corresponding to the reservation.
->   *
->   * Each reservation is going to reserve extra space for a log record header.
->   * When writes happen to the on-disk log, we don't subtract the length of the
-> -- 
-> 1.8.3.1
+>> The goal of this work is to use the existing PMU hardware coordination
+>> mechanism to ensure that perf and resctrl will not interfere with each
+>> other.
 > 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-xfs" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> I understand what it does.. but if I'd seen you frobbing at the PMU
+> earlier your patches would've never gotten merged.
+> 
+> It's simply not going to happen.
+
+Your two-fold guidance is clear to me: (1) do not use PMU registers
+directly, (2) use perf API instead.
+
+You state that you understand what we are trying to do and I hope that I
+convinced you that we are not able to accomplish the same by following
+your guidance.
+
+Could you please guide us how to obtain the accurate results we obtain
+at this time while satisfying your requirements?
+
+Earlier your response to a similar question was "That's the best you're
+going to get" - unfortunately I cannot respectfully say that to our
+customers when they indeed have become used to working with accurate
+data for more than a year. I really want to find a solution that is
+acceptable to mainline instead of having to maintain a solution needed
+by customers out of tree.
+
+Reinette
+
+
