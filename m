@@ -7,89 +7,118 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28F73C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 12:34:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01B19C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 12:35:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0F1A21759
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 12:34:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC2EC2175E
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 12:35:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uFahZa+f"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0F1A21759
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tk3gSgwg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC2EC2175E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729349AbeHCObB (ORCPT
+        id S1729792AbeHCObw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 10:31:01 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:37170 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728139AbeHCObB (ORCPT
+        Fri, 3 Aug 2018 10:31:52 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:45274 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728123AbeHCObw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 10:31:01 -0400
-Received: by mail-lj1-f194.google.com with SMTP id v9-v6so4807849ljk.4
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Aug 2018 05:34:52 -0700 (PDT)
+        Fri, 3 Aug 2018 10:31:52 -0400
+Received: by mail-wr1-f68.google.com with SMTP id f12-v6so5252179wrv.12
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Aug 2018 05:35:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=QwXyrEjX8iVrxIbJasKEs+ObJd7zXBNoFZWMYKI6DPY=;
-        b=uFahZa+fmUxGj9U3Pt5tvXdHgzMbmbSROSux+ixEmmCx8D/d1xRJCoXQp/pWwXDo/V
-         +Ll+P0shCE7hNLiDc8hibY6IcRVLvRz4tVoSwArHfmgl/LRvYgZKWnbhKkquUQ6uMjRy
-         fQ1O1k5y1h0WIuN+SCjWRzdeT+UNZq+pyL3CsGnm6kMC4iHUhuxnnYEON0uau0RVEp12
-         XrW2PKj609h+b2VZ5TAHiCDnjCdSHG2jfVttmoNe6atQD882tORuZfGnUUc+eCgTYO1l
-         LdT2zgGoEV4mWOmXswrjQ37Znh9H5gbW4W9KSbYhzcgUHStH4uOK24+mG7S2UGVdwrjP
-         zEZQ==
+        bh=wpQmnJomdj2K6XAdjkAsijWMJ5sp0iOAASGaGcqKubc=;
+        b=Tk3gSgwgIVaJ7J7BmTSEkron0641pKP9IyDlWwBRLAUDsitkWegqxrQUjWngMLVxTx
+         OFcy8PMprCncEU20EYaRgy9ydaipLvf1l5X4xpolMKokTKpC56OiKmOEqNUnbBnu6nt+
+         0Sf1OH2+1byk9kMSDznvZsKm7oRAruKDr6jGN6/4zvxNR+afnk+JciYv7r73etuf8R1V
+         9ekEOMU/s/1bzGToEIM8uWxrZhy1faqRcCbkwNN+L8Sv5K7L02tJJIo6sd7cVrdxoki9
+         AuxPfgVIpa2ogxcdxTumizP9MZnL0FrnGoQtIXIAufyXd/l0xOElB/tCfLptxjJEv+R4
+         oSQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=QwXyrEjX8iVrxIbJasKEs+ObJd7zXBNoFZWMYKI6DPY=;
-        b=tY92Rli1t3OX2HbYhWm+dvv2IjtNDPW/o+kH5bE1LyE/LyJP19VBTane5W31EYODC8
-         /dltVKzaPd/FE4nnsN9CBFFjBIeVZ8aq30iE5InWXficynx7CjdwsxGvQgDNqAL450Kc
-         L28TAfH4KiJsoxH/u12yBP/UPNDbLoB6k82iHc3w4vByOVAesGZK0xMXnD0E4rn4aR50
-         CUcpLVl87fDCJO2WyQriKz0D/E8eCQWxvEKCAY7fXjf8yF5kJuHN965QNCV3znD24DyP
-         9i9w+EzPkqpjC8gU6wV15zcds4NAyGMcZpmAGkK+Z30ckRVHl8vSjGgJo0j6ip9M5R8p
-         3A8A==
-X-Gm-Message-State: AOUpUlECUMTLFlI8VOIbpA2CRfETKQlWSj1ZACgcgjBMiamGqReamZI0
-        wyNiaigw4iVikXSFdjmuujwRO1prPnVtD/cNeQY=
-X-Google-Smtp-Source: AAOMgperGIj5NttJYV7qTVTog1fue1b6OgV+VgQ43oCg3nRjuCBziM33yYBM4Gj8R/PRiiwmxZy6p3l7tl2aVlmj2k0=
-X-Received: by 2002:a2e:4619:: with SMTP id t25-v6mr4214153lja.96.1533299691394;
- Fri, 03 Aug 2018 05:34:51 -0700 (PDT)
+        bh=wpQmnJomdj2K6XAdjkAsijWMJ5sp0iOAASGaGcqKubc=;
+        b=nrkxAiPOYRsYq3ajwe5SvWcKw+s7Pn8rF/UxZZvzgRtbz3eYLhlmZKcl1yFqCU/JU7
+         O4BMazbCvUjylmWEaz9ez8h9E//d/EUnc3Syz9uNahs03fWmH3tKcsGDxaRWQjn7y5s8
+         QXWnJoT2hjQnqgeukczPpBSNvL23QPBYE5Z7y+m2OQqfS0ELPENa6birs3OHtqC2DnNF
+         2aUkI1Pwtk+dsnZ5ah2Z/R5KnfQ8CpkpJnDbm9X8ykXcnq937nVVWjPIHv3os+8PQBQk
+         TygNqr2WShLZ5gLsidNUeUUNhJPBv9C1mAsqQzWgI+IyLKXlJP93JLa9x3m4feJCFPUp
+         Ujag==
+X-Gm-Message-State: AOUpUlFba7HRj+UfqHR2J/QyTBZz64+GeN5S7s4J85BVNRvOLQOpauE4
+        Yt43sgK5QrAHPwEwn4wlEZva1vCMRF4pJu+6LOo=
+X-Google-Smtp-Source: AAOMgpe1dnU1ozkdtwL/p1OCjfhCPXrZlZbj8Bs031xy2jRaU/vBzwb6Hdv/D7BJrNhPSWlYE1CkotDBRDcsfYQsfow=
+X-Received: by 2002:adf:ffc7:: with SMTP id x7-v6mr2535039wrs.137.1533299742819;
+ Fri, 03 Aug 2018 05:35:42 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a19:2b14:0:0:0:0:0 with HTTP; Fri, 3 Aug 2018 05:34:50 -0700 (PDT)
-In-Reply-To: <alpine.DEB.2.21.1807161116590.2644@nanos.tec.linutronix.de>
-References: <20180703123910.2180-1-willy@infradead.org> <20180703123910.2180-2-willy@infradead.org>
- <alpine.DEB.2.21.1807161116590.2644@nanos.tec.linutronix.de>
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-Date:   Fri, 3 Aug 2018 18:04:50 +0530
-Message-ID: <CAFqt6zbgoTgw1HNp+anOYY8CiU1BPoNeeddsnGGXWY_hVOd5iQ@mail.gmail.com>
-Subject: Re: [PATCH 2/3] x86: Convert vdso to use vm_fault_t
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Brajeswar Ghosh <brajeswar.linux@gmail.com>,
-        Sabyasachi Gupta <sabyasachi.linux@gmail.com>
+Received: by 2002:a1c:178a:0:0:0:0:0 with HTTP; Fri, 3 Aug 2018 05:35:41 -0700 (PDT)
+In-Reply-To: <f718f3ec-3726-3f51-6756-80b357fc23c9@flowbird.group>
+References: <20180724082213.25677-1-robert.foss@collabora.com> <f718f3ec-3726-3f51-6756-80b357fc23c9@flowbird.group>
+From:   Emil Velikov <emil.l.velikov@gmail.com>
+Date:   Fri, 3 Aug 2018 13:35:41 +0100
+Message-ID: <CACvgo53h=8q-xuJBPP1T2JWkb7SffXas94=moS1x76=BejyVJA@mail.gmail.com>
+Subject: Re: [RFC] drm: Allow DRM_IOCTL_MODE_MAP_DUMB for render nodes
+To:     Martin Fuzzey <martin.fuzzey@flowbird.group>
+Cc:     Robert Foss <robert.foss@collabora.com>,
+        David Airlie <airlied@linux.ie>,
+        Brian Paul <brianp@vmware.com>,
+        ML dri-devel <dri-devel@lists.freedesktop.org>,
+        Eric Engestrom <eric.engestrom@intel.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Nicolas Norvez <norvez@chromium.org>,
+        Rob Herring <robh@kernel.org>,
+        Sean Paul <seanpaul@chromium.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 16, 2018 at 2:47 PM, Thomas Gleixner <tglx@linutronix.de> wrote:
-> On Tue, 3 Jul 2018, Matthew Wilcox wrote:
->
->> Return vm_fault_t codes directly from the appropriate mm routines instead
->> of converting from errnos ourselves.  Fixes a minor bug where we'd return
->> SIGBUS instead of the correct OOM code if we ran out of memory allocating
->> page tables.
->>
->> Signed-off-by: Matthew Wilcox <willy@infradead.org>
->
-> Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
->
+Hi Martin,
 
-Thomas, are these 3 patches part of this series will be queued
-for 4.19 ?
+On 1 August 2018 at 15:24, Martin Fuzzey <martin.fuzzey@flowbird.group> wrote:
+> Hi,
+>
+> I am running into the same problem using etnaviv on i.MX6 under Android 8.1
+>
+> The mesa etnaviv code uses CREATE_DUMB / MAP_DUMB for the scanout buffers
+> and is called from the surfaceflinger process.
+>
+> But, under Android 8.1 drm_hwcomposer runs in a seperate process to
+> surfaceflinger.
+> Since drm_hwcomposer needs to use the KMS API it must be the DRM master,
+> that means that surface flinger cannot be DRM master too.
+>
+> Adding a render node to the imx drm device and configuring mesa to user
+> fixes
+> the problem but requires the render node to have access rights to use
+> CREATE_DUMB
+> / MAP_DUMB.
+>
+>
+> Here is my full patch:
+>
+> Make imx-drm export a render node so that mesa can use it to allocate
+>
+Let's start with the not-so obvious question:
+Why does one open the imx as render node?
+
+Of the top of my head:
+There is nothing in egl/android that should require an authenticated device.
+Hence, using a card node should be fine - the etnaviv code opens the
+render node it needs.
+
+It's been a while since I looked at the imx/etna code, so I may be
+missing something.
+
+HTH
+Emil
