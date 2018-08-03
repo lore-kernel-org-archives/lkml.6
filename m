@@ -3,88 +3,81 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7E44C43142
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 02:23:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE6C4C46467
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 02:25:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5999021531
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 02:23:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5999021531
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=telegraphics.com.au
+	by mail.kernel.org (Postfix) with ESMTP id 9206221717
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 02:25:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9206221717
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726516AbeHCERj (ORCPT
+        id S1727184AbeHCETd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 00:17:39 -0400
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:57348 "EHLO
-        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725736AbeHCERj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 00:17:39 -0400
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by kvm5.telegraphics.com.au (Postfix) with ESMTP id 5728C27D51;
-        Thu,  2 Aug 2018 22:23:38 -0400 (EDT)
-Date:   Fri, 3 Aug 2018 12:24:07 +1000 (AEST)
-From:   Finn Thain <fthain@telegraphics.com.au>
-To:     zhong jiang <zhongjiang@huawei.com>
-cc:     schmitzmic@gmail.com, jejb@linux.vnet.ibm.com,
-        martin.petersen@oracle.com, andy.shevchenko@gmail.com,
-        john.garry@huawei.com, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] scsi:NCR5380: remove same check condition in
- NCR5380_select
-In-Reply-To: <1533179408-20631-1-git-send-email-zhongjiang@huawei.com>
-Message-ID: <alpine.LNX.2.21.1808031156350.16@nippy.intranet>
-References: <1533179408-20631-1-git-send-email-zhongjiang@huawei.com>
+        Fri, 3 Aug 2018 00:19:33 -0400
+Received: from pide.tip.net.au ([203.10.76.2]:33199 "EHLO pide.tip.net.au"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726063AbeHCETd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 00:19:33 -0400
+Received: from canb.auug.org.au (unknown [122.99.82.10])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by pide.tip.net.au (Postfix) with ESMTPSA id 41hVyP5YgSz9CSG;
+        Fri,  3 Aug 2018 12:15:57 +1000 (AEST)
+Date:   Fri, 3 Aug 2018 11:00:23 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Geliang Tang <geliangtang@gmail.com>
+Subject: linux-next: build failure after merge of the pstore tree
+Message-ID: <20180803110002.5942ff15@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/wUzUYpsI4p=0c9YoFKPjbP4"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2 Aug 2018, zhong jiang wrote:
+--Sig_/wUzUYpsI4p=0c9YoFKPjbP4
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> The same check condition is redundant, so remove one of them.
-> 
+Hi Kees,
 
-If you are trying to find redundant code, your coccinelle script is 
-dangerously flawed.
+After merging the pstore tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-You need to realize that NCR5380_read(CURRENT_SCSI_DATA_REG) is not simply 
-a value in a CPU register or a device register, but it is the actual state 
-of the scsi bus data lines, which are subject to change any time, at the 
-whim of the firmwares in all of the SCSI bus devices participating in 
-arbitration at the time, or of a user who might kick a plug etc.
+fs/pstore/platform.o: In function `zbufsize_zstd':
+platform.c:(.text+0x172): undefined reference to `ZSTD_compressBound'
 
-From the datasheet:
+Caused by commit
 
-    The SCSI data lines are not actually registered, but gated directly 
-    onto the CPU bus whenever Address 000 is read by the CPU...
+  48ed452ca6ad ("pstore: add zstd compression support")
 
-Hence, NAK.
+I have used the pstore tree from next-20180802 for today.
 
--- 
+--=20
+Cheers,
+Stephen Rothwell
 
-> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
-> ---
->  drivers/scsi/NCR5380.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/scsi/NCR5380.c b/drivers/scsi/NCR5380.c
-> index 90ea0f5..2ecaf3f 100644
-> --- a/drivers/scsi/NCR5380.c
-> +++ b/drivers/scsi/NCR5380.c
-> @@ -999,8 +999,7 @@ static struct scsi_cmnd *NCR5380_select(struct Scsi_Host *instance,
->  
->  	/* Check for lost arbitration */
->  	if ((NCR5380_read(INITIATOR_COMMAND_REG) & ICR_ARBITRATION_LOST) ||
-> -	    (NCR5380_read(CURRENT_SCSI_DATA_REG) & hostdata->id_higher_mask) ||
-> -	    (NCR5380_read(INITIATOR_COMMAND_REG) & ICR_ARBITRATION_LOST)) {
-> +	    (NCR5380_read(CURRENT_SCSI_DATA_REG) & hostdata->id_higher_mask)) {
->  		NCR5380_write(MODE_REG, MR_BASE);
->  		dsprintk(NDEBUG_ARBITRATION, instance, "lost arbitration, deasserting MR_ARBITRATE\n");
->  		spin_lock_irq(&hostdata->lock);
-> 
+--Sig_/wUzUYpsI4p=0c9YoFKPjbP4
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltjqScACgkQAVBC80lX
+0GwALggApkQBA0vfK+wsVfRM9m83qorsSaDjALq5RnGLPD776TpCOb7y21jPYC3A
+uS1W0iR/wjEJt7hELJ5kyJGxaz3sxcIQivshWIFlU6daaWA2rjAv2UizlKcSi3Xv
+Esd0NESoKYoeKLmEpZefNlSbR3SqYiRDSNINLE9ntyL/IWkoKWT/Ui6LrgNXS9Cx
+8q1cYFXRJa+Aiblrpv7xF6qmzBNJG6Ju0hk2Axg0doNOee/wu9o1deZ2rrH0CVd5
+Iv3R7hurkO1oighix6H1kTYG00wo7fmbiCS/acV+qDkAhUaKKF+DiqxJv7rTCgDo
+YFJWP2UcdGbe1tTCwRFEKwRuEZx1yg==
+=/Fyh
+-----END PGP SIGNATURE-----
+
+--Sig_/wUzUYpsI4p=0c9YoFKPjbP4--
