@@ -2,93 +2,80 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F84EC28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 08:27:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7567C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 08:29:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9C4F2174C
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 08:27:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9C4F2174C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codewreck.org
+	by mail.kernel.org (Postfix) with ESMTP id D13082172B
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 08:29:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D13082172B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731311AbeHCKWz (ORCPT
+        id S1731995AbeHCKYU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 06:22:55 -0400
-Received: from nautica.notk.org ([91.121.71.147]:58203 "EHLO nautica.notk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728129AbeHCKWz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 06:22:55 -0400
-Received: by nautica.notk.org (Postfix, from userid 1001)
-        id 7EB3AC009; Fri,  3 Aug 2018 10:27:40 +0200 (CEST)
-Date:   Fri, 3 Aug 2018 10:27:25 +0200
-From:   Dominique Martinet <asmadeus@codewreck.org>
-To:     jiangyiwen <jiangyiwen@huawei.com>
-Cc:     Eric Van Hensbergen <ericvh@gmail.com>,
-        Ron Minnich <rminnich@sandia.gov>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        v9fs-developer@lists.sourceforge.net, netdev@vger.kernel.org
-Subject: Re: [V9fs-developer] [PATCH] net/9p: avoid request size exceed to
- the virtqueue number in the zero copy
-Message-ID: <20180803082725.GA8655@nautica>
-References: <5B63FB4D.1050703@huawei.com>
- <20180803073240.GA26848@nautica>
- <5B640FCC.3000704@huawei.com>
+        Fri, 3 Aug 2018 06:24:20 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:10624 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728129AbeHCKYT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 06:24:19 -0400
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 4AE906D571B76;
+        Fri,  3 Aug 2018 16:29:03 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS405-HUB.china.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server id 14.3.399.0; Fri, 3 Aug 2018
+ 16:28:57 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <edumazet@google.com>, <davem@davemloft.net>,
+        <kuznet@ms2.inr.ac.ru>, <yoshfuji@linux-ipv6.org>
+CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH net-next] tcp: remove unneeded variable 'err'
+Date:   Fri, 3 Aug 2018 16:28:48 +0800
+Message-ID: <20180803082848.24120-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <5B640FCC.3000704@huawei.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-jiangyiwen wrote on Fri, Aug 03, 2018:
-> On 2018/8/3 15:32, Dominique Martinet wrote:
-> > jiangyiwen wrote on Fri, Aug 03, 2018:
-> >> Unfortunately, when the address(input and response headers) are not
-> >> at page boundary, it will need two extra entry in the zero copy, or
-> >> else it will cause sg array out of bounds.
-> >>
-> >> To avoid the problem, we should subtract two pages for maxsize.
-> > 
-> > Good catch, that must have been painful to figure.
-> > 
-> > Given we know how big the headers are (something like 11 or 23 bytes
-> > depending on the op/direction, it's capped by P9_IOHDRSZ at 24),
-> > couldn't we just cheat and not use the start of the buffer if we detect
-> > it's overlapping?
-> 
-> Actually, generally the P9_IOHDRSZ will not cause the problem, because
-> 24 bytes is too small, but P9_ZC_HDR_SZ(4096 bytes) often cause two pages.
-> 
-> So I have a question about why we need to use P9_ZC_HDR_SZ, actually we
-> may use P9_IOHDRSZ instead.
+variable 'err' is unmodified after initalization,
+so simply cleans up it and returns 0.
 
-The reason is historical (for non-dotl versions of 9P), but the reply if
-error could be longer than P9_IOHDRSZ in this case - see the code in
-p9_check_zc_errors that copies the end of the string back from the zc
-buffer to the 4k buffer
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ net/ipv4/tcp.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-I don't see much other reason, though... But I don't understand how that
-is a problem - we don't actually put the full P9_ZC_HDR_SZ in chan->sg
-for headers, but these:
-        out = pack_sg_list(chan->sg, 0,
-                           VIRTQUEUE_NUM, req->tc.sdata, req->tc.size);
-        in = pack_sg_list(chan->sg, out,
-                          VIRTQUEUE_NUM, req->rc.sdata, in_hdr_len);
-
-req->tc.size is the size of the header up till that point and in_hdr_len
-is the size expected from the header.
-That's why I suggested that if these are on a page boundary, we could
-just memcpy that data further within the P9_ZC_HDR_SZ-sized buffer and
-use that for the header (then move it back to the start of the buffer
-for the reply header)
-
+diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
+index 31fa1c0..b8af2fe 100644
+--- a/net/ipv4/tcp.c
++++ b/net/ipv4/tcp.c
+@@ -2531,7 +2531,6 @@ int tcp_disconnect(struct sock *sk, int flags)
+ 	struct inet_sock *inet = inet_sk(sk);
+ 	struct inet_connection_sock *icsk = inet_csk(sk);
+ 	struct tcp_sock *tp = tcp_sk(sk);
+-	int err = 0;
+ 	int old_state = sk->sk_state;
+ 
+ 	if (old_state != TCP_CLOSE)
+@@ -2612,7 +2611,7 @@ int tcp_disconnect(struct sock *sk, int flags)
+ 	}
+ 
+ 	sk->sk_error_report(sk);
+-	return err;
++	return 0;
+ }
+ EXPORT_SYMBOL(tcp_disconnect);
+ 
 -- 
-Dominique
+2.7.0
+
+
