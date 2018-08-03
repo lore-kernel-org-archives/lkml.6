@@ -3,262 +3,100 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5836C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 16:17:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27EB5C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 16:19:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87BF221777
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 16:17:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87BF221777
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=interlog.com
+	by mail.kernel.org (Postfix) with ESMTP id CF9132176D
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 16:19:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF9132176D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728324AbeHCSOX (ORCPT
+        id S1727661AbeHCSP5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 14:14:23 -0400
-Received: from smtp.infotech.no ([82.134.31.41]:52665 "EHLO smtp.infotech.no"
+        Fri, 3 Aug 2018 14:15:57 -0400
+Received: from gate.crashing.org ([63.228.1.57]:55920 "EHLO gate.crashing.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727144AbeHCSOX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 14:14:23 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by smtp.infotech.no (Postfix) with ESMTP id 2120C204190;
-        Fri,  3 Aug 2018 18:17:23 +0200 (CEST)
-X-Virus-Scanned: by amavisd-new-2.6.6 (20110518) (Debian) at infotech.no
-Received: from smtp.infotech.no ([127.0.0.1])
-        by localhost (smtp.infotech.no [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 5kbTiA1hElhV; Fri,  3 Aug 2018 18:17:20 +0200 (CEST)
-Received: from [192.168.48.23] (host-45-58-245-67.dyn.295.ca [45.58.245.67])
-        by smtp.infotech.no (Postfix) with ESMTPA id 99535204165;
-        Fri,  3 Aug 2018 18:17:18 +0200 (CEST)
-Reply-To: dgilbert@interlog.com
-Subject: Re: [bug report] memory corruption panic caused by SG_IO ioctl()
-To:     gaowanlong <gaowanlong@huawei.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc:     "Wencongyang (UVP)" <wencongyang2@huawei.com>,
-        "Wanghui (John)" <john.wanghui@huawei.com>,
-        guijianfeng <guijianfeng@huawei.com>,
-        "lipengfei (Y)" <lipengfei58@huawei.com>,
-        qiaonuohan <qiaonuohan@huawei.com>
-References: <a44201bc-d8d1-6d19-645e-07687ef4bc9e@huawei.com>
- <93359d1a-930f-5279-3ca8-800d5930562d@interlog.com>
- <F0DE9BB0B24B3E4F8304582FAD6F7BFF01B7CB04@DGGEMA505-MBS.china.huawei.com>
-From:   Douglas Gilbert <dgilbert@interlog.com>
-Message-ID: <bc4ff9b5-230e-707d-2f81-f5a33e46fc34@interlog.com>
-Date:   Fri, 3 Aug 2018 12:17:17 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <F0DE9BB0B24B3E4F8304582FAD6F7BFF01B7CB04@DGGEMA505-MBS.china.huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-CA
+        id S1727144AbeHCSP5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 14:15:57 -0400
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w73FwaYU029633;
+        Fri, 3 Aug 2018 10:58:38 -0500
+Message-ID: <eb1750e90e4bd45da297fa6f78f8ef93671b7c2f.camel@kernel.crashing.org>
+Subject: Re: [RFC 0/4] Virtio uses DMA API for all devices
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        aik@ozlabs.ru, robh@kernel.org, joe@perches.com,
+        elfring@users.sourceforge.net, david@gibson.dropbear.id.au,
+        jasowang@redhat.com, mpe@ellerman.id.au, linuxram@us.ibm.com,
+        haren@linux.vnet.ibm.com, paulus@samba.org,
+        srikar@linux.vnet.ibm.com, robin.murphy@arm.com,
+        jean-philippe.brucker@arm.com, marc.zyngier@arm.com
+Date:   Fri, 03 Aug 2018 10:58:36 -0500
+In-Reply-To: <20180803070507.GA1344@infradead.org>
+References: <3d6e81511571260de1c8047aaffa8ac4df093d2e.camel@kernel.crashing.org>
+         <20180801081637.GA14438@arm.com> <20180801083639.GF26378@infradead.org>
+         <26c1d3d50d8e081eed44fe9940fbefed34598cbd.camel@kernel.crashing.org>
+         <20180802182959-mutt-send-email-mst@kernel.org>
+         <82ccef6ec3d95ee43f3990a4a2d0aea87eb45e89.camel@kernel.crashing.org>
+         <20180802200646-mutt-send-email-mst@kernel.org>
+         <e9beb6bba5a7d05741e27e85b24a3b23ba7c2762.camel@kernel.crashing.org>
+         <20180802225738-mutt-send-email-mst@kernel.org>
+         <de4888b6457e220776e16a9c8958ff0886ffc66c.camel@kernel.crashing.org>
+         <20180803070507.GA1344@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.4 (3.28.4-1.fc28) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-08-03 11:47 AM, gaowanlong wrote:
-> Doug,
+On Fri, 2018-08-03 at 00:05 -0700, Christoph Hellwig wrote:
+> >   2- Make virtio use the DMA API with our custom platform-provided
+> > swiotlb callbacks when needed, that is when not using IOMMU *and*
+> > running on a secure VM in our case.
 > 
-> On 2018-08-03 04:46 AM, Wanlong Gao wrote:
->> Hi Martinand all folks,
->>
->>
->>> Recently we find a kernel panic with memory corruption caused by SG_IO ioctl(),
->>> and it can be easily reproduced by running following reproducer about
->>> minutes,any idea?
-> 
->> Which kernel?
-> 
-> We've tested with 4.17.11 and 4.18.rc7 and both reproduced.
-> 
->> And what are the underlying devices (e.g. does /dev/sg0 refer to a SATA disk,
->> a real SCSI disk (SAS for example), USB mass storage, etc)?
-> 
-> We tested in a qemu-kvm guest and the sg0 refer to a virtual SATA disk.
+> And total NAK the customer platform-provided part of this.  We need
+> a flag passed in from the hypervisor that the device needs all bus
+> specific dma api treatment, and then just use the normal plaform
+> dma mapping setup. 
 
-Thanks for the prompt reply.
+Christoph, as I have explained already, we do NOT have a way to provide
+such a flag as neither the hypervisor nor qemu knows anything about
+this when the VM is created.
 
-The first test I am doing, and you can also do, is to replace the virtual
-SATA disk with a scsi_debug pseudo SCSI disk(s). This will tell us
-whether libata has a hand in this (as that was the case in a previous
-syzkaller report on the SG_IO ioctl()).
+>  To get swiotlb you'll need to then use the DT/ACPI
+> dma-range property to limit the addressable range, and a swiotlb
+> capable plaform will use swiotlb automatically.
 
->> Also can you get a copy of the kernel panic?
-> 
-> Since the call traces are different every time it reproduced, that I didn't paste the
-> call trace or the vmcore, but this reproducer is very useful and I believe you can reproduce
-> it easily using the following code.
+This cannot be done as you describe it.
 
-Okay.
+The VM is created as a *normal* VM. The DT stuff is generated by qemu
+at a point where it has *no idea* that the VM will later become secure
+and thus will have to restrict which pages can be used for "DMA".
 
-As I write I'm running your reproducer with lk 4.18.0-rc6 against pseudo
-scsi_debug "disks". So far no problems (5 minutes) with no noise in syslog.
+The VM will *at runtime* turn itself into a secure VM via interactions
+with the security HW and the Ultravisor layer (which sits below the
+HV). This happens way after the DT has been created and consumed, the
+qemu devices instanciated etc...
 
-Doug Gilbert
+Only the guest kernel knows because it initates the transition. When
+that happens, the virtio devices have already been used by the guest
+firmware, bootloader, possibly another kernel that kexeced the "secure"
+one, etc... 
 
->> C reproducer:
->>
->> // autogenerated by syzkaller (http://github.com/google/syzkaller)
->>
->> #define _GNU_SOURCE
->>
->> #include <endian.h>
->>
->> #include <sys/syscall.h>
->>
->> #include <unistd.h>
->>
->> #include <fcntl.h>
->>
->> #include <stdio.h>
->>
->> #include <string.h>
->>
->> #include <sys/stat.h>
->>
->> #include <stdint.h>
->>
->> #include <string.h>
->>
->> static uintptr_t syz_open_dev(uintptr_t a0, uintptr_t a1, uintptr_t a2)
->>
->> {
->>
->> if (a0 == 0xc || a0 == 0xb) {
->>
->> char buf[128];
->>
->> sprintf(buf, "/dev/%s/%d:%d", a0 == 0xc ? "char" : "block", (uint8_t)a1,
->> (uint8_t)a2);
->>
->> return open(buf, O_RDWR, 0);
->>
->> } else {
->>
->> char buf[1024];
->>
->> char* hash;
->>
->> strncpy(buf, (char*)a0, sizeof(buf) - 1);
->>
->> buf[sizeof(buf) - 1] = 0;
->>
->> while ((hash = strchr(buf, '#'))) {
->>
->> *hash = '0' + (char)(a1 % 10);
->>
->> a1 /= 10;
->>
->> }
->>
->> return open(buf, a2, 0);
->>
->> }
->>
->> }
->>
->> static void execute_one();
->>
->> extern unsigned long long procid;
->>
->> void loop()
->>
->> {
->>
->> while (1) {
->>
->> execute_one();
->>
->> }
->>
->> }
->>
->> uint64_t r[1] = {0xffffffffffffffff};
->>
->> void execute_one()
->>
->> {
->>
->> long res = 0;
->>
->> memcpy((void*)0x20000040, "/dev/sg#", 9);
->>
->> res = syz_open_dev(0x20000040, 0, 0);
->>
->> if (res != -1)
->>
->> r[0] = res;
->>
->> *(uint32_t*)0x200002c0 = 0x53;
->>
->> *(uint32_t*)0x200002c4 = 0;
->>
->> *(uint8_t*)0x200002c8 = 0xd;
->>
->> *(uint8_t*)0x200002c9 = 0;
->>
->> *(uint16_t*)0x200002ca = 0;
->>
->> *(uint32_t*)0x200002cc = 0x95;
->>
->> *(uint64_t*)0x200002d0 = 0x20000080;
->>
->> *(uint64_t*)0x200002d8 = 0x20000000;
->>
->> memcpy((void*)0x20000000,
->> "\x08\xf0\xa8\x77\xd3\xbe\x87\x5d\xda\x65\x79\x3f\xc7", 13);
->>
->> *(uint64_t*)0x200002e0 = 0x20000180;
->>
->> *(uint32_t*)0x200002e8 = 0x8001;
->>
->> *(uint32_t*)0x200002ec = 0x10024;
->>
->> *(uint32_t*)0x200002f0 = -1;
->>
->> *(uint64_t*)0x200002f4 = 0x20000280;
->>
->> *(uint8_t*)0x200002fc = 0;
->>
->> *(uint8_t*)0x200002fd = 0;
->>
->> *(uint8_t*)0x200002fe = 0;
->>
->> *(uint8_t*)0x200002ff = 0;
->>
->> *(uint16_t*)0x20000300 = 0;
->>
->> *(uint16_t*)0x20000302 = 0;
->>
->> *(uint32_t*)0x20000304 = 0;
->>
->> *(uint32_t*)0x20000308 = 0;
->>
->> *(uint32_t*)0x2000030c = 0;
->>
->> syscall(__NR_ioctl, r[0], 0x2285, 0x200002c0);
->>
->> }
->>
->> int main()
->>
->> {
->>
->> syscall(__NR_mmap, 0x20000000, 0x1000000, 3, 0x32, -1, 0);
->>
->> for (;;) {
->>
->> loop();
->>
->> }
->>
->> }
->>
-> 
-> 
+So instead of running around saying NAK NAK NAK, please explain how we
+can solve that differently.
+
+Ben.
+
 
