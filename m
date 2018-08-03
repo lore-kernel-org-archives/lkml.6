@@ -2,99 +2,125 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82F81C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 15:20:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4064C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 15:20:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D29221770
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 15:20:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D29221770
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 9E7B621775
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 15:20:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="SiF7cAwF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E7B621775
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727677AbeHCRRS (ORCPT
+        id S1728171AbeHCRRb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 13:17:18 -0400
-Received: from mga03.intel.com ([134.134.136.65]:22003 "EHLO mga03.intel.com"
+        Fri, 3 Aug 2018 13:17:31 -0400
+Received: from imap.thunk.org ([74.207.234.97]:34790 "EHLO imap.thunk.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726485AbeHCRRS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 13:17:18 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Aug 2018 08:20:31 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,439,1526367600"; 
-   d="scan'208";a="61855850"
-Received: from rchatre-mobl.amr.corp.intel.com (HELO [10.252.128.249]) ([10.252.128.249])
-  by orsmga007.jf.intel.com with ESMTP; 03 Aug 2018 08:18:10 -0700
-Subject: Re: [PATCH 0/2] x86/intel_rdt and perf/x86: Fix lack of coordination
- with perf
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Dave Hansen <dave.hansen@intel.com>, tglx@linutronix.de,
-        mingo@redhat.com, fenghua.yu@intel.com, tony.luck@intel.com,
-        vikas.shivappa@linux.intel.com, gavin.hindman@intel.com,
-        jithu.joseph@intel.com, hpa@zytor.com, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180802123923.GJ2530@hirez.programming.kicks-ass.net>
- <1af731f8-b5d3-5aca-af02-575802a961b9@intel.com>
- <20180802161823.GJ2458@hirez.programming.kicks-ass.net>
- <f990df31-ab75-974e-b142-47af07a33a08@intel.com>
- <20180802173727.GP2494@hirez.programming.kicks-ass.net>
- <653e874f-5e77-a9b5-996a-ed9daa3c6d43@intel.com>
- <20180802195410.GR2494@hirez.programming.kicks-ass.net>
- <d64f85e8-98ca-a81d-bf2d-13dd72fc411e@intel.com>
- <20180802201312.GS2494@hirez.programming.kicks-ass.net>
- <086b93f5-da5b-b5e5-148a-cef25117b963@intel.com>
- <20180803104956.GU2494@hirez.programming.kicks-ass.net>
-From:   Reinette Chatre <reinette.chatre@intel.com>
-Message-ID: <1eece033-fbae-c904-13ad-1904be91c049@intel.com>
-Date:   Fri, 3 Aug 2018 08:18:09 -0700
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S1726485AbeHCRRa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 13:17:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
+         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=gS6of1Wqx+Ga/Z6ewxwT1nDoWFudzhaHANCaL5kDyYM=; b=SiF7cAwFQy9rjIjWJXajYhZcs9
+        gMwvHAX4/Oc79SUrH4j1p3EkD57rchS5KjlnCmDK7Jbo9aFfW5T1oyKTN24JaKzSAgGJ8x7oudCyN
+        UWwTSpbe2NTvefSt3B6NYdBGtrqbbu/ftRIY/CxlpNM5jAHLtzj03J0HlDTs3U3mZwpk=;
+Received: from root (helo=callcc.thunk.org)
+        by imap.thunk.org with local-esmtp (Exim 4.89)
+        (envelope-from <tytso@thunk.org>)
+        id 1flbsZ-0002al-Ld; Fri, 03 Aug 2018 15:20:35 +0000
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id C5D817A64C9; Fri,  3 Aug 2018 11:20:34 -0400 (EDT)
+Date:   Fri, 3 Aug 2018 11:20:34 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Mike Snitzer <snitzer@redhat.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, Sagi Grimberg <sagi@grimberg.me>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>, dm-devel@redhat.com,
+        Ilya Dryomov <idryomov@gmail.com>, wgh@torlan.ru,
+        Zdenek Kabelac <zkabelac@redhat.com>
+Subject: Re: [dm-devel] LVM snapshot broke between 4.14 and 4.16
+Message-ID: <20180803152034.GD32066@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, Sagi Grimberg <sagi@grimberg.me>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>, dm-devel@redhat.com,
+        Ilya Dryomov <idryomov@gmail.com>, wgh@torlan.ru,
+        Zdenek Kabelac <zkabelac@redhat.com>
+References: <226835ba-2197-b850-6e5b-8ba14f7fd016@torlan.ru>
+ <CAOi1vP_tYG77e71CdDiOcszSSEWrp9Vfi+KB7yFAXVQChkjP5A@mail.gmail.com>
+ <93bff248-6897-4867-841b-2dace11597de@torlan.ru>
+ <CA+55aFyAox9BTDpRsqLXiROhHOX60aa45LEZ7Azteaumdu11Fw@mail.gmail.com>
+ <CAOi1vP-SJO4AMK=XD3Lmja++2dQqoiw6Zn8Vgxf8OfvYgnuC6Q@mail.gmail.com>
+ <CA+55aFy2DR9fxHhmGq+azSjX9D71YtLsuFKmoEuYW3uTAUYtJg@mail.gmail.com>
+ <d76415de-2056-c7d6-cc88-b896deaa8ead@torlan.ru>
+ <1ec0a220-d5b0-1c27-e63b-c4d3f4ce9d77@torlan.ru>
+ <CA+55aFyPVQ5-gA93irsaxPC9BNQxnGWrDDHPMUYai2kxKiaKWQ@mail.gmail.com>
+ <20180803133102.GA3092@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20180803104956.GU2494@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180803133102.GA3092@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Peter,
-
-On 8/3/2018 3:49 AM, Peter Zijlstra wrote:
-> On Thu, Aug 02, 2018 at 01:43:42PM -0700, Reinette Chatre wrote:
+On Fri, Aug 03, 2018 at 09:31:03AM -0400, Mike Snitzer wrote:
 > 
->> The goal of this work is to use the existing PMU hardware coordination
->> mechanism to ensure that perf and resctrl will not interfere with each
->> other.
-> 
-> I understand what it does.. but if I'd seen you frobbing at the PMU
-> earlier your patches would've never gotten merged.
-> 
-> It's simply not going to happen.
+> Debian is notorious for having a stale and/or custom lvm2.
+> Generally speaking, it is recommended that lvm2 not be older than the
+> kernel (but the opposite is fine).
 
-Your two-fold guidance is clear to me: (1) do not use PMU registers
-directly, (2) use perf API instead.
+On Fri, Aug 03, 2018 at 03:31:18PM +0200, Zdenek Kabelac wrote:
+> IMHO (as the author of fixing lvm2 patch) user should not be upgrading
+> kernels and keep running older lvm2 user-land tool (and there are very good
+> reasons for this).
 
-You state that you understand what we are trying to do and I hope that I
-convinced you that we are not able to accomplish the same by following
-your guidance.
+I'm going to have to strenuously disagree.
 
-Could you please guide us how to obtain the accurate results we obtain
-at this time while satisfying your requirements?
+In *general* it's quite common for users to update their kernel
+without updating their userspace.  For example, I as a *developer*, I
+am often running bleeding kernels (e.g., at the moment I am running
+something based on 4.18-rc6 on a Debian testing system; and it's not
+at all uncommon for users to run a newer kernel on older
+distribution).
 
-Earlier your response to a similar question was "That's the best you're
-going to get" - unfortunately I cannot respectfully say that to our
-customers when they indeed have become used to working with accurate
-data for more than a year. I really want to find a solution that is
-acceptable to mainline instead of having to maintain a solution needed
-by customers out of tree.
+This is the *first* I've heard that I should be continuously updating
+lvm because I'm running bleeding edge kernels --- and I would claim
+that this is entirely unreasonable.
 
-Reinette
+I'll also note that very often users will update kernels while running
+distribution userspace.  And if you are using Linode, very often
+*Linode* will offer a newer kernel to better take advantage of the
+Linode VM, and this is done without needing to install the Linode
+kernel into the userspace.
 
+It *used* to be the case that users running RHEL 2 or RHEL 3 could try
+updating to the latest upstream kernel, and everything would break and
+fall apart.  This was universally considered to be a failure, and a
+Bad Thing.  So if LVM2 is not backwards compatible, and breaks in the
+face of newer kernels running older distributions, that is a bug.
 
+If there is a fundamental bug in the userspace API, and it can't be
+fixed without a serious security bug, sometimes we need to have an
+exception to the "you can't mandate newer userspace" rule.  But I
+don't think this falls into this category; how would a user "exploit"
+what people are calling a "security bug" to break root?
+
+    	      	      	      	    		   	- Ted
