@@ -3,87 +3,203 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A12B5C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 11:05:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BE28C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 11:07:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61F7721707
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 11:05:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61F7721707
+	by mail.kernel.org (Postfix) with ESMTP id 13EAC21707
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 11:07:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13EAC21707
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729681AbeHCNBF (ORCPT
+        id S1727332AbeHCNDY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 09:01:05 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:36990 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726698AbeHCNBF (ORCPT
+        Fri, 3 Aug 2018 09:03:24 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:41875 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726698AbeHCNDY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 09:01:05 -0400
-Received: by mail-lj1-f195.google.com with SMTP id v9-v6so4598492ljk.4;
-        Fri, 03 Aug 2018 04:05:15 -0700 (PDT)
+        Fri, 3 Aug 2018 09:03:24 -0400
+Received: by mail-lf1-f67.google.com with SMTP id v22-v6so3761503lfe.8;
+        Fri, 03 Aug 2018 04:07:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=BFK7V571sAD6ojSsEzFD37otbcZCMFymq8tTipVQz5Q=;
-        b=PFLwZdUPEzPSvRcsyASON9EatugMXYQhJwNpPN4VLl3tQH5hSOFn2qNbjnn/okPJor
-         G6ryor3mJ55SYgm6OSkxP1hyH1QFxMRBNv5VPwKvheld74ymyhlhxYVvJppDZZcwMQ8Z
-         SVHSL2Pvtb2JIKSSzfrSyxQ0EIzvyONJnzvOcIbrfIV9uFt/0ymTaIZOC2x7E9PwLZxC
-         0sfzqV5lNkVIuk1rRJd1VrMDJ5tJu883EYJTKqi8fPiT/3Ri3b0dwZCgauwEmrvTq89D
-         AhOrQ2zxBKD3U5OzyLtMn5K2af7A/m5MgALPwvewUVhRdCppNj/S0CoNnzd6dvc+YTMS
-         SgsA==
-X-Gm-Message-State: AOUpUlH/DCJbALerJWRmkIdYEunBgvEK9BnyMbEtpcZaO2XtCr7uW++Y
-        PaJMzjwLtDJO9hFD/zWulrw=
-X-Google-Smtp-Source: AAOMgpfD9+ZylN1wJkuuSee8YaR8fDsesw9EA/JW7C4OgruB6s/B0OhVcA8y93imd0ool+o8QiqjUQ==
-X-Received: by 2002:a2e:944:: with SMTP id 65-v6mr5143711ljj.30.1533294315016;
-        Fri, 03 Aug 2018 04:05:15 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=nBPVmQ0z0cGPeIWv8fwey1FO5wbYfpOAucxXZ8jqdkg=;
+        b=SABhgGn2hqa83oZZ2FbcCNLWe2uYkfuFckA3q6FshqmhEstTIcrobL98TK4DVu8mRL
+         WvgNWAzZPMd3KJtL1KF0GCk4NnwytqKJDZsYl5dIV/quiBrZ2IHFpZgfnJ2zM89MIGc5
+         GDSgbiW0kcssgU0HkZPGP7CM5cVZXS8ImrxyP8sgyDkzqhXONAYdtKEqpV8joc+oTRzp
+         Ld7rX6dHZ3v9yu4iXZQ6nXwABZuOWltE0w99EPZ9dfhPDW8vUNMkJBxTPPLmFXPRi8T/
+         gEc6l+xtAK/aHedqieItzdKYadge7/CtneW62Vv+TRm6U1a4q6+rEQ9dJJmAKjpu4lmA
+         muag==
+X-Gm-Message-State: AOUpUlE4ACdeDMPUGkrA1KiuM3wRGoJs9SKDZM4/abKoU83SSldWXfkL
+        zaq7GludLKZZlBxHH78OeW4=
+X-Google-Smtp-Source: AAOMgpdSfmy/lBpeDll7zBfYBKOENwACFffEyxSq1tJk156LBiDhfBsP0bpWjzBExhYi1PhXpYjdFA==
+X-Received: by 2002:a19:4e06:: with SMTP id c6-v6mr4225750lfb.30.1533294452393;
+        Fri, 03 Aug 2018 04:07:32 -0700 (PDT)
 Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id d73-v6sm859029ljd.70.2018.08.03.04.05.13
+        by smtp.gmail.com with ESMTPSA id u24-v6sm861730lji.4.2018.08.03.04.07.30
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 03 Aug 2018 04:05:14 -0700 (PDT)
-Date:   Fri, 3 Aug 2018 14:05:11 +0300
+        Fri, 03 Aug 2018 04:07:31 -0700 (PDT)
+Date:   Fri, 3 Aug 2018 14:07:19 +0300
 From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     kbuild-all@01.org, lee.jones@linaro.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, eballetbo@gmail.com,
-        linus.walleij@linaro.org, mazziesaccount@gmail.com,
-        dmitry.torokhov@gmail.com, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        sboyd@kernel.org, broonie@kernel.org, linux-input@vger.kernel.org,
-        mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
-Subject: Re: [PATCH v11 1/2] mfd: bd71837: mfd driver for ROHM BD71837 PMIC
-Message-ID: <20180803110511.GB20907@localhost.localdomain>
-References: <77184f651e5cefb112f1061bc682b759f88144c6.1532946848.git.matti.vaittinen@fi.rohmeurope.com>
- <201808031831.TJYSQ80i%fengguang.wu@intel.com>
+To:     lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        eballetbo@gmail.com, linus.walleij@linaro.org,
+        mazziesaccount@gmail.com, dmitry.torokhov@gmail.com
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, sboyd@kernel.org, broonie@kernel.org,
+        linux-input@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
+        heikki.haikola@fi.rohmeurope.com
+Subject: [PATCH v12 0/2] mfd/regulator/clk/input: bd71837: ROHM BD71837 PMIC
+ driver
+Message-ID: <cover.1533292711.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <201808031831.TJYSQ80i%fengguang.wu@intel.com>
 User-Agent: Mutt/1.9.2 (2017-12-15)
-To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 03, 2018 at 06:10:21PM +0800, kbuild test robot wrote:
-> smatch warnings:
-> drivers/mfd/rohm-bd718x7.c:163 bd71837_i2c_probe() warn: unsigned 'button.irq' is never less than zero.
-> 
->    160		button.irq = regmap_irq_get_virq(bd71837->irq_data,
->    161						  BD71837_INT_PWRBTN_S);
->    162	
->  > 163		if (button.irq < 0) {
->    164			dev_err(&i2c->dev, "Failed to get the IRQ\n");
->    165			return button.irq;
->    166		}
+Patch series adding support for ROHM BD71837 PMIC.
 
-Comparing unsiged to smaller-than-zero. These tools are handy! I'll fix
-the errno check and send v12 in a minute... (or a bit more - but soonish
-in any case =])
+BD71837 is a programmable Power Management IC for powering single-core,
+dual-core, and quad-core SoCs such as NXP-i.MX 8M. It is optimized for
+low BOM cost and compact solution footprint. It integrates 8 buck
+regulators and 7 LDOs to provide all the power rails required by the
+SoC and the commonly used peripherals.
 
-Br,
-	Matti Vaittinen
+This is reduced set of patches containing only the MFD and devicetree
+bindings. This enables alrady applied regulator part and power button
+support using gpio-keys. Clock and reset support will be sent as separate
+set of patches.
+
+Changelog v12
+- fix return value check for regmap_irq_get_virq spotted by build bot.
+
+Changelog v11
+More fixes based on comments from Lee Jones
+- styling issues/spelling errors.
+- drop i2c_client struct from driver data.
+- add chip revision validation.
+
+Changelog v10
+Fixes based on comments from Lee Jones
+- Drop the platform data.
+- Drop the regmap wrapper functions and use regmap directly.
+- Rename files with rohm-prefix.
+- Replace goto from probe by in-place returns.
+- Drop unnecessary i2c_id table.
+- Change gpio_keys_button array to simple struct.
+- Fix return value checks for regmap functions.
+- Various styling/spelling fixes.
+- Replace foo-bar with something more meaningfull in DT example
+
+Changelog v9
+Fixes initiated by feedback from Enric Balletbo Serra, Lee and Dmitry.
+- Simplified control flow for probe
+- Removed accidentally left squash commit message
+- Some comma presence toggling after last member in an array =)
+- Styling of multi line comments.
+
+Changelog v8
+- Dropped clk-bd71837 from series (will send later)
+- Dropped bd718xx-pwrkey driver and used gpio_keys instead.
+- Added power-button short/long press duration configuratio to MFD
+- Cleaned MFD driver according to comments from Enric Balletbo Serra.
+  (used devm, removed unnecessary header inclusions, removed redundant
+  assignment, styling issues, allow building MFD part as module, fixed
+  license mismatch).
+
+Changelog v7
+- patch 1: Cleaned MFD probe since MFD no longer directly reads DT
+  properties.
+- patch 1/4: Moved power-key related definitions from powerkey patch (4)
+  to MFD patch (1) so that powerkey can be applied independently
+- Patch 2 is unchanged.
+- patch 3: Added missing allocation check back to clk probe
+
+Changelog v6
+- Added power-key input driver
+Based on feedback from Rob Herring and Stephen Boyd
+- Added link to datasheet
+- Removed interrupt-controller from DT and fixed binding document
+- clk styling fixes
+- remove clkdev usage
+- add clk bindings to MFD documentation
+- removed clk binding document
+
+Changelog v5
+- dropped regulator patches which are already applied to Mark's tree
+Based on feedback from Rob Herring and Stephen Boyd
+- mfd bindings: explain why this can be interrupt-controller
+- mfd bindings: describe interrupts better
+- mfd bindings: require one cell interrupt specifier
+- mfd bindings: use generic node names in example
+- mfd driver:   ack masked interrupt once at init
+- clk bindings: use generic node names in example
+- clk driver:   use devm
+- clk driver:   use of_clk_add_hw_provider
+- clk driver:   change severity of print and how prints are emitted at
+                probe error path.
+- clk driver:   dropped forward declared functions
+- clk configs:  drop unnecessary dependencies
+- clk driver:   other styling issues
+- mfd/clk DT:   drop clk node.
+
+Changelog v4
+- remove mutex from regulator state check as core prevents simultaneous
+  accesses
+- allow voltage change for bucks 1 to 4 when regulator is enabled
+- fix indentiation problems
+- properly correct SPDX comments
+
+Changelog v3
+- kill unused variable
+- kill unused definitions
+- use REGMAP_IRQ_REG
+
+Changelog v2
+Based on feedback from Mark Brown
+- Squashed code and buildfile changes to same patch
+- Fixed some styling issues
+- Changed SPDX comments to CPP style
+- Error out if voltage is changed when regulator is enabled instead of
+  Disabling the regulator for duration of change
+- Use devm_regulator_register
+- Remove compatible usage from regulators - use parent dev for config
+- Add a note about using regulator-boot-on for BUCK6 and 7
+- fixed warnings from kbuild test robot
+
+patch 1:
+        MFD driver and definitions bringing interrupt support and
+        enabling clk, regulator and input subsystems.
+patch 2:
+        MFD driver DT bindings
+
+This patch series is based on for-mfd-next
+
+---
+
+Matti Vaittinen (2):
+  mfd: bd71837: mfd driver for ROHM BD71837 PMIC
+  mfd: bd71837: Devicetree bindings for ROHM BD71837 PMIC
+
+ .../devicetree/bindings/mfd/rohm,bd71837-pmic.txt  |  62 ++++
+ drivers/mfd/Kconfig                                |  13 +
+ drivers/mfd/Makefile                               |   1 +
+ drivers/mfd/rohm-bd718x7.c                         | 211 +++++++++++++
+ include/linux/mfd/rohm-bd718x7.h                   | 332 +++++++++++++++++++++
+ 5 files changed, 619 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
+ create mode 100644 drivers/mfd/rohm-bd718x7.c
+ create mode 100644 include/linux/mfd/rohm-bd718x7.h
+
+-- 
+2.14.3
+
