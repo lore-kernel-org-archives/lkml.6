@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27099C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 10:11:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48AB7C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 10:12:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC2C621717
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 10:11:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D8F8921717
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 10:12:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=axentia.se header.i=@axentia.se header.b="WLbfndPH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC2C621717
+	dkim=pass (1024-bit key) header.d=axentia.se header.i=@axentia.se header.b="iYdmFIkZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8F8921717
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=axentia.se
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732650AbeHCMHZ (ORCPT
+        id S1732662AbeHCMHg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 08:07:25 -0400
-Received: from mail-he1eur01on0139.outbound.protection.outlook.com ([104.47.0.139]:5472
+        Fri, 3 Aug 2018 08:07:36 -0400
+Received: from mail-he1eur01on0118.outbound.protection.outlook.com ([104.47.0.118]:45289
         "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732090AbeHCMHZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 08:07:25 -0400
+        id S1732090AbeHCMHf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 08:07:35 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axentia.se;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NtZ0lXRRKQ2UBpzc49H2a2um6NSkQpYLcHdr4J0Q+bw=;
- b=WLbfndPHtSs2dZoG0lZOesd8gH7hErEkYT/MgOyE9BrFaLvE5jW94ElJBA9Mh6cExHiDR+bcIxiAdVpoCPKdgV9wfoZYkTn9mqWEgUFcfhrqIXcUOZUTWOf0i9dhNGXvRTwOSWW1tWJrWTN23A3DwXCTdhXdmm5Dw+DgKFg/m+k=
+ bh=QR1K3Y7YCs8AAB6dEQK7G40bpwip1E6XqXJRMNXOwUM=;
+ b=iYdmFIkZFvR1SMmOD9eTlt6gdV8/FGzuFZACQRt91mBoeriL6kdSEKXu2qINFodMOLDsb+5UhD35/6hA3/T7fd7GfrsbyTO9VfCl6B3D9pEfD7KjmnNbzylfIOaas1Pjj6lP5kYyB5t6ajo2w1JfYUt3CQeC+DXfLVbAfRHGG9U=
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=peda@axentia.se; 
 Received: from orc.pedanet (85.226.244.23) by
  DB6PR0201MB2456.eurprd02.prod.outlook.com (2603:10a6:4:35::8) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.995.21; Fri, 3 Aug 2018 10:11:42 +0000
+ 15.20.995.21; Fri, 3 Aug 2018 10:11:47 +0000
 From:   Peter Rosin <peda@axentia.se>
 To:     linux-kernel@vger.kernel.org
 Cc:     Peter Rosin <peda@axentia.se>,
@@ -53,9 +53,9 @@ Cc:     Peter Rosin <peda@axentia.se>,
         Russell King - ARM Linux <linux@armlinux.org.uk>,
         Jacopo Mondi <jacopo+renesas@jmondi.org>,
         Sakari Ailus <sakari.ailus@iki.fi>
-Subject: [PATCH v6 2/3] dt-bindings: display: atmel: optional video-interface of endpoints
-Date:   Fri,  3 Aug 2018 12:11:23 +0200
-Message-Id: <20180803101124.4622-3-peda@axentia.se>
+Subject: [PATCH v6 3/3] drm/atmel-hlcdc: support bus-width (12/16/18/24) in endpoint nodes
+Date:   Fri,  3 Aug 2018 12:11:24 +0200
+Message-Id: <20180803101124.4622-4-peda@axentia.se>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180803101124.4622-1-peda@axentia.se>
 References: <20180803101124.4622-1-peda@axentia.se>
@@ -66,49 +66,50 @@ X-ClientProxiedBy: AM6PR0202CA0003.eurprd02.prod.outlook.com
  (2603:10a6:209:15::16) To DB6PR0201MB2456.eurprd02.prod.outlook.com
  (2603:10a6:4:35::8)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 976120e4-2108-4209-91ba-08d5f929830d
+X-MS-Office365-Filtering-Correlation-Id: 5609ba86-a425-47e7-6ef3-08d5f9298633
 X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(7021125)(8989117)(5600074)(711020)(4534165)(7022125)(4603075)(4627221)(201702281549075)(8990107)(7048125)(7024125)(7027125)(7028125)(7023125)(2017052603328)(7153060)(7193020);SRVR:DB6PR0201MB2456;
-X-Microsoft-Exchange-Diagnostics: 1;DB6PR0201MB2456;3:H8SaOlmqxId5mYWlBYKLP55BSl5rkLZJGOfi95oakmhQSY3lwwbhMJFntX+gfrYhwssVwjLiuQEBkFQMCbojtxm516ouW9Pq7nRg8UK6GQWMEKu3Adk1c41bj9wDeoAsU/lB6SDZzZInv9P8CK6Gck2PDYK9eseU41awqd+OJuTKvl1jFeqaxHH9LWioenFvHe5wf/0tKEUPincCuhqfcZdo4pQp0p/ov5JZ49PupcD2fWCHnBHlqYNOoO+wJbu4;25:+rpqo3tRboE/R7Z5ozvKxBB+228CyqJA67mQLP39Xz7u+824gidh1pyUN76dUuz3WmgPRj5LqMqKgCzFfdIQ5Nu88d1ZWCtFu5ebGRa1PanqgxP41ekS3lR/RGzRB1QWv/QatG1tmueTtZrE6gTwG0m+v6LFpsm3KXZr4oEIGdjBuIbvr/HqDQReR3qE2sZXwKfzdHt49T6h48RoaLPvJ30DTlg8YjBzQyejq1JDZvyY0irAbDpwTRpV0eSUX28w8RCUUF1ClhDdcsKB4LuTbHuvkpNoBAA1HCANQeDR2c2GZFQ28JHfTSTbKVqgk3g09btTOGONw47XZmEVfq/neA==;31:AM5nlC+iJM7lCO1MeDsoADd0bLyZ/xafS514JKyajGL23y0mNSzGL+/FOaDsTSr1TJVR+IqUV08a8N5jNrDsvBXUNGMBAij/Bf1dN8N9u44qxMD73JvUg9OIp8znhSRNXZRphnNynntOWpgv9MutxcNwby3StlyA43ZW+RoNct5xfgRlYESxayPc3nKWPXJO9a4+DvzEMchkq6HaBNzO5npPxakKdBDEvIEJ5+m7HaA=
+X-Microsoft-Exchange-Diagnostics: 1;DB6PR0201MB2456;3:vn5ItCtcoYpfTBKlFY78eqsXDAmCnzPp/UdYZGzw/q05ZnRj+QocLe9+nVE6PBj8AOXZ+JfvBQZrLrnkjhhRvqTcEe+dQduIXRjn2Qe6JALyydRMpQCMSrnI6cojuIhORdQXSiNK5bFHx06Xab2OilzXToZgbqmHoYbWZsxVpmp8/pFce5VXO6E+PIcTHIaUl5sG+0cFEDFYhQ/tsePyrUB4iM7XD7z7J+9u781rJAh/hgnA/sJ6DkaBM8PpDhcq;25:ipBJkJ6Ss1P9xb9Al04KymY/CzmZJaDxGZ5PI9KTteBYjZjYmjgGKnkcgscToYtxXCFI1V7UNjhE3OvqMakDObNhrq1gVpj37BdhabFcWcnfC4KoexsxJBhktW5z2VAFKtvtFDrFDld2yf013KjEhRofw7ibCa3Cg6sEPH6w3WjFEKvXka2syddb9eqk6jlZAc5daM6urUkc6721HmgGg7RlEEs8kPBBM7mFKqEC+6olhWBESYWocpNOXfxyco9JchFd9PpKudKJ2VmOaD5+YeIryJrspNOgqdCOetGqQG7ooJv5oCaiLxk0dFxrht4BabSpQoGz8bzeUKOZ7gUg5w==;31:hW4/6okyLxgmvMWBfma5sfcVKMj6zsSrJd8wNs1BqdtJV1CPTlDjPLZ+melDm1D8YK4h7yQyO8bv2/jsHMBg1NXWoxzC4FhfDNjYIHUpm6BdltkM9/NetZknK7AofAgCzPGVhoo6Rmq2fw6GIFhnXzRkh96C8goD5xq2VrRLwejJG51oa7wOju1el3oBHZfBputQKUNttY7pI0EDKOoR5zhwC5LxcrmxJraYPe4v4ks=
 X-MS-TrafficTypeDiagnostic: DB6PR0201MB2456:
-X-Microsoft-Antispam-PRVS: <DB6PR0201MB245657E16FF79223BE593FDDBC230@DB6PR0201MB2456.eurprd02.prod.outlook.com>
+X-Microsoft-Antispam-PRVS: <DB6PR0201MB24563BD4F5B99E6BF56E79C5BC230@DB6PR0201MB2456.eurprd02.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:;
 X-MS-Exchange-SenderADCheck: 1
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(10201501046)(3231311)(944501410)(52105095)(3002001)(93006095)(93001095)(149027)(150027)(6041310)(20161123560045)(20161123558120)(20161123562045)(2016111802025)(20161123564045)(6043046)(6072148)(201708071742011)(7699016);SRVR:DB6PR0201MB2456;BCL:0;PCL:0;RULEID:;SRVR:DB6PR0201MB2456;
-X-Microsoft-Exchange-Diagnostics: 1;DB6PR0201MB2456;4:21RefTENq+edUjjlEkK9r5xLF6KaskllNIKBQTFuu2AbNC14raHvnXs6b+ZwRNmfnkUH/VKWCNupb8YY4xPvk9eDm6pUdSwbO3VPI11O4mSjKHC/nFJF98mCTUxbnbxu4uar9eNwtHWL4it5Ut2fYdCW6yCZ8a9hKxsogsNEUpaa9L7vI+QaoI4l0jzEbUroKX0AfE913jFpDOhVC3991GRH4m8rvCHavVhdyYOtzpsROfKUIfTLWs5uNPuBSDp8AUL4dTmWjlZNlxhgOiRJDg==
+X-Microsoft-Exchange-Diagnostics: 1;DB6PR0201MB2456;4:VD0naKv+uroVPk2wyCC40T+Y81Qo8agWFw1VehzhUDruHPQA9LvbxelNtK6FCTFP2paEETdbUwaEU6xAlz5e8UnwS6KcZ+hJj9j3kpPbCzllK2i0nSsAUqMF9+U0INUhbAG1wDq49BEaIoI1Qhydqon4w0L754SflT579O1PymqeDzK2fFlv1gR2ox8a++hq3EUdcb2fB1l2famnt+W+2J5tqU/ZqoJy73syZop/b7mDNMiTKkAOkCuctMG7S+PJpkocqwlIRZQVMjWJd3LE1A==
 X-Forefront-PRVS: 0753EA505A
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(366004)(346002)(39840400004)(396003)(376002)(136003)(189003)(199004)(386003)(25786009)(3846002)(476003)(956004)(2616005)(2906002)(16526019)(74482002)(36756003)(7416002)(1076002)(486006)(446003)(86362001)(26005)(105586002)(186003)(11346002)(97736004)(305945005)(106356001)(6116002)(6506007)(5660300001)(66066001)(8676002)(2361001)(6666003)(81156014)(6512007)(68736007)(47776003)(7736002)(81166006)(54906003)(478600001)(2351001)(8936002)(53936002)(48376002)(16586007)(76176011)(52116002)(51416003)(6916009)(50466002)(6486002)(50226002)(4326008)(316002)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:DB6PR0201MB2456;H:orc.pedanet;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(366004)(346002)(39840400004)(396003)(376002)(136003)(189003)(199004)(386003)(25786009)(3846002)(5024004)(476003)(956004)(2616005)(2906002)(16526019)(74482002)(36756003)(7416002)(1076002)(486006)(446003)(86362001)(575784001)(26005)(105586002)(186003)(11346002)(97736004)(305945005)(106356001)(6116002)(6506007)(5660300001)(66066001)(8676002)(2361001)(6666003)(81156014)(6512007)(68736007)(47776003)(7736002)(81166006)(54906003)(478600001)(2351001)(8936002)(53936002)(48376002)(16586007)(76176011)(52116002)(51416003)(6916009)(50466002)(6486002)(50226002)(4326008)(316002)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:DB6PR0201MB2456;H:orc.pedanet;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 Received-SPF: None (protection.outlook.com: axentia.se does not designate
  permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DB6PR0201MB2456;23:BYet07jSF/ylCHM58E2/bs2M5c6EmKFv+zy1VIi?=
- =?us-ascii?Q?Amw7PGn1/eo4rfZIhukuLEDr8rK9b4B9fZb9rLnlxa1/NfrCE+wcPdFtxCp0?=
- =?us-ascii?Q?sukM4mZwGqIf4Gs3RskB0rO1E3//n0Stkt1DCdCQdXLM6GkrlzODE2M8j+fZ?=
- =?us-ascii?Q?axsDEgzdnBAMFkDh5G4BbcyiWNW4LdxLHZ74JVtUpPVFyxCoUdMzT3BThvXk?=
- =?us-ascii?Q?n20Y00Nl2HkqnT2RuC7ivZmWmmIzvHCQ9PHAT5Xe/SvDaMRMF/CHlOtaYTb/?=
- =?us-ascii?Q?lYiddN8m6EjRS5Q8cYpRspXP5IcqDu9LTNoR1G5NBogFBNVx4GiZn5y+V5dd?=
- =?us-ascii?Q?NSdsxwqjg7VL2VsG54ArdShR3HgkPKD4vsEz8Ul2op4+PpZpE3DAtK9r/CRa?=
- =?us-ascii?Q?pXulrm45H91cUfjFBRUNXRnzdPynwx+WijqGKFyVhDxkF/cNY0Es5FSr8sP8?=
- =?us-ascii?Q?3bIUY9/ZislXVJbKSV2fW/fJpI0AEIz4xogEpzAJt/wrN3YRbzAb/PzqUUdT?=
- =?us-ascii?Q?7ngK4Vk6LBT6i9LrloUuFE6wQ2eDJ0WCXhW1bwQ4UtT63glqeImVAdnK7C63?=
- =?us-ascii?Q?rBcMsfeabRikDSgWtL5FamY1RNui0j2mqOxyu8j7+bX7+OJEqA0C2wgu4Jk6?=
- =?us-ascii?Q?I+6GJ24W0OpZW3UUneLFXRVo6tcw5r6CPE/1C+THFtIaRCQ4lB70e62ExF2f?=
- =?us-ascii?Q?Thi2i7PGxXxYI2UFSAPiR7pOztrdpnJUd/hCYL8H7bPUCqySWgYv60CcP1Tm?=
- =?us-ascii?Q?Gq8Hc6/Au5LslPBC0OgAJ+OyPaA/Q57WDxIdAw7w5rVpn40YUlWxyk9xGD1d?=
- =?us-ascii?Q?MubyWAmjowBMIxWvTD8XSI4CAYFGHaYv3n9CWAkfiSVrN6+hfkwtx0FjZOJw?=
- =?us-ascii?Q?q3BrqfdR8V5BkGhl+OxBMH1fo7VK/UB5ejdeOVe5rWWbdgg1TUVERsqjsCcG?=
- =?us-ascii?Q?Yrt+EKQ6r8nLiKuwkDzXF3RxU7qmmJ0DKduPGl5KO5qdFs+LXwgBroO71UI2?=
- =?us-ascii?Q?8XWMH34Qmxztl4UdNAHFPt5CrzR+9VfUgP7tj2IezOB58b+zyD76XibI9trl?=
- =?us-ascii?Q?uDC2PqhV31XwkZpAqxKkJyL5xYugIgGJ0FcrxLdbdtUuxm5mLUvIPif74k/8?=
- =?us-ascii?Q?GuIgAdBm7l8PgumHvgGQJVRDxEJIAUSiOJCjvjefGNgp/CCbAc1lbONzCvOj?=
- =?us-ascii?Q?eD8hrh0VUFjWtTe8SZj2zX6kzyQix+LvzeA4ED5K7WQcWcVymSWW5Ikhfrqf?=
- =?us-ascii?Q?0LDTb9zokMTsNTcC9ch1m7Fb10rd09q10/RS0EqsPeWy7EWv+eYOpY3Mff8C?=
- =?us-ascii?Q?rwVN34aW3u0mJRQCeLJTgfeM=3D?=
-X-Microsoft-Antispam-Message-Info: oS5Pe44b78C/lVw8snoYMiH0eWJxf4Kw6fgBKXXnlPh/0uTtHq7cNv/BVvA/1b/m/04tqXjT6JcailOTsCH0cfzklUVcYTTO7HZhSS8IYs99Tx3K/BD02Zue7hUcQVwE4JJYfR02b0pajEONOPTz+GjaaWHfkPicV3huJwdA29vjnhNh5raesne84NZKuDdc8tFV9Z+SjbI6yQAd8YtSOsCBSZ+O5ws+75rMkoLnThoDgQswZeFSPwoddTJ57Zzv/L/pomxN0AfYLQvpXS9KS7jEwrEZQForeFGxs7CKbVGNfKVvCqmcJDLeO5QYArcTAzsx+CPoKiKPWNkUfhemYy4kojSTH8bQFOrQsiwbVZA=
-X-Microsoft-Exchange-Diagnostics: 1;DB6PR0201MB2456;6:mlKX8nIRj8J/gXWZBXl5GD8wBD64wCA+U3cMyVZdZRC2Yv5MyjtCqct3irtAQ3KkBFOtgy9uVRKqxSbbSZ7mxH0tFfM9WKVPtnMTQpZKPtjudCy6M/sOSG0YWW+rzOQSRNyDOCRVArM31Pvvgo8MGghLWIB2V5urc0ZLkHYUa0WfCCjCpR4ibTLkcTktJHK4RTpNb6gj7+wC1/Bzv2wVGh/UZ6NPIN4MDUIHlewUL+a3Sq6VsEHBanq98OHLIUcJs1paOhy74yU6wh3XWAhoVBT/A8dd8Sj/NVB5VEpfRZ2osgjvErO5maE9PYCr77VwgyuL1pLzlEST+plgHO8imHSxKMZvaf0bu9RjIIyJuWhk6boitdbNIu9EdWYEkt4RMghsDnFCHwUmwmFegu8L9xSPA4R3IEzySJsJf9JNSq0Su/S2UlJSijWiKgEU3voIwlIEen8Dtn9NpKsB04gqdQ==;5:M9spCrhmL53Rfklrnq6Fb3fvH8vCeyIIqc4LG9w9P1H8X3vkRG7xPIl6R1z9QMg6ccuWu5TOR/VOqgsBAjEEYwfYaEtz+NiROtiZrEZFn0XEz1DWHmG/Kf/If8Gi4Q1C/3tRdt8rdwdOxtTkk6vyx5JdadRzg5os3vcA3gHBXHc=;7:EebYwjSCUDIVjU8pYBKSjHq5rNnfdPHjlbYPYpLtfSRr0qJsJZoUZ16+N3IN7AQ9el1mVevpi9R8HeZk7lzv526Sxf/pYeY8GoCxh86VbhpaUjwwbqAXdcJHcIjvFQZCAKIdvApRmstkkrjEz4CBuRMp5ce7qV+BxHfeUfORcoLtKIdGzyfQ4AmgbVmp+QIE75KAvpjbzjDbB1s0ovP+gnzcPLsjObxYQN+opp5jKwdXh2Py+STN7JiVA0IZvgtv
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DB6PR0201MB2456;23:YDOmSsDOe6ehwaaa/rlvFqNYKyu1+yCbTy3Xnsx?=
+ =?us-ascii?Q?IVXpJhmCqxfFPufVKvBpyXc65AzDGoxPueJiS2TzXOWYSvC0Wg/SC0hShcDU?=
+ =?us-ascii?Q?03VWhhaaM2NQ1ki1ej9WebIu4Dny0mNJUEIQ2ecIKTvUNnoe3YYQ/KyrTbS8?=
+ =?us-ascii?Q?TK70l+aHaHNeZk6TlyujdQ/e2rjPDKXkrovZ/uNoHmaqV/IIvnBsVZsl+8ip?=
+ =?us-ascii?Q?rHdXEqALyx6MwR6LSBhpLoj1xKJ28MwpqVCEfRs0f4dNUrps97kjKYZzFg8K?=
+ =?us-ascii?Q?IqXmS74na+pyM3rIzDJBe5WBdoB/RL6ya3/b20/Y3V/VLV4yORjT1I7JXmdM?=
+ =?us-ascii?Q?KHwuDSvOezfBS/B0zeMsIROcc3ZesKDVtlBUCMVxVcU5N+2PCPyFth7E1TDt?=
+ =?us-ascii?Q?woT/kTfjsy2zpC/ORfxaPt04czApCgvAMjG+EUVVl6QhOvHljHC+wjKQebeb?=
+ =?us-ascii?Q?lRdajaSqcO2FG5A2kY/vm098b+FdrRNvpzVmMQni8g1v3DoMzEZGIIRZwhhb?=
+ =?us-ascii?Q?RPAfd3OF8MmvJKnag7znr5n+UmFBKd/wN0hfJ2Ay7qLlxI96P6PuNyF1RIGO?=
+ =?us-ascii?Q?EI/rhkttDzBeMTE8YagR+HcbmT4rAQr5qzqQFutfzqM18W41raGZK8Y2QZ8S?=
+ =?us-ascii?Q?Oi9upkRqiKGyR1cXhCrOLhe+2Lt8e7yPN7S922sMBk4Z2icK2QwQEKEpwTHt?=
+ =?us-ascii?Q?rVuDf6gaBizM0b7Y/emS74N/d8bGbv53O1Nk4ow0EoCOoei4GZhclLjMGyMQ?=
+ =?us-ascii?Q?cQKeNe6Ec68jARIWmV6WiLUptEwwM2M8zCXYNpS9E6db+ZsWpF1PinxEptS0?=
+ =?us-ascii?Q?PyUgYj7EYiyOn77YNlpa2IN82Cbl/h2d+vLCBWdcVlyPyvNZjZjbJRHv0oSE?=
+ =?us-ascii?Q?0NiGEv6uQ5vwR5/kEWgOUa2w48HGXw2nYL/+4H9pZijKAj32PCPxWoI5Sh5W?=
+ =?us-ascii?Q?UE3jCFgPIlPUM6yW1wbLM0LcpEMYQ+qJc9c6ZZ+SY1PRJTYw30rrEhDEk/Gs?=
+ =?us-ascii?Q?1m20JJjM/BzMbzWMeo+zfhGP86vc56Y7+eP46K6YBxQlWRxej75nXX3qKwfS?=
+ =?us-ascii?Q?d+JL5SVu3diFtAOwstmBIGrTzs+CWtuMMDNjNvvvFoh0lWW1Lluo8UPmOjA4?=
+ =?us-ascii?Q?RDh5Iw0EmgbPbdB9YhDP/cg0/OCOB0LEVq0Q+UvzV19xJVRluvXpmu5sgICd?=
+ =?us-ascii?Q?hwJ7/QhMsDkcjS54jfJd0RGFK4C8rm+QJzKie8MyHubXiCi7vZAieASTj/4s?=
+ =?us-ascii?Q?cFL6k+swtKacaXJxAVAjph3pzIlZV7wtHCS16QGpjDxiBWqwN1sNETnGFcpG?=
+ =?us-ascii?Q?IuShWWUbf0B6ZocRU9XVMGTuXdfgX55JvWGySIN2Fc3pWEXdI2qiry5ZvKOG?=
+ =?us-ascii?Q?ETF8sVQ=3D=3D?=
+X-Microsoft-Antispam-Message-Info: xqiivk4BSr+qtLfQEmK8a2boGDvYRFvvodpu59aErNNgUkPh6W/F4rIoPbp2ATu/fRfm7RPHfecxsJIYMyUifcYniLP58SaYPp7flDfNi+UnxtXsZVrfGKICzNNn9IMB+yhT/4vjs3dsB+FxRRqPpQEoFtaeXC9Na6Ta1f+83e36aNeKChYQLZwc/l8chQPxvYhdOz9PgrgyKve2r0z4YRVJVNlz98e8F93CILu+pCoVkiDUrOuiQkqZej1s2nHry60Yu+ivraHqpYq3jBP3mzgo8/ZUVZ93RLSOqKDncZb2sxcJNgfADiILnl1E2oOl/FlzTMwMN3AmebXYeSAEUo+YT174CHNrxm3ahvi7Eg4=
+X-Microsoft-Exchange-Diagnostics: 1;DB6PR0201MB2456;6:zi/ZeXy9sS4ZFtUWwjch8h2/jgAxzflelrp3jCmlrEmVyOUlP1+EXbzgptip7IriansKmZ9hO+koCrvc0xnBd2foJC5s6dlikiuNkLghXbiVNuZHBMHqTvo8ET/v+I6ayYnsPjb5Be0GMjYJ4ugGrfC2KdMBJeOFFR7DNbKRQwlLfwxJ8CEkAcPEPIGuKYTolh8VXMCpzohnkqo1Zm/3xqG1BvXbJti5OKHfzPzgZI0T+VO8SnHA5kRjq8yp0uZMaxUGSItYutafI6Vfb6sHzvMwKazGZ/tUc0Tq8IREdTV8Iq66wuw4eV3wvvyxNn9Fza1reHxY4vzaJ0cdVlBUdjBvHxn7uWANyT23AAK97ilr+rqWs2cJyQuOt1tyoikc7a886ObZEUqXCy/nTsFy5RZauIUitd0S5yZ0CrjU78YkBxT0yRtS8kx2UtT+5Y53g4oHrEdUW+cqyeyE++y5Jg==;5:CTB05l3UHW3mzHgdVdGI4lTMOgLSPmOZJcNz6eeiZ4akWHZU/oxn2Ns30S8cNk+cpiRUtUjmeZ1iTtJPI6IDS8roVbpHXmCU9d2y7tESpFeK5+EEgGO5ldrzCGqyT1TfDQ7wT8CJnCwevYBphnhhRN4bbOcRJhs1nezazhfUGtk=;7:PEbdnyGl6ql7EoxUpexGLEYptv2c3eYboMLWtr9hGtf199DSpzoHPvFOxowJmtLmREgKRHC0jBfxQp7kgrU7y1jXgK7ip4KzDq/WnzmqYqL3dR/3/wq20RpFhx+DzXBVrYPwC9UAOknO5azRYS3B6nOBfDu9L6NP8vU3LthuLIsdG3CxfK1WG0/zA9HT/2RqU8SWT/5qGruycnUvOVdBu+Kr1tQN83ZCkXbE9sUZE0KQN9RtQ42Spv1OIzQrzy54
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
 X-OriginatorOrg: axentia.se
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Aug 2018 10:11:42.2035 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 976120e4-2108-4209-91ba-08d5f929830d
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Aug 2018 10:11:47.4848 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5609ba86-a425-47e7-6ef3-08d5f9298633
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 4ee68585-03e1-4785-942a-df9c1871a234
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0201MB2456
@@ -117,11 +118,12 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With bus-type/bus-width properties in the endpoint nodes, the video-
-interface of the connection can be specified for cases where the
-heuristic fails to select the correct output mode. This can happen
-e.g. if not all RGB pins are routed on the PCB; the driver has no
-way of knowing this, and needs to be told explicitly.
+This beats the heuristic that the connector is involved in what format
+should be output for cases where this fails.
+
+E.g. if there is a bridge that changes format between the encoder and the
+connector, or if some of the RGB pins between the lcd controller and the
+encoder are not routed on the PCB.
 
 This is critical for the devices that have the "conflicting output
 formats" issue (SAM9N12, SAM9X5, SAMA5D3), since the most significant
@@ -130,58 +132,235 @@ devices that do not have the "conflicting output formats" issue
 (SAMA5D2, SAMA5D4), this is completely irrelevant.
 
 Acked-by: Boris Brezillon <boris.brezillon@bootlin.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
 Reviewed-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 Signed-off-by: Peter Rosin <peda@axentia.se>
 ---
- .../devicetree/bindings/display/atmel/hlcdc-dc.txt | 30 ++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+ drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c   | 70 +++++++++++++++++-------
+ drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.h     |  1 +
+ drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c | 70 +++++++++++++++++++++---
+ 3 files changed, 114 insertions(+), 27 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/display/atmel/hlcdc-dc.txt b/Documentation/devicetree/bindings/display/atmel/hlcdc-dc.txt
-index 82f2acb3d374..10e8707d1443 100644
---- a/Documentation/devicetree/bindings/display/atmel/hlcdc-dc.txt
-+++ b/Documentation/devicetree/bindings/display/atmel/hlcdc-dc.txt
-@@ -15,6 +15,14 @@ Required children nodes:
-  to external devices using the OF graph reprensentation (see ../graph.txt).
-  At least one port node is required.
+diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
+index d73281095fac..c38a479ada98 100644
+--- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
++++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
+@@ -226,6 +226,55 @@ static void atmel_hlcdc_crtc_atomic_enable(struct drm_crtc *c,
+ #define ATMEL_HLCDC_RGB888_OUTPUT	BIT(3)
+ #define ATMEL_HLCDC_OUTPUT_MODE_MASK	GENMASK(3, 0)
  
-+Optional properties in grandchild nodes:
-+ Any endpoint grandchild node may specify a desired video interface
-+ according to ../../media/video-interfaces.txt, specifically
-+ - bus-type: must be <0>.
-+ - bus-width: recognized values are <12>, <16>, <18> and <24>, and
-+   override any output mode selection heuristic, forcing "rgb444",
-+   "rgb565", "rgb666" and "rgb888" respectively.
++static int atmel_hlcdc_connector_output_mode(struct drm_connector_state *state)
++{
++	struct drm_connector *connector = state->connector;
++	struct drm_display_info *info = &connector->display_info;
++	struct drm_encoder *encoder;
++	unsigned int supported_fmts = 0;
++	int j;
 +
- Example:
++	encoder = state->best_encoder;
++	if (!encoder)
++		encoder = connector->encoder;
++
++	switch (atmel_hlcdc_encoder_get_bus_fmt(encoder)) {
++	case 0:
++		break;
++	case MEDIA_BUS_FMT_RGB444_1X12:
++		return ATMEL_HLCDC_RGB444_OUTPUT;
++	case MEDIA_BUS_FMT_RGB565_1X16:
++		return ATMEL_HLCDC_RGB565_OUTPUT;
++	case MEDIA_BUS_FMT_RGB666_1X18:
++		return ATMEL_HLCDC_RGB666_OUTPUT;
++	case MEDIA_BUS_FMT_RGB888_1X24:
++		return ATMEL_HLCDC_RGB888_OUTPUT;
++	default:
++		return -EINVAL;
++	}
++
++	for (j = 0; j < info->num_bus_formats; j++) {
++		switch (info->bus_formats[j]) {
++		case MEDIA_BUS_FMT_RGB444_1X12:
++			supported_fmts |= ATMEL_HLCDC_RGB444_OUTPUT;
++			break;
++		case MEDIA_BUS_FMT_RGB565_1X16:
++			supported_fmts |= ATMEL_HLCDC_RGB565_OUTPUT;
++			break;
++		case MEDIA_BUS_FMT_RGB666_1X18:
++			supported_fmts |= ATMEL_HLCDC_RGB666_OUTPUT;
++			break;
++		case MEDIA_BUS_FMT_RGB888_1X24:
++			supported_fmts |= ATMEL_HLCDC_RGB888_OUTPUT;
++			break;
++		default:
++			break;
++		}
++	}
++
++	return supported_fmts;
++}
++
+ static int atmel_hlcdc_crtc_select_output_mode(struct drm_crtc_state *state)
+ {
+ 	unsigned int output_fmts = ATMEL_HLCDC_OUTPUT_MODE_MASK;
+@@ -238,31 +287,12 @@ static int atmel_hlcdc_crtc_select_output_mode(struct drm_crtc_state *state)
+ 	crtc = drm_crtc_to_atmel_hlcdc_crtc(state->crtc);
  
- 	hlcdc: hlcdc@f0030000 {
-@@ -50,3 +58,25 @@ Example:
- 			#pwm-cells = <3>;
- 		};
- 	};
+ 	for_each_new_connector_in_state(state->state, connector, cstate, i) {
+-		struct drm_display_info *info = &connector->display_info;
+ 		unsigned int supported_fmts = 0;
+-		int j;
+ 
+ 		if (!cstate->crtc)
+ 			continue;
+ 
+-		for (j = 0; j < info->num_bus_formats; j++) {
+-			switch (info->bus_formats[j]) {
+-			case MEDIA_BUS_FMT_RGB444_1X12:
+-				supported_fmts |= ATMEL_HLCDC_RGB444_OUTPUT;
+-				break;
+-			case MEDIA_BUS_FMT_RGB565_1X16:
+-				supported_fmts |= ATMEL_HLCDC_RGB565_OUTPUT;
+-				break;
+-			case MEDIA_BUS_FMT_RGB666_1X18:
+-				supported_fmts |= ATMEL_HLCDC_RGB666_OUTPUT;
+-				break;
+-			case MEDIA_BUS_FMT_RGB888_1X24:
+-				supported_fmts |= ATMEL_HLCDC_RGB888_OUTPUT;
+-				break;
+-			default:
+-				break;
+-			}
+-		}
++		supported_fmts = atmel_hlcdc_connector_output_mode(cstate);
+ 
+ 		if (crtc->dc->desc->conflicting_output_formats)
+ 			output_fmts &= supported_fmts;
+diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.h b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.h
+index 60c937f42114..4cc1e03f0aee 100644
+--- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.h
++++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.h
+@@ -441,5 +441,6 @@ void atmel_hlcdc_crtc_irq(struct drm_crtc *c);
+ int atmel_hlcdc_crtc_create(struct drm_device *dev);
+ 
+ int atmel_hlcdc_create_outputs(struct drm_device *dev);
++int atmel_hlcdc_encoder_get_bus_fmt(struct drm_encoder *encoder);
+ 
+ #endif /* DRM_ATMEL_HLCDC_H */
+diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c
+index 8db51fb131db..f587ae596791 100644
+--- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c
++++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c
+@@ -27,33 +27,89 @@
+ 
+ #include "atmel_hlcdc_dc.h"
+ 
++struct atmel_hlcdc_rgb_output {
++	struct drm_encoder encoder;
++	int bus_fmt;
++};
 +
-+Example 2: With a video interface override to force rgb565; as above
-+but with these changes/additions:
+ static const struct drm_encoder_funcs atmel_hlcdc_panel_encoder_funcs = {
+ 	.destroy = drm_encoder_cleanup,
+ };
+ 
++static struct atmel_hlcdc_rgb_output *
++atmel_hlcdc_encoder_to_rgb_output(struct drm_encoder *encoder)
++{
++	return container_of(encoder, struct atmel_hlcdc_rgb_output, encoder);
++}
 +
-+	&hlcdc {
-+		hlcdc-display-controller {
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&pinctrl_lcd_base &pinctrl_lcd_rgb565>;
++int atmel_hlcdc_encoder_get_bus_fmt(struct drm_encoder *encoder)
++{
++	struct atmel_hlcdc_rgb_output *output;
 +
-+			port@0 {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				reg = <0>;
++	output = atmel_hlcdc_encoder_to_rgb_output(encoder);
 +
-+				hlcdc_panel_output: endpoint@0 {
-+					reg = <0>;
-+					bus-type = <0>;
-+					bus-width = <16>;
-+				};
-+			};
-+		};
-+	};
++	return output->bus_fmt;
++}
++
++static int atmel_hlcdc_of_bus_fmt(struct device_node *ep)
++{
++	u32 bus_width;
++	int ret;
++
++	ret = of_property_read_u32(ep, "bus-width", &bus_width);
++	if (ret == -EINVAL)
++		return 0;
++	if (ret)
++		return ret;
++
++	switch (bus_width) {
++	case 12:
++		return MEDIA_BUS_FMT_RGB444_1X12;
++	case 16:
++		return MEDIA_BUS_FMT_RGB565_1X16;
++	case 18:
++		return MEDIA_BUS_FMT_RGB666_1X18;
++	case 24:
++		return MEDIA_BUS_FMT_RGB888_1X24;
++	default:
++		return -EINVAL;
++	}
++}
++
+ static int atmel_hlcdc_attach_endpoint(struct drm_device *dev, int endpoint)
+ {
+-	struct drm_encoder *encoder;
++	struct atmel_hlcdc_rgb_output *output;
++	struct device_node *ep;
+ 	struct drm_panel *panel;
+ 	struct drm_bridge *bridge;
+ 	int ret;
+ 
++	ep = of_graph_get_endpoint_by_regs(dev->dev->of_node, 0, endpoint);
++	if (!ep)
++		return -ENODEV;
++
+ 	ret = drm_of_find_panel_or_bridge(dev->dev->of_node, 0, endpoint,
+ 					  &panel, &bridge);
+ 	if (ret)
+ 		return ret;
+ 
+-	encoder = devm_kzalloc(dev->dev, sizeof(*encoder), GFP_KERNEL);
+-	if (!encoder)
++	output = devm_kzalloc(dev->dev, sizeof(*output), GFP_KERNEL);
++	if (!output)
+ 		return -EINVAL;
+ 
+-	ret = drm_encoder_init(dev, encoder,
++	output->bus_fmt = atmel_hlcdc_of_bus_fmt(ep);
++	if (output->bus_fmt < 0) {
++		dev_err(dev->dev, "invalid bus width\n");
++		return -EINVAL;
++	}
++
++	ret = drm_encoder_init(dev, &output->encoder,
+ 			       &atmel_hlcdc_panel_encoder_funcs,
+ 			       DRM_MODE_ENCODER_NONE, NULL);
+ 	if (ret)
+ 		return ret;
+ 
+-	encoder->possible_crtcs = 0x1;
++	output->encoder.possible_crtcs = 0x1;
+ 
+ 	if (panel) {
+ 		bridge = drm_panel_bridge_add(panel, DRM_MODE_CONNECTOR_Unknown);
+@@ -62,7 +118,7 @@ static int atmel_hlcdc_attach_endpoint(struct drm_device *dev, int endpoint)
+ 	}
+ 
+ 	if (bridge) {
+-		ret = drm_bridge_attach(encoder, bridge, NULL);
++		ret = drm_bridge_attach(&output->encoder, bridge, NULL);
+ 		if (!ret)
+ 			return 0;
+ 
+@@ -70,7 +126,7 @@ static int atmel_hlcdc_attach_endpoint(struct drm_device *dev, int endpoint)
+ 			drm_panel_bridge_remove(bridge);
+ 	}
+ 
+-	drm_encoder_cleanup(encoder);
++	drm_encoder_cleanup(&output->encoder);
+ 
+ 	return ret;
+ }
 -- 
 2.11.0
 
