@@ -5,63 +5,75 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1526C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 10:26:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC02DC28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 10:29:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B70DB2173F
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 10:26:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B70DB2173F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 64C8F2174C
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 10:29:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64C8F2174C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732593AbeHCMWI (ORCPT
+        id S1732587AbeHCMYs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 08:22:08 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:39474 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728197AbeHCMWI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 08:22:08 -0400
-Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1flXHs-0006PL-9O; Fri, 03 Aug 2018 12:26:24 +0200
-Date:   Fri, 3 Aug 2018 12:26:23 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Alistair Strachan <astrachan@google.com>
-cc:     linux-kernel@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        x86@kernel.org, kernel-team@android.com, joel@joelfernandes.com
-Subject: Re: [PATCH] x86: vdso: Use $LD instead of $CC to link
-In-Reply-To: <20180718224159.18236-1-astrachan@google.com>
-Message-ID: <alpine.DEB.2.21.1808031223500.1745@nanos.tec.linutronix.de>
-References: <20180718224159.18236-1-astrachan@google.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Fri, 3 Aug 2018 08:24:48 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:10626 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1732374AbeHCMYr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 08:24:47 -0400
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 12ABAEE04B9EB;
+        Fri,  3 Aug 2018 18:28:58 +0800 (CST)
+Received: from [127.0.0.1] (10.177.29.68) by DGGEMS410-HUB.china.huawei.com
+ (10.3.19.210) with Microsoft SMTP Server id 14.3.399.0; Fri, 3 Aug 2018
+ 18:28:55 +0800
+Message-ID: <5B642E65.6050509@huawei.com>
+Date:   Fri, 3 Aug 2018 18:28:53 +0800
+From:   zhong jiang <zhongjiang@huawei.com>
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20120428 Thunderbird/12.0.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+To:     <mingo@redhat.com>, <tglx@linutronix.de>, <bskeggs@redhat.com>,
+        <airlied@linux.ie>, <robdclark@gmail.com>
+CC:     <hpa@zytor.com>, <x86@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH linux-next] driver/gpu: Fix mismatch in funciton argument
+ type
+References: <1532238088-11193-1-git-send-email-zhongjiang@huawei.com>
+In-Reply-To: <1532238088-11193-1-git-send-email-zhongjiang@huawei.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.29.68]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 18 Jul 2018, Alistair Strachan wrote:
->  export CPPFLAGS_vdso.lds += -P -C
+On 2018/7/22 13:41, zhong jiang wrote:
+> Fix the following warning:
+>
+> drivers/gpu/drm/nouveau/dispnv50/wndw.c:570:1: error: symbol 'nv50_wndw_new_' redeclared with different type
+> (originally declared at drivers/gpu/drm/nouveau/dispnv50/wndw.h:39) - incompatible argument 7 (different signedness)
+>
+> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+> ---
+>  drivers/gpu/drm/nouveau/dispnv50/wndw.h | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/nouveau/dispnv50/wndw.h b/drivers/gpu/drm/nouveau/dispnv50/wndw.h
+> index b0b6428..0770683 100644
+> --- a/drivers/gpu/drm/nouveau/dispnv50/wndw.h
+> +++ b/drivers/gpu/drm/nouveau/dispnv50/wndw.h
+> @@ -38,8 +38,8 @@ struct nv50_wndw {
 >  
-> -VDSO_LDFLAGS_vdso.lds = -m64 -Wl,-soname=linux-vdso.so.1 \
-> -			-Wl,--no-undefined \
-> -			-Wl,-z,max-page-size=4096 -Wl,-z,common-page-size=4096 \
-> -			$(DISABLE_LTO)
-> +VDSO_LDFLAGS_vdso.lds = -m elf_x86_64 -soname linux-vdso.so.1 --no-undefined \
-> +			-z max-page-size=4096 -z common-page-size=4096
+>  int nv50_wndw_new_(const struct nv50_wndw_func *, struct drm_device *,
+>  		   enum drm_plane_type, const char *name, int index,
+> -		   const u32 *format, enum nv50_disp_interlock_type,
+> -		   u32 interlock_data, u32 heads, struct nv50_wndw **);
+> +		   const u32 *format, u32 heads, enum nv50_disp_interlock_type,
+> +		   u32 interlock_data, struct nv50_wndw **);
+>  void nv50_wndw_init(struct nv50_wndw *);
+>  void nv50_wndw_fini(struct nv50_wndw *);
+>  void nv50_wndw_flush_set(struct nv50_wndw *, u32 *interlock,
+ping ?
 
-Aside of the fact that it does not apply to upstream, why is this dropping
-the $(DISABLE_LTO) part?
-
-The changelog is utterly silent about that.
-
-Thanks,
-
-	tglx
