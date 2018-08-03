@@ -2,205 +2,280 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70B13C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 11:43:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DC16C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 11:44:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2296E21759
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 11:43:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D8772173F
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 11:44:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="cXMFTiB4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2296E21759
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="QaFiAqsJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D8772173F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728833AbeHCNjQ (ORCPT
+        id S1728423AbeHCNkF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 09:39:16 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:38792 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727464AbeHCNjQ (ORCPT
+        Fri, 3 Aug 2018 09:40:05 -0400
+Received: from mailout4.samsung.com ([203.254.224.34]:51850 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727355AbeHCNkF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 09:39:16 -0400
-Received: by mail-it0-f65.google.com with SMTP id v71-v6so7937166itb.3
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Aug 2018 04:43:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=oXuR2hcc/+Fmwt8ZzggVTWaIgwkPtS17lwQkmL2iLr0=;
-        b=cXMFTiB4CW0kv8u1Hm54AlScQ/eGXxGgHlIrE+vRpnm6IuoEp8xkRjVXiOuNfT/CsH
-         gfyEOEefLd4z3QaFo6TdoETEBAHvPjMPMpWyEVJ4s1T0d1QbyrfuUq3JHmehIAEesfG1
-         HBJr/h5ESZeIeX0XCEoy1d9st9jBglGSLmYQs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=oXuR2hcc/+Fmwt8ZzggVTWaIgwkPtS17lwQkmL2iLr0=;
-        b=gw83loH4WK9JLXEvDpghesQZ7ZgQCb/N0R2rJZQSvVWCdR5RSDX3R+p0aQMl+4/rog
-         5LMPsvdJggxo1cWy/zULxnCif4Kxk+r0pd+ekknDpgeqZTg2sUa29GPr/AYALzcg/DmU
-         dUWuAwtV81W9xFHO0k+rLzSAtZYIJiFQMlDtBGg0g7Lm21SmA3ew5RPTknPWQFY6LHWq
-         Bk0mnePl9lkKrRDuq2Vpc0VpUsZlAEpAC+lYa+lywNVN7S/U++fmQmBMs9U5j/tRwyGO
-         G+eqfWyVTTisuyIb6mfCrN20P9Bg8h23meyUfgw8qOWt4iDeUEWr75lIFH0Qx7c0BUEu
-         QTeQ==
-X-Gm-Message-State: AOUpUlFJAEA/Px0cbAmb0Bh+RZKBlxw7u7cY7XfoF56C9CYvgMC7oRdC
-        FQeZEV83trp1W5zL1FjeJuYNXIQBKqhu291bcqXC2A==
-X-Google-Smtp-Source: AAOMgpcNMiSpYLJkdErpfpNcZ7j6sPVcTqHlzRNn+FR1CjWy9nFXb5hQjb/aPadbfMlgIfPp/qIr/Q+5m6q0SvfFkGo=
-X-Received: by 2002:a02:570c:: with SMTP id u12-v6mr3034946jaa.142.1533296598836;
- Fri, 03 Aug 2018 04:43:18 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a02:2b03:0:0:0:0:0 with HTTP; Fri, 3 Aug 2018 04:43:18 -0700 (PDT)
-In-Reply-To: <1678369.6pMUSOvdlV@aspire.rjw.lan>
-References: <20180620172226.15012-1-ulf.hansson@linaro.org>
- <20180620172226.15012-5-ulf.hansson@linaro.org> <1678369.6pMUSOvdlV@aspire.rjw.lan>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Fri, 3 Aug 2018 13:43:18 +0200
-Message-ID: <CAPDyKFq=m7ad66SwiOr+4ab=e7PNiXrXJ6c8G0ZTPOdO1RQ_6g@mail.gmail.com>
-Subject: Re: [PATCH v8 04/26] PM / Domains: Add support for CPU devices to genpd
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Lina Iyer <ilina@codeaurora.org>,
-        Lina Iyer <lina.iyer@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Juri Lelli <juri.lelli@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 3 Aug 2018 09:40:05 -0400
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20180803114406epoutp044281d25ac58f46c590a4fb96fd389dd4~HXS0TV8Fh3114031140epoutp04W
+        for <linux-kernel@vger.kernel.org>; Fri,  3 Aug 2018 11:44:06 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20180803114406epoutp044281d25ac58f46c590a4fb96fd389dd4~HXS0TV8Fh3114031140epoutp04W
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1533296646;
+        bh=63fcJ9sVin9e9wt84gwljiEEDFPi/g6ArEHBK3VRNK4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=QaFiAqsJIqGq9F+5nzMmAvMTWfAMcXTxma32M93pWqhnlVb51fXrxyl4LmdihOiu5
+         s1cSzubICKc15tqmHVefL84Z5wdHf5rH6T5CJ5iNrMu+jmFq1lHmOVxiqY4HBosw0V
+         LpzOUQQ3KzEC1cIvJ6HiSg37DA7DGVNncC1IPLo8=
+Received: from epsmges5p2new.samsung.com (unknown [182.195.40.195]) by
+        epcas5p1.samsung.com (KnoxPortal) with ESMTP id
+        20180803114405epcas5p196da73ce4166e889c010e12fb1a2a017~HXSzRHG551943319433epcas5p18;
+        Fri,  3 Aug 2018 11:44:05 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+        epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        FC.7B.04309.500446B5; Fri,  3 Aug 2018 20:44:05 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+        20180803114404epcas5p1c5aaec7ca27e520b5cba52b0d7f09124~HXSyqLTJ81698916989epcas5p1G;
+        Fri,  3 Aug 2018 11:44:04 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20180803114404epsmtrp2905815bc5599ca51d8494a8007cad782~HXSyo3h9s1489414894epsmtrp2b;
+        Fri,  3 Aug 2018 11:44:04 +0000 (GMT)
+X-AuditID: b6c32a4a-9cbff700000010d5-25-5b6440052bc1
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        BB.3E.03889.400446B5; Fri,  3 Aug 2018 20:44:04 +0900 (KST)
+Received: from localhost.localdomain (unknown [107.108.161.94]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20180803114402epsmtip267acf64e223f5cbec9a318197d5649d4~HXSwrwSEW1260212602epsmtip2R;
+        Fri,  3 Aug 2018 11:44:02 +0000 (GMT)
+From:   Satendra Singh Thakur <satendra.t@samsung.com>
+To:     Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Cc:     vineet.j@samsung.com, hemanshu.s@samsung.com, sst2005@gmail.com,
+        Satendra Singh Thakur <satendra.t@samsung.com>
+Subject: [PATCH v1] drm/kms/crtc: Improving the func drm_mode_setcrtc
+Date:   Fri,  3 Aug 2018 17:13:34 +0530
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <66ead941-3c64-45e4-7835-949360e2b01f@linux.intel.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA0VSfUgTYRzu3d22c7Q8Ztab1LBLoSR1t5pepSWZcZTE+iJoxTzmm0r7sLvN
+        sg9YZeUUIzNKl32DUdKXZaVl5SRTalYW1aBoVGBJ3yujjOrmTfrrffg9H+/Djx+BaX7I44gi
+        uxPxds5KKVT45Y4pk5PlWfkm3c5XKqaqp1vGPP7+ScG0BFuVTP/99xjzqLVewRz70owzZ+7v
+        wJkX5/2AOXn3KcZ0Nvcqs1TsQfdDnG3xvlCyVwaCcvZw92L2ZeUdGduyt03G7r50GrChJq2R
+        WIkyChGXj/h4ZLc48ovsBZnUwqXmbLMhTUcn0zOYdCreztlQJjUv15g8v8gqdqTiSzirSxwZ
+        OUGgUmdn8A6XE8UXOgRnJmWiaX0KrUtP0evF17B6pt4gSvJQ4fN2VXFv0obO8jrMDR5NrABR
+        BCSnw/fnQqACqAgNeQ1Az8UyPExoyK8A3n5tlIgBAL+0tcuGHVd/PcElog3A3Q3HI45vANb/
+        5cNYIYr66mvlYdFo8h2AgbJ78jCBkS4YDGzDwjiGzIFv3h1UhjFOJkJvV0gu/aCFgR7PkCaK
+        zIb9J8qwcBAkuxSwa1doyKAmS+CFrT6lZJgHjzR7cQnHwP47lyLzOBj62KaQcA2A2/2LpKBG
+        AP0PqyKiObBs3y3RTIjtpsBzralS0VGwavCNLDyGpBqW79RI6gR46m0HNhz/+2hFpDMLAzf6
+        I1vZD2C1/4BsD5jg/Z96FIDTYBwqFmwFSDAU6+1ofYrA2QSXvSDF4rA1gaGjS1pwFTT05PoA
+        SQBqpPpBosWkkXMlQqnNByCBUaPVHzziSJ3PlW5EvMPMu6xI8AGDuMFqLC7W4hBP2O400wZ9
+        Wppuhs4wjUmjqbHqz4uWmjRkAedEaxEqRvywT0ZExbnBibPrmv7QngfePY7NDc8/Bd2D67X8
+        tVzvb3UC3ng9RuWxDC539C6LdqtXJEQVJYzx5ZQ8WzP+la/e0H3I5JyEKrWzlvi1a2sTTRVz
+        p9ZNfGveJI+tybv91NjXWL71Jp0aHLElvXpTS0+fgsuK7VzVkfxTkZhRE71waqB2zrbxVobC
+        hUKOTsJ4gfsHcGEc9ooDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrILMWRmVeSWpSXmKPExsWy7bCSvC6LQ0q0QfN6SYvecyeZLK58fc9m
+        sfPBLnaLV+ffMFtc3jWHzWLhx60sFmvPt7JY3N1wltFi+enrzBbHtl5id+DymN1wkcVj56y7
+        7B7bvz1g9Zh3MtDjfvdxJo+dk/YyefRtWcXo8XmTXABHFJdNSmpOZllqkb5dAlfGnYNcBZe0
+        Ko51zGRuYLys2MXIySEhYCKx49c1li5GLg4hgd2MEsfmH2CDSEhJLHuzDcoWllj57zk7RNEn
+        RonfnyaxgCTYgLqfz5nBCpIQEXjLKNG68zRYglmgUuLc88mMILawgKvEk5ez2UFsFgFViVkn
+        PrOC2LwCbhKN16+xQ2yQk7h5rpMZxOYUcJZ4tbgFzBYScJJ4NfEU+wRGvgWMDKsYJVMLinPT
+        c4sNC4zyUsv1ihNzi0vz0vWS83M3MYIDVktrB+OJE/GHGAU4GJV4eC+oJkcLsSaWFVfmHmKU
+        4GBWEuF92wkU4k1JrKxKLcqPLyrNSS0+xCjNwaIkziuffyxSSCA9sSQ1OzW1ILUIJsvEwSnV
+        wMi3551xH2v2Ecdci1lXxCX3XTY+VdB/6sbSoBXrxYq+cNp1HVGIOrTJ+dF0bZ/fgnKeaXFP
+        xHrmO13Q/1Ngf3p56eOTjG+OrFlvs7sgU8Dqnqz+n6t5S4pCxT3TPPtX9+i+Oxh/7p/0KbUH
+        n1Y7bxfTvdNsXfEjaPEek8m7PgXs782Xcbt5IlSJpTgj0VCLuag4EQDiA+ysVAIAAA==
+Message-Id: <20180803114404epcas5p1c5aaec7ca27e520b5cba52b0d7f09124~HXSyqLTJ81698916989epcas5p1G@epcas5p1.samsung.com>
+X-CMS-MailID: 20180803114404epcas5p1c5aaec7ca27e520b5cba52b0d7f09124
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20180803114404epcas5p1c5aaec7ca27e520b5cba52b0d7f09124
+References: <66ead941-3c64-45e4-7835-949360e2b01f@linux.intel.com>
+        <CGME20180803114404epcas5p1c5aaec7ca27e520b5cba52b0d7f09124@epcas5p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19 July 2018 at 12:25, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
-> On Wednesday, June 20, 2018 7:22:04 PM CEST Ulf Hansson wrote:
->> To enable a device belonging to a CPU to be attached to a PM domain managed
->> by genpd, let's do a few changes to genpd as to make it convenient to
->> manage the specifics around CPUs.
->>
->> First, as to be able to quickly find out what CPUs that are attached to a
->> genpd, which typically becomes useful from a genpd governor as following
->> changes is about to show, let's add a cpumask 'cpus' to the struct
->> generic_pm_domain.
->>
->> At the point when a device that belongs to a CPU, is attached/detached to
->> its corresponding PM domain via genpd_add_device(), let's update the
->> cpumask in genpd->cpus. Moreover, propagate the update of the cpumask to
->> the master domains, which makes the genpd->cpus to contain a cpumask that
->> hierarchically reflect all CPUs for a genpd, including CPUs attached to
->> subdomains.
->>
->> Second, to unconditionally manage CPUs and the cpumask in genpd->cpus, is
->> unnecessary for cases when only non-CPU devices are parts of a genpd.
->> Let's avoid this by adding a new configuration bit, GENPD_FLAG_CPU_DOMAIN.
->> Clients must set the bit before they call pm_genpd_init(), as to instruct
->> genpd that it shall deal with CPUs and thus manage the cpumask in
->> genpd->cpus.
->>
->> Cc: Lina Iyer <ilina@codeaurora.org>
->> Co-developed-by: Lina Iyer <lina.iyer@linaro.org>
->> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
->> ---
->>  drivers/base/power/domain.c | 69 ++++++++++++++++++++++++++++++++++++-
->>  include/linux/pm_domain.h   |  3 ++
->>  2 files changed, 71 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
->> index 21d298e1820b..6149ce0bfa7b 100644
->> --- a/drivers/base/power/domain.c
->> +++ b/drivers/base/power/domain.c
->> @@ -20,6 +20,7 @@
->>  #include <linux/sched.h>
->>  #include <linux/suspend.h>
->>  #include <linux/export.h>
->> +#include <linux/cpu.h>
->>
->>  #include "power.h"
->>
->> @@ -126,6 +127,7 @@ static const struct genpd_lock_ops genpd_spin_ops = {
->>  #define genpd_is_irq_safe(genpd)     (genpd->flags & GENPD_FLAG_IRQ_SAFE)
->>  #define genpd_is_always_on(genpd)    (genpd->flags & GENPD_FLAG_ALWAYS_ON)
->>  #define genpd_is_active_wakeup(genpd)        (genpd->flags & GENPD_FLAG_ACTIVE_WAKEUP)
->> +#define genpd_is_cpu_domain(genpd)   (genpd->flags & GENPD_FLAG_CPU_DOMAIN)
->>
->>  static inline bool irq_safe_dev_in_no_sleep_domain(struct device *dev,
->>               const struct generic_pm_domain *genpd)
->> @@ -1377,6 +1379,62 @@ static void genpd_free_dev_data(struct device *dev,
->>       dev_pm_put_subsys_data(dev);
->>  }
->>
->> +static void __genpd_update_cpumask(struct generic_pm_domain *genpd,
->> +                                int cpu, bool set, unsigned int depth)
->> +{
->> +     struct gpd_link *link;
->> +
->> +     if (!genpd_is_cpu_domain(genpd))
->> +             return;
->> +
->> +     list_for_each_entry(link, &genpd->slave_links, slave_node) {
->> +             struct generic_pm_domain *master = link->master;
->> +
->> +             genpd_lock_nested(master, depth + 1);
->> +             __genpd_update_cpumask(master, cpu, set, depth + 1);
->> +             genpd_unlock(master);
->> +     }
->> +
->> +     if (set)
->> +             cpumask_set_cpu(cpu, genpd->cpus);
->> +     else
->> +             cpumask_clear_cpu(cpu, genpd->cpus);
->> +}
->
-> As noted elsewhere, there is a concern about the possible weight of this
-> cpumask and I think that it would be good to explicitly put a limit on it.
+Following changes are done to this func:
+1. The declaration of plane and it's assignment plane = crtc->primary
+are only used when mode_valid is set. Therefore, moved it inside
+the if(mode_valid) statement.
 
-I have been digesting your comments on the series, but wonder if this
-is still a relevant concern?
+2. The declaration of connector and set_connectors_ptr and out_id
+are moved inside the for loop, as their scope is limited within
+that block.
 
-Updating the mask is only done when the cpu is attached to its PM
-domain. However, of course, I should not allocate the cpumask in
-pm_genpd_init() unless the GENPD_FLAG_CPU_DOMAIN is set, as that is
-just a waste.
+3. Currently, there are 3 checks on count_connectors
+and 4 checks on mode related params (mode_valid, mode, fb).
+if (crtc_req->mode_valid) {
+if (crtc_req->count_connectors == 0 && mode) {
+if (crtc_req->count_connectors > 0 && (!mode || !fb)) {
+if (crtc_req->count_connectors > 0) {
 
->
->> +
->> +static void genpd_update_cpumask(struct generic_pm_domain *genpd,
->> +                              struct device *dev, bool set)
->> +{
->> +     bool is_cpu = false;
->> +     int cpu;
->> +
->> +     if (!genpd_is_cpu_domain(genpd))
->> +             return;
->> +
->> +     for_each_possible_cpu(cpu) {
->> +             if (get_cpu_device(cpu) == dev) {
->> +                     is_cpu = true;
->
-> You may call __genpd_update_cpumask() right here and then you won't
-> need the extra is_cpu variable.
+In the modified code, there are just 1 check on mode_valid and
+2 checks  count_connectors.
+Checks on mode and fb are not needed as these variables will
+be non-NULL by the end of if(mode_valid) statement if mode_valid is set.
+If mode_valid is clear, mode and fb will be NULL.
+Therefore, we just check mode_valid and NOT mode or fb.
 
-Yes, indeed this looks weird, thanks for spotting it!
+4. Moved kfree inside if statement
 
-Ah, now I recall, the idea was to store an is_cpu variable per device,
-to avoid looking up the cpu device at detach, but this is just
-unnecessary. :-)
+Signed-off-by: Satendra Singh Thakur <satendra.t@samsung.com>
 
-[...]
+---
+ 
+ v1: Hi Mr Maarten, Thanks for the comments.
+     I have fixed some of them and done more modifications to the patch.
+     Please review.
 
-Thanks for reviewing!
+ drivers/gpu/drm/drm_crtc.c | 57 ++++++++++++++++++++++++----------------------
+ 1 file changed, 30 insertions(+), 27 deletions(-)
 
-Kind regards
-Uffe
+diff --git a/drivers/gpu/drm/drm_crtc.c b/drivers/gpu/drm/drm_crtc.c
+index 98a36e6..9842985 100644
+--- a/drivers/gpu/drm/drm_crtc.c
++++ b/drivers/gpu/drm/drm_crtc.c
+@@ -559,12 +559,10 @@ int drm_mode_setcrtc(struct drm_device *dev, void *data,
+ 	struct drm_mode_config *config = &dev->mode_config;
+ 	struct drm_mode_crtc *crtc_req = data;
+ 	struct drm_crtc *crtc;
+-	struct drm_plane *plane;
+-	struct drm_connector **connector_set = NULL, *connector;
++	struct drm_connector **connector_set = NULL;
+ 	struct drm_framebuffer *fb = NULL;
+ 	struct drm_display_mode *mode = NULL;
+ 	struct drm_mode_set set;
+-	uint32_t __user *set_connectors_ptr;
+ 	struct drm_modeset_acquire_ctx ctx;
+ 	int ret;
+ 	int i;
+@@ -586,7 +584,6 @@ int drm_mode_setcrtc(struct drm_device *dev, void *data,
+ 	}
+ 	DRM_DEBUG_KMS("[CRTC:%d:%s]\n", crtc->base.id, crtc->name);
+ 
+-	plane = crtc->primary;
+ 
+ 	mutex_lock(&crtc->dev->mode_config.mutex);
+ 	drm_modeset_acquire_init(&ctx, DRM_MODESET_ACQUIRE_INTERRUPTIBLE);
+@@ -596,6 +593,8 @@ int drm_mode_setcrtc(struct drm_device *dev, void *data,
+ 		goto out;
+ 
+ 	if (crtc_req->mode_valid) {
++		struct drm_plane *plane = crtc->primary;
++		/* Handle framebuffer and mode here*/
+ 		/* If we have a mode we need a framebuffer. */
+ 		/* If we pass -1, set the mode with the currently bound fb */
+ 		if (crtc_req->fb_id == -1) {
+@@ -636,8 +635,6 @@ int drm_mode_setcrtc(struct drm_device *dev, void *data,
+ 			ret = -EINVAL;
+ 			goto out;
+ 		}
+-
+-
+ 		ret = drm_mode_convert_umode(dev, mode, &crtc_req->mode);
+ 		if (ret) {
+ 			DRM_DEBUG_KMS("Invalid mode\n");
+@@ -669,31 +666,22 @@ int drm_mode_setcrtc(struct drm_device *dev, void *data,
+ 					      mode, fb);
+ 		if (ret)
+ 			goto out;
+-
+-	}
+-
+-	if (crtc_req->count_connectors == 0 && mode) {
+-		DRM_DEBUG_KMS("Count connectors is 0 but mode set\n");
+-		ret = -EINVAL;
+-		goto out;
+-	}
+-
+-	if (crtc_req->count_connectors > 0 && (!mode || !fb)) {
+-		DRM_DEBUG_KMS("Count connectors is %d but no mode or fb set\n",
+-			  crtc_req->count_connectors);
+-		ret = -EINVAL;
+-		goto out;
+-	}
+-
+-	if (crtc_req->count_connectors > 0) {
+-		u32 out_id;
+-
++		/* Handle connector here
++		 * crtc_req->mode_valid is set at this point
++		 * and we have mode and fb non-NULL.
++		 * We have already checked mode_valid
++		 * hence, we don't check mode and fb here.
++		 */
++		if (!crtc_req->count_connectors) {
++			DRM_DEBUG_KMS("Mode_valid flag is set but connectors' count is 0\n");
++			ret = -EINVAL;
++			goto out;
++		}
+ 		/* Avoid unbounded kernel memory allocation */
+ 		if (crtc_req->count_connectors > config->num_connector) {
+ 			ret = -EINVAL;
+ 			goto out;
+ 		}
+-
+ 		connector_set = kmalloc_array(crtc_req->count_connectors,
+ 					      sizeof(struct drm_connector *),
+ 					      GFP_KERNEL);
+@@ -703,6 +691,9 @@ int drm_mode_setcrtc(struct drm_device *dev, void *data,
+ 		}
+ 
+ 		for (i = 0; i < crtc_req->count_connectors; i++) {
++			struct drm_connector *connector;
++			uint32_t __user *set_connectors_ptr;
++			u32 out_id;
+ 			connector_set[i] = NULL;
+ 			set_connectors_ptr = (uint32_t __user *)(unsigned long)crtc_req->set_connectors_ptr;
+ 			if (get_user(out_id, &set_connectors_ptr[i])) {
+@@ -723,6 +714,18 @@ int drm_mode_setcrtc(struct drm_device *dev, void *data,
+ 
+ 			connector_set[i] = connector;
+ 		}
++
++	} else {
++		/* crtc_req->mode_valid is clear at this point
++		 * if mode_valid is clear, mode and fb will be NULL
++		 * hence, we don't check mode and fb here.
++		 */
++		if (crtc_req->count_connectors) {
++			DRM_DEBUG_KMS("Connectors's count is %u but mode_valid flag is clear\n",
++			crtc_req->count_connectors);
++			ret = -EINVAL;
++			goto out;
++		}
+ 	}
+ 
+ 	set.crtc = crtc;
+@@ -743,8 +746,8 @@ int drm_mode_setcrtc(struct drm_device *dev, void *data,
+ 			if (connector_set[i])
+ 				drm_connector_put(connector_set[i]);
+ 		}
++		kfree(connector_set);
+ 	}
+-	kfree(connector_set);
+ 	drm_mode_destroy(dev, mode);
+ 	if (ret == -EDEADLK) {
+ 		ret = drm_modeset_backoff(&ctx);
+-- 
+2.7.4
+
