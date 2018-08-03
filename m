@@ -2,154 +2,146 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 363FEC28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 10:32:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F5C8C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 10:40:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E251D2174C
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 10:32:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E251D2174C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
+	by mail.kernel.org (Postfix) with ESMTP id A7CA92174C
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 10:40:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7CA92174C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732580AbeHCM2K (ORCPT
+        id S1732630AbeHCMfx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 08:28:10 -0400
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:36000 "EHLO
-        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730783AbeHCM2K (ORCPT
+        Fri, 3 Aug 2018 08:35:53 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:39855 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730783AbeHCMfx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 08:28:10 -0400
-Received: from valkosipuli.localdomain (valkosipuli.retiisi.org.uk [IPv6:2001:1bc8:1a6:d3d5::80:2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by hillosipuli.retiisi.org.uk (Postfix) with ESMTPS id 4BBA8634C7F;
-        Fri,  3 Aug 2018 13:32:26 +0300 (EEST)
-Received: from sakke by valkosipuli.localdomain with local (Exim 4.89)
-        (envelope-from <sakari.ailus@retiisi.org.uk>)
-        id 1flXNi-0000tC-2N; Fri, 03 Aug 2018 13:32:26 +0300
-Date:   Fri, 3 Aug 2018 13:32:25 +0300
-From:   Sakari Ailus <sakari.ailus@iki.fi>
-To:     Peter Rosin <peda@axentia.se>
-Cc:     linux-kernel@vger.kernel.org,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, Jyri Sarha <jsarha@ti.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>
-Subject: Re: [PATCH v6 2/3] dt-bindings: display: atmel: optional
- video-interface of endpoints
-Message-ID: <20180803103225.xkwqe3wiv2gwdo5g@valkosipuli.retiisi.org.uk>
-References: <20180803101124.4622-1-peda@axentia.se>
- <20180803101124.4622-3-peda@axentia.se>
+        Fri, 3 Aug 2018 08:35:53 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w73AdtTe3854010
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Fri, 3 Aug 2018 03:39:55 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w73AdsfT3854007;
+        Fri, 3 Aug 2018 03:39:54 -0700
+Date:   Fri, 3 Aug 2018 03:39:54 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Peter Feiner <tipbot@zytor.com>
+Message-ID: <tip-301d328a6f8b53bb86c5ecf72db7bc178bcf1999@git.kernel.org>
+Cc:     mingo@kernel.org, linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        dwmw@amazon.co.uk, pfeiner@google.com, hpa@zytor.com,
+        pshier@google.com, jmattson@google.com, konrad.wilk@oracle.com,
+        bp@suse.de
+Reply-To: bp@suse.de, pshier@google.com, jmattson@google.com,
+          konrad.wilk@oracle.com, hpa@zytor.com, tglx@linutronix.de,
+          linux-kernel@vger.kernel.org, mingo@kernel.org,
+          pfeiner@google.com, dwmw@amazon.co.uk
+In-Reply-To: <20180801180657.138051-1-pshier@google.com>
+References: <20180801180657.138051-1-pshier@google.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/cpu] x86/cpufeatures: Add EPT_AD feature bit
+Git-Commit-ID: 301d328a6f8b53bb86c5ecf72db7bc178bcf1999
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20180803101124.4622-3-peda@axentia.se>
-User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Peter,
+Commit-ID:  301d328a6f8b53bb86c5ecf72db7bc178bcf1999
+Gitweb:     https://git.kernel.org/tip/301d328a6f8b53bb86c5ecf72db7bc178bcf1999
+Author:     Peter Feiner <pfeiner@google.com>
+AuthorDate: Wed, 1 Aug 2018 11:06:57 -0700
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Fri, 3 Aug 2018 12:36:23 +0200
 
-Thanks for cc'ing me.
+x86/cpufeatures: Add EPT_AD feature bit
 
-On Fri, Aug 03, 2018 at 12:11:23PM +0200, Peter Rosin wrote:
-> With bus-type/bus-width properties in the endpoint nodes, the video-
-> interface of the connection can be specified for cases where the
-> heuristic fails to select the correct output mode. This can happen
-> e.g. if not all RGB pins are routed on the PCB; the driver has no
-> way of knowing this, and needs to be told explicitly.
-> 
-> This is critical for the devices that have the "conflicting output
-> formats" issue (SAM9N12, SAM9X5, SAMA5D3), since the most significant
-> RGB bits move around depending on the selected output mode. For
-> devices that do not have the "conflicting output formats" issue
-> (SAMA5D2, SAMA5D4), this is completely irrelevant.
-> 
-> Acked-by: Boris Brezillon <boris.brezillon@bootlin.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> Reviewed-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> Signed-off-by: Peter Rosin <peda@axentia.se>
-> ---
->  .../devicetree/bindings/display/atmel/hlcdc-dc.txt | 30 ++++++++++++++++++++++
->  1 file changed, 30 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/display/atmel/hlcdc-dc.txt b/Documentation/devicetree/bindings/display/atmel/hlcdc-dc.txt
-> index 82f2acb3d374..10e8707d1443 100644
-> --- a/Documentation/devicetree/bindings/display/atmel/hlcdc-dc.txt
-> +++ b/Documentation/devicetree/bindings/display/atmel/hlcdc-dc.txt
-> @@ -15,6 +15,14 @@ Required children nodes:
->   to external devices using the OF graph reprensentation (see ../graph.txt).
->   At least one port node is required.
->  
-> +Optional properties in grandchild nodes:
-> + Any endpoint grandchild node may specify a desired video interface
-> + according to ../../media/video-interfaces.txt, specifically
-> + - bus-type: must be <0>.
+Some Intel processors have an EPT feature whereby the accessed & dirty bits
+in EPT entries can be updated by HW. MSR IA32_VMX_EPT_VPID_CAP exposes the
+presence of this capability.
 
-bus-type won't tell anything in this case, you could simply drop it. If
-your hardware only supports parallel or Bt.656 bus then the code parsing
-the properties can (and should) know the bus type as well.
+There is no point in trying to use that new feature bit in the VMX code as
+VMX needs to read the MSR anyway to access other bits, but having the
+feature bit for EPT_AD in place helps virtualization management as it
+exposes "ept_ad" in /proc/cpuinfo/$proc/flags if the feature is present.
 
-Looking at your implementation, bus-type is not being used. This supports
-the suggestion.
+[ tglx: Amended changelog ]
 
-The V4L2 implementation is about to change as well and there's a bit of
-discussion ongoing related to the bus-type property:
+Signed-off-by: Peter Feiner <pfeiner@google.com>
+Signed-off-by: Peter Shier <pshier@google.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Jim Mattson <jmattson@google.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Borislav Petkov <bp@suse.de>
+Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: David Woodhouse <dwmw@amazon.co.uk>
+Link: https://lkml.kernel.org/r/20180801180657.138051-1-pshier@google.com
 
-<URL:https://www.spinics.net/lists/linux-media/msg137980.html>
-<URL:https://www.spinics.net/lists/linux-media/msg137979.html>
+---
+ arch/x86/include/asm/cpufeatures.h |  2 +-
+ arch/x86/kernel/cpu/intel.c        | 10 +++++++++-
+ 2 files changed, 10 insertions(+), 2 deletions(-)
 
-> + - bus-width: recognized values are <12>, <16>, <18> and <24>, and
-> +   override any output mode selection heuristic, forcing "rgb444",
-> +   "rgb565", "rgb666" and "rgb888" respectively.
-> +
->  Example:
->  
->  	hlcdc: hlcdc@f0030000 {
-> @@ -50,3 +58,25 @@ Example:
->  			#pwm-cells = <3>;
->  		};
->  	};
-> +
-> +Example 2: With a video interface override to force rgb565; as above
-> +but with these changes/additions:
-> +
-> +	&hlcdc {
-> +		hlcdc-display-controller {
-> +			pinctrl-names = "default";
-> +			pinctrl-0 = <&pinctrl_lcd_base &pinctrl_lcd_rgb565>;
-> +
-> +			port@0 {
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +				reg = <0>;
-> +
-> +				hlcdc_panel_output: endpoint@0 {
-> +					reg = <0>;
-> +					bus-type = <0>;
-> +					bus-width = <16>;
-> +				};
-> +			};
-> +		};
-> +	};
-
--- 
-Kind regards,
-
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi
+diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
+index 5701f5cecd31..7fff98fa5855 100644
+--- a/arch/x86/include/asm/cpufeatures.h
++++ b/arch/x86/include/asm/cpufeatures.h
+@@ -229,7 +229,7 @@
+ 
+ #define X86_FEATURE_VMMCALL		( 8*32+15) /* Prefer VMMCALL to VMCALL */
+ #define X86_FEATURE_XENPV		( 8*32+16) /* "" Xen paravirtual guest */
+-
++#define X86_FEATURE_EPT_AD		( 8*32+17) /* Intel Extended Page Table access-dirty bit */
+ 
+ /* Intel-defined CPU features, CPUID level 0x00000007:0 (EBX), word 9 */
+ #define X86_FEATURE_FSGSBASE		( 9*32+ 0) /* RDFSBASE, WRFSBASE, RDGSBASE, WRGSBASE instructions*/
+diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
+index eb75564f2d25..c050cd6066af 100644
+--- a/arch/x86/kernel/cpu/intel.c
++++ b/arch/x86/kernel/cpu/intel.c
+@@ -465,14 +465,17 @@ static void detect_vmx_virtcap(struct cpuinfo_x86 *c)
+ #define X86_VMX_FEATURE_PROC_CTLS2_VIRT_APIC	0x00000001
+ #define X86_VMX_FEATURE_PROC_CTLS2_EPT		0x00000002
+ #define X86_VMX_FEATURE_PROC_CTLS2_VPID		0x00000020
++#define x86_VMX_FEATURE_EPT_CAP_AD		0x00200000
+ 
+ 	u32 vmx_msr_low, vmx_msr_high, msr_ctl, msr_ctl2;
++	u32 msr_vpid_cap, msr_ept_cap;
+ 
+ 	clear_cpu_cap(c, X86_FEATURE_TPR_SHADOW);
+ 	clear_cpu_cap(c, X86_FEATURE_VNMI);
+ 	clear_cpu_cap(c, X86_FEATURE_FLEXPRIORITY);
+ 	clear_cpu_cap(c, X86_FEATURE_EPT);
+ 	clear_cpu_cap(c, X86_FEATURE_VPID);
++	clear_cpu_cap(c, X86_FEATURE_EPT_AD);
+ 
+ 	rdmsr(MSR_IA32_VMX_PROCBASED_CTLS, vmx_msr_low, vmx_msr_high);
+ 	msr_ctl = vmx_msr_high | vmx_msr_low;
+@@ -487,8 +490,13 @@ static void detect_vmx_virtcap(struct cpuinfo_x86 *c)
+ 		if ((msr_ctl2 & X86_VMX_FEATURE_PROC_CTLS2_VIRT_APIC) &&
+ 		    (msr_ctl & X86_VMX_FEATURE_PROC_CTLS_TPR_SHADOW))
+ 			set_cpu_cap(c, X86_FEATURE_FLEXPRIORITY);
+-		if (msr_ctl2 & X86_VMX_FEATURE_PROC_CTLS2_EPT)
++		if (msr_ctl2 & X86_VMX_FEATURE_PROC_CTLS2_EPT) {
+ 			set_cpu_cap(c, X86_FEATURE_EPT);
++			rdmsr(MSR_IA32_VMX_EPT_VPID_CAP,
++			      msr_ept_cap, msr_vpid_cap);
++			if (msr_ept_cap & x86_VMX_FEATURE_EPT_CAP_AD)
++				set_cpu_cap(c, X86_FEATURE_EPT_AD);
++		}
+ 		if (msr_ctl2 & X86_VMX_FEATURE_PROC_CTLS2_VPID)
+ 			set_cpu_cap(c, X86_FEATURE_VPID);
+ 	}
