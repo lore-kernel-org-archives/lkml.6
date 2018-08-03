@@ -2,173 +2,93 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6745AC43142
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 00:09:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26E2BC43142
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 00:14:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1590C21708
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 00:09:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AEE1821708
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 00:14:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="aLXVahqn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1590C21708
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BynFY7Oj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEE1821708
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732068AbeHCCCu (ORCPT
+        id S1731423AbeHCCHn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 22:02:50 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:54594 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730951AbeHCCCt (ORCPT
+        Thu, 2 Aug 2018 22:07:43 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:35752 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727161AbeHCCHn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 22:02:49 -0400
-Received: by mail-it0-f65.google.com with SMTP id s7-v6so6118079itb.4
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Aug 2018 17:09:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=whepv9ceqpKeQSobXWBzs/Amu/cZ+5W6duyabfxJS5I=;
-        b=aLXVahqnkz9QDpDLJ8AQLKE2W7L1TLpvjIga7fwNbe7sUXz9FIkH0gKb5hYCpk8WM+
-         3c11zespD0cGxbg8/BfoWhGUtL7CjiHHVqu0DTMofkUG2k1v0bFYB0bQypfoZn2LvBw4
-         wjtf1tZViA86DQAUim6matsVQ85/IpJ0j8LFY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=whepv9ceqpKeQSobXWBzs/Amu/cZ+5W6duyabfxJS5I=;
-        b=GStEv5LT4hxLMXS8aEZf+lHDBdQhTLLL0rrIj3th2++O/rxaogSrSwQjw0k9wnZ7WZ
-         1y3GYhe+agK+82jC/Pt48tjUqQVdfm9yUssTpHQrzR1qyEXikVYQtbkJSCgUryI5qTms
-         sTr1SYrnHlbxXXOX+mSq1+B8J0IFz9EhQ7Pb6bcwrtXzb9mfKj4+fCGEDZjrMT90a9Ce
-         WRI1kJlBwIVS2i172UyEyvQc/GyMckiu3vYk4X8fPw09tkyrE/b+LBNwnMTQSDN7o0zK
-         JUdqVMwmxaBPs12ik1PJTEeeTGhwwB3MwVjsuFUuwgMV3fsT4xVhAPRZX241JmVxR756
-         FzBw==
-X-Gm-Message-State: AOUpUlGKuei5OmXKW0uUPZSMYyY6ANQ/Qf89uiWrsG429lnd99pHv0v/
-        utrVafquCh0mR8BiRwFNPQBEJpV7qK9E7IWqZNCYqg==
-X-Google-Smtp-Source: AAOMgpfA7kGxe4+RmMHk6xkgilWzSkt5oVQTttrgZ/UHP7wRzP/cvXXCllKfuYqkC4nqJzVbs6vTuPyy0cQ7ub7pHNg=
-X-Received: by 2002:a24:5004:: with SMTP id m4-v6mr4457189itb.38.1533254956321;
- Thu, 02 Aug 2018 17:09:16 -0700 (PDT)
+        Thu, 2 Aug 2018 22:07:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        MIME-Version:Date:Message-ID:Subject:From:Cc:To:Sender:Reply-To:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=IeB3GYzKkJzHXXydeNb5n4BpCJGaH3NgGKDy0S00Qbc=; b=BynFY7Oj/EFE/9+wq5VNe7OCzU
+        s87/lb0Ln8UGId9XudKIHs7TZ0DzGrRF/7KS9ZyCQQqxTTQw7ke4CdnrjXVKNZiV83usGSzeWa3P3
+        ZJmeMZNeWUi4lIvJdpPGzBSi83EP+BSnO6e5yBudwlGfb7uF+lwWv8vnUFHCwmp4vUaRaLE78ArZg
+        ga+LNhiBz4an3xxl+KyihbqepJOyYm99rOs54yEHTNbdoNl3r+rQ4Ln5DXIyeW2hI3XiEi/2bBj5G
+        0g+o32QjYPIj7kzEolBYhn6o76r14IAoP550sER6/RFkh8aWNcPtNVVUlesr2VFwp/FAvDySj2sSp
+        g+EwxJsg==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1flNjJ-0001U9-Dz; Fri, 03 Aug 2018 00:14:05 +0000
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kbuild <linux-kbuild@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc:     Richard Weinberger <richard@nod.at>, linux-um@lists.infradead.org
+From:   Randy Dunlap <rdunlap@infradead.org>
+Subject: kbuild: ARCH=um archheaders failed
+Message-ID: <be4f41de-c27a-abac-4b23-369c400e016e@infradead.org>
+Date:   Thu, 2 Aug 2018 17:13:59 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20180730110406.132729-1-tmaimon77@gmail.com> <20180730110406.132729-3-tmaimon77@gmail.com>
-In-Reply-To: <20180730110406.132729-3-tmaimon77@gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 3 Aug 2018 02:09:04 +0200
-Message-ID: <CACRpkdaXxWWQZQhap51nGcFvZeGnJ0ZK5LuwVJvkWevxvj7JUw@mail.gmail.com>
-Subject: Re: [PATCH v4 2/2] pinctrl: nuvoton: add NPCM7xx pinctrl and GPIO driver
-To:     Tomer Maimon <tmaimon77@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Patrick Venture <venture@google.com>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        avifishman70@gmail.com, Joel Stanley <joel@jms.id.au>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tomer,
+Hi Yamada-san,
 
-this is starting to look really good!
+I see this every few weeks.  It's not reproducible (it depends
+on the moon, Mars, etc.).
 
-Please try this with my patch and drop the new DIR_INV flag that I think
-we do not need anymore after that.
+I'm using O=builddir.  The build log is short (below).
 
-Other small bits:
+Do you see a makefile problem here?  (nothing to do with mmotm;
+I see it more frequently with linux-next since I do many daily
+builds with it)
 
-On Mon, Jul 30, 2018 at 1:04 PM Tomer Maimon <tmaimon77@gmail.com> wrote:
 
-> +/* Structure for register banks */
-> +struct npcm7xx_gpio {
-> +       void __iomem            *base;
-> +       struct gpio_chip        gc;
-> +       int                     irqbase;
-> +       int                     irq;
-> +       void                    *priv;
-> +       struct irq_chip         irq_chip;
-> +       u32                     pinctrl_id;
-> +       int (*direction_input)(struct gpio_chip *chip, unsigned offset);
-> +       int (*direction_output)(struct gpio_chip *chip, unsigned offset,
-> +                               int value);
-> +       int (*request)(struct gpio_chip *chip, unsigned offset);
-> +       void (*free)(struct gpio_chip *chip, unsigned offset);
+thanks.
+-- 
+make[1]: Entering directory '/home/rdunlap/mmotm-2018-0802-1529/UM64'
+  UPD     include/generated/uapi/linux/version.h
+  WRAP    arch/x86/include/generated/asm/dma-contiguous.h
+  WRAP    arch/x86/include/generated/asm/export.h
+  WRAP    arch/x86/include/generated/asm/early_ioremap.h
+  WRAP    arch/x86/include/generated/asm/mcs_spinlock.h
+  WRAP    arch/x86/include/generated/asm/mm-arch-hooks.h
+  WRAP    arch/x86/include/generated/uapi/asm/bpf_perf_event.h
+  WRAP    arch/x86/include/generated/uapi/asm/poll.h
+  GEN     ./Makefile
+make[2]: *** No rule to make target 'archheaders'.  Stop.
+arch/um/Makefile:119: recipe for target 'archheaders' failed
+make[1]: *** [archheaders] Error 2
+make[1]: *** Waiting for unfinished jobs....
+  UPD     include/config/kernel.release
+make[1]: *** wait: No child processes.  Stop.
+Makefile:146: recipe for target 'sub-make' failed
+make: *** [sub-make] Error 2
 
-Very nice! You sorted it out perfectly.
-
-> +/* GPIO handling in the pinctrl driver */
-> +static void npcm_gpio_set(struct gpio_chip *gc, void __iomem *reg,
-> +                         unsigned int pinmask)
-> +{
-> +       unsigned long flags;
-> +       unsigned long val;
-> +
-> +       spin_lock_irqsave(&gc->bgpio_lock, flags);
-> +
-> +       val = gc->read_reg(reg) | pinmask;
-> +       gc->write_reg(reg, val);
-
-I see some GPIO drivers do this but I don't think you need to use these indirect
-->read_reg() and ->write_reg() accessors, it just obscures things. If
-you need to
-access these registers I think it's fine to just use the base and
-read/write them.
-But it's your pick, I will not insist. Maybe it's a matter of taste.
-
-> +static int npcmgpio_direction_input(struct gpio_chip *chip, unsigned int offset)
-> +{
-> +       struct npcm7xx_gpio *bank = gpiochip_get_data(chip);
-> +       int ret;
-> +
-> +       ret = pinctrl_gpio_direction_input(offset + chip->base);
-> +       if (ret)
-> +               return ret;
-> +
-> +       return bank->direction_input(chip, offset);
-> +}
-
-Exactly as I think it should work, sweet!
-
-This:
-
-> +                       pctrl->gpio_bank[id].pinctrl_id = pinspec.args[0];
-> +                       pctrl->gpio_bank[id].gc.base = pinspec.args[1];
-> +                       pctrl->gpio_bank[id].gc.ngpio = pinspec.args[2];
-> +                       pctrl->gpio_bank[id].gc.owner = THIS_MODULE;
-> +                       pctrl->gpio_bank[id].gc.label =
-> +                               devm_kasprintf(pctrl->dev, GFP_KERNEL, "%pOF",
-
-And this:
-
-> +       for (i = 0 ; i < pctrl->bank_num ; i++) {
-> +               ret = gpiochip_add_pin_range(&pctrl->gpio_bank[i].gc,
-> +                                            dev_name(pctrl->dev),
-> +                                            pctrl->gpio_bank[i].pinctrl_id,
-> +                                            pctrl->gpio_bank[i].gc.base,
-> +                                            pctrl->gpio_bank[i].gc.ngpio);
-> +               if (ret < 0) {
-> +                       dev_err(pctrl->dev, "Failed to add GPIO bank %u\n", i);
-> +                       gpiochip_remove(&pctrl->gpio_bank[i].gc);
-> +                       goto err_range;
-> +               }
-> +       }
-
-Worries me a bit. This seems to be like this because you register the
-GPIO before the pin controller.
-
-Normally we would register in the other order, and the code inside
-of_gpiochio_add() as part of [devm_]gpiochip_add() will parse the phandle
-and add the ranges when you add the GPIO chip.
-
-Is this impossible to solve this cleanly?
-
-Yours,
-Linus Walleij
