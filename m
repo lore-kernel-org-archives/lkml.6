@@ -3,189 +3,168 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5400DC43142
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 00:43:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47C30C43142
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 00:55:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F250821700
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 00:43:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E7B3D21708
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 00:55:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="VaLL3dWU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F250821700
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RbGjdNSp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7B3D21708
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732373AbeHCChJ (ORCPT
+        id S1732211AbeHCCsg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 22:37:09 -0400
-Received: from mailout3.samsung.com ([203.254.224.33]:55535 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729118AbeHCChI (ORCPT
+        Thu, 2 Aug 2018 22:48:36 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:40255 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730951AbeHCCsg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 22:37:08 -0400
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20180803004326epoutp0350fa9a600c57c2f74454e2ab41755ade~HOR-RjCfh1779817798epoutp033;
-        Fri,  3 Aug 2018 00:43:26 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20180803004326epoutp0350fa9a600c57c2f74454e2ab41755ade~HOR-RjCfh1779817798epoutp033
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1533257007;
-        bh=C8y6OUU5rEaYzDDpnfe/rBjOekEXS0XVQUDvCbGkSQk=;
-        h=Date:From:To:Cc:Subject:In-reply-to:References:From;
-        b=VaLL3dWUosb0oDBe2i1jHLLhVFfF70YaMdfowGzv5LRrmsR71igcLAQo4ia6CwpBy
-         ms48uNfOBs/aw3dGObqlUr1Qr387Q+zlZI5qEKVHVzdD38O/RscqdLkMN0isAQ7C3I
-         x28PPYEOgo4KBurcfCVtOeHWDF23yDV0JGjapS78=
-Received: from epsmges2p3.samsung.com (unknown [182.195.40.158]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-        20180803004324epcas1p4ffda2e66cee17f32c8f356f4c523533c~HOR81CWi91335713357epcas1p4s;
-        Fri,  3 Aug 2018 00:43:24 +0000 (GMT)
-Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
-        epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-        3D.30.04412.C25A36B5; Fri,  3 Aug 2018 09:43:24 +0900 (KST)
-Received: from epsmgms2p2new.samsung.com (unknown [182.195.42.143]) by
-        epcas2p3.samsung.com (KnoxPortal) with ESMTP id
-        20180803004323epcas2p30e6a2ce60ccd34e3c1b744117b81fde4~HOR8c5Oca0914209142epcas2p3c;
-        Fri,  3 Aug 2018 00:43:23 +0000 (GMT)
-X-AuditID: b6c32a47-289ff7000000113c-66-5b63a52c461a
-Received: from epmmp2 ( [203.254.227.17]) by epsmgms2p2new.samsung.com
-        (Symantec Messaging Gateway) with SMTP id 65.13.03824.B25A36B5; Fri,  3 Aug
-        2018 09:43:23 +0900 (KST)
-MIME-version: 1.0
-Content-transfer-encoding: 8BIT
-Content-type: text/plain; charset="utf-8"
-Received: from [10.113.63.77] by mmp2.samsung.com (Oracle Communications
-        Messaging Server 7.0.5.31.0 64bit (built May  5 2014)) with ESMTPA id
-        <0PCV007QA0OBD370@mmp2.samsung.com>; Fri, 03 Aug 2018 09:43:23 +0900 (KST)
-Message-id: <5B63A52B.8010706@samsung.com>
-Date:   Fri, 03 Aug 2018 09:43:23 +0900
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
-        Thunderbird/31.6.0
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Brian Norris <briannorris@chromium.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Benson Leung <bleung@chromium.org>,
-        Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH v5 03/12] PM / devfreq: Don't adjust to user limits in
- governors
-In-reply-to: <20180803002452.GV68975@google.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrKJsWRmVeSWpSXmKPExsWy7bCmua7O0uRog5bDQhZ/Jx1jt5j+5DKL
-        xaaP71kt5h85x2pxdtlBNos1tw8xWjQvXs9mcbbpDbvF/a9HGS0u75rDZvG59wijxdLrF5ks
-        Pm94zGhxu3EFm8Wp65/ZLM6cvsRq0br3CLvFxq8eDkIea+atYfT4/WsSo8fshossHjvuLmH0
-        2LSqk83jzrU9bB77565h97hyoonVY8vVdhaPvi2rGD0+b5IL4I5KtclITUxJLVJIzUvOT8nM
-        S7dV8g6Od443NTMw1DW0tDBXUshLzE21VXLxCdB1y8wBek1JoSwxpxQoFJBYXKykb2dTlF9a
-        kqqQkV9cYqsUbWhopGdoYK5nZASkjWOtjEyBShJSM5pPX2AueCZYsXbDHcYGxi6+LkZODgkB
-        E4mHi58ydTFycQgJ7GCUOPznHJTznVHi9qx7rDBVB+58ZYRIbGCUmH6onQUkwSsgKPFj8j0g
-        m4ODWUBe4silbJAws4CmxIsvk1gg6u8yStz8sIsVol5L4uDda+wgNouAqsTB6VuZQWw2oPj+
-        FzfYQGx+AUWJqz8eM4LYogIREjvnfwOrFxHQkHjy+zzYEcwC01gluqf9B2sQFgiTuLL3OpjN
-        KWAg8fztamaQIgmBU+wSq2cfBLtOQsBFovkuG8Q3whKvjm9hh7ClJZ6t2sgIUd/OKPHlRTMr
-        hDOBUeLDqc1MEFXGEs8WdjFB/MYn0XH4LzvEUF6JjjYhiBIPiW+/v7NDvLyISeLmw8+sExhl
-        ZyGF0ixEKM1CCqUFjMyrGMVSC4pz01OLjQqM9YoTc4tL89L1kvNzNzGCk7CW+w7Gbed8DjEK
-        cDAq8fBeUE2OFmJNLCuuzD3EKMHBrCTC+7YTKMSbklhZlVqUH19UmpNafIjRFBjIE5mlRJPz
-        gRkiryTe0NTI2NjYwtTc0tjAUkmct8ovOFpIID2xJDU7NbUgtQimj4mDU6qB8aDvqzU5Njwv
-        FZi6brOqxL1MaJXTuKUgdDej57Omtke8jNF59QvcrKGWgsufahQfU+fyrb6t8OZWxqmjkatW
-        pTlOmPDp7reba1eebjm9kfe6e3yuI4vW8+9G2rpJXtKm85qik1imK6eafNVs4L5zuStA+PKT
-        6Z4MffGBL3hsWpWEUt3873xUYinOSDTUYi4qTgQAuC51ktgDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrAIsWRmVeSWpSXmKPExsVy+t9jQV3tpcnRBjeWGFv8nXSM3WL6k8ss
-        Fps+vme1mH/kHKvF2WUH2SzW3D7EaNG8eD2bxdmmN+wW978eZbS4vGsOm8Xn3iOMFkuvX2Sy
-        +LzhMaPF7cYVbBanrn9mszhz+hKrReveI+wWG796OAh5rJm3htHj969JjB6zGy6yeOy4u4TR
-        Y9OqTjaPO9f2sHnsn7uG3ePKiSZWjy1X21k8+rasYvT4vEkugDuKyyYlNSezLLVI3y6BK6P5
-        9AXmgmeCFWs33GFsYOzi62Lk5JAQMJE4cOcrYxcjF4eQwDpGiQ+HlrKAJHgFBCV+TL4HZHNw
-        MAvISxy5lA1hqktMmZILUX6fUaLhTwc7RLmWxMG718BsFgFViYPTtzKD2GxA8f0vbrCB2PwC
-        ihJXfzxmBJkjKhAh0X2iEiQsIqAh8eT3eUYQm1lgBqvExgsxILawQJjElb3X2SB2LWKSePV6
-        DxNIglPAQOL529XMExgFZiG5dBbCpbMQLl3AyLyKUTK1oDg3PbfYqMAoL7Vcrzgxt7g0L10v
-        OT93EyMwHrcd1urfwfh4SfwhRgEORiUe3guqydFCrIllxZW5hxglOJiVRHjfdgKFeFMSK6tS
-        i/Lji0pzUosPMUpzsCiJ8/LnH4sUEkhPLEnNTk0tSC2CyTJxcEo1MBqW9R2dn6q585rDS+/k
-        KPdu/cD/jzp3MPBvubL93/7ilcfrXnF2PL66gl3luqkNt3exj1zMjZ+eSvc2Gv/7GcaU/EQ2
-        NWKH38U3U5Yuj592VjCsfKclU5Bm+cdH75Iskk4s+/TeYcNxdlNXe9GpO2oc6y6sM7a+biZ7
-        QvFP01Km+5ffKE8+uF+JpTgj0VCLuag4EQBd2VddwwIAAA==
-X-CMS-MailID: 20180803004323epcas2p30e6a2ce60ccd34e3c1b744117b81fde4
-X-Msg-Generator: CA
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20180802233605epcas2p2fc6b1cef0dc773f6c7e59017721917bc
-References: <20180703234705.227473-1-mka@chromium.org>
-        <20180703234705.227473-4-mka@chromium.org>
-        <CGME20180802233605epcas2p2fc6b1cef0dc773f6c7e59017721917bc@epcas2p2.samsung.com>
-        <20180802233600.GT68975@google.com> <5B639BD2.5050008@samsung.com>
-        <20180803002452.GV68975@google.com>
+        Thu, 2 Aug 2018 22:48:36 -0400
+Received: by mail-pl0-f65.google.com with SMTP id s17-v6so1777016plp.7;
+        Thu, 02 Aug 2018 17:54:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4n4qaCUXb7AAcqu7GnjvdoEi4MLUA4kL86sNmhjheLo=;
+        b=RbGjdNSpv1S0dha3AzCEfbqPOh8YxWS+je2lJg7QGSFniZWMI+gy3IxFuOQYipPnjj
+         LdU9/3TZpaMavu4oPXopncmxbjsBylCkswsjbgg/yq9SkYSeMaPzYoZlv32BUjPErQ9q
+         lBS58Ge6gtoS2J1wkQlkfmTcwbFjxiu+mLObQZhxs2ejSz6XlnxMOKthbXT/Rb8HorQ6
+         mmU56MzanWZOI+dMOiN3HqqfzdBIQzmK2MtagAz+AgnJUbdMG7pUwkWr3RScb/deAN5A
+         6o58nVvLq7PCbGY6EOj84fi9JeMR65lh7Ll8j03/tVn69oZfeX7C9H+UN/FHWR985gLQ
+         AyZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4n4qaCUXb7AAcqu7GnjvdoEi4MLUA4kL86sNmhjheLo=;
+        b=qhbhSQHwg6Jh3cDGSZ+18R8XwfQGSM/AGMnPMSwGZMr1ZcxWi0HudamvwDXCKG2Lmf
+         CG2awyj3/1H/2UHfAnQeb+XUJ041yQeLnFlCv2WDPjhKkPtKu1gky3O0EyPzNqY/18sM
+         xa0LJr5IL65pbwcMJqGL78cw9MWAbvIeo5snV/t4tN7WTPd5nULGBLA2GbykHm55fM0w
+         RS3cKJHvK/wQGj+ei6uGm1lnLwfL291gDSmhmsJula3+6hicm6Es7wG+9eLSg51+2yTo
+         mcOv63KBzHgmJ5v7IBH7xyfwBxuYMNZXPXTghK9c7nYoitkTDW7k0VHrBUvJ5/AcmTuZ
+         AYlQ==
+X-Gm-Message-State: AOUpUlHogp45KBZzEWD3Uh04affGCuT45bTotZQrc5pR8yKdIU88g8NO
+        9emkhRl+lUCceffCIyS8/3wAk3iGz9Tvi62/xhY=
+X-Google-Smtp-Source: AAOMgpeCJlmu8o5CAxvcD85wMRBP+WpW0sejQ5ZREGpp9ouS86Vi5csSyPDen+rpwdRwjZtqizkFi8wGLxQBhDrsgeQ=
+X-Received: by 2002:a17:902:20e9:: with SMTP id v38-v6mr1473307plg.107.1533257693802;
+ Thu, 02 Aug 2018 17:54:53 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180731232618.23586-1-lsahlber@redhat.com> <CAH2r5mvWHnkrQ+zF81_E-KkpVZA3YtZLB_LTk1dmePv0Y3Ktrg@mail.gmail.com>
+ <1735951147.19009312.1533165340522.JavaMail.zimbra@redhat.com>
+In-Reply-To: <1735951147.19009312.1533165340522.JavaMail.zimbra@redhat.com>
+From:   Steve French <smfrench@gmail.com>
+Date:   Thu, 2 Aug 2018 17:54:42 -0700
+Message-ID: <CAH2r5mu_HeKuGieq10DdV0en8=zRj96HdKVSuzO9UYB1Nh3Ukw@mail.gmail.com>
+Subject: Re: [PATCH 0/8] cifs compounding
+To:     Ronnie Sahlberg <lsahlber@redhat.com>,
+        samba-technical <samba-technical@lists.samba.org>
+Cc:     CIFS <linux-cifs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Matthias,
+Big performance benefit (for this first narrow case) with Ronnie's
+compounding patches (now merged into cifs-2.6.git for-next).   This is
+the first code path enabled for smb3 compounding but looks very
+promising, if we continue to get such dramatic perf improvements (as
+we go forward implementing compounding to help stat, readdir etc.).
+Note that we have seen that Macs are quite aggressive about
+compounding in SMB3 (and Windows benefits a lot as well) so there a
+quite a few future code paths that we can optimize.  It obviously
+helps with more than network latency though, it can reduce server load
+as well.  Additional improvements in handle caching and directory
+leases (currently only implemented for the root directory) will also
+be a big win in the future as they are extended in cifs.ko for SMB3.
 
-On 2018년 08월 03일 09:24, Matthias Kaehlcke wrote:
-> On Fri, Aug 03, 2018 at 09:03:30AM +0900, Chanwoo Choi wrote:
->> Hi Matthias,
->>
->> On 2018년 08월 03일 08:36, Matthias Kaehlcke wrote:
->>> Hi Chanwoo,
->>>
->>> this patch and "PM / devfreq: Fix handling of min/max_freq == 0"
->>> address issues not directly related with the throttler. It seems it
->>> could still take a while for the throttler to move forward, do you
->>> want me to spin out these two patches so that they can get merged
->>> independently from the rest of the series?
->>
->> How about resend the devfreq patches(patch1/2/3/4/6) which don't depend on
->> throttler core with my reviewed tag? Maybe, it is easy to merge them through Myungjoo.
-> 
-> Sure, I can do this if you think it is reasonable to merge all these
-> patches without the throttler.
+I did some primitive tests with and without Ronnie's patch and it was
+from 40% to 2000% slower before his patch (on the wire).   I tried df
+and stat -f.  Note that stat -f shows the greater benefit (only one
+compounded request on the with his patch, instead of two requests only
+one of which is compounded with df)
 
-IMO, patch1/2/3/6 looks good. I replied with my reviewed-tag for them.
+Without his patch:
+local (fast network, to Samba)  ~2/100ths of a second
+remote (Azure, encrypted) - 16th/100ths to 17/100ths of a second
 
-patch4 defines the 'struct devfreq_policy' and then patch5
-send notification with 'struct devfreq_policy' on original patch.
-But, when we discussed it on patch5, new devfreq notification
-send 'struct devfreq_freq_limits' better than 'struct devfreq_policy'.
-So, patch4 would be required with more discussion. If myungjoo agree
-the current patch4, I'm okay.
+With his patch
+local (fast network, to Samba) ~1/1000 of a second
+remote (Azure, encrypted) ~6/100ths to ~12/100ths (stat -f vs. df)
 
-> 
-> These are the patches we are talking about and my interpretation of
-> their status:
-> 
-> [01] PM / devfreq: Init user limits from OPP limits, not viceversa
->   landed in Rafaels tree
-> 
-> [02] PM / devfreq: Fix handling of min/max_freq == 0
->   independent fix, can land
-> 
-> [03] PM / devfreq: Don't adjust to user limits in governors
->   independent improvement, can land
-> 
-> [04] PM / devfreq: Add struct devfreq_policy
->   edge case, can land if devfreq maintainers think that factoring out
->   some fields to the policy struct is an improvement independently of
->   the throttler
-> 
-> [05] PM / devfreq: Add support for policy notifiers
->   under heavy discussion ;-), can't land
-> 
-> [06] PM / devfreq: Make update_devfreq() public
->   has no user without the throttler, not sure if it should be merged
->   without it. up to devfreq maintainers.
-> 
-> Please let me know what you think
+so basically "stat -f" on the root goes from 3 requests to 1 send on
+the wire, while df goes from 4 requests to 2.
 
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+Good job Ronnie!
+On Wed, Aug 1, 2018 at 4:15 PM Ronnie Sahlberg <lsahlber@redhat.com> wrote:
+>
+> Updated patch.
+>
+> Thanks
+>
+> ----- Original Message -----
+> From: "Steve French" <smfrench@gmail.com>
+> To: "Ronnie Sahlberg" <lsahlber@redhat.com>
+> Cc: "CIFS" <linux-cifs@vger.kernel.org>
+> Sent: Wednesday, 1 August, 2018 5:19:36 PM
+> Subject: Re: [PATCH 0/8] cifs compounding
+>
+> I have merged the first three tentatively, but did a little cleanup of
+> scripts/checkpatch warnings (see attached lightly updated patches).
+> For patch four (update receive encrypted standard) I noticed some
+> endian errors - can you fix them (when I built them I got these sparse
+> warnings)
+>
+>   CHECK   /home/sfrench/cifs-2.6/fs/cifs/smb2ops.c
+> /home/sfrench/cifs-2.6/fs/cifs/smb2ops.c:3075:66: warning: restricted
+> __le32 degrades to integer
+> /home/sfrench/cifs-2.6/fs/cifs/smb2ops.c:3076:49: warning: restricted
+> __le32 degrades to integer
+> /home/sfrench/cifs-2.6/fs/cifs/smb2ops.c:3079:68: warning: restricted
+> __le32 degrades to integer
+> /home/sfrench/cifs-2.6/fs/cifs/smb2ops.c:3080:49: warning: restricted
+> __le32 degrades to integer
+> /home/sfrench/cifs-2.6/fs/cifs/smb2ops.c:3101:28: warning: invalid
+> assignment: -=
+> /home/sfrench/cifs-2.6/fs/cifs/smb2ops.c:3101:28:    left side has
+> type unsigned int
+> /home/sfrench/cifs-2.6/fs/cifs/smb2ops.c:3101:28:    right side has
+> type restricted __le32
+> /home/sfrench/cifs-2.6/fs/cifs/smb2ops.c:3108:28: warning: restricted
+> __le32 degrades to integer
+>
+> Attached are the lightly updated versions of the patches that reduce
+> the checkpatch warnings - but can you cleanup the endian errors in
+> patch 4.
+>
+>
+>
+>
+> On Tue, Jul 31, 2018 at 6:26 PM Ronnie Sahlberg <lsahlber@redhat.com> wrote:
+> >
+> > Steve, All
+> >
+> > An updated patch series based on Pavels feedback.
+> >
+>
+>
+> --
+> Thanks,
+>
+> Steve
+
+
+
+--
+Thanks,
+
+Steve
