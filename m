@@ -2,93 +2,155 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B43F5C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 11:32:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53C6DC28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 11:38:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1389E2175E
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 11:32:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1389E2175E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+	by mail.kernel.org (Postfix) with ESMTP id F27A821759
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 11:38:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=pmeerw.net header.i=@pmeerw.net header.b="KNzWCT6u"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F27A821759
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=pmeerw.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727850AbeHCN2m (ORCPT
+        id S1728412AbeHCNeP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 09:28:42 -0400
-Received: from ozlabs.org ([203.11.71.1]:51851 "EHLO ozlabs.org"
+        Fri, 3 Aug 2018 09:34:15 -0400
+Received: from ns.pmeerw.net ([84.19.176.117]:48016 "EHLO ns.pmeerw.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727031AbeHCN2m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 09:28:42 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41hlJs3ZkWz9ryt;
-        Fri,  3 Aug 2018 21:32:45 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     fbarrat@linux.ibm.com, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-Subject: [GIT PULL] Please pull powerpc/linux.git powerpc-4.18-5 tag
-Date:   Fri, 03 Aug 2018 21:32:44 +1000
-Message-ID: <877el7hehv.fsf@concordia.ellerman.id.au>
+        id S1728061AbeHCNeP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 09:34:15 -0400
+Received: by ns.pmeerw.net (Postfix, from userid 1000)
+        id D8460E01C1; Fri,  3 Aug 2018 13:38:17 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=pmeerw.net; s=mail;
+        t=1533296297; bh=aESNigdGVHEie0/4DNilJp7oKiYSmoe3b6a04oh9rrM=;
+        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+        b=KNzWCT6uFY+auv7m+IpGTBpSBTX/mhpd8xI6Ts9Sd6cPC8SXPt8w+F/L2d6/Q1v21
+         zTrlkF+fvoDoWMI9wOySSz0aOn0C0hBloO0X3mNuTkTP7Qgefdl94dcavrEcRm8+86
+         dRKP0F+jKAjyZYKEf7UDVz/ZKlOG9xKRMBJUNgvs=
+Received: from localhost (localhost [127.0.0.1])
+        by ns.pmeerw.net (Postfix) with ESMTP id C371BE0148;
+        Fri,  3 Aug 2018 13:38:17 +0200 (CEST)
+Date:   Fri, 3 Aug 2018 13:38:17 +0200 (CEST)
+From:   Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+To:     Parthiban Nallathambi <pn@denx.de>
+cc:     jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
+        robh+dt@kernel.org, linux-iio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, matthias.bgg@gmail.com, wd@denx.de,
+        sbabic@denx.de, hs@denx.de
+Subject: Re: [PATCH v4 1/3] iio: Add modifier for white light
+In-Reply-To: <fb30878f-0163-306a-e933-d9fecc996acb@denx.de>
+Message-ID: <alpine.DEB.2.21.1808031323150.13492@vps.pmeerw.net>
+References: <20180802182729.2061830-1-pn@denx.de> <alpine.DEB.2.21.1808022117460.25216@vps.pmeerw.net> <fb30878f-0163-306a-e933-d9fecc996acb@denx.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA256
+Hello,
 
-Hi Linus,
+> > it is not clear to me why 'white' is needed;
+> > isn't that the default, i.e. unfiltered light?
+> 
+> Yes, it is. But devices like vcnl4035 veml7700, White LED data one
+> register and all other sources of light (like fluorescent,
+> incandescent ,sunlight) in separate register.
+> 
+> So in such cases this WHITE modifier is needed. Should it needs to
+> come under IIO_MOD_LIGHT_CLEAR?
 
-Please pull some more powerpc fixes for 4.18:
+it is a mess already :), there is 
+_intensity
+_intensity_ir
+_intensity_both
+_intensity_uv
+_intensity_red
+_intensity_green
+_intensity_blue
+_intensity_clear
 
-The following changes since commit b03897cf318dfc47de33a7ecbc7655584266f034:
+I think that ir, uv, red, green, blue are filters for particular ranges 
+of the spectrum
 
-  powerpc/powernv: Fix save/restore of SPRG3 on entry/exit from stop (idle) (2018-07-18 20:40:17 +1000)
+_intensity_clear might be unfiltered and _intensity might relate to the 
+human eye photopic curve, I think the proposed white might be the same as 
+clear?
 
-are available in the git repository at:
+'both' means ir + _intensity (not clearly specified)
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git tags/powerpc-4.18-5
+regards, p.
 
-for you to fetch changes up to cca19f0b684f4ed6aabf6ad07ae3e15e77bfd78a:
+> > > +KernelVersion:	4.18
+> > > +Contact:	linux-iio@vger.kernel.org
+> > > +Description:
+> > > +		Modifier white indicates that measurements contain white LED
+> > > +		component.
+> > > +
+> > >   What:		/sys/.../iio:deviceX/in_intensity_red_integration_time
+> > >   What:
+> > > /sys/.../iio:deviceX/in_intensity_green_integration_time
+> > >   What:
+> > > /sys/.../iio:deviceX/in_intensity_blue_integration_time
+> > > diff --git a/drivers/iio/industrialio-core.c
+> > > b/drivers/iio/industrialio-core.c
+> > > index 19bdf3d2962a..cb939b9fad16 100644
+> > > --- a/drivers/iio/industrialio-core.c
+> > > +++ b/drivers/iio/industrialio-core.c
+> > > @@ -108,6 +108,7 @@ static const char * const iio_modifier_names[] = {
+> > >   	[IIO_MOD_LIGHT_GREEN] = "green",
+> > >   	[IIO_MOD_LIGHT_BLUE] = "blue",
+> > >   	[IIO_MOD_LIGHT_UV] = "uv",
+> > > +	[IIO_MOD_LIGHT_WHITE] = "white",
+> > >   	[IIO_MOD_QUATERNION] = "quaternion",
+> > >   	[IIO_MOD_TEMP_AMBIENT] = "ambient",
+> > >   	[IIO_MOD_TEMP_OBJECT] = "object",
+> > > diff --git a/include/uapi/linux/iio/types.h
+> > > b/include/uapi/linux/iio/types.h
+> > > index 4213cdf88e3c..de87a6c7e6de 100644
+> > > --- a/include/uapi/linux/iio/types.h
+> > > +++ b/include/uapi/linux/iio/types.h
+> > > @@ -84,6 +84,7 @@ enum iio_modifier {
+> > >   	IIO_MOD_CO2,
+> > >   	IIO_MOD_VOC,
+> > >   	IIO_MOD_LIGHT_UV,
+> > > +	IIO_MOD_LIGHT_WHITE,
+> > >   };
+> > >     enum iio_event_type {
+> > > diff --git a/tools/iio/iio_event_monitor.c b/tools/iio/iio_event_monitor.c
+> > > index b61245e1181d..a2f9c62a79dd 100644
+> > > --- a/tools/iio/iio_event_monitor.c
+> > > +++ b/tools/iio/iio_event_monitor.c
+> > > @@ -96,6 +96,7 @@ static const char * const iio_modifier_names[] = {
+> > >   	[IIO_MOD_LIGHT_GREEN] = "green",
+> > >   	[IIO_MOD_LIGHT_BLUE] = "blue",
+> > >   	[IIO_MOD_LIGHT_UV] = "uv",
+> > > +	[IIO_MOD_LIGHT_WHITE] = "white",
+> > >   	[IIO_MOD_QUATERNION] = "quaternion",
+> > >   	[IIO_MOD_TEMP_AMBIENT] = "ambient",
+> > >   	[IIO_MOD_TEMP_OBJECT] = "object",
+> > > @@ -178,6 +179,7 @@ static bool event_is_known(struct iio_event_data
+> > > *event)
+> > >   	case IIO_MOD_LIGHT_GREEN:
+> > >   	case IIO_MOD_LIGHT_BLUE:
+> > >   	case IIO_MOD_LIGHT_UV:
+> > > +	case IIO_MOD_LIGHT_WHITE:
+> > >   	case IIO_MOD_QUATERNION:
+> > >   	case IIO_MOD_TEMP_AMBIENT:
+> > >   	case IIO_MOD_TEMP_OBJECT:
+> > > 
+> > 
+> 
+> 
 
-  powerpc/64s/radix: Fix missing global invalidations when removing copro (2018-08-01 23:23:41 +1000)
+-- 
 
-- ------------------------------------------------------------------
-powerpc fixes for 4.18 #5
-
-One fix for a regression in a recent TLB flush optimisation, which caused us to
-incorrectly not send TLB invalidations to coprocessors.
-
-Thanks to:
-  Frederic Barrat, Nicholas Piggin, Vaibhav Jain.
-
-- ------------------------------------------------------------------
-Frederic Barrat (1):
-      powerpc/64s/radix: Fix missing global invalidations when removing copro
-
-
- arch/powerpc/include/asm/mmu_context.h | 33 +++++++++++++++++++++------------
- 1 file changed, 21 insertions(+), 12 deletions(-)
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJbZD0oAAoJEFHr6jzI4aWAcXgP/2H1bZ7IW+1iRkeBxLWerg+W
-jjo6sMXYFE/yIWiDquE0hqTDF2yeUPORrTJHDFAarDQN4kNzfbiyW1x5rR45hUED
-evbruA694+vzTIGH6bN/jiiuaazeKzX9SlweQN+eMZcO0R5m+BGPdz5mLlY/xvM+
-9iRY89+ZmMzIK5yWFeXwFYhnqupOhQAKmCh3cGi9DDI3hfSfBOawAeYyx8H6y8WI
-wd3bhl+PY6Yrx4Y6ZWnvWtNIY2QXSB9+rn0cOABPaQWasHhIYEFVpnT2DxRIM6ST
-V9BNOj1PhvDcClnwaNE8Gus06CTqf2crOWVhOvYYwB0tMlvFnhFjexxwkhXQSmeT
-kQKINYZ5eCyJhm1CmZ2CVv9KxPJESFilDr+CEHKXBq8mD7X1KUIvGyKmqZAOCgCQ
-2ZBhgPoSs/lBoj7uBMgriMrnDI0VonUGNYSgT0XPiKIB0/vi5uYJBumwkvTuyDYk
-2iIS29OnVv57xmF6QIvSp8jzmaDNxD+QP9Hrbqa7rInGiaGyYHAlfTqlm80ja7Jx
-HBvYTW9PPKywYyTAxBpFc9TytuX4CvPMZsA1vo7Ow8nfVTNjtqGRl0VeXZ3fkW3E
-QP8hfpgmkzIZeASpd1p7mSY0ki/5wad7Lb1wcqFJYE2/pT3Kd4oCjTbT7BFW70N6
-hegdM5woDuk8lKFqao3V
-=klUx
------END PGP SIGNATURE-----
+Peter Meerwald-Stadler
+Mobile: +43 664 24 44 418
