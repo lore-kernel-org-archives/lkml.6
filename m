@@ -2,152 +2,228 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C895C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 03:39:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22A2DC28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 03:48:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD785216E3
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 03:39:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ecL752qA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD785216E3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+	by mail.kernel.org (Postfix) with ESMTP id C325321723
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 03:48:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C325321723
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hisilicon.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727276AbeHCFdy (ORCPT
+        id S1727246AbeHCFnK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 01:33:54 -0400
-Received: from mailout2.samsung.com ([203.254.224.25]:54595 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726012AbeHCFdx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 01:33:53 -0400
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20180803033936epoutp02914648ee41fc5df4645083727cbf10a3~HQrzX1K4I1701917019epoutp02B
-        for <linux-kernel@vger.kernel.org>; Fri,  3 Aug 2018 03:39:36 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20180803033936epoutp02914648ee41fc5df4645083727cbf10a3~HQrzX1K4I1701917019epoutp02B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1533267577;
-        bh=wRjC7el8nU1Xb6elI50sNwaEVMXpWOlgivYXELa9jr8=;
-        h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
-        b=ecL752qAuUYGu/VYC0E25sCKY16KzYTDxs+GWIxoWG2CJmuo8QEywEPERZEpOlkhb
-         A0FQx6/A+vfg6cIU+t4yZeNe3baXx867tq3kaVysblcbDOwnLt3TJ7mYQALy6Z9f+f
-         VV2rNknXz8yLjxc3lkb16LwLpwWbWIo7VxluDa3Q=
-Received: from epsmges5p3new.samsung.com (unknown [182.195.40.192]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-        20180803033935epcas5p3f2f33f24214446d4c0b55ad7b29f491f~HQrx4w-d90252302523epcas5p3H;
-        Fri,  3 Aug 2018 03:39:35 +0000 (GMT)
-X-AuditID: b6c32a4b-239ff700000010d0-32-5b63ce7714ab
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        9D.FF.04304.77EC36B5; Fri,  3 Aug 2018 12:39:35 +0900 (KST)
-Mime-Version: 1.0
-Subject: RE: [PATCH 1/1] selftest/net: fix FILE_SIZE for 32 bit
- architecture.
-Reply-To: maninder1.s@samsung.com
-From:   Maninder Singh <maninder1.s@samsung.com>
-To:     Eric Dumazet <eric.dumazet@gmail.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "shuahkh@osg.samsung.com" <shuahkh@osg.samsung.com>
-CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        Fri, 3 Aug 2018 01:43:10 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:42190 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726012AbeHCFnK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 01:43:10 -0400
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 15A6A2B347DE4;
+        Fri,  3 Aug 2018 11:48:47 +0800 (CST)
+Received: from localhost (10.67.212.75) by DGGEMS403-HUB.china.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server (TLS) id 14.3.399.0; Fri, 3 Aug 2018
+ 11:48:40 +0800
+Date:   Fri, 3 Aug 2018 11:47:21 +0800
+From:   Kenneth Lee <liguozhu@hisilicon.com>
+To:     Jerome Glisse <jglisse@redhat.com>
+CC:     "Tian, Kevin" <kevin.tian@intel.com>,
+        Hao Fang <fanghao11@huawei.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Zaibo Xu <xuzaibo@huawei.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
+        Kenneth Lee <nek.in.cn@gmail.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "edumazet@google.com" <edumazet@google.com>,
-        PANKAJ MISHRA <pankaj.m@samsung.com>,
-        AMIT SAHRAWAT <a.sahrawat@samsung.com>,
-        Vaneet Narang <v.narang@samsung.com>
-X-Priority: 3
-X-Content-Kind-Code: NORMAL
-In-Reply-To: <4a412194-99aa-7969-54a4-727368fbf82c@gmail.com>
-X-Drm-Type: N,general
-X-Msg-Generator: Mail
-X-Msg-Type: PERSONAL
-X-Reply-Demand: N
-Message-ID: <20180803033159epcms5p1dd2f5a6834268e9a22efa15421795fa0@epcms5p1>
-Date:   Fri, 03 Aug 2018 09:01:59 +0530
-X-CMS-MailID: 20180803033159epcms5p1dd2f5a6834268e9a22efa15421795fa0
-Content-Transfer-Encoding: 7bit
+        "linuxarm@huawei.com" <linuxarm@huawei.com>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "David S . Miller" <davem@davemloft.net>,
+        "linux-accelerators@lists.ozlabs.org" 
+        <linux-accelerators@lists.ozlabs.org>
+Subject: Re: [RFC PATCH 0/7] A General Accelerator Framework, WarpDrive
+Message-ID: <20180803034721.GC91035@Turing-Arch-b>
+References: <20180801102221.5308-1-nek.in.cn@gmail.com>
+ <20180801165644.GA3820@redhat.com>
+ <AADFC41AFE54684AB9EE6CBC0274A5D191290E1A@SHSMSX101.ccr.corp.intel.com>
+ <20180802040557.GL160746@Turing-Arch-b>
+ <20180802142243.GA3481@redhat.com>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0hTURzHO/fOeZVW16l11B7z1kAD5+5s8yoqQlIDrQQpqBF2mYcpuQe7
-        m2UQiSk+QLNQkqU5rBQ1NXynFWS03moUlKImkUmi2dAeJkHb7qz+Op/zPd/z+/7Oj0Pg4hvC
-        UCLHYEFmA5tLCf0FfQ8jI6JOj2g18veVwcyrIcTUjRYJmFnHB1/m/tJLIdP9o1TIvB6sEzIO
-        +xZmeqEXY2pWvgqY4af1INlf3dMyjqnv2KZ81fYuq7rnogsqe1qBerlrR7rwOErIRmwWMkuQ
-        QWvMyjHoEqnUjMx9mUqVnI6i45hYSmJg9SiRSklLj9qfk+vqi5LksblWl5TOchwVnZRgNlot
-        SJJt5CyJlIamFTJaHitTKFyr8kS8QumynETZjqU6H9NN0Zm1xgKsAPzyKwd+BCT3wvaPa4Jy
-        4E+IySEAHzwpwcsBQYjIAPh7INDtCSQPwzdjjZibxWQ4HKu9BdyWQFIOf/VGuGUhKYOtg3c9
-        ZYLICgA7rhfj7gOcfIfB7s5wPksEa0tmBTyHwf7mXuBmPzIRjpf+9OX1YDjetviXlxwNgOcg
-        WDz9Euc5AM6sDnn1bbCtu8ITDMkSAPtnXmD8phrAoldT3rRYOPq0wXNbRB6EfTabhwWkFC6P
-        fPFWTYFNM98wvuudsH+xzjMInIyEnYPRvGU7rHnW4bVsghVrH7H1hw1cW2cpLBq/7bP+yGWn
-        09uCGnZOfMf4QTsBfLwy5lMFJLZ/s7b9l2z7l2wHeCsIQSZOr0Oc0hRjQKdlHKvnrAadTGvU
-        dwHPD92TOgC6RtKGAUkAaqNoTKrViH3YPC5fPwwggVNBosUylyTKYvPPIrMx02zNRdwwULpm
-        cAkPDdYaXf/dYMmklQqVSh4nV8YwKpraKvp6KEMjJnWsBZ1CyITM6/cwwi+0ABTefGG8qxs6
-        EtTckpw/mXBeYy3Urib3y5MW5lveJfWdixydu7qTbd8dFaZPj3Yeyw98gF+Wfn+ki2g6Ovdm
-        5Yr99wbBgWbnyKfuiat9afW7Qn+q7pkcB9/Gh8wKn8/n7F8OaVFMBsgcqbUp+JbXTReqU+x0
-        SZl0497NkaVVpav+nykBl83Se3Azx/4BIsRPULcDAAA=
-DLP-Filter: Pass
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180802142243.GA3481@redhat.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Originating-IP: [10.67.212.75]
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20180802103616epcas5p48ec1e2ea3568b11683aa7b55254dffb0
-References: <4a412194-99aa-7969-54a4-727368fbf82c@gmail.com>
-        <20180802103616epcas5p48ec1e2ea3568b11683aa7b55254dffb0~HCuTv0d7l2131721317epcas5p4u@epcas5p4.samsung.com>
-        <CGME20180802103616epcas5p48ec1e2ea3568b11683aa7b55254dffb0@epcms5p1>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
->On 08/02/2018 03:31 AM, Maninder Singh wrote:
->> FILE_SZ is defined as (1UL << 35), it will overflow
->> for 32 bit system and logic will break.
->> 
->> Signed-off-by: Maninder Singh <maninder1.s@samsung.com>
->> Signed-off-by: Vaneet Narang <v.narang@samsung.com>
->> ---
->>  tools/testing/selftests/net/tcp_mmap.c | 8 ++++----
->>  1 file changed, 4 insertions(+), 4 deletions(-)
->> 
->> diff --git a/tools/testing/selftests/net/tcp_mmap.c b/tools/testing/selftests/net/tcp_mmap.c
->> index e8c5dff..1d6ca12 100644
->> --- a/tools/testing/selftests/net/tcp_mmap.c
->> +++ b/tools/testing/selftests/net/tcp_mmap.c
->> @@ -85,7 +85,7 @@
->>  #define MSG_ZEROCOPY    0x4000000
->>  #endif
->>  
->> -#define FILE_SZ (1UL << 35)
->> +#define FILE_SZ (1ULL << 35)
-
-...
-...
->> @@ -431,7 +431,7 @@ int main(int argc, char *argv[])
->>                  zflg = 0;
->>          }
->>          while (total < FILE_SZ) {
->> -                long wr = FILE_SZ - total;
->> +                unsigned long long wr = FILE_SZ - total;
->>  
->>                  if (wr > chunk_size)
->>                          wr = chunk_size;
->> 
+On Thu, Aug 02, 2018 at 10:22:43AM -0400, Jerome Glisse wrote:
+> Date: Thu, 2 Aug 2018 10:22:43 -0400
+> From: Jerome Glisse <jglisse@redhat.com>
+> To: Kenneth Lee <liguozhu@hisilicon.com>
+> CC: "Tian, Kevin" <kevin.tian@intel.com>, Hao Fang <fanghao11@huawei.com>,
+>  Alex Williamson <alex.williamson@redhat.com>, Herbert Xu
+>  <herbert@gondor.apana.org.au>, "kvm@vger.kernel.org"
+>  <kvm@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, Greg
+>  Kroah-Hartman <gregkh@linuxfoundation.org>, Zaibo Xu <xuzaibo@huawei.com>,
+>  "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "Kumar, Sanjay K"
+>  <sanjay.k.kumar@intel.com>, Kenneth Lee <nek.in.cn@gmail.com>,
+>  "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+>  "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+>  "linuxarm@huawei.com" <linuxarm@huawei.com>,
+>  "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, Philippe
+>  Ombredanne <pombredanne@nexb.com>, Thomas Gleixner <tglx@linutronix.de>,
+>  "David S . Miller" <davem@davemloft.net>,
+>  "linux-accelerators@lists.ozlabs.org"
+>  <linux-accelerators@lists.ozlabs.org>
+> Subject: Re: [RFC PATCH 0/7] A General Accelerator Framework, WarpDrive
+> User-Agent: Mutt/1.10.0 (2018-05-17)
+> Message-ID: <20180802142243.GA3481@redhat.com>
 > 
->What about using more conventional size_t instead of "unsigned long long" ?
+> On Thu, Aug 02, 2018 at 12:05:57PM +0800, Kenneth Lee wrote:
+> > On Thu, Aug 02, 2018 at 02:33:12AM +0000, Tian, Kevin wrote:
+> > > Date: Thu, 2 Aug 2018 02:33:12 +0000
+> > > > From: Jerome Glisse
+> > > > On Wed, Aug 01, 2018 at 06:22:14PM +0800, Kenneth Lee wrote:
+> > > > > From: Kenneth Lee <liguozhu@hisilicon.com>
+> > > > >
+> > > > > WarpDrive is an accelerator framework to expose the hardware
+> > > > capabilities
+> > > > > directly to the user space. It makes use of the exist vfio and vfio-mdev
+> > > > > facilities. So the user application can send request and DMA to the
+> > > > > hardware without interaction with the kernel. This remove the latency
+> > > > > of syscall and context switch.
+> > > > >
+> > > > > The patchset contains documents for the detail. Please refer to it for
+> > > > more
+> > > > > information.
+> > > > >
+> > > > > This patchset is intended to be used with Jean Philippe Brucker's SVA
+> > > > > patch [1] (Which is also in RFC stage). But it is not mandatory. This
+> > > > > patchset is tested in the latest mainline kernel without the SVA patches.
+> > > > > So it support only one process for each accelerator.
+> > > > >
+> > > > > With SVA support, WarpDrive can support multi-process in the same
+> > > > > accelerator device.  We tested it in our SoC integrated Accelerator (board
+> > > > > ID: D06, Chip ID: HIP08). A reference work tree can be found here: [2].
+> > > > 
+> > > > I have not fully inspected things nor do i know enough about
+> > > > this Hisilicon ZIP accelerator to ascertain, but from glimpsing
+> > > > at the code it seems that it is unsafe to use even with SVA due
+> > > > to the doorbell. There is a comment talking about safetyness
+> > > > in patch 7.
+> > > > 
+> > > > Exposing thing to userspace is always enticing, but if it is
+> > > > a security risk then it should clearly say so and maybe a
+> > > > kernel boot flag should be necessary to allow such device to
+> > > > be use.
+> > > > 
+> > 
+> > But doorbell is just a notification. Except for DOS (to make hardware busy) it
+> > cannot actually take or change anything from the kernel space. And the DOS
+> > problem can be always taken as the problem that a group of processes share the
+> > same kernel entity.
+> > 
+> > In the coming HIP09 hardware, the doorbell will come with a random number so
+> > only the process who allocated the queue can knock it correctly.
+> 
+> When doorbell is ring the hardware start fetching commands from
+> the queue and execute them ? If so than a rogue process B might
+> ring the doorbell of process A which would starts execution of
+> random commands (ie whatever random memory value there is left
+> inside the command buffer memory, could be old commands i guess).
+> 
+> If this is not how this doorbell works then, yes it can only do
+> a denial of service i guess. Issue i have with doorbell is that
+> i have seen 10 differents implementations in 10 differents hw
+> and each are different as to what ringing or value written to the
+> doorbell does. It is painfull to track what is what for each hw.
+> 
 
-size_t is also equivalent to unsigned long and it will not hold value of (1 << 35) for 32 bit system.
-So we can do two things.
+In our implementation, doorbell is simply a notification, just like an interrupt
+to the accelerator. The command is all about what's in the queue.
 
-(1) reduce FILE SIZE to (1 << 30), so that UL (size_t) can hold this value.
-It will not show any perofrmance boost with ZEROCOPY. (checked on x86_64)
+I agree that there is no simple and standard way to track the shared IO space.
+But I think we have to trust the driver in some way. If the driver is malicious,
+even a simple ioctl can become an attack.
 
-(2) use unsigned long long to work with both 32 and 64 bit system.
-It will show performance boost with ZEROCOPY.(checked on x86_64)
+> 
+> > > > My more general question is do we want to grow VFIO to become
+> > > > a more generic device driver API. This patchset adds a command
+> > > > queue concept to it (i don't think it exist today but i have
+> > > > not follow VFIO closely).
+> > > > 
+> > 
+> > The thing is, VFIO is the only place to support DMA from user land. If we don't
+> > put it here, we have to create another similar facility to support the same.
+> 
+> No it is not, network device, GPU, block device, ... they all do
+> support DMA. The point i am trying to make here is that even in
 
-What do you think?
+Sorry, wait a minute, are we talking the same thing? I meant "DMA from user
+land", not "DMA from kernel driver". To do that we have to manipulate the
+IOMMU(Unit). I think it can only be done by default_domain or vfio domain. Or
+the user space have to directly access the IOMMU.
 
-Thanks and regards,
-Maninder Singh
+> your mechanisms the userspace must have a specific userspace
+> drivers for each hardware and thus there are virtually no
+> differences between having this userspace driver open a device
+> file in vfio or somewhere else in the device filesystem. This is
+> just a different path.
+> 
+
+The basic problem WarpDrive want to solve it to avoid syscall. This is important
+to accelerators. We have some data here:
+https://www.slideshare.net/linaroorg/progress-and-demonstration-of-wrapdrive-a-accelerator-framework-sfo17317
+
+(see page 3)
+
+The performance is different on using kernel and user drivers.
+
+And we also believe the hardware interface can become standard after sometime.
+Some companies have started to do this (such ARM's Revere). But before that, we
+should have a software channel for it.
+
+> So this is why i do not see any benefit to having all drivers with
+> SVM (can we please use SVM and not SVA as SVM is what have been use
+> in more places so far).
+> 
+
+Personally, we don't care what name to be used. I used SVM when I start this
+work. And then Jean said SVM had been used by AMD as Secure Virtual Machine. So
+he called it SVA. And now... who should I follow? :)
+
+> 
+> Cheers,
+> Jérôme
+
+-- 
+			-Kenneth(Hisilicon)
+
+================================================================================
+本邮件及其附件含有华为公司的保密信息，仅限于发送给上面地址中列出的个人或群组。禁
+止任何其他人以任何形式使用（包括但不限于全部或部分地泄露、复制、或散发）本邮件中
+的信息。如果您错收了本邮件，请您立即电话或邮件通知发件人并删除本邮件！
+This e-mail and its attachments contain confidential information from HUAWEI,
+which is intended only for the person or entity whose address is listed above.
+Any use of the 
+information contained herein in any way (including, but not limited to, total or
+partial disclosure, reproduction, or dissemination) by persons other than the
+intended 
+recipient(s) is prohibited. If you receive this e-mail in error, please notify
+the sender by phone or email immediately and delete it!
+
