@@ -4,39 +4,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F268CC43142
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 00:19:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE27EC43142
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 00:19:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A49CA21708
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 00:19:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9BA2921708
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 00:19:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=onstation.org header.i=@onstation.org header.b="H0GgrTw3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A49CA21708
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=onstation.org header.i=@onstation.org header.b="TD0NMzWG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BA2921708
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=onstation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732499AbeHCCMx (ORCPT
+        id S1732361AbeHCCMm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 22:12:53 -0400
+        Thu, 2 Aug 2018 22:12:42 -0400
 Received: from onstation.org ([52.200.56.107]:33992 "EHLO onstation.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732384AbeHCCMn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 22:12:43 -0400
+        id S1732186AbeHCCMl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 22:12:41 -0400
 Received: from xilitla.hsd1.wv.comcast.net (c-98-236-77-125.hsd1.wv.comcast.net [98.236.77.125])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
         (Authenticated sender: masneyb)
-        by onstation.org (Postfix) with ESMTPSA id A6EEF2A4A;
-        Fri,  3 Aug 2018 00:19:07 +0000 (UTC)
+        by onstation.org (Postfix) with ESMTPSA id 78D0B2A21;
+        Fri,  3 Aug 2018 00:19:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=onstation.org;
-        s=default; t=1533255548;
-        bh=xJJpo/Hp9rxSc8OyVWo1VZsGDRR9lIvTjK3TL8P9sCk=;
+        s=default; t=1533255546;
+        bh=mHEtt3mdtf9jFoWW7rav+wlHLtQl5QrX40REfm5zuDw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=H0GgrTw36eWt+R9nekdsBjfDTDU9v2dXxXGqWbf0B1S7tBvzMLOmJGty9o1W0M31V
-         QkbM1LcntgNvZoWO1AtvgRHEULU+gvrhWGXL5zXINoICl2CmRFwJ015mTIYia0fq8C
-         cPotrX62tR7094GF3InuC94eqKAcHi4TbI3A2E4A=
+        b=TD0NMzWGtP0690lgwA91uNtVIL0cDmZNkEbRpioTZaglphucEVMGWbuHsHDlGSxkT
+         tsIo3o1J4MqB8e4E5hBpd9u4fsClj2S53y53ePLR7bg+1x9P47ocH0XKaJnlsslHUq
+         fsE5jC3GsNJfyWpxRM36NXY50DWQOI68YW6mUrWc=
 From:   Brian Masney <masneyb@onstation.org>
 To:     jic23@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
         andy.gross@linaro.org, david.brown@linaro.org,
@@ -46,9 +46,9 @@ To:     jic23@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
 Cc:     jonathan@marek.ca, jmaneyrol@invensense.com, knaack.h@gmx.de,
         lars@metafoo.de, pmeerw@pmeerw.net, mkelly@xevo.com,
         fischerdouglasc@gmail.com, bshah@kde.org, ctatlor97@gmail.com
-Subject: [PATCH v3 8/9] dt-bindings: iio: tsl2772: add binding for avago,apds9930
-Date:   Thu,  2 Aug 2018 20:18:59 -0400
-Message-Id: <20180803001900.25371-9-masneyb@onstation.org>
+Subject: [PATCH v3 5/9] iio: tsl2772: add support for regulator framework
+Date:   Thu,  2 Aug 2018 20:18:56 -0400
+Message-Id: <20180803001900.25371-6-masneyb@onstation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180803001900.25371-1-masneyb@onstation.org>
 References: <20180803001900.25371-1-masneyb@onstation.org>
@@ -57,25 +57,163 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds avago,apds9930 to the tsl2772 bindings.
+This patch adds support for the regulator framework to the tsl2772
+driver. Driver was tested using a LG Nexus 5 (hammerhead) phone with
+the two regulators and on a Raspberry Pi 2 without any regulators
+controlling the power to the sensor.
 
 Signed-off-by: Brian Masney <masneyb@onstation.org>
 ---
- Documentation/devicetree/bindings/iio/light/tsl2772.txt | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/iio/light/tsl2772.c | 95 ++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 94 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/iio/light/tsl2772.txt b/Documentation/devicetree/bindings/iio/light/tsl2772.txt
-index 4e7d98627cbf..1c5e6f17a1df 100644
---- a/Documentation/devicetree/bindings/iio/light/tsl2772.txt
-+++ b/Documentation/devicetree/bindings/iio/light/tsl2772.txt
-@@ -13,6 +13,7 @@ Required properties:
- 		"amstaos,tmd2672"
- 		"amstaos,tsl2772"
- 		"amstaos,tmd2772"
-+		"avago,apds9930"
-   - reg: the I2C address of the device
+diff --git a/drivers/iio/light/tsl2772.c b/drivers/iio/light/tsl2772.c
+index ae00edf0d87e..4a11bf77a4d0 100644
+--- a/drivers/iio/light/tsl2772.c
++++ b/drivers/iio/light/tsl2772.c
+@@ -20,6 +20,7 @@
+ #include <linux/iio/iio.h>
+ #include <linux/iio/sysfs.h>
+ #include <linux/platform_data/tsl2772.h>
++#include <linux/regulator/consumer.h>
  
- Optional properties:
+ /* Cal defs */
+ #define PROX_STAT_CAL			0
+@@ -109,6 +110,9 @@
+ 
+ #define TSL2772_MAX_PROX_LEDS		2
+ 
++#define TSL2772_BOOT_MIN_SLEEP_TIME	10000
++#define TSL2772_BOOT_MAX_SLEEP_TIME	28000
++
+ /* Device family members */
+ enum {
+ 	tsl2571,
+@@ -156,6 +160,8 @@ struct tsl2772_chip {
+ 	struct mutex prox_mutex;
+ 	struct mutex als_mutex;
+ 	struct i2c_client *client;
++	struct regulator *vdd_supply;
++	struct regulator *vddio_supply;
+ 	u16 prox_data;
+ 	struct tsl2772_als_info als_cur_info;
+ 	struct tsl2772_settings settings;
+@@ -676,6 +682,52 @@ static int tsl2772_als_calibrate(struct iio_dev *indio_dev)
+ 	return ret;
+ }
+ 
++static void tsl2772_disable_regulators_action(void *_data)
++{
++	struct tsl2772_chip *chip = _data;
++
++	regulator_disable(chip->vdd_supply);
++	regulator_disable(chip->vddio_supply);
++}
++
++static int tsl2772_enable_regulator(struct tsl2772_chip *chip,
++				    struct regulator *regulator)
++{
++	int ret;
++
++	ret = regulator_enable(regulator);
++	if (ret < 0) {
++		dev_err(&chip->client->dev, "Failed to enable regulator: %d\n",
++			ret);
++		return ret;
++	}
++
++	return 0;
++}
++
++static struct regulator *tsl2772_get_regulator(struct tsl2772_chip *chip,
++					       char *name)
++{
++	struct regulator *regulator;
++	int ret;
++
++	regulator = devm_regulator_get(&chip->client->dev, name);
++	if (IS_ERR(regulator)) {
++		if (PTR_ERR(regulator) != -EPROBE_DEFER)
++			dev_err(&chip->client->dev,
++				"Failed to get %s regulator %d\n",
++				name, (int)PTR_ERR(regulator));
++
++		return regulator;
++	}
++
++	ret = tsl2772_enable_regulator(chip, regulator);
++	if (ret < 0)
++		return ERR_PTR(ret);
++
++	return regulator;
++}
++
+ static int tsl2772_chip_on(struct iio_dev *indio_dev)
+ {
+ 	struct tsl2772_chip *chip = iio_priv(indio_dev);
+@@ -1733,6 +1785,27 @@ static int tsl2772_probe(struct i2c_client *clientp,
+ 	chip->client = clientp;
+ 	i2c_set_clientdata(clientp, indio_dev);
+ 
++	chip->vddio_supply = tsl2772_get_regulator(chip, "vddio");
++	if (IS_ERR(chip->vddio_supply))
++		return PTR_ERR(chip->vddio_supply);
++
++	chip->vdd_supply = tsl2772_get_regulator(chip, "vdd");
++	if (IS_ERR(chip->vdd_supply)) {
++		regulator_disable(chip->vddio_supply);
++		return PTR_ERR(chip->vdd_supply);
++	}
++
++	ret = devm_add_action(&clientp->dev, tsl2772_disable_regulators_action,
++			      chip);
++	if (ret < 0) {
++		tsl2772_disable_regulators_action(chip);
++		dev_err(&clientp->dev, "Failed to setup regulator cleanup action %d\n",
++			ret);
++		return ret;
++	}
++
++	usleep_range(TSL2772_BOOT_MIN_SLEEP_TIME, TSL2772_BOOT_MAX_SLEEP_TIME);
++
+ 	ret = i2c_smbus_read_byte_data(chip->client,
+ 				       TSL2772_CMD_REG | TSL2772_CHIPID);
+ 	if (ret < 0)
+@@ -1806,13 +1879,33 @@ static int tsl2772_probe(struct i2c_client *clientp,
+ static int tsl2772_suspend(struct device *dev)
+ {
+ 	struct iio_dev *indio_dev = dev_get_drvdata(dev);
++	struct tsl2772_chip *chip = iio_priv(indio_dev);
++	int ret;
+ 
+-	return tsl2772_chip_off(indio_dev);
++	ret = tsl2772_chip_off(indio_dev);
++	regulator_disable(chip->vdd_supply);
++	regulator_disable(chip->vddio_supply);
++
++	return ret;
+ }
+ 
+ static int tsl2772_resume(struct device *dev)
+ {
+ 	struct iio_dev *indio_dev = dev_get_drvdata(dev);
++	struct tsl2772_chip *chip = iio_priv(indio_dev);
++	int ret;
++
++	ret = tsl2772_enable_regulator(chip, chip->vddio_supply);
++	if (ret < 0)
++		return ret;
++
++	ret = tsl2772_enable_regulator(chip, chip->vdd_supply);
++	if (ret < 0) {
++		regulator_disable(chip->vddio_supply);
++		return ret;
++	}
++
++	usleep_range(TSL2772_BOOT_MIN_SLEEP_TIME, TSL2772_BOOT_MAX_SLEEP_TIME);
+ 
+ 	return tsl2772_chip_on(indio_dev);
+ }
 -- 
 2.17.1
 
