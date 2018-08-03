@@ -2,112 +2,246 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6577C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 15:09:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A522C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 15:13:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A3AE2176D
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 15:09:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A3AE2176D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 9F8842174D
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 15:13:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="IOyJ8qHh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F8842174D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732544AbeHCRGf (ORCPT
+        id S1732403AbeHCRKP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 13:06:35 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:32878 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726115AbeHCRGf (ORCPT
+        Fri, 3 Aug 2018 13:10:15 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:37107 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732219AbeHCRKP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 13:06:35 -0400
-Received: from localhost (ip-213-127-46-170.ip.prioritytelecom.net [213.127.46.170])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 771C13EE;
-        Fri,  3 Aug 2018 15:09:49 +0000 (UTC)
-Date:   Fri, 3 Aug 2018 17:09:45 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Andrey Konovalov <andreyknvl@google.com>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        linux-doc@vger.kernel.org, Will Deacon <will.deacon@arm.com>,
-        Kostya Serebryany <kcc@google.com>,
-        linux-kselftest@vger.kernel.org,
-        Chintan Pandya <cpandya@codeaurora.org>,
-        Shuah Khan <shuah@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        linux-arch@vger.kernel.org, Jacob Bramley <Jacob.Bramley@arm.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Evgeniy Stepanov <eugenis@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: Re: [PATCH v4 0/7] arm64: untag user pointers passed to the kernel
-Message-ID: <20180803150945.GC9297@kroah.com>
-References: <cover.1529507994.git.andreyknvl@google.com>
- <CAAeHK+zqtyGzd_CZ7qKZKU-uZjZ1Pkmod5h8zzbN0xCV26nSfg@mail.gmail.com>
- <20180626172900.ufclp2pfrhwkxjco@armageddon.cambridge.arm.com>
- <CAAeHK+yqWKTdTG+ymZ2-5XKiDANV+fmUjnQkRy-5tpgphuLJRA@mail.gmail.com>
- <CAAeHK+wJbbCZd+-X=9oeJgsqQJiq8h+Aagz3SQMPaAzCD+pvFw@mail.gmail.com>
- <CAAeHK+yWF05XoU+0iuJoXAL3cWgdtxbeLoBz169yP12W4LkcQw@mail.gmail.com>
- <20180801174256.5mbyf33eszml4nmu@armageddon.cambridge.arm.com>
- <CAAeHK+zb7vcehuX9=oxLUJVJr1ZcgmRTODQz7wsPy+rJb=3kbQ@mail.gmail.com>
- <CAAeHK+xTxPhfbVTNxcbsx7VdwQ21Bt-vo2ZU1tEM1_JX7uKnng@mail.gmail.com>
+        Fri, 3 Aug 2018 13:10:15 -0400
+Received: by mail-oi0-f67.google.com with SMTP id j205-v6so10426642oib.4
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Aug 2018 08:13:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=Mj2+cFTAaz7k1cf7oyPUZcTSKYrY0YS8QFtx86Ti4u0=;
+        b=IOyJ8qHhBqVjKGTJoPcla/aZNohs/o8wKbHZBHx5GG6r7g6s2URzckazeuYAtN2bNT
+         a6k/WegrkqZ2yrh69SItTu6DIDeB3KMdCzvvdw8ZZ4QBFk7Py4uuXzIYQSkwgbBNEM3c
+         DhIIFe5qY1kpPupoUNE+zfOIXvaL6UNLUVnsE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=Mj2+cFTAaz7k1cf7oyPUZcTSKYrY0YS8QFtx86Ti4u0=;
+        b=pNu9NNziSRDQekU52R5fWdtQPQvKhj2T/s8dkGUJDPoH5IVIioLYYXsVnn7lsaR5fa
+         MjdMC96dV9IYLWwA0LnlF9C+iJp1aU/EgwKcSuGGNPuJbi933M5wRJyLXXWQQMz6JX5a
+         v3Fgm7V+hyKYeh5Xf8KRuuR02xHPjH7onFBwhDL/fTiiNRvE+UMJHBNfq1bwJ4372duK
+         ZeK60nIV+9lJKQBD+qiLVG5diQi3+MYJLjdPPjW4eYtUBWPYB0aNEhA5RXx6Flfjn/da
+         60sePQ9PmiYu8bjBhjeUCIXtmTgK0Dj8F9XRkLwVGQK+L8xC8rxP3G101gzR6Rn33s2e
+         6n+w==
+X-Gm-Message-State: AOUpUlHn98nodQZqM7wfuQeRDwsQoXDMmhNkqdRkSPEkE2/AOLtyZulw
+        CWqmrP3OrXSE0j007Pa+5TPRkwdWl/B4elD8hrg8wg==
+X-Google-Smtp-Source: AAOMgpfaWPacvf9x61mAevGue8dVGn+tIjhMczlawyRhUYSjHBTWotlS3J21pV4QnsYhUp4Vm5kQZNu6m6KyM+P2Ouw=
+X-Received: by 2002:aca:afcc:: with SMTP id y195-v6mr3808647oie.322.1533309209620;
+ Fri, 03 Aug 2018 08:13:29 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAAeHK+xTxPhfbVTNxcbsx7VdwQ21Bt-vo2ZU1tEM1_JX7uKnng@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: by 2002:a9d:6043:0:0:0:0:0 with HTTP; Fri, 3 Aug 2018 08:13:28 -0700 (PDT)
+In-Reply-To: <7a67a1f9-9cd1-103e-cfa1-e032f346e164@intel.com>
+References: <1532931343-9499-1-git-send-email-srinath.mannam@broadcom.com>
+ <1532931343-9499-3-git-send-email-srinath.mannam@broadcom.com> <7a67a1f9-9cd1-103e-cfa1-e032f346e164@intel.com>
+From:   Srinath Mannam <srinath.mannam@broadcom.com>
+Date:   Fri, 3 Aug 2018 20:43:28 +0530
+Message-ID: <CABe79T7GAQybN_SCic1cQ1554vbZqpHysExbDbY+nffRcuNZ8g@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] mmc: host: iproc: Add ACPI support to IPROC SDHCI
+To:     Adrian Hunter <adrian.hunter@intel.com>
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>, Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Vikram Prakash <vikram.prakash@broadcom.com>,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        linux-mmc@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 03, 2018 at 04:59:18PM +0200, Andrey Konovalov wrote:
-> On Thu, Aug 2, 2018 at 5:00 PM, Andrey Konovalov <andreyknvl@google.com> wrote:
-> > On Wed, Aug 1, 2018 at 7:42 PM, Catalin Marinas <catalin.marinas@arm.com> wrote:
-> >> On Mon, Jul 16, 2018 at 01:25:59PM +0200, Andrey Konovalov wrote:
-> >>> On Thu, Jun 28, 2018 at 9:30 PM, Andrey Konovalov <andreyknvl@google.com> wrote:
-> >>> So the checker reports ~100 different places where a __user pointer
-> >>> being casted. I've looked through them and found 3 places where we
-> >>> need to add untagging. Source code lines below come from 4.18-rc2+
-> >>> (6f0d349d).
-> >> [...]
-> >>> I'll add the 3 patches with fixes to v5 of this patchset.
-> >>
-> >> Thanks for investigating. You can fix those three places in your code
-> >
-> > OK, will do.
-> >
-> >> but I was rather looking for a way to check such casting in the future
-> >> for newly added code. While for the khwasan we can assume it's a debug
-> >> option, the tagged user pointers are ABI and we need to keep it stable.
-> >>
-> >> We could we actually add some macros for explicit conversion between
-> >> __user ptr and long and silence the warning there (I guess this would
-> >> work better for sparse). We can then detect new ptr to long casts as
-> >> they appear. I just hope that's not too intrusive.
-> >>
-> >> (I haven't tried the sparse patch yet, hopefully sometime this week)
-> >
-> > Haven't look at that sparse patch yet myself, but sounds doable.
-> > Should these macros go into this patchset or should they go
-> > separately?
-> 
-> Started looking at this. When I run sparse with default checks enabled
-> (make C=1) I get countless warnings. Does anybody actually use it?
+Hi Adrian Hunter,
 
-Try using a more up-to-date version of sparse.  Odds are you are using
-an old one, there is a newer version in a different branch on kernel.org
-somewhere...
+Thank you very much for your review and feedback.
 
-greg k-h
+I will do the change and update next patch set.
+
+Regards,
+Srinath.
+
+On Fri, Aug 3, 2018 at 6:47 PM, Adrian Hunter <adrian.hunter@intel.com> wrote:
+> On 30/07/18 09:15, Srinath Mannam wrote:
+>> Add ACPI support to all IPROC SDHCI varients
+>>
+>> Signed-off-by: Srinath Mannam <srinath.mannam@broadcom.com>
+>> Reviewed-by: Ray Jui <ray.jui@broadcom.com>
+>> Reviewed-by: Scott Branden <scott.branden@broadcom.com>
+>> Reviewed-by: Vladimir Olovyannikov <vladimir.olovyannikov@broadcom.com>
+>
+> One minor comment below, otherwise:
+>
+> Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+>
+>> ---
+>>  drivers/mmc/host/Kconfig       |  1 +
+>>  drivers/mmc/host/sdhci-iproc.c | 63 +++++++++++++++++++++++++++++-------------
+>>  2 files changed, 45 insertions(+), 19 deletions(-)
+>>
+>> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+>> index 0581c19..bc6702e 100644
+>> --- a/drivers/mmc/host/Kconfig
+>> +++ b/drivers/mmc/host/Kconfig
+>> @@ -334,6 +334,7 @@ config MMC_SDHCI_IPROC
+>>       tristate "SDHCI support for the BCM2835 & iProc SD/MMC Controller"
+>>       depends on ARCH_BCM2835 || ARCH_BCM_IPROC || COMPILE_TEST
+>>       depends on MMC_SDHCI_PLTFM
+>> +     depends on OF || ACPI
+>>       default ARCH_BCM_IPROC
+>>       select MMC_SDHCI_IO_ACCESSORS
+>>       help
+>> diff --git a/drivers/mmc/host/sdhci-iproc.c b/drivers/mmc/host/sdhci-iproc.c
+>> index d0e83db..abf5269 100644
+>> --- a/drivers/mmc/host/sdhci-iproc.c
+>> +++ b/drivers/mmc/host/sdhci-iproc.c
+>> @@ -15,6 +15,7 @@
+>>   * iProc SDHCI platform driver
+>>   */
+>>
+>> +#include <linux/acpi.h>
+>>  #include <linux/delay.h>
+>>  #include <linux/module.h>
+>>  #include <linux/mmc/host.h>
+>> @@ -162,9 +163,19 @@ static void sdhci_iproc_writeb(struct sdhci_host *host, u8 val, int reg)
+>>       sdhci_iproc_writel(host, newval, reg & ~3);
+>>  }
+>>
+>> +static unsigned int sdhci_iproc_get_max_clock(struct sdhci_host *host)
+>> +{
+>> +     struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+>> +
+>> +     if (pltfm_host->clk)
+>> +             return sdhci_pltfm_clk_get_max_clock(host);
+>> +     else
+>> +             return pltfm_host->clock;
+>> +}
+>> +
+>>  static const struct sdhci_ops sdhci_iproc_ops = {
+>>       .set_clock = sdhci_set_clock,
+>> -     .get_max_clock = sdhci_pltfm_clk_get_max_clock,
+>> +     .get_max_clock = sdhci_iproc_get_max_clock,
+>>       .set_bus_width = sdhci_set_bus_width,
+>>       .reset = sdhci_reset,
+>>       .set_uhs_signaling = sdhci_set_uhs_signaling,
+>> @@ -178,7 +189,7 @@ static const struct sdhci_ops sdhci_iproc_32only_ops = {
+>>       .write_w = sdhci_iproc_writew,
+>>       .write_b = sdhci_iproc_writeb,
+>>       .set_clock = sdhci_set_clock,
+>> -     .get_max_clock = sdhci_pltfm_clk_get_max_clock,
+>> +     .get_max_clock = sdhci_iproc_get_max_clock,
+>>       .set_bus_width = sdhci_set_bus_width,
+>>       .reset = sdhci_reset,
+>>       .set_uhs_signaling = sdhci_set_uhs_signaling,
+>> @@ -256,19 +267,29 @@ static const struct of_device_id sdhci_iproc_of_match[] = {
+>>  };
+>>  MODULE_DEVICE_TABLE(of, sdhci_iproc_of_match);
+>>
+>> +static const struct acpi_device_id sdhci_iproc_acpi_ids[] = {
+>> +     { .id = "BRCM5871", .driver_data = (kernel_ulong_t)&iproc_cygnus_data },
+>> +     { .id = "BRCM5872", .driver_data = (kernel_ulong_t)&iproc_data },
+>> +     { /* sentinel */ }
+>> +};
+>> +MODULE_DEVICE_TABLE(acpi, sdhci_iproc_acpi_ids);
+>> +
+>>  static int sdhci_iproc_probe(struct platform_device *pdev)
+>>  {
+>> -     const struct of_device_id *match;
+>> -     const struct sdhci_iproc_data *iproc_data;
+>> +     struct device *dev = &pdev->dev;
+>> +     const struct sdhci_iproc_data *iproc_data = NULL;
+>>       struct sdhci_host *host;
+>>       struct sdhci_iproc_host *iproc_host;
+>>       struct sdhci_pltfm_host *pltfm_host;
+>>       int ret;
+>>
+>> -     match = of_match_device(sdhci_iproc_of_match, &pdev->dev);
+>> -     if (!match)
+>> -             return -EINVAL;
+>> -     iproc_data = match->data;
+>> +     if (dev->of_node)
+>> +             iproc_data = of_device_get_match_data(dev);
+>> +     else if (has_acpi_companion(dev))
+>> +             iproc_data = acpi_device_get_match_data(dev);
+>
+> Can you use device_get_match_data() here
+>
+>> +
+>> +     if (!iproc_data)
+>> +             return -ENODEV;
+>>
+>>       host = sdhci_pltfm_init(pdev, iproc_data->pdata, sizeof(*iproc_host));
+>>       if (IS_ERR(host))
+>> @@ -280,19 +301,21 @@ static int sdhci_iproc_probe(struct platform_device *pdev)
+>>       iproc_host->data = iproc_data;
+>>
+>>       mmc_of_parse(host->mmc);
+>> -     sdhci_get_of_property(pdev);
+>> +     sdhci_get_property(pdev);
+>>
+>>       host->mmc->caps |= iproc_host->data->mmc_caps;
+>>
+>> -     pltfm_host->clk = devm_clk_get(&pdev->dev, NULL);
+>> -     if (IS_ERR(pltfm_host->clk)) {
+>> -             ret = PTR_ERR(pltfm_host->clk);
+>> -             goto err;
+>> -     }
+>> -     ret = clk_prepare_enable(pltfm_host->clk);
+>> -     if (ret) {
+>> -             dev_err(&pdev->dev, "failed to enable host clk\n");
+>> -             goto err;
+>> +     if (dev->of_node) {
+>> +             pltfm_host->clk = devm_clk_get(dev, NULL);
+>> +             if (IS_ERR(pltfm_host->clk)) {
+>> +                     ret = PTR_ERR(pltfm_host->clk);
+>> +                     goto err;
+>> +             }
+>> +             ret = clk_prepare_enable(pltfm_host->clk);
+>> +             if (ret) {
+>> +                     dev_err(dev, "failed to enable host clk\n");
+>> +                     goto err;
+>> +             }
+>>       }
+>>
+>>       if (iproc_host->data->pdata->quirks & SDHCI_QUIRK_MISSING_CAPS) {
+>> @@ -307,7 +330,8 @@ static int sdhci_iproc_probe(struct platform_device *pdev)
+>>       return 0;
+>>
+>>  err_clk:
+>> -     clk_disable_unprepare(pltfm_host->clk);
+>> +     if (dev->of_node)
+>> +             clk_disable_unprepare(pltfm_host->clk);
+>>  err:
+>>       sdhci_pltfm_free(pdev);
+>>       return ret;
+>> @@ -317,6 +341,7 @@ static struct platform_driver sdhci_iproc_driver = {
+>>       .driver = {
+>>               .name = "sdhci-iproc",
+>>               .of_match_table = sdhci_iproc_of_match,
+>> +             .acpi_match_table = ACPI_PTR(sdhci_iproc_acpi_ids),
+>>               .pm = &sdhci_pltfm_pmops,
+>>       },
+>>       .probe = sdhci_iproc_probe,
+>>
+>
