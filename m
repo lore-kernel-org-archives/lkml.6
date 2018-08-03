@@ -2,220 +2,202 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C231DC28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 10:55:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B03C0C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 11:00:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6488A21748
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 10:55:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6488A21748
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 37BED2173F
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 11:00:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=virtuozzo.com header.i=@virtuozzo.com header.b="B0V4dsnA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37BED2173F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=virtuozzo.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727044AbeHCMuw (ORCPT
+        id S1727127AbeHCM4N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 08:50:52 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:60581 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726175AbeHCMuw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 08:50:52 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w73Astlq3859138
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Fri, 3 Aug 2018 03:54:55 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w73AstKn3859135;
-        Fri, 3 Aug 2018 03:54:55 -0700
-Date:   Fri, 3 Aug 2018 03:54:55 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Sai Praneeth <tipbot@zytor.com>
-Message-ID: <tip-706d51681d636a0c4a5ef53395ec3b803e45ed4d@git.kernel.org>
-Cc:     mingo@kernel.org, hpa@zytor.com, dave.hansen@intel.com,
-        sai.praneeth.prakhya@intel.com, linux-kernel@vger.kernel.org,
-        dwmw@amazon.co.uk, tim.c.chen@intel.com, ravi.v.shankar@intel.com,
-        tglx@linutronix.de
-Reply-To: mingo@kernel.org, hpa@zytor.com, dave.hansen@intel.com,
-          sai.praneeth.prakhya@intel.com, linux-kernel@vger.kernel.org,
-          tim.c.chen@intel.com, dwmw@amazon.co.uk, tglx@linutronix.de,
-          ravi.v.shankar@intel.com
-In-Reply-To: <1533148945-24095-1-git-send-email-sai.praneeth.prakhya@intel.com>
-References: <1533148945-24095-1-git-send-email-sai.praneeth.prakhya@intel.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] x86/speculation: Support Enhanced IBRS on future CPUs
-Git-Commit-ID: 706d51681d636a0c4a5ef53395ec3b803e45ed4d
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Fri, 3 Aug 2018 08:56:13 -0400
+Received: from mail-eopbgr30091.outbound.protection.outlook.com ([40.107.3.91]:58181
+        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726523AbeHCM4N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 08:56:13 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=virtuozzo.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Zy1h2BuYgt/PTAPf/bxCct+cVIcfCtKYsUVbORKAA34=;
+ b=B0V4dsnADSjm6Ukn9tPKJYwu1UM52FQs5Vs1zaG8fktBufwM0mrCRG5e5PnoyhlUtScMTtJ8IVTueucYXqUDHZ13JVQGeKMllxvE13Q1fkqdwP0oSJx5NJOVppldGGGz96Tyw3pMpdyjAXZiYIZRC+CblArNuzsOISOe10qvDYM=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=ktkhai@virtuozzo.com; 
+Received: from [172.16.25.169] (185.231.240.5) by
+ AM5PR0801MB2017.eurprd08.prod.outlook.com (2603:10a6:203:4b::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1017.15; Fri, 3 Aug
+ 2018 10:59:37 +0000
+Subject: Re: [PATCH] mm: Move check for SHRINKER_NUMA_AWARE to
+ do_shrink_slab()
+To:     David Howells <dhowells@redhat.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, vdavydov.dev@gmail.com,
+        mhocko@suse.com, aryabinin@virtuozzo.com, ying.huang@intel.com,
+        penguin-kernel@I-love.SAKURA.ne.jp, willy@infradead.org,
+        shakeelb@google.com, jbacik@fb.com, linux-mm@kvack.org
+References: <47c34fad-5d11-53b0-4386-61be890163c5@virtuozzo.com>
+ <153320759911.18959.8842396230157677671.stgit@localhost.localdomain>
+ <20180802134723.ecdd540c7c9338f98ee1a2c6@linux-foundation.org>
+ <8347.1533292272@warthog.procyon.org.uk>
+From:   Kirill Tkhai <ktkhai@virtuozzo.com>
+Message-ID: <5250d5c0-0d26-260e-dc39-227b8e355a1b@virtuozzo.com>
+Date:   Fri, 3 Aug 2018 13:59:32 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+In-Reply-To: <8347.1533292272@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [185.231.240.5]
+X-ClientProxiedBy: AM5PR0701CA0012.eurprd07.prod.outlook.com
+ (2603:10a6:203:51::22) To AM5PR0801MB2017.eurprd08.prod.outlook.com
+ (2603:10a6:203:4b::20)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: a9184467-87b8-4676-10a3-08d5f93034e2
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:AM5PR0801MB2017;
+X-Microsoft-Exchange-Diagnostics: 1;AM5PR0801MB2017;3:pbmks2pehYeZtvPg4URmCUi3PZRVysUrQvU9g1EgdxUOHwE4qpkJ+9Oz0RjIz2YLq3zE0lNF93LTurrozbffpzXcY/lJD1IBsrNkx5hXtJkNEYsdTmy5LLttoJ4lEC8bayb2aYLyiKSdoB2fu8YtkzwWXBWN0vUdTXnEuvL3KKkXrJongKtn8nWejSO/PdEUmKkNiqGcnrBf1bgH+rQvrA1HBzJ0+3ZWpduDUcR4XpHeLOhTlxxzh3zXftmvKmm5;25:crQeERiomv0A+lFqcuN2Tejgt0m9Hsm4L4uZyMHy4oQfK5brBLU1RYZ1HlMNTzdx6MCTYKYD9zxFFLwGCHK/2DVlQ2LH29qPRhTqCvql8H+23XWLBeTSs/qf9W1fxApbmsl1sgyTvn0kshAx/6kQoDiBkdn0PsySUA9PWSBBf2gz/6n6xzgIiSXXXWdPhKmlNifd0+4nH9JJ9/O1gVmPrcVF6bBap92RDD0CzAxRn9pQWqDgRyrZyOl/8pyYAps3RAKpzZD1NBbAYAMGl5m06gaA01xBH81FsRg1bFxVoemKd9IcXS4QIh7b4lKW0ecV5qyGLMtgCiava6/QujZVJQ==;31:czsQFNdV1hJeVOqzyLOraF00vBAH6c9oru6FgEpU4EbB9s8D/TNgLKVfDa290cuRWtTZak4Jul2THssgH7YzVn3b1m4K5XWKxf2FmL6iFm3m0lNrgwortL6HJ397fjmUW1aHvWlGBoAUHEoaIgMyzFHkKE/004Gnsy7TFHXaHRZzJZ/Armr2RD5RFvXsUJzC3wDGX8MFCFktepyp16ApoBir/QPJj8FvbYToIxecspI=
+X-MS-TrafficTypeDiagnostic: AM5PR0801MB2017:
+X-Microsoft-Exchange-Diagnostics: 1;AM5PR0801MB2017;20:xmvelihPc4ULYdn0Vh1FZINTNIOulYqMlF+DmbABVb22jMETAMJad7ubaIoLKMelup+SqOKQEWnyvHfXZKPFB6+FIPZ0Vq+9f4KQmovxPRWfXSrXRlHi2ax8KsarsTQ9lAu4tIKoAiaYubO6TDHvXyJNxaILrXqUTTrCl82WR+r2qqnUfKaiVktc/0/D1X62shYRCMg+wF00e3fWUyhKHFnn65RcwrseASnS/NEmQMqITlBm4B4c6O5IIkNHY+9zrLey6hHJHN8FEvVJK9XsbSG0ioN5ffcM80xQ+rk97H1le/DKskRDc0GV8S0xRMnWun51PJt5icg/mGCPbd1RCEHcE6reg0hMqz06434MdCcTcGmlF3ndkCKewDRodIdE+1tDv4jr7Ud5hU8XCYal0c8qCIfzhUJ+arSsOQ8SIOjRcBKdCrk4nRbAdWlilUpTJ5o6gG6Gj+Fq7dDIIIwDUuVjw9z+/5wZT/R9wd89EtG/uSyJJmdPcbtLxU91fJke;4:qjSjyZAHV5NBHOgGlReWINS6IG+yo3YiXCpTAlYpDsu/K4Qb0vLhXO6gWfacQNMfaYXfR7yG/h4/RdYx3fqeYjTj2+aNs4Jres45zZgaM1endfX084SEPyndm9QLkPlLY7hgCQox9MrtoiX3nUNH2O71cFRJmkbh3MORgon5km6FT7lUyWZkJrH69gqlzMSir9PUCyOjF0a6rhDwQoPU65zSPQoMKz2xf/b6eWUje1BTZt7Qg8PaXibfU9/uRRCcTt2zJwjJQvvgYUf2JDKC60t+/nnEIQ62+hC1T2tXSOEivMw166xq8lpjDb37/NZtdXh3J0n7qmNHPPFW+WbkU56U84WvU2iffPQXsSa+SjQ=
+X-Microsoft-Antispam-PRVS: <AM5PR0801MB201729A1F4FE4CB0B09F613DCD230@AM5PR0801MB2017.eurprd08.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(192374486261705)(211171220733660);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3002001)(3231311)(944501410)(52105095)(93006095)(93001095)(10201501046)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123564045)(20161123558120)(20161123560045)(6072148)(201708071742011)(7699016);SRVR:AM5PR0801MB2017;BCL:0;PCL:0;RULEID:;SRVR:AM5PR0801MB2017;
+X-Forefront-PRVS: 0753EA505A
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6049001)(39850400004)(346002)(136003)(366004)(396003)(376002)(199004)(189003)(186003)(305945005)(230700001)(68736007)(2906002)(6116002)(5660300001)(65826007)(93886005)(3846002)(26005)(106356001)(97736004)(77096007)(8936002)(7416002)(36756003)(7736002)(8676002)(16526019)(81166006)(81156014)(64126003)(53546011)(6916009)(386003)(316002)(6666003)(31686004)(446003)(6486002)(65956001)(956004)(4326008)(39060400002)(76176011)(53936002)(31696002)(25786009)(66066001)(86362001)(486006)(47776003)(23676004)(52146003)(52116002)(11346002)(2486003)(2616005)(478600001)(229853002)(50466002)(5024004)(6246003)(65806001)(105586002)(16576012)(14444005)(58126008)(476003);DIR:OUT;SFP:1102;SCL:1;SRVR:AM5PR0801MB2017;H:[172.16.25.169];FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: virtuozzo.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtBTTVQUjA4MDFNQjIwMTc7MjM6RDlINVRtWUMyUnhoem1Fb1pvTzF1cEZK?=
+ =?utf-8?B?RWJCSnNNaVlGUlZsRDRiOU0zbmc0MDNZM0VrYnVMWmpqLzhod2dlOE5NemU0?=
+ =?utf-8?B?Z1hOUWYrU3E4aHhaUmhiSjMrK05RZmlmVS9BNS95a3NUUVUzQVJ5bkg0L1BO?=
+ =?utf-8?B?ZWRRUm5BTThLdVhGMTRkVDVWYmtaYnFrazM5ckp6dGxoamdXNDhYOEU0eEdR?=
+ =?utf-8?B?UHNaVnFDeWxxMEdJVUlJcEpBQ1Q3KzdlT2JkOU1zNmFnanNmQjNFOXdZNy9k?=
+ =?utf-8?B?cGdUZ1RLUTBobGZ3ZC9sLzhyMEt6WDVpYThwZ21MT1Z5cTh1YWtQRzdLTXV0?=
+ =?utf-8?B?K2xJNjFwdGc3MElqZHhKaEpJUjF4VTlPK3ppRGFOTVY3NWw0QmtVb3VLL1JY?=
+ =?utf-8?B?dktUT0wvZDM3YzhxQmdBU3M1c1p3N3NqQnRDdUN3VUhaYXBYbS9jNkJtMFdl?=
+ =?utf-8?B?MjVad1NoaXVYZEQvUE5JeU9XSHVUZjhuWGVjcmFWOG1UMW4yZ3hvWUJQT3c4?=
+ =?utf-8?B?Ym4rRDNjMCsvMC94UVlMZTdKUEc5MDN4bzgxUVl0U3BrUUhmRTNMa2lXZlNq?=
+ =?utf-8?B?bzRJS2srK0EzUTB6SVN1OWp0aXc1aUFzNnd2cU9FQStNd3poVDQwVUs5STN1?=
+ =?utf-8?B?WGh6SGNDbVhGQTUzOGc0dVU0NHFWQlhVS3liazd4WXVyTkozRS9HSzUzdHVp?=
+ =?utf-8?B?b1BScWR5TTNmeVN1L1doV1Q0UGhaYjFuVGxJbEpqekIvUEh5WjRxTDFCK1dJ?=
+ =?utf-8?B?ZVhZQXN4eDhhUjNWY2RFMkJWQnlCSmpFSkNwYUltVGVEOWxRSnB1VElTSklC?=
+ =?utf-8?B?dUFzaDhuV1pQTlF3RzlJMGJTTDR5MnkzMkRUZ2hoVFREOVdMUC9SODMxNlIr?=
+ =?utf-8?B?Um1oWW9wem9Rd1Z0MWlzREUxNEpQc3I5L2RkWFVJUkFJRUI1Zjh1SnB0MHNj?=
+ =?utf-8?B?cWxLWnNMUVYyQWUzaTZlUFRtdHZoVW9iYTEydm1MTUNUbUFuejFwbWRacjlV?=
+ =?utf-8?B?RzRSVVA5Rlovb3RFMnFrZ3dYRVNFTFRJUis5dXRSb3NXT1gyTmNyaDhVM2Y4?=
+ =?utf-8?B?NWlIVGFEK1AvTDZhWjlpRXJ6Y1J5N2IvQWdLSENmVVVMRHhSaGF5QTMybnhW?=
+ =?utf-8?B?Z0k2a0dtMW8xQTFOOThmaUl5dlp5SkJRdlJVK0ZiMU9vcGZySFAvWDM3cVQr?=
+ =?utf-8?B?bUNhUG9jSXpyOTNDRWJvTlU4Z2hqR09UQWlSYVpMNWVlTWlUWXc5UnNXanpy?=
+ =?utf-8?B?eUxGYjAxa25tN204Wm9xQnpmU3k4eTJlQmYvdm8wZURIWSsrMXhiaGpZLzZM?=
+ =?utf-8?B?eGV2YUJhcXg2b0tQTmp3QjhjMXJGdUorZnFuck1JUFdyaGI5bStIeHZSdXEv?=
+ =?utf-8?B?YjVmYVAwdmRTaGszL0pTcGxwT3FPZDdkeE5tM2dqa0FBcnNvUVY3SDU5eEdl?=
+ =?utf-8?B?QnFnTVUycWVZY0FkMXd5Y1Z1dyt6TjRGNGp6NHpwcGd4L2swQTFTUG1TclpK?=
+ =?utf-8?B?bEd1ZG56RDl3WXVIbS9pUkZEVzVqZEFYUVlsdXc2eXdncDRBaGI0UUJJNjF4?=
+ =?utf-8?B?Y3NITXQ1YWtVVkNpQ0psUFdHUWUyNnNpSlhUNW5VSXpLcDJuRHBvZ2Jwdnhz?=
+ =?utf-8?B?eGVyZExrY2s3UkhiYjJZTklSejBOWXUzUWd2OGRCZVJGMksyZzFZK0FwazVS?=
+ =?utf-8?B?WVJuQkVpaVBJNUpQMGE4VHV0b1ZxckIrRFJjNFo0N0xmQ29IYnd4M2paTTc2?=
+ =?utf-8?B?Z1Jhc0ZUOW14d05nYzJFV1VyeUdRN1RCTEd6eU1RWndXbG9yQk1LdGMwNzF2?=
+ =?utf-8?B?SWxxcU5WK1RnellqbkUxTlhRZytFNVZaVkkxN29OUklGTXhNZDI0MVhONXJP?=
+ =?utf-8?B?UkJGcFVLZnlKaktWc1pyWDhPOUdOZ0R3eForWWtnSXRRYzUxVVZvTENaYnJV?=
+ =?utf-8?B?Y1BJN3VNdGdER0R1c2xnU2MvckNUQytoWEgyR2xibE5MczVmVUR6SVl6SUJB?=
+ =?utf-8?B?T3BTTkowRXd4VG1JcjVKMzVObVZYTStJaVpQd0ZxdlFpS21RQ2o4aHpHaWR4?=
+ =?utf-8?Q?nN0waM=3D?=
+X-Microsoft-Antispam-Message-Info: B9c7/7EvFVA3qBRjmH9XY0b8ucX+Yd7Qnl6wUo0f68m/Pu5xzIsxY4DYyB62evv8Qze8wB5tfIiP5JnFHfFYQ4QILzMf+s5HT/u6Jho17gGUxgUD2SfqRBf/dMwbQ+a4j/TH/nLCSfKTVaId/LvrtBt8ftjtJV6YtobDQrDEf9LSsixsm3bJ8DNkyf4tb0+3RjZzd3pZqEAOWPCrCIXf4agtImTHjIoCnSGDN/rovx+IpayRI/4r2wrbRHm8ivc/W6x2T5ABwGai99g+HUzAnXmCt5r7HhQ0KltuIHrYVrWqu2+GmdBq8cRMuUApqHoAo+8f9jdgcIior4mhT14TuvwYaCqipVbgpA+ohBRDIYQ=
+X-Microsoft-Exchange-Diagnostics: 1;AM5PR0801MB2017;6:jqFOUmzUVxPoDpszsHiKEmu1C5oxbf0vjXpXKTRWaEXNHpej+MvGbeq6ZEcuQSobxYKsbw54l7Iu+r5yS88Juxug2HcSbsUYwA6KDziDI7r3/ckOeNKi2GMhntAul/pWg9uoJ+Vso2oTc5qMZQFpndi68GXbd3okV9O+L7il64FSiTOac+f/eCkE4Yy9Lba6YD4y2QwGutdKuaWJyTVqg1+56hAevjJ7Vmu8vZf9u3LYUYZn9B77sdTVKufTWAkrNNvhTfXHNJEY6wMSKBW5Bik9vXojyrr2ITcyPMNQGz3VbWA9f3DfGia3Al8nBpssEMcVSU9/IQNwwlc0bFcD9dWGCeu6zRAjlVNwbGN7Av8NnZhcMo3zTktNV8VsDeVseK44MdGEmCgmKV0qwmi+B0/BTTEQNoyBGgPoqFXb/kNZ3ndsJCvm/dLpIRzrlxF8mmJmCihDfAzYpo+G5hDKPA==;5:nVVmSvBbZZ8hgB6o7/jYO/Guzjx4Cqb665iWjs6frzUIIUUu/7ctdcAIc7Eq24dIMzV4tDDp5qykl0LBZL4MXvtwPBXhgvug4uPf/MMC6HbN+d/1Cif2KATlwIxKIx8lZ/iM1SKqAIoLrgnQ4wGNzPWl6PFXZk30/4r6DiQFbAI=;7:SXYG5OglgLWKBoQrLIa/waq4qLZ+DXSUS3+QT01Sr45/MLQO7AB1klCpihf52nevkhLY1xF1eA1Dflfdb1gVTBXjEMjKJ/kQ2mHhE/44CYZV7E10+vxwBE18z5o7ov3a3YvTzfuij3LPEGQnN4h5T6OZFys4UIeHBFz0VmNgDapu5dzF7Q3z5/1/EQysF/ZbIZ+kHz8qJP4EPtM5EWKR2L7cPox6Od0iwmA+6tZ6k/XgwQ3y3mcSUapwk9zgFC33
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;AM5PR0801MB2017;20:bvIEXvyBxRPl2ZSXft798iQ2jpTzkB97LjbtN1TuxrZK0BpmPL2qp2XZ8rKW8BROxGQg4c+McJ/9Uc6pMYxaILz9QWjGeAlN5qu2PfDMw0TjVSjmRJePpqrpT2B3QU6QtDHwUqgR/utvqWjOTDHh3veTkGlK0tamz0gdDjsR7Pk=
+X-OriginatorOrg: virtuozzo.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Aug 2018 10:59:37.3541 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a9184467-87b8-4676-10a3-08d5f93034e2
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM5PR0801MB2017
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  706d51681d636a0c4a5ef53395ec3b803e45ed4d
-Gitweb:     https://git.kernel.org/tip/706d51681d636a0c4a5ef53395ec3b803e45ed4d
-Author:     Sai Praneeth <sai.praneeth.prakhya@intel.com>
-AuthorDate: Wed, 1 Aug 2018 11:42:25 -0700
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Fri, 3 Aug 2018 12:50:34 +0200
+On 03.08.2018 13:31, David Howells wrote:
+> The reproducer can be reduced to:
+> 
+> 	#define _GNU_SOURCE
+> 	#include <endian.h>
+> 	#include <stdint.h>
+> 	#include <string.h>
+> 	#include <stdio.h>
+> 	#include <sys/syscall.h>
+> 	#include <sys/stat.h>
+> 	#include <sys/mount.h>
+> 	#include <unistd.h>
+> 	#include <fcntl.h>
+> 
+> 	const char path[] = "./file0";
+> 
+> 	int main()
+> 	{
+> 		mkdir(path, 0);
+> 		mount(path, path, "cgroup2", 0, 0);
+> 		chroot(path);
+> 		umount2(path, 0);
+> 		return 0;
+> 	}
+> 
+> and I've found two bugs (see attached patch).  The issue is that
+> do_remount_sb() is called with fc == NULL from umount(), but both
+> cgroup_reconfigure() and do_remount_sb() dereference fc unconditionally.
+>
+> But!  I'm not sure why the reproducer works at all because the umount2() call
+> is *after* the chroot, so should fail on ENOENT before it even gets that far.
+> In fact, umount2() can be called multiple times, apparently successfully, and
+> doesn't actually unmount anything.
 
-x86/speculation: Support Enhanced IBRS on future CPUs
+Before I also try to check why it works; just reporting you that the patch
+works the problem in my environment. Thanks, David.
 
-Future Intel processors will support "Enhanced IBRS" which is an "always
-on" mode i.e. IBRS bit in SPEC_CTRL MSR is enabled once and never
-disabled.
-
-From the specification [1]:
-
- "With enhanced IBRS, the predicted targets of indirect branches
-  executed cannot be controlled by software that was executed in a less
-  privileged predictor mode or on another logical processor. As a
-  result, software operating on a processor with enhanced IBRS need not
-  use WRMSR to set IA32_SPEC_CTRL.IBRS after every transition to a more
-  privileged predictor mode. Software can isolate predictor modes
-  effectively simply by setting the bit once. Software need not disable
-  enhanced IBRS prior to entering a sleep state such as MWAIT or HLT."
-
-If Enhanced IBRS is supported by the processor then use it as the
-preferred spectre v2 mitigation mechanism instead of Retpoline. Intel's
-Retpoline white paper [2] states:
-
- "Retpoline is known to be an effective branch target injection (Spectre
-  variant 2) mitigation on Intel processors belonging to family 6
-  (enumerated by the CPUID instruction) that do not have support for
-  enhanced IBRS. On processors that support enhanced IBRS, it should be
-  used for mitigation instead of retpoline."
-
-The reason why Enhanced IBRS is the recommended mitigation on processors
-which support it is that these processors also support CET which
-provides a defense against ROP attacks. Retpoline is very similar to ROP
-techniques and might trigger false positives in the CET defense.
-
-If Enhanced IBRS is selected as the mitigation technique for spectre v2,
-the IBRS bit in SPEC_CTRL MSR is set once at boot time and never
-cleared. Kernel also has to make sure that IBRS bit remains set after
-VMEXIT because the guest might have cleared the bit. This is already
-covered by the existing x86_spec_ctrl_set_guest() and
-x86_spec_ctrl_restore_host() speculation control functions.
-
-Enhanced IBRS still requires IBPB for full mitigation.
-
-[1] Speculative-Execution-Side-Channel-Mitigations.pdf
-[2] Retpoline-A-Branch-Target-Injection-Mitigation.pdf
-Both documents are available at:
-https://bugzilla.kernel.org/show_bug.cgi?id=199511
-
-Originally-by: David Woodhouse <dwmw@amazon.co.uk>
-Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Tim C Chen <tim.c.chen@intel.com>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Ravi Shankar <ravi.v.shankar@intel.com>
-Link: https://lkml.kernel.org/r/1533148945-24095-1-git-send-email-sai.praneeth.prakhya@intel.com
-
----
- arch/x86/include/asm/cpufeatures.h   |  1 +
- arch/x86/include/asm/nospec-branch.h |  1 +
- arch/x86/kernel/cpu/bugs.c           | 20 ++++++++++++++++++--
- arch/x86/kernel/cpu/common.c         |  3 +++
- 4 files changed, 23 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-index 5701f5cecd31..2687cd8e8d58 100644
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -219,6 +219,7 @@
- #define X86_FEATURE_IBPB		( 7*32+26) /* Indirect Branch Prediction Barrier */
- #define X86_FEATURE_STIBP		( 7*32+27) /* Single Thread Indirect Branch Predictors */
- #define X86_FEATURE_ZEN			( 7*32+28) /* "" CPU is AMD family 0x17 (Zen) */
-+#define X86_FEATURE_IBRS_ENHANCED	( 7*32+29) /* Enhanced IBRS */
- 
- /* Virtualization flags: Linux defined, word 8 */
- #define X86_FEATURE_TPR_SHADOW		( 8*32+ 0) /* Intel TPR Shadow */
-diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
-index c99082e2ef13..fd2a8c1b88bc 100644
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -214,6 +214,7 @@ enum spectre_v2_mitigation {
- 	SPECTRE_V2_RETPOLINE_MINIMAL_AMD,
- 	SPECTRE_V2_RETPOLINE_GENERIC,
- 	SPECTRE_V2_RETPOLINE_AMD,
-+	SPECTRE_V2_IBRS_ENHANCED,
- };
- 
- /* The Speculative Store Bypass disable variants */
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index bc8c43b22460..405a9a61bb89 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -130,6 +130,7 @@ static const char *spectre_v2_strings[] = {
- 	[SPECTRE_V2_RETPOLINE_MINIMAL_AMD]	= "Vulnerable: Minimal AMD ASM retpoline",
- 	[SPECTRE_V2_RETPOLINE_GENERIC]		= "Mitigation: Full generic retpoline",
- 	[SPECTRE_V2_RETPOLINE_AMD]		= "Mitigation: Full AMD retpoline",
-+	[SPECTRE_V2_IBRS_ENHANCED]		= "Mitigation: Enhanced IBRS",
- };
- 
- #undef pr_fmt
-@@ -332,6 +333,13 @@ static void __init spectre_v2_select_mitigation(void)
- 
- 	case SPECTRE_V2_CMD_FORCE:
- 	case SPECTRE_V2_CMD_AUTO:
-+		if (boot_cpu_has(X86_FEATURE_IBRS_ENHANCED)) {
-+			mode = SPECTRE_V2_IBRS_ENHANCED;
-+			/* Force it so VMEXIT will restore correctly */
-+			x86_spec_ctrl_base |= SPEC_CTRL_IBRS;
-+			wrmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base);
-+			goto specv2_set_mode;
-+		}
- 		if (IS_ENABLED(CONFIG_RETPOLINE))
- 			goto retpoline_auto;
- 		break;
-@@ -369,6 +377,7 @@ retpoline_auto:
- 		setup_force_cpu_cap(X86_FEATURE_RETPOLINE);
- 	}
- 
-+specv2_set_mode:
- 	spectre_v2_enabled = mode;
- 	pr_info("%s\n", spectre_v2_strings[mode]);
- 
-@@ -391,9 +400,16 @@ retpoline_auto:
- 
- 	/*
- 	 * Retpoline means the kernel is safe because it has no indirect
--	 * branches. But firmware isn't, so use IBRS to protect that.
-+	 * branches. Enhanced IBRS protects firmware too, so, enable restricted
-+	 * speculation around firmware calls only when Enhanced IBRS isn't
-+	 * supported.
-+	 *
-+	 * Use "mode" to check Enhanced IBRS instead of boot_cpu_has(), because
-+	 * the user might select retpoline on the kernel command line and if
-+	 * the CPU supports Enhanced IBRS, kernel might un-intentionally not
-+	 * enable IBRS around firmware calls.
- 	 */
--	if (boot_cpu_has(X86_FEATURE_IBRS)) {
-+	if (boot_cpu_has(X86_FEATURE_IBRS) && mode != SPECTRE_V2_IBRS_ENHANCED) {
- 		setup_force_cpu_cap(X86_FEATURE_USE_IBRS_FW);
- 		pr_info("Enabling Restricted Speculation for firmware calls\n");
- 	}
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 43a927eb9c09..df28e931d732 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -1005,6 +1005,9 @@ static void __init cpu_set_bug_bits(struct cpuinfo_x86 *c)
- 	   !cpu_has(c, X86_FEATURE_AMD_SSB_NO))
- 		setup_force_cpu_bug(X86_BUG_SPEC_STORE_BYPASS);
- 
-+	if (ia32_cap & ARCH_CAP_IBRS_ALL)
-+		setup_force_cpu_cap(X86_FEATURE_IBRS_ENHANCED);
-+
- 	if (x86_match_cpu(cpu_no_meltdown))
- 		return;
- 
+> ---
+> diff --git a/fs/super.c b/fs/super.c
+> index 3fe5d12b7697..321fbc244570 100644
+> --- a/fs/super.c
+> +++ b/fs/super.c
+> @@ -978,7 +978,10 @@ int do_remount_sb(struct super_block *sb, int sb_flags, void *data,
+>  	    sb->s_op->remount_fs) {
+>  		if (sb->s_op->reconfigure) {
+>  			retval = sb->s_op->reconfigure(sb, fc);
+> -			sb_flags = fc->sb_flags;
+> +			if (fc)
+> +				sb_flags = fc->sb_flags;
+> +			else
+> +				sb_flags = sb->s_flags;
+>  			if (retval == 0)
+>  				security_sb_reconfigure(fc);
+>  		} else {
+> diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
+> index f3238f38d152..48275fdce053 100644
+> --- a/kernel/cgroup/cgroup.c
+> +++ b/kernel/cgroup/cgroup.c
+> @@ -1796,9 +1796,11 @@ static void apply_cgroup_root_flags(unsigned int root_flags)
+>  
+>  static int cgroup_reconfigure(struct kernfs_root *kf_root, struct fs_context *fc)
+>  {
+> -	struct cgroup_fs_context *ctx = cgroup_fc2context(fc);
+> +	if (fc) {
+> +		struct cgroup_fs_context *ctx = cgroup_fc2context(fc);
+>  
+> -	apply_cgroup_root_flags(ctx->flags);
+> +		apply_cgroup_root_flags(ctx->flags);
+> +	}
+>  	return 0;
+>  }
+>  
+> 
