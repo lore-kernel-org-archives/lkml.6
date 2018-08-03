@@ -2,133 +2,141 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E02BBC28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 07:46:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EABB9C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 07:47:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A139A2172B
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 07:46:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A139A2172B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 9F8AA2172E
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 07:47:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="HY/IKGyw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F8AA2172E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730848AbeHCJlp (ORCPT
+        id S1729985AbeHCJmx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 05:41:45 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:50148 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727594AbeHCJlp (ORCPT
+        Fri, 3 Aug 2018 05:42:53 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:52856 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727250AbeHCJmx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 05:41:45 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1flUnE-00079m-ES; Fri, 03 Aug 2018 07:46:36 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Kalle Valo <kvalo@codeaurora.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Amitkumar Karwar <amit.karwar@redpinesignals.com>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] rsi: remove redundant variables bss, wh and temp_flash_content
-Date:   Fri,  3 Aug 2018 08:46:36 +0100
-Message-Id: <20180803074636.20479-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.1
+        Fri, 3 Aug 2018 05:42:53 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w737lThg000960;
+        Fri, 3 Aug 2018 02:47:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1533282449;
+        bh=dJDBtCF8izwdGhh9L9LLu1La1YJTEb0pZy9PTIVDLyY=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=HY/IKGywv0uJP1te+mRV+A6BM1z6OeMp4vVvAxOd8hQBG6HYfk85AksewhXakLwUK
+         tec8grsOFJXxr1lOkPVy3kuiy5xgaYlrDiQaopxK+hwvQMsvGURLmBLbH0eAmCpBHv
+         u1aEeXpTLf6rde7ba1uFuQq8Khv+m5GQLKSZIGPg=
+Received: from DLEE101.ent.ti.com (dlee101.ent.ti.com [157.170.170.31])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w737lSbu018348;
+        Fri, 3 Aug 2018 02:47:28 -0500
+Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Fri, 3 Aug
+ 2018 02:47:28 -0500
+Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Fri, 3 Aug 2018 02:47:28 -0500
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w737lN3u027567;
+        Fri, 3 Aug 2018 02:47:24 -0500
+Subject: Re: [PATCH 07/46] dmaengine: omap-dma: use
+ dmaenginem_async_device_register to simplify the code
+To:     Huang Shijie <sjhuang@iluvatar.ai>, <vkoul@kernel.org>
+CC:     <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <dave.jiang@intel.com>, <radhey.shyam.pandey@xilinx.com>,
+        <appana.durga.rao@xilinx.com>, <jmkrzyszt@gmail.com>,
+        <gomonovych@gmail.com>, <keescook@chromium.org>,
+        <horms+renesas@verge.net.au>, <geert+renesas@glider.be>,
+        <shawnguo@kernel.org>, <baoyou.xie@linaro.org>,
+        <michal.simek@xilinx.com>, <baohua@kernel.org>,
+        <ludovic.desroches@microchip.com>, <linus.walleij@linaro.org>,
+        <david.brown@linaro.org>
+References: <20180803072016.21544-1-sjhuang@iluvatar.ai>
+ <20180803072016.21544-8-sjhuang@iluvatar.ai>
+From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
+Message-ID: <646b3c1a-cf42-43ba-1f20-6c1375c78517@ti.com>
+Date:   Fri, 3 Aug 2018 10:47:30 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.0
 MIME-Version: 1.0
+In-Reply-To: <20180803072016.21544-8-sjhuang@iluvatar.ai>
 Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
 
-Variables bss, wh and temp_flash_content are being assigned but are
-never used hence they are redundant and can be removed.
 
-Cleans up clang warnings:
-warning: variable 'bss' set but not used [-Wunused-but-set-variable]
-warning: variable 'wh' set but not used [-Wunused-but-set-variable]
-warning: variable 'temp_flash_content' set but not used
- [-Wunused-but-set-variable]
+On 2018-08-03 10:19, Huang Shijie wrote:
+> Use dmaenginem_async_device_register to simplify the code:
+>    remove dma_async_device_unregister
+> 
+> Signed-off-by: Huang Shijie <sjhuang@iluvatar.ai>
+> ---
+>  drivers/dma/ti/omap-dma.c | 5 +----
+>  1 file changed, 1 insertion(+), 4 deletions(-)
+> 
+> diff --git a/drivers/dma/ti/omap-dma.c b/drivers/dma/ti/omap-dma.c
+> index a4a931ddf6f6..085748c6eb67 100644
+> --- a/drivers/dma/ti/omap-dma.c
+> +++ b/drivers/dma/ti/omap-dma.c
+> @@ -1566,7 +1566,7 @@ static int omap_dma_probe(struct platform_device *pdev)
+>  		}
+>  	}
+>  
+> -	rc = dma_async_device_register(&od->ddev);
+> +	rc = dmaenginem_async_device_register(&od->ddev);
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/wireless/rsi/rsi_91x_hal.c | 10 +---------
- 1 file changed, 1 insertion(+), 9 deletions(-)
+Why it is dmaenginem_async_device_register() and not aligned other
+resource managed functions (devm_* dmam_*), like
+devm_dma_async_device_register()
 
-diff --git a/drivers/net/wireless/rsi/rsi_91x_hal.c b/drivers/net/wireless/rsi/rsi_91x_hal.c
-index 27e6baf12e90..01edf960ff3c 100644
---- a/drivers/net/wireless/rsi/rsi_91x_hal.c
-+++ b/drivers/net/wireless/rsi/rsi_91x_hal.c
-@@ -57,7 +57,6 @@ int rsi_prepare_mgmt_desc(struct rsi_common *common, struct sk_buff *skb)
- 	struct ieee80211_vif *vif;
- 	struct rsi_mgmt_desc *mgmt_desc;
- 	struct skb_info *tx_params;
--	struct ieee80211_bss_conf *bss = NULL;
- 	struct rsi_xtended_desc *xtend_desc = NULL;
- 	u8 header_size;
- 	u32 dword_align_bytes = 0;
-@@ -91,7 +90,6 @@ int rsi_prepare_mgmt_desc(struct rsi_common *common, struct sk_buff *skb)
- 
- 	tx_params->internal_hdr_size = header_size;
- 	memset(&skb->data[0], 0, header_size);
--	bss = &vif->bss_conf;
- 	wh = (struct ieee80211_hdr *)&skb->data[header_size];
- 
- 	mgmt_desc = (struct rsi_mgmt_desc *)skb->data;
-@@ -148,7 +146,6 @@ int rsi_prepare_data_desc(struct rsi_common *common, struct sk_buff *skb)
- 	struct ieee80211_hdr *wh = NULL;
- 	struct ieee80211_tx_info *info;
- 	struct skb_info *tx_params;
--	struct ieee80211_bss_conf *bss;
- 	struct rsi_data_desc *data_desc;
- 	struct rsi_xtended_desc *xtend_desc;
- 	u8 ieee80211_size = MIN_802_11_HDR_LEN;
-@@ -159,7 +156,6 @@ int rsi_prepare_data_desc(struct rsi_common *common, struct sk_buff *skb)
- 
- 	info = IEEE80211_SKB_CB(skb);
- 	vif = info->control.vif;
--	bss = &vif->bss_conf;
- 	tx_params = (struct skb_info *)info->driver_data;
- 
- 	header_size = FRAME_DESC_SZ + sizeof(struct rsi_xtended_desc);
-@@ -288,7 +284,6 @@ int rsi_send_data_pkt(struct rsi_common *common, struct sk_buff *skb)
- 	struct ieee80211_tx_info *info;
- 	struct skb_info *tx_params;
- 	struct ieee80211_bss_conf *bss;
--	struct ieee80211_hdr *wh;
- 	int status = -EINVAL;
- 	u8 header_size;
- 
-@@ -304,7 +299,6 @@ int rsi_send_data_pkt(struct rsi_common *common, struct sk_buff *skb)
- 	bss = &vif->bss_conf;
- 	tx_params = (struct skb_info *)info->driver_data;
- 	header_size = tx_params->internal_hdr_size;
--	wh = (struct ieee80211_hdr *)&skb->data[header_size];
- 
- 	if (((vif->type == NL80211_IFTYPE_STATION) ||
- 	     (vif->type == NL80211_IFTYPE_P2P_CLIENT)) &&
-@@ -747,13 +741,11 @@ static int ping_pong_write(struct rsi_hw *adapter, u8 cmd, u8 *addr, u32 size)
- static int auto_fw_upgrade(struct rsi_hw *adapter, u8 *flash_content,
- 			   u32 content_size)
- {
--	u8 cmd, *temp_flash_content;
-+	u8 cmd;
- 	u32 temp_content_size, num_flash, index;
- 	u32 flash_start_address;
- 	int status;
- 
--	temp_flash_content = flash_content;
--
- 	if (content_size > MAX_FLASH_FILE_SIZE) {
- 		rsi_dbg(ERR_ZONE,
- 			"%s: Flash Content size is more than 400K %u\n",
--- 
-2.17.1
+and in dmaenginem_async_device_register() what is the 'm' in dmaenginem ?
+DMAengine Managed?
 
+>  	if (rc) {
+>  		pr_warn("OMAP-DMA: failed to register slave DMA engine device: %d\n",
+>  			rc);
+> @@ -1584,7 +1584,6 @@ static int omap_dma_probe(struct platform_device *pdev)
+>  				of_dma_simple_xlate, &omap_dma_info);
+>  		if (rc) {
+>  			pr_warn("OMAP-DMA: failed to register DMA controller\n");
+> -			dma_async_device_unregister(&od->ddev);
+>  			omap_dma_free(od);
+>  		}
+>  	}
+> @@ -1606,8 +1605,6 @@ static int omap_dma_remove(struct platform_device *pdev)
+>  	irq = platform_get_irq(pdev, 1);
+>  	devm_free_irq(&pdev->dev, irq, od);
+>  
+> -	dma_async_device_unregister(&od->ddev);
+> -
+
+I think this is a bad idea in general.
+We need to unregister the dma-device before we clean up and free resources.
+
+>  	if (!od->legacy) {
+>  		/* Disable all interrupts */
+>  		omap_dma_glbl_write(od, IRQENABLE_L0, 0);
+> 
+
+I'm sorry to say, but it is a NACK from me.
+
+- Péter
+
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
