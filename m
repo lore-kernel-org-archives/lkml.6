@@ -6,249 +6,251 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 004F3C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 08:44:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA609C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 08:44:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DB272173F
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 08:44:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DB272173F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
+	by mail.kernel.org (Postfix) with ESMTP id 586562173F
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 08:44:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 586562173F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732124AbeHCKjt (ORCPT
+        id S1732354AbeHCKkI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 06:39:49 -0400
-Received: from www62.your-server.de ([213.133.104.62]:51731 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728460AbeHCKjt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 06:39:49 -0400
-Received: from [78.46.172.3] (helo=sslproxy06.your-server.de)
-        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.85_2)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1flVe5-0006pd-Ev; Fri, 03 Aug 2018 10:41:13 +0200
-Received: from [2a02:120b:c3f4:b8b0:b5ea:3969:d380:aafd] (helo=linux.home)
-        by sslproxy06.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1flVe5-000F0w-9i; Fri, 03 Aug 2018 10:41:13 +0200
-Subject: Re: [PATCH bpf-next 12/13] docs: net: Fix various minor typos
-To:     "Tobin C. Harding" <me@tobin.cc>,
-        Alexei Starovoitov <ast@kernel.org>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        "David S. Miller" <davem@davemloft.net>, linux-doc@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180801050908.29970-1-me@tobin.cc>
- <20180801050908.29970-13-me@tobin.cc>
-From:   Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <76cf11bc-61b3-8068-5546-79d3ff3a58e9@iogearbox.net>
-Date:   Fri, 3 Aug 2018 10:41:12 +0200
+        Fri, 3 Aug 2018 06:40:08 -0400
+Received: from mx2.suse.de ([195.135.220.15]:55974 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728442AbeHCKkH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 06:40:07 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 488C1ADBA;
+        Fri,  3 Aug 2018 08:44:47 +0000 (UTC)
+Subject: linux-lora.git and LoRaWAN (was: [RFC net-next 00/15] net: A socket
+ API for LoRa)
+To:     Jian-Hong Pan <starnight@g.ncu.edu.tw>
+Cc:     Ben Whitten <Ben.Whitten@lairdtech.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Jiri Pirko <jiri@resnulli.us>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Matthias Brugger <mbrugger@suse.com>,
+        Janus Piwek <jpiwek@arroweurope.com>,
+        =?UTF-8?Q?Michael_R=c3=b6der?= <michael.roeder@avnet.eu>,
+        Dollar Chen <dollar.chen@wtmec.com>,
+        Ken Yu <ken.yu@rakwireless.com>,
+        =?UTF-8?Q?Konstantin_B=c3=b6hm?= <konstantin.boehm@ancud.de>,
+        Jan Jongboom <jan.jongboom@arm.com>,
+        "contact@snootlab.com" <contact@snootlab.com>,
+        Brian Ray <brian.ray@link-labs.com>,
+        "lora@globalsat.com.tw" <lora@globalsat.com.tw>,
+        Alexander Graf <agraf@suse.de>,
+        =?UTF-8?Q?Michal_Kube=c4=8dek?= <mkubecek@suse.cz>,
+        Rob Herring <robh@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Steve deRosier <derosier@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        Hasnain Virk <Hasnain.Virk@arm.com>,
+        Stefan Schmidt <stefan@datenfreihafen.org>,
+        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "seth.forshee@canonical.com" <seth.forshee@canonical.com>,
+        Jon Ortego <Jon.Ortego@imst.de>,
+        Daniele Comel <dcomel@mipot.com>, Powen Ko <powenk@looptek.com>
+References: <20180701110804.32415-1-afaerber@suse.de>
+ <BY1PR02MB11147C7443AB9623D6B65798E75A0@BY1PR02MB1114.namprd02.prod.outlook.com>
+ <e08cdcfb-207f-bd73-2afd-f775810b72b7@suse.de>
+ <BY1PR02MB11143134B9ABAC9C9929A9C4E7530@BY1PR02MB1114.namprd02.prod.outlook.com>
+ <CAC=mGzg0uP6ddm-kjev6JAH=GrKX9bT6s2canFOjKsC4rCcVAQ@mail.gmail.com>
+From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=afaerber@suse.de; prefer-encrypt=mutual; keydata=
+ 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
+Organization: SUSE Linux GmbH
+Message-ID: <6dda350b-66ab-b5ab-41ed-319b27e4e28c@suse.de>
+Date:   Fri, 3 Aug 2018 10:44:41 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180801050908.29970-13-me@tobin.cc>
+In-Reply-To: <CAC=mGzg0uP6ddm-kjev6JAH=GrKX9bT6s2canFOjKsC4rCcVAQ@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.100.0/24807/Fri Aug  3 02:50:20 2018)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/01/2018 07:09 AM, Tobin C. Harding wrote:
-> There are a few minor typos and grammatical issues.  We should however
-> try to keep the current flavour of the document.
+Hi Jian-Hong,
+
+Am 02.08.2018 um 09:52 schrieb Jian-Hong Pan:
+> 2018-07-18 19:28 GMT+08:00 Ben Whitten <Ben.Whitten@lairdtech.com>:
+>>> 1) PF_LORA/AF_LORA and associated identifiers are
+>>> proposed to represent
+>>>    this technology. While for an SX1276 [...] it
+>>> might work to
+>>>    layer LoRaWAN as a protocol option for PF_LORA and
+> add
+>>> LoRaWAN address
+>>>    fields to the union in my sockaddr_lora, how would that
+>>> work for devices
+>>>    that only support LoRaWAN but not pure LoRa? Do we
+>>> need both AF_LORA and
+>>>    AF_LORAWAN, or just a separate ETH_P_LORAWAN or
+>>> ARPHRD_LORAWAN?
+[...]
+>>> Meanwhile my attempt to play with netlink during SUSE
+>>> Hackweek has been
+>>> going slow and I could use some guidance or a volunteer to
+>>> contribute: I
+>>> have a bare skeleton of registration, commands, attributes
+>>> and multicast
+>>> groups, but no plan yet how to connect that to the actual
+>>> drivers to
+>>> query or apply the settings...
+>>
+>> Happy to help, I will be starting from zero on netlink but I can contribute my existing work incorporating Marks comments for sx1301 etal.
+>>
+>>> https://git.kernel.org/pub/scm/linux/kernel/git/afaerber/li
+>>> nux-lora.git/tree/net/lora/netlink.c?h=lora-next
 > 
-> Fix typos and grammar if glaringly required.
+> Is this the repository used for the LoRa subsystem now?!!!
+> If it is, than great!
+
+Yes, my linux-lora.git contains this RFC patchset (modulo SX1276 fixes
+spotted by kbuild bot) plus a new serdev driver for another module and
+ongoing work by Ben and me for refactoring SX1301. It's monitored by the
+0-day test service (kbuild bot).
+
+As this patchset was an RFC and does not have any Acked-bys from
+maintainers, the tree does not have a for-next branch integrated into
+linux-next on basis of 4.18-rc1, but instead (like my personal GitHub
+tree before) has a lora-next branch that rebases as patch queue on top
+of linux-next for now.
+
+The intent is to allow collaboration on getting things into a state that
+I can later submit a clean (squashed) RFC v2 for review, with all issues
+raised for this v1 addressed.
+
+For contributing patches to my linux-lora.git I suggest to use
+--subject-prefix="PATCH lora-next" to distinguish from net-next.
+And I just realize I should add a MAINTAINERS entry in my tree to make
+sure patches CC me, too. (I do monitor netdev for patches with subject
+"lora", but chances are someone might omit that.)
+
+> As the previous mails, I am trying to implement the LoRaWAN
+> specification as the soft MAC as the MAC layer over LoRa PHY.
+> This is the the talk about LoRaWAN class module I gave in Netdev Conf
+> https://www.slideshare.net/chienhungpan/lorawan-class-module-and-subsystem
 > 
-> Signed-off-by: Tobin C. Harding <me@tobin.cc>
-
-Overall looks good, just some minor nits:
-
->  Documentation/networking/filter.rst | 65 +++++++++++++++--------------
->  1 file changed, 33 insertions(+), 32 deletions(-)
+> The expectation is:
 > 
-> diff --git a/Documentation/networking/filter.rst b/Documentation/networking/filter.rst
-> index 99dfa74fc4f7..b989a6c882b8 100644
-> --- a/Documentation/networking/filter.rst
-> +++ b/Documentation/networking/filter.rst
-> @@ -32,10 +32,10 @@ removing the old one and placing your new one in its place, assuming your
->  filter has passed the checks, otherwise if it fails the old filter will
->  remain on that socket.
->  
-> -SO_LOCK_FILTER option allows to lock the filter attached to a socket. Once
-> -set, a filter cannot be removed or changed. This allows one process to
-> +SO_LOCK_FILTER option allows locking of the filter attached to a socket.
-> +Once set, a filter cannot be removed or changed. This allows one process to
->  setup a socket, attach a filter, lock it then drop privileges and be
-> -assured that the filter will be kept until the socket is closed.
-> +assured  that the filter will be kept until the socket is closed.
+> socket APIs:
+> send and receive the data
+> ------------------------------------------------------------
+> LoRaWAN class module implements MAC:
+> append the header/footer, encryption/decryption, timing slot and MAC commands
+> ------------------------------------------------------------
+> LoRa device drivers:
+> send and receive the messages for MAC layer
+> ------------------------------------------------------------
+> LoRa devices
 
-          ^-- looks like extra whitespace slipped in?
+Thanks for sharing your slides. We seem to be in alignment for the
+abstract concept above. The devil is in the implementation details. ^.-
 
->  The biggest user of this construct might be libpcap. Issuing a high-level
->  filter command like ``tcpdump -i em1 port 22`` passes through the libpcap
-> @@ -470,7 +470,7 @@ JIT compiler
->  ============
->  
->  The Linux kernel has a built-in BPF JIT compiler for x86_64, SPARC, PowerPC,
-> -ARM, ARM64, MIPS and s390 and can be enabled through CONFIG_BPF_JIT. The JIT
-> +ARM, ARM64, MIPS and s390 which can be enabled through CONFIG_BPF_JIT. The JIT
->  compiler is transparently invoked for each attached filter from user space
->  or for internal kernel users if it has been previously enabled by root::
->  
-> @@ -580,7 +580,7 @@ Internally, for the kernel interpreter, a different instruction set
->  format with similar underlying principles from BPF described in previous
->  paragraphs is being used. However, the instruction set format is modelled
->  closer to the underlying architecture to mimic native instruction sets, so
-> -that a better performance can be achieved (more details later). This new
-> +that better performance can be achieved (more details later). This new
->  ISA is called 'eBPF' or 'internal BPF' interchangeably. (Note: eBPF which
->  originates from [e]xtended BPF is not the same as BPF extensions! While
->  eBPF is an ISA, BPF extensions date back to classic BPF's 'overloading'
-> @@ -655,12 +655,12 @@ Some core changes of the new internal format:
->  
->    32-bit architectures run 64-bit internal BPF programs via interpreter.
->    Their JITs may convert BPF programs that only use 32-bit subregisters into
-> -  native instruction set and let the rest being interpreted.
-> +  native instruction set and let the rest be interpreted.
->  
-> -  Operation is 64-bit, because on 64-bit architectures, pointers are also
-> -  64-bit wide, and we want to pass 64-bit values in/out of kernel functions,
-> -  so 32-bit eBPF registers would otherwise require to define register-pair
-> -  ABI, thus, there won't be able to use a direct eBPF register to HW register
-> +  Operation is 64-bit since on 64-bit architectures pointers are also
-> +  64-bit wide and we want to pass 64-bit values in/out of kernel functions.
-> +  32-bit eBPF registers would otherwise require us to define a register-pair
-> +  ABI, thus we would not be able to use a direct eBPF register to HW register
->    mapping and JIT would need to do combine/split/move operations for every
->    register in and out of the function, which is complex, bug prone and slow.
->    Another reason is the use of atomic 64-bit counters.
-> @@ -694,7 +694,7 @@ Some core changes of the new internal format:
->    situations without performance penalty.
->  
->    After an in-kernel function call, R1 - R5 are reset to unreadable and R0 has
-> -  a return value of the function. Since R6 - R9 are callee saved, their state
-> +  the return value of the function. Since R6 - R9 are callee saved, their state
->    is preserved across the call.
->  
->    For example, consider three C functions::
-> @@ -732,7 +732,7 @@ Some core changes of the new internal format:
->    are currently not supported, but these restrictions can be lifted if necessary
->    in the future.
->  
-> -  On 64-bit architectures all register map to HW registers one to one. For
-> +  On 64-bit architectures all registers map to HW registers one to one. For
->    example, x86_64 JIT compiler can map them as ... ::
->  
->      R0 - rax
-> @@ -831,9 +831,10 @@ A program, that is translated internally consists of the following elements::
->  
->    op:16, jt:8, jf:8, k:32    ==>    op:8, dst_reg:4, src_reg:4, off:16, imm:32
->  
-> -So far 87 internal BPF instructions were implemented. 8-bit ``op`` opcode field
-> -has room for new instructions. Some of them may use 16/24/32 byte encoding. New
-> -instructions must be multiple of 8 bytes to preserve backward compatibility.
-> +So far 87 internal BPF instructions have been implemented. 8-bit ``op``
-> +opcode field has room for new instructions. Some of them may use 16/24/32
-> +byte encoding. New instructions must be a multiple of 8 bytes to preserve
-> +backward compatibility.
->  
->  Internal BPF is a general purpose RISC instruction set. Not every register and
->  every instruction are used during translation from original BPF to new format.
-> @@ -844,11 +845,11 @@ out of registers and would have to resort to spill/fill to stack.
->  
->  Internal BPF can used as generic assembler for last step performance
->  optimizations, socket filters and seccomp are using it as assembler. Tracing
-> -filters may use it as assembler to generate code from kernel. In kernel usage
-> +filters may use it as assembler to generate code from kernel.  In-kernel usage
+> Is it possible that combine the LoRaWAN class module I implemented?
 
-                                                                ^-- ditto
+Yes, as stated in this cover letter, I would love if you could help
+merge your LoRaWAN implementation with my driver framework. Comparing
+802.15.4 and 802.11, I think MAC code should go into net/maclorawan/ and
+then is a fairly independent module, with you as maintainer.
 
->  may not be bounded by security considerations, since generated internal BPF code
-> -may be optimizing internal code path and not being exposed to the user space.
-> -Safety of internal BPF can come from a verifier (TBD). In such use cases as
-> -described, it may be used as safe instruction set.
-> +may use an optimised internal code path and may not be being exposed to user
-> +space. Safety of internal BPF can come from a verifier (TBD). In such use cases
-> +as described, it may be used as safe as the instruction set.
->  
->  Just like the original BPF, the new format runs within a controlled environment,
->  is deterministic and the kernel can easily prove that. The safety of the program
-> @@ -945,7 +946,7 @@ Classic BPF is using BPF_MISC class to represent A = X and X = A moves.
->  eBPF is using BPF_MOV | BPF_X | BPF_ALU code instead. Since there are no
->  BPF_MISC operations in eBPF, the class 7 is used as BPF_ALU64 to mean
->  exactly the same operations as BPF_ALU, but with 64-bit wide operands
-> -instead. So BPF_ADD | BPF_X | BPF_ALU64 means 64-bit addition, i.e.:
-> +instead. So BPF_ADD | BPF_X | BPF_ALU64 means 64-bit addition i.e.
->  dst_reg = dst_reg + src_reg
->  
->  Classic BPF wastes the whole BPF_RET class to represent a single 'ret'
-> @@ -1024,8 +1025,8 @@ Where size is one of: BPF_B or BPF_H or BPF_W or BPF_DW. Note that 1 and
->  2 byte atomic increments are not supported.
->  
->  eBPF has one 16-byte instruction: BPF_LD | BPF_DW | BPF_IMM which consists
-> -of two consecutive ``struct bpf_insn`` 8-byte blocks and interpreted as single
-> -instruction that loads 64-bit immediate value into a dst_reg.
-> +of two consecutive ``struct bpf_insn`` 8-byte blocks and is interpreted as
-> +a single instruction that loads 64-bit immediate value into a dst_reg.
->  Classic BPF has similar instruction: BPF_LD | BPF_W | BPF_IMM which loads
->  32-bit immediate value into a register.
->  
-> @@ -1035,8 +1036,8 @@ eBPF verifier
->  The safety of the eBPF program is determined in two steps.
->  
->  First step does DAG check to disallow loops and other CFG validation.
-> -In particular it will detect programs that have unreachable instructions.
-> -(though classic BPF checker allows them)
-> +In particular it will detect programs that have unreachable instructions
-> +(though classic BPF checker allows them).
->  
->  Second step starts from the first insn and descends all possible paths.
->  It simulates execution of every insn and observes the state change of
-> @@ -1107,7 +1108,7 @@ For example::
->    bpf_ld R0 = *(u32 *)(R10 - 4)
->    bpf_exit
->  
-> -is invalid program.
-> +is an invalid program.
->  Though R10 is correct read-only register and has type PTR_TO_STACK
->  and R10 - 4 is within stack bounds, there were no stores into that location.
->  
-> @@ -1118,13 +1119,13 @@ Allowed function calls are customized with bpf_verifier_ops->get_func_proto()
->  The eBPF verifier will check that registers match argument constraints.
->  After the call register R0 will be set to return type of the function.
->  
-> -Function calls is a main mechanism to extend functionality of eBPF programs.
-> -Socket filters may let programs to call one set of functions, whereas tracing
-> -filters may allow completely different set.
-> +Function calls is an important mechanism to extend functionality of eBPF
-> +programs.  Socket filters may let programs call one set of functions,
-
-             ^-- ditto
-
-> +whereas tracing filters may allow a completely different set.
->  
-> -If a function made accessible to eBPF program, it needs to be thought through
-> -from safety point of view. The verifier will guarantee that the function is
-> -called with valid arguments.
-> +If a function is made accessible to eBPF program, it needs to be thought
-> +through from a safety point of view. The verifier will guarantee that the
-> +function is called with valid arguments.
->  
->  seccomp vs socket filters have different security restrictions for classic BPF.
->  Seccomp solves this by two stage verifier: classic BPF verifier is followed
-> @@ -1202,7 +1203,7 @@ checked and found to be non-NULL, all copies can become PTR_TO_MAP_VALUEs.
->  As well as range-checking, the tracked information is also used for enforcing
->  alignment of pointer accesses.  For instance, on most systems the packet pointer
->  is 2 bytes after a 4-byte alignment.  If a program adds 14 bytes to that to jump
-> -over the Ethernet header, then reads IHL and addes (IHL * 4), the resulting
-> +over the Ethernet header, then reads IHL and adds (IHL * 4), the resulting
->  pointer will have a variable offset known to be 4n+2 for some n, so adding the 2
->  bytes (NET_IP_ALIGN) gives a 4-byte alignment and so word-sized accesses through
->  that pointer are safe.
+> I start from the simplest class A end device's behavior, especially
+> the timing slot.
+> Also the encryption/decryption for uplink/downlink data messages.
+> I can send it as patches.
 > 
+> However, I have 2 problems right now.
+> 1. Which Address and Protocol Family should we use?  PF_LORA or PF_LORAWAN?
 
+That was one of the questions I raised above. I now think we need both.
+I'm not yet too deep into LoRaWAN, but from the AT command interfaces
+I've seen there's confirmed and unconfirmed transmission modes that with
+PF_LORAWAN might be mapped to SOCK_STREAM and SOCK_DGRAM. Or do you see
+a way of doing both on a single PF_LORA SOCK_LORAWAN socket?
+
+> 2. To test the LoRaWAN class module, adding more procedures in LoRa
+> device drivers to register as a LoRaWAN device is needed.
+
+No, I don't think so. There are (at least) two types of devices, LoRaWAN
+and LoRa devices. The SX1276 is a pure LoRa device and thus should only
+expose a LoRa network device. It'll be the task of the maclorawan module
+to translate between the two layers, not the business of the device
+driver; SX1276 should receive a ready-to-send LoRa skb. For Ethernet,
+PF_INET and PF_INET6 don't need separate devices either, both use eth0.
+
+What I do think we need is your struct lora_hw, maybe renamed to
+lora_phy. That could be the missing piece for registration of the device
+drivers with nllora module?
+Note that similarly we'll also need an nllorawan module that needs to
+work both with your maclorawan and with some of my device drivers that
+implement the MAC in an MCU.
+
+Additionally I've been looking into socket options at PF_LORA dgram
+layer for some radio options, but discarded that again for lack of
+precedence. Basically I wondered whether we could allow to choose SF,
+bandwidth, etc. on socket level and then apply those settings before
+sending one packet rather than expecting a global netlink operation that
+affects all sockets for that interface.
+
+Regards,
+Andreas
+
+-- 
+SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
