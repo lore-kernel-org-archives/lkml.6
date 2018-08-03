@@ -3,192 +3,119 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6035C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 18:29:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CCB9C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 18:38:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77FE221770
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 18:29:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77FE221770
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id CC6542177F
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 18:38:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC6542177F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730070AbeHCU03 (ORCPT
+        id S1729792AbeHCUem (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 16:26:29 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37408 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729607AbeHCU03 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 16:26:29 -0400
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w73ISed8013175
-        for <linux-kernel@vger.kernel.org>; Fri, 3 Aug 2018 14:29:02 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2kmrwmqxqw-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Aug 2018 14:29:01 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Fri, 3 Aug 2018 19:28:59 +0100
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 3 Aug 2018 19:28:54 +0100
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w73ISrGW44564612
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 3 Aug 2018 18:28:53 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 411815204E;
-        Fri,  3 Aug 2018 21:29:03 +0100 (BST)
-Received: from localhost.localdomain (unknown [9.80.98.9])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 9AD7352050;
-        Fri,  3 Aug 2018 21:29:01 +0100 (BST)
-Subject: Re: [PATCH v2 1/2] security/keys/secure_key: Adds the secure key
- support based on CAAM.
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
-        David Howells <dhowells@redhat.com>,
-        Udit Agarwal <udit.agarwal@nxp.com>
-Cc:     zohar@linux.vnet.ibm.com, jmorris@namei.org, serge@hallyn.com,
-        denkenz@gmail.com, linux-integrity@vger.kernel.org,
-        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, sahil.malhotra@nxp.com,
-        ruchika.gupta@nxp.com, horia.geanta@nxp.com, aymen.sghaier@nxp.com
-Date:   Fri, 03 Aug 2018 14:28:41 -0400
-In-Reply-To: <1533311338.4140.3.camel@HansenPartnership.com>
-References: <20180723111432.26830-1-udit.agarwal@nxp.com>
-         <8060.1533226481@warthog.procyon.org.uk>
-         <1533297482.4337.373.camel@linux.ibm.com>
-         <1533306238.4140.1.camel@HansenPartnership.com>
-         <1533307535.4337.415.camel@linux.ibm.com>
-         <1533311338.4140.3.camel@HansenPartnership.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18080318-4275-0000-0000-000002A35CAE
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18080318-4276-0000-0000-000037AB7BCE
-Message-Id: <1533320921.4337.479.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-03_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808030200
+        Fri, 3 Aug 2018 16:34:42 -0400
+Received: from mga11.intel.com ([192.55.52.93]:32824 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728139AbeHCUem (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 16:34:42 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Aug 2018 11:37:14 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,439,1526367600"; 
+   d="scan'208";a="61905944"
+Received: from rchatre-mobl.amr.corp.intel.com (HELO [10.252.128.249]) ([10.252.128.249])
+  by orsmga007.jf.intel.com with ESMTP; 03 Aug 2018 11:37:14 -0700
+Subject: Re: [PATCH 0/2] x86/intel_rdt and perf/x86: Fix lack of coordination
+ with perf
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Dave Hansen <dave.hansen@intel.com>, tglx@linutronix.de,
+        mingo@redhat.com, fenghua.yu@intel.com, tony.luck@intel.com,
+        vikas.shivappa@linux.intel.com, gavin.hindman@intel.com,
+        jithu.joseph@intel.com, hpa@zytor.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180802161823.GJ2458@hirez.programming.kicks-ass.net>
+ <f990df31-ab75-974e-b142-47af07a33a08@intel.com>
+ <20180802173727.GP2494@hirez.programming.kicks-ass.net>
+ <653e874f-5e77-a9b5-996a-ed9daa3c6d43@intel.com>
+ <20180802195410.GR2494@hirez.programming.kicks-ass.net>
+ <d64f85e8-98ca-a81d-bf2d-13dd72fc411e@intel.com>
+ <20180802201312.GS2494@hirez.programming.kicks-ass.net>
+ <086b93f5-da5b-b5e5-148a-cef25117b963@intel.com>
+ <20180803104956.GU2494@hirez.programming.kicks-ass.net>
+ <1eece033-fbae-c904-13ad-1904be91c049@intel.com>
+ <20180803152523.GY2476@hirez.programming.kicks-ass.net>
+From:   Reinette Chatre <reinette.chatre@intel.com>
+Message-ID: <d6df8a8a-f0f2-48f7-1c1d-c8893e1583c9@intel.com>
+Date:   Fri, 3 Aug 2018 11:37:13 -0700
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180803152523.GY2476@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-08-03 at 08:48 -0700, James Bottomley wrote:
-> On Fri, 2018-08-03 at 10:45 -0400, Mimi Zohar wrote:
-> > On Fri, 2018-08-03 at 07:23 -0700, James Bottomley wrote:
-> > > On Fri, 2018-08-03 at 07:58 -0400, Mimi Zohar wrote:
-> > > > On Thu, 2018-08-02 at 17:14 +0100, David Howells wrote:
-> > > > > Udit Agarwal <udit.agarwal@nxp.com> wrote:
-> > > > > 
-> > > > > > +==========
-> > > > > > +Secure Key
-> > > > > > +==========
-> > > > > > +
-> > > > > > +Secure key is the new type added to kernel key ring service.
-> > > > > > +Secure key is a symmetric type key of minimum length 32
-> > > > > > bytes
-> > > > > > +and with maximum possible length to be 128 bytes. It is
-> > > > > > produced
-> > > > > > +in kernel using the CAAM crypto engine. Userspace can only
-> > > > > > see
-> > > > > > +the blob for the corresponding key. All the blobs are
-> > > > > > displayed
-> > > > > > +or loaded in hex ascii.
-> > > > > 
-> > > > > To echo Mimi, this sounds suspiciously like it should have a
-> > > > > generic interface, not one that's specifically tied to one
-> > > > > piece of
-> > > > > hardware - particularly if it's named with generic "secure".
-> > > > > 
-> > > > > Can you convert this into a "symmetric" type and make the
-> > > > > backend
-> > > > > pluggable?
-> > > > 
-> > > > TPM 1.2 didn't support symmetric keys.  For this reason, the TPM
-> > > > "unseals" the random number, used as a symmetric key, and returns
-> > > > the
-> > > > "unsealed" data to the kernel.
-> > > > 
-> > > > Does anyone know if CAAM or TPM 2.0 have support for symmetric
-> > > > keys?
-> > > 
-> > > It depends what you mean by "support".  The answer is technically
-> > > yes,
-> > > it's the TPM2_EncryptDecrypt primitive.  However, the practical
-> > > answer
-> > > is that symmetric keys are mostly used for bulk operations and the
-> > > TPM
-> > > and its bus are way too slow to support that, so the only real,
-> > > practical use case is to have the TPM govern the release conditions
-> > > for
-> > > symmetric keys which are later used by a fast bulk
-> > > encryptor/decryptor
-> > > based in software.
-> > > 
-> > > >  If they have symmetric key support, there would be no need for
-> > > > the
-> > > > symmetric key ever to leave the device in the clear.  The device
-> > > > would unseal/decrypt data, such as an encrypted key.
-> > > > 
-> > > > The "symmetric" key type would be a generic interface for
-> > > > different
-> > > > devices.
-> > > 
-> > > It's possible, but it would only work for a non-bulk use case; do
-> > > we
-> > > have one of those?
-> > 
-> > "trusted" keys are currently being used to decrypt other keys (eg.
-> > encrypted, ecryptfs, ...).
+Hi Peter,
+
+On 8/3/2018 8:25 AM, Peter Zijlstra wrote:
+> On Fri, Aug 03, 2018 at 08:18:09AM -0700, Reinette Chatre wrote:
+>> You state that you understand what we are trying to do and I hope that I
+>> convinced you that we are not able to accomplish the same by following
+>> your guidance.
 > 
-> Yes, but that's just double encryption: it serves no real security
-> purpose because at the end of the chain, the symmetric key is released
-> into kernel memory to use in software crypto.  Unless you're using a
-> high speed (and high cost) crypto accelerator with HSA, this will
-> always be the case for bulk crypto.
+> No, I said I understood your pmc reserve patch and its implications.
 > 
-> The other slight problem with this chain of crypto is that I can impose
-> conditions on the key release from the TPM (well TPM2, since TPM1.2 has
-> a very weak policy engine) but if we use intermediate steps, those
-> conditions might not be preserved, so I think the ideal would be a
-> trusted key being released directly to LUKS or ecryptfs because the TPM
-> can then verify the policy at actual unseal time.  I get that for the
-> ecryptfs case you might want one key per file for sharding and sharing,
-> and that's more like a bulk case because the TPM isn't going to keep up
-> with the number of unseal operations required.
+> I have no clue what you're trying to do with resctl, nor why you think
+> this is not feasible with perf. And if it really is not feasible, you'll
+> have to live without it.
 
-Agreed.  Yet there are a couple of reasons for having this sort of
-indirection. By having the "encrypted" key encrypted/decrypted by a
-"trusted" key, the "trusted" key could be updated without impacting
-the "encrypted" key.  This could be used, for example, for key
-migration.  Another reason would be to define a single "trusted" key
-sealed to a set of PCRs, which could be used to encrypt/decrypt
-multiple symmetric keys.
+I can surely provide the details on what we are doing with resctrl and
+elaborate more on why this is not feasible with the full perf kernel API.
 
-Nothing is preventing these subsystems from directly using a "trusted"
-key.
+In summary:
+Building on top of Cache Allocation Technology (CAT) we load a portion
+of memory into a specified region of cache. After the region of cache
+obtained its data it (the cache region) is configured (via CAT) to only
+serve cache hits - this pre-loaded memory cannot be evicted from the
+cache. We call this "cache pseudo-locking" - the memory has been
+"pseudo-locked" to the cache.
 
-This discussion is the result of Udit Agarwal's posting a "secure" key
-patch. Before defining a new key type, whether it is called "secure"
-or "symmetric", we need to understand how the this new key type is
-going to be used.  Will it have a similar ability to impose conditions
-on the key release as the TPM?  Will it have symmetric key support, so
-that the symmetric key never needs to be released from the HW?
+To measure how successful the pseudo-locking of the memory is we can use
+the precision capable performance events on our platforms: start the
+cache hits and miss counters, read the pseudo-locked memory, stop the
+counters. This measurement is done with interrupts and hardware
+prefetchers disabled to ensure that _only_ access to the pseudo-locked
+memory is measured.
 
-Mimi
+Any additional code or data accessed either by the counter management or
+even by the loops reading the memory itself can contribute to cache
+hits/misses measured for that instead of the memory we are trying to access.
 
+Even within the current measurement code we had to take a lot of care to
+not use, for example, pointers to obtain information about the memory to
+be measured. The information had to be local variables.
+
+Looking at if we were to build on top of the kernel perf event API
+(perf_event_create_kernel_counter(), perf_event_enable(),
+perf_event_disable(), ...). Just looking at perf_event_enable() -
+ideally this would be as lean as possible to only enable the event and
+not result in itself contributing the the measurement. First, the
+enabling of the event is not as lean to fulfill this requirement since
+it executes more code after the event was actually enabled. Also, the
+code relies on a mutex so we cannot use it with interrupts disabled.
+
+We have two types of customers of this feature: those who require very
+low latency and those who require high determinism. In either case a
+measured cache miss is of concern to them and our goal is to provide a
+memory region for which the number of cache misses can be demonstrated.
+
+Reinette
