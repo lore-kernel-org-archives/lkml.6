@@ -2,127 +2,124 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-3.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81212C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 16:38:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C8A7C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 16:40:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3AF3A21777
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 16:38:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vqchevp0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3AF3A21777
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 2423621774
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 16:40:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2423621774
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729639AbeHCSfS (ORCPT
+        id S1728412AbeHCShb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 14:35:18 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:36350 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727339AbeHCSfS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 14:35:18 -0400
-Received: by mail-pg1-f195.google.com with SMTP id h12-v6so3091809pgs.3
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Aug 2018 09:38:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=SMSiMZFV2xmqIyEx2X/LLari/l23gt20gJWmoc5OjSs=;
-        b=vqchevp08TNUf+W43vibFh4Lml9nbon5lz2Yc/c5qeC3tSn10uefS32HGuGkzUmzOh
-         o8iqDX5cuMM2BkviIwBYGbYF+LG5YfR6WVzCWOgE1TkogR8C2N2axww77oWsqSPf93ge
-         0TnOjHQfQWPlzEt+2EVgdaf41XApMG6xUlBgtrwGLYH9AG/ximNxPN7A3YluMV3yG/jf
-         4ZV+uNlj0NMWlFcA5ncQXfkTK4UPINjYX+nd6M4c3GinIQ8zRxy4ZArgE3R1Bad/jdfi
-         ZN+/8BxcY4x2eqdu9AkJzCaF7ozhIhymWjNjgDkCEibiDUYRZjDb8hpc983If+QadAii
-         FN/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=SMSiMZFV2xmqIyEx2X/LLari/l23gt20gJWmoc5OjSs=;
-        b=m+NhWJWKbX8TY75/6GOpB5apJ/yHfXdcPTbaLS/R9RN42W7AD2zHsHqHG7nQSCirGN
-         vZOOY5ENOMLK0qNZW3aD3CR3KwFckRtgUF5MarDiVTwcA8n0EZNVXvltcApJADS3kA69
-         6NjFLlKOFmkEwGeu1tVEbTqBbjV3CDuW+q31j3b/py3M4eOSSZE2mHPxuS/PkoId3sII
-         3rj5Xn/gv/uGm7XrMZCFhHsp5ZJJjKwdzp8/B2S7OjA+jGy6yLBw992TPvoN7A+Yz5UZ
-         lka6MhKpvtzSlpksLgOOdaIMAnY21TOzS4hyMKhbV88A1W5QPtjR/4ivavKYtZgLQ2te
-         LoUg==
-X-Gm-Message-State: AOUpUlFYOahD+caQt48m0kcqzm7EzYjfh1R6HY1JRcsqlzt1J/01Kpdt
-        MhRYM+eLjCAg/al/wfh4f/Udl1OvMYLRfrChSm7VXw==
-X-Google-Smtp-Source: AAOMgpdYZh0j4UrmjpiNFlk/Vcl/mojzPz0wFCxUt90YTH6MtScA3CilKBA0WA4aefZO6hlVQdPbidB3eBAtJlXlLIU=
-X-Received: by 2002:a62:106:: with SMTP id 6-v6mr5430076pfb.168.1533314294547;
- Fri, 03 Aug 2018 09:38:14 -0700 (PDT)
+        Fri, 3 Aug 2018 14:37:31 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60848 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727171AbeHCShb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 14:37:31 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 56EFDACB1;
+        Fri,  3 Aug 2018 16:40:26 +0000 (UTC)
+Date:   Fri, 3 Aug 2018 18:40:24 +0200
+From:   Johannes Thumshirn <jth@kernel.org>
+To:     Randy Dunlap <rdunlap@infradead.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-watchdog@vger.kernel.org
+Subject: Re: linux-next: Tree for Aug 3 (watchdog/menz69_wdt.c)
+Message-ID: <20180803164024.tfujwvz2s6ekvjpv@linux-x5ow.site>
+References: <20180803192942.6975df0c@canb.auug.org.au>
+ <9d17144d-6f19-781f-8abc-1ee1c6f840bd@infradead.org>
 MIME-Version: 1.0
-References: <20180803151035.238a19d2@endymion>
-In-Reply-To: <20180803151035.238a19d2@endymion>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Fri, 3 Aug 2018 09:38:03 -0700
-Message-ID: <CAKwvOdmBtzkca-C1YpB_OYVyqFFi3P_Q8DJPaKr96DFZF0e6Hg@mail.gmail.com>
-Subject: Re: native_save_fl() causes a warning
-To:     jdelvare@suse.de
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Alistair Strachan <astrachan@google.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Arnd Bergmann <arnd@arndb.de>, hpa@zytor.com,
-        tstellar@redhat.com, sedat.dilek@gmail.com, jgross@suse.com,
-        Ingo Molnar <mingo@kernel.org>, David.Laight@aculab.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <9d17144d-6f19-781f-8abc-1ee1c6f840bd@infradead.org>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 3, 2018 at 6:10 AM Jean Delvare <jdelvare@suse.de> wrote:
->
-> Hi Nick,
->
-> It seems that this linux kernel commit of yours:
->
-> commit d0a8d9378d16eb3c69bd8e6d23779fbdbee3a8c7
-> Author: Nick Desaulniers
-> Date:   Thu Jun 21 09:23:24 2018 -0700
->
->     x86/paravirt: Make native_save_fl() extern inline
->
-> introduced a new warning (with W=3D1):
->
-> ./arch/x86/include/asm/irqflags.h:16:29: warning: no previous prototype f=
-or =E2=80=98native_save_fl=E2=80=99 [-Wmissing-prototypes]
->  extern inline unsigned long native_save_fl(void)
->                              ^
->
-> Please fix it.
+On Fri, Aug 03, 2018 at 08:39:48AM -0700, Randy Dunlap wrote:
+> On 08/03/2018 02:29 AM, Stephen Rothwell wrote:
+> > Hi all,
+> > 
+> > Changes since 20180802:
+> > 
+> 
+> Hi,
+> 
+> On i386 randconfig with COMPILE_TEST=y and MCB not enabled, I see:
+> 
+> drivers/watchdog/menz69_wdt.o: In function `men_z069_remove':
+> menz69_wdt.c:(.text+0xa6): undefined reference to `mcb_release_mem'
+> drivers/watchdog/menz69_wdt.o: In function `men_z069_probe':
+> menz69_wdt.c:(.text+0xdb): undefined reference to `mcb_request_mem'
+> menz69_wdt.c:(.text+0x14a): undefined reference to `mcb_release_mem'
+> drivers/watchdog/menz69_wdt.o: In function `men_z069_driver_init':
+> menz69_wdt.c:(.init.text+0x15): undefined reference to `__mcb_register_driver'
+> drivers/watchdog/menz69_wdt.o: In function `men_z069_driver_exit':
+> menz69_wdt.c:(.exit.text+0x9): undefined reference to `mcb_unregister_driver'
+> 
+> 
+> The Kconfig for MENZ069_WATCHDOG says:
+> config MENZ069_WATCHDOG
+> 	tristate "MEN 16Z069 Watchdog"
+> 	depends on MCB || COMPILE_TEST
+> 	select WATCHDOG_CORE
+> 
+> Looks to me like the driver really depends on MCB, unless someone wants
+> to add stubs in <linux/mcb.h>.
 
-Hi Jean, thanks for the report.  David Laight also reported this
-warning; he tested a patch I sent him overnight.
+*doh* looks like a copy & paste error. Wim can you fold that one in
+(or stage to your tree)?
 
-Let me guess, you're using a version of GCC < 4.9?  It seems that GCC
-< 4.9 will produce that warning for extern inline functions without
-previous declarations.
+From ae045015849cd15fd180e20f44d364e7a37c39c6 Mon Sep 17 00:00:00 2001
+From: Johannes Thumshirn <jthumshirn@suse.de>
+Date: Fri, 3 Aug 2018 18:35:17 +0200
+Subject: [PATCH] watchdog: fix dependencies  of menz69_wdt.o
 
-I'll add your Reported-By tag to the patch that I will send out in a
-few minutes.
+Currently menz69_wdt.ko has a dependency on MCB or COMPILE_TEST. But
+it actually needs symbols exported by MCB so the || COMPILE_TEST is
+wrong.
 
-> Secondly, I am quite curious why you changed only native_save_fl() from
-> static inline to extern inline, when native_restore_fl(),
-> native_irq_disable() and native_irq_enable() are equally referenced by
-> address in arch/x86/kernel/paravirt.c and thus should suffer from the
-> same problem. Can you explain?
+Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+---
+ drivers/watchdog/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This is a good point.  With native_save_fl, we were not able to boot
-the kernel at all.  Maybe this was called from the boot sequence
-(maybe Juergen knows more)?  It seems that the other functions aren't
-preventing us from booting, but maybe exercising other paths in
-paravirt would expose such an issue?  Or maybe paravirt doesn't have
-the same calling convention requirements for those functions?
+diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
+index df55d65bbb1c..5ea8909a41f9 100644
+--- a/drivers/watchdog/Kconfig
++++ b/drivers/watchdog/Kconfig
+@@ -163,7 +163,7 @@ config MENF21BMC_WATCHDOG
+ 
+ config MENZ069_WATCHDOG
+ 	tristate "MEN 16Z069 Watchdog"
+-	depends on MCB || COMPILE_TEST
++	depends on MCB
+ 	select WATCHDOG_CORE
+ 	help
+ 	  Say Y here to include support for the MEN 16Z069 Watchdog.
+-- 
+2.16.4
 
-Is there a standard testing procedure for paravirt? I'd be happy to
-try it to see if we can expose more things that should have the same
-cleanup.
---=20
-Thanks,
-~Nick Desaulniers
+
+
+-- 
+Johannes Thumshirn                                          Storage
+jthumshirn@suse.de                                +49 911 74053 689
+SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
+Key fingerprint = EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
