@@ -2,254 +2,143 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B1C6C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 14:39:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3995C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 14:41:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C05C21757
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 14:39:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C05C21757
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 5002121774
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 14:41:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5002121774
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bitron.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732520AbeHCQgc (ORCPT
+        id S1732418AbeHCQiZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 12:36:32 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44568 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732083AbeHCQgb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 12:36:31 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 95EF08197012;
-        Fri,  3 Aug 2018 14:39:52 +0000 (UTC)
-Received: from redhat.com (ovpn-125-78.rdu2.redhat.com [10.10.125.78])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 198597C34;
-        Fri,  3 Aug 2018 14:39:45 +0000 (UTC)
-Date:   Fri, 3 Aug 2018 10:39:44 -0400
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Kenneth Lee <liguozhu@hisilicon.com>
-Cc:     "Tian, Kevin" <kevin.tian@intel.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Zaibo Xu <xuzaibo@huawei.com>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
-        Hao Fang <fanghao11@huawei.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linuxarm@huawei.com" <linuxarm@huawei.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
+        Fri, 3 Aug 2018 12:38:25 -0400
+Received: from nov-007-i651.relay.mailchannels.net ([46.232.183.205]:46715
+        "EHLO nov-007-i651.relay.mailchannels.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732090AbeHCQiY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 12:38:24 -0400
+X-Sender-Id: novatrend|x-authuser|juerg@bitron.ch
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+        by relay.mailchannels.net (Postfix) with ESMTP id A0FB7BE0444;
+        Fri,  3 Aug 2018 14:41:42 +0000 (UTC)
+Received: from srv17.tophost.ch (swiss-ingress-3.mailchannels.ch [46.232.178.210])
+        by relay.mailchannels.net (Postfix) with ESMTPA id 98593BE03B0;
+        Fri,  3 Aug 2018 14:41:39 +0000 (UTC)
+X-Sender-Id: novatrend|x-authuser|juerg@bitron.ch
+Received: from srv17.tophost.ch (srv17.tophost.ch [193.33.128.141])
+        (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384)
+        by 0.0.0.0:2500 (trex/5.15.2);
+        Fri, 03 Aug 2018 14:41:42 +0000
+X-MC-Relay: Neutral
+X-MailChannels-SenderId: novatrend|x-authuser|juerg@bitron.ch
+X-MailChannels-Auth-Id: novatrend
+X-Attack-Chief: 504c628a055719f1_1533307302193_2210798741
+X-MC-Loop-Signature: 1533307302193:4221698340
+X-MC-Ingress-Time: 1533307302192
+Received: from [80.219.231.201] (port=55868 helo=jzen.bitron.ch)
+        by srv17.tophost.ch with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <j@bitron.ch>)
+        id 1flbGq-004ETW-Vo; Fri, 03 Aug 2018 16:41:37 +0200
+From:   =?UTF-8?q?J=C3=BCrg=20Billeter?= <j@bitron.ch>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Oleg Nesterov <oleg@redhat.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Kenneth Lee <nek.in.cn@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        "linux-accelerators@lists.ozlabs.org" 
-        <linux-accelerators@lists.ozlabs.org>
-Subject: Re: [RFC PATCH 0/7] A General Accelerator Framework, WarpDrive
-Message-ID: <20180803143944.GA4079@redhat.com>
-References: <20180801102221.5308-1-nek.in.cn@gmail.com>
- <20180801165644.GA3820@redhat.com>
- <AADFC41AFE54684AB9EE6CBC0274A5D191290E1A@SHSMSX101.ccr.corp.intel.com>
- <20180802040557.GL160746@Turing-Arch-b>
- <20180802142243.GA3481@redhat.com>
- <20180803034721.GC91035@Turing-Arch-b>
+        Eric Biederman <ebiederm@xmission.com>,
+        linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
+        =?UTF-8?q?J=C3=BCrg=20Billeter?= <j@bitron.ch>
+Subject: [PATCH v3 2/2] prctl: add PR_[GS]ET_KILLABLE
+Date:   Fri,  3 Aug 2018 16:40:21 +0200
+Message-Id: <20180803144021.56920-2-j@bitron.ch>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180803144021.56920-1-j@bitron.ch>
+References: <20180730075241.24002-1-j@bitron.ch>
+ <20180803144021.56920-1-j@bitron.ch>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180803034721.GC91035@Turing-Arch-b>
-User-Agent: Mutt/1.10.0 (2018-05-17)
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Fri, 03 Aug 2018 14:39:52 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Fri, 03 Aug 2018 14:39:52 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jglisse@redhat.com' RCPT:''
+X-AuthUser: juerg@bitron.ch
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 03, 2018 at 11:47:21AM +0800, Kenneth Lee wrote:
-> On Thu, Aug 02, 2018 at 10:22:43AM -0400, Jerome Glisse wrote:
-> > Date: Thu, 2 Aug 2018 10:22:43 -0400
-> > From: Jerome Glisse <jglisse@redhat.com>
-> > To: Kenneth Lee <liguozhu@hisilicon.com>
-> > CC: "Tian, Kevin" <kevin.tian@intel.com>, Hao Fang <fanghao11@huawei.com>,
-> >  Alex Williamson <alex.williamson@redhat.com>, Herbert Xu
-> >  <herbert@gondor.apana.org.au>, "kvm@vger.kernel.org"
-> >  <kvm@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, Greg
-> >  Kroah-Hartman <gregkh@linuxfoundation.org>, Zaibo Xu <xuzaibo@huawei.com>,
-> >  "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "Kumar, Sanjay K"
-> >  <sanjay.k.kumar@intel.com>, Kenneth Lee <nek.in.cn@gmail.com>,
-> >  "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-> >  "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-> >  "linuxarm@huawei.com" <linuxarm@huawei.com>,
-> >  "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, Philippe
-> >  Ombredanne <pombredanne@nexb.com>, Thomas Gleixner <tglx@linutronix.de>,
-> >  "David S . Miller" <davem@davemloft.net>,
-> >  "linux-accelerators@lists.ozlabs.org"
-> >  <linux-accelerators@lists.ozlabs.org>
-> > Subject: Re: [RFC PATCH 0/7] A General Accelerator Framework, WarpDrive
-> > User-Agent: Mutt/1.10.0 (2018-05-17)
-> > Message-ID: <20180802142243.GA3481@redhat.com>
-> > 
-> > On Thu, Aug 02, 2018 at 12:05:57PM +0800, Kenneth Lee wrote:
-> > > On Thu, Aug 02, 2018 at 02:33:12AM +0000, Tian, Kevin wrote:
-> > > > Date: Thu, 2 Aug 2018 02:33:12 +0000
-> > > > > From: Jerome Glisse
-> > > > > On Wed, Aug 01, 2018 at 06:22:14PM +0800, Kenneth Lee wrote:
-> > > > > > From: Kenneth Lee <liguozhu@hisilicon.com>
-> > > > > >
-> > > > > > WarpDrive is an accelerator framework to expose the hardware
-> > > > > capabilities
-> > > > > > directly to the user space. It makes use of the exist vfio and vfio-mdev
-> > > > > > facilities. So the user application can send request and DMA to the
-> > > > > > hardware without interaction with the kernel. This remove the latency
-> > > > > > of syscall and context switch.
-> > > > > >
-> > > > > > The patchset contains documents for the detail. Please refer to it for
-> > > > > more
-> > > > > > information.
-> > > > > >
-> > > > > > This patchset is intended to be used with Jean Philippe Brucker's SVA
-> > > > > > patch [1] (Which is also in RFC stage). But it is not mandatory. This
-> > > > > > patchset is tested in the latest mainline kernel without the SVA patches.
-> > > > > > So it support only one process for each accelerator.
-> > > > > >
-> > > > > > With SVA support, WarpDrive can support multi-process in the same
-> > > > > > accelerator device.  We tested it in our SoC integrated Accelerator (board
-> > > > > > ID: D06, Chip ID: HIP08). A reference work tree can be found here: [2].
-> > > > > 
-> > > > > I have not fully inspected things nor do i know enough about
-> > > > > this Hisilicon ZIP accelerator to ascertain, but from glimpsing
-> > > > > at the code it seems that it is unsafe to use even with SVA due
-> > > > > to the doorbell. There is a comment talking about safetyness
-> > > > > in patch 7.
-> > > > > 
-> > > > > Exposing thing to userspace is always enticing, but if it is
-> > > > > a security risk then it should clearly say so and maybe a
-> > > > > kernel boot flag should be necessary to allow such device to
-> > > > > be use.
-> > > > > 
-> > > 
-> > > But doorbell is just a notification. Except for DOS (to make hardware busy) it
-> > > cannot actually take or change anything from the kernel space. And the DOS
-> > > problem can be always taken as the problem that a group of processes share the
-> > > same kernel entity.
-> > > 
-> > > In the coming HIP09 hardware, the doorbell will come with a random number so
-> > > only the process who allocated the queue can knock it correctly.
-> > 
-> > When doorbell is ring the hardware start fetching commands from
-> > the queue and execute them ? If so than a rogue process B might
-> > ring the doorbell of process A which would starts execution of
-> > random commands (ie whatever random memory value there is left
-> > inside the command buffer memory, could be old commands i guess).
-> > 
-> > If this is not how this doorbell works then, yes it can only do
-> > a denial of service i guess. Issue i have with doorbell is that
-> > i have seen 10 differents implementations in 10 differents hw
-> > and each are different as to what ringing or value written to the
-> > doorbell does. It is painfull to track what is what for each hw.
-> > 
-> 
-> In our implementation, doorbell is simply a notification, just like an interrupt
-> to the accelerator. The command is all about what's in the queue.
-> 
-> I agree that there is no simple and standard way to track the shared IO space.
-> But I think we have to trust the driver in some way. If the driver is malicious,
-> even a simple ioctl can become an attack.
+PR_SET_KILLABLE clears the SIGNAL_UNKILLABLE flag. This allows
+CLONE_NEWPID tasks to restore normal signal behavior, opting out of the
+special signal protection for init processes. This prctl does not allow
+setting the SIGNAL_UNKILLABLE flag, only clearing.
 
-Trusting kernel space driver is fine, trusting user space driver is
-not in my view. AFAICT every driver developer so far always made
-sure that someone could not abuse its device to do harmfull thing to
-other process.
+The SIGNAL_UNKILLABLE flag, which is implicitly set for tasks cloned
+with CLONE_NEWPID, has the effect of ignoring all signals (from
+userspace) if the corresponding handler is set to SIG_DFL. The only
+exceptions are SIGKILL and SIGSTOP and they are only accepted if raised
+from an ancestor namespace.
 
+SIGINT, SIGQUIT and SIGTSTP are used in job control for ^C, ^\, ^Z.
+While a task with the SIGNAL_UNKILLABLE flag could install handlers for
+these signals, this is not sufficient to implement a shell that uses
+CLONE_NEWPID for child processes:
 
-> > > > > My more general question is do we want to grow VFIO to become
-> > > > > a more generic device driver API. This patchset adds a command
-> > > > > queue concept to it (i don't think it exist today but i have
-> > > > > not follow VFIO closely).
-> > > > > 
-> > > 
-> > > The thing is, VFIO is the only place to support DMA from user land. If we don't
-> > > put it here, we have to create another similar facility to support the same.
-> > 
-> > No it is not, network device, GPU, block device, ... they all do
-> > support DMA. The point i am trying to make here is that even in
-> 
-> Sorry, wait a minute, are we talking the same thing? I meant "DMA from user
-> land", not "DMA from kernel driver". To do that we have to manipulate the
-> IOMMU(Unit). I think it can only be done by default_domain or vfio domain. Or
-> the user space have to directly access the IOMMU.
+ * As SIGSTOP is ignored when raised from the SIGNAL_UNKILLABLE process
+   itself, it's not possible to implement the stop action in a custom
+   SIGTSTP handler.
+ * Many applications do not install handlers for these signals and
+   thus, job control won't work properly with unmodified applications.
 
-GPU do DMA in the sense that you pass to the kernel a valid
-virtual address (kernel driver do all the proper check) and
-then you can use the GPU to copy from or to that range of
-virtual address. Exactly how you want to use this compression
-engine. It does not rely on SVM but SVM going forward would
-still be the prefered option.
+There are other scenarios besides job control in a shell where
+applications rely on the default actions as described in signal(7) and
+PID isolation may be useful. This new prctl makes the signal protection
+for "init" processes optional, without breaking backward compatibility.
 
+Signed-off-by: JÃ¼rg Billeter <j@bitron.ch>
+---
+ include/uapi/linux/prctl.h |  4 ++++
+ kernel/sys.c               | 13 +++++++++++++
+ 2 files changed, 17 insertions(+)
 
-> > your mechanisms the userspace must have a specific userspace
-> > drivers for each hardware and thus there are virtually no
-> > differences between having this userspace driver open a device
-> > file in vfio or somewhere else in the device filesystem. This is
-> > just a different path.
-> > 
-> 
-> The basic problem WarpDrive want to solve it to avoid syscall. This is important
-> to accelerators. We have some data here:
-> https://www.slideshare.net/linaroorg/progress-and-demonstration-of-wrapdrive-a-accelerator-framework-sfo17317
-> 
-> (see page 3)
-> 
-> The performance is different on using kernel and user drivers.
+diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
+index c0d7ea0bf5b6..92afb63da727 100644
+--- a/include/uapi/linux/prctl.h
++++ b/include/uapi/linux/prctl.h
+@@ -219,4 +219,8 @@ struct prctl_mm_map {
+ # define PR_SPEC_DISABLE		(1UL << 2)
+ # define PR_SPEC_FORCE_DISABLE		(1UL << 3)
+ 
++/* Control SIGNAL_UNKILLABLE */
++#define PR_GET_KILLABLE			54
++#define PR_SET_KILLABLE			55
++
+ #endif /* _LINUX_PRCTL_H */
+diff --git a/kernel/sys.c b/kernel/sys.c
+index 38509dc1f77b..92c9322cfb98 100644
+--- a/kernel/sys.c
++++ b/kernel/sys.c
+@@ -2484,6 +2484,19 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
+ 			return -EINVAL;
+ 		error = arch_prctl_spec_ctrl_set(me, arg2, arg3);
+ 		break;
++	case PR_GET_KILLABLE:
++		if (arg3 || arg4 || arg5)
++			return -EINVAL;
++		error = put_user(!(me->signal->flags & SIGNAL_UNKILLABLE),
++				 (int __user *)arg2);
++		break;
++	case PR_SET_KILLABLE:
++		if (arg2 != 1 || arg3 || arg4 || arg5)
++			return -EINVAL;
++		spin_lock_irq(&me->sighand->siglock);
++		me->signal->flags &= ~SIGNAL_UNKILLABLE;
++		spin_unlock_irq(&me->sighand->siglock);
++		break;
+ 	default:
+ 		error = -EINVAL;
+ 		break;
+-- 
+2.18.0
 
-Yes and example i point to is exactly that. You have a one time setup
-cost (creating command buffer binding PASID with command buffer and
-couple other setup steps). Then userspace no longer have to do any
-ioctl to schedule work on the GPU. It is all down from userspace and
-it use a doorbell to notify hardware when it should go look at command
-buffer for new thing to execute.
-
-My point stands on that. You have existing driver already doing so
-with no new framework and in your scheme you need a userspace driver.
-So i do not see the value add, using one path or the other in the
-userspace driver is litteraly one line to change.
-
-
-> And we also believe the hardware interface can become standard after sometime.
-> Some companies have started to do this (such ARM's Revere). But before that, we
-> should have a software channel for it.
-
-I hope it does, but right now for every single piece of hardware you
-will need a specific driver (i am ignoring backward compatible hardware
-evolution as this is a thing that do exist).
-
-Even if down the road for every class of hardware you can use the same
-driver, i am not sure what the value add is to do it inside VFIO versus
-a class of device driver (like USB, PCIE, DRM aka GPU, ...) ie you would
-have a compression class (/dev/compress/*) a encryption one, ...
-
-
-> > So this is why i do not see any benefit to having all drivers with
-> > SVM (can we please use SVM and not SVA as SVM is what have been use
-> > in more places so far).
-> > 
-> 
-> Personally, we don't care what name to be used. I used SVM when I start this
-> work. And then Jean said SVM had been used by AMD as Secure Virtual Machine. So
-> he called it SVA. And now... who should I follow? :)
-
-I think Intel call it SVM too, i do not have any strong preference
-beside have only one to remember :)
-
-Cheers,
-Jérôme
