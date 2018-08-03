@@ -2,124 +2,114 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FDEBC28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 11:30:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60FE3C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 11:32:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3847D2175E
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 11:30:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i/VMJkUC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3847D2175E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 1D72E21759
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 11:32:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D72E21759
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727613AbeHCN0u (ORCPT
+        id S1727705AbeHCN2K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 09:26:50 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:44598 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727153AbeHCN0u (ORCPT
+        Fri, 3 Aug 2018 09:28:10 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:34854 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727031AbeHCN2K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 09:26:50 -0400
-Received: by mail-lj1-f195.google.com with SMTP id q127-v6so4636771ljq.11;
-        Fri, 03 Aug 2018 04:30:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=me97colI25uy3TCPRNy1m2h/mCI6MmyTM+QgqCGmwhg=;
-        b=i/VMJkUCL6AimOKjWqo0uGN79NmoGDzCwJovbSIcCNry8PchUAFvEvo8Wya2ZKYh/p
-         ZP4+RtlIsrzHjGus/Njyd5tK7cpYIgBa90+52L+TjsR2Q1PFuTgQbVeKm4pB2lI+DPG8
-         d3n33q7ayS70UVix8MtTCC367CFoLegi7MJ3sSszf2l2L5q1jy3whK9N64y1/n88XWk4
-         mtmAglDOYFwCG8hFYaleAT/a4Gewv/qsAwhpdl/YDdM4lCDnE7CLD9H8TSPSsrVuTKby
-         5RF5aa8fXwUF0JsKJmjMQ9c27XE9L+iFoXUjBbIW8AtSiUewDPlyXFnmzh9yL/m4C0AB
-         w9+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=me97colI25uy3TCPRNy1m2h/mCI6MmyTM+QgqCGmwhg=;
-        b=Dny0TLi4RITN9a2GfpWePyxYRcawZIf/tYR4pKtKXIY+zF60q+9pCS0LHXyaJhfzzH
-         KtT9Uu1m6I2sJMz8tF+APqnlu8nUQ5tl7ZEYq7xS6gDs5+oD/j3Nv1NvBJbWyXjCEymr
-         QNtn4JzcKMmPJfV+X6bvli033cvZTSbxW08OPHuCIetfyub/KkIVxOHcm1kKvZOl6D8D
-         GbEiJhWfKySujdnuzz8Aveh0dGqP70yRxp6GMJuW4V+GyXIP0Y5mOdlPuiuyeDuEcxGu
-         UZBqe04o++WRwiZ+ZumMXXfW7QTBS9afvWoSv4cvqrjJd7EtgWQDRKKgzKt8wTtIHJ+R
-         DQ/Q==
-X-Gm-Message-State: AOUpUlGSlJp5Zf08rZEWN04irJW+za8r+76Av+ekxQP8CnxSMNbFsga5
-        sz+RfTjLeqcHMaCY/+aZWA+V1pGK
-X-Google-Smtp-Source: AAOMgpfAtTpLBPbqd4M/XOzEurbFOX6UNzjXA9+JU8dV+4Tvm4mFlUotzPiN1JZa48rCOAWiLDpo3w==
-X-Received: by 2002:a2e:7113:: with SMTP id m19-v6mr5056962ljc.66.1533295854963;
-        Fri, 03 Aug 2018 04:30:54 -0700 (PDT)
-Received: from dimapc.localnet (109-252-90-13.nat.spd-mgts.ru. [109.252.90.13])
-        by smtp.gmail.com with ESMTPSA id j64-v6sm683814lfe.56.2018.08.03.04.30.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 03 Aug 2018 04:30:54 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Mikko Perttunen <cyndis@kapsi.fi>, Kyle Evans <kvans32@gmail.com>,
-        linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] gpu: host1x: Ignore clients initialization failure
-Date:   Fri, 03 Aug 2018 14:30:47 +0300
-Message-ID: <4457259.6qKMIOUXSS@dimapc>
-In-Reply-To: <20180803105055.GC28546@ulmo>
-References: <20180801150807.15926-1-digetx@gmail.com> <20180803105055.GC28546@ulmo>
+        Fri, 3 Aug 2018 09:28:10 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w73BW2mx056581
+        for <linux-kernel@vger.kernel.org>; Fri, 3 Aug 2018 07:32:15 -0400
+Received: from e35.co.us.ibm.com (e35.co.us.ibm.com [32.97.110.153])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2kmncna0m6-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Aug 2018 07:32:09 -0400
+Received: from localhost
+        by e35.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <muriloo@linux.ibm.com>;
+        Fri, 3 Aug 2018 05:31:51 -0600
+Received: from b03cxnp08025.gho.boulder.ibm.com (9.17.130.17)
+        by e35.co.us.ibm.com (192.168.1.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 3 Aug 2018 05:31:46 -0600
+Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
+        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w73BVjcN19726660
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 3 Aug 2018 04:31:45 -0700
+Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C06BFC605B;
+        Fri,  3 Aug 2018 05:31:45 -0600 (MDT)
+Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1E962C6057;
+        Fri,  3 Aug 2018 05:31:45 -0600 (MDT)
+Received: from localhost (unknown [9.80.83.25])
+        by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTPS;
+        Fri,  3 Aug 2018 05:31:44 -0600 (MDT)
+Date:   Fri, 3 Aug 2018 08:31:41 -0300
+From:   Murilo Opsfelder Araujo <muriloo@linux.ibm.com>
+To:     Michael Ellerman <mpe@ellerman.id.au>
+Cc:     Christophe LEROY <christophe.leroy@c-s.fr>,
+        linux-kernel@vger.kernel.org,
+        "Alastair D'Silva" <alastair@d-silva.org>,
+        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Cyril Bur <cyrilbur@gmail.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Joe Perches <joe@perches.com>,
+        Michael Neuling <mikey@neuling.org>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Simon Guo <wei.guo.simon@gmail.com>,
+        Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>,
+        "Tobin C . Harding" <me@tobin.cc>, linuxppc-dev@lists.ozlabs.org,
+        Segher Boessenkool <segher@kernel.crashing.org>
+Subject: Re: [PATCH v4 5/6] powerpc: Add show_user_instructions()
+References: <20180801213320.11203-1-muriloo@linux.ibm.com>
+ <20180801213320.11203-6-muriloo@linux.ibm.com>
+ <7209fa95-8d40-14ca-f27a-ce3edb64191e@c-s.fr>
+ <20180803004201.GA5891@kermit-br-ibm-com>
+ <69cf990b-d4aa-97e7-be3b-7936caa91688@c-s.fr>
+ <87pnyzhm9l.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87pnyzhm9l.fsf@concordia.ellerman.id.au>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-TM-AS-GCONF: 00
+x-cbid: 18080311-0012-0000-0000-00001696B249
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009476; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01069483; UDB=6.00549978; IPR=6.00848051;
+ MB=3.00022480; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-03 11:31:50
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18080311-0013-0000-0000-000053E73104
+Message-Id: <20180803113141.GA5476@kermit-br-ibm-com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-03_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=566 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808030129
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Friday, 3 August 2018 13:50:55 MSK Thierry Reding wrote:
-> On Wed, Aug 01, 2018 at 06:08:07PM +0300, Dmitry Osipenko wrote:
-> > From time to time new bugs are popping up, causing some host1x client to
-> > fail its initialization. Currently a single clients initialization failure
-> > causes whole host1x device registration to fail, as a result a single DRM
-> > sub-device initialization failure makes whole DRM initialization to fail.
-> > Let's ignore clients initialization failure, as a result display panel
-> > lights up even if some DRM clients (say GR2D or VIC) fail to initialize.
-> > 
-> > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> > ---
-> > 
-> >  drivers/gpu/host1x/bus.c | 18 +++++++-----------
-> >  1 file changed, 7 insertions(+), 11 deletions(-)
-> 
-> This is actually done on purpose. I can't think of a case where we would
-> actively like to keep a half-broken DRM device operational. The errors
-> that you're talking about should only happen during development,
+Hi, everyone.
 
-[only in a perfect world]
+I'd like to thank you all that contributed to refining and making this
+series better.  I did appreciate.
 
-> and the
-> device not showing up is a pretty good indicator that something is wrong
-> as opposed to everything booting normally and then getting some cryptic
-> error at runtime because one of the clients didn't initialize.
+Thank you!
 
-If machine doesn't have a serial port and it doesn't have ssh server running 
-or network doesn't come up, you'll end up with a completely dysfunctional 
-piece of hardware. Hence there is no chance for you to even check what is 
-wrong. The argument about a cryptic error doesn't make much sense, you have to 
-improve your runtime as well (and you'll get a error message in the kernels 
-log).
-
-> From my perspective, all clients should always be operational in
-> whatever baseline version you use. If it isn't that's a bug that should
-> be fixed. Ideally those bugs should get fixed before making it into a
-> baseline version (mainline, linux-next, ...), so that this never impacts
-> even developers, unless they break it themselves, in which case refusing
-> to register the DRM device is a pretty good incentive to fix it.
-
-Sounds like you're assuming that only kernel developers are supposed to use 
-Tegra, though at least (for now) for upstream it is kinda true. Of course that 
-could be changed ;-)
-
-
+Cheers
+Murilo
 
