@@ -2,144 +2,104 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A251DC28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 13:01:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3FEAC28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 13:02:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47AF121748
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 13:01:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="XF1JdH7B"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47AF121748
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lightnvm.io
+	by mail.kernel.org (Postfix) with ESMTP id 1B95A21748
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 13:02:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B95A21748
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731650AbeHCO5z (ORCPT
+        id S1731927AbeHCO6P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 10:57:55 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:34588 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729367AbeHCO5y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 10:57:54 -0400
-Received: by mail-lf1-f65.google.com with SMTP id n96-v6so4018335lfi.1
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Aug 2018 06:01:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=yY+s+Wo21js7uwOR5v+juzGv4BB2CsnjQLGXB4wq2Bc=;
-        b=XF1JdH7BAFloRql5wDrZhdPZwbHMvr8BuOvmX/wbFJulF+dLGfH5gDxNbpInpcyw0Y
-         jH7u4EcOHbxlZpLlE4oTudRRZdJl2ejfZZoX9HvOnj01kNxR98I1GZmBycO4NIOx0NdE
-         JkYAGOKtb2rfJcZyoun6JwqkZtK7S78lHvtzgiviqHPT/ot0w3SJZ904MAMvVWEj8JiR
-         mdlND5i1ENL9oSXB9VTNTEIlmheTnAQuXNmc689asRdTg1GB48eQ0f9v4NofHSvraPy1
-         H7ss99hBVtNvyOrmDEPYSBDMoizbPVqDpyjQDfvUmz0PT6nz9xUhWRSXot4tcgor+S5d
-         baxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=yY+s+Wo21js7uwOR5v+juzGv4BB2CsnjQLGXB4wq2Bc=;
-        b=K9vQW6UnXXUaJy6bWJaW8J9RcyTDYnw9X/RefO1GhJ/eB9jUCiSjrmFJVZezEF/7Q5
-         spVdzak02b7vZ/IuXz9p79fK7We2hM4GIpBEbQx4ZuMYGSBrZANrbBUGLFLLQPH51CfC
-         yEUiNnn3i6HZNfnXdC/Oy854qzXvN9/6iKUTxJhAfHKpOjvqTeJ6kETjAt7/XBcvzoRR
-         jy04isHiAUI4vfMorDrhuxRwb6i15usCPJ3mIMwc+8z2ed67W3dl9a0V1QUzIS9kjT2k
-         ABXgPxVVsjpLi0s/WD7eUqwRPTa9D/g+5Df2uWNeXjXF7K0IU5t+zDJqTldhRaHTgQAm
-         XJ5Q==
-X-Gm-Message-State: AOUpUlFvSaXb15A6wxOun5aavgK624MFCUylur35FdG8tS89M/XTGhzR
-        oz5ygGg67NMmgjE02dweYjSqUGC/3Uo=
-X-Google-Smtp-Source: AAOMgperbL9kpLngq+OS46FmhokcQ/v2tzEVTKft4AhuzUNNB1MRFCxRFr6x755XbKxMQLqKIQu8LA==
-X-Received: by 2002:ac2:418b:: with SMTP id z11-v6mr4865880lfh.3.1533301298245;
-        Fri, 03 Aug 2018 06:01:38 -0700 (PDT)
-Received: from [192.168.0.10] (95-166-82-66-cable.dk.customer.tdc.net. [95.166.82.66])
-        by smtp.googlemail.com with ESMTPSA id d13-v6sm707590lfi.74.2018.08.03.06.01.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 03 Aug 2018 06:01:36 -0700 (PDT)
-Subject: Re: [PATCH] lightnvm: move device L2P detection to core
-To:     javier@cnexlabs.com
-Cc:     igor.j.konopko@intel.com, marcin.dziegielewski@intel.com,
-        hans.holmberg@cnexlabs.com, hlitz@ucsc.edu,
-        youngtack.jin@circuitblvd.com, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180803085449.3436-1-mb@lightnvm.io>
- <31319710-8A72-49DC-9CFA-521CA06843F3@cnexlabs.com>
- <9349be00-4d14-9b25-ed11-fb9244428d7f@lightnvm.io>
- <C29BF7B1-4C9A-47C7-9E5F-AD63356B01BC@cnexlabs.com>
- <56562d7c-8deb-4597-4274-5a55ec9327f7@lightnvm.io>
- <B2E9F490-32FD-49C5-906D-994762E7191D@cnexlabs.com>
-From:   =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
-Message-ID: <e0be455d-2586-fea8-a554-2796b08dd5ff@lightnvm.io>
-Date:   Fri, 3 Aug 2018 15:01:35 +0200
+        Fri, 3 Aug 2018 10:58:15 -0400
+Received: from mx2.suse.de ([195.135.220.15]:41940 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729367AbeHCO6P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 10:58:15 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 212CDAE0A;
+        Fri,  3 Aug 2018 13:01:59 +0000 (UTC)
+Subject: Re: [PATCH v6 4/5] mm/page_alloc: Inline function to handle
+ CONFIG_DEFERRED_STRUCT_PAGE_INIT
+To:     osalvador@techadventures.net, akpm@linux-foundation.org
+Cc:     mhocko@suse.com, pasha.tatashin@oracle.com,
+        mgorman@techsingularity.net, aaron.lu@intel.com,
+        iamjoonsoo.kim@lge.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, dan.j.williams@intel.com,
+        david@redhat.com, Oscar Salvador <osalvador@suse.de>
+References: <20180801122348.21588-1-osalvador@techadventures.net>
+ <20180801122348.21588-5-osalvador@techadventures.net>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Openpgp: preference=signencrypt
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+ cqmP8roqufIAj+Ohhzs=
+Message-ID: <9af245b8-bf2d-4d32-053d-22d8596101b3@suse.cz>
+Date:   Fri, 3 Aug 2018 15:01:57 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <B2E9F490-32FD-49C5-906D-994762E7191D@cnexlabs.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180801122348.21588-5-osalvador@techadventures.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/03/2018 02:55 PM, Javier Gonzalez wrote:
->> On 3 Aug 2018, at 14.43, Matias Bjørling <mb@lightnvm.io> wrote:
->>
->> On 08/03/2018 02:40 PM, Javier Gonzalez wrote:
->>>> On 3 Aug 2018, at 14.37, Matias Bjørling <mb@lightnvm.io> wrote:
->>>>
->>>> On 08/03/2018 02:16 PM, Javier Gonzalez wrote:
->>>>>> On 3 Aug 2018, at 10.54, Matias Bjørling <mb@lightnvm.io> wrote:
->>>>>>
->>>>>> A 1.2 device is able to manage the logical to physical mapping
->>>>>> table internally or leave it to the host.
->>>>>>
->>>>>> A target only supports one of those approaches, and therefore must
->>>>>> check on initialization. Move this check to core to avoid each target
->>>>>> implement the check.
->>>>>>
->>>>>> Signed-off-by: Matias Bjørling <mb@lightnvm.io>
->>>>>> ---
->>>>> I see where you want to go with these changes, but the way targets are
->>>>> layered on top of the LightNVM subsystem does not align with it.
->>>>> LightNVM can support different OCSSD versions and capabilities, but that
->>>>> does not mean that a target (e.g., pblk) does. The way I see it, core
->>>>> should only check for (i) the drive to expose itself in a known revision
->>>>> and (ii) the reported structures to be consistent. However, specific
->>>>> functionality is not for core to check upo.
->>>>
->>>> Why try to initialize a target, if we already know that it is incompatible?
->>> Yes, that is my point. But the one who knows if the targets supports
->>> something or not is the target, not the subsystem. Here, you are making
->>> an assumption knowing the pblk requires the L2P on the host, but that
->>> could change in the future...
->>
->> I don't believe it can. It is not supported by the 2.0 specification.
->> 1.2 is legacy.
->>
+On 08/01/2018 02:23 PM, osalvador@techadventures.net wrote:
+> From: Oscar Salvador <osalvador@suse.de>
 > 
-> Ja... We both know that people is using 1.2 variants out there...
-
-Yes, I'm not saying that. I'm saying the spec 1.2 has been deprecated by 
-2.0 and no longer developed, and I'm not going to move that brainfart 
-into the 2.0 spec :)
-
+> Let us move the code between CONFIG_DEFERRED_STRUCT_PAGE_INIT
+> to an inline function.
+> Not having an ifdef in the function makes the code more readable.
 > 
->> I understand this from the perspective when checking for un-even
->> configurations using the geometry. But this is a spec incompatibility,
->> which I don't think the target should care about.
-> 
-> I see the point of not having this check in pblk since we know that we
-> are moving towards 2.0 and leaving 1.2 as legacy/not-upstream. But does
-> it really make sense to fail LightNVM on a 1.2 capability that is spec.
-> compliant? For all we know people could have this and use it from user
-> space or through an internal target.
->
+> Signed-off-by: Oscar Salvador <osalvador@suse.de>
+> Acked-by: Michal Hocko <mhocko@suse.com>
+> Reviewed-by: Pavel Tatashin <pasha.tatashin@oracle.com>
 
-It only fails on target creation, not on disk initialization. The disk 
-will be up so user-space and targets that implements. Is that a problem?
-
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
