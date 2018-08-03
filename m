@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A347FC28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 07:21:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2FE1C46467
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 07:21:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C1D22172D
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 07:21:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8DC8A2172E
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 07:21:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=iluvatar.ai header.i=@iluvatar.ai header.b="GBoX8swU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C1D22172D
+	dkim=pass (1024-bit key) header.d=iluvatar.ai header.i=@iluvatar.ai header.b="KelGrU/V"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DC8A2172E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=iluvatar.ai
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731501AbeHCJQR (ORCPT
+        id S1732033AbeHCJQS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 05:16:17 -0400
-Received: from mail.iluvatar.ai ([58.213.90.100]:57164 "EHLO mail.iluvatar.ai"
+        Fri, 3 Aug 2018 05:16:18 -0400
+Received: from mail.iluvatar.ai ([58.213.90.100]:57209 "EHLO mail.iluvatar.ai"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729808AbeHCJQQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 05:16:16 -0400
+        id S1729792AbeHCJQR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 05:16:17 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by mail.iluvatar.ai (Postfix) with ESMTP id 5CFE1107081C5;
+        by mail.iluvatar.ai (Postfix) with ESMTP id E6ED8107081CC;
         Fri,  3 Aug 2018 15:24:53 +0800 (CST)
 Received: from mail.iluvatar.ai ([127.0.0.1])
         by localhost (mail.iluvatar.ai [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id vKU63yUJzV6Y; Fri,  3 Aug 2018 15:24:53 +0800 (CST)
+        with ESMTP id dxKGkpg-xTKa; Fri,  3 Aug 2018 15:24:53 +0800 (CST)
 Received: from localhost (localhost [127.0.0.1])
-        by mail.iluvatar.ai (Postfix) with ESMTP id 0372E107081C8;
+        by mail.iluvatar.ai (Postfix) with ESMTP id 9D155107081C7;
         Fri,  3 Aug 2018 15:24:53 +0800 (CST)
-DKIM-Filter: OpenDKIM Filter v2.9.2 mail.iluvatar.ai 0372E107081C8
+DKIM-Filter: OpenDKIM Filter v2.9.2 mail.iluvatar.ai 9D155107081C7
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iluvatar.ai;
         s=809B2F8E-810B-11E8-86FD-A0A654EEFFEB; t=1533281093;
-        bh=KDphEuHxfEV/bQvjVHae/IdvTgCB2O1z5hhVDSG7hJY=;
+        bh=lmY3Ee6I4l55uOi6Yl0NoD2F8CrnxNhjQ8hVQIhitnE=;
         h=From:To:Subject:Date:Message-Id;
-        b=GBoX8swUjtj6ZjYON+03gJcJEDss1/oWCTeH/Eb+pdUglUAEAvfuNbW87F61McP2V
-         hcz9UYQS7TnoCeDaNyU/i6x5Vwnyeq4yr9z+CERcMQaYQewcie5Y2vbweFEgL8zDKw
-         WThu/a6vRJWVECiugF9RQ7zJus5AW5844nw4xPKE=
+        b=KelGrU/VaOUj6eo+hXrwNe+3E77Zt28MHaWqzXt7VVdj14+JW04fkgZELVWkx0/nb
+         3UEGxZttPpFySSrAIUhh90XvWZJA2hQRijIiLMzOjOvW+q164gAwywhIHFRpWtfOoR
+         cIqPVw0gUtdMmhMfZKyupua2EBsdKgZl8P57r5EE=
 X-Virus-Scanned: amavisd-new at iluvatar.ai
 Received: from mail.iluvatar.ai ([127.0.0.1])
         by localhost (mail.iluvatar.ai [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id 75pcs9RCdl3c; Fri,  3 Aug 2018 15:24:52 +0800 (CST)
+        with ESMTP id B-O7bpkO8Byy; Fri,  3 Aug 2018 15:24:53 +0800 (CST)
 Received: from localhost.localdomain (unknown [180.166.124.10])
-        by mail.iluvatar.ai (Postfix) with ESMTPSA id 43ED1107081C2;
+        by mail.iluvatar.ai (Postfix) with ESMTPSA id E4779107081C0;
         Fri,  3 Aug 2018 15:24:52 +0800 (CST)
 From:   Huang Shijie <sjhuang@iluvatar.ai>
 To:     vkoul@kernel.org
@@ -59,9 +59,9 @@ Cc:     dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
         michal.simek@xilinx.com, baohua@kernel.org,
         ludovic.desroches@microchip.com, linus.walleij@linaro.org,
         david.brown@linaro.org, Huang Shijie <sjhuang@iluvatar.ai>
-Subject: [PATCH 06/46] dmaengine: timb_dma: use dmaenginem_async_device_register to simplify the code
-Date:   Fri,  3 Aug 2018 15:19:36 +0800
-Message-Id: <20180803072016.21544-7-sjhuang@iluvatar.ai>
+Subject: [PATCH 07/46] dmaengine: omap-dma: use dmaenginem_async_device_register to simplify the code
+Date:   Fri,  3 Aug 2018 15:19:37 +0800
+Message-Id: <20180803072016.21544-8-sjhuang@iluvatar.ai>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180803072016.21544-1-sjhuang@iluvatar.ai>
 References: <20180803072016.21544-1-sjhuang@iluvatar.ai>
@@ -75,30 +75,39 @@ Use dmaenginem_async_device_register to simplify the code:
 
 Signed-off-by: Huang Shijie <sjhuang@iluvatar.ai>
 ---
- drivers/dma/timb_dma.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/dma/ti/omap-dma.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/dma/timb_dma.c b/drivers/dma/timb_dma.c
-index 395c698edb4d..39e1ba2347db 100644
---- a/drivers/dma/timb_dma.c
-+++ b/drivers/dma/timb_dma.c
-@@ -723,7 +723,7 @@ static int td_probe(struct platform_device *pdev)
- 		list_add_tail(&td_chan->chan.device_node, &td->dma.channels);
+diff --git a/drivers/dma/ti/omap-dma.c b/drivers/dma/ti/omap-dma.c
+index a4a931ddf6f6..085748c6eb67 100644
+--- a/drivers/dma/ti/omap-dma.c
++++ b/drivers/dma/ti/omap-dma.c
+@@ -1566,7 +1566,7 @@ static int omap_dma_probe(struct platform_device *pdev)
+ 		}
  	}
  
--	err = dma_async_device_register(&td->dma);
-+	err = dmaenginem_async_device_register(&td->dma);
- 	if (err) {
- 		dev_err(&pdev->dev, "Failed to register async device\n");
- 		goto err_free_irq;
-@@ -754,7 +754,6 @@ static int td_remove(struct platform_device *pdev)
- 	struct resource *iomem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	int irq = platform_get_irq(pdev, 0);
+-	rc = dma_async_device_register(&od->ddev);
++	rc = dmaenginem_async_device_register(&od->ddev);
+ 	if (rc) {
+ 		pr_warn("OMAP-DMA: failed to register slave DMA engine device: %d\n",
+ 			rc);
+@@ -1584,7 +1584,6 @@ static int omap_dma_probe(struct platform_device *pdev)
+ 				of_dma_simple_xlate, &omap_dma_info);
+ 		if (rc) {
+ 			pr_warn("OMAP-DMA: failed to register DMA controller\n");
+-			dma_async_device_unregister(&od->ddev);
+ 			omap_dma_free(od);
+ 		}
+ 	}
+@@ -1606,8 +1605,6 @@ static int omap_dma_remove(struct platform_device *pdev)
+ 	irq = platform_get_irq(pdev, 1);
+ 	devm_free_irq(&pdev->dev, irq, od);
  
--	dma_async_device_unregister(&td->dma);
- 	free_irq(irq, td);
- 	tasklet_kill(&td->tasklet);
- 	iounmap(td->membase);
+-	dma_async_device_unregister(&od->ddev);
+-
+ 	if (!od->legacy) {
+ 		/* Disable all interrupts */
+ 		omap_dma_glbl_write(od, IRQENABLE_L0, 0);
 -- 
 2.17.1
 
