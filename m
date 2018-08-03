@@ -6,155 +6,115 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B86EC28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 08:45:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 210A1C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 08:46:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58C5C2174D
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 08:45:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58C5C2174D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+	by mail.kernel.org (Postfix) with ESMTP id D92482173F
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 08:46:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D92482173F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732407AbeHCKkR convert rfc822-to-8bit (ORCPT
+        id S1732229AbeHCKlw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 06:40:17 -0400
-Received: from ozlabs.org ([203.11.71.1]:56655 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728442AbeHCKkR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 06:40:17 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41hgbC6N6Gz9s4V;
-        Fri,  3 Aug 2018 18:44:55 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Christophe LEROY <christophe.leroy@c-s.fr>,
-        Murilo Opsfelder Araujo <muriloo@linux.ibm.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Alastair D'Silva <alastair@d-silva.org>,
-        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Cyril Bur <cyrilbur@gmail.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Joe Perches <joe@perches.com>,
-        Michael Neuling <mikey@neuling.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Simon Guo <wei.guo.simon@gmail.com>,
-        Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>,
-        "Tobin C . Harding" <me@tobin.cc>, linuxppc-dev@lists.ozlabs.org,
-        Segher Boessenkool <segher@kernel.crashing.org>
-Subject: Re: [PATCH v4 5/6] powerpc: Add show_user_instructions()
-In-Reply-To: <69cf990b-d4aa-97e7-be3b-7936caa91688@c-s.fr>
-References: <20180801213320.11203-1-muriloo@linux.ibm.com> <20180801213320.11203-6-muriloo@linux.ibm.com> <7209fa95-8d40-14ca-f27a-ce3edb64191e@c-s.fr> <20180803004201.GA5891@kermit-br-ibm-com> <69cf990b-d4aa-97e7-be3b-7936caa91688@c-s.fr>
-Date:   Fri, 03 Aug 2018 18:44:54 +1000
-Message-ID: <87pnyzhm9l.fsf@concordia.ellerman.id.au>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+        Fri, 3 Aug 2018 06:41:52 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:39199 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728442AbeHCKlw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 06:41:52 -0400
+Received: from hsi-kbw-5-158-153-55.hsi19.kabel-badenwuerttemberg.de ([5.158.153.55] helo=[10.100.21.79])
+        by Galois.linutronix.de with esmtpsa (TLS1.2:RSA_AES_256_CBC_SHA1:256)
+        (Exim 4.80)
+        (envelope-from <erica.bugden@linutronix.de>)
+        id 1flVjD-0004OP-TL; Fri, 03 Aug 2018 10:46:32 +0200
+Message-ID: <1533285974.2179.6.camel@linutronix.de>
+Subject: Re: [PATCH] ftrace: Add missing check for existing hwlat thread
+From:   Erica Bugden <erica.bugden@linutronix.de>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     linux-kernel@vger.kernel.org, peterz@infradead.org,
+        tglx@linutronix.de, anna-maria@linutronix.de, bigeasy@linutronix.de
+Date:   Fri, 03 Aug 2018 10:46:14 +0200
+In-Reply-To: <20180801154006.580806cc@gandalf.local.home>
+References: <1533120354-22923-1-git-send-email-erica.bugden@linutronix.de>
+         <20180801154006.580806cc@gandalf.local.home>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Christophe LEROY <christophe.leroy@c-s.fr> writes:
-> Le 03/08/2018 à 02:42, Murilo Opsfelder Araujo a écrit :
->> Hi, Christophe.
->> On Thu, Aug 02, 2018 at 07:26:20AM +0200, Christophe LEROY wrote:
->>> Le 01/08/2018 à 23:33, Murilo Opsfelder Araujo a écrit :
->>>> show_user_instructions() is a slightly modified version of
->>>> show_instructions() that allows userspace instruction dump.
->>>>
->>>> This will be useful within show_signal_msg() to dump userspace
->>>> instructions of the faulty location.
->>>>
->>>> Here is a sample of what show_user_instructions() outputs:
->>>>
->>>>     pandafault[10850]: code: 4bfffeec 4bfffee8 3c401002 38427f00 fbe1fff8 f821ffc1 7c3f0b78 3d22fffe
->>>>     pandafault[10850]: code: 392988d0 f93f0020 e93f0020 39400048 <99490000> 39200000 7d234b78 383f0040
->>>>
->>>> The current->comm and current->pid printed can serve as a glue that
->>>> links the instructions dump to its originator, allowing messages to be
->>>> interleaved in the logs.
->>>>
->>>> diff --git a/arch/powerpc/kernel/process.c b/arch/powerpc/kernel/process.c
->>>> index e9533b4d2f08..364645ac732c 100644
->>>> --- a/arch/powerpc/kernel/process.c
->>>> +++ b/arch/powerpc/kernel/process.c
->>>> @@ -1299,6 +1299,46 @@ static void show_instructions(struct pt_regs *regs)
->>>>    	pr_cont("\n");
->>>>    }
->>>> +void show_user_instructions(struct pt_regs *regs)
->>>> +{
->>>> +	int i;
->>>> +	const char *prefix = KERN_INFO "%s[%d]: code: ";
->>>> +	unsigned long pc = regs->nip - (instructions_to_print * 3 / 4 *
->>>> +					sizeof(int));
->>>> +
->>>> +	printk(prefix, current->comm, current->pid);
->>>
->>> Why not use pr_info() and remove KERN_INFO from *prefix ?
->> 
->> Because it doesn't compile:
->> 
->>    arch/powerpc/kernel/process.c:1317:10: error: expected ‘)’ before ‘prefix’
->>      pr_info(prefix, current->comm, current->pid);
->>              ^
->>    ./include/linux/printk.h:288:21: note: in definition of macro ‘pr_fmt’
->>     #define pr_fmt(fmt) fmt
->>                       ^
->> 
->> `pr_info(prefix, ...)` expands to `printk("\001" "6" prefix, ...)`,
->> which is an invalid string concatenation.
->> 
->> `pr_info("%s", ...)` expands to `printk("\001" "6" "%s", ...)`, which is
->> valid.
->
-> Then what about using directly:
->
-> pr_info("%s[%d]: code: ", ...);
+On Wed, 2018-08-01 at 15:40 -0400, Steven Rostedt wrote:
+> On Wed,  1 Aug 2018 12:45:54 +0200
+> > Erica Bugden <erica.bugden@linutronix.de> wrote:
+> 
+> > The hwlat tracer uses a kernel thread to measure latencies. The function
+> > that creates this kernel thread, start_kthread(), can be called when the
+> > tracer is initialized and when the tracer is explicitly enabled.
+> > start_kthread() does not check if there is an existing hwlat kernel
+> > thread and will create a new one each time it is called.
+> > 
+> > This causes the reference to the previous thread to be lost. Without the
+> > thread reference, the old kernel thread becomes unstoppable and
+> > continues to use CPU time even after the hwlat tracer has been disabled.
+> > This problem can be observed when a system is booted with tracing
+> > enabled and the hwlat tracer is configured like this:
+> > 
+> > 	echo hwlat > current_tracer; echo 1 > tracing_on
+> > 
+> > Add the missing check for an existing kernel thread in start_kthread()
+> > to prevent this problem. This function and the rest of the hwlat kernel
+> > thread setup and teardown are already serialized because they are called
+> > through the tracer core code with trace_type_lock held.
+> > 
+> > > > Signed-off-by: Erica Bugden <erica.bugden@linutronix.de>
+> > ---
+> >  kernel/trace/trace_hwlat.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> > 
+> > diff --git a/kernel/trace/trace_hwlat.c b/kernel/trace/trace_hwlat.c
+> > index d7c8e4e..2d9d36d 100644
+> > --- a/kernel/trace/trace_hwlat.c
+> > +++ b/kernel/trace/trace_hwlat.c
+> > @@ -354,6 +354,9 @@ static int start_kthread(struct trace_array *tr)
+> > > >  	struct task_struct *kthread;
+> > > >  	int next_cpu;
+> >  
+> > > > +	if (hwlat_kthread)
+> > > > +		return 0;
+> > +
+> 
+> This looks like it is treating the symptom and not the disease.
+> 
+> > > >  	/* Just pick the first CPU on first iteration */
+> > > >  	current_mask = &save_cpumask;
+> > > >  	get_online_cpus();
+> 
+> Can you try this patch?
 
-Yeah that's better, I'll fix it up when applying.
+I tested the patch below and it also fixes the problem.
 
->>>> +#if !defined(CONFIG_BOOKE)
->>>> +		/* If executing with the IMMU off, adjust pc rather
->>>> +		 * than print XXXXXXXX.
->>>> +		 */
->>>> +		if (!(regs->msr & MSR_IR))
->>>> +			pc = (unsigned long)phys_to_virt(pc);
->>>
->>> Shouldn't this be done outside of the loop, only once ?
->> 
->> I don't think so.
->> 
->> pc gets incremented at the bottom of the loop:
->> 
->>    pc += sizeof(int);
->> 
->> Adjusting pc is necessary at each iteration.  Leaving this block inside
->> the loop seems correct.
->
-> This looks pretty strange.
-> The first time, pc is a physical address, that you change to a virtual 
-> address. Then when you increment it it is still a virtual address.
-> So when you call phys_to_virt(pc) for the second time, pc is already a 
-> virt address, so what happens indeed ?
-
-Yeah that's a bit fishy.
-
-On 64-bit it works because phys_to_virt() == __va() which is:
-
-  #define __va(x) ((void *)(unsigned long)((phys_addr_t)(x) | PAGE_OFFSET))
-
-ie. it uses bitwise or, so __va(__va(x)) == __va(x).
-
-But it looks like on 32-bit it's going to do the wrong thing. Do we ever
-actually hit that case though, I'm not sure?
-
-
-However for this patch I'll just remove the whole thing, because we
-don't expect to be dumping user instructions in realmode.
-
-cheers
+> 
+> -- Steve
+> 
+> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+> index 823687997b01..15862044db05 100644
+> --- a/kernel/trace/trace.c
+> +++ b/kernel/trace/trace.c
+> @@ -7628,7 +7628,9 @@ rb_simple_write(struct file *filp, const char __user *ubuf,
+>  
+>  	if (buffer) {
+>  		mutex_lock(&trace_types_lock);
+> -		if (val) {
+> +		if (!!val == tracer_tracing_is_on(tr)) {
+> +			val = 0; /* do nothing */
+> +		} else if (val) {
+>  			tracer_tracing_on(tr);
+>  			if (tr->current_trace->start)
+>  				tr->current_trace->start(tr);
