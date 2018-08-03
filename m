@@ -2,110 +2,101 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 710E6C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 14:39:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB781C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 14:39:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4DE821757
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 14:39:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4DE821757
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bitron.ch
+	by mail.kernel.org (Postfix) with ESMTP id 6095621757
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 14:39:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="YMornd2o"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6095621757
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732459AbeHCQgE (ORCPT
+        id S1732503AbeHCQgR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 12:36:04 -0400
-Received: from nov-007-i649.relay.mailchannels.net ([46.232.183.203]:28448
-        "EHLO nov-007-i649.relay.mailchannels.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1732271AbeHCQgD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 12:36:03 -0400
-X-Sender-Id: novatrend|x-authuser|juerg@bitron.ch
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-        by relay.mailchannels.net (Postfix) with ESMTP id 55DECBE04F1;
-        Fri,  3 Aug 2018 14:39:21 +0000 (UTC)
-Received: from srv17.tophost.ch (swiss-ingress-3.mailchannels.ch [46.232.178.210])
-        by relay.mailchannels.net (Postfix) with ESMTPA id F297FBE031A;
-        Fri,  3 Aug 2018 14:39:17 +0000 (UTC)
-X-Sender-Id: novatrend|x-authuser|juerg@bitron.ch
-Received: from srv17.tophost.ch (srv17.tophost.ch [193.33.128.141])
-        (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384)
-        by 0.0.0.0:2500 (trex/5.15.2);
-        Fri, 03 Aug 2018 14:39:21 +0000
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: novatrend|x-authuser|juerg@bitron.ch
-X-MailChannels-Auth-Id: novatrend
-X-Macabre-Cooing: 443225050d1d9cce_1533307160937_2055385670
-X-MC-Loop-Signature: 1533307160937:260901966
-X-MC-Ingress-Time: 1533307160936
-Received: from [80.219.231.201] (port=55852 helo=jzen.bitron.ch)
-        by srv17.tophost.ch with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.91)
-        (envelope-from <j@bitron.ch>)
-        id 1flbEZ-004Dx7-FU; Fri, 03 Aug 2018 16:39:15 +0200
-Message-ID: <548ab0d300c6b9839ad645655182d0ba26607d47.camel@bitron.ch>
-Subject: Re: [PATCH v2] prctl: add PR_[GS]ET_KILLABLE
-From:   =?ISO-8859-1?Q?J=FCrg?= Billeter <j@bitron.ch>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Oleg Nesterov <oleg@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-api@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Fri, 03 Aug 2018 16:39:14 +0200
-In-Reply-To: <87sh3vd14s.fsf@xmission.com>
-References: <20180730075241.24002-1-j@bitron.ch>
-         <20180731070337.61004-1-j@bitron.ch> <20180731143949.GA1890@redhat.com>
-         <f21a22c9730ab455504f58a5fbda72cba0eb1227.camel@bitron.ch>
-         <20180801141914.GA21248@redhat.com>
-         <7f7c57230e0279f4599bf13ae1d1d449d76ac232.camel@bitron.ch>
-         <87sh3vd14s.fsf@xmission.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.4 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-AuthUser: juerg@bitron.ch
+        Fri, 3 Aug 2018 12:36:17 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:54904 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732083AbeHCQgR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 12:36:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
+        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=PkAIz1NMlr2Je0QUuW4xWCU0s7LKItHJtmmPPwYN1sQ=;
+        b=YMornd2oxhk3TtNiDLAxjZXP7zLbyhKuJSicIt5Z6NlCt3oAbkQQNoWrT1KRyuSzs83ODM1ZSntZm45dSB8WrYji8QkbucqHcUvJI6DdWHD6G9ZJ9tfwfb18Hl7oad1+jkZ0RmDT0M8sqB8HwM4TEsBMbe3G1bwnM1ZbKNT4bE0=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1flbEu-0007ZT-Mu; Fri, 03 Aug 2018 16:39:36 +0200
+Date:   Fri, 3 Aug 2018 16:39:36 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc:     Stephen Hemminger <stephen@networkplumber.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v1 3/3] net: WireGuard secure network tunnel
+Message-ID: <20180803143936.GD27445@lunn.ch>
+References: <20180731191102.2434-1-Jason@zx2c4.com>
+ <20180731191102.2434-4-Jason@zx2c4.com>
+ <20180731132701.522b55e2@xeon-e3>
+ <CAHmME9oWYD7TUSkbqAFRFk9kwSWDfC2h-J72gpdxJiw5i1yrXw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHmME9oWYD7TUSkbqAFRFk9kwSWDfC2h-J72gpdxJiw5i1yrXw@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-08-03 at 08:34 -0500, Eric W. Biederman wrote:
-> From the other direction I think we can just go ahead and fix handling
-> of the job control stop signals as well.  As far as I understand it
-> there is a legitimate complaint that SIGTSTP SIGTTIN SIGTTOU do not work
-> on a pid namespace leader.
+On Fri, Aug 03, 2018 at 02:35:40AM +0200, Jason A. Donenfeld wrote:
+> On Tue, Jul 31, 2018 at 10:02 PM Andrew Lunn <andrew@lunn.ch> wrote:
+> > I just gave this patch to checkpatch.pl...
+> On Tue, Jul 31, 2018 at 10:22 PM Stephen Hemminger
+> <stephen@networkplumber.org> wrote:
+> > Please break lines at something reasonable like 100 characters.
 > 
-> The current implementation actual overshoots.  We only need to ignore
-> signals from the descendants in the pid namespace.  Ideally signals from
-> other processes are treated like normal.  We have only been able to
-> apply that ideal to SIGSTOP and SIGKILL as we can handle them in
-> prepare_signal.  Other signals can be blocked which means the logic to
-> handle them needs to live in get_signal where we may have no sender
-> information.
+> If the long lines really truly are dreadful, I have no problem fixing
+> that up for v2.
 
-SIGINT and SIGQUIT are also relevant for job control. Would the same
-approach be possible for them?
+A very large percentage of the kernel code uses 80 characters maximum.
+So anything which does not makes it look different. It makes it not
+look like kernel code. It is also not just about styling. If you use
+long lines, it makes it easier to use more indentation levels. But
+good readable code tends to have lots of little functions with only
+one or two levels of indentation, and each function does just one
+easily understood thing.
 
-And I would like to allow regular POSIX signal behavior also for
-signals used outside job control, e.g., SIGTERM, for maximum
-compatibility with existing applications. Furthermore, it would also be
-good to allow a PID namespace leader to send a signal to itself.
+Plus this is pretty much an open invite for kernel newbies to submit
+patches fixing up all these warnings. Maybe you would prefer to do it
+yourself, so you keep some degree of control over it. Also, such white
+space changes make backporting fixes more difficult. So it is better
+if you can get this done before it lands in the kernel and backporting
+becomes necessary.
 
-Do you think we can and should cover all of the above without a prctl
-by loosening the restrictions imposed by SIGNAL_UNKILLABLE (with
-reasonable effort)?
+> On Tue, Jul 31, 2018 at 10:02 PM Andrew Lunn <andrew@lunn.ch> wrote:
+> > > +static __always_inline void swap_endian(u8 *dst, const u8 *src, u8 bits)
+> > There is a general preference to not force the compile to
+> > inline. Leave it to decide.
+> 
+> I'm aware this is for the most part the case, and I've read the
+> variety of threads and documentation of folks explaining why this is a
+> good policy. In the particular instance of that function, inlining is
+> in fact always the right thing to do. But I'll give it a double check
+> to see if the compiler is already figuring that out on its own.
 
-In my opinion, my patch still makes sense as it simply allows regular
-POSIX signal behavior for PID namespace leaders and it doesn't risk any
-compatibility issues as the behavior doesn't change at all for
-processes that don't invoke the new prctl. I.e., simple patch, low
-risk, and covers all signals.
+Well, what compiler are you going to check? I think the minimum
+version of GCC is now v4.5. So you probably want to check 8.2, 7.3,
+6.4, 5.5, 4.9.3 and 4.8. And you might want to check ARM, MIPs, x86
+and amd64. So only 24 versions.
 
-In the meantime I've tested the missing patch for copy_process() and
-will send out v3 of the patch in case the new prctl makes sense after
-all.
+More realistically, if you have a strong argument why a particular
+function must be inlined, e.g. to avoid a timing attack, make that
+argument.
 
-Jürg
-
+	Andrew
