@@ -2,136 +2,89 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79704C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 04:03:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5CF5C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 04:09:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B71321711
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 04:03:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B71321711
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id 6B57521711
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 04:09:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YfT7FtJP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B57521711
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727203AbeHCF6F (ORCPT
+        id S1727291AbeHCGEL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 01:58:05 -0400
-Received: from gateway36.websitewelcome.com ([50.116.124.69]:33946 "EHLO
-        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726128AbeHCF6E (ORCPT
+        Fri, 3 Aug 2018 02:04:11 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:40336 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726301AbeHCGEL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 01:58:04 -0400
-X-Greylist: delayed 1408 seconds by postgrey-1.27 at vger.kernel.org; Fri, 03 Aug 2018 01:58:04 EDT
-Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
-        by gateway36.websitewelcome.com (Postfix) with ESMTP id 638CE400E7A32
-        for <linux-kernel@vger.kernel.org>; Thu,  2 Aug 2018 21:42:54 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id lQwuf6kO0PvAdlQwuf8xdz; Thu, 02 Aug 2018 22:40:21 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.50.82] (port=49190 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1flQwu-0019BB-6R; Thu, 02 Aug 2018 22:40:20 -0500
-Date:   Thu, 2 Aug 2018 22:40:19 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Zhenyu Wang <zhenyuw@linux.intel.com>,
-        Zhi Wang <zhi.a.wang@intel.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>
-Cc:     intel-gvt-dev@lists.freedesktop.org,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] drm/i915/kvmgt: Fix potential Spectre v1
-Message-ID: <20180803034019.GA18366@embeddedor.com>
+        Fri, 3 Aug 2018 02:04:11 -0400
+Received: by mail-oi0-f65.google.com with SMTP id w126-v6so7537601oie.7;
+        Thu, 02 Aug 2018 21:09:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Z0WojwAho9zVnqxXZlVAoq28/pzttXCvEcktqIzxO5g=;
+        b=YfT7FtJPk8btYxSAD8LpaI2InxfYEdQx53pJSRhNpXK2FhAuRJUNCM71LmwKKguXMd
+         4rKvA3ilVYtlXlrVYvFStU2ZNhNMqYpIlH/cERmKxeiK9DnuKpEAaP0U3P01t5/iIMqf
+         tU+A0woFky+0JdQ25z7u1Qmrl9fE/w2cRjbU9Tkyj0ukosfLs0Wr4TJU/u+HQXnx6YLq
+         fQTMsRbLPQ/3cVFDH4cR/TkGLUVDxBHd4jVkuIUv0BSJG5naOFUZy09/wzDPOTE1epOR
+         fKSVWbTbzw9/cgWLObfsOVcLLk5IXiawGt1tiqFPVT4gq6V92g+ktsDbADHRbBdnTbIs
+         EjDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Z0WojwAho9zVnqxXZlVAoq28/pzttXCvEcktqIzxO5g=;
+        b=KfKksmGRcz9o0lto1/eDRO7o4lvM6yYA+ntcMW8iJzYKC3WUbCi01LZu/fstIcEooc
+         vmWMDnfq1iWohIelvoxfOliv+irvkcMBRkizuuUzDgVG1neCN9q0M7lt4Z0Yhpxyw46X
+         uIa+NwguvLe9gFPhfDG6BGq7csAQPzDAj1u0FzItJMDSt+C5KKrZ3z00BbEYIbvNitwq
+         BA9uQCtY8VQXeYWnCJxB0HYyZJZsddxgsNJyBcAah9Hk4s4JeU4k7KeVRPLKmbKGZMBC
+         T8kBR73rjLAZ1l7/nGoht+QREGY+LZK5cb65FTvh3SIF/Vs2lDdZktx78tnGWmUdYLg/
+         ddJQ==
+X-Gm-Message-State: AOUpUlGVfis0eNtSH/fcWmldQq83tQ+LAsxqMQF8lYi2K6JSEVhPCOiF
+        MvqHfvHjN8WAUi9gyL/lvhHrG8X25730cuUizXk=
+X-Google-Smtp-Source: AA+uWPz7ywignb94u5i5oa0zf1ecuAyZLdg6KFtpbNoThDnws4kdCfFb3CQCII7c/XgpXnUyOrc9A+6JbwLVob8puSQ=
+X-Received: by 2002:aca:ad4f:: with SMTP id w76-v6mr1671594oie.233.1533269391541;
+ Thu, 02 Aug 2018 21:09:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.50.82
-X-Source-L: No
-X-Exim-ID: 1flQwu-0019BB-6R
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.50.82]:49190
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 10
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+References: <1532327996-17619-1-git-send-email-wanpengli@tencent.com>
+ <1532327996-17619-5-git-send-email-wanpengli@tencent.com> <cdf73aa6-d532-f522-2738-078b4acc19eb@redhat.com>
+In-Reply-To: <cdf73aa6-d532-f522-2738-078b4acc19eb@redhat.com>
+From:   Wanpeng Li <kernellwp@gmail.com>
+Date:   Fri, 3 Aug 2018 12:09:55 +0800
+Message-ID: <CANRm+Czkx0BTYh_6=WLVE8bUS2NkNuB0-F_Jb=TADHUb6p5Dvg@mail.gmail.com>
+Subject: Re: [PATCH v5 4/6] KVM: X86: Implement PV IPIs send hypercall
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
+        Radim Krcmar <rkrcmar@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-info.index can be indirectly controlled by user-space, hence leading
-to a potential exploitation of the Spectre variant 1 vulnerability.
+On Thu, 2 Aug 2018 at 21:04, Paolo Bonzini <pbonzini@redhat.com> wrote:
+>
+> On 23/07/2018 08:39, Wanpeng Li wrote:
+> > +Returns 0 if successfully delivery the IPIs and 1 if discarded.
+>
+> I'm changing this to
+>
+> "Returns the number of CPUs to which the IPIs were delivered successfully"
+>
+> with an obvious change to x86.c.
 
-This issue was detected with the help of Smatch:
+Thanks Paolo!
 
-drivers/gpu/drm/i915/gvt/kvmgt.c:1232 intel_vgpu_ioctl() warn:
-potential spectre issue 'vgpu->vdev.region' [r]
-
-Fix this by sanitizing info.index before indirectly using it to index
-vgpu->vdev.region
-
-Notice that given that speculation windows are large, the policy is
-to kill the speculation on the first load and not worry if it can be
-completed with a dependent load/store [1].
-
-[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/gpu/drm/i915/gvt/kvmgt.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/i915/gvt/kvmgt.c b/drivers/gpu/drm/i915/gvt/kvmgt.c
-index 4d2f53a..b703f20 100644
---- a/drivers/gpu/drm/i915/gvt/kvmgt.c
-+++ b/drivers/gpu/drm/i915/gvt/kvmgt.c
-@@ -43,6 +43,8 @@
- #include <linux/mdev.h>
- #include <linux/debugfs.h>
- 
-+#include <linux/nospec.h>
-+
- #include "i915_drv.h"
- #include "gvt.h"
- 
-@@ -1139,7 +1141,8 @@ static long intel_vgpu_ioctl(struct mdev_device *mdev, unsigned int cmd,
- 	} else if (cmd == VFIO_DEVICE_GET_REGION_INFO) {
- 		struct vfio_region_info info;
- 		struct vfio_info_cap caps = { .buf = NULL, .size = 0 };
--		int i, ret;
-+		unsigned int i;
-+		int ret;
- 		struct vfio_region_info_cap_sparse_mmap *sparse = NULL;
- 		size_t size;
- 		int nr_areas = 1;
-@@ -1224,6 +1227,10 @@ static long intel_vgpu_ioctl(struct mdev_device *mdev, unsigned int cmd,
- 				if (info.index >= VFIO_PCI_NUM_REGIONS +
- 						vgpu->vdev.num_regions)
- 					return -EINVAL;
-+				info.index =
-+					array_index_nospec(info.index,
-+							VFIO_PCI_NUM_REGIONS +
-+							vgpu->vdev.num_regions);
- 
- 				i = info.index - VFIO_PCI_NUM_REGIONS;
- 
--- 
-2.7.4
-
+Regards,
+Wanpeng Li
