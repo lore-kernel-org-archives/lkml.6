@@ -6,49 +6,49 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C083C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 12:17:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DDE9C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 12:17:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA0E821759
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 12:17:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E632521759
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 12:17:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="cccKVYOy";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="DYfiza4q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA0E821759
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="eABV0rnK";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="mIY+zeik"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E632521759
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731364AbeHCONE (ORCPT
+        id S1731619AbeHCONI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 10:13:04 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:45310 "EHLO
+        Fri, 3 Aug 2018 10:13:08 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:45468 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727403AbeHCONE (ORCPT
+        with ESMTP id S1727403AbeHCONH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 10:13:04 -0400
+        Fri, 3 Aug 2018 10:13:07 -0400
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id F3BE3607BD; Fri,  3 Aug 2018 12:16:58 +0000 (UTC)
+        id 515C9602B7; Fri,  3 Aug 2018 12:17:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533298619;
-        bh=Zsi/y3FYCzIxxLpLK8ynqd4qhjN6NLR3ux4gMLn85FM=;
+        s=default; t=1533298623;
+        bh=1Jdp7Zlr0OEA1yU9+iwqVJNjFakj/qigqjjsA79r2uU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cccKVYOyXgsMj78E02fqSWO7+P5GOV6z96dvGYkFxryinEbLo7uyGC5EGFiMyiQQP
-         ucKlItne3jGYNQdVwDOFXQUWwJi7pZOe7DwAEaTzPPMtINghpyFaLJo2u0U0b1weDV
-         hNyxpxcn+GtX35+hngR9c3aAClYlRwxKn8mgQQ9Y=
+        b=eABV0rnKuG1n3cJZhMWHGAJaEC3m1f7DKwTE4dSsKe0D+pE0IG9vgwz0yvzn8sWe+
+         gFZUyucKdOlkpAvM1/RO52EdN2tpASQ8Hz86BdW5WcN5NGVKfMi4qIuAO3KxZ/IT3u
+         XIHn2ZOhJg3SK6hAw266sf4IAcxBVtX49a+KHxj0=
 Received: from bgodavar-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: bgodavar@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 75BD560AD8;
-        Fri,  3 Aug 2018 12:16:54 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4BCCD6063A;
+        Fri,  3 Aug 2018 12:16:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533298617;
-        bh=Zsi/y3FYCzIxxLpLK8ynqd4qhjN6NLR3ux4gMLn85FM=;
+        s=default; t=1533298621;
+        bh=1Jdp7Zlr0OEA1yU9+iwqVJNjFakj/qigqjjsA79r2uU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DYfiza4q67aGJu5mSDvivaDMA3sLAuIBlBfzV+OIWTwvtj7vegIugQpl8sHaNn+Zt
-         WivNXuB2F12Mt4ZvDzUUtZ+4TzPMvL9ho+JxI9smuV1gOdmtp4uoh4TWg82JCWG2Yv
-         p2kFvB/0fPgXMVZp7qdFdbiqWX208+TVAUcYJNqI=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 75BD560AD8
+        b=mIY+zeikCeQVGbukyXzEtbTJ9eAxjxOEPCj4PlKx0lji5gHGZDUhgZoJR2h/pEyWk
+         WF8431M2MVI7aPdCr9vtrysR7ZQF2JxFNEVlglrijjILMCiJBPsUXnakNYZ92/FJHP
+         bhiEipmK+ZW8mDX4QpZYa0wfGQzhWirARb8yFE+k=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4BCCD6063A
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=bgodavar@codeaurora.org
 From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
@@ -58,9 +58,9 @@ Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         rtatiya@codeaurora.org, hemantg@codeaurora.org,
         linux-arm-msm@vger.kernel.org,
         Balakrishna Godavarthi <bgodavar@codeaurora.org>
-Subject: [PATCH v15 4/7] Bluetooth: hci_qca: Add wrapper functions for setting UART speed
-Date:   Fri,  3 Aug 2018 17:46:29 +0530
-Message-Id: <20180803121632.30689-5-bgodavar@codeaurora.org>
+Subject: [PATCH v15 5/7] Bluetooth: hci_qca: Enable 3.2 Mbps operating speed.
+Date:   Fri,  3 Aug 2018 17:46:30 +0530
+Message-Id: <20180803121632.30689-6-bgodavar@codeaurora.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180803121632.30689-1-bgodavar@codeaurora.org>
 References: <20180803121632.30689-1-bgodavar@codeaurora.org>
@@ -69,144 +69,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In function qca_setup, we set initial and operating speeds for Qualcomm
-Bluetooth SoC's. This block of code is common across different
-Qualcomm Bluetooth SoC's. Instead of duplicating the code, created
-a wrapper function to set the speeds. So that future coming SoC's
-can use these wrapper functions to set speeds.
+Enable Qualcomm chips to operate at 3.2Mbps.
 
 Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
 Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
 ---
- drivers/bluetooth/hci_qca.c | 93 ++++++++++++++++++++++++++++---------
- 1 file changed, 70 insertions(+), 23 deletions(-)
+ drivers/bluetooth/hci_qca.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
-index 5f1c0a8fd5cd..5f8a74d65bec 100644
+index 5f8a74d65bec..a6e7d38ef931 100644
 --- a/drivers/bluetooth/hci_qca.c
 +++ b/drivers/bluetooth/hci_qca.c
-@@ -119,6 +119,11 @@ struct qca_data {
- 	u64 votes_off;
- };
+@@ -877,6 +877,8 @@ static uint8_t qca_get_baudrate_value(int speed)
+ 		return QCA_BAUDRATE_2000000;
+ 	case 3000000:
+ 		return QCA_BAUDRATE_3000000;
++	case 3200000:
++		return QCA_BAUDRATE_3200000;
+ 	case 3500000:
+ 		return QCA_BAUDRATE_3500000;
+ 	default:
+@@ -891,7 +893,7 @@ static int qca_set_baudrate(struct hci_dev *hdev, uint8_t baudrate)
+ 	struct sk_buff *skb;
+ 	u8 cmd[] = { 0x01, 0x48, 0xFC, 0x01, 0x00 };
  
-+enum qca_speed_type {
-+	QCA_INIT_SPEED = 1,
-+	QCA_OPER_SPEED
-+};
-+
- struct qca_serdev {
- 	struct hci_uart	 serdev_hu;
- 	struct gpio_desc *bt_en;
-@@ -923,6 +928,61 @@ static inline void host_set_baudrate(struct hci_uart *hu, unsigned int speed)
- 		hci_uart_set_baudrate(hu, speed);
- }
+-	if (baudrate > QCA_BAUDRATE_3000000)
++	if (baudrate > QCA_BAUDRATE_3200000)
+ 		return -EINVAL;
  
-+static unsigned int qca_get_speed(struct hci_uart *hu,
-+				  enum qca_speed_type speed_type)
-+{
-+	unsigned int speed = 0;
-+
-+	if (speed_type == QCA_INIT_SPEED) {
-+		if (hu->init_speed)
-+			speed = hu->init_speed;
-+		else if (hu->proto->init_speed)
-+			speed = hu->proto->init_speed;
-+	} else {
-+		if (hu->oper_speed)
-+			speed = hu->oper_speed;
-+		else if (hu->proto->oper_speed)
-+			speed = hu->proto->oper_speed;
-+	}
-+
-+	return speed;
-+}
-+
-+static int qca_check_speeds(struct hci_uart *hu)
-+{
-+	if (!qca_get_speed(hu, QCA_INIT_SPEED) ||
-+	    !qca_get_speed(hu, QCA_OPER_SPEED))
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
-+static int qca_set_speed(struct hci_uart *hu, enum qca_speed_type speed_type)
-+{
-+	unsigned int speed, qca_baudrate;
-+	int ret;
-+
-+	if (speed_type == QCA_INIT_SPEED) {
-+		speed = qca_get_speed(hu, QCA_INIT_SPEED);
-+		if (speed)
-+			host_set_baudrate(hu, speed);
-+	} else {
-+		speed = qca_get_speed(hu, QCA_OPER_SPEED);
-+		if (!speed)
-+			return 0;
-+
-+		qca_baudrate = qca_get_baudrate_value(speed);
-+		bt_dev_info(hu->hdev, "Set UART speed to %d", speed);
-+		ret = qca_set_baudrate(hu->hdev, qca_baudrate);
-+		if (ret)
-+			return ret;
-+
-+		host_set_baudrate(hu, speed);
-+	}
-+
-+	return 0;
-+}
-+
- static int qca_setup(struct hci_uart *hu)
- {
- 	struct hci_dev *hdev = hu->hdev;
-@@ -933,37 +993,24 @@ static int qca_setup(struct hci_uart *hu)
- 
- 	bt_dev_info(hdev, "ROME setup");
- 
-+	ret = qca_check_speeds(hu);
-+	if (ret)
-+		return ret;
-+
- 	/* Patch downloading has to be done without IBS mode */
- 	clear_bit(STATE_IN_BAND_SLEEP_ENABLED, &qca->flags);
- 
- 	/* Setup initial baudrate */
--	speed = 0;
--	if (hu->init_speed)
--		speed = hu->init_speed;
--	else if (hu->proto->init_speed)
--		speed = hu->proto->init_speed;
--
--	if (speed)
--		host_set_baudrate(hu, speed);
-+	qca_set_speed(hu, QCA_INIT_SPEED);
- 
- 	/* Setup user speed if needed */
--	speed = 0;
--	if (hu->oper_speed)
--		speed = hu->oper_speed;
--	else if (hu->proto->oper_speed)
--		speed = hu->proto->oper_speed;
--
-+	speed = qca_get_speed(hu, QCA_OPER_SPEED);
- 	if (speed) {
--		qca_baudrate = qca_get_baudrate_value(speed);
--
--		bt_dev_info(hdev, "Set UART speed to %d", speed);
--		ret = qca_set_baudrate(hdev, qca_baudrate);
--		if (ret) {
--			bt_dev_err(hdev, "Failed to change the baud rate (%d)",
--				   ret);
-+		ret = qca_set_speed(hu, QCA_OPER_SPEED);
-+		if (ret)
- 			return ret;
--		}
--		host_set_baudrate(hu, speed);
-+
-+		qca_baudrate = qca_get_baudrate_value(speed);
- 	}
- 
- 	/* Get QCA version information */
+ 	cmd[4] = baudrate;
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
