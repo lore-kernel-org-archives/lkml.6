@@ -3,102 +3,76 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C1F3C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 13:08:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6C24C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 13:10:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16F592168C
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 13:08:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16F592168C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lwn.net
+	by mail.kernel.org (Postfix) with ESMTP id 9EEC82175D
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 13:10:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EEC82175D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731986AbeHCPEh (ORCPT
+        id S1731948AbeHCPG4 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 11:04:37 -0400
-Received: from ms.lwn.net ([45.79.88.28]:33718 "EHLO ms.lwn.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729367AbeHCPEh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 11:04:37 -0400
-Received: from localhost.localdomain (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id 3BBC92DB;
-        Fri,  3 Aug 2018 13:08:20 +0000 (UTC)
-Date:   Fri, 3 Aug 2018 07:08:18 -0600
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     "Tobin C. Harding" <me@tobin.cc>
-Cc:     Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>, linux-doc@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC bpf-next v2 3/3] docs: Split filter.txt into separate
- documents.
-Message-ID: <20180803070818.3d3e52e4@lwn.net>
-In-Reply-To: <20180802223100.26236-4-me@tobin.cc>
-References: <20180802223100.26236-1-me@tobin.cc>
-        <20180802223100.26236-4-me@tobin.cc>
-Organization: LWN.net
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Fri, 3 Aug 2018 11:06:56 -0400
+Received: from mx2.suse.de ([195.135.220.15]:45008 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729854AbeHCPG4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 11:06:56 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 3B578AD1E;
+        Fri,  3 Aug 2018 13:10:38 +0000 (UTC)
+Date:   Fri, 3 Aug 2018 15:10:35 +0200
+From:   Jean Delvare <jdelvare@suse.de>
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Alistair Strachan <astrachan@google.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Tom Stellar <tstellar@redhat.com>,
+        Sedat Dilek <sedat.dilek@gmail.com>,
+        Juergen Gross <jgross@suse.com>, Ingo Molnar <mingo@kernel.org>
+Subject: native_save_fl() causes a warning
+Message-ID: <20180803151035.238a19d2@endymion>
+Organization: SUSE Linux
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.31; x86_64-suse-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri,  3 Aug 2018 08:31:00 +1000
-"Tobin C. Harding" <me@tobin.cc> wrote:
+Hi Nick,
 
-> In preparation for conversion of Documentation/networking/filter.txt it
-> was noticed that the document contains a lot of information.  The
-> document may be more accessible if it was split up.  Some parts pertain
-> to everyone, let's put these bits in core-api/.  The more hard core bits
-> about eBPF internals could be put with the other BPF docs in
-> Documentation/bpf/.  There is a small bit of information on testing and
-> miscellaneous matters that are useful for everyone (everyone does
-> testing, right) so lets keep that info at the bottom of both new
-> documents.  (This includes the original authors.)
-> 
-> Split Documentation/networking/filter.txt into
-> Documentation/bpf/eBPF.rst and Documentation/core-api/bpf.rst
-> 
-> Signed-off-by: Tobin C. Harding <me@tobin.cc>
-> ---
->  .../{networking/filter.txt => bpf/eBPF.rst}   | 590 +----------------
->  Documentation/core-api/bpf.rst                | 599 ++++++++++++++++++
+It seems that this linux kernel commit of yours:
 
-Some overall thoughts...
+commit d0a8d9378d16eb3c69bd8e6d23779fbdbee3a8c7
+Author: Nick Desaulniers
+Date:   Thu Jun 21 09:23:24 2018 -0700
 
- - A good step in the right direction, and worthwhile work.  Thanks for
-   doing this!
+    x86/paravirt: Make native_save_fl() extern inline
 
- - The new eBPF.rst file is not actually an RST file.  Giving it that
-   extension while not converting the contents will confuse Sphinx.  I'd
-   call it .txt at this point.
+introduced a new warning (with W=1):
 
- - The document now known as core-api/bpf.rst is still covering two
-   separate things.  One is the socket-filter API, while the other is
-   classic BPF.  Since cBPF is still used elsewhere (seccomp), it's of
-   wider interest.  Also, this is user-space API stuff, not kernel API
-   stuff, so I think that Documentation/userspace-api/ is the right place
-   for it.
+./arch/x86/include/asm/irqflags.h:16:29: warning: no previous prototype for ‘native_save_fl’ [-Wmissing-prototypes]
+ extern inline unsigned long native_save_fl(void)
+                             ^
 
-I'm kind of thinking this through as I type it, but I guess I'm arguing
-for the creation of three files, all in Documentation/userspace-api/:
+Please fix it.
 
- - socket-filter.rst on how to write socket filters
- - cBPF.rst describing classic BPF and its tools
- - eBPF.rst describing extended BPF
-
-Tying cBPF.rst into seccomp_filter.rst could also be helpful for our
-readers.
-
-Does this make sense?
+Secondly, I am quite curious why you changed only native_save_fl() from
+static inline to extern inline, when native_restore_fl(),
+native_irq_disable() and native_irq_enable() are equally referenced by
+address in arch/x86/kernel/paravirt.c and thus should suffer from the
+same problem. Can you explain?
 
 Thanks,
-
-jon
+-- 
+Jean Delvare
+SUSE L3 Support
