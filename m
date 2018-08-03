@@ -2,130 +2,159 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFE62C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 09:42:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9995C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 09:42:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F1AC2173F
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 09:42:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F1AC2173F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 9BD772173F
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 09:42:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="A7dPWiYb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BD772173F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732483AbeHCLiO (ORCPT
+        id S1732520AbeHCLiZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 07:38:14 -0400
-Received: from foss.arm.com ([217.140.101.70]:40726 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728450AbeHCLiO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 07:38:14 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CB2E580D;
-        Fri,  3 Aug 2018 02:42:43 -0700 (PDT)
-Received: from e120077-lin.cambridge.arm.com (e120077-lin.cambridge.arm.com [10.2.207.74])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A8A913F5B3;
-        Fri,  3 Aug 2018 02:42:41 -0700 (PDT)
-Subject: Re: framebuffer corruption due to overlapping stp instructions on
- arm64
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Ramana Radhakrishnan <ramana.gcc@googlemail.com>
-Cc:     Florian Weimer <fweimer@redhat.com>,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        GNU C Library <libc-alpha@sourceware.org>,
-        Andrew Pinski <pinskia@gmail.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Mikulas Patocka <mpatocka@redhat.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-References: <alpine.LRH.2.02.1808021242320.31834@file01.intranet.prod.int.rdu2.redhat.com>
- <CA+=Sn1mWkjuwVnjw6OWWUM=UcP76bdFa680FebCseewHfx3NpA@mail.gmail.com>
- <9acdacdb-3bd5-b71a-3003-e48132ee1371@redhat.com>
- <CAJA7tRZbmnZq7RfvQeYEy_a1ZObWqpFpVdvgsXgsioQ3RyPMuA@mail.gmail.com>
- <CAKv+Gu97QvwoLLK_zueiA_gjg_4Q5cqU4YVUyHUVFFfffdyJaw@mail.gmail.com>
-From:   "Richard Earnshaw (lists)" <Richard.Earnshaw@arm.com>
-Openpgp: preference=signencrypt
-Message-ID: <11f9185a-7f71-83df-3a57-0a0ae9c1f934@arm.com>
-Date:   Fri, 3 Aug 2018 10:42:40 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 3 Aug 2018 07:38:25 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:36724 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732292AbeHCLiY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 07:38:24 -0400
+Received: by mail-pl0-f68.google.com with SMTP id e11-v6so2349910plb.3
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Aug 2018 02:42:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=tYCS5wD6vAtxWT95Bpgkjd+Us7bJHFzRkwkufQg4uGQ=;
+        b=A7dPWiYbD56fAtxLzC3IjZMbfOLKHJM6UHF7tIxKGuhi/Xj5nMp/9XWf7f+KaOJHB0
+         KTD7WbgfdN1pJguLQlXz+OpgQSuvNwNpaXjEXF5Vx2ntsz4rtZCh5+DceZx8zAf72zad
+         slmBGob2z14IobF6ad5PbCkQnLFuyjcnm/d2HiNegIylVdMGY3FIDFlFBPDWK5CoRLJW
+         0tkb6TAy5S5FGAL14ig2Te/qIuGCvncYckQEtWCxQneXOXP3S3BN0SqqV8+DXtwardwn
+         55qeK6EmgDmYPklzJhCxLI2LxEn1KxagHgU59Ba37rwMqsy0pnuCU3qxGmPwR5n/LoaR
+         uxHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=tYCS5wD6vAtxWT95Bpgkjd+Us7bJHFzRkwkufQg4uGQ=;
+        b=J4LSaZs4slu72wK7HCzfB7HJNQ3PyVc2KTT+0gT+Vl0ZpEKTujsH6IJXS9DGsiE5Ki
+         /4TrTxyo98P3VivkM2NREQnYYk/BTe1dcfLQU4Shdq9VYx3LNBIlZiUxf0ayJcule5W8
+         vNCc18bjWEQfAjvTfxWD4Iec951dQN1pKuFp2mCe3rYcVpRvMmAUZ4Qty89vZxnvOqZ4
+         cQZal88NpJbjV9B+Fu60o7/NTdSxszuwSwncduqndzrEgAk5+/1FZ9omSMFkoe3+WzVd
+         SsIUwt3BhSj52y/uUkuVA16oM4rCMaugvwhdIeJ7wSm0yWl0D3Pl83GPlNAfzDazVTq7
+         QZgA==
+X-Gm-Message-State: AOUpUlGWN/zWvJ0djbtnwJNkhwfkvM8XpV2/ZCRxg64JEjrS+4GZ/9ap
+        csCopeHv/OSXkTvz67WTXGm+6HCu5B9I5oIinkRCFQ==
+X-Google-Smtp-Source: AAOMgpdjI5mMdwC4CxAsKS7O2R8HcKUOrvYl14nmKC21/3PEoZo+ZrF/5HLo/HRbOUe81/y/r9XyF5zCbvltt5lz2wM=
+X-Received: by 2002:a17:902:d710:: with SMTP id w16-v6mr2849493ply.93.1533289373008;
+ Fri, 03 Aug 2018 02:42:53 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAKv+Gu97QvwoLLK_zueiA_gjg_4Q5cqU4YVUyHUVFFfffdyJaw@mail.gmail.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a17:90a:ac14:0:0:0:0 with HTTP; Fri, 3 Aug 2018 02:42:32
+ -0700 (PDT)
+In-Reply-To: <20180803092312.GA17798@arm.com>
+References: <cover.1530018818.git.andreyknvl@google.com> <20180628105057.GA26019@e103592.cambridge.arm.com>
+ <CAAeHK+w0T43+h3xqU4a-qutxd-qiEhsvk0eaZpmAn-T0hpaLZQ@mail.gmail.com>
+ <20180629110709.GA17859@arm.com> <CAAeHK+wHd8B2nhat-Z2Y2=s4NVobPG7vjr2CynjFhqPTwQRepQ@mail.gmail.com>
+ <20180703173608.GF27243@arm.com> <CAAeHK+wTcH+2hgm_BTkLLdn1GkjBtkhQ=vPWZCncJ6KenqgKpg@mail.gmail.com>
+ <CAAeHK+xc1E64tXEEHoXqOuUNZ7E_kVyho3_mNZTCc+LTGHYFdA@mail.gmail.com>
+ <20180801163538.GA10800@arm.com> <CACT4Y+aZtph5qDsLzTDEgpQRz4_Vtg1DD-cB18qooi6D0bexDg@mail.gmail.com>
+ <20180803092312.GA17798@arm.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Fri, 3 Aug 2018 11:42:32 +0200
+Message-ID: <CACT4Y+bCen+ccU8awYyx_Tw14JNZhaP4D-jNq-WZy7itW+vpYg@mail.gmail.com>
+Subject: Re: [PATCH v4 00/17] khwasan: kernel hardware assisted address sanitizer
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     Andrey Konovalov <andreyknvl@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Christoph Lameter <cl@linux.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Paul Lawrence <paullawrence@google.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-sparse@vger.kernel.org,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Chintan Pandya <cpandya@codeaurora.org>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Jann Horn <jannh@google.com>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Kostya Serebryany <kcc@google.com>,
+        Mark Brand <markbrand@google.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Evgeniy Stepanov <eugenis@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/08/18 10:29, Ard Biesheuvel wrote:
-> On 3 August 2018 at 11:15, Ramana Radhakrishnan
-> <ramana.gcc@googlemail.com> wrote:
->> On Fri, Aug 3, 2018 at 8:53 AM, Florian Weimer <fweimer@redhat.com> wrote:
->>> On 08/03/2018 09:11 AM, Andrew Pinski wrote:
->>>>
->>>> Yes fix Links not to use memcpy on the framebuffer.
->>>> It is undefined behavior to use device memory with memcpy.
->>>
->>>
->>> Some (de facto) ABIs require that it is supported, though.  For example, the
->>> POWER string functions avoid unaligned loads and stores for this reason
->>> because the platform has the same issue with device memory.  And yes, GCC
->>> will expand memcpy on POWER to something that is incompatible with device
->>> memory. 8-(
+On Fri, Aug 3, 2018 at 11:23 AM, Will Deacon <will.deacon@arm.com> wrote:
+> On Wed, Aug 01, 2018 at 06:52:09PM +0200, Dmitry Vyukov wrote:
+>> On Wed, Aug 1, 2018 at 6:35 PM, Will Deacon <will.deacon@arm.com> wrote:
+>> > Thanks for tracking these cases down and going through each of them. The
+>> > obvious follow-up question is: how do we ensure that we keep on top of
+>> > this in mainline? Are you going to repeat your experiment at every kernel
+>> > release or every -rc or something else? I really can't see how we can
+>> > maintain this in the long run, especially given that the coverage we have
+>> > is only dynamic -- do you have an idea of how much coverage you're actually
+>> > getting for, say, a defconfig+modules build?
+>> >
+>> > I'd really like to enable pointer tagging in the kernel, I'm just still
+>> > failing to see how we can do it in a controlled manner where we can reason
+>> > about the semantic changes using something other than a best-effort,
+>> > case-by-case basis which is likely to be fragile and error-prone.
+>> > Unfortunately, if that's all we have, then this gets relegated to a
+>> > debug feature, which sort of defeats the point in my opinion.
 >>
->> GCC for AArch64 - use -mstrict-align
->> GCC for AArch32 - use -mno-unaligned-access.
->>
->> If you see unaligned accesses coming out of the compiler for well
->> defined programs then that's a bug. Frequently we see undefined
->> programs that get the compiler to produce traps - atleast one or 2
->> bugs a year  in  GCC .
->>
->>
->>>
->>> If we don't want people to use memcpy, we probably need to provide a
->>> credible alternative.
->>
->> I believe a number of packages have rolled their own to take these
->> constraints into account
->> for AArch32, perhaps it needs to be expanded for AArch64 as well.
->>
-> 
-> I guess the semantics of a framebuffer are not strictly defined, but
-> the current reality is that it is expected to have memory semantics
-> (by Linux/glibc)
-> 
-> Matt is saying fundamental properties of the underlying interconnects
-> (AMBA) make that impossible on ARM, but I'd like to understand better
-> if that is universally the case, and whether such a system is still
-> PCIe compliant.
-> 
-> The discussion about whether memcpy() should rely on unaligned
-> accesses, and whether you should use it on device memory is orthogonal
-> to that, and not the heart of the matter IMO
-> 
+>> Well, in some cases there is no other way as resorting to dynamic testing.
+>> How do we ensure that kernel does not dereference NULL pointers, does
+>> not access objects after free or out of bounds? Nohow. And, yes, it's
+>> constant maintenance burden resolved via dynamic testing.
+>
+> ... and the advantage of NULL pointer issues is that you're likely to see
+> them as a synchronous exception at runtime, regardless of architecture and
+> regardless of Kconfig options. With pointer tagging, that's certainly not
+> the case, and so I don't think we can just treat issues there like we do for
+> NULL pointers.
 
-Whoa, hold on.
+Well, let's take use-after-frees, out-of-bounds, info leaks, data
+races is a good example, deadlocks and just logical bugs...
 
-Memcpy should never be used on device memory.  Period.  Memcpy doesn't
-know anything about what size of access is needed for accessing a device.
+> If you want to enable khwasan in "production" and since enabling it
+> could potentially change the behaviour of existing code paths, the
+> run-time validation space doubles as we'd need to get the same code
+> coverage with and without the feature being enabled.
 
-But why is the buffer in device memory rather than some other form of
-uncached memory?
+This is true for just any change in configs, sysctls or just a
+different workload. Any of this can enable new code, exiting code
+working differently, or just working with data in new states. And we
+have tens of thousands of bugs, so blindly deploying anything new to
+production without proper testing is a bad idea. It's not specific to
+HWASAN in any way. And when you enable HWASAN you actually do mean to
+retest everything as hard as possible.
 
-If you change memcpy to deal with an aspect of the system hardware,
-you'll end up hosing performance EVERYWHERE.  DON'T DO IT!
-
-If you must, create a new API with tighter semantics, but don't change
-memcpy to accommodate this.
-
-Anyway, back to the original report.  What memory mapping is being used?
- In detail?
-
-R.
+And in the end we do not seem to have any action points here, right?
