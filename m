@@ -6,56 +6,54 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE1D1C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 12:06:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ACB4C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 12:07:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F6BF21734
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 12:06:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F2D7B21734
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 12:07:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=cnexlabs.onmicrosoft.com header.i=@cnexlabs.onmicrosoft.com header.b="DK4X8A3n"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F6BF21734
+	dkim=pass (1024-bit key) header.d=cnexlabs.onmicrosoft.com header.i=@cnexlabs.onmicrosoft.com header.b="Q3Pm+yEz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2D7B21734
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cnexlabs.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727696AbeHCOCi (ORCPT
+        id S1728574AbeHCODg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 10:02:38 -0400
-Received: from mail-sn1nam02on0070.outbound.protection.outlook.com ([104.47.36.70]:27360
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
+        Fri, 3 Aug 2018 10:03:36 -0400
+Received: from mail-eopbgr690061.outbound.protection.outlook.com ([40.107.69.61]:47760
+        "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727328AbeHCOCi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 10:02:38 -0400
+        id S1727328AbeHCODg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 10:03:36 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=cnexlabs.onmicrosoft.com; s=selector1-cnexlabs-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5ix6nN8TY/pRUSNAN0CYMr9/tFfwo6qzD/vcFrFHOGU=;
- b=DK4X8A3nohTE0kMB3u54zSsU2bR/Zl8hvosnYVq1h1OLUae3aLRhXVvJu3/L4JcVRfsrtMp2/SmBHOvp+l6RSMvUdJlJkOQsRIO0zOJqi33aP1wS76Crox2folNB0iGTRo/Yec6QIca29o51eU4/IBj5JAnVnvPGtbaaMXKb4ps=
+ bh=VKqEKAdOYVSviN4/fzTxEdrIXkhRYtb+PJLuFJV5p4U=;
+ b=Q3Pm+yEziUH9OQVaIT2UlyIhV6kNtnJfOLULhXKhxaiQUjkhLrf59LwVDIY0+hsTi9gtqWw12EtxVjpzxuXjwgI+Vmm0bClgeA1HVraZ93m35mZYKQ8jvjVVKAmXQV4aIbw1CZwAYU6HeV12xbcnRJwwiKw6MAXzxOsRlNqG054=
 Received: from CO2PR06MB538.namprd06.prod.outlook.com (10.141.199.23) by
  CO2PR06MB570.namprd06.prod.outlook.com (10.141.230.17) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.995.21; Fri, 3 Aug 2018 12:02:40 +0000
+ 15.20.995.21; Fri, 3 Aug 2018 12:07:31 +0000
 Received: from CO2PR06MB538.namprd06.prod.outlook.com
  ([fe80::311c:7e3f:3043:5287]) by CO2PR06MB538.namprd06.prod.outlook.com
  ([fe80::311c:7e3f:3043:5287%8]) with mapi id 15.20.1017.010; Fri, 3 Aug 2018
- 12:02:37 +0000
+ 12:07:31 +0000
 From:   Javier Gonzalez <javier@cnexlabs.com>
 To:     =?utf-8?B?TWF0aWFzIEJqw7hybGluZw==?= <mb@lightnvm.io>
-CC:     Hans Holmberg <hans.holmberg@cnexlabs.com>,
+CC:     "Konopko, Igor J" <igor.j.konopko@intel.com>,
+        "marcin.dziegielewski@intel.com" <marcin.dziegielewski@intel.com>,
+        Hans Holmberg <hans.holmberg@cnexlabs.com>,
+        Heiner Litz <hlitz@ucsc.edu>,
+        Young Tack Tack Jin <youngtack.jin@circuitblvd.com>,
         "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] lightnvm: pblk: recover chunk state on 1.2 devices
-Thread-Topic: [PATCH] lightnvm: pblk: recover chunk state on 1.2 devices
-Thread-Index: AQHUDsAqECp4D0lQUUKx9mO19FFp2KR1YqSAgAG0kwCAAAIjgIAAAc0AgCcOdICAD/s1gIAAAWiA
-Date:   Fri, 3 Aug 2018 12:02:37 +0000
-Message-ID: <88659F4F-8105-41CA-B0B8-849E707F18CD@cnexlabs.com>
-References: <1530177121-24908-1-git-send-email-javier@cnexlabs.com>
- <1530177121-24908-2-git-send-email-javier@cnexlabs.com>
- <e42e5ab4-48c7-e822-618d-dc28c25262ed@lightnvm.io>
- <43D7E3C4-765F-46AB-9B84-27E37FCAE016@cnexlabs.com>
- <19b2f125-d373-cf2b-43c7-140b3872cd64@lightnvm.io>
- <D6AFE2C1-D273-4945-9A12-D4A0A57FD108@cnexlabs.com>
- <8c2fc1ff-e2ea-499e-3699-39622d00be9e@lightnvm.io>
-In-Reply-To: <8c2fc1ff-e2ea-499e-3699-39622d00be9e@lightnvm.io>
+Subject: Re: [PATCH] lightnvm: remove minor version check for 2.0
+Thread-Topic: [PATCH] lightnvm: remove minor version check for 2.0
+Thread-Index: AQHUKwjBnQOrlHyXU063xXFhQVi3bqSt7wWA
+Date:   Fri, 3 Aug 2018 12:07:30 +0000
+Message-ID: <7B08AEC1-90F8-4AE0-AE46-BADF8CC8D270@cnexlabs.com>
+References: <20180803090237.2022-1-mb@lightnvm.io>
+In-Reply-To: <20180803090237.2022-1-mb@lightnvm.io>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: yes
@@ -64,30 +62,30 @@ authentication-results: spf=none (sender IP is )
  smtp.mailfrom=javier@cnexlabs.com; 
 x-originating-ip: [193.106.164.211]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CO2PR06MB570;6:DjPsEEXgjPSk0mgq1vXtciOb2ajVQtgXL5k1VSMN7mzGDvoCvQjaSbCGHb0Eki5j48UvaoWXKUcFXXkIugtBV3Gx5jeA/xkxnGoe0+KWzMgMSo4o2zBbWmK9BrVnP6gZtwc9S9wbunRcEy6B7C2UCfsJgkMXv+h2ggeSDMBygxtLAF+4wvU/3bBK0xpMzfY8FTlAy9qUix8NB6i0R4+bYBHopzCUcWq62S12v2/jK/b/8l6hWIBzqAxW9npKJHCt5Lx9h/T9uqTiaqeybeJegaPMfHMsEDfBr8kwLhSSWq5ZB/b9NUroMBirGvtGN4Xe/9+mKFBFerpvxdTiW294tjXwl/RnvtJWYPifLD0Vb8tdaImYDu/dOMYxMpgrkvb1kjRI6xVbYIRNKt7DQgVrj6nrtf0pc4cDn1Pw9zqLG8SLmxu4QPlxMJNDsd/MgwW+dWGxxcghpe1rYWsANjVQzg==;5:disZPeyYrHWWVpkhOWPIsBZy6JJyXRtT0MJcOS2KbWrZmxGSrPqxmcxEKoRhRIrYcy6hMFKoOfMtSDr9XIf4erRlWhPYp3Q87p2qpi5PMqNSUj+l+amrTaXK6ALIiboO9UTkxVBnsWEfpXHg+pR44yWICT3c/sr6ZjLRTmdHapc=;7:mpAaQ0YhkPmq7YtYWICmWuN/kyyMrhw4uX8NxvEQD8VGskfoYipB4ZJobYrr1KyTlkdPabLoTaJfC8BnEiLk2F6KdD3ue+Qkex6mWIb9uDObFhZstzMmN3LJFfcdsMEQd5cj1hWdR1dUHZjSBYgKBUz5CNQcPGDXwvO2VSMA6BLnUfe4lsF8A/hvBkH/DeZH10cv5IF0Xql16jOp1DaP25wD4LjX+s3FNwowi1U8FJlHNBmL2G3s1MqHJphwHraT
+x-microsoft-exchange-diagnostics: 1;CO2PR06MB570;6:D2evgI8Wtw50llLK4PBrXWtaFeqFBpWQ0mveNfmgfnseranT3Fn2NDhE32hTd3IjTmcmgxVDhbUTgNv9qsPp15W9p74avf3xXBqtUksancLANlBmKqSl258EFExmzOMMuWTezYSmGZPxWeosDwRrDO1hjzhRuywcK2IE1Iqw9atb8oT64dRV50X+n/jcp4RJrr1e/KumqA3bHVoKYGmjqS6UELdPvlivDi9/Gq1jHK017iosG2p5qUObLVdux6q22Szt5uNSKBZm5Qyjqc4LIHdLQ9D0yhzRJGeYRl6aNkKHtzTVcaBiCiEFxSdCWoVYkxE5rYWN8tJfmG3j2OpqzKCiDfjV4Hg0yzBHl6oLjzShls3jzDYyat8byTyKkLYwIsocanHR7Rmlv+tNMcWXv40AGuPn7sj50Ls7MzdHHuGFl8mtuSYwndiACugRhcmKPsmMYiNVj7EGUFVJiPlDtg==;5:/Oc2Ij6+pE2mGxKyoqK+tONtQFSslVjw14rsVBCJNiqgt90LMaKDnkDxZGSxAC7bKJEgPEPXFu2kNTYtxl8vFTjztz83k3FaFETwTsdB4wHU3ymFnrecu0OFp6w0IbxeoC+nY6VJM3US5Roc10BKvkntBj09Ong8Uj/gqJi5rN4=;7:kL4mRqGpfvl77OYchPdmrZpdB3MA50AD6r1WaLbaWLwftNwpLDuXnvKlIeJsVA2PVKF4JuDm9A6MJVW7Y5pAToQdxThtD0jS8guSPgobMHlAX1V94c9KwWogp+QDImLkIWUuiiPbOvwpWcAT7H0VXLrCpY99L78VD8Tm+ssjdr9bX4XIu0fkPDbzL7hw7HTjZLV5i07MyLXIcoZlW1N/AUqR4PK7I4sEZ0alDZjz73dCHhyfSDfDMXDLAb3ksC8Q
 x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(376002)(346002)(136003)(39840400004)(366004)(396003)(189003)(199004)(53936002)(68736007)(54906003)(97736004)(99936001)(7736002)(93886005)(14454004)(3846002)(25786009)(6246003)(6116002)(476003)(82746002)(305945005)(486006)(2616005)(6486002)(2906002)(6436002)(316002)(229853002)(5660300001)(106356001)(36756003)(11346002)(6512007)(5250100002)(105586002)(66066001)(81166006)(446003)(99286004)(33656002)(2900100001)(83716003)(478600001)(26005)(76176011)(4326008)(186003)(6916009)(8936002)(14444005)(81156014)(6506007)(86362001)(256004)(53546011)(102836004)(8676002);DIR:OUT;SFP:1101;SCL:1;SRVR:CO2PR06MB570;H:CO2PR06MB538.namprd06.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-ms-office365-filtering-correlation-id: e61ff58b-8d36-4f7c-c7d3-08d5f939016b
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(396003)(366004)(39840400004)(136003)(376002)(346002)(189003)(199004)(26005)(76176011)(83716003)(478600001)(4326008)(446003)(99286004)(66066001)(81166006)(33656002)(2900100001)(6506007)(86362001)(8676002)(102836004)(256004)(8936002)(186003)(6916009)(81156014)(3846002)(14454004)(6246003)(25786009)(7736002)(82746002)(476003)(305945005)(6116002)(53936002)(68736007)(97736004)(99936001)(54906003)(11346002)(105586002)(5250100002)(6512007)(2906002)(6486002)(486006)(2616005)(36756003)(6436002)(316002)(229853002)(106356001)(5660300001);DIR:OUT;SFP:1101;SCL:1;SRVR:CO2PR06MB570;H:CO2PR06MB538.namprd06.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-ms-office365-filtering-correlation-id: 52b6864d-69cb-4407-cbab-08d5f939b06b
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(49563074)(7193020);SRVR:CO2PR06MB570;
 x-ms-traffictypediagnostic: CO2PR06MB570:
-x-microsoft-antispam-prvs: <CO2PR06MB5706F46D6D7F3C506721588BA230@CO2PR06MB570.namprd06.prod.outlook.com>
+x-microsoft-antispam-prvs: <CO2PR06MB570E2CA7FA8F5F85D2F5BC5BA230@CO2PR06MB570.namprd06.prod.outlook.com>
 x-exchange-antispam-report-test: UriScan:;
 x-ms-exchange-senderadcheck: 1
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(102415395)(6040522)(2401047)(5005006)(8121501046)(3231311)(944501410)(52105095)(3002001)(93006095)(93001095)(10201501046)(149027)(150027)(6041310)(20161123564045)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(6072148)(201708071742011)(7699016);SRVR:CO2PR06MB570;BCL:0;PCL:0;RULEID:;SRVR:CO2PR06MB570;
 x-forefront-prvs: 0753EA505A
 received-spf: None (protection.outlook.com: cnexlabs.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: 8Jd/er8ATNeQnobdwSBR0xfOyrYuShGzFbbzl5bPmRMi/X79ItcxU0VWkB3CI1NBKY2Jligx5SGsaq1jTtmIKkjwkBtdcnmFktj2JIVxgo1XLGEK5NBOeCed5zZdpJMbpznpCcTFOx3UraAoBGXDlrfxYjb0hB7lmh4eQqS6xBdhr95aBrquwc5vRFKrAFnTmJIhXS5oJM3hWw7KpFT1wGuR1F6YvaPhrYqL8+B9mapxSnpsxpa00qE8/J9J/QghyLZIlOXB6CQA+YMRogfRHDnISSiqdhijQCTS2+Ah55msVjXU+NwEKleSl9LbUI9AQSNyTqr0ChSnUHB5dwE+alBIBaf5qUkZi6giz/tdfks=
+x-microsoft-antispam-message-info: KPAdPvmvnzCtia5RxyPwEvZXNGGkCkANCDV8VTZdX0JgOY/YjyB7FyfTVgIsc8lq1yi0bJ9uNOU+ZaIytwfpOOek5YSWfaklDbTumzez8Bl02no77+BXrgGZgiWwH4Ce0tZgC0Sbt5rQNEM69rqEiVkRECfYmyhdDxtIgd6N7oLJSPEzLu3mZFW4vguwfELN5hwQZylt09O8flWW3KOdrvvGaI3BfQU3KbRnw04CgSAuaPmXx9EPf3qLRV8S+cy28yd4un4W7uAozp6ip0Cb2XPlrWAAaww9eOPmfHGDGmfqUw28p7f56js1E0KrTa1FlUX61L4yekLGQs02Zi/RLZtJ3pIdB4NqDRx0SdyO1BU=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: multipart/signed;
-        boundary="Apple-Mail=_3BC33749-B9D9-42B0-9EC1-E5F7699E401E";
+        boundary="Apple-Mail=_6BA32728-121A-4EAB-BA22-5F3BDD9FDF5C";
         protocol="application/pgp-signature";
         micalg=pgp-sha512
 MIME-Version: 1.0
 X-OriginatorOrg: cnexlabs.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e61ff58b-8d36-4f7c-c7d3-08d5f939016b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Aug 2018 12:02:37.0722
+X-MS-Exchange-CrossTenant-Network-Message-Id: 52b6864d-69cb-4407-cbab-08d5f939b06b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Aug 2018 12:07:30.8097
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: e40dfc2e-c6c1-463a-a598-38602b2c3cff
@@ -97,117 +95,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Apple-Mail=_3BC33749-B9D9-42B0-9EC1-E5F7699E401E
+--Apple-Mail=_6BA32728-121A-4EAB-BA22-5F3BDD9FDF5C
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain;
 	charset=utf-8
 
-> On 3 Aug 2018, at 13.57, Matias Bj=C3=B8rling <mb@lightnvm.io> wrote:
+> On 3 Aug 2018, at 11.02, Matias Bj=C3=B8rling <mb@lightnvm.io> wrote:
 >=20
-> On 07/24/2018 09:54 AM, Javier Gonzalez wrote:
->>> On 29 Jun 2018, at 13.28, Matias Bj=C3=B8rling <mb@lightnvm.io> =
-wrote:
->>>=20
->>> On 06/29/2018 01:22 PM, Javier Gonzalez wrote:
->>>>> On 29 Jun 2018, at 13.14, Matias Bj=C3=B8rling <mb@lightnvm.io> =
-wrote:
->>>>>=20
->>>>> On 06/28/2018 11:12 AM, Javier Gonz=C3=A1lez wrote:
->>>>>> The Open-Channel 1.2 spec does not define a mechanism for the =
-host to
->>>>>> recover the block (chunk) state. As a consequence, a newly format =
-device
->>>>>> will need to reconstruct the state. Currently, pblk assumes that =
-blocks
->>>>>> are not erased, which might cause double-erases in case that the =
-device
->>>>>> does not protect itself against them (which is not specified in =
-the spec
->>>>>> either).
->>>>>=20
->>>>> It should not be specified in the spec. It is up to the device to =
-handle
->>>>> double erases and not do it.
->>>>>=20
->>>>>> This patch, reconstructs the state based on read errors. If the =
-first
->>>>>> sector of a block returns and empty page (NVM_RSP_ERR_EMPTYPAGE), =
-then
->>>>>> the block s marked free, i.e., erased and ready to be used
->>>>>> (NVM_CHK_ST_FREE). Otherwise, the block is marked as closed
->>>>>> (NVM_CHK_ST_CLOSED). Note that even if a block is open and not =
-fully
->>>>>> written, it has to be erased in order to be used again.
->>>>>=20
->>>>> Should we extend it to do the scan, and update the write pointer =
-as
->>>>> well? I think this kind of feature already is baked into pblk?
->>>> This is already in place: we scan until empty page and take it from
->>>> there. This patch is only for the case in which we start a pblk =
-instance
->>>> form scratch. On a device already owned by pblk, we would not have =
-the
->>>> problem we are trying to solve here because we know the state.
->>>=20
->>> Agree. What I meant was that when we anyway are recovering the =
-state,
->>> we could just as well update ->wp and set to NVM_CHK_ST_OPEN and so
->>> forth for the initialization phase.
->> In 1.2 the use of chunk metadata is purely fictional. We respect the
->> chunk state machine as we transition lines, but all the write =
-pointers
->> are ignored. Instead, we use the line bitmap to point to the next
->> writable entry. This is BTW the same way we it in open lines on 2.0 =
-too.
+> A minor version number increase should not break backwards
+> compatibility.
 >=20
-> Now I understand where you are coming from. I had the understanding
-> that we where using the write pointer now that we moved to 2.0,
-> looking through the code, that wasn't the case. :) Which means that
-> pblk doesn't work with a devices that implements 2.0. Yikes... I knew
-> I had forgot a detail when support was added into pblk.
+> Fixes: 3cb98f84d368b ("lightnvm: add minor version to generic =
+geometry")
+> Signed-off-by: Matias Bj=C3=B8rling <mb@lightnvm.io>
+> ---
+> drivers/nvme/host/lightnvm.c | 6 ------
+> 1 file changed, 6 deletions(-)
 >=20
-
-I think you misunderstood; pblk does support 2.0 devices. What happens
-is that we transform the per chunk WP in 2.0 into the line bitmap to
-simplify the lookup. The point being that we do not need to create a
-fictional chunk for 1.2 devices since we do the translation to the
-bitmap directly. Does this make sense?
-
-> There are no empty sector marker in the 2.0 spec, since it uses the
-> write pointer to know where it is in the chunk. So there is a bit of
-> work to do there.
+> diff --git a/drivers/nvme/host/lightnvm.c =
+b/drivers/nvme/host/lightnvm.c
+> index d9e4cccd5b66..a156fe3ca7d3 100644
+> --- a/drivers/nvme/host/lightnvm.c
+> +++ b/drivers/nvme/host/lightnvm.c
+> @@ -414,12 +414,6 @@ static int nvme_nvm_setup_20(struct nvme_nvm_id20 =
+*id,
+> 	/* Set compacted version for upper layers */
+> 	geo->version =3D NVM_OCSSD_SPEC_20;
 >=20
+> -	if (!(geo->major_ver_id =3D=3D 2 && geo->minor_ver_id =3D=3D 0)) =
+{
+> -		pr_err("nvm: OCSSD version not supported (v%d.%d)\n",
+> -				geo->major_ver_id, geo->minor_ver_id);
+> -		return -EINVAL;
+> -	}
+> -
+> 	geo->num_ch =3D le16_to_cpu(id->num_grp);
+> 	geo->num_lun =3D le16_to_cpu(id->num_pu);
+> 	geo->all_luns =3D geo->num_ch * geo->num_lun;
+> --
+> 2.11.0
 
-Yes. And for 2.0 devices we go and look at the WP, but for 1.2 devices =
-we
-need to scan.
+Looks good to me.
 
-> Since this properly is a bit more work to do, I'll look into it after =
-FMS.
->=20
+Reviewed-by: Javier Gonz=C3=A1lez <javier@cnexlabs.com>
 
-Look the comments above. All we need for 2.0 support is in place. We can
-talk about it f2f.
 
-> I'm also moving the explicit coding of 1.2/2.0 chunk / bad block
-> fixing into core, so pblk can be simplfied, and doesn't have to think
-> to manage each version separately.
->=20
-
-Good. I have a patch I was expecting to send after FMS for moving chunk
-/ bad block out of pblk for the same reason. If you're doing the same
-thing I can stop looking into it...
-
->=20
->> Chunk metadata is only used to setup the bitmaps on init/recovery. =
-From
->> here on, we use the bitmap to find the next writable sector, without
->> worrying about the specific per-chunk write pointer. Thus, updating
->> chunk metadata here has no effect.
->> Does this make sense to you?
->> Javier
-
---Apple-Mail=_3BC33749-B9D9-42B0-9EC1-E5F7699E401E
+--Apple-Mail=_6BA32728-121A-4EAB-BA22-5F3BDD9FDF5C
 Content-Transfer-Encoding: 7bit
 Content-Disposition: attachment;
 	filename=signature.asc
@@ -217,19 +150,19 @@ Content-Description: Message signed with OpenPGP
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCgAdFiEE+ws7Qq+qZPG1bJoyIX4xUKFRnnQFAltkRFkACgkQIX4xUKFR
-nnRIDhAAwqZZEOQQOgUyROwIpb9kJXaHNnQuaXTwRIL96qNoWYEONdKD+E4fRaht
-ZwxMgU0kGetcgWW/8UY3xQdSA4vEt+X5Mqjc8mgBu3HOB/AxngrJQiw9molf2uSU
-VIR9+ZWX3lC61ESZs8bC9r+v9dg5Z/l7+oF6Q3+fieK3Fy03tvcB+0STyEf8I+WO
-FSJ78G3qJIzbHULJvVwksUxOcjUUKLfR7wHL1dJclqRdmJdaixLS8NykK/bjxamD
-+txxmvGlaSFQh/uGHfO/A9CwXj7sunWugnsrmkGrbNQJf4j+0WBcTEgqipkxj59d
-z+SF13SpODuy8sBCjiPM/NoTlyPaf4pbHkMhwTxbDP/s647VNnFnZuV70+B4Jo6t
-DgfzZ2mCtx9cOwk47gmPwHj5qysL8PjjtC1ACerLkn6RFw0Lo8jPILQVyFbTIK5S
-T6Lloa7POMAEhs5hQnA7+E8Jfx8RbsiJe3zSX8SctL1b03ZFKFHjGtv76XXCLus4
-xm3mZrqJuSsf2TxrYGgFTX91RgzFLRc/mqJ45vN2eifvTvuHKvWXFOg35LeRNdUp
-dM/N9iPOiZ8oX9yOvQpbacPYmWfwmh12vJcyH3vdGHOEM8bUHwvAdfVJ9N3GoozF
-IEJvXrfM9QIKacsP1yz8ke+IxETckclu9xSkVmAGb/lNFfM1gUg=
-=QP8u
+iQIzBAEBCgAdFiEE+ws7Qq+qZPG1bJoyIX4xUKFRnnQFAltkRX8ACgkQIX4xUKFR
+nnTNehAAhYO4sb3WnD435eBZs+ZQlmEJG631NbXuYcLfxh68eI9Pba6oweQPzIL4
+QuYyTJ88g/QUH1okZJFyZF05msQPB4koljZc1KAX8Bjt50zY9MWB9g0IthszT2fS
+NjgzUaJjonyD7CZtpwZOPR869D9VrGv3MATrO9+P25VLfwz2VJrLA1C5zDjNZXqA
+xqMtQ3tLR3qtmKXvVhWofAqEO1SXk9/i5foQcHLB4yAWpTrGltsCFrGMlhDq+1YC
+902UBBpaAZZWOLdkzrmYVD++Rc7OV6gnnmU/5yQJLtEnhMV9Lx9bbkhRm59+JHcq
+Pd0VBnxRuFamjMU3CeM6fCZrX4NbR6nXFk1YTsu00iY5r4qGyz+z8WSSlCxF1bsK
+q2ZapOnH19LPkNhzcnA/pARa6TDVyllkylEBZIUbs9RSMr4jGkzlhM1V1H/t4oZL
+22Nj3d/+kbi2snaV5XuA1S68pVaeLAfElSeICOaVJkj85XBORMiWGMCDN/xqx6Xn
+ZLzSvc4C4Do8EDaoUDZHWShDS5kCpcSChAivttONZTLI/ALB6/8JejH7cV9x96kT
+rfCX/hBu2+7PedOOt6kZO0Y1ceaEUg5Qq1+2qoGGMCDvBq/Uk6tdieFNjYk14Erv
+dllFLF7PhOuWOWk6tg13jZOhbIu2Af+vZJghI1RIxoqC8CGh/SA=
+=sVA3
 -----END PGP SIGNATURE-----
 
---Apple-Mail=_3BC33749-B9D9-42B0-9EC1-E5F7699E401E--
+--Apple-Mail=_6BA32728-121A-4EAB-BA22-5F3BDD9FDF5C--
