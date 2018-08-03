@@ -2,92 +2,126 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 023E3C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 09:21:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F81EC28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 09:23:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA94121717
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 09:21:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA94121717
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 8823B21717
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 09:22:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8823B21717
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732549AbeHCLRW (ORCPT
+        id S1732305AbeHCLSX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 07:17:22 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36060 "EHLO mx1.redhat.com"
+        Fri, 3 Aug 2018 07:18:23 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:45217 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732374AbeHCLRW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 07:17:22 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 86B6A81663FE;
-        Fri,  3 Aug 2018 09:21:55 +0000 (UTC)
-Received: from localhost (unknown [10.40.205.152])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 1D9137C3E;
-        Fri,  3 Aug 2018 09:21:54 +0000 (UTC)
-Date:   Fri, 3 Aug 2018 11:21:54 +0200
-From:   Stanislaw Gruszka <sgruszka@redhat.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Kalle Valo <kvalo@codeaurora.org>,
-        Wireless <linux-wireless@vger.kernel.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the
- wireless-drivers-next tree
-Message-ID: <20180803092152.GC10284@redhat.com>
-References: <20180803182942.4de98df2@canb.auug.org.au>
- <20180803091140.GA10284@redhat.com>
+        id S1728122AbeHCLSX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 07:18:23 -0400
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id B4C14AE70EA69;
+        Fri,  3 Aug 2018 17:22:52 +0800 (CST)
+Received: from [10.177.253.249] (10.177.253.249) by smtp.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server id 14.3.399.0; Fri, 3 Aug 2018
+ 17:22:50 +0800
+To:     Dominique Martinet <asmadeus@codewreck.org>
+CC:     "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        Greg Kurz <groug@kaod.org>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        Ron Minnich <rminnich@sandia.gov>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+        <v9fs-developer@lists.sourceforge.net>
+From:   piaojun <piaojun@huawei.com>
+Subject: [PATCH v3] net/9p/trans_virtio.c: add null terminal for mount tag
+Message-ID: <5B641ECC.5030401@huawei.com>
+Date:   Fri, 3 Aug 2018 17:22:20 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180803091140.GA10284@redhat.com>
-User-Agent: Mutt/1.8.3 (2017-05-23)
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Fri, 03 Aug 2018 09:21:55 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Fri, 03 Aug 2018 09:21:55 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'sgruszka@redhat.com' RCPT:''
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.253.249]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 03, 2018 at 11:11:40AM +0200, Stanislaw Gruszka wrote:
-> Hi
-> 
-> On Fri, Aug 03, 2018 at 06:29:42PM +1000, Stephen Rothwell wrote:
-> > After merging the wireless-drivers-next tree, today's linux-next build
-> > (powerpc allyesconfig) failed like this:
-> [snip]
-> > diff --git a/drivers/net/wireless/mediatek/mt76/Kconfig b/drivers/net/wireless/mediatek/mt76/Kconfig
-> > index 850611ad347a..ad56b3ed2be2 100644
-> > --- a/drivers/net/wireless/mediatek/mt76/Kconfig
-> > +++ b/drivers/net/wireless/mediatek/mt76/Kconfig
-> > @@ -13,6 +13,7 @@ config MT76x0U
-> >  	tristate "MediaTek MT76x0U (USB) support"
-> >  	depends on MAC80211
-> >  	depends on USB
-> > +	depends on BROKEN
-> Would be better to limit driver to be build as module.
-> Hopefully that will fix the issue. I'll post patch in a moment.
+chan->tag is Non-null terminated which will result in printing messy code
+when debugging code. So we should add '\0' for tag to make the code more
+convenient and robust. In addition, I drop char->tag_len to simplify the
+code.
 
-Ok, I made config allyesconfig and .config file looks like this:
+Signed-off-by: Jun Piao <piaojun@huawei.com>
+---
+ net/9p/trans_virtio.c | 17 +++++++----------
+ 1 file changed, 7 insertions(+), 10 deletions(-)
 
-CONFIG_WLAN_VENDOR_MEDIATEK=y
-CONFIG_MT7601U=y
-CONFIG_MT76_CORE=y
-CONFIG_MT76_USB=y
-CONFIG_MT76x2_COMMON=y
-CONFIG_MT76x0U=m
+diff --git a/net/9p/trans_virtio.c b/net/9p/trans_virtio.c
+index d422bfc..46a5ab2 100644
+--- a/net/9p/trans_virtio.c
++++ b/net/9p/trans_virtio.c
+@@ -89,10 +89,8 @@ struct virtio_chan {
+ 	unsigned long p9_max_pages;
+ 	/* Scatterlist: can be too big for stack. */
+ 	struct scatterlist sg[VIRTQUEUE_NUM];
+-
+-	int tag_len;
+ 	/*
+-	 * tag name to identify a mount Non-null terminated
++	 * tag name to identify a mount null terminated
+ 	 */
+ 	char *tag;
 
-However I still not sure if kernel will build this way.
-Because there can be conflict between kernel symbols
-and module symbols. So looks as part of quick fix
-mt7601u should be build also as module. And slower
-fix will be to rename symbosl names in mt76x0 driver.
+@@ -525,14 +523,15 @@ static ssize_t p9_mount_tag_show(struct device *dev,
+ {
+ 	struct virtio_chan *chan;
+ 	struct virtio_device *vdev;
++	int tag_len;
 
-Regards
-Stanislaw
+ 	vdev = dev_to_virtio(dev);
+ 	chan = vdev->priv;
++	tag_len = strlen(chan->tag);
+
+-	memcpy(buf, chan->tag, chan->tag_len);
+-	buf[chan->tag_len] = 0;
++	memcpy(buf, chan->tag, tag_len + 1);
+
+-	return chan->tag_len + 1;
++	return tag_len + 1;
+ }
+
+ static DEVICE_ATTR(mount_tag, 0444, p9_mount_tag_show, NULL);
+@@ -585,7 +584,7 @@ static int p9_virtio_probe(struct virtio_device *vdev)
+ 		err = -EINVAL;
+ 		goto out_free_vq;
+ 	}
+-	tag = kmalloc(tag_len, GFP_KERNEL);
++	tag = kzalloc(tag_len + 1, GFP_KERNEL);
+ 	if (!tag) {
+ 		err = -ENOMEM;
+ 		goto out_free_vq;
+@@ -594,7 +593,6 @@ static int p9_virtio_probe(struct virtio_device *vdev)
+ 	virtio_cread_bytes(vdev, offsetof(struct virtio_9p_config, tag),
+ 			   tag, tag_len);
+ 	chan->tag = tag;
+-	chan->tag_len = tag_len;
+ 	err = sysfs_create_file(&(vdev->dev.kobj), &dev_attr_mount_tag.attr);
+ 	if (err) {
+ 		goto out_free_tag;
+@@ -654,8 +652,7 @@ static int p9_virtio_probe(struct virtio_device *vdev)
+
+ 	mutex_lock(&virtio_9p_lock);
+ 	list_for_each_entry(chan, &virtio_chan_list, chan_list) {
+-		if (!strncmp(devname, chan->tag, chan->tag_len) &&
+-		    strlen(devname) == chan->tag_len) {
++		if (!strcmp(devname, chan->tag)) {
+ 			if (!chan->inuse) {
+ 				chan->inuse = true;
+ 				found = 1;
+-- 
