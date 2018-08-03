@@ -6,137 +6,179 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EABB9C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 07:47:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BEA9C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 07:49:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F8AA2172E
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 07:47:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 146A02172B
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 07:49:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="HY/IKGyw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F8AA2172E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="aNbB8M2P"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 146A02172B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729985AbeHCJmx (ORCPT
+        id S1729883AbeHCJoD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 05:42:53 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:52856 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727250AbeHCJmx (ORCPT
+        Fri, 3 Aug 2018 05:44:03 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:34145 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727682AbeHCJoD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 05:42:53 -0400
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w737lThg000960;
-        Fri, 3 Aug 2018 02:47:29 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1533282449;
-        bh=dJDBtCF8izwdGhh9L9LLu1La1YJTEb0pZy9PTIVDLyY=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=HY/IKGywv0uJP1te+mRV+A6BM1z6OeMp4vVvAxOd8hQBG6HYfk85AksewhXakLwUK
-         tec8grsOFJXxr1lOkPVy3kuiy5xgaYlrDiQaopxK+hwvQMsvGURLmBLbH0eAmCpBHv
-         u1aEeXpTLf6rde7ba1uFuQq8Khv+m5GQLKSZIGPg=
-Received: from DLEE101.ent.ti.com (dlee101.ent.ti.com [157.170.170.31])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w737lSbu018348;
-        Fri, 3 Aug 2018 02:47:28 -0500
-Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Fri, 3 Aug
- 2018 02:47:28 -0500
-Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Fri, 3 Aug 2018 02:47:28 -0500
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w737lN3u027567;
-        Fri, 3 Aug 2018 02:47:24 -0500
-Subject: Re: [PATCH 07/46] dmaengine: omap-dma: use
- dmaenginem_async_device_register to simplify the code
-To:     Huang Shijie <sjhuang@iluvatar.ai>, <vkoul@kernel.org>
-CC:     <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <dave.jiang@intel.com>, <radhey.shyam.pandey@xilinx.com>,
-        <appana.durga.rao@xilinx.com>, <jmkrzyszt@gmail.com>,
-        <gomonovych@gmail.com>, <keescook@chromium.org>,
-        <horms+renesas@verge.net.au>, <geert+renesas@glider.be>,
-        <shawnguo@kernel.org>, <baoyou.xie@linaro.org>,
-        <michal.simek@xilinx.com>, <baohua@kernel.org>,
-        <ludovic.desroches@microchip.com>, <linus.walleij@linaro.org>,
-        <david.brown@linaro.org>
-References: <20180803072016.21544-1-sjhuang@iluvatar.ai>
- <20180803072016.21544-8-sjhuang@iluvatar.ai>
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-Message-ID: <646b3c1a-cf42-43ba-1f20-6c1375c78517@ti.com>
-Date:   Fri, 3 Aug 2018 10:47:30 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.0
+        Fri, 3 Aug 2018 05:44:03 -0400
+Received: by mail-io0-f196.google.com with SMTP id l7-v6so4293567ioj.1
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Aug 2018 00:48:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5jLOmB910Fh4BnIL5tQ9SLes4JmW//eSoZWgHhu00UE=;
+        b=aNbB8M2Pti8Z7CH58Gi1R0Kyhi82gXpd/T31EAXO8LPTbi863l1NIYaBr5txti8EXk
+         S7vUUDdUhRSXLxGh1C7ukGvY6KzA0SbCKkHYY+ccoJSD9JAz9wu0MwbJzcG+K3imbvNx
+         S86uvGvIoR7jZHG5Mt+tgYoFOPKGN8drj55Mw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5jLOmB910Fh4BnIL5tQ9SLes4JmW//eSoZWgHhu00UE=;
+        b=BYYW/ubn94H5EFjkNuijGscc/I0aHPG2GuwPBwTmmpw4E3m7mSQ7JFB5dwLhhuCTyE
+         0/r8Bd5UXhBAskAV8njtyYOzI0SAKWbXjBbC+u15JnR7xGkpu9gf9cQyn9Thhr+w7Uo4
+         1q8cHGDHjSh9lDRZ2GJxg1WwcIsKQ1tteIjbCN8LzNIjusiZUOCp3CUy1Ao9qgaAbzR+
+         ZnR0SgwlRWF5+L0/iJz2m+QPJ2M5H8Bw8ozItMyvjaH8PkeU8eAmz7DrWiTsJOK4IyoU
+         6Vx4XjKEPc4/nGoViIurjBD233QQsKJIF0GT+pDgRmDgT6zatwGVtWgQhJ5SyAd75+dG
+         KYPg==
+X-Gm-Message-State: AOUpUlHEbFDip6YNd2h/FrIhM2UH5VBfhhO+RFPhdeCutL9amiTG4QpY
+        9jFvqWrgLUk6INUbxL1AXdJ/0k9FNlEibds8JHpkJA==
+X-Google-Smtp-Source: AA+uWPyH8/Jxu0AirwrHKY8wiVk2u36lgj94aSbWE5CzBaxYem53DHREqE668d1dzuifgYpC/9QR0R87/n+xp/6pBpk=
+X-Received: by 2002:a6b:3e46:: with SMTP id l67-v6mr4996360ioa.294.1533282538471;
+ Fri, 03 Aug 2018 00:48:58 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180803072016.21544-8-sjhuang@iluvatar.ai>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20180802131849.mqpt5lbtcqrxbwig@queper01-lin> <CAKfTPtDcoySXK0fBkDNy4wp1vsRxmiuAGT3CDZBh6Vnwyep2BA@mail.gmail.com>
+ <20180802141424.ju4jxxbk6pxw3kyq@queper01-lin> <CAKfTPtCzQZotmpt40X6uN9O0yAerq6c6bFgiFfqhhcbKsm7k4w@mail.gmail.com>
+ <20180802153035.vjtmqwdwujvt7ojs@queper01-lin> <CAKfTPtCGGqykN027kxK+chvKvCpNu4bYYdvfZJ+3_7YzT3Utfg@mail.gmail.com>
+ <20180802160009.uhwwj3tqrqmv7q5a@queper01-lin> <CAKfTPtB_tWgOPCB3q2Q2rESKczTPGBDUojcXDY7uP8YTQddBMg@mail.gmail.com>
+ <20180802161027.v2ctgscuc4uxbb7u@queper01-lin> <CAKfTPtDtaF9Qs4NWkKWUSr8Ryi-ScYNmPyacocPQUPxT00XAYg@mail.gmail.com>
+ <20180802165924.7ywgoxj2jwftxycz@queper01-lin>
+In-Reply-To: <20180802165924.7ywgoxj2jwftxycz@queper01-lin>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Fri, 3 Aug 2018 09:48:47 +0200
+Message-ID: <CAKfTPtDsG4FJy5xBO8+6pJzehEM668=SZ4yQ-szVTduofN3QZg@mail.gmail.com>
+Subject: Re: [PATCH v5 09/14] sched: Add over-utilization/tipping point indicator
+To:     Quentin Perret <quentin.perret@arm.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Chris Redpath <chris.redpath@arm.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Thara Gopinath <thara.gopinath@linaro.org>,
+        viresh kumar <viresh.kumar@linaro.org>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        "Cc: Steve Muckle" <smuckle@google.com>, adharmap@quicinc.com,
+        "Kannan, Saravana" <skannan@quicinc.com>, pkondeti@codeaurora.org,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        currojerez@riseup.net, Javi Merino <javi.merino@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, 2 Aug 2018 at 18:59, Quentin Perret <quentin.perret@arm.com> wrote:
+>
+> On Thursday 02 Aug 2018 at 18:38:01 (+0200), Vincent Guittot wrote:
+> > On Thu, 2 Aug 2018 at 18:10, Quentin Perret <quentin.perret@arm.com> wrote:
+> > >
+> > > On Thursday 02 Aug 2018 at 18:07:49 (+0200), Vincent Guittot wrote:
+> > > > On Thu, 2 Aug 2018 at 18:00, Quentin Perret <quentin.perret@arm.com> wrote:
+> > > > >
+> > > > > On Thursday 02 Aug 2018 at 17:55:24 (+0200), Vincent Guittot wrote:
+> > > > > > On Thu, 2 Aug 2018 at 17:30, Quentin Perret <quentin.perret@arm.com> wrote:
+> > > > > > >
+> > > > > > > On Thursday 02 Aug 2018 at 17:14:15 (+0200), Vincent Guittot wrote:
+> > > > > > > > On Thu, 2 Aug 2018 at 16:14, Quentin Perret <quentin.perret@arm.com> wrote:
+> > > > > > > > > Good point, setting the util_avg to 0 for new tasks should help
+> > > > > > > > > filtering out those tiny tasks too. And that would match with the idea
+> > > > > > > > > of letting tasks build their history before looking at their util_avg ...
+> > > > > > > > >
+> > > > > > > > > But there is one difference w.r.t frequency selection. The current code
+> > > > > > > > > won't mark the system overutilized, but will let sugov raise the
+> > > > > > > > > frequency when a new task is enqueued. So in case of a fork bomb, we
+> > > > > > > >
+> > > > > > > > If the initial value of util_avg is 0, we should not have any impact
+> > > > > > > > on the util_avg of the cfs rq on which the task is attached, isn't it
+> > > > > > > > ? so this should not impact both the over utilization state and the
+> > > > > > > > frequency selected by sugov or I'm missing something ?
+> > > > > > >
+> > > > > > > What I tried to say is that setting util_avg to 0 for new tasks will
+> > > > > > > prevent schedutil from raising the frequency in case of a fork bomb, and
+> > > > > > > I think that could be an issue. And I think this isn't an issue with the
+> > > > > > > patch as-is ...
+> > > > > >
+> > > > > > ok. So you also want to deal with fork bomb
+> > > > > > Not sure that you don't have some problem with current proposal too
+> > > > > > because select_task_rq_fair will always return prev_cpu because
+> > > > > > util_avg and util_est are 0 at that time
+> > > > >
+> > > > > But find_idlest_cpu() should select a CPU using load in case of a forkee
+> > > > > no ?
+> > > >
+> > > > So you have to wait for the next tick that will set the overutilized
+> > > > and disable the want_energy. Until this point, all new tasks will be
+> > > > put on the current cpu
+> > >
+> > > want_energy should always be false for forkees, because we set it only
+> > > for SD_BALANCE_WAKE.
+> >
+> > Ah yes I forgot that point.
+> > But doesn't this break the EAS policy ? I mean each time a new task is
+> > created, we use the load to select the best CPU
+>
+> If you really keep spawning new tasks all the time, yes EAS won't help
+> you, but there isn't a lot we can do :/. We need to have an idea of how
 
+My point was more that it's also happen for every single new task and
+not only with fork bomb
 
-On 2018-08-03 10:19, Huang Shijie wrote:
-> Use dmaenginem_async_device_register to simplify the code:
->    remove dma_async_device_unregister
-> 
-> Signed-off-by: Huang Shijie <sjhuang@iluvatar.ai>
-> ---
->  drivers/dma/ti/omap-dma.c | 5 +----
->  1 file changed, 1 insertion(+), 4 deletions(-)
-> 
-> diff --git a/drivers/dma/ti/omap-dma.c b/drivers/dma/ti/omap-dma.c
-> index a4a931ddf6f6..085748c6eb67 100644
-> --- a/drivers/dma/ti/omap-dma.c
-> +++ b/drivers/dma/ti/omap-dma.c
-> @@ -1566,7 +1566,7 @@ static int omap_dma_probe(struct platform_device *pdev)
->  		}
->  	}
->  
-> -	rc = dma_async_device_register(&od->ddev);
-> +	rc = dmaenginem_async_device_register(&od->ddev);
+> big a task is for EAS, and we obviously don't know that for new tasks, so
+> it's hard/dangerous to make assumptions.
 
-Why it is dmaenginem_async_device_register() and not aligned other
-resource managed functions (devm_* dmam_*), like
-devm_dma_async_device_register()
+But by not making any assumption, the new tasks are placed outside EAS
+control and can easily break what EAS tries to achieve because it
+looks for the idlest cpu which is unluckily most probably a CPU that
+EAS doesn't want to use
 
-and in dmaenginem_async_device_register() what is the 'm' in dmaenginem ?
-DMAengine Managed?
+>
+> So the proposal here is that if you only have forkees once in a while,
+> then those new tasks (and those new tasks only) will be placed using load
+> the first time, and then they'll fall under EAS control has soon as they
+> have at least a little bit of history. This _should_ happen without
+> re-enabling load balance spuriously too often, and that _should_ prevent
 
->  	if (rc) {
->  		pr_warn("OMAP-DMA: failed to register slave DMA engine device: %d\n",
->  			rc);
-> @@ -1584,7 +1584,6 @@ static int omap_dma_probe(struct platform_device *pdev)
->  				of_dma_simple_xlate, &omap_dma_info);
->  		if (rc) {
->  			pr_warn("OMAP-DMA: failed to register DMA controller\n");
-> -			dma_async_device_unregister(&od->ddev);
->  			omap_dma_free(od);
->  		}
->  	}
-> @@ -1606,8 +1605,6 @@ static int omap_dma_remove(struct platform_device *pdev)
->  	irq = platform_get_irq(pdev, 1);
->  	devm_free_irq(&pdev->dev, irq, od);
->  
-> -	dma_async_device_unregister(&od->ddev);
-> -
+I'm not really concerned about re-enabling load balance but more that
+the effort of packing of tasks in few cpus/clusters that EAS tries to
+do can be broken for every new task.
+So I wonder what is better for EAS : Make sure to efficiently spread
+newly created tasks in cas of fork bomb or  try to not break EAS task
+placement with every newly created tasks
 
-I think this is a bad idea in general.
-We need to unregister the dma-device before we clean up and free resources.
+Vincent
 
->  	if (!od->legacy) {
->  		/* Disable all interrupts */
->  		omap_dma_glbl_write(od, IRQENABLE_L0, 0);
-> 
-
-I'm sorry to say, but it is a NACK from me.
-
-- Péter
-
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+> it from ruining the placement of existing tasks ...
+>
+> As Peter already mentioned, a better way of solving this issue would be
+> to try to find the moment when the utilization signal has converged to
+> something stable (assuming that it converges), but that, I think, isn't
+> straightforward at all ...
+>
+> Does that make any sense ?
+>
+> Thanks,
+> Quentin
