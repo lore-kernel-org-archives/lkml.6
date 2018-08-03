@@ -3,71 +3,72 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04EFBC28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 23:00:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0A14C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 23:00:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA33C21748
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 23:00:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 981BC21748
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 23:00:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Snabtjg9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA33C21748
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="m8TfMP2h"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 981BC21748
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732104AbeHDA6P (ORCPT
+        id S1732186AbeHDA6n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 20:58:15 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:33065 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731846AbeHDA6P (ORCPT
+        Fri, 3 Aug 2018 20:58:43 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:39748 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732116AbeHDA6m (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 20:58:15 -0400
-Received: by mail-lj1-f196.google.com with SMTP id s12-v6so6179895ljj.0
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Aug 2018 15:59:56 -0700 (PDT)
+        Fri, 3 Aug 2018 20:58:42 -0400
+Received: by mail-lf1-f65.google.com with SMTP id a134-v6so5185029lfe.6
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Aug 2018 16:00:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=pUzX5yJ6xxFO8ti1x4g/C903BlT8ZKkcHG9/H6dxHFU=;
-        b=Snabtjg91FqdxRTUulbpZECBWIM034yyrFQtCwhBEsQzAkezVlRhxDMRgHd9JZupDt
-         nPZT+pBysWVTDd/lYlf4uAqZLU4xfzWZAeg7tAMQrczC/6ry3//ubvo1l+99JUFsbDtG
-         BqUpAWSemgwwIkAAGF/UdAzy+FeqCs9C2d+z0=
+        bh=dxEclpyOYuFQ7Rl9MmPDan1lmq0pPsaRMMW7EHhiPW4=;
+        b=m8TfMP2hN5da+QqFb6sdRZSAEXsq5TTZ3Cj3zU+zyo2TDXlPxKMT0a0p+6W/Xda1OL
+         wyGUo49XvdooeEpu6s1FpQSRhb4c9U9RKvM7SePaFbvdW7kn3jLZaQ5j39OmJ7V2O+Q+
+         OMjpgb3gwwfuOgBrKrUBKLckm8Sp38uuOa/34=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=pUzX5yJ6xxFO8ti1x4g/C903BlT8ZKkcHG9/H6dxHFU=;
-        b=cTuVxyUZxRh+7oBBS4f4kKAgxffCmtVSFM+BTvOpwLmUONJwJbxoj42xl2NF0ep2bo
-         d4GL1WckjNdu28TGIfOaLLOuciYuqAwwwzZqgUWVlzEOr4iZaRf6+qi6rpXECk9rtgRP
-         qJI0RlWG+yV7POcFhNTtDaXw3yLHtXbZsFCDHmbiFta1+QeyMNPxyoWw6fBVfWGT9oSF
-         SwTKzxM9MBNttFL7fFOT9IfF9bvICQ03wiloJsUBfIatyVMhvfHldbJV5vbyg/V2eV/k
-         b/IP82Jfb8N9jNZJvoh9iFE/Jn1aBFUQhxhBYxhXm0x6+vu9Nv9R2/UXNy6SftlQbc82
-         Hjng==
-X-Gm-Message-State: AOUpUlHDbH8QPn/FIwEXM5Xi8Pv/gJcwhdwaJfTNHOHRFmWPLmvC07ey
-        4he9aGKtXAFXEGV5Je0We8L842MxC7Q=
-X-Google-Smtp-Source: AAOMgpd16gM2YppIfSgY/HQKZBpWU5SsaIQ6nUVvb/VasZjDS3RiSujyd6AoDNqELm02ap8ULjmBjQ==
-X-Received: by 2002:a2e:5c07:: with SMTP id q7-v6mr6441698ljb.119.1533337195190;
-        Fri, 03 Aug 2018 15:59:55 -0700 (PDT)
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
-        by smtp.gmail.com with ESMTPSA id 97-v6sm917883lfw.13.2018.08.03.15.59.52
+        bh=dxEclpyOYuFQ7Rl9MmPDan1lmq0pPsaRMMW7EHhiPW4=;
+        b=G24mPRgZtxyUOGsEJJJUSOBtpj7ZK2CLSej+7a3egZtJ33j7+g5bOdvYo14knnsgil
+         ulrIFeGR/+6XlFR3WmlafoAktoCIc7tkhQEkwF6u5LJKBkgtIrMt3tY6CTtqvCNPjKLp
+         o0v7M+8EpFxU2Pp58UYIMXEEZo3ISLH+E5Or1eM2EEJNoFvvo167DLMSXsQlAR6dVjPe
+         /2l0nHrzUdyibyAEdXLrIP7AQ8RysS0JAuObB3vD53RyYTb31rbv+tn0riF5LeDi9Ud+
+         /SveB7ttMYOncfSlAIxuFNdqZTgWiuX3i99855MKWBuabFEpFLqxbkOsTriNCDbZ5Kdw
+         CEUA==
+X-Gm-Message-State: AOUpUlE1Ho5YkmGQlgL+BkInU1lZSuwF5bauUerYkfE0NuJOMVp0HV0j
+        84P1GOrmYpJUjxfx9vub/BpzZreKi50=
+X-Google-Smtp-Source: AAOMgpendJbLJx1N+k7y6r+Xx+HUxjXL9oSBX+i98ZPTkMIO+H6HiiuDGrR++tQDMY+uOrRtG/lbeg==
+X-Received: by 2002:a19:9a81:: with SMTP id c123-v6mr6098175lfe.106.1533337222407;
+        Fri, 03 Aug 2018 16:00:22 -0700 (PDT)
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com. [209.85.167.50])
+        by smtp.gmail.com with ESMTPSA id g63-v6sm1080146lji.79.2018.08.03.16.00.19
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 03 Aug 2018 15:59:52 -0700 (PDT)
-Received: by mail-lj1-f171.google.com with SMTP id r13-v6so6136464ljg.10
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Aug 2018 15:59:52 -0700 (PDT)
-X-Received: by 2002:a2e:540d:: with SMTP id i13-v6mr6383987ljb.51.1533337192318;
- Fri, 03 Aug 2018 15:59:52 -0700 (PDT)
+        Fri, 03 Aug 2018 16:00:21 -0700 (PDT)
+Received: by mail-lf1-f50.google.com with SMTP id j8-v6so5176392lfb.4
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Aug 2018 16:00:19 -0700 (PDT)
+X-Received: by 2002:a19:d484:: with SMTP id l126-v6mr5556118lfg.28.1533337219239;
+ Fri, 03 Aug 2018 16:00:19 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180731161340.13000-1-georgi.djakov@linaro.org> <20180731161340.13000-2-georgi.djakov@linaro.org>
-In-Reply-To: <20180731161340.13000-2-georgi.djakov@linaro.org>
+References: <20180731161340.13000-1-georgi.djakov@linaro.org> <20180731161340.13000-7-georgi.djakov@linaro.org>
+In-Reply-To: <20180731161340.13000-7-georgi.djakov@linaro.org>
 From:   Evan Green <evgreen@chromium.org>
-Date:   Fri, 3 Aug 2018 15:59:15 -0700
-X-Gmail-Original-Message-ID: <CAE=gft5vxheWYyF2JODuGAKcfHfYOS6sg-vCar=dZG5tFm9SVw@mail.gmail.com>
-Message-ID: <CAE=gft5vxheWYyF2JODuGAKcfHfYOS6sg-vCar=dZG5tFm9SVw@mail.gmail.com>
-Subject: Re: [PATCH v7 1/8] interconnect: Add generic on-chip interconnect API
+Date:   Fri, 3 Aug 2018 15:59:42 -0700
+X-Gmail-Original-Message-ID: <CAE=gft6eTnCm2CoUkhG8COHC+rMdrWGf2A+PqZYB+gq4djm5xQ@mail.gmail.com>
+Message-ID: <CAE=gft6eTnCm2CoUkhG8COHC+rMdrWGf2A+PqZYB+gq4djm5xQ@mail.gmail.com>
+Subject: Re: [PATCH v7 6/8] interconnect: qcom: Add msm8916 interconnect
+ provider driver
 To:     georgi.djakov@linaro.org
 Cc:     linux-pm@vger.kernel.org, gregkh@linuxfoundation.org,
         rjw@rjwysocki.net, robh+dt@kernel.org,
@@ -88,39 +89,18 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Tue, Jul 31, 2018 at 9:13 AM Georgi Djakov <georgi.djakov@linaro.org> wrote:
 >
-> This patch introduces a new API to get requirements and configure the
-> interconnect buses across the entire chipset to fit with the current
-> demand.
->
-> The API is using a consumer/provider-based model, where the providers are
-> the interconnect buses and the consumers could be various drivers.
-> The consumers request interconnect resources (path) between endpoints and
-> set the desired constraints on this data flow path. The providers receive
-> requests from consumers and aggregate these requests for all master-slave
-> pairs on that path. Then the providers configure each participating in the
-> topology node according to the requested data flow path, physical links and
-> constraints. The topology could be complicated and multi-tiered and is SoC
-> specific.
+> Add driver for the Qualcomm interconnect buses found in msm8916 based
+> platforms.
 >
 > Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
 > ---
->  Documentation/interconnect/interconnect.rst |  96 ++++
->  drivers/Kconfig                             |   2 +
->  drivers/Makefile                            |   1 +
->  drivers/interconnect/Kconfig                |  10 +
->  drivers/interconnect/Makefile               |   2 +
->  drivers/interconnect/core.c                 | 569 ++++++++++++++++++++
->  include/linux/interconnect-provider.h       | 125 +++++
->  include/linux/interconnect.h                |  42 ++
->  8 files changed, 847 insertions(+)
->  create mode 100644 Documentation/interconnect/interconnect.rst
->  create mode 100644 drivers/interconnect/Kconfig
->  create mode 100644 drivers/interconnect/Makefile
->  create mode 100644 drivers/interconnect/core.c
->  create mode 100644 include/linux/interconnect-provider.h
->  create mode 100644 include/linux/interconnect.h
+>  drivers/interconnect/Kconfig        |   5 +
+>  drivers/interconnect/Makefile       |   1 +
+>  drivers/interconnect/qcom/Kconfig   |   9 +
+>  drivers/interconnect/qcom/Makefile  |   2 +
+>  drivers/interconnect/qcom/msm8916.c | 510 ++++++++++++++++++++++++++++
+>  5 files changed, 527 insertions(+)
+>  create mode 100644 drivers/interconnect/qcom/msm8916.c
 >
-
-Thanks Georgi. This looks great!
 
 Reviewed-by: Evan Green <evgreen@chromium.org>
