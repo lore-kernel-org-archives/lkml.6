@@ -2,93 +2,188 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAD45C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 17:18:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64D06C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 17:19:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69F0A21777
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 17:18:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ORxNka3n"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69F0A21777
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 2085B21777
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 17:19:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2085B21777
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=holtmann.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728833AbeHCTQI (ORCPT
+        id S1729825AbeHCTQk convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 15:16:08 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:38913 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727843AbeHCTQI (ORCPT
+        Fri, 3 Aug 2018 15:16:40 -0400
+Received: from coyote.holtmann.net ([212.227.132.17]:50603 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727841AbeHCTQj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 15:16:08 -0400
-Received: by mail-io0-f195.google.com with SMTP id o22-v6so5593762ioh.6
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Aug 2018 10:18:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Br4uW5Mao84Evly/kpK73fkEMe7+xTtOWTzc1bakSbs=;
-        b=ORxNka3n32jepSckn0ZeMFUSZUjarKB+1QvSnBHHjSV6Jaizbcj8vTT/pvPyjj4cYg
-         Suv5+qAq0kCFsFNk4WJEHXHH0WLEZ+w9oFT26bdFrrE3YXNOij4jOV3GGofLaSU2etuz
-         7XmTJMQDVjrnfekgcgSNZoR06GF6vOa9irSNI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Br4uW5Mao84Evly/kpK73fkEMe7+xTtOWTzc1bakSbs=;
-        b=RpCeM8RSX1cISgAm3LsvkXqTk12Uz0eLgBpa/7NNLE74L5gi5rL4NJzdWUD4GWU/i7
-         Bz6hfpnTlvvLb8vAx1y3RMhA6zMEmt3gNKsrhZUIKwJh6aYLUytlCezowFkmoGZU2mna
-         4Czu2NePydL+c9FghC70yT8uQPXIvrL9GCivO6Leq4sW36Gw9JA6QTYKpIXwEGGZYl0j
-         N8odPUaD5HZwuEOrncDf+RLIFgF+QzxV+qsynUaO6qwuOmfyotSYwF3qhmJf0WRS6JnS
-         SPHPXBd+e78sJYvH08t7F/udBitSiTcrxKmcRriLi+OQ1n8BYio5L59t53rHBt2Xq1fG
-         T7Gg==
-X-Gm-Message-State: AOUpUlGdnP2ho/LdwO5yY4qu+pruULb106/Wf1JYkFP/muW1sLqfp3dX
-        jCMg/TCFXz09xJQAAZoXVCvUT5goqF1iLR5eQ0I/ePPT
-X-Google-Smtp-Source: AA+uWPx1O7oxLoHTJYNPcD8T0vebV/2fCKjnEu5ZvjCHdWPB1FJoTpeOVdYRxx3N+c/hgwx8C1x9ncoQ8A6es/VSuqw=
-X-Received: by 2002:a6b:c3c4:: with SMTP id t187-v6mr6721575iof.304.1533316735196;
- Fri, 03 Aug 2018 10:18:55 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180802111144.12512-1-digetx@gmail.com>
-In-Reply-To: <20180802111144.12512-1-digetx@gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 3 Aug 2018 19:18:43 +0200
-Message-ID: <CACRpkdas4qF51eesZ-M2+7wzp1t81qYSZSyxsmm-zAuvcaE2Pg@mail.gmail.com>
-Subject: Re: [PATCH v1 1/2] pinctrl: tegra: Move drivers registration to
- arch_init level
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Stefan Agner <stefan@agner.ch>,
-        Marcel Ziswiler <marcel@ziswiler.com>,
-        linux-tegra@vger.kernel.org,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 3 Aug 2018 15:16:39 -0400
+Received: from marcel-macpro.fritz.box (p4FEFCC41.dip0.t-ipconnect.de [79.239.204.65])
+        by mail.holtmann.org (Postfix) with ESMTPSA id BB003CEF9A;
+        Fri,  3 Aug 2018 19:26:24 +0200 (CEST)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 11.5 \(3445.9.1\))
+Subject: Re: [PATCH v7 2/3] Bluetooth: mediatek: Add protocol support for
+ MediaTek serial devices
+From:   Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <1533303749.3472.160.camel@mtkswgap22>
+Date:   Fri, 3 Aug 2018 19:19:25 +0200
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        "open list:BLUETOOTH DRIVERS" <linux-bluetooth@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8BIT
+Message-Id: <D2336CD2-B69B-4B5B-8125-F0CAD29E3243@holtmann.org>
+References: <cover.1533056925.git.sean.wang@mediatek.com>
+ <c92ed10cf16f36d9a3b390e864af92e2dfe7b771.1533056925.git.sean.wang@mediatek.com>
+ <1707FFA1-A294-4A95-A3BF-0910CE455232@holtmann.org>
+ <1533192799.3472.122.camel@mtkswgap22>
+ <FF45A90A-F9F1-47CB-AB1F-1E92BF587FBE@holtmann.org>
+ <1533199720.3472.136.camel@mtkswgap22>
+ <9526E5D9-50BA-4D57-80F5-083DB7D28AFE@holtmann.org>
+ <1533205495.3472.144.camel@mtkswgap22>
+ <A6D48D49-52CE-405D-8C5D-C4D54CE67221@holtmann.org>
+ <1533303749.3472.160.camel@mtkswgap22>
+To:     Sean Wang <sean.wang@mediatek.com>
+X-Mailer: Apple Mail (2.3445.9.1)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 2, 2018 at 1:12 PM Dmitry Osipenko <digetx@gmail.com> wrote:
+Hi Sean,
 
-> There is a bug in regards to deferred probing within the drivers core
-> that causes GPIO-driver to suspend after its users. The bug appears if
-> GPIO-driver probe is getting deferred, which happens after introducing
-> dependency on PINCTRL-driver for the GPIO-driver by defining "gpio-ranges"
-> property in device-tree. The bug in the drivers core is old (more than 4
-> years now) and is well known, unfortunately there is no easy fix for it.
-> The good news is that we can workaround the deferred probe issue by
-> changing GPIO / PINCTRL drivers registration order and hence by moving
-> PINCTRL driver registration to the arch_init level and GPIO to the
-> subsys_init.
->
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>>>>>>>> +
+>>>>>>>>> +static int mtk_hci_wmt_sync(struct hci_dev *hdev, u8 op, u8 flag, u16 plen,
+>>>>>>>>> +			    const void *param)
+>>>>>>>>> +{
+>>>>>>>>> +	struct mtk_hci_wmt_cmd wc;
+>>>>>>>>> +	struct mtk_wmt_hdr *hdr;
+>>>>>>>>> +	struct sk_buff *skb;
+>>>>>>>>> +	u32 hlen;
+>>>>>>>>> +
+>>>>>>>>> +	hlen = sizeof(*hdr) + plen;
+>>>>>>>>> +	if (hlen > 255)
+>>>>>>>>> +		return -EINVAL;
+>>>>>>>>> +
+>>>>>>>>> +	hdr = (struct mtk_wmt_hdr *)&wc;
+>>>>>>>>> +	hdr->dir = 1;
+>>>>>>>>> +	hdr->op = op;
+>>>>>>>>> +	hdr->dlen = cpu_to_le16(plen + 1);
+>>>>>>>>> +	hdr->flag = flag;
+>>>>>>>>> +	memcpy(wc.data, param, plen);
+>>>>>>>>> +
+>>>>>>>>> +	atomic_inc(&hdev->cmd_cnt);
+>>>>>>>> 
+>>>>>>>> Why are you doing this one. It will need a comment here if really needed. However I doubt that this is needed. You are only using it from hdev->setup and hdev->shutdown callbacks.
+>>>>>>>> 
+>>>>>>> 
+>>>>>>> An increment on cmd_cnt is really needed because hci_cmd_work would check whether cmd_cnt is positive and then has a decrement on cmd_cnt before a packet is being sent out.
+>>>>>>> 
+>>>>>>> okay will add a comment.
+>>>>>> 
+>>>>>> but you are in ->setup callback this time. So if you need this, then all the other ->setup routines would actually fail as well. Either this is leftover from when you did things in ->probe or ->open or this is some thing we might better fix properly in the core instead of papering over it. Can you recheck if this is really needed.
+>>>>>> 
+>>>>> 
+>>>>> I added a counter print and the counter increments as below
+>>>>> 
+>>>>> 	/* atomic_inc(&hdev->cmd_cnt); */
+>>>>>      pr_info("cmd_cnt = %d\n" , atomic_read(&hdev->cmd_cnt));
+>>>>> 
+>>>>>      skb = __hci_cmd_sync_ev(hdev, 0xfc6f, hlen, &wc, HCI_VENDOR_PKT,
+>>>>>                              HCI_INIT_TIMEOUT);
+>>>>> 
+>>>>> and the log show up that 
+>>>>> 
+>>>>> 
+>>>>> [  334.049156] Bluetooth: hci0: command 0xfc6f tx timeout
+>>>>> [  334.054840] cmd_cnt = 0
+>>>>> [  336.065076] Bluetooth: hci0: command 0xfc6f tx timeout
+>>>>> [  336.070795] cmd_cnt = 0
+>>>>> [  338.080997] Bluetooth: hci0: command 0xfc6f tx timeout
+>>>>> [  338.086683] cmd_cnt = 0
+>>>>> [  340.096907] Bluetooth: hci0: command 0xfc6f tx timeout
+>>>>> [  340.102609] cmd_cnt = 0
+>>>>> [  342.112824] Bluetooth: hci0: command 0xfc6f tx timeout
+>>>>> [  342.118520] cmd_cnt = 0
+>>>>> [  344.128747] Bluetooth: hci0: command 0xfc6f tx timeout
+>>>>> [  344.134454] cmd_cnt = 0
+>>>>> [  346.144667] Bluetooth: hci0: command 0xfc6f tx timeout
+>>>>> [  346.150372] cmd_cnt = 0
+>>>>> 
+>>>>> 
+>>>>> The packet is dropped by hci_cmd_work at [1], so I also wondered why the
+>>>>> other vendor driver works, it seems the counter needs to be incremented
+>>>>> before every skb is being queued to cmd_q.
+>>>>> 
+>>>>> 4257 static void hci_cmd_work(struct work_struct *work)
+>>>>> 4258 {
+>>>>> 4259         struct hci_dev *hdev = container_of(work, struct hci_dev, cmd_work);
+>>>>> 4260         struct sk_buff *skb;
+>>>>> 4261
+>>>>> 4262         BT_DBG("%s cmd_cnt %d cmd queued %d", hdev->name,
+>>>>> 4263                atomic_read(&hdev->cmd_cnt), skb_queue_len(&hdev->cmd_q));
+>>>>> 4264
+>>>>> 4265         /* Send queued commands */
+>>>>> 
+>>>>> [1]
+>>>>> 4266         if (atomic_read(&hdev->cmd_cnt)) { /* dropped when cmd_cnt is zero */
+>>>>> 4267                 skb = skb_dequeue(&hdev->cmd_q);
+>>>>> 4268                 if (!skb)
+>>>>> 4269                         return;
+>>>>> 4270
+>>>>> 4271                 kfree_skb(hdev->sent_cmd);
+>>>>> 4272
+>>>>> 4273                 hdev->sent_cmd = skb_clone(skb, GFP_KERNEL);
+>>>>> 4274                 if (hdev->sent_cmd) {
+>>>>> 4275                         atomic_dec(&hdev->cmd_cnt);  /* cmd_cnt-- */
+>>>>> 4276                         hci_send_frame(hdev, skb);
+>>>> 
+>>>> actually the command also needs to better go via the raw_q anyway since it doesn’t come back with the cmd status or cmd complete. You have it waiting for a vendor event. Maybe with is something we need to consider with __hci_cmd_sync_ev anyway.
+>>>> 
+>>>> Johan would know best since he wrote that code. Anyway, we should fix that in the core and not have you hack around it.
+>>>> 
+>>> 
+>>> yes, my case is that received event is neither cmd status nor cmd complete. It is completely a vendor event.
+>>> 
+>>> if it wants to be solved by the core layer, do you permit that I remove the hack and then send it in the next version?
+>> 
+>> we need to have a __hci_raw_sync_ev that uses the hdev->raw_q and waits for the specified event to come back. I never realized that you are missing the cmd status or cmd complete. So this is similar to the original CSR vendor commands which had the same behavior.
+>> 
+>> I have the feeling that you hdev->cmd_cnt increment is just hiding the problem here. If you really think that it is not chains any side effects we can merge the driver with a big warning and fix this up. However the clean way would be for you to create a patch that introduces __hci_raw_sync_ev as describe above.
+> 
+> What do you think of this? If I add extra atomic_set 1 on cmd_cnt after driver really got a vendor event back instead of blinding to increment for every packet sent.
+> 
+> the behavior is the same to receive a cmd status or complete. it should not have side effects.
+> 
+> 96         skb = __hci_cmd_sync_ev(hdev, 0xfc6f, hlen, &wc, HCI_VENDOR_PKT,
+> 97                                 HCI_INIT_TIMEOUT);
+> 98
+> 99         if (IS_ERR(skb)) {
+> 100                 int err = PTR_ERR(skb);
+> 101
+> 102                 bt_dev_err(hdev, "Failed to send wmt cmd (%d)", err);
+> 103                 return err;
+> 104         }
+> 105
+> 106         if (!test_bit(HCI_RESET, &hdev->flags)) <<<<<<
+> 107                 atomic_set(&hdev->cmd_cnt, 1);  <<<<<<
+> 108
+> 109         kfree_skb(skb);
 
-Patch applied with Stefan's ACK.
+this is even more hackish since the __hci_cmd_sync_ev command is really meant to get a cmd status first before waiting for that event.
 
-Yours,
-Linus Walleij
+Are all Mediatek vendor commands this way? Or just the ones for loading the firmware? So only the WMT ones?
+
+Regards
+
+Marcel
+
