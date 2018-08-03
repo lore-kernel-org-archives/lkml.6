@@ -2,385 +2,128 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36A23C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 14:04:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5885BC28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 14:05:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE33821709
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 14:04:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="zd9yyJEO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE33821709
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lightnvm.io
+	by mail.kernel.org (Postfix) with ESMTP id 06B0521709
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 14:05:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06B0521709
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732248AbeHCQAo (ORCPT
+        id S1732287AbeHCQCT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 12:00:44 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:34723 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732156AbeHCQAn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 12:00:43 -0400
-Received: by mail-lj1-f193.google.com with SMTP id f8-v6so5073860ljk.1
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Aug 2018 07:04:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=vgREXMzLLRwVTXnCuhtM78eUUGkLzFt8WFcMfskgAcI=;
-        b=zd9yyJEOZa5rBopKlHy6SnoJpjZE8Ko8wL64qhFEjV+VN5kAWO6WWHg4ejJTD4W54O
-         cdkpMFVP5Yj2yPuLtbutvTgPnSeZFWIE1hg8blCwkntKfCV0FbO+BMwK9X3tKTjDOZr8
-         aQO97Ohf17rpXL6KJpzftuM285rvMGjEZhlPA4hU8djDhB54Qb6F0DjGURw3cT3soJYJ
-         e9q4+yVCLsAtUm7L7+qHb/V/6RstDEzI8G9VeFjvwhtCxYS1KiyFjfGn6nUejeMvbVGP
-         p1CHD1JNaGKfLAk80smH/+q3rljbbgv4YUwtk/pCMHymZc5BtO9qD8L/F5I8pYJrLZ3I
-         dI8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=vgREXMzLLRwVTXnCuhtM78eUUGkLzFt8WFcMfskgAcI=;
-        b=f217pRAMxOdsSzSBlKhaSKZIObSnhH5p5CgKCPFgIA5cOijppAQITuXViOfxQe0OPF
-         m2jCvYaI/5ExRPuJuEABMWvq08EkH8NmSGCQd4x0a6vxRWAyCtYSnLpk996bpoC1v7+H
-         KMNjikx3faQJgUTKNE8Tw+r2rs6INwRsOOvnVu6JnZDYxAJjAzw+maQjtSuPyt1JIb/o
-         ieUxC7S1X0H/4ibnfqShobr/X9ZpxF2kbmfOr6L4/0uGRk36Tf7xCvEPR9KSvi1TCKLR
-         zN2oowID8LvBVxxxvd9GxpKXf+w4NcM55z8IWlUGZfTAIJVwwWO6Q1B2AHEmL0uNeMRX
-         X+5w==
-X-Gm-Message-State: AOUpUlGFg4n2LViwqxf7d735BP4IhW6HGLn6CTljjA/9+r0rSb40+FGk
-        3dhwVN/pp/fDhnTDnE9i5HUo5tQ23DI=
-X-Google-Smtp-Source: AAOMgpfV3dAtaRAMFBYsHpYg2d8mRKB8c/OZWzrFkIvk/l3cGUoO+A6JtumZeMpdfofV+rTJP4NQpA==
-X-Received: by 2002:a2e:610a:: with SMTP id v10-v6mr5488049ljb.39.1533305051395;
-        Fri, 03 Aug 2018 07:04:11 -0700 (PDT)
-Received: from [192.168.0.10] (95-166-82-66-cable.dk.customer.tdc.net. [95.166.82.66])
-        by smtp.googlemail.com with ESMTPSA id v10-v6sm924147ljg.12.2018.08.03.07.04.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 03 Aug 2018 07:04:10 -0700 (PDT)
-Subject: Re: [PATCH] lightnvm: combine 1.2 and 2.0 command flags
-To:     javier@cnexlabs.com
-Cc:     igor.j.konopko@intel.com, marcin.dziegielewski@intel.com,
-        hans.holmberg@cnexlabs.com, hlitz@ucsc.edu,
-        youngtack.jin@circuitblvd.com, linux-block@vger.kernel.org,
+        Fri, 3 Aug 2018 12:02:19 -0400
+Received: from foss.arm.com ([217.140.101.70]:43314 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731699AbeHCQCT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 12:02:19 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C29F980D;
+        Fri,  3 Aug 2018 07:05:49 -0700 (PDT)
+Received: from e107985-lin.Emea.Arm.com (e107985-lin.emea.arm.com [10.4.12.239])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 497FC3F2EA;
+        Fri,  3 Aug 2018 07:05:48 -0700 (PDT)
+From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>
+Cc:     Vincent Guittot <vincent.guittot@linaro.org>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Joel Fernandes <joelaf@google.com>,
         linux-kernel@vger.kernel.org
-References: <20180802162058.9800-1-mb@lightnvm.io>
- <537156D9-0CE0-4B8F-B8E3-32B291529EE4@cnexlabs.com>
-From:   =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
-Message-ID: <f3340b04-57c1-01c3-1797-a4ee4929420d@lightnvm.io>
-Date:   Fri, 3 Aug 2018 16:04:09 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
-MIME-Version: 1.0
-In-Reply-To: <537156D9-0CE0-4B8F-B8E3-32B291529EE4@cnexlabs.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+Subject: [PATCH v2] sched/fair: Remove setting task's se->runnable_weight during PELT update
+Date:   Fri,  3 Aug 2018 15:05:38 +0100
+Message-Id: <20180803140538.1178-1-dietmar.eggemann@arm.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/03/2018 03:35 PM, Javier Gonzalez wrote:
->> On 2 Aug 2018, at 18.20, Matias Bjørling <mb@lightnvm.io> wrote:
->>
->> Avoid targets open-code the nvm_rq command flag for version 1.2 and
->> 2.0. The core should have this responsibility.
->>
->> When moved into core, the flags parameter can be distilled into
->> access hint, scrambling, and program/erase suspend. Replace the
->> access hint with a "is_seq" parameter, and let the rest be
->> dependent on the command opcode, which is trivial to detect and
->> set.
->>
->> Signed-off-by: Matias Bjørling <mb@lightnvm.io>
->> ---
->> drivers/lightnvm/core.c          | 20 ++++++++++++++++++++
->> drivers/lightnvm/pblk-core.c     | 13 ++++---------
->> drivers/lightnvm/pblk-read.c     |  8 +-------
->> drivers/lightnvm/pblk-recovery.c | 14 ++++----------
->> drivers/lightnvm/pblk-write.c    |  2 +-
->> drivers/lightnvm/pblk.h          | 38 --------------------------------------
->> include/linux/lightnvm.h         |  2 ++
->> 7 files changed, 32 insertions(+), 65 deletions(-)
->>
->> diff --git a/drivers/lightnvm/core.c b/drivers/lightnvm/core.c
->> index 60aa7bc5a630..68553c7ae937 100644
->> --- a/drivers/lightnvm/core.c
->> +++ b/drivers/lightnvm/core.c
->> @@ -752,6 +752,24 @@ int nvm_set_tgt_bb_tbl(struct nvm_tgt_dev *tgt_dev, struct ppa_addr *ppas,
->> }
->> EXPORT_SYMBOL(nvm_set_tgt_bb_tbl);
->>
->> +static int nvm_set_flags(struct nvm_geo *geo, struct nvm_rq *rqd)
->> +{
->> +	int flags = 0;
->> +
->> +	if (geo->version == NVM_OCSSD_SPEC_20)
->> +		return 0;
->> +
->> +	if (rqd->is_seq)
->> +		flags |= geo->pln_mode >> 1;
->> +
->> +	if (rqd->opcode == NVM_OP_PREAD)
->> +		flags |= (NVM_IO_SCRAMBLE_ENABLE | NVM_IO_SUSPEND);
->> +	else if (rqd->opcode == NVM_OP_PWRITE)
->> +		flags |= NVM_IO_SCRAMBLE_ENABLE;
->> +
->> +	return flags;
->> +}
->> +
->> int nvm_submit_io(struct nvm_tgt_dev *tgt_dev, struct nvm_rq *rqd)
->> {
->> 	struct nvm_dev *dev = tgt_dev->parent;
->> @@ -763,6 +781,7 @@ int nvm_submit_io(struct nvm_tgt_dev *tgt_dev, struct nvm_rq *rqd)
->> 	nvm_rq_tgt_to_dev(tgt_dev, rqd);
->>
->> 	rqd->dev = tgt_dev;
->> +	rqd->flags = nvm_set_flags(&tgt_dev->geo, rqd);
->>
->> 	/* In case of error, fail with right address format */
->> 	ret = dev->ops->submit_io(dev, rqd);
->> @@ -783,6 +802,7 @@ int nvm_submit_io_sync(struct nvm_tgt_dev *tgt_dev, struct nvm_rq *rqd)
->> 	nvm_rq_tgt_to_dev(tgt_dev, rqd);
->>
->> 	rqd->dev = tgt_dev;
->> +	rqd->flags = nvm_set_flags(&tgt_dev->geo, rqd);
->>
->> 	/* In case of error, fail with right address format */
->> 	ret = dev->ops->submit_io_sync(dev, rqd);
->> diff --git a/drivers/lightnvm/pblk-core.c b/drivers/lightnvm/pblk-core.c
->> index 00984b486fea..72acf2f6dbd6 100644
->> --- a/drivers/lightnvm/pblk-core.c
->> +++ b/drivers/lightnvm/pblk-core.c
->> @@ -688,7 +688,7 @@ static int pblk_line_submit_emeta_io(struct pblk *pblk, struct pblk_line *line,
->> 	if (dir == PBLK_WRITE) {
->> 		struct pblk_sec_meta *meta_list = rqd.meta_list;
->>
->> -		rqd.flags = pblk_set_progr_mode(pblk, PBLK_WRITE);
->> +		rqd.is_seq = 1;
->> 		for (i = 0; i < rqd.nr_ppas; ) {
->> 			spin_lock(&line->lock);
->> 			paddr = __pblk_alloc_page(pblk, line, min);
->> @@ -703,11 +703,9 @@ static int pblk_line_submit_emeta_io(struct pblk *pblk, struct pblk_line *line,
->> 		for (i = 0; i < rqd.nr_ppas; ) {
->> 			struct ppa_addr ppa = addr_to_gen_ppa(pblk, paddr, id);
->> 			int pos = pblk_ppa_to_pos(geo, ppa);
->> -			int read_type = PBLK_READ_RANDOM;
->>
->> 			if (pblk_io_aligned(pblk, rq_ppas))
->> -				read_type = PBLK_READ_SEQUENTIAL;
->> -			rqd.flags = pblk_set_read_mode(pblk, read_type);
->> +				rqd.is_seq = 1;
->>
->> 			while (test_bit(pos, line->blk_bitmap)) {
->> 				paddr += min;
->> @@ -787,17 +785,14 @@ static int pblk_line_submit_smeta_io(struct pblk *pblk, struct pblk_line *line,
->> 	__le64 *lba_list = NULL;
->> 	int i, ret;
->> 	int cmd_op, bio_op;
->> -	int flags;
->>
->> 	if (dir == PBLK_WRITE) {
->> 		bio_op = REQ_OP_WRITE;
->> 		cmd_op = NVM_OP_PWRITE;
->> -		flags = pblk_set_progr_mode(pblk, PBLK_WRITE);
->> 		lba_list = emeta_to_lbas(pblk, line->emeta->buf);
->> 	} else if (dir == PBLK_READ_RECOV || dir == PBLK_READ) {
->> 		bio_op = REQ_OP_READ;
->> 		cmd_op = NVM_OP_PREAD;
->> -		flags = pblk_set_read_mode(pblk, PBLK_READ_SEQUENTIAL);
->> 	} else
->> 		return -EINVAL;
->>
->> @@ -822,7 +817,7 @@ static int pblk_line_submit_smeta_io(struct pblk *pblk, struct pblk_line *line,
->>
->> 	rqd.bio = bio;
->> 	rqd.opcode = cmd_op;
->> -	rqd.flags = flags;
->> +	rqd.is_seq = 1;
->> 	rqd.nr_ppas = lm->smeta_sec;
->>
->> 	for (i = 0; i < lm->smeta_sec; i++, paddr++) {
->> @@ -885,7 +880,7 @@ static void pblk_setup_e_rq(struct pblk *pblk, struct nvm_rq *rqd,
->> 	rqd->opcode = NVM_OP_ERASE;
->> 	rqd->ppa_addr = ppa;
->> 	rqd->nr_ppas = 1;
->> -	rqd->flags = pblk_set_progr_mode(pblk, PBLK_ERASE);
->> +	rqd->is_seq = 1;
->> 	rqd->bio = NULL;
->> }
->>
->> diff --git a/drivers/lightnvm/pblk-read.c b/drivers/lightnvm/pblk-read.c
->> index 26d414ae25b6..48739f6c0417 100644
->> --- a/drivers/lightnvm/pblk-read.c
->> +++ b/drivers/lightnvm/pblk-read.c
->> @@ -93,9 +93,7 @@ static void pblk_read_ppalist_rq(struct pblk *pblk, struct nvm_rq *rqd,
->> 	}
->>
->> 	if (pblk_io_aligned(pblk, nr_secs))
->> -		rqd->flags = pblk_set_read_mode(pblk, PBLK_READ_SEQUENTIAL);
->> -	else
->> -		rqd->flags = pblk_set_read_mode(pblk, PBLK_READ_RANDOM);
->> +		rqd->is_seq = 1;
->>
->> #ifdef CONFIG_NVM_PBLK_DEBUG
->> 	atomic_long_add(nr_secs, &pblk->inflight_reads);
->> @@ -344,7 +342,6 @@ static int pblk_setup_partial_read(struct pblk *pblk, struct nvm_rq *rqd,
->>
->> 	rqd->bio = new_bio;
->> 	rqd->nr_ppas = nr_holes;
->> -	rqd->flags = pblk_set_read_mode(pblk, PBLK_READ_RANDOM);
->>
->> 	pr_ctx->ppa_ptr = NULL;
->> 	pr_ctx->orig_bio = bio;
->> @@ -438,8 +435,6 @@ static void pblk_read_rq(struct pblk *pblk, struct nvm_rq *rqd, struct bio *bio,
->> 	} else {
->> 		rqd->ppa_addr = ppa;
->> 	}
->> -
->> -	rqd->flags = pblk_set_read_mode(pblk, PBLK_READ_RANDOM);
->> }
->>
->> int pblk_submit_read(struct pblk *pblk, struct bio *bio)
->> @@ -662,7 +657,6 @@ int pblk_submit_read_gc(struct pblk *pblk, struct pblk_gc_rq *gc_rq)
->>
->> 	rqd.opcode = NVM_OP_PREAD;
->> 	rqd.nr_ppas = gc_rq->secs_to_gc;
->> -	rqd.flags = pblk_set_read_mode(pblk, PBLK_READ_RANDOM);
->> 	rqd.bio = bio;
->>
->> 	if (pblk_submit_io_sync(pblk, &rqd)) {
->> diff --git a/drivers/lightnvm/pblk-recovery.c b/drivers/lightnvm/pblk-recovery.c
->> index e232e47e1353..cf629ab016ba 100644
->> --- a/drivers/lightnvm/pblk-recovery.c
->> +++ b/drivers/lightnvm/pblk-recovery.c
->> @@ -159,9 +159,7 @@ static int pblk_recov_read_oob(struct pblk *pblk, struct pblk_line *line,
->> 	rqd->dma_meta_list = dma_meta_list;
->>
->> 	if (pblk_io_aligned(pblk, rq_ppas))
->> -		rqd->flags = pblk_set_read_mode(pblk, PBLK_READ_SEQUENTIAL);
->> -	else
->> -		rqd->flags = pblk_set_read_mode(pblk, PBLK_READ_RANDOM);
->> +		rqd->is_seq = 1;
->>
->> 	for (i = 0; i < rqd->nr_ppas; ) {
->> 		struct ppa_addr ppa;
->> @@ -302,7 +300,7 @@ static int pblk_recov_pad_oob(struct pblk *pblk, struct pblk_line *line,
->>
->> 	rqd->bio = bio;
->> 	rqd->opcode = NVM_OP_PWRITE;
->> -	rqd->flags = pblk_set_progr_mode(pblk, PBLK_WRITE);
->> +	rqd->is_seq = 1;
->> 	rqd->meta_list = meta_list;
->> 	rqd->nr_ppas = rq_ppas;
->> 	rqd->ppa_list = ppa_list;
->> @@ -436,9 +434,7 @@ static int pblk_recov_scan_all_oob(struct pblk *pblk, struct pblk_line *line,
->> 	rqd->dma_meta_list = dma_meta_list;
->>
->> 	if (pblk_io_aligned(pblk, rq_ppas))
->> -		rqd->flags = pblk_set_read_mode(pblk, PBLK_READ_SEQUENTIAL);
->> -	else
->> -		rqd->flags = pblk_set_read_mode(pblk, PBLK_READ_RANDOM);
->> +		rqd->is_seq = 1;
->>
->> 	for (i = 0; i < rqd->nr_ppas; ) {
->> 		struct ppa_addr ppa;
->> @@ -567,9 +563,7 @@ static int pblk_recov_scan_oob(struct pblk *pblk, struct pblk_line *line,
->> 	rqd->dma_meta_list = dma_meta_list;
->>
->> 	if (pblk_io_aligned(pblk, rq_ppas))
->> -		rqd->flags = pblk_set_read_mode(pblk, PBLK_READ_SEQUENTIAL);
->> -	else
->> -		rqd->flags = pblk_set_read_mode(pblk, PBLK_READ_RANDOM);
->> +		rqd->is_seq = 1;
->>
->> 	for (i = 0; i < rqd->nr_ppas; ) {
->> 		struct ppa_addr ppa;
->> diff --git a/drivers/lightnvm/pblk-write.c b/drivers/lightnvm/pblk-write.c
->> index ee774a86cf1e..508c63701eda 100644
->> --- a/drivers/lightnvm/pblk-write.c
->> +++ b/drivers/lightnvm/pblk-write.c
->> @@ -302,7 +302,7 @@ static int pblk_alloc_w_rq(struct pblk *pblk, struct nvm_rq *rqd,
->> 	/* Setup write request */
->> 	rqd->opcode = NVM_OP_PWRITE;
->> 	rqd->nr_ppas = nr_secs;
->> -	rqd->flags = pblk_set_progr_mode(pblk, PBLK_WRITE);
->> +	rqd->is_seq = 1;
->> 	rqd->private = pblk;
->> 	rqd->end_io = end_io;
->>
->> diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
->> index 4760af7b6499..48b3035df3c4 100644
->> --- a/drivers/lightnvm/pblk.h
->> +++ b/drivers/lightnvm/pblk.h
->> @@ -1255,44 +1255,6 @@ static inline u32 pblk_calc_emeta_crc(struct pblk *pblk,
->> 	return crc;
->> }
->>
->> -static inline int pblk_set_progr_mode(struct pblk *pblk, int type)
->> -{
->> -	struct nvm_tgt_dev *dev = pblk->dev;
->> -	struct nvm_geo *geo = &dev->geo;
->> -	int flags;
->> -
->> -	if (geo->version == NVM_OCSSD_SPEC_20)
->> -		return 0;
->> -
->> -	flags = geo->pln_mode >> 1;
->> -
->> -	if (type == PBLK_WRITE)
->> -		flags |= NVM_IO_SCRAMBLE_ENABLE;
->> -
->> -	return flags;
->> -}
->> -
->> -enum {
->> -	PBLK_READ_RANDOM	= 0,
->> -	PBLK_READ_SEQUENTIAL	= 1,
->> -};
->> -
->> -static inline int pblk_set_read_mode(struct pblk *pblk, int type)
->> -{
->> -	struct nvm_tgt_dev *dev = pblk->dev;
->> -	struct nvm_geo *geo = &dev->geo;
->> -	int flags;
->> -
->> -	if (geo->version == NVM_OCSSD_SPEC_20)
->> -		return 0;
->> -
->> -	flags = NVM_IO_SUSPEND | NVM_IO_SCRAMBLE_ENABLE;
->> -	if (type == PBLK_READ_SEQUENTIAL)
->> -		flags |= geo->pln_mode >> 1;
->> -
->> -	return flags;
->> -}
->> -
->> static inline int pblk_io_aligned(struct pblk *pblk, int nr_secs)
->> {
->> 	return !(nr_secs % pblk->min_write_pgs);
->> diff --git a/include/linux/lightnvm.h b/include/linux/lightnvm.h
->> index e9e0d1c7eaf5..8acc2fe277d6 100644
->> --- a/include/linux/lightnvm.h
->> +++ b/include/linux/lightnvm.h
->> @@ -305,6 +305,8 @@ struct nvm_rq {
->> 	u64 ppa_status; /* ppa media status */
->> 	int error;
->>
->> +	int is_seq; /* Sequential hint flag. 1.2 only */
->> +
->> 	void *private;
->> };
->>
->> --
->> 2.11.0
-> 
-> Looks good to me. If you pick up [1], please note that you will need to
-> transform it too.
-> 
-> [1] lightnvm: pblk: recover chunk state on 1.2 devices
-> 
+A CFS (SCHED_OTHER, SCHED_BATCH or SCHED_IDLE policy) task's
+se->runnable_weight must always be in sync with its se->load.weight.
 
-Ok. If you don't mind, we can look at this after the write pointer fix 
-and 1.2/2.0 consolidation of chunk metadata has gone in.
+se->runnable_weight is set to se->load.weight when the task is
+forked (init_entity_runnable_average()) or reniced (reweight_entity()).
+
+There are two cases in set_load_weight() which since they currently only
+set se->load.weight could lead to a situation in which se->load.weight
+is different to se->runnable_weight for a CFS task:
+
+(1) A task switches to SCHED_IDLE.
+
+(2) A SCHED_FIFO, SCHED_RR or SCHED_DEADLINE task which has been reniced
+    (during which only its static priority gets set) switches to
+    SCHED_OTHER or SCHED_BATCH.
+
+Set se->runnable_weight to se->load.weight in these two cases to prevent
+this. This eliminates the need to explicitly set it to se->load.weight
+during PELT updates in the CFS scheduler fastpath.
+
+Signed-off-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
+---
+
+Changes v1->v2:
+- Rebased on latest tip/sched/core
+
+This patch has been tested w/ appropriate BUG_ON()'s in
+__update_load_avg_blocked_se() and __update_load_avg_se() on an Ubuntu
+18.04 desktop.
+
+ kernel/sched/core.c | 2 ++
+ kernel/sched/pelt.c | 6 ------
+ 2 files changed, 2 insertions(+), 6 deletions(-)
+
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index deafa9fe602b..2a08418db3d1 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -701,6 +701,7 @@ static void set_load_weight(struct task_struct *p, bool update_load)
+ 	if (idle_policy(p->policy)) {
+ 		load->weight = scale_load(WEIGHT_IDLEPRIO);
+ 		load->inv_weight = WMULT_IDLEPRIO;
++		p->se.runnable_weight = load->weight;
+ 		return;
+ 	}
+ 
+@@ -713,6 +714,7 @@ static void set_load_weight(struct task_struct *p, bool update_load)
+ 	} else {
+ 		load->weight = scale_load(sched_prio_to_weight[prio]);
+ 		load->inv_weight = sched_prio_to_wmult[prio];
++		p->se.runnable_weight = load->weight;
+ 	}
+ }
+ 
+diff --git a/kernel/sched/pelt.c b/kernel/sched/pelt.c
+index 35475c0c5419..d0016b16d23a 100644
+--- a/kernel/sched/pelt.c
++++ b/kernel/sched/pelt.c
+@@ -269,9 +269,6 @@ ___update_load_avg(struct sched_avg *sa, unsigned long load, unsigned long runna
+ 
+ int __update_load_avg_blocked_se(u64 now, int cpu, struct sched_entity *se)
+ {
+-	if (entity_is_task(se))
+-		se->runnable_weight = se->load.weight;
+-
+ 	if (___update_load_sum(now, cpu, &se->avg, 0, 0, 0)) {
+ 		___update_load_avg(&se->avg, se_weight(se), se_runnable(se));
+ 		return 1;
+@@ -282,9 +279,6 @@ int __update_load_avg_blocked_se(u64 now, int cpu, struct sched_entity *se)
+ 
+ int __update_load_avg_se(u64 now, int cpu, struct cfs_rq *cfs_rq, struct sched_entity *se)
+ {
+-	if (entity_is_task(se))
+-		se->runnable_weight = se->load.weight;
+-
+ 	if (___update_load_sum(now, cpu, &se->avg, !!se->on_rq, !!se->on_rq,
+ 				cfs_rq->curr == se)) {
+ 
+-- 
+2.11.0
+
