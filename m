@@ -2,44 +2,43 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B3BAC28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 13:04:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF51AC28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 13:04:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03C8C2168C
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 13:04:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7194321764
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 13:04:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=analog.onmicrosoft.com header.i=@analog.onmicrosoft.com header.b="aR/Uq/Hr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03C8C2168C
+	dkim=pass (1024-bit key) header.d=analog.onmicrosoft.com header.i=@analog.onmicrosoft.com header.b="p8CVlYji"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7194321764
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=analog.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732230AbeHCPA0 (ORCPT
+        id S1732251AbeHCPAr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 11:00:26 -0400
-Received: from mail-co1nam03on0071.outbound.protection.outlook.com ([104.47.40.71]:45440
-        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
+        Fri, 3 Aug 2018 11:00:47 -0400
+Received: from mail-bn3nam01on0086.outbound.protection.outlook.com ([104.47.33.86]:21328
+        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731682AbeHCPAZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 11:00:25 -0400
+        id S1729367AbeHCPAr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 11:00:47 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=analog.onmicrosoft.com; s=selector1-analog-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JL1qTg+sPvKkXeRz1C4OCz+batvn7QklUtIOlhDKhGw=;
- b=aR/Uq/HrZ3Mlsw9HSrO9ywc/63obWD9GDUOlcsSrj2WS8VWCxR/7+pT+fsxNzH6BOGGPnUCrSSRfWgfUnl0o3dkYjCK2wA9FC+lMrxMHVJ0kd/3U8EXuEQc6GeVFP+FkOF1HH8mz3l+SM8k5s6C8IgI2b5ZuHMeq+WMDHB1ed0M=
-Received: from CY4PR03CA0013.namprd03.prod.outlook.com (2603:10b6:903:33::23)
- by CY4PR03MB3125.namprd03.prod.outlook.com (2603:10b6:910:53::26) with
+ bh=oqKb4p/fAe8qGbWkwacH3pPg3o+2GcynS+zElp1wu5Q=;
+ b=p8CVlYjiAOGijMEwxOZpOIy63j5kBnfhMVBWoOgy8qWW9yidjIqrpSXoupXKoizEDl+E8hY+lLUbOl+fem9IWlDWwPC9wG3BUIepKHHWnkUdNJ79/wRn66/nxuLWIGsoZ4V+vZ7V2q0+Ab6dOJoJrKQxki73kZN6SQjNpletbXo=
+Received: from BYAPR03CA0032.namprd03.prod.outlook.com (2603:10b6:a02:a8::45)
+ by MWHPR03MB3134.namprd03.prod.outlook.com (2603:10b6:301:3c::27) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1017.15; Fri, 3 Aug
- 2018 13:04:05 +0000
-Received: from BY2FFO11FD009.protection.gbl (2a01:111:f400:7c0c::197) by
- CY4PR03CA0013.outlook.office365.com (2603:10b6:903:33::23) with Microsoft
+ 2018 13:04:27 +0000
+Received: from BY2FFO11FD012.protection.gbl (2a01:111:f400:7c0c::161) by
+ BYAPR03CA0032.outlook.office365.com (2603:10b6:a02:a8::45) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.1017.15 via Frontend Transport; Fri, 3 Aug 2018 13:04:05 +0000
+ 15.20.1017.15 via Frontend Transport; Fri, 3 Aug 2018 13:04:27 +0000
 Authentication-Results: spf=pass (sender IP is 137.71.25.55)
  smtp.mailfrom=analog.com; gmx.de; dkim=none (message not signed)
  header.d=none;gmx.de; dmarc=bestguesspass action=none header.from=analog.com;
@@ -47,16 +46,16 @@ Received-SPF: Pass (protection.outlook.com: domain of analog.com designates
  137.71.25.55 as permitted sender) receiver=protection.outlook.com;
  client-ip=137.71.25.55; helo=nwd2mta1.analog.com;
 Received: from nwd2mta1.analog.com (137.71.25.55) by
- BY2FFO11FD009.mail.protection.outlook.com (10.1.14.73) with Microsoft SMTP
+ BY2FFO11FD012.mail.protection.outlook.com (10.1.14.130) with Microsoft SMTP
  Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1017.15
- via Frontend Transport; Fri, 3 Aug 2018 13:04:04 +0000
+ via Frontend Transport; Fri, 3 Aug 2018 13:04:26 +0000
 Received: from NWD2HUBCAS7.ad.analog.com (nwd2hubcas7.ad.analog.com [10.64.69.107])
-        by nwd2mta1.analog.com (8.13.8/8.13.8) with ESMTP id w73D43ax012229
+        by nwd2mta1.analog.com (8.13.8/8.13.8) with ESMTP id w73D4P1S012378
         (version=TLSv1/SSLv3 cipher=AES128-SHA bits=128 verify=FAIL);
-        Fri, 3 Aug 2018 06:04:03 -0700
+        Fri, 3 Aug 2018 06:04:25 -0700
 Received: from linux.analog.com (10.50.1.113) by NWD2HUBCAS7.ad.analog.com
  (10.64.69.107) with Microsoft SMTP Server id 14.3.301.0; Fri, 3 Aug 2018
- 09:04:03 -0400
+ 09:04:25 -0400
 From:   Stefan Popa <stefan.popa@analog.com>
 To:     <jic23@kernel.org>, <broonie@kernel.org>
 CC:     Stefan Popa <stefan.popa@analog.com>, <lars@metafoo.de>,
@@ -66,9 +65,9 @@ CC:     Stefan Popa <stefan.popa@analog.com>, <lars@metafoo.de>,
         <akpm@linux-foundation.org>, <robh+dt@kernel.org>,
         <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 4/6] iio:adxl372: Add FIFO and interrupts support
-Date:   Fri, 3 Aug 2018 16:02:19 +0300
-Message-ID: <1533301341-26560-5-git-send-email-stefan.popa@analog.com>
+Subject: [PATCH v3 5/6] iio:adxl372: Add sampling frequency support
+Date:   Fri, 3 Aug 2018 16:02:20 +0300
+Message-ID: <1533301341-26560-6-git-send-email-stefan.popa@analog.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1533301341-26560-1-git-send-email-stefan.popa@analog.com>
 References: <1533301341-26560-1-git-send-email-stefan.popa@analog.com>
@@ -77,512 +76,180 @@ Content-Type: text/plain
 X-ADIRoutedOnPrem: True
 X-EOPAttributedMessage: 0
 X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:137.71.25.55;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(1496009)(7966004)(396003)(376002)(136003)(39860400002)(346002)(2980300002)(438002)(199004)(189003)(426003)(4326008)(54906003)(51416003)(106002)(316002)(336012)(126002)(7696005)(16586007)(305945005)(14444005)(7636002)(575784001)(50226002)(11346002)(77096007)(106466001)(53416004)(110136005)(76176011)(356003)(446003)(36756003)(2906002)(5660300001)(47776003)(44832011)(508600001)(486006)(72206003)(186003)(48376002)(246002)(50466002)(8936002)(6666003)(26005)(8676002)(476003)(7416002)(2616005)(334744003);DIR:OUT;SFP:1101;SCL:1;SRVR:CY4PR03MB3125;H:nwd2mta1.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail10.analog.com;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: 1;BY2FFO11FD009;1:Ll2UhCraazpW2Xm4fhq00T74cTU88aD7gsjGb1+DtfjJDcdzTSSgTrdBlHcQgmw3mTxl63YKiHHWVp3T4GEi6IDSJCRDP6dHpFaxYoSO5B7DqsbxAX/OP6HaFUj3m3YI
+X-Forefront-Antispam-Report: CIP:137.71.25.55;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(7966004)(346002)(39860400002)(396003)(136003)(376002)(2980300002)(438002)(199004)(189003)(246002)(110136005)(50466002)(126002)(476003)(356003)(54906003)(44832011)(14444005)(77096007)(26005)(106466001)(106002)(4326008)(5660300001)(486006)(7416002)(53416004)(6666003)(47776003)(305945005)(336012)(36756003)(508600001)(426003)(7636002)(16586007)(316002)(76176011)(2616005)(48376002)(7696005)(51416003)(8936002)(11346002)(446003)(8676002)(50226002)(72206003)(2906002)(186003);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR03MB3134;H:nwd2mta1.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail10.analog.com;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: 1;BY2FFO11FD012;1:EyKK6haP5a5cEF6RjWYKBJ8y9p6UAZKcP4xvHswx2viv0RQCnKQMniyq89wqKfpT0KjVxBXDVau26t/GbiGi9GTty3c+T4KKAWHdwmVx3kMLaGC6pLKWVX06joCNiHzK
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: f89b853d-93d9-46d0-6191-08d5f9419744
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600074)(711020)(4608076)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060);SRVR:CY4PR03MB3125;
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR03MB3125;3:otAo2M6QdJWTdQuyCyWJeQPFJXP1IGXXoiOn8C9CZ6Az2icCdp8+FWR3857S9uDKwLONnabRJ2ie6LseEiozXU6RbULQKu91o6x16GC0RErC2SG0LD/KBHRVTQEPDj0ZU4SpnCGZruP3otVjjnaVrhqG847pp0s1Zmd9bqjTq0Xrvaeag3KfdVvTlAArOSXJ2v6Vtruzd1pRx93aTBA6DSdjBkQq5yuxhzYfTrSvRd16ZDXWebxGtgmJdQZrqMN8b4bza3KG9xyWyqpUQcJeGIUrbfowcLyARyJrMufrOil7KnAr7Hr/rGpcIolKZ57gz4ID6esCDud751Nf769Uw4zsy7x/zND2y415LbDCddA=;25:kKGVw+PwAsdzJP9JMpUe0JrsAtue4ea6Kfb+VMcjyFbGhk8Ve/WMD3SDH72GanTnq21/tAfUQT2AN9GRz1S85w9Ib7XyOT30dcdPUTz6tFH7LeNoMf4JJH7Kb9lek18eDBxXxxqQIXUQnxQs1a4MTMz5UjXDqI+oL1QRRPBICrdA71kCXLUIEM+cQljhrWW3JCI1a2YAhhHBqp2dhEFgp8nX24rmz+jLvrANsgQSpPfyM2PL4fcUcerkyUDwg7//uW7cXZ3bPh/XSNXeIxlJ4h8Ym1PGGOt4AKiKUYLR/9lBmgHy4e02FmwbLEyPlvdoCg7lSoHQcf4GXKi6X/STjw==
-X-MS-TrafficTypeDiagnostic: CY4PR03MB3125:
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR03MB3125;31:CuDOEDwJIV17qZviQgCSJTFgFIC1bGZ1yTZdolaZTKYsFIyq0hvrEMnXXjlq10NRRlN89YIslcwMiHV7/f0NIpSDYepMiDwhhVf5o5XnBNK2JFmPofUzE6YPDNnOrvpPNgutDhbF968VFqS/wA71A5ds8XQVC3+tm6IZQrqvdes9EpdsWYQCW/TYLGHS0w/uiPJBXYg/3MU6WHAlf3fUwXRhY+ncpzA7/4/qm7/WGVc=;20:H/xm9Gv6QDCF8m5NHC7zbUtnPLxUIYaKtnQx2Ba1TGqRxbnC2B7PCW6FX8rOR2xibKHxYegC/vzpo6ftvE6pYEsQeNQBpiWbcZyzLf6YrtK0umreres9f4U5RHw9MlpuuCaw4+HiKlPHXPla7B8xI7+kc1kQNUSawR0WwhBQQSWbDv3n0gVtB2/LHUAtfFL3dIBvbdR+Tm/IH01yJLSPi7rxnGywyEQvgVA5iIVWM7BMW00YFEqgs5vbCV/7XTHgHOsi1l+PueCI6/tCG4Vsd0XZb1Nufk3QJELgZowinQFH9ZCXSTBj2tQOIp8CZlwdUostprkakFViVzakWkak8uHp7+qhAjPui08hrHJ2zEU9Vm6UjfiKNHdSqbFTKCACJ7RRRf52qbOqF5KmOMpddaZizPVZcwN/g0VhMK/czFWdIIdvohrw2Oxtw5VTHEbZh1of0v4xUcWeummwkhPSyO0lN3NFY/JcH4Mxs5Kv/mnsrIqH0Dm+rc6yxE4SzPok
-X-Microsoft-Antispam-PRVS: <CY4PR03MB3125BF0EB97646ECD99163D49D230@CY4PR03MB3125.namprd03.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(131327999870524)(232431446821674);
+X-MS-Office365-Filtering-Correlation-Id: b9233ad0-a821-416b-2f13-08d5f941a472
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4608076)(2017052603328)(7153060);SRVR:MWHPR03MB3134;
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR03MB3134;3:SqO+IfneOTNDHvuYLmTdKjcSVhGQD/y/R0vwEtkOx8caS8iETx3IYq925nikg4AHl+Ov9Dk2/wX49JlFazw932ol16bxEHGDhpciEVkN1qJSijJBQtBBBdA43DsBNdbtJk6/odqRETEQA/zSZ15aIimfw1mpzMSKFjk3Uk6hA1UYH7USyQUhgr1+wrcvhHcGZTjOVKB6Rw9Ii8y5NQaEwubnZuXXYWKAvm7cRcUivJMMPNnyKzLtkpVkBH7GyW97xWlwlafV6ncBT6XRod9bWF2xutiQTqiVRv2Hlgvho9yV7da0GaMjuy12s25SkXzft32PskPRqntsJ6VUjjyE1t+ODP3tEBkoXJw4LjVMozU=;25:auDHaB535V3AQnPdrFYd9Mz20/y4fZxaFwXJo7nnLD447F3bY8ROcHkNp5iAguVKqyNZDGV028BUS3XwE7J8YxpFoDOoIQ8YuKperdGQZRXt53j3s40B1HiivwZxKnxdG4nwg7Ky/w+uOOZfXnHgDXE4RqAOjLxiotZh4VqKNV4oHzvlhwjgIca/ocIRnSadDXUeoDyVHuFzDy7iTyuobab4teZ0VzC9pZvhlRz0yTqDR38KreRjSkGif8GSwLwgm8tIY+DibOqM8bBwHmRO8SJ/Yw0lesiNPI5+k517rU3Isn8o0+hnNFray7238iOeZcfzT7TAjDoYYsp+bdqtLw==
+X-MS-TrafficTypeDiagnostic: MWHPR03MB3134:
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR03MB3134;31:pUMa0WgYLVPYPQWeQW768twA/l0TKBJntRJcECa8K8f3/A5Vl+MoagxbMryg4Ao0GEz5MLtNFEqzg1ZpBH9WAe0nbeEvJBWLExyS+FnB/RSI3A1lfyPGaRYWQ+q+Sg0n5rEI22NNBT/LkWQArbQGvJbPCbup7eJW0M+k/KAqt2kzHryrD/Yf7RcJUP8PUqqPIPRaMkvcZqx3W2ahy49K6W1GO2NfUPsEwtWZ6O88iRM=;20:+XARh4VxyKMiUpZh7JGvLtAgc87F31nIc5N/kxDI62DWBaMvAFkLEhOqVJOjAFdyfEnRq7c4hhlQYGzVycN54XwI5GcrR2OcdpfTr5v5O9adTul+6uoj0Gr+H+64WbMhuX1y4kDZNnn1O9gVfFoUmdNldcOOwoGRmke8sv48zdgvk7gsFVqj417A/eWpXr3egZ1i5uKFgW07zkgrBMsA57uPsaRX9PVfAnbvqRlCamTwAa+e+3JbSvExr7lP9PvmYygONrVU7ALUUoKm4KUQTMQgugCMVuWElyV4uoZ0HVChvoBPb6ooIKZbOMjNVoYw4f88N2m0Gf1izboLGrTyJnE8lDOpLw/5dcLHdQP3Za6+uinhlnzvBf6z8DlGGRi/aPepBRyn3d3WDny6rzLaWFmQ599XR2GNFFUfJFErmBNP1FOgigIWhBF/oATSU+uTn4NAH6QIhnsAlTNDZU3gve1twf72RAMT4OQw7/IgUw4IG34aTkm/O4NJcds15PYI
+X-Microsoft-Antispam-PRVS: <MWHPR03MB31342CB40AA8CDCD74B8C8639D230@MWHPR03MB3134.namprd03.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(232431446821674);
 X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231311)(944501410)(52105095)(3002001)(93006095)(93004095)(10201501046)(6055026)(149027)(150027)(6041310)(20161123562045)(201703131423095)(201703011903075)(201702281528075)(20161123555045)(201703061421075)(20161123564045)(20161123560045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:CY4PR03MB3125;BCL:0;PCL:0;RULEID:;SRVR:CY4PR03MB3125;
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR03MB3125;4:PSu81LYwGSHXO1sV30NcuNigzaHSAgpBjhvS/6UecN/f3AVgqSl/w4psQ5PY9BMF+f1MAC6oPy6iMbUk+Wghtjq/rDMrB6YsClaTK5QIWmuj6rqUjK2xTQOzXcNf28r07A0v25eJBfXZAvoDTzdg95h4QSG0Zl9K9UT0vePO5FmAjVUGSoiablT0/nJ2IDNt85qZ8tQAZKMhHN3swSk8MBbaPUeZ+YhHnJJAXIhO7qLP/XXADE2Fjr/uRMA3jfej/5OBqdU52WIMizMllkOe4qEcsQBwlnJ/WMzIo+kkRgD2OZY4MbdZ5PJbctOhk9TeKBo3sNoZPU+XXAu7y0E8dkEJ/f60+MWAS3Xpqpu1iEc=
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231311)(944501410)(52105095)(10201501046)(93006095)(93004095)(3002001)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(201703131423095)(201703011903075)(201702281528075)(20161123555045)(201703061421075)(6072148)(201708071742011)(7699016);SRVR:MWHPR03MB3134;BCL:0;PCL:0;RULEID:;SRVR:MWHPR03MB3134;
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR03MB3134;4:E3n0q5pyo1ZeeMKUU5+U4dgv02itxBA+63YyYn0MVsGX2bmo5VfciLf/6Qz5Ta0AgJU2FBRBmC7BnYMIEFDRg/1phB1x9EjAk5YRWp9zgt/sCwlLqVeXlC78dQOzFGoGAdTeuSmddB0/yPwSFsrkDtUo2gDygo8Fzq2Bu6ZGTySbm3eiqv70deidJiGQjrZ7za5uhUrpZMjbmjqTQO3hzSgdREskIjjlLANhKcfiFuH1dHmFgGnyfwI3yS8/APMeRGCkKD2oJL2LQ7fQfU2roImTgtWS/OOB5Lyoqfp0ebjMDQfJPHVvputh+8vZXrnQ
 X-Forefront-PRVS: 0753EA505A
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;CY4PR03MB3125;23:GQ1n3xo9G8qOyMI3PZQTSZqp2cXLSAwZsBrZcr4pq?=
- =?us-ascii?Q?g4WceYRgHv0CcZhZmKgLZ10xHoXyxjLOdGiipYH7+W/aTU9xFUEHW0Qzqz/m?=
- =?us-ascii?Q?XoqvSnERRwRsRFLVZltIHXWyoBLFU9qlRDUesfsmCFcGJSbh3B1vmybKbD7n?=
- =?us-ascii?Q?ngAtcPU8jx1P0i7VnZuP6wOhowBclW3Ie+/cJ1RQJ/Q105CU6YgJq3iSaNEK?=
- =?us-ascii?Q?C+UGkn7pGSdq6wFdNotP37ESmloy3rWq6NA5Ut/qKtaL90HdmH8JaAVBMuj6?=
- =?us-ascii?Q?wRPJ/CALNh+5n6Kpg8Y63jO30N9nXo6G/yxNvFAxtm1Zb8kFi/+DP4Vgi8E2?=
- =?us-ascii?Q?LP47mGvVe2XiATwZ5MxGy/XEy86bIyTqE6xuO4sP8BCzOCetldOeStOQaRiu?=
- =?us-ascii?Q?xE19B9c206YeO1GAQ40tLusB8mPeeGwregfU2+WeSG5pIjM4BqzSQjhtwBP9?=
- =?us-ascii?Q?PkdIP29Dsa7UJFnrOkdddz8JQeTeJ5uQNTc2SN0CPjWhMe5jL+c/07FlS/BJ?=
- =?us-ascii?Q?0krQFVtrcAxEb9hY9f/JXvnSm5YcKUYl2D7j+Dt2vE2u6ad8IqXe6F7a9WY+?=
- =?us-ascii?Q?jgb6mrlNEfjmo7G5jPJx3LHORiMiZ6LlSTqOCqoNGpFDO4oLn18oCXUncx/T?=
- =?us-ascii?Q?lwbjtudg60B1wLT88E+4c9sQlivheGsSYowGrdS6UTQ+bPak8TIQ+bGeg9DZ?=
- =?us-ascii?Q?UhtZxxQKx/IYtBAITb7wKqS/4rwQihEZ9F12ZRVVQZcrjyLOst4Xp9oWriLw?=
- =?us-ascii?Q?J9ISe0eIyVdiRTwbyILq2k5TIju+VQGu4VAqsqudi0pejkOLkMFv+BKQNlPW?=
- =?us-ascii?Q?0lnRKq2Mka38m9WJKqzvbigCi+S7KmtMyZcR7Tr12hgI5Mda8MdYDUqSacB/?=
- =?us-ascii?Q?bATwMoF7ENW6Kj1OcSs5EI0M2BbehxXOGu3DyukcT7iL2RdfgJUIU8InM/VQ?=
- =?us-ascii?Q?HX8zezKAiADPFNamsq3gr3oCVUhWj1WjTUop/pLim+I0mggU5Zq8eX/e5wAh?=
- =?us-ascii?Q?xsOAULLkXZIcbj09XW5TdZRfBmt+O7et/O2eetUx5aszDWZEKQTyGnRcdtih?=
- =?us-ascii?Q?w0g55hHm+gAqrFbaYkY890ywCC24skS7OPlOG8XRUjv86jwIvHUFiiFAtrhD?=
- =?us-ascii?Q?+OSPvfS833PURDcQbu/jU0t1ZpEQ2CwiQwa71QYVnMlzWs4BVw2/wcAp7wkp?=
- =?us-ascii?Q?hKMonLyd98fz1o=3D?=
-X-Microsoft-Antispam-Message-Info: Umo3C1UALQFSAZwlNvN1DgHEYm94X5VfSWrpJe//MAp9PgsQHfUCtWpU3G6v6aoqH8XP9viKA3FyNhI1KQ7i2law2WP5JZenkjdpYSsQCahE+3J3akVcU0rNUI31PR1Wsgcwoa84EDxPg08sPS7PkNgC6amRn3MxYvy+z/s1NDXzzoEAfz43pYC7W5qoqg7ZXkI+TCybViqALvF+HirlqNURSYOy6VIKBvZ1+KTYwmW7alhBRkfRQluLPWBpYheGtsB7laThzrkEoSVMctwPvkzATfkp/GaT9Co0ZNcz6zG4YPWE6M7ZJ5pRjt/CLQrhFAJwR7GwVkvJt4ggPZxmkHSDeeGsrUOh6OtfAr1jAvM=
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR03MB3125;6:/71LibL0SIa/RfNnC/Y1Ct9ooiv4Ne/CsCETYY/SDHgr6Oz/PnIKyDybcEVO3xgxK/UtmdswHqb6/SismTmJtPx8tcDSTRZGPUYfzL2j7aDv4HqDbjFmn/T3KJSR6r4Zf5MVv/IrScjNP1ejv9pakU/3lYDKhWQiC53odxlpgQgk5MnK+8jLF34PgUMNmw/jveULewc5PjczV4JAMbE8S1b2XKYkWLdbiCDPZ2GTx7Dtdc9IBemKS8ZTi5tKnv+7BWAAk73Bq4LAW2x3udw93g4UwLmkKtO8CEgMDSmy5sycBtsSvKWP1rVWyGxIoUOlChzrkdSJ0lpzFnhQQtAfHkn/MVHIIPr7+XuCSENyRpq4eUpd0nDEIeDlKVpEzvoP2JDEkI0pjWmZoH76ld42Cqc/EMwEgGgQixq8DWKPtvRgc1eqTHeIdKzDZzaakak7UgGi58j0zFQ4Gi2QVXAuBg==;5:fGIFkRUX2xba1C2FGBw+KBuFfGFDQdNjO2rxysLYz0kZFaGzbfcGCCjaFNz5BUUQFLyLQiYzWgla5qMNSU4tWDfGtrVOjxzKMjo/XlOVl7FgFoyaZz7yK68HIk3q65aX9EeicnWQ+8TPRkeoete2444SX6T96cp3Rwumf9kudWk=;7:59dn/rnXWNJnpVKIFDpsgSQsRZ1yfSzgTPvBesVLuCH4fdfSgxlF087+vXxoQyK9KG89jvYxuByQ+EsJugCtm1/zgGh1gfFWFBVCG8Ezv7jaSmgy4BjwVjIpUwfxLdbkMTPexyJNJS30bEH8PpEVUe+inZOPooojgevgb0AJZgR04BzffiiP2QeTNpiD1G/EtENJ+EpIq8vCutMAY6mN4x4ejxrCyoHh7vmHsg/j21wY/c1RgNhpNXOZ7coLvBwY
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;MWHPR03MB3134;23:7BxOlnzRiANE84UBtBxYomBBTGJUR8bx2k6zvkiPH?=
+ =?us-ascii?Q?CmlOyx9kpOl4D3G1eGtRji/UEzmE/kj1/5h6xQCSt0VdNJCnJOt7qUiU4LzE?=
+ =?us-ascii?Q?cVan9sgzmPhF+ZzIg5JGx2qs+XNp7ZBOck96GJbU1EeSG/4zrOqpcReLV8bB?=
+ =?us-ascii?Q?a8BK6vVOBmhjwk7fhHsdJQi1PPDzDGnl7wuQYhyvqqoA38mL7+mewelyCFR+?=
+ =?us-ascii?Q?saGGCmLhLFYJGRjAeZ3caK4nAidwTpbCUhq9GSEzbTaBkcvrXds4CnPJoPT0?=
+ =?us-ascii?Q?mltZKqxsfe3GlGXGMcddMgy7wCTDKhtvdqS6YJaKX/HlCKXO/Q/TZu8SrY29?=
+ =?us-ascii?Q?eo46SWiRInBuTQ6/w1Ow6+ZYayjYm1EilFX8bNN/34DPAdXIqSSd+l8Jhtuq?=
+ =?us-ascii?Q?mk0weA0n06eOLj1WrCgUs6/iqcHxXqyvzYI4M7nrbLuxesaYCTBgyrPxuxM5?=
+ =?us-ascii?Q?m+N64aQ2l63UrFnRjTLWgN8pR/oxXDDLmAFTNJ/XAAjAYwR+Xl2eri3lBKAw?=
+ =?us-ascii?Q?qxV5JVf6Sou+06bNbk4vCGh7cOFQvtqUs14VE061NFt4KmhL+8OxBPC0fy2S?=
+ =?us-ascii?Q?MA2J0H69kkmLULRSx0lToTofh3LsIC/BtIUmkCMFIp2BCXCre5NS+mT4eMN9?=
+ =?us-ascii?Q?lzVzEVk/m9mvOm6LqHMZdeG6gqvtMYAViIYrGrNdI3CD0YBLCu3wfQiSdJic?=
+ =?us-ascii?Q?AzyjbDrFnY8VbHYcMQL2uVoxrNG7yqDZ7GVCS0atW71mgRPBamoSCi/QuYG/?=
+ =?us-ascii?Q?tqaueNajx2Zk99xZZUnVWEgSQ+mhrAxvj5CQd7C053/bzlzu4dT6S2V95fk6?=
+ =?us-ascii?Q?DjyinKe5YcFpEt4SqWaXG0S0WQiqmlh1Xg01tWsE40ojIwMv7s1PZKSqgOAp?=
+ =?us-ascii?Q?WYShkdRDemJGp3EZy4V46M/DdJqGGVJIb5sgYa58/UZLjuxviYaHBPKaRSpU?=
+ =?us-ascii?Q?PGauo/pbpWBnwc0RF5fmO7accVKqhgIrPYTqgKYxZazBPRGhaoW9Z6LaHn4z?=
+ =?us-ascii?Q?nOHbbzDT0XuvPobI1R2sNnQZEYLWYgFQVbqvuJXW/nJAKVBaQHjYlovonS8y?=
+ =?us-ascii?Q?H4HZqs1dagd5SsyBRQKJ6d/jOIsvb4pfOesjTDUIQfD1u2610Tw1UICqqVCA?=
+ =?us-ascii?Q?wPjBlQjQ64=3D?=
+X-Microsoft-Antispam-Message-Info: XFjcFl21/gVxAKXYKRPH95VpybWXyHxsk2nM6z1Uys08HsKAl2APk58k0gbV9wj3an43iB/9qJW0CAIujQSS09D/B4XFKrJF4vq6k1vn9Ylopv7RX/A0pYla3LXBvCuTnYhV0+Hv2O2yNaSAWRU/0ETC0rW1jkJ1DPbnB390EdN/YxwXM2XcLSAQS+adv5ViPCgyR7ILtvU8bhzMkhKdrEhhQKKLY2ZHkfpxc6KUMkJgGvmtkyeVg7nANE474b4BRshebFPvfddupxh/Hg+6B3h0VNL8t5lqjIAOMfL1vmeRrZLHXSjtwYa8Yk7CiCGX/CvLS1Kkj0xL5gM5hf55gYPqYTMhzBCHRtVJJLvzFog=
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR03MB3134;6:nA5TntfoUb33UtRRuPdk76gSGvfPHM76txn8Ibe2G60Vr0xJ5eKni/gu7+v4UaudoRlbk2Vva74RK4DHEpOErvk1ABzoG42olIHyoyZJK1NQ48S52xkioUcCact2mb/J81y+sZfUghRazOw/rfDZ7CVQ4DUJZYRdJv5tt5uvBRHLF2uFytAcEMYoUcj2r+79ZQf5ZHmiymuNobLnnluzgok7gmHUSfGbLpwfwqkVj4IV5DZGh2eA8YTIO5kPLw/3kFiyNpGYvVeeJfgajV93aTasir3IGmodKBQ1qbUEXs5IUJIvGWOGHhc5sCAwEFoKALOHSaqa0TlqQ7EO/5dH3qZpdbNFXloHbtkm+dcLiNQOxedU5oZm/Oa0u8B9XH3FOdJWK4daTUPFgJI7Rev02HFZHO2GJBuimlC/I0Xz0goBMxTT7tBtM0nE1wLxkIe6rT1OfwDCNZTiT92saQoQaw==;5:ObMx71LOc1Zo7OlJLzT5snsE4CtPrVm9CcusJ0QgwIyPYUIEUH4BJng+LyfzPkb0tEQ38jfG0dNJAKbc6vFQdADL/hWuI8wiM4mwVfbI6TzWSPurD39sO+Jn1ogDtDIBzgEcsRqiFlKALzqNBybUTOanNF+mlG9O2uJ/WtbxWrI=;7:NaLBVPgd94LmGHdDZx84g0wp3+dfZ1CQhtkoci7WgADsHrMWVz1VNHin9Jey2i40myWcgg0EnbkqsBH1glsRwnY9hxxbWlKRAm/PcTAdtftiS6x4v5/aTz5JoPXR6IjEN1Nx2XuAutb5+9sotWKnwwmsRtx8/LGYNvOJEAZuMidAfmor6yVEx+4yAyAsZlo/Ev0W1KIqFLs5X2lHGryZMwBw37q0aeLYB9hOYM9Clmcn56s5ceJT+idCuIkgz585
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
 X-OriginatorOrg: analog.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Aug 2018 13:04:04.3668
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Aug 2018 13:04:26.7117
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f89b853d-93d9-46d0-6191-08d5f9419744
+X-MS-Exchange-CrossTenant-Network-Message-Id: b9233ad0-a821-416b-2f13-08d5f941a472
 X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.55];Helo=[nwd2mta1.analog.com]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR03MB3125
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR03MB3134
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds support for the adxl372 FIFO. In order to accomplish this,
-triggered buffers were used.
+This patch adds the option for the user to select the sampling frequency.
+Also, the user can read the available frequencies and read the currently
+set frequency via the read_raw function. The frequency can be set via the
+write_raw function.
 
-The number of FIFO samples which trigger the watermark interrupt can be
-configured by using the buffer watermark. The FIFO format is determined by
-configuring the scan elements for each axis. The FIFO data is pushed to the
-IIO device's buffer.
+When the frequency is set, the bandwidth is also checked and ensured
+that it is constrained to at most half of the sampling frequency. Also, the
+activity and inactivity timers have to be updated because they depend on
+the selected ODR.
 
 Signed-off-by: Stefan Popa <stefan.popa@analog.com>
 ---
- drivers/iio/accel/adxl372.c | 346 +++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 345 insertions(+), 1 deletion(-)
+ drivers/iio/accel/adxl372.c | 74 ++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 73 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/iio/accel/adxl372.c b/drivers/iio/accel/adxl372.c
-index 7d5092d..e31e096 100644
+index e31e096..80b1838 100644
 --- a/drivers/iio/accel/adxl372.c
 +++ b/drivers/iio/accel/adxl372.c
-@@ -6,12 +6,19 @@
-  */
- 
- #include <linux/bitops.h>
-+#include <linux/interrupt.h>
-+#include <linux/irq.h>
- #include <linux/module.h>
- #include <linux/regmap.h>
- #include <linux/spi/spi.h>
- 
- #include <linux/iio/iio.h>
- #include <linux/iio/sysfs.h>
-+#include <linux/iio/buffer.h>
-+#include <linux/iio/events.h>
-+#include <linux/iio/trigger.h>
-+#include <linux/iio/trigger_consumer.h>
-+#include <linux/iio/triggered_buffer.h>
- 
- /* ADXL372 registers definition */
- #define ADXL372_DEVID			0x00
-@@ -123,6 +130,9 @@
- #define ADXL372_INT1_MAP_LOW_MSK		BIT(7)
- #define ADXL372_INT1_MAP_LOW_MODE(x)		(((x) & 0x1) << 7)
- 
-+/* The ADXL372 includes a deep, 512 sample FIFO buffer */
-+#define ADXL372_FIFO_SIZE			512
-+
- /*
-  * At +/- 200g with 12-bit resolution, scale is computed as:
-  * (200 + 200) * 9.81 / (2^12 - 1) = 0.958241
-@@ -164,6 +174,43 @@ enum adxl372_bandwidth {
- 	ADXL372_BW_3200HZ,
- };
- 
-+enum adxl372_fifo_format {
-+	ADXL372_XYZ_FIFO,
-+	ADXL372_X_FIFO,
-+	ADXL372_Y_FIFO,
-+	ADXL372_XY_FIFO,
-+	ADXL372_Z_FIFO,
-+	ADXL372_XZ_FIFO,
-+	ADXL372_YZ_FIFO,
-+	ADXL372_XYZ_PEAK_FIFO,
-+};
-+
-+enum adxl372_fifo_mode {
-+	ADXL372_FIFO_BYPASSED,
-+	ADXL372_FIFO_STREAMED,
-+	ADXL372_FIFO_TRIGGERED,
-+	ADXL372_FIFO_OLD_SAVED
-+};
-+
-+static const int adxl372_samp_freq_tbl[5] = {
-+	400, 800, 1600, 3200, 6400,
-+};
-+
-+struct adxl372_axis_lookup {
-+	unsigned int bits;
-+	enum adxl372_fifo_format fifo_format;
-+};
-+
-+static const struct adxl372_axis_lookup adxl372_axis_lookup_table[] = {
-+	{ BIT(0), ADXL372_X_FIFO },
-+	{ BIT(1), ADXL372_Y_FIFO },
-+	{ BIT(2), ADXL372_Z_FIFO },
-+	{ BIT(0) | BIT(1), ADXL372_XY_FIFO },
-+	{ BIT(0) | BIT(2), ADXL372_XZ_FIFO },
-+	{ BIT(1) | BIT(2), ADXL372_YZ_FIFO },
-+	{ BIT(0) | BIT(1) | BIT(2), ADXL372_XYZ_FIFO },
-+};
-+
- #define ADXL372_ACCEL_CHANNEL(index, reg, axis) {			\
- 	.type = IIO_ACCEL,						\
- 	.address = reg,							\
-@@ -171,6 +218,13 @@ enum adxl372_bandwidth {
+@@ -217,7 +217,8 @@ static const struct adxl372_axis_lookup adxl372_axis_lookup_table[] = {
+ 	.modified = 1,							\
  	.channel2 = IIO_MOD_##axis,					\
  	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),			\
- 	.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE),		\
-+	.scan_index = index,						\
-+	.scan_type = {							\
-+		.sign = 's',						\
-+		.realbits = 12,						\
-+		.storagebits = 16,					\
-+		.shift = 4,						\
-+	},								\
- }
- 
- static const struct iio_chan_spec adxl372_channels[] = {
-@@ -182,14 +236,37 @@ static const struct iio_chan_spec adxl372_channels[] = {
- struct adxl372_state {
- 	struct spi_device		*spi;
- 	struct regmap			*regmap;
-+	struct iio_trigger		*dready_trig;
-+	enum adxl372_fifo_mode		fifo_mode;
-+	enum adxl372_fifo_format	fifo_format;
- 	enum adxl372_op_mode		op_mode;
- 	enum adxl372_act_proc_mode	act_proc_mode;
- 	enum adxl372_odr		odr;
- 	enum adxl372_bandwidth		bw;
- 	u32				act_time_ms;
- 	u32				inact_time_ms;
-+	u8				fifo_set_size;
-+	u8				int1_bitmask;
-+	u8				int2_bitmask;
-+	u16				watermark;
-+	__be16				fifo_buf[ADXL372_FIFO_SIZE];
-+};
-+
-+static const unsigned long adxl372_channel_masks[] = {
-+	BIT(0), BIT(1), BIT(2),
-+	BIT(0) | BIT(1),
-+	BIT(0) | BIT(2),
-+	BIT(1) | BIT(2),
-+	BIT(0) | BIT(1) | BIT(2),
-+	0
- };
- 
-+static int adxl372_read_fifo(struct adxl372_state *st, u16 fifo_entries)
-+{
-+	return regmap_noinc_read(st->regmap, ADXL372_FIFO_DATA,
-+				 st->fifo_buf, fifo_entries * sizeof(u16));
-+}
-+
- static int adxl372_read_axis(struct adxl372_state *st, u8 addr)
- {
- 	__be16 regval;
-@@ -364,6 +441,109 @@ static int adxl372_set_inactivity_time_ms(struct adxl372_state *st,
+-	.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE),		\
++	.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE) |		\
++				    BIT(IIO_CHAN_INFO_SAMP_FREQ),	\
+ 	.scan_index = index,						\
+ 	.scan_type = {							\
+ 		.sign = 's',						\
+@@ -311,6 +312,19 @@ static int adxl372_set_odr(struct adxl372_state *st,
  	return ret;
  }
  
-+static int adxl372_set_interrupts(struct adxl372_state *st,
-+				  unsigned char int1_bitmask,
-+				  unsigned char int2_bitmask)
++static int adxl372_find_closest_match(const int *array,
++				      unsigned int size, int val)
 +{
-+	int ret;
++	int i;
 +
-+	ret = regmap_write(st->regmap, ADXL372_INT1_MAP, int1_bitmask);
-+	if (ret < 0)
-+		return ret;
-+
-+	return regmap_write(st->regmap, ADXL372_INT2_MAP, int2_bitmask);
-+}
-+
-+static int adxl372_configure_fifo(struct adxl372_state *st)
-+{
-+	unsigned int fifo_samples, fifo_ctl;
-+	int ret;
-+
-+	/* FIFO must be configured while in standby mode */
-+	ret = adxl372_set_op_mode(st, ADXL372_STANDBY);
-+	if (ret < 0)
-+		return ret;
-+
-+	fifo_samples = st->watermark & 0xFF;
-+	fifo_ctl = ADXL372_FIFO_CTL_FORMAT_MODE(st->fifo_format) |
-+		   ADXL372_FIFO_CTL_MODE_MODE(st->fifo_mode) |
-+		   ADXL372_FIFO_CTL_SAMPLES_MODE(st->watermark);
-+
-+	ret = regmap_write(st->regmap, ADXL372_FIFO_SAMPLES, fifo_samples);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = regmap_write(st->regmap, ADXL372_FIFO_CTL, fifo_ctl);
-+	if (ret < 0)
-+		return ret;
-+
-+	return adxl372_set_op_mode(st, ADXL372_FULL_BW_MEASUREMENT);
-+}
-+
-+static int adxl372_get_status(struct adxl372_state *st,
-+			      u8 *status1, u8 *status2,
-+			      u16 *fifo_entries)
-+{
-+	__be32 buf;
-+	u32 val;
-+	int ret;
-+
-+	/* STATUS1, STATUS2, FIFO_ENTRIES2 and FIFO_ENTRIES are adjacent regs */
-+	ret = regmap_bulk_read(st->regmap, ADXL372_STATUS_1,
-+			       &buf, sizeof(buf));
-+	if (ret < 0)
-+		return ret;
-+
-+	val = be32_to_cpu(buf);
-+
-+	*status1 = (val >> 24) & 0x0F;
-+	*status2 = (val >> 16) & 0x0F;
-+	/*
-+	 * FIFO_ENTRIES contains the least significant byte, and FIFO_ENTRIES2
-+	 * contains the two most significant bits
-+	 */
-+	*fifo_entries = val & 0x3FF;
-+
-+	return ret;
-+}
-+
-+static irqreturn_t adxl372_trigger_handler(int irq, void  *p)
-+{
-+	struct iio_poll_func *pf = p;
-+	struct iio_dev *indio_dev = pf->indio_dev;
-+	struct adxl372_state *st = iio_priv(indio_dev);
-+	u8 status1, status2;
-+	u16 fifo_entries;
-+	int i, ret;
-+
-+	ret = adxl372_get_status(st, &status1, &status2, &fifo_entries);
-+	if (ret < 0)
-+		goto err;
-+
-+	if (st->fifo_mode != ADXL372_FIFO_BYPASSED &&
-+	    ADXL372_STATUS_1_FIFO_FULL(status1)) {
-+		/*
-+		 * When reading data from multiple axes from the FIFO,
-+		 * to ensure that data is not overwritten and stored out
-+		 * of order at least one sample set must be left in the
-+		 * FIFO after every read.
-+		 */
-+		fifo_entries -= st->fifo_set_size;
-+
-+		ret = adxl372_read_fifo(st, fifo_entries);
-+		if (ret < 0)
-+			goto err;
-+
-+		/* Each sample is 2 bytes */
-+		for (i = 0; i < fifo_entries * sizeof(u16);
-+		     i += st->fifo_set_size * sizeof(u16))
-+			iio_push_to_buffers(indio_dev, &st->fifo_buf[i]);
++	for (i = 0; i < size; i++) {
++		if (val <= array[i])
++			return i;
 +	}
-+err:
-+	iio_trigger_notify_done(indio_dev->trig);
-+	return IRQ_HANDLED;
++
++	return size - 1;
 +}
 +
- static int adxl372_setup(struct adxl372_state *st)
+ static int adxl372_set_bandwidth(struct adxl372_state *st,
+ 				 enum adxl372_bandwidth bw)
  {
- 	unsigned int regval;
-@@ -443,7 +623,12 @@ static int adxl372_read_raw(struct iio_dev *indio_dev,
- 
- 	switch (info) {
- 	case IIO_CHAN_INFO_RAW:
-+		ret = iio_device_claim_direct_mode(indio_dev);
-+		if (ret)
+@@ -639,6 +653,51 @@ static int adxl372_read_raw(struct iio_dev *indio_dev,
+ 		*val = 0;
+ 		*val2 = ADXL372_USCALE;
+ 		return IIO_VAL_INT_PLUS_MICRO;
++	case IIO_CHAN_INFO_SAMP_FREQ:
++		*val = adxl372_samp_freq_tbl[st->odr];
++		return IIO_VAL_INT;
++	}
++
++	return -EINVAL;
++}
++
++static int adxl372_write_raw(struct iio_dev *indio_dev,
++			     struct iio_chan_spec const *chan,
++			     int val, int val2, long info)
++{
++	struct adxl372_state *st = iio_priv(indio_dev);
++	int odr_index, ret;
++
++	switch (info) {
++	case IIO_CHAN_INFO_SAMP_FREQ:
++		odr_index = adxl372_find_closest_match(adxl372_samp_freq_tbl,
++					ARRAY_SIZE(adxl372_samp_freq_tbl),
++					val);
++		ret = adxl372_set_odr(st, odr_index);
++		if (ret < 0)
 +			return ret;
++		/*
++		 * The timer period depends on the ODR selected.
++		 * At 3200 Hz and below, it is 6.6 ms; at 6400 Hz, it is 3.3 ms
++		 */
++		ret = adxl372_set_activity_time_ms(st, st->act_time_ms);
++		if (ret < 0)
++			return ret;
++		/*
++		 * The timer period depends on the ODR selected.
++		 * At 3200 Hz and below, it is 26 ms; at 6400 Hz, it is 13 ms
++		 */
++		ret = adxl372_set_inactivity_time_ms(st, st->inact_time_ms);
++		if (ret < 0)
++			return ret;
++		/*
++		 * The maximum bandwidth is constrained to at most half of
++		 * the ODR to ensure that the Nyquist criteria is not violated
++		 */
++		if (st->bw > odr_index)
++			ret = adxl372_set_bandwidth(st, odr_index);
 +
- 		ret = adxl372_read_axis(st, chan->address);
-+		iio_device_release_direct_mode(indio_dev);
- 		if (ret < 0)
- 			return ret;
- 
-@@ -459,9 +644,132 @@ static int adxl372_read_raw(struct iio_dev *indio_dev,
++		return ret;
+ 	default:
+ 		return -EINVAL;
  	}
- }
+@@ -766,8 +825,21 @@ static const struct iio_trigger_ops adxl372_trigger_ops = {
+ 	.set_trigger_state = adxl372_dready_trig_set_state,
+ };
  
-+static ssize_t adxl372_get_fifo_enabled(struct device *dev,
-+					  struct device_attribute *attr,
-+					  char *buf)
-+{
-+	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
-+	struct adxl372_state *st = iio_priv(indio_dev);
++static IIO_CONST_ATTR_SAMP_FREQ_AVAIL("400 800 1600 3200 6400");
 +
-+	return sprintf(buf, "%d\n", st->fifo_mode);
-+}
-+
-+static ssize_t adxl372_get_fifo_watermark(struct device *dev,
-+					  struct device_attribute *attr,
-+					  char *buf)
-+{
-+	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
-+	struct adxl372_state *st = iio_priv(indio_dev);
-+
-+	return sprintf(buf, "%d\n", st->watermark);
-+}
-+
-+static IIO_CONST_ATTR(hwfifo_watermark_min, "1");
-+static IIO_CONST_ATTR(hwfifo_watermark_max,
-+		      __stringify(ADXL372_FIFO_SIZE));
-+static IIO_DEVICE_ATTR(hwfifo_watermark, 0444,
-+		       adxl372_get_fifo_watermark, NULL, 0);
-+static IIO_DEVICE_ATTR(hwfifo_enabled, 0444,
-+		       adxl372_get_fifo_enabled, NULL, 0);
-+
-+static const struct attribute *adxl372_fifo_attributes[] = {
-+	&iio_const_attr_hwfifo_watermark_min.dev_attr.attr,
-+	&iio_const_attr_hwfifo_watermark_max.dev_attr.attr,
-+	&iio_dev_attr_hwfifo_watermark.dev_attr.attr,
-+	&iio_dev_attr_hwfifo_enabled.dev_attr.attr,
++static struct attribute *adxl372_attributes[] = {
++	&iio_const_attr_sampling_frequency_available.dev_attr.attr,
 +	NULL,
 +};
 +
-+static int adxl372_set_watermark(struct iio_dev *indio_dev, unsigned int val)
-+{
-+	struct adxl372_state *st  = iio_priv(indio_dev);
-+
-+	if (val > ADXL372_FIFO_SIZE)
-+		val = ADXL372_FIFO_SIZE;
-+
-+	st->watermark = val;
-+
-+	return 0;
-+}
-+
-+static int adxl372_buffer_postenable(struct iio_dev *indio_dev)
-+{
-+	struct adxl372_state *st = iio_priv(indio_dev);
-+	unsigned int mask;
-+	int i, ret;
-+
-+	ret = adxl372_set_interrupts(st, ADXL372_INT1_MAP_FIFO_FULL_MSK, 0);
-+	if (ret < 0)
-+		return ret;
-+
-+	mask = *indio_dev->active_scan_mask;
-+
-+	for (i = 0; i < ARRAY_SIZE(adxl372_axis_lookup_table); i++) {
-+		if (mask == adxl372_axis_lookup_table[i].bits)
-+			break;
-+	}
-+
-+	st->fifo_format = adxl372_axis_lookup_table[i].fifo_format;
-+	st->fifo_set_size = bitmap_weight(indio_dev->active_scan_mask,
-+					  indio_dev->masklength);
-+	/*
-+	 * The 512 FIFO samples can be allotted in several ways, such as:
-+	 * 170 sample sets of concurrent 3-axis data
-+	 * 256 sample sets of concurrent 2-axis data (user selectable)
-+	 * 512 sample sets of single-axis data
-+	 */
-+	if ((st->watermark * st->fifo_set_size) > ADXL372_FIFO_SIZE)
-+		st->watermark = (ADXL372_FIFO_SIZE  / st->fifo_set_size);
-+
-+	st->fifo_mode = ADXL372_FIFO_STREAMED;
-+
-+	ret = adxl372_configure_fifo(st);
-+	if (ret < 0) {
-+		st->fifo_mode = ADXL372_FIFO_BYPASSED;
-+		adxl372_set_interrupts(st, 0, 0);
-+		return ret;
-+	}
-+
-+	return iio_triggered_buffer_postenable(indio_dev);
-+}
-+
-+static int adxl372_buffer_predisable(struct iio_dev *indio_dev)
-+{
-+	struct adxl372_state *st = iio_priv(indio_dev);
-+
-+	adxl372_set_interrupts(st, 0, 0);
-+	st->fifo_mode = ADXL372_FIFO_BYPASSED;
-+	adxl372_configure_fifo(st);
-+
-+	return iio_triggered_buffer_predisable(indio_dev);
-+}
-+
-+static const struct iio_buffer_setup_ops adxl372_buffer_ops = {
-+	.postenable = adxl372_buffer_postenable,
-+	.predisable = adxl372_buffer_predisable,
-+};
-+
-+static int adxl372_dready_trig_set_state(struct iio_trigger *trig,
-+					 bool state)
-+{
-+	struct iio_dev *indio_dev = iio_trigger_get_drvdata(trig);
-+	struct adxl372_state *st = iio_priv(indio_dev);
-+	unsigned long int mask = 0;
-+
-+	if (state)
-+		mask = ADXL372_INT1_MAP_FIFO_FULL_MSK;
-+
-+	return adxl372_set_interrupts(st, mask, 0);
-+}
-+
-+static const struct iio_trigger_ops adxl372_trigger_ops = {
-+	.set_trigger_state = adxl372_dready_trig_set_state,
++static const struct attribute_group adxl372_attrs_group = {
++	.attrs = adxl372_attributes,
 +};
 +
  static const struct iio_info adxl372_info = {
++	.attrs = &adxl372_attrs_group,
  	.read_raw = adxl372_read_raw,
++	.write_raw = adxl372_write_raw,
  	.debugfs_reg_access = &adxl372_reg_access,
-+	.hwfifo_set_watermark = adxl372_set_watermark,
+ 	.hwfifo_set_watermark = adxl372_set_watermark,
  };
- 
- static const struct regmap_config adxl372_spi_regmap_config = {
-@@ -495,10 +803,11 @@ static int adxl372_probe(struct spi_device *spi)
- 
- 	indio_dev->channels = adxl372_channels;
- 	indio_dev->num_channels = ARRAY_SIZE(adxl372_channels);
-+	indio_dev->available_scan_masks = adxl372_channel_masks;
- 	indio_dev->dev.parent = &spi->dev;
- 	indio_dev->name = spi_get_device_id(spi)->name;
- 	indio_dev->info = &adxl372_info;
--	indio_dev->modes = INDIO_DIRECT_MODE;
-+	indio_dev->modes = INDIO_DIRECT_MODE | INDIO_BUFFER_SOFTWARE;
- 
- 	ret = adxl372_setup(st);
- 	if (ret < 0) {
-@@ -506,6 +815,41 @@ static int adxl372_probe(struct spi_device *spi)
- 		return ret;
- 	}
- 
-+	ret = devm_iio_triggered_buffer_setup(&st->spi->dev,
-+					      indio_dev, NULL,
-+					      adxl372_trigger_handler,
-+					      &adxl372_buffer_ops);
-+	if (ret < 0)
-+		return ret;
-+
-+	iio_buffer_set_attrs(indio_dev->buffer, adxl372_fifo_attributes);
-+
-+	if (st->spi->irq) {
-+		st->dready_trig = devm_iio_trigger_alloc(&st->spi->dev,
-+							 "%s-dev%d",
-+							 indio_dev->name,
-+							 indio_dev->id);
-+		if (st->dready_trig == NULL)
-+			return -ENOMEM;
-+
-+		st->dready_trig->ops = &adxl372_trigger_ops;
-+		st->dready_trig->dev.parent = &st->spi->dev;
-+		iio_trigger_set_drvdata(st->dready_trig, indio_dev);
-+		ret = devm_iio_trigger_register(&st->spi->dev, st->dready_trig);
-+		if (ret < 0)
-+			return ret;
-+
-+		indio_dev->trig = iio_trigger_get(st->dready_trig);
-+
-+		ret = devm_request_threaded_irq(&st->spi->dev, st->spi->irq,
-+					iio_trigger_generic_data_rdy_poll,
-+					NULL,
-+					IRQF_TRIGGER_RISING | IRQF_ONESHOT,
-+					indio_dev->name, st->dready_trig);
-+		if (ret < 0)
-+			return ret;
-+	}
-+
- 	return devm_iio_device_register(&st->spi->dev, indio_dev);
- }
- 
 -- 
 2.7.4
 
