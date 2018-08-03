@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59216C43142
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 03:11:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24309C43142
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 03:11:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18508216EE
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 03:11:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18508216EE
+	by mail.kernel.org (Postfix) with ESMTP id CDDAB2170A
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 03:11:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDDAB2170A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728794AbeHCFFx (ORCPT
+        id S1729474AbeHCFGB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 01:05:53 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:10730 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726571AbeHCFFj (ORCPT
+        Fri, 3 Aug 2018 01:06:01 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:12906 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727619AbeHCFFi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 01:05:39 -0400
-X-UUID: f973ce9cd7cb4642b1dc98176429a75a-20180803
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
+        Fri, 3 Aug 2018 01:05:38 -0400
+X-UUID: 8d487c509b8c418cb3c5a9a218bbcabe-20180803
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw02.mediatek.com
         (envelope-from <stu.hsieh@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 181951400; Fri, 03 Aug 2018 11:11:13 +0800
+        with ESMTP id 461211442; Fri, 03 Aug 2018 11:11:16 +0800
 Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Fri, 3 Aug 2018 11:11:11 +0800
+ mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Fri, 3 Aug 2018 11:11:14 +0800
 Received: from mtksdccf07.mediatek.inc (172.21.84.99) by MTKCAS06.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Fri, 3 Aug 2018 11:11:11 +0800
+ Transport; Fri, 3 Aug 2018 11:11:15 +0800
 From:   Stu Hsieh <stu.hsieh@mediatek.com>
 To:     CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>
 CC:     David Airlie <airlied@linux.ie>,
@@ -43,9 +43,9 @@ CC:     David Airlie <airlied@linux.ie>,
         <linux-mediatek@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, <srv_heupstream@mediatek.com>,
         Stu Hsieh <stu.hsieh@mediatek.com>
-Subject: [PATCH v2 06/15] drm/mediatek: add memory mode for RDMA
-Date:   Fri, 3 Aug 2018 11:10:59 +0800
-Message-ID: <1533265868-28110-7-git-send-email-stu.hsieh@mediatek.com>
+Subject: [PATCH v2 14/15] drm/mediatek: update some variable name from ovl to comp
+Date:   Fri, 3 Aug 2018 11:11:07 +0800
+Message-ID: <1533265868-28110-15-git-send-email-stu.hsieh@mediatek.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1533265868-28110-1-git-send-email-stu.hsieh@mediatek.com>
 References: <1533265868-28110-1-git-send-email-stu.hsieh@mediatek.com>
@@ -57,51 +57,136 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch add memory mode for RDMA
+This patch update some variable name from ovl to comp
 
-If use RDMA to read data from memory, it should set memory mode to RDMA
+Because RDMA would be first HW in ddp, the naming ovl
+should be change to comp.
 
 Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
 ---
- drivers/gpu/drm/mediatek/mtk_disp_rdma.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/gpu/drm/mediatek/mtk_drm_crtc.c | 26 +++++++++++++-------------
+ drivers/gpu/drm/mediatek/mtk_drm_crtc.h |  2 +-
+ 2 files changed, 14 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_disp_rdma.c b/drivers/gpu/drm/mediatek/mtk_disp_rdma.c
-index 60851bb2dd63..1985035451ce 100644
---- a/drivers/gpu/drm/mediatek/mtk_disp_rdma.c
-+++ b/drivers/gpu/drm/mediatek/mtk_disp_rdma.c
-@@ -31,6 +31,7 @@
- #define RDMA_REG_UPDATE_INT				BIT(0)
- #define DISP_REG_RDMA_GLOBAL_CON		0x0010
- #define RDMA_ENGINE_EN					BIT(0)
-+#define RDMA_MODE_MEMORY				BIT(1)
- #define DISP_REG_RDMA_SIZE_CON_0		0x0014
- #define DISP_REG_RDMA_SIZE_CON_1		0x0018
- #define DISP_REG_RDMA_TARGET_LINE		0x001c
-@@ -53,6 +54,7 @@ struct mtk_disp_rdma {
- 	struct mtk_ddp_comp		ddp_comp;
- 	struct drm_crtc			*crtc;
- 	const struct mtk_disp_rdma_data	*data;
-+	bool rdma_memory_mode;
- };
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
+index b4d3dfca4003..e61f4985ae7f 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
+@@ -172,9 +172,9 @@ static void mtk_drm_crtc_mode_set_nofb(struct drm_crtc *crtc)
+ static int mtk_drm_crtc_enable_vblank(struct drm_crtc *crtc)
+ {
+ 	struct mtk_drm_crtc *mtk_crtc = to_mtk_crtc(crtc);
+-	struct mtk_ddp_comp *ovl = mtk_crtc->ddp_comp[0];
++	struct mtk_ddp_comp *comp = mtk_crtc->ddp_comp[0];
  
- static inline struct mtk_disp_rdma *comp_to_rdma(struct mtk_ddp_comp *comp)
-@@ -121,10 +123,15 @@ static void mtk_rdma_config(struct mtk_ddp_comp *comp, unsigned int width,
- 	unsigned int threshold;
- 	unsigned int reg;
- 	struct mtk_disp_rdma *rdma = comp_to_rdma(comp);
-+	bool *rdma_memory_mode = comp->comp_mode;
+-	mtk_ddp_comp_enable_vblank(ovl, &mtk_crtc->base);
++	mtk_ddp_comp_enable_vblank(comp, &mtk_crtc->base);
  
- 	rdma_update_bits(comp, DISP_REG_RDMA_SIZE_CON_0, 0xfff, width);
- 	rdma_update_bits(comp, DISP_REG_RDMA_SIZE_CON_1, 0xfffff, height);
+ 	return 0;
+ }
+@@ -182,9 +182,9 @@ static int mtk_drm_crtc_enable_vblank(struct drm_crtc *crtc)
+ static void mtk_drm_crtc_disable_vblank(struct drm_crtc *crtc)
+ {
+ 	struct mtk_drm_crtc *mtk_crtc = to_mtk_crtc(crtc);
+-	struct mtk_ddp_comp *ovl = mtk_crtc->ddp_comp[0];
++	struct mtk_ddp_comp *comp = mtk_crtc->ddp_comp[0];
  
-+	if (*rdma_memory_mode == true)
-+		rdma_update_bits(comp, DISP_REG_RDMA_GLOBAL_CON,
-+				 RDMA_MODE_MEMORY, RDMA_MODE_MEMORY);
-+
+-	mtk_ddp_comp_disable_vblank(ovl);
++	mtk_ddp_comp_disable_vblank(comp);
+ }
+ 
+ static int mtk_crtc_ddp_clk_enable(struct mtk_drm_crtc *mtk_crtc)
+@@ -335,7 +335,7 @@ static void mtk_crtc_ddp_config(struct drm_crtc *crtc)
+ {
+ 	struct mtk_drm_crtc *mtk_crtc = to_mtk_crtc(crtc);
+ 	struct mtk_crtc_state *state = to_mtk_crtc_state(mtk_crtc->base.state);
+-	struct mtk_ddp_comp *ovl = mtk_crtc->ddp_comp[0];
++	struct mtk_ddp_comp *comp = mtk_crtc->ddp_comp[0];
+ 	unsigned int i;
+ 
  	/*
- 	 * Enable FIFO underflow since DSI and DPI can't be blocked.
- 	 * Keep the FIFO pseudo size reset default of 8 KiB. Set the
+@@ -344,7 +344,7 @@ static void mtk_crtc_ddp_config(struct drm_crtc *crtc)
+ 	 * queue update module registers on vblank.
+ 	 */
+ 	if (state->pending_config) {
+-		mtk_ddp_comp_config(ovl, state->pending_width,
++		mtk_ddp_comp_config(comp, state->pending_width,
+ 				    state->pending_height,
+ 				    state->pending_vrefresh, 0);
+ 
+@@ -359,7 +359,7 @@ static void mtk_crtc_ddp_config(struct drm_crtc *crtc)
+ 			plane_state = to_mtk_plane_state(plane->state);
+ 
+ 			if (plane_state->pending.config) {
+-				mtk_ddp_comp_layer_config(ovl, i, plane_state);
++				mtk_ddp_comp_layer_config(comp, i, plane_state);
+ 				plane_state->pending.config = false;
+ 			}
+ 		}
+@@ -371,12 +371,12 @@ static void mtk_drm_crtc_atomic_enable(struct drm_crtc *crtc,
+ 				       struct drm_crtc_state *old_state)
+ {
+ 	struct mtk_drm_crtc *mtk_crtc = to_mtk_crtc(crtc);
+-	struct mtk_ddp_comp *ovl = mtk_crtc->ddp_comp[0];
++	struct mtk_ddp_comp *comp = mtk_crtc->ddp_comp[0];
+ 	int ret;
+ 
+ 	DRM_DEBUG_DRIVER("%s %d\n", __func__, crtc->base.id);
+ 
+-	ret = mtk_smi_larb_get(ovl->larb_dev);
++	ret = mtk_smi_larb_get(comp->larb_dev);
+ 	if (ret) {
+ 		DRM_ERROR("Failed to get larb: %d\n", ret);
+ 		return;
+@@ -384,7 +384,7 @@ static void mtk_drm_crtc_atomic_enable(struct drm_crtc *crtc,
+ 
+ 	ret = mtk_crtc_ddp_hw_init(mtk_crtc);
+ 	if (ret) {
+-		mtk_smi_larb_put(ovl->larb_dev);
++		mtk_smi_larb_put(comp->larb_dev);
+ 		return;
+ 	}
+ 
+@@ -396,7 +396,7 @@ static void mtk_drm_crtc_atomic_disable(struct drm_crtc *crtc,
+ 					struct drm_crtc_state *old_state)
+ {
+ 	struct mtk_drm_crtc *mtk_crtc = to_mtk_crtc(crtc);
+-	struct mtk_ddp_comp *ovl = mtk_crtc->ddp_comp[0];
++	struct mtk_ddp_comp *comp = mtk_crtc->ddp_comp[0];
+ 	int i;
+ 
+ 	DRM_DEBUG_DRIVER("%s %d\n", __func__, crtc->base.id);
+@@ -419,7 +419,7 @@ static void mtk_drm_crtc_atomic_disable(struct drm_crtc *crtc,
+ 
+ 	drm_crtc_vblank_off(crtc);
+ 	mtk_crtc_ddp_hw_fini(mtk_crtc);
+-	mtk_smi_larb_put(ovl->larb_dev);
++	mtk_smi_larb_put(comp->larb_dev);
+ 
+ 	mtk_crtc->enabled = false;
+ }
+@@ -517,7 +517,7 @@ static int mtk_drm_crtc_init(struct drm_device *drm,
+ 	return ret;
+ }
+ 
+-void mtk_crtc_ddp_irq(struct drm_crtc *crtc, struct mtk_ddp_comp *ovl)
++void mtk_crtc_ddp_irq(struct drm_crtc *crtc, struct mtk_ddp_comp *comp)
+ {
+ 	struct mtk_drm_crtc *mtk_crtc = to_mtk_crtc(crtc);
+ 	struct mtk_drm_private *priv = crtc->dev->dev_private;
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_crtc.h b/drivers/gpu/drm/mediatek/mtk_drm_crtc.h
+index 0399321b1414..e64aa45915df 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_crtc.h
++++ b/drivers/gpu/drm/mediatek/mtk_drm_crtc.h
+@@ -24,7 +24,7 @@
+ #define MTK_MIN_BPC	3
+ 
+ void mtk_drm_crtc_commit(struct drm_crtc *crtc);
+-void mtk_crtc_ddp_irq(struct drm_crtc *crtc, struct mtk_ddp_comp *ovl);
++void mtk_crtc_ddp_irq(struct drm_crtc *crtc, struct mtk_ddp_comp *comp);
+ int mtk_drm_crtc_create(struct drm_device *drm_dev,
+ 			const enum mtk_ddp_comp_id *path,
+ 			unsigned int path_len);
 -- 
 2.12.5.2.gbdf23ab
 
