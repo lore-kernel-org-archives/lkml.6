@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAA5FC28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 07:25:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B7DEC28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 07:26:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84978215F9
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 07:25:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC6DF216FD
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 07:26:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=iluvatar.ai header.i=@iluvatar.ai header.b="XeUUvuyX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84978215F9
+	dkim=pass (1024-bit key) header.d=iluvatar.ai header.i=@iluvatar.ai header.b="gb46SPN2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC6DF216FD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=iluvatar.ai
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732684AbeHCJUi (ORCPT
+        id S1729917AbeHCJQQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 05:20:38 -0400
-Received: from mail.iluvatar.ai ([58.213.90.100]:57165 "EHLO mail.iluvatar.ai"
+        Fri, 3 Aug 2018 05:16:16 -0400
+Received: from mail.iluvatar.ai ([58.213.90.100]:56390 "EHLO mail.iluvatar.ai"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729808AbeHCJQZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 05:16:25 -0400
+        id S1728026AbeHCJQP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 05:16:15 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by mail.iluvatar.ai (Postfix) with ESMTP id 90B1A107081CA;
-        Fri,  3 Aug 2018 15:24:58 +0800 (CST)
+        by mail.iluvatar.ai (Postfix) with ESMTP id 160A013C8D162;
+        Fri,  3 Aug 2018 15:24:46 +0800 (CST)
 Received: from mail.iluvatar.ai ([127.0.0.1])
         by localhost (mail.iluvatar.ai [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id HVC-IuNmFMX2; Fri,  3 Aug 2018 15:24:58 +0800 (CST)
+        with ESMTP id 6ctxhGaTBqGd; Fri,  3 Aug 2018 15:24:45 +0800 (CST)
 Received: from localhost (localhost [127.0.0.1])
-        by mail.iluvatar.ai (Postfix) with ESMTP id 25892107081E1;
-        Fri,  3 Aug 2018 15:24:58 +0800 (CST)
-DKIM-Filter: OpenDKIM Filter v2.9.2 mail.iluvatar.ai 25892107081E1
+        by mail.iluvatar.ai (Postfix) with ESMTP id 7D0B613ED1C86;
+        Fri,  3 Aug 2018 15:24:45 +0800 (CST)
+DKIM-Filter: OpenDKIM Filter v2.9.2 mail.iluvatar.ai 7D0B613ED1C86
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iluvatar.ai;
-        s=809B2F8E-810B-11E8-86FD-A0A654EEFFEB; t=1533281098;
-        bh=Z+SOxwgabn0PZIzvevtjxhyKnCRTzlMyJFOK4zpfag8=;
+        s=809B2F8E-810B-11E8-86FD-A0A654EEFFEB; t=1533281085;
+        bh=U4m86qea4iJOaO5k/BmZRVgFVoLy61hQ9icocjhhoLo=;
         h=From:To:Subject:Date:Message-Id;
-        b=XeUUvuyXcXnudTcMkd0+m5u0JP6bmotanJa8ezZlTsx2usPv3G2aokN7YwehQF9kp
-         m6/IYIUYXUCzxlzzyY5WHjy5gw/qcBeZwWHd9MmpsSwu69GGF0+jt2YgczNC4Jf33P
-         imdSFGaBIPBv5Vyvo1nbcQN2CvZl5iUKtTK3hpyQ=
+        b=gb46SPN2uNOEGZH+NZmpnzpR7Bbg07HWaUSiLrmH+KkslvvRACyT20a9DdVPX2ED6
+         JVH0m5S8Zre5aB/O9V9u6MZ4X2h1gsxAVbZkRsWynwkhxTY/5KNv7ZZN7QTmDhYz84
+         +ULrzOUH2fC0R7sdvnaBOUYvRGKK9Pa14lpVGo28=
 X-Virus-Scanned: amavisd-new at iluvatar.ai
 Received: from mail.iluvatar.ai ([127.0.0.1])
         by localhost (mail.iluvatar.ai [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id AFbxfcYPAj19; Fri,  3 Aug 2018 15:24:57 +0800 (CST)
+        with ESMTP id 9YAcz0Gzr2A9; Fri,  3 Aug 2018 15:24:45 +0800 (CST)
 Received: from localhost.localdomain (unknown [180.166.124.10])
-        by mail.iluvatar.ai (Postfix) with ESMTPSA id BBF9B107081C4;
-        Fri,  3 Aug 2018 15:24:56 +0800 (CST)
+        by mail.iluvatar.ai (Postfix) with ESMTPSA id 944A213C8D162;
+        Fri,  3 Aug 2018 15:24:44 +0800 (CST)
 From:   Huang Shijie <sjhuang@iluvatar.ai>
 To:     vkoul@kernel.org
 Cc:     dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
@@ -59,65 +59,163 @@ Cc:     dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
         michal.simek@xilinx.com, baohua@kernel.org,
         ludovic.desroches@microchip.com, linus.walleij@linaro.org,
         david.brown@linaro.org, Huang Shijie <sjhuang@iluvatar.ai>
-Subject: [PATCH 11/46] dmaengine: tegra20-apb-dma: use helper dmaenginem_async_device_register
-Date:   Fri,  3 Aug 2018 15:19:41 +0800
-Message-Id: <20180803072016.21544-12-sjhuang@iluvatar.ai>
+Subject: [PATCH 00/46] Use dmaenginem_async_device_register to simplify code
+Date:   Fri,  3 Aug 2018 15:19:30 +0800
+Message-Id: <20180803072016.21544-1-sjhuang@iluvatar.ai>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180803072016.21544-1-sjhuang@iluvatar.ai>
-References: <20180803072016.21544-1-sjhuang@iluvatar.ai>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use dmaenginem_async_device_register to simplify the code:
-   remove dma_async_device_unregister
-   remove the label err_unregister_dma_dev
+All the patches are using dmaenginem_async_device_register to simplify code
+except the last one:
+  dmaengine: add COMPILE_TEST for the drivers
 
-Signed-off-by: Huang Shijie <sjhuang@iluvatar.ai>
----
- drivers/dma/tegra20-apb-dma.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+I use the last one to do the compiler test.  
+There are still 20 drivers which do not use the dmaenginem_async_device_register.
+Let me take a rest, if this patch set is accepted, I will do the rest.
 
-diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-index 9a558e30c461..9f6f51abbeef 100644
---- a/drivers/dma/tegra20-apb-dma.c
-+++ b/drivers/dma/tegra20-apb-dma.c
-@@ -1444,7 +1444,7 @@ static int tegra_dma_probe(struct platform_device *pdev)
- 	tdma->dma_dev.device_tx_status = tegra_dma_tx_status;
- 	tdma->dma_dev.device_issue_pending = tegra_dma_issue_pending;
- 
--	ret = dma_async_device_register(&tdma->dma_dev);
-+	ret = dmaenginem_async_device_register(&tdma->dma_dev);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev,
- 			"Tegra20 APB DMA driver registration failed %d\n", ret);
-@@ -1456,15 +1456,13 @@ static int tegra_dma_probe(struct platform_device *pdev)
- 	if (ret < 0) {
- 		dev_err(&pdev->dev,
- 			"Tegra20 APB DMA OF registration failed %d\n", ret);
--		goto err_unregister_dma_dev;
-+		goto err_irq;
- 	}
- 
- 	dev_info(&pdev->dev, "Tegra20 APB DMA driver register %d channels\n",
- 			cdata->nr_channels);
- 	return 0;
- 
--err_unregister_dma_dev:
--	dma_async_device_unregister(&tdma->dma_dev);
- err_irq:
- 	while (--i >= 0) {
- 		struct tegra_dma_channel *tdc = &tdma->channels[i];
-@@ -1485,8 +1483,6 @@ static int tegra_dma_remove(struct platform_device *pdev)
- 	int i;
- 	struct tegra_dma_channel *tdc;
- 
--	dma_async_device_unregister(&tdma->dma_dev);
--
- 	for (i = 0; i < tdma->chip_data->nr_channels; ++i) {
- 		tdc = &tdma->channels[i];
- 		free_irq(tdc->irq, tdc);
+Huang Shijie (46):
+  dmaengine: zx_dma: use dmaenginem_async_device_register to simplify
+    the code
+  dmaengine: zynqmp_dma: use dmaenginem_async_device_register to
+    simplify the code
+  dmaengine: xilinx_dma: use dmaenginem_async_device_register to
+    simplify the code
+  dmaengine: xgene-dma: use dmaenginem_async_device_register to simplify
+    the code
+  dmaengine: txx9dmac: use dmaenginem_async_device_register to simplify
+    the code
+  dmaengine: timb_dma: use dmaenginem_async_device_register to simplify
+    the code
+  dmaengine: omap-dma: use dmaenginem_async_device_register to simplify
+    the code
+  dmaengine: edma: use dmaenginem_async_device_register to simplify the
+    code
+  dmaengine: cppi41: use dmaenginem_async_device_register to simplify
+    the code
+  dmaengine: tegra210-adma: use helper dmaenginem_async_device_register
+  dmaengine: tegra20-apb-dma: use helper
+    dmaenginem_async_device_register
+  dmaengine: sun6i-dma: use helper dmaenginem_async_device_register
+  dmaengine: sun4i-dma: use dmaenginem_async_device_register to simplify
+    the code
+  dmaengine: coh901318: use dmaenginem_async_device_register to simplify
+    the code
+  dmaengine: s3c24xx-dma: use dmaenginem_async_device_register to
+    simplify the code
+  dmaengine: ste_dma40: use dmaenginem_async_device_register to simplify
+    the code
+  dmaengine: stm32-mdma: use dmaenginem_async_device_register to
+    simplify the code
+  dmaengine: stm32-dma: use dmaenginem_async_device_register to simplify
+    the code
+  dmaengine: sprd-dma: use dmaenginem_async_device_register to simplify
+    the code
+  dmaengine: sirf-dma: use dmaenginem_async_device_register to simplify
+    the code
+  dmaengine: bam_dma: use dmaenginem_async_device_register to simplify
+    the code
+  dmaengine: sudmac: use dmaenginem_async_device_register to simplify
+    the code
+  dmaengine: sa11x0-dma: use dmaenginem_async_device_register to
+    simplify the code
+  dmaengine: nbpfaxi: use dmaenginem_async_device_register to simplify
+    the code
+  dmaengine: mmp_tdma: use dmaenginem_async_device_register to simplify
+    the code
+  dmaengine: shdmac: use dmaenginem_async_device_register to simplify
+    the code
+  dmaengine: usb-dmac: use dmaenginem_async_device_register to simplify
+    the code
+  dmaengine: rcar-dmac: use dmaenginem_async_device_register to simplify
+    the code
+  dmaengine: hidma: use dmaenginem_async_device_register to simplify the
+    code
+  dmaengine: pxa_dma: use dmaenginem_async_device_register to simplify
+    the code
+  dmaengine: moxart-dma: use dmaenginem_async_device_register to
+    simplify the code
+  dmaengine: pl330: use dmaenginem_async_device_register to simplify the
+    code
+  dmaengine: pch_dma: use dmaenginem_async_device_register to simplify
+    the code
+  dmaengine: mxs-dma: use dmaenginem_async_device_register to simplify
+    the code
+  dmaengine: mtk-hsdma: use dmaenginem_async_device_register to simplify
+    the code
+  dmaengine: k3dma: use dmaenginem_async_device_register to simplify the
+    code
+  dmaengine: imx-sdma: use dmaenginem_async_device_register to simplify
+    the code
+  dmaengine: imx-dma: use dmaenginem_async_device_register to simplify
+    the code
+  dmaengine: img-mdc-dma: use dmaenginem_async_device_register to
+    simplify the code
+  dmaengine: fsl-edma: use dmaenginem_async_device_register to simplify
+    the code
+  dmaengine: at_hdmac: use dmaenginem_async_device_register to simplify
+    the code
+  dmaengine: at_xdmac: use dmaenginem_async_device_register to simplify
+    the code
+  dmaengine: dma-jz4780: use dmaenginem_async_device_register to
+    simplify the code
+  dmaengine: dma-jz4740: use dmaenginem_async_device_register to
+    simplify the code
+  dmaengine: dma-axi-dmac: use dmaenginem_async_device_register to
+    simplify the code
+  dmaengine: add COMPILE_TEST for the drivers
+
+ drivers/dma/Kconfig              | 24 ++++++++++++------------
+ drivers/dma/at_hdmac.c           |  4 +---
+ drivers/dma/at_xdmac.c           |  7 ++-----
+ drivers/dma/coh901318.c          | 14 ++++----------
+ drivers/dma/dma-axi-dmac.c       |  7 ++-----
+ drivers/dma/dma-jz4740.c         |  7 ++-----
+ drivers/dma/dma-jz4780.c         |  8 ++------
+ drivers/dma/fsl-edma.c           |  4 +---
+ drivers/dma/img-mdc-dma.c        |  7 ++-----
+ drivers/dma/imx-dma.c            |  8 ++------
+ drivers/dma/imx-sdma.c           |  7 ++-----
+ drivers/dma/k3dma.c              |  7 ++-----
+ drivers/dma/mediatek/mtk-hsdma.c |  4 +---
+ drivers/dma/mmp_tdma.c           |  7 ++-----
+ drivers/dma/moxart-dma.c         |  5 +----
+ drivers/dma/mxs-dma.c            |  3 +--
+ drivers/dma/nbpfaxi.c            |  7 ++-----
+ drivers/dma/pch_dma.c            |  4 +---
+ drivers/dma/pl330.c              |  4 +---
+ drivers/dma/pxa_dma.c            |  3 +--
+ drivers/dma/qcom/bam_dma.c       |  7 ++-----
+ drivers/dma/qcom/hidma.c         |  3 +--
+ drivers/dma/s3c24xx-dma.c        | 11 +++--------
+ drivers/dma/sa11x0-dma.c         |  4 +---
+ drivers/dma/sh/rcar-dmac.c       |  5 +----
+ drivers/dma/sh/shdmac.c          |  5 +----
+ drivers/dma/sh/sudmac.c          |  4 +---
+ drivers/dma/sh/usb-dmac.c        |  3 +--
+ drivers/dma/sirf-dma.c           |  7 ++-----
+ drivers/dma/sprd-dma.c           |  7 ++-----
+ drivers/dma/ste_dma40.c          | 14 +++++---------
+ drivers/dma/stm32-dma.c          |  3 +--
+ drivers/dma/stm32-mdma.c         |  4 +---
+ drivers/dma/sun4i-dma.c          |  7 ++-----
+ drivers/dma/sun6i-dma.c          |  7 ++-----
+ drivers/dma/tegra20-apb-dma.c    |  8 ++------
+ drivers/dma/tegra210-adma.c      |  8 ++------
+ drivers/dma/ti/Kconfig           |  2 +-
+ drivers/dma/ti/cppi41.c          |  7 ++-----
+ drivers/dma/ti/edma.c            |  8 ++------
+ drivers/dma/ti/omap-dma.c        |  5 +----
+ drivers/dma/timb_dma.c           |  3 +--
+ drivers/dma/txx9dmac.c           |  4 +---
+ drivers/dma/xgene-dma.c          | 16 ++--------------
+ drivers/dma/xilinx/xilinx_dma.c  |  5 +----
+ drivers/dma/xilinx/zynqmp_dma.c  |  4 +---
+ drivers/dma/zx_dma.c             |  7 ++-----
+ 47 files changed, 88 insertions(+), 221 deletions(-)
+
 -- 
 2.17.1
 
