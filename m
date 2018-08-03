@@ -6,66 +6,66 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0788C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 13:58:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D10F7C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 13:59:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 402FE21763
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 13:58:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 402FE21763
+	by mail.kernel.org (Postfix) with ESMTP id 8370121761
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 13:59:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8370121761
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732330AbeHCPy6 (ORCPT
+        id S1732188AbeHCP4U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 11:54:58 -0400
-Received: from orcrist.hmeau.com ([104.223.48.154]:36866 "EHLO
+        Fri, 3 Aug 2018 11:56:20 -0400
+Received: from orcrist.hmeau.com ([104.223.48.154]:36928 "EHLO
         deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732301AbeHCPy6 (ORCPT
+        with ESMTP id S1731699AbeHCP4T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 11:54:58 -0400
+        Fri, 3 Aug 2018 11:56:19 -0400
 Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
         by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1flaav-0005Cw-Fl; Fri, 03 Aug 2018 21:58:17 +0800
+        id 1flacJ-0005Lc-IE; Fri, 03 Aug 2018 21:59:43 +0800
 Received: from herbert by gondobar with local (Exim 4.89)
         (envelope-from <herbert@gondor.apana.org.au>)
-        id 1flaas-00023n-HR; Fri, 03 Aug 2018 21:58:14 +0800
-Date:   Fri, 3 Aug 2018 21:58:14 +0800
+        id 1flacF-00026D-TM; Fri, 03 Aug 2018 21:59:39 +0800
+Date:   Fri, 3 Aug 2018 21:59:39 +0800
 From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Jia-Ju Bai <baijiaju1990@gmail.com>
-Cc:     mst@redhat.com, jasowang@redhat.com, arei.gonglei@huawei.com,
-        davem@davemloft.net, virtualization@lists.linux-foundation.org,
+To:     Gilad Ben-Yossef <gilad@benyossef.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Ofir Drang <ofir.drang@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] crypto: virtio: Replace GFP_ATOMIC with GFP_KERNEL in
- __virtio_crypto_ablkcipher_do_req()
-Message-ID: <20180803135814.452fdflcronacrjr@gondor.apana.org.au>
-References: <20180723084346.16488-1-baijiaju1990@gmail.com>
+Subject: Re: [PATCH 0/4] crypto: ccree: fixes and cleanups
+Message-ID: <20180803135939.5ccgaifj4kbkfv3n@gondor.apana.org.au>
+References: <1532441567-11694-1-git-send-email-gilad@benyossef.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180723084346.16488-1-baijiaju1990@gmail.com>
+In-Reply-To: <1532441567-11694-1-git-send-email-gilad@benyossef.com>
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 23, 2018 at 04:43:46PM +0800, Jia-Ju Bai wrote:
-> __virtio_crypto_ablkcipher_do_req() is never called in atomic context.
+On Tue, Jul 24, 2018 at 03:12:42PM +0100, Gilad Ben-Yossef wrote:
+> Various code clean ups and fix ups.
 > 
-> __virtio_crypto_ablkcipher_do_req() is only called by 
-> virtio_crypto_ablkcipher_crypt_req(), which is only called by 
-> virtcrypto_find_vqs() that is never called in atomic context.
+> Gilad Ben-Yossef (4):
+>   crypto: ccree: drop useless type flag during reg
+>   crypto: ccree: remove cipher ivgen left overs
+>   crypto: ccree: zero all of request ctx before use
+>   crypto: ccree: allow bigger than sector XTS op
 > 
-> __virtio_crypto_ablkcipher_do_req() calls kzalloc_node() with GFP_ATOMIC,
-> which is not necessary.
-> GFP_ATOMIC can be replaced with GFP_KERNEL.
-> 
-> This is found by a static analysis tool named DCNS written by myself.
-> I also manually check the kernel code before reporting it.
-> 
-> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+>  drivers/crypto/ccree/cc_aead.c       | 16 +---------------
+>  drivers/crypto/ccree/cc_buffer_mgr.c |  8 ++------
+>  drivers/crypto/ccree/cc_cipher.c     | 36 ++++--------------------------------
+>  drivers/crypto/ccree/cc_cipher.h     |  1 -
+>  drivers/crypto/ccree/cc_driver.h     |  1 -
+>  5 files changed, 7 insertions(+), 55 deletions(-)
 
-Patch applied.  Thanks.
+All applied.  Thanks.
 -- 
 Email: Herbert Xu <herbert@gondor.apana.org.au>
 Home Page: http://gondor.apana.org.au/~herbert/
