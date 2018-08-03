@@ -2,114 +2,77 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA05CC43142
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 01:50:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 093A8C43142
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 01:51:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7318D21719
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 01:50:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qpcYt414"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7318D21719
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id BEDFA21717
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 01:51:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEDFA21717
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732353AbeHCDn5 (ORCPT
+        id S1732478AbeHCDo6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 23:43:57 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:42098 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731781AbeHCDn4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 23:43:56 -0400
-Received: by mail-pf1-f196.google.com with SMTP id l9-v6so2332737pff.9
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Aug 2018 18:50:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=POquWmug1aYuCeGv3DzX8EW7af7RAFFd0o0Hz8A+QyA=;
-        b=qpcYt414E0k97SaUPpBZ7sqQ+MaW/FDfLbcH0pPq8qy2nuOsJ5hNtiElv4kfHajoQF
-         jm9DeAN46lZ2XeA+f9zC17J4Nd92ekvvzkbt4speeCqewwyd5whshpS2zXfDCCKLhdUL
-         3VEk+QkZFqL6lWdPrzwy0yy5b9Xa9d/NRaRJsGRu46q82R1pOxFgvcjDZXmwX0O/OCrA
-         6P7Odr7U8kO/Pl2uZBF8tkpWpcX1xGfANjtKyJVGwGNC7cZFVKMp3U0d0i2Vdz3XhtQK
-         fj4NiSBwO9tmDAm45I/Ldu3jQ0PDpfDEOVqsoDKbl/YNpDvaEZHQvIyY5bP/y2ijjNVK
-         W01A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=POquWmug1aYuCeGv3DzX8EW7af7RAFFd0o0Hz8A+QyA=;
-        b=SXJyA9DYeHFYplmOTzOLM2ejJGd4sMd50if7goSe63zlD4dcnLBaZlG0rwz1+0PzBb
-         ADbqypWmVc617vpv4F9GWMjHkDxNi7Y34eVa/zy/RLk2dg9iR/KzqKFlQjj34OEizH86
-         03PtNQTpMwdrupHKuPGQywgWKKiw36aLNsrZs2iNF7uylgduA8l8AVNAvCTbAB+ayEmt
-         mqFgbw+wJ4oza7v1MM2C200dqiwL7WpDNcCZY0PfW+4vlrFIEc0StDPc2QOifZP4C11J
-         Lr0N2FBl5AYWoBiqngZpVpTCqN8eeS4XmfuYfVERGniZmu/TfpnaOqmhijzKpeHfPcOY
-         eSng==
-X-Gm-Message-State: AOUpUlFigwJz3yZ+Sl94Vvvqah5/K43KhAGrKjP3v5tgkxBPx8c3tevy
-        rX2v+uTj5wZkqDtgSipgfzs=
-X-Google-Smtp-Source: AAOMgpfAwr4RnKaf3uzQiFQTVF5Szg1yLCbrDq2WsBc4NYm9N6Y7BJSkFaR1ekFUSyx81DSKEd2ksg==
-X-Received: by 2002:a63:121a:: with SMTP id h26-v6mr1749063pgl.316.1533261004266;
-        Thu, 02 Aug 2018 18:50:04 -0700 (PDT)
-Received: from toddpoynor2.mtv.corp.google.com ([2620:0:1000:3701:7d29:cd13:d903:7908])
-        by smtp.gmail.com with ESMTPSA id m81-v6sm7348315pfa.188.2018.08.02.18.50.03
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 02 Aug 2018 18:50:03 -0700 (PDT)
-From:   Todd Poynor <toddpoynor@gmail.com>
-To:     Rob Springer <rspringer@google.com>,
-        John Joseph <jnjoseph@google.com>,
-        Ben Chan <benchan@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Dmitry Torokhov <dtor@chromium.org>, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, Todd Poynor <toddpoynor@google.com>
-Subject: [PATCH 1/4] staging: gasket: core: remove registration logs
-Date:   Thu,  2 Aug 2018 18:49:49 -0700
-Message-Id: <20180803014952.104582-2-toddpoynor@gmail.com>
-X-Mailer: git-send-email 2.18.0.597.ga71716f1ad-goog
-In-Reply-To: <20180803014952.104582-1-toddpoynor@gmail.com>
-References: <20180803014952.104582-1-toddpoynor@gmail.com>
+        Thu, 2 Aug 2018 23:44:58 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:10616 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1732375AbeHCDo6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 23:44:58 -0400
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 08479B1BCB5D2;
+        Fri,  3 Aug 2018 09:51:04 +0800 (CST)
+Received: from [10.177.253.249] (10.177.253.249) by smtp.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server id 14.3.399.0; Fri, 3 Aug 2018
+ 09:51:03 +0800
+Subject: Re: [V9fs-developer] About the V9fs-developer list (Was: [PATCH] 9p:
+ fix multiple
+To:     Dominique Martinet <asmadeus@codewreck.org>
+References: <20180728055945.GA16684@nautica> <5B5C0D12.3070208@huawei.com>
+ <20180728063248.GA24054@nautica> <20180802222835.GB18901@nautica>
+CC:     Latchesar Ionkov <lucho@ionkov.net>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <v9fs-developer@lists.sourceforge.net>,
+        Ron Minnich <rminnich@sandia.gov>
+From:   piaojun <piaojun@huawei.com>
+Message-ID: <5B63B4EF.4050909@huawei.com>
+Date:   Fri, 3 Aug 2018 09:50:39 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.2.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180802222835.GB18901@nautica>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.253.249]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Todd Poynor <toddpoynor@google.com>
 
-Remove logs for loading gasket drivers.
 
-Signed-off-by: Todd Poynor <toddpoynor@google.com>
----
- drivers/staging/gasket/gasket_core.c | 4 ----
- 1 file changed, 4 deletions(-)
-
-diff --git a/drivers/staging/gasket/gasket_core.c b/drivers/staging/gasket/gasket_core.c
-index 2b75f100da4d3..fa477d0c3c74c 100644
---- a/drivers/staging/gasket/gasket_core.c
-+++ b/drivers/staging/gasket/gasket_core.c
-@@ -1758,9 +1758,6 @@ int gasket_register_device(const struct gasket_driver_desc *driver_desc)
- 	}
- 	mutex_unlock(&g_mutex);
- 
--	pr_info("Loaded %s driver, framework version %s\n",
--		driver_desc->name, GASKET_FRAMEWORK_VERSION);
--
- 	if (desc_idx == -1) {
- 		pr_err("Too many Gasket drivers loaded: %d\n",
- 		       GASKET_FRAMEWORK_DESC_MAX);
-@@ -1808,7 +1805,6 @@ int gasket_register_device(const struct gasket_driver_desc *driver_desc)
- 		goto fail2;
- 	}
- 
--	pr_info("Driver registered successfully.\n");
- 	return 0;
- 
- fail2:
--- 
-2.18.0.597.ga71716f1ad-goog
-
+On 2018/8/3 6:28, Dominique Martinet wrote:
+> Dominique Martinet wrote on Sat, Jul 28, 2018:
+>> piaojun wrote on Sat, Jul 28, 2018:
+>>> Could we cancel the limitation of recipients' number?
+>>
+>> I think it's hard-coded by source-forge...
+>> I'm not list admin for v9fs-developer but we've had problems with
+>> another sf list on another project and the options are fairly limited
+>> from what I can recall...
+> 
+> I've got the list password from Eric (thanks!) and had a look.
+> 
+> It's actually more open than I remembered, in particular I have found
+> this maximum number of recipients setting and have lifted the limit.
+> 
+> 
+> You probably noticed I've also accepted a bunch of messages just now,
+> sorry for the spam if these were messages you had already seen, but
+> let's look forward to a more active list ;)
+> 
+Good news!
