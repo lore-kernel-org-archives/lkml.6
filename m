@@ -6,51 +6,51 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7237EC28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 14:29:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACB52C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 14:29:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB6E021748
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 14:29:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 57F8521748
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 14:29:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="IneSpxEg";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="dQf4X26R"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB6E021748
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="QUOD4WK8";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="orD8lry9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57F8521748
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732416AbeHCQ0E (ORCPT
+        id S1732442AbeHCQ0O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 12:26:04 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:53846 "EHLO
+        Fri, 3 Aug 2018 12:26:14 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:54866 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732362AbeHCQ0E (ORCPT
+        with ESMTP id S1732362AbeHCQ0O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 12:26:04 -0400
+        Fri, 3 Aug 2018 12:26:14 -0400
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 028F060BE3; Fri,  3 Aug 2018 14:29:26 +0000 (UTC)
+        id 3658A60D0C; Fri,  3 Aug 2018 14:29:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533306568;
-        bh=z0+o8JcTVkzBumcCN0fjCrlk1bse+h21Jcf+tjh8gtg=;
+        s=default; t=1533306578;
+        bh=P+GNtZZyeIlwe5ewxfy9BJ6cDSvlD5Xa0qlQO89Wo2Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
          References:From;
-        b=IneSpxEgD/3O/WDAqapSE0feG1ihNmuT+TSONLDMrDI3ZLSyuFg1GKr0Z+UzTYorp
-         /c7l34llDbH7LjRHQWU1rd0pnJ9riu9+Xs79T4IXC/7a/5Wp6fPXcclv2eyYQ9c+r2
-         euUg3IdZYnGJylsdJ86Hj8CrgTu6K/vejdJbowuQ=
+        b=QUOD4WK8O/NTEL2+0WwAK4/rfY7FANlPAZDczVi+U68L+JIKTkGZEqU5ut/JFSp75
+         dxttLLFBxLNea2bfPjoFOryo0ote3VVJg7vkTLc4XxVBUSjH9ChJsmoPgr5Vg0OJvc
+         dM1tOWtFlRBDUT7B++8x17wy8G6TYxdOOZmSqJXA=
 Received: from blr-ubuntu-253.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: saiprakash.ranjan@codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 1460760B7B;
-        Fri,  3 Aug 2018 14:29:17 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id D015960B22;
+        Fri,  3 Aug 2018 14:29:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533306564;
-        bh=z0+o8JcTVkzBumcCN0fjCrlk1bse+h21Jcf+tjh8gtg=;
+        s=default; t=1533306573;
+        bh=P+GNtZZyeIlwe5ewxfy9BJ6cDSvlD5Xa0qlQO89Wo2Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
          References:From;
-        b=dQf4X26RcOGffrr/0aI58ZSkrg64vLNSiA5qveJ2Ur6ofBcN8dtwmvEPKOobW5S3H
-         6lavmAqO0i+TaiYZuSTRW2k39eRADk4WlyODMolYIxxA97gVemFr94A8SIowL4DWRs
-         4MBJciGnjvr5dE75ZyO4IpwuzVBpXmmQj1Hyi5SE=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1460760B7B
+        b=orD8lry9etnsADIaM4yaaMB9hEZneOyI7NNXzgvolE09sAYgwpILnUMRVHzk641O6
+         OpkeVaFctTYbVRvXJK0TgZ1+AipbADzZwHqGq1CqoeHmXcI9h3ddrYzknZ7SUrI8fJ
+         h0radPHiexvK7tpWkHL3kiJ0ZPaI7g/9tLiJYxVM=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D015960B22
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
 From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
@@ -77,9 +77,9 @@ Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
         Ingo Molnar <mingo@kernel.org>,
         Tom Zanussi <tom.zanussi@linux.intel.com>,
         Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-Subject: [RFC PATCH 2/3] pstore: Add register readl/writel tracing support
-Date:   Fri,  3 Aug 2018 19:58:43 +0530
-Message-Id: <aa50eab8ec811be09941de9369ba8c8dddff509e.1533211509.git.saiprakash.ranjan@codeaurora.org>
+Subject: [RFC PATCH 3/3] dynamic_debug: Add support for dynamic register trace
+Date:   Fri,  3 Aug 2018 19:58:44 +0530
+Message-Id: <37c723a7892b21eb67b8447160d8d602703f321f.1533211509.git.saiprakash.ranjan@codeaurora.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <cover.1533211508.git.saiprakash.ranjan@codeaurora.org>
 References: <cover.1533211508.git.saiprakash.ranjan@codeaurora.org>
@@ -90,541 +90,188 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-readl/writel are typically used for reading from memory
-mapped registers, which can cause hangs if accessed
-unclocked. Tracing these events can help in debugging
-various issues faced during initial development.
+Introduce dynamic debug filtering mechanism to register
+tracing as dynamic_rtb() which will reduce a lot of
+overhead otherwise of tracing all the register reads/writes
+in all files.
 
-We log this trace information in persistent ram buffer which
-can be viewed after reset.
+Now we can just specify the file name or any wildcard pattern
+as any other dynamic debug facility in bootargs and dynamic rtb
+will just trace them and the output can be seen in pstore.
 
-We use pstore_rtb_call() to write the RTB log to pstore.
-RTB buffer size is taken from ramoops dt node with additional
-property called rtb-size.
+TODO: Now we use same 'p' flag but will add a separate flag for register trace
+later.
 
-For reading the trace after mounting pstore, rtb-ramoops entry
-can be seen in /sys/fs/pstore/ as in below sample output.
+Example for tracing all register reads/writes in drivers/soc/qcom/* below:
 
-Sample output of tracing register reads/writes in drivers:
+  # dyndbg="file drivers/soc/qcom/* +p" in bootargs
+  # reboot -f
+  # mount -t pstore pstore /sys/fs/pstore
+  # cat /sys/fs/pstore/rtb-ramoops-0
+    [LOGK_WRITEL ] ts:1373030419  data:ffff00000d5065a4  <ffff00000867cb44>  qcom_smsm_probe+0x51c/0x668
+    [LOGK_WRITEL ] ts:1373360576  data:ffff00000d506608  <ffff00000867cb44>  qcom_smsm_probe+0x51c/0x668
 
- # mount -t pstore pstore /sys/fs/pstore
- # tail /sys/fs/pstore/rtb-ramoops-0
- [LOGK_READL  ] ts:36468476204  data:ffff00000800d0fc  <ffff0000084e9ee0>  gic_check_gicv2+0x58/0x60
- [LOGK_WRITEL ] ts:36468477715  data:ffff00000800d000  <ffff0000084e9fac>  gic_cpu_if_up+0xc4/0x110
- [LOGK_READL  ] ts:36468478548  data:ffff00000800d000  <ffff0000084e9fd8>  gic_cpu_if_up+0xf0/0x110
- [LOGK_WRITEL ] ts:36468480319  data:ffff00000800d000  <ffff0000084e9fac>  gic_cpu_if_up+0xc4/0x110
- [LOGK_READL  ] ts:36468481048  data:ffff00000800d00c  <ffff000008081a34>  gic_handle_irq+0xac/0x128
- [LOGK_WRITEL ] ts:36468482923  data:ffff00000800d010  <ffff000008081aac>  gic_handle_irq+0x124/0x128
- [LOGK_READL  ] ts:36468483184  data:ffff00000800d00c  <ffff000008081a34>  gic_handle_irq+0xac/0x128
- [LOGK_WRITEL ] ts:36468485215  data:ffff00000800d010  <ffff000008081aac>  gic_handle_irq+0x124/0x128
- [LOGK_READL  ] ts:36468486309  data:ffff00000800d00c  <ffff000008081a34>  gic_handle_irq+0xac/0x128
- [LOGK_WRITEL ] ts:36468488236  data:ffff00000800d010  <ffff000008081aac>  gic_handle_irq+0x124/0x128
-
-Output has below 5 fields:
-
- * Log type, Timestamp, Data from caller which is the address of
-   read/write, Caller ip and Caller name.
+Also we add uncached_logk api to readl/writel definitions for arm64
+as of now. This can be extended to arm as well later for tracing.
 
 Signed-off-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
 ---
- fs/pstore/Kconfig          | 12 +++++++
- fs/pstore/Makefile         |  1 +
- fs/pstore/inode.c          | 71 +++++++++++++++++++++++++++++++++++++-
- fs/pstore/internal.h       |  8 +++++
- fs/pstore/platform.c       |  4 +++
- fs/pstore/ram.c            | 42 ++++++++++++++++++++--
- fs/pstore/rtb.c            | 45 ++++++++++++++++++++++++
- include/linux/pstore.h     |  2 ++
- include/linux/pstore_ram.h |  1 +
- include/linux/rtb.h        |  7 ++++
- kernel/trace/trace_rtb.c   |  3 ++
- 11 files changed, 193 insertions(+), 3 deletions(-)
- create mode 100644 fs/pstore/rtb.c
+ arch/arm64/include/asm/io.h   | 93 +++++++++++++++++++++++++++++++++++
+ include/linux/dynamic_debug.h | 10 ++++
+ kernel/trace/Kconfig          |  1 +
+ 3 files changed, 104 insertions(+)
 
-diff --git a/fs/pstore/Kconfig b/fs/pstore/Kconfig
-index 09c19ef91526..395c1ee55de0 100644
---- a/fs/pstore/Kconfig
-+++ b/fs/pstore/Kconfig
-@@ -113,6 +113,18 @@ config PSTORE_PMSG
+diff --git a/arch/arm64/include/asm/io.h b/arch/arm64/include/asm/io.h
+index 35b2e50f17fb..e5f68b1b00a0 100644
+--- a/arch/arm64/include/asm/io.h
++++ b/arch/arm64/include/asm/io.h
+@@ -22,6 +22,7 @@
+ #ifdef __KERNEL__
  
- 	  If unsure, say N.
- 
-+config PSTORE_RTB
-+	bool "Log register operations like read/write"
-+	depends on PSTORE && PSTORE!=m
-+	depends on RTB
-+	help
-+	  When this option is enabled, rtb driver will log all register
-+	  reads/writes into a persistent ram buffer that can be decoded
-+	  and dumped after reboot through pstore filesystem. It can be used
-+	  to debug readl/writel access.
-+
-+	  If unsure, say N.
-+
- config PSTORE_FTRACE
- 	bool "Persistent function tracer"
- 	depends on PSTORE
-diff --git a/fs/pstore/Makefile b/fs/pstore/Makefile
-index 967b5891f325..c772c9420f57 100644
---- a/fs/pstore/Makefile
-+++ b/fs/pstore/Makefile
-@@ -9,6 +9,7 @@ pstore-objs += inode.o platform.o
- pstore-$(CONFIG_PSTORE_FTRACE)	+= ftrace.o
- 
- pstore-$(CONFIG_PSTORE_PMSG)	+= pmsg.o
-+pstore-$(CONFIG_PSTORE_RTB)	+= rtb.o
- 
- ramoops-objs += ram.o ram_core.o
- obj-$(CONFIG_PSTORE_RAM)	+= ramoops.o
-diff --git a/fs/pstore/inode.c b/fs/pstore/inode.c
-index 5fcb845b9fec..469e65ec3f07 100644
---- a/fs/pstore/inode.c
-+++ b/fs/pstore/inode.c
-@@ -33,6 +33,7 @@
- #include <linux/sched.h>
- #include <linux/magic.h>
- #include <linux/pstore.h>
+ #include <linux/types.h>
 +#include <linux/rtb.h>
- #include <linux/slab.h>
- #include <linux/spinlock.h>
- #include <linux/uaccess.h>
-@@ -57,6 +58,7 @@ struct pstore_ftrace_seq_data {
- };
  
- #define REC_SIZE sizeof(struct pstore_ftrace_record)
-+#define REC_SIZE_RTB sizeof(struct rtb_layout)
- 
- static void free_pstore_private(struct pstore_private *private)
+ #include <asm/byteorder.h>
+ #include <asm/barrier.h>
+@@ -36,6 +37,7 @@
+ /*
+  * Generic IO read/write.  These perform native-endian accesses.
+  */
++#if !defined(CONFIG_RTB)
+ #define __raw_writeb __raw_writeb
+ static inline void __raw_writeb(u8 val, volatile void __iomem *addr)
  {
-@@ -131,13 +133,73 @@ static const struct seq_operations pstore_ftrace_seq_ops = {
- 	.show	= pstore_ftrace_seq_show,
- };
- 
-+static void *pstore_rtb_seq_start(struct seq_file *s, loff_t *pos)
-+{
-+	struct pstore_private *ps = s->private;
-+	struct pstore_ftrace_seq_data *rdata;
-+
-+	rdata = kzalloc(sizeof(*rdata), GFP_KERNEL);
-+	if (!rdata)
-+		return NULL;
-+
-+	rdata->off = ps->total_size % REC_SIZE_RTB;
-+	rdata->off += *pos * REC_SIZE_RTB;
-+	if (rdata->off + REC_SIZE_RTB > ps->total_size) {
-+		kfree(rdata);
-+		return NULL;
-+	}
-+
-+	return rdata;
-+}
-+
-+static void pstore_rtb_seq_stop(struct seq_file *s, void *v)
-+{
-+	kfree(v);
-+}
-+
-+static void *pstore_rtb_seq_next(struct seq_file *s, void *v, loff_t *pos)
-+{
-+	struct pstore_private *ps = s->private;
-+	struct pstore_ftrace_seq_data *rdata = v;
-+
-+	rdata->off += REC_SIZE_RTB;
-+	if (rdata->off + REC_SIZE_RTB > ps->total_size)
-+		return NULL;
-+
-+	(*pos)++;
-+	return rdata;
-+}
-+
-+static int pstore_rtb_seq_show(struct seq_file *s, void *v)
-+{
-+	struct pstore_private *ps = s->private;
-+	struct pstore_ftrace_seq_data *rdata = v;
-+	struct rtb_layout *rec;
-+
-+	rec = (struct rtb_layout *)(ps->record->buf + rdata->off);
-+
-+	seq_printf(s, "[%-12s] ts:%llu  data:%llx  <%llx>  %pS\n",
-+		   rec->log_type, rec->timestamp, rec->data,
-+		   rec->caller, (void *)rec->caller);
-+
-+	return 0;
-+}
-+
-+static const struct seq_operations pstore_rtb_seq_ops = {
-+	.start	= pstore_rtb_seq_start,
-+	.next	= pstore_rtb_seq_next,
-+	.stop	= pstore_rtb_seq_stop,
-+	.show	= pstore_rtb_seq_show,
-+};
-+
- static ssize_t pstore_file_read(struct file *file, char __user *userbuf,
- 						size_t count, loff_t *ppos)
- {
- 	struct seq_file *sf = file->private_data;
- 	struct pstore_private *ps = sf->private;
- 
--	if (ps->record->type == PSTORE_TYPE_FTRACE)
-+	if (ps->record->type == PSTORE_TYPE_FTRACE ||
-+			ps->record->type == PSTORE_TYPE_RTB)
- 		return seq_read(file, userbuf, count, ppos);
- 	return simple_read_from_buffer(userbuf, count, ppos,
- 				       ps->record->buf, ps->total_size);
-@@ -153,6 +215,9 @@ static int pstore_file_open(struct inode *inode, struct file *file)
- 	if (ps->record->type == PSTORE_TYPE_FTRACE)
- 		sops = &pstore_ftrace_seq_ops;
- 
-+	if (ps->record->type == PSTORE_TYPE_RTB)
-+		sops = &pstore_rtb_seq_ops;
-+
- 	err = seq_open(file, sops);
- 	if (err < 0)
- 		return err;
-@@ -373,6 +438,10 @@ int pstore_mkfile(struct dentry *root, struct pstore_record *record)
- 		scnprintf(name, sizeof(name), "powerpc-opal-%s-%llu",
- 			  record->psi->name, record->id);
- 		break;
-+	case PSTORE_TYPE_RTB:
-+		scnprintf(name, sizeof(name), "rtb-%s-%llu",
-+			  record->psi->name, record->id);
-+		break;
- 	case PSTORE_TYPE_UNKNOWN:
- 		scnprintf(name, sizeof(name), "unknown-%s-%llu",
- 			  record->psi->name, record->id);
-diff --git a/fs/pstore/internal.h b/fs/pstore/internal.h
-index fb767e28aeb2..a5498e8b89d2 100644
---- a/fs/pstore/internal.h
-+++ b/fs/pstore/internal.h
-@@ -25,6 +25,14 @@ static inline void pstore_register_pmsg(void) {}
- static inline void pstore_unregister_pmsg(void) {}
- #endif
- 
-+#ifdef CONFIG_PSTORE_RTB
-+extern void pstore_register_rtb(void);
-+extern void pstore_unregister_rtb(void);
-+#else
-+static inline void pstore_register_rtb(void) {}
-+static inline void pstore_unregister_rtb(void) {}
-+#endif
-+
- extern struct pstore_info *psinfo;
- 
- extern void	pstore_set_kmsg_bytes(int);
-diff --git a/fs/pstore/platform.c b/fs/pstore/platform.c
-index c238ab8ba31d..f074feb71f8d 100644
---- a/fs/pstore/platform.c
-+++ b/fs/pstore/platform.c
-@@ -573,6 +573,8 @@ int pstore_register(struct pstore_info *psi)
- 		pstore_register_ftrace();
- 	if (psi->flags & PSTORE_FLAGS_PMSG)
- 		pstore_register_pmsg();
-+	if (psi->flags & PSTORE_FLAGS_RTB)
-+		pstore_register_rtb();
- 
- 	/* Start watching for new records, if desired. */
- 	if (pstore_update_ms >= 0) {
-@@ -602,6 +604,8 @@ void pstore_unregister(struct pstore_info *psi)
- 	del_timer_sync(&pstore_timer);
- 	flush_work(&pstore_work);
- 
-+	if (psi->flags & PSTORE_FLAGS_RTB)
-+		pstore_unregister_rtb();
- 	if (psi->flags & PSTORE_FLAGS_PMSG)
- 		pstore_unregister_pmsg();
- 	if (psi->flags & PSTORE_FLAGS_FTRACE)
-diff --git a/fs/pstore/ram.c b/fs/pstore/ram.c
-index bbd1e357c23d..79c00c7cf7b4 100644
---- a/fs/pstore/ram.c
-+++ b/fs/pstore/ram.c
-@@ -56,6 +56,10 @@ static ulong ramoops_pmsg_size = MIN_MEM_SIZE;
- module_param_named(pmsg_size, ramoops_pmsg_size, ulong, 0400);
- MODULE_PARM_DESC(pmsg_size, "size of user space message log");
- 
-+static ulong ramoops_rtb_size = MIN_MEM_SIZE;
-+module_param_named(rtb_size, ramoops_rtb_size, ulong, 0400);
-+MODULE_PARM_DESC(rtb_size, "size of register trace log");
-+
- static unsigned long long mem_address;
- module_param_hw(mem_address, ullong, other, 0400);
- MODULE_PARM_DESC(mem_address,
-@@ -88,6 +92,7 @@ struct ramoops_context {
- 	struct persistent_ram_zone *cprz;	/* Console zone */
- 	struct persistent_ram_zone **fprzs;	/* Ftrace zones */
- 	struct persistent_ram_zone *mprz;	/* PMSG zone */
-+	struct persistent_ram_zone *rprz;       /* RTB zone */
- 	phys_addr_t phys_addr;
- 	unsigned long size;
- 	unsigned int memtype;
-@@ -95,6 +100,7 @@ struct ramoops_context {
- 	size_t console_size;
- 	size_t ftrace_size;
- 	size_t pmsg_size;
-+	size_t rtb_size;
- 	int dump_oops;
- 	u32 flags;
- 	struct persistent_ram_ecc_info ecc_info;
-@@ -106,6 +112,7 @@ struct ramoops_context {
- 	unsigned int max_ftrace_cnt;
- 	unsigned int ftrace_read_cnt;
- 	unsigned int pmsg_read_cnt;
-+	unsigned int rtb_read_cnt;
- 	struct pstore_info pstore;
- };
- 
-@@ -120,6 +127,7 @@ static int ramoops_pstore_open(struct pstore_info *psi)
- 	cxt->console_read_cnt = 0;
- 	cxt->ftrace_read_cnt = 0;
- 	cxt->pmsg_read_cnt = 0;
-+	cxt->rtb_read_cnt = 0;
- 	return 0;
+@@ -104,6 +106,97 @@ static inline u64 __raw_readq(const volatile void __iomem *addr)
+ 		     : "=r" (val) : "r" (addr));
+ 	return val;
  }
- 
-@@ -282,6 +290,11 @@ static ssize_t ramoops_pstore_read(struct pstore_record *record)
- 					   1, &record->id, &record->type,
- 					   PSTORE_TYPE_PMSG, 0);
- 
-+	if (!prz_ok(prz))
-+		prz = ramoops_get_next_prz(&cxt->rprz, &cxt->rtb_read_cnt,
-+					   1, &record->id, &record->type,
-+					   PSTORE_TYPE_RTB, 0);
-+
- 	/* ftrace is last since it may want to dynamically allocate memory. */
- 	if (!prz_ok(prz)) {
- 		if (!(cxt->flags & RAMOOPS_FLAG_FTRACE_PER_CPU)) {
-@@ -404,6 +417,11 @@ static int notrace ramoops_pstore_write(struct pstore_record *record)
- 	} else if (record->type == PSTORE_TYPE_PMSG) {
- 		pr_warn_ratelimited("PMSG shouldn't call %s\n", __func__);
- 		return -EINVAL;
-+	} else if (record->type == PSTORE_TYPE_RTB) {
-+		if (!cxt->rprz)
-+			return -ENOMEM;
-+		persistent_ram_write(cxt->rprz, record->buf, record->size);
-+		return 0;
- 	}
- 
- 	if (record->type != PSTORE_TYPE_DMESG)
-@@ -483,6 +501,9 @@ static int ramoops_pstore_erase(struct pstore_record *record)
- 	case PSTORE_TYPE_PMSG:
- 		prz = cxt->mprz;
- 		break;
-+	case PSTORE_TYPE_RTB:
-+		prz = cxt->rprz;
-+		break;
- 	default:
- 		return -EINVAL;
- 	}
-@@ -701,6 +722,7 @@ static int ramoops_parse_dt(struct platform_device *pdev,
- 	parse_size("console-size", pdata->console_size);
- 	parse_size("ftrace-size", pdata->ftrace_size);
- 	parse_size("pmsg-size", pdata->pmsg_size);
-+	parse_size("rtb-size", pdata->rtb_size);
- 	parse_size("ecc-size", pdata->ecc_info.ecc_size);
- 	parse_size("flags", pdata->flags);
- 
-@@ -747,7 +769,8 @@ static int ramoops_probe(struct platform_device *pdev)
- 	}
- 
- 	if (!pdata->mem_size || (!pdata->record_size && !pdata->console_size &&
--			!pdata->ftrace_size && !pdata->pmsg_size)) {
-+			!pdata->ftrace_size && !pdata->pmsg_size &&
-+			!pdata->rtb_size)) {
- 		pr_err("The memory size and the record/console size must be "
- 			"non-zero\n");
- 		goto fail_out;
-@@ -761,6 +784,8 @@ static int ramoops_probe(struct platform_device *pdev)
- 		pdata->ftrace_size = rounddown_pow_of_two(pdata->ftrace_size);
- 	if (pdata->pmsg_size && !is_power_of_2(pdata->pmsg_size))
- 		pdata->pmsg_size = rounddown_pow_of_two(pdata->pmsg_size);
-+	if (pdata->rtb_size && !is_power_of_2(pdata->rtb_size))
-+		pdata->rtb_size = rounddown_pow_of_two(pdata->rtb_size);
- 
- 	cxt->size = pdata->mem_size;
- 	cxt->phys_addr = pdata->mem_address;
-@@ -769,6 +794,7 @@ static int ramoops_probe(struct platform_device *pdev)
- 	cxt->console_size = pdata->console_size;
- 	cxt->ftrace_size = pdata->ftrace_size;
- 	cxt->pmsg_size = pdata->pmsg_size;
-+	cxt->rtb_size = pdata->rtb_size;
- 	cxt->dump_oops = pdata->dump_oops;
- 	cxt->flags = pdata->flags;
- 	cxt->ecc_info = pdata->ecc_info;
-@@ -776,7 +802,7 @@ static int ramoops_probe(struct platform_device *pdev)
- 	paddr = cxt->phys_addr;
- 
- 	dump_mem_sz = cxt->size - cxt->console_size - cxt->ftrace_size
--			- cxt->pmsg_size;
-+			- cxt->pmsg_size - cxt->rtb_size;
- 	err = ramoops_init_przs("dump", dev, cxt, &cxt->dprzs, &paddr,
- 				dump_mem_sz, cxt->record_size,
- 				&cxt->max_dump_cnt, 0, 0);
-@@ -804,6 +830,11 @@ static int ramoops_probe(struct platform_device *pdev)
- 	if (err)
- 		goto fail_init_mprz;
- 
-+	err = ramoops_init_prz("rtb", dev, cxt, &cxt->rprz, &paddr,
-+				cxt->rtb_size, 0);
-+	if (err)
-+		goto fail_init_rprz;
-+
- 	cxt->pstore.data = cxt;
- 	/*
- 	 * Console can handle any buffer size, so prefer LOG_LINE_MAX. If we
-@@ -829,6 +860,8 @@ static int ramoops_probe(struct platform_device *pdev)
- 		cxt->pstore.flags |= PSTORE_FLAGS_FTRACE;
- 	if (cxt->pmsg_size)
- 		cxt->pstore.flags |= PSTORE_FLAGS_PMSG;
-+	if (cxt->rtb_size)
-+		cxt->pstore.flags |= PSTORE_FLAGS_RTB;
- 
- 	err = pstore_register(&cxt->pstore);
- 	if (err) {
-@@ -846,6 +879,7 @@ static int ramoops_probe(struct platform_device *pdev)
- 	dump_oops = pdata->dump_oops;
- 	ramoops_console_size = pdata->console_size;
- 	ramoops_pmsg_size = pdata->pmsg_size;
-+	ramoops_rtb_size = pdata->rtb_size;
- 	ramoops_ftrace_size = pdata->ftrace_size;
- 
- 	pr_info("attached 0x%lx@0x%llx, ecc: %d/%d\n",
-@@ -858,6 +892,8 @@ static int ramoops_probe(struct platform_device *pdev)
- 	kfree(cxt->pstore.buf);
- fail_clear:
- 	cxt->pstore.bufsize = 0;
-+	persistent_ram_free(cxt->rprz);
-+fail_init_rprz:
- 	persistent_ram_free(cxt->mprz);
- fail_init_mprz:
- fail_init_fprz:
-@@ -877,6 +913,7 @@ static int ramoops_remove(struct platform_device *pdev)
- 	kfree(cxt->pstore.buf);
- 	cxt->pstore.bufsize = 0;
- 
-+	persistent_ram_free(cxt->rprz);
- 	persistent_ram_free(cxt->mprz);
- 	persistent_ram_free(cxt->cprz);
- 	ramoops_free_przs(cxt);
-@@ -918,6 +955,7 @@ static void ramoops_register_dummy(void)
- 	dummy_data->console_size = ramoops_console_size;
- 	dummy_data->ftrace_size = ramoops_ftrace_size;
- 	dummy_data->pmsg_size = ramoops_pmsg_size;
-+	dummy_data->rtb_size = ramoops_rtb_size;
- 	dummy_data->dump_oops = dump_oops;
- 	dummy_data->flags = RAMOOPS_FLAG_FTRACE_PER_CPU;
- 
-diff --git a/fs/pstore/rtb.c b/fs/pstore/rtb.c
-new file mode 100644
-index 000000000000..9fe159c38d64
---- /dev/null
-+++ b/fs/pstore/rtb.c
-@@ -0,0 +1,45 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2018 The Linux Foundation. All rights reserved.
-+ */
-+
-+#include <linux/fs.h>
-+#include <linux/irqflags.h>
-+#include <linux/rtb.h>
-+#include <linux/smp.h>
-+
-+#include "internal.h"
-+
-+void notrace pstore_rtb_call(struct rtb_layout *start)
-+{
-+	unsigned long flags;
-+	struct pstore_record record = {
-+		.type = PSTORE_TYPE_RTB,
-+		.buf = (char *)start,
-+		.size = sizeof(*start),
-+		.psi = psinfo,
-+	};
-+
-+	local_irq_save(flags);
-+
-+	psinfo->write(&record);
-+
-+	local_irq_restore(flags);
-+}
-+
-+void pstore_register_rtb(void)
-+{
-+	int ret;
-+
-+	if (!psinfo->write)
-+		return;
-+
-+	ret = rtb_init();
-+	if (ret)
-+		return;
-+}
-+
-+void pstore_unregister_rtb(void)
-+{
-+	rtb_exit();
-+}
-diff --git a/include/linux/pstore.h b/include/linux/pstore.h
-index a15bc4d48752..07ae7afe9d3a 100644
---- a/include/linux/pstore.h
-+++ b/include/linux/pstore.h
-@@ -44,6 +44,7 @@ enum pstore_type_id {
- 	PSTORE_TYPE_PPC_COMMON	= 6,
- 	PSTORE_TYPE_PMSG	= 7,
- 	PSTORE_TYPE_PPC_OPAL	= 8,
-+	PSTORE_TYPE_RTB		= 9,
- 	PSTORE_TYPE_UNKNOWN	= 255
- };
- 
-@@ -193,6 +194,7 @@ struct pstore_info {
- #define PSTORE_FLAGS_CONSOLE	(1 << 1)
- #define PSTORE_FLAGS_FTRACE	(1 << 2)
- #define PSTORE_FLAGS_PMSG	(1 << 3)
-+#define PSTORE_FLAGS_RTB	(1 << 4)
- 
- extern int pstore_register(struct pstore_info *);
- extern void pstore_unregister(struct pstore_info *);
-diff --git a/include/linux/pstore_ram.h b/include/linux/pstore_ram.h
-index e6d226464838..81eee723f2bb 100644
---- a/include/linux/pstore_ram.h
-+++ b/include/linux/pstore_ram.h
-@@ -97,6 +97,7 @@ struct ramoops_platform_data {
- 	unsigned long	console_size;
- 	unsigned long	ftrace_size;
- 	unsigned long	pmsg_size;
-+	unsigned long	rtb_size;
- 	int		dump_oops;
- 	u32		flags;
- 	struct persistent_ram_ecc_info ecc_info;
-diff --git a/include/linux/rtb.h b/include/linux/rtb.h
-index a969bd020466..169a77b4a565 100644
---- a/include/linux/rtb.h
-+++ b/include/linux/rtb.h
-@@ -21,4 +21,11 @@ static inline int rtb_init(void) { return 0; }
- static inline void rtb_exit(void) { }
- #endif
- 
-+#if defined(CONFIG_PSTORE_RTB)
-+extern void pstore_rtb_call(struct rtb_layout *start);
 +#else
-+static inline void pstore_rtb_call(struct rtb_layout *start)
-+{ }
++static inline void __raw_writeb_log(u8 val, volatile void __iomem *addr)
++{
++	asm volatile("strb %w0, [%1]" : : "rZ" (val), "r" (addr));
++}
++
++static inline void __raw_writew_log(u16 val, volatile void __iomem *addr)
++{
++	asm volatile("strh %w0, [%1]" : : "rZ" (val), "r" (addr));
++}
++
++static inline void __raw_writel_log(u32 val, volatile void __iomem *addr)
++{
++	asm volatile("str %w0, [%1]" : : "rZ" (val), "r" (addr));
++}
++
++static inline void __raw_writeq_log(u64 val, volatile void __iomem *addr)
++{
++	asm volatile("str %x0, [%1]" : : "rZ" (val), "r" (addr));
++}
++
++static inline u8 __raw_readb_log(const volatile void __iomem *addr)
++{
++	u8 val;
++
++	asm volatile(ALTERNATIVE("ldrb %w0, [%1]",
++				 "ldarb %w0, [%1]",
++				 ARM64_WORKAROUND_DEVICE_LOAD_ACQUIRE)
++		     : "=r" (val) : "r" (addr));
++	return val;
++}
++
++static inline u16 __raw_readw_log(const volatile void __iomem *addr)
++{
++	u16 val;
++
++	asm volatile(ALTERNATIVE("ldrh %w0, [%1]",
++				 "ldarh %w0, [%1]",
++				 ARM64_WORKAROUND_DEVICE_LOAD_ACQUIRE)
++		     : "=r" (val) : "r" (addr));
++	return val;
++}
++
++static inline u32 __raw_readl_log(const volatile void __iomem *addr)
++{
++	u32 val;
++
++	asm volatile(ALTERNATIVE("ldr %w0, [%1]",
++				 "ldar %w0, [%1]",
++				 ARM64_WORKAROUND_DEVICE_LOAD_ACQUIRE)
++		     : "=r" (val) : "r" (addr));
++	return val;
++}
++
++static inline u64 __raw_readq_log(const volatile void __iomem *addr)
++{
++	u64 val;
++
++	asm volatile(ALTERNATIVE("ldr %0, [%1]",
++				 "ldar %0, [%1]",
++				 ARM64_WORKAROUND_DEVICE_LOAD_ACQUIRE)
++		     : "=r" (val) : "r" (addr));
++	return val;
++}
++
++#define __raw_write_logged(v, a, _t) ({		\
++	volatile void __iomem *_a = (a);	\
++	void *_addr = (void __force *)(_a);	\
++	dynamic_rtb("LOGK_WRITEL", _addr);	\
++	__raw_write##_t##_log((v), _a);		\
++	})
++
++#define __raw_writeb(v, a)	__raw_write_logged((v), a, b)
++#define __raw_writew(v, a)	__raw_write_logged((v), a, w)
++#define __raw_writel(v, a)	__raw_write_logged((v), a, l)
++#define __raw_writeq(v, a)	__raw_write_logged((v), a, q)
++
++#define __raw_read_logged(a, _l, _t)    ({				\
++	_t __a;								\
++	const volatile void __iomem *_a = (const volatile void __iomem *)(a);\
++	void *_addr = (void __force *)(_a);				\
++	dynamic_rtb("LOGK_READL", _addr);				\
++	__a = __raw_read##_l##_log(_a);					\
++	__a;								\
++	})
++
++#define __raw_readb(a)	__raw_read_logged((a), b, u8)
++#define __raw_readw(a)	__raw_read_logged((a), w, u16)
++#define __raw_readl(a)	__raw_read_logged((a), l, u32)
++#define __raw_readq(a)	__raw_read_logged((a), q, u64)
++#endif
+ 
+ /* IO barriers */
+ #define __iormb()		rmb()
+diff --git a/include/linux/dynamic_debug.h b/include/linux/dynamic_debug.h
+index 2fd8006153c3..d76bd63c13b3 100644
+--- a/include/linux/dynamic_debug.h
++++ b/include/linux/dynamic_debug.h
+@@ -155,6 +155,16 @@ do {								\
+ 			       buf, len, ascii);		\
+ } while (0)
+ 
++#if defined(CONFIG_RTB)
++#define dynamic_rtb(log_type, data)				\
++do {								\
++	DEFINE_DYNAMIC_DEBUG_METADATA(descriptor,		\
++		__builtin_constant_p(log_type) ? log_type : "rtb");\
++	if (DYNAMIC_DEBUG_BRANCH(descriptor))			\
++		uncached_logk(log_type, data);			\
++} while (0)
 +#endif
 +
- #endif /* _RTB_H */
-diff --git a/kernel/trace/trace_rtb.c b/kernel/trace/trace_rtb.c
-index e8c24db71a2d..ddfcee12e414 100644
---- a/kernel/trace/trace_rtb.c
-+++ b/kernel/trace/trace_rtb.c
-@@ -73,6 +73,9 @@ static void uncached_logk_pc_idx(const char *log_type, u64 caller,
- 	rtb_write_timestamp(start);
- 	/* Make sure data is written */
- 	mb();
-+#if defined(CONFIG_PSTORE_RTB)
-+	pstore_rtb_call(start);
-+#endif
- }
+ #else
  
- static int rtb_get_idx(void)
+ #include <linux/string.h>
+diff --git a/kernel/trace/Kconfig b/kernel/trace/Kconfig
+index 9bbf7d1f60aa..898fcc38264b 100644
+--- a/kernel/trace/Kconfig
++++ b/kernel/trace/Kconfig
+@@ -724,6 +724,7 @@ config TRACING_EVENTS_GPIO
+ 
+ config RTB
+ 	bool "Register Trace Buffer"
++	depends on DYNAMIC_DEBUG
+ 	help
+ 	  Add support for logging different events to a small uncached
+ 	  region. This is designed to aid in debugging reset cases where the
 -- 
 QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
 of Code Aurora Forum, hosted by The Linux Foundation
