@@ -2,186 +2,70 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACAB7C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 14:06:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34D1BC28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 14:09:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6399A21709
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 14:06:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6399A21709
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id C27562170D
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 14:09:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C27562170D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732307AbeHCQCz (ORCPT
+        id S1732219AbeHCQFq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 12:02:55 -0400
-Received: from smtp.nue.novell.com ([195.135.221.5]:35881 "EHLO
-        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731699AbeHCQCz (ORCPT
-        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
-        Fri, 3 Aug 2018 12:02:55 -0400
-Received: from linux-l9pv.suse (124-11-22-254.static.tfn.net.tw [124.11.22.254])
-        by smtp.nue.novell.com with ESMTP (TLS encrypted); Fri, 03 Aug 2018 16:06:11 +0200
-Date:   Fri, 3 Aug 2018 22:05:53 +0800
-From:   joeyli <jlee@suse.com>
-To:     Ryan Chen <yu.chen.surf@gmail.com>
-Cc:     Chen Yu <yu.c.chen@intel.com>, oneukum@suse.com,
-        Pavel Machek <pavel@ucw.cz>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        ebiggers@google.com, Theodore Ts'o <tytso@mit.edu>,
-        smueller@chronox.de, denkenz@gmail.com,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        linux-crypto@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kookoo.gu@intel.com, Zhang Rui <rui.zhang@intel.com>
-Subject: Re: [PATCH 0/4][RFC v2] Introduce the in-kernel hibernation
- encryption
-Message-ID: <20180803140443.GD4244@linux-l9pv.suse>
-References: <20180719132003.GA30981@sandybridge-desktop>
- <20180720102532.GA20284@amd>
- <1532346156.3057.11.camel@suse.com>
- <20180723162302.GA4503@sandybridge-desktop>
- <1532590246.7411.3.camel@suse.com>
- <20180726081404.GG4244@linux-l9pv.suse>
- <20180730170415.GQ4244@linux-l9pv.suse>
- <20180803033702.GB416@sandybridge-desktop>
- <20180803053445.GC4244@linux-l9pv.suse>
- <CADjb_WSURQz86+E8kakNf7UBDM+aho+uaz3QdDkuGsEgan=szw@mail.gmail.com>
+        Fri, 3 Aug 2018 12:05:46 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:56688 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731781AbeHCQFp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 12:05:45 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1flalV-0007DK-FP; Fri, 03 Aug 2018 14:09:13 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>,
+        ocfs2-devel@oss.oracle.com
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ocfs2: fix spelling mistake: "ambigous" -> "ambiguous"
+Date:   Fri,  3 Aug 2018 15:09:13 +0100
+Message-Id: <20180803140913.3357-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CADjb_WSURQz86+E8kakNf7UBDM+aho+uaz3QdDkuGsEgan=szw@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 03, 2018 at 09:14:22PM +0800, Ryan Chen wrote:
-> On Fri, Aug 3, 2018 at 1:35 PM joeyli <jlee@suse.com> wrote:
-> >
-> > On Fri, Aug 03, 2018 at 11:37:02AM +0800, Yu Chen wrote:
-> > > Hi Joey,
-> > > On Tue, Jul 31, 2018 at 01:04:15AM +0800, joeyli wrote:
-> > > > Hi all,
-> > > >
-> > > > On Thu, Jul 26, 2018 at 04:14:04PM +0800, joeyli wrote:
-> > > > > On Thu, Jul 26, 2018 at 09:30:46AM +0200, Oliver Neukum wrote:
-> > > > > > On Di, 2018-07-24 at 00:23 +0800, Yu Chen wrote:
-> > > > > > >
-> > > > > > > Good point, we once tried to generate key in kernel, but people
-> > > > > > > suggest to generate key in userspace and provide it to the
-> > > > > > > kernel, which is what ecryptfs do currently, so it seems this
-> > > > > > > should also be safe for encryption in kernel.
-> > > > > > > https://www.spinics.net/lists/linux-crypto/msg33145.html
-> > > > > > > Thus Chun-Yi's signature can use EFI key and both the key from
-> > > > > > > user space.
-> > > > > >
-> > > > > > Hi,
-> > > > > >
-> > > > > > ecryptfs can trust user space. It is supposed to keep data
-> > > > > > safe while the system is inoperative. The whole point of Secure
-> > > > > > Boot is a cryptographic system of trust that does not include
-> > > > > > user space.
-> > > > > >
-> > > > > > I seriously doubt we want to use trusted computing here. So the
-> > > > > > key needs to be generated in kernel space and stored in a safe
-> > > > > > manner. As we have a saolution doing that, can we come to ausable
-> > > > > > synthesis?
-> > > > > >
-> > > > > >         Regards
-> > > > > >                 Oliver
-> > > > >
-> > > > > Crurently there have two solutions, they are trusted key and EFI key.
-> > > > > Both of them are generated in kernel and are not visible in user space.
-> > > > >
-> > > > > The trusted key is generated by kernel then sealed by the TPM's
-> > > > > SRK. So the trusted key can be stored in anywhere then be enrolled
-> > > > > to kernel when we need it. EVM already uses it.
-> > > > >
-> > > > > The EFI key is Jiri Kosina's idea. It is stored in boot services
-> > > > > variable, which means that it can only be access by signed EFI binary
-> > > > > (e.g. signed EFI boot stub) when secure boot be enabled. SLE applied
-> > > > > this solution a couple of years.
-> > > > >
-> > > > > I am working on put the EFI key to key retention service. Then
-> > > > > EFI key can be a master key of encrypted key. EVM can also use
-> > > > > it:
-> > > > > https://github.com/joeyli/linux-s4sign/commit/bae39460393ada4c0226dd07cd5e3afcef86b71f
-> > > > > https://github.com/joeyli/linux-s4sign/commit/f552f97cc3cca5acd84f424b7f946ffb5fe8e9ec
-> > > > >
-> > > > > That's why I want to use key retention service in hibernation
-> > > > > encryption/authentication. Which means that we can use key
-> > > > > API to access trusted key and EFI key.
-> > > > >
-> > > >
-> > > > Here is a proof of concept for using the key retention service
-> > > > to encrypt/sign snapshot image. It's using EFI key now, I will
-> > > > add encrypted key support in the key handler later:
-> > > >     https://github.com/joeyli/linux-s4sign/commit/6311e97038974bc5de8121769fb4d34470009566
-> > > >
-> > > Thanks for the work, I have two questions here:
-> >
-> > My EFI key patch set is almost done. I will send it soon.
-> >
-> Okay, please send them out then we can have further discussion
-> on that.
-> > > 1. Could you please describe a little more about the scenario on
-> > >    how the user could use the secret key for hibernation encryption?
-> > >    A requirement is that, the user should provide a passphrase(for key derivation, i.e.)
-> > >    during resume. I was thinking how user could interact with
-> > >    the security key mechanism here.
-> > >
-> >
-> > User space doesn't need to involve. The EFI root key is generated by
-> > EFI boot stub and be transfer to kernel. It's stored in EFI boot service
-> > variable that it can only be accessed by trusted EFI binary when
-> > secure boot is enabled.
-> >
-> Okay, this apply to the 'suspend' phase, right?
-> I'm still a little confused about the 'resume' phase.
-> Taking encryption as example(not signature),
-> the purpose of doing hibernation encryption is to prevent other users
-> from stealing ram content. Say, user A uses a  passphrase to generate the
-> key and encrypted the hibernation snapshot and stores it on the disk .
-> Then if user
-> B wants to do a hibernation resume to A's previous environment, B has
-> to provide the same passphrase.
-> If I understand correctly, the secret key is saved in  header and stored
-> on the disk. Which means,  any one can read the header from the disk
-> to get  the secret key in trampoline  thus decrypt the image, which is not
-> safe.
+From: Colin Ian King <colin.king@canonical.com>
 
-The secret key that it's saved in snapshot header is a session key which
-is encrypted by ERK (EFI root key). The ERK only lives in kernel space.
-So the session key is still secure.
+Trivial fix to spelling mistake in error message text
 
-When resume, the session key will be decrypted/verified by ERK. Then
-kernel uses the session key to decrypted/verified snapshot image.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/ocfs2/inode.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Of course that we can direct use ERK to encrypt/authenticate snapshot
-image. Actually the first version of hibernation verification in SLE
-direct uses ERK. So the snapshot header only keeps signature but no
-encrypted session key.
-
-I add session key in new version because I want to align with
-the use case of TPM trusted key + encrypted key. Then hibernation
-can use key retention service API to access EFI key or encrypted key.
-
-Compare the trusted key with EFI secure key:
-
-TPM SRK ----seal-----> Trusted key    ---encrypt---> Encrypted key
-ERK     ---encrypt---> EFI secure key ---encrypt---> Encrypted key
-
-Both of them can be the master key of encrypted key. 
+diff --git a/fs/ocfs2/inode.c b/fs/ocfs2/inode.c
+index 79279240fb6e..8f3598550f2c 100644
+--- a/fs/ocfs2/inode.c
++++ b/fs/ocfs2/inode.c
+@@ -548,7 +548,7 @@ static int ocfs2_read_locked_inode(struct inode *inode,
+ 	 */
+ 	mlog_bug_on_msg(!!(fe->i_flags & cpu_to_le32(OCFS2_SYSTEM_FL)) !=
+ 			!!(args->fi_flags & OCFS2_FI_FLAG_SYSFILE),
+-			"Inode %llu: system file state is ambigous\n",
++			"Inode %llu: system file state is ambiguous\n",
+ 			(unsigned long long)args->fi_blkno);
  
-If EFI key can not be accepted by kernel community, then the TPM
-trusted key + encrypted key will be the only solution. We can very
-easy to switch to encrypted key by using key retention service
-API.
+ 	if (S_ISCHR(le16_to_cpu(fe->i_mode)) ||
+-- 
+2.17.1
 
-Thanks a lot!
-Joey Lee 
