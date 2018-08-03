@@ -2,168 +2,141 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDDEBC28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 10:10:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BC2CC28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 10:11:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87C6521717
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 10:10:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87C6521717
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 4C6AE2174D
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 10:11:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C6AE2174D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732584AbeHCMG1 (ORCPT
+        id S1732611AbeHCMGn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 08:06:27 -0400
-Received: from mga06.intel.com ([134.134.136.31]:57381 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729818AbeHCMG0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 08:06:26 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Aug 2018 03:10:49 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,438,1526367600"; 
-   d="scan'208";a="72272390"
-Received: from bee.sh.intel.com (HELO lkp-server01) ([10.239.97.14])
-  by orsmga003.jf.intel.com with ESMTP; 03 Aug 2018 03:10:45 -0700
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1flX2i-0009zi-L5; Fri, 03 Aug 2018 18:10:44 +0800
-Date:   Fri, 3 Aug 2018 18:10:21 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     kbuild-all@01.org, lee.jones@linaro.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, eballetbo@gmail.com,
-        linus.walleij@linaro.org, mazziesaccount@gmail.com,
-        dmitry.torokhov@gmail.com, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        sboyd@kernel.org, broonie@kernel.org, linux-input@vger.kernel.org,
-        mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
-Subject: Re: [PATCH v11 1/2] mfd: bd71837: mfd driver for ROHM BD71837 PMIC
-Message-ID: <201808031831.TJYSQ80i%fengguang.wu@intel.com>
-References: <77184f651e5cefb112f1061bc682b759f88144c6.1532946848.git.matti.vaittinen@fi.rohmeurope.com>
+        Fri, 3 Aug 2018 08:06:43 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:46998 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732587AbeHCMGm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 08:06:42 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w73A8uJh111594
+        for <linux-kernel@vger.kernel.org>; Fri, 3 Aug 2018 06:11:05 -0400
+Received: from e35.co.us.ibm.com (e35.co.us.ibm.com [32.97.110.153])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2kmm1r2hnd-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Aug 2018 06:11:05 -0400
+Received: from localhost
+        by e35.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <nayna@linux.vnet.ibm.com>;
+        Fri, 3 Aug 2018 04:11:04 -0600
+Received: from b03cxnp08027.gho.boulder.ibm.com (9.17.130.19)
+        by e35.co.us.ibm.com (192.168.1.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 3 Aug 2018 04:11:01 -0600
+Received: from b03ledav003.gho.boulder.ibm.com (b03ledav003.gho.boulder.ibm.com [9.17.130.234])
+        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w73AB0Oi65994894
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 3 Aug 2018 03:11:00 -0700
+Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6DF236A04D;
+        Fri,  3 Aug 2018 04:11:00 -0600 (MDT)
+Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4A8986A04F;
+        Fri,  3 Aug 2018 04:10:57 -0600 (MDT)
+Received: from [9.124.31.153] (unknown [9.124.31.153])
+        by b03ledav003.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Fri,  3 Aug 2018 04:10:56 -0600 (MDT)
+Subject: Re: [PATCH 1/4] ima: add support for arch specific policies
+To:     kbuild test robot <lkp@intel.com>,
+        Eric Richter <erichte@linux.vnet.ibm.com>
+Cc:     kbuild-all@01.org,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        Justin Forbes <jforbes@redhat.com>,
+        Mimi Zohar <zohar@linux.ibm.com>
+References: <20180725233200.761-2-erichte@linux.vnet.ibm.com>
+ <201807281011.3IfKWpyx%fengguang.wu@intel.com>
+From:   Nayna Jain <nayna@linux.vnet.ibm.com>
+Date:   Fri, 3 Aug 2018 15:38:36 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <77184f651e5cefb112f1061bc682b759f88144c6.1532946848.git.matti.vaittinen@fi.rohmeurope.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <201807281011.3IfKWpyx%fengguang.wu@intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18080310-0012-0000-0000-00001696A816
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009476; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01069467; UDB=6.00549964; IPR=6.00848025;
+ MB=3.00022478; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-03 10:11:04
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18080310-0013-0000-0000-000053E70437
+Message-Id: <b47cddd8-44ea-1175-a6ee-25f06ad4a185@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-03_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808030113
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Matti,
 
-Thank you for the patch! Perhaps something to improve:
 
-[auto build test WARNING on ljones-mfd/for-mfd-next]
-[also build test WARNING on v4.18-rc7 next-20180802]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+On 07/28/2018 07:54 AM, kbuild test robot wrote:
+> Hi Nayna,
+>
+> Thank you for the patch! Perhaps something to improve:
 
-url:    https://github.com/0day-ci/linux/commits/Matti-Vaittinen/mfd-bd71837-mfd-driver-for-ROHM-BD71837-PMIC/20180730-204810
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git for-mfd-next
+Thanks for the report. I will address or squash the changes with the 
+existing PATCH 1/4 in the next version.
+The warning about NULL dereference in PATCH 4/4 is related to changes in 
+PATCH 1/4, so will fix in PATCH 1/4 itself.
 
-smatch warnings:
-drivers/mfd/rohm-bd718x7.c:163 bd71837_i2c_probe() warn: unsigned 'button.irq' is never less than zero.
+Thanks & Regards,
+     - Nayna
 
-vim +163 drivers/mfd/rohm-bd718x7.c
 
-    88	
-    89	static int bd71837_i2c_probe(struct i2c_client *i2c,
-    90				    const struct i2c_device_id *id)
-    91	{
-    92		struct bd71837 *bd71837;
-    93		int ret, i;
-    94		unsigned int val;
-    95	
-    96		bd71837 = devm_kzalloc(&i2c->dev, sizeof(struct bd71837), GFP_KERNEL);
-    97	
-    98		if (!bd71837)
-    99			return -ENOMEM;
-   100	
-   101		bd71837->chip_irq = i2c->irq;
-   102	
-   103		if (!bd71837->chip_irq) {
-   104			dev_err(&i2c->dev, "No IRQ configured\n");
-   105			return -EINVAL;
-   106		}
-   107	
-   108		bd71837->dev = &i2c->dev;
-   109		dev_set_drvdata(&i2c->dev, bd71837);
-   110	
-   111		bd71837->regmap = devm_regmap_init_i2c(i2c, &bd71837_regmap_config);
-   112		if (IS_ERR(bd71837->regmap)) {
-   113			dev_err(&i2c->dev, "regmap initialization failed\n");
-   114			return PTR_ERR(bd71837->regmap);
-   115		}
-   116	
-   117		ret = regmap_read(bd71837->regmap, BD71837_REG_REV, &val);
-   118		if (ret) {
-   119			dev_err(&i2c->dev, "Read BD71837_REG_DEVICE failed\n");
-   120			return ret;
-   121		}
-   122		for (i = 0; i < ARRAY_SIZE(supported_revisions); i++)
-   123			if (supported_revisions[i] == val)
-   124				break;
-   125	
-   126		if (i == ARRAY_SIZE(supported_revisions)) {
-   127			dev_err(&i2c->dev, "Unsupported chip revision\n");
-   128			return -ENODEV;
-   129		}
-   130	
-   131		ret = devm_regmap_add_irq_chip(&i2c->dev, bd71837->regmap,
-   132					       bd71837->chip_irq, IRQF_ONESHOT, 0,
-   133					       &bd71837_irq_chip, &bd71837->irq_data);
-   134		if (ret) {
-   135			dev_err(&i2c->dev, "Failed to add irq_chip\n");
-   136			return ret;
-   137		}
-   138	
-   139		/* Configure short press to 10 milliseconds */
-   140		ret = regmap_update_bits(bd71837->regmap,
-   141					 BD71837_REG_PWRONCONFIG0,
-   142					 BD718XX_PWRBTN_PRESS_DURATION_MASK,
-   143					 BD718XX_PWRBTN_SHORT_PRESS_10MS);
-   144		if (ret) {
-   145			dev_err(&i2c->dev, "Failed to configure button short press timeout\n");
-   146			return ret;
-   147		}
-   148	
-   149		/* Configure long press to 10 seconds */
-   150		ret = regmap_update_bits(bd71837->regmap,
-   151					 BD71837_REG_PWRONCONFIG1,
-   152					 BD718XX_PWRBTN_PRESS_DURATION_MASK,
-   153					 BD718XX_PWRBTN_LONG_PRESS_10S);
-   154	
-   155		if (ret) {
-   156			dev_err(&i2c->dev, "Failed to configure button long press timeout\n");
-   157			return ret;
-   158		}
-   159	
-   160		button.irq = regmap_irq_get_virq(bd71837->irq_data,
-   161						  BD71837_INT_PWRBTN_S);
-   162	
- > 163		if (button.irq < 0) {
-   164			dev_err(&i2c->dev, "Failed to get the IRQ\n");
-   165			return button.irq;
-   166		}
-   167	
-   168		ret = devm_mfd_add_devices(bd71837->dev, PLATFORM_DEVID_AUTO,
-   169					   bd71837_mfd_cells,
-   170					   ARRAY_SIZE(bd71837_mfd_cells), NULL, 0,
-   171					   regmap_irq_get_domain(bd71837->irq_data));
-   172		if (ret)
-   173			dev_err(&i2c->dev, "Failed to create subdevices\n");
-   174	
-   175		return ret;
-   176	}
-   177	
+>
+> [auto build test WARNING on integrity/next-integrity]
+> [also build test WARNING on next-20180727]
+> [cannot apply to v4.18-rc6]
+> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+>
+> url:    https://github.com/0day-ci/linux/commits/Eric-Richter/ima-add-support-for-arch-specific-policies/20180728-072442
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git next-integrity
+> reproduce:
+>          # apt-get install sparse
+>          make ARCH=x86_64 allmodconfig
+>          make C=1 CF=-D__CHECK_ENDIAN__
+>
+>
+> sparse warnings: (new ones prefixed by >>)
+>
+>>> security/integrity/ima/ima_policy.c:198:23: sparse: symbol 'arch_policy_rules' was not declared. Should it be static?
+>>> security/integrity/ima/ima_policy.c:199:23: sparse: symbol 'arch_policy_entry' was not declared. Should it be static?
+>     include/linux/slab.h:631:13: sparse: undefined identifier '__builtin_mul_overflow'
+>     include/linux/slab.h:631:13: sparse: not a function <noident>
+>     include/linux/slab.h:631:13: sparse: call with no type!
+>
+> Please review and possibly fold the followup patch.
+>
+> ---
+> 0-DAY kernel test infrastructure                Open Source Technology Center
+> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+>
 
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
