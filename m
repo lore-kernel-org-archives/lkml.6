@@ -3,159 +3,198 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17C60C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 16:37:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B1D7C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 16:37:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B473421774
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 16:37:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A8CE21777
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 16:37:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="TEDeTomU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B473421774
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="OmPg6ppm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A8CE21777
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728639AbeHCSet (ORCPT
+        id S1729612AbeHCSew (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 14:34:49 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:42823 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727362AbeHCSet (ORCPT
+        Fri, 3 Aug 2018 14:34:52 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:41232 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727362AbeHCSev (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 14:34:49 -0400
-Received: by mail-io0-f196.google.com with SMTP id g11-v6so5474745ioq.9;
-        Fri, 03 Aug 2018 09:37:46 -0700 (PDT)
+        Fri, 3 Aug 2018 14:34:51 -0400
+Received: by mail-pg1-f194.google.com with SMTP id z8-v6so3079565pgu.8
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Aug 2018 09:37:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=NhGHLCuCDrC3t2YKc6PPYC7XNF/mP/dEl9RYiSyhq9E=;
-        b=TEDeTomUMKBUXIvTXNmFyvYFZR2kvUe0HvCNqnCOADTNkq9OYw0atHpabH/PldQ2ie
-         nZ7jLF+mQCmQ8lK62O5MaD+DaKgVx90nP9irfDS2xFV2rR+scvv0TzEaPIgq45BGquMi
-         Rf1o07tVBc86cQ8QiHcE4lcjV5u4wpvl0/3wI=
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=lsbzl/aTVJqe9yg2zOgT5GvTyvwlhm8GeYPdTfOQU6s=;
+        b=OmPg6ppmxkYcgnsVnRuW/4A0FBNY+vzs8ePsMJ6OHfu3rd2emnvwUV3UIB3UQLwIA6
+         3/K7aztKBQpy+8whKec8uPJidLx7G1USeTnkcElCzfb0NhEuQ7Ow5/C2hojbyowxhZf7
+         vpKzEYxPtVWaizoRCS9MZbWOfqERB3DGI1LzU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NhGHLCuCDrC3t2YKc6PPYC7XNF/mP/dEl9RYiSyhq9E=;
-        b=beY7r7Im+e1zHpRkTuFtePl7MhOtcDb6Q7EmCkguqa1HoqCoMSKOC0M8VOC0pdqWMl
-         DIuwacth3GsdhMVoG9x3u/xpJn82prUcNCFnBWfmg/5NJSL7urXzE7IlRcaea4aEId9Q
-         nUzgdPiEcfBfB1hF/CWH2Nv5fFfi/r59GWV8ti/syT5kHfaNjZVvBbX9Ryi7K0GqdhcW
-         2XiMxpYsj5yt5Ko6w9jwIAwP9mSmRMjdbB3cElmetBo5oIOyJkHwjI64Axlu50yp7pbv
-         wpvh+9arL+jR9CLEfGUTMN0Hhe8lktVpAFBHl3bKK9R0ODO292Y8FSKzzkcTWSdxYd7T
-         Ap1g==
-X-Gm-Message-State: AOUpUlGHSBz2LkJS6BmVz6KT8BSekLO4w816M+7f5HSWLwNG1NvXbUm7
-        TgkhOw3q0SoV712ycaVbmqjbMZHAsn3hbyoyIEA=
-X-Google-Smtp-Source: AAOMgpf1+xqv8xeYdI6UKj+BepLIaUu0RDwTWYgmLEEHeCG8JYtg2OoumI4H9NFoXFfXrc4b30x1l00bXJvrkT/1Yyc=
-X-Received: by 2002:a6b:fc0c:: with SMTP id r12-v6mr7093910ioh.203.1533314266130;
- Fri, 03 Aug 2018 09:37:46 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=lsbzl/aTVJqe9yg2zOgT5GvTyvwlhm8GeYPdTfOQU6s=;
+        b=uPQLiFlmoSl9fOzkJzR7fpz9A7gohtFbLsb6uwgHPBKIhQwHYPG2J/fTE04yTifsfz
+         NK7DT72trTAfYHG5SNaiT3tUT1Qzpy7b68aTGeaikl1gY2DRHVOKywmmbbevORQjEnwV
+         5dc18fv661InGMweWgF1EbOV0RfehWlrdeq1o7AoEjcqnLv9GKIH12jW6WmNUOrgSaq/
+         MfbMrWdoGugi6k2IGsEGlgNLNXqxXNJDs1MpXEoXKH1zwWfqjD26lrRe52qDaIRhwgoB
+         e2rzzl30e5I/hObjAWJbbaQ2gxxbAiz7tfBwI7PqJ/C9HUNTm28d7nFJttuw+FO/hLfc
+         u/Yg==
+X-Gm-Message-State: AOUpUlHZU3XZCx9hxnlwRt3fiBC6GP52iJUIL53BAqbNzcCFRgLHcjiO
+        kh1LOVKBl5xNQLeseAakyuj6hw==
+X-Google-Smtp-Source: AAOMgpdDx9BWEChtSz8riujxpWrtmtnovqNTQxPZrEc6OZ2S4NHAuVk07ap4LlhoN9W32kjaVShTyQ==
+X-Received: by 2002:a62:d842:: with SMTP id e63-v6mr5415959pfg.88.1533314268041;
+        Fri, 03 Aug 2018 09:37:48 -0700 (PDT)
+Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
+        by smtp.gmail.com with ESMTPSA id q10-v6sm7343072pfh.124.2018.08.03.09.37.46
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 03 Aug 2018 09:37:46 -0700 (PDT)
+Date:   Fri, 3 Aug 2018 09:37:45 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Network Development <netdev@vger.kernel.org>
+Cc:     Paul Mackerras <paulus@samba.org>, linux-ppp@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH net-next] ppp: mppe: Remove VLA usage
+Message-ID: <20180803163745.GA45715@beast>
 MIME-Version: 1.0
-References: <226835ba-2197-b850-6e5b-8ba14f7fd016@torlan.ru>
- <CAOi1vP_tYG77e71CdDiOcszSSEWrp9Vfi+KB7yFAXVQChkjP5A@mail.gmail.com>
- <93bff248-6897-4867-841b-2dace11597de@torlan.ru> <CA+55aFyAox9BTDpRsqLXiROhHOX60aa45LEZ7Azteaumdu11Fw@mail.gmail.com>
- <CAOi1vP-SJO4AMK=XD3Lmja++2dQqoiw6Zn8Vgxf8OfvYgnuC6Q@mail.gmail.com>
- <CA+55aFy2DR9fxHhmGq+azSjX9D71YtLsuFKmoEuYW3uTAUYtJg@mail.gmail.com>
- <d76415de-2056-c7d6-cc88-b896deaa8ead@torlan.ru> <1ec0a220-d5b0-1c27-e63b-c4d3f4ce9d77@torlan.ru>
- <CA+55aFyPVQ5-gA93irsaxPC9BNQxnGWrDDHPMUYai2kxKiaKWQ@mail.gmail.com> <b2bbd8ec-ac5b-fa8a-d3f7-8615d87f73c3@redhat.com>
-In-Reply-To: <b2bbd8ec-ac5b-fa8a-d3f7-8615d87f73c3@redhat.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 3 Aug 2018 09:37:35 -0700
-Message-ID: <CA+55aFwWZX=CXmWDTkDGb36kf12XmTehmQjbiMPCqCRG2hi9kw@mail.gmail.com>
-Subject: Re: LVM snapshot broke between 4.14 and 4.16
-To:     Zdenek Kabelac <zkabelac@redhat.com>
-Cc:     wgh@torlan.ru, Ilya Dryomov <idryomov@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        linux-block <linux-block@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Dammit. I haven't had to shout and curse at people for a while, but
-this is ABSOLUTELY THE MOST IMPORTANT THING IN THE UNIVERSE WHEN IT
-COMES TO SOFTWARE DEVELOPMENT ]
+In the quest to remove all stack VLA usage from the kernel[1], this
+removes the discouraged use of AHASH_REQUEST_ON_STACK (and associated
+VLA) by switching to shash directly and keeping the associated descriptor
+allocated with the regular state on the heap.
 
-On Fri, Aug 3, 2018 at 6:31 AM Zdenek Kabelac <zkabelac@redhat.com> wrote:
->
-> IMHO (as the author of fixing lvm2 patch) user should not be upgrading kernels
-> and keep running older lvm2 user-land tool (and there are very good reasons
-> for this).
+[1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
 
-Yeah, HELL NO!
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Acked-by: Arnd Bergmann <arnd@arndb.de>
+---
+Paul suggested this go via netdev directly:
+https://lkml.kernel.org/r/20180803031315.GA30807@fergus
+---
+ drivers/net/ppp/ppp_mppe.c | 56 ++++++++++++++++++++------------------
+ 1 file changed, 30 insertions(+), 26 deletions(-)
 
-Guess what? You're wrong. YOU ARE MISSING THE #1 KERNEL RULE.
+diff --git a/drivers/net/ppp/ppp_mppe.c b/drivers/net/ppp/ppp_mppe.c
+index 6c7fd98cb00a..a205750b431b 100644
+--- a/drivers/net/ppp/ppp_mppe.c
++++ b/drivers/net/ppp/ppp_mppe.c
+@@ -96,7 +96,7 @@ static inline void sha_pad_init(struct sha_pad *shapad)
+  */
+ struct ppp_mppe_state {
+ 	struct crypto_skcipher *arc4;
+-	struct crypto_ahash *sha1;
++	struct shash_desc *sha1;
+ 	unsigned char *sha1_digest;
+ 	unsigned char master_key[MPPE_MAX_KEY_LEN];
+ 	unsigned char session_key[MPPE_MAX_KEY_LEN];
+@@ -136,25 +136,16 @@ struct ppp_mppe_state {
+  */
+ static void get_new_key_from_sha(struct ppp_mppe_state * state)
+ {
+-	AHASH_REQUEST_ON_STACK(req, state->sha1);
+-	struct scatterlist sg[4];
+-	unsigned int nbytes;
+-
+-	sg_init_table(sg, 4);
+-
+-	nbytes = setup_sg(&sg[0], state->master_key, state->keylen);
+-	nbytes += setup_sg(&sg[1], sha_pad->sha_pad1,
+-			   sizeof(sha_pad->sha_pad1));
+-	nbytes += setup_sg(&sg[2], state->session_key, state->keylen);
+-	nbytes += setup_sg(&sg[3], sha_pad->sha_pad2,
+-			   sizeof(sha_pad->sha_pad2));
+-
+-	ahash_request_set_tfm(req, state->sha1);
+-	ahash_request_set_callback(req, 0, NULL, NULL);
+-	ahash_request_set_crypt(req, sg, state->sha1_digest, nbytes);
+-
+-	crypto_ahash_digest(req);
+-	ahash_request_zero(req);
++	crypto_shash_init(state->sha1);
++	crypto_shash_update(state->sha1, state->master_key,
++			    state->keylen);
++	crypto_shash_update(state->sha1, sha_pad->sha_pad1,
++			    sizeof(sha_pad->sha_pad1));
++	crypto_shash_update(state->sha1, state->session_key,
++			    state->keylen);
++	crypto_shash_update(state->sha1, sha_pad->sha_pad2,
++			    sizeof(sha_pad->sha_pad2));
++	crypto_shash_final(state->sha1, state->sha1_digest);
+ }
+ 
+ /*
+@@ -200,6 +191,7 @@ static void mppe_rekey(struct ppp_mppe_state * state, int initial_key)
+ static void *mppe_alloc(unsigned char *options, int optlen)
+ {
+ 	struct ppp_mppe_state *state;
++	struct crypto_shash *shash;
+ 	unsigned int digestsize;
+ 
+ 	if (optlen != CILEN_MPPE + sizeof(state->master_key) ||
+@@ -217,13 +209,21 @@ static void *mppe_alloc(unsigned char *options, int optlen)
+ 		goto out_free;
+ 	}
+ 
+-	state->sha1 = crypto_alloc_ahash("sha1", 0, CRYPTO_ALG_ASYNC);
+-	if (IS_ERR(state->sha1)) {
+-		state->sha1 = NULL;
++	shash = crypto_alloc_shash("sha1", 0, 0);
++	if (IS_ERR(shash))
++		goto out_free;
++
++	state->sha1 = kmalloc(sizeof(*state->sha1) +
++				     crypto_shash_descsize(shash),
++			      GFP_KERNEL);
++	if (!state->sha1) {
++		crypto_free_shash(shash);
+ 		goto out_free;
+ 	}
++	state->sha1->tfm = shash;
++	state->sha1->flags = 0;
+ 
+-	digestsize = crypto_ahash_digestsize(state->sha1);
++	digestsize = crypto_shash_digestsize(shash);
+ 	if (digestsize < MPPE_MAX_KEY_LEN)
+ 		goto out_free;
+ 
+@@ -246,7 +246,10 @@ static void *mppe_alloc(unsigned char *options, int optlen)
+ 
+ out_free:
+ 	kfree(state->sha1_digest);
+-	crypto_free_ahash(state->sha1);
++	if (state->sha1) {
++		crypto_free_shash(state->sha1->tfm);
++		kzfree(state->sha1);
++	}
+ 	crypto_free_skcipher(state->arc4);
+ 	kfree(state);
+ out:
+@@ -261,7 +264,8 @@ static void mppe_free(void *arg)
+ 	struct ppp_mppe_state *state = (struct ppp_mppe_state *) arg;
+ 	if (state) {
+ 		kfree(state->sha1_digest);
+-		crypto_free_ahash(state->sha1);
++		crypto_free_shash(state->sha1->tfm);
++		kzfree(state->sha1);
+ 		crypto_free_skcipher(state->arc4);
+ 		kfree(state);
+ 	}
+-- 
+2.17.1
 
-We do not regress, and we do not regress exactly because your are 100% wrong.
 
-And the reason you state for your opinion is in fact exactly *WHY* you
-are wrong.
-
-Your "good reasons" are pure and utter garbage.
-
-The whole point of "we do not regress" is so that people can upgrade
-the kernel and never have to worry about it.
-
-> Kernel had a bug which has been fixed
-
-That is *ENTIRELY* immaterial.
-
-Guys, whether something was buggy or not DOES NOT MATTER.
-
-Why?
-
-Bugs happen. That's a fact of life. Arguing that "we had to break
-something because we were fixing a bug" is completely insane. We fix
-tens of bugs every single day, thinking that "fixing a bug" means that
-we can break something is simply NOT TRUE.
-
-So bugs simply aren't even relevant to the discussion. They happen,
-they get found, they get fixed, and it has nothing to do with "we
-break users".
-
-Because the only thing that matters IS THE USER.
-
-How hard is that to understand?
-
-Anybody who uses "but it was buggy" as an argument is entirely missing
-the point. As far as the USER was concerned, it wasn't buggy - it
-worked for him/her.
-
-Maybe it worked *because* the user had taken the bug into account,
-maybe it worked because the user didn't notice - again, it doesn't
-matter. It worked for the user.
-
-Breaking a user workflow for a "bug" is absolutely the WORST reason
-for breakage you can imagine.
-
-It's basically saying "I took something that worked, and I broke it,
-but now it's better". Do you not see how f*cking insane that statement
-is?
-
-And without users, your program is not a program, it's a pointless
-piece of code that you might as well throw away.
-
-Seriously. This is *why* the #1 rule for kernel development is "we
-don't break users". Because "I fixed a bug" is absolutely NOT AN
-ARGUMENT if that bug fix broke a user setup. You actually introduced a
-MUCH BIGGER bug by "fixing" something that the user clearly didn't
-even care about.
-
-And dammit, we upgrade the kernel ALL THE TIME without upgrading any
-other programs at all. It is absolutely required, because flag-days
-and dependencies are horribly bad.
-
-And it is also required simply because I as a kernel developer do not
-upgrade random other tools that I don't even care about as I develop
-the kernel, and I want any of my users to feel safe doing the same
-time.
-
-So no. Your rule is COMPLETELY wrong. If you cannot upgrade a kernel
-without upgrading some other random binary, then we have a problem.
-
-                     Linus
+-- 
+Kees Cook
+Pixel Security
