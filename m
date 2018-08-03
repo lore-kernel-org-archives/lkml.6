@@ -2,121 +2,148 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58954C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 16:55:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 193E8C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 16:56:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1D9A21723
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 16:55:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uUdKvhQV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1D9A21723
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id C93532173F
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 16:56:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C93532173F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728226AbeHCSwG (ORCPT
+        id S1728324AbeHCSxX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 14:52:06 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:53033 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727466AbeHCSwG (ORCPT
+        Fri, 3 Aug 2018 14:53:23 -0400
+Received: from gateway33.websitewelcome.com ([192.185.146.21]:36802 "EHLO
+        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727171AbeHCSxX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 14:52:06 -0400
-Received: by mail-it0-f68.google.com with SMTP id d9-v6so9201921itf.2
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Aug 2018 09:54:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=WvGZvgDARZpI8mXGcviTmQkVEgmINSsJtf4vTyDN+kM=;
-        b=uUdKvhQVGGsJuKdHh4hL4cwIg3KePgDITLNsG3H4MZIgzpyBgs0nRmWeDBNTIskAwB
-         5EKL3U1C7JKZPecOIHdK5YMIYi4h28I5DWgOkpokWnxBW+eSzb3QsFtX2A0AKeJeoczz
-         evaxU5o6IUmM4DqWx75WjuDG4xO+q9htTFq4TfVNQfPi2QrF+87rvyadNVW1OfPHdgzm
-         1J9JNSsqzA8HGZFEFg/PDxoUem3WaL7U0dpVHfGCWNYkGw7msJbWUmvzCszYcUM4iwpX
-         mKyU2Bd+DqO0GjXdIXigzrSpkWNi7UhheJCNZta3MnEQ27BVIfgNj2gL5OS9uz+Gtys6
-         f3sg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=WvGZvgDARZpI8mXGcviTmQkVEgmINSsJtf4vTyDN+kM=;
-        b=CJg77ke7vxsEJZF9J95d/A+eK/OydN3DDhuDEt5Bl8RlYvs5vUnDjRZ988pNFU3Att
-         XfW/0zmDzXZA79ypOOCR3ZZvVlZ/z6ceyz3+bmuhq25H5kBSjdBp0+BchKdCSgXwCPxN
-         CI5NvlkU52wfF9FFsOZk48CpzT04zHueDXtdh8iYxtN7aGCCJPSxodH/HZHLXi+S3+St
-         DSAeD53m6ilJRXiyqQMi9EqarogtKTjfpqjeau5+7xvJ4XLabrVwZ7IxUTBKR20iaVZ+
-         TTCje0NX1Ef4mfPxcb5xCsaSTMeG4ATP0vp1bESlxz+9D0kwGQQxVJlmSjTAfE292sGs
-         LK4g==
-X-Gm-Message-State: AOUpUlF2DjWik/1ZySAc0kQUcrz0VLClnMMDoVEwfACPPpfAevFCZCft
-        HqJ6vWlTG8rVLo6O8bHIKEjvDNrdHIgrXM33bxb6jQ==
-X-Google-Smtp-Source: AAOMgpdkoZuILngtU3LsjnN6d6dD1d9SFo2jwbOgFOAUEAWXblwPXqf+goQAsk3cWmbxeo9syCZoK8RpupAD0rBXjX8=
-X-Received: by 2002:a24:22cf:: with SMTP id o198-v6mr7114718ito.53.1533315298287;
- Fri, 03 Aug 2018 09:54:58 -0700 (PDT)
+        Fri, 3 Aug 2018 14:53:23 -0400
+Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
+        by gateway33.websitewelcome.com (Postfix) with ESMTP id 20B4932F7
+        for <linux-kernel@vger.kernel.org>; Fri,  3 Aug 2018 11:56:15 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id ldN9ffJUDRPojldN9fAD9M; Fri, 03 Aug 2018 11:56:15 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.50.82] (port=33226 helo=[192.168.1.71])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1fldN8-003QAF-7d; Fri, 03 Aug 2018 11:56:14 -0500
+Subject: Re: [PATCH 11/11] ASoC: wm8994: Mark expected switch fall-through
+To:     Mark Brown <broonie@kernel.org>
+Cc:     valdis.kletnieks@vt.edu, Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        patches@opensource.cirrus.com, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>
+References: <cover.1533151956.git.gustavo@embeddedor.com>
+ <8e3df79b1dca92d49fd9d5c97391d31814ab40f9.1533151956.git.gustavo@embeddedor.com>
+ <30613.1533313609@turing-police.cc.vt.edu>
+ <85d918a5-6a14-ead0-4d0e-d63b5e43ad81@embeddedor.com>
+ <20180803164504.GF6591@sirena.org.uk>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <684a4fe9-6818-d19c-e7b7-fb8d592a0cee@embeddedor.com>
+Date:   Fri, 3 Aug 2018 11:56:12 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Received: by 2002:a02:918c:0:0:0:0:0 with HTTP; Fri, 3 Aug 2018 09:54:57 -0700 (PDT)
-In-Reply-To: <20180803164337.GB4718@bombadil.infradead.org>
-References: <cover.1529507994.git.andreyknvl@google.com> <CAAeHK+zqtyGzd_CZ7qKZKU-uZjZ1Pkmod5h8zzbN0xCV26nSfg@mail.gmail.com>
- <20180626172900.ufclp2pfrhwkxjco@armageddon.cambridge.arm.com>
- <CAAeHK+yqWKTdTG+ymZ2-5XKiDANV+fmUjnQkRy-5tpgphuLJRA@mail.gmail.com>
- <CAAeHK+wJbbCZd+-X=9oeJgsqQJiq8h+Aagz3SQMPaAzCD+pvFw@mail.gmail.com>
- <CAAeHK+yWF05XoU+0iuJoXAL3cWgdtxbeLoBz169yP12W4LkcQw@mail.gmail.com>
- <20180801174256.5mbyf33eszml4nmu@armageddon.cambridge.arm.com>
- <CAAeHK+zb7vcehuX9=oxLUJVJr1ZcgmRTODQz7wsPy+rJb=3kbQ@mail.gmail.com>
- <CAAeHK+xTxPhfbVTNxcbsx7VdwQ21Bt-vo2ZU1tEM1_JX7uKnng@mail.gmail.com>
- <20180803150945.GC9297@kroah.com> <20180803164337.GB4718@bombadil.infradead.org>
-From:   Andrey Konovalov <andreyknvl@google.com>
-Date:   Fri, 3 Aug 2018 18:54:57 +0200
-Message-ID: <CAAeHK+zqVTOSFD5yZ0E5Z3HZPVn8KYQJMGjBvin8rEfugBdfag@mail.gmail.com>
-Subject: Re: [PATCH v4 0/7] arm64: untag user pointers passed to the kernel
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        linux-doc@vger.kernel.org, Will Deacon <will.deacon@arm.com>,
-        Kostya Serebryany <kcc@google.com>,
-        linux-kselftest@vger.kernel.org,
-        Chintan Pandya <cpandya@codeaurora.org>,
-        Shuah Khan <shuah@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        linux-arch@vger.kernel.org, Jacob Bramley <Jacob.Bramley@arm.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Evgeniy Stepanov <eugenis@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180803164504.GF6591@sirena.org.uk>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.50.82
+X-Source-L: No
+X-Exim-ID: 1fldN8-003QAF-7d
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.71]) [189.250.50.82]:33226
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 91
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 3, 2018 at 6:43 PM, Matthew Wilcox <willy@infradead.org> wrote:
-> On Fri, Aug 03, 2018 at 05:09:45PM +0200, Greg Kroah-Hartman wrote:
->> On Fri, Aug 03, 2018 at 04:59:18PM +0200, Andrey Konovalov wrote:
->> > Started looking at this. When I run sparse with default checks enabled
->> > (make C=1) I get countless warnings. Does anybody actually use it?
->>
->> Try using a more up-to-date version of sparse.  Odds are you are using
->> an old one, there is a newer version in a different branch on kernel.org
->> somewhere...
->
-> That's not true.  Building the current version of sparse from
-> git://git.kernel.org/pub/scm/devel/sparse/sparse.git leaves me with a
-> thousand errors just building the mm/ directory.  A sample:
 
-I'm running the one from https://github.com/lucvoo/sparse-dev which
-seems to be even more up to date. Defconfig on x86 gives me ~3000
-warnings:
 
-https://gist.github.com/xairy/8adace989f64462e18ffb5cb7d096b73
+On 08/03/2018 11:45 AM, Mark Brown wrote:
+> On Fri, Aug 03, 2018 at 11:41:39AM -0500, Gustavo A. R. Silva wrote:
+>> On 08/03/2018 11:26 AM, valdis.kletnieks@vt.edu wrote:
+>>> On Wed, 01 Aug 2018 14:56:16 -0500, "Gustavo A. R. Silva" said:
+> 
+>>> Wait, what? This looks like the sort of bug -Wimplicit-fallthrough is supposed
+>>> to catch.  Unless for 'case WM8994_SYSCLK_OPCLK:' we actually do want to do a
+>>> whole bunch of snd_soc_component_update_bits() calls and then return -EINVAL
+>>> whether or not that case succeeded?
+> 
+>> Yeah, it seems like a bug. Can someone confirm this?
+> 
+>> Notice that this code has been there since 2010.
+> 
+> Basically nobody ever uses OPCLK so I'd be susprised if anyone ever
+> noticed.
+> 
+
+I see. I wonder what's the best approach in this case. Should that code be removed instead of 'fixed'?
+
+Thanks
+--
+Gustavo
