@@ -2,160 +2,216 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 966E7C46469
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68C7EC28CF6
 	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 18:07:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54184217B7
+	by mail.kernel.org (Postfix) with ESMTP id 1CA71217A2
 	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 18:07:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="XQFr64s6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54184217B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CA71217A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729946AbeHCUEg (ORCPT
+        id S1729338AbeHCUEM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 16:04:36 -0400
-Received: from mail-eopbgr50045.outbound.protection.outlook.com ([40.107.5.45]:14368
-        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727356AbeHCUEg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 16:04:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=I1IhrzxkrGr8VlALkA+DRG8erJ2i7p/uTAR55z6l3EQ=;
- b=XQFr64s6AdSJcvaSSNh9fGYmPp6dmrv+VA7adeTy+i+OzpGmu7dfMqQJMYYAvJeUeWhJzd461tDsoqovqwqmTIeJvm6KeVPjNmH9I7sOvowy1OW171KX4ot/KJHRZTMiXkFkHrxTRoPcDXn9E/XwqjbiX7UEh60vHoIgxIojLnA=
-Received: from AM0PR04MB4290.eurprd04.prod.outlook.com (52.134.126.145) by
- AM0PR04MB4337.eurprd04.prod.outlook.com (52.134.126.156) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1017.15; Fri, 3 Aug 2018 18:07:09 +0000
-Received: from AM0PR04MB4290.eurprd04.prod.outlook.com
- ([fe80::c96b:d6f5:db75:1273]) by AM0PR04MB4290.eurprd04.prod.outlook.com
- ([fe80::c96b:d6f5:db75:1273%5]) with mapi id 15.20.1017.010; Fri, 3 Aug 2018
- 18:07:09 +0000
-From:   Leonard Crestez <leonard.crestez@nxp.com>
-To:     "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>
-CC:     Richard Zhu <hongxing.zhu@nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "andrew.smirnov@gmail.com" <andrew.smirnov@gmail.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [RFC] PCI: imx: Add multi-pd support
-Thread-Topic: [RFC] PCI: imx: Add multi-pd support
-Thread-Index: AQHUI3qj7YIZZjz5Gkie2VtYh1QPdaSpCxaAgAVXigA=
-Date:   Fri, 3 Aug 2018 18:07:09 +0000
-Message-ID: <53f9f939dbce11e1c96986ff41f29dd6e41b9220.camel@nxp.com>
-References: <8018069bc772376caef29e76280e4d0facffdb68.1532455922.git.leonard.crestez@nxp.com>
-         <CAPDyKFpN99iDYf1mcG-G1=AAkiw8OjoynvK+5cBV8GvCs6WtKg@mail.gmail.com>
-In-Reply-To: <CAPDyKFpN99iDYf1mcG-G1=AAkiw8OjoynvK+5cBV8GvCs6WtKg@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Evolution 3.28.1-2 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=leonard.crestez@nxp.com; 
-x-originating-ip: [95.76.156.53]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM0PR04MB4337;6:70UKBFfFpiC2JnutMzJQBi6hYwP95tfvU/jj+j2k9mDAufmpgmgwAVwi1CVpHGSy14whAbbrKDsaVOWiXFrb+V8JFbjO2w9hTaR1J5tJT/cNDpjkuqk1CD3rLyAVxbFwc/K5Mj7RDhaqUEqTI6fpSbeDsflwIg+ee0Gr1rIbNhzRriFUsPfSwJuCnsV+LEjZ/t4Zhu+TCoZOBsA5dKoYacvVfTJYyIoSJDy/rNB01gyJBwA7J7Dv2brKXWePzKd2wLwVgeZocfub9jB7m95RLFj+Ah4IXFxLQ5+4e8RBhrqU72zwt3LrIQK7p+viJHECKSESmYAj15Taw/0Qx4dy1iF1Ehy9H9hbSizYvOGEJmUl9Tu+wD2rRxv2tSxov6cseFXKu3hppoEcQ1goWNc0yaQsbZEVIh/TaUeyulm/y+18R8OK2xEHgzxWUGYF6/37b+lyp1bdXjVwpnmqVHm0gg==;5:busYd5fv8RhCzlsCxVcy1oGMSfj0tLe+TZOjOqy46qv99SI5cRKreTapZONYkVwrqJ5tOi6gzTdiWjeYniNszsqK2SJPehW/STZ83Xj8LHqIpUPj3wf6dBHDWmnt4/IBX8FnfgQjYG/0VUw61jBWizNB6FVkNIpDuNQaLAxepvs=;7:moQGN/TmHXUQ7ZNIO/tGVj/QxFGC0frXiro9R5glnfGaY7fiSo1DcSxYPT1QIXjzLVVS19Zihs3KDnOveD96GKvks6HcRsZrU06tw44NqvG5XvbmXnXz4Mf9f2R5V7ZukXWjCopTBEr9tv1LXoFs4T4XW0VM2egVAIbvG7v28r+fkh1jYBS71LM3w/4Y2hmfCm6Ud1VilgOUWNVsz1fs5QkdrPANLv1HZ/B1Fz79BjGylNrBpdM9QmgXHUpsuMXh
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: d8724a92-60d3-4a37-0e41-08d5f96bee0b
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600074)(711020)(4618075)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB4337;
-x-ms-traffictypediagnostic: AM0PR04MB4337:
-x-microsoft-antispam-prvs: <AM0PR04MB4337181D913F883777876A4CEE230@AM0PR04MB4337.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(185117386973197);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231311)(944501410)(52105095)(93006095)(93001095)(3002001)(10201501046)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:AM0PR04MB4337;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB4337;
-x-forefront-prvs: 0753EA505A
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(376002)(136003)(346002)(396003)(366004)(189003)(199004)(229853002)(14454004)(66066001)(305945005)(106356001)(3846002)(5640700003)(6486002)(2351001)(6116002)(105586002)(2906002)(6436002)(5250100002)(2501003)(7736002)(478600001)(39060400002)(5660300001)(36756003)(25786009)(44832011)(99286004)(186003)(26005)(8936002)(76176011)(81156014)(6916009)(7416002)(446003)(476003)(2616005)(50226002)(54906003)(316002)(68736007)(2900100001)(86362001)(8676002)(6506007)(53936002)(81166006)(4326008)(6246003)(11346002)(102836004)(14444005)(5024004)(53546011)(118296001)(97736004)(6512007)(256004)(486006)(99106002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4337;H:AM0PR04MB4290.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: F9lBvNuxGLB/0YYl1hf3mEqV0tz30CbR2Juh7jDYJB2ekjOZqkGel7wsO4GWmI/CcH+9jVO/bKw+qbcn56Bi9Y1qzqwimZvl8M4R2WFMMrNhRYFugqvU+LXXYGD2pChfTG0J+H1u34IdkdfCOE8dgCSESa/Ccq0LIC4EEiQDqQbcvEDn5+lzBiNQHN7McUhEYd+wqsPAw7AUQagUfwJa1Pjesnn7dVHyt4eJxHFLfnnkp6XvCU/iTNjURhXU0uHNdtWwo7ktByXydRLkqOK/gV1A0QycFmlII///9PwzpB+RTGAAqb9sU3at6/twNT20CrfyrL8XQbknIW6d7+fCgidR0bsBqqSIvZP2XkHGJrk=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <B04ACE21F8C2A04CB2EE9769B597C5F6@eurprd04.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Fri, 3 Aug 2018 16:04:12 -0400
+Received: from smtp.nue.novell.com ([195.135.221.5]:57327 "EHLO
+        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727356AbeHCUEM (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
+        Fri, 3 Aug 2018 16:04:12 -0400
+Received: from linux-l9pv.suse (124-11-22-254.static.tfn.net.tw [124.11.22.254])
+        by smtp.nue.novell.com with ESMTP (TLS encrypted); Fri, 03 Aug 2018 20:06:39 +0200
+Date:   Sat, 4 Aug 2018 02:06:24 +0800
+From:   joeyli <jlee@suse.com>
+To:     Ryan Chen <yu.chen.surf@gmail.com>
+Cc:     Chen Yu <yu.c.chen@intel.com>, oneukum@suse.com,
+        Pavel Machek <pavel@ucw.cz>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        ebiggers@google.com, Theodore Ts'o <tytso@mit.edu>,
+        smueller@chronox.de, denkenz@gmail.com,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        linux-crypto@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kookoo.gu@intel.com, Zhang Rui <rui.zhang@intel.com>
+Subject: Re: [PATCH 0/4][RFC v2] Introduce the in-kernel hibernation
+ encryption
+Message-ID: <20180803180624.GE4244@linux-l9pv.suse>
+References: <1532346156.3057.11.camel@suse.com>
+ <20180723162302.GA4503@sandybridge-desktop>
+ <1532590246.7411.3.camel@suse.com>
+ <20180726081404.GG4244@linux-l9pv.suse>
+ <20180730170415.GQ4244@linux-l9pv.suse>
+ <20180803033702.GB416@sandybridge-desktop>
+ <20180803053445.GC4244@linux-l9pv.suse>
+ <CADjb_WSURQz86+E8kakNf7UBDM+aho+uaz3QdDkuGsEgan=szw@mail.gmail.com>
+ <20180803140443.GD4244@linux-l9pv.suse>
+ <CADjb_WQoa7eDhioZ8iVAzc8=BnBMbJyMCCLyxxgLjnzxi-R6XQ@mail.gmail.com>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d8724a92-60d3-4a37-0e41-08d5f96bee0b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Aug 2018 18:07:09.1630
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4337
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CADjb_WQoa7eDhioZ8iVAzc8=BnBMbJyMCCLyxxgLjnzxi-R6XQ@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gVHVlLCAyMDE4LTA3LTMxIGF0IDEwOjMyICswMjAwLCBVbGYgSGFuc3NvbiB3cm90ZToNCj4g
-T24gMjQgSnVseSAyMDE4IGF0IDIwOjE3LCBMZW9uYXJkIENyZXN0ZXogPGxlb25hcmQuY3Jlc3Rl
-ekBueHAuY29tPiB3cm90ZToNCj4gPiBPbiBzb21lIGNoaXBzIHRoZSBQQ0lFIGFuZCBQQ0lFX1BI
-WSBibG9ja3MgYXJlIGluIHNlcGFyYXRlIHBvd2VyIGRvbWFpbnMNCj4gPiB3aGljaCBjYW4gYmUg
-cG93ZXItZ2F0ZWQgaW5kZXBlbmRlbnRseS4gVGhlIGRyaXZlciBuZWVkcyB0byBoYW5kbGUgdGhp
-cw0KPiA+IGJ5IGtlZXBpbmcgYm90aCBkb21haW4gYWN0aXZlLg0KPiA+IA0KPiA+IFRoaXMgaXMg
-aW50ZW5kZWQgZm9yIGlteDZzeCB3aGVyZSBQQ0lFIGlzIGluIERJU1BNSVggYW5kIFBDSUVfUEhZ
-IGluDQo+ID4gaXQncyBvd24gZG9tYWluLiBEZWZpbmluZyB0aGUgRElTUE1JWCBkb21haW4gcmVx
-dWlyZXMgYSB3YXkgZm9yIHBjaWUgdG8NCj4gPiBrZWVwIGl0IGFjdGl2ZSBvciBpdCB3aWxsIGJy
-ZWFrIHdoZW4gZGlzcGxheXMgYXJlIG9mZi4NCj4gPiANCj4gPiBUaGUgcG93ZXItZG9tYWlucyBv
-biBpbXg2c3ggYXJlIG1lYW50IHRvIGxvb2sgbGlrZSB0aGlzOg0KPiA+ICAgICAgICAgcG93ZXIt
-ZG9tYWlucyA9IDwmcGRfZGlzcD4sIDwmcGRfcGNpPjsNCj4gPiAgICAgICAgIHBvd2VyLWRvbWFp
-bi1uYW1lcyA9ICJwY2llIiwgInBjaWVfcGh5IjsNCj4gPiANCj4gPiBTaWduZWQtb2ZmLWJ5OiBM
-ZW9uYXJkIENyZXN0ZXogPGxlb25hcmQuY3Jlc3RlekBueHAuY29tPg0KPiBSZXZpZXdlZC1ieTog
-VWxmIEhhbnNzb24gPHVsZi5oYW5zc29uQGxpbmFyby5vcmc+DQoNClRoYW5rcyBmb3IgdGFraW5n
-IHRoZSB0aW1lIHRvIGxvb2sgYXQgdGhpcywgSSB3aWxsIGxpa2VseSByZXBvc3QgdGhpcw0KYXMg
-UEFUQ0ggaW4gYSBzZXJpZXMgbGF0ZXIuDQoNCj4gPiBSaWdodCBub3cgaWYgYSBkZXZpY2UgaGFz
-IGEgc2luZ2xlIHBvd2VyIGRvbWFpbiBpdCB3aWxsIGJlIGFjdGl2YXRlZA0KPiA+IGJlZm9yZSBw
-cm9iZSBidXQgaWYgaXQgaGFzIG11bHRpcGxlIGRvbWFpbnMgdGhleSBuZWVkIHRvIGJlIGV4cGxp
-Y2l0bHkNCj4gPiAiYXR0YWNoZWQiIHRvIGFuZCBjb250cm9sbGVkLiBTdXBwb3J0aW5nIGJvdGgg
-aXMgYSBiaXQgYXdrd2FyZCwgdGhpcw0KPiA+IHBhdGNoIG1ha2VzIHRoZSBkaXN0aW5jdGlvbiBi
-YXNlZCBvbiAoZGV2LT5wbV9kb21haW4gIT0gTlVMTCkuDQo+ID4gDQo+ID4gTWF5YmUgdGhlIFBN
-IGNvcmUgc2hvdWxkIG1ha2UgdGhpcyBkaXN0aW5jdGlvbiBiYXNlZCBvbiBhIGZsYWcgaW4gc3Ry
-dWN0DQo+ID4gZGV2aWNlX2RyaXZlciBpbnN0ZWFkIG9mIG51bWJlciBvZiBwb3dlci1kb21haW5z
-PyBTbyBieSBkZWZhdWx0IHdoZW4gYQ0KPiA+IGRldmljZSBoYXMgbXVsdGlwbGUgcG93ZXIgZG9t
-YWlucyB0aGV5IHdvdWxkIHdvdWxkIGJlIGFjdGl2YXRlZA0KPiA+IHRvZ2V0aGVyIGFuZCB0aGlz
-IHBhdGNoIHdvdWxkIGJlIHVubmVjZXNzYXJ5Lg0KPiANCj4gQWN0aXZhdGlvbiBpcyBkZWxpYmVy
-YXRlbHkgbGVmdCB0byBiZSBtYW5nZWQgYnkgZWFjaCB1c2VyLCBhcyB0aGUgUE0NCj4gY29yZS9n
-ZW5wZCBjYW4ndCBrbm93IHdoZW4gcG93ZXJpbmcgb24gdGhlIFBNIGRvbWFpbnMgbWFrZSBzZW5z
-ZS4NCg0KQnkgZGVmYXVsdCB0aGUgUE0gY29yZSBjb3VsZCB0cmVhdCBhIGxpc3Qgb2YgcG0gZG9t
-YWlucyBqdXN0IGxpa2UgaXQNCnRyZWF0cyBhIGRvbWFpbiBub3cuIE15IHBhdGNoIGRvZXNuJ3Qg
-ZG8gYW55dGhpbmcgcGNpLXNwZWNpZmljLCBpdCBqdXN0DQphdHRhY2hlcyBhbGwgZG9tYWlucyBh
-bmQgY3JlYXRlcyBkZXZpY2UgbGlua3MuIENvdWxkbid0IHRoZSBjb3JlIGRvDQp0aGlzPw0KDQo+
-IFRoZSBtYWluIHJlYXNvbiB0byB3aHkgZ2VucGQgcG93ZXJzIG9uIHRoZSBQTSBkb21haW4gZm9y
-IHRoZSBzaW5nbGUgUE0NCj4gZG9tYWluIGNhc2UsIGlzIGJlY2F1c2Ugb2YgbGVnYWN5IGJlaGF2
-aW9ycyBpbiBkcml2ZXJzLg0KDQpXb3VsZG4ndCBpdCBiZSBuaWNlciB0byBvdXQtb3V0IG9mIHN1
-Y2ggbGVnYWN5IGJlaGF2aW9ycyB3aXRoIGEgZmxhZyBpbg0Kc3RydWN0IGRyaXZlciBpbnN0ZWFk
-IG9mIHNpbmdsZS12ZXJzdXMtbXVsdGlwbGUgZG9tYWlucz8NCg0KPiA+IFRoZSBkZXZpY2VfbGlu
-ayBpcyBtYXJrZWQgYXMgIlNUQVRFTEVTUyIgYmVjYXVzZSBvdGhlcndpc2UgYSB3YXJuaW5nIGlz
-DQo+ID4gdHJpZ2dlcmVkIGluIGRldmljZV9saW5rc19kcml2ZXJfYm91bmQuIFRoaXMgc2VlbXMg
-dG8gaGFwcGVuIGJlY2F1c2UgdGhlDQo+ID4gcGQgZGV2aWNlcyBhcmUgYWx3YXlzIG1hcmtlZCBh
-cyAiRExfREVWX05PX0RSSVZFUiIuIE1heWJlIHRoZXkgc2hvdWxkIGJlDQo+ID4gaW5zdGVhZCBh
-bHdheXMgYmUgbWFya2VkIGFzIERMX0RFVl9EUklWRVJfQk9VTkQ/DQo+IA0KPiBVc2luZyBTVEFU
-RUxFU1MgaXMgY29ycmVjdCwgYmVjYXVzZSB0aGUgc3VwcGxpZXIgZGV2aWNlcywgd2hpY2ggYXJl
-DQo+IG1hbmFnZWQgYnkgZ2VucGQgZG9uJ3QgaGF2ZSBhbnkgZHJpdmVyIGF0dGFjaGVkIHRvIHRo
-ZW0uDQoNCkFzIGZhciBhcyBJIGNhbiB0ZWxsIHRoZXNlIGdlbnBkX2RldiBkZXZpY2VzIG5lZWQg
-dG8gYmUgbWFudWFsbHkNCnVucmVnaXN0ZXJlZCBpbiB0aGUgY29uc3VtZXIncyByZW1vdmUgZnVu
-Y3Rpb24sIHJpZ2h0PyBJZiB0aGV5IHdlcmUNCm1hcmtlZCB3aXRoIERMX0RFVl9EUklWRVJfQk9V
-TkQgdGhlbiB5b3UgY291bGQgdXNlDQpETF9GTEFHX0FVVE9SRU1PVkVfU1VQUExJRVIgb24gdGhl
-bS4NCg0KQXMgZmFyIGFzIEkgY2FuIHRlbGwgdGhlIERMX0RFVl8qIHN0YXRlcyBhcmUgdXNlZCB0
-byBkZWFsIHdpdGggcHJvYmluZw0Kb3JkZXIgYnV0IHNpbmNlIG5vIGRyaXZlciB3aWxsIGV2ZXIg
-YmluZCB0byB0aGVzZSBzdXBwbGllcnMgd2UgY291bGQNCnRyZWF0IHRoZW0gYXMgZWZmZWN0aXZl
-bHkgYWx3YXlzIGJvdW5kcy4NCg0KDQpQZXJoYXBzIHRoaXMgY2FuIGJlIHJldmlzaXRlZCBsYXRl
-ciwgaW14LXBjaSBpcyBub3QgYSB2ZXJ5IGdvb2QgdXNlY2FzZQ0KZm9yIHRoaXMgYmVjYXVzZSBp
-dCBkb2Vzbid0IGV2ZW4gc3VwcG9ydCByZW1vdmUu
+On Sat, Aug 04, 2018 at 12:09:08AM +0800, Ryan Chen wrote:
+> On Fri, Aug 3, 2018 at 10:06 PM joeyli <jlee@suse.com> wrote:
+> >
+> > On Fri, Aug 03, 2018 at 09:14:22PM +0800, Ryan Chen wrote:
+> > > On Fri, Aug 3, 2018 at 1:35 PM joeyli <jlee@suse.com> wrote:
+> > > >
+> > > > On Fri, Aug 03, 2018 at 11:37:02AM +0800, Yu Chen wrote:
+> > > > > Hi Joey,
+> > > > > On Tue, Jul 31, 2018 at 01:04:15AM +0800, joeyli wrote:
+> > > > > > Hi all,
+> > > > > >
+> > > > > > On Thu, Jul 26, 2018 at 04:14:04PM +0800, joeyli wrote:
+> > > > > > > On Thu, Jul 26, 2018 at 09:30:46AM +0200, Oliver Neukum wrote:
+> > > > > > > > On Di, 2018-07-24 at 00:23 +0800, Yu Chen wrote:
+> > > > > > > > >
+> > > > > > > > > Good point, we once tried to generate key in kernel, but people
+> > > > > > > > > suggest to generate key in userspace and provide it to the
+> > > > > > > > > kernel, which is what ecryptfs do currently, so it seems this
+> > > > > > > > > should also be safe for encryption in kernel.
+> > > > > > > > > https://www.spinics.net/lists/linux-crypto/msg33145.html
+> > > > > > > > > Thus Chun-Yi's signature can use EFI key and both the key from
+> > > > > > > > > user space.
+> > > > > > > >
+> > > > > > > > Hi,
+> > > > > > > >
+> > > > > > > > ecryptfs can trust user space. It is supposed to keep data
+> > > > > > > > safe while the system is inoperative. The whole point of Secure
+> > > > > > > > Boot is a cryptographic system of trust that does not include
+> > > > > > > > user space.
+> > > > > > > >
+> > > > > > > > I seriously doubt we want to use trusted computing here. So the
+> > > > > > > > key needs to be generated in kernel space and stored in a safe
+> > > > > > > > manner. As we have a saolution doing that, can we come to ausable
+> > > > > > > > synthesis?
+> > > > > > > >
+> > > > > > > >         Regards
+> > > > > > > >                 Oliver
+> > > > > > >
+> > > > > > > Crurently there have two solutions, they are trusted key and EFI key.
+> > > > > > > Both of them are generated in kernel and are not visible in user space.
+> > > > > > >
+> > > > > > > The trusted key is generated by kernel then sealed by the TPM's
+> > > > > > > SRK. So the trusted key can be stored in anywhere then be enrolled
+> > > > > > > to kernel when we need it. EVM already uses it.
+> > > > > > >
+> > > > > > > The EFI key is Jiri Kosina's idea. It is stored in boot services
+> > > > > > > variable, which means that it can only be access by signed EFI binary
+> > > > > > > (e.g. signed EFI boot stub) when secure boot be enabled. SLE applied
+> > > > > > > this solution a couple of years.
+> > > > > > >
+> > > > > > > I am working on put the EFI key to key retention service. Then
+> > > > > > > EFI key can be a master key of encrypted key. EVM can also use
+> > > > > > > it:
+> > > > > > > https://github.com/joeyli/linux-s4sign/commit/bae39460393ada4c0226dd07cd5e3afcef86b71f
+> > > > > > > https://github.com/joeyli/linux-s4sign/commit/f552f97cc3cca5acd84f424b7f946ffb5fe8e9ec
+> > > > > > >
+> > > > > > > That's why I want to use key retention service in hibernation
+> > > > > > > encryption/authentication. Which means that we can use key
+> > > > > > > API to access trusted key and EFI key.
+> > > > > > >
+> > > > > >
+> > > > > > Here is a proof of concept for using the key retention service
+> > > > > > to encrypt/sign snapshot image. It's using EFI key now, I will
+> > > > > > add encrypted key support in the key handler later:
+> > > > > >     https://github.com/joeyli/linux-s4sign/commit/6311e97038974bc5de8121769fb4d34470009566
+> > > > > >
+> > > > > Thanks for the work, I have two questions here:
+> > > >
+> > > > My EFI key patch set is almost done. I will send it soon.
+> > > >
+> > > Okay, please send them out then we can have further discussion
+> > > on that.
+> > > > > 1. Could you please describe a little more about the scenario on
+> > > > >    how the user could use the secret key for hibernation encryption?
+> > > > >    A requirement is that, the user should provide a passphrase(for key derivation, i.e.)
+> > > > >    during resume. I was thinking how user could interact with
+> > > > >    the security key mechanism here.
+> > > > >
+> > > >
+> > > > User space doesn't need to involve. The EFI root key is generated by
+> > > > EFI boot stub and be transfer to kernel. It's stored in EFI boot service
+> > > > variable that it can only be accessed by trusted EFI binary when
+> > > > secure boot is enabled.
+> > > >
+> > > Okay, this apply to the 'suspend' phase, right?
+> > > I'm still a little confused about the 'resume' phase.
+> > > Taking encryption as example(not signature),
+> > > the purpose of doing hibernation encryption is to prevent other users
+> > > from stealing ram content. Say, user A uses a  passphrase to generate the
+> > > key and encrypted the hibernation snapshot and stores it on the disk .
+> > > Then if user
+> > > B wants to do a hibernation resume to A's previous environment, B has
+> > > to provide the same passphrase.
+> > > If I understand correctly, the secret key is saved in  header and stored
+> > > on the disk. Which means,  any one can read the header from the disk
+> > > to get  the secret key in trampoline  thus decrypt the image, which is not
+> > > safe.
+> >
+> > The secret key that it's saved in snapshot header is a session key which
+> > is encrypted by ERK (EFI root key). The ERK only lives in kernel space.
+> > So the session key is still secure.
+> >
+> > When resume, the session key will be decrypted/verified by ERK. Then
+> > kernel uses the session key to decrypted/verified snapshot image.
+> >
+> OK, I see.
+> > Of course that we can direct use ERK to encrypt/authenticate snapshot
+> > image. Actually the first version of hibernation verification in SLE
+> > direct uses ERK. So the snapshot header only keeps signature but no
+> > encrypted session key.
+> >
+> > I add session key in new version because I want to align with
+> > the use case of TPM trusted key + encrypted key. Then hibernation
+> > can use key retention service API to access EFI key or encrypted key.
+> >
+> > Compare the trusted key with EFI secure key:
+> >
+> > TPM SRK ----seal-----> Trusted key    ---encrypt---> Encrypted key
+> > ERK     ---encrypt---> EFI secure key ---encrypt---> Encrypted key
+> >
+> > Both of them can be the master key of encrypted key.
+> >
+> So either Trusted key or EFI secure key(session key) could be used
+> for snapshot encryption, right?
+
+Yes. Or we can use encrypted key. It depends on different use case.
+
+If the trusted key is sealed with PCRs, then we can not generate
+new trusted key after PCRs be capped. Then we can only use the
+encrypted key as the session key.  
+
+> > If EFI key can not be accepted by kernel community, then the TPM
+> > trusted key + encrypted key will be the only solution. We can very
+> > easy to switch to encrypted key by using key retention service
+> > API.
+> >
+> Back to question raised previously,  how could TPM or EFI key be used to
+> prevent user B from resuming to the environment of A? It appears to me
+> that, although A is the user who  launches the hibernation,   B could
+>  resume to the context of A because there's no certification during
+> resume. Is there any way to introduce the  password based verification?
+
+I see you point. Yes, TPM or EFI key can only be used to prevent that the
+content in snapshot image be detected on other machine. It can not be used
+to prevent the snapshot image be resumed on _the same_ machine by different
+user. Sounds like B can physical accessing the machine. Could you please
+explain more detail for the case? 
+
+As you said, password is useful in this case. But I have no idea for how
+to introduce password without user space helper. And user space helper
+must be authenticate by kernel. Which means that we need to add mechanism
+to verify user space binary. 
+
+Thanks
+Joey Lee 
