@@ -6,120 +6,160 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCC60C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 12:39:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6444BC28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 12:40:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7308A2175E
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 12:39:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 138DA2175E
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 12:40:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="hW1fKqkJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7308A2175E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lightnvm.io
+	dkim=pass (1024-bit key) header.d=cnexlabs.onmicrosoft.com header.i=@cnexlabs.onmicrosoft.com header.b="kPJ6+yP6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 138DA2175E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cnexlabs.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729909AbeHCOgD (ORCPT
+        id S1731311AbeHCOgn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 10:36:03 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:40578 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728198AbeHCOgD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 10:36:03 -0400
-Received: by mail-lj1-f194.google.com with SMTP id j19-v6so4816517ljc.7
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Aug 2018 05:39:52 -0700 (PDT)
+        Fri, 3 Aug 2018 10:36:43 -0400
+Received: from mail-bn3nam01on0045.outbound.protection.outlook.com ([104.47.33.45]:1736
+        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728198AbeHCOgn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 10:36:43 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=yAiGYM8ZqFECE4IsLkNUTsZwYEzxiDv7Me9zw3iaBSA=;
-        b=hW1fKqkJSvarWVWbpPbNp+FXcxEVw08cds9I0mR0glCr7HbD9LahkMh7+VeONQtMuT
-         0tfJDO3zHaTavfox5H78GKe+6LETXxXRY090hh2SxDExTeoWCTtxI/xlZKqBt07QD+kS
-         V0jVBZ/uJwJrmyQlxFrIOZJ8q69l1keqottbMxnAYdgkyj9f+Z+3DEM1fGMPV922H6i0
-         GKSISpzpN187qQcqofJ2uJdGOBgZfMrfZnrqDYeTyWcNf+JCa7rh2g7n/7c5noDC6CQo
-         9i0nRWsGoR3uZVL4WBlDm2JhL9RCtH8XVLQy+4l3ukOFI5edO+apb9ohazaqX7MtMigl
-         W/+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=yAiGYM8ZqFECE4IsLkNUTsZwYEzxiDv7Me9zw3iaBSA=;
-        b=Rng7TehEt92EMutMe4jchRrQ0upKICRd9wdWP2pbMD4cL5PxEvymOyNEaYEQ/mkQGf
-         hB3fv0sqj4EVkY29WmkU9mhIJKBUvjwZSl0jaa4Kxsdoy0uYpP85PR0KrWAXThWqwDhl
-         B9+IwTyce55BQuQI4RbVhVJ5AKn0K+2pr2Ept0lHhB30CBFpCtzhI+yZjNrj3NWYUwZ5
-         csTvAtrgqUV2WZSb8tcoHJqerd3xVitsgd1TjCLJGrvV/tHWjtBrKNSumhy2Bc1QWLMr
-         eyfn0if58qnBdFtuYa5m/DSQ50ZY+Bp74OnGCr37V0J0Ay0q9rTd/gDlYxGMj5+Ch2Te
-         /XTQ==
-X-Gm-Message-State: AOUpUlECp1o6BdIvUhIaEb8MdPeM/Ydv3X7fcLOXFjrVMzIbtlLZwyB7
-        1264mv2efIGPCxFVKdhl1PPW3U46MVE8BQ==
-X-Google-Smtp-Source: AAOMgpc1cvWXhZ5L1fCxGBi6i4As9gBh6bu0l3L/3ulVdZeJJazWQWw8K5/a95UFHGaaki1BJBo6xw==
-X-Received: by 2002:a2e:1b83:: with SMTP id c3-v6mr5305509ljf.0.1533299991880;
-        Fri, 03 Aug 2018 05:39:51 -0700 (PDT)
-Received: from [192.168.0.10] (95-166-82-66-cable.dk.customer.tdc.net. [95.166.82.66])
-        by smtp.googlemail.com with ESMTPSA id d12-v6sm712532lfg.15.2018.08.03.05.39.50
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 03 Aug 2018 05:39:51 -0700 (PDT)
-Subject: Re: [PATCH] lightnvm: pblk: remove unnecessary drive version check
-To:     javier@cnexlabs.com
-Cc:     igor.j.konopko@intel.com, marcin.dziegielewski@intel.com,
-        hans.holmberg@cnexlabs.com, hlitz@ucsc.edu,
-        youngtack.jin@circuitblvd.com, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180802205841.22039-1-mb@lightnvm.io>
- <4382FFAE-0602-4A16-8120-E930141606ED@cnexlabs.com>
-From:   =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
-Message-ID: <130c689a-723f-a32a-96e3-a7a59ff6b7b8@lightnvm.io>
-Date:   Fri, 3 Aug 2018 14:39:50 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+ d=cnexlabs.onmicrosoft.com; s=selector1-cnexlabs-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gVS8f9FqXuGJvaTaxXsnwbINTwOGoHnioatuyHhZ4RE=;
+ b=kPJ6+yP6j/fWD4YfjFEyfsymCSfHiWkn2Wujb8Ocr3S0x5xLMEftKMVob6RBCi36ll0RjLrK2pPExU+ufui3ay1Yv3rz2PZdTVHyVWIKI6/1q6otADroQcZVDn+ZNh3AencwFUC0HXDxzE0IGsPRxGy1N4eyFTqnqEsFxnZRcAA=
+Received: from CO2PR06MB538.namprd06.prod.outlook.com (10.141.199.23) by
+ CO2PR06MB905.namprd06.prod.outlook.com (10.141.228.11) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.995.21; Fri, 3 Aug 2018 12:40:13 +0000
+Received: from CO2PR06MB538.namprd06.prod.outlook.com
+ ([fe80::311c:7e3f:3043:5287]) by CO2PR06MB538.namprd06.prod.outlook.com
+ ([fe80::311c:7e3f:3043:5287%8]) with mapi id 15.20.1017.010; Fri, 3 Aug 2018
+ 12:40:12 +0000
+From:   Javier Gonzalez <javier@cnexlabs.com>
+To:     =?utf-8?B?TWF0aWFzIEJqw7hybGluZw==?= <mb@lightnvm.io>
+CC:     "Konopko, Igor J" <igor.j.konopko@intel.com>,
+        "marcin.dziegielewski@intel.com" <marcin.dziegielewski@intel.com>,
+        Hans Holmberg <hans.holmberg@cnexlabs.com>,
+        Heiner Litz <hlitz@ucsc.edu>,
+        Young Tack Tack Jin <youngtack.jin@circuitblvd.com>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] lightnvm: move device L2P detection to core
+Thread-Topic: [PATCH] lightnvm: move device L2P detection to core
+Thread-Index: AQHUKweuBQbrOBanp0uVNhhgjqWapKSt8ZYAgAAF5ICAAACwgA==
+Date:   Fri, 3 Aug 2018 12:40:12 +0000
+Message-ID: <C29BF7B1-4C9A-47C7-9E5F-AD63356B01BC@cnexlabs.com>
+References: <20180803085449.3436-1-mb@lightnvm.io>
+ <31319710-8A72-49DC-9CFA-521CA06843F3@cnexlabs.com>
+ <9349be00-4d14-9b25-ed11-fb9244428d7f@lightnvm.io>
+In-Reply-To: <9349be00-4d14-9b25-ed11-fb9244428d7f@lightnvm.io>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: yes
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=javier@cnexlabs.com; 
+x-originating-ip: [193.106.164.211]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;CO2PR06MB905;6:kT5iCfq07JU24eF+Eibpnl5+sFlbZdGVTlUYiOr6Lf7r9YoFHuTfdTCwZzRjD9bcIxoNUxQOwQ54Va55PhoPkFx2DVJZkGV1EsGlhRMWbzGcVv0HNRI0zT48j3DpjK20p9zPmKIda/1U5rLcVPG/7+jil1Ty9EQLAdMURXTtnHEjNIZX5riBTlEq8P1yEpFhJIuFi+mkVKbOXwHY0cczKazsLkIrwDZRPd+EcB0NZxen1bmDa+Y5Lk6FBifOT85/Gs7mcx4Jl2GhcX4agU3d1EbdnMZLjM88cSxSW0sIn6sTfIWlcZyQruLC9iMkUXiBNt2UYLJlTzVM5BPMxG05aAmsaY4sMCwh33Vmxh8HFAeJXZQTKOtsw4qYCYX/QhqPym5LPaeyUwFV9t74m3xHpeXEP7vVBudh9WqP9GZ2QZ/6xYjWsRdQbHJk8Ja5lPR96C0xRWvqIZMXuW/v+fBXrA==;5:roFky/nK5OQ2rw0zXlUuLdtzeK91j8lIyzulTSXKhjmGslgmyjmeMS2+KvL4lWcUOVADLaGo3b/2N2W8VwTtGroPPaKt0AAgwgDMYq4d1YCiodC/sD2yeNxp79OMwnbbFa8YDBn05/tuf9fgMfYd3rogDLsah2/dypvfLqH5juc=;7:AhEhe9y+1/IGMHCheiOXbLDKKTut1odlfNkO0FtNEe85np3uzelqmc3se0gh7lnpfYeXmqxJ+Kdp5YnOSW0pnryB9U3mlnQcpKF1FkK6KFtAejnyn1FspAsMOTvL0MDTlT7MDo2uEahphbERa3O7oXw5WCdHZVTCrzY2WH8PnXi+1cDc4VF4/tjk/d73StG8qYqo4X2MNjZwzu1CHpXfLIxNV5rVzmcnFTU5k6ZeiXmmuVCRgf7tNmcecezyWUuK
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(396003)(136003)(346002)(376002)(39840400004)(366004)(189003)(199004)(81156014)(3846002)(97736004)(2900100001)(186003)(99936001)(33656002)(14454004)(53546011)(446003)(6512007)(25786009)(8676002)(6116002)(5250100002)(6486002)(478600001)(86362001)(102836004)(6916009)(11346002)(26005)(4326008)(81166006)(2906002)(53936002)(6506007)(8936002)(2616005)(316002)(7736002)(486006)(68736007)(6246003)(54906003)(76176011)(106356001)(5660300001)(36756003)(66066001)(105586002)(229853002)(256004)(83716003)(476003)(82746002)(305945005)(6436002)(99286004);DIR:OUT;SFP:1101;SCL:1;SRVR:CO2PR06MB905;H:CO2PR06MB538.namprd06.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-ms-office365-filtering-correlation-id: 4125dff0-be7c-4a4d-ac1b-08d5f93e41b8
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600074)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(49563074)(7193020);SRVR:CO2PR06MB905;
+x-ms-traffictypediagnostic: CO2PR06MB905:
+x-microsoft-antispam-prvs: <CO2PR06MB9057F2889F9DA587487A16CBA230@CO2PR06MB905.namprd06.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(102415395)(6040522)(2401047)(8121501046)(5005006)(3002001)(3231311)(944501410)(52105095)(10201501046)(93006095)(93001095)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:CO2PR06MB905;BCL:0;PCL:0;RULEID:;SRVR:CO2PR06MB905;
+x-forefront-prvs: 0753EA505A
+received-spf: None (protection.outlook.com: cnexlabs.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: NbYCfjt7GVuJ56sECQl/C8weavIFxgldg24jK4RSMB70UvW53sr8KNIxoEIESmsg71YrVCQuhVmohFAWZkAdYgPrPEI5AFVnhbZDCgpDn3qr/VzrAlkG1ucagcyfI4f4QDJWgYCZX9UrRRf58pmTFUj9fgB3Y8OAX7HiXOksNM0vw1qsg33iwP2QgeS4ichELwHJbUXxsq9oDBLqJtdlmLRILSjGTUXRb32RjnmxGWmec63NRox8QDWylURdyqNA/xgUKEP8xNv6Z3gEJqMUPnMYLygA7IyEuLKJxpQCgzCkdB41JlcZ64tPmL5M/85PO3v+SIRRF9CTt15vGLmxKUUyaFtK4w7uvSSfs8BDGvM=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: multipart/signed;
+        boundary="Apple-Mail=_10966F8B-E1ED-47DA-AC7B-FFAE67A46EAF";
+        protocol="application/pgp-signature";
+        micalg=pgp-sha512
 MIME-Version: 1.0
-In-Reply-To: <4382FFAE-0602-4A16-8120-E930141606ED@cnexlabs.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: cnexlabs.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4125dff0-be7c-4a4d-ac1b-08d5f93e41b8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Aug 2018 12:40:12.6001
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: e40dfc2e-c6c1-463a-a598-38602b2c3cff
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO2PR06MB905
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/03/2018 02:18 PM, Javier Gonzalez wrote:
->> On 2 Aug 2018, at 22.58, Matias Bjørling <mb@lightnvm.io> wrote:
->>
->> The nvme driver checks for 1.2 and 2.0 compatibility. If an unsupported
->> version is reported, the device will not be initialized.
->>
->> Signed-off-by: Matias Bjørling <mb@lightnvm.io>
->> ---
->> drivers/lightnvm/pblk-init.c | 8 --------
->> 1 file changed, 8 deletions(-)
->>
->> diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
->> index 537e98f2b24a..e9e2fedff387 100644
->> --- a/drivers/lightnvm/pblk-init.c
->> +++ b/drivers/lightnvm/pblk-init.c
->> @@ -1202,14 +1202,6 @@ static void *pblk_init(struct nvm_tgt_dev *dev, struct gendisk *tdisk,
->> 	pblk->state = PBLK_STATE_RUNNING;
->> 	pblk->gc.gc_enabled = 0;
->>
->> -	if (!(geo->version == NVM_OCSSD_SPEC_12 ||
->> -					geo->version == NVM_OCSSD_SPEC_20)) {
->> -		pblk_err(pblk, "OCSSD version not supported (%u)\n",
->> -							geo->version);
->> -		kfree(pblk);
->> -		return ERR_PTR(-EINVAL);
->> -	}
->> -
->> 	if (geo->version == NVM_OCSSD_SPEC_12 && geo->dom & NVM_RSP_L2P) {
->> 		pblk_err(pblk, "host-side L2P table not supported. (%x)\n",
->> 							geo->dom);
->> --
->> 2.11.0
-> 
-> The same comment goes for this patch. pblk does support 2.0 and 1.2
-> today, but it is not guaranteed it will support a new revision straight
-> away. So I think that a check wither here or through the .capabilities I
-> proposed on the other patch is necessary.
-> 
+--Apple-Mail=_10966F8B-E1ED-47DA-AC7B-FFAE67A46EAF
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset=utf-8
 
-Works for me. I'll send another patch that enables pblk target to tell 
-which version it supports.
+> On 3 Aug 2018, at 14.37, Matias Bj=C3=B8rling <mb@lightnvm.io> wrote:
+>=20
+> On 08/03/2018 02:16 PM, Javier Gonzalez wrote:
+>>> On 3 Aug 2018, at 10.54, Matias Bj=C3=B8rling <mb@lightnvm.io> =
+wrote:
+>>>=20
+>>> A 1.2 device is able to manage the logical to physical mapping
+>>> table internally or leave it to the host.
+>>>=20
+>>> A target only supports one of those approaches, and therefore must
+>>> check on initialization. Move this check to core to avoid each =
+target
+>>> implement the check.
+>>>=20
+>>> Signed-off-by: Matias Bj=C3=B8rling <mb@lightnvm.io>
+>>> ---
+>> I see where you want to go with these changes, but the way targets =
+are
+>> layered on top of the LightNVM subsystem does not align with it.
+>> LightNVM can support different OCSSD versions and capabilities, but =
+that
+>> does not mean that a target (e.g., pblk) does. The way I see it, core
+>> should only check for (i) the drive to expose itself in a known =
+revision
+>> and (ii) the reported structures to be consistent. However, specific
+>> functionality is not for core to check upo.
+>=20
+> Why try to initialize a target, if we already know that it is =
+incompatible?
+
+Yes, that is my point. But the one who knows if the targets supports
+something or not is the target, not the subsystem. Here, you are making
+an assumption knowing the pblk requires the L2P on the host, but that
+could change in the future...
+
+--Apple-Mail=_10966F8B-E1ED-47DA-AC7B-FFAE67A46EAF
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE+ws7Qq+qZPG1bJoyIX4xUKFRnnQFAltkTSkACgkQIX4xUKFR
+nnTGlA//YWk05KrbuSeK59x845B+LPOYfFl7v4191hCJjM10oE7hhgI7fzMZ5OKw
+anR0SKx7w7dyZiZBHNnjpTgSi7b4NYAFAyEK0FPvkPj2IzFObvKt+OvfFOOWs0Ts
+/bkL8I0XO6nSdXmoorFLXco8U1+L1/oYnmQmDlxy3/5Eujl2RX37Nk1JpK/vXwsm
+FsghooPwB6z0QE+jV+eUIk7iVFTyPQege6H9Qo1Fu3k41i+q+1dTdas8dbEHGVjV
+bB/iLXccoeTP3WZZWdwRVlcOhRzHZbqE/aQZI3tahsO/jNfHX/elo8k7bN9C3PKR
+fxaDOHFzZ81fvoVeMN88ha40SlyJqwYt+2Lk45MNNb3fkUTypVeel+xTL8jUXFSt
+vM4Hc35qMMXuxW3ieyzXWM2+Ii/2J9cvgib0YcFt4bdpLPD7djNmjHLMOxwdi+gP
+5ZhUF+E0f9WKUkJ5fIq8Z9Dgh19N+tHHJbBQkJVYHqtVk5wnHxgNVneArjypA4HZ
+gsUId9pn4xIOCQYb/y5a6YHrng7svjnQ4M7IiyjWsf5tWXDYJZn7YvCKYIrmHaNQ
+Cxxxeq6aATz91hp4+izkmbEZV797U0izo6qVcnGyDRpazQ5iH8UHaEmzcXv9BH/q
+G5W4sawXE3aI+Rm1jQaXOwsw28vyR6BCwiEfHcw5oSbRKwy8PQA=
+=tIbH
+-----END PGP SIGNATURE-----
+
+--Apple-Mail=_10966F8B-E1ED-47DA-AC7B-FFAE67A46EAF--
