@@ -3,130 +3,241 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74CD6C46469
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 21:42:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5D77C4646D
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 21:45:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25FA6217AA
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 21:42:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 51ABB217AF
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 21:45:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hftBzH2Z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25FA6217AA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="f+ax59Cu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51ABB217AF
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732230AbeHCXkd (ORCPT
+        id S1732173AbeHCXnN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 19:40:33 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:34980 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729985AbeHCXk1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 19:40:27 -0400
-Received: by mail-wm0-f65.google.com with SMTP id o18-v6so7888550wmc.0
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Aug 2018 14:42:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=A1f4CDWh0tqNxurRFifBgG+DAwyoT6odptDX15QF0Ng=;
-        b=hftBzH2ZlKXtO+uAkCbWVKMP69Lop9oWcaDbAfe7cmIXkLH3O4OgExwkhfwdFrTUaT
-         5q9nv+KibNktl4AbWfjRKkXQLVMhc3zEyx+oQ0Aq5xYx7HMfsI9z66KujJf5vdMFhNKE
-         FOC61BuWALjUDa+1nqy4Cfcu3FOTMv1U4YXmqiCuS62PhhupbAw05Ze2ov8UyMIUckjD
-         wCh80vVIZIgcgLQbRL3lVjwCwKUA568AqDhIQAvF2KfTSe3wvujga7+oYolMiA1gXVOa
-         m2Tc/8v7qF8pQvjCd21XjAs8yKrm5ZKutBx8OdI/AssWieLsPFcVC3ZsAA/lssi6yfFO
-         bBGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=A1f4CDWh0tqNxurRFifBgG+DAwyoT6odptDX15QF0Ng=;
-        b=GGDtLB3XJdy4OtSn4A4agu+Iq8XwGXZDzQSzUZZlLk1UO2ZfQOPL9DDYgtYdGZ/C1C
-         oT4JseiRRFQKOM/EMTV0Kf3oX4Z8+ljVS+roA66gz7HrvH+rx6rlZK/v0fpF03dWDn9x
-         yVXQeQs9d+k8bQYOAFVdUAY226WqBP2rv6jyNYhygCkMeXllepv+3XM8ohVH+/+kodYR
-         LZhuMsb/+Qivf4mjqjKGjxsxbuegwyc8AatIR4bDSdl6IAApS5jKjVg8qGC+LzWndpkl
-         FOtJoMpo0Li6CCtwq44p4SMPV1jyapPyxESM/RygonhC0Dx8VglbDJzt1W4ZSVmmJeo2
-         rfeA==
-X-Gm-Message-State: AOUpUlHNLPQiISa8gr9u2/M30Nmpf+kP2yh0+pOOOuEO3zYWI5pyB/fB
-        H0PYbH13rM/nvTFqoAfdP3P6et2Q
-X-Google-Smtp-Source: AAOMgpflYVPaQ7pusm2/0xlQsvJ4+ZSbQzeRDpJYh+k2GgpBqase63onnVTU0IivojFpWE/E/fAigg==
-X-Received: by 2002:a1c:2108:: with SMTP id h8-v6mr5673848wmh.108.1533332542009;
-        Fri, 03 Aug 2018 14:42:22 -0700 (PDT)
-Received: from ?IPv6:2003:ea:8bd4:d600:9545:19fe:eae2:90aa? (p200300EA8BD4D600954519FEEAE290AA.dip0.t-ipconnect.de. [2003:ea:8bd4:d600:9545:19fe:eae2:90aa])
-        by smtp.googlemail.com with ESMTPSA id r16-v6sm6389131wru.59.2018.08.03.14.42.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 03 Aug 2018 14:42:21 -0700 (PDT)
-Subject: [PATCH 3/3] mei: Improve usage of mei_start
-From:   Heiner Kallweit <hkallweit1@gmail.com>
-To:     Tomas Winkler <tomas.winkler@intel.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <5e0250ff-2470-1128-d8eb-b36e3ca04417@gmail.com>
-Message-ID: <8d5151fb-88dc-b4cf-843a-9519516ccd36@gmail.com>
-Date:   Fri, 3 Aug 2018 23:42:09 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 3 Aug 2018 19:43:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35898 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731952AbeHCXnM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 19:43:12 -0400
+Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6DD9D217AA;
+        Fri,  3 Aug 2018 21:45:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1533332706;
+        bh=H2LtzC+gu9ANPEIxDAfX5WK6q1nYGB27h7RV36h+HaU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=f+ax59CuYjcEzUBMomqdPUBNiJd/w9qf7pC5tqQI14xgfihS6YPPLYrFpOk1zhmos
+         Yq7h1zyCqPY9m06ZPIjFFzrp0evhoX1hOtWoAKSFjLYidGd7cWBOELcSmruBsQbcy6
+         uuMUDVnek1DxEFun21GsWpavS/MzawF7kl5Ggo6E=
+Date:   Fri, 3 Aug 2018 22:44:59 +0100
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Brian Masney <masneyb@onstation.org>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com, andy.gross@linaro.org,
+        david.brown@linaro.org, linux-iio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        jonathan@marek.ca, jmaneyrol@invensense.com, knaack.h@gmx.de,
+        lars@metafoo.de, pmeerw@pmeerw.net, mkelly@xevo.com,
+        fischerdouglasc@gmail.com, bshah@kde.org, ctatlor97@gmail.com
+Subject: Re: [PATCH v3 1/9] iio: imu: mpu6050: add support for regulator
+ framework
+Message-ID: <20180803224459.49ca563c@archlinux>
+In-Reply-To: <20180803001900.25371-2-masneyb@onstation.org>
+References: <20180803001900.25371-1-masneyb@onstation.org>
+        <20180803001900.25371-2-masneyb@onstation.org>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <5e0250ff-2470-1128-d8eb-b36e3ca04417@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-mei_start() prints an error message and returns -ENODEV on failure,
-so we don't have to duplicate this in the caller.
+On Thu,  2 Aug 2018 20:18:52 -0400
+Brian Masney <masneyb@onstation.org> wrote:
 
-Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
----
- drivers/misc/mei/pci-me.c  | 6 ++----
- drivers/misc/mei/pci-txe.c | 6 ++----
- 2 files changed, 4 insertions(+), 8 deletions(-)
+> This patch adds support for the regulator framework to the mpu6050
+> driver.
+> 
+> Signed-off-by: Brian Masney <masneyb@onstation.org>
+> Signed-off-by: Jonathan Marek <jonathan@marek.ca>
+> Acked-by: Rob Herring <robh@kernel.org>
+Applied to the togreg branch of iio.git and pushed out as testing
+for the autobuilders to play with it.
 
-diff --git a/drivers/misc/mei/pci-me.c b/drivers/misc/mei/pci-me.c
-index a60376f0..02ba830a 100644
---- a/drivers/misc/mei/pci-me.c
-+++ b/drivers/misc/mei/pci-me.c
-@@ -208,11 +208,9 @@ static int mei_me_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 		goto end;
- 	}
- 
--	if (mei_start(dev)) {
--		dev_err(&pdev->dev, "init hw failure.\n");
--		err = -ENODEV;
-+	err = mei_start(dev);
-+	if (err)
- 		goto release_irq;
--	}
- 
- 	pm_runtime_set_autosuspend_delay(&pdev->dev, MEI_ME_RPM_TIMEOUT);
- 	pm_runtime_use_autosuspend(&pdev->dev);
-diff --git a/drivers/misc/mei/pci-txe.c b/drivers/misc/mei/pci-txe.c
-index 3ea2b8f6..901574be 100644
---- a/drivers/misc/mei/pci-txe.c
-+++ b/drivers/misc/mei/pci-txe.c
-@@ -120,11 +120,9 @@ static int mei_txe_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 		goto end;
- 	}
- 
--	if (mei_start(dev)) {
--		dev_err(&pdev->dev, "init hw failure.\n");
--		err = -ENODEV;
-+	err = mei_start(dev);
-+	if (err)
- 		goto release_irq;
--	}
- 
- 	pm_runtime_set_autosuspend_delay(&pdev->dev, MEI_TXI_RPM_TIMEOUT);
- 	pm_runtime_use_autosuspend(&pdev->dev);
--- 
-2.18.0
+Thanks,
 
+Jonathan
+
+> ---
+> Changes since v2:
+> - Dropped regulator_enabled value since it is not needed.
+> 
+> Changes since v1:
+> - Use devm_regulator_get() instead of devm_regulator_get_optional()
+> - Use devm_add_action() for cleaning up the regulator.
+> - Correct ordering of resume code.
+> - Add regulator_enabled flag to ensure regulator is not disabled twice,
+>   specifically the case where the device is suspended and then the
+>   driver is removed.
+> 
+> Original extra changelog from v1:
+> 
+> This is a variation of Jonathan Marek's patch from postmarketOS
+> https://gitlab.com/postmarketOS/linux-postmarketos/commit/b8ad1ec1859c8bbcbce94944b3f4dd68f8f9fc37
+> with the following changes:
+> 
+> - Stripped out 6515 variant code.
+> - Add the regulator to the mpu core instead of only the i2c variant.
+> - Add error handling.
+> - Release the regulator on suspend, device remove, etc.
+> - Device tree documentation.
+> 
+>  .../bindings/iio/imu/inv_mpu6050.txt          |  1 +
+>  drivers/iio/imu/inv_mpu6050/inv_mpu_core.c    | 62 +++++++++++++++++++
+>  drivers/iio/imu/inv_mpu6050/inv_mpu_iio.h     |  2 +
+>  3 files changed, 65 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/imu/inv_mpu6050.txt b/Documentation/devicetree/bindings/iio/imu/inv_mpu6050.txt
+> index b2f27da847b8..6ab9a9d196b0 100644
+> --- a/Documentation/devicetree/bindings/iio/imu/inv_mpu6050.txt
+> +++ b/Documentation/devicetree/bindings/iio/imu/inv_mpu6050.txt
+> @@ -20,6 +20,7 @@ Required properties:
+>    bindings.
+>  
+>  Optional properties:
+> + - vddio-supply: regulator phandle for VDDIO supply
+>   - mount-matrix: an optional 3x3 mounting rotation matrix
+>   - i2c-gate node.  These devices also support an auxiliary i2c bus.  This is
+>     simple enough to be described using the i2c-gate binding. See
+> diff --git a/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c b/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c
+> index d80ef468508a..1e428c196a82 100644
+> --- a/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c
+> +++ b/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c
+> @@ -23,6 +23,7 @@
+>  #include <linux/iio/iio.h>
+>  #include <linux/acpi.h>
+>  #include <linux/platform_device.h>
+> +#include <linux/regulator/consumer.h>
+>  #include "inv_mpu_iio.h"
+>  
+>  /*
+> @@ -926,6 +927,39 @@ static int inv_check_and_setup_chip(struct inv_mpu6050_state *st)
+>  	return result;
+>  }
+>  
+> +static int inv_mpu_core_enable_regulator(struct inv_mpu6050_state *st)
+> +{
+> +	int result;
+> +
+> +	result = regulator_enable(st->vddio_supply);
+> +	if (result) {
+> +		dev_err(regmap_get_device(st->map),
+> +			"Failed to enable regulator: %d\n", result);
+> +	} else {
+> +		/* Give the device a little bit of time to start up. */
+> +		usleep_range(35000, 70000);
+> +	}
+> +
+> +	return result;
+> +}
+> +
+> +static int inv_mpu_core_disable_regulator(struct inv_mpu6050_state *st)
+> +{
+> +	int result;
+> +
+> +	result = regulator_disable(st->vddio_supply);
+> +	if (result)
+> +		dev_err(regmap_get_device(st->map),
+> +			"Failed to disable regulator: %d\n", result);
+> +
+> +	return result;
+> +}
+> +
+> +static void inv_mpu_core_disable_regulator_action(void *_data)
+> +{
+> +	inv_mpu_core_disable_regulator(_data);
+> +}
+> +
+>  int inv_mpu_core_probe(struct regmap *regmap, int irq, const char *name,
+>  		int (*inv_mpu_bus_setup)(struct iio_dev *), int chip_type)
+>  {
+> @@ -992,6 +1026,28 @@ int inv_mpu_core_probe(struct regmap *regmap, int irq, const char *name,
+>  		return -EINVAL;
+>  	}
+>  
+> +	st->vddio_supply = devm_regulator_get(dev, "vddio");
+> +	if (IS_ERR(st->vddio_supply)) {
+> +		if (PTR_ERR(st->vddio_supply) != -EPROBE_DEFER)
+> +			dev_err(dev, "Failed to get vddio regulator %d\n",
+> +				(int)PTR_ERR(st->vddio_supply));
+> +
+> +		return PTR_ERR(st->vddio_supply);
+> +	}
+> +
+> +	result = inv_mpu_core_enable_regulator(st);
+> +	if (result)
+> +		return result;
+> +
+> +	result = devm_add_action(dev, inv_mpu_core_disable_regulator_action,
+> +				 st);
+> +	if (result) {
+> +		inv_mpu_core_disable_regulator_action(st);
+> +		dev_err(dev, "Failed to setup regulator cleanup action %d\n",
+> +			result);
+> +		return result;
+> +	}
+> +
+>  	/* power is turned on inside check chip type*/
+>  	result = inv_check_and_setup_chip(st);
+>  	if (result)
+> @@ -1051,7 +1107,12 @@ static int inv_mpu_resume(struct device *dev)
+>  	int result;
+>  
+>  	mutex_lock(&st->lock);
+> +	result = inv_mpu_core_enable_regulator(st);
+> +	if (result)
+> +		goto out_unlock;
+> +
+>  	result = inv_mpu6050_set_power_itg(st, true);
+> +out_unlock:
+>  	mutex_unlock(&st->lock);
+>  
+>  	return result;
+> @@ -1064,6 +1125,7 @@ static int inv_mpu_suspend(struct device *dev)
+>  
+>  	mutex_lock(&st->lock);
+>  	result = inv_mpu6050_set_power_itg(st, false);
+> +	inv_mpu_core_disable_regulator(st);
+>  	mutex_unlock(&st->lock);
+>  
+>  	return result;
+> diff --git a/drivers/iio/imu/inv_mpu6050/inv_mpu_iio.h b/drivers/iio/imu/inv_mpu6050/inv_mpu_iio.h
+> index e69a59659dbc..6bcc11fc1b88 100644
+> --- a/drivers/iio/imu/inv_mpu6050/inv_mpu_iio.h
+> +++ b/drivers/iio/imu/inv_mpu6050/inv_mpu_iio.h
+> @@ -129,6 +129,7 @@ struct inv_mpu6050_hw {
+>   *  @chip_period:	chip internal period estimation (~1kHz).
+>   *  @it_timestamp:	timestamp from previous interrupt.
+>   *  @data_timestamp:	timestamp for next data sample.
+> + *  @vddio_supply	voltage regulator for the chip.
+>   */
+>  struct inv_mpu6050_state {
+>  	struct mutex lock;
+> @@ -149,6 +150,7 @@ struct inv_mpu6050_state {
+>  	s64 chip_period;
+>  	s64 it_timestamp;
+>  	s64 data_timestamp;
+> +	struct regulator *vddio_supply;
+>  };
+>  
+>  /*register and associated bit definition*/
 
