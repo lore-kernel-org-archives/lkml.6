@@ -2,77 +2,126 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A55FDC28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 09:43:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 688B1C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 09:43:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 174222173F
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 09:43:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 174222173F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sorico.fr
+	by mail.kernel.org (Postfix) with ESMTP id 0119E2173F
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 09:43:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0119E2173F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codewreck.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732545AbeHCLia (ORCPT
+        id S1732564AbeHCLio (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 07:38:30 -0400
-Received: from mout02.posteo.de ([185.67.36.142]:45313 "EHLO mout02.posteo.de"
+        Fri, 3 Aug 2018 07:38:44 -0400
+Received: from nautica.notk.org ([91.121.71.147]:37063 "EHLO nautica.notk.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732522AbeHCLi3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 07:38:29 -0400
-Received: from submission (posteo.de [89.146.220.130]) 
-        by mout02.posteo.de (Postfix) with ESMTPS id 41073210C8
-        for <linux-kernel@vger.kernel.org>; Fri,  3 Aug 2018 11:42:58 +0200 (CEST)
-Received: from customer (localhost [127.0.0.1])
-        by submission (posteo.de) with ESMTPSA id 41hht869xcz9rxM;
-        Fri,  3 Aug 2018 11:42:56 +0200 (CEST)
-Subject: Re: [PATCH 0/2] gpio: mvebu: Add support for multiple PWM lines
-To:     Gregory CLEMENT <gregory.clement@bootlin.com>, aditya@kobol.io,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     Gregory CLEMENT <gregory.clement@free-electrons.com>,
-        Ralph Sennhauser <ralph.sennhauser@gmail.com>,
-        Richard Genoud <richard.genoud@gmail.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        gauthier@kobol.io, alban.browaeys@gmail.com,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        linux-pwm@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <1532114623-81911-1-git-send-email-aditya@kobol.io>
- <CACRpkdbiAkt6hT+LeRXCjWDZwjeYDF-e3sckMOWqnL2rdqLDug@mail.gmail.com>
- <87sh3vbxlf.fsf@bootlin.com>
-From:   Richard Genoud <richard@sorico.fr>
-Message-ID: <e50f0301-f60a-0521-7d73-dcea28721365@sorico.fr>
-Date:   Fri, 3 Aug 2018 11:42:56 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1732522AbeHCLio (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 07:38:44 -0400
+Received: by nautica.notk.org (Postfix, from userid 1001)
+        id 36880C009; Fri,  3 Aug 2018 11:43:12 +0200 (CEST)
+Date:   Fri, 3 Aug 2018 11:42:57 +0200
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     piaojun <piaojun@huawei.com>
+Cc:     "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        Greg Kurz <groug@kaod.org>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        Ron Minnich <rminnich@sandia.gov>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        v9fs-developer@lists.sourceforge.net
+Subject: Re: [PATCH v3] net/9p/trans_virtio.c: add null terminal for mount tag
+Message-ID: <20180803094257.GA21285@nautica>
+References: <5B641ECC.5030401@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <87sh3vbxlf.fsf@bootlin.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: fr
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+In-Reply-To: <5B641ECC.5030401@huawei.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/08/2018 11:36, Gregory CLEMENT wrote:
-> Hi Linus and Adita
->  
->  On dim., juil. 29 2018, Linus Walleij <linus.walleij@linaro.org> wrote:
-> 
->> Hoping for some review from Gergory, Ralph or Richard who all seem
->> to use this driver!
-> 
-> Would it be possible to resend the series adding me in CC?  I would
-> like to comment the patches, but unfortunately it seems that I was in
-> none of the mailing list where the series had been sent.
-> 
-> I found the patches on patchwork, and started to have a look on it for
-> example, in the patch "gpio: mvebu: Add support for multiple PWM lines
-> per GPIO chip", I wonder why the id is stored as it was not used at all.
-> 
-> Having the patch inlined in an email would male the review easier.
-Same for me :)
+piaojun wrote on Fri, Aug 03, 2018:
+> chan->tag is Non-null terminated which will result in printing messy code
+> when debugging code. So we should add '\0' for tag to make the code more
+> convenient and robust. In addition, I drop char->tag_len to simplify the
+> code.
 
+LGTM, I'll pick this up.
+
+Thanks for the rework
+
+> Signed-off-by: Jun Piao <piaojun@huawei.com>
+> ---
+>  net/9p/trans_virtio.c | 17 +++++++----------
+>  1 file changed, 7 insertions(+), 10 deletions(-)
+> 
+> diff --git a/net/9p/trans_virtio.c b/net/9p/trans_virtio.c
+> index d422bfc..46a5ab2 100644
+> --- a/net/9p/trans_virtio.c
+> +++ b/net/9p/trans_virtio.c
+> @@ -89,10 +89,8 @@ struct virtio_chan {
+>  	unsigned long p9_max_pages;
+>  	/* Scatterlist: can be too big for stack. */
+>  	struct scatterlist sg[VIRTQUEUE_NUM];
+> -
+> -	int tag_len;
+>  	/*
+> -	 * tag name to identify a mount Non-null terminated
+> +	 * tag name to identify a mount null terminated
+>  	 */
+>  	char *tag;
+> 
+> @@ -525,14 +523,15 @@ static ssize_t p9_mount_tag_show(struct device *dev,
+>  {
+>  	struct virtio_chan *chan;
+>  	struct virtio_device *vdev;
+> +	int tag_len;
+> 
+>  	vdev = dev_to_virtio(dev);
+>  	chan = vdev->priv;
+> +	tag_len = strlen(chan->tag);
+> 
+> -	memcpy(buf, chan->tag, chan->tag_len);
+> -	buf[chan->tag_len] = 0;
+> +	memcpy(buf, chan->tag, tag_len + 1);
+> 
+> -	return chan->tag_len + 1;
+> +	return tag_len + 1;
+>  }
+> 
+>  static DEVICE_ATTR(mount_tag, 0444, p9_mount_tag_show, NULL);
+> @@ -585,7 +584,7 @@ static int p9_virtio_probe(struct virtio_device *vdev)
+>  		err = -EINVAL;
+>  		goto out_free_vq;
+>  	}
+> -	tag = kmalloc(tag_len, GFP_KERNEL);
+> +	tag = kzalloc(tag_len + 1, GFP_KERNEL);
+>  	if (!tag) {
+>  		err = -ENOMEM;
+>  		goto out_free_vq;
+> @@ -594,7 +593,6 @@ static int p9_virtio_probe(struct virtio_device *vdev)
+>  	virtio_cread_bytes(vdev, offsetof(struct virtio_9p_config, tag),
+>  			   tag, tag_len);
+>  	chan->tag = tag;
+> -	chan->tag_len = tag_len;
+>  	err = sysfs_create_file(&(vdev->dev.kobj), &dev_attr_mount_tag.attr);
+>  	if (err) {
+>  		goto out_free_tag;
+> @@ -654,8 +652,7 @@ static int p9_virtio_probe(struct virtio_device *vdev)
+> 
+>  	mutex_lock(&virtio_9p_lock);
+>  	list_for_each_entry(chan, &virtio_chan_list, chan_list) {
+> -		if (!strncmp(devname, chan->tag, chan->tag_len) &&
+> -		    strlen(devname) == chan->tag_len) {
+> +		if (!strcmp(devname, chan->tag)) {
+>  			if (!chan->inuse) {
+>  				chan->inuse = true;
+>  				found = 1;
+> -- 
