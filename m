@@ -2,167 +2,167 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 235F2C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 11:23:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D53CEC28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 11:25:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3CFB2175D
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 11:23:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="O3X8BkQF";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="O3X8BkQF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3CFB2175D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 85C352175D
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 11:25:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85C352175D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727517AbeHCNTL (ORCPT
+        id S1727419AbeHCNUy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 09:19:11 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:37698 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726933AbeHCNTL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 09:19:11 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id A35936071C; Fri,  3 Aug 2018 11:23:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533295397;
-        bh=HLYIHU7VmyOv/UZOVqD7EpX0HcCI8U8Myv4CgNdgwlE=;
-        h=Subject:From:To:Cc:References:Date:In-Reply-To:From;
-        b=O3X8BkQF2q/VmnapuInlDlfb5Nby8V8J+8u1RezOMGMGz94ZBfwhpTZxHukI6867x
-         /Xl6jussxpaUqLtVYz0eU8Ykv5Yc9FImWUBN2zsemfwctNhxOwZF2UyfU0fHx/wkFZ
-         jeUySZlypIRMoi3mfNPXylU0a4WxVAiR4WvOWkjw=
-Received: from [10.204.110.203] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        Fri, 3 Aug 2018 09:20:54 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38506 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726933AbeHCNUx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 09:20:53 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: rohitkr@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3FDDA60264;
-        Fri,  3 Aug 2018 11:23:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533295397;
-        bh=HLYIHU7VmyOv/UZOVqD7EpX0HcCI8U8Myv4CgNdgwlE=;
-        h=Subject:From:To:Cc:References:Date:In-Reply-To:From;
-        b=O3X8BkQF2q/VmnapuInlDlfb5Nby8V8J+8u1RezOMGMGz94ZBfwhpTZxHukI6867x
-         /Xl6jussxpaUqLtVYz0eU8Ykv5Yc9FImWUBN2zsemfwctNhxOwZF2UyfU0fHx/wkFZ
-         jeUySZlypIRMoi3mfNPXylU0a4WxVAiR4WvOWkjw=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3FDDA60264
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rohitkr@codeaurora.org
-Subject: Re: [PATCH v2] remoteproc: qcom: Introduce Non-PAS ADSP PIL driver
-From:   Rohit Kumar <rohitkr@codeaurora.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     ohad@wizery.com, bjorn.andersson@linaro.org, mark.rutland@arm.com,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, bgoswami@codeaurora.org,
-        sbpata@codeaurora.org
-References: <1530264053-8394-1-git-send-email-rohitkr@codeaurora.org>
- <20180706203236.GA24729@rob-hp-laptop>
- <43dcb60b-720f-27ab-3696-dbf0fe0b65fc@codeaurora.org>
-Message-ID: <be77dbce-49aa-862f-0192-f0264b5aa588@codeaurora.org>
-Date:   Fri, 3 Aug 2018 16:53:05 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        by mx1.redhat.com (Postfix) with ESMTPS id A6C5540216F7;
+        Fri,  3 Aug 2018 11:24:59 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.34.27.30])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 39FB42026D65;
+        Fri,  3 Aug 2018 11:24:56 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Fri,  3 Aug 2018 13:24:59 +0200 (CEST)
+Date:   Fri, 3 Aug 2018 13:24:55 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Cc:     srikar@linux.vnet.ibm.com, rostedt@goodmis.org,
+        mhiramat@kernel.org, liu.song.a23@gmail.com, peterz@infradead.org,
+        mingo@redhat.com, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org, linux-kernel@vger.kernel.org,
+        ananth@linux.vnet.ibm.com, alexis.berlemont@gmail.com,
+        naveen.n.rao@linux.vnet.ibm.com,
+        linux-arm-kernel@lists.infradead.org, linux-mips@linux-mips.org,
+        linux@armlinux.org.uk, ralf@linux-mips.org, paul.burton@mips.com
+Subject: Re: [PATCH v7 3/6] Uprobes: Support SDT markers having reference
+ count (semaphore)
+Message-ID: <20180803112455.GA13794@redhat.com>
+References: <20180731035143.11942-1-ravi.bangoria@linux.ibm.com>
+ <20180731035143.11942-4-ravi.bangoria@linux.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <43dcb60b-720f-27ab-3696-dbf0fe0b65fc@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180731035143.11942-4-ravi.bangoria@linux.ibm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 03 Aug 2018 11:24:59 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 03 Aug 2018 11:24:59 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'oleg@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Bjorn,
+Hi Ravi,
+
+I was going to give up and ack this series, but it seems I noticed
+a bug...
+
+On 07/31, Ravi Bangoria wrote:
+>
+> +static int delayed_uprobe_add(struct uprobe *uprobe, struct mm_struct *mm)
+> +{
+> +	struct delayed_uprobe *du;
+> +
+> +	if (delayed_uprobe_check(uprobe, mm))
+> +		return 0;
+> +
+> +	du  = kzalloc(sizeof(*du), GFP_KERNEL);
+> +	if (!du)
+> +		return -ENOMEM;
+> +
+> +	du->uprobe = uprobe;
+> +	du->mm = mm;
+
+I am surprised I didn't notice this before...
+
+So
+	du->mm = mm;
+
+is fine, mm can't go away, uprobe_clear_state() does delayed_uprobe_remove(NULL,mm).
+
+But
+	du->uprobe = uprobe;
+
+doesn't look right, uprobe can go away and it can be freed, its memory can be reused.
+We can't rely on remove_breakpoint(), the application can unmap the probed page/vma.
+Yes we do not care about the application in this case, say, the next uprobe_mmap() can
+wrongly increment the counter, we do not care although this can lead to hard-to-debug
+problems. But, if nothing else, the kernel can crash if the freed memory is unmapped.
+So I think put_uprobe() should do delayed_uprobe_remove(uprobe, NULL) before kfree()
+and delayed_uprobe_remove() should be updated to handle the mm==NULL case.
+
+Also. delayed_uprobe_add() should check the list and avoid duplicates. Otherwise the
+trivial
+
+	for (;;)
+		munmap(mmap(uprobed_file));
+
+will eat the memory until uprobe is unregistered.
 
 
-Can you please let us know the suggest the file name and review the patch.
+> +static bool valid_ref_ctr_vma(struct uprobe *uprobe,
+> +			      struct vm_area_struct *vma)
+> +{
+> +	unsigned long vaddr = offset_to_vaddr(vma, uprobe->ref_ctr_offset);
+> +
+> +	return uprobe->ref_ctr_offset &&
+> +		vma->vm_file &&
+> +		file_inode(vma->vm_file) == uprobe->inode &&
+> +		vma->vm_flags & VM_WRITE &&
+> +		!(vma->vm_flags & VM_SHARED) &&
 
+		vma->vm_flags & (VM_WRITE|VM_SHARED) == VM_WRITE &&
 
-On 7/9/2018 11:29 AM, Rohit Kumar wrote:
-> Thanks Rob for reviewing.
+looks a bit better to me, but I won't insist.
+
+> +static int delayed_uprobe_install(struct vm_area_struct *vma)
+> +{
+> +	struct list_head *pos, *q;
+> +	struct delayed_uprobe *du;
+> +	unsigned long vaddr;
+> +	int ret = 0, err = 0;
+> +
+> +	mutex_lock(&delayed_uprobe_lock);
+> +	list_for_each_safe(pos, q, &delayed_uprobe_list) {
+> +		du = list_entry(pos, struct delayed_uprobe, list);
+> +
+> +		if (!valid_ref_ctr_vma(du->uprobe, vma))
+> +			continue;
+> +
+> +		vaddr = offset_to_vaddr(vma, du->uprobe->ref_ctr_offset);
+> +		ret = __update_ref_ctr(vma->vm_mm, vaddr, 1);
+> +		/* Record an error and continue. */
+> +		err = ret & !err ? ret : err;
+
+I try to avoid the cosmetic nits, but I simply can't look at this line ;)
+
+		if (ret && !err)
+			err = ret;
+
+> @@ -1072,7 +1281,14 @@ int uprobe_mmap(struct vm_area_struct *vma)
+>  	struct uprobe *uprobe, *u;
+>  	struct inode *inode;
 >
->
-> On 7/7/2018 2:02 AM, Rob Herring wrote:
->> On Fri, Jun 29, 2018 at 02:50:53PM +0530, Rohit kumar wrote:
->>> This adds APSS based ADSP PIL driver for QCOM SoCs.
->>> Added initial support for SDM845 with ADSP bootup and
->>> shutdown operation handled from Application Processor
->>> SubSystem(APSS).
->>>
->>> Signed-off-by: Rohit kumar <rohitkr@codeaurora.org>
->>> ---
->>> Changes since v1:
->>> - Used APIs from qcom_q6v5.c
->>> - Use clock, reset and regmap driver APIs instead of
->>>    directly writing into the LPASS registers.
->>> - Created new file for non PAS ADSP PIL instead of extending
->>>    existing ADSP PIL driver.
->>> - cleanups as suggested by Bjorn and Rob.
->>>
->>>   .../bindings/remoteproc/qcom,non-pas-adsp.txt      | 138 +++++
->> This should be a separate patch.
->
-> Ok. Will separate it in next spin.
->>> drivers/remoteproc/Kconfig                         |  18 +
->>>   drivers/remoteproc/Makefile                        |   1 +
->>>   drivers/remoteproc/qcom_nonpas_adsp_pil.c          | 667 
->>> +++++++++++++++++++++
->>>   4 files changed, 824 insertions(+)
->>>   create mode 100644 
->>> Documentation/devicetree/bindings/remoteproc/qcom,non-pas-adsp.txt
->>>   create mode 100644 drivers/remoteproc/qcom_nonpas_adsp_pil.c
->>>
->>> diff --git 
->>> a/Documentation/devicetree/bindings/remoteproc/qcom,non-pas-adsp.txt 
->>> b/Documentation/devicetree/bindings/remoteproc/qcom,non-pas-adsp.txt
->>> new file mode 100644
->>> index 0000000..0581aaa
->>> --- /dev/null
->>> +++ 
->>> b/Documentation/devicetree/bindings/remoteproc/qcom,non-pas-adsp.txt
->>> @@ -0,0 +1,138 @@
->>> +Qualcomm Technology Inc. Non PAS ADSP Peripheral Image Loader
->>> +
->>> +This document defines the binding for a component that loads and 
->>> boots firmware
->>> +on the Qualcomm Technology Inc. ADSP Hexagon core.
->>> +
->>> +- compatible:
->>> +    Usage: required
->>> +    Value type: <string>
->>> +    Definition: must be one of:
->>> +            "qcom,sdm845-apss-adsp-pil"
->> Didn't Bjorn say to drop the 'apss' part?
->
-> Yes, he had asked to rename compatible string for  existing PIL driver 
-> as "qcom,platform-subsystem-pas"
-> and non-pas pil driver as "qcom,platform-subsystem-pil". I wanted to 
-> get confirmation from Bjorn whether
-> we should rename the filename too.
-> @Bjorn, can you please suggest filename and compatible strings for the 
-> two drivers.
->>> +
->>> +- reg:
->>> +    Usage: required
->>> +    Value type: <prop-encoded-array>
->>> +    Definition: must specify the base address and size of the qdsp6ss
->>> +
->>> +- reg-names:
->>> +    Usage: required
->>> +    Value type: <stringlist>
->>> +    Definition: must be "qdsp6ss"
->>> +
->>>
->> -- 
->> To unsubscribe from this list: send the line "unsubscribe 
->> linux-remoteproc" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at http://vger.kernel.org/majordomo-info.html
->
-> Thanks,
-> Rohit
->
+> -	if (no_uprobe_events() || !valid_vma(vma, true))
+> +	if (no_uprobe_events())
+> +		return 0;
+> +
+> +	if (vma->vm_flags & VM_WRITE &&
+> +	    test_bit(MMF_HAS_UPROBES, &vma->vm_mm->flags))
+> +		delayed_uprobe_install(vma);
+
+OK, so you also added the VM_WRITE check and I agree. But then I think we
+should also check VM_SHARED, just like valid_ref_ctr_vma() does?
+
+Oleg.
 
