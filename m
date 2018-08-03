@@ -2,166 +2,111 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B0E8C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 17:21:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F9EDC28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 17:25:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 404B421777
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 17:21:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B6D8021784
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 17:25:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IC0ceDxa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 404B421777
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="CIJJOUvd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6D8021784
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729607AbeHCTTA (ORCPT
+        id S1729349AbeHCTWW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 15:19:00 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:38286 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727841AbeHCTTA (ORCPT
+        Fri, 3 Aug 2018 15:22:22 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:54829 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728116AbeHCTWW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 15:19:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=/7zcp47e6Ydd4cZN9LQW18xrO4SGF+ktz9zrchZXPTw=; b=IC0ceDxaj3PSNtMTXsAaOk1M9
-        QEtga76/juR42zvAw8YxOerG0K+uYK2ow40CGzi1YhW5SewN0LagB8Dfwz2LWm9Btlztd4040Zpl6
-        u0/ODDUHaxsv2ONZgj7/zbIBDGXO1qRD5kDu5ruoTk/wjutwUf0TfDR3kxkYUjYrrFVGfQObFkuFs
-        WSVr6hJyDuwr3bq6lDxduvs9KjgJq2oX76ZRgr8aiwsQg75b2NvkOHRn30bcFRwPnZQCUh1tkPUs0
-        MdNVE0Edk8oQuZyCVZHkWoqr7+K1hAYuXDzvw1kTkP2wUeiYZve62Gb2b7CUiY31wKu+X/8iGWQKM
-        JtR6kOARA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fldll-0008BK-El; Fri, 03 Aug 2018 17:21:41 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id E8E7A20267E51; Fri,  3 Aug 2018 19:21:39 +0200 (CEST)
-Date:   Fri, 3 Aug 2018 19:21:39 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Tejun Heo <tj@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Daniel Drake <drake@endlessm.com>,
-        Vinayak Menon <vinmenon@codeaurora.org>,
-        Christopher Lameter <cl@linux.com>,
-        Mike Galbraith <efault@gmx.de>,
-        Shakeel Butt <shakeelb@google.com>,
-        Peter Enderborg <peter.enderborg@sony.com>, linux-mm@kvack.org,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@fb.com
-Subject: Re: [PATCH 8/9] psi: pressure stall information for CPU, memory, and
- IO
-Message-ID: <20180803172139.GE2494@hirez.programming.kicks-ass.net>
-References: <20180801151958.32590-1-hannes@cmpxchg.org>
- <20180801151958.32590-9-hannes@cmpxchg.org>
+        Fri, 3 Aug 2018 15:22:22 -0400
+Received: by mail-it0-f65.google.com with SMTP id s7-v6so9301042itb.4
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Aug 2018 10:25:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=X2NAUnRoIsdwobCyBEqidc4JYudFIVHILUTepkSMRVs=;
+        b=CIJJOUvdhUdBbggU3H/RbZDBcfx6mSVFczc15Kh+AvoUIQwII1kzAvXbH+bNfO4LbF
+         aA2kKTiP8J/RlDMjAugzKVigJY4J1WW9KLHGHcbqVAfdglRcEARuKviKfPS7AwAXljZw
+         ra5WccZ44D65IulWK3sTy6pm+WpEW8OV+deCw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=X2NAUnRoIsdwobCyBEqidc4JYudFIVHILUTepkSMRVs=;
+        b=aq9PiyqFq2fUKiQCLA75yBaYV+NH5cNTA2P9bF2LY1gayiDminyV6DfQjlcqlLVph4
+         xjdslAw7oMVgbb4RcKE9rOGbVfeQzYLxe4MxcXr+QKwvUVjifnH9U5l5UovadjpwEx24
+         u+QfUwJ7D6cL3uDzMO2WJuCPRRpzcYqGSVEgaMDjo02wupwUgJyQ5OFyKhC3qElnqP9a
+         vndHrgPN214igASdNysDka1EhXgj0Hnxvxb5EsP06ekCYf4SOVd0rXGcOXA9z7ScJ0xc
+         rs3enq/AqT2wBQxD6q7QEpDDLC3E2848cUyj2Xg9kcVA7PwAoV2+j2yVw5+a/dWWaE/G
+         MtQA==
+X-Gm-Message-State: AOUpUlGUQ0WnuKIs+Gh7cSvIL8/NmJZY14KObP18BvT6J91WmVW3r/FN
+        +up7sy1LVTVFXBZUS5lY204U0N7aURppR72IR78b9A==
+X-Google-Smtp-Source: AAOMgpfL7FThXQOpllOh2Ys1chN1rVPMPXQryWGuMd0iI13GIGRpmNYCat7YATpRQKTGJM+BmOpy7Hrhi88ZdZePqwg=
+X-Received: by 2002:a02:2505:: with SMTP id g5-v6mr4234089jag.112.1533317109011;
+ Fri, 03 Aug 2018 10:25:09 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180801151958.32590-9-hannes@cmpxchg.org>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+References: <20180802111144.12512-1-digetx@gmail.com> <20a52a0461e32e776e526171c250551a@agner.ch>
+In-Reply-To: <20a52a0461e32e776e526171c250551a@agner.ch>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 3 Aug 2018 19:24:56 +0200
+Message-ID: <CACRpkda+t=0aJMSKre+U-GHN2d47pV3b_g13PcinXScP_UX5Ng@mail.gmail.com>
+Subject: Re: [PATCH v1 1/2] pinctrl: tegra: Move drivers registration to
+ arch_init level
+To:     Stefan Agner <stefan@agner.ch>
+Cc:     Dmitry Osipenko <digetx@gmail.com>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Marcel Ziswiler <marcel@ziswiler.com>,
+        linux-tegra@vger.kernel.org,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 01, 2018 at 11:19:57AM -0400, Johannes Weiner wrote:
-> +			time = READ_ONCE(groupc->times[s]);
-> +			/*
-> +			 * In addition to already concluded states, we
-> +			 * also incorporate currently active states on
-> +			 * the CPU, since states may last for many
-> +			 * sampling periods.
-> +			 *
-> +			 * This way we keep our delta sampling buckets
-> +			 * small (u32) and our reported pressure close
-> +			 * to what's actually happening.
-> +			 */
-> +			if (test_state(groupc->tasks, cpu, s)) {
-> +				/*
-> +				 * We can race with a state change and
-> +				 * need to make sure the state_start
-> +				 * update is ordered against the
-> +				 * updates to the live state and the
-> +				 * time buckets (groupc->times).
-> +				 *
-> +				 * 1. If we observe task state that
-> +				 * needs to be recorded, make sure we
-> +				 * see state_start from when that
-> +				 * state went into effect or we'll
-> +				 * count time from the previous state.
-> +				 *
-> +				 * 2. If the time delta has already
-> +				 * been added to the bucket, make sure
-> +				 * we don't see it in state_start or
-> +				 * we'll count it twice.
-> +				 *
-> +				 * If the time delta is out of
-> +				 * state_start but not in the time
-> +				 * bucket yet, we'll miss it entirely
-> +				 * and handle it in the next period.
-> +				 */
-> +				smp_rmb();
-> +				time += cpu_clock(cpu) - groupc->state_start;
-> +			}
+On Thu, Aug 2, 2018 at 1:31 PM Stefan Agner <stefan@agner.ch> wrote:
 
-As is, groupc->state_start needs a READ_ONCE() above and a WRITE_ONCE()
-below. But like stated earlier, doing an update in scheduler_tick() is
-probably easier.
+> A while back at least using those init lists were not well received even
+> for GPIO/pinctrl drivers:
+>
+> https://lore.kernel.org/lkml/CACRpkdYk0zW12qNXgOstTLmdVDYacu0Un+8quTN+J_azOic7AA@mail.gmail.com/T/#mf0596982324a6489b5537b0531ac5aed60a316ba
 
-> +static void psi_group_change(struct psi_group *group, int cpu, u64 now,
-> +			     unsigned int clear, unsigned int set)
-> +{
-> +	struct psi_group_cpu *groupc;
-> +	unsigned int t, m;
-> +	u32 delta;
-> +
-> +	groupc = per_cpu_ptr(group->pcpu, cpu);
-> +
-> +	/*
-> +	 * First we assess the aggregate resource states these CPU's
-> +	 * tasks have been in since the last change, and account any
-> +	 * SOME and FULL time that may have resulted in.
-> +	 *
-> +	 * Then we update the task counts according to the state
-> +	 * change requested through the @clear and @set bits.
-> +	 */
-> +
-> +	delta = now - groupc->state_start;
-> +	groupc->state_start = now;
-> +
-> +	/*
-> +	 * Update state_start before recording time in the sampling
-> +	 * buckets and changing task counts, to prevent a racing
-> +	 * aggregation from counting the delta twice or attributing it
-> +	 * to an old state.
-> +	 */
-> +	smp_wmb();
-> +
-> +	if (test_state(groupc->tasks, cpu, PSI_IO_SOME)) {
-> +		groupc->times[PSI_IO_SOME] += delta;
-> +		if (test_state(groupc->tasks, cpu, PSI_IO_FULL))
-> +			groupc->times[PSI_IO_FULL] += delta;
-> +	}
-> +	if (test_state(groupc->tasks, cpu, PSI_MEM_SOME)) {
-> +		groupc->times[PSI_MEM_SOME] += delta;
-> +		if (test_state(groupc->tasks, cpu, PSI_MEM_FULL))
-> +			groupc->times[PSI_MEM_FULL] += delta;
-> +	}
+You shouldn't listen too much to that guy he's not trustworthy.
 
-Might we worth checking the compiler does the right thing here and
-optimizes this branch fest into something sensible.
+> I still think we should make an exception for GPIO/pinctrl and use
+> earlier initcalls. Platform GPIO/pinctrl drivers provide basic
+> infrastructure often used by many other drivers, we want to have them
+> loaded early. It avoids unnecessary EPROBE_DEFER and hence probably even
+> boots faster.
 
-> +	if (test_state(groupc->tasks, cpu, PSI_CPU_SOME))
-> +		groupc->times[PSI_CPU_SOME] += delta;
-> +	if (test_state(groupc->tasks, cpu, PSI_NONIDLE))
-> +		groupc->times[PSI_NONIDLE] += delta;
+When we have the pin control and GPIO at different initlevels it makes me
+uneasy because I feel we have implicit init dependencies that seem more
+than a little fragile.
 
+My recent thinking has involved the component method used in DRM drivers
+such as drivers/gpu/drm/vc4/vc4_drv.c where a few different component
+subdrivers are linked together at bind time (not probe time!) into a master
+component.
+
+Rob was no big fan of this but the DRM people like it and I was thinking to
+make a try at it.
+
+This way we could at least probe and bind the pin control and GPIO drivers
+at the *same* initlevel and express the dependencies between them
+somewhat.
+
+> This should definitely go in, at least as a stop gap solution.
+
+Agreed. (And patch applied.)
+
+Yours,
+Linus Walleij
