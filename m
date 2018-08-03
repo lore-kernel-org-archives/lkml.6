@@ -2,84 +2,104 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58994C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 09:52:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7B3FC28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 09:54:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E8022174B
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 09:52:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E8022174B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lip6.fr
+	by mail.kernel.org (Postfix) with ESMTP id 8ED712174B
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 09:54:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8ED712174B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732497AbeHCLsW (ORCPT
+        id S1732514AbeHCLtk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 07:48:22 -0400
-Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:53230
-        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728122AbeHCLsW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 07:48:22 -0400
-X-IronPort-AV: E=Sophos;i="5.51,438,1526335200"; 
-   d="scan'208";a="274881484"
-Received: from vaio-julia.rsr.lip6.fr ([132.227.76.33])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Aug 2018 11:52:48 +0200
-Date:   Fri, 3 Aug 2018 11:52:45 +0200 (CEST)
-From:   Julia Lawall <julia.lawall@lip6.fr>
-X-X-Sender: jll@hadrien
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-cc:     Finn Thain <fthain@telegraphics.com.au>,
-        zhong jiang <zhongjiang@huawei.com>,
-        Michael Schmitz <schmitzmic@gmail.com>,
-        "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        John Garry <john.garry@huawei.com>,
-        linux-scsi <linux-scsi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] scsi:NCR5380: remove same check condition in
- NCR5380_select
-In-Reply-To: <CAHp75Vc8tWKUpKS8yY52CdJ=mU-iqcrUCz32ZSSJixLA1bM0tQ@mail.gmail.com>
-Message-ID: <alpine.DEB.2.20.1808031146090.3871@hadrien>
-References: <1533179408-20631-1-git-send-email-zhongjiang@huawei.com> <alpine.LNX.2.21.1808031156350.16@nippy.intranet> <CAHp75Vc8tWKUpKS8yY52CdJ=mU-iqcrUCz32ZSSJixLA1bM0tQ@mail.gmail.com>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Fri, 3 Aug 2018 07:49:40 -0400
+Received: from mx.socionext.com ([202.248.49.38]:4856 "EHLO mx.socionext.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729818AbeHCLtj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 07:49:39 -0400
+Received: from unknown (HELO kinkan-ex.css.socionext.com) ([172.31.9.52])
+  by mx.socionext.com with ESMTP; 03 Aug 2018 18:54:05 +0900
+Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
+        by kinkan-ex.css.socionext.com (Postfix) with ESMTP id 92F9218022B;
+        Fri,  3 Aug 2018 18:54:05 +0900 (JST)
+Received: from 172.31.9.51 (172.31.9.51) by m-FILTER with ESMTP; Fri, 3 Aug 2018 18:54:05 +0900
+Received: from plum.e01.socionext.com (unknown [10.213.132.32])
+        by kinkan.css.socionext.com (Postfix) with ESMTP id 481D71A11BB;
+        Fri,  3 Aug 2018 18:54:05 +0900 (JST)
+From:   Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+To:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+Subject: [PATCH v2 0/4] phy: socionext: add new UniPhier USB PHY driver support
+Date:   Fri,  3 Aug 2018 18:54:01 +0900
+Message-Id: <1533290045-18969-1-git-send-email-hayashi.kunihiko@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This series adds support for PHY interface built into USB controller
+implemented in Socionext UniPhier SoCs.
 
+The USB3 PHY driver supports High-Speed PHY and Super-Speed PHY included in
+the USB3 glue layer, and the USB2 PHY driver supports High-Speed PHY
+integrated into system controller.
 
-On Fri, 3 Aug 2018, Andy Shevchenko wrote:
+Kunihiko Hayashi (4):
+  dt-bindings: phy: add DT bindings for UniPhier USB3 PHY driver
+  phy: socionext: add USB3 PHY driver for UniPhier SoC
+  dt-bindings: phy: add DT bindings for UniPhier USB2 PHY driver
+  phy: socionext: add USB2 PHY driver for UniPhier SoC
 
-> On Fri, Aug 3, 2018 at 5:24 AM, Finn Thain <fthain@telegraphics.com.au> wrote:
-> > On Thu, 2 Aug 2018, zhong jiang wrote:
-> >
-> >> The same check condition is redundant, so remove one of them.
-> >>
-> >
-> > If you are trying to find redundant code, your coccinelle script is
-> > dangerously flawed.
->
-> These days too many coccinelle helpers make people think they are
-> doing right "clean ups" when in the practice they bring the
-> regressions.
->
-> Julia, is possible by coccinelle to distinguish memory accesses versus
-> I/O? At least it would increase robustness in some cases.
+Changes since v1:
+- rewrite a header with C++ comment style
+- dt-bindings: separate a document for ssphy and hsphy
+- dt-bindings: sort clock-names and reset-names to begin with "phy"
+- dt-bindings: use vbus-supply instead of phy-supply, because vbus isn't
+  for phy, but vbus is tied to the port that corresponds to each phy [1]
+- stop using phy_power and add own .power_on and .power_off functions
+  to control clk/reset for phy and vbus regulator
+- separate clk_get() and reset_control_get() for each clk/reset
+  and remove arrays of clock_names and reset_names
+- remove phy-parameters that are the same as power-on values
+- remove functions to set phy-parameters for legacy SoCs
+- express phy-parameters by using macros including the number of
+  the register and its bitfield (msb and lsb)
 
-With make coccicheck, the semantic patch should already emit the warning:
+[1] http://lists.infradead.org/pipermail/linux-arm-kernel/2018-July/593279.html
 
-//# A common source of false positives is when the argument performs a side
-//# effect.
+ .../devicetree/bindings/phy/uniphier-usb2-phy.txt  |  45 +++
+ .../bindings/phy/uniphier-usb3-hsphy.txt           |  69 ++++
+ .../bindings/phy/uniphier-usb3-ssphy.txt           |  57 +++
+ drivers/phy/Kconfig                                |   1 +
+ drivers/phy/Makefile                               |   1 +
+ drivers/phy/socionext/Kconfig                      |  25 ++
+ drivers/phy/socionext/Makefile                     |   7 +
+ drivers/phy/socionext/phy-uniphier-usb2.c          | 246 ++++++++++++
+ drivers/phy/socionext/phy-uniphier-usb3hs.c        | 423 +++++++++++++++++++++
+ drivers/phy/socionext/phy-uniphier-usb3ss.c        | 350 +++++++++++++++++
+ 10 files changed, 1224 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/phy/uniphier-usb2-phy.txt
+ create mode 100644 Documentation/devicetree/bindings/phy/uniphier-usb3-hsphy.txt
+ create mode 100644 Documentation/devicetree/bindings/phy/uniphier-usb3-ssphy.txt
+ create mode 100644 drivers/phy/socionext/Kconfig
+ create mode 100644 drivers/phy/socionext/Makefile
+ create mode 100644 drivers/phy/socionext/phy-uniphier-usb2.c
+ create mode 100644 drivers/phy/socionext/phy-uniphier-usb3hs.c
+ create mode 100644 drivers/phy/socionext/phy-uniphier-usb3ss.c
 
-I can modify the rule so that it doesn't report on code that involves
-function calls.  It could lose some desirable warnings, where the function
-call is just a wrapper for eg extracting some field, but it is probably
-safer in practice.
+-- 
+2.7.4
 
-julia
