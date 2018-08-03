@@ -2,92 +2,90 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 389F0C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 17:10:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F2CDC28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 17:11:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC0752177F
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 17:10:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="TtTyHIRN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC0752177F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id C34A82177F
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 17:11:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C34A82177F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729407AbeHCTHp (ORCPT
+        id S1729733AbeHCTI7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 15:07:45 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:36326 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727613AbeHCTHo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 15:07:44 -0400
-Received: by mail-it0-f65.google.com with SMTP id p81-v6so9378719itp.1
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Aug 2018 10:10:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=IioGxO/RNsPfTVToAmjK+aiQ0Tjuetj1bIQpmpDnaO8=;
-        b=TtTyHIRN/I9tNit/FWsSQVhd4lRPdvd18Jh3caWN3EULVVUsJu9MszmwIEpidMIQ0s
-         9+Y3mxAxwKgRb2EK5yzzZWaQbLKs/bNH0/nWesYcADxxk/BlWPiKw0BJwCFDY7BPusSv
-         ciGW/rXWLJjjdDAdpACa35uwYnqCsDjxwbqfA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=IioGxO/RNsPfTVToAmjK+aiQ0Tjuetj1bIQpmpDnaO8=;
-        b=CqZt2D9mJjs58Vk6XSHpPjO5qKd0BNcPnkM4BTj+i4Ykd8pBQd6wgg9BwckznKNnZu
-         zPGH48XqpTFjJdHH7IkmwTgDPG8eJ/15N6Vrm7GhzNrpiE4VyddCOTLBuJxkKtB9rjD3
-         geWJ71F1kGkKDUoyuecYWL4mmlfUSmRLi1wyp+RIOuLIWEKKhFClTCX2MmdkrYei4lVf
-         bf1Dxe4Kyoesd2z1Bpex60WGPn8cQtl+rg1UBDVinXnoCJ1Sz641KQIJ0DMAdKXndHk5
-         Ds6c5x4JWxIKIlyj341uFfFaUn/jMOkuoYCamW2VCb4kz0rBwmCDCw/PjQbzJ1owAfGy
-         umZQ==
-X-Gm-Message-State: AOUpUlFZ05w89w0h+bB4oXZpV0z6XEgJxoXbVCvaURjI7N/xo67glj8a
-        +tysHziant5z8ymRzdw9Fwyz1zTQGjL0peC5JjfOJg==
-X-Google-Smtp-Source: AAOMgpegkKM5gd1OBGDG5K7+aDYT7PjxlHLMhbKl9GUFBdk37JuKifEYx/gpe/8JRCju99J58THJs8WeXjDl1/x6Ks0=
-X-Received: by 2002:a02:9d03:: with SMTP id n3-v6mr4020435jak.113.1533316234107;
- Fri, 03 Aug 2018 10:10:34 -0700 (PDT)
+        Fri, 3 Aug 2018 15:08:59 -0400
+Received: from mga05.intel.com ([192.55.52.43]:29517 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727376AbeHCTI7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 15:08:59 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Aug 2018 10:11:48 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,439,1526367600"; 
+   d="scan'208";a="245797206"
+Received: from fmsmsx107.amr.corp.intel.com ([10.18.124.205])
+  by orsmga005.jf.intel.com with ESMTP; 03 Aug 2018 10:11:42 -0700
+Received: from fmsmsx126.amr.corp.intel.com (10.18.125.43) by
+ fmsmsx107.amr.corp.intel.com (10.18.124.205) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Fri, 3 Aug 2018 10:11:42 -0700
+Received: from fmsmsx113.amr.corp.intel.com ([169.254.13.40]) by
+ FMSMSX126.amr.corp.intel.com ([169.254.1.163]) with mapi id 14.03.0319.002;
+ Fri, 3 Aug 2018 10:11:41 -0700
+From:   "Verma, Vishal L" <vishal.l.verma@intel.com>
+To:     "Williams, Dan J" <dan.j.williams@intel.com>,
+        "ross.zwisler@linux.intel.com" <ross.zwisler@linux.intel.com>,
+        "oceanhehy@gmail.com" <oceanhehy@gmail.com>,
+        "Jiang, Dave" <dave.jiang@intel.com>,
+        "lenb@kernel.org" <lenb@kernel.org>,
+        "rjw@rjwysocki.net" <rjw@rjwysocki.net>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+        "hehy1@lenovo.com" <hehy1@lenovo.com>
+Subject: Re: [PATCH] ACPI: nfit: return -ENODEV if fail to find NFIT at
+ startup
+Thread-Topic: [PATCH] ACPI: nfit: return -ENODEV if fail to find NFIT at
+ startup
+Thread-Index: AQHUKw9W31TJeaGVuEmcv5V4mRjBQqSuuU+A
+Date:   Fri, 3 Aug 2018 17:11:41 +0000
+Message-ID: <1533316299.8557.71.camel@intel.com>
+References: <1533289198-11400-1-git-send-email-oceanhehy@gmail.com>
+In-Reply-To: <1533289198-11400-1-git-send-email-oceanhehy@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.232.112.133]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <CE939AF9BD0A30438FEC5A12E3B27967@intel.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <1533117623-27856-1-git-send-email-narmstrong@baylibre.com>
-In-Reply-To: <1533117623-27856-1-git-send-email-narmstrong@baylibre.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 3 Aug 2018 19:10:22 +0200
-Message-ID: <CACRpkdbSE0ThGpEo2YnVQ7wW85QbAeOwmFpLczHwL3Q2W3ZF6Q@mail.gmail.com>
-Subject: Re: [PATCH 0/5] pinctrl: meson: Add support for TEST_N gpio
-To:     Neil Armstrong <narmstrong@baylibre.com>,
-        Carlo Caione <carlo@caione.org>
-Cc:     Kevin Hilman <khilman@baylibre.com>,
-        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 1, 2018 at 12:00 PM Neil Armstrong <narmstrong@baylibre.com> wrote:
-
-> The Amlogic Meson GX and AXG SoCs needs to do a Secure Monitor call to
-> set the TEST_N pin direction.
-> This patchset :
-> - adds the Secure Monitor call
-> - adds support int the pinctrl-meson common code
-> - adds support for GXBB, GXL and AGX SoCs
-
-A lot of trouble to access a single GPIO pin (I guess _N means "active low"?)
-
-Is this line used for something especially important? Would be nice to
-include in some commit message like patch 1/5 why we invest so much
-energy to accessing this pin.
-
-Just curious. If you're just aiming for feature completion, that is a good
-reason as well :D
-
-Yours,
-Linus Walleij
+DQpPbiBGcmksIDIwMTgtMDgtMDMgYXQgMDU6MzkgLTA0MDAsIE9jZWFuIEhlIHdyb3RlOg0KPiBG
+cm9tOiBPY2VhbiBIZSA8aGVoeTFAbGVub3ZvLmNvbT4NCj4gDQo+IEluIHRoZSBiZWdpbm5pbmcg
+b2YgYWNwaV9uZml0X2FkZCwgaWYgZmFpbCB0byBmaW5kIE5GSVQgdGFibGUgdGhlbg0KPiBzaG91
+bGQNCj4gcmV0dXJuIC1FTk9ERVYsIGluc3RlYWQgb2YgMC4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6
+IE9jZWFuIEhlIDxoZWh5MUBsZW5vdm8uY29tPg0KPiAtLS0NCj4gIGRyaXZlcnMvYWNwaS9uZml0
+L2NvcmUuYyB8IDIgKy0NCj4gIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxl
+dGlvbigtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvYWNwaS9uZml0L2NvcmUuYyBiL2Ry
+aXZlcnMvYWNwaS9uZml0L2NvcmUuYw0KPiBpbmRleCA3YzQ3OTAwLi4xNzkwZDdjIDEwMDY0NA0K
+PiAtLS0gYS9kcml2ZXJzL2FjcGkvbmZpdC9jb3JlLmMNCj4gKysrIGIvZHJpdmVycy9hY3BpL25m
+aXQvY29yZS5jDQo+IEBAIC0zMzU1LDcgKzMzNTUsNyBAQCBzdGF0aWMgaW50IGFjcGlfbmZpdF9h
+ZGQoc3RydWN0IGFjcGlfZGV2aWNlDQo+ICphZGV2KQ0KPiAgCWlmIChBQ1BJX0ZBSUxVUkUoc3Rh
+dHVzKSkgew0KPiAgCQkvKiBUaGlzIGlzIG9rLCB3ZSBjb3VsZCBoYXZlIGFuIG52ZGltbSBob3Rw
+bHVnZ2VkDQo+IGxhdGVyICovDQo+ICAJCWRldl9kYmcoZGV2LCAiZmFpbGVkIHRvIGZpbmQgTkZJ
+VCBhdCBzdGFydHVwXG4iKTsNCj4gLQkJcmV0dXJuIDA7DQo+ICsJCXJldHVybiAtRU5PREVWOw0K
+DQpIbSwgdGhlIGNvbW1lbnQgZGlyZWN0bHkgYWJvdmUgdGhpcyBzYXlzIHRoaXMgaXMgb2suLg0K
+SGFzIHRoaXMgY2F1c2VkIGFueSBwcm9ibGVtcyBpbiBwcmFjdGljZT8NCg0KPiAgCX0NCj4gIA0K
+PiAgCXJjID0gZGV2bV9hZGRfYWN0aW9uX29yX3Jlc2V0KGRldiwgYWNwaV9uZml0X3B1dF90YWJs
+ZSwNCj4gdGJsKTsNCg==
