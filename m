@@ -2,158 +2,83 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72036C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 13:30:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C25AC28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 13:31:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 208B22175D
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 13:30:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=javigon-com.20150623.gappssmtp.com header.i=@javigon-com.20150623.gappssmtp.com header.b="LL9cim/Q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 208B22175D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=javigon.com
+	by mail.kernel.org (Postfix) with ESMTP id 3B1922175D
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 13:31:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B1922175D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732173AbeHCP0x (ORCPT
+        id S1732222AbeHCP11 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 11:26:53 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:45342 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729630AbeHCP0x (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 11:26:53 -0400
-Received: by mail-ed1-f68.google.com with SMTP id s16-v6so2152387edq.12
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Aug 2018 06:30:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=javigon-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=IUvsjD9m1QX7o5WGCRuXIk0TAKa5VmkAaQ+JpCUQt64=;
-        b=LL9cim/Q+heT2mDJlQC5BmWMW+LDPU3kypF4dOm4w+ZkhBKPjSPAXFIxt7e04YwKbK
-         IJCcjuBxLVdXP/S2grcm0aHga9IPP1ujXKbnHTu87OHfHt2Dlek2Z/O7si09lWJjWkR6
-         FSF1FZCyNDcw4d5e0ERISJFkF+LcjdLJc+lSyAkvzRM5fjNuasmuPy3IMdxkj+caVapD
-         fQ4e7mx4t7WS7mbhyOdQycFr48BIM1yzrnhUy/HRIIQByPf5BA93SMQlbU2+FyvEIEUj
-         kbPsJL8p9jc/e72RUNqArP+SVV3GcWuCGXxgLmbmZy5R/6PfUMwylxvJo+n3kvjMPquU
-         bsOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=IUvsjD9m1QX7o5WGCRuXIk0TAKa5VmkAaQ+JpCUQt64=;
-        b=jwKvOOHB061oiWaOggk6BsPJjdavIpgePfegSkBEPYs1dJGTqfDUpkeeOpla1XuuRQ
-         Eyjdicv9UAD8NOmNB9WrzTqTw4fV3S2FJrRgxYQw3TqI3nLaqjwInMiuOPRJGuC5omu8
-         KrajBhe5nSg0wznuB1I4fwngF/7n9eq/kKd7lzn4w+KI0DUTM10V0BvG5vBZvROKshHZ
-         8O/S9Rm6Nk7jH2mvFdA29tClLfPG5Mq7ZVxZ6RjahqMG0+9+Z1kX7HHoKw9C8ONhJ8OW
-         mzDgNOr5//QnsE4qUoZM40ZgTkxmTAj+2tgJZZ4Q8ip4mRsij0DvOE44WcvS0ZhQg+Jm
-         we5Q==
-X-Gm-Message-State: AOUpUlGDGNcIvHAEQwX7J97nI1TEm+ElGost7D/aVv6Rr4bIeJkns4bJ
-        XAxy3npPtVNtzJZObkBPRppzIA==
-X-Google-Smtp-Source: AAOMgpc9douFSS0U/WyPeyLjVpFIPxpRuEjJK7MqvrlczwnexExKo2leOPZRFQEI6itddvBZo0rRVQ==
-X-Received: by 2002:a50:9286:: with SMTP id k6-v6mr7560592eda.66.1533303029923;
-        Fri, 03 Aug 2018 06:30:29 -0700 (PDT)
-Received: from ch-wrk-javier.cnexlabs.com (6164211-cl69.boa.fiberby.dk. [193.106.164.211])
-        by smtp.gmail.com with ESMTPSA id b44-v6sm5998532edd.93.2018.08.03.06.30.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 03 Aug 2018 06:30:29 -0700 (PDT)
-From:   "=?UTF-8?q?Javier=20Gonz=C3=A1lez?=" <javier@javigon.com>
-X-Google-Original-From: =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
-To:     mb@lightnvm.io
-Cc:     axboe@kernel.dk, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
-Subject: [PATCH V2] lightnvm: pblk: take write semaphore on metadata
-Date:   Fri,  3 Aug 2018 15:30:11 +0200
-Message-Id: <1533303011-2855-1-git-send-email-javier@cnexlabs.com>
-X-Mailer: git-send-email 2.7.4
+        Fri, 3 Aug 2018 11:27:27 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41924 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729630AbeHCP10 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 11:27:26 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 30C6140216F9;
+        Fri,  3 Aug 2018 13:31:04 +0000 (UTC)
+Received: from localhost (unknown [10.18.25.149])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A07E620389E0;
+        Fri,  3 Aug 2018 13:31:03 +0000 (UTC)
+Date:   Fri, 3 Aug 2018 09:31:03 -0400
+From:   Mike Snitzer <snitzer@redhat.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     wgh@torlan.ru, Ilya Dryomov <idryomov@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        linux-block <linux-block@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Sagi Grimberg <sagi@grimberg.me>, dm-devel@redhat.com
+Subject: Re: LVM snapshot broke between 4.14 and 4.16
+Message-ID: <20180803133102.GA3092@redhat.com>
+References: <226835ba-2197-b850-6e5b-8ba14f7fd016@torlan.ru>
+ <CAOi1vP_tYG77e71CdDiOcszSSEWrp9Vfi+KB7yFAXVQChkjP5A@mail.gmail.com>
+ <93bff248-6897-4867-841b-2dace11597de@torlan.ru>
+ <CA+55aFyAox9BTDpRsqLXiROhHOX60aa45LEZ7Azteaumdu11Fw@mail.gmail.com>
+ <CAOi1vP-SJO4AMK=XD3Lmja++2dQqoiw6Zn8Vgxf8OfvYgnuC6Q@mail.gmail.com>
+ <CA+55aFy2DR9fxHhmGq+azSjX9D71YtLsuFKmoEuYW3uTAUYtJg@mail.gmail.com>
+ <d76415de-2056-c7d6-cc88-b896deaa8ead@torlan.ru>
+ <1ec0a220-d5b0-1c27-e63b-c4d3f4ce9d77@torlan.ru>
+ <CA+55aFyPVQ5-gA93irsaxPC9BNQxnGWrDDHPMUYai2kxKiaKWQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+55aFyPVQ5-gA93irsaxPC9BNQxnGWrDDHPMUYai2kxKiaKWQ@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 03 Aug 2018 13:31:04 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 03 Aug 2018 13:31:04 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'msnitzer@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-# Changes singe V1:
-  - Fix double I/O on the read path (by Matias)
-  - Improve commit message (by Jens)
+On Thu, Aug 02 2018 at  5:52pm -0400,
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-pblk guarantees write ordering at a chunk level through a per open chunk
-semaphore. At this point, since we only have an open I/O stream for both
-user and GC data, the semaphore is per parallel unit.
+> On Thu, Aug 2, 2018 at 2:39 PM WGH <wgh@torlan.ru> wrote:
+> >
+> > I've just found one public report of this bug, though:
+> > https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=900442
+> 
+> Yeah, it does sound like we should fix this issue.
 
-Since metadata I/O is synchronous, the semaphore is not needed as
-ordering is guaranteed. However, if the metadata scheme changes or
-multiple streams are open, this guarantee might not be preserved.
+Debian is notorious for having a stale and/or custom lvm2.
+Generally speaking, it is recommended that lvm2 not be older than the
+kernel (but the opposite is fine).  
 
-This patch makes sure that all writes go through the semaphore, even for
-synchronous I/O. This is consistent with pblk's write I/O model. It also
-simplifies maintenance since changes in the metdatada scheme could cause
-ordering issues.
+Given the narrow scope of users impacted (read-only snapshot creation is
+very niche, certainly not the default): I don't think it is worth making
+fiddly changes in dm-snapshot to warn the user and override the
+permissions for the cow device.
 
-Signed-off-by: Javier González <javier@cnexlabs.com>
----
- drivers/lightnvm/pblk-core.c | 18 ++++++++++++++++--
- drivers/lightnvm/pblk.h      |  1 +
- 2 files changed, 17 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/lightnvm/pblk-core.c b/drivers/lightnvm/pblk-core.c
-index 00984b486fea..6432faf5b19c 100644
---- a/drivers/lightnvm/pblk-core.c
-+++ b/drivers/lightnvm/pblk-core.c
-@@ -493,6 +493,20 @@ int pblk_submit_io_sync(struct pblk *pblk, struct nvm_rq *rqd)
- 	return nvm_submit_io_sync(dev, rqd);
- }
- 
-+int pblk_submit_io_sync_sem(struct pblk *pblk, struct nvm_rq *rqd)
-+{
-+	int ret;
-+
-+	if (rqd->opcode != NVM_OP_PWRITE)
-+		return pblk_submit_io_sync(pblk, rqd);
-+
-+	pblk_down_page(pblk, rqd->ppa_list, rqd->nr_ppas);
-+	ret = pblk_submit_io_sync(pblk, rqd);
-+	pblk_up_page(pblk, rqd->ppa_list, rqd->nr_ppas);
-+
-+	return ret;
-+}
-+
- static void pblk_bio_map_addr_endio(struct bio *bio)
- {
- 	bio_put(bio);
-@@ -737,7 +751,7 @@ static int pblk_line_submit_emeta_io(struct pblk *pblk, struct pblk_line *line,
- 		}
- 	}
- 
--	ret = pblk_submit_io_sync(pblk, &rqd);
-+	ret = pblk_submit_io_sync_sem(pblk, &rqd);
- 	if (ret) {
- 		pblk_err(pblk, "emeta I/O submission failed: %d\n", ret);
- 		bio_put(bio);
-@@ -842,7 +856,7 @@ static int pblk_line_submit_smeta_io(struct pblk *pblk, struct pblk_line *line,
- 	 * the write thread is the only one sending write and erase commands,
- 	 * there is no need to take the LUN semaphore.
- 	 */
--	ret = pblk_submit_io_sync(pblk, &rqd);
-+	ret = pblk_submit_io_sync_sem(pblk, &rqd);
- 	if (ret) {
- 		pblk_err(pblk, "smeta I/O submission failed: %d\n", ret);
- 		bio_put(bio);
-diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
-index 4760af7b6499..6ccc6ad8e1ce 100644
---- a/drivers/lightnvm/pblk.h
-+++ b/drivers/lightnvm/pblk.h
-@@ -782,6 +782,7 @@ void pblk_log_write_err(struct pblk *pblk, struct nvm_rq *rqd);
- void pblk_log_read_err(struct pblk *pblk, struct nvm_rq *rqd);
- int pblk_submit_io(struct pblk *pblk, struct nvm_rq *rqd);
- int pblk_submit_io_sync(struct pblk *pblk, struct nvm_rq *rqd);
-+int pblk_submit_io_sync_sem(struct pblk *pblk, struct nvm_rq *rqd);
- int pblk_submit_meta_io(struct pblk *pblk, struct pblk_line *meta_line);
- struct bio *pblk_bio_map_addr(struct pblk *pblk, void *data,
- 			      unsigned int nr_secs, unsigned int len,
--- 
-2.7.4
-
+Mike
