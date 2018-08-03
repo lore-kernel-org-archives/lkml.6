@@ -2,218 +2,144 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2851C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 12:57:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A251DC28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 13:01:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 473E82170D
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 12:57:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 473E82170D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	by mail.kernel.org (Postfix) with ESMTP id 47AF121748
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 13:01:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="XF1JdH7B"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47AF121748
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lightnvm.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731865AbeHCOxc (ORCPT
+        id S1731650AbeHCO5z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 10:53:32 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:10981 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729639AbeHCOxb (ORCPT
+        Fri, 3 Aug 2018 10:57:55 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:34588 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729367AbeHCO5y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 10:53:31 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1, AES128-SHA)
-        id <B5b6451210000>; Fri, 03 Aug 2018 05:57:05 -0700
-Received: from HQMAIL104.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Fri, 03 Aug 2018 05:57:17 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Fri, 03 Aug 2018 05:57:17 -0700
-Received: from HQMAIL102.nvidia.com (172.18.146.10) by HQMAIL104.nvidia.com
- (172.18.146.11) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 3 Aug
- 2018 12:57:16 +0000
-Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL102.nvidia.com
- (172.18.146.10) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 3 Aug
- 2018 12:57:16 +0000
-Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1347.2 via Frontend
- Transport; Fri, 3 Aug 2018 12:57:16 +0000
-Received: from moonraker.nvidia.com (Not Verified[10.21.132.122]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5b64512b0000>; Fri, 03 Aug 2018 05:57:16 -0700
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-CC:     <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, Jon Hunter <jonathanh@nvidia.com>
-Subject: [RFC PATCH] ASoC: core: Optimise suspend/resume of DAPM widgets
-Date:   Fri, 3 Aug 2018 13:57:05 +0100
-Message-ID: <1533301025-19980-1-git-send-email-jonathanh@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-X-NVConfidentiality: public
+        Fri, 3 Aug 2018 10:57:54 -0400
+Received: by mail-lf1-f65.google.com with SMTP id n96-v6so4018335lfi.1
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Aug 2018 06:01:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=yY+s+Wo21js7uwOR5v+juzGv4BB2CsnjQLGXB4wq2Bc=;
+        b=XF1JdH7BAFloRql5wDrZhdPZwbHMvr8BuOvmX/wbFJulF+dLGfH5gDxNbpInpcyw0Y
+         jH7u4EcOHbxlZpLlE4oTudRRZdJl2ejfZZoX9HvOnj01kNxR98I1GZmBycO4NIOx0NdE
+         JkYAGOKtb2rfJcZyoun6JwqkZtK7S78lHvtzgiviqHPT/ot0w3SJZ904MAMvVWEj8JiR
+         mdlND5i1ENL9oSXB9VTNTEIlmheTnAQuXNmc689asRdTg1GB48eQ0f9v4NofHSvraPy1
+         H7ss99hBVtNvyOrmDEPYSBDMoizbPVqDpyjQDfvUmz0PT6nz9xUhWRSXot4tcgor+S5d
+         baxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=yY+s+Wo21js7uwOR5v+juzGv4BB2CsnjQLGXB4wq2Bc=;
+        b=K9vQW6UnXXUaJy6bWJaW8J9RcyTDYnw9X/RefO1GhJ/eB9jUCiSjrmFJVZezEF/7Q5
+         spVdzak02b7vZ/IuXz9p79fK7We2hM4GIpBEbQx4ZuMYGSBrZANrbBUGLFLLQPH51CfC
+         yEUiNnn3i6HZNfnXdC/Oy854qzXvN9/6iKUTxJhAfHKpOjvqTeJ6kETjAt7/XBcvzoRR
+         jy04isHiAUI4vfMorDrhuxRwb6i15usCPJ3mIMwc+8z2ed67W3dl9a0V1QUzIS9kjT2k
+         ABXgPxVVsjpLi0s/WD7eUqwRPTa9D/g+5Df2uWNeXjXF7K0IU5t+zDJqTldhRaHTgQAm
+         XJ5Q==
+X-Gm-Message-State: AOUpUlFvSaXb15A6wxOun5aavgK624MFCUylur35FdG8tS89M/XTGhzR
+        oz5ygGg67NMmgjE02dweYjSqUGC/3Uo=
+X-Google-Smtp-Source: AAOMgperbL9kpLngq+OS46FmhokcQ/v2tzEVTKft4AhuzUNNB1MRFCxRFr6x755XbKxMQLqKIQu8LA==
+X-Received: by 2002:ac2:418b:: with SMTP id z11-v6mr4865880lfh.3.1533301298245;
+        Fri, 03 Aug 2018 06:01:38 -0700 (PDT)
+Received: from [192.168.0.10] (95-166-82-66-cable.dk.customer.tdc.net. [95.166.82.66])
+        by smtp.googlemail.com with ESMTPSA id d13-v6sm707590lfi.74.2018.08.03.06.01.36
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 03 Aug 2018 06:01:36 -0700 (PDT)
+Subject: Re: [PATCH] lightnvm: move device L2P detection to core
+To:     javier@cnexlabs.com
+Cc:     igor.j.konopko@intel.com, marcin.dziegielewski@intel.com,
+        hans.holmberg@cnexlabs.com, hlitz@ucsc.edu,
+        youngtack.jin@circuitblvd.com, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180803085449.3436-1-mb@lightnvm.io>
+ <31319710-8A72-49DC-9CFA-521CA06843F3@cnexlabs.com>
+ <9349be00-4d14-9b25-ed11-fb9244428d7f@lightnvm.io>
+ <C29BF7B1-4C9A-47C7-9E5F-AD63356B01BC@cnexlabs.com>
+ <56562d7c-8deb-4597-4274-5a55ec9327f7@lightnvm.io>
+ <B2E9F490-32FD-49C5-906D-994762E7191D@cnexlabs.com>
+From:   =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
+Message-ID: <e0be455d-2586-fea8-a554-2796b08dd5ff@lightnvm.io>
+Date:   Fri, 3 Aug 2018 15:01:35 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <B2E9F490-32FD-49C5-906D-994762E7191D@cnexlabs.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For soundcards that have several DAI links and many DAPM widgets the
-time taken for snd_soc_suspend to execute has been observed to be
-several milliseconds. The time is largely spent executing
-dapm_power_widgets() for each for the DAI links that need to be
-suspended. Given that dapm_power_widgets() is called again after
-suspending/resuming the DAI links, one way to optimise the
-suspend/resume time is to avoid calling dapm_power_widgets() for
-each DAI link and reduces the suspend time significantly.
+On 08/03/2018 02:55 PM, Javier Gonzalez wrote:
+>> On 3 Aug 2018, at 14.43, Matias Bjørling <mb@lightnvm.io> wrote:
+>>
+>> On 08/03/2018 02:40 PM, Javier Gonzalez wrote:
+>>>> On 3 Aug 2018, at 14.37, Matias Bjørling <mb@lightnvm.io> wrote:
+>>>>
+>>>> On 08/03/2018 02:16 PM, Javier Gonzalez wrote:
+>>>>>> On 3 Aug 2018, at 10.54, Matias Bjørling <mb@lightnvm.io> wrote:
+>>>>>>
+>>>>>> A 1.2 device is able to manage the logical to physical mapping
+>>>>>> table internally or leave it to the host.
+>>>>>>
+>>>>>> A target only supports one of those approaches, and therefore must
+>>>>>> check on initialization. Move this check to core to avoid each target
+>>>>>> implement the check.
+>>>>>>
+>>>>>> Signed-off-by: Matias Bjørling <mb@lightnvm.io>
+>>>>>> ---
+>>>>> I see where you want to go with these changes, but the way targets are
+>>>>> layered on top of the LightNVM subsystem does not align with it.
+>>>>> LightNVM can support different OCSSD versions and capabilities, but that
+>>>>> does not mean that a target (e.g., pblk) does. The way I see it, core
+>>>>> should only check for (i) the drive to expose itself in a known revision
+>>>>> and (ii) the reported structures to be consistent. However, specific
+>>>>> functionality is not for core to check upo.
+>>>>
+>>>> Why try to initialize a target, if we already know that it is incompatible?
+>>> Yes, that is my point. But the one who knows if the targets supports
+>>> something or not is the target, not the subsystem. Here, you are making
+>>> an assumption knowing the pblk requires the L2P on the host, but that
+>>> could change in the future...
+>>
+>> I don't believe it can. It is not supported by the 2.0 specification.
+>> 1.2 is legacy.
+>>
+> 
+> Ja... We both know that people is using 1.2 variants out there...
 
-Please note that this has been observed on the Tegra210 Jetson TX1
-platform which is not currently supported in the mainline for audio
-but has been tested with out-of-tree patches to enable I2S audio.
-For Tegra210 the audio drivers (for I2S, etc) are implemented as
-component drivers to offer greater flexibility with dynamic audio
-routing within the Tegra Audio Processing Engine (APE) from userspace.
-The downside of this flexibility is that now there are a lof more DAI
-links and so the time to suspend the soundcard can take several
-milliseconds.
+Yes, I'm not saying that. I'm saying the spec 1.2 has been deprecated by 
+2.0 and no longer developed, and I'm not going to move that brainfart 
+into the 2.0 spec :)
 
-In the resume path, it is not clear if there could be any issues from
-not sync'ing the DAPM power state until after unmuting and resuming
-the CPU DAI drivers, because this will happen later with this change.
+> 
+>> I understand this from the perspective when checking for un-even
+>> configurations using the geometry. But this is a spec incompatibility,
+>> which I don't think the target should care about.
+> 
+> I see the point of not having this check in pblk since we know that we
+> are moving towards 2.0 and leaving 1.2 as legacy/not-upstream. But does
+> it really make sense to fail LightNVM on a 1.2 capability that is spec.
+> compliant? For all we know people could have this and use it from user
+> space or through an internal target.
+>
 
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
----
-
-It is not 100% clear to me if there are any downsides to this approach
-but I am looking to find away to avoid calling dapm_power_widgets() so
-many times in the suspend path when there are many DAI links.
-Unfortunately, I don't think that I can simply mark some of the DAI
-links with 'ignore_suspend' because it could be possible that they are
-active.
-
- include/sound/soc-dapm.h |  2 ++
- sound/soc/soc-core.c     | 18 ++++--------------
- sound/soc/soc-dapm.c     | 43 ++++++++++++++++++++++++++++++++++++++++---
- 3 files changed, 46 insertions(+), 17 deletions(-)
-
-diff --git a/include/sound/soc-dapm.h b/include/sound/soc-dapm.h
-index af9ef16cc34d..5dbd601154c4 100644
---- a/include/sound/soc-dapm.h
-+++ b/include/sound/soc-dapm.h
-@@ -427,6 +427,8 @@ void snd_soc_dapm_reset_cache(struct snd_soc_dapm_context *dapm);
- /* dapm events */
- void snd_soc_dapm_stream_event(struct snd_soc_pcm_runtime *rtd, int stream,
- 	int event);
-+void snd_soc_dapm_stream_suspend(struct snd_soc_pcm_runtime *rtd, int stream);
-+void snd_soc_dapm_stream_resume(struct snd_soc_pcm_runtime *rtd, int stream);
- void snd_soc_dapm_shutdown(struct snd_soc_card *card);
- 
- /* external DAPM widget events */
-diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
-index 81b27923303d..03c5fa95afb8 100644
---- a/sound/soc/soc-core.c
-+++ b/sound/soc/soc-core.c
-@@ -519,13 +519,8 @@ int snd_soc_suspend(struct device *dev)
- 		if (rtd->dai_link->ignore_suspend)
- 			continue;
- 
--		snd_soc_dapm_stream_event(rtd,
--					  SNDRV_PCM_STREAM_PLAYBACK,
--					  SND_SOC_DAPM_STREAM_SUSPEND);
--
--		snd_soc_dapm_stream_event(rtd,
--					  SNDRV_PCM_STREAM_CAPTURE,
--					  SND_SOC_DAPM_STREAM_SUSPEND);
-+		snd_soc_dapm_stream_suspend(rtd, SNDRV_PCM_STREAM_PLAYBACK);
-+		snd_soc_dapm_stream_suspend(rtd, SNDRV_PCM_STREAM_CAPTURE);
- 	}
- 
- 	/* Recheck all endpoints too, their state is affected by suspend */
-@@ -637,13 +632,8 @@ static void soc_resume_deferred(struct work_struct *work)
- 		if (rtd->dai_link->ignore_suspend)
- 			continue;
- 
--		snd_soc_dapm_stream_event(rtd,
--					  SNDRV_PCM_STREAM_PLAYBACK,
--					  SND_SOC_DAPM_STREAM_RESUME);
--
--		snd_soc_dapm_stream_event(rtd,
--					  SNDRV_PCM_STREAM_CAPTURE,
--					  SND_SOC_DAPM_STREAM_RESUME);
-+		snd_soc_dapm_stream_resume(rtd, SNDRV_PCM_STREAM_PLAYBACK);
-+		snd_soc_dapm_stream_resume(rtd, SNDRV_PCM_STREAM_CAPTURE);
- 	}
- 
- 	/* unmute any active DACs */
-diff --git a/sound/soc/soc-dapm.c b/sound/soc/soc-dapm.c
-index 7e96793050c9..7d4f75d29d55 100644
---- a/sound/soc/soc-dapm.c
-+++ b/sound/soc/soc-dapm.c
-@@ -4201,7 +4201,7 @@ void snd_soc_dapm_connect_dai_link_widgets(struct snd_soc_card *card)
- }
- 
- static void soc_dapm_stream_event(struct snd_soc_pcm_runtime *rtd, int stream,
--	int event)
-+	int event, bool power_widgets)
- {
- 	int i;
- 
-@@ -4209,7 +4209,8 @@ static void soc_dapm_stream_event(struct snd_soc_pcm_runtime *rtd, int stream,
- 	for (i = 0; i < rtd->num_codecs; i++)
- 		soc_dapm_dai_stream_event(rtd->codec_dais[i], stream, event);
- 
--	dapm_power_widgets(rtd->card, event);
-+	if (power_widgets)
-+		dapm_power_widgets(rtd->card, event);
- }
- 
- /**
-@@ -4229,7 +4230,43 @@ void snd_soc_dapm_stream_event(struct snd_soc_pcm_runtime *rtd, int stream,
- 	struct snd_soc_card *card = rtd->card;
- 
- 	mutex_lock_nested(&card->dapm_mutex, SND_SOC_DAPM_CLASS_RUNTIME);
--	soc_dapm_stream_event(rtd, stream, event);
-+	soc_dapm_stream_event(rtd, stream, event, true);
-+	mutex_unlock(&card->dapm_mutex);
-+}
-+
-+/**
-+ * snd_soc_dapm_stream_suspend - send a suspend stream event to the dapm core
-+ * @rtd: PCM runtime data
-+ * @stream: stream name
-+ *
-+ * Sends a suspend stream event to the dapm core.
-+ *
-+ * Returns 0 for success else error.
-+ */
-+void snd_soc_dapm_stream_suspend(struct snd_soc_pcm_runtime *rtd, int stream)
-+{
-+	struct snd_soc_card *card = rtd->card;
-+
-+	mutex_lock_nested(&card->dapm_mutex, SND_SOC_DAPM_CLASS_RUNTIME);
-+	soc_dapm_stream_event(rtd, stream, SND_SOC_DAPM_STREAM_SUSPEND, false);
-+	mutex_unlock(&card->dapm_mutex);
-+}
-+
-+/**
-+ * snd_soc_dapm_stream_resume - send a resume stream event to the dapm core
-+ * @rtd: PCM runtime data
-+ * @stream: stream name
-+ *
-+ * Sends a resume stream event to the dapm core.
-+ *
-+ * Returns 0 for success else error.
-+ */
-+void snd_soc_dapm_stream_resume(struct snd_soc_pcm_runtime *rtd, int stream)
-+{
-+	struct snd_soc_card *card = rtd->card;
-+
-+	mutex_lock_nested(&card->dapm_mutex, SND_SOC_DAPM_CLASS_RUNTIME);
-+	soc_dapm_stream_event(rtd, stream, SND_SOC_DAPM_STREAM_RESUME, false);
- 	mutex_unlock(&card->dapm_mutex);
- }
- 
--- 
-2.7.4
+It only fails on target creation, not on disk initialization. The disk 
+will be up so user-space and targets that implements. Is that a problem?
 
