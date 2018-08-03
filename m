@@ -2,196 +2,116 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 888F5C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 13:42:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CCAAC28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 13:42:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 384C721763
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 13:42:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 384C721763
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id BB0A72176D
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 13:42:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB0A72176D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732188AbeHCPjA (ORCPT
+        id S1732222AbeHCPjR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 11:39:00 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:3182 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729871AbeHCPi7 (ORCPT
+        Fri, 3 Aug 2018 11:39:17 -0400
+Received: from gateway34.websitewelcome.com ([192.185.148.214]:21274 "EHLO
+        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729367AbeHCPjR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 11:38:59 -0400
-X-UUID: e06a3d0886b242cd86bd2f74edf5c82a-20180803
-Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
-        (envelope-from <sean.wang@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1468524000; Fri, 03 Aug 2018 21:42:31 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs03n1.mediatek.inc (172.21.101.181) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Fri, 3 Aug 2018 21:42:29 +0800
-Received: from [172.21.77.33] (172.21.77.33) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Fri, 3 Aug 2018 21:42:29 +0800
-Message-ID: <1533303749.3472.160.camel@mtkswgap22>
-Subject: Re: [PATCH v7 2/3] Bluetooth: mediatek: Add protocol support for
- MediaTek serial devices
-From:   Sean Wang <sean.wang@mediatek.com>
-To:     Marcel Holtmann <marcel@holtmann.org>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        "open list:BLUETOOTH DRIVERS" <linux-bluetooth@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Date:   Fri, 3 Aug 2018 21:42:29 +0800
-In-Reply-To: <A6D48D49-52CE-405D-8C5D-C4D54CE67221@holtmann.org>
-References: <cover.1533056925.git.sean.wang@mediatek.com>
-         <c92ed10cf16f36d9a3b390e864af92e2dfe7b771.1533056925.git.sean.wang@mediatek.com>
-         <1707FFA1-A294-4A95-A3BF-0910CE455232@holtmann.org>
-         <1533192799.3472.122.camel@mtkswgap22>
-         <FF45A90A-F9F1-47CB-AB1F-1E92BF587FBE@holtmann.org>
-         <1533199720.3472.136.camel@mtkswgap22>
-         <9526E5D9-50BA-4D57-80F5-083DB7D28AFE@holtmann.org>
-         <1533205495.3472.144.camel@mtkswgap22>
-         <A6D48D49-52CE-405D-8C5D-C4D54CE67221@holtmann.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 8bit
+        Fri, 3 Aug 2018 11:39:17 -0400
+Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
+        by gateway34.websitewelcome.com (Postfix) with ESMTP id 97407118885C
+        for <linux-kernel@vger.kernel.org>; Fri,  3 Aug 2018 08:42:51 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id laLOfQKvibXuJlaLkfq68V; Fri, 03 Aug 2018 08:42:51 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.50.82] (port=49916 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1flaLN-001l1F-Hz; Fri, 03 Aug 2018 08:42:13 -0500
+Date:   Fri, 3 Aug 2018 08:42:11 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Rohit kumar <rohitkr@codeaurora.org>,
+        Patrick Lai <plai@codeaurora.org>,
+        Banajit Goswami <bgoswami@codeaurora.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] ASoC: smd845: fix memory leak
+Message-ID: <20180803134211.GA24593@embeddedor.com>
 MIME-Version: 1.0
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.50.82
+X-Source-L: No
+X-Exim-ID: 1flaLN-001l1F-Hz
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.50.82]:49916
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 9
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-08-03 at 14:51 +0200, Marcel Holtmann wrote:
-> Hi Sean,
-> 
-> >>>>>>> +
-> >>>>>>> +static int mtk_hci_wmt_sync(struct hci_dev *hdev, u8 op, u8 flag, u16 plen,
-> >>>>>>> +			    const void *param)
-> >>>>>>> +{
-> >>>>>>> +	struct mtk_hci_wmt_cmd wc;
-> >>>>>>> +	struct mtk_wmt_hdr *hdr;
-> >>>>>>> +	struct sk_buff *skb;
-> >>>>>>> +	u32 hlen;
-> >>>>>>> +
-> >>>>>>> +	hlen = sizeof(*hdr) + plen;
-> >>>>>>> +	if (hlen > 255)
-> >>>>>>> +		return -EINVAL;
-> >>>>>>> +
-> >>>>>>> +	hdr = (struct mtk_wmt_hdr *)&wc;
-> >>>>>>> +	hdr->dir = 1;
-> >>>>>>> +	hdr->op = op;
-> >>>>>>> +	hdr->dlen = cpu_to_le16(plen + 1);
-> >>>>>>> +	hdr->flag = flag;
-> >>>>>>> +	memcpy(wc.data, param, plen);
-> >>>>>>> +
-> >>>>>>> +	atomic_inc(&hdev->cmd_cnt);
-> >>>>>> 
-> >>>>>> Why are you doing this one. It will need a comment here if really needed. However I doubt that this is needed. You are only using it from hdev->setup and hdev->shutdown callbacks.
-> >>>>>> 
-> >>>>> 
-> >>>>> An increment on cmd_cnt is really needed because hci_cmd_work would check whether cmd_cnt is positive and then has a decrement on cmd_cnt before a packet is being sent out.
-> >>>>> 
-> >>>>> okay will add a comment.
-> >>>> 
-> >>>> but you are in ->setup callback this time. So if you need this, then all the other ->setup routines would actually fail as well. Either this is leftover from when you did things in ->probe or ->open or this is some thing we might better fix properly in the core instead of papering over it. Can you recheck if this is really needed.
-> >>>> 
-> >>> 
-> >>> I added a counter print and the counter increments as below
-> >>> 
-> >>> 	/* atomic_inc(&hdev->cmd_cnt); */
-> >>>       pr_info("cmd_cnt = %d\n" , atomic_read(&hdev->cmd_cnt));
-> >>> 
-> >>>       skb = __hci_cmd_sync_ev(hdev, 0xfc6f, hlen, &wc, HCI_VENDOR_PKT,
-> >>>                               HCI_INIT_TIMEOUT);
-> >>> 
-> >>> and the log show up that 
-> >>> 
-> >>> 
-> >>> [  334.049156] Bluetooth: hci0: command 0xfc6f tx timeout
-> >>> [  334.054840] cmd_cnt = 0
-> >>> [  336.065076] Bluetooth: hci0: command 0xfc6f tx timeout
-> >>> [  336.070795] cmd_cnt = 0
-> >>> [  338.080997] Bluetooth: hci0: command 0xfc6f tx timeout
-> >>> [  338.086683] cmd_cnt = 0
-> >>> [  340.096907] Bluetooth: hci0: command 0xfc6f tx timeout
-> >>> [  340.102609] cmd_cnt = 0
-> >>> [  342.112824] Bluetooth: hci0: command 0xfc6f tx timeout
-> >>> [  342.118520] cmd_cnt = 0
-> >>> [  344.128747] Bluetooth: hci0: command 0xfc6f tx timeout
-> >>> [  344.134454] cmd_cnt = 0
-> >>> [  346.144667] Bluetooth: hci0: command 0xfc6f tx timeout
-> >>> [  346.150372] cmd_cnt = 0
-> >>> 
-> >>> 
-> >>> The packet is dropped by hci_cmd_work at [1], so I also wondered why the
-> >>> other vendor driver works, it seems the counter needs to be incremented
-> >>> before every skb is being queued to cmd_q.
-> >>> 
-> >>> 4257 static void hci_cmd_work(struct work_struct *work)
-> >>> 4258 {
-> >>> 4259         struct hci_dev *hdev = container_of(work, struct hci_dev, cmd_work);
-> >>> 4260         struct sk_buff *skb;
-> >>> 4261
-> >>> 4262         BT_DBG("%s cmd_cnt %d cmd queued %d", hdev->name,
-> >>> 4263                atomic_read(&hdev->cmd_cnt), skb_queue_len(&hdev->cmd_q));
-> >>> 4264
-> >>> 4265         /* Send queued commands */
-> >>> 
-> >>> [1]
-> >>> 4266         if (atomic_read(&hdev->cmd_cnt)) { /* dropped when cmd_cnt is zero */
-> >>> 4267                 skb = skb_dequeue(&hdev->cmd_q);
-> >>> 4268                 if (!skb)
-> >>> 4269                         return;
-> >>> 4270
-> >>> 4271                 kfree_skb(hdev->sent_cmd);
-> >>> 4272
-> >>> 4273                 hdev->sent_cmd = skb_clone(skb, GFP_KERNEL);
-> >>> 4274                 if (hdev->sent_cmd) {
-> >>> 4275                         atomic_dec(&hdev->cmd_cnt);  /* cmd_cnt-- */
-> >>> 4276                         hci_send_frame(hdev, skb);
-> >> 
-> >> actually the command also needs to better go via the raw_q anyway since it doesn’t come back with the cmd status or cmd complete. You have it waiting for a vendor event. Maybe with is something we need to consider with __hci_cmd_sync_ev anyway.
-> >> 
-> >> Johan would know best since he wrote that code. Anyway, we should fix that in the core and not have you hack around it.
-> >> 
-> > 
-> > yes, my case is that received event is neither cmd status nor cmd complete. It is completely a vendor event.
-> > 
-> > if it wants to be solved by the core layer, do you permit that I remove the hack and then send it in the next version?
-> 
-> we need to have a __hci_raw_sync_ev that uses the hdev->raw_q and waits for the specified event to come back. I never realized that you are missing the cmd status or cmd complete. So this is similar to the original CSR vendor commands which had the same behavior.
-> 
-> I have the feeling that you hdev->cmd_cnt increment is just hiding the problem here. If you really think that it is not chains any side effects we can merge the driver with a big warning and fix this up. However the clean way would be for you to create a patch that introduces __hci_raw_sync_ev as describe above.
+In case memory resources for *card* were allocated, release them before
+return.
 
-What do you think of this? If I add extra atomic_set 1 on cmd_cnt after driver really got a vendor event back instead of blinding to increment for every packet sent.
+Addresses-Coverity-ID: 1472244 ("Resource leak")
+Fixes: 6b1687bf76ef ("ASoC: qcom: add sdm845 sound card support")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+NOTE: Notice that there are many places in which the return values of
+      functions snd_soc_dai_set_sysclk() and snd_soc_dai_set_fmt() are
+      not being checked. I wonder if this is intentional. Otherwise, I
+      can send a patch for that. Please, confirm. Thanks!
 
-the behavior is the same to receive a cmd status or complete. it should not have side effects.
+ sound/soc/qcom/sdm845.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
- 96         skb = __hci_cmd_sync_ev(hdev, 0xfc6f, hlen, &wc, HCI_VENDOR_PKT,
- 97                                 HCI_INIT_TIMEOUT);
- 98
- 99         if (IS_ERR(skb)) {
-100                 int err = PTR_ERR(skb);
-101
-102                 bt_dev_err(hdev, "Failed to send wmt cmd (%d)", err);
-103                 return err;
-104         }
-105
-106         if (!test_bit(HCI_RESET, &hdev->flags)) <<<<<<
-107                 atomic_set(&hdev->cmd_cnt, 1);  <<<<<<
-108
-109         kfree_skb(skb);
-
-> Regards
-> 
-> Marcel
-> 
-
+diff --git a/sound/soc/qcom/sdm845.c b/sound/soc/qcom/sdm845.c
+index be0cb11..c1adb77 100644
+--- a/sound/soc/qcom/sdm845.c
++++ b/sound/soc/qcom/sdm845.c
+@@ -222,8 +222,10 @@ static int sdm845_snd_platform_probe(struct platform_device *pdev)
+ 
+ 	/* Allocate the private data */
+ 	data = kzalloc(sizeof(*data), GFP_KERNEL);
+-	if (!data)
+-		return -ENOMEM;
++	if (!data) {
++		ret = -ENOMEM;
++		goto data_alloc_fail;
++	}
+ 
+ 	card->dev = dev;
+ 	dev_set_drvdata(dev, card);
+@@ -248,6 +250,7 @@ static int sdm845_snd_platform_probe(struct platform_device *pdev)
+ 	kfree(card->dai_link);
+ parse_dt_fail:
+ 	kfree(data);
++data_alloc_fail:
+ 	kfree(card);
+ 	return ret;
+ }
+-- 
+2.7.4
 
