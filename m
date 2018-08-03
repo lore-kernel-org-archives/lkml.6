@@ -2,85 +2,147 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88C61C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 03:22:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B3F3C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 03:31:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3ED1421711
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 03:22:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3ED1421711
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 1D308216FE
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 03:31:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D308216FE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727049AbeHCFQJ (ORCPT
+        id S1727128AbeHCF0B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 01:16:09 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:37282 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725972AbeHCFQJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 01:16:09 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6B0D418A;
-        Thu,  2 Aug 2018 20:21:55 -0700 (PDT)
-Received: from [192.168.100.241] (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6AE163F5BA;
-        Thu,  2 Aug 2018 20:21:54 -0700 (PDT)
-Subject: Re: [RFC 1/2] slub: Avoid trying to allocate memory on offline nodes
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     linux-mm@kvack.org, cl@linux.com, penberg@kernel.org,
-        rientjes@google.com, iamjoonsoo.kim@lge.com,
-        akpm@linux-foundation.org, vbabka@suse.cz, Punit.Agrawal@arm.com,
-        Lorenzo.Pieralisi@arm.com, linux-arm-kernel@lists.infradead.org,
-        bhelgaas@google.com, linux-kernel@vger.kernel.org
-References: <20180801200418.1325826-1-jeremy.linton@arm.com>
- <20180801200418.1325826-2-jeremy.linton@arm.com>
- <20180802091554.GE10808@dhcp22.suse.cz>
-From:   Jeremy Linton <jeremy.linton@arm.com>
-Message-ID: <c6caddbf-e275-219e-12b6-538a53ced17d@arm.com>
-Date:   Thu, 2 Aug 2018 22:21:53 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Fri, 3 Aug 2018 01:26:01 -0400
+Received: from mga06.intel.com ([134.134.136.31]:34597 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725972AbeHCF0B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 01:26:01 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Aug 2018 20:31:47 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,437,1526367600"; 
+   d="scan'208";a="250728002"
+Received: from sandybridge-desktop.sh.intel.com (HELO sandybridge-desktop) ([10.239.160.116])
+  by fmsmga005.fm.intel.com with ESMTP; 02 Aug 2018 20:31:19 -0700
+Date:   Fri, 3 Aug 2018 11:37:02 +0800
+From:   Yu Chen <yu.c.chen@intel.com>
+To:     joeyli <jlee@suse.com>
+Cc:     Oliver Neukum <oneukum@suse.com>, Pavel Machek <pavel@ucw.cz>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Eric Biggers <ebiggers@google.com>,
+        Theodore Ts o <tytso@mit.edu>,
+        Stephan Mueller <smueller@chronox.de>,
+        Denis Kenzior <denkenz@gmail.com>, linux-pm@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gu, Kookoo" <kookoo.gu@intel.com>,
+        "Zhang, Rui" <rui.zhang@intel.com>
+Subject: Re: [PATCH 0/4][RFC v2] Introduce the in-kernel hibernation
+ encryption
+Message-ID: <20180803033702.GB416@sandybridge-desktop>
+References: <20180718202235.GA4132@amd>
+ <20180718235851.GA22170@sandybridge-desktop>
+ <20180719110149.GA4679@amd>
+ <20180719132003.GA30981@sandybridge-desktop>
+ <20180720102532.GA20284@amd>
+ <1532346156.3057.11.camel@suse.com>
+ <20180723162302.GA4503@sandybridge-desktop>
+ <1532590246.7411.3.camel@suse.com>
+ <20180726081404.GG4244@linux-l9pv.suse>
+ <20180730170415.GQ4244@linux-l9pv.suse>
 MIME-Version: 1.0
-In-Reply-To: <20180802091554.GE10808@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180730170415.GQ4244@linux-l9pv.suse>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 08/02/2018 04:15 AM, Michal Hocko wrote:
-> On Wed 01-08-18 15:04:17, Jeremy Linton wrote:
-> [...]
->> @@ -2519,6 +2519,8 @@ static void *___slab_alloc(struct kmem_cache *s, gfp_t gfpflags, int node,
->>   		if (unlikely(!node_match(page, searchnode))) {
->>   			stat(s, ALLOC_NODE_MISMATCH);
->>   			deactivate_slab(s, page, c->freelist, c);
->> +			if (!node_online(searchnode))
->> +				node = NUMA_NO_NODE;
->>   			goto new_slab;
+Hi Joey,
+On Tue, Jul 31, 2018 at 01:04:15AM +0800, joeyli wrote:
+> Hi all,
 > 
-> This is inherently racy. Numa node can get offline at any point after
-> you check it here. Making it race free would involve some sort of
-> locking and I am not really convinced this is a good idea.
-
-I spent some time looking/thinking about this, and i'm pretty sure its 
-not creating any new problems. But OTOH, I think the node_online() check 
-is probably a bit misleading as what we really want to assure is that 
-node<MAX_NUMNODES and that there is going to be a valid entry in 
-NODE_DATA() so we don't deference null.
-
-
+> On Thu, Jul 26, 2018 at 04:14:04PM +0800, joeyli wrote:
+> > On Thu, Jul 26, 2018 at 09:30:46AM +0200, Oliver Neukum wrote:
+> > > On Di, 2018-07-24 at 00:23 +0800, Yu Chen wrote:
+> > > > 
+> > > > Good point, we once tried to generate key in kernel, but people
+> > > > suggest to generate key in userspace and provide it to the
+> > > > kernel, which is what ecryptfs do currently, so it seems this
+> > > > should also be safe for encryption in kernel.
+> > > > https://www.spinics.net/lists/linux-crypto/msg33145.html
+> > > > Thus Chun-Yi's signature can use EFI key and both the key from
+> > > > user space.
+> > > 
+> > > Hi,
+> > > 
+> > > ecryptfs can trust user space. It is supposed to keep data
+> > > safe while the system is inoperative. The whole point of Secure
+> > > Boot is a cryptographic system of trust that does not include
+> > > user space.
+> > > 
+> > > I seriously doubt we want to use trusted computing here. So the
+> > > key needs to be generated in kernel space and stored in a safe
+> > > manner. As we have a saolution doing that, can we come to ausable
+> > > synthesis?
+> > > 
+> > > 	Regards
+> > > 		Oliver
+> > 
+> > Crurently there have two solutions, they are trusted key and EFI key.
+> > Both of them are generated in kernel and are not visible in user space.
+> > 
+> > The trusted key is generated by kernel then sealed by the TPM's
+> > SRK. So the trusted key can be stored in anywhere then be enrolled
+> > to kernel when we need it. EVM already uses it.
+> > 
+> > The EFI key is Jiri Kosina's idea. It is stored in boot services
+> > variable, which means that it can only be access by signed EFI binary
+> > (e.g. signed EFI boot stub) when secure boot be enabled. SLE applied
+> > this solution a couple of years.
+> > 
+> > I am working on put the EFI key to key retention service. Then
+> > EFI key can be a master key of encrypted key. EVM can also use
+> > it: 
+> > https://github.com/joeyli/linux-s4sign/commit/bae39460393ada4c0226dd07cd5e3afcef86b71f
+> > https://github.com/joeyli/linux-s4sign/commit/f552f97cc3cca5acd84f424b7f946ffb5fe8e9ec
+> > 
+> > That's why I want to use key retention service in hibernation
+> > encryption/authentication. Which means that we can use key
+> > API to access trusted key and EFI key.  
+> >
 > 
->>   		}
->>   	}
->> -- 
->> 2.14.3
->>
+> Here is a proof of concept for using the key retention service
+> to encrypt/sign snapshot image. It's using EFI key now, I will
+> add encrypted key support in the key handler later:
+>     https://github.com/joeyli/linux-s4sign/commit/6311e97038974bc5de8121769fb4d34470009566 
 > 
+Thanks for the work, I have two questions here:
+1. Could you please describe a little more about the scenario on
+   how the user could use the secret key for hibernation encryption?
+   A requirement is that, the user should provide a passphrase(for key derivation, i.e.)
+   during resume. I was thinking how user could interact with
+   the security key mechanism here.
 
+2. The generation of secret key in EFI boot environment is
+   using a non standard derivation method in generate_secret_key(),
+   I'm not sure if this is safe enough. This is why we tried to put
+   PBKDF2 into kernel at first and leave it to the user space then.
+
+Best,
+Yu
+
+> My next step is that cleaning up the my EFI key type patches and
+> submit it to EFI/keys subsystem ASAP. Then I will clean up
+> my hibernation encryption/authentication solution for reviewing.
+> 
+> Thanks
+> Joey Lee 
