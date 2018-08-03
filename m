@@ -6,44 +6,45 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC561C43142
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 03:03:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A3F3C43142
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 03:03:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FECE216F3
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 03:03:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FECE216F3
+	by mail.kernel.org (Postfix) with ESMTP id C693A216FB
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 03:03:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C693A216FB
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727775AbeHCE54 (ORCPT
+        id S1728025AbeHCE56 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 00:57:56 -0400
-Received: from mga01.intel.com ([192.55.52.88]:19256 "EHLO mga01.intel.com"
+        Fri, 3 Aug 2018 00:57:58 -0400
+Received: from mga17.intel.com ([192.55.52.151]:48918 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727246AbeHCE5y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 00:57:54 -0400
+        id S1727246AbeHCE56 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 00:57:58 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Aug 2018 20:03:48 -0700
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Aug 2018 20:03:51 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,437,1526367600"; 
-   d="scan'208";a="80109907"
+   d="scan'208";a="78325507"
 Received: from sgsxdev001.isng.intel.com (HELO localhost) ([10.226.88.11])
-  by orsmga002.jf.intel.com with ESMTP; 02 Aug 2018 20:03:38 -0700
+  by orsmga001.jf.intel.com with ESMTP; 02 Aug 2018 20:03:47 -0700
 From:   Songjun Wu <songjun.wu@linux.intel.com>
 To:     hua.ma@linux.intel.com, yixin.zhu@linux.intel.com,
         chuanhua.lei@linux.intel.com, qi-ming.wu@intel.com
 Cc:     linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
         linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
         Songjun Wu <songjun.wu@linux.intel.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+        James Hogan <jhogan@kernel.org>, linux-kernel@vger.kernel.org,
+        Paul Burton <paul.burton@mips.com>,
         Rob Herring <robh+dt@kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
         Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH v2 03/18] dt-bindings: clk: Add documentation of grx500 clock controller
-Date:   Fri,  3 Aug 2018 11:02:22 +0800
-Message-Id: <20180803030237.3366-4-songjun.wu@linux.intel.com>
+Subject: [PATCH v2 05/18] dt-binding: MIPS: Add documentation of Intel MIPS SoCs
+Date:   Fri,  3 Aug 2018 11:02:24 +0800
+Message-Id: <20180803030237.3366-6-songjun.wu@linux.intel.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180803030237.3366-1-songjun.wu@linux.intel.com>
 References: <20180803030237.3366-1-songjun.wu@linux.intel.com>
@@ -52,68 +53,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yixin Zhu <yixin.zhu@linux.intel.com>
+From: Hua Ma <hua.ma@linux.intel.com>
 
-This patch adds binding documentation for grx500 clock controller.
+This patch adds binding documentation for the
+compatible values of the Intel MIPS SoCs.
 
-Signed-off-by: YiXin Zhu <yixin.zhu@linux.intel.com>
+Signed-off-by: Hua Ma <hua.ma@linux.intel.com>
 Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
 ---
 
 Changes in v2:
-- Rewrite clock driver's dt-binding document according to Rob Herring's
-  comments.
-- Simplify device tree docoment, remove some clock description.
+- New patch split from previous patch
+- Add the board and chip compatible in dt document
 
- .../devicetree/bindings/clock/intel,grx500-clk.txt | 39 ++++++++++++++++++++++
- 1 file changed, 39 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/intel,grx500-clk.txt
+ Documentation/devicetree/bindings/mips/intel.txt | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mips/intel.txt
 
-diff --git a/Documentation/devicetree/bindings/clock/intel,grx500-clk.txt b/Documentation/devicetree/bindings/clock/intel,grx500-clk.txt
+diff --git a/Documentation/devicetree/bindings/mips/intel.txt b/Documentation/devicetree/bindings/mips/intel.txt
 new file mode 100644
-index 000000000000..e54e1dad9196
+index 000000000000..ac594ef303b7
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/intel,grx500-clk.txt
-@@ -0,0 +1,39 @@
-+Device Tree Clock bindings for grx500 PLL controller.
++++ b/Documentation/devicetree/bindings/mips/intel.txt
+@@ -0,0 +1,17 @@
++Intel MIPS SoC device tree bindings
 +
-+This binding uses the common clock binding:
-+	Documentation/devicetree/bindings/clock/clock-bindings.txt
++1, SoCs
 +
-+The grx500 clock controller supplies clock to various controllers within the
-+SoC.
++Each device tree must specify a compatible value for the Intel SoC
++it uses in the compatible property of the root node. The compatible
++value must be one of the following values:
 +
-+Required properties for clock node
-+- compatible: Should be "intel,grx500-cgu".
-+- reg: physical base address of the controller and length of memory range.
-+- #clock-cells: should be 1.
++  intel,xrx500
 +
-+Optional Propteries:
-+- intel,osc-frequency: frequency of the osc clock.
-+if missing, driver will use clock rate defined in the driver.
++2, Boards
 +
-+Example: Clock controller node:
++Each device tree must specify a compatible value for the Intel Board
++it uses in the compatible property of the root node. The compatible
++value must be one of the following values:
 +
-+	cgu: cgu@16200000 {
-+                compatible = "intel,grx500-cgu", "syscon";
-+		reg = <0x16200000 0x200>;
-+		#clock-cells = <1>;
-+	};
-+
-+
-+Example: UART controller node that consumes the clock generated by clock
-+	controller.
-+
-+	asc0: serial@16600000 {
-+		compatible = "lantiq,asc";
-+		reg = <0x16600000 0x100000>;
-+		interrupt-parent = <&gic>;
-+		interrupts = <GIC_SHARED 103 IRQ_TYPE_LEVEL_HIGH>,
-+			<GIC_SHARED 105 IRQ_TYPE_LEVEL_HIGH>,
-+			<GIC_SHARED 106 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&cgu CLK_SSX4>, <&cgu GCLK_UART>;
-+		clock-names = "freq", "asc";
-+	};
++  intel,easy350-anywan
 -- 
 2.11.0
 
