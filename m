@@ -2,170 +2,293 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3369BC28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 20:43:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3325C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 20:44:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D14472178D
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 20:43:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 385A72178D
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 20:44:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ZUOqcDwC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D14472178D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=pass (2048-bit key) header.d=bakuhatsu-net.20150623.gappssmtp.com header.i=@bakuhatsu-net.20150623.gappssmtp.com header.b="RNsqrcqT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 385A72178D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bakuhatsu.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731816AbeHCWk4 (ORCPT
+        id S1731986AbeHCWmj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 18:40:56 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:38450 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729828AbeHCWk4 (ORCPT
+        Fri, 3 Aug 2018 18:42:39 -0400
+Received: from mail-ua0-f194.google.com ([209.85.217.194]:39676 "EHLO
+        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728794AbeHCWmj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 18:40:56 -0400
-Received: by mail-it0-f65.google.com with SMTP id v71-v6so10204213itb.3;
-        Fri, 03 Aug 2018 13:43:03 -0700 (PDT)
+        Fri, 3 Aug 2018 18:42:39 -0400
+Received: by mail-ua0-f194.google.com with SMTP id g18-v6so5827557uam.6
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Aug 2018 13:44:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
-        bh=NL4fku+xboNURUcDAdSfUChZ/+fYzGn8CWnuW2juxZY=;
-        b=ZUOqcDwCA6kTWxRYli2SgxXmbe1JvQ4KHBPtj5FJ3O8CzotkM5EtsyE+wwt0+J0hgf
-         VY2LR1HwS8jjiI5nsry+mamKgz75iPOVBOBDl33qptgimOvVpiSYrAqhe/jVu5jOV1MD
-         btisbTjpZ1iV+rLrH+N6bEfMkFlzpf7CDTT3c=
+        d=bakuhatsu-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=3GAte+VHZuimmSqbW+3EP51sIl8W8cJPDRDrANge5GM=;
+        b=RNsqrcqT3dFj6/PlDdQ7X1JyDBMef/qtI1m6fxtkg+WU/Nx9la6Gz3RfFmQWIrx4DM
+         BhlF6IWUs/PPvFYUJgJCed+Zt0RIWGj5Bs00grs5Y7J4f+i9Ha0ReeoccIo62RebCIJ8
+         YGO9H2tNvhb25BGb5ByGGkOTTKxklfuPdpLq4yl+vCmCCM+ckYe/nhiLgV7BKZTvX0YT
+         aRNFOExX+6IWccSYInleWOSHjW50ijIRaLmFI9HOftYjdu+B8ceaRx9revJxuVVs3qvm
+         ufJvuW/UKH0xRDLxzKvwHdY6ls97c09uUmBrjW4gRBITFpK/8w45bvcA8qxfZu5rE+q6
+         tgPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=NL4fku+xboNURUcDAdSfUChZ/+fYzGn8CWnuW2juxZY=;
-        b=HrkkB4mJqY68IvOwNPT8e1lv29sWKmFxZ/N5dVIISGR6LyqnoS8b1rJEbruSoSSZ8j
-         Tw1V2VDeEtI95v4d0a3oZdDTAHk35YsD6qCdDfwd48CJRxGG4tUgHH08xXxdpYsvuyXN
-         7SvNJlikL1flvmOyjrC6ow7kpwPYzYNbJZa4qmW95iYWGppCp1K0nQfkdjhs73VXGGDc
-         wlI4zZxCa2cKcvUknO5lxE+4Az8uymO7IS9xZ3a1XSScUneXCHYxCyr5c4X4h1IxZ4jV
-         vK2kyvxrH+YOhJePgCjP53/M8aZzcz7e53avKZ9EKzT9aIrY9gpk4DJAKIr8YN2686Ap
-         Fncg==
-X-Gm-Message-State: AOUpUlEcFzz/G+m3Be3UfwLBa7UbgkUQKb7ShM5ZFWD41lxJvpGcuPha
-        hjqu2EbMZzO5Q5iWEeqQyo0ZjPINV1cYK0wX8TA=
-X-Google-Smtp-Source: AAOMgpeMb3wORLTLrKxdXnriOhxCd9TnD1ldpWVMEie2t9yan+APzt7Se+0VQhwUwG4/r2S/pcFXWcFgiwH+S68SRAw=
-X-Received: by 2002:a02:1bdc:: with SMTP id 89-v6mr4801610jas.72.1533328983107;
- Fri, 03 Aug 2018 13:43:03 -0700 (PDT)
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=3GAte+VHZuimmSqbW+3EP51sIl8W8cJPDRDrANge5GM=;
+        b=HCXCHshJmYiaEbqb5xDFcBPVVv9KPsNOKnr+lW+QwfXSg8Ua+dBCjfGssgIbiQz7iO
+         Wvh7YOpqVrhLwWpYh9vbdPc3kmFxTuSmSgvum0seT39+QPHMz9RXJIocp942gOCXkIUx
+         lCWKMEM/oeAzySdJf6P/yVfB/xeyvGJJsP1eSAamV+OxWURGp6y7AXodDH+u5Ra52srP
+         qhFDfkrstuY4AjqjKRkkjgouyLm4KNeu1Ef1OVsUYqE6Jdi1K2KSBv3u1quhSeFZlnjD
+         i/TYJuaXVjYf4fQPDITE9SK9a3OI2q9y/kc7sZPlH+leLmykZg8csZOJySuP+n3VMYqo
+         YDIw==
+X-Gm-Message-State: AOUpUlH+2SxsQEVm5LmxDYJojTJCWGZHkvDFMQHPPdhVIN6sXSuVSFmS
+        Q3pW+8b5/6KwSjxEkKf1x3rSkCgMiqIWTN962VTq
+X-Google-Smtp-Source: AAOMgpf7Uz7U9Wd85CmsTw0JuFCp9PtQU1DJBC6ET1oSUCKwwHLJbxk3dg+8PC2Ky9PguwaPGvbB7uBsSosaaUg2xfQ=
+X-Received: by 2002:a1f:c102:: with SMTP id r2-v6mr3422593vkf.34.1533329085268;
+ Fri, 03 Aug 2018 13:44:45 -0700 (PDT)
 MIME-Version: 1.0
-References: <93bff248-6897-4867-841b-2dace11597de@torlan.ru>
- <CA+55aFyAox9BTDpRsqLXiROhHOX60aa45LEZ7Azteaumdu11Fw@mail.gmail.com>
- <CAOi1vP-SJO4AMK=XD3Lmja++2dQqoiw6Zn8Vgxf8OfvYgnuC6Q@mail.gmail.com>
- <CA+55aFy2DR9fxHhmGq+azSjX9D71YtLsuFKmoEuYW3uTAUYtJg@mail.gmail.com>
- <d76415de-2056-c7d6-cc88-b896deaa8ead@torlan.ru> <1ec0a220-d5b0-1c27-e63b-c4d3f4ce9d77@torlan.ru>
- <CA+55aFyPVQ5-gA93irsaxPC9BNQxnGWrDDHPMUYai2kxKiaKWQ@mail.gmail.com>
- <20180803133102.GA3092@redhat.com> <20180803152034.GD32066@thunk.org>
- <20180803195636.GA31444@agk-dp.fab.redhat.com> <20180803200817.GB31444@agk-dp.fab.redhat.com>
-In-Reply-To: <20180803200817.GB31444@agk-dp.fab.redhat.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 3 Aug 2018 13:42:52 -0700
-Message-ID: <CA+55aFyFXxN3Qkt+=Ke5Mqctbc3+iX5_HzeH0gHFZK8tDpa=Uw@mail.gmail.com>
-Subject: Re: [dm-devel] LVM snapshot broke between 4.14 and 4.16
-To:     "Theodore Ts'o" <tytso@mit.edu>, Mike Snitzer <snitzer@redhat.com>,
-        Jens Axboe <axboe@kernel.dk>, Sagi Grimberg <sagi@grimberg.me>,
+Received: by 2002:ab0:2245:0:0:0:0:0 with HTTP; Fri, 3 Aug 2018 13:44:44 -0700 (PDT)
+In-Reply-To: <alpine.LRH.2.02.1808031424140.14030@file01.intranet.prod.int.rdu2.redhat.com>
+References: <alpine.LRH.2.02.1808021242320.31834@file01.intranet.prod.int.rdu2.redhat.com>
+ <CAHCPf3tFGqkYEcWNN4LaWThw_rVqT316pzLv6T7RfxwO-eZ0EA@mail.gmail.com>
+ <alpine.LRH.2.02.1808030212340.17672@file01.intranet.prod.int.rdu2.redhat.com>
+ <CAKv+Gu8DeuksZhk1g3q_msSKV_hSY_2e1uzVten9-oGO3j9Sqg@mail.gmail.com>
+ <20180803094129.GB17798@arm.com> <alpine.LRH.2.02.1808031235410.31584@file01.intranet.prod.int.rdu2.redhat.com>
+ <CAKv+Gu-aNFh1fsr_05SEwDp99n3pLrguP7=tEcFQPNY53=K7Fw@mail.gmail.com> <alpine.LRH.2.02.1808031424140.14030@file01.intranet.prod.int.rdu2.redhat.com>
+From:   Matt Sealey <neko@bakuhatsu.net>
+Date:   Fri, 3 Aug 2018 15:44:44 -0500
+Message-ID: <CAHCPf3s-+Qf=WBZz1KpisDMG3520jCUh8PLAO3PHa4jdt8kCTw@mail.gmail.com>
+Subject: Re: framebuffer corruption due to overlapping stp instructions on arm64
+To:     Mikulas Patocka <mpatocka@redhat.com>
+Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Joao Pinto <Joao.Pinto@synopsys.com>,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-block <linux-block@vger.kernel.org>, dm-devel@redhat.com,
-        Ilya Dryomov <idryomov@gmail.com>, wgh@torlan.ru,
-        Zdenek Kabelac <zkabelac@redhat.com>
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-pci <linux-pci@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 3, 2018 at 1:08 PM Alasdair G Kergon <agk@redhat.com> wrote:
+On 3 August 2018 at 13:25, Mikulas Patocka <mpatocka@redhat.com> wrote:
 >
-> If taking this approach, it might be better to use the current version
-> i.e.  where we add the kernel-side fix.  IOW anything compiling against
-> a uapi header taken from a kernel up to now will see the old behaviour,
-> but anything newer (after we next increment the kernel dm version) will
-> be required to change its userspace code if it has this problem in it.
+>
+> On Fri, 3 Aug 2018, Ard Biesheuvel wrote:
+>
+>> Are we still talking about overlapping unaligned accesses here? Or do
+>> you see other failures as well?
+>
+> Yes - it is caused by overlapping unaligned accesses inside memcpy. When I
+> put "dmb sy" between the overlapping accesses in
+> glibc/sysdeps/aarch64/memcpy.S, this program doesn't detect any memory
+> corruption.
 
-No, please don't do things like that.
+It is a symptom of generating reorderable accesses inside memcpy. It's nothing
+to do with alignment, per se (see below). A dmb sy just hides the symptoms.
 
-It's a nightmare. It just means that different people randomly have
-different behavior depending on what development environment they had,
-which is horrible for any situation where you do cross-builds, but
-it's also horrible from a testing standpoint.
+What we're talking about here - yes, Ard, within certain amounts of
+reason - is that
+you cannot use PCI BAR memory as 'Normal' - certainly never cacheable memory,
+but Normal NC isn't good either. That is that your CPU cannot post
+writes or reads
+towards PCI memory spaces unless it is dealing with it as Device memory or very
+strictly controlled use of Normal Non-Cacheable.
 
-And it's a *huge* nightmare for stable releases and backporting fixes.
-Absolutely *no* user space shjould ever care about kernel versions. If
-you want to use a new system call or something, just *use* if, and
-then if it fails, fall back to the old one. Never ever check "what's
-the kernel version" or anything like that.
+I understand why the rest of the world likes to mark stuff as
+'writecombine,' but
+that's x86-ism, not an Arm memory type.
 
-Instead, what I suggest we do is:
+There is potential for accesses to the same slave from different
+masters (or just
+different AXI IDs, most cores rotate over 8 or 16 or so for Normal
+memory to achieve)
+to be reordered. PCIe has no idea what the source was, it will just
+accept them in the order it receives them, and also it will be
+strictly defined to
+manage incoming AXI or ACE transactions (and barriers..) in a way that does
+not violate the PCIe memory model - the worst case is deadlocks, the best case
+is you see some very strange behavior.
 
-Case 1: if a user program notice that a new kernel breaks something, then
+In any case the original ordering of two Normal-NC transactions may
+not make it to
+the PCIe bridge in the first place which is probably why a DMB
+resolves it - it will
+force the core to issue them in order and it's likely unless there is
+some hyper-complex
+multi-pathing going on, they'll stay ordered. If you MUST preserve the
+order between
+two Normal memory accesses, a barrier is required. The same is true also of any
+re-orderable device access.
 
- (a) report it to kernel people with a test-case
+>> > I tried to run it on system RAM mapped with the NC attribute and I didn't
+>> > get any corruption - that suggests the the bug may be in the PCIE
+>> > subsystem.
 
- (b) if you notice that the *reason* a new kernel broke something is
-because you had a bug and you can just fix that bug and it will always
-work on all kernels, by all means just fix the bug. Obviously you
-don't want to just keep buggy code around just because it was found by
-a kernel change
+Pure fluke.
 
- (c) but even if (b) happens, do that report. In fact, you now have a
-perfect test-case for the kernel people you report it to: you can tell
-them *exactly* what changed, and what the two situations were.
+I'll give a simple explanation. The Arm Architecture defines
+single-copy and multi-copy
+atomic transactions. You can treat 'single-copy' to mean that that
+transaction cannot
+be made partial, or reordered within itself, i.e. it must modify
+memory (if it is a store) in
+a single swift effort and any future reads from that memory must
+return the FULL result
+of that write.
 
- (d) and if whoever you reported the kernel breakage to doesn't seem
-to take it seriously, just escalate it to me.
+Multi-copy means it can be resized and reordered a bit. Will Deacon is
+going to crucify
+me for simplifying it, but.. let's proceed with a poor example:
 
-Note that for the (d) case, there are situations where even _I_ won't
-necessarily take it seriously. If you're the only user of some
-program, I may just go "Oh, you already fixed your own problem, I
-don't need to worry". Or if it turns out that the breakage wasn't
-"user flow", but some test-suite regression, I will tend to ignore
-those. Test suites are by definition for finding _behavior_, but
-behavior can change - it's actual _breakage_ I worry about.
+STR X0,[X1] on a 32-bit bus cannot ever be single-copy atomic, because
+you cannot
+write 64-bits of data on a 32-bit bus in a single, unbreakable
+transaction. This is because
+from one bus cycle to the next, one half of the transaction will be in
+a different place. Your
+interconnect will have latched and buffered 32-bits and the CPU is
+holding the other.
 
-But also notice how none of that "case 1" has any versioning related
-to it.  Yes, you'll have old versions of the user program before the
-bug was fixed, but they will *not* look at kernel versions, and the
-new versions certainly shouldn't either.
+STP X0, X1, [X2] on a 64-bit bus can be single-copy atomic with
+respect to the element
+size. But it is on the whole multi-copy atomic - that is to say that
+it can provide a single
+transaction with multiple elements which are transmitted, and those
+elements could be
+messed with on the way down the pipe.
 
-Case 2: the kernel side.  We get that breakage reported, but it turns
-out that different versions of the workflow act differently, and maybe
-some versions depend on the new behavior, and some depend on the old
-behavior.
+On a 128-bit bus, you might expect it to be single-copy atomic because
+the entire
+transaction can be fit into one single data beat, but *it is most
+definitely not* according
+to the architecture. The data from X0 and X1 may be required to be
+stored at *X2 and
+*(X2+8), but the architecture doesn't care which one is written first.
+Neither does AMBA.
 
-And yes, this happens.
+STP is only ever guaranteed to be single-copy atomic with regards to
+the element size
+(which is the X register in question). If you swap the data around,
+and do STP X1, X0,
+[X2] you may see a different result dependent on how the processor
+decides to pull
+data from the register file and in what order. Users of the old 32-bit
+ARM STM instruction
+will recall that it writes the register list in incrementing order,
+lowest register number to
+lowest address, so what is the solution for STP? Do you expect expect
+X0 to be emitted
+on the bus first or the data to be stored in *X2?
 
-We have been in the situation where we get a bug-report for something
-we changed three years ago, and by now, all modern user space depends
-on the new "fixed" behavior, but some embedded user who hadn't
-upgraded a kernel in years is unhappy.
+It's neither!
 
-It's happened several times, and if it really is "it's been years",
-even I will go "tough luck, I guess you're stuck on your old kernel".
-Because we can't fix it.
+That means you can do an STP on one processor and an LDR of one of the 64-bit
+words on another processor, and you may be able to see
 
-But in a situation like this, where we really want to encourage new
-behavior but we have somebody who reported the breakage in a timely
-manner (ie it's fairly recent), _and_ it's a system tool like lvm2
-that actually gives us a version number, at that point the *kernel*
-might decide "this is an old binary, I will now use some versioning to
-fall back on old behavior".
+a) None of the STP transaction
+b) X2 is written with the value in X0, but X2+8 is not holding the value in X1
+c) b, only reversed
+d) What you expect
 
-Because for the kernel, the compatibility really is a #1 concern, and
-if we have to check version numbers or infer compatibility issues some
-other way, we'll do it.
+And this can change dependent on the resizers and bridges and QoS and paths
+between a master interface and a slave interface, although a truly
+single-copy atomic
+transaction going through a downsizer to smaller than the transaction
+size is a broken
+system design, it may be allowable if the downsizer hazards addresses
+to the granularity
+of the larger bus size on the read and write channels and will stall
+the read until the write
+has committed at least to a buffer, or downstream of the downsizer, so
+that it will return
+on read the full breadth of the memory update.... that's down to the
+system designer.
+There are plenty of places things like this can happen - in cache
+controllers, for
+example, and merging store buffers (you may have a 256 bit or 512 bit
+buffer, but
+only a 128-bit memory interface).
 
-But that "different behavior for different application versions" is
-something we generally avoid at all costs. We do have a couple of
-cases where we deduce what people want based on behavior. But it is
-very very rare, and we generally want to avoid it if there is _any_
-other model for it.
+memcpy() as a function nor the loads and stores it makes are not
+single-copy atomic,
+no transactions need to be with Normal memory, so that merged stores
+and linefills
+(if cacheable) can be done. Hence, your memcpy() is just randomly
+chucking whatever
+data it likes to the bus and they'll arrive in any old order,
+'writecombine' semantics make
+you think you'll only ever see one very large write with all the CPU
+activity merged
+together - also NOT true.
 
-So even in case 2, we do try to avoid versioning. More often we add a
-new flag, and say "hey, if you want the new behavior, use the new flag
-to say so". Not versioning, but explicit "I want the new behavior"
+And the granularity of the hazarding in your system, from the CPU
+store buffer to the
+bus interface to the interconnect buffering to the PCIe bridge to the
+PCIe EP is.. what?
+Not the same all the way down, I'll bet you.
 
-Not all system calls take flags, of course.
+It is assuming that Intel writecombine semantics would apply, which to
+be truthful are NO
+different to the ones of a merging store buffer in an Arm processor
+(Intel architecture states
+that the writecombine buffer can be flushed at any time with any
+amount of actual data,
+it might not be the biggest burst you can imagine), but in practice it
+tends to be in cache-line
+sized chunks with strict incrementing order and subsequent writes due
+to the extremely
+large pipeline and queueing will be absorbed by the writecombine
+buffer almost with
+guarantee.
 
-             Linus
+Links is broken. Even on Intel. If you overlap memory transactions and
+expect them to be
+gathered and reordered to produce nice, ordered non-overlapping
+streaming transactions
+you'll be sorely disappointed when they don't, which is what is
+happening here. The fix is
+use barriers - and don't rely on single-copy atomicity (which is the
+only saving feature that
+would not require you to use a barrier) since this is a situation
+where absolutely none is
+afforded.
+
+It'd be easier to cross your fingers that the PCIe RC is has a
+coherent master port (ACE-Lite
+or something fancier) and can snoop into CPU caches. Then you can mark a memory
+location in DRAM as Normal Inner/Outer Cacheable Writeback,
+Inner/Outer Shareable,
+Write-allocate, read-allocate, and you won't even notice your CPU
+doing any memory
+writes, but yes if you tell a graphics adapter that it's main
+framebuffer is in DRAM it might
+be a bit slower (to the speed of the PCIe link.. which may affect your
+maximum resolution
+in some really strange circumstances). If it cannot use a DRAM
+framebuffer then I'd have to
+wonder why not.. every PCI graphics card I ever used could take any
+base address and
+the magic of PCI bus mastering would handle it. This is no different
+to how you'd use
+DRAM as texture memory.. phenomenally slowly, but without having to
+worry about any
+ordering semantics (except you should flush your data cache to PoC at
+the end of every
+frame).
+
+Ta,
+Matt
