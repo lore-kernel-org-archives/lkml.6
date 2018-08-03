@@ -2,246 +2,501 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A522C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 15:13:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63735C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 15:14:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F8842174D
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 15:13:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="IOyJ8qHh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F8842174D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
+	by mail.kernel.org (Postfix) with ESMTP id 11DD42176D
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 15:14:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11DD42176D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jmondi.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732403AbeHCRKP (ORCPT
+        id S1732507AbeHCRKn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 13:10:15 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:37107 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732219AbeHCRKP (ORCPT
+        Fri, 3 Aug 2018 13:10:43 -0400
+Received: from relay7-d.mail.gandi.net ([217.70.183.200]:50637 "EHLO
+        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732219AbeHCRKm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 13:10:15 -0400
-Received: by mail-oi0-f67.google.com with SMTP id j205-v6so10426642oib.4
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Aug 2018 08:13:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=Mj2+cFTAaz7k1cf7oyPUZcTSKYrY0YS8QFtx86Ti4u0=;
-        b=IOyJ8qHhBqVjKGTJoPcla/aZNohs/o8wKbHZBHx5GG6r7g6s2URzckazeuYAtN2bNT
-         a6k/WegrkqZ2yrh69SItTu6DIDeB3KMdCzvvdw8ZZ4QBFk7Py4uuXzIYQSkwgbBNEM3c
-         DhIIFe5qY1kpPupoUNE+zfOIXvaL6UNLUVnsE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=Mj2+cFTAaz7k1cf7oyPUZcTSKYrY0YS8QFtx86Ti4u0=;
-        b=pNu9NNziSRDQekU52R5fWdtQPQvKhj2T/s8dkGUJDPoH5IVIioLYYXsVnn7lsaR5fa
-         MjdMC96dV9IYLWwA0LnlF9C+iJp1aU/EgwKcSuGGNPuJbi933M5wRJyLXXWQQMz6JX5a
-         v3Fgm7V+hyKYeh5Xf8KRuuR02xHPjH7onFBwhDL/fTiiNRvE+UMJHBNfq1bwJ4372duK
-         ZeK60nIV+9lJKQBD+qiLVG5diQi3+MYJLjdPPjW4eYtUBWPYB0aNEhA5RXx6Flfjn/da
-         60sePQ9PmiYu8bjBhjeUCIXtmTgK0Dj8F9XRkLwVGQK+L8xC8rxP3G101gzR6Rn33s2e
-         6n+w==
-X-Gm-Message-State: AOUpUlHn98nodQZqM7wfuQeRDwsQoXDMmhNkqdRkSPEkE2/AOLtyZulw
-        CWqmrP3OrXSE0j007Pa+5TPRkwdWl/B4elD8hrg8wg==
-X-Google-Smtp-Source: AAOMgpfaWPacvf9x61mAevGue8dVGn+tIjhMczlawyRhUYSjHBTWotlS3J21pV4QnsYhUp4Vm5kQZNu6m6KyM+P2Ouw=
-X-Received: by 2002:aca:afcc:: with SMTP id y195-v6mr3808647oie.322.1533309209620;
- Fri, 03 Aug 2018 08:13:29 -0700 (PDT)
+        Fri, 3 Aug 2018 13:10:42 -0400
+X-Originating-IP: 82.50.90.136
+Received: from w540 (host136-90-dynamic.50-82-r.retail.telecomitalia.it [82.50.90.136])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id 4A09F20005;
+        Fri,  3 Aug 2018 15:13:51 +0000 (UTC)
+Date:   Fri, 3 Aug 2018 17:13:46 +0200
+From:   jacopo mondi <jacopo@jmondi.org>
+To:     Steve Longerbeam <slongerbeam@gmail.com>
+Cc:     linux-media@vger.kernel.org,
+        Steve Longerbeam <steve_longerbeam@mentor.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Niklas =?utf-8?Q?S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v6 03/17] media: v4l2: async: Add
+ v4l2_async_notifier_add_subdev
+Message-ID: <20180803151346.GG4528@w540>
+References: <1531175957-1973-1-git-send-email-steve_longerbeam@mentor.com>
+ <1531175957-1973-4-git-send-email-steve_longerbeam@mentor.com>
 MIME-Version: 1.0
-Received: by 2002:a9d:6043:0:0:0:0:0 with HTTP; Fri, 3 Aug 2018 08:13:28 -0700 (PDT)
-In-Reply-To: <7a67a1f9-9cd1-103e-cfa1-e032f346e164@intel.com>
-References: <1532931343-9499-1-git-send-email-srinath.mannam@broadcom.com>
- <1532931343-9499-3-git-send-email-srinath.mannam@broadcom.com> <7a67a1f9-9cd1-103e-cfa1-e032f346e164@intel.com>
-From:   Srinath Mannam <srinath.mannam@broadcom.com>
-Date:   Fri, 3 Aug 2018 20:43:28 +0530
-Message-ID: <CABe79T7GAQybN_SCic1cQ1554vbZqpHysExbDbY+nffRcuNZ8g@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] mmc: host: iproc: Add ACPI support to IPROC SDHCI
-To:     Adrian Hunter <adrian.hunter@intel.com>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>, Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Vikram Prakash <vikram.prakash@broadcom.com>,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        linux-mmc@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="APlYHCtpeOhspHkB"
+Content-Disposition: inline
+In-Reply-To: <1531175957-1973-4-git-send-email-steve_longerbeam@mentor.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Adrian Hunter,
 
-Thank you very much for your review and feedback.
+--APlYHCtpeOhspHkB
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-I will do the change and update next patch set.
+Hi Steven,
+   I've a small remark, which is probably not only related to your
+   patches but was there alreay... Anyway, please read below..
 
-Regards,
-Srinath.
 
-On Fri, Aug 3, 2018 at 6:47 PM, Adrian Hunter <adrian.hunter@intel.com> wrote:
-> On 30/07/18 09:15, Srinath Mannam wrote:
->> Add ACPI support to all IPROC SDHCI varients
->>
->> Signed-off-by: Srinath Mannam <srinath.mannam@broadcom.com>
->> Reviewed-by: Ray Jui <ray.jui@broadcom.com>
->> Reviewed-by: Scott Branden <scott.branden@broadcom.com>
->> Reviewed-by: Vladimir Olovyannikov <vladimir.olovyannikov@broadcom.com>
+On Mon, Jul 09, 2018 at 03:39:03PM -0700, Steve Longerbeam wrote:
+> v4l2_async_notifier_add_subdev() adds an asd to the notifier. It checks
+> that no other equivalent asd's have already been added to this notifier's
+> asd list, or to other registered notifier's waiting or done lists, and
+> increments num_subdevs.
 >
-> One minor comment below, otherwise:
+> v4l2_async_notifier_add_subdev() does not make use of the notifier subdevs
+> array, otherwise it would have to re-allocate the array every time the
+> function was called. In place of the subdevs array, the function adds
+> the newly allocated asd to a new master asd_list. The function will
+> return error with a WARN() if it is ever called with the subdevs array
+> allocated.
 >
-> Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+> Drivers are now required to call a v4l2_async_notifier_init(), before the
+> first call to v4l2_async_notifier_add_subdev(), in order to initialize
+> the asd_list.
 >
->> ---
->>  drivers/mmc/host/Kconfig       |  1 +
->>  drivers/mmc/host/sdhci-iproc.c | 63 +++++++++++++++++++++++++++++-------------
->>  2 files changed, 45 insertions(+), 19 deletions(-)
->>
->> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
->> index 0581c19..bc6702e 100644
->> --- a/drivers/mmc/host/Kconfig
->> +++ b/drivers/mmc/host/Kconfig
->> @@ -334,6 +334,7 @@ config MMC_SDHCI_IPROC
->>       tristate "SDHCI support for the BCM2835 & iProc SD/MMC Controller"
->>       depends on ARCH_BCM2835 || ARCH_BCM_IPROC || COMPILE_TEST
->>       depends on MMC_SDHCI_PLTFM
->> +     depends on OF || ACPI
->>       default ARCH_BCM_IPROC
->>       select MMC_SDHCI_IO_ACCESSORS
->>       help
->> diff --git a/drivers/mmc/host/sdhci-iproc.c b/drivers/mmc/host/sdhci-iproc.c
->> index d0e83db..abf5269 100644
->> --- a/drivers/mmc/host/sdhci-iproc.c
->> +++ b/drivers/mmc/host/sdhci-iproc.c
->> @@ -15,6 +15,7 @@
->>   * iProc SDHCI platform driver
->>   */
->>
->> +#include <linux/acpi.h>
->>  #include <linux/delay.h>
->>  #include <linux/module.h>
->>  #include <linux/mmc/host.h>
->> @@ -162,9 +163,19 @@ static void sdhci_iproc_writeb(struct sdhci_host *host, u8 val, int reg)
->>       sdhci_iproc_writel(host, newval, reg & ~3);
->>  }
->>
->> +static unsigned int sdhci_iproc_get_max_clock(struct sdhci_host *host)
->> +{
->> +     struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
->> +
->> +     if (pltfm_host->clk)
->> +             return sdhci_pltfm_clk_get_max_clock(host);
->> +     else
->> +             return pltfm_host->clock;
->> +}
->> +
->>  static const struct sdhci_ops sdhci_iproc_ops = {
->>       .set_clock = sdhci_set_clock,
->> -     .get_max_clock = sdhci_pltfm_clk_get_max_clock,
->> +     .get_max_clock = sdhci_iproc_get_max_clock,
->>       .set_bus_width = sdhci_set_bus_width,
->>       .reset = sdhci_reset,
->>       .set_uhs_signaling = sdhci_set_uhs_signaling,
->> @@ -178,7 +189,7 @@ static const struct sdhci_ops sdhci_iproc_32only_ops = {
->>       .write_w = sdhci_iproc_writew,
->>       .write_b = sdhci_iproc_writeb,
->>       .set_clock = sdhci_set_clock,
->> -     .get_max_clock = sdhci_pltfm_clk_get_max_clock,
->> +     .get_max_clock = sdhci_iproc_get_max_clock,
->>       .set_bus_width = sdhci_set_bus_width,
->>       .reset = sdhci_reset,
->>       .set_uhs_signaling = sdhci_set_uhs_signaling,
->> @@ -256,19 +267,29 @@ static const struct of_device_id sdhci_iproc_of_match[] = {
->>  };
->>  MODULE_DEVICE_TABLE(of, sdhci_iproc_of_match);
->>
->> +static const struct acpi_device_id sdhci_iproc_acpi_ids[] = {
->> +     { .id = "BRCM5871", .driver_data = (kernel_ulong_t)&iproc_cygnus_data },
->> +     { .id = "BRCM5872", .driver_data = (kernel_ulong_t)&iproc_data },
->> +     { /* sentinel */ }
->> +};
->> +MODULE_DEVICE_TABLE(acpi, sdhci_iproc_acpi_ids);
->> +
->>  static int sdhci_iproc_probe(struct platform_device *pdev)
->>  {
->> -     const struct of_device_id *match;
->> -     const struct sdhci_iproc_data *iproc_data;
->> +     struct device *dev = &pdev->dev;
->> +     const struct sdhci_iproc_data *iproc_data = NULL;
->>       struct sdhci_host *host;
->>       struct sdhci_iproc_host *iproc_host;
->>       struct sdhci_pltfm_host *pltfm_host;
->>       int ret;
->>
->> -     match = of_match_device(sdhci_iproc_of_match, &pdev->dev);
->> -     if (!match)
->> -             return -EINVAL;
->> -     iproc_data = match->data;
->> +     if (dev->of_node)
->> +             iproc_data = of_device_get_match_data(dev);
->> +     else if (has_acpi_companion(dev))
->> +             iproc_data = acpi_device_get_match_data(dev);
+> In v4l2_async_notifier_has_async_subdev(), __v4l2_async_notifier_register(),
+> and v4l2_async_notifier_cleanup(), maintain backward compatibility with
+> the subdevs array, by alternatively operate on the subdevs array or a
+> non-empty notifier->asd_list.
 >
-> Can you use device_get_match_data() here
+> Signed-off-by: Steve Longerbeam <steve_longerbeam@mentor.com>
+> ---
+> Changes since v5:
+> - export v4l2_async_notifier_init() which must be called by drivers.
+>   Suggested by Sakari Ailus.
+> Changes since v4:
+> - none
+> Changes since v3:
+> - init notifier lists after the sanity checks.
+> Changes since v2:
+> - add a NULL asd pointer check to v4l2_async_notifier_asd_valid().
+> Changes since v1:
+> - none
+> ---
+>  drivers/media/v4l2-core/v4l2-async.c | 189 +++++++++++++++++++++++++++--------
+>  include/media/v4l2-async.h           |  34 ++++++-
+>  2 files changed, 180 insertions(+), 43 deletions(-)
 >
->> +
->> +     if (!iproc_data)
->> +             return -ENODEV;
->>
->>       host = sdhci_pltfm_init(pdev, iproc_data->pdata, sizeof(*iproc_host));
->>       if (IS_ERR(host))
->> @@ -280,19 +301,21 @@ static int sdhci_iproc_probe(struct platform_device *pdev)
->>       iproc_host->data = iproc_data;
->>
->>       mmc_of_parse(host->mmc);
->> -     sdhci_get_of_property(pdev);
->> +     sdhci_get_property(pdev);
->>
->>       host->mmc->caps |= iproc_host->data->mmc_caps;
->>
->> -     pltfm_host->clk = devm_clk_get(&pdev->dev, NULL);
->> -     if (IS_ERR(pltfm_host->clk)) {
->> -             ret = PTR_ERR(pltfm_host->clk);
->> -             goto err;
->> -     }
->> -     ret = clk_prepare_enable(pltfm_host->clk);
->> -     if (ret) {
->> -             dev_err(&pdev->dev, "failed to enable host clk\n");
->> -             goto err;
->> +     if (dev->of_node) {
->> +             pltfm_host->clk = devm_clk_get(dev, NULL);
->> +             if (IS_ERR(pltfm_host->clk)) {
->> +                     ret = PTR_ERR(pltfm_host->clk);
->> +                     goto err;
->> +             }
->> +             ret = clk_prepare_enable(pltfm_host->clk);
->> +             if (ret) {
->> +                     dev_err(dev, "failed to enable host clk\n");
->> +                     goto err;
->> +             }
->>       }
->>
->>       if (iproc_host->data->pdata->quirks & SDHCI_QUIRK_MISSING_CAPS) {
->> @@ -307,7 +330,8 @@ static int sdhci_iproc_probe(struct platform_device *pdev)
->>       return 0;
->>
->>  err_clk:
->> -     clk_disable_unprepare(pltfm_host->clk);
->> +     if (dev->of_node)
->> +             clk_disable_unprepare(pltfm_host->clk);
->>  err:
->>       sdhci_pltfm_free(pdev);
->>       return ret;
->> @@ -317,6 +341,7 @@ static struct platform_driver sdhci_iproc_driver = {
->>       .driver = {
->>               .name = "sdhci-iproc",
->>               .of_match_table = sdhci_iproc_of_match,
->> +             .acpi_match_table = ACPI_PTR(sdhci_iproc_acpi_ids),
->>               .pm = &sdhci_pltfm_pmops,
->>       },
->>       .probe = sdhci_iproc_probe,
->>
+> diff --git a/drivers/media/v4l2-core/v4l2-async.c b/drivers/media/v4l2-core/v4l2-async.c
+> index 0e7e529..8e52df2 100644
+> --- a/drivers/media/v4l2-core/v4l2-async.c
+> +++ b/drivers/media/v4l2-core/v4l2-async.c
+> @@ -363,16 +363,26 @@ static bool v4l2_async_notifier_has_async_subdev(
+>  	struct v4l2_async_notifier *notifier, struct v4l2_async_subdev *asd,
+>  	unsigned int this_index)
+>  {
+> +	struct v4l2_async_subdev *asd_y;
+>  	unsigned int j;
 >
+>  	lockdep_assert_held(&list_lock);
+>
+>  	/* Check that an asd is not being added more than once. */
+> -	for (j = 0; j < this_index; j++) {
+> -		struct v4l2_async_subdev *asd_y = notifier->subdevs[j];
+> -
+> -		if (asd_equal(asd, asd_y))
+> -			return true;
+> +	if (notifier->subdevs) {
+> +		for (j = 0; j < this_index; j++) {
+> +			asd_y = notifier->subdevs[j];
+> +			if (asd_equal(asd, asd_y))
+> +				return true;
+> +		}
+> +	} else {
+> +		j = 0;
+> +		list_for_each_entry(asd_y, &notifier->asd_list, asd_list) {
+> +			if (j++ >= this_index)
+> +				break;
+> +			if (asd_equal(asd, asd_y))
+> +				return true;
+> +		}
+>  	}
+>
+>  	/* Check that an asd does not exist in other notifiers. */
+> @@ -383,10 +393,46 @@ static bool v4l2_async_notifier_has_async_subdev(
+>  	return false;
+>  }
+>
+> -static int __v4l2_async_notifier_register(struct v4l2_async_notifier *notifier)
+> +static int v4l2_async_notifier_asd_valid(struct v4l2_async_notifier *notifier,
+> +					 struct v4l2_async_subdev *asd,
+> +					 unsigned int this_index)
+>  {
+>  	struct device *dev =
+>  		notifier->v4l2_dev ? notifier->v4l2_dev->dev : NULL;
+> +
+> +	if (!asd)
+> +		return -EINVAL;
+> +
+> +	switch (asd->match_type) {
+> +	case V4L2_ASYNC_MATCH_CUSTOM:
+> +	case V4L2_ASYNC_MATCH_DEVNAME:
+> +	case V4L2_ASYNC_MATCH_I2C:
+> +	case V4L2_ASYNC_MATCH_FWNODE:
+> +		if (v4l2_async_notifier_has_async_subdev(notifier, asd,
+> +							 this_index))
+> +			return -EEXIST;
+> +		break;
+> +	default:
+> +		dev_err(dev, "Invalid match type %u on %p\n",
+> +			asd->match_type, asd);
+> +		return -EINVAL;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +void v4l2_async_notifier_init(struct v4l2_async_notifier *notifier)
+> +{
+> +	mutex_lock(&list_lock);
+> +
+> +	INIT_LIST_HEAD(&notifier->asd_list);
+> +
+> +	mutex_unlock(&list_lock);
+> +}
+> +EXPORT_SYMBOL(v4l2_async_notifier_init);
+> +
+> +static int __v4l2_async_notifier_register(struct v4l2_async_notifier *notifier)
+> +{
+>  	struct v4l2_async_subdev *asd;
+>  	int ret;
+>  	int i;
+> @@ -399,29 +445,25 @@ static int __v4l2_async_notifier_register(struct v4l2_async_notifier *notifier)
+>
+>  	mutex_lock(&list_lock);
+>
+> -	for (i = 0; i < notifier->num_subdevs; i++) {
+> -		asd = notifier->subdevs[i];
+> +	if (notifier->subdevs) {
+> +		for (i = 0; i < notifier->num_subdevs; i++) {
+> +			asd = notifier->subdevs[i];
+>
+> -		switch (asd->match_type) {
+> -		case V4L2_ASYNC_MATCH_CUSTOM:
+> -		case V4L2_ASYNC_MATCH_DEVNAME:
+> -		case V4L2_ASYNC_MATCH_I2C:
+> -		case V4L2_ASYNC_MATCH_FWNODE:
+> -			if (v4l2_async_notifier_has_async_subdev(
+> -				    notifier, asd, i)) {
+> -				dev_err(dev,
+> -					"asd has already been registered or in notifier's subdev list\n");
+> -				ret = -EEXIST;
+> +			ret = v4l2_async_notifier_asd_valid(notifier, asd, i);
+> +			if (ret)
+>  				goto err_unlock;
+> -			}
+> -			break;
+> -		default:
+> -			dev_err(dev, "Invalid match type %u on %p\n",
+> -				asd->match_type, asd);
+> -			ret = -EINVAL;
+> -			goto err_unlock;
+> +
+> +			list_add_tail(&asd->list, &notifier->waiting);
+> +		}
+> +	} else {
+> +		i = 0;
+> +		list_for_each_entry(asd, &notifier->asd_list, asd_list) {
+> +			ret = v4l2_async_notifier_asd_valid(notifier, asd, i++);
+
+Here the call stack looks like this, if I'm not mistaken:
+
+list_for_each_entry(asd, notifier->asd_list, i) {
+        v4l2_async_notifier_asd_valid(notifier, asd, i):
+                v4l2_async_notifier_has_async_subdev(notifier, asd, i):
+                        list_for_each_entry(asd_y, notifier->asd_list, j) {
+                                if (j >= i) break;
+                                if (asd == asd_y) return true;
+                        }
+}
+
+Which is an optimization of O(n^2), but still bad.
+
+This was there already there, it was:
+for (i = 0; i < notifier->num_subdevs; i++) {
+        v4l2_async_notifier_has_async_subdev(notifier, notifier->subdevs[i], i):
+                for (j = 0; j < i; j++) {
+                        if (notifier->subdevs[i] == notifier->subdevs[j])
+                                return true;
+                        }
+                }
+}
+
+We're not talking high performances here, but I see no reason to go through
+the list twice, as after switching to use your here introduced
+v4l2_async_notifier_add_subdev() async subdevices are tested at endpoint
+parsing time in v4l2_async_notifier_fwnode_parse_endpoint(), which
+guarantees we can't have doubles later, at notifier registration time.
+
+If I'm not wrong, this can be anyway optimized later.
+
+Thanks
+   j
+
+> +			if (ret)
+> +				goto err_unlock;
+> +
+> +			list_add_tail(&asd->list, &notifier->waiting);
+>  		}
+> -		list_add_tail(&asd->list, &notifier->waiting);
+>  	}
+>
+>  	ret = v4l2_async_notifier_try_all_subdevs(notifier);
+> @@ -511,36 +553,99 @@ void v4l2_async_notifier_unregister(struct v4l2_async_notifier *notifier)
+>  }
+>  EXPORT_SYMBOL(v4l2_async_notifier_unregister);
+>
+> -void v4l2_async_notifier_cleanup(struct v4l2_async_notifier *notifier)
+> +static void __v4l2_async_notifier_cleanup(struct v4l2_async_notifier *notifier)
+>  {
+> +	struct v4l2_async_subdev *asd, *tmp;
+>  	unsigned int i;
+>
+> -	if (!notifier || !notifier->max_subdevs)
+> +	if (!notifier)
+>  		return;
+>
+> -	for (i = 0; i < notifier->num_subdevs; i++) {
+> -		struct v4l2_async_subdev *asd = notifier->subdevs[i];
+> +	if (notifier->subdevs) {
+> +		if (!notifier->max_subdevs)
+> +			return;
+>
+> -		switch (asd->match_type) {
+> -		case V4L2_ASYNC_MATCH_FWNODE:
+> -			fwnode_handle_put(asd->match.fwnode);
+> -			break;
+> -		default:
+> -			WARN_ON_ONCE(true);
+> -			break;
+> +		for (i = 0; i < notifier->num_subdevs; i++) {
+> +			asd = notifier->subdevs[i];
+> +
+> +			switch (asd->match_type) {
+> +			case V4L2_ASYNC_MATCH_FWNODE:
+> +				fwnode_handle_put(asd->match.fwnode);
+> +				break;
+> +			default:
+> +				break;
+> +			}
+> +
+> +			kfree(asd);
+>  		}
+>
+> -		kfree(asd);
+> +		notifier->max_subdevs = 0;
+> +		kvfree(notifier->subdevs);
+> +		notifier->subdevs = NULL;
+> +	} else {
+> +		list_for_each_entry_safe(asd, tmp,
+> +					 &notifier->asd_list, asd_list) {
+> +			switch (asd->match_type) {
+> +			case V4L2_ASYNC_MATCH_FWNODE:
+> +				fwnode_handle_put(asd->match.fwnode);
+> +				break;
+> +			default:
+> +				break;
+> +			}
+> +
+> +			list_del(&asd->asd_list);
+> +			kfree(asd);
+> +		}
+>  	}
+>
+> -	notifier->max_subdevs = 0;
+>  	notifier->num_subdevs = 0;
+> +}
+> +
+> +void v4l2_async_notifier_cleanup(struct v4l2_async_notifier *notifier)
+> +{
+> +	mutex_lock(&list_lock);
+> +
+> +	__v4l2_async_notifier_cleanup(notifier);
+>
+> -	kvfree(notifier->subdevs);
+> -	notifier->subdevs = NULL;
+> +	mutex_unlock(&list_lock);
+>  }
+>  EXPORT_SYMBOL_GPL(v4l2_async_notifier_cleanup);
+>
+> +int v4l2_async_notifier_add_subdev(struct v4l2_async_notifier *notifier,
+> +				   struct v4l2_async_subdev *asd)
+> +{
+> +	int ret;
+> +
+> +	mutex_lock(&list_lock);
+> +
+> +	if (notifier->num_subdevs >= V4L2_MAX_SUBDEVS) {
+> +		ret = -EINVAL;
+> +		goto unlock;
+> +	}
+> +
+> +	/*
+> +	 * If caller uses this function, it cannot also allocate and
+> +	 * place asd's in the notifier->subdevs array.
+> +	 */
+> +	if (WARN_ON(notifier->subdevs)) {
+> +		ret = -EINVAL;
+> +		goto unlock;
+> +	}
+> +
+> +	ret = v4l2_async_notifier_asd_valid(notifier, asd,
+> +					    notifier->num_subdevs);
+> +	if (ret)
+> +		goto unlock;
+> +
+> +	list_add_tail(&asd->asd_list, &notifier->asd_list);
+> +	notifier->num_subdevs++;
+> +
+> +unlock:
+> +	mutex_unlock(&list_lock);
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(v4l2_async_notifier_add_subdev);
+> +
+>  int v4l2_async_register_subdev(struct v4l2_subdev *sd)
+>  {
+>  	struct v4l2_async_notifier *subdev_notifier;
+> @@ -614,7 +719,7 @@ void v4l2_async_unregister_subdev(struct v4l2_subdev *sd)
+>  	mutex_lock(&list_lock);
+>
+>  	__v4l2_async_notifier_unregister(sd->subdev_notifier);
+> -	v4l2_async_notifier_cleanup(sd->subdev_notifier);
+> +	__v4l2_async_notifier_cleanup(sd->subdev_notifier);
+>  	kfree(sd->subdev_notifier);
+>  	sd->subdev_notifier = NULL;
+>
+> diff --git a/include/media/v4l2-async.h b/include/media/v4l2-async.h
+> index 1592d32..ab4d7ac 100644
+> --- a/include/media/v4l2-async.h
+> +++ b/include/media/v4l2-async.h
+> @@ -73,6 +73,8 @@ enum v4l2_async_match_type {
+>   * @match.custom.priv:
+>   *		Driver-specific private struct with match parameters
+>   *		to be used if %V4L2_ASYNC_MATCH_CUSTOM.
+> + * @asd_list:	used to add struct v4l2_async_subdev objects to the
+> + *		master notifier @asd_list
+>   * @list:	used to link struct v4l2_async_subdev objects, waiting to be
+>   *		probed, to a notifier->waiting list
+>   *
+> @@ -98,6 +100,7 @@ struct v4l2_async_subdev {
+>
+>  	/* v4l2-async core private: not to be used by drivers */
+>  	struct list_head list;
+> +	struct list_head asd_list;
+>  };
+>
+>  /**
+> @@ -127,6 +130,7 @@ struct v4l2_async_notifier_operations {
+>   * @v4l2_dev:	v4l2_device of the root notifier, NULL otherwise
+>   * @sd:		sub-device that registered the notifier, NULL otherwise
+>   * @parent:	parent notifier
+> + * @asd_list:	master list of struct v4l2_async_subdev, replaces @subdevs
+>   * @waiting:	list of struct v4l2_async_subdev, waiting for their drivers
+>   * @done:	list of struct v4l2_subdev, already probed
+>   * @list:	member in a global list of notifiers
+> @@ -139,12 +143,38 @@ struct v4l2_async_notifier {
+>  	struct v4l2_device *v4l2_dev;
+>  	struct v4l2_subdev *sd;
+>  	struct v4l2_async_notifier *parent;
+> +	struct list_head asd_list;
+>  	struct list_head waiting;
+>  	struct list_head done;
+>  	struct list_head list;
+>  };
+>
+>  /**
+> + * v4l2_async_notifier_init - Initialize a notifier.
+> + *
+> + * @notifier: pointer to &struct v4l2_async_notifier
+> + *
+> + * This function initializes the notifier @asd_list. It must be called
+> + * before the first call to @v4l2_async_notifier_add_subdev.
+> + */
+> +void v4l2_async_notifier_init(struct v4l2_async_notifier *notifier);
+> +
+> +/**
+> + * v4l2_async_notifier_add_subdev - Add an async subdev to the
+> + *				notifier's master asd list.
+> + *
+> + * @notifier: pointer to &struct v4l2_async_notifier
+> + * @asd: pointer to &struct v4l2_async_subdev
+> + *
+> + * This can be used before registering a notifier to add an
+> + * asd to the notifiers @asd_list. If the caller uses this
+> + * method to compose an asd list, it must never allocate
+> + * or place asd's in the @subdevs array.
+> + */
+> +int v4l2_async_notifier_add_subdev(struct v4l2_async_notifier *notifier,
+> +				   struct v4l2_async_subdev *asd);
+> +
+> +/**
+>   * v4l2_async_notifier_register - registers a subdevice asynchronous notifier
+>   *
+>   * @v4l2_dev: pointer to &struct v4l2_device
+> @@ -177,7 +207,9 @@ void v4l2_async_notifier_unregister(struct v4l2_async_notifier *notifier);
+>   * Release memory resources related to a notifier, including the async
+>   * sub-devices allocated for the purposes of the notifier but not the notifier
+>   * itself. The user is responsible for calling this function to clean up the
+> - * notifier after calling @v4l2_async_notifier_parse_fwnode_endpoints or
+> + * notifier after calling
+> + * @v4l2_async_notifier_add_subdev,
+> + * @v4l2_async_notifier_parse_fwnode_endpoints or
+>   * @v4l2_fwnode_reference_parse_sensor_common.
+>   *
+>   * There is no harm from calling v4l2_async_notifier_cleanup in other
+> --
+> 2.7.4
+>
+
+--APlYHCtpeOhspHkB
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJbZHEqAAoJEHI0Bo8WoVY8lAYP/3i6mIobjOSl6q70kBDkwEVc
+byUEOEqYIGvVP3Fzhzd7zjlawG3ZxUS/mCBycFqnrba04SEIHazj6ffakVohDklk
+Uo04386DEkVWCKWRBnrF0eeiKm70G2mEJK2dc48TIHyFxhUXg9cu1B+oSySGJEoW
+Y7F+80ogskzNR2StNGwpQ+13mPRMtGS6XKiyks6qrdjSGqwYolRxnaHpRwqO/2kS
+LoPB1TVR2EzwyQPbpwXnQdFLas8v7ksk+sD/MTlkZ9wrpOiU63WUb4WmIex7OvKD
+Fc2p916ctQWMYW1NA9jXTl2YEJKS/xZyqF9LxXgRp/kdnb9J7/3j5ttlX0ouZHRB
+kMFsAOuVdDcDbxgX3UkM9zC/+bTbtO68KqA2OtpwBkYbxhYpJJwhEFlSE904frHD
+xntAPfHgXFRDlc4daWgI+7NoGuqY9pBvePIwA2rNjdyR+O6w561/koDHdtkaw5Dl
+1WS//XJNSmK/IZksP4jvdeSFACnUlVFSzVibnuwuCRT+S3qS8VmGHQGftxh99eQt
+8SXjJVEE4hOAmFVCSnIfkkQyeaAxmB8AzDA8POVO5WM66pGjf3dYef+B7NxQN/7h
+q0NG9glM8AB9803HhSzEvfnuRkmnRVmWB1lWgza/4hbOdpH/y7mHYZb7HnJ1i0a6
+tsHC0yn7maV9ctyzvNv2
+=45de
+-----END PGP SIGNATURE-----
+
+--APlYHCtpeOhspHkB--
