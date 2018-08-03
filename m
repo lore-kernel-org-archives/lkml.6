@@ -3,178 +3,94 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F408C4646D
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 22:09:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68A3FC4646D
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 22:10:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB888217A2
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 22:09:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15231217A2
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 22:10:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TIUdS1TH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB888217A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="vQAEKlKp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15231217A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732069AbeHDAHi (ORCPT
+        id S1732136AbeHDAIZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 20:07:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42326 "EHLO mail.kernel.org"
+        Fri, 3 Aug 2018 20:08:25 -0400
+Received: from frisell.zx2c4.com ([192.95.5.64]:55263 "EHLO frisell.zx2c4.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729968AbeHDAHi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 20:07:38 -0400
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1887E2178D;
-        Fri,  3 Aug 2018 22:09:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1533334167;
-        bh=lEBqVc0IWvFfaDompZhV8+plJJSHJENcU0ZWw5YeLc4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=TIUdS1TH1tGxPtLoav8FIeLRs6WyX2kljv0aGopFCvToI0NJjGb9HFco10TVSE27o
-         hcC3smXixm0anJuW6HWd5yH4chvyJQwq4iX1upoxypxHblpodRRkKqb9tonp7E1U56
-         BjU813djKXzJedWFE/ZaOhMs2dryMm8IGR3AmJZs=
-Date:   Fri, 3 Aug 2018 23:09:22 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Marcus Folkesson <marcus.folkesson@gmail.com>,
-        Kent Gustavsson <kent@minoris.se>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-iio <linux-iio@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 1/3] iio: adc: add support for mcp3911
-Message-ID: <20180803230922.22d628fc@archlinux>
-In-Reply-To: <CAHp75Vf8kMLsoFN_EK150yW_FvH8XfgjiETYAtvW63et5NNurw@mail.gmail.com>
-References: <20180802191554.20176-1-marcus.folkesson@gmail.com>
-        <CAHp75Vf8kMLsoFN_EK150yW_FvH8XfgjiETYAtvW63et5NNurw@mail.gmail.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1729968AbeHDAIZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 20:08:25 -0400
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id d77afddc;
+        Fri, 3 Aug 2018 21:58:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
+        :references:in-reply-to:from:date:message-id:subject:to:cc
+        :content-type; s=mail; bh=BQ3yMWvnOBnsgLQUk5Hxul/kO8w=; b=vQAEKl
+        Kp/J0b1mkTN3uo9pqCaGh6um+fHQIziUA1ClgzR4w6f0OEFI9OX+l4jWmReILhmK
+        5HfAxs5SyRhz6kT/x5+85VbpWXoAq+gbG+63mlXBZHSE2KLex2+wSaVBc7qcOfId
+        VaQJ1pwo4Ka37H9yaUtK4bYlQRAi4ga0WfMa3b/jK8ia2q5qvknQc9Rl4LBDKHaL
+        +riOi/gjhOn4jVGqZNoy/Xj5S6yRVeBBZc0LRSl84qq1P5BXaSsZpltFnnEUYRqe
+        It1YVQnsAFL1Jmja5bjn6tCV2khMdijvC+sLHEnPwFC9j0iiZmey0HanIJuqZKyF
+        aqgv6hKm4kIYwQiQ==
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id e962cce6 (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128:NO);
+        Fri, 3 Aug 2018 21:58:29 +0000 (UTC)
+Received: by mail-oi0-f42.google.com with SMTP id n84-v6so12418515oib.9;
+        Fri, 03 Aug 2018 15:10:13 -0700 (PDT)
+X-Gm-Message-State: AOUpUlG2K96fnC6hQpUi8pl0/EmASU3qXM3H8ln8HLqEHLCiuizEd8lI
+        e2vaPtOz5GAdEEdaissMeTNOUmg75oO2QRVModo=
+X-Google-Smtp-Source: AAOMgpeRDGhXdVs0BpIok0Eh1Pau8rfnCo1GLHEEHd30Eh9L+bNWvnbZsGKKQ689aAz87xi0Yt0x0tVcHpNxmnZmg7o=
+X-Received: by 2002:aca:7596:: with SMTP id q144-v6mr5396955oic.105.1533334213138;
+ Fri, 03 Aug 2018 15:10:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20180801072246.GA15677@sol.localdomain> <CALCETrXD_VyoyW5C1U34o-ySJ4nFcO6PQ+ZNBVYxCpJ-f65CHw@mail.gmail.com>
+ <CAHmME9oThR-dE3gTW0UyqAGZO80qu19ktG4YTb4iL6CNpzNNaw@mail.gmail.com> <CALCETrVziUpAU4nTaZ=t5ct=1jsWswWOy7KDNxXGPD1L=tMTGQ@mail.gmail.com>
+In-Reply-To: <CALCETrVziUpAU4nTaZ=t5ct=1jsWswWOy7KDNxXGPD1L=tMTGQ@mail.gmail.com>
+From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
+Date:   Sat, 4 Aug 2018 00:10:01 +0200
+X-Gmail-Original-Message-ID: <CAHmME9pt3PxKQmc8E-arA-W0p2tp9z_oJ-uXQwis3qD=Zvpnsg@mail.gmail.com>
+Message-ID: <CAHmME9pt3PxKQmc8E-arA-W0p2tp9z_oJ-uXQwis3qD=Zvpnsg@mail.gmail.com>
+Subject: Re: [PATCH v1 2/3] zinc: Introduce minimal cryptography library
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Eric Biggers <ebiggers3@gmail.com>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Samuel Neves <sneves@dei.uc.pt>,
+        "Daniel J . Bernstein" <djb@cr.yp.to>,
+        Tanja Lange <tanja@hyperelliptic.org>,
+        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>,
+        Karthikeyan Bhargavan <karthik.bhargavan@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2 Aug 2018 22:52:00 +0300
-Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+On Fri, Aug 3, 2018 at 11:29 PM Andy Lutomirski <luto@amacapital.net> wrote:
+> Gotcha.  That was very hidden in the 24k lines.  Please make this (and
+> any similar goodies) be their own patches.
 
-> On Thu, Aug 2, 2018 at 10:15 PM, Marcus Folkesson
-> <marcus.folkesson@gmail.com> wrote:
-> > MCP3911 is a dual channel Analog Front End (AFE) containing two
-> > synchronous sampling delta-sigma Analog-to-Digital Converters (ADC).
-> >
-> > Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>  
-> 
-> > Signed-off-by: Kent Gustavsson <kent@minoris.se>  
-> 
-> What is this? Why it's here (presense and location in the message)?
-To clarify... If Kent wrote the patch and you are simply acting
-as gatekeeper / upstreamer you should set the mail to be from Kent
-and put your own Signed-off after his to basically act as a submaintainer
-certifying you believe his sign off and all that entails.
+I know, sorry, and I certainly will have this split out. The above
+code snippet was from the much much shorter WireGuard patch (3/3), but
+indeed the simd_get/put/relax code is in the monster patch here, so
+that'll certainly be split for v2.
 
-If it is a bit of a joint effort then that's fine but for copyright
-purposes there should be some indication of the split.
+>
+> Also, please consider spelling it differently:
+>
+> simd_context_t simd_context = simd_get();
+>
+> Because we'll feel very silly the first time some architecture has
+> more than one possible state.  (It wouldn't be entirely insane for x86
+> to distinguish between "no SIMD", "XMM only", and "go to town!", for
+> example.)
 
-
-> 
-> > + * Copyright (C) 2018 Kent Gustavsson <kent@minoris.se>  
-> 
-> > + *  
-> 
-> Redundant.
-> 
-> > +static int mcp3911_read(struct mcp3911 *adc, u8 reg, u32 *val, u8 len)
-> > +{
-> > +       int ret;
-> > +
-> > +       reg = MCP3911_REG_READ(reg, adc->dev_addr);
-> > +       ret = spi_write_then_read(adc->spi, &reg, 1, val, len);
-> > +       if (ret < 0)
-> > +               return ret;
-> > +
-> > +       be32_to_cpus(val);
-> > +       *val >>= ((4 - len) * 8);
-> > +       dev_dbg(&adc->spi->dev, "reading 0x%x from register 0x%x\n", *val,
-> > +                       reg>>1);
-> > +       return ret;
-> > +}
-> > +
-> > +static int mcp3911_write(struct mcp3911 *adc, u8 reg, u32 val, u8 len)
-> > +{
-> > +       dev_dbg(&adc->spi->dev, "writing 0x%x to register 0x%x\n", val, reg);
-> > +
-> > +       val <<= (3 - len) * 8;
-> > +       cpu_to_be32s(&val);
-> > +       val |= MCP3911_REG_WRITE(reg, adc->dev_addr);
-> > +
-> > +       return spi_write(adc->spi, &val, len + 1);
-> > +}  
-> 
-> Can't you use REGMAP_SPI ?
-My instinct is not really. The magic device-addr doesn't help.
-You could work around it but it's not that nice and you'd have
-to create the regmap mapping on the fly or carry static ones
-for each value of htat.
-
-
-
-> 
-> > +       of_property_read_u32(of_node, "device-addr", &adc->dev_addr);
-> > +       if (adc->dev_addr > 3) {
-> > +               dev_err(&adc->spi->dev,
-> > +                               "invalid device address (%i). Must be in range 0-3.\n",
-> > +                               adc->dev_addr);
-> > +               return -EINVAL;
-> > +       }
-> > +       dev_dbg(&adc->spi->dev, "use device address %i\n", adc->dev_addr);  
-> 
-> Isn't what we called CS (chip select)?
-Nope. We went around this in an earlier revision. It's an address transmitted
-in the control byte to allow you to 'share' a chip select line between multiple
-chips (crazy but true).
-
-> 
-> > +       if (IS_ERR(adc->vref)) {  
-> 
-> > +  
-> 
-> Redundant.
-> 
-> > +       if (adc->clki)  
-> 
-> Seems to be redundant if clock is optional (it should be NULL and API
-> is NULL-aware).
-> 
-> > +               clk_disable_unprepare(adc->clki);  
-> 
-> > +       if (adc->clki)
-> > +               clk_disable_unprepare(adc->clki);  
-> 
-> Ditto.
-> 
-> > +#if defined(CONFIG_OF)  
-> 
-> This prevents playing with the device on ACPI enabled platforms.
-Yeah, that trickery is still little known (and I forget about it from
-time to time).
-
-The upshot for those who have missed this is you can use a magic
-acpi device to instantiate based on device tree bindings :)
-
-So we need to strip all this 'obvious' protection stuff out of drivers.
-
-> 
-> > +               .of_match_table = of_match_ptr(mcp3911_dt_ids),  
-> 
-> Ditto for macro.
-> 
-
+That's a great idea. It'll also make it clearer that users shouldn't
+just dump a raw "true" in there; raw bools are more tempting to abuse
+like that.
