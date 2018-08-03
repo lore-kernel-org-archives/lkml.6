@@ -6,49 +6,49 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6441BC28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 14:10:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B94A2C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 14:10:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 137062170D
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 14:10:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7223C2170D
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 14:10:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="NRb8Elwz";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="DbUBe9P0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 137062170D
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="VBQMjC03";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="JAzrJV7x"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7223C2170D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732403AbeHCQHV (ORCPT
+        id S1732423AbeHCQHY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 12:07:21 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:39474 "EHLO
+        Fri, 3 Aug 2018 12:07:24 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:39576 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731781AbeHCQHT (ORCPT
+        with ESMTP id S1731781AbeHCQHW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 12:07:19 -0400
+        Fri, 3 Aug 2018 12:07:22 -0400
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 38F4D6024C; Fri,  3 Aug 2018 14:10:48 +0000 (UTC)
+        id F188960AFF; Fri,  3 Aug 2018 14:10:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533305448;
-        bh=e1jCYZyOjK2cepkiEYHcHm0ColVjHvst2rpq/6QZIzc=;
+        s=default; t=1533305451;
+        bh=DVGdmtNtKpeKURO1+P5XZeWTqDAOj6c1fbHeVSBaRmM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NRb8ElwzasTMFM4JtIfG82H6oHc1eiWLBgMGQJB9UejR70NIEDuTjSf4xPRQobla2
-         GuT259l5DGnU0lEmS8+o2/n1XDqSagmMCv3Ii8PbV0mjh6DiVUphb2n3bCRZPvWemN
-         nCDdTx8NOfcaVLtjaekOYWEfqi8YOXRXh27xUfrg=
+        b=VBQMjC03Flj+hLZvaSGZHHSzh6j1EAlzhhQzwIARXQaG4jXkCCDEUGD1ecdep47EG
+         J+yiJwSCZ7jm2BG4JyuD7P/lgPvL2JlVmXxKgXpK9Um8IBHPRCWwemMVRgW9G/Wgoc
+         YO53lRmxRVkjBPf+dF+beUvquLAAs/KmifHFFL8M=
 Received: from srichara-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: sricharan@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 32E5A602D7;
-        Fri,  3 Aug 2018 14:10:44 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0061560117;
+        Fri,  3 Aug 2018 14:10:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533305447;
-        bh=e1jCYZyOjK2cepkiEYHcHm0ColVjHvst2rpq/6QZIzc=;
+        s=default; t=1533305450;
+        bh=DVGdmtNtKpeKURO1+P5XZeWTqDAOj6c1fbHeVSBaRmM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DbUBe9P068TxJTZLZBrQVeCyZCJ+ZgLRNK8yxBYLYC7q94KJsQ0BG4aN+O0marp3F
-         W1pbFJJT4Qk2901vbrTzHSUIR07GlSzzoLQQkXjHiIvNVQzTHJcb03UBnj6mHzaz95
-         Xq3aka8W5ASCzh8cFL9UmH8JLw/1M7H1bd3H0Pbs=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 32E5A602D7
+        b=JAzrJV7xjQCMHcuUrAgeZwdtK5hfq0mP1vxvxnVhE7zhn074K6MQjMbvK6+pHtZG5
+         3ClDtyqLuQU2MDQFXAAUGKagLJz0Y1eyPnyNO3ulKOKallE8ZITY+P294guJ984slQ
+         V6v622jWEWbXJWpFb6zafzXFEjgRaLZSqsdrnDIY=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0061560117
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
 From:   Sricharan R <sricharan@codeaurora.org>
@@ -56,9 +56,9 @@ To:     andy.gross@linaro.org, david.brown@linaro.org, robh+dt@kernel.org,
         linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     sricharan@codeaurora.org
-Subject: [PATCH 3/5] arm: dts: qcom: Move common nodes to ipq8064-v.1.0.dtsi
-Date:   Fri,  3 Aug 2018 19:40:17 +0530
-Message-Id: <1533305419-29152-4-git-send-email-sricharan@codeaurora.org>
+Subject: [PATCH 4/5] arm: dts: qcom: Add ipq8064-ap161.dts
+Date:   Fri,  3 Aug 2018 19:40:18 +0530
+Message-Id: <1533305419-29152-5-git-send-email-sricharan@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1533305419-29152-1-git-send-email-sricharan@codeaurora.org>
 References: <1533305419-29152-1-git-send-email-sricharan@codeaurora.org>
@@ -67,218 +67,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The nodes in ipq8064-ap148.dts currently are common with
-boards that we will add next. So move the common data to
-ipq8064-v.1.0.dtsi.
+Add a new board dts for ipq8064-ap161.
 
 Signed-off-by: Sricharan R <sricharan@codeaurora.org>
 ---
- arch/arm/boot/dts/qcom-ipq8064-ap148.dts | 83 ++------------------------------
- arch/arm/boot/dts/qcom-ipq8064-v1.0.dtsi | 65 +++++++++++++++++++++++++
- arch/arm/boot/dts/qcom-ipq8064.dtsi      |  9 ++++
- 3 files changed, 77 insertions(+), 80 deletions(-)
+ Documentation/devicetree/bindings/arm/qcom.txt | 2 ++
+ arch/arm/boot/dts/Makefile                     | 1 +
+ arch/arm/boot/dts/qcom-ipq8064-ap161.dts       | 7 +++++++
+ 3 files changed, 10 insertions(+)
+ create mode 100644 arch/arm/boot/dts/qcom-ipq8064-ap161.dts
 
-diff --git a/arch/arm/boot/dts/qcom-ipq8064-ap148.dts b/arch/arm/boot/dts/qcom-ipq8064-ap148.dts
-index bcf53e3..f45b05e 100644
---- a/arch/arm/boot/dts/qcom-ipq8064-ap148.dts
-+++ b/arch/arm/boot/dts/qcom-ipq8064-ap148.dts
-@@ -2,26 +2,8 @@
- #include "qcom-ipq8064-v1.0.dtsi"
+diff --git a/Documentation/devicetree/bindings/arm/qcom.txt b/Documentation/devicetree/bindings/arm/qcom.txt
+index ee532e7..2325135 100644
+--- a/Documentation/devicetree/bindings/arm/qcom.txt
++++ b/Documentation/devicetree/bindings/arm/qcom.txt
+@@ -15,6 +15,7 @@ The 'SoC' and 'board' elements are required. All other elements are optional.
  
- / {
--	model = "Qualcomm IPQ8064/AP148";
--	compatible = "qcom,ipq8064-ap148", "qcom,ipq8064";
--
--	aliases {
--		serial0 = &gsbi4_serial;
--	};
--
--	chosen {
--		stdout-path = "serial0:115200n8";
--	};
--
--	reserved-memory {
--		#address-cells = <1>;
--		#size-cells = <1>;
--		ranges;
--		rsvd@41200000 {
--			reg = <0x41200000 0x300000>;
--			no-map;
--		};
--	};
-+	model = "Qualcomm Technologies, Inc. IPQ8064/AP-148";
-+	compatible = "qcom,ipq8064-ap148";
+ The 'SoC' element must be one of the following strings:
  
- 	soc {
- 		pinmux@800000 {
-@@ -30,74 +12,15 @@
- 				function = "gsbi4";
- 				bias-disable;
- 			};
--
--			spi_pins: spi_pins {
--				mux {
--					pins = "gpio18", "gpio19", "gpio21";
--					function = "gsbi5";
--					drive-strength = <10>;
--					bias-none;
--				};
--			};
- 		};
++	ipq8064
+ 	apq8016
+ 	apq8074
+ 	apq8084
+@@ -30,6 +31,7 @@ The 'SoC' element must be one of the following strings:
  
- 		gsbi@16300000 {
--			qcom,mode = <GSBI_PROT_I2C_UART>;
--			status = "ok";
--			serial@16340000 {
--				status = "ok";
--			};
--
--			i2c4: i2c@16380000 {
-+			i2c@16380000 {
- 				status = "ok";
--
- 				clock-frequency = <200000>;
--
- 				pinctrl-0 = <&i2c4_pins>;
- 				pinctrl-names = "default";
- 			};
- 		};
--
--		gsbi5: gsbi@1a200000 {
--			qcom,mode = <GSBI_PROT_SPI>;
--			status = "ok";
--
--			spi4: spi@1a280000 {
--				status = "ok";
--				spi-max-frequency = <50000000>;
--
--				pinctrl-0 = <&spi_pins>;
--				pinctrl-names = "default";
--
--				cs-gpios = <&qcom_pinmux 20 0>;
--
--				flash: m25p80@0 {
--					compatible = "s25fl256s1";
--					#address-cells = <1>;
--					#size-cells = <1>;
--					spi-max-frequency = <50000000>;
--					reg = <0>;
--
--					partition@0 {
--						label = "rootfs";
--						reg = <0x0 0x1000000>;
--					};
--
--					partition@1 {
--						label = "scratch";
--						reg = <0x1000000 0x1000000>;
--					};
--				};
--			};
--		};
--
--		sata-phy@1b400000 {
--			status = "ok";
--		};
--
--		sata@29000000 {
--			ports-implemented = <0x1>;
--			status = "ok";
--		};
- 	};
- };
-diff --git a/arch/arm/boot/dts/qcom-ipq8064-v1.0.dtsi b/arch/arm/boot/dts/qcom-ipq8064-v1.0.dtsi
-index e118119..ee32f97 100644
---- a/arch/arm/boot/dts/qcom-ipq8064-v1.0.dtsi
-+++ b/arch/arm/boot/dts/qcom-ipq8064-v1.0.dtsi
-@@ -1,2 +1,67 @@
- // SPDX-License-Identifier: GPL-2.0
- #include "qcom-ipq8064.dtsi"
+ The 'board' element must be one of the following strings:
+ 
++	ap
+ 	cdp
+ 	liquid
+ 	dragonboard
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index 37a3de7..233661a 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -772,6 +772,7 @@ dtb-$(CONFIG_ARCH_QCOM) += \
+ 	qcom-ipq4019-ap.dk07.1-c1.dtb \
+ 	qcom-ipq4019-ap.dk07.1-c2.dtb \
+ 	qcom-ipq8064-ap148.dtb \
++	qcom-ipq8064-ap161.dtb \
+ 	qcom-msm8660-surf.dtb \
+ 	qcom-msm8960-cdp.dtb \
+ 	qcom-msm8974-fairphone-fp2.dtb \
+diff --git a/arch/arm/boot/dts/qcom-ipq8064-ap161.dts b/arch/arm/boot/dts/qcom-ipq8064-ap161.dts
+new file mode 100644
+index 0000000..aab5174
+--- /dev/null
++++ b/arch/arm/boot/dts/qcom-ipq8064-ap161.dts
+@@ -0,0 +1,7 @@
++// SPDX-License-Identifier: GPL-2.0
++#include "qcom-ipq8064-v1.0.dtsi"
 +
 +/ {
-+	model = "Qualcomm Technologies, Inc. IPQ8064-v1.0";
-+
-+	aliases {
-+		serial0 = &gsbi4_serial;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	soc {
-+		gsbi@16300000 {
-+			qcom,mode = <GSBI_PROT_I2C_UART>;
-+			status = "ok";
-+
-+			serial@16340000 {
-+				status = "ok";
-+			};
-+		};
-+
-+		gsbi5: gsbi@1a200000 {
-+			qcom,mode = <GSBI_PROT_SPI>;
-+			status = "ok";
-+
-+			spi4: spi@1a280000 {
-+				status = "ok";
-+				spi-max-frequency = <50000000>;
-+
-+				pinctrl-0 = <&spi_pins>;
-+				pinctrl-names = "default";
-+
-+				cs-gpios = <&qcom_pinmux 20 0>;
-+
-+				flash: m25p80@0 {
-+					compatible = "s25fl256s1";
-+					#address-cells = <1>;
-+					#size-cells = <1>;
-+					spi-max-frequency = <50000000>;
-+					reg = <0>;
-+
-+					partition@0 {
-+						label = "rootfs";
-+						reg = <0x0 0x1000000>;
-+					};
-+
-+					partition@1 {
-+						label = "scratch";
-+						reg = <0x1000000 0x1000000>;
-+					};
-+				};
-+			};
-+		};
-+
-+		sata-phy@1b400000 {
-+			status = "ok";
-+		};
-+
-+		sata@29000000 {
-+			ports-implemented = <0x1>;
-+			status = "ok";
-+		};
-+	};
++	model = "Qualcomm Technologies, Inc. IPQ8064/AP-161";
++	compatible = "qcom,ipq8064-ap161";
 +};
-diff --git a/arch/arm/boot/dts/qcom-ipq8064.dtsi b/arch/arm/boot/dts/qcom-ipq8064.dtsi
-index e78618e..04cc822 100644
---- a/arch/arm/boot/dts/qcom-ipq8064.dtsi
-+++ b/arch/arm/boot/dts/qcom-ipq8064.dtsi
-@@ -144,6 +144,15 @@
- 					bias-disable;
- 				};
- 			};
-+
-+			spi_pins: spi_pins {
-+				mux {
-+					pins = "gpio18", "gpio19", "gpio21";
-+					function = "gsbi5";
-+					drive-strength = <10>;
-+					bias-none;
-+				};
-+			};
- 		};
- 
- 		intc: interrupt-controller@2000000 {
 -- 
 QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
 
