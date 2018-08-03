@@ -3,135 +3,122 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32551C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 18:57:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F2BEC28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 18:57:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E27952178F
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 18:57:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ECEEA217A2
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 18:57:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ut7Lvj5f"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E27952178F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="S+y+lcnz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECEEA217A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731995AbeHCUzQ (ORCPT
+        id S1732087AbeHCUzS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 16:55:16 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:35165 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727953AbeHCUzP (ORCPT
+        Fri, 3 Aug 2018 16:55:18 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:40606 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727953AbeHCUzR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 16:55:15 -0400
-Received: by mail-pg1-f194.google.com with SMTP id e6-v6so3257369pgv.2
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Aug 2018 11:57:44 -0700 (PDT)
+        Fri, 3 Aug 2018 16:55:17 -0400
+Received: by mail-it0-f65.google.com with SMTP id h23-v6so9770649ita.5;
+        Fri, 03 Aug 2018 11:57:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=rj40mg9Xb51R1c2uuHTuNoY8IlKKEY01gojzJ1OKAL0=;
-        b=ut7Lvj5flrqTKo5kvp9V8cPepJcnzyIlVbNGEE+/+I+Y3GJKssZxezNPbnHXcpY1vE
-         1FVeDUKMwFjlXc+It5U6g38dXrcYSwG89sIV0vM10Psd1bYQuUZpTqmP3WQPKpxpowzr
-         qfAY1wyg4uNWwzEpGDMnkbxil2tTbVS7kOa1SqPIN2bbeUU9WY0MHiSdGcSzlGSmCkUj
-         DNQiemln766XEeAstfQbJIiVrC3RNdM+MatxGWF4TpyLPhi5xocb6bCTkqpqVbHTyhmJ
-         0cUPImzl7A0oSwSfeppT4wm8Bdpr88IG0a3kEAvUgvIksTqHddgcNDG2tBZB2eN1fQsY
-         OZ9Q==
+        bh=13qy+dxDgzc11PMhtnRwbhDfHnFyPcN1FSVdS6qh9wc=;
+        b=S+y+lcnzKHY9sP+zwlnGst4m3tG+Jx/G+z9zdtFmGPWoe7i9BPSHNGcIgq4ic6xX4U
+         ShmLvv6MP2EuqATbo+MK36AkCP0S/jemL74Rw0V0vumFrKn9tL65PR3r4As1bYmmpFUW
+         LKiGh4se2Z5ZfW8Vp23h+CYnBMmlJhvfaOAMg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=rj40mg9Xb51R1c2uuHTuNoY8IlKKEY01gojzJ1OKAL0=;
-        b=HvWFWNon+SILAc2ADBNz+N1H/Jo8vWgDSQj89H6VKfZgCvO/rAiR3zxzkmo2pXmXg/
-         pUMRh206pXGkIn6hJ+4FkY0TJ3Idt4PFRPviZj45w8Y6Q8kyOQeVYpi0i4BPN/OvnKQ/
-         AR2IQMM324q70ZByqsMP51b3UENukZjEA+cuS8JKLWAvIJ/JcWpfHK19/vQLJzRR0JQ/
-         IJ1622WJbtjFznP1v3/ke0d1e/wV5ZNq5NNoSffJohSJ3RyNckePFgkF2K/DnSfApAzX
-         YBrzctUS8S8SU5gEKkovbFBw7kp4c1krCud8YjLuZbqOPuCWq16/6Aet/3ZE1yjKMxPI
-         5+0Q==
-X-Gm-Message-State: AOUpUlEu3SQMzdZTTYKckoNKjHd+XrAg9NIwso+R0bb6TpxjlS2UK2fI
-        SAXVysQ7mRlmG4r5GnpKpUzzI91/JzQy+2a2/yE=
-X-Google-Smtp-Source: AAOMgpd/XIcoZRmGS125NIaZBb3blj4vU0yJFgYOLkVlueHh7rNt+qoaNPysTGSNcN/f0LNMLRKDPZbhAG7rxU81Cgw=
-X-Received: by 2002:a62:3545:: with SMTP id c66-v6mr5837945pfa.63.1533322663970;
- Fri, 03 Aug 2018 11:57:43 -0700 (PDT)
+        bh=13qy+dxDgzc11PMhtnRwbhDfHnFyPcN1FSVdS6qh9wc=;
+        b=oVxZzO74fKSFl4+EpHbLaJFZ9EIy2YSMDwjBYDH4SQzmjNyCRcImuznbU62eSZce4e
+         mVCP5Qw0/7F2L9naw6jTcHA72T2a/rulHRufesul6sllXduXXWQAOxwT7kM0TeKYBrRG
+         ZY8XrbOh7aHc5er00DwWX2zuT63b1QRsh8vLunQGv9Ox0XB6ALsqbgrzbvvzMgeo+4+N
+         YU4xZSHzT5pNWbC2StCumROYvrNXgtwYiaPtgGfxi/Bkn7BTJEH3VSYsDIb5lLYlTX1s
+         YQ8bxCVrKMVigzX9/VjdO1jgn+L6y26Q5pkTZnlOAwzweS6NLNW1tpprGb9/yLDft3xt
+         HXsw==
+X-Gm-Message-State: AOUpUlEuSm47xgDcCPdT653G5FcEFCz8RNd7GA95lkAEwQmJceapeC83
+        2ED3hT23p9Qdjw0LGOG7xPydYrpEA8YqkQ2rDyY=
+X-Google-Smtp-Source: AAOMgpftH8S1bEbq8LpFJ4VUvJVtwRRaA4Lv7M+ZXz9z+KDG2CoqlmKh/YQn11BQOa2TVFOPtfu3ki+DzIWq7OnJ9WY=
+X-Received: by 2002:a24:b211:: with SMTP id u17-v6mr7247336ite.1.1533322665013;
+ Fri, 03 Aug 2018 11:57:45 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180728002409.5781-1-xiyou.wangcong@gmail.com>
- <ef0e1185-51d6-0707-cda4-6f2ea987b651@linux.alibaba.com> <CAM_iQpVeK2VQDuahreZC2-L4eEzx0WtD8Bz=oHH68VSAiMqLGQ@mail.gmail.com>
- <fad5ebe6-ec49-c67b-7b4f-78a413723aa8@linux.alibaba.com> <xm26ftzz8h0r.fsf@bsegall-linux.svl.corp.google.com>
- <CAM_iQpXGCqo9AAp2kpSKk9sHx0ZRK7JU_c07sWh4vR9kFQ+LxA@mail.gmail.com> <0939a9c3-e9c0-ae8a-3f56-0dde1ab2fc8e@linux.alibaba.com>
-In-Reply-To: <0939a9c3-e9c0-ae8a-3f56-0dde1ab2fc8e@linux.alibaba.com>
-From:   Cong Wang <xiyou.wangcong@gmail.com>
-Date:   Fri, 3 Aug 2018 11:57:31 -0700
-Message-ID: <CAM_iQpVkU9Qf_V+DvUuqxLqsiGN=Qg+Uyt1Kpiu5HuQVRi=KqQ@mail.gmail.com>
-Subject: Re: [PATCH] sched/fair: sync expires_seq in distribute_cfs_runtime()
-To:     Xunlei Pang <xlpang@linux.alibaba.com>
-Cc:     Ben Segall <bsegall@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>
+References: <CAOi1vP_tYG77e71CdDiOcszSSEWrp9Vfi+KB7yFAXVQChkjP5A@mail.gmail.com>
+ <93bff248-6897-4867-841b-2dace11597de@torlan.ru> <CA+55aFyAox9BTDpRsqLXiROhHOX60aa45LEZ7Azteaumdu11Fw@mail.gmail.com>
+ <CAOi1vP-SJO4AMK=XD3Lmja++2dQqoiw6Zn8Vgxf8OfvYgnuC6Q@mail.gmail.com>
+ <CA+55aFy2DR9fxHhmGq+azSjX9D71YtLsuFKmoEuYW3uTAUYtJg@mail.gmail.com>
+ <d76415de-2056-c7d6-cc88-b896deaa8ead@torlan.ru> <1ec0a220-d5b0-1c27-e63b-c4d3f4ce9d77@torlan.ru>
+ <CA+55aFyPVQ5-gA93irsaxPC9BNQxnGWrDDHPMUYai2kxKiaKWQ@mail.gmail.com>
+ <20180803133102.GA3092@redhat.com> <20180803152034.GD32066@thunk.org> <20180803183932.GA3258@redhat.com>
+In-Reply-To: <20180803183932.GA3258@redhat.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 3 Aug 2018 11:57:34 -0700
+Message-ID: <CA+55aFwGGjs_imFFkEPJ4g99Kseam=4Qppv4G6Q=ZfZXdzF7Vw@mail.gmail.com>
+Subject: Re: LVM snapshot broke between 4.14 and 4.16
+To:     Mike Snitzer <snitzer@redhat.com>
+Cc:     "Theodore Ts'o" <tytso@mit.edu>, Jens Axboe <axboe@kernel.dk>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>, dm-devel@redhat.com,
+        Ilya Dryomov <idryomov@gmail.com>, wgh@torlan.ru,
+        Zdenek Kabelac <zkabelac@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 31, 2018 at 8:24 PM Xunlei Pang <xlpang@linux.alibaba.com> wrote:
+On Fri, Aug 3, 2018 at 11:39 AM Mike Snitzer <snitzer@redhat.com> wrote:
 >
-> Let's see the unthrottle cases.
-> 1. for the periodic timer
-> distribute_cfs_runtime updates the throttled cfs_rq->runtime_expires to
-> be a new value, so expire_cfs_rq_runtime does nothing because of:
->   rq_clock(rq_of(cfs_rq)) - cfs_rq->runtime_expires < 0
->
-> Afterwards assign_cfs_rq_runtime() will sync its expires_seq.
+> Please stop with the overreaction and making this something it isn't.
 
-Is there any guarantee rq_clock(cfs_rq) is always ahead of
-cfs_rq->runtime_expires in this case?
+It's not an overreaction when people get their scripts broken, and
+some developers then argue "that's not a serious bug".
 
-I doubt, because cfs_rq->runtime_expires could be assigned
-by a sched_clock() on a different CPU running the periodic timer.
+Guys, this needs to be fixed.  With all the stupid and fundamentyally
+incorrect excuses, I am now no longer even willing to maintain any
+other course of action.
 
-Also, rq_clock() is behind sched_clock() on the same CPU too,
-sometimes it is merely hundreds of nanoseconds, sometimes it is
-tens of thousands nanoseconds in my environment. (I have a
-different patch to address this, but still not sure if it is correct.)
+If you develop for the Linux kernel, you need to realize that
+"breaking user space" is simply not acceptable. And if you cannot live
+with that, then you should stop working on the kernel. Because I will
+refuse to continue to pull from you as a developer.
 
+At worst, I'll just revert the original commit entirely. I was hoping
+we'd be able to avoid that, partly because the commit looks fine, but
+partly because it also doesn't revert cleanly.
 
->
-> 2. for the slack timer
-> the two expires_seq should be the same, so if clock drift happens soon,
-> expire_cfs_rq_runtime regards it as true clock drift:
->   cfs_rq->runtime_expires += TICK_NSEC
-> If it happens that global expires_seq advances, it also doesn't matter,
-> expire_cfs_rq_runtime will clear the stale expire_cfs_rq_runtime as
-> expected.
+Or I'll just do something like this, since it seems like it's the lvm
+people who have the hardest time with understanding the simple rules:
 
-Hmm, looks like due to the runtime_refresh_within() check in
-slack timer.
+diff --git a/drivers/md/dm-ioctl.c b/drivers/md/dm-ioctl.c
+index b810ea77e6b1..fcfab812e025 100644
+--- a/drivers/md/dm-ioctl.c
++++ b/drivers/md/dm-ioctl.c
+@@ -1049,7 +1049,12 @@ static int do_resume(struct dm_ioctl *param)
+                        return PTR_ERR(old_map);
+                }
 
+-               if (dm_table_get_mode(new_map) & FMODE_WRITE)
++               /*
++                * This used to do
++                *    dm_table_get_mode(new_map) & FMODE_WRITE
++                * but the lvm tools got this wrong, and will
++                * continue to write to "read-only" volumes.
++               if (0)
+                        set_disk_ro(dm_disk(md), 0);
+                else
+                        set_disk_ro(dm_disk(md), 1);
 
+which seems to target the actual problem more directly.
 
->
-> >
-> >>
-> >> Nothing /important/ goes wrong because distribute_cfs_runtime only fills
-> >> runtime_remaining up to 1, not a real amount.
-> >
-> > No, runtime_remaining is updated right before expire_cfs_rq_runtime():
-> >
-> > static void __account_cfs_rq_runtime(struct cfs_rq *cfs_rq, u64 delta_exec)
-> > {
-> >         /* dock delta_exec before expiring quota (as it could span periods) */
-> >         cfs_rq->runtime_remaining -= delta_exec;
-> >         expire_cfs_rq_runtime(cfs_rq);
-> >
-> > so almost certainly it can't be 1.
->
-> I think Ben means it firstly gets a distributtion of 1 to run after
-> unthrottling, soon it will have a negative runtime_remaining, and go
-> to assign_cfs_rq_runtime().
-
-That is obvious, being 1 in distribute_cfs_runtime is not relevant to the
-discussion here.
+              Linus
