@@ -6,275 +6,109 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA81DC28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 19:15:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D91FC28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 19:17:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86828217A2
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 19:15:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86828217A2
+	by mail.kernel.org (Postfix) with ESMTP id DE023217A2
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 19:17:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE023217A2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729938AbeHCVNL (ORCPT
+        id S1731507AbeHCVPO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 17:13:11 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40358 "EHLO mx1.redhat.com"
+        Fri, 3 Aug 2018 17:15:14 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52362 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728324AbeHCVNL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 17:13:11 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        id S1728324AbeHCVPO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 17:15:14 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id CAF6E401DEB0;
-        Fri,  3 Aug 2018 19:15:34 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 16564818533A;
+        Fri,  3 Aug 2018 19:17:38 +0000 (UTC)
 Received: from redhat.com (ovpn-117-153.ams2.redhat.com [10.36.117.153])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 930C31D08B;
-        Fri,  3 Aug 2018 19:15:32 +0000 (UTC)
-Date:   Fri, 3 Aug 2018 22:15:31 +0300
+        by smtp.corp.redhat.com (Postfix) with SMTP id 518732026D65;
+        Fri,  3 Aug 2018 19:17:33 +0000 (UTC)
+Date:   Fri, 3 Aug 2018 22:17:32 +0300
 From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Wei Wang <wei.w.wang@intel.com>
-Cc:     virtio-dev@lists.oasis-open.org, linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, linux-mm@kvack.org,
-        mhocko@kernel.org, akpm@linux-foundation.org,
-        penguin-kernel@i-love.sakura.ne.jp
-Subject: Re: [PATCH v3 2/2] virtio_balloon: replace oom notifier with shrinker
-Message-ID: <20180803221423-mutt-send-email-mst@kernel.org>
-References: <1533285146-25212-1-git-send-email-wei.w.wang@intel.com>
- <1533285146-25212-3-git-send-email-wei.w.wang@intel.com>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        aik@ozlabs.ru, robh@kernel.org, joe@perches.com,
+        elfring@users.sourceforge.net, david@gibson.dropbear.id.au,
+        jasowang@redhat.com, mpe@ellerman.id.au, linuxram@us.ibm.com,
+        haren@linux.vnet.ibm.com, paulus@samba.org,
+        srikar@linux.vnet.ibm.com, robin.murphy@arm.com,
+        jean-philippe.brucker@arm.com, marc.zyngier@arm.com
+Subject: Re: [RFC 0/4] Virtio uses DMA API for all devices
+Message-ID: <20180803221634-mutt-send-email-mst@kernel.org>
+References: <20180801081637.GA14438@arm.com>
+ <20180801083639.GF26378@infradead.org>
+ <26c1d3d50d8e081eed44fe9940fbefed34598cbd.camel@kernel.crashing.org>
+ <20180802182959-mutt-send-email-mst@kernel.org>
+ <82ccef6ec3d95ee43f3990a4a2d0aea87eb45e89.camel@kernel.crashing.org>
+ <20180802200646-mutt-send-email-mst@kernel.org>
+ <e9beb6bba5a7d05741e27e85b24a3b23ba7c2762.camel@kernel.crashing.org>
+ <20180802225738-mutt-send-email-mst@kernel.org>
+ <de4888b6457e220776e16a9c8958ff0886ffc66c.camel@kernel.crashing.org>
+ <20180803070507.GA1344@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1533285146-25212-3-git-send-email-wei.w.wang@intel.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Fri, 03 Aug 2018 19:15:34 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Fri, 03 Aug 2018 19:15:34 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mst@redhat.com' RCPT:''
+In-Reply-To: <20180803070507.GA1344@infradead.org>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Fri, 03 Aug 2018 19:17:38 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Fri, 03 Aug 2018 19:17:38 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mst@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 03, 2018 at 04:32:26PM +0800, Wei Wang wrote:
-> The OOM notifier is getting deprecated to use for the reasons:
-> - As a callout from the oom context, it is too subtle and easy to
->   generate bugs and corner cases which are hard to track;
-> - It is called too late (after the reclaiming has been performed).
->   Drivers with large amuont of reclaimable memory is expected to
->   release them at an early stage of memory pressure;
-> - The notifier callback isn't aware of oom contrains;
-> Link: https://lkml.org/lkml/2018/7/12/314
+On Fri, Aug 03, 2018 at 12:05:07AM -0700, Christoph Hellwig wrote:
+> On Thu, Aug 02, 2018 at 04:13:09PM -0500, Benjamin Herrenschmidt wrote:
+> > So let's differenciate the two problems of having an IOMMU (real or
+> > emulated) which indeeds adds overhead etc... and using the DMA API.
+> > 
+> > At the moment, virtio does this all over the place:
+> > 
+> > 	if (use_dma_api)
+> > 		dma_map/alloc_something(...)
+> > 	else
+> > 		use_pa
+> > 
+> > The idea of the patch set is to do two, somewhat orthogonal, changes
+> > that together achieve what we want. Let me know where you think there
+> > is "a bunch of issues" because I'm missing it:
+> > 
+> >  1- Replace the above if/else constructs with just calling the DMA API,
+> > and have virtio, at initialization, hookup its own dma_ops that just
+> > "return pa" (roughly) when the IOMMU stuff isn't used.
+> > 
+> > This adds an indirect function call to the path that previously didn't
+> > have one (the else case above). Is that a significant/measurable
+> > overhead ?
 > 
-> This patch replaces the virtio-balloon oom notifier with a shrinker
-> to release balloon pages on memory pressure. The balloon pages are
-> given back to mm adaptively by returning the number of pages that the
-> reclaimer is asking for (i.e. sc->nr_to_scan).
+> If you call it often enough it does:
 > 
-> Currently the max possible value of sc->nr_to_scan passed to the balloon
-> shrinker is SHRINK_BATCH, which is 128. This is smaller than the
-> limitation that only VIRTIO_BALLOON_ARRAY_PFNS_MAX (256) pages can be
-> returned via one invocation of leak_balloon. But this patch still
-> considers the case that SHRINK_BATCH or shrinker->batch could be changed
-> to a value larger than VIRTIO_BALLOON_ARRAY_PFNS_MAX, which will need to
-> do multiple invocations of leak_balloon.
+> https://www.spinics.net/lists/netdev/msg495413.html
 > 
-> Historically, the feature VIRTIO_BALLOON_F_DEFLATE_ON_OOM has been used
-> to release balloon pages on OOM. We continue to use this feature bit for
-> the shrinker, so the shrinker is only registered when this feature bit
-> has been negotiated with host.
+> >  2- Make virtio use the DMA API with our custom platform-provided
+> > swiotlb callbacks when needed, that is when not using IOMMU *and*
+> > running on a secure VM in our case.
 > 
-> Signed-off-by: Wei Wang <wei.w.wang@intel.com>
-> Cc: Michael S. Tsirkin <mst@redhat.com>
-> Cc: Michal Hocko <mhocko@kernel.org>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
+> And total NAK the customer platform-provided part of this.  We need
+> a flag passed in from the hypervisor that the device needs all bus
+> specific dma api treatment, and then just use the normal plaform
+> dma mapping setup.  To get swiotlb you'll need to then use the DT/ACPI
+> dma-range property to limit the addressable range, and a swiotlb
+> capable plaform will use swiotlb automatically.
 
+It seems reasonable to teach a platform to override dma-range
+for a specific device e.g. in case it knows about bugs in ACPI.
 
-Could you add data at how was this tested and how did guest
-behaviour change. Which configurations see an improvement?
-
-> ---
->  drivers/virtio/virtio_balloon.c | 111 ++++++++++++++++++++++------------------
->  1 file changed, 60 insertions(+), 51 deletions(-)
-> 
-> diff --git a/drivers/virtio/virtio_balloon.c b/drivers/virtio/virtio_balloon.c
-> index 8100e77..612a359 100644
-> --- a/drivers/virtio/virtio_balloon.c
-> +++ b/drivers/virtio/virtio_balloon.c
-> @@ -27,7 +27,6 @@
->  #include <linux/slab.h>
->  #include <linux/module.h>
->  #include <linux/balloon_compaction.h>
-> -#include <linux/oom.h>
->  #include <linux/wait.h>
->  #include <linux/mm.h>
->  #include <linux/mount.h>
-> @@ -40,13 +39,8 @@
->   */
->  #define VIRTIO_BALLOON_PAGES_PER_PAGE (unsigned)(PAGE_SIZE >> VIRTIO_BALLOON_PFN_SHIFT)
->  #define VIRTIO_BALLOON_ARRAY_PFNS_MAX 256
-> -#define OOM_VBALLOON_DEFAULT_PAGES 256
->  #define VIRTBALLOON_OOM_NOTIFY_PRIORITY 80
->  
-> -static int oom_pages = OOM_VBALLOON_DEFAULT_PAGES;
-> -module_param(oom_pages, int, S_IRUSR | S_IWUSR);
-> -MODULE_PARM_DESC(oom_pages, "pages to free on OOM");
-> -
->  #ifdef CONFIG_BALLOON_COMPACTION
->  static struct vfsmount *balloon_mnt;
->  #endif
-> @@ -86,8 +80,8 @@ struct virtio_balloon {
->  	/* Memory statistics */
->  	struct virtio_balloon_stat stats[VIRTIO_BALLOON_S_NR];
->  
-> -	/* To register callback in oom notifier call chain */
-> -	struct notifier_block nb;
-> +	/* To register a shrinker to shrink memory upon memory pressure */
-> +	struct shrinker shrinker;
->  };
->  
->  static struct virtio_device_id id_table[] = {
-> @@ -365,38 +359,6 @@ static void update_balloon_size(struct virtio_balloon *vb)
->  		      &actual);
->  }
->  
-> -/*
-> - * virtballoon_oom_notify - release pages when system is under severe
-> - *			    memory pressure (called from out_of_memory())
-> - * @self : notifier block struct
-> - * @dummy: not used
-> - * @parm : returned - number of freed pages
-> - *
-> - * The balancing of memory by use of the virtio balloon should not cause
-> - * the termination of processes while there are pages in the balloon.
-> - * If virtio balloon manages to release some memory, it will make the
-> - * system return and retry the allocation that forced the OOM killer
-> - * to run.
-> - */
-> -static int virtballoon_oom_notify(struct notifier_block *self,
-> -				  unsigned long dummy, void *parm)
-> -{
-> -	struct virtio_balloon *vb;
-> -	unsigned long *freed;
-> -	unsigned num_freed_pages;
-> -
-> -	vb = container_of(self, struct virtio_balloon, nb);
-> -	if (!virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_DEFLATE_ON_OOM))
-> -		return NOTIFY_OK;
-> -
-> -	freed = parm;
-> -	num_freed_pages = leak_balloon(vb, oom_pages);
-> -	update_balloon_size(vb);
-> -	*freed += num_freed_pages;
-> -
-> -	return NOTIFY_OK;
-> -}
-> -
->  static void update_balloon_stats_func(struct work_struct *work)
->  {
->  	struct virtio_balloon *vb;
-> @@ -550,6 +512,53 @@ static struct file_system_type balloon_fs = {
->  
->  #endif /* CONFIG_BALLOON_COMPACTION */
->  
-> +static unsigned long virtio_balloon_shrinker_scan(struct shrinker *shrinker,
-> +						  struct shrink_control *sc)
-> +{
-> +	unsigned long pages_to_free, pages_freed = 0;
-> +	struct virtio_balloon *vb = container_of(shrinker,
-> +					struct virtio_balloon, shrinker);
-> +
-> +	pages_to_free = sc->nr_to_scan * VIRTIO_BALLOON_PAGES_PER_PAGE;
-> +
-> +	/*
-> +	 * One invocation of leak_balloon can deflate at most
-> +	 * VIRTIO_BALLOON_ARRAY_PFNS_MAX balloon pages, so we call it
-> +	 * multiple times to deflate pages till reaching pages_to_free.
-> +	 */
-> +	while (vb->num_pages && pages_to_free) {
-> +		pages_to_free -= pages_freed;
-> +		pages_freed += leak_balloon(vb, pages_to_free);
-> +	}
-> +	update_balloon_size(vb);
-> +
-> +	return pages_freed / VIRTIO_BALLOON_PAGES_PER_PAGE;
-> +}
-> +
-> +static unsigned long virtio_balloon_shrinker_count(struct shrinker *shrinker,
-> +						   struct shrink_control *sc)
-> +{
-> +	struct virtio_balloon *vb = container_of(shrinker,
-> +					struct virtio_balloon, shrinker);
-> +
-> +	return vb->num_pages / VIRTIO_BALLOON_PAGES_PER_PAGE;
-> +}
-> +
-> +static void virtio_balloon_unregister_shrinker(struct virtio_balloon *vb)
-> +{
-> +	unregister_shrinker(&vb->shrinker);
-> +}
-> +
-> +static int virtio_balloon_register_shrinker(struct virtio_balloon *vb)
-> +{
-> +	vb->shrinker.scan_objects = virtio_balloon_shrinker_scan;
-> +	vb->shrinker.count_objects = virtio_balloon_shrinker_count;
-> +	vb->shrinker.batch = 0;
-> +	vb->shrinker.seeks = DEFAULT_SEEKS;
-> +
-> +	return register_shrinker(&vb->shrinker);
-> +}
-> +
->  static int virtballoon_probe(struct virtio_device *vdev)
->  {
->  	struct virtio_balloon *vb;
-> @@ -582,17 +591,10 @@ static int virtballoon_probe(struct virtio_device *vdev)
->  	if (err)
->  		goto out_free_vb;
->  
-> -	vb->nb.notifier_call = virtballoon_oom_notify;
-> -	vb->nb.priority = VIRTBALLOON_OOM_NOTIFY_PRIORITY;
-> -	err = register_oom_notifier(&vb->nb);
-> -	if (err < 0)
-> -		goto out_del_vqs;
-> -
->  #ifdef CONFIG_BALLOON_COMPACTION
->  	balloon_mnt = kern_mount(&balloon_fs);
->  	if (IS_ERR(balloon_mnt)) {
->  		err = PTR_ERR(balloon_mnt);
-> -		unregister_oom_notifier(&vb->nb);
->  		goto out_del_vqs;
->  	}
->  
-> @@ -601,13 +603,20 @@ static int virtballoon_probe(struct virtio_device *vdev)
->  	if (IS_ERR(vb->vb_dev_info.inode)) {
->  		err = PTR_ERR(vb->vb_dev_info.inode);
->  		kern_unmount(balloon_mnt);
-> -		unregister_oom_notifier(&vb->nb);
->  		vb->vb_dev_info.inode = NULL;
->  		goto out_del_vqs;
->  	}
->  	vb->vb_dev_info.inode->i_mapping->a_ops = &balloon_aops;
->  #endif
-> -
-> +	/*
-> +	 * We continue to use VIRTIO_BALLOON_F_DEFLATE_ON_OOM to decide if a
-> +	 * shrinker needs to be registered to relieve memory pressure.
-> +	 */
-> +	if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_DEFLATE_ON_OOM)) {
-> +		err = virtio_balloon_register_shrinker(vb);
-> +		if (err)
-> +			goto out_del_vqs;
-> +	}
->  	virtio_device_ready(vdev);
->  
->  	if (towards_target(vb))
-> @@ -639,8 +648,8 @@ static void virtballoon_remove(struct virtio_device *vdev)
->  {
->  	struct virtio_balloon *vb = vdev->priv;
->  
-> -	unregister_oom_notifier(&vb->nb);
-> -
-> +	if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_DEFLATE_ON_OOM))
-> +		virtio_balloon_unregister_shrinker(vb);
->  	spin_lock_irq(&vb->stop_update_lock);
->  	vb->stop_update = true;
->  	spin_unlock_irq(&vb->stop_update_lock);
-> -- 
-> 2.7.4
+-- 
+MST
