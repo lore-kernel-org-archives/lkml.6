@@ -2,502 +2,234 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE769C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 15:02:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 883E3C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 15:06:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6EFCE21761
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 15:02:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="AzyFYwBt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EFCE21761
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id 3768221761
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 15:06:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3768221761
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=interlog.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732469AbeHCQ7W (ORCPT
+        id S1732374AbeHCRDM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 12:59:22 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:36178 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732325AbeHCQ7V (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 12:59:21 -0400
-Received: from dflxv15.itg.ti.com ([128.247.5.124])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w73F2ar3102850;
-        Fri, 3 Aug 2018 10:02:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1533308556;
-        bh=slMRl9T/PjfbrDknSL/nz+/BJDFZJMvXRSvzoh9fwiM=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=AzyFYwBt0d6MOcXlTaxmelh11x60bVNTrQpZSudPTCFYGc/Oq1kOOVJeComRfmDuK
-         HbJNmS7WsLVqbLP8LzgwxRnrv+O2f1nwAcIJIxmC23l2PQdczi03PWpxRfTmQeOMBO
-         oqZyrqGqPwbJauWTeU8qqL+7o/zP9fEg5aPnsIB0=
-Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
-        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w73F2aje032421;
-        Fri, 3 Aug 2018 10:02:36 -0500
-Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Fri, 3 Aug
- 2018 10:02:35 -0500
-Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Fri, 3 Aug 2018 10:02:35 -0500
-Received: from legion.dal.design.ti.com (legion.dal.design.ti.com [128.247.22.53])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w73F2ZJp028768;
-        Fri, 3 Aug 2018 10:02:35 -0500
-Received: from localhost (a0272616local-lt.dhcp.ti.com [172.22.161.114])
-        by legion.dal.design.ti.com (8.11.7p1+Sun/8.11.7) with ESMTP id w73F2Zx08538;
-        Fri, 3 Aug 2018 10:02:35 -0500 (CDT)
-From:   Dan Murphy <dmurphy@ti.com>
-To:     <robh+dt@kernel.org>, <jacek.anaszewski@gmail.com>
-CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-leds@vger.kernel.org>, Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH 2/2] leds: lm3697: Introduce the lm3697 driver
-Date:   Fri, 3 Aug 2018 10:02:31 -0500
-Message-ID: <20180803150231.7172-2-dmurphy@ti.com>
-X-Mailer: git-send-email 2.12.2
-In-Reply-To: <20180803150231.7172-1-dmurphy@ti.com>
-References: <20180803150231.7172-1-dmurphy@ti.com>
+        Fri, 3 Aug 2018 13:03:12 -0400
+Received: from smtp.infotech.no ([82.134.31.41]:52470 "EHLO smtp.infotech.no"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731362AbeHCRDM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 13:03:12 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by smtp.infotech.no (Postfix) with ESMTP id 251DC204237;
+        Fri,  3 Aug 2018 17:06:26 +0200 (CEST)
+X-Virus-Scanned: by amavisd-new-2.6.6 (20110518) (Debian) at infotech.no
+Received: from smtp.infotech.no ([127.0.0.1])
+        by localhost (smtp.infotech.no [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id FX3YiiikE22p; Fri,  3 Aug 2018 17:06:18 +0200 (CEST)
+Received: from [192.168.48.23] (host-45-58-245-67.dyn.295.ca [45.58.245.67])
+        by smtp.infotech.no (Postfix) with ESMTPA id 57211204165;
+        Fri,  3 Aug 2018 17:06:17 +0200 (CEST)
+Reply-To: dgilbert@interlog.com
+Subject: Re: [bug report] memory corruption panic caused by SG_IO ioctl()
+To:     Wanlong Gao <gaowanlong@huawei.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     "wencongyang (A)" <wencongyang2@huawei.com>,
+        "Wanghui (John)" <john.wanghui@huawei.com>,
+        guijianfeng <guijianfeng@huawei.com>, lipengfei58@huawei.com,
+        qiaonuohan <qiaonuohan@huawei.com>
+References: <a44201bc-d8d1-6d19-645e-07687ef4bc9e@huawei.com>
+From:   Douglas Gilbert <dgilbert@interlog.com>
+Message-ID: <93359d1a-930f-5279-3ca8-800d5930562d@interlog.com>
+Date:   Fri, 3 Aug 2018 11:06:15 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <a44201bc-d8d1-6d19-645e-07687ef4bc9e@huawei.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-CA
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Introduce the lm3697 LED driver for
-backlighting and display.
+On 2018-08-03 04:46 AM, Wanlong Gao wrote:
+> Hi Martinand all folks,
+> 
+> 
+> Recently we find a kernel panic with memory corruption caused by SG_IO ioctl(), 
+> and it can be easily reproduced by running following reproducer about 
+> minutes,any idea?
 
-Datasheet location:
-http://www.ti.com/lit/ds/symlink/lm3697.pdf
+Which kernel?
 
-Signed-off-by: Dan Murphy <dmurphy@ti.com>
----
- drivers/leds/Kconfig       |   9 +
- drivers/leds/Makefile      |   1 +
- drivers/leds/leds-lm3697.c | 375 +++++++++++++++++++++++++++++++++++++
- 3 files changed, 385 insertions(+)
- create mode 100644 drivers/leds/leds-lm3697.c
+And what are the underlying devices (e.g. does /dev/sg0 refer to a SATA disk,
+a real SCSI disk (SAS for example), USB mass storage, etc)?
 
-diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-index 6e3a998f3370..efa8be180934 100644
---- a/drivers/leds/Kconfig
-+++ b/drivers/leds/Kconfig
-@@ -150,6 +150,15 @@ config LEDS_LM3642
- 	  converter plus 1.5A constant current driver for a high-current
- 	  white LED.
- 
-+config LEDS_LM3697
-+	tristate "LED support for LM3697 Chip"
-+	depends on LEDS_CLASS && I2C
-+	select REGMAP_I2C
-+	help
-+	  This option enables support for LEDs connected to LM3697.
-+	  The LM3697 is an 11 bit high performance backlight driver for
-+	  keypad and display lighting.
-+
- config LEDS_LM3692X
- 	tristate "LED support for LM3692x Chips"
- 	depends on LEDS_CLASS && I2C && OF
-diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-index 420b5d2cfa62..2813f089f3db 100644
---- a/drivers/leds/Makefile
-+++ b/drivers/leds/Makefile
-@@ -19,6 +19,7 @@ obj-$(CONFIG_LEDS_LOCOMO)		+= leds-locomo.o
- obj-$(CONFIG_LEDS_LM3530)		+= leds-lm3530.o
- obj-$(CONFIG_LEDS_LM3533)		+= leds-lm3533.o
- obj-$(CONFIG_LEDS_LM3642)		+= leds-lm3642.o
-+obj-$(CONFIG_LEDS_LM3697)		+= leds-lm3697.o
- obj-$(CONFIG_LEDS_MIKROTIK_RB532)	+= leds-rb532.o
- obj-$(CONFIG_LEDS_S3C24XX)		+= leds-s3c24xx.o
- obj-$(CONFIG_LEDS_NET48XX)		+= leds-net48xx.o
-diff --git a/drivers/leds/leds-lm3697.c b/drivers/leds/leds-lm3697.c
-new file mode 100644
-index 000000000000..332bde4af01a
---- /dev/null
-+++ b/drivers/leds/leds-lm3697.c
-@@ -0,0 +1,375 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// TI LM3697 LED chip family driver
-+// Copyright (C) 2018 Texas Instruments Incorporated - http://www.ti.com/
-+
-+#include <linux/gpio/consumer.h>
-+#include <linux/i2c.h>
-+#include <linux/init.h>
-+#include <linux/leds.h>
-+#include <linux/module.h>
-+#include <linux/mutex.h>
-+#include <linux/of.h>
-+#include <linux/of_gpio.h>
-+#include <linux/regmap.h>
-+#include <linux/regulator/consumer.h>
-+#include <linux/slab.h>
-+#include <uapi/linux/uleds.h>
-+
-+#define LM3697_REV			0x0
-+#define LM3697_RESET			0x1
-+#define LM3697_OUTPUT_CONFIG		0x10
-+#define LM3697_CTRL_A_RAMP		0x11
-+#define LM3697_CTRL_B_RAMP		0x12
-+#define LM3697_CTRL_A_B_RT_RAMP		0x13
-+#define LM3697_CTRL_A_B_RAMP_CFG	0x14
-+#define LM3697_CTRL_A_B_BRT_CFG		0x16
-+#define LM3697_CTRL_A_FS_CURR_CFG	0x17
-+#define LM3697_CTRL_B_FS_CURR_CFG	0x18
-+#define LM3697_PWM_CFG			0x1c
-+#define LM3697_CTRL_A_BRT_LSB		0x20
-+#define LM3697_CTRL_A_BRT_MSB		0x21
-+#define LM3697_CTRL_B_BRT_LSB		0x22
-+#define LM3697_CTRL_B_BRT_MSB		0x23
-+#define LM3697_CTRL_ENABLE		0x24
-+
-+#define LM3697_SW_RESET		BIT(0)
-+
-+#define LM3697_CTRL_A_EN	BIT(0)
-+#define LM3697_CTRL_B_EN	BIT(1)
-+#define LM3697_CTRL_A_B_EN	(LM3697_CTRL_A_EN | LM3697_CTRL_B_EN)
-+
-+#define LM3697_CONTROL_A	0
-+#define LM3697_CONTROL_B	1
-+
-+#define LM3697_HVLED1_2_3_A		0
-+#define LM3697_HVLED1_B_HVLED2_3_A	1
-+#define LM3697_HVLED2_B_HVLED1_3_A	2
-+#define LM3697_HVLED1_2_B_HVLED3_A	3
-+#define LM3697_HVLED3_B_HVLED1_2_A	4
-+#define LM3697_HVLED1_3_B_HVLED2_A	5
-+#define LM3697_HVLED1_A_HVLED2_3_B	6
-+#define LM3697_HVLED1_2_3_B		7
-+
-+/**
-+ * struct lm3697_led -
-+ * @led_dev - LED class device pointer
-+ * @priv - Pointer to the device struct
-+ * @control_bank - Control bank the LED is associated to. 0 is control bank A
-+ *		   1 is control bank B.
-+ * @label - LED label
-+ */
-+struct lm3697_led {
-+	struct led_classdev led_dev;
-+	struct lm3697 *priv;
-+	int control_bank;
-+	char label[LED_MAX_NAME_SIZE];
-+};
-+
-+/**
-+ * struct lm3697 -
-+ * @lock - Lock for reading/writing the device
-+ * @client - Pointer to the I2C client
-+ * @dev - Pointer to the devices device struct
-+ * @regmap - Devices register map
-+ * @enable_gpio - Hardware enable gpio
-+ * @regulator - LED supply regulator pointer
-+ * @control_bank_config - Control bank configuration
-+ * @leds - Array of LED strings.
-+ */
-+struct lm3697 {
-+	struct mutex lock;
-+	struct i2c_client *client;
-+	struct device *dev;
-+	struct regmap *regmap;
-+	struct gpio_desc *enable_gpio;
-+	struct regulator *regulator;
-+	int control_bank_config;
-+	struct lm3697_led leds[];
-+};
-+
-+static const struct reg_default lm3697_reg_defs[] = {
-+	{LM3697_OUTPUT_CONFIG, 0x6},
-+	{LM3697_CTRL_A_RAMP, 0x0},
-+	{LM3697_CTRL_B_RAMP, 0x0},
-+	{LM3697_CTRL_A_B_RT_RAMP, 0x0},
-+	{LM3697_CTRL_A_B_RAMP_CFG, 0x0},
-+	{LM3697_CTRL_A_B_BRT_CFG, 0x0},
-+	{LM3697_CTRL_A_FS_CURR_CFG, 0x13},
-+	{LM3697_CTRL_B_FS_CURR_CFG, 0x13},
-+	{LM3697_PWM_CFG, 0xc},
-+	{LM3697_CTRL_A_BRT_LSB, 0x0},
-+	{LM3697_CTRL_A_BRT_MSB, 0x0},
-+	{LM3697_CTRL_B_BRT_LSB, 0x0},
-+	{LM3697_CTRL_B_BRT_MSB, 0x0},
-+	{LM3697_CTRL_ENABLE, 0x0},
-+};
-+
-+static const struct regmap_config lm3697_regmap_config = {
-+	.reg_bits = 8,
-+	.val_bits = 8,
-+
-+	.max_register = LM3697_CTRL_ENABLE,
-+	.reg_defaults = lm3697_reg_defs,
-+	.num_reg_defaults = ARRAY_SIZE(lm3697_reg_defs),
-+	.cache_type = REGCACHE_RBTREE,
-+};
-+
-+static int lm3697_brightness_set(struct led_classdev *led_cdev,
-+				enum led_brightness brt_val)
-+{
-+	struct lm3697_led *led = container_of(led_cdev, struct lm3697_led,
-+					      led_dev);
-+	int brt_msb_reg, brt_lsb_reg, ctrl_en_val;
-+	int led_brightness_lsb = (brt_val >> 5);
-+	int ret;
-+
-+	mutex_lock(&led->priv->lock);
-+
-+	if (led->control_bank == LM3697_CONTROL_A) {
-+		brt_msb_reg = LM3697_CTRL_A_BRT_MSB;
-+		brt_lsb_reg = LM3697_CTRL_A_BRT_LSB;
-+		ctrl_en_val = LM3697_CTRL_A_EN;
-+	} else {
-+		brt_msb_reg = LM3697_CTRL_B_BRT_MSB;
-+		brt_lsb_reg = LM3697_CTRL_B_BRT_LSB;
-+		ctrl_en_val = LM3697_CTRL_B_EN;
-+	}
-+
-+	if (brt_val == LED_OFF)
-+		ret = regmap_update_bits(led->priv->regmap, LM3697_CTRL_ENABLE,
-+					 ctrl_en_val, ~ctrl_en_val);
-+	else
-+		ret = regmap_update_bits(led->priv->regmap, LM3697_CTRL_ENABLE,
-+					 ctrl_en_val, ctrl_en_val);
-+	
-+	if (ret) {
-+		dev_err(&led->priv->client->dev, "Cannot write CTRL enable\n");
-+		goto out;
-+	}
-+
-+
-+	ret = regmap_write(led->priv->regmap, brt_lsb_reg, led_brightness_lsb);
-+	if (ret) {
-+		dev_err(&led->priv->client->dev, "Cannot write LSB\n");
-+		goto out;
-+	}
-+
-+	ret = regmap_write(led->priv->regmap, brt_msb_reg, brt_val);
-+	if (ret) {
-+		dev_err(&led->priv->client->dev, "Cannot write MSB\n");
-+		goto out;
-+	}
-+out:
-+	mutex_unlock(&led->priv->lock);
-+	return ret;
-+}
-+
-+static int lm3697_init(struct lm3697 *priv)
-+{
-+	int ret;
-+
-+	if (priv->enable_gpio)
-+		gpiod_direction_output(priv->enable_gpio, 1);
-+	else
-+		regmap_write(priv->regmap, LM3697_RESET, LM3697_SW_RESET);
-+
-+	ret = regmap_write(priv->regmap, LM3697_OUTPUT_CONFIG,
-+			   priv->control_bank_config);
-+	if (ret) {
-+		dev_err(&priv->client->dev, "Cannot write MSB\n");
-+		goto out;
-+	}
-+
-+	ret = regmap_write(priv->regmap, LM3697_CTRL_ENABLE, 0x0);
-+	if (ret) {
-+		dev_err(&priv->client->dev, "Cannot write LSB\n");
-+		goto out;
-+	}
-+
-+out:
-+	return ret;
-+}
-+
-+static int lm3697_probe_dt(struct lm3697 *priv)
-+{
-+	struct fwnode_handle *child = NULL;
-+	struct fwnode_handle *fwnode;
-+	struct device_node *np;
-+	struct lm3697_led *led;
-+	const char *name;
-+	size_t i = 0;
-+	int ret;
-+
-+	priv->enable_gpio = devm_gpiod_get_optional(&priv->client->dev,
-+						   "enable", GPIOD_OUT_LOW);
-+	if (IS_ERR(priv->enable_gpio)) {
-+		ret = PTR_ERR(priv->enable_gpio);
-+		dev_err(&priv->client->dev, "Failed to get enable gpio: %d\n",
-+			ret);
-+		return ret;
-+	}
-+
-+	priv->regulator = devm_regulator_get(&priv->client->dev, "vled");
-+	if (IS_ERR(priv->regulator))
-+		priv->regulator = NULL;
-+
-+	fwnode = of_fwnode_handle(priv->client->dev.of_node);
-+	ret = fwnode_property_read_u32(fwnode, "control-bank-cfg",
-+				       &priv->control_bank_config);
-+	if (ret) {
-+		dev_err(&priv->client->dev, "reg DT property missing\n");
-+		goto out;
-+	}
-+
-+	if (priv->control_bank_config < LM3697_HVLED1_2_3_A ||
-+	    priv->control_bank_config > LM3697_HVLED1_2_3_B) {
-+		dev_err(&priv->client->dev, "Control bank configuration is \
-+			out of range\n");
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+
-+
-+	device_for_each_child_node(priv->dev, child) {
-+		np = to_of_node(child);
-+		led = &priv->leds[i];
-+
-+		ret = fwnode_property_read_u32(child, "reg", &led->control_bank);
-+		if (ret) {
-+			dev_err(&priv->client->dev, "reg DT property missing\n");
-+			goto child_out;
-+		}
-+
-+		fwnode_property_read_string(child, "linux,default-trigger",
-+					    &led->led_dev.default_trigger);
-+
-+		ret = fwnode_property_read_string(child, "label", &name);
-+		if (ret)
-+			snprintf(led->label, sizeof(led->label),
-+				"%s::", priv->client->name);
-+		else
-+			snprintf(led->label, sizeof(led->label),
-+				 "%s:%s", priv->client->name, name);
-+
-+
-+		led->priv = priv;
-+		led->led_dev.name = led->label;
-+		led->led_dev.brightness_set_blocking = lm3697_brightness_set;
-+
-+		ret = devm_of_led_classdev_register(priv->dev, np,
-+						    &led->led_dev);
-+		if (ret) {
-+			dev_err(&priv->client->dev, "led register err: %d\n", ret);
-+			goto child_out;
-+		}
-+
-+		led->led_dev.dev->of_node = to_of_node(child);
-+
-+		if (priv->control_bank_config == LM3697_HVLED1_2_3_A ||
-+		    priv->control_bank_config == LM3697_HVLED1_2_3_B)
-+			goto child_out;
-+
-+		i++;
-+		fwnode_handle_put(child);
-+	}
-+
-+child_out:
-+	fwnode_handle_put(child);
-+out:
-+	return ret;
-+}
-+
-+static int lm3697_probe(struct i2c_client *client,
-+			const struct i2c_device_id *id)
-+{
-+	struct lm3697 *led;
-+	int count;
-+	int ret;
-+
-+	count = device_get_child_node_count(&client->dev);
-+	if (!count) {
-+		dev_err(&client->dev, "LEDs are not defined in device tree!");
-+		return -ENODEV;
-+	}
-+
-+	led = devm_kzalloc(&client->dev, struct_size(led, leds, count), GFP_KERNEL);
-+	if (!led)
-+		return -ENOMEM;
-+
-+	mutex_init(&led->lock);
-+	i2c_set_clientdata(client, led);
-+
-+	led->client = client;
-+	led->dev = &client->dev;
-+	led->regmap = devm_regmap_init_i2c(client, &lm3697_regmap_config);
-+	if (IS_ERR(led->regmap)) {
-+		ret = PTR_ERR(led->regmap);
-+		dev_err(&client->dev, "Failed to allocate register map: %d\n",
-+			ret);
-+		return ret;
-+	}
-+
-+	ret = lm3697_probe_dt(led);
-+	if (ret)
-+		return ret;
-+
-+	ret = lm3697_init(led);
-+	if (ret)
-+		return ret;
-+
-+	return ret;
-+}
-+
-+static int lm3697_remove(struct i2c_client *client)
-+{
-+	struct lm3697 *led = i2c_get_clientdata(client);
-+	int ret;
-+
-+	ret = regmap_update_bits(led->regmap, LM3697_CTRL_ENABLE,
-+				 LM3697_CTRL_A_B_EN, 0);
-+	if (ret) {
-+		dev_err(&led->client->dev, "Failed to disable regulator\n");
-+		return ret;
-+	}
-+
-+	if (led->enable_gpio)
-+		gpiod_direction_output(led->enable_gpio, 0);
-+
-+	if (led->regulator) {
-+		ret = regulator_disable(led->regulator);
-+		if (ret)
-+			dev_err(&led->client->dev,
-+				"Failed to disable regulator\n");
-+	}
-+
-+	mutex_destroy(&led->lock);
-+
-+	return 0;
-+}
-+
-+static const struct i2c_device_id lm3697_id[] = {
-+	{ "lm3697", 0 },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(i2c, lm3697_id);
-+
-+static const struct of_device_id of_lm3697_leds_match[] = {
-+	{ .compatible = "ti,lm3697", },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, of_lm3697_leds_match);
-+
-+static struct i2c_driver lm3697_driver = {
-+	.driver = {
-+		.name	= "lm3697",
-+		.of_match_table = of_lm3697_leds_match,
-+	},
-+	.probe		= lm3697_probe,
-+	.remove		= lm3697_remove,
-+	.id_table	= lm3697_id,
-+};
-+module_i2c_driver(lm3697_driver);
-+
-+MODULE_DESCRIPTION("Texas Instruments LM3697 LED driver");
-+MODULE_AUTHOR("Dan Murphy <dmurphy@ti.com>");
-+MODULE_LICENSE("GPL v2");
--- 
-2.17.0.582.gccdcbd54c
+Also can you get a copy of the kernel panic?
+
+Doug Gilbert
+
+> 
+> C reproducer:
+> 
+> // autogenerated by syzkaller (http://github.com/google/syzkaller)
+> 
+> #define _GNU_SOURCE
+> 
+> #include <endian.h>
+> 
+> #include <sys/syscall.h>
+> 
+> #include <unistd.h>
+> 
+> #include <fcntl.h>
+> 
+> #include <stdio.h>
+> 
+> #include <string.h>
+> 
+> #include <sys/stat.h>
+> 
+> #include <stdint.h>
+> 
+> #include <string.h>
+> 
+> static uintptr_t syz_open_dev(uintptr_t a0, uintptr_t a1, uintptr_t a2)
+> 
+> {
+> 
+> if (a0 == 0xc || a0 == 0xb) {
+> 
+> char buf[128];
+> 
+> sprintf(buf, "/dev/%s/%d:%d", a0 == 0xc ? "char" : "block", (uint8_t)a1, 
+> (uint8_t)a2);
+> 
+> return open(buf, O_RDWR, 0);
+> 
+> } else {
+> 
+> char buf[1024];
+> 
+> char* hash;
+> 
+> strncpy(buf, (char*)a0, sizeof(buf) - 1);
+> 
+> buf[sizeof(buf) - 1] = 0;
+> 
+> while ((hash = strchr(buf, '#'))) {
+> 
+> *hash = '0' + (char)(a1 % 10);
+> 
+> a1 /= 10;
+> 
+> }
+> 
+> return open(buf, a2, 0);
+> 
+> }
+> 
+> }
+> 
+> static void execute_one();
+> 
+> extern unsigned long long procid;
+> 
+> void loop()
+> 
+> {
+> 
+> while (1) {
+> 
+> execute_one();
+> 
+> }
+> 
+> }
+> 
+> uint64_t r[1] = {0xffffffffffffffff};
+> 
+> void execute_one()
+> 
+> {
+> 
+> long res = 0;
+> 
+> memcpy((void*)0x20000040, "/dev/sg#", 9);
+> 
+> res = syz_open_dev(0x20000040, 0, 0);
+> 
+> if (res != -1)
+> 
+> r[0] = res;
+> 
+> *(uint32_t*)0x200002c0 = 0x53;
+> 
+> *(uint32_t*)0x200002c4 = 0;
+> 
+> *(uint8_t*)0x200002c8 = 0xd;
+> 
+> *(uint8_t*)0x200002c9 = 0;
+> 
+> *(uint16_t*)0x200002ca = 0;
+> 
+> *(uint32_t*)0x200002cc = 0x95;
+> 
+> *(uint64_t*)0x200002d0 = 0x20000080;
+> 
+> *(uint64_t*)0x200002d8 = 0x20000000;
+> 
+> memcpy((void*)0x20000000, 
+> "\x08\xf0\xa8\x77\xd3\xbe\x87\x5d\xda\x65\x79\x3f\xc7", 13);
+> 
+> *(uint64_t*)0x200002e0 = 0x20000180;
+> 
+> *(uint32_t*)0x200002e8 = 0x8001;
+> 
+> *(uint32_t*)0x200002ec = 0x10024;
+> 
+> *(uint32_t*)0x200002f0 = -1;
+> 
+> *(uint64_t*)0x200002f4 = 0x20000280;
+> 
+> *(uint8_t*)0x200002fc = 0;
+> 
+> *(uint8_t*)0x200002fd = 0;
+> 
+> *(uint8_t*)0x200002fe = 0;
+> 
+> *(uint8_t*)0x200002ff = 0;
+> 
+> *(uint16_t*)0x20000300 = 0;
+> 
+> *(uint16_t*)0x20000302 = 0;
+> 
+> *(uint32_t*)0x20000304 = 0;
+> 
+> *(uint32_t*)0x20000308 = 0;
+> 
+> *(uint32_t*)0x2000030c = 0;
+> 
+> syscall(__NR_ioctl, r[0], 0x2285, 0x200002c0);
+> 
+> }
+> 
+> int main()
+> 
+> {
+> 
+> syscall(__NR_mmap, 0x20000000, 0x1000000, 3, 0x32, -1, 0);
+> 
+> for (;;) {
+> 
+> loop();
+> 
+> }
+> 
+> }
+> 
 
