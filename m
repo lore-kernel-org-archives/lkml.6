@@ -2,199 +2,156 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B29FC28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 05:34:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B1BCC28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 05:35:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E87721711
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 05:34:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E87721711
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 2376A21711
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 05:35:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2376A21711
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727613AbeHCH3M (ORCPT
+        id S1727696AbeHCH3i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 03:29:12 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:48001 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726829AbeHCH3L (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 03:29:11 -0400
-X-UUID: e00c582ad1b44085b0ed9593f911e409-20180803
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
-        (envelope-from <ck.hu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1731610551; Fri, 03 Aug 2018 13:34:32 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs03n1.mediatek.inc (172.21.101.181) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Fri, 3 Aug 2018 13:34:31 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Fri, 3 Aug 2018 13:34:31 +0800
-Message-ID: <1533274471.31144.17.camel@mtksdaap41>
-Subject: Re: [PATCH v2 14/15] drm/mediatek: update some variable name from
- ovl to comp
-From:   CK Hu <ck.hu@mediatek.com>
-To:     Stu Hsieh <stu.hsieh@mediatek.com>
-CC:     Philipp Zabel <p.zabel@pengutronix.de>,
-        David Airlie <airlied@linux.ie>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <dri-devel@lists.freedesktop.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <srv_heupstream@mediatek.com>
-Date:   Fri, 3 Aug 2018 13:34:31 +0800
-In-Reply-To: <1533265868-28110-15-git-send-email-stu.hsieh@mediatek.com>
-References: <1533265868-28110-1-git-send-email-stu.hsieh@mediatek.com>
-         <1533265868-28110-15-git-send-email-stu.hsieh@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        Fri, 3 Aug 2018 03:29:38 -0400
+Received: from smtp.nue.novell.com ([195.135.221.5]:34110 "EHLO
+        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726829AbeHCH3h (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
+        Fri, 3 Aug 2018 03:29:37 -0400
+Received: from linux-l9pv.suse (124-11-22-254.static.tfn.net.tw [124.11.22.254])
+        by smtp.nue.novell.com with ESMTP (TLS encrypted); Fri, 03 Aug 2018 07:34:55 +0200
+Date:   Fri, 3 Aug 2018 13:34:45 +0800
+From:   joeyli <jlee@suse.com>
+To:     Yu Chen <yu.c.chen@intel.com>
+Cc:     Oliver Neukum <oneukum@suse.com>, Pavel Machek <pavel@ucw.cz>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Eric Biggers <ebiggers@google.com>,
+        Theodore Ts o <tytso@mit.edu>,
+        Stephan Mueller <smueller@chronox.de>,
+        Denis Kenzior <denkenz@gmail.com>, linux-pm@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gu, Kookoo" <kookoo.gu@intel.com>,
+        "Zhang, Rui" <rui.zhang@intel.com>
+Subject: Re: [PATCH 0/4][RFC v2] Introduce the in-kernel hibernation
+ encryption
+Message-ID: <20180803053445.GC4244@linux-l9pv.suse>
+References: <20180718235851.GA22170@sandybridge-desktop>
+ <20180719110149.GA4679@amd>
+ <20180719132003.GA30981@sandybridge-desktop>
+ <20180720102532.GA20284@amd>
+ <1532346156.3057.11.camel@suse.com>
+ <20180723162302.GA4503@sandybridge-desktop>
+ <1532590246.7411.3.camel@suse.com>
+ <20180726081404.GG4244@linux-l9pv.suse>
+ <20180730170415.GQ4244@linux-l9pv.suse>
+ <20180803033702.GB416@sandybridge-desktop>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180803033702.GB416@sandybridge-desktop>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Stu:
+On Fri, Aug 03, 2018 at 11:37:02AM +0800, Yu Chen wrote:
+> Hi Joey,
+> On Tue, Jul 31, 2018 at 01:04:15AM +0800, joeyli wrote:
+> > Hi all,
+> > 
+> > On Thu, Jul 26, 2018 at 04:14:04PM +0800, joeyli wrote:
+> > > On Thu, Jul 26, 2018 at 09:30:46AM +0200, Oliver Neukum wrote:
+> > > > On Di, 2018-07-24 at 00:23 +0800, Yu Chen wrote:
+> > > > > 
+> > > > > Good point, we once tried to generate key in kernel, but people
+> > > > > suggest to generate key in userspace and provide it to the
+> > > > > kernel, which is what ecryptfs do currently, so it seems this
+> > > > > should also be safe for encryption in kernel.
+> > > > > https://www.spinics.net/lists/linux-crypto/msg33145.html
+> > > > > Thus Chun-Yi's signature can use EFI key and both the key from
+> > > > > user space.
+> > > > 
+> > > > Hi,
+> > > > 
+> > > > ecryptfs can trust user space. It is supposed to keep data
+> > > > safe while the system is inoperative. The whole point of Secure
+> > > > Boot is a cryptographic system of trust that does not include
+> > > > user space.
+> > > > 
+> > > > I seriously doubt we want to use trusted computing here. So the
+> > > > key needs to be generated in kernel space and stored in a safe
+> > > > manner. As we have a saolution doing that, can we come to ausable
+> > > > synthesis?
+> > > > 
+> > > > 	Regards
+> > > > 		Oliver
+> > > 
+> > > Crurently there have two solutions, they are trusted key and EFI key.
+> > > Both of them are generated in kernel and are not visible in user space.
+> > > 
+> > > The trusted key is generated by kernel then sealed by the TPM's
+> > > SRK. So the trusted key can be stored in anywhere then be enrolled
+> > > to kernel when we need it. EVM already uses it.
+> > > 
+> > > The EFI key is Jiri Kosina's idea. It is stored in boot services
+> > > variable, which means that it can only be access by signed EFI binary
+> > > (e.g. signed EFI boot stub) when secure boot be enabled. SLE applied
+> > > this solution a couple of years.
+> > > 
+> > > I am working on put the EFI key to key retention service. Then
+> > > EFI key can be a master key of encrypted key. EVM can also use
+> > > it: 
+> > > https://github.com/joeyli/linux-s4sign/commit/bae39460393ada4c0226dd07cd5e3afcef86b71f
+> > > https://github.com/joeyli/linux-s4sign/commit/f552f97cc3cca5acd84f424b7f946ffb5fe8e9ec
+> > > 
+> > > That's why I want to use key retention service in hibernation
+> > > encryption/authentication. Which means that we can use key
+> > > API to access trusted key and EFI key.  
+> > >
+> > 
+> > Here is a proof of concept for using the key retention service
+> > to encrypt/sign snapshot image. It's using EFI key now, I will
+> > add encrypted key support in the key handler later:
+> >     https://github.com/joeyli/linux-s4sign/commit/6311e97038974bc5de8121769fb4d34470009566 
+> > 
+> Thanks for the work, I have two questions here:
 
-On Fri, 2018-08-03 at 11:11 +0800, Stu Hsieh wrote:
-> This patch update some variable name from ovl to comp
+My EFI key patch set is almost done. I will send it soon.
+
+> 1. Could you please describe a little more about the scenario on
+>    how the user could use the secret key for hibernation encryption?
+>    A requirement is that, the user should provide a passphrase(for key derivation, i.e.)
+>    during resume. I was thinking how user could interact with
+>    the security key mechanism here.
+>
+
+User space doesn't need to involve. The EFI root key is generated by
+EFI boot stub and be transfer to kernel. It's stored in EFI boot service
+variable that it can only be accessed by trusted EFI binary when
+secure boot is enabled.
+
+> 2. The generation of secret key in EFI boot environment is
+>    using a non standard derivation method in generate_secret_key(),
+>    I'm not sure if this is safe enough. This is why we tried to put
+>    PBKDF2 into kernel at first and leave it to the user space then.
 > 
-> Because RDMA would be first HW in ddp, the naming ovl
-> should be change to comp.
-> 
-> Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
 
-Reviewed-by: CK Hu <ck.hu@mediatek.com>
+Thank you for point out. 
 
-> ---
->  drivers/gpu/drm/mediatek/mtk_drm_crtc.c | 26 +++++++++++++-------------
->  drivers/gpu/drm/mediatek/mtk_drm_crtc.h |  2 +-
->  2 files changed, 14 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
-> index b4d3dfca4003..e61f4985ae7f 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
-> @@ -172,9 +172,9 @@ static void mtk_drm_crtc_mode_set_nofb(struct drm_crtc *crtc)
->  static int mtk_drm_crtc_enable_vblank(struct drm_crtc *crtc)
->  {
->  	struct mtk_drm_crtc *mtk_crtc = to_mtk_crtc(crtc);
-> -	struct mtk_ddp_comp *ovl = mtk_crtc->ddp_comp[0];
-> +	struct mtk_ddp_comp *comp = mtk_crtc->ddp_comp[0];
->  
-> -	mtk_ddp_comp_enable_vblank(ovl, &mtk_crtc->base);
-> +	mtk_ddp_comp_enable_vblank(comp, &mtk_crtc->base);
->  
->  	return 0;
->  }
-> @@ -182,9 +182,9 @@ static int mtk_drm_crtc_enable_vblank(struct drm_crtc *crtc)
->  static void mtk_drm_crtc_disable_vblank(struct drm_crtc *crtc)
->  {
->  	struct mtk_drm_crtc *mtk_crtc = to_mtk_crtc(crtc);
-> -	struct mtk_ddp_comp *ovl = mtk_crtc->ddp_comp[0];
-> +	struct mtk_ddp_comp *comp = mtk_crtc->ddp_comp[0];
->  
-> -	mtk_ddp_comp_disable_vblank(ovl);
-> +	mtk_ddp_comp_disable_vblank(comp);
->  }
->  
->  static int mtk_crtc_ddp_clk_enable(struct mtk_drm_crtc *mtk_crtc)
-> @@ -335,7 +335,7 @@ static void mtk_crtc_ddp_config(struct drm_crtc *crtc)
->  {
->  	struct mtk_drm_crtc *mtk_crtc = to_mtk_crtc(crtc);
->  	struct mtk_crtc_state *state = to_mtk_crtc_state(mtk_crtc->base.state);
-> -	struct mtk_ddp_comp *ovl = mtk_crtc->ddp_comp[0];
-> +	struct mtk_ddp_comp *comp = mtk_crtc->ddp_comp[0];
->  	unsigned int i;
->  
->  	/*
-> @@ -344,7 +344,7 @@ static void mtk_crtc_ddp_config(struct drm_crtc *crtc)
->  	 * queue update module registers on vblank.
->  	 */
->  	if (state->pending_config) {
-> -		mtk_ddp_comp_config(ovl, state->pending_width,
-> +		mtk_ddp_comp_config(comp, state->pending_width,
->  				    state->pending_height,
->  				    state->pending_vrefresh, 0);
->  
-> @@ -359,7 +359,7 @@ static void mtk_crtc_ddp_config(struct drm_crtc *crtc)
->  			plane_state = to_mtk_plane_state(plane->state);
->  
->  			if (plane_state->pending.config) {
-> -				mtk_ddp_comp_layer_config(ovl, i, plane_state);
-> +				mtk_ddp_comp_layer_config(comp, i, plane_state);
->  				plane_state->pending.config = false;
->  			}
->  		}
-> @@ -371,12 +371,12 @@ static void mtk_drm_crtc_atomic_enable(struct drm_crtc *crtc,
->  				       struct drm_crtc_state *old_state)
->  {
->  	struct mtk_drm_crtc *mtk_crtc = to_mtk_crtc(crtc);
-> -	struct mtk_ddp_comp *ovl = mtk_crtc->ddp_comp[0];
-> +	struct mtk_ddp_comp *comp = mtk_crtc->ddp_comp[0];
->  	int ret;
->  
->  	DRM_DEBUG_DRIVER("%s %d\n", __func__, crtc->base.id);
->  
-> -	ret = mtk_smi_larb_get(ovl->larb_dev);
-> +	ret = mtk_smi_larb_get(comp->larb_dev);
->  	if (ret) {
->  		DRM_ERROR("Failed to get larb: %d\n", ret);
->  		return;
-> @@ -384,7 +384,7 @@ static void mtk_drm_crtc_atomic_enable(struct drm_crtc *crtc,
->  
->  	ret = mtk_crtc_ddp_hw_init(mtk_crtc);
->  	if (ret) {
-> -		mtk_smi_larb_put(ovl->larb_dev);
-> +		mtk_smi_larb_put(comp->larb_dev);
->  		return;
->  	}
->  
-> @@ -396,7 +396,7 @@ static void mtk_drm_crtc_atomic_disable(struct drm_crtc *crtc,
->  					struct drm_crtc_state *old_state)
->  {
->  	struct mtk_drm_crtc *mtk_crtc = to_mtk_crtc(crtc);
-> -	struct mtk_ddp_comp *ovl = mtk_crtc->ddp_comp[0];
-> +	struct mtk_ddp_comp *comp = mtk_crtc->ddp_comp[0];
->  	int i;
->  
->  	DRM_DEBUG_DRIVER("%s %d\n", __func__, crtc->base.id);
-> @@ -419,7 +419,7 @@ static void mtk_drm_crtc_atomic_disable(struct drm_crtc *crtc,
->  
->  	drm_crtc_vblank_off(crtc);
->  	mtk_crtc_ddp_hw_fini(mtk_crtc);
-> -	mtk_smi_larb_put(ovl->larb_dev);
-> +	mtk_smi_larb_put(comp->larb_dev);
->  
->  	mtk_crtc->enabled = false;
->  }
-> @@ -517,7 +517,7 @@ static int mtk_drm_crtc_init(struct drm_device *drm,
->  	return ret;
->  }
->  
-> -void mtk_crtc_ddp_irq(struct drm_crtc *crtc, struct mtk_ddp_comp *ovl)
-> +void mtk_crtc_ddp_irq(struct drm_crtc *crtc, struct mtk_ddp_comp *comp)
->  {
->  	struct mtk_drm_crtc *mtk_crtc = to_mtk_crtc(crtc);
->  	struct mtk_drm_private *priv = crtc->dev->dev_private;
-> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_crtc.h b/drivers/gpu/drm/mediatek/mtk_drm_crtc.h
-> index 0399321b1414..e64aa45915df 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_drm_crtc.h
-> +++ b/drivers/gpu/drm/mediatek/mtk_drm_crtc.h
-> @@ -24,7 +24,7 @@
->  #define MTK_MIN_BPC	3
->  
->  void mtk_drm_crtc_commit(struct drm_crtc *crtc);
-> -void mtk_crtc_ddp_irq(struct drm_crtc *crtc, struct mtk_ddp_comp *ovl);
-> +void mtk_crtc_ddp_irq(struct drm_crtc *crtc, struct mtk_ddp_comp *comp);
->  int mtk_drm_crtc_create(struct drm_device *drm_dev,
->  			const enum mtk_ddp_comp_id *path,
->  			unsigned int path_len);
+The generate_secret_key() reuse the logic in kaslr_get_random_long()
+that it produces random seed by RDRAND, RDTSC and i8254. It doesn't
+standard like PBKDF2, but we do not have too many choices in the
+early boot stage. At least KASLR is using the same logic.
 
+We can relay on user space helper. But the helper must be authenticated
+by kernel. Currently we do not have kernel mechanism to verity user
+space process.
 
+Regards
+Joey Lee  
