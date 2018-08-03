@@ -2,68 +2,104 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6153C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 07:22:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D25FC28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 07:22:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67372216FD
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 07:22:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67372216FD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 07868216FD
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 07:22:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=iluvatar.ai header.i=@iluvatar.ai header.b="MbYBU8UH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07868216FD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=iluvatar.ai
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732759AbeHCJQs (ORCPT
+        id S1732721AbeHCJQq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 05:16:48 -0400
-Received: from mga11.intel.com ([192.55.52.93]:61959 "EHLO mga11.intel.com"
+        Fri, 3 Aug 2018 05:16:46 -0400
+Received: from mail.iluvatar.ai ([58.213.90.100]:57164 "EHLO mail.iluvatar.ai"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732738AbeHCJQs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 05:16:48 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Aug 2018 00:21:51 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,437,1526367600"; 
-   d="scan'208";a="59391313"
-Received: from songjunw-mobl1.ger.corp.intel.com (HELO [10.226.39.42]) ([10.226.39.42])
-  by fmsmga007.fm.intel.com with ESMTP; 03 Aug 2018 00:21:46 -0700
-Subject: Re: [PATCH v2 15/18] serial: intel: Support more platform
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     hua.ma@linux.intel.com, yixin.zhu@linux.intel.com,
-        chuanhua.lei@linux.intel.com, qi-ming.wu@intel.com,
-        linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
-        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.com>
-References: <20180803030237.3366-1-songjun.wu@linux.intel.com>
- <20180803030237.3366-16-songjun.wu@linux.intel.com>
- <20180803055709.GB32226@kroah.com>
-From:   "Wu, Songjun" <songjun.wu@linux.intel.com>
-Message-ID: <2bd3f808-ed93-ac2c-a802-957a88129e67@linux.intel.com>
-Date:   Fri, 3 Aug 2018 15:21:45 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
-MIME-Version: 1.0
-In-Reply-To: <20180803055709.GB32226@kroah.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        id S1732620AbeHCJQp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 05:16:45 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mail.iluvatar.ai (Postfix) with ESMTP id 2A56C1450441C;
+        Fri,  3 Aug 2018 15:25:19 +0800 (CST)
+Received: from mail.iluvatar.ai ([127.0.0.1])
+        by localhost (mail.iluvatar.ai [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id OFR43FS-YQg2; Fri,  3 Aug 2018 15:25:18 +0800 (CST)
+Received: from localhost (localhost [127.0.0.1])
+        by mail.iluvatar.ai (Postfix) with ESMTP id B3B1C1450441A;
+        Fri,  3 Aug 2018 15:25:18 +0800 (CST)
+DKIM-Filter: OpenDKIM Filter v2.9.2 mail.iluvatar.ai B3B1C1450441A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iluvatar.ai;
+        s=809B2F8E-810B-11E8-86FD-A0A654EEFFEB; t=1533281118;
+        bh=sYlwJ5RiWGaXSyuQbIFZWdtOrzK7EPZqNPhlQmJhOkg=;
+        h=From:To:Subject:Date:Message-Id;
+        b=MbYBU8UHwufVusFdJv2Ix1/hKvWQhk8iyPw8FiWF82RxQTX2+SclbA4dHq5YlyVsX
+         xpT5biHkG7eP9RXrhssUSSOZEayo9FdVVGfDLhBqR0ZZY319u9+MK4AXaVutljCuuR
+         1vUdY7k+YMsORwzQ1kOPqH1ELu5Gkx8rCsmf7nAc=
+X-Virus-Scanned: amavisd-new at iluvatar.ai
+Received: from mail.iluvatar.ai ([127.0.0.1])
+        by localhost (mail.iluvatar.ai [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id 3aFBHEXK6QuG; Fri,  3 Aug 2018 15:25:18 +0800 (CST)
+Received: from localhost.localdomain (unknown [180.166.124.10])
+        by mail.iluvatar.ai (Postfix) with ESMTPSA id E395014504413;
+        Fri,  3 Aug 2018 15:25:16 +0800 (CST)
+From:   Huang Shijie <sjhuang@iluvatar.ai>
+To:     vkoul@kernel.org
+Cc:     dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dave.jiang@intel.com, radhey.shyam.pandey@xilinx.com,
+        appana.durga.rao@xilinx.com, jmkrzyszt@gmail.com,
+        gomonovych@gmail.com, peter.ujfalusi@ti.com, keescook@chromium.org,
+        horms+renesas@verge.net.au, geert+renesas@glider.be,
+        shawnguo@kernel.org, baoyou.xie@linaro.org,
+        michal.simek@xilinx.com, baohua@kernel.org,
+        ludovic.desroches@microchip.com, linus.walleij@linaro.org,
+        david.brown@linaro.org, Huang Shijie <sjhuang@iluvatar.ai>
+Subject: [PATCH 32/46] dmaengine: pl330: use dmaenginem_async_device_register to simplify the code
+Date:   Fri,  3 Aug 2018 15:20:02 +0800
+Message-Id: <20180803072016.21544-33-sjhuang@iluvatar.ai>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180803072016.21544-1-sjhuang@iluvatar.ai>
+References: <20180803072016.21544-1-sjhuang@iluvatar.ai>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Use dmaenginem_async_device_register to simplify the code:
+	remove dma_async_device_unregister.
 
+Signed-off-by: Huang Shijie <sjhuang@iluvatar.ai>
+---
+ drivers/dma/pl330.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-On 8/3/2018 1:57 PM, Greg Kroah-Hartman wrote:
-> On Fri, Aug 03, 2018 at 11:02:34AM +0800, Songjun Wu wrote:
->> Support more platform.
->>
->> Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
->> ---
-> Your changelog text makes no sense, sorry.
-Thanks for your comment.
-I will describe it more clearly.
+diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
+index 88750a34e859..e4bc330132c7 100644
+--- a/drivers/dma/pl330.c
++++ b/drivers/dma/pl330.c
+@@ -3037,7 +3037,7 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
+ 	pd->max_burst = ((pl330->quirks & PL330_QUIRK_BROKEN_NO_FLUSHP) ?
+ 			 1 : PL330_MAX_BURST);
+ 
+-	ret = dma_async_device_register(pd);
++	ret = dmaenginem_async_device_register(pd);
+ 	if (ret) {
+ 		dev_err(&adev->dev, "unable to register DMAC\n");
+ 		goto probe_err3;
+@@ -3114,8 +3114,6 @@ static int pl330_remove(struct amba_device *adev)
+ 			devm_free_irq(&adev->dev, irq, pl330);
+ 	}
+ 
+-	dma_async_device_unregister(&pl330->ddma);
+-
+ 	/* Idle the DMAC */
+ 	list_for_each_entry_safe(pch, _p, &pl330->ddma.channels,
+ 			chan.device_node) {
+-- 
+2.17.1
+
