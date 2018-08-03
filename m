@@ -2,102 +2,321 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78B76C43142
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 02:06:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD10FC43142
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 02:08:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06D9721724
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 02:06:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06D9721724
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codewreck.org
+	by mail.kernel.org (Postfix) with ESMTP id 509F821724
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 02:08:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 509F821724
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726175AbeHCEAW (ORCPT
+        id S1726343AbeHCECr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 00:00:22 -0400
-Received: from nautica.notk.org ([91.121.71.147]:58896 "EHLO nautica.notk.org"
+        Fri, 3 Aug 2018 00:02:47 -0400
+Received: from mx.socionext.com ([202.248.49.38]:56280 "EHLO mx.socionext.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725731AbeHCEAW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 00:00:22 -0400
-Received: by nautica.notk.org (Postfix, from userid 1001)
-        id 70159C009; Fri,  3 Aug 2018 04:06:23 +0200 (CEST)
-Date:   Fri, 3 Aug 2018 04:06:08 +0200
-From:   Dominique Martinet <asmadeus@codewreck.org>
-To:     piaojun <piaojun@huawei.com>
-Cc:     Greg Kurz <groug@kaod.org>, Latchesar Ionkov <lucho@ionkov.net>,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        v9fs-developer@lists.sourceforge.net,
-        Ron Minnich <rminnich@sandia.gov>
-Subject: Re: [V9fs-developer] [PATCH v2] net/9p/trans_virtio.c: add null
- terminal for mount tag
-Message-ID: <20180803020608.GA15635@nautica>
-References: <5B6262F4.9080601@huawei.com>
- <20180802015439.GA27403@nautica>
- <5B62658A.3010605@huawei.com>
- <20180802152339.194c2820@bahia.lan>
- <5B63B3CE.3040601@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <5B63B3CE.3040601@huawei.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        id S1725733AbeHCECq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 00:02:46 -0400
+Received: from unknown (HELO kinkan-ex.css.socionext.com) ([172.31.9.52])
+  by mx.socionext.com with ESMTP; 03 Aug 2018 11:08:49 +0900
+Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
+        by kinkan-ex.css.socionext.com (Postfix) with ESMTP id 905E518022B;
+        Fri,  3 Aug 2018 11:08:49 +0900 (JST)
+Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Fri, 3 Aug 2018 11:08:49 +0900
+Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
+        by iyokan.css.socionext.com (Postfix) with ESMTP id DC23E4032A;
+        Fri,  3 Aug 2018 11:08:48 +0900 (JST)
+Received: from aegis.e01.socionext.com (unknown [10.213.134.210])
+        by yuzu.css.socionext.com (Postfix) with ESMTP id B54C5120149;
+        Fri,  3 Aug 2018 11:08:48 +0900 (JST)
+From:   Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        linux-media@vger.kernel.org
+Cc:     Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+Subject: [PATCH v2] media: dvb-frontends: add LNBH29 LNB supply driver
+Date:   Fri,  3 Aug 2018 11:08:39 +0900
+Message-Id: <20180803020839.5967-1-suzuki.katsuhiro@socionext.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-piaojun wrote on Fri, Aug 03, 2018:
-> We'd better reach an agreement about the patch fix.
+Add support for STMicroelectronics LNBH29 LNB supply driver.
 
-The way I read Greg's comment was that he agreed to the proposed changes
-and is waiting for a new version.
+Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
 
+---
 
-I'm writing a longer reply than I should because I don't like people
-saying strncmp is safe just because it's strncmp, feel free to skim
-through the rest as it's just ranting.
+Changes since v1:
+  - Fix wrong I2C transfer routine
+  - Remove unused headers
+---
+ drivers/media/dvb-frontends/Kconfig  |  10 ++
+ drivers/media/dvb-frontends/Makefile |   1 +
+ drivers/media/dvb-frontends/lnbh29.c | 168 +++++++++++++++++++++++++++
+ drivers/media/dvb-frontends/lnbh29.h |  36 ++++++
+ 4 files changed, 215 insertions(+)
+ create mode 100644 drivers/media/dvb-frontends/lnbh29.c
+ create mode 100644 drivers/media/dvb-frontends/lnbh29.h
 
-
-> In my opinion, replacing strlen(chan->tag) with a local variable
-> sounds reasonable,
-
-So we agree here
-
-> and changing strncmp to strcmp may be little beneficial, as strcmp is more
-> dangerours such as buffer-flow.
-
-strcmp is more dangerous for buffer-overflow if you're comparing
-"unsafe" non-null terminated strings.
-This isn't the case here as you've constructed chan->tag yourself and
-you rely on it being null-terminated by calling strlen() on it yourself.
-
-strncmp(x, y, strlen(y)+1) is at best awkward, but it's a false sense of
-security if you think this is any better than strcmp here. It implies that:
- - y is null-terminated (for strlen() to work)
- - x is either null-terminated or longer than y
-
-Here, x is the devname argument to p9_virtio_create, which comes
-straight from the mount syscall with "copy_mount_string", using
-strndup_user, which returns a null-terminated string or an error.
-
-(the code is currently not safe if it returns an error, I'm sending
-another mail about it right after this one as we already have a partial
-fix)
-
-
-strcmp(x, y) on the other hand assumes that x and y are null-terminated
-in this case, which is the same assumptions you have, so is strictly as
-"safe" as strncmp used that way.
-(it could also assume that one is null terminated and the other one is
-at least as long as that, e.g. when comparing a "char buf[42]" to the
-constant "foo" then we don't care if buf is null-terminated)
-
-
-Thanks,
+diff --git a/drivers/media/dvb-frontends/Kconfig b/drivers/media/dvb-frontends/Kconfig
+index 048285134cdf..847da72d1256 100644
+--- a/drivers/media/dvb-frontends/Kconfig
++++ b/drivers/media/dvb-frontends/Kconfig
+@@ -791,6 +791,16 @@ config DVB_LNBH25
+ 	  An SEC control chip.
+ 	  Say Y when you want to support this chip.
+ 
++config DVB_LNBH29
++	tristate "LNBH29 SEC controller"
++	depends on DVB_CORE && I2C
++	default m if !MEDIA_SUBDRV_AUTOSELECT
++	help
++	  LNB power supply and control voltage
++	  regulator chip with step-up converter
++	  and I2C interface for STMicroelectronics LNBH29.
++	  Say Y when you want to support this chip.
++
+ config DVB_LNBP21
+ 	tristate "LNBP21/LNBH24 SEC controllers"
+ 	depends on DVB_CORE && I2C
+diff --git a/drivers/media/dvb-frontends/Makefile b/drivers/media/dvb-frontends/Makefile
+index 779dfd027b24..e9179162658c 100644
+--- a/drivers/media/dvb-frontends/Makefile
++++ b/drivers/media/dvb-frontends/Makefile
+@@ -58,6 +58,7 @@ obj-$(CONFIG_DVB_LGDT3306A) += lgdt3306a.o
+ obj-$(CONFIG_DVB_LG2160) += lg2160.o
+ obj-$(CONFIG_DVB_CX24123) += cx24123.o
+ obj-$(CONFIG_DVB_LNBH25) += lnbh25.o
++obj-$(CONFIG_DVB_LNBH29) += lnbh29.o
+ obj-$(CONFIG_DVB_LNBP21) += lnbp21.o
+ obj-$(CONFIG_DVB_LNBP22) += lnbp22.o
+ obj-$(CONFIG_DVB_ISL6405) += isl6405.o
+diff --git a/drivers/media/dvb-frontends/lnbh29.c b/drivers/media/dvb-frontends/lnbh29.c
+new file mode 100644
+index 000000000000..410bae099c32
+--- /dev/null
++++ b/drivers/media/dvb-frontends/lnbh29.c
+@@ -0,0 +1,168 @@
++// SPDX-License-Identifier: GPL-2.0
++//
++// Driver for LNB supply and control IC STMicroelectronics LNBH29
++//
++// Copyright (c) 2018 Socionext Inc.
++
++#include <linux/module.h>
++#include <linux/init.h>
++#include <linux/slab.h>
++
++#include <media/dvb_frontend.h>
++#include "lnbh29.h"
++
++/**
++ * struct lnbh29_priv - LNBH29 driver private data
++ * @i2c:         Pointer to the I2C adapter structure
++ * @i2c_address: I2C address of LNBH29 chip
++ * @config:      Registers configuration
++ *               offset 0: 1st register address, always 0x01 (DATA)
++ *               offset 1: DATA register value
++ */
++struct lnbh29_priv {
++	struct i2c_adapter *i2c;
++	u8 i2c_address;
++	u8 config[2];
++};
++
++#define LNBH29_STATUS_OLF     BIT(0)
++#define LNBH29_STATUS_OTF     BIT(1)
++#define LNBH29_STATUS_VMON    BIT(2)
++#define LNBH29_STATUS_PNG     BIT(3)
++#define LNBH29_STATUS_PDO     BIT(4)
++#define LNBH29_VSEL_MASK      GENMASK(2, 0)
++#define LNBH29_VSEL_0         0x00
++/* Min: 13.188V, Typ: 13.667V, Max:14V */
++#define LNBH29_VSEL_13        0x03
++/* Min: 18.158V, Typ: 18.817V, Max:19.475V */
++#define LNBH29_VSEL_18        0x07
++
++static int lnbh29_read_vmon(struct lnbh29_priv *priv)
++{
++	u8 addr = 0x00;
++	u8 status[2];
++	int ret;
++	struct i2c_msg msg[2] = {
++		{
++			.addr = priv->i2c_address,
++			.flags = 0,
++			.len = 1,
++			.buf = &addr
++		}, {
++			.addr = priv->i2c_address,
++			.flags = I2C_M_RD,
++			.len = sizeof(status),
++			.buf = status
++		}
++	};
++
++	ret = i2c_transfer(priv->i2c, msg, 2);
++	if (ret >= 0 && ret != 2)
++		ret = -EIO;
++	if (ret < 0) {
++		dev_dbg(&priv->i2c->dev, "LNBH29 I2C transfer failed (%d)\n",
++			ret);
++		return ret;
++	}
++
++	if (status[0] & (LNBH29_STATUS_OLF | LNBH29_STATUS_VMON)) {
++		dev_err(&priv->i2c->dev,
++			"LNBH29 voltage in failure state, status reg 0x%x\n",
++			status[0]);
++		return -EIO;
++	}
++
++	return 0;
++}
++
++static int lnbh29_set_voltage(struct dvb_frontend *fe,
++			      enum fe_sec_voltage voltage)
++{
++	struct lnbh29_priv *priv = fe->sec_priv;
++	u8 data_reg;
++	int ret;
++	struct i2c_msg msg = {
++		.addr = priv->i2c_address,
++		.flags = 0,
++		.len = sizeof(priv->config),
++		.buf = priv->config
++	};
++
++	switch (voltage) {
++	case SEC_VOLTAGE_OFF:
++		data_reg = LNBH29_VSEL_0;
++		break;
++	case SEC_VOLTAGE_13:
++		data_reg = LNBH29_VSEL_13;
++		break;
++	case SEC_VOLTAGE_18:
++		data_reg = LNBH29_VSEL_18;
++		break;
++	default:
++		return -EINVAL;
++	}
++	priv->config[1] &= ~LNBH29_VSEL_MASK;
++	priv->config[1] |= data_reg;
++
++	ret = i2c_transfer(priv->i2c, &msg, 1);
++	if (ret >= 0 && ret != 1)
++		ret = -EIO;
++	if (ret < 0) {
++		dev_err(&priv->i2c->dev, "LNBH29 I2C transfer error (%d)\n",
++			ret);
++		return ret;
++	}
++
++	/* Soft-start time (Vout 0V to 18V) is Typ. 6ms. */
++	usleep_range(6000, 20000);
++
++	if (voltage == SEC_VOLTAGE_OFF)
++		return 0;
++
++	return lnbh29_read_vmon(priv);
++}
++
++static void lnbh29_release(struct dvb_frontend *fe)
++{
++	lnbh29_set_voltage(fe, SEC_VOLTAGE_OFF);
++	kfree(fe->sec_priv);
++	fe->sec_priv = NULL;
++}
++
++struct dvb_frontend *lnbh29_attach(struct dvb_frontend *fe,
++				   struct lnbh29_config *cfg,
++				   struct i2c_adapter *i2c)
++{
++	struct lnbh29_priv *priv;
++
++	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return NULL;
++
++	priv->i2c_address = (cfg->i2c_address >> 1);
++	priv->i2c = i2c;
++	priv->config[0] = 0x01;
++	priv->config[1] = cfg->data_config;
++	fe->sec_priv = priv;
++
++	if (lnbh29_set_voltage(fe, SEC_VOLTAGE_OFF)) {
++		dev_err(&i2c->dev, "no LNBH29 found at I2C addr 0x%02x\n",
++			priv->i2c_address);
++		kfree(priv);
++		fe->sec_priv = NULL;
++		return NULL;
++	}
++
++	fe->ops.release_sec = lnbh29_release;
++	fe->ops.set_voltage = lnbh29_set_voltage;
++
++	dev_info(&i2c->dev, "LNBH29 attached at I2C addr 0x%02x\n",
++		 priv->i2c_address);
++
++	return fe;
++}
++EXPORT_SYMBOL(lnbh29_attach);
++
++MODULE_AUTHOR("Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>");
++MODULE_DESCRIPTION("STMicroelectronics LNBH29 driver");
++MODULE_LICENSE("GPL v2");
+diff --git a/drivers/media/dvb-frontends/lnbh29.h b/drivers/media/dvb-frontends/lnbh29.h
+new file mode 100644
+index 000000000000..6179921520d9
+--- /dev/null
++++ b/drivers/media/dvb-frontends/lnbh29.h
+@@ -0,0 +1,36 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Driver for LNB supply and control IC STMicroelectronics LNBH29
++ *
++ * Copyright (c) 2018 Socionext Inc.
++ */
++
++#ifndef LNBH29_H
++#define LNBH29_H
++
++#include <linux/i2c.h>
++#include <linux/dvb/frontend.h>
++
++/* Using very low E.S.R. capacitors or ceramic caps */
++#define LNBH29_DATA_COMP    BIT(3)
++
++struct lnbh29_config {
++	u8 i2c_address;
++	u8 data_config;
++};
++
++#if IS_REACHABLE(CONFIG_DVB_LNBH29)
++struct dvb_frontend *lnbh29_attach(struct dvb_frontend *fe,
++				   struct lnbh29_config *cfg,
++				   struct i2c_adapter *i2c);
++#else
++static inline struct dvb_frontend *lnbh29_attach(struct dvb_frontend *fe,
++						 struct lnbh29_config *cfg,
++						 struct i2c_adapter *i2c)
++{
++	printk(KERN_WARNING "%s: driver disabled by Kconfig\n", __func__);
++	return NULL;
++}
++#endif
++
++#endif
 -- 
-Dominique
+2.18.0
 
