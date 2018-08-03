@@ -2,140 +2,148 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36CD3C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 08:54:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1E20C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 08:55:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5ABB2173F
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 08:54:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2284521754
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 08:55:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="IumrAL/s"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5ABB2173F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="1XLrwi/u"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2284521754
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lightnvm.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732094AbeHCKtz (ORCPT
+        id S1732269AbeHCKuW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 06:49:55 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:41856 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727866AbeHCKtz (ORCPT
+        Fri, 3 Aug 2018 06:50:22 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:44448 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727866AbeHCKuW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 06:49:55 -0400
-Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 58ACA112;
-        Fri,  3 Aug 2018 10:54:33 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1533286474;
-        bh=2v10gNDERp1KH9zbX89NMR08xJXBkXNaTYS3bU3jGqQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IumrAL/smnaAVto2r1TKeq35sVXcSfPhJQikzIWn/6XdsP6eEQFdK3uQJq1VHOXwQ
-         6pL5YkeYQ7HuvGBn1Q/q/UggBj4eHj3HpXkv0nULNu8BG0pJheX/72KnrxUBG3rnQg
-         iPej69QL0vUhT9Vf4oKeUVZjoilNPa0eEnBVmLgc=
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Peter Rosin <peda@axentia.se>
-Cc:     jacopo mondi <jacopo@jmondi.org>, linux-kernel@vger.kernel.org,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, Jyri Sarha <jsarha@ti.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Sakari Ailus <sakari.ailus@iki.fi>
-Subject: Re: [RESEND PATCH v5 2/3] dt-bindings: display: atmel: optional video-interface of endpoints
-Date:   Fri, 03 Aug 2018 11:55:14 +0300
-Message-ID: <3057649.ixkh6hxoBL@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <6fe3e84e-bd9d-0894-df8b-1b40c0f9477d@axentia.se>
-References: <20180803072308.14962-1-peda@axentia.se> <20180803081128.GA4528@w540> <6fe3e84e-bd9d-0894-df8b-1b40c0f9477d@axentia.se>
+        Fri, 3 Aug 2018 06:50:22 -0400
+Received: by mail-lf1-f68.google.com with SMTP id g6-v6so3502598lfb.11
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Aug 2018 01:55:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=OhWG67qTTauUONHtvYIKHt5AVpM/AdhgRLjS8xMeBnY=;
+        b=1XLrwi/uegYCGxVBMBiNLyGw92Z6t7NKrniTiqtVfdLM4feT2EaI5DSWS/1TTp1lxo
+         hypHGgMPdEC0SjpvdhvuBE02yIiugm6lRrAciVwmKonM8BDVhGNA+eFsfWIg3i4i4niO
+         9eQG2kzKFw1A6+rRqCdpou6RAA4vJ3FZRarqf02LdCzzjQ+7NAz2ghEteUVn2QfUM377
+         CW5HW+Oh7v8vV3CnbnEasee7R/s59Mwex504AXFpk3FJp5KGu3qZPTgc6vOCGBpHuIh5
+         v0XiLva9QzQAm/7R+H2Zvi7WkYEvfn9Xlhv73fOc6v3YAjWHGZiO/s8UvY1Qw4PTtwiy
+         iHRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=OhWG67qTTauUONHtvYIKHt5AVpM/AdhgRLjS8xMeBnY=;
+        b=I2OD+h/E/UDwGZ9vhYZjoyh1fz/JGbT8OPfCiOfITt69un0fHdeH7HK18aT647ZnKc
+         Pdw7LnQ2VSz792qPGPQX/5QhbE3mOm7bEmv0CY+/gXeR47gASiK+U1u4OriYyTx8IZeY
+         v7iLVuXWImpTytGakFib4PZWjf6oRK7pPy3gr/2XAZG7xAJFRdxD6JHC+bFWVVoAoR8M
+         H1PVMNghX/qcsQ6tcd1Tr6cD8eqe1ZkOuoWx1VUKh+ti4k2CapsLTcTF2SLs613UgGLm
+         ++O7n8q0ygVHywBTlmJdcHapU2ftmdgXsDcUBk9t4DVWpqERL9OmRWObH3/K6MHj4/dq
+         2zHQ==
+X-Gm-Message-State: AOUpUlHT4xHqJ2CpoiXqYgaMh73IUzZoKIilCn2KSfJjvUzH0N9dKQ1I
+        zXsWNM4ISvFRodTWK3dDTiz8rQ==
+X-Google-Smtp-Source: AAOMgpdF5LGp/rHQQshnviHojTc+NyeNnNSnWi91VBkjqH3+g14UkXj6J1FEjQIVkJCFTxEtdYoQsQ==
+X-Received: by 2002:a19:988f:: with SMTP id a137-v6mr4322123lfe.128.1533286501229;
+        Fri, 03 Aug 2018 01:55:01 -0700 (PDT)
+Received: from localhost.localdomain (95-166-82-66-cable.dk.customer.tdc.net. [95.166.82.66])
+        by smtp.gmail.com with ESMTPSA id a140-v6sm637345lfb.21.2018.08.03.01.54.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 03 Aug 2018 01:55:00 -0700 (PDT)
+From:   =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
+To:     igor.j.konopko@intel.com, marcin.dziegielewski@intel.com,
+        javier@cnexlabs.com, hans.holmberg@cnexlabs.com, hlitz@ucsc.edu,
+        youngtack.jin@circuitblvd.com
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
+Subject: [PATCH] lightnvm: move device L2P detection to core
+Date:   Fri,  3 Aug 2018 10:54:49 +0200
+Message-Id: <20180803085449.3436-1-mb@lightnvm.io>
+X-Mailer: git-send-email 2.11.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Peter,
+A 1.2 device is able to manage the logical to physical mapping
+table internally or leave it to the host.
 
-(CC'ing Sakari Ailus)
+A target only supports one of those approaches, and therefore must
+check on initialization. Move this check to core to avoid each target
+implement the check.
 
-On Friday, 3 August 2018 11:40:02 EEST Peter Rosin wrote:
-> On 2018-08-03 10:11, jacopo mondi wrote:
-> > On Fri, Aug 03, 2018 at 09:23:07AM +0200, Peter Rosin wrote:
-> >> With bus-type/bus-width properties in the endpoint nodes, the video-
-> >> interface of the connection can be specified for cases where the
-> >> heuristic fails to select the correct output mode. This can happen
-> >> e.g. if not all RGB pins are routed on the PCB; the driver has no
-> >> way of knowing this, and needs to be told explicitly.
-> >> 
-> >> This is critical for the devices that have the "conflicting output
-> >> formats" issue (SAM9N12, SAM9X5, SAMA5D3), since the most significant
-> >> RGB bits move around depending on the selected output mode. For
-> >> devices that do not have the "conflicting output formats" issue
-> >> (SAMA5D2, SAMA5D4), this is completely irrelevant.
-> >> 
-> >> Acked-by: Boris Brezillon <boris.brezillon@bootlin.com>
-> >> Reviewed-by: Rob Herring <robh@kernel.org>
-> >> Signed-off-by: Peter Rosin <peda@axentia.se>
-> >> ---
-> >> 
-> >>  .../devicetree/bindings/display/atmel/hlcdc-dc.txt | 26
-> >>  ++++++++++++++++++++++ 1 file changed, 26 insertions(+)
-> >> 
-> >> diff --git a/Documentation/devicetree/bindings/display/atmel/hlcdc-dc.txt
-> >> b/Documentation/devicetree/bindings/display/atmel/hlcdc-dc.txt index
-> >> 82f2acb3d374..9de434a8f523 100644
-> >> --- a/Documentation/devicetree/bindings/display/atmel/hlcdc-dc.txt
-> >> +++ b/Documentation/devicetree/bindings/display/atmel/hlcdc-dc.txt
-> >> 
-> >> @@ -15,6 +15,14 @@ Required children nodes:
-> >>   to external devices using the OF graph reprensentation (see
-> >>   ../graph.txt).
-> >>   At least one port node is required.
-> >> 
-> >> +Optional properties in grandchild nodes:
-> >> + Any endpoint grandchild node may specify a desired video interface
-> >> + according to ../../media/video-interfaces.txt, specifically
-> >> + - bus-type: must be <0>.
-> > 
-> > Is there any value in specifying this, if it has a fixed value to
-> > "autodetect"? I understand it's optional, so if nobody else objects,
-> > feels free to keep it there.
-> 
-> That's just how media/video-interfaces.txt works.
-> 
-> bus-type 0 means that other properties describe the bus type. In this
-> case bus-width is specified, so that means a parallel bus. But bus-width
-> has no meaning (or may not have) if bus-type is non-zero. But checking
-> that bus-type for zero in the code seemed like overkill to me since the
-> driver already knows that it is a parallel bus...
-> 
-> TL;DR I'd like to keep it.
+Signed-off-by: Matias Bjørling <mb@lightnvm.io>
+---
+ drivers/lightnvm/core.c      | 5 +++++
+ drivers/lightnvm/pblk-init.c | 7 -------
+ include/linux/lightnvm.h     | 6 ++++++
+ 3 files changed, 11 insertions(+), 7 deletions(-)
 
-Sakari told me recently that he was planning to introduce explicit bus types 
-for parallel buses (both external sync and BT.656). Sakari, do you want to 
-comment on this ?
-
-> >> + - bus-width: recognized values are <12>, <16>, <18> and <24>, and
-> >> +   override any output mode selection heuristic, forcing "rgb444",
-> >> +   "rgb565", "rgb666" and "rgb888" respectively.
-
-[snip]
-
+diff --git a/drivers/lightnvm/core.c b/drivers/lightnvm/core.c
+index 68553c7ae937..964352720a03 100644
+--- a/drivers/lightnvm/core.c
++++ b/drivers/lightnvm/core.c
+@@ -355,6 +355,11 @@ static int nvm_create_tgt(struct nvm_dev *dev, struct nvm_ioctl_create *create)
+ 		return -EINVAL;
+ 	}
+ 
++	if ((tt->flags & NVM_TGT_F_HOST_L2P) != (dev->geo.dom & NVM_RSP_L2P)) {
++		pr_err("nvm: device is incompatible with target L2P type.\n");
++		return -EINVAL;
++	}
++
+ 	if (nvm_target_exists(create->tgtname)) {
+ 		pr_err("nvm: target name already exists (%s)\n",
+ 							create->tgtname);
+diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
+index e9e2fedff387..cc8a59e3c240 100644
+--- a/drivers/lightnvm/pblk-init.c
++++ b/drivers/lightnvm/pblk-init.c
+@@ -1202,13 +1202,6 @@ static void *pblk_init(struct nvm_tgt_dev *dev, struct gendisk *tdisk,
+ 	pblk->state = PBLK_STATE_RUNNING;
+ 	pblk->gc.gc_enabled = 0;
+ 
+-	if (geo->version == NVM_OCSSD_SPEC_12 && geo->dom & NVM_RSP_L2P) {
+-		pblk_err(pblk, "host-side L2P table not supported. (%x)\n",
+-							geo->dom);
+-		kfree(pblk);
+-		return ERR_PTR(-EINVAL);
+-	}
+-
+ 	spin_lock_init(&pblk->resubmit_lock);
+ 	spin_lock_init(&pblk->trans_lock);
+ 	spin_lock_init(&pblk->lock);
+diff --git a/include/linux/lightnvm.h b/include/linux/lightnvm.h
+index 8acc2fe277d6..f4a84694e5e2 100644
+--- a/include/linux/lightnvm.h
++++ b/include/linux/lightnvm.h
+@@ -495,9 +495,15 @@ typedef void (nvm_tgt_exit_fn)(void *, bool);
+ typedef int (nvm_tgt_sysfs_init_fn)(struct gendisk *);
+ typedef void (nvm_tgt_sysfs_exit_fn)(struct gendisk *);
+ 
++enum {
++	NVM_TGT_F_DEV_L2P = 0,
++	NVM_TGT_F_HOST_L2P = 1 << 0,
++};
++
+ struct nvm_tgt_type {
+ 	const char *name;
+ 	unsigned int version[3];
++	int flags;
+ 
+ 	/* target entry points */
+ 	nvm_tgt_make_rq_fn *make_rq;
 -- 
-Regards,
-
-Laurent Pinchart
-
-
+2.11.0
 
