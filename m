@@ -2,163 +2,221 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FA37C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 13:49:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7F83C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 13:49:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B49F221763
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 13:49:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E93421763
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 13:49:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="gVzqdrli"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B49F221763
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="cC1OXEkH";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="H+oZPUqY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E93421763
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732274AbeHCPqD (ORCPT
+        id S1732312AbeHCPqM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 11:46:03 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:35854 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729985AbeHCPqD (ORCPT
+        Fri, 3 Aug 2018 11:46:12 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:53790 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731501AbeHCPqM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 11:46:03 -0400
-Received: by mail-io0-f194.google.com with SMTP id r15-v6so5031592ioa.3
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Aug 2018 06:49:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=AtQASPNcdxtlSlwRH5gh1dpAbDYuNJ1H5uoaQ32f0wY=;
-        b=gVzqdrliCc/BEscX7xfyFwu5XerYsVw0wVh/D0pRtVxxyO2YGcDpa/cuO4PoxowvNb
-         LgNWpUScmBRyq5SptDi6Mth7qzKYVhiRvwli/q12COssQ7HDz/wvPmkXqqMET/prvo6e
-         OtOlbT0GpdtIK2OIKRKvEpAzqQp9Bv2xJ6nzo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=AtQASPNcdxtlSlwRH5gh1dpAbDYuNJ1H5uoaQ32f0wY=;
-        b=c1kkzoWUVJo761upV707iwLWcPixXlPqHkPyuVZUcxfVOUiymAjhmVBCzSux0HNcHx
-         oTtv681DU9SpTPfsRU1kCW10+PFVzByjJWI4R2wcEdt7xhMnXY5+69yLvHkgM/Lbi33d
-         aqxP/rkRSnoqA32TbPqiTlT3+kMGhn6j1JX5TMfLzD8hLK2Qx4qXy1XKLyPV39KQQpRz
-         AiLDpRn6oaRW6SG6UADs3gdAcD5nWgEogvbL5GvtFSHK9u502QiE7SGLSu6NEz51rd61
-         LhGkNgMpqvo75qKYghHQfqE2RGspMF08uFOjMiQgo0eRl6UmPIQ2BE29MM5/PzQi5YsN
-         hAZg==
-X-Gm-Message-State: AOUpUlHyG5FJyKFdzt3ffORSFYxsHn78fHQ8f2cYH4GD2h292v2WARAw
-        62wct3LfgGjLX17uSEpJ5VAZwhICmIPAc67CKA32ew==
-X-Google-Smtp-Source: AA+uWPyIjbWM+shBs1/HMIp9Putg0lST7wqSLohYTfcywvWIsYF3jEtek8bgKTuiJWX0qrk39Ntt3muQ5Emz2EgbNqI=
-X-Received: by 2002:a6b:3e46:: with SMTP id l67-v6mr5949563ioa.294.1533304176197;
- Fri, 03 Aug 2018 06:49:36 -0700 (PDT)
+        Fri, 3 Aug 2018 11:46:12 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 92232607BD; Fri,  3 Aug 2018 13:49:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1533304184;
+        bh=S43oLhBtGnIIfWLgmHqrWdpmZaSzyEcc4/GBf55tR1g=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=cC1OXEkHw5M6YkvweonXIhA20NgQ3vvnwaIsCYZKrPeqV9wjbqQInuXaBbm6ALdDR
+         Q+EXCVEV6yFHOgnSfRR0iWB78YjlBx9cIZ4QKTXJjYjwsndMzyFljzN4IlGaT0BYXR
+         QHCLeL4LB46m8wwLcsHlyklQad3ATxS7WTmiASoE=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 89FCE60264;
+        Fri,  3 Aug 2018 13:49:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1533304183;
+        bh=S43oLhBtGnIIfWLgmHqrWdpmZaSzyEcc4/GBf55tR1g=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=H+oZPUqYJCvhMM3AJzDQFhYRVsdRUN/KcqxEBhg+NBz1rNRTagx0ryyqccSJui/zK
+         F2uktlnkdV7WE+h2zsihWjmrLmMafb7wvZB8nT0AjxMIxdIqxgu5iXBO1/whnQQsZ1
+         v/qNw6fdxNRAWjAxjDjVZHzotxbODtTbw1fpc20E=
 MIME-Version: 1.0
-References: <20180802141424.ju4jxxbk6pxw3kyq@queper01-lin> <CAKfTPtCzQZotmpt40X6uN9O0yAerq6c6bFgiFfqhhcbKsm7k4w@mail.gmail.com>
- <20180802153035.vjtmqwdwujvt7ojs@queper01-lin> <CAKfTPtCGGqykN027kxK+chvKvCpNu4bYYdvfZJ+3_7YzT3Utfg@mail.gmail.com>
- <20180802160009.uhwwj3tqrqmv7q5a@queper01-lin> <CAKfTPtB_tWgOPCB3q2Q2rESKczTPGBDUojcXDY7uP8YTQddBMg@mail.gmail.com>
- <20180802161027.v2ctgscuc4uxbb7u@queper01-lin> <CAKfTPtDtaF9Qs4NWkKWUSr8Ryi-ScYNmPyacocPQUPxT00XAYg@mail.gmail.com>
- <20180802165924.7ywgoxj2jwftxycz@queper01-lin> <CAKfTPtDsG4FJy5xBO8+6pJzehEM668=SZ4yQ-szVTduofN3QZg@mail.gmail.com>
- <20180803081850.hj7bp5ognuywapmd@queper01-lin>
-In-Reply-To: <20180803081850.hj7bp5ognuywapmd@queper01-lin>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Fri, 3 Aug 2018 15:49:24 +0200
-Message-ID: <CAKfTPtDkJY=JYicZk8sM9_mJ-iq+Jwse0oVRbW=wpxXKKnEoeQ@mail.gmail.com>
-Subject: Re: [PATCH v5 09/14] sched: Add over-utilization/tipping point indicator
-To:     Quentin Perret <quentin.perret@arm.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Chris Redpath <chris.redpath@arm.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Thara Gopinath <thara.gopinath@linaro.org>,
-        viresh kumar <viresh.kumar@linaro.org>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        "Cc: Steve Muckle" <smuckle@google.com>, adharmap@quicinc.com,
-        "Kannan, Saravana" <skannan@quicinc.com>, pkondeti@codeaurora.org,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        currojerez@riseup.net, Javi Merino <javi.merino@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Fri, 03 Aug 2018 19:19:43 +0530
+From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
+To:     Marcel Holtmann <marcel@holtmann.org>
+Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        "open list:BLUETOOTH DRIVERS" <linux-bluetooth@vger.kernel.org>,
+        Thierry Escande <thierry.escande@linaro.org>,
+        rtatiya@codeaurora.org, hemantg@codeaurora.org,
+        linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v15 0/7] Enable Bluetooth functionality for WCN3990
+In-Reply-To: <9348C715-71AE-416B-8460-55135FFDAC7E@holtmann.org>
+References: <20180803121632.30689-1-bgodavar@codeaurora.org>
+ <9348C715-71AE-416B-8460-55135FFDAC7E@holtmann.org>
+Message-ID: <22ec0ff6f986e56cb6c365eea2c3da56@codeaurora.org>
+X-Sender: bgodavar@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 3 Aug 2018 at 10:18, Quentin Perret <quentin.perret@arm.com> wrote:
->
-> On Friday 03 Aug 2018 at 09:48:47 (+0200), Vincent Guittot wrote:
-> > On Thu, 2 Aug 2018 at 18:59, Quentin Perret <quentin.perret@arm.com> wrote:
-> > I'm not really concerned about re-enabling load balance but more that
-> > the effort of packing of tasks in few cpus/clusters that EAS tries to
-> > do can be broken for every new task.
->
-> Well, re-enabling load balance immediately would break the nice placement
-> that EAS found, because it would shuffle all tasks around and break the
-> packing strategy. Letting that sole new task go in find_idlest_cpu()
+Hi Marcel,
 
-Sorry I was not clear in my explanation. Re enabling load balance
-would be a problem of course. I wanted to say that there is few chance
-that this will re-enable the load balance immediately and break EAS
-and I'm not worried by this case. But i'm only concerned by the new
-task being put outside EAS policy.
+On 2018-08-03 18:16, Marcel Holtmann wrote:
+> Hi Balakrishna,
+> 
+>> These patches enables Bluetooth functinalties for new Qualcomm
+>> Bluetooth chip wnc3990. As this is latest chip with new features,
+>> along with some common features to old chip "qcom,qca6174-bt".
+>> we have updated names of functions that are used for both the chips
+>> to keep this generic and would help in future when we would have new
+>> BT SoC.
+>> 
+>> The below are difference between new and old chips.
+>> 
+>> *Power:
+>> *New chip: we use voltage regulators to turn on/off the chip and we
+>>  must send a command on Tx line to turn on/off the chip completely.
+>> *Old chip: We turn on/off by setting a GPIO.
+>> 
+>> *Note: Turning on sequence differs between two chips.
+>> 
+>> *Firmware download:
+>>  Only firmware file name differ from New and Old chip.
+>> 
+>>  So we reused some functions/structure/variables which are used for 
+>> old
+>>  chip to New chip by generic naming (may be future chips may use same 
+>> functions).
+>> 
+>> * As we have multiple changes for functions names,we have tested these 
+>> patches
+>>   on both chips.
+>> 
+>> v15:
+>> * fixed nit issue in hci_qca.
+>> 
+>> v13:
+>> * Segregated optional and required properties for wcn3990.
+>> 
+>> v12:
+>> * removed iteration loop in qca_init_wcn3990
+>> * updated review comments.
+>> 
+>> v11:
+>> * removed regulator current from dtbindings
+>> * addressed review comments.
+>> 
+>> v10:
+>> * update current load with actual values of WCN3990.
+>> * added support  for itterative connect with BT chip if it fails to 
+>> respond to the HOST.
+>> * Added regulator current dtbindings.
+>> * addressed review comments.
+>> 
+>> v9:
+>> * removed smps regs.
+>> * hidded flow control in respective functions.
+>> * moved qca_soc_ver to qca_setup
+>> * addressed review comments.
+>> 
+>> v8:
+>>  * Squashed [v7 2/8] and [v7 3/8] to one patch.
+>>  * updated functions to set and get the UART speeds.
+>>  * addressed review comments.
+>> 
+>> v7:
+>>  * Renamed all the possible function of ROME to generic.
+>>  * updated with review comments for hci_qca and btqca
+>>  * fixed kbuild errors.
+>>  * created wrapper functions for re-usable blocks.
+>> 
+>> v6:
+>>  * Hooked up qca_power to qca_serdev.
+>>  * renamed all the naming inconsistency functions with qca_*
+>>  * leveraged common code of ROME for wcn3990.
+>>  * created wrapper functions for re-usable blocks.
+>>  * updated function of _*regulator_enable and _*regualtor_disable.
+>>  * removed redundant comments and functions.
+>>  * add code to derive the firmware files based on ROM Version.
+>>  * created new patch for common function of ROME and wcn3990.
+>>  * enables Qualcomm chip to operate at 3.2Mbps.
+>>  * updated names of functions that are used for both the chips to keep 
+>> this generic.
+>> 
+>> v5:
+>>  * updated with review comments for hci_qca and btqca
+>> 
+>> v4:
+>>  * rebased all changes on top of bluetooth-next.
+>>  * addressed review comments.
+>>  * New patch created for firmware download.
+>> 
+>> v3:
+>>  * Rebased all changes on top of bluetooth-next.
+>>  * dt-bindings: net: bluetooth: Add device tree bindings for QTI chip 
+>> wcn3990
+>>    - added dt-binding snippet for bluetooth chip wcn3990.
+>>  * Bluetooth: Add support for wcn3990 soc.
+>>    - updated BT_INFO with bt_dev_info, where ever necessary.
+>> 
+>> v2:
+>>   * Add support for wcn3990:
+>>    These changes are aligned as per serdev frame work.
+>>          We implemented these changes on top of 
+>> https://patchwork.kernel.org/patch/10316093/
+>>        As this patch enable serdev for one of the Qualcomm BT chip.
+>> 
+>>        The changes in the patch include.
+>>        - Adding support to voting up/down regulators for WCN3990.
+>>           - Bluetooth firmware download for wcn3990.
+>> 
+>>  * Add device tree bindings for Atheros chips:
+>>          These changes are on top of 
+>> https://patchwork.kernel.org/patch/10316097/.
+>>          - Description of device tree bindings.
+>> 
+>> Balakrishna Godavarthi (7):
+>>  dt-bindings: net: bluetooth: Add device tree bindings for QTI chip
+>>    wcn3990
+>>  Bluetooth: btqca: Rename ROME specific functions to generic functions
+>>  Bluetooth: btqca: Redefine qca_uart_setup() to generic function.
+>>  Bluetooth: hci_qca: Add wrapper functions for setting UART speed
+>>  Bluetooth: hci_qca: Enable 3.2 Mbps operating speed.
+>>  Bluetooth: btqca: Add wcn3990 firmware download support.
+>>  Bluetooth: hci_qca: Add support for Qualcomm Bluetooth chip wcn3990
+>> 
+>> .../bindings/net/qualcomm-bluetooth.txt       |  29 +-
+>> drivers/bluetooth/btqca.c                     | 117 +++--
+>> drivers/bluetooth/btqca.h                     |  22 +-
+>> drivers/bluetooth/hci_qca.c                   | 486 +++++++++++++++---
+>> 4 files changed, 539 insertions(+), 115 deletions(-)
+> 
+> all 7 patches have been applied to bluetooth-next tree.
+> 
+> If we need to fix things, we fix them with additional patches instead
+> of respinning the series.
+> 
+> Regards
+> 
+> Marcel
 
-For example, if you run on hikey960 the simple script below, which
-can't really be seen as a fork bomb IMHO, you will see threads
-scheduled on big cores every 0.5 seconds whereas everything should be
-packed on little core  :
-for i in {0..10}; do
-echo "t"$i
-sleep 0.5
-done
+Thanks for the update Marcel.
 
-> shouldn't impact the placement of existing tasks. That might have an energy
-> cost for that one task, yes, but it's really hard to do anything smarter
-> with new tasks IMO ... EAS simply can't work without a utilization value.
->
-> > So I wonder what is better for EAS : Make sure to efficiently spread
-> > newly created tasks in cas of fork bomb or  try to not break EAS task
-> > placement with every newly created tasks
->
-> That shouldn't break the placement per se, we're just making one
-> temporary exception for new tasks. What do you think 'the right thing'
-> to do is ? To just put new tasks on prev_cpu or something like that ?
+@Matthias, Thanks for reviewing patches.
 
-I think that EAS, which is about saving power, could be a bit power
-friendly when it has to make some assumptions about new task.
-
->
-> That might help some use-cases I suppose, but will probably harm others ...
-> I'm just not too keen on making assumptions about the size of new tasks,
-
-But you are already doing some assumptions by letting the default
-mode, which use load_avg, selecting the task for you. The comment of
-the init function of load_avg states:
-
-void init_entity_runnable_average()
-{
-...
-/*
-* Tasks are intialized with full load to be seen as heavy tasks until
-* they get a chance to stabilize to their real load level.
-* Group entities are intialized with zero load to reflect the fact that
-* nothing has been attached to the task group yet.
-*/
-
-So it means that EAS makes the assumption that new task are heavy
-tasks until they get a chance to stabilize
-
-Regards,
-Vincent
-
-> that's all. But I'm definitely open to ideas if there is something
-> smarter we can do.
->
-> Thanks,
-> Quentin
+-- 
+Regards
+Balakrishna.
