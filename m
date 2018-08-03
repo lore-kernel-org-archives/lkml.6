@@ -6,48 +6,48 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CA2DC28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 07:21:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 866E2C46463
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 07:22:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2738C216FD
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 07:21:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D6EE216FD
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 07:22:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=iluvatar.ai header.i=@iluvatar.ai header.b="OragWE49"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2738C216FD
+	dkim=pass (1024-bit key) header.d=iluvatar.ai header.i=@iluvatar.ai header.b="EHCokPj1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D6EE216FD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=iluvatar.ai
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732831AbeHCJQw (ORCPT
+        id S1732869AbeHCJQz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 05:16:52 -0400
-Received: from mail.iluvatar.ai ([58.213.90.100]:57210 "EHLO mail.iluvatar.ai"
+        Fri, 3 Aug 2018 05:16:55 -0400
+Received: from mail.iluvatar.ai ([58.213.90.100]:57735 "EHLO mail.iluvatar.ai"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732737AbeHCJQv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 05:16:51 -0400
+        id S1732670AbeHCJQw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 05:16:52 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by mail.iluvatar.ai (Postfix) with ESMTP id 0639B14556867;
-        Fri,  3 Aug 2018 15:25:28 +0800 (CST)
+        by mail.iluvatar.ai (Postfix) with ESMTP id D96BC1455686F;
+        Fri,  3 Aug 2018 15:25:29 +0800 (CST)
 Received: from mail.iluvatar.ai ([127.0.0.1])
         by localhost (mail.iluvatar.ai [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id Rz1MkBeQqoG1; Fri,  3 Aug 2018 15:25:27 +0800 (CST)
+        with ESMTP id ibrkgwYSh1EH; Fri,  3 Aug 2018 15:25:29 +0800 (CST)
 Received: from localhost (localhost [127.0.0.1])
-        by mail.iluvatar.ai (Postfix) with ESMTP id 9CA941455686D;
-        Fri,  3 Aug 2018 15:25:27 +0800 (CST)
-DKIM-Filter: OpenDKIM Filter v2.9.2 mail.iluvatar.ai 9CA941455686D
+        by mail.iluvatar.ai (Postfix) with ESMTP id 8AB2114556870;
+        Fri,  3 Aug 2018 15:25:29 +0800 (CST)
+DKIM-Filter: OpenDKIM Filter v2.9.2 mail.iluvatar.ai 8AB2114556870
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iluvatar.ai;
-        s=809B2F8E-810B-11E8-86FD-A0A654EEFFEB; t=1533281127;
-        bh=sTw1UU5qD7fkC1MT8wtHFAyBFEwMFPe8deeAAyKJf3U=;
+        s=809B2F8E-810B-11E8-86FD-A0A654EEFFEB; t=1533281129;
+        bh=wFyy7JV/hK38zSHu+jvvNX7SVjgqYRFDGo08N42P96Q=;
         h=From:To:Subject:Date:Message-Id;
-        b=OragWE493wIYKzgOU9JitevokFP+8PS6XDrayqOjB5a8FsULpbQEDCych1EOpEg4q
-         3ToIVeCHecn5mOdsWUAQZDJra1Mqy8HJfojsBDlCkJ1CwnYQl2km/zDtavHo8cBsce
-         9xnMYT0k7Sht7gHhaj+zZ5JzIqhZIWqTZlWaAHRc=
+        b=EHCokPj1hkqyDaeUfpQT9LEwZCHfy2O9XQbXme7At//+gtKwtDcWvHOMMvAPa/K8d
+         sODhFrgb4Zi41a5lzqQC2W68ufU8CJAP+CYjng0w5S5eAmUlPElkbnSBokGk2NQufH
+         3IfgOBNYeBRCELLXpoKdsE0dxl5w9C60LnMW44i8=
 X-Virus-Scanned: amavisd-new at iluvatar.ai
 Received: from mail.iluvatar.ai ([127.0.0.1])
         by localhost (mail.iluvatar.ai [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id F3ndg3WZgssX; Fri,  3 Aug 2018 15:25:27 +0800 (CST)
+        with ESMTP id 3eqB7x0ZCGvS; Fri,  3 Aug 2018 15:25:29 +0800 (CST)
 Received: from localhost.localdomain (unknown [180.166.124.10])
-        by mail.iluvatar.ai (Postfix) with ESMTPSA id 5319B140B5B37;
-        Fri,  3 Aug 2018 15:25:26 +0800 (CST)
+        by mail.iluvatar.ai (Postfix) with ESMTPSA id DF13F14556874;
+        Fri,  3 Aug 2018 15:25:28 +0800 (CST)
 From:   Huang Shijie <sjhuang@iluvatar.ai>
 To:     vkoul@kernel.org
 Cc:     dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
@@ -59,9 +59,9 @@ Cc:     dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
         michal.simek@xilinx.com, baohua@kernel.org,
         ludovic.desroches@microchip.com, linus.walleij@linaro.org,
         david.brown@linaro.org, Huang Shijie <sjhuang@iluvatar.ai>
-Subject: [PATCH 41/46] dmaengine: at_hdmac: use dmaenginem_async_device_register to simplify the code
-Date:   Fri,  3 Aug 2018 15:20:11 +0800
-Message-Id: <20180803072016.21544-42-sjhuang@iluvatar.ai>
+Subject: [PATCH 43/46] dmaengine: dma-jz4780: use dmaenginem_async_device_register to simplify the code
+Date:   Fri,  3 Aug 2018 15:20:13 +0800
+Message-Id: <20180803072016.21544-44-sjhuang@iluvatar.ai>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180803072016.21544-1-sjhuang@iluvatar.ai>
 References: <20180803072016.21544-1-sjhuang@iluvatar.ai>
@@ -72,41 +72,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Use dmaenginem_async_device_register to simplify the code:
 	remove dma_async_device_unregister.
+	remove label err_unregister_dev
 
 Signed-off-by: Huang Shijie <sjhuang@iluvatar.ai>
 ---
- drivers/dma/at_hdmac.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/dma/dma-jz4780.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/dma/at_hdmac.c b/drivers/dma/at_hdmac.c
-index 75f38d19fcbe..536146601238 100644
---- a/drivers/dma/at_hdmac.c
-+++ b/drivers/dma/at_hdmac.c
-@@ -1954,7 +1954,7 @@ static int __init at_dma_probe(struct platform_device *pdev)
- 	  dma_has_cap(DMA_SLAVE, atdma->dma_common.cap_mask)  ? "slave " : "",
- 	  plat_dat->nr_channels);
+diff --git a/drivers/dma/dma-jz4780.c b/drivers/dma/dma-jz4780.c
+index 85820a2d69d4..b2a244902bc5 100644
+--- a/drivers/dma/dma-jz4780.c
++++ b/drivers/dma/dma-jz4780.c
+@@ -847,7 +847,7 @@ static int jz4780_dma_probe(struct platform_device *pdev)
+ 		jzchan->vchan.desc_free = jz4780_dma_desc_free;
+ 	}
  
--	dma_async_device_register(&atdma->dma_common);
-+	dmaenginem_async_device_register(&atdma->dma_common);
+-	ret = dma_async_device_register(dd);
++	ret = dmaenginem_async_device_register(dd);
+ 	if (ret) {
+ 		dev_err(dev, "failed to register device\n");
+ 		goto err_disable_clk;
+@@ -858,15 +858,12 @@ static int jz4780_dma_probe(struct platform_device *pdev)
+ 					 jzdma);
+ 	if (ret) {
+ 		dev_err(dev, "failed to register OF DMA controller\n");
+-		goto err_unregister_dev;
++		goto err_disable_clk;
+ 	}
  
- 	/*
- 	 * Do not return an error if the dmac node is not present in order to
-@@ -1973,7 +1973,6 @@ static int __init at_dma_probe(struct platform_device *pdev)
+ 	dev_info(dev, "JZ4780 DMA controller initialised\n");
  	return 0;
  
- err_of_dma_controller_register:
--	dma_async_device_unregister(&atdma->dma_common);
- 	dma_pool_destroy(atdma->memset_pool);
- err_memset_pool_create:
- 	dma_pool_destroy(atdma->dma_desc_pool);
-@@ -2000,7 +1999,6 @@ static int at_dma_remove(struct platform_device *pdev)
- 	struct resource		*io;
+-err_unregister_dev:
+-	dma_async_device_unregister(dd);
+-
+ err_disable_clk:
+ 	clk_disable_unprepare(jzdma->clk);
  
- 	at_dma_off(atdma);
--	dma_async_device_unregister(&atdma->dma_common);
+@@ -887,7 +884,6 @@ static int jz4780_dma_remove(struct platform_device *pdev)
+ 	for (i = 0; i < JZ_DMA_NR_CHANNELS; i++)
+ 		tasklet_kill(&jzdma->chan[i].vchan.task);
  
- 	dma_pool_destroy(atdma->memset_pool);
- 	dma_pool_destroy(atdma->dma_desc_pool);
+-	dma_async_device_unregister(&jzdma->dma_device);
+ 	return 0;
+ }
+ 
 -- 
 2.17.1
 
