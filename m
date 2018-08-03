@@ -2,140 +2,157 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAAD2C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 04:50:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF617C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 04:51:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8821D21711
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 04:50:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7023621711
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 04:51:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=CAVIUMNETWORKS.onmicrosoft.com header.i=@CAVIUMNETWORKS.onmicrosoft.com header.b="Abfpk+Ew"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8821D21711
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=caviumnetworks.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tpR4f+8e"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7023621711
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727297AbeHCGoc (ORCPT
+        id S1727343AbeHCGp4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 02:44:32 -0400
-Received: from mail-by2nam01on0076.outbound.protection.outlook.com ([104.47.34.76]:7136
-        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726413AbeHCGob (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 02:44:31 -0400
+        Fri, 3 Aug 2018 02:45:56 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:36910 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726381AbeHCGpz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 02:45:55 -0400
+Received: by mail-pf1-f193.google.com with SMTP id a26-v6so2567338pfo.4;
+        Thu, 02 Aug 2018 21:51:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=CAVIUMNETWORKS.onmicrosoft.com; s=selector1-cavium-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Ddv4kYpU89ob+XT48FriOjj31K912O5lo13iBzmfVdM=;
- b=Abfpk+Ewf0Z0fUdKcWx1os8ppg0tzEnyVzvnLM3qmqdzkxcSQLHWjO7+vcz+sMMo08fvPaY9MRi2Keu4Iy6scb9X+leD1CneEXQRBSEEzDc9s/aYsg3U8qd1DMVV2OKvoruFAD6D4zO4gtyauDAEU6DwF9x+XteQ+lNpfrXe+3U=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=George.Cherian@cavium.com; 
-Received: from [10.167.103.249] (111.93.218.67) by
- SN6PR07MB4928.namprd07.prod.outlook.com (2603:10b6:805:a5::29) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1017.15; Fri, 3 Aug 2018 04:49:59 +0000
-Subject: Re: Re: [PATCH] i2c: xlp9xx: Fix case where SSIF read transaction
- completes early
-To:     Wolfram Sang <wsa@the-dreams.de>,
-        George Cherian <george.cherian@cavium.com>
-Cc:     linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        jglauber@cavium.com
-References: <1532323119-11085-1-git-send-email-george.cherian@cavium.com>
- <20180731210513.izqbzpvvqq5lq4uh@ninjato>
-From:   George Cherian <gcherian@caviumnetworks.com>
-Message-ID: <77928aed-a9c4-48af-6766-693a142568eb@caviumnetworks.com>
-Date:   Fri, 3 Aug 2018 10:19:40 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=vPx17pyTwH83a4kYwiR0LXQKXjyTj8DF1zf8QdAICBU=;
+        b=tpR4f+8eVmngRWdNd5eQE5ArwIJLPTnYoEKSs8p+GA2s7buWwIDp4y1ZsmvcSwK9dx
+         fEhdXpOgv/Wwd3cyrJLR1hV9hvo1Ptd1gdN9E63caTnice8IqVUwaNJzsD09pNSbPxU8
+         4JtY4DxhRIOnJk4Te681X0DtYbIYaQOmFDIfG5AddGIAxU6iaN7adb5A7RVIGOkM8TAO
+         FtqK0962wudwiH4LwZ0hdLNHepdtA8b8mwgN1DurFGECUnzL8FwbhJZzk8mxK1Y1F7AG
+         xjclHGZY3gYswNWxS1QBD8UaUEq+8UkY20CNsQg4mhDuXbahhoD9CmkfzN9/fbky/JM2
+         LodQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=vPx17pyTwH83a4kYwiR0LXQKXjyTj8DF1zf8QdAICBU=;
+        b=bJ26yoV5EIpgba7dgriQXyHgDZIXwmyARaTxKbbBO05+uMHGe/NtcmavDnXm8o8l4e
+         baTdagfKgd2jCT7xXiPstR8kfZzJFUgW5DoHGpTujXUyyMpSgZYfHQq6+HswlWrXstJi
+         POIvIQlUt44NFcOyZBuSkezNq2g0pLfX7RYEfzewRa9GiNGiOQX7QHML1yltBZM1Du5u
+         o8iBtlk1yo0gWBGWidO5khZo+ypBgnlEib46u9S2WDy/Lkww9x1j8kwjTwvokyZKwRda
+         dPRyzED8NDdBxS0lwlfJ3p4X7AJEOEZI4r3wzMeoaHxZqin+2k4IkCpRmbvSzXuedSar
+         8qWQ==
+X-Gm-Message-State: AOUpUlGkTbGN3iLq+bTUl8FX69b0poKykdJtQrRCbCAx16TXuB/wMKLP
+        K5mpKKrj20CC/RaBDUQWGhk=
+X-Google-Smtp-Source: AAOMgpd6woTyWtZAT4o15k3nlJcin+4LAZPi/YUgWU7R6aIo/FlUwt4VhvlGU/41eDJS8CikHEl86g==
+X-Received: by 2002:a63:5815:: with SMTP id m21-v6mr2127700pgb.78.1533271887903;
+        Thu, 02 Aug 2018 21:51:27 -0700 (PDT)
+Received: from rodete-desktop-imager.corp.google.com ([2401:fa00:d:10:9465:817a:e0d1:934d])
+        by smtp.gmail.com with ESMTPSA id k123-v6sm3536254pga.21.2018.08.02.21.51.23
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 02 Aug 2018 21:51:26 -0700 (PDT)
+Date:   Fri, 3 Aug 2018 13:51:21 +0900
+From:   Minchan Kim <minchan@kernel.org>
+To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Tino Lehnig <tino.lehnig@contabo.de>, stable@vger.kernel.org,
+        Jens Axboe <axboe@kernel.dk>
+Subject: Re: [PATCH 1/2] zram: remove BD_CAP_SYNCHRONOUS_IO with writeback
+ feature
+Message-ID: <20180803045121.GC86818@rodete-desktop-imager.corp.google.com>
+References: <20180802051112.86174-1-minchan@kernel.org>
+ <20180802141304.d0589ddc5f8213429ab3b565@linux-foundation.org>
+ <20180803023929.GA7500@jagdpanzerIV>
+ <20180803030019.GB86818@rodete-desktop-imager.corp.google.com>
+ <20180803041302.GB502@jagdpanzerIV>
 MIME-Version: 1.0
-In-Reply-To: <20180731210513.izqbzpvvqq5lq4uh@ninjato>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [111.93.218.67]
-X-ClientProxiedBy: BM1PR01CA0101.INDPRD01.PROD.OUTLOOK.COM (2603:1096:b00::17)
- To SN6PR07MB4928.namprd07.prod.outlook.com (2603:10b6:805:a5::29)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 4c2e9447-212a-4bfc-7632-08d5f8fc9248
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:SN6PR07MB4928;
-X-Microsoft-Exchange-Diagnostics: 1;SN6PR07MB4928;3:cOvfBwBMkNitq2cgAwtznhEP0r9aZw7lBI8Cw5hRGXtx7CC5Gkb+j994Y4ypSH7vkjxPOMUc+5HMnWTDFKxWmrqprQYN1M4zjL0OUNWrjurrRYzLst0TN0aHqrVhAgSen8/gmXfrPl86U1jUzEENdch0/Xg1y+7rpyWlarTEf1Sw9P4A0xdZOEjEEOCcMwQ36BuaBL3KUt3wDKXdKOGyoCOmMq76gbvqQ8t7EL5PNm0SWIg2ti7iIx+UbPD1OG60;25:1bllHNYIMUqzgs31GA9OWyttgWKmMcF037Lt8VTYqyGnx6ql5lvSCTtSqK1LDvGUoANscrMdIYSDRJSKV+Zfv8XLJBWMTKgvwt7Cs5/F0FylygoIf5qg+Ab8GfDcKS4WgMfixJPyih4urIeog24XGCJ4thO2e4sv63M0ZPyT1hV1BHVsz76llaSvcjPPS7415W+O784TiGnyiPFa7O5qMKMNNAOx4hPQHCIJVHYshOmVAyP6IB7g8fAvSVzuAy4ipeqJUIOYVeY9uyfoP0c6w8t3GGjXB8HFXPGyAplqPKqeCEGiZ6w2vGIs3yv9sHGV8GmC6oUW8Mto45Cjv3Ungw==;31:skU/br2+OFZlY3IuIksO+h4U8wRybN40FGhCH01diaoHCxMRsFCh68KbJNn7jeIoqtfEqVh7mVY6XlHu9P6xXWH6yxQ+VreLtt/lGYTMAjN9BH5Tpsln39s3aAVhCIU1u6Bg0MG1kM2CrWsvaKODgFeSg0QRDeGQ1j0aJUULiZyBf7uvWGkOkGU91kdsZoiNFfbbBnIVV+WhjfsX//IL39p1SWKKO0mRB/YlPkKlaj4=
-X-MS-TrafficTypeDiagnostic: SN6PR07MB4928:
-X-Microsoft-Exchange-Diagnostics: 1;SN6PR07MB4928;20:U3n3uFMz6YbkHkDgHWtqsO7VJAKq+14nOcnm+VnjFzexmYW/OpFL1R3JEet+D4tqX8BPiYZsX9Vtpx7/RWCB5G31gqBw7B/OYEP9X7Pdps/2Jn54RjsqEPKDIDlZFx0gWklvi/fvsTeaACDBvX0kWEE4LyHnl/IRdQgH7YiA+6BWn7Oypt3pHLxm5FOzlv3NuE/k4/Z7jO+gtfSeFHtWExaUTvGAPBJa1eVk1Nkdg7ta0UD50L9nEBpWEbOwmvyEkxlj4sM7ncQYkNhN72wMoUo5gKUmsTqm0Wy5MFIcNLlbLdzDkcDuOJB97lSftp5r+DWcN2DJdIkmm95f1X8BEPTNLQCECg60VEV/MD+cRA0e56JwytiwbLNBNoiO9Z4HzxqK/IXXZggyvA0j9QoqDliC5TToScvAkpbXTmqvQctQ/9PEGa15QHFpH91h9ZHyhBCmjckH/aKobbwiaL/0awgMQdu3o3o41pbvD2PpERj5gLjn45wLMu02/QiSdtjPLpe65aFQFqjigWs2zz0qPbRUkQuHu3N8vghxqIBwGfkFGTJUiHzz8/S8bXiTA5rjWhbeGFBcM0h2ljYJaEoXSMGPz82q9krnqdYDp7nsLbU=;4:lujsfJdZ3qU/2loVSTM0qIQZOUIIN+FGnPSXUPnZrLRqin3ihA9L8frZvYc3k3op7qInXMaYyxeI4F3gUDtvE08WK9ZEQQgfQXmHtNhBasu3FsdA5mIu2M/D2jA35NmtE2DW1oNt2/OKqTa5QnJufE2ZyV12AmbtU7hv2aPo7F/cP7c16v9Ms09ueQLMU/d11soxDbfjEuqGnomwIEiHayG8vH5ooxaOMCQRTpoPVq0eIVAhjLJmtk7ppk1C7YXGh/I2T4fut8MgRh4ai9rctg==
-X-Microsoft-Antispam-PRVS: <SN6PR07MB49284AEAFFDF744288413CDBF9230@SN6PR07MB4928.namprd07.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(93006095)(10201501046)(3231311)(944501410)(52105095)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(6072148)(201708071742011)(7699016);SRVR:SN6PR07MB4928;BCL:0;PCL:0;RULEID:;SRVR:SN6PR07MB4928;
-X-Forefront-PRVS: 0753EA505A
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6049001)(366004)(376002)(136003)(346002)(39860400002)(396003)(54094003)(51914003)(199004)(189003)(65826007)(23746002)(53546011)(50466002)(6246003)(14444005)(486006)(5009440100003)(230700001)(3846002)(64126003)(6116002)(6486002)(229853002)(25786009)(2906002)(53936002)(42882007)(11346002)(52116002)(446003)(76176011)(476003)(26005)(16526019)(97736004)(5660300001)(8936002)(956004)(77096007)(2616005)(386003)(110136005)(7736002)(58126008)(65806001)(65956001)(47776003)(105586002)(16576012)(67846002)(6666003)(316002)(305945005)(478600001)(66066001)(106356001)(81166006)(8676002)(81156014)(72206003)(4326008)(107886003)(68736007)(31686004)(31696002)(36756003);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR07MB4928;H:[10.167.103.249];FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-Received-SPF: None (protection.outlook.com: cavium.com does not designate
- permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?Windows-1252?Q?1;SN6PR07MB4928;23:WhnbV1WkVgYqTcG81ORj6O258BsYhZlPd0obD?=
- =?Windows-1252?Q?wCxjhSpDh/97uZpsHngyAVGsK+LvoQSAzWH5UgHBucvyat5O0FxwgHbd?=
- =?Windows-1252?Q?4YQwv14xvDOyOLyfAzRLMQwRWjoc1uzmKC5FTgtfxc+lnmiFAOtLXlb5?=
- =?Windows-1252?Q?wMpVlwiu2iDxWic7FAVOhLEA68B+dRa7HEEGGPwwc5b/0GRDXt/M6aoF?=
- =?Windows-1252?Q?ACndZW4518N+QTqVquosWeVMAQAy2MCusBI+2Jftl7iveFgmBFLUHCQ/?=
- =?Windows-1252?Q?xPxNrriFaNJEj0+W12ST1eGPV8KBy2paWRkZ4zTxn5RNzZv4+NNHDy0V?=
- =?Windows-1252?Q?8dDom7hu7Jp97o6HNrJlYbB4OeKgwSIRikYl0zSOgfyo46lCa8aq02a4?=
- =?Windows-1252?Q?Oq5fFFXM8nX1IY11L30fnynYxpxg3T0aeGf1W4Y1NLMfGWWulcS0cG/B?=
- =?Windows-1252?Q?VPefsDiIGN4S5FZWsxa03Au/w+S67gZSWH7RW3hO651xdLCMEPDOl09T?=
- =?Windows-1252?Q?jWlOvGWlRBkRUafuU0n77OEYah141XbnZBK04xbfeN6gPIUZegi2xiY0?=
- =?Windows-1252?Q?6TNmtyBw7Eor01oLXv9r3HtQe08gmrl3V7tPNlSrg8+M800XQSXOksFY?=
- =?Windows-1252?Q?dQ+USU38E6tSjIT/8jkbl235HJ37D4cKt6ndJtJWF07DaZlCpsmdQLNb?=
- =?Windows-1252?Q?fA/FDHEt01gZSDJ3SPqchR+tPp6aHdj77GR+r/diboTJuP95l5uvqls0?=
- =?Windows-1252?Q?fZUeoBiDgRjvlsoje8znJ+klpkt/EcxDdc0AfRQy9tgu4wdmbkKX0wrE?=
- =?Windows-1252?Q?p2qZdXOGJ3IYe2A9wskzCztUmLFaNbkoS0y7aOzTd0UuD1HGgwODQZbk?=
- =?Windows-1252?Q?O/S99aJyYwxrwWXTg+PnJNfaaBJJ+D3XW26Nz3zigCER2Y2f96ufK0MO?=
- =?Windows-1252?Q?C4c9zD4/D8dV275gKHUXPBoDuvTG0RZcQ+8/qd3pFCvgiKgVgxHARmsg?=
- =?Windows-1252?Q?ce5cVXY5Bxec01+QA4UeaBrSJY/plLsgElJoN9gUm/hEGKXp2z6ZjJUq?=
- =?Windows-1252?Q?opgBrpdLbc1xzEmatyQCy5N3kg4tMjMCxQjZapwZdlRvkZ5YzIDF9/as?=
- =?Windows-1252?Q?0Jx/PoyLvfUYcyADrlNXkR1XIewCXajfuxdy2f0KNJnyrRSG0MceU98+?=
- =?Windows-1252?Q?79mcovxUWVuZEywtdcCS9DdTOoklXDd2fy+e+JW+QSM3LCfmGdBuTIru?=
- =?Windows-1252?Q?wO54O7bzoQ2hx/HqWW5qHXHBqjoy0XuSwV5er6XdfeU5pFDpTmvI3j3S?=
- =?Windows-1252?Q?DW9QB9yS7vrW/FINFXHO7izExDZB0kXfoufzSpZ/GGYx2rxKlYqvnSDp?=
- =?Windows-1252?Q?3B/qiIeYSZ0aBWCQxOrl9x0UVelGjcOanRnRUHjZ/yvcI/LYktU5ayoT?=
- =?Windows-1252?Q?gPmDR5Jf/jjCzQCmFRrNfQkdyzUezzqBsAQLVD+LObQvIQUBposCMoNo?=
- =?Windows-1252?Q?+fgebgUIxqL+nV/+K/VWStCzdwarcTWZQ+/S7osxJ676uatKoDSejc4l?=
- =?Windows-1252?Q?5sZOA+mRDOR8nMm8DdWZ7Hp0EKu0C/bT3Gz+TO3jnTbTKl7d8gYlS9+a?=
- =?Windows-1252?Q?m/alrISPYipnvz1A6PN3Ds=3D?=
-X-Microsoft-Antispam-Message-Info: u+QX/0+bxsSqwJmYFWXS9gPZyPJWybjpmBBwJ0XnFzHY/yarznzxHqB+mLV/13aH50jkbgh1H5HbS1QXst23fiOJu8ZageHR6EOcYwM3849GPQRun7+NOCzG9cz5I8ovIk7LSrPIBp9cr8c8QsSzpJgzNfoxsJRbUC+pThYjSLZVClxPAKbYvD9sDg0a2dJHDSTvj5festbJtj/PRfMjlnZ/tr66QM67KrNpJ/EKNYQUU0PkfuyB0l8sidnNfttFIAQUAyaaO8LeXGblI5B/TMISWTniV5gS7sD4BZI1gmi9L7+KIpsU9LySVRYvH2o/Fxb3CaxnOJNpT8vhrHTlswGjfZ+SuLvadUlXS9Cctls=
-X-Microsoft-Exchange-Diagnostics: 1;SN6PR07MB4928;6:G+XR4JmHZNPsZ6zCcQ0uMkQD7PdcfDs3iKVTmNdrVqlNPF6pHeGeHkzAhBy/n3FSfha7aKMGMEhKcFHx4oJF3/GQZ3a/RpcpX9/BoA0Mcg+gKGMf35Glg0OgrdtkMErrDzmDE5Gcwwix9jBB+iZ4/MdxGSLj3E0ICjAISOHesphvd++SajcMECzwxWsQ4tmfcMtakoGVCaDc4uytZm0ZvFzqh/Io7BhpDWAGUa8UhGMUc2LFvl8pzucNhWtMMPpaUvTtk+jEIzfUK9AP1vQTdf+fafzgydcBANwVmsA+4UDDEh4BtHhrxgzrisx07txVNAqwCKY+M5oyGkx7NNEx2FSF0qnauP4n/GhPvbLXYNWNWJ7JPQ6pLTSv+B8mFnD7HtqYXhm20QdyWHiukUnqOZCG/J0B9HvvszAPyK0GsmacaD+znTRxsZ1WZ9czaatBjlAEow7K3c2Zfsoy4rEW+w==;5:Zp9YXHh+YcuDsGejadm5Qtl4RQ7pHhQBZI6ragNRs9jJInLmrZKFLBQP6/MqWnywAX6tlA1i8Lq1eSJpnwTPfZn2G4XDqGDvZEyOMKYAuH2elUPtlwGA8mNBoO+bp58oxrru3O4kf50+kC2wFum9iZ8v3zvDtjDpHChjDRvxRvk=;7:UZczNHyNTDQbuynrHiwi1J+4BqcVhLKezpnAUqahZJqXTQzYXbk7UZVeIc9/OObDSCDpREYvgvOHmwWNzgE0zKj4Pu2fw7Rp3HD0yq0wV5mjbvMkCSqu794XsVOr3aQOR/bRCuBURTYS8NCpAKbgsroCOl+5BQBNQe3GOKZ2ilkI/eyUYAj47EXBJbYfWT2BObrZxu0hoDyr1kmfsGDjSQYAX/BKc1RoLPHYDwpFYpn0wazC9/bBd088xP3aAr4i
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-OriginatorOrg: caviumnetworks.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Aug 2018 04:49:59.1838 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4c2e9447-212a-4bfc-7632-08d5f8fc9248
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 711e4ccf-2e9b-4bcf-a551-4094005b6194
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR07MB4928
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180803041302.GB502@jagdpanzerIV>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Wolfran,
-
-Thanks for the review.
-
-I will update the patch with a small comment section above
-len --;
-so that there is no confusion.
-
-On 08/01/2018 02:35 AM, Wolfram Sang wrote:
->> --- a/drivers/i2c/busses/i2c-xlp9xx.c
->> +++ b/drivers/i2c/busses/i2c-xlp9xx.c
->> @@ -191,28 +191,30 @@ static void xlp9xx_i2c_drain_rx_fifo(struct xlp9xx_i2c_dev *priv)
->>   	if (priv->len_recv) {
->>   		/* read length byte */
->>   		rlen = xlp9xx_read_i2c_reg(priv, XLP9XX_I2C_MRXFIFO);
->> +		len--;
+On Fri, Aug 03, 2018 at 01:13:02PM +0900, Sergey Senozhatsky wrote:
+> Hi Minchan,
 > 
-> I don't know the HW and assume the above line is correct because of
-> merging two interrupts into one. However, the line looks a bit stray,
-> and I wonder if we shouldn't add a comment somewhere explaining the
-> situation similar to the second paragraph of the commit message?
+> On (08/03/18 12:00), Minchan Kim wrote:
+> > > 	"Device is so fast that asynchronous IO would be inefficient."
+> > > 
+> > > Which is not the reason why BDI_CAP_SYNCHRONOUS_IO is used by ZRAM.
+> > > Probably, the comment needs to be updated as well.
+> > 
+> > I couldn't catch your point. Could you clarify a little bit more?
+> > What do you want to correct for the comment?
+> >
+> > > Both SWP_SYNCHRONOUS_IO and BDI_CAP_SYNCHRONOUS_IO tend to pivot
+> > > "efficiency" [looking at the comments], but in ZRAM's case the whole
+> > > reason to use SYNC IO is a race condition and user-after-free that
+> > > follows.
+> > 
+> > Actually, it's not whole reason. As I wrote down, without it, swap_readpage
+> > waits the IO completion for a long time by blk_poll so it causes system
+> > sluggish problem when device is slow(e.g., zram with backing device).
 > 
+> Sure, this is problem #1. But slow swap device probably doesn't do any
+> irreversible harm to the system. Unlike use-after-free, which does. Thus
+> use-after-free is a problem #0. BDI_CAP_SYNCHRONOUS_IO comment doesn't
+> mention problem #0; it talks about problem #1 only. So, nothing serious,
+> just wanted to point that out.
+> 
+> So we probably can make ZRAM always ASYNC when WB is enabled.
+> 
+> 
+> Or... maybe we can make swap out to be SYNC and perform WB in background.
+> In __zram_bvec_write() we can always write compressed object to zmalloc,
+> even the huge ones.
+> Things to note:
+> a) even when WB is enabled we still allocate huge classes
+> b) even when WB is enabled we still may use those huge classes (consider
+>    a case when backing devices is full)
+> 
+> So huge classes are still there and we still use them. So let's use
+> them?
+> 
+> For a huge object, after we stored it into zsmalloc, we can schedule a WB
+> work, which would:
+> a) write that particular object (page) to the backing device
+> b) mark entry as WB entry
+> c) remove object from zsmalloc, unlock necessary locks
+> 
+> So swap in should either see object in zsmalloc or on backing device.
+> How does this sound?
+> 
+> And reading from a backing device can always be SYNC. Can it?
+> Am I missing something?
 
-Regards,
--George
+AFAIK, onging writeback page couldn't freed so it was not writeabck problem.
+
+What I'm tryig to fix is read part.
+If we use swapcache, it shouldn't be a problem either because swapcache
+has a reference count and we should wait PG_lock release before the freeing
+from the swapcache so there is no race condition.
+
+However, by the skip swapcache logic, we don't have a refcount any longer.
+
+I think we can hold a new refcount in zram driver itself. With that, we
+could get both benefits from writeback feature and skip swapcache.
+
+However, I decided, at this moment, going this simple way for
+stable-material to solve #0 and #1 problems at the same time.
+
+Thanks. 
+
+
+> 
+> 	-ss
