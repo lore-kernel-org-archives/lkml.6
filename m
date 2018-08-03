@@ -2,72 +2,101 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DB45C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 10:09:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4684EC28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 10:10:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 402AC21717
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 10:09:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 402AC21717
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id F298021717
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 10:10:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="f48tuFOP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F298021717
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732493AbeHCMFS (ORCPT
+        id S1732524AbeHCMGF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 08:05:18 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53372 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728450AbeHCMFS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 08:05:18 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 29F184012981;
-        Fri,  3 Aug 2018 10:09:42 +0000 (UTC)
-Received: from localhost (unknown [10.40.205.152])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 678152142F20;
-        Fri,  3 Aug 2018 10:09:41 +0000 (UTC)
-Date:   Fri, 3 Aug 2018 12:09:40 +0200
-From:   Stanislaw Gruszka <sgruszka@redhat.com>
-To:     Kalle Valo <kvalo@codeaurora.org>
-Cc:     Wireless <linux-wireless@vger.kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] mt76x0: build driver only as module
-Message-ID: <20180803100939.GE10284@redhat.com>
-References: <20180803091401.GB10284@redhat.com>
- <87zhy36c4n.fsf@kamboji.qca.qualcomm.com>
- <20180803092822.GD10284@redhat.com>
+        Fri, 3 Aug 2018 08:06:05 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:41062 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728122AbeHCMGE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 08:06:04 -0400
+Received: by mail-io0-f193.google.com with SMTP id q9-v6so4521285ioj.8
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Aug 2018 03:10:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=cwwM4ZmIg5b/t6g0BIko0N16SX6FE9E8A0tse56fZB4=;
+        b=f48tuFOPiYPS50jfgk3A36bE/473W+tlNO/fVf3BadbD9qIqaabAgYQb8ibNn8jUYV
+         NRTeStqYkocGZGENbFumoKVVjDNvdwyf1IV5d8mh+pt46Y31po+TEDIc5hECNI+IzOrQ
+         GSbxipUGUBheLl6c4RRl+9a7DNhGr311G1XYw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=cwwM4ZmIg5b/t6g0BIko0N16SX6FE9E8A0tse56fZB4=;
+        b=c2zYSnjRzUbVPdXdOgtYwik8ISkNDvZBzis+si0u6qXkbltlG9YivHMpJpRWzAQRvK
+         oheNxW+sq3BCQSl/FbmfDDZgb51BpGDqfWpJdOoOfN/bDH4mCJGmhkJxTII4aw5P2qe+
+         f2eCSnEaHxFCBKXGMEajGpyxERwOmkNWyax0a9nNE5OdKVPfVGCeISyMKKmFxggKE0ei
+         Q211nakq80W+fvtkHk/7qTxicIuqtimhkUS06oQDEpYPg10ql6Cy5a70n5nL6cgPErzx
+         QVjJATPwt7vd+LW8FIp1dOy0AqBu1zjlF+soFKiVOz665JP0YdfaxQjYyF55HrHzEoJV
+         XIzA==
+X-Gm-Message-State: AOUpUlHhqmq2TTG+jIPGIk89pH3fn44vJzBokbZuovorArM1inYPcHz6
+        uvlCzgdWSV4DWewVVVEkopli5G8FPMXqXfVwUDqLir8znos=
+X-Google-Smtp-Source: AA+uWPw3KNYT6E6r5KtJpJuVYyy9CjM/56naMTJBb3g4Jrs5pt8WJtsFN2XfsDoWr00Tl7vgtM3HfrMi4T7YeGWBuUQ=
+X-Received: by 2002:a6b:144c:: with SMTP id 73-v6mr5329070iou.218.1533291028143;
+ Fri, 03 Aug 2018 03:10:28 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180803092822.GD10284@redhat.com>
-User-Agent: Mutt/1.8.3 (2017-05-23)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Fri, 03 Aug 2018 10:09:42 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Fri, 03 Aug 2018 10:09:42 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'sgruszka@redhat.com' RCPT:''
+Received: by 2002:a02:2b03:0:0:0:0:0 with HTTP; Fri, 3 Aug 2018 03:10:27 -0700 (PDT)
+In-Reply-To: <20180629102035.2757-1-rnayak@codeaurora.org>
+References: <20180629102035.2757-1-rnayak@codeaurora.org>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Fri, 3 Aug 2018 12:10:27 +0200
+Message-ID: <CAPDyKFq=7RrUcspzyZGxYrv8bFHC=hkqMTT1SFeb+H_=Yv_Cxg@mail.gmail.com>
+Subject: Re: [PATCH] remoteproc: q6v5: Add support to vote for rpmh power domains
+To:     Rajendra Nayak <rnayak@codeaurora.org>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>, sibis@codeaurora.org,
+        linux-remoteproc@vger.kernel.org,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 03, 2018 at 11:28:22AM +0200, Stanislaw Gruszka wrote:
-> > But this feels like an ugly hack to me. Isn't there a better way to fix
-> > this? (I don't have time to investigate the error in detail right now.)
-> 
-> Yes, rename symbols names. And I will do this, just wanted to provide
-> quick fix for the problem. 
-> 
-> Moreover seems the same thing should be done for mt7601u to avoid build
-> errors and perhaps with mt76 :-( 
-> 
-> So I'm going to rename functions.
+On 29 June 2018 at 12:20, Rajendra Nayak <rnayak@codeaurora.org> wrote:
+> With rpmh ARC resources being modelled as power domains with
+> performance state, add support to proxy vote on these for SDM845.
+> Add support to vote on multiple of them, now that genpd supports
+> associating multiple power domains to a device.
+>
+> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+> ---
+> This patch is dependent on the rpmh powerdomain driver
+> still under review,
+> https://lkml.org/lkml/2018/6/27/7
 
-I have the patches, I'm building kernel with allyesconfig now,
-it will take a while ...
+I assume you intend to re-spin this to use the new
+dev_pm_domain_attach_by_name(), once 4.19 rc1 is out, right!?
 
-Stanislaw
+Anyway, please keep me in the loop.
+
+[...]
+
+> +       if (num_pds > 1) {
+> +               for (i = 0; i < num_pds; i++) {
+> +                       devs[i] = genpd_dev_pm_attach_by_id(dev, i);
+
+This API is supposed to be called only by the driver core. Please use
+dev_pm_domain_attach_by_id|name() instead.
+
+[...]
+
+Kind regards
+Uffe
