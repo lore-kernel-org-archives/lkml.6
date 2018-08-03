@@ -2,123 +2,169 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 658AFC28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 19:27:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA7D3C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 19:30:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C9832176D
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 19:27:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fd+ufpem"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C9832176D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 5E3AA2176D
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 19:30:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E3AA2176D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730196AbeHCVZF (ORCPT
+        id S1729828AbeHCV2R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 17:25:05 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:33687 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727857AbeHCVZE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 17:25:04 -0400
-Received: by mail-wm0-f66.google.com with SMTP id r24-v6so5754486wmh.0
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Aug 2018 12:27:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:subject:to:cc:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=9OA5LgHSgaLYXTbwaDFhQKZeZeOzaWcET78LLCmeXsc=;
-        b=fd+ufpemeQBTkIrfBBKlGH0sH6+xUlZWxyZRTG+sTvAvmTomJdj7HflsnpX+WjSX3G
-         EpIlIZqHv5UbGt/+P+lnhV4i79+SfRn4Sh44jBD0fcIIaAN4+eNTYv0BzuJLIBZ2T0aE
-         cf1VOP2NGT/b7Z1/AupVPDuP6SEoyDSqPWMq7B/7RZh3TBIce8fN57Kdl24VOkm3SoNV
-         pcip15Ew7SdD5E68hpAeqEAnh+uVt82pUcBOsIs9CcgMMUTMQ7AZLOGapcklXl7DrluC
-         dJXuJFRNUDYRmy9cJeXKflL9WAuj1TT+FA/TMWAE0/dLqkQiDYddY10dLK3ZuObtZrl6
-         VDpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:cc:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=9OA5LgHSgaLYXTbwaDFhQKZeZeOzaWcET78LLCmeXsc=;
-        b=PopVeY6jfjsWOr73YqXP9O1yx9oVeOBYphfdfYFccCuU9mqu0PGo3AflrWRC5QmkUx
-         ry/KYXPjQzegj4An8Y9Y8Q/10ODExlQv9yNl15hDJswv6CbYhUhRFJFyRRx6Hwd1zZEX
-         hHpse70FEbArG6mHhvRegyAbPOkvvdcp1+XaBTXkoX1cV154B1z4W4Um4y3PvC9zu7Y/
-         BqN1fwCB990/Hs6esnSDP6zMVU2gF2iSd4IXIyOCPggqRyZP62zAKePN9SMAx28AvVP/
-         8hYFoNVHPS8PM4YxcBhqN7zNKNIkmaU3GrE4asyJwXlz+UPIgG822awLCobg1FPJKY9+
-         TVSA==
-X-Gm-Message-State: AOUpUlGCf12C7rb5kgr2JlI5JnJ4FtWByI0umeFqnoPzCC+Rn1PMIwQE
-        rKGKXJamjhrSw65VrfBMlzGPf6/s
-X-Google-Smtp-Source: AAOMgpcJu2z4rqso39dCrDQO4b5FmQ6PYHbLcCltjbTx7+UQIZtz6629oCShpVIHrfIejw2u5WAuLg==
-X-Received: by 2002:a1c:5f56:: with SMTP id t83-v6mr6116119wmb.27.1533324445957;
-        Fri, 03 Aug 2018 12:27:25 -0700 (PDT)
-Received: from ?IPv6:2003:ea:8bd4:d600:9545:19fe:eae2:90aa? (p200300EA8BD4D600954519FEEAE290AA.dip0.t-ipconnect.de. [2003:ea:8bd4:d600:9545:19fe:eae2:90aa])
-        by smtp.googlemail.com with ESMTPSA id x7-v6sm7057437wrr.95.2018.08.03.12.27.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 03 Aug 2018 12:27:25 -0700 (PDT)
-From:   Heiner Kallweit <hkallweit1@gmail.com>
-Subject: [PATCH] genirq: Consider domain hierarchy when checking for
- IRQCHIP_ONESHOT_SAFE
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Message-ID: <a0407813-dbc3-4d4a-4feb-2c4865dfd4f5@gmail.com>
-Date:   Fri, 3 Aug 2018 21:27:21 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 3 Aug 2018 17:28:17 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38036 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728139AbeHCV2R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 17:28:17 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D89B4BB428;
+        Fri,  3 Aug 2018 19:30:37 +0000 (UTC)
+Received: from localhost (unknown [10.18.25.149])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id B6D402026D65;
+        Fri,  3 Aug 2018 19:30:37 +0000 (UTC)
+Date:   Fri, 3 Aug 2018 15:30:37 -0400
+From:   Mike Snitzer <snitzer@redhat.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Zdenek Kabelac <zkabelac@redhat.com>, wgh@torlan.ru,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        linux-block <linux-block@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Sagi Grimberg <sagi@grimberg.me>, dm-devel@redhat.com
+Subject: Re: LVM snapshot broke between 4.14 and 4.16
+Message-ID: <20180803193037.GA4581@redhat.com>
+References: <CA+55aFyAox9BTDpRsqLXiROhHOX60aa45LEZ7Azteaumdu11Fw@mail.gmail.com>
+ <CAOi1vP-SJO4AMK=XD3Lmja++2dQqoiw6Zn8Vgxf8OfvYgnuC6Q@mail.gmail.com>
+ <CA+55aFy2DR9fxHhmGq+azSjX9D71YtLsuFKmoEuYW3uTAUYtJg@mail.gmail.com>
+ <d76415de-2056-c7d6-cc88-b896deaa8ead@torlan.ru>
+ <1ec0a220-d5b0-1c27-e63b-c4d3f4ce9d77@torlan.ru>
+ <CA+55aFyPVQ5-gA93irsaxPC9BNQxnGWrDDHPMUYai2kxKiaKWQ@mail.gmail.com>
+ <b2bbd8ec-ac5b-fa8a-d3f7-8615d87f73c3@redhat.com>
+ <CA+55aFwWZX=CXmWDTkDGb36kf12XmTehmQjbiMPCqCRG2hi9kw@mail.gmail.com>
+ <20180803185431.GB3258@redhat.com>
+ <CA+55aFwDEY7B6OMh5xL2wc8BRj1KkzBHggNowAjbsWfma6H5Zg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+55aFwDEY7B6OMh5xL2wc8BRj1KkzBHggNowAjbsWfma6H5Zg@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Fri, 03 Aug 2018 19:30:37 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Fri, 03 Aug 2018 19:30:37 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'msnitzer@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In case of a domain hierarchy we may miss the IRQCHIP_ONESHOT_SAFE
-flag because we look at top of the stack only. See also discussion
-here: https://marc.info/?l=linux-kernel&m=153301773524685&w=2
+On Fri, Aug 03 2018 at  3:09pm -0400,
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
----
-Uups, PATCH tag was missing.
----
- kernel/irq/manage.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+> On Fri, Aug 3, 2018 at 11:54 AM Mike Snitzer <snitzer@redhat.com> wrote:
+> >
+> >
+> > As I explained to Ted in my previous reply to this thread: using an lvm2
+> > that is of the same vintage of the kernel is generally going to provide
+> > a more robust user experience
+> 
+> You said that yes.
+> 
+> And it is completely irrelevant.
+> 
+> The fact is, if you use an older lvm2, then a newer kernel still needs
+> to work.  Your "more robust experience" argument has nothing
+> what-so-ever to do with that.
+> 
+> Will you get new features from newer user land tools? Sure, usually.
+> And entirely immaterial to a kernel regression.
 
-diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
-index a66c58f9..1a28f068 100644
---- a/kernel/irq/manage.c
-+++ b/kernel/irq/manage.c
-@@ -1156,6 +1156,16 @@ setup_irq_thread(struct irqaction *new, unsigned int irq, bool secondary)
- 	return 0;
- }
+I was merely giving context for the suggestion of keeping lvm2 updated.
+Not saying it was relevant for this regression.
  
-+static bool irq_data_oneshot_safe(struct irq_data *data)
-+{
-+#ifdef	CONFIG_IRQ_DOMAIN_HIERARCHY
-+	/* check topmost irq_chip only */
-+	while (data->parent_data)
-+		data = data->parent_data;
-+#endif
-+	return !!(data->chip->flags & IRQCHIP_ONESHOT_SAFE);
-+}
-+
- /*
-  * Internal function to register an irqaction - typically used to
-  * allocate special interrupts that are part of the architecture.
-@@ -1243,7 +1253,7 @@ __setup_irq(unsigned int irq, struct irq_desc *desc, struct irqaction *new)
- 	 * chip flags, so we can avoid the unmask dance at the end of
- 	 * the threaded handler for those.
- 	 */
--	if (desc->irq_data.chip->flags & IRQCHIP_ONESHOT_SAFE)
-+	if (irq_data_oneshot_safe(&desc->irq_data))
- 		new->flags &= ~IRQF_ONESHOT;
- 
- 	/*
--- 
-2.18.0
+> Will newer user land tools hopefully fix other issues? You'd hope so,
+> but again - immaterial.
+> 
+> So why are you bringing up a complete red herring? It's entirely
+> immaterial to the actual issue at hand.
 
+I was trying to give context for the "best to update lvm2 anyway"
+disclaimer that was used.  Yeah, it was specious.
+
+And Zdenek exposed way more surface area for you to attack with his
+reply to this thread.  My initial response to this thread was far more
+understated but was effectively: read-only dm-snapshot is rare, I'm
+inclined to just let this be.
+
+And yeah, that isn't a good excuse to ignore it but: dm-snapshot is a
+steaming pile as compared to dm thin-provisioning so dm-snapshot users
+who then go off the beaten path are already masochistic.  SO the 2 users
+who noticed can cope..
+
+But that too is a cop-out.
+
+> I would _hope_ that other projects hjave the same "no regressions"
+> rule that the kernel has, but I know many don't. But whatever other
+> projects are out there, and whatever other rules _they_ have for their
+> development is also entirely immaterial to the kernel.
+> 
+> The kernel has a simple rule: no user regressions.
+> 
+> Yes, we've had to break that rule very occasionally - when the
+> semantics are a huge honking security issue and cannot possibly be
+> hidden any other way, then we obviously have to break them.
+> 
+> So it has happened. It's happily quite rare.
+>
+> But in this case, the issue is that the block layer now enforces the
+> read-only protection more. And it seems to be the case that the lvm
+> tools set the read-only flag even when they then depended on being
+> able to write to them, because we didn't use to.
+> 
+> So just judging from that description, I do suspect that "we can't
+> depend on the lvm read-only flag", so a patch like
+> 
+>  "let's not turn DM_READONLY_FLAG into actually set_disk_ro(dm_disk(md), 1)"
+> 
+> makes sense.
+> 
+> Obviously, if we can limit that more, that would be lovely.
+> 
+> But dammit, NOBODY gets to say "oh, you should just update user land tools".
+
+I'll have a closer look at all this.
+
+Could be DM in general is lacking for read-only permissions when you
+have complex stacking involved.
+
+> Because when they do, I will explode. And I'm 1000% serious that I
+> will refuse to work with people who continue to say that or continue
+> to make excuses.
+> 
+> And user land developers should damn well know about this. The fact
+> that they are apparently not clued in about kernel rules is what
+> allowed this bug to go undiscovered and unreported for much too long.
+> Apparently the lvm2 user land developers *did* notice the breakage,
+> but instead of reporting it as a kernel bug, they worked around it.
+
+Yeap, they did.. I was unaware myself.
+
+> So user land developers should actually know that if the kernel stops
+> working for them, they should *not* work around it. Sure, fix your
+> program, but let the kernel people know.
+
+Agreed.
+ 
+> And kernel people should know that "oh, the user land people already
+> changed their behavior" is *not* a "I don't need to care about it".
+> Unless the user land fix was so long ago that nobody cares any more.
+
+I never didn't care.  I just didn't care much.  Because "dm-snapshot".
+
+Mike
