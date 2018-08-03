@@ -2,181 +2,142 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14231C43142
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 00:19:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1919C43142
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 00:24:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA53C21708
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 00:19:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9EE32215EA
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 00:24:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=onstation.org header.i=@onstation.org header.b="ePogXnj+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA53C21708
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=onstation.org
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JwNBqx/T"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EE32215EA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732526AbeHCCN1 (ORCPT
+        id S1732072AbeHCCS3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 22:13:27 -0400
-Received: from onstation.org ([52.200.56.107]:33992 "EHLO onstation.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727161AbeHCCMj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 22:12:39 -0400
-Received: from xilitla.hsd1.wv.comcast.net (c-98-236-77-125.hsd1.wv.comcast.net [98.236.77.125])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: masneyb)
-        by onstation.org (Postfix) with ESMTPSA id 45BBB227B;
-        Fri,  3 Aug 2018 00:19:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=onstation.org;
-        s=default; t=1533255543;
-        bh=f0CHoJaHBAxYjtngAY0Hbbyq/v0orDNg7GWXGNHhgFk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ePogXnj+FZriNtbcs1if8O1x31yBqsbVzqUwpzzrmKXe9Knuxl4eqFCBpe6jaCU/7
-         4fHMMlpI9iu/ZQ9A3C69fffacKV8ClHqH5NIY157oEhWADctLEwF9OcLAFEPw88KN6
-         0LcDKavvagCZce4TbYakbOnVoncniH6P0LICA+kA=
-From:   Brian Masney <masneyb@onstation.org>
-To:     jic23@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        andy.gross@linaro.org, david.brown@linaro.org,
-        linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org
-Cc:     jonathan@marek.ca, jmaneyrol@invensense.com, knaack.h@gmx.de,
-        lars@metafoo.de, pmeerw@pmeerw.net, mkelly@xevo.com,
-        fischerdouglasc@gmail.com, bshah@kde.org, ctatlor97@gmail.com
-Subject: [PATCH v3 2/9] ARM: dts: qcom: msm8974-hammerhead: add device tree bindings for mpu6515
-Date:   Thu,  2 Aug 2018 20:18:53 -0400
-Message-Id: <20180803001900.25371-3-masneyb@onstation.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180803001900.25371-1-masneyb@onstation.org>
-References: <20180803001900.25371-1-masneyb@onstation.org>
+        Thu, 2 Aug 2018 22:18:29 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:37868 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727091AbeHCCS3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 22:18:29 -0400
+Received: by mail-pf1-f195.google.com with SMTP id a26-v6so2245141pfo.4
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Aug 2018 17:24:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=zZM5Jpx2IOsVIogcv5OnZCGUFSkwrthIO9ixu6UL/zk=;
+        b=JwNBqx/TkS5+lFcVFFYLiMRYmbod7QmLNXLkwmEDUz4oeIuHzq0PegMUPZNvN84iKw
+         NXrOzmyV5VGTShOHDjdJnMIva8SgRFJmNBrSILibSOYcSAHvI89WQ5IrqnKB4ErmRy7M
+         ymnHtKKiquFY5YuHtlcDJ57gKJ8WUzXgiSd+A=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=zZM5Jpx2IOsVIogcv5OnZCGUFSkwrthIO9ixu6UL/zk=;
+        b=jF+hNdsF23S0xA5O0QUL+Hv6rnN4i2BTPuteHSW+diibgu/CVGmMxvkJLxv+vxemmJ
+         P5A/6WZCptDYahfvUCHLtlqSx2dcM/wgKS9CWa+QDhu5rOIE38XEVnFSutILrr2r9nPW
+         mP8InqGN6H+M8TiAGpRbaaPeHVyik6wgJn7Uyt46W5WoGnPxbB7+/qpfpzy0aFFJ3jG0
+         U4HmEMuXvq0AOcRkSNMxNTdfbt6gFzzA4ps/l4574/+dejgQth5H4e5s8nP6OU2JaseJ
+         8QEMKwb5ubbLAXYMPGCXuYOmDsvCDGQdlKrb37GDn27h1ku2/swX9gF+/qhF+iNVbcF1
+         gcPA==
+X-Gm-Message-State: AOUpUlHVgV9XIWIvFxZCcEQ40gWRrpAkCN7ApcZ3wKA4USYfeE3ctvRF
+        cnIwsgZr+YDCSiKSjB3XmZr1aw==
+X-Google-Smtp-Source: AAOMgpcZoZ1fvS1ahbH41kCXghtxhx0sjdGR+UX2unvNSTS2KPs+OlwOZ9L74Q+/kS9gPNKomdNKVw==
+X-Received: by 2002:a65:6455:: with SMTP id s21-v6mr1440532pgv.394.1533255893073;
+        Thu, 02 Aug 2018 17:24:53 -0700 (PDT)
+Received: from localhost ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
+        by smtp.gmail.com with ESMTPSA id 14-v6sm7021724pft.93.2018.08.02.17.24.52
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 02 Aug 2018 17:24:52 -0700 (PDT)
+Date:   Thu, 2 Aug 2018 17:24:52 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Chanwoo Choi <cw00.choi@samsung.com>
+Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Brian Norris <briannorris@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Benson Leung <bleung@chromium.org>,
+        Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH v5 03/12] PM / devfreq: Don't adjust to user limits in
+ governors
+Message-ID: <20180803002452.GV68975@google.com>
+References: <20180703234705.227473-1-mka@chromium.org>
+ <20180703234705.227473-4-mka@chromium.org>
+ <CGME20180802233605epcas2p2fc6b1cef0dc773f6c7e59017721917bc@epcas2p2.samsung.com>
+ <20180802233600.GT68975@google.com>
+ <5B639BD2.5050008@samsung.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5B639BD2.5050008@samsung.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds device tree bindings for the mpu6515 to the LG Nexus 5
-(hammerhead) phone. Confirmed that the gyroscope / accelerometer
-(mpu6515), magnetometer (ak8963), and temperature / pressure (bmp280)
-sensors are available on the phone.
+On Fri, Aug 03, 2018 at 09:03:30AM +0900, Chanwoo Choi wrote:
+> Hi Matthias,
+> 
+> On 2018년 08월 03일 08:36, Matthias Kaehlcke wrote:
+> > Hi Chanwoo,
+> > 
+> > this patch and "PM / devfreq: Fix handling of min/max_freq == 0"
+> > address issues not directly related with the throttler. It seems it
+> > could still take a while for the throttler to move forward, do you
+> > want me to spin out these two patches so that they can get merged
+> > independently from the rest of the series?
+> 
+> How about resend the devfreq patches(patch1/2/3/4/6) which don't depend on
+> throttler core with my reviewed tag? Maybe, it is easy to merge them through Myungjoo.
 
-Interrupts are not working properly on the ak8963 magnetometer so they
-are currently not configured.
+Sure, I can do this if you think it is reasonable to merge all these
+patches without the throttler.
 
-The bmp280 retuns temperature/pressure measurement skipped errors but
-will reliably work if I run:
+These are the patches we are talking about and my interpretation of
+their status:
 
-    echo 1 > in_pressure_oversampling_ratio
-    echo 1 > in_temp_oversampling_ratio
+[01] PM / devfreq: Init user limits from OPP limits, not viceversa
+  landed in Rafaels tree
 
-Signed-off-by: Brian Masney <masneyb@onstation.org>
-Signed-off-by: Jonathan Marek <jonathan@marek.ca>
----
-I'll send follow up patch(es) once I investigate why the skipped errors
-are occurring with the bmp280 with the default oversampling ratios.
+[02] PM / devfreq: Fix handling of min/max_freq == 0
+  independent fix, can land
 
- .../qcom-msm8974-lge-nexus5-hammerhead.dts    | 56 +++++++++++++++++++
- arch/arm/boot/dts/qcom-msm8974.dtsi           | 11 ++++
- 2 files changed, 67 insertions(+)
+[03] PM / devfreq: Don't adjust to user limits in governors
+  independent improvement, can land
 
-diff --git a/arch/arm/boot/dts/qcom-msm8974-lge-nexus5-hammerhead.dts b/arch/arm/boot/dts/qcom-msm8974-lge-nexus5-hammerhead.dts
-index c2dc9d09484a..928affae1885 100644
---- a/arch/arm/boot/dts/qcom-msm8974-lge-nexus5-hammerhead.dts
-+++ b/arch/arm/boot/dts/qcom-msm8974-lge-nexus5-hammerhead.dts
-@@ -241,6 +241,24 @@
- 				bias-pull-up;
- 			};
- 		};
-+
-+		i2c12_pins: i2c12 {
-+			mux {
-+				pins = "gpio87", "gpio88";
-+				function = "blsp_i2c12";
-+				drive-strength = <2>;
-+				bias-disable;
-+			};
-+		};
-+
-+		mpu6515_pin: mpu6515 {
-+			irq {
-+				pins = "gpio73";
-+				function = "gpio";
-+				bias-disable;
-+				input-enable;
-+			};
-+		};
- 	};
- 
- 	sdhci@f9824900 {
-@@ -277,6 +295,44 @@
- 			linux,code = <KEY_VOLUMEDOWN>;
- 		};
- 	};
-+
-+	i2c@f9968000 {
-+		status = "ok";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&i2c12_pins>;
-+		clock-frequency = <100000>;
-+		qcom,src-freq = <50000000>;
-+
-+		mpu6515@68 {
-+			compatible = "invensense,mpu6515";
-+			reg = <0x68>;
-+			interrupts-extended = <&msmgpio 73 IRQ_TYPE_EDGE_FALLING>;
-+			vddio-supply = <&pm8941_lvs1>;
-+
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&mpu6515_pin>;
-+
-+			i2c-gate {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				ak8963@f {
-+					compatible = "asahi-kasei,ak8963";
-+					reg = <0x0f>;
-+					// Currently only works in polling mode.
-+					// gpios = <&msmgpio 61 0>;
-+					vid-supply = <&pm8941_lvs1>;
-+					vdd-supply = <&pm8941_l17>;
-+				};
-+
-+				bmp280@76 {
-+					compatible = "bosch,bmp280";
-+					reg = <0x76>;
-+					vdda-supply = <&pm8941_lvs1>;
-+					vddd-supply = <&pm8941_l17>;
-+				};
-+			};
-+		};
-+	};
- };
- 
- &spmi_bus {
-diff --git a/arch/arm/boot/dts/qcom-msm8974.dtsi b/arch/arm/boot/dts/qcom-msm8974.dtsi
-index d9019a49b292..cebb6ae9143a 100644
---- a/arch/arm/boot/dts/qcom-msm8974.dtsi
-+++ b/arch/arm/boot/dts/qcom-msm8974.dtsi
-@@ -737,6 +737,17 @@
- 			dma-names = "tx", "rx";
- 		};
- 
-+		blsp_i2c12: i2c@f9968000 {
-+			status = "disabled";
-+			compatible = "qcom,i2c-qup-v2.1.1";
-+			reg = <0xf9968000 0x1000>;
-+			interrupts = <0 106 IRQ_TYPE_NONE>;
-+			clocks = <&gcc GCC_BLSP2_QUP6_I2C_APPS_CLK>, <&gcc GCC_BLSP2_AHB_CLK>;
-+			clock-names = "core", "iface";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+
- 		spmi_bus: spmi@fc4cf000 {
- 			compatible = "qcom,spmi-pmic-arb";
- 			reg-names = "core", "intr", "cnfg";
--- 
-2.17.1
+[04] PM / devfreq: Add struct devfreq_policy
+  edge case, can land if devfreq maintainers think that factoring out
+  some fields to the policy struct is an improvement independently of
+  the throttler
 
+[05] PM / devfreq: Add support for policy notifiers
+  under heavy discussion ;-), can't land
+
+[06] PM / devfreq: Make update_devfreq() public
+  has no user without the throttler, not sure if it should be merged
+  without it. up to devfreq maintainers.
+
+Please let me know what you think
+
+Thanks
+
+Matthias
