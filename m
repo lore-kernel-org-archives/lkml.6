@@ -2,155 +2,182 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41923C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 19:47:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31CB4C46469
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 19:50:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0289E217AE
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 19:47:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0289E217AE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id CBA032178D
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 19:50:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mGzO3pMr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBA032178D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731999AbeHCVpa (ORCPT
+        id S1731982AbeHCVsK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 17:45:30 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57772 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1731925AbeHCVpa (ORCPT
+        Fri, 3 Aug 2018 17:48:10 -0400
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:39260 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728470AbeHCVsJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 17:45:30 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w73JdYVs031932
-        for <linux-kernel@vger.kernel.org>; Fri, 3 Aug 2018 15:47:47 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2kmt3afar1-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Aug 2018 15:47:47 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Fri, 3 Aug 2018 20:47:45 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 3 Aug 2018 20:47:43 +0100
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w73JlgaQ34406558
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 3 Aug 2018 19:47:42 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B007042042;
-        Fri,  3 Aug 2018 22:47:52 +0100 (BST)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A26A942041;
-        Fri,  3 Aug 2018 22:47:51 +0100 (BST)
-Received: from localhost.localdomain (unknown [9.80.98.9])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri,  3 Aug 2018 22:47:51 +0100 (BST)
-Subject: Re: [PATCH 3/4] ima: add support for KEXEC_ORIG_KERNEL_CHECK
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Seth Forshee <seth.forshee@canonical.com>
-Cc:     Eric Richter <erichte@linux.vnet.ibm.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Justin Forbes <jforbes@redhat.com>
-Date:   Fri, 03 Aug 2018 15:47:30 -0400
-In-Reply-To: <20180803161636.GX3001@ubuntu-xps13>
-References: <20180725233200.761-1-erichte@linux.vnet.ibm.com>
-         <20180725233200.761-4-erichte@linux.vnet.ibm.com>
-         <20180803131129.GS3001@ubuntu-xps13>
-         <1533308099.4337.424.camel@linux.ibm.com>
-         <20180803161636.GX3001@ubuntu-xps13>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18080319-4275-0000-0000-000002A36693
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18080319-4276-0000-0000-000037AB85DB
-Message-Id: <1533325650.4337.527.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-03_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808030213
+        Fri, 3 Aug 2018 17:48:09 -0400
+Received: by mail-yw1-f66.google.com with SMTP id r184-v6so1404335ywg.6
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Aug 2018 12:50:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=/8eorP3SBVJgegrat/pBBkRyKnsxwNw2tVlTziNUwzA=;
+        b=mGzO3pMriJtX+H4GhrFGf9l6KbVr6v4UcbosbBele8EsBgNBb/TpYoE5iQlzM2wBde
+         +CIUSZxCPyQ8yBhCrRgHDuwqrZlI+oUlQKf/3n0d15JcoWB8JjjbvKKgn6aXdomGt6+X
+         3H5kffqe4XBd8RUS/oRhKRwKOrMIfaljwqev4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=/8eorP3SBVJgegrat/pBBkRyKnsxwNw2tVlTziNUwzA=;
+        b=UwHoDzi+q/ejI5dFLg9eX6J18HZG5dtPBzLTJqtMTpcs5o0tFPR1uGi4a0g/0zaRM7
+         hlGpfqgNQWP1xXJxfU/1m1NB6VrOtwiT4JqyKT6tOKTAvyy1jYz0hYxkyGFgK/9TLcy7
+         4/4yB5MyYJSXw/JbD0EAkOJBSYqJOwSnY/9rbjdcPmJnBra+yrlShauKDbNohlFjr1g7
+         j2wmmrrkk79RCLHetVf1Dvaf71qLw9USouFXQrsyehoPK8GHKbb0vbWoYLlfNnGTWE82
+         Suuh9QzjlsITPTh6UO8qh5TsIV9ggdkuP/5wumXzn9ZKTX2uufjtx8rlFE4Ux50MKqgU
+         Psdw==
+X-Gm-Message-State: AOUpUlHzKfYTrwIeY2X2M1z8lcwJsApLO4wA1aUmQ44yOHN0Z7zK0956
+        h6s9/pi5YJNYEf1VU14KZiW5xA==
+X-Google-Smtp-Source: AAOMgpctwxkGGnbBivsMaKRgMt4XDVZlWUoOaHsvTYuMPpM0OUFR4Pl7k7IyOWMmAzgi9z4k7Vc9jg==
+X-Received: by 2002:a0d:e044:: with SMTP id j65-v6mr841699ywe.202.1533325826432;
+        Fri, 03 Aug 2018 12:50:26 -0700 (PDT)
+Received: from localhost ([2620:0:1013:11:ad55:b1db:adfe:3b9f])
+        by smtp.gmail.com with ESMTPSA id r3-v6sm3547016ywr.80.2018.08.03.12.50.25
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 03 Aug 2018 12:50:25 -0700 (PDT)
+Date:   Fri, 3 Aug 2018 15:50:25 -0400
+From:   Sean Paul <seanpaul@chromium.org>
+To:     Emil Velikov <emil.l.velikov@gmail.com>
+Cc:     Martin Fuzzey <martin.fuzzey@flowbird.group>,
+        Robert Foss <robert.foss@collabora.com>,
+        David Airlie <airlied@linux.ie>,
+        Brian Paul <brianp@vmware.com>,
+        ML dri-devel <dri-devel@lists.freedesktop.org>,
+        Eric Engestrom <eric.engestrom@intel.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Nicolas Norvez <norvez@chromium.org>,
+        Rob Herring <robh@kernel.org>,
+        Sean Paul <seanpaul@chromium.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Subject: Re: [RFC] drm: Allow DRM_IOCTL_MODE_MAP_DUMB for render nodes
+Message-ID: <20180803195025.GO20303@art_vandelay>
+References: <20180724082213.25677-1-robert.foss@collabora.com>
+ <f718f3ec-3726-3f51-6756-80b357fc23c9@flowbird.group>
+ <CACvgo53h=8q-xuJBPP1T2JWkb7SffXas94=moS1x76=BejyVJA@mail.gmail.com>
+ <c05f1d94-bf9e-cf9b-e575-dc220b9ca163@flowbird.group>
+ <CACvgo50u--YAxwG-cEhgj5AagOcz9oyaX2YC52Gp6324c8mNEQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACvgo50u--YAxwG-cEhgj5AagOcz9oyaX2YC52Gp6324c8mNEQ@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-08-03 at 11:16 -0500, Seth Forshee wrote:
-> On Fri, Aug 03, 2018 at 10:54:59AM -0400, Mimi Zohar wrote:
-> > On Fri, 2018-08-03 at 08:11 -0500, Seth Forshee wrote:
-> > > On Wed, Jul 25, 2018 at 06:31:59PM -0500, Eric Richter wrote:
-> > > > IMA can verify the signature of kernel images loaded with kexec_file_load,
-> > > > but can not verify images loaded with the regular kexec_load syscall.
-> > > > Therefore, the appraisal will automatically fail during kexec_load when an
-> > > > appraise policy rule is set for func=KEXEC_KERNEL_CHECK. This can be used
-> > > > to effectively disable the kexec_load syscall, while still allowing the
-> > > > kexec_file_load to operate so long as the target kernel image is signed.
-> > > > 
-> > > > However, this conflicts with CONFIG_KEXEC_VERIFY_SIG. If that option is
-> > > > enabled and there is an appraise rule set, then the target kernel would
-> > > > have to be verifiable by both IMA and the architecture specific kernel
-> > > > verification procedure.
-> > > > 
-> > > > This patch adds a new func= for IMA appraisal specifically for the original
-> > > > kexec_load syscall. Therefore, the kexec_load syscall can be effectively
-> > > > disabled via IMA policy, leaving the kexec_file_load syscall able to do its
-> > > > own signature verification, and not require it to be signed via IMA. To
-> > > > retain compatibility, the existing func=KEXEC_KERNEL_CHECK flag is
-> > > > unchanged, and thus enables appraisal for both kexec syscalls.
-> > > 
-> > > This seems like a roundabout way to disallow the kexec_load syscall.
-> > > Wouldn't it make more sense to simply disallow kexec_load any time
-> > > CONFIG_KEXEC_VERIFY_SIG is enabled, since it effectively renders that
-> > > option impotent? Or has that idea already been rejected?
-> > 
-> > Agreed!  We can modify the "case LOADING_KEXEC_IMAGE" in
-> > ima_load_data() to prevent the kexec_load based on
-> > CONFIG_KEXEC_VERIFY_SIG.
-> > 
-> > The architecture specific policy would only include the IMA appraise
-> > rule if CONFIG_KEXEC_VERIFY_SIG was not defined.
+On Fri, Aug 03, 2018 at 06:03:50PM +0100, Emil Velikov wrote:
+> On 3 August 2018 at 16:06, Martin Fuzzey <martin.fuzzey@flowbird.group> wrote:
+> > Hi Emil,
+> >
+> > On 03/08/18 14:35, Emil Velikov wrote:
+> >>
+> >> Hi Martin,
+> >>
+> >> On 1 August 2018 at 15:24, Martin Fuzzey <martin.fuzzey@flowbird.group>
+> >> wrote:
+> >>
+> >> Let's start with the not-so obvious question:
+> >> Why does one open the imx as render node?
+> >>
+> >> Of the top of my head:
+> >> There is nothing in egl/android that should require an authenticated
+> >> device.
+> >> Hence, using a card node should be fine - the etnaviv code opens the
+> >> render node it needs.
+> >
+> >
+> > Yes, the problem is not in egl/android but in the scanout buffer allocation
+> > code.
+> >
+> > etnaviv opens the render node on the *GPU* (for submitting GPU commands),
+> > that part is fine.
+> >
+> > But scanout buffers need to be allocated from imx-drm not etnaviv.
+> >
+> > This done by renderonly_create_kms_dumb_buffer_for_resource()
+> > [src/gallium/auxiliary/renderonly/renderonly.c]
+> > Which uses DRM_IOCTL_MODE_CREATE_DUMB followed by
+> > DRM_IOCTL_PRIME_FD_TO_HANDLE
+> > on the "kms_fd" (probably poorly named because it's not actually used for
+> > modesetting)
+> > see imx_drm_screen_create()[ src/gallium/winsys/imx/drm/imx_drm_winsys.c]
+> >
+> >
+> > If the card node is used DRM_IOCTL_MODE_CREATE_DUMB works but
+> > DRM_IOCTL_PRIME_FD_TO_HANDLE fails, because the permissions are
+> > DRM_AUTH|DRM_UNLOCKED|DRM_RENDER_ALLOW
+> >
+> Right I missed the DRM_AUTH, in the fd <> handle IOCTLs.
+> So in order for things to work, we'd need to either:
+>  - allow dumb buffers for render nodes, or
+>  - drop the DRM_AUTH for fd <> handle imports
 > 
-> After looking at this some more I'm having second thoughts about my
-> suggestion. As a distro we produce a kernel that needs to be flexible
-> enough for a variety of scenarios, and if we completely close off the
-> ability to load an unsigned kernel for kexec that's almost certainly
-> going to end up breaking some use cases.
+> Pointing an alternative solution, for kernel developers to analyse and
+> make a decision.
 > 
-> So I think it is necessary to make this a run-time decision rather than
-> a compile-time decision. The patch as provided does this based on
-> whether or not the kernel was booted under secure boot. That might be
-> reasonable, though I still find this mechanism kind of awkward.
+> >
+> > In android 8.1 the hardware composer runs in a seperate process and it has
+> > to use the card node and be drm master (to use the KMS API),
+> > therefore, when the surface flinger calls
+> > renderonly_create_kms_dumb_buffer_for_resource() it is not authenticated.
+> >
+> > Making surface flinger use a render node fixes the problem for
+> > DRM_IOCTL_PRIME_FD_TO_HANDLE (because that already has DRM_RENDER_ALLOW),
+> > but DRM_IOCTL_MODE_CREATE_DUMB now fails without the patch.
+> >
+> >
+> > This probably worked in previous versions of Android where surface flinger
+> > and hwc were all in the same process.
+> >
+> There has been varying hacks for Android through the years. Bringing
+> details into the discussion will result in a significant diversion.
+> Something we could avoid, for the time being ;-)
 
-Right, the above change is almost right.  Instead of preventing the
-kexec_load syscall based on CONFIG_KEXEC_VERIFY_SIG it should be based
-on a runtime secure boot flag.  Only if there is an arch specific
-secure boot function and the secure boot flag is enabled, would the
-kexec_load be disabled.
+Did someone say diversion?!? The way this was handled prior to using
+render/control nodes in drm_hwc/[drm/gbm]_gralloc is that all modesetting was
+done via gralloc which was master. The hwc implementation was basically a proxy
+backchanneling all of the work to gralloc. 
 
-Without an architecture specific secure boot function, the existing
-IMA code would fail the kexec_load syscall.
+Anyways, we probably don't want to go back there.
 
->  It seems
-> like ideally there would instead be some logic that would accept the
-> image if the KEXEC_VERIFY_SIG verification had passed, and otherwise
-> require IMA signature verification.
+Fwiw, I'd lean towards allowing DUMB allocation from the render nodes. I
+understand it limits use cases that are undesirable, but it is also limiting
+usecases that are desirable. So, given that people are going to get "creative"
+regardless of how many safety railings we put up, we shouldn't make things
+unnecessarily hard on other trying to Get Work Done.
 
-True, but for now to coordinate between the two signature verification
-methods, only if CONFIG_KEXEC_VERIFY_SIG is not enabled would an IMA
-architecture specific rule be defined.
+Sean
 
-Mimi
+[Disclaimer: I'm totally and completely biased on this issue]
 
+
+> 
+> Thanks
+> Emil
+
+-- 
+Sean Paul, Software Engineer, Google / Chromium OS
