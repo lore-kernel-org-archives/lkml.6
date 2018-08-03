@@ -5,112 +5,116 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECC02C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 17:39:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43B6EC28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 17:44:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7FE121784
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 17:39:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7FE121784
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
+	by mail.kernel.org (Postfix) with ESMTP id F1A0F21784
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 17:44:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1A0F21784
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=interlog.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727819AbeHCThK (ORCPT
+        id S1728171AbeHCTlv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 15:37:10 -0400
-Received: from shelob.surriel.com ([96.67.55.147]:44340 "EHLO
-        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727171AbeHCThK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 15:37:10 -0400
-Received: from imladris.surriel.com ([96.67.55.152])
-        by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <riel@shelob.surriel.com>)
-        id 1fle3M-0000vD-Eq; Fri, 03 Aug 2018 13:39:52 -0400
-Message-ID: <1533317992.28585.103.camel@surriel.com>
-Subject: Re: [PATCH 11/11] mm,sched: conditionally skip lazy TLB mm
- refcounting
-From:   Rik van Riel <riel@surriel.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-team@fb.com, mingo@kernel.org,
-        luto@kernel.org, x86@kernel.org, efault@gmx.de,
-        dave.hansen@intel.com
-Date:   Fri, 03 Aug 2018 13:39:52 -0400
-In-Reply-To: <20180803172516.GM2458@hirez.programming.kicks-ass.net>
-References: <20180801100255.4278-1-riel@surriel.com>
-         <20180801100255.4278-12-riel@surriel.com>
-         <20180803155618.GB2494@hirez.programming.kicks-ass.net>
-         <1533314448.28585.101.camel@surriel.com>
-         <20180803172516.GM2458@hirez.programming.kicks-ass.net>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-zzrHFJ9L2f/2GqQONPoP"
-X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
-Mime-Version: 1.0
+        Fri, 3 Aug 2018 15:41:51 -0400
+Received: from smtp.infotech.no ([82.134.31.41]:52971 "EHLO smtp.infotech.no"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727362AbeHCTlv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 15:41:51 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by smtp.infotech.no (Postfix) with ESMTP id 1E354204188;
+        Fri,  3 Aug 2018 19:44:32 +0200 (CEST)
+X-Virus-Scanned: by amavisd-new-2.6.6 (20110518) (Debian) at infotech.no
+Received: from smtp.infotech.no ([127.0.0.1])
+        by localhost (smtp.infotech.no [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id t0WOa0v4SyK9; Fri,  3 Aug 2018 19:44:29 +0200 (CEST)
+Received: from [192.168.48.23] (host-45-58-245-67.dyn.295.ca [45.58.245.67])
+        by smtp.infotech.no (Postfix) with ESMTPA id 7259220416A;
+        Fri,  3 Aug 2018 19:44:28 +0200 (CEST)
+Reply-To: dgilbert@interlog.com
+Subject: Re: [bug report] memory corruption panic caused by SG_IO ioctl()
+From:   Douglas Gilbert <dgilbert@interlog.com>
+To:     gaowanlong <gaowanlong@huawei.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc:     "Wencongyang (UVP)" <wencongyang2@huawei.com>,
+        "Wanghui (John)" <john.wanghui@huawei.com>,
+        guijianfeng <guijianfeng@huawei.com>,
+        "lipengfei (Y)" <lipengfei58@huawei.com>,
+        qiaonuohan <qiaonuohan@huawei.com>
+References: <a44201bc-d8d1-6d19-645e-07687ef4bc9e@huawei.com>
+ <93359d1a-930f-5279-3ca8-800d5930562d@interlog.com>
+ <F0DE9BB0B24B3E4F8304582FAD6F7BFF01B7CB04@DGGEMA505-MBS.china.huawei.com>
+ <bc4ff9b5-230e-707d-2f81-f5a33e46fc34@interlog.com>
+Message-ID: <94815265-6db3-35b3-b027-47819b963d4a@interlog.com>
+Date:   Fri, 3 Aug 2018 13:44:27 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <bc4ff9b5-230e-707d-2f81-f5a33e46fc34@interlog.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-CA
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 2018-08-03 12:17 PM, Douglas Gilbert wrote:
+> On 2018-08-03 11:47 AM, gaowanlong wrote:
+>> Doug,
+>>
+>> On 2018-08-03 04:46 AM, Wanlong Gao wrote:
+>>> Hi Martinand all folks,
+>>>
+>>>
+>>>> Recently we find a kernel panic with memory corruption caused by SG_IO ioctl(),
+>>>> and it can be easily reproduced by running following reproducer about
+>>>> minutes,any idea?
+>>
+>>> Which kernel?
+>>
+>> We've tested with 4.17.11 and 4.18.rc7 and both reproduced.
+>>
+>>> And what are the underlying devices (e.g. does /dev/sg0 refer to a SATA disk,
+>>> a real SCSI disk (SAS for example), USB mass storage, etc)?
+>>
+>> We tested in a qemu-kvm guest and the sg0 refer to a virtual SATA disk.
+> 
+> Thanks for the prompt reply.
+> 
+> The first test I am doing, and you can also do, is to replace the virtual
+> SATA disk with a scsi_debug pseudo SCSI disk(s). This will tell us
+> whether libata has a hand in this (as that was the case in a previous
+> syzkaller report on the SG_IO ioctl()).
+> 
+>>> Also can you get a copy of the kernel panic?
+>>
+>> Since the call traces are different every time it reproduced, that I didn't 
+>> paste the
+>> call trace or the vmcore, but this reproducer is very useful and I believe you 
+>> can reproduce
+>> it easily using the following code.
+> 
+> Okay.
+> 
+> As I write I'm running your reproducer with lk 4.18.0-rc6 against pseudo
+> scsi_debug "disks". So far no problems (5 minutes) with no noise in syslog.
 
---=-zzrHFJ9L2f/2GqQONPoP
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Ran for an hour before I stopped it. Before that I did a
+   echo 1 > /sys/bus/pseudo/drivers/scsi_debug/opts
 
-On Fri, 2018-08-03 at 19:25 +0200, Peter Zijlstra wrote:
-> On Fri, Aug 03, 2018 at 12:40:48PM -0400, Rik van Riel wrote:
-> > On Fri, 2018-08-03 at 17:56 +0200, Peter Zijlstra wrote:
-> > >=20
-> > > Why can't we skip the ->active_mm swizzle and keep ->active_mm =3D=3D
-> > > ->mm.
-> > >=20
-> > > Doing the swizzle but not the refcount just makes me itch.
-> >=20
-> > I am working on that now, it adds another 7-8
-> > patches on top of this series.
->=20
-> I thought those were taking ->active_mm out entirely, not avoiding
-> the
-> swizzle, but I might have missed something in the middle :-)
+which causes a lot of noise in syslog. Then I could see every command was
+being rejected with "LBA out of range". So I restarted scsi_debug with this:
 
-At this point, only the fact that ->active_mm is still
-being used by a few places in the code :)
+   modprobe scsi_debug max_luns=8 sector_size=4096 virtual_gb=2000 ndelay=5000
 
-> > The big question is, do we want this optimization
-> > to wait for further cleanups, or should we run with
-> > code that seems to be stable right now, and put
-> > additional cleanups and enhancements on top of it
-> > later?
->=20
-> At the very least the Changelog needs to explain why we cannot do
-> away
-> with the swizzle now and how doing the swizzle without the
-> refcounting
-> is not completely broken (I think I see, but urgh).
+To give 8 pseudo scsi disks of 2 TB size. Then it worked, this from syslog:
+   sd 0:0:0:0: scsi_debug: tag=0x7e, cmd 08 f0 a8 77 d3 be 87 5d da 65 79 3f c7
 
-The changelog for patches 9 & 10 explains, I think.
+That is certainly strange, a READ(6) [deprecated] with 13 bytes in the command!
+But it doesn't seem to hurt scsi_debug. Still running 15 minutes later ...
 
-What is missing from my explanation?
-
-How would you like to see it explained?
-
---=20
-All Rights Reversed.
---=-zzrHFJ9L2f/2GqQONPoP
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAltkk2gACgkQznnekoTE
-3oPD5Qf+MiuWUhnghz5Q5O4mfa+kl4ThWgPH5dQpaxpXfs4nvc63I0f7IaWeILa/
-d1goI2hZbn2rlawcBw8oFkGgiLneKZYgifhWSokFfGJXqwEKXWeMYThJi8zx2Qej
-CIu17Yr6fwPFYKqwrSvEGmaFHseOLt+sD7KCbsI9Yz56xnCC7pqsrmH3DYqw6EYh
-dCFblk/35+1Iud6z5y+aFztf4Y117gn3NgFrpLmGlzEB0aMGk/eW48rF5qfDNPz9
-3vkxl6wvco80nU+qbKnKLXrZ0GNAiXY4x2OUGoRe6kyAlDNBKAgEzb34obXwh8iR
-U7YCvVehTqqbSqshy9aW5eeX/YBhlg==
-=FuK3
------END PGP SIGNATURE-----
-
---=-zzrHFJ9L2f/2GqQONPoP--
+Doug Gilbert
 
