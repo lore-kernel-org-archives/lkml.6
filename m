@@ -2,86 +2,113 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 217FCC43142
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 03:14:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2AB6C43142
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 03:15:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC233216EE
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 03:14:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC233216EE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 5E91C216EE
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 03:15:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E91C216EE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727850AbeHCFII (ORCPT
+        id S1727339AbeHCFJL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 01:08:08 -0400
-Received: from foss.arm.com ([217.140.101.70]:37022 "EHLO foss.arm.com"
+        Fri, 3 Aug 2018 01:09:11 -0400
+Received: from mga05.intel.com ([192.55.52.43]:63817 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727521AbeHCFII (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 01:08:08 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5AA4B15A2;
-        Thu,  2 Aug 2018 20:13:58 -0700 (PDT)
-Received: from [192.168.100.241] (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4CC8A3F5BA;
-        Thu,  2 Aug 2018 20:13:57 -0700 (PDT)
-Subject: Re: [RFC 1/2] slub: Avoid trying to allocate memory on offline nodes
-To:     Christopher Lameter <cl@linux.com>
-Cc:     linux-mm@kvack.org, penberg@kernel.org, rientjes@google.com,
-        iamjoonsoo.kim@lge.com, akpm@linux-foundation.org, mhocko@suse.com,
-        vbabka@suse.cz, Punit.Agrawal@arm.com, Lorenzo.Pieralisi@arm.com,
-        linux-arm-kernel@lists.infradead.org, bhelgaas@google.com,
-        linux-kernel@vger.kernel.org
-References: <20180801200418.1325826-1-jeremy.linton@arm.com>
- <20180801200418.1325826-2-jeremy.linton@arm.com>
- <01000164fb05bba7-1804e794-a08d-4ee0-b842-c44c89647716-000000@email.amazonses.com>
-From:   Jeremy Linton <jeremy.linton@arm.com>
-Message-ID: <fdcb2cd2-579f-8f90-1e2d-d144bb2768e1@arm.com>
-Date:   Thu, 2 Aug 2018 22:12:52 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1726381AbeHCFJL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 01:09:11 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Aug 2018 20:15:00 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,437,1526367600"; 
+   d="scan'208";a="80111841"
+Received: from voyager.sc.intel.com (HELO voyager) ([10.3.52.149])
+  by orsmga002.jf.intel.com with ESMTP; 02 Aug 2018 20:15:00 -0700
+Date:   Thu, 2 Aug 2018 20:09:47 -0700
+From:   Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Marc Zyngier <marc.zyngier@arm.com>,
+        Julien Thierry <julien.thierry@arm.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCH 1/4] genirq: Provide basic NMI management for interrupt
+ lines
+Message-ID: <20180803030947.GA12916@voyager>
+References: <1532430427-57151-1-git-send-email-julien.thierry@arm.com>
+ <1532430427-57151-2-git-send-email-julien.thierry@arm.com>
+ <20180801030723.GA31383@voyager>
+ <df8f9f98-a1d3-e871-eec8-d805ff7cf5b7@arm.com>
+ <20180802020320.GC31758@voyager>
+ <86tvodw9wz.wl-marc.zyngier@arm.com>
+ <alpine.DEB.2.21.1808020841200.1835@nanos.tec.linutronix.de>
+ <86r2jhw7a1.wl-marc.zyngier@arm.com>
+ <alpine.DEB.2.21.1808021137400.2037@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-In-Reply-To: <01000164fb05bba7-1804e794-a08d-4ee0-b842-c44c89647716-000000@email.amazonses.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1808021137400.2037@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 08/02/2018 09:23 AM, Christopher Lameter wrote:
-> On Wed, 1 Aug 2018, Jeremy Linton wrote:
+On Thu, Aug 02, 2018 at 11:40:55AM +0200, Thomas Gleixner wrote:
+> On Thu, 2 Aug 2018, Marc Zyngier wrote:
+> > On Thu, 02 Aug 2018 07:55:49 +0100,
+> > Thomas Gleixner <tglx@linutronix.de> wrote:
+> > > 
+> > > On Thu, 2 Aug 2018, Marc Zyngier wrote:
+> > > > 
+> > > > If we need to distinguish between the two, then we need two flags. One
+> > > > that indicates the generation capability, and one that indicates the
+> > > > forwarding capability.
+> > > 
+> > > There is absolutely no reason to expose this on x86, really.
+> > > 
+> > > Why?
+> > > 
+> > > Because NMI is an utter trainwreck on x86. It's a single entry point
+> > > without the ability of differentiation from which source the NMI
+> > > originated. So mapping it to anything generic is just not going to work.
+> > > 
+> > > It has absolutely nothing to do with the normal way of vector based
+> > > interrupt operation and I don't see at all how adding this just because
+> > > would improve anything on x86. In fact it would create more problems than
+> > > it solves.
+> > 
+> > Fair enough. Does it mean Julien can completely ignore the x86
+> > requirements for this and focus on something that fit the need of
+> > architectures where (pseudo-)NMIs can be managed similarly to normal
+> > interrupts (arm, arm64, sparc...)?
 > 
->> diff --git a/mm/slub.c b/mm/slub.c
->> index 51258eff4178..e03719bac1e2 100644
->> --- a/mm/slub.c
->> +++ b/mm/slub.c
->> @@ -2519,6 +2519,8 @@ static void *___slab_alloc(struct kmem_cache *s, gfp_t gfpflags, int node,
->>   		if (unlikely(!node_match(page, searchnode))) {
->>   			stat(s, ALLOC_NODE_MISMATCH);
->>   			deactivate_slab(s, page, c->freelist, c);
->> +			if (!node_online(searchnode))
->> +				node = NUMA_NO_NODE;
->>   			goto new_slab;
->>   		}
->>   	}
->>
-> 
-> Would it not be better to implement this check in the page allocator?
-> There is also the issue of how to fallback to the nearest node.
+> Yes, focussing on "sane" architectures (by some definition of sane) where
+> the NMI mode is just changing the delivery restrictions allows to still
+> differentiate from which source the NMI originates.
 
-Possibly? Falling back to the nearest node though, should be handled if 
-memory-less nodes is enabled, which in the problematic case isn't.
+Let me assume that one can find a way to reliably identify the source of an
+NMI in x86. If we cannot use the proposed request_nmi() as it does not fit
+x86, is it acceptable to bypass the existing irq framework and directly
+program the delivery mode as NMI in the relevant hardware (e.g., a register
+holding the MSI data)? For instance, in my initial attempt to have the HPET
+timer to generate NMIs [1]. I could directly write to the FSB Interrupt
+Route Register. In my view, it makes sense because, as you say, in x86 NMIs
+are handled separately from the normal vector based interrupts.
 
-> 
-> NUMA_NO_NODE should fallback to the current memory allocation policy but
-> it seems by inserting it here you would end up just with the default node
-> for the processor.
+I guess this would also imply reserving the relevant hardware so that it
+is not used when calling request_irq().
 
-I picked this spot (compared to 2/2) because a number of paths are 
-funneling through here, and in this case it shouldn't be a very hot path.
+Thanks and BR,
+Ricardo
+
+[1]. https://lore.kernel.org/patchwork/cover/953394/
+
