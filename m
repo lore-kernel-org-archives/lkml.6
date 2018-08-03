@@ -2,97 +2,127 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52B39C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 10:31:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA534C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 10:31:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0AF282174D
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 10:31:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="QoX6kgZd";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="QoX6kgZd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AF282174D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 860EB2174D
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 10:31:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 860EB2174D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732653AbeHCM0r (ORCPT
+        id S1732679AbeHCM05 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 08:26:47 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:44610 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732233AbeHCM0r (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 08:26:47 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id DF9BC606DD; Fri,  3 Aug 2018 10:31:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533292265;
-        bh=jvguKH8OUifI9BKBsIr6mIxLJd2zkw/vkLLjQQwpcvQ=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=QoX6kgZdD8MZ/rjVFuFxXhTaNR1vTROOTayI6JIZ69FUrSFeF5UAddUeRmuBwqKJ3
-         YcuTy/OkSVHgWwJpOgdfUfWkcE31cbOdyjMRyczJQ3JYVFLKcLbuhq9tacR2jeMDlx
-         4x0+gztVrul0IVrhBmPxKTegBNjd+YY1J9z6ooT4=
-Received: from potku.adurom.net (88-114-240-52.elisa-laajakaista.fi [88.114.240.52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        Fri, 3 Aug 2018 08:26:57 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53794 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1732233AbeHCM05 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 08:26:57 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 30D09602B7;
-        Fri,  3 Aug 2018 10:31:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533292265;
-        bh=jvguKH8OUifI9BKBsIr6mIxLJd2zkw/vkLLjQQwpcvQ=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=QoX6kgZdD8MZ/rjVFuFxXhTaNR1vTROOTayI6JIZ69FUrSFeF5UAddUeRmuBwqKJ3
-         YcuTy/OkSVHgWwJpOgdfUfWkcE31cbOdyjMRyczJQ3JYVFLKcLbuhq9tacR2jeMDlx
-         4x0+gztVrul0IVrhBmPxKTegBNjd+YY1J9z6ooT4=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 30D09602B7
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From:   Kalle Valo <kvalo@codeaurora.org>
-To:     Stanislaw Gruszka <sgruszka@redhat.com>
-Cc:     Wireless <linux-wireless@vger.kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] mt76x0: build driver only as module
-References: <20180803091401.GB10284@redhat.com>
-        <87zhy36c4n.fsf@kamboji.qca.qualcomm.com>
-        <20180803092822.GD10284@redhat.com>
-        <20180803100939.GE10284@redhat.com>
-Date:   Fri, 03 Aug 2018 13:31:01 +0300
-In-Reply-To: <20180803100939.GE10284@redhat.com> (Stanislaw Gruszka's message
-        of "Fri, 3 Aug 2018 12:09:40 +0200")
-Message-ID: <87va8r68t6.fsf@kamboji.qca.qualcomm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8092D4015A56;
+        Fri,  3 Aug 2018 10:31:15 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-78.rdu2.redhat.com [10.10.120.78])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 495551D085;
+        Fri,  3 Aug 2018 10:31:13 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <47c34fad-5d11-53b0-4386-61be890163c5@virtuozzo.com>
+References: <47c34fad-5d11-53b0-4386-61be890163c5@virtuozzo.com> <153320759911.18959.8842396230157677671.stgit@localhost.localdomain> <20180802134723.ecdd540c7c9338f98ee1a2c6@linux-foundation.org>
+To:     Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc:     dhowells@redhat.com, Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, vdavydov.dev@gmail.com,
+        mhocko@suse.com, aryabinin@virtuozzo.com, ying.huang@intel.com,
+        penguin-kernel@I-love.SAKURA.ne.jp, willy@infradead.org,
+        shakeelb@google.com, jbacik@fb.com, linux-mm@kvack.org
+Subject: Re: [PATCH] mm: Move check for SHRINKER_NUMA_AWARE to do_shrink_slab()
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <8346.1533292272.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8BIT
+Date:   Fri, 03 Aug 2018 11:31:12 +0100
+Message-ID: <8347.1533292272@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Fri, 03 Aug 2018 10:31:15 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Fri, 03 Aug 2018 10:31:15 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Stanislaw Gruszka <sgruszka@redhat.com> writes:
+The reproducer can be reduced to:
 
-> On Fri, Aug 03, 2018 at 11:28:22AM +0200, Stanislaw Gruszka wrote:
->> > But this feels like an ugly hack to me. Isn't there a better way to fix
->> > this? (I don't have time to investigate the error in detail right now.)
->> 
->> Yes, rename symbols names. And I will do this, just wanted to provide
->> quick fix for the problem. 
->> 
->> Moreover seems the same thing should be done for mt7601u to avoid build
->> errors and perhaps with mt76 :-( 
->> 
->> So I'm going to rename functions.
->
-> I have the patches, I'm building kernel with allyesconfig now,
-> it will take a while ...
+	#define _GNU_SOURCE
+	#include <endian.h>
+	#include <stdint.h>
+	#include <string.h>
+	#include <stdio.h>
+	#include <sys/syscall.h>
+	#include <sys/stat.h>
+	#include <sys/mount.h>
+	#include <unistd.h>
+	#include <fcntl.h>
 
-I'm now hoping to send the pull request tomorrow, so if you can submit a
-proper patch some time today that would be good.
+	const char path[] = "./file0";
 
--- 
-Kalle Valo
+	int main()
+	{
+		mkdir(path, 0);
+		mount(path, path, "cgroup2", 0, 0);
+		chroot(path);
+		umount2(path, 0);
+		return 0;
+	}
+
+and I've found two bugs (see attached patch).  The issue is that
+do_remount_sb() is called with fc == NULL from umount(), but both
+cgroup_reconfigure() and do_remount_sb() dereference fc unconditionally.
+
+But!  I'm not sure why the reproducer works at all because the umount2() call
+is *after* the chroot, so should fail on ENOENT before it even gets that far.
+In fact, umount2() can be called multiple times, apparently successfully, and
+doesn't actually unmount anything.
+
+David
+---
+diff --git a/fs/super.c b/fs/super.c
+index 3fe5d12b7697..321fbc244570 100644
+--- a/fs/super.c
++++ b/fs/super.c
+@@ -978,7 +978,10 @@ int do_remount_sb(struct super_block *sb, int sb_flags, void *data,
+ 	    sb->s_op->remount_fs) {
+ 		if (sb->s_op->reconfigure) {
+ 			retval = sb->s_op->reconfigure(sb, fc);
+-			sb_flags = fc->sb_flags;
++			if (fc)
++				sb_flags = fc->sb_flags;
++			else
++				sb_flags = sb->s_flags;
+ 			if (retval == 0)
+ 				security_sb_reconfigure(fc);
+ 		} else {
+diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
+index f3238f38d152..48275fdce053 100644
+--- a/kernel/cgroup/cgroup.c
++++ b/kernel/cgroup/cgroup.c
+@@ -1796,9 +1796,11 @@ static void apply_cgroup_root_flags(unsigned int root_flags)
+ 
+ static int cgroup_reconfigure(struct kernfs_root *kf_root, struct fs_context *fc)
+ {
+-	struct cgroup_fs_context *ctx = cgroup_fc2context(fc);
++	if (fc) {
++		struct cgroup_fs_context *ctx = cgroup_fc2context(fc);
+ 
+-	apply_cgroup_root_flags(ctx->flags);
++		apply_cgroup_root_flags(ctx->flags);
++	}
+ 	return 0;
+ }
+ 
