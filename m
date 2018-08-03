@@ -2,172 +2,396 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17221C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 12:18:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F8C0C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 12:19:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8F7D2175E
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 12:18:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D338121759
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 12:19:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=cnexlabs.onmicrosoft.com header.i=@cnexlabs.onmicrosoft.com header.b="T+6X9Rzi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8F7D2175E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cnexlabs.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="FRIsYpN2";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="dqfeAr+4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D338121759
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730588AbeHCOOv (ORCPT
+        id S1729968AbeHCOPm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 10:14:51 -0400
-Received: from mail-by2nam03on0053.outbound.protection.outlook.com ([104.47.42.53]:31325
-        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727148AbeHCOOv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 10:14:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=cnexlabs.onmicrosoft.com; s=selector1-cnexlabs-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vJJAfvuLUtnQLmXqF+I/cUkfL8TAhfmJV5mG/AaKJa8=;
- b=T+6X9RzilTrcWFj6OII4OAle/ezqbAH262ik5I63BzQ3G6gngP+bYQtPuFcWpPhzcFbj9bdLhYm5GOhWN0RjqKqoaW8Ip5zFEycia0fz6e9eFpj80hMSXq6yDKbrU7snuZQZMQOTq+YjjgzkUYyEfBME3MiWWw0+LyzZP0kLkgY=
-Received: from CO2PR06MB538.namprd06.prod.outlook.com (10.141.199.23) by
- CO2PR06MB635.namprd06.prod.outlook.com (10.141.228.25) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.995.21; Fri, 3 Aug 2018 12:18:30 +0000
-Received: from CO2PR06MB538.namprd06.prod.outlook.com
- ([fe80::311c:7e3f:3043:5287]) by CO2PR06MB538.namprd06.prod.outlook.com
- ([fe80::311c:7e3f:3043:5287%8]) with mapi id 15.20.1017.010; Fri, 3 Aug 2018
- 12:18:29 +0000
-From:   Javier Gonzalez <javier@cnexlabs.com>
-To:     =?utf-8?B?TWF0aWFzIEJqw7hybGluZw==?= <mb@lightnvm.io>
-CC:     "Konopko, Igor J" <igor.j.konopko@intel.com>,
-        "marcin.dziegielewski@intel.com" <marcin.dziegielewski@intel.com>,
-        Hans Holmberg <hans.holmberg@cnexlabs.com>,
-        Heiner Litz <hlitz@ucsc.edu>,
-        Young Tack Tack Jin <youngtack.jin@circuitblvd.com>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] lightnvm: pblk: remove unnecessary drive version check
-Thread-Topic: [PATCH] lightnvm: pblk: remove unnecessary drive version check
-Thread-Index: AQHUKqOqJvYCHWb7506nHMv0DcNCh6St8uCA
-Date:   Fri, 3 Aug 2018 12:18:29 +0000
-Message-ID: <4382FFAE-0602-4A16-8120-E930141606ED@cnexlabs.com>
-References: <20180802205841.22039-1-mb@lightnvm.io>
-In-Reply-To: <20180802205841.22039-1-mb@lightnvm.io>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: yes
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=javier@cnexlabs.com; 
-x-originating-ip: [193.106.164.211]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CO2PR06MB635;6:9WM5KDMU9iSJmme1DPU9SenMhMBT0+kQX/gNpTRl5i6ewS3JgGHwbK9ko+6/g8/Y0BipM+tnpFL+NEiRmfhmn1HKL6wvR5XQeFuHY6kS+GmhGKAB+wvadxxj1HiOsSjEctwU4WU4aCbxxVmEsPOWoC5h8FSUTY4sC9SBJ3svP8Y2VihbAyuNX+UGM1BpRivMiaIck8hYexyK6TE/T4On3wAaWeNUP06lqy/eG4MzmguHe/2tIn37ZquRPpIfc6ghemBF/77uvS4grJDLf3DqLr2oQU8yDRS0lQhTOlhbfJ5/W3xz4/oPqgUP7EyDSgQS5wW3VxELpxDQrOjebmwaLXx0F529ZMHFZErJLkNdqY2Kv+gyVfJTWzhd+pRkEdgzvu6+Y8Tkg3fIb5/Fdg3aj7ajArEBwqmbKjrybZ4wCC3cWKweOXBIolz/ur/c2+ndbkzmwmHAVgARaDUxKIv/OQ==;5:u5gLZYSUaxlO8+ZkcWguIQk0DHPTrobqYQ4abv+hiyP64cmMxeTKBKn+hWzOU2N9JFe4uV44tBRjbMKZxitU3NGuVWQJn8RQDYDJGly9eZJirAiBvCrCLB4IQ+AtDM8cJHaoJESnanvESsS3YBofaNPl0bMQs6DcGQLvfSPDvMo=;7:QN5h8wXdcy0QkDP4nJlp/8tx79w2OMgb3DKZBwa0jh8AwHPGjbQnPKuB3y24U0+/js0wJ2fXDQk+AihW8sEk38lLBErRcM0mAhchvyP0ME0LscNHEugDPMSd7No8LeHTnSD0REvbAf9GJfSeGw136e5roDozwgBiXjjlZjZKQjlqT61MF43t+D9mCwx/UAh5d/NJSJSAbqRKNYeabRNftY7DmoiGh8TTnTBeuInaQwldW34gOy5KtH9FqgbWSrqn
-x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(136003)(346002)(39840400004)(366004)(376002)(396003)(189003)(199004)(51444003)(102836004)(3846002)(68736007)(6116002)(6506007)(97736004)(26005)(105586002)(186003)(8676002)(8936002)(6916009)(81166006)(81156014)(33656002)(6246003)(4326008)(478600001)(2906002)(25786009)(53936002)(36756003)(76176011)(7736002)(106356001)(6436002)(6512007)(486006)(99286004)(476003)(2616005)(2900100001)(316002)(5660300001)(305945005)(66066001)(11346002)(6486002)(54906003)(99936001)(83716003)(446003)(229853002)(86362001)(256004)(5250100002)(14454004)(82746002);DIR:OUT;SFP:1101;SCL:1;SRVR:CO2PR06MB635;H:CO2PR06MB538.namprd06.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-ms-office365-filtering-correlation-id: 326a219e-b866-4682-5330-08d5f93b3910
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(49563074)(7193020);SRVR:CO2PR06MB635;
-x-ms-traffictypediagnostic: CO2PR06MB635:
-x-microsoft-antispam-prvs: <CO2PR06MB635B4B71D91407CBAA4A8A8BA230@CO2PR06MB635.namprd06.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(102415395)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231311)(944501410)(52105095)(10201501046)(3002001)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:CO2PR06MB635;BCL:0;PCL:0;RULEID:;SRVR:CO2PR06MB635;
-x-forefront-prvs: 0753EA505A
-received-spf: None (protection.outlook.com: cnexlabs.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: MmVw/xcXQCcLzaEFFhwguQjPJrOTsH/eFBIwJaaUoBPDYDszWcryHEp+q1qMbuu30VOGcZSJat6rG9iQ0XVdJuS/QArGpx9VclGP0SErrL3XFhv7IHMFW9rjmZFZ5HxSAmzTKhvzvgmUB/u+SAeFlNa3O3sG4qxtVt3UgUMgsGmYTdaTA5CnMdBKCZ77wICoGIrGL5fDKMppSN2d7Y+HuSiR2IZsC7To8bDY5GLFoe5jRxbi6C6pLC+6QqlQ3rVZ7l2sgqKjAKutPZiiZ38OVBLHyTDzSMVuCd6vAxmzsCT36Khpx760UQWEHVMqaWJlrdZ+94izzMYfiTlzuRNJDVSe5xgF6ltms1pdFA+w+Cw=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: multipart/signed;
-        boundary="Apple-Mail=_1AD2DCDC-FCD9-4104-BF12-23CFF23EA93E";
-        protocol="application/pgp-signature";
-        micalg=pgp-sha512
+        Fri, 3 Aug 2018 10:15:42 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:47264 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727677AbeHCOPl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 10:15:41 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 45422602B7; Fri,  3 Aug 2018 12:19:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1533298776;
+        bh=fJnXav+vAq1geqokStin2eIbWr/vfDAtZGRgB2SYVuc=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=FRIsYpN27C0VqTWPysT1rUEa1gk6nRrsD1wTtoPqih5mkSkUBQ/LcbwrboCGWkFds
+         6tyCviBaNRBTo5ijCzRFpsiK1oj7r8RWRNu/GFupzKodIPTjXyaWYBqvncTI1/rK1x
+         FwqjX/zlbADAi/Jcq46dOcmBMCE4uijEIwfYYAto=
+Received: from [192.168.225.247] (unknown [49.32.113.96])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id E5388602D7;
+        Fri,  3 Aug 2018 12:19:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1533298775;
+        bh=fJnXav+vAq1geqokStin2eIbWr/vfDAtZGRgB2SYVuc=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=dqfeAr+45A4yShxKehn43+hAHBdlrancAgpTN9QbiyHbNznBZvNK/uCO8TgDHtuDg
+         MUBi5amOLdvNr/M9FgB8pKh/sPGJc/Yb6z6OmJB7C4rr5MsHahLhoTuajek7yMMWzl
+         lY9AI2t9Rr8D3fGzesVMr8koIP+E8h7vEsa2niyw=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E5388602D7
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+Subject: Re: [PATCH v2 2/2] clk: qcom: Add lpass clock controller driver for
+ SDM845
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Amit Nischal <anischal@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        rohitkr@codeaurora.org
+References: <1530773721-14668-1-git-send-email-tdas@codeaurora.org>
+ <1530773721-14668-3-git-send-email-tdas@codeaurora.org>
+ <153092037708.143105.10977459810239534218@swboyd.mtv.corp.google.com>
+From:   Taniya Das <tdas@codeaurora.org>
+Message-ID: <6ef09f88-b497-79ec-cdac-b6440abe017d@codeaurora.org>
+Date:   Fri, 3 Aug 2018 17:49:28 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-OriginatorOrg: cnexlabs.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 326a219e-b866-4682-5330-08d5f93b3910
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Aug 2018 12:18:29.6559
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: e40dfc2e-c6c1-463a-a598-38602b2c3cff
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO2PR06MB635
+In-Reply-To: <153092037708.143105.10977459810239534218@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Apple-Mail=_1AD2DCDC-FCD9-4104-BF12-23CFF23EA93E
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-	charset=utf-8
 
-> On 2 Aug 2018, at 22.58, Matias Bj=C3=B8rling <mb@lightnvm.io> wrote:
->=20
-> The nvme driver checks for 1.2 and 2.0 compatibility. If an =
-unsupported
-> version is reported, the device will not be initialized.
->=20
-> Signed-off-by: Matias Bj=C3=B8rling <mb@lightnvm.io>
-> ---
-> drivers/lightnvm/pblk-init.c | 8 --------
-> 1 file changed, 8 deletions(-)
->=20
-> diff --git a/drivers/lightnvm/pblk-init.c =
-b/drivers/lightnvm/pblk-init.c
-> index 537e98f2b24a..e9e2fedff387 100644
-> --- a/drivers/lightnvm/pblk-init.c
-> +++ b/drivers/lightnvm/pblk-init.c
-> @@ -1202,14 +1202,6 @@ static void *pblk_init(struct nvm_tgt_dev *dev, =
-struct gendisk *tdisk,
-> 	pblk->state =3D PBLK_STATE_RUNNING;
-> 	pblk->gc.gc_enabled =3D 0;
->=20
-> -	if (!(geo->version =3D=3D NVM_OCSSD_SPEC_12 ||
-> -					geo->version =3D=3D =
-NVM_OCSSD_SPEC_20)) {
-> -		pblk_err(pblk, "OCSSD version not supported (%u)\n",
-> -							geo->version);
-> -		kfree(pblk);
-> -		return ERR_PTR(-EINVAL);
-> -	}
-> -
-> 	if (geo->version =3D=3D NVM_OCSSD_SPEC_12 && geo->dom & =
-NVM_RSP_L2P) {
-> 		pblk_err(pblk, "host-side L2P table not supported. =
-(%x)\n",
-> 							geo->dom);
-> --
-> 2.11.0
 
-The same comment goes for this patch. pblk does support 2.0 and 1.2
-today, but it is not guaranteed it will support a new revision straight
-away. So I think that a check wither here or through the .capabilities I
-proposed on the other patch is necessary.
+On 7/7/2018 5:09 AM, Stephen Boyd wrote:
+> Quoting Taniya Das (2018-07-04 23:55:21)
+>> diff --git a/drivers/clk/qcom/lpasscc-sdm845.c b/drivers/clk/qcom/lpasscc-sdm845.c
+>> new file mode 100644
+>> index 0000000..5285b26
+>> --- /dev/null
+>> +++ b/drivers/clk/qcom/lpasscc-sdm845.c
+>> @@ -0,0 +1,243 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
+>> + */
+>> +
+>> +#include <linux/bitops.h>
+>> +#include <linux/err.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/module.h>
+>> +#include <linux/of_address.h>
+>> +#include <linux/regmap.h>
+>> +
+>> +#include <dt-bindings/clock/qcom,lpass-sdm845.h>
+>> +
+>> +#include "clk-regmap.h"
+>> +#include "clk-branch.h"
+>> +#include "common.h"
+>> +
+>> +static struct clk_branch gcc_lpass_q6_axi_clk = {
+>> +       .halt_reg = 0x0,
+>> +       .halt_check = BRANCH_HALT,
+>> +       .clkr = {
+>> +               .enable_reg = 0x0,
+>> +               .enable_mask = BIT(0),
+>> +               .hw.init = &(struct clk_init_data){
+>> +                       .name = "gcc_lpass_q6_axi_clk",
+>> +                       .ops = &clk_branch2_ops,
+>> +               },
+>> +       },
+>> +};
+>> +
+>> +static struct clk_branch gcc_lpass_sway_clk = {
+>> +       .halt_reg = 0x8,
+>> +       .halt_check = BRANCH_HALT,
+>> +       .clkr = {
+>> +               .enable_reg = 0x8,
+>> +               .enable_mask = BIT(0),
+>> +               .hw.init = &(struct clk_init_data){
+>> +                       .name = "gcc_lpass_sway_clk",
+>> +                       .ops = &clk_branch2_ops,
+>> +               },
+>> +       },
+>> +};
+>> +
 
-Javier
+Moved the above clocks to GCC driver.
 
---Apple-Mail=_1AD2DCDC-FCD9-4104-BF12-23CFF23EA93E
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
+>> +static struct clk_branch lpass_audio_wrapper_aon_clk = {
+>> +       .halt_reg = 0x098,
+>> +       .halt_check = BRANCH_VOTED,
+>> +       .clkr = {
+>> +               .enable_reg = 0x098,
+>> +               .enable_mask = BIT(0),
+>> +               .hw.init = &(struct clk_init_data){
+>> +                       .name = "lpass_audio_wrapper_aon_clk",
+>> +                       .ops = &clk_branch2_ops,
+>> +               },
+>> +       },
+>> +};
+>> +
+>> +static struct clk_branch lpass_q6ss_ahbm_aon_clk = {
+>> +       .halt_reg = 0x12000,
+>> +       .halt_check = BRANCH_VOTED,
+> 
+> I'll take your word for it.
+> 
+>> +       .clkr = {
+>> +               .enable_reg = 0x12000,
+>> +               .enable_mask = BIT(0),
+>> +               .hw.init = &(struct clk_init_data){
+>> +                       .name = "lpass_q6ss_ahbm_aon_clk",
+>> +                       .ops = &clk_branch2_ops,
+>> +               },
+>> +       },
+>> +};
+>> +
+>> +static struct clk_branch lpass_q6ss_ahbs_aon_clk = {
+>> +       .halt_reg = 0x1f000,
+>> +       .halt_check = BRANCH_VOTED,
+>> +       .clkr = {
+>> +               .enable_reg = 0x1f000,
+>> +               .enable_mask = BIT(0),
+>> +               .hw.init = &(struct clk_init_data){
+>> +                       .name = "lpass_q6ss_ahbs_aon_clk",
+>> +                       .ops = &clk_branch2_ops,
+>> +               },
+>> +       },
+>> +};
+>> +
+>> +static struct clk_branch lpass_qdsp6ss_xo_clk = {
+>> +       .halt_reg = 0x18,
+>> +       .halt_check = BRANCH_HALT_SKIP,
+> 
+> Why? Hint, add a comment.
+> 
 
------BEGIN PGP SIGNATURE-----
+Added a comment in the next patch.
 
-iQIzBAEBCgAdFiEE+ws7Qq+qZPG1bJoyIX4xUKFRnnQFAltkSBEACgkQIX4xUKFR
-nnQhVBAAkisfae1+/wXH0oRMNssZjaVUN9JSbo5mg1+dxwKo3tacGYyE4c1Vd43m
-ZjPqY8am7NLO5hF9Vd6moz+l0T6feIQdYY17DJNY56aB+wZtszTB8uQmPmJYeLZT
-kHWS0voZSDF1ILDhdvIiSPQIep7WjubVYRm7b/aSPac8iJ4yZtfSd2kpogirpK58
-xrujIe1fu9VZ7ynM5sDnCbNPNzvARgehx8ow+0S06T0FinOwS+gYCTYvdi/RMycN
-08yPauUrSDh9ywiycs0x/v8IK7zungHeK9kWOBP43dwDhj08vYA/TKJUgC0G8BiY
-7UTGt7giuOdgrWqZi478XeweI5Qe8CwnOYMBYGbZW+H1XjLtp5U8h+FGcms+0JsI
-cmaxG6mIh4YyQdVPzPr63RUOiDMt5xR2C1SroaiRXvNZsYlk6hqwOMYvvbBqiDJa
-p6Cx0YAYdweTEGN4n9OiSCyhjdFa0cBuNkGAY41LBVNxeGl0RerYB/aR3tP4rRcn
-0kvyWCK9ZiTGhzlBuU92C4njM8B5xFY9hzXiOmpMOa1yHgmrm6e1H1M6lIO8ToIK
-gDFdkLYWedoB6/FNdWscywcZSRpKVNU8V/PUudO7VkA+NAwJjJKRBAMh5NYaxGhJ
-x7A30GxDEvy+q6lNEcvQGDNKlB3QsHqboCLWO+eoAFvVyiqdGnw=
-=W9X9
------END PGP SIGNATURE-----
+>> +       .clkr = {
+>> +               .enable_reg = 0x18,
+>> +               .enable_mask = BIT(0),
+>> +               .hw.init = &(struct clk_init_data){
+>> +                       .name = "lpass_qdsp6ss_xo_clk",
+>> +                       .ops = &clk_branch2_ops,
+>> +               },
+>> +       },
+>> +};
+>> +
+>> +static struct clk_branch lpass_qdsp6ss_sleep_clk = {
+>> +       .halt_reg = 0x1c,
+>> +       .halt_check = BRANCH_HALT_SKIP,
+> 
+> Why? Hint, add a comment.
 
---Apple-Mail=_1AD2DCDC-FCD9-4104-BF12-23CFF23EA93E--
+Added a comment in the next patch.
+
+> 
+>> +       .clkr = {
+>> +               .enable_reg = 0x1c,
+>> +               .enable_mask = BIT(0),
+>> +               .hw.init = &(struct clk_init_data){
+>> +                       .name = "lpass_qdsp6ss_sleep_clk",
+>> +                       .ops = &clk_branch2_ops,
+>> +               },
+>> +       },
+>> +};
+>> +
+>> +static struct clk_branch lpass_qdsp6ss_core_clk = {
+>> +       .halt_reg = 0x0,
+>> +       .halt_check = BRANCH_HALT_SKIP,
+> 
+> Again.
+> 
+
+Added a comment in the next patch.
+
+>> +       .clkr = {
+>> +               .enable_reg = 0x0,
+>> +               .enable_mask = BIT(0),
+>> +               .hw.init = &(struct clk_init_data){
+>> +                       .name = "lpass_qdsp6ss_core_clk",
+>> +                       .ops = &clk_branch2_ops,
+>> +               },
+>> +       },
+>> +};
+>> +
+>> +static struct regmap_config lpass_regmap_config = {
+>> +       .reg_bits       = 32,
+>> +       .reg_stride     = 4,
+>> +       .val_bits       = 32,
+>> +       .fast_io        = true,
+>> +};
+>> +
+>> +static struct clk_regmap *lpass_gcc_sdm845_clocks[] = {
+>> +       [GCC_LPASS_Q6_AXI_CLK] = &gcc_lpass_q6_axi_clk.clkr,
+>> +       [GCC_LPASS_SWAY_CLK] = &gcc_lpass_sway_clk.clkr,
+>> +};
+>> +
+>> +static const struct qcom_cc_desc lpass_gcc_sdm845_desc = {
+>> +       .config = &lpass_regmap_config,
+>> +       .clks = lpass_gcc_sdm845_clocks,
+>> +       .num_clks = ARRAY_SIZE(lpass_gcc_sdm845_clocks),
+>> +};
+>> +
+>> +static struct clk_regmap *lpass_cc_sdm845_clocks[] = {
+>> +       [LPASS_AUDIO_WRAPPER_AON_CLK] = &lpass_audio_wrapper_aon_clk.clkr,
+>> +       [LPASS_Q6SS_AHBM_AON_CLK] = &lpass_q6ss_ahbm_aon_clk.clkr,
+>> +       [LPASS_Q6SS_AHBS_AON_CLK] = &lpass_q6ss_ahbs_aon_clk.clkr,
+> 
+> So it's kinda sad that these lists have holes in them and we just waste
+> space forever the more we add. How about using the same linear array,
+> but indexing into the array with different offsets based on the start of
+> the numberspace for those clks? It would mean that adding new clks
+> wouldn't work, so add all the clks now instead of later.
+> 
+
+There are no more clocks from these CCs which would be required to be 
+controlled. These are only required for the Low Pass Audio subsystem to 
+be brought out of reset.
+
+> Otherwise, maybe we need to add support for qcom_cc_desc having two
+> cells and then indicating which first cell to map into? So the binding
+> would look like:
+> 
+> 	<&lpasscc 0 GCC_LPASS_Q6_AXI_CLK>
+> 
+> 	<&lpasscc 1 LPASS_Q6SS_AHBM_AON_CLK>
+> 
+> and our lookup function would need to be different for the multi-cell
+> thing, but otherwise works and avoids the hole and adding numbers later
+> problem.
+> 
+>> +};
+>> +
+>> +static const struct qcom_cc_desc lpass_cc_sdm845_desc = {
+>> +       .config = &lpass_regmap_config,
+>> +       .clks = lpass_cc_sdm845_clocks,
+>> +       .num_clks = ARRAY_SIZE(lpass_cc_sdm845_clocks),
+>> +};
+>> +
+>> +static struct clk_regmap *lpass_qdsp6ss_sdm845_clocks[] = {
+>> +       [LPASS_QDSP6SS_XO_CLK] = &lpass_qdsp6ss_xo_clk.clkr,
+>> +       [LPASS_QDSP6SS_SLEEP_CLK] = &lpass_qdsp6ss_sleep_clk.clkr,
+>> +       [LPASS_QDSP6SS_CORE_CLK] = &lpass_qdsp6ss_core_clk.clkr,
+>> +};
+>> +
+>> +static const struct qcom_cc_desc lpass_qdsp6ss_sdm845_desc = {
+>> +       .config = &lpass_regmap_config,
+>> +       .clks = lpass_qdsp6ss_sdm845_clocks,
+>> +       .num_clks = ARRAY_SIZE(lpass_qdsp6ss_sdm845_clocks),
+>> +};
+>> +
+>> +static int lpass_clocks_sdm845_probe(struct platform_device *pdev, int index,
+>> +                                    const struct qcom_cc_desc *desc)
+>> +{
+>> +       struct device_node *np = pdev->dev.of_node;
+>> +       struct regmap *regmap;
+>> +       struct resource res;
+>> +       void __iomem *base;
+>> +
+>> +       if (of_address_to_resource(np, index, &res))
+> 
+> Just use platform device APIs instead please.
+> 
+
+I have moved to use the platform device APIs.
+
+>> +               return -ENOMEM;
+>> +
+>> +       base = devm_ioremap(&pdev->dev, res.start, resource_size(&res));
+> 
+> And devm_ioremap_resource().
+
+Use the above API to map.
+
+> 
+>> +       if (IS_ERR(base))
+>> +               return -ENOMEM;
+>> +
+>> +       regmap = devm_regmap_init_mmio(&pdev->dev, base, desc->config);
+>> +       if (IS_ERR(regmap))
+>> +               return PTR_ERR(regmap);
+>> +
+>> +       return qcom_cc_really_probe(pdev, desc, regmap);
+>> +}
+>> +
+>> +/* LPASS CC clock controller */
+>> +static const struct of_device_id lpass_cc_sdm845_match_table[] = {
+>> +       { .compatible = "qcom,sdm845-lpasscc" },
+>> +       { }
+>> +};
+>> +MODULE_DEVICE_TABLE(of, lpass_cc_sdm845_match_table);
+>> +
+>> +static int lpass_cc_sdm845_probe(struct platform_device *pdev)
+>> +{
+>> +       const struct qcom_cc_desc *desc;
+>> +       struct device_node *np;
+>> +       int ret, index;
+>> +
+>> +       np = pdev->dev.of_node;
+>> +
+>> +       lpass_regmap_config.name = "lpass_gcc";
+>> +       desc = &lpass_gcc_sdm845_desc;
+>> +       index = of_property_match_string(np, "reg-names", "lpass_gcc");
+>> +
+>> +       ret = lpass_clocks_sdm845_probe(pdev, index, desc);
+>> +       if (ret)
+>> +               return ret;
+>> +
+>> +       lpass_regmap_config.name = "lpass_cc";
+>> +       desc = &lpass_cc_sdm845_desc;
+>> +       index = of_property_match_string(np, "reg-names", "lpass_cc");
+>> +
+>> +       ret = lpass_clocks_sdm845_probe(pdev, index, desc);
+>> +       if (ret)
+>> +               return ret;
+>> +
+>> +       lpass_regmap_config.name = "lpass_qdsp6ss";
+>> +       desc = &lpass_qdsp6ss_sdm845_desc;
+>> +       index = of_property_match_string(np, "reg-names", "lpass_qdsp6ss");
+> 
+> We shouldn't need to do this. Just index them by number and specify that
+> the order has to be exactly that order. reg-names is supposed to be
+> optional.
+> 
+
+Have fixed the index in the next patch.
+
+>> +
+>> +       ret = lpass_clocks_sdm845_probe(pdev, index, desc);
+>> +       if (ret)
+>> +               return ret;
+>> +
+>> +       return 0;
+> 
+> Just 'return lpass_clocks_sdm845_probe()'.
+> 
+
+removed the check for ret.
+
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
+
+--
