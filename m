@@ -2,120 +2,115 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CCB9C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 18:38:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88259C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 18:39:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC6542177F
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 18:38:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC6542177F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 515822177F
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 18:39:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 515822177F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729792AbeHCUem (ORCPT
+        id S1729958AbeHCUhF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 16:34:42 -0400
-Received: from mga11.intel.com ([192.55.52.93]:32824 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728139AbeHCUem (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 16:34:42 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Aug 2018 11:37:14 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,439,1526367600"; 
-   d="scan'208";a="61905944"
-Received: from rchatre-mobl.amr.corp.intel.com (HELO [10.252.128.249]) ([10.252.128.249])
-  by orsmga007.jf.intel.com with ESMTP; 03 Aug 2018 11:37:14 -0700
-Subject: Re: [PATCH 0/2] x86/intel_rdt and perf/x86: Fix lack of coordination
- with perf
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Dave Hansen <dave.hansen@intel.com>, tglx@linutronix.de,
-        mingo@redhat.com, fenghua.yu@intel.com, tony.luck@intel.com,
-        vikas.shivappa@linux.intel.com, gavin.hindman@intel.com,
-        jithu.joseph@intel.com, hpa@zytor.com, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180802161823.GJ2458@hirez.programming.kicks-ass.net>
- <f990df31-ab75-974e-b142-47af07a33a08@intel.com>
- <20180802173727.GP2494@hirez.programming.kicks-ass.net>
- <653e874f-5e77-a9b5-996a-ed9daa3c6d43@intel.com>
- <20180802195410.GR2494@hirez.programming.kicks-ass.net>
- <d64f85e8-98ca-a81d-bf2d-13dd72fc411e@intel.com>
- <20180802201312.GS2494@hirez.programming.kicks-ass.net>
- <086b93f5-da5b-b5e5-148a-cef25117b963@intel.com>
- <20180803104956.GU2494@hirez.programming.kicks-ass.net>
- <1eece033-fbae-c904-13ad-1904be91c049@intel.com>
- <20180803152523.GY2476@hirez.programming.kicks-ass.net>
-From:   Reinette Chatre <reinette.chatre@intel.com>
-Message-ID: <d6df8a8a-f0f2-48f7-1c1d-c8893e1583c9@intel.com>
-Date:   Fri, 3 Aug 2018 11:37:13 -0700
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Fri, 3 Aug 2018 16:37:05 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51606 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728139AbeHCUhF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 16:37:05 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id F04588197021;
+        Fri,  3 Aug 2018 18:39:35 +0000 (UTC)
+Received: from localhost (unknown [10.18.25.149])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3AF767C4F;
+        Fri,  3 Aug 2018 18:39:33 +0000 (UTC)
+Date:   Fri, 3 Aug 2018 14:39:32 -0400
+From:   Mike Snitzer <snitzer@redhat.com>
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, Sagi Grimberg <sagi@grimberg.me>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>, dm-devel@redhat.com,
+        Ilya Dryomov <idryomov@gmail.com>, wgh@torlan.ru,
+        Zdenek Kabelac <zkabelac@redhat.com>
+Subject: Re: LVM snapshot broke between 4.14 and 4.16
+Message-ID: <20180803183932.GA3258@redhat.com>
+References: <CAOi1vP_tYG77e71CdDiOcszSSEWrp9Vfi+KB7yFAXVQChkjP5A@mail.gmail.com>
+ <93bff248-6897-4867-841b-2dace11597de@torlan.ru>
+ <CA+55aFyAox9BTDpRsqLXiROhHOX60aa45LEZ7Azteaumdu11Fw@mail.gmail.com>
+ <CAOi1vP-SJO4AMK=XD3Lmja++2dQqoiw6Zn8Vgxf8OfvYgnuC6Q@mail.gmail.com>
+ <CA+55aFy2DR9fxHhmGq+azSjX9D71YtLsuFKmoEuYW3uTAUYtJg@mail.gmail.com>
+ <d76415de-2056-c7d6-cc88-b896deaa8ead@torlan.ru>
+ <1ec0a220-d5b0-1c27-e63b-c4d3f4ce9d77@torlan.ru>
+ <CA+55aFyPVQ5-gA93irsaxPC9BNQxnGWrDDHPMUYai2kxKiaKWQ@mail.gmail.com>
+ <20180803133102.GA3092@redhat.com>
+ <20180803152034.GD32066@thunk.org>
 MIME-Version: 1.0
-In-Reply-To: <20180803152523.GY2476@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180803152034.GD32066@thunk.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Fri, 03 Aug 2018 18:39:36 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Fri, 03 Aug 2018 18:39:36 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'msnitzer@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Peter,
+On Fri, Aug 03 2018 at 11:20am -0400,
+Theodore Y. Ts'o <tytso@mit.edu> wrote:
 
-On 8/3/2018 8:25 AM, Peter Zijlstra wrote:
-> On Fri, Aug 03, 2018 at 08:18:09AM -0700, Reinette Chatre wrote:
->> You state that you understand what we are trying to do and I hope that I
->> convinced you that we are not able to accomplish the same by following
->> your guidance.
+> On Fri, Aug 03, 2018 at 09:31:03AM -0400, Mike Snitzer wrote:
+> > 
+> > Debian is notorious for having a stale and/or custom lvm2.
+> > Generally speaking, it is recommended that lvm2 not be older than the
+> > kernel (but the opposite is fine).
 > 
-> No, I said I understood your pmc reserve patch and its implications.
+> On Fri, Aug 03, 2018 at 03:31:18PM +0200, Zdenek Kabelac wrote:
+> > IMHO (as the author of fixing lvm2 patch) user should not be upgrading
+> > kernels and keep running older lvm2 user-land tool (and there are very good
+> > reasons for this).
 > 
-> I have no clue what you're trying to do with resctl, nor why you think
-> this is not feasible with perf. And if it really is not feasible, you'll
-> have to live without it.
+> I'm going to have to strenuously disagree.
+> 
+> In *general* it's quite common for users to update their kernel
+> without updating their userspace.  For example, I as a *developer*, I
+> am often running bleeding kernels (e.g., at the moment I am running
+> something based on 4.18-rc6 on a Debian testing system; and it's not
+> at all uncommon for users to run a newer kernel on older
+> distribution).
+> 
+> This is the *first* I've heard that I should be continuously updating
+> lvm because I'm running bleeding edge kernels --- and I would claim
+> that this is entirely unreasonable.
 
-I can surely provide the details on what we are doing with resctrl and
-elaborate more on why this is not feasible with the full perf kernel API.
+It isn't a hard requirement.  But relative to a newer kernel, you simply
+cannot deny that a newer lvm2 will work better than on older lvm2.  Not
+even speaking about this block regression.  Lessons are learned, fixes
+are made, support for the newer kernel's targets are available, etc etc.
 
-In summary:
-Building on top of Cache Allocation Technology (CAT) we load a portion
-of memory into a specified region of cache. After the region of cache
-obtained its data it (the cache region) is configured (via CAT) to only
-serve cache hits - this pre-loaded memory cannot be evicted from the
-cache. We call this "cache pseudo-locking" - the memory has been
-"pseudo-locked" to the cache.
+That is where the suggestion to keep lvm2 updated along with the kernel
+comes from.
 
-To measure how successful the pseudo-locking of the memory is we can use
-the precision capable performance events on our platforms: start the
-cache hits and miss counters, read the pseudo-locked memory, stop the
-counters. This measurement is done with interrupts and hardware
-prefetchers disabled to ensure that _only_ access to the pseudo-locked
-memory is measured.
+It isn't about "oh we regress _all_ the time.. screw users!".
 
-Any additional code or data accessed either by the counter management or
-even by the loops reading the memory itself can contribute to cache
-hits/misses measured for that instead of the memory we are trying to access.
+> I'll also note that very often users will update kernels while running
+> distribution userspace.  And if you are using Linode, very often
+> *Linode* will offer a newer kernel to better take advantage of the
+> Linode VM, and this is done without needing to install the Linode
+> kernel into the userspace.
+> 
+> It *used* to be the case that users running RHEL 2 or RHEL 3 could try
+> updating to the latest upstream kernel, and everything would break and
+> fall apart.  This was universally considered to be a failure, and a
+> Bad Thing.  So if LVM2 is not backwards compatible, and breaks in the
+> face of newer kernels running older distributions, that is a bug.
 
-Even within the current measurement code we had to take a lot of care to
-not use, for example, pointers to obtain information about the memory to
-be measured. The information had to be local variables.
-
-Looking at if we were to build on top of the kernel perf event API
-(perf_event_create_kernel_counter(), perf_event_enable(),
-perf_event_disable(), ...). Just looking at perf_event_enable() -
-ideally this would be as lean as possible to only enable the event and
-not result in itself contributing the the measurement. First, the
-enabling of the event is not as lean to fulfill this requirement since
-it executes more code after the event was actually enabled. Also, the
-code relies on a mutex so we cannot use it with interrupts disabled.
-
-We have two types of customers of this feature: those who require very
-low latency and those who require high determinism. In either case a
-measured cache miss is of concern to them and our goal is to provide a
-memory region for which the number of cache misses can be demonstrated.
-
-Reinette
+Please stop with the overreaction and making this something it isn't.
