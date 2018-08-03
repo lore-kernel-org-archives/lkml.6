@@ -2,221 +2,131 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7F83C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 13:49:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B88C0C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 13:50:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E93421763
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 13:49:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6855E21763
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 13:50:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="cC1OXEkH";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="H+oZPUqY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E93421763
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TVGQFG5t"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6855E21763
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732312AbeHCPqM (ORCPT
+        id S1732327AbeHCPqx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 11:46:12 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:53790 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731501AbeHCPqM (ORCPT
+        Fri, 3 Aug 2018 11:46:53 -0400
+Received: from mail-yb0-f194.google.com ([209.85.213.194]:36344 "EHLO
+        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731146AbeHCPqx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 11:46:12 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 92232607BD; Fri,  3 Aug 2018 13:49:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533304184;
-        bh=S43oLhBtGnIIfWLgmHqrWdpmZaSzyEcc4/GBf55tR1g=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=cC1OXEkHw5M6YkvweonXIhA20NgQ3vvnwaIsCYZKrPeqV9wjbqQInuXaBbm6ALdDR
-         Q+EXCVEV6yFHOgnSfRR0iWB78YjlBx9cIZ4QKTXJjYjwsndMzyFljzN4IlGaT0BYXR
-         QHCLeL4LB46m8wwLcsHlyklQad3ATxS7WTmiASoE=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 89FCE60264;
-        Fri,  3 Aug 2018 13:49:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533304183;
-        bh=S43oLhBtGnIIfWLgmHqrWdpmZaSzyEcc4/GBf55tR1g=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=H+oZPUqYJCvhMM3AJzDQFhYRVsdRUN/KcqxEBhg+NBz1rNRTagx0ryyqccSJui/zK
-         F2uktlnkdV7WE+h2zsihWjmrLmMafb7wvZB8nT0AjxMIxdIqxgu5iXBO1/whnQQsZ1
-         v/qNw6fdxNRAWjAxjDjVZHzotxbODtTbw1fpc20E=
+        Fri, 3 Aug 2018 11:46:53 -0400
+Received: by mail-yb0-f194.google.com with SMTP id s1-v6so2667444ybk.3;
+        Fri, 03 Aug 2018 06:50:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=XtslmG8l/iRc2k5q6zwj22bwk0LttblIv+FDNA7Nb7o=;
+        b=TVGQFG5tzU/NVheWhn+C0OerbBVC6RZ9psRnhuwLO5iKfPBxawFvOD+Unu/9nKDR1S
+         W5garCyxXxs0G6VTlkTdAaHNA5Po5mSLBpQ/fjQzR8HcHYBhRzcTPPoIcfB3IdFrPI97
+         RIudonpJDD4gsDrM7UN5TxDsA+1CViU0BDmwn8IR+yEjGMljYoZQsr0PbALWZvr7nGNC
+         kKLT4RlZZt7GZ9uNB038jcm7eYGowHqvYlid+kSUmAFemgoLBImWAFLApjfdgtG8aBFL
+         mJ7AUZ2FkJPuU46UkxsPcAaa8BfAkXJMuJPBrCIfEK7WYYBk+abRcUgkeaP8CfiTC6BJ
+         V+5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=XtslmG8l/iRc2k5q6zwj22bwk0LttblIv+FDNA7Nb7o=;
+        b=FEUx0LO9bp83WdOree9Kz4vqcNi/q7QK2Zmvm8luIhX5yj0A8pAjQeJGtdRxS5rZh5
+         3+u8S+tDTxvjyW9IDQvp6rLk08KDQje4LFVpcimKY9os36GOT1OLs00G9ohfMaO99Zpb
+         mcbW1JyhbOh3EhjfcJP5o0yXrYVlXGLhI0GTWaxC2CSGTlhdbRLeq7jwEO+yhZNu4JX0
+         AyPMqwRvyxxDBOKMSlv2NBPNBV3Ect/bxOGOkX5MXh/Mzo9NacUuAKngceZmpb6k1avw
+         okEKABC2S7iRBxc3NlD7f4C5TZvFOhgnGDqOB2tUrDB6WUaP7APJviOy7WPZYIdasDWn
+         JBuA==
+X-Gm-Message-State: AOUpUlHT9SGDF5yf+9T5sNx9lNSGwic7fZnvL64HlhU61jqrknr/43A1
+        b7pMNs6DoUUQYjtNXohjI1Fp+ehI98ODOEhbOXk=
+X-Google-Smtp-Source: AAOMgpcFYmTCzXGWSmKGjqMub3boPu7/rZYc0+IKXkwbcweXTLtR8TaTa09FUOHdpCCcoOpujxXLQf2dNWoPAV/j6SY=
+X-Received: by 2002:a25:4c84:: with SMTP id z126-v6mr2063828yba.409.1533304226354;
+ Fri, 03 Aug 2018 06:50:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Fri, 03 Aug 2018 19:19:43 +0530
-From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
-To:     Marcel Holtmann <marcel@holtmann.org>
-Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        "open list:BLUETOOTH DRIVERS" <linux-bluetooth@vger.kernel.org>,
-        Thierry Escande <thierry.escande@linaro.org>,
-        rtatiya@codeaurora.org, hemantg@codeaurora.org,
-        linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v15 0/7] Enable Bluetooth functionality for WCN3990
-In-Reply-To: <9348C715-71AE-416B-8460-55135FFDAC7E@holtmann.org>
-References: <20180803121632.30689-1-bgodavar@codeaurora.org>
- <9348C715-71AE-416B-8460-55135FFDAC7E@holtmann.org>
-Message-ID: <22ec0ff6f986e56cb6c365eea2c3da56@codeaurora.org>
-X-Sender: bgodavar@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+Received: by 2002:a25:bc1:0:0:0:0:0 with HTTP; Fri, 3 Aug 2018 06:50:25 -0700 (PDT)
+In-Reply-To: <20180801185128.23440-4-maxi.jourdan@wanadoo.fr>
+References: <20180801185128.23440-1-maxi.jourdan@wanadoo.fr> <20180801185128.23440-4-maxi.jourdan@wanadoo.fr>
+From:   Yixun Lan <yixun.lan@gmail.com>
+Date:   Fri, 3 Aug 2018 21:50:25 +0800
+Message-ID: <CALecT5hgk+Wuh4-UWY29NNoEz-47Fx3pSjve8raCd3hRMzXE5w@mail.gmail.com>
+Subject: Re: [PATCH 3/4] ARM64: dts: meson-gx: add dmcbus and canvas nodes.
+To:     Maxime Jourdan <maxi.jourdan@wanadoo.fr>
+Cc:     Kevin Hilman <khilman@baylibre.com>, devicetree@vger.kernel.org,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marcel,
+Hi Maxime
 
-On 2018-08-03 18:16, Marcel Holtmann wrote:
-> Hi Balakrishna,
-> 
->> These patches enables Bluetooth functinalties for new Qualcomm
->> Bluetooth chip wnc3990. As this is latest chip with new features,
->> along with some common features to old chip "qcom,qca6174-bt".
->> we have updated names of functions that are used for both the chips
->> to keep this generic and would help in future when we would have new
->> BT SoC.
->> 
->> The below are difference between new and old chips.
->> 
->> *Power:
->> *New chip: we use voltage regulators to turn on/off the chip and we
->>  must send a command on Tx line to turn on/off the chip completely.
->> *Old chip: We turn on/off by setting a GPIO.
->> 
->> *Note: Turning on sequence differs between two chips.
->> 
->> *Firmware download:
->>  Only firmware file name differ from New and Old chip.
->> 
->>  So we reused some functions/structure/variables which are used for 
->> old
->>  chip to New chip by generic naming (may be future chips may use same 
->> functions).
->> 
->> * As we have multiple changes for functions names,we have tested these 
->> patches
->>   on both chips.
->> 
->> v15:
->> * fixed nit issue in hci_qca.
->> 
->> v13:
->> * Segregated optional and required properties for wcn3990.
->> 
->> v12:
->> * removed iteration loop in qca_init_wcn3990
->> * updated review comments.
->> 
->> v11:
->> * removed regulator current from dtbindings
->> * addressed review comments.
->> 
->> v10:
->> * update current load with actual values of WCN3990.
->> * added support  for itterative connect with BT chip if it fails to 
->> respond to the HOST.
->> * Added regulator current dtbindings.
->> * addressed review comments.
->> 
->> v9:
->> * removed smps regs.
->> * hidded flow control in respective functions.
->> * moved qca_soc_ver to qca_setup
->> * addressed review comments.
->> 
->> v8:
->>  * Squashed [v7 2/8] and [v7 3/8] to one patch.
->>  * updated functions to set and get the UART speeds.
->>  * addressed review comments.
->> 
->> v7:
->>  * Renamed all the possible function of ROME to generic.
->>  * updated with review comments for hci_qca and btqca
->>  * fixed kbuild errors.
->>  * created wrapper functions for re-usable blocks.
->> 
->> v6:
->>  * Hooked up qca_power to qca_serdev.
->>  * renamed all the naming inconsistency functions with qca_*
->>  * leveraged common code of ROME for wcn3990.
->>  * created wrapper functions for re-usable blocks.
->>  * updated function of _*regulator_enable and _*regualtor_disable.
->>  * removed redundant comments and functions.
->>  * add code to derive the firmware files based on ROM Version.
->>  * created new patch for common function of ROME and wcn3990.
->>  * enables Qualcomm chip to operate at 3.2Mbps.
->>  * updated names of functions that are used for both the chips to keep 
->> this generic.
->> 
->> v5:
->>  * updated with review comments for hci_qca and btqca
->> 
->> v4:
->>  * rebased all changes on top of bluetooth-next.
->>  * addressed review comments.
->>  * New patch created for firmware download.
->> 
->> v3:
->>  * Rebased all changes on top of bluetooth-next.
->>  * dt-bindings: net: bluetooth: Add device tree bindings for QTI chip 
->> wcn3990
->>    - added dt-binding snippet for bluetooth chip wcn3990.
->>  * Bluetooth: Add support for wcn3990 soc.
->>    - updated BT_INFO with bt_dev_info, where ever necessary.
->> 
->> v2:
->>   * Add support for wcn3990:
->>    These changes are aligned as per serdev frame work.
->>          We implemented these changes on top of 
->> https://patchwork.kernel.org/patch/10316093/
->>        As this patch enable serdev for one of the Qualcomm BT chip.
->> 
->>        The changes in the patch include.
->>        - Adding support to voting up/down regulators for WCN3990.
->>           - Bluetooth firmware download for wcn3990.
->> 
->>  * Add device tree bindings for Atheros chips:
->>          These changes are on top of 
->> https://patchwork.kernel.org/patch/10316097/.
->>          - Description of device tree bindings.
->> 
->> Balakrishna Godavarthi (7):
->>  dt-bindings: net: bluetooth: Add device tree bindings for QTI chip
->>    wcn3990
->>  Bluetooth: btqca: Rename ROME specific functions to generic functions
->>  Bluetooth: btqca: Redefine qca_uart_setup() to generic function.
->>  Bluetooth: hci_qca: Add wrapper functions for setting UART speed
->>  Bluetooth: hci_qca: Enable 3.2 Mbps operating speed.
->>  Bluetooth: btqca: Add wcn3990 firmware download support.
->>  Bluetooth: hci_qca: Add support for Qualcomm Bluetooth chip wcn3990
->> 
->> .../bindings/net/qualcomm-bluetooth.txt       |  29 +-
->> drivers/bluetooth/btqca.c                     | 117 +++--
->> drivers/bluetooth/btqca.h                     |  22 +-
->> drivers/bluetooth/hci_qca.c                   | 486 +++++++++++++++---
->> 4 files changed, 539 insertions(+), 115 deletions(-)
-> 
-> all 7 patches have been applied to bluetooth-next tree.
-> 
-> If we need to fix things, we fix them with additional patches instead
-> of respinning the series.
-> 
-> Regards
-> 
-> Marcel
+great job! thanks for contributing the patches..
 
-Thanks for the update Marcel.
+On Thu, Aug 2, 2018 at 2:51 AM, Maxime Jourdan <maxi.jourdan@wanadoo.fr> wrote:
+> Wrap the canvas node in a syscon node.
+>
+> Signed-off-by: Maxime Jourdan <maxi.jourdan@wanadoo.fr>
+> ---
+>  arch/arm64/boot/dts/amlogic/meson-gx.dtsi | 17 +++++++++++++++++
+>  1 file changed, 17 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
+> index b8dc4dbb391b..d104b9e111fb 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
+> +++ b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
+> @@ -423,6 +423,23 @@
+>                         };
+>                 };
+>
+> +               dmcbus: bus@c8838000 {
+> +                       compatible = "simple-bus";
+> +                       reg = <0x0 0xc8838000 0x0 0x1000>;
+> +                       #address-cells = <2>;
+> +                       #size-cells = <2>;
+> +                       ranges = <0x0 0x0 0x0 0xc8838000 0x0 0x1000>;
+> +
+> +                       sysctrl_DMC: system-controller@0 {
+> +                               compatible = "amlogic,meson-gx-dmc-sysctrl", "syscon", "simple-mfd";
 
-@Matthias, Thanks for reviewing patches.
+we'd like to drop 'meson-' prefix, so better using "amlogic,gx-dmc-sysctrl",
+please take a look at the discussion here [1]
 
--- 
-Regards
-Balakrishna.
+[1] https://lkml.kernel.org/r/7hk1prmg4w.fsf@baylibre.com
+
+> +                               reg = <0x0 0x0 0x0 0x1000>;
+> +
+> +                               canvas: canvas-provider@0 {
+> +                                       compatible = "amlogic,meson-canvas";
+ditto
+
+> +                               };
+> +                       };
+> +               };
+> +
+>                 hiubus: bus@c883c000 {
+>                         compatible = "simple-bus";
+>                         reg = <0x0 0xc883c000 0x0 0x2000>;
+> --
+> 2.17.1
+>
+>
+> _______________________________________________
+> linux-amlogic mailing list
+> linux-amlogic@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-amlogic
