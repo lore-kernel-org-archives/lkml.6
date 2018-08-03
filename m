@@ -2,72 +2,196 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61E17C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 13:42:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 888F5C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 13:42:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FE3D21766
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 13:42:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FE3D21766
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 384C721763
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 13:42:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 384C721763
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732044AbeHCPiy (ORCPT
+        id S1732188AbeHCPjA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 11:38:54 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:56136 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729871AbeHCPix (ORCPT
+        Fri, 3 Aug 2018 11:39:00 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:3182 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729871AbeHCPi7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 11:38:53 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1flaLZ-0005mR-3b; Fri, 03 Aug 2018 13:42:25 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Stanislaw Gruszka <sgruszka@redhat.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] iwlegacy: fix spelling mistake "acumulative" -> "accumulative"
-Date:   Fri,  3 Aug 2018 14:42:24 +0100
-Message-Id: <20180803134224.2609-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+        Fri, 3 Aug 2018 11:38:59 -0400
+X-UUID: e06a3d0886b242cd86bd2f74edf5c82a-20180803
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
+        (envelope-from <sean.wang@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1468524000; Fri, 03 Aug 2018 21:42:31 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs03n1.mediatek.inc (172.21.101.181) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Fri, 3 Aug 2018 21:42:29 +0800
+Received: from [172.21.77.33] (172.21.77.33) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Fri, 3 Aug 2018 21:42:29 +0800
+Message-ID: <1533303749.3472.160.camel@mtkswgap22>
+Subject: Re: [PATCH v7 2/3] Bluetooth: mediatek: Add protocol support for
+ MediaTek serial devices
+From:   Sean Wang <sean.wang@mediatek.com>
+To:     Marcel Holtmann <marcel@holtmann.org>
+CC:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        "open list:BLUETOOTH DRIVERS" <linux-bluetooth@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Date:   Fri, 3 Aug 2018 21:42:29 +0800
+In-Reply-To: <A6D48D49-52CE-405D-8C5D-C4D54CE67221@holtmann.org>
+References: <cover.1533056925.git.sean.wang@mediatek.com>
+         <c92ed10cf16f36d9a3b390e864af92e2dfe7b771.1533056925.git.sean.wang@mediatek.com>
+         <1707FFA1-A294-4A95-A3BF-0910CE455232@holtmann.org>
+         <1533192799.3472.122.camel@mtkswgap22>
+         <FF45A90A-F9F1-47CB-AB1F-1E92BF587FBE@holtmann.org>
+         <1533199720.3472.136.camel@mtkswgap22>
+         <9526E5D9-50BA-4D57-80F5-083DB7D28AFE@holtmann.org>
+         <1533205495.3472.144.camel@mtkswgap22>
+         <A6D48D49-52CE-405D-8C5D-C4D54CE67221@holtmann.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
 Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Fri, 2018-08-03 at 14:51 +0200, Marcel Holtmann wrote:
+> Hi Sean,
+> 
+> >>>>>>> +
+> >>>>>>> +static int mtk_hci_wmt_sync(struct hci_dev *hdev, u8 op, u8 flag, u16 plen,
+> >>>>>>> +			    const void *param)
+> >>>>>>> +{
+> >>>>>>> +	struct mtk_hci_wmt_cmd wc;
+> >>>>>>> +	struct mtk_wmt_hdr *hdr;
+> >>>>>>> +	struct sk_buff *skb;
+> >>>>>>> +	u32 hlen;
+> >>>>>>> +
+> >>>>>>> +	hlen = sizeof(*hdr) + plen;
+> >>>>>>> +	if (hlen > 255)
+> >>>>>>> +		return -EINVAL;
+> >>>>>>> +
+> >>>>>>> +	hdr = (struct mtk_wmt_hdr *)&wc;
+> >>>>>>> +	hdr->dir = 1;
+> >>>>>>> +	hdr->op = op;
+> >>>>>>> +	hdr->dlen = cpu_to_le16(plen + 1);
+> >>>>>>> +	hdr->flag = flag;
+> >>>>>>> +	memcpy(wc.data, param, plen);
+> >>>>>>> +
+> >>>>>>> +	atomic_inc(&hdev->cmd_cnt);
+> >>>>>> 
+> >>>>>> Why are you doing this one. It will need a comment here if really needed. However I doubt that this is needed. You are only using it from hdev->setup and hdev->shutdown callbacks.
+> >>>>>> 
+> >>>>> 
+> >>>>> An increment on cmd_cnt is really needed because hci_cmd_work would check whether cmd_cnt is positive and then has a decrement on cmd_cnt before a packet is being sent out.
+> >>>>> 
+> >>>>> okay will add a comment.
+> >>>> 
+> >>>> but you are in ->setup callback this time. So if you need this, then all the other ->setup routines would actually fail as well. Either this is leftover from when you did things in ->probe or ->open or this is some thing we might better fix properly in the core instead of papering over it. Can you recheck if this is really needed.
+> >>>> 
+> >>> 
+> >>> I added a counter print and the counter increments as below
+> >>> 
+> >>> 	/* atomic_inc(&hdev->cmd_cnt); */
+> >>>       pr_info("cmd_cnt = %d\n" , atomic_read(&hdev->cmd_cnt));
+> >>> 
+> >>>       skb = __hci_cmd_sync_ev(hdev, 0xfc6f, hlen, &wc, HCI_VENDOR_PKT,
+> >>>                               HCI_INIT_TIMEOUT);
+> >>> 
+> >>> and the log show up that 
+> >>> 
+> >>> 
+> >>> [  334.049156] Bluetooth: hci0: command 0xfc6f tx timeout
+> >>> [  334.054840] cmd_cnt = 0
+> >>> [  336.065076] Bluetooth: hci0: command 0xfc6f tx timeout
+> >>> [  336.070795] cmd_cnt = 0
+> >>> [  338.080997] Bluetooth: hci0: command 0xfc6f tx timeout
+> >>> [  338.086683] cmd_cnt = 0
+> >>> [  340.096907] Bluetooth: hci0: command 0xfc6f tx timeout
+> >>> [  340.102609] cmd_cnt = 0
+> >>> [  342.112824] Bluetooth: hci0: command 0xfc6f tx timeout
+> >>> [  342.118520] cmd_cnt = 0
+> >>> [  344.128747] Bluetooth: hci0: command 0xfc6f tx timeout
+> >>> [  344.134454] cmd_cnt = 0
+> >>> [  346.144667] Bluetooth: hci0: command 0xfc6f tx timeout
+> >>> [  346.150372] cmd_cnt = 0
+> >>> 
+> >>> 
+> >>> The packet is dropped by hci_cmd_work at [1], so I also wondered why the
+> >>> other vendor driver works, it seems the counter needs to be incremented
+> >>> before every skb is being queued to cmd_q.
+> >>> 
+> >>> 4257 static void hci_cmd_work(struct work_struct *work)
+> >>> 4258 {
+> >>> 4259         struct hci_dev *hdev = container_of(work, struct hci_dev, cmd_work);
+> >>> 4260         struct sk_buff *skb;
+> >>> 4261
+> >>> 4262         BT_DBG("%s cmd_cnt %d cmd queued %d", hdev->name,
+> >>> 4263                atomic_read(&hdev->cmd_cnt), skb_queue_len(&hdev->cmd_q));
+> >>> 4264
+> >>> 4265         /* Send queued commands */
+> >>> 
+> >>> [1]
+> >>> 4266         if (atomic_read(&hdev->cmd_cnt)) { /* dropped when cmd_cnt is zero */
+> >>> 4267                 skb = skb_dequeue(&hdev->cmd_q);
+> >>> 4268                 if (!skb)
+> >>> 4269                         return;
+> >>> 4270
+> >>> 4271                 kfree_skb(hdev->sent_cmd);
+> >>> 4272
+> >>> 4273                 hdev->sent_cmd = skb_clone(skb, GFP_KERNEL);
+> >>> 4274                 if (hdev->sent_cmd) {
+> >>> 4275                         atomic_dec(&hdev->cmd_cnt);  /* cmd_cnt-- */
+> >>> 4276                         hci_send_frame(hdev, skb);
+> >> 
+> >> actually the command also needs to better go via the raw_q anyway since it doesn’t come back with the cmd status or cmd complete. You have it waiting for a vendor event. Maybe with is something we need to consider with __hci_cmd_sync_ev anyway.
+> >> 
+> >> Johan would know best since he wrote that code. Anyway, we should fix that in the core and not have you hack around it.
+> >> 
+> > 
+> > yes, my case is that received event is neither cmd status nor cmd complete. It is completely a vendor event.
+> > 
+> > if it wants to be solved by the core layer, do you permit that I remove the hack and then send it in the next version?
+> 
+> we need to have a __hci_raw_sync_ev that uses the hdev->raw_q and waits for the specified event to come back. I never realized that you are missing the cmd status or cmd complete. So this is similar to the original CSR vendor commands which had the same behavior.
+> 
+> I have the feeling that you hdev->cmd_cnt increment is just hiding the problem here. If you really think that it is not chains any side effects we can merge the driver with a big warning and fix this up. However the clean way would be for you to create a patch that introduces __hci_raw_sync_ev as describe above.
 
-fix spelling mistake in rx stats text
+What do you think of this? If I add extra atomic_set 1 on cmd_cnt after driver really got a vendor event back instead of blinding to increment for every packet sent.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/wireless/intel/iwlegacy/3945-debug.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+the behavior is the same to receive a cmd status or complete. it should not have side effects.
 
-diff --git a/drivers/net/wireless/intel/iwlegacy/3945-debug.c b/drivers/net/wireless/intel/iwlegacy/3945-debug.c
-index c1b4441fb8b2..a2960032be81 100644
---- a/drivers/net/wireless/intel/iwlegacy/3945-debug.c
-+++ b/drivers/net/wireless/intel/iwlegacy/3945-debug.c
-@@ -95,7 +95,7 @@ il3945_ucode_rx_stats_read(struct file *file, char __user *user_buf,
- 	pos +=
- 	    scnprintf(buf + pos, bufsz - pos,
- 		      "%-32s     current"
--		      "acumulative       delta         max\n",
-+		      "accumulative      delta         max\n",
- 		      "Statistics_Rx - OFDM:");
- 	pos +=
- 	    scnprintf(buf + pos, bufsz - pos,
--- 
-2.17.1
+ 96         skb = __hci_cmd_sync_ev(hdev, 0xfc6f, hlen, &wc, HCI_VENDOR_PKT,
+ 97                                 HCI_INIT_TIMEOUT);
+ 98
+ 99         if (IS_ERR(skb)) {
+100                 int err = PTR_ERR(skb);
+101
+102                 bt_dev_err(hdev, "Failed to send wmt cmd (%d)", err);
+103                 return err;
+104         }
+105
+106         if (!test_bit(HCI_RESET, &hdev->flags)) <<<<<<
+107                 atomic_set(&hdev->cmd_cnt, 1);  <<<<<<
+108
+109         kfree_skb(skb);
+
+> Regards
+> 
+> Marcel
+> 
+
 
