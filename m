@@ -2,354 +2,140 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 899D9C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 07:59:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E84FC28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 08:02:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 355A3216F3
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 07:59:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 355A3216F3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 422E1216F3
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 08:02:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=iluvatar.ai header.i=@iluvatar.ai header.b="EET/D4GA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 422E1216F3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=iluvatar.ai
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729938AbeHCJzB (ORCPT
+        id S1731083AbeHCJ5S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 05:55:01 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34058 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727192AbeHCJzA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 05:55:00 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 703D6818533A;
-        Fri,  3 Aug 2018 07:59:53 +0000 (UTC)
-Received: from redhat.com (ovpn-117-153.ams2.redhat.com [10.36.117.153])
-        by smtp.corp.redhat.com (Postfix) with SMTP id CEB2D215670D;
-        Fri,  3 Aug 2018 07:59:51 +0000 (UTC)
-Date:   Fri, 3 Aug 2018 10:59:50 +0300
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] vhost: switch to use new message format
-Message-ID: <20180803105511-mutt-send-email-mst@kernel.org>
-References: <1533279891-12249-1-git-send-email-jasowang@redhat.com>
+        Fri, 3 Aug 2018 05:57:18 -0400
+Received: from mail.iluvatar.ai ([58.213.90.100]:57474 "EHLO mail.iluvatar.ai"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727199AbeHCJ5S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 05:57:18 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mail.iluvatar.ai (Postfix) with ESMTP id 9E31F100EAAA1;
+        Fri,  3 Aug 2018 16:05:44 +0800 (CST)
+Received: from mail.iluvatar.ai ([127.0.0.1])
+        by localhost (mail.iluvatar.ai [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id 3LpIeRBp0M5L; Fri,  3 Aug 2018 16:05:42 +0800 (CST)
+Received: from localhost (localhost [127.0.0.1])
+        by mail.iluvatar.ai (Postfix) with ESMTP id 74388142826CD;
+        Fri,  3 Aug 2018 16:05:42 +0800 (CST)
+DKIM-Filter: OpenDKIM Filter v2.9.2 mail.iluvatar.ai 74388142826CD
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iluvatar.ai;
+        s=809B2F8E-810B-11E8-86FD-A0A654EEFFEB; t=1533283542;
+        bh=hRoBe97hJ3IPdaAKo0w+WYh2iEg9420IniSRNzr08bA=;
+        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:
+         Content-Transfer-Encoding;
+        b=EET/D4GAvyQR+IWaHN1HOUE+nIxkZCdD2tNJ7cyNgvnzi3R1INAnHHMLX7utN59KQ
+         fNgWw/wF2EWRVUWzRCqPr5K7uLgp3PS51IqJhelQQvv5PUUvs4NYG3oU24Mv8VULhb
+         NjzjHnCSVZ1QyjSxN8LCd6KbQRscIlfb+IoCwwlw=
+X-Virus-Scanned: amavisd-new at iluvatar.ai
+Received: from mail.iluvatar.ai ([127.0.0.1])
+        by localhost (mail.iluvatar.ai [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id l16u8PdCsfHk; Fri,  3 Aug 2018 16:05:42 +0800 (CST)
+Received: from [192.168.128.73] (unknown [180.166.124.10])
+        by mail.iluvatar.ai (Postfix) with ESMTPSA id 25222100EAAA1;
+        Fri,  3 Aug 2018 16:05:41 +0800 (CST)
+Subject: Re: [PATCH 09/46] dmaengine: cppi41: use
+ dmaenginem_async_device_register to simplify the code
+To:     Peter Ujfalusi <peter.ujfalusi@ti.com>, vkoul@kernel.org
+Cc:     dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dave.jiang@intel.com, radhey.shyam.pandey@xilinx.com,
+        appana.durga.rao@xilinx.com, jmkrzyszt@gmail.com,
+        gomonovych@gmail.com, keescook@chromium.org,
+        horms+renesas@verge.net.au, geert+renesas@glider.be,
+        shawnguo@kernel.org, baoyou.xie@linaro.org,
+        michal.simek@xilinx.com, baohua@kernel.org,
+        ludovic.desroches@microchip.com, linus.walleij@linaro.org,
+        david.brown@linaro.org
+References: <20180803072016.21544-1-sjhuang@iluvatar.ai>
+ <20180803072016.21544-10-sjhuang@iluvatar.ai>
+ <43458794-d124-13df-c944-e473dc8ee1c2@ti.com>
+From:   Huang Shijie <sjhuang@iluvatar.ai>
+Message-ID: <b95f7ce3-b50f-ea62-dbfb-d25973230ec4@iluvatar.ai>
+Date:   Fri, 3 Aug 2018 16:02:00 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1533279891-12249-1-git-send-email-jasowang@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Fri, 03 Aug 2018 07:59:53 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Fri, 03 Aug 2018 07:59:53 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mst@redhat.com' RCPT:''
+In-Reply-To: <43458794-d124-13df-c944-e473dc8ee1c2@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 03, 2018 at 03:04:51PM +0800, Jason Wang wrote:
-> We use to have message like:
-> 
-> struct vhost_msg {
-> 	int type;
-> 	union {
-> 		struct vhost_iotlb_msg iotlb;
-> 		__u8 padding[64];
-> 	};
-> };
-> 
-> Unfortunately, there will be a hole of 32bit in 64bit machine because
-> of the alignment. This leads a different formats between 32bit API and
-> 64bit API. What's more it will break 32bit program running on 64bit
-> machine.
-> 
-> So fixing this by introducing a new message type with an explicit
-> 32bit reserved field after type like:
-> 
-> struct vhost_msg_v2 {
-> 	int type;
-> 	__u32 reserved;
-> 	union {
-> 		struct vhost_iotlb_msg iotlb;
-> 		__u8 padding[64];
-> 	};
-> };
-> 
-> We will have a consistent ABI after switching to use this. To enable
-> this capability, introduce a new ioctl (VHOST_SET_BAKCEND_FEATURE) for
-> userspace to enable this feature (VHOST_BACKEND_F_IOTLB_V2).
-> 
-> Fixes: 6b1e6cc7855b ("vhost: new device IOTLB API")
-> Signed-off-by: Jason Wang <jasowang@redhat.com>
-> ---
->  drivers/vhost/net.c        | 30 ++++++++++++++++++++
->  drivers/vhost/vhost.c      | 71 ++++++++++++++++++++++++++++++++++------------
->  drivers/vhost/vhost.h      | 11 ++++++-
->  include/uapi/linux/vhost.h | 18 ++++++++++++
->  4 files changed, 111 insertions(+), 19 deletions(-)
-> 
-> diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
-> index 367d802..4e656f8 100644
-> --- a/drivers/vhost/net.c
-> +++ b/drivers/vhost/net.c
-> @@ -78,6 +78,10 @@ enum {
->  };
->  
->  enum {
-> +	VHOST_NET_BACKEND_FEATURES = (1ULL << VHOST_BACKEND_F_IOTLB_MSG_V2)
-> +};
-> +
-> +enum {
->  	VHOST_NET_VQ_RX = 0,
->  	VHOST_NET_VQ_TX = 1,
->  	VHOST_NET_VQ_MAX = 2,
-> @@ -1399,6 +1403,21 @@ static long vhost_net_reset_owner(struct vhost_net *n)
->  	return err;
->  }
->  
-> +static int vhost_net_set_backend_features(struct vhost_net *n, u64 features)
-> +{
-> +	int i;
-> +
-> +	mutex_lock(&n->dev.mutex);
-> +	for (i = 0; i < VHOST_NET_VQ_MAX; ++i) {
-> +		mutex_lock(&n->vqs[i].vq.mutex);
-> +		n->vqs[i].vq.acked_backend_features = features;
-> +		mutex_unlock(&n->vqs[i].vq.mutex);
-> +	}
-> +	mutex_unlock(&n->dev.mutex);
-> +
-> +	return 0;
-> +}
-> +
->  static int vhost_net_set_features(struct vhost_net *n, u64 features)
->  {
->  	size_t vhost_hlen, sock_hlen, hdr_len;
-> @@ -1489,6 +1508,17 @@ static long vhost_net_ioctl(struct file *f, unsigned int ioctl,
->  		if (features & ~VHOST_NET_FEATURES)
->  			return -EOPNOTSUPP;
->  		return vhost_net_set_features(n, features);
-> +	case VHOST_GET_BACKEND_FEATURES:
-> +		features = VHOST_NET_BACKEND_FEATURES;
-> +		if (copy_to_user(featurep, &features, sizeof(features)))
-> +			return -EFAULT;
-> +		return 0;
-> +	case VHOST_SET_BACKEND_FEATURES:
-> +		if (copy_from_user(&features, featurep, sizeof(features)))
-> +			return -EFAULT;
-> +		if (features & ~VHOST_NET_BACKEND_FEATURES)
-> +			return -EOPNOTSUPP;
-> +		return vhost_net_set_backend_features(n, features);
->  	case VHOST_RESET_OWNER:
->  		return vhost_net_reset_owner(n);
->  	case VHOST_SET_OWNER:
-> diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-> index a502f1a..6f6c42d 100644
-> --- a/drivers/vhost/vhost.c
-> +++ b/drivers/vhost/vhost.c
-> @@ -315,6 +315,7 @@ static void vhost_vq_reset(struct vhost_dev *dev,
->  	vq->log_addr = -1ull;
->  	vq->private_data = NULL;
->  	vq->acked_features = 0;
-> +	vq->acked_backend_features = 0;
->  	vq->log_base = NULL;
->  	vq->error_ctx = NULL;
->  	vq->kick = NULL;
-> @@ -1027,28 +1028,40 @@ static int vhost_process_iotlb_msg(struct vhost_dev *dev,
->  ssize_t vhost_chr_write_iter(struct vhost_dev *dev,
->  			     struct iov_iter *from)
->  {
-> -	struct vhost_msg_node node;
-> -	unsigned size = sizeof(struct vhost_msg);
-> -	size_t ret;
-> -	int err;
-> +	struct vhost_iotlb_msg msg;
-> +	size_t offset;
-> +	int type, ret;
->  
-> -	if (iov_iter_count(from) < size)
-> -		return 0;
-> -	ret = copy_from_iter(&node.msg, size, from);
-> -	if (ret != size)
-> +	ret = copy_from_iter(&type, sizeof(type), from);
-> +	if (ret != sizeof(type))
->  		goto done;
->  
-> -	switch (node.msg.type) {
-> +	switch (type) {
->  	case VHOST_IOTLB_MSG:
-> -		err = vhost_process_iotlb_msg(dev, &node.msg.iotlb);
-> -		if (err)
-> -			ret = err;
-> +		/* There maybe a hole after type for V1 message type,
-> +		 * so skip it here.
-> +		 */
-> +		offset = offsetof(struct vhost_msg, iotlb) - sizeof(int);
-> +		break;
-> +	case VHOST_IOTLB_MSG_V2:
-> +		offset = sizeof(__u32);
->  		break;
->  	default:
->  		ret = -EINVAL;
-> -		break;
-> +		goto done;
-> +	}
-> +
-> +	iov_iter_advance(from, offset);
-> +	ret = copy_from_iter(&msg, sizeof(msg), from);
-> +	if (ret != sizeof(msg))
-> +		goto done;
-> +	if (vhost_process_iotlb_msg(dev, &msg)) {
-> +		ret = -EFAULT;
-> +		goto done;
->  	}
->  
-> +	ret = (type == VHOST_IOTLB_MSG) ? sizeof(struct vhost_msg) :
-> +	      sizeof(struct vhost_msg_v2);
->  done:
->  	return ret;
->  }
 
-We can actually fix 32 bit apps too, checking the mode for v1.
-But that can wait for another patch.
 
-> @@ -1107,13 +1120,28 @@ ssize_t vhost_chr_read_iter(struct vhost_dev *dev, struct iov_iter *to,
->  		finish_wait(&dev->wait, &wait);
->  
->  	if (node) {
-> -		ret = copy_to_iter(&node->msg, size, to);
-> +		struct vhost_iotlb_msg *msg;
-> +		void *start = &node->msg;
-> +
-> +		switch (node->msg.type) {
-> +		case VHOST_IOTLB_MSG:
-> +			size = sizeof(node->msg);
-> +			msg = &node->msg.iotlb;
-> +			break;
-> +		case VHOST_IOTLB_MSG_V2:
-> +			size = sizeof(node->msg_v2);
-> +			msg = &node->msg_v2.iotlb;
-> +			break;
-> +		default:
-> +			BUG();
-> +			break;
-> +		}
->  
-> -		if (ret != size || node->msg.type != VHOST_IOTLB_MISS) {
-> +		ret = copy_to_iter(start, size, to);
-> +		if (ret != size || msg->type != VHOST_IOTLB_MISS) {
->  			kfree(node);
->  			return ret;
->  		}
-> -
->  		vhost_enqueue_msg(dev, &dev->pending_list, node);
->  	}
->  
-> @@ -1126,12 +1154,19 @@ static int vhost_iotlb_miss(struct vhost_virtqueue *vq, u64 iova, int access)
->  	struct vhost_dev *dev = vq->dev;
->  	struct vhost_msg_node *node;
->  	struct vhost_iotlb_msg *msg;
-> +	bool v2 = vhost_backend_has_feature(vq, VHOST_BACKEND_F_IOTLB_MSG_V2);
->  
-> -	node = vhost_new_msg(vq, VHOST_IOTLB_MISS);
-> +	node = vhost_new_msg(vq, v2 ? VHOST_IOTLB_MSG_V2 : VHOST_IOTLB_MSG);
->  	if (!node)
->  		return -ENOMEM;
->  
-> -	msg = &node->msg.iotlb;
-> +	if (v2) {
-> +		node->msg_v2.type = VHOST_IOTLB_MSG_V2;
-> +		msg = &node->msg_v2.iotlb;
-> +	} else {
-> +		msg = &node->msg.iotlb;
-> +	}
-> +
->  	msg->type = VHOST_IOTLB_MISS;
->  	msg->iova = iova;
->  	msg->perm = access;
-> diff --git a/drivers/vhost/vhost.h b/drivers/vhost/vhost.h
-> index 6c844b9..466ef75 100644
-> --- a/drivers/vhost/vhost.h
-> +++ b/drivers/vhost/vhost.h
-> @@ -132,6 +132,7 @@ struct vhost_virtqueue {
->  	struct vhost_umem *iotlb;
->  	void *private_data;
->  	u64 acked_features;
-> +	u64 acked_backend_features;
->  	/* Log write descriptors */
->  	void __user *log_base;
->  	struct vhost_log *log;
-> @@ -147,7 +148,10 @@ struct vhost_virtqueue {
->  };
->  
->  struct vhost_msg_node {
-> -  struct vhost_msg msg;
-> +  union {
-> +	  struct vhost_msg msg;
-> +	  struct vhost_msg_v2 msg_v2;
-> +  };
->    struct vhost_virtqueue *vq;
->    struct list_head node;
->  };
-> @@ -238,6 +242,11 @@ static inline bool vhost_has_feature(struct vhost_virtqueue *vq, int bit)
->  	return vq->acked_features & (1ULL << bit);
->  }
->  
-> +static inline bool vhost_backend_has_feature(struct vhost_virtqueue *vq, int bit)
-> +{
-> +	return vq->acked_backend_features & (1ULL << bit);
-> +}
-> +
->  #ifdef CONFIG_VHOST_CROSS_ENDIAN_LEGACY
->  static inline bool vhost_is_little_endian(struct vhost_virtqueue *vq)
->  {
-> diff --git a/include/uapi/linux/vhost.h b/include/uapi/linux/vhost.h
-> index c51f8e5..c176e9d 100644
-> --- a/include/uapi/linux/vhost.h
-> +++ b/include/uapi/linux/vhost.h
-> @@ -65,6 +65,7 @@ struct vhost_iotlb_msg {
->  };
->  
->  #define VHOST_IOTLB_MSG 0x1
-> +#define VHOST_IOTLB_MSG_V2 0x2
->  
->  struct vhost_msg {
->  	int type;
-> @@ -74,6 +75,15 @@ struct vhost_msg {
->  	};
->  };
->  
-> +struct vhost_msg_v2 {
-> +	int type;
-> +	__u32 reserved;
-> +	union {
-> +		struct vhost_iotlb_msg iotlb;
-> +		__u8 padding[64];
-> +	};
-> +};
-> +
->  struct vhost_memory_region {
->  	__u64 guest_phys_addr;
->  	__u64 memory_size; /* bytes */
-> @@ -160,6 +170,14 @@ struct vhost_memory {
->  #define VHOST_GET_VRING_BUSYLOOP_TIMEOUT _IOW(VHOST_VIRTIO, 0x24,	\
->  					 struct vhost_vring_state)
->  
-> +/* Set or get vhost backend capability */
-> +
-> +/* Use message type V2 */
-> +#define VHOST_BACKEND_F_IOTLB_MSG_V2 0x1
-> +
-> +#define VHOST_SET_BACKEND_FEATURES _IOW(VHOST_VIRTIO, 0x25, __u64)
-> +#define VHOST_GET_BACKEND_FEATURES _IOW(VHOST_VIRTIO, 0x26, __u64)
-> +
->  /* VHOST_NET specific defines */
->  
->  /* Attach virtio net ring to a raw socket, or tap device.
+=E5=9C=A8 2018=E5=B9=B408=E6=9C=8803=E6=97=A5 15:55, Peter Ujfalusi =E5=86=
+=99=E9=81=93:
+>
+> On 2018-08-03 10:19, Huang Shijie wrote:
+>> Use dmaenginem_async_device_register to simplify the code:
+>>     remove dma_async_device_unregister
+>>
+>> Signed-off-by: Huang Shijie <sjhuang@iluvatar.ai>
+>> ---
+>>   drivers/dma/ti/cppi41.c | 7 ++-----
+>>   1 file changed, 2 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/dma/ti/cppi41.c b/drivers/dma/ti/cppi41.c
+>> index 1497da367710..d2998a19ed2e 100644
+>> --- a/drivers/dma/ti/cppi41.c
+>> +++ b/drivers/dma/ti/cppi41.c
+>> @@ -1096,21 +1096,19 @@ static int cppi41_dma_probe(struct platform_de=
+vice *pdev)
+>>   		goto err_chans;
+>>   	cdd->irq =3D irq;
+>>  =20
+>> -	ret =3D dma_async_device_register(&cdd->ddev);
+>> +	ret =3D dmaenginem_async_device_register(&cdd->ddev);
+>>   	if (ret)
+>>   		goto err_chans;
+>>  =20
+>>   	ret =3D of_dma_controller_register(dev->of_node,
+>>   			cppi41_dma_xlate, &cpp41_dma_info);
+>>   	if (ret)
+>> -		goto err_of;
+>> +		goto err_chans;
+>>  =20
+>>   	pm_runtime_mark_last_busy(dev);
+>>   	pm_runtime_put_autosuspend(dev);
+>>  =20
+>>   	return 0;
+>> -err_of:
+>> -	dma_async_device_unregister(&cdd->ddev);
+>>   err_chans:
+>>   	deinit_cppi41(dev, cdd);
+>>   err_init_cppi:
+>> @@ -1132,7 +1130,6 @@ static int cppi41_dma_remove(struct platform_dev=
+ice *pdev)
+>>   		dev_err(&pdev->dev, "%s could not pm_runtime_get: %i\n",
+>>   			__func__, error);
+>>   	of_dma_controller_free(pdev->dev.of_node);
+>> -	dma_async_device_unregister(&cdd->ddev);
+> If I read the code right then this is not safe.
+> We would have deinitalized cppi41 driver which is not functional, but w=
+e
+> will still have the dma device registered and if a channel is requested
+> we will have kernel crash.
+>
+> It falls in the same case as omap-dma, edma.
+Thanks for pointing this, we can drop the patches for omap-dma, edma.
 
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
+Huang Shijie
 
-> -- 
-> 2.7.4
