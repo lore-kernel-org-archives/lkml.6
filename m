@@ -2,92 +2,151 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45BD3C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 19:10:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12F72C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 19:10:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A08621782
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 19:10:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A08621782
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bell.net
+	by mail.kernel.org (Postfix) with ESMTP id B339A21782
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 19:10:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="PT2vxOxn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B339A21782
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730272AbeHCVHd (ORCPT
+        id S1731978AbeHCVHm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 17:07:33 -0400
-Received: from simcoe208srvr.owm.bell.net ([184.150.200.208]:50463 "EHLO
-        torfep02.bell.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728246AbeHCVHc (ORCPT
+        Fri, 3 Aug 2018 17:07:42 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:36576 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728246AbeHCVHm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 17:07:32 -0400
-Received: from bell.net torfep02 184.150.200.158 by torfep02.bell.net
-          with ESMTP
-          id <20180803190957.ZQZT32387.torfep02.bell.net@torspm02.bell.net>;
-          Fri, 3 Aug 2018 15:09:57 -0400
-Received: from [192.168.2.49] (really [70.53.62.189]) by torspm02.bell.net
-          with ESMTP
-          id <20180803190957.QVIY31064.torspm02.bell.net@[192.168.2.49]>;
-          Fri, 3 Aug 2018 15:09:57 -0400
-Subject: Re: [PATCH] parisc: prefer _THIS_IP_ and _RET_IP_ statement
- expressions
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     deller@gmx.de, jejb@parisc-linux.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Pravin Shedge <pravin.shedge4linux@gmail.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        linux-parisc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-References: <20180801182258.17834-1-ndesaulniers@google.com>
- <78c667f9-5c8b-3835-83eb-4b59e27e4f7e@bell.net>
- <CAKwvOdmdrA+UvAWyqe8sNJt5nxHXHsSwf5Yxih9HYgVL+kovxQ@mail.gmail.com>
- <fe7b57d8-b586-a390-31d2-2274f69db3c0@bell.net>
- <CAKwvOd=CLBFZRQ4HQb_+VCydDEvsbC2w2gD4hTwvp_jm1zqN9Q@mail.gmail.com>
- <54b2139b-53d2-01c5-f240-93a692cdbc59@bell.net>
- <CAKwvOdktvrZL8T_5K2VtQtgt_mscS7kzVXYVy0O7CSuGX53Y5A@mail.gmail.com>
- <536ef1b1-cfa2-f66d-4261-fb8405964632@bell.net>
- <CAKwvOdmwj76aESZNKhzfPmhfzGKvrfDut7oD5KAwA+VR-JukSg@mail.gmail.com>
- <80743c1c-2a8c-7bce-2068-24c63790eba7@bell.net>
- <CAKwvOdmDwO1U1sk=3-6zXFrVw6by1e_9VBx1WWMCx_rMqYSw-A@mail.gmail.com>
-From:   John David Anglin <dave.anglin@bell.net>
-Message-ID: <81a7e33a-0403-b6d4-fcba-c2168a608ba6@bell.net>
-Date:   Fri, 3 Aug 2018 15:09:57 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 3 Aug 2018 17:07:42 -0400
+Received: by mail-io0-f195.google.com with SMTP id r15-v6so5880835ioa.3;
+        Fri, 03 Aug 2018 12:10:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=nvL5FiU5YXCXcfxUfO20a3zDdWcrcNDrj4X8rTCzbZs=;
+        b=PT2vxOxnkAA0cke3iM8WrP0cCya7HflOTUJwFHzUf67Cs/11M5bGPBOwCFysyVmU3B
+         d7P8mXeZwHvjo6nkPyKsTKb8zcgDOZAw3RcGCVC1yRQqbhbQuFbTgDXjecSo4BJBCHZm
+         ThajIF2NDRy1MR+F7JTFj5IN+eMsNr7KWgLEk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=nvL5FiU5YXCXcfxUfO20a3zDdWcrcNDrj4X8rTCzbZs=;
+        b=GwMYJP0bvrYKo3ro3thPj+NYzOzik9rp7oM877GL35X7rZZfndq3N9boFef2K3bSXF
+         9R5nWC0rAmwnGZRxyonhRx2DatpfWv5XGlYeJDJLkaaTPhaJaoYIwNPWi367x/jQSxKy
+         POtk8VNPrdCqf9RWXnk/p6KYuoc1FuATjAot2pBvzOzBsmZmUY+KUOZLLs5Iki2K5xil
+         mVI4NqkSCmEfkJ2gsTbF7m34fjQzv0rElCbp5Nn7cWcEPAZouGwaXSVNasgTP6VEKxng
+         Ct6jZ43638FQFhW/yDeWjBBeGSfjt2UxxBz2QzKXsXpkFzo3Hel1gbnyXYEuFHx6reDE
+         7+SQ==
+X-Gm-Message-State: AOUpUlH8DcY3nxWFu5bDQAKHGpybKAps3kHdsyCeLIyVJNcVY/njOKnR
+        Y87sCnC30p304sX9khdudOOHqO80hCEfkYcjMRw=
+X-Google-Smtp-Source: AAOMgpfY5goloJYOgYbYK93LL+KAeD6moehbL+9AJQdfwd1bCp//6H0iPk2HfRgk10RAeSb+AgcFmtSvrKXkYHHNxbU=
+X-Received: by 2002:a6b:fc0c:: with SMTP id r12-v6mr7580454ioh.203.1533323407671;
+ Fri, 03 Aug 2018 12:10:07 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAKwvOdmDwO1U1sk=3-6zXFrVw6by1e_9VBx1WWMCx_rMqYSw-A@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Cloudmark-Analysis: v=2.2 cv=DZT4krlW c=1 sm=0 tr=0 a=VCUqJnZSONuD0ISaPFNHjQ==:17 a=IkcTkHD0fZMA:10 a=dapMudl6Dx4A:10 a=mDV3o1hIAAAA:8 a=CCpqsmhAAAAA:8 a=FBHGMhGWAAAA:8 a=oo6BvqPr6ModUujxAbAA:9 a=QEXdDO2ut3YA:10 a=3WmcZs0_zLoA:10 a=PMXd7YaJusUA:10 a=66zSKFQpzMcA:10 a=_FVE-zBwftR9WsbkzFJk:22 a=ul9cdbp4aOFLsgKbc677:22 a=9gvnlMMaQFpL9xblJ6ne:22
+References: <CAOi1vP_tYG77e71CdDiOcszSSEWrp9Vfi+KB7yFAXVQChkjP5A@mail.gmail.com>
+ <93bff248-6897-4867-841b-2dace11597de@torlan.ru> <CA+55aFyAox9BTDpRsqLXiROhHOX60aa45LEZ7Azteaumdu11Fw@mail.gmail.com>
+ <CAOi1vP-SJO4AMK=XD3Lmja++2dQqoiw6Zn8Vgxf8OfvYgnuC6Q@mail.gmail.com>
+ <CA+55aFy2DR9fxHhmGq+azSjX9D71YtLsuFKmoEuYW3uTAUYtJg@mail.gmail.com>
+ <d76415de-2056-c7d6-cc88-b896deaa8ead@torlan.ru> <1ec0a220-d5b0-1c27-e63b-c4d3f4ce9d77@torlan.ru>
+ <CA+55aFyPVQ5-gA93irsaxPC9BNQxnGWrDDHPMUYai2kxKiaKWQ@mail.gmail.com>
+ <b2bbd8ec-ac5b-fa8a-d3f7-8615d87f73c3@redhat.com> <CA+55aFwWZX=CXmWDTkDGb36kf12XmTehmQjbiMPCqCRG2hi9kw@mail.gmail.com>
+ <20180803185431.GB3258@redhat.com>
+In-Reply-To: <20180803185431.GB3258@redhat.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 3 Aug 2018 12:09:56 -0700
+Message-ID: <CA+55aFwDEY7B6OMh5xL2wc8BRj1KkzBHggNowAjbsWfma6H5Zg@mail.gmail.com>
+Subject: Re: LVM snapshot broke between 4.14 and 4.16
+To:     Mike Snitzer <snitzer@redhat.com>
+Cc:     Zdenek Kabelac <zkabelac@redhat.com>, wgh@torlan.ru,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        linux-block <linux-block@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Sagi Grimberg <sagi@grimberg.me>, dm-devel@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-08-03 2:11 PM, Nick Desaulniers wrote:
-> But the kernel uses the generic_THIS_IP_  *everywhere*, not parisc's
-> custom current_text_addr().  So if this did actually break unwinding,
-> you should have noticed by now.
-The unwind problem was noticed.
+On Fri, Aug 3, 2018 at 11:54 AM Mike Snitzer <snitzer@redhat.com> wrote:
+>
+>
+> As I explained to Ted in my previous reply to this thread: using an lvm2
+> that is of the same vintage of the kernel is generally going to provide
+> a more robust user experience
 
-Patches were recently applied to gcc and binutils to try and fix it.  
-The gcc patch moved
-branch tables to rodata so that the label at the head of the table 
-wasn't in text.
+You said that yes.
 
-https://gcc.gnu.org/ml/gcc-patches/2018-07/msg01804.html
-https://sourceware.org/ml/binutils/2018-07/msg00474.html
+And it is completely irrelevant.
 
-When I saw your suggested change, I realized there was another source of 
-text labels
-that need linker relocations.
+The fact is, if you use an older lvm2, then a newer kernel still needs
+to work.  Your "more robust experience" argument has nothing
+what-so-ever to do with that.
 
-Dave
+Will you get new features from newer user land tools? Sure, usually.
+And entirely immaterial to a kernel regression.
 
--- 
-John David Anglin  dave.anglin@bell.net
+Will newer user land tools hopefully fix other issues? You'd hope so,
+but again - immaterial.
 
+So why are you bringing up a complete red herring? It's entirely
+immaterial to the actual issue at hand.
+
+I would _hope_ that other projects hjave the same "no regressions"
+rule that the kernel has, but I know many don't. But whatever other
+projects are out there, and whatever other rules _they_ have for their
+development is also entirely immaterial to the kernel.
+
+The kernel has a simple rule: no user regressions.
+
+Yes, we've had to break that rule very occasionally - when the
+semantics are a huge honking security issue and cannot possibly be
+hidden any other way, then we obviously have to break them.
+
+So it has happened. It's happily quite rare.
+
+But in this case, the issue is that the block layer now enforces the
+read-only protection more. And it seems to be the case that the lvm
+tools set the read-only flag even when they then depended on being
+able to write to them, because we didn't use to.
+
+So just judging from that description, I do suspect that "we can't
+depend on the lvm read-only flag", so a patch like
+
+ "let's not turn DM_READONLY_FLAG into actually set_disk_ro(dm_disk(md), 1)"
+
+makes sense.
+
+Obviously, if we can limit that more, that would be lovely.
+
+But dammit, NOBODY gets to say "oh, you should just update user land tools".
+
+Because when they do, I will explode. And I'm 1000% serious that I
+will refuse to work with people who continue to say that or continue
+to make excuses.
+
+And user land developers should damn well know about this. The fact
+that they are apparently not clued in about kernel rules is what
+allowed this bug to go undiscovered and unreported for much too long.
+Apparently the lvm2 user land developers *did* notice the breakage,
+but instead of reporting it as a kernel bug, they worked around it.
+
+So user land developers should actually know that if the kernel stops
+working for them, they should *not* work around it. Sure, fix your
+program, but let the kernel people know.
+
+And kernel people should know that "oh, the user land people already
+changed their behavior" is *not* a "I don't need to care about it".
+Unless the user land fix was so long ago that nobody cares any more.
+
+                   Linus
