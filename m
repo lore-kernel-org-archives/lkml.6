@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0E2DC4646D
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:05:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7D15C4646F
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:05:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7378A217C6
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:05:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7378A217C6
+	by mail.kernel.org (Postfix) with ESMTP id 4A183217C6
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:05:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A183217C6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732974AbeHDLFg (ORCPT
+        id S1732993AbeHDLFi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 07:05:36 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48804 "EHLO
+        Sat, 4 Aug 2018 07:05:38 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48816 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727600AbeHDLFe (ORCPT
+        with ESMTP id S1727600AbeHDLFh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 07:05:34 -0400
+        Sat, 4 Aug 2018 07:05:37 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2168289C;
-        Sat,  4 Aug 2018 09:05:35 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 30EBE89C;
+        Sat,  4 Aug 2018 09:05:39 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 20/32] ipv4: frags: handle possible skb truesize change
-Date:   Sat,  4 Aug 2018 11:01:10 +0200
-Message-Id: <20180804082650.974341571@linuxfoundation.org>
+Subject: [PATCH 4.9 21/32] net: dsa: Do not suspend/resume closed slave_dev
+Date:   Sat,  4 Aug 2018 11:01:11 +0200
+Message-Id: <20180804082651.016137898@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180804082649.908295462@linuxfoundation.org>
 References: <20180804082649.908295462@linuxfoundation.org>
@@ -50,50 +51,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-[ Upstream commit 4672694bd4f1aebdab0ad763ae4716e89cb15221 ]
+[ Upstream commit a94c689e6c9e72e722f28339e12dff191ee5a265 ]
 
-ip_frag_queue() might call pskb_pull() on one skb that
-is already in the fragment queue.
+If a DSA slave network device was previously disabled, there is no need
+to suspend or resume it.
 
-We need to take care of possible truesize change, or we
-might have an imbalance of the netns frags memory usage.
-
-IPv6 is immune to this bug, because RFC5722, Section 4,
-amended by Errata ID 3089 states :
-
-  When reassembling an IPv6 datagram, if
-  one or more its constituent fragments is determined to be an
-  overlapping fragment, the entire datagram (and any constituent
-  fragments) MUST be silently discarded.
-
-Fixes: 158f323b9868 ("net: adjust skb->truesize in pskb_expand_head()")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
+Fixes: 2446254915a7 ("net: dsa: allow switch drivers to implement suspend/resume hooks")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/ip_fragment.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ net/dsa/slave.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/net/ipv4/ip_fragment.c
-+++ b/net/ipv4/ip_fragment.c
-@@ -446,11 +446,16 @@ found:
- 		int i = end - FRAG_CB(next)->offset; /* overlap is 'i' bytes */
+--- a/net/dsa/slave.c
++++ b/net/dsa/slave.c
+@@ -1199,6 +1199,9 @@ int dsa_slave_suspend(struct net_device
+ {
+ 	struct dsa_slave_priv *p = netdev_priv(slave_dev);
  
- 		if (i < next->len) {
-+			int delta = -next->truesize;
++	if (!netif_running(slave_dev))
++		return 0;
 +
- 			/* Eat head of the next overlapped fragment
- 			 * and leave the loop. The next ones cannot overlap.
- 			 */
- 			if (!pskb_pull(next, i))
- 				goto err;
-+			delta += next->truesize;
-+			if (delta)
-+				add_frag_mem_limit(qp->q.net, delta);
- 			FRAG_CB(next)->offset += i;
- 			qp->q.meat -= i;
- 			if (next->ip_summed != CHECKSUM_UNNECESSARY)
+ 	netif_device_detach(slave_dev);
+ 
+ 	if (p->phy) {
+@@ -1216,6 +1219,9 @@ int dsa_slave_resume(struct net_device *
+ {
+ 	struct dsa_slave_priv *p = netdev_priv(slave_dev);
+ 
++	if (!netif_running(slave_dev))
++		return 0;
++
+ 	netif_device_attach(slave_dev);
+ 
+ 	if (p->phy) {
 
 
