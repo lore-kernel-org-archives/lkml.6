@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 220E8C4646D
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:11:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97B0BC4646F
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:11:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DBD89217C5
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:11:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBD89217C5
+	by mail.kernel.org (Postfix) with ESMTP id 50B77217C5
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:11:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50B77217C5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389249AbeHDLLl (ORCPT
+        id S2389267AbeHDLLp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 07:11:41 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50294 "EHLO
+        Sat, 4 Aug 2018 07:11:45 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50304 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733165AbeHDLLl (ORCPT
+        with ESMTP id S1733165AbeHDLLo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 07:11:41 -0400
+        Sat, 4 Aug 2018 07:11:44 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 37092BC6;
-        Sat,  4 Aug 2018 09:11:41 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6DA59BC6;
+        Sat,  4 Aug 2018 09:11:44 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Brad Love <brad@nextdimension.cc>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org, Jane Wan <Jane.Wan@nokia.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 068/124] media: saa7164: Fix driver name in debug output
-Date:   Sat,  4 Aug 2018 11:00:57 +0200
-Message-Id: <20180804082705.068582363@linuxfoundation.org>
+Subject: [PATCH 4.4 069/124] mtd: rawnand: fsl_ifc: fix FSL NAND driver to read all ONFI parameter pages
+Date:   Sat,  4 Aug 2018 11:00:58 +0200
+Message-Id: <20180804082705.102958877@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180804082702.434482435@linuxfoundation.org>
 References: <20180804082702.434482435@linuxfoundation.org>
@@ -52,39 +51,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Brad Love <brad@nextdimension.cc>
+From: Jane Wan <Jane.Wan@nokia.com>
 
-[ Upstream commit 0cc4655cb57af0b7e105d075c4f83f8046efafe7 ]
+[ Upstream commit a75bbe71a27875fdc61cde1af6d799037cef6bed ]
 
-This issue was reported by a user who downloaded a corrupt saa7164
-firmware, then went looking for a valid xc5000 firmware to fix the
-error displayed...but the device in question has no xc5000, thus after
-much effort, the wild goose chase eventually led to a support call.
+Per ONFI specification (Rev. 4.0), if the CRC of the first parameter page
+read is not valid, the host should read redundant parameter page copies.
+Fix FSL NAND driver to read the two redundant copies which are mandatory
+in the specification.
 
-The xc5000 has nothing to do with saa7164 (as far as I can tell),
-so replace the string with saa7164 as well as give a meaningful
-hint on the firmware mismatch.
-
-Signed-off-by: Brad Love <brad@nextdimension.cc>
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Jane Wan <Jane.Wan@nokia.com>
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/pci/saa7164/saa7164-fw.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/mtd/nand/fsl_ifc_nand.c |   17 ++++++++++-------
+ 1 file changed, 10 insertions(+), 7 deletions(-)
 
---- a/drivers/media/pci/saa7164/saa7164-fw.c
-+++ b/drivers/media/pci/saa7164/saa7164-fw.c
-@@ -430,7 +430,8 @@ int saa7164_downloadfirmware(struct saa7
- 			__func__, fw->size);
+--- a/drivers/mtd/nand/fsl_ifc_nand.c
++++ b/drivers/mtd/nand/fsl_ifc_nand.c
+@@ -449,9 +449,16 @@ static void fsl_ifc_cmdfunc(struct mtd_i
  
- 		if (fw->size != fwlength) {
--			printk(KERN_ERR "xc5000: firmware incorrect size\n");
-+			printk(KERN_ERR "saa7164: firmware incorrect size %zu != %u\n",
-+				fw->size, fwlength);
- 			ret = -ENOMEM;
- 			goto out;
- 		}
+ 	case NAND_CMD_READID:
+ 	case NAND_CMD_PARAM: {
++		/*
++		 * For READID, read 8 bytes that are currently used.
++		 * For PARAM, read all 3 copies of 256-bytes pages.
++		 */
++		int len = 8;
+ 		int timing = IFC_FIR_OP_RB;
+-		if (command == NAND_CMD_PARAM)
++		if (command == NAND_CMD_PARAM) {
+ 			timing = IFC_FIR_OP_RBCD;
++			len = 256 * 3;
++		}
+ 
+ 		ifc_out32((IFC_FIR_OP_CW0 << IFC_NAND_FIR0_OP0_SHIFT) |
+ 			  (IFC_FIR_OP_UA  << IFC_NAND_FIR0_OP1_SHIFT) |
+@@ -461,12 +468,8 @@ static void fsl_ifc_cmdfunc(struct mtd_i
+ 			  &ifc->ifc_nand.nand_fcr0);
+ 		ifc_out32(column, &ifc->ifc_nand.row3);
+ 
+-		/*
+-		 * although currently it's 8 bytes for READID, we always read
+-		 * the maximum 256 bytes(for PARAM)
+-		 */
+-		ifc_out32(256, &ifc->ifc_nand.nand_fbcr);
+-		ifc_nand_ctrl->read_bytes = 256;
++		ifc_out32(len, &ifc->ifc_nand.nand_fbcr);
++		ifc_nand_ctrl->read_bytes = len;
+ 
+ 		set_addr(mtd, 0, 0, 0);
+ 		fsl_ifc_run_command(mtd);
 
 
