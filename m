@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B93D2C4646F
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:12:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AE4FC4646F
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:12:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 520A22177A
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:12:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 520A22177A
+	by mail.kernel.org (Postfix) with ESMTP id 1F6702177A
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:12:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F6702177A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389417AbeHDLMW (ORCPT
+        id S2389429AbeHDLM0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 07:12:22 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50428 "EHLO
+        Sat, 4 Aug 2018 07:12:26 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50436 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732902AbeHDLMW (ORCPT
+        with ESMTP id S1732902AbeHDLMZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 07:12:22 -0400
+        Sat, 4 Aug 2018 07:12:25 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8D873BBF;
-        Sat,  4 Aug 2018 09:12:21 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A29D3BC6;
+        Sat,  4 Aug 2018 09:12:24 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anton Vasilyev <vasilyev@ispras.ru>,
-        Marc Kleine-Budde <mkl@pengutronix.de>
-Subject: [PATCH 4.4 119/124] can: ems_usb: Fix memory leak on ems_usb_disconnect()
-Date:   Sat,  4 Aug 2018 11:01:48 +0200
-Message-Id: <20180804082706.911859038@linuxfoundation.org>
+        stable@vger.kernel.org, Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jeremy Cline <jcline@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 120/124] net: socket: fix potential spectre v1 gadget in socketcall
+Date:   Sat,  4 Aug 2018 11:01:49 +0200
+Message-Id: <20180804082706.948729452@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180804082702.434482435@linuxfoundation.org>
 References: <20180804082702.434482435@linuxfoundation.org>
@@ -50,33 +51,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Anton Vasilyev <vasilyev@ispras.ru>
+From: Jeremy Cline <jcline@redhat.com>
 
-commit 72c05f32f4a5055c9c8fe889bb6903ec959c0aad upstream.
+commit c8e8cd579bb4265651df8223730105341e61a2d1 upstream.
 
-ems_usb_probe() allocates memory for dev->tx_msg_buffer, but there
-is no its deallocation in ems_usb_disconnect().
+'call' is a user-controlled value, so sanitize the array index after the
+bounds check to avoid speculating past the bounds of the 'nargs' array.
 
-Found by Linux Driver Verification project (linuxtesting.org).
+Found with the help of Smatch:
 
-Signed-off-by: Anton Vasilyev <vasilyev@ispras.ru>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+net/socket.c:2508 __do_sys_socketcall() warn: potential spectre issue
+'nargs' [r] (local cap)
+
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Jeremy Cline <jcline@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/can/usb/ems_usb.c |    1 +
- 1 file changed, 1 insertion(+)
+ net/socket.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/net/can/usb/ems_usb.c
-+++ b/drivers/net/can/usb/ems_usb.c
-@@ -1078,6 +1078,7 @@ static void ems_usb_disconnect(struct us
- 		usb_free_urb(dev->intr_urb);
+--- a/net/socket.c
++++ b/net/socket.c
+@@ -89,6 +89,7 @@
+ #include <linux/magic.h>
+ #include <linux/slab.h>
+ #include <linux/xattr.h>
++#include <linux/nospec.h>
  
- 		kfree(dev->intr_in_buffer);
-+		kfree(dev->tx_msg_buffer);
- 	}
- }
+ #include <asm/uaccess.h>
+ #include <asm/unistd.h>
+@@ -2324,6 +2325,7 @@ SYSCALL_DEFINE2(socketcall, int, call, u
  
+ 	if (call < 1 || call > SYS_SENDMMSG)
+ 		return -EINVAL;
++	call = array_index_nospec(call, SYS_SENDMMSG + 1);
+ 
+ 	len = nargs[call];
+ 	if (len > sizeof(a))
 
 
