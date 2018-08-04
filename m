@@ -6,72 +6,80 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CC7EC4646F
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 16:32:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA84FC4646D
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 16:36:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2425B217CD
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 16:32:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2425B217CD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 41A0E2178F
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 16:36:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41A0E2178F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728904AbeHDSdm (ORCPT
+        id S1729624AbeHDShT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 14:33:42 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:43962 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727877AbeHDSdm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 14:33:42 -0400
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id oKQnlF9qkDfv; Sat,  4 Aug 2018 18:32:28 +0200 (CEST)
-Received: from nazgul.tnic (95-42-181-223.ip.btc-net.bg [95.42.181.223])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 5AEA01EC00FF;
-        Sat,  4 Aug 2018 18:32:28 +0200 (CEST)
-Date:   Sat, 4 Aug 2018 18:32:30 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Manish Narani <manish.narani@xilinx.com>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com,
-        will.deacon@arm.com, michal.simek@xilinx.com, mchehab@kernel.org,
-        mdf@kernel.org, edgar.iglesias@xilinx.com,
-        shubhrajyoti.datta@xilinx.com, naga.sureshkumar.relli@xilinx.com,
-        bharat.kumar.gogada@xilinx.com, stefan.krsmanovic@aggios.com,
-        sgoud@xilinx.com, anirudh@xilinx.com, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-edac@vger.kernel.org
-Subject: Re: [PATCH v4 0/4] EDAC: Enhancements to Synopsys EDAC driver
-Message-ID: <20180804163230.GA8157@nazgul.tnic>
-References: <1533374735-16662-1-git-send-email-manish.narani@xilinx.com>
+        Sat, 4 Aug 2018 14:37:19 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:7784 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728417AbeHDShT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 4 Aug 2018 14:37:19 -0400
+X-IronPort-AV: E=Sophos;i="5.43,368,1503331200"; 
+   d="scan'208";a="43070901"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 05 Aug 2018 00:35:56 +0800
+Received: from G08CNEXCHPEKD02.g08.fujitsu.local (unknown [10.167.33.83])
+        by cn.fujitsu.com (Postfix) with ESMTP id 723234B6ADEE;
+        Sun,  5 Aug 2018 00:35:51 +0800 (CST)
+Received: from fnst.localdomain (10.167.226.155) by
+ G08CNEXCHPEKD02.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
+ (TLS) id 14.3.399.0; Sun, 5 Aug 2018 00:35:54 +0800
+Date:   Sun, 5 Aug 2018 00:35:48 +0800
+From:   Lu Fengqi <lufq.fnst@cn.fujitsu.com>
+To:     zhong jiang <zhongjiang@huawei.com>
+CC:     <clm@fb.com>, <jbacik@fb.com>, <dsterba@suse.com>,
+        <linux-btrfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] btrfs/extent_map: Remove unneeded variable "ret"
+Message-ID: <20180804163548.GG2049@fnst.localdomain>
+References: <1533381223-16734-1-git-send-email-zhongjiang@huawei.com>
+ <20180804125947.GF2049@fnst.localdomain>
+ <5B65A7E9.90607@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <1533374735-16662-1-git-send-email-manish.narani@xilinx.com>
-User-Agent: Mutt/1.6.0 (2016-04-01)
+In-Reply-To: <5B65A7E9.90607@huawei.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Originating-IP: [10.167.226.155]
+X-yoursite-MailScanner-ID: 723234B6ADEE.AC1DF
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: lufq.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Aug 04, 2018 at 02:55:31PM +0530, Manish Narani wrote:
-> This patch series enhances the current EDAC driver to support different
+On Sat, Aug 04, 2018 at 09:19:37PM +0800, zhong jiang wrote:
+>On 2018/8/4 20:59, Lu Fengqi wrote:
+>> On Sat, Aug 04, 2018 at 07:13:43PM +0800, zhong jiang wrote:
+>>> The ret is not used after initalization, So just remove it.
+>> So why not change these two functions to void function?
+>>
+> I just keep the original interface  and make the minimal change.
+>of course,   It is also feasible that make these two functions to void function.
+>
+>I will repost if  you prefer to that change.  I am ok with that.
 
-This one, your 2/4 and 4/4 still says "this patch". Hurried too much?
-How about slowing down and looking at them with a critical eye?
-
-Also, how about waiting for a week before resending your patches so that
-you give people chance to review them too?
-
-While you wait, please read Documentation/process/submitting-patches.rst
-- it'll help you with the submission modalities.
-
-Thanks.
+Since the return value which always is 0 is meaningless, I would prefer
+to make this change.
 
 -- 
-Regards/Gruss,
-    Boris.
+Thanks,
+Lu
 
-ECO tip #101: Trim your mails when you reply.
---
+>
+>Thanks,
+>zhong jiang
+>
+>
+>
+
+
