@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD885C4646F
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:07:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90EC6C4646F
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:07:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 815C3217C6
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:07:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 815C3217C6
+	by mail.kernel.org (Postfix) with ESMTP id 41B13217C6
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:07:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41B13217C6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387447AbeHDLHC (ORCPT
+        id S2387454AbeHDLHF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 07:07:02 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49294 "EHLO
+        Sat, 4 Aug 2018 07:07:05 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49304 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729243AbeHDLHB (ORCPT
+        with ESMTP id S1726754AbeHDLHE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 07:07:01 -0400
+        Sat, 4 Aug 2018 07:07:04 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8A0A1BB3;
-        Sat,  4 Aug 2018 09:07:02 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 93C3ABCF;
+        Sat,  4 Aug 2018 09:07:05 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+        stable@vger.kernel.org, Noam Rathaus <noamr@beyondsecurity.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 016/124] netfilter: ipset: List timing out entries with "timeout 1" instead of zero
-Date:   Sat,  4 Aug 2018 11:00:05 +0200
-Message-Id: <20180804082703.057487478@linuxfoundation.org>
+Subject: [PATCH 4.4 017/124] infiniband: fix a possible use-after-free bug
+Date:   Sat,  4 Aug 2018 11:00:06 +0200
+Message-Id: <20180804082703.091542383@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180804082702.434482435@linuxfoundation.org>
 References: <20180804082702.434482435@linuxfoundation.org>
@@ -51,45 +52,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
-[ Upstream commit bd975e691486ba52790ba23cc9b4fecab7bc0d31 ]
+[ Upstream commit cb2595c1393b4a5211534e6f0a0fbad369e21ad8 ]
 
-When listing sets with timeout support, there's a probability that
-just timing out entries with "0" timeout value is listed/saved.
-However when restoring the saved list, the zero timeout value means
-permanent elelements.
+ucma_process_join() will free the new allocated "mc" struct,
+if there is any error after that, especially the copy_to_user().
 
-The new behaviour is that timing out entries are listed with "timeout 1"
-instead of zero.
+But in parallel, ucma_leave_multicast() could find this "mc"
+through idr_find() before ucma_process_join() frees it, since it
+is already published.
 
-Fixes netfilter bugzilla #1258.
+So "mc" could be used in ucma_leave_multicast() after it is been
+allocated and freed in ucma_process_join(), since we don't refcnt
+it.
 
-Signed-off-by: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
+Fix this by separating "publish" from ID allocation, so that we
+can get an ID first and publish it later after copy_to_user().
+
+Fixes: c8f6a362bf3e ("RDMA/cma: Add multicast communication support")
+Reported-by: Noam Rathaus <noamr@beyondsecurity.com>
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/linux/netfilter/ipset/ip_set_timeout.h |   10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ drivers/infiniband/core/ucma.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/include/linux/netfilter/ipset/ip_set_timeout.h
-+++ b/include/linux/netfilter/ipset/ip_set_timeout.h
-@@ -65,8 +65,14 @@ ip_set_timeout_set(unsigned long *timeou
- static inline u32
- ip_set_timeout_get(unsigned long *timeout)
- {
--	return *timeout == IPSET_ELEM_PERMANENT ? 0 :
--		jiffies_to_msecs(*timeout - jiffies)/MSEC_PER_SEC;
-+	u32 t;
-+
-+	if (*timeout == IPSET_ELEM_PERMANENT)
-+		return 0;
-+
-+	t = jiffies_to_msecs(*timeout - jiffies)/MSEC_PER_SEC;
-+	/* Zero value in userspace means no timeout */
-+	return t == 0 ? 1 : t;
- }
+--- a/drivers/infiniband/core/ucma.c
++++ b/drivers/infiniband/core/ucma.c
+@@ -217,7 +217,7 @@ static struct ucma_multicast* ucma_alloc
+ 		return NULL;
  
- #endif	/* __KERNEL__ */
+ 	mutex_lock(&mut);
+-	mc->id = idr_alloc(&multicast_idr, mc, 0, 0, GFP_KERNEL);
++	mc->id = idr_alloc(&multicast_idr, NULL, 0, 0, GFP_KERNEL);
+ 	mutex_unlock(&mut);
+ 	if (mc->id < 0)
+ 		goto error;
+@@ -1375,6 +1375,10 @@ static ssize_t ucma_process_join(struct
+ 		goto err3;
+ 	}
+ 
++	mutex_lock(&mut);
++	idr_replace(&multicast_idr, mc, mc->id);
++	mutex_unlock(&mut);
++
+ 	mutex_unlock(&file->mut);
+ 	ucma_put_ctx(ctx);
+ 	return 0;
 
 
