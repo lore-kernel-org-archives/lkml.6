@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 195DAC4646F
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:12:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64FE3C4646D
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:12:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C57DF2177A
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:12:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C57DF2177A
+	by mail.kernel.org (Postfix) with ESMTP id 269532177A
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:12:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 269532177A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389495AbeHDLMm (ORCPT
+        id S2389510AbeHDLMq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 07:12:42 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50476 "EHLO
+        Sat, 4 Aug 2018 07:12:46 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50492 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388557AbeHDLMl (ORCPT
+        with ESMTP id S2388557AbeHDLMo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 07:12:41 -0400
+        Sat, 4 Aug 2018 07:12:44 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9C028BBF;
-        Sat,  4 Aug 2018 09:12:40 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D352789C;
+        Sat,  4 Aug 2018 09:12:43 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Ewan D. Milne" <emilne@redhat.com>,
-        Tony Battersby <tonyb@cybernetics.com>,
-        Bart Van Assche <bart.vanassche@wdc.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.4 124/124] scsi: sg: fix minor memory leak in error path
-Date:   Sat,  4 Aug 2018 11:01:53 +0200
-Message-Id: <20180804082707.090344443@linuxfoundation.org>
+        stable@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        netdev@vger.kernel.org, Dmitry Safonov <dima@arista.com>
+Subject: [PATCH 4.4 106/124] netlink: Do not subscribe to non-existent groups
+Date:   Sat,  4 Aug 2018 11:01:35 +0200
+Message-Id: <20180804082706.427556290@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180804082702.434482435@linuxfoundation.org>
 References: <20180804082702.434482435@linuxfoundation.org>
@@ -52,33 +52,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tony Battersby <tonyb@cybernetics.com>
+From: Dmitry Safonov <dima@arista.com>
 
-commit c170e5a8d222537e98aa8d4fddb667ff7a2ee114 upstream.
+[ Upstream commit 7acf9d4237c46894e0fa0492dd96314a41742e84 ]
 
-Fix a minor memory leak when there is an error opening a /dev/sg device.
+Make ABI more strict about subscribing to group > ngroups.
+Code doesn't check for that and it looks bogus.
+(one can subscribe to non-existing group)
+Still, it's possible to bind() to all possible groups with (-1)
 
-Fixes: cc833acbee9d ("sg: O_EXCL and other lock handling")
-Cc: <stable@vger.kernel.org>
-Reviewed-by: Ewan D. Milne <emilne@redhat.com>
-Signed-off-by: Tony Battersby <tonyb@cybernetics.com>
-Reviewed-by: Bart Van Assche <bart.vanassche@wdc.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Steffen Klassert <steffen.klassert@secunet.com>
+Cc: netdev@vger.kernel.org
+Signed-off-by: Dmitry Safonov <dima@arista.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/scsi/sg.c |    1 +
+ net/netlink/af_netlink.c |    1 +
  1 file changed, 1 insertion(+)
 
---- a/drivers/scsi/sg.c
-+++ b/drivers/scsi/sg.c
-@@ -2195,6 +2195,7 @@ sg_add_sfp(Sg_device * sdp)
- 	write_lock_irqsave(&sdp->sfd_lock, iflags);
- 	if (atomic_read(&sdp->detaching)) {
- 		write_unlock_irqrestore(&sdp->sfd_lock, iflags);
-+		kfree(sfp);
- 		return ERR_PTR(-ENODEV);
+--- a/net/netlink/af_netlink.c
++++ b/net/netlink/af_netlink.c
+@@ -983,6 +983,7 @@ static int netlink_bind(struct socket *s
+ 		if (err)
+ 			return err;
  	}
- 	list_add_tail(&sfp->sfd_siblings, &sdp->sfds);
++	groups &= (1UL << nlk->ngroups) - 1;
+ 
+ 	bound = nlk->bound;
+ 	if (bound) {
 
 
