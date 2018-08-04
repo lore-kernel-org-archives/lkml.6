@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D590FC4646F
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:10:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08B2EC4646F
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:10:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B0BB2177A
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:10:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B0BB2177A
+	by mail.kernel.org (Postfix) with ESMTP id C26C6217C5
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:10:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C26C6217C5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388885AbeHDLKG (ORCPT
+        id S2388899AbeHDLKJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 07:10:06 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49942 "EHLO
+        Sat, 4 Aug 2018 07:10:09 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49950 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732962AbeHDLKG (ORCPT
+        with ESMTP id S1732962AbeHDLKJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 07:10:06 -0400
+        Sat, 4 Aug 2018 07:10:09 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3C54789C;
-        Sat,  4 Aug 2018 09:10:06 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4EDF489C;
+        Sat,  4 Aug 2018 09:10:09 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 075/124] scsi: megaraid: silence a static checker bug
-Date:   Sat,  4 Aug 2018 11:01:04 +0200
-Message-Id: <20180804082705.315399282@linuxfoundation.org>
+Subject: [PATCH 4.4 076/124] thermal: exynos: fix setting rising_threshold for Exynos5433
+Date:   Sat,  4 Aug 2018 11:01:05 +0200
+Message-Id: <20180804082705.350104368@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180804082702.434482435@linuxfoundation.org>
 References: <20180804082702.434482435@linuxfoundation.org>
@@ -51,33 +52,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-[ Upstream commit 27e833dabab74ee665e487e291c9afc6d71effba ]
+[ Upstream commit 8bfc218d0ebbabcba8ed2b8ec1831e0cf1f71629 ]
 
-If we had more than 32 megaraid cards then it would cause memory
-corruption.  That's not likely, of course, but it's handy to enforce it
-and make the static checker happy.
+Add missing clearing of the previous value when setting rising
+temperature threshold.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/megaraid.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/thermal/samsung/exynos_tmu.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/scsi/megaraid.c
-+++ b/drivers/scsi/megaraid.c
-@@ -4197,6 +4197,9 @@ megaraid_probe_one(struct pci_dev *pdev,
- 	int irq, i, j;
- 	int error = -ENODEV;
+--- a/drivers/thermal/samsung/exynos_tmu.c
++++ b/drivers/thermal/samsung/exynos_tmu.c
+@@ -585,6 +585,7 @@ static int exynos5433_tmu_initialize(str
+ 		threshold_code = temp_to_code(data, temp);
  
-+	if (hba_count >= MAX_CONTROLLERS)
-+		goto out;
-+
- 	if (pci_enable_device(pdev))
- 		goto out;
- 	pci_set_master(pdev);
+ 		rising_threshold = readl(data->base + rising_reg_offset);
++		rising_threshold &= ~(0xff << j * 8);
+ 		rising_threshold |= (threshold_code << j * 8);
+ 		writel(rising_threshold, data->base + rising_reg_offset);
+ 
 
 
