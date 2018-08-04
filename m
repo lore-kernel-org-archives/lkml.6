@@ -6,39 +6,39 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B332C46470
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 04:49:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 198D0C4646D
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 04:49:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 229B42178D
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 04:49:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5FF8217B4
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 04:49:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="kOfjxaRa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 229B42178D
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="R3Fpci9t"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5FF8217B4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728024AbeHDGsX (ORCPT
+        id S1728309AbeHDGsY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 02:48:23 -0400
-Received: from conuserg-11.nifty.com ([210.131.2.78]:64028 "EHLO
+        Sat, 4 Aug 2018 02:48:24 -0400
+Received: from conuserg-11.nifty.com ([210.131.2.78]:64073 "EHLO
         conuserg-11.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726396AbeHDGsW (ORCPT
+        with ESMTP id S1726186AbeHDGsX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 02:48:22 -0400
+        Sat, 4 Aug 2018 02:48:23 -0400
 Received: from grover.tkatk1.zaq.ne.jp (zaqdadce369.zaq.ne.jp [218.220.227.105]) (authenticated)
-        by conuserg-11.nifty.com with ESMTP id w744lBUe027764;
-        Sat, 4 Aug 2018 13:47:12 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-11.nifty.com w744lBUe027764
+        by conuserg-11.nifty.com with ESMTP id w744lBUg027764;
+        Sat, 4 Aug 2018 13:47:14 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-11.nifty.com w744lBUg027764
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1533358033;
-        bh=ulZoy0aw7RRCqQOsqMWNRLnJF7c1Iv70/QIKaR5unz4=;
+        s=dec2015msa; t=1533358035;
+        bh=f+KzLO9Zo8AUTIEcRMJ6Yoats7Pnq6JJJRhdP/HI3cQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kOfjxaRajVFuIBjRzC9WPMBXFaRNIX7okCWnL23bBpWSUgfRi4vmWLRdS6hy+0Cyl
-         jD9r5lobuOP3BiF68nTVPWy0n5k6877jQ4CM9cFCpLvvLtpCZ2EFyI648+X0Q/K0mv
-         nClWpM7+LU8UF7t43egQ8g4xQVTMyicPz0aVbCeiuqBffIhZD/yVcIqZRv+mNcKKCU
-         hwQBBbpFIqhZlIPYGAnjBPxk6htSvzE8HNFZDIi4j4xhqYW8YzB3N/EYiE83Y+QuLK
-         l9rt+g40aBEltIS5S90N5PLm8jFZF4puCWwbGaZETKiH9Ws+zr1jgbqk4DqR1w4WG2
-         Hx0qmXPDWVx/g==
+        b=R3Fpci9t8O338kFk3wsstAPl1zn6q9F5GdnEqVgP/Cb59YYwzC8ywvrHgY0q0cSgB
+         g69ZYKdCOXNmSoddffKvH4z17AqgKIoi3OZ48Vj0S0v3LgpJW/pXJIJWPn5zFGeMSf
+         BdTJuAbKtH74c3JoeMuIVdOIx0RwJeRsH0c0hXCIu802kA0sH/w2FHj3+VSkWg0EQ7
+         jyOSvtg+q4L1HDPAataaizmp4aWZ2v5X7Z4u7dTygOj3WpJMKD1n2nUGD48+BL8Ijb
+         AT5rdU946DcboVFcpCwhoQelJ+0rh7ordseAafmiTbfzxdnynPgqTmrAUyTEPjS860
+         M+I0LyiSc3B2Q==
 X-Nifty-SrcIP: [218.220.227.105]
 From:   Masahiro Yamada <yamada.masahiro@socionext.com>
 To:     linux-kbuild@vger.kernel.org
@@ -49,9 +49,9 @@ Cc:     Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>,
         Sam Ravnborg <sam@ravnborg.org>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 1/3] um: fix parallel building with O= option
-Date:   Sat,  4 Aug 2018 13:47:01 +0900
-Message-Id: <1533358023-5801-2-git-send-email-yamada.masahiro@socionext.com>
+Subject: [PATCH 3/3] um: clean up archheaders recipe
+Date:   Sat,  4 Aug 2018 13:47:03 +0900
+Message-Id: <1533358023-5801-4-git-send-email-yamada.masahiro@socionext.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1533358023-5801-1-git-send-email-yamada.masahiro@socionext.com>
 References: <1533358023-5801-1-git-send-email-yamada.masahiro@socionext.com>
@@ -60,65 +60,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Randy Dunlap reports UML occasionally fails to build with -j<N> and
-O=<builddir> options.
+Now that '%asm-generic' is added to no-dot-config-targets,
+'make asm-generic' does not include the kernel configuration.
 
-  make[1]: Entering directory '/home/rdunlap/mmotm-2018-0802-1529/UM64'
-    UPD     include/generated/uapi/linux/version.h
-    WRAP    arch/x86/include/generated/asm/dma-contiguous.h
-    WRAP    arch/x86/include/generated/asm/export.h
-    WRAP    arch/x86/include/generated/asm/early_ioremap.h
-    WRAP    arch/x86/include/generated/asm/mcs_spinlock.h
-    WRAP    arch/x86/include/generated/asm/mm-arch-hooks.h
-    WRAP    arch/x86/include/generated/uapi/asm/bpf_perf_event.h
-    WRAP    arch/x86/include/generated/uapi/asm/poll.h
-    GEN     ./Makefile
-  make[2]: *** No rule to make target 'archheaders'.  Stop.
-  arch/um/Makefile:119: recipe for target 'archheaders' failed
-  make[1]: *** [archheaders] Error 2
-  make[1]: *** Waiting for unfinished jobs....
-    UPD     include/config/kernel.release
-  make[1]: *** wait: No child processes.  Stop.
-  Makefile:146: recipe for target 'sub-make' failed
-  make: *** [sub-make] Error 2
-
-The cause of the problem is the use of '$(MAKE) KBUILD_SRC=',
-which recurses to the top Makefile via the $(objtree)/Makefile
-generated by scripts/mkmakefile.
-
-When you run "make -j<N> O=<builddir> ARCH=um", Make can execute
-'archheaders' and 'outputmakefile' targets simultaneously because
-there is no dependency between them.
-
-If it happens,
-
-  $(Q)$(MAKE) KBUILD_SRC= ARCH=$(HEADER_ARCH) archheaders
-
-... tries to run $(objtree)/Makefile that is being updated.
-
-The correct way for the recursion is
-
-  $(Q)$(MAKE) -f $(srctree)/Makefile ARCH=$(HEADER_ARCH) archheaders
-
-..., which does not rely on the generated Makefile.
+You can simply do 'make asm-generic' in the recursed top Makefile
+without bothering syncconfig.
 
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
 
- arch/um/Makefile | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ arch/um/Makefile | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
 diff --git a/arch/um/Makefile b/arch/um/Makefile
-index e54dda8..de340e4 100644
+index de340e4..1a47f9c 100644
 --- a/arch/um/Makefile
 +++ b/arch/um/Makefile
-@@ -122,8 +122,7 @@ archheaders:
- 	$(Q)$(MAKE) -f $(srctree)/scripts/Makefile.asm-generic \
- 	            kbuild-file=$(HOST_DIR)/include/uapi/asm/Kbuild \
- 		    obj=$(HOST_DIR)/include/generated/uapi/asm
--	$(Q)$(MAKE) KBUILD_SRC= ARCH=$(HEADER_ARCH) archheaders
--
-+	$(Q)$(MAKE) -f $(srctree)/Makefile ARCH=$(HEADER_ARCH) archheaders
+@@ -116,13 +116,7 @@ endef
+ KBUILD_KCONFIG := $(HOST_DIR)/um/Kconfig
+ 
+ archheaders:
+-	$(Q)$(MAKE) -f $(srctree)/scripts/Makefile.asm-generic \
+-	            kbuild-file=$(HOST_DIR)/include/asm/Kbuild \
+-		    obj=$(HOST_DIR)/include/generated/asm
+-	$(Q)$(MAKE) -f $(srctree)/scripts/Makefile.asm-generic \
+-	            kbuild-file=$(HOST_DIR)/include/uapi/asm/Kbuild \
+-		    obj=$(HOST_DIR)/include/generated/uapi/asm
+-	$(Q)$(MAKE) -f $(srctree)/Makefile ARCH=$(HEADER_ARCH) archheaders
++	$(Q)$(MAKE) -f $(srctree)/Makefile ARCH=$(HEADER_ARCH) asm-generic archheaders
  
  archprepare: include/generated/user_constants.h
  
