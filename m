@@ -6,38 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B13CCC4646F
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:06:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA9EEC4646F
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:06:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B1B5217C6
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:06:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B1B5217C6
+	by mail.kernel.org (Postfix) with ESMTP id 71C2D217C6
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:06:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71C2D217C6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733093AbeHDLGA (ORCPT
+        id S1733107AbeHDLGD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 07:06:00 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48934 "EHLO
+        Sat, 4 Aug 2018 07:06:03 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48960 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727600AbeHDLF7 (ORCPT
+        with ESMTP id S1727600AbeHDLGC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 07:05:59 -0400
+        Sat, 4 Aug 2018 07:06:02 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8783C89C;
-        Sat,  4 Aug 2018 09:06:00 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D24BB89C;
+        Sat,  4 Aug 2018 09:06:03 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Neal Cardwell <ncardwell@google.com>,
-        Yuchung Cheng <ycheng@google.com>,
-        Soheil Hassas Yeganeh <soheil@google.com>,
-        Priyaranjan Jha <priyarjha@google.com>,
-        Eric Dumazet <edumazet@google.com>,
+        stable@vger.kernel.org, Xiao Liang <xiliang@redhat.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 07/32] tcp_bbr: fix bw probing to raise in-flight data for very small BDPs
-Date:   Sat,  4 Aug 2018 11:00:57 +0200
-Message-Id: <20180804082650.284138337@linuxfoundation.org>
+Subject: [PATCH 4.9 08/32] xen-netfront: wait xenbus state change when load module manually
+Date:   Sat,  4 Aug 2018 11:00:58 +0200
+Message-Id: <20180804082650.324496320@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180804082649.908295462@linuxfoundation.org>
 References: <20180804082649.908295462@linuxfoundation.org>
@@ -54,56 +50,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Neal Cardwell <ncardwell@google.com>
+From: Xiao Liang <xiliang@redhat.com>
 
-[ Upstream commit 383d470936c05554219094a4d364d964cb324827 ]
+[ Upstream commit 822fb18a82abaf4ee7058793d95d340f5dab7bfc ]
 
-For some very small BDPs (with just a few packets) there was a
-quantization effect where the target number of packets in flight
-during the super-unity-gain (1.25x) phase of gain cycling was
-implicitly truncated to a number of packets no larger than the normal
-unity-gain (1.0x) phase of gain cycling. This meant that in multi-flow
-scenarios some flows could get stuck with a lower bandwidth, because
-they did not push enough packets inflight to discover that there was
-more bandwidth available. This was really only an issue in multi-flow
-LAN scenarios, where RTTs and BDPs are low enough for this to be an
-issue.
+When loading module manually, after call xenbus_switch_state to initializes
+the state of the netfront device, the driver state did not change so fast
+that may lead no dev created in latest kernel. This patch adds wait to make
+sure xenbus knows the driver is not in closed/unknown state.
 
-This fix ensures that gain cycling can raise inflight for small BDPs
-by ensuring that in PROBE_BW mode target inflight values with a
-super-unity gain are always greater than inflight values with a gain
-<= 1. Importantly, this applies whether the inflight value is
-calculated for use as a cwnd value, or as a target inflight value for
-the end of the super-unity phase in bbr_is_next_cycle_phase() (both
-need to be bigger to ensure we can probe with more packets in flight
-reliably).
+Current state:
+[vm]# ethtool eth0
+Settings for eth0:
+	Link detected: yes
+[vm]# modprobe -r xen_netfront
+[vm]# modprobe  xen_netfront
+[vm]# ethtool eth0
+Settings for eth0:
+Cannot get device settings: No such device
+Cannot get wake-on-lan settings: No such device
+Cannot get message level: No such device
+Cannot get link status: No such device
+No data available
 
-This is a candidate fix for stable releases.
+With the patch installed.
+[vm]# ethtool eth0
+Settings for eth0:
+	Link detected: yes
+[vm]# modprobe -r xen_netfront
+[vm]# modprobe xen_netfront
+[vm]# ethtool eth0
+Settings for eth0:
+	Link detected: yes
 
-Fixes: 0f8782ea1497 ("tcp_bbr: add BBR congestion control")
-Signed-off-by: Neal Cardwell <ncardwell@google.com>
-Acked-by: Yuchung Cheng <ycheng@google.com>
-Acked-by: Soheil Hassas Yeganeh <soheil@google.com>
-Acked-by: Priyaranjan Jha <priyarjha@google.com>
-Reviewed-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: Xiao Liang <xiliang@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/tcp_bbr.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/net/xen-netfront.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/net/ipv4/tcp_bbr.c
-+++ b/net/ipv4/tcp_bbr.c
-@@ -324,6 +324,10 @@ static u32 bbr_target_cwnd(struct sock *
- 	/* Reduce delayed ACKs by rounding up cwnd to the next even number. */
- 	cwnd = (cwnd + 1) & ~1U;
+--- a/drivers/net/xen-netfront.c
++++ b/drivers/net/xen-netfront.c
+@@ -86,6 +86,7 @@ struct netfront_cb {
+ /* IRQ name is queue name with "-tx" or "-rx" appended */
+ #define IRQ_NAME_SIZE (QUEUE_NAME_SIZE + 3)
  
-+	/* Ensure gain cycling gets inflight above BDP even for small BDPs. */
-+	if (bbr->mode == BBR_PROBE_BW && gain > BBR_UNIT)
-+		cwnd += 2;
-+
- 	return cwnd;
- }
++static DECLARE_WAIT_QUEUE_HEAD(module_load_q);
+ static DECLARE_WAIT_QUEUE_HEAD(module_unload_q);
  
+ struct netfront_stats {
+@@ -1349,6 +1350,11 @@ static struct net_device *xennet_create_
+ 	netif_carrier_off(netdev);
+ 
+ 	xenbus_switch_state(dev, XenbusStateInitialising);
++	wait_event(module_load_q,
++			   xenbus_read_driver_state(dev->otherend) !=
++			   XenbusStateClosed &&
++			   xenbus_read_driver_state(dev->otherend) !=
++			   XenbusStateUnknown);
+ 	return netdev;
+ 
+  exit:
 
 
