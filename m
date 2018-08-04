@@ -2,93 +2,120 @@ Return-Path: <SRS0=4jry=KT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 004C3C4646F
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 11:53:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A509C4646D
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 11:53:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1CF4217CE
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 11:53:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lC1jLszs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1CF4217CE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id CFFF9217CE
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 11:53:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFFF9217CE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727803AbeHDNx6 (ORCPT
+        id S1728420AbeHDNyB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 09:53:58 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:43208 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726588AbeHDNx6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 09:53:58 -0400
-Received: by mail-lj1-f195.google.com with SMTP id r13-v6so6965750ljg.10;
-        Sat, 04 Aug 2018 04:53:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=RI3Tu2O+l8H/RLnhOlOKwo0o27c+tF591SEVuGVNbnU=;
-        b=lC1jLszsVR/J1ImZTJjvfJN+wRjFSTHY1QfTCjqn7VvG5OSmJlr8lGZQh7KzooaKDT
-         NsNpp9t8oDu6jHLYbd1s/hVnjq8Gz3o86HCLm0c/iVREi0Djlx+6d8W66O6M6XY+GtER
-         NzGBxuAln06EIOxqAdkV/TTLKd8ztvSfEK0OpHPVeOuWTrNKZ8z+X0e31qVzR78lQPtc
-         +AHwxMCl484Z3Y6TYF3DOBT4fak9t51LFOHBitWeEmbc8O92eGhs56iiF0YpWefHTxsH
-         HxGWf5c4DvRumoccD4107zZ4saPp1VI+aKJyWLhZAlvReAb+w/k01AxyBuwPAMAiIWBp
-         WJvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=RI3Tu2O+l8H/RLnhOlOKwo0o27c+tF591SEVuGVNbnU=;
-        b=cVPBkezsCDUV+95M6TrSuwJqcTzTbAoZo2GmsN3XHFloF2DODaLC3umFE6SXYLVZQk
-         IkNGGpZTMIQ9n9zGWk+S6RWRNcXJl5GRgNwmNDtA6r+YGw7nmoSCJJa0z/537f8ndPqh
-         9XxchGkRR3nFXdNBeNS0hfmjjYrW1DHdDlY3Swtm/ExqCOYtbbVr2XYMuzw65SIUJqEf
-         UEY6g0Hs/D/Vfis60nQD24PW2GAq6W9mADTCKDF7rV2012QY1sTkfmYVgk36Dg6rEMH0
-         tcHMEMqnrDUmWBZZqkxq4incaCFMPBom92j2HBAJfYgonDvVAfoX1Xe/Gxa55I9uAMtq
-         s30Q==
-X-Gm-Message-State: AOUpUlE9suauwuO4DFNFRMNtbjn6jE+9Jpu6OX8xhFodX3sbBl3gRBMN
-        JuVOzS+hh4W5f6Jv+HBy4DY=
-X-Google-Smtp-Source: AAOMgpdULcBiinDD5uh+b8vAtM9uM3LIwuszBGrlNr1QQgJrkH+emlOMSyjFjh6Ni1vFtZHU5xKuCg==
-X-Received: by 2002:a2e:5f5b:: with SMTP id t88-v6mr8318724ljb.140.1533383608047;
-        Sat, 04 Aug 2018 04:53:28 -0700 (PDT)
-Received: from dimapc.localnet ([109.252.90.13])
-        by smtp.gmail.com with ESMTPSA id h9-v6sm1150476lfc.47.2018.08.04.04.53.26
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 04 Aug 2018 04:53:27 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Mikko Perttunen <cyndis@kapsi.fi>
-Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v1] memory: tegra: Block DMA for clients HW on a faulty memory access
-Date:   Sat, 04 Aug 2018 14:53:19 +0300
-Message-ID: <2607799.I2xByD6lqT@dimapc>
-In-Reply-To: <20180508165841.13758-1-digetx@gmail.com>
-References: <20180508165841.13758-1-digetx@gmail.com>
+        Sat, 4 Aug 2018 09:54:01 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:40118 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726588AbeHDNyB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 4 Aug 2018 09:54:01 -0400
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 1CCA4646A0DC;
+        Sat,  4 Aug 2018 19:53:24 +0800 (CST)
+Received: from linux-ibm.site (10.175.102.37) by
+ DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
+ 14.3.399.0; Sat, 4 Aug 2018 19:53:20 +0800
+From:   zhong jiang <zhongjiang@huawei.com>
+To:     <davem@davemloft.net>, <wensong@linux-vs.org>,
+        <horms@verge.net.au>, <ja@ssi.bg>
+CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] net: Remove some unneeded semicolon
+Date:   Sat, 4 Aug 2018 19:41:41 +0800
+Message-ID: <1533382901-17922-1-git-send-email-zhongjiang@huawei.com>
+X-Mailer: git-send-email 1.7.12.4
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
+X-Originating-IP: [10.175.102.37]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tuesday, 8 May 2018 19:58:41 MSK Dmitry Osipenko wrote:
-> Currently Memory Controller informs about erroneous memory accesses done
-> by memory clients and that's it. Let's make it to block whole HW unit
-> that corresponds to the misbehaving memory client in order to try to avoid
-> memory corruptions and to stop deliberate attempts of manipulation by a
-> misbehaving client.
+That semicolon is not unneeded , Just remove them.
 
-Guys, any comments? That is a kinda useful feature, in worst case only some of 
-memory could get corrupted instead of trashing the whole memory. In my 
-experience with T20/30, the interrupt handling latency is low and blocking 
-happens immediately after the first page fault.
+Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+---
+ net/core/utils.c               | 2 +-
+ net/netfilter/ipvs/ip_vs_ctl.c | 2 +-
+ net/packet/af_packet.c         | 4 ++--
+ net/sunrpc/auth_gss/auth_gss.c | 2 +-
+ 4 files changed, 5 insertions(+), 5 deletions(-)
 
-
+diff --git a/net/core/utils.c b/net/core/utils.c
+index d47863b..2a597ac 100644
+--- a/net/core/utils.c
++++ b/net/core/utils.c
+@@ -397,7 +397,7 @@ int inet_pton_with_scope(struct net *net, __kernel_sa_family_t af,
+ 		break;
+ 	default:
+ 		pr_err("unexpected address family %d\n", af);
+-	};
++	}
+ 
+ 	return ret;
+ }
+diff --git a/net/netfilter/ipvs/ip_vs_ctl.c b/net/netfilter/ipvs/ip_vs_ctl.c
+index dd21782..62eefea 100644
+--- a/net/netfilter/ipvs/ip_vs_ctl.c
++++ b/net/netfilter/ipvs/ip_vs_ctl.c
+@@ -134,7 +134,7 @@ static void update_defense_level(struct netns_ipvs *ipvs)
+ 		} else {
+ 			atomic_set(&ipvs->dropentry, 0);
+ 			ipvs->sysctl_drop_entry = 1;
+-		};
++		}
+ 		break;
+ 	case 3:
+ 		atomic_set(&ipvs->dropentry, 1);
+diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
+index e3e00d3..345e380 100644
+--- a/net/packet/af_packet.c
++++ b/net/packet/af_packet.c
+@@ -1582,7 +1582,7 @@ static int fanout_set_data(struct packet_sock *po, char __user *data,
+ 		return fanout_set_data_ebpf(po, data, len);
+ 	default:
+ 		return -EINVAL;
+-	};
++	}
+ }
+ 
+ static void fanout_release_data(struct packet_fanout *f)
+@@ -1591,7 +1591,7 @@ static void fanout_release_data(struct packet_fanout *f)
+ 	case PACKET_FANOUT_CBPF:
+ 	case PACKET_FANOUT_EBPF:
+ 		__fanout_set_data_bpf(f, NULL);
+-	};
++	}
+ }
+ 
+ static bool __fanout_id_is_free(struct sock *sk, u16 candidate_id)
+diff --git a/net/sunrpc/auth_gss/auth_gss.c b/net/sunrpc/auth_gss/auth_gss.c
+index 3e192e2..846ea65 100644
+--- a/net/sunrpc/auth_gss/auth_gss.c
++++ b/net/sunrpc/auth_gss/auth_gss.c
+@@ -517,7 +517,7 @@ static int gss_encode_v1_msg(struct gss_upcall_msg *gss_msg,
+ 		err = gss_encode_v1_msg(gss_msg, service_name, gss_auth->target_name);
+ 		if (err)
+ 			goto err_put_pipe_version;
+-	};
++	}
+ 	kref_get(&gss_auth->kref);
+ 	return gss_msg;
+ err_put_pipe_version:
+-- 
+1.7.12.4
 
