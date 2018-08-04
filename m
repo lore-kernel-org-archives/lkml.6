@@ -2,107 +2,103 @@ Return-Path: <SRS0=4jry=KT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04D72C4646F
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 07:10:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C2A6C4646D
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 07:32:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9DCC217BB
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 07:10:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B82J4Qqd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9DCC217BB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id E584D217B9
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 07:32:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E584D217B9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=t-chip.com.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727513AbeHDJKD (ORCPT
+        id S1727096AbeHDJbi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 05:10:03 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:40440 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726550AbeHDJKD (ORCPT
+        Sat, 4 Aug 2018 05:31:38 -0400
+Received: from regular1.263xmail.com ([211.150.99.140]:57014 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726550AbeHDJbi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 05:10:03 -0400
-Received: by mail-pl0-f66.google.com with SMTP id s17-v6so3511524plp.7;
-        Sat, 04 Aug 2018 00:10:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=to:cc:from:subject:message-id:date:user-agent:mime-version
-         :content-transfer-encoding:content-language;
-        bh=yf61xEva5q+UDmzb0Gn7V4uPpAtWDH7iwpCQV4qx7vs=;
-        b=B82J4QqdDBlslu1FZ2lCm8TrEYnadCroZNsldoWSLeq2/56fyXC+DV1gnoZcA0QLIC
-         /WLh9DkMDjQ+8NTqpMImDmQNy7g+BPWg8258Yxc5nLRL0pMc1QQu5qkZp56PXi5J2LTO
-         EQ8LvrkO5RRRWtr07jILtJ6uqXYQ+G2K2nUJvMvaxDcxyfkkktUgc5bN4ordoOTO49fF
-         ZoV+W4e5LbOeJ4DY7pPYAea75mk4Xr8YEwa2NiDVw2pDgxpWT+RBD3td26rTD/01CJ8Q
-         fSDuZTpBepLmuOR4CSTW2kSijxhnhZKI5sS1TmhozynDWaLEehnJuRX8EPZ28VZwxfg+
-         /SKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
-         :mime-version:content-transfer-encoding:content-language;
-        bh=yf61xEva5q+UDmzb0Gn7V4uPpAtWDH7iwpCQV4qx7vs=;
-        b=fNJTdz5ngNtafyFwb0BQDAkhXzDU+3Key50iEEvNRXadBYaGliUx/TuaKAtZBc4pll
-         EZVKCfYnsndhN0DBdw2fD9hfeRFuqGKZXdKbZB+3S8h0q4FWF93bcLZdxx2cOPaiX8YW
-         qucIWD+lXc5EvO3zTtL7k8PYSQiT+aNWLAS/qmVXvRIy+tzK8iJoxmzrfMyo6JA4Zg/x
-         q3nIO2pQ/NNNd8pHti6J9TIehGpePIf0K5mcG/63fFzYkJRzEH5VZ6A9MA0TSjUGrw7G
-         gNzrMwngPgm5HzQABtfOOKw3F9zotH/p78gvhCC6j9bIWFlnk+iAY3DVNLIugqKJRYWa
-         4Dsw==
-X-Gm-Message-State: AOUpUlGYs+/tsQ0OMO8Y087wU6ep62TB43lNwa8cBus5vrnymRnUA/WT
-        rphqfkHbAE4NiBDqFU30BCGIag3s
-X-Google-Smtp-Source: AAOMgpfVxBJgI+XN8cnal5cRPY+7J0YWMpygCozxqVy9/iweTS0CqCncSLaXZfiIxVUyQtHiD4jGTQ==
-X-Received: by 2002:a17:902:1c8:: with SMTP id b66-v6mr6375453plb.273.1533366623700;
-        Sat, 04 Aug 2018 00:10:23 -0700 (PDT)
-Received: from Salils-MacBook-Air.local ([2601:600:a27f:d810:d077:b4f0:b680:ad6b])
-        by smtp.gmail.com with ESMTPSA id a11-v6sm11499988pfl.66.2018.08.04.00.10.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 04 Aug 2018 00:10:22 -0700 (PDT)
-To:     gregkh@linuxfoundation.org
-Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-From:   Salil Kapur <salilkapur93@gmail.com>
-Subject: [PATCH] USB: Removing NULL check for pool since dma_pool_destroy is
- safe
-Message-ID: <b5db9a6d-6194-ae7c-235d-dce772cb9a4c@gmail.com>
-Date:   Sat, 4 Aug 2018 00:10:22 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+        Sat, 4 Aug 2018 05:31:38 -0400
+Received: from djw?t-chip.com.cn (unknown [192.168.167.160])
+        by regular1.263xmail.com (Postfix) with ESMTP id 5A6D11EB;
+        Sat,  4 Aug 2018 15:31:39 +0800 (CST)
+X-263anti-spam: KSV:0;
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-KSVirus-check: 0
+X-ABS-CHECKED: 4
+Received: from localhost.localdomain (localhost [127.0.0.1])
+        by smtp.263.net (Postfix) with ESMTPA id 8804D387;
+        Sat,  4 Aug 2018 15:31:36 +0800 (CST)
+X-IP-DOMAINF: 1
+X-RL-SENDER: djw@t-chip.com.cn
+X-FST-TO: linux-rockchip@lists.infradead.org
+X-SENDER-IP: 59.33.108.240
+X-LOGIN-NAME: djw@t-chip.com.cn
+X-UNIQUE-TAG: <c303d7e852f18bccf51a4d887bc5525c>
+X-ATTACHMENT-NUM: 0
+X-SENDER: djw@t-chip.com.cn
+X-DNS-TYPE: 7
+Received: from localhost.localdomain (240.108.33.59.broad.zs.gd.dynamic.163data.com.cn [59.33.108.240])
+        by smtp.263.net (Postfix) whith ESMTP id 13908AEOABI;
+        Sat, 04 Aug 2018 15:31:37 +0800 (CST)
+From:   djw@t-chip.com.cn
+To:     linux-rockchip@lists.infradead.org
+Cc:     Wayne Chou <zxf@t-chip.com.cn>, Levin Du <djw@t-chip.com.cn>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v0] clk: rockchip: Add pclk_rkpwm_pmu to PMU critical clocks in rk3399
+Date:   Sat,  4 Aug 2018 15:31:02 +0800
+Message-Id: <1533367862-7212-1-git-send-email-djw@t-chip.com.cn>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Removing NULL check for pool since dma_pool_destroy is safe
+From: Levin Du <djw@t-chip.com.cn>
 
-Signed-off-by: Salil Kapur <salilkapur93@gmail.com>
+PWM2 is commonly used to control voltage of PWM regulator of VDD_LOG in
+RK3399. On the Firefly-RK3399 board, PWM2 outputs 40 KHz square wave
+from power on and the VDD_LOG is about 0.9V. When the kernel boots
+normally into the system, the PWM2 keeps outputing PWM signal.
+
+But the kernel hangs randomly after "Starting kernel ..." line on that
+board. When it happens, PWM2 outputs high level which causes VDD_LOG
+drops to 0.4V below the normal operating voltage.
+
+By adding "pclk_rkpwm_pmu" to the rk3399_pmucru_critical_clocks array,
+PWM clock is ensured to be prepared at startup and the PWM2 output is
+normal. After repeated tests, the early boot hang is gone.
+
+This patch works on both Firefly-RK3399 and ROC-RK3399-PC boards.
+
+Signed-off-by: Levin Du <djw@t-chip.com.cn>
+
 ---
- drivers/usb/core/buffer.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/usb/core/buffer.c b/drivers/usb/core/buffer.c
-index 77eef8acff94..f641342cdec0 100644
---- a/drivers/usb/core/buffer.c
-+++ b/drivers/usb/core/buffer.c
-@@ -101,12 +101,8 @@ void hcd_buffer_destroy(struct usb_hcd *hcd)
-         return;
- 
-     for (i = 0; i < HCD_BUFFER_POOLS; i++) {
--        struct dma_pool *pool = hcd->pool[i];
--
--        if (pool) {
--            dma_pool_destroy(pool);
--            hcd->pool[i] = NULL;
--        }
-+        dma_pool_destroy(hcd->pool[i]);
-+        hcd->pool[i] = NULL;
-     }
- }
- 
+ drivers/clk/rockchip/clk-rk3399.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
+index 2a8634a..5a62814 100644
+--- a/drivers/clk/rockchip/clk-rk3399.c
++++ b/drivers/clk/rockchip/clk-rk3399.c
+@@ -1523,6 +1523,7 @@ static const char *const rk3399_pmucru_critical_clocks[] __initconst = {
+ 	"pclk_pmu_src",
+ 	"fclk_cm0s_src_pmu",
+ 	"clk_timer_src_pmu",
++	"pclk_rkpwm_pmu",
+ };
+ 
+ static void __init rk3399_clk_init(struct device_node *np)
 -- 
-2.14.4
+2.7.4
+
 
