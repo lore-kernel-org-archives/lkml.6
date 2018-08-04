@@ -2,125 +2,145 @@ Return-Path: <SRS0=4jry=KT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25203C28CF6
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 02:05:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7740CC28CF6
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 02:12:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AFB7C21774
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 02:05:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="Y65sKUpW";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fTtBdbtT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFB7C21774
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 296F921774
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 02:12:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 296F921774
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726676AbeHDEEW (ORCPT
+        id S1726753AbeHDELe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 00:04:22 -0400
-Received: from mail-yb0-f193.google.com ([209.85.213.193]:39706 "EHLO
-        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725722AbeHDEEW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 00:04:22 -0400
-Received: by mail-yb0-f193.google.com with SMTP id c4-v6so3359361ybl.6
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Aug 2018 19:05:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=M2qLk78DpmSoHWEmCrQPL0FMKHbPeLiRDI/fmZSDnQk=;
-        b=Y65sKUpWpOsd2VXGyDXwpoB+NuOssYPExYmJjeBh9QpNLhNJL4WB/pKYeiRL35vL5Z
-         xvUtV+IBXMNFUUXa5p3AHSKoQ2myRqeM/g3pIN9DGj7Gxvme4WU8tDjy5hqLzBL1Fmnz
-         DRupV+dDwENzDUO4B8uf44z5o0BtJv8hi2f3gtOQk048U92qp6Jbi8RICqgKmw9YzFs8
-         Gk0Ae9NckfhBHNF9B5CuADdqrdtRD0d5Sf3StN1EArbY5kcJk3blnemcbIKvCUsOXj+h
-         yVeA/ksyd8KLP1cS9A+rvkie5Ic3sQ7QwJefI3Wai5VE5p/uFUrF8svKtLBIlSzyo0SH
-         34jg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=M2qLk78DpmSoHWEmCrQPL0FMKHbPeLiRDI/fmZSDnQk=;
-        b=fTtBdbtTQYHshmWo7vHNS+F7iHo7ULxpZFVkFV1xyCC3m3jPRpxDUJdw+LZPzvGupE
-         5ds3kS6rKEyu2/Ngi/S/I76BBJGWGgG9/uf+RXeT4/8gkssD/ya03gNQbIAhyyXlp9Ua
-         kL3SK7qjd9wrYu7y0yGt3dgGepFJXWFXCG8uY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=M2qLk78DpmSoHWEmCrQPL0FMKHbPeLiRDI/fmZSDnQk=;
-        b=uSYVVkKTzNJFNmSEr22IJVNVsP75hspa/juyPqhqlnufafXAneyEwm+LDNJlmkxKju
-         3wQHotNZsSp+w9q1yT3QJJHEENtuyoo6+mm+DNcJr4UFWxOMgTaGN957QeDUyQELftzX
-         dwSS78ic5BhsYNoQUJcHjlHfuA/UNudZsc5aazSSa7k4/iLyCt1LvNqL2bCsR2SR9cyl
-         fnUENL9pwgejIKb7pe1smV9e1I0BlwSjWltETAHRrHAGq0UXKm/3fU+rDto527Go2Cga
-         Jr2JXTIL/9Y44KE+tMwbNdkkYv49eEXLtd+B8h84W+hVNqXZrx07SjIgA36qqUIO8BmI
-         chOw==
-X-Gm-Message-State: AOUpUlElRnH0BYB/4aA9dRj+4Y8MrHJBTuYtJqD1j4gAzOEsStVD0cH+
-        EliJtcoGD9gW4j8dn7X10vrgly/9gKF3IxTVd9mTwg==
-X-Google-Smtp-Source: AAOMgpdIa9iT7AcTwjomW24i2XsBeXrUvnn4rGRHtaYhPWmA0nN2VPwPi/3NAuiosElbGte81T9eRjr0fbrLQqFXqYM=
-X-Received: by 2002:a25:b219:: with SMTP id i25-v6mr3503817ybj.112.1533348331286;
- Fri, 03 Aug 2018 19:05:31 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a25:7450:0:0:0:0:0 with HTTP; Fri, 3 Aug 2018 19:05:30 -0700 (PDT)
-In-Reply-To: <834feb7bd03c803eddaf00568c7a8e5b2a4712f0.1533287504.git.geliangtang@gmail.com>
-References: <CAGXu5jKr_M1zxirDJjbE5fzzhQyXeNWaAkGUK13RDKTBANTbPQ@mail.gmail.com>
- <834feb7bd03c803eddaf00568c7a8e5b2a4712f0.1533287504.git.geliangtang@gmail.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Fri, 3 Aug 2018 19:05:30 -0700
-X-Google-Sender-Auth: A__rdyhbOiyFOUVSubnqoEabb5I
-Message-ID: <CAGXu5jJazh2UG9PVnt7JFHcCbMm9mFy2r1_BULkqUhmr5t6Mvg@mail.gmail.com>
-Subject: Re: [PATCH] pstore: set PSTORE_ZSTD_COMPRESS to bool
-To:     Geliang Tang <geliangtang@gmail.com>
-Cc:     Anton Vorontsov <anton@enomsg.org>,
-        Colin Cross <ccross@android.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kbuild test robot <lkp@intel.com>
+        Sat, 4 Aug 2018 00:11:34 -0400
+Received: from gate.crashing.org ([63.228.1.57]:47361 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725722AbeHDELe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 4 Aug 2018 00:11:34 -0400
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w741BGPi022662;
+        Fri, 3 Aug 2018 20:11:17 -0500
+Message-ID: <ba086ad15679fd59758fb74096c46fcce42dc974.camel@kernel.crashing.org>
+Subject: Re: [RFC 0/4] Virtio uses DMA API for all devices
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        aik@ozlabs.ru, robh@kernel.org, joe@perches.com,
+        elfring@users.sourceforge.net, david@gibson.dropbear.id.au,
+        jasowang@redhat.com, mpe@ellerman.id.au, linuxram@us.ibm.com,
+        haren@linux.vnet.ibm.com, paulus@samba.org,
+        srikar@linux.vnet.ibm.com, robin.murphy@arm.com,
+        jean-philippe.brucker@arm.com, marc.zyngier@arm.com
+Date:   Fri, 03 Aug 2018 20:11:16 -0500
+In-Reply-To: <20180803220443-mutt-send-email-mst@kernel.org>
+References: <20180801083639.GF26378@infradead.org>
+         <26c1d3d50d8e081eed44fe9940fbefed34598cbd.camel@kernel.crashing.org>
+         <20180802182959-mutt-send-email-mst@kernel.org>
+         <82ccef6ec3d95ee43f3990a4a2d0aea87eb45e89.camel@kernel.crashing.org>
+         <20180802200646-mutt-send-email-mst@kernel.org>
+         <e9beb6bba5a7d05741e27e85b24a3b23ba7c2762.camel@kernel.crashing.org>
+         <20180802225738-mutt-send-email-mst@kernel.org>
+         <de4888b6457e220776e16a9c8958ff0886ffc66c.camel@kernel.crashing.org>
+         <20180803070507.GA1344@infradead.org>
+         <eb1750e90e4bd45da297fa6f78f8ef93671b7c2f.camel@kernel.crashing.org>
+         <20180803220443-mutt-send-email-mst@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.4 (3.28.4-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 3, 2018 at 2:16 AM, Geliang Tang <geliangtang@gmail.com> wrote:
-> Fix build error:
->
->    fs/pstore/platform.o: In function `zbufsize_zstd':
->>> platform.c:(.text+0x172): undefined reference to `ZSTD_compressBound'
->
-> Signed-off-by: Geliang Tang <geliangtang@gmail.com>
+On Fri, 2018-08-03 at 22:07 +0300, Michael S. Tsirkin wrote:
+> On Fri, Aug 03, 2018 at 10:58:36AM -0500, Benjamin Herrenschmidt wrote:
+> > On Fri, 2018-08-03 at 00:05 -0700, Christoph Hellwig wrote:
+> > > >   2- Make virtio use the DMA API with our custom platform-provided
+> > > > swiotlb callbacks when needed, that is when not using IOMMU *and*
+> > > > running on a secure VM in our case.
+> > > 
+> > > And total NAK the customer platform-provided part of this.  We need
+> > > a flag passed in from the hypervisor that the device needs all bus
+> > > specific dma api treatment, and then just use the normal plaform
+> > > dma mapping setup. 
+> > 
+> > Christoph, as I have explained already, we do NOT have a way to provide
+> > such a flag as neither the hypervisor nor qemu knows anything about
+> > this when the VM is created.
+> 
+> I think the fact you can't add flags from the hypervisor is
+> a sign of a problematic architecture, you should look at
+> adding that down the road - you will likely need it at some point.
 
-Thanks! I'll squash this into the original commit.
+Well, we can later in the boot process. At VM creation time, it's just
+a normal VM. The VM firmware, bootloader etc... are just operating
+normally etc...
 
--Kees
+Later on, (we may have even already run Linux at that point,
+unsecurely, as we can use Linux as a bootloader under some
+circumstances), we start a "secure image".
 
-> ---
->  fs/pstore/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/pstore/Kconfig b/fs/pstore/Kconfig
-> index 63cf4813559a..503086f7f7c1 100644
-> --- a/fs/pstore/Kconfig
-> +++ b/fs/pstore/Kconfig
-> @@ -51,7 +51,7 @@ config PSTORE_842_COMPRESS
->           This option enables 842 compression algorithm support.
->
->  config PSTORE_ZSTD_COMPRESS
-> -       tristate "zstd compression"
-> +       bool "zstd compression"
->         depends on PSTORE
->         select CRYPTO_ZSTD
->         help
-> --
-> 2.17.1
->
+This is a kernel zImage that includes a "ticket" that has the
+appropriate signature etc... so that when that kernel starts, it can
+authenticate with the ultravisor, be verified (along with its ramdisk)
+etc... and copied (by the UV) into secure memory & run from there.
 
+At that point, the hypervisor is informed that the VM has become
+secure.
 
+So at that point, we could exit to qemu to inform it of the change, and
+have it walk the qtree and "Switch" all the virtio devices to use the
+IOMMU I suppose, but it feels a lot grosser to me.
 
--- 
-Kees Cook
-Pixel Security
+That's the only other option I can think of.
+
+> However in this specific case, the flag does not need to come from the
+> hypervisor, it can be set by arch boot code I think.
+> Christoph do you see a problem with that?
+
+The above could do that yes. Another approach would be to do it from a
+small virtio "quirk" that pokes a bit in the device to force it to
+iommu mode when it detects that we are running in a secure VM. That's a
+bit warty on the virito side but probably not as much as having a qemu
+one that walks of the virtio devices to change how they behave.
+
+What do you reckon ?
+
+Cheers,
+Ben.
+
+> > >  To get swiotlb you'll need to then use the DT/ACPI
+> > > dma-range property to limit the addressable range, and a swiotlb
+> > > capable plaform will use swiotlb automatically.
+> > 
+> > This cannot be done as you describe it.
+> > 
+> > The VM is created as a *normal* VM. The DT stuff is generated by qemu
+> > at a point where it has *no idea* that the VM will later become secure
+> > and thus will have to restrict which pages can be used for "DMA".
+> > 
+> > The VM will *at runtime* turn itself into a secure VM via interactions
+> > with the security HW and the Ultravisor layer (which sits below the
+> > HV). This happens way after the DT has been created and consumed, the
+> > qemu devices instanciated etc...
+> > 
+> > Only the guest kernel knows because it initates the transition. When
+> > that happens, the virtio devices have already been used by the guest
+> > firmware, bootloader, possibly another kernel that kexeced the "secure"
+> > one, etc... 
+> > 
+> > So instead of running around saying NAK NAK NAK, please explain how we
+> > can solve that differently.
+> > 
+> > Ben.
+> > 
+
