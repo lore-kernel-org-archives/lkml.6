@@ -2,115 +2,106 @@ Return-Path: <SRS0=4jry=KT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A1A1C4646F
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:29:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C619C4646F
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:29:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF0CC217D0
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:29:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF0CC217D0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id 544A2217D5
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:29:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J2MxhbQR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 544A2217D5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728420AbeHDL3K (ORCPT
+        id S1729633AbeHDL3c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 07:29:10 -0400
-Received: from mail-ua0-f195.google.com ([209.85.217.195]:36530 "EHLO
-        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726532AbeHDL3K (ORCPT
+        Sat, 4 Aug 2018 07:29:32 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:45446 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726532AbeHDL3b (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 07:29:10 -0400
-Received: by mail-ua0-f195.google.com with SMTP id c12-v6so7058952uan.3;
-        Sat, 04 Aug 2018 02:29:05 -0700 (PDT)
+        Sat, 4 Aug 2018 07:29:31 -0400
+Received: by mail-wr1-f65.google.com with SMTP id f12-v6so7575536wrv.12;
+        Sat, 04 Aug 2018 02:29:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=fBSAKK7Yif8naa+XFOhqWlJda9sQTn+GrYmJkcUUzkc=;
+        b=J2MxhbQRwxH6eJFTsSk8ncZD6av6Lk6liyJRQZ92wcXw5oLuj7lVeKKxEN1/Bnr+hP
+         kcqWiL9gNdoqyW1oYzoTaIyCDOYfBGUF+utguO+x5SWM5TXuFeMU+X/A5H0+g9+yPBoH
+         iQd206ToKpfLRAZ2unvbMtsE3nNsjkevP47smU/VxyRc45iLiQChynZqwTz+9+2q7YdH
+         Lx/r+k+xFfCdrP+404N2E288kkwvsXCumzJP6g1JtQVc/scMUKpzlsMjEBVuF/r7oY4g
+         BXQS9D03O20rdAewmE1JUPLOpR8iHXJlaXRfF4odGdBQTSXAa5VLi51A1++6xsfZHelr
+         xJ/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1W09M69y5Ysz7nMJ7EGGzp+dDUt3+tBBhUYBcJDiksY=;
-        b=TOSrX5o4iR0JmK+F6F2x8/RvGrXLrsqWr/7Z6DChnBYxmG6nuVMnSEGpt/gRREAggu
-         YDRIqBfMfc+VQqOXy/ObXIIhMU/o10K9ZhoVKmxd6BPsZnLkDvAl4s5BnQm/4snXpl/N
-         jPUgBcMtwA4xuucF3HOGobCOG5CctNRawqABoE6Wb7inQZzbohwkGrACaeDW0xeQBRYR
-         1XnphMNmJDgvt3n1I4KHpxMC2C/MWgulFCbyb3cDXI/9YnfIhq1Kn6jHj8xX2q09jJq8
-         M6zoIjT220328L+g3GR6GvO2gvIMZiVhVhXojptXwDaL8OKjgJmGL0H+h+W11GYnlTql
-         9Ftw==
-X-Gm-Message-State: AOUpUlF3EF27N2/NNfHIezIAC0j/8fIafCnNd/iva03ngYEuUH64viZk
-        og3Uq2hSXUqtNeZ7TCYTwbURy/MF3zMFbVsDB1k=
-X-Google-Smtp-Source: AAOMgpfZVXdNBZiXcHrRxmVksot8p6lmT4s+en9kYQBU2hQwkOHWyiujBfWeAdjGntGTpcqEbXOTPMTMo60hhTNc430=
-X-Received: by 2002:ab0:80e:: with SMTP id a14-v6mr5457002uaf.114.1533374944582;
- Sat, 04 Aug 2018 02:29:04 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=fBSAKK7Yif8naa+XFOhqWlJda9sQTn+GrYmJkcUUzkc=;
+        b=cvaWc9sTDiivATFe5I82eEkg8iyoQqjbW1FHAsWPX6O2pO7yAzkEgNp6QjLyt+0c1o
+         9dFpm3Tz0JEwO0HkqBTfZE9P5UOQG/3xvblKmQcNQRUb0/8q44M1c4xvbIDdWRIUJEWl
+         iAtsTsByiJe5XyH4mnRCNQCATFc4Mn4/eoScrVJFcruHzHvmZVn4KW/1gHFiANtIoAvz
+         iGFnmNXZ7QQAPlfDjcX7L6oRlPfvjohs4nYGcSgGTTxhR3hyEXteb5JhBm0IihJiz5YV
+         gYSE3qPgh8yaiKyspSuVbjjyihh9GFYV/nC1nncv0P2ITE0IcGBVW3NHBqH7huC1REag
+         dWaQ==
+X-Gm-Message-State: AOUpUlFzrrzziAaUdg51WoAKchY/uXpealRiIsGNdXieQRSPM5PcHM0u
+        tJNY3xaCXtaB1ofSVF9r7FJSpa36j/mOLA==
+X-Google-Smtp-Source: AAOMgpf7Gr6PPTEVqCUaJglM3DUGnbjOoPBtkaV3qrNvPe5Rz1H66G8NA275zlePBhVTsPuU3gc1vA==
+X-Received: by 2002:adf:9e84:: with SMTP id a4-v6mr4598162wrf.70.1533374965332;
+        Sat, 04 Aug 2018 02:29:25 -0700 (PDT)
+Received: from flashbox ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id g125-v6sm1375017wmf.16.2018.08.04.02.29.24
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 04 Aug 2018 02:29:24 -0700 (PDT)
+Date:   Sat, 4 Aug 2018 02:29:22 -0700
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org
+Subject: Re: [PATCH 4.4 000/124] 4.4.146-stable review
+Message-ID: <20180804092922.GA27721@flashbox>
+References: <20180804082702.434482435@linuxfoundation.org>
 MIME-Version: 1.0
-References: <20180411060320.14458-1-willy@infradead.org> <20180411060320.14458-3-willy@infradead.org>
- <alpine.DEB.2.20.1804110842560.3788@nuc-kabylake> <20180411192448.GD22494@bombadil.infradead.org>
- <alpine.DEB.2.20.1804111601090.7458@nuc-kabylake> <20180411235652.GA28279@bombadil.infradead.org>
- <alpine.DEB.2.20.1804120907100.11220@nuc-kabylake> <20180412142718.GA20398@bombadil.infradead.org>
- <20180412191322.GA21205@bombadil.infradead.org> <20180803212257.GA5922@roeck-us.net>
- <20180803223357.GA23284@bombadil.infradead.org>
-In-Reply-To: <20180803223357.GA23284@bombadil.infradead.org>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Sat, 4 Aug 2018 11:28:52 +0200
-Message-ID: <CAMuHMdXXYH_7oVJJ5sGWFj_-WbjuMdooXTqBfV+z0CzR193T3A@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] slab: __GFP_ZERO is incompatible with a constructor
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Guenter Roeck <linux@roeck-us.net>,
-        Christoph Lameter <cl@linux.com>,
-        Linux MM <linux-mm@kvack.org>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>, jlayton@redhat.com,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Linux-sh list <linux-sh@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180804082702.434482435@linuxfoundation.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Aug 4, 2018 at 12:34 AM Matthew Wilcox <willy@infradead.org> wrote:
-> On Fri, Aug 03, 2018 at 02:22:57PM -0700, Guenter Roeck wrote:
-> > On Thu, Apr 12, 2018 at 12:13:22PM -0700, Matthew Wilcox wrote:
-> > > From: Matthew Wilcox <mawilcox@microsoft.com>
-> > > __GFP_ZERO requests that the object be initialised to all-zeroes,
-> > > while the purpose of a constructor is to initialise an object to a
-> > > particular pattern.  We cannot do both.  Add a warning to catch any
-> > > users who mistakenly pass a __GFP_ZERO flag when allocating a slab with
-> > > a constructor.
-> > >
-> > > Fixes: d07dbea46405 ("Slab allocators: support __GFP_ZERO in all allocators")
-> > > Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
-> > > Acked-by: Johannes Weiner <hannes@cmpxchg.org>
-> > > Acked-by: Vlastimil Babka <vbabka@suse.cz>
-> > > Acked-by: Michal Hocko <mhocko@suse.com>
-> >
-> > Seen with v4.18-rc7-139-gef46808 and v4.18-rc7-178-g0b5b1f9a78b5 when
-> > booting sh4 images in qemu:
->
-> Thanks!  It's under discussion here:
->
-> https://marc.info/?t=153301426900002&r=1&w=2
+On Sat, Aug 04, 2018 at 10:59:49AM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.4.146 release.
+> There are 124 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Mon Aug  6 08:26:39 UTC 2018.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.146-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-and https://www.spinics.net/lists/linux-sh/msg53298.html
+Merged, compiled with -Werror, and installed onto my Pixel 2 XL.
 
-> also reported here with a bogus backtrace:
->
-> https://marc.info/?l=linux-sh&m=153305755505935&w=2
->
-> Short version: It's a bug that's been present since 2009 and nobody
-> noticed until now.  And nobody's quite sure what the effect of this
-> bug is.
-Gr{oetje,eeting}s,
+No issues noticed in dmesg or general usage.
 
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Thanks!
+Nathan
