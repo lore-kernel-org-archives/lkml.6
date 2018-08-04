@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A024C4646F
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:03:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B1C3C4646D
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:03:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17A50217BF
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:03:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17A50217BF
+	by mail.kernel.org (Postfix) with ESMTP id CCE73217C6
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:03:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCE73217C6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732104AbeHDLDI (ORCPT
+        id S1732173AbeHDLDL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 07:03:08 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48266 "EHLO
+        Sat, 4 Aug 2018 07:03:11 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48274 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728349AbeHDLDH (ORCPT
+        with ESMTP id S1728349AbeHDLDL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 07:03:07 -0400
+        Sat, 4 Aug 2018 07:03:11 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0320EBBF;
-        Sat,  4 Aug 2018 09:03:09 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1F6D989C;
+        Sat,  4 Aug 2018 09:03:12 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Sean Paul <seanpaul@chromium.org>
-Subject: [PATCH 4.17 30/31] drm/atomic: Initialize variables in drm_atomic_helper_async_check() to make gcc happy
-Date:   Sat,  4 Aug 2018 11:01:05 +0200
-Message-Id: <20180804082634.336996497@linuxfoundation.org>
+        stable@vger.kernel.org, "Ewan D. Milne" <emilne@redhat.com>,
+        Tony Battersby <tonyb@cybernetics.com>,
+        Bart Van Assche <bart.vanassche@wdc.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.17 31/31] scsi: sg: fix minor memory leak in error path
+Date:   Sat,  4 Aug 2018 11:01:06 +0200
+Message-Id: <20180804082634.382348484@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180804082632.304529527@linuxfoundation.org>
 References: <20180804082632.304529527@linuxfoundation.org>
@@ -51,44 +52,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Boris Brezillon <boris.brezillon@bootlin.com>
+From: Tony Battersby <tonyb@cybernetics.com>
 
-commit de2d8db395c32d121d02871819444b631f73e0b6 upstream.
+commit c170e5a8d222537e98aa8d4fddb667ff7a2ee114 upstream.
 
-drm_atomic_helper_async_check() declares the plane, old_plane_state and
-new_plane_state variables to iterate over all planes of the atomic
-state and make sure only one plane is enabled.
+Fix a minor memory leak when there is an error opening a /dev/sg device.
 
-Unfortunately gcc is not smart enough to figure out that the check on
-n_planes is enough to guarantee that plane, new_plane_state and
-old_plane_state are initialized.
-
-Explicitly initialize those variables to NULL to make gcc happy.
-
-Fixes: fef9df8b5945 ("drm/atomic: initial support for asynchronous plane update")
+Fixes: cc833acbee9d ("sg: O_EXCL and other lock handling")
 Cc: <stable@vger.kernel.org>
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
-Reviewed-by: Sean Paul <seanpaul@chromium.org>
-Link: https://patchwork.freedesktop.org/patch/msgid/20180724133300.32023-1-boris.brezillon@bootlin.com
+Reviewed-by: Ewan D. Milne <emilne@redhat.com>
+Signed-off-by: Tony Battersby <tonyb@cybernetics.com>
+Reviewed-by: Bart Van Assche <bart.vanassche@wdc.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/drm_atomic_helper.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/scsi/sg.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/gpu/drm/drm_atomic_helper.c
-+++ b/drivers/gpu/drm/drm_atomic_helper.c
-@@ -1499,8 +1499,9 @@ int drm_atomic_helper_async_check(struct
- {
- 	struct drm_crtc *crtc;
- 	struct drm_crtc_state *crtc_state;
--	struct drm_plane *plane;
--	struct drm_plane_state *old_plane_state, *new_plane_state;
-+	struct drm_plane *plane = NULL;
-+	struct drm_plane_state *old_plane_state = NULL;
-+	struct drm_plane_state *new_plane_state = NULL;
- 	const struct drm_plane_helper_funcs *funcs;
- 	int i, n_planes = 0;
- 
+--- a/drivers/scsi/sg.c
++++ b/drivers/scsi/sg.c
+@@ -2186,6 +2186,7 @@ sg_add_sfp(Sg_device * sdp)
+ 	write_lock_irqsave(&sdp->sfd_lock, iflags);
+ 	if (atomic_read(&sdp->detaching)) {
+ 		write_unlock_irqrestore(&sdp->sfd_lock, iflags);
++		kfree(sfp);
+ 		return ERR_PTR(-ENODEV);
+ 	}
+ 	list_add_tail(&sfp->sfd_siblings, &sdp->sfds);
 
 
