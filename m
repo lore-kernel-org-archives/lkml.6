@@ -2,134 +2,196 @@ Return-Path: <SRS0=4jry=KT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08A85C28CF6
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 01:13:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2A3DC28CF6
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 01:19:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF69621782
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 01:13:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lKY/ERAA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF69621782
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 6B1AD2172B
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 01:19:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B1AD2172B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732211AbeHDDMA (ORCPT
+        id S1732173AbeHDDRu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 23:12:00 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:40610 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732124AbeHDDMA (ORCPT
+        Fri, 3 Aug 2018 23:17:50 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38116 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1731977AbeHDDRt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 23:12:00 -0400
-Received: by mail-oi0-f66.google.com with SMTP id w126-v6so12971983oie.7
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Aug 2018 18:13:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OYiUqYyZxJJi4RvmRgHSRW9vOzuAZYSY5bJyIaHed3o=;
-        b=lKY/ERAAGj2nvNmjYdXwhc0CmmWfZNch2h7/LFORx6SheeHVboy9falw9JOkPyhNxi
-         df8zJQz1ZmvvPe75oL0QQm4MeQBTrXwHRa8I4HlKfncjedkJCf7psWUqIZlQFCPmaVy5
-         QPRE+6/etk1KyscSVWNh3Kw5cRdpvkdsQs0BdkJFCUhIQwoXKm3MAFDN9+IhrNN/urP+
-         seswgWHQtfMxP9/+41eBvAs+ly0NG0GKsc/yJhEOaj9j49wb9A0B1lZzDs49CFWDDM1E
-         4qV5fISBGY2fawHSzcqdteQOaEHnsWFibLiIQS4qwdtzmiY3dZth8cs0uBZYYzYSiUEn
-         kFpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OYiUqYyZxJJi4RvmRgHSRW9vOzuAZYSY5bJyIaHed3o=;
-        b=VeqIrkKh5B2lNf2sxzKSaxUGK56loNP64Ukezz4bWVzGpU0rS3kSc5cw7BOLL47h5q
-         yD/7hJ8YsgSGUHaIwGxlr8yMv4APF1ny6B5KfIVLoUDVdqau8HpIiNOb7ukV+sZLqlBN
-         VbEN9KG4hLhVcQmSLxn7ykbG0xFRzwesifOCO4n5gNiKTEXFqUi8Pu8eANIQ/4IUaiw+
-         ORDVERfaVA9hqqfPO/Xw0ot2O1hh2XZ3lh55YJmHoloRsK8JTpdaaZ1/B9yDz+JMux0l
-         F3BIEXaKxIUYY8DdkgES7Zc57eiZljT43voDfZHtecF4gJhEo+fWut2381mgQp7cuNDS
-         lH6Q==
-X-Gm-Message-State: AOUpUlFgkhvQy7Uqi2lKMjKJYsRREW/rXWtNsGvVuCPFM2KgwSEM+gz/
-        nsFHxfVHGhh2FMcdYEz1tKADa6+YVRcO7mutvYs=
-X-Google-Smtp-Source: AAOMgpdDyYfGQKHPVAyOZofG6X1Cv2WNVvQAmbmfD5C4XM/jGKhPZKKr78D6F82fiCwqdraRPlWAGDb1eHEM/MzGoBA=
-X-Received: by 2002:aca:1719:: with SMTP id j25-v6mr5253185oii.138.1533345198911;
- Fri, 03 Aug 2018 18:13:18 -0700 (PDT)
-MIME-Version: 1.0
-References: <alpine.LRH.2.02.1808021242320.31834@file01.intranet.prod.int.rdu2.redhat.com>
- <CA+=Sn1mWkjuwVnjw6OWWUM=UcP76bdFa680FebCseewHfx3NpA@mail.gmail.com>
- <9acdacdb-3bd5-b71a-3003-e48132ee1371@redhat.com> <CAJA7tRZbmnZq7RfvQeYEy_a1ZObWqpFpVdvgsXgsioQ3RyPMuA@mail.gmail.com>
- <CAKv+Gu97QvwoLLK_zueiA_gjg_4Q5cqU4YVUyHUVFFfffdyJaw@mail.gmail.com>
- <11f9185a-7f71-83df-3a57-0a0ae9c1f934@arm.com> <alpine.LRH.2.02.1808032046540.24748@file01.intranet.prod.int.rdu2.redhat.com>
-In-Reply-To: <alpine.LRH.2.02.1808032046540.24748@file01.intranet.prod.int.rdu2.redhat.com>
-From:   Andrew Pinski <pinskia@gmail.com>
-Date:   Fri, 3 Aug 2018 18:13:05 -0700
-Message-ID: <CA+=Sn1=6F-fGLmXE0VqQHTqTCUKUT=Fz29mMT7349SPFisbZ9A@mail.gmail.com>
-Subject: Re: framebuffer corruption due to overlapping stp instructions on arm64
-To:     mpatocka@redhat.com
-Cc:     Richard Earnshaw <Richard.Earnshaw@arm.com>,
-        ard.biesheuvel@linaro.org,
-        Ramana Radhakrishnan <ramana.gcc@googlemail.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        thomas.petazzoni@free-electrons.com,
-        GNU C Library <libc-alpha@sourceware.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, linux@armlinux.org.uk,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org
+        Fri, 3 Aug 2018 23:17:49 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w741J4Pt121834
+        for <linux-kernel@vger.kernel.org>; Fri, 3 Aug 2018 21:19:06 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2kn0sw29x0-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Aug 2018 21:19:06 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <benh@kernel.crashing.org>;
+        Sat, 4 Aug 2018 02:19:03 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Sat, 4 Aug 2018 02:18:58 +0100
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w741IvJB24183034
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Sat, 4 Aug 2018 01:18:57 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id F271011C04A;
+        Sat,  4 Aug 2018 04:19:06 +0100 (BST)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5402E11C054;
+        Sat,  4 Aug 2018 04:19:06 +0100 (BST)
+Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Sat,  4 Aug 2018 04:19:06 +0100 (BST)
+Received: from pasglop (unknown [9.85.183.237])
+        (using TLSv1.2 with cipher AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 9805AA01B5;
+        Sat,  4 Aug 2018 11:18:48 +1000 (AEST)
+Subject: Re: [RFC 0/4] Virtio uses DMA API for all devices
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        aik@ozlabs.ru, robh@kernel.org, joe@perches.com,
+        elfring@users.sourceforge.net, david@gibson.dropbear.id.au,
+        jasowang@redhat.com, mpe@ellerman.id.au, linuxram@us.ibm.com,
+        haren@linux.vnet.ibm.com, paulus@samba.org,
+        srikar@linux.vnet.ibm.com, robin.murphy@arm.com,
+        jean-philippe.brucker@arm.com, marc.zyngier@arm.com
+In-Reply-To: <20180803220443-mutt-send-email-mst@kernel.org>
+References: <20180801083639.GF26378@infradead.org>
+         <26c1d3d50d8e081eed44fe9940fbefed34598cbd.camel@kernel.crashing.org>
+         <20180802182959-mutt-send-email-mst@kernel.org>
+         <82ccef6ec3d95ee43f3990a4a2d0aea87eb45e89.camel@kernel.crashing.org>
+         <20180802200646-mutt-send-email-mst@kernel.org>
+         <e9beb6bba5a7d05741e27e85b24a3b23ba7c2762.camel@kernel.crashing.org>
+         <20180802225738-mutt-send-email-mst@kernel.org>
+         <de4888b6457e220776e16a9c8958ff0886ffc66c.camel@kernel.crashing.org>
+         <20180803070507.GA1344@infradead.org>
+         <eb1750e90e4bd45da297fa6f78f8ef93671b7c2f.camel@kernel.crashing.org>
+         <20180803220443-mutt-send-email-mst@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Date:   Fri, 03 Aug 2018 20:18:34 -0500
+X-Mailer: Evolution 3.28.4 (3.28.4-1.fc28) 
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18080401-0020-0000-0000-000002B0FD7A
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18080401-0021-0000-0000-000020FD33D2
+Message-Id: <d103acae2ab677eba761c4aa4c5c84a5e1f32127.camel@kernel.crashing.org>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-03_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1034 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808040013
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 3, 2018 at 5:58 PM Mikulas Patocka <mpatocka@redhat.com> wrote:
->
->
->
-> On Fri, 3 Aug 2018, Richard Earnshaw (lists) wrote:
->
-> > Whoa, hold on.
-> >
-> > Memcpy should never be used on device memory.  Period.  Memcpy doesn't
-> > know anything about what size of access is needed for accessing a device.
-> >
-> > But why is the buffer in device memory rather than some other form of
-> > uncached memory?
-> >
-> > If you change memcpy to deal with an aspect of the system hardware,
-> > you'll end up hosing performance EVERYWHERE.  DON'T DO IT!
->
-> memcpy in glibc uses ifunc selection and it already has optimized variants
-> for Falkor and Thunder-X. You can add just another variant for Armada-8040
-> that works around this bug and you won't be harming anyone but users of
-> Armada-8040.
+On Fri, 2018-08-03 at 22:07 +0300, Michael S. Tsirkin wrote:
+> On Fri, Aug 03, 2018 at 10:58:36AM -0500, Benjamin Herrenschmidt wrote:
+> > On Fri, 2018-08-03 at 00:05 -0700, Christoph Hellwig wrote:
+> > > >   2- Make virtio use the DMA API with our custom platform-provided
+> > > > swiotlb callbacks when needed, that is when not using IOMMU *and*
+> > > > running on a secure VM in our case.
+> > > 
+> > > And total NAK the customer platform-provided part of this.  We need
+> > > a flag passed in from the hypervisor that the device needs all bus
+> > > specific dma api treatment, and then just use the normal plaform
+> > > dma mapping setup. 
+> > 
+> > Christoph, as I have explained already, we do NOT have a way to provide
+> > such a flag as neither the hypervisor nor qemu knows anything about
+> > this when the VM is created.
+> 
+> I think the fact you can't add flags from the hypervisor is
+> a sign of a problematic architecture, you should look at
+> adding that down the road - you will likely need it at some point.
 
-Except it is not a bug in the ARMADA at all.  It is a bug in thinking
-memcpy will work on non-DRAM memory.
-Can you run the test program on x86 using the similar framebuffer
-setup?  Does doing two writes (one aligned and one unaligned but
-overlapping with previous one) cause the same issue?  I suspect it
-does, then using memcpy for frame buffers is wrong.
+Well, we can later in the boot process. At VM creation time, it's just
+a normal VM. The VM firmware, bootloader etc... are just operating
+normally etc...
 
-Thanks,
-Andrew
+Later on, (we may have even already run Linux at that point,
+unsecurely, as we can use Linux as a bootloader under some
+circumstances), we start a "secure image".
 
->
-> Furthermore, you can detect in the kernel that the PCI bus has some device
-> with prefetchable BAR and activate the workaround only if there is
-> videocard plugged in the PCIe slot.
->
-> > If you must, create a new API with tighter semantics, but don't change
-> > memcpy to accommodate this.
-> >
-> > Anyway, back to the original report.  What memory mapping is being used?
-> >  In detail?
->
-> It is PCI prefetchable BAR. It is mapped using pgprot_writecombine, which
-> results in MT_NORMAL_NC page attributes. (the MT_DEVICE_nGnRE can't be
-> used because it results in crashes due to unaligned accesses to videoram).
->
-> > R.
->
-> Mikulas
+This is a kernel zImage that includes a "ticket" that has the
+appropriate signature etc... so that when that kernel starts, it can
+authenticate with the ultravisor, be verified (along with its ramdisk)
+etc... and copied (by the UV) into secure memory & run from there.
+
+At that point, the hypervisor is informed that the VM has become
+secure.
+
+So at that point, we could exit to qemu to inform it of the change, and
+have it walk the qtree and "Switch" all the virtio devices to use the
+IOMMU I suppose, but it feels a lot grosser to me.
+
+That's the only other option I can think of.
+
+> However in this specific case, the flag does not need to come from the
+> hypervisor, it can be set by arch boot code I think.
+> Christoph do you see a problem with that?
+
+The above could do that yes. Another approach would be to do it from a
+small virtio "quirk" that pokes a bit in the device to force it to
+iommu mode when it detects that we are running in a secure VM. That's a
+bit warty on the virito side but probably not as much as having a qemu
+one that walks of the virtio devices to change how they behave.
+
+What do you reckon ?
+
+What we want to avoid is to expose any of this to the *end user* or
+libvirt or any other higher level of the management stack. We really
+want that stuff to remain contained between the VM itself, KVM and
+maybe qemu.
+
+We will need some other qemu changes for migration so that's ok. But
+the minute you start touching libvirt and the higher levels it becomes
+a nightmare.
+
+Cheers,
+Ben.
+
+> > >  To get swiotlb you'll need to then use the DT/ACPI
+> > > dma-range property to limit the addressable range, and a swiotlb
+> > > capable plaform will use swiotlb automatically.
+> > 
+> > This cannot be done as you describe it.
+> > 
+> > The VM is created as a *normal* VM. The DT stuff is generated by qemu
+> > at a point where it has *no idea* that the VM will later become secure
+> > and thus will have to restrict which pages can be used for "DMA".
+> > 
+> > The VM will *at runtime* turn itself into a secure VM via interactions
+> > with the security HW and the Ultravisor layer (which sits below the
+> > HV). This happens way after the DT has been created and consumed, the
+> > qemu devices instanciated etc...
+> > 
+> > Only the guest kernel knows because it initates the transition. When
+> > that happens, the virtio devices have already been used by the guest
+> > firmware, bootloader, possibly another kernel that kexeced the "secure"
+> > one, etc... 
+> > 
+> > So instead of running around saying NAK NAK NAK, please explain how we
+> > can solve that differently.
+> > 
+> > Ben.
+> > 
+
