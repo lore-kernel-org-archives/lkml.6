@@ -6,34 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABB96C4646F
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:07:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A218EC4646F
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:07:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71729217C6
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:07:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71729217C6
+	by mail.kernel.org (Postfix) with ESMTP id 5C759217C7
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:07:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C759217C7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387631AbeHDLHj (ORCPT
+        id S2387645AbeHDLHm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 07:07:39 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49412 "EHLO
+        Sat, 4 Aug 2018 07:07:42 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49418 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726754AbeHDLHi (ORCPT
+        with ESMTP id S1726754AbeHDLHl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 07:07:38 -0400
+        Sat, 4 Aug 2018 07:07:41 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A5D1A89C;
-        Sat,  4 Aug 2018 09:07:39 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B389E89C;
+        Sat,  4 Aug 2018 09:07:42 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 4.4 008/124] tracing: Quiet gcc warning about maybe unused link variable
-Date:   Sat,  4 Aug 2018 10:59:57 +0200
-Message-Id: <20180804082702.756841527@linuxfoundation.org>
+        stable@vger.kernel.org, Juergen Gross <jgross@suse.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.4 009/124] xen/netfront: raise max number of slots in xennet_get_responses()
+Date:   Sat,  4 Aug 2018 10:59:58 +0200
+Message-Id: <20180804082702.800715724@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180804082702.434482435@linuxfoundation.org>
 References: <20180804082702.434482435@linuxfoundation.org>
@@ -50,53 +52,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Steven Rostedt (VMware) <rostedt@goodmis.org>
+From: Juergen Gross <jgross@suse.com>
 
-commit 2519c1bbe38d7acacc9aacba303ca6f97482ed53 upstream.
+[ Upstream commit 57f230ab04d2910a06d17d988f1c4d7586a59113 ]
 
-Commit 57ea2a34adf4 ("tracing/kprobes: Fix trace_probe flags on
-enable_trace_kprobe() failure") added an if statement that depends on another
-if statement that gcc doesn't see will initialize the "link" variable and
-gives the warning:
+The max number of slots used in xennet_get_responses() is set to
+MAX_SKB_FRAGS + (rx->status <= RX_COPY_THRESHOLD).
 
- "warning: 'link' may be used uninitialized in this function"
+In old kernel-xen MAX_SKB_FRAGS was 18, while nowadays it is 17. This
+difference is resulting in frequent messages "too many slots" and a
+reduced network throughput for some workloads (factor 10 below that of
+a kernel-xen based guest).
 
-It is really a false positive, but to quiet the warning, and also to make
-sure that it never actually is used uninitialized, initialize the "link"
-variable to NULL and add an if (!WARN_ON_ONCE(!link)) where the compiler
-thinks it could be used uninitialized.
+Replacing MAX_SKB_FRAGS by XEN_NETIF_NR_SLOTS_MIN for calculation of
+the max number of slots to use solves that problem (tests showed no
+more messages "too many slots" and throughput was as high as with the
+kernel-xen based guest system).
 
-Cc: stable@vger.kernel.org
-Fixes: 57ea2a34adf4 ("tracing/kprobes: Fix trace_probe flags on enable_trace_kprobe() failure")
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Replace MAX_SKB_FRAGS-2 by XEN_NETIF_NR_SLOTS_MIN-1 in
+netfront_tx_slot_available() for making it clearer what is really being
+tested without actually modifying the tested value.
+
+Signed-off-by: Juergen Gross <jgross@suse.com>
+Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- kernel/trace/trace_kprobe.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/net/xen-netfront.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/kernel/trace/trace_kprobe.c
-+++ b/kernel/trace/trace_kprobe.c
-@@ -349,7 +349,7 @@ static struct trace_kprobe *find_trace_k
- static int
- enable_trace_kprobe(struct trace_kprobe *tk, struct trace_event_file *file)
+--- a/drivers/net/xen-netfront.c
++++ b/drivers/net/xen-netfront.c
+@@ -238,7 +238,7 @@ static void rx_refill_timeout(unsigned l
+ static int netfront_tx_slot_available(struct netfront_queue *queue)
  {
--	struct event_file_link *link;
-+	struct event_file_link *link = NULL;
- 	int ret = 0;
+ 	return (queue->tx.req_prod_pvt - queue->tx.rsp_cons) <
+-		(NET_TX_RING_SIZE - MAX_SKB_FRAGS - 2);
++		(NET_TX_RING_SIZE - XEN_NETIF_NR_SLOTS_MIN - 1);
+ }
  
- 	if (file) {
-@@ -375,7 +375,9 @@ enable_trace_kprobe(struct trace_kprobe
- 
- 	if (ret) {
- 		if (file) {
--			list_del_rcu(&link->list);
-+			/* Notice the if is true on not WARN() */
-+			if (!WARN_ON_ONCE(!link))
-+				list_del_rcu(&link->list);
- 			kfree(link);
- 			tk->tp.flags &= ~TP_FLAG_TRACE;
- 		} else {
+ static void xennet_maybe_wake_tx(struct netfront_queue *queue)
+@@ -775,7 +775,7 @@ static int xennet_get_responses(struct n
+ 	RING_IDX cons = queue->rx.rsp_cons;
+ 	struct sk_buff *skb = xennet_get_rx_skb(queue, cons);
+ 	grant_ref_t ref = xennet_get_rx_ref(queue, cons);
+-	int max = MAX_SKB_FRAGS + (rx->status <= RX_COPY_THRESHOLD);
++	int max = XEN_NETIF_NR_SLOTS_MIN + (rx->status <= RX_COPY_THRESHOLD);
+ 	int slots = 1;
+ 	int err = 0;
+ 	unsigned long ret;
 
 
