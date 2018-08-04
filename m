@@ -3,57 +3,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C3CCC28CF6
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 01:23:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36D8CC28CF6
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 01:46:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE9FC2172B
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 01:23:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE9FC2172B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
+	by mail.kernel.org (Postfix) with ESMTP id D94112178F
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 01:46:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D94112178F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732150AbeHDDWG (ORCPT
+        id S1732156AbeHDDhm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 23:22:06 -0400
-Received: from gate.crashing.org ([63.228.1.57]:54661 "EHLO gate.crashing.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731977AbeHDDWG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 23:22:06 -0400
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w741MBRK023518;
-        Fri, 3 Aug 2018 20:22:12 -0500
-Message-ID: <398d498048a5b288cce06003c0808bfefa1e9b1f.camel@kernel.crashing.org>
-Subject: Re: [RFC 0/4] Virtio uses DMA API for all devices
-From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        aik@ozlabs.ru, robh@kernel.org, joe@perches.com,
-        elfring@users.sourceforge.net, david@gibson.dropbear.id.au,
-        jasowang@redhat.com, mpe@ellerman.id.au, linuxram@us.ibm.com,
-        haren@linux.vnet.ibm.com, paulus@samba.org,
-        srikar@linux.vnet.ibm.com, robin.murphy@arm.com,
-        jean-philippe.brucker@arm.com, marc.zyngier@arm.com
-Date:   Fri, 03 Aug 2018 20:22:11 -0500
-In-Reply-To: <20180803220443-mutt-send-email-mst@kernel.org>
-References: <20180801083639.GF26378@infradead.org>
-         <26c1d3d50d8e081eed44fe9940fbefed34598cbd.camel@kernel.crashing.org>
-         <20180802182959-mutt-send-email-mst@kernel.org>
-         <82ccef6ec3d95ee43f3990a4a2d0aea87eb45e89.camel@kernel.crashing.org>
-         <20180802200646-mutt-send-email-mst@kernel.org>
-         <e9beb6bba5a7d05741e27e85b24a3b23ba7c2762.camel@kernel.crashing.org>
-         <20180802225738-mutt-send-email-mst@kernel.org>
-         <de4888b6457e220776e16a9c8958ff0886ffc66c.camel@kernel.crashing.org>
-         <20180803070507.GA1344@infradead.org>
-         <eb1750e90e4bd45da297fa6f78f8ef93671b7c2f.camel@kernel.crashing.org>
-         <20180803220443-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.4 (3.28.4-1.fc28) 
+        Fri, 3 Aug 2018 23:37:42 -0400
+Received: from smtprelay0164.hostedemail.com ([216.40.44.164]:41133 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1731986AbeHDDhm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 23:37:42 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay01.hostedemail.com (Postfix) with ESMTP id CF81F100E86C1;
+        Sat,  4 Aug 2018 01:38:55 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: shirt55_6aefdeec8c359
+X-Filterd-Recvd-Size: 1978
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf09.hostedemail.com (Postfix) with ESMTPA;
+        Sat,  4 Aug 2018 01:38:54 +0000 (UTC)
+Message-ID: <87ead21c1ab865072c693a092139d72ab5ccff52.camel@perches.com>
+Subject: Re: [PATCH] checkpatch: Check for space after "else" keyword
+From:   Joe Perches <joe@perches.com>
+To:     Michal Zylowski <michal.zylowski@intel.com>, apw@canonical.com,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org
+Date:   Fri, 03 Aug 2018 18:38:53 -0700
+In-Reply-To: <1533244821-31004-1-git-send-email-michal.zylowski@intel.com>
+References: <1533244821-31004-1-git-send-email-michal.zylowski@intel.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -61,98 +51,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-08-03 at 22:07 +0300, Michael S. Tsirkin wrote:
-> On Fri, Aug 03, 2018 at 10:58:36AM -0500, Benjamin Herrenschmidt wrote:
-> > On Fri, 2018-08-03 at 00:05 -0700, Christoph Hellwig wrote:
-> > > >   2- Make virtio use the DMA API with our custom platform-provided
-> > > > swiotlb callbacks when needed, that is when not using IOMMU *and*
-> > > > running on a secure VM in our case.
-> > > 
-> > > And total NAK the customer platform-provided part of this.  We need
-> > > a flag passed in from the hypervisor that the device needs all bus
-> > > specific dma api treatment, and then just use the normal plaform
-> > > dma mapping setup. 
-> > 
-> > Christoph, as I have explained already, we do NOT have a way to provide
-> > such a flag as neither the hypervisor nor qemu knows anything about
-> > this when the VM is created.
+On Thu, 2018-08-02 at 23:20 +0200, Michal Zylowski wrote:
+> Current checkpatch implementation permits notation like:
+> } else{
+> in kernel code.
+> It looks like oversight and inconsistency in checkpatch rules (e.g.
+> instruction like 'do' is tested).
 > 
-> I think the fact you can't add flags from the hypervisor is
-> a sign of a problematic architecture, you should look at
-> adding that down the road - you will likely need it at some point.
+> Add regex for checking space after 'else' keyword and trigger error if
+> space is not present.
+> 
+> Signed-off-by: Michal Zylowski <michal.zylowski@intel.com>
 
-(Appologies if you got this twice, my mailer had a brain fart and I don't
-know if the first one got through & am about to disappear in a plane for 17h)
+Acked-by: Joe Perches <joe@perches.com
 
-Well, we can later in the boot process. At VM creation time, it's just
-a normal VM. The VM firmware, bootloader etc... are just operating
-normally etc...
+though it might be better if the do and else
+was written on a single line like:
 
-Later on, (we may have even already run Linux at that point,
-unsecurely, as we can use Linux as a bootloader under some
-circumstances), we start a "secure image".
+	$line =~ /\b(?:else|do)\{/
 
-This is a kernel zImage that includes a "ticket" that has the
-appropriate signature etc... so that when that kernel starts, it can
-authenticate with the ultravisor, be verified (along with its ramdisk)
-etc... and copied (by the UV) into secure memory & run from there.
-
-At that point, the hypervisor is informed that the VM has become
-secure.
-
-So at that point, we could exit to qemu to inform it of the change, and
-have it walk the qtree and "Switch" all the virtio devices to use the
-IOMMU I suppose, but it feels a lot grosser to me.
-
-That's the only other option I can think of.
-
-> However in this specific case, the flag does not need to come from the
-> hypervisor, it can be set by arch boot code I think.
-> Christoph do you see a problem with that?
-
-The above could do that yes. Another approach would be to do it from a
-small virtio "quirk" that pokes a bit in the device to force it to
-iommu mode when it detects that we are running in a secure VM. That's a
-bit warty on the virito side but probably not as much as having a qemu
-one that walks of the virtio devices to change how they behave.
-
-What do you reckon ?
-
-What we want to avoid is to expose any of this to the *end user* or
-libvirt or any other higher level of the management stack. We really
-want that stuff to remain contained between the VM itself, KVM and
-maybe qemu.
-
-We will need some other qemu changes for migration so that's ok. But
-the minute you start touching libvirt and the higher levels it becomes
-a nightmare.
-
-Cheers,
-Ben.
-
-> > >  To get swiotlb you'll need to then use the DT/ACPI
-> > > dma-range property to limit the addressable range, and a swiotlb
-> > > capable plaform will use swiotlb automatically.
-> > 
-> > This cannot be done as you describe it.
-> > 
-> > The VM is created as a *normal* VM. The DT stuff is generated by qemu
-> > at a point where it has *no idea* that the VM will later become secure
-> > and thus will have to restrict which pages can be used for "DMA".
-> > 
-> > The VM will *at runtime* turn itself into a secure VM via interactions
-> > with the security HW and the Ultravisor layer (which sits below the
-> > HV). This happens way after the DT has been created and consumed, the
-> > qemu devices instanciated etc...
-> > 
-> > Only the guest kernel knows because it initates the transition. When
-> > that happens, the virtio devices have already been used by the guest
-> > firmware, bootloader, possibly another kernel that kexeced the "secure"
-> > one, etc... 
-> > 
-> > So instead of running around saying NAK NAK NAK, please explain how we
-> > can solve that differently.
-> > 
-> > Ben.
-> > 
-
+> ---
+>  scripts/checkpatch.pl | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+> index e16d671..2e3f41e 100755
+> --- a/scripts/checkpatch.pl
+> +++ b/scripts/checkpatch.pl
+> @@ -4479,6 +4479,7 @@ sub process {
+>  
+>  #need space before brace following if, while, etc
+>  		if (($line =~ /\(.*\)\{/ && $line !~ /\($Type\)\{/) ||
+> +		    $line =~ /else\{/ ||
+>  		    $line =~ /do\{/) {
+>  			if (ERROR("SPACING",
+>  				  "space required before the open brace '{'\n" . $herecurr) &&
