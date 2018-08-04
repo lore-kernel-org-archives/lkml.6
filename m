@@ -6,64 +6,38 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFB1DC4646D
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 05:34:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D80DBC4646D
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 05:47:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABF2F2178F
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 05:34:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABF2F2178F
+	by mail.kernel.org (Postfix) with ESMTP id 88997217B8
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 05:47:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88997217B8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727445AbeHDHd0 (ORCPT
+        id S1727600AbeHDHqm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 03:33:26 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:32947 "EHLO mail.bootlin.com"
+        Sat, 4 Aug 2018 03:46:42 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:33009 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726055AbeHDHdZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 03:33:25 -0400
+        id S1726186AbeHDHqm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 4 Aug 2018 03:46:42 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 472622074F; Sat,  4 Aug 2018 07:33:59 +0200 (CEST)
+        id 0DE4C20723; Sat,  4 Aug 2018 07:47:15 +0200 (CEST)
 Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 81276206A8;
-        Sat,  4 Aug 2018 07:33:58 +0200 (CEST)
-Date:   Sat, 4 Aug 2018 07:33:58 +0200
+        by mail.bootlin.com (Postfix) with ESMTPSA id BE767206A6;
+        Sat,  4 Aug 2018 07:47:14 +0200 (CEST)
+Date:   Sat, 4 Aug 2018 07:47:14 +0200
 From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     <mshettel@codeaurora.org>
-Cc:     "'Wolfram Sang'" <wsa@the-dreams.de>, <linux-i2c@vger.kernel.org>,
-        "'Jonathan Corbet'" <corbet@lwn.net>, <linux-doc@vger.kernel.org>,
-        "'Greg Kroah-Hartman'" <gregkh@linuxfoundation.org>,
-        "'Arnd Bergmann'" <arnd@arndb.de>,
-        "'Przemyslaw Sroka'" <psroka@cadence.com>,
-        "'Arkadiusz Golec'" <agolec@cadence.com>,
-        "'Alan Douglas'" <adouglas@cadence.com>,
-        "'Bartosz Folta'" <bfolta@cadence.com>,
-        "'Damian Kos'" <dkos@cadence.com>,
-        "'Alicja Jurasik-Urbaniak'" <alicja@cadence.com>,
-        "'Cyprian Wronka'" <cwronka@cadence.com>,
-        "'Suresh Punnoose'" <sureshp@cadence.com>,
-        "'Rafal Ciepiela'" <rafalc@cadence.com>,
-        "'Thomas Petazzoni'" <thomas.petazzoni@bootlin.com>,
-        "'Nishanth Menon'" <nm@ti.com>,
-        "'Rob Herring'" <robh+dt@kernel.org>,
-        "'Pawel Moll'" <pawel.moll@arm.com>,
-        "'Mark Rutland'" <mark.rutland@arm.com>,
-        "'Ian Campbell'" <ijc+devicetree@hellion.org.uk>,
-        "'Kumar Gala'" <galak@codeaurora.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        "'Vitor Soares'" <Vitor.Soares@synopsys.com>,
-        "'Geert Uytterhoeven'" <geert@linux-m68k.org>,
-        "'Linus Walleij'" <linus.walleij@linaro.org>,
-        "'Xiang Lin'" <Xiang.Lin@synaptics.com>,
-        <linux-gpio@vger.kernel.org>, "'Sekhar Nori'" <nsekhar@ti.com>,
-        "'Przemyslaw Gaj'" <pgaj@cadence.com>,
-        "'Peter Rosin'" <peda@axentia.se>
-Subject: Re: [PATCH v6 01/10] i3c: Add core I3C infrastructure
-Message-ID: <20180804073358.7c5cf3a0@bbrezillon>
-In-Reply-To: <023901d42b72$5bc329d0$13497d70$@codeaurora.org>
-References: <20180719152930.3715-1-boris.brezillon@bootlin.com>
-        <20180719152930.3715-2-boris.brezillon@bootlin.com>
-        <023901d42b72$5bc329d0$13497d70$@codeaurora.org>
+To:     KOBAYASHI Yoshitake <yoshitake.kobayashi@toshiba.co.jp>
+Cc:     miquel.raynal@bootlin.com, richard@nod.at, dwmw2@infradead.org,
+        computersforpeace@gmail.com, marek.vasut@gmail.com,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6] mtd: nand: toshiba: Add support for Toshiba Memory
+ BENAND (Built-in ECC NAND)
+Message-ID: <20180804074714.1cec3938@bbrezillon>
+In-Reply-To: <1533360352-2882-1-git-send-email-yoshitake.kobayashi@toshiba.co.jp>
+References: <1533360352-2882-1-git-send-email-yoshitake.kobayashi@toshiba.co.jp>
 X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -73,74 +47,128 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mike,
+On Sat,  4 Aug 2018 14:25:52 +0900
+KOBAYASHI Yoshitake <yoshitake.kobayashi@toshiba.co.jp> wrote:
 
-On Fri, 3 Aug 2018 15:38:43 -0600
-<mshettel@codeaurora.org> wrote:
-
-> > +static void
-> > +i3c_master_register_new_i3c_devs(struct i3c_master_controller *master)
-> > +{
-> > +	struct i3c_dev_desc *desc;
-> > +	int ret;
-> > +
-> > +	if (!master->init_done)
-> > +		return;
-> > +
-> > +	i3c_bus_for_each_i3cdev(master->bus, desc) {
-> > +		if (desc->dev || !desc->info.dyn_addr)
-> > +			continue;
-> > +
-> > +		desc->dev = kzalloc(sizeof(*desc->dev), GFP_KERNEL);
-> > +		if (!desc->dev)
-> > +			continue;
-> > +
-> > +		desc->dev->bus = master->bus;
-> > +		desc->dev->desc = desc;
-> > +		desc->dev->dev.parent = &master->bus->dev;
-> > +		if (desc == master->this)
-> > +			desc->dev->dev.type = &i3c_master_type;
-> > +		else
-> > +			desc->dev->dev.type = &i3c_device_type;
-> > +		desc->dev->dev.bus = &i3c_bus_type;
-> > +		desc->dev->dev.release = i3c_device_release;
-> > +		dev_set_name(&desc->dev->dev, "%d-%llx", master->bus-  
-> > >id,  
-> > +			     desc->info.pid);
-> > +
-> > +		if (desc->boardinfo)
-> > +			desc->dev->dev.of_node = desc->boardinfo-  
-> > >of_node;  
-> > +
-> > +		pr_info("%s:%i\n", __func__, __LINE__);
-> > +		if (ret)
-> > +			dev_err(master->parent,
-> > +				"Failed to add I3C device (err = %d)\n",  
-> ret);
-> > +	}
-> > +}  
+> This patch is a patch to support TOSHIBA MEMORY CORPORATION BENAND
+> memory devices.  Check the status of the built-in ECC with the Read
+> Status command without using the vendor specific command.  The Read
+> Status command only knows whether there was bitflips above the
+> threshold and can not get accurate bitflips.  For now, I set
+> max_bitflips mtd->bitflip_threshold.
 > 
-> The compiler gives a warning that "ret" may be used uninitialized in the
-> above function, which is true since "ret" is never assigned a value.  Also,
-> I wonder about the "pr_info" call here, should there be a more detailed
-> message here about the device being registered, other than the file name and
-> line number?
+> Signed-off-by: KOBAYASHI Yoshitake <yoshitake.kobayashi@toshiba.co.jp>
 
-Yes, kbuild already reported that problem. I messed up when selecting
-the lines to add to my commit and added this trace instead of
+Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
 
-		ret = device_register(&desc->dev->dev);
-
-Will be fixed in v7.
-
+> ---
+>  drivers/mtd/nand/raw/nand_toshiba.c | 88 +++++++++++++++++++++++++++++++++++++
+>  1 file changed, 88 insertions(+)
 > 
-> Otherwise, I have gone through the code in the process of writing the first
-> iteration of the Qualcomm I3C master driver, and overall the framework looks
-> good.  Will update with any additional feedback I have.
+> diff --git a/drivers/mtd/nand/raw/nand_toshiba.c b/drivers/mtd/nand/raw/nand_toshiba.c
+> index ab43f02..8aec3fa 100644
+> --- a/drivers/mtd/nand/raw/nand_toshiba.c
+> +++ b/drivers/mtd/nand/raw/nand_toshiba.c
+> @@ -17,6 +17,89 @@
+>  
+>  #include <linux/mtd/rawnand.h>
+>  
+> +/* Bit for detecting BENAND */
+> +#define TOSHIBA_NAND_ID4_IS_BENAND		BIT(7)
+> +
+> +/* Recommended to rewrite for BENAND */
+> +#define TOSHIBA_NAND_STATUS_REWRITE_RECOMMENDED	BIT(3)
+> +
+> +static int toshiba_nand_benand_eccstatus(struct mtd_info *mtd,
+> +					 struct nand_chip *chip)
+> +{
+> +	int ret;
+> +	unsigned int max_bitflips = 0;
+> +	u8 status;
+> +
+> +	/* Check Status */
+> +	ret = nand_status_op(chip, &status);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (status & NAND_STATUS_FAIL) {
+> +		/* uncorrected */
+> +		mtd->ecc_stats.failed++;
+> +	} else if (status & TOSHIBA_NAND_STATUS_REWRITE_RECOMMENDED) {
+> +		/* corrected */
+> +		max_bitflips = mtd->bitflip_threshold;
+> +		mtd->ecc_stats.corrected += max_bitflips;
+> +	}
+> +
+> +	return max_bitflips;
+> +}
+> +
+> +static int
+> +toshiba_nand_read_page_benand(struct mtd_info *mtd,
+> +			      struct nand_chip *chip, uint8_t *buf,
+> +			      int oob_required, int page)
+> +{
+> +	int ret;
+> +
+> +	ret = nand_read_page_raw(mtd, chip, buf, oob_required, page);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return toshiba_nand_benand_eccstatus(mtd, chip);
+> +}
+> +
+> +static int
+> +toshiba_nand_read_subpage_benand(struct mtd_info *mtd,
+> +				 struct nand_chip *chip, uint32_t data_offs,
+> +				 uint32_t readlen, uint8_t *bufpoi, int page)
+> +{
+> +	int ret;
+> +
+> +	ret = nand_read_page_op(chip, page, data_offs,
+> +				bufpoi + data_offs, readlen);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return toshiba_nand_benand_eccstatus(mtd, chip);
+> +}
+> +
+> +static void toshiba_nand_benand_init(struct nand_chip *chip)
+> +{
+> +	struct mtd_info *mtd = nand_to_mtd(chip);
+> +
+> +	/*
+> +	 * On BENAND, the entire OOB region can be used by the MTD user.
+> +	 * The calculated ECC bytes are stored into other isolated
+> +	 * area which is not accessible to users.
+> +	 * This is why chip->ecc.bytes = 0.
+> +	 */
+> +	chip->ecc.bytes = 0;
+> +	chip->ecc.size = 512;
+> +	chip->ecc.strength = 8;
+> +	chip->ecc.read_page = toshiba_nand_read_page_benand;
+> +	chip->ecc.read_subpage = toshiba_nand_read_subpage_benand;
+> +	chip->ecc.write_page = nand_write_page_raw;
+> +	chip->ecc.read_page_raw = nand_read_page_raw_notsupp;
+> +	chip->ecc.write_page_raw = nand_write_page_raw_notsupp;
+> +
+> +	chip->options |= NAND_SUBPAGE_READ;
+> +
+> +	mtd_set_ooblayout(mtd, &nand_ooblayout_lp_ops);
+> +}
+> +
+>  static void toshiba_nand_decode_id(struct nand_chip *chip)
+>  {
+>  	struct mtd_info *mtd = nand_to_mtd(chip);
+> @@ -68,6 +151,11 @@ static int toshiba_nand_init(struct nand_chip *chip)
+>  	if (nand_is_slc(chip))
+>  		chip->bbt_options |= NAND_BBT_SCAN2NDPAGE;
+>  
+> +	/* Check that chip is BENAND and ECC mode is on-die */
+> +	if (nand_is_slc(chip) && chip->ecc.mode == NAND_ECC_ON_DIE &&
+> +	    chip->id.data[4] & TOSHIBA_NAND_ID4_IS_BENAND)
+> +		toshiba_nand_benand_init(chip);
+> +
+>  	return 0;
+>  }
+>  
 
-Thanks for looking at the framework code. Your driver is in my TODO
-list.
-
-Regards,
-
-Boris
