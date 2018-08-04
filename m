@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C23CFC4646F
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:06:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C099C4646D
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:06:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70C18217C6
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:06:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70C18217C6
+	by mail.kernel.org (Postfix) with ESMTP id E2EFE217C6
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:06:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2EFE217C6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733268AbeHDLGn (ORCPT
+        id S1733282AbeHDLGq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 07:06:43 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49198 "EHLO
+        Sat, 4 Aug 2018 07:06:46 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49210 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727293AbeHDLGn (ORCPT
+        with ESMTP id S1727293AbeHDLGp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 07:06:43 -0400
+        Sat, 4 Aug 2018 07:06:45 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 215BABC6;
-        Sat,  4 Aug 2018 09:06:43 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2C2A9BC6;
+        Sat,  4 Aug 2018 09:06:47 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Zhouyang Jia <jiazhouyang09@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Takashi Iwai <tiwai@suse.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 010/124] ALSA: emu10k1: add error handling for snd_ctl_add
-Date:   Sat,  4 Aug 2018 10:59:59 +0200
-Message-Id: <20180804082702.834202535@linuxfoundation.org>
+Subject: [PATCH 4.4 011/124] ALSA: fm801: add error handling for snd_ctl_add
+Date:   Sat,  4 Aug 2018 11:00:00 +0200
+Message-Id: <20180804082702.869095664@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180804082702.434482435@linuxfoundation.org>
 References: <20180804082702.434482435@linuxfoundation.org>
@@ -53,7 +54,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Zhouyang Jia <jiazhouyang09@gmail.com>
 
-[ Upstream commit 6d531e7b972cb62ded011c2dfcc2d9f72ea6c421 ]
+[ Upstream commit ef1ffbe7889e99f5b5cccb41c89e5c94f50f3218 ]
 
 When snd_ctl_add fails, the lack of error-handling code may
 cause unexpected results.
@@ -61,25 +62,39 @@ cause unexpected results.
 This patch adds error-handling code after calling snd_ctl_add.
 
 Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
+Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- sound/pci/emu10k1/emupcm.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ sound/pci/fm801.c |   16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
 
---- a/sound/pci/emu10k1/emupcm.c
-+++ b/sound/pci/emu10k1/emupcm.c
-@@ -1850,7 +1850,9 @@ int snd_emu10k1_pcm_efx(struct snd_emu10
- 	if (!kctl)
- 		return -ENOMEM;
- 	kctl->id.device = device;
--	snd_ctl_add(emu->card, kctl);
-+	err = snd_ctl_add(emu->card, kctl);
-+	if (err < 0)
-+		return err;
- 
- 	snd_pcm_lib_preallocate_pages_for_all(pcm, SNDRV_DMA_TYPE_DEV, snd_dma_pci_data(emu->pci), 64*1024, 64*1024);
- 
+--- a/sound/pci/fm801.c
++++ b/sound/pci/fm801.c
+@@ -1050,11 +1050,19 @@ static int snd_fm801_mixer(struct fm801
+ 		if ((err = snd_ac97_mixer(chip->ac97_bus, &ac97, &chip->ac97_sec)) < 0)
+ 			return err;
+ 	}
+-	for (i = 0; i < FM801_CONTROLS; i++)
+-		snd_ctl_add(chip->card, snd_ctl_new1(&snd_fm801_controls[i], chip));
++	for (i = 0; i < FM801_CONTROLS; i++) {
++		err = snd_ctl_add(chip->card,
++			snd_ctl_new1(&snd_fm801_controls[i], chip));
++		if (err < 0)
++			return err;
++	}
+ 	if (chip->multichannel) {
+-		for (i = 0; i < FM801_CONTROLS_MULTI; i++)
+-			snd_ctl_add(chip->card, snd_ctl_new1(&snd_fm801_controls_multi[i], chip));
++		for (i = 0; i < FM801_CONTROLS_MULTI; i++) {
++			err = snd_ctl_add(chip->card,
++				snd_ctl_new1(&snd_fm801_controls_multi[i], chip));
++			if (err < 0)
++				return err;
++		}
+ 	}
+ 	return 0;
+ }
 
 
