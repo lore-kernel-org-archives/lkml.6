@@ -2,156 +2,115 @@ Return-Path: <SRS0=4jry=KT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 303E6C4646D
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 12:43:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88152C4646D
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 12:43:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DBE0421837
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 12:43:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBE0421837
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 49943217CE
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 12:43:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49943217CE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728279AbeHDOnv (ORCPT
+        id S1728484AbeHDOoc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 10:43:51 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34144 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726744AbeHDOnv (ORCPT
+        Sat, 4 Aug 2018 10:44:32 -0400
+Received: from lb2-smtp-cloud7.xs4all.net ([194.109.24.28]:44006 "EHLO
+        lb2-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726744AbeHDOob (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 10:43:51 -0400
-Received: from localhost (ip-213-127-46-170.ip.prioritytelecom.net [213.127.46.170])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B1B44480;
-        Sat,  4 Aug 2018 12:43:12 +0000 (UTC)
-Date:   Sat, 4 Aug 2018 14:43:09 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Hauke Mehrtens <hauke@hauke-m.de>
-Cc:     "Wu, Songjun" <songjun.wu@linux.intel.com>, hua.ma@linux.intel.com,
-        yixin.zhu@linux.intel.com, chuanhua.lei@linux.intel.com,
-        qi-ming.wu@intel.com, linux-mips@linux-mips.org,
-        linux-clk@vger.kernel.org, linux-serial@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jiri Slaby <jslaby@suse.com>
-Subject: Re: [PATCH v2 14/18] serial: intel: Add CCF support
-Message-ID: <20180804124309.GB4920@kroah.com>
-References: <20180803030237.3366-1-songjun.wu@linux.intel.com>
- <20180803030237.3366-15-songjun.wu@linux.intel.com>
- <20180803055640.GA32226@kroah.com>
- <763bba56-3701-7fe9-9b31-4710594b40d5@linux.intel.com>
- <20180803103023.GA6557@kroah.com>
- <3360edd2-f3d8-b860-13fa-ce680edbfd0a@hauke-m.de>
+        Sat, 4 Aug 2018 10:44:31 -0400
+Received: from [192.168.2.10] ([212.251.195.8])
+        by smtp-cloud7.xs4all.net with ESMTPA
+        id lvuOfCz5A6brUlvuSfFLs6; Sat, 04 Aug 2018 14:43:53 +0200
+Subject: Re: [PATCH v6 0/8] Cedrus driver for the Allwinner Video Engine,
+ using media requests
+To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        devel@driverdev.osuosl.org
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-sunxi@googlegroups.com,
+        Hugues Fruchet <hugues.fruchet@st.com>,
+        Randy Li <ayaka@soulik.info>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>
+References: <20180725100256.22833-1-paul.kocialkowski@bootlin.com>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <4e8a0286-7e49-5622-1895-ac3268224152@xs4all.nl>
+Date:   Sat, 4 Aug 2018 14:43:48 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3360edd2-f3d8-b860-13fa-ce680edbfd0a@hauke-m.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180725100256.22833-1-paul.kocialkowski@bootlin.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfFzPnAa1QZX/9m5xmsvcyD0giK4Z9S47S2BA/Q58q2cfLtjzU2QzjCraeViylQAAhYn0QYSa+u8LE2SxFHa5QN3gak9kfAAUZaxy6VVkAe9mVE0SD0QW
+ +hSdFRuiDFUxYSMRQldGfw6BwaRRZB4cicvaIbsYuF/B+0igmfIFf9PcetjybQjVc6aISKG7XZi7VqTSoVuMzwWEE0Y603zFcM6Byu8CfLB7RsOYEUj0haxw
+ j24bhGY9rFLlz44KpdLZRVwabruYgyaK1HkB/paIhY5qCTsYSfou8axxObY1d1cdl1XJORtK8uwBvXBJK+0TFcuho45tl19LaScaPD/kd4fumJMMFUJaeJR3
+ xRjm8BHvU0ui8m0AHKwuhMrnH+wwByiGDtbkJvOUUDTV1oJoyowPbBI3BAxqle20cyEP5nkicT402sRiksCA06RiqoOEXF2a2/Eeb5cIU/vchxwEm7kG2ohk
+ L+ybuvG0JewB+r5dd3tUtTlc5HPnnl4uAdUToa7B1XkfCqi6e1X9TsH6ZNmw0V8KhpQHXsXe6PzF1OZCOxsSZCOELW3v7ENu+AcQdL1SpCdXsBDR/wIXoqzF
+ JFWLoB3jSuTaAMwQflv/uLqxDN0b7GTNTzra7ONGZy+hyKZ9NXpraU/DEQ+OeUkpSTGtNGVv7zRXPP+F4OtUviVQ6VX8ASkofatg4tF1mOExS2J/uAn9hUjQ
+ gBsDT2SCqste1Z3QY8GwdZpgy+d/nnL+UCgdQZJmPbFfLB+46ZrirjDsPgHQL/O/BtYh6n2kXDxx0N8X6QaQRFII10gIKG1/OclEp5tWAfyERv3yqGlZmMAA
+ VOkHCP3h1/p25w1UzHwn0T7Kw5+qJnZ99sRw7dbWg5QmQACcIIZfow7ZYS5lshuLwtfOmcbIAXo4Olueed7IxUg5BxCH6LQCrzBggKpHPXOGQLmkvimCkHqa
+ coh9b/1CAq8NhfKd5LY82albQW1v/B1IouQOlmlhMXFa2+E3ipnwGpEoLAnJ/6zAk8w9lnhPMLXk3dzL0ZqF9pWEkgFIj7MNEIsO0bzV4BZj4exjYhsaP4jW
+ AVCknMONXWJdE84i7KB9GOKD8qCDkI2upEY=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Aug 04, 2018 at 12:54:22PM +0200, Hauke Mehrtens wrote:
-> On 08/03/2018 12:30 PM, Greg Kroah-Hartman wrote:
-> > On Fri, Aug 03, 2018 at 03:33:38PM +0800, Wu, Songjun wrote:
-> >>
-> >>
-> >> On 8/3/2018 1:56 PM, Greg Kroah-Hartman wrote:
-> >>> On Fri, Aug 03, 2018 at 11:02:33AM +0800, Songjun Wu wrote:
-> >>>> Previous implementation uses platform-dependent API to get the clock.
-> >>>> Those functions are not available for other SoC which uses the same IP.
-> >>>> The CCF (Common Clock Framework) have an abstraction based APIs for
-> >>>> clock. In future, the platform specific code will be removed when the
-> >>>> legacy soc use CCF as well.
-> >>>> Change to use CCF APIs to get clock and rate. So that different SoCs
-> >>>> can use the same driver.
-> >>>>
-> >>>> Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
-> >>>> ---
-> >>>>
-> >>>> Changes in v2: None
-> >>>>
-> >>>>   drivers/tty/serial/lantiq.c | 11 +++++++++++
-> >>>>   1 file changed, 11 insertions(+)
-> >>>>
-> >>>> diff --git a/drivers/tty/serial/lantiq.c b/drivers/tty/serial/lantiq.c
-> >>>> index 36479d66fb7c..35518ab3a80d 100644
-> >>>> --- a/drivers/tty/serial/lantiq.c
-> >>>> +++ b/drivers/tty/serial/lantiq.c
-> >>>> @@ -26,7 +26,9 @@
-> >>>>   #include <linux/clk.h>
-> >>>>   #include <linux/gpio.h>
-> >>>> +#ifdef CONFIG_LANTIQ
-> >>>>   #include <lantiq_soc.h>
-> >>>> +#endif
-> >>> That is never how you do this in Linux, you know better.
-> >>>
-> >>> Please go and get this patchset reviewed and signed-off-by from other
-> >>> internal Intel kernel developers before resending it next time.  It is
-> >>> their job to find and fix your basic errors like this, not ours.
-> >> Thank you for your comment.
-> >> Actually, we have discussed this issue internally.
-> >> We put the reason why we use "#ifdef CONFIG_LANTIQ" preprocessor in commit
-> >> message in "[PATCH v2 08/18] serial: intel: Get serial id from dts".
-> >> Please refer the commit message below.
-> >>
-> >> "#ifdef CONFIG_LANTIQ" preprocessor is used because LTQ_EARLY_ASC
-> >> macro is defined in lantiq_soc.h.
-> >> lantiq_soc.h is in arch path for legacy product support.
-> >>
-> >> arch/mips/include/asm/mach-lantiq/xway/lantiq_soc.h
-> >>
-> >> If "#ifdef preprocessor" is changed to
-> >> "if (IS_ENABLED(CONFIG_LANTIQ))", when CONFIG_LANTIQ is not enabled,
-> >> code using LTQ_EARLY_ASC is compiled.
-> >> Compilation will fail for no LTQ_EARLY_ASC defined.
-> > 
-> > Sorry, but no.  Why is this one tiny driver/chip somehow more "special"
-> > than all of the tens of thousands of other devices we support to warrent
-> > it getting some sort of special exception to do things differently?
-> > What happens to the next device that wants to do it this way?
-> > 
-> > Our coding style and rules are there for a reason, do not violate them
-> > thinking your device is the only one that matters.
-> > 
-> > Do it properly, again, you all know better than this.
-> > 
-> > greg k-h
-> > 
-> Hi Greg,
+On 07/25/2018 12:02 PM, Paul Kocialkowski wrote:
+> This is the sixth iteration of the updated Cedrus driver,
+> that supports the Video Engine found in most Allwinner SoCs, starting
+> with the A10. It was tested on the A13, A20, A33 and H3.
 > 
-> The problem is that the Lantiq SoC code in arch/mips/lantiq does not use
-> the common clock framework, but it uses the clk framework directly. It
-> defines CONFIG_HAVE_CLK and CONFIG_CLKDEV_LOOKUP, but not
-> CONFIG_COMMON_CLK. The xRX500 SoC which is being added here is about 2
-> generations more recent than the VR9/xRX200 SoC which is the latest
-> which is supported by the code in arch/mips/lantiq. With this new SoC we
-> switched to the common clock framework. This driver is used by the older
-> SoC and also by the new ones because this IP core is pretty similar in
-> all the SoCs.
-> This patch makes it possible to use it with the legacy lantiq code and
-> also with the common clock framework. I see multiple options to fix this
-> problem.
+> The initial version of this driver[0] was originally written and
+> submitted by Florent Revest using a previous version of the request API
+> that is necessary to provide coherency between controls and the buffers
+> they apply to.
 > 
-> 1. The current approach to have it as a compile variant for a) legacy
-> lantiq arch code without common clock framework and b) support for SoCs
-> using the common clock framework.
-> 2. Convert the lantiq arch code to the common clock framework. This
-> would be a good approach, but it need some efforts.
-> 3. Remove the arch/mips/lantiq code. There are still users of this code.
-> 4. Use the old APIs also for the new xRX500 SoC, I do not like this
-> approach.
-> 5. Move lantiq_soc.h to somewhere in include/linux/ so it is globally
-> available and provide some better wrapper code.
+> The driver was adapted to use the latest version of the media request
+> API[1], as submitted by Hand Verkuil. Media request API support is a
+> hard requirement for the Cedrus driver.
+> 
+> The driver itself currently only supports MPEG2 and more codecs will be
+> added to the driver eventually. The output frames provided by the
+> Video Engine are in a multi-planar 32x32-tiled YUV format, with a plane
+> for luminance (Y) and a plane for chrominance (UV). A specific format is
+> introduced in the V4L2 API to describe it.
+> 
+> This implementation is based on the significant work that was conducted
+> by various members of the linux-sunxi community for understanding and
+> documenting the Video Engine's innards.
+> 
+> In addition to the media requests API, the following series are required
+> for Cedrus:
+> * vicodec: the Virtual Codec driver
 
-I don't really care what you do at this point in time, but you all
-should know better than the crazy #ifdef is not allowed to try to
-prevent/allow the inclusion of a .h file.  Checkpatch might have even
-warned you about it, right?
+This will appear in for 4.19.
 
-So do it correctly, odds are #5 is correct, as that makes it work like
-any other device in the kernel.  You are not unique here.
+> * allwinner: a64: add SRAM controller / system control
+> * SRAM patches from the Cedrus VPU driver series version 5
 
-greg k-h
+What about these? Are they queued up for 4.19 as well?
+
+I'll post a rebased reqv17 later today that includes the
+"add v4l2_ctrl_request_hdl_find/put/ctrl_find functions" patch.
+
+Regards,
+
+	Hans
