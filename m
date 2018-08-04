@@ -3,37 +3,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA9EEC4646F
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:06:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD8F4C4646D
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:06:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71C2D217C6
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:06:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71C2D217C6
+	by mail.kernel.org (Postfix) with ESMTP id 87D46217C8
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:06:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87D46217C8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733107AbeHDLGD (ORCPT
+        id S1733126AbeHDLGG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 07:06:03 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48960 "EHLO
+        Sat, 4 Aug 2018 07:06:06 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48988 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727600AbeHDLGC (ORCPT
+        with ESMTP id S1727600AbeHDLGF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 07:06:02 -0400
+        Sat, 4 Aug 2018 07:06:05 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D24BB89C;
-        Sat,  4 Aug 2018 09:06:03 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E20EB89C;
+        Sat,  4 Aug 2018 09:06:06 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Xiao Liang <xiliang@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 08/32] xen-netfront: wait xenbus state change when load module manually
-Date:   Sat,  4 Aug 2018 11:00:58 +0200
-Message-Id: <20180804082650.324496320@linuxfoundation.org>
+        stable@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        netdev@vger.kernel.org, Dmitry Safonov <dima@arista.com>
+Subject: [PATCH 4.9 09/32] netlink: Do not subscribe to non-existent groups
+Date:   Sat,  4 Aug 2018 11:00:59 +0200
+Message-Id: <20180804082650.385073855@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180804082649.908295462@linuxfoundation.org>
 References: <20180804082649.908295462@linuxfoundation.org>
@@ -50,67 +52,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Xiao Liang <xiliang@redhat.com>
+From: Dmitry Safonov <dima@arista.com>
 
-[ Upstream commit 822fb18a82abaf4ee7058793d95d340f5dab7bfc ]
+[ Upstream commit 7acf9d4237c46894e0fa0492dd96314a41742e84 ]
 
-When loading module manually, after call xenbus_switch_state to initializes
-the state of the netfront device, the driver state did not change so fast
-that may lead no dev created in latest kernel. This patch adds wait to make
-sure xenbus knows the driver is not in closed/unknown state.
+Make ABI more strict about subscribing to group > ngroups.
+Code doesn't check for that and it looks bogus.
+(one can subscribe to non-existing group)
+Still, it's possible to bind() to all possible groups with (-1)
 
-Current state:
-[vm]# ethtool eth0
-Settings for eth0:
-	Link detected: yes
-[vm]# modprobe -r xen_netfront
-[vm]# modprobe  xen_netfront
-[vm]# ethtool eth0
-Settings for eth0:
-Cannot get device settings: No such device
-Cannot get wake-on-lan settings: No such device
-Cannot get message level: No such device
-Cannot get link status: No such device
-No data available
-
-With the patch installed.
-[vm]# ethtool eth0
-Settings for eth0:
-	Link detected: yes
-[vm]# modprobe -r xen_netfront
-[vm]# modprobe xen_netfront
-[vm]# ethtool eth0
-Settings for eth0:
-	Link detected: yes
-
-Signed-off-by: Xiao Liang <xiliang@redhat.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Steffen Klassert <steffen.klassert@secunet.com>
+Cc: netdev@vger.kernel.org
+Signed-off-by: Dmitry Safonov <dima@arista.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/xen-netfront.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ net/netlink/af_netlink.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/net/xen-netfront.c
-+++ b/drivers/net/xen-netfront.c
-@@ -86,6 +86,7 @@ struct netfront_cb {
- /* IRQ name is queue name with "-tx" or "-rx" appended */
- #define IRQ_NAME_SIZE (QUEUE_NAME_SIZE + 3)
+--- a/net/netlink/af_netlink.c
++++ b/net/netlink/af_netlink.c
+@@ -983,6 +983,7 @@ static int netlink_bind(struct socket *s
+ 		if (err)
+ 			return err;
+ 	}
++	groups &= (1UL << nlk->ngroups) - 1;
  
-+static DECLARE_WAIT_QUEUE_HEAD(module_load_q);
- static DECLARE_WAIT_QUEUE_HEAD(module_unload_q);
- 
- struct netfront_stats {
-@@ -1349,6 +1350,11 @@ static struct net_device *xennet_create_
- 	netif_carrier_off(netdev);
- 
- 	xenbus_switch_state(dev, XenbusStateInitialising);
-+	wait_event(module_load_q,
-+			   xenbus_read_driver_state(dev->otherend) !=
-+			   XenbusStateClosed &&
-+			   xenbus_read_driver_state(dev->otherend) !=
-+			   XenbusStateUnknown);
- 	return netdev;
- 
-  exit:
+ 	bound = nlk->bound;
+ 	if (bound) {
 
 
