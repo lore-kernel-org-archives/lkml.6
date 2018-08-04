@@ -6,34 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBDB1C4646D
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:11:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2DD0C4646F
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:11:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9D062177A
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:11:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9D062177A
+	by mail.kernel.org (Postfix) with ESMTP id 87AFC2177A
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:11:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87AFC2177A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389185AbeHDLL1 (ORCPT
+        id S2389195AbeHDLL3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 07:11:27 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50234 "EHLO
+        Sat, 4 Aug 2018 07:11:29 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50242 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732670AbeHDLL0 (ORCPT
+        with ESMTP id S1732670AbeHDLL3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 07:11:26 -0400
+        Sat, 4 Aug 2018 07:11:29 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C9858BC6;
-        Sat,  4 Aug 2018 09:11:25 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E2FF2BC6;
+        Sat,  4 Aug 2018 09:11:28 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
-        stable@kernel.org
-Subject: [PATCH 4.4 099/124] ext4: check for allocation block validity with block group locked
-Date:   Sat,  4 Aug 2018 11:01:28 +0200
-Message-Id: <20180804082706.177337451@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Engestrom <eric.engestrom@imgtec.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Vinod Koul <vinod.koul@intel.com>,
+        Andrea Adami <andrea.adami@gmail.com>
+Subject: [PATCH 4.4 100/124] dmaengine: pxa_dma: remove duplicate const qualifier
+Date:   Sat,  4 Aug 2018 11:01:29 +0200
+Message-Id: <20180804082706.218123491@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180804082702.434482435@linuxfoundation.org>
 References: <20180804082702.434482435@linuxfoundation.org>
@@ -50,69 +52,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Theodore Ts'o <tytso@mit.edu>
+From: Eric Engestrom <eric.engestrom@imgtec.com>
 
-commit 8d5a803c6a6ce4ec258e31f76059ea5153ba46ef upstream.
+commit 4e0def887d717598ae8062b46e55f9e00d3a5783 upstream.
 
-With commit 044e6e3d74a3: "ext4: don't update checksum of new
-initialized bitmaps" the buffer valid bit will get set without
-actually setting up the checksum for the allocation bitmap, since the
-checksum will get calculated once we actually allocate an inode or
-block.
-
-If we are doing this, then we need to (re-)check the verified bit
-after we take the block group lock.  Otherwise, we could race with
-another process reading and verifying the bitmap, which would then
-complain about the checksum being invalid.
-
-https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1780137
-
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: stable@kernel.org
+Signed-off-by: Eric Engestrom <eric.engestrom@imgtec.com>
+Acked-by: Robert Jarzmik <robert.jarzmik@free.fr>
+Signed-off-by: Vinod Koul <vinod.koul@intel.com>
+Cc: Andrea Adami <andrea.adami@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/balloc.c |    3 +++
- fs/ext4/ialloc.c |    3 +++
- 2 files changed, 6 insertions(+)
+ drivers/dma/pxa_dma.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/ext4/balloc.c
-+++ b/fs/ext4/balloc.c
-@@ -378,6 +378,8 @@ static int ext4_validate_block_bitmap(st
- 		return -EFSCORRUPTED;
- 
- 	ext4_lock_group(sb, block_group);
-+	if (buffer_verified(bh))
-+		goto verified;
- 	if (unlikely(!ext4_block_bitmap_csum_verify(sb, block_group,
- 			desc, bh))) {
- 		ext4_unlock_group(sb, block_group);
-@@ -400,6 +402,7 @@ static int ext4_validate_block_bitmap(st
- 		return -EFSCORRUPTED;
- 	}
- 	set_buffer_verified(bh);
-+verified:
- 	ext4_unlock_group(sb, block_group);
+--- a/drivers/dma/pxa_dma.c
++++ b/drivers/dma/pxa_dma.c
+@@ -1321,7 +1321,7 @@ static int pxad_init_phys(struct platfor
  	return 0;
  }
---- a/fs/ext4/ialloc.c
-+++ b/fs/ext4/ialloc.c
-@@ -88,6 +88,8 @@ static int ext4_validate_inode_bitmap(st
- 		return -EFSCORRUPTED;
  
- 	ext4_lock_group(sb, block_group);
-+	if (buffer_verified(bh))
-+		goto verified;
- 	blk = ext4_inode_bitmap(sb, desc);
- 	if (!ext4_inode_bitmap_csum_verify(sb, block_group, desc, bh,
- 					   EXT4_INODES_PER_GROUP(sb) / 8)) {
-@@ -105,6 +107,7 @@ static int ext4_validate_inode_bitmap(st
- 		return -EFSBADCRC;
- 	}
- 	set_buffer_verified(bh);
-+verified:
- 	ext4_unlock_group(sb, block_group);
- 	return 0;
- }
+-static const struct of_device_id const pxad_dt_ids[] = {
++static const struct of_device_id pxad_dt_ids[] = {
+ 	{ .compatible = "marvell,pdma-1.0", },
+ 	{}
+ };
 
 
