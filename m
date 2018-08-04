@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF2D4C4646F
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:02:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BE25C4646F
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:02:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9269321775
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:02:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9269321775
+	by mail.kernel.org (Postfix) with ESMTP id 17FEC217BF
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:02:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17FEC217BF
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728904AbeHDLCS (ORCPT
+        id S1729583AbeHDLCV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 07:02:18 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48090 "EHLO
+        Sat, 4 Aug 2018 07:02:21 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48096 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726477AbeHDLCR (ORCPT
+        with ESMTP id S1726477AbeHDLCU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 07:02:17 -0400
+        Sat, 4 Aug 2018 07:02:20 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EA72ABC6;
-        Sat,  4 Aug 2018 09:02:19 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 01551BB3;
+        Sat,  4 Aug 2018 09:02:22 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Josh Poimboeuf <jpoimboe@redhat.com>,
         Jeremy Cline <jcline@redhat.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.17 14/31] net: socket: fix potential spectre v1 gadget in socketcall
-Date:   Sat,  4 Aug 2018 11:00:49 +0200
-Message-Id: <20180804082633.340077305@linuxfoundation.org>
+Subject: [PATCH 4.17 15/31] net: socket: Fix potential spectre v1 gadget in sock_is_registered
+Date:   Sat,  4 Aug 2018 11:00:50 +0200
+Message-Id: <20180804082633.410038863@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180804082632.304529527@linuxfoundation.org>
 References: <20180804082632.304529527@linuxfoundation.org>
@@ -53,15 +53,10 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jeremy Cline <jcline@redhat.com>
 
-commit c8e8cd579bb4265651df8223730105341e61a2d1 upstream.
+commit e978de7a6d382ec378830ca2cf38e902df0b6d84 upstream.
 
-'call' is a user-controlled value, so sanitize the array index after the
-bounds check to avoid speculating past the bounds of the 'nargs' array.
-
-Found with the help of Smatch:
-
-net/socket.c:2508 __do_sys_socketcall() warn: potential spectre issue
-'nargs' [r] (local cap)
+'family' can be a user-controlled value, so sanitize it after the bounds
+check to avoid speculative out-of-bounds access.
 
 Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 Cc: stable@vger.kernel.org
@@ -70,26 +65,20 @@ Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/socket.c |    2 ++
- 1 file changed, 2 insertions(+)
+ net/socket.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 --- a/net/socket.c
 +++ b/net/socket.c
-@@ -89,6 +89,7 @@
- #include <linux/magic.h>
- #include <linux/slab.h>
- #include <linux/xattr.h>
-+#include <linux/nospec.h>
+@@ -2694,7 +2694,8 @@ EXPORT_SYMBOL(sock_unregister);
  
- #include <linux/uaccess.h>
- #include <asm/unistd.h>
-@@ -2526,6 +2527,7 @@ SYSCALL_DEFINE2(socketcall, int, call, u
+ bool sock_is_registered(int family)
+ {
+-	return family < NPROTO && rcu_access_pointer(net_families[family]);
++	return family < NPROTO &&
++		rcu_access_pointer(net_families[array_index_nospec(family, NPROTO)]);
+ }
  
- 	if (call < 1 || call > SYS_SENDMMSG)
- 		return -EINVAL;
-+	call = array_index_nospec(call, SYS_SENDMMSG + 1);
- 
- 	len = nargs[call];
- 	if (len > sizeof(a))
+ static int __init sock_init(void)
 
 
