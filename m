@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B1C3C4646D
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:03:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11474C4646F
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:03:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CCE73217C6
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:03:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCE73217C6
+	by mail.kernel.org (Postfix) with ESMTP id B1CDC217BF
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:03:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1CDC217BF
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732173AbeHDLDL (ORCPT
+        id S1732219AbeHDLDP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 07:03:11 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48274 "EHLO
+        Sat, 4 Aug 2018 07:03:15 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48286 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728349AbeHDLDL (ORCPT
+        with ESMTP id S1728349AbeHDLDO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 07:03:11 -0400
+        Sat, 4 Aug 2018 07:03:14 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1F6D989C;
-        Sat,  4 Aug 2018 09:03:12 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3E88DBBF;
+        Sat,  4 Aug 2018 09:03:16 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Ewan D. Milne" <emilne@redhat.com>,
-        Tony Battersby <tonyb@cybernetics.com>,
-        Bart Van Assche <bart.vanassche@wdc.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.17 31/31] scsi: sg: fix minor memory leak in error path
-Date:   Sat,  4 Aug 2018 11:01:06 +0200
-Message-Id: <20180804082634.382348484@linuxfoundation.org>
+        stable@vger.kernel.org, Roman Kagan <rkagan@virtuozzo.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 4.17 20/31] kvm: x86: vmx: fix vpid leak
+Date:   Sat,  4 Aug 2018 11:00:55 +0200
+Message-Id: <20180804082633.855160204@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180804082632.304529527@linuxfoundation.org>
 References: <20180804082632.304529527@linuxfoundation.org>
@@ -52,33 +50,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tony Battersby <tonyb@cybernetics.com>
+From: Roman Kagan <rkagan@virtuozzo.com>
 
-commit c170e5a8d222537e98aa8d4fddb667ff7a2ee114 upstream.
+commit 63aff65573d73eb8dda4732ad4ef222dd35e4862 upstream.
 
-Fix a minor memory leak when there is an error opening a /dev/sg device.
+VPID for the nested vcpu is allocated at vmx_create_vcpu whenever nested
+vmx is turned on with the module parameter.
 
-Fixes: cc833acbee9d ("sg: O_EXCL and other lock handling")
-Cc: <stable@vger.kernel.org>
-Reviewed-by: Ewan D. Milne <emilne@redhat.com>
-Signed-off-by: Tony Battersby <tonyb@cybernetics.com>
-Reviewed-by: Bart Van Assche <bart.vanassche@wdc.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+However, it's only freed if the L1 guest has executed VMXON which is not
+a given.
+
+As a result, on a system with nested==on every creation+deletion of an
+L1 vcpu without running an L2 guest results in leaking one vpid.  Since
+the total number of vpids is limited to 64k, they can eventually get
+exhausted, preventing L2 from starting.
+
+Delay allocation of the L2 vpid until VMXON emulation, thus matching its
+freeing.
+
+Fixes: 5c614b3583e7b6dab0c86356fa36c2bcbb8322a0
+Cc: stable@vger.kernel.org
+Signed-off-by: Roman Kagan <rkagan@virtuozzo.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/sg.c |    1 +
- 1 file changed, 1 insertion(+)
+ arch/x86/kvm/vmx.c |    7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
---- a/drivers/scsi/sg.c
-+++ b/drivers/scsi/sg.c
-@@ -2186,6 +2186,7 @@ sg_add_sfp(Sg_device * sdp)
- 	write_lock_irqsave(&sdp->sfd_lock, iflags);
- 	if (atomic_read(&sdp->detaching)) {
- 		write_unlock_irqrestore(&sdp->sfd_lock, iflags);
-+		kfree(sfp);
- 		return ERR_PTR(-ENODEV);
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -7660,6 +7660,8 @@ static int enter_vmx_operation(struct kv
+ 		     HRTIMER_MODE_REL_PINNED);
+ 	vmx->nested.preemption_timer.function = vmx_preemption_timer_fn;
+ 
++	vmx->nested.vpid02 = allocate_vpid();
++
+ 	vmx->nested.vmxon = true;
+ 	return 0;
+ 
+@@ -10108,11 +10110,9 @@ static struct kvm_vcpu *vmx_create_vcpu(
+ 			goto free_vmcs;
  	}
- 	list_add_tail(&sfp->sfd_siblings, &sdp->sfds);
+ 
+-	if (nested) {
++	if (nested)
+ 		nested_vmx_setup_ctls_msrs(&vmx->nested.msrs,
+ 					   kvm_vcpu_apicv_active(&vmx->vcpu));
+-		vmx->nested.vpid02 = allocate_vpid();
+-	}
+ 
+ 	vmx->nested.posted_intr_nv = -1;
+ 	vmx->nested.current_vmptr = -1ull;
+@@ -10129,7 +10129,6 @@ static struct kvm_vcpu *vmx_create_vcpu(
+ 	return &vmx->vcpu;
+ 
+ free_vmcs:
+-	free_vpid(vmx->nested.vpid02);
+ 	free_loaded_vmcs(vmx->loaded_vmcs);
+ free_msrs:
+ 	kfree(vmx->guest_msrs);
 
 
