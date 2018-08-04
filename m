@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2488FC4646D
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:03:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84A25C4646F
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:03:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6576217BF
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:03:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6576217BF
+	by mail.kernel.org (Postfix) with ESMTP id 47F1A208D5
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:03:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47F1A208D5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732325AbeHDLD1 (ORCPT
+        id S1732332AbeHDLDe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 07:03:27 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48342 "EHLO
+        Sat, 4 Aug 2018 07:03:34 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48360 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726983AbeHDLD1 (ORCPT
+        with ESMTP id S1726983AbeHDLDd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 07:03:27 -0400
+        Sat, 4 Aug 2018 07:03:33 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C8081BB3;
-        Sat,  4 Aug 2018 09:03:28 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 078F3BC6;
+        Sat,  4 Aug 2018 09:03:34 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-        Kalle Valo <kvalo@codeaurora.org>
-Subject: [PATCH 4.17 24/31] iwlwifi: add more card IDs for 9000 series
-Date:   Sat,  4 Aug 2018 11:00:59 +0200
-Message-Id: <20180804082634.036372595@linuxfoundation.org>
+        Jack Morgenstein <jackm@dev.mellanox.co.il>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 4.17 26/31] RDMA/uverbs: Expand primary and alt AV port checks
+Date:   Sat,  4 Aug 2018 11:01:01 +0200
+Message-Id: <20180804082634.130902560@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180804082632.304529527@linuxfoundation.org>
 References: <20180804082632.304529527@linuxfoundation.org>
@@ -51,240 +52,112 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+From: Jack Morgenstein <jackm@dev.mellanox.co.il>
 
-commit 0a5257bc6d89c2ae69b9bf955679cb4f89261874 upstream.
+commit addb8a6559f0f8b5a37582b7ca698358445a55bf upstream.
 
-Add new device IDs for the 9000 series.
+The commit cited below checked that the port numbers provided in the
+primary and alt AVs are legal.
 
-Cc: stable@vger.kernel.org # 4.14
-Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+That is sufficient to prevent a kernel panic. However, it is not
+sufficient for correct operation.
+
+In Linux, AVs (both primary and alt) must be completely self-described.
+We do not accept an AV from userspace without an embedded port number.
+(This has been the case since kernel 3.14 commit dbf727de7440
+("IB/core: Use GID table in AH creation and dmac resolution")).
+
+For the primary AV, this embedded port number must match the port number
+specified with IB_QP_PORT.
+
+We also expect the port number embedded in the alt AV to match the
+alt_port_num value passed by the userspace driver in the modify_qp command
+base structure.
+
+Add these checks to modify_qp.
+
+Cc: <stable@vger.kernel.org> # 4.16
+Fixes: 5d4c05c3ee36 ("RDMA/uverbs: Sanitize user entered port numbers prior to access it")
+Signed-off-by: Jack Morgenstein <jackm@dev.mellanox.co.il>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/intel/iwlwifi/cfg/9000.c   |   69 ++++++++++++++++++++++++
- drivers/net/wireless/intel/iwlwifi/iwl-config.h |    5 +
- drivers/net/wireless/intel/iwlwifi/pcie/drv.c   |   22 +++++++
- 3 files changed, 96 insertions(+)
+ drivers/infiniband/core/uverbs_cmd.c |   59 ++++++++++++++++++++++++++++++++---
+ 1 file changed, 54 insertions(+), 5 deletions(-)
 
---- a/drivers/net/wireless/intel/iwlwifi/cfg/9000.c
-+++ b/drivers/net/wireless/intel/iwlwifi/cfg/9000.c
-@@ -180,6 +180,17 @@ const struct iwl_cfg iwl9260_2ac_cfg = {
- 	.max_ht_ampdu_exponent = IEEE80211_HT_MAX_AMPDU_64K,
- };
+--- a/drivers/infiniband/core/uverbs_cmd.c
++++ b/drivers/infiniband/core/uverbs_cmd.c
+@@ -1984,15 +1984,64 @@ static int modify_qp(struct ib_uverbs_fi
+ 		goto release_qp;
+ 	}
  
-+const struct iwl_cfg iwl9260_killer_2ac_cfg = {
-+	.name = "Killer (R) Wireless-AC 1550 Wireless Network Adapter (9260NGW)",
-+	.fw_name_pre = IWL9260A_FW_PRE,
-+	.fw_name_pre_b_or_c_step = IWL9260B_FW_PRE,
-+	IWL_DEVICE_9000,
-+	.ht_params = &iwl9000_ht_params,
-+	.nvm_ver = IWL9000_NVM_VERSION,
-+	.nvm_calib_ver = IWL9000_TX_POWER_VERSION,
-+	.max_ht_ampdu_exponent = IEEE80211_HT_MAX_AMPDU_64K,
-+};
+-	if ((cmd->base.attr_mask & IB_QP_AV) &&
+-	    !rdma_is_port_valid(qp->device, cmd->base.dest.port_num)) {
+-		ret = -EINVAL;
+-		goto release_qp;
++	if ((cmd->base.attr_mask & IB_QP_AV)) {
++		if (!rdma_is_port_valid(qp->device, cmd->base.dest.port_num)) {
++			ret = -EINVAL;
++			goto release_qp;
++		}
 +
- const struct iwl_cfg iwl9270_2ac_cfg = {
- 	.name = "Intel(R) Dual Band Wireless AC 9270",
- 	.fw_name_pre = IWL9260A_FW_PRE,
-@@ -269,6 +280,34 @@ const struct iwl_cfg iwl9560_2ac_cfg_soc
- 	.soc_latency = 5000,
- };
++		if (cmd->base.attr_mask & IB_QP_STATE &&
++		    cmd->base.qp_state == IB_QPS_RTR) {
++		/* We are in INIT->RTR TRANSITION (if we are not,
++		 * this transition will be rejected in subsequent checks).
++		 * In the INIT->RTR transition, we cannot have IB_QP_PORT set,
++		 * but the IB_QP_STATE flag is required.
++		 *
++		 * Since kernel 3.14 (commit dbf727de7440), the uverbs driver,
++		 * when IB_QP_AV is set, has required inclusion of a valid
++		 * port number in the primary AV. (AVs are created and handled
++		 * differently for infiniband and ethernet (RoCE) ports).
++		 *
++		 * Check the port number included in the primary AV against
++		 * the port number in the qp struct, which was set (and saved)
++		 * in the RST->INIT transition.
++		 */
++			if (cmd->base.dest.port_num != qp->real_qp->port) {
++				ret = -EINVAL;
++				goto release_qp;
++			}
++		} else {
++		/* We are in SQD->SQD. (If we are not, this transition will
++		 * be rejected later in the verbs layer checks).
++		 * Check for both IB_QP_PORT and IB_QP_AV, these can be set
++		 * together in the SQD->SQD transition.
++		 *
++		 * If only IP_QP_AV was set, add in IB_QP_PORT as well (the
++		 * verbs layer driver does not track primary port changes
++		 * resulting from path migration. Thus, in SQD, if the primary
++		 * AV is modified, the primary port should also be modified).
++		 *
++		 * Note that in this transition, the IB_QP_STATE flag
++		 * is not allowed.
++		 */
++			if (((cmd->base.attr_mask & (IB_QP_AV | IB_QP_PORT))
++			     == (IB_QP_AV | IB_QP_PORT)) &&
++			    cmd->base.port_num != cmd->base.dest.port_num) {
++				ret = -EINVAL;
++				goto release_qp;
++			}
++			if ((cmd->base.attr_mask & (IB_QP_AV | IB_QP_PORT))
++			    == IB_QP_AV) {
++				cmd->base.attr_mask |= IB_QP_PORT;
++				cmd->base.port_num = cmd->base.dest.port_num;
++			}
++		}
+ 	}
  
-+const struct iwl_cfg iwl9560_killer_2ac_cfg_soc = {
-+	.name = "Killer (R) Wireless-AC 1550i Wireless Network Adapter (9560NGW)",
-+	.fw_name_pre = IWL9000A_FW_PRE,
-+	.fw_name_pre_b_or_c_step = IWL9000B_FW_PRE,
-+	.fw_name_pre_rf_next_step = IWL9000RFB_FW_PRE,
-+	IWL_DEVICE_9000,
-+	.ht_params = &iwl9000_ht_params,
-+	.nvm_ver = IWL9000_NVM_VERSION,
-+	.nvm_calib_ver = IWL9000_TX_POWER_VERSION,
-+	.max_ht_ampdu_exponent = IEEE80211_HT_MAX_AMPDU_64K,
-+	.integrated = true,
-+	.soc_latency = 5000,
-+};
-+
-+const struct iwl_cfg iwl9560_killer_s_2ac_cfg_soc = {
-+	.name = "Killer (R) Wireless-AC 1550s Wireless Network Adapter (9560NGW)",
-+	.fw_name_pre = IWL9000A_FW_PRE,
-+	.fw_name_pre_b_or_c_step = IWL9000B_FW_PRE,
-+	.fw_name_pre_rf_next_step = IWL9000RFB_FW_PRE,
-+	IWL_DEVICE_9000,
-+	.ht_params = &iwl9000_ht_params,
-+	.nvm_ver = IWL9000_NVM_VERSION,
-+	.nvm_calib_ver = IWL9000_TX_POWER_VERSION,
-+	.max_ht_ampdu_exponent = IEEE80211_HT_MAX_AMPDU_64K,
-+	.integrated = true,
-+	.soc_latency = 5000,
-+};
-+
- const struct iwl_cfg iwl9460_2ac_cfg_shared_clk = {
- 	.name = "Intel(R) Dual Band Wireless AC 9460",
- 	.fw_name_pre = IWL9000A_FW_PRE,
-@@ -319,6 +358,36 @@ const struct iwl_cfg iwl9560_2ac_cfg_sha
- 	.fw_name_pre = IWL9000A_FW_PRE,
- 	.fw_name_pre_b_or_c_step = IWL9000B_FW_PRE,
- 	.fw_name_pre_rf_next_step = IWL9000RFB_FW_PRE,
-+	IWL_DEVICE_9000,
-+	.ht_params = &iwl9000_ht_params,
-+	.nvm_ver = IWL9000_NVM_VERSION,
-+	.nvm_calib_ver = IWL9000_TX_POWER_VERSION,
-+	.max_ht_ampdu_exponent = IEEE80211_HT_MAX_AMPDU_64K,
-+	.integrated = true,
-+	.soc_latency = 5000,
-+	.extra_phy_cfg_flags = FW_PHY_CFG_SHARED_CLK
-+};
-+
-+const struct iwl_cfg iwl9560_killer_2ac_cfg_shared_clk = {
-+	.name = "Killer (R) Wireless-AC 1550i Wireless Network Adapter (9560NGW)",
-+	.fw_name_pre = IWL9000A_FW_PRE,
-+	.fw_name_pre_b_or_c_step = IWL9000B_FW_PRE,
-+	.fw_name_pre_rf_next_step = IWL9000RFB_FW_PRE,
-+	IWL_DEVICE_9000,
-+	.ht_params = &iwl9000_ht_params,
-+	.nvm_ver = IWL9000_NVM_VERSION,
-+	.nvm_calib_ver = IWL9000_TX_POWER_VERSION,
-+	.max_ht_ampdu_exponent = IEEE80211_HT_MAX_AMPDU_64K,
-+	.integrated = true,
-+	.soc_latency = 5000,
-+	.extra_phy_cfg_flags = FW_PHY_CFG_SHARED_CLK
-+};
-+
-+const struct iwl_cfg iwl9560_killer_s_2ac_cfg_shared_clk = {
-+	.name = "Killer (R) Wireless-AC 1550s Wireless Network Adapter (9560NGW)",
-+	.fw_name_pre = IWL9000A_FW_PRE,
-+	.fw_name_pre_b_or_c_step = IWL9000B_FW_PRE,
-+	.fw_name_pre_rf_next_step = IWL9000RFB_FW_PRE,
- 	IWL_DEVICE_9000,
- 	.ht_params = &iwl9000_ht_params,
- 	.nvm_ver = IWL9000_NVM_VERSION,
---- a/drivers/net/wireless/intel/iwlwifi/iwl-config.h
-+++ b/drivers/net/wireless/intel/iwlwifi/iwl-config.h
-@@ -471,6 +471,7 @@ extern const struct iwl_cfg iwl8275_2ac_
- extern const struct iwl_cfg iwl4165_2ac_cfg;
- extern const struct iwl_cfg iwl9160_2ac_cfg;
- extern const struct iwl_cfg iwl9260_2ac_cfg;
-+extern const struct iwl_cfg iwl9260_killer_2ac_cfg;
- extern const struct iwl_cfg iwl9270_2ac_cfg;
- extern const struct iwl_cfg iwl9460_2ac_cfg;
- extern const struct iwl_cfg iwl9560_2ac_cfg;
-@@ -478,10 +479,14 @@ extern const struct iwl_cfg iwl9460_2ac_
- extern const struct iwl_cfg iwl9461_2ac_cfg_soc;
- extern const struct iwl_cfg iwl9462_2ac_cfg_soc;
- extern const struct iwl_cfg iwl9560_2ac_cfg_soc;
-+extern const struct iwl_cfg iwl9560_killer_2ac_cfg_soc;
-+extern const struct iwl_cfg iwl9560_killer_s_2ac_cfg_soc;
- extern const struct iwl_cfg iwl9460_2ac_cfg_shared_clk;
- extern const struct iwl_cfg iwl9461_2ac_cfg_shared_clk;
- extern const struct iwl_cfg iwl9462_2ac_cfg_shared_clk;
- extern const struct iwl_cfg iwl9560_2ac_cfg_shared_clk;
-+extern const struct iwl_cfg iwl9560_killer_2ac_cfg_shared_clk;
-+extern const struct iwl_cfg iwl9560_killer_s_2ac_cfg_shared_clk;
- extern const struct iwl_cfg iwl22000_2ac_cfg_hr;
- extern const struct iwl_cfg iwl22000_2ac_cfg_hr_cdb;
- extern const struct iwl_cfg iwl22000_2ac_cfg_jf;
---- a/drivers/net/wireless/intel/iwlwifi/pcie/drv.c
-+++ b/drivers/net/wireless/intel/iwlwifi/pcie/drv.c
-@@ -545,6 +545,9 @@ static const struct pci_device_id iwl_hw
- 	{IWL_PCI_DEVICE(0x2526, 0x1210, iwl9260_2ac_cfg)},
- 	{IWL_PCI_DEVICE(0x2526, 0x1410, iwl9270_2ac_cfg)},
- 	{IWL_PCI_DEVICE(0x2526, 0x1420, iwl9460_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x2526, 0x1550, iwl9260_killer_2ac_cfg)},
-+	{IWL_PCI_DEVICE(0x2526, 0x1551, iwl9560_killer_s_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x2526, 0x1552, iwl9560_killer_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x2526, 0x1610, iwl9270_2ac_cfg)},
- 	{IWL_PCI_DEVICE(0x2526, 0x2030, iwl9560_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x2526, 0x2034, iwl9560_2ac_cfg_soc)},
-@@ -554,6 +557,7 @@ static const struct pci_device_id iwl_hw
- 	{IWL_PCI_DEVICE(0x2526, 0x40A4, iwl9460_2ac_cfg)},
- 	{IWL_PCI_DEVICE(0x2526, 0x4234, iwl9560_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x2526, 0x42A4, iwl9462_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x2526, 0x8014, iwl9260_2ac_cfg)},
- 	{IWL_PCI_DEVICE(0x2526, 0xA014, iwl9260_2ac_cfg)},
- 	{IWL_PCI_DEVICE(0x271B, 0x0010, iwl9160_2ac_cfg)},
- 	{IWL_PCI_DEVICE(0x271B, 0x0014, iwl9160_2ac_cfg)},
-@@ -578,6 +582,8 @@ static const struct pci_device_id iwl_hw
- 	{IWL_PCI_DEVICE(0x2720, 0x1010, iwl9260_2ac_cfg)},
- 	{IWL_PCI_DEVICE(0x2720, 0x1030, iwl9560_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x2720, 0x1210, iwl9260_2ac_cfg)},
-+	{IWL_PCI_DEVICE(0x2720, 0x1551, iwl9560_killer_s_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x2720, 0x1552, iwl9560_killer_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x2720, 0x2030, iwl9560_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x2720, 0x2034, iwl9560_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x2720, 0x4030, iwl9560_2ac_cfg)},
-@@ -604,6 +610,8 @@ static const struct pci_device_id iwl_hw
- 	{IWL_PCI_DEVICE(0x30DC, 0x1010, iwl9260_2ac_cfg)},
- 	{IWL_PCI_DEVICE(0x30DC, 0x1030, iwl9560_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x30DC, 0x1210, iwl9260_2ac_cfg)},
-+	{IWL_PCI_DEVICE(0x30DC, 0x1551, iwl9560_killer_s_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x30DC, 0x1552, iwl9560_killer_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x30DC, 0x2030, iwl9560_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x30DC, 0x2034, iwl9560_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x30DC, 0x4030, iwl9560_2ac_cfg_soc)},
-@@ -630,6 +638,8 @@ static const struct pci_device_id iwl_hw
- 	{IWL_PCI_DEVICE(0x31DC, 0x1010, iwl9260_2ac_cfg)},
- 	{IWL_PCI_DEVICE(0x31DC, 0x1030, iwl9560_2ac_cfg_shared_clk)},
- 	{IWL_PCI_DEVICE(0x31DC, 0x1210, iwl9260_2ac_cfg)},
-+	{IWL_PCI_DEVICE(0x31DC, 0x1551, iwl9560_killer_s_2ac_cfg_shared_clk)},
-+	{IWL_PCI_DEVICE(0x31DC, 0x1552, iwl9560_killer_2ac_cfg_shared_clk)},
- 	{IWL_PCI_DEVICE(0x31DC, 0x2030, iwl9560_2ac_cfg_shared_clk)},
- 	{IWL_PCI_DEVICE(0x31DC, 0x2034, iwl9560_2ac_cfg_shared_clk)},
- 	{IWL_PCI_DEVICE(0x31DC, 0x4030, iwl9560_2ac_cfg_shared_clk)},
-@@ -656,6 +666,8 @@ static const struct pci_device_id iwl_hw
- 	{IWL_PCI_DEVICE(0x34F0, 0x1010, iwl9260_2ac_cfg)},
- 	{IWL_PCI_DEVICE(0x34F0, 0x1030, iwl9560_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x34F0, 0x1210, iwl9260_2ac_cfg)},
-+	{IWL_PCI_DEVICE(0x34F0, 0x1551, iwl9560_killer_s_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x34F0, 0x1552, iwl9560_killer_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x34F0, 0x2030, iwl9560_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x34F0, 0x2034, iwl9560_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x34F0, 0x4030, iwl9560_2ac_cfg_soc)},
-@@ -682,6 +694,8 @@ static const struct pci_device_id iwl_hw
- 	{IWL_PCI_DEVICE(0x3DF0, 0x1010, iwl9260_2ac_cfg)},
- 	{IWL_PCI_DEVICE(0x3DF0, 0x1030, iwl9560_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x3DF0, 0x1210, iwl9260_2ac_cfg)},
-+	{IWL_PCI_DEVICE(0x3DF0, 0x1551, iwl9560_killer_s_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x3DF0, 0x1552, iwl9560_killer_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x3DF0, 0x2030, iwl9560_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x3DF0, 0x2034, iwl9560_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x3DF0, 0x4030, iwl9560_2ac_cfg_soc)},
-@@ -708,6 +722,8 @@ static const struct pci_device_id iwl_hw
- 	{IWL_PCI_DEVICE(0x43F0, 0x1010, iwl9260_2ac_cfg)},
- 	{IWL_PCI_DEVICE(0x43F0, 0x1030, iwl9560_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x43F0, 0x1210, iwl9260_2ac_cfg)},
-+	{IWL_PCI_DEVICE(0x43F0, 0x1551, iwl9560_killer_s_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x43F0, 0x1552, iwl9560_killer_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x43F0, 0x2030, iwl9560_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x43F0, 0x2034, iwl9560_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x43F0, 0x4030, iwl9560_2ac_cfg_soc)},
-@@ -743,6 +759,8 @@ static const struct pci_device_id iwl_hw
- 	{IWL_PCI_DEVICE(0x9DF0, 0x1010, iwl9260_2ac_cfg)},
- 	{IWL_PCI_DEVICE(0x9DF0, 0x1030, iwl9560_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x9DF0, 0x1210, iwl9260_2ac_cfg)},
-+	{IWL_PCI_DEVICE(0x9DF0, 0x1551, iwl9560_killer_s_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x9DF0, 0x1552, iwl9560_killer_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x9DF0, 0x2010, iwl9460_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x9DF0, 0x2030, iwl9560_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x9DF0, 0x2034, iwl9560_2ac_cfg_soc)},
-@@ -771,6 +789,8 @@ static const struct pci_device_id iwl_hw
- 	{IWL_PCI_DEVICE(0xA0F0, 0x1010, iwl9260_2ac_cfg)},
- 	{IWL_PCI_DEVICE(0xA0F0, 0x1030, iwl9560_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0xA0F0, 0x1210, iwl9260_2ac_cfg)},
-+	{IWL_PCI_DEVICE(0xA0F0, 0x1551, iwl9560_killer_s_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0xA0F0, 0x1552, iwl9560_killer_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0xA0F0, 0x2030, iwl9560_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0xA0F0, 0x2034, iwl9560_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0xA0F0, 0x4030, iwl9560_2ac_cfg_soc)},
-@@ -797,6 +817,8 @@ static const struct pci_device_id iwl_hw
- 	{IWL_PCI_DEVICE(0xA370, 0x1010, iwl9260_2ac_cfg)},
- 	{IWL_PCI_DEVICE(0xA370, 0x1030, iwl9560_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0xA370, 0x1210, iwl9260_2ac_cfg)},
-+	{IWL_PCI_DEVICE(0xA370, 0x1551, iwl9560_killer_s_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0xA370, 0x1552, iwl9560_killer_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0xA370, 0x2030, iwl9560_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0xA370, 0x2034, iwl9560_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0xA370, 0x4030, iwl9560_2ac_cfg_soc)},
+ 	if ((cmd->base.attr_mask & IB_QP_ALT_PATH) &&
+ 	    (!rdma_is_port_valid(qp->device, cmd->base.alt_port_num) ||
+-	    !rdma_is_port_valid(qp->device, cmd->base.alt_dest.port_num))) {
++	    !rdma_is_port_valid(qp->device, cmd->base.alt_dest.port_num) ||
++	    cmd->base.alt_port_num != cmd->base.alt_dest.port_num)) {
+ 		ret = -EINVAL;
+ 		goto release_qp;
+ 	}
 
 
