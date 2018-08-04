@@ -6,39 +6,37 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56A2CC4646F
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:02:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2DD5C4646F
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:02:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1068B21775
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:02:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1068B21775
+	by mail.kernel.org (Postfix) with ESMTP id 9764521775
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:02:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9764521775
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729683AbeHDLC2 (ORCPT
+        id S1729707AbeHDLCa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 07:02:28 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48124 "EHLO
+        Sat, 4 Aug 2018 07:02:30 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48134 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726477AbeHDLC1 (ORCPT
+        with ESMTP id S1726477AbeHDLCa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 07:02:27 -0400
+        Sat, 4 Aug 2018 07:02:30 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F00A7BC6;
-        Sat,  4 Aug 2018 09:02:28 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3FD46BB3;
+        Sat,  4 Aug 2018 09:02:32 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Brijesh Singh <brijesh.singh@amd.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.17 17/31] x86/efi: Access EFI MMIO data as unencrypted when SEV is active
-Date:   Sat,  4 Aug 2018 11:00:52 +0200
-Message-Id: <20180804082633.586381045@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        Jann Horn <jannh@google.com>, Florian Westphal <fw@strlen.de>,
+        Peter Oskolkov <posk@google.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.17 02/31] inet: frag: enforce memory limits earlier
+Date:   Sat,  4 Aug 2018 11:00:37 +0200
+Message-Id: <20180804082632.422384376@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180804082632.304529527@linuxfoundation.org>
 References: <20180804082632.304529527@linuxfoundation.org>
@@ -55,50 +53,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Brijesh Singh <brijesh.singh@amd.com>
+From: Eric Dumazet <edumazet@google.com>
 
-commit 9b788f32bee6b0b293a4bdfca4ad4bb0206407fb upstream.
+[ Upstream commit 56e2c94f055d328f5f6b0a5c1721cca2f2d4e0a1 ]
 
-SEV guest fails to update the UEFI runtime variables stored in the
-flash.
+We currently check current frags memory usage only when
+a new frag queue is created. This allows attackers to first
+consume the memory budget (default : 4 MB) creating thousands
+of frag queues, then sending tiny skbs to exceed high_thresh
+limit by 2 to 3 order of magnitude.
 
-The following commit:
+Note that before commit 648700f76b03 ("inet: frags: use rhashtables
+for reassembly units"), work queue could be starved under DOS,
+getting no cpu cycles.
+After commit 648700f76b03, only the per frag queue timer can eventually
+remove an incomplete frag queue and its skbs.
 
-  1379edd59673 ("x86/efi: Access EFI data as encrypted when SEV is active")
-
-unconditionally maps all the UEFI runtime data as 'encrypted' (C=1).
-
-When SEV is active the UEFI runtime data marked as EFI_MEMORY_MAPPED_IO
-should be mapped as 'unencrypted' so that both guest and hypervisor can
-access the data.
-
-Signed-off-by: Brijesh Singh <brijesh.singh@amd.com>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: <stable@vger.kernel.org> # 4.15.x
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-efi@vger.kernel.org
-Fixes: 1379edd59673 ("x86/efi: Access EFI data as encrypted ...")
-Link: http://lkml.kernel.org/r/20180720012846.23560-2-ard.biesheuvel@linaro.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Fixes: b13d3cbfb8e8 ("inet: frag: move eviction of queues to work queue")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: Jann Horn <jannh@google.com>
+Cc: Florian Westphal <fw@strlen.de>
+Cc: Peter Oskolkov <posk@google.com>
+Cc: Paolo Abeni <pabeni@redhat.com>
+Acked-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/x86/platform/efi/efi_64.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/ipv4/inet_fragment.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/arch/x86/platform/efi/efi_64.c
-+++ b/arch/x86/platform/efi/efi_64.c
-@@ -417,7 +417,7 @@ static void __init __map_region(efi_memo
- 	if (!(md->attribute & EFI_MEMORY_WB))
- 		flags |= _PAGE_PCD;
+--- a/net/ipv4/inet_fragment.c
++++ b/net/ipv4/inet_fragment.c
+@@ -157,9 +157,6 @@ static struct inet_frag_queue *inet_frag
+ {
+ 	struct inet_frag_queue *q;
  
--	if (sev_active())
-+	if (sev_active() && md->type != EFI_MEMORY_MAPPED_IO)
- 		flags |= _PAGE_ENC;
+-	if (!nf->high_thresh || frag_mem_limit(nf) > nf->high_thresh)
+-		return NULL;
+-
+ 	q = kmem_cache_zalloc(f->frags_cachep, GFP_ATOMIC);
+ 	if (!q)
+ 		return NULL;
+@@ -204,6 +201,9 @@ struct inet_frag_queue *inet_frag_find(s
+ {
+ 	struct inet_frag_queue *fq;
  
- 	pfn = md->phys_addr >> PAGE_SHIFT;
++	if (!nf->high_thresh || frag_mem_limit(nf) > nf->high_thresh)
++		return NULL;
++
+ 	rcu_read_lock();
+ 
+ 	fq = rhashtable_lookup(&nf->rhashtable, key, nf->f->rhash_params);
 
 
