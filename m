@@ -2,94 +2,89 @@ Return-Path: <SRS0=4jry=KT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8BB7C4646D
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 21:24:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9654DC4646D
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 21:26:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FAD9217CB
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 21:24:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="oYox3bUK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FAD9217CB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
+	by mail.kernel.org (Postfix) with ESMTP id 492BA217CB
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 21:26:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 492BA217CB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729717AbeHDX0d (ORCPT
+        id S1729707AbeHDX2T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 19:26:33 -0400
-Received: from imap.thunk.org ([74.207.234.97]:37872 "EHLO imap.thunk.org"
+        Sat, 4 Aug 2018 19:28:19 -0400
+Received: from sauhun.de ([88.99.104.3]:59098 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728889AbeHDX0d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 19:26:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
-         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=jN0bIPtmlxtxd+2BGp5uTQ8ax1Z/GZoHKjKaOhHjv40=; b=oYox3bUK1YbcuCoGeLWgKjukJv
-        kxRYXk7mWkh2ekmC5e857c/4giLbK7rT/z0rLJWkjixiLCam7jRYbQ3TO1VKerb3jAfLbyEXhIHDC
-        OBMHE2nDqjbDpUxG3Kc/8c6+9voogq0KsYm0TvBJo0xiyDIHhrtKA/IsSyouL6tBXn/E=;
-Received: from root (helo=callcc.thunk.org)
-        by imap.thunk.org with local-esmtp (Exim 4.89)
-        (envelope-from <tytso@thunk.org>)
-        id 1fm42F-0002Cr-Ic; Sat, 04 Aug 2018 21:24:27 +0000
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 4D1FD7A64C9; Sat,  4 Aug 2018 17:24:26 -0400 (EDT)
-Date:   Sat, 4 Aug 2018 17:24:26 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     zhong jiang <zhongjiang@huawei.com>
-Cc:     adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ext4/mballoc: Remove unneeded variable "err"
-Message-ID: <20180804212426.GE4461@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        zhong jiang <zhongjiang@huawei.com>, adilger.kernel@dilger.ca,
-        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1533380696-16325-1-git-send-email-zhongjiang@huawei.com>
+        id S1728882AbeHDX2T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 4 Aug 2018 19:28:19 -0400
+Received: from localhost (p54B337AD.dip0.t-ipconnect.de [84.179.55.173])
+        by pokefinder.org (Postfix) with ESMTPSA id DAC5B684EA9;
+        Sat,  4 Aug 2018 23:26:16 +0200 (CEST)
+Date:   Sat, 4 Aug 2018 23:26:16 +0200
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        linux-arm-msm@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
+        linux-soc@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 00/12] i2c: quirks: add zero length checks and update
+ drivers
+Message-ID: <20180804212616.7pk7aqbg2vadkewg@ninjato>
+References: <20180723202617.15230-1-wsa+renesas@sang-engineering.com>
+ <CAHp75VcAzAtV0+Eu8TGPnrxSpAnPOXU9mvpeO1SaoBO3Rx=wRw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="y3tkl3dnffqg37zd"
 Content-Disposition: inline
-In-Reply-To: <1533380696-16325-1-git-send-email-zhongjiang@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+In-Reply-To: <CAHp75VcAzAtV0+Eu8TGPnrxSpAnPOXU9mvpeO1SaoBO3Rx=wRw@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Aug 04, 2018 at 07:04:56PM +0800, zhong jiang wrote:
-> The err is not used after initalization. So just remove the variable.
-> 
-> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
 
-I'll apply this patch, but how did you generate the diff?  The
-function name here is all wrong:
+--y3tkl3dnffqg37zd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
-> index 8b24d3d..e29fce2 100644
-> --- a/fs/ext4/mballoc.c
-> +++ b/fs/ext4/mballoc.c
-> @@ -3801,7 +3801,6 @@ static int ext4_mb_new_preallocation(struct ext4_allocation_context *ac)
-                                   ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The lines in question are from ext4_mb_release_inode_pa(), *not*
-ext4_mb_new_preallocation().  So when I inspected the patch visually,
-my first reaction was, "there's no way this patch would apply".
+> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+>=20
+> for patches 1 and 2.
 
-But then I looked at the C code changed by the patch, and I was
-surprised to see that it applied correctly in a completely different
-function, and when I regenerated the patch, the line numbers matched
-yours --- so the only thing "wrong" in your patch is the function name.
+Thanks, Andy. If you could reply with that to the individual patches,
+then patchwork picks up the tags for me making my life a little easier.
 
-So that raises the question --- how did you create the diff in this
-patch?  What version of git?  And what version of the kernel?
 
-Regards,
+--y3tkl3dnffqg37zd
+Content-Type: application/pgp-signature; name="signature.asc"
 
-					- Ted
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAltmGfgACgkQFA3kzBSg
+KbYVRg/+OwlL7SdGI6MZQ2jRp7gw3gDHkg0ZF8760xcD+mpJoaTy04WJdd0SVBx8
+8QS5GKVQz1tMrl5ZXddhBEPvzb+bKqNMlLXT78LrxIkQfDNR86HYu6kyBol4kTWX
+wo7M1LHvBPc1HqUU8Uclr+l3nzFdc56IqyTwmZ/7zP94ygGy2EhEw0x+NWzQ+o+d
+p5iTyMpDRAPPDpMIctQTAjMHo8QHQW5eLQ18C0+SFa316Dp3H6tIRdbw/Lg1syc8
+VMV3Gg5h8rtOxCP13glLimeX2y+7m9KEVD/nmuAv/HjF0DWmRNAGIUPnxa+5+tgU
+ya4SfhoeyB3em9FYjAzpZ5Jlwhv72D31/pIpSkQcmuvoQASsqsWFs1Y2Dp9MnEzJ
+IE0pnAtkuIz8WtXyypdmNsqVop0luvwujut4jLFGiugpURZBn2v4W/+k+7EF7l/j
+pvLENgVQpmkNlcSgzeZa/XPy+JLIC/gQa+jDGea+x9bXvZllaDrx3hLJ23truc7p
+xSccpG+0wBn/EY1J3diYVPsBJ7YpPjR/H+3HP0biC6pIcsEh1BDJYhYn+XWcA1f7
+8Nyn3SMBDxQ5MIhtMrghlQuX200A6+NA6zIzZaSm2fN/MycrKd3O8Rek+LYjqxtX
+V3uypDH8e4JQfnqgGKlsFCnJOpOVEgiQ+5Ut9jZWVoitUl3lZ3I=
+=2ORJ
+-----END PGP SIGNATURE-----
+
+--y3tkl3dnffqg37zd--
