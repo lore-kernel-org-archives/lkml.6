@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73831C4646F
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:07:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1164CC4646F
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:08:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35C7D217C6
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:07:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35C7D217C6
+	by mail.kernel.org (Postfix) with ESMTP id C74B7217C7
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:08:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C74B7217C7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387701AbeHDLHy (ORCPT
+        id S2387716AbeHDLH5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 07:07:54 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49472 "EHLO
+        Sat, 4 Aug 2018 07:07:57 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49482 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726754AbeHDLHx (ORCPT
+        with ESMTP id S1732384AbeHDLH5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 07:07:53 -0400
+        Sat, 4 Aug 2018 07:07:57 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E6894BB3;
-        Sat,  4 Aug 2018 09:07:54 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F388DBB3;
+        Sat,  4 Aug 2018 09:07:57 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org, Nikolay Borisov <nborisov@suse.com>,
+        David Sterba <dsterba@suse.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 033/124] media: videobuf2-core: dont call memop finish when queueing
-Date:   Sat,  4 Aug 2018 11:00:22 +0200
-Message-Id: <20180804082703.674631750@linuxfoundation.org>
+Subject: [PATCH 4.4 034/124] btrfs: add barriers to btrfs_sync_log before log_commit_wait wakeups
+Date:   Sat,  4 Aug 2018 11:00:23 +0200
+Message-Id: <20180804082703.712833610@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180804082702.434482435@linuxfoundation.org>
 References: <20180804082702.434482435@linuxfoundation.org>
@@ -51,42 +51,97 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hans Verkuil <hans.verkuil@cisco.com>
+From: David Sterba <dsterba@suse.com>
 
-[ Upstream commit 90b2da89a083e1395cb322521a42397c49ae4500 ]
+[ Upstream commit 3d3a2e610ea5e7c6d4f9481ecce5d8e2d8317843 ]
 
-When a buffer is queued or requeued in vb2_buffer_done, then don't
-call the finish memop. In this case the buffer is only returned to vb2,
-not to userspace.
+Currently the code assumes that there's an implied barrier by the
+sequence of code preceding the wakeup, namely the mutex unlock.
 
-Calling 'finish' here will cause an unbalance when the queue is
-canceled, since the core will call the same memop again.
+As Nikolay pointed out:
 
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+I think this is wrong (not your code) but the original assumption that
+the RELEASE semantics provided by mutex_unlock is sufficient.
+According to memory-barriers.txt:
+
+Section 'LOCK ACQUISITION FUNCTIONS' states:
+
+ (2) RELEASE operation implication:
+
+     Memory operations issued before the RELEASE will be completed before the
+     RELEASE operation has completed.
+
+     Memory operations issued after the RELEASE *may* be completed before the
+     RELEASE operation has completed.
+
+(I've bolded the may portion)
+
+The example given there:
+
+As an example, consider the following:
+
+    *A = a;
+    *B = b;
+    ACQUIRE
+    *C = c;
+    *D = d;
+    RELEASE
+    *E = e;
+    *F = f;
+
+The following sequence of events is acceptable:
+
+    ACQUIRE, {*F,*A}, *E, {*C,*D}, *B, RELEASE
+
+So if we assume that *C is modifying the flag which the waitqueue is checking,
+and *E is the actual wakeup, then those accesses can be re-ordered...
+
+IMHO this code should be considered broken...
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+
+To be on the safe side, add the barriers. The synchronization logic
+around log using the mutexes and several other threads does not make it
+easy to reason for/against the barrier.
+
+CC: Nikolay Borisov <nborisov@suse.com>
+Link: https://lkml.kernel.org/r/6ee068d8-1a69-3728-00d1-d86293d43c9f@suse.com
+Reviewed-by: Nikolay Borisov <nborisov@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
+
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/v4l2-core/videobuf2-core.c |    9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ fs/btrfs/tree-log.c |   10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
---- a/drivers/media/v4l2-core/videobuf2-core.c
-+++ b/drivers/media/v4l2-core/videobuf2-core.c
-@@ -870,9 +870,12 @@ void vb2_buffer_done(struct vb2_buffer *
- 	dprintk(4, "done processing on buffer %d, state: %d\n",
- 			vb->index, state);
+--- a/fs/btrfs/tree-log.c
++++ b/fs/btrfs/tree-log.c
+@@ -2961,8 +2961,11 @@ out_wake_log_root:
+ 	mutex_unlock(&log_root_tree->log_mutex);
  
--	/* sync buffers */
--	for (plane = 0; plane < vb->num_planes; ++plane)
--		call_void_memop(vb, finish, vb->planes[plane].mem_priv);
-+	if (state != VB2_BUF_STATE_QUEUED &&
-+	    state != VB2_BUF_STATE_REQUEUEING) {
-+		/* sync buffers */
-+		for (plane = 0; plane < vb->num_planes; ++plane)
-+			call_void_memop(vb, finish, vb->planes[plane].mem_priv);
-+	}
+ 	/*
+-	 * The barrier before waitqueue_active is implied by mutex_unlock
++	 * The barrier before waitqueue_active is needed so all the updates
++	 * above are seen by the woken threads. It might not be necessary, but
++	 * proving that seems to be hard.
+ 	 */
++	smp_mb();
+ 	if (waitqueue_active(&log_root_tree->log_commit_wait[index2]))
+ 		wake_up(&log_root_tree->log_commit_wait[index2]);
+ out:
+@@ -2973,8 +2976,11 @@ out:
+ 	mutex_unlock(&root->log_mutex);
  
- 	spin_lock_irqsave(&q->done_lock, flags);
- 	if (state == VB2_BUF_STATE_QUEUED ||
+ 	/*
+-	 * The barrier before waitqueue_active is implied by mutex_unlock
++	 * The barrier before waitqueue_active is needed so all the updates
++	 * above are seen by the woken threads. It might not be necessary, but
++	 * proving that seems to be hard.
+ 	 */
++	smp_mb();
+ 	if (waitqueue_active(&root->log_commit_wait[index1]))
+ 		wake_up(&root->log_commit_wait[index1]);
+ 	return ret;
 
 
