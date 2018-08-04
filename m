@@ -2,102 +2,112 @@ Return-Path: <SRS0=4jry=KT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34707C4646F
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 14:49:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CD21C4646D
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 14:50:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E05752186C
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 14:49:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nQWi0Cw4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E05752186C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	by mail.kernel.org (Postfix) with ESMTP id 3E6FD2186C
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 14:50:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E6FD2186C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rowland.harvard.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729712AbeHDQuY (ORCPT
+        id S1729716AbeHDQvM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 12:50:24 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:36477 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727092AbeHDQuX (ORCPT
+        Sat, 4 Aug 2018 12:51:12 -0400
+Received: from netrider.rowland.org ([192.131.102.5]:40987 "HELO
+        netrider.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1727832AbeHDQvM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 12:50:23 -0400
-Received: by mail-pf1-f195.google.com with SMTP id b11-v6so4735898pfo.3;
-        Sat, 04 Aug 2018 07:49:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=4ymj4Q6wWgOAvQbTy75axQ/yRvuTb9Er87LeIb8CpZ0=;
-        b=nQWi0Cw4wpbTHyAnKxPJHinqlt6iHxpA0eyfccKrR+FPOeBjlcH3LAPgbXEscY3OiO
-         ZzahLtozFCMDsZFFkyF4s1hax2GggkCFaHUj1qarMY3v2t1/6V65PgcEnFO3A7wiHa6N
-         Hh7NLBTsRqjhKDXleDB7CTuFh51IttfvTgZSHjPvIhARrbQhlNlVi3JjO7/zd/QtJn3Z
-         qOlpD10IMlGYWhrPMy0qMLrXJDP/QjpEpOj65pFhantE7M92gSXMYRIgIJDfM9oITGhs
-         cSHp4yBALWhMKwl80Yxqz6MmfE6PmzO/mjbv5NDsCpRVyONFOBdHp0xGblpeP1U8GyWm
-         jmhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=4ymj4Q6wWgOAvQbTy75axQ/yRvuTb9Er87LeIb8CpZ0=;
-        b=POkdmyBa6lqnSxKL+b1NbySDNeO8s/PVbZfSHA5sYZSo718uhfCW8IVll04vg34PXJ
-         6ypRYc/wORWWd6ttIPkCuU0a0H+pgLvTBQt8Nodxd9NccxIEXTzCcEs+hGhW8hZyy4I1
-         fiV2+BtCPBlAZsJYzyLmfdZH5mP4kkNNVlkSwr0abOOY1iRpIRfumwjew8zWrCQmcjez
-         7bzJfXEsQYS4BrHgNDx4mdEkZzMRmHMgyOK2XcaP9kahuSrKw/Hd++8WI86wEFpykLwh
-         nLafkSrWFt1CscC7KSgFfXGFTCXI0yHyI5kK9LLPxG1SPdXTEa+AGSoI6+bYrRaUam60
-         KELw==
-X-Gm-Message-State: AOUpUlFWDiYusit1gUIvIDO4uldR3kEV0U4GNQV7EGxMaGkPJhGoOnYx
-        xLgJtWGn33XKEuhQzv/akJLCdUCw
-X-Google-Smtp-Source: AAOMgpcJC5Zhk8rhGbyuuXz6j00A7y4Wj/pFTNs4grHSoS8Cs5HhwW4jwtDonGkRFeQgP6YpgAQEGw==
-X-Received: by 2002:a62:51:: with SMTP id 78-v6mr9364233pfa.135.1533394167103;
-        Sat, 04 Aug 2018 07:49:27 -0700 (PDT)
-Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id 22-v6sm14017101pfl.126.2018.08.04.07.49.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 04 Aug 2018 07:49:26 -0700 (PDT)
-Subject: Re: [PATCH 4.17 00/31] 4.17.13-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-References: <20180804082632.304529527@linuxfoundation.org>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <15d3b835-fb8b-5348-45c2-c5f16e0c42e1@roeck-us.net>
-Date:   Sat, 4 Aug 2018 07:49:25 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Sat, 4 Aug 2018 12:51:12 -0400
+Received: (qmail 26243 invoked by uid 500); 4 Aug 2018 10:50:15 -0400
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 4 Aug 2018 10:50:15 -0400
+Date:   Sat, 4 Aug 2018 10:50:15 -0400 (EDT)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@netrider.rowland.org
+To:     Guenter Roeck <linux@roeck-us.net>
+cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] USB: OHCI: ohci-sm501: complete URBs in BH context
+In-Reply-To: <1533355279-26725-1-git-send-email-linux@roeck-us.net>
+Message-ID: <Pine.LNX.4.44L0.1808041047220.25853-100000@netrider.rowland.org>
 MIME-Version: 1.0
-In-Reply-To: <20180804082632.304529527@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/04/2018 02:00 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.17.13 release.
-> There are 31 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Fri, 3 Aug 2018, Guenter Roeck wrote:
+
+> Testing an USB drive connected to ohci-sm501 results in a large number
+> of runtime warnings.
 > 
-> Responses should be made by Mon Aug  6 08:26:21 UTC 2018.
-> Anything received after that time might be too late.
+> WARNING: CPU: 0 PID: 0 at ./include/linux/dma-mapping.h:541
+> hcd_buffer_free+0x148/0x178
+> Modules linked in:
+> 
+> CPU: 0 PID: 0 Comm: swapper Not tainted 4.18.0-rc7-00014-g7ec386e4c991-dirty
+> PC is at hcd_buffer_free+0x148/0x178
+> PR is at hcd_buffer_free+0x66/0x178
+> PC  : 8c26cbb0 SP  : 8c481da8 SR  : 400080f1
+> TEA : c00c8fe0
+> R0  : 000000f0 R1  : 000000f0 R2  : 8f9bb890 R3  : 00000000
+> R4  : 8f9c8800 R5  : 00001004 R6  : b07c6000 R7  : 007c6000
+> R8  : 00001004 R9  : 8f9bb814 R10 : 8c388104 R11 : 007c6000
+> R12 : b07c6000 R13 : 8f875680 R14 : 00000000
+> MACH: 000002fe MACL: 0000017c GBR : 00000000 PR  : 8c26cace
+> 
+> Call trace:
+>  [<(ptrval)>] usb_hcd_unmap_urb_for_dma+0xf4/0x13c
+>  [<(ptrval)>] arch_local_save_flags+0x0/0x8
+>  [<(ptrval)>] __usb_hcd_giveback_urb+0x2e/0xdc
+>  [<(ptrval)>] arch_local_save_flags+0x0/0x8
+>  [<(ptrval)>] finish_urb+0x8a/0x164
+>  [<(ptrval)>] arch_local_save_flags+0x0/0x8
+>  [<(ptrval)>] printk+0x0/0x48
+>  [<(ptrval)>] ohci_work.part.11+0x150/0x41c
+>  [<(ptrval)>] td_done.isra.4+0x0/0x11c
+>  [<(ptrval)>] vprintk_default+0x14/0x20
+>  [<(ptrval)>] arch_local_save_flags+0x0/0x8
+>  [<(ptrval)>] ohci_irq+0x20c/0x314
+>  [<(ptrval)>] usb_hcd_irq+0x16/0x28
+> 
+> Code analysis shows that interrupts are indeed disabled in ohci_irq().
+> Handle the situation by setting the HCD_BH flag in the ohci-sm501 driver.
+> With this flag set, urbs are released in a tasklet and not by the
+> interrupt handler.
+> 
+> Fixes: f54aab6ebcecd ("usb: ohci-sm501 driver")
+> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+
+Unfortunately, one must not simply turn on this flag.  Doing so will
+violate some of the documented requirements for scheduling of periodic
+transfers.  Significantly deeper changes to the OHCI driver are
+necessary before the flag is set.
+
+Alan Stern
+
+> ---
+>  drivers/usb/host/ohci-sm501.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/host/ohci-sm501.c b/drivers/usb/host/ohci-sm501.c
+> index c9233cddf9a2..eeb5b3137cf2 100644
+> --- a/drivers/usb/host/ohci-sm501.c
+> +++ b/drivers/usb/host/ohci-sm501.c
+> @@ -49,7 +49,7 @@ static const struct hc_driver ohci_sm501_hc_driver = {
+>  	 * generic hardware linkage
+>  	 */
+>  	.irq =			ohci_irq,
+> -	.flags =		HCD_USB11 | HCD_MEMORY | HCD_LOCAL_MEM,
+> +	.flags =		HCD_USB11 | HCD_MEMORY | HCD_LOCAL_MEM | HCD_BH,
+>  
+>  	/*
+>  	 * basic lifecycle operations
 > 
 
-Build results:
-	total: 134 pass: 134 fail: 0
-Qemu test results:
-	total: 261 pass: 261 fail: 0
-
-Details are available at http://kerneltests.org/builders/.
-
-Guenter
