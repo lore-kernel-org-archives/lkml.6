@@ -3,38 +3,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 982DEC4646D
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:05:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 575E5C4646D
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:05:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B8B5217C6
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:05:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B8B5217C6
+	by mail.kernel.org (Postfix) with ESMTP id 11196217C6
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:05:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11196217C6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733048AbeHDLFu (ORCPT
+        id S1733061AbeHDLFy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 07:05:50 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48858 "EHLO
+        Sat, 4 Aug 2018 07:05:54 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48884 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727600AbeHDLFu (ORCPT
+        with ESMTP id S1727600AbeHDLFx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 07:05:50 -0400
+        Sat, 4 Aug 2018 07:05:53 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 620AFBB3;
-        Sat,  4 Aug 2018 09:05:51 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 79FA4BC6;
+        Sat,  4 Aug 2018 09:05:54 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Floris Bos <bos@je-eigen-domein.nl>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
+        stable@vger.kernel.org, Anton Vasilyev <vasilyev@ispras.ru>,
+        Andrew Lunn <andrew@lunn.ch>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 04/32] net: lan78xx: fix rx handling before first packet is send
-Date:   Sat,  4 Aug 2018 11:00:54 +0200
-Message-Id: <20180804082650.113689062@linuxfoundation.org>
+Subject: [PATCH 4.9 05/32] net: mdio-mux: bcm-iproc: fix wrong getter and setter pair
+Date:   Sat,  4 Aug 2018 11:00:55 +0200
+Message-Id: <20180804082650.158796193@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180804082649.908295462@linuxfoundation.org>
 References: <20180804082649.908295462@linuxfoundation.org>
@@ -51,35 +51,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stefan Wahren <stefan.wahren@i2se.com>
+From: Anton Vasilyev <vasilyev@ispras.ru>
 
-[ Upstream commit 136f55f660192ce04af091642efc75d85e017364 ]
+[ Upstream commit b0753408aadf32c7ece9e6b765017881e54af833 ]
 
-As long the bh tasklet isn't scheduled once, no packet from the rx path
-will be handled. Since the tx path also schedule the same tasklet
-this situation only persits until the first packet transmission.
-So fix this issue by scheduling the tasklet after link reset.
+mdio_mux_iproc_probe() uses platform_set_drvdata() to store md pointer
+in device, whereas mdio_mux_iproc_remove() restores md pointer by
+dev_get_platdata(&pdev->dev). This leads to wrong resources release.
 
-Link: https://github.com/raspberrypi/linux/issues/2617
-Fixes: 55d7de9de6c3 ("Microchip's LAN7800 family USB 2/3 to 10/100/1000 Ethernet")
-Suggested-by: Floris Bos <bos@je-eigen-domein.nl>
-Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
+The patch replaces getter to platform_get_drvdata.
+
+Fixes: 98bc865a1ec8 ("net: mdio-mux: Add MDIO mux driver for iProc SoCs")
+Signed-off-by: Anton Vasilyev <vasilyev@ispras.ru>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/usb/lan78xx.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/phy/mdio-mux-bcm-iproc.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/usb/lan78xx.c
-+++ b/drivers/net/usb/lan78xx.c
-@@ -1170,6 +1170,8 @@ static int lan78xx_link_reset(struct lan
- 			mod_timer(&dev->stat_monitor,
- 				  jiffies + STAT_UPDATE_TIMER);
- 		}
-+
-+		tasklet_schedule(&dev->bh);
- 	}
+--- a/drivers/net/phy/mdio-mux-bcm-iproc.c
++++ b/drivers/net/phy/mdio-mux-bcm-iproc.c
+@@ -218,7 +218,7 @@ out:
  
- 	return ret;
+ static int mdio_mux_iproc_remove(struct platform_device *pdev)
+ {
+-	struct iproc_mdiomux_desc *md = dev_get_platdata(&pdev->dev);
++	struct iproc_mdiomux_desc *md = platform_get_drvdata(pdev);
+ 
+ 	mdio_mux_uninit(md->mux_handle);
+ 	mdiobus_unregister(md->mii_bus);
 
 
