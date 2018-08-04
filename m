@@ -6,37 +6,46 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A8FBC4646D
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:04:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2610DC4646F
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:04:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D038E217BF
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:04:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D038E217BF
+	by mail.kernel.org (Postfix) with ESMTP id D3805217BF
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:04:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3805217BF
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732483AbeHDLD6 (ORCPT
+        id S1732507AbeHDLEC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 07:03:58 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48456 "EHLO
+        Sat, 4 Aug 2018 07:04:02 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48494 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726983AbeHDLD5 (ORCPT
+        with ESMTP id S1726983AbeHDLEC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 07:03:57 -0400
+        Sat, 4 Aug 2018 07:04:02 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B9C5ABC6;
-        Sat,  4 Aug 2018 09:03:59 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4AFC8BBF;
+        Sat,  4 Aug 2018 09:04:03 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Len Brown <len.brown@intel.com>,
+        stable@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Brian Gerst <brgerst@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Juergen Gross <jgross@suse.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Peter Zijlstra <peterz@infradead.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, stable@kernel.org
-Subject: [PATCH 4.14 14/23] x86/apic: Future-proof the TSC_DEADLINE quirk for SKX
-Date:   Sat,  4 Aug 2018 11:01:05 +0200
-Message-Id: <20180804082645.391953076@linuxfoundation.org>
+        xen-devel@lists.xenproject.org, Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.14 15/23] x86/entry/64: Remove %ebx handling from error_entry/exit
+Date:   Sat,  4 Aug 2018 11:01:06 +0200
+Message-Id: <20180804082645.449818322@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180804082643.641435547@linuxfoundation.org>
 References: <20180804082643.641435547@linuxfoundation.org>
@@ -53,41 +62,134 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Len Brown <len.brown@intel.com>
+From: Andy Lutomirski <luto@kernel.org>
 
-commit d9e6dbcf28f383bf08e6a3180972f5722e514a54 upstream.
+commit b3681dd548d06deb2e1573890829dff4b15abf46 upstream.
 
-All SKX with stepping higher than 4 support the TSC_DEADLINE,
-no matter the microcode version.
+error_entry and error_exit communicate the user vs. kernel status of
+the frame using %ebx.  This is unnecessary -- the information is in
+regs->cs.  Just use regs->cs.
 
-Without this patch, upcoming SKX steppings will not be able to use
-their TSC_DEADLINE timer.
+This makes error_entry simpler and makes error_exit more robust.
 
-Signed-off-by: Len Brown <len.brown@intel.com>
-Cc: <stable@kernel.org> # v4.14+
+It also fixes a nasty bug.  Before all the Spectre nonsense, the
+xen_failsafe_callback entry point returned like this:
+
+        ALLOC_PT_GPREGS_ON_STACK
+        SAVE_C_REGS
+        SAVE_EXTRA_REGS
+        ENCODE_FRAME_POINTER
+        jmp     error_exit
+
+And it did not go through error_entry.  This was bogus: RBX
+contained garbage, and error_exit expected a flag in RBX.
+
+Fortunately, it generally contained *nonzero* garbage, so the
+correct code path was used.  As part of the Spectre fixes, code was
+added to clear RBX to mitigate certain speculation attacks.  Now,
+depending on kernel configuration, RBX got zeroed and, when running
+some Wine workloads, the kernel crashes.  This was introduced by:
+
+    commit 3ac6d8c787b8 ("x86/entry/64: Clear registers for exceptions/interrupts, to reduce speculation attack surface")
+
+With this patch applied, RBX is no longer needed as a flag, and the
+problem goes away.
+
+I suspect that malicious userspace could use this bug to crash the
+kernel even without the offending patch applied, though.
+
+[ Historical note: I wrote this patch as a cleanup before I was aware
+  of the bug it fixed. ]
+
+[ Note to stable maintainers: this should probably get applied to all
+  kernels.  If you're nervous about that, a more conservative fix to
+  add xorl %ebx,%ebx; incl %ebx before the jump to error_exit should
+  also fix the problem. ]
+
+Reported-and-tested-by: M. Vefa Bicakci <m.v.b@runbox.com>
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: Dominik Brodowski <linux@dominikbrodowski.net>
+Cc: Greg KH <gregkh@linuxfoundation.org>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Juergen Gross <jgross@suse.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Fixes: 616dd5872e ("x86/apic: Update TSC_DEADLINE quirk with additional SKX stepping")
-Link: http://lkml.kernel.org/r/d0c7129e509660be9ec6b233284b8d42d90659e8.1532207856.git.len.brown@intel.com
+Cc: stable@vger.kernel.org
+Cc: xen-devel@lists.xenproject.org
+Fixes: 3ac6d8c787b8 ("x86/entry/64: Clear registers for exceptions/interrupts, to reduce speculation attack surface")
+Link: http://lkml.kernel.org/r/b5010a090d3586b2d6e06c7ad3ec5542d1241c45.1532282627.git.luto@kernel.org
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/apic/apic.c |    3 +++
- 1 file changed, 3 insertions(+)
+ arch/x86/entry/entry_64.S |   18 ++++--------------
+ 1 file changed, 4 insertions(+), 14 deletions(-)
 
---- a/arch/x86/kernel/apic/apic.c
-+++ b/arch/x86/kernel/apic/apic.c
-@@ -580,6 +580,9 @@ static u32 skx_deadline_rev(void)
- 	case 0x04: return 0x02000014;
- 	}
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -933,7 +933,7 @@ ENTRY(\sym)
  
-+	if (boot_cpu_data.x86_stepping > 4)
-+		return 0;
-+
- 	return ~0U;
- }
+ 	call	\do_sym
+ 
+-	jmp	error_exit			/* %ebx: no swapgs flag */
++	jmp	error_exit
+ 	.endif
+ END(\sym)
+ .endm
+@@ -1166,7 +1166,6 @@ END(paranoid_exit)
+ 
+ /*
+  * Save all registers in pt_regs, and switch GS if needed.
+- * Return: EBX=0: came from user mode; EBX=1: otherwise
+  */
+ ENTRY(error_entry)
+ 	UNWIND_HINT_FUNC
+@@ -1213,7 +1212,6 @@ ENTRY(error_entry)
+ 	 * for these here too.
+ 	 */
+ .Lerror_kernelspace:
+-	incl	%ebx
+ 	leaq	native_irq_return_iret(%rip), %rcx
+ 	cmpq	%rcx, RIP+8(%rsp)
+ 	je	.Lerror_bad_iret
+@@ -1247,28 +1245,20 @@ ENTRY(error_entry)
+ 
+ 	/*
+ 	 * Pretend that the exception came from user mode: set up pt_regs
+-	 * as if we faulted immediately after IRET and clear EBX so that
+-	 * error_exit knows that we will be returning to user mode.
++	 * as if we faulted immediately after IRET.
+ 	 */
+ 	mov	%rsp, %rdi
+ 	call	fixup_bad_iret
+ 	mov	%rax, %rsp
+-	decl	%ebx
+ 	jmp	.Lerror_entry_from_usermode_after_swapgs
+ END(error_entry)
+ 
+-
+-/*
+- * On entry, EBX is a "return to kernel mode" flag:
+- *   1: already in kernel mode, don't need SWAPGS
+- *   0: user gsbase is loaded, we need SWAPGS and standard preparation for return to usermode
+- */
+ ENTRY(error_exit)
+ 	UNWIND_HINT_REGS
+ 	DISABLE_INTERRUPTS(CLBR_ANY)
+ 	TRACE_IRQS_OFF
+-	testl	%ebx, %ebx
+-	jnz	retint_kernel
++	testb	$3, CS(%rsp)
++	jz	retint_kernel
+ 	jmp	retint_user
+ END(error_exit)
  
 
 
