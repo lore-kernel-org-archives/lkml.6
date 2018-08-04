@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1137DC4646F
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 14:36:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55D6DC4646F
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 14:36:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5440217BD
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 14:35:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 005252183B
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 14:36:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nuk3Eq1J"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5440217BD
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nrgC6SHG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 005252183B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731006AbeHDQgu (ORCPT
+        id S1731257AbeHDQgy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 12:36:50 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:43229 "EHLO
+        Sat, 4 Aug 2018 12:36:54 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:42811 "EHLO
         mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727293AbeHDQgu (ORCPT
+        with ESMTP id S1729704AbeHDQgv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 12:36:50 -0400
-Received: by mail-wr1-f66.google.com with SMTP id b15-v6so8052881wrv.10
-        for <linux-kernel@vger.kernel.org>; Sat, 04 Aug 2018 07:35:55 -0700 (PDT)
+        Sat, 4 Aug 2018 12:36:51 -0400
+Received: by mail-wr1-f66.google.com with SMTP id e7-v6so8053404wrs.9
+        for <linux-kernel@vger.kernel.org>; Sat, 04 Aug 2018 07:35:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=XOjaooObl5XtjTXcMYnB4dbSmbk5JYZhgnoG6lwD5Po=;
-        b=nuk3Eq1JYiuMJerooAX/agE8/ZqeyEhU4laqwUVeo0azAeE0UACx0HcgPyl7Bv8tN6
-         dHH6PCnftUZ8Ged2YDpZvIDpqJJAVAdWmif0rnEDmKz739dP2f+ndjOJjdS0lUr6ZQWb
-         8/eQjCx4d56TAg8ABiQ51owWxwnyevoP1ZUGgQGf+jWfGiYSBLj9PrErf/gB9L7GiDxo
-         AFTT59BOIqNplSfpraYXq/AsLBINPweUCnGtKsyNRpvzZiE+v4LZKSxojUgX79zC7rlW
-         kJAEK+7Sr5G6xhk6+gjKTMdMF0VLPdPCBAVEtltmecMa6rcBgqumZNI/5ChDDz8YPMmx
-         4AXw==
+        bh=MkQX8yFS8BYlzpvEprUqW0KivtOdW+K2WSmVyMQCX/o=;
+        b=nrgC6SHGX6rBtjVM7gyFRnwAaTJQEoSnB/EZ1H0xVyn/lwCfRA6N1rsTKQPheMrNFV
+         vb2Zq0Q58PCrufYiB9kzU7qdRNyqbOm3Yx/sTTrgU2IAweX+bExLze1J+Cf9qsarAgl7
+         zYSGoyoozQMZsEfHGk+CsHaF5MH52nTpliU7dJdnNB45NHWkgHjmwalOTNOl5B7b+YnL
+         DewWig/5hOYXJlJ21vW09NgOhM5IB60YDWB8d3xvi8QBgzx0f4oZk6plOhiocbssT/KC
+         v08m+pQ37FuL9Ygxfprc9FvpWJl73hutZGqhIdiPm9siWik2g8sjf4cEzT6VaLW+tgkh
+         qMdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=XOjaooObl5XtjTXcMYnB4dbSmbk5JYZhgnoG6lwD5Po=;
-        b=WyQy2jnzbAxMnZtVD+CUo2j1pIlOxWYQ/CnYLh9uBnEOll2mPiZUsKttYztc2vXLED
-         8U1D0UGiWY8hVzWbEZWaEAEMg19QBIMqZEl6lA5E8/3wBEQhfstYKP6hGU4q5UAb79kS
-         8G8BfVKipjO12yNwbmg1HJx1SOyxqe8A2QRhWCcT1R4iyz+aKqvKtf7pnxitVDrfK6TA
-         T7H1dlu3y/BWVJk0WcLxTXauLoXkKyFkfadLa7gsB/gefQYWjYaHSc5o9CnqbY6IeT+9
-         nM3LVaBKqEH3HOITGZFdQ79ftZIXa2F3bOgtGACz3cqyFcNIS7bXQjhmwz68QrEHHGWJ
-         DZCA==
-X-Gm-Message-State: AOUpUlE6uNn+g+dnWZMECWgkmLgPjS6BN8GMF89h05dHbVzHCNUo7nvE
-        B1cDv5HK0iJ9dK1+O21+3DI=
-X-Google-Smtp-Source: AAOMgpcyW5ZBLURMuPLEfLF3UFFAEQxDgfVxBcjxXjgpa5AMYiTTTtrh1yZiAuXzJ7/iv69KDF6agg==
-X-Received: by 2002:a5d:504d:: with SMTP id h13-v6mr4979916wrt.18.1533393355026;
-        Sat, 04 Aug 2018 07:35:55 -0700 (PDT)
+        bh=MkQX8yFS8BYlzpvEprUqW0KivtOdW+K2WSmVyMQCX/o=;
+        b=SkmUVmQ2lWvkOTHoi8yVZWVB6bJKlysM0WK9P+6kulHR6WQEzSSmKhkPZiG6GnB77W
+         3nAbLBrQlwTjuCDQJZkfYs/sK/NNrXI1OoP51JgBPCD/7OR26PAZ4e0d/3zqLmwQFqh7
+         mGyYY48RcNXHZxcjOi9leXvewmZtLeeoclkFuPE6ApR63+3OhsX7mdv2phm8vo9PPhNZ
+         yysqh28hfuCZSWh7WrzPJTO8mMB7/erfQgsYWQZyyRDSwG5FJ9LYFDHzbC4JOBx9zmHr
+         gXfT5rjs0XNYROJTlndFD6rDKVJEm/9yrmBeC0QCEn1mP6DEDaUZNvJbRMNjI+UOISoh
+         gP3Q==
+X-Gm-Message-State: AOUpUlFiGFJwn8Ph6TS+P4BPAE8R5Ta/dsXF+j0l3Of6pl7Qr4GsFJ3g
+        nZozujm/l+f2hrtZiMjttFQ=
+X-Google-Smtp-Source: AA+uWPxI9b8KGOS9kITmzXNGR/hudU1egPKFmf0e2A4vaeIJBwO7RqGsPAgCp+0MkfrcVwLFnf/Okw==
+X-Received: by 2002:adf:f585:: with SMTP id f5-v6mr4226811wro.59.1533393356353;
+        Sat, 04 Aug 2018 07:35:56 -0700 (PDT)
 Received: from localhost.localdomain ([2a02:8108:85c0:57c8:8569:71c8:6dba:bb41])
-        by smtp.gmail.com with ESMTPSA id x14-v6sm5409149wrv.21.2018.08.04.07.35.54
+        by smtp.gmail.com with ESMTPSA id x14-v6sm5409149wrv.21.2018.08.04.07.35.55
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 04 Aug 2018 07:35:54 -0700 (PDT)
+        Sat, 04 Aug 2018 07:35:55 -0700 (PDT)
 From:   Michael Straube <straube.linux@gmail.com>
 To:     gregkh@linuxfoundation.org
 Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH 2/4] staging: rtl8188eu: remove unnecessary parentheses
-Date:   Sat,  4 Aug 2018 16:35:41 +0200
-Message-Id: <20180804143543.1500-2-straube.linux@gmail.com>
+Subject: [PATCH 3/4] staging: rtl8188eu: remove redundant include
+Date:   Sat,  4 Aug 2018 16:35:42 +0200
+Message-Id: <20180804143543.1500-3-straube.linux@gmail.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180804143543.1500-1-straube.linux@gmail.com>
 References: <20180804143543.1500-1-straube.linux@gmail.com>
@@ -73,28 +73,26 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove unnecessary parentheses from if conditions.
+The header osdep_service.h is included from drv_types.h,
+so remove the redundant include.
 
 Signed-off-by: Michael Straube <straube.linux@gmail.com>
 ---
- drivers/staging/rtl8188eu/core/rtw_iol.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/staging/rtl8188eu/include/rtw_iol.h | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/staging/rtl8188eu/core/rtw_iol.c b/drivers/staging/rtl8188eu/core/rtw_iol.c
-index f7a86eac738e..fc3c66201e59 100644
---- a/drivers/staging/rtl8188eu/core/rtw_iol.c
-+++ b/drivers/staging/rtl8188eu/core/rtw_iol.c
-@@ -12,8 +12,8 @@ bool rtw_iol_applied(struct adapter *adapter)
- 	if (adapter->registrypriv.fw_iol == 1)
- 		return true;
+diff --git a/drivers/staging/rtl8188eu/include/rtw_iol.h b/drivers/staging/rtl8188eu/include/rtw_iol.h
+index f20b35e8d0a2..d713782d5cdc 100644
+--- a/drivers/staging/rtl8188eu/include/rtw_iol.h
++++ b/drivers/staging/rtl8188eu/include/rtw_iol.h
+@@ -7,7 +7,6 @@
+ #ifndef __RTW_IOL_H_
+ #define __RTW_IOL_H_
  
--	if ((adapter->registrypriv.fw_iol == 2) &&
--	    (!adapter_to_dvobj(adapter)->ishighspeed))
-+	if (adapter->registrypriv.fw_iol == 2 &&
-+	    !adapter_to_dvobj(adapter)->ishighspeed)
- 		return true;
- 	return false;
- }
+-#include <osdep_service.h>
+ #include <drv_types.h>
+ 
+ bool rtw_iol_applied(struct adapter *adapter);
 -- 
 2.18.0
 
