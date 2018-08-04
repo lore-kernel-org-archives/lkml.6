@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 355D0C4646F
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:09:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F204C4646F
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:09:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9073217C5
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:09:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9073217C5
+	by mail.kernel.org (Postfix) with ESMTP id 4806E2177A
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:09:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4806E2177A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388569AbeHDLI7 (ORCPT
+        id S2388582AbeHDLJD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 07:08:59 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49722 "EHLO
+        Sat, 4 Aug 2018 07:09:03 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49734 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732462AbeHDLI7 (ORCPT
+        with ESMTP id S1732462AbeHDLJC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 07:08:59 -0400
+        Sat, 4 Aug 2018 07:09:02 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0FFEBBB3;
-        Sat,  4 Aug 2018 09:08:59 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 36E4DBBF;
+        Sat,  4 Aug 2018 09:09:03 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        stable@vger.kernel.org, Xinming Hu <huxm@marvell.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 052/124] PCI: pciehp: Request control of native hotplug only if supported
-Date:   Sat,  4 Aug 2018 11:00:41 +0200
-Message-Id: <20180804082704.458190976@linuxfoundation.org>
+Subject: [PATCH 4.4 053/124] mwifiex: correct histogram data with appropriate index
+Date:   Sat,  4 Aug 2018 11:00:42 +0200
+Message-Id: <20180804082704.492649127@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180804082702.434482435@linuxfoundation.org>
 References: <20180804082702.434482435@linuxfoundation.org>
@@ -52,41 +51,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
+From: Xinming Hu <huxm@marvell.com>
 
-[ Upstream commit 408fec36a1ab3d14273c2116b449ef1e9be3cb8b ]
+[ Upstream commit 30bfce0b63fa68c14ae1613eb9d259fa18644074 ]
 
-Currently we request control of native PCIe hotplug unconditionally.
-Native PCIe hotplug events are handled by the pciehp driver, and if it is
-not enabled those events will be lost.
+Correct snr/nr/rssi data index to avoid possible buffer underflow.
 
-Request control of native PCIe hotplug only if the pciehp driver is
-enabled, so we will actually handle native PCIe hotplug events.
-
-Suggested-by: Bjorn Helgaas <bhelgaas@google.com>
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Xinming Hu <huxm@marvell.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/acpi/pci_root.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/net/wireless/mwifiex/util.c |    8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
---- a/drivers/acpi/pci_root.c
-+++ b/drivers/acpi/pci_root.c
-@@ -472,9 +472,11 @@ static void negotiate_os_control(struct
- 	}
+--- a/drivers/net/wireless/mwifiex/util.c
++++ b/drivers/net/wireless/mwifiex/util.c
+@@ -702,12 +702,14 @@ void mwifiex_hist_data_set(struct mwifie
+ 			   s8 nflr)
+ {
+ 	struct mwifiex_histogram_data *phist_data = priv->hist_data;
++	s8 nf   = -nflr;
++	s8 rssi = snr - nflr;
  
- 	control = OSC_PCI_EXPRESS_CAPABILITY_CONTROL
--		| OSC_PCI_EXPRESS_NATIVE_HP_CONTROL
- 		| OSC_PCI_EXPRESS_PME_CONTROL;
+ 	atomic_inc(&phist_data->num_samples);
+ 	atomic_inc(&phist_data->rx_rate[rx_rate]);
+-	atomic_inc(&phist_data->snr[snr]);
+-	atomic_inc(&phist_data->noise_flr[128 + nflr]);
+-	atomic_inc(&phist_data->sig_str[nflr - snr]);
++	atomic_inc(&phist_data->snr[snr + 128]);
++	atomic_inc(&phist_data->noise_flr[nf + 128]);
++	atomic_inc(&phist_data->sig_str[rssi + 128]);
+ }
  
-+	if (IS_ENABLED(CONFIG_HOTPLUG_PCI_PCIE))
-+		control |= OSC_PCI_EXPRESS_NATIVE_HP_CONTROL;
-+
- 	if (pci_aer_available()) {
- 		if (aer_acpi_firmware_first())
- 			dev_info(&device->dev,
+ /* function to reset histogram data during init/reset */
 
 
