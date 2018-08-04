@@ -6,36 +6,39 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64D5FC4646F
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:09:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECC07C4646F
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:09:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 150452177A
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:09:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 150452177A
+	by mail.kernel.org (Postfix) with ESMTP id B0E85217C5
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:09:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0E85217C5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388788AbeHDLJo (ORCPT
+        id S2388799AbeHDLJr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 07:09:44 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49864 "EHLO
+        Sat, 4 Aug 2018 07:09:47 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49870 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726855AbeHDLJn (ORCPT
+        with ESMTP id S1726855AbeHDLJq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 07:09:43 -0400
+        Sat, 4 Aug 2018 07:09:46 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E5B1FBB3;
-        Sat,  4 Aug 2018 09:09:43 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 01623BBF;
+        Sat,  4 Aug 2018 09:09:46 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        KaiChieh Chuang <kaichieh.chuang@mediatek.com>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Vincent Palatin <vpalatin@chromium.org>,
+        Benson Leung <bleung@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Gwendal Grignou <gwendal@chromium.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 029/124] ASoC: dpcm: fix BE dai not hw_free and shutdown
-Date:   Sat,  4 Aug 2018 11:00:18 +0200
-Message-Id: <20180804082703.537797064@linuxfoundation.org>
+Subject: [PATCH 4.4 030/124] mfd: cros_ec: Fail early if we cannot identify the EC
+Date:   Sat,  4 Aug 2018 11:00:19 +0200
+Message-Id: <20180804082703.569581243@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180804082702.434482435@linuxfoundation.org>
 References: <20180804082702.434482435@linuxfoundation.org>
@@ -52,47 +55,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kai Chieh Chuang <kaichieh.chuang@mediatek.com>
+From: Vincent Palatin <vpalatin@chromium.org>
 
-[ Upstream commit 9c0ac70ad24d76b873c1551e27790c7f6a815d5c ]
+[ Upstream commit 0dbbf25561b29ffab5ba6277429760abdf49ceff ]
 
-In case, one BE is used by two FE1/FE2
-FE1--->BE-->
-       |
-FE2----]
-when FE1/FE2 call dpcm_be_dai_hw_free() together
-the BE users will be 2 (> 1), hence cannot be hw_free
-the be state will leave at, ex. SND_SOC_DPCM_STATE_STOP
+If we cannot communicate with the EC chip to detect the protocol version
+and its features, it's very likely useless to continue. Else we will
+commit all kind of uninformed mistakes (using the wrong protocol, the
+wrong buffer size, mixing the EC with other chips).
 
-later FE1/FE2 call dpcm_be_dai_shutdown(),
-will be skip due to wrong state.
-leaving the BE not being hw_free and shutdown.
-
-The BE dai will be hw_free later when calling
-dpcm_be_dai_shutdown() if still in invalid state.
-
-Signed-off-by: KaiChieh Chuang <kaichieh.chuang@mediatek.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Vincent Palatin <vpalatin@chromium.org>
+Acked-by: Benson Leung <bleung@chromium.org>
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Reviewed-by: Gwendal Grignou <gwendal@chromium.org>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- sound/soc/soc-pcm.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/mfd/cros_ec.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/sound/soc/soc-pcm.c
-+++ b/sound/soc/soc-pcm.c
-@@ -1682,8 +1682,10 @@ int dpcm_be_dai_shutdown(struct snd_soc_
- 			continue;
+--- a/drivers/mfd/cros_ec.c
++++ b/drivers/mfd/cros_ec.c
+@@ -68,7 +68,11 @@ int cros_ec_register(struct cros_ec_devi
  
- 		if ((be->dpcm[stream].state != SND_SOC_DPCM_STATE_HW_FREE) &&
--		    (be->dpcm[stream].state != SND_SOC_DPCM_STATE_OPEN))
--			continue;
-+		    (be->dpcm[stream].state != SND_SOC_DPCM_STATE_OPEN)) {
-+			soc_pcm_hw_free(be_substream);
-+			be->dpcm[stream].state = SND_SOC_DPCM_STATE_HW_FREE;
-+		}
+ 	mutex_init(&ec_dev->lock);
  
- 		dev_dbg(be->dev, "ASoC: close BE %s\n",
- 			dpcm->fe->dai_link->name);
+-	cros_ec_query_all(ec_dev);
++	err = cros_ec_query_all(ec_dev);
++	if (err) {
++		dev_err(dev, "Cannot identify the EC: error %d\n", err);
++		return err;
++	}
+ 
+ 	err = mfd_add_devices(ec_dev->dev, PLATFORM_DEVID_AUTO, &ec_cell, 1,
+ 			      NULL, ec_dev->irq, NULL);
 
 
