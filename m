@@ -5,56 +5,26 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B2BCC28CF6
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 01:19:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C3CCC28CF6
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 01:23:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C26862172B
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 01:19:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C26862172B
+	by mail.kernel.org (Postfix) with ESMTP id EE9FC2172B
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 01:23:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE9FC2172B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732243AbeHDDSA (ORCPT
+        id S1732150AbeHDDWG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 23:18:00 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60252 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1731977AbeHDDSA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 23:18:00 -0400
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w741J63a092544
-        for <linux-kernel@vger.kernel.org>; Fri, 3 Aug 2018 21:19:16 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2kmy73d13n-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Aug 2018 21:19:16 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <benh@kernel.crashing.org>;
-        Sat, 4 Aug 2018 02:19:14 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sat, 4 Aug 2018 02:19:09 +0100
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w741J8Xn30802116
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sat, 4 Aug 2018 01:19:08 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1299EAE051;
-        Sat,  4 Aug 2018 04:19:06 +0100 (BST)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 69F43AE045;
-        Sat,  4 Aug 2018 04:19:05 +0100 (BST)
-Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Sat,  4 Aug 2018 04:19:05 +0100 (BST)
-Received: from pasglop (unknown [9.85.183.237])
-        (using TLSv1.2 with cipher AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 897BAA01EA;
-        Sat,  4 Aug 2018 11:18:58 +1000 (AEST)
+        Fri, 3 Aug 2018 23:22:06 -0400
+Received: from gate.crashing.org ([63.228.1.57]:54661 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731977AbeHDDWG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 23:22:06 -0400
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w741MBRK023518;
+        Fri, 3 Aug 2018 20:22:12 -0500
+Message-ID: <398d498048a5b288cce06003c0808bfefa1e9b1f.camel@kernel.crashing.org>
 Subject: Re: [RFC 0/4] Virtio uses DMA API for all devices
 From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
 To:     "Michael S. Tsirkin" <mst@redhat.com>
@@ -69,6 +39,7 @@ Cc:     Christoph Hellwig <hch@infradead.org>,
         haren@linux.vnet.ibm.com, paulus@samba.org,
         srikar@linux.vnet.ibm.com, robin.murphy@arm.com,
         jean-philippe.brucker@arm.com, marc.zyngier@arm.com
+Date:   Fri, 03 Aug 2018 20:22:11 -0500
 In-Reply-To: <20180803220443-mutt-send-email-mst@kernel.org>
 References: <20180801083639.GF26378@infradead.org>
          <26c1d3d50d8e081eed44fe9940fbefed34598cbd.camel@kernel.crashing.org>
@@ -82,22 +53,9 @@ References: <20180801083639.GF26378@infradead.org>
          <eb1750e90e4bd45da297fa6f78f8ef93671b7c2f.camel@kernel.crashing.org>
          <20180803220443-mutt-send-email-mst@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Date:   Fri, 03 Aug 2018 20:16:21 -0500
 X-Mailer: Evolution 3.28.4 (3.28.4-1.fc28) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18080401-4275-0000-0000-000002A388E5
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18080401-4276-0000-0000-000037ABA8D1
-Message-Id: <051fd78e15595b414839fa8f9d445b9f4d7576c6.camel@kernel.crashing.org>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-03_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1034 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808040013
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -122,6 +80,9 @@ On Fri, 2018-08-03 at 22:07 +0300, Michael S. Tsirkin wrote:
 > I think the fact you can't add flags from the hypervisor is
 > a sign of a problematic architecture, you should look at
 > adding that down the road - you will likely need it at some point.
+
+(Appologies if you got this twice, my mailer had a brain fart and I don't
+know if the first one got through & am about to disappear in a plane for 17h)
 
 Well, we can later in the boot process. At VM creation time, it's just
 a normal VM. The VM firmware, bootloader etc... are just operating
