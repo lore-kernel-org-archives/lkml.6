@@ -6,41 +6,40 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B1DFC4646D
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC2EDC46470
 	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:02:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3867121775
+	by mail.kernel.org (Postfix) with ESMTP id 70C97217BF
 	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:02:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3867121775
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70C97217BF
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727173AbeHDLCD (ORCPT
+        id S1727796AbeHDLCF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 07:02:03 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48046 "EHLO
+        Sat, 4 Aug 2018 07:02:05 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48052 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726477AbeHDLCD (ORCPT
+        with ESMTP id S1726477AbeHDLCF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 07:02:03 -0400
+        Sat, 4 Aug 2018 07:02:05 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6F435BB3;
-        Sat,  4 Aug 2018 09:02:04 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 80458BBF;
+        Sat,  4 Aug 2018 09:02:07 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Jay Vosburgh <j.vosburgh@gmail.com>,
-        Veaceslav Falico <vfalico@gmail.com>,
-        Andy Gospodarek <andy@greyhouse.net>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.17 01/31] bonding: avoid lockdep confusion in bond_get_stats()
-Date:   Sat,  4 Aug 2018 11:00:36 +0200
-Message-Id: <20180804082632.372194919@linuxfoundation.org>
+        stable@vger.kernel.org, Feras Daoud <ferasda@mellanox.com>,
+        Tariq Toukan <tariqt@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>
+Subject: [PATCH 4.17 10/31] net/mlx5e: IPoIB, Set the netdevice sw mtu in ipoib enhanced flow
+Date:   Sat,  4 Aug 2018 11:00:45 +0200
+Message-Id: <20180804082632.916339076@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180804082632.304529527@linuxfoundation.org>
 References: <20180804082632.304529527@linuxfoundation.org>
 User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
@@ -52,174 +51,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Feras Daoud <ferasda@mellanox.com>
 
-[ Upstream commit 7e2556e40026a1b0c16f37446ab398d5a5a892e4 ]
+[ Upstream commit 8e1d162d8e81838119de18b4ca1e302ce906f2a6 ]
 
-syzbot found that the following sequence produces a LOCKDEP splat [1]
+After introduction of the cited commit, mlx5e_build_nic_params
+receives the netdevice mtu in order to set the sw_mtu of mlx5e_params.
+For enhanced IPoIB, the netdevice mtu is not set in this stage,
+therefore, the initial sw_mtu equals zero. As a result, the hw_mtu
+of the receive queue will be calculated incorrectly causing traffic
+issues.
 
-ip link add bond10 type bond
-ip link add bond11 type bond
-ip link set bond11 master bond10
+To fix this issue, query for port mtu before building the nic params.
 
-To fix this, we can use the already provided nest_level.
-
-This patch also provides correct nesting for dev->addr_list_lock
-
-[1]
-WARNING: possible recursive locking detected
-4.18.0-rc6+ #167 Not tainted
---------------------------------------------
-syz-executor751/4439 is trying to acquire lock:
-(____ptrval____) (&(&bond->stats_lock)->rlock){+.+.}, at: spin_lock include/linux/spinlock.h:310 [inline]
-(____ptrval____) (&(&bond->stats_lock)->rlock){+.+.}, at: bond_get_stats+0xb4/0x560 drivers/net/bonding/bond_main.c:3426
-
-but task is already holding lock:
-(____ptrval____) (&(&bond->stats_lock)->rlock){+.+.}, at: spin_lock include/linux/spinlock.h:310 [inline]
-(____ptrval____) (&(&bond->stats_lock)->rlock){+.+.}, at: bond_get_stats+0xb4/0x560 drivers/net/bonding/bond_main.c:3426
-
-other info that might help us debug this:
- Possible unsafe locking scenario:
-
-       CPU0
-       ----
-  lock(&(&bond->stats_lock)->rlock);
-  lock(&(&bond->stats_lock)->rlock);
-
- *** DEADLOCK ***
-
- May be due to missing lock nesting notation
-
-3 locks held by syz-executor751/4439:
- #0: (____ptrval____) (rtnl_mutex){+.+.}, at: rtnl_lock+0x17/0x20 net/core/rtnetlink.c:77
- #1: (____ptrval____) (&(&bond->stats_lock)->rlock){+.+.}, at: spin_lock include/linux/spinlock.h:310 [inline]
- #1: (____ptrval____) (&(&bond->stats_lock)->rlock){+.+.}, at: bond_get_stats+0xb4/0x560 drivers/net/bonding/bond_main.c:3426
- #2: (____ptrval____) (rcu_read_lock){....}, at: bond_get_stats+0x0/0x560 include/linux/compiler.h:215
-
-stack backtrace:
-CPU: 0 PID: 4439 Comm: syz-executor751 Not tainted 4.18.0-rc6+ #167
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
- print_deadlock_bug kernel/locking/lockdep.c:1765 [inline]
- check_deadlock kernel/locking/lockdep.c:1809 [inline]
- validate_chain kernel/locking/lockdep.c:2405 [inline]
- __lock_acquire.cold.64+0x1fb/0x486 kernel/locking/lockdep.c:3435
- lock_acquire+0x1e4/0x540 kernel/locking/lockdep.c:3924
- __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
- _raw_spin_lock+0x2a/0x40 kernel/locking/spinlock.c:144
- spin_lock include/linux/spinlock.h:310 [inline]
- bond_get_stats+0xb4/0x560 drivers/net/bonding/bond_main.c:3426
- dev_get_stats+0x10f/0x470 net/core/dev.c:8316
- bond_get_stats+0x232/0x560 drivers/net/bonding/bond_main.c:3432
- dev_get_stats+0x10f/0x470 net/core/dev.c:8316
- rtnl_fill_stats+0x4d/0xac0 net/core/rtnetlink.c:1169
- rtnl_fill_ifinfo+0x1aa6/0x3fb0 net/core/rtnetlink.c:1611
- rtmsg_ifinfo_build_skb+0xc8/0x190 net/core/rtnetlink.c:3268
- rtmsg_ifinfo_event.part.30+0x45/0xe0 net/core/rtnetlink.c:3300
- rtmsg_ifinfo_event net/core/rtnetlink.c:3297 [inline]
- rtnetlink_event+0x144/0x170 net/core/rtnetlink.c:4716
- notifier_call_chain+0x180/0x390 kernel/notifier.c:93
- __raw_notifier_call_chain kernel/notifier.c:394 [inline]
- raw_notifier_call_chain+0x2d/0x40 kernel/notifier.c:401
- call_netdevice_notifiers_info+0x3f/0x90 net/core/dev.c:1735
- call_netdevice_notifiers net/core/dev.c:1753 [inline]
- netdev_features_change net/core/dev.c:1321 [inline]
- netdev_change_features+0xb3/0x110 net/core/dev.c:7759
- bond_compute_features.isra.47+0x585/0xa50 drivers/net/bonding/bond_main.c:1120
- bond_enslave+0x1b25/0x5da0 drivers/net/bonding/bond_main.c:1755
- bond_do_ioctl+0x7cb/0xae0 drivers/net/bonding/bond_main.c:3528
- dev_ifsioc+0x43c/0xb30 net/core/dev_ioctl.c:327
- dev_ioctl+0x1b5/0xcc0 net/core/dev_ioctl.c:493
- sock_do_ioctl+0x1d3/0x3e0 net/socket.c:992
- sock_ioctl+0x30d/0x680 net/socket.c:1093
- vfs_ioctl fs/ioctl.c:46 [inline]
- file_ioctl fs/ioctl.c:500 [inline]
- do_vfs_ioctl+0x1de/0x1720 fs/ioctl.c:684
- ksys_ioctl+0xa9/0xd0 fs/ioctl.c:701
- __do_sys_ioctl fs/ioctl.c:708 [inline]
- __se_sys_ioctl fs/ioctl.c:706 [inline]
- __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:706
- do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x440859
-Code: e8 2c af 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 3b 10 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffc51a92878 EFLAGS: 00000213 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000440859
-RDX: 0000000020000040 RSI: 0000000000008990 RDI: 0000000000000003
-RBP: 0000000000000000 R08: 00000000004002c8 R09: 00000000004002c8
-R10: 00000000022d5880 R11: 0000000000000213 R12: 0000000000007390
-R13: 0000000000401db0 R14: 0000000000000000 R15: 0000000000000000
-
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Cc: Jay Vosburgh <j.vosburgh@gmail.com>
-Cc: Veaceslav Falico <vfalico@gmail.com>
-Cc: Andy Gospodarek <andy@greyhouse.net>
-
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 472a1e44b349 ("net/mlx5e: Save MTU in channels params")
+Signed-off-by: Feras Daoud <ferasda@mellanox.com>
+Reviewed-by: Tariq Toukan <tariqt@mellanox.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/bonding/bond_main.c |   14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/mellanox/mlx5/core/ipoib/ipoib.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/net/bonding/bond_main.c
-+++ b/drivers/net/bonding/bond_main.c
-@@ -1691,6 +1691,8 @@ int bond_enslave(struct net_device *bond
- 		goto err_upper_unlink;
- 	}
- 
-+	bond->nest_level = dev_get_nest_level(bond_dev) + 1;
-+
- 	/* If the mode uses primary, then the following is handled by
- 	 * bond_change_active_slave().
- 	 */
-@@ -1738,7 +1740,6 @@ int bond_enslave(struct net_device *bond
- 	if (bond_mode_uses_xmit_hash(bond))
- 		bond_update_slave_arr(bond, NULL);
- 
--	bond->nest_level = dev_get_nest_level(bond_dev);
- 
- 	netdev_info(bond_dev, "Enslaving %s as %s interface with %s link\n",
- 		    slave_dev->name,
-@@ -3389,6 +3390,13 @@ static void bond_fold_stats(struct rtnl_
- 	}
- }
- 
-+static int bond_get_nest_level(struct net_device *bond_dev)
-+{
-+	struct bonding *bond = netdev_priv(bond_dev);
-+
-+	return bond->nest_level;
-+}
-+
- static void bond_get_stats(struct net_device *bond_dev,
- 			   struct rtnl_link_stats64 *stats)
+--- a/drivers/net/ethernet/mellanox/mlx5/core/ipoib/ipoib.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/ipoib/ipoib.c
+@@ -76,6 +76,7 @@ void mlx5i_init(struct mlx5_core_dev *md
+ 		void *ppriv)
  {
-@@ -3397,7 +3405,7 @@ static void bond_get_stats(struct net_de
- 	struct list_head *iter;
- 	struct slave *slave;
+ 	struct mlx5e_priv *priv  = mlx5i_epriv(netdev);
++	u16 max_mtu;
  
--	spin_lock(&bond->stats_lock);
-+	spin_lock_nested(&bond->stats_lock, bond_get_nest_level(bond_dev));
- 	memcpy(stats, &bond->bond_stats, sizeof(*stats));
+ 	/* priv init */
+ 	priv->mdev        = mdev;
+@@ -84,6 +85,9 @@ void mlx5i_init(struct mlx5_core_dev *md
+ 	priv->ppriv       = ppriv;
+ 	mutex_init(&priv->state_lock);
  
- 	rcu_read_lock();
-@@ -4192,6 +4200,7 @@ static const struct net_device_ops bond_
- 	.ndo_neigh_setup	= bond_neigh_setup,
- 	.ndo_vlan_rx_add_vid	= bond_vlan_rx_add_vid,
- 	.ndo_vlan_rx_kill_vid	= bond_vlan_rx_kill_vid,
-+	.ndo_get_lock_subclass  = bond_get_nest_level,
- #ifdef CONFIG_NET_POLL_CONTROLLER
- 	.ndo_netpoll_setup	= bond_netpoll_setup,
- 	.ndo_netpoll_cleanup	= bond_netpoll_cleanup,
-@@ -4690,6 +4699,7 @@ static int bond_init(struct net_device *
- 	if (!bond->wq)
- 		return -ENOMEM;
- 
-+	bond->nest_level = SINGLE_DEPTH_NESTING;
- 	netdev_lockdep_set_classes(bond_dev);
- 
- 	list_add_tail(&bond->bond_list, &bn->dev_list);
++	mlx5_query_port_max_mtu(mdev, &max_mtu, 1);
++	netdev->mtu = max_mtu;
++
+ 	mlx5e_build_nic_params(mdev, &priv->channels.params,
+ 			       profile->max_nch(mdev), netdev->mtu);
+ 	mlx5i_build_nic_params(mdev, &priv->channels.params);
 
 
