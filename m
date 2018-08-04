@@ -6,42 +6,42 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4A3DC4646D
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD812C4646F
 	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 05:30:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 978D9217B4
+	by mail.kernel.org (Postfix) with ESMTP id 661272177A
 	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 05:30:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 978D9217B4
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 661272177A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=toshiba.co.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727218AbeHDH3k (ORCPT
+        id S1727118AbeHDH0o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 03:29:40 -0400
-Received: from mo-csw1116.securemx.jp ([210.130.202.158]:41226 "EHLO
+        Sat, 4 Aug 2018 03:26:44 -0400
+Received: from mo-csw1115.securemx.jp ([210.130.202.157]:55764 "EHLO
         mo-csw.securemx.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726055AbeHDH3k (ORCPT
+        with ESMTP id S1726396AbeHDH0n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 03:29:40 -0400
-Received: by mo-csw.securemx.jp (mx-mo-csw1116) id w745TWLR000773; Sat, 4 Aug 2018 14:29:32 +0900
-X-Iguazu-Qid: 2wGrT2hbsoZemxf7rc
-X-Iguazu-QSIG: v=1; s=0; t=1533360572; q=2wGrT2hbsoZemxf7rc; m=fWLoZMBK0fYugtY533PjSu4xCFSoTTJpttmiC/x+MmE=
-Received: from imx12.toshiba.co.jp (imx12.toshiba.co.jp [61.202.160.132])
-        by relay.securemx.jp (mx-mr1113) id w745TUHB032990;
-        Sat, 4 Aug 2018 14:29:31 +0900
-Received: from hop101.toshiba.co.jp ([133.199.85.107])
-        by imx12.toshiba.co.jp  with ESMTP id w745TUhE007278;
-        Sat, 4 Aug 2018 14:29:30 +0900 (JST)
+        Sat, 4 Aug 2018 03:26:43 -0400
+Received: by mo-csw.securemx.jp (mx-mo-csw1115) id w745QN67007035; Sat, 4 Aug 2018 14:26:23 +0900
+X-Iguazu-Qid: 2wGqjZUhdEFGnqXwtk
+X-Iguazu-QSIG: v=1; s=0; t=1533360382; q=2wGqjZUhdEFGnqXwtk; m=efBU3koXaYlJ2dy8mid6XF+0OEJ8Iq4Kbvu3IMFJTfs=
+Received: from imx2.toshiba.co.jp (imx2.toshiba.co.jp [106.186.93.51])
+        by relay.securemx.jp (mx-mr1112) id w745QJ5g037574;
+        Sat, 4 Aug 2018 14:26:19 +0900
+Received: from hop001.toshiba.co.jp ([133.199.164.63])
+        by imx2.toshiba.co.jp  with ESMTP id w745QJ1Z010620;
+        Sat, 4 Aug 2018 14:26:19 +0900 (JST)
 From:   KOBAYASHI Yoshitake <yoshitake.kobayashi@toshiba.co.jp>
 To:     boris.brezillon@bootlin.com, miquel.raynal@bootlin.com,
         richard@nod.at, dwmw2@infradead.org, computersforpeace@gmail.com,
         marek.vasut@gmail.com
 Cc:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
         KOBAYASHI Yoshitake <yoshitake.kobayashi@toshiba.co.jp>
-Subject: [RFC PATCH v2] mtd: nand: toshiba: Add support for ->exec_op()
-Date:   Sat,  4 Aug 2018 14:26:18 +0900
+Subject: [PATCH v6] mtd: nand: toshiba: Add support for Toshiba Memory BENAND (Built-in ECC NAND)
+Date:   Sat,  4 Aug 2018 14:25:52 +0900
 X-TSB-HOP: ON
-Message-Id: <1533360378-2925-1-git-send-email-yoshitake.kobayashi@toshiba.co.jp>
+Message-Id: <1533360352-2882-1-git-send-email-yoshitake.kobayashi@toshiba.co.jp>
 X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -49,90 +49,123 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 This patch is a patch to support TOSHIBA MEMORY CORPORATION BENAND
-memory devices.  This use vendor specific command
-(TOSHIBA_NAND_CMD_ECC_STATUS) to know the exact bitflips.  However, I
-could not test this patch because I do not have a platform that
-supports chip-> exec_op.  Therefore, I post this patch as RFC.
-
-As soon as I get a platform that supports chip-> exec_op, I would like
-to test and re-post.
+memory devices.  Check the status of the built-in ECC with the Read
+Status command without using the vendor specific command.  The Read
+Status command only knows whether there was bitflips above the
+threshold and can not get accurate bitflips.  For now, I set
+max_bitflips mtd->bitflip_threshold.
 
 Signed-off-by: KOBAYASHI Yoshitake <yoshitake.kobayashi@toshiba.co.jp>
 ---
- drivers/mtd/nand/raw/nand_toshiba.c | 53 ++++++++++++++++++++++++++++++++++++-
- 1 file changed, 52 insertions(+), 1 deletion(-)
+ drivers/mtd/nand/raw/nand_toshiba.c | 88 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 88 insertions(+)
 
 diff --git a/drivers/mtd/nand/raw/nand_toshiba.c b/drivers/mtd/nand/raw/nand_toshiba.c
-index 8aec3fa..3f4683b 100644
+index ab43f02..8aec3fa 100644
 --- a/drivers/mtd/nand/raw/nand_toshiba.c
 +++ b/drivers/mtd/nand/raw/nand_toshiba.c
-@@ -23,14 +23,65 @@
- /* Recommended to rewrite for BENAND */
- #define TOSHIBA_NAND_STATUS_REWRITE_RECOMMENDED	BIT(3)
+@@ -17,6 +17,89 @@
  
-+/* ECC Status Read Command for BENAND */
-+#define TOSHIBA_NAND_CMD_ECC_STATUS_READ	0x7A
+ #include <linux/mtd/rawnand.h>
+ 
++/* Bit for detecting BENAND */
++#define TOSHIBA_NAND_ID4_IS_BENAND		BIT(7)
 +
-+/* ECC Status Mask for BENAND */
-+#define TOSHIBA_NAND_ECC_STATUS_MASK		0x0F
++/* Recommended to rewrite for BENAND */
++#define TOSHIBA_NAND_STATUS_REWRITE_RECOMMENDED	BIT(3)
 +
-+/* Uncorrectable Error for BENAND */
-+#define TOSHIBA_NAND_ECC_STATUS_UNCORR		0x0F
-+
-+static int toshiba_nand_benand_read_eccstatus_op(struct nand_chip *chip,
-+						 u8 *buf)
++static int toshiba_nand_benand_eccstatus(struct mtd_info *mtd,
++					 struct nand_chip *chip)
 +{
-+	u8 *ecc_status = buf;
++	int ret;
++	unsigned int max_bitflips = 0;
++	u8 status;
 +
-+	if (chip->exec_op) {
-+		const struct nand_sdr_timings *sdr =
-+			nand_get_sdr_timings(&chip->data_interface);
-+		struct nand_op_instr instrs[] = {
-+			NAND_OP_CMD(TOSHIBA_NAND_CMD_ECC_STATUS_READ,
-+				    PSEC_TO_NSEC(sdr->tADL_min)),
-+			NAND_OP_8BIT_DATA_IN(chip->ecc.steps, ecc_status, 0),
-+		};
-+		struct nand_operation op = NAND_OPERATION(instrs);
++	/* Check Status */
++	ret = nand_status_op(chip, &status);
++	if (ret)
++		return ret;
 +
-+		return nand_exec_op(chip, &op);
++	if (status & NAND_STATUS_FAIL) {
++		/* uncorrected */
++		mtd->ecc_stats.failed++;
++	} else if (status & TOSHIBA_NAND_STATUS_REWRITE_RECOMMENDED) {
++		/* corrected */
++		max_bitflips = mtd->bitflip_threshold;
++		mtd->ecc_stats.corrected += max_bitflips;
 +	}
 +
-+	return -ENOTSUPP;
++	return max_bitflips;
 +}
 +
- static int toshiba_nand_benand_eccstatus(struct mtd_info *mtd,
- 					 struct nand_chip *chip)
- {
- 	int ret;
- 	unsigned int max_bitflips = 0;
--	u8 status;
-+	u8 status, ecc_status[8];
- 
- 	/* Check Status */
-+	ret = toshiba_nand_benand_read_eccstatus_op(chip, ecc_status);
-+	if (!ret) {
-+		unsigned int i, bitflips = 0;
++static int
++toshiba_nand_read_page_benand(struct mtd_info *mtd,
++			      struct nand_chip *chip, uint8_t *buf,
++			      int oob_required, int page)
++{
++	int ret;
 +
-+		for (i = 0; i < chip->ecc.steps; i++) {
-+			bitflips = ecc_status[i] & TOSHIBA_NAND_ECC_STATUS_MASK;
-+			if (bitflips == TOSHIBA_NAND_ECC_STATUS_UNCORR) {
-+				mtd->ecc_stats.failed++;
-+			} else {
-+				mtd->ecc_stats.corrected += bitflips;
-+				max_bitflips = max(max_bitflips, bitflips);
-+			}
-+		}
++	ret = nand_read_page_raw(mtd, chip, buf, oob_required, page);
++	if (ret)
++		return ret;
 +
-+		return max_bitflips;
-+	}
++	return toshiba_nand_benand_eccstatus(mtd, chip);
++}
++
++static int
++toshiba_nand_read_subpage_benand(struct mtd_info *mtd,
++				 struct nand_chip *chip, uint32_t data_offs,
++				 uint32_t readlen, uint8_t *bufpoi, int page)
++{
++	int ret;
++
++	ret = nand_read_page_op(chip, page, data_offs,
++				bufpoi + data_offs, readlen);
++	if (ret)
++		return ret;
++
++	return toshiba_nand_benand_eccstatus(mtd, chip);
++}
++
++static void toshiba_nand_benand_init(struct nand_chip *chip)
++{
++	struct mtd_info *mtd = nand_to_mtd(chip);
 +
 +	/*
-+	 * Fallback to regular status check if
-+	 * toshiba_nand_benand_read_eccstatus_op() failed.
++	 * On BENAND, the entire OOB region can be used by the MTD user.
++	 * The calculated ECC bytes are stored into other isolated
++	 * area which is not accessible to users.
++	 * This is why chip->ecc.bytes = 0.
 +	 */
- 	ret = nand_status_op(chip, &status);
- 	if (ret)
- 		return ret;
++	chip->ecc.bytes = 0;
++	chip->ecc.size = 512;
++	chip->ecc.strength = 8;
++	chip->ecc.read_page = toshiba_nand_read_page_benand;
++	chip->ecc.read_subpage = toshiba_nand_read_subpage_benand;
++	chip->ecc.write_page = nand_write_page_raw;
++	chip->ecc.read_page_raw = nand_read_page_raw_notsupp;
++	chip->ecc.write_page_raw = nand_write_page_raw_notsupp;
++
++	chip->options |= NAND_SUBPAGE_READ;
++
++	mtd_set_ooblayout(mtd, &nand_ooblayout_lp_ops);
++}
++
+ static void toshiba_nand_decode_id(struct nand_chip *chip)
+ {
+ 	struct mtd_info *mtd = nand_to_mtd(chip);
+@@ -68,6 +151,11 @@ static int toshiba_nand_init(struct nand_chip *chip)
+ 	if (nand_is_slc(chip))
+ 		chip->bbt_options |= NAND_BBT_SCAN2NDPAGE;
+ 
++	/* Check that chip is BENAND and ECC mode is on-die */
++	if (nand_is_slc(chip) && chip->ecc.mode == NAND_ECC_ON_DIE &&
++	    chip->id.data[4] & TOSHIBA_NAND_ID4_IS_BENAND)
++		toshiba_nand_benand_init(chip);
++
+ 	return 0;
+ }
+ 
 -- 
 2.7.4
 
