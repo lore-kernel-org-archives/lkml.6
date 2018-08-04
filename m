@@ -2,106 +2,99 @@ Return-Path: <SRS0=4jry=KT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E09AC28CF6
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 00:58:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0E55C28CF6
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 01:04:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3757420895
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 00:58:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3757420895
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 60B9321782
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 01:04:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b="Y9i5DOku"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60B9321782
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=cisco.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732229AbeHDC47 (ORCPT
+        id S1732191AbeHDDCR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 22:56:59 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34994 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731959AbeHDC47 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 22:56:59 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 291F24067720;
-        Sat,  4 Aug 2018 00:58:20 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B8BC81DB47;
-        Sat,  4 Aug 2018 00:58:19 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id w740wJEA026593;
-        Fri, 3 Aug 2018 20:58:19 -0400
-Received: from localhost (mpatocka@localhost)
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id w740wI0n026589;
-        Fri, 3 Aug 2018 20:58:18 -0400
-X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
-Date:   Fri, 3 Aug 2018 20:58:18 -0400 (EDT)
-From:   Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To:     "Richard Earnshaw (lists)" <Richard.Earnshaw@arm.com>
-cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Ramana Radhakrishnan <ramana.gcc@googlemail.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        GNU C Library <libc-alpha@sourceware.org>,
-        Andrew Pinski <pinskia@gmail.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Subject: Re: framebuffer corruption due to overlapping stp instructions on
- arm64
-In-Reply-To: <11f9185a-7f71-83df-3a57-0a0ae9c1f934@arm.com>
-Message-ID: <alpine.LRH.2.02.1808032046540.24748@file01.intranet.prod.int.rdu2.redhat.com>
-References: <alpine.LRH.2.02.1808021242320.31834@file01.intranet.prod.int.rdu2.redhat.com> <CA+=Sn1mWkjuwVnjw6OWWUM=UcP76bdFa680FebCseewHfx3NpA@mail.gmail.com> <9acdacdb-3bd5-b71a-3003-e48132ee1371@redhat.com> <CAJA7tRZbmnZq7RfvQeYEy_a1ZObWqpFpVdvgsXgsioQ3RyPMuA@mail.gmail.com>
- <CAKv+Gu97QvwoLLK_zueiA_gjg_4Q5cqU4YVUyHUVFFfffdyJaw@mail.gmail.com> <11f9185a-7f71-83df-3a57-0a0ae9c1f934@arm.com>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+        Fri, 3 Aug 2018 23:02:17 -0400
+Received: from rcdn-iport-7.cisco.com ([173.37.86.78]:25816 "EHLO
+        rcdn-iport-7.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731959AbeHDDCR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 23:02:17 -0400
+X-Greylist: delayed 562 seconds by postgrey-1.27 at vger.kernel.org; Fri, 03 Aug 2018 23:02:16 EDT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=cisco.com; i=@cisco.com; l=612; q=dns/txt; s=iport;
+  t=1533344617; x=1534554217;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=i+8AVuM633G7eRYKqNPFYQQrerSU+gCdN93m7BrkLAg=;
+  b=Y9i5DOkuMnF+oZAS2PYShUafic8VAW/D5ES34nH+T2st1g4HAZJESx/h
+   ku12vIeMk5hNjSkZcrHX7AewZmpF9euVQeHI9i1Ods9s5YKcd6SGuYBt2
+   013jRhH2d1Tv+LAcftilSbyUPTfi+XGuiTh3Y6YBJO0xjRhGils8dJKkN
+   o=;
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A0DRAACB+GRb/4sNJK1cGQEBAQEBAQE?=
+ =?us-ascii?q?BAQEBAQcBAQEBAYNOgWIoCoN0iAmMRoINgzuSI4F6C4RsAheCdyE0GAECAQE?=
+ =?us-ascii?q?CAQECbSiFNwEFIxFFEAIBCBgCAiYCAgIwFRACBAENBYUgsTSBLopTgQuHfhe?=
+ =?us-ascii?q?BQT+BEoMShH6DAYJVApotCQKPQoE8AYxcK5IEAhEUgSQdOIFScBWDJJBTb48?=
+ =?us-ascii?q?JgRsBAQ?=
+X-IronPort-AV: E=Sophos;i="5.51,441,1526342400"; 
+   d="scan'208";a="430236787"
+Received: from alln-core-6.cisco.com ([173.36.13.139])
+  by rcdn-iport-7.cisco.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Aug 2018 00:54:16 +0000
+Received: from XCH-ALN-020.cisco.com (xch-aln-020.cisco.com [173.36.7.30])
+        by alln-core-6.cisco.com (8.15.2/8.15.2) with ESMTPS id w740sGkt015365
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=FAIL);
+        Sat, 4 Aug 2018 00:54:16 GMT
+Received: from xch-rcd-012.cisco.com (173.37.102.22) by XCH-ALN-020.cisco.com
+ (173.36.7.30) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Fri, 3 Aug
+ 2018 19:54:16 -0500
+Received: from xch-rcd-012.cisco.com ([173.37.102.22]) by
+ XCH-RCD-012.cisco.com ([173.37.102.22]) with mapi id 15.00.1320.000; Fri, 3
+ Aug 2018 19:54:15 -0500
+From:   "Govindarajulu Varadarajan (gvaradar)" <gvaradar@cisco.com>
+To:     "baijiaju1990@gmail.com" <baijiaju1990@gmail.com>,
+        "_govind@gmx.com" <_govind@gmx.com>,
+        "Christian Benvenuti (benve)" <benve@cisco.com>,
+        "Parvi Kaustubhi (pkaustub)" <pkaustub@cisco.com>
+CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] net: cisco: enic: Replace GFP_ATOMIC with GFP_KERNEL
+Thread-Topic: [PATCH] net: cisco: enic: Replace GFP_ATOMIC with GFP_KERNEL
+Thread-Index: AQHUK42q4On1LPy0O0elj9HXJYNlKQ==
+Date:   Sat, 4 Aug 2018 00:54:15 +0000
+Message-ID: <4fefa848e281ffa5380eddee1b77553b48b0da09.camel@cisco.com>
+References: <20180804004009.18928-1-baijiaju1990@gmail.com>
+In-Reply-To: <20180804004009.18928-1-baijiaju1990@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.155.164.154]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <6938C1B122002541960DCE584C01181A@emea.cisco.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Sat, 04 Aug 2018 00:58:20 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Sat, 04 Aug 2018 00:58:20 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mpatocka@redhat.com' RCPT:''
+X-Outbound-SMTP-Client: 173.36.7.30, xch-aln-020.cisco.com
+X-Outbound-Node: alln-core-6.cisco.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On Fri, 3 Aug 2018, Richard Earnshaw (lists) wrote:
-
-> Whoa, hold on.
-> 
-> Memcpy should never be used on device memory.  Period.  Memcpy doesn't
-> know anything about what size of access is needed for accessing a device.
-> 
-> But why is the buffer in device memory rather than some other form of
-> uncached memory?
-> 
-> If you change memcpy to deal with an aspect of the system hardware,
-> you'll end up hosing performance EVERYWHERE.  DON'T DO IT!
-
-memcpy in glibc uses ifunc selection and it already has optimized variants 
-for Falkor and Thunder-X. You can add just another variant for Armada-8040 
-that works around this bug and you won't be harming anyone but users of 
-Armada-8040.
-
-Furthermore, you can detect in the kernel that the PCI bus has some device 
-with prefetchable BAR and activate the workaround only if there is 
-videocard plugged in the PCIe slot.
-
-> If you must, create a new API with tighter semantics, but don't change
-> memcpy to accommodate this.
-> 
-> Anyway, back to the original report.  What memory mapping is being used?
->  In detail?
-
-It is PCI prefetchable BAR. It is mapped using pgprot_writecombine, which 
-results in MT_NORMAL_NC page attributes. (the MT_DEVICE_nGnRE can't be 
-used because it results in crashes due to unaligned accesses to videoram).
-
-> R.
-
-Mikulas
+T24gU2F0LCAyMDE4LTA4LTA0IGF0IDA4OjQwICswODAwLCBKaWEtSnUgQmFpIHdyb3RlOg0KPiB2
+bmljX2Rldl9yZWdpc3RlcigpLCB2bmljX3JxX2FsbG9jX2J1ZnMoKSBhbmQgdm5pY193cV9hbGxv
+Y19idWZzKCkgDQo+IGFyZSBuZXZlciBjYWxsZWQgaW4gYXRvbWljIGNvbnRleHQuDQo+IFRoZXkg
+Y2FsbCBremFsbG9jKCkgd2l0aCBHRlBfQVRPTUlDLCB3aGljaCBpcyBub3QgbmVjZXNzYXJ5Lg0K
+PiBHRlBfQVRPTUlDIGNhbiBiZSByZXBsYWNlZCB3aXRoIEdGUF9LRVJORUwuDQo+IA0KPiBUaGlz
+IGlzIGZvdW5kIGJ5IGEgc3RhdGljIGFuYWx5c2lzIHRvb2wgbmFtZWQgRENOUyB3cml0dGVuIGJ5
+IG15c2VsZi4NCg0KTG9va3MgZ29vZCB0byBtZS4gVGhhbmtzIHlvdS4NCg0KQWNrZWQtYnk6IEdv
+dmluZGFyYWp1bHUgVmFyYWRhcmFqYW4gPGd2YXJhZGFyQGNpc2NvLmNvbT4NCg==
