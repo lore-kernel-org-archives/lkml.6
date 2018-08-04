@@ -2,130 +2,209 @@ Return-Path: <SRS0=4jry=KT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4EDFC4646D
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 07:32:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A8B0C4646F
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 08:00:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F828217B9
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 07:32:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA4B1217BB
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 08:00:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="FtNx6tUj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F828217B9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L+fwd96+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA4B1217BB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sai.msu.ru
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727591AbeHDJcV (ORCPT
+        id S1727038AbeHDKAO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 05:32:21 -0400
-Received: from mailout4.samsung.com ([203.254.224.34]:22500 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726448AbeHDJcV (ORCPT
+        Sat, 4 Aug 2018 06:00:14 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:46724 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726396AbeHDKAN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 05:32:21 -0400
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20180804073237epoutp04fa463aebcb96e5f4cb1f983b00fbb027~HnghwUM1c2420324203epoutp04l
-        for <linux-kernel@vger.kernel.org>; Sat,  4 Aug 2018 07:32:37 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20180804073237epoutp04fa463aebcb96e5f4cb1f983b00fbb027~HnghwUM1c2420324203epoutp04l
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1533367957;
-        bh=n1KwOO66Nk56cbrl+maJWjHsGriECtXjOvnpgVKnqwA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FtNx6tUjhScxPPNpR6pERVG2/Bs3iX1pnxnhUpaXnWLfrZUbYNZylI8LSAC2uCCW6
-         ZobLMAEcp8sReZzX7iOtdpYH92MwElrUW02dqvYiS13MSaNzVTCA5kNh5jura++9ou
-         c1CMVmpIAI5z/nZPCU112cKBwDgdI1JWqZr/Lgok=
-Received: from epsmges5p3new.samsung.com (unknown [182.195.40.193]) by
-        epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-        20180804073235epcas5p46cdc75f89fd14e42e77f4225dbc08c60~Hnggc6Y-C2865928659epcas5p4G;
-        Sat,  4 Aug 2018 07:32:35 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        E3.6F.04304.396556B5; Sat,  4 Aug 2018 16:32:35 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-        20180804073234epcas5p4e3ed929df6b4d35c8831cb0fe3d98e58~HngfSE6Sd0407704077epcas5p4Q;
-        Sat,  4 Aug 2018 07:32:34 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20180804073234epsmtrp11d3b5b350ec08a7c1e0a4d639f98073c~HngfQqFO32501325013epsmtrp1L;
-        Sat,  4 Aug 2018 07:32:34 +0000 (GMT)
-X-AuditID: b6c32a4b-221ff700000010d0-fb-5b6556933fca
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        F7.99.03759.296556B5; Sat,  4 Aug 2018 16:32:34 +0900 (KST)
-Received: from localhost.localdomain (unknown [107.108.161.94]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20180804073232epsmtip2bece2795310f8fd2faf0450c05de8f50~HngdvSWRi2726827268epsmtip2R;
-        Sat,  4 Aug 2018 07:32:32 +0000 (GMT)
-From:   Satendra Singh Thakur <satendra.t@samsung.com>
-To:     Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Cc:     sst2005@gmail.com, Satendra Singh Thakur <satendra.t@samsung.com>
-Subject: Re: Re: [PATCH] drm/kms/crtc: Saving crtc->primary into a drm_plane
- pointer instead of dereferencing it every time. 
-Date:   Sat,  4 Aug 2018 13:02:21 +0530
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <20180730133355.GB20303@art_vandelay>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrNKsWRmVeSWpSXmKPExsWy7bCmhu7ksNRog6+bDSx6z51ksrjy9T2b
-        xc4Hu9gtLu+aw2ax8ONWFou151tZLO5uOMtosfz0dWYHDo/ZDRdZPHbOusvusf3bA1aPeScD
-        Pe53H2fy2DlpL5NH35ZVjB6fN8kFcESl2mSkJqakFimk5iXnp2TmpdsqeQfHO8ebmhkY6hpa
-        WpgrKeQl5qbaKrn4BOi6ZeYAXaakUJaYUwoUCkgsLlbSt7Mpyi8tSVXIyC8usVWKNjQ00jM0
-        MNczMgLSprFWRqZAJQmpGafn1Bc8Z65oufCOvYHxP1MXIyeHhICJxKEJc5i7GLk4hAR2M0r8
-        X3CGCcL5xCjxrHMPK0iVkMA3RonZd4xhOhruX2OFKNrLKHHgwVR2iKIvjBKv3heD2GxARc/n
-        zAArEhF4yShxs+UMkMPBwSzgKrF0jhpIjbBAvcTsq9fAFrAIqEoc+byGFWKBnMTNc53MIDan
-        gJHEnnUPWUDmSAhsYZN4emQ1G0iCV6BM4tzMz4wQDS4SvVMnsUHYwhKvjm9hh7ClJF72t0HZ
-        kxklms/6QQxazShx9mIvVMJeomXKARaI4zQl1u/SBwkzC/BJ9P5+wgQSlhDglehoE4KoVpFY
-        +eIwM8z4Pwu6oG72kJiycjYbJBxaGSV+tNpMYJSdhTB0ASPjKkbJ1ILi3PTUYtMC47zUcr3i
-        xNzi0rx0veT83E2M4ISm5b2DcdM5n0OMAhyMSjy8DDUp0UKsiWXFlbmHGCU4mJVEeNMPAIV4
-        UxIrq1KL8uOLSnNSiw8xmgIDcCKzlGhyPjDZ5pXEG5oamZkZWBqYGluYGSqJ837wC44WEkhP
-        LEnNTk0tSC2C6WPi4JRqYNQvnrfjZo+hrkSjrEZH5nfuEgv+9rfHDzkmr3yed6/3z7mTd7jT
-        J9TuWTxH9fDzFcwVrQbvsztefnD4eLKAyfT+zcKL11pCIw5rzmHr4Pyvfux7gqqqe0Rzkq63
-        X6zK8bvWKuckOXv1NS7O5nZrfbSX/6zx/I2/TENFgh+dVU6KXnNp1uQvAUosxRmJhlrMRcWJ
-        APgLoCR+AwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrOLMWRmVeSWpSXmKPExsWy7bCSvO6ksNRog/mNUha9504yWVz5+p7N
-        YueDXewWl3fNYbNY+HEri8Xa860sFnc3nGW0WH76OrMDh8fshossHjtn3WX32P7tAavHvJOB
-        Hve7jzN57Jy0l8mjb8sqRo/Pm+QCOKK4bFJSczLLUov07RK4Mk7PqS94zlzRcuEdewPjf6Yu
-        Rk4OCQETiYb711i7GLk4hAR2M0pse9PACpGQklj2ZhsbhC0ssfLfc3aIok+MEs1b7jKCJNiA
-        up/PmQHWLSLwllGidedpFpAEs4C7xL05v9hBbGGBWokLM96CrWMRUJU48nkN2AZeAVeJTzN+
-        MENskJO4ea4TzOYUMJLYs+4h2BwhAUOJ0+uPsk9g5FvAyLCKUTK1oDg3PbfYsMAwL7Vcrzgx
-        t7g0L10vOT93EyM4OLU0dzBeXhJ/iFGAg1GJh5ehJiVaiDWxrLgy9xCjBAezkghv+gGgEG9K
-        YmVValF+fFFpTmrxIUZpDhYlcd6neccihQTSE0tSs1NTC1KLYLJMHJxSDYztB2/qSx8SENhv
-        0lDoL1owdYF0+venhsps3MFv54q1rXlz7KNh5QsdRauOrs0TD5q0TBBObRZzWhxr7Zi28KOL
-        Z7qTQNH8N5zlioxRnzz+ViruYZ2nw39RLn6P4ByLujCvi+KrlAoW7At68024IU8ox07ANOIp
-        B9+2vRzRU1c39zWe2ahkp8RSnJFoqMVcVJwIAOT2soZKAgAA
-Message-Id: <20180804073234epcas5p4e3ed929df6b4d35c8831cb0fe3d98e58~HngfSE6Sd0407704077epcas5p4Q@epcas5p4.samsung.com>
-X-CMS-MailID: 20180804073234epcas5p4e3ed929df6b4d35c8831cb0fe3d98e58
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20180804073234epcas5p4e3ed929df6b4d35c8831cb0fe3d98e58
-References: <20180730133355.GB20303@art_vandelay>
-        <CGME20180804073234epcas5p4e3ed929df6b4d35c8831cb0fe3d98e58@epcas5p4.samsung.com>
+        Sat, 4 Aug 2018 06:00:13 -0400
+Received: by mail-oi0-f67.google.com with SMTP id y207-v6so13800562oie.13;
+        Sat, 04 Aug 2018 01:00:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=TnrRxH7hpSxjUXlMOo0osfu5mjWzOeK8d80zX04cfhk=;
+        b=L+fwd96+rh/DAK1BM1Q90aiha7E/iKgq5BcmkwpOgZ234Em+7C3vy7JwExhBTfNSux
+         8b5RV/6O2f3JQBEkvX0/AzK4P16oVdKs6vvELBtCwRPbxfFukfddqNKRc17OZO1wHJw6
+         wtJ5m/g3PWVaAeH+8obfTzOILxo7ICKHMCRLU2/LBB19o+DNWY4nPADaunh7oJUJXrDu
+         KmAo1O1V9QblFwyeqXWdu0aA4tWLCLrdBQroI0YLPmbhMQ20G2lgU1BwGAASFOKLFEWT
+         +cAy4hf3+BglnadihVJ0Ij8knTwi9aZm17IYdzBBbUC/9w/C1V4BSlg5nxol6kiZ0YSB
+         P+0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=TnrRxH7hpSxjUXlMOo0osfu5mjWzOeK8d80zX04cfhk=;
+        b=HOGac2DvI6vE3M52rIspD3YZfVEGUJ0d5tUfwlXeJbhqXpHasLULVprLfhRGNoojxC
+         bpFSsJjQn3XQgi+dbW1a4Rm+XFQQ+CjPxw3kGc+QHhTMAMxNu16lsIQdRQMhhuFmxQrD
+         SZjQJ3hbdl7YF3PP2ncXFgfNyw/J105cBl4j0aUAJOngvYx1Ltq4sCzR9E/3T3rk3VO3
+         DKPuW1E55Gx8JvmfSJ+euU64BXk6MzobDmYeXb6is+j47aDG4Zd6ct3T671pEvFPO/BY
+         iK+o3d+PGamse5QOv/vjGFgk72Ekr3Nrw9yu/emRzk/gGtLNnwMTbbjpkxfI7A+J+gd1
+         TIEQ==
+X-Gm-Message-State: AOUpUlHr8tltsiZpIfOUapBVxY42JPKXSzhc4DRtfV+tsAdM1bWQPT1b
+        000VgAeQmK/CMgazoQjUKEsY3QLgFYtpm+Ksr7I=
+X-Google-Smtp-Source: AAOMgpcd3Un27DG30xvbe6OthxqAje5rQ8zVJsq8mdP8el10kHYce1K+1x4sCyWmFD++WOSpFYvKmV/dteimduoICec=
+X-Received: by 2002:aca:c514:: with SMTP id v20-v6mr6813002oif.153.1533369626302;
+ Sat, 04 Aug 2018 01:00:26 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a9d:734:0:0:0:0:0 with HTTP; Sat, 4 Aug 2018 01:00:05 -0700 (PDT)
+In-Reply-To: <1556658.LS2rrRvGR3@avalon>
+References: <CAJs94EZEqWEscECp7bsJ3DvqoU83_Y2WQ55jPaG4MyoG-hvLFQ@mail.gmail.com>
+ <Pine.LNX.4.44L0.1807231444150.1328-100000@iolanthe.rowland.org>
+ <CAJs94EahjbkJRWKR=2QeD=tOMR=kznwXbQgTbKvSuTg4jBk1ew@mail.gmail.com> <1556658.LS2rrRvGR3@avalon>
+From:   "Matwey V. Kornilov" <matwey@sai.msu.ru>
+Date:   Sat, 4 Aug 2018 11:00:05 +0300
+X-Google-Sender-Auth: 5CjSUtvDaBZKN4Opv0Q2uu4BVT8
+Message-ID: <CAJs94EZA=o5=4frPhXs3vnr4x-__gSZ2ximvTyugLoaD6KLcUg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] media: usb: pwc: Don't use coherent DMA buffers for
+ ISO transfer
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Alan Stern <stern@rowland.harvard.edu>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>, mingo@redhat.com,
+        Mike Isely <isely@pobox.com>,
+        Bhumika Goyal <bhumirks@gmail.com>,
+        Colin King <colin.king@canonical.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        keiichiw@chromium.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 30 Jul 2018 at 09:33:55 -0400 Sean Paul wrote:
+2018-07-30 18:35 GMT+03:00 Laurent Pinchart <laurent.pinchart@ideasonboard.com>:
+> Hi Matwey,
+>
+> On Tuesday, 24 July 2018 21:56:09 EEST Matwey V. Kornilov wrote:
+>> 2018-07-23 21:57 GMT+03:00 Alan Stern:
+>> > On Mon, 23 Jul 2018, Matwey V. Kornilov wrote:
+>> >> I've tried to strategies:
+>> >>
+>> >> 1) Use dma_unmap and dma_map inside the handler (I suppose this is
+>> >> similar to how USB core does when there is no URB_NO_TRANSFER_DMA_MAP)
+>> >
+>> > Yes.
+>> >
+>> >> 2) Use sync_cpu and sync_device inside the handler (and dma_map only
+>> >> once at memory allocation)
+>> >>
+>> >> It is interesting that dma_unmap/dma_map pair leads to the lower
+>> >> overhead (+1us) than sync_cpu/sync_device (+2us) at x86_64 platform.
+>> >> At armv7l platform using dma_unmap/dma_map  leads to ~50 usec in the
+>> >> handler, and sync_cpu/sync_device - ~65 usec.
+>> >>
+>> >> However, I am not sure is it mandatory to call
+>> >> dma_sync_single_for_device for FROM_DEVICE direction?
+>> >
+>> > According to Documentation/DMA-API-HOWTO.txt, the CPU should not write
+>> > to a DMA_FROM_DEVICE-mapped area, so dma_sync_single_for_device() is
+>> > not needed.
+>>
+>> Well, I measured the following at armv7l. The handler execution time
+>> (URB_NO_TRANSFER_DMA_MAP is used for all cases):
+>>
+>> 1) coherent DMA: ~3000 usec (pwc is not functional)
+>> 2) explicit dma_unmap and dma_map in the handler: ~52 usec
+>> 3) explicit dma_sync_single_for_cpu (no dma_sync_single_for_device): ~56
+>> usec
+>
+> I really don't understand why the sync option is slower. Could you please
+> investigate ? Before doing anything we need to make sure we have a full
+> understanding of the problem.
 
->Maybe this is simpler, but not overwhelmingly so.
+Hi,
 
->To be honest, I'm a bit concerned with the volume of no-op patches you're
->sending to the list. I so appreciate and encourage your participation,
->but perhaps we could redirect your efforts. 
->Again, *thank you* for your patches, it's great to have you here.
+I've found one drawback in my measurements. I forgot to fix CPU
+frequency at lowest state 300MHz. Now, I remeasured
 
->Sean
+2) dma_unmap and dma_map in the handler:
+2A) dma_unmap_single call: 28.8 +- 1.5 usec
+2B) memcpy and the rest: 58 +- 6 usec
+2C) dma_map_single call: 22 +- 2 usec
+Total: 110 +- 7 usec
+
+3) dma_sync_single_for_cpu
+3A) dma_sync_single_for_cpu call: 29.4 +- 1.7 usec
+3B) memcpy and the rest: 59 +- 6 usec
+3C) noop (trace events overhead): 5 +- 2 usec
+Total: 93 +- 7 usec
+
+So, now we see that 2A and 3A (as well as 2B and 3B) agree good within
+error ranges.
+
+>
+>> So, I suppose that unfortunately Tomasz suggestion doesn't work. There
+>> is no performance improvement when dma_sync_single is used.
+>>
+>> At x86_64 the following happens:
+>>
+>> 1) coherent DMA: ~2 usec
+>
+> What do you mean by coherent DMA for x86_64 ? Is that usb_alloc_coherent() ?
+> Could you trace it to see how memory is allocated exactly, and how it's mapped
+> to the CPU ? I suspect that it will end up in dma_direct_alloc() but I'd like
+> a confirmation.
+
+usb_alloc_coherents() ends up inside hcd_buffer_alloc() where
+dma_alloc_coherent() is called. Keep in mind, that requested size is
+9560 in our case and pool is not used.
+
+>
+>> 2) explicit dma_unmap and dma_map in the handler: ~3.5 usec
+>> 3) explicit dma_sync_single_for_cpu (no dma_sync_single_for_device): ~4 usec
+>>
+>> So, whats to do next? Personally, I think that DMA streaming API
+>> introduces not so great overhead.
+>
+> It might not be very large, but with USB3 cameras at high resolutions and
+> framerates, it might still become noticeable. I wouldn't degrade performances
+> on x86, especially if we can decide which option to use based on the platform
+> (or perhaps even better based on Kconfig options such as DMA_NONCOHERENT).
+
+PWC is discontinued chip, so there will not be any new USB3 cameras.
+
+Kconfig won't work here, as I said before, DMA config is stored inside
+device tree blob on ARM architecture.
+
+>
+>> Does anybody happy with turning to streaming DMA or I'll introduce
+>> module-level switch as Ezequiel suggested?
+>
+> A module-level switch isn't a good idea, it will just confuse users. We need
+> to establish a strategy and come up with a good heuristic that can be applied
+> at compile and/or runtime to automatically decide how to allocate buffers.
+
+I am agree in general, but I cannot understand why webcam driver
+should think about memory allocation heuristics.
+
+>
+> --
+> Regards,
+>
+> Laurent Pinchart
+>
+>
+>
 
 
-Hello Mr Sean,
-Thanks for the comments , I will take care of this in future.
-Thanks
--Satendra
+
+-- 
+With best regards,
+Matwey V. Kornilov.
+Sternberg Astronomical Institute, Lomonosov Moscow State University, Russia
+119234, Moscow, Universitetsky pr-k 13, +7 (495) 9392382
