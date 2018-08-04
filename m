@@ -6,36 +6,38 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DED1AC4646D
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:03:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADF1BC4646F
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:03:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D33E217BF
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:03:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D33E217BF
+	by mail.kernel.org (Postfix) with ESMTP id 727D1217C6
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:03:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 727D1217C6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732253AbeHDLDS (ORCPT
+        id S1732301AbeHDLDY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 07:03:18 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48292 "EHLO
+        Sat, 4 Aug 2018 07:03:24 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48328 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728349AbeHDLDS (ORCPT
+        with ESMTP id S1727481AbeHDLDX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 07:03:18 -0400
+        Sat, 4 Aug 2018 07:03:23 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 52F0BBC6;
-        Sat,  4 Aug 2018 09:03:19 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 90D34BB3;
+        Sat,  4 Aug 2018 09:03:25 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yi Wang <wang.yi59@zte.com.cn>,
-        Jiang Biao <jiang.biao2@zte.com.cn>,
-        Richard Guy Briggs <rgb@redhat.com>,
-        Paul Moore <paul@paul-moore.com>
-Subject: [PATCH 4.17 21/31] audit: fix potential null dereference context->module.name
-Date:   Sat,  4 Aug 2018 11:00:56 +0200
-Message-Id: <20180804082633.910907344@linuxfoundation.org>
+        stable@vger.kernel.org, Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        syzbot+121be635a7a35ddb7dcb@syzkaller.appspotmail.com,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Eric Biggers <ebiggers3@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.17 23/31] userfaultfd: remove uffd flags from vma->vm_flags if UFFD_EVENT_FORK fails
+Date:   Sat,  4 Aug 2018 11:00:58 +0200
+Message-Id: <20180804082633.996505438@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180804082632.304529527@linuxfoundation.org>
 References: <20180804082632.304529527@linuxfoundation.org>
@@ -52,55 +54,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yi Wang <wang.yi59@zte.com.cn>
+From: Mike Rapoport <rppt@linux.vnet.ibm.com>
 
-commit b305f7ed0f4f494ad6f3ef5667501535d5a8fa31 upstream.
+commit 31e810aa1033a7db50a2746cd34a2432237f6420 upstream.
 
-The variable 'context->module.name' may be null pointer when
-kmalloc return null, so it's better to check it before using
-to avoid null dereference.
-Another one more thing this patch does is using kstrdup instead
-of (kmalloc + strcpy), and signal a lost record via audit_log_lost.
+The fix in commit 0cbb4b4f4c44 ("userfaultfd: clear the
+vma->vm_userfaultfd_ctx if UFFD_EVENT_FORK fails") cleared the
+vma->vm_userfaultfd_ctx but kept userfaultfd flags in vma->vm_flags
+that were copied from the parent process VMA.
 
-Cc: stable@vger.kernel.org # 4.11
-Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
-Reviewed-by: Jiang Biao <jiang.biao2@zte.com.cn>
-Reviewed-by: Richard Guy Briggs <rgb@redhat.com>
-Signed-off-by: Paul Moore <paul@paul-moore.com>
+As the result, there is an inconsistency between the values of
+vma->vm_userfaultfd_ctx.ctx and vma->vm_flags which triggers BUG_ON
+in userfaultfd_release().
+
+Clearing the uffd flags from vma->vm_flags in case of UFFD_EVENT_FORK
+failure resolves the issue.
+
+Link: http://lkml.kernel.org/r/1532931975-25473-1-git-send-email-rppt@linux.vnet.ibm.com
+Fixes: 0cbb4b4f4c44 ("userfaultfd: clear the vma->vm_userfaultfd_ctx if UFFD_EVENT_FORK fails")
+Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+Reported-by: syzbot+121be635a7a35ddb7dcb@syzkaller.appspotmail.com
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: Eric Biggers <ebiggers3@gmail.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/auditsc.c |   13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+ fs/userfaultfd.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/kernel/auditsc.c
-+++ b/kernel/auditsc.c
-@@ -1274,8 +1274,12 @@ static void show_special(struct audit_co
- 		break;
- 	case AUDIT_KERN_MODULE:
- 		audit_log_format(ab, "name=");
--		audit_log_untrustedstring(ab, context->module.name);
--		kfree(context->module.name);
-+		if (context->module.name) {
-+			audit_log_untrustedstring(ab, context->module.name);
-+			kfree(context->module.name);
-+		} else
-+			audit_log_format(ab, "(null)");
-+
- 		break;
- 	}
- 	audit_log_end(ab);
-@@ -2408,8 +2412,9 @@ void __audit_log_kern_module(char *name)
- {
- 	struct audit_context *context = current->audit_context;
+--- a/fs/userfaultfd.c
++++ b/fs/userfaultfd.c
+@@ -631,8 +631,10 @@ static void userfaultfd_event_wait_compl
+ 		/* the various vma->vm_userfaultfd_ctx still points to it */
+ 		down_write(&mm->mmap_sem);
+ 		for (vma = mm->mmap; vma; vma = vma->vm_next)
+-			if (vma->vm_userfaultfd_ctx.ctx == release_new_ctx)
++			if (vma->vm_userfaultfd_ctx.ctx == release_new_ctx) {
+ 				vma->vm_userfaultfd_ctx = NULL_VM_UFFD_CTX;
++				vma->vm_flags &= ~(VM_UFFD_WP | VM_UFFD_MISSING);
++			}
+ 		up_write(&mm->mmap_sem);
  
--	context->module.name = kmalloc(strlen(name) + 1, GFP_KERNEL);
--	strcpy(context->module.name, name);
-+	context->module.name = kstrdup(name, GFP_KERNEL);
-+	if (!context->module.name)
-+		audit_log_lost("out of memory in __audit_log_kern_module");
- 	context->type = AUDIT_KERN_MODULE;
- }
- 
+ 		userfaultfd_ctx_put(release_new_ctx);
 
 
