@@ -6,36 +6,37 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 784D5C4646F
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:12:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 053EBC4646D
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:12:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D7312177A
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:12:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D7312177A
+	by mail.kernel.org (Postfix) with ESMTP id BE7CD217C5
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:12:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE7CD217C5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389350AbeHDLMF (ORCPT
+        id S2389362AbeHDLMI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 07:12:05 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50368 "EHLO
+        Sat, 4 Aug 2018 07:12:08 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50380 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732902AbeHDLME (ORCPT
+        with ESMTP id S1732902AbeHDLMG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 07:12:04 -0400
+        Sat, 4 Aug 2018 07:12:06 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3193C89C;
-        Sat,  4 Aug 2018 09:12:03 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 50D5C89C;
+        Sat,  4 Aug 2018 09:12:06 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Neal Cardwell <ncardwell@google.com>,
-        Lawrence Brakmo <brakmo@fb.com>,
+        Jann Horn <jannh@google.com>, Florian Westphal <fw@strlen.de>,
+        Peter Oskolkov <posk@google.com>,
+        Paolo Abeni <pabeni@redhat.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 113/124] tcp: add one more quick ack after after ECN events
-Date:   Sat,  4 Aug 2018 11:01:42 +0200
-Message-Id: <20180804082706.689516290@linuxfoundation.org>
+Subject: [PATCH 4.4 114/124] inet: frag: enforce memory limits earlier
+Date:   Sat,  4 Aug 2018 11:01:43 +0200
+Message-Id: <20180804082706.727601513@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180804082702.434482435@linuxfoundation.org>
 References: <20180804082702.434482435@linuxfoundation.org>
@@ -54,46 +55,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit 15ecbe94a45ef88491ca459b26efdd02f91edb6d ]
+[ Upstream commit 56e2c94f055d328f5f6b0a5c1721cca2f2d4e0a1 ]
 
-Larry Brakmo proposal ( https://patchwork.ozlabs.org/patch/935233/
-tcp: force cwnd at least 2 in tcp_cwnd_reduction) made us rethink
-about our recent patch removing ~16 quick acks after ECN events.
+We currently check current frags memory usage only when
+a new frag queue is created. This allows attackers to first
+consume the memory budget (default : 4 MB) creating thousands
+of frag queues, then sending tiny skbs to exceed high_thresh
+limit by 2 to 3 order of magnitude.
 
-tcp_enter_quickack_mode(sk, 1) makes sure one immediate ack is sent,
-but in the case the sender cwnd was lowered to 1, we do not want
-to have a delayed ack for the next packet we will receive.
+Note that before commit 648700f76b03 ("inet: frags: use rhashtables
+for reassembly units"), work queue could be starved under DOS,
+getting no cpu cycles.
+After commit 648700f76b03, only the per frag queue timer can eventually
+remove an incomplete frag queue and its skbs.
 
-Fixes: 522040ea5fdd ("tcp: do not aggressively quick ack after ECN events")
+Fixes: b13d3cbfb8e8 ("inet: frag: move eviction of queues to work queue")
 Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: Neal Cardwell <ncardwell@google.com>
-Cc: Lawrence Brakmo <brakmo@fb.com>
-Acked-by: Neal Cardwell <ncardwell@google.com>
+Reported-by: Jann Horn <jannh@google.com>
+Cc: Florian Westphal <fw@strlen.de>
+Cc: Peter Oskolkov <posk@google.com>
+Cc: Paolo Abeni <pabeni@redhat.com>
+Acked-by: Florian Westphal <fw@strlen.de>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/tcp_input.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/ipv4/inet_fragment.c |   10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
---- a/net/ipv4/tcp_input.c
-+++ b/net/ipv4/tcp_input.c
-@@ -239,7 +239,7 @@ static void __tcp_ecn_check_ce(struct so
- 		 * it is probably a retransmit.
- 		 */
- 		if (tp->ecn_flags & TCP_ECN_SEEN)
--			tcp_enter_quickack_mode(sk, 1);
-+			tcp_enter_quickack_mode(sk, 2);
- 		break;
- 	case INET_ECN_CE:
- 		if (tcp_ca_needs_ecn(sk))
-@@ -247,7 +247,7 @@ static void __tcp_ecn_check_ce(struct so
+--- a/net/ipv4/inet_fragment.c
++++ b/net/ipv4/inet_fragment.c
+@@ -364,11 +364,6 @@ static struct inet_frag_queue *inet_frag
+ {
+ 	struct inet_frag_queue *q;
  
- 		if (!(tp->ecn_flags & TCP_ECN_DEMAND_CWR)) {
- 			/* Better not delay acks, sender can have a very low cwnd */
--			tcp_enter_quickack_mode(sk, 1);
-+			tcp_enter_quickack_mode(sk, 2);
- 			tp->ecn_flags |= TCP_ECN_DEMAND_CWR;
- 		}
- 		tp->ecn_flags |= TCP_ECN_SEEN;
+-	if (frag_mem_limit(nf) > nf->high_thresh) {
+-		inet_frag_schedule_worker(f);
+-		return NULL;
+-	}
+-
+ 	q = kmem_cache_zalloc(f->frags_cachep, GFP_ATOMIC);
+ 	if (!q)
+ 		return NULL;
+@@ -405,6 +400,11 @@ struct inet_frag_queue *inet_frag_find(s
+ 	struct inet_frag_queue *q;
+ 	int depth = 0;
+ 
++	if (!nf->high_thresh || frag_mem_limit(nf) > nf->high_thresh) {
++		inet_frag_schedule_worker(f);
++		return NULL;
++	}
++
+ 	if (frag_mem_limit(nf) > nf->low_thresh)
+ 		inet_frag_schedule_worker(f);
+ 
 
 
