@@ -6,37 +6,33 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02CB5C4646D
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:11:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13BC8C4646F
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:11:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4BC0217C5
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:11:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4BC0217C5
+	by mail.kernel.org (Postfix) with ESMTP id C589A2177A
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:11:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C589A2177A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389160AbeHDLLU (ORCPT
+        id S2389169AbeHDLLY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 07:11:20 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50212 "EHLO
+        Sat, 4 Aug 2018 07:11:24 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50226 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732670AbeHDLLT (ORCPT
+        with ESMTP id S1732670AbeHDLLX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 07:11:19 -0400
+        Sat, 4 Aug 2018 07:11:23 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A9B52BBF;
-        Sat,  4 Aug 2018 09:11:19 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B6D7BBC6;
+        Sat,  4 Aug 2018 09:11:22 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Anatoly Trosinenko <anatoly.trosinenko@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Phillip Lougher <phillip@squashfs.org.uk>, stable@kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.4 097/124] squashfs: be more careful about metadata corruption
-Date:   Sat,  4 Aug 2018 11:01:26 +0200
-Message-Id: <20180804082706.107082836@linuxfoundation.org>
+        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>
+Subject: [PATCH 4.4 098/124] ext4: fix inline data updates with checksums enabled
+Date:   Sat,  4 Aug 2018 11:01:27 +0200
+Message-Id: <20180804082706.142180092@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180804082702.434482435@linuxfoundation.org>
 References: <20180804082702.434482435@linuxfoundation.org>
@@ -53,96 +49,166 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Linus Torvalds <torvalds@linux-foundation.org>
+From: Theodore Ts'o <tytso@mit.edu>
 
-commit 01cfb7937a9af2abb1136c7e89fbf3fd92952956 upstream.
+commit 362eca70b53389bddf3143fe20f53dcce2cfdf61 upstream.
 
-Anatoly Trosinenko reports that a corrupted squashfs image can cause a
-kernel oops.  It turns out that squashfs can end up being confused about
-negative fragment lengths.
+The inline data code was updating the raw inode directly; this is
+problematic since if metadata checksums are enabled,
+ext4_mark_inode_dirty() must be called to update the inode's checksum.
+In addition, the jbd2 layer requires that get_write_access() be called
+before the metadata buffer is modified.  Fix both of these problems.
 
-The regular squashfs_read_data() does check for negative lengths, but
-squashfs_read_metadata() did not, and the fragment size code just
-blindly trusted the on-disk value.  Fix both the fragment parsing and
-the metadata reading code.
+https://bugzilla.kernel.org/show_bug.cgi?id=200443
 
-Reported-by: Anatoly Trosinenko <anatoly.trosinenko@gmail.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Phillip Lougher <phillip@squashfs.org.uk>
-Cc: stable@kernel.org
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/squashfs/cache.c       |    3 +++
- fs/squashfs/file.c        |    8 ++++++--
- fs/squashfs/fragment.c    |    4 +---
- fs/squashfs/squashfs_fs.h |    6 ++++++
- 4 files changed, 16 insertions(+), 5 deletions(-)
+ fs/ext4/inline.c |   19 +++++++++++--------
+ fs/ext4/inode.c  |   16 +++++++---------
+ 2 files changed, 18 insertions(+), 17 deletions(-)
 
---- a/fs/squashfs/cache.c
-+++ b/fs/squashfs/cache.c
-@@ -350,6 +350,9 @@ int squashfs_read_metadata(struct super_
+--- a/fs/ext4/inline.c
++++ b/fs/ext4/inline.c
+@@ -678,6 +678,10 @@ int ext4_try_to_write_inline_data(struct
+ 		goto convert;
+ 	}
  
- 	TRACE("Entered squashfs_read_metadata [%llx:%x]\n", *block, *offset);
- 
-+	if (unlikely(length < 0))
-+		return -EIO;
++	ret = ext4_journal_get_write_access(handle, iloc.bh);
++	if (ret)
++		goto out;
 +
- 	while (length) {
- 		entry = squashfs_cache_get(sb, msblk->block_cache, *block, 0);
- 		if (entry->error) {
---- a/fs/squashfs/file.c
-+++ b/fs/squashfs/file.c
-@@ -194,7 +194,11 @@ static long long read_indexes(struct sup
- 		}
+ 	flags |= AOP_FLAG_NOFS;
  
- 		for (i = 0; i < blocks; i++) {
--			int size = le32_to_cpu(blist[i]);
-+			int size = squashfs_block_size(blist[i]);
-+			if (size < 0) {
-+				err = size;
-+				goto failure;
-+			}
- 			block += SQUASHFS_COMPRESSED_SIZE_BLOCK(size);
- 		}
- 		n -= blocks;
-@@ -367,7 +371,7 @@ static int read_blocklist(struct inode *
- 			sizeof(size));
- 	if (res < 0)
- 		return res;
--	return le32_to_cpu(size);
-+	return squashfs_block_size(size);
+ 	page = grab_cache_page_write_begin(mapping, 0, flags);
+@@ -706,7 +710,7 @@ int ext4_try_to_write_inline_data(struct
+ out_up_read:
+ 	up_read(&EXT4_I(inode)->xattr_sem);
+ out:
+-	if (handle)
++	if (handle && (ret != 1))
+ 		ext4_journal_stop(handle);
+ 	brelse(iloc.bh);
+ 	return ret;
+@@ -748,6 +752,7 @@ int ext4_write_inline_data_end(struct in
+ 
+ 	ext4_write_unlock_xattr(inode, &no_expand);
+ 	brelse(iloc.bh);
++	mark_inode_dirty(inode);
+ out:
+ 	return copied;
  }
+@@ -894,7 +899,6 @@ retry_journal:
+ 		goto out;
+ 	}
  
- /* Copy data into page cache  */
---- a/fs/squashfs/fragment.c
-+++ b/fs/squashfs/fragment.c
-@@ -61,9 +61,7 @@ int squashfs_frag_lookup(struct super_bl
- 		return size;
- 
- 	*fragment_block = le64_to_cpu(fragment_entry.start_block);
--	size = le32_to_cpu(fragment_entry.size);
 -
--	return size;
-+	return squashfs_block_size(fragment_entry.size);
+ 	page = grab_cache_page_write_begin(mapping, 0, flags);
+ 	if (!page) {
+ 		ret = -ENOMEM;
+@@ -912,6 +916,9 @@ retry_journal:
+ 		if (ret < 0)
+ 			goto out_release_page;
+ 	}
++	ret = ext4_journal_get_write_access(handle, iloc.bh);
++	if (ret)
++		goto out_release_page;
+ 
+ 	up_read(&EXT4_I(inode)->xattr_sem);
+ 	*pagep = page;
+@@ -932,7 +939,6 @@ int ext4_da_write_inline_data_end(struct
+ 				  unsigned len, unsigned copied,
+ 				  struct page *page)
+ {
+-	int i_size_changed = 0;
+ 	int ret;
+ 
+ 	ret = ext4_write_inline_data_end(inode, pos, len, copied, page);
+@@ -950,10 +956,8 @@ int ext4_da_write_inline_data_end(struct
+ 	 * But it's important to update i_size while still holding page lock:
+ 	 * page writeout could otherwise come in and zero beyond i_size.
+ 	 */
+-	if (pos+copied > inode->i_size) {
++	if (pos+copied > inode->i_size)
+ 		i_size_write(inode, pos+copied);
+-		i_size_changed = 1;
+-	}
+ 	unlock_page(page);
+ 	page_cache_release(page);
+ 
+@@ -963,8 +967,7 @@ int ext4_da_write_inline_data_end(struct
+ 	 * ordering of page lock and transaction start for journaling
+ 	 * filesystems.
+ 	 */
+-	if (i_size_changed)
+-		mark_inode_dirty(inode);
++	mark_inode_dirty(inode);
+ 
+ 	return copied;
  }
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -1164,9 +1164,10 @@ static int ext4_write_end(struct file *f
+ 	loff_t old_size = inode->i_size;
+ 	int ret = 0, ret2;
+ 	int i_size_changed = 0;
++	int inline_data = ext4_has_inline_data(inode);
  
+ 	trace_ext4_write_end(inode, pos, len, copied);
+-	if (ext4_has_inline_data(inode)) {
++	if (inline_data) {
+ 		ret = ext4_write_inline_data_end(inode, pos, len,
+ 						 copied, page);
+ 		if (ret < 0) {
+@@ -1194,7 +1195,7 @@ static int ext4_write_end(struct file *f
+ 	 * ordering of page lock and transaction start for journaling
+ 	 * filesystems.
+ 	 */
+-	if (i_size_changed)
++	if (i_size_changed || inline_data)
+ 		ext4_mark_inode_dirty(handle, inode);
  
---- a/fs/squashfs/squashfs_fs.h
-+++ b/fs/squashfs/squashfs_fs.h
-@@ -129,6 +129,12 @@
+ 	if (pos + len > inode->i_size && ext4_can_truncate(inode))
+@@ -1268,6 +1269,7 @@ static int ext4_journalled_write_end(str
+ 	int partial = 0;
+ 	unsigned from, to;
+ 	int size_changed = 0;
++	int inline_data = ext4_has_inline_data(inode);
  
- #define SQUASHFS_COMPRESSED_BLOCK(B)	(!((B) & SQUASHFS_COMPRESSED_BIT_BLOCK))
+ 	trace_ext4_journalled_write_end(inode, pos, len, copied);
+ 	from = pos & (PAGE_CACHE_SIZE - 1);
+@@ -1275,7 +1277,7 @@ static int ext4_journalled_write_end(str
  
-+static inline int squashfs_block_size(__le32 raw)
-+{
-+	u32 size = le32_to_cpu(raw);
-+	return (size >> 25) ? -EIO : size;
-+}
-+
- /*
-  * Inode number ops.  Inodes consist of a compressed block number, and an
-  * uncompressed offset within that block
+ 	BUG_ON(!ext4_handle_valid(handle));
+ 
+-	if (ext4_has_inline_data(inode)) {
++	if (inline_data) {
+ 		ret = ext4_write_inline_data_end(inode, pos, len,
+ 						 copied, page);
+ 		if (ret < 0) {
+@@ -1306,7 +1308,7 @@ static int ext4_journalled_write_end(str
+ 	if (old_size < pos)
+ 		pagecache_isize_extended(inode, old_size, pos);
+ 
+-	if (size_changed) {
++	if (size_changed || inline_data) {
+ 		ret2 = ext4_mark_inode_dirty(handle, inode);
+ 		if (!ret)
+ 			ret = ret2;
+@@ -1804,11 +1806,7 @@ static int __ext4_journalled_writepage(s
+ 	}
+ 
+ 	if (inline_data) {
+-		BUFFER_TRACE(inode_bh, "get write access");
+-		ret = ext4_journal_get_write_access(handle, inode_bh);
+-
+-		err = ext4_handle_dirty_metadata(handle, inode, inode_bh);
+-
++		ret = ext4_mark_inode_dirty(handle, inode);
+ 	} else {
+ 		ret = ext4_walk_page_buffers(handle, page_bufs, 0, len, NULL,
+ 					     do_journal_get_write_access);
 
 
