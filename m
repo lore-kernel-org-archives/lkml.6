@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B1EFC4646D
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:11:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE268C4646D
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:11:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C82052177A
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:11:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C82052177A
+	by mail.kernel.org (Postfix) with ESMTP id 81CCF2177A
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:11:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81CCF2177A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389225AbeHDLLg (ORCPT
+        id S2389238AbeHDLLj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 07:11:36 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50264 "EHLO
+        Sat, 4 Aug 2018 07:11:39 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50274 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732670AbeHDLLf (ORCPT
+        with ESMTP id S1733176AbeHDLLi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 07:11:35 -0400
+        Sat, 4 Aug 2018 07:11:38 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1A8D0BC6;
-        Sat,  4 Aug 2018 09:11:34 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 257FDBC6;
+        Sat,  4 Aug 2018 09:11:37 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 102/124] ipv4: remove BUG_ON() from fib_compute_spec_dst
-Date:   Sat,  4 Aug 2018 11:01:31 +0200
-Message-Id: <20180804082706.290364095@linuxfoundation.org>
+        stable@vger.kernel.org, Damien Le Moal <damien.lemoal@wdc.com>,
+        Hannes Reinecke <hare@suse.com>, Tejun Heo <tj@kernel.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.4 067/124] libata: Fix command retry decision
+Date:   Sat,  4 Aug 2018 11:00:56 +0200
+Message-Id: <20180804082705.032583095@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180804082702.434482435@linuxfoundation.org>
 References: <20180804082702.434482435@linuxfoundation.org>
@@ -51,48 +51,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
+From: Damien Le Moal <damien.lemoal@wdc.com>
 
-[ Upstream commit 9fc12023d6f51551d6ca9ed7e02ecc19d79caf17 ]
+[ Upstream commit 804689ad2d9b66d0d3920b48cf05881049d44589 ]
 
-Remove BUG_ON() from fib_compute_spec_dst routine and check
-in_dev pointer during flowi4 data structure initialization.
-fib_compute_spec_dst routine can be run concurrently with device removal
-where ip_ptr net_device pointer is set to NULL. This can happen
-if userspace enables pkt info on UDP rx socket and the device
-is removed while traffic is flowing
+For failed commands with valid sense data (e.g. NCQ commands),
+scsi_check_sense() is used in ata_analyze_tf() to determine if the
+command can be retried. In such case, rely on this decision and ignore
+the command error mask based decision done in ata_worth_retry().
 
-Fixes: 35ebf65e851c ("ipv4: Create and use fib_compute_spec_dst() helper")
-Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+This fixes useless retries of commands such as unaligned writes on zoned
+disks (TYPE_ZAC).
+
+Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+Reviewed-by: Hannes Reinecke <hare@suse.com>
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/fib_frontend.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/ata/libata-eh.c |   12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
---- a/net/ipv4/fib_frontend.c
-+++ b/net/ipv4/fib_frontend.c
-@@ -289,19 +289,19 @@ __be32 fib_compute_spec_dst(struct sk_bu
- 		return ip_hdr(skb)->daddr;
+--- a/drivers/ata/libata-eh.c
++++ b/drivers/ata/libata-eh.c
+@@ -2198,12 +2198,16 @@ static void ata_eh_link_autopsy(struct a
+ 		if (qc->err_mask & ~AC_ERR_OTHER)
+ 			qc->err_mask &= ~AC_ERR_OTHER;
  
- 	in_dev = __in_dev_get_rcu(dev);
--	BUG_ON(!in_dev);
+-		/* SENSE_VALID trumps dev/unknown error and revalidation */
++		/*
++		 * SENSE_VALID trumps dev/unknown error and revalidation. Upper
++		 * layers will determine whether the command is worth retrying
++		 * based on the sense data and device class/type. Otherwise,
++		 * determine directly if the command is worth retrying using its
++		 * error mask and flags.
++		 */
+ 		if (qc->flags & ATA_QCFLAG_SENSE_VALID)
+ 			qc->err_mask &= ~(AC_ERR_DEV | AC_ERR_OTHER);
+-
+-		/* determine whether the command is worth retrying */
+-		if (ata_eh_worth_retry(qc))
++		else if (ata_eh_worth_retry(qc))
+ 			qc->flags |= ATA_QCFLAG_RETRY;
  
- 	net = dev_net(dev);
- 
- 	scope = RT_SCOPE_UNIVERSE;
- 	if (!ipv4_is_zeronet(ip_hdr(skb)->saddr)) {
-+		bool vmark = in_dev && IN_DEV_SRC_VMARK(in_dev);
- 		struct flowi4 fl4 = {
- 			.flowi4_iif = LOOPBACK_IFINDEX,
- 			.flowi4_oif = l3mdev_master_ifindex_rcu(dev),
- 			.daddr = ip_hdr(skb)->saddr,
- 			.flowi4_tos = RT_TOS(ip_hdr(skb)->tos),
- 			.flowi4_scope = scope,
--			.flowi4_mark = IN_DEV_SRC_VMARK(in_dev) ? skb->mark : 0,
-+			.flowi4_mark = vmark ? skb->mark : 0,
- 		};
- 		if (!fib_lookup(net, &fl4, &res, 0))
- 			return FIB_RES_PREFSRC(net, res);
+ 		/* accumulate error info */
 
 
