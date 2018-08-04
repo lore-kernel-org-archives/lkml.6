@@ -6,82 +6,134 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86509C4646F
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 16:40:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FCEDC4646F
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 16:42:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4695D2178F
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 16:40:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4695D2178F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id BCFD02178F
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 16:42:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCFD02178F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cambridgegreys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729684AbeHDSlx (ORCPT
+        id S1729666AbeHDSnp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 14:41:53 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:41778 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727877AbeHDSlw (ORCPT
+        Sat, 4 Aug 2018 14:43:45 -0400
+Received: from ivanoab5.miniserver.com ([78.31.111.25]:55888 "EHLO
+        www.kot-begemot.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728054AbeHDSno (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 14:41:52 -0400
-Received: from p4fea5a5a.dip0.t-ipconnect.de ([79.234.90.90] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1flzbR-0007fF-HM; Sat, 04 Aug 2018 18:40:29 +0200
-Date:   Sat, 4 Aug 2018 18:40:26 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Palmer Dabbelt <palmer@dabbelt.com>
-cc:     Christoph Hellwig <hch@lst.de>, marc.zyngier@arm.com,
-        jason@lakedaemon.net, robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, aou@eecs.berkeley.edu,
-        linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-        shorne@gmail.com
-Subject: Re: [PATCH 3/6] irqchip: RISC-V Local Interrupt Controller Driver
-In-Reply-To: <mhng-f79111da-51d4-483e-86ce-ff0a41c3b5bc@palmer-si-x1c4>
-Message-ID: <alpine.DEB.2.21.1808041837130.1658@nanos.tec.linutronix.de>
-References: <mhng-f79111da-51d4-483e-86ce-ff0a41c3b5bc@palmer-si-x1c4>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Sat, 4 Aug 2018 14:43:44 -0400
+X-Greylist: delayed 2194 seconds by postgrey-1.27 at vger.kernel.org; Sat, 04 Aug 2018 14:43:44 EDT
+Received: from tun5.smaug.kot-begemot.co.uk ([192.168.18.6] helo=smaug.kot-begemot.co.uk)
+        by www.kot-begemot.co.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <anton.ivanov@cambridgegreys.com>)
+        id 1flz42-0007ju-L9; Sat, 04 Aug 2018 16:05:58 +0000
+Received: from ppp-94-68-121-61.home.otenet.gr ([94.68.121.61] helo=[192.168.1.158])
+        by smaug.kot-begemot.co.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <anton.ivanov@cambridgegreys.com>)
+        id 1flz42-0003Jl-4R; Sat, 04 Aug 2018 17:05:58 +0100
+Subject: Re: [PATCH] um: NULL check before kfree is not needed
+To:     YueHaibing <yuehaibing@huawei.com>, jdike@addtoit.com,
+        richard@nod.at, christophe.jaillet@wanadoo.fr,
+        keescook@chromium.org
+Cc:     linux-um@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20180803063911.23384-1-yuehaibing@huawei.com>
+From:   Anton Ivanov <anton.ivanov@cambridgegreys.com>
+Message-ID: <3b72e9da-c4ac-cee0-1833-7c2b346fcc28@cambridgegreys.com>
+Date:   Sat, 4 Aug 2018 17:05:28 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+In-Reply-To: <20180803063911.23384-1-yuehaibing@huawei.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Clacks-Overhead: GNU Terry Pratchett
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 3 Aug 2018, Palmer Dabbelt wrote:
-> On Wed, 01 Aug 2018 11:55:06 PDT (-0700), tglx@linutronix.de wrote:
-> > Is there some high level documentation about the design (or the lack of) or
-> > can someone give a concise explanation how this stuff is supposed to work?
-> As part of our original push to upstream the arch code it was suggested that
-> we move this out to an irqchip driver, but after actually attempting to do
-> that it appears that the mechanics of doing so have overshadowed the
-> complexity of the actual interrupt handling code, which is only a dozen or so
-> instructions.  In retrospect this is just another instance of me not knowing
-> what I'm doing, sorry!
-> 
-> I like Christoph's approach of merging the ISA-mandated interrupt handling
-> code back into arch/riscv, as it's much saner that way.  The one big headache
-> is that because we special-cased timer interrupts in the ISA they now
-> disappear from the standard Linux mechanisms for handling these.
-> 
-> That said, I'd rather have this warts and all then wait around for something
-> perfect, as maintaining a dozen or so out of tree drivers that are tightly
-> coupled to the core arch code has proven to be a mess.  If we can get the code
-> upstream then everyone will be on the same page so we can work on actually
-> improving this, as opposed to just spinning our wheels keeping this big mess
-> alive.
-> 
-> Hopefully that makes some amount of sense...
+On 03/08/18 07:39, YueHaibing wrote:
 
-Thanks for the detailed explanation. It's what I extracted from the
-documents to which Christoph pointed me. And as I said in the other thread
-it does not realiy make sense to force that low level mechanism into an irq
-chip. That would be overkill for no real value.
+> kfree(NULL) is safe,so this removes NULL check before freeing the mem
+>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
+>   arch/um/drivers/vector_kern.c | 15 +++++----------
+>   arch/um/drivers/vector_user.c |  6 ++----
+>   arch/um/kernel/irq.c          |  3 +--
+>   3 files changed, 8 insertions(+), 16 deletions(-)
+>
+> diff --git a/arch/um/drivers/vector_kern.c b/arch/um/drivers/vector_kern.c
+> index 50ee3bb..c84133c 100644
+> --- a/arch/um/drivers/vector_kern.c
+> +++ b/arch/um/drivers/vector_kern.c
+> @@ -1118,16 +1118,11 @@ static int vector_net_close(struct net_device *dev)
+>   		os_close_file(vp->fds->tx_fd);
+>   		vp->fds->tx_fd = -1;
+>   	}
+> -	if (vp->bpf != NULL)
+> -		kfree(vp->bpf);
+> -	if (vp->fds->remote_addr != NULL)
+> -		kfree(vp->fds->remote_addr);
+> -	if (vp->transport_data != NULL)
+> -		kfree(vp->transport_data);
+> -	if (vp->header_rxbuffer != NULL)
+> -		kfree(vp->header_rxbuffer);
+> -	if (vp->header_txbuffer != NULL)
+> -		kfree(vp->header_txbuffer);
+> +	kfree(vp->bpf);
+> +	kfree(vp->fds->remote_addr);
+> +	kfree(vp->transport_data);
+> +	kfree(vp->header_rxbuffer);
+> +	kfree(vp->header_txbuffer);
+>   	if (vp->rx_queue != NULL)
+>   		destroy_queue(vp->rx_queue);
+>   	if (vp->tx_queue != NULL)
+> diff --git a/arch/um/drivers/vector_user.c b/arch/um/drivers/vector_user.c
+> index 4d6a78e..3d8cdbd 100644
+> --- a/arch/um/drivers/vector_user.c
+> +++ b/arch/um/drivers/vector_user.c
+> @@ -267,8 +267,7 @@ static struct vector_fds *user_init_raw_fds(struct arglist *ifspec)
+>   		os_close_file(rxfd);
+>   	if (txfd >= 0)
+>   		os_close_file(txfd);
+> -	if (result != NULL)
+> -		kfree(result);
+> +	kfree(result);
+>   	return NULL;
+>   }
+>   
+> @@ -434,8 +433,7 @@ static struct vector_fds *user_init_socket_fds(struct arglist *ifspec, int id)
+>   	if (fd >= 0)
+>   		os_close_file(fd);
+>   	if (result != NULL) {
+> -		if (result->remote_addr != NULL)
+> -			kfree(result->remote_addr);
+> +		kfree(result->remote_addr);
+>   		kfree(result);
+>   	}
+>   	return NULL;
+> diff --git a/arch/um/kernel/irq.c b/arch/um/kernel/irq.c
+> index 6b7f382..8360fa3 100644
+> --- a/arch/um/kernel/irq.c
+> +++ b/arch/um/kernel/irq.c
+> @@ -244,8 +244,7 @@ static void garbage_collect_irq_entries(void)
+>   			to_free = NULL;
+>   		}
+>   		walk = walk->next;
+> -		if (to_free != NULL)
+> -			kfree(to_free);
+> +		kfree(to_free);
+>   	}
+>   }
+>   
+kfree in both slab and slob check for NULLs before freeing so this is 
+correct. Thanks for noticing.
 
-Thanks,
+Richard, please apply,
 
-	tglx
-
+A.
