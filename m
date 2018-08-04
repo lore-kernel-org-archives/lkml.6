@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30960C4646D
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:09:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28E88C4646F
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:09:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7E942177A
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:09:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7E942177A
+	by mail.kernel.org (Postfix) with ESMTP id D805F2177A
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:09:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D805F2177A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388814AbeHDLJt (ORCPT
+        id S2388829AbeHDLJx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 07:09:49 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49890 "EHLO
+        Sat, 4 Aug 2018 07:09:53 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49900 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726855AbeHDLJt (ORCPT
+        with ESMTP id S1732962AbeHDLJw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 07:09:49 -0400
+        Sat, 4 Aug 2018 07:09:52 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 10F1189C;
-        Sat,  4 Aug 2018 09:09:49 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 163C089C;
+        Sat,  4 Aug 2018 09:09:52 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ganapathi Bhat <gbhat@marvell.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
+        Yunlei He <heyunlei@huawei.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 031/124] mwifiex: handle race during mwifiex_usb_disconnect
-Date:   Sat,  4 Aug 2018 11:00:20 +0200
-Message-Id: <20180804082703.604065023@linuxfoundation.org>
+Subject: [PATCH 4.4 022/124] f2fs: fix to dont trigger writeback during recovery
+Date:   Sat,  4 Aug 2018 11:00:11 +0200
+Message-Id: <20180804082703.267410743@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180804082702.434482435@linuxfoundation.org>
 References: <20180804082702.434482435@linuxfoundation.org>
@@ -51,47 +52,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ganapathi Bhat <gbhat@marvell.com>
+From: Chao Yu <yuchao0@huawei.com>
 
-[ Upstream commit b817047ae70c0bd67b677b65d0d69d72cd6e9728 ]
+[ Upstream commit 64c74a7ab505ea40d1b3e5d02735ecab08ae1b14 ]
 
-Race condition is observed during rmmod of mwifiex_usb:
+- f2fs_fill_super
+ - recover_fsync_data
+  - recover_data
+   - del_fsync_inode
+    - iput
+     - iput_final
+      - write_inode_now
+       - f2fs_write_inode
+        - f2fs_balance_fs
+         - f2fs_balance_fs_bg
+          - sync_dirty_inodes
 
-1. The rmmod thread will call mwifiex_usb_disconnect(), download
-   SHUTDOWN command and do wait_event_interruptible_timeout(),
-   waiting for response.
+With data_flush mount option, during recovery, in order to avoid entering
+above writeback flow, let's detect recovery status and do skip in
+f2fs_balance_fs_bg.
 
-2. The main thread will handle the response and will do a
-   wake_up_interruptible(), unblocking rmmod thread.
-
-3. On getting unblocked, rmmod thread  will make rx_cmd.urb = NULL in
-   mwifiex_usb_free().
-
-4. The main thread will try to resubmit rx_cmd.urb in
-   mwifiex_usb_submit_rx_urb(), which is NULL.
-
-To fix, wait for main thread to complete before calling
-mwifiex_usb_free().
-
-Signed-off-by: Ganapathi Bhat <gbhat@marvell.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Yunlei He <heyunlei@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/mwifiex/usb.c |    3 +++
+ fs/f2fs/segment.c |    3 +++
  1 file changed, 3 insertions(+)
 
---- a/drivers/net/wireless/mwifiex/usb.c
-+++ b/drivers/net/wireless/mwifiex/usb.c
-@@ -624,6 +624,9 @@ static void mwifiex_usb_disconnect(struc
- 					 MWIFIEX_FUNC_SHUTDOWN);
- 	}
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -295,6 +295,9 @@ void f2fs_balance_fs(struct f2fs_sb_info
  
-+	if (adapter->workqueue)
-+		flush_workqueue(adapter->workqueue);
+ void f2fs_balance_fs_bg(struct f2fs_sb_info *sbi)
+ {
++	if (unlikely(is_sbi_flag_set(sbi, SBI_POR_DOING)))
++		return;
 +
- 	mwifiex_usb_free(card);
- 
- 	mwifiex_dbg(adapter, FATAL,
+ 	/* try to shrink extent cache when there is no enough memory */
+ 	if (!available_free_memory(sbi, EXTENT_CACHE))
+ 		f2fs_shrink_extent_tree(sbi, EXTENT_CACHE_SHRINK_NUMBER);
 
 
