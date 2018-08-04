@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 882B8C4646F
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:04:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D595C4646D
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:04:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4034C217BF
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:04:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4034C217BF
+	by mail.kernel.org (Postfix) with ESMTP id E3B91217C6
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:04:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3B91217C6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732664AbeHDLE3 (ORCPT
+        id S1732678AbeHDLEd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 07:04:29 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48578 "EHLO
+        Sat, 4 Aug 2018 07:04:33 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48594 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726469AbeHDLE3 (ORCPT
+        with ESMTP id S1726469AbeHDLEc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 07:04:29 -0400
+        Sat, 4 Aug 2018 07:04:32 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E755889C;
-        Sat,  4 Aug 2018 09:04:30 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 376A9BB3;
+        Sat,  4 Aug 2018 09:04:34 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Ewan D. Milne" <emilne@redhat.com>,
-        Tony Battersby <tonyb@cybernetics.com>,
-        Bart Van Assche <bart.vanassche@wdc.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.14 23/23] scsi: sg: fix minor memory leak in error path
-Date:   Sat,  4 Aug 2018 11:01:14 +0200
-Message-Id: <20180804082645.964423831@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 03/23] ipv4: frags: handle possible skb truesize change
+Date:   Sat,  4 Aug 2018 11:00:54 +0200
+Message-Id: <20180804082644.086821253@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180804082643.641435547@linuxfoundation.org>
 References: <20180804082643.641435547@linuxfoundation.org>
@@ -52,33 +50,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tony Battersby <tonyb@cybernetics.com>
+From: Eric Dumazet <edumazet@google.com>
 
-commit c170e5a8d222537e98aa8d4fddb667ff7a2ee114 upstream.
+[ Upstream commit 4672694bd4f1aebdab0ad763ae4716e89cb15221 ]
 
-Fix a minor memory leak when there is an error opening a /dev/sg device.
+ip_frag_queue() might call pskb_pull() on one skb that
+is already in the fragment queue.
 
-Fixes: cc833acbee9d ("sg: O_EXCL and other lock handling")
-Cc: <stable@vger.kernel.org>
-Reviewed-by: Ewan D. Milne <emilne@redhat.com>
-Signed-off-by: Tony Battersby <tonyb@cybernetics.com>
-Reviewed-by: Bart Van Assche <bart.vanassche@wdc.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+We need to take care of possible truesize change, or we
+might have an imbalance of the netns frags memory usage.
+
+IPv6 is immune to this bug, because RFC5722, Section 4,
+amended by Errata ID 3089 states :
+
+  When reassembling an IPv6 datagram, if
+  one or more its constituent fragments is determined to be an
+  overlapping fragment, the entire datagram (and any constituent
+  fragments) MUST be silently discarded.
+
+Fixes: 158f323b9868 ("net: adjust skb->truesize in pskb_expand_head()")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/scsi/sg.c |    1 +
- 1 file changed, 1 insertion(+)
+ net/ipv4/ip_fragment.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/drivers/scsi/sg.c
-+++ b/drivers/scsi/sg.c
-@@ -2186,6 +2186,7 @@ sg_add_sfp(Sg_device * sdp)
- 	write_lock_irqsave(&sdp->sfd_lock, iflags);
- 	if (atomic_read(&sdp->detaching)) {
- 		write_unlock_irqrestore(&sdp->sfd_lock, iflags);
-+		kfree(sfp);
- 		return ERR_PTR(-ENODEV);
- 	}
- 	list_add_tail(&sfp->sfd_siblings, &sdp->sfds);
+--- a/net/ipv4/ip_fragment.c
++++ b/net/ipv4/ip_fragment.c
+@@ -447,11 +447,16 @@ found:
+ 		int i = end - FRAG_CB(next)->offset; /* overlap is 'i' bytes */
+ 
+ 		if (i < next->len) {
++			int delta = -next->truesize;
++
+ 			/* Eat head of the next overlapped fragment
+ 			 * and leave the loop. The next ones cannot overlap.
+ 			 */
+ 			if (!pskb_pull(next, i))
+ 				goto err;
++			delta += next->truesize;
++			if (delta)
++				add_frag_mem_limit(qp->q.net, delta);
+ 			FRAG_CB(next)->offset += i;
+ 			qp->q.meat -= i;
+ 			if (next->ip_summed != CHECKSUM_UNNECESSARY)
 
 
