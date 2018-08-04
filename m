@@ -2,112 +2,112 @@ Return-Path: <SRS0=4jry=KT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CD21C4646D
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 14:50:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78474C4646D
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 15:05:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E6FD2186C
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 14:50:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E6FD2186C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rowland.harvard.edu
+	by mail.kernel.org (Postfix) with ESMTP id 1F116217CE
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 15:05:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="CvvY/pM4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F116217CE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729716AbeHDQvM (ORCPT
+        id S1728983AbeHDRFx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 12:51:12 -0400
-Received: from netrider.rowland.org ([192.131.102.5]:40987 "HELO
-        netrider.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1727832AbeHDQvM (ORCPT
+        Sat, 4 Aug 2018 13:05:53 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:35164 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727961AbeHDRFw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 12:51:12 -0400
-Received: (qmail 26243 invoked by uid 500); 4 Aug 2018 10:50:15 -0400
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 4 Aug 2018 10:50:15 -0400
-Date:   Sat, 4 Aug 2018 10:50:15 -0400 (EDT)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@netrider.rowland.org
-To:     Guenter Roeck <linux@roeck-us.net>
-cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] USB: OHCI: ohci-sm501: complete URBs in BH context
-In-Reply-To: <1533355279-26725-1-git-send-email-linux@roeck-us.net>
-Message-ID: <Pine.LNX.4.44L0.1808041047220.25853-100000@netrider.rowland.org>
+        Sat, 4 Aug 2018 13:05:52 -0400
+Received: by mail-pg1-f193.google.com with SMTP id e6-v6so4232854pgv.2
+        for <linux-kernel@vger.kernel.org>; Sat, 04 Aug 2018 08:04:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=PUzmStxQVh3GuD1nWMsR8PqaxGgEFgEUHWgPmJ1e1j8=;
+        b=CvvY/pM4z+W8XnpVIGpjhpTZLhftOCBotjPyPkjVyefh2rD0qS/5OMlPg/6bYBH+g2
+         9zWoVPBNx7B0h80n5uerf0GBFDA2fvBq6AKUSqsRAbXYlJm5za/3zjnE3AOW5veN7Swh
+         EjQU5/X3ah7eFucZpqaYKQ5dOwUiQOAYwON88=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=PUzmStxQVh3GuD1nWMsR8PqaxGgEFgEUHWgPmJ1e1j8=;
+        b=Fg7AlhlOEhDkCdllwZXbo68HgsKpCWVYtn2QZJ7V3EMCEMD5muS0G0JMdTi5vqjkKj
+         lKyPVMm3sU6tr0fJoTToYbTWVgtYj19DrLeUIyWRPe2J/vnhac5wjGPNRc1CSzKPCm2p
+         8J627Gzl6tGMTXnQSl5qxOGXvcFR88xXY9PX2OE0GbVnX8a5Ik7IzUdi30xKy+NeOdQS
+         iG5lgEmFfXhckJPOlzoHm8y1p6rP7pwl3i0DGFuZ6vWB85mVvL9q8pQqYIEr1O1cev4y
+         mOwXJvolAxtLZJD8mb52V5+bRafyi4AN+wOKrCjNli0U6Ehn/0rFV3kD3SGW6hVqIjAF
+         CUbQ==
+X-Gm-Message-State: AOUpUlEaa2Xz/GxAyzL7Y5Rkol/MeCSa/ZtcJYwofQZ23/rCdeaZzcDc
+        aKyfpQBlHaFRfXSJaofznQLh3g==
+X-Google-Smtp-Source: AAOMgpd4ULIsLjrSBsIEItfYVOOjGBzTK53OcRmxdrVXgboPoDUN1lAxBRxjb9ALQRFpiMtoNwDBJg==
+X-Received: by 2002:a62:ea05:: with SMTP id t5-v6mr9373793pfh.228.1533395093846;
+        Sat, 04 Aug 2018 08:04:53 -0700 (PDT)
+Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
+        by smtp.gmail.com with ESMTPSA id v23-v6sm10027030pfm.80.2018.08.04.08.04.52
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 04 Aug 2018 08:04:52 -0700 (PDT)
+Date:   Sat, 4 Aug 2018 08:04:51 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, Bart Massey <bart.massey@gmail.com>,
+        Dave Kleikamp <shaggy@kernel.org>,
+        jfs-discussion@lists.sourceforge.net,
+        Kees Cook <keescook@chromium.org>, stable@vger.kernel.org
+Subject: [GIT PULL] usercopy fix for v4.18-rc8
+Message-ID: <20180804150451.GA31926@beast>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 3 Aug 2018, Guenter Roeck wrote:
+Hi,
 
-> Testing an USB drive connected to ohci-sm501 results in a large number
-> of runtime warnings.
-> 
-> WARNING: CPU: 0 PID: 0 at ./include/linux/dma-mapping.h:541
-> hcd_buffer_free+0x148/0x178
-> Modules linked in:
-> 
-> CPU: 0 PID: 0 Comm: swapper Not tainted 4.18.0-rc7-00014-g7ec386e4c991-dirty
-> PC is at hcd_buffer_free+0x148/0x178
-> PR is at hcd_buffer_free+0x66/0x178
-> PC  : 8c26cbb0 SP  : 8c481da8 SR  : 400080f1
-> TEA : c00c8fe0
-> R0  : 000000f0 R1  : 000000f0 R2  : 8f9bb890 R3  : 00000000
-> R4  : 8f9c8800 R5  : 00001004 R6  : b07c6000 R7  : 007c6000
-> R8  : 00001004 R9  : 8f9bb814 R10 : 8c388104 R11 : 007c6000
-> R12 : b07c6000 R13 : 8f875680 R14 : 00000000
-> MACH: 000002fe MACL: 0000017c GBR : 00000000 PR  : 8c26cace
-> 
-> Call trace:
->  [<(ptrval)>] usb_hcd_unmap_urb_for_dma+0xf4/0x13c
->  [<(ptrval)>] arch_local_save_flags+0x0/0x8
->  [<(ptrval)>] __usb_hcd_giveback_urb+0x2e/0xdc
->  [<(ptrval)>] arch_local_save_flags+0x0/0x8
->  [<(ptrval)>] finish_urb+0x8a/0x164
->  [<(ptrval)>] arch_local_save_flags+0x0/0x8
->  [<(ptrval)>] printk+0x0/0x48
->  [<(ptrval)>] ohci_work.part.11+0x150/0x41c
->  [<(ptrval)>] td_done.isra.4+0x0/0x11c
->  [<(ptrval)>] vprintk_default+0x14/0x20
->  [<(ptrval)>] arch_local_save_flags+0x0/0x8
->  [<(ptrval)>] ohci_irq+0x20c/0x314
->  [<(ptrval)>] usb_hcd_irq+0x16/0x28
-> 
-> Code analysis shows that interrupts are indeed disabled in ohci_irq().
-> Handle the situation by setting the HCD_BH flag in the ohci-sm501 driver.
-> With this flag set, urbs are released in a tasklet and not by the
-> interrupt handler.
-> 
-> Fixes: f54aab6ebcecd ("usb: ohci-sm501 driver")
-> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Please pull this usercopy fix for v4.18-rc8. Bart Massey discovered that
+the usercopy whitelist for JFS was incomplete: the inline inode data may
+intentionally "overflow" into the neighboring "extended area", so the
+size of the whitelist needed to be raised to include the neighboring
+field.
 
-Unfortunately, one must not simply turn on this flag.  Doing so will
-violate some of the documented requirements for scheduling of periodic
-transfers.  Significantly deeper changes to the OHCI driver are
-necessary before the flag is set.
+Thanks!
 
-Alan Stern
+-Kees
 
-> ---
->  drivers/usb/host/ohci-sm501.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/host/ohci-sm501.c b/drivers/usb/host/ohci-sm501.c
-> index c9233cddf9a2..eeb5b3137cf2 100644
-> --- a/drivers/usb/host/ohci-sm501.c
-> +++ b/drivers/usb/host/ohci-sm501.c
-> @@ -49,7 +49,7 @@ static const struct hc_driver ohci_sm501_hc_driver = {
->  	 * generic hardware linkage
->  	 */
->  	.irq =			ohci_irq,
-> -	.flags =		HCD_USB11 | HCD_MEMORY | HCD_LOCAL_MEM,
-> +	.flags =		HCD_USB11 | HCD_MEMORY | HCD_LOCAL_MEM | HCD_BH,
->  
->  	/*
->  	 * basic lifecycle operations
-> 
+The following changes since commit 7daf201d7fe8334e2d2364d4e8ed3394ec9af819:
 
+  Linux 4.18-rc2 (2018-06-24 20:54:29 +0800)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git tags/usercopy-fix-v4.18-rc8
+
+for you to fetch changes up to 961b33c244e5ba1543ae26270a1ba29f29c2db83:
+
+  jfs: Fix usercopy whitelist for inline inode data (2018-08-04 07:53:46 -0700)
+
+----------------------------------------------------------------
+- Fix JFS usercopy whitelist (it needed to cover neighboring field too) for
+  "overflow" inline inode data.
+
+----------------------------------------------------------------
+Kees Cook (1):
+      jfs: Fix usercopy whitelist for inline inode data
+
+ fs/jfs/jfs_dinode.h | 7 +++++++
+ fs/jfs/jfs_incore.h | 1 +
+ fs/jfs/super.c      | 3 +--
+ 3 files changed, 9 insertions(+), 2 deletions(-)
+
+-- 
+Kees Cook
+Pixel Security
