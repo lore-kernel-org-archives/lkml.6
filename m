@@ -3,49 +3,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9654DC4646D
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 21:26:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 536C1C4646D
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 21:26:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 492BA217CB
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 21:26:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 492BA217CB
+	by mail.kernel.org (Postfix) with ESMTP id 153AA217CB
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 21:26:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 153AA217CB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729707AbeHDX2T (ORCPT
+        id S1729727AbeHDX2y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 19:28:19 -0400
-Received: from sauhun.de ([88.99.104.3]:59098 "EHLO pokefinder.org"
+        Sat, 4 Aug 2018 19:28:54 -0400
+Received: from sauhun.de ([88.99.104.3]:59110 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728882AbeHDX2T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 19:28:19 -0400
+        id S1728882AbeHDX2y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 4 Aug 2018 19:28:54 -0400
 Received: from localhost (p54B337AD.dip0.t-ipconnect.de [84.179.55.173])
-        by pokefinder.org (Postfix) with ESMTPSA id DAC5B684EA9;
-        Sat,  4 Aug 2018 23:26:16 +0200 (CEST)
-Date:   Sat, 4 Aug 2018 23:26:16 +0200
+        by pokefinder.org (Postfix) with ESMTPSA id C312A684EB1;
+        Sat,  4 Aug 2018 23:26:52 +0200 (CEST)
+Date:   Sat, 4 Aug 2018 23:26:52 +0200
 From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-i2c <linux-i2c@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        linux-arm-msm@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
-        linux-soc@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 00/12] i2c: quirks: add zero length checks and update
- drivers
-Message-ID: <20180804212616.7pk7aqbg2vadkewg@ninjato>
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/12] i2c: quirks: add zero length checks
+Message-ID: <20180804212652.xe6q2brc74pijvi6@ninjato>
 References: <20180723202617.15230-1-wsa+renesas@sang-engineering.com>
- <CAHp75VcAzAtV0+Eu8TGPnrxSpAnPOXU9mvpeO1SaoBO3Rx=wRw@mail.gmail.com>
+ <20180723202617.15230-2-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="y3tkl3dnffqg37zd"
+        protocol="application/pgp-signature"; boundary="ss5syh2dz7ow7lq7"
 Content-Disposition: inline
-In-Reply-To: <CAHp75VcAzAtV0+Eu8TGPnrxSpAnPOXU9mvpeO1SaoBO3Rx=wRw@mail.gmail.com>
+In-Reply-To: <20180723202617.15230-2-wsa+renesas@sang-engineering.com>
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -53,38 +46,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---y3tkl3dnffqg37zd
+--ss5syh2dz7ow7lq7
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-
-> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+On Mon, Jul 23, 2018 at 10:26:05PM +0200, Wolfram Sang wrote:
+> Some adapters do not support a message length of 0. Add this as a quirk
+> so drivers don't have to open code it.
 >=20
-> for patches 1 and 2.
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Thanks, Andy. If you could reply with that to the individual patches,
-then patchwork picks up the tags for me making my life a little easier.
+Applied to for-next, thanks!
 
 
---y3tkl3dnffqg37zd
+--ss5syh2dz7ow7lq7
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAltmGfgACgkQFA3kzBSg
-KbYVRg/+OwlL7SdGI6MZQ2jRp7gw3gDHkg0ZF8760xcD+mpJoaTy04WJdd0SVBx8
-8QS5GKVQz1tMrl5ZXddhBEPvzb+bKqNMlLXT78LrxIkQfDNR86HYu6kyBol4kTWX
-wo7M1LHvBPc1HqUU8Uclr+l3nzFdc56IqyTwmZ/7zP94ygGy2EhEw0x+NWzQ+o+d
-p5iTyMpDRAPPDpMIctQTAjMHo8QHQW5eLQ18C0+SFa316Dp3H6tIRdbw/Lg1syc8
-VMV3Gg5h8rtOxCP13glLimeX2y+7m9KEVD/nmuAv/HjF0DWmRNAGIUPnxa+5+tgU
-ya4SfhoeyB3em9FYjAzpZ5Jlwhv72D31/pIpSkQcmuvoQASsqsWFs1Y2Dp9MnEzJ
-IE0pnAtkuIz8WtXyypdmNsqVop0luvwujut4jLFGiugpURZBn2v4W/+k+7EF7l/j
-pvLENgVQpmkNlcSgzeZa/XPy+JLIC/gQa+jDGea+x9bXvZllaDrx3hLJ23truc7p
-xSccpG+0wBn/EY1J3diYVPsBJ7YpPjR/H+3HP0biC6pIcsEh1BDJYhYn+XWcA1f7
-8Nyn3SMBDxQ5MIhtMrghlQuX200A6+NA6zIzZaSm2fN/MycrKd3O8Rek+LYjqxtX
-V3uypDH8e4JQfnqgGKlsFCnJOpOVEgiQ+5Ut9jZWVoitUl3lZ3I=
-=2ORJ
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAltmGhwACgkQFA3kzBSg
+KbYCuBAAqO909trDreplqkNEXwXpF+CJDdy0zwZ3jjlIrlCnnZ7xr5aYlOdS9uA2
+gyB7pL+rlbNHoQePk9suNfIkSAGiM0hm71ZoyoPVVU/o8jHRlT26UPVPXoB49LaK
+kOhgK5GdhaHWULjTczhwZzs97rrQnXXpfS/f4wl6RuwKUVX235zfPhgn/avJcC2M
+Y/GrPicQBenoRrmuZPPqmvlDL/T0LN0HhSF/ZvBYOQZnCMiY1DdmLiy9gwiiWBiy
+MgiHGiHDHbJ2GfvLfVrELXnId4gIQaPmCQ6ZZZep85xqS5rPxmvNtzzKZMb1NTK2
+lX6tBfG5ji9sx2u435Ha6CJh0KKVNLt6d5KAkRiEtQepCKb8WGw8skgx4jwOIhIs
+kYLRhRdba63NxM7ke2pi+TtBzq4pw7hmjJWbJO3402f67ulP4qttykTYEY/joB/E
++8IroXAHek2A3c7mcPKGNTv3uYu1Rt9pRUN5i99fDGEGQ2r8/ixZKdSA+7sJicXJ
+A2dd5vV+KcNtp9HiKzdGBa8PTU8etUu5hWKeOdstu2RT9PTrmNKm1yz5oKp8dxna
+DVe4x+b2fHDr+cxD0xvxLzvtFOQ6D/8halYL+0mCt4r5LRWJD8mMks8WlwPBiq0V
+qL25AHd8XNPh2uEcDbGIghh7D5qBRaHTdnI6bJN9qdttz686MMw=
+=KS6K
 -----END PGP SIGNATURE-----
 
---y3tkl3dnffqg37zd--
+--ss5syh2dz7ow7lq7--
