@@ -6,35 +6,37 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7D28C4646D
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:04:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97344C4646D
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:04:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92404217BF
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:04:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92404217BF
+	by mail.kernel.org (Postfix) with ESMTP id 5D068217BF
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:04:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D068217BF
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732588AbeHDLEO (ORCPT
+        id S1732606AbeHDLER (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 07:04:14 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48536 "EHLO
+        Sat, 4 Aug 2018 07:04:17 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48548 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727038AbeHDLEN (ORCPT
+        with ESMTP id S1729696AbeHDLEQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 07:04:13 -0400
+        Sat, 4 Aug 2018 07:04:16 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 96A37BB3;
-        Sat,  4 Aug 2018 09:04:15 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A8D08BB3;
+        Sat,  4 Aug 2018 09:04:18 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-        Kalle Valo <kvalo@codeaurora.org>
-Subject: [PATCH 4.14 19/23] iwlwifi: add more card IDs for 9000 series
-Date:   Sat,  4 Aug 2018 11:01:10 +0200
-Message-Id: <20180804082645.708278670@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        Jann Horn <jannh@google.com>, Florian Westphal <fw@strlen.de>,
+        Peter Oskolkov <posk@google.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 02/23] inet: frag: enforce memory limits earlier
+Date:   Sat,  4 Aug 2018 11:00:53 +0200
+Message-Id: <20180804082643.865898512@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180804082643.641435547@linuxfoundation.org>
 References: <20180804082643.641435547@linuxfoundation.org>
@@ -51,240 +53,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+From: Eric Dumazet <edumazet@google.com>
 
-commit 0a5257bc6d89c2ae69b9bf955679cb4f89261874 upstream.
+[ Upstream commit 56e2c94f055d328f5f6b0a5c1721cca2f2d4e0a1 ]
 
-Add new device IDs for the 9000 series.
+We currently check current frags memory usage only when
+a new frag queue is created. This allows attackers to first
+consume the memory budget (default : 4 MB) creating thousands
+of frag queues, then sending tiny skbs to exceed high_thresh
+limit by 2 to 3 order of magnitude.
 
-Cc: stable@vger.kernel.org # 4.14
-Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Note that before commit 648700f76b03 ("inet: frags: use rhashtables
+for reassembly units"), work queue could be starved under DOS,
+getting no cpu cycles.
+After commit 648700f76b03, only the per frag queue timer can eventually
+remove an incomplete frag queue and its skbs.
+
+Fixes: b13d3cbfb8e8 ("inet: frag: move eviction of queues to work queue")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: Jann Horn <jannh@google.com>
+Cc: Florian Westphal <fw@strlen.de>
+Cc: Peter Oskolkov <posk@google.com>
+Cc: Paolo Abeni <pabeni@redhat.com>
+Acked-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/net/wireless/intel/iwlwifi/cfg/9000.c   |   69 ++++++++++++++++++++++++
- drivers/net/wireless/intel/iwlwifi/iwl-config.h |    5 +
- drivers/net/wireless/intel/iwlwifi/pcie/drv.c   |   22 +++++++
- 3 files changed, 96 insertions(+)
+ net/ipv4/inet_fragment.c |   10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
---- a/drivers/net/wireless/intel/iwlwifi/cfg/9000.c
-+++ b/drivers/net/wireless/intel/iwlwifi/cfg/9000.c
-@@ -177,6 +177,17 @@ const struct iwl_cfg iwl9260_2ac_cfg = {
- 	.max_ht_ampdu_exponent = IEEE80211_HT_MAX_AMPDU_64K,
- };
+--- a/net/ipv4/inet_fragment.c
++++ b/net/ipv4/inet_fragment.c
+@@ -356,11 +356,6 @@ static struct inet_frag_queue *inet_frag
+ {
+ 	struct inet_frag_queue *q;
  
-+const struct iwl_cfg iwl9260_killer_2ac_cfg = {
-+	.name = "Killer (R) Wireless-AC 1550 Wireless Network Adapter (9260NGW)",
-+	.fw_name_pre = IWL9260A_FW_PRE,
-+	.fw_name_pre_b_or_c_step = IWL9260B_FW_PRE,
-+	IWL_DEVICE_9000,
-+	.ht_params = &iwl9000_ht_params,
-+	.nvm_ver = IWL9000_NVM_VERSION,
-+	.nvm_calib_ver = IWL9000_TX_POWER_VERSION,
-+	.max_ht_ampdu_exponent = IEEE80211_HT_MAX_AMPDU_64K,
-+};
-+
- const struct iwl_cfg iwl9270_2ac_cfg = {
- 	.name = "Intel(R) Dual Band Wireless AC 9270",
- 	.fw_name_pre = IWL9260A_FW_PRE,
-@@ -266,6 +277,34 @@ const struct iwl_cfg iwl9560_2ac_cfg_soc
- 	.soc_latency = 5000,
- };
+-	if (!nf->high_thresh || frag_mem_limit(nf) > nf->high_thresh) {
+-		inet_frag_schedule_worker(f);
+-		return NULL;
+-	}
+-
+ 	q = kmem_cache_zalloc(f->frags_cachep, GFP_ATOMIC);
+ 	if (!q)
+ 		return NULL;
+@@ -397,6 +392,11 @@ struct inet_frag_queue *inet_frag_find(s
+ 	struct inet_frag_queue *q;
+ 	int depth = 0;
  
-+const struct iwl_cfg iwl9560_killer_2ac_cfg_soc = {
-+	.name = "Killer (R) Wireless-AC 1550i Wireless Network Adapter (9560NGW)",
-+	.fw_name_pre = IWL9000A_FW_PRE,
-+	.fw_name_pre_b_or_c_step = IWL9000B_FW_PRE,
-+	.fw_name_pre_rf_next_step = IWL9000RFB_FW_PRE,
-+	IWL_DEVICE_9000,
-+	.ht_params = &iwl9000_ht_params,
-+	.nvm_ver = IWL9000_NVM_VERSION,
-+	.nvm_calib_ver = IWL9000_TX_POWER_VERSION,
-+	.max_ht_ampdu_exponent = IEEE80211_HT_MAX_AMPDU_64K,
-+	.integrated = true,
-+	.soc_latency = 5000,
-+};
++	if (!nf->high_thresh || frag_mem_limit(nf) > nf->high_thresh) {
++		inet_frag_schedule_worker(f);
++		return NULL;
++	}
 +
-+const struct iwl_cfg iwl9560_killer_s_2ac_cfg_soc = {
-+	.name = "Killer (R) Wireless-AC 1550s Wireless Network Adapter (9560NGW)",
-+	.fw_name_pre = IWL9000A_FW_PRE,
-+	.fw_name_pre_b_or_c_step = IWL9000B_FW_PRE,
-+	.fw_name_pre_rf_next_step = IWL9000RFB_FW_PRE,
-+	IWL_DEVICE_9000,
-+	.ht_params = &iwl9000_ht_params,
-+	.nvm_ver = IWL9000_NVM_VERSION,
-+	.nvm_calib_ver = IWL9000_TX_POWER_VERSION,
-+	.max_ht_ampdu_exponent = IEEE80211_HT_MAX_AMPDU_64K,
-+	.integrated = true,
-+	.soc_latency = 5000,
-+};
-+
- const struct iwl_cfg iwl9460_2ac_cfg_shared_clk = {
- 	.name = "Intel(R) Dual Band Wireless AC 9460",
- 	.fw_name_pre = IWL9000A_FW_PRE,
-@@ -316,6 +355,36 @@ const struct iwl_cfg iwl9560_2ac_cfg_sha
- 	.fw_name_pre = IWL9000A_FW_PRE,
- 	.fw_name_pre_b_or_c_step = IWL9000B_FW_PRE,
- 	.fw_name_pre_rf_next_step = IWL9000RFB_FW_PRE,
-+	IWL_DEVICE_9000,
-+	.ht_params = &iwl9000_ht_params,
-+	.nvm_ver = IWL9000_NVM_VERSION,
-+	.nvm_calib_ver = IWL9000_TX_POWER_VERSION,
-+	.max_ht_ampdu_exponent = IEEE80211_HT_MAX_AMPDU_64K,
-+	.integrated = true,
-+	.soc_latency = 5000,
-+	.extra_phy_cfg_flags = FW_PHY_CFG_SHARED_CLK
-+};
-+
-+const struct iwl_cfg iwl9560_killer_2ac_cfg_shared_clk = {
-+	.name = "Killer (R) Wireless-AC 1550i Wireless Network Adapter (9560NGW)",
-+	.fw_name_pre = IWL9000A_FW_PRE,
-+	.fw_name_pre_b_or_c_step = IWL9000B_FW_PRE,
-+	.fw_name_pre_rf_next_step = IWL9000RFB_FW_PRE,
-+	IWL_DEVICE_9000,
-+	.ht_params = &iwl9000_ht_params,
-+	.nvm_ver = IWL9000_NVM_VERSION,
-+	.nvm_calib_ver = IWL9000_TX_POWER_VERSION,
-+	.max_ht_ampdu_exponent = IEEE80211_HT_MAX_AMPDU_64K,
-+	.integrated = true,
-+	.soc_latency = 5000,
-+	.extra_phy_cfg_flags = FW_PHY_CFG_SHARED_CLK
-+};
-+
-+const struct iwl_cfg iwl9560_killer_s_2ac_cfg_shared_clk = {
-+	.name = "Killer (R) Wireless-AC 1550s Wireless Network Adapter (9560NGW)",
-+	.fw_name_pre = IWL9000A_FW_PRE,
-+	.fw_name_pre_b_or_c_step = IWL9000B_FW_PRE,
-+	.fw_name_pre_rf_next_step = IWL9000RFB_FW_PRE,
- 	IWL_DEVICE_9000,
- 	.ht_params = &iwl9000_ht_params,
- 	.nvm_ver = IWL9000_NVM_VERSION,
---- a/drivers/net/wireless/intel/iwlwifi/iwl-config.h
-+++ b/drivers/net/wireless/intel/iwlwifi/iwl-config.h
-@@ -470,6 +470,7 @@ extern const struct iwl_cfg iwl8265_2ac_
- extern const struct iwl_cfg iwl4165_2ac_sdio_cfg;
- extern const struct iwl_cfg iwl9160_2ac_cfg;
- extern const struct iwl_cfg iwl9260_2ac_cfg;
-+extern const struct iwl_cfg iwl9260_killer_2ac_cfg;
- extern const struct iwl_cfg iwl9270_2ac_cfg;
- extern const struct iwl_cfg iwl9460_2ac_cfg;
- extern const struct iwl_cfg iwl9560_2ac_cfg;
-@@ -477,10 +478,14 @@ extern const struct iwl_cfg iwl9460_2ac_
- extern const struct iwl_cfg iwl9461_2ac_cfg_soc;
- extern const struct iwl_cfg iwl9462_2ac_cfg_soc;
- extern const struct iwl_cfg iwl9560_2ac_cfg_soc;
-+extern const struct iwl_cfg iwl9560_killer_2ac_cfg_soc;
-+extern const struct iwl_cfg iwl9560_killer_s_2ac_cfg_soc;
- extern const struct iwl_cfg iwl9460_2ac_cfg_shared_clk;
- extern const struct iwl_cfg iwl9461_2ac_cfg_shared_clk;
- extern const struct iwl_cfg iwl9462_2ac_cfg_shared_clk;
- extern const struct iwl_cfg iwl9560_2ac_cfg_shared_clk;
-+extern const struct iwl_cfg iwl9560_killer_2ac_cfg_shared_clk;
-+extern const struct iwl_cfg iwl9560_killer_s_2ac_cfg_shared_clk;
- extern const struct iwl_cfg iwla000_2ac_cfg_hr;
- extern const struct iwl_cfg iwla000_2ac_cfg_hr_cdb;
- extern const struct iwl_cfg iwla000_2ac_cfg_jf;
---- a/drivers/net/wireless/intel/iwlwifi/pcie/drv.c
-+++ b/drivers/net/wireless/intel/iwlwifi/pcie/drv.c
-@@ -543,6 +543,9 @@ static const struct pci_device_id iwl_hw
- 	{IWL_PCI_DEVICE(0x2526, 0x1210, iwl9260_2ac_cfg)},
- 	{IWL_PCI_DEVICE(0x2526, 0x1410, iwl9270_2ac_cfg)},
- 	{IWL_PCI_DEVICE(0x2526, 0x1420, iwl9460_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x2526, 0x1550, iwl9260_killer_2ac_cfg)},
-+	{IWL_PCI_DEVICE(0x2526, 0x1551, iwl9560_killer_s_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x2526, 0x1552, iwl9560_killer_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x2526, 0x1610, iwl9270_2ac_cfg)},
- 	{IWL_PCI_DEVICE(0x2526, 0x2030, iwl9560_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x2526, 0x2034, iwl9560_2ac_cfg_soc)},
-@@ -552,6 +555,7 @@ static const struct pci_device_id iwl_hw
- 	{IWL_PCI_DEVICE(0x2526, 0x40A4, iwl9460_2ac_cfg)},
- 	{IWL_PCI_DEVICE(0x2526, 0x4234, iwl9560_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x2526, 0x42A4, iwl9462_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x2526, 0x8014, iwl9260_2ac_cfg)},
- 	{IWL_PCI_DEVICE(0x2526, 0xA014, iwl9260_2ac_cfg)},
- 	{IWL_PCI_DEVICE(0x271B, 0x0010, iwl9160_2ac_cfg)},
- 	{IWL_PCI_DEVICE(0x271B, 0x0014, iwl9160_2ac_cfg)},
-@@ -576,6 +580,8 @@ static const struct pci_device_id iwl_hw
- 	{IWL_PCI_DEVICE(0x2720, 0x1010, iwl9260_2ac_cfg)},
- 	{IWL_PCI_DEVICE(0x2720, 0x1030, iwl9560_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x2720, 0x1210, iwl9260_2ac_cfg)},
-+	{IWL_PCI_DEVICE(0x2720, 0x1551, iwl9560_killer_s_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x2720, 0x1552, iwl9560_killer_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x2720, 0x2030, iwl9560_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x2720, 0x2034, iwl9560_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x2720, 0x4030, iwl9560_2ac_cfg)},
-@@ -602,6 +608,8 @@ static const struct pci_device_id iwl_hw
- 	{IWL_PCI_DEVICE(0x30DC, 0x1010, iwl9260_2ac_cfg)},
- 	{IWL_PCI_DEVICE(0x30DC, 0x1030, iwl9560_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x30DC, 0x1210, iwl9260_2ac_cfg)},
-+	{IWL_PCI_DEVICE(0x30DC, 0x1551, iwl9560_killer_s_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x30DC, 0x1552, iwl9560_killer_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x30DC, 0x2030, iwl9560_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x30DC, 0x2034, iwl9560_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x30DC, 0x4030, iwl9560_2ac_cfg_soc)},
-@@ -628,6 +636,8 @@ static const struct pci_device_id iwl_hw
- 	{IWL_PCI_DEVICE(0x31DC, 0x1010, iwl9260_2ac_cfg)},
- 	{IWL_PCI_DEVICE(0x31DC, 0x1030, iwl9560_2ac_cfg_shared_clk)},
- 	{IWL_PCI_DEVICE(0x31DC, 0x1210, iwl9260_2ac_cfg)},
-+	{IWL_PCI_DEVICE(0x31DC, 0x1551, iwl9560_killer_s_2ac_cfg_shared_clk)},
-+	{IWL_PCI_DEVICE(0x31DC, 0x1552, iwl9560_killer_2ac_cfg_shared_clk)},
- 	{IWL_PCI_DEVICE(0x31DC, 0x2030, iwl9560_2ac_cfg_shared_clk)},
- 	{IWL_PCI_DEVICE(0x31DC, 0x2034, iwl9560_2ac_cfg_shared_clk)},
- 	{IWL_PCI_DEVICE(0x31DC, 0x4030, iwl9560_2ac_cfg_shared_clk)},
-@@ -654,6 +664,8 @@ static const struct pci_device_id iwl_hw
- 	{IWL_PCI_DEVICE(0x34F0, 0x1010, iwl9260_2ac_cfg)},
- 	{IWL_PCI_DEVICE(0x34F0, 0x1030, iwl9560_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x34F0, 0x1210, iwl9260_2ac_cfg)},
-+	{IWL_PCI_DEVICE(0x34F0, 0x1551, iwl9560_killer_s_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x34F0, 0x1552, iwl9560_killer_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x34F0, 0x2030, iwl9560_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x34F0, 0x2034, iwl9560_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x34F0, 0x4030, iwl9560_2ac_cfg_soc)},
-@@ -680,6 +692,8 @@ static const struct pci_device_id iwl_hw
- 	{IWL_PCI_DEVICE(0x3DF0, 0x1010, iwl9260_2ac_cfg)},
- 	{IWL_PCI_DEVICE(0x3DF0, 0x1030, iwl9560_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x3DF0, 0x1210, iwl9260_2ac_cfg)},
-+	{IWL_PCI_DEVICE(0x3DF0, 0x1551, iwl9560_killer_s_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x3DF0, 0x1552, iwl9560_killer_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x3DF0, 0x2030, iwl9560_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x3DF0, 0x2034, iwl9560_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x3DF0, 0x4030, iwl9560_2ac_cfg_soc)},
-@@ -706,6 +720,8 @@ static const struct pci_device_id iwl_hw
- 	{IWL_PCI_DEVICE(0x43F0, 0x1010, iwl9260_2ac_cfg)},
- 	{IWL_PCI_DEVICE(0x43F0, 0x1030, iwl9560_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x43F0, 0x1210, iwl9260_2ac_cfg)},
-+	{IWL_PCI_DEVICE(0x43F0, 0x1551, iwl9560_killer_s_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x43F0, 0x1552, iwl9560_killer_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x43F0, 0x2030, iwl9560_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x43F0, 0x2034, iwl9560_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x43F0, 0x4030, iwl9560_2ac_cfg_soc)},
-@@ -741,6 +757,8 @@ static const struct pci_device_id iwl_hw
- 	{IWL_PCI_DEVICE(0x9DF0, 0x1010, iwl9260_2ac_cfg)},
- 	{IWL_PCI_DEVICE(0x9DF0, 0x1030, iwl9560_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x9DF0, 0x1210, iwl9260_2ac_cfg)},
-+	{IWL_PCI_DEVICE(0x9DF0, 0x1551, iwl9560_killer_s_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x9DF0, 0x1552, iwl9560_killer_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x9DF0, 0x2010, iwl9460_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x9DF0, 0x2030, iwl9560_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x9DF0, 0x2034, iwl9560_2ac_cfg_soc)},
-@@ -769,6 +787,8 @@ static const struct pci_device_id iwl_hw
- 	{IWL_PCI_DEVICE(0xA0F0, 0x1010, iwl9260_2ac_cfg)},
- 	{IWL_PCI_DEVICE(0xA0F0, 0x1030, iwl9560_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0xA0F0, 0x1210, iwl9260_2ac_cfg)},
-+	{IWL_PCI_DEVICE(0xA0F0, 0x1551, iwl9560_killer_s_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0xA0F0, 0x1552, iwl9560_killer_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0xA0F0, 0x2030, iwl9560_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0xA0F0, 0x2034, iwl9560_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0xA0F0, 0x4030, iwl9560_2ac_cfg_soc)},
-@@ -795,6 +815,8 @@ static const struct pci_device_id iwl_hw
- 	{IWL_PCI_DEVICE(0xA370, 0x1010, iwl9260_2ac_cfg)},
- 	{IWL_PCI_DEVICE(0xA370, 0x1030, iwl9560_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0xA370, 0x1210, iwl9260_2ac_cfg)},
-+	{IWL_PCI_DEVICE(0xA370, 0x1551, iwl9560_killer_s_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0xA370, 0x1552, iwl9560_killer_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0xA370, 0x2030, iwl9560_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0xA370, 0x2034, iwl9560_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0xA370, 0x4030, iwl9560_2ac_cfg_soc)},
+ 	if (frag_mem_limit(nf) > nf->low_thresh)
+ 		inet_frag_schedule_worker(f);
+ 
 
 
