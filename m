@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02DF7C4646D
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:19:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18F2EC4646D
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:19:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AFBBE217BB
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:19:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C408F217CD
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:19:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j8LO9JL+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFBBE217BB
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e2J/Xlvg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C408F217CD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733135AbeHDLTL (ORCPT
+        id S2387509AbeHDLTN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 07:19:11 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:54664 "EHLO
+        Sat, 4 Aug 2018 07:19:13 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:51679 "EHLO
         mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732384AbeHDLTK (ORCPT
+        with ESMTP id S1729655AbeHDLTL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 07:19:10 -0400
-Received: by mail-wm0-f68.google.com with SMTP id c14-v6so8696809wmb.4
-        for <linux-kernel@vger.kernel.org>; Sat, 04 Aug 2018 02:19:07 -0700 (PDT)
+        Sat, 4 Aug 2018 07:19:11 -0400
+Received: by mail-wm0-f68.google.com with SMTP id y2-v6so8707323wma.1
+        for <linux-kernel@vger.kernel.org>; Sat, 04 Aug 2018 02:19:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=eIM+oFDIyMU+vtuKm+REDkQwP8mECokcffPrDbr4N84=;
-        b=j8LO9JL+hfWXpxzJrokOSjRNmp0tv1Cr5Vu971Ur2US9lHe1sP3WXuM9/fD4E0XsBQ
-         mCZrhASLaPQbnPNkvZhkjsrPkhfAWdZSfAWoTyR3Z0WrLAOR3uupz6fPFFm09irmd4+9
-         psa78rj8GVD9pWRHXqR3pyk3rd2j9/t1bdw7UdRguTA9w6UHb834o/KOlcYVHDnCZvfa
-         XZ3gWhltP3Q9ZQYfBHBS9v3wf+BHwSvKHHpRUyHzUSszLKFsdnx0WtXkHbU8nK40KjV+
-         92B2p3Bg99kvcG/VLHgJljXdLgUd+8SktKMDPZGx0zfZx0xSBvOgji5/JYhrqycUVwDD
-         AMWw==
+        bh=zBiYLp2M4NGuObombw7FqzyAFwGufrowZxvmDIvzZ3c=;
+        b=e2J/XlvgKX9LwQxfZRVnfmXtmuUrXTIvcrCIZoAQ+eYlU4DM7I886sFh1sDUGvN611
+         NK9cMwcg3+MZzJMIFAx/0pD//J2zv8/9ZaKErDvJcuUJl5lF5zzC/ehrB6gkjg3Y847+
+         VYvmiDNPe4l9BMacK2aNjH010ykfv7zEypBfhaTY86E80UaERIVTWRSh7GbrCdrXWeNc
+         Nhdsk7pYO2B2S37TVUoZS4qQo51Xa6MhShbTdefTIudRpA0zlxhACqIyWbUkv+6nb2vD
+         nr1UtRV+j+bVP8rcyLaHSDGm0ZapRwfLLXa+R2AAOwoJXoumwpbYPFZ7jjdJNFG9Mmkz
+         V/bw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=eIM+oFDIyMU+vtuKm+REDkQwP8mECokcffPrDbr4N84=;
-        b=k3n1dIyn3fyIJ6uqh2rnjHhh2FSZf/NYS77/QQ0cYjl1gtjbhhJZeMUufOkThU0ecZ
-         kGLJS86tceRC/KUAAgZEJUkOAVsWIMU4FeYKqSO3Iyq5loB8ck95KiNpNZTod3Sm7IfJ
-         eDIwHhBUo+edZzqHrxQyUao2aXMd7mQWNgOKHTO9cASHUOfsm5Q4n21mhgu09nK/iJeg
-         XyDiGVYZFnHLUEfg7FaXOyG91s+KBiczULbrDOjR6iR+ef3TAousTRYwwLmcja9AhpS3
-         UUMVyIfVYEqm5sH/xeqhT5Oj8BdH9oLItXlaeE4/bFVDVr078cId7b83jpKsTT01EApJ
-         Bihg==
-X-Gm-Message-State: AOUpUlGnwMzquMG5WZ7upLj+LRy+8HLGFw1alO80oeDf5xdp27vMAmOI
-        wGHo/gkJOUSl1z9a+lCXmNwpNN1imf0=
-X-Google-Smtp-Source: AAOMgpe11qWx1d6kjVTHXUmzoFGkNYqfrNU6BXI0A55kAoWiTMY7Qt7yQajtk43jsEk0sYE8gKkvmA==
-X-Received: by 2002:a1c:92:: with SMTP id 140-v6mr6484251wma.87.1533374346723;
-        Sat, 04 Aug 2018 02:19:06 -0700 (PDT)
+        bh=zBiYLp2M4NGuObombw7FqzyAFwGufrowZxvmDIvzZ3c=;
+        b=Oe3iCnUFOSyedxQgDcI9de55r1DVJcv0DUvgpO3lAMo2bK9ZO6D1ILxoI0CDaaira3
+         VMYBO9EdLCOPKAoLjW6+LLCClm5j0JWfBvsYTN3B50adapeLlFXmApSTzWLJ7tRKaaxu
+         ZMjWiDJVPuenTwlQF+Wj4GgST1Y6zJGiYWoh+EyaZJ4G43fvqXj94bW3MC0HlhyKq8Jb
+         YALjipdyHIhzGpZP8A83oURh5sNUexxtaEJLOhYnTLuzgeX463nznCHblYIES173GdGo
+         fd4qlYDj1j6ga30SFMdiySTjbgXpWlWWRayyw34danxvPEJUZdYdGyRyXWl7sS+k87t7
+         n9vQ==
+X-Gm-Message-State: AOUpUlFN/kXjp4IbjZ7xDNNTpdGq2bUC7EfhkiXo8ul/vkhPDiGPFbMI
+        j6bwykdlkzg7WMTw0VC6amqnrS3fXIE=
+X-Google-Smtp-Source: AAOMgpf3EiePiDEkAWURSvgYQ++eHhM0Lg/QfGOzb/+OLBHZywlCkBm20PPIzpaVfidg6BARS+pCkg==
+X-Received: by 2002:a1c:4d09:: with SMTP id o9-v6mr7580803wmh.111.1533374348088;
+        Sat, 04 Aug 2018 02:19:08 -0700 (PDT)
 Received: from localhost.localdomain (host81-158-116-187.range81-158.btcentralplus.com. [81.158.116.187])
-        by smtp.gmail.com with ESMTPSA id q188-v6sm2710040wmd.36.2018.08.04.02.19.05
+        by smtp.gmail.com with ESMTPSA id q188-v6sm2710040wmd.36.2018.08.04.02.19.06
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 04 Aug 2018 02:19:05 -0700 (PDT)
+        Sat, 04 Aug 2018 02:19:07 -0700 (PDT)
 From:   John Whitmore <johnfwhitmore@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
         John Whitmore <johnfwhitmore@gmail.com>
-Subject: [PATCH 1/7] staging:rtl8192u: Remove typedef and rename QOS_TCLAS - Style
-Date:   Sat,  4 Aug 2018 10:18:53 +0100
-Message-Id: <20180804091859.6729-2-johnfwhitmore@gmail.com>
+Subject: [PATCH 2/7] staging:rtl8192u: Rename types in QOS_TCLAS union - Style
+Date:   Sat,  4 Aug 2018 10:18:54 +0100
+Message-Id: <20180804091859.6729-3-johnfwhitmore@gmail.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180804091859.6729-1-johnfwhitmore@gmail.com>
 References: <20180804091859.6729-1-johnfwhitmore@gmail.com>
@@ -73,81 +73,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove the typedef from the union QOS_TCLAS, which causes a checkpatch
-issue with defining new types. In addition, as a type, the name should
-be in lowercase so has been changed.
+Whilst none of the structures inside the qos_tclas union are used, their
+names conflict with the coding standard being named in uppercase.
+The names of all five have been changed to lowercase.
 
-These are coding style changes and should have no impact on runtime
-code execution.
+This is a style change, and since none of the structures are referenced,
+these changes should have no impact on runtime code execution.
 
 Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
 ---
- drivers/staging/rtl8192u/ieee80211/rtl819x_TS.h     | 6 +++---
- drivers/staging/rtl8192u/ieee80211/rtl819x_TSProc.c | 6 +++---
- 2 files changed, 6 insertions(+), 6 deletions(-)
+ .../staging/rtl8192u/ieee80211/rtl819x_TS.h   | 20 +++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
 diff --git a/drivers/staging/rtl8192u/ieee80211/rtl819x_TS.h b/drivers/staging/rtl8192u/ieee80211/rtl819x_TS.h
-index 5cf00a2e08ae..823ba363e0ab 100644
+index 823ba363e0ab..c352ba0bcd8f 100644
 --- a/drivers/staging/rtl8192u/ieee80211/rtl819x_TS.h
 +++ b/drivers/staging/rtl8192u/ieee80211/rtl819x_TS.h
-@@ -14,7 +14,7 @@ enum tr_select {
- 	RX_DIR = 1,
- };
+@@ -16,22 +16,22 @@ enum tr_select {
  
--typedef union _QOS_TCLAS {
-+union qos_tclas {
+ union qos_tclas {
  
- 	struct _TYPE_GENERAL {
+-	struct _TYPE_GENERAL {
++	struct type_general {
  		u8		Priority;
-@@ -63,7 +63,7 @@ typedef union _QOS_TCLAS {
+ 		u8		ClassifierType;
+ 		u8		Mask;
+-	} TYPE_GENERAL;
++	} type_general;
+ 
+-	struct _TYPE0_ETH {
++	struct type0_eth {
+ 		u8		Priority;
+ 		u8		ClassifierType;
+ 		u8		Mask;
+ 		u8		SrcAddr[6];
+ 		u8		DstAddr[6];
+ 		u16		Type;
+-	} TYPE0_ETH;
++	} type0_eth;
+ 
+-	struct _TYPE1_IPV4 {
++	struct type1_ipv4 {
+ 		u8		Priority;
+ 		u8		ClassifierType;
+ 		u8		Mask;
+@@ -43,9 +43,9 @@ union qos_tclas {
+ 		u8		DSCP;
+ 		u8		Protocol;
+ 		u8		Reserved;
+-	} TYPE1_IPV4;
++	} type1_ipv4;
+ 
+-	struct _TYPE1_IPV6 {
++	struct type1_ipv6 {
+ 		u8		Priority;
+ 		u8		ClassifierType;
+ 		u8		Mask;
+@@ -55,14 +55,14 @@ union qos_tclas {
+ 		u16		SrcPort;
+ 		u16		DstPort;
+ 		u8		FlowLabel[3];
+-	} TYPE1_IPV6;
++	} type1_ipv6;
+ 
+-	struct _TYPE2_8021Q {
++	struct type2_8021q {
+ 		u8		Priority;
+ 		u8		ClassifierType;
  		u8		Mask;
  		u16		TagType;
- 	} TYPE2_8021Q;
--} QOS_TCLAS, *PQOS_TCLAS;
-+};
+-	} TYPE2_8021Q;
++	} type2_8021q;
+ };
  
  struct ts_common_info {
- 	struct list_head		list;
-@@ -71,7 +71,7 @@ struct ts_common_info {
- 	struct timer_list		inact_timer;
- 	u8				addr[6];
- 	struct tspec_body		t_spec;
--	QOS_TCLAS			t_class[TCLAS_NUM];
-+	union qos_tclas			t_class[TCLAS_NUM];
- 	u8				t_clas_proc;
- 	u8				t_clas_num;
- };
-diff --git a/drivers/staging/rtl8192u/ieee80211/rtl819x_TSProc.c b/drivers/staging/rtl8192u/ieee80211/rtl819x_TSProc.c
-index de06cd11ab65..d46d8f468671 100644
---- a/drivers/staging/rtl8192u/ieee80211/rtl819x_TSProc.c
-+++ b/drivers/staging/rtl8192u/ieee80211/rtl819x_TSProc.c
-@@ -105,7 +105,7 @@ static void ResetTsCommonInfo(struct ts_common_info *pTsCommonInfo)
- {
- 	eth_zero_addr(pTsCommonInfo->addr);
- 	memset(&pTsCommonInfo->t_spec, 0, sizeof(struct tspec_body));
--	memset(&pTsCommonInfo->t_class, 0, sizeof(QOS_TCLAS)*TCLAS_NUM);
-+	memset(&pTsCommonInfo->t_class, 0, sizeof(union qos_tclas)*TCLAS_NUM);
- 	pTsCommonInfo->t_clas_proc = 0;
- 	pTsCommonInfo->t_clas_num = 0;
- }
-@@ -265,7 +265,7 @@ static struct ts_common_info *SearchAdmitTRStream(struct ieee80211_device *ieee,
- }
- 
- static void MakeTSEntry(struct ts_common_info *pTsCommonInfo, u8 *Addr,
--			struct tspec_body *pTSPEC, PQOS_TCLAS pTCLAS, u8 TCLAS_Num,
-+			struct tspec_body *pTSPEC, union qos_tclas *pTCLAS, u8 TCLAS_Num,
- 			u8 TCLAS_Proc)
- {
- 	u8	count;
-@@ -279,7 +279,7 @@ static void MakeTSEntry(struct ts_common_info *pTsCommonInfo, u8 *Addr,
- 		memcpy((u8 *)(&(pTsCommonInfo->t_spec)), (u8 *)pTSPEC, sizeof(struct tspec_body));
- 
- 	for(count = 0; count < TCLAS_Num; count++)
--		memcpy((u8 *)(&(pTsCommonInfo->t_class[count])), (u8 *)pTCLAS, sizeof(QOS_TCLAS));
-+		memcpy((u8 *)(&(pTsCommonInfo->t_class[count])), (u8 *)pTCLAS, sizeof(union qos_tclas));
- 
- 	pTsCommonInfo->t_clas_proc = TCLAS_Proc;
- 	pTsCommonInfo->t_clas_num = TCLAS_Num;
 -- 
 2.18.0
 
