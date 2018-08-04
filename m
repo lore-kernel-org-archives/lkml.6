@@ -6,34 +6,37 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FA1DC4646F
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:07:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51506C4646D
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:07:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3709217C7
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:07:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3709217C7
+	by mail.kernel.org (Postfix) with ESMTP id 07989217C6
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:07:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07989217C6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387596AbeHDLHe (ORCPT
+        id S2387611AbeHDLHh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 07:07:34 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49396 "EHLO
+        Sat, 4 Aug 2018 07:07:37 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49404 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726754AbeHDLHd (ORCPT
+        with ESMTP id S1726754AbeHDLHf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 07:07:33 -0400
+        Sat, 4 Aug 2018 07:07:35 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8C56E89C;
-        Sat,  4 Aug 2018 09:07:33 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 92BD289C;
+        Sat,  4 Aug 2018 09:07:36 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
+        stable@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Artem Savkov <asavkov@redhat.com>,
         "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 4.4 006/124] tracing: Fix possible double free in event_enable_trigger_func()
-Date:   Sat,  4 Aug 2018 10:59:55 +0200
-Message-Id: <20180804082702.675700544@linuxfoundation.org>
+Subject: [PATCH 4.4 007/124] tracing/kprobes: Fix trace_probe flags on enable_trace_kprobe() failure
+Date:   Sat,  4 Aug 2018 10:59:56 +0200
+Message-Id: <20180804082702.714128505@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180804082702.434482435@linuxfoundation.org>
 References: <20180804082702.434482435@linuxfoundation.org>
@@ -50,60 +53,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Steven Rostedt (VMware) <rostedt@goodmis.org>
+From: Artem Savkov <asavkov@redhat.com>
 
-commit 15cc78644d0075e76d59476a4467e7143860f660 upstream.
+commit 57ea2a34adf40f3a6e88409aafcf803b8945619a upstream.
 
-There was a case that triggered a double free in event_trigger_callback()
-due to the called reg() function freeing the trigger_data and then it
-getting freed again by the error return by the caller. The solution there
-was to up the trigger_data ref count.
+If enable_trace_kprobe fails to enable the probe in enable_k(ret)probe
+it returns an error, but does not unset the tp flags it set previously.
+This results in a probe being considered enabled and failures like being
+unable to remove the probe through kprobe_events file since probes_open()
+expects every probe to be disabled.
 
-Code inspection found that event_enable_trigger_func() has the same issue,
-but is not as easy to trigger (requires harder to trigger failures). It
-needs to be solved slightly different as it needs more to clean up when the
-reg() function fails.
+Link: http://lkml.kernel.org/r/20180725102826.8300-1-asavkov@redhat.com
+Link: http://lkml.kernel.org/r/20180725142038.4765-1-asavkov@redhat.com
 
-Link: http://lkml.kernel.org/r/20180725124008.7008e586@gandalf.local.home
-
+Cc: Ingo Molnar <mingo@redhat.com>
 Cc: stable@vger.kernel.org
-Fixes: 7862ad1846e99 ("tracing: Add 'enable_event' and 'disable_event' event trigger commands")
-Reivewed-by: Masami Hiramatsu <mhiramat@kernel.org>
+Fixes: 41a7dd420c57 ("tracing/kprobes: Support ftrace_event_file base multibuffer")
+Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Signed-off-by: Artem Savkov <asavkov@redhat.com>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/trace/trace_events_trigger.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ kernel/trace/trace_kprobe.c |   13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
---- a/kernel/trace/trace_events_trigger.c
-+++ b/kernel/trace/trace_events_trigger.c
-@@ -1231,6 +1231,9 @@ event_enable_trigger_func(struct event_c
- 		goto out;
+--- a/kernel/trace/trace_kprobe.c
++++ b/kernel/trace/trace_kprobe.c
+@@ -349,11 +349,10 @@ static struct trace_kprobe *find_trace_k
+ static int
+ enable_trace_kprobe(struct trace_kprobe *tk, struct trace_event_file *file)
+ {
++	struct event_file_link *link;
+ 	int ret = 0;
+ 
+ 	if (file) {
+-		struct event_file_link *link;
+-
+ 		link = kmalloc(sizeof(*link), GFP_KERNEL);
+ 		if (!link) {
+ 			ret = -ENOMEM;
+@@ -373,6 +372,16 @@ enable_trace_kprobe(struct trace_kprobe
+ 		else
+ 			ret = enable_kprobe(&tk->rp.kp);
  	}
- 
-+	/* Up the trigger_data count to make sure nothing frees it on failure */
-+	event_trigger_init(trigger_ops, trigger_data);
 +
- 	if (trigger) {
- 		number = strsep(&trigger, ":");
- 
-@@ -1281,6 +1284,7 @@ event_enable_trigger_func(struct event_c
- 		goto out_disable;
- 	/* Just return zero, not the number of enabled functions */
- 	ret = 0;
-+	event_trigger_free(trigger_ops, trigger_data);
++	if (ret) {
++		if (file) {
++			list_del_rcu(&link->list);
++			kfree(link);
++			tk->tp.flags &= ~TP_FLAG_TRACE;
++		} else {
++			tk->tp.flags &= ~TP_FLAG_PROFILE;
++		}
++	}
   out:
  	return ret;
- 
-@@ -1291,7 +1295,7 @@ event_enable_trigger_func(struct event_c
-  out_free:
- 	if (cmd_ops->set_filter)
- 		cmd_ops->set_filter(NULL, trigger_data, NULL);
--	kfree(trigger_data);
-+	event_trigger_free(trigger_ops, trigger_data);
- 	kfree(enable_data);
- 	goto out;
  }
 
 
