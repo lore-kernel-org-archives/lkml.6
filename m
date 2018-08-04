@@ -6,35 +6,37 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8155C4646D
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:02:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8088AC4646D
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:02:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA9FF21775
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:02:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA9FF21775
+	by mail.kernel.org (Postfix) with ESMTP id 40F6121775
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:02:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40F6121775
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729838AbeHDLCj (ORCPT
+        id S1730043AbeHDLCn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 07:02:39 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48162 "EHLO
+        Sat, 4 Aug 2018 07:02:43 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48172 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726477AbeHDLCj (ORCPT
+        with ESMTP id S1726477AbeHDLCm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 07:02:39 -0400
+        Sat, 4 Aug 2018 07:02:42 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AD1A4BB3;
-        Sat,  4 Aug 2018 09:02:41 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C04C2BB3;
+        Sat,  4 Aug 2018 09:02:44 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Josh Poimboeuf <jpoimboe@redhat.com>,
-        Jeremy Cline <jcline@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.17 05/31] netlink: Fix spectre v1 gadget in netlink_create()
-Date:   Sat,  4 Aug 2018 11:00:40 +0200
-Message-Id: <20180804082632.678922895@linuxfoundation.org>
+        stable@vger.kernel.org, Jose Abreu <joabreu@synopsys.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Joao Pinto <jpinto@synopsys.com>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+Subject: [PATCH 4.17 06/31] net: stmmac: Fix WoL for PCI-based setups
+Date:   Sat,  4 Aug 2018 11:00:41 +0200
+Message-Id: <20180804082632.724152772@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180804082632.304529527@linuxfoundation.org>
 References: <20180804082632.304529527@linuxfoundation.org>
@@ -51,51 +53,84 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jeremy Cline <jcline@redhat.com>
+From: Jose Abreu <Jose.Abreu@synopsys.com>
 
-[ Upstream commit bc5b6c0b62b932626a135f516a41838c510c6eba ]
+[ Upstream commit b7d0f08e9129c45ed41bc0cfa8e77067881e45fd ]
 
-'protocol' is a user-controlled value, so sanitize it after the bounds
-check to avoid using it for speculative out-of-bounds access to arrays
-indexed by it.
+WoL won't work in PCI-based setups because we are not saving the PCI EP
+state before entering suspend state and not allowing D3 wake.
 
-This addresses the following accesses detected with the help of smatch:
+Fix this by using a wrapper around stmmac_{suspend/resume} which
+correctly sets the PCI EP state.
 
-* net/netlink/af_netlink.c:654 __netlink_create() warn: potential
-  spectre issue 'nlk_cb_mutex_keys' [w]
-
-* net/netlink/af_netlink.c:654 __netlink_create() warn: potential
-  spectre issue 'nlk_cb_mutex_key_strings' [w]
-
-* net/netlink/af_netlink.c:685 netlink_create() warn: potential spectre
-  issue 'nl_table' [w] (local cap)
-
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Signed-off-by: Jeremy Cline <jcline@redhat.com>
-Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Signed-off-by: Jose Abreu <joabreu@synopsys.com>
+Cc: David S. Miller <davem@davemloft.net>
+Cc: Joao Pinto <jpinto@synopsys.com>
+Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
+Cc: Alexandre Torgue <alexandre.torgue@st.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/netlink/af_netlink.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c |   40 +++++++++++++++++++++--
+ 1 file changed, 38 insertions(+), 2 deletions(-)
 
---- a/net/netlink/af_netlink.c
-+++ b/net/netlink/af_netlink.c
-@@ -63,6 +63,7 @@
- #include <linux/hash.h>
- #include <linux/genetlink.h>
- #include <linux/net_namespace.h>
-+#include <linux/nospec.h>
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c
+@@ -257,7 +257,7 @@ static int stmmac_pci_probe(struct pci_d
+ 		return -ENOMEM;
  
- #include <net/net_namespace.h>
- #include <net/netns/generic.h>
-@@ -679,6 +680,7 @@ static int netlink_create(struct net *ne
+ 	/* Enable pci device */
+-	ret = pcim_enable_device(pdev);
++	ret = pci_enable_device(pdev);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "%s: ERROR: failed to enable device\n",
+ 			__func__);
+@@ -300,9 +300,45 @@ static int stmmac_pci_probe(struct pci_d
+ static void stmmac_pci_remove(struct pci_dev *pdev)
+ {
+ 	stmmac_dvr_remove(&pdev->dev);
++	pci_disable_device(pdev);
+ }
  
- 	if (protocol < 0 || protocol >= MAX_LINKS)
- 		return -EPROTONOSUPPORT;
-+	protocol = array_index_nospec(protocol, MAX_LINKS);
+-static SIMPLE_DEV_PM_OPS(stmmac_pm_ops, stmmac_suspend, stmmac_resume);
++static int stmmac_pci_suspend(struct device *dev)
++{
++	struct pci_dev *pdev = to_pci_dev(dev);
++	int ret;
++
++	ret = stmmac_suspend(dev);
++	if (ret)
++		return ret;
++
++	ret = pci_save_state(pdev);
++	if (ret)
++		return ret;
++
++	pci_disable_device(pdev);
++	pci_wake_from_d3(pdev, true);
++	return 0;
++}
++
++static int stmmac_pci_resume(struct device *dev)
++{
++	struct pci_dev *pdev = to_pci_dev(dev);
++	int ret;
++
++	pci_restore_state(pdev);
++	pci_set_power_state(pdev, PCI_D0);
++
++	ret = pci_enable_device(pdev);
++	if (ret)
++		return ret;
++
++	pci_set_master(pdev);
++
++	return stmmac_resume(dev);
++}
++
++static SIMPLE_DEV_PM_OPS(stmmac_pm_ops, stmmac_pci_suspend, stmmac_pci_resume);
  
- 	netlink_lock_table();
- #ifdef CONFIG_MODULES
+ /* synthetic ID, no official vendor */
+ #define PCI_VENDOR_ID_STMMAC 0x700
 
 
