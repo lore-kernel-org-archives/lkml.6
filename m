@@ -2,138 +2,99 @@ Return-Path: <SRS0=4jry=KT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FCEDC4646F
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 16:42:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA302C4646D
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 16:45:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BCFD02178F
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 16:42:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCFD02178F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cambridgegreys.com
+	by mail.kernel.org (Postfix) with ESMTP id 534692178F
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 16:45:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lVwZFp8u"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 534692178F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729666AbeHDSnp (ORCPT
+        id S1729678AbeHDSqN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 14:43:45 -0400
-Received: from ivanoab5.miniserver.com ([78.31.111.25]:55888 "EHLO
-        www.kot-begemot.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728054AbeHDSno (ORCPT
+        Sat, 4 Aug 2018 14:46:13 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:39636 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728054AbeHDSqN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 14:43:44 -0400
-X-Greylist: delayed 2194 seconds by postgrey-1.27 at vger.kernel.org; Sat, 04 Aug 2018 14:43:44 EDT
-Received: from tun5.smaug.kot-begemot.co.uk ([192.168.18.6] helo=smaug.kot-begemot.co.uk)
-        by www.kot-begemot.co.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <anton.ivanov@cambridgegreys.com>)
-        id 1flz42-0007ju-L9; Sat, 04 Aug 2018 16:05:58 +0000
-Received: from ppp-94-68-121-61.home.otenet.gr ([94.68.121.61] helo=[192.168.1.158])
-        by smaug.kot-begemot.co.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <anton.ivanov@cambridgegreys.com>)
-        id 1flz42-0003Jl-4R; Sat, 04 Aug 2018 17:05:58 +0100
-Subject: Re: [PATCH] um: NULL check before kfree is not needed
-To:     YueHaibing <yuehaibing@huawei.com>, jdike@addtoit.com,
-        richard@nod.at, christophe.jaillet@wanadoo.fr,
-        keescook@chromium.org
-Cc:     linux-um@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20180803063911.23384-1-yuehaibing@huawei.com>
-From:   Anton Ivanov <anton.ivanov@cambridgegreys.com>
-Message-ID: <3b72e9da-c4ac-cee0-1833-7c2b346fcc28@cambridgegreys.com>
-Date:   Sat, 4 Aug 2018 17:05:28 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180803063911.23384-1-yuehaibing@huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Clacks-Overhead: GNU Terry Pratchett
+        Sat, 4 Aug 2018 14:46:13 -0400
+Received: by mail-oi0-f66.google.com with SMTP id d189-v6so15220436oib.6
+        for <linux-kernel@vger.kernel.org>; Sat, 04 Aug 2018 09:44:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=bImFTE7v22jiBX2rRzfosXl4Vf9/I1d1wG0XVTAiiaY=;
+        b=lVwZFp8uNyxkEuGPidFh6//piYK5D81ifRKYV/QjulBX6eVI3UUiDWmcEzhULrfPJf
+         sbW2rWu6jMJiDu8bsIG6wecphOHL9X2LxbQnI8pH/pMeYwP39XT28yYmhMBxdooQ6bb2
+         mHgeQDa+dYH8RnMjUGySZAGqstB0QkT8HWJmMl7dcomtl8XZJFPSFEvEzMtn//xqrRsU
+         wRSCqH3vjyTCPreApwA6xkig+n0U71Tm2+lcFEFYVTkVLvdxAPYgsNcuVE0bx6uHByLr
+         kHgjwJ+9jRAEGzggEFjLI9ZSx3TPyow6rYNzhundHtyHshyHLmUgk2KUE5C1/81Qq7lK
+         IuQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=bImFTE7v22jiBX2rRzfosXl4Vf9/I1d1wG0XVTAiiaY=;
+        b=I9esYq9TFV39VOoqm5gwynNbiOMlCxNtyM1EvZkFrN4Ekj0AUGNK9rdbBnaRJRClou
+         LSVC8lBgzv3wfpOdYJNRPwnlfsmjQYqsk4rX/w2wc5hn1XuP4CtZ69o0KGOD3IgEXJze
+         IglMl9+QoRlt8pCMC0B2HdWC9RHm1oZ9puwmPI+k0a079FLxrmf7wRbT8ZrXDrBoog5a
+         s1FtF1xJEnVpU6Ck/7+ihzUR/1Vg5aQsUF1rxrKgn6qSbx6zPfG1sQI4cAZ2VbAn8Jxb
+         7SoYcGuBHD5LBflT4eUfTbjH/2TC/lUAym77qipfEHCrfe6zcUhac+vbLZ3RTFhdICRH
+         vgag==
+X-Gm-Message-State: AOUpUlGiPw0DTTqIamZCCpNDHGGF9RJY+eIhxa5PWUI4OA3rnv2iOu1l
+        fn4XrIKYnfHBVkwjiVuHyMhf11sShjM=
+X-Google-Smtp-Source: AAOMgpc/oNfg5sWtLzyyXOn+ZJyQY9JerKjtwK6VgsAckGFsCGjiM6EKJEi6pq1WkaZv5Px/jfLHmQ==
+X-Received: by 2002:aca:ceca:: with SMTP id e193-v6mr7487456oig.37.1533401098289;
+        Sat, 04 Aug 2018 09:44:58 -0700 (PDT)
+Received: from nukespec.lan (c-98-195-139-126.hsd1.tx.comcast.net. [98.195.139.126])
+        by smtp.gmail.com with ESMTPSA id r81-v6sm6136208oih.28.2018.08.04.09.44.57
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 04 Aug 2018 09:44:57 -0700 (PDT)
+From:   Alexandru Gagniuc <mr.nuke.me@gmail.com>
+To:     perex@perex.cz, tiwai@suse.com
+Cc:     Alexandru Gagniuc <mr.nuke.me@gmail.com>,
+        Kailang Yang <kailang@realtek.com>,
+        Hui Wang <hui.wang@canonical.com>, Peisen <pshou@realtek.com>,
+        Tom Briden <tom@decompile.me.uk>, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] ALSA: hda/realtek - Add mute LED quirk for HP Spectre x360
+Date:   Sat,  4 Aug 2018 11:44:44 -0500
+Message-Id: <20180804164448.7152-1-mr.nuke.me@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/08/18 07:39, YueHaibing wrote:
+This device has the same issues as the HP x360 wrt the MUTE LED and
+the front speakers not working. This patch fixes the MUTE LED issue,
+but doesn't touch the HDA verbs. The fix for the x360 does not work
+on the Spectre.
 
-> kfree(NULL) is safe,so this removes NULL check before freeing the mem
->
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->   arch/um/drivers/vector_kern.c | 15 +++++----------
->   arch/um/drivers/vector_user.c |  6 ++----
->   arch/um/kernel/irq.c          |  3 +--
->   3 files changed, 8 insertions(+), 16 deletions(-)
->
-> diff --git a/arch/um/drivers/vector_kern.c b/arch/um/drivers/vector_kern.c
-> index 50ee3bb..c84133c 100644
-> --- a/arch/um/drivers/vector_kern.c
-> +++ b/arch/um/drivers/vector_kern.c
-> @@ -1118,16 +1118,11 @@ static int vector_net_close(struct net_device *dev)
->   		os_close_file(vp->fds->tx_fd);
->   		vp->fds->tx_fd = -1;
->   	}
-> -	if (vp->bpf != NULL)
-> -		kfree(vp->bpf);
-> -	if (vp->fds->remote_addr != NULL)
-> -		kfree(vp->fds->remote_addr);
-> -	if (vp->transport_data != NULL)
-> -		kfree(vp->transport_data);
-> -	if (vp->header_rxbuffer != NULL)
-> -		kfree(vp->header_rxbuffer);
-> -	if (vp->header_txbuffer != NULL)
-> -		kfree(vp->header_txbuffer);
-> +	kfree(vp->bpf);
-> +	kfree(vp->fds->remote_addr);
-> +	kfree(vp->transport_data);
-> +	kfree(vp->header_rxbuffer);
-> +	kfree(vp->header_txbuffer);
->   	if (vp->rx_queue != NULL)
->   		destroy_queue(vp->rx_queue);
->   	if (vp->tx_queue != NULL)
-> diff --git a/arch/um/drivers/vector_user.c b/arch/um/drivers/vector_user.c
-> index 4d6a78e..3d8cdbd 100644
-> --- a/arch/um/drivers/vector_user.c
-> +++ b/arch/um/drivers/vector_user.c
-> @@ -267,8 +267,7 @@ static struct vector_fds *user_init_raw_fds(struct arglist *ifspec)
->   		os_close_file(rxfd);
->   	if (txfd >= 0)
->   		os_close_file(txfd);
-> -	if (result != NULL)
-> -		kfree(result);
-> +	kfree(result);
->   	return NULL;
->   }
->   
-> @@ -434,8 +433,7 @@ static struct vector_fds *user_init_socket_fds(struct arglist *ifspec, int id)
->   	if (fd >= 0)
->   		os_close_file(fd);
->   	if (result != NULL) {
-> -		if (result->remote_addr != NULL)
-> -			kfree(result->remote_addr);
-> +		kfree(result->remote_addr);
->   		kfree(result);
->   	}
->   	return NULL;
-> diff --git a/arch/um/kernel/irq.c b/arch/um/kernel/irq.c
-> index 6b7f382..8360fa3 100644
-> --- a/arch/um/kernel/irq.c
-> +++ b/arch/um/kernel/irq.c
-> @@ -244,8 +244,7 @@ static void garbage_collect_irq_entries(void)
->   			to_free = NULL;
->   		}
->   		walk = walk->next;
-> -		if (to_free != NULL)
-> -			kfree(to_free);
-> +		kfree(to_free);
->   	}
->   }
->   
-kfree in both slab and slob check for NULLs before freeing so this is 
-correct. Thanks for noticing.
+Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+---
+ sound/pci/hda/patch_realtek.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Richard, please apply,
+diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
+index f6af3e1c2b93..d14b05f68d6d 100644
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -6530,6 +6530,7 @@ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
+ 	SND_PCI_QUIRK(0x103c, 0x827e, "HP x360", ALC295_FIXUP_HP_X360),
+ 	SND_PCI_QUIRK(0x103c, 0x82bf, "HP", ALC221_FIXUP_HP_MIC_NO_PRESENCE),
+ 	SND_PCI_QUIRK(0x103c, 0x82c0, "HP", ALC221_FIXUP_HP_MIC_NO_PRESENCE),
++	SND_PCI_QUIRK(0x103c, 0x83b9, "HP Spectre x360", ALC269_FIXUP_HP_MUTE_LED_MIC3),
+ 	SND_PCI_QUIRK(0x1043, 0x103e, "ASUS X540SA", ALC256_FIXUP_ASUS_MIC),
+ 	SND_PCI_QUIRK(0x1043, 0x103f, "ASUS TX300", ALC282_FIXUP_ASUS_TX300),
+ 	SND_PCI_QUIRK(0x1043, 0x106d, "Asus K53BE", ALC269_FIXUP_LIMIT_INT_MIC_BOOST),
+-- 
+2.17.1
 
-A.
