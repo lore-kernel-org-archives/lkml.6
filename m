@@ -6,37 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97344C4646D
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:04:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E418CC4646F
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:04:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D068217BF
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:04:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D068217BF
+	by mail.kernel.org (Postfix) with ESMTP id A8FE5217BF
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:04:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8FE5217BF
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732606AbeHDLER (ORCPT
+        id S1732621AbeHDLEV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 07:04:17 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48548 "EHLO
+        Sat, 4 Aug 2018 07:04:21 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48554 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729696AbeHDLEQ (ORCPT
+        with ESMTP id S1726469AbeHDLEU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 07:04:16 -0400
+        Sat, 4 Aug 2018 07:04:20 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A8D08BB3;
-        Sat,  4 Aug 2018 09:04:18 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B09C0BC6;
+        Sat,  4 Aug 2018 09:04:21 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Jann Horn <jannh@google.com>, Florian Westphal <fw@strlen.de>,
-        Peter Oskolkov <posk@google.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 02/23] inet: frag: enforce memory limits earlier
-Date:   Sat,  4 Aug 2018 11:00:53 +0200
-Message-Id: <20180804082643.865898512@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Jack Morgenstein <jackm@dev.mellanox.co.il>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 4.14 20/23] RDMA/uverbs: Expand primary and alt AV port checks
+Date:   Sat,  4 Aug 2018 11:01:11 +0200
+Message-Id: <20180804082645.767850616@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180804082643.641435547@linuxfoundation.org>
 References: <20180804082643.641435547@linuxfoundation.org>
@@ -53,60 +52,112 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Jack Morgenstein <jackm@dev.mellanox.co.il>
 
-[ Upstream commit 56e2c94f055d328f5f6b0a5c1721cca2f2d4e0a1 ]
+commit addb8a6559f0f8b5a37582b7ca698358445a55bf upstream.
 
-We currently check current frags memory usage only when
-a new frag queue is created. This allows attackers to first
-consume the memory budget (default : 4 MB) creating thousands
-of frag queues, then sending tiny skbs to exceed high_thresh
-limit by 2 to 3 order of magnitude.
+The commit cited below checked that the port numbers provided in the
+primary and alt AVs are legal.
 
-Note that before commit 648700f76b03 ("inet: frags: use rhashtables
-for reassembly units"), work queue could be starved under DOS,
-getting no cpu cycles.
-After commit 648700f76b03, only the per frag queue timer can eventually
-remove an incomplete frag queue and its skbs.
+That is sufficient to prevent a kernel panic. However, it is not
+sufficient for correct operation.
 
-Fixes: b13d3cbfb8e8 ("inet: frag: move eviction of queues to work queue")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: Jann Horn <jannh@google.com>
-Cc: Florian Westphal <fw@strlen.de>
-Cc: Peter Oskolkov <posk@google.com>
-Cc: Paolo Abeni <pabeni@redhat.com>
-Acked-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+In Linux, AVs (both primary and alt) must be completely self-described.
+We do not accept an AV from userspace without an embedded port number.
+(This has been the case since kernel 3.14 commit dbf727de7440
+("IB/core: Use GID table in AH creation and dmac resolution")).
+
+For the primary AV, this embedded port number must match the port number
+specified with IB_QP_PORT.
+
+We also expect the port number embedded in the alt AV to match the
+alt_port_num value passed by the userspace driver in the modify_qp command
+base structure.
+
+Add these checks to modify_qp.
+
+Cc: <stable@vger.kernel.org> # 4.16
+Fixes: 5d4c05c3ee36 ("RDMA/uverbs: Sanitize user entered port numbers prior to access it")
+Signed-off-by: Jack Morgenstein <jackm@dev.mellanox.co.il>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/ipv4/inet_fragment.c |   10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
 
---- a/net/ipv4/inet_fragment.c
-+++ b/net/ipv4/inet_fragment.c
-@@ -356,11 +356,6 @@ static struct inet_frag_queue *inet_frag
- {
- 	struct inet_frag_queue *q;
+---
+ drivers/infiniband/core/uverbs_cmd.c |   59 ++++++++++++++++++++++++++++++++---
+ 1 file changed, 54 insertions(+), 5 deletions(-)
+
+--- a/drivers/infiniband/core/uverbs_cmd.c
++++ b/drivers/infiniband/core/uverbs_cmd.c
+@@ -1981,15 +1981,64 @@ static int modify_qp(struct ib_uverbs_fi
+ 		goto release_qp;
+ 	}
  
--	if (!nf->high_thresh || frag_mem_limit(nf) > nf->high_thresh) {
--		inet_frag_schedule_worker(f);
--		return NULL;
--	}
--
- 	q = kmem_cache_zalloc(f->frags_cachep, GFP_ATOMIC);
- 	if (!q)
- 		return NULL;
-@@ -397,6 +392,11 @@ struct inet_frag_queue *inet_frag_find(s
- 	struct inet_frag_queue *q;
- 	int depth = 0;
- 
-+	if (!nf->high_thresh || frag_mem_limit(nf) > nf->high_thresh) {
-+		inet_frag_schedule_worker(f);
-+		return NULL;
-+	}
+-	if ((cmd->base.attr_mask & IB_QP_AV) &&
+-	    !rdma_is_port_valid(qp->device, cmd->base.dest.port_num)) {
+-		ret = -EINVAL;
+-		goto release_qp;
++	if ((cmd->base.attr_mask & IB_QP_AV)) {
++		if (!rdma_is_port_valid(qp->device, cmd->base.dest.port_num)) {
++			ret = -EINVAL;
++			goto release_qp;
++		}
 +
- 	if (frag_mem_limit(nf) > nf->low_thresh)
- 		inet_frag_schedule_worker(f);
++		if (cmd->base.attr_mask & IB_QP_STATE &&
++		    cmd->base.qp_state == IB_QPS_RTR) {
++		/* We are in INIT->RTR TRANSITION (if we are not,
++		 * this transition will be rejected in subsequent checks).
++		 * In the INIT->RTR transition, we cannot have IB_QP_PORT set,
++		 * but the IB_QP_STATE flag is required.
++		 *
++		 * Since kernel 3.14 (commit dbf727de7440), the uverbs driver,
++		 * when IB_QP_AV is set, has required inclusion of a valid
++		 * port number in the primary AV. (AVs are created and handled
++		 * differently for infiniband and ethernet (RoCE) ports).
++		 *
++		 * Check the port number included in the primary AV against
++		 * the port number in the qp struct, which was set (and saved)
++		 * in the RST->INIT transition.
++		 */
++			if (cmd->base.dest.port_num != qp->real_qp->port) {
++				ret = -EINVAL;
++				goto release_qp;
++			}
++		} else {
++		/* We are in SQD->SQD. (If we are not, this transition will
++		 * be rejected later in the verbs layer checks).
++		 * Check for both IB_QP_PORT and IB_QP_AV, these can be set
++		 * together in the SQD->SQD transition.
++		 *
++		 * If only IP_QP_AV was set, add in IB_QP_PORT as well (the
++		 * verbs layer driver does not track primary port changes
++		 * resulting from path migration. Thus, in SQD, if the primary
++		 * AV is modified, the primary port should also be modified).
++		 *
++		 * Note that in this transition, the IB_QP_STATE flag
++		 * is not allowed.
++		 */
++			if (((cmd->base.attr_mask & (IB_QP_AV | IB_QP_PORT))
++			     == (IB_QP_AV | IB_QP_PORT)) &&
++			    cmd->base.port_num != cmd->base.dest.port_num) {
++				ret = -EINVAL;
++				goto release_qp;
++			}
++			if ((cmd->base.attr_mask & (IB_QP_AV | IB_QP_PORT))
++			    == IB_QP_AV) {
++				cmd->base.attr_mask |= IB_QP_PORT;
++				cmd->base.port_num = cmd->base.dest.port_num;
++			}
++		}
+ 	}
  
+ 	if ((cmd->base.attr_mask & IB_QP_ALT_PATH) &&
+ 	    (!rdma_is_port_valid(qp->device, cmd->base.alt_port_num) ||
+-	    !rdma_is_port_valid(qp->device, cmd->base.alt_dest.port_num))) {
++	    !rdma_is_port_valid(qp->device, cmd->base.alt_dest.port_num) ||
++	    cmd->base.alt_port_num != cmd->base.alt_dest.port_num)) {
+ 		ret = -EINVAL;
+ 		goto release_qp;
+ 	}
 
 
