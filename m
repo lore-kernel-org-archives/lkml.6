@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B92F0C4646D
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:12:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E765C4646D
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:12:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BF412177A
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:12:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BF412177A
+	by mail.kernel.org (Postfix) with ESMTP id 13F40217C5
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:12:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13F40217C5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389322AbeHDLL6 (ORCPT
+        id S2389335AbeHDLMB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 07:11:58 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50348 "EHLO
+        Sat, 4 Aug 2018 07:12:01 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50358 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388576AbeHDLL5 (ORCPT
+        with ESMTP id S1732902AbeHDLMA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 07:11:57 -0400
+        Sat, 4 Aug 2018 07:12:00 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 97B4689C;
-        Sat,  4 Aug 2018 09:11:56 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AABD5BBF;
+        Sat,  4 Aug 2018 09:11:59 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dmitry Torokhov <dtor@chromium.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 063/124] HID: i2c-hid: check if device is there before really probing
-Date:   Sat,  4 Aug 2018 11:00:52 +0200
-Message-Id: <20180804082704.857905539@linuxfoundation.org>
+        stable@vger.kernel.org, Floris Bos <bos@je-eigen-domein.nl>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 104/124] net: lan78xx: fix rx handling before first packet is send
+Date:   Sat,  4 Aug 2018 11:01:33 +0200
+Message-Id: <20180804082706.358731134@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180804082702.434482435@linuxfoundation.org>
 References: <20180804082702.434482435@linuxfoundation.org>
@@ -52,43 +51,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dmitry Torokhov <dtor@chromium.org>
+From: Stefan Wahren <stefan.wahren@i2se.com>
 
-[ Upstream commit b3a81b6c4fc6730ac49e20d789a93c0faabafc98 ]
+[ Upstream commit 136f55f660192ce04af091642efc75d85e017364 ]
 
-On many Chromebooks touch devices are multi-sourced; the components are
-electrically compatible and one can be freely swapped for another without
-changing the OS image or firmware.
+As long the bh tasklet isn't scheduled once, no packet from the rx path
+will be handled. Since the tx path also schedule the same tasklet
+this situation only persits until the first packet transmission.
+So fix this issue by scheduling the tasklet after link reset.
 
-To avoid bunch of scary messages when device is not actually present in the
-system let's try testing basic communication with it and if there is no
-response terminate probe early with -ENXIO.
-
-Signed-off-by: Dmitry Torokhov <dtor@chromium.org>
-Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Link: https://github.com/raspberrypi/linux/issues/2617
+Fixes: 55d7de9de6c3 ("Microchip's LAN7800 family USB 2/3 to 10/100/1000 Ethernet")
+Suggested-by: Floris Bos <bos@je-eigen-domein.nl>
+Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/hid/i2c-hid/i2c-hid.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/net/usb/lan78xx.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/hid/i2c-hid/i2c-hid.c
-+++ b/drivers/hid/i2c-hid/i2c-hid.c
-@@ -1017,6 +1017,14 @@ static int i2c_hid_probe(struct i2c_clie
- 	pm_runtime_set_active(&client->dev);
- 	pm_runtime_enable(&client->dev);
- 
-+	/* Make sure there is something at this address */
-+	ret = i2c_smbus_read_byte(client);
-+	if (ret < 0) {
-+		dev_dbg(&client->dev, "nothing at this address: %d\n", ret);
-+		ret = -ENXIO;
-+		goto err_pm;
-+	}
+--- a/drivers/net/usb/lan78xx.c
++++ b/drivers/net/usb/lan78xx.c
+@@ -1361,6 +1361,8 @@ static void lan78xx_init_mac_address(str
+ 			netif_dbg(dev, ifup, dev->net,
+ 				  "MAC address set to random addr");
+ 		}
 +
- 	ret = i2c_hid_fetch_hid_descriptor(ihid);
- 	if (ret < 0)
- 		goto err_pm;
++		tasklet_schedule(&dev->bh);
+ 	}
+ 
+ 	ret = lan78xx_write_reg(dev, MAF_LO(0), addr_lo);
 
 
