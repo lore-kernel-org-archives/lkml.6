@@ -6,68 +6,68 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58FB6C4646F
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:26:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CDF0C4646D
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:26:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1CCB217CB
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:26:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CBF9C217CE
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:26:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="lNPfW/Pj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1CCB217CB
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="4kYJRQbk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBF9C217CE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729666AbeHDL0W (ORCPT
+        id S1729694AbeHDL00 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 07:26:22 -0400
-Received: from mail-bn3nam01on0071.outbound.protection.outlook.com ([104.47.33.71]:58240
-        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+        Sat, 4 Aug 2018 07:26:26 -0400
+Received: from mail-eopbgr730046.outbound.protection.outlook.com ([40.107.73.46]:65112
+        "EHLO NAM05-DM3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727096AbeHDL0W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 07:26:22 -0400
+        id S1727629AbeHDL00 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 4 Aug 2018 07:26:26 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VSrjBbxZmbIdaxZmw4sBJvFApEDkBHZD2je4KbNmhjQ=;
- b=lNPfW/PjXLt5l3fDmduNkBoQvzfATVXZvyez6fgG780xYmPw7kdxu/8/B3A1qQ8hOGLkkFM8qpiHU23pdsbFfEOmqpK2iR8dS6hlmlE40oszQxoFYK68rbNFPzGEUO83rjVPqDmgYlpT4/kv0FPjZwhXp5JgQJWmBpOeLsbO0Og=
-Received: from CY4PR02CA0028.namprd02.prod.outlook.com (2603:10b6:903:117::14)
- by DM5PR0201MB3509.namprd02.prod.outlook.com (2603:10b6:4:76::39) with
- Microsoft SMTP Server (version=TLS1_2,
+ bh=eIozYdZaMepAWpziaAOXYVIFiUqugBL8Lk5IORVUWRc=;
+ b=4kYJRQbk0aNlwi9IqfhUlF1fmWpiiq0ckYcaToHrFhmYkb4MrGJiks9Y72u2PTKDP0432w6RwQkKTVhf3VOXaJyGEq8OYNAB4VMATQmOZdWzjPqkE6N06zoqKaAUl78YsJj87NxE9iZVUSouPjdPr6RtEuUsMuBiJLVXweQrvOU=
+Received: from MWHPR0201CA0027.namprd02.prod.outlook.com
+ (2603:10b6:301:74::40) by CY4PR0201MB3507.namprd02.prod.outlook.com
+ (2603:10b6:910:95::13) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1017.15; Sat, 4 Aug
- 2018 09:26:15 +0000
-Received: from BL2NAM02FT063.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e46::206) by CY4PR02CA0028.outlook.office365.com
- (2603:10b6:903:117::14) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1017.14 via Frontend
+ 2018 09:26:16 +0000
+Received: from SN1NAM02FT049.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e44::204) by MWHPR0201CA0027.outlook.office365.com
+ (2603:10b6:301:74::40) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1017.15 via Frontend
  Transport; Sat, 4 Aug 2018 09:26:15 +0000
-Authentication-Results: spf=pass (sender IP is 149.199.60.100)
+Authentication-Results: spf=pass (sender IP is 149.199.60.83)
  smtp.mailfrom=xilinx.com; vger.kernel.org; dkim=none (message not signed)
  header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
  header.from=xilinx.com;
 Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.60.100 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.60.100; helo=xsj-pvapsmtpgw02;
-Received: from xsj-pvapsmtpgw02 (149.199.60.100) by
- BL2NAM02FT063.mail.protection.outlook.com (10.152.77.121) with Microsoft SMTP
+ 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
+Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
+ SN1NAM02FT049.mail.protection.outlook.com (10.152.72.166) with Microsoft SMTP
  Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1038.3
- via Frontend Transport; Sat, 4 Aug 2018 09:26:14 +0000
-Received: from unknown-38-66.xilinx.com ([149.199.38.66]:46152 helo=xsj-pvapsmtp01)
-        by xsj-pvapsmtpgw02 with esmtp (Exim 4.63)
+ via Frontend Transport; Sat, 4 Aug 2018 09:26:15 +0000
+Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
+        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
         (envelope-from <manish.narani@xilinx.com>)
-        id 1flspC-0000SS-4x; Sat, 04 Aug 2018 02:26:14 -0700
+        id 1flspC-0001kj-Jc; Sat, 04 Aug 2018 02:26:14 -0700
 Received: from [127.0.0.1] (helo=localhost)
         by xsj-pvapsmtp01 with smtp (Exim 4.63)
         (envelope-from <manish.narani@xilinx.com>)
-        id 1flsp6-0002RS-VF; Sat, 04 Aug 2018 02:26:09 -0700
-Received: from xsj-pvapsmtp01 (xsj-smtp1.xilinx.com [149.199.38.66])
-        by xsj-smtp-dlp1.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id w749Px87001276;
-        Sat, 4 Aug 2018 02:25:59 -0700
+        id 1flsp7-0002RS-3H; Sat, 04 Aug 2018 02:26:09 -0700
+Received: from xsj-pvapsmtp01 (smtp3.xilinx.com [149.199.38.66])
+        by xsj-smtp-dlp2.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id w749Q4k2014007;
+        Sat, 4 Aug 2018 02:26:04 -0700
 Received: from [172.23.64.106] (helo=xhdvnc125.xilinx.com)
         by xsj-pvapsmtp01 with esmtp (Exim 4.63)
         (envelope-from <mnarani@xilinx.com>)
-        id 1flsox-0002IQ-2r; Sat, 04 Aug 2018 02:25:59 -0700
+        id 1flsp0-0002JQ-L2; Sat, 04 Aug 2018 02:26:03 -0700
 Received: by xhdvnc125.xilinx.com (Postfix, from userid 16987)
-        id 626321214D0; Sat,  4 Aug 2018 14:55:58 +0530 (IST)
+        id F094B1214D0; Sat,  4 Aug 2018 14:56:01 +0530 (IST)
 From:   Manish Narani <manish.narani@xilinx.com>
 To:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
         <catalin.marinas@arm.com>, <will.deacon@arm.com>,
@@ -81,9 +81,9 @@ CC:     <sgoud@xilinx.com>, <anirudh@xilinx.com>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-edac@vger.kernel.org>,
         Manish Narani <manish.narani@xilinx.com>
-Subject: [PATCH v4 2/4] dt: bindings: Document ZynqMP DDRC in Synopsys documentation
-Date:   Sat, 4 Aug 2018 14:55:33 +0530
-Message-ID: <1533374735-16662-3-git-send-email-manish.narani@xilinx.com>
+Subject: [PATCH v4 3/4] edac: synopsys: Add EDAC ECC support for ZynqMP DDRC
+Date:   Sat, 4 Aug 2018 14:55:34 +0530
+Message-ID: <1533374735-16662-4-git-send-email-manish.narani@xilinx.com>
 X-Mailer: git-send-email 2.1.1
 In-Reply-To: <1533374735-16662-1-git-send-email-manish.narani@xilinx.com>
 References: <1533374735-16662-1-git-send-email-manish.narani@xilinx.com>
@@ -92,113 +92,1109 @@ X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
 X-TM-AS-User-Approved-Sender: Yes;Yes
 X-EOPAttributedMessage: 0
 X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:149.199.60.100;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(346002)(396003)(376002)(136003)(39860400002)(2980300002)(438002)(189003)(199004)(36386004)(486006)(103686004)(2906002)(90966002)(305945005)(14444005)(50466002)(48376002)(44832011)(106466001)(2201001)(36756003)(72206003)(63266004)(336012)(6666003)(52956003)(5660300001)(478600001)(50226002)(26005)(186003)(7416002)(8936002)(446003)(51416003)(126002)(4326008)(426003)(106002)(316002)(16586007)(356003)(42186006)(476003)(2616005)(11346002)(81166006)(47776003)(54906003)(110136005)(6266002)(76176011)(81156014)(107886003)(8676002)(107986001)(921003)(5001870100001)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR0201MB3509;H:xsj-pvapsmtpgw02;FPR:;SPF:Pass;LANG:en;PTR:xapps1.xilinx.com,unknown-60-100.xilinx.com;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: 1;BL2NAM02FT063;1:QKneoM5kOuHqW3bvLtdz6Hhqs5XdGaPXIK0OWch5jmrDoFvOLmHsxlz4nZSnFeuc/K4Fe8ndE7c5xV6UDdy/ctJxHDw8gL0OMeJnvk2TKFD2MMGJPBb/tzl5OpGOBkmJ
+X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(346002)(396003)(39860400002)(136003)(376002)(2980300002)(438002)(189003)(199004)(72206003)(217873002)(81156014)(8936002)(81166006)(8676002)(2201001)(90966002)(356003)(2906002)(47776003)(7416002)(53946003)(50226002)(305945005)(106466001)(478600001)(5660300001)(110136005)(63266004)(6666003)(186003)(5024004)(48376002)(14444005)(54906003)(106002)(36386004)(446003)(26005)(11346002)(44832011)(426003)(126002)(476003)(2616005)(50466002)(486006)(336012)(36756003)(6266002)(51416003)(103686004)(76176011)(316002)(52956003)(4326008)(16586007)(107886003)(42186006)(107986001)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:CY4PR0201MB3507;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: 1;SN1NAM02FT049;1:SCjnhC1Jf6WGc7kz9g5EPtK/QnUaUlP0Jd7CdjK+ww3fTjsMVrdt3JcggcAyPW4926Ha+sfEMYQpefe1aa1NvQ28wMt7ulXWRVxIjyLA/0fjs+bgiHTWgIDVsWnNfYvu
 MIME-Version: 1.0
 Content-Type: text/plain
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: cba40095-44a1-49fb-4a25-08d5f9ec5366
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600074)(711020)(4608076)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060);SRVR:DM5PR0201MB3509;
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR0201MB3509;3:XnsMZ9Scr5UkykP6+fLexXwDVegbgTupxPYZHEqXhDQMQvvY01wtEEHFj9urj16xXpvbePpphoFXjlr5kYPU5J6C6prKVVbXrkHoZXssu4H4QWffd++QyUrkko9MuYNUlZu2YhPHCw8nWwxHLrekaBjSLtOV65mLR4Z1h0mneYDbHPoKP1mHExn5NHGA3KX/s9KFK+ZU1nvKM6Frb302Hy9m/uc+pC2X9GDF7C6wfn9n5IIdahvMy8EXiRk6fbY4uiYgNDWU5ojj9CSh1AYP85jsFIsV8DW4eoiNz36/syxW1uSxVhrM4TvMp+nlTW8XJ+jzioUJFAHG+BtuJ563RX4oschRCyB14Iq3n9gi+IM=;25:qn/+ccfpR/KBBWD3+OwBwPdBiPW3giVqhgzDkxltUb33E7ICmXvg8kSvEJOauhuq3I8q1pSaQ8ZYO9qC4Po87+VGZgj5odDpCYUwkrGctpoc+pCUb3u8jmpUL+bh+3yPiCmdUPShpm8IX+4T+u2oEYtjFleqEHi8ChCsGfXAqbgm0bjmr0Vh3+JmvsVQdRrdyUJxQz4YcIR+nY4TwNpULdx3XnGzQaieG/5nA1BW0zJW7Gi3/I74AEFmlZVSbSL6eyFNYXO/E8C7SAGcUCPuXGh4j6NLe45/bBu4UL1qJPsOotz6toTyxKDxHJv6ITd34ItrWH1wfJSRAZjUb4RpJQ==
-X-MS-TrafficTypeDiagnostic: DM5PR0201MB3509:
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR0201MB3509;31:rANJAoL5bx4OPAIYjFYy5lWdjgSn3qVw/O3rlofxozIKVxAkO7AtVzFL3ca+LKPOnjHI5GZP7it20UogzWiU8pj9mQSuPjUyB238ozA2aoOqoUXpbnuODcJu00LfmW6xVXjieZ125kC0Epd0IYx6UTj7LNfRrtyEyll0/Al1VYTp04oAaxchTUSBLu7aGM71UnXtmAq5YHL0shZv4N39cSHv0EKPGqVtTl7i0iqCweI=;20:W/p0NtAMgFGZUPwOszGygEYkYYny+RYI1jxKnD+6nqPbMSbr6WlQaCOiqIXI9rQ/zj+Bb1uygtdmWYYnqDC5gr0Ssb12TRyYv+b+u+hwJICQgBGLQVup2/zF1bdsikpPJyghxi8Te8nv3mULyvm04FRh8kTJRPCQREh49PCQZD3sod6urWpK1uBQMAeWWZrmumie4MEJmxn1JEe7gN3bvNkAni0YvU8MInxF2nXjPt4rhsfL5/zcOlRXlEzsUFNyMGRWAmntfxOgqOshi5LXnrRxsUjjpLPRsS+nRnFO83W3i54zgqDSojxVMZM6KFIIjfxrYbb65KMLEYuhE//CUqHTIXcMMXHuxq0SV91CQ3HHJXoBqoB176yAxA/rmeNONjUhl0naX9b4g5AbfqKOozBUacozGgi1eNoUKcrpx4/vD+IGh5mTOMfjR2x99bV5E3LhSHQnii2eq9T5BWaRxMDphJWuCXZatUk775FC3UgFEEYRlazK+azRXsYRnkPv
+X-MS-Office365-Filtering-Correlation-Id: 1b84374f-753f-46b2-dfec-08d5f9ec53d6
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4608076)(2017052603328)(7153060);SRVR:CY4PR0201MB3507;
+X-Microsoft-Exchange-Diagnostics: 1;CY4PR0201MB3507;3:DQbaZDrnLxsann4vSk5Qml++yGpqNtEGiv9DiD35IVA1maI1G4xCl7f+MSDBwSQreSk8gyFjwKkBIgfhuqe9NTDlSxFN4czckAeSPnFx5KUewqlIQteRnAMd47VBFzKJSsfU+4ZRUrtqypaHaFZUp/rznow5VCYdY8XF7eQvWaXBCrL1NDrHGPp25mgNeNmCx2bS76G5lUm/1IAXyllIfD3KDe+FPaWYFQryyxnevPg1aMaQLdKSN9MD4HyaElG2nUGj2eTG2Rozu9v9HUHFzCyoNAlC7BuHR7GmUst4jdo2vEh6fj+jE52NcchFwi0CZA4YXKKcbmoO7bdMR92mJU1IzCxFPAEN46mKD5p1zHM=;25:nfPsVMOzx9viOb6X8kcpIRCR3CZiIXOa0YxoFLVth9P2DLHo1d5K5465OL9KS6mNynpNRe25SYZdYUFN6U8VD7tbACDuiEIRm/Pk2rniFpIZXILatHQEt6uzgFcBtGXCIHgxxqBDrYF/kbMDIyjPDsSgZFkr57WZMvM9xINXGo+KFyNvsVnYHSOcB2EFcuuoJyqpii4exL4Rg8B17YjjJuiSGFQpXwi7i976CE9QZHqUKLGEdZph+Sq6Tk3J9uf9aJYskaHnuiSQuCX59wJbD/dyXVDwzZ/hhPIfXx42YRPmwzDT6LsqWDa6qYn0343/MyNGG+xzRroBGoyx9C6lmg==
+X-MS-TrafficTypeDiagnostic: CY4PR0201MB3507:
+X-Microsoft-Exchange-Diagnostics: 1;CY4PR0201MB3507;31:48tIYAzK400UNfQKBitUfaCwXVNgXS4QCdx/CmovqNBSzbugNml74gUJ8GPHBnRwiSiRcd/8WrJRZLOlvHb/ZKt7kUUFoFbjjFglDaUXyzxpAsfIh6xTdOqgr6EN2xfNr1L86BFdNiJc2sQwtNfEx7FWbae0KZhKxX+TP6j4LMMmpdOmQIrXnwL/nfZY7UTL0K+XH1ef2lRMRkLz5+ep4AsF9JlQ3WaCSC2PBDzxkLQ=;20:MgWZ4WybuM7vuFZ2eXiZWLqBdNVJOVa0TE3RVuimab+CrUs2RR37nVfQE7ZfOJByjRxPBqyyKst/A0LQdU/PRXYrNUnusa7cz0DpIJSTfVMrwvGBCUxGgPcK/23va4uRdL4rQqzFHtPiysRsPZGaJ5Gp722HzC+Fj7OY77B0NcQJu0HIZ/JSuzusstyNDJGN55HV5tiH3X1pjhuvbxmK2hNMjaL7yWTXmjLHQS+BU/ei/PWl+K2VpJvtoHsuExx/RY2GAZlonVceQ3WoOTN86NJQUm/zPUPb+1r4w6aVQqlfgxCpJofVe4Hfmq/e/93mkH5XgtOE3P2BBrnqlFv0N+rdHoKPKGUgOYGVVvnHSgViO7w7JulrJGfgTtyq1+KpYt/Iy/mKxICm80XBEAK9tSlLTmimDCqmkQn1qB8tI/79OHgK9gRaDxlQrN6w6/AVUXUNLqtVbAK+T0HjPV6Flbo3GvyMFV1sxN/P/M31x1qqZMvgmwDoOrocJM8Y53HV
 X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-Microsoft-Antispam-PRVS: <DM5PR0201MB3509916B81A207280F3ACA61C1220@DM5PR0201MB3509.namprd02.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(20558992708506)(192813158149592);
+X-Microsoft-Antispam-PRVS: <CY4PR0201MB350797815CF92B2065EB1646C1220@CY4PR0201MB3507.namprd02.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(192813158149592);
 X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(93006095)(93004095)(10201501046)(3231311)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:DM5PR0201MB3509;BCL:0;PCL:0;RULEID:;SRVR:DM5PR0201MB3509;
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR0201MB3509;4:jKfDd9TvhnMlPbzeHPQoeUT4XnBHhfMeIWmVurp/YQ3FnW4wC2MMS6fEnWBfuAtRNfatfbN/7axzOk2u0qImMi72E6Ls0u4avW3SAMXaqOdL3XD1Y28MHKbVbnntpyTd3KdV6qUkir7golOJDO1J1p61uQI46MsrgPLhzTRuxFb6kA3k4ZJhqHfc/fbjFJf88DDsRXgLmmXt/iBQObt9vpcTPKoNXT1XdTiJut1KOnKpVG2SXWW8I7f+UaDBxjL+58PMkgrNW7ExLRXDlQLhfA0YvYbIn3OfoF9MYgFy6OiWaFsczT/8jW+5U5149MOQPiiuzenvwD1BUXZ1H36xutB+tENF/NPccoC3CKgz368=
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93004095)(3231311)(944501410)(52105095)(10201501046)(3002001)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(6072148)(201708071742011)(7699016);SRVR:CY4PR0201MB3507;BCL:0;PCL:0;RULEID:;SRVR:CY4PR0201MB3507;
+X-Microsoft-Exchange-Diagnostics: 1;CY4PR0201MB3507;4:BqSJTves4Stz20ezjRuOSg6o800tEKQWGbOuHESzFsHKydao9WyMHYWO4WNNtEg9IopU4hCnscUt6gx6delVdIFUg0IJ9lk9vsoi78CiOdkLC2vwPoWHnL8dV6K4+iDiOeDTxx6pQ2FD5BdiZrKY+876fRoq+krfNX2WqH0KMVwc5sLP8BwtGX33IJjmMwEWm97j2rwBEHA5BaG93lQ3Z35+NJIwZdploQ7fKBXe3UyQ51+XadoJon4Fsj2/nLrmoN5+9ta1JteomuvWQL4X449CpMc9CziSuJxuOPfa0KZe0AVicPfebQmIGAvrYbgf
 X-Forefront-PRVS: 0754F7E325
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DM5PR0201MB3509;23:70ZkSnbnxPHdaccT6ezY0UhtI9kxHj7BuURWl7w?=
- =?us-ascii?Q?lCg+0ZCXA3mdZU+nymsLTmcEFXVe9xtRRSllNbOJ/nd+yMBCfF0nbNXIvffo?=
- =?us-ascii?Q?UmmkkmovgqRCy0udUulNUlHuvh/duqoCfU8uUB1u0f78kODp/CjF2SMNPG0n?=
- =?us-ascii?Q?uj3uGvT9WTt/CMSaCghQ0juBp4aNHUrhBNopzeAnlDmPjc1wRwkME47No5CS?=
- =?us-ascii?Q?4GvoTq4YQU8nmp+7WgUgXpNj9G6AkIiCbW168HZMczXK4k3KX8ktEUNdso1V?=
- =?us-ascii?Q?zfG6lE6D0sHmTxqKp5/vdyG31TZE50G0y0Q+ftjOOXXjYDYtOdKMwc9s0HXr?=
- =?us-ascii?Q?rezZMy0lQalkmJpNkFHxF3LQodZQTINNNQRblLphhoioybOW+bhx/sDDGKa4?=
- =?us-ascii?Q?Kia+2Dh11TtfIhBdpGCOS337fCipnCIIaWyUzlJb4wEjfkXse2Ha8CAIjahY?=
- =?us-ascii?Q?luqAM6U5/yF5axRvbDQoqz9RvG1fWiD36T4mN3ka4FFE0gyZtbkY2jpGMBIp?=
- =?us-ascii?Q?9G85lyuawlpq3LrAbk9bNEvdf7nkKXB6Z+D0EVmXh15ZSvpByhpbvcUKb2Jd?=
- =?us-ascii?Q?hxW6YalJALKv/LVBCFMcrRO0dHzL7Q8SVX6nVZmV+d93DuuDtJvmB9ird69T?=
- =?us-ascii?Q?1QYPVA/SIm6MDPMIA4RllWcin++JTBRcKytkk2qAGb72P7IPGKeYE8cBBZqy?=
- =?us-ascii?Q?gbc2he0rZgWHl1QfllakDqFckOcFui2X/gsz+Ix1Vc/SosaZ6nWBKxL4NxG2?=
- =?us-ascii?Q?DThRyss82S5kR2ksXmkRXbowHQxbxvLjl2AalIQ5/NvbLUgPEdJu07EZ1H9h?=
- =?us-ascii?Q?axi0OVxG4NowEKrbZegn1tjj6Ie3XdpH5mblSLiIHiGPGGIPkY/TkQ4COajR?=
- =?us-ascii?Q?IaMSa2hst3pPcUwfmTpPyYvN3Xu2cP4XJBUZw7sC2Ejdyglg724yaLh9ICoE?=
- =?us-ascii?Q?PqACmAsGIfh777bOtDxT07H2ouU8dexjXAbsFLUOUgC1xIT+yOt2vPI89S3k?=
- =?us-ascii?Q?wISWsnR/JKG3CkVHWJj50o8pbpixRB70/W2lCoJZaXGu6h71ElZzQzBYWv1S?=
- =?us-ascii?Q?uZpbjAcHRuF7lit9rIB5HfexKJxC8YWDbHBXmvfJPgL0lZBOeGMhftavLDI5?=
- =?us-ascii?Q?jNZIYtwg1T3S0YaKmVVtlWsnzxfzC7K1y3VMxN7Tp/2jttP08n6UKcfUCQIL?=
- =?us-ascii?Q?A1fYv1swGrnu0Dw1jeI878J1kU+vGmfeUq+8a89WHgfxF9ndsqVuXdIA9UJp?=
- =?us-ascii?Q?op/yD4xIVMgPRUUVuJXj28bwHvusiF6TgzWimovarelfKdCnARxXweT+1Tsb?=
- =?us-ascii?Q?ti0ZWajj3HqkrMYq7NdQcY2o=3D?=
-X-Microsoft-Antispam-Message-Info: Poq+3EfHl3ZZyRwnplED7ObR3voOVQ+Pi2VUrC35dZNw4N0iq11pEsFvYqRe54K7tWRXU8Nt7xAnRSwsmETffKrXSuPDMswmcFgJFR09e7JAvQooNQdOlULU7bXhkBvkjsvc+WrwseX9fU1ZoLzncxmWc190FFLgIi7H8p6nSeNiU8rxwkHTT3izirkNqN5uMLcS2oziPPiQNl5fsouMzvNY45g2YDSniTpWgRDIEXtfeLsa/66YwuZR3hQ0jUgtA8I2N+uSJTCH6/OhpKG89QwR+3xeRZB+T+ba9AFxyNYujJ4Hvp6ARpocT3kSykyHPtOyLnuv59Z0RDMORhdmpeuwUMEpJDR9k38YxsmQifI=
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR0201MB3509;6:kr7PeiH57sJ+1FS5iVQZgWQ3T+xHsPvBB5cJJOnjSEb6TfeJribi97IRrnEpWnixUaZcNGV5gn868zEL9GBHZz2t3RVI2q6Rm/t93Vf0ReUeWybK1Q683lWutwRLqj+FaUcjYPAq5OVIfSmReETEvAFqCFg5PEBJP+U9FdtWpABTL7XHpqPF7x+CNez6RpXf48fkiakLIMaIwDoYF1Kn56rqO3du0+XSFc/cOAkdPOosuKSwFYedLnw+BkajX4PS1t93WPdQ7tzQ2KfYdFOeGkzvJHrULIO20uX4OYMFXcwZO5fF7ORPwtHHLkON0ymwK2KBNG2EImiX/XnOtpN4k5Icis2w4ugwK2I4qOXDYGoqKnOxHpf4e1FG/5ZLTQ+RXpBsAqbVVVuePhSgssbEU1d1C2ruhpJgRNvVAcCoyR9HoojkqolVinNFNwZzOgKwH5KnOCHi1m6iDNnoIvSgMA==;5:q22pQF1SZdwYleZNBIgVGODXNhijuAxG3vzrLLIqHLQEhreOxkNkUas95zmLjrn5V82iIdaFSyz+Xb+BfKp8A5FFELnot15V32F5DPLBsYQho7V93N6gpYzNBm50rUi9kjj6ke4/Ut9ZFc3S9PejXcnZePuS/EbZT/7YvCAPXMQ=;7:wVAGIN6AI6OS/kvd55PFW/GOhNKwn2b84lSXpd0f3293L4olaIpB7N3YDqzbo371PIzdLhR6E4H6z6fpe6Wgt77t0vizlhauPF5W8j4CEWxL8/wS5PlV0ll5qBebEkmW78jbmUo2b18FTxnQtf+y2SO/utKg11/+r1utGDAsEubhxhCU2Qxse23FHaMzE6Ek4QDt9dAcj91db+pBSyvTP8hfe8DKP1pb7mqXzwJy3lqgSX9FIaqKgaVq/BKKiKV4
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;CY4PR0201MB3507;23:1633+OSEIlFzDbItr51OTw/8lVaSf83fkDE0rci?=
+ =?us-ascii?Q?NOi7Nricq9+2+TxsVwB6QfJeVdXeZKy8dSOhdLaLiap8Y6epyhdSsfT9s3mR?=
+ =?us-ascii?Q?3er1/1ZMNgPMtnuqG4m82wumqFZyEJgOlz3HyS0XG6VtHC5ME5m1PIteNVKu?=
+ =?us-ascii?Q?gIAnkVCBONJiJ7X20+nV1Cg5/7aTGvJxCuvnIU+2QlvADUNv29Dhn+C4llf1?=
+ =?us-ascii?Q?MijaIZzzHFm0YtMItB8AKc11HjIfCu2s9LSAZ3W6eKhYlHC2jTgJRrz0d9L1?=
+ =?us-ascii?Q?c/eFfw1vAyLWggg+A7uEwNIbxz1aSNZEV7Zt4RsN05xOo1upkMq1E9PiSMW9?=
+ =?us-ascii?Q?IIjvbU91TTQxRjbEopg0oJFjC9T3ACx41fPyMhmTEcpZ07Et1WvLeYecJ/dr?=
+ =?us-ascii?Q?xHi2BiiAolzEUx3PKl+fe5hurhqV5pVDxypTo7kXeHkdShA6T4zHU6OztidD?=
+ =?us-ascii?Q?vEzUIiOFsscTgKsIfXwOLJaqi7GSC+4pvVL4QnX7iGBkXRDEEE7dj23TvL95?=
+ =?us-ascii?Q?hanxbIe0nI0lQkx4Pmvewxvy6GmtSW/iSddSzIVhTHEYbZvH2fzI2Fq1varg?=
+ =?us-ascii?Q?6PhTNWZMOrQvt7tlQFOvnXcyZXrTWhDhQHR5mlwBFAsZO92fpqPe8VjDutFJ?=
+ =?us-ascii?Q?xxXP6hTXUsS/b7+45d+FpyJ5knHCjmJ580FtNEMkd7zizooI3SwILKkR1iQC?=
+ =?us-ascii?Q?fzc5Ud1R2ugfWsyyWmJpN8+KGC9p6b9IwJKL6vxFN/sBh8HGCA7WIIjdA6JN?=
+ =?us-ascii?Q?H5jXVBB1M0PjudzRadpGYu2JR3tkdNVX0IyMemrh+zjnDyCBFbZgnSeqeerp?=
+ =?us-ascii?Q?X7OeQ4mYerRiP0Qkv4Rw/dLVF7XHgQHzaVuWa30sCLZHeGxeHRiQLpgKXlyT?=
+ =?us-ascii?Q?G5bj2lgXw0GREjLXgyveOqWsX4OU/cxByC9s714LWPjVXeEPQwN7VOTpuImN?=
+ =?us-ascii?Q?WmpDODlxY7S7nvJ3eKyzS/nwkSf5wT/qPDzXLaYH03V8/Y32nr1kctiMrKJp?=
+ =?us-ascii?Q?wTtA+Mum9UMP5fqyh4chiXkxVOION8yVbWC/uJnSywOrz7MA6wUY/31frg9h?=
+ =?us-ascii?Q?dGp2vlZN/IsKnEZ8vdKNhskl4EbWt45hoZV7qHN1hRaXoxtKtF5WFzYu/6hN?=
+ =?us-ascii?Q?rfF/LowrOkN1IXbvvOvhzmmdmhWhNgE6WCVqiUKaF0Fo+nLcb6JDfoV/ncfk?=
+ =?us-ascii?Q?5bnh3PKYU9zz29DfdKKp7Fn+e/nyUad7DWthlvq42fqp2GKnW9XwWdlcwX3h?=
+ =?us-ascii?Q?5BHbL2VBQBRRFV6JsJxBnCIstuQxoIgctUwM/zS9U5d73oAoltCSUo6Tkm4p?=
+ =?us-ascii?Q?eLzhaKQaRCrnx274YGPED304O2937l/9K3JvvDYD0jQLztVkt+FtdlrbajUL?=
+ =?us-ascii?Q?Gmyo48g=3D=3D?=
+X-Microsoft-Antispam-Message-Info: uepO8RUWhZ3bmUUdIj+kyV5zm0dmN8OF4bjiBkS4ryaIaisf8niGg9EXduAjsvBqNLhAj9QC1Ux3dMwKKYjOLI1mxWFyM9+MmGcuJZtIZgi0+Yvn5CfnxjrYO7q0SNOKvNqKlm55MTqX4aci1rKRkUFUPxOBj2vtHBlaJjKCL+BkpCk8eoVqnMBubIXFmarfz5cP0ZEwAgph8GUrzmY9QpBSKCPMV8TY0vAcJ3SHzgMZl1ybgVSoRduGmgD5ba6LUa/3Dv/PUy0D4RcU06afLaEJmhRRJHPPQBJ96onw7mL2wOQOSY8VOUmdBdH6gpO/fUNVVZs1n3+FO4WIoqZGYWQJbXF9uDfnYXZKrtnpcnk=
+X-Microsoft-Exchange-Diagnostics: 1;CY4PR0201MB3507;6:rcj0sa7r+9GaIuS8keGy8atGOjNB+Orjl08PHkQcBaJTTfWu2Gt68dP5oP+fWjBKvIxISrdoPPw2GTFqnIkM4YPPuTi+ippAsJeB/BRmQVpWrhZWkscEWSKptvs5ysrDaHG1jIL9/mrzV9BU/P25LiDq9UqtlpiSHV1bfX3weLFG1DOXQ+Gf3JALEC535zjt4R2qJNdpB5CB0h1WvLxgk93mt+/zdvcrY2+dmwxd0v5CkVy+ZvlHFoW5YH3wRCMOG7nB6FEirXeVZ28N/p1frt9YXfEWOusDHQYs0RGeUuT02et5nWWhwtN9gywYSQhMipux92AabOM0tlzdiXZmFMJLUg4cBA+rc8cpbha24c/MbqRl4dz5XBV2VcJgZqXvF0eHu0JlEX713IyKTBWojkAWps6MfPxjdUg4FTXpJ75qZp+dJjJVCQ1jGmvukDVMKwbztQHMKKZx+eA3EUE4Gw==;5:MUzTNpLvO+IowovniPZBPe9qNRgresEBBzgZ8vzm42oKKJ0ue4X9epmWUROjf9dqrMgwSDboCStBlHM+1cA/RNfcAXcMYZz1nVFGS5MJppmEpo4IRNOkzT2TdQO45HQ0WUVXCzjEvjLT96qJ27xywh8cxm9lE5ckTtb2uCLPVZc=;7:KsAMsR2AIrbpgPw7lIoVB+mTfbDCUBZcRqS6q3cMjUKo0b5AnpYAtqpO5kBTthtpjZzin/48doShIUHITdPdpo1oCJgA5n1dyDIX46qh47rryNy4ZYARY95jN1UDmwHI5ojDeTdRdyzd9zAGmfQ1hruf61ntUOpQot1t/HHuiJiwQUklLnE3sNzsp7/aYPlHsS8EbLwjIQwnBHIOTPJxrf2KNTwVJ6vlBInrlkfk+uLipLlplYwxEnaXerRpgVGc
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
 X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Aug 2018 09:26:14.7885
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Aug 2018 09:26:15.0263
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: cba40095-44a1-49fb-4a25-08d5f9ec5366
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1b84374f-753f-46b2-dfec-08d5f9ec53d6
 X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.100];Helo=[xsj-pvapsmtpgw02]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR0201MB3509
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR0201MB3507
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds information of ZynqMP DDRC which reports the single bit
-errors that are corrected and the double bit errors that are detected.
+Add EDAC ECC support for ZynqMP DDRC IP. Also add support for ECC Error
+Injection in ZynqMP. The corrected and uncorrected error interrupts
+support is added. The Row, Column, Bank, Bank Group and Rank bits
+positions are determined via Address Map registers of Synopsys DDRC.
 
 Signed-off-by: Manish Narani <manish.narani@xilinx.com>
 ---
- .../bindings/memory-controllers/synopsys.txt       | 27 ++++++++++++++++++----
- 1 file changed, 22 insertions(+), 5 deletions(-)
+ drivers/edac/Kconfig         |   2 +-
+ drivers/edac/synopsys_edac.c | 864 ++++++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 848 insertions(+), 18 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/memory-controllers/synopsys.txt b/Documentation/devicetree/bindings/memory-controllers/synopsys.txt
-index a43d26d..9d32762 100644
---- a/Documentation/devicetree/bindings/memory-controllers/synopsys.txt
-+++ b/Documentation/devicetree/bindings/memory-controllers/synopsys.txt
-@@ -1,15 +1,32 @@
- Binding for Synopsys IntelliDDR Multi Protocol Memory Controller
+diff --git a/drivers/edac/Kconfig b/drivers/edac/Kconfig
+index 57304b2..b1fc7a16 100644
+--- a/drivers/edac/Kconfig
++++ b/drivers/edac/Kconfig
+@@ -441,7 +441,7 @@ config EDAC_ALTERA_SDMMC
  
--This controller has an optional ECC support in half-bus width (16-bit)
--configuration. The ECC controller corrects one bit error and detects
--two bit errors.
-+The ZynqMP DDR ECC controller has an optional ECC support in 64-bit and 32-bit
-+bus width configurations.
-+
-+The Zynq DDR ECC controller has an optional ECC support in half-bus width
-+(16-bit) configuration.
-+
-+These both ECC controllers correct single bit ECC errors and detect double bit
-+ECC errors.
+ config EDAC_SYNOPSYS
+ 	tristate "Synopsys DDR Memory Controller"
+-	depends on ARCH_ZYNQ
++	depends on ARCH_ZYNQ || ARM64
+ 	help
+ 	  Support for error detection and correction on the Synopsys DDR
+ 	  memory controller.
+diff --git a/drivers/edac/synopsys_edac.c b/drivers/edac/synopsys_edac.c
+index b3c54e7..82f276b 100644
+--- a/drivers/edac/synopsys_edac.c
++++ b/drivers/edac/synopsys_edac.c
+@@ -22,6 +22,7 @@
+ #include <linux/edac.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
++#include <linux/interrupt.h>
+ #include <linux/of.h>
  
- Required properties:
-- - compatible: Should be 'xlnx,zynq-ddrc-a05'
-- - reg: Base address and size of the controllers memory area
-+ - compatible: One of:
-+	- 'xlnx,zynq-ddrc-a05' : Zynq DDR ECC controller
-+	- 'xlnx,zynqmp-ddrc-2.40a' : ZynqMP DDR ECC controller
-+ - reg: Should contain DDR controller registers location and length.
-+
-+Required properties for "xlnx,zynqmp-ddrc-2.40a":
-+ - interrupts: Property with a value describing the interrupt number.
+ #include "edac_module.h"
+@@ -96,6 +97,170 @@
+ #define SCRUB_MODE_MASK		0x7
+ #define SCRUB_MODE_SECDED	0x4
  
- Example:
- 	memory-controller@f8006000 {
- 		compatible = "xlnx,zynq-ddrc-a05";
- 		reg = <0xf8006000 0x1000>;
- 	};
++/* DDR ECC Quirks */
++#define DDR_ECC_INTR_SUPPORT	BIT(0)
 +
-+	mc: memory-controller@fd070000 {
-+		compatible = "xlnx,zynqmp-ddrc-2.40a";
-+		reg = <0x0 0xfd070000 0x0 0x30000>;
-+		interrupt-parent = <&gic>;
-+		interrupts = <0 112 4>;
-+	};
++/* DDR ECC Quirks */
++#define DDR_ECC_INTR_SUPPORT	BIT(0)
++#define DDR_ECC_DATA_POISON_SUPPORT BIT(1)
++
++/* ZynqMP Enhanced DDR memory controller registers that are relevant to ECC */
++/* ECC Configuration Registers */
++#define ECC_CFG0_OFST	0x70
++#define ECC_CFG1_OFST	0x74
++
++/* ECC Status Register */
++#define ECC_STAT_OFST	0x78
++
++/* ECC Clear Register */
++#define ECC_CLR_OFST	0x7C
++
++/* ECC Error count Register */
++#define ECC_ERRCNT_OFST	0x80
++
++/* ECC Corrected Error Address Register */
++#define ECC_CEADDR0_OFST	0x84
++#define ECC_CEADDR1_OFST	0x88
++
++/* ECC Syndrome Registers */
++#define ECC_CSYND0_OFST	0x8C
++#define ECC_CSYND1_OFST	0x90
++#define ECC_CSYND2_OFST	0x94
++
++/* ECC Bit Mask0 Address Register */
++#define ECC_BITMASK0_OFST	0x98
++#define ECC_BITMASK1_OFST	0x9C
++#define ECC_BITMASK2_OFST	0xA0
++
++/* ECC UnCorrected Error Address Register */
++#define ECC_UEADDR0_OFST	0xA4
++#define ECC_UEADDR1_OFST	0xA8
++
++/* ECC Syndrome Registers */
++#define ECC_UESYND0_OFST	0xAC
++#define ECC_UESYND1_OFST	0xB0
++#define ECC_UESYND2_OFST	0xB4
++
++/* ECC Poison Address Reg */
++#define ECC_POISON0_OFST	0xB8
++#define ECC_POISON1_OFST	0xBC
++
++#define ECC_ADDRMAP0_OFFSET	0x200
++
++/* Control register bitfield definitions */
++#define ECC_CTRL_BUSWIDTH_MASK	0x3000
++#define ECC_CTRL_BUSWIDTH_SHIFT	12
++#define ECC_CTRL_CLR_CE_ERRCNT	BIT(2)
++#define ECC_CTRL_CLR_UE_ERRCNT	BIT(3)
++
++/* DDR Control Register width definitions  */
++#define DDRCTL_EWDTH_16		2
++#define DDRCTL_EWDTH_32		1
++#define DDRCTL_EWDTH_64		0
++
++/* ECC status register definitions */
++#define ECC_STAT_UECNT_MASK	0xF0000
++#define ECC_STAT_UECNT_SHIFT	16
++#define ECC_STAT_CECNT_MASK	0xF00
++#define ECC_STAT_CECNT_SHIFT	8
++#define ECC_STAT_BITNUM_MASK	0x7F
++
++/* DDR QOS Interrupt register definitions */
++#define DDR_QOS_IRQ_STAT_OFST	0x20200
++#define DDR_QOSUE_MASK		0x4
++#define	DDR_QOSCE_MASK		0x2
++#define	ECC_CE_UE_INTR_MASK	0x6
++#define DDR_QOS_IRQ_EN_OFST     0x20208
++#define DDR_QOS_IRQ_DB_OFST	0x2020C
++
++/* ECC Corrected Error Register Mask and Shifts*/
++#define ECC_CEADDR0_RW_MASK	0x3FFFF
++#define ECC_CEADDR0_RNK_MASK	BIT(24)
++#define ECC_CEADDR1_BNKGRP_MASK	0x3000000
++#define ECC_CEADDR1_BNKNR_MASK	0x70000
++#define ECC_CEADDR1_BLKNR_MASK	0xFFF
++#define ECC_CEADDR1_BNKGRP_SHIFT	24
++#define ECC_CEADDR1_BNKNR_SHIFT	16
++
++/* ECC Poison register shifts */
++#define ECC_POISON0_RANK_SHIFT 24
++#define ECC_POISON1_BANKGRP_SHIFT 28
++#define ECC_POISON1_BANKNR_SHIFT 24
++
++/* DDR Memory type defines */
++#define MEM_TYPE_DDR3		0x1
++#define MEM_TYPE_LPDDR3		0x8
++#define MEM_TYPE_DDR2		0x4
++#define MEM_TYPE_DDR4		0x10
++#define MEM_TYPE_LPDDR4		0x20
++
++/* DDRC Software control register */
++#define DDRC_SWCTL 0x320
++
++/* DDRC ECC CE & UE poison mask */
++#define ECC_CEPOISON_MASK 0x3
++#define ECC_UEPOISON_MASK 0x1
++
++/* DDRC Device config masks */
++#define DDRC_MSTR_DEV_CONFIG_MASK 0xC0000000
++#define DDRC_MSTR_DEV_CONFIG_SHIFT	30
++#define DDRC_MSTR_DEV_CONFIG_X4_MASK	0x0
++#define DDRC_MSTR_DEV_CONFIG_X8_MASK	0x1
++#define DDRC_MSTR_DEV_CONFIG_X16_MASK	0x2
++#define DDRC_MSTR_DEV_CONFIG_X32_MASK	0x3
++
++#define DDR_MAX_ROW_SHIFT	18
++#define DDR_MAX_COL_SHIFT	14
++#define DDR_MAX_BANK_SHIFT	3
++#define DDR_MAX_BANKGRP_SHIFT	2
++
++#define ROW_MAX_VAL_MASK	0xF
++#define COL_MAX_VAL_MASK	0xF
++#define BANK_MAX_VAL_MASK	0x1F
++#define BANKGRP_MAX_VAL_MASK	0x1F
++#define RANK_MAX_VAL_MASK	0x1F
++
++#define ROW_B0_BASE		6
++#define ROW_B1_BASE		7
++#define ROW_B2_BASE		8
++#define ROW_B3_BASE		9
++#define ROW_B4_BASE		10
++#define ROW_B5_BASE		11
++#define ROW_B6_BASE		12
++#define ROW_B7_BASE		13
++#define ROW_B8_BASE		14
++#define ROW_B9_BASE		15
++#define ROW_B10_BASE		16
++#define ROW_B11_BASE		17
++#define ROW_B12_BASE		18
++#define ROW_B13_BASE		19
++#define ROW_B14_BASE		20
++#define ROW_B15_BASE		21
++#define ROW_B16_BASE		22
++#define ROW_B17_BASE		23
++
++#define COL_B2_BASE		2
++#define COL_B3_BASE		3
++#define COL_B4_BASE		4
++#define COL_B5_BASE		5
++#define COL_B6_BASE		6
++#define COL_B7_BASE		7
++#define COL_B8_BASE		8
++#define COL_B9_BASE		9
++#define COL_B10_BASE		10
++#define COL_B11_BASE		11
++#define COL_B12_BASE		12
++#define COL_B13_BASE		13
++
++#define BANK_B0_BASE		2
++#define BANK_B1_BASE		3
++#define BANK_B2_BASE		4
++
++#define BANKGRP_B0_BASE		2
++#define BANKGRP_B1_BASE		3
++
++#define RANK_B0_BASE		6
++
+ /**
+  * struct ecc_error_info - ECC error log information
+  * @row:	Row number
+@@ -103,6 +268,8 @@
+  * @bank:	Bank number
+  * @bitpos:	Bit position
+  * @data:	Data causing the error
++ * @bankgrpnr:	Bank group number
++ * @blknr:	Block number
+  */
+ struct ecc_error_info {
+ 	u32 row;
+@@ -110,6 +277,8 @@ struct ecc_error_info {
+ 	u32 bank;
+ 	u32 bitpos;
+ 	u32 data;
++	u32 bankgrpnr;
++	u32 blknr;
+ };
+ 
+ /**
+@@ -128,12 +297,18 @@ struct synps_ecc_status {
+ 
+ /**
+  * struct synps_edac_priv - DDR memory controller private instance data
+- * @baseaddr:	Base address of the DDR controller
+- * @message:	Buffer for framing the event specific info
+- * @stat:	ECC status information
+- * @p_data:	Pointer to platform data
+- * @ce_cnt:	Correctable Error count
+- * @ue_cnt:	Uncorrectable Error count
++ * @baseaddr:		Base address of the DDR controller
++ * @message:		Buffer for framing the event specific info
++ * @stat:		ECC status information
++ * @p_data:		Pointer to platform data
++ * @ce_cnt:		Correctable Error count
++ * @ue_cnt:		Uncorrectable Error count
++ * @poison_addr:	Data poison address
++ * @row_shift:		Value of row shifts
++ * @col_shift:		Value of col shifts
++ * @bank_shift:		Value of bank shifts
++ * @bankgrp_shift:	Value of bank group shifts
++ * @rank_shift:		Value of rank shifts
+  */
+ struct synps_edac_priv {
+ 	void __iomem *baseaddr;
+@@ -142,6 +317,12 @@ struct synps_edac_priv {
+ 	const struct synps_platform_data *p_data;
+ 	u32 ce_cnt;
+ 	u32 ue_cnt;
++	ulong poison_addr;
++	u32 row_shift[18];
++	u32 col_shift[14];
++	u32 bank_shift[3];
++	u32 bankgrp_shift[2];
++	u32 rank_shift[1];
+ };
+ 
+ /**
+@@ -166,7 +347,7 @@ struct synps_platform_data {
+  *
+  * Determines there is any ecc error or not
+  *
+- * Return: one if there is no error otherwise returns zero
++ * Return: 1 if there is no error otherwise returns 0
+  */
+ static int synps_edac_geterror_info(struct synps_edac_priv *priv)
+ {
+@@ -221,6 +402,72 @@ static int synps_edac_geterror_info(struct synps_edac_priv *priv)
+ }
+ 
+ /**
++ * synps_enh_edac_geterror_info - Get the current ecc error info
++ * @base:	Pointer to the base address of the ddr memory controller
++ * @p:		Pointer to the synopsys ecc status structure
++ *
++ * Determines there is any ecc error or not
++ *
++ * Return: one if there is no error otherwise returns zero
++ */
++static int synps_enh_edac_geterror_info(struct synps_edac_priv *priv)
++{
++	void __iomem *base;
++	struct synps_ecc_status *p;
++	u32 regval, clearval = 0;
++
++	if (!priv)
++		return 1;
++
++	base = priv->baseaddr;
++	p = &priv->stat;
++
++	regval = readl(base + ECC_STAT_OFST);
++	if (!regval)
++		return 1;
++
++	p->ce_cnt = (regval & ECC_STAT_CECNT_MASK) >> ECC_STAT_CECNT_SHIFT;
++	p->ue_cnt = (regval & ECC_STAT_UECNT_MASK) >> ECC_STAT_UECNT_SHIFT;
++	p->ceinfo.bitpos = (regval & ECC_STAT_BITNUM_MASK);
++
++	regval = readl(base + ECC_CEADDR0_OFST);
++	if (!(p->ce_cnt))
++		goto ue_err;
++
++	p->ceinfo.row = (regval & ECC_CEADDR0_RW_MASK);
++	regval = readl(base + ECC_CEADDR1_OFST);
++	p->ceinfo.bank = (regval & ECC_CEADDR1_BNKNR_MASK) >>
++					ECC_CEADDR1_BNKNR_SHIFT;
++	p->ceinfo.bankgrpnr = (regval &	ECC_CEADDR1_BNKGRP_MASK) >>
++					ECC_CEADDR1_BNKGRP_SHIFT;
++	p->ceinfo.blknr = (regval & ECC_CEADDR1_BLKNR_MASK);
++	p->ceinfo.data = readl(base + ECC_CSYND0_OFST);
++	edac_dbg(3, "ce bit position: %d data: %d\n", p->ceinfo.bitpos,
++		 p->ceinfo.data);
++
++ue_err:
++	regval = readl(base + ECC_UEADDR0_OFST);
++	if (!(p->ue_cnt))
++		goto out;
++
++	p->ueinfo.row = (regval & ECC_CEADDR0_RW_MASK);
++	regval = readl(base + ECC_UEADDR1_OFST);
++	p->ueinfo.bankgrpnr = (regval & ECC_CEADDR1_BNKGRP_MASK) >>
++					ECC_CEADDR1_BNKGRP_SHIFT;
++	p->ueinfo.bank = (regval & ECC_CEADDR1_BNKNR_MASK) >>
++					ECC_CEADDR1_BNKNR_SHIFT;
++	p->ueinfo.blknr = (regval & ECC_CEADDR1_BLKNR_MASK);
++	p->ueinfo.data = readl(base + ECC_UESYND0_OFST);
++out:
++	clearval = ECC_CTRL_CLR_CE_ERR | ECC_CTRL_CLR_CE_ERRCNT;
++	clearval |= ECC_CTRL_CLR_UE_ERR | ECC_CTRL_CLR_UE_ERRCNT;
++	writel(clearval, base + ECC_CLR_OFST);
++	writel(0x0, base + ECC_CLR_OFST);
++
++	return 0;
++}
++
++/**
+  * synps_edac_handle_error - Handle controller error types CE and UE
+  * @mci:	Pointer to the edac memory controller instance
+  * @p:		Pointer to the synopsys ecc status structure
+@@ -235,9 +482,17 @@ static void synps_edac_handle_error(struct mem_ctl_info *mci,
+ 
+ 	if (p->ce_cnt) {
+ 		pinf = &p->ceinfo;
+-		snprintf(priv->message, SYNPS_EDAC_MSG_SIZE,
+-			 "DDR ECC error type :%s Row %d Bank %d Col %d ",
+-			 "CE", pinf->row, pinf->bank, pinf->col);
++		if (priv->p_data->quirks == 0)
++			snprintf(priv->message, SYNPS_EDAC_MSG_SIZE,
++				 "DDR ECC error type :%s Row %d Bank %d Col %d ",
++				 "CE", pinf->row, pinf->bank, pinf->col);
++		else
++			snprintf(priv->message, SYNPS_EDAC_MSG_SIZE,
++				 "DDR ECC error type :%s Row %d Bank %d Col %d "
++				 "BankGroup Number %d Block Number %d",
++				 "CE", pinf->row, pinf->bank, pinf->col,
++				 pinf->bankgrpnr, pinf->blknr);
++
+ 		edac_mc_handle_error(HW_EVENT_ERR_CORRECTED, mci,
+ 				     p->ce_cnt, 0, 0, 0, 0, 0, -1,
+ 				     priv->message, "");
+@@ -245,9 +500,17 @@ static void synps_edac_handle_error(struct mem_ctl_info *mci,
+ 
+ 	if (p->ue_cnt) {
+ 		pinf = &p->ueinfo;
+-		snprintf(priv->message, SYNPS_EDAC_MSG_SIZE,
+-			 "DDR ECC error type :%s Row %d Bank %d Col %d ",
+-			 "UE", pinf->row, pinf->bank, pinf->col);
++		if (priv->p_data->quirks == 0)
++			snprintf(priv->message, SYNPS_EDAC_MSG_SIZE,
++				 "DDR ECC error type :%s Row %d Bank %d Col %d ",
++				"UE", pinf->row, pinf->bank, pinf->col);
++		else
++			snprintf(priv->message, SYNPS_EDAC_MSG_SIZE,
++				 "DDR ECC error type :%s Row %d Bank %d Col %d "
++				 "BankGroup Number %d Block Number %d",
++				 "UE", pinf->row, pinf->bank, pinf->col,
++				 pinf->bankgrpnr, pinf->blknr);
++
+ 		edac_mc_handle_error(HW_EVENT_ERR_UNCORRECTED, mci,
+ 				     p->ue_cnt, 0, 0, 0, 0, 0, -1,
+ 				     priv->message, "");
+@@ -257,6 +520,41 @@ static void synps_edac_handle_error(struct mem_ctl_info *mci,
+ }
+ 
+ /**
++ * synps_edac_intr_handler - synps edac isr
++ * @irq:        irq number
++ * @dev_id:     device id poniter
++ *
++ * This is the Isr routine called by edac core interrupt thread.
++ * Used to check and post ECC errors.
++ *
++ * Return: IRQ_NONE, if interrupt not set or IRQ_HANDLED otherwise
++ */
++static irqreturn_t synps_edac_intr_handler(int irq, void *dev_id)
++{
++	struct mem_ctl_info *mci = dev_id;
++	struct synps_edac_priv *priv = mci->pvt_info;
++	const struct synps_platform_data *p_data = priv->p_data;
++	int status, regval;
++
++	regval = readl(priv->baseaddr + DDR_QOS_IRQ_STAT_OFST) &
++			(DDR_QOSCE_MASK | DDR_QOSUE_MASK);
++	if (!(regval & ECC_CE_UE_INTR_MASK))
++		return IRQ_NONE;
++	status = p_data->edac_geterror_info(priv);
++	if (status)
++		return IRQ_NONE;
++
++	priv->ce_cnt += priv->stat.ce_cnt;
++	priv->ue_cnt += priv->stat.ue_cnt;
++	synps_edac_handle_error(mci, &priv->stat);
++
++	edac_dbg(3, "Total error count ce %d ue %d\n",
++		 priv->ce_cnt, priv->ue_cnt);
++	writel(regval, priv->baseaddr + DDR_QOS_IRQ_STAT_OFST);
++	return IRQ_HANDLED;
++}
++
++/**
+  * synps_edac_check - Check controller for ECC errors
+  * @mci:	Pointer to the edac memory controller instance
+  *
+@@ -312,6 +610,40 @@ static enum dev_type synps_edac_get_dtype(const void __iomem *base)
+ }
+ 
+ /**
++ * synps_enh_edac_get_dtype - Return the controller memory width
++ * @base:	Pointer to the ddr memory controller base address
++ *
++ * Get the EDAC device type width appropriate for the current controller
++ * configuration.
++ *
++ * Return: a device type width enumeration.
++ */
++static enum dev_type synps_enh_edac_get_dtype(const void __iomem *base)
++{
++	enum dev_type dt;
++	u32 width;
++
++	width = readl(base + CTRL_OFST);
++	width = (width & ECC_CTRL_BUSWIDTH_MASK) >>
++		ECC_CTRL_BUSWIDTH_SHIFT;
++	switch (width) {
++	case DDRCTL_EWDTH_16:
++		dt = DEV_X2;
++		break;
++	case DDRCTL_EWDTH_32:
++		dt = DEV_X4;
++		break;
++	case DDRCTL_EWDTH_64:
++		dt = DEV_X8;
++		break;
++	default:
++		dt = DEV_UNKNOWN;
++	}
++
++	return dt;
++}
++
++/**
+  * synps_edac_get_eccstate - Return the controller ecc enable/disable status
+  * @base:	Pointer to the ddr memory controller base address
+  *
+@@ -337,6 +669,32 @@ static bool synps_edac_get_eccstate(void __iomem *base)
+ }
+ 
+ /**
++ * synps_enh_edac_get_eccstate - Return the controller ecc enable/disable status
++ * @base:	Pointer to the ddr memory controller base address
++ *
++ * Get the ECC enable/disable status for the controller
++ *
++ * Return: a ecc status boolean i.e true/false - enabled/disabled.
++ */
++static bool synps_enh_edac_get_eccstate(void __iomem *base)
++{
++	enum dev_type dt;
++	u32 ecctype;
++	bool state = false;
++
++	dt = synps_enh_edac_get_dtype(base);
++	if (dt == DEV_UNKNOWN)
++		return state;
++
++	ecctype = readl(base + ECC_CFG0_OFST) & SCRUB_MODE_MASK;
++	if ((ecctype == SCRUB_MODE_SECDED) &&
++	    ((dt == DEV_X2) || (dt == DEV_X4) || (dt == DEV_X8)))
++		state = true;
++
++	return state;
++}
++
++/**
+  * synps_edac_get_memsize - reads the size of the attached memory device
+  *
+  * Return: the memory size in bytes
+@@ -375,6 +733,35 @@ static enum mem_type synps_edac_get_mtype(const void __iomem *base)
+ }
+ 
+ /**
++ * synps_enh_edac_get_mtype - Returns controller memory type
++ * @base:	pointer to the synopsys ecc status structure
++ *
++ * Get the EDAC memory type appropriate for the current controller
++ * configuration.
++ *
++ * Return: a memory type enumeration.
++ */
++static enum mem_type synps_enh_edac_get_mtype(const void __iomem *base)
++{
++	enum mem_type mt;
++	u32 memtype;
++
++	memtype = readl(base + CTRL_OFST);
++
++	mt = MEM_UNKNOWN;
++	if ((memtype & MEM_TYPE_DDR3) || (memtype & MEM_TYPE_LPDDR3))
++		mt = MEM_DDR3;
++	else if (memtype & MEM_TYPE_DDR2)
++		mt = MEM_RDDR2;
++	else if ((memtype & MEM_TYPE_LPDDR4) || (memtype & MEM_TYPE_DDR4))
++		mt = MEM_DDR4;
++	else
++		mt = MEM_EMPTY;
++
++	return mt;
++}
++
++/**
+  * synps_edac_init_csrows - Initialize the cs row data
+  * @mci:	Pointer to the edac memory controller instance
+  *
+@@ -442,8 +829,13 @@ static int synps_edac_mc_init(struct mem_ctl_info *mci,
+ 	mci->dev_name = SYNPS_EDAC_MOD_STRING;
+ 	mci->mod_name = SYNPS_EDAC_MOD_VER;
+ 
+-	edac_op_state = EDAC_OPSTATE_POLL;
+-	mci->edac_check = synps_edac_check;
++	if (priv->p_data->quirks & DDR_ECC_INTR_SUPPORT) {
++		edac_op_state = EDAC_OPSTATE_INT;
++	} else {
++		edac_op_state = EDAC_OPSTATE_POLL;
++		mci->edac_check = synps_edac_check;
++	}
++
+ 	mci->ctl_page_to_phys = NULL;
+ 
+ 	status = synps_edac_init_csrows(mci);
+@@ -459,13 +851,409 @@ static const struct synps_platform_data zynq_edac_def = {
+ 	.quirks			= 0,
+ };
+ 
++static const struct synps_platform_data zynqmp_enh_edac_def = {
++	.edac_geterror_info	= synps_enh_edac_geterror_info,
++	.edac_get_mtype		= synps_enh_edac_get_mtype,
++	.edac_get_dtype		= synps_enh_edac_get_dtype,
++	.edac_get_eccstate	= synps_enh_edac_get_eccstate,
++	.quirks			= (DDR_ECC_INTR_SUPPORT |
++				   DDR_ECC_DATA_POISON_SUPPORT),
++};
++
+ static const struct of_device_id synps_edac_match[] = {
+ 	{ .compatible = "xlnx,zynq-ddrc-a05", .data = (void *)&zynq_edac_def },
++	{ .compatible = "xlnx,zynqmp-ddrc-2.40a",
++				.data = (void *)&zynqmp_enh_edac_def},
+ 	{ /* end of table */ }
+ };
+ 
+ MODULE_DEVICE_TABLE(of, synps_edac_match);
+ 
++#define to_mci(k) container_of(k, struct mem_ctl_info, dev)
++
++/**
++ * ddr_poison_setup -	update poison registers
++ * @priv:		Pointer to synps_edac_priv struct
++ *
++ * Update poison registers as per ddr mapping
++ * Return: none.
++ */
++static void ddr_poison_setup(struct synps_edac_priv *priv)
++{
++	int col = 0, row = 0, bank = 0, bankgrp = 0, rank = 0, regval;
++	int index;
++	ulong hif_addr = 0;
++
++	hif_addr = priv->poison_addr >> 3;
++
++	for (index = 0; index < DDR_MAX_ROW_SHIFT; index++) {
++		if (priv->row_shift[index])
++			row |= (((hif_addr >> priv->row_shift[index]) &
++						BIT(0)) << index);
++		else
++			break;
++	}
++
++	for (index = 0; index < DDR_MAX_COL_SHIFT; index++) {
++		if (priv->col_shift[index] || index < 3)
++			col |= (((hif_addr >> priv->col_shift[index]) &
++						BIT(0)) << index);
++		else
++			break;
++	}
++
++	for (index = 0; index < DDR_MAX_BANK_SHIFT; index++) {
++		if (priv->bank_shift[index])
++			bank |= (((hif_addr >> priv->bank_shift[index]) &
++						BIT(0)) << index);
++		else
++			break;
++	}
++
++	for (index = 0; index < DDR_MAX_BANKGRP_SHIFT; index++) {
++		if (priv->bankgrp_shift[index])
++			bankgrp |= (((hif_addr >> priv->bankgrp_shift[index])
++						& BIT(0)) << index);
++		else
++			break;
++	}
++
++	if (priv->rank_shift[0])
++		rank = (hif_addr >> priv->rank_shift[0]) & BIT(0);
++
++	regval = (rank << ECC_POISON0_RANK_SHIFT) | col;
++	writel(regval, priv->baseaddr + ECC_POISON0_OFST);
++	regval = (bankgrp << ECC_POISON1_BANKGRP_SHIFT) |
++			 (bank << ECC_POISON1_BANKNR_SHIFT) | row;
++	writel(regval, priv->baseaddr + ECC_POISON1_OFST);
++}
++
++/**
++ * inject_data_error_show - Get Poison0 & 1 register contents
++ * @dev:	Pointer to the device struct
++ * @mattr:	Pointer to device attributes
++ * @data:	Pointer to user data
++ *
++ * Get the Poison0 and Poison1 register contents
++ * Return: Number of bytes copied.
++ */
++static ssize_t inject_data_error_show(struct device *dev,
++					      struct device_attribute *mattr,
++					      char *data)
++{
++	struct mem_ctl_info *mci = to_mci(dev);
++	struct synps_edac_priv *priv = mci->pvt_info;
++
++	return sprintf(data, "Poison0 Addr: 0x%08x\n\rPoison1 Addr: 0x%08x\n\r"
++			"Error injection Address: 0x%lx\n\r",
++			readl(priv->baseaddr + ECC_POISON0_OFST),
++			readl(priv->baseaddr + ECC_POISON1_OFST),
++			priv->poison_addr);
++}
++
++/**
++ * inject_data_error_store - Configure Poison0 Poison1 registers
++ * @dev:	Pointer to the device struct
++ * @mattr:	Pointer to device attributes
++ * @data:	Pointer to user data
++ * @count:	read the size bytes from buffer
++ *
++ * Configures the Poison0 and Poison1 register contents as per user given
++ * address
++ * Return: Number of bytes copied.
++ */
++static ssize_t inject_data_error_store(struct device *dev,
++					       struct device_attribute *mattr,
++					       const char *data, size_t count)
++{
++	struct mem_ctl_info *mci = to_mci(dev);
++	struct synps_edac_priv *priv = mci->pvt_info;
++
++	if (kstrtoul(data, 0, &priv->poison_addr))
++		return -EINVAL;
++
++	ddr_poison_setup(priv);
++
++	return count;
++}
++
++/**
++ * inject_data_poison_show - Shows type of Data poison
++ * @dev:	Pointer to the device struct
++ * @mattr:	Pointer to device attributes
++ * @data:	Pointer to user data
++ *
++ * Shows the type of Error injection enabled, either UE or CE
++ * Return: Number of bytes copied.
++ */
++static ssize_t inject_data_poison_show(struct device *dev,
++					      struct device_attribute *mattr,
++					      char *data)
++{
++	struct mem_ctl_info *mci = to_mci(dev);
++	struct synps_edac_priv *priv = mci->pvt_info;
++
++	return sprintf(data, "Data Poisoning: %s\n\r",
++			(((readl(priv->baseaddr + ECC_CFG1_OFST)) & 0x3) == 0x3)
++			? ("Correctable Error") : ("UnCorrectable Error"));
++}
++
++/**
++ * inject_data_poison_store - Enbles Data poison CE/UE
++ * @dev:	Pointer to the device struct
++ * @mattr:	Pointer to device attributes
++ * @data:	Pointer to user data
++ * @count:	read the size bytes from buffer
++ *
++ * Enables the CE or UE Data poison
++ * Return: Number of bytes copied.
++ */
++static ssize_t inject_data_poison_store(struct device *dev,
++					       struct device_attribute *mattr,
++					       const char *data, size_t count)
++{
++	struct mem_ctl_info *mci = to_mci(dev);
++	struct synps_edac_priv *priv = mci->pvt_info;
++
++	writel(0, priv->baseaddr + DDRC_SWCTL);
++	if (strncmp(data, "CE", 2) == 0)
++		writel(ECC_CEPOISON_MASK, priv->baseaddr + ECC_CFG1_OFST);
++	else
++		writel(ECC_UEPOISON_MASK, priv->baseaddr + ECC_CFG1_OFST);
++	writel(1, priv->baseaddr + DDRC_SWCTL);
++
++	return count;
++}
++
++static DEVICE_ATTR_RW(inject_data_error);
++static DEVICE_ATTR_RW(inject_data_poison);
++
++/**
++ * synps_edac_create_sysfs_attributes - Create sysfs entries
++ * @mci:	Pointer to the edac memory controller instance
++ *
++ * Create sysfs attributes for injecting ECC errors using data poison.
++ *
++ * Return: 0 if sysfs creation was successful, else return negative error code.
++ */
++static int synps_edac_create_sysfs_attributes(struct mem_ctl_info *mci)
++{
++	int rc;
++
++	rc = device_create_file(&mci->dev, &dev_attr_inject_data_error);
++	if (rc < 0)
++		return rc;
++	rc = device_create_file(&mci->dev, &dev_attr_inject_data_poison);
++	if (rc < 0)
++		return rc;
++	return 0;
++}
++
++/**
++ * synps_edac_remove_sysfs_attributes - Removes sysfs entries
++ * @mci:	Pointer to the edac memory controller instance
++ *
++ * Removes sysfs attributes.
++ *
++ * Return: none.
++ */
++static void synps_edac_remove_sysfs_attributes(struct mem_ctl_info *mci)
++{
++	device_remove_file(&mci->dev, &dev_attr_inject_data_error);
++	device_remove_file(&mci->dev, &dev_attr_inject_data_poison);
++}
++
++/**
++ * setup_address_map -	Set Address Map by querying ADDRMAP registers
++ * @priv:		Pointer to synps_edac_priv struct
++ *
++ * Set Address Map by querying ADDRMAP registers
++ * Return: none.
++ */
++static void setup_address_map(struct synps_edac_priv *priv)
++{
++	u32 addrmap[12], addrmap_row_b2_10;
++	int index;
++	u32 width, memtype;
++
++	memtype = readl(priv->baseaddr + CTRL_OFST);
++	width = (memtype & ECC_CTRL_BUSWIDTH_MASK) >> ECC_CTRL_BUSWIDTH_SHIFT;
++
++	for (index = 0; index < 12; index++) {
++		u32 addrmap_offset;
++
++		addrmap_offset = ECC_ADDRMAP0_OFFSET + (index * 4);
++		addrmap[index] = readl(priv->baseaddr + addrmap_offset);
++	}
++
++	priv->row_shift[0] = (addrmap[5] & ROW_MAX_VAL_MASK) + ROW_B0_BASE;
++	priv->row_shift[1] = ((addrmap[5] >> 8) &
++			ROW_MAX_VAL_MASK) + ROW_B1_BASE;
++
++	addrmap_row_b2_10 = (addrmap[5] >> 16) & ROW_MAX_VAL_MASK;
++	if (addrmap_row_b2_10 != ROW_MAX_VAL_MASK) {
++		for (index = 2; index < 11; index++)
++			priv->row_shift[index] = addrmap_row_b2_10 +
++				index + ROW_B0_BASE;
++
++	} else {
++		priv->row_shift[2] = (addrmap[9] &
++				ROW_MAX_VAL_MASK) + ROW_B2_BASE;
++		priv->row_shift[3] = ((addrmap[9] >> 8) &
++				ROW_MAX_VAL_MASK) + ROW_B3_BASE;
++		priv->row_shift[4] = ((addrmap[9] >> 16) &
++				ROW_MAX_VAL_MASK) + ROW_B4_BASE;
++		priv->row_shift[5] = ((addrmap[9] >> 24) &
++				ROW_MAX_VAL_MASK) + ROW_B5_BASE;
++		priv->row_shift[6] = (addrmap[10] &
++				ROW_MAX_VAL_MASK) + ROW_B6_BASE;
++		priv->row_shift[7] = ((addrmap[10] >> 8) &
++				ROW_MAX_VAL_MASK) + ROW_B7_BASE;
++		priv->row_shift[8] = ((addrmap[10] >> 16) &
++				ROW_MAX_VAL_MASK) + ROW_B8_BASE;
++		priv->row_shift[9] = ((addrmap[10] >> 24) &
++				ROW_MAX_VAL_MASK) + ROW_B9_BASE;
++		priv->row_shift[10] = (addrmap[11] &
++				ROW_MAX_VAL_MASK) + ROW_B10_BASE;
++	}
++
++	priv->row_shift[11] = (((addrmap[5] >> 24) & ROW_MAX_VAL_MASK) ==
++				ROW_MAX_VAL_MASK) ? 0 : (((addrmap[5] >> 24) &
++				ROW_MAX_VAL_MASK) + ROW_B11_BASE);
++	priv->row_shift[12] = ((addrmap[6] & ROW_MAX_VAL_MASK) ==
++				ROW_MAX_VAL_MASK) ? 0 : ((addrmap[6] &
++				ROW_MAX_VAL_MASK) + ROW_B12_BASE);
++	priv->row_shift[13] = (((addrmap[6] >> 8) & ROW_MAX_VAL_MASK) ==
++				ROW_MAX_VAL_MASK) ? 0 : (((addrmap[6] >> 8) &
++				ROW_MAX_VAL_MASK) + ROW_B13_BASE);
++	priv->row_shift[14] = (((addrmap[6] >> 16) & ROW_MAX_VAL_MASK) ==
++				ROW_MAX_VAL_MASK) ? 0 : (((addrmap[6] >> 16) &
++				ROW_MAX_VAL_MASK) + ROW_B14_BASE);
++	priv->row_shift[15] = (((addrmap[6] >> 24) & ROW_MAX_VAL_MASK) ==
++				ROW_MAX_VAL_MASK) ? 0 : (((addrmap[6] >> 24) &
++				ROW_MAX_VAL_MASK) + ROW_B15_BASE);
++	priv->row_shift[16] = ((addrmap[7] & ROW_MAX_VAL_MASK) ==
++				ROW_MAX_VAL_MASK) ? 0 : ((addrmap[7] &
++				ROW_MAX_VAL_MASK) + ROW_B16_BASE);
++	priv->row_shift[17] = (((addrmap[7] >> 8) & ROW_MAX_VAL_MASK) ==
++				ROW_MAX_VAL_MASK) ? 0 : (((addrmap[7] >> 8) &
++				ROW_MAX_VAL_MASK) + ROW_B17_BASE);
++
++	priv->col_shift[0] = 0;
++	priv->col_shift[1] = 1;
++	priv->col_shift[2] = (addrmap[2] & COL_MAX_VAL_MASK) + COL_B2_BASE;
++	priv->col_shift[3] = ((addrmap[2] >> 8) &
++			COL_MAX_VAL_MASK) + COL_B3_BASE;
++	priv->col_shift[4] = (((addrmap[2] >> 16) & COL_MAX_VAL_MASK) ==
++			COL_MAX_VAL_MASK) ? 0 : (((addrmap[2] >> 16) &
++					COL_MAX_VAL_MASK) + COL_B4_BASE);
++	priv->col_shift[5] = (((addrmap[2] >> 24) & COL_MAX_VAL_MASK) ==
++			COL_MAX_VAL_MASK) ? 0 : (((addrmap[2] >> 24) &
++					COL_MAX_VAL_MASK) + COL_B5_BASE);
++	priv->col_shift[6] = ((addrmap[3] & COL_MAX_VAL_MASK) ==
++			COL_MAX_VAL_MASK) ? 0 : ((addrmap[3] &
++					COL_MAX_VAL_MASK) + COL_B6_BASE);
++	priv->col_shift[7] = (((addrmap[3] >> 8) & COL_MAX_VAL_MASK) ==
++			COL_MAX_VAL_MASK) ? 0 : (((addrmap[3] >> 8) &
++					COL_MAX_VAL_MASK) + COL_B7_BASE);
++	priv->col_shift[8] = (((addrmap[3] >> 16) & COL_MAX_VAL_MASK) ==
++			COL_MAX_VAL_MASK) ? 0 : (((addrmap[3] >> 16) &
++					COL_MAX_VAL_MASK) + COL_B8_BASE);
++	priv->col_shift[9] = (((addrmap[3] >> 24) & COL_MAX_VAL_MASK) ==
++			COL_MAX_VAL_MASK) ? 0 : (((addrmap[3] >> 24) &
++					COL_MAX_VAL_MASK) + COL_B9_BASE);
++	if (width == DDRCTL_EWDTH_64) {
++		if (memtype & MEM_TYPE_LPDDR3) {
++			priv->col_shift[10] = ((addrmap[4] &
++				COL_MAX_VAL_MASK) == COL_MAX_VAL_MASK) ? 0 :
++				((addrmap[4] & COL_MAX_VAL_MASK) +
++				 COL_B10_BASE);
++			priv->col_shift[11] = (((addrmap[4] >> 8) &
++				COL_MAX_VAL_MASK) == COL_MAX_VAL_MASK) ? 0 :
++				(((addrmap[4] >> 8) & COL_MAX_VAL_MASK) +
++				 COL_B11_BASE);
++		} else {
++			priv->col_shift[11] = ((addrmap[4] &
++				COL_MAX_VAL_MASK) == COL_MAX_VAL_MASK) ? 0 :
++				((addrmap[4] & COL_MAX_VAL_MASK) +
++				 COL_B10_BASE);
++			priv->col_shift[13] = (((addrmap[4] >> 8) &
++				COL_MAX_VAL_MASK) == COL_MAX_VAL_MASK) ? 0 :
++				(((addrmap[4] >> 8) & COL_MAX_VAL_MASK) +
++				 COL_B11_BASE);
++		}
++	} else if (width == DDRCTL_EWDTH_32) {
++		if (memtype & MEM_TYPE_LPDDR3) {
++			priv->col_shift[10] = (((addrmap[3] >> 24) &
++				COL_MAX_VAL_MASK) == COL_MAX_VAL_MASK) ? 0 :
++				(((addrmap[3] >> 24) & COL_MAX_VAL_MASK) +
++				 COL_B9_BASE);
++			priv->col_shift[11] = ((addrmap[4] &
++				COL_MAX_VAL_MASK) == COL_MAX_VAL_MASK) ? 0 :
++				((addrmap[4] & COL_MAX_VAL_MASK) +
++				 COL_B10_BASE);
++		} else {
++			priv->col_shift[11] = (((addrmap[3] >> 24) &
++				COL_MAX_VAL_MASK) == COL_MAX_VAL_MASK) ? 0 :
++				(((addrmap[3] >> 24) & COL_MAX_VAL_MASK) +
++				 COL_B9_BASE);
++			priv->col_shift[13] = ((addrmap[4] &
++				COL_MAX_VAL_MASK) == COL_MAX_VAL_MASK) ? 0 :
++				((addrmap[4] & COL_MAX_VAL_MASK) +
++				 COL_B10_BASE);
++		}
++	} else {
++		if (memtype & MEM_TYPE_LPDDR3) {
++			priv->col_shift[10] = (((addrmap[3] >> 16) &
++				COL_MAX_VAL_MASK) == COL_MAX_VAL_MASK) ? 0 :
++				(((addrmap[3] >> 16) & COL_MAX_VAL_MASK) +
++				 COL_B8_BASE);
++			priv->col_shift[11] = (((addrmap[3] >> 24) &
++				COL_MAX_VAL_MASK) == COL_MAX_VAL_MASK) ? 0 :
++				(((addrmap[3] >> 24) & COL_MAX_VAL_MASK) +
++				 COL_B9_BASE);
++			priv->col_shift[13] = ((addrmap[4] &
++				COL_MAX_VAL_MASK) == COL_MAX_VAL_MASK) ? 0 :
++				((addrmap[4] & COL_MAX_VAL_MASK) +
++				 COL_B10_BASE);
++		} else {
++			priv->col_shift[11] = (((addrmap[3] >> 16) &
++				COL_MAX_VAL_MASK) == COL_MAX_VAL_MASK) ? 0 :
++				(((addrmap[3] >> 16) & COL_MAX_VAL_MASK) +
++				 COL_B8_BASE);
++			priv->col_shift[13] = (((addrmap[3] >> 24) &
++				COL_MAX_VAL_MASK) == COL_MAX_VAL_MASK) ? 0 :
++				(((addrmap[3] >> 24) & COL_MAX_VAL_MASK) +
++				 COL_B9_BASE);
++		}
++	}
++
++	if (width) {
++		for (index = 9; index > width; index--) {
++			priv->col_shift[index] = priv->col_shift[index - width];
++			priv->col_shift[index - width] = 0;
++		}
++	}
++
++	priv->bank_shift[0] = (addrmap[1] & BANK_MAX_VAL_MASK) + BANK_B0_BASE;
++	priv->bank_shift[1] = ((addrmap[1] >> 8) &
++				BANK_MAX_VAL_MASK) + BANK_B1_BASE;
++	priv->bank_shift[2] = (((addrmap[1] >> 16) &
++				BANK_MAX_VAL_MASK) == BANK_MAX_VAL_MASK) ? 0 :
++				(((addrmap[1] >> 16) & BANK_MAX_VAL_MASK) +
++				 BANK_B2_BASE);
++
++	priv->bankgrp_shift[0] = (addrmap[8] &
++				BANKGRP_MAX_VAL_MASK) + BANKGRP_B0_BASE;
++	priv->bankgrp_shift[1] = (((addrmap[8] >> 8) & BANKGRP_MAX_VAL_MASK) ==
++				BANKGRP_MAX_VAL_MASK) ? 0 : (((addrmap[8] >> 8)
++				& BANKGRP_MAX_VAL_MASK) + BANKGRP_B1_BASE);
++
++	priv->rank_shift[0] = ((addrmap[0] & RANK_MAX_VAL_MASK) ==
++				RANK_MAX_VAL_MASK) ? 0 : ((addrmap[0] &
++				RANK_MAX_VAL_MASK) + RANK_B0_BASE);
++}
++
+ /**
+  * synps_edac_mc_probe - Check controller and bind driver
+  * @pdev:	Pointer to the platform_device struct
+@@ -480,7 +1268,7 @@ static int synps_edac_mc_probe(struct platform_device *pdev)
+ 	struct mem_ctl_info *mci;
+ 	struct edac_mc_layer layers[2];
+ 	struct synps_edac_priv *priv;
+-	int rc;
++	int rc, irq, status;
+ 	struct resource *res;
+ 	void __iomem *baseaddr;
+ 	const struct of_device_id *match;
+@@ -529,6 +1317,27 @@ static int synps_edac_mc_probe(struct platform_device *pdev)
+ 		goto free_edac_mc;
+ 	}
+ 
++	if (priv->p_data->quirks & DDR_ECC_INTR_SUPPORT) {
++		irq = platform_get_irq(pdev, 0);
++		if (irq < 0) {
++			edac_printk(KERN_ERR, EDAC_MC,
++					"No irq %d in DT\n", irq);
++			return -ENODEV;
++		}
++
++		status = devm_request_irq(&pdev->dev, irq,
++			synps_edac_intr_handler,
++			0, dev_name(&pdev->dev), mci);
++		if (status < 0) {
++			edac_printk(KERN_ERR, EDAC_MC, "Failed to request Irq\n");
++			goto free_edac_mc;
++		}
++
++		/* Enable UE/CE Interrupts */
++		writel((DDR_QOSUE_MASK | DDR_QOSCE_MASK),
++			priv->baseaddr + DDR_QOS_IRQ_EN_OFST);
++	}
++
+ 	rc = edac_mc_add_mc(mci);
+ 	if (rc) {
+ 		edac_printk(KERN_ERR, EDAC_MC,
+@@ -536,11 +1345,24 @@ static int synps_edac_mc_probe(struct platform_device *pdev)
+ 		goto free_edac_mc;
+ 	}
+ 
++	if (priv->p_data->quirks & DDR_ECC_DATA_POISON_SUPPORT) {
++		if (synps_edac_create_sysfs_attributes(mci)) {
++			edac_printk(KERN_ERR, EDAC_MC,
++					"Failed to create sysfs entries\n");
++			goto free_edac_mc;
++		}
++	}
++
++	if (of_device_is_compatible(pdev->dev.of_node,
++				    "xlnx,zynqmp-ddrc-2.40a"))
++		setup_address_map(priv);
++
+ 	/*
+ 	 * Start capturing the correctable and uncorrectable errors. A write of
+ 	 * 0 starts the counters.
+ 	 */
+-	writel(0x0, baseaddr + ECC_CTRL_OFST);
++	if (!(priv->p_data->quirks & DDR_ECC_INTR_SUPPORT))
++		writel(0x0, baseaddr + ECC_CTRL_OFST);
+ 	return rc;
+ 
+ free_edac_mc:
+@@ -558,8 +1380,16 @@ static int synps_edac_mc_probe(struct platform_device *pdev)
+ static int synps_edac_mc_remove(struct platform_device *pdev)
+ {
+ 	struct mem_ctl_info *mci = platform_get_drvdata(pdev);
++	struct synps_edac_priv *priv;
+ 
++	priv = mci->pvt_info;
++	if (priv->p_data->quirks & DDR_ECC_INTR_SUPPORT)
++		/* Disable UE/CE Interrupts */
++		writel((DDR_QOSUE_MASK | DDR_QOSCE_MASK),
++			priv->baseaddr + DDR_QOS_IRQ_DB_OFST);
+ 	edac_mc_del_mc(&pdev->dev);
++	if (priv->p_data->quirks & DDR_ECC_DATA_POISON_SUPPORT)
++		synps_edac_remove_sysfs_attributes(mci);
+ 	edac_mc_free(mci);
+ 
+ 	return 0;
 -- 
 2.1.1
 
