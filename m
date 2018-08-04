@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E50F9C4646D
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:08:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0AF8C4646D
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:08:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0FFD208DD
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:08:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0FFD208DD
+	by mail.kernel.org (Postfix) with ESMTP id 9EB902177A
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:08:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EB902177A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388502AbeHDLIf (ORCPT
+        id S1733278AbeHDLIu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 07:08:35 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49620 "EHLO
+        Sat, 4 Aug 2018 07:08:50 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49684 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732462AbeHDLIe (ORCPT
+        with ESMTP id S1732462AbeHDLIu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 07:08:34 -0400
+        Sat, 4 Aug 2018 07:08:50 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 61DAABB3;
-        Sat,  4 Aug 2018 09:08:35 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D0383BB3;
+        Sat,  4 Aug 2018 09:08:50 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sven Eckelmann <sven.eckelmann@openmesh.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 045/124] ath: Add regulatory mapping for Bahamas
-Date:   Sat,  4 Aug 2018 11:00:34 +0200
-Message-Id: <20180804082704.162565671@linuxfoundation.org>
+Subject: [PATCH 4.4 050/124] powerpc/8xx: fix invalid register expression in head_8xx.S
+Date:   Sat,  4 Aug 2018 11:00:39 +0200
+Message-Id: <20180804082704.383670917@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180804082702.434482435@linuxfoundation.org>
 References: <20180804082702.434482435@linuxfoundation.org>
@@ -52,50 +51,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sven Eckelmann <sven.eckelmann@openmesh.com>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
 
-[ Upstream commit 699e2302c286a14afe7b7394151ce6c4e1790cc1 ]
+[ Upstream commit e4ccb1dae6bdef228d729c076c38161ef6e7ca34 ]
 
-The country code is used by the ath to detect the ISO 3166-1 alpha-2 name
-and to select the correct conformance test limits (CTL) for a country. If
-the country isn't available and it is still programmed in the EEPROM then
-it will cause an error and stop the initialization with:
+New binutils generate the following warning
 
-  Invalid EEPROM contents
+  AS      arch/powerpc/kernel/head_8xx.o
+arch/powerpc/kernel/head_8xx.S: Assembler messages:
+arch/powerpc/kernel/head_8xx.S:916: Warning: invalid register expression
 
-The current CTL mappings for this country are:
+This patch fixes it.
 
-* 2.4GHz: ETSI
-* 5GHz: FCC
-
-Signed-off-by: Sven Eckelmann <sven.eckelmann@openmesh.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/ath/regd.h        |    1 +
- drivers/net/wireless/ath/regd_common.h |    1 +
- 2 files changed, 2 insertions(+)
+ arch/powerpc/kernel/head_8xx.S |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/wireless/ath/regd.h
-+++ b/drivers/net/wireless/ath/regd.h
-@@ -68,6 +68,7 @@ enum CountryCode {
- 	CTRY_AUSTRALIA = 36,
- 	CTRY_AUSTRIA = 40,
- 	CTRY_AZERBAIJAN = 31,
-+	CTRY_BAHAMAS = 44,
- 	CTRY_BAHRAIN = 48,
- 	CTRY_BANGLADESH = 50,
- 	CTRY_BARBADOS = 52,
---- a/drivers/net/wireless/ath/regd_common.h
-+++ b/drivers/net/wireless/ath/regd_common.h
-@@ -306,6 +306,7 @@ static struct country_code_to_enum_rd al
- 	{CTRY_AUSTRALIA2, FCC6_WORLD, "AU"},
- 	{CTRY_AUSTRIA, ETSI1_WORLD, "AT"},
- 	{CTRY_AZERBAIJAN, ETSI4_WORLD, "AZ"},
-+	{CTRY_BAHAMAS, FCC3_WORLD, "BS"},
- 	{CTRY_BAHRAIN, APL6_WORLD, "BH"},
- 	{CTRY_BANGLADESH, NULL1_WORLD, "BD"},
- 	{CTRY_BARBADOS, FCC2_WORLD, "BB"},
+--- a/arch/powerpc/kernel/head_8xx.S
++++ b/arch/powerpc/kernel/head_8xx.S
+@@ -720,7 +720,7 @@ start_here:
+ 	tovirt(r6,r6)
+ 	lis	r5, abatron_pteptrs@h
+ 	ori	r5, r5, abatron_pteptrs@l
+-	stw	r5, 0xf0(r0)	/* Must match your Abatron config file */
++	stw	r5, 0xf0(0)	/* Must match your Abatron config file */
+ 	tophys(r5,r5)
+ 	stw	r6, 0(r5)
+ 
 
 
