@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2543C4646F
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:09:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7152BC4646F
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:09:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C6072177A
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:09:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C6072177A
+	by mail.kernel.org (Postfix) with ESMTP id 3535A217C6
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:09:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3535A217C6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388679AbeHDLJT (ORCPT
+        id S2388692AbeHDLJW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 07:09:19 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49784 "EHLO
+        Sat, 4 Aug 2018 07:09:22 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49790 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727600AbeHDLJS (ORCPT
+        with ESMTP id S1727600AbeHDLJV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 07:09:18 -0400
+        Sat, 4 Aug 2018 07:09:21 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D099389C;
-        Sat,  4 Aug 2018 09:09:18 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D894ABBF;
+        Sat,  4 Aug 2018 09:09:21 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 058/124] media: smiapp: fix timeout checking in smiapp_read_nvm
-Date:   Sat,  4 Aug 2018 11:00:47 +0200
-Message-Id: <20180804082704.679780201@linuxfoundation.org>
+Subject: [PATCH 4.4 059/124] ALSA: usb-audio: Apply rate limit to warning messages in URB complete callback
+Date:   Sat,  4 Aug 2018 11:00:48 +0200
+Message-Id: <20180804082704.714552524@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180804082702.434482435@linuxfoundation.org>
 References: <20180804082702.434482435@linuxfoundation.org>
@@ -52,58 +50,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-[ Upstream commit 7a2148dfda8001c983f0effd9afd8a7fa58e99c4 ]
+[ Upstream commit 377a879d9832f4ba69bd6a1fc996bb4181b1e504 ]
 
-The current code decrements the timeout counter i and the end of
-each loop i is incremented, so the check for timeout will always
-be false and hence the timeout mechanism is just a dead code path.
-Potentially, if the RD_READY bit is not set, we could end up in
-an infinite loop.
+retire_capture_urb() may print warning messages when the given URB
+doesn't align, and this may flood the system log easily.
+Put the rate limit to the message for avoiding it.
 
-Fix this so the timeout starts from 1000 and decrements to zero,
-if at the end of the loop i is zero we have a timeout condition.
-
-Detected by CoverityScan, CID#1324008 ("Logically dead code")
-
-Fixes: ccfc97bdb5ae ("[media] smiapp: Add driver")
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Bugzilla: https://bugzilla.suse.com/show_bug.cgi?id=1093485
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/i2c/smiapp/smiapp-core.c |   11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+ sound/usb/pcm.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/media/i2c/smiapp/smiapp-core.c
-+++ b/drivers/media/i2c/smiapp/smiapp-core.c
-@@ -981,7 +981,7 @@ static int smiapp_read_nvm(struct smiapp
- 		if (rval)
- 			goto out;
- 
--		for (i = 0; i < 1000; i++) {
-+		for (i = 1000; i > 0; i--) {
- 			rval = smiapp_read(
- 				sensor,
- 				SMIAPP_REG_U8_DATA_TRANSFER_IF_1_STATUS, &s);
-@@ -992,11 +992,10 @@ static int smiapp_read_nvm(struct smiapp
- 			if (s & SMIAPP_DATA_TRANSFER_IF_1_STATUS_RD_READY)
- 				break;
- 
--			if (--i == 0) {
--				rval = -ETIMEDOUT;
--				goto out;
--			}
--
-+		}
-+		if (!i) {
-+			rval = -ETIMEDOUT;
-+			goto out;
+--- a/sound/usb/pcm.c
++++ b/sound/usb/pcm.c
+@@ -1300,7 +1300,7 @@ static void retire_capture_urb(struct sn
+ 		if (bytes % (runtime->sample_bits >> 3) != 0) {
+ 			int oldbytes = bytes;
+ 			bytes = frames * stride;
+-			dev_warn(&subs->dev->dev,
++			dev_warn_ratelimited(&subs->dev->dev,
+ 				 "Corrected urb data len. %d->%d\n",
+ 							oldbytes, bytes);
  		}
- 
- 		for (i = 0; i < SMIAPP_NVM_PAGE_SIZE; i++) {
 
 
