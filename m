@@ -5,135 +5,275 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EC83C46470
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 11:04:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A588C4646F
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 11:11:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2065217CE
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 11:04:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2065217CE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id A91E4217CC
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 11:11:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A91E4217CC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hauke-m.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729663AbeHDNEh (ORCPT
+        id S1728279AbeHDNLk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 09:04:37 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44818 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726855AbeHDNEh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 09:04:37 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Sat, 4 Aug 2018 09:11:40 -0400
+Received: from mx1.mailbox.org ([80.241.60.212]:17854 "EHLO mx1.mailbox.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726550AbeHDNLk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 4 Aug 2018 09:11:40 -0400
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [80.241.60.240])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D9A638197031;
-        Sat,  4 Aug 2018 11:04:15 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7E41C2026D66;
-        Sat,  4 Aug 2018 11:04:15 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id w74B4EZ0000455;
-        Sat, 4 Aug 2018 07:04:14 -0400
-Received: from localhost (mpatocka@localhost)
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id w74B4Dsu000400;
-        Sat, 4 Aug 2018 07:04:13 -0400
-X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
-Date:   Sat, 4 Aug 2018 07:04:13 -0400 (EDT)
-From:   Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To:     Andrew Pinski <pinskia@gmail.com>
-cc:     Richard Earnshaw <Richard.Earnshaw@arm.com>,
-        ard.biesheuvel@linaro.org,
-        Ramana Radhakrishnan <ramana.gcc@googlemail.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        thomas.petazzoni@free-electrons.com,
-        GNU C Library <libc-alpha@sourceware.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, linux@armlinux.org.uk,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: framebuffer corruption due to overlapping stp instructions on
- arm64
-In-Reply-To: <CA+=Sn1=6F-fGLmXE0VqQHTqTCUKUT=Fz29mMT7349SPFisbZ9A@mail.gmail.com>
-Message-ID: <alpine.LRH.2.02.1808040611070.23762@file01.intranet.prod.int.rdu2.redhat.com>
-References: <alpine.LRH.2.02.1808021242320.31834@file01.intranet.prod.int.rdu2.redhat.com> <CA+=Sn1mWkjuwVnjw6OWWUM=UcP76bdFa680FebCseewHfx3NpA@mail.gmail.com> <9acdacdb-3bd5-b71a-3003-e48132ee1371@redhat.com> <CAJA7tRZbmnZq7RfvQeYEy_a1ZObWqpFpVdvgsXgsioQ3RyPMuA@mail.gmail.com>
- <CAKv+Gu97QvwoLLK_zueiA_gjg_4Q5cqU4YVUyHUVFFfffdyJaw@mail.gmail.com> <11f9185a-7f71-83df-3a57-0a0ae9c1f934@arm.com> <alpine.LRH.2.02.1808032046540.24748@file01.intranet.prod.int.rdu2.redhat.com>
- <CA+=Sn1=6F-fGLmXE0VqQHTqTCUKUT=Fz29mMT7349SPFisbZ9A@mail.gmail.com>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+        by mx1.mailbox.org (Postfix) with ESMTPS id CBC6F48A66;
+        Sat,  4 Aug 2018 13:11:15 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp1.mailbox.org ([80.241.60.240])
+        by spamfilter01.heinlein-hosting.de (spamfilter01.heinlein-hosting.de [80.241.56.115]) (amavisd-new, port 10030)
+        with ESMTP id Y5N9gQU_QThB; Sat,  4 Aug 2018 13:11:13 +0200 (CEST)
+Subject: Re: [PATCH v2 04/18] MIPS: dts: Add initial support for Intel MIPS
+ SoCs
+To:     Songjun Wu <songjun.wu@linux.intel.com>, hua.ma@linux.intel.com,
+        yixin.zhu@linux.intel.com, chuanhua.lei@linux.intel.com,
+        qi-ming.wu@intel.com
+Cc:     linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
+        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+        James Hogan <jhogan@kernel.org>, linux-kernel@vger.kernel.org,
+        Paul Burton <paul.burton@mips.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>
+References: <20180803030237.3366-1-songjun.wu@linux.intel.com>
+ <20180803030237.3366-5-songjun.wu@linux.intel.com>
+From:   Hauke Mehrtens <hauke@hauke-m.de>
+Message-ID: <4f58b5ee-1e3c-7d39-258e-e4525d78db0b@hauke-m.de>
+Date:   Sat, 4 Aug 2018 13:11:07 +0200
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Sat, 04 Aug 2018 11:04:15 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Sat, 04 Aug 2018 11:04:15 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mpatocka@redhat.com' RCPT:''
+In-Reply-To: <20180803030237.3366-5-songjun.wu@linux.intel.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="X0b2gHnRoDWWhZa0XmgbmDwsF2zwlMDFd"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--X0b2gHnRoDWWhZa0XmgbmDwsF2zwlMDFd
+Content-Type: multipart/mixed; boundary="kTYbZNGrF8dpzU7F9ObS8ZoN8nmGoFTOF";
+ protected-headers="v1"
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: Songjun Wu <songjun.wu@linux.intel.com>, hua.ma@linux.intel.com,
+ yixin.zhu@linux.intel.com, chuanhua.lei@linux.intel.com, qi-ming.wu@intel.com
+Cc: linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
+ linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+ James Hogan <jhogan@kernel.org>, linux-kernel@vger.kernel.org,
+ Paul Burton <paul.burton@mips.com>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Ralf Baechle <ralf@linux-mips.org>
+Message-ID: <4f58b5ee-1e3c-7d39-258e-e4525d78db0b@hauke-m.de>
+Subject: Re: [PATCH v2 04/18] MIPS: dts: Add initial support for Intel MIPS
+ SoCs
+References: <20180803030237.3366-1-songjun.wu@linux.intel.com>
+ <20180803030237.3366-5-songjun.wu@linux.intel.com>
+In-Reply-To: <20180803030237.3366-5-songjun.wu@linux.intel.com>
+
+--kTYbZNGrF8dpzU7F9ObS8ZoN8nmGoFTOF
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+
+On 08/03/2018 05:02 AM, Songjun Wu wrote:
+> From: Hua Ma <hua.ma@linux.intel.com>
+>=20
+> Add dts files to support Intel MIPS SoCs:
+> - xrx500.dtsi is the chip dts
+> - easy350_anywan.dts is the board dts
+>=20
+> Signed-off-by: Hua Ma <hua.ma@linux.intel.com>
+> Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
+> ---
+>=20
+> Changes in v2:
+> - New patch split from previous patch
+> - The memory address is changed to @20000000
+> - Update to obj-$(CONFIG_BUILTIN_DTB) as per commit fca3aa166422
+>=20
+>  arch/mips/boot/dts/Makefile                      |  1 +
+>  arch/mips/boot/dts/intel-mips/Makefile           |  4 ++
+>  arch/mips/boot/dts/intel-mips/easy350_anywan.dts | 26 ++++++++++
+>  arch/mips/boot/dts/intel-mips/xrx500.dtsi        | 66 ++++++++++++++++=
+++++++++
+>  4 files changed, 97 insertions(+)
+>  create mode 100644 arch/mips/boot/dts/intel-mips/Makefile
+>  create mode 100644 arch/mips/boot/dts/intel-mips/easy350_anywan.dts
+>  create mode 100644 arch/mips/boot/dts/intel-mips/xrx500.dtsi
+>=20
+> diff --git a/arch/mips/boot/dts/Makefile b/arch/mips/boot/dts/Makefile
+> index 1e79cab8e269..05f52f279047 100644
+> --- a/arch/mips/boot/dts/Makefile
+> +++ b/arch/mips/boot/dts/Makefile
+> @@ -3,6 +3,7 @@ subdir-y	+=3D brcm
+>  subdir-y	+=3D cavium-octeon
+>  subdir-y	+=3D img
+>  subdir-y	+=3D ingenic
+> +subdir-y	+=3D intel-mips
+>  subdir-y	+=3D lantiq
+>  subdir-y	+=3D mscc
+>  subdir-y	+=3D mti
+> diff --git a/arch/mips/boot/dts/intel-mips/Makefile b/arch/mips/boot/dt=
+s/intel-mips/Makefile
+> new file mode 100644
+> index 000000000000..adfaabbbb07c
+> --- /dev/null
+> +++ b/arch/mips/boot/dts/intel-mips/Makefile
+> @@ -0,0 +1,4 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +dtb-$(CONFIG_DTB_INTEL_MIPS_GRX500)	+=3D easy350_anywan.dtb
+> +
+> +obj-$(CONFIG_BUILTIN_DTB)		+=3D $(addsuffix .o, $(dtb-y))
+> diff --git a/arch/mips/boot/dts/intel-mips/easy350_anywan.dts b/arch/mi=
+ps/boot/dts/intel-mips/easy350_anywan.dts
+> new file mode 100644
+> index 000000000000..e5e95f90c5e7
+> --- /dev/null
+> +++ b/arch/mips/boot/dts/intel-mips/easy350_anywan.dts
+> @@ -0,0 +1,26 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/dts-v1/;
+> +
+> +#include <dt-bindings/interrupt-controller/mips-gic.h>
+> +#include <dt-bindings/clock/intel,grx500-clk.h>
+> +
+> +#include "xrx500.dtsi"
+> +
+> +/ {
+> +	model =3D "EASY350 ANYWAN (GRX350) Main model";
+
+Main model can be removed, it does not identify the board.
+
+> +	compatible =3D "intel,easy350-anywan";
+
+I think this should be
+	compatible =3D "intel,easy350-anywan", "intel,xrx500";
+
+Are there different revisions of the EASY350 Anywan board or only of the
+EASY550 board?There are at least some differences in the power supply on
+the EASY550 V1 and EASY550 V2 board. I would suggest to be here very
+specific to make it easier when adding more boards.
+
+> +
+> +	aliases {
+> +		serial0 =3D &asc0;
+> +	};
+> +
+> +	chosen {
+> +		bootargs =3D "earlycon=3Dlantiq,0x16600000 clk_ignore_unused";
+
+What happens when you remove clk_ignore_unused?
+If it crashes we should probably define some of the clock to be always
+active.
+
+> +		stdout-path =3D "serial0";
+> +	};
+> +
+> +	memory@20000000 {
+> +		device_type =3D "memory";
+> +		reg =3D <0x20000000 0x0e000000>;
+> +	};
+> +};
+> diff --git a/arch/mips/boot/dts/intel-mips/xrx500.dtsi b/arch/mips/boot=
+/dts/intel-mips/xrx500.dtsi
+> new file mode 100644
+> index 000000000000..54c5f8f8b604
+> --- /dev/null
+> +++ b/arch/mips/boot/dts/intel-mips/xrx500.dtsi
+> @@ -0,0 +1,66 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +/ {
+> +	#address-cells =3D <1>;
+> +	#size-cells =3D <1>;
+> +	compatible =3D "intel,xrx500";
+> +
+> +	cpus {
+> +		#address-cells =3D <1>;
+> +		#size-cells =3D <0>;
+> +
+> +		cpu0: cpu@0 {
+> +			device_type =3D "cpu";
+> +			compatible =3D "mti,interaptiv";
+> +			clocks =3D <&cgu CLK_CPU>;
+> +			reg =3D <0>;
+> +		};
+> +
+> +		cpu1: cpu@1 {
+> +			device_type =3D "cpu";
+> +			compatible =3D "mti,interaptiv";
+> +			reg =3D <1>;
+> +		};
+> +	};
+> +
+> +	cpu_intc: interrupt-controller {
+> +		compatible =3D "mti,cpu-interrupt-controller";
+> +
+> +		interrupt-controller;
+> +		#interrupt-cells =3D <1>;
+> +	};
+> +
+> +	gic: gic@12320000 {
+> +		compatible =3D "mti,gic";
+> +		reg =3D <0x12320000 0x20000>;
+> +
+> +		interrupt-controller;
+> +		#interrupt-cells =3D <3>;
+> +		/*
+> +		 * Declare the interrupt-parent even though the mti,gic
+> +		 * binding doesn't require it, such that the kernel can
+> +		 * figure out that cpu_intc is the root interrupt
+> +		 * controller & should be probed first.
+> +		 */
+> +		interrupt-parent =3D <&cpu_intc>;
+> +		mti,reserved-ipi-vectors =3D <56 8>;
+> +	};
+> +
+> +	cgu: cgu@16200000 {
+> +		compatible =3D "intel,grx500-cgu", "syscon";
+> +		reg =3D <0x16200000 0x200>;
+> +		#clock-cells =3D <1>;
+> +	};
+> +
+> +	asc0: serial@16600000 {
+> +		compatible =3D "lantiq,asc";
+> +		reg =3D <0x16600000 0x100000>;
+> +
+> +		interrupt-parent =3D <&gic>;
+> +		interrupts =3D <GIC_SHARED 103 IRQ_TYPE_LEVEL_HIGH>,
+> +			<GIC_SHARED 105 IRQ_TYPE_LEVEL_HIGH>,
+> +			<GIC_SHARED 106 IRQ_TYPE_LEVEL_HIGH>;
+> +		clocks =3D <&cgu CLK_SSX4>, <&cgu GCLK_UART>;
+> +		clock-names =3D "freq", "asc";
+> +	};
+> +};
+>=20
 
 
-On Fri, 3 Aug 2018, Andrew Pinski wrote:
 
-> On Fri, Aug 3, 2018 at 5:58 PM Mikulas Patocka <mpatocka@redhat.com> wrote:
-> >
-> >
-> >
-> > On Fri, 3 Aug 2018, Richard Earnshaw (lists) wrote:
-> >
-> > > Whoa, hold on.
-> > >
-> > > Memcpy should never be used on device memory.  Period.  Memcpy doesn't
-> > > know anything about what size of access is needed for accessing a device.
-> > >
-> > > But why is the buffer in device memory rather than some other form of
-> > > uncached memory?
-> > >
-> > > If you change memcpy to deal with an aspect of the system hardware,
-> > > you'll end up hosing performance EVERYWHERE.  DON'T DO IT!
-> >
-> > memcpy in glibc uses ifunc selection and it already has optimized variants
-> > for Falkor and Thunder-X. You can add just another variant for Armada-8040
-> > that works around this bug and you won't be harming anyone but users of
-> > Armada-8040.
-> 
-> Except it is not a bug in the ARMADA at all.  It is a bug in thinking
-> memcpy will work on non-DRAM memory.
+--kTYbZNGrF8dpzU7F9ObS8ZoN8nmGoFTOF--
 
-There's plenty of memcpy's in the graphics stack. No one will be rewriting 
-all the graphics drivers because of tiny market share that ARM has in 
-desktop computers. So if you refuse to fix things and blame everyone else, 
-you can as well announce that you don't want to have PCIe graphics on ARM 
-at all.
+--X0b2gHnRoDWWhZa0XmgbmDwsF2zwlMDFd
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
-> Can you run the test program on x86 using the similar framebuffer
-> setup?  Does doing two writes (one aligned and one unaligned but
-> overlapping with previous one) cause the same issue?  I suspect it
-> does, then using memcpy for frame buffers is wrong.
->
-> Thanks,
-> Andrew
+-----BEGIN PGP SIGNATURE-----
 
-Overlapping unaligned writes work on x86 - they have to, because of 
-backward compatibility.
+iQEzBAEBCAAdFiEEyz0/uAcd+JwXmwtD8bdnhZyy68cFAltlicsACgkQ8bdnhZyy
+68fF3Qf+MUOxtnxWC/uB7FeRDczLlhwmZSY6lm1xguQ9SzeFRm0Nq+rScWLYqoO7
+KEeMILOplCoo67uHvZ5LElWiobLI3g3PFF/pAVhAVAAcgYsI5VO4rmBKK43UQrSP
+PFehXjDZd8Dn4+QFKAs9cvCImQOjzhW91TBFRJfBsk6jxz7FMXeFfolZTfBpiPex
+RmXKk9jZndztrF5gbcx9W+NueVUl6EKReamn18/snleNF6JIb9TnnChIlDMo/XxX
+Dc59MD6k4d65np44Onx73iWsT/gxdR0PjpEr8hZDH2XCbuHjSrVLoKs/AnBN40Ra
+x30Z27Zn2p5QHN4OmbG8hLd/JeqVgg==
+=jV+X
+-----END PGP SIGNATURE-----
 
-8086, 80286 and 80386 didn't have any cache at all.
-
-80486 and Pentium had cache, but when the CPU was reading some data from 
-memory, the motherboard could disable cacheability for this data by a 
-special pin. Software didn't have to do any explicit cache management - 
-programs for 80386 that expected that there's no cache worked flawlessly 
-on 80486 and Pentium.
-
-Pentium Pro had memory type range registers that determine cacheability of 
-various memory regions (so that it could allocate a cache line on write 
-without having to query the motherboard if the particular region of memory 
-is cacheable) - but the MTRRs were set by BIOS and the software didn't 
-have to care about them at all - an 80386 operating system that had no 
-idea of cacheability would still work on Pentium Pro.
-
-MTRRs could also set a write-combining mode on a region of memory - but 
-again, this is completely transparent to the software (the write combining 
-buffers are flushed when accessing an I/O port or uncacheable memory) - so 
-that an accelerated graphics driver written for Pentium that had no idea 
-of write-combining would still work on Pentium Pro with write combining 
-enabled.
-
-Mikulas
+--X0b2gHnRoDWWhZa0XmgbmDwsF2zwlMDFd--
