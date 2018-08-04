@@ -2,61 +2,91 @@ Return-Path: <SRS0=4jry=KT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72D64C4646D
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 20:10:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 418BDC4646F
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 20:11:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FB8421530
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 20:10:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FB8421530
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id E918B21530
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 20:11:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E918B21530
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729673AbeHDWMU (ORCPT
+        id S1729696AbeHDWMx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 18:12:20 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:56814 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727127AbeHDWMU (ORCPT
+        Sat, 4 Aug 2018 18:12:53 -0400
+Received: from gateway23.websitewelcome.com ([192.185.50.250]:16241 "EHLO
+        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727127AbeHDWMx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 18:12:20 -0400
-Received: from localhost (unknown [172.58.40.140])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 398301401E5AB;
-        Sat,  4 Aug 2018 13:10:32 -0700 (PDT)
-Date:   Sat, 04 Aug 2018 13:10:31 -0700 (PDT)
-Message-Id: <20180804.131031.531712040899086911.davem@davemloft.net>
-To:     ubraun@linux.ibm.com
-Cc:     netdev@vger.kernel.org, linux-s390@vger.kernel.org,
-        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        raspl@linux.ibm.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net 1/1] net/smc: no cursor update send in state
- SMC_INIT
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20180803083833.51029-1-ubraun@linux.ibm.com>
-References: <20180803083833.51029-1-ubraun@linux.ibm.com>
-X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sat, 04 Aug 2018 13:10:32 -0700 (PDT)
+        Sat, 4 Aug 2018 18:12:53 -0400
+Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
+        by gateway23.websitewelcome.com (Postfix) with ESMTP id 39D0AEB26
+        for <linux-kernel@vger.kernel.org>; Sat,  4 Aug 2018 15:11:05 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id m2tFf3zWcbXuJm2tFfTWlQ; Sat, 04 Aug 2018 15:11:05 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.50.82] (port=60168 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1fm2tE-002B9s-Mo; Sat, 04 Aug 2018 15:11:04 -0500
+Date:   Sat, 4 Aug 2018 15:11:03 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] ALSA: mixart: Mark expected switch fall-through
+Message-ID: <20180804201103.GA26669@embeddedor.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.50.82
+X-Source-L: No
+X-Exim-ID: 1fm2tE-002B9s-Mo
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.50.82]:60168
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 4
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ursula Braun <ubraun@linux.ibm.com>
-Date: Fri,  3 Aug 2018 10:38:33 +0200
+In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+where we are expecting to fall through.
 
-> If a writer blocked condition is received without data, the current
-> consumer cursor is immediately sent. Servers could already receive this
-> condition in state SMC_INIT without finished tx-setup. This patch
-> avoids sending a consumer cursor update in this case.
-> 
-> Signed-off-by: Ursula Braun <ubraun@linux.ibm.com>
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ sound/pci/mixart/mixart.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Applied, thank you.
+diff --git a/sound/pci/mixart/mixart.c b/sound/pci/mixart/mixart.c
+index a74f1ad..9cd297a 100644
+--- a/sound/pci/mixart/mixart.c
++++ b/sound/pci/mixart/mixart.c
+@@ -182,6 +182,7 @@ static int mixart_set_clock(struct mixart_mgr *mgr,
+ 	case PIPE_RUNNING:
+ 		if(rate != 0)
+ 			break;
++		/* fall through */
+ 	default:
+ 		if(rate == 0)
+ 			return 0; /* nothing to do */
+-- 
+2.7.4
+
