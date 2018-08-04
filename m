@@ -6,42 +6,37 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13FF5C4646F
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:05:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00F5CC4646F
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:05:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC956217C6
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:05:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC956217C6
+	by mail.kernel.org (Postfix) with ESMTP id AF006217C6
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:05:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF006217C6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732919AbeHDLFX (ORCPT
+        id S1732934AbeHDLF0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 07:05:23 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48752 "EHLO
+        Sat, 4 Aug 2018 07:05:26 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48772 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727600AbeHDLFX (ORCPT
+        with ESMTP id S1727600AbeHDLF0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 07:05:23 -0400
+        Sat, 4 Aug 2018 07:05:26 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9C928BB3;
-        Sat,  4 Aug 2018 09:05:23 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D14B8BC6;
+        Sat,  4 Aug 2018 09:05:26 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Krister Johansen <kjlx@templeofstupid.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        David Chen <david.chen@nutanix.com>
-Subject: [PATCH 4.9 17/32] sched/wait: Remove the lockless swait_active() check in swake_up*()
-Date:   Sat,  4 Aug 2018 11:01:07 +0200
-Message-Id: <20180804082650.826684034@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        Jay Vosburgh <j.vosburgh@gmail.com>,
+        Veaceslav Falico <vfalico@gmail.com>,
+        Andy Gospodarek <andy@greyhouse.net>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 18/32] bonding: avoid lockdep confusion in bond_get_stats()
+Date:   Sat,  4 Aug 2018 11:01:08 +0200
+Message-Id: <20180804082650.881984935@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180804082649.908295462@linuxfoundation.org>
 References: <20180804082649.908295462@linuxfoundation.org>
@@ -58,105 +53,174 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Boqun Feng <boqun.feng@gmail.com>
+From: Eric Dumazet <edumazet@google.com>
 
-commit 35a2897c2a306cca344ca5c0b43416707018f434 upstream.
+[ Upstream commit 7e2556e40026a1b0c16f37446ab398d5a5a892e4 ]
 
-Steven Rostedt reported a potential race in RCU core because of
-swake_up():
+syzbot found that the following sequence produces a LOCKDEP splat [1]
 
-        CPU0                            CPU1
-        ----                            ----
-                                __call_rcu_core() {
+ip link add bond10 type bond
+ip link add bond11 type bond
+ip link set bond11 master bond10
 
-                                 spin_lock(rnp_root)
-                                 need_wake = __rcu_start_gp() {
-                                  rcu_start_gp_advanced() {
-                                   gp_flags = FLAG_INIT
-                                  }
-                                 }
+To fix this, we can use the already provided nest_level.
 
- rcu_gp_kthread() {
-   swait_event_interruptible(wq,
-        gp_flags & FLAG_INIT) {
-   spin_lock(q->lock)
+This patch also provides correct nesting for dev->addr_list_lock
 
-                                *fetch wq->task_list here! *
+[1]
+WARNING: possible recursive locking detected
+4.18.0-rc6+ #167 Not tainted
+--------------------------------------------
+syz-executor751/4439 is trying to acquire lock:
+(____ptrval____) (&(&bond->stats_lock)->rlock){+.+.}, at: spin_lock include/linux/spinlock.h:310 [inline]
+(____ptrval____) (&(&bond->stats_lock)->rlock){+.+.}, at: bond_get_stats+0xb4/0x560 drivers/net/bonding/bond_main.c:3426
 
-   list_add(wq->task_list, q->task_list)
-   spin_unlock(q->lock);
+but task is already holding lock:
+(____ptrval____) (&(&bond->stats_lock)->rlock){+.+.}, at: spin_lock include/linux/spinlock.h:310 [inline]
+(____ptrval____) (&(&bond->stats_lock)->rlock){+.+.}, at: bond_get_stats+0xb4/0x560 drivers/net/bonding/bond_main.c:3426
 
-   *fetch old value of gp_flags here *
+other info that might help us debug this:
+ Possible unsafe locking scenario:
 
-                                 spin_unlock(rnp_root)
+       CPU0
+       ----
+  lock(&(&bond->stats_lock)->rlock);
+  lock(&(&bond->stats_lock)->rlock);
 
-                                 rcu_gp_kthread_wake() {
-                                  swake_up(wq) {
-                                   swait_active(wq) {
-                                    list_empty(wq->task_list)
+ *** DEADLOCK ***
 
-                                   } * return false *
+ May be due to missing lock nesting notation
 
-  if (condition) * false *
-    schedule();
+3 locks held by syz-executor751/4439:
+ #0: (____ptrval____) (rtnl_mutex){+.+.}, at: rtnl_lock+0x17/0x20 net/core/rtnetlink.c:77
+ #1: (____ptrval____) (&(&bond->stats_lock)->rlock){+.+.}, at: spin_lock include/linux/spinlock.h:310 [inline]
+ #1: (____ptrval____) (&(&bond->stats_lock)->rlock){+.+.}, at: bond_get_stats+0xb4/0x560 drivers/net/bonding/bond_main.c:3426
+ #2: (____ptrval____) (rcu_read_lock){....}, at: bond_get_stats+0x0/0x560 include/linux/compiler.h:215
 
-In this case, a wakeup is missed, which could cause the rcu_gp_kthread
-waits for a long time.
+stack backtrace:
+CPU: 0 PID: 4439 Comm: syz-executor751 Not tainted 4.18.0-rc6+ #167
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
+ print_deadlock_bug kernel/locking/lockdep.c:1765 [inline]
+ check_deadlock kernel/locking/lockdep.c:1809 [inline]
+ validate_chain kernel/locking/lockdep.c:2405 [inline]
+ __lock_acquire.cold.64+0x1fb/0x486 kernel/locking/lockdep.c:3435
+ lock_acquire+0x1e4/0x540 kernel/locking/lockdep.c:3924
+ __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
+ _raw_spin_lock+0x2a/0x40 kernel/locking/spinlock.c:144
+ spin_lock include/linux/spinlock.h:310 [inline]
+ bond_get_stats+0xb4/0x560 drivers/net/bonding/bond_main.c:3426
+ dev_get_stats+0x10f/0x470 net/core/dev.c:8316
+ bond_get_stats+0x232/0x560 drivers/net/bonding/bond_main.c:3432
+ dev_get_stats+0x10f/0x470 net/core/dev.c:8316
+ rtnl_fill_stats+0x4d/0xac0 net/core/rtnetlink.c:1169
+ rtnl_fill_ifinfo+0x1aa6/0x3fb0 net/core/rtnetlink.c:1611
+ rtmsg_ifinfo_build_skb+0xc8/0x190 net/core/rtnetlink.c:3268
+ rtmsg_ifinfo_event.part.30+0x45/0xe0 net/core/rtnetlink.c:3300
+ rtmsg_ifinfo_event net/core/rtnetlink.c:3297 [inline]
+ rtnetlink_event+0x144/0x170 net/core/rtnetlink.c:4716
+ notifier_call_chain+0x180/0x390 kernel/notifier.c:93
+ __raw_notifier_call_chain kernel/notifier.c:394 [inline]
+ raw_notifier_call_chain+0x2d/0x40 kernel/notifier.c:401
+ call_netdevice_notifiers_info+0x3f/0x90 net/core/dev.c:1735
+ call_netdevice_notifiers net/core/dev.c:1753 [inline]
+ netdev_features_change net/core/dev.c:1321 [inline]
+ netdev_change_features+0xb3/0x110 net/core/dev.c:7759
+ bond_compute_features.isra.47+0x585/0xa50 drivers/net/bonding/bond_main.c:1120
+ bond_enslave+0x1b25/0x5da0 drivers/net/bonding/bond_main.c:1755
+ bond_do_ioctl+0x7cb/0xae0 drivers/net/bonding/bond_main.c:3528
+ dev_ifsioc+0x43c/0xb30 net/core/dev_ioctl.c:327
+ dev_ioctl+0x1b5/0xcc0 net/core/dev_ioctl.c:493
+ sock_do_ioctl+0x1d3/0x3e0 net/socket.c:992
+ sock_ioctl+0x30d/0x680 net/socket.c:1093
+ vfs_ioctl fs/ioctl.c:46 [inline]
+ file_ioctl fs/ioctl.c:500 [inline]
+ do_vfs_ioctl+0x1de/0x1720 fs/ioctl.c:684
+ ksys_ioctl+0xa9/0xd0 fs/ioctl.c:701
+ __do_sys_ioctl fs/ioctl.c:708 [inline]
+ __se_sys_ioctl fs/ioctl.c:706 [inline]
+ __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:706
+ do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x440859
+Code: e8 2c af 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 3b 10 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007ffc51a92878 EFLAGS: 00000213 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000440859
+RDX: 0000000020000040 RSI: 0000000000008990 RDI: 0000000000000003
+RBP: 0000000000000000 R08: 00000000004002c8 R09: 00000000004002c8
+R10: 00000000022d5880 R11: 0000000000000213 R12: 0000000000007390
+R13: 0000000000401db0 R14: 0000000000000000 R15: 0000000000000000
 
-The reason of this is that we do a lockless swait_active() check in
-swake_up(). To fix this, we can either 1) add a smp_mb() in swake_up()
-before swait_active() to provide the proper order or 2) simply remove
-the swait_active() in swake_up().
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Cc: Jay Vosburgh <j.vosburgh@gmail.com>
+Cc: Veaceslav Falico <vfalico@gmail.com>
+Cc: Andy Gospodarek <andy@greyhouse.net>
 
-The solution 2 not only fixes this problem but also keeps the swait and
-wait API as close as possible, as wake_up() doesn't provide a full
-barrier and doesn't do a lockless check of the wait queue either.
-Moreover, there are users already using swait_active() to do their quick
-checks for the wait queues, so it make less sense that swake_up() and
-swake_up_all() do this on their own.
-
-This patch then removes the lockless swait_active() check in swake_up()
-and swake_up_all().
-
-Reported-by: Steven Rostedt <rostedt@goodmis.org>
-Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Krister Johansen <kjlx@templeofstupid.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/20170615041828.zk3a3sfyudm5p6nl@tardis
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: David Chen <david.chen@nutanix.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- kernel/sched/swait.c |    6 ------
- 1 file changed, 6 deletions(-)
+ drivers/net/bonding/bond_main.c |   14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
---- a/kernel/sched/swait.c
-+++ b/kernel/sched/swait.c
-@@ -33,9 +33,6 @@ void swake_up(struct swait_queue_head *q
+--- a/drivers/net/bonding/bond_main.c
++++ b/drivers/net/bonding/bond_main.c
+@@ -1682,6 +1682,8 @@ int bond_enslave(struct net_device *bond
+ 		goto err_upper_unlink;
+ 	}
+ 
++	bond->nest_level = dev_get_nest_level(bond_dev) + 1;
++
+ 	/* If the mode uses primary, then the following is handled by
+ 	 * bond_change_active_slave().
+ 	 */
+@@ -1729,7 +1731,6 @@ int bond_enslave(struct net_device *bond
+ 	if (bond_mode_uses_xmit_hash(bond))
+ 		bond_update_slave_arr(bond, NULL);
+ 
+-	bond->nest_level = dev_get_nest_level(bond_dev);
+ 
+ 	netdev_info(bond_dev, "Enslaving %s as %s interface with %s link\n",
+ 		    slave_dev->name,
+@@ -3359,6 +3360,13 @@ static void bond_fold_stats(struct rtnl_
+ 	}
+ }
+ 
++static int bond_get_nest_level(struct net_device *bond_dev)
++{
++	struct bonding *bond = netdev_priv(bond_dev);
++
++	return bond->nest_level;
++}
++
+ static struct rtnl_link_stats64 *bond_get_stats(struct net_device *bond_dev,
+ 						struct rtnl_link_stats64 *stats)
  {
- 	unsigned long flags;
+@@ -3367,7 +3375,7 @@ static struct rtnl_link_stats64 *bond_ge
+ 	struct list_head *iter;
+ 	struct slave *slave;
  
--	if (!swait_active(q))
--		return;
--
- 	raw_spin_lock_irqsave(&q->lock, flags);
- 	swake_up_locked(q);
- 	raw_spin_unlock_irqrestore(&q->lock, flags);
-@@ -51,9 +48,6 @@ void swake_up_all(struct swait_queue_hea
- 	struct swait_queue *curr;
- 	LIST_HEAD(tmp);
+-	spin_lock(&bond->stats_lock);
++	spin_lock_nested(&bond->stats_lock, bond_get_nest_level(bond_dev));
+ 	memcpy(stats, &bond->bond_stats, sizeof(*stats));
  
--	if (!swait_active(q))
--		return;
--
- 	raw_spin_lock_irq(&q->lock);
- 	list_splice_init(&q->task_list, &tmp);
- 	while (!list_empty(&tmp)) {
+ 	rcu_read_lock();
+@@ -4163,6 +4171,7 @@ static const struct net_device_ops bond_
+ 	.ndo_neigh_setup	= bond_neigh_setup,
+ 	.ndo_vlan_rx_add_vid	= bond_vlan_rx_add_vid,
+ 	.ndo_vlan_rx_kill_vid	= bond_vlan_rx_kill_vid,
++	.ndo_get_lock_subclass  = bond_get_nest_level,
+ #ifdef CONFIG_NET_POLL_CONTROLLER
+ 	.ndo_netpoll_setup	= bond_netpoll_setup,
+ 	.ndo_netpoll_cleanup	= bond_netpoll_cleanup,
+@@ -4655,6 +4664,7 @@ static int bond_init(struct net_device *
+ 	if (!bond->wq)
+ 		return -ENOMEM;
+ 
++	bond->nest_level = SINGLE_DEPTH_NESTING;
+ 	netdev_lockdep_set_classes(bond_dev);
+ 
+ 	list_add_tail(&bond->bond_list, &bn->dev_list);
 
 
