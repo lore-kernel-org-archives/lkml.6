@@ -2,118 +2,121 @@ Return-Path: <SRS0=4jry=KT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68001C4646F
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 15:47:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 424E2C4646D
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 16:22:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07B6C217CD
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 15:47:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC03B217CD
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 16:22:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="R7+LLrNJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07B6C217CD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="DgAbyfh8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC03B217CD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729641AbeHDRse (ORCPT
+        id S1728835AbeHDSX0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 13:48:34 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:50680 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727803AbeHDRse (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 13:48:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=TZpyQNjibjNOLUfnd0dfO5TMshSVem9za2WRk2ubBcY=; b=R7+LLrNJikVKSOBGHs1s34t9mm
-        ReKgwPgVc+2FWlAoOR+FA03pa9sK9yCaTi3BQotgkT4CiA1cDO3ofwEOP5UJ+MKUmC8CV2FvlLoFh
-        cLJ5IixNQ6Fm9/RjJIVTacdH/C8XpJA4k4vLMntGBjXRAEnDNGtqREavoEwfmU+AdJKNJNbgUfsLM
-        R6GDaZyRJtVv1xHkYrIZIAqdLzP5K/DMhJf2npiXKSdPMCfwbvlruXeOR5y9LvwXMuoPdOSZjXi8o
-        Bx8vjqwz3Lzrrl5lbdFThaYgeWS+E9Kc193PClwdFkWT991jF6sJ252fyBHpl/e6V/F2pcwmaHN/r
-        l9i52ghA==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1flym4-000303-5R; Sat, 04 Aug 2018 15:47:24 +0000
-Subject: Re: kbuild: ARCH=um archheaders failed
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     linux-kbuild <linux-kbuild@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Richard Weinberger <richard@nod.at>,
-        linux-um@lists.infradead.org
-References: <be4f41de-c27a-abac-4b23-369c400e016e@infradead.org>
- <861c26a6-294c-755d-2396-e5d18b9bbcbf@infradead.org>
- <CAK7LNARdoeKCNYV7Kp6YLNsJ4rjrjXRWMsf4op58-JzRYUNVtg@mail.gmail.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <29f9908d-06e5-8e88-4433-9bd7935a0d1f@infradead.org>
-Date:   Sat, 4 Aug 2018 08:47:20 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Sat, 4 Aug 2018 14:23:26 -0400
+Received: from imap.thunk.org ([74.207.234.97]:37572 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727788AbeHDSX0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 4 Aug 2018 14:23:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
+         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=IFMoixiTCQw0hSTWrxKp8kT6byCt9H6gEhDcDQM//Vk=; b=DgAbyfh8A/Pn4IhWT/kGtJQgzF
+        9IHWm3OUg/YpQdw2InXrskMeI/YmaXN2RsGZuj+rEhWJQsdjUmqen9Asu9/jSIvIh1w1nBAobm7Xn
+        IeO5J/zFMm50ANryOpg7wF4U2Jd1W9QOheQ46BgIGA44lYStGP6x+g5b5VShR67GWt70=;
+Received: from root (helo=callcc.thunk.org)
+        by imap.thunk.org with local-esmtp (Exim 4.89)
+        (envelope-from <tytso@thunk.org>)
+        id 1flzJe-0000Pz-HU; Sat, 04 Aug 2018 16:22:06 +0000
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 9CD3B7A64C9; Sat,  4 Aug 2018 12:22:05 -0400 (EDT)
+Date:   Sat, 4 Aug 2018 12:22:05 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Zdenek Kabelac <zkabelac@redhat.com>
+Cc:     Mike Snitzer <snitzer@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, Sagi Grimberg <sagi@grimberg.me>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>, dm-devel@redhat.com,
+        Ilya Dryomov <idryomov@gmail.com>, wgh@torlan.ru
+Subject: Re: [dm-devel] LVM snapshot broke between 4.14 and 4.16
+Message-ID: <20180804162205.GB4461@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Zdenek Kabelac <zkabelac@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, Sagi Grimberg <sagi@grimberg.me>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>, dm-devel@redhat.com,
+        Ilya Dryomov <idryomov@gmail.com>, wgh@torlan.ru
+References: <d76415de-2056-c7d6-cc88-b896deaa8ead@torlan.ru>
+ <1ec0a220-d5b0-1c27-e63b-c4d3f4ce9d77@torlan.ru>
+ <CA+55aFyPVQ5-gA93irsaxPC9BNQxnGWrDDHPMUYai2kxKiaKWQ@mail.gmail.com>
+ <b2bbd8ec-ac5b-fa8a-d3f7-8615d87f73c3@redhat.com>
+ <CA+55aFwWZX=CXmWDTkDGb36kf12XmTehmQjbiMPCqCRG2hi9kw@mail.gmail.com>
+ <20180803185431.GB3258@redhat.com>
+ <CA+55aFwDEY7B6OMh5xL2wc8BRj1KkzBHggNowAjbsWfma6H5Zg@mail.gmail.com>
+ <20180803193037.GA4581@redhat.com>
+ <20180804052033.GA4461@thunk.org>
+ <102c2d75-f768-a649-52c3-bac6f0ca738d@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <CAK7LNARdoeKCNYV7Kp6YLNsJ4rjrjXRWMsf4op58-JzRYUNVtg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <102c2d75-f768-a649-52c3-bac6f0ca738d@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/03/2018 07:23 PM, Masahiro Yamada wrote:
-> 2018-08-04 0:41 GMT+09:00 Randy Dunlap <rdunlap@infradead.org>:
->> On 08/02/2018 05:13 PM, Randy Dunlap wrote:
->>> Hi Yamada-san,
->>>
->>> I see this every few weeks.  It's not reproducible (it depends
->>> on the moon, Mars, etc.).
->>>
->>> I'm using O=builddir.  The build log is short (below).
->>>
->>> Do you see a makefile problem here?  (nothing to do with mmotm;
->>> I see it more frequently with linux-next since I do many daily
->>> builds with it)
->>
->> BTW, this is just um defconfig with -j4.
->>
->> --
->> ~Randy
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-kbuild" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+On Sat, Aug 04, 2018 at 10:36:50AM +0200, Zdenek Kabelac wrote:
+> dm-snapshost has really outdated design - it's been useful in the old age
+> where megabyte was hell lot of space.
 > 
-> 
-> 
-> I will send a patch with commit description later
-> after more testing,
-> but the following patch should fix the issue.
-> 
-> 
-> diff --git a/arch/um/Makefile b/arch/um/Makefile
-> index d3975e7..1cec053 100644
-> --- a/arch/um/Makefile
-> +++ b/arch/um/Makefile
-> @@ -120,7 +120,7 @@ archheaders:
->         $(Q)$(MAKE) -f $(srctree)/scripts/Makefile.asm-generic \
->                     kbuild-file=$(HOST_DIR)/include/uapi/asm/Kbuild \
->                     obj=$(HOST_DIR)/include/generated/uapi/asm
-> -       $(Q)$(MAKE) KBUILD_SRC= ARCH=$(HEADER_ARCH) archheaders
-> +       $(Q)$(MAKE) -f $(srctree)/Makefile ARCH=$(HEADER_ARCH) archheaders
-> 
-> 
->  archprepare: include/generated/user_constants.h
-> 
-> 
-> 
+> Nowadays, when users do need to handle snapshots in multi gigabyte sizes and
+> moreover have number of snapshots from the same volume taken over the time,
+> want to take snapshot of snapshot of snapshot, the old snapshot simple kills
+> all the performance, uses tons of resources and becomes serious bottleneck
+> of your system and has lots of usability limitation.
 
-I tested this patch and it works.  :)
-but then it's difficult to reproduce the problem.
+Fair enough.  I don't think I would consider that makes dm-snapshot a
+"steaming pile".  For me, protection against data loss is Job One.
 
-Thanks!
--- 
-~Randy
+> That's where  thin provisioning will shine....
+
+The dm-thin development might want to take a look at what's currently
+in Documentation/device-mapper/thin-privisioning.txt:
+
+   Status
+   ======
+
+   These targets are very much still in the EXPERIMENTAL state.  Please
+   do not yet rely on them in production.  But do experiment and offer us
+   feedback.  Different use cases will have different performance
+   characteristics, for example due to fragmentation of the data volume.
+
+   If you find this software is not performing as expected please mail
+   dm-devel@redhat.com with details and we'll try our best to improve
+   things for you.
+
+   Userspace tools for checking and repairing the metadata are under
+   development.
+
+Saying that dm-snapshot is a steaming pile and dm-thin is what
+everyone should use doesn't seem to be consistent with the above.
+
+Cheers,
+
+					- Ted
