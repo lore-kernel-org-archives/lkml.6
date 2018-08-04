@@ -5,56 +5,56 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2A3DC28CF6
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 01:19:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B2BCC28CF6
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 01:19:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B1AD2172B
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 01:19:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B1AD2172B
+	by mail.kernel.org (Postfix) with ESMTP id C26862172B
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 01:19:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C26862172B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732173AbeHDDRu (ORCPT
+        id S1732243AbeHDDSA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 23:17:50 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38116 "EHLO
+        Fri, 3 Aug 2018 23:18:00 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60252 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1731977AbeHDDRt (ORCPT
+        by vger.kernel.org with ESMTP id S1731977AbeHDDSA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 23:17:49 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w741J4Pt121834
-        for <linux-kernel@vger.kernel.org>; Fri, 3 Aug 2018 21:19:06 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2kn0sw29x0-1
+        Fri, 3 Aug 2018 23:18:00 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w741J63a092544
+        for <linux-kernel@vger.kernel.org>; Fri, 3 Aug 2018 21:19:16 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2kmy73d13n-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Aug 2018 21:19:06 -0400
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Aug 2018 21:19:16 -0400
 Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <benh@kernel.crashing.org>;
-        Sat, 4 Aug 2018 02:19:03 +0100
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Sat, 4 Aug 2018 02:19:14 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sat, 4 Aug 2018 02:18:58 +0100
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w741IvJB24183034
+        Sat, 4 Aug 2018 02:19:09 +0100
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w741J8Xn30802116
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sat, 4 Aug 2018 01:18:57 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id F271011C04A;
+        Sat, 4 Aug 2018 01:19:08 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1299EAE051;
         Sat,  4 Aug 2018 04:19:06 +0100 (BST)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5402E11C054;
-        Sat,  4 Aug 2018 04:19:06 +0100 (BST)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 69F43AE045;
+        Sat,  4 Aug 2018 04:19:05 +0100 (BST)
 Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Sat,  4 Aug 2018 04:19:06 +0100 (BST)
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Sat,  4 Aug 2018 04:19:05 +0100 (BST)
 Received: from pasglop (unknown [9.85.183.237])
         (using TLSv1.2 with cipher AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 9805AA01B5;
-        Sat,  4 Aug 2018 11:18:48 +1000 (AEST)
+        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 897BAA01EA;
+        Sat,  4 Aug 2018 11:18:58 +1000 (AEST)
 Subject: Re: [RFC 0/4] Virtio uses DMA API for all devices
 From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
 To:     "Michael S. Tsirkin" <mst@redhat.com>
@@ -83,14 +83,14 @@ References: <20180801083639.GF26378@infradead.org>
          <20180803220443-mutt-send-email-mst@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
-Date:   Fri, 03 Aug 2018 20:18:34 -0500
+Date:   Fri, 03 Aug 2018 20:16:21 -0500
 X-Mailer: Evolution 3.28.4 (3.28.4-1.fc28) 
 Content-Transfer-Encoding: 7bit
 X-TM-AS-GCONF: 00
-x-cbid: 18080401-0020-0000-0000-000002B0FD7A
+x-cbid: 18080401-4275-0000-0000-000002A388E5
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18080401-0021-0000-0000-000020FD33D2
-Message-Id: <d103acae2ab677eba761c4aa4c5c84a5e1f32127.camel@kernel.crashing.org>
+x-cbparentid: 18080401-4276-0000-0000-000037ABA8D1
+Message-Id: <051fd78e15595b414839fa8f9d445b9f4d7576c6.camel@kernel.crashing.org>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-03_10:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
