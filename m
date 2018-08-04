@@ -3,136 +3,115 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93C1EC4646F
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 20:31:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4697DC4646F
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 20:37:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 483E521777
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 20:31:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 483E521777
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=torlan.ru
+	by mail.kernel.org (Postfix) with ESMTP id 8EB04217CB
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 20:37:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EB04217CB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729686AbeHDWdo (ORCPT
+        id S1729661AbeHDWjl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 18:33:44 -0400
-Received: from forward105j.mail.yandex.net ([5.45.198.248]:37915 "EHLO
-        forward105j.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727127AbeHDWdo (ORCPT
+        Sat, 4 Aug 2018 18:39:41 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56474 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727127AbeHDWjk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 18:33:44 -0400
-Received: from mxback1j.mail.yandex.net (mxback1j.mail.yandex.net [IPv6:2a02:6b8:0:1619::10a])
-        by forward105j.mail.yandex.net (Yandex) with ESMTP id 41D081852E7;
-        Sat,  4 Aug 2018 23:31:48 +0300 (MSK)
-Received: from smtp2o.mail.yandex.net (smtp2o.mail.yandex.net [2a02:6b8:0:1a2d::26])
-        by mxback1j.mail.yandex.net (nwsmtp/Yandex) with ESMTP id iOrIcDulVX-VlWWuZOr;
-        Sat, 04 Aug 2018 23:31:48 +0300
-Received: by smtp2o.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id kiRpq2KbQV-VkamrckE;
-        Sat, 04 Aug 2018 23:31:46 +0300
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (Client certificate not present)
-Subject: Re: LVM snapshot broke between 4.14 and 4.16
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Mike Snitzer <snitzer@redhat.com>, Theodore Ts'o <tytso@mit.edu>,
-        Jens Axboe <axboe@kernel.dk>, Sagi Grimberg <sagi@grimberg.me>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-block <linux-block@vger.kernel.org>, dm-devel@redhat.com,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Zdenek Kabelac <zkabelac@redhat.com>
-References: <CA+55aFyAox9BTDpRsqLXiROhHOX60aa45LEZ7Azteaumdu11Fw@mail.gmail.com>
- <CAOi1vP-SJO4AMK=XD3Lmja++2dQqoiw6Zn8Vgxf8OfvYgnuC6Q@mail.gmail.com>
- <CA+55aFy2DR9fxHhmGq+azSjX9D71YtLsuFKmoEuYW3uTAUYtJg@mail.gmail.com>
- <d76415de-2056-c7d6-cc88-b896deaa8ead@torlan.ru>
- <1ec0a220-d5b0-1c27-e63b-c4d3f4ce9d77@torlan.ru>
- <CA+55aFyPVQ5-gA93irsaxPC9BNQxnGWrDDHPMUYai2kxKiaKWQ@mail.gmail.com>
- <20180803133102.GA3092@redhat.com> <20180803152034.GD32066@thunk.org>
- <20180803183932.GA3258@redhat.com>
- <CA+55aFwGGjs_imFFkEPJ4g99Kseam=4Qppv4G6Q=ZfZXdzF7Vw@mail.gmail.com>
- <20180803190617.GA4498@redhat.com>
- <CA+55aFzSM6qhZpM4CCpRNR_LWNCbLyRtQQ3hnPwnRrBdDkwWUw@mail.gmail.com>
- <a5feeaa7-e043-3987-cf23-4090e3eeec4a@torlan.ru>
- <CA+55aFza3_+poqmw34ev+a_jZ1Tz0rxjTu7YfnU4HX-SU52abQ@mail.gmail.com>
-From:   WGH <wgh@torlan.ru>
-Openpgp: preference=signencrypt
-Message-ID: <f724132c-802d-8b22-fab1-7b0c09e8a5dd@torlan.ru>
-Date:   Sat, 4 Aug 2018 23:29:35 +0300
+        Sat, 4 Aug 2018 18:39:40 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w74KYV6e139554
+        for <linux-kernel@vger.kernel.org>; Sat, 4 Aug 2018 16:37:47 -0400
+Received: from e35.co.us.ibm.com (e35.co.us.ibm.com [32.97.110.153])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2kn856fy3y-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Sat, 04 Aug 2018 16:37:47 -0400
+Received: from localhost
+        by e35.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <tyreld@linux.vnet.ibm.com>;
+        Sat, 4 Aug 2018 14:37:46 -0600
+Received: from b03cxnp07028.gho.boulder.ibm.com (9.17.130.15)
+        by e35.co.us.ibm.com (192.168.1.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Sat, 4 Aug 2018 14:37:42 -0600
+Received: from b03ledav001.gho.boulder.ibm.com (b03ledav001.gho.boulder.ibm.com [9.17.130.232])
+        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w74Kbfjo9044364
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Sat, 4 Aug 2018 13:37:41 -0700
+Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 617626E053;
+        Sat,  4 Aug 2018 14:37:41 -0600 (MDT)
+Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3CF3B6E04C;
+        Sat,  4 Aug 2018 14:37:40 -0600 (MDT)
+Received: from oc6857751186.ibm.com (unknown [9.80.200.87])
+        by b03ledav001.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Sat,  4 Aug 2018 14:37:39 -0600 (MDT)
+Subject: Re: [PATCH] powpc:feature: of_node_put is not needed after iterator.
+To:     zhong jiang <zhongjiang@huawei.com>, benh@kernel.crashing.org
+Cc:     paulus@samba.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org
+References: <1533392700-24621-1-git-send-email-zhongjiang@huawei.com>
+From:   Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
+Date:   Sat, 4 Aug 2018 13:37:39 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.0
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <CA+55aFza3_+poqmw34ev+a_jZ1Tz0rxjTu7YfnU4HX-SU52abQ@mail.gmail.com>
-Content-Type: multipart/mixed;
- boundary="------------08D3D26552869C678A565F6E"
+In-Reply-To: <1533392700-24621-1-git-send-email-zhongjiang@huawei.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18080420-0012-0000-0000-00001697810B
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009484; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01069877; UDB=6.00550340; IPR=6.00848713;
+ MB=3.00022509; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-04 20:37:44
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18080420-0013-0000-0000-000053EB41BC
+Message-Id: <eb06cfd4-ccbd-3f7f-2118-10f385d9b217@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-04_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808040228
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------08D3D26552869C678A565F6E
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+On 08/04/2018 07:25 AM, zhong jiang wrote:
+> for_each_node_by_name iterators only  exit normally when the loop
+> cursor is NULL, So there is no point to call of_node_put.
+> 
+> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
 
-On 08/04/2018 08:04 PM, Linus Torvalds wrote:
-> Anyway, just out of curiosity, what was the traceback?
->
-> I'm not entirely happy with that patch either (even after the obvious
-> fix to add the "1" argument), but it does seem like the minimal
-> temporary workaround for now.
+Reviewed-by: Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
 
-Here it is.
+> ---
+>  arch/powerpc/platforms/powermac/feature.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/arch/powerpc/platforms/powermac/feature.c b/arch/powerpc/platforms/powermac/feature.c
+> index 3f82cb2..4eb8cb3 100644
+> --- a/arch/powerpc/platforms/powermac/feature.c
+> +++ b/arch/powerpc/platforms/powermac/feature.c
+> @@ -2889,10 +2889,8 @@ static void __init probe_one_macio(const char *name, const char *compat, int typ
+>  	/* On all machines, switch modem & serial ports off */
+>  	for_each_node_by_name(np, "ch-a")
+>  		initial_serial_shutdown(np);
+> -	of_node_put(np);
+>  	for_each_node_by_name(np, "ch-b")
+>  		initial_serial_shutdown(np);
+> -	of_node_put(np);
+>  }
+> 
+>  void __init
+> 
 
-
---------------08D3D26552869C678A565F6E
-Content-Type: text/x-log;
- name="traceback.log"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
- filename="traceback.log"
-
-[   68.313024] ------------[ cut here ]------------
-[   68.313030] dm-3
-[   68.313049] WARNING: CPU: 1 PID: 77 at block/blk-core.c:2180 generic_make_request_checks+0x4ac/0x600
-[   68.313054] Modules linked in: nf_tables xt_cgroup xt_owner kvm_intel iwlmvm kvm irqbypass iwlwifi
-[   68.313068] CPU: 1 PID: 77 Comm: kworker/1:1 Not tainted 4.17.9-gentoo #3
-[   68.313071] Hardware name: LENOVO 20B6A019RT/20B6A019RT, BIOS GJET91WW (2.41 ) 09/21/2016
-[   68.313077] Workqueue: ksnaphd do_metadata
-[   68.313083] RIP: 0010:generic_make_request_checks+0x4ac/0x600
-[   68.313087] RSP: 0018:ffffc900002e7ba8 EFLAGS: 00010282
-[   68.313091] RAX: 0000000000000000 RBX: ffff8801ef6da300 RCX: ffffffff82636218
-[   68.313094] RDX: 0000000000000001 RSI: 0000000000000086 RDI: ffffffff82cf57cc
-[   68.313097] RBP: ffff880211c2b150 R08: 0000000000000004 R09: 0000000000000307
-[   68.313100] R10: ffffc900002e7c80 R11: ffffffff82cf780d R12: 0000000000000000
-[   68.313103] R13: 0000000000000001 R14: 0000000000001000 R15: ffff8801ef6da300
-[   68.313107] FS:  0000000000000000(0000) GS:ffff88021f240000(0000) knlGS:0000000000000000
-[   68.313111] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   68.313114] CR2: 000056166d9e8520 CR3: 0000000003a0a006 CR4: 00000000001606e0
-[   68.313117] Call Trace:
-[   68.313126]  ? scsi_init_sgtable+0x42/0x80
-[   68.313134]  ? kmem_cache_alloc+0x170/0x1a0
-[   68.313140]  generic_make_request+0x64/0x400
-[   68.313146]  ? submit_bio+0x6c/0x140
-[   68.313150]  ? bio_alloc_bioset+0xa9/0x1f0
-[   68.313155]  submit_bio+0x6c/0x140
-[   68.313160]  ? vm_get_page+0x20/0x50
-[   68.313165]  dispatch_io+0x287/0x430
-[   68.313171]  ? bio_next_page+0xb0/0xb0
-[   68.313175]  ? bio_get_page+0x40/0x40
-[   68.313180]  ? cpumask_next+0x16/0x20
-[   68.313185]  sync_io+0xc3/0x120
-[   68.313191]  dm_io+0x1f8/0x220
-[   68.313196]  ? bio_next_page+0xb0/0xb0
-[   68.313200]  ? bio_get_page+0x40/0x40
-[   68.313204]  ? cpumask_next+0x16/0x20
-[   68.313209]  do_metadata+0x1d/0x30
-[   68.313216]  process_one_work+0x1b9/0x3e0
-[   68.313222]  worker_thread+0x2b/0x3c0
-[   68.313227]  ? wq_update_unbound_numa+0x10/0x10
-[   68.313232]  kthread+0x113/0x130
-[   68.313237]  ? kthread_create_worker_on_cpu+0x70/0x70
-[   68.313242]  ret_from_fork+0x35/0x40
-[   68.313246] Code: 3e fc ff ff 45 8b a4 24 4c 03 00 00 48 8d 74 24 08 48 89 df c6 05 3a 49 35 01 01 e8 df 68 01 00 48 89 c7 44 89 e6 e8 c4 a0 cd ff <0f> 0b 4c 8b 63 08 e9 0c fc ff ff 80 3d 18 49 35 01 00 0f 85 29 
-[   68.313300] ---[ end trace 2a4da4181ebee969 ]---
-
---------------08D3D26552869C678A565F6E--
