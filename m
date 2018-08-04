@@ -6,40 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3537C4646D
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:07:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06C21C4646F
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:07:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 331D2217C6
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:07:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 331D2217C6
+	by mail.kernel.org (Postfix) with ESMTP id AAD63217C6
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:07:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAD63217C6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387398AbeHDLG4 (ORCPT
+        id S2387423AbeHDLG7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 07:06:56 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49278 "EHLO
+        Sat, 4 Aug 2018 07:06:59 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49290 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729243AbeHDLGz (ORCPT
+        with ESMTP id S1729243AbeHDLG6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 07:06:55 -0400
+        Sat, 4 Aug 2018 07:06:58 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 313F3BB3;
-        Sat,  4 Aug 2018 09:06:56 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 72F35BB3;
+        Sat,  4 Aug 2018 09:06:59 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mathieu Malaterre <malat@debian.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 014/124] mm/slub.c: add __printf verification to slab_err()
-Date:   Sat,  4 Aug 2018 11:00:03 +0200
-Message-Id: <20180804082702.983485337@linuxfoundation.org>
+Subject: [PATCH 4.4 015/124] rtc: ensure rtc_set_alarm fails when alarms are not supported
+Date:   Sat,  4 Aug 2018 11:00:04 +0200
+Message-Id: <20180804082703.022594979@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180804082702.434482435@linuxfoundation.org>
 References: <20180804082702.434482435@linuxfoundation.org>
@@ -56,40 +51,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mathieu Malaterre <malat@debian.org>
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-[ Upstream commit a38965bf941b7c2af50de09c96bc5f03e136caef ]
+[ Upstream commit abfdff44bc38e9e2ef7929f633fb8462632299d4 ]
 
-__printf is useful to verify format and arguments.  Remove the following
-warning (with W=1):
+When using RTC_ALM_SET or RTC_WKALM_SET with rtc_wkalrm.enabled not set,
+rtc_timer_enqueue() is not called and rtc_set_alarm() may succeed but the
+subsequent RTC_AIE_ON ioctl will fail. RTC_ALM_READ would also fail in that
+case.
 
-  mm/slub.c:721:2: warning: function might be possible candidate for `gnu_printf' format attribute [-Wsuggest-attribute=format]
+Ensure rtc_set_alarm() fails when alarms are not supported to avoid letting
+programs think the alarms are working for a particular RTC when they are
+not.
 
-Link: http://lkml.kernel.org/r/20180505200706.19986-1-malat@debian.org
-Signed-off-by: Mathieu Malaterre <malat@debian.org>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Christoph Lameter <cl@linux.com>
-Cc: Pekka Enberg <penberg@kernel.org>
-Cc: David Rientjes <rientjes@google.com>
-Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- mm/slub.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/rtc/interface.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -659,7 +659,7 @@ void object_err(struct kmem_cache *s, st
- 	print_trailer(s, page, object);
- }
- 
--static void slab_err(struct kmem_cache *s, struct page *page,
-+static __printf(3, 4) void slab_err(struct kmem_cache *s, struct page *page,
- 			const char *fmt, ...)
+--- a/drivers/rtc/interface.c
++++ b/drivers/rtc/interface.c
+@@ -349,6 +349,11 @@ int rtc_set_alarm(struct rtc_device *rtc
  {
- 	va_list args;
+ 	int err;
+ 
++	if (!rtc->ops)
++		return -ENODEV;
++	else if (!rtc->ops->set_alarm)
++		return -EINVAL;
++
+ 	err = rtc_valid_tm(&alarm->time);
+ 	if (err != 0)
+ 		return err;
 
 
