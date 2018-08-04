@@ -7,93 +7,94 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E69BAC28CF6
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 00:30:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86AF9C28CF6
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 00:33:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 967A621777
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 00:30:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D2E22178D
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 00:33:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UwUI/AWv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 967A621777
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UnBs4OBl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D2E22178D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732186AbeHDC3O (ORCPT
+        id S1732173AbeHDCc1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 22:29:14 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:34188 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728173AbeHDC3O (ORCPT
+        Fri, 3 Aug 2018 22:32:27 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:35868 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728173AbeHDCc1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 22:29:14 -0400
-Received: by mail-pl0-f65.google.com with SMTP id f6-v6so3242343plo.1
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Aug 2018 17:30:40 -0700 (PDT)
+        Fri, 3 Aug 2018 22:32:27 -0400
+Received: by mail-pg1-f195.google.com with SMTP id h12-v6so3573316pgs.3
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Aug 2018 17:33:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id;
-        bh=HT0qfXR1a7UHzfd+dXBGc+vhC9vE9qM53mDMm7UJpLs=;
-        b=UwUI/AWvga74ih5dq+aqQurwV63MNQkm1B59NWnIfrartLmwju0Oq55jOyY+hKnjZF
-         plg1+HW2vaASf3sLWKdC5zcPMktu+AuWz8yR5/nSZsfsIndpoMhFklGyKdtDQrtEqZIZ
-         qKKEnjIk50+Twg4BluU2XikDdPv38eYJeWMKaKOJRWKUtWuyZaB8rzSEhrOpzBE5XP98
-         7AVKOJqI/swDGR9x46cUE0qy5nWVeAR5P3zRD4sEe9O+t8fEY1Qyo5/UAXMCwH1ZEcvo
-         tiWcwhyw3+VUwQhUFadWS2D3q+C2KEeB3loglCvMzlqCAncaJbK2T2TYBJzq9FE4rsjm
-         6WcQ==
+        bh=JF9iBhlRE70KaEqu6ZTLgZazp+LTn0J6LlrD0LRVg4U=;
+        b=UnBs4OBlFrlsnOlxuOQbangus+JarR3+4yMCmjmX2EWqU/y1i44r3rGRYemv2mtttx
+         8q46KVRT6b8I9y3b0zKMYtVcTC5OoYRj+rOeGNqe/nMG0D7Ud1El//rpNM8gtYwJsPMK
+         wr/coXP2aejoBEfADvUXA+GslFRg7E/IFvgwZRDKBsjbugSP/YGPcwucomAYRX41vMLS
+         s33sB0iciROVJBpkEeEwZG9B2twTJXFiIfug1dulTNkkEkG0ygN63b5GDifdJPUXI9TZ
+         ZzsEtzAhpuge/WPaemTUski/uwO+DK2vbOPWOV6mxAnl7j2mb7YMUtfFmpUOU5jjCcx6
+         YJFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=HT0qfXR1a7UHzfd+dXBGc+vhC9vE9qM53mDMm7UJpLs=;
-        b=MW5WdIrGG5W2yTQBYJUV2TLIHpHuqdpZXwSn3MgopcizUW8pENEiFqoRW23YpqJnN4
-         uI/DIfv54kUfAi9QuyqppHXyaYm5DVPIK7Lf4VETe1iLDc3h70g823HlRVcgv0TMxAxp
-         rK95XdiD3o+g1bO04bhFdjs/cTelgBdHx37PUjMNmOunU9I0mZEJEx4L2FF0DGt93Gyv
-         stU7isZYAb018VUeAk+U776HK4d0D7XLOXdHpdalOkdFzq/qQpguxLaDN8JRkxa7m5/2
-         w3o0NObvkJO1NuHKCcVkuFjp42adoYLRxhmF/W7l2cj9iS6xp0bnMjfkvO8tDZ636oIw
-         nXjg==
-X-Gm-Message-State: AOUpUlHSwnQ0wrQko4qIWWJLhmJuPtpG1NKehCFD8f7Bap9lOAF16s7K
-        ua6S3SIOhitNxNMBVMs67L4=
-X-Google-Smtp-Source: AAOMgpfOihrFVrvRXD0SKStdWMHaLY5ybHiS8BG+RZlH9PN7t3NbNWy249Fm62CEZIK3kN6vT3v1vA==
-X-Received: by 2002:a17:902:4201:: with SMTP id g1-v6mr5456228pld.203.1533342640064;
-        Fri, 03 Aug 2018 17:30:40 -0700 (PDT)
+        bh=JF9iBhlRE70KaEqu6ZTLgZazp+LTn0J6LlrD0LRVg4U=;
+        b=eIyHGeeoeSgtCUF7eg1/8rHHfvVQ+De8cvJTMPXpeEmY7PThoQG1W73B621Hb2m5OR
+         +frORth7RdQByAgtBNcQnppZa5beTkytrcbJTkWSZX9hPQ8qTKlT7WVfu7qhuH9tfsog
+         bTC4VfBUNGasgTYptXnjQdTTira80uLkMTAJATQQblJ2MSgk3oLw2LP5CI1MpMOXdUyd
+         QlGnWwmVMKf88aIAqG9Py70dTZz9pem/IOE2+EoZG2WL1pGEXRqzZf2l88YHsXLRs3DW
+         +Bg2hKH9xS+XofOwZE2k/bAoZA1Lhtpyn8LXNsWtKyiTpdi1EK6S6f7Fi9fRhO2Eztvk
+         B2PQ==
+X-Gm-Message-State: AOUpUlH87fVg8ykGTk19hwPt4OU/sStIPUHBNHEz//R2ZtWGyqpd6f47
+        dYJZDWEGWKGPscWyNYHiwptAH+iC
+X-Google-Smtp-Source: AAOMgpeJcLaa8NJ7hj0NR4qQWgrezEafm+VgvYZIvb0TfBrw6DOfjr1pGNZkej0jFzu7zu38b6olew==
+X-Received: by 2002:a65:60cf:: with SMTP id r15-v6mr5707234pgv.41.1533342833202;
+        Fri, 03 Aug 2018 17:33:53 -0700 (PDT)
 Received: from localhost.localdomain ([2402:f000:1:4414:80c0:93b4:a4e2:6d2f])
-        by smtp.gmail.com with ESMTPSA id 16-v6sm10067970pfo.164.2018.08.03.17.30.38
+        by smtp.gmail.com with ESMTPSA id z2-v6sm5376076pgv.12.2018.08.03.17.33.50
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 03 Aug 2018 17:30:39 -0700 (PDT)
+        Fri, 03 Aug 2018 17:33:52 -0700 (PDT)
 From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-To:     bskeggs@redhat.com, airlied@linux.ie
-Cc:     dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+To:     alexander.deucher@amd.com, christian.koenig@amd.com,
+        David1.Zhou@amd.com, airlied@linux.ie
+Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
         linux-kernel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [PATCH] gpu: drm: nouveau: nvkm: nv50: Replace mdelay() with msleep() in nv50_sensor_setup()
-Date:   Sat,  4 Aug 2018 08:30:30 +0800
-Message-Id: <20180804003030.18669-1-baijiaju1990@gmail.com>
+Subject: [PATCH] gpu: drm: radeon: si: Replace mdelay() with msleep() in si_pcie_gen3_enable()
+Date:   Sat,  4 Aug 2018 08:33:44 +0800
+Message-Id: <20180804003344.18775-1-baijiaju1990@gmail.com>
 X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-nv50_sensor_setup() is never called in atomic context.
+si_pcie_gen3_enable() is never called in atomic context.
 It calls mdelay() to busily wait, which is not necessary.
 mdelay() can be replaced with msleep().
 
-This is found by a static analysis tool named DCNS written by myself.
+This is found by a static analysis tool named DCNS written by myself
 
 Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
 ---
- drivers/gpu/drm/nouveau/nvkm/subdev/therm/nv50.c | 2 +-
+ drivers/gpu/drm/radeon/si.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/therm/nv50.c b/drivers/gpu/drm/nouveau/nvkm/subdev/therm/nv50.c
-index 9b57b433d4cf..ce8f98f3ee48 100644
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/therm/nv50.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/therm/nv50.c
-@@ -122,7 +122,7 @@ nv50_sensor_setup(struct nvkm_therm *therm)
- {
- 	struct nvkm_device *device = therm->subdev.device;
- 	nvkm_mask(device, 0x20010, 0x40000000, 0x0);
--	mdelay(20); /* wait for the temperature to stabilize */
-+	msleep(20); /* wait for the temperature to stabilize */
- }
+diff --git a/drivers/gpu/drm/radeon/si.c b/drivers/gpu/drm/radeon/si.c
+index 1907c950d76f..c28743443970 100644
+--- a/drivers/gpu/drm/radeon/si.c
++++ b/drivers/gpu/drm/radeon/si.c
+@@ -7181,7 +7181,7 @@ static void si_pcie_gen3_enable(struct radeon_device *rdev)
+ 				tmp |= LC_REDO_EQ;
+ 				WREG32_PCIE_PORT(PCIE_LC_CNTL4, tmp);
  
- static int
+-				mdelay(100);
++				msleep(100);
+ 
+ 				/* linkctl */
+ 				pci_read_config_word(root, bridge_pos + PCI_EXP_LNKCTL, &tmp16);
 -- 
 2.17.0
 
