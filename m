@@ -2,105 +2,103 @@ Return-Path: <SRS0=4jry=KT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA7C4C4646F
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 13:33:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40B9CC4646F
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 13:45:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BD6E217CD
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 13:33:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BD6E217CD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id DF31D217CD
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 13:45:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF31D217CD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728904AbeHDPdq (ORCPT
+        id S1728422AbeHDPpw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 11:33:46 -0400
-Received: from mail-it0-f69.google.com ([209.85.214.69]:42304 "EHLO
-        mail-it0-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727293AbeHDPdq (ORCPT
+        Sat, 4 Aug 2018 11:45:52 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:22607 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726696AbeHDPpw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 11:33:46 -0400
-Received: by mail-it0-f69.google.com with SMTP id l138-v6so8352863itb.7
-        for <linux-kernel@vger.kernel.org>; Sat, 04 Aug 2018 06:33:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=Oo2hWJLKsRmIvjh6T743wZT6V0GWebx+aiK0xPSb8GI=;
-        b=k2rnqYp+jZTeqw21ifg6g6MjO97xeek+8WlLg0j60SWrX0PY4ySc6Z5SoHdFu/Ai1H
-         /yxXoxLlyJqAPY0MVoi/5at/LXqvDHVXzK5nM6k+WjmC343IlNAgwX1GRSO9Z0MEmPrP
-         V8kz2/rBk9UDB58yRY3r0lkKiQjpv7r5K7NRsXPzXC+sVKJz7eevr4UPzYs2j/C4HH0U
-         MjQveFrAlK9Fc/F7JzYip2FomcaGlubprA2cAiX4xz70wTrSH6zW5Jtg2VgdQM8wlezM
-         t6VGTrIN8IeYVzPTSoHlKQarQbdFbKgXvUrU3KhkLUCIxD8eubFayy48MY45HM+HBOXm
-         jcyw==
-X-Gm-Message-State: AOUpUlHHQbpnFU578hNRkm8vpxUxZbz/bsQqMHnjrC+3vMtxmNPLBsO6
-        K6viyR3T66l38gFm9CMQ4PUA/KfH/7ECNUXcUOl8XGCJNAjq
-X-Google-Smtp-Source: AAOMgpfyvl4RA58Md2vZjfZRj3i6TGnKd6h6T5mHjJr42THY0SmZ+oZ2QBw0dXUNOLeRmENku914Z82NOzsN/zBT+m09VoPq1AK7
-MIME-Version: 1.0
-X-Received: by 2002:a24:f707:: with SMTP id x7-v6mr1306512ith.11.1533389582535;
- Sat, 04 Aug 2018 06:33:02 -0700 (PDT)
-Date:   Sat, 04 Aug 2018 06:33:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000005e979605729c1564@google.com>
-Subject: WARNING in try_charge
-From:   syzbot <syzbot+bab151e82a4e973fa325@syzkaller.appspotmail.com>
-To:     cgroups@vger.kernel.org, hannes@cmpxchg.org,
+        Sat, 4 Aug 2018 11:45:52 -0400
+Received: from fsav304.sakura.ne.jp (fsav304.sakura.ne.jp [153.120.85.135])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w74Dj4J5011061;
+        Sat, 4 Aug 2018 22:45:04 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav304.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav304.sakura.ne.jp);
+ Sat, 04 Aug 2018 22:45:04 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav304.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126074194044.bbtec.net [126.74.194.44])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w74Dj3bA011057
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Sat, 4 Aug 2018 22:45:04 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Subject: Re: WARNING in try_charge
+To:     mhocko@kernel.org, David Rientjes <rientjes@google.com>
+References: <0000000000005e979605729c1564@google.com>
+Cc:     syzbot <syzbot+bab151e82a4e973fa325@syzkaller.appspotmail.com>,
+        cgroups@vger.kernel.org, hannes@cmpxchg.org,
         linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        mhocko@kernel.org, syzkaller-bugs@googlegroups.com,
-        vdavydov.dev@gmail.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+        syzkaller-bugs@googlegroups.com, vdavydov.dev@gmail.com
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Message-ID: <4660f164-b3e3-28a0-9898-718c5fa6b84d@I-love.SAKURA.ne.jp>
+Date:   Sat, 4 Aug 2018 22:45:03 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <0000000000005e979605729c1564@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+syzbot is hitting WARN(1) because of mem_cgroup_out_of_memory() == false.
+At first I suspected that syzbot is hitting
 
-syzbot found the following crash on:
+  static bool oom_kill_memcg_victim(struct oom_control *oc)
+  {
+          if (oc->chosen_memcg == NULL || oc->chosen_memcg == INFLIGHT_VICTIM)
+                  return oc->chosen_memcg;
 
-HEAD commit:    d1e0b8e0cb7a Add linux-next specific files for 20180725
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=15a1c770400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=eef3552c897e4d33
-dashboard link: https://syzkaller.appspot.com/bug?extid=bab151e82a4e973fa325
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+case because
 
-Unfortunately, I don't have any reproducer for this crash yet.
+  /* We have one or more terminating processes at this point. */
+  oc->chosen_task = INFLIGHT_VICTIM;
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+bab151e82a4e973fa325@syzkaller.appspotmail.com
+is not called. But since that patch was dropped from next-20180803, syzbot
+seems to be hitting a different race condition
+( https://syzkaller.appspot.com/text?tag=CrashLog&x=12071654400000 ).
 
-Killed process 23767 (syz-executor2) total-vm:70472kB, anon-rss:104kB,  
-file-rss:32768kB, shmem-rss:0kB
-oom_reaper: reaped process 23767 (syz-executor2), now anon-rss:0kB,  
-file-rss:32000kB, shmem-rss:0kB
-------------[ cut here ]------------
-Memory cgroup charge failed because of no reclaimable memory! This looks  
-like a misconfiguration or a kernel bug.
-WARNING: CPU: 1 PID: 23767 at mm/memcontrol.c:1710 mem_cgroup_oom  
-mm/memcontrol.c:1709 [inline]
-WARNING: CPU: 1 PID: 23767 at mm/memcontrol.c:1710 try_charge+0x734/0x1680  
-mm/memcontrol.c:2211
-Kernel panic - not syncing: panic_on_warn set ...
+Therefore, next culprit I suspect is
 
-CPU: 1 PID: 23767 Comm: syz-executor2 Not tainted 4.18.0-rc6-next-20180725+  
-#18
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
-  panic+0x238/0x4e7 kernel/panic.c:184
+    mm, oom: remove oom_lock from oom_reaper
 
+    oom_reaper used to rely on the oom_lock since e2fe14564d33 ("oom_reaper:
+    close race with exiting task").  We do not really need the lock anymore
+    though.  212925802454 ("mm: oom: let oom_reap_task and exit_mmap run
+    concurrently") has removed serialization with the exit path based on the
+    mm reference count and so we do not really rely on the oom_lock anymore.
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+    Tetsuo was arguing that at least MMF_OOM_SKIP should be set under the lock
+    to prevent from races when the page allocator didn't manage to get the
+    freed (reaped) memory in __alloc_pages_may_oom but it sees the flag later
+    on and move on to another victim.  Although this is possible in principle
+    let's wait for it to actually happen in real life before we make the
+    locking more complex again.
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
+    Therefore remove the oom_lock for oom_reaper paths (both exit_mmap and
+    oom_reap_task_mm).  The reaper serializes with exit_mmap by mmap_sem +
+    MMF_OOM_SKIP flag.  There is no synchronization with out_of_memory path
+    now.
+
+which is in next-20180803, and my "mm, oom: Fix unnecessary killing of additional processes."
+( https://marc.info/?i=1533389386-3501-4-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp )
+could mitigate it. Michal and David, please respond.
+
