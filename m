@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11D76C4646F
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:11:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B92F0C4646D
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:12:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8F262177A
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:11:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8F262177A
+	by mail.kernel.org (Postfix) with ESMTP id 6BF412177A
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:12:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BF412177A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389305AbeHDLLz (ORCPT
+        id S2389322AbeHDLL6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 07:11:55 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50340 "EHLO
+        Sat, 4 Aug 2018 07:11:58 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50348 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729655AbeHDLLy (ORCPT
+        with ESMTP id S2388576AbeHDLL5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 07:11:54 -0400
+        Sat, 4 Aug 2018 07:11:57 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8970989C;
-        Sat,  4 Aug 2018 09:11:53 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 97B4689C;
+        Sat,  4 Aug 2018 09:11:56 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Richter <tmricht@linux.ibm.com>,
-        Hendrik Brueckner <brueckner@linux.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        stable@vger.kernel.org, Dmitry Torokhov <dtor@chromium.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Jiri Kosina <jkosina@suse.cz>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 072/124] perf: fix invalid bit in diagnostic entry
-Date:   Sat,  4 Aug 2018 11:01:01 +0200
-Message-Id: <20180804082705.212477531@linuxfoundation.org>
+Subject: [PATCH 4.4 063/124] HID: i2c-hid: check if device is there before really probing
+Date:   Sat,  4 Aug 2018 11:00:52 +0200
+Message-Id: <20180804082704.857905539@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180804082702.434482435@linuxfoundation.org>
 References: <20180804082702.434482435@linuxfoundation.org>
@@ -52,39 +52,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thomas Richter <tmricht@linux.ibm.com>
+From: Dmitry Torokhov <dtor@chromium.org>
 
-[ Upstream commit 3c0a83b14ea71fef5ccc93a3bd2de5f892be3194 ]
+[ Upstream commit b3a81b6c4fc6730ac49e20d789a93c0faabafc98 ]
 
-The s390 CPU measurement facility sampling mode supports basic entries
-and diagnostic entries. Each entry has a valid bit to indicate the
-status of the entry as valid or invalid.
+On many Chromebooks touch devices are multi-sourced; the components are
+electrically compatible and one can be freely swapped for another without
+changing the OS image or firmware.
 
-This bit is bit 31 in the diagnostic entry, but the bit mask definition
-refers to bit 30.
+To avoid bunch of scary messages when device is not actually present in the
+system let's try testing basic communication with it and if there is no
+response terminate probe early with -ENXIO.
 
-Fix this by making the reserved field one bit larger.
-
-Fixes: 7e75fc3ff4cf ("s390/cpum_sf: Add raw data sampling to support the diagnostic-sampling function")
-Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
-Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Signed-off-by: Dmitry Torokhov <dtor@chromium.org>
+Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/s390/include/asm/cpu_mf.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/hid/i2c-hid/i2c-hid.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/arch/s390/include/asm/cpu_mf.h
-+++ b/arch/s390/include/asm/cpu_mf.h
-@@ -113,7 +113,7 @@ struct hws_basic_entry {
+--- a/drivers/hid/i2c-hid/i2c-hid.c
++++ b/drivers/hid/i2c-hid/i2c-hid.c
+@@ -1017,6 +1017,14 @@ static int i2c_hid_probe(struct i2c_clie
+ 	pm_runtime_set_active(&client->dev);
+ 	pm_runtime_enable(&client->dev);
  
- struct hws_diag_entry {
- 	unsigned int def:16;	    /* 0-15  Data Entry Format		 */
--	unsigned int R:14;	    /* 16-19 and 20-30 reserved		 */
-+	unsigned int R:15;	    /* 16-19 and 20-30 reserved		 */
- 	unsigned int I:1;	    /* 31 entry valid or invalid	 */
- 	u8	     data[];	    /* Machine-dependent sample data	 */
- } __packed;
++	/* Make sure there is something at this address */
++	ret = i2c_smbus_read_byte(client);
++	if (ret < 0) {
++		dev_dbg(&client->dev, "nothing at this address: %d\n", ret);
++		ret = -ENXIO;
++		goto err_pm;
++	}
++
+ 	ret = i2c_hid_fetch_hid_descriptor(ihid);
+ 	if (ret < 0)
+ 		goto err_pm;
 
 
