@@ -6,38 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F367CC4646F
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:10:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8718C4646F
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:10:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9502217C6
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:10:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9502217C6
+	by mail.kernel.org (Postfix) with ESMTP id 75BEB217C6
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:10:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75BEB217C6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388935AbeHDLKT (ORCPT
+        id S2388949AbeHDLKW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 07:10:19 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49982 "EHLO
+        Sat, 4 Aug 2018 07:10:22 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49990 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732962AbeHDLKS (ORCPT
+        with ESMTP id S1732962AbeHDLKV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 07:10:18 -0400
+        Sat, 4 Aug 2018 07:10:21 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 96251BBF;
-        Sat,  4 Aug 2018 09:10:18 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9FF37BBF;
+        Sat,  4 Aug 2018 09:10:21 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Satendra Singh Thakur <satendra.t@samsung.com>,
-        Madhur Verma <madhur.verma@samsung.com>,
-        Hemanshu Srivastava <hemanshu.s@samsung.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        stable@vger.kernel.org, Connor McAdams <conmanx360@gmail.com>,
+        Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+        Takashi Iwai <tiwai@suse.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 079/124] drm/atomic: Handling the case when setting old crtc for plane
-Date:   Sat,  4 Aug 2018 11:01:08 +0200
-Message-Id: <20180804082705.455354279@linuxfoundation.org>
+Subject: [PATCH 4.4 080/124] ALSA: hda/ca0132: fix build failure when a local macro is defined
+Date:   Sat,  4 Aug 2018 11:01:09 +0200
+Message-Id: <20180804082705.489853279@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180804082702.434482435@linuxfoundation.org>
 References: <20180804082702.434482435@linuxfoundation.org>
@@ -54,41 +52,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Satendra Singh Thakur <satendra.t@samsung.com>
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 
-[ Upstream commit fc2a69f3903dfd97cd47f593e642b47918c949df ]
+[ Upstream commit 8e142e9e628975b0dddd05cf1b095331dff6e2de ]
 
-In the func drm_atomic_set_crtc_for_plane, with the current code,
-if crtc of the plane_state and crtc passed as argument to the func
-are same, entire func will executed in vein.
-It will get state of crtc and clear and set the bits in plane_mask.
-All these steps are not required for same old crtc.
-Ideally, we should do nothing in this case, this patch handles the same,
-and causes the program to return without doing anything in such scenario.
+DECLARE_TLV_DB_SCALE (alias of SNDRV_CTL_TLVD_DECLARE_DB_SCALE) is used but
+tlv.h is not included. This causes build failure when local macro is
+defined by comment-out.
 
-Signed-off-by: Satendra Singh Thakur <satendra.t@samsung.com>
-Cc: Madhur Verma <madhur.verma@samsung.com>
-Cc: Hemanshu Srivastava <hemanshu.s@samsung.com>
-Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Link: https://patchwork.freedesktop.org/patch/msgid/1525326572-25854-1-git-send-email-satendra.t@samsung.com
+This commit fixes the bug. At the same time, the alias macro is replaced
+with a destination macro added at a commit 46e860f76804 ("ALSA: rename
+TLV-related macros so that they're friendly to user applications")
+
+Reported-by: Connor McAdams <conmanx360@gmail.com>
+Fixes: 44f0c9782cc6 ('ALSA: hda/ca0132: Add tuning controls')
+Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/drm_atomic.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ sound/pci/hda/patch_ca0132.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/drivers/gpu/drm/drm_atomic.c
-+++ b/drivers/gpu/drm/drm_atomic.c
-@@ -960,7 +960,9 @@ drm_atomic_set_crtc_for_plane(struct drm
- {
- 	struct drm_plane *plane = plane_state->plane;
- 	struct drm_crtc_state *crtc_state;
--
-+	/* Nothing to do for same crtc*/
-+	if (plane_state->crtc == crtc)
-+		return 0;
- 	if (plane_state->crtc) {
- 		crtc_state = drm_atomic_get_crtc_state(plane_state->state,
- 						       plane_state->crtc);
+--- a/sound/pci/hda/patch_ca0132.c
++++ b/sound/pci/hda/patch_ca0132.c
+@@ -38,6 +38,10 @@
+ /* Enable this to see controls for tuning purpose. */
+ /*#define ENABLE_TUNING_CONTROLS*/
+ 
++#ifdef ENABLE_TUNING_CONTROLS
++#include <sound/tlv.h>
++#endif
++
+ #define FLOAT_ZERO	0x00000000
+ #define FLOAT_ONE	0x3f800000
+ #define FLOAT_TWO	0x40000000
+@@ -3067,8 +3071,8 @@ static int equalizer_ctl_put(struct snd_
+ 	return 1;
+ }
+ 
+-static const DECLARE_TLV_DB_SCALE(voice_focus_db_scale, 2000, 100, 0);
+-static const DECLARE_TLV_DB_SCALE(eq_db_scale, -2400, 100, 0);
++static const SNDRV_CTL_TLVD_DECLARE_DB_SCALE(voice_focus_db_scale, 2000, 100, 0);
++static const SNDRV_CTL_TLVD_DECLARE_DB_SCALE(eq_db_scale, -2400, 100, 0);
+ 
+ static int add_tuning_control(struct hda_codec *codec,
+ 				hda_nid_t pnid, hda_nid_t nid,
 
 
