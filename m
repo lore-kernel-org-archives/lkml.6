@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C2DFC4646F
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:09:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04643C4646F
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:09:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B82062177A
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:09:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B82062177A
+	by mail.kernel.org (Postfix) with ESMTP id BD70F2177A
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:09:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD70F2177A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388740AbeHDLJc (ORCPT
+        id S2388754AbeHDLJi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 07:09:32 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49822 "EHLO
+        Sat, 4 Aug 2018 07:09:38 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49842 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726855AbeHDLJb (ORCPT
+        with ESMTP id S1726855AbeHDLJh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 07:09:31 -0400
+        Sat, 4 Aug 2018 07:09:37 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9EF13BB3;
-        Sat,  4 Aug 2018 09:09:31 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D240DBB3;
+        Sat,  4 Aug 2018 09:09:37 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shaul Triebitz <shaul.triebitz@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
+        stable@vger.kernel.org,
+        Thierry Escande <thierry.escande@linaro.org>,
+        Marcel Holtmann <marcel@holtmann.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 026/124] iwlwifi: pcie: fix race in Rx buffer allocator
-Date:   Sat,  4 Aug 2018 11:00:15 +0200
-Message-Id: <20180804082703.421702408@linuxfoundation.org>
+Subject: [PATCH 4.4 027/124] Bluetooth: hci_qca: Fix "Sleep inside atomic section" warning
+Date:   Sat,  4 Aug 2018 11:00:16 +0200
+Message-Id: <20180804082703.459550272@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180804082702.434482435@linuxfoundation.org>
 References: <20180804082702.434482435@linuxfoundation.org>
@@ -51,34 +52,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Shaul Triebitz <shaul.triebitz@intel.com>
+From: Thierry Escande <thierry.escande@linaro.org>
 
-[ Upstream commit 0f22e40053bd5378ad1e3250e65c574fd61c0cd6 ]
+[ Upstream commit 9960521c44a5d828f29636ceac0600603ecbddbf ]
 
-Make sure the rx_allocator worker is canceled before running the
-rx_init routine.  rx_init frees and re-allocates all rxb's pages.  The
-rx_allocator worker also allocates pages for the used rxb's.  Running
-rx_init and rx_allocator simultaniously causes a kernel panic.  Fix
-that by canceling the work in rx_init.
+This patch fixes the following warning during boot:
 
-Signed-off-by: Shaul Triebitz <shaul.triebitz@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+ do not call blocking ops when !TASK_RUNNING; state=1 set at
+ [<(ptrval)>] qca_setup+0x194/0x750 [hci_uart]
+ WARNING: CPU: 2 PID: 1878 at kernel/sched/core.c:6135
+ __might_sleep+0x7c/0x88
+
+In qca_set_baudrate(), the current task state is set to
+TASK_UNINTERRUPTIBLE before going to sleep for 300ms. It was then
+restored to TASK_INTERRUPTIBLE. This patch sets the current task state
+back to TASK_RUNNING instead.
+
+Signed-off-by: Thierry Escande <thierry.escande@linaro.org>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/iwlwifi/pcie/rx.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/bluetooth/hci_qca.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/wireless/iwlwifi/pcie/rx.c
-+++ b/drivers/net/wireless/iwlwifi/pcie/rx.c
-@@ -713,6 +713,8 @@ int iwl_pcie_rx_init(struct iwl_trans *t
- 						WQ_HIGHPRI | WQ_UNBOUND, 1);
- 	INIT_WORK(&rba->rx_alloc, iwl_pcie_rx_allocator_work);
+--- a/drivers/bluetooth/hci_qca.c
++++ b/drivers/bluetooth/hci_qca.c
+@@ -884,7 +884,7 @@ static int qca_set_baudrate(struct hci_d
+ 	 */
+ 	set_current_state(TASK_UNINTERRUPTIBLE);
+ 	schedule_timeout(msecs_to_jiffies(BAUDRATE_SETTLE_TIMEOUT_MS));
+-	set_current_state(TASK_INTERRUPTIBLE);
++	set_current_state(TASK_RUNNING);
  
-+	cancel_work_sync(&rba->rx_alloc);
-+
- 	spin_lock(&rba->lock);
- 	atomic_set(&rba->req_pending, 0);
- 	atomic_set(&rba->req_ready, 0);
+ 	return 0;
+ }
 
 
