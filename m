@@ -2,103 +2,94 @@ Return-Path: <SRS0=4jry=KT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8EF3C4646F
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 21:23:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8BB7C4646D
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 21:24:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E222217CB
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 21:23:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E222217CB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
+	by mail.kernel.org (Postfix) with ESMTP id 9FAD9217CB
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 21:24:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="oYox3bUK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FAD9217CB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729694AbeHDXZR (ORCPT
+        id S1729717AbeHDX0d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 19:25:17 -0400
-Received: from sauhun.de ([88.99.104.3]:59046 "EHLO pokefinder.org"
+        Sat, 4 Aug 2018 19:26:33 -0400
+Received: from imap.thunk.org ([74.207.234.97]:37872 "EHLO imap.thunk.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728889AbeHDXZQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 19:25:16 -0400
-Received: from localhost (p54B337AD.dip0.t-ipconnect.de [84.179.55.173])
-        by pokefinder.org (Postfix) with ESMTPSA id 2AD6A684E7E;
-        Sat,  4 Aug 2018 23:23:15 +0200 (CEST)
-Date:   Sat, 4 Aug 2018 23:23:14 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 00/12] i2c: quirks: add zero length checks and update
- drivers
-Message-ID: <20180804212314.oelyhfqxclhatjev@ninjato>
-References: <20180723202617.15230-1-wsa+renesas@sang-engineering.com>
+        id S1728889AbeHDX0d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 4 Aug 2018 19:26:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
+         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=jN0bIPtmlxtxd+2BGp5uTQ8ax1Z/GZoHKjKaOhHjv40=; b=oYox3bUK1YbcuCoGeLWgKjukJv
+        kxRYXk7mWkh2ekmC5e857c/4giLbK7rT/z0rLJWkjixiLCam7jRYbQ3TO1VKerb3jAfLbyEXhIHDC
+        OBMHE2nDqjbDpUxG3Kc/8c6+9voogq0KsYm0TvBJo0xiyDIHhrtKA/IsSyouL6tBXn/E=;
+Received: from root (helo=callcc.thunk.org)
+        by imap.thunk.org with local-esmtp (Exim 4.89)
+        (envelope-from <tytso@thunk.org>)
+        id 1fm42F-0002Cr-Ic; Sat, 04 Aug 2018 21:24:27 +0000
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 4D1FD7A64C9; Sat,  4 Aug 2018 17:24:26 -0400 (EDT)
+Date:   Sat, 4 Aug 2018 17:24:26 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     zhong jiang <zhongjiang@huawei.com>
+Cc:     adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ext4/mballoc: Remove unneeded variable "err"
+Message-ID: <20180804212426.GE4461@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        zhong jiang <zhongjiang@huawei.com>, adilger.kernel@dilger.ca,
+        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1533380696-16325-1-git-send-email-zhongjiang@huawei.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="7aewi4gtlzfrpl7f"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180723202617.15230-1-wsa+renesas@sang-engineering.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <1533380696-16325-1-git-send-email-zhongjiang@huawei.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sat, Aug 04, 2018 at 07:04:56PM +0800, zhong jiang wrote:
+> The err is not used after initalization. So just remove the variable.
+> 
+> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
 
---7aewi4gtlzfrpl7f
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I'll apply this patch, but how did you generate the diff?  The
+function name here is all wrong:
 
-On Mon, Jul 23, 2018 at 10:26:04PM +0200, Wolfram Sang wrote:
-> I had this idea for quite some time on my todo list but a soon to be
-> implemented refactoring in the i2c-rcar driver now finally made me do it.=
- Add a
-> 'can't do 0 length messages' quirk to the quirk infrastructure for and re=
-move
-> the manual handling from the drivers. This makes the quirk much more visi=
-ble.
-> (Quite some prominent vendors in that list) We also have a centralized pl=
-ace to
-> handle updates to the quirk detection if that is ever needed.
->=20
-> I have tested this with the i2c-rcar and i2c-sh_mobile driver on a Renesas
-> SalvatorXS board equipped with M3-N (r8a77965).
->=20
-> A git branch can be found here:
->=20
-> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/quirk-no-=
-zero-len
->=20
-> Looking forward to comments, reviews, tests...
+> diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
+> index 8b24d3d..e29fce2 100644
+> --- a/fs/ext4/mballoc.c
+> +++ b/fs/ext4/mballoc.c
+> @@ -3801,7 +3801,6 @@ static int ext4_mb_new_preallocation(struct ext4_allocation_context *ac)
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-I applied all the patches which either got acks from the maintainers or
-have no maintainers. I'll reply individually to which I applied. I will
-wait some more for other acks before I'll resend next cycle.
+The lines in question are from ext4_mb_release_inode_pa(), *not*
+ext4_mb_new_preallocation().  So when I inspected the patch visually,
+my first reaction was, "there's no way this patch would apply".
 
+But then I looked at the C code changed by the patch, and I was
+surprised to see that it applied correctly in a completely different
+function, and when I regenerated the patch, the line numbers matched
+yours --- so the only thing "wrong" in your patch is the function name.
 
---7aewi4gtlzfrpl7f
-Content-Type: application/pgp-signature; name="signature.asc"
+So that raises the question --- how did you create the diff in this
+patch?  What version of git?  And what version of the kernel?
 
------BEGIN PGP SIGNATURE-----
+Regards,
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAltmGUIACgkQFA3kzBSg
-KbarZw/+MqkSaLU5cZh0Ej4pjwuIe4JAPI/uPWDVkXNyeIEo6+WbzoIPFzkDd4ud
-K07Rpa875ilzbCF4/arvTbuad4WCjckKF637IAiwL7iZFN8viwwqSTP14jskIp9r
-Ikn4s/dKyNNBUyE46Kxl2myhL2KSLES6mHyOq03dEjcykqgAauC+y86iyGU8203N
-66KiZQx9Bj5cY8PCOWFNn0xFCfA7EkBRi2bC1dp9w2KHbY1JTt3Iyj5sXzGCQbgw
-bqwDq7ME1jtODtiPH/BlGyM6VEe1F06Jn0+meccy6831dJfFtTJgWxYQ91jB9jSg
-HcurYXJGeRf89M71jvL7udcNu7SrUNydD3M3sADqDMq7qejhpk1BQ4N2JyIvFWoN
-f4l3ZuXiAdwDVkEtJZ0fMV3ZnXYtESI41YqzxAPPXza3QAS3qGR8J0rJN+gOmfxC
-wOuvgM7RQLqIh1Wye/6ac3PxJzlMoYiZXUcMsJ3ljHxRrqVagJb20UBij8ip5mJ/
-mp+OrI/noPN15A4Cha5QJvcxTKeIyJD9HsVx4kndTQuoGTxqc3SfctDzyN/9BJ0V
-FquyU4BUnHetzVdIpK5nLzKIYRyR8lCa7LTYcDJzOQ5Nh/D3O4DUvA/akYTrxeik
-/hvcc90N4bvC6EUdceb1baqX0LFOcKZaKo5PGTdZs01kzGPXg5c=
-=vEPg
------END PGP SIGNATURE-----
-
---7aewi4gtlzfrpl7f--
+					- Ted
