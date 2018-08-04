@@ -3,38 +3,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0AF8C4646D
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:08:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C23BEC4646F
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:08:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9EB902177A
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:08:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EB902177A
+	by mail.kernel.org (Postfix) with ESMTP id 8805F2177A
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:08:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8805F2177A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733278AbeHDLIu (ORCPT
+        id S2388528AbeHDLIx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 07:08:50 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49684 "EHLO
+        Sat, 4 Aug 2018 07:08:53 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49690 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732462AbeHDLIu (ORCPT
+        with ESMTP id S1732462AbeHDLIx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 07:08:50 -0400
+        Sat, 4 Aug 2018 07:08:53 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D0383BB3;
-        Sat,  4 Aug 2018 09:08:50 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E82F989C;
+        Sat,  4 Aug 2018 09:08:53 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Julia Lawall <Julia.Lawall@lip6.fr>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 050/124] powerpc/8xx: fix invalid register expression in head_8xx.S
-Date:   Sat,  4 Aug 2018 11:00:39 +0200
-Message-Id: <20180804082704.383670917@linuxfoundation.org>
+Subject: [PATCH 4.4 051/124] pinctrl: at91-pio4: add missing of_node_put
+Date:   Sat,  4 Aug 2018 11:00:40 +0200
+Message-Id: <20180804082704.418644228@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180804082702.434482435@linuxfoundation.org>
 References: <20180804082702.434482435@linuxfoundation.org>
@@ -51,36 +52,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Christophe Leroy <christophe.leroy@c-s.fr>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-[ Upstream commit e4ccb1dae6bdef228d729c076c38161ef6e7ca34 ]
+[ Upstream commit 21816364715f508c10da1e087e352bc1e326614f ]
 
-New binutils generate the following warning
+The device node iterators perform an of_node_get on each iteration, so a
+jump out of the loop requires an of_node_put.
 
-  AS      arch/powerpc/kernel/head_8xx.o
-arch/powerpc/kernel/head_8xx.S: Assembler messages:
-arch/powerpc/kernel/head_8xx.S:916: Warning: invalid register expression
+The semantic patch that fixes this problem is as follows
+(http://coccinelle.lip6.fr):
 
-This patch fixes it.
+// <smpl>
+@@
+expression root,e;
+local idexpression child;
+iterator name for_each_child_of_node;
+@@
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+ for_each_child_of_node(root, child) {
+   ... when != of_node_put(child)
+       when != e = child
++  of_node_put(child);
+?  break;
+   ...
+}
+... when != child
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/kernel/head_8xx.S |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pinctrl/pinctrl-at91-pio4.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/arch/powerpc/kernel/head_8xx.S
-+++ b/arch/powerpc/kernel/head_8xx.S
-@@ -720,7 +720,7 @@ start_here:
- 	tovirt(r6,r6)
- 	lis	r5, abatron_pteptrs@h
- 	ori	r5, r5, abatron_pteptrs@l
--	stw	r5, 0xf0(r0)	/* Must match your Abatron config file */
-+	stw	r5, 0xf0(0)	/* Must match your Abatron config file */
- 	tophys(r5,r5)
- 	stw	r6, 0(r5)
+--- a/drivers/pinctrl/pinctrl-at91-pio4.c
++++ b/drivers/pinctrl/pinctrl-at91-pio4.c
+@@ -568,8 +568,10 @@ static int atmel_pctl_dt_node_to_map(str
+ 		for_each_child_of_node(np_config, np) {
+ 			ret = atmel_pctl_dt_subnode_to_map(pctldev, np, map,
+ 						    &reserved_maps, num_maps);
+-			if (ret < 0)
++			if (ret < 0) {
++				of_node_put(np);
+ 				break;
++			}
+ 		}
+ 	}
  
 
 
