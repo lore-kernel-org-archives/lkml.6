@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77A32C4646F
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:12:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98A28C4646D
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:12:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A9962177A
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:12:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A9962177A
+	by mail.kernel.org (Postfix) with ESMTP id 58CE8217C7
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:12:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58CE8217C7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389470AbeHDLMg (ORCPT
+        id S2389483AbeHDLMj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 07:12:36 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50462 "EHLO
+        Sat, 4 Aug 2018 07:12:39 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50472 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388557AbeHDLMf (ORCPT
+        with ESMTP id S2388557AbeHDLMi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 07:12:35 -0400
+        Sat, 4 Aug 2018 07:12:38 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D4750BBF;
-        Sat,  4 Aug 2018 09:12:33 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 88534BBF;
+        Sat,  4 Aug 2018 09:12:37 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Xiao Liang <xiliang@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 105/124] xen-netfront: wait xenbus state change when load module manually
-Date:   Sat,  4 Aug 2018 11:01:34 +0200
-Message-Id: <20180804082706.393252081@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Jamie Heilman <jamie@audible.transient.net>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.4 123/124] crypto: padlock-aes - Fix Nano workaround data corruption
+Date:   Sat,  4 Aug 2018 11:01:52 +0200
+Message-Id: <20180804082707.056362975@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180804082702.434482435@linuxfoundation.org>
 References: <20180804082702.434482435@linuxfoundation.org>
@@ -50,67 +51,71 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Xiao Liang <xiliang@redhat.com>
+From: Herbert Xu <herbert@gondor.apana.org.au>
 
-[ Upstream commit 822fb18a82abaf4ee7058793d95d340f5dab7bfc ]
+commit 46d8c4b28652d35dc6cfb5adf7f54e102fc04384 upstream.
 
-When loading module manually, after call xenbus_switch_state to initializes
-the state of the netfront device, the driver state did not change so fast
-that may lead no dev created in latest kernel. This patch adds wait to make
-sure xenbus knows the driver is not in closed/unknown state.
+This was detected by the self-test thanks to Ard's chunking patch.
 
-Current state:
-[vm]# ethtool eth0
-Settings for eth0:
-	Link detected: yes
-[vm]# modprobe -r xen_netfront
-[vm]# modprobe  xen_netfront
-[vm]# ethtool eth0
-Settings for eth0:
-Cannot get device settings: No such device
-Cannot get wake-on-lan settings: No such device
-Cannot get message level: No such device
-Cannot get link status: No such device
-No data available
+I finally got around to testing this out on my ancient Via box.  It
+turns out that the workaround got the assembly wrong and we end up
+doing count + initial cycles of the loop instead of just count.
 
-With the patch installed.
-[vm]# ethtool eth0
-Settings for eth0:
-	Link detected: yes
-[vm]# modprobe -r xen_netfront
-[vm]# modprobe xen_netfront
-[vm]# ethtool eth0
-Settings for eth0:
-	Link detected: yes
+This obviously causes corruption, either by overwriting the source
+that is yet to be processed, or writing over the end of the buffer.
 
-Signed-off-by: Xiao Liang <xiliang@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+On CPUs that don't require the workaround only ECB is affected.
+On Nano CPUs both ECB and CBC are affected.
+
+This patch fixes it by doing the subtraction prior to the assembly.
+
+Fixes: a76c1c23d0c3 ("crypto: padlock-aes - work around Nano CPU...")
+Cc: <stable@vger.kernel.org>
+Reported-by: Jamie Heilman <jamie@audible.transient.net>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/xen-netfront.c |    6 ++++++
- 1 file changed, 6 insertions(+)
 
---- a/drivers/net/xen-netfront.c
-+++ b/drivers/net/xen-netfront.c
-@@ -86,6 +86,7 @@ struct netfront_cb {
- /* IRQ name is queue name with "-tx" or "-rx" appended */
- #define IRQ_NAME_SIZE (QUEUE_NAME_SIZE + 3)
+---
+ drivers/crypto/padlock-aes.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+--- a/drivers/crypto/padlock-aes.c
++++ b/drivers/crypto/padlock-aes.c
+@@ -266,6 +266,8 @@ static inline void padlock_xcrypt_ecb(co
+ 		return;
+ 	}
  
-+static DECLARE_WAIT_QUEUE_HEAD(module_load_q);
- static DECLARE_WAIT_QUEUE_HEAD(module_unload_q);
++	count -= initial;
++
+ 	if (initial)
+ 		asm volatile (".byte 0xf3,0x0f,0xa7,0xc8"	/* rep xcryptecb */
+ 			      : "+S"(input), "+D"(output)
+@@ -273,7 +275,7 @@ static inline void padlock_xcrypt_ecb(co
  
- struct netfront_stats {
-@@ -1335,6 +1336,11 @@ static struct net_device *xennet_create_
- 	netif_carrier_off(netdev);
+ 	asm volatile (".byte 0xf3,0x0f,0xa7,0xc8"	/* rep xcryptecb */
+ 		      : "+S"(input), "+D"(output)
+-		      : "d"(control_word), "b"(key), "c"(count - initial));
++		      : "d"(control_word), "b"(key), "c"(count));
+ }
  
- 	xenbus_switch_state(dev, XenbusStateInitialising);
-+	wait_event(module_load_q,
-+			   xenbus_read_driver_state(dev->otherend) !=
-+			   XenbusStateClosed &&
-+			   xenbus_read_driver_state(dev->otherend) !=
-+			   XenbusStateUnknown);
- 	return netdev;
+ static inline u8 *padlock_xcrypt_cbc(const u8 *input, u8 *output, void *key,
+@@ -284,6 +286,8 @@ static inline u8 *padlock_xcrypt_cbc(con
+ 	if (count < cbc_fetch_blocks)
+ 		return cbc_crypt(input, output, key, iv, control_word, count);
  
-  exit:
++	count -= initial;
++
+ 	if (initial)
+ 		asm volatile (".byte 0xf3,0x0f,0xa7,0xd0"	/* rep xcryptcbc */
+ 			      : "+S" (input), "+D" (output), "+a" (iv)
+@@ -291,7 +295,7 @@ static inline u8 *padlock_xcrypt_cbc(con
+ 
+ 	asm volatile (".byte 0xf3,0x0f,0xa7,0xd0"	/* rep xcryptcbc */
+ 		      : "+S" (input), "+D" (output), "+a" (iv)
+-		      : "d" (control_word), "b" (key), "c" (count-initial));
++		      : "d" (control_word), "b" (key), "c" (count));
+ 	return iv;
+ }
+ 
 
 
