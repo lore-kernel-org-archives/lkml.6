@@ -2,129 +2,176 @@ Return-Path: <SRS0=4jry=KT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FACBC4646D
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 17:31:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32208C4646D
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 17:44:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1AC87217BB
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 17:31:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5753217CD
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 17:43:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TeGyDJmc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AC87217BB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b="O1ZeaXYq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5753217CD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.bosch.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729682AbeHDTdQ (ORCPT
+        id S1729641AbeHDTpW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 15:33:16 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:39312 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727953AbeHDTdQ (ORCPT
+        Sat, 4 Aug 2018 15:45:22 -0400
+Received: from de-out1.bosch-org.com ([139.15.230.186]:47420 "EHLO
+        de-out1.bosch-org.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728067AbeHDTpW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 15:33:16 -0400
-Received: by mail-wm0-f68.google.com with SMTP id q8-v6so9802333wmq.4;
-        Sat, 04 Aug 2018 10:31:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=rDCc+1pbzDhtKlyEZt94GtHgCQyOS1ly/P+5CzkzmV4=;
-        b=TeGyDJmceqLYK4+pc+ZUQzSFlQnBRRRxn2Dn2yjIMh2yD8nT3iP4iythhu3EUgVR9l
-         ujeVdLr1/GkSRNZG0a9YbvBYclLOv+Zh63A4VEIRdvyKrPiNdV32sRnKzMT04SsCj7In
-         FN4aApMj1eU+XAKo5dw7A0xA0S1oMygRIiBj051dTfFHnjPKPWKiVwrDnM5rA7xLJldJ
-         CZgTmKMcCU2UipC/9Yn1NRtdW3J1Msz0lDNdT4hU2ooAdyP5G31pFBFX4dpQ3MjGZ61h
-         jphJ+kj6w9YZ45IjnKNRj7IhVzIYF6Q9yXsR0Ftppw2vBRj+tBMh96Voex3009RCh2p1
-         yckw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=rDCc+1pbzDhtKlyEZt94GtHgCQyOS1ly/P+5CzkzmV4=;
-        b=Y7K7MSVBAP6KDj3KNe9hk3hV31u66Dm0DDxk+UrQTALxFak69rBdbObVwKT8vhiI/c
-         aPez0BTFrq6RYxGFV4XQAjX9zdx6++3J/i5RP/zK28rkaDB7lZ/MfSo3ndaapwCc40oY
-         PYWAtKO4YFIqR5/s8w8Tgq/bVey56dIr3k+24J/K1v9x47bEIcTwGisPf57fTeNjB/SN
-         98ri3ay5/SGyDcwZmR7KOlsJytf0aFBz1lZl1BuOZRVPDvju3VEV0iOLtI+EtI2bke09
-         xHjEcJHBuvUldBNXtzcmOzXCydpbCXppzlcoDhQsd3r8V+lurnnffv3sodeu1fUpz6v/
-         URYQ==
-X-Gm-Message-State: AOUpUlHVrZpATySDbYDfVFBdMbXpNhUaXybH/Cp3m1y7joU2tCh6If1V
-        B3kQNngI/DP0O0WwOtFnxp4rd6iI
-X-Google-Smtp-Source: AAOMgpeiTr4YSzxruBbcyTWEF9MEdaF/SgXfwLCwDzjAyjyBD5sPXwBxVpNRvsMIV7UaSADOMVZjag==
-X-Received: by 2002:a1c:e146:: with SMTP id y67-v6mr7467688wmg.108.1533403911813;
-        Sat, 04 Aug 2018 10:31:51 -0700 (PDT)
-Received: from [192.168.178.21] (2-230-197-194.ip203.fastwebnet.it. [2.230.197.194])
-        by smtp.gmail.com with ESMTPSA id v6-v6sm958654wmc.43.2018.08.04.10.31.50
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 04 Aug 2018 10:31:50 -0700 (PDT)
-Subject: Re: [PATCH] Revert "cpufreq: intel_pstate: Fix ->set_policy()
- interface for no_turbo"
-To:     srinivas.pandruvada@linux.intel.com, rjw@rjwysocki.net
-Cc:     lenb@kernel.org, viresh.kumar@linaro.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180804152932.3861-1-gabriele.mzt@gmail.com>
-From:   Gabriele Mazzotta <gabriele.mzt@gmail.com>
-Message-ID: <ccf46de4-d75e-306b-9554-9d33f68d2379@gmail.com>
-Date:   Sat, 4 Aug 2018 19:31:50 +0200
+        Sat, 4 Aug 2018 15:45:22 -0400
+Received: from si0vm1947.rbesz01.com (unknown [139.15.230.188])
+        by si0vms0217.rbdmz01.com (Postfix) with ESMTPS id 41jWVh0VTjz4f3kky;
+        Sat,  4 Aug 2018 19:43:56 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=de.bosch.com;
+        s=2015-01-21; t=1533404636;
+        bh=rNreBz9tcS3Q2kVTNLarcOTT5RXq5VFV0bGKMsjq8CU=; l=10;
+        h=From:From:Reply-To:Sender;
+        b=O1ZeaXYqdLmhOObkLAA6cpu75WDxf22J+xYLdiffsdjR1NkbWr5b9pQiEo63TLz+9
+         303Ik1IpV+uoKOLiAry9jsdylH6xrkixTzQm9WF9iEn22YQo1fMDYLSTcIpzovJ110
+         zRGfrZGKJtRGBt3q8hPjiC44b2laMW5JZdD0/T7s=
+Received: from fe0vm1740.rbesz01.com (unknown [10.58.172.176])
+        by si0vm1947.rbesz01.com (Postfix) with ESMTP id 41jWVg75gMz6CjQSR;
+        Sat,  4 Aug 2018 19:43:55 +0200 (CEST)
+X-AuditID: 0a3aad14-86fff70000000cae-a7-5b65e5dc7729
+Received: from fe0vm1651.rbesz01.com (Unknown_Domain [10.58.173.29])
+        (using TLS with cipher AES128-SHA (128/128 bits))
+        (Client did not present a certificate)
+        by fe0vm1740.rbesz01.com (SMG Outbound) with SMTP id 34.6D.03246.CD5E56B5; Sat,  4 Aug 2018 19:43:56 +0200 (CEST)
+Received: from SI-HUB1000.de.bosch.com (si-hub1000.de.bosch.com [10.4.103.106])
+        by fe0vm1651.rbesz01.com (Postfix) with ESMTPS id 41jWVg4vVzzhdYX;
+        Sat,  4 Aug 2018 19:43:55 +0200 (CEST)
+Received: from luchador.grb-fir.grb.de.bosch.com (10.19.187.97) by
+ SI-HUB1000.de.bosch.com (10.4.103.106) with Microsoft SMTP Server id
+ 14.3.408.0; Sat, 4 Aug 2018 19:43:55 +0200
+From:   Mark Jonas <mark.jonas@de.bosch.com>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     <linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Wang Xin <xin.wang7@cn.bosch.com>,
+        Mark Jonas <mark.jonas@de.bosch.com>
+Subject: [PATCH] eeprom: at24: Fix unexpected timeout under high load
+Date:   Sat, 4 Aug 2018 19:43:40 +0200
+Message-ID: <1533404620-18536-1-git-send-email-mark.jonas@de.bosch.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <20180804152932.3861-1-gabriele.mzt@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Brightmail-Tracker: H4sIAAAAAAAAA22SfUwTdxzG+d315Vo4Oa5FvitgshM0IZmCQqxvxGTZ5A9ZdMlMGMnGYX+0
+        jX0hvUIE/xCdipAotUMDteALmDnE6MhmKtMYupcwY2ChiCBYFZF1xMX5UiMU5q4UbP/wv7vn
+        +X2e5+65o0j2rFxDGS12bLPwJk6mlCg3XEr/aOwJLs6e/DNRO+f8Xa7tfnhVpv2m7bJMe2Tu
+        FdL6ut2yLdKC0IwTFbQNjUoLbrZ0ygtedi3bLvlSuUmHTcZKbFudX6I0/PZyhigfTdszFJol
+        alBzSj1SUMDkgq/rrrQeKSmWOUFA8NQPROTmBoL2yZ4F5yoCz48jZBiRMVkw0uuZv1YzVdDS
+        4kDhQyRTj8D/bFwSNlTMJ3DHd1BWjyhKwmRA3duSsEwzW+HJ+V9kkeplMNJXR0b0JPijeWIe
+        JRmAnkCAdCDaFWO5YqwziOhAyWU4u9Kcsy43e5WtFAvV2TmrdlnNXSiymtqDQt4yL2IoxCXQ
+        h4dwMSvlK4UqsxflUQSXTOf5dMXsklKrrsrAC4avbRUmLHAaGsXFxbGqd7JQUWo2CoLRavEi
+        oEhOTb+tEaNoHV9VjW3WCOZFqZSES6EtO8RIRs/b8W6My7Ft0d1IURzQKvErskk2rMd7yowm
+        +6LNpUc6l8Y6sbUEpfCitVSC2L08HEEL5bxZMOoX8A8iOLuoRtFb6GNq9tkJJ8lKLFYL1qTQ
+        FydEngmfNFRY3j2BJo2eHt9VzCbHGNGUKXQXiRuq6LxweYL4c0a7gfao3EVs0oIYhda0iQzj
+        ToDW4QwIXNgCrZ4gAnfjaQLqAj8RMNDtkkPj8145NAV/VkDA36+Awe9CCmg96VDCcPtjJbQf
+        PU7D9b7ORGj6u4mBByOvGXBeO6kCZ8elZJg+3ZAK3879mwqzD7rS4NVAbTqEekbTxbzGD6E3
+        cH05+Bs6M8FxeyATeu/dWAHt06EVcK7j2Ep403lhJQyPfZ81Jc5KiLPuzZ2f1c7b3zPrghp9
+        N00N6v9L56kNHsrfWKS8llFCWCY3H/5n4OaVeOete03/Ndw/sDsTu9SeKT5xprBadVTuGzzX
+        cWc8JPdNufz6yyE1E3Ts/7TwUPnz7V8scce/WKrf1PjZwc+HdjY/Cm5bP/FU2u9/9NU+B/ur
+        1ji8QVX4dOz15qJThaO1pviM8xfHbufTPCcRDHxOFmkT+P8BqI+ZuTQEAAA=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/08/2018 17:29, Gabriele Mazzotta wrote:
-> This change does not take into account that some BIOSes change
-> MSR_IA32_MISC_ENABLE_TURBO_DISABLE depending on the power source.
-> If the turbo is disabled when the system boots, policy.max_freq
-> is set to pstate.max_pstate. However, if the BIOS later enables
-> the turbo, the CPU will never be able to run at pstate.turbo_pstate.
-> 
-> Since now intel_pstate_set_policy() does its calculations using
-> pstate.max_freq and pstate.turbo_freq, we can always calculate
-> cpuinfo.max_freq using pstate.turbo_pstate, thus allowing system
-> with varying MSR_IA32_MISC_ENABLE_TURBO_DISABLE to run at full
-> speed when the turbo is enabled.
-> 
-> This reverts commit 983e600e88835f0321d1a0ea06f52d48b7b5a544.
-> 
-> Signed-off-by: Gabriele Mazzotta <gabriele.mzt@gmail.com>
-> ---
->  drivers/cpufreq/intel_pstate.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstate.c
-> index 3c3971256130..4043aae2d611 100644
-> --- a/drivers/cpufreq/intel_pstate.c
-> +++ b/drivers/cpufreq/intel_pstate.c
-> @@ -2068,9 +2068,8 @@ static int __intel_pstate_cpu_init(struct cpufreq_policy *policy)
->  	/* cpuinfo and default policy values */
->  	policy->cpuinfo.min_freq = cpu->pstate.min_pstate * cpu->pstate.scaling;
->  	update_turbo_state();
+From: Wang Xin <xin.wang7@cn.bosch.com>
 
-Commit 983e600e8883 added this update_turbo_state() call, but it is
-needed by intel_pstate_init_acpi_perf_limits() here below. I should
-have mentioned it in the commit message.
+Within at24_loop_until_timeout the timestamp used for timeout checking
+is recorded after the I2C transfer and sleep_range(). Under high CPU
+load either the execution time for I2C transfer or sleep_range() could
+actually be larger than the timeout value. Worst case the I2C transfer
+is only tried once because the loop will exit due to the timeout
+although the EEPROM is now ready.
 
-However, I've just realized that a similar problem to that I'm trying
-to fix can occur on those systems where core_frequency is adjusted
-depending on the availability of the turbo.
+To fix this issue the timestamp is recorded at the beginning of each
+iteration. That is, before I2C transfer and sleep. Then the timeout
+is actually checked against the timestamp of the previous iteration.
+This makes sure that even if the timeout is reached, there is still one
+more chance to try the I2C transfer in case the EEPROM is ready.
 
-The call to update_turbo_state() could also be moved in
-intel_pstate_init_acpi_perf_limits(), right before the check on
-global.turbo_disabled.
+Signed-off-by: Wang Xin <xin.wang7@cn.bosch.com>
+Signed-off-by: Mark Jonas <mark.jonas@de.bosch.com>
+---
+ drivers/misc/eeprom/at24.c | 26 +++++++++++++++++++-------
+ 1 file changed, 19 insertions(+), 7 deletions(-)
 
-> -	policy->cpuinfo.max_freq = global.turbo_disabled ?
-> -			cpu->pstate.max_pstate : cpu->pstate.turbo_pstate;
-> -	policy->cpuinfo.max_freq *= cpu->pstate.scaling;
-> +	policy->cpuinfo.max_freq =
-> +		cpu->pstate.turbo_pstate * cpu->pstate.scaling;
->  
->  	intel_pstate_init_acpi_perf_limits(policy);
->  
-> 
+diff --git a/drivers/misc/eeprom/at24.c b/drivers/misc/eeprom/at24.c
+index f5cc517..6d8c294 100644
+--- a/drivers/misc/eeprom/at24.c
++++ b/drivers/misc/eeprom/at24.c
+@@ -112,16 +112,26 @@ MODULE_PARM_DESC(at24_write_timeout, "Time (in ms) to try writes (default 25)");
+  * write to work while making sure that at least one iteration is run before
+  * checking the break condition.
+  *
++ * By recording current time at the beginning of one iteration, the timeout
++ * is actually checked against the time in previous iteration. It makes sure,
++ * even the timeout is reached, there is still one more chance to try I2C
++ * transfer in case EEPROM is ready.
++ *
+  * It takes two parameters: a variable in which the future timeout in jiffies
+  * will be stored and a temporary variable holding the time of the last
+  * iteration of processing the request. Both should be unsigned integers
+  * holding at least 32 bits.
+  */
+-#define at24_loop_until_timeout(tout, op_time)				\
+-	for (tout = jiffies + msecs_to_jiffies(at24_write_timeout),	\
+-	     op_time = 0;						\
+-	     op_time ? time_before(op_time, tout) : true;		\
+-	     usleep_range(1000, 1500), op_time = jiffies)
++#define at24_loop_until_timeout_begin(tout, op_time)		\
++	tout = jiffies + msecs_to_jiffies(at24_write_timeout);	\
++	while (true) {						\
++		op_time = jiffies;
++
++#define at24_loop_until_timeout_end(tout, op_time)		\
++		if (time_before(tout, op_time))			\
++			break;					\
++		usleep_range(1000, 1500);			\
++	}
+ 
+ struct at24_chip_data {
+ 	/*
+@@ -308,13 +318,14 @@ static ssize_t at24_regmap_read(struct at24_data *at24, char *buf,
+ 	/* adjust offset for mac and serial read ops */
+ 	offset += at24->offset_adj;
+ 
+-	at24_loop_until_timeout(timeout, read_time) {
++	at24_loop_until_timeout_begin(timeout, read_time) {
+ 		ret = regmap_bulk_read(regmap, offset, buf, count);
+ 		dev_dbg(&client->dev, "read %zu@%d --> %d (%ld)\n",
+ 			count, offset, ret, jiffies);
+ 		if (!ret)
+ 			return count;
+ 	}
++	at24_loop_until_timeout_end(timeout, read_time)
+ 
+ 	return -ETIMEDOUT;
+ }
+@@ -359,13 +370,14 @@ static ssize_t at24_regmap_write(struct at24_data *at24, const char *buf,
+ 	client = at24_client->client;
+ 	count = at24_adjust_write_count(at24, offset, count);
+ 
+-	at24_loop_until_timeout(timeout, write_time) {
++	at24_loop_until_timeout_begin(timeout, write_time) {
+ 		ret = regmap_bulk_write(regmap, offset, buf, count);
+ 		dev_dbg(&client->dev, "write %zu@%d --> %d (%ld)\n",
+ 			count, offset, ret, jiffies);
+ 		if (!ret)
+ 			return count;
+ 	}
++	at24_loop_until_timeout_end(timeout, write_time)
+ 
+ 	return -ETIMEDOUT;
+ }
+-- 
+2.7.4
+
