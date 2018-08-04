@@ -2,173 +2,116 @@ Return-Path: <SRS0=4jry=KT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DA80C4646F
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 05:19:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BA75C4646D
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 05:20:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E521621775
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 05:19:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E521621775
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 09CCB21775
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 05:20:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="p3Di7WUO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09CCB21775
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727600AbeHDHSS (ORCPT
+        id S1727832AbeHDHUF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 03:18:18 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:52896 "EHLO mail.skyhub.de"
+        Sat, 4 Aug 2018 03:20:05 -0400
+Received: from imap.thunk.org ([74.207.234.97]:36424 "EHLO imap.thunk.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726186AbeHDHSS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 03:18:18 -0400
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id TjGIyU-qdY88; Sat,  4 Aug 2018 07:18:57 +0200 (CEST)
-Received: from nazgul.tnic (95-42-137-230.ip.btc-net.bg [95.42.137.230])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id BC8131EC025D;
-        Sat,  4 Aug 2018 07:18:56 +0200 (CEST)
-Date:   Sat, 4 Aug 2018 07:18:57 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Manish Narani <manish.narani@xilinx.com>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com,
-        will.deacon@arm.com, michal.simek@xilinx.com, mchehab@kernel.org,
-        mdf@kernel.org, edgar.iglesias@xilinx.com,
-        shubhrajyoti.datta@xilinx.com, naga.sureshkumar.relli@xilinx.com,
-        bharat.kumar.gogada@xilinx.com, stefan.krsmanovic@aggios.com,
-        sgoud@xilinx.com, anirudh@xilinx.com, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-edac@vger.kernel.org
-Subject: Re: [PATCH v3 1/4] edac: synps: Add platform specific structures for
- ddrc controller
-Message-ID: <20180804051857.GA3843@nazgul.tnic>
-References: <1533214282-9977-1-git-send-email-manish.narani@xilinx.com>
- <1533214282-9977-2-git-send-email-manish.narani@xilinx.com>
+        id S1726186AbeHDHUF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 4 Aug 2018 03:20:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
+         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=eyRbIOy++1SQ0QjOX3jJd/TSPjlUqCYZr6nuf+XihHQ=; b=p3Di7WUO6bpaR95m4UW2V0wFnF
+        q8Sf/sfxOeZr4ON0tHvb45TrC5qAVvmYDrGQAsGxuGPa3lBWDlpwLwq7Qn+ErQ37diH86KBOGv/Dz
+        pSYvytdycsOWQIgnQFJFMmaZLgLSGLZmpSQjKm88JTK0dLZ5ECX++w6M7uk/IHhBRJds=;
+Received: from root (helo=callcc.thunk.org)
+        by imap.thunk.org with local-esmtp (Exim 4.89)
+        (envelope-from <tytso@thunk.org>)
+        id 1flozS-0007xW-7p; Sat, 04 Aug 2018 05:20:34 +0000
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 4EB607A64C9; Sat,  4 Aug 2018 01:20:33 -0400 (EDT)
+Date:   Sat, 4 Aug 2018 01:20:33 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Mike Snitzer <snitzer@redhat.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, Sagi Grimberg <sagi@grimberg.me>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>, dm-devel@redhat.com,
+        Zdenek Kabelac <zkabelac@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>, wgh@torlan.ru
+Subject: Re: [dm-devel] LVM snapshot broke between 4.14 and 4.16
+Message-ID: <20180804052033.GA4461@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, Sagi Grimberg <sagi@grimberg.me>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>, dm-devel@redhat.com,
+        Zdenek Kabelac <zkabelac@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>, wgh@torlan.ru
+References: <CAOi1vP-SJO4AMK=XD3Lmja++2dQqoiw6Zn8Vgxf8OfvYgnuC6Q@mail.gmail.com>
+ <CA+55aFy2DR9fxHhmGq+azSjX9D71YtLsuFKmoEuYW3uTAUYtJg@mail.gmail.com>
+ <d76415de-2056-c7d6-cc88-b896deaa8ead@torlan.ru>
+ <1ec0a220-d5b0-1c27-e63b-c4d3f4ce9d77@torlan.ru>
+ <CA+55aFyPVQ5-gA93irsaxPC9BNQxnGWrDDHPMUYai2kxKiaKWQ@mail.gmail.com>
+ <b2bbd8ec-ac5b-fa8a-d3f7-8615d87f73c3@redhat.com>
+ <CA+55aFwWZX=CXmWDTkDGb36kf12XmTehmQjbiMPCqCRG2hi9kw@mail.gmail.com>
+ <20180803185431.GB3258@redhat.com>
+ <CA+55aFwDEY7B6OMh5xL2wc8BRj1KkzBHggNowAjbsWfma6H5Zg@mail.gmail.com>
+ <20180803193037.GA4581@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1533214282-9977-2-git-send-email-manish.narani@xilinx.com>
-User-Agent: Mutt/1.6.0 (2016-04-01)
+In-Reply-To: <20180803193037.GA4581@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 02, 2018 at 06:21:19PM +0530, Manish Narani wrote:
-> This patch adds platform specific structures, so that we can add
-
-"This patch" in a commit message is tautologically redundant.
-
-> different IP support later using quirks.
+On Fri, Aug 03, 2018 at 03:30:37PM -0400, Mike Snitzer wrote:
 > 
-> Signed-off-by: Manish Narani <manish.narani@xilinx.com>
-> ---
->  drivers/edac/synopsys_edac.c | 64 ++++++++++++++++++++++++++++++++++++--------
->  1 file changed, 53 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/edac/synopsys_edac.c b/drivers/edac/synopsys_edac.c
-> index 0c9c59e..d4798e8 100644
-> --- a/drivers/edac/synopsys_edac.c
-> +++ b/drivers/edac/synopsys_edac.c
-> @@ -22,6 +22,7 @@
->  #include <linux/edac.h>
->  #include <linux/module.h>
->  #include <linux/platform_device.h>
-> +#include <linux/of.h>
->  
->  #include "edac_module.h"
->  
-> @@ -130,6 +131,7 @@ struct synps_ecc_status {
->   * @baseaddr:	Base address of the DDR controller
->   * @message:	Buffer for framing the event specific info
->   * @stat:	ECC status information
-> + * @p_data:	Pointer to platform data
->   * @ce_cnt:	Correctable Error count
->   * @ue_cnt:	Uncorrectable Error count
->   */
-> @@ -137,11 +139,29 @@ struct synps_edac_priv {
->  	void __iomem *baseaddr;
->  	char message[SYNPS_EDAC_MSG_SIZE];
->  	struct synps_ecc_status stat;
-> +	const struct synps_platform_data *p_data;
->  	u32 ce_cnt;
->  	u32 ue_cnt;
->  };
->  
->  /**
-> + * struct synps_platform_data -  synps platform data structure
-> + * @synps_edac_geterror_info:	function pointer to synps edac error info
-> + * @synps_edac_get_mtype:	function pointer to synps edac mtype
-> + * @synps_edac_get_dtype:	function pointer to synps edac dtype
-> + * @synps_edac_get_eccstate:	function pointer to synps edac eccstate
-> + * @quirks:			to differentiate IPs
-> + */
-> +struct synps_platform_data {
-> +	int (*synps_edac_geterror_info)(void __iomem *base,
-> +					struct synps_ecc_status *p);
-> +	enum mem_type (*synps_edac_get_mtype)(const void __iomem *base);
-> +	enum dev_type (*synps_edac_get_dtype)(const void __iomem *base);
-> +	bool (*synps_edac_get_eccstate)(void __iomem *base);
-> +	int quirks;
-> +};
-> +
-> +/**
->   * synps_edac_geterror_info - Get the current ecc error info
->   * @base:	Pointer to the base address of the ddr memory controller
->   * @p:		Pointer to the synopsys ecc status structure
-> @@ -242,7 +262,8 @@ static void synps_edac_check(struct mem_ctl_info *mci)
->  	struct synps_edac_priv *priv = mci->pvt_info;
->  	int status;
->  
-> -	status = synps_edac_geterror_info(priv->baseaddr, &priv->stat);
-> +	status = priv->p_data->synps_edac_geterror_info(priv->baseaddr,
-> +							&priv->stat);
+> I was trying to give context for the "best to update lvm2 anyway"
+> disclaimer that was used.  Yeah, it was specious.
 
-Unnecessarily long line - shortening by renaming might help.
+Well, it seemed to indicate a certain attitude that both Linus and I
+are concerned about.  I tried to use more of a "pursuading" style to
+impress why that attitude was not ideal/correct.  Linus used a much
+more assertive style (e.g., "Hell, no!").
 
->  	if (status)
->  		return;
->  
-> @@ -372,10 +393,12 @@ static int synps_edac_init_csrows(struct mem_ctl_info *mci)
->  		for (j = 0; j < csi->nr_channels; j++) {
->  			dimm            = csi->channels[j]->dimm;
->  			dimm->edac_mode = EDAC_FLAG_SECDED;
-> -			dimm->mtype     = synps_edac_get_mtype(priv->baseaddr);
-> +			dimm->mtype     = priv->p_data->synps_edac_get_mtype(
-> +						priv->baseaddr);
+> And yeah, that isn't a good excuse to ignore it but: dm-snapshot is a
+> steaming pile as compared to dm thin-provisioning...
 
-Ditto - that trailing opening brace at the end is just yucky. Shorten it
-and let is stick out even if it longer than 80 cols.
+On a side note, this is the first that I've heard the assertion that
+dm-thin was better than dm-snapshot.  My impression was that
+dm-snapshot was a proven code base, that only did one thing and (as
+far as I could tell) did it well.  In contrast, dm-thin is much newer
+code, **far** more complex, with functionality and corner cases
+approaching that of a file system --- and just to be even more
+exciting, it doesn't have an fsck/repair tool to deal with corrupted
+metadata.
 
->  			dimm->nr_pages  = (size >> PAGE_SHIFT) / csi->nr_channels;
->  			dimm->grain     = SYNPS_EDAC_ERR_GRAIN;
-> -			dimm->dtype     = synps_edac_get_dtype(priv->baseaddr);
-> +			dimm->dtype     = priv->p_data->synps_edac_get_dtype(
-> +						priv->baseaddr);
->  		}
->  	}
->  
-> @@ -423,6 +446,21 @@ static int synps_edac_mc_init(struct mem_ctl_info *mci,
->  	return status;
->  }
->  
-> +static const struct synps_platform_data zynq_edac_def = {
-> +	.synps_edac_geterror_info	= synps_edac_geterror_info,
-> +	.synps_edac_get_mtype		= synps_edac_get_mtype,
-> +	.synps_edac_get_dtype		= synps_edac_get_dtype,
-> +	.synps_edac_get_eccstate	= synps_edac_get_eccstate,
-> +	.quirks				= 0,
+In your opinion, is it because you disagree with the assumption that
+dm-thin is scary?  Or is the argument that dm-snapshot is even
+scarier?
 
-Drop the "synps_" prefix from the function pointer names and leave them
-in the actual function names so that when one looks at the code, knows
-what is what.
+						- Ted
 
--- 
-Regards/Gruss,
-    Boris.
+P.S.  It could be that my impression is wrong/out-dated, but the
+kernel documentation still says that userspace tools for checking and
+repairing the metadata are "under development".  As a file system
+developer, the reaction this inspires is best summed up as:
 
-ECO tip #101: Trim your mails when you reply.
---
+     https://imgflip.com/memetemplate/50971393/Scared-Face
