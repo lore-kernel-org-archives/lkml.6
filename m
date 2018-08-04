@@ -2,185 +2,109 @@ Return-Path: <SRS0=4jry=KT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6D6DC4646D
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 10:34:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7164CC4646D
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 10:46:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C0E3217CB
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 10:34:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C0E3217CB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jmondi.org
+	by mail.kernel.org (Postfix) with ESMTP id 186A6217CE
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 10:46:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="lwV87Vjo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 186A6217CE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kapsi.fi
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728569AbeHDMeQ (ORCPT
+        id S1728420AbeHDMqX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 08:34:16 -0400
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:48299 "EHLO
-        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726576AbeHDMeQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 08:34:16 -0400
-X-Originating-IP: 37.176.141.94
-Received: from w540 (unknown [37.176.141.94])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 124221C0003;
-        Sat,  4 Aug 2018 10:33:55 +0000 (UTC)
-Date:   Sat, 4 Aug 2018 12:33:54 +0200
-From:   jacopo mondi <jacopo@jmondi.org>
-To:     Steve Longerbeam <slongerbeam@gmail.com>
-Cc:     Sakari Ailus <sakari.ailus@iki.fi>, linux-media@vger.kernel.org,
-        Steve Longerbeam <steve_longerbeam@mentor.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Niklas =?utf-8?Q?S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Sebastian Reichel <sre@kernel.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6 16/17] media: v4l2: async: Remove notifier subdevs
- array
-Message-ID: <20180804103354.GB9285@w540>
-References: <1531175957-1973-1-git-send-email-steve_longerbeam@mentor.com>
- <1531175957-1973-17-git-send-email-steve_longerbeam@mentor.com>
- <20180723123557.bfxxsqqhlaj3ccwc@valkosipuli.retiisi.org.uk>
- <a040c77f-2bee-5d0d-57ec-852ff30448e9@gmail.com>
+        Sat, 4 Aug 2018 08:46:23 -0400
+Received: from mail.kapsi.fi ([91.232.154.25]:35191 "EHLO mail.kapsi.fi"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726855AbeHDMqX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 4 Aug 2018 08:46:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
+         s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+        MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=CQtI1CvcneBmbgMnFmRBQ8DBLmVsBp11DbWWQ+ped8s=; b=lwV87VjoZpf0I7NW/8GA6qz/Ph
+        dt/yO1YfVtE57Q0sLe9+MRIRx/zUyy05EmgD13CfHSYvr5LcPk6kHa3vN5hP3hbq9zNCX0HQcYYld
+        2kPMR7D47ty4UCAF7HXWdAR2BJZX/3QMSpyxTX6m/oBasysV9t2aFYEheP0z1qFGqxQBL+02+kbWn
+        2EjoWXCU5RyrKvRFtLWCrROlKvh5Rt22Fk68GECYpAn66cfsKdQF+t/fU//uJrMXU+9he0ziCXl4J
+        02MQMgSBbfrFID6mIaRXrSDNK04C8juVHOIxYF85cTxcl4uJEGdB1A061c+t+y+cRYk0QOK1qrp+E
+        Gbj/+1/w==;
+Received: from dsl-hkibng22-54faa2-250.dhcp.inet.fi ([84.250.162.250])
+        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <cyndis@kapsi.fi>)
+        id 1flu4D-0002Xd-Ib; Sat, 04 Aug 2018 13:45:49 +0300
+Subject: Re: [PATCH v3 3/8] mailbox: Add transmit done by blocking option
+To:     Jassi Brar <jassisinghbrar@gmail.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>
+Cc:     Greg KH <gregkh@linuxfoundation.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Devicetree List <devicetree@vger.kernel.org>,
+        linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org,
+        ", linux-arm-kernel"@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        srv_heupstream <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20180702114033.15654-1-mperttunen@nvidia.com>
+ <20180702114033.15654-4-mperttunen@nvidia.com>
+ <CABb+yY0_dKC_cYFwwb-aeRgrx=sjv=8VLP=C6DJEecFf=v+mkQ@mail.gmail.com>
+From:   Mikko Perttunen <cyndis@kapsi.fi>
+Message-ID: <907bac36-0c54-8f38-0f5e-f59196d414c6@kapsi.fi>
+Date:   Sat, 4 Aug 2018 13:45:49 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="8P1HSweYDcXXzwPJ"
-Content-Disposition: inline
-In-Reply-To: <a040c77f-2bee-5d0d-57ec-852ff30448e9@gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <CABb+yY0_dKC_cYFwwb-aeRgrx=sjv=8VLP=C6DJEecFf=v+mkQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 84.250.162.250
+X-SA-Exim-Mail-From: cyndis@kapsi.fi
+X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 08/03/2018 03:54 PM, Jassi Brar wrote:
+> On Mon, Jul 2, 2018 at 5:10 PM, Mikko Perttunen <mperttunen@nvidia.com> wrote:
+>> Add a new TXDONE option, TXDONE_BY_BLOCK. With this option, the
+>> send_data function of the mailbox driver is expected to block until
+>> the message has been sent. The new option is used with the Tegra
+>> Combined UART driver to minimize unnecessary overhead when transmitting
+>> data.
+>>
+> 1) TXDONE_BY_BLOCK flag :-
+>          Have you tried setting the flag mbox_chan->mbox_client->tx_block ?
 
---8P1HSweYDcXXzwPJ
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+No - I suppose I should have done that. I'm a bit concerned about 
+overhead as send_data may be called thousands of times per second, so I 
+tried to make it as close as possible to the downstream driver that just 
+pokes the mailbox register directly.
 
-Hi Steve,
+> 
+> 2) Implementing TEGRA_HSP_MBOX_TYPE_SM :-
+>         In mailbox framework, a controller is a collection of identical
+> channels. That is, instances of the same class.
+>         So ideally, in probe you should populate a controller for each
+> type of channel, i.e, DB, SM, SS and AS.
 
-On Mon, Jul 23, 2018 at 09:44:57AM -0700, Steve Longerbeam wrote:
->
->
-> On 07/23/2018 05:35 AM, Sakari Ailus wrote:
-> >Hi Steve,
-> >
-> >Thanks for the update.
-> >
-> >On Mon, Jul 09, 2018 at 03:39:16PM -0700, Steve Longerbeam wrote:
-> >>All platform drivers have been converted to use
-> >>v4l2_async_notifier_add_subdev(), in place of adding
-> >>asd's to the notifier subdevs array. So the subdevs
-> >>array can now be removed from struct v4l2_async_notifier,
-> >>and remove the backward compatibility support for that
-> >>array in v4l2-async.c.
-> >>
-> >>Signed-off-by: Steve Longerbeam <steve_longerbeam@mentor.com>
-> >This set removes the subdevs and num_subdevs fieldsfrom the notifier (as
-> >discussed previously) but it doesn't include the corresponding
-> >driver changes. Is there a patch missing from the set?
->
-> Hi Sakari, yes somehow patch 15/17 (the large patch to all drivers)
-> got dropped by the ML, maybe because the cc-list was too big?
->
-> I will resend with only linux-media and cc: you.
+Hmm, yes, I guess this would be possible if I change the mailbox core to 
+allow registering multiple controllers per device.
 
-For the Renesas CEU and Renesas R-Car VIN you can add my:
+Thanks!
+Mikko
 
-Tested-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-
-I would have a very small comment on the renesas-ceu.c patch. I'm copying
-the hunk here below as the patch didn't reach the mailing list
-
->@@ -1562,40 +1557,46 @@ static int ceu_parse_dt(struct ceu_device *ceudev)
->                        dev_err(ceudev->dev,
->                                "No subdevice connected on endpoint %u.\n", i);
->                        ret = -ENODEV;
->-                       goto error_put_node;
->+                       goto error_cleanup;
->                }
->
->                ret = v4l2_fwnode_endpoint_parse(of_fwnode_handle(ep), &fw_ep);
->                if (ret) {
->                if (ret) {
->                        dev_err(ceudev->dev,
->                                "Unable to parse endpoint #%u.\n", i);
->-                       goto error_put_node;
->+                       goto error_cleanup;
->                }
->
->                if (fw_ep.bus_type != V4L2_MBUS_PARALLEL) {
->                        dev_err(ceudev->dev,
->                                "Only parallel input supported.\n");
->                        ret = -EINVAL;
->-                       goto error_put_node;
->+                       goto error_cleanup;
->                }
->
->                /* Setup the ceu subdevice and the async subdevice. */
->                ceu_sd = &ceudev->subdevs[i];
->                INIT_LIST_HEAD(&ceu_sd->asd.list);
->
->+               remote = of_graph_get_remote_port_parent(ep);
->                ceu_sd->mbus_flags = fw_ep.bus.parallel.flags;
->                ceu_sd->asd.match_type = V4L2_ASYNC_MATCH_FWNODE;
->-               ceu_sd->asd.match.fwnode =
->-                       fwnode_graph_get_remote_port_parent(
->-                                       of_fwnode_handle(ep));
->+               ceu_sd->asd.match.fwnode = of_fwnode_handle(remote);
->+
->+               ret = v4l2_async_notifier_add_subdev(&ceudev->notifier,
->+                                                    &ceu_sd->asd);
->+               if (ret) {
->+                       of_node_put(remote);
-
-                        ^^^ The 'remote' device node is only put in
-                        the error path
->
->+                       goto error_cleanup;
->+               }
->
->-               ceudev->asds[i] = &ceu_sd->asd;
->                of_node_put(ep);
->        }
->
->        return num_ep;
->
->-error_put_node:
->+error_cleanup:
->+       v4l2_async_notifier_cleanup(&ceudev->notifier);
->        of_node_put(ep);
->        return ret;
-> }
-
-Thanks
-   j
-
---8P1HSweYDcXXzwPJ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJbZYEHAAoJEHI0Bo8WoVY8D0YP/118mTcv2D47wecQgUINkN8L
-UoNtkZS33DMSupbVeHb6KncVmxZkI2KN93siOp+UT/oxUZLQuSnQOXENojQRkN+E
-7qVYvd7W7jy83vBL0OPuHSH8qnP1EDcgKGCkn+0VDLGRGlP1tCdV2B2fMEIH5lr2
-VQYnIqXjI8DkR2LT5aW7UuUxojsf3NajuvV2JkKJzHtna2JFSw2Fm5G0fyb42/Uo
-IXXDSCU1+vKZXaL5u4zgxYCClpJWjHIid+H+RPLttEUXKIml7TIYbzTYJtIaMzYo
-A51rX8dSYGcb5M2EG6VsRfGok7VKfMMEevU2hBWIzxKqABE+EOcsEKf9lWJ1TGDA
-B6Fe0qeCdmkT07wMwnXAvfhTkO6oO/dpziKzUnbS3odAKLYGIM6o1q2iKYzyDtHF
-GAb0izQs0+4/m+jIz53hWURyDwv8QuGgrpjJkapZPJxaosbgs/Hsi/KJLqbUE35P
-gxL60Q5hWynY7Lgq6+r5hG6xa+01LxxaHQl0gG5t1YxY7W9vU9Z6QQ1n3tmSmW2X
-5yjKpLL4hEksDmqSA1HhPsi+IE/hx2OD7O5FjlSABcudJwpb6zlAeWiFPrNpfjC+
-3M4V9gITTyTs+ObtCpWCEn73EUmlBeMrQkSlq79V+qEol9U1CVNuIyIyXmewf+Iq
-z9A6Pr3Cj/BEaQyaCVQB
-=N+md
------END PGP SIGNATURE-----
-
---8P1HSweYDcXXzwPJ--
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
