@@ -2,115 +2,86 @@ Return-Path: <SRS0=4jry=KT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26C26C4646F
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 12:30:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF195C4646F
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 12:36:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0EED217D5
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 12:30:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0EED217D5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.com
+	by mail.kernel.org (Postfix) with ESMTP id 80F7C217CE
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 12:36:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="v+jMwqN/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80F7C217CE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727832AbeHDOav (ORCPT
+        id S1727978AbeHDOgx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 10:30:51 -0400
-Received: from mout.gmx.net ([212.227.15.15]:45359 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726676AbeHDOav (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 10:30:51 -0400
-Received: from Damenlys-MBP.lan ([180.111.168.89]) by mail.gmx.com (mrgmx003
- [212.227.17.184]) with ESMTPSA (Nemesis) id 0LgqQQ-1gG3Wf3nbK-00oEXv; Sat, 04
- Aug 2018 14:29:57 +0200
-Subject: Re: [PATCH] btrfs/extent_map: Remove unneeded variable "ret"
-To:     zhong jiang <zhongjiang@huawei.com>, clm@fb.com, jbacik@fb.com,
-        dsterba@suse.com
-Cc:     linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Su Yue <suy.fnst@cn.fujitsu.com>
-References: <1533381223-16734-1-git-send-email-zhongjiang@huawei.com>
-From:   Su Yue <Damenly_Su@gmx.com>
-Message-ID: <05f5d38b-9569-6ec7-534f-9a3a5ecd5faa@gmx.com>
-Date:   Sat, 4 Aug 2018 20:29:49 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.0
+        Sat, 4 Aug 2018 10:36:53 -0400
+Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:58467 "EHLO
+        wout2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726744AbeHDOgx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 4 Aug 2018 10:36:53 -0400
+X-Greylist: delayed 343 seconds by postgrey-1.27 at vger.kernel.org; Sat, 04 Aug 2018 10:36:52 EDT
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+        by mailout.west.internal (Postfix) with ESMTP id 4AC7430E;
+        Sat,  4 Aug 2018 08:30:34 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute1.internal (MEProxy); Sat, 04 Aug 2018 08:30:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=DCW2Vk
+        h86TTCQMxQ4zQWTCLH1cOAyg4wsTa2BiGw7J0=; b=v+jMwqN/hAYe98mo8KDHr1
+        KAlmERZvwu7EUNlkXKnpd2mQBMBWDw1uMWE6oDINJPaeXRHyoUs/gwGqNSWOUSR7
+        fLkDsoNlop6PCiS/RgxtqNwWpGfbDoRENo/1aLyLzIfr2+lTLcZ4JzESrQwkuHik
+        Lv+l84KTcvqV6Gz/0p++lGmIhP5GIIj3FMODerFwFU/unA3BzNhXkBmR6/pKg5kl
+        RGAB72VEydcX/6bL1u7sI/Bn2jpkZ5d26TA9/JqYABRtveUvNGPKIZeqcGtCYkrC
+        prZzMgEwOVWHfle73gljTcmEvrzjlWFxFXpl09eHJl3JwBs6Ug5u6FZ82taFzAJA
+        ==
+X-ME-Proxy: <xmx:aZxlW7HejbVTHtuc-Q68LwIXzMLQ8g6Ke1CIkMr7cR9MEoeGTl38Fw>
+    <xmx:aZxlW_OMBdIuKcR15w-nUs7SiDU-qYS4eklsRzA0x3e9oKaZAVKtsw>
+    <xmx:aZxlW23nKbxq60F4X3DKQRikGKqtPJiwNJ-gzZdb9t8UZ8_QH2MOcw>
+    <xmx:aZxlW9CgqEc4zADspGRtsnppN0SqMq57nKb040IShQcjthDwrD3yKw>
+    <xmx:aZxlW39XOuLhWSJRFSxp8NOmr-uvcYs8iLjbY-GxPo56SyDSz3-38Q>
+    <xmx:aZxlWzKye3pB5OpY15veL4vbiIw2vlFyvbjtcayzi8LmaJHAuOJt4Q>
+X-ME-Sender: <xms:aZxlW_w1IZboT3cn4j7V_mxYTX-HaAir6es_88Ckq0BCoSOsTzdseQ>
+Received: from [192.168.178.24] (ip-213-127-46-170.ip.prioritytelecom.net [213.127.46.170])
+        by mail.messagingengine.com (Postfix) with ESMTPA id AA65CE405A;
+        Sat,  4 Aug 2018 08:30:32 -0400 (EDT)
+Date:   Sat, 04 Aug 2018 14:30:29 +0200
+User-Agent: K-9 Mail for Android
+In-Reply-To: <afe8b55a-6cd3-b193-4cd6-8f78baa5298d@dev.carbon-project.org>
+References: <20180803062828.GA9708@kroah.com> <afe8b55a-6cd3-b193-4cd6-8f78baa5298d@dev.carbon-project.org>
 MIME-Version: 1.0
-In-Reply-To: <1533381223-16734-1-git-send-email-zhongjiang@huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:xFcQTkJWvWoHR4RETPIM3ic/U6iR09ocFlTfE6ITMdoiHeV+XYp
- apXYDceQXg+1pp5vhraLZUoRm/RKPJry4zG5jGmTsqdNC+Mz74cc9chNDkHbd6MTOSH55Gh
- XKEFvBGcwRr66CA9Xx+zPd8RFtFLBbCC4g+24psmPaDgGfvqB6ObTMIzjqLUgGUYgn8QZuz
- cTPgdMbTJhPO2MuiaHS/g==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:d83Hm2zRRW0=:Zt+I44kqyXKH8LVbtEpGvG
- lUTyI+ihLAjlUUbkScJ+nix8XwnZU3ena/oLtkKlZ1ucgVi27UHkGHPOzzWQ8Dqc9Jwy3X2m0
- 7uj/XGiOG6+sNwN+QbD1vV7IgmWD08k+2bgbi00q1CkSV3Xh5ayGgsEp+X23gfvXq0d5u1o3M
- aE6lY16QSPq3v46oXZTk8h2kH+j22Lm7u5PBBIz7six7a3gKCsFjFkscD/ILaqLADog0F8BSn
- 2KqVL0ZUxvzLlqfpbXhaJgB0LBwb0RzBXLWuuHJ9DHqn0gkYnLaAeMjpAD2T9VLOD9bR+PWLP
- fVfIcIsMa1dXq2AkycdfVa9eKi2n0pIRFh0/xNNIpyaNuHfZUGTdDlgsJW/YA4wo8095+Kqqg
- Cc+gPFvmC8K6BJba033yfvPqFtAEBvLIOB0LBQetfZsTaoQUd4ryOIBdnu+HSvxab3QjnjBpJ
- qRbVArtqvPdKHh/MJc1f/hznplsjpZCDkDKUi98/POJ67C+f5+U/ejNbs7S/c4Fck3w1Ny2PC
- 9GhsH9vPfYyjXUvxBWzHEggPqggapVKUtRQzb8Mlrqhx+SX6/qscvdf9Lzr51lzeBb5agS0q8
- nlmD1fcd+lJsSXNj9PF9v1mlef5PNep7Qh/EJvqEAO4y/6oEitKH18/oMppUgWoNygVOltvVk
- VabeXbTr04b3keVd2XfUfNXJT4Gq0BHMu4WM5599UQDmwWvGznq9kEy63Re9iCbTPo9/kpdR3
- T16hztSIuiwqCayRAsv1PsR8FoH6W5yxuSacikgz3caIKI53Jc4qRm0cm/acfrdS18lPaKGFE
- dCJeiyc
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: Linux 4.17.12
+To:     =?ISO-8859-1?Q?Kai_Wasserb=E4ch?= <kai@dev.carbon-project.org>,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        torvalds@linux-foundation.org, stable@vger.kernel.org
+From:   Greg K-H <gregkh@linuxfoundation.org>
+Message-ID: <364B6D5B-B609-4AA4-B1E6-F93B965FD010@linuxfoundation.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On August 4, 2018 12:56:23 PM GMT+02:00, "Kai Wasserb=C3=A4ch" <kai@dev=2Ec=
+arbon-project=2Eorg> wrote:
+>Hey Greg,
+>as with the 4=2E17=2E11 release, there is no signature file for the patch
+>(<https://cdn=2Ekernel=2Eorg/pub/linux/kernel/v4=2Ex/patch-4=2E17=2E12=2E=
+xz>=2E Could
+>you
+>please add a signature for that patch?
+>
+>Thanks,
+>Kai
 
-
-On 2018/8/4 7:13 PM, zhong jiang wrote:
-> The ret is not used after initalization, So just remove it.
-> 
-> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
-
-Reviewed-by: Su Yue <suy.fnst@cn.fujitsu.com>
-> ---
->   fs/btrfs/extent_map.c | 8 +++-----
->   1 file changed, 3 insertions(+), 5 deletions(-)
-> 
-> diff --git a/fs/btrfs/extent_map.c b/fs/btrfs/extent_map.c
-> index 6648d55..b48ab41 100644
-> --- a/fs/btrfs/extent_map.c
-> +++ b/fs/btrfs/extent_map.c
-> @@ -276,7 +276,6 @@ static void try_merge_map(struct extent_map_tree *tree, struct extent_map *em)
->   int unpin_extent_cache(struct extent_map_tree *tree, u64 start, u64 len,
->   		       u64 gen)
->   {
-> -	int ret = 0;
->   	struct extent_map *em;
->   	bool prealloc = false;
->   
-> @@ -308,7 +307,7 @@ int unpin_extent_cache(struct extent_map_tree *tree, u64 start, u64 len,
->   	free_extent_map(em);
->   out:
->   	write_unlock(&tree->lock);
-> -	return ret;
-> +	return 0;
->   
->   }
->   
-> @@ -430,14 +429,13 @@ struct extent_map *search_extent_mapping(struct extent_map_tree *tree,
->    */
->   int remove_extent_mapping(struct extent_map_tree *tree, struct extent_map *em)
->   {
-> -	int ret = 0;
-> -
->   	WARN_ON(test_bit(EXTENT_FLAG_PINNED, &em->flags));
->   	rb_erase(&em->rb_node, &tree->map);
->   	if (!test_bit(EXTENT_FLAG_LOGGING, &em->flags))
->   		list_del_init(&em->list);
->   	RB_CLEAR_NODE(&em->rb_node);
-> -	return ret;
-> +
-> +	return 0;
->   }
->   
->   void replace_extent_mapping(struct extent_map_tree *tree,
-> 
+https://www=2Ekernel=2Eorg/minor-changes-to-tarball-release-format=2Ehtml
