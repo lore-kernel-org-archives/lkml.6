@@ -2,92 +2,90 @@ Return-Path: <SRS0=4jry=KT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3658C4646F
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 08:12:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A3D0C4646D
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 08:15:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94FCF217BF
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 08:12:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94FCF217BF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lip6.fr
+	by mail.kernel.org (Postfix) with ESMTP id A512D216ED
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 08:15:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FK5HYAgy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A512D216ED
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727121AbeHDKLw (ORCPT
+        id S1726976AbeHDKO7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 06:11:52 -0400
-Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:25386
-        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726676AbeHDKLw (ORCPT
+        Sat, 4 Aug 2018 06:14:59 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:35386 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726055AbeHDKO7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 06:11:52 -0400
-X-IronPort-AV: E=Sophos;i="5.51,442,1526335200"; 
-   d="scan'208";a="274959825"
-Received: from abo-214-111-68.mrs.modulonet.fr (HELO [192.168.0.15]) ([85.68.111.214])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Aug 2018 10:11:54 +0200
-Date:   Sat, 4 Aug 2018 10:11:54 +0200 (CEST)
-From:   Julia Lawall <julia.lawall@lip6.fr>
-X-X-Sender: jll@hadrien
-To:     Sohil Ladhani <supertakumi86@gmail.com>
-cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Larry Finger <Larry.Finger@lwfinger.net>,
-        Kees Cook <keescook@chromium.org>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Ping-Ke Shih <pkshih@realtek.com>,
-        Arushi Singhal <arushisinghal19971997@gmail.com>,
-        "Frank A. Cancio Bello" <frank@generalsoftwareinc.com>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Staging: rtlwifi: base: Fixed line ending with
- parentheses
-In-Reply-To: <20180804080817.GA2140@zenus>
-Message-ID: <alpine.DEB.2.20.1808041010490.2435@hadrien>
-References: <20180804080817.GA2140@zenus>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        Sat, 4 Aug 2018 06:14:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=XgqiD9AcQ0QZ3MMo7q5cXccF+S3FJ6tY8x6hL1+La3k=; b=FK5HYAgyfuFGw6Z0QwybPA0k8
+        ifMKHEioEAX//09ROmH2IG5V9KArwo2o/YfRlwTvHY6/dyRphjs0ehjsUEk4fnKnd9Mg+wqpDpK/x
+        pW8awEDx6OQC7QLesZi+1L8fC7tYIp8GE0jsGs8vJ7xJ+thu8MbYcZa+ODScdYKECI2crcP60QYSS
+        xOyQBHbbBUXVdrBbMCYWFDajlSXi0QIrQJCDQhNRlMbccvzeVbcbUe8SOGaeSZ766cNogSJiY9VsB
+        WO4HNRFHXS+T7H0Ui2ZJvR6Jgu4/2KbJhUt5fg4kMPXMOXXGhCVQ8bFeOdXikIk8ovTdo5xFaoMaX
+        U+WOLe4fg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1flriG-0000VG-BY; Sat, 04 Aug 2018 08:15:00 +0000
+Date:   Sat, 4 Aug 2018 01:15:00 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        aik@ozlabs.ru, robh@kernel.org, joe@perches.com,
+        elfring@users.sourceforge.net, david@gibson.dropbear.id.au,
+        jasowang@redhat.com, mpe@ellerman.id.au, linuxram@us.ibm.com,
+        haren@linux.vnet.ibm.com, paulus@samba.org,
+        srikar@linux.vnet.ibm.com, robin.murphy@arm.com,
+        jean-philippe.brucker@arm.com, marc.zyngier@arm.com
+Subject: Re: [RFC 0/4] Virtio uses DMA API for all devices
+Message-ID: <20180804081500.GA1455@infradead.org>
+References: <20180801083639.GF26378@infradead.org>
+ <26c1d3d50d8e081eed44fe9940fbefed34598cbd.camel@kernel.crashing.org>
+ <20180802182959-mutt-send-email-mst@kernel.org>
+ <82ccef6ec3d95ee43f3990a4a2d0aea87eb45e89.camel@kernel.crashing.org>
+ <20180802200646-mutt-send-email-mst@kernel.org>
+ <e9beb6bba5a7d05741e27e85b24a3b23ba7c2762.camel@kernel.crashing.org>
+ <20180802225738-mutt-send-email-mst@kernel.org>
+ <de4888b6457e220776e16a9c8958ff0886ffc66c.camel@kernel.crashing.org>
+ <20180803070507.GA1344@infradead.org>
+ <20180803221634-mutt-send-email-mst@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180803221634-mutt-send-email-mst@kernel.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Aug 03, 2018 at 10:17:32PM +0300, Michael S. Tsirkin wrote:
+> It seems reasonable to teach a platform to override dma-range
+> for a specific device e.g. in case it knows about bugs in ACPI.
 
+A platform will be able override dma-range using the dev->bus_dma_mask
+field starting in 4.19.  But we'll still need a way how to
 
-On Sat, 4 Aug 2018, Sohil Ladhani wrote:
-
-> This patch fixes the "Lines should not end with a '('" problem reported by
-> checkpatch
-
-There is still no v2 in the subject line, or explanation of what has
-changed under the --- (I assume this is still the same place and the same
-code; I didn't keep the old versions to check).
-
-julia
-
->
-> Signed-off-by: Sohil Ladhani <supertakumi86@gmail.com>
-> ---
->  drivers/staging/rtlwifi/base.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/staging/rtlwifi/base.c b/drivers/staging/rtlwifi/base.c
-> index 094827c1879a..654aa4e068ba 100644
-> --- a/drivers/staging/rtlwifi/base.c
-> +++ b/drivers/staging/rtlwifi/base.c
-> @@ -685,9 +685,8 @@ static void _rtl_query_protection_mode(struct ieee80211_hw *hw,
->  	}
->  }
->
-> -u8 rtl_mrate_idx_to_arfr_id(
-> -	struct ieee80211_hw *hw, u8 rate_index,
-> -	enum wireless_mode wirelessmode)
-> +u8 rtl_mrate_idx_to_arfr_id(struct ieee80211_hw *hw, u8 rate_index,
-> +			    enum wireless_mode wirelessmode)
->  {
->  	struct rtl_priv *rtlpriv = rtl_priv(hw);
->  	struct rtl_phy *rtlphy = &rtlpriv->phy;
-> --
-> 2.18.0
->
->
+  a) document in the virtio spec that all bus dma quirks are to be
+     applied
+  b) a way to document in a virtio-related spec how the bus handles
+     dma for Ben's totally fucked up hypervisor.  Without that there
+     is not way we'll get interoperable implementations.
