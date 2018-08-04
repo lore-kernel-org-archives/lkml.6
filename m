@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCBFCC4646D
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:09:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C2DFC4646F
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:09:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 819792177A
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:09:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 819792177A
+	by mail.kernel.org (Postfix) with ESMTP id B82062177A
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:09:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B82062177A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388722AbeHDLJ3 (ORCPT
+        id S2388740AbeHDLJc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 07:09:29 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49810 "EHLO
+        Sat, 4 Aug 2018 07:09:32 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49822 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726855AbeHDLJ2 (ORCPT
+        with ESMTP id S1726855AbeHDLJb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 07:09:28 -0400
+        Sat, 4 Aug 2018 07:09:31 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 84D97BBF;
-        Sat,  4 Aug 2018 09:09:28 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9EF13BB3;
+        Sat,  4 Aug 2018 09:09:31 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
+        stable@vger.kernel.org, Shaul Triebitz <shaul.triebitz@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 061/124] drm/radeon: fix mode_valids return type
-Date:   Sat,  4 Aug 2018 11:00:50 +0200
-Message-Id: <20180804082704.786500341@linuxfoundation.org>
+Subject: [PATCH 4.4 026/124] iwlwifi: pcie: fix race in Rx buffer allocator
+Date:   Sat,  4 Aug 2018 11:00:15 +0200
+Message-Id: <20180804082703.421702408@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180804082702.434482435@linuxfoundation.org>
 References: <20180804082702.434482435@linuxfoundation.org>
@@ -52,70 +51,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+From: Shaul Triebitz <shaul.triebitz@intel.com>
 
-[ Upstream commit 7a47f20eb1fb8fa8d7a8fe3a4fd8c721f04c2174 ]
+[ Upstream commit 0f22e40053bd5378ad1e3250e65c574fd61c0cd6 ]
 
-The method struct drm_connector_helper_funcs::mode_valid is defined
-as returning an 'enum drm_mode_status' but the driver implementation
-for this method uses an 'int' for it.
+Make sure the rx_allocator worker is canceled before running the
+rx_init routine.  rx_init frees and re-allocates all rxb's pages.  The
+rx_allocator worker also allocates pages for the used rxb's.  Running
+rx_init and rx_allocator simultaniously causes a kernel panic.  Fix
+that by canceling the work in rx_init.
 
-Fix this by using 'enum drm_mode_status' in the driver too.
-
-Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Shaul Triebitz <shaul.triebitz@intel.com>
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/radeon/radeon_connectors.c |   10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/net/wireless/iwlwifi/pcie/rx.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/gpu/drm/radeon/radeon_connectors.c
-+++ b/drivers/gpu/drm/radeon/radeon_connectors.c
-@@ -844,7 +844,7 @@ static int radeon_lvds_get_modes(struct
- 	return ret;
- }
+--- a/drivers/net/wireless/iwlwifi/pcie/rx.c
++++ b/drivers/net/wireless/iwlwifi/pcie/rx.c
+@@ -713,6 +713,8 @@ int iwl_pcie_rx_init(struct iwl_trans *t
+ 						WQ_HIGHPRI | WQ_UNBOUND, 1);
+ 	INIT_WORK(&rba->rx_alloc, iwl_pcie_rx_allocator_work);
  
--static int radeon_lvds_mode_valid(struct drm_connector *connector,
-+static enum drm_mode_status radeon_lvds_mode_valid(struct drm_connector *connector,
- 				  struct drm_display_mode *mode)
- {
- 	struct drm_encoder *encoder = radeon_best_single_encoder(connector);
-@@ -993,7 +993,7 @@ static int radeon_vga_get_modes(struct d
- 	return ret;
- }
- 
--static int radeon_vga_mode_valid(struct drm_connector *connector,
-+static enum drm_mode_status radeon_vga_mode_valid(struct drm_connector *connector,
- 				  struct drm_display_mode *mode)
- {
- 	struct drm_device *dev = connector->dev;
-@@ -1136,7 +1136,7 @@ static int radeon_tv_get_modes(struct dr
- 	return 1;
- }
- 
--static int radeon_tv_mode_valid(struct drm_connector *connector,
-+static enum drm_mode_status radeon_tv_mode_valid(struct drm_connector *connector,
- 				struct drm_display_mode *mode)
- {
- 	if ((mode->hdisplay > 1024) || (mode->vdisplay > 768))
-@@ -1477,7 +1477,7 @@ static void radeon_dvi_force(struct drm_
- 		radeon_connector->use_digital = true;
- }
- 
--static int radeon_dvi_mode_valid(struct drm_connector *connector,
-+static enum drm_mode_status radeon_dvi_mode_valid(struct drm_connector *connector,
- 				  struct drm_display_mode *mode)
- {
- 	struct drm_device *dev = connector->dev;
-@@ -1778,7 +1778,7 @@ out:
- 	return ret;
- }
- 
--static int radeon_dp_mode_valid(struct drm_connector *connector,
-+static enum drm_mode_status radeon_dp_mode_valid(struct drm_connector *connector,
- 				  struct drm_display_mode *mode)
- {
- 	struct drm_device *dev = connector->dev;
++	cancel_work_sync(&rba->rx_alloc);
++
+ 	spin_lock(&rba->lock);
+ 	atomic_set(&rba->req_pending, 0);
+ 	atomic_set(&rba->req_ready, 0);
 
 
