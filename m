@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D774C4646D
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A85BC4646F
 	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:02:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EFFE21775
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:02:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EFFE21775
+	by mail.kernel.org (Postfix) with ESMTP id 3D75E217BF
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:02:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D75E217BF
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728095AbeHDLCI (ORCPT
+        id S1728456AbeHDLCP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 07:02:08 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48058 "EHLO
+        Sat, 4 Aug 2018 07:02:15 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48080 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726477AbeHDLCI (ORCPT
+        with ESMTP id S1726477AbeHDLCO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 07:02:08 -0400
+        Sat, 4 Aug 2018 07:02:14 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 88989BB3;
-        Sat,  4 Aug 2018 09:02:10 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 98FB9BB3;
+        Sat,  4 Aug 2018 09:02:16 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Anatoly Trosinenko <anatoly.trosinenko@gmail.com>,
-        Phillip Lougher <phillip.lougher@gmail.com>, stable@kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.17 11/31] squashfs: more metadata hardening
-Date:   Sat,  4 Aug 2018 11:00:46 +0200
-Message-Id: <20180804082632.955001229@linuxfoundation.org>
+        stable@vger.kernel.org, Anton Vasilyev <vasilyev@ispras.ru>,
+        Marc Kleine-Budde <mkl@pengutronix.de>
+Subject: [PATCH 4.17 13/31] can: ems_usb: Fix memory leak on ems_usb_disconnect()
+Date:   Sat,  4 Aug 2018 11:00:48 +0200
+Message-Id: <20180804082633.227259411@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180804082632.304529527@linuxfoundation.org>
 References: <20180804082632.304529527@linuxfoundation.org>
@@ -52,37 +50,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Linus Torvalds <torvalds@linux-foundation.org>
+From: Anton Vasilyev <vasilyev@ispras.ru>
 
-commit d512584780d3e6a7cacb2f482834849453d444a1 upstream.
+commit 72c05f32f4a5055c9c8fe889bb6903ec959c0aad upstream.
 
-Anatoly reports another squashfs fuzzing issue, where the decompression
-parameters themselves are in a compressed block.
+ems_usb_probe() allocates memory for dev->tx_msg_buffer, but there
+is no its deallocation in ems_usb_disconnect().
 
-This causes squashfs_read_data() to be called in order to read the
-decompression options before the decompression stream having been set
-up, making squashfs go sideways.
+Found by Linux Driver Verification project (linuxtesting.org).
 
-Reported-by: Anatoly Trosinenko <anatoly.trosinenko@gmail.com>
-Acked-by: Phillip Lougher <phillip.lougher@gmail.com>
-Cc: stable@kernel.org
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Anton Vasilyev <vasilyev@ispras.ru>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/squashfs/block.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/can/usb/ems_usb.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/fs/squashfs/block.c
-+++ b/fs/squashfs/block.c
-@@ -167,6 +167,8 @@ int squashfs_read_data(struct super_bloc
- 	}
+--- a/drivers/net/can/usb/ems_usb.c
++++ b/drivers/net/can/usb/ems_usb.c
+@@ -1072,6 +1072,7 @@ static void ems_usb_disconnect(struct us
+ 		usb_free_urb(dev->intr_urb);
  
- 	if (compressed) {
-+		if (!msblk->stream)
-+			goto read_failure;
- 		length = squashfs_decompress(msblk, bh, b, offset, length,
- 			output);
- 		if (length < 0)
+ 		kfree(dev->intr_in_buffer);
++		kfree(dev->tx_msg_buffer);
+ 	}
+ }
+ 
 
 
