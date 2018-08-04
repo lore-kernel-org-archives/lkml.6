@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4027C4646D
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:12:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1BC0C4646F
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:12:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6362E2177A
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:12:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6362E2177A
+	by mail.kernel.org (Postfix) with ESMTP id B48D72177A
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:12:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B48D72177A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389524AbeHDLMs (ORCPT
+        id S2389537AbeHDLMw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 07:12:48 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50502 "EHLO
+        Sat, 4 Aug 2018 07:12:52 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50514 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388557AbeHDLMr (ORCPT
+        with ESMTP id S2388557AbeHDLMv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 07:12:47 -0400
+        Sat, 4 Aug 2018 07:12:51 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DFE4589C;
-        Sat,  4 Aug 2018 09:12:46 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7E2DE89C;
+        Sat,  4 Aug 2018 09:12:50 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, kernel test robot <rong.a.chen@intel.com>,
-        Dmitry Safonov <dima@arista.com>,
+        stable@vger.kernel.org,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 107/124] netlink: Dont shift with UB on nlk->ngroups
-Date:   Sat,  4 Aug 2018 11:01:36 +0200
-Message-Id: <20180804082706.463051350@linuxfoundation.org>
+Subject: [PATCH 4.4 108/124] NET: stmmac: align DMA stuff to largest cache line length
+Date:   Sat,  4 Aug 2018 11:01:37 +0200
+Message-Id: <20180804082706.497901268@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180804082702.434482435@linuxfoundation.org>
 References: <20180804082702.434482435@linuxfoundation.org>
@@ -51,37 +51,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dmitry Safonov <dima@arista.com>
+From: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
 
-[ Upstream commit 61f4b23769f0cc72ae62c9a81cf08f0397d40da8 ]
+[ Upstream commit 9939a46d90c6c76f4533d534dbadfa7b39dc6acc ]
 
-On i386 nlk->ngroups might be 32 or 0. Which leads to UB, resulting in
-hang during boot.
-Check for 0 ngroups and use (unsigned long long) as a type to shift.
+As for today STMMAC_ALIGN macro (which is used to align DMA stuff)
+relies on L1 line length (L1_CACHE_BYTES).
+This isn't correct in case of system with several cache levels
+which might have L1 cache line length smaller than L2 line. This
+can lead to sharing one cache line between DMA buffer and other
+data, so we can lose this data while invalidate DMA buffer before
+DMA transaction.
 
-Fixes: 7acf9d4237c4 ("netlink: Do not subscribe to non-existent groups").
-Reported-by: kernel test robot <rong.a.chen@intel.com>
-Signed-off-by: Dmitry Safonov <dima@arista.com>
+Fix that by using SMP_CACHE_BYTES instead of L1_CACHE_BYTES for
+aligning.
+
+Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/netlink/af_netlink.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/netlink/af_netlink.c
-+++ b/net/netlink/af_netlink.c
-@@ -983,7 +983,11 @@ static int netlink_bind(struct socket *s
- 		if (err)
- 			return err;
- 	}
--	groups &= (1UL << nlk->ngroups) - 1;
-+
-+	if (nlk->ngroups == 0)
-+		groups = 0;
-+	else
-+		groups &= (1ULL << nlk->ngroups) - 1;
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -54,7 +54,7 @@
+ #include <linux/reset.h>
+ #include <linux/of_mdio.h>
  
- 	bound = nlk->bound;
- 	if (bound) {
+-#define STMMAC_ALIGN(x)	L1_CACHE_ALIGN(x)
++#define	STMMAC_ALIGN(x)		__ALIGN_KERNEL(x, SMP_CACHE_BYTES)
+ 
+ /* Module parameters */
+ #define TX_TIMEO	5000
 
 
