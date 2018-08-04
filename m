@@ -2,155 +2,128 @@ Return-Path: <SRS0=4jry=KT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8DE3C4646F
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 18:22:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BD77C4646F
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 18:23:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91086217CB
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 18:22:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15AED21763
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 18:23:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KJ8vyTGk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91086217CB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="M16qRQJA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15AED21763
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729663AbeHDUXz (ORCPT
+        id S1729668AbeHDUZP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 16:23:55 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:35286 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728054AbeHDUXz (ORCPT
+        Sat, 4 Aug 2018 16:25:15 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:36710 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728054AbeHDUZP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 16:23:55 -0400
-Received: by mail-wr1-f65.google.com with SMTP id g1-v6so4936372wru.2;
-        Sat, 04 Aug 2018 11:22:23 -0700 (PDT)
+        Sat, 4 Aug 2018 16:25:15 -0400
+Received: by mail-pl0-f66.google.com with SMTP id e11-v6so3942807plb.3
+        for <linux-kernel@vger.kernel.org>; Sat, 04 Aug 2018 11:23:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=oFFI0EISTPJdVf0+8pY3UPl0OPXEx7SkUOMOEODVh0Q=;
-        b=KJ8vyTGkhoH7eUNCPEdo82+/LOA4qWmY6WkTP3/seeCF0uxO4avIFomW1Jk34YlwWL
-         xw+DnPyA/xBGtHnpCIauq5lNHrCFLeXEQ3IiURrQIbpdLZvGxZg8YGRkaJhj8Q3Mh+59
-         6l+wo31a6QtSp4H3GJzEPgUd33M3Um/vIjjBTBfEg3lVUB7QWjbF446KawIehznxSRNy
-         044BOMoidmt+17q02hzDhx4k/YI5SzLaWnYmUQ8rIcB2Ury18BBMbXPSdYLN9UtmFfMs
-         5a1MWRkaIIavJ8H8ye1X6feZ3ASzDFIi+8rqOy8nzed2Sw4ukjs7HTmM2XRpR+dp+hkn
-         edmA==
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=bCwe84L7p9AwTasKI4cVE0v5oPhE5ctCQBIpeDuk1N8=;
+        b=M16qRQJAEdku+HjQgS3mukQo1x8APQFNStaWoDB8OlU3EeAOimC55zQE7tp3EbN2mO
+         UvyuRwiwpeEigR8YNDMaIvAmEXtqp7Adtzw3AzckXOo6JosWb8fLmWjaiO+yIZ1KBYw2
+         /hIil+DUytD/ya4yzVCjKVi4ArFv+kCKdEt1nJssbuyLwvtVMZcknJYaEnIbnl5dX2rO
+         TWOqGWyH6qFOWi0nDauzzZl884uQqJ/OUm4QEfy5ycmggryb6Gbe9PLhVvy5/gi3cakL
+         ykcM61S3PzaSVwdkJx3y5s1B0QA4SlRxuEqQM4Ha5drFcxq4vQAL72KMdaH08wVB/gaR
+         1yDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=oFFI0EISTPJdVf0+8pY3UPl0OPXEx7SkUOMOEODVh0Q=;
-        b=SQYGWe6wIqZS6U7h7GsgLi3DobSx1B81k5vGaQzzS9nf2RQjL18+Ehgna25MjH/BiI
-         gZDbnY2FjFSqDWUf8MwsdMx8af2TGZJjqboILtbHbRBCjbUERQ9VAVc4fGTdzsg+R4dU
-         ZjXYRWTeZ3eaYUiT8wkxLsvDMSL7zPgLvKZoEuct8m0EZyMRM43muMmxzvYpV5jMWtKV
-         UA1T4ePi5CN/V51jYYDwHCNzAo3tZdB6sfW/OVDMy6k/ydg62IKmYMOBZ65ik1huRjqX
-         rM9ZgotjvVewWUnmLyGDT5RnvDACa2Ca41Fr2VqLid08T62Ho0ShVrpc2tPS+A3eYlqo
-         QcaQ==
-X-Gm-Message-State: AOUpUlGZXwQWZAL8L6F1j4CwlRwPGhWKMfVMo5T30GzTaOmeFhifxzGA
-        AdnhKlFytOLKrK2JLg/bBBIerW3G
-X-Google-Smtp-Source: AAOMgpfcnfXNDJ5IbXYlcggnMZvgQguzwR0WaWrtS6dawhyGOjZXQXPt7ubP+bqtB0yGLxeOBnFjcQ==
-X-Received: by 2002:adf:8481:: with SMTP id 1-v6mr5785088wrg.34.1533406942666;
-        Sat, 04 Aug 2018 11:22:22 -0700 (PDT)
-Received: from debian64.daheim (p4FD09136.dip0.t-ipconnect.de. [79.208.145.54])
-        by smtp.gmail.com with ESMTPSA id v5-v6sm5795798wru.60.2018.08.04.11.22.21
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 04 Aug 2018 11:22:21 -0700 (PDT)
-Received: from localhost.daheim ([127.0.0.1] helo=debian64.localnet)
-        by debian64.daheim with esmtp (Exim 4.91)
-        (envelope-from <chunkeey@gmail.com>)
-        id 1fm1C0-0003hH-Oz; Sat, 04 Aug 2018 20:22:20 +0200
-From:   Christian Lamparter <chunkeey@gmail.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     fe@dev.tdt.de, Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] gpio: Add driver for PC Engines APU2/APU3 GPIOs
-Date:   Sat, 04 Aug 2018 20:22:20 +0200
-Message-ID: <1846152.TW98f23PIX@debian64>
-In-Reply-To: <CACRpkdbY3w-ptUOkv5TUZh+5oEGU+4BLO_6=12QecRveTSBKSQ@mail.gmail.com>
-References: <20180801111243.2848-1-fe@dev.tdt.de> <CACRpkdbY3w-ptUOkv5TUZh+5oEGU+4BLO_6=12QecRveTSBKSQ@mail.gmail.com>
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=bCwe84L7p9AwTasKI4cVE0v5oPhE5ctCQBIpeDuk1N8=;
+        b=Ah+/jfeiRUCoAnwNt7XXOcwHHgrYMWsqNbvj2QaS/OAAFyZU2e2r7/BZeBz3mL7Inm
+         Rpu2LuEvPDvFsMXT2RA8dBwZSauSQomNS7cufUBjexKaVZ4USJt53oQl/GTvLvgGb+CU
+         KqU2dL0n3wbJRJ22F66Z9tnIDbxmiKh415uNTM4vNUiDgsgFnegejcMWciZxBhFZ99Fc
+         nTWsmY7EJjSNqkMzfzxtn9FREoEvaIeAneddOaXVHHRgSCVTL8z1CGt1ETA4IL4g9TUw
+         QkCUojGcdCC+egjV5Hpb6ZXHpiOr5hLjVkB/sskd98jyUs61eBw1UZBX0+7V6VbuUK02
+         OKTA==
+X-Gm-Message-State: AOUpUlEfFav/nVYxfimxoW4eIhMIFeWLW8fNbe3nYqChgktYKE2VQCB5
+        I9IYez+mAVsQvdkNzJFT8WlwIg==
+X-Google-Smtp-Source: AAOMgpdr/hlQrn6xNY3uqEEzKpmP4IORE//TP4E2DEm2tydoGGMgpAN1CpuhVGU5am+H/SUHlfIwYg==
+X-Received: by 2002:a17:902:6193:: with SMTP id u19-v6mr8016733plj.133.1533407023630;
+        Sat, 04 Aug 2018 11:23:43 -0700 (PDT)
+Received: from [100.112.67.156] ([104.133.9.108])
+        by smtp.gmail.com with ESMTPSA id r83-v6sm17451965pgr.8.2018.08.04.11.23.41
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Sat, 04 Aug 2018 11:23:41 -0700 (PDT)
+Date:   Sat, 4 Aug 2018 11:23:34 -0700 (PDT)
+From:   Hugh Dickins <hughd@google.com>
+X-X-Sender: hugh@eggly.anvils
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+cc:     Hugh Dickins <hughd@google.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kees Cook <keescook@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        =?UTF-8?Q?J=C3=BCrgen_Gro=C3=9F?= <jgross@suse.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>
+Subject: Re: [PATCH 3/7] x86/mm/init: pass unconverted symbol addresses to
+ free_init_pages()
+In-Reply-To: <CA+55aFzd-F65GVBq8a-vTaU4G5UwddDcOdcd3SV9YVdB6qDGdg@mail.gmail.com>
+Message-ID: <alpine.LSU.2.11.1808041112260.1860@eggly.anvils>
+References: <20180802225823.4711C55B@viggo.jf.intel.com> <20180802225828.89B2D0E2@viggo.jf.intel.com> <alpine.LSU.2.11.1808031650050.4436@eggly.anvils> <CA+55aFzd-F65GVBq8a-vTaU4G5UwddDcOdcd3SV9YVdB6qDGdg@mail.gmail.com>
+User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thursday, August 2, 2018 11:30:00 PM CEST Linus Walleij wrote:
-> On Wed, Aug 1, 2018 at 1:12 PM Florian Eckert <fe@dev.tdt.de> wrote:
-> 
-> > Add a new device driver "gpio-apu" which will now handle the GPIOs on
-> > APU2 and APU3 devices from PC Engines.
+On Sat, 4 Aug 2018, Linus Torvalds wrote:
+> On Fri, Aug 3, 2018 at 5:19 PM Hugh Dickins <hughd@google.com> wrote:
 > >
-> > - APU2/APU3 -> front button reset support
-> > - APU3 -> SIM switch support
-> >
-> > Signed-off-by: Florian Eckert <fe@dev.tdt.de>
+> > I thought that virt_to_page() only works on virtual addresses
+> > in the direct map
 > 
-> Hi Florian, thanks for the patch!
+> You're right that virt_to_page() does not work on any _actual_ virtual
+> mappings (ie no user pages, and no vmalloc() pages etc). It does not
+> follow page tables at all.
+> 
+> And on 32-bit, it literally ends up doing (see __phys_addr_nodebug()) a simple
+> 
+>     #define __phys_addr_nodebug(x)  ((x) - PAGE_OFFSET)
+> 
+> However, on x86-64, we have *two* cases of direct mappings: we have
+> the one at __START_KERNEL_map, and we have the one at PAGE_OFFSET.
+> 
+> And virt_to_page() handles both of those direct mappings.
+> 
+> Annoying? Yes. And it has caused bugs in the past. And I entirely
+> forget why we needed it on x86-64.
+> 
+> [ Goes around and rummages ]
+> 
+> Oh, never mind, looking around reminded me why: we want to map the
+> kernel text in the top 31 bits, so that we can use the faster
+> -mcmodel=kernel because all symbols fit in sign-extended 32 bits.
+> 
+> Maybe there was some other reason too, but I think that's it.
 
-There have been multiple attempts at upstreaming a gpio/pinctrl driver for
-the different APU SoC by now. The last attempt I remember took place on 
-this ML too: <https://lkml.org/lkml/2017/12/20/824>
+Thanks a lot for writing that up. You shamed me into grepping
+a little harder than I did yesterday, when all I could find were
+"- PAGE_OFFSET" conversions (maybe I got lost in 32-bit-land).
+I had missed __phys_addr_nodebug(), where the __START_KERNEL_map
+alternative is handled.
 
-But sadly most attempts stalled, because there is already a leds-apu driver 
-<https://github.com/torvalds/linux/blob/master/drivers/leds/leds-apu.c>
-(since the gpio-driver was never accepted) that will do in a pinch for the
-LEDs (which most people care about).
-
-> I looped in Andy Schevchenko and Mika Westerberg who are authorities on
-> x86 platform drivers in general and GPIO and pin control in particular
-> so they can help out with the review.
-Intel helping AMD. That's nice to see ;-)
-
-> I'm a bit confused whether these things are really GPIOs or just
-> switches but since they can change direction they seem to be GPIOs.
-
-Yes, it's a real gpio/pinctrl in AMDs Tech docs.
-<https://support.amd.com/TechDocs/52740_16h_Models_30h-3Fh_BKDG.pdf>
-
-Some of the pins are muxed. I.e GPIO167-170 can either be a GPIO or
-used for HD audio.
-"The HD audio controller supports up to four codecs with one AZ_SDIN
-pin from each codec. The four AZ_SDIN pins are multiplexed with
-GPIO167-170 (GPIOxA7-GPIOxAA). If a particular pin is to be used for
-HD audio functionality". There's a full table in "3.26.12.1 GPIO Registers". 
-
-
-
-
-As for the APUs. The vendor (PC Engines) happily provides
-PDFs and schematics for their boards:
-<https://www.pcengines.ch/pdf/apu1.pdf>
-<https://www.pcengines.ch/schema/apu1c.pdf>
-<https://www.pcengines.ch/pdf/apu2.pdf>
-<http://pcengines.ch/schema/apu2c.pdf>
-
-So, it's possible to repurpose several test points as additional
-GPIOs and more.
-
-Note2:
-On both boards there is also a dedicated GPIO pin header J19, but
-these pins are controlled by the SuperIO Nuvoton NCT5104D.
-
-> > +config GPIO_APU
-> > +       tristate "PC Engines APU2/APU3 GPIO support"
-> > +       depends on X86
-> > +       select GPIO_GENERIC
-> > +       help
-> > +         Say Y here to support GPIO functionality on APU2/APU3 boards
-> > +         from PC Engines.
-> > +         - APU2/APU3 -> front button reset support
-> > +         - APU3 -> SIM switch support
-Well, by design this driver will sort of clash with the leds-apu driver. 
- 
-Regards,
-Christian
-
-
+Hugh
