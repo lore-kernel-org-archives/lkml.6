@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C776C46470
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:07:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A31EFC4646F
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:07:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C872217C7
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:07:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C872217C7
+	by mail.kernel.org (Postfix) with ESMTP id 54C0F217C6
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:07:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54C0F217C6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387669AbeHDLHt (ORCPT
+        id S2387684AbeHDLHv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 07:07:49 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49452 "EHLO
+        Sat, 4 Aug 2018 07:07:51 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49460 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726754AbeHDLHr (ORCPT
+        with ESMTP id S1726754AbeHDLHu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 07:07:47 -0400
+        Sat, 4 Aug 2018 07:07:50 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C6FABBB3;
-        Sat,  4 Aug 2018 09:07:48 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DCC49BB3;
+        Sat,  4 Aug 2018 09:07:51 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Shuah Khan (Samsung OSG)" <shuah@kernel.org>,
+        stable@vger.kernel.org, Eyal Reizer <eyalr@ti.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 023/124] usbip: usbip_detach: Fix memory, udev context and udev leak
-Date:   Sat,  4 Aug 2018 11:00:12 +0200
-Message-Id: <20180804082703.309209824@linuxfoundation.org>
+Subject: [PATCH 4.4 032/124] wlcore: sdio: check for valid platform device data before suspend
+Date:   Sat,  4 Aug 2018 11:00:21 +0200
+Message-Id: <20180804082703.639219270@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180804082702.434482435@linuxfoundation.org>
 References: <20180804082702.434482435@linuxfoundation.org>
@@ -51,48 +51,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Shuah Khan (Samsung OSG)" <shuah@kernel.org>
+From: Eyal Reizer <eyalreizer@gmail.com>
 
-[ Upstream commit d179f99a651685b19333360e6558110da2fe9bd7 ]
+[ Upstream commit 6e91d48371e79862ea2c05867aaebe4afe55a865 ]
 
-detach_port() fails to call usbip_vhci_driver_close() from its error
-path after usbip_vhci_detach_device() returns failure, leaking memory
-allocated in usbip_vhci_driver_open() and holding udev_context and udev
-references. Fix it to call usbip_vhci_driver_close().
+the wl pointer can be null In case only wlcore_sdio is probed while
+no WiLink module is successfully probed, as in the case of mounting a
+wl12xx module while using a device tree file configured with wl18xx
+related settings.
+In this case the system was crashing in wl1271_suspend() as platform
+device data is not set.
+Make sure wl the pointer is valid before using it.
 
-Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Eyal Reizer <eyalr@ti.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/usb/usbip/src/usbip_detach.c |    9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/net/wireless/ti/wlcore/sdio.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/tools/usb/usbip/src/usbip_detach.c
-+++ b/tools/usb/usbip/src/usbip_detach.c
-@@ -43,7 +43,7 @@ void usbip_detach_usage(void)
+--- a/drivers/net/wireless/ti/wlcore/sdio.c
++++ b/drivers/net/wireless/ti/wlcore/sdio.c
+@@ -388,6 +388,11 @@ static int wl1271_suspend(struct device
+ 	mmc_pm_flag_t sdio_flags;
+ 	int ret = 0;
  
- static int detach_port(char *port)
- {
--	int ret;
-+	int ret = 0;
- 	uint8_t portnum;
- 	char path[PATH_MAX+1];
- 
-@@ -73,9 +73,12 @@ static int detach_port(char *port)
- 	}
- 
- 	ret = usbip_vhci_detach_device(portnum);
--	if (ret < 0)
--		return -1;
-+	if (ret < 0) {
-+		ret = -1;
-+		goto call_driver_close;
++	if (!wl) {
++		dev_err(dev, "no wilink module was probed\n");
++		goto out;
 +	}
++
+ 	dev_dbg(dev, "wl1271 suspend. wow_enabled: %d\n",
+ 		wl->wow_enabled);
  
-+call_driver_close:
- 	usbip_vhci_driver_close();
- 
- 	return ret;
 
 
