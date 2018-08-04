@@ -6,34 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E3D7C4646F
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:04:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97D12C4646D
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:04:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42474217C6
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:04:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42474217C6
+	by mail.kernel.org (Postfix) with ESMTP id 5B336217C6
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:04:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B336217C6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732743AbeHDLEs (ORCPT
+        id S1732762AbeHDLEv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 07:04:48 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48638 "EHLO
+        Sat, 4 Aug 2018 07:04:51 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48646 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726469AbeHDLEr (ORCPT
+        with ESMTP id S1729718AbeHDLEv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 07:04:47 -0400
+        Sat, 4 Aug 2018 07:04:51 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D8812BB3;
-        Sat,  4 Aug 2018 09:04:49 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EDA3589C;
+        Sat,  4 Aug 2018 09:04:52 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eli Cohen <eli@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>
-Subject: [PATCH 4.14 08/23] net/mlx5e: E-Switch, Initialize eswitch only if eswitch manager
-Date:   Sat,  4 Aug 2018 11:00:59 +0200
-Message-Id: <20180804082645.040658115@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Anatoly Trosinenko <anatoly.trosinenko@gmail.com>,
+        Phillip Lougher <phillip.lougher@gmail.com>, stable@kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.14 09/23] squashfs: more metadata hardening
+Date:   Sat,  4 Aug 2018 11:01:00 +0200
+Message-Id: <20180804082645.110555785@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180804082643.641435547@linuxfoundation.org>
 References: <20180804082643.641435547@linuxfoundation.org>
@@ -50,41 +52,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eli Cohen <eli@mellanox.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 
-[ Upstream commit 5f5991f36dce1e69dd8bd7495763eec2e28f08e7 ]
+commit d512584780d3e6a7cacb2f482834849453d444a1 upstream.
 
-Execute mlx5_eswitch_init() only if we have MLX5_ESWITCH_MANAGER
-capabilities.
-Do the same for mlx5_eswitch_cleanup().
+Anatoly reports another squashfs fuzzing issue, where the decompression
+parameters themselves are in a compressed block.
 
-Fixes: a9f7705ffd66 ("net/mlx5: Unify vport manager capability check")
-Signed-off-by: Eli Cohen <eli@mellanox.com>
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+This causes squashfs_read_data() to be called in order to read the
+decompression options before the decompression stream having been set
+up, making squashfs go sideways.
+
+Reported-by: Anatoly Trosinenko <anatoly.trosinenko@gmail.com>
+Acked-by: Phillip Lougher <phillip.lougher@gmail.com>
+Cc: stable@kernel.org
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/mellanox/mlx5/core/eswitch.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
-@@ -1616,7 +1616,7 @@ int mlx5_eswitch_init(struct mlx5_core_d
- 	int vport_num;
- 	int err;
+---
+ fs/squashfs/block.c |    2 ++
+ 1 file changed, 2 insertions(+)
+
+--- a/fs/squashfs/block.c
++++ b/fs/squashfs/block.c
+@@ -167,6 +167,8 @@ int squashfs_read_data(struct super_bloc
+ 	}
  
--	if (!MLX5_VPORT_MANAGER(dev))
-+	if (!MLX5_ESWITCH_MANAGER(dev))
- 		return 0;
- 
- 	esw_info(dev,
-@@ -1689,7 +1689,7 @@ abort:
- 
- void mlx5_eswitch_cleanup(struct mlx5_eswitch *esw)
- {
--	if (!esw || !MLX5_VPORT_MANAGER(esw->dev))
-+	if (!esw || !MLX5_ESWITCH_MANAGER(esw->dev))
- 		return;
- 
- 	esw_info(esw->dev, "cleanup\n");
+ 	if (compressed) {
++		if (!msblk->stream)
++			goto read_failure;
+ 		length = squashfs_decompress(msblk, bh, b, offset, length,
+ 			output);
+ 		if (length < 0)
 
 
