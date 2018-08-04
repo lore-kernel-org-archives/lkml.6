@@ -6,37 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2DD5C4646F
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:02:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D799EC4646D
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:02:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9764521775
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:02:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9764521775
+	by mail.kernel.org (Postfix) with ESMTP id 9C72D217BF
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:02:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C72D217BF
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729707AbeHDLCa (ORCPT
+        id S1729721AbeHDLCd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 07:02:30 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48134 "EHLO
+        Sat, 4 Aug 2018 07:02:33 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48146 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726477AbeHDLCa (ORCPT
+        with ESMTP id S1726477AbeHDLCd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 07:02:30 -0400
+        Sat, 4 Aug 2018 07:02:33 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3FD46BB3;
-        Sat,  4 Aug 2018 09:02:32 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 87189BCF;
+        Sat,  4 Aug 2018 09:02:35 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Jann Horn <jannh@google.com>, Florian Westphal <fw@strlen.de>,
-        Peter Oskolkov <posk@google.com>,
-        Paolo Abeni <pabeni@redhat.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.17 02/31] inet: frag: enforce memory limits earlier
-Date:   Sat,  4 Aug 2018 11:00:37 +0200
-Message-Id: <20180804082632.422384376@linuxfoundation.org>
+Subject: [PATCH 4.17 03/31] ipv4: frags: handle possible skb truesize change
+Date:   Sat,  4 Aug 2018 11:00:38 +0200
+Message-Id: <20180804082632.468630911@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180804082632.304529527@linuxfoundation.org>
 References: <20180804082632.304529527@linuxfoundation.org>
@@ -55,54 +52,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit 56e2c94f055d328f5f6b0a5c1721cca2f2d4e0a1 ]
+[ Upstream commit 4672694bd4f1aebdab0ad763ae4716e89cb15221 ]
 
-We currently check current frags memory usage only when
-a new frag queue is created. This allows attackers to first
-consume the memory budget (default : 4 MB) creating thousands
-of frag queues, then sending tiny skbs to exceed high_thresh
-limit by 2 to 3 order of magnitude.
+ip_frag_queue() might call pskb_pull() on one skb that
+is already in the fragment queue.
 
-Note that before commit 648700f76b03 ("inet: frags: use rhashtables
-for reassembly units"), work queue could be starved under DOS,
-getting no cpu cycles.
-After commit 648700f76b03, only the per frag queue timer can eventually
-remove an incomplete frag queue and its skbs.
+We need to take care of possible truesize change, or we
+might have an imbalance of the netns frags memory usage.
 
-Fixes: b13d3cbfb8e8 ("inet: frag: move eviction of queues to work queue")
+IPv6 is immune to this bug, because RFC5722, Section 4,
+amended by Errata ID 3089 states :
+
+  When reassembling an IPv6 datagram, if
+  one or more its constituent fragments is determined to be an
+  overlapping fragment, the entire datagram (and any constituent
+  fragments) MUST be silently discarded.
+
+Fixes: 158f323b9868 ("net: adjust skb->truesize in pskb_expand_head()")
 Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: Jann Horn <jannh@google.com>
-Cc: Florian Westphal <fw@strlen.de>
-Cc: Peter Oskolkov <posk@google.com>
-Cc: Paolo Abeni <pabeni@redhat.com>
-Acked-by: Florian Westphal <fw@strlen.de>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/inet_fragment.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ net/ipv4/ip_fragment.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/net/ipv4/inet_fragment.c
-+++ b/net/ipv4/inet_fragment.c
-@@ -157,9 +157,6 @@ static struct inet_frag_queue *inet_frag
- {
- 	struct inet_frag_queue *q;
+--- a/net/ipv4/ip_fragment.c
++++ b/net/ipv4/ip_fragment.c
+@@ -383,11 +383,16 @@ found:
+ 		int i = end - next->ip_defrag_offset; /* overlap is 'i' bytes */
  
--	if (!nf->high_thresh || frag_mem_limit(nf) > nf->high_thresh)
--		return NULL;
--
- 	q = kmem_cache_zalloc(f->frags_cachep, GFP_ATOMIC);
- 	if (!q)
- 		return NULL;
-@@ -204,6 +201,9 @@ struct inet_frag_queue *inet_frag_find(s
- {
- 	struct inet_frag_queue *fq;
- 
-+	if (!nf->high_thresh || frag_mem_limit(nf) > nf->high_thresh)
-+		return NULL;
+ 		if (i < next->len) {
++			int delta = -next->truesize;
 +
- 	rcu_read_lock();
- 
- 	fq = rhashtable_lookup(&nf->rhashtable, key, nf->f->rhash_params);
+ 			/* Eat head of the next overlapped fragment
+ 			 * and leave the loop. The next ones cannot overlap.
+ 			 */
+ 			if (!pskb_pull(next, i))
+ 				goto err;
++			delta += next->truesize;
++			if (delta)
++				add_frag_mem_limit(qp->q.net, delta);
+ 			next->ip_defrag_offset += i;
+ 			qp->q.meat -= i;
+ 			if (next->ip_summed != CHECKSUM_UNNECESSARY)
 
 
