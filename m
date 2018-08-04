@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9041C4646D
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:08:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 209F8C4646F
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:08:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7329A217C6
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:08:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7329A217C6
+	by mail.kernel.org (Postfix) with ESMTP id C804320895
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:08:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C804320895
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388435AbeHDLI3 (ORCPT
+        id S2388473AbeHDLIc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 07:08:29 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49600 "EHLO
+        Sat, 4 Aug 2018 07:08:32 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49608 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732475AbeHDLI2 (ORCPT
+        with ESMTP id S1732462AbeHDLIb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 07:08:28 -0400
+        Sat, 4 Aug 2018 07:08:31 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E052EBB3;
-        Sat,  4 Aug 2018 09:08:28 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F1190BB3;
+        Sat,  4 Aug 2018 09:08:31 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -33,9 +33,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Sven Eckelmann <sven.eckelmann@openmesh.com>,
         Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 043/124] ath: Add regulatory mapping for Serbia
-Date:   Sat,  4 Aug 2018 11:00:32 +0200
-Message-Id: <20180804082704.037032545@linuxfoundation.org>
+Subject: [PATCH 4.4 044/124] ath: Add regulatory mapping for Bermuda
+Date:   Sat,  4 Aug 2018 11:00:33 +0200
+Message-Id: <20180804082704.074204414@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180804082702.434482435@linuxfoundation.org>
 References: <20180804082702.434482435@linuxfoundation.org>
@@ -54,7 +54,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Sven Eckelmann <sven.eckelmann@openmesh.com>
 
-[ Upstream commit 2a3169a54bb53717928392a04fb84deb765b51f1 ]
+[ Upstream commit 9c790f2d234f65697e3b0948adbfdf36dbe63dd7 ]
 
 The country code is used by the ath to detect the ISO 3166-1 alpha-2 name
 and to select the correct conformance test limits (CTL) for a country. If
@@ -65,8 +65,8 @@ it will cause an error and stop the initialization with:
 
 The current CTL mappings for this country are:
 
-* 2.4GHz: ETSI
-* 5GHz: ETSI
+* 2.4GHz: FCC
+* 5GHz: FCC
 
 Signed-off-by: Sven Eckelmann <sven.eckelmann@openmesh.com>
 Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
@@ -79,23 +79,23 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/drivers/net/wireless/ath/regd.h
 +++ b/drivers/net/wireless/ath/regd.h
-@@ -159,6 +159,7 @@ enum CountryCode {
- 	CTRY_ROMANIA = 642,
- 	CTRY_RUSSIA = 643,
- 	CTRY_SAUDI_ARABIA = 682,
-+	CTRY_SERBIA = 688,
- 	CTRY_SERBIA_MONTENEGRO = 891,
- 	CTRY_SINGAPORE = 702,
- 	CTRY_SLOVAKIA = 703,
+@@ -74,6 +74,7 @@ enum CountryCode {
+ 	CTRY_BELARUS = 112,
+ 	CTRY_BELGIUM = 56,
+ 	CTRY_BELIZE = 84,
++	CTRY_BERMUDA = 60,
+ 	CTRY_BOLIVIA = 68,
+ 	CTRY_BOSNIA_HERZ = 70,
+ 	CTRY_BRAZIL = 76,
 --- a/drivers/net/wireless/ath/regd_common.h
 +++ b/drivers/net/wireless/ath/regd_common.h
-@@ -452,6 +452,7 @@ static struct country_code_to_enum_rd al
- 	{CTRY_ROMANIA, NULL1_WORLD, "RO"},
- 	{CTRY_RUSSIA, NULL1_WORLD, "RU"},
- 	{CTRY_SAUDI_ARABIA, NULL1_WORLD, "SA"},
-+	{CTRY_SERBIA, ETSI1_WORLD, "RS"},
- 	{CTRY_SERBIA_MONTENEGRO, ETSI1_WORLD, "CS"},
- 	{CTRY_SINGAPORE, APL6_WORLD, "SG"},
- 	{CTRY_SLOVAKIA, ETSI1_WORLD, "SK"},
+@@ -313,6 +313,7 @@ static struct country_code_to_enum_rd al
+ 	{CTRY_BELGIUM, ETSI1_WORLD, "BE"},
+ 	{CTRY_BELGIUM2, ETSI4_WORLD, "BL"},
+ 	{CTRY_BELIZE, APL1_ETSIC, "BZ"},
++	{CTRY_BERMUDA, FCC3_FCCA, "BM"},
+ 	{CTRY_BOLIVIA, APL1_ETSIC, "BO"},
+ 	{CTRY_BOSNIA_HERZ, ETSI1_WORLD, "BA"},
+ 	{CTRY_BRAZIL, FCC3_WORLD, "BR"},
 
 
