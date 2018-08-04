@@ -6,39 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F298C4646F
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:08:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A6F8C4646F
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:08:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B9A1217C6
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:08:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B9A1217C6
+	by mail.kernel.org (Postfix) with ESMTP id 1A30A217C6
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:08:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A30A217C6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388268AbeHDLIW (ORCPT
+        id S2388375AbeHDLIZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 07:08:22 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49576 "EHLO
+        Sat, 4 Aug 2018 07:08:25 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49590 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732475AbeHDLIW (ORCPT
+        with ESMTP id S1732475AbeHDLIY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 07:08:22 -0400
+        Sat, 4 Aug 2018 07:08:24 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 74A3089C;
-        Sat,  4 Aug 2018 09:08:22 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C7F2FBB3;
+        Sat,  4 Aug 2018 09:08:25 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kan Liang <kan.liang@intel.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        acme@kernel.org, eranian@google.com,
-        Ingo Molnar <mingo@kernel.org>,
+        stable@vger.kernel.org,
+        Sven Eckelmann <sven.eckelmann@openmesh.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 024/124] perf/x86/intel/uncore: Correct fixed counter index check in generic code
-Date:   Sat,  4 Aug 2018 11:00:13 +0200
-Message-Id: <20180804082703.344587471@linuxfoundation.org>
+Subject: [PATCH 4.4 042/124] ath: Add regulatory mapping for Tanzania
+Date:   Sat,  4 Aug 2018 11:00:31 +0200
+Message-Id: <20180804082704.002281243@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180804082702.434482435@linuxfoundation.org>
 References: <20180804082702.434482435@linuxfoundation.org>
@@ -55,41 +52,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kan Liang <kan.liang@intel.com>
+From: Sven Eckelmann <sven.eckelmann@openmesh.com>
 
-[ Upstream commit 4749f8196452eeb73cf2086a6a9705bae479d33d ]
+[ Upstream commit 667ddac5745fb9fddfe8f7fd2523070f50bd4442 ]
 
-There is no index which is bigger than UNCORE_PMC_IDX_FIXED. The only
-exception is client IMC uncore, which has been specially handled.
-For generic code, it is not correct to use >= to check fixed counter.
-The code quality issue will bring problem when a new counter index is
-introduced.
+The country code is used by the ath to detect the ISO 3166-1 alpha-2 name
+and to select the correct conformance test limits (CTL) for a country. If
+the country isn't available and it is still programmed in the EEPROM then
+it will cause an error and stop the initialization with:
 
-Signed-off-by: Kan Liang <kan.liang@intel.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: acme@kernel.org
-Cc: eranian@google.com
-Link: http://lkml.kernel.org/r/1525371913-10597-3-git-send-email-kan.liang@intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+  Invalid EEPROM contents
+
+The current CTL mappings for this country are:
+
+* 2.4GHz: ETSI
+* 5GHz: FCC
+
+Signed-off-by: Sven Eckelmann <sven.eckelmann@openmesh.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kernel/cpu/perf_event_intel_uncore.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wireless/ath/regd.h        |    1 +
+ drivers/net/wireless/ath/regd_common.h |    1 +
+ 2 files changed, 2 insertions(+)
 
---- a/arch/x86/kernel/cpu/perf_event_intel_uncore.c
-+++ b/arch/x86/kernel/cpu/perf_event_intel_uncore.c
-@@ -229,7 +229,7 @@ void uncore_perf_event_update(struct int
- 	u64 prev_count, new_count, delta;
- 	int shift;
- 
--	if (event->hw.idx >= UNCORE_PMC_IDX_FIXED)
-+	if (event->hw.idx == UNCORE_PMC_IDX_FIXED)
- 		shift = 64 - uncore_fixed_ctr_bits(box);
- 	else
- 		shift = 64 - uncore_perf_ctr_bits(box);
+--- a/drivers/net/wireless/ath/regd.h
++++ b/drivers/net/wireless/ath/regd.h
+@@ -170,6 +170,7 @@ enum CountryCode {
+ 	CTRY_SWITZERLAND = 756,
+ 	CTRY_SYRIA = 760,
+ 	CTRY_TAIWAN = 158,
++	CTRY_TANZANIA = 834,
+ 	CTRY_THAILAND = 764,
+ 	CTRY_TRINIDAD_Y_TOBAGO = 780,
+ 	CTRY_TUNISIA = 788,
+--- a/drivers/net/wireless/ath/regd_common.h
++++ b/drivers/net/wireless/ath/regd_common.h
+@@ -463,6 +463,7 @@ static struct country_code_to_enum_rd al
+ 	{CTRY_SWITZERLAND, ETSI1_WORLD, "CH"},
+ 	{CTRY_SYRIA, NULL1_WORLD, "SY"},
+ 	{CTRY_TAIWAN, APL3_FCCA, "TW"},
++	{CTRY_TANZANIA, APL1_WORLD, "TZ"},
+ 	{CTRY_THAILAND, FCC3_WORLD, "TH"},
+ 	{CTRY_TRINIDAD_Y_TOBAGO, FCC3_WORLD, "TT"},
+ 	{CTRY_TUNISIA, ETSI3_WORLD, "TN"},
 
 
