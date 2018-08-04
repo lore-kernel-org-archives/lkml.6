@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8CC5C4646D
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:06:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93C3CC4646D
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:06:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F36F217C6
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:06:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F36F217C6
+	by mail.kernel.org (Postfix) with ESMTP id 5663A217C6
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:06:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5663A217C6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733214AbeHDLGb (ORCPT
+        id S1733228AbeHDLGe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 07:06:31 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49152 "EHLO
+        Sat, 4 Aug 2018 07:06:34 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49156 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727293AbeHDLGa (ORCPT
+        with ESMTP id S1727293AbeHDLGd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 07:06:30 -0400
+        Sat, 4 Aug 2018 07:06:33 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A07C8BB3;
-        Sat,  4 Aug 2018 09:06:31 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B0A44BB3;
+        Sat,  4 Aug 2018 09:06:34 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Eric Anholt <eric@anholt.net>
-Subject: [PATCH 4.9 31/32] drm/vc4: Reset ->{x, y}_scaling[1] when dealing with uniplanar formats
-Date:   Sat,  4 Aug 2018 11:01:21 +0200
-Message-Id: <20180804082651.458066965@linuxfoundation.org>
+        stable@vger.kernel.org, "Ewan D. Milne" <emilne@redhat.com>,
+        Tony Battersby <tonyb@cybernetics.com>,
+        Bart Van Assche <bart.vanassche@wdc.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.9 32/32] scsi: sg: fix minor memory leak in error path
+Date:   Sat,  4 Aug 2018 11:01:22 +0200
+Message-Id: <20180804082651.504849455@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180804082649.908295462@linuxfoundation.org>
 References: <20180804082649.908295462@linuxfoundation.org>
@@ -51,36 +52,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Boris Brezillon <boris.brezillon@bootlin.com>
+From: Tony Battersby <tonyb@cybernetics.com>
 
-commit a6a00918d4ad8718c3ccde38c02cec17f116b2fd upstream.
+commit c170e5a8d222537e98aa8d4fddb667ff7a2ee114 upstream.
 
-This is needed to ensure ->is_unity is correct when the plane was
-previously configured to output a multi-planar format with scaling
-enabled, and is then being reconfigured to output a uniplanar format.
+Fix a minor memory leak when there is an error opening a /dev/sg device.
 
-Fixes: fc04023fafec ("drm/vc4: Add support for YUV planes.")
+Fixes: cc833acbee9d ("sg: O_EXCL and other lock handling")
 Cc: <stable@vger.kernel.org>
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
-Reviewed-by: Eric Anholt <eric@anholt.net>
-Link: https://patchwork.freedesktop.org/patch/msgid/20180724133601.32114-1-boris.brezillon@bootlin.com
+Reviewed-by: Ewan D. Milne <emilne@redhat.com>
+Signed-off-by: Tony Battersby <tonyb@cybernetics.com>
+Reviewed-by: Bart Van Assche <bart.vanassche@wdc.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/vc4/vc4_plane.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/scsi/sg.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/gpu/drm/vc4/vc4_plane.c
-+++ b/drivers/gpu/drm/vc4/vc4_plane.c
-@@ -350,6 +350,9 @@ static int vc4_plane_setup_clipping_and_
- 			vc4_state->x_scaling[0] = VC4_SCALING_TPZ;
- 		if (vc4_state->y_scaling[0] == VC4_SCALING_NONE)
- 			vc4_state->y_scaling[0] = VC4_SCALING_TPZ;
-+	} else {
-+		vc4_state->x_scaling[1] = VC4_SCALING_NONE;
-+		vc4_state->y_scaling[1] = VC4_SCALING_NONE;
+--- a/drivers/scsi/sg.c
++++ b/drivers/scsi/sg.c
+@@ -2185,6 +2185,7 @@ sg_add_sfp(Sg_device * sdp)
+ 	write_lock_irqsave(&sdp->sfd_lock, iflags);
+ 	if (atomic_read(&sdp->detaching)) {
+ 		write_unlock_irqrestore(&sdp->sfd_lock, iflags);
++		kfree(sfp);
+ 		return ERR_PTR(-ENODEV);
  	}
- 
- 	vc4_state->is_unity = (vc4_state->x_scaling[0] == VC4_SCALING_NONE &&
+ 	list_add_tail(&sfp->sfd_siblings, &sdp->sfds);
 
 
