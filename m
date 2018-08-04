@@ -2,152 +2,157 @@ Return-Path: <SRS0=4jry=KT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3BF5C4646D
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 04:51:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63695C4646F
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 04:52:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E7A42178D
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 04:51:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 008D62178D
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 04:52:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="juOA+La2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E7A42178D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="Ndtuk6SR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 008D62178D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727796AbeHDGu4 (ORCPT
+        id S1727803AbeHDGwI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 02:50:56 -0400
-Received: from mail-yb0-f193.google.com ([209.85.213.193]:38490 "EHLO
-        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726186AbeHDGu4 (ORCPT
+        Sat, 4 Aug 2018 02:52:08 -0400
+Received: from conssluserg-05.nifty.com ([210.131.2.90]:45896 "EHLO
+        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726186AbeHDGwI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 02:50:56 -0400
-Received: by mail-yb0-f193.google.com with SMTP id i9-v6so3443153ybo.5
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Aug 2018 21:51:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=ysw2c+fpcoURBxliFg4KI831RITh1ed64QxJrExTDcE=;
-        b=juOA+La2FZfYDL+fwUafekX2cmsl0GhddQVDL8O2V2JvqfU2cwP4WzKNHTfgqUP52M
-         spqmVnAGUUKp7WjRj+cocx19kIHcHfKoLBXUkMahIl7r/k8nJ2PwbwzvEyOsCV3ai6nJ
-         3rjcNjERzIUadnsKGjULX6AbEyR8mf/mXi+xvawuNxvgyDoXIxCctXGUo+UI3Zp3kqx8
-         S3OtSn3rQbZlDvExiR8FecorNjZb+LHQ3CRe3b7gtydDgiu0xkG3VD+2GDz497eix/Xp
-         YfXdsmeH+NeVrnBjV+t2ytGjj1BMz8S825nrzVHnSCSjaYenqMXRGMuFBDNMEocv51A5
-         gtKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=ysw2c+fpcoURBxliFg4KI831RITh1ed64QxJrExTDcE=;
-        b=hlnTNbuAM7ZXPXWBjLUCayp+MRnJNcU567qrKU3sJ4tUN2SkhfWVYBhFUzTlUhkV9x
-         jJIao7XTP3t2A0q2W0FENweoLzbRV7rarxNbZcC5MTZDphS1BTrkHxZyrrRDAeGjw7pa
-         96iKTLgXbOh+6Zr0AZytxLm/7p5IWecf2KMagYhfN92Esgq7uF3M1xBcis4yC9EXjZA1
-         jaT0ggtUz+X7Ca8VrT6a7pI3F52Hl14zKoGrCwpH5C7I43x8kBzHXeWMEVn42E4pG7IK
-         zgkF0j9Zvd5Ofehj+uDPq5jHs1gk4cTFd0kYyiwxv0NUmxoofRWdl39oNZT+UBvPStfH
-         1hOg==
-X-Gm-Message-State: AOUpUlFix8ZuqXW6L4xzLdZxzRPInHQJaGPqtR10456/yoVQGoIuSW/0
-        qwxKxwzEnPWNZLcBnpBkGgXQ66MzyWtjQAnswDY5Zg==
-X-Google-Smtp-Source: AAOMgpch5Uh/kKRp1xoNleDhh63S/MnECB7vdM0r7hhSKyj3j76zzfb9qE+0IueEbWF/5+ViEq9YPTp+MxeN9gpvTSg=
-X-Received: by 2002:a25:5702:: with SMTP id l2-v6mr3645504ybb.24.1533358299824;
- Fri, 03 Aug 2018 21:51:39 -0700 (PDT)
+        Sat, 4 Aug 2018 02:52:08 -0400
+Received: from mail-ua0-f181.google.com (mail-ua0-f181.google.com [209.85.217.181]) (authenticated)
+        by conssluserg-05.nifty.com with ESMTP id w744qbDM026432;
+        Sat, 4 Aug 2018 13:52:37 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com w744qbDM026432
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1533358357;
+        bh=8s6Gqsy9H/AVCb5MmhfHMujpLArr+HgRw/1t6/7c0oM=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=Ndtuk6SRdKx7fQqpD65AimBFPrvpHm+HaRj6SyMu96sp5+5DL2oQfY1OwaZr4AzlH
+         5Ai+VfCBNY/66Vgj+fAdNlOxzWp0Hv5hf64GIsXF0EvWGu1pxeXCZn+qKuqtauGY5Y
+         lCbLqJdj0DTWDTb9xLjU+n7OcMnd6CFV9CK24hk/T73YyWl5N3Sb0OO9RS/h2zB+ce
+         lknVS8wLRXMRDbgEtQspwk45dcrCM91KKotXNxkZeLyYqN3UV9Ar0AzaFdCd+1d3kK
+         uToRkX9+0edXLS1TPyY4CjTLvlJmF20P/RzgVehh/ylN/o8Vi47tpUIS0npiwH+P7B
+         m3P6w9dMvVkgQ==
+X-Nifty-SrcIP: [209.85.217.181]
+Received: by mail-ua0-f181.google.com with SMTP id i4-v6so6689548uak.0;
+        Fri, 03 Aug 2018 21:52:37 -0700 (PDT)
+X-Gm-Message-State: AOUpUlEhMYHTSsJm9Ai1kYcoFtNqAQ7DzhcPv2fvqKJv5wJ4TGaQh/8j
+        tfNv18D9qlle9GvS+9F0GDKN06/NF2kINv8eyqY=
+X-Google-Smtp-Source: AAOMgpcAj9Ol3dqEaOz9YbDGGhChv/SRkYiEQ0FAa3rTGcLjuQXl/QpcRd3E7DDJEp9aNa0qZHuzwYwfs9Lijyxpy2o=
+X-Received: by 2002:ab0:52f1:: with SMTP id w46-v6mr4449827uaw.52.1533358356455;
+ Fri, 03 Aug 2018 21:52:36 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a25:bfce:0:0:0:0:0 with HTTP; Fri, 3 Aug 2018 21:51:38 -0700 (PDT)
-In-Reply-To: <20180803162340.32b4b3fde55a4f5a5c28b425@kernel.org>
-References: <20180730222423.196630-1-joel@joelfernandes.org>
- <20180802235527.ddb0d1837154e3f98571b3b0@kernel.org> <CAJWu+opoT6Ky-pwAwBbjDkyt0Y_UF1QUnDshu-_vLTU5K87_HQ@mail.gmail.com>
- <20180803162340.32b4b3fde55a4f5a5c28b425@kernel.org>
-From:   Joel Fernandes <joelaf@google.com>
-Date:   Fri, 3 Aug 2018 21:51:38 -0700
-Message-ID: <CAJWu+opO9-bb5RWorbQ54vq0rU1U6NFSnH9BDwGTvXhSaPmPTg@mail.gmail.com>
-Subject: Re: [PATCH v12 0/3] tracing: Centralize preemptirq tracepoints and
- unify their usage
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     Joel Fernandes <joel@joelfernandes.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Cc: Android Kernel" <kernel-team@android.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Byungchul Park <byungchul.park@lge.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Thomas Glexiner <tglx@linutronix.de>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>
+Received: by 2002:ab0:2642:0:0:0:0:0 with HTTP; Fri, 3 Aug 2018 21:51:56 -0700 (PDT)
+In-Reply-To: <1533358023-5801-2-git-send-email-yamada.masahiro@socionext.com>
+References: <1533358023-5801-1-git-send-email-yamada.masahiro@socionext.com> <1533358023-5801-2-git-send-email-yamada.masahiro@socionext.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Sat, 4 Aug 2018 13:51:56 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAS-sb0Um_R+jw4ymac+5yaCCW7CkgoR7-HEsND4u4PMxw@mail.gmail.com>
+Message-ID: <CAK7LNAS-sb0Um_R+jw4ymac+5yaCCW7CkgoR7-HEsND4u4PMxw@mail.gmail.com>
+Subject: Re: [PATCH 1/3] um: fix parallel building with O= option
+To:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Cc:     Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>,
+        linux-um@lists.infradead.org, Randy Dunlap <rdunlap@infradead.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Masami,
-
-On Fri, Aug 3, 2018 at 12:23 AM, Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> Hi Joel,
+2018-08-04 13:47 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
+> Randy Dunlap reports UML occasionally fails to build with -j<N> and
+> O=<builddir> options.
 >
-> Thank you for trying to fix that.
+>   make[1]: Entering directory '/home/rdunlap/mmotm-2018-0802-1529/UM64'
+>     UPD     include/generated/uapi/linux/version.h
+>     WRAP    arch/x86/include/generated/asm/dma-contiguous.h
+>     WRAP    arch/x86/include/generated/asm/export.h
+>     WRAP    arch/x86/include/generated/asm/early_ioremap.h
+>     WRAP    arch/x86/include/generated/asm/mcs_spinlock.h
+>     WRAP    arch/x86/include/generated/asm/mm-arch-hooks.h
+>     WRAP    arch/x86/include/generated/uapi/asm/bpf_perf_event.h
+>     WRAP    arch/x86/include/generated/uapi/asm/poll.h
+>     GEN     ./Makefile
+>   make[2]: *** No rule to make target 'archheaders'.  Stop.
+>   arch/um/Makefile:119: recipe for target 'archheaders' failed
+>   make[1]: *** [archheaders] Error 2
+>   make[1]: *** Waiting for unfinished jobs....
+>     UPD     include/config/kernel.release
+>   make[1]: *** wait: No child processes.  Stop.
+>   Makefile:146: recipe for target 'sub-make' failed
+>   make: *** [sub-make] Error 2
 >
-> On Thu, 2 Aug 2018 19:57:09 -0700
-> Joel Fernandes <joelaf@google.com> wrote:
+> The cause of the problem is the use of '$(MAKE) KBUILD_SRC=',
+> which recurses to the top Makefile via the $(objtree)/Makefile
+> generated by scripts/mkmakefile.
 >
->> Hi Masami,
->>
->> On Thu, Aug 2, 2018 at 7:55 AM, Masami Hiramatsu <mhiramat@kernel.org> wrote:
->> > Hi Joel,
->> >
->> > I found this caused several issues when testing ftrace.
->> >
->> > #1) ftrace boottest (FTRACE_STARTUP_TEST) fails
->>
->> This sadly appears to be a real issue. The startup test for
->> "preemptirqsoff" tracer fails, however it passes for only preemptoff
->> or only irqsoff. I tested only the last 2 tracers, not the first one,
->> that's why I didn't catch it. I need to debug this more.
->>
->> > #2) mmiotrace reports "IRQs not enabled as expected" error
->> > #3) lock subsystem event boottest causes "IRQs not disabled as expected" error (sometimes)
->>
->> Could you try the below patch and let me know if you still see the
->> issue? In the v11 I removed the lockdep_recursing() check since it
->> seemed unnecessary. But I'd like to rule out that there's still some
->> issue lurking there. Thanks and I appreciate your help, diff is
->> attached to this email.
+> When you run "make -j<N> O=<builddir> ARCH=um", Make can execute
+> 'archheaders' and 'outputmakefile' targets simultaneously because
+> there is no dependency between them.
 >
-> I tried the attached patch. But unfortunately I still see #1 and #2.
-> (#3 does not always occurred, I'll continue to test)
+> If it happens,
+>
+>   $(Q)$(MAKE) KBUILD_SRC= ARCH=$(HEADER_ARCH) archheaders
+>
+> ... tries to run $(objtree)/Makefile that is being updated.
+>
+> The correct way for the recursion is
+>
+>   $(Q)$(MAKE) -f $(srctree)/Makefile ARCH=$(HEADER_ARCH) archheaders
+>
+> ..., which does not rely on the generated Makefile.
 >
 
-I found that #2 is because of CPU hotplug and tracepoint interaction.
-I can reproduce the same issue if I manually offline a CPU by:
-echo 0 > /sys/devices/system/cpu/cpuX/online
 
-mmiotrace also does the same thing.
 
-Its because the tracepoints become inactive when we hotplug. This
-prevents the lockdep probes that were registered from getting called.
+I forgot to add this:
 
-Basically the cond parameter in DECLARE_TRACE is whether the cpu is online:
-#define DECLARE_TRACE(name, proto, args)                                \
-        __DECLARE_TRACE(name, PARAMS(proto), PARAMS(args),              \
-                        cpu_online(raw_smp_processor_id()),             \
-                        PARAMS(void *__data, proto),                    \
-                        PARAMS(__data, args))
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
 
-which prevents the probes from getting called.
 
-Steve, any ideas on how we can fix this? Basically we need the
-tracepoints to work until the CPU is really offline... Could you also
-let me know why we need to check if CPU is online or not before
-calling the tracepoint probes?
 
-I'll try to look into #1 and #2 tomorrow as well (I'm on vacation +
-weekend, so time is a bit short, but this is quite important so I'll
-make time). Thanks!
 
-- Joel
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
+>
+>  arch/um/Makefile | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>
+> diff --git a/arch/um/Makefile b/arch/um/Makefile
+> index e54dda8..de340e4 100644
+> --- a/arch/um/Makefile
+> +++ b/arch/um/Makefile
+> @@ -122,8 +122,7 @@ archheaders:
+>         $(Q)$(MAKE) -f $(srctree)/scripts/Makefile.asm-generic \
+>                     kbuild-file=$(HOST_DIR)/include/uapi/asm/Kbuild \
+>                     obj=$(HOST_DIR)/include/generated/uapi/asm
+> -       $(Q)$(MAKE) KBUILD_SRC= ARCH=$(HEADER_ARCH) archheaders
+> -
+> +       $(Q)$(MAKE) -f $(srctree)/Makefile ARCH=$(HEADER_ARCH) archheaders
+>
+>  archprepare: include/generated/user_constants.h
+>
+> --
+> 2.7.4
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kbuild" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
