@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AE4FC4646F
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:12:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3945DC4646D
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:12:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F6702177A
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:12:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F6702177A
+	by mail.kernel.org (Postfix) with ESMTP id EBFEC217C6
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:12:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBFEC217C6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389429AbeHDLM0 (ORCPT
+        id S2389442AbeHDLM3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 07:12:26 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50436 "EHLO
+        Sat, 4 Aug 2018 07:12:29 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50446 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732902AbeHDLMZ (ORCPT
+        with ESMTP id S1732902AbeHDLM2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 07:12:25 -0400
+        Sat, 4 Aug 2018 07:12:28 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A29D3BC6;
-        Sat,  4 Aug 2018 09:12:24 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B6684BBF;
+        Sat,  4 Aug 2018 09:12:27 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Josh Poimboeuf <jpoimboe@redhat.com>,
-        Jeremy Cline <jcline@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 120/124] net: socket: fix potential spectre v1 gadget in socketcall
-Date:   Sat,  4 Aug 2018 11:01:49 +0200
-Message-Id: <20180804082706.948729452@linuxfoundation.org>
+        stable@vger.kernel.org, Jiang Biao <jiang.biao2@zte.com.cn>,
+        Huang Chong <huang.chong@zte.com.cn>,
+        "Michael S. Tsirkin" <mst@redhat.com>
+Subject: [PATCH 4.4 121/124] virtio_balloon: fix another race between migration and ballooning
+Date:   Sat,  4 Aug 2018 11:01:50 +0200
+Message-Id: <20180804082706.991580440@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180804082702.434482435@linuxfoundation.org>
 References: <20180804082702.434482435@linuxfoundation.org>
@@ -51,45 +51,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jeremy Cline <jcline@redhat.com>
+From: Jiang Biao <jiang.biao2@zte.com.cn>
 
-commit c8e8cd579bb4265651df8223730105341e61a2d1 upstream.
+commit 89da619bc18d79bca5304724c11d4ba3b67ce2c6 upstream.
 
-'call' is a user-controlled value, so sanitize the array index after the
-bounds check to avoid speculating past the bounds of the 'nargs' array.
+Kernel panic when with high memory pressure, calltrace looks like,
 
-Found with the help of Smatch:
+PID: 21439 TASK: ffff881be3afedd0 CPU: 16 COMMAND: "java"
+ #0 [ffff881ec7ed7630] machine_kexec at ffffffff81059beb
+ #1 [ffff881ec7ed7690] __crash_kexec at ffffffff81105942
+ #2 [ffff881ec7ed7760] crash_kexec at ffffffff81105a30
+ #3 [ffff881ec7ed7778] oops_end at ffffffff816902c8
+ #4 [ffff881ec7ed77a0] no_context at ffffffff8167ff46
+ #5 [ffff881ec7ed77f0] __bad_area_nosemaphore at ffffffff8167ffdc
+ #6 [ffff881ec7ed7838] __node_set at ffffffff81680300
+ #7 [ffff881ec7ed7860] __do_page_fault at ffffffff8169320f
+ #8 [ffff881ec7ed78c0] do_page_fault at ffffffff816932b5
+ #9 [ffff881ec7ed78f0] page_fault at ffffffff8168f4c8
+    [exception RIP: _raw_spin_lock_irqsave+47]
+    RIP: ffffffff8168edef RSP: ffff881ec7ed79a8 RFLAGS: 00010046
+    RAX: 0000000000000246 RBX: ffffea0019740d00 RCX: ffff881ec7ed7fd8
+    RDX: 0000000000020000 RSI: 0000000000000016 RDI: 0000000000000008
+    RBP: ffff881ec7ed79a8 R8: 0000000000000246 R9: 000000000001a098
+    R10: ffff88107ffda000 R11: 0000000000000000 R12: 0000000000000000
+    R13: 0000000000000008 R14: ffff881ec7ed7a80 R15: ffff881be3afedd0
+    ORIG_RAX: ffffffffffffffff CS: 0010 SS: 0018
 
-net/socket.c:2508 __do_sys_socketcall() warn: potential spectre issue
-'nargs' [r] (local cap)
+It happens in the pagefault and results in double pagefault
+during compacting pages when memory allocation fails.
 
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Analysed the vmcore, the page leads to second pagefault is corrupted
+with _mapcount=-256, but private=0.
+
+It's caused by the race between migration and ballooning, and lock
+missing in virtballoon_migratepage() of virtio_balloon driver.
+This patch fix the bug.
+
+Fixes: e22504296d4f64f ("virtio_balloon: introduce migration primitives to balloon pages")
 Cc: stable@vger.kernel.org
-Signed-off-by: Jeremy Cline <jcline@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Jiang Biao <jiang.biao2@zte.com.cn>
+Signed-off-by: Huang Chong <huang.chong@zte.com.cn>
+Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/socket.c |    2 ++
+ drivers/virtio/virtio_balloon.c |    2 ++
  1 file changed, 2 insertions(+)
 
---- a/net/socket.c
-+++ b/net/socket.c
-@@ -89,6 +89,7 @@
- #include <linux/magic.h>
- #include <linux/slab.h>
- #include <linux/xattr.h>
-+#include <linux/nospec.h>
+--- a/drivers/virtio/virtio_balloon.c
++++ b/drivers/virtio/virtio_balloon.c
+@@ -479,7 +479,9 @@ static int virtballoon_migratepage(struc
+ 	tell_host(vb, vb->inflate_vq);
  
- #include <asm/uaccess.h>
- #include <asm/unistd.h>
-@@ -2324,6 +2325,7 @@ SYSCALL_DEFINE2(socketcall, int, call, u
- 
- 	if (call < 1 || call > SYS_SENDMMSG)
- 		return -EINVAL;
-+	call = array_index_nospec(call, SYS_SENDMMSG + 1);
- 
- 	len = nargs[call];
- 	if (len > sizeof(a))
+ 	/* balloon's page migration 2nd step -- deflate "page" */
++	spin_lock_irqsave(&vb_dev_info->pages_lock, flags);
+ 	balloon_page_delete(page);
++	spin_unlock_irqrestore(&vb_dev_info->pages_lock, flags);
+ 	vb->num_pfns = VIRTIO_BALLOON_PAGES_PER_PAGE;
+ 	set_page_pfns(vb, vb->pfns, page);
+ 	tell_host(vb, vb->deflate_vq);
 
 
