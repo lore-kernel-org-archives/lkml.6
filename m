@@ -3,75 +3,119 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 431A5C4646D
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 12:44:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0A69C4646F
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 13:01:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 01CD2217CE
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 12:44:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01CD2217CE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 1F7F9217CD
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 13:01:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F7F9217CD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728889AbeHDOpH (ORCPT
+        id S1728835AbeHDPCT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 10:45:07 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34276 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726744AbeHDOpH (ORCPT
+        Sat, 4 Aug 2018 11:02:19 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:34905 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726753AbeHDPCS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 10:45:07 -0400
-Received: from localhost (ip-213-127-46-170.ip.prioritytelecom.net [213.127.46.170])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C4BBC480;
-        Sat,  4 Aug 2018 12:44:29 +0000 (UTC)
-Date:   Sat, 4 Aug 2018 14:44:24 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org
-Subject: Re: [PATCH 4.9 00/32] 4.9.118-stable review
-Message-ID: <20180804124424.GC4920@kroah.com>
-References: <20180804082649.908295462@linuxfoundation.org>
- <20180804093000.GB27721@flashbox>
+        Sat, 4 Aug 2018 11:02:18 -0400
+X-IronPort-AV: E=Sophos;i="5.43,368,1503331200"; 
+   d="scan'208";a="43067538"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 04 Aug 2018 20:59:56 +0800
+Received: from G08CNEXCHPEKD02.g08.fujitsu.local (unknown [10.167.33.83])
+        by cn.fujitsu.com (Postfix) with ESMTP id B3A004B66A09;
+        Sat,  4 Aug 2018 20:59:50 +0800 (CST)
+Received: from fnst.localdomain (10.167.226.155) by
+ G08CNEXCHPEKD02.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
+ (TLS) id 14.3.399.0; Sat, 4 Aug 2018 20:59:51 +0800
+Date:   Sat, 4 Aug 2018 20:59:48 +0800
+From:   Lu Fengqi <lufq.fnst@cn.fujitsu.com>
+To:     zhong jiang <zhongjiang@huawei.com>
+CC:     <clm@fb.com>, <jbacik@fb.com>, <dsterba@suse.com>,
+        <linux-btrfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] btrfs/extent_map: Remove unneeded variable "ret"
+Message-ID: <20180804125947.GF2049@fnst.localdomain>
+References: <1533381223-16734-1-git-send-email-zhongjiang@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20180804093000.GB27721@flashbox>
+In-Reply-To: <1533381223-16734-1-git-send-email-zhongjiang@huawei.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Originating-IP: [10.167.226.155]
+X-yoursite-MailScanner-ID: B3A004B66A09.AD2E7
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: lufq.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Aug 04, 2018 at 02:30:00AM -0700, Nathan Chancellor wrote:
-> On Sat, Aug 04, 2018 at 11:00:50AM +0200, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 4.9.118 release.
-> > There are 32 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Mon Aug  6 08:26:35 UTC 2018.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.118-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> > 
-> 
-> Merged, compiled with -Werror, and installed onto my OnePlus 6.
-> 
-> No issues noticed in dmesg or general usage.
+On Sat, Aug 04, 2018 at 07:13:43PM +0800, zhong jiang wrote:
+>The ret is not used after initalization, So just remove it.
 
-Wonderful, thank you for testing two of these and letting me know.
+So why not change these two functions to void function?
 
-greg k-h
+-- 
+Thanks,
+Lu
+
+>
+>Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+>---
+> fs/btrfs/extent_map.c | 8 +++-----
+> 1 file changed, 3 insertions(+), 5 deletions(-)
+>
+>diff --git a/fs/btrfs/extent_map.c b/fs/btrfs/extent_map.c
+>index 6648d55..b48ab41 100644
+>--- a/fs/btrfs/extent_map.c
+>+++ b/fs/btrfs/extent_map.c
+>@@ -276,7 +276,6 @@ static void try_merge_map(struct extent_map_tree *tree, struct extent_map *em)
+> int unpin_extent_cache(struct extent_map_tree *tree, u64 start, u64 len,
+> 		       u64 gen)
+> {
+>-	int ret = 0;
+> 	struct extent_map *em;
+> 	bool prealloc = false;
+> 
+>@@ -308,7 +307,7 @@ int unpin_extent_cache(struct extent_map_tree *tree, u64 start, u64 len,
+> 	free_extent_map(em);
+> out:
+> 	write_unlock(&tree->lock);
+>-	return ret;
+>+	return 0;
+> 
+> }
+> 
+>@@ -430,14 +429,13 @@ struct extent_map *search_extent_mapping(struct extent_map_tree *tree,
+>  */
+> int remove_extent_mapping(struct extent_map_tree *tree, struct extent_map *em)
+> {
+>-	int ret = 0;
+>-
+> 	WARN_ON(test_bit(EXTENT_FLAG_PINNED, &em->flags));
+> 	rb_erase(&em->rb_node, &tree->map);
+> 	if (!test_bit(EXTENT_FLAG_LOGGING, &em->flags))
+> 		list_del_init(&em->list);
+> 	RB_CLEAR_NODE(&em->rb_node);
+>-	return ret;
+>+
+>+	return 0;
+> }
+> 
+> void replace_extent_mapping(struct extent_map_tree *tree,
+>-- 
+>1.7.12.4
+>
+>--
+>To unsubscribe from this list: send the line "unsubscribe linux-btrfs" in
+>the body of a message to majordomo@vger.kernel.org
+>More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+>
+
+
