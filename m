@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0346AC4646D
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:11:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB722C4646D
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:11:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7641217C6
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:11:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7641217C6
+	by mail.kernel.org (Postfix) with ESMTP id 6F7B02177A
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:11:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F7B02177A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389119AbeHDLLI (ORCPT
+        id S2389134AbeHDLLL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 07:11:08 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50174 "EHLO
+        Sat, 4 Aug 2018 07:11:11 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50188 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732670AbeHDLLH (ORCPT
+        with ESMTP id S1732670AbeHDLLK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 07:11:07 -0400
+        Sat, 4 Aug 2018 07:11:10 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5C852BCF;
-        Sat,  4 Aug 2018 09:11:07 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6A38FBC6;
+        Sat,  4 Aug 2018 09:11:10 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Shivasharan S <shivasharan.srikanteshwara@broadcom.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 093/124] scsi: megaraid_sas: Increase timeout by 1 sec for non-RAID fastpath IOs
-Date:   Sat,  4 Aug 2018 11:01:22 +0200
-Message-Id: <20180804082705.961938993@linuxfoundation.org>
+Subject: [PATCH 4.4 094/124] media: si470x: fix __be16 annotations
+Date:   Sat,  4 Aug 2018 11:01:23 +0200
+Message-Id: <20180804082705.999618035@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180804082702.434482435@linuxfoundation.org>
 References: <20180804082702.434482435@linuxfoundation.org>
@@ -52,39 +51,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Shivasharan S <shivasharan.srikanteshwara@broadcom.com>
+From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 
-[ Upstream commit 3239b8cd28fd849a2023483257d35d68c5876c74 ]
+[ Upstream commit 90db5c829692a0a7845e977e45719b4699216bd4 ]
 
-Hardware could time out Fastpath IOs one second earlier than the timeout
-provided by the host.
+The annotations there are wrong as warned:
+   drivers/media/radio/si470x/radio-si470x-i2c.c:107:35: warning: cast to restricted __be16
+   drivers/media/radio/si470x/radio-si470x-i2c.c:107:35: warning: cast to restricted __be16
+   drivers/media/radio/si470x/radio-si470x-i2c.c:107:35: warning: cast to restricted __be16
+   drivers/media/radio/si470x/radio-si470x-i2c.c:107:35: warning: cast to restricted __be16
+   drivers/media/radio/si470x/radio-si470x-i2c.c:129:24: warning: incorrect type in assignment (different base types)
+   drivers/media/radio/si470x/radio-si470x-i2c.c:129:24:    expected unsigned short [unsigned] [short] <noident>
+   drivers/media/radio/si470x/radio-si470x-i2c.c:129:24:    got restricted __be16 [usertype] <noident>
+   drivers/media/radio/si470x/radio-si470x-i2c.c:163:39: warning: cast to restricted __be16
+   drivers/media/radio/si470x/radio-si470x-i2c.c:163:39: warning: cast to restricted __be16
+   drivers/media/radio/si470x/radio-si470x-i2c.c:163:39: warning: cast to restricted __be16
+   drivers/media/radio/si470x/radio-si470x-i2c.c:163:39: warning: cast to restricted __be16
 
-For non-RAID devices, driver provides timeout value based on OS provided
-timeout value. Under certain scenarios, if the OS provides a timeout
-value of 1 second, due to above behavior hardware will timeout
-immediately.
-
-Increase timeout value for non-RAID fastpath IOs by 1 second.
-
-Signed-off-by: Shivasharan S <shivasharan.srikanteshwara@broadcom.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/megaraid/megaraid_sas_fusion.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/media/radio/si470x/radio-si470x-i2c.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/scsi/megaraid/megaraid_sas_fusion.c
-+++ b/drivers/scsi/megaraid/megaraid_sas_fusion.c
-@@ -1886,6 +1886,9 @@ megasas_build_syspd_fusion(struct megasa
- 		pRAID_Context->timeoutValue = cpu_to_le16(os_timeout_value);
- 		pRAID_Context->VirtualDiskTgtId = cpu_to_le16(device_id);
- 	} else {
-+		if (os_timeout_value)
-+			os_timeout_value++;
-+
- 		/* system pd Fast Path */
- 		io_request->Function = MPI2_FUNCTION_SCSI_IO_REQUEST;
- 		timeout_limit = (scmd->device->type == TYPE_DISK) ?
+--- a/drivers/media/radio/si470x/radio-si470x-i2c.c
++++ b/drivers/media/radio/si470x/radio-si470x-i2c.c
+@@ -96,7 +96,7 @@ MODULE_PARM_DESC(max_rds_errors, "RDS ma
+  */
+ int si470x_get_register(struct si470x_device *radio, int regnr)
+ {
+-	u16 buf[READ_REG_NUM];
++	__be16 buf[READ_REG_NUM];
+ 	struct i2c_msg msgs[1] = {
+ 		{
+ 			.addr = radio->client->addr,
+@@ -121,7 +121,7 @@ int si470x_get_register(struct si470x_de
+ int si470x_set_register(struct si470x_device *radio, int regnr)
+ {
+ 	int i;
+-	u16 buf[WRITE_REG_NUM];
++	__be16 buf[WRITE_REG_NUM];
+ 	struct i2c_msg msgs[1] = {
+ 		{
+ 			.addr = radio->client->addr,
+@@ -151,7 +151,7 @@ int si470x_set_register(struct si470x_de
+ static int si470x_get_all_registers(struct si470x_device *radio)
+ {
+ 	int i;
+-	u16 buf[READ_REG_NUM];
++	__be16 buf[READ_REG_NUM];
+ 	struct i2c_msg msgs[1] = {
+ 		{
+ 			.addr = radio->client->addr,
 
 
