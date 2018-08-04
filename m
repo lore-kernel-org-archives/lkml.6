@@ -3,38 +3,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06C21C4646F
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:07:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD885C4646F
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:07:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AAD63217C6
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:07:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAD63217C6
+	by mail.kernel.org (Postfix) with ESMTP id 815C3217C6
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:07:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 815C3217C6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387423AbeHDLG7 (ORCPT
+        id S2387447AbeHDLHC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 07:06:59 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49290 "EHLO
+        Sat, 4 Aug 2018 07:07:02 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49294 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729243AbeHDLG6 (ORCPT
+        with ESMTP id S1729243AbeHDLHB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 07:06:58 -0400
+        Sat, 4 Aug 2018 07:07:01 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 72F35BB3;
-        Sat,  4 Aug 2018 09:06:59 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8A0A1BB3;
+        Sat,  4 Aug 2018 09:07:02 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 015/124] rtc: ensure rtc_set_alarm fails when alarms are not supported
-Date:   Sat,  4 Aug 2018 11:00:04 +0200
-Message-Id: <20180804082703.022594979@linuxfoundation.org>
+Subject: [PATCH 4.4 016/124] netfilter: ipset: List timing out entries with "timeout 1" instead of zero
+Date:   Sat,  4 Aug 2018 11:00:05 +0200
+Message-Id: <20180804082703.057487478@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180804082702.434482435@linuxfoundation.org>
 References: <20180804082702.434482435@linuxfoundation.org>
@@ -51,39 +51,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+From: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
 
-[ Upstream commit abfdff44bc38e9e2ef7929f633fb8462632299d4 ]
+[ Upstream commit bd975e691486ba52790ba23cc9b4fecab7bc0d31 ]
 
-When using RTC_ALM_SET or RTC_WKALM_SET with rtc_wkalrm.enabled not set,
-rtc_timer_enqueue() is not called and rtc_set_alarm() may succeed but the
-subsequent RTC_AIE_ON ioctl will fail. RTC_ALM_READ would also fail in that
-case.
+When listing sets with timeout support, there's a probability that
+just timing out entries with "0" timeout value is listed/saved.
+However when restoring the saved list, the zero timeout value means
+permanent elelements.
 
-Ensure rtc_set_alarm() fails when alarms are not supported to avoid letting
-programs think the alarms are working for a particular RTC when they are
-not.
+The new behaviour is that timing out entries are listed with "timeout 1"
+instead of zero.
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Fixes netfilter bugzilla #1258.
+
+Signed-off-by: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/rtc/interface.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ include/linux/netfilter/ipset/ip_set_timeout.h |   10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
---- a/drivers/rtc/interface.c
-+++ b/drivers/rtc/interface.c
-@@ -349,6 +349,11 @@ int rtc_set_alarm(struct rtc_device *rtc
+--- a/include/linux/netfilter/ipset/ip_set_timeout.h
++++ b/include/linux/netfilter/ipset/ip_set_timeout.h
+@@ -65,8 +65,14 @@ ip_set_timeout_set(unsigned long *timeou
+ static inline u32
+ ip_set_timeout_get(unsigned long *timeout)
  {
- 	int err;
- 
-+	if (!rtc->ops)
-+		return -ENODEV;
-+	else if (!rtc->ops->set_alarm)
-+		return -EINVAL;
+-	return *timeout == IPSET_ELEM_PERMANENT ? 0 :
+-		jiffies_to_msecs(*timeout - jiffies)/MSEC_PER_SEC;
++	u32 t;
 +
- 	err = rtc_valid_tm(&alarm->time);
- 	if (err != 0)
- 		return err;
++	if (*timeout == IPSET_ELEM_PERMANENT)
++		return 0;
++
++	t = jiffies_to_msecs(*timeout - jiffies)/MSEC_PER_SEC;
++	/* Zero value in userspace means no timeout */
++	return t == 0 ? 1 : t;
+ }
+ 
+ #endif	/* __KERNEL__ */
 
 
