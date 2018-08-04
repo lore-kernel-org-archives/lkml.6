@@ -4,60 +4,60 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75EA2C4646F
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 14:35:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9261C4646D
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 14:35:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F2D4217BD
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 14:35:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 706FB217BD
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 14:35:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aWonSiQv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F2D4217BD
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F7zyT8u+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 706FB217BD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730043AbeHDQg3 (ORCPT
+        id S1730214AbeHDQgb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 12:36:29 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:40335 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729746AbeHDQg2 (ORCPT
+        Sat, 4 Aug 2018 12:36:31 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:33913 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729802AbeHDQga (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 12:36:28 -0400
-Received: by mail-ed1-f66.google.com with SMTP id e19-v6so3127577edq.7;
-        Sat, 04 Aug 2018 07:35:34 -0700 (PDT)
+        Sat, 4 Aug 2018 12:36:30 -0400
+Received: by mail-ed1-f67.google.com with SMTP id h1-v6so3146863eds.1;
+        Sat, 04 Aug 2018 07:35:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=x6P3Wv19cLOAsi405hdR7itID5XxZbj2n6vytLRGHTk=;
-        b=aWonSiQvLhtfOb0lYdoKYrJcAlkdNgCLyNYD8xJP/MqeBF6ebhsYaMEqJoiPNsrArH
-         qSbbKgK59xzGbJz5iiq4ZZR0u2BHjVxFswc8DfZv5fxt7TliKIU3fU1XSrI1+ey/GzA0
-         lCsSz5wB7F2hfkplloXaUDOQt2C/4E3j5YAIybhBEti54HqxPyxy0R/MIQP2yxfQ0SWN
-         Pu7CMJxoGMi3QilW8hO4WS8HsNZKo8Li6dXrkFfGrQ0IbrydkeltVxTb1m46Js5H7Bck
-         0emTrVfVh21UpOWYyL3uaQmTBmm3RzYBbCTuVLmzka6/ZK3CI6Zw7BV+3WqaDURsennX
-         Sn/A==
+        bh=6CcvGzir+Pc3Rkt408mXoZUbFXaWdaiMloQs3Ib+E+Y=;
+        b=F7zyT8u++JrS/+sUbBjeNvWFGzu1jdedwtBN8YgrLKpYPGuzy46GuYDfTCeJD3yj3g
+         HI1YAijwxtkkTviRFv80RhjbmtXqGQZuWCzqrftRcN+TsC0ayycuX3ZpsL/Feb++qX9r
+         4W4CN3gSKKc+49lXz8jatY1CAFJTQ1fFxTWbk0PgkK2dCExKOe8uZhrzpR1VAkc1FBk7
+         hqhdH1I2ncfWe+Mx38HrEp37my3bOA/aHE/pmkdPaWMDC1ks0Tvmj0LbQ1KTFSLzAkmQ
+         CH1aqz2ajXoHlZT6nKolPiefvwRwDAMMXtEqPmsj11JjioyzHbjllZGJdgKm9pqKtPlr
+         VjCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=x6P3Wv19cLOAsi405hdR7itID5XxZbj2n6vytLRGHTk=;
-        b=qAf7zpTpyc+NdwWD70KWUJmVommYVWiIVTUuMf+e/DJB/dMFDa8508UbXWm2RRQ9Og
-         psZrlCnq+CXqGHRJeHt6ShFe/FdNqVitVzfEPpkJv0NENe6Zohfv6YtYI7sJA81veQu/
-         M2JErOs6eE7ceq3Pm29+Qm4EahvX0LMOVILTdqRkvtnz5ABNV0tJLesZKz2YjTTx6xc2
-         nyGXgjrw9aBkBXXNhkaWGqwJH1mz8yQok8GZw/92doZ/dpZsIwokumebYyUAzvgBwxJj
-         rNNE4w+B68BmCHHuW3kjqWDpySRjRRUCFmKlrPa/Bh0FWs8S0ucCiwcgcHKQMiXAK0Np
-         D/tQ==
-X-Gm-Message-State: AOUpUlFNQYX7B3mgiDFbne/Y4dGnsOKDfSeLWJOii86LUoX5tYKUzU/H
-        O8M28k8NmpbPi4vT8kmXCz8=
-X-Google-Smtp-Source: AAOMgpcpWhcEp6FSTIzMmHYcctG4oG63Mtbxt8m5Q7GQYfBAh60YWHUdyTHbUiqoN58AntlZIYtQ7w==
-X-Received: by 2002:a50:f4d2:: with SMTP id v18-v6mr11531885edm.162.1533393334153;
-        Sat, 04 Aug 2018 07:35:34 -0700 (PDT)
+        bh=6CcvGzir+Pc3Rkt408mXoZUbFXaWdaiMloQs3Ib+E+Y=;
+        b=Q3BL2Us3do2xQkjKWmOVySQYvZR4MgKmgsREZQzi1AOLqJw3TRfenEGik6l+kxPtRo
+         HOC7fTaoOuu8NFmbQPmDkDdMS1P+G9lGPP1hM1/AgYAhUrDD4Z0y6v5yPtEdle5UE/72
+         IEQ26JQlYYTIU2wLjXlYFDkevD8CMkJ6aWQ9M/38MqzhXMpSMX2f3ePm8xQrZPZiMBYX
+         6HDMcyRnY+quALhs0uxA0KdFzAgbTwVbgg545QBxP4L240OvxXc/crRNeBTFrIHswcTP
+         6Pq8re8oEAJubv+xiBSx72CKW4Ptiq1RUZdD0EusCyucSEBDH3QRWeRI2ErIl7ZHlvMa
+         APHg==
+X-Gm-Message-State: AOUpUlFgjRmTyCC3YsvgJpFoeFjqWAXp6wkTObrM0Hwx19R51D7ny7+1
+        aL+1FINXE4rwzVez8wqhrQOgKLCN
+X-Google-Smtp-Source: AAOMgpd3dV1/KAC7ys1Vsee+clKBhjfdN7BvT9BbwxSI6x6NDG4dWV9riP/tNOvGA2nXYYK8z+gl6A==
+X-Received: by 2002:a50:81c6:: with SMTP id 64-v6mr11413868ede.89.1533393335301;
+        Sat, 04 Aug 2018 07:35:35 -0700 (PDT)
 Received: from localhost.localdomain ([109.252.90.13])
-        by smtp.gmail.com with ESMTPSA id y20-v6sm589379edq.55.2018.08.04.07.35.33
+        by smtp.gmail.com with ESMTPSA id y20-v6sm589379edq.55.2018.08.04.07.35.34
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 04 Aug 2018 07:35:33 -0700 (PDT)
+        Sat, 04 Aug 2018 07:35:34 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Joerg Roedel <joro@8bytes.org>,
         Robin Murphy <robin.murphy@arm.com>,
@@ -65,9 +65,9 @@ To:     Joerg Roedel <joro@8bytes.org>,
         Jonathan Hunter <jonathanh@nvidia.com>
 Cc:     iommu@lists.linux-foundation.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 6/8] iommu/tegra: gart: Ignore devices without IOMMU phandle in DT
-Date:   Sat,  4 Aug 2018 17:30:01 +0300
-Message-Id: <20180804143003.15817-7-digetx@gmail.com>
+Subject: [PATCH v2 7/8] iommu: Introduce iotlb_sync_map callback
+Date:   Sat,  4 Aug 2018 17:30:02 +0300
+Message-Id: <20180804143003.15817-8-digetx@gmail.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180804143003.15817-1-digetx@gmail.com>
 References: <20180804143003.15817-1-digetx@gmail.com>
@@ -76,62 +76,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-GART can't handle all devices, hence ignore devices that aren't related
-to GART. IOMMU phandle must be explicitly assign to devices in the device
-tree.
+Introduce iotlb_sync_map() callback that is invoked in the end of
+iommu_map(). This new callback allows IOMMU drivers to avoid syncing
+after mapping of each contiguous chunk and sync only when the whole
+mapping is completed, optimizing performance of the mapping operation.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Reviewed-by: Robin Murphy <robin.murphy@arm.com>
 ---
- drivers/iommu/tegra-gart.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+ drivers/iommu/iommu.c | 8 ++++++--
+ include/linux/iommu.h | 1 +
+ 2 files changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/iommu/tegra-gart.c b/drivers/iommu/tegra-gart.c
-index def570bc88c4..bcdb8973a0ad 100644
---- a/drivers/iommu/tegra-gart.c
-+++ b/drivers/iommu/tegra-gart.c
-@@ -348,8 +348,12 @@ static bool gart_iommu_capable(enum iommu_cap cap)
- 
- static int gart_iommu_add_device(struct device *dev)
+diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+index f3698006cb53..056282f23b10 100644
+--- a/drivers/iommu/iommu.c
++++ b/drivers/iommu/iommu.c
+@@ -1545,13 +1545,14 @@ static size_t iommu_pgsize(struct iommu_domain *domain,
+ int iommu_map(struct iommu_domain *domain, unsigned long iova,
+ 	      phys_addr_t paddr, size_t size, int prot)
  {
--	struct iommu_group *group = iommu_group_get_for_dev(dev);
-+	struct iommu_group *group;
++	const struct iommu_ops *ops = domain->ops;
+ 	unsigned long orig_iova = iova;
+ 	unsigned int min_pagesz;
+ 	size_t orig_size = size;
+ 	phys_addr_t orig_paddr = paddr;
+ 	int ret = 0;
  
-+	if (!dev->iommu_fwspec)
-+		return -ENODEV;
-+
-+	group = iommu_group_get_for_dev(dev);
- 	if (IS_ERR(group))
- 		return PTR_ERR(group);
+-	if (unlikely(domain->ops->map == NULL ||
++	if (unlikely(ops->map == NULL ||
+ 		     domain->pgsize_bitmap == 0UL))
+ 		return -ENODEV;
  
-@@ -366,6 +370,12 @@ static void gart_iommu_remove_device(struct device *dev)
- 	iommu_device_unlink(&gart_handle->iommu, dev);
- }
+@@ -1580,7 +1581,7 @@ int iommu_map(struct iommu_domain *domain, unsigned long iova,
+ 		pr_debug("mapping: iova 0x%lx pa %pa pgsize 0x%zx\n",
+ 			 iova, &paddr, pgsize);
  
-+static int gart_iommu_of_xlate(struct device *dev,
-+			       struct of_phandle_args *args)
-+{
-+	return 0;
-+}
-+
- static const struct iommu_ops gart_iommu_ops = {
- 	.capable	= gart_iommu_capable,
- 	.domain_alloc	= gart_iommu_domain_alloc,
-@@ -380,6 +390,7 @@ static const struct iommu_ops gart_iommu_ops = {
- 	.unmap		= gart_iommu_unmap,
- 	.iova_to_phys	= gart_iommu_iova_to_phys,
- 	.pgsize_bitmap	= GART_IOMMU_PGSIZES,
-+	.of_xlate	= gart_iommu_of_xlate,
- };
+-		ret = domain->ops->map(domain, iova, paddr, pgsize, prot);
++		ret = ops->map(domain, iova, paddr, pgsize, prot);
+ 		if (ret)
+ 			break;
  
- static int tegra_gart_suspend(struct device *dev)
-@@ -459,6 +470,7 @@ static int tegra_gart_probe(struct platform_device *pdev)
+@@ -1589,6 +1590,9 @@ int iommu_map(struct iommu_domain *domain, unsigned long iova,
+ 		size -= pgsize;
  	}
  
- 	iommu_device_set_ops(&gart->iommu, &gart_iommu_ops);
-+	iommu_device_set_fwnode(&gart->iommu, dev->fwnode);
- 
- 	ret = iommu_device_register(&gart->iommu);
- 	if (ret) {
++	if (ops->iotlb_sync_map)
++		ops->iotlb_sync_map(domain);
++
+ 	/* unroll mapping in case something went wrong */
+ 	if (ret)
+ 		iommu_unmap(domain, orig_iova, orig_size - size);
+diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+index 7447b0b0579a..7ed115526fb5 100644
+--- a/include/linux/iommu.h
++++ b/include/linux/iommu.h
+@@ -206,6 +206,7 @@ struct iommu_ops {
+ 	void (*flush_iotlb_all)(struct iommu_domain *domain);
+ 	void (*iotlb_range_add)(struct iommu_domain *domain,
+ 				unsigned long iova, size_t size);
++	void (*iotlb_sync_map)(struct iommu_domain *domain);
+ 	void (*iotlb_sync)(struct iommu_domain *domain);
+ 	phys_addr_t (*iova_to_phys)(struct iommu_domain *domain, dma_addr_t iova);
+ 	int (*add_device)(struct device *dev);
 -- 
 2.18.0
 
