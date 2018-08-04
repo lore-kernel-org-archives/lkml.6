@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30F86C4646F
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:02:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77391C4646D
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:02:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8AD921775
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:02:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8AD921775
+	by mail.kernel.org (Postfix) with ESMTP id 3712421775
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:02:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3712421775
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730480AbeHDLCt (ORCPT
+        id S1730736AbeHDLCw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 07:02:49 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48190 "EHLO
+        Sat, 4 Aug 2018 07:02:52 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48198 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726477AbeHDLCs (ORCPT
+        with ESMTP id S1726477AbeHDLCv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 07:02:48 -0400
+        Sat, 4 Aug 2018 07:02:51 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D7A83BB3;
-        Sat,  4 Aug 2018 09:02:50 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EB9D489C;
+        Sat,  4 Aug 2018 09:02:53 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eli Cohen <eli@mellanox.com>,
+        stable@vger.kernel.org, Or Gerlitz <ogerlitz@mellanox.com>,
+        Parav Pandit <parav@mellanox.com>,
         Saeed Mahameed <saeedm@mellanox.com>
-Subject: [PATCH 4.17 08/31] net/mlx5e: E-Switch, Initialize eswitch only if eswitch manager
-Date:   Sat,  4 Aug 2018 11:00:43 +0200
-Message-Id: <20180804082632.804143977@linuxfoundation.org>
+Subject: [PATCH 4.17 09/31] net/mlx5e: Set port trust mode to PCP as default
+Date:   Sat,  4 Aug 2018 11:00:44 +0200
+Message-Id: <20180804082632.848362768@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180804082632.304529527@linuxfoundation.org>
 References: <20180804082632.304529527@linuxfoundation.org>
@@ -50,41 +51,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eli Cohen <eli@mellanox.com>
+From: Or Gerlitz <ogerlitz@mellanox.com>
 
-[ Upstream commit 5f5991f36dce1e69dd8bd7495763eec2e28f08e7 ]
+[ Upstream commit 2e8e70d249e8c5c79bf88bbb36bb68154ab15471 ]
 
-Execute mlx5_eswitch_init() only if we have MLX5_ESWITCH_MANAGER
-capabilities.
-Do the same for mlx5_eswitch_cleanup().
+The hairpin offload code has dependency on the trust mode being PCP.
 
-Fixes: a9f7705ffd66 ("net/mlx5: Unify vport manager capability check")
-Signed-off-by: Eli Cohen <eli@mellanox.com>
+Hence we should set PCP as the default for handling cases where we are
+disallowed to read the trust mode from the FW, or failed to initialize it.
+
+Fixes: 106be53b6b0a ('net/mlx5e: Set per priority hairpin pairs')
+Signed-off-by: Or Gerlitz <ogerlitz@mellanox.com>
+Reviewed-by: Parav Pandit <parav@mellanox.com>
 Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/eswitch.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/mellanox/mlx5/core/en_dcbnl.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
-@@ -1698,7 +1698,7 @@ int mlx5_eswitch_init(struct mlx5_core_d
- 	int vport_num;
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_dcbnl.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_dcbnl.c
+@@ -1057,6 +1057,8 @@ static int mlx5e_trust_initialize(struct
+ 	struct mlx5_core_dev *mdev = priv->mdev;
  	int err;
  
--	if (!MLX5_VPORT_MANAGER(dev))
-+	if (!MLX5_ESWITCH_MANAGER(dev))
++	priv->dcbx_dp.trust_state = MLX5_QPTS_TRUST_PCP;
++
+ 	if (!MLX5_DSCP_SUPPORTED(mdev))
  		return 0;
  
- 	esw_info(dev,
-@@ -1767,7 +1767,7 @@ abort:
- 
- void mlx5_eswitch_cleanup(struct mlx5_eswitch *esw)
- {
--	if (!esw || !MLX5_VPORT_MANAGER(esw->dev))
-+	if (!esw || !MLX5_ESWITCH_MANAGER(esw->dev))
- 		return;
- 
- 	esw_info(esw->dev, "cleanup\n");
 
 
