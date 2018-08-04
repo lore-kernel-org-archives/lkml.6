@@ -6,37 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8088AC4646D
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:02:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B7CBC4646F
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:02:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40F6121775
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:02:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40F6121775
+	by mail.kernel.org (Postfix) with ESMTP id 2701E21775
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:02:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2701E21775
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730043AbeHDLCn (ORCPT
+        id S1730209AbeHDLCq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 07:02:43 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48172 "EHLO
+        Sat, 4 Aug 2018 07:02:46 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48180 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726477AbeHDLCm (ORCPT
+        with ESMTP id S1726477AbeHDLCp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 07:02:42 -0400
+        Sat, 4 Aug 2018 07:02:45 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C04C2BB3;
-        Sat,  4 Aug 2018 09:02:44 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CDE1B89C;
+        Sat,  4 Aug 2018 09:02:47 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jose Abreu <joabreu@synopsys.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Joao Pinto <jpinto@synopsys.com>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>
-Subject: [PATCH 4.17 06/31] net: stmmac: Fix WoL for PCI-based setups
-Date:   Sat,  4 Aug 2018 11:00:41 +0200
-Message-Id: <20180804082632.724152772@linuxfoundation.org>
+        stable@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        YueHaibing <yuehaibing@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.17 07/31] rxrpc: Fix user call ID check in rxrpc_service_prealloc_one
+Date:   Sat,  4 Aug 2018 11:00:42 +0200
+Message-Id: <20180804082632.759832554@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180804082632.304529527@linuxfoundation.org>
 References: <20180804082632.304529527@linuxfoundation.org>
@@ -53,84 +51,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jose Abreu <Jose.Abreu@synopsys.com>
+From: YueHaibing <yuehaibing@huawei.com>
 
-[ Upstream commit b7d0f08e9129c45ed41bc0cfa8e77067881e45fd ]
+[ Upstream commit c01f6c9b3207e52fc9973a066a856ddf7a0538d8 ]
 
-WoL won't work in PCI-based setups because we are not saving the PCI EP
-state before entering suspend state and not allowing D3 wake.
+There just check the user call ID isn't already in use, hence should
+compare user_call_ID with xcall->user_call_ID, which is current
+node's user_call_ID.
 
-Fix this by using a wrapper around stmmac_{suspend/resume} which
-correctly sets the PCI EP state.
-
-Signed-off-by: Jose Abreu <joabreu@synopsys.com>
-Cc: David S. Miller <davem@davemloft.net>
-Cc: Joao Pinto <jpinto@synopsys.com>
-Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
-Cc: Alexandre Torgue <alexandre.torgue@st.com>
+Fixes: 540b1c48c37a ("rxrpc: Fix deadlock between call creation and sendmsg/recvmsg")
+Suggested-by: David Howells <dhowells@redhat.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c |   40 +++++++++++++++++++++--
- 1 file changed, 38 insertions(+), 2 deletions(-)
+ net/rxrpc/call_accept.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c
-@@ -257,7 +257,7 @@ static int stmmac_pci_probe(struct pci_d
- 		return -ENOMEM;
- 
- 	/* Enable pci device */
--	ret = pcim_enable_device(pdev);
-+	ret = pci_enable_device(pdev);
- 	if (ret) {
- 		dev_err(&pdev->dev, "%s: ERROR: failed to enable device\n",
- 			__func__);
-@@ -300,9 +300,45 @@ static int stmmac_pci_probe(struct pci_d
- static void stmmac_pci_remove(struct pci_dev *pdev)
- {
- 	stmmac_dvr_remove(&pdev->dev);
-+	pci_disable_device(pdev);
- }
- 
--static SIMPLE_DEV_PM_OPS(stmmac_pm_ops, stmmac_suspend, stmmac_resume);
-+static int stmmac_pci_suspend(struct device *dev)
-+{
-+	struct pci_dev *pdev = to_pci_dev(dev);
-+	int ret;
-+
-+	ret = stmmac_suspend(dev);
-+	if (ret)
-+		return ret;
-+
-+	ret = pci_save_state(pdev);
-+	if (ret)
-+		return ret;
-+
-+	pci_disable_device(pdev);
-+	pci_wake_from_d3(pdev, true);
-+	return 0;
-+}
-+
-+static int stmmac_pci_resume(struct device *dev)
-+{
-+	struct pci_dev *pdev = to_pci_dev(dev);
-+	int ret;
-+
-+	pci_restore_state(pdev);
-+	pci_set_power_state(pdev, PCI_D0);
-+
-+	ret = pci_enable_device(pdev);
-+	if (ret)
-+		return ret;
-+
-+	pci_set_master(pdev);
-+
-+	return stmmac_resume(dev);
-+}
-+
-+static SIMPLE_DEV_PM_OPS(stmmac_pm_ops, stmmac_pci_suspend, stmmac_pci_resume);
- 
- /* synthetic ID, no official vendor */
- #define PCI_VENDOR_ID_STMMAC 0x700
+--- a/net/rxrpc/call_accept.c
++++ b/net/rxrpc/call_accept.c
+@@ -116,9 +116,9 @@ static int rxrpc_service_prealloc_one(st
+ 		while (*pp) {
+ 			parent = *pp;
+ 			xcall = rb_entry(parent, struct rxrpc_call, sock_node);
+-			if (user_call_ID < call->user_call_ID)
++			if (user_call_ID < xcall->user_call_ID)
+ 				pp = &(*pp)->rb_left;
+-			else if (user_call_ID > call->user_call_ID)
++			else if (user_call_ID > xcall->user_call_ID)
+ 				pp = &(*pp)->rb_right;
+ 			else
+ 				goto id_in_use;
 
 
