@@ -6,40 +6,40 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6534C4646F
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 08:23:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FDC1C4646F
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 08:23:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84604217CE
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 08:23:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 31CCD21537
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 08:23:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kH80taNt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84604217CE
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="n5n1Q4Cy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31CCD21537
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728720AbeHDKXb (ORCPT
+        id S1729243AbeHDKXe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 06:23:31 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:37258 "EHLO
+        Sat, 4 Aug 2018 06:23:34 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:37392 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726055AbeHDKXa (ORCPT
+        with ESMTP id S1726055AbeHDKXe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 06:23:30 -0400
+        Sat, 4 Aug 2018 06:23:34 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
         Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=U6fW/izvP24EZMoN+Wixchj0VutMhM57U48S9KuzyDA=; b=kH80taNtDOHNgxws10xO4fBHa
-        ZvLk2zazWIfDRk8Xaw5WBhyWEx5y9+sx1w2hZs4UBAsytn6bKk5RryULtl503i5peFc0yzJV9Uwh5
-        mSsBDvQGrBDzPJBEQg/ugNtDYPZcnrulBBpEa8CUvyFRc5N0LS3a+6GpxwD+SzpGN6i+cAHza0Gcu
-        DDPrljonXdrQNbFflafCDHTv7mr6qEi/y8H7N9724VsYxpThTWBID/ibkWyqp/XJyDTBIdwMOFs6O
-        t9aSuEdVzP+es21aSqoYnZkG8SSiNesMTadzKGSy17IpB0oXI+r38yL28kbidnToDaFt+/RrM6aI7
-        ctGJd+h4w==;
+         bh=Y9L6sVyCND3pCUBTkFzMbfyGpy1+MFBmetZ8xMn3P9k=; b=n5n1Q4CypWK1AbLxXcdoRmqQJ
+        7BXglkB+j8UQ6B5+MEU+F8NI8k4vFVdnGFqPXy/3y3LYyCtyrYxYYgvwFot2E9+sufdTcyrbqw8F8
+        0SijbLm2AtXiNXDH/7fdIYc2IpGFYOOGa4Qac5M3EIZ+5W2b+Q+i6sSf7w/EnxulLUr09GttExzwJ
+        CumyNZF0uWpQVx+l3bI98gKOf/f1Etmg5dJD8J+RyI7ZkQnnm0UGTr1mNFoG7ACmhFIxtPWDyhj7y
+        22vi0GV5TyLNustcQD/9vrecVwQ4MvbgYufVVOfT/I+fZxoBlpeTg/4RU2mH1seXw6zDsULmngtUa
+        y7l6nuopg==;
 Received: from [46.125.249.69] (helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1flrqZ-0003hS-Mf; Sat, 04 Aug 2018 08:23:36 +0000
+        id 1flrqc-0003jY-Sh; Sat, 04 Aug 2018 08:23:39 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     tglx@linutronix.de, palmer@sifive.com, jason@lakedaemon.net,
         marc.zyngier@arm.com, robh+dt@kernel.org, mark.rutland@arm.com
@@ -47,9 +47,9 @@ Cc:     anup@brainfault.org, atish.patra@wdc.com,
         devicetree@vger.kernel.org, aou@eecs.berkeley.edu,
         linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
         shorne@gmail.com
-Subject: [PATCH 4/8] RISC-V: add a definition for the SIE SEIE bit
-Date:   Sat,  4 Aug 2018 10:23:15 +0200
-Message-Id: <20180804082319.5711-5-hch@lst.de>
+Subject: [PATCH 5/8] RISC-V: implement low-level interrupt handling
+Date:   Sat,  4 Aug 2018 10:23:16 +0200
+Message-Id: <20180804082319.5711-6-hch@lst.de>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180804082319.5711-1-hch@lst.de>
 References: <20180804082319.5711-1-hch@lst.de>
@@ -59,26 +59,102 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This mirrors the SIE_SSIE and SETE bits that are used in a similar
-fashion.
+Add support for a routine that dispatches exceptions with the interrupt
+flags set to either the IPI or irqdomain code (and the clock source in the
+future).
+
+Loosely based on the irq-riscv-int.c irqchip driver from the RISC-V tree.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- arch/riscv/include/asm/csr.h | 1 +
- 1 file changed, 1 insertion(+)
+ arch/riscv/kernel/entry.S |  4 +--
+ arch/riscv/kernel/irq.c   | 52 ++++++++++++++++++++++++++++++++-------
+ 2 files changed, 45 insertions(+), 11 deletions(-)
 
-diff --git a/arch/riscv/include/asm/csr.h b/arch/riscv/include/asm/csr.h
-index 421fa3585798..28a0d1cb374c 100644
---- a/arch/riscv/include/asm/csr.h
-+++ b/arch/riscv/include/asm/csr.h
-@@ -54,6 +54,7 @@
- /* Interrupt Enable and Interrupt Pending flags */
- #define SIE_SSIE _AC(0x00000002, UL) /* Software Interrupt Enable */
- #define SIE_STIE _AC(0x00000020, UL) /* Timer Interrupt Enable */
-+#define SIE_SEIE _AC(0x00000200, UL) /* External Interrupt Enable */
+diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
+index 9aaf6c986771..fa2c08e3c05e 100644
+--- a/arch/riscv/kernel/entry.S
++++ b/arch/riscv/kernel/entry.S
+@@ -168,8 +168,8 @@ ENTRY(handle_exception)
  
- #define EXC_INST_MISALIGNED     0
- #define EXC_INST_ACCESS         1
+ 	/* Handle interrupts */
+ 	move a0, sp /* pt_regs */
+-	REG_L a1, handle_arch_irq
+-	jr a1
++	move a1, s4 /* scause */
++	tail do_IRQ
+ 1:
+ 	/* Exceptions run with interrupts enabled */
+ 	csrs sstatus, SR_SIE
+diff --git a/arch/riscv/kernel/irq.c b/arch/riscv/kernel/irq.c
+index 7bcdaed15703..ab5f3e22c7cc 100644
+--- a/arch/riscv/kernel/irq.c
++++ b/arch/riscv/kernel/irq.c
+@@ -1,21 +1,55 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Copyright (C) 2012 Regents of the University of California
+  * Copyright (C) 2017 SiFive
+- *
+- *   This program is free software; you can redistribute it and/or
+- *   modify it under the terms of the GNU General Public License
+- *   as published by the Free Software Foundation, version 2.
+- *
+- *   This program is distributed in the hope that it will be useful,
+- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- *   GNU General Public License for more details.
++ * Copyright (C) 2018 Christoph Hellwig
+  */
+ 
+ #include <linux/interrupt.h>
+ #include <linux/irqchip.h>
+ #include <linux/irqdomain.h>
+ 
++/*
++ * Possible interrupt causes:
++ */
++#define INTERRUPT_CAUSE_SOFTWARE    1
++#define INTERRUPT_CAUSE_TIMER       5
++#define INTERRUPT_CAUSE_EXTERNAL    9
++
++/*
++ * The high order bit of the trap cause register is always set for
++ * interrupts, which allows us to differentiate them from exceptions
++ * quickly.  The INTERRUPT_CAUSE_* macros don't contain that bit, so we
++ * need to mask it off.
++ */
++#define INTERRUPT_CAUSE_FLAG	(1UL << (__riscv_xlen - 1))
++
++asmlinkage void __irq_entry do_IRQ(struct pt_regs *regs, unsigned long cause)
++{
++	struct pt_regs *old_regs = set_irq_regs(regs);
++
++	irq_enter();
++	switch (cause & ~INTERRUPT_CAUSE_FLAG) {
++#ifdef CONFIG_SMP
++	case INTERRUPT_CAUSE_SOFTWARE:
++		/*
++		 * We only use software interrupts to pass IPIs, so if a non-SMP
++		 * system gets one, then we don't know what to do.
++		 */
++		riscv_software_interrupt();
++		break;
++#endif
++	case INTERRUPT_CAUSE_EXTERNAL:
++		handle_arch_irq(regs);
++		break;
++	default:
++		panic("unexpected interrupt cause");
++	}
++	irq_exit();
++
++	set_irq_regs(old_regs);
++}
++
+ void __init init_IRQ(void)
+ {
+ 	irqchip_init();
 -- 
 2.18.0
 
