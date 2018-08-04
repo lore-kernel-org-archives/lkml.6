@@ -2,310 +2,121 @@ Return-Path: <SRS0=4jry=KT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30259C4646F
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 08:23:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EBA3C4646F
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 08:37:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA9E0217BF
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 08:23:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XBHbwVgD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA9E0217BF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+	by mail.kernel.org (Postfix) with ESMTP id 4C0B2217BB
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 08:37:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C0B2217BB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729690AbeHDKXp (ORCPT
+        id S1726871AbeHDKgw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 06:23:45 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:37744 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726055AbeHDKXo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 06:23:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
-        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=2Ek7WWh5ShInMQ28slfdtf/tBTg+jZFaSpL99WJ5lto=; b=XBHbwVgD96AqBZ6j3YHBC9Dkr
-        Mo+op4tYADTSnRa+e4zUuLb3hVHRjjfwLcT7DA+ox18bWk1MCdlcc5taqzEqAvN8d/Jitzu8mQNcm
-        c/jrNL95/o51YxNbOhKqMWhl1FkOWr77mByDIjn0mo2Wx3QPTaz6P9z4r31gKSWxlCNhmZ83y3OIt
-        ORzWCfn9ceuOIQNZl7SHmud1GKetMkCZBToy3Con/E1p005NJbp7hjZG1rIIHxaKAXeqYWsD5RGmU
-        bK9JNYpRRcr5i+DNd1xNHQgHw643jnfjtR5gRfiBSjufTPbLOw+bjji6LdVYF5kQZlMP0sPcdSJms
-        W+ja1y9Ow==;
-Received: from [46.125.249.69] (helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1flrqm-0003pv-TK; Sat, 04 Aug 2018 08:23:49 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     tglx@linutronix.de, palmer@sifive.com, jason@lakedaemon.net,
-        marc.zyngier@arm.com, robh+dt@kernel.org, mark.rutland@arm.com
-Cc:     anup@brainfault.org, atish.patra@wdc.com,
-        devicetree@vger.kernel.org, aou@eecs.berkeley.edu,
-        linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-        shorne@gmail.com, Palmer Dabbelt <palmer@dabbelt.com>,
-        Dmitriy Cherkasov <dmitriy@oss-tech.org>
-Subject: [PATCH 8/8] clocksource: new RISC-V SBI timer driver
-Date:   Sat,  4 Aug 2018 10:23:19 +0200
-Message-Id: <20180804082319.5711-9-hch@lst.de>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180804082319.5711-1-hch@lst.de>
-References: <20180804082319.5711-1-hch@lst.de>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+        Sat, 4 Aug 2018 06:36:52 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59968 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726448AbeHDKgw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 4 Aug 2018 06:36:52 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 06FBA87A87;
+        Sat,  4 Aug 2018 08:36:58 +0000 (UTC)
+Received: from [10.40.204.63] (ovpn-204-63.brq.redhat.com [10.40.204.63])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 17C94112D172;
+        Sat,  4 Aug 2018 08:36:50 +0000 (UTC)
+Subject: Re: [dm-devel] LVM snapshot broke between 4.14 and 4.16
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, Sagi Grimberg <sagi@grimberg.me>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>, dm-devel@redhat.com,
+        Ilya Dryomov <idryomov@gmail.com>, wgh@torlan.ru
+References: <CAOi1vP-SJO4AMK=XD3Lmja++2dQqoiw6Zn8Vgxf8OfvYgnuC6Q@mail.gmail.com>
+ <CA+55aFy2DR9fxHhmGq+azSjX9D71YtLsuFKmoEuYW3uTAUYtJg@mail.gmail.com>
+ <d76415de-2056-c7d6-cc88-b896deaa8ead@torlan.ru>
+ <1ec0a220-d5b0-1c27-e63b-c4d3f4ce9d77@torlan.ru>
+ <CA+55aFyPVQ5-gA93irsaxPC9BNQxnGWrDDHPMUYai2kxKiaKWQ@mail.gmail.com>
+ <b2bbd8ec-ac5b-fa8a-d3f7-8615d87f73c3@redhat.com>
+ <CA+55aFwWZX=CXmWDTkDGb36kf12XmTehmQjbiMPCqCRG2hi9kw@mail.gmail.com>
+ <20180803185431.GB3258@redhat.com>
+ <CA+55aFwDEY7B6OMh5xL2wc8BRj1KkzBHggNowAjbsWfma6H5Zg@mail.gmail.com>
+ <20180803193037.GA4581@redhat.com> <20180804052033.GA4461@thunk.org>
+From:   Zdenek Kabelac <zkabelac@redhat.com>
+Organization: Red Hat
+Message-ID: <102c2d75-f768-a649-52c3-bac6f0ca738d@redhat.com>
+Date:   Sat, 4 Aug 2018 10:36:50 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180804052033.GA4461@thunk.org>
+Content-Type: text/plain; charset=iso-8859-2; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Sat, 04 Aug 2018 08:36:58 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Sat, 04 Aug 2018 08:36:58 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'zkabelac@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Palmer Dabbelt <palmer@dabbelt.com>
+Dne 4.8.2018 v 07:20 Theodore Y. Ts'o napsal(a):
+> On Fri, Aug 03, 2018 at 03:30:37PM -0400, Mike Snitzer wrote:
+>>
+>> I was trying to give context for the "best to update lvm2 anyway"
+>> disclaimer that was used.  Yeah, it was specious.
+> 
+> Well, it seemed to indicate a certain attitude that both Linus and I
+> are concerned about.  I tried to use more of a "pursuading" style to
+> impress why that attitude was not ideal/correct.  Linus used a much
+> more assertive style (e.g., "Hell, no!").
 
-The RISC-V ISA defines a per-hart real-time clock and timer, which is
-present on all systems.  The clock is accessed via the 'rdtime'
-pseudo-instruction (which reads a CSR), and the timer is set via an SBI
-call.
+My whole point was - when someone has 'enough time' to compile fresh new 
+kernel, spending couple seconds to build also recent lvm2 should have be no 
+issue. Bugs are continually fixed, new feature from newer kernel are being
+used, known problems are being addressed - that's  all what it means.
+Bug are fixed not just in kernel, but also in user-space.
 
-Contains various improvements from Atish Patra <atish.patra@wdc.com>.
+> 
+>> And yeah, that isn't a good excuse to ignore it but: dm-snapshot is a
+>> steaming pile as compared to dm thin-provisioning...
+> 
+> On a side note, this is the first that I've heard the assertion that
+> dm-thin was better than dm-snapshot.  My impression was that
+> dm-snapshot was a proven code base, that only did one thing and (as
+> far as I could tell) did it well.  In contrast, dm-thin is much newer
+> code, **far** more complex, with functionality and corner cases
+> approaching that of a file system --- and just to be even more
+> exciting, it doesn't have an fsck/repair tool to deal with corrupted
+> metadata.
+> 
+> In your opinion, is it because you disagree with the assumption that
+> dm-thin is scary?  Or is the argument that dm-snapshot is even
+> scarier?
 
-Signed-off-by: Dmitriy Cherkasov <dmitriy@oss-tech.org>
-Signed-off-by: Palmer Dabbelt <palmer@dabbelt.com>
-[hch: remove dead code, add SPDX tags, used riscv_of_processor_hart(),
- minor cleanups, merged  hotplug cpu support and other improvements
- from Atish]
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Atish Patra <atish.patra@wdc.com>
----
- arch/riscv/include/asm/smp.h      |   3 -
- arch/riscv/kernel/irq.c           |   3 +
- arch/riscv/kernel/smpboot.c       |   1 -
- arch/riscv/kernel/time.c          |   9 +--
- drivers/clocksource/Kconfig       |  11 ++++
- drivers/clocksource/Makefile      |   1 +
- drivers/clocksource/riscv_timer.c | 105 ++++++++++++++++++++++++++++++
- include/linux/cpuhotplug.h        |   1 +
- 8 files changed, 122 insertions(+), 12 deletions(-)
- create mode 100644 drivers/clocksource/riscv_timer.c
 
-diff --git a/arch/riscv/include/asm/smp.h b/arch/riscv/include/asm/smp.h
-index c9395fff246f..36016845461d 100644
---- a/arch/riscv/include/asm/smp.h
-+++ b/arch/riscv/include/asm/smp.h
-@@ -24,9 +24,6 @@
- 
- #ifdef CONFIG_SMP
- 
--/* SMP initialization hook for setup_arch */
--void __init init_clockevent(void);
--
- /* SMP initialization hook for setup_arch */
- void __init setup_smp(void);
- 
-diff --git a/arch/riscv/kernel/irq.c b/arch/riscv/kernel/irq.c
-index ab5f3e22c7cc..0cfac48a1272 100644
---- a/arch/riscv/kernel/irq.c
-+++ b/arch/riscv/kernel/irq.c
-@@ -30,6 +30,9 @@ asmlinkage void __irq_entry do_IRQ(struct pt_regs *regs, unsigned long cause)
- 
- 	irq_enter();
- 	switch (cause & ~INTERRUPT_CAUSE_FLAG) {
-+	case INTERRUPT_CAUSE_TIMER:
-+		riscv_timer_interrupt();
-+		break;
- #ifdef CONFIG_SMP
- 	case INTERRUPT_CAUSE_SOFTWARE:
- 		/*
-diff --git a/arch/riscv/kernel/smpboot.c b/arch/riscv/kernel/smpboot.c
-index f741458c5a3f..56abab6a9812 100644
---- a/arch/riscv/kernel/smpboot.c
-+++ b/arch/riscv/kernel/smpboot.c
-@@ -104,7 +104,6 @@ asmlinkage void __init smp_callin(void)
- 	current->active_mm = mm;
- 
- 	trap_init();
--	init_clockevent();
- 	notify_cpu_starting(smp_processor_id());
- 	set_cpu_online(smp_processor_id(), 1);
- 	local_flush_tlb_all();
-diff --git a/arch/riscv/kernel/time.c b/arch/riscv/kernel/time.c
-index 0df9b2cbd645..1911c8f6b8a6 100644
---- a/arch/riscv/kernel/time.c
-+++ b/arch/riscv/kernel/time.c
-@@ -18,12 +18,6 @@
- 
- unsigned long riscv_timebase;
- 
--void __init init_clockevent(void)
--{
--	timer_probe();
--	csr_set(sie, SIE_STIE);
--}
--
- void __init time_init(void)
- {
- 	struct device_node *cpu;
-@@ -35,6 +29,5 @@ void __init time_init(void)
- 	riscv_timebase = prop;
- 
- 	lpj_fine = riscv_timebase / HZ;
--
--	init_clockevent();
-+	timer_probe();
- }
-diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
-index dec0dd88ec15..a11f4ba98b05 100644
---- a/drivers/clocksource/Kconfig
-+++ b/drivers/clocksource/Kconfig
-@@ -609,4 +609,15 @@ config ATCPIT100_TIMER
- 	help
- 	  This option enables support for the Andestech ATCPIT100 timers.
- 
-+config RISCV_TIMER
-+	bool "Timer for the RISC-V platform"
-+	depends on RISCV
-+	default y
-+	select TIMER_PROBE
-+	select TIMER_OF
-+	help
-+	  This enables the per-hart timer built into all RISC-V systems, which
-+	  is accessed via both the SBI and the rdcycle instruction.  This is
-+	  required for all RISC-V systems.
-+
- endmenu
-diff --git a/drivers/clocksource/Makefile b/drivers/clocksource/Makefile
-index 00caf37e52f9..ded31f720bd9 100644
---- a/drivers/clocksource/Makefile
-+++ b/drivers/clocksource/Makefile
-@@ -78,3 +78,4 @@ obj-$(CONFIG_H8300_TPU)			+= h8300_tpu.o
- obj-$(CONFIG_CLKSRC_ST_LPC)		+= clksrc_st_lpc.o
- obj-$(CONFIG_X86_NUMACHIP)		+= numachip.o
- obj-$(CONFIG_ATCPIT100_TIMER)		+= timer-atcpit100.o
-+obj-$(CONFIG_RISCV_TIMER)		+= riscv_timer.o
-diff --git a/drivers/clocksource/riscv_timer.c b/drivers/clocksource/riscv_timer.c
-new file mode 100644
-index 000000000000..4e8b347e43e2
---- /dev/null
-+++ b/drivers/clocksource/riscv_timer.c
-@@ -0,0 +1,105 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2012 Regents of the University of California
-+ * Copyright (C) 2017 SiFive
-+ */
-+#include <linux/clocksource.h>
-+#include <linux/clockchips.h>
-+#include <linux/cpu.h>
-+#include <linux/delay.h>
-+#include <linux/irq.h>
-+#include <asm/sbi.h>
-+
-+/*
-+ * All RISC-V systems have a timer attached to every hart.  These timers can be
-+ * read by the 'rdcycle' pseudo instruction, and can use the SBI to setup
-+ * events.  In order to abstract the architecture-specific timer reading and
-+ * setting functions away from the clock event insertion code, we provide
-+ * function pointers to the clockevent subsystem that perform two basic
-+ * operations: rdtime() reads the timer on the current CPU, and
-+ * next_event(delta) sets the next timer event to 'delta' cycles in the future.
-+ * As the timers are inherently a per-cpu resource, these callbacks perform
-+ * operations on the current hart.  There is guaranteed to be exactly one timer
-+ * per hart on all RISC-V systems.
-+ */
-+
-+static int riscv_clock_next_event(unsigned long delta,
-+		struct clock_event_device *ce)
-+{
-+	csr_set(sie, SIE_STIE);
-+	sbi_set_timer(get_cycles64() + delta);
-+	return 0;
-+}
-+
-+static DEFINE_PER_CPU(struct clock_event_device, riscv_clock_event) = {
-+	.name			= "riscv_timer_clockevent",
-+	.features		= CLOCK_EVT_FEAT_ONESHOT,
-+	.rating			= 100,
-+	.set_next_event		= riscv_clock_next_event,
-+};
-+
-+/*
-+ * It is guaranteed that all the timers across all the harts are synchronized
-+ * within one tick of each other, so while this could technically go
-+ * backwards when hopping between CPUs, practically it won't happen.
-+ */
-+static unsigned long long riscv_clocksource_rdtime(struct clocksource *cs)
-+{
-+	return get_cycles64();
-+}
-+
-+static DEFINE_PER_CPU(struct clocksource, riscv_clocksource) = {
-+	.name		= "riscv_clocksource",
-+	.rating		= 300,
-+	.mask		= CLOCKSOURCE_MASK(BITS_PER_LONG),
-+	.flags		= CLOCK_SOURCE_IS_CONTINUOUS,
-+	.read		= riscv_clocksource_rdtime,
-+};
-+
-+static int riscv_timer_starting_cpu(unsigned int cpu)
-+{
-+	struct clock_event_device *ce = per_cpu_ptr(&riscv_clock_event, cpu);
-+
-+	ce->cpumask = cpumask_of(cpu);
-+	clockevents_config_and_register(ce, riscv_timebase, 100, 0x7fffffff);
-+
-+	csr_set(sie, SIE_STIE);
-+	return 0;
-+}
-+
-+static int riscv_timer_dying_cpu(unsigned int cpu)
-+{
-+	csr_clear(sie, SIE_STIE);
-+	return 0;
-+}
-+
-+/* called directly from the low-level interrupt handler */
-+void riscv_timer_interrupt(void)
-+{
-+	struct clock_event_device *evdev = this_cpu_ptr(&riscv_clock_event);
-+
-+	csr_clear(sie, SIE_STIE);
-+	evdev->event_handler(evdev);
-+}
-+
-+static int __init riscv_timer_init_dt(struct device_node *n)
-+{
-+	int cpu_id = riscv_of_processor_hart(n), error;
-+	struct clocksource *cs;
-+
-+	if (cpu_id != smp_processor_id())
-+		return 0;
-+
-+	cs = per_cpu_ptr(&riscv_clocksource, cpu_id);
-+	clocksource_register_hz(cs, riscv_timebase);
-+
-+	error = cpuhp_setup_state(CPUHP_AP_RISCV_TIMER_STARTING,
-+			 "clockevents/riscv/timer:starting",
-+			 riscv_timer_starting_cpu, riscv_timer_dying_cpu);
-+	if (error)
-+		pr_err("RISCV timer register failed [%d] for cpu = [%d]\n",
-+		       error, cpu_id);
-+	return error;
-+}
-+
-+TIMER_OF_DECLARE(riscv_timer, "riscv", riscv_timer_init_dt);
-diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
-index 8796ba387152..554c27f6cfbd 100644
---- a/include/linux/cpuhotplug.h
-+++ b/include/linux/cpuhotplug.h
-@@ -125,6 +125,7 @@ enum cpuhp_state {
- 	CPUHP_AP_MARCO_TIMER_STARTING,
- 	CPUHP_AP_MIPS_GIC_TIMER_STARTING,
- 	CPUHP_AP_ARC_TIMER_STARTING,
-+	CPUHP_AP_RISCV_TIMER_STARTING,
- 	CPUHP_AP_KVM_STARTING,
- 	CPUHP_AP_KVM_ARM_VGIC_INIT_STARTING,
- 	CPUHP_AP_KVM_ARM_VGIC_STARTING,
--- 
-2.18.0
+dm-snapshost has really outdated design - it's been useful in the old age 
+where megabyte was hell lot of space.
 
+Nowadays, when users do need to handle snapshots in multi gigabyte sizes and 
+moreover have number of snapshots from the same volume taken over the time, 
+want to take snapshot of snapshot of snapshot, the old snapshot simple kills 
+all the performance, uses tons of resources and becomes serious bottleneck of 
+your system and has lots of usability limitation.
+
+That's where  thin provisioning will shine....
+
+However if you still need to take short-living smallish snapshot and you want 
+to use non-provisioned origin device, there the snapshot will still work as 
+proven technology -  just no one can expect it will scale for the recent 
+device size explosion...
+
+Regards
+
+Zdenek
