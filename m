@@ -3,42 +3,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3438CC4646D
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B332C46470
 	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 04:49:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D54CF217B4
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 04:49:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 229B42178D
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 04:49:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="NhMBpiTu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D54CF217B4
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="kOfjxaRa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 229B42178D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727600AbeHDGsW (ORCPT
+        id S1728024AbeHDGsX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 02:48:22 -0400
-Received: from conuserg-11.nifty.com ([210.131.2.78]:64044 "EHLO
+        Sat, 4 Aug 2018 02:48:23 -0400
+Received: from conuserg-11.nifty.com ([210.131.2.78]:64028 "EHLO
         conuserg-11.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726676AbeHDGsV (ORCPT
+        with ESMTP id S1726396AbeHDGsW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 02:48:21 -0400
+        Sat, 4 Aug 2018 02:48:22 -0400
 Received: from grover.tkatk1.zaq.ne.jp (zaqdadce369.zaq.ne.jp [218.220.227.105]) (authenticated)
-        by conuserg-11.nifty.com with ESMTP id w744lBUd027764;
-        Sat, 4 Aug 2018 13:47:11 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-11.nifty.com w744lBUd027764
+        by conuserg-11.nifty.com with ESMTP id w744lBUe027764;
+        Sat, 4 Aug 2018 13:47:12 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-11.nifty.com w744lBUe027764
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1533358032;
-        bh=Z/L2kTHPiGConeFBI3Xf0SKHrgDQmudCHaDSUkpYBjU=;
-        h=From:To:Cc:Subject:Date:From;
-        b=NhMBpiTu/CanJiYdC/ppDqDD95Tse0co4Q3n2IXqI6Uuoz7PlNChMnob4HXYkxLFR
-         dro8OMv/KNTOjlkHZqCWnEY630MhUT+4vAbTvkDe/MeD0Yghh/MrGNv8UOS25zk7pz
-         jh7wHOGy2c4vJqx58G4twwAoKJUzHMK0RF7fPicg82y5ZfdZsfGjnIe+qmmUrsE9EO
-         ko1YnTSiBFjROvJYTkIPYu6HRQz2Dl7T4SHxUOD4v0iQcupdGq1V6PVCuX4enJ43IF
-         Y6IVPthdbhVYBJquKYfL3CuflxPolxpKW5YNpDJ2Ur03Nn4pIyFzLL/eLTStOW4/b6
-         ymrTHDCGwd+Ow==
+        s=dec2015msa; t=1533358033;
+        bh=ulZoy0aw7RRCqQOsqMWNRLnJF7c1Iv70/QIKaR5unz4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=kOfjxaRajVFuIBjRzC9WPMBXFaRNIX7okCWnL23bBpWSUgfRi4vmWLRdS6hy+0Cyl
+         jD9r5lobuOP3BiF68nTVPWy0n5k6877jQ4CM9cFCpLvvLtpCZ2EFyI648+X0Q/K0mv
+         nClWpM7+LU8UF7t43egQ8g4xQVTMyicPz0aVbCeiuqBffIhZD/yVcIqZRv+mNcKKCU
+         hwQBBbpFIqhZlIPYGAnjBPxk6htSvzE8HNFZDIi4j4xhqYW8YzB3N/EYiE83Y+QuLK
+         l9rt+g40aBEltIS5S90N5PLm8jFZF4puCWwbGaZETKiH9Ws+zr1jgbqk4DqR1w4WG2
+         Hx0qmXPDWVx/g==
 X-Nifty-SrcIP: [218.220.227.105]
 From:   Masahiro Yamada <yamada.masahiro@socionext.com>
 To:     linux-kbuild@vger.kernel.org
@@ -49,35 +49,79 @@ Cc:     Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>,
         Sam Ravnborg <sam@ravnborg.org>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 0/3] Kbuild: fix and clean-up arch/um/Makefile
-Date:   Sat,  4 Aug 2018 13:47:00 +0900
-Message-Id: <1533358023-5801-1-git-send-email-yamada.masahiro@socionext.com>
+Subject: [PATCH 1/3] um: fix parallel building with O= option
+Date:   Sat,  4 Aug 2018 13:47:01 +0900
+Message-Id: <1533358023-5801-2-git-send-email-yamada.masahiro@socionext.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1533358023-5801-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1533358023-5801-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Randy Dunlap reports UML occasionally fails to build with -j<N> and
+O=<builddir> options.
 
-1/3 fixes the build failure reported by Randy.
-(I may have seen a similar report before, but I cannot recall it.)
+  make[1]: Entering directory '/home/rdunlap/mmotm-2018-0802-1529/UM64'
+    UPD     include/generated/uapi/linux/version.h
+    WRAP    arch/x86/include/generated/asm/dma-contiguous.h
+    WRAP    arch/x86/include/generated/asm/export.h
+    WRAP    arch/x86/include/generated/asm/early_ioremap.h
+    WRAP    arch/x86/include/generated/asm/mcs_spinlock.h
+    WRAP    arch/x86/include/generated/asm/mm-arch-hooks.h
+    WRAP    arch/x86/include/generated/uapi/asm/bpf_perf_event.h
+    WRAP    arch/x86/include/generated/uapi/asm/poll.h
+    GEN     ./Makefile
+  make[2]: *** No rule to make target 'archheaders'.  Stop.
+  arch/um/Makefile:119: recipe for target 'archheaders' failed
+  make[1]: *** [archheaders] Error 2
+  make[1]: *** Waiting for unfinished jobs....
+    UPD     include/config/kernel.release
+  make[1]: *** wait: No child processes.  Stop.
+  Makefile:146: recipe for target 'sub-make' failed
+  make: *** [sub-make] Error 2
 
-2/3 and 3/3 clean-up the Makefile a bit more.
+The cause of the problem is the use of '$(MAKE) KBUILD_SRC=',
+which recurses to the top Makefile via the $(objtree)/Makefile
+generated by scripts/mkmakefile.
 
-I'd like to apply this series to kbuild tree.
-Ack from UML folks are appreciated.
+When you run "make -j<N> O=<builddir> ARCH=um", Make can execute
+'archheaders' and 'outputmakefile' targets simultaneously because
+there is no dependency between them.
 
+If it happens,
 
+  $(Q)$(MAKE) KBUILD_SRC= ARCH=$(HEADER_ARCH) archheaders
 
-Masahiro Yamada (3):
-  um: fix parallel building with O= option
-  kbuild: add %asm-generic to no-dot-config-targets
-  um: clean up archheaders recipe
+... tries to run $(objtree)/Makefile that is being updated.
 
- Makefile         | 2 +-
- arch/um/Makefile | 9 +--------
- 2 files changed, 2 insertions(+), 9 deletions(-)
+The correct way for the recursion is
 
+  $(Q)$(MAKE) -f $(srctree)/Makefile ARCH=$(HEADER_ARCH) archheaders
+
+..., which does not rely on the generated Makefile.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+ arch/um/Makefile | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/arch/um/Makefile b/arch/um/Makefile
+index e54dda8..de340e4 100644
+--- a/arch/um/Makefile
++++ b/arch/um/Makefile
+@@ -122,8 +122,7 @@ archheaders:
+ 	$(Q)$(MAKE) -f $(srctree)/scripts/Makefile.asm-generic \
+ 	            kbuild-file=$(HOST_DIR)/include/uapi/asm/Kbuild \
+ 		    obj=$(HOST_DIR)/include/generated/uapi/asm
+-	$(Q)$(MAKE) KBUILD_SRC= ARCH=$(HEADER_ARCH) archheaders
+-
++	$(Q)$(MAKE) -f $(srctree)/Makefile ARCH=$(HEADER_ARCH) archheaders
+ 
+ archprepare: include/generated/user_constants.h
+ 
 -- 
 2.7.4
 
