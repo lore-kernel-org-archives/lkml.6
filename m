@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AB5AC46470
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:09:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCBFCC4646D
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:09:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C12152177A
-	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:09:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C12152177A
+	by mail.kernel.org (Postfix) with ESMTP id 819792177A
+	for <linux-kernel@archiver.kernel.org>; Sat,  4 Aug 2018 09:09:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 819792177A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388710AbeHDLJY (ORCPT
+        id S2388722AbeHDLJ3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 07:09:24 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49800 "EHLO
+        Sat, 4 Aug 2018 07:09:29 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49810 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727600AbeHDLJY (ORCPT
+        with ESMTP id S1726855AbeHDLJ2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 07:09:24 -0400
+        Sat, 4 Aug 2018 07:09:28 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EB948BBF;
-        Sat,  4 Aug 2018 09:09:24 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 84D97BBF;
+        Sat,  4 Aug 2018 09:09:28 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Terry Junge <terry.junge@plantronics.com>,
-        Jiri Kosina <jkosina@suse.cz>,
+        stable@vger.kernel.org,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 060/124] HID: hid-plantronics: Re-resend Update to map button for PTT products
-Date:   Sat,  4 Aug 2018 11:00:49 +0200
-Message-Id: <20180804082704.751110640@linuxfoundation.org>
+Subject: [PATCH 4.4 061/124] drm/radeon: fix mode_valids return type
+Date:   Sat,  4 Aug 2018 11:00:50 +0200
+Message-Id: <20180804082704.786500341@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180804082702.434482435@linuxfoundation.org>
 References: <20180804082702.434482435@linuxfoundation.org>
@@ -51,43 +52,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Terry Junge <terry.junge@plantronics.com>
+From: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
 
-[ Upstream commit 37e376df5f4993677c33968a0c19b0c5acbf1108 ]
+[ Upstream commit 7a47f20eb1fb8fa8d7a8fe3a4fd8c721f04c2174 ]
 
-Add a mapping for Push-To-Talk joystick trigger button.
+The method struct drm_connector_helper_funcs::mode_valid is defined
+as returning an 'enum drm_mode_status' but the driver implementation
+for this method uses an 'int' for it.
 
-Tested on ChromeBox/ChromeBook with various Plantronics devices.
+Fix this by using 'enum drm_mode_status' in the driver too.
 
-Signed-off-by: Terry Junge <terry.junge@plantronics.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/hid/hid-plantronics.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/radeon/radeon_connectors.c |   10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
---- a/drivers/hid/hid-plantronics.c
-+++ b/drivers/hid/hid-plantronics.c
-@@ -2,7 +2,7 @@
-  *  Plantronics USB HID Driver
-  *
-  *  Copyright (c) 2014 JD Cole <jd.cole@plantronics.com>
-- *  Copyright (c) 2015 Terry Junge <terry.junge@plantronics.com>
-+ *  Copyright (c) 2015-2018 Terry Junge <terry.junge@plantronics.com>
-  */
+--- a/drivers/gpu/drm/radeon/radeon_connectors.c
++++ b/drivers/gpu/drm/radeon/radeon_connectors.c
+@@ -844,7 +844,7 @@ static int radeon_lvds_get_modes(struct
+ 	return ret;
+ }
  
- /*
-@@ -48,6 +48,10 @@ static int plantronics_input_mapping(str
- 	unsigned short mapped_key;
- 	unsigned long plt_type = (unsigned long)hid_get_drvdata(hdev);
+-static int radeon_lvds_mode_valid(struct drm_connector *connector,
++static enum drm_mode_status radeon_lvds_mode_valid(struct drm_connector *connector,
+ 				  struct drm_display_mode *mode)
+ {
+ 	struct drm_encoder *encoder = radeon_best_single_encoder(connector);
+@@ -993,7 +993,7 @@ static int radeon_vga_get_modes(struct d
+ 	return ret;
+ }
  
-+	/* special case for PTT products */
-+	if (field->application == HID_GD_JOYSTICK)
-+		goto defaulted;
-+
- 	/* handle volume up/down mapping */
- 	/* non-standard types or multi-HID interfaces - plt_type is PID */
- 	if (!(plt_type & HID_USAGE_PAGE)) {
+-static int radeon_vga_mode_valid(struct drm_connector *connector,
++static enum drm_mode_status radeon_vga_mode_valid(struct drm_connector *connector,
+ 				  struct drm_display_mode *mode)
+ {
+ 	struct drm_device *dev = connector->dev;
+@@ -1136,7 +1136,7 @@ static int radeon_tv_get_modes(struct dr
+ 	return 1;
+ }
+ 
+-static int radeon_tv_mode_valid(struct drm_connector *connector,
++static enum drm_mode_status radeon_tv_mode_valid(struct drm_connector *connector,
+ 				struct drm_display_mode *mode)
+ {
+ 	if ((mode->hdisplay > 1024) || (mode->vdisplay > 768))
+@@ -1477,7 +1477,7 @@ static void radeon_dvi_force(struct drm_
+ 		radeon_connector->use_digital = true;
+ }
+ 
+-static int radeon_dvi_mode_valid(struct drm_connector *connector,
++static enum drm_mode_status radeon_dvi_mode_valid(struct drm_connector *connector,
+ 				  struct drm_display_mode *mode)
+ {
+ 	struct drm_device *dev = connector->dev;
+@@ -1778,7 +1778,7 @@ out:
+ 	return ret;
+ }
+ 
+-static int radeon_dp_mode_valid(struct drm_connector *connector,
++static enum drm_mode_status radeon_dp_mode_valid(struct drm_connector *connector,
+ 				  struct drm_display_mode *mode)
+ {
+ 	struct drm_device *dev = connector->dev;
 
 
