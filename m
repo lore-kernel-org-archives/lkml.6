@@ -2,261 +2,103 @@ Return-Path: <SRS0=mdhE=KU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F65BC28CF6
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 03:24:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E910EC28CF6
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 03:41:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF851208C0
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 03:24:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 91DDF21736
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 03:41:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tuHpYe8r"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF851208C0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="cjZgwuu6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91DDF21736
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727580AbeHEF07 (ORCPT
+        id S1726207AbeHEFoz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 5 Aug 2018 01:26:59 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:46180 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726121AbeHEF07 (ORCPT
+        Sun, 5 Aug 2018 01:44:55 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:45792 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726078AbeHEFoz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 Aug 2018 01:26:59 -0400
-Received: by mail-pg1-f193.google.com with SMTP id f14-v6so4121012pgv.13;
-        Sat, 04 Aug 2018 20:23:59 -0700 (PDT)
+        Sun, 5 Aug 2018 01:44:55 -0400
+Received: by mail-pf1-f195.google.com with SMTP id i26-v6so5173728pfo.12
+        for <linux-kernel@vger.kernel.org>; Sat, 04 Aug 2018 20:41:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=ssAAIsvCmi0/GZVaortLAXi2PA0a/5tL3SgT/2w8XsI=;
-        b=tuHpYe8rM9FT1Z30Qsg5PUMjrcIS9G9Qx50yIs+XY9yogHl29F+zDiXsgT8CwXZQ1m
-         UkjHcMxe/bde8Fmb2+Da7BulbymnIj5L/LEkqKivjmSrEKm2HRExvmecC9lp5RYsXWKZ
-         cu2B1GtDdNJM69bRLlQLcCRjsr/gNzy5gHqHU/xl00KnsjKRqYFOAIhlWD7REkaQBSZ7
-         AeB9ilrSturiE/E+10AgLqHMSF+DkAT+7t28pGRIyRtGrQLOvxdzbohLt8TlWetrTEL5
-         aOj+2lfg+Bnf1dBSkhrYjKSqLfgZEejAWmT5afltEPlBwKZ2FsobROom7gJNcdlLcNpg
-         oV0A==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=qei0gYGaM+p+YVCxg0VrV2h4yIf3yFl6IUtEh/HIkXM=;
+        b=cjZgwuu6jy1N15VfAq+BZFcWAt85cfbxXJzi0c6SnF7SMOwvVjMhQ7P7ov74ev0cWN
+         24eHIna5S/hv9TPwjQDR1xXhVKuUgzOPGdcX4fnUtsmx9Do6r/o8Yf8V1KyNdgsISlaJ
+         wfAnYTjwlsHeUiBU9NdtZlupOTUI2vwwKEyyI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=ssAAIsvCmi0/GZVaortLAXi2PA0a/5tL3SgT/2w8XsI=;
-        b=mSZ+2T7BmYmJBCtE5SYxEhGAnm6nSWURa8QToUJ49A7t+fCu6hfzh4Ht2LlMBWgjVi
-         aB48tVVtfbswjEt0SWr3/rSRFX8JhlQskRYHr//G3mIrij7/3l4OtIMzQYP5aoSmYCMu
-         BfalLAbWZXh+bJaGpowNQxg+b2e6Mi1KtIJKk1V/LRyGUkA2wVLCu0RMVEdJ65oNZ0es
-         arE8XqR+vWi23fzRJhIdX/fE//wo0zmQPuvNU5HYdU1L6OyxPGBTP0Gh5Ftl1FD1s5iW
-         +6nxXUgWkz6tM/S3/OFYiX07ys52sOY+YiE71war5aA07fGEhAT7SUMGvpUMieHtZ+We
-         J54w==
-X-Gm-Message-State: AOUpUlHdFeOoeZXE7yVFn0p1vhZWjBwGAYQLtPXqPBib25mXNtb7gIcX
-        q7UtIvUEt690rJ6jcBa/fslusZ8l
-X-Google-Smtp-Source: AAOMgpfKYyB0P3Q+pIvuUt345DWq5RvQx/lHRFKZmcYg+W+MxINjtcoLi0gc4baqp/2CUTKsJJ6inw==
-X-Received: by 2002:a62:4b48:: with SMTP id y69-v6mr11320003pfa.93.1533439438665;
-        Sat, 04 Aug 2018 20:23:58 -0700 (PDT)
-Received: from linux-l9pv.suse ([124.11.22.254])
-        by smtp.gmail.com with ESMTPSA id x87-v6sm15971922pfa.143.2018.08.04.20.23.50
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sat, 04 Aug 2018 20:23:58 -0700 (PDT)
-From:   "Lee, Chun-Yi" <joeyli.kernel@gmail.com>
-X-Google-Original-From: "Lee, Chun-Yi" <jlee@suse.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-efi@vger.kernel.org, x86@kernel.org,
-        keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
-        "Lee, Chun-Yi" <jlee@suse.com>, Kees Cook <keescook@chromium.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Pavel Machek <pavel@ucw.cz>, Chen Yu <yu.c.chen@intel.com>,
-        Oliver Neukum <oneukum@suse.com>,
-        Ryan Chen <yu.chen.surf@gmail.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        David Howells <dhowells@redhat.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>
-Subject: [PATCH 6/6] key: enforce the secure boot checking when loading efi root key
-Date:   Sun,  5 Aug 2018 11:21:19 +0800
-Message-Id: <20180805032119.20485-7-jlee@suse.com>
-X-Mailer: git-send-email 2.12.3
-In-Reply-To: <20180805032119.20485-1-jlee@suse.com>
-References: <20180805032119.20485-1-jlee@suse.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=qei0gYGaM+p+YVCxg0VrV2h4yIf3yFl6IUtEh/HIkXM=;
+        b=gU/iqgyX5LERcZnYQKC7zmhWg4bRWnx/UuuZMV2VAvp2ac9LJqsuqGrFOcjEjfTM6n
+         7Y4o+rBSnEDsVjeEsLR1iWt8ig0s09kVwbtd2S/JDfjOjAp1hdtXzsi8UDsdCFO7RDUT
+         GHZcMc/Xx9HQItatey3H/WdtUQw/douZoWpWczxVQt9p5+ZLmhZs5Pu9pxSs/udJnX7J
+         DPYp3EZOT3pVBNaR41sNakfzg78inoTzU+jlxu9q9Q+qT9qa7vHYMdCxEAiCcsFXkYlV
+         rxvRKcllY70yUpo76TzRwmd036zCvarmxufPFl77cdBUbSKjuXsCkwgY+wfYGW6DAsUB
+         Xplg==
+X-Gm-Message-State: AOUpUlEmMy+v7+/N0ivxLB0M80uIbPOxTXRWYTSha6rlmY8KqsCvI9L9
+        lvJrQi4BQgIX9b8JVpZfc7T8
+X-Google-Smtp-Source: AAOMgpcsvl11bXjOo3lp6acUDUk+y+I8NvAplLmATQN1zp/f9anAbx+GzeQIwxyCt8mKa2wqQJKRGQ==
+X-Received: by 2002:a62:15c8:: with SMTP id 191-v6mr11249171pfv.194.1533440512732;
+        Sat, 04 Aug 2018 20:41:52 -0700 (PDT)
+Received: from Mani-XPS-13-9360 ([111.93.136.226])
+        by smtp.gmail.com with ESMTPSA id t19-v6sm16522037pfk.182.2018.08.04.20.41.43
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 04 Aug 2018 20:41:51 -0700 (PDT)
+Date:   Sun, 5 Aug 2018 09:11:40 +0530
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     afaerber@suse.de
+Cc:     Wolfram Sang <wsa@the-dreams.de>, robh+dt@kernel.org,
+        linus.walleij@linaro.org, linux-i2c@vger.kernel.org,
+        liuwei@actions-semi.com, mp-cs@actions-semi.com,
+        96boards@ucrobotics.com, devicetree@vger.kernel.org,
+        andy.shevchenko@gmail.com, daniel.thompson@linaro.org,
+        amit.kucheria@linaro.org, linux-arm-kernel@lists.infradead.org,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        hzhang@ucrobotics.com, bdong@ucrobotics.com,
+        manivannanece23@gmail.com, thomas.liau@actions-semi.com,
+        jeff.chen@actions-semi.com
+Subject: Re: [PATCH v8 2/6] arm64: dts: actions: Add pinctrl definition for
+ S900 I2C controller
+Message-ID: <20180805034140.GA6907@Mani-XPS-13-9360>
+References: <20180801180232.23680-1-manivannan.sadhasivam@linaro.org>
+ <20180801180232.23680-3-manivannan.sadhasivam@linaro.org>
+ <20180804210440.6fw4zrvk6lzawypc@ninjato>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180804210440.6fw4zrvk6lzawypc@ninjato>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The EFI root key is not completely secure insecure when the
-secure boot is disabled because it can be changed by unsigned EFI
-binary before system be handed over to kernel. But in some use
-case user does not want the EFI secure key functions be blocked
-when secure boot is disabled.
+On Sat, Aug 04, 2018 at 11:04:40PM +0200, Wolfram Sang wrote:
+> On Wed, Aug 01, 2018 at 11:32:28PM +0530, Manivannan Sadhasivam wrote:
+> > Add pinctrl definition for Actions Semiconductor S900 I2C controller.
+> > Pinctrl definitions are only available for I2C0, I2C1, and I2C2.
+> > 
+> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> 
+> Note that I don't take DTS patches, so skipping patches 2-4.
+>
 
-Like the kernel module verification, this patch adds a enforce
-kernel configuration option that it can be used to enforce kernel
-to checking the secure boot before loading efi root key. And user
-can also use kernel parameter to enable it. When this option be
-enabled, the EFI root key will not be loaded by kernel when secure
-boot is diabled.
+Hi Andreas,
 
-Without this option, kernel will be tainted but the EFI root key
-can still be loaded.
+Can you please take the DTS patches through Actions tree?
 
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Cc: Pavel Machek <pavel@ucw.cz>
-Cc: Chen Yu <yu.c.chen@intel.com>
-Cc: Oliver Neukum <oneukum@suse.com>
-Cc: Ryan Chen <yu.chen.surf@gmail.com>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: David Howells <dhowells@redhat.com>
-Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Signed-off-by: "Lee, Chun-Yi" <jlee@suse.com>
----
- Documentation/admin-guide/kernel-parameters.txt |  6 +++++
- drivers/firmware/efi/Kconfig                    |  8 ++++++
- drivers/firmware/efi/efi-secure-key.c           | 33 ++++++++++++++++++++++---
- include/linux/kernel.h                          |  3 ++-
- kernel/panic.c                                  |  1 +
- 5 files changed, 46 insertions(+), 5 deletions(-)
+Thanks,
+Mani
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 533ff5c68970..7a9ac358793f 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -1122,6 +1122,12 @@
- 			vendor GUIDs, all of them will be loaded. See
- 			Documentation/acpi/ssdt-overlays.txt for details.
- 
-+	efi-secure-key.sb_enforce [EFI; X86]
-+			When EFI_SECURE_KEY is set, this means that
-+			EFI root key will not be loaded when secure boot is
-+			not enabled. Note that if EFI_SECURE_KEY_SB_ENFORCE
-+			is set, that is always true, so this option does
-+			nothing.
- 
- 	eisa_irq_edge=	[PARISC,HW]
- 			See header of drivers/parisc/eisa.c.
-diff --git a/drivers/firmware/efi/Kconfig b/drivers/firmware/efi/Kconfig
-index 048cf91ae8e8..fba894a4e7b0 100644
---- a/drivers/firmware/efi/Kconfig
-+++ b/drivers/firmware/efi/Kconfig
-@@ -187,6 +187,14 @@ config EFI_SECURE_KEY
- 
- 	  If unsure, say N.
- 
-+config EFI_SECURE_KEY_SB_ENFORCE
-+	bool "Force checking secure boot when loading EFI root key"
-+	default y
-+	depends on EFI_SECURE_KEY
-+	help
-+	  Skip EFI root key when secure boot is not enabled. Without this,
-+	  EFI root key will simply taint the kernel when no secure boot.
-+
- endmenu
- 
- config UEFI_CPER
-diff --git a/drivers/firmware/efi/efi-secure-key.c b/drivers/firmware/efi/efi-secure-key.c
-index aa422ee87f70..417d73768887 100644
---- a/drivers/firmware/efi/efi-secure-key.c
-+++ b/drivers/firmware/efi/efi-secure-key.c
-@@ -15,6 +15,7 @@
- #include <linux/parser.h>
- #include <linux/random.h>
- #include <linux/scatterlist.h>
-+#include <linux/moduleparam.h>
- #include <keys/efi-type.h>
- #include <keys/user-type.h>
- #include <crypto/algapi.h>
-@@ -27,6 +28,9 @@ static unsigned long rkey_size;
- static bool is_loaded;
- static bool is_secure;
- 
-+static bool sb_enforce = IS_ENABLED(CONFIG_EFI_SECURE_KEY_SB_ENFORCE);
-+module_param(sb_enforce, bool_enable_only, 0644);
-+
- static void __init
- print_efi_rkey_setup_data(struct efi_rkey_setup_data *rkey_setup)
- {
-@@ -59,11 +63,13 @@ void __init parse_efi_root_key_setup(u64 phys_addr, u32 data_len)
- 
- 	/* keep efi root key */
- 	if (rkey_setup->final_status == EFI_SUCCESS) {
--		memcpy(root_key, rkey_setup->root_key, rkey_setup->key_size);
--		rkey_size = rkey_setup->key_size;
--		is_loaded = true;
- 		is_secure = rkey_setup->is_secure;
--		pr_info("EFI root key is loaded.\n");
-+		if (is_secure || !sb_enforce) {
-+			memcpy(root_key, rkey_setup->root_key, rkey_setup->key_size);
-+			rkey_size = rkey_setup->key_size;
-+			is_loaded = true;
-+			pr_info("EFI root key is loaded.\n");
-+		}
- 		if (!is_secure) {
- 			pr_warn("EFI root key is insecure when no secure boot.\n");
- 		}
-@@ -75,6 +81,14 @@ void __init parse_efi_root_key_setup(u64 phys_addr, u32 data_len)
- 	early_iounmap(setup_data, data_len);
- }
- 
-+static void __init clean_efi_root_key(void)
-+{
-+	memzero_explicit(root_key, ROOT_KEY_SIZE);
-+	rkey_size = 0;
-+	is_loaded = false;
-+	is_secure = false;
-+}
-+
- #define ERK_HASH_SIZE SHA256_DIGEST_SIZE
- #define HMAC_HASH_SIZE SHA256_DIGEST_SIZE
- #define DKEY_SIZE SHA256_DIGEST_SIZE
-@@ -705,6 +719,17 @@ static int __init init_efi_secure_key(void)
- 	if (!is_loaded)
- 		return 0;
- 
-+	if (!is_secure) {
-+		if (sb_enforce) {
-+			clean_efi_root_key();
-+			pr_info("EFI root key is unloaded because insecure.\n");
-+			return 0;
-+		} else {
-+			add_taint(TAINT_INSECURE_KEY, LOCKDEP_STILL_OK);
-+			pr_warn("Tainted kernel because EFI root key is insecure.\n");
-+		}
-+	}
-+
- 	hash_tfm = crypto_alloc_shash(hash_alg, 0, CRYPTO_ALG_ASYNC);
- 	if (IS_ERR(hash_tfm)) {
- 		pr_err("can't allocate %s transform: %ld\n",
-diff --git a/include/linux/kernel.h b/include/linux/kernel.h
-index 941dc0a5a877..b45716e54a97 100644
---- a/include/linux/kernel.h
-+++ b/include/linux/kernel.h
-@@ -565,7 +565,8 @@ extern enum system_states {
- #define TAINT_LIVEPATCH			15
- #define TAINT_AUX			16
- #define TAINT_RANDSTRUCT		17
--#define TAINT_FLAGS_COUNT		18
-+#define TAINT_INSECURE_KEY		18
-+#define TAINT_FLAGS_COUNT		19
- 
- struct taint_flag {
- 	char c_true;	/* character printed when tainted */
-diff --git a/kernel/panic.c b/kernel/panic.c
-index 8b2e002d52eb..d641098a814d 100644
---- a/kernel/panic.c
-+++ b/kernel/panic.c
-@@ -327,6 +327,7 @@ const struct taint_flag taint_flags[TAINT_FLAGS_COUNT] = {
- 	[ TAINT_LIVEPATCH ]		= { 'K', ' ', true },
- 	[ TAINT_AUX ]			= { 'X', ' ', true },
- 	[ TAINT_RANDSTRUCT ]		= { 'T', ' ', true },
-+	[TAINT_INSECURE_KEY]		= { 'Y', ' ', false },
- };
- 
- /**
--- 
-2.13.6
 
