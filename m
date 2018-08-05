@@ -2,442 +2,533 @@ Return-Path: <SRS0=mdhE=KU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBA3DC46471
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 16:08:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1CDFC46471
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 16:11:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72444218C1
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 16:08:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 73C1A21782
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 16:11:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="S20tk8MC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72444218C1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U/uVhSYH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73C1A21782
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726647AbeHESNs (ORCPT
+        id S1726465AbeHESQE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 5 Aug 2018 14:13:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51434 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726271AbeHESNs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 Aug 2018 14:13:48 -0400
-Received: from localhost (c-67-160-202-76.hsd1.ca.comcast.net [67.160.202.76])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5513021782;
-        Sun,  5 Aug 2018 16:08:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1533485323;
-        bh=09PcMorp3SngAYjNp/xin7chBO5JVmXIMLUjoyRCiVA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=S20tk8MCBOHIdXrJDCBTGMlIDo3kZfOSDqMXerG6oUrZr6HWlZbwuK9j6VZfavGJ8
-         Fxa+jrFru1I5f73+ie92AWeMDkSGKUHCiBD2hrkJY3hhl99lgxwHgVf8JVm/BZfIOO
-         CzJEIZJjcDnWKswl5jtlIcTWJMe1xwFG9wAdjT6Y=
-Date:   Sun, 5 Aug 2018 09:08:42 -0700
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     Chao Yu <chao@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: avoid fi->i_gc_rwsem[WRITE] lock in
- f2fs_gc
-Message-ID: <20180805160842.GA55836@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180730013242.15647-1-jaegeuk@kernel.org>
- <20180804222954.GB35077@jaegeuk-macbookpro.roam.corp.google.com>
- <4ab08c78-4a3a-4161-9c6f-2835829c95c3@kernel.org>
+        Sun, 5 Aug 2018 14:16:04 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:45765 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726207AbeHESQD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 5 Aug 2018 14:16:03 -0400
+Received: by mail-wr1-f67.google.com with SMTP id f12-v6so9997629wrv.12;
+        Sun, 05 Aug 2018 09:10:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=IY25fBc5OGJ1zgyTFs+7hk4aKWQdaaraLUjFzx/PF4c=;
+        b=U/uVhSYH8jS7/rWJ6Jsuw+POZ7aYZUDTd+4p7KMwX43HkdigRy4WLjb6cpybyV/zev
+         Lz9aZwSxGnYYypKTAzULwl+LwMHLXwLfWIk6yhgdLaeteWy5Vjfo5i8Wa2NpLgHDzc6C
+         JbFkKWJ+WNEiCkUYStW8qmZ/m2lnAnLgSBT4tVj4bf9wQASugIAlwLGJAGQ79AfOXR+X
+         lxi/nVcpu+2AaruWoRaNOJ0/YcYdMvxCuRPYxr0Fl5aJtPGycfKbZX0MhfFqxaaLY3Ot
+         M0vgwxH1Sv1etxuiSxb99lA+9BnITf8ty34BY4bhRcCurIK3v+Bgrs/ZnkANYGPKcPmx
+         T6qA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=IY25fBc5OGJ1zgyTFs+7hk4aKWQdaaraLUjFzx/PF4c=;
+        b=CcxOTcdPRH/4Upkji5G56ZyDFI4Xk1xSC5Nz+OsSHdRd4XEGtYqQNSVSPdVxna//Pb
+         HaIY1Z/yUmuk2ZE23ZulMezMgKVuG4yYySTPfWRzB4s9Tqj1OXAoVFDBRZPfGlnySeZx
+         ukhfQis+OcvDYbUj0ucJLJm8yk8ZjNeD9TWQnOBbkuoiLBup04JlZU+cM61tf8uQahOL
+         UoKm0U1W8GnHq64nYLQLigG+R0YUoooH35iQEX0qYFdeBivc25LATkRBSXG3zRnGwvz3
+         rzGZ+Akzgsb6DetopzKeDoCO6DOC0LAnuD2VeDFSnMUrR9t8ftoLJ4epW/QnMvjDxy+f
+         gNlw==
+X-Gm-Message-State: AOUpUlEU66X5Dm+p23woOlOKxSDX4co9zt0uZJcrIgk2yNcSUmVTMLJa
+        Ly82BoHUcNmAEJmHJ8QbZw7u81dK
+X-Google-Smtp-Source: AAOMgpcpJvZsInfMBVk1gsnj3jv5kQdq0UXAlNrvgiiGBdFOVza1ytMbrlXpW9jKtqz/J822ApIVqg==
+X-Received: by 2002:adf:e887:: with SMTP id d7-v6mr7659564wrm.43.1533485456117;
+        Sun, 05 Aug 2018 09:10:56 -0700 (PDT)
+Received: from [192.168.1.18] (dkm184.neoplus.adsl.tpnet.pl. [83.24.16.184])
+        by smtp.gmail.com with ESMTPSA id d42-v6sm10728734wma.0.2018.08.05.09.10.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 05 Aug 2018 09:10:55 -0700 (PDT)
+Subject: Re: [PATCH v4 1/2] leds: core: Introduce LED pattern trigger
+To:     Baolin Wang <baolin.wang@linaro.org>, pavel@ucw.cz
+Cc:     rteysseyre@gmail.com, bjorn.andersson@linaro.org,
+        broonie@kernel.org, linux-leds@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <c43374283744539702023053c896efe3c73b7833.1533441631.git.baolin.wang@linaro.org>
+From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Message-ID: <3d7e8701-d92b-9f51-befa-a585b5957488@gmail.com>
+Date:   Sun, 5 Aug 2018 18:10:53 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4ab08c78-4a3a-4161-9c6f-2835829c95c3@kernel.org>
-User-Agent: Mutt/1.8.2 (2017-04-18)
+In-Reply-To: <c43374283744539702023053c896efe3c73b7833.1533441631.git.baolin.wang@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/05, Chao Yu wrote:
-> On 2018/8/5 6:29, Jaegeuk Kim wrote:
-> > The f2fs_gc() called by f2fs_balance_fs() requires to be called outside of
-> > fi->i_gc_rwsem[WRITE], since f2fs_gc() can try to grab it in a loop.
-> > 
-> > If it hits the miximum retrials in GC, let's give a chance to release
-> > gc_mutex for a short time in order not to go into live lock in the worst
-> > case.
-> > 
-> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> > ---
-> > v2 log from v1:
-> >  - keep lock order: i_gc_rwsem -> lock_op
-> > 
-> >  fs/f2fs/f2fs.h    |  1 +
-> >  fs/f2fs/file.c    | 76 ++++++++++++++++++++++++-----------------------
-> >  fs/f2fs/gc.c      | 22 ++++++++++----
-> >  fs/f2fs/segment.c |  5 +++-
-> >  fs/f2fs/segment.h |  2 +-
-> >  5 files changed, 61 insertions(+), 45 deletions(-)
-> > 
-> > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> > index a9447c7d6570..50349780001b 100644
-> > --- a/fs/f2fs/f2fs.h
-> > +++ b/fs/f2fs/f2fs.h
-> > @@ -1223,6 +1223,7 @@ struct f2fs_sb_info {
-> >  	unsigned int gc_mode;			/* current GC state */
-> >  	/* for skip statistic */
-> >  	unsigned long long skipped_atomic_files[2];	/* FG_GC and BG_GC */
-> > +	unsigned long long skipped_gc_rwsem;		/* FG_GC only */
-> >  
-> >  	/* threshold for gc trials on pinned files */
-> >  	u64 gc_pin_file_threshold;
-> > diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> > index 78c1bd6b8497..7bcf47f41ef1 100644
-> > --- a/fs/f2fs/file.c
-> > +++ b/fs/f2fs/file.c
-> > @@ -1179,25 +1179,31 @@ static int __exchange_data_block(struct inode *src_inode,
-> >  	return ret;
-> >  }
-> >  
-> > -static int f2fs_do_collapse(struct inode *inode, pgoff_t start, pgoff_t end)
-> > +static int f2fs_do_collapse(struct inode *inode, loff_t offset, loff_t len)
-> >  {
-> >  	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-> >  	pgoff_t nrpages = (i_size_read(inode) + PAGE_SIZE - 1) / PAGE_SIZE;
-> > +	pgoff_t start = offset >> PAGE_SHIFT;
-> > +	pgoff_t end = (offset + len) >> PAGE_SHIFT;
-> >  	int ret;
-> >  
-> >  	f2fs_balance_fs(sbi, true);
-> > -	f2fs_lock_op(sbi);
-> >  
-> > -	f2fs_drop_extent_tree(inode);
-> > +	/* avoid gc operation during block exchange */
-> > +	down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
-> >  
-> > +	f2fs_lock_op(sbi);
-> > +	f2fs_drop_extent_tree(inode);
-> > +	truncate_pagecache(inode, offset);
-> >  	ret = __exchange_data_block(inode, inode, end, start, nrpages - end, true);
-> >  	f2fs_unlock_op(sbi);
-> > +
-> > +	up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
-> >  	return ret;
-> >  }
-> >  
-> >  static int f2fs_collapse_range(struct inode *inode, loff_t offset, loff_t len)
-> >  {
-> > -	pgoff_t pg_start, pg_end;
-> >  	loff_t new_size;
-> >  	int ret;
-> >  
-> > @@ -1212,21 +1218,13 @@ static int f2fs_collapse_range(struct inode *inode, loff_t offset, loff_t len)
-> >  	if (ret)
-> >  		return ret;
-> >  
-> > -	pg_start = offset >> PAGE_SHIFT;
-> > -	pg_end = (offset + len) >> PAGE_SHIFT;
-> > -
-> > -	/* avoid gc operation during block exchange */
-> > -	down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
-> > -
-> >  	down_write(&F2FS_I(inode)->i_mmap_sem);
-> >  	/* write out all dirty pages from offset */
-> >  	ret = filemap_write_and_wait_range(inode->i_mapping, offset, LLONG_MAX);
-> >  	if (ret)
-> >  		goto out_unlock;
-> >  
-> > -	truncate_pagecache(inode, offset);
-> > -
-> > -	ret = f2fs_do_collapse(inode, pg_start, pg_end);
-> > +	ret = f2fs_do_collapse(inode, offset, len);
-> >  	if (ret)
-> >  		goto out_unlock;
-> >  
-> > @@ -1242,7 +1240,6 @@ static int f2fs_collapse_range(struct inode *inode, loff_t offset, loff_t len)
-> >  		f2fs_i_size_write(inode, new_size);
-> >  out_unlock:
-> >  	up_write(&F2FS_I(inode)->i_mmap_sem);
-> > -	up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
-> >  	return ret;
-> >  }
-> >  
-> > @@ -1417,9 +1414,6 @@ static int f2fs_insert_range(struct inode *inode, loff_t offset, loff_t len)
-> >  
-> >  	f2fs_balance_fs(sbi, true);
-> >  
-> > -	/* avoid gc operation during block exchange */
-> > -	down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
-> > -
-> >  	down_write(&F2FS_I(inode)->i_mmap_sem);
-> >  	ret = f2fs_truncate_blocks(inode, i_size_read(inode), true);
-> >  	if (ret)
-> > @@ -1430,13 +1424,15 @@ static int f2fs_insert_range(struct inode *inode, loff_t offset, loff_t len)
-> >  	if (ret)
-> >  		goto out;
-> >  
-> > -	truncate_pagecache(inode, offset);
-> > -
-> >  	pg_start = offset >> PAGE_SHIFT;
-> >  	pg_end = (offset + len) >> PAGE_SHIFT;
-> >  	delta = pg_end - pg_start;
-> >  	idx = (i_size_read(inode) + PAGE_SIZE - 1) / PAGE_SIZE;
-> >  
-> > +	/* avoid gc operation during block exchange */
-> > +	down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
-> > +	truncate_pagecache(inode, offset);
-> > +
-> >  	while (!ret && idx > pg_start) {
-> >  		nr = idx - pg_start;
-> >  		if (nr > delta)
-> > @@ -1450,6 +1446,7 @@ static int f2fs_insert_range(struct inode *inode, loff_t offset, loff_t len)
-> >  					idx + delta, nr, false);
-> >  		f2fs_unlock_op(sbi);
-> >  	}
-> > +	up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
-> >  
-> >  	/* write out all moved pages, if possible */
-> >  	filemap_write_and_wait_range(inode->i_mapping, offset, LLONG_MAX);
-> > @@ -1459,7 +1456,6 @@ static int f2fs_insert_range(struct inode *inode, loff_t offset, loff_t len)
-> >  		f2fs_i_size_write(inode, new_size);
-> >  out:
-> >  	up_write(&F2FS_I(inode)->i_mmap_sem);
-> > -	up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
-> >  	return ret;
-> >  }
-> >  
-> > @@ -1706,8 +1702,6 @@ static int f2fs_ioc_start_atomic_write(struct file *filp)
-> >  
-> >  	inode_lock(inode);
-> >  
-> > -	down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
-> > -
-> >  	if (f2fs_is_atomic_file(inode)) {
-> >  		if (is_inode_flag_set(inode, FI_ATOMIC_REVOKE_REQUEST))
-> >  			ret = -EINVAL;
-> > @@ -1718,6 +1712,8 @@ static int f2fs_ioc_start_atomic_write(struct file *filp)
-> >  	if (ret)
-> >  		goto out;
-> >  
-> > +	down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
-> > +
-> >  	if (!get_dirty_pages(inode))
-> >  		goto skip_flush;
-> >  
-> > @@ -1725,18 +1721,20 @@ static int f2fs_ioc_start_atomic_write(struct file *filp)
-> >  		"Unexpected flush for atomic writes: ino=%lu, npages=%u",
-> >  					inode->i_ino, get_dirty_pages(inode));
-> >  	ret = filemap_write_and_wait_range(inode->i_mapping, 0, LLONG_MAX);
-> > -	if (ret)
-> > +	if (ret) {
-> > +		up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
-> >  		goto out;
-> > +	}
-> >  skip_flush:
-> >  	set_inode_flag(inode, FI_ATOMIC_FILE);
-> >  	clear_inode_flag(inode, FI_ATOMIC_REVOKE_REQUEST);
-> > -	f2fs_update_time(F2FS_I_SB(inode), REQ_TIME);
-> > +	up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
-> >  
-> > +	f2fs_update_time(F2FS_I_SB(inode), REQ_TIME);
-> >  	F2FS_I(inode)->inmem_task = current;
-> >  	stat_inc_atomic_write(inode);
-> >  	stat_update_max_atomic_write(inode);
-> >  out:
-> > -	up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
-> >  	inode_unlock(inode);
-> >  	mnt_drop_write_file(filp);
-> >  	return ret;
-> > @@ -1754,9 +1752,9 @@ static int f2fs_ioc_commit_atomic_write(struct file *filp)
-> >  	if (ret)
-> >  		return ret;
-> >  
-> > -	inode_lock(inode);
-> > +	f2fs_balance_fs(F2FS_I_SB(inode), true);
-> >  
-> > -	down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
-> > +	inode_lock(inode);
-> >  
-> >  	if (f2fs_is_volatile_file(inode)) {
-> >  		ret = -EINVAL;
-> > @@ -1782,7 +1780,6 @@ static int f2fs_ioc_commit_atomic_write(struct file *filp)
-> >  		clear_inode_flag(inode, FI_ATOMIC_REVOKE_REQUEST);
-> >  		ret = -EINVAL;
-> >  	}
-> > -	up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
-> >  	inode_unlock(inode);
-> >  	mnt_drop_write_file(filp);
-> >  	return ret;
-> > @@ -2378,15 +2375,10 @@ static int f2fs_move_file_range(struct file *file_in, loff_t pos_in,
-> >  	}
-> >  
-> >  	inode_lock(src);
-> > -	down_write(&F2FS_I(src)->i_gc_rwsem[WRITE]);
-> >  	if (src != dst) {
-> >  		ret = -EBUSY;
-> >  		if (!inode_trylock(dst))
-> >  			goto out;
-> > -		if (!down_write_trylock(&F2FS_I(dst)->i_gc_rwsem[WRITE])) {
-> > -			inode_unlock(dst);
-> > -			goto out;
-> > -		}
-> >  	}
-> >  
-> >  	ret = -EINVAL;
-> > @@ -2431,6 +2423,14 @@ static int f2fs_move_file_range(struct file *file_in, loff_t pos_in,
-> >  		goto out_unlock;
-> >  
-> >  	f2fs_balance_fs(sbi, true);
-> > +
-> > +	down_write(&F2FS_I(src)->i_gc_rwsem[WRITE]);
-> > +	if (src != dst) {
-> > +		ret = -EBUSY;
-> > +		if (!down_write_trylock(&F2FS_I(dst)->i_gc_rwsem[WRITE]))
-> > +			goto out_src;
-> > +	}
-> > +
-> >  	f2fs_lock_op(sbi);
-> >  	ret = __exchange_data_block(src, dst, pos_in >> F2FS_BLKSIZE_BITS,
-> >  				pos_out >> F2FS_BLKSIZE_BITS,
-> > @@ -2443,13 +2443,15 @@ static int f2fs_move_file_range(struct file *file_in, loff_t pos_in,
-> >  			f2fs_i_size_write(dst, dst_osize);
-> >  	}
-> >  	f2fs_unlock_op(sbi);
-> > -out_unlock:
-> > -	if (src != dst) {
-> > +
-> > +	if (src != dst)
-> >  		up_write(&F2FS_I(dst)->i_gc_rwsem[WRITE]);
-> > +out_src:
-> > +	up_write(&F2FS_I(src)->i_gc_rwsem[WRITE]);
-> > +out_unlock:
-> > +	if (src != dst)
-> >  		inode_unlock(dst);
-> > -	}
-> >  out:
-> > -	up_write(&F2FS_I(src)->i_gc_rwsem[WRITE]);
-> >  	inode_unlock(src);
-> >  	return ret;
-> >  }
-> > diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> > index e352fbd33848..cac317e37306 100644
-> > --- a/fs/f2fs/gc.c
-> > +++ b/fs/f2fs/gc.c
-> > @@ -884,6 +884,7 @@ static void gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
-> >  			if (!down_write_trylock(
-> >  				&F2FS_I(inode)->i_gc_rwsem[WRITE])) {
-> >  				iput(inode);
-> > +				sbi->skipped_gc_rwsem++;
-> >  				continue;
-> >  			}
-> >  
-> > @@ -913,6 +914,7 @@ static void gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
-> >  					continue;
-> >  				if (!down_write_trylock(
-> >  						&fi->i_gc_rwsem[WRITE])) {
-> > +					sbi->skipped_gc_rwsem++;
-> >  					up_write(&fi->i_gc_rwsem[READ]);
-> >  					continue;
-> >  				}
-> > @@ -1062,6 +1064,7 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
-> >  				prefree_segments(sbi));
-> >  
-> >  	cpc.reason = __get_cp_reason(sbi);
-> > +	sbi->skipped_gc_rwsem = 0;
-> >  gc_more:
-> >  	if (unlikely(!(sbi->sb->s_flags & SB_ACTIVE))) {
-> >  		ret = -EINVAL;
-> > @@ -1103,7 +1106,8 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
-> >  	total_freed += seg_freed;
-> >  
-> >  	if (gc_type == FG_GC) {
-> > -		if (sbi->skipped_atomic_files[FG_GC] > last_skipped)
-> > +		if (sbi->skipped_atomic_files[FG_GC] > last_skipped ||
-> > +						sbi->skipped_gc_rwsem)
-> 
-> There should be other foreground ops like DIO can race with GC, in such case, if
-> we increase sbi->skipped_gc_rwsem, and call f2fs_drop_inmem_pages_all() to drop
-> inmem pages later, it doesn't help?
+Hi Baolin,
 
-Let me add a condition to decide that.
+Thank you for the fix.
 
-> 
-> >  			skipped_round++;
-> >  		last_skipped = sbi->skipped_atomic_files[FG_GC];
-> >  		round++;
-> > @@ -1112,15 +1116,21 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
-> >  	if (gc_type == FG_GC)
-> >  		sbi->cur_victim_sec = NULL_SEGNO;
-> >  
-> > -	if (!sync) {
-> > -		if (has_not_enough_free_secs(sbi, sec_freed, 0)) {
-> > -			if (skipped_round > MAX_SKIP_ATOMIC_COUNT &&
-> > -				skipped_round * 2 >= round)
-> > -				f2fs_drop_inmem_pages_all(sbi, true);
-> > +	if (sync)
-> > +		goto stop;
-> > +
-> > +	if (has_not_enough_free_secs(sbi, sec_freed, 0)) {
-> > +		if (skipped_round <= MAX_SKIP_GC_COUNT ||
-> > +					skipped_round * 2 < round) {
-> >  			segno = NULL_SEGNO;
-> >  			goto gc_more;
-> >  		}
-> >  
-> > +		if (sbi->skipped_atomic_files[FG_GC] == last_skipped) {
-> > +			f2fs_drop_inmem_pages_all(sbi, true);
-> > +			segno = NULL_SEGNO;
-> > +			goto gc_more;
-> > +		}
-> >  		if (gc_type == FG_GC)
-> >  			ret = f2fs_write_checkpoint(sbi, &cpc);
-> >  	}
-> > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> > index 3662e1f429b4..15b3b095fd58 100644
-> > --- a/fs/f2fs/segment.c
-> > +++ b/fs/f2fs/segment.c
-> > @@ -444,10 +444,12 @@ int f2fs_commit_inmem_pages(struct inode *inode)
-> >  	struct f2fs_inode_info *fi = F2FS_I(inode);
-> >  	int err;
-> >  
-> > -	f2fs_balance_fs(sbi, true);
-> > +	f2fs_balance_fs(F2FS_I_SB(inode), true);
-> 
-> We don't need to change sbi to F2FS_I_SB(inode).
-> 
-> down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+I've found few more details to improve, please take a look
+at my comments below.
 
-Done.
+On 08/05/2018 06:04 AM, Baolin Wang wrote:
+> Some LED controllers have support for autonomously controlling
+> brightness over time, according to some preprogrammed pattern or
+> function.
+> 
+> This patch adds pattern trigger that LED device can configure the
+> pattern and trigger it.
+> 
+> Signed-off-by: Raphael Teysseyre <rteysseyre@gmail.com>
+> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+> ---
+> Changes from v3:
+>  - Reset pattern number to 0 if user provides incorrect pattern string.
+>  - Support one pattern.
+> 
+> Changes from v2:
+>  - Remove hardware_pattern boolen.
+>  - Chnage the pattern string format.
+> 
+> Changes from v1:
+>  - Use ATTRIBUTE_GROUPS() to define attributes.
+>  - Introduce hardware_pattern flag to determine if software pattern
+>  or hardware pattern.
+>  - Re-implement pattern_trig_store_pattern() function.
+>  - Remove pattern_get() interface.
+>  - Improve comments.
+>  - Other small optimization.
+> ---
+>  .../ABI/testing/sysfs-class-led-trigger-pattern    |  21 ++
+>  drivers/leds/trigger/Kconfig                       |   7 +
+>  drivers/leds/trigger/Makefile                      |   1 +
+>  drivers/leds/trigger/ledtrig-pattern.c             | 271 +++++++++++++++++++++
+>  include/linux/leds.h                               |  16 ++
+>  5 files changed, 316 insertions(+)
+>  create mode 100644 Documentation/ABI/testing/sysfs-class-led-trigger-pattern
+>  create mode 100644 drivers/leds/trigger/ledtrig-pattern.c
+> 
+> diff --git a/Documentation/ABI/testing/sysfs-class-led-trigger-pattern b/Documentation/ABI/testing/sysfs-class-led-trigger-pattern
+> new file mode 100644
+> index 0000000..40afefe
+> --- /dev/null
+> +++ b/Documentation/ABI/testing/sysfs-class-led-trigger-pattern
+> @@ -0,0 +1,21 @@
+> +What:		/sys/class/leds/<led>/pattern
+> +Date:		August 2018
+> +KernelVersion:	4.19
+> +Description:
+> +		Specify a pattern for the LED, for LED hardware that support
+> +		altering the brightness as a function of time.
+> +
+> +		The pattern is given by a series of tuples, of brightness and
+> +		duration (ms). The LED is expected to traverse the series and
+> +		each brightness value for the specified duration. Duration of
+> +		0 means brightness should immediately change to new value.
+> +
+> +		The format of the pattern values should be:
+> +		"brightness_1 duration_1 brightness_2 duration_2 brightness_3
+> +		duration_3 ...".
+> +
+> +What:		/sys/class/leds/<led>/repeat
+> +Date:		August 2018
+> +KernelVersion:	4.19
+> +Description:
+> +		Specify a pattern repeat number. 0 means repeat indefinitely.
 
+In current implementation this file on read returns the number
+of remaining repeat intervals. I'd add that to this description.
+
+> diff --git a/drivers/leds/trigger/Kconfig b/drivers/leds/trigger/Kconfig
+> index 4018af7..b76fc3c 100644
+> --- a/drivers/leds/trigger/Kconfig
+> +++ b/drivers/leds/trigger/Kconfig
+> @@ -129,4 +129,11 @@ config LEDS_TRIGGER_NETDEV
+>  	  This allows LEDs to be controlled by network device activity.
+>  	  If unsure, say Y.
+>  
+> +config LEDS_TRIGGER_PATTERN
+> +	tristate "LED Pattern Trigger"
+> +	help
+> +	  This allows LEDs to be controlled by a software or hardware pattern
+> +	  which is a series of tuples, of brightness and duration (ms).
+> +	  If unsure, say N
+> +
+>  endif # LEDS_TRIGGERS
+> diff --git a/drivers/leds/trigger/Makefile b/drivers/leds/trigger/Makefile
+> index f3cfe19..9bcb64e 100644
+> --- a/drivers/leds/trigger/Makefile
+> +++ b/drivers/leds/trigger/Makefile
+> @@ -13,3 +13,4 @@ obj-$(CONFIG_LEDS_TRIGGER_TRANSIENT)	+= ledtrig-transient.o
+>  obj-$(CONFIG_LEDS_TRIGGER_CAMERA)	+= ledtrig-camera.o
+>  obj-$(CONFIG_LEDS_TRIGGER_PANIC)	+= ledtrig-panic.o
+>  obj-$(CONFIG_LEDS_TRIGGER_NETDEV)	+= ledtrig-netdev.o
+> +obj-$(CONFIG_LEDS_TRIGGER_PATTERN)	+= ledtrig-pattern.o
+> diff --git a/drivers/leds/trigger/ledtrig-pattern.c b/drivers/leds/trigger/ledtrig-pattern.c
+> new file mode 100644
+> index 0000000..e5b90b7
+> --- /dev/null
+> +++ b/drivers/leds/trigger/ledtrig-pattern.c
+> @@ -0,0 +1,271 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +/*
+> + * LED pattern trigger
+> + *
+> + * Idea discussed with Pavel Machek. Raphael Teysseyre implemented
+> + * the first version, Baolin Wang simplified and improved the approach.
+> + */
+> +
+> +#include <linux/kernel.h>
+> +#include <linux/leds.h>
+> +#include <linux/module.h>
+> +#include <linux/mutex.h>
+> +#include <linux/slab.h>
+> +#include <linux/timer.h>
+> +
+> +#define MAX_PATTERNS		1024
+> +
+> +struct pattern_trig_data {
+> +	struct led_classdev *led_cdev;
+> +	struct led_pattern patterns[MAX_PATTERNS];
+> +	struct led_pattern *curr;
+> +	struct led_pattern *next;
+> +	struct mutex lock;
+> +	u32 npatterns;
+> +	u32 repeat;
+> +	bool is_indefinite;
+> +	struct timer_list timer;
+> +};
+> +
+> +static void pattern_trig_update_patterns(struct pattern_trig_data *data)
+> +{
+> +	data->curr = data->next;
+> +	if (!data->is_indefinite && data->curr == data->patterns)
+> +		data->repeat--;
+> +
+> +	if (data->next == data->patterns + data->npatterns - 1)
+> +		data->next = data->patterns;
+> +	else
+> +		data->next++;
+> +}
+> +
+> +static void pattern_trig_timer_function(struct timer_list *t)
+> +{
+> +	struct pattern_trig_data *data = from_timer(data, t, timer);
+> +
+> +	mutex_lock(&data->lock);
+> +
+> +	if (!data->is_indefinite && !data->repeat) {
+> +		mutex_unlock(&data->lock);
+> +		return;
+> +	}
+> +
+> +	led_set_brightness(data->led_cdev, data->curr->brightness);
+> +	mod_timer(&data->timer, jiffies + msecs_to_jiffies(data->curr->delta_t));
+> +	pattern_trig_update_patterns(data);
+> +
+> +	mutex_unlock(&data->lock);
+> +}
+> +
+> +static int pattern_trig_start_pattern(struct pattern_trig_data *data,
+> +				      struct led_classdev *led_cdev)
+> +{
+> +	if (!data->npatterns)
+> +		return 0;
+> +
+> +	if (led_cdev->pattern_set) {
+> +		return led_cdev->pattern_set(led_cdev, data->patterns,
+> +					     data->npatterns, data->repeat);
+> +	}
+> +
+> +	data->curr = data->patterns;
+> +	data->next = data->npatterns > 1 ? data->patterns + 1 : data->patterns;
+> +	data->timer.expires = jiffies;
+> +	add_timer(&data->timer);
+> +
+> +	return 0;
+> +}
+> +
+> +static ssize_t pattern_trig_show_repeat(struct device *dev,
+> +					struct device_attribute *attr,
+> +					char *buf)
+
+Please fix checkpatch.pl warnings:
+
+WARNING: Consider renaming function(s) 'pattern_trig_show_repeat' to
+'repeat_show' 'pattern_trig_store_repeat' to 'repeat_store'
+#209: FILE: drivers/leds/trigger/ledtrig-pattern.c:127:
++}
+
+WARNING: Consider renaming function(s) 'pattern_trig_show_pattern' to
+'pattern_show' 'pattern_trig_store_pattern' to 'pattern_store'
+#276: FILE: drivers/leds/trigger/ledtrig-pattern.c:194:
++}
+
+
+> +{
+> +	struct led_classdev *led_cdev = dev_get_drvdata(dev);
+> +	struct pattern_trig_data *data = led_cdev->trigger_data;
+> +	u32 repeat;
+> +
+> +	mutex_lock(&data->lock);
+> +
+> +	repeat = data->repeat;
+> +
+> +	mutex_unlock(&data->lock);
+> +
+> +	return scnprintf(buf, PAGE_SIZE, "%u\n", repeat);
+> +}
+> +
+> +static ssize_t pattern_trig_store_repeat(struct device *dev,
+> +					 struct device_attribute *attr,
+> +					 const char *buf, size_t count)
+> +{
+> +	struct led_classdev *led_cdev = dev_get_drvdata(dev);
+> +	struct pattern_trig_data *data = led_cdev->trigger_data;
+> +	unsigned long res;
+> +	int err;
+> +
+> +	err = kstrtoul(buf, 10, &res);
+> +	if (err)
+> +		return err;
+> +
+> +	if (!led_cdev->pattern_set)
+> +		del_timer_sync(&data->timer);
+
+Is there a reason for not having this check under mutex?
+
+> +	mutex_lock(&data->lock);
+> +
+> +	data->repeat = res;
+> +
+> +	/* 0 means repeat indefinitely */
+> +	if (!data->repeat)
+> +		data->is_indefinite = true;
+> +	else
+> +		data->is_indefinite = false;
+> +
+> +	err = pattern_trig_start_pattern(data, led_cdev);
+> +
+> +	mutex_unlock(&data->lock);
+> +	return err < 0 ? err : count;
+> +}
+> +
+> +static DEVICE_ATTR(repeat, 0644, pattern_trig_show_repeat,
+> +		   pattern_trig_store_repeat);
+> +
+> +static ssize_t pattern_trig_show_pattern(struct device *dev,
+> +					 struct device_attribute *attr,
+> +					 char *buf)
+> +{
+> +	struct led_classdev *led_cdev = dev_get_drvdata(dev);
+> +	struct pattern_trig_data *data = led_cdev->trigger_data;
+> +	ssize_t count = 0;
+> +	int i;
+> +
+> +	mutex_lock(&data->lock);
+> +
+> +	if (!data->npatterns)
+> +		goto out;
+> +
+> +	for (i = 0; i < data->npatterns; i++) {
+> +		count += scnprintf(buf + count, PAGE_SIZE - count,
+> +				   "%d %d ",
+> +				   data->patterns[i].brightness,
+> +				   data->patterns[i].delta_t);
+> +	}
+> +
+> +	buf[count - 1] = '\n';
+> +
+> +out:
+> +	mutex_unlock(&data->lock);
+> +	return count;
+> +}
+> +
+> +static ssize_t pattern_trig_store_pattern(struct device *dev,
+> +					  struct device_attribute *attr,
+> +					  const char *buf, size_t count)
+> +{
+> +	struct led_classdev *led_cdev = dev_get_drvdata(dev);
+> +	struct pattern_trig_data *data = led_cdev->trigger_data;
+> +	int ccount, cr, offset = 0, err = 0;
+> +
+> +	if (!led_cdev->pattern_set)
+> +		del_timer_sync(&data->timer);
+
+Ditto.
+
+> +	mutex_lock(&data->lock);
+> +
+> +	data->npatterns = 0;
+> +	while (offset < count - 1 && data->npatterns < MAX_PATTERNS) {
+> +		cr = 0;
+> +		ccount = sscanf(buf + offset, "%d %d %n",
+> +				&data->patterns[data->npatterns].brightness,
+> +				&data->patterns[data->npatterns].delta_t, &cr);
+> +		if (ccount != 2) {
+> +			data->npatterns = 0;
+> +			err = -EINVAL;
+> +			goto out;
+> +		}
+> +
+> +		offset += cr;
+> +		data->npatterns++;
+> +	}
+> +
+> +	err = pattern_trig_start_pattern(data, led_cdev);
+> +
+> +out:
+> +	mutex_unlock(&data->lock);
+> +	return err < 0 ? err : count;
+> +}
+> +
+> +static DEVICE_ATTR(pattern, 0644, pattern_trig_show_pattern,
+> +		   pattern_trig_store_pattern);
+> +
+> +static struct attribute *pattern_trig_attrs[] = {
+> +	&dev_attr_pattern.attr,
+> +	&dev_attr_repeat.attr,
+> +	NULL
+> +};
+> +ATTRIBUTE_GROUPS(pattern_trig);
+> +
+> +static int pattern_trig_activate(struct led_classdev *led_cdev)
+> +{
+> +	struct pattern_trig_data *data;
+> +
+> +	data = kzalloc(sizeof(*data), GFP_KERNEL);
+> +	if (!data)
+> +		return -ENOMEM;
+> +
+> +	if (!!led_cdev->pattern_set ^ !!led_cdev->pattern_clear) {
+> +		dev_warn(led_cdev->dev,
+> +			 "Hardware pattern ops validation failed\n");
+> +		led_cdev->pattern_set = NULL;
+> +		led_cdev->pattern_clear = NULL;
+> +	}
+> +
+> +	data->is_indefinite = true;
+> +	mutex_init(&data->lock);
+> +	data->led_cdev = led_cdev;
+> +	led_set_trigger_data(led_cdev, data);
+> +	timer_setup(&data->timer, pattern_trig_timer_function, 0);
+> +	led_cdev->activated = true;
+> +
+> +	return 0;
+> +}
+> +
+> +static void pattern_trig_deactivate(struct led_classdev *led_cdev)
+> +{
+> +	struct pattern_trig_data *data = led_cdev->trigger_data;
+> +
+> +	if (!led_cdev->activated)
+> +		return;
+> +
+> +	if (led_cdev->pattern_clear)
+> +		led_cdev->pattern_clear(led_cdev);
+> +	else
+> +		del_timer_sync(&data->timer);
+> +
+> +	led_set_brightness(led_cdev, LED_OFF);
+> +	kfree(data);
+> +	led_cdev->activated = false;
+> +}
+> +
+> +static struct led_trigger pattern_led_trigger = {
+> +	.name = "pattern",
+> +	.activate = pattern_trig_activate,
+> +	.deactivate = pattern_trig_deactivate,
+> +	.groups = pattern_trig_groups,
+> +};
+> +
+> +static int __init pattern_trig_init(void)
+> +{
+> +	return led_trigger_register(&pattern_led_trigger);
+> +}
+> +
+> +static void __exit pattern_trig_exit(void)
+> +{
+> +	led_trigger_unregister(&pattern_led_trigger);
+> +}
+> +
+> +module_init(pattern_trig_init);
+> +module_exit(pattern_trig_exit);
+> +
+> +MODULE_AUTHOR("Raphael Teysseyre <rteysseyre@gmail.com");
+> +MODULE_AUTHOR("Baolin Wang <baolin.wang@linaro.org");
+> +MODULE_DESCRIPTION("LED Pattern trigger");
+> +MODULE_LICENSE("GPL v2");
+> diff --git a/include/linux/leds.h b/include/linux/leds.h
+> index 834683d..c54712c 100644
+> --- a/include/linux/leds.h
+> +++ b/include/linux/leds.h
+> @@ -22,6 +22,7 @@
+>  #include <linux/workqueue.h>
+>  
+>  struct device;
+> +struct led_pattern;
+>  /*
+>   * LED Core
+>   */
+> @@ -88,6 +89,11 @@ struct led_classdev {
+>  				     unsigned long *delay_on,
+>  				     unsigned long *delay_off);
+>  
+> +	int (*pattern_set)(struct led_classdev *led_cdev,
+> +			   struct led_pattern *pattern, int len,
+> +			   unsigned repeat);
+> +	int (*pattern_clear)(struct led_classdev *led_cdev);
+> +
+>  	struct device		*dev;
+>  	const struct attribute_group	**groups;
+>  
+> @@ -472,4 +478,14 @@ static inline void led_classdev_notify_brightness_hw_changed(
+>  	struct led_classdev *led_cdev, enum led_brightness brightness) { }
+>  #endif
+>  
+> +/**
+> + * struct led_pattern - brightness value in a pattern
+
+Since this structure describes single pattern interval and not
+the whole pattern, please change its description to:
+
+pattern interval settings
+
+> + * @delta_t: delay until next entry, in milliseconds
+
+@delta_t: pattern interval delay, in milliseconds
+
+> + * @brightness: brightness at time = 0
+
+@brightness: pattern interval brightness
+
+> + */
+> +struct led_pattern {
+> +	int delta_t;
+> +	int brightness;
+> +};
+> +
+>  #endif		/* __LINUX_LEDS_H_INCLUDED */
 > 
-> Thanks,
-> 
-> > +
-> >  	f2fs_lock_op(sbi);
-> >  
-> >  	set_inode_flag(inode, FI_ATOMIC_COMMIT);
-> > +	down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
-> >  
-> >  	mutex_lock(&fi->inmem_lock);
-> >  	err = __f2fs_commit_inmem_pages(inode);
-> > @@ -458,6 +460,7 @@ int f2fs_commit_inmem_pages(struct inode *inode)
-> >  	spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
-> >  	mutex_unlock(&fi->inmem_lock);
-> >  
-> > +	up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
-> >  	clear_inode_flag(inode, FI_ATOMIC_COMMIT);
-> >  
-> >  	f2fs_unlock_op(sbi);
-> > diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-> > index 50495515f0a0..b3d9e317ff0c 100644
-> > --- a/fs/f2fs/segment.h
-> > +++ b/fs/f2fs/segment.h
-> > @@ -215,7 +215,7 @@ struct segment_allocation {
-> >  #define IS_DUMMY_WRITTEN_PAGE(page)			\
-> >  		(page_private(page) == (unsigned long)DUMMY_WRITTEN_PAGE)
-> >  
-> > -#define MAX_SKIP_ATOMIC_COUNT			16
-> > +#define MAX_SKIP_GC_COUNT			16
-> >  
-> >  struct inmem_pages {
-> >  	struct list_head list;
-> > 
+
+-- 
+Best regards,
+Jacek Anaszewski
