@@ -2,63 +2,62 @@ Return-Path: <SRS0=mdhE=KU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81AD0C28CF6
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 03:23:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F65BC28CF6
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 03:24:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32CDE217CE
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 03:23:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF851208C0
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 03:24:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JCwapnbB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32CDE217CE
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tuHpYe8r"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF851208C0
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727296AbeHEF0v (ORCPT
+        id S1727580AbeHEF07 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 5 Aug 2018 01:26:51 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:38252 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726121AbeHEF0u (ORCPT
+        Sun, 5 Aug 2018 01:26:59 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:46180 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726121AbeHEF07 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 Aug 2018 01:26:50 -0400
-Received: by mail-pf1-f194.google.com with SMTP id x17-v6so5185351pfh.5;
-        Sat, 04 Aug 2018 20:23:50 -0700 (PDT)
+        Sun, 5 Aug 2018 01:26:59 -0400
+Received: by mail-pg1-f193.google.com with SMTP id f14-v6so4121012pgv.13;
+        Sat, 04 Aug 2018 20:23:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=5ZF6r9bNjhRtpl7cdP+PHafOqszJX3zIJFSwk4iCGq8=;
-        b=JCwapnbBDGofCVbd+M9USzgmxbq4njEZXMUvjxxrIYdoFNJPYrmYUgAMn3hsRgRAt9
-         eBsUT7edSTZErkaLuHNDbXDzC/2qcfSUPs9nmKHGo8CYkYoeti5++3grJvpp1jp6ixIN
-         Wo3qX3w4ZLRSBFTEOK5iX+0fRCq16cskygq1SvCs4rSDnwGWDCKhkS8qYUmcEGEY1gFW
-         5TnccOuzM7nqmwIdjbj6L7AcwI9uHKm3p79zgMwWFjHtYFEO9kC4hlGjPkF/xBuEdCZJ
-         xbuiz24dMU9TP69pEnmKdHjU+8j9S4yMUS0aVP2Gk3q3WyCMWclpuaeP+20a6Y6sbaVh
-         YbDw==
+        bh=ssAAIsvCmi0/GZVaortLAXi2PA0a/5tL3SgT/2w8XsI=;
+        b=tuHpYe8rM9FT1Z30Qsg5PUMjrcIS9G9Qx50yIs+XY9yogHl29F+zDiXsgT8CwXZQ1m
+         UkjHcMxe/bde8Fmb2+Da7BulbymnIj5L/LEkqKivjmSrEKm2HRExvmecC9lp5RYsXWKZ
+         cu2B1GtDdNJM69bRLlQLcCRjsr/gNzy5gHqHU/xl00KnsjKRqYFOAIhlWD7REkaQBSZ7
+         AeB9ilrSturiE/E+10AgLqHMSF+DkAT+7t28pGRIyRtGrQLOvxdzbohLt8TlWetrTEL5
+         aOj+2lfg+Bnf1dBSkhrYjKSqLfgZEejAWmT5afltEPlBwKZ2FsobROom7gJNcdlLcNpg
+         oV0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=5ZF6r9bNjhRtpl7cdP+PHafOqszJX3zIJFSwk4iCGq8=;
-        b=uRPYjK7oHRqhbrSpRJYR4UvMTFx5TjYyYuhKu1aL4SWRe+2LQa6hRu5Je/ESMBdJ9Q
-         Jfv8IuEh8rUgcY1BSR01LsmnxKxv+nl4LzLctgl1sxGQHAm7n8uwl4ug0NNB07f7sFcc
-         ibfR36lc2tMeHwlyF9C7OpWjxO9q3WwEIXSIZt6M0hsbv3tWUYl5UnQQK8dejJivLxuq
-         QoFSrp8Wx9Y4CzTAmnt0M4NvCq34Mu2vuIzZqyZ1VXcR1HpEMJiz56V4otcjEoiaoa/V
-         xwbfrBbW7+eXTENUgqEh0EMq+rMHmJC+80iNDsFq+OSHoMiyJH4WGDyTlro2tanFqjnl
-         bZBg==
-X-Gm-Message-State: AOUpUlGEVlANB4shzTatS6+XWehBrwv5j/Pvd0LmOHVHT7A6IYPuRHq5
-        JD4Nt3QOEA/5H8uCLKK1VW15Tqqj
-X-Google-Smtp-Source: AAOMgpc9/5Gp7UvzqImpMozODYu297FY4kdukgREeREymplA167y7ovr6nBxsoFHqrWHYZ8T1SMtww==
-X-Received: by 2002:a62:4add:: with SMTP id c90-v6mr11356605pfj.23.1533439430356;
-        Sat, 04 Aug 2018 20:23:50 -0700 (PDT)
+        bh=ssAAIsvCmi0/GZVaortLAXi2PA0a/5tL3SgT/2w8XsI=;
+        b=mSZ+2T7BmYmJBCtE5SYxEhGAnm6nSWURa8QToUJ49A7t+fCu6hfzh4Ht2LlMBWgjVi
+         aB48tVVtfbswjEt0SWr3/rSRFX8JhlQskRYHr//G3mIrij7/3l4OtIMzQYP5aoSmYCMu
+         BfalLAbWZXh+bJaGpowNQxg+b2e6Mi1KtIJKk1V/LRyGUkA2wVLCu0RMVEdJ65oNZ0es
+         arE8XqR+vWi23fzRJhIdX/fE//wo0zmQPuvNU5HYdU1L6OyxPGBTP0Gh5Ftl1FD1s5iW
+         +6nxXUgWkz6tM/S3/OFYiX07ys52sOY+YiE71war5aA07fGEhAT7SUMGvpUMieHtZ+We
+         J54w==
+X-Gm-Message-State: AOUpUlHdFeOoeZXE7yVFn0p1vhZWjBwGAYQLtPXqPBib25mXNtb7gIcX
+        q7UtIvUEt690rJ6jcBa/fslusZ8l
+X-Google-Smtp-Source: AAOMgpfKYyB0P3Q+pIvuUt345DWq5RvQx/lHRFKZmcYg+W+MxINjtcoLi0gc4baqp/2CUTKsJJ6inw==
+X-Received: by 2002:a62:4b48:: with SMTP id y69-v6mr11320003pfa.93.1533439438665;
+        Sat, 04 Aug 2018 20:23:58 -0700 (PDT)
 Received: from linux-l9pv.suse ([124.11.22.254])
-        by smtp.gmail.com with ESMTPSA id x87-v6sm15971922pfa.143.2018.08.04.20.23.42
+        by smtp.gmail.com with ESMTPSA id x87-v6sm15971922pfa.143.2018.08.04.20.23.50
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sat, 04 Aug 2018 20:23:49 -0700 (PDT)
+        Sat, 04 Aug 2018 20:23:58 -0700 (PDT)
 From:   "Lee, Chun-Yi" <joeyli.kernel@gmail.com>
 X-Google-Original-From: "Lee, Chun-Yi" <jlee@suse.com>
 To:     linux-kernel@vger.kernel.org
@@ -75,9 +74,9 @@ Cc:     linux-efi@vger.kernel.org, x86@kernel.org,
         Ard Biesheuvel <ard.biesheuvel@linaro.org>,
         David Howells <dhowells@redhat.com>,
         Mimi Zohar <zohar@linux.vnet.ibm.com>
-Subject: [PATCH 5/6] key: add EFI secure key as a master key type
-Date:   Sun,  5 Aug 2018 11:21:18 +0800
-Message-Id: <20180805032119.20485-6-jlee@suse.com>
+Subject: [PATCH 6/6] key: enforce the secure boot checking when loading efi root key
+Date:   Sun,  5 Aug 2018 11:21:19 +0800
+Message-Id: <20180805032119.20485-7-jlee@suse.com>
 X-Mailer: git-send-email 2.12.3
 In-Reply-To: <20180805032119.20485-1-jlee@suse.com>
 References: <20180805032119.20485-1-jlee@suse.com>
@@ -86,18 +85,21 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-EFI secure key can be a new master key type that it's used for
-generate encrypted key.
+The EFI root key is not completely secure insecure when the
+secure boot is disabled because it can be changed by unsigned EFI
+binary before system be handed over to kernel. But in some use
+case user does not want the EFI secure key functions be blocked
+when secure boot is disabled.
 
-Compared with trusted key or user key, the advantage of using
-EFI master key is that it doesn't need TPM or password from user
-space.
+Like the kernel module verification, this patch adds a enforce
+kernel configuration option that it can be used to enforce kernel
+to checking the secure boot before loading efi root key. And user
+can also use kernel parameter to enable it. When this option be
+enabled, the EFI root key will not be loaded by kernel when secure
+boot is diabled.
 
-As other master key types, keyctl can be used to create new encrypted
-key by EFI secure key. Using the "efi:" prefix string with master
-key name:
-
-e.g. keyctl add encrypted evm-key "new efi:kmk-efi 32" @u
+Without this option, kernel will be tainted but the EFI root key
+can still be loaded.
 
 Cc: Kees Cook <keescook@chromium.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
@@ -113,116 +115,148 @@ Cc: David Howells <dhowells@redhat.com>
 Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
 Signed-off-by: "Lee, Chun-Yi" <jlee@suse.com>
 ---
- drivers/firmware/efi/efi-secure-key.c    | 21 +++++++++++++++++++++
- include/keys/efi-type.h                  |  7 +++++++
- security/keys/encrypted-keys/encrypted.c | 10 ++++++++++
- 3 files changed, 38 insertions(+)
+ Documentation/admin-guide/kernel-parameters.txt |  6 +++++
+ drivers/firmware/efi/Kconfig                    |  8 ++++++
+ drivers/firmware/efi/efi-secure-key.c           | 33 ++++++++++++++++++++++---
+ include/linux/kernel.h                          |  3 ++-
+ kernel/panic.c                                  |  1 +
+ 5 files changed, 46 insertions(+), 5 deletions(-)
 
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 533ff5c68970..7a9ac358793f 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -1122,6 +1122,12 @@
+ 			vendor GUIDs, all of them will be loaded. See
+ 			Documentation/acpi/ssdt-overlays.txt for details.
+ 
++	efi-secure-key.sb_enforce [EFI; X86]
++			When EFI_SECURE_KEY is set, this means that
++			EFI root key will not be loaded when secure boot is
++			not enabled. Note that if EFI_SECURE_KEY_SB_ENFORCE
++			is set, that is always true, so this option does
++			nothing.
+ 
+ 	eisa_irq_edge=	[PARISC,HW]
+ 			See header of drivers/parisc/eisa.c.
+diff --git a/drivers/firmware/efi/Kconfig b/drivers/firmware/efi/Kconfig
+index 048cf91ae8e8..fba894a4e7b0 100644
+--- a/drivers/firmware/efi/Kconfig
++++ b/drivers/firmware/efi/Kconfig
+@@ -187,6 +187,14 @@ config EFI_SECURE_KEY
+ 
+ 	  If unsure, say N.
+ 
++config EFI_SECURE_KEY_SB_ENFORCE
++	bool "Force checking secure boot when loading EFI root key"
++	default y
++	depends on EFI_SECURE_KEY
++	help
++	  Skip EFI root key when secure boot is not enabled. Without this,
++	  EFI root key will simply taint the kernel when no secure boot.
++
+ endmenu
+ 
+ config UEFI_CPER
 diff --git a/drivers/firmware/efi/efi-secure-key.c b/drivers/firmware/efi/efi-secure-key.c
-index 5e72a8c9e13e..aa422ee87f70 100644
+index aa422ee87f70..417d73768887 100644
 --- a/drivers/firmware/efi/efi-secure-key.c
 +++ b/drivers/firmware/efi/efi-secure-key.c
-@@ -676,6 +676,27 @@ struct key_type key_type_efi = {
- };
- EXPORT_SYMBOL_GPL(key_type_efi);
- 
-+/*
-+ * request_efi_key - request the efi key
-+ */
-+struct key *request_efi_key(const char *master_desc,
-+			    const u8 **master_key, size_t *master_keylen)
-+{
-+	struct efi_key_payload *epayload;
-+	struct key *ekey;
-+
-+	ekey = request_key(&key_type_efi, master_desc, NULL);
-+	if (IS_ERR(ekey))
-+		goto error;
-+
-+	down_read(&ekey->sem);
-+	epayload = ekey->payload.data[0];
-+	*master_key = epayload->key;
-+	*master_keylen = epayload->key_len;
-+error:
-+	return ekey;
-+}
-+
- static int __init init_efi_secure_key(void)
- {
- 	int ret;
-diff --git a/include/keys/efi-type.h b/include/keys/efi-type.h
-index 57524b22d42f..bbe649f3eec0 100644
---- a/include/keys/efi-type.h
-+++ b/include/keys/efi-type.h
-@@ -39,12 +39,19 @@ extern struct key_type key_type_efi;
- #if defined(CONFIG_EFI_SECURE_KEY)
- extern long efi_read_blob(const struct key *key, char __user *buffer,
- 			  char *kbuffer, size_t buflen);
-+extern struct key *request_efi_key(const char *master_desc,
-+			const u8 **master_key, size_t *master_keylen);
- #else
- inline long efi_read_blob(const struct key *key, char __user *buffer,
- 			  char *kbuffer, size_t buflen)
- {
- 	return 0;
- }
-+static inline struct key *request_efi_key(const char *master_desc,
-+			const u8 **master_key, size_t *master_keylen)
-+{
-+	return ERR_PTR(-EOPNOTSUPP);
-+}
- #endif
- 
- #endif /* _KEYS_EFI_TYPE_H */
-diff --git a/security/keys/encrypted-keys/encrypted.c b/security/keys/encrypted-keys/encrypted.c
-index d92cbf9687c3..b396506afdfc 100644
---- a/security/keys/encrypted-keys/encrypted.c
-+++ b/security/keys/encrypted-keys/encrypted.c
-@@ -24,6 +24,7 @@
- #include <keys/user-type.h>
- #include <keys/trusted-type.h>
- #include <keys/encrypted-type.h>
-+#include <keys/efi-type.h>
- #include <linux/key-type.h>
+@@ -15,6 +15,7 @@
+ #include <linux/parser.h>
  #include <linux/random.h>
- #include <linux/rcupdate.h>
-@@ -40,6 +41,7 @@
+ #include <linux/scatterlist.h>
++#include <linux/moduleparam.h>
+ #include <keys/efi-type.h>
+ #include <keys/user-type.h>
+ #include <crypto/algapi.h>
+@@ -27,6 +28,9 @@ static unsigned long rkey_size;
+ static bool is_loaded;
+ static bool is_secure;
  
- static const char KEY_TRUSTED_PREFIX[] = "trusted:";
- static const char KEY_USER_PREFIX[] = "user:";
-+static const char KEY_EFI_PREFIX[] = "efi:";
- static const char hash_alg[] = "sha256";
- static const char hmac_alg[] = "hmac(sha256)";
- static const char blkcipher_alg[] = "cbc(aes)";
-@@ -50,6 +52,7 @@ static int blksize;
++static bool sb_enforce = IS_ENABLED(CONFIG_EFI_SECURE_KEY_SB_ENFORCE);
++module_param(sb_enforce, bool_enable_only, 0644);
++
+ static void __init
+ print_efi_rkey_setup_data(struct efi_rkey_setup_data *rkey_setup)
+ {
+@@ -59,11 +63,13 @@ void __init parse_efi_root_key_setup(u64 phys_addr, u32 data_len)
  
- #define KEY_TRUSTED_PREFIX_LEN (sizeof (KEY_TRUSTED_PREFIX) - 1)
- #define KEY_USER_PREFIX_LEN (sizeof (KEY_USER_PREFIX) - 1)
-+#define KEY_EFI_PREFIX_LEN (sizeof (KEY_EFI_PREFIX) - 1)
- #define KEY_ECRYPTFS_DESC_LEN 16
- #define HASH_SIZE SHA256_DIGEST_SIZE
- #define MAX_DATA_SIZE 4096
-@@ -142,6 +145,8 @@ static int valid_master_desc(const char *new_desc, const char *orig_desc)
- 		prefix_len = KEY_TRUSTED_PREFIX_LEN;
- 	else if (!strncmp(new_desc, KEY_USER_PREFIX, KEY_USER_PREFIX_LEN))
- 		prefix_len = KEY_USER_PREFIX_LEN;
-+	else if (!strncmp(new_desc, KEY_EFI_PREFIX, KEY_EFI_PREFIX_LEN))
-+		prefix_len = KEY_EFI_PREFIX_LEN;
- 	else
- 		return -EINVAL;
+ 	/* keep efi root key */
+ 	if (rkey_setup->final_status == EFI_SUCCESS) {
+-		memcpy(root_key, rkey_setup->root_key, rkey_setup->key_size);
+-		rkey_size = rkey_setup->key_size;
+-		is_loaded = true;
+ 		is_secure = rkey_setup->is_secure;
+-		pr_info("EFI root key is loaded.\n");
++		if (is_secure || !sb_enforce) {
++			memcpy(root_key, rkey_setup->root_key, rkey_setup->key_size);
++			rkey_size = rkey_setup->key_size;
++			is_loaded = true;
++			pr_info("EFI root key is loaded.\n");
++		}
+ 		if (!is_secure) {
+ 			pr_warn("EFI root key is insecure when no secure boot.\n");
+ 		}
+@@ -75,6 +81,14 @@ void __init parse_efi_root_key_setup(u64 phys_addr, u32 data_len)
+ 	early_iounmap(setup_data, data_len);
+ }
  
-@@ -434,6 +439,11 @@ static struct key *request_master_key(struct encrypted_key_payload *epayload,
- 		mkey = request_user_key(epayload->master_desc +
- 					KEY_USER_PREFIX_LEN,
- 					master_key, master_keylen);
-+	} else if (!strncmp(epayload->master_desc, KEY_EFI_PREFIX,
-+			    KEY_EFI_PREFIX_LEN)) {
-+		mkey = request_efi_key(epayload->master_desc +
-+					KEY_EFI_PREFIX_LEN,
-+					master_key, master_keylen);
- 	} else
- 		goto out;
++static void __init clean_efi_root_key(void)
++{
++	memzero_explicit(root_key, ROOT_KEY_SIZE);
++	rkey_size = 0;
++	is_loaded = false;
++	is_secure = false;
++}
++
+ #define ERK_HASH_SIZE SHA256_DIGEST_SIZE
+ #define HMAC_HASH_SIZE SHA256_DIGEST_SIZE
+ #define DKEY_SIZE SHA256_DIGEST_SIZE
+@@ -705,6 +719,17 @@ static int __init init_efi_secure_key(void)
+ 	if (!is_loaded)
+ 		return 0;
  
++	if (!is_secure) {
++		if (sb_enforce) {
++			clean_efi_root_key();
++			pr_info("EFI root key is unloaded because insecure.\n");
++			return 0;
++		} else {
++			add_taint(TAINT_INSECURE_KEY, LOCKDEP_STILL_OK);
++			pr_warn("Tainted kernel because EFI root key is insecure.\n");
++		}
++	}
++
+ 	hash_tfm = crypto_alloc_shash(hash_alg, 0, CRYPTO_ALG_ASYNC);
+ 	if (IS_ERR(hash_tfm)) {
+ 		pr_err("can't allocate %s transform: %ld\n",
+diff --git a/include/linux/kernel.h b/include/linux/kernel.h
+index 941dc0a5a877..b45716e54a97 100644
+--- a/include/linux/kernel.h
++++ b/include/linux/kernel.h
+@@ -565,7 +565,8 @@ extern enum system_states {
+ #define TAINT_LIVEPATCH			15
+ #define TAINT_AUX			16
+ #define TAINT_RANDSTRUCT		17
+-#define TAINT_FLAGS_COUNT		18
++#define TAINT_INSECURE_KEY		18
++#define TAINT_FLAGS_COUNT		19
+ 
+ struct taint_flag {
+ 	char c_true;	/* character printed when tainted */
+diff --git a/kernel/panic.c b/kernel/panic.c
+index 8b2e002d52eb..d641098a814d 100644
+--- a/kernel/panic.c
++++ b/kernel/panic.c
+@@ -327,6 +327,7 @@ const struct taint_flag taint_flags[TAINT_FLAGS_COUNT] = {
+ 	[ TAINT_LIVEPATCH ]		= { 'K', ' ', true },
+ 	[ TAINT_AUX ]			= { 'X', ' ', true },
+ 	[ TAINT_RANDSTRUCT ]		= { 'T', ' ', true },
++	[TAINT_INSECURE_KEY]		= { 'Y', ' ', false },
+ };
+ 
+ /**
 -- 
 2.13.6
 
