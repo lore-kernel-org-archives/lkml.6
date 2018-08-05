@@ -2,167 +2,93 @@ Return-Path: <SRS0=mdhE=KU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1DB2C4646F
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 02:05:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35AC1C4646F
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 02:13:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 983E0217C7
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 02:05:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 983E0217C7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
+	by mail.kernel.org (Postfix) with ESMTP id DB5DC217C7
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 02:13:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB5DC217C7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726100AbeHEEIK (ORCPT
+        id S1726078AbeHEEOt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 5 Aug 2018 00:08:10 -0400
-Received: from gate.crashing.org ([63.228.1.57]:46952 "EHLO gate.crashing.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725721AbeHEEIJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 Aug 2018 00:08:09 -0400
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w751AHxe004284;
-        Sat, 4 Aug 2018 20:10:27 -0500
-Message-ID: <a3ec0a454928e880dabc3782ea906e318634abf9.camel@kernel.crashing.org>
-Subject: Re: [RFC 0/4] Virtio uses DMA API for all devices
-From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        aik@ozlabs.ru, robh@kernel.org, joe@perches.com,
-        elfring@users.sourceforge.net, david@gibson.dropbear.id.au,
-        jasowang@redhat.com, mpe@ellerman.id.au, linuxram@us.ibm.com,
-        haren@linux.vnet.ibm.com, paulus@samba.org,
-        srikar@linux.vnet.ibm.com, robin.murphy@arm.com,
-        jean-philippe.brucker@arm.com, marc.zyngier@arm.com
-Date:   Sun, 05 Aug 2018 11:10:15 +1000
-In-Reply-To: <20180804082120.GB4421@infradead.org>
-References: <20180802182959-mutt-send-email-mst@kernel.org>
-         <82ccef6ec3d95ee43f3990a4a2d0aea87eb45e89.camel@kernel.crashing.org>
-         <20180802200646-mutt-send-email-mst@kernel.org>
-         <e9beb6bba5a7d05741e27e85b24a3b23ba7c2762.camel@kernel.crashing.org>
-         <20180802225738-mutt-send-email-mst@kernel.org>
-         <de4888b6457e220776e16a9c8958ff0886ffc66c.camel@kernel.crashing.org>
-         <20180803070507.GA1344@infradead.org>
-         <eb1750e90e4bd45da297fa6f78f8ef93671b7c2f.camel@kernel.crashing.org>
-         <20180803160246.GA13794@infradead.org>
-         <22310f58605169fe9de83abf78b59f593ff7fbb7.camel@kernel.crashing.org>
-         <20180804082120.GB4421@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.4 (3.28.4-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Sun, 5 Aug 2018 00:14:49 -0400
+Received: from gateway21.websitewelcome.com ([192.185.45.95]:19055 "EHLO
+        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725730AbeHEEOt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 5 Aug 2018 00:14:49 -0400
+Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
+        by gateway21.websitewelcome.com (Postfix) with ESMTP id C22E9400CD13D
+        for <linux-kernel@vger.kernel.org>; Sat,  4 Aug 2018 21:12:01 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id m8WXfxI4vRPojm8WXfRvuX; Sat, 04 Aug 2018 21:12:01 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.50.82] (port=38930 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1fm8WX-004Ijd-58; Sat, 04 Aug 2018 21:12:01 -0500
+Date:   Sat, 4 Aug 2018 21:12:00 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>
+Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] PM / hibernate: Mark expected switch fall-through
+Message-ID: <20180805021200.GA10911@embeddedor.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.50.82
+X-Source-L: No
+X-Exim-ID: 1fm8WX-004Ijd-58
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.50.82]:38930
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 10
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 2018-08-04 at 01:21 -0700, Christoph Hellwig wrote:
-> No matter if you like it or not (I don't!) virtio is defined to bypass
-> dma translations, it is very clearly stated in the spec.  It has some
-> ill-defined bits to bypass it, so if you want the dma mapping API
-> to be used you'll have to set that bit (in its original form, a refined
-> form, or an entirely newly defined sane form) and make sure your
-> hypersivors always sets it.  It's not rocket science, just a little bit
-> for work to make sure your setup is actually going to work reliably
-> and portably.
+In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+where we are expecting to fall through.
 
-I think you are conflating completely different things, let me try to
-clarify, we might actually be talking past each other.
+Addresses-Coverity-ID: 114713 ("Missing break in switch")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ kernel/power/hibernate.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> > We aren't going to cancel years of HW and SW development for our
-> 
-> Maybe you should have actually read the specs you are claiming to
-> implemented before spending all that effort.
-
-Anyway, let's cool our respective jets and sort that out, there are
-indeed other approaches than overriding the DMA ops with special ones,
-though I find them less tasty ... but here's my attempt at a (simpler)
-description.
-
-Bear with me for the long-ish email, this tries to describe the system
-so you get an idea where we come from, and options we can use to get
-out of this.
-
-So we *are* implementing the spec, since qemu is currently unmodified:
-
-Default virtio will bypass the iommu emulated by qemu as per spec etc..
-
-On the Linux side, thus, virtio "sees" a normal iommu-bypassing device
-and will treat it as such.
-
-The problem is the assumption in the middle that qemu can access all
-guest pages directly, which holds true for traditional VMs, but breaks
-when the VM in our case turns itself into a secure VM. This isn't under
-the action (or due to changes in) the hypervisor. KVM operates (almost)
-normally here.
-
-But there's this (very thin and open source btw) layer underneath
-called ultravisor, which exploits some HW facilities to maintain a
-separate pool of "secure" memory, which cannot be physically accessed
-by a non-secure entity.
-
-So in our scenario, qemu and KVM create a VM totally normally, there is
-no changes required to the VM firmware, bootloader(s), etc... in fact
-we support Linux based bootloaders, and those will work as normal linux
-would in a VM, virtio works normally, etc...
-
-Until that VM (via grub or kexec for example) loads a "secure image".
-
-That secure image is a Linux kernel which has been "wrapped" (to simply
-imagine a modified zImage wrapper though that's not entirely exact).
-
-When that is run, before it modifies it's .data, it will interact with
-the ultravisor using a specific HW facility to make itself secure. What
-happens then is that the UV cryptographically verifies the kernel and
-ramdisk, and copies them to the secure memory where execution returns.
-
-The Ultravisor is then involved as a small shim for hypercalls between
-the secure VM and KVM to prevent leakage of information (sanitize
-registers etc...).
-
-Now at this point, qemu can no longer access the secure VM pages
-(there's more to this, such as using HMM to allow migration/encryption
-accross etc... but let's not get bogged down).
-
-So virtio can no longer access any page in the VM.
-
-Now the VM *can* request from the Ultravisor some selected pages to be
-made "insecure" and thus shared with qemu. This is how we handle some
-of the pages used in our paravirt stuff, and that's how we want to deal
-with virtio, by creating an insecure swiotlb pool.
-
-At this point, thus, there are two options.
-
- - One you have rejected, which is to have a way for "no-iommu" virtio
-(which still doesn't use an iommu on the qemu side and doesn't need
-to), to be forced to use some custom DMA ops on the VM side.
-
- - One, which sadly has more overhead and will require modifying more
-pieces of the puzzle, which is to make qemu uses an emulated iommu.
-Once we make qemu do that, we can then layer swiotlb on top of the
-emulated iommu on the guest side, and pass that as dma_ops to virtio.
-
-Now, assuming you still absolutely want us to go down the second
-option, there are several ways to get there. We would prefer to avoid
-requiring the user to pass some special option to qemu. That has an
-impact up the food chain (libvirt, management tools etc...) and users
-probably won't understand what it's about. In fact the *end user* might
-not even need to know a VM is secure, though applications inside might.
-
-There's the additional annoyance that currently our guest FW (SLOF)
-cannot deal with virtio in IOMMU mode, but that's fixable.
-
-From there, refer to the email chain between Michael and I where we are
-discussing options to "switch" virtio at runtime on the qemu side.
-
-Any comment or suggestion ?
-
-Cheers,
-Ben.
-
+diff --git a/kernel/power/hibernate.c b/kernel/power/hibernate.c
+index 9c85c78..38f3f96 100644
+--- a/kernel/power/hibernate.c
++++ b/kernel/power/hibernate.c
+@@ -638,6 +638,7 @@ static void power_down(void)
+ 		break;
+ 	case HIBERNATION_PLATFORM:
+ 		hibernation_platform_enter();
++		/* Fall through */
+ 	case HIBERNATION_SHUTDOWN:
+ 		if (pm_power_off)
+ 			kernel_power_off();
+-- 
+2.7.4
 
