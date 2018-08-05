@@ -2,105 +2,144 @@ Return-Path: <SRS0=mdhE=KU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0CBAC46470
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 23:27:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88456C46471
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 23:30:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50B29219A3
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 23:27:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50B29219A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 32B91219A3
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 23:30:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="WeGcIs1G"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32B91219A3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726915AbeHFBdX (ORCPT
+        id S1726954AbeHFBg5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 5 Aug 2018 21:33:23 -0400
-Received: from mx2.suse.de ([195.135.220.15]:37766 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726673AbeHFBdX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 Aug 2018 21:33:23 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 37D09AE62;
-        Sun,  5 Aug 2018 23:27:03 +0000 (UTC)
-From:   =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
-To:     linux-serial@vger.kernel.org, Rob Herring <robh@kernel.org>
-Cc:     linux-mips@linux-mips.org, jringle@gridpoint.com,
-        allsey87@gmail.com, Jakub Kicinski <kubakici@wp.pl>,
-        Xue Liu <liuxuenetmail@gmail.com>,
-        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, linux-kernel@vger.kernel.org
-Subject: [RFC] serial: sc16is7xx: Use DT sub-nodes for UART ports
-Date:   Mon,  6 Aug 2018 01:26:51 +0200
-Message-Id: <20180805232651.10605-1-afaerber@suse.de>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <CAL_JsqKNnfgESG6ON95D7nD8VNrcVy7-x6cGGnae_GbbGKAuPQ@mail.gmail.com>
-References: <CAL_JsqKNnfgESG6ON95D7nD8VNrcVy7-x6cGGnae_GbbGKAuPQ@mail.gmail.com>
+        Sun, 5 Aug 2018 21:36:57 -0400
+Received: from ozlabs.org ([203.11.71.1]:57439 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726673AbeHFBg5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 5 Aug 2018 21:36:57 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 41kH88493zz9s0n;
+        Mon,  6 Aug 2018 09:30:32 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1533511833;
+        bh=aH5sklbpyNQs1yKxpU9GfRfUFEPmA8Vlg1xIZOWSo98=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=WeGcIs1GU23gwjitMnzBI8uFadeHlSL5GCy2xM3fpqN5Kk7EhMm/Fk8Uql3lRZF3v
+         4ezpoFqYZuDceyrm+kitMRzMT0LaLQCIL1xJ3NdxPfe+PYztKHtJ3JucDQqx88ArNW
+         33TlMUgwsOiOMlVQid9jHklYy+920PwmHfUWx/JZ50LYHwEeyILUk6VDnWFijf2gBe
+         X3KAT/GMq+EmOemtQ/S8CVK1yNByo5jaJyZfN8SsMHBGLCc6p/MLJln0fyFeG5aEQq
+         V6GzOJ+IFf3bEMgKV/gOIbKxUeJvwThCOZ3AA+Hwk2X/Mmz89BLIzbVBJgpTiY+tB1
+         +s21zs22ddKYw==
+Date:   Mon, 6 Aug 2018 09:30:15 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Samuel Morris <samorris@lexmark.com>, Tejun Heo <tj@kernel.org>
+Cc:     Tony Lindgren <tony@atomide.com>, Roger Quadros <rogerq@ti.com>,
+        Naresh Kamboju <naresh.kamboju@linaro.org>,
+        linux-omap@vger.kernel.org,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, ssantosh@kernel.org,
+        Olof Johansson <olof@lixom.net>, Tero Kristo <t-kristo@ti.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>
+Subject: Re: 4.18.0-rc1-next-20180619 boot failed on beagle board x15
+Message-ID: <20180806093015.6099ef5c@canb.auug.org.au>
+In-Reply-To: <CAFY_6qo83Ui6_xRkuTYZUduUJSK2dLKhzd+B_nQ-XW5ciDH-7A@mail.gmail.com>
+References: <CA+G9fYuKW_jCFZPqG4tz=QY9ROfHO38KiCp9XTA+KaDOFVtcqQ@mail.gmail.com>
+        <20180620102904.GC112168@atomide.com>
+        <d5d57b10-facb-d5f7-ad7f-34afae726756@ti.com>
+        <CAFY_6qqDcG7+sp7jawhTjuWHizPR75=HUsRJfGPhEPzVE4f5kg@mail.gmail.com>
+        <6c15a753-c4a8-ff89-f5c0-0fd19c817c91@ti.com>
+        <CAFY_6qq3=+hMLKr0VtCe-witPtV2LTeBSQb3pwqdzysbyiYtMQ@mail.gmail.com>
+        <5206d66d-56d0-2edc-8dd0-00eedbaac3db@ti.com>
+        <20180702093243.GO112168@atomide.com>
+        <CAFY_6qo83Ui6_xRkuTYZUduUJSK2dLKhzd+B_nQ-XW5ciDH-7A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/0YK+L5KAgQs0umX0hv0jfjt"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is to allow using serdev.
+--Sig_/0YK+L5KAgQs0umX0hv0jfjt
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Andreas Färber <afaerber@suse.de>
----
- drivers/tty/serial/sc16is7xx.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+Hi Samuel,
 
-diff --git a/drivers/tty/serial/sc16is7xx.c b/drivers/tty/serial/sc16is7xx.c
-index 243c96025053..ad7267274f65 100644
---- a/drivers/tty/serial/sc16is7xx.c
-+++ b/drivers/tty/serial/sc16is7xx.c
-@@ -1213,9 +1213,31 @@ static int sc16is7xx_probe(struct device *dev,
- 			SC16IS7XX_IOCONTROL_SRESET_BIT);
- 
- 	for (i = 0; i < devtype->nr_uart; ++i) {
-+#ifdef CONFIG_OF
-+		struct device_node *np;
-+		struct platform_device *pdev;
-+		char name[6] = "uartx";
-+#endif
-+
- 		s->p[i].line		= i;
- 		/* Initialize port data */
-+#ifdef CONFIG_OF
-+		name[4] = '0' + i;
-+		np = of_get_child_by_name(dev->of_node, name);
-+		if (IS_ERR(np)) {
-+			ret = PTR_ERR(np);
-+			goto out_ports;
-+		}
-+		pdev = of_platform_device_create(np, NULL, dev);
-+		if (IS_ERR(pdev)) {
-+			ret = PTR_ERR(pdev);
-+			goto out_ports;
-+		}
-+		platform_set_drvdata(pdev, dev_get_drvdata(dev));
-+		s->p[i].port.dev	= &pdev->dev;
-+#else
- 		s->p[i].port.dev	= dev;
-+#endif
- 		s->p[i].port.irq	= irq;
- 		s->p[i].port.type	= PORT_SC16IS7XX;
- 		s->p[i].port.fifosize	= SC16IS7XX_FIFO_SIZE;
-@@ -1271,6 +1293,9 @@ static int sc16is7xx_probe(struct device *dev,
- 	for (i--; i >= 0; i--) {
- 		uart_remove_one_port(&sc16is7xx_uart, &s->p[i].port);
- 		clear_bit(s->p[i].port.line, &sc16is7xx_lines);
-+#ifdef CONFIG_OF
-+		of_platform_device_destroy(s->p[i].port.dev, NULL);
-+#endif
- 	}
- 
- #ifdef CONFIG_GPIOLIB
--- 
-2.16.4
+On Mon, 2 Jul 2018 09:31:56 -0400 Samuel Morris <samorris@lexmark.com> wrot=
+e:
+>
+> On Mon, Jul 2, 2018 at 5:32 AM, Tony Lindgren <tony@atomide.com> wrote:
+> > Hi,
+> >
+> > * Roger Quadros <rogerq@ti.com> [180621 14:56]: =20
+> >> On 21/06/18 17:31, Samuel Morris wrote: =20
+> >> > On Thu, Jun 21, 2018 at 3:58 AM, Roger Quadros <rogerq@ti.com> wrote=
+: =20
+> >> >> +Rafael
+> >> >>
+> >> >> On 20/06/18 18:30, Samuel Morris wrote: =20
+> >> >>> On Wed, Jun 20, 2018 at 8:58 AM, Roger Quadros <rogerq@ti.com> wro=
+te: =20
+> >> >>>> Tony,
+> >> >>>>
+> >> >>>> On 20/06/18 13:29, Tony Lindgren wrote: =20
+> >> >>>>> Hi,
+> >> >>>>>
+> >> >>>>> * Naresh Kamboju <naresh.kamboju@linaro.org> [180620 05:55]: =20
+> >> >>>>>> Linux next (4.18.0-rc1-next-20180619) boot failed on beagle boa=
+rd x15. =20
+> >> >>>>>
+> >> >>>>> Bisect points to commit aece27a2f01b ("ata: ahci_platform: allow=
+ disabling of
+> >> >>>>> hotplug to save power").
+> >> >>>>>
+> >> >>>>> Reverting the patch makes things work again. Any ideas what
+> >> >>>>> might be going wrong here? Things clearly idle but then there
+> >> >>>>> seems to be some register access with clocks disabled. =20
+> >
+> > So this issue is still happening as of next-20180702. Can you guys
+> > please revert the commit above while working on a better solution? =20
+>=20
+> That's fine with me. I'm not very familiar with the process here, does
+> this require anything on my end? And would that require the
+> accompanying patch to be reverted: "ata: ahci: rpm_put port on
+> port_stop to match rpm_get in port_start"? There shouldn't be any
+> problem leaving that one in, but I just want to know before submitting
+> my next patch set.
 
+I am still reverting that commit from linux-next myself.  Has this
+issue been fixed some other way, or is it still ongoing?
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/0YK+L5KAgQs0umX0hv0jfjt
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltniIcACgkQAVBC80lX
+0Gy+uwgAjx18AusCZRh5RpDhTpXN2yvL7JAiPuWJVdZAb/EYFEAB/EP+oaNaKSla
+xnFifSNuzIY//X39E3Rim6NMUdWSA9F6CqRGQMhOgFKtXQPzCytDuhVCQ7YYirYw
+V5jYFmZLH0ZCgnP2fLX792gjBdIFUi/MYyLv8LVf2nM29dDX0+WqKqfIZn8BopEU
+M5HYs5p2aD90gtyQtzWuz1y3zRyLYsBgY4HFdj+4ZAnuCfBFMFmBWCfHuZgqjSd+
+ClFk7KI6Pf0hICdxn9yFF7mwgg6d2u/bebaqFhAr8re0RXiBZLEgs32opSpyeUig
+0vyso/SsPqx1XvhU/j+6sWyceMeUdQ==
+=37UH
+-----END PGP SIGNATURE-----
+
+--Sig_/0YK+L5KAgQs0umX0hv0jfjt--
