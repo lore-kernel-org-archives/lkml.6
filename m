@@ -7,56 +7,57 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F34CBC28CF6
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 03:22:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0852EC28CF6
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 03:22:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEC41217CE
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 03:22:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4949217CE
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 03:22:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iZt5Obip"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEC41217CE
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bBSMij5a"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4949217CE
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726382AbeHEFZS (ORCPT
+        id S1726540AbeHEFZb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 5 Aug 2018 01:25:18 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:33628 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726078AbeHEFZS (ORCPT
+        Sun, 5 Aug 2018 01:25:31 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:41429 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726078AbeHEFZa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 Aug 2018 01:25:18 -0400
-Received: by mail-pf1-f196.google.com with SMTP id d4-v6so5199260pfn.0;
-        Sat, 04 Aug 2018 20:22:19 -0700 (PDT)
+        Sun, 5 Aug 2018 01:25:30 -0400
+Received: by mail-pl0-f68.google.com with SMTP id w19-v6so2543889ply.8;
+        Sat, 04 Aug 2018 20:22:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=xhFVOJthM2Kcd/hhGu+MWtF5+C5N8XfpRNAkYf0VHyM=;
-        b=iZt5ObipaTLO0jWH5cA2l4NqL5xzWhLsI77iiA6JDd/DBfm74dazcp1DsQtGOxB8fj
-         EF/bzGGTZ4IAtPlMXejTr+uWKfoQ7jd5T1F92A+V9b8Ka7t8Gamvb9Qp+gMQRuRfDmwu
-         /X5uLlliPJAOVcq2qSkPwnLOdX/y9KY9CE2/cNjBfOr21RDgTwLK9sUm25kjyPfQj7q3
-         GvTEaq2fN7cEYX+9Z6QSJdb1LahMYYT1wfVEj8sSM5l7s1PF2k48utBldkaLb3MK6YMN
-         JAQOOBZiWQWmF6yMuqSEu6T1Fvl1cTgFa8C+fk6Cbf5sXAViLuIwXlTwxAvvnmTtgP3u
-         2rNQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=SK56+5RdIQbYqRji3I7EZg8OZqP3Orae5FOZ2UzhpBc=;
+        b=bBSMij5ap8N4lndRwMpETAqvpi2wgXDCoZ1ArFuMfUPfrN9oLOjS7SVz2CLvN0XaP2
+         Q7gsccvU0lDmfP/caf8jDsm3p1aLNExLgfXQz9ntqLjYQRwpDWFeS5wNZC1xwbb5ZXso
+         tpfKqfto9gQJOdx85u5sbcCMjtNPGQrXmob/3BGGRUQVznBdNoYsv2EAVjN8UwC+mplE
+         exFLBi1TNHUdPbbZ4uYaYtRD6j8AqDTl+QpyAh1oFwHCFKM853exbx8AJW5lizy7XEzi
+         FCsLnLWVLT3/ZF4dHYgxSRQrz0grDE4fEEUGTp4si5S6vHnrgY0sLYvJwh9PHp05jH+0
+         RZkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=xhFVOJthM2Kcd/hhGu+MWtF5+C5N8XfpRNAkYf0VHyM=;
-        b=saycqJyOBfN+6KjScNY0t/qqOJxmWmoWR3nDrATOaBykWmznw2fNPiCkk1FFtO1XZA
-         +4YEz1TosorTQPdzkiXRBDBYC1z447wL55NRDVt1Bqpv4AmlxxoEBMkovIh48GqN4YTp
-         TJrw7gFF2NN6kInlV5JlblhvAtOiToQRmf7l+AOmKf7CwCxrqffD4R8zTDuamWq8Yy7e
-         S16Mjj0pB2DrMhN6U4/wetieFYIpGm31+yBF2WshVZf15xQhEMSNrFrRb3Mox46ioswW
-         UNJzPNC9TbARivugrnLnVpx6Yx65R87PQ3WZ2UJTYk7GqfUPpWhpPEb8EFOSWRIFfQKC
-         KyUw==
-X-Gm-Message-State: AOUpUlFjqrVzmatQQx8fmaRG/9fznajsS1LIze87hBsP+vWRSLw+AKHc
-        awgb9ZkcI2+KY3h2Ax95uXlSfrv3
-X-Google-Smtp-Source: AAOMgpf2sfWF3srnNiN2ZEtu/Y/4kPPiPxSwqrKX5ySZQf23R4sf0mFqPnnfQ22ZPjwjK3fZolzPFA==
-X-Received: by 2002:a62:90d4:: with SMTP id q81-v6mr11385759pfk.37.1533439338773;
-        Sat, 04 Aug 2018 20:22:18 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=SK56+5RdIQbYqRji3I7EZg8OZqP3Orae5FOZ2UzhpBc=;
+        b=RzfqQhJMcPEAU0366R/UhIUlwuL93GVNZnoNACpPIkjQxTVDpN05qDbzgEr6/G6DHC
+         P2OD7FiHQON0hrG4LApicVX9LxHT/UCRmA8BaQXExlWoydht2XSx4f09SQ6n9rr+Vi7l
+         iUcJiziyFUdKbS8hFBJ1ogZdPR5733/+vREtXij3zW1hw6ctp/hr/76l2UGeWQJ/Agts
+         lDguno2quNlmJKJRTkRcOP3Vt49aZrqJ7ejD1UCyCy9Ke/X/JGUc1wHAk9WRbg9KKH0U
+         eCWjEjd76miZqGEQew21cdgFrLV6AlgF7dmX6H9IIQaBOCSCidSxB/TnEzfBJtaP6GX7
+         nasQ==
+X-Gm-Message-State: AOUpUlGjARZ2MveBIGYL/47YZV1mG1A0G7Oap8QoCHnsVzki9izPim3i
+        FHVzqsfbcX/c9fsZ3WfLpRwAYeze
+X-Google-Smtp-Source: AAOMgpekiA2GseAGkUnhvdUS/cnDntTmwBrVTnCbyoVNtK34o8sMTHjdDBR/9olw4rFjNOrd5ifqAA==
+X-Received: by 2002:a17:902:e088:: with SMTP id cb8-v6mr9154895plb.189.1533439350683;
+        Sat, 04 Aug 2018 20:22:30 -0700 (PDT)
 Received: from linux-l9pv.suse ([124.11.22.254])
-        by smtp.gmail.com with ESMTPSA id x87-v6sm15971922pfa.143.2018.08.04.20.21.52
+        by smtp.gmail.com with ESMTPSA id x87-v6sm15971922pfa.143.2018.08.04.20.22.19
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sat, 04 Aug 2018 20:22:18 -0700 (PDT)
+        Sat, 04 Aug 2018 20:22:30 -0700 (PDT)
 From:   "Lee, Chun-Yi" <joeyli.kernel@gmail.com>
 X-Google-Original-From: "Lee, Chun-Yi" <jlee@suse.com>
 To:     linux-kernel@vger.kernel.org
@@ -73,31 +74,20 @@ Cc:     linux-efi@vger.kernel.org, x86@kernel.org,
         Ard Biesheuvel <ard.biesheuvel@linaro.org>,
         David Howells <dhowells@redhat.com>,
         Mimi Zohar <zohar@linux.vnet.ibm.com>
-Subject: [PATCH 0/6][RFC] Add EFI secure key to key retention service 
-Date:   Sun,  5 Aug 2018 11:21:13 +0800
-Message-Id: <20180805032119.20485-1-jlee@suse.com>
+Subject: [PATCH 1/6] x86/KASLR: make getting random long number function public
+Date:   Sun,  5 Aug 2018 11:21:14 +0800
+Message-Id: <20180805032119.20485-2-jlee@suse.com>
 X-Mailer: git-send-email 2.12.3
+In-Reply-To: <20180805032119.20485-1-jlee@suse.com>
+References: <20180805032119.20485-1-jlee@suse.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When secure boot is enabled, only signed EFI binary can access
-EFI boot service variable before ExitBootService. Which means that
-the EFI boot service variable is secure.
-   
-This patch set add functions to EFI boot stub to generate a 512-bit
-random number that it can be used as a root key for encryption and
-authentication. This root key will be kept in EFI boot service variable.
-EFI boot stub will read and transfer ERK (efi root key) to kernel.
-    
-At runtime, the ERK can be used to encrypted/authentication other
-random number to generate EFI secure key. The EFI secure key can be
-a new master key type for encrypted key. It's useful for hibernation
-or evm.
-
-Here is the proof of concept for using EFI secure key in hibernation:
-  https://github.com/joeyli/linux-s4sign/commit/6311e97038974bc5de8121769fb4d34470009566
+Separating the functions for getting random long number from KASLR
+to x86 library, then it can be used to generate random long for
+EFI root key.
 
 Cc: Kees Cook <keescook@chromium.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
@@ -112,42 +102,256 @@ Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Cc: David Howells <dhowells@redhat.com>
 Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
 Signed-off-by: "Lee, Chun-Yi" <jlee@suse.com>
-
-Lee, Chun-Yi (6):
-  x86/KASLR: make getting random long number function public
-  efi: the function transfers status to string
-  efi: generate efi root key in EFI boot stub
-  key: add EFI secure key type
-  key: add EFI secure key as a master key type
-  key: enforce the secure boot checking when loading efi root key
-
- Documentation/admin-guide/kernel-parameters.txt |   6 +
- arch/x86/boot/compressed/Makefile               |   1 +
- arch/x86/boot/compressed/cpuflags.c             |   2 +-
- arch/x86/boot/compressed/eboot.c                |   2 +
- arch/x86/boot/compressed/efi_root_key.c         | 212 +++++++
- arch/x86/boot/compressed/kaslr.c                |  21 -
- arch/x86/boot/compressed/misc.c                 |  17 +
- arch/x86/boot/compressed/misc.h                 |  12 +-
- arch/x86/include/asm/efi.h                      |  13 +
- arch/x86/include/uapi/asm/bootparam.h           |   1 +
- arch/x86/kernel/setup.c                         |   3 +
- arch/x86/lib/kaslr.c                            |  61 +-
- arch/x86/lib/random.c                           |  68 +++
- drivers/firmware/efi/Kconfig                    |  31 +
- drivers/firmware/efi/Makefile                   |   1 +
- drivers/firmware/efi/efi-secure-key.c           | 748 ++++++++++++++++++++++++
- include/keys/efi-type.h                         |  57 ++
- include/linux/efi.h                             |  40 ++
- include/linux/kernel.h                          |   3 +-
- kernel/panic.c                                  |   1 +
- security/keys/encrypted-keys/encrypted.c        |  10 +
- 21 files changed, 1226 insertions(+), 84 deletions(-)
- create mode 100644 arch/x86/boot/compressed/efi_root_key.c
+---
+ arch/x86/boot/compressed/kaslr.c | 21 -------------
+ arch/x86/boot/compressed/misc.c  | 17 ++++++++++
+ arch/x86/boot/compressed/misc.h  |  6 ++++
+ arch/x86/lib/kaslr.c             | 61 ++---------------------------------
+ arch/x86/lib/random.c            | 68 ++++++++++++++++++++++++++++++++++++++++
+ 5 files changed, 93 insertions(+), 80 deletions(-)
  create mode 100644 arch/x86/lib/random.c
- create mode 100644 drivers/firmware/efi/efi-secure-key.c
- create mode 100644 include/keys/efi-type.h
 
+diff --git a/arch/x86/boot/compressed/kaslr.c b/arch/x86/boot/compressed/kaslr.c
+index b87a7582853d..0f40d2178ebc 100644
+--- a/arch/x86/boot/compressed/kaslr.c
++++ b/arch/x86/boot/compressed/kaslr.c
+@@ -33,13 +33,11 @@
+ #include "error.h"
+ #include "../string.h"
+ 
+-#include <generated/compile.h>
+ #include <linux/module.h>
+ #include <linux/uts.h>
+ #include <linux/utsname.h>
+ #include <linux/ctype.h>
+ #include <linux/efi.h>
+-#include <generated/utsrelease.h>
+ #include <asm/efi.h>
+ 
+ /* Macros used by the included decompressor code below. */
+@@ -57,25 +55,6 @@ extern unsigned long get_cmd_line_ptr(void);
+ /* Used by PAGE_KERN* macros: */
+ pteval_t __default_kernel_pte_mask __read_mostly = ~0;
+ 
+-/* Simplified build-specific string for starting entropy. */
+-static const char build_str[] = UTS_RELEASE " (" LINUX_COMPILE_BY "@"
+-		LINUX_COMPILE_HOST ") (" LINUX_COMPILER ") " UTS_VERSION;
+-
+-static unsigned long rotate_xor(unsigned long hash, const void *area,
+-				size_t size)
+-{
+-	size_t i;
+-	unsigned long *ptr = (unsigned long *)area;
+-
+-	for (i = 0; i < size / sizeof(hash); i++) {
+-		/* Rotate by odd number of bits and XOR. */
+-		hash = (hash << ((sizeof(hash) * 8) - 7)) | (hash >> 7);
+-		hash ^= ptr[i];
+-	}
+-
+-	return hash;
+-}
+-
+ /* Attempt to create a simple but unpredictable starting entropy. */
+ static unsigned long get_boot_seed(void)
+ {
+diff --git a/arch/x86/boot/compressed/misc.c b/arch/x86/boot/compressed/misc.c
+index 8dd1d5ccae58..eb0ab9cad4e4 100644
+--- a/arch/x86/boot/compressed/misc.c
++++ b/arch/x86/boot/compressed/misc.c
+@@ -426,3 +426,20 @@ void fortify_panic(const char *name)
+ {
+ 	error("detected buffer overflow");
+ }
++
++#if CONFIG_RANDOMIZE_BASE
++unsigned long rotate_xor(unsigned long hash, const void *area,
++			size_t size)
++{
++	size_t i;
++	unsigned long *ptr = (unsigned long *)area;
++
++	for (i = 0; i < size / sizeof(hash); i++) {
++		/* Rotate by odd number of bits and XOR. */
++		hash = (hash << ((sizeof(hash) * 8) - 7)) | (hash >> 7);
++		hash ^= ptr[i];
++	}
++
++	return hash;
++}
++#endif
+diff --git a/arch/x86/boot/compressed/misc.h b/arch/x86/boot/compressed/misc.h
+index a423bdb42686..957f327ad83c 100644
+--- a/arch/x86/boot/compressed/misc.h
++++ b/arch/x86/boot/compressed/misc.h
+@@ -70,6 +70,8 @@ int cmdline_find_option_bool(const char *option);
+ 
+ 
+ #if CONFIG_RANDOMIZE_BASE
++#include <generated/compile.h>
++#include <generated/utsrelease.h>
+ /* kaslr.c */
+ void choose_random_location(unsigned long input,
+ 			    unsigned long input_size,
+@@ -78,6 +80,10 @@ void choose_random_location(unsigned long input,
+ 			    unsigned long *virt_addr);
+ /* cpuflags.c */
+ bool has_cpuflag(int flag);
++/* Simplified build-specific string for starting entropy. */
++static const char build_str[] = UTS_RELEASE " (" LINUX_COMPILE_BY "@"
++		LINUX_COMPILE_HOST ") (" LINUX_COMPILER ") " UTS_VERSION;
++unsigned long rotate_xor(unsigned long hash, const void *area, size_t size);
+ #else
+ static inline void choose_random_location(unsigned long input,
+ 					  unsigned long input_size,
+diff --git a/arch/x86/lib/kaslr.c b/arch/x86/lib/kaslr.c
+index 79778ab200e4..29ed9bfde5a5 100644
+--- a/arch/x86/lib/kaslr.c
++++ b/arch/x86/lib/kaslr.c
+@@ -26,67 +26,10 @@
+ #define get_boot_seed() kaslr_offset()
+ #endif
+ 
+-#define I8254_PORT_CONTROL	0x43
+-#define I8254_PORT_COUNTER0	0x40
+-#define I8254_CMD_READBACK	0xC0
+-#define I8254_SELECT_COUNTER0	0x02
+-#define I8254_STATUS_NOTREADY	0x40
+-static inline u16 i8254(void)
+-{
+-	u16 status, timer;
+-
+-	do {
+-		outb(I8254_PORT_CONTROL,
+-		     I8254_CMD_READBACK | I8254_SELECT_COUNTER0);
+-		status = inb(I8254_PORT_COUNTER0);
+-		timer  = inb(I8254_PORT_COUNTER0);
+-		timer |= inb(I8254_PORT_COUNTER0) << 8;
+-	} while (status & I8254_STATUS_NOTREADY);
+-
+-	return timer;
+-}
++#include "random.c"
+ 
+ unsigned long kaslr_get_random_long(const char *purpose)
+ {
+-#ifdef CONFIG_X86_64
+-	const unsigned long mix_const = 0x5d6008cbf3848dd3UL;
+-#else
+-	const unsigned long mix_const = 0x3f39e593UL;
+-#endif
+-	unsigned long raw, random = get_boot_seed();
+-	bool use_i8254 = true;
+-
+-	debug_putstr(purpose);
+ 	debug_putstr(" KASLR using");
+-
+-	if (has_cpuflag(X86_FEATURE_RDRAND)) {
+-		debug_putstr(" RDRAND");
+-		if (rdrand_long(&raw)) {
+-			random ^= raw;
+-			use_i8254 = false;
+-		}
+-	}
+-
+-	if (has_cpuflag(X86_FEATURE_TSC)) {
+-		debug_putstr(" RDTSC");
+-		raw = rdtsc();
+-
+-		random ^= raw;
+-		use_i8254 = false;
+-	}
+-
+-	if (use_i8254) {
+-		debug_putstr(" i8254");
+-		random ^= i8254();
+-	}
+-
+-	/* Circular multiply for better bit diffusion */
+-	asm(_ASM_MUL "%3"
+-	    : "=a" (random), "=d" (raw)
+-	    : "a" (random), "rm" (mix_const));
+-	random += raw;
+-
+-	debug_putstr("...\n");
+-
+-	return random;
++	return get_random_long(purpose);
+ }
+diff --git a/arch/x86/lib/random.c b/arch/x86/lib/random.c
+new file mode 100644
+index 000000000000..f2fe6a784c98
+--- /dev/null
++++ b/arch/x86/lib/random.c
+@@ -0,0 +1,68 @@
++// SPDX-License-Identifier: GPL-2.0
++
++#include <asm/io.h>
++#include <asm/archrandom.h>
++
++#define I8254_PORT_CONTROL	0x43
++#define I8254_PORT_COUNTER0	0x40
++#define I8254_CMD_READBACK	0xC0
++#define I8254_SELECT_COUNTER0	0x02
++#define I8254_STATUS_NOTREADY	0x40
++static inline u16 i8254(void)
++{
++	u16 status, timer;
++
++	do {
++		outb(I8254_PORT_CONTROL,
++		     I8254_CMD_READBACK | I8254_SELECT_COUNTER0);
++		status = inb(I8254_PORT_COUNTER0);
++		timer  = inb(I8254_PORT_COUNTER0);
++		timer |= inb(I8254_PORT_COUNTER0) << 8;
++	} while (status & I8254_STATUS_NOTREADY);
++
++	return timer;
++}
++
++static unsigned long get_random_long(const char *purpose)
++{
++#ifdef CONFIG_X86_64
++	const unsigned long mix_const = 0x5d6008cbf3848dd3UL;
++#else
++	const unsigned long mix_const = 0x3f39e593UL;
++#endif
++	unsigned long raw, random = get_boot_seed();
++	bool use_i8254 = true;
++
++	debug_putstr(purpose);
++
++	if (has_cpuflag(X86_FEATURE_RDRAND)) {
++		debug_putstr(" RDRAND");
++		if (rdrand_long(&raw)) {
++			random ^= raw;
++			use_i8254 = false;
++		}
++	}
++
++	if (has_cpuflag(X86_FEATURE_TSC)) {
++		debug_putstr(" RDTSC");
++		raw = rdtsc();
++
++		random ^= raw;
++		use_i8254 = false;
++	}
++
++	if (use_i8254) {
++		debug_putstr(" i8254");
++		random ^= i8254();
++	}
++
++	/* Circular multiply for better bit diffusion */
++	asm(_ASM_MUL "%3"
++	    : "=a" (random), "=d" (raw)
++	    : "a" (random), "rm" (mix_const));
++	random += raw;
++
++	debug_putstr("...\n");
++
++	return random;
++}
 -- 
 2.13.6
 
