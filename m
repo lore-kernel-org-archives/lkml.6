@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0EA8C46473
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 19:05:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA37BC46471
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 19:05:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3513218D7
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 19:05:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A0B9218C3
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 19:05:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lG3ubbKn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3513218D7
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qg74gj1J"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A0B9218C3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727065AbeHEVLF (ORCPT
+        id S1727227AbeHEVLI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 5 Aug 2018 17:11:05 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:43288 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726855AbeHEVLE (ORCPT
+        Sun, 5 Aug 2018 17:11:08 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:40704 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726855AbeHEVLI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 Aug 2018 17:11:04 -0400
-Received: by mail-wr1-f65.google.com with SMTP id b15-v6so10268456wrv.10
-        for <linux-kernel@vger.kernel.org>; Sun, 05 Aug 2018 12:05:31 -0700 (PDT)
+        Sun, 5 Aug 2018 17:11:08 -0400
+Received: by mail-wr1-f68.google.com with SMTP id h15-v6so10286934wrs.7
+        for <linux-kernel@vger.kernel.org>; Sun, 05 Aug 2018 12:05:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=7Dmlu67sax7CAqxxrePaf1+hkI+XMm++rNx/gbZNK0A=;
-        b=lG3ubbKnM7Tttp8aTB9sbN32gDon3Cn51jIhudJCbXx/nxPUwr+WhSE/yDk5zc23bY
-         GxUwRZVChwMhd3V4VFgZh+BEKuV/WlONZFLpqp7NS/4ASdmF8Tix53ylRKOl6qcCQd9p
-         i+i2gGzPCqXvwen2X+tuZ8TYvvcDtq3LpxElW/5APupOHGm0FZU0TvtokNy+rtxL4glL
-         XacsFQ27Kc+OxYw2Nt9Inp0JJz4/DuYDlsXe2oiNhJZ75FfGCJWc3IDJMQLGFaUuDRT6
-         2fGVRPUPvoXM02msFtESd3ZhbLMix1sTk2NKY43s2RQeEf5TqHNu0ev2ppLoC7cSOYVs
-         pXEA==
+        bh=cOx4dHS42bYsoKUHGwvx7dw+fot+Y45/6s6dBpig3v4=;
+        b=Qg74gj1Jg/Jioq8XTsTBEK2dV9RtNSC+QluifXXlWfEh/v0FbfE8XRU9VSXcrZoBBO
+         ZvH6e+Ce9uyVIq0vdsew50XZOB8QTohOTRv+O2cWER32PXvfR7GUiK3iG0NrOKAxMWLU
+         5OOfkIEI9FFYfqjcWeeJFi2BZIOiDIkTxKcOITo+BzbTmYm/B/JMwHui3ceo2Q9gGKyD
+         FQ7ht77t4vVN0JMrhsTFjVkXogJgMi3I2+2o7qfCaMVfz2Uq68/cvx0/tR/YA01uYijj
+         XyQXayQ8ZkdUD/E9tJy+k5jOderUGNRBTHxwWNgBSAdmtIlohjSNLXbLW+NynFJQ0hyW
+         xWrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=7Dmlu67sax7CAqxxrePaf1+hkI+XMm++rNx/gbZNK0A=;
-        b=UmZAfsW8QDgO8vVlZCEVDr9A5SseBFSi6FgD9fVVNci6M+SDNVsW7deB4X0MN1QnSf
-         MQztk04vX99pqqv8H9xMww4YIgvkVXVOVr5zGkPp6XJulAA9P6ZfSSzWgWe76UX98c/U
-         G9kcWqj4YVKOv3na39tpaH3h/CZDv5MDSw7JgIbDVeJtPc1o629t/ESUHWtEahoVg8/B
-         Qvs3sfHXvNbBI/s9JdbjOQtNI0N2iOB64fBfaZc/jaCfbHl8ENV+NJG0KUimDFfcx/um
-         zi6HjtOTVjwQNtsgSaml3FKnMwKysdM6O4gMxgr6QnoJjxqhAYoaqYFsPiPhofEluCg2
-         3XNQ==
-X-Gm-Message-State: AOUpUlG4qxvaRRfz8y+C6Ir6hvygHsk2oV4rrbek3w6PHGyZ4INBE6Ng
-        cymFtmTYdvLsVMIqdJHhdwY=
-X-Google-Smtp-Source: AAOMgpcPz9DDOyNcEgZi8+6XeTYD42tZKTSLLz5P2nDbwMVTh7k//y5+U4tJv3OP7VdZdXIsDqlRpw==
-X-Received: by 2002:adf:b456:: with SMTP id v22-v6mr7956627wrd.187.1533495931308;
-        Sun, 05 Aug 2018 12:05:31 -0700 (PDT)
+        bh=cOx4dHS42bYsoKUHGwvx7dw+fot+Y45/6s6dBpig3v4=;
+        b=ZS24pgumzcguo1jtNtKYnyB/MGkubiMiKS7UfK2RBrUwtmuopiZJWiVDHh3V8w4HFv
+         Zq5BkGcYyKaC3Ej8umWwyjnFlfxk3NbmvIywEvT9BXrO0R+ltEanAHz2x52z0u3JDzv8
+         beXH3VvMTvXwxtUmYRGrsPYXztatFxl9UPFcaRhcdCKiY8kYg8CWJsNPBROQxb4fXXGB
+         zw6I+CMMcdM+DM2kxTRD/4PnbZ21H5NlsGxilKCPDwNuDPDJTNl8rfSJVHScECZeaIAk
+         Yw/tpyPJZkucXYQQ7N9CwmEDe6zUO86jOlAgWSPzpUKJTHi1m9gIIskcmzPXUlLQyge7
+         nghw==
+X-Gm-Message-State: AOUpUlFS0wg24NEn4DIsmrPzIWo8T/0q+7fvQ6G7pPzWfxZzX08Zj08j
+        1T+MN92pVPqHwjvj05LiKro=
+X-Google-Smtp-Source: AAOMgpeU/ZPaa8/PiYA3LhHcg9Eud7aESgzvZdaNXIH4UnIIkT/xhLB0pMKO5AB1h+Z0Bz8aAgtT2Q==
+X-Received: by 2002:adf:a4d4:: with SMTP id h20-v6mr7775886wrb.167.1533495934285;
+        Sun, 05 Aug 2018 12:05:34 -0700 (PDT)
 Received: from localhost.localdomain ([2a02:8108:85c0:57c8:8569:71c8:6dba:bb41])
-        by smtp.gmail.com with ESMTPSA id g125-v6sm4500884wmf.16.2018.08.05.12.05.30
+        by smtp.gmail.com with ESMTPSA id g125-v6sm4500884wmf.16.2018.08.05.12.05.33
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 05 Aug 2018 12:05:30 -0700 (PDT)
+        Sun, 05 Aug 2018 12:05:33 -0700 (PDT)
 From:   Michael Straube <straube.linux@gmail.com>
 To:     gregkh@linuxfoundation.org
 Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH v2 4/6] staging: rtl8188eu: remove whitespace - style
-Date:   Sun,  5 Aug 2018 21:05:14 +0200
-Message-Id: <20180805190516.2133-4-straube.linux@gmail.com>
+Subject: [PATCH v2 6/6] staging: rtl8188eu: remove whitespace, add missing blank line
+Date:   Sun,  5 Aug 2018 21:05:16 +0200
+Message-Id: <20180805190516.2133-6-straube.linux@gmail.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180805190516.2133-1-straube.linux@gmail.com>
 References: <20180805190516.2133-1-straube.linux@gmail.com>
@@ -74,68 +74,142 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Replace tabs with spaces and/or remove spaces where appropriate.
+Add a missing blank line after declarations.
+
+Also clears checkpatch warnings.
+WARNING: Statements should start on a tabstop
+WARNING: suspect code indent for conditional statements (8, 17)
 
 Signed-off-by: Michael Straube <straube.linux@gmail.com>
 ---
- .../staging/rtl8188eu/hal/rtl8188eu_xmit.c    | 22 +++++++++----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+ drivers/staging/rtl8188eu/core/rtw_sta_mgt.c | 37 ++++++++++----------
+ 1 file changed, 19 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/staging/rtl8188eu/hal/rtl8188eu_xmit.c b/drivers/staging/rtl8188eu/hal/rtl8188eu_xmit.c
-index 6925ec48dff1..a11bee16d070 100644
---- a/drivers/staging/rtl8188eu/hal/rtl8188eu_xmit.c
-+++ b/drivers/staging/rtl8188eu/hal/rtl8188eu_xmit.c
-@@ -15,7 +15,7 @@
- 
- s32 rtw_hal_init_xmit_priv(struct adapter *adapt)
+diff --git a/drivers/staging/rtl8188eu/core/rtw_sta_mgt.c b/drivers/staging/rtl8188eu/core/rtw_sta_mgt.c
+index 34c3e2af63c1..f12a12b19d3f 100644
+--- a/drivers/staging/rtl8188eu/core/rtw_sta_mgt.c
++++ b/drivers/staging/rtl8188eu/core/rtw_sta_mgt.c
+@@ -18,7 +18,7 @@ static void _rtw_init_stainfo(struct sta_info *psta)
  {
--	struct xmit_priv	*pxmitpriv = &adapt->xmitpriv;
-+	struct xmit_priv *pxmitpriv = &adapt->xmitpriv;
+ 	memset((u8 *)psta, 0, sizeof(struct sta_info));
  
- 	tasklet_init(&pxmitpriv->xmit_tasklet,
- 		     (void(*)(unsigned long))rtl8188eu_xmit_tasklet,
-@@ -30,8 +30,8 @@ static u8 urb_zero_packet_chk(struct adapter *adapt, int sz)
- 
- static void rtl8188eu_cal_txdesc_chksum(struct tx_desc	*ptxdesc)
- {
--	u16	*usptr = (u16 *)ptxdesc;
--	u32 count = 16;		/*  (32 bytes / 2 bytes per XOR) => 16 times */
-+	u16 *usptr = (u16 *)ptxdesc;
-+	u32 count = 16; /* (32 bytes / 2 bytes per XOR) => 16 times */
- 	u32 index;
- 	u16 checksum = 0;
- 
-@@ -160,15 +160,15 @@ static void fill_txdesc_phy(struct pkt_attrib *pattrib, __le32 *pdw)
- 
- static s32 update_txdesc(struct xmit_frame *pxmitframe, u8 *pmem, s32 sz, u8 bagg_pkt)
- {
--	int	pull = 0;
--	uint	qsel;
-+	int pull = 0;
-+	uint qsel;
- 	u8 data_rate, pwr_status, offset;
--	struct adapter		*adapt = pxmitframe->padapter;
--	struct pkt_attrib	*pattrib = &pxmitframe->attrib;
-+	struct adapter *adapt = pxmitframe->padapter;
-+	struct pkt_attrib *pattrib = &pxmitframe->attrib;
- 	struct odm_dm_struct *odmpriv = &adapt->HalData->odmpriv;
--	struct tx_desc	*ptxdesc = (struct tx_desc *)pmem;
--	struct mlme_ext_priv	*pmlmeext = &adapt->mlmeextpriv;
--	struct mlme_ext_info	*pmlmeinfo = &(pmlmeext->mlmext_info);
-+	struct tx_desc *ptxdesc = (struct tx_desc *)pmem;
-+	struct mlme_ext_priv *pmlmeext = &adapt->mlmeextpriv;
-+	struct mlme_ext_info *pmlmeinfo = &(pmlmeext->mlmext_info);
- 
- 	if (adapt->registrypriv.mp_mode == 0) {
- 		if ((!bagg_pkt) && (urb_zero_packet_chk(adapt, sz) == 0)) {
-@@ -328,7 +328,7 @@ static s32 update_txdesc(struct xmit_frame *pxmitframe, u8 *pmem, s32 sz, u8 bag
- 	return pull;
+-	 spin_lock_init(&psta->lock);
++	spin_lock_init(&psta->lock);
+ 	INIT_LIST_HEAD(&psta->list);
+ 	INIT_LIST_HEAD(&psta->hash_list);
+ 	_rtw_init_queue(&psta->sleep_q);
+@@ -55,7 +55,7 @@ static void _rtw_init_stainfo(struct sta_info *psta)
+ #endif	/*  CONFIG_88EU_AP_MODE */
  }
  
--/* for non-agg data frame or  management frame */
-+/* for non-agg data frame or management frame */
- static s32 rtw_dump_xframe(struct adapter *adapt, struct xmit_frame *pxmitframe)
+-u32	_rtw_init_sta_priv(struct	sta_priv *pstapriv)
++u32 _rtw_init_sta_priv(struct sta_priv *pstapriv)
  {
- 	s32 ret = _SUCCESS;
+ 	struct sta_info *psta;
+ 	s32 i;
+@@ -127,15 +127,15 @@ inline struct sta_info *rtw_get_stainfo_by_offset(struct sta_priv *stapriv, int
+ 	return (struct sta_info *)(stapriv->pstainfo_buf + offset * sizeof(struct sta_info));
+ }
+ 
+-u32	_rtw_free_sta_priv(struct	sta_priv *pstapriv)
++u32 _rtw_free_sta_priv(struct sta_priv *pstapriv)
+ {
+ 	struct list_head *phead, *plist;
+ 	struct sta_info *psta = NULL;
+ 	struct recv_reorder_ctrl *preorder_ctrl;
+-	int	index;
++	int index;
+ 
+ 	if (pstapriv) {
+-		/*	delete all reordering_ctrl_timer		*/
++		/* delete all reordering_ctrl_timer */
+ 		spin_lock_bh(&pstapriv->sta_hash_lock);
+ 		for (index = 0; index < NUM_STA; index++) {
+ 			phead = &pstapriv->sta_hash[index];
+@@ -171,7 +171,7 @@ struct sta_info *rtw_alloc_stainfo(struct sta_priv *pstapriv, u8 *hwaddr)
+ 	struct __queue *pfree_sta_queue;
+ 	struct recv_reorder_ctrl *preorder_ctrl;
+ 	int i = 0;
+-	u16  wRxSeqInitialValue = 0xffff;
++	u16 wRxSeqInitialValue = 0xffff;
+ 
+ 	pfree_sta_queue = &pstapriv->free_sta_queue;
+ 
+@@ -243,14 +243,14 @@ struct sta_info *rtw_alloc_stainfo(struct sta_priv *pstapriv, u8 *hwaddr)
+ }
+ 
+ /*  using pstapriv->sta_hash_lock to protect */
+-u32	rtw_free_stainfo(struct adapter *padapter, struct sta_info *psta)
++u32 rtw_free_stainfo(struct adapter *padapter, struct sta_info *psta)
+ {
+ 	int i;
+ 	struct __queue *pfree_sta_queue;
+ 	struct recv_reorder_ctrl *preorder_ctrl;
+-	struct	sta_xmit_priv	*pstaxmitpriv;
+-	struct	xmit_priv	*pxmitpriv = &padapter->xmitpriv;
+-	struct	sta_priv *pstapriv = &padapter->stapriv;
++	struct sta_xmit_priv *pstaxmitpriv;
++	struct xmit_priv *pxmitpriv = &padapter->xmitpriv;
++	struct sta_priv *pstapriv = &padapter->stapriv;
+ 
+ 	if (!psta)
+ 		goto exit;
+@@ -376,9 +376,9 @@ u32	rtw_free_stainfo(struct adapter *padapter, struct sta_info *psta)
+ void rtw_free_all_stainfo(struct adapter *padapter)
+ {
+ 	struct list_head *plist, *phead;
+-	s32	index;
++	s32 index;
+ 	struct sta_info *psta = NULL;
+-	struct	sta_priv *pstapriv = &padapter->stapriv;
++	struct sta_priv *pstapriv = &padapter->stapriv;
+ 	struct sta_info *pbcmc_stainfo = rtw_get_bcmc_stainfo(padapter);
+ 
+ 	if (pstapriv->asoc_sta_count == 1)
+@@ -407,7 +407,7 @@ struct sta_info *rtw_get_stainfo(struct sta_priv *pstapriv, u8 *hwaddr)
+ {
+ 	struct list_head *plist, *phead;
+ 	struct sta_info *psta = NULL;
+-	u32	index;
++	u32 index;
+ 	u8 *addr;
+ 	u8 bc_addr[ETH_ALEN] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
+ 
+@@ -443,10 +443,10 @@ struct sta_info *rtw_get_stainfo(struct sta_priv *pstapriv, u8 *hwaddr)
+ 
+ u32 rtw_init_bcmc_stainfo(struct adapter *padapter)
+ {
+-	struct sta_info		*psta;
++	struct sta_info *psta;
+ 	u32 res = _SUCCESS;
+ 	unsigned char bcast_addr[ETH_ALEN] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
+-	struct	sta_priv *pstapriv = &padapter->stapriv;
++	struct sta_priv *pstapriv = &padapter->stapriv;
+ 
+ 	psta = rtw_alloc_stainfo(pstapriv, bcast_addr);
+ 
+@@ -465,9 +465,10 @@ u32 rtw_init_bcmc_stainfo(struct adapter *padapter)
+ 
+ struct sta_info *rtw_get_bcmc_stainfo(struct adapter *padapter)
+ {
+-	struct sta_priv		*pstapriv = &padapter->stapriv;
++	struct sta_priv *pstapriv = &padapter->stapriv;
+ 	u8 bc_addr[ETH_ALEN] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
+-	 return rtw_get_stainfo(pstapriv, bc_addr);
++
++	return rtw_get_stainfo(pstapriv, bc_addr);
+ }
+ 
+ u8 rtw_access_ctrl(struct adapter *padapter, u8 *mac_addr)
+@@ -502,7 +503,7 @@ u8 rtw_access_ctrl(struct adapter *padapter, u8 *mac_addr)
+ 	else if (pacl_list->mode == 2)/* deny unless in accept list */
+ 		res = (match) ? true : false;
+ 	else
+-		 res = true;
++		res = true;
+ 
+ #endif
+ 
 -- 
 2.18.0
 
