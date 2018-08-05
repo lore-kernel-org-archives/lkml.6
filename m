@@ -2,112 +2,99 @@ Return-Path: <SRS0=mdhE=KU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3881C46471
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 10:02:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED952C46470
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 10:19:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A832217BD
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 10:02:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A832217BD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 9413E217BF
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 10:19:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="pblJbIzC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9413E217BF
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726276AbeHEMGE (ORCPT
+        id S1726402AbeHEMX7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 5 Aug 2018 08:06:04 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:52685 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726130AbeHEMGE (ORCPT
+        Sun, 5 Aug 2018 08:23:59 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:40266 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726130AbeHEMX7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 Aug 2018 08:06:04 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 92B8A8061C; Sun,  5 Aug 2018 12:02:00 +0200 (CEST)
-Date:   Sun, 5 Aug 2018 12:02:00 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Ryan Chen <yu.chen.surf@gmail.com>
-Cc:     jlee@suse.com, Chen Yu <yu.c.chen@intel.com>, oneukum@suse.com,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        ebiggers@google.com, Theodore Ts'o <tytso@mit.edu>,
-        smueller@chronox.de, denkenz@gmail.com,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        linux-crypto@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kookoo.gu@intel.com, Zhang Rui <rui.zhang@intel.com>
-Subject: Re: [PATCH 0/4][RFC v2] Introduce the in-kernel hibernation
- encryption
-Message-ID: <20180805100200.GB22948@amd>
-References: <20180719132003.GA30981@sandybridge-desktop>
- <20180720102532.GA20284@amd>
- <1532346156.3057.11.camel@suse.com>
- <20180723162302.GA4503@sandybridge-desktop>
- <1532590246.7411.3.camel@suse.com>
- <20180726081404.GG4244@linux-l9pv.suse>
- <20180730170415.GQ4244@linux-l9pv.suse>
- <20180803033702.GB416@sandybridge-desktop>
- <20180803053445.GC4244@linux-l9pv.suse>
- <CADjb_WSURQz86+E8kakNf7UBDM+aho+uaz3QdDkuGsEgan=szw@mail.gmail.com>
+        Sun, 5 Aug 2018 08:23:59 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w75AEUmn175502;
+        Sun, 5 Aug 2018 10:19:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=1IKAyi/5iKq8ZvfEzBm6fh2VMpfOTOujCZYs814SpLA=;
+ b=pblJbIzC6gwuug0E2kIhqwJwqLxam289aU4l+P39KpshQa9TBu7Se6CzEoQcb4g2DPyz
+ liyKUbuJdv5l4Obr25IchURfaCIdR75nMmbGIlViuVJL8WkGJ/F/D1Vsi8OqgmzmSV44
+ pa2z6/2gcQ9YxlXGNRSyf7ibuDLTDv3OHJ1UDWxajgIkkBfT4JhZn1sU7qevKzKTGQIF
+ qMSAgHZ+X3dRbyy/uJBTWx/PP/mnkArH6k0l7bSSZ+nGchecR3E+XZCkn2TGkOJNrDS8
+ wnSe7AhPZwRhsGK8BRU9qZn8jVPMW8+A7df91ZGpyZ421T14V5lwFTN8p3noNuMTL8Ht 8Q== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by aserp2120.oracle.com with ESMTP id 2kn43nj22t-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sun, 05 Aug 2018 10:19:51 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w75AJoRI004232
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sun, 5 Aug 2018 10:19:50 GMT
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w75AJo4g006791;
+        Sun, 5 Aug 2018 10:19:50 GMT
+Received: from oracle.com (/10.154.190.53)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Sun, 05 Aug 2018 03:19:49 -0700
+Date:   Sun, 5 Aug 2018 06:19:45 -0400
+From:   Sowmini Varadhan <sowmini.varadhan@oracle.com>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     santosh.shilimkar@oracle.com,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Netdev list <netdev@vger.kernel.org>
+Subject: Re: [PATCH] RDS is not Radio Data System
+Message-ID: <20180805101945.GA4056@oracle.com>
+References: <20180805065920.GA8968@amd>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="gj572EiMnwbLXET9"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CADjb_WSURQz86+E8kakNf7UBDM+aho+uaz3QdDkuGsEgan=szw@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180805065920.GA8968@amd>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8975 signatures=668707
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=952
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1808050116
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On (08/05/18 08:59), Pavel Machek wrote:
+> Getting prompt "The RDS Protocol" (RDS) is not too helpful, and it is
+> easily confused with Radio Data System (which we may want to support
+> in kernel, too).
+> 
+> I wonder if option should be named NET_RDS, instead?
 
---gj572EiMnwbLXET9
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+RDS has been around for a while now (since 2.6). How will you
+rename proposal manage backward compatibility? Why can't you call
+your new option CONFIG_RADIO  or similar instead?
 
-Hi!
+Are we going to rename NFS* to NET_NFS* because someone decided
+to reuse the NFS acronym? 
 
-> > User space doesn't need to involve. The EFI root key is generated by
-> > EFI boot stub and be transfer to kernel. It's stored in EFI boot service
-> > variable that it can only be accessed by trusted EFI binary when
-> > secure boot is enabled.
-> >
-> Okay, this apply to the 'suspend' phase, right?
-> I'm still a little confused about the 'resume' phase.
-> Taking encryption as example(not signature),
-> the purpose of doing hibernation encryption is to prevent other users
-> from stealing ram content. Say, user A uses a  passphrase to generate the
+> And this sounds like a good idea:
+> -	tristate "The RDS Protocol"
+> +	tristate "The Reliable Datagram Sockets (RDS) Protocol"
 
-No, I don't think that's purpose here.
+surn that sounds fine.
 
-Purpose here is to prevent user from reading/modifying kernel memory
-content on machine he owns.
+--Sowmini
 
-Strange as it may sound, that is what "secure" boot requires (and what
-Disney wants).
-
-I guess it may have some non-evil uses,
-too... https://www.linux.com/news/matthew-garrett-explains-how-increase-sec=
-urity-boot-time
-
-								=09
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---gj572EiMnwbLXET9
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAltmyxcACgkQMOfwapXb+vLgdgCcCgfNMlQjTf1H5wowJUF9tzdz
-DiQAn1P1w9iLF/MQ4Ihimsvs1Uhx5WXx
-=+5iu
------END PGP SIGNATURE-----
-
---gj572EiMnwbLXET9--
