@@ -2,108 +2,105 @@ Return-Path: <SRS0=mdhE=KU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4906BC4646F
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 00:25:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 231D2C4646F
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 00:27:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA817217CE
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 00:25:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="MZd7WZ4g"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA817217CE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
+	by mail.kernel.org (Postfix) with ESMTP id D5EBB217CE
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 00:27:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5EBB217CE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730232AbeHEC1y (ORCPT
+        id S1730039AbeHEC3e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 22:27:54 -0400
-Received: from imap.thunk.org ([74.207.234.97]:38146 "EHLO imap.thunk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726961AbeHEC1y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 22:27:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
-         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=Q8ozgmkh9c8xVgW7uiByxVshDeymBAogAUyM2T9RMvg=; b=MZd7WZ4gLYBwE9bvRdk/4EMUig
-        eCgC7fkuGGcGf8DXs7o0AjIpqBQh79JUQ6ciZe9OyTw4ocPqGHb5kdivE0r3MOgov+qV3AsFHIGrv
-        EUreLU11s95yMGPYDK6taNYWbjtdbz7KRN38K3ZX5ePZ6+CW0R3OXiRBS04fSTWuYXZw=;
-Received: from root (helo=callcc.thunk.org)
-        by imap.thunk.org with local-esmtp (Exim 4.89)
-        (envelope-from <tytso@thunk.org>)
-        id 1fm6rD-0003Op-9Y; Sun, 05 Aug 2018 00:25:15 +0000
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 59ED07A64C9; Sat,  4 Aug 2018 20:25:14 -0400 (EDT)
-Date:   Sat, 4 Aug 2018 20:25:14 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     Yann Droneaud <ydroneaud@opteya.com>, linux-crypto@vger.kernel.org,
-        Linux Kernel Developers List <linux-kernel@vger.kernel.org>,
-        labbott@redhat.com
-Subject: Re: [PATCH] random: add a config option to trust the CPU's hwrng
-Message-ID: <20180805002514.GF4461@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Pavel Machek <pavel@ucw.cz>, Yann Droneaud <ydroneaud@opteya.com>,
-        linux-crypto@vger.kernel.org,
-        Linux Kernel Developers List <linux-kernel@vger.kernel.org>,
-        labbott@redhat.com
-References: <20180718014344.1309-1-tytso@mit.edu>
- <37046662f2b38f98854abfa1b5868a27c3fa0888.camel@opteya.com>
- <20180718142625.GA5942@thunk.org>
- <20180804215209.GA3201@localhost>
+        Sat, 4 Aug 2018 22:29:34 -0400
+Received: from gateway33.websitewelcome.com ([192.185.145.190]:13455 "EHLO
+        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726961AbeHEC3e (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 4 Aug 2018 22:29:34 -0400
+Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
+        by gateway33.websitewelcome.com (Postfix) with ESMTP id 62DE6C27D3
+        for <linux-kernel@vger.kernel.org>; Sat,  4 Aug 2018 19:27:04 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id m6syfdcL0kBj6m6syfw4ES; Sat, 04 Aug 2018 19:27:04 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.50.82] (port=35062 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1fm6sx-003f3t-Oe; Sat, 04 Aug 2018 19:27:03 -0500
+Date:   Sat, 4 Aug 2018 19:27:02 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Oded Gabbay <oded.gabbay@gmail.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
+        David Airlie <airlied@linux.ie>
+Cc:     dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] drm/amdkfd: Use true and false for boolean values
+Message-ID: <20180805002702.GA26671@embeddedor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180804215209.GA3201@localhost>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.50.82
+X-Source-L: No
+X-Exim-ID: 1fm6sx-003f3t-Oe
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.50.82]:35062
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 41
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Aug 04, 2018 at 11:52:10PM +0200, Pavel Machek wrote:
-> > However, enabling config option means that the CRNG will be
-> > initialized with potentially information available to the CPU
-> > manufacturer and/or Nation States, and this persists *after*
-> > initialization / early boot.  So to say, "we're perfectly safe after
-> > we leave initialization / early boot" is not true.
-> 
-> This should really be explained in the help text.
-> 
-> I assume that after 10 seconds of moving mouse, user is safe even when
-> rdrand is backoored?
+Return statements in functions returning bool should use true or false
+instead of an integer value.
 
-You'll hate this answer, but "it depends".  Suppose someone is using
-an init script which generates ssh keys upon first boot if they are
-missing.  If this is the case, *and* RDRAND is backdoored, then the
-keys will be generated in such a way that they *might* be succeptible
-to being guessed by a nation state.  Moving your mouse around for 1000
-or 10,000 seconds won't help if the host's ssh keys has already been
-generated.
+This code was detected with the help of Coccinelle.
 
-Depending on your hardware, no mouse motion might be necessary at all.
-On my laptop (a Dell XPS 13 model 9370) using an dm-crypt protected
-root disk, and running a Debian testing userspace, with a 4.18-rc6
-based kernel, the "CRNG is initialized" message is printed *before*
-the root file system is mounted.
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/gpu/drm/amd/amdkfd/cik_event_interrupt.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-On other systems, where the hardware does not issue as many
-interrupts, the mouse motion might be extremely important in order to
-get the "CRNG is initialized" message.
+diff --git a/drivers/gpu/drm/amd/amdkfd/cik_event_interrupt.c b/drivers/gpu/drm/amd/amdkfd/cik_event_interrupt.c
+index 5d2475d..16af9d1 100644
+--- a/drivers/gpu/drm/amd/amdkfd/cik_event_interrupt.c
++++ b/drivers/gpu/drm/amd/amdkfd/cik_event_interrupt.c
+@@ -62,12 +62,12 @@ static bool cik_event_interrupt_isr(struct kfd_dev *dev,
+ 	vmid  = (ihre->ring_id & 0x0000ff00) >> 8;
+ 	if (vmid < dev->vm_info.first_vmid_kfd ||
+ 	    vmid > dev->vm_info.last_vmid_kfd)
+-		return 0;
++		return false;
+ 
+ 	/* If there is no valid PASID, it's likely a firmware bug */
+ 	pasid = (ihre->ring_id & 0xffff0000) >> 16;
+ 	if (WARN_ONCE(pasid == 0, "FW bug: No PASID in KFD interrupt"))
+-		return 0;
++		return false;
+ 
+ 	/* Interrupt types we care about: various signals and faults.
+ 	 * They will be forwarded to a work queue (see below).
+-- 
+2.7.4
 
-> (Plus, I'd say this should be kernel command line option, not config
-> option...?)
-
-Agreed, there should be a command line option as well.  I just haven't
-gotten around to it yet, and in the meantime, having a config option
-is better than nothing.   Patches gratefully accepted...  :-)
-
-   	       		  	  	     		  - Ted
