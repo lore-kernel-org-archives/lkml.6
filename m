@@ -2,62 +2,63 @@ Return-Path: <SRS0=mdhE=KU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 270B4C28CF6
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 03:23:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81AD0C28CF6
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 03:23:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE63B217CE
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 03:23:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 32CDE217CE
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 03:23:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TuVql3x3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE63B217CE
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JCwapnbB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32CDE217CE
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727039AbeHEF0B (ORCPT
+        id S1727296AbeHEF0v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 5 Aug 2018 01:26:01 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:35492 "EHLO
+        Sun, 5 Aug 2018 01:26:51 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:38252 "EHLO
         mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726078AbeHEF0B (ORCPT
+        with ESMTP id S1726121AbeHEF0u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 Aug 2018 01:26:01 -0400
-Received: by mail-pf1-f194.google.com with SMTP id p12-v6so5193556pfh.2;
-        Sat, 04 Aug 2018 20:23:01 -0700 (PDT)
+        Sun, 5 Aug 2018 01:26:50 -0400
+Received: by mail-pf1-f194.google.com with SMTP id x17-v6so5185351pfh.5;
+        Sat, 04 Aug 2018 20:23:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=WC+YG9egYWyIyyrybMEOlXO6oMLmG1hqTvA6CjPBuhg=;
-        b=TuVql3x3hf1F1zoWPaJpC1pjBWiWqEw59BuVGfUYs6XZ/irnXDfFOSg5OTWzDGDkc4
-         wx1gBtPj6sbnCJqVzmeWu9+MBx342FUN4FtNIVvWqf7DaYAZZvKcEpzMxyrXUNezK4W1
-         hg5jas6SDw7bmsCiTaNHWnWcHI8XNYVVrglkho5XLIgDiQTx2sn+pXeUV7LC9tp6H4VR
-         2xJ5NipMqHdHpBh3IZuHsYS0HPDLHOAwxQ8EPfpp1eECKSkAzpGwXp+F5Alm6zk9SC6L
-         AIS60PB/Gg3rQO9Zh7TEHWQ4BKzANhMFUIPYoxiTLJWChTfccE3rpBCbr1nMVu89p3Ze
-         87Ew==
+        bh=5ZF6r9bNjhRtpl7cdP+PHafOqszJX3zIJFSwk4iCGq8=;
+        b=JCwapnbBDGofCVbd+M9USzgmxbq4njEZXMUvjxxrIYdoFNJPYrmYUgAMn3hsRgRAt9
+         eBsUT7edSTZErkaLuHNDbXDzC/2qcfSUPs9nmKHGo8CYkYoeti5++3grJvpp1jp6ixIN
+         Wo3qX3w4ZLRSBFTEOK5iX+0fRCq16cskygq1SvCs4rSDnwGWDCKhkS8qYUmcEGEY1gFW
+         5TnccOuzM7nqmwIdjbj6L7AcwI9uHKm3p79zgMwWFjHtYFEO9kC4hlGjPkF/xBuEdCZJ
+         xbuiz24dMU9TP69pEnmKdHjU+8j9S4yMUS0aVP2Gk3q3WyCMWclpuaeP+20a6Y6sbaVh
+         YbDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=WC+YG9egYWyIyyrybMEOlXO6oMLmG1hqTvA6CjPBuhg=;
-        b=Ws3yMLJeqdNSI9UhoQ0CZ3hiZiL42pKg4X+0n6T0JqKi2zvREggZQg+Pxb17sIfq38
-         X1vhLLgmj+GJfb0OdD11oFXwo2NAIIHuHqCeMt7Wpt2HgCtm8JF81yDwzR9TZwtybP15
-         nEUlh3kSwwwgY69LrS+nMru1mJwCk3F3w2Qut6vjBs/GR/PO2lS6G8cPP+gCfSc7p9cu
-         xdKDodeoZos8C6sTMGVJDd6uyT91uVn2CzQ4WdmPwTMmhWUno0R+EsjWnCZPuTvxAlko
-         +geMS8SHQpITjWgPEUy1QEQ5zzLJI22J/50ejrADV0H7rU3a9p9gy3pqOWiiyYuS3P3X
-         FKHQ==
-X-Gm-Message-State: AOUpUlHbKdbC2soQgjDeABIqPQEfrcZdOlbv+7nGa4y5E82k4BLJGEQh
-        2231B3xt2xwFVFd2dE9AthsYMrP8
-X-Google-Smtp-Source: AAOMgpdgPPE97ElCBFfLNqIJNSWBxlFHd+W8yCUensJemD+MBpC7G9MjzG8320vvjliviJovZe2SCA==
-X-Received: by 2002:a62:249c:: with SMTP id k28-v6mr3620802pfk.195.1533439380456;
-        Sat, 04 Aug 2018 20:23:00 -0700 (PDT)
+        bh=5ZF6r9bNjhRtpl7cdP+PHafOqszJX3zIJFSwk4iCGq8=;
+        b=uRPYjK7oHRqhbrSpRJYR4UvMTFx5TjYyYuhKu1aL4SWRe+2LQa6hRu5Je/ESMBdJ9Q
+         Jfv8IuEh8rUgcY1BSR01LsmnxKxv+nl4LzLctgl1sxGQHAm7n8uwl4ug0NNB07f7sFcc
+         ibfR36lc2tMeHwlyF9C7OpWjxO9q3WwEIXSIZt6M0hsbv3tWUYl5UnQQK8dejJivLxuq
+         QoFSrp8Wx9Y4CzTAmnt0M4NvCq34Mu2vuIzZqyZ1VXcR1HpEMJiz56V4otcjEoiaoa/V
+         xwbfrBbW7+eXTENUgqEh0EMq+rMHmJC+80iNDsFq+OSHoMiyJH4WGDyTlro2tanFqjnl
+         bZBg==
+X-Gm-Message-State: AOUpUlGEVlANB4shzTatS6+XWehBrwv5j/Pvd0LmOHVHT7A6IYPuRHq5
+        JD4Nt3QOEA/5H8uCLKK1VW15Tqqj
+X-Google-Smtp-Source: AAOMgpc9/5Gp7UvzqImpMozODYu297FY4kdukgREeREymplA167y7ovr6nBxsoFHqrWHYZ8T1SMtww==
+X-Received: by 2002:a62:4add:: with SMTP id c90-v6mr11356605pfj.23.1533439430356;
+        Sat, 04 Aug 2018 20:23:50 -0700 (PDT)
 Received: from linux-l9pv.suse ([124.11.22.254])
-        by smtp.gmail.com with ESMTPSA id x87-v6sm15971922pfa.143.2018.08.04.20.22.50
+        by smtp.gmail.com with ESMTPSA id x87-v6sm15971922pfa.143.2018.08.04.20.23.42
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sat, 04 Aug 2018 20:22:59 -0700 (PDT)
+        Sat, 04 Aug 2018 20:23:49 -0700 (PDT)
 From:   "Lee, Chun-Yi" <joeyli.kernel@gmail.com>
 X-Google-Original-From: "Lee, Chun-Yi" <jlee@suse.com>
 To:     linux-kernel@vger.kernel.org
@@ -74,9 +75,9 @@ Cc:     linux-efi@vger.kernel.org, x86@kernel.org,
         Ard Biesheuvel <ard.biesheuvel@linaro.org>,
         David Howells <dhowells@redhat.com>,
         Mimi Zohar <zohar@linux.vnet.ibm.com>
-Subject: [PATCH 4/6] key: add EFI secure key type
-Date:   Sun,  5 Aug 2018 11:21:17 +0800
-Message-Id: <20180805032119.20485-5-jlee@suse.com>
+Subject: [PATCH 5/6] key: add EFI secure key as a master key type
+Date:   Sun,  5 Aug 2018 11:21:18 +0800
+Message-Id: <20180805032119.20485-6-jlee@suse.com>
 X-Mailer: git-send-email 2.12.3
 In-Reply-To: <20180805032119.20485-1-jlee@suse.com>
 References: <20180805032119.20485-1-jlee@suse.com>
@@ -85,66 +86,18 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-EFI secure key is a new key type that the key is encrypted and
-authenticated by the EFI root key. The ERK (EFI root key) is
-generated by EFI boot stub and be stored in EFI boot services
-variable before ExitBootServices be called.
+EFI secure key can be a new master key type that it's used for
+generate encrypted key.
 
-When user enabled the secure boot in firmware, the EFI root key is
-secure which means that the encrypted EFI secure key is also secure.
+Compared with trusted key or user key, the advantage of using
+EFI master key is that it doesn't need TPM or password from user
+space.
 
-A EFI secure key is generated by kernel and can be keep by user
-space. It is also a new master key type like trusted key(TPM) or
-user key. The EFI key can be used by hibernation encryption and
-authentication. And it can also be a master key to generate a
-encrypted key for EVM.
+As other master key types, keyctl can be used to create new encrypted
+key by EFI secure key. Using the "efi:" prefix string with master
+key name:
 
-The layout of the efi key payload is:
-
-	      -+-+-----------------------+
-	       | |                       |
-	       | |                       |
-	       | |                       |
-      key_len->| |         key           |
-	       | |                       |
-	       | |                       |
-	      -+-+-----------------------+----+-
-	       | |     key_len           |    |
-	       | |(decrypted key length) |    |
-	       | |     (string)          |    |
-	       | |                       |    |
-	       | +-----------------------|    |
- datablob_len->| |                       |    |
-	       | |      ERK hash         | datablob
-	       | |                       |    |
-	       | +-----------------------|    |
-	       | |          iv           |    |
-	       | |(initialization vector)|    |
-	       | +-----------------------|    |
-	       | |                       |    |
-	       | |                       |    |
-	       | |                       |    |
-	       | |    encrypted_key      |    |
-	       | |                       |    |
-	       | |                       |    |
-	      -+-+-----------------------+----+-
-		 |        hmac           |
-		 |(signature of datablob)|
-		 +-----------------------+
-
-The datablob can be exported to user space with hmac.
-
-As other key type, EFI key can be created by keyctl tool:
-
-e.g. keyctl add efi key-name "new 128" @u
-
-EFI secure key can also be dumped to a file by keyctl:
-e.g. keyctl pipe $NUMBER > ~/tmp/key-name.blob
-
-The $NUMBER is the key serial number.
-
-Enroll the key blob back to kernel:
-e.g. keyctl add efi key-name "load `cat ~/tmp/key-name.blob`" @u
+e.g. keyctl add encrypted evm-key "new efi:kmk-efi 32" @u
 
 Cc: Kees Cook <keescook@chromium.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
@@ -160,718 +113,116 @@ Cc: David Howells <dhowells@redhat.com>
 Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
 Signed-off-by: "Lee, Chun-Yi" <jlee@suse.com>
 ---
- drivers/firmware/efi/efi-secure-key.c | 636 ++++++++++++++++++++++++++++++++++
- include/keys/efi-type.h               |  50 +++
- 2 files changed, 686 insertions(+)
- create mode 100644 include/keys/efi-type.h
+ drivers/firmware/efi/efi-secure-key.c    | 21 +++++++++++++++++++++
+ include/keys/efi-type.h                  |  7 +++++++
+ security/keys/encrypted-keys/encrypted.c | 10 ++++++++++
+ 3 files changed, 38 insertions(+)
 
 diff --git a/drivers/firmware/efi/efi-secure-key.c b/drivers/firmware/efi/efi-secure-key.c
-index e56d7d176e03..5e72a8c9e13e 100644
+index 5e72a8c9e13e..aa422ee87f70 100644
 --- a/drivers/firmware/efi/efi-secure-key.c
 +++ b/drivers/firmware/efi/efi-secure-key.c
-@@ -11,6 +11,16 @@
- #include <linux/efi.h>
- #include <linux/memblock.h>
- #include <linux/security.h>
-+#include <linux/key-type.h>
-+#include <linux/parser.h>
-+#include <linux/random.h>
-+#include <linux/scatterlist.h>
-+#include <keys/efi-type.h>
-+#include <keys/user-type.h>
-+#include <crypto/algapi.h>
-+#include <crypto/hash.h>
-+#include <crypto/sha.h>
-+#include <crypto/skcipher.h>
+@@ -676,6 +676,27 @@ struct key_type key_type_efi = {
+ };
+ EXPORT_SYMBOL_GPL(key_type_efi);
  
- static u8 root_key[ROOT_KEY_SIZE];
- static unsigned long rkey_size;
-@@ -64,3 +74,629 @@ void __init parse_efi_root_key_setup(u64 phys_addr, u32 data_len)
- 		sizeof(struct setup_data) + sizeof(struct efi_rkey_setup_data));
- 	early_iounmap(setup_data, data_len);
- }
-+
-+#define ERK_HASH_SIZE SHA256_DIGEST_SIZE
-+#define HMAC_HASH_SIZE SHA256_DIGEST_SIZE
-+#define DKEY_SIZE SHA256_DIGEST_SIZE
-+
-+struct key_type key_type_efi;
-+
-+static const char hash_alg[] = "sha256";
-+static const char hmac_alg[] = "hmac(sha256)";
-+static struct crypto_shash *hash_tfm;
-+
-+static int calc_hash(struct crypto_shash *tfm, const u8 *buf,
-+		     unsigned int buflen, u8 *digest)
-+{
-+	SHASH_DESC_ON_STACK(desc, tfm);
-+	int ret;
-+
-+	desc->tfm = tfm;
-+	desc->flags = 0;
-+
-+	ret = crypto_shash_digest(desc, buf, buflen, digest);
-+	shash_desc_zero(desc);
-+
-+	return ret;
-+}
-+
-+static int get_derived_key(const char *salt, u8 *derived_key)
-+{
-+	u8 *derived_buf;
-+	unsigned int derived_buf_len;
-+	int ret;
-+
-+	derived_buf_len = strlen(salt) + 1 + ROOT_KEY_SIZE;
-+	if (derived_buf_len < DKEY_SIZE)
-+		derived_buf_len = DKEY_SIZE;
-+
-+	derived_buf = kzalloc(derived_buf_len, GFP_KERNEL);
-+	if (!derived_buf)
-+		return -ENOMEM;
-+
-+	memcpy(derived_buf + strlen(derived_buf) + 1, root_key,
-+		ROOT_KEY_SIZE);
-+	ret = calc_hash(hash_tfm, derived_buf, derived_buf_len, derived_key);
-+	memzero_explicit(derived_buf, derived_buf_len);
-+
-+	return ret;
-+}
-+
-+static int calc_hmac(const u8 *buf, unsigned int buflen, u8 *digest)
-+{
-+	struct crypto_shash *tfm;
-+	u8 *auth_key;
-+	int ret;
-+
-+	auth_key = kzalloc(DKEY_SIZE, GFP_KERNEL);
-+	if (!auth_key)
-+		return -ENOMEM;
-+
-+	tfm = crypto_alloc_shash(hmac_alg, 0, CRYPTO_ALG_ASYNC);
-+	if (IS_ERR(tfm)) {
-+		pr_err("can't alloc %s transform: %ld\n",
-+			hmac_alg, PTR_ERR(tfm));
-+		ret = PTR_ERR(tfm);
-+		goto tfm_fail;
-+	}
-+
-+	ret = get_derived_key("AUTH_KEY", auth_key);
-+	if (ret)
-+		goto key_fail;
-+
-+	ret = crypto_shash_setkey(tfm, auth_key, DKEY_SIZE);
-+	if (!ret)
-+		ret = calc_hash(tfm, buf, buflen, digest);
-+
-+key_fail:
-+	crypto_free_shash(tfm);
-+tfm_fail:
-+	memzero_explicit(auth_key, DKEY_SIZE);
-+
-+	return ret;
-+}
-+
-+static const char blkcipher_alg[] = "cbc(aes)";
-+static unsigned int ivsize;
-+static int blksize;
-+
-+static int set_aes_sizes(void)
-+{
-+	struct crypto_skcipher *tfm;
-+
-+	tfm = crypto_alloc_skcipher(blkcipher_alg, 0, CRYPTO_ALG_ASYNC);
-+	if (IS_ERR(tfm)) {
-+		pr_err("failed to alloc_cipher (%ld)\n", PTR_ERR(tfm));
-+		return PTR_ERR(tfm);
-+	}
-+	ivsize = crypto_skcipher_ivsize(tfm);
-+	blksize = crypto_skcipher_blocksize(tfm);
-+	crypto_free_skcipher(tfm);
-+
-+	return 0;
-+}
-+
-+enum {
-+	Opt_err = -1,
-+	Opt_new, Opt_load,
-+};
-+
-+static const match_table_t key_tokens = {
-+	{Opt_new, "new"},
-+	{Opt_load, "load"},
-+	{Opt_err, NULL}
-+};
-+
-+static struct efi_key_payload *efi_payload_alloc(struct key *key, char *key_len_str)
-+{
-+	struct efi_key_payload *ekp = NULL;
-+	unsigned short encrypted_keylen;
-+	unsigned short datablob_len;
-+	unsigned short payload_len;
-+	long key_len;
-+	int ret;
-+
-+	ret = kstrtol(key_len_str, 10, &key_len);
-+	if (ret < 0)
-+		return ERR_PTR(ret);
-+	encrypted_keylen = roundup(key_len, blksize);
-+
-+	/* efi_key_payload + key + datablob + hmac */
-+	datablob_len = strlen(key_len_str) + 1 + ERK_HASH_SIZE + ivsize + encrypted_keylen;
-+	payload_len = sizeof(*ekp) + key_len + datablob_len + HMAC_HASH_SIZE;
-+
-+	ret = key_payload_reserve(key, payload_len);
-+	if (ret < 0)
-+		return ERR_PTR(ret);
-+
-+	ekp = kzalloc(payload_len, GFP_KERNEL);
-+	if (!ekp)
-+		return ERR_PTR(-ENOMEM);
-+	ekp->key = ekp->payload_data;
-+	ekp->datablob = ekp->key + key_len;
-+	ekp->key_len_str = ekp->datablob;
-+	ekp->erk_hash = ekp->key_len_str + strlen(key_len_str) + 1;
-+	ekp->iv = ekp->erk_hash + ERK_HASH_SIZE;
-+	ekp->encrypted_key = ekp->iv + ivsize;
-+	ekp->hmac = ekp->encrypted_key + encrypted_keylen;
-+	ekp->key_len = key_len;
-+	ekp->datablob_len = datablob_len;
-+
-+	memcpy(ekp->key_len_str, key_len_str, strlen(key_len_str));
-+
-+	return ekp;
-+}
-+
 +/*
-+ * datablob_parse - parse the keyctl data and fill in the
-+ *                  payload and options structures
-+ *
-+ * On success returns command number, otherwise -EINVAL.
++ * request_efi_key - request the efi key
 + */
-+static int datablob_parse(char *datablob, char **key_len_str, char **hex_encoded_blob)
++struct key *request_efi_key(const char *master_desc,
++			    const u8 **master_key, size_t *master_keylen)
 +{
-+	substring_t args[MAX_OPT_ARGS];
-+	long key_len;
-+	int key_cmd;
-+	int ret;
-+	char *c;
++	struct efi_key_payload *epayload;
++	struct key *ekey;
 +
-+	/* main command */
-+	c = strsep(&datablob, " \t");
-+	if (!c)
-+		return -EINVAL;
-+	key_cmd = match_token(c, key_tokens, args);
++	ekey = request_key(&key_type_efi, master_desc, NULL);
++	if (IS_ERR(ekey))
++		goto error;
 +
-+	/* first string argument is key length */
-+	c = strsep(&datablob, " \t");
-+	if (!c)
-+		return -EINVAL;
-+	*key_len_str = c;
-+	ret = kstrtol(*key_len_str, 10, &key_len);
-+	if (ret < 0 || key_len < MIN_KEY_SIZE || key_len > MAX_KEY_SIZE)
-+		return -EINVAL;
-+
-+	switch (key_cmd) {
-+	case Opt_new:
-+		ret = Opt_new;
-+		break;
-+	case Opt_load:
-+		*hex_encoded_blob = strsep(&datablob, " \t");
-+		if (!*hex_encoded_blob) {
-+			pr_info("hex blob is missing\n");
-+			return -EINVAL;
-+		}
-+		if (strlen(*hex_encoded_blob) / 2 > MAX_BLOB_SIZE)
-+			return -EINVAL;
-+		ret = Opt_load;
-+		break;
-+	case Opt_err:
-+		return -EINVAL;
-+	}
-+
-+	return ret;
++	down_read(&ekey->sem);
++	epayload = ekey->payload.data[0];
++	*master_key = epayload->key;
++	*master_keylen = epayload->key_len;
++error:
++	return ekey;
 +}
 +
-+static int key_encrypt(struct efi_key_payload *ekp, size_t encrypted_keylen)
-+{
-+	struct scatterlist src[1], dst[1];
-+	struct crypto_skcipher *tfm;
-+	struct skcipher_request *req;
-+	u8 *encrypted_key_tmp;
-+	u8 *iv_tmp, *enc_key;
-+	int ret;
-+
-+	encrypted_key_tmp = kzalloc(encrypted_keylen, GFP_KERNEL);
-+	if (!encrypted_key_tmp)
-+		return -ENOMEM;
-+
-+	enc_key = kzalloc(DKEY_SIZE, GFP_KERNEL);
-+	if (!enc_key) {
-+		ret = -ENOMEM;
-+		goto key_fail;
-+	}
-+
-+	iv_tmp = kmemdup(ekp->iv, ivsize, GFP_KERNEL);
-+	if (!iv_tmp) {
-+		ret = -ENOMEM;
-+		goto iv_fail;
-+	}
-+
-+	tfm = crypto_alloc_skcipher(blkcipher_alg, 0, CRYPTO_ALG_ASYNC);
-+	if (IS_ERR(tfm)) {
-+		ret = PTR_ERR(tfm);
-+		pr_err("failed to allocate skcipher (%d)\n", ret);
-+		goto tfm_fail;
-+	}
-+
-+	ret = get_derived_key("ENC_KEY", enc_key);
-+	if (ret) {
-+		pr_err("failed to get encrypt key\n");
-+		goto req_fail;
-+	}
-+
-+	ret = crypto_skcipher_setkey(tfm, enc_key, DKEY_SIZE);
-+	if (ret) {
-+		pr_err("failed to setkey (%d)\n", ret);
-+		goto req_fail;
-+	}
-+
-+	req = skcipher_request_alloc(tfm, GFP_KERNEL);
-+	if (!req) {
-+		pr_err("failed to allocate request\n");
-+		ret = -ENOMEM;
-+		goto req_fail;
-+	}
-+
-+	memcpy(iv_tmp, ekp->iv, ivsize);
-+	sg_init_one(src, ekp->key, ekp->key_len);
-+	sg_init_one(dst, encrypted_key_tmp, encrypted_keylen);
-+	skcipher_request_set_crypt(req, src, dst, ekp->key_len, iv_tmp);
-+	ret = crypto_skcipher_encrypt(req);
-+	if (!ret)
-+		memcpy(ekp->encrypted_key, encrypted_key_tmp, encrypted_keylen);
-+
-+	skcipher_request_free(req);
-+req_fail:
-+	crypto_free_skcipher(tfm);
-+tfm_fail:
-+	kzfree(iv_tmp);
-+iv_fail:
-+	memzero_explicit(enc_key, DKEY_SIZE);
-+key_fail:
-+	kzfree(encrypted_key_tmp);
-+
-+	return ret;
-+}
-+
-+static int key_decrypt(struct efi_key_payload *ekp)
-+{
-+	struct scatterlist src[1], dst[1];
-+	struct crypto_skcipher *tfm;
-+	struct skcipher_request *req;
-+	size_t encrypted_keylen;
-+	u8 *decrypted_key_tmp;
-+	u8 *enc_key, *iv_tmp;
-+	int ret;
-+
-+	encrypted_keylen = roundup(ekp->key_len, blksize);
-+
-+	decrypted_key_tmp = kzalloc(ekp->key_len, GFP_KERNEL);
-+	if (!decrypted_key_tmp)
-+		return -ENOMEM;
-+
-+	enc_key = kzalloc(DKEY_SIZE, GFP_KERNEL);
-+	if (!enc_key) {
-+		ret = -ENOMEM;
-+		goto key_fail;
-+	}
-+
-+	iv_tmp = kmemdup(ekp->iv, ivsize, GFP_KERNEL);
-+	if (!iv_tmp) {
-+		ret = -ENOMEM;
-+		goto iv_fail;
-+	}
-+
-+	tfm = crypto_alloc_skcipher(blkcipher_alg, 0, CRYPTO_ALG_ASYNC);
-+	if (IS_ERR(tfm)) {
-+		ret = PTR_ERR(tfm);
-+		pr_err("failed to allocate skcipher (%d)\n", ret);
-+		goto tfm_fail;
-+	}
-+
-+	ret = get_derived_key("ENC_KEY", enc_key);
-+	if (ret) {
-+		pr_err("failed to get encrypt key\n");
-+		goto req_fail;
-+	}
-+
-+	ret = crypto_skcipher_setkey(tfm, enc_key, DKEY_SIZE);
-+	if (ret) {
-+		pr_err("failed to setkey (%d)\n", ret);
-+		goto req_fail;
-+	}
-+
-+	req = skcipher_request_alloc(tfm, GFP_KERNEL);
-+	if (!req) {
-+		pr_err("failed to allocate request\n");
-+		ret = -ENOMEM;
-+		goto req_fail;
-+	}
-+
-+	memcpy(iv_tmp, ekp->iv, ivsize);
-+	sg_init_one(src, ekp->encrypted_key, encrypted_keylen);
-+	sg_init_one(dst, decrypted_key_tmp, ekp->key_len);
-+	skcipher_request_set_crypt(req, src, dst, ekp->key_len, iv_tmp);
-+	ret = crypto_skcipher_decrypt(req);
-+	if (!ret)
-+		memcpy(ekp->key, decrypted_key_tmp, ekp->key_len);
-+
-+	skcipher_request_free(req);
-+req_fail:
-+	crypto_free_skcipher(tfm);
-+tfm_fail:
-+	kzfree(iv_tmp);
-+iv_fail:
-+	memzero_explicit(enc_key, DKEY_SIZE);
-+key_fail:
-+	kzfree(decrypted_key_tmp);
-+
-+	return ret;
-+}
-+
-+/*
-+ * Convert the ascii encoded blob to binary. And checking the hmac.
-+ * The input blob format is:
-+ * <erk hash> <encrypted iv> <encrypted key> <hmac>
-+ */
-+static int verify_hmac(struct efi_key_payload *ekp, char *hex_encoded_blob)
-+{
-+	u8 erk_hash[ERK_HASH_SIZE];
-+	int max_encoded_blob_len;
-+	size_t encrypted_keylen;
-+	char *bufp;
-+	u8 *hmac;
-+	int ret;
-+
-+	/* check blob size */
-+	max_encoded_blob_len = ekp->datablob_len + HMAC_HASH_SIZE
-+				- strlen(ekp->key_len_str) - 1;
-+	if (strlen(hex_encoded_blob) / 2 > max_encoded_blob_len)
-+		return -EINVAL;
-+
-+	bufp = hex_encoded_blob;
-+	ret = hex2bin(ekp->erk_hash, bufp, ERK_HASH_SIZE);
-+	if (ret < 0)
-+		return -EINVAL;
-+
-+	/* check the hash of ERK */
-+	ret = calc_hash(hash_tfm, root_key, ROOT_KEY_SIZE, erk_hash);
-+	if (ret < 0 || crypto_memneq(ekp->erk_hash, erk_hash, ERK_HASH_SIZE))
-+		return -EINVAL;
-+
-+	/* iv */
-+	bufp += ERK_HASH_SIZE * 2;
-+	ret = hex2bin(ekp->iv, bufp, ivsize);
-+	if (ret < 0)
-+		return -EINVAL;
-+
-+	/* encrypted key */
-+	bufp += ivsize * 2;
-+	encrypted_keylen = roundup(ekp->key_len, blksize);
-+	ret = hex2bin(ekp->encrypted_key, bufp, encrypted_keylen);
-+	if (ret < 0)
-+		return -EINVAL;
-+
-+	/* verify hmac */
-+	bufp += encrypted_keylen * 2;
-+	ret = hex2bin(ekp->hmac, bufp, HMAC_HASH_SIZE);
-+	if (ret < 0)
-+		return -EINVAL;
-+
-+	hmac = kzalloc(HMAC_HASH_SIZE, GFP_KERNEL);
-+	if (!hmac)
-+		return -ENOMEM;
-+
-+	ret = calc_hmac(ekp->datablob, ekp->datablob_len, hmac);
-+	if (ret)
-+		goto err;
-+
-+	ret = crypto_memneq(ekp->hmac, hmac, HMAC_HASH_SIZE);
-+	if (ret) {
-+		pr_warn("hmac signature does not match\n");
-+		ret = -EINVAL;
-+	}
-+
-+err:
-+	kzfree(hmac);
-+	return ret;
-+}
-+
-+/*
-+ * efi_instantiate - create a new efi key
-+ *
-+ * Decrypt an existing efi key blob or, for a new key, get a
-+ * random key, then encrypt and creatse a efi key-type key,
-+ * adding it to the specified keyring.
-+ *
-+ * e.g.
-+ * keyctl add efi kmk-efi "new 128" @u
-+ * keyctl add efi kmk-efi "load `cat kmk-efi.blob`" @u
-+ *
-+ * On success, return 0. Otherwise return errno.
-+ */
-+static int efi_instantiate(struct key *key,
-+			   struct key_preparsed_payload *prep)
-+{
-+	struct efi_key_payload *ekp = NULL;
-+	size_t datalen = prep->datalen;
-+	char *datablob = NULL;
-+	char *key_len_str = NULL;
-+	char *hex_encoded_blob = NULL;
-+	int key_cmd;
-+	int ret = 0;
-+
-+	if (datalen <= 0 || datalen > 32767 || !prep->data)
-+		return -EINVAL;
-+
-+	datablob = kzalloc(datalen + 1, GFP_KERNEL);
-+	if (!datablob)
-+		return -ENOMEM;
-+	memcpy(datablob, prep->data, datalen);
-+	datablob[datalen] = '\0';
-+
-+	key_cmd = datablob_parse(datablob, &key_len_str, &hex_encoded_blob);
-+	if (key_cmd < 0) {
-+		ret = key_cmd;
-+		goto out;
-+	}
-+
-+	ekp = efi_payload_alloc(key, key_len_str);
-+	if (!ekp) {
-+		ret = -ENOMEM;
-+		goto out;
-+	}
-+
-+	switch (key_cmd) {
-+	case Opt_load:
-+		ret = verify_hmac(ekp, hex_encoded_blob);
-+		if (ret)
-+			break;
-+		ret = key_decrypt(ekp);
-+		break;
-+	case Opt_new:
-+		get_random_bytes(ekp->iv, ivsize);
-+		get_random_bytes(ekp->key, ekp->key_len);
-+		break;
-+	default:
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+out:
-+	kzfree(datablob);
-+	if (!ret)
-+		rcu_assign_keypointer(key, ekp);
-+	else
-+		kzfree(ekp);
-+	return ret;
-+}
-+
-+/*
-+ * efi_read_blob - read the encrypted blob data with hex format
-+ *
-+ * The resulting datablob format is:
-+ * <key length string> <erk hash> <encrypted iv> <encrypted key> <hmac>
-+ *
-+ * On success, return the efi key datablob size.
-+ */
-+long efi_read_blob(const struct key *key, char __user *buffer,
-+		   char *kbuffer, size_t buflen)
-+{
-+	struct efi_key_payload *ekp;
-+	size_t asciiblob_len, encrypted_keylen;
-+	char *ascii_buf;
-+	char *bufp;
-+	int i, len;
-+	int ret;
-+
-+	if (!is_loaded)
-+		return -EINVAL;
-+
-+	ekp = dereference_key_locked(key);
-+	if (!ekp)
-+		return -EINVAL;
-+
-+	/* datablob_len = key_len string length + 1 + ERK hash length + ivsize + encrypted_keylen
-+	 * double size of ERK hash, iv, encrypted key, and hmac for ascii
-+	 */
-+	encrypted_keylen = roundup(ekp->key_len, blksize);
-+	asciiblob_len = ekp->datablob_len + ERK_HASH_SIZE + ivsize + encrypted_keylen + HMAC_HASH_SIZE * 2;
-+
-+	if ((!buffer && !kbuffer) || buflen < asciiblob_len)
-+		return asciiblob_len;
-+
-+	ascii_buf = kzalloc(asciiblob_len + 1, GFP_KERNEL);
-+	if (!ascii_buf)
-+		return -ENOMEM;
-+
-+	ascii_buf[asciiblob_len] = '\0';
-+
-+	/* copy key length string */
-+	len = sprintf(ascii_buf, "%d ", ekp->key_len);
-+
-+	/* pack hash of ERK */
-+	bufp = ascii_buf + len;
-+	ret = calc_hash(hash_tfm, root_key, ROOT_KEY_SIZE, ekp->erk_hash);
-+	if (ret)
-+		goto err;
-+	for (i = 0; i < ERK_HASH_SIZE; i++)
-+		bufp = hex_byte_pack(bufp, ekp->erk_hash[i]);
-+
-+	/* pack iv */
-+	for (i = 0; i < ivsize; i++)
-+		bufp = hex_byte_pack(bufp, ekp->iv[i]);
-+
-+	/* encrypt and pack key */
-+	ret = key_encrypt(ekp, encrypted_keylen);
-+	if (ret)
-+		goto err;
-+	for (i = 0; i < ekp->key_len; i++)
-+		bufp = hex_byte_pack(bufp, ekp->encrypted_key[i]);
-+
-+	/* generate and pack HMAC */
-+	ret = calc_hmac(ekp->datablob, ekp->datablob_len, ekp->hmac);
-+	if (ret)
-+		goto err;
-+	for (i = 0; i < HMAC_HASH_SIZE; i++)
-+		bufp = hex_byte_pack(bufp, ekp->hmac[i]);
-+
-+	ret = asciiblob_len;
-+	if (buffer) {
-+		if (copy_to_user(buffer, ascii_buf, asciiblob_len) != 0)
-+			ret = -EFAULT;
-+	}
-+	if (kbuffer) {
-+		if (!memcpy(kbuffer, ascii_buf, asciiblob_len))
-+			ret = -EFAULT;
-+	}
-+err:
-+	kzfree(ascii_buf);
-+	return ret;
-+}
-+EXPORT_SYMBOL(efi_read_blob);
-+
-+/*
-+ * efi_read - format and copy the encrypted data to userspace
-+ *
-+ * The resulting datablob format is:
-+ * <key length string> <erk hash> <encrypted iv> <encrypted key> <hmac>
-+ *
-+ * On success, return to userspace the encrypted key datablob size.
-+ */
-+static long efi_read(const struct key *key, char __user *buffer,
-+			size_t buflen)
-+{
-+	return efi_read_blob(key, buffer, NULL, buflen);
-+}
-+
-+/*
-+ * efi_destroy - clear and free the key's payload
-+ */
-+static void efi_destroy(struct key *key)
-+{
-+	kzfree(key->payload.data[0]);
-+}
-+
-+struct key_type key_type_efi = {
-+	.name = "efi",
-+	.instantiate = efi_instantiate,
-+	.destroy = efi_destroy,
-+	.describe = user_describe,
-+	.read = efi_read,
-+};
-+EXPORT_SYMBOL_GPL(key_type_efi);
-+
-+static int __init init_efi_secure_key(void)
-+{
-+	int ret;
-+
-+	/* root_key must be loaded */
-+	if (!is_loaded)
-+		return 0;
-+
-+	hash_tfm = crypto_alloc_shash(hash_alg, 0, CRYPTO_ALG_ASYNC);
-+	if (IS_ERR(hash_tfm)) {
-+		pr_err("can't allocate %s transform: %ld\n",
-+			hash_alg, PTR_ERR(hash_tfm));
-+		return PTR_ERR(hash_tfm);
-+	}
-+
-+	/* initial EFI key type */
-+	ret = set_aes_sizes();
-+	if (!ret)
-+		ret = register_key_type(&key_type_efi);
-+
-+	return ret;
-+}
-+
-+late_initcall(init_efi_secure_key);
+ static int __init init_efi_secure_key(void)
+ {
+ 	int ret;
 diff --git a/include/keys/efi-type.h b/include/keys/efi-type.h
-new file mode 100644
-index 000000000000..57524b22d42f
---- /dev/null
+index 57524b22d42f..bbe649f3eec0 100644
+--- a/include/keys/efi-type.h
 +++ b/include/keys/efi-type.h
-@@ -0,0 +1,50 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+/* efi-type.h: EFI key type
-+ *
-+ * Copyright (C) 2018 Lee, Chun-Yi <jlee@suse.com>
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public Licence
-+ * as published by the Free Software Foundation; either version
-+ * 2 of the Licence, or (at your option) any later version.
-+ */
-+
-+#ifndef _KEYS_EFI_TYPE_H
-+#define _KEYS_EFI_TYPE_H
-+
-+#include <linux/key.h>
-+#include <linux/rcupdate.h>
-+
-+#define MIN_KEY_SIZE			32
-+#define MAX_KEY_SIZE			128
-+#define MAX_BLOB_SIZE			512
-+
-+struct efi_key_payload {
-+	struct rcu_head rcu;
-+	u8 *key;
-+	u8 *datablob;			/* key_len(string) + ERK hash + iv + encrypted key */
-+	char *key_len_str;
-+	u8 *erk_hash;
-+	u8 *iv;
-+	u8 *encrypted_key;
-+	u8 *hmac;
-+	unsigned int key_len;
-+	unsigned int datablob_len;
-+	u8 payload_data[0];		/* key + datablob + hmac */
-+};
-+
-+extern struct key_type key_type_efi;
-+
-+#if defined(CONFIG_EFI_SECURE_KEY)
-+extern long efi_read_blob(const struct key *key, char __user *buffer,
-+			  char *kbuffer, size_t buflen);
-+#else
-+inline long efi_read_blob(const struct key *key, char __user *buffer,
-+			  char *kbuffer, size_t buflen)
+@@ -39,12 +39,19 @@ extern struct key_type key_type_efi;
+ #if defined(CONFIG_EFI_SECURE_KEY)
+ extern long efi_read_blob(const struct key *key, char __user *buffer,
+ 			  char *kbuffer, size_t buflen);
++extern struct key *request_efi_key(const char *master_desc,
++			const u8 **master_key, size_t *master_keylen);
+ #else
+ inline long efi_read_blob(const struct key *key, char __user *buffer,
+ 			  char *kbuffer, size_t buflen)
+ {
+ 	return 0;
+ }
++static inline struct key *request_efi_key(const char *master_desc,
++			const u8 **master_key, size_t *master_keylen)
 +{
-+	return 0;
++	return ERR_PTR(-EOPNOTSUPP);
 +}
-+#endif
-+
-+#endif /* _KEYS_EFI_TYPE_H */
+ #endif
+ 
+ #endif /* _KEYS_EFI_TYPE_H */
+diff --git a/security/keys/encrypted-keys/encrypted.c b/security/keys/encrypted-keys/encrypted.c
+index d92cbf9687c3..b396506afdfc 100644
+--- a/security/keys/encrypted-keys/encrypted.c
++++ b/security/keys/encrypted-keys/encrypted.c
+@@ -24,6 +24,7 @@
+ #include <keys/user-type.h>
+ #include <keys/trusted-type.h>
+ #include <keys/encrypted-type.h>
++#include <keys/efi-type.h>
+ #include <linux/key-type.h>
+ #include <linux/random.h>
+ #include <linux/rcupdate.h>
+@@ -40,6 +41,7 @@
+ 
+ static const char KEY_TRUSTED_PREFIX[] = "trusted:";
+ static const char KEY_USER_PREFIX[] = "user:";
++static const char KEY_EFI_PREFIX[] = "efi:";
+ static const char hash_alg[] = "sha256";
+ static const char hmac_alg[] = "hmac(sha256)";
+ static const char blkcipher_alg[] = "cbc(aes)";
+@@ -50,6 +52,7 @@ static int blksize;
+ 
+ #define KEY_TRUSTED_PREFIX_LEN (sizeof (KEY_TRUSTED_PREFIX) - 1)
+ #define KEY_USER_PREFIX_LEN (sizeof (KEY_USER_PREFIX) - 1)
++#define KEY_EFI_PREFIX_LEN (sizeof (KEY_EFI_PREFIX) - 1)
+ #define KEY_ECRYPTFS_DESC_LEN 16
+ #define HASH_SIZE SHA256_DIGEST_SIZE
+ #define MAX_DATA_SIZE 4096
+@@ -142,6 +145,8 @@ static int valid_master_desc(const char *new_desc, const char *orig_desc)
+ 		prefix_len = KEY_TRUSTED_PREFIX_LEN;
+ 	else if (!strncmp(new_desc, KEY_USER_PREFIX, KEY_USER_PREFIX_LEN))
+ 		prefix_len = KEY_USER_PREFIX_LEN;
++	else if (!strncmp(new_desc, KEY_EFI_PREFIX, KEY_EFI_PREFIX_LEN))
++		prefix_len = KEY_EFI_PREFIX_LEN;
+ 	else
+ 		return -EINVAL;
+ 
+@@ -434,6 +439,11 @@ static struct key *request_master_key(struct encrypted_key_payload *epayload,
+ 		mkey = request_user_key(epayload->master_desc +
+ 					KEY_USER_PREFIX_LEN,
+ 					master_key, master_keylen);
++	} else if (!strncmp(epayload->master_desc, KEY_EFI_PREFIX,
++			    KEY_EFI_PREFIX_LEN)) {
++		mkey = request_efi_key(epayload->master_desc +
++					KEY_EFI_PREFIX_LEN,
++					master_key, master_keylen);
+ 	} else
+ 		goto out;
+ 
 -- 
 2.13.6
 
