@@ -2,121 +2,159 @@ Return-Path: <SRS0=mdhE=KU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D186C46471
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 09:44:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14833C46471
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 09:48:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 890D7217BF
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 09:44:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 890D7217BF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 8CECE217BD
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 09:48:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CECE217BD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726267AbeHELsd (ORCPT
+        id S1726233AbeHELwA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 5 Aug 2018 07:48:33 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:52209 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726080AbeHELsc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 Aug 2018 07:48:32 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 5AB8380547; Sun,  5 Aug 2018 11:44:33 +0200 (CEST)
-Date:   Sun, 5 Aug 2018 11:44:32 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Yann Droneaud <ydroneaud@opteya.com>,
-        linux-crypto@vger.kernel.org,
-        Linux Kernel Developers List <linux-kernel@vger.kernel.org>,
-        labbott@redhat.com
-Subject: Re: [PATCH] random: add a config option to trust the CPU's hwrng
-Message-ID: <20180805094432.GA22948@amd>
-References: <20180718014344.1309-1-tytso@mit.edu>
- <37046662f2b38f98854abfa1b5868a27c3fa0888.camel@opteya.com>
- <20180718142625.GA5942@thunk.org>
- <20180804215209.GA3201@localhost>
- <20180805002514.GF4461@thunk.org>
+        Sun, 5 Aug 2018 07:52:00 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:56812 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726081AbeHELwA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 5 Aug 2018 07:52:00 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id DCF4D72CE2689;
+        Sun,  5 Aug 2018 17:47:54 +0800 (CST)
+Received: from linux-work.huawei.com (10.67.189.174) by
+ DGGEMS409-HUB.china.huawei.com (10.3.19.209) with Microsoft SMTP Server id
+ 14.3.399.0; Sun, 5 Aug 2018 17:47:46 +0800
+From:   nixiaoming <nixiaoming@huawei.com>
+To:     <paul@paul-moore.com>, <sds@tycho.nsa.gov>,
+        <eparis@parisplace.org>, <jmorris@namei.org>, <serge@hallyn.com>,
+        <nixiaoming@huawei.com>
+CC:     <selinux@tycho.nsa.gov>, <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH] selinuxfs: Fix the resource leak in the failed branch of sel_make_inode
+Date:   Sun, 5 Aug 2018 17:10:36 +0800
+Message-ID: <20180805091036.30035-1-nixiaoming@huawei.com>
+X-Mailer: git-send-email 2.10.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="qDbXVdCdHGoSgWSk"
-Content-Disposition: inline
-In-Reply-To: <20180805002514.GF4461@thunk.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain
+X-Originating-IP: [10.67.189.174]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+If the resource requested by d_alloc_name is not added to the linked
+list through d_add, then dput needs to be called to release the
+subsequent abnormal branch to avoid resource leakage.
 
---qDbXVdCdHGoSgWSk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Add missing dput to selinuxfs.c
 
-On Sat 2018-08-04 20:25:14, Theodore Y. Ts'o wrote:
-> On Sat, Aug 04, 2018 at 11:52:10PM +0200, Pavel Machek wrote:
-> > > However, enabling config option means that the CRNG will be
-> > > initialized with potentially information available to the CPU
-> > > manufacturer and/or Nation States, and this persists *after*
-> > > initialization / early boot.  So to say, "we're perfectly safe after
-> > > we leave initialization / early boot" is not true.
-> >=20
-> > This should really be explained in the help text.
-> >=20
-> > I assume that after 10 seconds of moving mouse, user is safe even when
-> > rdrand is backoored?
->=20
-> You'll hate this answer, but "it depends".  Suppose someone is using
-> an init script which generates ssh keys upon first boot if they are
-> missing.  If this is the case, *and* RDRAND is backdoored, then the
-> keys will be generated in such a way that they *might* be succeptible
-> to being guessed by a nation state.  Moving your mouse around for 1000
-> or 10,000 seconds won't help if the host's ssh keys has already been
-> generated.
+Signed-off-by: nixiaoming <nixiaoming@huawei.com>
+---
+ security/selinux/selinuxfs.c | 33 +++++++++++++++++++++++++--------
+ 1 file changed, 25 insertions(+), 8 deletions(-)
 
-Yep, understood, but after moving the mouse, /dev/random &
-/dev/urandom can be trusted afaict.
+diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
+index 79d3709..0b66d728 100644
+--- a/security/selinux/selinuxfs.c
++++ b/security/selinux/selinuxfs.c
+@@ -1365,13 +1365,18 @@ static int sel_make_bools(struct selinux_fs_info *fsi)
+ 
+ 		ret = -ENOMEM;
+ 		inode = sel_make_inode(dir->d_sb, S_IFREG | S_IRUGO | S_IWUSR);
+-		if (!inode)
++		if (!inode) {
++			dput(dentry);
+ 			goto out;
++		}
+ 
+ 		ret = -ENAMETOOLONG;
+ 		len = snprintf(page, PAGE_SIZE, "/%s/%s", BOOL_DIR_NAME, names[i]);
+-		if (len >= PAGE_SIZE)
++		if (len >= PAGE_SIZE) {
++			dput(dentry);
++			iput(inode);
+ 			goto out;
++		}
+ 
+ 		isec = (struct inode_security_struct *)inode->i_security;
+ 		ret = security_genfs_sid(fsi->state, "selinuxfs", page,
+@@ -1586,8 +1591,10 @@ static int sel_make_avc_files(struct dentry *dir)
+ 			return -ENOMEM;
+ 
+ 		inode = sel_make_inode(dir->d_sb, S_IFREG|files[i].mode);
+-		if (!inode)
++		if (!inode) {
++			dput(dentry);
+ 			return -ENOMEM;
++		}
+ 
+ 		inode->i_fop = files[i].ops;
+ 		inode->i_ino = ++fsi->last_ino;
+@@ -1632,8 +1639,10 @@ static int sel_make_initcon_files(struct dentry *dir)
+ 			return -ENOMEM;
+ 
+ 		inode = sel_make_inode(dir->d_sb, S_IFREG|S_IRUGO);
+-		if (!inode)
++		if (!inode) {
++			dput(dentry);
+ 			return -ENOMEM;
++		}
+ 
+ 		inode->i_fop = &sel_initcon_ops;
+ 		inode->i_ino = i|SEL_INITCON_INO_OFFSET;
+@@ -1733,8 +1742,10 @@ static int sel_make_perm_files(char *objclass, int classvalue,
+ 
+ 		rc = -ENOMEM;
+ 		inode = sel_make_inode(dir->d_sb, S_IFREG|S_IRUGO);
+-		if (!inode)
++		if (!inode) {
++			dput(dentry);
+ 			goto out;
++		}
+ 
+ 		inode->i_fop = &sel_perm_ops;
+ 		/* i+1 since perm values are 1-indexed */
+@@ -1763,8 +1774,10 @@ static int sel_make_class_dir_entries(char *classname, int index,
+ 		return -ENOMEM;
+ 
+ 	inode = sel_make_inode(dir->d_sb, S_IFREG|S_IRUGO);
+-	if (!inode)
++	if (!inode) {
++		dput(dentry);
+ 		return -ENOMEM;
++	}
+ 
+ 	inode->i_fop = &sel_class_ops;
+ 	inode->i_ino = sel_class_to_ino(index);
+@@ -1838,8 +1851,10 @@ static int sel_make_policycap(struct selinux_fs_info *fsi)
+ 			return -ENOMEM;
+ 
+ 		inode = sel_make_inode(fsi->sb, S_IFREG | 0444);
+-		if (inode == NULL)
++		if (inode == NULL) {
++			dput(dentry);
+ 			return -ENOMEM;
++		}
+ 
+ 		inode->i_fop = &sel_policycap_ops;
+ 		inode->i_ino = iter | SEL_POLICYCAP_INO_OFFSET;
+@@ -1932,8 +1947,10 @@ static int sel_fill_super(struct super_block *sb, void *data, int silent)
+ 
+ 	ret = -ENOMEM;
+ 	inode = sel_make_inode(sb, S_IFCHR | S_IRUGO | S_IWUGO);
+-	if (!inode)
++	if (!inode) {
++		dput(dentry);
+ 		goto err;
++	}
+ 
+ 	inode->i_ino = ++fsi->last_ino;
+ 	isec = (struct inode_security_struct *)inode->i_security;
+-- 
+2.10.1
 
-> Depending on your hardware, no mouse motion might be necessary at all.
-> On my laptop (a Dell XPS 13 model 9370) using an dm-crypt protected
-> root disk, and running a Debian testing userspace, with a 4.18-rc6
-> based kernel, the "CRNG is initialized" message is printed *before*
-> the root file system is mounted.
-
-Entropy is easy to gather on any laptop. cat /dev/sda > /dev/null :-).
-
-> On other systems, where the hardware does not issue as many
-> interrupts, the mouse motion might be extremely important in order to
-> get the "CRNG is initialized" message.
->=20
-> > (Plus, I'd say this should be kernel command line option, not config
-> > option...?)
->=20
-> Agreed, there should be a command line option as well.  I just haven't
-> gotten around to it yet, and in the meantime, having a config option
-> is better than nothing.   Patches gratefully accepted...  :-)
-
-Well, this was RFC :-). I actually don't think config option is good
-idea. Command line option is enough.
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---qDbXVdCdHGoSgWSk
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAltmxwAACgkQMOfwapXb+vIjlgCgnqUZ7Qv6cY/V9TqL13r+UIEB
-KMoAn1XlG4RzYJsKqFZOOgBvVwiKU6Aq
-=/iEp
------END PGP SIGNATURE-----
-
---qDbXVdCdHGoSgWSk--
