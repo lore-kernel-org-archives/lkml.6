@@ -3,132 +3,149 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D7F2C46470
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 15:19:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E089C46470
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 15:20:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E70121898
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 15:19:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C648A21899
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 15:20:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Hv+IykXG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E70121898
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g1KtoY7m"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C648A21899
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726432AbeHERYc (ORCPT
+        id S1726680AbeHERZn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 5 Aug 2018 13:24:32 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:45374 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726251AbeHERYb (ORCPT
+        Sun, 5 Aug 2018 13:25:43 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:44426 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726251AbeHERZn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 Aug 2018 13:24:31 -0400
-Received: by mail-oi0-f65.google.com with SMTP id q11-v6so17892123oic.12
-        for <linux-kernel@vger.kernel.org>; Sun, 05 Aug 2018 08:19:35 -0700 (PDT)
+        Sun, 5 Aug 2018 13:25:43 -0400
+Received: by mail-lf1-f68.google.com with SMTP id g6-v6so7269174lfb.11
+        for <linux-kernel@vger.kernel.org>; Sun, 05 Aug 2018 08:20:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=vb19Oyv2v4zP66s8RVPlDKjv8CAt7YWeFYapQL1HDKg=;
-        b=Hv+IykXGdhDJbS+N87UoS/xcUyzR6po1W09dLnZMCBgniylS55KUE8KHErUYS0ZeRm
-         2VV86LV3GEwBmLblMS3+RGdcpCaA6X5g42I53xyNOaWKV+ADeLtWQ4zvrqRlDHLEfTTt
-         2evhu9ux1M+Va5OeeJp4nQVYresqKODkLhbtY=
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=JELoMQRI+xsNZaRvhrGZCWpaqTv6jbTv5XLiXxwcexQ=;
+        b=g1KtoY7mC320vvTijnmFkrRODChO+bVJVmkB4Syk7ITTbPITQ76vc9pD89VjruhDIF
+         z28Urookno4OqYu33H+efTiojwijytgvUF5hwTPHECV8b05gcxqPdN1dcAZe6qeMxkGO
+         JvW+/4x7ynXC4rAwsPC/YcW5Sz5GSmSkXES6NjgHIrw4NAmguza6b+FueWBGgNgxQD1g
+         5/7LwMHkXF/ujTnQnWlXvLmFNOxcEarY2nT3XaQT2umUwgeeRepFJ2DdLOjk6GYXBhwm
+         tENHKqjhG5NLHoChcEqwfvY2NA1vdXTw8GHozQnn9u8kByfGXRzeZdrvfNMbovFahl33
+         rFSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=vb19Oyv2v4zP66s8RVPlDKjv8CAt7YWeFYapQL1HDKg=;
-        b=QnOVE0+8lHGOFGPTuxk+YYr709/f/DLRZ4f+8erwE5QJJgYYjho1FFTSgUFKpO59Gb
-         yxrpWV18QWT8Pj+ZyUaHqAGebvTQL18v3WmKZZm/eWERl1nnisN8nDjDpH6GO8QCbK+k
-         Y5bFYBdoAfq0y4L0sCDkzLHmMqxZ/085Z7Pj20wQXZ5WWSlhNKJd9ZIqy5+fEyH14Xys
-         f70TqnyG/SEvbxfam/d7mlXLR5Fpma9M8LGZc7dnpP2TKpl0Wwgln8JGA4Q3Ot1GlUR/
-         bfPzZXqzYbZMLsubcRIkOS9M9HDCKxvSuBKWZeX77iC/dgf+OWa4cNtceNtqVgseON1C
-         /08A==
-X-Gm-Message-State: AOUpUlEKPL3hrimnmNVoCLHovWrGG5B8nfu3zyUW0BwmBISrQZFVtyt+
-        JsKlqbCDy+I7MsuBErsT2xYFIQ==
-X-Google-Smtp-Source: AA+uWPx0mZ1QtK21cIc05L2oZycwUIg0MDY/fqj00Ke9XJfDRCoVqzKzVZ7iHN+iLGRc0RWoFSDyuw==
-X-Received: by 2002:aca:d9c5:: with SMTP id q188-v6mr10279923oig.239.1533482374889;
-        Sun, 05 Aug 2018 08:19:34 -0700 (PDT)
-Received: from localhost ([2600:3c00::f03c:91ff:fefc:c793])
-        by smtp.gmail.com with ESMTPSA id m11-v6sm8474607oif.27.2018.08.05.08.19.33
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 05 Aug 2018 08:19:33 -0700 (PDT)
-Date:   Sun, 5 Aug 2018 15:19:33 +0000
-From:   Dan Rue <dan.rue@linaro.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Naresh Kamboju <naresh.kamboju@linaro.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>
-Subject: Re: [PATCH 4.4 000/124] 4.4.146-stable review
-Message-ID: <20180805151933.efzi3mawp22p3wex@linode.therub.org>
-References: <20180804082702.434482435@linuxfoundation.org>
- <CA+G9fYsZtw-OHh2cKC0VG5zwdKOMvnOx-cAVfp2qfY_drFQ4_Q@mail.gmail.com>
- <20180805134952.GA15972@kroah.com>
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=JELoMQRI+xsNZaRvhrGZCWpaqTv6jbTv5XLiXxwcexQ=;
+        b=fiA4InkvSs75gZVTquwK9SjDoqaAsAnfK/Uj3g30IJpavdX3Wi+tlKGlsDfx4Br0iB
+         /5ldDt86lrMyuE5D2u7fl7IqHooaCaPDXq3qFWIXyirbU2yPS55p406uSxzNwFrvfMPT
+         CfHA2A+6lTlS6iD65CFljX0iTh21UuxxWmkYfZi2oHpVrQq+/PrUxgDM6W9sj1fpx+0H
+         xNZYKwC2bBOcifwZvZM3OAKunxTgPtTSh/c+kRjfuSiWl/UeQVWz9R5IEmEiFOY5UM0L
+         ZNEGT3qdH47lx1jYHijgJpuHnPA/ZrAAao0SlJx2+7QFmgntvBddqkZEf1SrC13OKdEF
+         MSsA==
+X-Gm-Message-State: AOUpUlHLphwlRo3yZIM0pBlUxsNec3V3EOC8w+WKvKWotGdZUyt9+pDg
+        MA1Ruje9CweqxjbvCRYhzUI=
+X-Google-Smtp-Source: AAOMgpdl0PjjPhuhOg8ah1KeiqnEkenZ6SgWO4j8EUm8ub8i5MAfqLnVfrDjURPqjIQrrv8gRvcq7Q==
+X-Received: by 2002:ac2:428f:: with SMTP id m15-v6mr9498330lfh.52.1533482445405;
+        Sun, 05 Aug 2018 08:20:45 -0700 (PDT)
+Received: from Dankpad.localdomain ([212.3.193.74])
+        by smtp.gmail.com with ESMTPSA id b3-v6sm1692911lfg.43.2018.08.05.08.20.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 05 Aug 2018 08:20:44 -0700 (PDT)
+From:   =?UTF-8?q?Kristaps=20=C4=8Civkulis?= <kristaps.civkulis@gmail.com>
+To:     gaoxiang25@huawei.com, yuchao0@huawei.com,
+        gregkh@linuxfoundation.org, linux-erofs@lists.ozlabs.org,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: erofs: fix if assignment style issue
+Date:   Sun,  5 Aug 2018 18:21:01 +0300
+Message-Id: <20180805152101.11657-1-kristaps.civkulis@gmail.com>
+X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180805134952.GA15972@kroah.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Aug 05, 2018 at 03:49:52PM +0200, Greg Kroah-Hartman wrote:
-> On Sun, Aug 05, 2018 at 05:24:21PM +0530, Naresh Kamboju wrote:
-> > On 4 August 2018 at 14:29, Greg Kroah-Hartman
-> > <gregkh@linuxfoundation.org> wrote:
-> > > This is the start of the stable review cycle for the 4.4.146 release.
-> > > There are 124 patches in this series, all will be posted as a response
-> > > to this one.  If anyone has any issues with these being applied, please
-> > > let me know.
-> > >
-> > > Responses should be made by Mon Aug  6 08:26:39 UTC 2018.
-> > > Anything received after that time might be too late.
-> > >
-> > > The whole patch series can be found in one patch at:
-> > >         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.146-rc1.gz
-> > > or in the git tree and branch at:
-> > >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
-> > > and the diffstat can be found below.
-> > >
-> > > thanks,
-> > >
-> > > greg k-h
-> > 
-> > Results from Linaro’s test farm.
-> > No regressions on arm64, arm and x86_64.
-> 
-> Really?  How did you all miss the netfilter bug that was introduced by
-> this series?
-> 
-> Anyway, thanks for testing, but I'm worried...
+Fix coding style issue "do not use assignment in if condition"
+detected by checkpatch.pl.
 
-I took a look through our test suites to see where we may have coverage for
-this. There is a netns series of tests in LTP [1], but we've had trouble
-getting them running successfully in the past and so they are being skipped. I
-don't know if it would have caught this particular issue, but I'll find out,
-and also see if we can get them working and running again.
+Signed-off-by: Kristaps Čivkulis <kristaps.civkulis@gmail.com>
+---
+ drivers/staging/erofs/unzip_vle.c |  3 ++-
+ drivers/staging/erofs/xattr.c     | 16 ++++++++--------
+ 2 files changed, 10 insertions(+), 9 deletions(-)
 
-We also run the net/ tests in kselftest, but there aren't that many, and of
-course running kselftest the way we do is not a well supported usecase (running
-all of 4.17 kselftest against 4.4 kernels, skipping tests that are broken).
+diff --git a/drivers/staging/erofs/unzip_vle.c b/drivers/staging/erofs/unzip_vle.c
+index 1030ca5c2dc3..45b1255f5a22 100644
+--- a/drivers/staging/erofs/unzip_vle.c
++++ b/drivers/staging/erofs/unzip_vle.c
+@@ -702,7 +702,8 @@ static int z_erofs_do_read_page(struct z_erofs_vle_frontend *fe,
+ 	/* can be used for verification */
+ 	map->m_llen = offset + cur - map->m_la;
+ 
+-	if ((end = cur) > 0)
++	end = cur;
++	if (end > 0)
+ 		goto repeat;
+ 
+ 	/* FIXME! avoid the last relundant fixup & endio */
+diff --git a/drivers/staging/erofs/xattr.c b/drivers/staging/erofs/xattr.c
+index 6b9685fa601c..0e9cfeccdf99 100644
+--- a/drivers/staging/erofs/xattr.c
++++ b/drivers/staging/erofs/xattr.c
+@@ -288,8 +288,8 @@ static int inline_getxattr(struct inode *inode, struct getxattr_iter *it)
+ 
+ 	remaining = ret;
+ 	while (remaining) {
+-		if ((ret = xattr_foreach(&it->it,
+-			&find_xattr_handlers, &remaining)) >= 0)
++		ret = xattr_foreach(&it->it, &find_xattr_handlers, &remaining);
++		if (ret >= 0)
+ 			break;
+ 	}
+ 	xattr_iter_end(&it->it, true);
+@@ -321,8 +321,8 @@ static int shared_getxattr(struct inode *inode, struct getxattr_iter *it)
+ 			it->it.blkaddr = blkaddr;
+ 		}
+ 
+-		if ((ret = xattr_foreach(&it->it,
+-			&find_xattr_handlers, NULL)) >= 0)
++		ret = xattr_foreach(&it->it, &find_xattr_handlers, NULL);
++		if (ret >= 0)
+ 			break;
+ 	}
+ 	if (vi->xattr_shared_count)
+@@ -512,8 +512,8 @@ static int inline_listxattr(struct listxattr_iter *it)
+ 
+ 	remaining = ret;
+ 	while (remaining) {
+-		if ((ret = xattr_foreach(&it->it,
+-			&list_xattr_handlers, &remaining)) < 0)
++		ret = xattr_foreach(&it->it, &list_xattr_handlers, &remaining);
++		if (ret < 0)
+ 			break;
+ 	}
+ 	xattr_iter_end(&it->it, true);
+@@ -544,8 +544,8 @@ static int shared_listxattr(struct listxattr_iter *it)
+ 			it->it.blkaddr = blkaddr;
+ 		}
+ 
+-		if ((ret = xattr_foreach(&it->it,
+-			&list_xattr_handlers, NULL)) < 0)
++		ret = xattr_foreach(&it->it, &list_xattr_handlers, NULL);
++		if (ret < 0)
+ 			break;
+ 	}
+ 	if (vi->xattr_shared_count)
+-- 
+2.18.0
 
-So I would ask, how would net/ expect such things to be tested, and what can we
-do to help?
-
-Dan
-
-[1] https://github.com/linux-test-project/ltp/tree/master/testcases/kernel/containers/netns
