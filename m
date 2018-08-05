@@ -2,98 +2,188 @@ Return-Path: <SRS0=mdhE=KU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE7E8C4646D
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 00:22:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65E7EC4646F
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 00:22:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74B43217BD
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 00:22:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74B43217BD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id 1E100217D1
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 00:22:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E100217D1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729709AbeHECYx (ORCPT
+        id S1729838AbeHECZN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 22:24:53 -0400
-Received: from gateway32.websitewelcome.com ([192.185.145.182]:15300 "EHLO
-        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726754AbeHECYx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 22:24:53 -0400
-Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
-        by gateway32.websitewelcome.com (Postfix) with ESMTP id 8206519C213
-        for <linux-kernel@vger.kernel.org>; Sat,  4 Aug 2018 19:22:23 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id m6oRfPooZSjJAm6oRf9R7n; Sat, 04 Aug 2018 19:22:23 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.50.82] (port=35036 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1fm6oQ-003dNy-Sj; Sat, 04 Aug 2018 19:22:22 -0500
-Date:   Sat, 4 Aug 2018 19:22:22 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] clk: qcom: clk-branch: Use true and false for boolean values
-Message-ID: <20180805002222.GA24789@embeddedor.com>
+        Sat, 4 Aug 2018 22:25:13 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33012 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729715AbeHECZN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 4 Aug 2018 22:25:13 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id BB13B401EF07;
+        Sun,  5 Aug 2018 00:22:42 +0000 (UTC)
+Received: from redhat.com (ovpn-116-17.ams2.redhat.com [10.36.116.17])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 4304F2026D66;
+        Sun,  5 Aug 2018 00:22:37 +0000 (UTC)
+Date:   Sun, 5 Aug 2018 03:22:36 +0300
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        aik@ozlabs.ru, robh@kernel.org, joe@perches.com,
+        elfring@users.sourceforge.net, david@gibson.dropbear.id.au,
+        jasowang@redhat.com, mpe@ellerman.id.au, linuxram@us.ibm.com,
+        haren@linux.vnet.ibm.com, paulus@samba.org,
+        srikar@linux.vnet.ibm.com, robin.murphy@arm.com,
+        jean-philippe.brucker@arm.com, marc.zyngier@arm.com
+Subject: Re: [RFC 0/4] Virtio uses DMA API for all devices
+Message-ID: <20180805031046-mutt-send-email-mst@kernel.org>
+References: <20180802182959-mutt-send-email-mst@kernel.org>
+ <82ccef6ec3d95ee43f3990a4a2d0aea87eb45e89.camel@kernel.crashing.org>
+ <20180802200646-mutt-send-email-mst@kernel.org>
+ <e9beb6bba5a7d05741e27e85b24a3b23ba7c2762.camel@kernel.crashing.org>
+ <20180802225738-mutt-send-email-mst@kernel.org>
+ <de4888b6457e220776e16a9c8958ff0886ffc66c.camel@kernel.crashing.org>
+ <20180803070507.GA1344@infradead.org>
+ <eb1750e90e4bd45da297fa6f78f8ef93671b7c2f.camel@kernel.crashing.org>
+ <20180803220443-mutt-send-email-mst@kernel.org>
+ <051fd78e15595b414839fa8f9d445b9f4d7576c6.camel@kernel.crashing.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.50.82
-X-Source-L: No
-X-Exim-ID: 1fm6oQ-003dNy-Sj
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.50.82]:35036
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 33
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <051fd78e15595b414839fa8f9d445b9f4d7576c6.camel@kernel.crashing.org>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Sun, 05 Aug 2018 00:22:42 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Sun, 05 Aug 2018 00:22:42 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mst@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Return statements in functions returning bool should use true or false
-instead of an integer value.
+On Fri, Aug 03, 2018 at 08:16:21PM -0500, Benjamin Herrenschmidt wrote:
+> On Fri, 2018-08-03 at 22:07 +0300, Michael S. Tsirkin wrote:
+> > On Fri, Aug 03, 2018 at 10:58:36AM -0500, Benjamin Herrenschmidt wrote:
+> > > On Fri, 2018-08-03 at 00:05 -0700, Christoph Hellwig wrote:
+> > > > >   2- Make virtio use the DMA API with our custom platform-provided
+> > > > > swiotlb callbacks when needed, that is when not using IOMMU *and*
+> > > > > running on a secure VM in our case.
+> > > > 
+> > > > And total NAK the customer platform-provided part of this.  We need
+> > > > a flag passed in from the hypervisor that the device needs all bus
+> > > > specific dma api treatment, and then just use the normal plaform
+> > > > dma mapping setup. 
+> > > 
+> > > Christoph, as I have explained already, we do NOT have a way to provide
+> > > such a flag as neither the hypervisor nor qemu knows anything about
+> > > this when the VM is created.
+> > 
+> > I think the fact you can't add flags from the hypervisor is
+> > a sign of a problematic architecture, you should look at
+> > adding that down the road - you will likely need it at some point.
+> 
+> Well, we can later in the boot process. At VM creation time, it's just
+> a normal VM. The VM firmware, bootloader etc... are just operating
+> normally etc...
 
-This code was detected with the help of Coccinelle.
+I see the allure of this, but I think down the road you will
+discover passing a flag in libvirt XML saying
+"please use a secure mode" or whatever is a good idea.
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/clk/qcom/clk-branch.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Even thought it is probably not required to address this
+specific issue.
 
-diff --git a/drivers/clk/qcom/clk-branch.c b/drivers/clk/qcom/clk-branch.c
-index bc2205c..99446bf 100644
---- a/drivers/clk/qcom/clk-branch.c
-+++ b/drivers/clk/qcom/clk-branch.c
-@@ -18,7 +18,7 @@ static bool clk_branch_in_hwcg_mode(const struct clk_branch *br)
- 	u32 val;
- 
- 	if (!br->hwcg_reg)
--		return 0;
-+		return false;
- 
- 	regmap_read(br->clkr.regmap, br->hwcg_reg, &val);
- 
--- 
-2.7.4
+For example, I don't think ballooning works in secure mode,
+you will be able to teach libvirt not to try to add a
+balloon to the guest.
 
+> Later on, (we may have even already run Linux at that point,
+> unsecurely, as we can use Linux as a bootloader under some
+> circumstances), we start a "secure image".
+> 
+> This is a kernel zImage that includes a "ticket" that has the
+> appropriate signature etc... so that when that kernel starts, it can
+> authenticate with the ultravisor, be verified (along with its ramdisk)
+> etc... and copied (by the UV) into secure memory & run from there.
+> 
+> At that point, the hypervisor is informed that the VM has become
+> secure.
+> 
+> So at that point, we could exit to qemu to inform it of the change,
+
+That's probably a good idea too.
+
+> and
+> have it walk the qtree and "Switch" all the virtio devices to use the
+> IOMMU I suppose, but it feels a lot grosser to me.
+
+That part feels gross, yes.
+
+> That's the only other option I can think of.
+> 
+> > However in this specific case, the flag does not need to come from the
+> > hypervisor, it can be set by arch boot code I think.
+> > Christoph do you see a problem with that?
+> 
+> The above could do that yes. Another approach would be to do it from a
+> small virtio "quirk" that pokes a bit in the device to force it to
+> iommu mode when it detects that we are running in a secure VM. That's a
+> bit warty on the virito side but probably not as much as having a qemu
+> one that walks of the virtio devices to change how they behave.
+> 
+> What do you reckon ?
+
+I think you are right that for the dma limit the hypervisor doesn't seem
+to need to know.
+
+> What we want to avoid is to expose any of this to the *end user* or
+> libvirt or any other higher level of the management stack. We really
+> want that stuff to remain contained between the VM itself, KVM and
+> maybe qemu.
+>
+> We will need some other qemu changes for migration so that's ok. But
+> the minute you start touching libvirt and the higher levels it becomes
+> a nightmare.
+> 
+> Cheers,
+> Ben.
+
+I don't believe you'll be able to avoid that entirely. The split between
+libvirt and qemu is more about community than about code, random bits of
+functionality tend to land on random sides of that fence.  Better add a
+tag in domain XML early is my advice. Having said that, it's your
+hypervisor. I'm just suggesting that when hypervisor does somehow need
+to care then I suspect most people won't be receptive to the argument
+that changing libvirt is a nightmare.
+
+> > > >  To get swiotlb you'll need to then use the DT/ACPI
+> > > > dma-range property to limit the addressable range, and a swiotlb
+> > > > capable plaform will use swiotlb automatically.
+> > > 
+> > > This cannot be done as you describe it.
+> > > 
+> > > The VM is created as a *normal* VM. The DT stuff is generated by qemu
+> > > at a point where it has *no idea* that the VM will later become secure
+> > > and thus will have to restrict which pages can be used for "DMA".
+> > > 
+> > > The VM will *at runtime* turn itself into a secure VM via interactions
+> > > with the security HW and the Ultravisor layer (which sits below the
+> > > HV). This happens way after the DT has been created and consumed, the
+> > > qemu devices instanciated etc...
+> > > 
+> > > Only the guest kernel knows because it initates the transition. When
+> > > that happens, the virtio devices have already been used by the guest
+> > > firmware, bootloader, possibly another kernel that kexeced the "secure"
+> > > one, etc... 
+> > > 
+> > > So instead of running around saying NAK NAK NAK, please explain how we
+> > > can solve that differently.
+> > > 
+> > > Ben.
+> > > 
