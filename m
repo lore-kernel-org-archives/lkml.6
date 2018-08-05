@@ -2,167 +2,274 @@ Return-Path: <SRS0=mdhE=KU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AECD8C46470
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 11:02:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84C8CC46470
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 11:19:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 370FE217BB
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 11:02:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 370FE217BB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 1383B21782
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 11:19:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QyndC4oj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1383B21782
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726240AbeHENGq (ORCPT
+        id S1726261AbeHENXT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 5 Aug 2018 09:06:46 -0400
-Received: from mga05.intel.com ([192.55.52.43]:55462 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726091AbeHENGq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 Aug 2018 09:06:46 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Aug 2018 04:02:33 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,447,1526367600"; 
-   d="scan'208";a="73680579"
-Received: from fmsmsx103.amr.corp.intel.com ([10.18.124.201])
-  by fmsmga002.fm.intel.com with ESMTP; 05 Aug 2018 04:02:30 -0700
-Received: from fmsmsx156.amr.corp.intel.com (10.18.116.74) by
- FMSMSX103.amr.corp.intel.com (10.18.124.201) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Sun, 5 Aug 2018 04:02:30 -0700
-Received: from lcsmsx152.ger.corp.intel.com (10.186.165.231) by
- fmsmsx156.amr.corp.intel.com (10.18.116.74) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Sun, 5 Aug 2018 04:02:29 -0700
-Received: from hasmsx108.ger.corp.intel.com ([169.254.9.74]) by
- LCSMSX152.ger.corp.intel.com ([10.186.165.231]) with mapi id 14.03.0319.002;
- Sun, 5 Aug 2018 14:02:18 +0300
-From:   "Winkler, Tomas" <tomas.winkler@intel.com>
-To:     Heiner Kallweit <hkallweit1@gmail.com>
-CC:     Arnd Bergmann <arnd@arndb.de>,
+        Sun, 5 Aug 2018 09:23:19 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:44257 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726100AbeHENXT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 5 Aug 2018 09:23:19 -0400
+Received: by mail-wr1-f68.google.com with SMTP id r16-v6so9576195wrt.11
+        for <linux-kernel@vger.kernel.org>; Sun, 05 Aug 2018 04:19:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=KgPmHbWJpelEAwzMtWCdVZJEnLz5nE8BPOxlpN7Ji40=;
+        b=QyndC4ojqwnZGTpQItT95BwI9wvYwAqXa5oposb91ifDVMRj1t/3IdRCKC2/lht2Zv
+         CKAPFxu3fvLVibLpag/2b2yfLRgIK/4BETcHNQvV5Pl55wUkI4REcxSjmM0eh+i+joIm
+         6BnU0J2VDiZ807PM2HjQl6Qmd+QQVqO6ol4ppq3tV4Ek4g4u6oOgVH9XlyqK3vNA4db/
+         CxA6E3OHr/wz0mO2UIa0x0Qe5Zxg1L0CCarSY872NPysT4D43sx6z+U120vGzqN3OeQR
+         W9tHNioDx0Ck3uDc+Wm+xai0G2yMhXv3vEqYFTnzM3FlBVUpmMkFDdscwiQpzR25d8g3
+         yeTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=KgPmHbWJpelEAwzMtWCdVZJEnLz5nE8BPOxlpN7Ji40=;
+        b=rkrkkfAeycOm2RosP1DaT5BbHlpZxTfhubfqprdh/Ekkha+2gVQ6h9OPGn5dLoaCC1
+         gXH3Vio4cxaG6k6qUfUcl4nzcQrobW9Z8gzdOgS7ZygsqXiunfe+foE4IMSNwoOzwgsn
+         FkGB6mr5TyRmkUWdAZk3gNWMnti/9xV3q4M2IH36OxNBzLZMZj72Fhh0dzYpPvUt2h8P
+         V3kTD/bpJJhZemYDd08W/j+81e1aR5JYuM2St3+yYmaryVTJaLjzqWTjYHrkfqKyDI9d
+         0JY5G7LBVi1KyhxIU9A97nF/bXJrs4DeKZRVGvixla6EdRodZKQ1qIuq5sTDfisIC6yh
+         ptgg==
+X-Gm-Message-State: AOUpUlEvDeGU6srw4ZANT+m9C6PdAF6YMifnolhEjRUEU3KhUGqv2O9P
+        tnAIQ17yt7L5nZM5zHY6fFT6qd1Y
+X-Google-Smtp-Source: AAOMgpfXBQ0IUtqBlgfB/WhQiwDky5Hk0D3Q4WlU1d27QmBRFAZyM5ZPaPR0y3NUIZ3iv8PnEcsudQ==
+X-Received: by 2002:adf:e687:: with SMTP id r7-v6mr7439613wrm.35.1533467943661;
+        Sun, 05 Aug 2018 04:19:03 -0700 (PDT)
+Received: from ?IPv6:2003:ea:8bd4:d600:5ce1:7729:7f46:df77? (p200300EA8BD4D6005CE177297F46DF77.dip0.t-ipconnect.de. [2003:ea:8bd4:d600:5ce1:7729:7f46:df77])
+        by smtp.googlemail.com with ESMTPSA id e133-v6sm7849879wma.33.2018.08.05.04.19.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 05 Aug 2018 04:19:03 -0700 (PDT)
+Subject: Re: [PATCH 2/3] mei: Migrate to pci_alloc_irq_vectors API
+To:     "Winkler, Tomas" <tomas.winkler@intel.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 2/3] mei: Migrate to pci_alloc_irq_vectors API
-Thread-Topic: [PATCH 2/3] mei: Migrate to pci_alloc_irq_vectors API
-Thread-Index: AQHUK3LeM360AWbRAkSjcMQbLRli/aSw+nJw
-Date:   Sun, 5 Aug 2018 11:02:17 +0000
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9D97F6B4@hasmsx108.ger.corp.intel.com>
 References: <5e0250ff-2470-1128-d8eb-b36e3ca04417@gmail.com>
  <c6426b7f-8fee-77ad-56be-00a0d5d04fa6@gmail.com>
-In-Reply-To: <c6426b7f-8fee-77ad-56be-00a0d5d04fa6@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiOTIzY2NlNDAtMTM0Mi00ZjM5LTk0ODctZWNhNmM4OWQ0Mjk4IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiK29GRlFQcVNLV1ZvSjBCM244Y1FyWXdGeUlEMkkrNDRcL2NWK3NYYmFiM1ZoS21TcmNxdktcL3ZXbXFqd09Xb1RyIn0=
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.12.116.54]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+ <5B8DA87D05A7694D9FA63FD143655C1B9D97F6B4@hasmsx108.ger.corp.intel.com>
+From:   Heiner Kallweit <hkallweit1@gmail.com>
+Message-ID: <d6a3e94c-2b05-f9d4-2522-37153e45c1d8@gmail.com>
+Date:   Sun, 5 Aug 2018 13:18:55 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
+In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B9D97F6B4@hasmsx108.ger.corp.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiANCj4gVXBkYXRlIHRoZSBkcml2ZXIgdG8gdGhlIHBjaV9hbGxvY19pcnFfdmVjdG9ycyBBUEks
-IHRoaXMgYWxsb3dzIHRvIGdldCByaWQgb2YNCj4gbGVnYWN5IGNhbGxzIGxpa2UgcGNpX2VuYWJs
-ZV9tc2koKS4gQW5vdGhlciBiZW5lZml0IGlzIHRoYXQgbm8gZHJpdmVyIGNoYW5nZQ0KPiB3b3Vs
-ZCBiZSBuZWVkZWQgaW4gY2FzZSB0aGUgaGFyZHdhcmUgc3RhcnRzIHN1cHBvcnRpbmcgTVNJLVgu
-DQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBIZWluZXIgS2FsbHdlaXQgPGhrYWxsd2VpdDFAZ21haWwu
-Y29tPg0KDQpTb3JyeSwgd2UgYXJlIGxvc2luZyB0aGUgT05FX1NIT1QgZmxhZyBoZXJlLCAgSW4g
-c3BpdGUgdGhhdCBwY2lfZW5hYmxlX21zaSBpcyBtYXJrZWQgYXMgZGVwcmVjYXRlZCwgIA0KSSBk
-b24ndCBzZWUgb3ZlcmFsbCBhY3Rpb24gb24gTEtNTCB0byBhY3R1YWxseSAgZGVwcmVjYXRlIGl0
-Lg0KRm9yIHRoaXMgY2hhbmdlIEkgd291bGQgbmVlZCB0byBleHRlbnNpY2UgdGVzdGluZyBvbiBm
-dXR1cmUgYW5kIGxlZ2FjeSBkZXZpY2VzLCBmcmFua2x5ICBJIHByZWZlciBub3QgdG8gZGlnIGlu
-dG8gaXQgcmlnaHQgbm93Lg0KVGhhbmtzDQpUb21hcw0KDQo+IC0tLQ0KPiAgZHJpdmVycy9taXNj
-L21laS9wY2ktbWUuYyAgfCAyNSArKysrKysrKysrKy0tLS0tLS0tLS0tLS0tDQo+IGRyaXZlcnMv
-bWlzYy9tZWkvcGNpLXR4ZS5jIHwgMzAgKysrKysrKysrKysrKystLS0tLS0tLS0tLS0tLS0tDQo+
-ICAyIGZpbGVzIGNoYW5nZWQsIDI1IGluc2VydGlvbnMoKyksIDMwIGRlbGV0aW9ucygtKQ0KPiAN
-Cj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbWlzYy9tZWkvcGNpLW1lLmMgYi9kcml2ZXJzL21pc2Mv
-bWVpL3BjaS1tZS5jIGluZGV4DQo+IDU1YmExYzQxLi5hNjAzNzZmMCAxMDA2NDQNCj4gLS0tIGEv
-ZHJpdmVycy9taXNjL21laS9wY2ktbWUuYw0KPiArKysgYi9kcml2ZXJzL21pc2MvbWVpL3BjaS1t
-ZS5jDQo+IEBAIC0xNDksNyArMTQ5LDYgQEAgc3RhdGljIGludCBtZWlfbWVfcHJvYmUoc3RydWN0
-IHBjaV9kZXYgKnBkZXYsIGNvbnN0DQo+IHN0cnVjdCBwY2lfZGV2aWNlX2lkICplbnQpDQo+ICAJ
-Y29uc3Qgc3RydWN0IG1laV9jZmcgKmNmZzsNCj4gIAlzdHJ1Y3QgbWVpX2RldmljZSAqZGV2Ow0K
-PiAgCXN0cnVjdCBtZWlfbWVfaHcgKmh3Ow0KPiAtCXVuc2lnbmVkIGludCBpcnFmbGFnczsNCj4g
-IAlpbnQgZXJyOw0KPiANCj4gIAljZmcgPSBtZWlfbWVfZ2V0X2NmZyhlbnQtPmRyaXZlcl9kYXRh
-KTsgQEAgLTE5NiwxOCArMTk1LDE2IEBADQo+IHN0YXRpYyBpbnQgbWVpX21lX3Byb2JlKHN0cnVj
-dCBwY2lfZGV2ICpwZGV2LCBjb25zdCBzdHJ1Y3QgcGNpX2RldmljZV9pZA0KPiAqZW50KQ0KPiAg
-CWh3ID0gdG9fbWVfaHcoZGV2KTsNCj4gIAlody0+bWVtX2FkZHIgPSBwY2ltX2lvbWFwX3RhYmxl
-KHBkZXYpWzBdOw0KPiANCj4gLQlwY2lfZW5hYmxlX21zaShwZGV2KTsNCj4gLQ0KPiAtCSAvKiBy
-ZXF1ZXN0IGFuZCBlbmFibGUgaW50ZXJydXB0ICovDQo+IC0JaXJxZmxhZ3MgPSBwY2lfZGV2X21z
-aV9lbmFibGVkKHBkZXYpID8gSVJRRl9PTkVTSE9UIDoNCj4gSVJRRl9TSEFSRUQ7DQo+ICsJZXJy
-ID0gcGNpX2FsbG9jX2lycV92ZWN0b3JzKHBkZXYsIDEsIDEsIFBDSV9JUlFfQUxMX1RZUEVTKTsN
-Cj4gKwlpZiAoZXJyIDwgMCkNCj4gKwkJZ290byBlbmQ7DQo+IA0KPiAtCWVyciA9IHJlcXVlc3Rf
-dGhyZWFkZWRfaXJxKHBkZXYtPmlycSwNCj4gLQkJCW1laV9tZV9pcnFfcXVpY2tfaGFuZGxlciwN
-Cj4gLQkJCW1laV9tZV9pcnFfdGhyZWFkX2hhbmRsZXIsDQo+IC0JCQlpcnFmbGFncywgS0JVSUxE
-X01PRE5BTUUsIGRldik7DQo+ICsJLyogcmVxdWVzdCBhbmQgZW5hYmxlIGludGVycnVwdCAqLw0K
-PiArCWVyciA9IHBjaV9yZXF1ZXN0X2lycShwZGV2LCAwLCBtZWlfbWVfaXJxX3F1aWNrX2hhbmRs
-ZXIsDQo+ICsJCQkgICAgICBtZWlfbWVfaXJxX3RocmVhZF9oYW5kbGVyLCBkZXYsDQo+IEtCVUlM
-RF9NT0ROQU1FKTsNCj4gIAlpZiAoZXJyKSB7DQo+IC0JCWRldl9lcnIoJnBkZXYtPmRldiwgInJl
-cXVlc3RfdGhyZWFkZWRfaXJxIGZhaWx1cmUuIGlycSA9DQo+ICVkXG4iLA0KPiAtCQkgICAgICAg
-cGRldi0+aXJxKTsNCj4gKwkJcGNpX2VycihwZGV2LCAicGNpX3JlcXVlc3RfaXJxIGZhaWx1cmUu
-IGlycSA9ICVkXG4iLA0KPiArCQkJcGNpX2lycV92ZWN0b3IocGRldiwgMCkpOw0KPiAgCQlnb3Rv
-IGVuZDsNCj4gIAl9DQo+IA0KPiBAQCAtMjU4LDcgKzI1NSw3IEBAIHN0YXRpYyBpbnQgbWVpX21l
-X3Byb2JlKHN0cnVjdCBwY2lfZGV2ICpwZGV2LCBjb25zdA0KPiBzdHJ1Y3QgcGNpX2RldmljZV9p
-ZCAqZW50KQ0KPiAgcmVsZWFzZV9pcnE6DQo+ICAJbWVpX2NhbmNlbF93b3JrKGRldik7DQo+ICAJ
-bWVpX2Rpc2FibGVfaW50ZXJydXB0cyhkZXYpOw0KPiAtCWZyZWVfaXJxKHBkZXYtPmlycSwgZGV2
-KTsNCj4gKwlwY2lfZnJlZV9pcnEocGRldiwgMCwgZGV2KTsNCj4gIGVuZDoNCj4gIAlkZXZfZXJy
-KCZwZGV2LT5kZXYsICJpbml0aWFsaXphdGlvbiBmYWlsZWQuXG4iKTsNCj4gIAlyZXR1cm4gZXJy
-Ow0KPiBAQCAtMjg3LDcgKzI4NCw3IEBAIHN0YXRpYyB2b2lkIG1laV9tZV9zaHV0ZG93bihzdHJ1
-Y3QgcGNpX2RldiAqcGRldikNCj4gIAltZWlfbWVfdW5zZXRfcG1fZG9tYWluKGRldik7DQo+IA0K
-PiAgCW1laV9kaXNhYmxlX2ludGVycnVwdHMoZGV2KTsNCj4gLQlmcmVlX2lycShwZGV2LT5pcnEs
-IGRldik7DQo+ICsJcGNpX2ZyZWVfaXJxKHBkZXYsIDAsIGRldik7DQo+ICB9DQo+IA0KPiAgLyoq
-DQo+IEBAIC0zMTYsNyArMzEzLDcgQEAgc3RhdGljIHZvaWQgbWVpX21lX3JlbW92ZShzdHJ1Y3Qg
-cGNpX2RldiAqcGRldikNCj4gDQo+ICAJbWVpX2Rpc2FibGVfaW50ZXJydXB0cyhkZXYpOw0KPiAN
-Cj4gLQlmcmVlX2lycShwZGV2LT5pcnEsIGRldik7DQo+ICsJcGNpX2ZyZWVfaXJxKHBkZXYsIDAs
-IGRldik7DQo+IA0KPiAgCW1laV9kZXJlZ2lzdGVyKGRldik7DQo+ICB9DQo+IGRpZmYgLS1naXQg
-YS9kcml2ZXJzL21pc2MvbWVpL3BjaS10eGUuYyBiL2RyaXZlcnMvbWlzYy9tZWkvcGNpLXR4ZS5j
-IGluZGV4DQo+IGI4YTQ5NTgxLi4zZWEyYjhmNiAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9taXNj
-L21laS9wY2ktdHhlLmMNCj4gKysrIGIvZHJpdmVycy9taXNjL21laS9wY2ktdHhlLmMNCj4gQEAg
-LTY0LDYgKzY0LDcgQEAgc3RhdGljIGludCBtZWlfdHhlX3Byb2JlKHN0cnVjdCBwY2lfZGV2ICpw
-ZGV2LCBjb25zdA0KPiBzdHJ1Y3QgcGNpX2RldmljZV9pZCAqZW50KSAgew0KPiAgCXN0cnVjdCBt
-ZWlfZGV2aWNlICpkZXY7DQo+ICAJc3RydWN0IG1laV90eGVfaHcgKmh3Ow0KPiArCWlycV9oYW5k
-bGVyX3QgcWggPSBOVUxMOw0KPiAgCWNvbnN0IGludCBtYXNrID0gQklUKFNFQ19CQVIpIHwgQklU
-KEJSSURHRV9CQVIpOw0KPiAgCWludCBlcnI7DQo+IA0KPiBAQCAtMTAwLDI1ICsxMDEsMjIgQEAg
-c3RhdGljIGludCBtZWlfdHhlX3Byb2JlKHN0cnVjdCBwY2lfZGV2ICpwZGV2LA0KPiBjb25zdCBz
-dHJ1Y3QgcGNpX2RldmljZV9pZCAqZW50KQ0KPiAgCWh3ID0gdG9fdHhlX2h3KGRldik7DQo+ICAJ
-aHctPm1lbV9hZGRyID0gcGNpbV9pb21hcF90YWJsZShwZGV2KTsNCj4gDQo+IC0JcGNpX2VuYWJs
-ZV9tc2kocGRldik7DQo+ICsJZXJyID0gcGNpX2FsbG9jX2lycV92ZWN0b3JzKHBkZXYsIDEsIDEs
-IFBDSV9JUlFfQUxMX1RZUEVTKTsNCj4gKwlpZiAoZXJyIDwgMCkNCj4gKwkJZ290byBlbmQ7DQo+
-IA0KPiAgCS8qIGNsZWFyIHNwdXJpb3VzIGludGVycnVwdHMgKi8NCj4gIAltZWlfY2xlYXJfaW50
-ZXJydXB0cyhkZXYpOw0KPiANCj4gKwlpZiAoIXBjaV9kZXZfbXNpX2VuYWJsZWQocGRldikpDQo+
-ICsJCXFoID0gbWVpX3R4ZV9pcnFfcXVpY2tfaGFuZGxlcjsNCj4gKw0KPiAgCS8qIHJlcXVlc3Qg
-YW5kIGVuYWJsZSBpbnRlcnJ1cHQgICovDQo+IC0JaWYgKHBjaV9kZXZfbXNpX2VuYWJsZWQocGRl
-dikpDQo+IC0JCWVyciA9IHJlcXVlc3RfdGhyZWFkZWRfaXJxKHBkZXYtPmlycSwNCj4gLQkJCU5V
-TEwsDQo+IC0JCQltZWlfdHhlX2lycV90aHJlYWRfaGFuZGxlciwNCj4gLQkJCUlSUUZfT05FU0hP
-VCwgS0JVSUxEX01PRE5BTUUsIGRldik7DQo+IC0JZWxzZQ0KPiAtCQllcnIgPSByZXF1ZXN0X3Ro
-cmVhZGVkX2lycShwZGV2LT5pcnEsDQo+IC0JCQltZWlfdHhlX2lycV9xdWlja19oYW5kbGVyLA0K
-PiAtCQkJbWVpX3R4ZV9pcnFfdGhyZWFkX2hhbmRsZXIsDQo+IC0JCQlJUlFGX1NIQVJFRCwgS0JV
-SUxEX01PRE5BTUUsIGRldik7DQo+ICsJZXJyID0gcGNpX3JlcXVlc3RfaXJxKHBkZXYsIDAsIHFo
-LCBtZWlfdHhlX2lycV90aHJlYWRfaGFuZGxlciwNCj4gKwkJCSAgICAgIGRldiwgS0JVSUxEX01P
-RE5BTUUpOw0KPiAgCWlmIChlcnIpIHsNCj4gLQkJZGV2X2VycigmcGRldi0+ZGV2LCAibWVpOiBy
-ZXF1ZXN0X3RocmVhZGVkX2lycSBmYWlsdXJlLiBpcnENCj4gPSAlZFxuIiwNCj4gLQkJCXBkZXYt
-PmlycSk7DQo+ICsJCXBjaV9lcnIocGRldiwgIm1laTogcGNpX3JlcXVlc3RfaXJxIGZhaWx1cmUu
-IGlycSA9ICVkXG4iLA0KPiArCQkJcGNpX2lycV92ZWN0b3IocGRldiwgMCkpOw0KPiAgCQlnb3Rv
-IGVuZDsNCj4gIAl9DQo+IA0KPiBAQCAtMTYyLDcgKzE2MCw3IEBAIHN0YXRpYyBpbnQgbWVpX3R4
-ZV9wcm9iZShzdHJ1Y3QgcGNpX2RldiAqcGRldiwgY29uc3QNCj4gc3RydWN0IHBjaV9kZXZpY2Vf
-aWQgKmVudCkNCj4gIHJlbGVhc2VfaXJxOg0KPiAgCW1laV9jYW5jZWxfd29yayhkZXYpOw0KPiAg
-CW1laV9kaXNhYmxlX2ludGVycnVwdHMoZGV2KTsNCj4gLQlmcmVlX2lycShwZGV2LT5pcnEsIGRl
-dik7DQo+ICsJcGNpX2ZyZWVfaXJxKHBkZXYsIDAsIGRldik7DQo+ICBlbmQ6DQo+ICAJZGV2X2Vy
-cigmcGRldi0+ZGV2LCAiaW5pdGlhbGl6YXRpb24gZmFpbGVkLlxuIik7DQo+ICAJcmV0dXJuIGVy
-cjsNCj4gQEAgLTE5MSw3ICsxODksNyBAQCBzdGF0aWMgdm9pZCBtZWlfdHhlX3NodXRkb3duKHN0
-cnVjdCBwY2lfZGV2ICpwZGV2KQ0KPiAgCW1laV90eGVfdW5zZXRfcG1fZG9tYWluKGRldik7DQo+
-IA0KPiAgCW1laV9kaXNhYmxlX2ludGVycnVwdHMoZGV2KTsNCj4gLQlmcmVlX2lycShwZGV2LT5p
-cnEsIGRldik7DQo+ICsJcGNpX2ZyZWVfaXJxKHBkZXYsIDAsIGRldik7DQo+ICB9DQo+IA0KPiAg
-LyoqDQo+IEBAIC0yMTksNyArMjE3LDcgQEAgc3RhdGljIHZvaWQgbWVpX3R4ZV9yZW1vdmUoc3Ry
-dWN0IHBjaV9kZXYgKnBkZXYpDQo+ICAJbWVpX3R4ZV91bnNldF9wbV9kb21haW4oZGV2KTsNCj4g
-DQo+ICAJbWVpX2Rpc2FibGVfaW50ZXJydXB0cyhkZXYpOw0KPiAtCWZyZWVfaXJxKHBkZXYtPmly
-cSwgZGV2KTsNCj4gKwlwY2lfZnJlZV9pcnEocGRldiwgMCwgZGV2KTsNCj4gDQo+ICAJbWVpX2Rl
-cmVnaXN0ZXIoZGV2KTsNCj4gIH0NCj4gLS0NCj4gMi4xOC4wDQo+IA0KDQo=
+On 05.08.2018 13:02, Winkler, Tomas wrote:
+>>
+>> Update the driver to the pci_alloc_irq_vectors API, this allows to get rid of
+>> legacy calls like pci_enable_msi(). Another benefit is that no driver change
+>> would be needed in case the hardware starts supporting MSI-X.
+>>
+>> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+> 
+> Sorry, we are losing the ONE_SHOT flag here,  In spite that pci_enable_msi is marked as deprecated,  
+ONE_SHOT flag isn't needed here. See commit f7368a550275 ("PCI: Use IRQF_ONESHOT if
+pci_request_irq() called with no handler") and also following comment in __setup_irq():
+
+* Drivers are often written to work w/o knowledge about the
+* underlying irq chip implementation, so a request for a
+* threaded irq without a primary hard irq context handler
+* requires the ONESHOT flag to be set. Some irq chips like
+* MSI based interrupts are per se one shot safe. Check the
+* chip flags, so we can avoid the unmask dance at the end of
+* the threaded handler for those.
+
+> I don't see overall action on LKML to actually  deprecate it.
+> For this change I would need to extensice testing on future and legacy devices, frankly  I prefer not to dig into it right now.
+
+Sure, up to you.
+
+> Thanks
+> Tomas
+> 
+Rgds, Heiner
+
+>> ---
+>>  drivers/misc/mei/pci-me.c  | 25 +++++++++++--------------
+>> drivers/misc/mei/pci-txe.c | 30 ++++++++++++++----------------
+>>  2 files changed, 25 insertions(+), 30 deletions(-)
+>>
+>> diff --git a/drivers/misc/mei/pci-me.c b/drivers/misc/mei/pci-me.c index
+>> 55ba1c41..a60376f0 100644
+>> --- a/drivers/misc/mei/pci-me.c
+>> +++ b/drivers/misc/mei/pci-me.c
+>> @@ -149,7 +149,6 @@ static int mei_me_probe(struct pci_dev *pdev, const
+>> struct pci_device_id *ent)
+>>  	const struct mei_cfg *cfg;
+>>  	struct mei_device *dev;
+>>  	struct mei_me_hw *hw;
+>> -	unsigned int irqflags;
+>>  	int err;
+>>
+>>  	cfg = mei_me_get_cfg(ent->driver_data); @@ -196,18 +195,16 @@
+>> static int mei_me_probe(struct pci_dev *pdev, const struct pci_device_id
+>> *ent)
+>>  	hw = to_me_hw(dev);
+>>  	hw->mem_addr = pcim_iomap_table(pdev)[0];
+>>
+>> -	pci_enable_msi(pdev);
+>> -
+>> -	 /* request and enable interrupt */
+>> -	irqflags = pci_dev_msi_enabled(pdev) ? IRQF_ONESHOT :
+>> IRQF_SHARED;
+>> +	err = pci_alloc_irq_vectors(pdev, 1, 1, PCI_IRQ_ALL_TYPES);
+>> +	if (err < 0)
+>> +		goto end;
+>>
+>> -	err = request_threaded_irq(pdev->irq,
+>> -			mei_me_irq_quick_handler,
+>> -			mei_me_irq_thread_handler,
+>> -			irqflags, KBUILD_MODNAME, dev);
+>> +	/* request and enable interrupt */
+>> +	err = pci_request_irq(pdev, 0, mei_me_irq_quick_handler,
+>> +			      mei_me_irq_thread_handler, dev,
+>> KBUILD_MODNAME);
+>>  	if (err) {
+>> -		dev_err(&pdev->dev, "request_threaded_irq failure. irq =
+>> %d\n",
+>> -		       pdev->irq);
+>> +		pci_err(pdev, "pci_request_irq failure. irq = %d\n",
+>> +			pci_irq_vector(pdev, 0));
+>>  		goto end;
+>>  	}
+>>
+>> @@ -258,7 +255,7 @@ static int mei_me_probe(struct pci_dev *pdev, const
+>> struct pci_device_id *ent)
+>>  release_irq:
+>>  	mei_cancel_work(dev);
+>>  	mei_disable_interrupts(dev);
+>> -	free_irq(pdev->irq, dev);
+>> +	pci_free_irq(pdev, 0, dev);
+>>  end:
+>>  	dev_err(&pdev->dev, "initialization failed.\n");
+>>  	return err;
+>> @@ -287,7 +284,7 @@ static void mei_me_shutdown(struct pci_dev *pdev)
+>>  	mei_me_unset_pm_domain(dev);
+>>
+>>  	mei_disable_interrupts(dev);
+>> -	free_irq(pdev->irq, dev);
+>> +	pci_free_irq(pdev, 0, dev);
+>>  }
+>>
+>>  /**
+>> @@ -316,7 +313,7 @@ static void mei_me_remove(struct pci_dev *pdev)
+>>
+>>  	mei_disable_interrupts(dev);
+>>
+>> -	free_irq(pdev->irq, dev);
+>> +	pci_free_irq(pdev, 0, dev);
+>>
+>>  	mei_deregister(dev);
+>>  }
+>> diff --git a/drivers/misc/mei/pci-txe.c b/drivers/misc/mei/pci-txe.c index
+>> b8a49581..3ea2b8f6 100644
+>> --- a/drivers/misc/mei/pci-txe.c
+>> +++ b/drivers/misc/mei/pci-txe.c
+>> @@ -64,6 +64,7 @@ static int mei_txe_probe(struct pci_dev *pdev, const
+>> struct pci_device_id *ent)  {
+>>  	struct mei_device *dev;
+>>  	struct mei_txe_hw *hw;
+>> +	irq_handler_t qh = NULL;
+>>  	const int mask = BIT(SEC_BAR) | BIT(BRIDGE_BAR);
+>>  	int err;
+>>
+>> @@ -100,25 +101,22 @@ static int mei_txe_probe(struct pci_dev *pdev,
+>> const struct pci_device_id *ent)
+>>  	hw = to_txe_hw(dev);
+>>  	hw->mem_addr = pcim_iomap_table(pdev);
+>>
+>> -	pci_enable_msi(pdev);
+>> +	err = pci_alloc_irq_vectors(pdev, 1, 1, PCI_IRQ_ALL_TYPES);
+>> +	if (err < 0)
+>> +		goto end;
+>>
+>>  	/* clear spurious interrupts */
+>>  	mei_clear_interrupts(dev);
+>>
+>> +	if (!pci_dev_msi_enabled(pdev))
+>> +		qh = mei_txe_irq_quick_handler;
+>> +
+>>  	/* request and enable interrupt  */
+>> -	if (pci_dev_msi_enabled(pdev))
+>> -		err = request_threaded_irq(pdev->irq,
+>> -			NULL,
+>> -			mei_txe_irq_thread_handler,
+>> -			IRQF_ONESHOT, KBUILD_MODNAME, dev);
+>> -	else
+>> -		err = request_threaded_irq(pdev->irq,
+>> -			mei_txe_irq_quick_handler,
+>> -			mei_txe_irq_thread_handler,
+>> -			IRQF_SHARED, KBUILD_MODNAME, dev);
+>> +	err = pci_request_irq(pdev, 0, qh, mei_txe_irq_thread_handler,
+>> +			      dev, KBUILD_MODNAME);
+>>  	if (err) {
+>> -		dev_err(&pdev->dev, "mei: request_threaded_irq failure. irq
+>> = %d\n",
+>> -			pdev->irq);
+>> +		pci_err(pdev, "mei: pci_request_irq failure. irq = %d\n",
+>> +			pci_irq_vector(pdev, 0));
+>>  		goto end;
+>>  	}
+>>
+>> @@ -162,7 +160,7 @@ static int mei_txe_probe(struct pci_dev *pdev, const
+>> struct pci_device_id *ent)
+>>  release_irq:
+>>  	mei_cancel_work(dev);
+>>  	mei_disable_interrupts(dev);
+>> -	free_irq(pdev->irq, dev);
+>> +	pci_free_irq(pdev, 0, dev);
+>>  end:
+>>  	dev_err(&pdev->dev, "initialization failed.\n");
+>>  	return err;
+>> @@ -191,7 +189,7 @@ static void mei_txe_shutdown(struct pci_dev *pdev)
+>>  	mei_txe_unset_pm_domain(dev);
+>>
+>>  	mei_disable_interrupts(dev);
+>> -	free_irq(pdev->irq, dev);
+>> +	pci_free_irq(pdev, 0, dev);
+>>  }
+>>
+>>  /**
+>> @@ -219,7 +217,7 @@ static void mei_txe_remove(struct pci_dev *pdev)
+>>  	mei_txe_unset_pm_domain(dev);
+>>
+>>  	mei_disable_interrupts(dev);
+>> -	free_irq(pdev->irq, dev);
+>> +	pci_free_irq(pdev, 0, dev);
+>>
+>>  	mei_deregister(dev);
+>>  }
+>> --
+>> 2.18.0
+>>
+> 
+
