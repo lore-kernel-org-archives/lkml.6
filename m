@@ -2,83 +2,196 @@ Return-Path: <SRS0=mdhE=KU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98330C28CF6
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD1A1C4646F
 	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 04:57:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A966217BD
+	by mail.kernel.org (Postfix) with ESMTP id 78670217BF
 	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 04:57:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A966217BD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.de
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78670217BF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726279AbeHEG4e (ORCPT
+        id S1726407AbeHEG5g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 5 Aug 2018 02:56:34 -0400
-Received: from mout.gmx.net ([212.227.15.15]:47835 "EHLO mout.gmx.net"
+        Sun, 5 Aug 2018 02:57:36 -0400
+Received: from gate.crashing.org ([63.228.1.57]:59685 "EHLO gate.crashing.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725975AbeHEG4e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 Aug 2018 02:56:34 -0400
-Received: from homer.simpson.net ([185.221.151.118]) by mail.gmx.com (mrgmx002
- [212.227.17.190]) with ESMTPSA (Nemesis) id 0LcT2M-1gAp8W1qSM-00joyQ; Sun, 05
- Aug 2018 06:52:58 +0200
-Message-ID: <1533444777.9157.10.camel@gmx.de>
-Subject: Re: [rt-patch 4/3] arm,KVM: Move phys_timer handling to hard irq
- context
-From:   Mike Galbraith <efault@gmx.de>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-rt-users <linux-rt-users@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Date:   Sun, 05 Aug 2018 06:52:57 +0200
-In-Reply-To: <1533385520.5602.31.camel@gmx.de>
-References: <20180727215710.zq6gkoqzlb4ca7qv@linutronix.de>
-         <1532764179.9882.14.camel@gmx.de> <1532768853.9882.73.camel@gmx.de>
-         <1533192980.11791.8.camel@gmx.de>
-         <20180802123104.7fed73b4@gandalf.local.home>
-         <1533228650.12550.15.camel@gmx.de> <1533231816.12550.54.camel@gmx.de>
-         <1533385520.5602.31.camel@gmx.de>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.26.6 
+        id S1725975AbeHEG5g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 5 Aug 2018 02:57:36 -0400
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w754qtPK010149;
+        Sat, 4 Aug 2018 23:52:56 -0500
+Message-ID: <fd8fee94cf42e436878f179c7895de3a4dab3355.camel@kernel.crashing.org>
+Subject: Re: [RFC 0/4] Virtio uses DMA API for all devices
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        aik@ozlabs.ru, robh@kernel.org, joe@perches.com,
+        elfring@users.sourceforge.net, david@gibson.dropbear.id.au,
+        jasowang@redhat.com, mpe@ellerman.id.au, linuxram@us.ibm.com,
+        haren@linux.vnet.ibm.com, paulus@samba.org,
+        srikar@linux.vnet.ibm.com, robin.murphy@arm.com,
+        jean-philippe.brucker@arm.com, marc.zyngier@arm.com
+Date:   Sun, 05 Aug 2018 14:52:54 +1000
+In-Reply-To: <20180805031046-mutt-send-email-mst@kernel.org>
+References: <20180802182959-mutt-send-email-mst@kernel.org>
+         <82ccef6ec3d95ee43f3990a4a2d0aea87eb45e89.camel@kernel.crashing.org>
+         <20180802200646-mutt-send-email-mst@kernel.org>
+         <e9beb6bba5a7d05741e27e85b24a3b23ba7c2762.camel@kernel.crashing.org>
+         <20180802225738-mutt-send-email-mst@kernel.org>
+         <de4888b6457e220776e16a9c8958ff0886ffc66c.camel@kernel.crashing.org>
+         <20180803070507.GA1344@infradead.org>
+         <eb1750e90e4bd45da297fa6f78f8ef93671b7c2f.camel@kernel.crashing.org>
+         <20180803220443-mutt-send-email-mst@kernel.org>
+         <051fd78e15595b414839fa8f9d445b9f4d7576c6.camel@kernel.crashing.org>
+         <20180805031046-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.4 (3.28.4-1.fc28) 
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:bFU7AozI/I+9ClIcQLKd9I891EVj9KidFWdtVPI8vTqD6rXsKwb
- fJEjN90vwrt/sGzXFKQfpGLFwbE9xkI+VTABujAp6mkClu+zTfw84d9vkXr3PktrqT9ffJZ
- 1Rtp7Wn+VqOSF9Z8uxLrczdqGzO3I8w+/dMfVyv1U+itSv+/lJLuTldkbZtbEnf0nBZeBPQ
- TYAPrg9REtROMckzcP5ew==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:wY6qf4oKuWc=:lKcE8SDNN4DqA0joxOT0QT
- zvTgW3nP0Q88m41ZUQVfq00zOWqCBN7sXuVhV+Mqy1WtVdJp3IqzCyJjSkq1K4T3a3YlxJTb/
- t4csM3ifbdD8+3BG+yShpwS9QrCJSCZy5qzVdg/t7DJXm3GtMb+4Cf/Sj1xrquiAJKbZQvRlH
- UbNErrffSugS0iLeblXzJ22PgRmKaoKBsnnLp1vMca5o+8his3CVh0QgTiIHDm8fX+X5gtRk6
- X49e0Zq4qnKwvfs872/fj9E/+gTK1AgYCC9IGu1GQvCg/HLRw11loYp57KYsLzZevhtOA/WWf
- l0EqrJq2QgDOvKmG62bPKP5unRH37eazdV1GhxmJR7vy72en75TJIfnd/HVta0m/9qZQ2JXK9
- Bpb9QkcjI2Z/C49nu3c5H55pota1s7R7lgu3BHq/qhHsy4IL3aDHlX/sQK6rmfGGx1l78+Ppk
- JcvKJr5OaC3jezRdBOyx+VoGyZKuX5Cw5EF+bcjZCBywMFZpagKvhKcqCmtgxZJL20Q75uD4x
- 7gbencaFtODd2hieeioX17xy26Am3xtW6xBvBhH8IdRWDHaQ/qE+ePRh/BsNmAJK+vx6z9ucT
- m4JLsbB9msH0cexzegwjKk65o+Ao2d33MZWd7FhlwXbZzYOKKimvfMgB7zBwwtYWRuu5ATkQ1
- 1XVd8KQ4plMCKkP6Hpq9ZLek0oDWea0MkiNLD39KRseCnQI2oqqiy7AI/BxG/zbDtAfbNLTeS
- ETqb/W6WWR/HhsNjJHKkZnzd3jc192e1GjTbes3uIc0Hw4P8bWeoyRzVBf1ZQ48RsTMSyJdwB
- dI6LPdQ
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 2018-08-04 at 14:25 +0200, Mike Galbraith wrote:
+On Sun, 2018-08-05 at 03:22 +0300, Michael S. Tsirkin wrote:
+> I see the allure of this, but I think down the road you will
+> discover passing a flag in libvirt XML saying
+> "please use a secure mode" or whatever is a good idea.
 > 
-> Besides, there are more interesting fish in the arm64 sea than kvm.
+> Even thought it is probably not required to address this
+> specific issue.
 > 
-> virgin 4.16.18-rt12-rt
-> 
-> [  537.236131] ITS queue timeout (65440 65504 4640)
-> [  537.236150] ITS cmd its_build_inv_cmd failed
+> For example, I don't think ballooning works in secure mode,
+> you will be able to teach libvirt not to try to add a
+> balloon to the guest.
 
-FWIW, I had thought that something 4.16..master had made that business
-go entirely away, but it only became much more infrequent.  So much for
-plan to slowly sneak up on whatever than was via ~bisect.
+Right, we'll need some quirk to disable balloons  in the guest I
+suppose.
+
+Passing something from libvirt is cumbersome because the end user may
+not even need to know about secure VMs. There are use cases where the
+security is a contract down to some special application running inside
+the secure VM, the sysadmin knows nothing about.
+
+Also there's repercussions all the way to admin tools, web UIs etc...
+so it's fairly wide ranging.
+
+So as long as we only need to quirk a couple of devices, it's much
+better contained that way.
+
+> > Later on, (we may have even already run Linux at that point,
+> > unsecurely, as we can use Linux as a bootloader under some
+> > circumstances), we start a "secure image".
+> > 
+> > This is a kernel zImage that includes a "ticket" that has the
+> > appropriate signature etc... so that when that kernel starts, it can
+> > authenticate with the ultravisor, be verified (along with its ramdisk)
+> > etc... and copied (by the UV) into secure memory & run from there.
+> > 
+> > At that point, the hypervisor is informed that the VM has become
+> > secure.
+> > 
+> > So at that point, we could exit to qemu to inform it of the change,
+> 
+> That's probably a good idea too.
+
+We probably will have to tell qemu eventually for migration, as we'll
+need some kind of key exchange phase etc... to deal with the crypto
+aspects (the actual page copy is sorted via encrypting the secure pages
+back to normal pages in qemu, but we'll need extra metadata).
+
+> > and
+> > have it walk the qtree and "Switch" all the virtio devices to use the
+> > IOMMU I suppose, but it feels a lot grosser to me.
+> 
+> That part feels gross, yes.
+> 
+> > That's the only other option I can think of.
+> > 
+> > > However in this specific case, the flag does not need to come from the
+> > > hypervisor, it can be set by arch boot code I think.
+> > > Christoph do you see a problem with that?
+> > 
+> > The above could do that yes. Another approach would be to do it from a
+> > small virtio "quirk" that pokes a bit in the device to force it to
+> > iommu mode when it detects that we are running in a secure VM. That's a
+> > bit warty on the virito side but probably not as much as having a qemu
+> > one that walks of the virtio devices to change how they behave.
+> > 
+> > What do you reckon ?
+> 
+> I think you are right that for the dma limit the hypervisor doesn't seem
+> to need to know.
+
+It's not just a limit mind you. It's a range, at least if we allocate
+just a single pool of insecure pages. swiotlb feels like a better
+option for us.
+
+> > What we want to avoid is to expose any of this to the *end user* or
+> > libvirt or any other higher level of the management stack. We really
+> > want that stuff to remain contained between the VM itself, KVM and
+> > maybe qemu.
+> > 
+> > We will need some other qemu changes for migration so that's ok. But
+> > the minute you start touching libvirt and the higher levels it becomes
+> > a nightmare.
+> > 
+> > Cheers,
+> > Ben.
+> 
+> I don't believe you'll be able to avoid that entirely. The split between
+> libvirt and qemu is more about community than about code, random bits of
+> functionality tend to land on random sides of that fence.  Better add a
+> tag in domain XML early is my advice. Having said that, it's your
+> hypervisor. I'm just suggesting that when hypervisor does somehow need
+> to care then I suspect most people won't be receptive to the argument
+> that changing libvirt is a nightmare.
+
+It only needs to care at runtime. The problem isn't changing libvirt
+per-se, I don't have a problem with that. The problem is that it means
+creating two categories of machines "secure" and "non-secure", which is
+end-user visible, and thus has to be escalated to all the various
+management stacks, UIs, etc... out there.
+
+In addition, there are some cases where the individual creating the VMs
+may not have any idea that they are secure.
+
+But yes, if we have to, we'll do it. However, so far, we don't think
+it's a great idea.
+
+Cheers,
+Ben.
+
+> > > > >   To get swiotlb you'll need to then use the DT/ACPI
+> > > > > dma-range property to limit the addressable range, and a swiotlb
+> > > > > capable plaform will use swiotlb automatically.
+> > > > 
+> > > > This cannot be done as you describe it.
+> > > > 
+> > > > The VM is created as a *normal* VM. The DT stuff is generated by qemu
+> > > > at a point where it has *no idea* that the VM will later become secure
+> > > > and thus will have to restrict which pages can be used for "DMA".
+> > > > 
+> > > > The VM will *at runtime* turn itself into a secure VM via interactions
+> > > > with the security HW and the Ultravisor layer (which sits below the
+> > > > HV). This happens way after the DT has been created and consumed, the
+> > > > qemu devices instanciated etc...
+> > > > 
+> > > > Only the guest kernel knows because it initates the transition. When
+> > > > that happens, the virtio devices have already been used by the guest
+> > > > firmware, bootloader, possibly another kernel that kexeced the "secure"
+> > > > one, etc... 
+> > > > 
+> > > > So instead of running around saying NAK NAK NAK, please explain how we
+> > > > can solve that differently.
+> > > > 
+> > > > Ben.
 
