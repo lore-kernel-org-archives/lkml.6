@@ -4,61 +4,61 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30CDAC46470
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 20:08:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAF12C46471
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 20:08:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC60920685
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 20:08:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 62DF42156B
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 20:08:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qR1cKltE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC60920685
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FB6FaXGf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62DF42156B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729221AbeHEWOT (ORCPT
+        id S1729325AbeHEWOV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 5 Aug 2018 18:14:19 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:33850 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728524AbeHEWOS (ORCPT
+        Sun, 5 Aug 2018 18:14:21 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:42322 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729193AbeHEWOU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 Aug 2018 18:14:18 -0400
-Received: by mail-pl0-f67.google.com with SMTP id f6-v6so4724914plo.1
-        for <linux-kernel@vger.kernel.org>; Sun, 05 Aug 2018 13:08:34 -0700 (PDT)
+        Sun, 5 Aug 2018 18:14:20 -0400
+Received: by mail-pl0-f68.google.com with SMTP id g6-v6so1154528plq.9
+        for <linux-kernel@vger.kernel.org>; Sun, 05 Aug 2018 13:08:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=4v1fbKG86doSCL9jxZMYCCgUZUCHBnTDlqgINKqDAYA=;
-        b=qR1cKltEnKNm3BiG23TLtM6LJwGEJshIVpLOZA/jba848TJjLRYccPv/tV1v1ykMhI
-         ct1NFukjyeUxUMQbcA/dQKdfjtrRLiXVWrxCJo0eovbqkIsTUYEHt8oF5KEgxyGpnMhT
-         79iKXF88yKKFuLjGUsVExSWBIBusbNNc7eo2EwxYsGUR/5+wZ563KkrarRKLYw02jV14
-         TwpaLKDts/+VEewumyG4u/W8z+tjuCZ5SBpEgdjwK/YwixTNDJ6H6s68Jcd4HMZpxtWV
-         ZAN799cSURODpZlMrcb7L75FavEnlut7dQQnDzsFxCqw3xc8K8IEarcdLxFkD+tm2MIC
-         hnlA==
+        bh=wA/I74DwdG5/o2actje4g8J97nm7i9lFPMy6J5tsJ8E=;
+        b=FB6FaXGfdbNqIsyQOsdJQ/WMvLJ8fOiRVXApOa+XuOLiE0vu/NMjx9UnKfobQYO+ip
+         RxM3ih2Q3LzccoPJJBMfathTZUW+Z/plJEiZXm5GL6C50U/vcaIfCK32F/oS2rqBDlrl
+         WNK796LLbYvAhns2qeWGauxXtOWUeMxqBe5YDr4h/FXFlDifukrZ3AT7TgmXbm5KHQfN
+         N1M32+sn5wWVqsO165d9e2HPiDyW4P8cgVhYl0/yLWmU4+Ru70m9Mp9Rg5pUJkH61j/f
+         RcdUvI99jVbPZV1pCws27eOsO6z+twUybj+fNAckjn9x3QdnRm6iM9cobXLpJcNzg3SR
+         vLpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=4v1fbKG86doSCL9jxZMYCCgUZUCHBnTDlqgINKqDAYA=;
-        b=HHQWkpsnb4d2tbPQ0xX+BKBQVmlValAv0rjs9/eG/Js6qGHPT7n+r+evNqGIPsmQq/
-         D2DVLUKqpa3xz9ZW/Vg/CAw2H1ULm0BmVYfZvupGyXBNEzv0USra5JDH8sYFo71yIQ07
-         DmP4crHrj7wYT80+xX74F2YHMSqaQowBkT5kabvxFfBJJ0gt//I+Ad+D02L5j9GyWkfC
-         aGUSRCLNtzhCHBVCpQgEDNuoUAt+GFls4qa3KOm1bB6u4spoAbOckbQ5NYbjvD83uziN
-         BRTTCfdiGm/6JYjD5PIdxE+kes41HzvaqWerlQpmpaz/NcZAWPD4DzPNVaqqQ6EKbiKj
-         9oiw==
-X-Gm-Message-State: AOUpUlE2+Lfsl5cphpF4NELlbYkXH7mdemHV5pJH00s22oCxRGRzPHGw
-        e09XorVgQOCtBNFff6To00q7VgQP
-X-Google-Smtp-Source: AAOMgpdA7BVqIv11NayVkZF4+axW/whqeYnRgSZCYSnPwm7qtmKeY/YY+qJPN0YuvPglcaEuKvmNkw==
-X-Received: by 2002:a17:902:5a3:: with SMTP id f32-v6mr11462371plf.286.1533499713612;
-        Sun, 05 Aug 2018 13:08:33 -0700 (PDT)
+        bh=wA/I74DwdG5/o2actje4g8J97nm7i9lFPMy6J5tsJ8E=;
+        b=r3tSMzVSsXdbhKNKnHmsYkOdUhy/FcX5ywIlW+9Q+KCQn5mBfG9Hn2g3nEiJ+JNqze
+         yi8lwBTaBxTGF/nx+jt6EWkR4GiZXapG3NuKElP1nZoIHodBXcUnuxv+cZjK0Bw2Xzwj
+         sMFgSLJL+oqVJTQh4C2pjDXfKqXWW0XCLtWcI+YRmd2gCKw2u1vGRFxjNv1haU/Vp8lM
+         NK7cS+d28caRxi20kLC3ol450b6RgXb27OeABXHW1LbGcQKbkEH2II2+G6/jEtgJgSFe
+         jaXeS1PsKpd0gMkiBd8QC3XHWMr/iU/jrlqkK+uxEuPexygRdkvJc9lIao1N1mnd8cye
+         Ju9A==
+X-Gm-Message-State: AOUpUlHtJIZjUjdIx/gdNsCa+P3FkM1YupuSb7Em6VxlgOooDkewUaf9
+        ppK/d4egfqdd/tvQFw1v9CQ=
+X-Google-Smtp-Source: AAOMgpdgTLF4/R7p8CLQ9ebChPLqLJcJKdxWI9S5py/lOPnY3WvO+wb3DEv1NcZ8FPconh2KBSQVVw==
+X-Received: by 2002:a17:902:8697:: with SMTP id g23-v6mr11440683plo.292.1533499715329;
+        Sun, 05 Aug 2018 13:08:35 -0700 (PDT)
 Received: from toddpoynor2.mtv.corp.google.com ([2620:0:1000:3701:7d29:cd13:d903:7908])
-        by smtp.gmail.com with ESMTPSA id o72-v6sm15038227pfk.76.2018.08.05.13.08.32
+        by smtp.gmail.com with ESMTPSA id o72-v6sm15038227pfk.76.2018.08.05.13.08.34
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 05 Aug 2018 13:08:33 -0700 (PDT)
+        Sun, 05 Aug 2018 13:08:34 -0700 (PDT)
 From:   Todd Poynor <toddpoynor@gmail.com>
 To:     Rob Springer <rspringer@google.com>,
         John Joseph <jnjoseph@google.com>,
@@ -66,9 +66,9 @@ To:     Rob Springer <rspringer@google.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         Todd Poynor <toddpoynor@google.com>
-Subject: [PATCH 12/15] staging: gasket: apex: move sysfs setup code to probe function
-Date:   Sun,  5 Aug 2018 13:07:46 -0700
-Message-Id: <20180805200749.116693-13-toddpoynor@gmail.com>
+Subject: [PATCH 13/15] staging: gasket: core: protect against races during unregister
+Date:   Sun,  5 Aug 2018 13:07:47 -0700
+Message-Id: <20180805200749.116693-14-toddpoynor@gmail.com>
 X-Mailer: git-send-email 2.18.0.597.ga71716f1ad-goog
 In-Reply-To: <20180805200749.116693-1-toddpoynor@gmail.com>
 References: <20180805200749.116693-1-toddpoynor@gmail.com>
@@ -81,53 +81,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Todd Poynor <toddpoynor@google.com>
 
-The gasket framework no longer provides callbacks to the device driver
-for sysfs setup and teardown.  Move the sysfs setup code to the device
-probe function.  Apex does not implement sysfs cleanup code.
+Keep mutex held across the unregistration operation, until the
+driver_desc field of the global table is removed, to prevent a
+concurrent accessor from looking up the driver_desc while
+gasket_unregister_device() is in the processing of removing it.
 
+Reported-by: Guenter Roeck <groeck@chromium.org>
 Signed-off-by: Todd Poynor <toddpoynor@google.com>
 ---
- drivers/staging/gasket/apex_driver.c | 14 +++++---------
- 1 file changed, 5 insertions(+), 9 deletions(-)
+ drivers/staging/gasket/gasket_core.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/staging/gasket/apex_driver.c b/drivers/staging/gasket/apex_driver.c
-index 69ca7fb10eddc..55319619b2e66 100644
---- a/drivers/staging/gasket/apex_driver.c
-+++ b/drivers/staging/gasket/apex_driver.c
-@@ -568,12 +568,6 @@ static struct gasket_sysfs_attribute apex_sysfs_attrs[] = {
- 	GASKET_END_OF_ATTR_ARRAY
- };
- 
--static int apex_sysfs_setup_cb(struct gasket_dev *gasket_dev)
--{
--	return gasket_sysfs_create_entries(gasket_dev->dev_info.device,
--					   apex_sysfs_attrs);
--}
--
- /* On device open, perform a core reinit reset. */
- static int apex_device_open_cb(struct gasket_dev *gasket_dev)
- {
-@@ -639,6 +633,11 @@ static int apex_pci_probe(struct pci_dev *pci_dev,
- 		goto remove_device;
+diff --git a/drivers/staging/gasket/gasket_core.c b/drivers/staging/gasket/gasket_core.c
+index ace92f107ed58..a6462b6d702f1 100644
+--- a/drivers/staging/gasket/gasket_core.c
++++ b/drivers/staging/gasket/gasket_core.c
+@@ -1765,9 +1765,9 @@ void gasket_unregister_device(const struct gasket_driver_desc *driver_desc)
+ 			break;
+ 		}
  	}
+-	mutex_unlock(&g_mutex);
  
-+	ret = gasket_sysfs_create_entries(gasket_dev->dev_info.device,
-+					  apex_sysfs_attrs);
-+	if (ret)
-+		dev_err(&pci_dev->dev, "error creating device sysfs entries\n");
-+
- 	ret = gasket_enable_device(gasket_dev);
- 	if (ret) {
- 		dev_err(&pci_dev->dev, "error enabling gasket device\n");
-@@ -695,9 +694,6 @@ static struct gasket_driver_desc apex_desc = {
- 	.interrupts = apex_interrupts,
- 	.interrupt_pack_width = 7,
+ 	if (!internal_desc) {
++		mutex_unlock(&g_mutex);
+ 		pr_err("request to unregister unknown desc: %s, %d:%d\n",
+ 		       driver_desc->name, driver_desc->major,
+ 		       driver_desc->minor);
+@@ -1780,7 +1780,6 @@ void gasket_unregister_device(const struct gasket_driver_desc *driver_desc)
+ 	class_destroy(internal_desc->class);
  
--	.sysfs_setup_cb = apex_sysfs_setup_cb,
--	.sysfs_cleanup_cb = NULL,
--
- 	.device_open_cb = apex_device_open_cb,
- 	.device_close_cb = apex_device_cleanup,
+ 	/* Finally, effectively "remove" the driver. */
+-	mutex_lock(&g_mutex);
+ 	g_descs[desc_idx].driver_desc = NULL;
+ 	mutex_unlock(&g_mutex);
  
 -- 
 2.18.0.597.ga71716f1ad-goog
