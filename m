@@ -2,106 +2,133 @@ Return-Path: <SRS0=mdhE=KU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36DD8C46472
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 15:14:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D7F2C46470
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 15:19:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E652021885
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 15:14:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E652021885
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 2E70121898
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 15:19:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Hv+IykXG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E70121898
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726942AbeHERTi (ORCPT
+        id S1726432AbeHERYc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 5 Aug 2018 13:19:38 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:47133 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726261AbeHERTi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 Aug 2018 13:19:38 -0400
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id C655A766EA98B;
-        Sun,  5 Aug 2018 23:14:32 +0800 (CST)
-Received: from linux-ibm.site (10.175.102.37) by
- DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
- 14.3.399.0; Sun, 5 Aug 2018 23:14:30 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-To:     <clm@fb.com>, <jbacik@fb.com>, <dsterba@suse.com>
-CC:     <linux-btrfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH 1/3] fs/btrfs/disk-io: Remove unneeded variable "err"
-Date:   Sun, 5 Aug 2018 23:02:49 +0800
-Message-ID: <1533481371-21349-2-git-send-email-zhongjiang@huawei.com>
-X-Mailer: git-send-email 1.7.12.4
-In-Reply-To: <1533481371-21349-1-git-send-email-zhongjiang@huawei.com>
-References: <1533481371-21349-1-git-send-email-zhongjiang@huawei.com>
+        Sun, 5 Aug 2018 13:24:32 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:45374 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726251AbeHERYb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 5 Aug 2018 13:24:31 -0400
+Received: by mail-oi0-f65.google.com with SMTP id q11-v6so17892123oic.12
+        for <linux-kernel@vger.kernel.org>; Sun, 05 Aug 2018 08:19:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=vb19Oyv2v4zP66s8RVPlDKjv8CAt7YWeFYapQL1HDKg=;
+        b=Hv+IykXGdhDJbS+N87UoS/xcUyzR6po1W09dLnZMCBgniylS55KUE8KHErUYS0ZeRm
+         2VV86LV3GEwBmLblMS3+RGdcpCaA6X5g42I53xyNOaWKV+ADeLtWQ4zvrqRlDHLEfTTt
+         2evhu9ux1M+Va5OeeJp4nQVYresqKODkLhbtY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=vb19Oyv2v4zP66s8RVPlDKjv8CAt7YWeFYapQL1HDKg=;
+        b=QnOVE0+8lHGOFGPTuxk+YYr709/f/DLRZ4f+8erwE5QJJgYYjho1FFTSgUFKpO59Gb
+         yxrpWV18QWT8Pj+ZyUaHqAGebvTQL18v3WmKZZm/eWERl1nnisN8nDjDpH6GO8QCbK+k
+         Y5bFYBdoAfq0y4L0sCDkzLHmMqxZ/085Z7Pj20wQXZ5WWSlhNKJd9ZIqy5+fEyH14Xys
+         f70TqnyG/SEvbxfam/d7mlXLR5Fpma9M8LGZc7dnpP2TKpl0Wwgln8JGA4Q3Ot1GlUR/
+         bfPzZXqzYbZMLsubcRIkOS9M9HDCKxvSuBKWZeX77iC/dgf+OWa4cNtceNtqVgseON1C
+         /08A==
+X-Gm-Message-State: AOUpUlEKPL3hrimnmNVoCLHovWrGG5B8nfu3zyUW0BwmBISrQZFVtyt+
+        JsKlqbCDy+I7MsuBErsT2xYFIQ==
+X-Google-Smtp-Source: AA+uWPx0mZ1QtK21cIc05L2oZycwUIg0MDY/fqj00Ke9XJfDRCoVqzKzVZ7iHN+iLGRc0RWoFSDyuw==
+X-Received: by 2002:aca:d9c5:: with SMTP id q188-v6mr10279923oig.239.1533482374889;
+        Sun, 05 Aug 2018 08:19:34 -0700 (PDT)
+Received: from localhost ([2600:3c00::f03c:91ff:fefc:c793])
+        by smtp.gmail.com with ESMTPSA id m11-v6sm8474607oif.27.2018.08.05.08.19.33
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 05 Aug 2018 08:19:33 -0700 (PDT)
+Date:   Sun, 5 Aug 2018 15:19:33 +0000
+From:   Dan Rue <dan.rue@linaro.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Naresh Kamboju <naresh.kamboju@linaro.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>
+Subject: Re: [PATCH 4.4 000/124] 4.4.146-stable review
+Message-ID: <20180805151933.efzi3mawp22p3wex@linode.therub.org>
+References: <20180804082702.434482435@linuxfoundation.org>
+ <CA+G9fYsZtw-OHh2cKC0VG5zwdKOMvnOx-cAVfp2qfY_drFQ4_Q@mail.gmail.com>
+ <20180805134952.GA15972@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.102.37]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180805134952.GA15972@kroah.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The err is not used after initalization, So remove it and make
-the function to be void function.
+On Sun, Aug 05, 2018 at 03:49:52PM +0200, Greg Kroah-Hartman wrote:
+> On Sun, Aug 05, 2018 at 05:24:21PM +0530, Naresh Kamboju wrote:
+> > On 4 August 2018 at 14:29, Greg Kroah-Hartman
+> > <gregkh@linuxfoundation.org> wrote:
+> > > This is the start of the stable review cycle for the 4.4.146 release.
+> > > There are 124 patches in this series, all will be posted as a response
+> > > to this one.  If anyone has any issues with these being applied, please
+> > > let me know.
+> > >
+> > > Responses should be made by Mon Aug  6 08:26:39 UTC 2018.
+> > > Anything received after that time might be too late.
+> > >
+> > > The whole patch series can be found in one patch at:
+> > >         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.146-rc1.gz
+> > > or in the git tree and branch at:
+> > >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
+> > > and the diffstat can be found below.
+> > >
+> > > thanks,
+> > >
+> > > greg k-h
+> > 
+> > Results from Linaro’s test farm.
+> > No regressions on arm64, arm and x86_64.
+> 
+> Really?  How did you all miss the netfilter bug that was introduced by
+> this series?
+> 
+> Anyway, thanks for testing, but I'm worried...
 
-Signed-off-by: zhong jiang <zhongjiang@huawei.com>
----
- fs/btrfs/disk-io.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+I took a look through our test suites to see where we may have coverage for
+this. There is a netns series of tests in LTP [1], but we've had trouble
+getting them running successfully in the past and so they are being skipped. I
+don't know if it would have caught this particular issue, but I'll find out,
+and also see if we can get them working and running again.
 
-diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
-index 468365d..34e4926 100644
---- a/fs/btrfs/disk-io.c
-+++ b/fs/btrfs/disk-io.c
-@@ -53,8 +53,8 @@
- static const struct extent_io_ops btree_extent_io_ops;
- static void end_workqueue_fn(struct btrfs_work *work);
- static void btrfs_destroy_ordered_extents(struct btrfs_root *root);
--static int btrfs_destroy_delayed_refs(struct btrfs_transaction *trans,
--				      struct btrfs_fs_info *fs_info);
-+static void btrfs_destroy_delayed_refs(struct btrfs_transaction *trans,
-+				       struct btrfs_fs_info *fs_info);
- static void btrfs_destroy_delalloc_inodes(struct btrfs_root *root);
- static int btrfs_destroy_marked_extents(struct btrfs_fs_info *fs_info,
- 					struct extent_io_tree *dirty_pages,
-@@ -4179,13 +4179,12 @@ static void btrfs_destroy_all_ordered_extents(struct btrfs_fs_info *fs_info)
- 	spin_unlock(&fs_info->ordered_root_lock);
- }
- 
--static int btrfs_destroy_delayed_refs(struct btrfs_transaction *trans,
--				      struct btrfs_fs_info *fs_info)
-+static void btrfs_destroy_delayed_refs(struct btrfs_transaction *trans,
-+				       struct btrfs_fs_info *fs_info)
- {
- 	struct rb_node *node;
- 	struct btrfs_delayed_ref_root *delayed_refs;
- 	struct btrfs_delayed_ref_node *ref;
--	int ret = 0;
- 
- 	delayed_refs = &trans->delayed_refs;
- 
-@@ -4193,7 +4192,6 @@ static int btrfs_destroy_delayed_refs(struct btrfs_transaction *trans,
- 	if (atomic_read(&delayed_refs->num_entries) == 0) {
- 		spin_unlock(&delayed_refs->lock);
- 		btrfs_info(fs_info, "delayed_refs has NO entry");
--		return ret;
- 	}
- 
- 	while ((node = rb_first(&delayed_refs->href_root)) != NULL) {
-@@ -4247,8 +4245,6 @@ static int btrfs_destroy_delayed_refs(struct btrfs_transaction *trans,
- 	}
- 
- 	spin_unlock(&delayed_refs->lock);
--
--	return ret;
- }
- 
- static void btrfs_destroy_delalloc_inodes(struct btrfs_root *root)
--- 
-1.7.12.4
+We also run the net/ tests in kselftest, but there aren't that many, and of
+course running kselftest the way we do is not a well supported usecase (running
+all of 4.17 kselftest against 4.4 kernels, skipping tests that are broken).
 
+So I would ask, how would net/ expect such things to be tested, and what can we
+do to help?
+
+Dan
+
+[1] https://github.com/linux-test-project/ltp/tree/master/testcases/kernel/containers/netns
