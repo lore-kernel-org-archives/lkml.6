@@ -2,144 +2,109 @@ Return-Path: <SRS0=mdhE=KU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4323FC46471
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 13:53:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 128C6C46470
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 14:03:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE77B208E6
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 13:53:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE77B208E6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id BEE522145D
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 14:03:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEE522145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726691AbeHEP6T (ORCPT
+        id S1726382AbeHEQHs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 5 Aug 2018 11:58:19 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:10227 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726112AbeHEP6T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 Aug 2018 11:58:19 -0400
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 88E02A1FCB2CF;
-        Sun,  5 Aug 2018 21:53:31 +0800 (CST)
-Received: from linux-ibm.site (10.175.102.37) by
- DGGEMS405-HUB.china.huawei.com (10.3.19.205) with Microsoft SMTP Server id
- 14.3.399.0; Sun, 5 Aug 2018 21:53:27 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-To:     <martin.petersen@oracle.com>, <jejb@linux.vnet.ibm.com>
-CC:     <kartilak@cisco.com>, <john.garry@huawei.com>,
-        <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] drivers/scsi/fnic/fnic_trace: Use kvcalloc to replace vmalloc+memset
-Date:   Sun, 5 Aug 2018 21:41:47 +0800
-Message-ID: <1533476507-16642-1-git-send-email-zhongjiang@huawei.com>
-X-Mailer: git-send-email 1.7.12.4
+        Sun, 5 Aug 2018 12:07:48 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35454 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726112AbeHEQHs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 5 Aug 2018 12:07:48 -0400
+Received: from localhost (unknown [89.188.5.116])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9A2DA40B;
+        Sun,  5 Aug 2018 14:03:05 +0000 (UTC)
+Date:   Sun, 5 Aug 2018 16:03:01 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        netdev@vger.kernel.org, Dmitry Safonov <dima@arista.com>
+Subject: Re: [PATCH 4.4 106/124] netlink: Do not subscribe to non-existent
+ groups
+Message-ID: <20180805140301.GA17056@kroah.com>
+References: <20180804082702.434482435@linuxfoundation.org>
+ <20180804082706.427556290@linuxfoundation.org>
+ <20180804180734.GA25546@flashbox>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.102.37]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180804180734.GA25546@flashbox>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The open code vmalloc() + memset() should be replaced by kvcalloc.
-It make the code concise.
+On Sat, Aug 04, 2018 at 11:07:34AM -0700, Nathan Chancellor wrote:
+> On Sat, Aug 04, 2018 at 11:01:35AM +0200, Greg Kroah-Hartman wrote:
+> > 4.4-stable review patch.  If anyone has any objections, please let me know.
+> > 
+> > ------------------
+> > 
+> > From: Dmitry Safonov <dima@arista.com>
+> > 
+> > [ Upstream commit 7acf9d4237c46894e0fa0492dd96314a41742e84 ]
+> > 
+> > Make ABI more strict about subscribing to group > ngroups.
+> > Code doesn't check for that and it looks bogus.
+> > (one can subscribe to non-existing group)
+> > Still, it's possible to bind() to all possible groups with (-1)
+> > 
+> > Cc: "David S. Miller" <davem@davemloft.net>
+> > Cc: Herbert Xu <herbert@gondor.apana.org.au>
+> > Cc: Steffen Klassert <steffen.klassert@secunet.com>
+> > Cc: netdev@vger.kernel.org
+> > Signed-off-by: Dmitry Safonov <dima@arista.com>
+> > Signed-off-by: David S. Miller <davem@davemloft.net>
+> > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > ---
+> >  net/netlink/af_netlink.c |    1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > --- a/net/netlink/af_netlink.c
+> > +++ b/net/netlink/af_netlink.c
+> > @@ -983,6 +983,7 @@ static int netlink_bind(struct socket *s
+> >  		if (err)
+> >  			return err;
+> >  	}
+> > +	groups &= (1UL << nlk->ngroups) - 1;
+> >  
+> >  	bound = nlk->bound;
+> >  	if (bound) {
+> > 
+> > 
+> 
+> Hi Greg,
+> 
+> I am so sorry I didn't catch this in my initial report but this commit
+> along with ba7aaf93ef2f ("netlink: Don't shift with UB on nlk->ngroups")
+> breaks mobile data on both the Pixel 2 XL and OnePlus 6. There is signal
+> but it just never connects to 3G/LTE. Reverting those two commits fixes
+> the issue.
+> 
+> Nothing stands out to me in dmesg unfortunately and iven neither device
+> is running a vanilla kernel, I cannot say if this is a problem in mainline
+> or not but I just wanted to make you aware of it.
 
-Signed-off-by: zhong jiang <zhongjiang@huawei.com>
----
- drivers/scsi/fnic/fnic_trace.c | 27 ++++++++++-----------------
- 1 file changed, 10 insertions(+), 17 deletions(-)
+Many thanks for catching this.  I'll go drop this patch from the trees
+for now, and will queue it up later with the fixup patch when that lands
+in Linus's tree.
 
-diff --git a/drivers/scsi/fnic/fnic_trace.c b/drivers/scsi/fnic/fnic_trace.c
-index 57f67af..e775774 100644
---- a/drivers/scsi/fnic/fnic_trace.c
-+++ b/drivers/scsi/fnic/fnic_trace.c
-@@ -477,8 +477,8 @@ int fnic_trace_buf_init(void)
- 	}
- 
- 	fnic_trace_entries.page_offset =
--		vmalloc(array_size(fnic_max_trace_entries,
--				   sizeof(unsigned long)));
-+			kvcalloc(fnic_max_trace_entries,
-+				   sizeof(unsigned long), GFP_KERNEL);
- 	if (!fnic_trace_entries.page_offset) {
- 		printk(KERN_ERR PFX "Failed to allocate memory for"
- 				  " page_offset\n");
-@@ -489,8 +489,6 @@ int fnic_trace_buf_init(void)
- 		err = -ENOMEM;
- 		goto err_fnic_trace_buf_init;
- 	}
--	memset((void *)fnic_trace_entries.page_offset, 0,
--		  (fnic_max_trace_entries * sizeof(unsigned long)));
- 	fnic_trace_entries.wr_idx = fnic_trace_entries.rd_idx = 0;
- 	fnic_buf_head = fnic_trace_buf_p;
- 
-@@ -524,7 +522,7 @@ void fnic_trace_free(void)
- 	fnic_tracing_enabled = 0;
- 	fnic_trace_debugfs_terminate();
- 	if (fnic_trace_entries.page_offset) {
--		vfree((void *)fnic_trace_entries.page_offset);
-+		kvfree((void *)fnic_trace_entries.page_offset);
- 		fnic_trace_entries.page_offset = NULL;
- 	}
- 	if (fnic_trace_buf_p) {
-@@ -556,8 +554,8 @@ int fnic_fc_trace_init(void)
- 	fc_trace_max_entries = (fnic_fc_trace_max_pages * PAGE_SIZE)/
- 				FC_TRC_SIZE_BYTES;
- 	fnic_fc_ctlr_trace_buf_p =
--		(unsigned long)vmalloc(array_size(PAGE_SIZE,
--						  fnic_fc_trace_max_pages));
-+		(unsigned long)kvcalloc(fnic_fc_trace_max_pages,
-+					PAGE_SIZE, GFP_KERNEL);
- 	if (!fnic_fc_ctlr_trace_buf_p) {
- 		pr_err("fnic: Failed to allocate memory for "
- 		       "FC Control Trace Buf\n");
-@@ -565,25 +563,20 @@ int fnic_fc_trace_init(void)
- 		goto err_fnic_fc_ctlr_trace_buf_init;
- 	}
- 
--	memset((void *)fnic_fc_ctlr_trace_buf_p, 0,
--			fnic_fc_trace_max_pages * PAGE_SIZE);
--
- 	/* Allocate memory for page offset */
- 	fc_trace_entries.page_offset =
--		vmalloc(array_size(fc_trace_max_entries,
--				   sizeof(unsigned long)));
-+				kvcalloc(fc_trace_max_entries,
-+					sizeof(unsigned long), GFP_KERNEL);
- 	if (!fc_trace_entries.page_offset) {
- 		pr_err("fnic:Failed to allocate memory for page_offset\n");
- 		if (fnic_fc_ctlr_trace_buf_p) {
- 			pr_err("fnic: Freeing FC Control Trace Buf\n");
--			vfree((void *)fnic_fc_ctlr_trace_buf_p);
-+			kvfree((void *)fnic_fc_ctlr_trace_buf_p);
- 			fnic_fc_ctlr_trace_buf_p = 0;
- 		}
- 		err = -ENOMEM;
- 		goto err_fnic_fc_ctlr_trace_buf_init;
- 	}
--	memset((void *)fc_trace_entries.page_offset, 0,
--	       (fc_trace_max_entries * sizeof(unsigned long)));
- 
- 	fc_trace_entries.rd_idx = fc_trace_entries.wr_idx = 0;
- 	fc_trace_buf_head = fnic_fc_ctlr_trace_buf_p;
-@@ -618,11 +611,11 @@ void fnic_fc_trace_free(void)
- 	fnic_fc_tracing_enabled = 0;
- 	fnic_fc_trace_debugfs_terminate();
- 	if (fc_trace_entries.page_offset) {
--		vfree((void *)fc_trace_entries.page_offset);
-+		kvfree((void *)fc_trace_entries.page_offset);
- 		fc_trace_entries.page_offset = NULL;
- 	}
- 	if (fnic_fc_ctlr_trace_buf_p) {
--		vfree((void *)fnic_fc_ctlr_trace_buf_p);
-+		kvfree((void *)fnic_fc_ctlr_trace_buf_p);
- 		fnic_fc_ctlr_trace_buf_p = 0;
- 	}
- 	pr_info("fnic:Successfully FC_CTLR Freed Trace Buffer\n");
--- 
-1.7.12.4
+thanks,
 
+greg k-h
