@@ -3,40 +3,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50275C46470
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 16:42:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8D21C46471
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 16:43:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DEB021898
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 16:42:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DEB021898
+	by mail.kernel.org (Postfix) with ESMTP id 9F97721898
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 16:43:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F97721898
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726503AbeHESrR (ORCPT
+        id S1726855AbeHEStG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 5 Aug 2018 14:47:17 -0400
-Received: from mx2.suse.de ([195.135.220.15]:42590 "EHLO mx1.suse.de"
+        Sun, 5 Aug 2018 14:49:06 -0400
+Received: from mx2.suse.de ([195.135.220.15]:43306 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726233AbeHESrR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 Aug 2018 14:47:17 -0400
+        id S1726407AbeHEStG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 5 Aug 2018 14:49:06 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id AE781ADA7;
-        Sun,  5 Aug 2018 16:42:06 +0000 (UTC)
-Date:   Sun, 05 Aug 2018 18:42:06 +0200
-Message-ID: <s5hh8k8u5nl.wl-tiwai@suse.de>
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D8398ADA7;
+        Sun,  5 Aug 2018 16:43:55 +0000 (UTC)
+Date:   Sun, 05 Aug 2018 18:43:55 +0200
+Message-ID: <s5hftzsu5kk.wl-tiwai@suse.de>
 From:   Takashi Iwai <tiwai@suse.de>
-To:     "Alexandru Gagniuc" <mr.nuke.me@gmail.com>
-Cc:     <perex@perex.cz>, <alsa-devel@alsa-project.org>,
-        "Hui Wang" <hui.wang@canonical.com>,
-        "Tom Briden" <tom@decompile.me.uk>,
-        "Kailang Yang" <kailang@realtek.com>, "Peisen" <pshou@realtek.com>,
+To:     " Gustavo A. R. Silva " <gustavo@embeddedor.com>
+Cc:     "Jaroslav Kysela" <perex@perex.cz>, <alsa-devel@alsa-project.org>,
         <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ALSA: hda/realtek - Add mute LED quirk for HP Spectre x360
-In-Reply-To: <20180804164448.7152-1-mr.nuke.me@gmail.com>
-References: <20180804164448.7152-1-mr.nuke.me@gmail.com>
+Subject: Re: [PATCH] ALSA: mixart: Mark expected switch fall-through
+In-Reply-To: <20180804201103.GA26669@embeddedor.com>
+References: <20180804201103.GA26669@embeddedor.com>
 User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
  FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/26
  (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
@@ -47,15 +45,13 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 04 Aug 2018 18:44:44 +0200,
-Alexandru Gagniuc wrote:
+On Sat, 04 Aug 2018 22:11:03 +0200,
+ Gustavo A. R. Silva  wrote:
 > 
-> This device has the same issues as the HP x360 wrt the MUTE LED and
-> the front speakers not working. This patch fixes the MUTE LED issue,
-> but doesn't touch the HDA verbs. The fix for the x360 does not work
-> on the Spectre.
+> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+> where we are expecting to fall through.
 > 
-> Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
 Applied, thanks.
 
