@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B750C46471
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 20:08:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9671C46471
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 20:08:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3BD121920
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 20:08:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E1C0208DE
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 20:08:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YV+22Z8z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3BD121920
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="glFa02Yj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E1C0208DE
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728787AbeHEWOP (ORCPT
+        id S1729060AbeHEWOR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 5 Aug 2018 18:14:15 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:41590 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728524AbeHEWOO (ORCPT
+        Sun, 5 Aug 2018 18:14:17 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:39720 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728524AbeHEWOQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 Aug 2018 18:14:14 -0400
-Received: by mail-pl0-f68.google.com with SMTP id w19-v6so3062145ply.8
-        for <linux-kernel@vger.kernel.org>; Sun, 05 Aug 2018 13:08:30 -0700 (PDT)
+        Sun, 5 Aug 2018 18:14:16 -0400
+Received: by mail-pl0-f65.google.com with SMTP id m1-v6so4715995plt.6
+        for <linux-kernel@vger.kernel.org>; Sun, 05 Aug 2018 13:08:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=gpbI7qWDO6JeCEEZnAVOq1IdQOaMkP3/ZpER6OY/0cw=;
-        b=YV+22Z8zvN6TVaER+5Khk/La++24gSduH/Gh+GJePedy2MRiK9RITyRo1Sy7x0FikN
-         Le8ky/YDJ54VXOxB/wAVP6edUKNWizvB8Zl15asT53m4g3BseucYXKwTBFlqgsHf+Kkm
-         rL57csIMv94hCyqff4A8lFi0AUPBwdS+srKzKH4w02GvRpHoH1SQRg7paapjjHhZ28Ld
-         A5En0fE+6XRCCRNVhFuE3+AMqjcAVMTSm51+LPgOKFwRQrnmDgU9tIf5zpI6o3wuV/CH
-         r08HQnrivabxNocd1XF8G/GYCuMl+Vdm8oqDzA6MElkWfG6jOVXwb5y6TH2U1XOUAgK9
-         wvOQ==
+        bh=eUjLrCINFhUHEvJtdiJwX9hsyE9DR/+wSvQzVqArlCQ=;
+        b=glFa02Yj5Y2LpMAggF7eOZDIr40n8Fw/4BNZmwzrtsTmA3WDtw2ewmxVad7oxVpW4M
+         EKdHrSYEniN8KJUYKYw8dliocawG8jfZeQbDb8mmrVlq2VO7c68mNzZQg1ei2Tfvrooa
+         u3WxOATu3Ii9Mr4HZI/60BsehZVGUq4bI5L1PbyiRJRbmKIalnAi5Ii+WQLEkYFdF1bY
+         xMQMZtar7+nStGppz5LObZULaZn4AVmCKH9ZVVGEVEuITRN1ARphPk7GWqG+fvkGBqWG
+         CUPMFEdQ2D4zj/oqbIQeULJCt299/sc8aGwVHANcOk7iGczfjN//EDZsOxreh/mRQMxj
+         CxKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=gpbI7qWDO6JeCEEZnAVOq1IdQOaMkP3/ZpER6OY/0cw=;
-        b=NoNmv+ktQcRuhRBb4XUWOE9e010ORfc5V2HkrCuyzZdjI1ye9yMAbO5fxDeOuyQmBn
-         zgtDUgsQaBv1IZ8WB65lMWebzBJwt1XMaFy1vXFX3vPcyB853VIHx70ASogiF1yOOsWb
-         InHPRHpF7MW5qDz3ASbRGRPw5G+24wL/2x2KI/LxyfnQ6MRmqy49P1PJGMphHDl77zYh
-         wItzTUHADe6EV4aNjZk3kX4a/wfCAMB0Fbk745sgRWleuj+sC0rtzzRe4SVytNDIpNw0
-         cEWQ/GrJBBfmKuvQqqdE3py/QTCEi2TXjpEI32Up0RrLyLVVvoM/GjiRFG59su6zov6W
-         z4IQ==
-X-Gm-Message-State: AOUpUlHWn49OQr/Lp0JBJEPt0iUzcngb0EpfoXfLv3n49BlT09sgQsr6
-        vtkSq/gH+o9rYqSQv8XLqUM=
-X-Google-Smtp-Source: AAOMgpdabr6Ky7xM/7/Jm1399QK/jOWMChwC3AXclg1NUwvumRK9PnVY9WZa18h6Audq585l+oxTXA==
-X-Received: by 2002:a17:902:9a83:: with SMTP id w3-v6mr11454411plp.75.1533499710319;
-        Sun, 05 Aug 2018 13:08:30 -0700 (PDT)
+        bh=eUjLrCINFhUHEvJtdiJwX9hsyE9DR/+wSvQzVqArlCQ=;
+        b=qoh7ilXjFBm0ZHP7Deq22pj1rTgHISfGfxc28cvr4NIygNmKqya4l8sfCPeKljfxCF
+         bpmTX6tkeSb6aZ4YxgaSYYM0EPKpaDwY/OYgxYx3rjwbfeAsYYmRdX6CtsnaX2sf6kEc
+         0GbR3t+rPx27QgwssKrGC0AkXdl5tEJa5c8/Gdep0jsDK9nhI9JYqzZL2FdnVedbu/Cx
+         1b6fPi7it26Zl6bUDSnDtLa04reecqvbnFaQ+BBlMSi/lBAA8ChauWMMU0RpKXVxJ0u1
+         cVupwFgg9V0eem7a3hcrg2bfxkWFyhkI49alBiONzY35qA86LkCqKD7g0s1vL1Hb/1JV
+         BTmA==
+X-Gm-Message-State: AOUpUlEEJJvVdkEr0UQoNX0Gi79IpmIoNoNmAbH562WT6i28fqOg+rmV
+        JfAco9KLQhC7ykkBZNtr2emgwlW1
+X-Google-Smtp-Source: AAOMgpdz29j+0yPqNJUyWB+MqkhrKCG+YmkgJsATao3S/n4SoNaSSFTvGHYz5Y1cw1vMMMANYw3IrQ==
+X-Received: by 2002:a17:902:74c2:: with SMTP id f2-v6mr11295617plt.260.1533499711992;
+        Sun, 05 Aug 2018 13:08:31 -0700 (PDT)
 Received: from toddpoynor2.mtv.corp.google.com ([2620:0:1000:3701:7d29:cd13:d903:7908])
-        by smtp.gmail.com with ESMTPSA id o72-v6sm15038227pfk.76.2018.08.05.13.08.29
+        by smtp.gmail.com with ESMTPSA id o72-v6sm15038227pfk.76.2018.08.05.13.08.31
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 05 Aug 2018 13:08:29 -0700 (PDT)
+        Sun, 05 Aug 2018 13:08:31 -0700 (PDT)
 From:   Todd Poynor <toddpoynor@gmail.com>
 To:     Rob Springer <rspringer@google.com>,
         John Joseph <jnjoseph@google.com>,
@@ -66,9 +66,9 @@ To:     Rob Springer <rspringer@google.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         Todd Poynor <toddpoynor@google.com>
-Subject: [PATCH 10/15] staging: gasket: apex: fold device add/remove logic inline
-Date:   Sun,  5 Aug 2018 13:07:44 -0700
-Message-Id: <20180805200749.116693-11-toddpoynor@gmail.com>
+Subject: [PATCH 11/15] staging: gasket: core: remove sysfs setup and cleanup callbacks
+Date:   Sun,  5 Aug 2018 13:07:45 -0700
+Message-Id: <20180805200749.116693-12-toddpoynor@gmail.com>
 X-Mailer: git-send-email 2.18.0.597.ga71716f1ad-goog
 In-Reply-To: <20180805200749.116693-1-toddpoynor@gmail.com>
 References: <20180805200749.116693-1-toddpoynor@gmail.com>
@@ -81,123 +81,77 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Todd Poynor <toddpoynor@google.com>
 
-Gasket device drivers are now in charge of the device add and remove
-sequences; the framework callbacks for these are deleted.  Move the
-apex device add callback code to the probe function.  Apex did not
-implement the removal callback.
+Gasket device drivers now call into the gasket framework to initialize
+and de-initialize, rather than the other way around.  The calling code
+can perform sysfs setup and cleanup actions without callbacks from the
+framework.  Remove the sysfs setup and cleanup callbacks.
 
 Signed-off-by: Todd Poynor <toddpoynor@google.com>
 ---
- drivers/staging/gasket/apex_driver.c | 69 +++++++++++++---------------
- 1 file changed, 32 insertions(+), 37 deletions(-)
+ drivers/staging/gasket/gasket_core.c | 10 ----------
+ drivers/staging/gasket/gasket_core.h | 18 ------------------
+ 2 files changed, 28 deletions(-)
 
-diff --git a/drivers/staging/gasket/apex_driver.c b/drivers/staging/gasket/apex_driver.c
-index 1d8a100c52885..69ca7fb10eddc 100644
---- a/drivers/staging/gasket/apex_driver.c
-+++ b/drivers/staging/gasket/apex_driver.c
-@@ -448,37 +448,6 @@ static int apex_reset(struct gasket_dev *gasket_dev)
- 	return ret;
- }
+diff --git a/drivers/staging/gasket/gasket_core.c b/drivers/staging/gasket/gasket_core.c
+index 0d76e18fcde5b..ace92f107ed58 100644
+--- a/drivers/staging/gasket/gasket_core.c
++++ b/drivers/staging/gasket/gasket_core.c
+@@ -1489,18 +1489,9 @@ int gasket_pci_add_device(struct pci_dev *pci_dev,
+ 	if (ret)
+ 		goto fail4;
  
--static int apex_add_dev_cb(struct gasket_dev *gasket_dev)
--{
--	ulong page_table_ready, msix_table_ready;
--	int retries = 0;
--
--	apex_reset(gasket_dev);
--
--	while (retries < APEX_RESET_RETRY) {
--		page_table_ready =
--			gasket_dev_read_64(gasket_dev, APEX_BAR_INDEX,
--					   APEX_BAR2_REG_KERNEL_HIB_PAGE_TABLE_INIT);
--		msix_table_ready =
--			gasket_dev_read_64(gasket_dev, APEX_BAR_INDEX,
--					   APEX_BAR2_REG_KERNEL_HIB_MSIX_TABLE_INIT);
--		if (page_table_ready && msix_table_ready)
--			break;
--		schedule_timeout(msecs_to_jiffies(APEX_RESET_DELAY));
--		retries++;
+-	ret = check_and_invoke_callback(gasket_dev,
+-					driver_desc->sysfs_setup_cb);
+-	if (ret) {
+-		dev_err(gasket_dev->dev, "Error in sysfs setup cb: %d\n", ret);
+-		goto fail5;
 -	}
 -
--	if (retries == APEX_RESET_RETRY) {
--		if (!page_table_ready)
--			dev_err(gasket_dev->dev, "Page table init timed out\n");
--		if (!msix_table_ready)
--			dev_err(gasket_dev->dev, "MSI-X table init timed out\n");
--		return -ETIMEDOUT;
--	}
--
--	return 0;
--}
--
- /*
-  * Check permissions for Apex ioctls.
-  * Returns true if the current user may execute this ioctl, and false otherwise.
-@@ -626,6 +595,8 @@ static int apex_pci_probe(struct pci_dev *pci_dev,
- 			  const struct pci_device_id *id)
- {
- 	int ret;
-+	ulong page_table_ready, msix_table_ready;
-+	int retries = 0;
- 	struct gasket_dev *gasket_dev;
- 
- 	ret = pci_enable_device(pci_dev);
-@@ -644,15 +615,42 @@ static int apex_pci_probe(struct pci_dev *pci_dev,
- 	}
- 
- 	pci_set_drvdata(pci_dev, gasket_dev);
-+	apex_reset(gasket_dev);
-+
-+	while (retries < APEX_RESET_RETRY) {
-+		page_table_ready =
-+			gasket_dev_read_64(gasket_dev, APEX_BAR_INDEX,
-+					   APEX_BAR2_REG_KERNEL_HIB_PAGE_TABLE_INIT);
-+		msix_table_ready =
-+			gasket_dev_read_64(gasket_dev, APEX_BAR_INDEX,
-+					   APEX_BAR2_REG_KERNEL_HIB_MSIX_TABLE_INIT);
-+		if (page_table_ready && msix_table_ready)
-+			break;
-+		schedule_timeout(msecs_to_jiffies(APEX_RESET_DELAY));
-+		retries++;
-+	}
-+
-+	if (retries == APEX_RESET_RETRY) {
-+		if (!page_table_ready)
-+			dev_err(gasket_dev->dev, "Page table init timed out\n");
-+		if (!msix_table_ready)
-+			dev_err(gasket_dev->dev, "MSI-X table init timed out\n");
-+		ret = -ETIMEDOUT;
-+		goto remove_device;
-+	}
-+
- 	ret = gasket_enable_device(gasket_dev);
- 	if (ret) {
- 		dev_err(&pci_dev->dev, "error enabling gasket device\n");
--		gasket_pci_remove_device(pci_dev);
--		pci_disable_device(pci_dev);
--		return ret;
-+		goto remove_device;
- 	}
- 
+ 	*gasket_devp = gasket_dev;
  	return 0;
-+
-+remove_device:
-+	gasket_pci_remove_device(pci_dev);
-+	pci_disable_device(pci_dev);
-+	return ret;
- }
  
- static void apex_pci_remove(struct pci_dev *pci_dev)
-@@ -697,9 +695,6 @@ static struct gasket_driver_desc apex_desc = {
- 	.interrupts = apex_interrupts,
- 	.interrupt_pack_width = 7,
+-fail5:
+-	check_and_invoke_callback(gasket_dev, driver_desc->sysfs_cleanup_cb);
+ fail4:
+ fail3:
+ 	gasket_sysfs_remove_mapping(gasket_dev->dev_info.device);
+@@ -1550,7 +1541,6 @@ void gasket_pci_remove_device(struct pci_dev *pci_dev)
  
--	.add_dev_cb = apex_add_dev_cb,
--	.remove_dev_cb = NULL,
+ 	gasket_cleanup_pci(gasket_dev);
+ 
+-	check_and_invoke_callback(gasket_dev, driver_desc->sysfs_cleanup_cb);
+ 	gasket_sysfs_remove_mapping(gasket_dev->dev_info.device);
+ 	device_destroy(internal_desc->class, gasket_dev->dev_info.devt);
+ 	gasket_free_dev(gasket_dev);
+diff --git a/drivers/staging/gasket/gasket_core.h b/drivers/staging/gasket/gasket_core.h
+index 0ef0a2640f0fe..275fd0b345b6e 100644
+--- a/drivers/staging/gasket/gasket_core.h
++++ b/drivers/staging/gasket/gasket_core.h
+@@ -444,24 +444,6 @@ struct gasket_driver_desc {
+ 	 */
+ 	int (*device_close_cb)(struct gasket_dev *dev);
+ 
+-	/*
+-	 * sysfs_setup_cb: Callback to set up driver-specific sysfs nodes.
+-	 * @dev: Pointer to the gasket_dev struct for this device.
+-	 *
+-	 * Called during the add gasket device call.
+-	 *
+-	 */
+-	int (*sysfs_setup_cb)(struct gasket_dev *dev);
 -
- 	.sysfs_setup_cb = apex_sysfs_setup_cb,
- 	.sysfs_cleanup_cb = NULL,
- 
+-	/*
+-	 * sysfs_cleanup_cb: Callback to clean up driver-specific sysfs nodes.
+-	 * @dev: Pointer to the gasket_dev struct for this device.
+-	 *
+-	 * Called during device disable processing.
+-	 *
+-	 */
+-	int (*sysfs_cleanup_cb)(struct gasket_dev *dev);
+-
+ 	/*
+ 	 * get_mappable_regions_cb: Get descriptors of mappable device memory.
+ 	 * @gasket_dev: Pointer to the struct gasket_dev for this device.
 -- 
 2.18.0.597.ga71716f1ad-goog
 
