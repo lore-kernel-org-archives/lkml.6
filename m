@@ -2,125 +2,363 @@ Return-Path: <SRS0=mdhE=KU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62310C46470
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 14:41:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 608C0C46470
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 14:41:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0ED1621898
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 14:41:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GMKKhd6Z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0ED1621898
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	by mail.kernel.org (Postfix) with ESMTP id 1216B21898
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 14:41:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1216B21898
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726371AbeHEQqM (ORCPT
+        id S1726514AbeHEQqh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 5 Aug 2018 12:46:12 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:40424 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726191AbeHEQqM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 Aug 2018 12:46:12 -0400
-Received: by mail-pl0-f65.google.com with SMTP id s17-v6so4537250plp.7;
-        Sun, 05 Aug 2018 07:41:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=JjpHn7RBzggnN4vJTpPrEUbsht/E7fP5GnOYxXF0J/o=;
-        b=GMKKhd6Zs2js9W/LyECx0DJqlSp+SkAp/44ZqXJSx7bx282v9wPPQgraLqNjaoq9n6
-         eSqnv2lLoAeMuZxGccMZvM0SXauVHthp8SahOwZB1yZLHWItT4vyv/OC3iHvOquopGGR
-         SglunmwNUexfeeWnGhboj+FYEh6tz1YeEPN2JBIUxqoB848pJ/oFUNUsMvSHkvh+Bjvp
-         PVAGQHlY9NgeCzWztx68NbM+cSYCSUHcix25X+hKVvzCDvUXmwzLrMQkHmi5QgeUpmYh
-         PSK4FBYFvM0Ch9dqROdQe4ljVtVd5Sn9/0qpz07xZkOjsquqI3JMG4pQkFJq7eUrvqeK
-         8pyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=JjpHn7RBzggnN4vJTpPrEUbsht/E7fP5GnOYxXF0J/o=;
-        b=pZJvzaXqMgoBofHLcnx+T8GJgdLiUgWPWyXY92oTQmxxDLDcokDw8zX88/C1m5BOE6
-         ulCrAlp1u/FlMrdPABc1VSW6go0E5JSV2U2H4JNtJIEzGxn01BiActr/DUWGbkwwCfGL
-         z8vipzHWRUwHdiLtjgS1P41AcR+27se08fAeLcSDRUf4XyECUBXiF6WDmEeIpYuZxscn
-         ZQ6DVg5UeSRZcGGozEmOVpHb9fzpdGBP4URW+tDUqYfm5t2AR8ZYQrajpB0sY4DerRky
-         Ejml34aguc38h2SKOqKkDueVLx3CG5y2+l9YgY7vvsUUPlaDEV6mBTlNQwDpV2GPHhIf
-         i+NQ==
-X-Gm-Message-State: AOUpUlH18T/kdlF5kyX+ImaVwYxidV5KOiyOAaqyoYOC0he4Ed2uoWxy
-        QrZI5zug0J3nS5FWm6pOOm3ge8st
-X-Google-Smtp-Source: AAOMgpdota4ECJc5PN3q0v/iLBCxqzC7LVP1hGOxWyMbLir6ubnU5pseCxLzfaTrVvo/Mq6Ly773XQ==
-X-Received: by 2002:a17:902:d70d:: with SMTP id w13-v6mr10615936ply.229.1533480082925;
-        Sun, 05 Aug 2018 07:41:22 -0700 (PDT)
-Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id e82-v6sm19743436pfd.40.2018.08.05.07.41.20
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 05 Aug 2018 07:41:21 -0700 (PDT)
-Subject: Re: [PATCH 4.4 000/124] 4.4.146-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>
-References: <20180804082702.434482435@linuxfoundation.org>
- <CA+G9fYsZtw-OHh2cKC0VG5zwdKOMvnOx-cAVfp2qfY_drFQ4_Q@mail.gmail.com>
- <20180805134952.GA15972@kroah.com>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <18c8f409-219f-b2ed-4202-5e69d767949a@roeck-us.net>
-Date:   Sun, 5 Aug 2018 07:41:19 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Sun, 5 Aug 2018 12:46:37 -0400
+Received: from smtp.nue.novell.com ([195.135.221.5]:57154 "EHLO
+        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726191AbeHEQqh (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
+        Sun, 5 Aug 2018 12:46:37 -0400
+Received: from linux-l9pv.suse (124-11-22-254.static.tfn.net.tw [124.11.22.254])
+        by smtp.nue.novell.com with ESMTP (TLS encrypted); Sun, 05 Aug 2018 16:41:32 +0200
+Date:   Sun, 5 Aug 2018 22:40:55 +0800
+From:   joeyli <jlee@suse.com>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     "Lee, Chun-Yi" <joeyli.kernel@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        keyrings@vger.kernel.org,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Pavel Machek <pavel@ucw.cz>, Chen Yu <yu.c.chen@intel.com>,
+        Oliver Neukum <oneukum@suse.com>,
+        Ryan Chen <yu.chen.surf@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>
+Subject: Re: [PATCH 1/6] x86/KASLR: make getting random long number function
+ public
+Message-ID: <20180805144055.GA27062@linux-l9pv.suse>
+References: <20180805032119.20485-1-jlee@suse.com>
+ <20180805032119.20485-2-jlee@suse.com>
+ <CAKv+Gu-zMbPQe6UtrDxoOX6Csfu9xturNVs2rrhd7c=NRzghVg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180805134952.GA15972@kroah.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKv+Gu-zMbPQe6UtrDxoOX6Csfu9xturNVs2rrhd7c=NRzghVg@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/05/2018 06:49 AM, Greg Kroah-Hartman wrote:
-> On Sun, Aug 05, 2018 at 05:24:21PM +0530, Naresh Kamboju wrote:
->> On 4 August 2018 at 14:29, Greg Kroah-Hartman
->> <gregkh@linuxfoundation.org> wrote:
->>> This is the start of the stable review cycle for the 4.4.146 release.
->>> There are 124 patches in this series, all will be posted as a response
->>> to this one.  If anyone has any issues with these being applied, please
->>> let me know.
->>>
->>> Responses should be made by Mon Aug  6 08:26:39 UTC 2018.
->>> Anything received after that time might be too late.
->>>
->>> The whole patch series can be found in one patch at:
->>>          https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.146-rc1.gz
->>> or in the git tree and branch at:
->>>          git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
->>> and the diffstat can be found below.
->>>
->>> thanks,
->>>
->>> greg k-h
->>
->> Results from Linaro’s test farm.
->> No regressions on arm64, arm and x86_64.
+Hi Ard,
+
+On Sun, Aug 05, 2018 at 10:16:03AM +0200, Ard Biesheuvel wrote:
+> On 5 August 2018 at 05:21, Lee, Chun-Yi <joeyli.kernel@gmail.com> wrote:
+> > Separating the functions for getting random long number from KASLR
+> > to x86 library, then it can be used to generate random long for
+> > EFI root key.
+> >
+> > Cc: Kees Cook <keescook@chromium.org>
+> > Cc: Thomas Gleixner <tglx@linutronix.de>
+> > Cc: Ingo Molnar <mingo@redhat.com>
+> > Cc: "H. Peter Anvin" <hpa@zytor.com>
+> > Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+> > Cc: Pavel Machek <pavel@ucw.cz>
+> > Cc: Chen Yu <yu.c.chen@intel.com>
+> > Cc: Oliver Neukum <oneukum@suse.com>
+> > Cc: Ryan Chen <yu.chen.surf@gmail.com>
+> > Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> > Cc: David Howells <dhowells@redhat.com>
+> > Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
+> > Signed-off-by: "Lee, Chun-Yi" <jlee@suse.com>
 > 
-> Really?  How did you all miss the netfilter bug that was introduced by
-> this series?
+> Not my call to make perhaps, but i'm nacking it anyway.
+> 
+> Playing games with counters and other low entropy inputs may have been
+> acceptable for kaslr on x86 when it was first introduced, but using it
+> to generate symmetric keys is really out of the question.
+> 
+> On modern x86, i suppose rdrand is a given, and these days we have
+> EFI_RNG_PROTOCOL as well (and an open source UEFI driver for ChasoKey,
+> btw - perhaps we should try and get MS to sign that?), although I'm
+> not sure whether any x86 support this out of the box now.
+> 
+> BTW using low entropy inputs on top of rdrand or EFI_RNG_PROTOCOL is
+> fine, if you're paranoid, but if you have neither of those, you should
+> really fail the call.
 > 
 
-If I understand the related exchange correctly, this bug exists upstream as well,
-and no one caught it there either. I am also not sure if there are secondary
-conditions, such as the number of multicast groups. Given that, I don't really
-feel that bad. On the contrary, kudos to Nathan for catching it.
+I agreed with your suggestion. I will add EFI_RNG_PROTOCOL and also checking
+the existence of RDRAND and EFI_RNG_PROTOCOL.
 
-This just shows that our testing is not perfect and needs to improve further.
+Thanks for your view.
 
-Guenter
+Joey Lee
+ 
+> > ---
+> >  arch/x86/boot/compressed/kaslr.c | 21 -------------
+> >  arch/x86/boot/compressed/misc.c  | 17 ++++++++++
+> >  arch/x86/boot/compressed/misc.h  |  6 ++++
+> >  arch/x86/lib/kaslr.c             | 61 ++---------------------------------
+> >  arch/x86/lib/random.c            | 68 ++++++++++++++++++++++++++++++++++++++++
+> >  5 files changed, 93 insertions(+), 80 deletions(-)
+> >  create mode 100644 arch/x86/lib/random.c
+> >
+> > diff --git a/arch/x86/boot/compressed/kaslr.c b/arch/x86/boot/compressed/kaslr.c
+> > index b87a7582853d..0f40d2178ebc 100644
+> > --- a/arch/x86/boot/compressed/kaslr.c
+> > +++ b/arch/x86/boot/compressed/kaslr.c
+> > @@ -33,13 +33,11 @@
+> >  #include "error.h"
+> >  #include "../string.h"
+> >
+> > -#include <generated/compile.h>
+> >  #include <linux/module.h>
+> >  #include <linux/uts.h>
+> >  #include <linux/utsname.h>
+> >  #include <linux/ctype.h>
+> >  #include <linux/efi.h>
+> > -#include <generated/utsrelease.h>
+> >  #include <asm/efi.h>
+> >
+> >  /* Macros used by the included decompressor code below. */
+> > @@ -57,25 +55,6 @@ extern unsigned long get_cmd_line_ptr(void);
+> >  /* Used by PAGE_KERN* macros: */
+> >  pteval_t __default_kernel_pte_mask __read_mostly = ~0;
+> >
+> > -/* Simplified build-specific string for starting entropy. */
+> > -static const char build_str[] = UTS_RELEASE " (" LINUX_COMPILE_BY "@"
+> > -               LINUX_COMPILE_HOST ") (" LINUX_COMPILER ") " UTS_VERSION;
+> > -
+> > -static unsigned long rotate_xor(unsigned long hash, const void *area,
+> > -                               size_t size)
+> > -{
+> > -       size_t i;
+> > -       unsigned long *ptr = (unsigned long *)area;
+> > -
+> > -       for (i = 0; i < size / sizeof(hash); i++) {
+> > -               /* Rotate by odd number of bits and XOR. */
+> > -               hash = (hash << ((sizeof(hash) * 8) - 7)) | (hash >> 7);
+> > -               hash ^= ptr[i];
+> > -       }
+> > -
+> > -       return hash;
+> > -}
+> > -
+> >  /* Attempt to create a simple but unpredictable starting entropy. */
+> >  static unsigned long get_boot_seed(void)
+> >  {
+> > diff --git a/arch/x86/boot/compressed/misc.c b/arch/x86/boot/compressed/misc.c
+> > index 8dd1d5ccae58..eb0ab9cad4e4 100644
+> > --- a/arch/x86/boot/compressed/misc.c
+> > +++ b/arch/x86/boot/compressed/misc.c
+> > @@ -426,3 +426,20 @@ void fortify_panic(const char *name)
+> >  {
+> >         error("detected buffer overflow");
+> >  }
+> > +
+> > +#if CONFIG_RANDOMIZE_BASE
+> > +unsigned long rotate_xor(unsigned long hash, const void *area,
+> > +                       size_t size)
+> > +{
+> > +       size_t i;
+> > +       unsigned long *ptr = (unsigned long *)area;
+> > +
+> > +       for (i = 0; i < size / sizeof(hash); i++) {
+> > +               /* Rotate by odd number of bits and XOR. */
+> > +               hash = (hash << ((sizeof(hash) * 8) - 7)) | (hash >> 7);
+> > +               hash ^= ptr[i];
+> > +       }
+> > +
+> > +       return hash;
+> > +}
+> > +#endif
+> > diff --git a/arch/x86/boot/compressed/misc.h b/arch/x86/boot/compressed/misc.h
+> > index a423bdb42686..957f327ad83c 100644
+> > --- a/arch/x86/boot/compressed/misc.h
+> > +++ b/arch/x86/boot/compressed/misc.h
+> > @@ -70,6 +70,8 @@ int cmdline_find_option_bool(const char *option);
+> >
+> >
+> >  #if CONFIG_RANDOMIZE_BASE
+> > +#include <generated/compile.h>
+> > +#include <generated/utsrelease.h>
+> >  /* kaslr.c */
+> >  void choose_random_location(unsigned long input,
+> >                             unsigned long input_size,
+> > @@ -78,6 +80,10 @@ void choose_random_location(unsigned long input,
+> >                             unsigned long *virt_addr);
+> >  /* cpuflags.c */
+> >  bool has_cpuflag(int flag);
+> > +/* Simplified build-specific string for starting entropy. */
+> > +static const char build_str[] = UTS_RELEASE " (" LINUX_COMPILE_BY "@"
+> > +               LINUX_COMPILE_HOST ") (" LINUX_COMPILER ") " UTS_VERSION;
+> > +unsigned long rotate_xor(unsigned long hash, const void *area, size_t size);
+> >  #else
+> >  static inline void choose_random_location(unsigned long input,
+> >                                           unsigned long input_size,
+> > diff --git a/arch/x86/lib/kaslr.c b/arch/x86/lib/kaslr.c
+> > index 79778ab200e4..29ed9bfde5a5 100644
+> > --- a/arch/x86/lib/kaslr.c
+> > +++ b/arch/x86/lib/kaslr.c
+> > @@ -26,67 +26,10 @@
+> >  #define get_boot_seed() kaslr_offset()
+> >  #endif
+> >
+> > -#define I8254_PORT_CONTROL     0x43
+> > -#define I8254_PORT_COUNTER0    0x40
+> > -#define I8254_CMD_READBACK     0xC0
+> > -#define I8254_SELECT_COUNTER0  0x02
+> > -#define I8254_STATUS_NOTREADY  0x40
+> > -static inline u16 i8254(void)
+> > -{
+> > -       u16 status, timer;
+> > -
+> > -       do {
+> > -               outb(I8254_PORT_CONTROL,
+> > -                    I8254_CMD_READBACK | I8254_SELECT_COUNTER0);
+> > -               status = inb(I8254_PORT_COUNTER0);
+> > -               timer  = inb(I8254_PORT_COUNTER0);
+> > -               timer |= inb(I8254_PORT_COUNTER0) << 8;
+> > -       } while (status & I8254_STATUS_NOTREADY);
+> > -
+> > -       return timer;
+> > -}
+> > +#include "random.c"
+> >
+> >  unsigned long kaslr_get_random_long(const char *purpose)
+> >  {
+> > -#ifdef CONFIG_X86_64
+> > -       const unsigned long mix_const = 0x5d6008cbf3848dd3UL;
+> > -#else
+> > -       const unsigned long mix_const = 0x3f39e593UL;
+> > -#endif
+> > -       unsigned long raw, random = get_boot_seed();
+> > -       bool use_i8254 = true;
+> > -
+> > -       debug_putstr(purpose);
+> >         debug_putstr(" KASLR using");
+> > -
+> > -       if (has_cpuflag(X86_FEATURE_RDRAND)) {
+> > -               debug_putstr(" RDRAND");
+> > -               if (rdrand_long(&raw)) {
+> > -                       random ^= raw;
+> > -                       use_i8254 = false;
+> > -               }
+> > -       }
+> > -
+> > -       if (has_cpuflag(X86_FEATURE_TSC)) {
+> > -               debug_putstr(" RDTSC");
+> > -               raw = rdtsc();
+> > -
+> > -               random ^= raw;
+> > -               use_i8254 = false;
+> > -       }
+> > -
+> > -       if (use_i8254) {
+> > -               debug_putstr(" i8254");
+> > -               random ^= i8254();
+> > -       }
+> > -
+> > -       /* Circular multiply for better bit diffusion */
+> > -       asm(_ASM_MUL "%3"
+> > -           : "=a" (random), "=d" (raw)
+> > -           : "a" (random), "rm" (mix_const));
+> > -       random += raw;
+> > -
+> > -       debug_putstr("...\n");
+> > -
+> > -       return random;
+> > +       return get_random_long(purpose);
+> >  }
+> > diff --git a/arch/x86/lib/random.c b/arch/x86/lib/random.c
+> > new file mode 100644
+> > index 000000000000..f2fe6a784c98
+> > --- /dev/null
+> > +++ b/arch/x86/lib/random.c
+> > @@ -0,0 +1,68 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +
+> > +#include <asm/io.h>
+> > +#include <asm/archrandom.h>
+> > +
+> > +#define I8254_PORT_CONTROL     0x43
+> > +#define I8254_PORT_COUNTER0    0x40
+> > +#define I8254_CMD_READBACK     0xC0
+> > +#define I8254_SELECT_COUNTER0  0x02
+> > +#define I8254_STATUS_NOTREADY  0x40
+> > +static inline u16 i8254(void)
+> > +{
+> > +       u16 status, timer;
+> > +
+> > +       do {
+> > +               outb(I8254_PORT_CONTROL,
+> > +                    I8254_CMD_READBACK | I8254_SELECT_COUNTER0);
+> > +               status = inb(I8254_PORT_COUNTER0);
+> > +               timer  = inb(I8254_PORT_COUNTER0);
+> > +               timer |= inb(I8254_PORT_COUNTER0) << 8;
+> > +       } while (status & I8254_STATUS_NOTREADY);
+> > +
+> > +       return timer;
+> > +}
+> > +
+> > +static unsigned long get_random_long(const char *purpose)
+> > +{
+> > +#ifdef CONFIG_X86_64
+> > +       const unsigned long mix_const = 0x5d6008cbf3848dd3UL;
+> > +#else
+> > +       const unsigned long mix_const = 0x3f39e593UL;
+> > +#endif
+> > +       unsigned long raw, random = get_boot_seed();
+> > +       bool use_i8254 = true;
+> > +
+> > +       debug_putstr(purpose);
+> > +
+> > +       if (has_cpuflag(X86_FEATURE_RDRAND)) {
+> > +               debug_putstr(" RDRAND");
+> > +               if (rdrand_long(&raw)) {
+> > +                       random ^= raw;
+> > +                       use_i8254 = false;
+> > +               }
+> > +       }
+> > +
+> > +       if (has_cpuflag(X86_FEATURE_TSC)) {
+> > +               debug_putstr(" RDTSC");
+> > +               raw = rdtsc();
+> > +
+> > +               random ^= raw;
+> > +               use_i8254 = false;
+> > +       }
+> > +
+> > +       if (use_i8254) {
+> > +               debug_putstr(" i8254");
+> > +               random ^= i8254();
+> > +       }
+> > +
+> > +       /* Circular multiply for better bit diffusion */
+> > +       asm(_ASM_MUL "%3"
+> > +           : "=a" (random), "=d" (raw)
+> > +           : "a" (random), "rm" (mix_const));
+> > +       random += raw;
+> > +
+> > +       debug_putstr("...\n");
+> > +
+> > +       return random;
+> > +}
+> > --
+> > 2.13.6
+> >
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-efi" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
