@@ -2,128 +2,99 @@ Return-Path: <SRS0=mdhE=KU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6735BC46471
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 21:35:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B668EC46470
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 21:36:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D34E219A2
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 21:35:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vAKhRKfl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D34E219A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 745D0219A2
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 21:36:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 745D0219A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727657AbeHEXlg (ORCPT
+        id S1728711AbeHEXmU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 5 Aug 2018 19:41:36 -0400
-Received: from mail-ua0-f196.google.com ([209.85.217.196]:40655 "EHLO
-        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727154AbeHEXlg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 Aug 2018 19:41:36 -0400
-Received: by mail-ua0-f196.google.com with SMTP id m13-v6so10025084uaq.7
-        for <linux-kernel@vger.kernel.org>; Sun, 05 Aug 2018 14:35:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=lgdiXFluR903lvXgRiPtlA0Zp7ZASnFLlsPSseuNe00=;
-        b=vAKhRKfltz+cqEKaf1Z4OQwrQgyL+2IaZdpFE3yf86mpCwpyEhKlVDNMSe/rd9tEp9
-         Boi/InrCe6O9F7Sh9/ScFTe8fJ6GDDlIUpWkYTZoxCGUsVYONq7fwNhpwblmSKSAesNf
-         IjCEBLGDW1OBkHv6fELcpFMxLjNzqyeoTlQm2UInXuyEe7M1bHGdQBGpuhTisK9XyWgs
-         k/CRgMqlRsawzmBfEeqZUhLkFEaxGn7U+AuDWru+PWzpFCYtllWBy/xPuPM4g24Ocy6R
-         JUczVaoue5zUOtsUipLqLMq6QPoKlIUezAtj5MaH2/GPJilzoQ65Fcosn1/x5gTSojxd
-         SsPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=lgdiXFluR903lvXgRiPtlA0Zp7ZASnFLlsPSseuNe00=;
-        b=HNLsxLr1PPpDGV9AUMNdjsILA6WTrWwkRkBso3kqdU2DOn9E6HRFWbbJlVfqcsCI0H
-         WkkXWKxmM8EMUFE9ZtkRwE1Mrsfc3De8bX6/Wc2V6ogUTtaP9zGHMRqL+Ykhy8wFhFy3
-         04o1NbeADfd3nfDjKZpXPr3aWzdtMfzOsqdRa4EgnuqVUEIWFtZo+2z/t0bgE7JDqT9a
-         AvgIRmrcLQO09vSIBkhCvDmyI2zmJJdzhawIAz2chRqPV7suk+9937UPpA59ERe0qxqq
-         oKUzjHEONmsObC90XSOM7igvdF1oB4hT3XVAEaIKQhfON90juTNDNbfLzYFk8oY0oF8L
-         p3nw==
-X-Gm-Message-State: AOUpUlEd1sepsOKrfDa5PpikPM/1f2ajrcR8sVgX0izyplxjMA3F/+0P
-        IWjXgSv0eYi9j/zWaQfIbLV+SXVTDaT0/dWwQ4I=
-X-Google-Smtp-Source: AAOMgpd2H35H62hbmrIAYURNr34C/0ZAmyE+b8eU/Ym3wb6OFTgXG2E7t/BFTTku8KhXVwpovnO3ysrhR5tcysehY3Y=
-X-Received: by 2002:ab0:17ec:: with SMTP id p44-v6mr8766809uaf.53.1533504934456;
- Sun, 05 Aug 2018 14:35:34 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a67:7187:0:0:0:0:0 with HTTP; Sun, 5 Aug 2018 14:35:14 -0700 (PDT)
-In-Reply-To: <CADPp2fCY7DKi_0fxi+r986T3e=7rzygAPHLby6amcdC11f+=Hw@mail.gmail.com>
-References: <CADPp2fB3Oj3Jm08rVqeHxX855EnO8+22-H552Q6AFfJL-dWmtQ@mail.gmail.com>
- <a88b1975-4232-4b6f-9497-ab44dbdda5d6@suse.com> <CADPp2fCY7DKi_0fxi+r986T3e=7rzygAPHLby6amcdC11f+=Hw@mail.gmail.com>
-From:   Adam Novak <interfect@gmail.com>
-Date:   Sun, 5 Aug 2018 14:35:14 -0700
-Message-ID: <CADPp2fCdYc2ER+Y7RUU0ZOkU-vr_b=Ep+dhEg7fcSd0TzK-g-g@mail.gmail.com>
-Subject: Re: Problems with Zen under Xen and recent Linux kernel improvements
-To:     Juergen Gross <jgross@suse.com>
-Cc:     linux-kernel@vger.kernel.org, boris.ostrovsky@oracle.com,
-        x86@kernel.org
+        Sun, 5 Aug 2018 19:42:20 -0400
+Received: from gate.crashing.org ([63.228.1.57]:54599 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727535AbeHEXmT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 5 Aug 2018 19:42:19 -0400
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w75LUs6K031030;
+        Sun, 5 Aug 2018 16:30:56 -0500
+Message-ID: <00113a1e9ec3e111ee4e12d682168142dcbbcf61.camel@kernel.crashing.org>
+Subject: Re: [RFC 0/4] Virtio uses DMA API for all devices
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        aik@ozlabs.ru, robh@kernel.org, joe@perches.com,
+        elfring@users.sourceforge.net, david@gibson.dropbear.id.au,
+        jasowang@redhat.com, mpe@ellerman.id.au, linuxram@us.ibm.com,
+        haren@linux.vnet.ibm.com, paulus@samba.org,
+        srikar@linux.vnet.ibm.com, robin.murphy@arm.com,
+        jean-philippe.brucker@arm.com, marc.zyngier@arm.com
+Date:   Mon, 06 Aug 2018 07:30:54 +1000
+In-Reply-To: <b7e8294e3e70d24072883a7e8e5375719d5af870.camel@kernel.crashing.org>
+References: <20180802200646-mutt-send-email-mst@kernel.org>
+         <e9beb6bba5a7d05741e27e85b24a3b23ba7c2762.camel@kernel.crashing.org>
+         <20180802225738-mutt-send-email-mst@kernel.org>
+         <de4888b6457e220776e16a9c8958ff0886ffc66c.camel@kernel.crashing.org>
+         <20180803070507.GA1344@infradead.org>
+         <eb1750e90e4bd45da297fa6f78f8ef93671b7c2f.camel@kernel.crashing.org>
+         <20180803160246.GA13794@infradead.org>
+         <22310f58605169fe9de83abf78b59f593ff7fbb7.camel@kernel.crashing.org>
+         <20180804082120.GB4421@infradead.org>
+         <a3ec0a454928e880dabc3782ea906e318634abf9.camel@kernel.crashing.org>
+         <20180805072930.GB23288@infradead.org>
+         <b7e8294e3e70d24072883a7e8e5375719d5af870.camel@kernel.crashing.org>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.4 (3.28.4-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-OK, I pulled that commit, 74899d92e66663dc7671a8017b3146dcd4735f3b, in
-to the Ubuntu kernel and it seems to solve the problem. Now I just
-need to get Ubuntu to ship it.
+On Mon, 2018-08-06 at 07:16 +1000, Benjamin Herrenschmidt wrote:
+> I'm trying to understand because the limitation is not a device side
+> limitation, it's not a qemu limitation, it's actually more of a VM
+> limitation. It has most of its memory pages made inaccessible for
+> security reasons. The platform from a qemu/KVM perspective is almost
+> entirely normal.
 
-Thanks!
+In fact this is probably the best image of what's going on:
 
-On Sun, Aug 5, 2018 at 12:27 PM, Adam Novak <interfect@gmail.com> wrote:
-> Sorry, I am using Xen version 4.9.2, specifically 4.9.2-0ubuntu1.
->
-> I am seeing the bug with *kernel* version 4.15.0, and specifically
-> Ubuntu's tag Ubuntu-4.15.0-23.25. That appears to have the "x86/cpu:
-> Re-apply forced caps every time CPU caps are re-read" patch, but not
-> "x86/xen: Add call of speculative_store_bypass_ht_init() to PV paths".
->
-> I can try cherry-picking that commit. Are there other commits in
-> particular that might need to be pulled into the Ubuntu kernel to get
-> it to work?
->
-> On Tue, Jul 31, 2018 at 4:58 AM, Juergen Gross <jgross@suse.com> wrote:
->> On 31/07/18 03:14, Adam Novak wrote:
->>> Hello,
->>>
->>> I was advised to take this here, and to Boris Ostrovsky and Juergen
->>> Gross, by Thomas Gleixner.
->>>
->>> I am having some trouble with the new speculation control code that
->>> has been added to the Linux kernel, for AMD Zen CPUs. I am running an
->>> AMD Ryzen 7 1700, and I am running Linux as a Xen dom0 (which is part
->>> of the problem; the code seems to work fine running outside of Xen).
->>>
->>> I started having trouble on Ubuntu's commit
->>> 3f6a3b035f91a22c0d3bd27630bf61eac9c8cf6c, "x86/speculation: Handle HT
->>> correctly on AMD", which appears to be cherry-picked from
->>> 1f50ddb4f4189243c05926b842dc1a0332195f31. Since that commit, my system
->>> hangs during the boot process; it starts starting stuff up and trying
->>> to mount things and printing "[OK]" messages, but then fairly early in
->>> the boot process the kernel complains that it is "unable to handle
->>> kernel NULL pointer deference at 000...0008"
->>>
->>> On my Ubuntu bug:
->>>
->>> https://bugs.launchpad.net/bugs/1777338
->>>
->>> I have a "Screenshot of the null pointer dereference message". It is
->>> running into trouble during a spin lock in the new
->>> speculative_store_bypass_update().
->>>
->>> Has anyone else seen this behavior on these CPUs under Xen (I am using 4.9)?
->>
->> You want at least 4.9.112, especially due to the missing patches
->> "x86/xen: Add call of speculative_store_bypass_ht_init() to PV paths",
->> "x86/cpu: Re-apply forced caps every time CPU caps are re-read"
->>
->> Juergen
+It's a normal VM from a KVM/qemu perspective (and thus virtio). It
+boots normally, can run firmware, linux, etc... normally, it's not
+created with any different XML or qemu command line definition etc...
+
+It just that once it reaches the kernel with the secure stuff enabled
+(could be via kexec from a normal kernel), that kernel will "stash
+away" most of the VM's memory into some secure space that nothing else
+(not even the hypervisor) can access.
+
+It can keep around a pool or two of normal memory for bounce buferring
+IOs but that's about it.
+
+I think that's the clearest way I could find to explain what's going
+on, and why I'm so resistant on adding things on qemu side.
+
+That said, we *can* (and will) notify KVM and qemu of the transition,
+and we can/will do so after virtio has been instanciated and used by
+the bootloader, but before it will be used (or even probed) by the
+secure VM itself, so there's an opportunity to poke at things, either
+from the VM itself (a quirk poking at virtio config space for example)
+or from qemu (though I find the idea of iterating all virtio devices
+from qemu to change a setting rather gross).
+
+Cheers,
+Ben.
+
+
