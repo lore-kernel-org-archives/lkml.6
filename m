@@ -2,129 +2,128 @@ Return-Path: <SRS0=mdhE=KU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE205C46470
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 08:29:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AF98C46471
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 08:34:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86EFB21748
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 08:29:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A2A8217BB
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 08:34:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="GjYmp1oO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86EFB21748
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lightnvm.io
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CgJHwsdb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A2A8217BB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sai.msu.ru
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726165AbeHEKdM (ORCPT
+        id S1726243AbeHEKhq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 5 Aug 2018 06:33:12 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:36881 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726081AbeHEKdM (ORCPT
+        Sun, 5 Aug 2018 06:37:46 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:46267 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726081AbeHEKhq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 Aug 2018 06:33:12 -0400
-Received: by mail-qt0-f194.google.com with SMTP id n6-v6so10654107qtl.4
-        for <linux-kernel@vger.kernel.org>; Sun, 05 Aug 2018 01:29:26 -0700 (PDT)
+        Sun, 5 Aug 2018 06:37:46 -0400
+Received: by mail-oi0-f65.google.com with SMTP id y207-v6so16992795oie.13;
+        Sun, 05 Aug 2018 01:33:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=VJSDojTbzMjrBPtqDBh+7R3BGWy6nWura0YGmFUimfo=;
-        b=GjYmp1oOPO5028EUT+E7YeOg9dnG+T3qdSL6Hd5amTeUVWrsBqpsaIJaF5KUs9GkKJ
-         PiD+R5KD945ecbICy9d7Ye65kFueUlYpoi1ucVfLIf6HFGC+GHe3PZtz6Z3D3C53yeED
-         vs1TA6zCqDovPfuwLZSg7acjEmyyc145KWkHnAnt5KHo+n0HZOdVy1R3+nd8XMv4M2RS
-         fQg4jAjz/yakxBNi94QmHyhyodPqazWMFUaqO0Y8wgQMPZB1n9ZI56Pz0AHrQweOf1zt
-         jyt9tt9U4LvMJvnSNGN0uGPUc6w6M9I+L0IrT8eib7RcRP01iAsswPaOu3PHqCIhIbvz
-         bLDw==
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=qsP+s47x++DYY+iN3K+Nt/+lBilgOjxgZUWGiMMFKhs=;
+        b=CgJHwsdbWIWLZTAgPa/0BJvi1nhjobB91O2fk9knapTbXcNYnqcJRdt1ft9IyOYvfI
+         zjA7nAQYwDcv7bx9nY5Lr/WI8qecA5UoBalyWi9UYcIkJvkJp3C7Lhf7V9AzAY9EmIPu
+         T0HDrs8CkKfpALicUFs3igRXGpAtbtt7kdu8EzNsi6AzmiXs/I71QDr5sqjZDYqGdcZM
+         NkSOcS+QOjyIdMw5dxdFj54sNzHPeP1HmPxxvnyUUOz/MUrIvSIdPpTZwdNzrGEp6bs1
+         U8JpSafC1/0el0dsey3p8V5sYuxK9JSvb7qMbzGVSf1wm1TXgE4mTFDap3TNqnswDtdR
+         785Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=VJSDojTbzMjrBPtqDBh+7R3BGWy6nWura0YGmFUimfo=;
-        b=N4tTah09OxWrjYHKoPcU4YAL3rNYHIa2uQDqF5xiBH+usY7xWZvzpVPVG46sDyuWQ+
-         5f9612fyFOyYfwDE3SeyZiUiEponoRg4YZDDH/QfRPVUtsFtRXhC/kSiIGwBvSET43D0
-         QGYucPHIqwEsQZdblFdY6XE43YrQarL+BwekcMKsRiExO13SeXxmgHwPymDglRPwcrKp
-         t1gVmsRXoRwBEzs7hF93KkDvlpkRk2PM8SL6p2Koe+LSzdehT/iVTIULNrSM7uT4irXx
-         kfnX3VunkUg5SrZkQpS20YAboLflOu/alQd98iLVxA4k+Zo8d2kZTm3Ojx9j0NmPglMC
-         SxCQ==
-X-Gm-Message-State: AOUpUlFCFSjsf751FeaKwhQN9GTM8dZ/7YMSnxulZN0cWZur2TLRf0Pn
-        r360o5f9iVH/voR8adk4C96VtmIjhEM=
-X-Google-Smtp-Source: AAOMgpcXMy3uY02aN4/CIINpm/QLkfq8apScGkDki5dGp3jPzJXEtmFpuE2HF3aLNVD4i+elGt/wDA==
-X-Received: by 2002:aed:35bd:: with SMTP id c58-v6mr10105497qte.155.1533457765331;
-        Sun, 05 Aug 2018 01:29:25 -0700 (PDT)
-Received: from C02VV2HXHV2Q.local ([217.63.102.42])
-        by smtp.gmail.com with ESMTPSA id s53-v6sm8731584qts.5.2018.08.05.01.29.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 05 Aug 2018 01:29:24 -0700 (PDT)
-Subject: Re: [PATCH] lightnvm: remove minor version check for 2.0
-To:     axboe@kernel.dk
-Cc:     Javier Gonzalez <javier@cnexlabs.com>,
-        "Konopko, Igor J" <igor.j.konopko@intel.com>,
-        "marcin.dziegielewski@intel.com" <marcin.dziegielewski@intel.com>,
-        Hans Holmberg <hans.holmberg@cnexlabs.com>,
-        Heiner Litz <hlitz@ucsc.edu>,
-        Young Tack Tack Jin <youngtack.jin@circuitblvd.com>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20180803090237.2022-1-mb@lightnvm.io>
- <7B08AEC1-90F8-4AE0-AE46-BADF8CC8D270@cnexlabs.com>
-From:   =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
-Message-ID: <2f1d5972-3257-22e0-efd7-0038f979f438@lightnvm.io>
-Date:   Sun, 5 Aug 2018 10:29:21 +0200
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
- Gecko/20100101 Thunderbird/52.8.0
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=qsP+s47x++DYY+iN3K+Nt/+lBilgOjxgZUWGiMMFKhs=;
+        b=n73QH0sXjg9wir+DcGUUNsKEtBBwY23Y/77SBumdfZrS/RIL/aJZEA6Lrj9ZTYUeRx
+         02F8TmX+p9Pj71O2QVfw2JKws1znFr3993hAh9b8BjPVH6i/68fMVkng+a8ahAe6Bf6N
+         OUujkMvQprIL6ZGGnXthVNelCyO8gCzkTskj5r9WCcvwKpWbY/u/xbxzaq/EgwHo8wfy
+         o5GrecsyYJAOMpnMLcHlB/iUiGWUROKFA0HKEjBbOjr8jLBtWSiKoakRf5w78f0QsxgI
+         pJxIGTmTq90pGr5U3twav09sbSlConZfsw3VeDsm2obtCITf7rxjzqzCiXS5TV8nd2np
+         wxWQ==
+X-Gm-Message-State: AOUpUlF4uIpwJw3xSqt6PdnNapZ0s2rFCRsNhkDyY1cWgTPo7qw+iUMO
+        g8i4cE+e0NMPGUVXvEwjHjB0nNb6aE/Q2AjkQEw=
+X-Google-Smtp-Source: AAOMgpdubfm2+XMj8EkDbvoA6bQbofK+R+Zgv5x0Q2CWYD/fbnxas4jB2AWA202XxvF/AkyGn/tk+lobMDd2kYeJSRo=
+X-Received: by 2002:aca:f401:: with SMTP id s1-v6mr10786906oih.269.1533458038799;
+ Sun, 05 Aug 2018 01:33:58 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <7B08AEC1-90F8-4AE0-AE46-BADF8CC8D270@cnexlabs.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Received: by 2002:a9d:734:0:0:0:0:0 with HTTP; Sun, 5 Aug 2018 01:33:38 -0700 (PDT)
+In-Reply-To: <20180805074946.GA14119@infradead.org>
+References: <CAJs94EZA=o5=4frPhXs3vnr4x-__gSZ2ximvTyugLoaD6KLcUg@mail.gmail.com>
+ <Pine.LNX.4.44L0.1808041045060.25853-100000@netrider.rowland.org> <20180805074946.GA14119@infradead.org>
+From:   "Matwey V. Kornilov" <matwey@sai.msu.ru>
+Date:   Sun, 5 Aug 2018 11:33:38 +0300
+X-Google-Sender-Auth: lgbxPGvEkrmWgv7FhhY07-uxNyM
+Message-ID: <CAJs94Eb_Mzxk6a+_b8ZnutdkBjrk5=UWg0F1X0-iRZK1do5uLg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] media: usb: pwc: Don't use coherent DMA buffers for
+ ISO transfer
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Alan Stern <stern@rowland.harvard.edu>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>, mingo@redhat.com,
+        Mike Isely <isely@pobox.com>,
+        Bhumika Goyal <bhumirks@gmail.com>,
+        Colin King <colin.king@canonical.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        keiichiw@chromium.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/3/18 2:07 PM, Javier Gonzalez wrote:
->> On 3 Aug 2018, at 11.02, Matias Bjørling <mb@lightnvm.io> wrote:
+2018-08-05 10:49 GMT+03:00 Christoph Hellwig <hch@infradead.org>:
+> On Sat, Aug 04, 2018 at 10:46:35AM -0400, Alan Stern wrote:
+>> > 2) dma_unmap and dma_map in the handler:
+>> > 2A) dma_unmap_single call: 28.8 +- 1.5 usec
+>> > 2B) memcpy and the rest: 58 +- 6 usec
+>> > 2C) dma_map_single call: 22 +- 2 usec
+>> > Total: 110 +- 7 usec
+>> >
+>> > 3) dma_sync_single_for_cpu
+>> > 3A) dma_sync_single_for_cpu call: 29.4 +- 1.7 usec
+>> > 3B) memcpy and the rest: 59 +- 6 usec
+>> > 3C) noop (trace events overhead): 5 +- 2 usec
+>> > Total: 93 +- 7 usec
+>> >
+>> > So, now we see that 2A and 3A (as well as 2B and 3B) agree good within
+>> > error ranges.
 >>
->> A minor version number increase should not break backwards
->> compatibility.
->>
->> Fixes: 3cb98f84d368b ("lightnvm: add minor version to generic geometry")
->> Signed-off-by: Matias Bjørling <mb@lightnvm.io>
->> ---
->> drivers/nvme/host/lightnvm.c | 6 ------
->> 1 file changed, 6 deletions(-)
->>
->> diff --git a/drivers/nvme/host/lightnvm.c b/drivers/nvme/host/lightnvm.c
->> index d9e4cccd5b66..a156fe3ca7d3 100644
->> --- a/drivers/nvme/host/lightnvm.c
->> +++ b/drivers/nvme/host/lightnvm.c
->> @@ -414,12 +414,6 @@ static int nvme_nvm_setup_20(struct nvme_nvm_id20 *id,
->> 	/* Set compacted version for upper layers */
->> 	geo->version = NVM_OCSSD_SPEC_20;
->>
->> -	if (!(geo->major_ver_id == 2 && geo->minor_ver_id == 0)) {
->> -		pr_err("nvm: OCSSD version not supported (v%d.%d)\n",
->> -				geo->major_ver_id, geo->minor_ver_id);
->> -		return -EINVAL;
->> -	}
->> -
->> 	geo->num_ch = le16_to_cpu(id->num_grp);
->> 	geo->num_lun = le16_to_cpu(id->num_pu);
->> 	geo->all_luns = geo->num_ch * geo->num_lun;
->> --
->> 2.11.0
-> 
-> Looks good to me.
-> 
-> Reviewed-by: Javier González <javier@cnexlabs.com>
-> 
+>> Taken together, those measurements look like a pretty good argument for
+>> always using dma_sync_single_for_cpu in the driver.  Provided results
+>> on other platforms aren't too far out of line with these results.
+>
+> Logically speaking on no-mmio no-swiotlb platforms dma_sync_single_for_cpu
+> and dma_unmap should always be identical.  With the migration towards
+> everyone using dma-direct and dma-noncoherent this is actually going to
+> be enforced, and I plan to move that enforcement to common code in the
+> next merge window or two.
+>
 
-Hi Jens,
+I think that Alan means that using dma_sync_single_for_cpu() we save
+time required for subsequent dma_map() call (which is required when we
+do dma_unmap()).
 
-Would it be possible to pick this one up for 4.19?
+So, does everybody happy with dma_sync_single_for_cpu() for now? If
+so, then I'll prepare new version of the patch series.
 
-Thank you!
+-- 
+With best regards,
+Matwey V. Kornilov.
+Sternberg Astronomical Institute, Lomonosov Moscow State University, Russia
+119234, Moscow, Universitetsky pr-k 13, +7 (495) 9392382
