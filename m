@@ -6,42 +6,42 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 807F5C4646D
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 00:39:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95790C4646F
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 00:50:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39A89217C1
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 00:39:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39A89217C1
+	by mail.kernel.org (Postfix) with ESMTP id 4578C217CC
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 00:50:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4578C217CC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727296AbeHECmX (ORCPT
+        id S1726793AbeHECwu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 22:42:23 -0400
-Received: from gateway32.websitewelcome.com ([192.185.145.182]:46963 "EHLO
-        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726298AbeHECmX (ORCPT
+        Sat, 4 Aug 2018 22:52:50 -0400
+Received: from gateway23.websitewelcome.com ([192.185.50.185]:36161 "EHLO
+        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726069AbeHECwt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 22:42:23 -0400
-Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
-        by gateway32.websitewelcome.com (Postfix) with ESMTP id A072A1D3658
-        for <linux-kernel@vger.kernel.org>; Sat,  4 Aug 2018 19:39:50 -0500 (CDT)
+        Sat, 4 Aug 2018 22:52:49 -0400
+Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
+        by gateway23.websitewelcome.com (Postfix) with ESMTP id 4B2708442
+        for <linux-kernel@vger.kernel.org>; Sat,  4 Aug 2018 19:50:15 -0500 (CDT)
 Received: from gator4166.hostgator.com ([108.167.133.22])
         by cmsmtp with SMTP
-        id m75KfPxyjSjJAm75Kf9a9x; Sat, 04 Aug 2018 19:39:50 -0500
+        id m7FPf6TgjbXuJm7FPfVyoU; Sat, 04 Aug 2018 19:50:15 -0500
 X-Authority-Reason: nr=8
-Received: from [189.250.50.82] (port=35126 helo=embeddedor)
+Received: from [189.250.50.82] (port=35454 helo=embeddedor)
         by gator4166.hostgator.com with esmtpa (Exim 4.91)
         (envelope-from <gustavo@embeddedor.com>)
-        id 1fm75K-003jGa-6T; Sat, 04 Aug 2018 19:39:50 -0500
-Date:   Sat, 4 Aug 2018 19:39:49 -0500
+        id 1fm7FO-003mnf-Q5; Sat, 04 Aug 2018 19:50:14 -0500
+Date:   Sat, 4 Aug 2018 19:50:14 -0500
 From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>
+Cc:     xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] scsi: csiostor: Use true and false for boolean values
-Message-ID: <20180805003949.GA32476@embeddedor.com>
+Subject: [PATCH] xen/biomerge: Use true and false for boolean values
+Message-ID: <20180805005014.GA2299@embeddedor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -54,13 +54,13 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 189.250.50.82
 X-Source-L: No
-X-Exim-ID: 1fm75K-003jGa-6T
+X-Exim-ID: 1fm7FO-003mnf-Q5
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.50.82]:35126
+X-Source-Sender: (embeddedor) [189.250.50.82]:35454
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 61
+X-Email-Count: 65
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -75,25 +75,22 @@ This code was detected with the help of Coccinelle.
 
 Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- drivers/scsi/csiostor/csio_scsi.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/xen/biomerge.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/csiostor/csio_scsi.c b/drivers/scsi/csiostor/csio_scsi.c
-index dab0d3f..aae7abc 100644
---- a/drivers/scsi/csiostor/csio_scsi.c
-+++ b/drivers/scsi/csiostor/csio_scsi.c
-@@ -147,9 +147,9 @@ csio_scsi_itnexus_loss_error(uint16_t error)
- 	case FW_ERR_RDEV_LOST:
- 	case FW_ERR_RDEV_LOGO:
- 	case FW_ERR_RDEV_IMPL_LOGO:
--		return 1;
-+		return true;
- 	}
+diff --git a/drivers/xen/biomerge.c b/drivers/xen/biomerge.c
+index 30d7f52..55ed80c 100644
+--- a/drivers/xen/biomerge.c
++++ b/drivers/xen/biomerge.c
+@@ -17,7 +17,7 @@ bool xen_biovec_phys_mergeable(const struct bio_vec *vec1,
+ 	 * XXX: Add support for merging bio_vec when using different page
+ 	 * size in Xen and Linux.
+ 	 */
 -	return 0;
 +	return false;
+ #endif
  }
- 
- /*
+ EXPORT_SYMBOL(xen_biovec_phys_mergeable);
 -- 
 2.7.4
 
