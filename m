@@ -3,48 +3,44 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E1E4C4646F
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 00:32:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 529BCC4646D
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 00:34:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3A2F217D1
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 00:32:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3A2F217D1
+	by mail.kernel.org (Postfix) with ESMTP id 02FEC217D1
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 00:34:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02FEC217D1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726961AbeHECeh (ORCPT
+        id S1726794AbeHECgk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 22:34:37 -0400
-Received: from gateway30.websitewelcome.com ([192.185.197.25]:41276 "EHLO
-        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726298AbeHECeh (ORCPT
+        Sat, 4 Aug 2018 22:36:40 -0400
+Received: from gateway23.websitewelcome.com ([192.185.50.185]:33346 "EHLO
+        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726069AbeHECgj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 22:34:37 -0400
-Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
-        by gateway30.websitewelcome.com (Postfix) with ESMTP id EDD3B44B5
-        for <linux-kernel@vger.kernel.org>; Sat,  4 Aug 2018 19:09:02 -0500 (CDT)
+        Sat, 4 Aug 2018 22:36:39 -0400
+Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
+        by gateway23.websitewelcome.com (Postfix) with ESMTP id 9059471BD
+        for <linux-kernel@vger.kernel.org>; Sat,  4 Aug 2018 19:34:07 -0500 (CDT)
 Received: from gator4166.hostgator.com ([108.167.133.22])
         by cmsmtp with SMTP
-        id m6bWf67AebXuJm6bWfVccs; Sat, 04 Aug 2018 19:09:02 -0500
+        id m6znfjIi3BcCXm6znfK61J; Sat, 04 Aug 2018 19:34:07 -0500
 X-Authority-Reason: nr=8
-Received: from [189.250.50.82] (port=34986 helo=embeddedor)
+Received: from [189.250.50.82] (port=35096 helo=embeddedor)
         by gator4166.hostgator.com with esmtpa (Exim 4.91)
         (envelope-from <gustavo@embeddedor.com>)
-        id 1fm6bV-003YLZ-2h; Sat, 04 Aug 2018 19:09:01 -0500
-Date:   Sat, 4 Aug 2018 19:08:59 -0500
+        id 1fm6zn-003hQh-4A; Sat, 04 Aug 2018 19:34:07 -0500
+Date:   Sat, 4 Aug 2018 19:34:06 -0500
 From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Roger Pau =?iso-8859-1?Q?Monn=E9?= <roger.pau@citrix.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>, Jens Axboe <axboe@kernel.dk>
-Cc:     xen-devel@lists.xenproject.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] xen-blkfront: use true and false for boolean values
-Message-ID: <20180805000859.GA20132@embeddedor.com>
+Subject: [PATCH] Input: raydium_i2c_ts - use true and false for boolean values
+Message-ID: <20180805003406.GA30522@embeddedor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -57,13 +53,13 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 189.250.50.82
 X-Source-L: No
-X-Exim-ID: 1fm6bV-003YLZ-2h
+X-Exim-ID: 1fm6zn-003hQh-4A
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.50.82]:34986
+X-Source-Sender: (embeddedor) [189.250.50.82]:35096
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 15
+X-Email-Count: 52
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -78,31 +74,31 @@ This code was detected with the help of Coccinelle.
 
 Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- drivers/block/xen-blkfront.c | 4 ++--
+ drivers/input/touchscreen/raydium_i2c_ts.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/block/xen-blkfront.c b/drivers/block/xen-blkfront.c
-index 94300db..8986ada 100644
---- a/drivers/block/xen-blkfront.c
-+++ b/drivers/block/xen-blkfront.c
-@@ -1436,7 +1436,7 @@ static bool blkif_completion(unsigned long *id,
- 
- 		/* Wait the second response if not yet here. */
- 		if (s2->status == REQ_WAITING)
--			return 0;
-+			return false;
- 
- 		bret->status = blkif_get_final_status(s->status,
- 						      s2->status);
-@@ -1537,7 +1537,7 @@ static bool blkif_completion(unsigned long *id,
+diff --git a/drivers/input/touchscreen/raydium_i2c_ts.c b/drivers/input/touchscreen/raydium_i2c_ts.c
+index d1c09e6..c89853a 100644
+--- a/drivers/input/touchscreen/raydium_i2c_ts.c
++++ b/drivers/input/touchscreen/raydium_i2c_ts.c
+@@ -466,7 +466,7 @@ static bool raydium_i2c_boot_trigger(struct i2c_client *client)
  		}
  	}
  
--	return 1;
-+	return true;
+-	return 0;
++	return false;
  }
  
- static irqreturn_t blkif_interrupt(int irq, void *dev_id)
+ static bool raydium_i2c_fw_trigger(struct i2c_client *client)
+@@ -492,7 +492,7 @@ static bool raydium_i2c_fw_trigger(struct i2c_client *client)
+ 		}
+ 	}
+ 
+-	return 0;
++	return false;
+ }
+ 
+ static int raydium_i2c_check_path(struct i2c_client *client)
 -- 
 2.7.4
 
