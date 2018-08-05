@@ -2,196 +2,147 @@ Return-Path: <SRS0=mdhE=KU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD1A1C4646F
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 04:57:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 908CAC28CF6
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 05:37:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78670217BF
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 04:57:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78670217BF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
+	by mail.kernel.org (Postfix) with ESMTP id 31F37217BD
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 05:37:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=virtuozzo.com header.i=@virtuozzo.com header.b="CxXU+KeK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31F37217BD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=virtuozzo.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726407AbeHEG5g (ORCPT
+        id S1726204AbeHEHgN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 5 Aug 2018 02:57:36 -0400
-Received: from gate.crashing.org ([63.228.1.57]:59685 "EHLO gate.crashing.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725975AbeHEG5g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 Aug 2018 02:57:36 -0400
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w754qtPK010149;
-        Sat, 4 Aug 2018 23:52:56 -0500
-Message-ID: <fd8fee94cf42e436878f179c7895de3a4dab3355.camel@kernel.crashing.org>
-Subject: Re: [RFC 0/4] Virtio uses DMA API for all devices
-From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        aik@ozlabs.ru, robh@kernel.org, joe@perches.com,
-        elfring@users.sourceforge.net, david@gibson.dropbear.id.au,
-        jasowang@redhat.com, mpe@ellerman.id.au, linuxram@us.ibm.com,
-        haren@linux.vnet.ibm.com, paulus@samba.org,
-        srikar@linux.vnet.ibm.com, robin.murphy@arm.com,
-        jean-philippe.brucker@arm.com, marc.zyngier@arm.com
-Date:   Sun, 05 Aug 2018 14:52:54 +1000
-In-Reply-To: <20180805031046-mutt-send-email-mst@kernel.org>
-References: <20180802182959-mutt-send-email-mst@kernel.org>
-         <82ccef6ec3d95ee43f3990a4a2d0aea87eb45e89.camel@kernel.crashing.org>
-         <20180802200646-mutt-send-email-mst@kernel.org>
-         <e9beb6bba5a7d05741e27e85b24a3b23ba7c2762.camel@kernel.crashing.org>
-         <20180802225738-mutt-send-email-mst@kernel.org>
-         <de4888b6457e220776e16a9c8958ff0886ffc66c.camel@kernel.crashing.org>
-         <20180803070507.GA1344@infradead.org>
-         <eb1750e90e4bd45da297fa6f78f8ef93671b7c2f.camel@kernel.crashing.org>
-         <20180803220443-mutt-send-email-mst@kernel.org>
-         <051fd78e15595b414839fa8f9d445b9f4d7576c6.camel@kernel.crashing.org>
-         <20180805031046-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.4 (3.28.4-1.fc28) 
-Mime-Version: 1.0
+        Sun, 5 Aug 2018 03:36:13 -0400
+Received: from mail-eopbgr40107.outbound.protection.outlook.com ([40.107.4.107]:51840
+        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725727AbeHEHgN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 5 Aug 2018 03:36:13 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=virtuozzo.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xN622BP3I5MgFOszq9F+f9L2QlkSpC15ixT7fyN0T/A=;
+ b=CxXU+KeK9cqaMQ/il1WQQpBYgvigY9WNMDHmUgYSEpLZ99EsqRkRfaO542r+Tmg/pxtZlRNsEG8yXyTjsbbF1M/660R329O1J8G8FXpK3LFdOr3gPynclGejpphV/joUIzzZSgRi024gsu1eYrGJeJcGK1U0OeeghRAXnGPaul4=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=ktkhai@virtuozzo.com; 
+Received: from localhost.localdomain (128.69.177.17) by
+ DB6PR0801MB2024.eurprd08.prod.outlook.com (2603:10a6:4:76::17) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1017.14; Sun, 5 Aug 2018 05:30:53 +0000
+Subject: Re: [PATCH] mm: Use special value SHRINKER_REGISTERING instead
+ list_empty() check
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, vdavydov.dev@gmail.com,
+        mhocko@suse.com, aryabinin@virtuozzo.com, ying.huang@intel.com,
+        penguin-kernel@I-love.SAKURA.ne.jp, shakeelb@google.com,
+        jbacik@fb.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <153331055842.22632.9290331685041037871.stgit@localhost.localdomain>
+ <20180803155120.0d65511b46c100565b4f8a2c@linux-foundation.org>
+ <843169c5-a47a-e6cd-7412-611e72eb20ba@virtuozzo.com>
+ <20180805000305.GC3183@bombadil.infradead.org>
+From:   Kirill Tkhai <ktkhai@virtuozzo.com>
+Message-ID: <e5d67774-a006-e533-d928-64a4407cbb16@virtuozzo.com>
+Date:   Sun, 5 Aug 2018 08:30:43 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180805000305.GC3183@bombadil.infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [128.69.177.17]
+X-ClientProxiedBy: HE1PR0901CA0062.eurprd09.prod.outlook.com
+ (2603:10a6:3:45::30) To DB6PR0801MB2024.eurprd08.prod.outlook.com
+ (2603:10a6:4:76::17)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 170aab84-9761-415e-a57f-08d5fa949df2
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(7168020)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:DB6PR0801MB2024;
+X-Microsoft-Exchange-Diagnostics: 1;DB6PR0801MB2024;3:hXAIEtsPQEc35B8oQRGr1VSYZHD+nyBpBHerEZ2fxs/sUoDRtsF8BWCwnJjyCJgABbsLIElNj1aS9tDzyNVnDNPuEEUuxu9s7WjVdi8JycT0u7KgTamZQhxZOhmEcNpyHWIwqsMi15meDanZFOG9+CHuRxesjxQ/d9FtNZPpz4DmEdvNlRccCd8budPSjlh2eU0DGgO+I+mr3eJ5wNR9vfJDgEl5Tt99t4GhegrAEUqcxF5PcWA7upPg4xxk1jbm;25:KDFR+/O+29xTOuo9xQtz0w2W/P+rXAsAzEFQv3u7Da256hnrJWSZgK7TxuNh9TrldAvHeXDf0pkw2DyZqN4S6Q3ra/QyMbnMTQ/xbEQW/XIjceZnfDDR2OfL/Ay4lvujOkpM370Yd1gJzRordXj4WtV7TJ2Cfjb0+ahRWngcXZWCcjY8FPOWli+zOdAxoxlR93pxXPFBe7KvaejfoTG+vBYB9RzNcM+yx9/zCBt1FBmFwdB/XFM8tgSzOJ5/FL1XVYnlo8e9Hu4iDIFWMG/vn+xEbrPkWX2/Sk+4YPa6SNWk1ZlqQhzz4Zi0IN6Fr7JesIiUga8OVIHbyux3yQzgEQ==;31:BMZntZVWi4UKPrVossj3tIXheYJtQ5e1nNGD4yMaktihpuIUjLSIGSs/JDmQf4e6jRwRSC5GGZ5KuXZ8LsDqywC+WWwrf8TBOCKqFMOxx5QNl7RW2cg8uHUOjtuboREMp6seqqc4zJNND2qowQCy9ZFzDf3vsM/I6USxJ+659A27oluk54XQQzaxfhD4D2XcJBCJ1uZCrbcgT9Jj+qmZv5gnwakihTOMe0Sho+WqYAQ=
+X-MS-TrafficTypeDiagnostic: DB6PR0801MB2024:
+X-Microsoft-Exchange-Diagnostics: 1;DB6PR0801MB2024;20:aXDScQ3ca+3OiOiXLcr83OVrpQCemmvhI9uqJKFjS0JV0DFrqflk9XM/cPbtTmbWY39AF6h+xj3aXUZTjhMgQVBGmGvMkb8zjIrsHTCD5tk2dhDJCcrXspOXPKuqm7U3BXEXn2/n/hvCNA+5kfmr7Rfm3Y4eQ3zKl9kUOpiTZuVTUGYG5Mpkg2Jkayy1Wezd7zDb/ov3uxWSXortHC0yG7iHTNhEADFM4yl4a/TSZpR7nWAieEBTM9p8E3Vcfiiu2oIrVkhkI6VoIDDLbmVQZ1+e4DECn0aJ2XabUC29yTT6ValyoGJmxA86vHLR8LzaQGmAtwMuQVYg/o0ed1Af6FMQi6NCoFUxA7cQzv4WjWVDHLAOVDe7ku/Pv7iWriGwOKxcXNHf0yniiSC21W/BZWGx239g/wQEkwRsqU9fpaIJpDGfLNvdKO5rrhXpQKXhoKfPuvycdO50TJPMJJcuS065tOpfixmhRcZ6XiQKG1oMOeFyrx5bNLB9ekn9brSU;4:PY0rI3BX4fzG8zLVLuUWcD6dPxaHpKkE528hDKgfsR/fdZvkOrxg9mEyE1n6E0QjvuUUCvDmAGMN/Rluk3Nw1Gv5Fj0KPwo+hpX8gwZk/uutJSlydAil814AvtZmZfrf03zdv+Z/keEMWysL/dxOEmFQrxOpdU8c/55wspr3yeWHyf9mjB3PAApflsonHLcgK/LT39SLOpU0YD92NQRB4x1CBVV/6QCGaWKXlwX6oPPsfoaRonJyjRJS/bwhiKStZZRrS10zv9LjJiTVAgOL1g==
+X-Microsoft-Antispam-PRVS: <DB6PR0801MB20246F9FC19A3010D981B152CD210@DB6PR0801MB2024.eurprd08.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3002001)(10201501046)(3231311)(944501410)(52105095)(93006095)(93001095)(149027)(150027)(6041310)(20161123560045)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:DB6PR0801MB2024;BCL:0;PCL:0;RULEID:;SRVR:DB6PR0801MB2024;
+X-Forefront-PRVS: 0755F54DD9
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6069001)(136003)(39840400004)(396003)(376002)(366004)(346002)(199004)(189003)(6116002)(3846002)(486006)(476003)(6506007)(386003)(2616005)(956004)(53546011)(55236004)(16526019)(76176011)(11346002)(36756003)(52146003)(23676004)(97736004)(52116002)(446003)(316002)(2486003)(58126008)(31686004)(26005)(230700001)(186003)(105586002)(106356001)(25786009)(93886005)(5660300001)(8676002)(39060400002)(305945005)(6916009)(81166006)(6486002)(81156014)(47776003)(7416002)(229853002)(4326008)(65826007)(6246003)(8936002)(65806001)(65956001)(966005)(66066001)(53936002)(68736007)(86362001)(478600001)(2906002)(50466002)(6512007)(6666003)(6306002)(7736002)(64126003)(31696002);DIR:OUT;SFP:1102;SCL:1;SRVR:DB6PR0801MB2024;H:localhost.localdomain;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: virtuozzo.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtEQjZQUjA4MDFNQjIwMjQ7MjM6dFZrYXZvelBTL3I3MXZiSHZzY3FEeVBE?=
+ =?utf-8?B?WjZDZ3pybDcxN3c3dStCUkU5dS9jYWdGbW5HQjhpKzYwZThPdU9aWW9xMnJl?=
+ =?utf-8?B?R2VkK2xmV3NmaGYvMXdKeGp4cEZ3NElHakRtbkxEeXBCelRERFhCYWFEczIr?=
+ =?utf-8?B?bFhSTlVTQUdrZTM1VUZyZ0Z0VkpYS3h2TUlNMDZ0dFF2TG9JNHEwdWhaVmRE?=
+ =?utf-8?B?SWF1UHRHN0lMQnV5endjVEdicitpOWNteDFFclBvTEpUdGlwQTZ1Q0JJeTBU?=
+ =?utf-8?B?R2kvdmorRFhER1Exenk0TmlUb0R0WjBwQ2UyK1lGM3lwcExURlEwTGQ0ZXQ5?=
+ =?utf-8?B?REJRdUdlMjZ3d2cxeFo5Nk1nOWJoZk5zdDlvS3IvYVdRWkkyRHBnZS90bWJo?=
+ =?utf-8?B?MFFSc2VYNFBNeXBkUS9lZTlRb2RwMGNUZlhwSmQ3OTJHaDB0cWEvSWJDdE1Q?=
+ =?utf-8?B?K2N5eUxVbHF2cEE4RUhIUFhnZ05KUURiLzBBVTNOR2MwNG1VK0Zld3NZMWFD?=
+ =?utf-8?B?aXFzMk9aUWFic1hyNHlHd0J4SmwzTHRka3V5NXY2a2s0NGYyVGpUN3FybUxD?=
+ =?utf-8?B?N2hNamdlZXpvcE9OZmdKSWVtWk13dTV4RjFqRzIxYytxNm12dDIvUkRNSTJo?=
+ =?utf-8?B?SzdtVHdmOStZRTg4Z1U4OU9JV0tRWWRmT21PVlErRFNtbDg5aXM1eFVxNmM4?=
+ =?utf-8?B?Nk5CSlVxNnZ0RlBYNHEyaWt0eDg2UmJCcVBQQnIvem9vQ2Y5ckRJclpuYXhG?=
+ =?utf-8?B?OWVQcXN3aW9SMTBsQmcyL3FyVFczelcyVGVCKzUzV0xRMzFjQWNaR3ZJL01C?=
+ =?utf-8?B?VlNtM0pkM2JENEkvblRWRmhzZDNSdHk4SHZDVlFaR3gzVEE0SVlUd2VyL2o2?=
+ =?utf-8?B?MFlRZ3V4VHpHQXJwZ1Z1QURzMzJuU3pHZUs1MEVoaEpaaUUvSkpsOHl0WnVl?=
+ =?utf-8?B?ZFYxL1pzeXkvMzhBM0dHOEhaL2QrbDQzRklyYldLVmRKUVJGTzZCdGc3Yk01?=
+ =?utf-8?B?M2VISmtaeGZOcTI4dFhhbG91R29KaUVlOWJVUHg1STBTUUc0b2RxbWoxU2hv?=
+ =?utf-8?B?cmdyRW1CbDU1Q1c1bmp5M3Bjd0M0TmlOMERUbHdUNkwvcUlnTStIOXRXRXNW?=
+ =?utf-8?B?L0JJK0FTR0pXOVcwejdRaWdZWnNLcWkwRWZiSWUxc1pOSnBkZnVjcUxHb0Vp?=
+ =?utf-8?B?elFQRTRwMCtZdVFKYndCYlViMnhFZFFTclZrZlF2ZDNuUStBdjRSKzVoWDFa?=
+ =?utf-8?B?Y2tXQjBoNElOd0s2YUh3SlRoR0pZaUxUSjNzUWtXaVNxRXo2bm1lTzNVczRs?=
+ =?utf-8?B?YlhSWVZqTi9GeFcxc0NSNkQ2ZzM0VHpYZGlLWHF5d2J6aE55T1hUOFhmRytM?=
+ =?utf-8?B?Wm5SbDljcFVxdEE4aHRHeWZxNzVicWkrT0tjTkJsWUhVeXpueEhDUWdpWEZs?=
+ =?utf-8?B?czAzc3JPZnJMRkJQQmN5Ym1YeWp4cWRDeW5LL3cwd3VnL2I3QVE0R0JES1FT?=
+ =?utf-8?B?MkpMNUlPU3hLYTJONVg3U2pnMUtyUHlqUC9MV1QyMTFZSHJRdEhGdjloc2Mv?=
+ =?utf-8?B?WVYvUWp5M1ljZmh6VkxpWUZHVnkyY2p2eUJhYmZHbnNXOEVKZXBOV1hEMVph?=
+ =?utf-8?B?NUEvZmtWVjRtcjZ2ak41VkxRQ2REQ1VEVGdTL2lFNTR5V2xQWmRnaW96bW9s?=
+ =?utf-8?B?c2ZUbnZVcXl0ejJTZWpmRjRSaGdaRXRXMG1lT2d5MlBVdzRCSlJsNysvT2FS?=
+ =?utf-8?B?OFNIQ1FvdjkxNU1WWTdaeVM2ME5TTUtvSXFsaWhNZGloUjIxNVRlSXZHZStI?=
+ =?utf-8?B?V3NzV3NFc0RicTVZbFhwbW5OdDBoRUcvOUh4K3U4RHhrY3lZd2NlZUhNYlV0?=
+ =?utf-8?B?QklOZGRKL1RhWlBhT0dOVk51TDM3OWVMeW1pa3FrM3JoNUxRdklaWVovTGRC?=
+ =?utf-8?B?ck1XdEFFOGViM0NJaU5Rci8zaGlmdkErNHIrbVNtRjJKRUJpRkhKNTBnUU9W?=
+ =?utf-8?B?SjRzL1lXVlZZY212T2JRYTBZYzdxVEkyVGhrS255cnp3Yk9MZk16UG9jWTJC?=
+ =?utf-8?Q?WQdQJWeXV37iTRx7sZwcYcqq858?=
+X-Microsoft-Antispam-Message-Info: dlpsg9MUbX4MKjJhPCgvi6Ae+N7yGBfFnfr7sYs8VCqEH9/1fTyyJp2cK43ivXJ/wJr4we7Po5U7pf3/tdGPKfhBSPJ+keQBd5Gce8PxPVp9x2tabf5S/uUX6p1qwkKy5KoxwdXUGMgqDVkAaO36gWeGwaeC8TipayRMNMyhaY0wcU2QQL4OVk6Ees6+VUPULWjLaN4QOKyASO6XKZQCyjrcEmYE+g02k2pdkkBj2pVhq70YU4gWaYhcb1T/TQjQyAHE55maXaxbwCeWREGl/w+Ooek+HWA3w02ukDfmdX1UE58gIGwWBCK2uzkvX+PVFCkQHFtGpLWi/qH+ulbxfPbfi4YH3E2w/LCteEPX0eA=
+X-Microsoft-Exchange-Diagnostics: 1;DB6PR0801MB2024;6:1aSMTrFK3BTBCtTcPidR0aEUl7PDjetqlyyp/GgtB6ny0F6XdNilYb+/Q6pkgqENjoEvS5VCnLRm70vsLht0g1S1S9WPtKVj8Ypr1V7Fbh3nOWlCQny13UbL014WzrnKE+tVQhlDrtRiSf+GPocOEu9EgInnpeqSbkbIwvvVu1eegornW7qwQMgWKJaGAM1DR3H0H0sv12z7yfdSlB1Dv+3he+X+tGdmmIxV0y+UjOu+2WuqQg31lOtNE/8fNONMwlv3rUZQgmJ/R2NDsJbhsqJGtlFOeRXJw73F5WDsNiVW2WR3y5XZVXom1BYUCeXXsnEQq/DM66u8MzaHEeLxd4jpr9pEpccGI6qmN5AbNtgsmO9INN5hKNk04x3BBZZ/Z/wX0F5t08Hz8Y1efZGdAhbWjIgYw/LXbqTmlZPsW0q8KUwtcLlcGbK2WPW/6pBKlollCeOHtT6q3EWjHzU4Zw==;5:oPke4bLeeCJIQK9xQoVyn6ohg1dbmuofP4g0o4pAC01G8DMNQg3pN4THMauPQxwibbkzIvOp4Ifz3+8kUOQIGpfcPdVn3rv/eiXGx13eRypSOMv1tfcVXuXY+OCgGuiXdx8FbcMpeLcfnWu/RYaMbgc69ErNsVI02yyol1KXcas=;7:Z6tTnVh/fnET3/6ntdBSPhNdxjONXuingBmsjkxv/iwrkPWwDLXwqtRLqm5pcL1mbKwGgWJSlZXA5QPFeY1aETY9MPvl/gFHerUYjJVDZVJd5izbcY2ot9peX74blDx0rRXhKoDB5Ucu+ycms1nXWFB3yCBUr763nh9JJgxz1J3Bl+2lBsn78Qi9LdXzx3HGHIIC0h+wxIsrz87f/Sf1k7cW4ZVSrd4Z7UryLqNM4hs33OqtSle3EvI8xMHS4VuO
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;DB6PR0801MB2024;20:J9+9ApDV9KK/NI1hVTul/ZOdiVbOZDwaOFBqtPMuEvJ2c9FCHYTAmnYNeM4LX9EBPsRwKqRdc6cETHxy4D9Vk3DrlwK8sYResFtc4txTwayeIbxzjelHf0BAorm1+2vMCjhdqe7XlIOD3Y6mUk8b4fBrh5xI9ZW7tZbPplLlzwI=
+X-OriginatorOrg: virtuozzo.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Aug 2018 05:30:53.7020 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 170aab84-9761-415e-a57f-08d5fa949df2
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0801MB2024
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 2018-08-05 at 03:22 +0300, Michael S. Tsirkin wrote:
-> I see the allure of this, but I think down the road you will
-> discover passing a flag in libvirt XML saying
-> "please use a secure mode" or whatever is a good idea.
+On 05.08.2018 03:03, Matthew Wilcox wrote:
+> On Sat, Aug 04, 2018 at 09:42:05PM +0300, Kirill Tkhai wrote:
+>> This is exactly the thing the patch makes. Instead of inserting a shrinker pointer
+>> to idr, it inserts a fake value SHRINKER_REGISTERING there. The patch makes impossible
+>> to dereference a shrinker unless it's completely registered. 
 > 
-> Even thought it is probably not required to address this
-> specific issue.
+> -       id = idr_alloc(&shrinker_idr, shrinker, 0, 0, GFP_KERNEL);
+> +       id = idr_alloc(&shrinker_idr, SHRINKER_REGISTERING, 0, 0, GFP_KERNEL);
 > 
-> For example, I don't think ballooning works in secure mode,
-> you will be able to teach libvirt not to try to add a
-> balloon to the guest.
-
-Right, we'll need some quirk to disable balloons  in the guest I
-suppose.
-
-Passing something from libvirt is cumbersome because the end user may
-not even need to know about secure VMs. There are use cases where the
-security is a contract down to some special application running inside
-the secure VM, the sysadmin knows nothing about.
-
-Also there's repercussions all the way to admin tools, web UIs etc...
-so it's fairly wide ranging.
-
-So as long as we only need to quirk a couple of devices, it's much
-better contained that way.
-
-> > Later on, (we may have even already run Linux at that point,
-> > unsecurely, as we can use Linux as a bootloader under some
-> > circumstances), we start a "secure image".
-> > 
-> > This is a kernel zImage that includes a "ticket" that has the
-> > appropriate signature etc... so that when that kernel starts, it can
-> > authenticate with the ultravisor, be verified (along with its ramdisk)
-> > etc... and copied (by the UV) into secure memory & run from there.
-> > 
-> > At that point, the hypervisor is informed that the VM has become
-> > secure.
-> > 
-> > So at that point, we could exit to qemu to inform it of the change,
+> Instead:
 > 
-> That's probably a good idea too.
-
-We probably will have to tell qemu eventually for migration, as we'll
-need some kind of key exchange phase etc... to deal with the crypto
-aspects (the actual page copy is sorted via encrypting the secure pages
-back to normal pages in qemu, but we'll need extra metadata).
-
-> > and
-> > have it walk the qtree and "Switch" all the virtio devices to use the
-> > IOMMU I suppose, but it feels a lot grosser to me.
+> +       id = idr_alloc(&shrinker_idr, NULL, 0, 0, GFP_KERNEL);
 > 
-> That part feels gross, yes.
-> 
-> > That's the only other option I can think of.
-> > 
-> > > However in this specific case, the flag does not need to come from the
-> > > hypervisor, it can be set by arch boot code I think.
-> > > Christoph do you see a problem with that?
-> > 
-> > The above could do that yes. Another approach would be to do it from a
-> > small virtio "quirk" that pokes a bit in the device to force it to
-> > iommu mode when it detects that we are running in a secure VM. That's a
-> > bit warty on the virito side but probably not as much as having a qemu
-> > one that walks of the virtio devices to change how they behave.
-> > 
-> > What do you reckon ?
-> 
-> I think you are right that for the dma limit the hypervisor doesn't seem
-> to need to know.
+> ... and the rest of your patch becomes even simpler.
 
-It's not just a limit mind you. It's a range, at least if we allocate
-just a single pool of insecure pages. swiotlb feels like a better
-option for us.
+The patch, we are discussing at the moment, does *exactly* this:
 
-> > What we want to avoid is to expose any of this to the *end user* or
-> > libvirt or any other higher level of the management stack. We really
-> > want that stuff to remain contained between the VM itself, KVM and
-> > maybe qemu.
-> > 
-> > We will need some other qemu changes for migration so that's ok. But
-> > the minute you start touching libvirt and the higher levels it becomes
-> > a nightmare.
-> > 
-> > Cheers,
-> > Ben.
-> 
-> I don't believe you'll be able to avoid that entirely. The split between
-> libvirt and qemu is more about community than about code, random bits of
-> functionality tend to land on random sides of that fence.  Better add a
-> tag in domain XML early is my advice. Having said that, it's your
-> hypervisor. I'm just suggesting that when hypervisor does somehow need
-> to care then I suspect most people won't be receptive to the argument
-> that changing libvirt is a nightmare.
+https://lkml.org/lkml/2018/8/3/588
 
-It only needs to care at runtime. The problem isn't changing libvirt
-per-se, I don't have a problem with that. The problem is that it means
-creating two categories of machines "secure" and "non-secure", which is
-end-user visible, and thus has to be escalated to all the various
-management stacks, UIs, etc... out there.
-
-In addition, there are some cases where the individual creating the VMs
-may not have any idea that they are secure.
-
-But yes, if we have to, we'll do it. However, so far, we don't think
-it's a great idea.
-
-Cheers,
-Ben.
-
-> > > > >   To get swiotlb you'll need to then use the DT/ACPI
-> > > > > dma-range property to limit the addressable range, and a swiotlb
-> > > > > capable plaform will use swiotlb automatically.
-> > > > 
-> > > > This cannot be done as you describe it.
-> > > > 
-> > > > The VM is created as a *normal* VM. The DT stuff is generated by qemu
-> > > > at a point where it has *no idea* that the VM will later become secure
-> > > > and thus will have to restrict which pages can be used for "DMA".
-> > > > 
-> > > > The VM will *at runtime* turn itself into a secure VM via interactions
-> > > > with the security HW and the Ultravisor layer (which sits below the
-> > > > HV). This happens way after the DT has been created and consumed, the
-> > > > qemu devices instanciated etc...
-> > > > 
-> > > > Only the guest kernel knows because it initates the transition. When
-> > > > that happens, the virtio devices have already been used by the guest
-> > > > firmware, bootloader, possibly another kernel that kexeced the "secure"
-> > > > one, etc... 
-> > > > 
-> > > > So instead of running around saying NAK NAK NAK, please explain how we
-> > > > can solve that differently.
-> > > > 
-> > > > Ben.
-
+It looks like you missed this hunk in the patch.
