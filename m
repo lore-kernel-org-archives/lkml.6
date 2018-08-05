@@ -2,129 +2,98 @@ Return-Path: <SRS0=mdhE=KU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72F28C46471
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 17:47:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79260C46470
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 18:12:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24BE721888
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 17:47:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="FuO2kYq3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24BE721888
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=HansenPartnership.com
+	by mail.kernel.org (Postfix) with ESMTP id 2A1CB218C1
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 18:12:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A1CB218C1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726666AbeHETwu (ORCPT
+        id S1726628AbeHEUR5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 5 Aug 2018 15:52:50 -0400
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:55608 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726362AbeHETwu (ORCPT
+        Sun, 5 Aug 2018 16:17:57 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45696 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726407AbeHEUR5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 Aug 2018 15:52:50 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 3DC7A8EE251;
-        Sun,  5 Aug 2018 10:47:29 -0700 (PDT)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 9FvHIjfEqOLU; Sun,  5 Aug 2018 10:47:29 -0700 (PDT)
-Received: from [153.66.254.194] (unknown [50.35.68.20])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 1769F8EE0C7;
-        Sun,  5 Aug 2018 10:47:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1533491248;
-        bh=w7pgO9ema1R8uKWcJYWQI8uKqMSkMzMRe7+2SDs01dY=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=FuO2kYq3TG/cDHKxKvpUr5YUqRWJ4SoFJ/i7i17trSfh8jk4BnhKnrEUFiGGxl+Sc
-         R4LMi5ttb9KQkRXbk02dAbdAN8Ye5UJewogDtO7QEBAyC6Vp1EmCLM649AXq/lIuTj
-         nVr3XVWQXGRraigtKMA3bryYVSqSCy+uwmuJAjYQ=
-Message-ID: <1533491246.4087.1.camel@HansenPartnership.com>
-Subject: Re: [PATCH 0/6][RFC] Add EFI secure key to key retention service
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "Lee, Chun-Yi" <joeyli.kernel@gmail.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        keyrings@vger.kernel.org,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        "Lee, Chun-Yi" <jlee@suse.com>, Kees Cook <keescook@chromium.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Pavel Machek <pavel@ucw.cz>, Chen Yu <yu.c.chen@intel.com>,
-        Oliver Neukum <oneukum@suse.com>,
-        Ryan Chen <yu.chen.surf@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>
-Date:   Sun, 05 Aug 2018 10:47:26 -0700
-In-Reply-To: <CAKv+Gu81vEGNggcWv1NyPJsMeK0HRi_DanH2+Z_4metoNG=txA@mail.gmail.com>
-References: <20180805032119.20485-1-jlee@suse.com>
-         <CAKv+Gu81vEGNggcWv1NyPJsMeK0HRi_DanH2+Z_4metoNG=txA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Sun, 5 Aug 2018 16:17:57 -0400
+Received: from localhost (unknown [89.188.5.116])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 28A23480;
+        Sun,  5 Aug 2018 18:12:32 +0000 (UTC)
+Date:   Sun, 5 Aug 2018 20:12:29 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Frank Werner-Krippendorf <mail@kripp.ch>
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        Larry.Finger@lwfinger.net
+Subject: Re: [PATCH] Staging: rtl8712: rtl871x: removed unused code, to fix a
+ coding style issue
+Message-ID: <20180805181229.GA32497@kroah.com>
+References: <1533489152-19472-1-git-send-email-mail@kripp.ch>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1533489152-19472-1-git-send-email-mail@kripp.ch>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 2018-08-05 at 09:25 +0200, Ard Biesheuvel wrote:
-> Hello Chun,yi,
+On Sun, Aug 05, 2018 at 07:12:32PM +0200, Frank Werner-Krippendorf wrote:
+> Fixed a coding style issue.
 > 
-> On 5 August 2018 at 05:21, Lee, Chun-Yi <joeyli.kernel@gmail.com>
-> wrote:
-> > When secure boot is enabled, only signed EFI binary can access
-> > EFI boot service variable before ExitBootService. Which means that
-> > the EFI boot service variable is secure.
-> > 
-> 
-> No it, isn't, and this is a very dangerous assumption to make.
-> 
-> 'Secure' means different things to different people. 'Secure boot' is
-> a misnomer, since it is too vague: it should be called 'authenticated
-> boot', and the catch is that authentication using public-key crypto
-> does not involve secrets at all.
+> Signed-off-by: Frank Werner-Krippendorf <mail@kripp.ch>
+> ---
+>  drivers/staging/rtl8712/rtl871x_event.h   | 10 +++++-----
+>  drivers/staging/rtl8712/rtl871x_io.h      |  2 +-
+>  drivers/staging/rtl8712/rtl871x_pwrctrl.h | 10 +++++-----
+>  drivers/staging/rtl8712/rtl871x_xmit.h    | 14 +++++++-------
+>  4 files changed, 18 insertions(+), 18 deletions(-)
 
-Hang on, let's not throw the baby out with the bathwater here.
+Hi,
 
-The design of "secure boot" is to create a boot time environment where
-only trusted code may execute.  We rely on this trust guarantee when we
-pivot from the EFI to the MoK root of trust in shim.
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
 
-The reason we in Linux trust this guarantee is that it pertains to the
-boot environment only, so any violation would allow Windows boot to be
-compromised as well and we trust Microsoft's Business interests in
-securing windows far enough to think this would be dealt with very
-severely and it's an outcome the ODMs (who also add secure boot keys)
-are worried enough about to be very careful.
+You are receiving this message because of the following common error(s)
+as indicated below:
 
-The rub (and this is where I'm agreeing with Ard) is that any use case
-we come up with where a violation wouldn't cause a problem in windows
-is a use case where we cannot rely on the guarantee because Microsoft
-no longer has a strong business interest in policing it.  This, for
-instance, is why we don't populate the Linux trusted keyrings with the
-secure boot keys (we may trust them in the boot environment where
-compromise would be shared with windows but we can't trust them in the
-Linux OS environment where it wouldn't).  So this means we have to be
-very careful coming up with uses for secure boot that aren't strictly
-rooted in the guarantee as enforced by the business interests of
-Microsoft and the ODMs.
+- Your patch did many different things all at once, making it difficult
+  to review.  All Linux kernel patches need to only do one thing at a
+  time.  If you need to do multiple things (such as clean up all coding
+  style issues in a file/driver), do it in a sequence of patches, each
+  one doing only one thing.  This will make it easier to review the
+  patches to ensure that they are correct, and to help alleviate any
+  merge issues that larger patches can cause.
 
->  The UEFI variable store was not designed with confidentiality in
-> mind, and assuming [given the reputation of EFI on the implementation
-> side] that you can use it to keep secrets is rather unwise imho.
+- You did not specify a description of why the patch is needed, or
+  possibly, any description at all, in the email body.  Please read the
+  section entitled "The canonical patch format" in the kernel file,
+  Documentation/SubmittingPatches for what is needed in order to
+  properly describe the change.
 
-Agree completely here: Microsoft doesn't use UEFI variables for
-confidentiality, so we shouldn't either.  If you want confidentiality,
-use a TPM (like Microsoft does for the bitlocker key).
+- You did not write a descriptive Subject: for the patch, allowing Greg,
+  and everyone else, to know what this patch is all about.  Please read
+  the section entitled "The canonical patch format" in the kernel file,
+  Documentation/SubmittingPatches for what a proper Subject: line should
+  look like.
 
-James
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
 
+thanks,
+
+greg k-h's patch email bot
