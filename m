@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AD5CC46471
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B38E5C46472
 	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 19:05:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30CDD218D7
+	by mail.kernel.org (Postfix) with ESMTP id 68BD7218C3
 	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 19:05:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HHU7NKOp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30CDD218D7
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JmPF/OTY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68BD7218C3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726934AbeHEVLC (ORCPT
+        id S1726985AbeHEVLD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 5 Aug 2018 17:11:02 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:42284 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726592AbeHEVLC (ORCPT
+        Sun, 5 Aug 2018 17:11:03 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:41383 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726855AbeHEVLD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 Aug 2018 17:11:02 -0400
-Received: by mail-wr1-f66.google.com with SMTP id e7-v6so10270591wrs.9
-        for <linux-kernel@vger.kernel.org>; Sun, 05 Aug 2018 12:05:29 -0700 (PDT)
+        Sun, 5 Aug 2018 17:11:03 -0400
+Received: by mail-wr1-f67.google.com with SMTP id j5-v6so10276438wrr.8
+        for <linux-kernel@vger.kernel.org>; Sun, 05 Aug 2018 12:05:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=yDpcNrzd3bIdRHtMLKWH12x556X3QclGSR/SBsoypRs=;
-        b=HHU7NKOpTgdFHu0Ury4653awaKe7dXyw0FzEz0XkPOT9QLUkyj8WZwEmN1V61swtxl
-         ozzcYt79c7ldQimr3CQdQhw3XPCy0eciL7QBfu5kUS38N+qjWofi4zKi2J02z0lwyk6f
-         J1SP2sMSWXodLoJeZt8RFaJyaEvSpUjmJR/jQtu3iI4NK6ITStfocp/EoOzRUmaGLbjM
-         RShS0iUCPESrptgZvkqoQ4FQhjUFdAv4TFkcg4I62ejeLrltfQ/Lp7In1SMxOjR4Ng6u
-         iikb2SrUXBofXIuRvjAY5+tZKVrpodgrTAiivXw2LAQYg9yprdZzfWVHnRdZ4XICdvdQ
-         8yhQ==
+        bh=z4wbxk/n9WK646OOk+xWHw+425xgHexLf0Sb56gT10k=;
+        b=JmPF/OTYph4Akuzb5wFDJGtvf1s4CqwnVUNRUiG5pHYJ2VAPnnMRdCuR0MU7bbQuVF
+         8Us9OJByp+EAEEW77LcDsVnQdl3tN+9zM1O7KOgGK10XLq9ZxsVfvI2HyY9ewUTf9+7+
+         5vkWZkUukOEE/G+Wkbg453ed+QcdAIgztt3cIN1s/uN1gAqOaEi2vScZrFfwsDdkAx2N
+         AQ6V+XGdAuzK6/y7F3EZRTeeHnZFp6RqKdSZXnRK0VdayJJP3sgav+/k+cxyauPyWlTl
+         Xj8+ew9In2Rp6WDiNjrzhvaagvdLSGNPCDEM2fWFkSs7CKO5n4D31hhni/9v9zUGNJcL
+         n6AA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=yDpcNrzd3bIdRHtMLKWH12x556X3QclGSR/SBsoypRs=;
-        b=VTz43nZHCb48CzWebGg9Mw70YnW05EdEtpeG1WO5fZKZcN3Op/+ZXDqNYT26f2yw59
-         YwKixk1n/jLFEQJ6Wte8s2JDOPMCOUdqnJ3KORBccEzfFmXMBYTPuFzi/sEs7wbmMFE5
-         7RrSpdUwFC1HyimLUiEzCfYQHhP0QI+8NU08VgXrdTWmrgKwmX1HadOpyuQFp44Wc/b6
-         HgafR6iCMcKI+tOd8Vrjn7F2dXbSKgVpUMM/kFvP5H27IH5dRiDfwH2BZpsJG3mOlOBp
-         m2BM0YIS8w+xcXYIoDueyvlb8pKHOiKY/ehPTCf0tAxN7Po8r3+Y5gbYeib9gVdig3Zw
-         V2TA==
-X-Gm-Message-State: AOUpUlG9BmUTilO+PoFD/ZVxJavjr+aQi2q/H5ksPOLk5BEYVfqTK0jF
-        wdd61eMMxhXyGD3hR6SOPIq/9X1s
-X-Google-Smtp-Source: AAOMgpckSLnoO4bEdt/RZLeoP7Z5ouqyvcM9aAmc4RjgMBiWd3aeQ4YwnRlqxKs+3VRULwmzJ7RVgQ==
-X-Received: by 2002:adf:f28c:: with SMTP id k12-v6mr7109537wro.263.1533495928601;
-        Sun, 05 Aug 2018 12:05:28 -0700 (PDT)
+        bh=z4wbxk/n9WK646OOk+xWHw+425xgHexLf0Sb56gT10k=;
+        b=YzbcWAaYn/dTNs+Dh6O4O/35tDNGdfj1vQXcrqQGvpOCW+9bgKJuEbiqYfnuVnjjGE
+         XJcy2FirY4x81/P2UElXv8hAk/xHERZCjTAptzOFv4dQAEX/PrLUpKL/yVhDNprPaaeJ
+         nsEcpdrdAmNSV/KSUsj3oyUVevd5DQqU6EOFEH5ZkdAL0x7R7nQel4OGaEr71r0SKeMO
+         pKCA/aV894ViTLVEKOaEE5Xj6tVrRckMh3axu+t+Ixyu3wr0sjLq50NSk5WmXxRrGsZH
+         2WX2Z6gMc7ynyXAjIKTAzm21xRny/3XWJWktp1a8Y0u2qJYbwP0vLQJY5jSKh+wxt0OK
+         znlw==
+X-Gm-Message-State: AOUpUlE0ewODK4Ha8JiE6YW3MmZONghOd94jnwCBfuwIBtGIMCZpJgEn
+        CLsJ8oLyYdIHqoV3HG9lV4GPHDbO
+X-Google-Smtp-Source: AAOMgpdbiHJkIYeELogorNNN8eBuyeRvOWJAtQ8KNFUC0HE4SyljvNq9egcuZ9vAyivl4+V32Rg/Sg==
+X-Received: by 2002:adf:db41:: with SMTP id f1-v6mr8342451wrj.212.1533495929994;
+        Sun, 05 Aug 2018 12:05:29 -0700 (PDT)
 Received: from localhost.localdomain ([2a02:8108:85c0:57c8:8569:71c8:6dba:bb41])
-        by smtp.gmail.com with ESMTPSA id g125-v6sm4500884wmf.16.2018.08.05.12.05.27
+        by smtp.gmail.com with ESMTPSA id g125-v6sm4500884wmf.16.2018.08.05.12.05.29
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 05 Aug 2018 12:05:28 -0700 (PDT)
+        Sun, 05 Aug 2018 12:05:29 -0700 (PDT)
 From:   Michael Straube <straube.linux@gmail.com>
 To:     gregkh@linuxfoundation.org
 Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH v2 2/6] staging: rtl8188eu: use is_multicast_ether_addr in rtl8188eu_xmit.c
-Date:   Sun,  5 Aug 2018 21:05:12 +0200
-Message-Id: <20180805190516.2133-2-straube.linux@gmail.com>
+Subject: [PATCH v2 3/6] staging: rtl8188eu: cleanup block comment - style
+Date:   Sun,  5 Aug 2018 21:05:13 +0200
+Message-Id: <20180805190516.2133-3-straube.linux@gmail.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180805190516.2133-1-straube.linux@gmail.com>
 References: <20180805190516.2133-1-straube.linux@gmail.com>
@@ -73,38 +73,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use is_multicast_ether_addr instead of custom IS_MCAST in
-hal/rtl8188eu_xmit.c.
-
-There is only one use, so remove the extra variable for the
-result of IS_MCAST.
+Cleanup a block comment to conform with kernel coding style.
+Also cleans 'line over 80 characters' checkpatch warnings.
 
 Signed-off-by: Michael Straube <straube.linux@gmail.com>
 ---
- drivers/staging/rtl8188eu/hal/rtl8188eu_xmit.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/staging/rtl8188eu/hal/rtl8188eu_xmit.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/staging/rtl8188eu/hal/rtl8188eu_xmit.c b/drivers/staging/rtl8188eu/hal/rtl8188eu_xmit.c
-index 14622eee56ca..82fc5075e0a6 100644
+index 82fc5075e0a6..6925ec48dff1 100644
 --- a/drivers/staging/rtl8188eu/hal/rtl8188eu_xmit.c
 +++ b/drivers/staging/rtl8188eu/hal/rtl8188eu_xmit.c
-@@ -167,7 +167,6 @@ static s32 update_txdesc(struct xmit_frame *pxmitframe, u8 *pmem, s32 sz, u8 bag
- 	struct tx_desc	*ptxdesc = (struct tx_desc *)pmem;
- 	struct mlme_ext_priv	*pmlmeext = &adapt->mlmeextpriv;
- 	struct mlme_ext_info	*pmlmeinfo = &(pmlmeext->mlmext_info);
--	int	bmcst = IS_MCAST(pattrib->ra);
+@@ -43,9 +43,11 @@ static void rtl8188eu_cal_txdesc_chksum(struct tx_desc	*ptxdesc)
+ 	ptxdesc->txdw7 |= cpu_to_le32(0x0000ffff & checksum);
+ }
  
- 	if (adapt->registrypriv.mp_mode == 0) {
- 		if ((!bagg_pkt) && (urb_zero_packet_chk(adapt, sz) == 0)) {
-@@ -186,7 +185,7 @@ static s32 update_txdesc(struct xmit_frame *pxmitframe, u8 *pmem, s32 sz, u8 bag
- 
- 	ptxdesc->txdw0 |= cpu_to_le32(((offset) << OFFSET_SHT) & 0x00ff0000);/* 32 bytes for TX Desc */
- 
--	if (bmcst)
-+	if (is_multicast_ether_addr(pattrib->ra))
- 		ptxdesc->txdw0 |= cpu_to_le32(BMC);
- 
- 	if (adapt->registrypriv.mp_mode == 0) {
+-/*  Description: In normal chip, we should send some packet to Hw which will be used by Fw */
+-/*			in FW LPS mode. The function is to fill the Tx descriptor of this packets, then */
+-/*			Fw can tell Hw to send these packet derectly. */
++/*
++ * In normal chip, we should send some packet to Hw which will be used by Fw
++ * in FW LPS mode. The function is to fill the Tx descriptor of this packets,
++ * then Fw can tell Hw to send these packet derectly.
++ */
+ void rtl8188e_fill_fake_txdesc(struct adapter *adapt, u8 *desc, u32 BufferLen, u8  ispspoll, u8  is_btqosnull)
+ {
+ 	struct tx_desc *ptxdesc;
 -- 
 2.18.0
 
