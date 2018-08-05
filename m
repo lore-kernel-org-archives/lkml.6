@@ -6,43 +6,42 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A371C4646D
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 00:13:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A69B6C4646F
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 00:18:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6B1F217CC
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 00:13:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6B1F217CC
+	by mail.kernel.org (Postfix) with ESMTP id 663C5217BD
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 00:18:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 663C5217BD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730043AbeHECP1 (ORCPT
+        id S1729661AbeHECVJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 22:15:27 -0400
-Received: from gateway34.websitewelcome.com ([192.185.148.196]:34802 "EHLO
-        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726855AbeHECP1 (ORCPT
+        Sat, 4 Aug 2018 22:21:09 -0400
+Received: from gateway24.websitewelcome.com ([192.185.51.228]:39446 "EHLO
+        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726754AbeHECVJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 22:15:27 -0400
+        Sat, 4 Aug 2018 22:21:09 -0400
 Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
-        by gateway34.websitewelcome.com (Postfix) with ESMTP id B2A899043E5
-        for <linux-kernel@vger.kernel.org>; Sat,  4 Aug 2018 19:12:59 -0500 (CDT)
+        by gateway24.websitewelcome.com (Postfix) with ESMTP id 82BE9A307
+        for <linux-kernel@vger.kernel.org>; Sat,  4 Aug 2018 19:18:40 -0500 (CDT)
 Received: from gator4166.hostgator.com ([108.167.133.22])
         by cmsmtp with SMTP
-        id m6fLfUjob79N3m6fLfnl9q; Sat, 04 Aug 2018 19:12:59 -0500
+        id m6kqfUmfc79N3m6kqfnny4; Sat, 04 Aug 2018 19:18:40 -0500
 X-Authority-Reason: nr=8
-Received: from [189.250.50.82] (port=34992 helo=embeddedor)
+Received: from [189.250.50.82] (port=35016 helo=embeddedor)
         by gator4166.hostgator.com with esmtpa (Exim 4.91)
         (envelope-from <gustavo@embeddedor.com>)
-        id 1fm6fK-003ZsG-Uv; Sat, 04 Aug 2018 19:12:59 -0500
-Date:   Sat, 4 Aug 2018 19:12:57 -0500
+        id 1fm6kp-003buN-W9; Sat, 04 Aug 2018 19:18:40 -0500
+Date:   Sat, 4 Aug 2018 19:18:39 -0500
 From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
+To:     "Lee, Chun-Yi" <jlee@suse.com>, Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>
+Cc:     platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] venus: helpers: use true and false for boolean values
-Message-ID: <20180805001257.GA21110@embeddedor.com>
+Subject: [PATCH] platform/x86: acer-wmi: use true and false for boolean values
+Message-ID: <20180805001839.GA22975@embeddedor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -55,13 +54,13 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 189.250.50.82
 X-Source-L: No
-X-Exim-ID: 1fm6fK-003ZsG-Uv
+X-Exim-ID: 1fm6kp-003buN-W9
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.50.82]:34992
+X-Source-Sender: (embeddedor) [189.250.50.82]:35016
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 20
+X-Email-Count: 25
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -76,22 +75,25 @@ This code was detected with the help of Coccinelle.
 
 Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- drivers/media/platform/qcom/venus/helpers.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/platform/x86/acer-wmi.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/platform/qcom/venus/helpers.c b/drivers/media/platform/qcom/venus/helpers.c
-index cd3b96e..e436385 100644
---- a/drivers/media/platform/qcom/venus/helpers.c
-+++ b/drivers/media/platform/qcom/venus/helpers.c
-@@ -472,7 +472,7 @@ static bool is_dynamic_bufmode(struct venus_inst *inst)
+diff --git a/drivers/platform/x86/acer-wmi.c b/drivers/platform/x86/acer-wmi.c
+index 8952173..ede92be 100644
+--- a/drivers/platform/x86/acer-wmi.c
++++ b/drivers/platform/x86/acer-wmi.c
+@@ -673,9 +673,9 @@ static void __init find_quirks(void)
+ static bool has_cap(u32 cap)
+ {
+ 	if ((interface->capability & cap) != 0)
+-		return 1;
++		return true;
  
- 	caps = venus_caps_by_codec(core, inst->hfi_codec, inst->session_type);
- 	if (!caps)
--		return 0;
-+		return false;
- 
- 	return caps->cap_bufs_mode_dynamic;
+-	return 0;
++	return false;
  }
+ 
+ /*
 -- 
 2.7.4
 
