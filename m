@@ -3,96 +3,93 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60998C4646D
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 00:37:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1165C4646D
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 00:37:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B9D3217C1
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 00:37:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 96AC0217C1
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 00:37:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="C5WbeZA7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B9D3217C1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=arista.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sHi3jhWS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96AC0217C1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728515AbeHECjp (ORCPT
+        id S1728835AbeHECkC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 22:39:45 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:33005 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726628AbeHECjp (ORCPT
+        Sat, 4 Aug 2018 22:40:02 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:38642 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726509AbeHECkC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 22:39:45 -0400
-Received: by mail-ed1-f65.google.com with SMTP id x5-v6so3470804edr.0
-        for <linux-kernel@vger.kernel.org>; Sat, 04 Aug 2018 17:37:12 -0700 (PDT)
+        Sat, 4 Aug 2018 22:40:02 -0400
+Received: by mail-lj1-f193.google.com with SMTP id p6-v6so7829875ljc.5;
+        Sat, 04 Aug 2018 17:37:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=arista.com; s=googlenew;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=wTt0JluoyzBHg6Sslo/56PgSemOt0eCgCkwz+E5A8JQ=;
-        b=C5WbeZA7/X4Z50LOoAIRXln3ISW58cD7XaQwqBOQxhBjBnzO9SEjANobyvlq5Ub42X
-         kQBhTGh8JbCTtDIXXT+H/4bC0nsgTHhUx5R9tDdAfoppVORqJQUGZqzBJrqQZo+1/Vrl
-         7zsI1FvgFwpjggZhQfmiuF/4kuQu+cMkyX4pf36P3OWhT7PI/owDbt0AHCvo/5o4KnNr
-         LEUqKWfgQRvWyIfjiBdHtGcATBC2G9dVK3jiR+8p468nUWpNY+2nm4cAfHi8M6aoMZsu
-         5DkWA8GukxH2dpeHDcvE6g6mXyD8epwrq9uDp3v2GhBhBoJstIVC8yKBvNpNAb3ml477
-         0bfw==
+        bh=c82ln70mP1NzdVbMkzTg4/+6iy9DXi/uAWsQ30Cg/WM=;
+        b=sHi3jhWSOY92fu30VRk+bV6mHfonPYXSbQzTdTF6yxUjve9k2Crjki7xhOWHfyBi8+
+         xmvZcWw6X1IkLsSQTdt42pn4ELumvUqLzMfAsKRSsm1xEVFMDWFHff6eijYGbVN9zAZi
+         TPYS59dwvMp5OfTiDa4avgLS7E1+IqWMgTS+gtzWYW8swXZKLreSGnFurWkuv8ejwyMe
+         pPz1keq5Tq6F5348Axsc0dOhGvsWIDq4arEiwKbQ0dGzA6Jd4F4QJKvDHY/R7ct1Cw1m
+         lMf9rTO5ktaTaYDWS65JbKD3i9CDNtLNBkzz5y6BYeqkhCZL8nmcIiN9Un+pNE0MhQ5A
+         N9Nw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=wTt0JluoyzBHg6Sslo/56PgSemOt0eCgCkwz+E5A8JQ=;
-        b=kLIEQ4Z358qGoeX8oqk4sEc86Zc74Tr4kY5RC4c4vgQXG2vRg78rWl3dMJAfpMLsDU
-         uqVZ22mpRnZ7M2rHuchsiKqE6ltqLaKEMoCQONZlShBZ4H/whRwuKyrMg0A+grtNtyXc
-         Ymm/vLhFeTv54x15kcHWrgSFOgX9s7jhksbTR/VBIdHNnvip2gQs9wuF3E1A2kDXB5cI
-         ywLeTdbwDcWJYllxmSG6HAkRJf4Mnb81EWqcFk8V5KgJ0NXOO0SrLBDl4zllI4K5Brr0
-         cIJPJbq61rT4dFNdO0Rl7JgJR8V552u2vAw6L7U1W+7z+H2OyF+UrgrcTsLpP7c22mdB
-         Cyeg==
-X-Gm-Message-State: AOUpUlEuFNXibwDsnylzPhMujtoPQwSbkEA1n2wwyZyGtAwBLPdYEJFY
-        Mj1h5E21eJ3Si5BuzKwWL3YvKg==
-X-Google-Smtp-Source: AAOMgpc2QP5PIcFWGwknEHJf6/eEkhRR5nkZSwBOrckMprTKNJ6/t6SiAKzdb3OVNbvQLoaSG+/mMw==
-X-Received: by 2002:a50:89aa:: with SMTP id g39-v6mr12299794edg.25.1533429431688;
-        Sat, 04 Aug 2018 17:37:11 -0700 (PDT)
-Received: from localhost.localdomain ([2a02:8084:ea2:c100:5459:5b7e:632c:59fc])
-        by smtp.gmail.com with ESMTPSA id p10-v6sm3130324edh.9.2018.08.04.17.37.10
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 04 Aug 2018 17:37:11 -0700 (PDT)
-Message-ID: <1533429429.2679.156.camel@arista.com>
-Subject: Re: [PATCH] netlink: Don't shift on 64 for ngroups
-From:   Dmitry Safonov <dima@arista.com>
-To:     David Miller <davem@davemloft.net>
-Cc:     linux-kernel@vger.kernel.org, natechancellor@gmail.com,
-        herbert@gondor.apana.org.au, steffen.klassert@secunet.com,
-        netdev@vger.kernel.org, stable@vger.kernel.org
-Date:   Sun, 05 Aug 2018 01:37:09 +0100
-In-Reply-To: <20180804.170856.2031275734761112973.davem@davemloft.net>
-References: <20180804235544.10347-1-dima@arista.com>
-         <20180804.170856.2031275734761112973.davem@davemloft.net>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.24.6 (3.24.6-1.fc26) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        bh=c82ln70mP1NzdVbMkzTg4/+6iy9DXi/uAWsQ30Cg/WM=;
+        b=rKe7DqTvPVJxDx4bmwh6u3nmqr8dKjFXnTMf75uUAybx9TvVDFlv16PJtAjC/yYmI6
+         9+Vj6Qy+jbu3YmOCrDe/2KoXyxPXKhATmnOUyE2dUtj+WvApeNXHzFNd+1/ps1dl07sl
+         nKcfVgaTQNBw1yoonTbgSQIIptSk4jpEoXVi8P78n689af1/1ALLisbaaidGJ5KEa7u6
+         +TN5B7ZPfDQYUCLmDI0dacGsSnoGEtUVu1QFBkc1xmohvhPF4q9YdILd8iL48WRtvHmn
+         IScl3U8PzxnjjaC0e6YS1tZUf4hvHy1kOPZ8ON+VxanWWfztdx18Pw+v0mFzwBWa6xrN
+         UNdw==
+X-Gm-Message-State: AOUpUlGfMs59S272BQulJP51Lvszl4BVx3VrKZJHLX1w6QZwdSLn8J5B
+        d6WgtZrgb3L6w1oGucZSpaw=
+X-Google-Smtp-Source: AAOMgpfhk+6C8xrZAZuolAI8Blv73hxNgIDxel/Pw+hRa6UD1f4Lc9J3W8KdMKRaZnpnrwIFp1vmnA==
+X-Received: by 2002:a2e:9e17:: with SMTP id e23-v6mr8629524ljk.14.1533429447938;
+        Sat, 04 Aug 2018 17:37:27 -0700 (PDT)
+Received: from dimapc.localnet (109-252-90-13.nat.spd-mgts.ru. [109.252.90.13])
+        by smtp.gmail.com with ESMTPSA id k5-v6sm1531815ljk.69.2018.08.04.17.37.26
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 04 Aug 2018 17:37:27 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Mikko Perttunen <cyndis@kapsi.fi>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v1] memory: tegra: Block DMA for clients HW on a faulty memory access
+Date:   Sun, 05 Aug 2018 03:37:26 +0300
+Message-ID: <1797693.ge5mZLuUEu@dimapc>
+In-Reply-To: <89f0794e-affa-dba0-9684-582ce5570cad@kapsi.fi>
+References: <20180508165841.13758-1-digetx@gmail.com> <2607799.I2xByD6lqT@dimapc> <89f0794e-affa-dba0-9684-582ce5570cad@kapsi.fi>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 2018-08-04 at 17:08 -0700, David Miller wrote:
-> From: Dmitry Safonov <dima@arista.com>
-> Date: Sun,  5 Aug 2018 00:55:44 +0100
-> 
-> > @@ -1011,8 +1011,8 @@ static int netlink_bind(struct socket *sock,
-> struct sockaddr *addr,
-> >  
-> >       if (nlk->ngroups == 0)
-> >               groups = 0;
-> > -     else
-> > -             groups &= (1ULL << nlk->ngroups) - 1;
-> > +     else if (nlk->ngroups < sizeof(long unsigned int))
-> > +             groups &= (1UL << nlk->ngroups) - 1;
-> 
-> Sizeof is in bytes, you want to compare against bits.
+On Sunday, 5 August 2018 03:11:57 MSK Mikko Perttunen wrote:
+> One potential issue is with host1x clients where userspace processes can
+> submit jobs with invalid memory accesses (addresses not mapped to
+> IOMMU). If when such a failure happens, we disable the DMA for the whole
+> host1x client, unrelated userspace processes may see failures even
+> though there is no problem with their jobs.
 
-I'm too bad. Drop this version, please.
-I've resent v2.
+Good point, I'll take a look at partial resurrection of patch [0]. Anyway I 
+think it's still better to fail even the unrelated jobs, rather than to have 
+corrupted memory.
+
+[0] https://github.com/grate-driver/linux/commit/
+c0351a9d01491af2b2fefc162de1c2e4fcfaa94c#diff-20226be476307cb7ec9f60e26a9c30deR378
+
+
