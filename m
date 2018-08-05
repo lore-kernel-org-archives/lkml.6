@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8D21C46471
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 16:43:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBD42C46470
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 16:44:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F97721898
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 16:43:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F97721898
+	by mail.kernel.org (Postfix) with ESMTP id 7501F21898
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 16:44:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7501F21898
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726855AbeHEStG (ORCPT
+        id S1726934AbeHEStQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 5 Aug 2018 14:49:06 -0400
-Received: from mx2.suse.de ([195.135.220.15]:43306 "EHLO mx1.suse.de"
+        Sun, 5 Aug 2018 14:49:16 -0400
+Received: from mx2.suse.de ([195.135.220.15]:43344 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726407AbeHEStG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 Aug 2018 14:49:06 -0400
+        id S1726382AbeHEStQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 5 Aug 2018 14:49:16 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D8398ADA7;
-        Sun,  5 Aug 2018 16:43:55 +0000 (UTC)
-Date:   Sun, 05 Aug 2018 18:43:55 +0200
-Message-ID: <s5hftzsu5kk.wl-tiwai@suse.de>
+        by mx1.suse.de (Postfix) with ESMTP id EEBA3AE26;
+        Sun,  5 Aug 2018 16:44:04 +0000 (UTC)
+Date:   Sun, 05 Aug 2018 18:44:04 +0200
+Message-ID: <s5heffcu5kb.wl-tiwai@suse.de>
 From:   Takashi Iwai <tiwai@suse.de>
 To:     " Gustavo A. R. Silva " <gustavo@embeddedor.com>
 Cc:     "Jaroslav Kysela" <perex@perex.cz>, <alsa-devel@alsa-project.org>,
         <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ALSA: mixart: Mark expected switch fall-through
-In-Reply-To: <20180804201103.GA26669@embeddedor.com>
-References: <20180804201103.GA26669@embeddedor.com>
+Subject: Re: [PATCH] ALSA: emu10k1: Mark expected switch fall-throughs
+In-Reply-To: <20180804201209.GA26701@embeddedor.com>
+References: <20180804201209.GA26701@embeddedor.com>
 User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
  FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/26
  (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
@@ -45,11 +45,15 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 04 Aug 2018 22:11:03 +0200,
+On Sat, 04 Aug 2018 22:12:09 +0200,
  Gustavo A. R. Silva  wrote:
 > 
 > In preparation to enabling -Wimplicit-fallthrough, mark switch cases
 > where we are expecting to fall through.
+> 
+> Notice that in this particular case, I replaced the code comment with
+> a proper "fall through" annotation, which is what GCC is expecting
+> to find.
 > 
 > Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
