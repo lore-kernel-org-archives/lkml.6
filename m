@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A72B1C4646D
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 00:08:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DBE0C4646D
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 00:08:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F4E6217CC
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 00:08:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F4E6217CC
+	by mail.kernel.org (Postfix) with ESMTP id 54A9D217CC
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 00:08:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54A9D217CC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730052AbeHECKY (ORCPT
+        id S1730232AbeHECKe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 22:10:24 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:58654 "EHLO
+        Sat, 4 Aug 2018 22:10:34 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:58674 "EHLO
         shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729709AbeHECKY (ORCPT
+        with ESMTP id S1729690AbeHECKe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 22:10:24 -0400
+        Sat, 4 Aug 2018 22:10:34 -0400
 Received: from localhost (unknown [172.58.40.233])
         (using TLSv1 with cipher AES256-SHA (256/256 bits))
         (Client did not present a certificate)
         (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 01A36140764DD;
-        Sat,  4 Aug 2018 17:07:56 -0700 (PDT)
-Date:   Sat, 04 Aug 2018 17:07:53 -0700 (PDT)
-Message-Id: <20180804.170753.739714742014742080.davem@davemloft.net>
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 890B3140764DD;
+        Sat,  4 Aug 2018 17:08:07 -0700 (PDT)
+Date:   Sat, 04 Aug 2018 17:08:06 -0700 (PDT)
+Message-Id: <20180804.170806.83052413495057896.davem@davemloft.net>
 To:     dima@arista.com
 Cc:     natechancellor@gmail.com, gregkh@linuxfoundation.org,
         linux-kernel@vger.kernel.org, stable@vger.kernel.org,
@@ -39,22 +39,22 @@ Cc:     natechancellor@gmail.com, gregkh@linuxfoundation.org,
 Subject: Re: [PATCH 4.4 106/124] netlink: Do not subscribe to non-existent
  groups
 From:   David Miller <davem@davemloft.net>
-In-Reply-To: <1533426268.2679.152.camel@arista.com>
+In-Reply-To: <1533426425.2679.154.camel@arista.com>
 References: <1533425198.2679.148.camel@arista.com>
         <20180804.163348.896647113172060665.davem@davemloft.net>
-        <1533426268.2679.152.camel@arista.com>
+        <1533426425.2679.154.camel@arista.com>
 X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
 Mime-Version: 1.0
 Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sat, 04 Aug 2018 17:07:57 -0700 (PDT)
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sat, 04 Aug 2018 17:08:08 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Dmitry Safonov <dima@arista.com>
-Date: Sun, 05 Aug 2018 00:44:28 +0100
+Date: Sun, 05 Aug 2018 00:47:05 +0100
 
 > On Sat, 2018-08-04 at 16:33 -0700, David Miller wrote:
 >> From: Dmitry Safonov <dima@arista.com>
@@ -75,16 +75,8 @@ Date: Sun, 05 Aug 2018 00:44:28 +0100
 >> 
 >> This makes also the "ULL" in your constant specification incorrect as
 >> well.
->> 
->> So much crazy stuff going on here :-/
 > 
-> Right, I misslooked that..
-> How does this work on Android then?
-> I doubt they changed uabi.
+> I think, ULL is right - I did it to make shift for 32 well-defined.
+> (which in result has 32 bits set)
 
-We can have many more than 32 multicast group subscriptions.
-
-That's why the memberships are also stored in the nlk->groups[] array.
-
-I'm --><--- this close to simply reverting all of your changes, the
-missed masking seems to be quite harmless.
+Oh right, my bad.
