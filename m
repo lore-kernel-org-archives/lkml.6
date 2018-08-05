@@ -3,35 +3,33 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7DDBC46471
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 19:13:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7143C46471
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 19:14:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F48D218DF
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 19:13:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F48D218DF
+	by mail.kernel.org (Postfix) with ESMTP id 8407A218DF
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 19:14:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8407A218DF
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726811AbeHEVSp (ORCPT
+        id S1726928AbeHEVUH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 5 Aug 2018 17:18:45 -0400
-Received: from mx2.suse.de ([195.135.220.15]:44184 "EHLO mx1.suse.de"
+        Sun, 5 Aug 2018 17:20:07 -0400
+Received: from mx2.suse.de ([195.135.220.15]:44352 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726509AbeHEVSp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 Aug 2018 17:18:45 -0400
+        id S1726509AbeHEVUG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 5 Aug 2018 17:20:06 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 86AC0AE74;
-        Sun,  5 Aug 2018 19:13:09 +0000 (UTC)
-Subject: Re: [PATCH 1/3] fs/btrfs/disk-io: Remove unneeded variable "err"
+        by mx1.suse.de (Postfix) with ESMTP id 726E7ADD7;
+        Sun,  5 Aug 2018 19:14:30 +0000 (UTC)
+Subject: Re: [PATCH 0/3] Remove uneeded variable "err"
 To:     zhong jiang <zhongjiang@huawei.com>, clm@fb.com, jbacik@fb.com,
         dsterba@suse.com
 Cc:     linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <1533481371-21349-1-git-send-email-zhongjiang@huawei.com>
- <1533481371-21349-2-git-send-email-zhongjiang@huawei.com>
 From:   Nikolay Borisov <nborisov@suse.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=nborisov@suse.com; prefer-encrypt=mutual; keydata=
@@ -76,12 +74,12 @@ Autocrypt: addr=nborisov@suse.com; prefer-encrypt=mutual; keydata=
  KIuxEcV8wcVjr+Wr9zRl06waOCkgrQbTPp631hToxo+4rA1jiQF2M80HAet65ytBVR2pFGZF
  zGYYLqiG+mpUZ+FPjxk9kpkRYz61mTLSY7tuFljExfJWMGfgSg1OxfLV631jV1TcdUnx+h3l
  Sqs2vMhAVt14zT8mpIuu2VNxcontxgVr1kzYA/tQg32fVRbGr449j1gw57BV9i0vww==
-Message-ID: <b999d05d-1f94-5f31-8b43-20e6bf4ebc3d@suse.com>
-Date:   Sun, 5 Aug 2018 22:13:07 +0300
+Message-ID: <c9f07f02-38c0-7491-3b48-0dda20f60d13@suse.com>
+Date:   Sun, 5 Aug 2018 22:14:29 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <1533481371-21349-2-git-send-email-zhongjiang@huawei.com>
+In-Reply-To: <1533481371-21349-1-git-send-email-zhongjiang@huawei.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -93,68 +91,21 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 On  5.08.2018 18:02, zhong jiang wrote:
-> The err is not used after initalization, So remove it and make
-> the function to be void function.
 > 
-> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
-
-The ret value of this function is not checked by the sole caller
-(btrfs_cleanup_one_transaction), however, this does not give you the
-right to use a bulk commit message. If you want your future
-contributions to be taken seriously please put actual effort in properly
-describing your changes.
-
-
-> ---
->  fs/btrfs/disk-io.c | 12 ++++--------
->  1 file changed, 4 insertions(+), 8 deletions(-)
+> zhong jiang (3):
+>   fs/btrfs/disk-io: Remove unneeded variable "err"
+>   fs/btrfs/extent-tree: remove redudant variable "err"
+>   fs/btrfs/tree-log: remove the unneeded variable "err"
 > 
-> diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
-> index 468365d..34e4926 100644
-> --- a/fs/btrfs/disk-io.c
-> +++ b/fs/btrfs/disk-io.c
-> @@ -53,8 +53,8 @@
->  static const struct extent_io_ops btree_extent_io_ops;
->  static void end_workqueue_fn(struct btrfs_work *work);
->  static void btrfs_destroy_ordered_extents(struct btrfs_root *root);
-> -static int btrfs_destroy_delayed_refs(struct btrfs_transaction *trans,
-> -				      struct btrfs_fs_info *fs_info);
-> +static void btrfs_destroy_delayed_refs(struct btrfs_transaction *trans,
-> +				       struct btrfs_fs_info *fs_info);
->  static void btrfs_destroy_delalloc_inodes(struct btrfs_root *root);
->  static int btrfs_destroy_marked_extents(struct btrfs_fs_info *fs_info,
->  					struct extent_io_tree *dirty_pages,
-> @@ -4179,13 +4179,12 @@ static void btrfs_destroy_all_ordered_extents(struct btrfs_fs_info *fs_info)
->  	spin_unlock(&fs_info->ordered_root_lock);
->  }
->  
-> -static int btrfs_destroy_delayed_refs(struct btrfs_transaction *trans,
-> -				      struct btrfs_fs_info *fs_info)
-> +static void btrfs_destroy_delayed_refs(struct btrfs_transaction *trans,
-> +				       struct btrfs_fs_info *fs_info)
->  {
->  	struct rb_node *node;
->  	struct btrfs_delayed_ref_root *delayed_refs;
->  	struct btrfs_delayed_ref_node *ref;
-> -	int ret = 0;
->  
->  	delayed_refs = &trans->delayed_refs;
->  
-> @@ -4193,7 +4192,6 @@ static int btrfs_destroy_delayed_refs(struct btrfs_transaction *trans,
->  	if (atomic_read(&delayed_refs->num_entries) == 0) {
->  		spin_unlock(&delayed_refs->lock);
->  		btrfs_info(fs_info, "delayed_refs has NO entry");
-> -		return ret;
->  	}
->  
->  	while ((node = rb_first(&delayed_refs->href_root)) != NULL) {
-> @@ -4247,8 +4245,6 @@ static int btrfs_destroy_delayed_refs(struct btrfs_transaction *trans,
->  	}
->  
->  	spin_unlock(&delayed_refs->lock);
-> -
-> -	return ret;
->  }
->  
->  static void btrfs_destroy_delalloc_inodes(struct btrfs_root *root)
+>  fs/btrfs/disk-io.c     | 12 ++++--------
+>  fs/btrfs/extent-tree.c |  6 ++----
+>  fs/btrfs/tree-log.c    |  5 +----
+>  fs/btrfs/tree-log.h    |  2 +-
+>  4 files changed, 8 insertions(+), 17 deletions(-)
 > 
+
+
+NAK on the whole series on the basis of using a bulk commit message
+which doesn't really describe the changes of each individual commit. If
+you want those changes to eventually be merged resubmit the series with
+individual reasoning for every commit.
