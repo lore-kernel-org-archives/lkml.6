@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 701FEC46471
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 20:08:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B750C46471
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 20:08:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DD0C2192C
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 20:08:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B3BD121920
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 20:08:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KXSrFWqW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DD0C2192C
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YV+22Z8z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3BD121920
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728668AbeHEWOO (ORCPT
+        id S1728787AbeHEWOP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 5 Aug 2018 18:14:14 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:42316 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726680AbeHEWON (ORCPT
+        Sun, 5 Aug 2018 18:14:15 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:41590 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728524AbeHEWOO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 Aug 2018 18:14:13 -0400
-Received: by mail-pl0-f67.google.com with SMTP id g6-v6so1154460plq.9
-        for <linux-kernel@vger.kernel.org>; Sun, 05 Aug 2018 13:08:29 -0700 (PDT)
+        Sun, 5 Aug 2018 18:14:14 -0400
+Received: by mail-pl0-f68.google.com with SMTP id w19-v6so3062145ply.8
+        for <linux-kernel@vger.kernel.org>; Sun, 05 Aug 2018 13:08:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=PWWaZ1vnH/YBjAqwNBqF9ILBsura1qGVzE4YUNOQJP0=;
-        b=KXSrFWqWxubyOYmSJCTlu7bxzCJ0FNkeeIyktk9PKXMt8l4nUEyDPkw8o8YRs7ORq+
-         hxbP9u/WKxrUfYY/3jxnSjjKO/cxrA9qvnEztyDfneMemxbgeD65ImAmFHLJlmFrMxE5
-         PLPsDm82zPq4wfzyp4eDBuAunjjxeMyX8NHYVf2+fQMVWWlAQeWb/sV2D9O8iGP7PGSx
-         lwMTMHbZnOk0SqzTidRd0XLM0d5AW3LruWZ1jQr1SlJ1/NqRxTWscUY6AEzUxDENa479
-         xF0LcRSJKAdmdUCx/iHOI4ZHkaOM91LUbaMn7Rck5lZgzlDfSAxm0P3jX3P/sUaJ1YJ9
-         YW8Q==
+        bh=gpbI7qWDO6JeCEEZnAVOq1IdQOaMkP3/ZpER6OY/0cw=;
+        b=YV+22Z8zvN6TVaER+5Khk/La++24gSduH/Gh+GJePedy2MRiK9RITyRo1Sy7x0FikN
+         Le8ky/YDJ54VXOxB/wAVP6edUKNWizvB8Zl15asT53m4g3BseucYXKwTBFlqgsHf+Kkm
+         rL57csIMv94hCyqff4A8lFi0AUPBwdS+srKzKH4w02GvRpHoH1SQRg7paapjjHhZ28Ld
+         A5En0fE+6XRCCRNVhFuE3+AMqjcAVMTSm51+LPgOKFwRQrnmDgU9tIf5zpI6o3wuV/CH
+         r08HQnrivabxNocd1XF8G/GYCuMl+Vdm8oqDzA6MElkWfG6jOVXwb5y6TH2U1XOUAgK9
+         wvOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=PWWaZ1vnH/YBjAqwNBqF9ILBsura1qGVzE4YUNOQJP0=;
-        b=HRyhA8cV2Mm91MxhYnq8EREVOKAX3UzE253pMLFKQ7J3vi3yIZIl+a765ZOOYFL710
-         6mF7PFeBYG7Z/K/zZBZedK5WiDRvNMljpO9Zi7lSKGpyH9FHKyz8MFZ+gyiX0Pjf2DjX
-         xlG6dymWZvU+7nJX3t02MFNsynDNk8mE9bGNCnYZBwucgadMAVAw0x+g+r4ian6DWfED
-         0evdLakduSlOla7kSm6VOyRLqpppWDDM83zp4YhBQSo+bVp/ZkUsbSZ1ssRwXlwQ6fga
-         ZGJp9gSooWfUDfNrlQ3K8j+n2vFBJ6hm3MXXSGpGtdyFSxcqQ88ogjgMPISOnQ7D2sLG
-         8ZFg==
-X-Gm-Message-State: AOUpUlFKKe2o/ZlJIOnXN9u550XQ87KeelWEVCMXkMS/peZjGg6iD89F
-        8tDLTrfDh3I/3hlxVAflyLM=
-X-Google-Smtp-Source: AAOMgpe3jDqF4t5uco7PRhdqCYm6YW8U4IP94pjOa7v53IhX0Xclu03/I43dglCqCd+r5hqF0wRZAQ==
-X-Received: by 2002:a17:902:aa46:: with SMTP id c6-v6mr11298245plr.313.1533499708610;
-        Sun, 05 Aug 2018 13:08:28 -0700 (PDT)
+        bh=gpbI7qWDO6JeCEEZnAVOq1IdQOaMkP3/ZpER6OY/0cw=;
+        b=NoNmv+ktQcRuhRBb4XUWOE9e010ORfc5V2HkrCuyzZdjI1ye9yMAbO5fxDeOuyQmBn
+         zgtDUgsQaBv1IZ8WB65lMWebzBJwt1XMaFy1vXFX3vPcyB853VIHx70ASogiF1yOOsWb
+         InHPRHpF7MW5qDz3ASbRGRPw5G+24wL/2x2KI/LxyfnQ6MRmqy49P1PJGMphHDl77zYh
+         wItzTUHADe6EV4aNjZk3kX4a/wfCAMB0Fbk745sgRWleuj+sC0rtzzRe4SVytNDIpNw0
+         cEWQ/GrJBBfmKuvQqqdE3py/QTCEi2TXjpEI32Up0RrLyLVVvoM/GjiRFG59su6zov6W
+         z4IQ==
+X-Gm-Message-State: AOUpUlHWn49OQr/Lp0JBJEPt0iUzcngb0EpfoXfLv3n49BlT09sgQsr6
+        vtkSq/gH+o9rYqSQv8XLqUM=
+X-Google-Smtp-Source: AAOMgpdabr6Ky7xM/7/Jm1399QK/jOWMChwC3AXclg1NUwvumRK9PnVY9WZa18h6Audq585l+oxTXA==
+X-Received: by 2002:a17:902:9a83:: with SMTP id w3-v6mr11454411plp.75.1533499710319;
+        Sun, 05 Aug 2018 13:08:30 -0700 (PDT)
 Received: from toddpoynor2.mtv.corp.google.com ([2620:0:1000:3701:7d29:cd13:d903:7908])
-        by smtp.gmail.com with ESMTPSA id o72-v6sm15038227pfk.76.2018.08.05.13.08.27
+        by smtp.gmail.com with ESMTPSA id o72-v6sm15038227pfk.76.2018.08.05.13.08.29
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 05 Aug 2018 13:08:28 -0700 (PDT)
+        Sun, 05 Aug 2018 13:08:29 -0700 (PDT)
 From:   Todd Poynor <toddpoynor@gmail.com>
 To:     Rob Springer <rspringer@google.com>,
         John Joseph <jnjoseph@google.com>,
@@ -66,9 +66,9 @@ To:     Rob Springer <rspringer@google.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         Todd Poynor <toddpoynor@google.com>
-Subject: [PATCH 09/15] staging: gasket: core: delete device add and remove callbacks
-Date:   Sun,  5 Aug 2018 13:07:43 -0700
-Message-Id: <20180805200749.116693-10-toddpoynor@gmail.com>
+Subject: [PATCH 10/15] staging: gasket: apex: fold device add/remove logic inline
+Date:   Sun,  5 Aug 2018 13:07:44 -0700
+Message-Id: <20180805200749.116693-11-toddpoynor@gmail.com>
 X-Mailer: git-send-email 2.18.0.597.ga71716f1ad-goog
 In-Reply-To: <20180805200749.116693-1-toddpoynor@gmail.com>
 References: <20180805200749.116693-1-toddpoynor@gmail.com>
@@ -81,98 +81,123 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Todd Poynor <toddpoynor@google.com>
 
-Gasket device drivers are now in charge of orchestrating the device add
-and removal sequences, so the callbacks from the framework to the device
-drivers for these events are no longer needed.
+Gasket device drivers are now in charge of the device add and remove
+sequences; the framework callbacks for these are deleted.  Move the
+apex device add callback code to the probe function.  Apex did not
+implement the removal callback.
 
 Signed-off-by: Todd Poynor <toddpoynor@google.com>
 ---
- drivers/staging/gasket/gasket_core.c | 10 ----------
- drivers/staging/gasket/gasket_core.h | 29 ----------------------------
- 2 files changed, 39 deletions(-)
+ drivers/staging/gasket/apex_driver.c | 69 +++++++++++++---------------
+ 1 file changed, 32 insertions(+), 37 deletions(-)
 
-diff --git a/drivers/staging/gasket/gasket_core.c b/drivers/staging/gasket/gasket_core.c
-index fad4883e6332c..0d76e18fcde5b 100644
---- a/drivers/staging/gasket/gasket_core.c
-+++ b/drivers/staging/gasket/gasket_core.c
-@@ -1468,12 +1468,6 @@ int gasket_pci_add_device(struct pci_dev *pci_dev,
- 	if (ret)
- 		goto fail2;
+diff --git a/drivers/staging/gasket/apex_driver.c b/drivers/staging/gasket/apex_driver.c
+index 1d8a100c52885..69ca7fb10eddc 100644
+--- a/drivers/staging/gasket/apex_driver.c
++++ b/drivers/staging/gasket/apex_driver.c
+@@ -448,37 +448,6 @@ static int apex_reset(struct gasket_dev *gasket_dev)
+ 	return ret;
+ }
  
--	ret = check_and_invoke_callback(gasket_dev, driver_desc->add_dev_cb);
--	if (ret) {
--		dev_err(gasket_dev->dev, "Error in add device cb: %d\n", ret);
--		goto fail2;
+-static int apex_add_dev_cb(struct gasket_dev *gasket_dev)
+-{
+-	ulong page_table_ready, msix_table_ready;
+-	int retries = 0;
+-
+-	apex_reset(gasket_dev);
+-
+-	while (retries < APEX_RESET_RETRY) {
+-		page_table_ready =
+-			gasket_dev_read_64(gasket_dev, APEX_BAR_INDEX,
+-					   APEX_BAR2_REG_KERNEL_HIB_PAGE_TABLE_INIT);
+-		msix_table_ready =
+-			gasket_dev_read_64(gasket_dev, APEX_BAR_INDEX,
+-					   APEX_BAR2_REG_KERNEL_HIB_MSIX_TABLE_INIT);
+-		if (page_table_ready && msix_table_ready)
+-			break;
+-		schedule_timeout(msecs_to_jiffies(APEX_RESET_DELAY));
+-		retries++;
 -	}
 -
- 	ret = gasket_sysfs_create_mapping(gasket_dev->dev_info.device,
- 					  gasket_dev);
- 	if (ret)
-@@ -1512,7 +1506,6 @@ int gasket_pci_add_device(struct pci_dev *pci_dev,
- 	gasket_sysfs_remove_mapping(gasket_dev->dev_info.device);
- fail2:
- 	gasket_cleanup_pci(gasket_dev);
--	check_and_invoke_callback(gasket_dev, driver_desc->remove_dev_cb);
- 	device_destroy(internal_desc->class, gasket_dev->dev_info.devt);
- fail1:
- 	gasket_free_dev(gasket_dev);
-@@ -1559,9 +1552,6 @@ void gasket_pci_remove_device(struct pci_dev *pci_dev)
+-	if (retries == APEX_RESET_RETRY) {
+-		if (!page_table_ready)
+-			dev_err(gasket_dev->dev, "Page table init timed out\n");
+-		if (!msix_table_ready)
+-			dev_err(gasket_dev->dev, "MSI-X table init timed out\n");
+-		return -ETIMEDOUT;
+-	}
+-
+-	return 0;
+-}
+-
+ /*
+  * Check permissions for Apex ioctls.
+  * Returns true if the current user may execute this ioctl, and false otherwise.
+@@ -626,6 +595,8 @@ static int apex_pci_probe(struct pci_dev *pci_dev,
+ 			  const struct pci_device_id *id)
+ {
+ 	int ret;
++	ulong page_table_ready, msix_table_ready;
++	int retries = 0;
+ 	struct gasket_dev *gasket_dev;
  
- 	check_and_invoke_callback(gasket_dev, driver_desc->sysfs_cleanup_cb);
- 	gasket_sysfs_remove_mapping(gasket_dev->dev_info.device);
--
--	check_and_invoke_callback(gasket_dev, driver_desc->remove_dev_cb);
--
- 	device_destroy(internal_desc->class, gasket_dev->dev_info.devt);
- 	gasket_free_dev(gasket_dev);
+ 	ret = pci_enable_device(pci_dev);
+@@ -644,15 +615,42 @@ static int apex_pci_probe(struct pci_dev *pci_dev,
+ 	}
+ 
+ 	pci_set_drvdata(pci_dev, gasket_dev);
++	apex_reset(gasket_dev);
++
++	while (retries < APEX_RESET_RETRY) {
++		page_table_ready =
++			gasket_dev_read_64(gasket_dev, APEX_BAR_INDEX,
++					   APEX_BAR2_REG_KERNEL_HIB_PAGE_TABLE_INIT);
++		msix_table_ready =
++			gasket_dev_read_64(gasket_dev, APEX_BAR_INDEX,
++					   APEX_BAR2_REG_KERNEL_HIB_MSIX_TABLE_INIT);
++		if (page_table_ready && msix_table_ready)
++			break;
++		schedule_timeout(msecs_to_jiffies(APEX_RESET_DELAY));
++		retries++;
++	}
++
++	if (retries == APEX_RESET_RETRY) {
++		if (!page_table_ready)
++			dev_err(gasket_dev->dev, "Page table init timed out\n");
++		if (!msix_table_ready)
++			dev_err(gasket_dev->dev, "MSI-X table init timed out\n");
++		ret = -ETIMEDOUT;
++		goto remove_device;
++	}
++
+ 	ret = gasket_enable_device(gasket_dev);
+ 	if (ret) {
+ 		dev_err(&pci_dev->dev, "error enabling gasket device\n");
+-		gasket_pci_remove_device(pci_dev);
+-		pci_disable_device(pci_dev);
+-		return ret;
++		goto remove_device;
+ 	}
+ 
+ 	return 0;
++
++remove_device:
++	gasket_pci_remove_device(pci_dev);
++	pci_disable_device(pci_dev);
++	return ret;
  }
-diff --git a/drivers/staging/gasket/gasket_core.h b/drivers/staging/gasket/gasket_core.h
-index 9c143ebeba452..0ef0a2640f0fe 100644
---- a/drivers/staging/gasket/gasket_core.h
-+++ b/drivers/staging/gasket/gasket_core.h
-@@ -302,12 +302,6 @@ struct gasket_dev {
- 	/* Hardware revision value for this device. */
- 	int hardware_revision;
  
--	/*
--	 * Device-specific data; allocated in gasket_driver_desc.add_dev_cb()
--	 * and freed in gasket_driver_desc.remove_dev_cb().
--	 */
--	void *cb_data;
--
- 	/* Protects access to per-device data (i.e. this structure). */
- 	struct mutex mutex;
+ static void apex_pci_remove(struct pci_dev *pci_dev)
+@@ -697,9 +695,6 @@ static struct gasket_driver_desc apex_desc = {
+ 	.interrupts = apex_interrupts,
+ 	.interrupt_pack_width = 7,
  
-@@ -415,29 +409,6 @@ struct gasket_driver_desc {
- 	int interrupt_pack_width;
+-	.add_dev_cb = apex_add_dev_cb,
+-	.remove_dev_cb = NULL,
+-
+ 	.sysfs_setup_cb = apex_sysfs_setup_cb,
+ 	.sysfs_cleanup_cb = NULL,
  
- 	/* Driver callback functions - all may be NULL */
--	/*
--	 * add_dev_cb: Callback when a device is found.
--	 * @dev: The gasket_dev struct for this driver instance.
--	 *
--	 * This callback should initialize the device-specific cb_data.
--	 * Called when a device is found by the driver,
--	 * before any BAR ranges have been mapped. If this call fails (returns
--	 * nonzero), remove_dev_cb will be called.
--	 *
--	 */
--	int (*add_dev_cb)(struct gasket_dev *dev);
--
--	/*
--	 * remove_dev_cb: Callback for when a device is removed from the system.
--	 * @dev: The gasket_dev struct for this driver instance.
--	 *
--	 * This callback should free data allocated in add_dev_cb.
--	 * Called immediately before a device is unregistered by the driver.
--	 * All framework-managed resources will have been cleaned up by the time
--	 * this callback is invoked (PCI BARs, character devices, ...).
--	 */
--	int (*remove_dev_cb)(struct gasket_dev *dev);
--
- 	/*
- 	 * device_open_cb: Callback for when a device node is opened in write
- 	 * mode.
 -- 
 2.18.0.597.ga71716f1ad-goog
 
