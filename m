@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 267FAC46472
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 20:08:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BFBCC46470
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 20:08:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4AC921916
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 20:08:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0443C21986
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 20:08:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WvYQhjre"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4AC921916
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lVS2944z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0443C21986
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727619AbeHEWOE (ORCPT
+        id S1727874AbeHEWOG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 5 Aug 2018 18:14:04 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:34003 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726680AbeHEWOD (ORCPT
+        Sun, 5 Aug 2018 18:14:06 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:39778 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726680AbeHEWOG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 Aug 2018 18:14:03 -0400
-Received: by mail-pg1-f194.google.com with SMTP id y5-v6so5225872pgv.1
-        for <linux-kernel@vger.kernel.org>; Sun, 05 Aug 2018 13:08:20 -0700 (PDT)
+        Sun, 5 Aug 2018 18:14:06 -0400
+Received: by mail-pf1-f196.google.com with SMTP id j8-v6so5783230pff.6
+        for <linux-kernel@vger.kernel.org>; Sun, 05 Aug 2018 13:08:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=UwnDCyJz+dWsH+0j9AKlU1tsmISAsJ2kN12TYVstnEs=;
-        b=WvYQhjreAr5raOqEU8qqITkFCY5+TyTGw7ZyDXR3G7AH4V3nzQnj3G6pMqsCMMpzoz
-         0t66pda6c0IlFSoc3jSaEe0XPONkCHOzKXwsv2s1whaS8ZhwiLJO7BWpgPP4XylGlrOc
-         cbNaC43w+8jPeLG7lor8TD2TLqRucFVAVCw5IfdIKTpltZubySATLjEyi+2iEYDD1e5G
-         y6xhB9rFYu/xfdvAYG+QKGAhTTX+p+9G++zIOR6DRI/s//s1tyTiKkiEMYMJcXct8fep
-         BE02P4gWJwQ+B//zrj11Jm9dkBZHbdkMpRiVXccVaw0I94P6g+U36TJXKfH0rSd2hwts
-         On0A==
+        bh=R7Nd3O7sGo6sZ4vJM8mnW0c4rn2Ly42ipcgyAN9gk2w=;
+        b=lVS2944zufMrkgX8I++VvLqq4Kf4nrsGzlEjB+afKrTU+xTR1JFsulXALINaEudWM4
+         GRejPPze392xqoWVtUjzZhdEwfD+5ufstXWrX315nw7fWDeG3Lv48dNIRTbX88CBma/K
+         Ad8jLWw0j+GBDvnbTICVTwh/UBuloXiKzUxZRNEFR4vlgaTsMQ6PAFi5FcN7vnskYTK5
+         FWue2Q/i2ve+pRZPsJQLjRko7bdZnYcDdvM0a31SphdAGJBN8RvMZczbAUuOMdniFZuG
+         s3h9MpeUGQXLiNEvMu3WchP6t/ST7nMdL+lioJOUFrVulcjpN+PEyoqQd80rsLj0+14A
+         6Cjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=UwnDCyJz+dWsH+0j9AKlU1tsmISAsJ2kN12TYVstnEs=;
-        b=b/9XsoEnx92uRQ2hSUKGKzjJolyQvx5955/6yWesy3CmZG/AmOCGE7W9qNTi3zvnTH
-         mBSS4qYBATuEYLkRzrh/DeSUUsvF5imduk9/313g5oZWvd/2qAEL1Eg3sAupcd33LHxH
-         GRjRJ6qgF3kF6VSj+zkNFi5xx34aA779Kr6P75sHgCQnoHmj4BUsfKzOSHoLEdTqXQ9k
-         rZnuzbDF1JRGKvxprvg5wqDd/UlStTmLtA+qlGu4UislhVySrziWvTrL+DkL/zobL4tV
-         POe/5qoj42/1HSL+eKij186YXxVyJ6o1nE+ZMAV24TnZdTvFD6h19+Bn8PuwtlRwEJqg
-         o7qg==
-X-Gm-Message-State: AOUpUlH+SsnmK8ymZ0ece4F2ob34xtN8U3UKLPqU1wrA+8sMkwgWW8YR
-        Q42GW4MpdiBdL4ClXCwuPHqGlvX5
-X-Google-Smtp-Source: AAOMgpf2jxNRfOHibP6u85GxinAG9ovuLG2IL50Xgt1KkhqSkYXut9+cHCFViNgeZ0h7OPr+i8DzKg==
-X-Received: by 2002:a63:220d:: with SMTP id i13-v6mr12213226pgi.212.1533499699490;
-        Sun, 05 Aug 2018 13:08:19 -0700 (PDT)
+        bh=R7Nd3O7sGo6sZ4vJM8mnW0c4rn2Ly42ipcgyAN9gk2w=;
+        b=EWEtMSz602He8370hNbcU7cJ/QmBgVyRuiwSCfwzlzixp0Ovtl+9oPEbPxu+8gvAMC
+         SzlzjMEw0lGbgz+Q14IPyQMxJjGRzPmcEedYcmDimZ5ULL058lecsAUMYmwzLhzs1zF7
+         w1vvyC/LwSyb4L+JOWyXMqmwlBZVCNIQN1hx0f0T+3l9F2VwP6qH2aodEBEQT3sBE81l
+         I7TpV7iK36iXTNtTGxV0SCQFu0MtMrLgkltxmXIScU/Ne1WukGroHIF97HfNLBbQbS5K
+         BK+0NAHw2DWhRky+hhIhZMslNQvSqfApgxMygzxKBqKpRYRCwqxj1dQw+h1JpelMHB3n
+         KQ3g==
+X-Gm-Message-State: AOUpUlHwmjs6YLbwjaZmHO85AyUU+459cksB03IDNzjlyPIcBN9Vwzdf
+        0hXCXA1KV7STV2y7RbgMVt8=
+X-Google-Smtp-Source: AAOMgpfPZm662Mp2XQR6xbSFArDFgyj37UQmqh4iBC3QlMAkZir5agM50hdkK1HmNSRprJjQV2faqA==
+X-Received: by 2002:a63:6b86:: with SMTP id g128-v6mr12200658pgc.344.1533499701339;
+        Sun, 05 Aug 2018 13:08:21 -0700 (PDT)
 Received: from toddpoynor2.mtv.corp.google.com ([2620:0:1000:3701:7d29:cd13:d903:7908])
-        by smtp.gmail.com with ESMTPSA id o72-v6sm15038227pfk.76.2018.08.05.13.08.18
+        by smtp.gmail.com with ESMTPSA id o72-v6sm15038227pfk.76.2018.08.05.13.08.20
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 05 Aug 2018 13:08:19 -0700 (PDT)
+        Sun, 05 Aug 2018 13:08:20 -0700 (PDT)
 From:   Todd Poynor <toddpoynor@gmail.com>
 To:     Rob Springer <rspringer@google.com>,
         John Joseph <jnjoseph@google.com>,
@@ -66,9 +66,9 @@ To:     Rob Springer <rspringer@google.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         Todd Poynor <toddpoynor@google.com>
-Subject: [PATCH 04/15] staging: gasket: core: convert remaining info logs to debug
-Date:   Sun,  5 Aug 2018 13:07:38 -0700
-Message-Id: <20180805200749.116693-5-toddpoynor@gmail.com>
+Subject: [PATCH 05/15] staging: gasket: core: remove device enable and disable callbacks
+Date:   Sun,  5 Aug 2018 13:07:39 -0700
+Message-Id: <20180805200749.116693-6-toddpoynor@gmail.com>
 X-Mailer: git-send-email 2.18.0.597.ga71716f1ad-goog
 In-Reply-To: <20180805200749.116693-1-toddpoynor@gmail.com>
 References: <20180805200749.116693-1-toddpoynor@gmail.com>
@@ -81,46 +81,94 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Todd Poynor <toddpoynor@google.com>
 
-Remaining info-level logs in gasket core converted to debug-level; the
-information is not needed during normal system operation.
+Device enable/disable operations are moving from being initiated through
+the gasket framework to being initiated by the gasket device driver.
+The driver can perform any processing needed for these operations before
+or after the calls into the framework.  Neither of these callbacks are
+implemented for the only gasket driver upstream today, apex.
 
 Signed-off-by: Todd Poynor <toddpoynor@google.com>
 ---
- drivers/staging/gasket/gasket_core.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/staging/gasket/gasket_core.c |  9 ---------
+ drivers/staging/gasket/gasket_core.h | 27 ++-------------------------
+ 2 files changed, 2 insertions(+), 34 deletions(-)
 
 diff --git a/drivers/staging/gasket/gasket_core.c b/drivers/staging/gasket/gasket_core.c
-index 01cafe1ff6605..2741256eacfe8 100644
+index 2741256eacfe8..b070efaf0d41c 100644
 --- a/drivers/staging/gasket/gasket_core.c
 +++ b/drivers/staging/gasket/gasket_core.c
-@@ -1819,7 +1819,7 @@ void gasket_unregister_device(const struct gasket_driver_desc *driver_desc)
- 	g_descs[desc_idx].driver_desc = NULL;
- 	mutex_unlock(&g_mutex);
- 
--	pr_info("removed %s driver\n", driver_desc->name);
-+	pr_debug("removed %s driver\n", driver_desc->name);
+@@ -648,8 +648,6 @@ static void gasket_disable_dev(struct gasket_dev *gasket_dev)
+ 			gasket_page_table_cleanup(gasket_dev->page_table[i]);
+ 		}
+ 	}
+-
+-	check_and_invoke_callback(gasket_dev, driver_desc->disable_dev_cb);
  }
- EXPORT_SYMBOL(gasket_unregister_device);
  
-@@ -1827,7 +1827,7 @@ static int __init gasket_init(void)
- {
- 	int i;
+ /*
+@@ -1408,13 +1406,6 @@ static int gasket_enable_dev(struct gasket_internal_desc *internal_desc,
+ 	}
+ 	gasket_dev->hardware_revision = ret;
  
--	pr_info("Performing one-time init of the Gasket framework.\n");
-+	pr_debug("%s\n", __func__);
- 	/* Check for duplicates and find a free slot. */
- 	mutex_lock(&g_mutex);
- 	for (i = 0; i < GASKET_FRAMEWORK_DESC_MAX; i++) {
-@@ -1843,8 +1843,7 @@ static int __init gasket_init(void)
+-	ret = check_and_invoke_callback(gasket_dev, driver_desc->enable_dev_cb);
+-	if (ret) {
+-		dev_err(gasket_dev->dev, "Error in enable device cb: %d\n",
+-			ret);
+-		return ret;
+-	}
+-
+ 	/* device_status_cb returns a device status, not an error code. */
+ 	gasket_dev->status = gasket_get_hw_status(gasket_dev);
+ 	if (gasket_dev->status == GASKET_STATUS_DEAD)
+diff --git a/drivers/staging/gasket/gasket_core.h b/drivers/staging/gasket/gasket_core.h
+index 9f9bc66a0daa0..5d40bc7f52e91 100644
+--- a/drivers/staging/gasket/gasket_core.h
++++ b/drivers/staging/gasket/gasket_core.h
+@@ -473,34 +473,11 @@ struct gasket_driver_desc {
+ 	 */
+ 	int (*device_close_cb)(struct gasket_dev *dev);
  
- static void __exit gasket_exit(void)
- {
--	/* No deinit/dealloc needed at present. */
--	pr_info("Removing Gasket framework module.\n");
-+	pr_debug("%s\n", __func__);
- }
- MODULE_DESCRIPTION("Google Gasket driver framework");
- MODULE_VERSION(GASKET_FRAMEWORK_VERSION);
+-	/*
+-	 * enable_dev_cb: Callback immediately before enabling the device.
+-	 * @dev: Pointer to the gasket_dev struct for this driver instance.
+-	 *
+-	 * This callback is invoked after the device has been added and all BAR
+-	 * spaces mapped, immediately before registering and enabling the
+-	 * [character] device via cdev_add. If this call fails (returns
+-	 * nonzero), disable_dev_cb will be called.
+-	 *
+-	 * Note that cdev are initialized but not active
+-	 * (cdev_add has not yet been called) when this callback is invoked.
+-	 */
+-	int (*enable_dev_cb)(struct gasket_dev *dev);
+-
+-	/*
+-	 * disable_dev_cb: Callback immediately after disabling the device.
+-	 * @dev: Pointer to the gasket_dev struct for this driver instance.
+-	 *
+-	 * Called during device shutdown, immediately after disabling device
+-	 * operations via cdev_del.
+-	 */
+-	int (*disable_dev_cb)(struct gasket_dev *dev);
+-
+ 	/*
+ 	 * sysfs_setup_cb: Callback to set up driver-specific sysfs nodes.
+ 	 * @dev: Pointer to the gasket_dev struct for this device.
+ 	 *
+-	 * Called just before enable_dev_cb.
++	 * Called during the add gasket device call.
+ 	 *
+ 	 */
+ 	int (*sysfs_setup_cb)(struct gasket_dev *dev);
+@@ -509,7 +486,7 @@ struct gasket_driver_desc {
+ 	 * sysfs_cleanup_cb: Callback to clean up driver-specific sysfs nodes.
+ 	 * @dev: Pointer to the gasket_dev struct for this device.
+ 	 *
+-	 * Called just before disable_dev_cb.
++	 * Called during device disable processing.
+ 	 *
+ 	 */
+ 	int (*sysfs_cleanup_cb)(struct gasket_dev *dev);
 -- 
 2.18.0.597.ga71716f1ad-goog
 
