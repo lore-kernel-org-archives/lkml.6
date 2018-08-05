@@ -2,159 +2,112 @@ Return-Path: <SRS0=mdhE=KU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14833C46471
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 09:48:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3881C46471
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 10:02:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CECE217BD
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 09:48:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CECE217BD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 9A832217BD
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 10:02:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A832217BD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726233AbeHELwA (ORCPT
+        id S1726276AbeHEMGE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 5 Aug 2018 07:52:00 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:56812 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726081AbeHELwA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 Aug 2018 07:52:00 -0400
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id DCF4D72CE2689;
-        Sun,  5 Aug 2018 17:47:54 +0800 (CST)
-Received: from linux-work.huawei.com (10.67.189.174) by
- DGGEMS409-HUB.china.huawei.com (10.3.19.209) with Microsoft SMTP Server id
- 14.3.399.0; Sun, 5 Aug 2018 17:47:46 +0800
-From:   nixiaoming <nixiaoming@huawei.com>
-To:     <paul@paul-moore.com>, <sds@tycho.nsa.gov>,
-        <eparis@parisplace.org>, <jmorris@namei.org>, <serge@hallyn.com>,
-        <nixiaoming@huawei.com>
-CC:     <selinux@tycho.nsa.gov>, <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH] selinuxfs: Fix the resource leak in the failed branch of sel_make_inode
-Date:   Sun, 5 Aug 2018 17:10:36 +0800
-Message-ID: <20180805091036.30035-1-nixiaoming@huawei.com>
-X-Mailer: git-send-email 2.10.1
+        Sun, 5 Aug 2018 08:06:04 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:52685 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726130AbeHEMGE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 5 Aug 2018 08:06:04 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 92B8A8061C; Sun,  5 Aug 2018 12:02:00 +0200 (CEST)
+Date:   Sun, 5 Aug 2018 12:02:00 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Ryan Chen <yu.chen.surf@gmail.com>
+Cc:     jlee@suse.com, Chen Yu <yu.c.chen@intel.com>, oneukum@suse.com,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        ebiggers@google.com, Theodore Ts'o <tytso@mit.edu>,
+        smueller@chronox.de, denkenz@gmail.com,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        linux-crypto@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kookoo.gu@intel.com, Zhang Rui <rui.zhang@intel.com>
+Subject: Re: [PATCH 0/4][RFC v2] Introduce the in-kernel hibernation
+ encryption
+Message-ID: <20180805100200.GB22948@amd>
+References: <20180719132003.GA30981@sandybridge-desktop>
+ <20180720102532.GA20284@amd>
+ <1532346156.3057.11.camel@suse.com>
+ <20180723162302.GA4503@sandybridge-desktop>
+ <1532590246.7411.3.camel@suse.com>
+ <20180726081404.GG4244@linux-l9pv.suse>
+ <20180730170415.GQ4244@linux-l9pv.suse>
+ <20180803033702.GB416@sandybridge-desktop>
+ <20180803053445.GC4244@linux-l9pv.suse>
+ <CADjb_WSURQz86+E8kakNf7UBDM+aho+uaz3QdDkuGsEgan=szw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.189.174]
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="gj572EiMnwbLXET9"
+Content-Disposition: inline
+In-Reply-To: <CADjb_WSURQz86+E8kakNf7UBDM+aho+uaz3QdDkuGsEgan=szw@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If the resource requested by d_alloc_name is not added to the linked
-list through d_add, then dput needs to be called to release the
-subsequent abnormal branch to avoid resource leakage.
 
-Add missing dput to selinuxfs.c
+--gj572EiMnwbLXET9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: nixiaoming <nixiaoming@huawei.com>
----
- security/selinux/selinuxfs.c | 33 +++++++++++++++++++++++++--------
- 1 file changed, 25 insertions(+), 8 deletions(-)
+Hi!
 
-diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
-index 79d3709..0b66d728 100644
---- a/security/selinux/selinuxfs.c
-+++ b/security/selinux/selinuxfs.c
-@@ -1365,13 +1365,18 @@ static int sel_make_bools(struct selinux_fs_info *fsi)
- 
- 		ret = -ENOMEM;
- 		inode = sel_make_inode(dir->d_sb, S_IFREG | S_IRUGO | S_IWUSR);
--		if (!inode)
-+		if (!inode) {
-+			dput(dentry);
- 			goto out;
-+		}
- 
- 		ret = -ENAMETOOLONG;
- 		len = snprintf(page, PAGE_SIZE, "/%s/%s", BOOL_DIR_NAME, names[i]);
--		if (len >= PAGE_SIZE)
-+		if (len >= PAGE_SIZE) {
-+			dput(dentry);
-+			iput(inode);
- 			goto out;
-+		}
- 
- 		isec = (struct inode_security_struct *)inode->i_security;
- 		ret = security_genfs_sid(fsi->state, "selinuxfs", page,
-@@ -1586,8 +1591,10 @@ static int sel_make_avc_files(struct dentry *dir)
- 			return -ENOMEM;
- 
- 		inode = sel_make_inode(dir->d_sb, S_IFREG|files[i].mode);
--		if (!inode)
-+		if (!inode) {
-+			dput(dentry);
- 			return -ENOMEM;
-+		}
- 
- 		inode->i_fop = files[i].ops;
- 		inode->i_ino = ++fsi->last_ino;
-@@ -1632,8 +1639,10 @@ static int sel_make_initcon_files(struct dentry *dir)
- 			return -ENOMEM;
- 
- 		inode = sel_make_inode(dir->d_sb, S_IFREG|S_IRUGO);
--		if (!inode)
-+		if (!inode) {
-+			dput(dentry);
- 			return -ENOMEM;
-+		}
- 
- 		inode->i_fop = &sel_initcon_ops;
- 		inode->i_ino = i|SEL_INITCON_INO_OFFSET;
-@@ -1733,8 +1742,10 @@ static int sel_make_perm_files(char *objclass, int classvalue,
- 
- 		rc = -ENOMEM;
- 		inode = sel_make_inode(dir->d_sb, S_IFREG|S_IRUGO);
--		if (!inode)
-+		if (!inode) {
-+			dput(dentry);
- 			goto out;
-+		}
- 
- 		inode->i_fop = &sel_perm_ops;
- 		/* i+1 since perm values are 1-indexed */
-@@ -1763,8 +1774,10 @@ static int sel_make_class_dir_entries(char *classname, int index,
- 		return -ENOMEM;
- 
- 	inode = sel_make_inode(dir->d_sb, S_IFREG|S_IRUGO);
--	if (!inode)
-+	if (!inode) {
-+		dput(dentry);
- 		return -ENOMEM;
-+	}
- 
- 	inode->i_fop = &sel_class_ops;
- 	inode->i_ino = sel_class_to_ino(index);
-@@ -1838,8 +1851,10 @@ static int sel_make_policycap(struct selinux_fs_info *fsi)
- 			return -ENOMEM;
- 
- 		inode = sel_make_inode(fsi->sb, S_IFREG | 0444);
--		if (inode == NULL)
-+		if (inode == NULL) {
-+			dput(dentry);
- 			return -ENOMEM;
-+		}
- 
- 		inode->i_fop = &sel_policycap_ops;
- 		inode->i_ino = iter | SEL_POLICYCAP_INO_OFFSET;
-@@ -1932,8 +1947,10 @@ static int sel_fill_super(struct super_block *sb, void *data, int silent)
- 
- 	ret = -ENOMEM;
- 	inode = sel_make_inode(sb, S_IFCHR | S_IRUGO | S_IWUGO);
--	if (!inode)
-+	if (!inode) {
-+		dput(dentry);
- 		goto err;
-+	}
- 
- 	inode->i_ino = ++fsi->last_ino;
- 	isec = (struct inode_security_struct *)inode->i_security;
--- 
-2.10.1
+> > User space doesn't need to involve. The EFI root key is generated by
+> > EFI boot stub and be transfer to kernel. It's stored in EFI boot service
+> > variable that it can only be accessed by trusted EFI binary when
+> > secure boot is enabled.
+> >
+> Okay, this apply to the 'suspend' phase, right?
+> I'm still a little confused about the 'resume' phase.
+> Taking encryption as example(not signature),
+> the purpose of doing hibernation encryption is to prevent other users
+> from stealing ram content. Say, user A uses a  passphrase to generate the
 
+No, I don't think that's purpose here.
+
+Purpose here is to prevent user from reading/modifying kernel memory
+content on machine he owns.
+
+Strange as it may sound, that is what "secure" boot requires (and what
+Disney wants).
+
+I guess it may have some non-evil uses,
+too... https://www.linux.com/news/matthew-garrett-explains-how-increase-sec=
+urity-boot-time
+
+								=09
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--gj572EiMnwbLXET9
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAltmyxcACgkQMOfwapXb+vLgdgCcCgfNMlQjTf1H5wowJUF9tzdz
+DiQAn1P1w9iLF/MQ4Ihimsvs1Uhx5WXx
+=+5iu
+-----END PGP SIGNATURE-----
+
+--gj572EiMnwbLXET9--
