@@ -2,140 +2,108 @@ Return-Path: <SRS0=mdhE=KU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CFB7C4646D
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 02:35:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FDBEC4646F
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 02:42:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B135217CE
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 02:35:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gXVS+6nL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B135217CE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 590F2217CE
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 02:42:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 590F2217CE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726092AbeHEEh5 (ORCPT
+        id S1726118AbeHEEpB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 5 Aug 2018 00:37:57 -0400
-Received: from mail-ua0-f196.google.com ([209.85.217.196]:34656 "EHLO
-        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725839AbeHEEh4 (ORCPT
+        Sun, 5 Aug 2018 00:45:01 -0400
+Received: from gateway31.websitewelcome.com ([192.185.143.36]:25366 "EHLO
+        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725960AbeHEEpA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 Aug 2018 00:37:56 -0400
-Received: by mail-ua0-f196.google.com with SMTP id r15-v6so42263uao.1;
-        Sat, 04 Aug 2018 19:35:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=XaK02h39axL+dHaD7cGJzDAeNWTCLBgBUDsmQ8WiAoU=;
-        b=gXVS+6nLIx1j+LCl8juHIbAs04cFm8rZcjn4gstam+LG1qY9RRCI5visq7Fcr9Op5p
-         KNLrTeqiWu6A54A34d1ZrNdPg7Dl0kDkTwMQJYX0w1m4t+cvED2MaLm8L7USg8gREVhy
-         2onmyKk1IEPgBPcSX9Dh5Eb/EKQtIohmbpHnmGIfaaN7TWqLLD0hNDZorJyUUiqcTRMO
-         ciWcQD8GHwsIRh3cmFTfTMv7bdkbmuCsHs5mDsWA8lxOyeBTqcvUIG2HotT96lo9EJHK
-         V1YvWBDf9MBKzxk9xVWCrT6kSY0ASH8oT0WerUCtWZWFa72LUuIStl11drPy8RI3zGkj
-         038A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=XaK02h39axL+dHaD7cGJzDAeNWTCLBgBUDsmQ8WiAoU=;
-        b=gJEBsfWv47lJ5utDTVvKOnJhcvhnr3geFtpGKsjojRBBlMlGKZfVqzC87Fkxvt6aRW
-         WhAhyrVreb1O9zssTM1VWUfF7RCRh/k+l21TUPf46q1UC1RgLduYdw3z3/EBEhjNMVm4
-         RUJHL6asXQ4lYtk4XL4xxDkc8LRzR0B6cWsz5B0b8LWl9JkHDPmAZUM0pWGgLfNIspru
-         yUqO6VsE8zlFxyprht/IuoQ8EmeOWCCdCpuAz5OG95bxBq4Youj63K0Bq1sjsrpTcm+5
-         YikrE4lHy2v75hE1UnCN1G0mvQUpAkdmRQey3rMrSC4XTnQLMAXzFAhe542apP57VZaX
-         2dPw==
-X-Gm-Message-State: AOUpUlEhH2TfQrw3/fb7HxM92aMEasTFfQpXIur5PMiqmG0WS6Yqp7S2
-        TQbIU4v96uST9Q4NsdS2CgGnledUWq9PcucruyY=
-X-Google-Smtp-Source: AAOMgpfood1iSuwKPrYMFX/Ofdg3dn/LdXu/EDYX4CzD6kQ5rnO2VHwI+fbYSwIDieYKCnmhkAMtXsacIZBxI/YGSm4=
-X-Received: by 2002:a1f:bd2:: with SMTP id 201-v6mr6099041vkl.165.1533436504190;
- Sat, 04 Aug 2018 19:35:04 -0700 (PDT)
+        Sun, 5 Aug 2018 00:45:00 -0400
+Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
+        by gateway31.websitewelcome.com (Postfix) with ESMTP id 4CD182C5FC
+        for <linux-kernel@vger.kernel.org>; Sat,  4 Aug 2018 21:42:07 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id m8zffW1Wh79N3m8zffp1hn; Sat, 04 Aug 2018 21:42:07 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.50.82] (port=39268 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1fm8ze-00059I-Nd; Sat, 04 Aug 2018 21:42:06 -0500
+Date:   Sat, 4 Aug 2018 21:42:05 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH net-next] virtio-net: mark expected switch fall-throughs
+Message-ID: <20180805024205.GA14300@embeddedor.com>
 MIME-Version: 1.0
-Received: by 2002:a67:3f0f:0:0:0:0:0 with HTTP; Sat, 4 Aug 2018 19:35:03 -0700 (PDT)
-In-Reply-To: <20180727100617.GB25592@arm.com>
-References: <1532638907-46129-1-git-send-email-gengdongjiu@huawei.com> <20180727100617.GB25592@arm.com>
-From:   gengdongjiu <gengdj.1984@gmail.com>
-Date:   Sun, 5 Aug 2018 10:35:03 +0800
-Message-ID: <CAMj-D2Ab9Txk27GDQbOy3X=Qup7BuA3sWSovsOpffpxe6UcBFQ@mail.gmail.com>
-Subject: Re: [PATCH] arm64: clean the additional checks before calling ghes_notify_sea()
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     Dongjiu Geng <gengdongjiu@huawei.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        mark.rutland@arm.com, Len Brown <lenb@kernel.org>,
-        rafael.j.wysocki@intel.com, erik.schmauss@intel.com,
-        robert.moore@intel.com,
-        arm-mail-list <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-acpi@vger.kernel.org, devel@acpica.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.50.82
+X-Source-L: No
+X-Exim-ID: 1fm8ze-00059I-Nd
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.50.82]:39268
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 16
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-07-27 18:06 GMT+08:00 Will Deacon <will.deacon@arm.com>:
-> On Thu, Jul 26, 2018 at 05:01:47PM -0400, Dongjiu Geng wrote:
->> In order to remove the additional check before calling the
->> ghes_notify_sea(), make stub definition when !CONFIG_ACPI_APEI_SEA.
->>
->> Signed-off-by: Dongjiu Geng <gengdongjiu@huawei.com>
->> ---
->
-> Acked-by: Will Deacon <will.deacon@arm.com>
+In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+where we are expecting to fall through.
 
-Will,
-     This patch will be applied, right? thanks
+Addresses-Coverity-ID: 1402059 ("Missing break in switch")
+Addresses-Coverity-ID: 1402060 ("Missing break in switch")
+Addresses-Coverity-ID: 1402061 ("Missing break in switch")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/net/virtio_net.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
->
-> Will
->
->> This cleanup is ever mentioned by Mark Rutland in [1]
->>
->> [1]:
->> https://lkml.org/lkml/2018/5/31/289
->> ---
->>  arch/arm64/mm/fault.c | 7 +------
->>  include/acpi/ghes.h   | 4 ++++
->>  2 files changed, 5 insertions(+), 6 deletions(-)
->>
->> diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
->> index b8eecc7..9ffe01d 100644
->> --- a/arch/arm64/mm/fault.c
->> +++ b/arch/arm64/mm/fault.c
->> @@ -727,12 +727,7 @@ static int do_sea(unsigned long addr, unsigned int esr, struct pt_regs *regs)
->>
->>  int handle_guest_sea(phys_addr_t addr, unsigned int esr)
->>  {
->> -     int ret = -ENOENT;
->> -
->> -     if (IS_ENABLED(CONFIG_ACPI_APEI_SEA))
->> -             ret = ghes_notify_sea();
->> -
->> -     return ret;
->> +     return ghes_notify_sea();
->>  }
->>
->>  asmlinkage void __exception do_mem_abort(unsigned long addr, unsigned int esr,
->> diff --git a/include/acpi/ghes.h b/include/acpi/ghes.h
->> index 1624e2b..82cb4eb 100644
->> --- a/include/acpi/ghes.h
->> +++ b/include/acpi/ghes.h
->> @@ -118,6 +118,10 @@ static inline void *acpi_hest_get_next(struct acpi_hest_generic_data *gdata)
->>            (void *)section - (void *)(estatus + 1) < estatus->data_length; \
->>            section = acpi_hest_get_next(section))
->>
->> +#ifdef CONFIG_ACPI_APEI_SEA
->>  int ghes_notify_sea(void);
->> +#else
->> +static inline int ghes_notify_sea(void) { return -ENOENT; }
->> +#endif
->>
->>  #endif /* GHES_H */
->> --
->> 1.9.1
->>
+diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+index 14f661c..62311dd 100644
+--- a/drivers/net/virtio_net.c
++++ b/drivers/net/virtio_net.c
+@@ -697,6 +697,7 @@ static struct sk_buff *receive_small(struct net_device *dev,
+ 			goto xdp_xmit;
+ 		default:
+ 			bpf_warn_invalid_xdp_action(act);
++			/* fall through */
+ 		case XDP_ABORTED:
+ 			trace_xdp_exception(vi->dev, xdp_prog, act);
+ 		case XDP_DROP:
+@@ -876,8 +877,10 @@ static struct sk_buff *receive_mergeable(struct net_device *dev,
+ 			goto xdp_xmit;
+ 		default:
+ 			bpf_warn_invalid_xdp_action(act);
++			/* fall through */
+ 		case XDP_ABORTED:
+ 			trace_xdp_exception(vi->dev, xdp_prog, act);
++			/* fall through */
+ 		case XDP_DROP:
+ 			if (unlikely(xdp_page != page))
+ 				__free_pages(xdp_page, 0);
+-- 
+2.7.4
+
