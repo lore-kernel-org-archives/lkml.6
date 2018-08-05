@@ -2,165 +2,160 @@ Return-Path: <SRS0=mdhE=KU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3315AC46471
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 11:34:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 524C9C46471
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 11:51:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E12EB217BB
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 11:34:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E12EB217BB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id EF61C217BF
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 11:51:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XIvIjfr7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF61C217BF
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726407AbeHENin (ORCPT
+        id S1726275AbeHENzL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 5 Aug 2018 09:38:43 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:42656 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726091AbeHENin (ORCPT
+        Sun, 5 Aug 2018 09:55:11 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:41532 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726091AbeHENzL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 Aug 2018 09:38:43 -0400
-Received: from p4fea5a5a.dip0.t-ipconnect.de ([79.234.90.90] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fmHIl-0001DU-PN; Sun, 05 Aug 2018 13:34:23 +0200
-Date:   Sun, 5 Aug 2018 13:34:23 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-cc:     LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>
-Subject: [GIT pull] x86 fix for 4.18
-Message-ID: <alpine.DEB.2.21.1808051331140.17359@nanos.tec.linutronix.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Sun, 5 Aug 2018 09:55:11 -0400
+Received: by mail-lf1-f66.google.com with SMTP id v22-v6so7085011lfe.8
+        for <linux-kernel@vger.kernel.org>; Sun, 05 Aug 2018 04:50:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=fCrCMajiSpDrJx6yxxIM4scVj6JtaCQMiAVMq1Tv5GU=;
+        b=XIvIjfr7XRLrAdBYsTFHrZ03J6b3u1F/AvrLJE99QmUhjmrkye+m8cuDy0RB15557l
+         1t2Eh4BiDpi1gfDSbYn6hxJD77Xq/ljRo9O6nk79pmIdbRf38ZMagBM1ut4lcpwuAsOc
+         VaNEtQKY64Jz5MgXQT7/m6hY+dyzQrVAjCyJ8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=fCrCMajiSpDrJx6yxxIM4scVj6JtaCQMiAVMq1Tv5GU=;
+        b=hT8w48vNQmvYhPMgZF8Syk6nEGqgloS18y0DW/MhADAWjDQHmvW+YHV+KTuio8fXqG
+         OIesfmrlZ5Xt5PzRPCKJFoLnBT8c8S3WeD6YIOWzu01EVurh5RZtGS5kHvAHFipgwKeb
+         VzsVCmGKX/8R3vdK3vsnYoMkYn45xTByio8i4RZT9XhdP6wkCIYXZM745scr2b4UJS+1
+         lWzYpCquzuAHhZ76uigcdx3f/6nfe1eI23cHd1khUyFSkHvbxalCZ1xihOMkPeOwtJ4N
+         MqZYYi7jhmo+PzTB1VwTQaDcBuAsOFZHR1jDxC7mI5fMARhGtW1UmpFIld+uWVxJSa1g
+         ftjA==
+X-Gm-Message-State: AOUpUlFekVecxdJkIlzG/ru5srvCU1YKTYNoZon5qiD10RtUztU/NfA6
+        X4VFw2mlhe7i/QjXW2307NCmbo1qn8ry0ae83iLL3A==
+X-Google-Smtp-Source: AAOMgpewQ7PMgT0PzWr2501DgRS/QPZ5KMK/Vf+6BUoI64fx1nQQo3Y9BF9fn+vbplp5ED9bgqiivitJqDu2AGVbypU=
+X-Received: by 2002:a19:9646:: with SMTP id y67-v6mr8539636lfd.130.1533469851020;
+ Sun, 05 Aug 2018 04:50:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Received: by 2002:a19:169b:0:0:0:0:0 with HTTP; Sun, 5 Aug 2018 04:50:50 -0700 (PDT)
+In-Reply-To: <20180804082632.304529527@linuxfoundation.org>
+References: <20180804082632.304529527@linuxfoundation.org>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Sun, 5 Aug 2018 17:20:50 +0530
+Message-ID: <CA+G9fYvP0J9C7FZZ=TNb7iut8qd_Yiarn-9feg8UK9q8gzKQ6A@mail.gmail.com>
+Subject: Re: [PATCH 4.17 00/31] 4.17.13-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+On 4 August 2018 at 14:30, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+> This is the start of the stable review cycle for the 4.17.13 release.
+> There are 31 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Mon Aug  6 08:26:21 UTC 2018.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
+4.17.13-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-4.17.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-please pull the latest x86-urgent-for-linus git tree from:
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm and x86_64.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-urgent-for-linus
+Summary
+------------------------------------------------------------------------
 
-A single fix, which addresses boot failures on machines which do not report
-EBDA correctly, which can place the trampoline into reserved memory regions.
-Validating against E820 prevents that.
+kernel: 4.17.13-rc1
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git
+git branch: linux-4.17.y
+git commit: 53a78f5361967de09bc2ee060a68cac8f79ab4f1
+git describe: v4.17.12-32-g53a78f536196
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.17-oe/bu=
+ild/v4.17.12-32-g53a78f536196
 
-Thanks,
-
-	tglx
-
------------------->
-Kirill A. Shutemov (1):
-      x86/boot/compressed/64: Validate trampoline placement against E820
+No regressions (compared to build v4.17.12)
 
 
- arch/x86/boot/compressed/pgtable_64.c | 73 ++++++++++++++++++++++++++---------
- 1 file changed, 55 insertions(+), 18 deletions(-)
+Ran 16416 total tests in the following environments and test suites.
 
-diff --git a/arch/x86/boot/compressed/pgtable_64.c b/arch/x86/boot/compressed/pgtable_64.c
-index 8c5107545251..9e2157371491 100644
---- a/arch/x86/boot/compressed/pgtable_64.c
-+++ b/arch/x86/boot/compressed/pgtable_64.c
-@@ -1,3 +1,4 @@
-+#include <asm/e820/types.h>
- #include <asm/processor.h>
- #include "pgtable.h"
- #include "../string.h"
-@@ -34,10 +35,62 @@ unsigned long *trampoline_32bit __section(.data);
- extern struct boot_params *boot_params;
- int cmdline_find_option_bool(const char *option);
- 
-+static unsigned long find_trampoline_placement(void)
-+{
-+	unsigned long bios_start, ebda_start;
-+	unsigned long trampoline_start;
-+	struct boot_e820_entry *entry;
-+	int i;
-+
-+	/*
-+	 * Find a suitable spot for the trampoline.
-+	 * This code is based on reserve_bios_regions().
-+	 */
-+
-+	ebda_start = *(unsigned short *)0x40e << 4;
-+	bios_start = *(unsigned short *)0x413 << 10;
-+
-+	if (bios_start < BIOS_START_MIN || bios_start > BIOS_START_MAX)
-+		bios_start = BIOS_START_MAX;
-+
-+	if (ebda_start > BIOS_START_MIN && ebda_start < bios_start)
-+		bios_start = ebda_start;
-+
-+	bios_start = round_down(bios_start, PAGE_SIZE);
-+
-+	/* Find the first usable memory region under bios_start. */
-+	for (i = boot_params->e820_entries - 1; i >= 0; i--) {
-+		entry = &boot_params->e820_table[i];
-+
-+		/* Skip all entries above bios_start. */
-+		if (bios_start <= entry->addr)
-+			continue;
-+
-+		/* Skip non-RAM entries. */
-+		if (entry->type != E820_TYPE_RAM)
-+			continue;
-+
-+		/* Adjust bios_start to the end of the entry if needed. */
-+		if (bios_start > entry->addr + entry->size)
-+			bios_start = entry->addr + entry->size;
-+
-+		/* Keep bios_start page-aligned. */
-+		bios_start = round_down(bios_start, PAGE_SIZE);
-+
-+		/* Skip the entry if it's too small. */
-+		if (bios_start - TRAMPOLINE_32BIT_SIZE < entry->addr)
-+			continue;
-+
-+		break;
-+	}
-+
-+	/* Place the trampoline just below the end of low memory */
-+	return bios_start - TRAMPOLINE_32BIT_SIZE;
-+}
-+
- struct paging_config paging_prepare(void *rmode)
- {
- 	struct paging_config paging_config = {};
--	unsigned long bios_start, ebda_start;
- 
- 	/* Initialize boot_params. Required for cmdline_find_option_bool(). */
- 	boot_params = rmode;
-@@ -61,23 +114,7 @@ struct paging_config paging_prepare(void *rmode)
- 		paging_config.l5_required = 1;
- 	}
- 
--	/*
--	 * Find a suitable spot for the trampoline.
--	 * This code is based on reserve_bios_regions().
--	 */
--
--	ebda_start = *(unsigned short *)0x40e << 4;
--	bios_start = *(unsigned short *)0x413 << 10;
--
--	if (bios_start < BIOS_START_MIN || bios_start > BIOS_START_MAX)
--		bios_start = BIOS_START_MAX;
--
--	if (ebda_start > BIOS_START_MIN && ebda_start < bios_start)
--		bios_start = ebda_start;
--
--	/* Place the trampoline just below the end of low memory, aligned to 4k */
--	paging_config.trampoline_start = bios_start - TRAMPOLINE_32BIT_SIZE;
--	paging_config.trampoline_start = round_down(paging_config.trampoline_start, PAGE_SIZE);
-+	paging_config.trampoline_start = find_trampoline_placement();
- 
- 	trampoline_32bit = (unsigned long *)paging_config.trampoline_start;
- 
+Environments
+--------------
+- dragonboard-410c - arm64
+- hi6220-hikey - arm64
+- juno-r2 - arm64
+- qemu_arm
+- qemu_arm64
+- qemu_x86_64
+- x15 - arm
+- x86_64
+
+Test Suites
+-----------
+* boot
+* kselftest
+* libhugetlbfs
+* ltp-cap_bounds-tests
+* ltp-containers-tests
+* ltp-cve-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-hugetlb-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-nptl-tests
+* ltp-pty-tests
+* ltp-sched-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+* ltp-timers-tests
+* ltp-math-tests
+* ltp-open-posix-tests
+* kselftest-vsyscall-mode-native
+* kselftest-vsyscall-mode-none
+
+--=20
+Linaro LKFT
+https://lkft.linaro.org
