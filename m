@@ -2,98 +2,442 @@ Return-Path: <SRS0=mdhE=KU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,RCVD_NUMERIC_HELO,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A0C7C46470
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 16:07:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBA3DC46471
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 16:08:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E06B221899
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 16:07:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 72444218C1
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 16:08:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b="FJjDjISU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E06B221899
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=aol.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="S20tk8MC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72444218C1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726514AbeHESKa (ORCPT
+        id S1726647AbeHESNs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 5 Aug 2018 14:10:30 -0400
-Received: from sonic307-9.consmr.mail.gq1.yahoo.com ([98.137.64.33]:40735 "EHLO
-        sonic307-9.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726271AbeHESKa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 Aug 2018 14:10:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1533485126; bh=B4++H7lcSKCjXIf3e6GhAbA9uWKuBCQ5csKuNw0MfZQ=; h=Subject:To:References:From:Date:In-Reply-To:From:Subject; b=FJjDjISUUDvQjlIXpj6RVxDQA6w2F4vKHzePC4k1eyWesYTcglnSwxGbAOXw/YMDQhLG7xGqfGcWy6PwbRXwEae27dShfPxdYb8yC/XBrMzfDg/2wj+ER04ZEZBN30qgtf/GICgdVsPTk34WvXQrW0ZbofaYJFSNA6IKcHT3T5MeZoWr/7sxrmcL9Tq7ZcheIQso+ttapPfsgU+n/4/w/ujqz5oGWkfKLipi3bzl2MbZ0k1/MFRNBmJtiVz8HJW8a1z9204vltWlMdpCrzPxNNGnBHOFsilLJOtHG7HdstR2krWSvyZdeCz93OrVCridfYIQcjr/mTEVYjAsF+tg/Q==
-X-YMail-OSG: z217Ts8VM1mJ4wdWbg44wmZCF5zv2SIQaw9CdLe.7W7IjjZvdwJUCZAaID3_uVH
- l6RqFya6zb6u6a81YADOfhVxaU3qqsqjBMZvoGiidVpBC9h5MkvSS.KPT1yM0kAXLT_QwxpIXCG0
- YrZtSoOtDPy.tGk.u2vnSJ8BQnGpR6WLxtwqFM.HGX43C.fdsdI.DVnCcRbZUY5VDoVKEnWqlpG2
- 2L.pCr9VMJlIQBIQ1N2PgL.1GwVLstlgdEJF50QTQeBJ50sX0ACeSofff.zd2DRH6gBtYX4x4FUh
- VLVLYw1WCYk._9.mqFiBdtIkHpVEYa1yQrC0XbyU1EuOc60Rx2GmUpaF.VdP7y9QZQigYPev6kBj
- m3XzEKVUhwEhoazCkCUH5UjqEI0E7JNvu7d5OE2cQjXbEnLS8vrUAppnqKzT8RvNRAV70ZB8L9nu
- r4zMH1rbriN0YRi8zFGfSnuDPXPLRzJD0BVVXkKivzCJZfMMMpTOZ5ZoyDAj1t5IEksnoEO2OXj4
- _c4VhdKjk9vCH19I0uz0SDLdVwqsaZW2Ct8uXRvzdpjdIi1TLLZFjaT5SLu6p7k3KJEYOmVn3rWn
- ymLHKo2wunzG9P7dLS88_3Yvi2YjdrCnXfK2MtYXYiU0XAUI7k3a47TC7RbkrWqQYi1nty0Hc7DK
- zHmUzeCX2fYdtZ.wZ1n_tZoUnrulv14J5K7mIqTFM2Y4nNmEVc4ZqEtXm2.pwc4wlbAg6hp4olQC
- c.yAng1q_M4Q3fNCYITeMwjw3yfLjNHLhirHJGHAqzVMD0ihDcba2XGke61JOVEvyKvGnNOm_vrR
- l.1wQLZHjTdvNH6qDY1pg36N8PE3PTNiWxeQrx89Sqia2bOPCLwtcpAl4wuYBZ5JZbJwW23KkNG_
- 5pmn2UUH2jMpTJrN44zx5G7j3nfGNqOfvcmrZHSGxKkfkJpnl9WihzbD7ceuxNMMGUIjuvzjDrLq
- yRWD0LYy55e4nVM9AlDqF8x5kVo9oVFyeXuGtYSRLuRws59ubO3uzDN6l_w7S7Jpv8bE-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic307.consmr.mail.gq1.yahoo.com with HTTP; Sun, 5 Aug 2018 16:05:26 +0000
-Received: from 116.226.251.211 (EHLO [192.168.1.7]) ([116.226.251.211])
-          by smtp423.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 911663abacc0c66c1c0400804901dd49;
-          Sun, 05 Aug 2018 16:05:26 +0000 (UTC)
-Subject: Re: [PATCH] staging: erofs: fix if assignment style issue
-To:     =?UTF-8?Q?Kristaps_=c4=8civkulis?= <kristaps.civkulis@gmail.com>,
-        gaoxiang25@huawei.com, yuchao0@huawei.com,
-        gregkh@linuxfoundation.org, linux-erofs@lists.ozlabs.org,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-References: <20180805152101.11657-1-kristaps.civkulis@gmail.com>
-From:   Gao Xiang <hsiangkao@aol.com>
-Message-ID: <78215373-c086-28bc-e35c-27f93d4e7dce@aol.com>
-Date:   Mon, 6 Aug 2018 00:05:16 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Sun, 5 Aug 2018 14:13:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51434 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726271AbeHESNs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 5 Aug 2018 14:13:48 -0400
+Received: from localhost (c-67-160-202-76.hsd1.ca.comcast.net [67.160.202.76])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5513021782;
+        Sun,  5 Aug 2018 16:08:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1533485323;
+        bh=09PcMorp3SngAYjNp/xin7chBO5JVmXIMLUjoyRCiVA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=S20tk8MCBOHIdXrJDCBTGMlIDo3kZfOSDqMXerG6oUrZr6HWlZbwuK9j6VZfavGJ8
+         Fxa+jrFru1I5f73+ie92AWeMDkSGKUHCiBD2hrkJY3hhl99lgxwHgVf8JVm/BZfIOO
+         CzJEIZJjcDnWKswl5jtlIcTWJMe1xwFG9wAdjT6Y=
+Date:   Sun, 5 Aug 2018 09:08:42 -0700
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     Chao Yu <chao@kernel.org>
+Cc:     linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [f2fs-dev] [PATCH v2] f2fs: avoid fi->i_gc_rwsem[WRITE] lock in
+ f2fs_gc
+Message-ID: <20180805160842.GA55836@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180730013242.15647-1-jaegeuk@kernel.org>
+ <20180804222954.GB35077@jaegeuk-macbookpro.roam.corp.google.com>
+ <4ab08c78-4a3a-4161-9c6f-2835829c95c3@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20180805152101.11657-1-kristaps.civkulis@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4ab08c78-4a3a-4161-9c6f-2835829c95c3@kernel.org>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kristaps,
+On 08/05, Chao Yu wrote:
+> On 2018/8/5 6:29, Jaegeuk Kim wrote:
+> > The f2fs_gc() called by f2fs_balance_fs() requires to be called outside of
+> > fi->i_gc_rwsem[WRITE], since f2fs_gc() can try to grab it in a loop.
+> > 
+> > If it hits the miximum retrials in GC, let's give a chance to release
+> > gc_mutex for a short time in order not to go into live lock in the worst
+> > case.
+> > 
+> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> > ---
+> > v2 log from v1:
+> >  - keep lock order: i_gc_rwsem -> lock_op
+> > 
+> >  fs/f2fs/f2fs.h    |  1 +
+> >  fs/f2fs/file.c    | 76 ++++++++++++++++++++++++-----------------------
+> >  fs/f2fs/gc.c      | 22 ++++++++++----
+> >  fs/f2fs/segment.c |  5 +++-
+> >  fs/f2fs/segment.h |  2 +-
+> >  5 files changed, 61 insertions(+), 45 deletions(-)
+> > 
+> > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> > index a9447c7d6570..50349780001b 100644
+> > --- a/fs/f2fs/f2fs.h
+> > +++ b/fs/f2fs/f2fs.h
+> > @@ -1223,6 +1223,7 @@ struct f2fs_sb_info {
+> >  	unsigned int gc_mode;			/* current GC state */
+> >  	/* for skip statistic */
+> >  	unsigned long long skipped_atomic_files[2];	/* FG_GC and BG_GC */
+> > +	unsigned long long skipped_gc_rwsem;		/* FG_GC only */
+> >  
+> >  	/* threshold for gc trials on pinned files */
+> >  	u64 gc_pin_file_threshold;
+> > diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> > index 78c1bd6b8497..7bcf47f41ef1 100644
+> > --- a/fs/f2fs/file.c
+> > +++ b/fs/f2fs/file.c
+> > @@ -1179,25 +1179,31 @@ static int __exchange_data_block(struct inode *src_inode,
+> >  	return ret;
+> >  }
+> >  
+> > -static int f2fs_do_collapse(struct inode *inode, pgoff_t start, pgoff_t end)
+> > +static int f2fs_do_collapse(struct inode *inode, loff_t offset, loff_t len)
+> >  {
+> >  	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+> >  	pgoff_t nrpages = (i_size_read(inode) + PAGE_SIZE - 1) / PAGE_SIZE;
+> > +	pgoff_t start = offset >> PAGE_SHIFT;
+> > +	pgoff_t end = (offset + len) >> PAGE_SHIFT;
+> >  	int ret;
+> >  
+> >  	f2fs_balance_fs(sbi, true);
+> > -	f2fs_lock_op(sbi);
+> >  
+> > -	f2fs_drop_extent_tree(inode);
+> > +	/* avoid gc operation during block exchange */
+> > +	down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+> >  
+> > +	f2fs_lock_op(sbi);
+> > +	f2fs_drop_extent_tree(inode);
+> > +	truncate_pagecache(inode, offset);
+> >  	ret = __exchange_data_block(inode, inode, end, start, nrpages - end, true);
+> >  	f2fs_unlock_op(sbi);
+> > +
+> > +	up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+> >  	return ret;
+> >  }
+> >  
+> >  static int f2fs_collapse_range(struct inode *inode, loff_t offset, loff_t len)
+> >  {
+> > -	pgoff_t pg_start, pg_end;
+> >  	loff_t new_size;
+> >  	int ret;
+> >  
+> > @@ -1212,21 +1218,13 @@ static int f2fs_collapse_range(struct inode *inode, loff_t offset, loff_t len)
+> >  	if (ret)
+> >  		return ret;
+> >  
+> > -	pg_start = offset >> PAGE_SHIFT;
+> > -	pg_end = (offset + len) >> PAGE_SHIFT;
+> > -
+> > -	/* avoid gc operation during block exchange */
+> > -	down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+> > -
+> >  	down_write(&F2FS_I(inode)->i_mmap_sem);
+> >  	/* write out all dirty pages from offset */
+> >  	ret = filemap_write_and_wait_range(inode->i_mapping, offset, LLONG_MAX);
+> >  	if (ret)
+> >  		goto out_unlock;
+> >  
+> > -	truncate_pagecache(inode, offset);
+> > -
+> > -	ret = f2fs_do_collapse(inode, pg_start, pg_end);
+> > +	ret = f2fs_do_collapse(inode, offset, len);
+> >  	if (ret)
+> >  		goto out_unlock;
+> >  
+> > @@ -1242,7 +1240,6 @@ static int f2fs_collapse_range(struct inode *inode, loff_t offset, loff_t len)
+> >  		f2fs_i_size_write(inode, new_size);
+> >  out_unlock:
+> >  	up_write(&F2FS_I(inode)->i_mmap_sem);
+> > -	up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+> >  	return ret;
+> >  }
+> >  
+> > @@ -1417,9 +1414,6 @@ static int f2fs_insert_range(struct inode *inode, loff_t offset, loff_t len)
+> >  
+> >  	f2fs_balance_fs(sbi, true);
+> >  
+> > -	/* avoid gc operation during block exchange */
+> > -	down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+> > -
+> >  	down_write(&F2FS_I(inode)->i_mmap_sem);
+> >  	ret = f2fs_truncate_blocks(inode, i_size_read(inode), true);
+> >  	if (ret)
+> > @@ -1430,13 +1424,15 @@ static int f2fs_insert_range(struct inode *inode, loff_t offset, loff_t len)
+> >  	if (ret)
+> >  		goto out;
+> >  
+> > -	truncate_pagecache(inode, offset);
+> > -
+> >  	pg_start = offset >> PAGE_SHIFT;
+> >  	pg_end = (offset + len) >> PAGE_SHIFT;
+> >  	delta = pg_end - pg_start;
+> >  	idx = (i_size_read(inode) + PAGE_SIZE - 1) / PAGE_SIZE;
+> >  
+> > +	/* avoid gc operation during block exchange */
+> > +	down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+> > +	truncate_pagecache(inode, offset);
+> > +
+> >  	while (!ret && idx > pg_start) {
+> >  		nr = idx - pg_start;
+> >  		if (nr > delta)
+> > @@ -1450,6 +1446,7 @@ static int f2fs_insert_range(struct inode *inode, loff_t offset, loff_t len)
+> >  					idx + delta, nr, false);
+> >  		f2fs_unlock_op(sbi);
+> >  	}
+> > +	up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+> >  
+> >  	/* write out all moved pages, if possible */
+> >  	filemap_write_and_wait_range(inode->i_mapping, offset, LLONG_MAX);
+> > @@ -1459,7 +1456,6 @@ static int f2fs_insert_range(struct inode *inode, loff_t offset, loff_t len)
+> >  		f2fs_i_size_write(inode, new_size);
+> >  out:
+> >  	up_write(&F2FS_I(inode)->i_mmap_sem);
+> > -	up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+> >  	return ret;
+> >  }
+> >  
+> > @@ -1706,8 +1702,6 @@ static int f2fs_ioc_start_atomic_write(struct file *filp)
+> >  
+> >  	inode_lock(inode);
+> >  
+> > -	down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+> > -
+> >  	if (f2fs_is_atomic_file(inode)) {
+> >  		if (is_inode_flag_set(inode, FI_ATOMIC_REVOKE_REQUEST))
+> >  			ret = -EINVAL;
+> > @@ -1718,6 +1712,8 @@ static int f2fs_ioc_start_atomic_write(struct file *filp)
+> >  	if (ret)
+> >  		goto out;
+> >  
+> > +	down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+> > +
+> >  	if (!get_dirty_pages(inode))
+> >  		goto skip_flush;
+> >  
+> > @@ -1725,18 +1721,20 @@ static int f2fs_ioc_start_atomic_write(struct file *filp)
+> >  		"Unexpected flush for atomic writes: ino=%lu, npages=%u",
+> >  					inode->i_ino, get_dirty_pages(inode));
+> >  	ret = filemap_write_and_wait_range(inode->i_mapping, 0, LLONG_MAX);
+> > -	if (ret)
+> > +	if (ret) {
+> > +		up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+> >  		goto out;
+> > +	}
+> >  skip_flush:
+> >  	set_inode_flag(inode, FI_ATOMIC_FILE);
+> >  	clear_inode_flag(inode, FI_ATOMIC_REVOKE_REQUEST);
+> > -	f2fs_update_time(F2FS_I_SB(inode), REQ_TIME);
+> > +	up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+> >  
+> > +	f2fs_update_time(F2FS_I_SB(inode), REQ_TIME);
+> >  	F2FS_I(inode)->inmem_task = current;
+> >  	stat_inc_atomic_write(inode);
+> >  	stat_update_max_atomic_write(inode);
+> >  out:
+> > -	up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+> >  	inode_unlock(inode);
+> >  	mnt_drop_write_file(filp);
+> >  	return ret;
+> > @@ -1754,9 +1752,9 @@ static int f2fs_ioc_commit_atomic_write(struct file *filp)
+> >  	if (ret)
+> >  		return ret;
+> >  
+> > -	inode_lock(inode);
+> > +	f2fs_balance_fs(F2FS_I_SB(inode), true);
+> >  
+> > -	down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+> > +	inode_lock(inode);
+> >  
+> >  	if (f2fs_is_volatile_file(inode)) {
+> >  		ret = -EINVAL;
+> > @@ -1782,7 +1780,6 @@ static int f2fs_ioc_commit_atomic_write(struct file *filp)
+> >  		clear_inode_flag(inode, FI_ATOMIC_REVOKE_REQUEST);
+> >  		ret = -EINVAL;
+> >  	}
+> > -	up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+> >  	inode_unlock(inode);
+> >  	mnt_drop_write_file(filp);
+> >  	return ret;
+> > @@ -2378,15 +2375,10 @@ static int f2fs_move_file_range(struct file *file_in, loff_t pos_in,
+> >  	}
+> >  
+> >  	inode_lock(src);
+> > -	down_write(&F2FS_I(src)->i_gc_rwsem[WRITE]);
+> >  	if (src != dst) {
+> >  		ret = -EBUSY;
+> >  		if (!inode_trylock(dst))
+> >  			goto out;
+> > -		if (!down_write_trylock(&F2FS_I(dst)->i_gc_rwsem[WRITE])) {
+> > -			inode_unlock(dst);
+> > -			goto out;
+> > -		}
+> >  	}
+> >  
+> >  	ret = -EINVAL;
+> > @@ -2431,6 +2423,14 @@ static int f2fs_move_file_range(struct file *file_in, loff_t pos_in,
+> >  		goto out_unlock;
+> >  
+> >  	f2fs_balance_fs(sbi, true);
+> > +
+> > +	down_write(&F2FS_I(src)->i_gc_rwsem[WRITE]);
+> > +	if (src != dst) {
+> > +		ret = -EBUSY;
+> > +		if (!down_write_trylock(&F2FS_I(dst)->i_gc_rwsem[WRITE]))
+> > +			goto out_src;
+> > +	}
+> > +
+> >  	f2fs_lock_op(sbi);
+> >  	ret = __exchange_data_block(src, dst, pos_in >> F2FS_BLKSIZE_BITS,
+> >  				pos_out >> F2FS_BLKSIZE_BITS,
+> > @@ -2443,13 +2443,15 @@ static int f2fs_move_file_range(struct file *file_in, loff_t pos_in,
+> >  			f2fs_i_size_write(dst, dst_osize);
+> >  	}
+> >  	f2fs_unlock_op(sbi);
+> > -out_unlock:
+> > -	if (src != dst) {
+> > +
+> > +	if (src != dst)
+> >  		up_write(&F2FS_I(dst)->i_gc_rwsem[WRITE]);
+> > +out_src:
+> > +	up_write(&F2FS_I(src)->i_gc_rwsem[WRITE]);
+> > +out_unlock:
+> > +	if (src != dst)
+> >  		inode_unlock(dst);
+> > -	}
+> >  out:
+> > -	up_write(&F2FS_I(src)->i_gc_rwsem[WRITE]);
+> >  	inode_unlock(src);
+> >  	return ret;
+> >  }
+> > diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> > index e352fbd33848..cac317e37306 100644
+> > --- a/fs/f2fs/gc.c
+> > +++ b/fs/f2fs/gc.c
+> > @@ -884,6 +884,7 @@ static void gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+> >  			if (!down_write_trylock(
+> >  				&F2FS_I(inode)->i_gc_rwsem[WRITE])) {
+> >  				iput(inode);
+> > +				sbi->skipped_gc_rwsem++;
+> >  				continue;
+> >  			}
+> >  
+> > @@ -913,6 +914,7 @@ static void gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+> >  					continue;
+> >  				if (!down_write_trylock(
+> >  						&fi->i_gc_rwsem[WRITE])) {
+> > +					sbi->skipped_gc_rwsem++;
+> >  					up_write(&fi->i_gc_rwsem[READ]);
+> >  					continue;
+> >  				}
+> > @@ -1062,6 +1064,7 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
+> >  				prefree_segments(sbi));
+> >  
+> >  	cpc.reason = __get_cp_reason(sbi);
+> > +	sbi->skipped_gc_rwsem = 0;
+> >  gc_more:
+> >  	if (unlikely(!(sbi->sb->s_flags & SB_ACTIVE))) {
+> >  		ret = -EINVAL;
+> > @@ -1103,7 +1106,8 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
+> >  	total_freed += seg_freed;
+> >  
+> >  	if (gc_type == FG_GC) {
+> > -		if (sbi->skipped_atomic_files[FG_GC] > last_skipped)
+> > +		if (sbi->skipped_atomic_files[FG_GC] > last_skipped ||
+> > +						sbi->skipped_gc_rwsem)
+> 
+> There should be other foreground ops like DIO can race with GC, in such case, if
+> we increase sbi->skipped_gc_rwsem, and call f2fs_drop_inmem_pages_all() to drop
+> inmem pages later, it doesn't help?
 
-On 2018/8/5 23:21, Kristaps Čivkulis wrote:
-> Fix coding style issue "do not use assignment in if condition"
-> detected by checkpatch.pl.
->
-> Signed-off-by: Kristaps Čivkulis <kristaps.civkulis@gmail.com>
+Let me add a condition to decide that.
 
-I don't know whether this rule is mandatory or not for the current linux
-kernel
-when I checked the original patchset with checkpatch.pl.
+> 
+> >  			skipped_round++;
+> >  		last_skipped = sbi->skipped_atomic_files[FG_GC];
+> >  		round++;
+> > @@ -1112,15 +1116,21 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
+> >  	if (gc_type == FG_GC)
+> >  		sbi->cur_victim_sec = NULL_SEGNO;
+> >  
+> > -	if (!sync) {
+> > -		if (has_not_enough_free_secs(sbi, sec_freed, 0)) {
+> > -			if (skipped_round > MAX_SKIP_ATOMIC_COUNT &&
+> > -				skipped_round * 2 >= round)
+> > -				f2fs_drop_inmem_pages_all(sbi, true);
+> > +	if (sync)
+> > +		goto stop;
+> > +
+> > +	if (has_not_enough_free_secs(sbi, sec_freed, 0)) {
+> > +		if (skipped_round <= MAX_SKIP_GC_COUNT ||
+> > +					skipped_round * 2 < round) {
+> >  			segno = NULL_SEGNO;
+> >  			goto gc_more;
+> >  		}
+> >  
+> > +		if (sbi->skipped_atomic_files[FG_GC] == last_skipped) {
+> > +			f2fs_drop_inmem_pages_all(sbi, true);
+> > +			segno = NULL_SEGNO;
+> > +			goto gc_more;
+> > +		}
+> >  		if (gc_type == FG_GC)
+> >  			ret = f2fs_write_checkpoint(sbi, &cpc);
+> >  	}
+> > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> > index 3662e1f429b4..15b3b095fd58 100644
+> > --- a/fs/f2fs/segment.c
+> > +++ b/fs/f2fs/segment.c
+> > @@ -444,10 +444,12 @@ int f2fs_commit_inmem_pages(struct inode *inode)
+> >  	struct f2fs_inode_info *fi = F2FS_I(inode);
+> >  	int err;
+> >  
+> > -	f2fs_balance_fs(sbi, true);
+> > +	f2fs_balance_fs(F2FS_I_SB(inode), true);
+> 
+> We don't need to change sbi to F2FS_I_SB(inode).
+> 
+> down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
 
-Sometime I prefer to use assignment in if condition since the whole
-statement
-is more meaningful than separate to several statements...  although it
-can lead to
-some potential bugs.
+Done.
 
-Another case is use (!ptr) to replace (ptr == NULL) and use (ptr) to replace
-(ptr != NULL) for pointers. Actually these expressions are equivalent in C,
-but I personally like the nullptr concept... I also have no idea if it
-is mandatory to fix
-as the checkpatch.pl suggested or not...
-
-Thanks for your patch :) if it is actually mandatory or strongly
-recommend, you can add:
-
-Reviewed-by: Gao Xiang <gaoxiang25@huawei.com>
-
-Thanks,
-Gao Xiang
+> 
+> Thanks,
+> 
+> > +
+> >  	f2fs_lock_op(sbi);
+> >  
+> >  	set_inode_flag(inode, FI_ATOMIC_COMMIT);
+> > +	down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+> >  
+> >  	mutex_lock(&fi->inmem_lock);
+> >  	err = __f2fs_commit_inmem_pages(inode);
+> > @@ -458,6 +460,7 @@ int f2fs_commit_inmem_pages(struct inode *inode)
+> >  	spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
+> >  	mutex_unlock(&fi->inmem_lock);
+> >  
+> > +	up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+> >  	clear_inode_flag(inode, FI_ATOMIC_COMMIT);
+> >  
+> >  	f2fs_unlock_op(sbi);
+> > diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+> > index 50495515f0a0..b3d9e317ff0c 100644
+> > --- a/fs/f2fs/segment.h
+> > +++ b/fs/f2fs/segment.h
+> > @@ -215,7 +215,7 @@ struct segment_allocation {
+> >  #define IS_DUMMY_WRITTEN_PAGE(page)			\
+> >  		(page_private(page) == (unsigned long)DUMMY_WRITTEN_PAGE)
+> >  
+> > -#define MAX_SKIP_ATOMIC_COUNT			16
+> > +#define MAX_SKIP_GC_COUNT			16
+> >  
+> >  struct inmem_pages {
+> >  	struct list_head list;
+> > 
