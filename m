@@ -2,110 +2,121 @@ Return-Path: <SRS0=mdhE=KU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7143C46471
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 19:14:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3637C46471
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 19:27:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8407A218DF
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 19:14:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8407A218DF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 9B915218D0
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 19:27:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M5e6GWUV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B915218D0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726928AbeHEVUH (ORCPT
+        id S1726870AbeHEVdA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 5 Aug 2018 17:20:07 -0400
-Received: from mx2.suse.de ([195.135.220.15]:44352 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726509AbeHEVUG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 Aug 2018 17:20:06 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 726E7ADD7;
-        Sun,  5 Aug 2018 19:14:30 +0000 (UTC)
-Subject: Re: [PATCH 0/3] Remove uneeded variable "err"
-To:     zhong jiang <zhongjiang@huawei.com>, clm@fb.com, jbacik@fb.com,
-        dsterba@suse.com
-Cc:     linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1533481371-21349-1-git-send-email-zhongjiang@huawei.com>
-From:   Nikolay Borisov <nborisov@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=nborisov@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <c9f07f02-38c0-7491-3b48-0dda20f60d13@suse.com>
-Date:   Sun, 5 Aug 2018 22:14:29 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Sun, 5 Aug 2018 17:33:00 -0400
+Received: from mail-ua0-f195.google.com ([209.85.217.195]:45657 "EHLO
+        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726465AbeHEVc7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 5 Aug 2018 17:32:59 -0400
+Received: by mail-ua0-f195.google.com with SMTP id k8-v6so9821376uaq.12
+        for <linux-kernel@vger.kernel.org>; Sun, 05 Aug 2018 12:27:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=hk22uFlSagTRl/AuL24BOOFZKVv026RsCIUW0M2x5U8=;
+        b=M5e6GWUVBzYmfdd4mzjnKLlvsL9mAIa26ky2L07tUkZYlFRGFVK9H26zFFNkU4+OoK
+         Y1D5sAG9EH/IKKxSv8l+D27iF/1UKUcj4bA5h5Ltf37D3IAWdHauB8XZxjNokwJ8RuyH
+         Ak/rYZctqWbPZeItt5OxL3yvCd/nagdR0OZWOab/WrtgyBQ8E8cTuZVW+i4DlnXdBGqO
+         IDDdflgxYtvzXcqBBIBbxXoveM/EX5fgF+lkiztdNKrkoSXejRSiqE7trAstJ7W3MtFZ
+         FikSw3XwYn0CyczvzNuw/XuvbvOGBG/ELzFKrf/ombjpgeIxIsmx7ZeKVnYv+kPMdVa4
+         5vVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=hk22uFlSagTRl/AuL24BOOFZKVv026RsCIUW0M2x5U8=;
+        b=m6sDzscH98S3VpZ+ds0zEmGN/cpDY5MnSIGW9tnyT9vZKEdfMidhhRYxwIOgX2ZPZI
+         HywhcchlBo6+2WvdQeqCaLoN0gGBaUpBdVkJes0awtQ3ELLAp1fbaZ4H/6yAgeTpPdw1
+         vmXSSLlF+tmeDKQp0JKBVstMc5M6AZlbf9H3AUsXHl1rjkbYaiuFxgZwv3Vt8XBWHkIg
+         bcc8nsPhheww/KwH1j91AJEtsIXYQRlDX1X7hK0MiN9gnZqHdG2BkPhwRrirGkj2OYfh
+         1yDUBySRPPP4XVjYagEzjyyAc7QOdVQped02qRNrLo8U9jrsvPlj8M1aM6tx2m/tZHVG
+         DYCw==
+X-Gm-Message-State: AOUpUlFMPOsUnIA7kFrS1GG9Ktt2gjoDzUdNZmwMK4J30M0bTqb5OFKE
+        /Y95grLYwXDrTL8UvHhipTQZrmdpbsh3/oPwFYNOWvYL
+X-Google-Smtp-Source: AAOMgpcUf28ukWFGsjAp49iMpIkzjFYcZM93UEzG7U55CzVQ8nqd75NF/KHoV8tMQhETmxlklEUUQhGq0U74I89ZAHg=
+X-Received: by 2002:a1f:ccc5:: with SMTP id c188-v6mr7458476vkg.151.1533497242261;
+ Sun, 05 Aug 2018 12:27:22 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1533481371-21349-1-git-send-email-zhongjiang@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a67:7187:0:0:0:0:0 with HTTP; Sun, 5 Aug 2018 12:27:01 -0700 (PDT)
+In-Reply-To: <a88b1975-4232-4b6f-9497-ab44dbdda5d6@suse.com>
+References: <CADPp2fB3Oj3Jm08rVqeHxX855EnO8+22-H552Q6AFfJL-dWmtQ@mail.gmail.com>
+ <a88b1975-4232-4b6f-9497-ab44dbdda5d6@suse.com>
+From:   Adam Novak <interfect@gmail.com>
+Date:   Sun, 5 Aug 2018 12:27:01 -0700
+Message-ID: <CADPp2fCY7DKi_0fxi+r986T3e=7rzygAPHLby6amcdC11f+=Hw@mail.gmail.com>
+Subject: Re: Problems with Zen under Xen and recent Linux kernel improvements
+To:     Juergen Gross <jgross@suse.com>
+Cc:     linux-kernel@vger.kernel.org, boris.ostrovsky@oracle.com,
+        x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Sorry, I am using Xen version 4.9.2, specifically 4.9.2-0ubuntu1.
 
+I am seeing the bug with *kernel* version 4.15.0, and specifically
+Ubuntu's tag Ubuntu-4.15.0-23.25. That appears to have the "x86/cpu:
+Re-apply forced caps every time CPU caps are re-read" patch, but not
+"x86/xen: Add call of speculative_store_bypass_ht_init() to PV paths".
 
-On  5.08.2018 18:02, zhong jiang wrote:
-> 
-> zhong jiang (3):
->   fs/btrfs/disk-io: Remove unneeded variable "err"
->   fs/btrfs/extent-tree: remove redudant variable "err"
->   fs/btrfs/tree-log: remove the unneeded variable "err"
-> 
->  fs/btrfs/disk-io.c     | 12 ++++--------
->  fs/btrfs/extent-tree.c |  6 ++----
->  fs/btrfs/tree-log.c    |  5 +----
->  fs/btrfs/tree-log.h    |  2 +-
->  4 files changed, 8 insertions(+), 17 deletions(-)
-> 
+I can try cherry-picking that commit. Are there other commits in
+particular that might need to be pulled into the Ubuntu kernel to get
+it to work?
 
-
-NAK on the whole series on the basis of using a bulk commit message
-which doesn't really describe the changes of each individual commit. If
-you want those changes to eventually be merged resubmit the series with
-individual reasoning for every commit.
+On Tue, Jul 31, 2018 at 4:58 AM, Juergen Gross <jgross@suse.com> wrote:
+> On 31/07/18 03:14, Adam Novak wrote:
+>> Hello,
+>>
+>> I was advised to take this here, and to Boris Ostrovsky and Juergen
+>> Gross, by Thomas Gleixner.
+>>
+>> I am having some trouble with the new speculation control code that
+>> has been added to the Linux kernel, for AMD Zen CPUs. I am running an
+>> AMD Ryzen 7 1700, and I am running Linux as a Xen dom0 (which is part
+>> of the problem; the code seems to work fine running outside of Xen).
+>>
+>> I started having trouble on Ubuntu's commit
+>> 3f6a3b035f91a22c0d3bd27630bf61eac9c8cf6c, "x86/speculation: Handle HT
+>> correctly on AMD", which appears to be cherry-picked from
+>> 1f50ddb4f4189243c05926b842dc1a0332195f31. Since that commit, my system
+>> hangs during the boot process; it starts starting stuff up and trying
+>> to mount things and printing "[OK]" messages, but then fairly early in
+>> the boot process the kernel complains that it is "unable to handle
+>> kernel NULL pointer deference at 000...0008"
+>>
+>> On my Ubuntu bug:
+>>
+>> https://bugs.launchpad.net/bugs/1777338
+>>
+>> I have a "Screenshot of the null pointer dereference message". It is
+>> running into trouble during a spin lock in the new
+>> speculative_store_bypass_update().
+>>
+>> Has anyone else seen this behavior on these CPUs under Xen (I am using 4.9)?
+>
+> You want at least 4.9.112, especially due to the missing patches
+> "x86/xen: Add call of speculative_store_bypass_ht_init() to PV paths",
+> "x86/cpu: Re-apply forced caps every time CPU caps are re-read"
+>
+> Juergen
