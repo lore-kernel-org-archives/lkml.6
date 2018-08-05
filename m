@@ -2,115 +2,145 @@ Return-Path: <SRS0=mdhE=KU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73BB0C4646F
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 01:16:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 090A9C4646F
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 01:39:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2127B217CE
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 01:16:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DB+0tB7z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2127B217CE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	by mail.kernel.org (Postfix) with ESMTP id AF969217CC
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 01:39:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF969217CC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727514AbeHEDSm (ORCPT
+        id S1727625AbeHEDlo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 23:18:42 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:41042 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726412AbeHEDSm (ORCPT
+        Sat, 4 Aug 2018 23:41:44 -0400
+Received: from smtprelay0230.hostedemail.com ([216.40.44.230]:46614 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726647AbeHEDlo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 23:18:42 -0400
-Received: by mail-pl0-f68.google.com with SMTP id w19-v6so2484019ply.8;
-        Sat, 04 Aug 2018 18:16:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=3JTjV+XqT4IV4y5YSovo8gJDSc27VvxcOn5e7IJyZJA=;
-        b=DB+0tB7zMfzs38f2jLXzkHUDioKgy0yCRWVkSQD0w/RFS2O6tYHxw+nGJktuY+Xf+8
-         BAtQA1jtW6M02uaMI4qW3CPHdSIue+I1jfMwz469n5PrT4YLVVAZDi2l+Y/t1Edox50x
-         Q3jQhW2+1dQJMQBtXR+LglvQ3zKqMI9U0KcUfxw/jvXHrq0P2oaeR9NVRlHNOeDo26ec
-         minbLkXsw3o48mWnRA67BSXhNH1Jj7C1jmT0m5+F7R9m3d17xvu/vYkVFNYtPIKF3eM4
-         qR44uxZom57MVK5lTN2gzkosMNgrI8K173QfQkj0ZHB+H3TGP4ei6x2kzvkDwEX18Y67
-         n2ng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=3JTjV+XqT4IV4y5YSovo8gJDSc27VvxcOn5e7IJyZJA=;
-        b=PnvqUZ4ZuUnyYFKioHPczKuuOP/zLuD/Sdd7/PciRog4ZKVIrFtgfT6BzozzhGJY1w
-         Kxdcd0PSByrF8uoSH1RJuOJ+DJ9G/5QWebyEwaV8xLYEQ5wNUkbVukxeni1lhW7fbjEd
-         f6TqDdKwZFagaJjWtLao4ziQVPjXNtxSPYFe7zgO+ih9+X/+j7/KRhVG7ceABQ501dMk
-         LynRTv1V1j7MPQspAgWCSoUltM/UDjlqGmv3rUzZM1jVecW1LFjaS8rn8RU/OiwkwW4V
-         1BXonTXrAhKWPQ6QRzDp52+Ybmv2ubOQqgJOS+RDFeGEdtW5Yfk5UedllBCl22OXQyXy
-         iDTg==
-X-Gm-Message-State: AOUpUlFDQx0MglcBi5hN2Zt2gFS4S5SsE+vjIFhPf/cLTOxlp/pR1x9P
-        2SSnRZZjhxFu2bdxszXzzpo79S61
-X-Google-Smtp-Source: AAOMgpf0KpB4CBZkVsGxwGp6bp7AztTSAlCkHydC5IIwpxGLrjxjvxQz4cba66t7ngigLBm1kIMLCA==
-X-Received: by 2002:a17:902:8f8c:: with SMTP id z12-v6mr8757567plo.4.1533431762270;
-        Sat, 04 Aug 2018 18:16:02 -0700 (PDT)
-Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id h18-v6sm4793268pfa.173.2018.08.04.18.16.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 04 Aug 2018 18:16:01 -0700 (PDT)
-Subject: Re: [PATCH 4/4] watchdog: hpwdt: Update version number.
-To:     Jerry Hoemann <jerry.hoemann@hpe.com>, wim@linux-watchdog.org
-Cc:     linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1533244541-42310-1-git-send-email-jerry.hoemann@hpe.com>
- <1533244541-42310-5-git-send-email-jerry.hoemann@hpe.com>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <056cf690-6a25-c921-5bb1-217ea1c9536c@roeck-us.net>
-Date:   Sat, 4 Aug 2018 18:16:00 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <1533244541-42310-5-git-send-email-jerry.hoemann@hpe.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+        Sat, 4 Aug 2018 23:41:44 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay08.hostedemail.com (Postfix) with ESMTP id 5A1EE182CED2A;
+        Sun,  5 Aug 2018 01:39:00 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: bait57_1404ee92d0b58
+X-Filterd-Recvd-Size: 4641
+Received: from XPS-9350 (unknown [172.58.27.170])
+        (Authenticated sender: joe@perches.com)
+        by omf06.hostedemail.com (Postfix) with ESMTPA;
+        Sun,  5 Aug 2018 01:38:57 +0000 (UTC)
+Message-ID: <3081c875c5c5854188288e80c4e1bf27651e1436.camel@perches.com>
+Subject: Re: [PATCH v2 1/2] Support the nonstring variable attribute (gcc >=
+ 8)
+From:   Joe Perches <joe@perches.com>
+To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Josh Poimboeuf <jpoimboe@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        David Rientjes <rientjes@google.com>,
+        Martin Sebor <msebor@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Date:   Sat, 04 Aug 2018 18:38:55 -0700
+In-Reply-To: <20180801175433.GA25298@gmail.com>
+References: <20180801175433.GA25298@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/02/2018 02:15 PM, Jerry Hoemann wrote:
-> Bump version number to reflect recent bug fixes.
+On Wed, 2018-08-01 at 19:54 +0200, Miguel Ojeda wrote:
+> From the GCC manual:
 > 
-> Signed-off-by: Jerry Hoemann <jerry.hoemann@hpe.com>
-
-As usual, my recommendation is to drop version numbers. The version number is
-reflected by the Linux kernel version and SHA. Yet, I understand that people
-feel quite strong about having version numbers in drivers, so,
-
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-
-Just don't expect anyone outside hpe to keep it up to date.
-
-Guenter
-
+> The nonstring variable attribute specifies that an object or member
+> declaration with type array of char or pointer to char is intended to
+> store character arrays that do not necessarily contain a terminating NUL
+> character. This is useful in detecting uses of such arrays or pointers
+> with functions that expect NUL-terminated strings, and to avoid warnings
+> when such an array or pointer is used as an argument to a bounded string
+> manipulation function such as strncpy.
+> 
+>   https://gcc.gnu.org/onlinedocs/gcc/Common-Variable-Attributes.html
+> 
+> Some reports are already coming to the LKML regarding these
+> warnings. When they are false positives, like this one
+> 
+>   https://lkml.org/lkml/2018/1/16/135
+> 
+> we can use __nonstring to let gcc know a NUL character is not required.
+> 
+> Cc: Ingo Molnar <mingo@kernel.org>
+> Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+> Cc: Will Deacon <will.deacon@arm.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: David Rientjes <rientjes@google.com>
+> Cc: Martin Sebor <msebor@gmail.com>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
 > ---
->   drivers/watchdog/hpwdt.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+> Re-sending this since a few months have passed, Martin has improved
+> GCC's feature and warnings are appearing in Geert's build bot.
+> Added an example in the second patch as requested by David.
 > 
-> diff --git a/drivers/watchdog/hpwdt.c b/drivers/watchdog/hpwdt.c
-> index f098371..27091f3 100644
-> --- a/drivers/watchdog/hpwdt.c
-> +++ b/drivers/watchdog/hpwdt.c
-> @@ -26,7 +26,7 @@
->   #include <linux/watchdog.h>
->   #include <asm/nmi.h>
->   
-> -#define HPWDT_VERSION			"2.0.0"
-> +#define HPWDT_VERSION			"2.0.1"
->   #define SECS_TO_TICKS(secs)		((secs) * 1000 / 128)
->   #define TICKS_TO_SECS(ticks)		((ticks) * 128 / 1000)
->   #define HPWDT_MAX_TIMER			TICKS_TO_SECS(65535)
+>  include/linux/compiler-gcc.h   | 14 ++++++++++++++
+>  include/linux/compiler_types.h |  4 ++++
+>  2 files changed, 18 insertions(+)
 > 
+> diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
+> index 573f5a7d42d4..fab4e904f1fe 100644
+> --- a/include/linux/compiler-gcc.h
+> +++ b/include/linux/compiler-gcc.h
+> @@ -343,6 +343,20 @@
+>  #define __designated_init __attribute__((designated_init))
+>  #endif
+>  
+> +#if GCC_VERSION >= 80000
+> +/*
+> + * The nonstring variable attribute specifies that an object or member
+> + * declaration with type array of char or pointer to char is intended
+> + * to store character arrays that do not necessarily contain a terminating
+> + * NUL character. This is useful in detecting uses of such arrays or pointers
+> + * with functions that expect NUL-terminated strings, and to avoid warnings
+> + * when such an array or pointer is used as an argument to a bounded string
+> + * manipulation function such as strncpy.
+> + * https://gcc.gnu.org/onlinedocs/gcc/Common-Variable-Attributes.html
+> + */
 
+Please move this down to the already existing test
+for GCC_VERSION >= 80000 near the bottom of the
+file so that version number tests are always in
+increasing order in the file.
+
+> +#define __nonstring __attribute__((nonstring))
+> +#endif
+> +
+>  #endif	/* gcc version >= 40000 specific checks */
+>  
+>  #if !defined(__noclone)
+> diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
+> index a8ba6b04152c..9c07be36e86a 100644
+> --- a/include/linux/compiler_types.h
+> +++ b/include/linux/compiler_types.h
+> @@ -289,4 +289,8 @@ struct ftrace_likely_data {
+>  #define __diag_error(compiler, version, option, comment) \
+>  	__diag_ ## compiler(version, error, option)
+>  
+> +#ifndef __nonstring
+> +# define __nonstring
+> +#endif
+> +
+>  #endif /* __LINUX_COMPILER_TYPES_H */
