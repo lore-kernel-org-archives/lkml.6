@@ -2,146 +2,129 @@ Return-Path: <SRS0=mdhE=KU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B782C46470
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 08:17:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE205C46470
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 08:29:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02D74217C1
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 08:17:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 86EFB21748
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 08:29:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="a0Q+K3CA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02D74217C1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="GjYmp1oO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86EFB21748
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lightnvm.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726111AbeHEKVV (ORCPT
+        id S1726165AbeHEKdM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 5 Aug 2018 06:21:21 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:37027 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726081AbeHEKVV (ORCPT
+        Sun, 5 Aug 2018 06:33:12 -0400
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:36881 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726081AbeHEKdM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 Aug 2018 06:21:21 -0400
-Received: by mail-io0-f195.google.com with SMTP id z19-v6so8498327ioh.4
-        for <linux-kernel@vger.kernel.org>; Sun, 05 Aug 2018 01:17:37 -0700 (PDT)
+        Sun, 5 Aug 2018 06:33:12 -0400
+Received: by mail-qt0-f194.google.com with SMTP id n6-v6so10654107qtl.4
+        for <linux-kernel@vger.kernel.org>; Sun, 05 Aug 2018 01:29:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=yT6owx9DHj0U08psBNj/nXo0h3fpKNs+e7+vxhr2q2Q=;
-        b=a0Q+K3CAb2USl39VuC84XQeq7G0dkce1rUOsy5S6O7ZVu0TVEdXDrHsz108UI+mqgN
-         cUdQ16OuP3YTCp/tiTdC+cHNcRB2tZaDHuduHzlngYK6w6EDOnPfxizuXu5aOhqoDmRL
-         ghcaYWIz8AoCLidlvlVmlmhK74fC5Qi65eXxk=
+        d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=VJSDojTbzMjrBPtqDBh+7R3BGWy6nWura0YGmFUimfo=;
+        b=GjYmp1oOPO5028EUT+E7YeOg9dnG+T3qdSL6Hd5amTeUVWrsBqpsaIJaF5KUs9GkKJ
+         PiD+R5KD945ecbICy9d7Ye65kFueUlYpoi1ucVfLIf6HFGC+GHe3PZtz6Z3D3C53yeED
+         vs1TA6zCqDovPfuwLZSg7acjEmyyc145KWkHnAnt5KHo+n0HZOdVy1R3+nd8XMv4M2RS
+         fQg4jAjz/yakxBNi94QmHyhyodPqazWMFUaqO0Y8wgQMPZB1n9ZI56Pz0AHrQweOf1zt
+         jyt9tt9U4LvMJvnSNGN0uGPUc6w6M9I+L0IrT8eib7RcRP01iAsswPaOu3PHqCIhIbvz
+         bLDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=yT6owx9DHj0U08psBNj/nXo0h3fpKNs+e7+vxhr2q2Q=;
-        b=tz4BsT/Zrjo69hc9X+ZKevZsqsIYnkCxJhb5wQHxBDiGvRG9gpGcqWJeQo7uXs6m7v
-         9X8kCcSz5jqUPJOhK2WyVXl7I2YBOt2Fw0sLyHp8QehAcexDBplQZSPktS3vk5N9X66c
-         HM30L53LiYAU4vDLNrUWQfNH9Hvt5PVOWdgqR9420xYSt6BxJIojvElriMpB35Z32fJG
-         8B7b2fhYMpnJmxg0DxXRQRrObKP65Wk08FTkR5e6h0q3lVw9Pa+d5SwwufNeqXpcBHBE
-         v6/hyDirARwncZLRaLWnWM3DfUOZxTUYTQuNBsL3osdlbpUJcpr1Z+eNBz37nwYf2yk2
-         f0OA==
-X-Gm-Message-State: AOUpUlHMKYd1rePAtHf+DWDnvMxpJfx444Sb7uan8zKJlMbfWXwXGkFK
-        LOV/kdPbYEj9RI3E/uemuKX3W0Uj77wtUJ7h/0hygQ==
-X-Google-Smtp-Source: AA+uWPwB5LjusVgtoev6baCCFEJOTf+GyUNndRNSLPldctBWzKvfuCigAmpnVTcprNKWdiXfA6FvUFca5PqVA8IdZec=
-X-Received: by 2002:a6b:be83:: with SMTP id o125-v6mr11416460iof.173.1533457057156;
- Sun, 05 Aug 2018 01:17:37 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=VJSDojTbzMjrBPtqDBh+7R3BGWy6nWura0YGmFUimfo=;
+        b=N4tTah09OxWrjYHKoPcU4YAL3rNYHIa2uQDqF5xiBH+usY7xWZvzpVPVG46sDyuWQ+
+         5f9612fyFOyYfwDE3SeyZiUiEponoRg4YZDDH/QfRPVUtsFtRXhC/kSiIGwBvSET43D0
+         QGYucPHIqwEsQZdblFdY6XE43YrQarL+BwekcMKsRiExO13SeXxmgHwPymDglRPwcrKp
+         t1gVmsRXoRwBEzs7hF93KkDvlpkRk2PM8SL6p2Koe+LSzdehT/iVTIULNrSM7uT4irXx
+         kfnX3VunkUg5SrZkQpS20YAboLflOu/alQd98iLVxA4k+Zo8d2kZTm3Ojx9j0NmPglMC
+         SxCQ==
+X-Gm-Message-State: AOUpUlFCFSjsf751FeaKwhQN9GTM8dZ/7YMSnxulZN0cWZur2TLRf0Pn
+        r360o5f9iVH/voR8adk4C96VtmIjhEM=
+X-Google-Smtp-Source: AAOMgpcXMy3uY02aN4/CIINpm/QLkfq8apScGkDki5dGp3jPzJXEtmFpuE2HF3aLNVD4i+elGt/wDA==
+X-Received: by 2002:aed:35bd:: with SMTP id c58-v6mr10105497qte.155.1533457765331;
+        Sun, 05 Aug 2018 01:29:25 -0700 (PDT)
+Received: from C02VV2HXHV2Q.local ([217.63.102.42])
+        by smtp.gmail.com with ESMTPSA id s53-v6sm8731584qts.5.2018.08.05.01.29.22
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 05 Aug 2018 01:29:24 -0700 (PDT)
+Subject: Re: [PATCH] lightnvm: remove minor version check for 2.0
+To:     axboe@kernel.dk
+Cc:     Javier Gonzalez <javier@cnexlabs.com>,
+        "Konopko, Igor J" <igor.j.konopko@intel.com>,
+        "marcin.dziegielewski@intel.com" <marcin.dziegielewski@intel.com>,
+        Hans Holmberg <hans.holmberg@cnexlabs.com>,
+        Heiner Litz <hlitz@ucsc.edu>,
+        Young Tack Tack Jin <youngtack.jin@circuitblvd.com>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20180803090237.2022-1-mb@lightnvm.io>
+ <7B08AEC1-90F8-4AE0-AE46-BADF8CC8D270@cnexlabs.com>
+From:   =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
+Message-ID: <2f1d5972-3257-22e0-efd7-0038f979f438@lightnvm.io>
+Date:   Sun, 5 Aug 2018 10:29:21 +0200
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.8.0
 MIME-Version: 1.0
-Received: by 2002:a6b:ac05:0:0:0:0:0 with HTTP; Sun, 5 Aug 2018 01:17:36 -0700 (PDT)
-In-Reply-To: <20180805032119.20485-3-jlee@suse.com>
-References: <20180805032119.20485-1-jlee@suse.com> <20180805032119.20485-3-jlee@suse.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Sun, 5 Aug 2018 10:17:36 +0200
-Message-ID: <CAKv+Gu9tE2KZNXTqtOi9qg3a861NQc-rQYxUQbioj04DzAkXbQ@mail.gmail.com>
-Subject: Re: [PATCH 2/6] efi: the function transfers status to string
-To:     "Lee, Chun-Yi" <joeyli.kernel@gmail.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        keyrings@vger.kernel.org,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        "Lee, Chun-Yi" <jlee@suse.com>, Kees Cook <keescook@chromium.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Pavel Machek <pavel@ucw.cz>, Chen Yu <yu.c.chen@intel.com>,
-        Oliver Neukum <oneukum@suse.com>,
-        Ryan Chen <yu.chen.surf@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <7B08AEC1-90F8-4AE0-AE46-BADF8CC8D270@cnexlabs.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5 August 2018 at 05:21, Lee, Chun-Yi <joeyli.kernel@gmail.com> wrote:
-> This function can be used to transfer EFI status code to string
-> for printing out debug message.
->
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: "H. Peter Anvin" <hpa@zytor.com>
-> Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-> Cc: Pavel Machek <pavel@ucw.cz>
-> Cc: Chen Yu <yu.c.chen@intel.com>
-> Cc: Oliver Neukum <oneukum@suse.com>
-> Cc: Ryan Chen <yu.chen.surf@gmail.com>
-> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> Cc: David Howells <dhowells@redhat.com>
-> Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
-> Signed-off-by: "Lee, Chun-Yi" <jlee@suse.com>
+On 8/3/18 2:07 PM, Javier Gonzalez wrote:
+>> On 3 Aug 2018, at 11.02, Matias Bjørling <mb@lightnvm.io> wrote:
+>>
+>> A minor version number increase should not break backwards
+>> compatibility.
+>>
+>> Fixes: 3cb98f84d368b ("lightnvm: add minor version to generic geometry")
+>> Signed-off-by: Matias Bjørling <mb@lightnvm.io>
+>> ---
+>> drivers/nvme/host/lightnvm.c | 6 ------
+>> 1 file changed, 6 deletions(-)
+>>
+>> diff --git a/drivers/nvme/host/lightnvm.c b/drivers/nvme/host/lightnvm.c
+>> index d9e4cccd5b66..a156fe3ca7d3 100644
+>> --- a/drivers/nvme/host/lightnvm.c
+>> +++ b/drivers/nvme/host/lightnvm.c
+>> @@ -414,12 +414,6 @@ static int nvme_nvm_setup_20(struct nvme_nvm_id20 *id,
+>> 	/* Set compacted version for upper layers */
+>> 	geo->version = NVM_OCSSD_SPEC_20;
+>>
+>> -	if (!(geo->major_ver_id == 2 && geo->minor_ver_id == 0)) {
+>> -		pr_err("nvm: OCSSD version not supported (v%d.%d)\n",
+>> -				geo->major_ver_id, geo->minor_ver_id);
+>> -		return -EINVAL;
+>> -	}
+>> -
+>> 	geo->num_ch = le16_to_cpu(id->num_grp);
+>> 	geo->num_lun = le16_to_cpu(id->num_pu);
+>> 	geo->all_luns = geo->num_ch * geo->num_lun;
+>> --
+>> 2.11.0
+> 
+> Looks good to me.
+> 
+> Reviewed-by: Javier González <javier@cnexlabs.com>
+> 
 
-Very useful.
+Hi Jens,
 
-Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Would it be possible to pick this one up for 4.19?
 
-> ---
->  include/linux/efi.h | 26 ++++++++++++++++++++++++++
->  1 file changed, 26 insertions(+)
->
-> diff --git a/include/linux/efi.h b/include/linux/efi.h
-> index 56add823f190..744cf92fe18e 100644
-> --- a/include/linux/efi.h
-> +++ b/include/linux/efi.h
-> @@ -1651,4 +1651,30 @@ struct linux_efi_tpm_eventlog {
->
->  extern int efi_tpm_eventlog_init(void);
->
-> +#define EFI_STATUS_STR(_status) \
-> +case EFI_##_status: \
-> +       return "EFI_" __stringify(_status);
-> +
-> +static inline char *
-> +efi_status_to_str(efi_status_t status)
-> +{
-> +       switch (status) {
-> +       EFI_STATUS_STR(SUCCESS)
-> +       EFI_STATUS_STR(LOAD_ERROR)
-> +       EFI_STATUS_STR(INVALID_PARAMETER)
-> +       EFI_STATUS_STR(UNSUPPORTED)
-> +       EFI_STATUS_STR(BAD_BUFFER_SIZE)
-> +       EFI_STATUS_STR(BUFFER_TOO_SMALL)
-> +       EFI_STATUS_STR(NOT_READY)
-> +       EFI_STATUS_STR(DEVICE_ERROR)
-> +       EFI_STATUS_STR(WRITE_PROTECTED)
-> +       EFI_STATUS_STR(OUT_OF_RESOURCES)
-> +       EFI_STATUS_STR(NOT_FOUND)
-> +       EFI_STATUS_STR(ABORTED)
-> +       EFI_STATUS_STR(SECURITY_VIOLATION)
-> +       }
-> +
-> +       return "";
-> +}
-> +
->  #endif /* _LINUX_EFI_H */
-> --
-> 2.13.6
->
+Thank you!
