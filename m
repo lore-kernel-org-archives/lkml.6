@@ -2,95 +2,110 @@ Return-Path: <SRS0=mdhE=KU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CAF6C4646D
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 01:02:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB898C4646D
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 01:03:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37B89217CC
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 01:02:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37B89217CC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id 59E77217CE
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 01:03:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=iluvatar.ai header.i=@iluvatar.ai header.b="lhwCT7Hr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59E77217CE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=iluvatar.ai
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726855AbeHEDEl (ORCPT
+        id S1727191AbeHEDGc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 4 Aug 2018 23:04:41 -0400
-Received: from gateway33.websitewelcome.com ([192.185.145.190]:27334 "EHLO
-        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726084AbeHEDEl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 4 Aug 2018 23:04:41 -0400
-Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
-        by gateway33.websitewelcome.com (Postfix) with ESMTP id 3CD553DE686
-        for <linux-kernel@vger.kernel.org>; Sat,  4 Aug 2018 20:02:04 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id m7Qqfdwe7kBj6m7QqfwOGb; Sat, 04 Aug 2018 20:02:04 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.50.82] (port=35498 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1fm7Qp-003sEQ-MN; Sat, 04 Aug 2018 20:02:03 -0500
-Date:   Sat, 4 Aug 2018 20:02:01 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Matthias Brugger <matthias.bgg@gmail.com>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] soc: mediatek: pwrap: use true and false for boolean values
-Message-ID: <20180805010201.GA7320@embeddedor.com>
+        Sat, 4 Aug 2018 23:06:32 -0400
+Received: from mail.iluvatar.ai ([58.213.90.100]:4516 "EHLO mail.iluvatar.ai"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726298AbeHEDGc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 4 Aug 2018 23:06:32 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mail.iluvatar.ai (Postfix) with ESMTP id 9610B120854B6;
+        Sun,  5 Aug 2018 09:07:28 +0800 (CST)
+Received: from mail.iluvatar.ai ([127.0.0.1])
+        by localhost (mail.iluvatar.ai [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id VMBM52OeTlX3; Sun,  5 Aug 2018 09:07:28 +0800 (CST)
+Received: from localhost (localhost [127.0.0.1])
+        by mail.iluvatar.ai (Postfix) with ESMTP id 0C7B61292775C;
+        Sun,  5 Aug 2018 09:07:28 +0800 (CST)
+DKIM-Filter: OpenDKIM Filter v2.9.2 mail.iluvatar.ai 0C7B61292775C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iluvatar.ai;
+        s=809B2F8E-810B-11E8-86FD-A0A654EEFFEB; t=1533431248;
+        bh=a/++NVgqsYQSXVipcbCMxOTCNlTa4WcXh3BmmT8Xo6Q=;
+        h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
+        b=lhwCT7HrGFwJljaHwhddxN+6CbZdvKv2YMYY6PGHGwzpdTPoh+R/G+oL3Re28ejNp
+         VmTURrFkUk09yyCnE6PNIx+sMXw2aPP/Wppne/9FQKcAlo5UJFVKrruahrN/fA+167
+         C+OSO2+8TQQwg0G8aacO0gvX7POkt9KKoNp1ZFbg=
+X-Virus-Scanned: amavisd-new at iluvatar.ai
+Received: from mail.iluvatar.ai ([127.0.0.1])
+        by localhost (mail.iluvatar.ai [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id EN-k7p7UF0xX; Sun,  5 Aug 2018 09:07:27 +0800 (CST)
+Received: from hsj-ThinkPad-Edge-E431 (unknown [223.167.32.17])
+        by mail.iluvatar.ai (Postfix) with ESMTPSA id 12326120854B6;
+        Sun,  5 Aug 2018 09:07:27 +0800 (CST)
+Date:   Sun, 5 Aug 2018 09:03:44 +0800
+From:   Huang Shijie <sjhuang@iluvatar.ai>
+To:     Peter Ujfalusi <peter.ujfalusi@ti.com>
+Cc:     vkoul@kernel.org, dmaengine@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dave.jiang@intel.com,
+        radhey.shyam.pandey@xilinx.com, appana.durga.rao@xilinx.com,
+        jmkrzyszt@gmail.com, gomonovych@gmail.com, keescook@chromium.org,
+        horms+renesas@verge.net.au, geert+renesas@glider.be,
+        shawnguo@kernel.org, baoyou.xie@linaro.org,
+        michal.simek@xilinx.com, baohua@kernel.org,
+        ludovic.desroches@microchip.com, linus.walleij@linaro.org,
+        david.brown@linaro.org
+Subject: Re: [PATCH 00/46] Use dmaenginem_async_device_register to simplify
+ code
+Message-ID: <20180805010342.GA10132@hsj-ThinkPad-Edge-E431>
+References: <20180803072016.21544-1-sjhuang@iluvatar.ai>
+ <5d8b222c-6798-aebc-43fc-d4dab9b6f43b@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.50.82
-X-Source-L: No
-X-Exim-ID: 1fm7Qp-003sEQ-MN
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.50.82]:35498
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 4
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <5d8b222c-6798-aebc-43fc-d4dab9b6f43b@ti.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Return statements in functions returning bool should use true or false
-instead of an integer value.
+On Fri, Aug 03, 2018 at 11:20:49AM +0300, Peter Ujfalusi wrote:
+> Hi,
+> 
+> On 2018-08-03 10:19, Huang Shijie wrote:
+> > All the patches are using dmaenginem_async_device_register to simplify code
+> > except the last one:
+> >   dmaengine: add COMPILE_TEST for the drivers
+> > 
+> > I use the last one to do the compiler test.  
+> > There are still 20 drivers which do not use the dmaenginem_async_device_register.
+> > Let me take a rest, if this patch set is accepted, I will do the rest.
+> 
+> I think for most of the drivers this series is going to open a race
+> which is essentially:
+> 
+> prior:
+> _remove()
+> {
+> ...
+> 	dma_async_device_register()
+> 	/* Free resources, disable HW, etc */
 
-This issue was detected with the help of Coccinelle.
+If these resources are managed by the devm_* APIs.
+We can use the dmaenginem_async_device_register().
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/soc/mediatek/mtk-pmic-wrap.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The Devres will release all the things in the following order:
+       ................................................
+ 	dma_async_device_unregister()
+ 	/* Free resources, disable HW, etc */
+       ................................................
 
-diff --git a/drivers/soc/mediatek/mtk-pmic-wrap.c b/drivers/soc/mediatek/mtk-pmic-wrap.c
-index 4e931fd..932470a 100644
---- a/drivers/soc/mediatek/mtk-pmic-wrap.c
-+++ b/drivers/soc/mediatek/mtk-pmic-wrap.c
-@@ -1096,7 +1096,7 @@ static bool pwrap_is_pmic_cipher_ready(struct pmic_wrapper *wrp)
- 	ret = pwrap_read(wrp, wrp->slave->dew_regs[PWRAP_DEW_CIPHER_RDY],
- 			 &rdata);
- 	if (ret)
--		return 0;
-+		return false;
- 
- 	return rdata == 1;
- }
--- 
-2.7.4
-
+    
+Thanks
+Huang Shijie
