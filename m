@@ -2,100 +2,107 @@ Return-Path: <SRS0=mdhE=KU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5D05C46471
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 10:26:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A9E2C46470
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 10:38:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B7F2217BF
-	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 10:26:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BHO5XDaF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B7F2217BF
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id B34C221782
+	for <linux-kernel@archiver.kernel.org>; Sun,  5 Aug 2018 10:38:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B34C221782
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726517AbeHEMa1 (ORCPT
+        id S1726271AbeHEMmF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 5 Aug 2018 08:30:27 -0400
-Received: from mail-ua0-f194.google.com ([209.85.217.194]:37825 "EHLO
-        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726130AbeHEMa1 (ORCPT
+        Sun, 5 Aug 2018 08:42:05 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:53765 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726100AbeHEMmF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 Aug 2018 08:30:27 -0400
-Received: by mail-ua0-f194.google.com with SMTP id y10-v6so9075011uao.4;
-        Sun, 05 Aug 2018 03:26:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=QIsDlcmOui1lnQ3rqfDglrNBfuvBO0AIran9Ii9hwqg=;
-        b=BHO5XDaFOmdf8LheqEMaXuZY7JQg/LoT72bx0rK7RBchSNYgcyQmAydFLv1WSXPaBy
-         5hzjNQ6ltmoZowLJIQa1eSY+OsrG255xnjc16hBMB6wNH5ZKY/m1w97ECmqtKLgiPHeW
-         4Q7HF6LPC4IyM0B8mOo5V1lu4IjbfRffhG2felLiVFHk3j7QZ1cPMvOjW9r0ujMljpaw
-         P9Geu3cPN+X7O870UrM/S9eiYEVNHJFi0k0Mi4o7WE8GwlZcpiQd8tf0qhlCDYuaJoU2
-         KxCk7dVP43m2bvafIPvd+Uz1g4btLLOb/GeHYl2tE9ATsGXqvbhruIhIUcJb5EDgwOQL
-         7uDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=QIsDlcmOui1lnQ3rqfDglrNBfuvBO0AIran9Ii9hwqg=;
-        b=hUWRByyMcU3vgzkgwRyOIqTnbdEPDlk/C2ByWGu2n/4cgXkcmguRjPdcYwBv7n/RSc
-         Aqx1r0p4ny7EOy7eYJLCqTubLJnmnUGsppCHO3Xf44i7JDQSZrr3anLTV7RyM3NLPLEO
-         +0HZ2OR/dMzkf/6LrjPRT3DfKPpCu3XjWPYnf/TM11tWrMdH0/VjNDofznU5dMpYCv6z
-         /tnMVJwqZmtBD1IyiX1QInWazu1BLhvKmzV7scq7ez+JT8CpR0ahfn9+Rq+MZO7fhTxs
-         hN2qjMHAno+gU06TmDSV3ZCDQ7trnIwd3jOfCBmV+Hb7WdwI2BcaTyeJRZBEIj1fciF/
-         1LhA==
-X-Gm-Message-State: AOUpUlGyxYq9XTsH/pdv56fDj+X3Y7C2THtgrWp3RWHH3bwJuJgXKxl0
-        WV84GKzsnZURwb8Lfx992sZDGyzL5VYONGEc53OmPfhT
-X-Google-Smtp-Source: AAOMgpdXyWHWUojNiwR+2ezac+b/zYSwyH/9kKrAXcGRZw+ffKV3Ja3Z0b9UDGILsyyp+GHNozoa57FdYakTKc4mrPQ=
-X-Received: by 2002:a1f:c884:: with SMTP id y126-v6mr6539342vkf.76.1533464781541;
- Sun, 05 Aug 2018 03:26:21 -0700 (PDT)
+        Sun, 5 Aug 2018 08:42:05 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 6903E80633; Sun,  5 Aug 2018 12:37:57 +0200 (CEST)
+Date:   Sun, 5 Aug 2018 12:37:56 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Sowmini Varadhan <sowmini.varadhan@oracle.com>, arnd@arndb.de,
+        gthelen@google.com, jgg@mellanox.com
+Cc:     santosh.shilimkar@oracle.com,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Netdev list <netdev@vger.kernel.org>
+Subject: Re: [PATCH] RDS is not Radio Data System
+Message-ID: <20180805103756.GA24849@amd>
+References: <20180805065920.GA8968@amd>
+ <20180805101945.GA4056@oracle.com>
 MIME-Version: 1.0
-Received: by 2002:a67:2149:0:0:0:0:0 with HTTP; Sun, 5 Aug 2018 03:26:20 -0700 (PDT)
-In-Reply-To: <20180805001839.GA22975@embeddedor.com>
-References: <20180805001839.GA22975@embeddedor.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Sun, 5 Aug 2018 13:26:20 +0300
-Message-ID: <CAHp75Vc=HLMVhQ30z9LTM7z+nmYgYPSRJib0PVTVW8H25eYg5g@mail.gmail.com>
-Subject: Re: [PATCH] platform/x86: acer-wmi: use true and false for boolean values
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     "Lee, Chun-Yi" <jlee@suse.com>, Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="7AUc2qLy4jB3hD7Z"
+Content-Disposition: inline
+In-Reply-To: <20180805101945.GA4056@oracle.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Aug 5, 2018 at 3:18 AM, Gustavo A. R. Silva
-<gustavo@embeddedor.com> wrote:
-> Return statements in functions returning bool should use true or false
-> instead of an integer value.
->
-> This code was detected with the help of Coccinelle.
 
->  static bool has_cap(u32 cap)
->  {
->         if ((interface->capability & cap) != 0)
-> -               return 1;
-> +               return true;
->
-> -       return 0;
-> +       return false;
->  }
+--7AUc2qLy4jB3hD7Z
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-this entire function can be oneliner:
+On Sun 2018-08-05 06:19:45, Sowmini Varadhan wrote:
+> On (08/05/18 08:59), Pavel Machek wrote:
+> > Getting prompt "The RDS Protocol" (RDS) is not too helpful, and it is
+> > easily confused with Radio Data System (which we may want to support
+> > in kernel, too).
+> >=20
+> > I wonder if option should be named NET_RDS, instead?
+>=20
+> RDS has been around for a while now (since 2.6). How will you
+> rename proposal manage backward compatibility? Why can't you call
+> your new option CONFIG_RADIO  or similar instead?
+>=20
+> Are we going to rename NFS* to NET_NFS* because someone decided
+> to reuse the NFS acronym?=20
 
-return !!(...);
+Was it?
 
+Because this was first time kernel asked that question... when I was
+testing -next. Is this related?
 
--- 
-With Best Regards,
-Andy Shevchenko
+commit 533d1daea8d8a389b37207ad7b50c4e750969231
+    IB: Revert "remove redundant INFINIBAND kconfig dependencies"
+
+> > And this sounds like a good idea:
+> > -	tristate "The RDS Protocol"
+> > +	tristate "The Reliable Datagram Sockets (RDS) Protocol"
+>=20
+> surn that sounds fine.
+
+Can you apply the patch, or do you want me to send it to davem?
+
+Signed-off-by: Pavel Machek <pavel@ucw.cz>
+
+Thanks,
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--7AUc2qLy4jB3hD7Z
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAltm04QACgkQMOfwapXb+vLyjgCgu6DEn0uwoQLJwZE2qVLSeIOm
+/HcAn02lG6cu7dLKHpCHLw9ByrqZ1pm8
+=vV9F
+-----END PGP SIGNATURE-----
+
+--7AUc2qLy4jB3hD7Z--
