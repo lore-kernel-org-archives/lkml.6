@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2BFEC46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:41:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0408C46472
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:41:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C1D021A6C
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:41:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C66B21A73
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:41:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="imLs9/aO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C1D021A6C
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ro3MVatE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C66B21A73
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387860AbeHFSvC (ORCPT
+        id S2387934AbeHFSvF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 14:51:02 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:54936 "EHLO
+        Mon, 6 Aug 2018 14:51:05 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:39952 "EHLO
         mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387720AbeHFSvB (ORCPT
+        with ESMTP id S2387814AbeHFSvD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 14:51:01 -0400
-Received: by mail-wm0-f66.google.com with SMTP id c14-v6so14471510wmb.4
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Aug 2018 09:41:06 -0700 (PDT)
+        Mon, 6 Aug 2018 14:51:03 -0400
+Received: by mail-wm0-f66.google.com with SMTP id y9-v6so15089018wma.5
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Aug 2018 09:41:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=MRLVSCH0Nl1kzAwRQQajvguDlRs+/L7hQOGZ466Yf5o=;
-        b=imLs9/aOpxfxymi3Jm6LL6Cl+HPgYBfHrn/Rg9Cv1bIX3BAGWdVj4LT09FPkG31amJ
-         2CoFZRgddIiWLsCzIWVXY1G1pFFxYVV8Mfp0qYuiZKiuMWN8Z0EzTMIHLKSlNuRG8u8T
-         xollaHvv6gm2kjD0sMtaDFY/wRtfr0zOBGh8hemHLeRmD0Zq4K/I636KJEl/+SUtHWlK
-         uPEVc4iPimcP9RTeAqVnlD6hx+VF6k8mnbMDmCCsv5pwcAQHCBhjwC3K4bOq0jwDBs8d
-         fWI2OUe+eqE4h6JB7APAHwjbDL+As93F2/61VDpaxx+VJF3TJmmPJ82EujRrL8QyfY81
-         0kXA==
+        bh=ZrhxEh1LXKnM2IrXVIXbI5DKlDD8oKDUSL0rMpxw/qU=;
+        b=Ro3MVatE7Wpum1+4Kk+2wXZyHXWGz5DhEhdhzVDpd6n/5zWbox/Ku85U5aRyxxnzQJ
+         1J/xWvRyFAc03TrVnYRNw8OmHId2EwNePrTxpSWu1Ofv1SyERhzredl8WNaZAOK9NUox
+         kdSLR0PzMNwDcdf8IDNrR/K6Rn2/Oq2YV3/c4uct4BnX14eyZ8BAMtfJTUrExgVGB4/D
+         CVBWJPc3EidgI39apO4xklbv+Fl96U1MRR2IF/FLrVGIUHoTHo8+XdeER10wgCNAs+pz
+         Ume8Ot7SFSHyWHNqaSQSC14cH5byqzRoQ0+VYrRQwYDbd2MRQJguQiz5Xk4ALJ4R63mL
+         Zn3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=MRLVSCH0Nl1kzAwRQQajvguDlRs+/L7hQOGZ466Yf5o=;
-        b=R+i1EErpPvaCKgwmkGRUiLS2GcahXyhX2caVE1cLQkYtjktkcrAD5GpGvzxEQvOrGg
-         0NpPiFodxYZhL+82sphulhZZbQkzfNFgAoH7KgEEp/q7vUi7Msk9tYvVa5CyP/2c6VCD
-         4k3krLchVNeUXrDUNosnDT+24Rd63UubkgdY1hP7kX0YToQrevYb9H/cS2PDroDofsf8
-         g+XZpOzSyNdU0DQxsA3iFvYsbWnT1g4sToEW3QaPCcil/xVHfUKLigxwb3dckl22v4p0
-         WG5ND90+l0SbI/QJs2xsx0vV2AkRwcW+JjiWE79YLnWZOUsCHU/72N/URl6xVvHvs+oF
-         c7wA==
-X-Gm-Message-State: AOUpUlHY8qAQJn/xZX3uv2ZVbWGGOgCevZe5rnTt8b+ef+SemH8CTtFq
-        wMgI4BEeRbmwhh0ta/CfUnn+Ng==
-X-Google-Smtp-Source: AAOMgpdwhViAs+BEk/dzpjpUJqfDn+Z0f2edpJCMumu9mOlf7GNNn7B6rxYD936ltUhmZIL38rBNtg==
-X-Received: by 2002:a1c:b756:: with SMTP id h83-v6mr13169480wmf.8.1533573665078;
-        Mon, 06 Aug 2018 09:41:05 -0700 (PDT)
+        bh=ZrhxEh1LXKnM2IrXVIXbI5DKlDD8oKDUSL0rMpxw/qU=;
+        b=a+Qi1lZGiYO4fw/W0Q8QDVSqEpJBlwoImamIFLAyQZgX3LUJcrc4ZlTCbYL9LY8dN1
+         dHEWvT03NnuKD4mslC3spVqcai+AfwyZvKecy4zsXzTxwTPRWBpisNJKsJQpYgVgphkM
+         ynalUJcdt0sMEUGA5NvfCah6y9n+aPU9ftgU7nopF6EziEjmLvFd7RO9vkjzVGVvPGCX
+         SB74k8rRRYQjP0YApYq1KmMjyBxF/TQdUU8BhmFXFvbcKan22i1H0/ozqHuGx9NYgSi5
+         lEx3dl4NJjYFe97f7++se+IP6igincwdjvfxmrD0hMRQPpAPhr8IoPSd1WbsNuuEAjJN
+         KOXw==
+X-Gm-Message-State: AOUpUlHPSHetzz+mWV2b69Uf0cnoPaZM6UEIA5c2ARyFpWNELCYXLI9Y
+        ewz1uEeq29kaTE6Yjrw8CWXG6A==
+X-Google-Smtp-Source: AAOMgpcDi4MsvNpmW3WExVMPVjcfyNYV436aYUrVpmhZEgiIKgBhHcCGOm+96ozBcTKn96ws7pU/kw==
+X-Received: by 2002:a1c:8010:: with SMTP id b16-v6mr12985397wmd.9.1533573668058;
+        Mon, 06 Aug 2018 09:41:08 -0700 (PDT)
 Received: from andreyknvl0.muc.corp.google.com ([2a00:79e0:15:10:84be:a42a:826d:c530])
-        by smtp.gmail.com with ESMTPSA id 66-v6sm16385790wmw.34.2018.08.06.09.41.03
+        by smtp.gmail.com with ESMTPSA id 66-v6sm16385790wmw.34.2018.08.06.09.41.06
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 06 Aug 2018 09:41:04 -0700 (PDT)
+        Mon, 06 Aug 2018 09:41:07 -0700 (PDT)
 From:   Andrey Konovalov <andreyknvl@google.com>
 To:     Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>,
@@ -84,9 +84,9 @@ Cc:     Dmitry Vyukov <dvyukov@google.com>,
         Jacob Bramley <Jacob.Bramley@arm.com>,
         Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
         Chintan Pandya <cpandya@codeaurora.org>
-Subject: [PATCH v5 08/10] usb, arm64: untag user addresses in devio
-Date:   Mon,  6 Aug 2018 18:40:43 +0200
-Message-Id: <39bbae2c9d880bd3c27ac3ee03d4be72e161491c.1533573460.git.andreyknvl@google.com>
+Subject: [PATCH v5 10/10] selftests, arm64: add a selftest for passing tagged pointers to kernel
+Date:   Mon,  6 Aug 2018 18:40:45 +0200
+Message-Id: <44c929e1128adfa5e84ed7db832d2b34edc55f19.1533573460.git.andreyknvl@google.com>
 X-Mailer: git-send-email 2.18.0.597.ga71716f1ad-goog
 In-Reply-To: <cover.1533573460.git.andreyknvl@google.com>
 References: <cover.1533573460.git.andreyknvl@google.com>
@@ -97,53 +97,89 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-devio allows to mmap memory regions and keeps them in a list. It also
-accepts a user address through an ioctl call and searches the memory
-region list for the region that contains this address. Since the addresses
-provided to mmap must not be tagged, and the addresses provided to ioctl
-might be tagged, we might compare tagged and untagged addresses during the
-search.
-
-Untag the provided addresses before searching.
+This patch adds a simple test, that calls the uname syscall with a
+tagged user pointer as an argument. Without the kernel accepting tagged
+user pointers the test fails with EFAULT.
 
 Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
 ---
- drivers/usb/core/devio.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ tools/testing/selftests/arm64/.gitignore      |  1 +
+ tools/testing/selftests/arm64/Makefile        | 11 +++++++++++
+ .../testing/selftests/arm64/run_tags_test.sh  | 12 ++++++++++++
+ tools/testing/selftests/arm64/tags_test.c     | 19 +++++++++++++++++++
+ 4 files changed, 43 insertions(+)
+ create mode 100644 tools/testing/selftests/arm64/.gitignore
+ create mode 100644 tools/testing/selftests/arm64/Makefile
+ create mode 100755 tools/testing/selftests/arm64/run_tags_test.sh
+ create mode 100644 tools/testing/selftests/arm64/tags_test.c
 
-diff --git a/drivers/usb/core/devio.c b/drivers/usb/core/devio.c
-index 476dcc5f2da3..357c2e7b87b8 100644
---- a/drivers/usb/core/devio.c
-+++ b/drivers/usb/core/devio.c
-@@ -1404,7 +1404,7 @@ find_memory_area(struct usb_dev_state *ps, const struct usbdevfs_urb *uurb)
- {
- 	struct usb_memory *usbm = NULL, *iter;
- 	unsigned long flags;
--	unsigned long uurb_start = (unsigned long)uurb->buffer;
-+	unsigned long uurb_start = (unsigned long)untagged_addr(uurb->buffer);
- 
- 	spin_lock_irqsave(&ps->lock, flags);
- 	list_for_each_entry(iter, &ps->memory_list, memlist) {
-@@ -1633,7 +1633,8 @@ static int proc_do_submiturb(struct usb_dev_state *ps, struct usbdevfs_urb *uurb
- 		}
- 	} else if (uurb->buffer_length > 0) {
- 		if (as->usbm) {
--			unsigned long uurb_start = (unsigned long)uurb->buffer;
-+			unsigned long uurb_start =
-+				(unsigned long)untagged_addr(uurb->buffer);
- 
- 			as->urb->transfer_buffer = as->usbm->mem +
- 					(uurb_start - as->usbm->vm_start);
-@@ -1712,7 +1713,8 @@ static int proc_do_submiturb(struct usb_dev_state *ps, struct usbdevfs_urb *uurb
- 	as->ps = ps;
- 	as->userurb = arg;
- 	if (as->usbm) {
--		unsigned long uurb_start = (unsigned long)uurb->buffer;
-+		unsigned long uurb_start =
-+			(unsigned long)untagged_addr(uurb->buffer);
- 
- 		as->urb->transfer_flags |= URB_NO_TRANSFER_DMA_MAP;
- 		as->urb->transfer_dma = as->usbm->dma_handle +
+diff --git a/tools/testing/selftests/arm64/.gitignore b/tools/testing/selftests/arm64/.gitignore
+new file mode 100644
+index 000000000000..e8fae8d61ed6
+--- /dev/null
++++ b/tools/testing/selftests/arm64/.gitignore
+@@ -0,0 +1 @@
++tags_test
+diff --git a/tools/testing/selftests/arm64/Makefile b/tools/testing/selftests/arm64/Makefile
+new file mode 100644
+index 000000000000..a61b2e743e99
+--- /dev/null
++++ b/tools/testing/selftests/arm64/Makefile
+@@ -0,0 +1,11 @@
++# SPDX-License-Identifier: GPL-2.0
++
++# ARCH can be overridden by the user for cross compiling
++ARCH ?= $(shell uname -m 2>/dev/null || echo not)
++
++ifneq (,$(filter $(ARCH),aarch64 arm64))
++TEST_GEN_PROGS := tags_test
++TEST_PROGS := run_tags_test.sh
++endif
++
++include ../lib.mk
+diff --git a/tools/testing/selftests/arm64/run_tags_test.sh b/tools/testing/selftests/arm64/run_tags_test.sh
+new file mode 100755
+index 000000000000..745f11379930
+--- /dev/null
++++ b/tools/testing/selftests/arm64/run_tags_test.sh
+@@ -0,0 +1,12 @@
++#!/bin/sh
++# SPDX-License-Identifier: GPL-2.0
++
++echo "--------------------"
++echo "running tags test"
++echo "--------------------"
++./tags_test
++if [ $? -ne 0 ]; then
++	echo "[FAIL]"
++else
++	echo "[PASS]"
++fi
+diff --git a/tools/testing/selftests/arm64/tags_test.c b/tools/testing/selftests/arm64/tags_test.c
+new file mode 100644
+index 000000000000..1452ed7d33f9
+--- /dev/null
++++ b/tools/testing/selftests/arm64/tags_test.c
+@@ -0,0 +1,19 @@
++// SPDX-License-Identifier: GPL-2.0
++
++#include <stdio.h>
++#include <unistd.h>
++#include <stdint.h>
++#include <sys/utsname.h>
++
++#define SHIFT_TAG(tag)		((uint64_t)(tag) << 56)
++#define SET_TAG(ptr, tag)	(((uint64_t)(ptr) & ~SHIFT_TAG(0xff)) | \
++					SHIFT_TAG(tag))
++
++int main(void)
++{
++	struct utsname utsname;
++	void *ptr = &utsname;
++	void *tagged_ptr = (void *)SET_TAG(ptr, 0x42);
++	int err = uname(tagged_ptr);
++	return err;
++}
 -- 
 2.18.0.597.ga71716f1ad-goog
 
