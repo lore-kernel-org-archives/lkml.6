@@ -3,102 +3,119 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD50DC4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 10:52:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B644FC46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 10:52:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9AFA921A01
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 10:52:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9AFA921A01
+	by mail.kernel.org (Postfix) with ESMTP id 77BEA21A08
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 10:52:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77BEA21A08
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730113AbeHFNBQ (ORCPT
+        id S1730213AbeHFNBW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 09:01:16 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36578 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728723AbeHFNBQ (ORCPT
+        Mon, 6 Aug 2018 09:01:22 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:38928 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728723AbeHFNBV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 09:01:16 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w76An6P1093255
-        for <linux-kernel@vger.kernel.org>; Mon, 6 Aug 2018 06:52:46 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2kpkkvuam1-1
+        Mon, 6 Aug 2018 09:01:21 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w76An49J088452
+        for <linux-kernel@vger.kernel.org>; Mon, 6 Aug 2018 06:52:51 -0400
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2kpm989ker-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Aug 2018 06:52:45 -0400
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Aug 2018 06:52:51 -0400
 Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
-        Mon, 6 Aug 2018 11:52:44 +0100
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Mon, 6 Aug 2018 11:52:49 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 6 Aug 2018 11:52:41 +0100
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w76AqeuQ39780368
+        Mon, 6 Aug 2018 11:52:45 +0100
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w76AqicB18087976
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 6 Aug 2018 10:52:40 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 24A0B42041;
+        Mon, 6 Aug 2018 10:52:44 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A73CB11C05B;
+        Mon,  6 Aug 2018 13:52:52 +0100 (BST)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 572F311C04C;
         Mon,  6 Aug 2018 13:52:50 +0100 (BST)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 04DF542042;
-        Mon,  6 Aug 2018 13:52:48 +0100 (BST)
 Received: from rapoport-lnx (unknown [9.148.8.115])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Mon,  6 Aug 2018 13:52:47 +0100 (BST)
-Received: by rapoport-lnx (sSMTP sendmail emulation); Mon, 06 Aug 2018 13:52:36 +0300
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Mon,  6 Aug 2018 13:52:50 +0100 (BST)
+Received: by rapoport-lnx (sSMTP sendmail emulation); Mon, 06 Aug 2018 13:52:40 +0300
 From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
 To:     "David S. Miller" <davem@davemloft.net>
 Cc:     Sam Ravnborg <sam@ravnborg.org>, Michal Hocko <mhocko@kernel.org>,
         sparclinux@vger.kernel.org, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org,
         Mike Rapoport <rppt@linux.vnet.ibm.com>
-Subject: [PATCH v2 0/3] sparc32: switch to NO_BOOTMEM
-Date:   Mon,  6 Aug 2018 13:52:32 +0300
+Subject: [PATCH v2 1/3] sparc: mm/init_32: kill trailing whitespace
+Date:   Mon,  6 Aug 2018 13:52:33 +0300
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1533552755-16679-1-git-send-email-rppt@linux.vnet.ibm.com>
+References: <1533552755-16679-1-git-send-email-rppt@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18080610-0016-0000-0000-000001F1E44E
+x-cbid: 18080610-0028-0000-0000-000002E62307
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18080610-0017-0000-0000-00003247236B
-Message-Id: <1533552755-16679-1-git-send-email-rppt@linux.vnet.ibm.com>
+x-cbparentid: 18080610-0029-0000-0000-0000239E4472
+Message-Id: <1533552755-16679-2-git-send-email-rppt@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-06_06:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=730 adultscore=0 classifier=spam adjust=0 reason=mlx
+ mlxlogscore=864 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1807170000 definitions=main-1808060117
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+---
+ arch/sparc/mm/init_32.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-These patches convert sparc32 to use memblock + nobootmem.
-I've made the conversion as simple as possible, just enough to allow moving
-HAVE_MEMBLOCK and NO_BOOTMEM to the common SPARC configuration.
-
-v2 changes:
-* split whitespace changes to a separate patch
-* address Sam's comments [1]
-
-[1] https://lkml.org/lkml/2018/8/2/403
-
-Mike Rapoport (3):
-  sparc: mm/init_32: kill trailing whitespace
-  sparc32: switch to NO_BOOTMEM
-  sparc32: split ramdisk detection and reservation to a helper function
-
- arch/sparc/Kconfig      |   4 +-
- arch/sparc/mm/init_32.c | 127 ++++++++++++++++++------------------------------
- 2 files changed, 50 insertions(+), 81 deletions(-)
-
+diff --git a/arch/sparc/mm/init_32.c b/arch/sparc/mm/init_32.c
+index 95fe4f0..3ec10b2 100644
+--- a/arch/sparc/mm/init_32.c
++++ b/arch/sparc/mm/init_32.c
+@@ -133,7 +133,7 @@ unsigned long __init bootmem_init(unsigned long *pages_avail)
+ 	}
+ 
+ 	/* Start with page aligned address of last symbol in kernel
+-	 * image.  
++	 * image.
+ 	 */
+ 	start_pfn  = (unsigned long)__pa(PAGE_ALIGN((unsigned long) &_end));
+ 
+@@ -214,7 +214,7 @@ unsigned long __init bootmem_init(unsigned long *pages_avail)
+ 		*pages_avail -= PAGE_ALIGN(size) >> PAGE_SHIFT;
+ 
+ 		initrd_start = (initrd_start - phys_base) + PAGE_OFFSET;
+-		initrd_end = (initrd_end - phys_base) + PAGE_OFFSET;		
++		initrd_end = (initrd_end - phys_base) + PAGE_OFFSET;
+ 	}
+ #endif
+ 	/* Reserve the kernel text/data/bss. */
+@@ -322,7 +322,7 @@ void __init mem_init(void)
+ 
+ 		map_high_region(start_pfn, end_pfn);
+ 	}
+-	
++
+ 	mem_init_print_info(NULL);
+ }
+ 
 -- 
 2.7.4
 
