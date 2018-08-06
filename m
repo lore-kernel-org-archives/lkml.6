@@ -5,112 +5,108 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCD6CC4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 14:26:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB215C4646D
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 14:30:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8687021A38
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 14:26:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8687021A38
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 922A921A50
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 14:30:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 922A921A50
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732325AbeHFQfx (ORCPT
+        id S1731691AbeHFQjk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 12:35:53 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49366 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1731257AbeHFQfw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 12:35:52 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w76ENi9J062929
-        for <linux-kernel@vger.kernel.org>; Mon, 6 Aug 2018 10:26:30 -0400
-Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2kpn6hftcc-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Aug 2018 10:26:30 -0400
-Received: from localhost
-        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <tuliom@linux.ibm.com>;
-        Mon, 6 Aug 2018 10:26:29 -0400
-Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
-        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 6 Aug 2018 10:26:25 -0400
-Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
-        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w76EQON29961886
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 6 Aug 2018 14:26:24 GMT
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2B1E6112064;
-        Mon,  6 Aug 2018 10:26:06 -0400 (EDT)
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BDD35112062;
-        Mon,  6 Aug 2018 10:26:05 -0400 (EDT)
-Received: from linux.ibm.com (unknown [9.85.161.40])
-        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
-        Mon,  6 Aug 2018 10:26:05 -0400 (EDT)
-From:   Tulio Magno Quites Machado Filho <tuliom@linux.ibm.com>
-To:     Florian Weimer <fweimer@redhat.com>,
-        Mikulas Patocka <mpatocka@redhat.com>,
-        Andrew Pinski <pinskia@gmail.com>
-Cc:     Richard Earnshaw <Richard.Earnshaw@arm.com>,
+        Mon, 6 Aug 2018 12:39:40 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60688 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728723AbeHFQjk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 12:39:40 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 3189281663F1;
+        Mon,  6 Aug 2018 14:30:17 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id D49801049487;
+        Mon,  6 Aug 2018 14:30:16 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id w76EUGOx015286;
+        Mon, 6 Aug 2018 10:30:16 -0400
+Received: from localhost (mpatocka@localhost)
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id w76EUFkb015282;
+        Mon, 6 Aug 2018 10:30:16 -0400
+X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
+Date:   Mon, 6 Aug 2018 10:30:15 -0400 (EDT)
+From:   Mikulas Patocka <mpatocka@redhat.com>
+X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
+To:     Pavel Machek <pavel@ucw.cz>
+cc:     Andrew Pinski <pinskia@gmail.com>,
+        Richard Earnshaw <Richard.Earnshaw@arm.com>,
         ard.biesheuvel@linaro.org,
         Ramana Radhakrishnan <ramana.gcc@googlemail.com>,
+        Florian Weimer <fweimer@redhat.com>,
         thomas.petazzoni@free-electrons.com,
         GNU C Library <libc-alpha@sourceware.org>,
         Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>, linux@armlinux.org.uk,
         LKML <linux-kernel@vger.kernel.org>,
         linux-arm-kernel@lists.infradead.org
-Subject: Re: framebuffer corruption due to overlapping stp instructions on arm64
-In-Reply-To: <fd2cae87-b2df-d8ef-8836-e6cbf8c5f851@redhat.com>
-References: <alpine.LRH.2.02.1808021242320.31834@file01.intranet.prod.int.rdu2.redhat.com> <CA+=Sn1mWkjuwVnjw6OWWUM=UcP76bdFa680FebCseewHfx3NpA@mail.gmail.com> <9acdacdb-3bd5-b71a-3003-e48132ee1371@redhat.com> <CAJA7tRZbmnZq7RfvQeYEy_a1ZObWqpFpVdvgsXgsioQ3RyPMuA@mail.gmail.com> <CAKv+Gu97QvwoLLK_zueiA_gjg_4Q5cqU4YVUyHUVFFfffdyJaw@mail.gmail.com> <11f9185a-7f71-83df-3a57-0a0ae9c1f934@arm.com> <alpine.LRH.2.02.1808032046540.24748@file01.intranet.prod.int.rdu2.redhat.com> <CA+=Sn1=6F-fGLmXE0VqQHTqTCUKUT=Fz29mMT7349SPFisbZ9A@mail.gmail.com> <alpine.LRH.2.02.1808040611070.23762@file01.intranet.prod.int.rdu2.redhat.com> <fd2cae87-b2df-d8ef-8836-e6cbf8c5f851@redhat.com>
-User-Agent: Notmuch/0.27 (http://notmuchmail.org) Emacs/25.3.1 (x86_64-redhat-linux-gnu)
-Date:   Mon, 06 Aug 2018 11:26:22 -0300
+Subject: Re: framebuffer corruption due to overlapping stp instructions on
+ arm64
+In-Reply-To: <20180805215150.GB1862@amd>
+Message-ID: <alpine.LRH.2.02.1808061003320.9697@file01.intranet.prod.int.rdu2.redhat.com>
+References: <alpine.LRH.2.02.1808021242320.31834@file01.intranet.prod.int.rdu2.redhat.com> <CA+=Sn1mWkjuwVnjw6OWWUM=UcP76bdFa680FebCseewHfx3NpA@mail.gmail.com> <9acdacdb-3bd5-b71a-3003-e48132ee1371@redhat.com> <CAJA7tRZbmnZq7RfvQeYEy_a1ZObWqpFpVdvgsXgsioQ3RyPMuA@mail.gmail.com>
+ <CAKv+Gu97QvwoLLK_zueiA_gjg_4Q5cqU4YVUyHUVFFfffdyJaw@mail.gmail.com> <11f9185a-7f71-83df-3a57-0a0ae9c1f934@arm.com> <alpine.LRH.2.02.1808032046540.24748@file01.intranet.prod.int.rdu2.redhat.com> <CA+=Sn1=6F-fGLmXE0VqQHTqTCUKUT=Fz29mMT7349SPFisbZ9A@mail.gmail.com>
+ <alpine.LRH.2.02.1808040611070.23762@file01.intranet.prod.int.rdu2.redhat.com> <20180805215150.GB1862@amd>
+User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-x-cbid: 18080614-0064-0000-0000-000003360408
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009495; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01070349; UDB=6.00550807; IPR=6.00849549;
- MB=3.00022537; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-06 14:26:28
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18080614-0065-0000-0000-00003A3511A7
-Message-Id: <87h8k7h8q9.fsf@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-06_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=499 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808060152
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Mon, 06 Aug 2018 14:30:17 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Mon, 06 Aug 2018 14:30:17 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mpatocka@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Florian Weimer <fweimer@redhat.com> writes:
 
-> On 08/04/2018 01:04 PM, Mikulas Patocka wrote:
->> There's plenty of memcpy's in the graphics stack. No one will be rewriting
->> all the graphics drivers because of tiny market share that ARM has in
->> desktop computers. So if you refuse to fix things and blame everyone else,
->> you can as well announce that you don't want to have PCIe graphics on ARM
->> at all.
->
-> The POWER toolchain maintainers said pretty much the same thing not too 
-> long ago.  I wonder how many architectures need to fail until the 
-> graphics stack is finally fixed.
 
-Unfortunately, it is not just the graphics stack.
-This is being used in other userspace programs that benefit from GPUs and
-accelerators.
+On Sun, 5 Aug 2018, Pavel Machek wrote:
 
-But can we say they're are nonportable programs?
-I'm not convinced yet.
+> Hi!
+> 
+> > > Can you run the test program on x86 using the similar framebuffer
+> > > setup?  Does doing two writes (one aligned and one unaligned but
+> > > overlapping with previous one) cause the same issue?  I suspect it
+> > > does, then using memcpy for frame buffers is wrong.
+> 
+> I'm pretty sure it will work ok on x86.
+> 
+> > Overlapping unaligned writes work on x86 - they have to, because of 
+> > backward compatibility.
+> 
+> It is not that easy. 8086s (and similar) did not have MTRRs and PATs
+> either. Overlapping unaligned writes _on main memory_, _with normal
+> MTRR settings_ certainly work ok on x86.
 
--- 
-Tulio Magno
+It works even with write-combining. Write-combining specifies, that the 
+writes may hit the framebuffer in unspecified order. But if the writes are 
+overlapping, the CPU can't just reorder them and write the wrong result to 
+the framebuffer.
 
+> Chances is memory type can be configured to work similar way on your
+> ARM/PCIe case?
+
+ARM has memory types GRE, nGRE, nGnRE, nGnRnE - that allow or not allow 
+gathering, reordering, early write acknowledgement. Unfortunatelly, all 
+these memory types will trigger a fault on unaligned accesses.
+
+It has also Non-Cached memory type (some people on this thread believe 
+that it can't be used for GPUs, some believe that it can) - this memory 
+type supports unaligned accesses, so it is actually used for framebuffers 
+on ARM.
+
+If we had a memory type that didn't do early write acknowledgement and 
+supported unaligned accesses, it would solve this problem.
+
+Mikulas
