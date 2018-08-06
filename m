@@ -2,97 +2,241 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42B88C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 18:04:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD11AC4646D
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 18:05:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1EDE208B6
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 18:04:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="zxjBTx/o"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1EDE208B6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 862E0208B6
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 18:05:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 862E0208B6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387467AbeHFUOr (ORCPT
+        id S2387486AbeHFUP1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 16:14:47 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:38108 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733004AbeHFUOq (ORCPT
+        Mon, 6 Aug 2018 16:15:27 -0400
+Received: from relay6-d.mail.gandi.net ([217.70.183.198]:54843 "EHLO
+        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727665AbeHFUP1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 16:14:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=ZWCFOg3kUl0vTxpPVawGXZoL5hQ2FdrX7BAQ+cF56M0=; b=zxjBTx/oIE/qFTxYIuWb7mRN0
-        QylzjU23wBJ5syKQL0k13ku3Uot1CJhl1rLpL3gy9Nj84PkUDVTZ4KroNstL/SFJPJcjrgM4z+QM4
-        XicGBJ32tnXO10CSWKeySJ/H18t+oq905aJkOepowSG8urtVGNb2NxJGXV1jplg1aDnqYColAGvNM
-        v7XGnIMyvKUfXTqxYP6H9RpBdrMLGjrhM+bmT3J5T/upruic5bBdl66p5WILpvxqD/DEfRecZHcwb
-        jGVoQHSkoXgdRIuPNFkEEBpYjo7mKvTV6kX8Pd9tw8z3tSJACVzBYvKyc3+99LXiimkxM7PJwM2X5
-        Qpke8dmsQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fmjrm-0002xk-R8; Mon, 06 Aug 2018 18:04:27 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id D87B12058A21E; Mon,  6 Aug 2018 20:04:23 +0200 (CEST)
-Date:   Mon, 6 Aug 2018 20:04:23 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Fubo Chen <fubo.chen@gmail.com>
-Cc:     jpoimboe@redhat.com, Ingo Molnar <mingo@kernel.org>,
-        bhole_prashant_q7@lab.ntt.co.jp,
-        Linux Kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] perf/x86/intel: Fix unwind errors from PEBS entries
- (mk-II)
-Message-ID: <20180806180423.GC2476@hirez.programming.kicks-ass.net>
-References: <60466ab6-311b-ad8d-2f79-32702174cb95@lab.ntt.co.jp>
- <20180719153347.buoe6pavpqc75zbb@treble>
- <20180719174311.GK2494@hirez.programming.kicks-ass.net>
- <20180719211954.GZ2512@hirez.programming.kicks-ass.net>
- <CAJAFBLDtRUwYhMaOrgHer4eTvjWL2jC-fy0GGv+Pjd8q3wgywA@mail.gmail.com>
- <20180806154235.GO2494@hirez.programming.kicks-ass.net>
- <CAJAFBLCt574QmeP5N9D-d+Sc67BWQ5E2C=LhqFVvUpchC4O3PQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJAFBLCt574QmeP5N9D-d+Sc67BWQ5E2C=LhqFVvUpchC4O3PQ@mail.gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Mon, 6 Aug 2018 16:15:27 -0400
+X-Originating-IP: 79.86.19.127
+Received: from alex.numericable.fr (127.19.86.79.rev.sfr.net [79.86.19.127])
+        (Authenticated sender: alex@ghiti.fr)
+        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 3754DC0003;
+        Mon,  6 Aug 2018 18:05:05 +0000 (UTC)
+From:   Alexandre Ghiti <alex@ghiti.fr>
+To:     linux-mm@kvack.org, mike.kravetz@oracle.com, linux@armlinux.org.uk,
+        catalin.marinas@arm.com, will.deacon@arm.com, tony.luck@intel.com,
+        fenghua.yu@intel.com, ralf@linux-mips.org, paul.burton@mips.com,
+        jhogan@kernel.org, jejb@parisc-linux.org, deller@gmx.de,
+        benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au,
+        ysato@users.sourceforge.jp, dalias@libc.org, davem@davemloft.net,
+        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, arnd@arndb.de,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-ia64@vger.kernel.org, linux-mips@linux-mips.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-arch@vger.kernel.org
+Cc:     Alexandre Ghiti <alex@ghiti.fr>
+Subject: [PATCH v6 07/11] hugetlb: Introduce generic version of huge_pte_wrprotect
+Date:   Mon,  6 Aug 2018 17:57:07 +0000
+Message-Id: <20180806175711.24438-8-alex@ghiti.fr>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180806175711.24438-1-alex@ghiti.fr>
+References: <20180806175711.24438-1-alex@ghiti.fr>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 06, 2018 at 09:54:23AM -0700, Fubo Chen wrote:
-> On Mon, Aug 6, 2018 at 8:42 AM Peter Zijlstra <peterz@infradead.org> wrote:
-> >
-> > On Mon, Aug 06, 2018 at 08:35:07AM -0700, Fubo Chen wrote:
-> > > On Thu, Jul 19, 2018 at 2:21 PM Peter Zijlstra <peterz@infradead.org> wrote:
-> > > > --- a/include/uapi/linux/perf_event.h
-> > > > +++ b/include/uapi/linux/perf_event.h
-> > > > @@ -143,6 +143,8 @@ enum perf_event_sample_format {
-> > > >         PERF_SAMPLE_PHYS_ADDR                   = 1U << 19,
-> > > >
-> > > >         PERF_SAMPLE_MAX = 1U << 20,             /* non-ABI */
-> > > > +
-> > > > +       __PERF_SAMPLE_CALLCHAIN_EARLY           = 1UL << 63,
-> > > >  };
-> > >
-> > > The above change makes sparse unhappy :-( Sparse reports the following
-> > > complaint about __PERF_SAMPLE_CALLCHAIN_EARLY:
-> >
-> > I thought I changed that to 1ULL before commit.
-> 
-> The sparse complaint was reported for code with the "1ULL << 63".
+arm, arm64, ia64, mips, parisc, powerpc, sh, sparc, x86
+architectures use the same version of huge_pte_wrprotect, so move
+this generic implementation into asm-generic/hugetlb.h.
 
-Ah ok.. and I think I see what you mean. The C standard says that enums
-shall be 'int'. However C++ standard says any integer type that fits the
-largest value.
+Signed-off-by: Alexandre Ghiti <alex@ghiti.fr>
+Tested-by: Helge Deller <deller@gmx.de> # parisc
+Acked-by: Catalin Marinas <catalin.marinas@arm.com> # arm64
+Acked-by: Paul Burton <paul.burton@mips.com> # MIPS parts
+Reviewed-by: Luiz Capitulino <lcapitulino@redhat.com>
+Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
+---
+ arch/arm/include/asm/hugetlb.h     | 5 -----
+ arch/arm64/include/asm/hugetlb.h   | 5 -----
+ arch/ia64/include/asm/hugetlb.h    | 5 -----
+ arch/mips/include/asm/hugetlb.h    | 5 -----
+ arch/parisc/include/asm/hugetlb.h  | 5 -----
+ arch/powerpc/include/asm/hugetlb.h | 5 -----
+ arch/sh/include/asm/hugetlb.h      | 5 -----
+ arch/sparc/include/asm/hugetlb.h   | 5 -----
+ arch/x86/include/asm/hugetlb.h     | 5 -----
+ include/asm-generic/hugetlb.h      | 7 +++++++
+ 10 files changed, 7 insertions(+), 45 deletions(-)
 
-I suppose GCC uses the C++ definition and I suspect many other compilers
-will too.
+diff --git a/arch/arm/include/asm/hugetlb.h b/arch/arm/include/asm/hugetlb.h
+index c821b550d6a4..9ca14227eeb7 100644
+--- a/arch/arm/include/asm/hugetlb.h
++++ b/arch/arm/include/asm/hugetlb.h
+@@ -44,11 +44,6 @@ static inline int prepare_hugepage_range(struct file *file,
+ 	return 0;
+ }
+ 
+-static inline pte_t huge_pte_wrprotect(pte_t pte)
+-{
+-	return pte_wrprotect(pte);
+-}
+-
+ static inline void arch_clear_hugepage_flags(struct page *page)
+ {
+ 	clear_bit(PG_dcache_clean, &page->flags);
+diff --git a/arch/arm64/include/asm/hugetlb.h b/arch/arm64/include/asm/hugetlb.h
+index 49247c6f94db..1fd64ebf0cd7 100644
+--- a/arch/arm64/include/asm/hugetlb.h
++++ b/arch/arm64/include/asm/hugetlb.h
+@@ -42,11 +42,6 @@ static inline int prepare_hugepage_range(struct file *file,
+ 	return 0;
+ }
+ 
+-static inline pte_t huge_pte_wrprotect(pte_t pte)
+-{
+-	return pte_wrprotect(pte);
+-}
+-
+ static inline void arch_clear_hugepage_flags(struct page *page)
+ {
+ 	clear_bit(PG_dcache_clean, &page->flags);
+diff --git a/arch/ia64/include/asm/hugetlb.h b/arch/ia64/include/asm/hugetlb.h
+index bf573500b3c4..82fe3d7a38d9 100644
+--- a/arch/ia64/include/asm/hugetlb.h
++++ b/arch/ia64/include/asm/hugetlb.h
+@@ -26,11 +26,6 @@ static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
+ {
+ }
+ 
+-static inline pte_t huge_pte_wrprotect(pte_t pte)
+-{
+-	return pte_wrprotect(pte);
+-}
+-
+ static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
+ 					   unsigned long addr, pte_t *ptep)
+ {
+diff --git a/arch/mips/include/asm/hugetlb.h b/arch/mips/include/asm/hugetlb.h
+index 1c9c4531376c..b3d6bb53ee6e 100644
+--- a/arch/mips/include/asm/hugetlb.h
++++ b/arch/mips/include/asm/hugetlb.h
+@@ -62,11 +62,6 @@ static inline int huge_pte_none(pte_t pte)
+ 	return !val || (val == (unsigned long)invalid_pte_table);
+ }
+ 
+-static inline pte_t huge_pte_wrprotect(pte_t pte)
+-{
+-	return pte_wrprotect(pte);
+-}
+-
+ static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
+ 					   unsigned long addr, pte_t *ptep)
+ {
+diff --git a/arch/parisc/include/asm/hugetlb.h b/arch/parisc/include/asm/hugetlb.h
+index c09d8c74553c..5a102d7251e4 100644
+--- a/arch/parisc/include/asm/hugetlb.h
++++ b/arch/parisc/include/asm/hugetlb.h
+@@ -38,11 +38,6 @@ static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
+ {
+ }
+ 
+-static inline pte_t huge_pte_wrprotect(pte_t pte)
+-{
+-	return pte_wrprotect(pte);
+-}
+-
+ void huge_ptep_set_wrprotect(struct mm_struct *mm,
+ 					   unsigned long addr, pte_t *ptep);
+ 
+diff --git a/arch/powerpc/include/asm/hugetlb.h b/arch/powerpc/include/asm/hugetlb.h
+index 3562d46585ba..7123599089c6 100644
+--- a/arch/powerpc/include/asm/hugetlb.h
++++ b/arch/powerpc/include/asm/hugetlb.h
+@@ -152,11 +152,6 @@ static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
+ 	flush_hugetlb_page(vma, addr);
+ }
+ 
+-static inline pte_t huge_pte_wrprotect(pte_t pte)
+-{
+-	return pte_wrprotect(pte);
+-}
+-
+ extern int huge_ptep_set_access_flags(struct vm_area_struct *vma,
+ 				      unsigned long addr, pte_t *ptep,
+ 				      pte_t pte, int dirty);
+diff --git a/arch/sh/include/asm/hugetlb.h b/arch/sh/include/asm/hugetlb.h
+index a9f8266f33cf..54f65094efe6 100644
+--- a/arch/sh/include/asm/hugetlb.h
++++ b/arch/sh/include/asm/hugetlb.h
+@@ -31,11 +31,6 @@ static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
+ {
+ }
+ 
+-static inline pte_t huge_pte_wrprotect(pte_t pte)
+-{
+-	return pte_wrprotect(pte);
+-}
+-
+ static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
+ 					   unsigned long addr, pte_t *ptep)
+ {
+diff --git a/arch/sparc/include/asm/hugetlb.h b/arch/sparc/include/asm/hugetlb.h
+index 11115bbd712e..f661362376e0 100644
+--- a/arch/sparc/include/asm/hugetlb.h
++++ b/arch/sparc/include/asm/hugetlb.h
+@@ -48,11 +48,6 @@ static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
+ {
+ }
+ 
+-static inline pte_t huge_pte_wrprotect(pte_t pte)
+-{
+-	return pte_wrprotect(pte);
+-}
+-
+ static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
+ 					   unsigned long addr, pte_t *ptep)
+ {
+diff --git a/arch/x86/include/asm/hugetlb.h b/arch/x86/include/asm/hugetlb.h
+index 42d872054791..3cd3a2c9840e 100644
+--- a/arch/x86/include/asm/hugetlb.h
++++ b/arch/x86/include/asm/hugetlb.h
+@@ -28,11 +28,6 @@ static inline int prepare_hugepage_range(struct file *file,
+ 	return 0;
+ }
+ 
+-static inline pte_t huge_pte_wrprotect(pte_t pte)
+-{
+-	return pte_wrprotect(pte);
+-}
+-
+ static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
+ 					   unsigned long addr, pte_t *ptep)
+ {
+diff --git a/include/asm-generic/hugetlb.h b/include/asm-generic/hugetlb.h
+index 2fc3d68424e9..cd9697672b79 100644
+--- a/include/asm-generic/hugetlb.h
++++ b/include/asm-generic/hugetlb.h
+@@ -80,4 +80,11 @@ static inline int huge_pte_none(pte_t pte)
+ }
+ #endif
+ 
++#ifndef __HAVE_ARCH_HUGE_PTE_WRPROTECT
++static inline pte_t huge_pte_wrprotect(pte_t pte)
++{
++	return pte_wrprotect(pte);
++}
++#endif
++
+ #endif /* _ASM_GENERIC_HUGETLB_H */
+-- 
+2.16.2
+
