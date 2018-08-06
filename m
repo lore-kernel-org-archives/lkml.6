@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCC8EC4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 23:27:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1235CC46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 23:27:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 866A721A12
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 23:27:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C0CF621A12
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 23:27:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GuUdyovG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 866A721A12
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vene/i5b"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0CF621A12
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388532AbeHGBiZ (ORCPT
+        id S2388570AbeHGBib (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 21:38:25 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:41827 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731432AbeHGBiZ (ORCPT
+        Mon, 6 Aug 2018 21:38:31 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:45031 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731432AbeHGBia (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 21:38:25 -0400
-Received: by mail-oi0-f68.google.com with SMTP id k12-v6so25234080oiw.8;
-        Mon, 06 Aug 2018 16:27:00 -0700 (PDT)
+        Mon, 6 Aug 2018 21:38:30 -0400
+Received: by mail-oi0-f66.google.com with SMTP id s198-v6so25222481oih.11;
+        Mon, 06 Aug 2018 16:27:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=2bZ3Se4cgyGCiwuPr3El/TGVU5z5CMKd0ds0GHiAfTw=;
-        b=GuUdyovGPckoK8zDcbACzemz3VMUxYLJ4C8kkYY2IvYBB/q9CLbiHBQwwLpnA5uYvc
-         608LeCsU3olh0nPqNFfdnKFArd655QmiT+oDi7GvfuQCh/RrXPGK5cI2anlc6pUC+feW
-         Mi3Pms71GszwJMcY3uuLewF3iBRjwKjsWit6BcLHqATJlgNSwzFr/t5gK4dhkp/w5mNu
-         d7FdJpVQ2CgXhWfvGjPtKNHUTtXIQU8CVIhz/eSUsdyTvb1mSvb/GXReoggjQTK7D+0t
-         8y6njYZyCnRh3clmTbvqBCHIAgCczr7AlPaFhzrOU7vo/Rs6snCCb274UbX0hxjd/I21
-         Y3Nw==
+        bh=hmTl8/1fRiYZPHtNk6ThTZh2VqXnVbDxTlqsL3JkjaA=;
+        b=vene/i5bbGvykssAvZFw0/PWoB9Ma7/wBHYXcIfp0z1kKroMtjf+bOoQLGEG8Mi638
+         WMqQEsBMrLA29DzYiEAHzGa2R+9DK5pc3kanO5o4hJRgRUhp9K4CSsqtePVYKQpWSLIa
+         wY6KT6uEgzlqeqr+an8uf/yNWWIeGmOeg6cwIHWtrqPrxb0YSu9lvoZJfhYOKOzKfxfH
+         ZfBrug+CTEsV2Od9lR3fYMcy5LLK3nn9Onag5rJjdyp6nFwqyuUitpI6YCfR+UN9g5UA
+         wlEGJJh2Koa4NfgOjll3KZHO2s1eaDcxP8eZovRhh2vtGpAQOt0gcqb0hbJFjrlleUG3
+         4yJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=2bZ3Se4cgyGCiwuPr3El/TGVU5z5CMKd0ds0GHiAfTw=;
-        b=ZVhohLDg5wVEsYZh9Sks99gz+JIN16aBR4Y5EyP8LwWxsLHPY0OjAHR/sXpu09zTSv
-         AsSV4KiPs6yVeF767BPZIg2RhBnb1IFL+mrHKlza1hc0/qvH62DCXCIB8rw+VHTjkInR
-         IB+4QrzNAn7T3kblcfshUX7/el3KmJ8NL06f4Qp2UfR7Cn4FF09/RDeUwbk3VnIXWcwm
-         s3uC7RtDP9D8kG+QpykAsKS0eVlC7QcXeDJZrSAjQBgqmd2ZPGcqzhvjwQM9JE/h2+/D
-         lamc1U5KLvRKcLwCYnQEBObOycG57NPvyg/DNHY2EU5ZGK5ycoF+uiZ6m6k4BM6FofRr
-         BMPw==
-X-Gm-Message-State: AOUpUlF6z7YPtGI/UtJL4ppF/9r+VdUlpQ3a34ZJfKG7RUrcl+ihWrGJ
-        U3Jnjt3Y25L1mOGsxFil+82LL6gmZwM=
-X-Google-Smtp-Source: AAOMgpeGISPLlKhVIqJgDC21UC9nd5l+l/0Kp71SpYw3ac98GEdfCzo3mejCOWHDqAXHXDcJZ1eivA==
-X-Received: by 2002:aca:4204:: with SMTP id p4-v6mr15426647oia.242.1533598020198;
-        Mon, 06 Aug 2018 16:27:00 -0700 (PDT)
+        bh=hmTl8/1fRiYZPHtNk6ThTZh2VqXnVbDxTlqsL3JkjaA=;
+        b=F8eV4ClJQGfxQYXfyT0AO3Ohne7C21Tp9ry8FdoPw7UwwmHyhE6m0UaXFbDIUIF7vO
+         bH7hLSx2SYcbu5Bqo9AQQFOOMKCfAh+N/0ZEBLFRNIapKKtyOj40ZNvAGQxu2fTgfMxt
+         1OiA+CP98HexizRRkGbjVDGESPqWVvej1ux3TiG7ryw3OR3kdptvHyMTHFKEruwqHtjN
+         PE7bB4Hl9FarKO73+d0D3r+hgbnzqDKNI0qM+PDoEBx+zMKCqAkS92rPFcOd/1vyct1x
+         UNSH/J7EeYZVlhiZJ031EXvJWyKEe82t3eyuryco+5ivo7uuW7mjF4q8gQZ7AICwEJKn
+         kkLQ==
+X-Gm-Message-State: AOUpUlHUEPyEr6epmN+BAEe0llTtBElko/RGU7F2VoC6dz6UO6CVNYAo
+        nMk+O3ru+Ee1aTiYNWN9z7MF+FYOgUA=
+X-Google-Smtp-Source: AAOMgpewaBmZ3Hx9zpVKNq6Ibe5ag++4mpSRQyPOTkZUlk6p8Vmg8wWx1x+DWynbGTI7w4yAS9H9dw==
+X-Received: by 2002:aca:bec2:: with SMTP id o185-v6mr17721451oif.22.1533598025648;
+        Mon, 06 Aug 2018 16:27:05 -0700 (PDT)
 Received: from nuclearis2-1.lan (c-98-195-139-126.hsd1.tx.comcast.net. [98.195.139.126])
-        by smtp.gmail.com with ESMTPSA id w13-v6sm10613328oiw.51.2018.08.06.16.26.58
+        by smtp.gmail.com with ESMTPSA id w13-v6sm10613328oiw.51.2018.08.06.16.27.04
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 06 Aug 2018 16:26:59 -0700 (PDT)
+        Mon, 06 Aug 2018 16:27:05 -0700 (PDT)
 From:   Alexandru Gagniuc <mr.nuke.me@gmail.com>
 To:     linux-pci@vger.kernel.org, bhelgaas@google.com,
         jakub.kicinski@netronome.com
@@ -77,9 +77,9 @@ Cc:     keith.busch@intel.com, alex_gagniuc@dellteam.com,
         netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
         intel-wired-lan@lists.osuosl.org, linux-rdma@vger.kernel.org,
         oss-drivers@netronome.com
-Subject: [PATCH v6 7/9] net/mlx4: Do not call pcie_print_link_status()
-Date:   Mon,  6 Aug 2018 18:25:41 -0500
-Message-Id: <20180806232600.25694-7-mr.nuke.me@gmail.com>
+Subject: [PATCH v6 8/9] net/mlx5: Do not call pcie_print_link_status()
+Date:   Mon,  6 Aug 2018 18:25:42 -0500
+Message-Id: <20180806232600.25694-8-mr.nuke.me@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180806232600.25694-1-mr.nuke.me@gmail.com>
 References: <CAErSpo4PK+SQLNfdkLNt9eLc7bpbxbkZCsa8T-tQpid601n0SQ@mail.gmail.com>
@@ -93,27 +93,24 @@ This is now done by the PCI core to warn of sub-optimal bandwidth.
 
 Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
 ---
- drivers/net/ethernet/mellanox/mlx4/main.c | 7 -------
- 1 file changed, 7 deletions(-)
+ drivers/net/ethernet/mellanox/mlx5/core/main.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/drivers/net/ethernet/mellanox/mlx4/main.c b/drivers/net/ethernet/mellanox/mlx4/main.c
-index 872014702fc1..da4d54195853 100644
---- a/drivers/net/ethernet/mellanox/mlx4/main.c
-+++ b/drivers/net/ethernet/mellanox/mlx4/main.c
-@@ -3398,13 +3398,6 @@ static int mlx4_load_one(struct pci_dev *pdev, int pci_dev_data,
- 		}
- 	}
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/main.c b/drivers/net/ethernet/mellanox/mlx5/core/main.c
+index 615005e63819..e10f9c2bea3b 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/main.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/main.c
+@@ -1045,10 +1045,6 @@ static int mlx5_load_one(struct mlx5_core_dev *dev, struct mlx5_priv *priv,
+ 	dev_info(&pdev->dev, "firmware version: %d.%d.%d\n", fw_rev_maj(dev),
+ 		 fw_rev_min(dev), fw_rev_sub(dev));
  
--	/* check if the device is functioning at its maximum possible speed.
--	 * No return code for this call, just warn the user in case of PCI
--	 * express device capabilities are under-satisfied by the bus.
--	 */
--	if (!mlx4_is_slave(dev))
--		pcie_print_link_status(dev->persist->pdev);
+-	/* Only PFs hold the relevant PCIe information for this query */
+-	if (mlx5_core_is_pf(dev))
+-		pcie_print_link_status(dev->pdev);
 -
- 	/* In master functions, the communication channel must be initialized
- 	 * after obtaining its address from fw */
- 	if (mlx4_is_master(dev)) {
+ 	/* on load removing any previous indication of internal error, device is
+ 	 * up
+ 	 */
 -- 
 2.17.1
 
