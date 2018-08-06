@@ -2,129 +2,133 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94228C46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 15:47:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85B1EC46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 15:47:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D5DE21A52
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 15:47:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3CC4021A56
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 15:47:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="RRuS1JA1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D5DE21A52
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fqg8LS0X"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CC4021A56
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732936AbeHFR5U (ORCPT
+        id S1732969AbeHFR53 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 13:57:20 -0400
-Received: from mail-it0-f51.google.com ([209.85.214.51]:50366 "EHLO
-        mail-it0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728626AbeHFR5U (ORCPT
+        Mon, 6 Aug 2018 13:57:29 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:37944 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728626AbeHFR53 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 13:57:20 -0400
-Received: by mail-it0-f51.google.com with SMTP id j81-v6so16270024ite.0
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Aug 2018 08:47:38 -0700 (PDT)
+        Mon, 6 Aug 2018 13:57:29 -0400
+Received: by mail-oi0-f66.google.com with SMTP id v8-v6so23029579oie.5;
+        Mon, 06 Aug 2018 08:47:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=H2CzqvJKjXzXYMVy3svae+zgTT/t2E6Ky/lfqJ+uo0Y=;
-        b=RRuS1JA1QS1V6gB10KpcBMPjuYnhBy2ZSLs7/SkyL5kUJ5wmQ0CfK3RT94iFxgqhAK
-         t7VLXlz2POQY8SY7eqcCMIzrYs9ifyI5N4d+BtfhA6WSJ+kI58rAslNdMDqyF3f4FASq
-         kL3Fy2ljwKAF1EzjSz58J1M1TLErVMvuq7Pgs=
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=NUxULdrAsENRyAZz9hmMd/lFkVRAbPU7a/kClLZEie0=;
+        b=fqg8LS0XKJjBceyYkHdw7qpsqd6x7p7SSQ4kTl0UATuG3LOBo1EyprGyCLcChu1N0L
+         SwYye7GRtxncc9HgwAMwoxCAvDBXU9JcF3JCKPcgD6KXfmJ/SyvoJg+iBydbq4U0IW6y
+         Kk2D/Mu28kSU09yLr5qzbvGQjoZFOurmNRdFMA4dViTHhxLzrfcn7JB05BD5T2ZNe0EU
+         i5JgbmU98mL+e/IGQRMkhOh+8dYiVdBzOpW0b7iMClSLkbJqPUI3hKvO3XOmkBVvfQBE
+         y+zjph5+tgGkuq3CZHmZfoGgGqaKMtrZRVw/QMGgx6S/XLAR/GOxDqTZDB06VZgYhKlf
+         q3MQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=H2CzqvJKjXzXYMVy3svae+zgTT/t2E6Ky/lfqJ+uo0Y=;
-        b=QDyV4rAo/fWuM+oMFdh48wGmmZ7jtlmQuyuyCjQtgVfEzyf+hbRGfZihpy8VRNK3RR
-         OOqgqD3nF/yfCt7ui94eYD9gd+9/4iMHpj7PU9tZdH8bwPNsh0/k32plGvoPEmaQD959
-         dXdDCHz/FmxGK8dfg8QW5mLE78/IITGKSVpMAJEZLqtps/mAYccZtkWv3Gnp/rr0WX83
-         rIUfb8VNPjsExOuqRllFYW53CIYaB9l66VLTlOUktJvvgvcAKYk6/taYOy/gtRbScXI5
-         wrs5SSWgUTD3iPFIlw/zRHLZED4ZV2Ry6EwOJwBnjntrB1CpjMdOIxJmE/xa9gBKdo9l
-         ksMA==
-X-Gm-Message-State: AOUpUlHvA4rntaF7yFfLRYIi3u/q0caZXbhCqE0XcuxFyXwXIfbVQu8n
-        r2AIeYPW5hcSK41PxLKwofpXbjilB1RYejeQTDgGUA==
-X-Google-Smtp-Source: AAOMgpdhYsxphREPEUfXZ/VzZUfjFolVHsbiX72R+rrQUxHPOzZd11rTdgmYAEzcnruoQbHMGaur5CDC3OLhtv2kUWA=
-X-Received: by 2002:a02:35a:: with SMTP id y87-v6mr13463167jad.2.1533570457733;
- Mon, 06 Aug 2018 08:47:37 -0700 (PDT)
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=NUxULdrAsENRyAZz9hmMd/lFkVRAbPU7a/kClLZEie0=;
+        b=Ux34pTmYaRkL7BoBafDKVKaYQJjMRGWvlZ1NDPzBd/hQb0vMCt7603R3MVRhdUl7cm
+         gxuUtK4CVMtIZR5jb9MySbd2A4tWKFJ+P1OC7NjLtVMqIHFMmq14EbegXNxhNHGPO+gc
+         QTuOwA7p74eBjoq+8KMd5B4VnWy6EUyXIqK1UD8RK0nomEB3CSouvd555M51TrTm+QaK
+         ASUhw5ygR3P0hTX9g4m4aOWk6YSrDVHoOhsCu2H1bk1wTaHsnZcoVDqzllUSMFxleS0l
+         tbJL7VqYmoSJG7ovrCgYYtxwGO2qFS5mXrrU4Jcc4wL+iju6LYvKM5eJdJ0eBzdimlIV
+         Z4Xg==
+X-Gm-Message-State: AOUpUlE2Y+KhsM7GHmb6hVWvESKt2GBAa59LCw4e7mMM48IL9SFnQobb
+        4YvIRqIrB6YCDZoZ0R3dG5s44hr1
+X-Google-Smtp-Source: AAOMgpdhO41O++DSlvfQh7rH8ZXw0lGRXaXp+qPPwHbBUNq5G8OTZxbqToDKbmZo1lNtdPb3v5aYSA==
+X-Received: by 2002:aca:847:: with SMTP id 68-v6mr16276184oii.312.1533570466713;
+        Mon, 06 Aug 2018 08:47:46 -0700 (PDT)
+Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id p7-v6sm10445656oif.35.2018.08.06.08.47.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 06 Aug 2018 08:47:45 -0700 (PDT)
+Subject: Re: [PATCH][usb-next] USB: typec: fsusb302: remove unused variables
+ snk_pdo and toggling_mode_name
+To:     Colin King <colin.king@canonical.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180806111414.9436-1-colin.king@canonical.com>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <554613b4-daec-7db6-d770-7e222ab8d23b@roeck-us.net>
+Date:   Mon, 6 Aug 2018 08:47:43 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Received: by 2002:a6b:ac05:0:0:0:0:0 with HTTP; Mon, 6 Aug 2018 08:47:36 -0700 (PDT)
-In-Reply-To: <99fff4fe-afa9-f12f-a518-472a9dd1c530@arm.com>
-References: <alpine.LRH.2.02.1808021242320.31834@file01.intranet.prod.int.rdu2.redhat.com>
- <CAHCPf3tFGqkYEcWNN4LaWThw_rVqT316pzLv6T7RfxwO-eZ0EA@mail.gmail.com>
- <alpine.LRH.2.02.1808030212340.17672@file01.intranet.prod.int.rdu2.redhat.com>
- <CAKv+Gu8DeuksZhk1g3q_msSKV_hSY_2e1uzVten9-oGO3j9Sqg@mail.gmail.com>
- <20180803094129.GB17798@arm.com> <alpine.LRH.2.02.1808031235410.31584@file01.intranet.prod.int.rdu2.redhat.com>
- <CAKv+Gu-aNFh1fsr_05SEwDp99n3pLrguP7=tEcFQPNY53=K7Fw@mail.gmail.com>
- <alpine.LRH.2.02.1808031424140.14030@file01.intranet.prod.int.rdu2.redhat.com>
- <CAHCPf3s-+Qf=WBZz1KpisDMG3520jCUh8PLAO3PHa4jdt8kCTw@mail.gmail.com>
- <CAKv+Gu9_h-WFi1j4+DWUN_dMj75SKKHxWoDH8WQ9P7S7MNpZQg@mail.gmail.com>
- <alpine.LRH.2.02.1808060553130.30832@file01.intranet.prod.int.rdu2.redhat.com>
- <99fff4fe-afa9-f12f-a518-472a9dd1c530@arm.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Mon, 6 Aug 2018 17:47:36 +0200
-Message-ID: <CAKv+Gu_C2g=C=gMpk4a5jpDORnxZY6t1v=HDoy59m5vwNBxBBg@mail.gmail.com>
-Subject: Re: framebuffer corruption due to overlapping stp instructions on arm64
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     Mikulas Patocka <mpatocka@redhat.com>,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        Joao Pinto <Joao.Pinto@synopsys.com>,
-        linux-pci <linux-pci@vger.kernel.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Matt Sealey <neko@bakuhatsu.net>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180806111414.9436-1-colin.king@canonical.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6 August 2018 at 14:42, Robin Murphy <robin.murphy@arm.com> wrote:
-> On 06/08/18 11:25, Mikulas Patocka wrote:
-> [...]
->>>
->>> None of this explains why some transactions fail to make it across
->>> entirely. The overlapping writes in question write the same data to
->>> the memory locations that are covered by both, and so the ordering in
->>> which the transactions are received should not affect the outcome.
->>
->>
->> You're right that the corruption couldn't be explained just by reordering
->> writes. My hypothesis is that the PCIe controller tries to disambiguate
->> the overlapping writes, but the disambiguation logic was not tested and it
->> is buggy. If there's a barrier between the overlapping writes, the PCIe
->> controller won't see any overlapping writes, so it won't trigger the
->> faulty disambiguation logic and it works.
->>
->> Could the ARM engineers look if there's some chicken bit in Cortex-A72
->> that could insert barriers between non-cached writes automatically?
->
->
-> I don't think there is, and even if there was I imagine it would have a
-> pretty hideous effect on non-coherent DMA buffers and the various other
-> places in which we have Normal-NC mappings of actual system RAM.
->
+On 08/06/2018 04:14 AM, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Variables snk_pdo and toggling_mode_name are defined but are not used and
+> hence can be removed.
+> 
+> Cleans up clang warnings:
+> warning: 'snk_pdo' defined but not used [-Wunused-const-variable=]
+> warning: 'toggling_mode_name' defined but not used [-Wunused-const-variable=]
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Looking at the A72 manual, there is one chicken bit that looks like it
-may be related:
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 
-CPUACTLR_EL1 bit #50:
+> ---
+>   drivers/usb/typec/fusb302/fusb302.c | 11 -----------
+>   1 file changed, 11 deletions(-)
+> 
+> diff --git a/drivers/usb/typec/fusb302/fusb302.c b/drivers/usb/typec/fusb302/fusb302.c
+> index 82bed9810be6..ad7cfed1cea7 100644
+> --- a/drivers/usb/typec/fusb302/fusb302.c
+> +++ b/drivers/usb/typec/fusb302/fusb302.c
+> @@ -48,13 +48,6 @@ enum toggling_mode {
+>   	TOGGLING_MODE_SRC,
+>   };
+>   
+> -static const char * const toggling_mode_name[] = {
+> -	[TOGGLINE_MODE_OFF]	= "toggling_OFF",
+> -	[TOGGLING_MODE_DRP]	= "toggling_DRP",
+> -	[TOGGLING_MODE_SNK]	= "toggling_SNK",
+> -	[TOGGLING_MODE_SRC]	= "toggling_SRC",
+> -};
+> -
+>   enum src_current_status {
+>   	SRC_CURRENT_DEFAULT,
+>   	SRC_CURRENT_MEDIUM,
+> @@ -1178,10 +1171,6 @@ static const u32 src_pdo[] = {
+>   	PDO_FIXED(5000, 400, PDO_FIXED_FLAGS),
+>   };
+>   
+> -static const u32 snk_pdo[] = {
+> -	PDO_FIXED(5000, 400, PDO_FIXED_FLAGS),
+> -};
+> -
+>   static const struct tcpc_config fusb302_tcpc_config = {
+>   	.src_pdo = src_pdo,
+>   	.nr_src_pdo = ARRAY_SIZE(src_pdo),
+> 
 
-0 Enables store streaming on NC/GRE memory type. This is the reset value.
-1 Disables store streaming on NC/GRE memory type.
-
-so putting something like
-
-mrs x0, S3_1_C15_C2_0
-orr x0, x0, #(1 << 50)
-msr S3_1_C15_C2_0, x0
-
-in __cpu_setup() would be worth a try.
