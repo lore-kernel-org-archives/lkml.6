@@ -2,83 +2,146 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4886DC46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:13:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31F83C46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:16:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9D33208AF
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:13:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9D33208AF
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id DFF5D208AF
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:16:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFF5D208AF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=citrix.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733206AbeHFSXZ (ORCPT
+        id S1733187AbeHFS0j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 14:23:25 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37906 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730876AbeHFSXY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 14:23:24 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 27E8A40241DA;
-        Mon,  6 Aug 2018 16:13:36 +0000 (UTC)
-Received: from redhat.com (unknown [10.36.118.7])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 765111C589;
-        Mon,  6 Aug 2018 16:13:33 +0000 (UTC)
-Date:   Mon, 6 Aug 2018 19:13:32 +0300
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Anshuman Khandual <khandual@linux.vnet.ibm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        robh@kernel.org, srikar@linux.vnet.ibm.com, aik@ozlabs.ru,
-        Jason Wang <jasowang@redhat.com>, linuxram@us.ibm.com,
-        linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, paulus@samba.org,
-        joe@perches.com, david@gibson.dropbear.id.au,
-        linuxppc-dev@lists.ozlabs.org, elfring@users.sourceforge.net,
-        haren@linux.vnet.ibm.com
-Subject: Re: [RFC 0/4] Virtio uses DMA API for all devices
-Message-ID: <20180806191111-mutt-send-email-mst@kernel.org>
-References: <20180802235332-mutt-send-email-mst@kernel.org>
- <b31d2162-884c-0ed4-00df-e7debe0cc0e7@redhat.com>
- <20180803220812-mutt-send-email-mst@kernel.org>
- <01c74680c4b3aa25d9b4375a9ab5e10046b7c71b.camel@kernel.crashing.org>
- <20180805032355-mutt-send-email-mst@kernel.org>
- <74a1e1b8-81e0-84db-6d0d-d8bd9caebb4a@linux.vnet.ibm.com>
- <20180806163440-mutt-send-email-mst@kernel.org>
- <20180806152406.GA29020@infradead.org>
- <20180806190321-mutt-send-email-mst@kernel.org>
- <20180806161040.GA4675@infradead.org>
+        Mon, 6 Aug 2018 14:26:39 -0400
+Received: from smtp.ctxuk.citrix.com ([185.25.65.24]:38463 "EHLO
+        SMTP.EU.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730876AbeHFS0j (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 14:26:39 -0400
+X-IronPort-AV: E=Sophos;i="5.51,452,1526342400"; 
+   d="scan'208";a="77238302"
+Date:   Mon, 6 Aug 2018 18:16:38 +0200
+From:   Roger Pau =?utf-8?B?TW9ubsOp?= <roger.pau@citrix.com>
+To:     Juergen Gross <jgross@suse.com>
+CC:     <linux-kernel@vger.kernel.org>, <xen-devel@lists.xenproject.org>,
+        <linux-block@vger.kernel.org>, <konrad.wilk@oracle.com>,
+        <axboe@kernel.dk>, <boris.ostrovsky@oracle.com>
+Subject: Re: [PATCH 2/4] xen/blkfront: cleanup stale persistent grants
+Message-ID: <20180806161638.nmjamflckekeuyzb@mac>
+References: <20180806113403.24728-1-jgross@suse.com>
+ <20180806113403.24728-4-jgross@suse.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20180806161040.GA4675@infradead.org>
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 06 Aug 2018 16:13:36 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 06 Aug 2018 16:13:36 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mst@redhat.com' RCPT:''
+In-Reply-To: <20180806113403.24728-4-jgross@suse.com>
+User-Agent: NeoMutt/20180716
+X-ClientProxiedBy: AMSPEX02CAS02.citrite.net (10.69.22.113) To
+ AMSPEX02CL02.citrite.net (10.69.22.126)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 06, 2018 at 09:10:40AM -0700, Christoph Hellwig wrote:
-> On Mon, Aug 06, 2018 at 07:06:05PM +0300, Michael S. Tsirkin wrote:
-> > > I've done something very similar in the thread I posted a few years
-> > > ago.
-> > 
-> > Right so that was before spectre where a virtual call was cheaper :(
+On Mon, Aug 06, 2018 at 01:34:01PM +0200, Juergen Gross wrote:
+> Add a periodic cleanup function to remove old persistent grants which
+> are no longer in use on the backend side. This avoids starvation in
+> case there are lots of persistent grants for a device which no longer
+> is involved in I/O business.
 > 
-> Sorry, I meant days, not years.  The whole point of the thread was the
-> slowdowns due to retpolines, which are the software spectre mitigation.
+> Signed-off-by: Juergen Gross <jgross@suse.com>
+> ---
+>  drivers/block/xen-blkfront.c | 99 ++++++++++++++++++++++++++++++++++++++++++--
+>  1 file changed, 95 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/block/xen-blkfront.c b/drivers/block/xen-blkfront.c
+> index b5cedccb5d7d..19feb8835fc4 100644
+> --- a/drivers/block/xen-blkfront.c
+> +++ b/drivers/block/xen-blkfront.c
+> @@ -46,6 +46,7 @@
+>  #include <linux/scatterlist.h>
+>  #include <linux/bitmap.h>
+>  #include <linux/list.h>
+> +#include <linux/workqueue.h>
+>  
+>  #include <xen/xen.h>
+>  #include <xen/xenbus.h>
+> @@ -121,6 +122,9 @@ static inline struct blkif_req *blkif_req(struct request *rq)
+>  
+>  static DEFINE_MUTEX(blkfront_mutex);
+>  static const struct block_device_operations xlvbd_block_fops;
+> +static struct delayed_work blkfront_work;
+> +static LIST_HEAD(info_list);
+> +static bool blkfront_work_active;
+>  
+>  /*
+>   * Maximum number of segments in indirect requests, the actual value used by
+> @@ -216,6 +220,7 @@ struct blkfront_info
+>  	/* Save uncomplete reqs and bios for migration. */
+>  	struct list_head requests;
+>  	struct bio_list bio_list;
+> +	struct list_head info_list;
+>  };
+>  
+>  static unsigned int nr_minors;
+> @@ -1764,6 +1769,12 @@ static int write_per_ring_nodes(struct xenbus_transaction xbt,
+>  	return err;
+>  }
+>  
+> +static void free_info(struct blkfront_info *info)
+> +{
+> +	list_del(&info->info_list);
+> +	kfree(info);
+> +}
+> +
+>  /* Common code used when first setting up, and when resuming. */
+>  static int talk_to_blkback(struct xenbus_device *dev,
+>  			   struct blkfront_info *info)
+> @@ -1885,7 +1896,10 @@ static int talk_to_blkback(struct xenbus_device *dev,
+>   destroy_blkring:
+>  	blkif_free(info, 0);
+>  
+> -	kfree(info);
+> +	mutex_lock(&blkfront_mutex);
+> +	free_info(info);
+> +	mutex_unlock(&blkfront_mutex);
+> +
+>  	dev_set_drvdata(&dev->dev, NULL);
+>  
+>  	return err;
+> @@ -1996,6 +2010,10 @@ static int blkfront_probe(struct xenbus_device *dev,
+>  	info->handle = simple_strtoul(strrchr(dev->nodename, '/')+1, NULL, 0);
+>  	dev_set_drvdata(&dev->dev, info);
+>  
+> +	mutex_lock(&blkfront_mutex);
+> +	list_add(&info->info_list, &info_list);
+> +	mutex_unlock(&blkfront_mutex);
+> +
+>  	return 0;
+>  }
+>  
+> @@ -2306,6 +2324,15 @@ static void blkfront_gather_backend_features(struct blkfront_info *info)
+>  	if (indirect_segments <= BLKIF_MAX_SEGMENTS_PER_REQUEST)
+>  		indirect_segments = 0;
+>  	info->max_indirect_segments = indirect_segments;
+> +
+> +	if (info->feature_persistent) {
+> +		mutex_lock(&blkfront_mutex);
+> +		if (!blkfront_work_active) {
+> +			blkfront_work_active = true;
+> +			schedule_delayed_work(&blkfront_work, HZ * 10);
 
-Oh that makes sense then. Could you post a pointer pls so
-this patchset is rebased on top (there are things to
-change about 4/4 but 1-3 could go in if they don't add
-overhead)?
+Does it make sense to provide a module parameter to rune the schedule
+of the cleanup routine?
 
--- 
-MST
+> +		}
+> +		mutex_unlock(&blkfront_mutex);
+
+Is it really necessary to have the blkfront_work_active boolean? What
+happens if you queue the same delayed work more than once?
+
+Thanks, Roger.
