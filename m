@@ -2,133 +2,107 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E26ABC4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 14:05:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2289EC4646D
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 14:05:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93C7F21A34
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 14:05:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93C7F21A34
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id C158E21A34
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 14:05:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="3rIUHzRg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C158E21A34
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729389AbeHFQOV (ORCPT
+        id S1730253AbeHFQOZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 12:14:21 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39522 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727451AbeHFQOU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 12:14:20 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 96F3D7A9;
-        Mon,  6 Aug 2018 07:05:04 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 678323F2EA;
-        Mon,  6 Aug 2018 07:05:04 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id 35E111AE2D8E; Mon,  6 Aug 2018 15:05:08 +0100 (BST)
-Date:   Mon, 6 Aug 2018 15:05:08 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        aik@ozlabs.ru, robh@kernel.org, joe@perches.com,
-        elfring@users.sourceforge.net, david@gibson.dropbear.id.au,
-        jasowang@redhat.com, mpe@ellerman.id.au, linuxram@us.ibm.com,
-        haren@linux.vnet.ibm.com, paulus@samba.org,
-        srikar@linux.vnet.ibm.com, robin.murphy@arm.com,
-        jean-philippe.brucker@arm.com, marc.zyngier@arm.com
-Subject: Re: [RFC 0/4] Virtio uses DMA API for all devices
-Message-ID: <20180806140507.GB15078@arm.com>
-References: <20180720035941.6844-1-khandual@linux.vnet.ibm.com>
- <20180727095804.GA25592@arm.com>
- <20180730093414.GD26245@infradead.org>
- <20180730125100-mutt-send-email-mst@kernel.org>
- <20180730111802.GA9830@infradead.org>
- <20180730155633-mutt-send-email-mst@kernel.org>
- <20180731173052.GA17153@infradead.org>
- <3d6e81511571260de1c8047aaffa8ac4df093d2e.camel@kernel.crashing.org>
- <20180801081637.GA14438@arm.com>
- <20180805032504-mutt-send-email-mst@kernel.org>
+        Mon, 6 Aug 2018 12:14:25 -0400
+Received: from mail-eopbgr700075.outbound.protection.outlook.com ([40.107.70.75]:37856
+        "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727451AbeHFQOZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 12:14:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xqgC3rBg2w0iGBVjlWt7k1JVwxGXIT8lmiyVHITUoAs=;
+ b=3rIUHzRgY7K/d7ZxT4jZniUdWrdZZNdg1mXO9Q3598LDfCh0gjc23v7qPqYZO55uKRnGWs9eRvPJf8CyRkDB7himZ+FtRJnByCO+yNQnh3/e44TFnzr3wXZ0MdHeuPSCkcIuIRnc+/3l53eABu+i/pcpY9fgCtnwwkVaSjIWGsU=
+Received: from BN3PR0201MB0993.namprd02.prod.outlook.com (10.161.207.14) by
+ BN3PR0201MB1012.namprd02.prod.outlook.com (10.161.207.146) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1017.15; Mon, 6 Aug 2018 14:05:06 +0000
+Received: from BN3PR0201MB0993.namprd02.prod.outlook.com
+ ([fe80::d4fc:b478:dd6d:55c5]) by BN3PR0201MB0993.namprd02.prod.outlook.com
+ ([fe80::d4fc:b478:dd6d:55c5%8]) with mapi id 15.20.1017.019; Mon, 6 Aug 2018
+ 14:05:06 +0000
+From:   Anurag Kumar Vulisha <anuragku@xilinx.com>
+To:     Mathias Nyman <mathias.nyman@linux.intel.com>,
+        "mathias.nyman@intel.com" <mathias.nyman@intel.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+CC:     "v.anuragkumar@gmail.com" <v.anuragkumar@gmail.com>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v3] usb: host: xhci-plat: Iterate over parent nodes for
+ finding quirks
+Thread-Topic: [PATCH v3] usb: host: xhci-plat: Iterate over parent nodes for
+ finding quirks
+Thread-Index: AQHULYYP1XPehd/Dd0Ss9p2pehlIZqSywBwAgAABPAA=
+Date:   Mon, 6 Aug 2018 14:05:06 +0000
+Message-ID: <BN3PR0201MB0993A760010FC4EC8345F274A7200@BN3PR0201MB0993.namprd02.prod.outlook.com>
+References: <1533560671-32640-1-git-send-email-anurag.kumar.vulisha@xilinx.com>
+ <532f004d-8a79-e61b-e668-958c162599aa@linux.intel.com>
+In-Reply-To: <532f004d-8a79-e61b-e668-958c162599aa@linux.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=anuragku@xilinx.com; 
+x-originating-ip: [149.199.50.133]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BN3PR0201MB1012;6:8HjIw8Yx+MogIUuNkR5bbt217n+8vmstQEIEHGGHNI7OatKwalSERHkgyEDHaMKT3roQogL6Utan8FzidE1ffjGcEXJxgcFQIPp1PXiIWkrH+dZBXDZmY8iOWhvUHSoWogD/IDrobfvmQpCcjlybl7VCjAj1GK2ui2T7czLaE7arh7u3PX1fz45xqrx4eD9KWPfCAl+7V6b8mfMpRdy/hxpgbVmyG1TWBify6shWSr5+EOQ2gQAixHiuyki4xz6vl8vzBQOBMDUf1gLjizgsed0nApxHd0xCTiw7pulzbvZljUch/x30ZW/Ueb8WkFfalrWWsv0FICzF91Jr1TdYIyytXFpkpGwfXYN1r8Eih735GsnDnLwA8/WTBvzFBhmChp3FYeHEBgVMKCJdFB6J8f33yp3Boj/oJR16fmAvYd7v31sEX8h5Om720xx0xRpNnIMBPTgma4C5wo61lMb/YA==;5:CsiVxbTvUJo4+uo08Wf0Nw6l775Neavk6+UwVa3kRLBfE0TJjUWr9iW6fac19FxjM/AaMvS1v9t5kOQrwqXUNhExcsavSInTWHu1Gj0U+SdKQUC00NVMH6Vk1vEdzfzPqtDehiwB0Mi4JmFjwQBcEoF1vXu9Zbl3y8XFo4nrcfU=;7:v45HebaMfTH+CVWgEE7aj1anUmvVwpcIDVrsFnrSqiNfq+Zodgc7uxG9k4JzszvxlEtkLD0+qkI5StQXA0v5EPTenQQt7rs8NQqjdVyCWvWp/JAp/BE1/MnoBpQnQ/iyZXePdxj7mIJaSV9Lu4wxXuK9zvzG+i0PxY/NbzQzgmWtibqtF8FP3LtBQ4d4qnDIujGvG267xiGtUW9w3+GW1TPvpDan3uliIRjI16fe6lpaeHTNrEKOZxiz9an7sUkf
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: f3b2b51e-2ebf-49d1-307b-08d5fba59cff
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:BN3PR0201MB1012;
+x-ms-traffictypediagnostic: BN3PR0201MB1012:
+x-ld-processed: 657af505-d5df-48d0-8300-c31994686c5c,ExtAddr
+x-microsoft-antispam-prvs: <BN3PR0201MB101273520DE5E7E08540FC59A7200@BN3PR0201MB1012.namprd02.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(192813158149592);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(10201501046)(3231311)(944501410)(52105095)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:BN3PR0201MB1012;BCL:0;PCL:0;RULEID:;SRVR:BN3PR0201MB1012;
+x-forefront-prvs: 07562C22DA
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(39860400002)(136003)(346002)(376002)(396003)(189003)(199004)(97736004)(2201001)(14454004)(478600001)(5660300001)(2501003)(53936002)(8936002)(2900100001)(86362001)(66066001)(39060400002)(33656002)(105586002)(25786009)(5250100002)(106356001)(6506007)(186003)(2906002)(102836004)(76176011)(26005)(3846002)(81156014)(81166006)(8676002)(6116002)(6246003)(68736007)(11346002)(476003)(229853002)(9686003)(4326008)(446003)(55016002)(305945005)(7736002)(110136005)(74316002)(486006)(316002)(256004)(54906003)(7696005)(99286004)(6436002);DIR:OUT;SFP:1101;SCL:1;SRVR:BN3PR0201MB1012;H:BN3PR0201MB0993.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: xilinx.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: quzaNrXBWlZLZ6f28CS0C3Mr9qSBvyRyrNDnGUclRGcGtI3Pd1GPqwF3B8WcM7prMK1+ftHD0A1JdPZfddaHnOPvdklIdE88ePN0MCkNNfqvqfXYNnDdEzWAfEcIZCw4PcsZgYjz/nhts/XZtHB0MchZ4o7infZapYZfJXNOJM5r8S7jdtKdFjGHHIGL5I0WaBpAAURlSVCCFQP9slRn0Ym6O12wIYfqYvN3zjcLorBAPDmuMj5NRUi2czJdL6DjNjCPGqoXhTPhsUjlKC84fCACuZpNAxD3urdjCqwFN/8UG8O1kNk1+i1trpffhe7SJdu4NJhe0akIh5fViDaGAOYEc79rn42PHPg2lYNrduo=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180805032504-mutt-send-email-mst@kernel.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f3b2b51e-2ebf-49d1-307b-08d5fba59cff
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Aug 2018 14:05:06.2126
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN3PR0201MB1012
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Michael,
-
-On Sun, Aug 05, 2018 at 03:27:42AM +0300, Michael S. Tsirkin wrote:
-> On Wed, Aug 01, 2018 at 09:16:38AM +0100, Will Deacon wrote:
-> > On Tue, Jul 31, 2018 at 03:36:22PM -0500, Benjamin Herrenschmidt wrote:
-> > > On Tue, 2018-07-31 at 10:30 -0700, Christoph Hellwig wrote:
-> > > > > However the question people raise is that DMA API is already full of
-> > > > > arch-specific tricks the likes of which are outlined in your post linked
-> > > > > above. How is this one much worse?
-> > > > 
-> > > > None of these warts is visible to the driver, they are all handled in
-> > > > the architecture (possibly on a per-bus basis).
-> > > > 
-> > > > So for virtio we really need to decide if it has one set of behavior
-> > > > as specified in the virtio spec, or if it behaves exactly as if it
-> > > > was on a PCI bus, or in fact probably both as you lined up.  But no
-> > > > magic arch specific behavior inbetween.
-> > > 
-> > > The only arch specific behaviour is needed in the case where it doesn't
-> > > behave like PCI. In this case, the PCI DMA ops are not suitable, but in
-> > > our secure VMs, we still need to make it use swiotlb in order to bounce
-> > > through non-secure pages.
-> > 
-> > On arm/arm64, the problem we have is that legacy virtio devices on the MMIO
-> > transport (so definitely not PCI) have historically been advertised by qemu
-> > as not being cache coherent, but because the virtio core has bypassed DMA
-> > ops then everything has happened to work. If we blindly enable the arch DMA
-> > ops, we'll plumb in the non-coherent ops and start getting data corruption,
-> > so we do need a way to quirk virtio as being "always coherent" if we want to
-> > use the DMA ops (which we do, because our emulation platforms have an IOMMU
-> > for all virtio devices).
-> > 
-> > Will
-> 
-> Right that's not very different from placing the device within the IOMMU
-> domain but in fact bypassing the IOMMU
-
-Hmm, I'm not sure I follow you here -- the IOMMU bypassing is handled
-inside the IOMMU driver, so we'd still end up with non-coherent DMA ops
-for the guest accesses. The presence of an IOMMU doesn't imply coherency for
-us. Or am I missing your point here?
-
-> I wonder whether anyone ever needs a non coherent virtio-mmio. If yes we
-> can extend PLATFORM_IOMMU to cover that or add another bit.
-
-I think that's probably the right way around: assume that legacy virtio-mmio
-devices are coherent by default.
-
-> What exactly do the non-coherent ops do that causes the corruption?
-
-The non-coherent ops mean that the guest ends up allocating the vring queues
-using non-cacheable mappings, whereas qemu/hypervisor uses a cacheable
-mapping despite not advertising the devices as being cache-coherent.
-
-This hits something in the architecture known as "mismatched aliases", which
-means that coherency is lost between the guest and the hypervisor,
-consequently resulting in data not being visible and ordering not being
-guaranteed. The usual symptom is that the device appears to lock up iirc,
-because the guest and the hypervisor are unable to communicate with each
-other.
-
-Does that help to clarify things?
-
-Thanks,
-
-Will
+DQo+PiBTaWduZWQtb2ZmLWJ5OiBBbnVyYWcgS3VtYXIgVnVsaXNoYSA8YW51cmFnLmt1bWFyLnZ1
+bGlzaGFAeGlsaW54LmNvbT4NCj4+IC0tLQ0KPj4gICBDaGFuZ2VzIGluIHYzOg0KPj4gCTEuIEFz
+IE1hdGhpYXMgc3VnZ2VzdGVkLCBtb3ZlZCB0aGUgcG9zaXRpb24gb2YgcmVhZGluZyBkZXZpY2V0
+cmVlDQo+PiAJICAgcHJvcGVydHkgImltb2QtaW50ZXJ2YWwtbnMiIGludG8gZm9yIGxvb3ANCj4+
+DQo+PiAgIENoYW5nZXMgaW4gdjI6DQo+PiAJMS4gQXMgc3VnZ2VzdGVkIGJ5IE1hdGhpYXMsIHJl
+c3RvcmluZyBpbW1vZF9pbnRlcnZhbCBjaGFuZ2VzIHRvDQo+PiAJICAgZGVmYXVsdA0KPj4gLS0t
+DQo+DQoNCkhpIE1hdGhpYXMsDQoNClRoYW5rcyBhIG1pbGxpb24gZm9yIHlvdXIgaGVscCBpbiBj
+b3JyZWN0aW5nIHRoZSBwYXRjaC4NCg0KUmVnYXJkcywNCkFudXJhZyBLdW1hciBWdWxpc2hhDQoN
+Cj5UaGFua3MsIGFkZGluZyB0byBxdWV1ZQ0KPg0K
