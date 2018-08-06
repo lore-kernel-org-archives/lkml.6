@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E397DC46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 23:26:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E802C46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 23:26:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FA4721A12
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 23:26:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 39C2521A12
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 23:26:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="n8sdHqYA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FA4721A12
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jmHGRLdi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39C2521A12
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387687AbeHGBiB (ORCPT
+        id S2387812AbeHGBiH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 21:38:01 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:34321 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387557AbeHGBiA (ORCPT
+        Mon, 6 Aug 2018 21:38:07 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:36451 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387557AbeHGBiG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 21:38:00 -0400
-Received: by mail-oi0-f67.google.com with SMTP id 13-v6so25306603ois.1;
-        Mon, 06 Aug 2018 16:26:37 -0700 (PDT)
+        Mon, 6 Aug 2018 21:38:06 -0400
+Received: by mail-oi0-f66.google.com with SMTP id n21-v6so25323219oig.3;
+        Mon, 06 Aug 2018 16:26:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Dr6bD/jWDLVzyDzhBEQSjBVlycw+s4X4ei2OzivsGgY=;
-        b=n8sdHqYAskbg7CtaoFIf/aRhbfv6sCO1+02+aW1s19U38v3nTSZMJzJC3ziw4IzRGp
-         SsZAJ4+mYocxH6PNi3ZyYy/CHok1SZ1sMjAA3zpZk+L+BLilc0veqytXofjxLRFQPJG+
-         ysWAoQAgnms00rq2XfkbVMTbGrQBEo6fKzdxGmTQ+Kb20HMwaMjb8H3N2/Qoy9yKFHpa
-         e0jysm4TAsQMkmHo+BBK4nDsEaV7iZiEaSUxb7w9XlCj5fygYlEkKPrXqHgnqWkb5wBL
-         ZCthrWPN8sfrT7kPo8QUXpbsBZ/0p4Fsr83OTNBbqkpDJhnTNtiXkifwoIUHRWq6dnG6
-         OgmA==
+        bh=4xvs0w0N34TXyC9C+D5prP5itXqvnv+RfR86wouk0kk=;
+        b=jmHGRLdipkwGcIVNGZSA/5abo4KZz9QoJ2CujiDhYmjx7S5vhKy1m7EbttvWkFOSbI
+         bQy7spZ0zFAnY1ajUUglsSasOpC5E8C3aLfZEoDIWQyK0xfJfgQxCUdldjL8RFzn3PJr
+         O9oFhh4nqv7ZFEveR6ITOnOrHPHqyyJSg5QC9w6X6YJGDriaEzKO7KZtLSvAjb1hM8VK
+         Bf4TS4Y/R3Kl5qHm836cnvbx6RNZcCouI47P3Q7/WC/MBXA5lsX2zaCrQMe4pkFmSAb/
+         0deO0tGjHjOfPQd8elnfEbH+CShDPXrSUSobuEBjos8qwELw6Z/I0AzmhOScP/2aWEZg
+         FbaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=Dr6bD/jWDLVzyDzhBEQSjBVlycw+s4X4ei2OzivsGgY=;
-        b=gz+UV3tHwghaEdenAcYJrUV1i0Dk1aauXMMUt2OBHMdQgd9ky4K73rrbPNzePMOAn/
-         I6UOFRCjdTKDbF8YEF4qtqjKSdh7iOBYxxDgGn5NZGO5RX+kTaSLVpdkKBb54rajn6VE
-         9jQDvE4Xy0gvrkSAT+3MNSMji2eTxn5dScVeCJyynmnWkSX/pjo7ZbEawgnAkcC8jkl2
-         WSBN1MEkqI+9680uyJjPvtkeRZBzAlU2O+UzaXGXIPVVwVdHGzd+UBWK6ZPXX+oY6ov4
-         c+9NZJ1ig2mg0ME1QOQHx7A7W8sK1xO+IfQVET6iUXnJ9unn1XIQ0UDSMpI+MaQ9XsMT
-         Jdow==
-X-Gm-Message-State: AOUpUlEoJ+x77DAhjAoug50fTuzgxCUYW71hafxZ/b46d3M5Dk0cJrT3
-        j/SfL4r92wiu8chGxAH3WbKQjreijaQ=
-X-Google-Smtp-Source: AAOMgpeNTL+cRNAu8Zdz1+IUcwIa2wgZRxCGTZYNzLJLv3i0coa8OkRSkrx+LlQWL9pd9Wh5l/8prA==
-X-Received: by 2002:a54:4f94:: with SMTP id g20-v6mr17342767oiy.130.1533597996617;
-        Mon, 06 Aug 2018 16:26:36 -0700 (PDT)
+        bh=4xvs0w0N34TXyC9C+D5prP5itXqvnv+RfR86wouk0kk=;
+        b=rbTSzrZf8c2dQlnDdUwoM7/vE57ccDEpxDFvnBaILHlJfVRRZKM5RyCWm8e+8FX/T+
+         QRPAlkLSXTTq40NaXQ7hQBYaZG91ErIprn7ywRjVrdAHzM5Bk46TcEABTNMREfLKLn0S
+         4+cdSf8ce9HGmH41xrtf/DI9TjybadMoyItLqGbFfsMhwTGWxh+xrF8zKYmTZgcgdIVP
+         kWHT20B4FT54omqkHpsgg+TMKlQiKIdf0qnajOmU1YSDWSati0mP2QZkR+Oq6b2D4eYe
+         GvG6gynl079LrRob2xcB7CB5IpYZcpeOyJ87c9o+1rnwbwcwJLaRbWtql0YHcMi7ED2h
+         U5fg==
+X-Gm-Message-State: AOUpUlHFb17K96OpSgIRjzOnO4VTOqnPQtFDf2Oo21hu0a1OIZvh88zF
+        fpSEK4eqhRJ843DXyZbE7m48HEH7DWs=
+X-Google-Smtp-Source: AA+uWPybWOBtCGsptH4SXYTvRhwz1Sf4nFnZmWUZ0PHWrU1XYI/lhZX1mdk+y8qbZ4ZWQgK8CEeCYw==
+X-Received: by 2002:aca:d0cc:: with SMTP id j73-v6mr15607295oiy.255.1533598002124;
+        Mon, 06 Aug 2018 16:26:42 -0700 (PDT)
 Received: from nuclearis2-1.lan (c-98-195-139-126.hsd1.tx.comcast.net. [98.195.139.126])
-        by smtp.gmail.com with ESMTPSA id w13-v6sm10613328oiw.51.2018.08.06.16.26.35
+        by smtp.gmail.com with ESMTPSA id w13-v6sm10613328oiw.51.2018.08.06.16.26.40
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 06 Aug 2018 16:26:36 -0700 (PDT)
+        Mon, 06 Aug 2018 16:26:41 -0700 (PDT)
 From:   Alexandru Gagniuc <mr.nuke.me@gmail.com>
 To:     linux-pci@vger.kernel.org, bhelgaas@google.com,
         jakub.kicinski@netronome.com
@@ -77,9 +77,9 @@ Cc:     keith.busch@intel.com, alex_gagniuc@dellteam.com,
         netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
         intel-wired-lan@lists.osuosl.org, linux-rdma@vger.kernel.org,
         oss-drivers@netronome.com
-Subject: [PATCH v6 3/9] bnxt_en: Do not call pcie_print_link_status()
-Date:   Mon,  6 Aug 2018 18:25:37 -0500
-Message-Id: <20180806232600.25694-3-mr.nuke.me@gmail.com>
+Subject: [PATCH v6 4/9] cxgb4: Do not call pcie_print_link_status()
+Date:   Mon,  6 Aug 2018 18:25:38 -0500
+Message-Id: <20180806232600.25694-4-mr.nuke.me@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180806232600.25694-1-mr.nuke.me@gmail.com>
 References: <CAErSpo4PK+SQLNfdkLNt9eLc7bpbxbkZCsa8T-tQpid601n0SQ@mail.gmail.com>
@@ -93,21 +93,23 @@ This is now done by the PCI core to warn of sub-optimal bandwidth.
 
 Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
 ---
- drivers/net/ethernet/broadcom/bnxt/bnxt.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.c b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-index 4394c1162be4..4b3928c89076 100644
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-@@ -8909,7 +8909,6 @@ static int bnxt_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	netdev_info(dev, "%s found at mem %lx, node addr %pM\n",
- 		    board_info[ent->driver_data].name,
- 		    (long)pci_resource_start(pdev, 0), dev->dev_addr);
+diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
+index a8926e97935e..049958898c17 100644
+--- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
++++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
+@@ -5726,9 +5726,6 @@ static int init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 			free_msix_info(adapter);
+ 	}
+ 
+-	/* check for PCI Express bandwidth capabiltites */
 -	pcie_print_link_status(pdev);
- 
- 	return 0;
- 
+-
+ 	err = init_rss(adapter);
+ 	if (err)
+ 		goto out_free_dev;
 -- 
 2.17.1
 
