@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC827C46472
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 22:29:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6757C4646D
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 22:30:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83717208A2
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 22:29:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7DA26208A2
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 22:30:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f4TupVyG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83717208A2
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O2N6qSTD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DA26208A2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388375AbeHGAk6 (ORCPT
+        id S2388396AbeHGAlL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 20:40:58 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:45369 "EHLO
+        Mon, 6 Aug 2018 20:41:11 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:35199 "EHLO
         mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387889AbeHGAk5 (ORCPT
+        with ESMTP id S2387814AbeHGAk4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 20:40:57 -0400
-Received: by mail-lf1-f68.google.com with SMTP id j143-v6so10188048lfj.12;
-        Mon, 06 Aug 2018 15:29:45 -0700 (PDT)
+        Mon, 6 Aug 2018 20:40:56 -0400
+Received: by mail-lf1-f68.google.com with SMTP id f18-v6so10225814lfc.2;
+        Mon, 06 Aug 2018 15:29:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=UZjTLX7QnQr/t1695VcV1KTsYiUTLZK2WnrZPxW0nQ0=;
-        b=f4TupVyGulWb3GeTA5wNIXDgA28jrcBpoND1Ko4n43chjDMerygFxt+GgpBmhCWCEh
-         K/A8/d6es6eXkmxlKoHfZjx30fvveGPjnB182ekcFQetalYPOaF4T9hu0nUk85K7igRD
-         pFaf34gyE0Zk2i1ShroXnPSN5wopTGpVpI1c/n9zik+LN0rqjfs7uR3Gro5ITP9UccJk
-         gxvw9AxP+3OeRFlgDcpoSvLkaHLUAWI/ABqKHR/WspP52lLK5uBZn4q3a4MufOHAaCYx
-         pZWK2+kUNIZ1qoXXJfb7/ohkBoX7If/OVQRjuGQrfmXfv5c61AbP5/BLb6/0Yc4wYlwU
-         kEYA==
+        bh=FDaMkIad0o9QzNTv2EARYdjQpGULA5HnpcmySlWm3i8=;
+        b=O2N6qSTD6wcYUO5uf/sAtdsjHk+jMRgROxM64BeLFfqEax+Sd2rSsUJXBLoACFBcfU
+         vpNekW03thHx+TO+4dBbmDjf2ARNzjZJ8OwQ2JmymgK+1PhoIzxi4XFh9k23tXNkeVvg
+         R/uUcHgx02mbIEzP04Oerc0v2PIDWffK6wANRL7q1ngph2ViEoL9LEDoA7W496FeGGWy
+         fDEOFe7qBJJOAxK5zUlkF+1u2agqRzLDQjvJ1yRepsL8yKJFWV99oaF+DF47sTpWYxgX
+         BhOrFttIAwOnfZYjZuWzM/h2xNhw20WJknDy/Yd3cYox7qeKVDQ+D6qNwpfoF+0FY7d4
+         Dgug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=UZjTLX7QnQr/t1695VcV1KTsYiUTLZK2WnrZPxW0nQ0=;
-        b=Jqvi0lJmOaw9wwXyL5s6YI8thPaE609XO1MbjkhBSqG3Z3bI50y4vXx0bBgZUiLVmt
-         T2LDfqv54dop88CTQtQuNtAjGEi59CA4Iyr7hbtgl0Gr0TXz55b56+dozqHvgSaeKjqK
-         DG+1GNJeecByF0mlSRvC3YiMEBdJJDLCAyemMp86oJqDAWv+tCDavpPRoXyNyyKsCQeE
-         qQn1bLHmqMM6v6pwBagIlXsuO3omc9SdM+7v9izBYtLTGIuTRZSgJ8KN4kXAYQUZhkuo
-         +eLVRjI2FAsLiyv3f9dkZkrwQomW1h4lR4PbT/403TWxDW1BpMeuR42VPtQzQ+Spe/aF
-         7Cyw==
-X-Gm-Message-State: AOUpUlH8ulOhm8PMKoyMAmlFCnh8XYZHTz5aauMgUGZgSuVZ0GosOYj6
-        438obxVcwm5+iqAFeNt7bgQ=
-X-Google-Smtp-Source: AAOMgpdOVignCZnEeCBAFO3oZT9ssWE7eymuQTN++pgaa4W5/B4vcnak1+wEbM2FXkRJkCqWvtg9Vw==
-X-Received: by 2002:a19:5a56:: with SMTP id o83-v6mr11909803lfb.50.1533594584634;
-        Mon, 06 Aug 2018 15:29:44 -0700 (PDT)
+        bh=FDaMkIad0o9QzNTv2EARYdjQpGULA5HnpcmySlWm3i8=;
+        b=XCqM7J3M8OFMENwt9BO2WoX1MyR0fXST2ovOBJ16Bx/PwoJsOZTdMgRz0TywB0PuVm
+         fYB8L3mkq+TVh6ui+Cq4hb9krNoHGvAs/CVgxd2ueoYRBZxQmTGX+PcbQ+R0LHgu3dbV
+         Xk3FtuUt3TsewjfGxHeXnQDZocMOS0y34pLZWCWHFSytMKpjkDPCDCEL74ydPR2xUOnA
+         QjIGMny081zM79t8Tydcvr3DXdTmunEZSTwNoh/kmc8q/uOnt1DRY6pB2U6JO9AJE7yV
+         bbLH7Z/dqGzIoI0Q1SsYhveJG5GSvYyoHlSwuh91RpU2PPJQodawc1VqFjJ6Ttu5vtSY
+         jweQ==
+X-Gm-Message-State: AOUpUlGGSRtgx2XtVq6kI/o/0EhEmz2hQgu324HV1nGMCIakn5l+Rwo+
+        oUqe+VJEwM1dtMQyEUxpKvU=
+X-Google-Smtp-Source: AAOMgpciX3+0nE/8mArhut1MLp5m3pxfDitwVhtDsHuy0YeZFQlZ9DyC70LgedcTWPE5Cjl89pXqDA==
+X-Received: by 2002:a19:b24e:: with SMTP id b75-v6mr11741465lff.11.1533594583186;
+        Mon, 06 Aug 2018 15:29:43 -0700 (PDT)
 Received: from z50.lan (93-181-165-181.internetia.net.pl. [93.181.165.181])
-        by smtp.gmail.com with ESMTPSA id o4-v6sm2438561ljc.67.2018.08.06.15.29.43
+        by smtp.gmail.com with ESMTPSA id o4-v6sm2438561ljc.67.2018.08.06.15.29.41
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 06 Aug 2018 15:29:44 -0700 (PDT)
+        Mon, 06 Aug 2018 15:29:42 -0700 (PDT)
 From:   Janusz Krzysztofik <jmkrzyszt@gmail.com>
 To:     Boris Brezillon <boris.brezillon@bootlin.com>,
         Linus Walleij <linus.walleij@linaro.org>
@@ -73,9 +73,9 @@ Cc:     Jonathan Corbet <corbet@lwn.net>,
         linux-mtd@lists.infradead.org, linux-doc@vger.kernel.org,
         linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Subject: [RFC PATCH v2 12/12] gpiolib: Add fast processing path to bitmap API functions
-Date:   Tue,  7 Aug 2018 00:29:18 +0200
-Message-Id: <20180806222918.12644-13-jmkrzyszt@gmail.com>
+Subject: [RFC PATCH v2 11/12] mtd: rawnand: ams-delta: Use GPIO API bitmap extension
+Date:   Tue,  7 Aug 2018 00:29:17 +0200
+Message-Id: <20180806222918.12644-12-jmkrzyszt@gmail.com>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20180806222918.12644-1-jmkrzyszt@gmail.com>
 References: <20180718235710.18242-1-jmkrzyszt@gmail.com>
@@ -85,67 +85,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Certain GPIO descriptor arrays returned by gpio_get_array() may contain
-information on a single GPIO chip driving array member pins in hardware
-order.  In such cases, bitmaps of values can be passed directly to the
-chip callback functions without wasting time on iterations.
+Try to address the driver performance issues by replacing traditional
+get/set array function calls with their bitmap based equivalents.
 
-Add respective code to gpiod_get/set_array_bitmap_complex() functions.
+As long as fast bitmap processing path is not implemented in the new
+API extension, performance of the driver remains unchanged.
 
 Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
 ---
- Documentation/driver-api/gpio/consumer.rst |  6 ++++++
- drivers/gpio/gpiolib.c                     | 14 ++++++++++++++
- 2 files changed, 20 insertions(+)
+ drivers/mtd/nand/raw/ams-delta.c | 19 +++----------------
+ 1 file changed, 3 insertions(+), 16 deletions(-)
 
-diff --git a/Documentation/driver-api/gpio/consumer.rst b/Documentation/driver-api/gpio/consumer.rst
-index bec4eab3b87c..b82f134dc352 100644
---- a/Documentation/driver-api/gpio/consumer.rst
-+++ b/Documentation/driver-api/gpio/consumer.rst
-@@ -409,6 +409,12 @@ descriptor arrays, only those of type struct gpio_descs returned by
- gpiod_get_array() and its variants.  Supported array size is limited to the size
- of the bitmap, i.e., sizeof(unsigned long).
+diff --git a/drivers/mtd/nand/raw/ams-delta.c b/drivers/mtd/nand/raw/ams-delta.c
+index 30c461138195..7b08b2c441d3 100644
+--- a/drivers/mtd/nand/raw/ams-delta.c
++++ b/drivers/mtd/nand/raw/ams-delta.c
+@@ -78,15 +78,9 @@ static void ams_delta_write_commit(struct ams_delta_nand *priv)
  
-+If the .chip member of the array structure, filled in by gpiod_get_array() in
-+certain circumstances, contains a valid GPIO chip descriptor, the raw variants
-+of the functions can take fast processing paths, passing bitmap arguments
-+directly to the chip callback functions.  That allows for utilization of GPIO
-+banks as data I/O ports without much loss of performance.
-+
+ static void ams_delta_write_next_byte(struct ams_delta_nand *priv, u_char byte)
+ {
+-	struct gpio_descs *data_gpiods = priv->data_gpiods;
+ 	unsigned long bits = byte;
+-	int i, value_array[data_gpiods->ndescs];
+-
+-	for (i = 0; i < data_gpiods->ndescs; i++)
+-		value_array[i] = test_bit(i, &bits);
  
- GPIOs mapped to IRQs
- --------------------
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 5b541364dee0..bf95f2964bc5 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -2846,6 +2846,12 @@ int gpiod_get_array_bitmap_complex(bool raw, bool can_sleep,
- 	if (array->ndescs > sizeof(*bits))
- 		return -EINVAL;
+-	gpiod_set_raw_array_value(data_gpiods->ndescs, data_gpiods->desc,
+-				  value_array);
++	gpiod_set_raw_array_bitmap(priv->data_gpiods, &bits);
  
-+	if (raw && !IS_ERR_OR_NULL(array->chip)) {
-+		unsigned long mask = (1ULL << array->ndescs) - 1;
-+
-+		return gpio_chip_get_multiple(array->chip, &mask, bits);
-+	}
-+
- 	i = gpiod_get_array_value_complex(raw, can_sleep, array->ndescs,
- 					  array->desc, value_array);
- 	if (i)
-@@ -3156,6 +3162,14 @@ int gpiod_set_array_bitmap_complex(bool raw, bool can_sleep,
- 	if (array->ndescs > sizeof(*bits))
- 		return -EINVAL;
+ 	ams_delta_write_commit(priv);
+ }
+@@ -106,22 +100,15 @@ static void ams_delta_write_first_byte(struct ams_delta_nand *priv, u_char byte)
  
-+	if (raw && !IS_ERR_OR_NULL(array->chip)) {
-+		unsigned long mask = (1ULL << array->ndescs) - 1;
-+
-+		gpio_chip_set_multiple(array->chip, &mask, bits);
-+
-+		return 0;
-+	}
-+
- 	for (i = 0; i < array->ndescs; i++)
- 		value_array[i] = test_bit(i, bits);
+ static u_char ams_delta_read_next_byte(struct ams_delta_nand *priv)
+ {
+-	struct gpio_descs *data_gpiods = priv->data_gpiods;
+-	unsigned long bits = 0;
+-	int i, value_array[data_gpiods->ndescs];
++	unsigned long bits;
+ 
+ 	gpiod_set_value(priv->gpiod_nre, 0);
+ 	ndelay(40);
+ 
+-	gpiod_get_raw_array_value(data_gpiods->ndescs, data_gpiods->desc,
+-				  value_array);
++	gpiod_get_raw_array_bitmap(priv->data_gpiods, &bits);
+ 
+ 	gpiod_set_value(priv->gpiod_nre, 1);
+ 
+-	for (i = 0; i < data_gpiods->ndescs; i++)
+-		if (value_array[i])
+-			__set_bit(i, &bits);
+-
+ 	return bits;
+ }
  
 -- 
 2.16.4
