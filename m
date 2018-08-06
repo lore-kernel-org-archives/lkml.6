@@ -3,149 +3,136 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 301E3C46472
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 21:28:34 +0000 (UTC)
-Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4DAA21A5D
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AF68C4646D
 	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 21:28:33 +0000 (UTC)
+Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
+	by mail.kernel.org (Postfix) with ESMTP id D276921A5E
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 21:28:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HvWizv+A"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4DAA21A5D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="fxi7dNqb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D276921A5E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733143AbeHFXj3 (ORCPT
+        id S1733117AbeHFXj2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 19:39:29 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:44956 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731982AbeHFXj2 (ORCPT
+        Mon, 6 Aug 2018 19:39:28 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:38856 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730310AbeHFXj2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 6 Aug 2018 19:39:28 -0400
-Received: by mail-ed1-f65.google.com with SMTP id f23-v6so5874855edr.11
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Aug 2018 14:28:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ikR6TP7282ERP0kUUFX5W1c8IsMF7VGrOOPyP0KjutM=;
-        b=HvWizv+A5LVRnlBy30Iokzia7fMCVzxiUxONtXxalDiYhi8iNWEk0d1WyE9cXrcPp3
-         dC+gl7sHVDQKimZtnWdjHb/M7KaRSuFw4/sMslYq5D19VpoYjEnwLtBHL8SOzfIDU+3R
-         CufDyt9+qy/Y089TGkuoFCU3qC0AoWwJ37VBZdQxwFlpyNO5rOv5zECTag/+j9oPPs1u
-         XPpguKbBwTlvny8H2ejRV1qUoRd5kRmpKDepxcewQn18L4orZxzHL5BJRdXTvP52snWh
-         9ES3Svxt/xCKucQEJ1T5y6+FadQiZSzQwwn1ZXzJj7MTj6HTYmbG8PFiIGHPwsB+QyVo
-         uDEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ikR6TP7282ERP0kUUFX5W1c8IsMF7VGrOOPyP0KjutM=;
-        b=f4tL08yTRRdL4V5REhUaInOGkuvE/vo7k2sqft5mb1EGiUVisFath6QpFs9lC37UaM
-         LtE/azTYUoe4aZsloRGbNKYwf/05D/FI/vI6zPFlGj9jm1ZYUdEegF+TKXEy4o5ZJ8Wn
-         Yc+lvlYjei3UzFXRkZR+VxLaTGHvT1TyXCZ7HEc1lmjb7hRwMDsdqd+u5jZ4ZHvIcbLp
-         SkxvUclGZTkwKD02kaSRlln+rJxrVoda879XLyUmy+WlaQ7tKZ8b2v5yPFpUgVWl363p
-         Ha2IMn4ixGOfRf0S/BO2TkFx6gNBpjxUuFse/CqTNBEIlPzhLFeQlcILEVg3r4Q9+Lou
-         pG6g==
-X-Gm-Message-State: AOUpUlHzyG69mDeSTgTT6eqU33Ezz/glk7rBuUuhFygWyEYLuAym1Cz8
-        IYEZA/8hDUGjAmkmTl0nOoFxQS0O5fbNx6Y6NT2ufp6C
-X-Google-Smtp-Source: AAOMgpdPWNNl5qOoZ5J3WBLQUoGa+MowGofNEfY8RM0J0eYdpQhRdyXFvkoNdMTAi3pmIpcl843slxMvp+Do7aqYQTk=
-X-Received: by 2002:a50:97fc:: with SMTP id f57-v6mr19285489edb.21.1533590909212;
- Mon, 06 Aug 2018 14:28:29 -0700 (PDT)
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w76LNtIv175393;
+        Mon, 6 Aug 2018 21:28:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=vgIV0JvsCe/lZyR6bnb0dj24gQdZKQU6PDA8U9rbMEU=;
+ b=fxi7dNqbYe3upFtOpez2F5n9L30tDP9Taz2HyVC9NYGbRnuVsD9h4PVTJDa4YKNBJ0Lx
+ c8FzcHGGQcDPAWHrMRufwebwCharQovGbTMHtykh8JhP/uao/7vJI+o6S/0N6jn696df
+ +jYuACEo0Je5p+Mwl70pTSXMrhP8ZRHSXIlkNvWFn3InEhoCU4d2nCWV2m2yPmuLOIt8
+ +k3p8RwwvBQmXeDMBEb3j038ZDbxLXdS1/NPwBnJ/bh76/kOfdKmioSV5vSzRMz7hyUQ
+ jYr8eT2iZk4ZlNiofgzyqKiTyAA3qrYVaAAO+DP3ysaF+mQwpRXoBYd+Hn+u0zqVFAB5 Vw== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by aserp2130.oracle.com with ESMTP id 2kn1ncxvm2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 06 Aug 2018 21:28:14 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w76LSDBE022466
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 6 Aug 2018 21:28:13 GMT
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w76LSDiO012266;
+        Mon, 6 Aug 2018 21:28:13 GMT
+Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 06 Aug 2018 14:28:13 -0700
+Subject: Re: [PATCH] xen/biomerge: Use true and false for boolean values
+To:     Juergen Gross <jgross@suse.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
+References: <20180805005014.GA2299@embeddedor.com>
+ <9c98c6be-92ba-3045-0888-549376872eb6@suse.com>
+From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
+ 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
+ Jg6OxFYd01z+a+oL
+Message-ID: <d9b3d7e6-4bc1-a7c2-1636-7a7f7ec9f10f@oracle.com>
+Date:   Mon, 6 Aug 2018 17:29:15 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <60466ab6-311b-ad8d-2f79-32702174cb95@lab.ntt.co.jp>
- <20180719153347.buoe6pavpqc75zbb@treble> <20180719174311.GK2494@hirez.programming.kicks-ass.net>
- <20180719211954.GZ2512@hirez.programming.kicks-ass.net> <CAJAFBLDtRUwYhMaOrgHer4eTvjWL2jC-fy0GGv+Pjd8q3wgywA@mail.gmail.com>
- <20180806154235.GO2494@hirez.programming.kicks-ass.net> <CAJAFBLCt574QmeP5N9D-d+Sc67BWQ5E2C=LhqFVvUpchC4O3PQ@mail.gmail.com>
- <20180806180423.GC2476@hirez.programming.kicks-ass.net>
-In-Reply-To: <20180806180423.GC2476@hirez.programming.kicks-ass.net>
-From:   Fubo Chen <fubo.chen@gmail.com>
-Date:   Mon, 6 Aug 2018 14:28:18 -0700
-Message-ID: <CAJAFBLA2WigOMxuWXxZvHVwuGtvYr3_b4gpNbdGzry-=AVxjqA@mail.gmail.com>
-Subject: Re: [PATCH] perf/x86/intel: Fix unwind errors from PEBS entries (mk-II)
-To:     peterz@infradead.org
-Cc:     jpoimboe@redhat.com, Ingo Molnar <mingo@kernel.org>,
-        bhole_prashant_q7@lab.ntt.co.jp,
-        Linux Kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <9c98c6be-92ba-3045-0888-549376872eb6@suse.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8977 signatures=668707
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1808060224
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 6, 2018 at 11:04 AM Peter Zijlstra <peterz@infradead.org> wrote:
-> On Mon, Aug 06, 2018 at 09:54:23AM -0700, Fubo Chen wrote:
-> > On Mon, Aug 6, 2018 at 8:42 AM Peter Zijlstra <peterz@infradead.org> wrote:
-> > > On Mon, Aug 06, 2018 at 08:35:07AM -0700, Fubo Chen wrote:
-> > > > On Thu, Jul 19, 2018 at 2:21 PM Peter Zijlstra <peterz@infradead.org> wrote:
-> > > > > --- a/include/uapi/linux/perf_event.h
-> > > > > +++ b/include/uapi/linux/perf_event.h
-> > > > > @@ -143,6 +143,8 @@ enum perf_event_sample_format {
-> > > > >         PERF_SAMPLE_PHYS_ADDR                   = 1U << 19,
-> > > > >
-> > > > >         PERF_SAMPLE_MAX = 1U << 20,             /* non-ABI */
-> > > > > +
-> > > > > +       __PERF_SAMPLE_CALLCHAIN_EARLY           = 1UL << 63,
-> > > > >  };
-> > > >
-> > > > The above change makes sparse unhappy :-( Sparse reports the following
-> > > > complaint about __PERF_SAMPLE_CALLCHAIN_EARLY:
-> > >
-> > > I thought I changed that to 1ULL before commit.
-> >
-> > The sparse complaint was reported for code with the "1ULL << 63".
->
-> Ah ok.. and I think I see what you mean. The C standard says that enums
-> shall be 'int'. However C++ standard says any integer type that fits the
-> largest value.
->
-> I suppose GCC uses the C++ definition and I suspect many other compilers
-> will too.
-
-Do you think the patch below is sufficient to suppress the sparse warning?
-
----
- include/uapi/linux/perf_event.h       | 2 +-
- tools/include/uapi/linux/perf_event.h | 3 +--
- 2 files changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
-index eeb787b1c53c..0f0f43599b74 100644
---- a/include/uapi/linux/perf_event.h
-+++ b/include/uapi/linux/perf_event.h
-@@ -144,8 +144,8 @@ enum perf_event_sample_format {
-
-  PERF_SAMPLE_MAX = 1U << 20, /* non-ABI */
-
-- __PERF_SAMPLE_CALLCHAIN_EARLY = 1ULL << 63,
- };
-+#define __PERF_SAMPLE_CALLCHAIN_EARLY (1ULL << 63)
-
- /*
-  * values to program into branch_sample_type when PERF_SAMPLE_BRANCH is set
-diff --git a/tools/include/uapi/linux/perf_event.h
-b/tools/include/uapi/linux/perf_event.h
-index eeb787b1c53c..3db800bc8d2e 100644
---- a/tools/include/uapi/linux/perf_event.h
-+++ b/tools/include/uapi/linux/perf_event.h
-@@ -143,9 +143,8 @@ enum perf_event_sample_format {
-  PERF_SAMPLE_PHYS_ADDR = 1U << 19,
-
-  PERF_SAMPLE_MAX = 1U << 20, /* non-ABI */
--
-- __PERF_SAMPLE_CALLCHAIN_EARLY = 1ULL << 63,
- };
-+#define __PERF_SAMPLE_CALLCHAIN_EARLY (1ULL << 63)
-
- /*
-  * values to program into branch_sample_type when PERF_SAMPLE_BRANCH is set
+On 08/06/2018 07:42 AM, Juergen Gross wrote:
+> On 05/08/18 02:50, Gustavo A. R. Silva wrote:
+>> Return statements in functions returning bool should use true or false
+>> instead of an integer value.
+>>
+>> This code was detected with the help of Coccinelle.
+>>
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> Reviewed-by: Juergen Gross <jgross@suse.com>
 
 
+Thanks.
 
-
-
--- 
-Fubo.
+Applied to for-linus-4.19
