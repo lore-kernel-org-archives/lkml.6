@@ -3,127 +3,75 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E196C46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 09:21:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C653AC4646D
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 09:22:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C854B219EC
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 09:21:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C854B219EC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 856D2219EC
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 09:22:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 856D2219EC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730215AbeHFL3h (ORCPT
+        id S1729478AbeHFLaX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 07:29:37 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:52247 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727490AbeHFL3h (ORCPT
+        Mon, 6 Aug 2018 07:30:23 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:44767 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727401AbeHFLaW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 07:29:37 -0400
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <sha@pengutronix.de>)
-        id 1fmbha-0006kB-8i; Mon, 06 Aug 2018 11:21:22 +0200
-Received: from sha by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <sha@pengutronix.de>)
-        id 1fmbhZ-0001Po-Ts; Mon, 06 Aug 2018 11:21:21 +0200
-Date:   Mon, 6 Aug 2018 11:21:21 +0200
-From:   Sascha Hauer <s.hauer@pengutronix.de>
-To:     Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc:     Mark Brown <broonie@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
-        alexandre.belloni@bootlin.com
-Subject: Re: [PATCH RESEND 3/5] spi: imx: Use correct number of bytes per
- words
-Message-ID: <20180806092121.s7kuwf3yamrerw24@pengutronix.de>
-References: <20180717143154.28241-1-maxime.chevallier@bootlin.com>
- <20180717143154.28241-4-maxime.chevallier@bootlin.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180717143154.28241-4-maxime.chevallier@bootlin.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-IRC:  #ptxdist @freenode
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-Uptime: 11:21:07 up 54 days, 18:30, 56 users,  load average: 0.15, 0.13,
- 0.21
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        Mon, 6 Aug 2018 07:30:22 -0400
+Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=kurt.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA1:256)
+        (Exim 4.80)
+        (envelope-from <kurt@linutronix.de>)
+        id 1fmbi9-0002UC-Hj; Mon, 06 Aug 2018 11:21:57 +0200
+From:   Kurt Kanzenbach <kurt@linutronix.de>
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Kurt Kanzenbach <kurt@linutronix.de>,
+        Gregory CLEMENT <gregory.clement@bootlin.com>,
+        Jane Wan <Jane.Wan@nokia.com>,
+        Jagdish Gediya <jagdish.gediya@nxp.com>,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] mtd: nand: fsl-ifc: fix SRAM initialization for newer controller
+Date:   Mon,  6 Aug 2018 11:21:35 +0200
+Message-Id: <20180806092137.9287-1-kurt@linutronix.de>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 17, 2018 at 04:31:52PM +0200, Maxime Chevallier wrote:
-> The SPI core enforces that we always use the next power-of-two number of
-> bytes to store words. As a result, a 24 bits word will be stored in 4
-> bytes.
-> 
-> This commit fixes the spi_imx_bytes_per_word function to return the
-> correct number of bytes.
-> 
-> This also allows to get rid of unnecessary checks in the can_dma
-> function, since the SPI core validates that we always have a transfer
-> length that is a multiple of the number of bytes per word.
-> 
-> Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Hi,
 
-Reviewed-by: Sascha Hauer <s.hauer@pengutronix.de>
+the current way of initializing the internal SRAM of the IFC controller only
+works for older controller versions. Newer versions require a different
+method. So, adding support for it.
 
-Sascha
+Thereby, the result of the SRAM initialization should be checked. If it's not
+successful, further commands such as read won't work.
 
-> ---
->  drivers/spi/spi-imx.c | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/spi/spi-imx.c b/drivers/spi/spi-imx.c
-> index ecafbda5ec94..3ae706dac660 100644
-> --- a/drivers/spi/spi-imx.c
-> +++ b/drivers/spi/spi-imx.c
-> @@ -202,7 +202,12 @@ static unsigned int spi_imx_clkdiv_2(unsigned int fin,
->  
->  static int spi_imx_bytes_per_word(const int bits_per_word)
->  {
-> -	return DIV_ROUND_UP(bits_per_word, BITS_PER_BYTE);
-> +	if (bits_per_word <= 8)
-> +		return 1;
-> +	else if (bits_per_word <= 16)
-> +		return 2;
-> +	else
-> +		return 4;
->  }
->  
->  static bool spi_imx_can_dma(struct spi_master *master, struct spi_device *spi,
-> @@ -219,9 +224,6 @@ static bool spi_imx_can_dma(struct spi_master *master, struct spi_device *spi,
->  
->  	bytes_per_word = spi_imx_bytes_per_word(transfer->bits_per_word);
->  
-> -	if (bytes_per_word != 1 && bytes_per_word != 2 && bytes_per_word != 4)
-> -		return false;
-> -
->  	for (i = spi_imx->devtype_data->fifo_size / 2; i > 0; i--) {
->  		if (!(transfer->len % (i * bytes_per_word)))
->  			break;
-> -- 
-> 2.11.0
-> 
-> 
+Tested on hardware.
+
+Thanks,
+Kurt
+
+Kurt Kanzenbach (2):
+  mtd: nand: fsl-ifc: check result of SRAM initialization
+  mtd: nand: fsl-ifc: fixup SRAM init for newer ctrl versions
+
+ drivers/mtd/nand/raw/fsl_ifc_nand.c | 35 +++++++++++++++++++++++++++++++----
+ include/linux/fsl_ifc.h             |  2 ++
+ 2 files changed, 33 insertions(+), 4 deletions(-)
 
 -- 
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+2.11.0
+
