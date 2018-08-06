@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDA78C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 09:18:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C6A6C46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 09:19:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A0EF21723
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 09:18:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 314CE2172B
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 09:19:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nio365.onmicrosoft.com header.i=@nio365.onmicrosoft.com header.b="KeZwSniz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A0EF21723
+	dkim=pass (1024-bit key) header.d=nio365.onmicrosoft.com header.i=@nio365.onmicrosoft.com header.b="J7IkKvSU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 314CE2172B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ni.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730256AbeHFL0v (ORCPT
+        id S1730279AbeHFL1N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 07:26:51 -0400
-Received: from mx0b-00010702.pphosted.com ([148.163.158.57]:36238 "EHLO
+        Mon, 6 Aug 2018 07:27:13 -0400
+Received: from mx0b-00010702.pphosted.com ([148.163.158.57]:36580 "EHLO
         mx0b-00010702.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728475AbeHFL0u (ORCPT
+        by vger.kernel.org with ESMTP id S1727451AbeHFL1M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 07:26:50 -0400
-Received: from pps.filterd (m0098779.ppops.net [127.0.0.1])
-        by mx0b-00010702.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w769BDsE000403;
-        Mon, 6 Aug 2018 04:17:44 -0500
+        Mon, 6 Aug 2018 07:27:12 -0400
+Received: from pps.filterd (m0098778.ppops.net [127.0.0.1])
+        by mx0b-00010702.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w769BFKt008035;
+        Mon, 6 Aug 2018 04:17:47 -0500
 Authentication-Results: ppops.net;
         dkim=pass header.d=nio365.onmicrosoft.com header.s=selector1-ni-com
-Received: from nam01-by2-obe.outbound.protection.outlook.com (mail-by2nam01lp0180.outbound.protection.outlook.com [216.32.181.180])
-        by mx0b-00010702.pphosted.com with ESMTP id 2kn9y5kk7p-1
+Received: from nam02-sn1-obe.outbound.protection.outlook.com (mail-sn1nam02lp0020.outbound.protection.outlook.com [216.32.180.20])
+        by mx0b-00010702.pphosted.com with ESMTP id 2kn93xbp4c-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Mon, 06 Aug 2018 04:17:44 -0500
+        Mon, 06 Aug 2018 04:17:47 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=nio365.onmicrosoft.com; s=selector1-ni-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CBsEvnAqao96YrSVCTjgxikm0AUf2icoXxyE0pbFMwY=;
- b=KeZwSniz8H2rlXAuK6Nder+m72MLIW9ibaNT+ScH/PFq3niU2Ba4hzWWqhS9HQ/E07+BzWdY4vhgyXYA4kEJ8Scpr1Yb9oQ3iuCYKBcQ63S7a/e33b9aLF0os47fO68abYBFASzcdrdB8ncaFIsUA9JcPOh++Xwqpd1xdnK++DI=
+ bh=PxrucYTxbB2PY8+gsCWLHBwoZET2kgZGL9xzmXHVing=;
+ b=J7IkKvSU1xrEmG2XMugL+sLg7PRl119QMvuT4vc5C/vzg5cyqa4/gOeGlZuffzNF1U+vAV3d/ZplzxRXvmqDz/vRCOId6mfK6kW6uNxLTAy8HebIlW3HjmU3RPqP2FcOqMr+uWHNiWeW+NBrpbJ9Q7IIlvclpssuGXkjMKvJIq4=
 Received: from jcartwri.amer.corp.natinst.com (130.164.62.116) by
- CY4PR04MB0966.namprd04.prod.outlook.com (2603:10b6:910:54::24) with Microsoft
+ BN6PR04MB0963.namprd04.prod.outlook.com (2603:10b6:405:43::35) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1017.18; Mon, 6 Aug 2018 09:17:42 +0000
+ 15.20.1017.14; Mon, 6 Aug 2018 09:17:46 +0000
 Received: by jcartwri.amer.corp.natinst.com (Postfix, from userid 1000)
-        id BAA31302D67; Mon,  6 Aug 2018 04:17:38 -0500 (CDT)
+        id 0CAB3302F5F; Mon,  6 Aug 2018 04:17:39 -0500 (CDT)
 From:   Julia Cartwright <julia@ni.com>
 To:     linux-kernel@vger.kernel.org, linux-rt-users@vger.kernel.org
 Cc:     Thomas Gleixner <tglx@linutronix.de>,
@@ -54,78 +54,70 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         John Kacur <jkacur@redhat.com>,
         Paul Gortmaker <paul.gortmaker@windriver.com>,
         Daniel Wagner <daniel.wagner@siemens.com>,
-        tom.zanussi@linux.intel.com, Peter Zijlstra <peterz@infradead.org>,
-        Gratian Crisan <gratian.crisan@ni.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        dvhart@infradead.org,
-        syzbot 
-        <bot+2af19c9e1ffe4d4ee1d16c56ae7580feaee75765@syzkaller.appspotmail.com>,
-        syzkaller-bugs@googlegroups.com, stable@vger.kernel.org,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH RT 02/22] futex: Fix more put_pi_state() vs. exit_pi_state_list() races
-Date:   Mon,  6 Aug 2018 04:17:18 -0500
-Message-Id: <31e791651f8d58a70490d8a6bb0809521f64ca6e.1533540554.git.julia@ni.com>
+        tom.zanussi@linux.intel.com, stable-rt@vger.kernel.org
+Subject: [PATCH RT 13/22] net: use task_struct instead of CPU number as the queue owner on -RT
+Date:   Mon,  6 Aug 2018 04:17:29 -0500
+Message-Id: <3e1cac93740464869248669c4f10a68773844243.1533540554.git.julia@ni.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <cover.1533540554.git.julia@ni.com>
 References: <cover.1533540554.git.julia@ni.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [130.164.62.116]
-X-ClientProxiedBy: SN6PR1501CA0002.namprd15.prod.outlook.com
- (2603:10b6:805::15) To CY4PR04MB0966.namprd04.prod.outlook.com
- (2603:10b6:910:54::24)
+X-ClientProxiedBy: CY4PR04CA0055.namprd04.prod.outlook.com
+ (2603:10b6:910:4f::20) To BN6PR04MB0963.namprd04.prod.outlook.com
+ (2603:10b6:405:43::35)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: f000c027-8b01-4a3c-27c4-08d5fb7d7691
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:CY4PR04MB0966;
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR04MB0966;3:uwiJyUeUN98hv6fUOpGSJLcJm48H8dujRGLkVU/n2K+maeU8OCSZLZJGh4DD3tDLb3OGkq75ALvai6UMagFv1NEN/gLIuowK3Pk/Bn9w0LHXkmxSENt2fPhkCUPblueFE27DtMpWVOXc6QDQwn7pWMweIb9ab7ufMFhp0mFLRXdl2eLjC3EUJVceVi/+mLOHgIIcRFN+ALU/E4kkhKjKHp4A566nE9pF0tB3h1tMtXF+4kgmtFBdhzomjQEdDFNp;25:hB/FSuik1Ja6CC/FjD5QBkZQf3aaekptrHTNJ9xN/8298zDsTKTi5NYDrvWS1RLt7lzoxikQSh1gRnPS/Ijjlw4H9VgsFZ6tRYj0y4UASU0XgsUByYBHP9VNSl9Z2rpDfl04KTjTI6whC9AYtOLVrdSwa6H9ICqIEGREoeMCDtk3btVgyANsBEVrUy2PcOXXPsjVpTJGrwQtgRlQnKrZANnQ3t2FgFSZlkP9+dD5QTYjHKowHMIbFHKpF9UWvyzFiwDNwu8IhU5uygLXv8+GO6P27Qrc4qbGLVTb+XIlll9MRWGoVVEgPTDfLphloGg3xJG0Dz/FrkIMJW1K/kWkww==;31:qECfYZtdHNHm4Pk8HNL0d7O4zyc3xnGN0ALcSg1WFdw0S/sC+YbxJNaa7OySvVKolz5j9xV23ZSvbgJ6goibXIINSgJ22NXQ00+cEWSbHmAy5nOeaWCj8+JTcuLJx3iHob8yq7gWejPlPb7Y7v4X7dJ0WH6n/XwdDdhmjPs7z6JPgouMqCiELGoJQI13qwsgJ6iXEL3W6BaL3F9pUxutqrUF9BdvviptYBPR8FBfqx0=
-X-MS-TrafficTypeDiagnostic: CY4PR04MB0966:
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR04MB0966;20:/PSRzdFQjbehhm5PnIABrKxEfBXV8AT3axD9WSJ8tkYKkb8EFmFTX/9DzjT1509uBk0DmY9Szi/Qj0/DyRPPHX5FgIqsZfmpDz7jNiptGB8J5StgPdngaw0vQkWoZpDOMv8AZEX0wrpvwCpCWT2v1NH4AOHPK2pV1Z047ZEkloaerRssKiHzuBnNM4UBCtDIh/TNHPdgz8F+Hxl+qc0fZc25wD1LAXsOUOMCGWCS0gBvc8WV9bBS5dZZtI8KM7nIDKXr7tqBfMnQC4SBjoQeATZGcwLR5CRNVw/QWSmq2AyCGnCt93KuQ9LxJSCbNKOx3EJKVtnu9A7B/Ub9eqtp2MVUXZQY48v0wdHmJBzXVE6G1/P+mQyzSpkf5UW9bFjX+HZRpRe7ETLggP+lkRLPmbPxwj73J8Q1E/sJiE2wQRwSheRKB4NfYSUtXNPEvOx6JdvKUNZ8QHfqkoAogFRm8q4XFwLUx76Im2lCdtZ/ZOJxe95Tieowb8F+fGgdc8lkTF5aK2J6Koxyy8ERtkr1prJSgPC1+RZax+kQJaFHHeIg4+ipw9cgesnh2exVdqjqFQerEOQNSfdf02tO6Hy2JHBZeZDMTtXYTku9rli4q6s=
-X-Microsoft-Antispam-PRVS: <CY4PR04MB0966B960149DBF633F9197FDF4200@CY4PR04MB0966.namprd04.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(215639381216008)(9452136761055)(211936372134217)(42068640409301)(153496737603132)(145744241990776);
+X-MS-Office365-Filtering-Correlation-Id: 8b7970d7-2aa4-4255-57e6-08d5fb7d7907
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BN6PR04MB0963;
+X-Microsoft-Exchange-Diagnostics: 1;BN6PR04MB0963;3:ILj17mMxegoWsmcjfj3OtlzvQevYgyUYAsk56sZBZiMEsvo6pHek4LJPaqp05qCNJC+c/w42+NLIjZ8WYvYEQb0BdGAnooIM6krY7X6jezWAB8SBpa0vrwyi1OYIAZnrCmzIzwiFzsflw5sGgwcauhiZtSXJoDS5+0WvijZKfIvNmEsUrCUvUWydbEqWYaUVd9QeaVi5hy4jcZ5IbvuBN5z2DwDikUMXLcGZWrpEWWY+btogog70oG3RIwUEEZzh;25:/2byzTSDriN7p+2zgIIHmcJfHKeDpXkbJ+afaf3xNUxwbnxSBemg8MC9ITxxoAMtd9qEYmnLhokG/kZ+m89KUadppg0rZbXTDOoJvVsTJFgp+Ge0f4jbHUMc3sZjTiage5PvtVALtL/Hmnglmc/K/pp1O/B3QY7ZQpuiThkzZpMIDAjZonifuM8pK8g5CrRCUvJhwGbjcHJ/IsgNCH+KBILuVv1eJNY3bYe8RWDTYJjgwJNDNrCcDYx7aAMW4tihyXhMbZ09YHx4ldYPgOq5Ug6Ez6SXHBzfh1937WTsA+f98JreCh3nX27X5eA6ty4mZ7k+rHZ1Tr4bSy9wIIr+5w==;31:RUxB/XIpHOuBdD7X+HgLVcQOD3QvAklN70NG9ImQwH4acwMqIPndHDAsfS9uP5oN/M9WIGUooA33GXMXsRluAkYNpcv+XxxQ9ST3CMIxclx/1q5Ghy4oRnabORT0CTzE1DDCf3HG1Xg3TW1hEYgmIs85X3USYUxR3cllBKDzY4b+bsW06s+e0RhHKMaHWkhwT04XOgiLLNDNdhSIPHtrGOQMlZo5vaoZSFcLhik9+ro=
+X-MS-TrafficTypeDiagnostic: BN6PR04MB0963:
+X-Microsoft-Exchange-Diagnostics: 1;BN6PR04MB0963;20:VRG4Wyri+0wDGlbaA/NqV5YLA8m7dcRgXHMEEGv5j74fBl3xe7Ycjp1ku/7mBBx3jkAW5VybO8pIQT23FHTBRdQHsQUv6Rqb6MVVLDSPFyzWajdrn6oTXNowMhtZ9i8QAuRqiJpJJLtLtG6oiE69VPbM3CkCL1S1+JPy4oRV8Od16/Yf82GSQczha/oZAzpFQpPd9OYwH6qmpP03pdRIRzDVRF1YVy3OFl/HHFo69+9pBcBDsYjB6Tit4wDOikrUqoEtQeAc/Iwd2Ypc/bJKlp233nKDURbFBnuBquKVhgjQdFtMr+O8LrJnd6QyRjKMmQa4lzP9PVkKaITjahl3243nEN1wT0BObTiM2b0elc2mUrBnX/hVGE9ALt7gctcvw/4nvJhS49FSvT9LcRMW8tW9ltWk+lTg38gWBqnhudWchxoqPc+ZtBjo1nEKrv5GkGvccRr7zvkI9cVQWwmFb+GFpZjQNqfxQMmPZeCIuSG5ETXwJ4srW/33zlcQlg/gVs4qTcrzx3KOzs/A+rElGcDrtmOQhsGfFk8HIAdaEowVB4iETgk9Tqf9wFXjDzZoQeL5jYUA75deD1FsV8a8NkrcCGJaRLgBSU6LlZ38mMQ=
+X-Microsoft-Antispam-PRVS: <BN6PR04MB096332FE3E59865B253DBA36F4200@BN6PR04MB0963.namprd04.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(9452136761055)(145744241990776);
 X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231311)(944501410)(52105095)(10201501046)(3002001)(93006095)(93001095)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(6072148)(201708071742011)(7699016);SRVR:CY4PR04MB0966;BCL:0;PCL:0;RULEID:;SRVR:CY4PR04MB0966;
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR04MB0966;4:Sc3H75xMB8F3cMF9/dJ25XYxhY6SuXDtJhmMy6w5hcH4/enhyGqfJfnDCwCEToML/sr6wxRYGbCDZeru8qats24qmqKTFYiiEqIccm3NsV/ZNRUw9eTJRbDIjjFmkXrcTRKRGv8GAX57YE/BOH94esJDUqutM8EmFb4W6+A/+agYAWX3BWRh0feSbQJyRJTfmDr1Zs4iicZ6nw3TTrVDsVolFrd/0A6MndAVD42xMAKsOkTs1sWedZ2/uFmtGYluwfTFErFRQaKIw0186w2CWCJvKwKolYpTwFrrIWzE9QYKH8XjRzkaLJ1mFYpi5XnqVJF08tHgyvLTJHlDzvIQnFYxDNLmrqlEzPwuT9i0axU+30C1KBIbYQGbUEft93HyLp+wM0a6Vg52L5nTy8T8tG3pK0J3bgkeun2aP/smWGTnebr0ZsNhBGn0bjdSKs3eaXM3lUWhoD7AzFoZX1X6TfbOsc8ueGTiCDeJPSa89KQ=
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(93006095)(93001095)(3002001)(3231311)(944501410)(52105095)(149027)(150027)(6041310)(20161123562045)(20161123564045)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:BN6PR04MB0963;BCL:0;PCL:0;RULEID:;SRVR:BN6PR04MB0963;
+X-Microsoft-Exchange-Diagnostics: 1;BN6PR04MB0963;4:kKUAsxjHHCBy0MN5soMv/zxhv5GQUyVeWHTUD9Zl6uTkCR8xvk10iYXuIiOZJVjoQKLYxDCQzJVd5TRBEJUK7ZJn775aCvDpAhTfmt0vVDm2oNb3RmmsJLLB/jypbLpOkNdt5fI5l+N1xlthDFNuNwF+kabEVQgs6uyFbyi8A0GbFP3aSWXKJyXPR6qkqqyXRr1Q3XMGJ6PKqeJI5FzKflPf+h3LmU2RBOY85Y922BSEEu5ia7ITVpmg8CkbryGKy9FB0IW2afbDY18Er6Whp7U6R907Nh6rkv4Dwhm1pHABObMNB9KbWQ3FQiRdVZaFBxrFcIP17y2cc/MNT22rd2p2T6JWxyPP2rsnGsLVS6w=
 X-Forefront-PRVS: 07562C22DA
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(346002)(136003)(396003)(39850400004)(376002)(366004)(189003)(199004)(42186006)(51416003)(52116002)(316002)(966005)(53936002)(122856001)(76176011)(8676002)(2906002)(81156014)(105586002)(81166006)(106356001)(4326008)(6306002)(16586007)(478600001)(54906003)(48376002)(5660300001)(50466002)(66066001)(6666003)(118296001)(52956003)(446003)(50226002)(7416002)(90966002)(6266002)(68736007)(8936002)(47776003)(2616005)(26005)(186003)(11346002)(486006)(476003)(386003)(14444005)(3846002)(97736004)(36756003)(7736002)(6116002)(305945005);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR04MB0966;H:jcartwri.amer.corp.natinst.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(376002)(346002)(136003)(366004)(39850400004)(396003)(199004)(189003)(305945005)(6116002)(76176011)(2906002)(186003)(97736004)(7736002)(50466002)(48376002)(52116002)(51416003)(81166006)(26005)(478600001)(36756003)(8676002)(81156014)(122856001)(3846002)(316002)(106356001)(53936002)(16586007)(105586002)(6666003)(42186006)(52956003)(7416002)(68736007)(66066001)(47776003)(6266002)(14444005)(118296001)(11346002)(5660300001)(4326008)(50226002)(446003)(2616005)(386003)(476003)(486006)(8936002)(90966002)(54906003);DIR:OUT;SFP:1102;SCL:1;SRVR:BN6PR04MB0963;H:jcartwri.amer.corp.natinst.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 Received-SPF: None (protection.outlook.com: ni.com does not designate
  permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;CY4PR04MB0966;23:dXljsLiQ18turgLso0K8NyCWp8HmpuF9Gb7oVGGqu?=
- =?us-ascii?Q?SdmZkT/+9IN6+V68RS8uvK/U0D3VfzrFqZ9ucVFXt8Hr6Bn8gMPqBgjoU7bJ?=
- =?us-ascii?Q?mxctHuZyhx+xzspgYZLPRVQnMAKMupdJgQG5KzNjBP0SOPfofy6eAde3OAiF?=
- =?us-ascii?Q?Lc0emdMDG7KXi8xVcL42H7RQ1jxz+xL3JYC4Ftpb5w7poT2ZIkgdCCwafQ/m?=
- =?us-ascii?Q?d998gxFJ+UmxNQx/Y+TbN45+CIf+eb8OKXU9BiAAhrRY2uJ+wx+qhqqQtDud?=
- =?us-ascii?Q?0CgXMBizpndZdbnpTKipBh1qHCv/IrxFyzv81v5+24TE5CNDGrh3IiKsakDQ?=
- =?us-ascii?Q?wOBrqmTFlz1nFqkl5JFWCsQXPdZSCykDkvsTXZ/M7KBuMIg67BFZ13Lyf2fa?=
- =?us-ascii?Q?FmEnVQIoeQyXDEewkFV4IP/MiM6s+DrJ82p3HIFjwpBEXjHAnst6HhfvvA2U?=
- =?us-ascii?Q?sjFrmHaBHQ4yan7hbMssw6eufMwF0sNsONdV3BRqktHth/zxEzvc5vbyMQcW?=
- =?us-ascii?Q?PMw+yuJLYROQyT8dyFXpWR59OKl2IFgaxkwfSuhl8lH1RAvpuXvxDYiEHTpB?=
- =?us-ascii?Q?goYcDWYn0ux5einkdK7x0ocYp39nq8jTS5cqd/VZ3Fdgu6pU1gdUYuvyac42?=
- =?us-ascii?Q?88Hj2AAzJErHE31E88a2j0fqeyxhwmnVXpJo1/mj+MnQf72WOmE1akiWVJ+X?=
- =?us-ascii?Q?IizfgJR7rmnS8j+szL5th6davY95wgL4zhsryaFb21Qb0S56IgWKx/+3PsfV?=
- =?us-ascii?Q?2KPnTn8QqDrMOX1Su5FKc0ZRv4OJcWdPEdg/eY4+hUr17m/gfV0dhSi8ypg8?=
- =?us-ascii?Q?736dZgKIJvF+mjDo2x3NHXXeTpoStmwqIb+i42jgZ3jj44Z97rxz4iwsACov?=
- =?us-ascii?Q?FzUJE//kRbgP/fK7TJOobBOMY/ORgr4GGjpWna/8ETt3YiN5YMVQv0cTWdgc?=
- =?us-ascii?Q?obYbS0Sql67t9wMtwKYUCE9XVBO4ALXYHa+vJPJ6mCE1AxeI9HoIjOhHE93r?=
- =?us-ascii?Q?vf2lsNF3MvpxtKbtrmXK9k+9jD7hHSQQaNvqhoDoc2NTKi+GrJS/bNCMRYvd?=
- =?us-ascii?Q?z0CGHCHFqrl6Qdg7j0RStAY9MSuOUAS8DeNSK7TILI1ILft9x97QtAuSWd5q?=
- =?us-ascii?Q?NRaXy9gmDL+HMc+2GqXPymcS+FdL9RtyLNMp9BEGNKWmhGmyW0fu6USAocyy?=
- =?us-ascii?Q?GgQypMqB+zoDIfFz3IGNGDvuIi5kqQsV2wnYGT28ZEyYqmt/fmFwF7OuA=3D?=
- =?us-ascii?Q?=3D?=
-X-Microsoft-Antispam-Message-Info: 9a8C/YqkIn7F4VazWxS5cR03pHMezvmVuzAF3nxqqYYyzrWUxeOV6OunTTMXisrtfH56ujSUjpeViKr+gRqPAYF9O/kcnfuozgRqgDiPG4PajeEKTkrNR1r+WcV8AbuYnUkaNKuHwfo/0pMcgrIZN4ZTlNfR36KzFREbtjgaVDChX5qundsjckc/0Fa1s47ggyMEwlhRyL6jSfBreulYc0TrywTZqm6qGjPrEffuRjbDNueMU5JQesjQI97s1SCt/kWmMFKeje/UDial+m00GTo/XUju550PEqznHUU4Q1+x1eLVUVo390uXGsvdOhvor98lmIaXhj9auAqBYHzlrzLScgB5YAd5WFMdIw3Ppy8=
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR04MB0966;6:dgsyWdMrdDAylRdtOrmhSzouI8KOYc10fR5pUqqP2vL0BjPuco3WaBSiCLrIbn1Rej49z5ucWhAqlcflOK8WRh1E172ossHJvet8nfl5O9C0d+4KQ5psjaQbIn4moQ7MhZ7euaKzWD5epSVZktPrNZ2J2lKMyYHZ+UiB4HpuU5VuYXSKXVCE5ZJb8WZF0sODQfvPj3NxZ4PF/ylcKATnkVcR4NfhbEvrbaC/20UElQfqUAzxTHQDPrf9F5AoXSitl5B2Aob8kw4usr+mu80TRTwrlW2X8DYkJt5+CJenNwFgUR3Js8R4hiewVKg7Jg+1JqUAZ/SCF7UfDF21XyKIZWcB+yUCxsvSvPnmwC1prpxhCPt5728CIT6vy2JLHflEm7JJQ11ZhwO82tmb54oNZ/dAnwNBrW916soXR1/bOZYDiibCz7elUROzEFWpdkTYfA++ADnn0D3H+1M1o0m+Mg==;5:r/lbpQU/UA7N70G8hOhU/sNvYxbg+NeLmt2kCPQmNQ9RjvVlHV0J5stMMJpCp7Cep9jKrO2NB+7Y9HCKFG8dX/aKRnjU9gv+c8HjWI4AxQqPxOmfQO+P0iKy7GfsjS7tBKCGB+UGaX+JnSVcsMNHQ/KKOxTeWo8kuM/xmO8wuZ0=;7:e6AI3EKuTE1gK602stC3cj4XY1Nu/mw3sJSNV0UNGfrPhkLN67nliAXOqUP3LLRme8QLr80G6lMTwjLpcn5gDvGDAykDyEBE7/yJCJGkpqt0gv0oXnS7HKhj0tH748j6yQNfHK3UVeyEsQwnAdWMhU9pmtQJw/6RNigq7SjAtM5jtFJLZLuJJ0CA7hD4/BHr2Om+QJDOiVmOk5yJDILDrtryOejels4pLXM36xuubNvLM2f7kIGypjF78pZNXAzt
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BN6PR04MB0963;23:Nnx0sQldbi/eH0zsoK+k2llsTWJqNvvdmm5RgL4ab?=
+ =?us-ascii?Q?eEnLYKAzoQ+bw03Evis5mYpzbrF9+LhsgeEoifDfitSNysgzKHpgdW34z6+e?=
+ =?us-ascii?Q?SJNSI52nhlN8Per83cAl4QhzZARY3FQ/l+RRICHfsiLxcGplOduLk1ysFWMT?=
+ =?us-ascii?Q?x4ULyurQ95q7l7DQ0ysW6RnmzqiuvXK+H14WQnbmTT7hcVlpvpAI0x4uOlAZ?=
+ =?us-ascii?Q?x84LIEsSm7k6uEeMHSTcYr7syKio69MendvORUE6ShCEgHLSl6j6UYMBQmjU?=
+ =?us-ascii?Q?+n3PTBry4SrQwWPeiUE7ZaSZpk9NLQnhYql2zRvo1KWVUM6iQABaSdFhi2Zu?=
+ =?us-ascii?Q?RzqIJ3cUKsrGW3Yaa/bcgncX5+CYLvmMjJaFSZHg3srrM0L9eFQuVhJj38Fm?=
+ =?us-ascii?Q?oQlTTqoZFvYzNMBOKh0GmifiLHV/H3vqiU43yhyiK5vWQcIJnGBrQdwfEX2s?=
+ =?us-ascii?Q?tzWQVW3jFL78KY8Uhog3HdZPZ7XaOHmYjQBrTiRhVxoSle/Wwi56fCUIyLqg?=
+ =?us-ascii?Q?2JxkF4fghffxq9XIpHd2vciyybTaU3CcHXR1COwWHT6mB/U0GwMjCK2Tc9Uj?=
+ =?us-ascii?Q?vHBcMA/AcGplayxH0HJRThHwNYq3Lcjpuw3nCC36cL5DntPdI4PWeNyCPWnv?=
+ =?us-ascii?Q?CiK1B+bP1wtoCWx3N8KIfLIMA/LsGy28t9BZutCGa9mpqRuaY42dHT8pbguN?=
+ =?us-ascii?Q?L3shljsNteyAQw0ygecAbMy2s89zZBKAeXPuL0knxYsN7IDnTNmaWnFWOyeH?=
+ =?us-ascii?Q?rFw8ku7ndqH6OqxPkE/QtWLeuqS0OG5KnLpHpTuUH40eaCfXIg5er/B+BWvv?=
+ =?us-ascii?Q?k3W8vKaRq6ll86sIOQxDaOOwzmCdJOLexp67wx2RmsKtIDyBY+1nuwFAUXzX?=
+ =?us-ascii?Q?sStqm2kMdE0LoBaWpl+tKCcVvKe9QGJ7iyP+/OMd4O/IlQETrpJiYjRB4+hH?=
+ =?us-ascii?Q?fH2J1x1HlLhPEr7FGcG1TScTpp+YCtObThh2+OIeV4OO6vpv1KE+dhzDN/av?=
+ =?us-ascii?Q?T6AeFWeW89fvi5aGP0s3wdXh/fWRiDKCMxyzMI/1YVbgpIcwW84cBmVhh2Iz?=
+ =?us-ascii?Q?tUTYaFwBAu1bX7PksIWrKPlFeDUigz3pxWTsDh6jEHGFZNLnDJjbu/VfpyBX?=
+ =?us-ascii?Q?KOLchQA1BU0ZMSI3j6LElPQBAXCdwkALFbZgQkcz2rN2coUKT1lMvKi2i+GF?=
+ =?us-ascii?Q?uvKCWgxmXI4d2iYs8/8st5zg931psEXMCDz?=
+X-Microsoft-Antispam-Message-Info: dVkmnT9WfR8YDrSPvWAxp8TS6ggfxHIzLGVCXhYUj0ZJ+WugC3nX1k3Pckyx0OscEFcomIJPAwKuOYszxuAIb3xpqCRsQ8veHe2j0O82196aJ7x8ElBgUluS1/9xXXMq0Usty8tYBa7axvaH27YINN53HdNFPjzXfdnC8pRmDtWVikgBi2MElYDZXCCfisw6SFkaBruyTlsiTyXaMsEVuE1thi+4KNurd2CIGGAX1UAT92JnuRw0puTKW9MJHKQnq306uNXXSKUSoXYLTzeT8x5Ya7VyszT4h8AMkXYUWY5BGkeyVjL4jN4uI5NOyVkWbPKFGkLDT1PUdMV4lTtVuZHq4cvW9ehQa4epn9o9NtA=
+X-Microsoft-Exchange-Diagnostics: 1;BN6PR04MB0963;6:Ed2aIMBt06o5cBZFIgieAnH/jv7Ac7zuv9qBiK7yqStON53C1kTKcHidi8Zsvl8oSfQArHs4R51j12xNXkHwOXW+dKahqaEN1bZZmYegR4Zk8i5uh5K7ODCOBZv79SPaHOPXY9BsBYUbMHqBoBxY1UzTVhGsSzWXdoYbqt4eMgr6MasBeIRK8/WdS9CfInxTinAn7y4RXLnbE3kMOPAEmYcqI7q1thuuxg/nDC2I7yHDRugCtTzTa+r/9z/si3hEnX6yOH/C39gG7GSD5bdPeg9kOAXjW08Sw6pPLpChWZEdYxyvqlLRyVVJPqrl1zyap/rk0BJW+2AGVyPMRm4BCpH8DmqowE4m//rgdCoXJSKl/4DRgVArYlIJZ91sz0SnIn5AthdCTU0KDaeFQy/+P5SWdlEi0B59syva/Zzmok1tY1cDgoVfT+Nz+pE82NDL3KMph38KeU620uvXrOiUjA==;5:07laGhzfzUCKO9x2r3w6/MUOmGpiAIB+R0tPh0jL9M5Ih9wSYV7ntvr3WH986JqEDepT8PdFHtRfmihhMRxVjlp3AJMhWusA2D+9VDEtnOOVUq57SUfsQhdog65ana8J80HGAHtIjWm20fyEGg2A1QLG5TSSfuvPB+ujn9J3A/A=;7:GMAuyX38/qSz1CSnOcNPi4eTwshc3PhgIc6FlFIviV/nKJnHfZUpmW26BZkAmfJcaHcVlr+UBtphxR+SfKn3/6eLX2TZ6YjXLoUUpeR1gB4EXRGBySqaeSgipj6CzBG+vP0eiyWqNLoKg2t5D9QEEwNhTiaxA8zvjjREu3jWCPRatvl7PmkoyjEJHUapZUPCAGj4WRMe5vdYiZMuo3S56aNW5zB+Fq/OYr3FFvfAyDV7irYsS3hnek0x0iD7Xly4
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
 X-OriginatorOrg: ni.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2018 09:17:42.1041 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f000c027-8b01-4a3c-27c4-08d5fb7d7691
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2018 09:17:46.2020 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8b7970d7-2aa4-4255-57e6-08d5fb7d7907
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 87ba1f9a-44cd-43a6-b008-6fdb45a5204e
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR04MB0966
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR04MB0963
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-06_05:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=inbound_policy_notspam policy=inbound_policy score=30
- priorityscore=1501 malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0
- spamscore=0 clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0
+ spamscore=0 clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
  mlxlogscore=999 adultscore=0 classifier=spam adjust=30 reason=mlx
  scancount=1 engine=8.0.1-1807170000 definitions=main-1808060100
 Sender: linux-kernel-owner@vger.kernel.org
@@ -133,121 +125,156 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Zijlstra <peterz@infradead.org>
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
 4.9.115-rt94-rc1 stable review patch.
 If you have any objection to the inclusion of this patch, let me know.
 
 --- 8< --- 8< --- 8< ---
-[ Upstream commit 51d00899f7e6ded15c89cb4e2cb11a35283bac81 ]
+In commit ("net: move xmit_recursion to per-task variable on -RT") the
+recursion level was changed to be per-task since we can get preempted in
+BH on -RT. The lock owner should consequently be recorded as the task
+that holds the lock and not the CPU. Otherwise we trigger the "Dead loop
+on virtual device" warning on SMP systems.
 
-Dmitry (through syzbot) reported being able to trigger the WARN in
-get_pi_state() and a use-after-free on:
-
-	raw_spin_lock_irq(&pi_state->pi_mutex.wait_lock);
-
-Both are due to this race:
-
-  exit_pi_state_list()				put_pi_state()
-
-  lock(&curr->pi_lock)
-  while() {
-	pi_state = list_first_entry(head);
-	hb = hash_futex(&pi_state->key);
-	unlock(&curr->pi_lock);
-
-						dec_and_test(&pi_state->refcount);
-
-	lock(&hb->lock)
-	lock(&pi_state->pi_mutex.wait_lock)	// uaf if pi_state free'd
-	lock(&curr->pi_lock);
-
-	....
-
-	unlock(&curr->pi_lock);
-	get_pi_state();				// WARN; refcount==0
-
-The problem is we take the reference count too late, and don't allow it
-being 0. Fix it by using inc_not_zero() and simply retrying the loop
-when we fail to get a refcount. In that case put_pi_state() should
-remove the entry from the list.
-
-Reported-by: Dmitry Vyukov <dvyukov@google.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Gratian Crisan <gratian.crisan@ni.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: dvhart@infradead.org
-Cc: syzbot <bot+2af19c9e1ffe4d4ee1d16c56ae7580feaee75765@syzkaller.appspotmail.com>
-Cc: syzkaller-bugs@googlegroups.com
-Cc: <stable@vger.kernel.org>
-Fixes: c74aef2d06a9 ("futex: Fix pi_state->owner serialization")
-Link: http://lkml.kernel.org/r/20171031101853.xpfh72y643kdfhjs@hirez.programming.kicks-ass.net
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: stable-rt@vger.kernel.org
+Reported-by: Kurt Kanzenbach <kurt.kanzenbach@linutronix.de>
+Tested-by: Kurt Kanzenbach <kurt.kanzenbach@linutronix.de>
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+(cherry picked from commit d3a66ffd1c4f0253076069b10a8223e7b6e80e38)
 Signed-off-by: Julia Cartwright <julia@ni.com>
 ---
- kernel/futex.c | 23 ++++++++++++++++++++---
- 1 file changed, 20 insertions(+), 3 deletions(-)
+ include/linux/netdevice.h | 54 ++++++++++++++++++++++++++++++++++-----
+ net/core/dev.c            |  6 ++++-
+ 2 files changed, 53 insertions(+), 7 deletions(-)
 
-diff --git a/kernel/futex.c b/kernel/futex.c
-index 47e42faad6c5..270148be5647 100644
---- a/kernel/futex.c
-+++ b/kernel/futex.c
-@@ -899,11 +899,27 @@ void exit_pi_state_list(struct task_struct *curr)
+diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
+index 85fc72b8a92b..6f1a3f286c4b 100644
+--- a/include/linux/netdevice.h
++++ b/include/linux/netdevice.h
+@@ -594,7 +594,11 @@ struct netdev_queue {
+  * write-mostly part
+  */
+ 	spinlock_t		_xmit_lock ____cacheline_aligned_in_smp;
++#ifdef CONFIG_PREEMPT_RT_FULL
++	struct task_struct	*xmit_lock_owner;
++#else
+ 	int			xmit_lock_owner;
++#endif
+ 	/*
+ 	 * Time (in jiffies) of last Tx
  	 */
- 	raw_spin_lock_irq(&curr->pi_lock);
- 	while (!list_empty(head)) {
--
- 		next = head->next;
- 		pi_state = list_entry(next, struct futex_pi_state, list);
- 		key = pi_state->key;
- 		hb = hash_futex(&key);
+@@ -3610,41 +3614,79 @@ static inline u32 netif_msg_init(int debug_value, int default_msg_enable_bits)
+ 	return (1 << debug_value) - 1;
+ }
+ 
++#ifdef CONFIG_PREEMPT_RT_FULL
++static inline void netdev_queue_set_owner(struct netdev_queue *txq, int cpu)
++{
++	txq->xmit_lock_owner = current;
++}
 +
-+		/*
-+		 * We can race against put_pi_state() removing itself from the
-+		 * list (a waiter going away). put_pi_state() will first
-+		 * decrement the reference count and then modify the list, so
-+		 * its possible to see the list entry but fail this reference
-+		 * acquire.
-+		 *
-+		 * In that case; drop the locks to let put_pi_state() make
-+		 * progress and retry the loop.
-+		 */
-+		if (!atomic_inc_not_zero(&pi_state->refcount)) {
-+			raw_spin_unlock_irq(&curr->pi_lock);
-+			cpu_relax();
-+			raw_spin_lock_irq(&curr->pi_lock);
-+			continue;
-+		}
- 		raw_spin_unlock_irq(&curr->pi_lock);
++static inline void netdev_queue_clear_owner(struct netdev_queue *txq)
++{
++	txq->xmit_lock_owner = NULL;
++}
++
++static inline bool netdev_queue_has_owner(struct netdev_queue *txq)
++{
++	if (txq->xmit_lock_owner != NULL)
++		return true;
++	return false;
++}
++
++#else
++
++static inline void netdev_queue_set_owner(struct netdev_queue *txq, int cpu)
++{
++	txq->xmit_lock_owner = cpu;
++}
++
++static inline void netdev_queue_clear_owner(struct netdev_queue *txq)
++{
++	txq->xmit_lock_owner = -1;
++}
++
++static inline bool netdev_queue_has_owner(struct netdev_queue *txq)
++{
++	if (txq->xmit_lock_owner != -1)
++		return true;
++	return false;
++}
++#endif
++
+ static inline void __netif_tx_lock(struct netdev_queue *txq, int cpu)
+ {
+ 	spin_lock(&txq->_xmit_lock);
+-	txq->xmit_lock_owner = cpu;
++	netdev_queue_set_owner(txq, cpu);
+ }
  
- 		spin_lock(&hb->lock);
-@@ -914,10 +930,12 @@ void exit_pi_state_list(struct task_struct *curr)
- 		 * task still owns the PI-state:
- 		 */
- 		if (head->next != next) {
-+			/* retain curr->pi_lock for the loop invariant */
- 			raw_spin_unlock(&curr->pi_lock);
- 			raw_spin_unlock_irq(&pi_state->pi_mutex.wait_lock);
- 			spin_unlock(&hb->lock);
- 			raw_spin_lock_irq(&curr->pi_lock);
-+			put_pi_state(pi_state);
- 			continue;
- 		}
+ static inline void __netif_tx_lock_bh(struct netdev_queue *txq)
+ {
+ 	spin_lock_bh(&txq->_xmit_lock);
+-	txq->xmit_lock_owner = smp_processor_id();
++	netdev_queue_set_owner(txq, smp_processor_id());
+ }
  
-@@ -925,9 +943,8 @@ void exit_pi_state_list(struct task_struct *curr)
- 		WARN_ON(list_empty(&pi_state->list));
- 		list_del_init(&pi_state->list);
- 		pi_state->owner = NULL;
--		raw_spin_unlock(&curr->pi_lock);
+ static inline bool __netif_tx_trylock(struct netdev_queue *txq)
+ {
+ 	bool ok = spin_trylock(&txq->_xmit_lock);
+ 	if (likely(ok))
+-		txq->xmit_lock_owner = smp_processor_id();
++		netdev_queue_set_owner(txq, smp_processor_id());
+ 	return ok;
+ }
  
--		get_pi_state(pi_state);
-+		raw_spin_unlock(&curr->pi_lock);
- 		raw_spin_unlock_irq(&pi_state->pi_mutex.wait_lock);
- 		spin_unlock(&hb->lock);
+ static inline void __netif_tx_unlock(struct netdev_queue *txq)
+ {
+-	txq->xmit_lock_owner = -1;
++	netdev_queue_clear_owner(txq);
+ 	spin_unlock(&txq->_xmit_lock);
+ }
  
+ static inline void __netif_tx_unlock_bh(struct netdev_queue *txq)
+ {
+-	txq->xmit_lock_owner = -1;
++	netdev_queue_clear_owner(txq);
+ 	spin_unlock_bh(&txq->_xmit_lock);
+ }
+ 
+ static inline void txq_trans_update(struct netdev_queue *txq)
+ {
+-	if (txq->xmit_lock_owner != -1)
++	if (netdev_queue_has_owner(txq))
+ 		txq->trans_start = jiffies;
+ }
+ 
+diff --git a/net/core/dev.c b/net/core/dev.c
+index 93995575d23a..e7dc4700e463 100644
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -3449,7 +3449,11 @@ static int __dev_queue_xmit(struct sk_buff *skb, void *accel_priv)
+ 	if (dev->flags & IFF_UP) {
+ 		int cpu = smp_processor_id(); /* ok because BHs are off */
+ 
++#ifdef CONFIG_PREEMPT_RT_FULL
++		if (txq->xmit_lock_owner != current) {
++#else
+ 		if (txq->xmit_lock_owner != cpu) {
++#endif
+ 			if (unlikely(xmit_rec_read() > XMIT_RECURSION_LIMIT))
+ 				goto recursion_alert;
+ 
+@@ -7168,7 +7172,7 @@ static void netdev_init_one_queue(struct net_device *dev,
+ 	/* Initialize queue lock */
+ 	spin_lock_init(&queue->_xmit_lock);
+ 	netdev_set_xmit_lockdep_class(&queue->_xmit_lock, dev->type);
+-	queue->xmit_lock_owner = -1;
++	netdev_queue_clear_owner(queue);
+ 	netdev_queue_numa_node_write(queue, NUMA_NO_NODE);
+ 	queue->dev = dev;
+ #ifdef CONFIG_BQL
 -- 
 2.18.0
 
