@@ -2,96 +2,131 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDED9C46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 15:35:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 414A5C46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 15:37:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98CCD21A54
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 15:35:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C0710219E8
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 15:37:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mSI/KZpR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98CCD21A54
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20150623.gappssmtp.com header.i=@cmpxchg-org.20150623.gappssmtp.com header.b="doipVUdh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0710219E8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cmpxchg.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732938AbeHFRo7 (ORCPT
+        id S1732886AbeHFRrd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 13:44:59 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:34260 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732548AbeHFRo6 (ORCPT
+        Mon, 6 Aug 2018 13:47:33 -0400
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:39538 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729724AbeHFRrd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 13:44:58 -0400
-Received: by mail-ed1-f66.google.com with SMTP id h1-v6so5360458eds.1
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Aug 2018 08:35:19 -0700 (PDT)
+        Mon, 6 Aug 2018 13:47:33 -0400
+Received: by mail-qk0-f193.google.com with SMTP id b5-v6so9173675qkg.6
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Aug 2018 08:37:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=CL8O5tikn45Pv25rK5T7KHEXv5j1NLsiTb/gKepailI=;
-        b=mSI/KZpRwX1YubhX+glDlBNP1BAgY3caKwjQ9lEvESxUylUWUQSljXKWEJ9deBzY0p
-         H7o7+S3i21tI5sbBk4xBF68NwiTKCBoS55qVWlFp9lIHeXm0uPexS8GNLV9Og/koxQfJ
-         8qt3vNWVDh9/gXHat33mH4Lapc2l+aTj8IpqG1XCqQEws4KbC5L8maqpt7RXh7BrHUJ2
-         q1JwNl/cgpbKTPjEaew4ij72g4XKyT7ajUSBPf62Sf9Rv8OuALezSw/fBhNGDD2V6Ue/
-         ZwQ3EAFTI0hjEMyG9TyZntclXOwHsty04Vqebn7XzCSOdzMeP37Lb99u2AOHf1m8uzQH
-         gRxQ==
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=qGtFj7QGQQt9S5+V3oAQSCBbiSZ7fGINDfjcXzvk80A=;
+        b=doipVUdhWQjSItLgotm8duswFctbnFegpnQzV8RbRWdGIBRLv4YoA4CdkusAOiMjtI
+         gFA0jFlkbOr2humb2F+PzGx1sQmQsyESlBXXmBRIHN5kaRJ07i1P1GbuCODQtfM10dbj
+         Fm33vvDZdiXtFyk1SwCw30dF26jTaU4w5Msi4wr06kM1xIRwjUwq5l5aU49g1WmWrK/s
+         jmtELt0EA5SuLdTLyLTf6l3ybX4JKr33fmYWbpIS0yvtnjEgl8f8G9idOVNBOEHQfrSH
+         Gjb/AP8fa/0hkJYASs03WBYrzR75uVwYzlsEuYbhcJnhk+YY1nT5Ruf3aLpKMFG8MmLe
+         q36A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=CL8O5tikn45Pv25rK5T7KHEXv5j1NLsiTb/gKepailI=;
-        b=smiOIMDRcWPmgSWs5WnpcZbF/jtdHPJBZLLLnQX+NbHdf8vGkbm5TvxwAm5vNKzDJE
-         9Af8rMV1eVQv0kOtjUAq5PaAmP6KyBZCc2cENFTHJ/gY8z9eP+QYFDxPMdPsGs0cLZpR
-         tMsrLSPYg1tT+IhL7i45wLm6o5VPM68wY3tARAyjn/ET0fFfGK/Orgpw7CVGETI/Q8CY
-         5a5jwfDfVjMH6ybGiKKhJLmEP1P0em43kb9IETXJwsBiJ0b/RwKXVO5+zqUYA3zYrKOw
-         eMWqpsWtJxRr76EgKX7KtgiSydVxE1FoFGX88lEowJm0uZ+d+Pfs1Us6l9K/0bXlhxnJ
-         zQ/Q==
-X-Gm-Message-State: AOUpUlGtxKP9HmNTNhg0yvVQ3DAxdZI+Q8js7E97NazWpkAoW0Zn0Z6p
-        cDeeiIZlhdJyFvGcMXD36B9qEwA49w72wH5i4wg=
-X-Google-Smtp-Source: AAOMgpeKkVAmpZrE3WZ6pnw657YHMyl/DeYeu9X/LR0jF2LcZWmVsDHMxcTXzFJw3QL92Y3NBWAMFuH+U2zp49SidJw=
-X-Received: by 2002:a50:c292:: with SMTP id o18-v6mr19386042edf.188.1533569718869;
- Mon, 06 Aug 2018 08:35:18 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=qGtFj7QGQQt9S5+V3oAQSCBbiSZ7fGINDfjcXzvk80A=;
+        b=Pe+7mcxpWzQwuHPxyd0HJpzxjFICR+do4VdxHrq68LptU+DN622ifbiX3M2b7WE8bd
+         RP7QoLLBIrWwzLRcwps6QgJ311aHPzDmzdgfYQNKRyY4zMzogx+q6tFPWF9fQJ+B2XCf
+         wQZX9Q2IguUgHgtsjd/ZxgVxEh8GWCIMjDPLAhl5mk1uhRiZxZ0x08+fh5ouR9bwEQhi
+         wV4V+OJ/ydTvHqym4ODkdEvLHUk7QQGRKFQzEgZ1FXo/Z5lMM33xg7b0yLqE8/HhP6l2
+         A5w71LOURsAND1M8BD20zdOZbO77gju8WHeoGQO/eKy6wgcRwPswI12U0DKlRSGQiq14
+         s8Pg==
+X-Gm-Message-State: AOUpUlGhrcAZSFP493xUZkuNZpXVfEsm2zk+6WssVEAmBBScbFZtQVhA
+        R931+MUjO9zfi3j/tRHRxZyo+A==
+X-Google-Smtp-Source: AAOMgpfr7nWmNMKJN+bHmq/uvPij//Bev/cPR/bOc+FMn3wWhm9xVed28OivHAel4KkpNGyzyNdeeQ==
+X-Received: by 2002:a37:71c7:: with SMTP id m190-v6mr13962620qkc.275.1533569873837;
+        Mon, 06 Aug 2018 08:37:53 -0700 (PDT)
+Received: from localhost (pool-96-246-38-36.nycmny.fios.verizon.net. [96.246.38.36])
+        by smtp.gmail.com with ESMTPSA id t11-v6sm9584120qkt.28.2018.08.06.08.37.52
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 06 Aug 2018 08:37:52 -0700 (PDT)
+Date:   Mon, 6 Aug 2018 11:40:51 -0400
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Tejun Heo <tj@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Daniel Drake <drake@endlessm.com>,
+        Vinayak Menon <vinmenon@codeaurora.org>,
+        Christopher Lameter <cl@linux.com>,
+        Mike Galbraith <efault@gmx.de>,
+        Shakeel Butt <shakeelb@google.com>,
+        Peter Enderborg <peter.enderborg@sony.com>, linux-mm@kvack.org,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@fb.com
+Subject: Re: [PATCH 8/9] psi: pressure stall information for CPU, memory, and
+ IO
+Message-ID: <20180806154051.GA14209@cmpxchg.org>
+References: <20180801151958.32590-1-hannes@cmpxchg.org>
+ <20180801151958.32590-9-hannes@cmpxchg.org>
+ <20180803165641.GA2476@hirez.programming.kicks-ass.net>
+ <20180806150550.GA9888@cmpxchg.org>
+ <20180806152528.GM2494@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-References: <60466ab6-311b-ad8d-2f79-32702174cb95@lab.ntt.co.jp>
- <20180719153347.buoe6pavpqc75zbb@treble> <20180719174311.GK2494@hirez.programming.kicks-ass.net>
- <20180719211954.GZ2512@hirez.programming.kicks-ass.net>
-In-Reply-To: <20180719211954.GZ2512@hirez.programming.kicks-ass.net>
-From:   Fubo Chen <fubo.chen@gmail.com>
-Date:   Mon, 6 Aug 2018 08:35:07 -0700
-Message-ID: <CAJAFBLDtRUwYhMaOrgHer4eTvjWL2jC-fy0GGv+Pjd8q3wgywA@mail.gmail.com>
-Subject: Re: [PATCH] perf/x86/intel: Fix unwind errors from PEBS entries (mk-II)
-To:     peterz@infradead.org
-Cc:     jpoimboe@redhat.com, Ingo Molnar <mingo@kernel.org>,
-        bhole_prashant_q7@lab.ntt.co.jp,
-        Linux Kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180806152528.GM2494@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 19, 2018 at 2:21 PM Peter Zijlstra <peterz@infradead.org> wrote:
-> --- a/include/uapi/linux/perf_event.h
-> +++ b/include/uapi/linux/perf_event.h
-> @@ -143,6 +143,8 @@ enum perf_event_sample_format {
->         PERF_SAMPLE_PHYS_ADDR                   = 1U << 19,
->
->         PERF_SAMPLE_MAX = 1U << 20,             /* non-ABI */
-> +
-> +       __PERF_SAMPLE_CALLCHAIN_EARLY           = 1UL << 63,
->  };
+On Mon, Aug 06, 2018 at 05:25:28PM +0200, Peter Zijlstra wrote:
+> On Mon, Aug 06, 2018 at 11:05:50AM -0400, Johannes Weiner wrote:
+> > Argh, that's right. This needs an explicit count if we want to access
+> > it locklessly. And you already said you didn't like that this is the
+> > only state not derived purely from the task counters, so maybe this is
+> > the way to go after all.
+> > 
+> > How about something like this (untested)?
+> 
+> 
+> > +static inline void psi_switch(struct rq *rq, struct task_struct *prev,
+> > +			      struct task_struct *next)
+> > +{
+> > +	if (psi_disabled)
+> > +		return;
+> > +
+> > +	if (unlikely(prev->flags & PF_MEMSTALL))
+> > +		psi_task_change(prev, rq_clock(rq), TSK_RECLAIMING, 0);
+> > +	if (unlikely(next->flags & PF_MEMSTALL))
+> > +		psi_task_change(next, rq_clock(rq), 0, TSK_RECLAIMING);
+> > +}
+> 
+> 
+> Urgh... can't say I really like that.
+> 
+> I would really rather do that scheduler_tick() thing to avoid the remote
+> update. The tick is a lot less hot than the switch path and esp.
+> next->flags might be a cold line (prev->flags is typically the same line
+> as prev->state so we already have that, but I don't think anybody now
+> looks at next->flags or its line, so that'd be cold load).
 
-The above change makes sparse unhappy :-( Sparse reports the following
-complaint about __PERF_SAMPLE_CALLCHAIN_EARLY:
+Okay, the tick updater sounds like a much better option then. HZ
+frequency should produce more than recent enough data.
 
-./include/uapi/linux/perf_event.h:147:56: warning: cast truncates bits
-from constant value (8000000000000000 becomes 0)
+That means we will retain the not-so-nice PF_MEMSTALL flag test under
+rq lock, but it'll eliminate most of that memory ordering headache.
 
-Is the above change portable? Isn't a compiler allowed to use 'int' to
-represent an enumeration type?
-
-Fubo.
+I'll do that. Thanks!
