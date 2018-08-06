@@ -2,177 +2,113 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5780FC46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 12:09:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B55DC4646D
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 12:09:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15A3421A04
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 12:09:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15A3421A04
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id D46C021A0F
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 12:09:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D46C021A0F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732066AbeHFOST (ORCPT
+        id S1732124AbeHFOSm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 10:18:19 -0400
-Received: from mga11.intel.com ([192.55.52.93]:53493 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731180AbeHFOST (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 10:18:19 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Aug 2018 05:09:30 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,452,1526367600"; 
-   d="scan'208";a="77869419"
-Received: from espoo.fi.intel.com ([10.237.66.147])
-  by fmsmga004.fm.intel.com with ESMTP; 06 Aug 2018 05:09:27 -0700
-From:   Gwan-gyeong Mun <gwan-gyeong.mun@intel.com>
-To:     Jani Nikula <jani.nikula@linux.intel.com>
-Cc:     Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: [v2] drm/i915: Add detection of changing of edid on between suspend and resume
-Date:   Mon,  6 Aug 2018 15:09:27 +0300
-Message-Id: <20180806120927.24719-1-gwan-gyeong.mun@intel.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180803163453.7760-1-gwan-gyeong.mun@intel.com>
-References: <20180803163453.7760-1-gwan-gyeong.mun@intel.com>
+        Mon, 6 Aug 2018 10:18:42 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56104 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731180AbeHFOSm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 10:18:42 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1657B818AAEB;
+        Mon,  6 Aug 2018 12:09:52 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id C962C101042B;
+        Mon,  6 Aug 2018 12:09:51 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id w76C9pYk022731;
+        Mon, 6 Aug 2018 08:09:51 -0400
+Received: from localhost (mpatocka@localhost)
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id w76C9oVn022722;
+        Mon, 6 Aug 2018 08:09:50 -0400
+X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
+Date:   Mon, 6 Aug 2018 08:09:50 -0400 (EDT)
+From:   Mikulas Patocka <mpatocka@redhat.com>
+X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+cc:     Florian Weimer <fweimer@redhat.com>,
+        Andrew Pinski <pinskia@gmail.com>,
+        Richard Earnshaw <Richard.Earnshaw@arm.com>,
+        Ramana Radhakrishnan <ramana.gcc@googlemail.com>,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        GNU C Library <libc-alpha@sourceware.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Subject: Re: framebuffer corruption due to overlapping stp instructions on
+ arm64
+In-Reply-To: <CAKv+Gu8HyHX8qjg1qHV2M9Re+RGQJigjdAFVC_yR4niGkk2ikA@mail.gmail.com>
+Message-ID: <alpine.LRH.2.02.1808060700070.10220@file01.intranet.prod.int.rdu2.redhat.com>
+References: <alpine.LRH.2.02.1808021242320.31834@file01.intranet.prod.int.rdu2.redhat.com> <CAKv+Gu97QvwoLLK_zueiA_gjg_4Q5cqU4YVUyHUVFFfffdyJaw@mail.gmail.com> <11f9185a-7f71-83df-3a57-0a0ae9c1f934@arm.com> <alpine.LRH.2.02.1808032046540.24748@file01.intranet.prod.int.rdu2.redhat.com>
+ <CA+=Sn1=6F-fGLmXE0VqQHTqTCUKUT=Fz29mMT7349SPFisbZ9A@mail.gmail.com> <alpine.LRH.2.02.1808040611070.23762@file01.intranet.prod.int.rdu2.redhat.com> <fd2cae87-b2df-d8ef-8836-e6cbf8c5f851@redhat.com> <alpine.LRH.2.02.1808060325110.3756@file01.intranet.prod.int.rdu2.redhat.com>
+ <CAKv+Gu_y6La77sWOSROrwfRy65jrFVYVvRZt+ewNheYhdhHCkQ@mail.gmail.com> <alpine.LRH.2.02.1808060626060.2986@file01.intranet.prod.int.rdu2.redhat.com> <CAKv+Gu87YqLM=FFZ6V8rHhuhskDdsBUuXFpqNKVbXWqdnuNEyA@mail.gmail.com> <alpine.LRH.2.02.1808060639200.2986@file01.intranet.prod.int.rdu2.redhat.com>
+ <CAKv+Gu8HyHX8qjg1qHV2M9Re+RGQJigjdAFVC_yR4niGkk2ikA@mail.gmail.com>
+User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Mon, 06 Aug 2018 12:09:52 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Mon, 06 Aug 2018 12:09:52 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mpatocka@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The hotplug detection routine of i915 uses drm_helper_hpd_irq_event(). This
-helper can detect changing of status of connector, but it can not detect changing
-of edid. Following scenario requires detection of changing of edid.
 
- 1) plug display device to a connector
- 2) system suspend
- 3) unplug 1)'s display device and plug the other display device to a connector
- 4) system resume
 
-It adds edid check routine when a connector status still remains as "connector_status_connected".
+On Mon, 6 Aug 2018, Ard Biesheuvel wrote:
 
-v2: Add NULL check before comparing of EDIDs.
+> >> Are we talking about a quirk for the Armada 8040 or about PCIe on ARM
+> >> in general?
+> >
+> > I don't know - there are not any other easily available PCIe ARM boards
+> > except for Armada 8040.
+> 
+> ... indeed, and sadly, the ones that are available all have this
+> horrible Synopsys DesignWare PCIe IP that does not implement a true
+> root complex at all, but is simply repurposed endpoint IP with some
+> tweaks so it vaguely resembles a root complex.
+> 
+> But this is exactly why I am asking: I use a AMD Seattle Overdrive as
+> my main Linux development system, and it runs the gnome-shell stack
+> flawlessly (using the nouveau driver), as well as a UEFI framebuffer
+> using efifb. So my suspicion is that this is either a Synopsys IP
+> issue or an interconnect issue, and has nothing to do with the
+> impedance mismatch between AMBA and PCIe.
 
-Testcase: igt/kms_chamelium/hdmi-edid-change-during-hibernate
-Testcase: igt/kms_chamelium/hdmi-edid-change-during-suspend
-Testcase: igt/kms_chamelium/dp-edid-change-during-hibernate
-Testcase: igt/kms_chamelium/dp-edid-change-during-suspend
+If you run the program for testing memcpy on framebuffer that I posted in 
+this thread - does it detect some corruption for you?
 
-Signed-off-by: Gwan-gyeong Mun <gwan-gyeong.mun@intel.com>
----
- drivers/gpu/drm/i915/intel_hotplug.c | 83 +++++++++++++++++++++++++++-
- 1 file changed, 82 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/i915/intel_hotplug.c b/drivers/gpu/drm/i915/intel_hotplug.c
-index 648a13c6043c..0bd3e1c38167 100644
---- a/drivers/gpu/drm/i915/intel_hotplug.c
-+++ b/drivers/gpu/drm/i915/intel_hotplug.c
-@@ -507,6 +507,87 @@ void intel_hpd_init(struct drm_i915_private *dev_priv)
- 	}
- }
- 
-+/**
-+ * intel_hpd_irq_event - hotplug processing
-+ * @dev: drm_device
-+ *
-+ * Drivers can use this function to run a detect cycle on all connectors which
-+ * have the DRM_CONNECTOR_POLL_HPD flag set in their &polled member. All other
-+ * connectors are ignored, which is useful to avoid reprobing fixed panels.
-+ *
-+ * This function is useful for drivers which can't or don't track hotplug interrupts
-+ * for each connector. This function is based on drm_helper_hpd_irq_event() helper
-+ * function and besides it adds edid check routine when a connector status still
-+ * remains as "connector_status_connected".
-+ *
-+ * Following scenario requires detection of changing of edid.
-+ *  1) plug display device to a connector
-+ *  2) system suspend
-+ *  3) unplug 1)'s display device and plug the other display device to a connector
-+ *  4) system resume
-+
-+ * This function must be called from process context with no mode
-+ * setting locks held.
-+ *
-+ * Note that a connector can be both polled and probed from the hotplug handler,
-+ * in case the hotplug interrupt is known to be unreliable.
-+ */
-+static bool intel_hpd_irq_event(struct drm_device *dev)
-+{
-+	struct drm_connector *connector;
-+	struct drm_connector_list_iter conn_iter;
-+	enum drm_connector_status old_status, cur_status;
-+	struct edid *old_edid;
-+	bool changed = false;
-+
-+	if (!dev->mode_config.poll_enabled)
-+		return false;
-+
-+	mutex_lock(&dev->mode_config.mutex);
-+	drm_connector_list_iter_begin(dev, &conn_iter);
-+	drm_for_each_connector_iter(connector, &conn_iter) {
-+		/* Only handle HPD capable connectors. */
-+		if (!(connector->polled & DRM_CONNECTOR_POLL_HPD))
-+			continue;
-+
-+		old_status = connector->status;
-+		old_edid = to_intel_connector(connector)->detect_edid;
-+
-+		cur_status = drm_helper_probe_detect(connector, NULL, false);
-+		DRM_DEBUG_KMS("[CONNECTOR:%d:%s] status updated from %s to %s\n",
-+			      connector->base.id, connector->name,
-+			      drm_get_connector_status_name(old_status),
-+			      drm_get_connector_status_name(cur_status));
-+
-+		if (old_status != cur_status)
-+			changed = true;
-+
-+		/* Check changing of edid when a connector status still remains
-+		 * as "connector_status_connected".
-+		 */
-+		if (old_status == cur_status &&
-+		    cur_status == connector_status_connected) {
-+			struct edid *cur_edid = to_intel_connector(connector)->detect_edid;
-+			if (!old_edid || !cur_edid)
-+				continue;
-+
-+			if (memcmp(old_edid, cur_edid, sizeof(*cur_edid))) {
-+				changed = true;
-+				DRM_DEBUG_KMS("[CONNECTOR:%d:%s] edid updated\n",
-+					      connector->base.id,
-+					      connector->name);
-+			}
-+		}
-+	}
-+	drm_connector_list_iter_end(&conn_iter);
-+	mutex_unlock(&dev->mode_config.mutex);
-+
-+	if (changed)
-+		drm_kms_helper_hotplug_event(dev);
-+
-+	return changed;
-+}
-+
- static void i915_hpd_poll_init_work(struct work_struct *work)
- {
- 	struct drm_i915_private *dev_priv =
-@@ -552,7 +633,7 @@ static void i915_hpd_poll_init_work(struct work_struct *work)
- 	 * in the middle of disabling polling
- 	 */
- 	if (!enabled)
--		drm_helper_hpd_irq_event(dev);
-+		intel_hpd_irq_event(dev);
- }
- 
- /**
--- 
-2.18.0
+BTW. does the Radeon GPU driver work for you?
 
+My observation is that OpenGL with Nouveau works, but it's slow and the 
+whole system locks up when playing video in chromium.
+
+Radeon HD 6350 (pre-GCN), doesn't lock up, but OpenGL (and Glamour) has 
+many artifacts and corrupted textures. When I switch it to EXA 
+acceleration and don't use OpenGL, it works.
+
+The artifacts are not fixed by preloading a glibc with fixed memcpy, so 
+there's supposedly some other bug somewhere.
+
+
+Unfortunatelly, there's no low-power GCN card.
+
+Mikulas
