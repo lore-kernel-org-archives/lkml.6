@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 916F6C46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:41:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3953AC46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:41:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 433B421A67
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:41:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E24CC21A6E
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:41:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SJkaC5hI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 433B421A67
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZGPkGAit"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E24CC21A6E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388298AbeHFSv0 (ORCPT
+        id S2387716AbeHFSu7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 14:51:26 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:35068 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387795AbeHFSvB (ORCPT
+        Mon, 6 Aug 2018 14:50:59 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:52397 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387689AbeHFSu5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 14:51:01 -0400
-Received: by mail-wr1-f66.google.com with SMTP id g1-v6so9509343wru.2
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Aug 2018 09:41:07 -0700 (PDT)
+        Mon, 6 Aug 2018 14:50:57 -0400
+Received: by mail-wm0-f66.google.com with SMTP id o11-v6so14383188wmh.2
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Aug 2018 09:41:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=qyIb1LedubX4Bm4tOfTQFFJt+XM5l2v/UMtetdGR0wA=;
-        b=SJkaC5hITo4nP+vXjYHN2mVUXmdrwLIHbNc8CpZmyoVvw3V7GtCN1wz4N7Al1vQJcF
-         hd2hQ2Dda2FOZFaB3fi4YONbr7FkxJE0+zV6mYo8QkXkiP+cwOm4HdDWfXUKGfXTgQlN
-         Q8wwiuZ3k//FGLrWLP4x7doPn4M/2AOprO2n9lsdrV3GL2iuZY36GdqROtoI4m5Lg5QZ
-         FAAmEmPnQxfd5XtkyfuMIGdZRRZ9O3+CyxV3b1xZlSjyfDnCfuNe+F9+7eELSrWmRhH9
-         ogwsvNzG8jsKFD9+W2+dNbTKYfDwtsP7DnjDyEzq/aPqETSO9v2jfp/3lWSRQXXa9tjz
-         rjcw==
+        bh=5fRpq50lZXJwhRR4cll4FW2BMrTPAWBgy5AakciCwzI=;
+        b=ZGPkGAitVZH43xaGKInnHdd7n/tyNFXUzL/qaHmZCe6+KqfeJS77EJC8jpTGmiU2SO
+         FzBsG36dBCTrIkzWu7kBkjDSJ5fbo9HzHHpwULu2+NoF4YKnPx2mMKqPQ6pAqaU+lAht
+         KS8yf0vS/2EMM6y6c5ON02j5qVjYR1ZgccetnnSEPi1qy0nKoCNXeGe3MBLWUTVcG4y5
+         ZfZSGga8z9m37aTIH9e8f0b1iTeoQe63qTqsPyBHuvsvnOwmUUef0zRMpeqgFq8qOZTE
+         KCQcpTxFLAh5tLjD/wxtGyP600A9uQuSjuRPT2mpi2rpLX/7Y0KGnc5Icm5Qoz0w3r+s
+         oyqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=qyIb1LedubX4Bm4tOfTQFFJt+XM5l2v/UMtetdGR0wA=;
-        b=aJZMuFSGpg7XHG9HYfxN9eD/iWIw0f3PaDZsSnqYNgIQwj3Kt/c7/zUiuwA8NvTHXJ
-         zg9/bmuvBgI7LM7RK4g6GWvy/KsAf0456cv5CCQR3ZPBQO41ldnMw8lDAIR2UlMhrkVB
-         hT6foCcKnoHATi/AjFdTVV6oNA+Tb68JvcyvAiZAWGuNuPWWSrobR94ayr4UcN3dn95R
-         ajQRTYy2ZSE6+oDwgLKk71n38DJwLmc0QPWZeW61fT5KDRVH1tT5nWxsGaD9F3JAGHq5
-         sGuJ09btkia2Pd3FA6tI0om1Z8+FUfErmMktGDabBScK2VjcYApOVJA/DjKwsDQeLGMs
-         MJKA==
-X-Gm-Message-State: AOUpUlHSsM9xoEF9+Y46hq4Zn06MCaXbvMY4QTsB6GOdBDAuf11un4Ho
-        Un32yoH6AybUpMhkO63pUngx9Q==
-X-Google-Smtp-Source: AAOMgpeO7k6j2TtDLWY/G7617DSwScmheLW9n+G6mjNCfjUdKJdVUj28MA6JiNxNbo41h0Nsk3UX4g==
-X-Received: by 2002:a5d:50cd:: with SMTP id f13-v6mr10733476wrt.73.1533573666455;
-        Mon, 06 Aug 2018 09:41:06 -0700 (PDT)
+        bh=5fRpq50lZXJwhRR4cll4FW2BMrTPAWBgy5AakciCwzI=;
+        b=th4bZqfdno/hc2VKcHqX+lUmej3Onyp8q/Ia5z5X1RL1XuNd/oWxrGqdlBWXjfZ/qo
+         LznUZfiLQ9UKoZjhDPaYaBljXP9WziaA7YqzCKsYBBeQs87M+U4wvR/O+0panV5fAWep
+         A/MDGiO9IPfyRwdnA92ZSNHBj6BHDYQacZNSypZ8+dVN9rkk4ItQxKbcyehzoaNpL8SM
+         1Od7gU9gYqfFUWIT6qeBSfdrs4wqV08E00/bux6rH4FsY/CD0IwbQ2S9DhNiplAP1Kwd
+         GjI5pvutkr/JDG+3ZuHtEHQz06/JNE8OUS9LISDiQBbmuoi1MnaevKJuGFp8atjOWwdk
+         hl5g==
+X-Gm-Message-State: AOUpUlER0tyyQ5V3bJuw6mhRXg2zFwWXwZJu4Cvtr2Hod1Xavw7rXbUG
+        hVhwXtzc3XOvgxkZ8TK+lVJbSg==
+X-Google-Smtp-Source: AAOMgpfY8aYVRq098HPSl5HcnHIV9H6zFUoOXHqCl8eBn+piyFbVnG/gEtDm0yEYaeKPInUxDQL8Gg==
+X-Received: by 2002:a1c:4405:: with SMTP id r5-v6mr11514009wma.4.1533573662204;
+        Mon, 06 Aug 2018 09:41:02 -0700 (PDT)
 Received: from andreyknvl0.muc.corp.google.com ([2a00:79e0:15:10:84be:a42a:826d:c530])
-        by smtp.gmail.com with ESMTPSA id 66-v6sm16385790wmw.34.2018.08.06.09.41.05
+        by smtp.gmail.com with ESMTPSA id 66-v6sm16385790wmw.34.2018.08.06.09.41.00
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 06 Aug 2018 09:41:05 -0700 (PDT)
+        Mon, 06 Aug 2018 09:41:01 -0700 (PDT)
 From:   Andrey Konovalov <andreyknvl@google.com>
 To:     Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>,
@@ -84,9 +84,9 @@ Cc:     Dmitry Vyukov <dvyukov@google.com>,
         Jacob Bramley <Jacob.Bramley@arm.com>,
         Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
         Chintan Pandya <cpandya@codeaurora.org>
-Subject: [PATCH v5 09/10] arm64: update Documentation/arm64/tagged-pointers.txt
-Date:   Mon,  6 Aug 2018 18:40:44 +0200
-Message-Id: <5396af31a51aaafd5d65742d1cc48854513be778.1533573460.git.andreyknvl@google.com>
+Subject: [PATCH v5 06/10] arm64: untag user address in __do_user_fault
+Date:   Mon,  6 Aug 2018 18:40:41 +0200
+Message-Id: <d22f893405349d7d26d67161f9577eabfee27214.1533573460.git.andreyknvl@google.com>
 X-Mailer: git-send-email 2.18.0.597.ga71716f1ad-goog
 In-Reply-To: <cover.1533573460.git.andreyknvl@google.com>
 References: <cover.1533573460.git.andreyknvl@google.com>
@@ -97,30 +97,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a note that work on passing tagged user pointers to the kernel via
-syscalls has started, but might not be complete yet.
+In __do_user_fault the fault address is being compared to TASK_SIZE to
+find out whether the address lies in the kernel or in user space. Since
+the fault address is coming from a user it can be tagged.
+
+Untag the pointer before comparing.
 
 Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
 ---
- Documentation/arm64/tagged-pointers.txt | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ arch/arm64/mm/fault.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/arm64/tagged-pointers.txt b/Documentation/arm64/tagged-pointers.txt
-index a25a99e82bb1..361481283f00 100644
---- a/Documentation/arm64/tagged-pointers.txt
-+++ b/Documentation/arm64/tagged-pointers.txt
-@@ -35,8 +35,9 @@ Using non-zero address tags in any of these locations may result in an
- error code being returned, a (fatal) signal being raised, or other modes
- of failure.
- 
--For these reasons, passing non-zero address tags to the kernel via
--system calls is forbidden, and using a non-zero address tag for sp is
-+Some initial work for supporting non-zero address tags passed to the
-+kernel via system calls has been done, but the kernel doesn't provide
-+any guarantees at this point. Using a non-zero address tag for sp is
- strongly discouraged.
- 
- Programs maintaining a frame pointer and frame records that use non-zero
+diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
+index b8eecc7b9531..89033d992d28 100644
+--- a/arch/arm64/mm/fault.c
++++ b/arch/arm64/mm/fault.c
+@@ -313,7 +313,7 @@ static void __do_user_fault(struct siginfo *info, unsigned int esr)
+ 	 * type", so we ignore this wrinkle and just return the translation
+ 	 * fault.)
+ 	 */
+-	if (current->thread.fault_address >= TASK_SIZE) {
++	if (untagged_addr(current->thread.fault_address) >= TASK_SIZE) {
+ 		switch (ESR_ELx_EC(esr)) {
+ 		case ESR_ELx_EC_DABT_LOW:
+ 			/*
 -- 
 2.18.0.597.ga71716f1ad-goog
 
