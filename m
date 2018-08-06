@@ -2,122 +2,116 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EDEFC46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 21:04:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF56AC4646D
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 21:09:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 388D921A5E
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 21:04:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="yqhJwU+C"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 388D921A5E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 6301221A5D
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 21:09:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6301221A5D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732823AbeHFXOw (ORCPT
+        id S1732746AbeHFXU0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 19:14:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32920 "EHLO mail.kernel.org"
+        Mon, 6 Aug 2018 19:20:26 -0400
+Received: from mga11.intel.com ([192.55.52.93]:21969 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728948AbeHFXOw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 19:14:52 -0400
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5269D21A3B;
-        Mon,  6 Aug 2018 21:03:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1533589439;
-        bh=TBbs6MPXPCwbBgeqtWlIyZSqPCNEvjksmxswD2I3Yq0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=yqhJwU+C6u9x7JRtyBrJ0C1roGinXcRNUtAmCWUjuKlzefbpnazV973mUa7rCP4js
-         4KFsdbYiJcSSwagQOILZ5JGKesS5p0+xVjMc5RDaL3Zj0y/Z/gqGxhFbhmjFDkQT++
-         6OjRqxe6JCZGxqn7TuGn6L6TtlSje4Lw7uYDvpFE=
-Date:   Mon, 6 Aug 2018 16:03:57 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Bharat Kumar Gogada <bharat.kumar.gogada@xilinx.com>
-Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        bhelgaas@google.com, rgummal@xilinx.com
-Subject: Re: [PATCH 2/3] PCI: Use dedicated Xilinx controller irq number for
- AER
-Message-ID: <20180806210357.GD30691@bhelgaas-glaptop.roam.corp.google.com>
-References: <1533141889-19962-1-git-send-email-bharat.kumar.gogada@xilinx.com>
- <1533141889-19962-3-git-send-email-bharat.kumar.gogada@xilinx.com>
+        id S1728671AbeHFXU0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 19:20:26 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Aug 2018 14:09:32 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,452,1526367600"; 
+   d="scan'208";a="222428188"
+Received: from tstruk-mobl1.jf.intel.com ([10.7.196.170])
+  by orsmga004.jf.intel.com with ESMTP; 06 Aug 2018 14:09:18 -0700
+Subject: [PATCH v3 RESEND 0/2] tpm: add support for nonblocking operation
+From:   Tadeusz Struk <tadeusz.struk@intel.com>
+To:     jarkko.sakkinen@linux.intel.com
+Cc:     flihp@twobit.us, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, tadeusz.struk@intel.com
+Date:   Mon, 06 Aug 2018 14:09:18 -0700
+Message-ID: <153358975874.26901.16081444242758666628.stgit@tstruk-mobl1.jf.intel.com>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1533141889-19962-3-git-send-email-bharat.kumar.gogada@xilinx.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 01, 2018 at 10:14:48PM +0530, Bharat Kumar Gogada wrote:
-> Xilinx ZynqMP PS PCIe does not report AER interrupts using Advanced
-> Error Interrupt Message Number. The controller has dedicated interrupt line
-> for reporting PCIe errors along with AER.
-> 
-> Using pci_dev->sysdata of root port to save controller irq number, which
-> will be used for registering AER irq handler.
-> 
-> Signed-off-by: Bharat Kumar Gogada <bharat.kumar.gogada@xilinx.com>
-> ---
->  drivers/pci/quirks.c |   29 +++++++++++++++++++++++++++++
->  1 files changed, 29 insertions(+), 0 deletions(-)
-> 
-> diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-> index f439de8..e666373 100644
-> --- a/drivers/pci/quirks.c
-> +++ b/drivers/pci/quirks.c
-> @@ -4753,3 +4753,32 @@ static void quirk_gpu_hda(struct pci_dev *hda)
->  			      PCI_CLASS_MULTIMEDIA_HD_AUDIO, 8, quirk_gpu_hda);
->  DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_NVIDIA, PCI_ANY_ID,
->  			      PCI_CLASS_MULTIMEDIA_HD_AUDIO, 8, quirk_gpu_hda);
-> +
-> +#if defined(CONFIG_ARCH_ZYNQMP) && defined(CONFIG_PCIE_XILINX_NWL) && \
-> +	defined(CONFIG_PCIEAER)
-> +/*
-> + * Xilinx ZynqMP PS PCIe does not report AER interrupts using Advanced
-> + * Error Interrupt Message Number. The controller has dedicated interrupt line
-> + * for reporting PCIe errors along with AER.
+The TCG SAPI specification [1] defines a set of functions, which allow
+applications to use the TPM device in either blocking or non-blocking fashion.
+Each command defined by the specification has a corresponding
+Tss2_Sys_<COMMAND>_Prepare() and Tss2_Sys_<COMMAND>_Complete() call, which
+together with Tss2_Sys_ExecuteAsync() is designed to allow asynchronous
+mode of operation. Currently the TPM driver supports only blocking calls,
+which doesn't allow asynchronous IO operations.
+This patch changes it and adds support for nonblocking write and a new poll
+function to enable applications, which want to take advantage of this feature.
+The new functionality can be tested using standard TPM tools implemented
+in [2], together with modified TCTI from [3], and an example application
+by Philip Tricca [4]. Here is a short description from Philip:
 
-Your comment says "PCIe errors along with AER", but your ifdef tests
-CONFIG_PCIEAER.  Per PCIe r4.0, sec 6.2.6, interrupts can be generated
-even if AER isn't supported.  Don't we want to allow that?
+"The example application `glib-tss2-event` uses a glib main event loop
+to create an RSA 2048 primary key in the TPM2 NULL hierarchy while
+using a glib timer event to time the operation. A GSource object is
+used to generate an event when the FD underlying the tss2 function
+call has data ready. While the application waits for an event indicating
+that the CreatePrimary operation is complete, it counts timer events
+that occur every 100ms. Once the CreatePrimary operation completes the
+number of timer events that occurred is used to make a rough calculation
+of the elapsed time. This value is then printed to the console.
+This takes ~300 lines of C code and requires no management or
+synchronization of threads. The glib GMainContext is "just a poll()
+loop" according to the glib documentation here:
 
-> + */
-> +#include <linux/of.h>
-> +#include <linux/of_irq.h>
-> +
-> +static void quirk_xilinx_aer_irq(struct pci_dev *dev)
-> +{
-> +	struct device_node *dev_node;
-> +
-> +	if (pci_pcie_type(dev) == PCI_EXP_TYPE_ROOT_PORT &&
-> +	    pci_find_ext_capability(dev, PCI_EXT_CAP_ID_ERR)) {
-> +		dev_node = of_find_compatible_node(NULL, NULL,
-> +						   "xlnx,nwl-pcie-2.11");
-> +		if (!dev_node) {
-> +			dev_err(&dev->dev, "Error could not find ZynqMP PS PCIe node\n");
+https://developer.gnome.org/programming-guidelines/stable/main-contexts.html.en
 
-Use pci_err().
+and so supporting 'poll' is the easiest way to integrate with glib /
+gtk+. This is true of any other event system that relies on 'poll'
+instead of worker threads."
 
-Doesn't arm64 support generic kernels that may contain support for
-several platforms?  We don't want a warning if a generic kernel
-happens to be running on a non-ZynqMP system.
+[1] https://trustedcomputinggroup.org/wp-content/uploads/TSS_SAPI_Version-1.1_Revision-22_review_030918.pdf
+[2] https://github.com/tpm2-software/tpm2-tools
+[3] https://github.com/tstruk/tpm2-tss/tree/async
+[4] https://github.com/flihp/glib-tss2-async-example
 
-> +			return;
-> +		}
-> +
-> +		dev->sysdata = dev_node->data;
-> +	}
-> +}
-> +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_XILINX, PCI_ANY_ID, quirk_xilinx_aer_irq);
-> +#endif
-> -- 
-> 1.7.1
-> 
+---
+Changes in v3:
+- Fixed problem reported by 0-dey kbuild test robot around __exitcall.
+  It complained because there is a module_exit() in another file already.
+- Added info on example application from Philip
+
+Changes in v2:
+- Split the change into two separate patches. First patch adds a pointer
+  to the space to the struct file_priv to have access to it from the async job.
+  This is to avoid memory allocations on every write call. Now everything
+  what's needed is in the file_priv struct.
+- Renamed the 'work' member of the timer to avoid confusion.
+  Now there are 'timeout_work' and 'async_work'.
+- Removed the global wait queue and moved it to file_priv.
+- Only creating the work queue when the first file is opened.
+
+Tadeusz Struk (2):
+      tpm: add ptr to the tpm_space struct to file_priv
+      tpm: add support for nonblocking operation
+
+ drivers/char/tpm/tpm-dev-common.c |  150 +++++++++++++++++++++++++++----------
+ drivers/char/tpm/tpm-dev.c        |   22 +++--
+ drivers/char/tpm/tpm-dev.h        |   19 +++--
+ drivers/char/tpm/tpm-interface.c  |    1 
+ drivers/char/tpm/tpm.h            |    1 
+ drivers/char/tpm/tpmrm-dev.c      |   31 ++++----
+ 6 files changed, 152 insertions(+), 72 deletions(-)
+
+--
+TS
