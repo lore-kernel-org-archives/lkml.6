@@ -6,65 +6,66 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A635C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 09:36:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A7D1C46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 09:37:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B346C219F0
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 09:36:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C930219F0
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 09:37:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XmFENDgu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B346C219F0
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HFXbJL29"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C930219F0
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728554AbeHFLoR (ORCPT
+        id S1728719AbeHFLqK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 07:44:17 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:41729 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728010AbeHFLoR (ORCPT
+        Mon, 6 Aug 2018 07:46:10 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:35567 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726865AbeHFLqJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 07:44:17 -0400
-Received: by mail-oi0-f67.google.com with SMTP id k12-v6so20984130oiw.8;
-        Mon, 06 Aug 2018 02:36:03 -0700 (PDT)
+        Mon, 6 Aug 2018 07:46:09 -0400
+Received: by mail-oi0-f66.google.com with SMTP id m11-v6so21079973oic.2;
+        Mon, 06 Aug 2018 02:37:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:sender:in-reply-to:references:from:date:message-id
          :subject:to:cc;
-        bh=A+opYyAlr1mqtRUwRNoWnXJIpMVPT2NnIXcngaoeahE=;
-        b=XmFENDgutwMUDVM1JqKAQHIcG/Sc/iXKLHYu3O8pGR/Yajwac9KMwmANe6LnpgzJMV
-         k5XzEtQzq5VpXvNZBXGl/Ds0ACrcFjUv1ZuD6+a6m9nqhrnBzMKTTnfKCksSYDNU+NE+
-         kv/bZ8EqklI1Je5ZW2jPvC2gLDNn1MHtm1yd3fddK5P1DTBGi6YiA5P/RvhFl3MqOG2e
-         qDt6UppnefMj/ulhG4cBZu7cGKdMqd3j2ow4vAusijMZal6BzPTOClx0WfaYSNuwVeU/
-         godn5CTOyCBupWVCiXS/OppXxZdHMhMGmf4YsEHn7S4TCs03kRfWT5/6gJ1HL1w6Ue9m
-         yuqQ==
+        bh=SyZxqYKMRVFjzuEbMoI6Rrpj7H0UWOnVi5KYNPDzUBg=;
+        b=HFXbJL29Tdmm1/0PtrHOR330+49z7AlNsN3XjUEa5A8c/5zd11xRNvQOd0/JlOXUBA
+         W2NkCKR5rQESPUDt2KGyksn4J23BUnsfnN9xLxAmMS2FNq9ofFhPqn6w8xGKNk0YW7LU
+         Hu0E0Xha6dNYS+hbX48U40OhFnsu17Bh+BgNn7PpCHAT3KdLuzd4zDdYkn8ttukQFvBG
+         VmnI5K52uevYIv4g3xqEfoBz9hCLD2MLO59u/XYV/QlnhFMiLghcicZU6HMyQhaBoUMO
+         2qiMWBCevDoRS9Tkc+k+vymDnpfZ1wgTgBKTkG+iJQ+d6iHO9bI9G9VMpJ89j6GlPQJd
+         HcjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
          :date:message-id:subject:to:cc;
-        bh=A+opYyAlr1mqtRUwRNoWnXJIpMVPT2NnIXcngaoeahE=;
-        b=DRZnvxdDLukJUXR3g5vCPGd7QND6idUCzhoXUvLUXl5M8nwasjkhsrJ80appZKD53i
-         W5zclEbRt4mUec2U6fLOPHv0XM1I/X/G+6SQtI/9ua76nZn+5Yzh4ksNDra+tne04tCj
-         APKbhVkmTh7eYPJ7FBYKAzIh3V6gUtXiGOuFSodcT2rq58JvQDipzUswJ1Mg48lGfPNU
-         yjab5pi0UUnDNrRTLd5LZkHc/VJIvHimSB4mSsLn/ckr85F/uHhDePs9ExuMQCSPJQiH
-         +VRUM72BuR7yxynvoGTDCPshCUlDVOoFMujkeQw1U6VQ+A2qQ8fA2dRY42gjFHnFkhsQ
-         3+Og==
-X-Gm-Message-State: AOUpUlHKge9HkDyWYU5bF1S2eGjQMC2GdUPbmK2q+waLmT1AZn+EV46M
-        Tyw55nsxOCZwdy0L8hmm68wK3pT6AsIcm+U5tAA=
-X-Google-Smtp-Source: AAOMgpeeYl6Q8VjJzZY4XRWpkF2JZnMvyOGGrGRX1+uhZXqAhVIQM+dS/bZt0rNnm438v/UFieNiD2mD47fCiGgsTbc=
-X-Received: by 2002:aca:ccc4:: with SMTP id c187-v6mr13065063oig.282.1533548163288;
- Mon, 06 Aug 2018 02:36:03 -0700 (PDT)
+        bh=SyZxqYKMRVFjzuEbMoI6Rrpj7H0UWOnVi5KYNPDzUBg=;
+        b=pvq0dXYeff6/hKjzTgN4gBSMTzbg2fDQirKqgeYlAx8ujpLZD//SlP6V8Rpl9Vzepv
+         7RThO7oGOW+sIVODu/5WWza8pweszVkclnDXCZnc7qmV3k/8gJnEMhgA0/8Yge5u75B7
+         uNavLxF1NknjVpPtjsuto80yWE1pv1aVPPgYoz5NhDLUvwydh2TitFJGyGPdYil/H1A6
+         EJpPvv6qGvSumGZkgXvaXK/sEdHgzdv7iUumIzPeEcsyYcco2m6FAVFYzu7uGf3ODGFH
+         /pqgAMktXU0MKI842I8LzbtR2y2f4Aw1ppFjuBFP/NIxSz4ub++6KSmYPgVBVz5yD8AG
+         UOmQ==
+X-Gm-Message-State: AOUpUlHuQhnMVr0pemfvCRCbo2IsaOXJaL9TaJqcnJeMfaG/Xp8CdPpr
+        oyLx4AHi3wRFP5ySf1eSmr5tbIzjtTo+gv52zgY=
+X-Google-Smtp-Source: AA+uWPyKfC5V+QJYgjKKEl0tls/7WQFNIFzNZGTYr3tKXeWHNkOZMze6SOCzl2vCyk+VznIQpFM0GMjolTbvN+6mGoU=
+X-Received: by 2002:aca:6285:: with SMTP id w127-v6mr13147132oib.120.1533548275567;
+ Mon, 06 Aug 2018 02:37:55 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a9d:63d2:0:0:0:0:0 with HTTP; Mon, 6 Aug 2018 02:36:02 -0700 (PDT)
-In-Reply-To: <CAPDyKFq=m7ad66SwiOr+4ab=e7PNiXrXJ6c8G0ZTPOdO1RQ_6g@mail.gmail.com>
+Received: by 2002:a9d:63d2:0:0:0:0:0 with HTTP; Mon, 6 Aug 2018 02:37:55 -0700 (PDT)
+In-Reply-To: <CAPDyKFrmP15+_hyRp44Jw-wsTmsNFKORdCeGJEgW8o0OoKiHhA@mail.gmail.com>
 References: <20180620172226.15012-1-ulf.hansson@linaro.org>
- <20180620172226.15012-5-ulf.hansson@linaro.org> <1678369.6pMUSOvdlV@aspire.rjw.lan>
- <CAPDyKFq=m7ad66SwiOr+4ab=e7PNiXrXJ6c8G0ZTPOdO1RQ_6g@mail.gmail.com>
+ <2056372.NMt4aPaF4h@aspire.rjw.lan> <2205807.cU2puvubpP@aspire.rjw.lan>
+ <1726374.375PCQfjLZ@aspire.rjw.lan> <CAPDyKFrmP15+_hyRp44Jw-wsTmsNFKORdCeGJEgW8o0OoKiHhA@mail.gmail.com>
 From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Mon, 6 Aug 2018 11:36:02 +0200
-X-Google-Sender-Auth: dX1Zm-lORw25sKTSdgEojk8zvdQ
-Message-ID: <CAJZ5v0jah=aiYoV_b_p=-x+puO0sxeGRBCtJnQAD8xb8p1QGfg@mail.gmail.com>
-Subject: Re: [PATCH v8 04/26] PM / Domains: Add support for CPU devices to genpd
+Date:   Mon, 6 Aug 2018 11:37:55 +0200
+X-Google-Sender-Auth: H14bSO5pjzQIiWspJj7KLuSnis0
+Message-ID: <CAJZ5v0hk1wfm10fyycmddKF6wR4D51r30fD_-J5UDMbtB3+V-Q@mail.gmail.com>
+Subject: Re: [PATCH v8 09/26] kernel/cpu_pm: Manage runtime PM in the idle
+ path for CPUs
 To:     Ulf Hansson <ulf.hansson@linaro.org>
 Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
         Sudeep Holla <sudeep.holla@arm.com>,
@@ -90,91 +91,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 3, 2018 at 1:43 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> On 19 July 2018 at 12:25, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
->> On Wednesday, June 20, 2018 7:22:04 PM CEST Ulf Hansson wrote:
->>> To enable a device belonging to a CPU to be attached to a PM domain managed
->>> by genpd, let's do a few changes to genpd as to make it convenient to
->>> manage the specifics around CPUs.
->>>
->>> First, as to be able to quickly find out what CPUs that are attached to a
->>> genpd, which typically becomes useful from a genpd governor as following
->>> changes is about to show, let's add a cpumask 'cpus' to the struct
->>> generic_pm_domain.
->>>
->>> At the point when a device that belongs to a CPU, is attached/detached to
->>> its corresponding PM domain via genpd_add_device(), let's update the
->>> cpumask in genpd->cpus. Moreover, propagate the update of the cpumask to
->>> the master domains, which makes the genpd->cpus to contain a cpumask that
->>> hierarchically reflect all CPUs for a genpd, including CPUs attached to
->>> subdomains.
->>>
->>> Second, to unconditionally manage CPUs and the cpumask in genpd->cpus, is
->>> unnecessary for cases when only non-CPU devices are parts of a genpd.
->>> Let's avoid this by adding a new configuration bit, GENPD_FLAG_CPU_DOMAIN.
->>> Clients must set the bit before they call pm_genpd_init(), as to instruct
->>> genpd that it shall deal with CPUs and thus manage the cpumask in
->>> genpd->cpus.
->>>
->>> Cc: Lina Iyer <ilina@codeaurora.org>
->>> Co-developed-by: Lina Iyer <lina.iyer@linaro.org>
->>> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
->>> ---
->>>  drivers/base/power/domain.c | 69 ++++++++++++++++++++++++++++++++++++-
->>>  include/linux/pm_domain.h   |  3 ++
->>>  2 files changed, 71 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
->>> index 21d298e1820b..6149ce0bfa7b 100644
->>> --- a/drivers/base/power/domain.c
->>> +++ b/drivers/base/power/domain.c
->>> @@ -20,6 +20,7 @@
->>>  #include <linux/sched.h>
->>>  #include <linux/suspend.h>
->>>  #include <linux/export.h>
->>> +#include <linux/cpu.h>
->>>
->>>  #include "power.h"
->>>
->>> @@ -126,6 +127,7 @@ static const struct genpd_lock_ops genpd_spin_ops = {
->>>  #define genpd_is_irq_safe(genpd)     (genpd->flags & GENPD_FLAG_IRQ_SAFE)
->>>  #define genpd_is_always_on(genpd)    (genpd->flags & GENPD_FLAG_ALWAYS_ON)
->>>  #define genpd_is_active_wakeup(genpd)        (genpd->flags & GENPD_FLAG_ACTIVE_WAKEUP)
->>> +#define genpd_is_cpu_domain(genpd)   (genpd->flags & GENPD_FLAG_CPU_DOMAIN)
->>>
->>>  static inline bool irq_safe_dev_in_no_sleep_domain(struct device *dev,
->>>               const struct generic_pm_domain *genpd)
->>> @@ -1377,6 +1379,62 @@ static void genpd_free_dev_data(struct device *dev,
->>>       dev_pm_put_subsys_data(dev);
->>>  }
->>>
->>> +static void __genpd_update_cpumask(struct generic_pm_domain *genpd,
->>> +                                int cpu, bool set, unsigned int depth)
->>> +{
->>> +     struct gpd_link *link;
->>> +
->>> +     if (!genpd_is_cpu_domain(genpd))
->>> +             return;
->>> +
->>> +     list_for_each_entry(link, &genpd->slave_links, slave_node) {
->>> +             struct generic_pm_domain *master = link->master;
->>> +
->>> +             genpd_lock_nested(master, depth + 1);
->>> +             __genpd_update_cpumask(master, cpu, set, depth + 1);
->>> +             genpd_unlock(master);
->>> +     }
->>> +
->>> +     if (set)
->>> +             cpumask_set_cpu(cpu, genpd->cpus);
->>> +     else
->>> +             cpumask_clear_cpu(cpu, genpd->cpus);
->>> +}
->>
->> As noted elsewhere, there is a concern about the possible weight of this
->> cpumask and I think that it would be good to explicitly put a limit on it.
+On Fri, Aug 3, 2018 at 1:42 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> [...]
 >
-> I have been digesting your comments on the series, but wonder if this
-> is still a relevant concern?
+>>>
+>>> Assuming that I have got that right, there are concerns, mostly regarding
+>>> patch [07/26], but I will reply to that directly.
+>>
+>> Well, I haven't got that right, so never mind.
+>>
+>> There are a few minor things to address, but apart from that the general
+>> genpd patches look ready.
+>
+> Alright, thanks!
+>
+> I will re-spin the series and post a new version once 4.19 rc1 is out.
+> Hopefully we can queue it up early in next cycle to get it tested in
+> next for a while.
+>
+>>
+>>> The $subject patch is fine by me by itself, but it obviously depends on the
+>>> previous ones.  Patches [01-02/26] are fine too, but they don't seem to be
+>>> particularly useful without the rest of the series.
+>>>
+>>> As far as patches [10-26/26] go, I'd like to see some review comments and/or
+>>> tags from the people with vested interest in there, in particular from Daniel
+>>> on patch [12/26] and from Sudeep on the PSCI ones.
+>>
+>> But this still holds.
+>
+> Actually, patch 10 and patch11 is ready to go as well. I ping Daniel
+> on patch 12.
+>
+> In regards to the rest of the series, some of the PSCI/ARM changes
+> have been reviewed by Mark Rutland, however several changes have not
+> been acked.
+>
+> On the other hand, one can also interpret the long silence in regards
+> to PSCI/ARM changes as they are good to go. :-)
 
-Well, there are systems with very large cpumasks and it is sort of
-good to have that in mind when designing any code using them.
+Well, in that case giving an ACK to them should not be an issue for
+the people with a vested interest I suppose.
