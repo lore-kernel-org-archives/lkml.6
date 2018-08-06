@@ -2,129 +2,208 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B10B4C46472
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 17:05:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EDBEC46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 17:06:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6DACC21A56
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 17:05:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DACC21A56
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 2474021A5A
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 17:06:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2474021A5A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732424AbeHFTPY (ORCPT
+        id S1732474AbeHFTQj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 15:15:24 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:54658 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728071AbeHFTPY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 15:15:24 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BAF6B307D862;
-        Mon,  6 Aug 2018 17:05:23 +0000 (UTC)
-Received: from t450s.home (ovpn-116-35.phx2.redhat.com [10.3.116.35])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 24C5360BEC;
-        Mon,  6 Aug 2018 17:05:22 +0000 (UTC)
-Date:   Mon, 6 Aug 2018 11:05:21 -0600
-From:   Alex Williamson <alex.williamson@redhat.com>
-To:     "Raj, Ashok" <ashok.raj@intel.com>
-Cc:     Kenneth Lee <liguozhu@hisilicon.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        Zaibo Xu <xuzaibo@huawei.com>, sanjay.k.kumar@intel.com,
-        Kenneth Lee <nek.in.cn@gmail.com>,
-        Hao Fang <fanghao11@huawei.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Joerg Roedel <joro@8bytes.org>,
-        Zhou Wang <wangzhou1@hisilicon.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>, linuxarm@huawei.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Cornelia Huck <cohuck@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        "linux-accelerators@lists.ozlabs.org" 
-        <linux-accelerators@lists.ozlabs.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>
-Subject: Re: [RFC PATCH 3/7] vfio: add spimdev support
-Message-ID: <20180806110521.0b708e0b@t450s.home>
-In-Reply-To: <20180806163428.GB32409@otc-nc-03>
-References: <20180801102221.5308-1-nek.in.cn@gmail.com>
-        <20180801102221.5308-4-nek.in.cn@gmail.com>
-        <AADFC41AFE54684AB9EE6CBC0274A5D191290F7B@SHSMSX101.ccr.corp.intel.com>
-        <20180802034727.GK160746@Turing-Arch-b>
-        <AADFC41AFE54684AB9EE6CBC0274A5D19129102C@SHSMSX101.ccr.corp.intel.com>
-        <20180802073440.GA91035@Turing-Arch-b>
-        <20180802103528.0b863030.cohuck@redhat.com>
-        <20180802124327.403b10ab@t450s.home>
-        <20180806014004.GF91035@Turing-Arch-b>
-        <20180806094940.47c70be9@t450s.home>
-        <20180806163428.GB32409@otc-nc-03>
+        Mon, 6 Aug 2018 15:16:39 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:43916 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728626AbeHFTQi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 15:16:38 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
+        id 1fmixm-0002Gl-RN; Mon, 06 Aug 2018 17:06:34 +0000
+Date:   Mon, 6 Aug 2018 18:06:34 +0100
+From:   Al Viro <viro@ZenIV.linux.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Sergey Klyaus <sergey.m.klyaus@gmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Li Wang <liwang@redhat.com>,
+        Andreas Dilger <adilger@dilger.ca>,
+        Andi Kleen <andi.kleen@intel.com>
+Subject: Re: [PATCH] vfs: fix statfs64() returning impossible EOVERFLOW for
+ 64-bit f_files
+Message-ID: <20180806170634.GA2490@ZenIV.linux.org.uk>
+References: <20171005183636.20732-1-sergey.m.klyaus@gmail.com>
+ <20171005205724.GJ21978@ZenIV.linux.org.uk>
+ <CA+55aFx7d2+GG=0LqMejiK=ZADxX347v_m0S4WzrnQ=1FoyP8A@mail.gmail.com>
+ <20171005230633.GK21978@ZenIV.linux.org.uk>
+ <CA+55aFzJYXCNPXT8D91FmjU2AWOfvWMnx2BZE+0CLgBcqX3u1g@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Mon, 06 Aug 2018 17:05:24 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+55aFzJYXCNPXT8D91FmjU2AWOfvWMnx2BZE+0CLgBcqX3u1g@mail.gmail.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 6 Aug 2018 09:34:28 -0700
-"Raj, Ashok" <ashok.raj@intel.com> wrote:
-
-> On Mon, Aug 06, 2018 at 09:49:40AM -0600, Alex Williamson wrote:
-> > On Mon, 6 Aug 2018 09:40:04 +0800
-> > Kenneth Lee <liguozhu@hisilicon.com> wrote:  
-> > > 
-> > > 1. It supports thousands of processes. Take zip accelerator as an example, any
-> > > application need data compression/decompression will need to interact with the
-> > > accelerator. To support that, you have to create tens of thousands of mdev for
-> > > their usage. I don't think it is a good idea to have so many devices in the
-> > > system.  
-> > 
-> > Each mdev is a device, regardless of whether there are hardware
-> > resources committed to the device, so I don't understand this argument.
-> >    
-> > > 2. The application does not want to own the mdev for long. It just need an
-> > > access point for the hardware service. If it has to interact with an management
-> > > agent for allocation and release, this makes the problem complex.  
-> > 
-> > I don't see how the length of the usage plays a role here either.  Are
-> > you concerned that the time it takes to create and remove an mdev is
-> > significant compared to the usage time?  Userspace is certainly welcome
-> > to create a pool of devices, but why should it be the kernel's
-> > responsibility to dynamically assign resources to an mdev?  What's the
-> > usage model when resources are unavailable?  It seems there's
-> > complexity in either case, but it's generally userspace's responsibility
-> > to impose a policy.
-> >   
+On Thu, Oct 05, 2017 at 06:31:29PM -0700, Linus Torvalds wrote:
+> On Thu, Oct 5, 2017 at 4:06 PM, Al Viro <viro@zeniv.linux.org.uk> wrote:
+> >
+> > Just to make sure we are on the same page: out of kstatfs fields
+> > we have 5 u64 ones (see above; all of them are u64 is struct statfs64
+> > on all architectures), an opaque 64bit f_fsid and 5 fields that
+> > are long: f_type (magic numbers, all 32bit), f_namelen (max filename
+> > length), f_frsize (0 on most of filesystems, always fits into 32 bits),
+> > f_flags (guaranteed to be 32bit) and f_bsize.
 > 
-> Can vfio dev's created representing an mdev be shared between several 
-> processes?  It doesn't need to be exclusive.
+> Please just use that FITS_IN() kind of macro regardless.
 > 
-> The path to hardware is established by the processes binding to SVM and
-> IOMMU ensuring that the PASID is plummed properly.  One can think the 
-> same hardware is shared between several processes, hardware knows the 
-> isolation is via the PASID. 
+> If the sizes match, the compiler will optimize the test away.
 > 
-> For these cases it isn't required to create a dev per process. 
+> If the sizes don't match, that FITS_IN() will do the right thing.
+> 
+> Do *not* manually go and say "these fields are ok, because..". The
+> whole bug was because people were confused about the field widths.
 
-The iommu group is the unit of ownership, a vfio group mirrors an iommu
-group, therefore a vfio group only allows a single open(2).  A group
-also represents the minimum isolation set of devices, therefore devices
-within a group are not considered isolated and must share the same
-address space represented by the vfio container.  Beyond that, it is
-possible to share devices among processes, but (I think) it generally
-implies a hierarchical rather than peer relationship between
-processes.  Thanks,
+To bring that thread back, with apologies for having it fall through
+the cracks back last autumn:
 
-Alex
+compat_statfs64 "overflow checks" are completely bogus.  Some relevant
+information:
+	* all struct compat_statfs64 instances (all 3 of them) have
+identical field sizes.  So any ifdefs on sizeof of anything in them
+are nonsense to start with.
+	* most of the fields have the same size as their struct kstatfs
+counterparts, with the following exceptions - f_type, f_bsize, f_frsize,
+f_namelen and f_flags are u32 in compat_statfs64 and long in kstatfs.
+Anything other than those fields should not be getting any overflow
+checks for obvious reasons - in particular this
+                /* f_files and f_ffree may be -1; it's okay
+                 * to stuff that into 32 bits */
+                if (kbuf->f_files != 0xffffffffffffffffULL
+                 && (kbuf->f_files & 0xffffffff00000000ULL))
+                        return -EOVERFLOW;
+                if (kbuf->f_ffree != 0xffffffffffffffffULL
+                 && (kbuf->f_ffree & 0xffffffff00000000ULL))
+                        return -EOVERFLOW;
+is garbage, blindly copied from handling of compat_statfs where f_files is
+32bit.
+	* anyone who seriously suggests that some fs might want to report
+f_namelen greater than 4Gb is welcome to bludgeon themselves with GNU Hurd
+manuals, repeating the mantras about avoiding arbitrary limits until they
+get enlightened, go join Hurd development or succeed in bashing out
+whatever they had between their ears.  Either way, they won't be pestering
+us again.
+	* f_type is an opaque magic value; if it doesn't fit into 32 bits,
+such filesystem can't be used on 32bit host.  Bug.
+	* f_flags is generated right there in fs/statfs.c and the value is
+currently limited to 13 bits.
+
+That leaves us with f_bsize and f_frsize (the latter defaulting to the former).
+Hugetlbfs can put greater than 4Gb values in there, for really huge pages.
+And that's the only thing worth checking in there.
+
+So the whole put_compat_statfs64() thing should be
+static int put_compat_statfs64(struct compat_statfs64 __user *ubuf, struct kstatfs *kbuf)
+{
+	struct compat_statfs64 buf;
+
+	if ((kbuf->f_bsize | kbuf->f_frsize) & 0xffffffff00000000ULL)
+		return -EOVERFLOW;
+
+	memset(&buf, 0, sizeof(struct compat_statfs64));
+	buf.f_type = kbuf->f_type;
+	buf.f_bsize = kbuf->f_bsize;
+	buf.f_blocks = kbuf->f_blocks;
+	buf.f_bfree = kbuf->f_bfree;
+	buf.f_bavail = kbuf->f_bavail;
+	buf.f_files = kbuf->f_files;
+	buf.f_ffree = kbuf->f_ffree;
+	buf.f_namelen = kbuf->f_namelen;
+	buf.f_fsid.val[0] = kbuf->f_fsid.val[0];
+	buf.f_fsid.val[1] = kbuf->f_fsid.val[1];
+	buf.f_frsize = kbuf->f_frsize;
+	buf.f_flags = kbuf->f_flags;
+	if (copy_to_user(ubuf, &buf, sizeof(struct compat_statfs64)))
+		return -EFAULT;
+	return 0;
+}
+and that's it for compat_statfs64 bug reported by Sergey.
+
+I'm somewhat tempted to get rid of those 'long' in struct kstatfs,
+turning f_bsize and f_frsize into u64, with f_type, f_namelen and f_flags
+becoming u32 and f_spare going to hell (not a single filesystem stores
+anything in f_spare and e.g. mips zeroes those on the way to userland in
+*native* statfs(2) anyway).  We'd lose the "fast" case of do_statfs64()
+and do_statfs_native(), but frankly, it's not a great loss.  Doing e.g.
+
+struct kstatfs {
+        u32 f_type;
+	u32 f_namelen;	// moved up here
+        u64 f_bsize;
+        u64 f_blocks;
+        u64 f_bfree;
+        u64 f_bavail;
+        u64 f_files;
+        u64 f_ffree;
+        __kernel_fsid_t f_fsid;
+        u64 f_frsize;
+        u32 f_flags;
+};
+
+with
+
+#define STATFS_COPYOUT(type)						\
+static int put##type(struct kstatfs *st, struct type __user *p)		\
+{									\
+	struct type buf;						\
+									\
+	memset(&buf, 0, sizeof(buf));					\
+	buf.f_type = st->f_type;					\
+	if (!FIT_IN(st->f_bsize, buf.f_bsize))				\
+		return -EOVERFLOW;					\
+	buf.f_bsize = st->f_bsize;					\
+	if (!FIT_IN(st->f_blocks, buf.f_blocks))			\
+		return -EOVERFLOW;					\
+	buf.f_blocks = st->f_blocks;					\
+	if (!FIT_IN(st->f_bfree, buf.f_bfree))				\
+		return -EOVERFLOW;					\
+	buf.f_bfree = st->f_bfree;					\
+	if (!FIT_IN(st->f_bavail, buf.f_bavail))			\
+		return -EOVERFLOW;					\
+	buf.f_bavail = st->f_bavail;					\
+	if (!FIT_IN(st->f_files, buf.f_files) && st->f_files != -1)	\
+		return -EOVERFLOW;					\
+	buf.f_files = st->f_files;					\
+	if (!FIT_IN(st->f_ffree, buf.f_ffree) && st->f_ffree != -1)	\
+		return -EOVERFLOW;					\
+	buf.f_ffree = st->f_ffree;					\
+	buf.f_fsid = st->f_fsid;					\
+	buf.f_namelen = st->f_namelen;					\
+	if (!FIT_IN(st->f_frsize, buf.f_frsize))			\
+		return -EOVERFLOW;					\
+	buf.f_frsize = st->f_frsize;					\
+	buf.f_flags = st->f_flags;					\
+	if (copy_to_user(p, &buf, sizeof(buf)))				\
+		return -EFAULT;						\
+	return 0;							\
+}
+
+STATFS_COPYOUT(statfs)
+STATFS_COPYOUT(compat_statfs)
+STATFS_COPYOUT(statfs64)
+STATFS_COPYOUT(compat_statfs64)
+
+providing all the copyout helpers should be reasonably sane, IMO.
+
+As for the convoluted macros Sergey has proposed...  Not without a very
+good evidence that they win enough performance to be worth the complexity.
+
+Comments?  Again, my apologies for losing that thread back then - I've just
+found it while doing (unrelated) grep through the old mailboxen...
