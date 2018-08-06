@@ -3,104 +3,98 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A416C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 08:56:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7A02C4646D
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 08:57:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED9EC21582
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 08:56:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED9EC21582
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 88031219EA
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 08:57:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88031219EA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727514AbeHFLE2 (ORCPT
+        id S1727573AbeHFLFC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 07:04:28 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:60609 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726468AbeHFLE2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 07:04:28 -0400
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <sha@pengutronix.de>)
-        id 1fmbJL-0003Uv-Rt; Mon, 06 Aug 2018 10:56:19 +0200
-Received: from sha by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <sha@pengutronix.de>)
-        id 1fmbJL-0007kH-EV; Mon, 06 Aug 2018 10:56:19 +0200
-Date:   Mon, 6 Aug 2018 10:56:19 +0200
-From:   Sascha Hauer <s.hauer@pengutronix.de>
-To:     Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc:     Mark Brown <broonie@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
-        alexandre.belloni@bootlin.com
-Subject: Re: [PATCH RESEND 1/5] spi: imx: Remove duplicate variable
- assignments
-Message-ID: <20180806085619.zfhrow3pnkcjbjdu@pengutronix.de>
-References: <20180717143154.28241-1-maxime.chevallier@bootlin.com>
- <20180717143154.28241-2-maxime.chevallier@bootlin.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180717143154.28241-2-maxime.chevallier@bootlin.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-IRC:  #ptxdist @freenode
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-Uptime: 10:55:56 up 54 days, 18:05, 55 users,  load average: 0.26, 0.31,
- 0.39
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        Mon, 6 Aug 2018 07:05:02 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:34728 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726468AbeHFLFC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 07:05:02 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3A6C07A9;
+        Mon,  6 Aug 2018 01:56:59 -0700 (PDT)
+Received: from approximate.Emea.Arm.com (approximate.emea.arm.com [10.4.13.119])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4E7943F5D0;
+        Mon,  6 Aug 2018 01:56:58 -0700 (PDT)
+From:   Marc Zyngier <marc.zyngier@arm.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Jason Cooper <jason@lakedaemon.net>, linux-kernel@vger.kernel.org,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: [GIT PULL] irqchip updates for 4.19
+Date:   Mon,  6 Aug 2018 09:56:39 +0100
+Message-Id: <20180806085639.17510-1-marc.zyngier@arm.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 17, 2018 at 04:31:50PM +0200, Maxime Chevallier wrote:
-> Some fields in struct spi_imx_data are assigned a different value twice
-> in a row, in spi_imx_setupxfer.
-> 
-> Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
-> ---
->  drivers/spi/spi-imx.c | 2 --
->  1 file changed, 2 deletions(-)
+Hi Thomas,
 
-Reviewed-by: Sascha Hauer <s.hauer@pengutronix.de>
+The 4.19 PR is more of a GICv3 special than an actual irqchip PR.
 
-Sascha
+It reworks the way we allocate LPIs so that it can be much more fine
+grained (instead of the allocation in chunks of 32 interrupts that
+we've used so far). This allows supporting system that have thousands
+of devices (not kidding!), each one using a single MSI... It also helps in
+situation where the hypervisor enforces a very small number of
+available LPIs.
 
-> 
-> diff --git a/drivers/spi/spi-imx.c b/drivers/spi/spi-imx.c
-> index d3b21faf6b1f..d75153c995af 100644
-> --- a/drivers/spi/spi-imx.c
-> +++ b/drivers/spi/spi-imx.c
-> @@ -1106,8 +1106,6 @@ static int spi_imx_setupxfer(struct spi_device *spi,
->  	if (spi_imx->devtype_data->dynamic_burst && !spi_imx->slave_mode) {
->  		u32 mask;
->  
-> -		spi_imx->dynamic_burst = 0;
-> -		spi_imx->remainder = 0;
->  		spi_imx->read_u32  = 1;
->  
->  		mask = (1 << spi_imx->bits_per_word) - 1;
-> -- 
-> 2.11.0
-> 
-> 
+Another change is the conversion of the ITS driver to using raw
+spinlocks, making it work on RT (yay!).
 
--- 
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Please pull,
+
+       M.
+
+The following changes since commit 9d3cce1e8b8561fed5f383d22a4d6949db4eadbe:
+
+  Linux 4.18-rc5 (2018-07-15 12:49:31 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/maz/arm-platforms.git tags/irqchip-4.19
+
+for you to fetch changes up to a8db74564b0c634667e1722264bde303d296f566:
+
+  irqchip/gic-v3-its: Make its_lock a raw_spin_lock_t (2018-08-06 09:16:19 +0100)
+
+----------------------------------------------------------------
+irqchip updates for 4.19
+
+- GICv3 ITS LPI allocation revamp
+- GICv3 support for hypervisor-enforced LPI range
+- GICv3 ITS conversion to raw spinlock
+
+----------------------------------------------------------------
+Marc Zyngier (7):
+      irqchip/gic-v3-its: Refactor LPI allocator
+      irqchip/gic-v3-its: Use full range of LPIs
+      irqchip/gic-v3-its: Move minimum LPI requirements to individual busses
+      irqchip/gic-v3-its: Drop chunk allocation compatibility
+      irqchip/gic-v3: Expose GICD_TYPER in the rdist structure
+      irqchip/gic-v3-its: Honor hypervisor enforced LPI range
+      irqchip/gic-v3-its: Reduce minimum LPI allocation to 1 for PCI devices
+
+Sebastian Andrzej Siewior (1):
+      irqchip/gic-v3-its: Make its_lock a raw_spin_lock_t
+
+ drivers/irqchip/irq-gic-v3-its-fsl-mc-msi.c   |   3 +
+ drivers/irqchip/irq-gic-v3-its-pci-msi.c      |  16 +-
+ drivers/irqchip/irq-gic-v3-its-platform-msi.c |   2 +
+ drivers/irqchip/irq-gic-v3-its.c              | 243 +++++++++++++++++---------
+ drivers/irqchip/irq-gic-v3.c                  |   4 +-
+ include/linux/irqchip/arm-gic-v3.h            |   3 +-
+ 6 files changed, 178 insertions(+), 93 deletions(-)
