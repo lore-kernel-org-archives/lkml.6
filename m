@@ -2,122 +2,99 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E723BC4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 10:08:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE254C46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 10:09:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A010B219DA
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 10:08:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A010B219DA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 9E89A219DA
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 10:09:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E89A219DA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728440AbeHFMQg (ORCPT
+        id S1729267AbeHFMR5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 08:16:36 -0400
-Received: from foss.arm.com ([217.140.101.70]:35670 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726746AbeHFMQf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 08:16:35 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E27227A9;
-        Mon,  6 Aug 2018 03:08:14 -0700 (PDT)
-Received: from [0.0.0.0] (e107985-lin.Emea.Arm.com [10.4.12.239])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0C1C73F5D0;
-        Mon,  6 Aug 2018 03:08:09 -0700 (PDT)
-Subject: Re: [PATCH v5 09/14] sched: Add over-utilization/tipping point
- indicator
-To:     Vincent Guittot <vincent.guittot@linaro.org>,
-        Quentin Perret <quentin.perret@arm.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Chris Redpath <chris.redpath@arm.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Thara Gopinath <thara.gopinath@linaro.org>,
-        viresh kumar <viresh.kumar@linaro.org>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        "Cc: Steve Muckle" <smuckle@google.com>, adharmap@quicinc.com,
-        "Kannan, Saravana" <skannan@quicinc.com>, pkondeti@codeaurora.org,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        currojerez@riseup.net, Javi Merino <javi.merino@kernel.org>
-References: <20180802153035.vjtmqwdwujvt7ojs@queper01-lin>
- <CAKfTPtCGGqykN027kxK+chvKvCpNu4bYYdvfZJ+3_7YzT3Utfg@mail.gmail.com>
- <20180802160009.uhwwj3tqrqmv7q5a@queper01-lin>
- <CAKfTPtB_tWgOPCB3q2Q2rESKczTPGBDUojcXDY7uP8YTQddBMg@mail.gmail.com>
- <20180802161027.v2ctgscuc4uxbb7u@queper01-lin>
- <CAKfTPtDtaF9Qs4NWkKWUSr8Ryi-ScYNmPyacocPQUPxT00XAYg@mail.gmail.com>
- <20180802165924.7ywgoxj2jwftxycz@queper01-lin>
- <CAKfTPtDsG4FJy5xBO8+6pJzehEM668=SZ4yQ-szVTduofN3QZg@mail.gmail.com>
- <20180803081850.hj7bp5ognuywapmd@queper01-lin>
- <CAKfTPtDkJY=JYicZk8sM9_mJ-iq+Jwse0oVRbW=wpxXKKnEoeQ@mail.gmail.com>
- <20180803155547.sxlhxpmhwcoappit@queper01-lin>
- <CAKfTPtBT-p-Z0EneirfOTwUw=5jEeDGa+4_EE4ogi2Ht7GU9Bg@mail.gmail.com>
-From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
-Message-ID: <68689fcb-3cb8-4685-58ef-0bec84be2047@arm.com>
-Date:   Mon, 6 Aug 2018 12:08:07 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 6 Aug 2018 08:17:57 -0400
+Received: from mx2.suse.de ([195.135.220.15]:32998 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727700AbeHFMR5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 08:17:57 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id B461BAE54;
+        Mon,  6 Aug 2018 10:09:29 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 55D741E0501; Mon,  6 Aug 2018 12:09:28 +0200 (CEST)
+Date:   Mon, 6 Aug 2018 12:09:28 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        syzbot <syzbot+9933e4476f365f5d5a1b@syzkaller.appspotmail.com>,
+        linux-mm@kvack.org, mgorman@techsingularity.net,
+        Michal Hocko <mhocko@kernel.org>, ak@linux.intel.com,
+        jack@suse.cz, jlayton@redhat.com, linux-kernel@vger.kernel.org,
+        mawilcox@microsoft.com, syzkaller-bugs@googlegroups.com,
+        tim.c.chen@linux.intel.com,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: INFO: task hung in generic_file_write_iter
+Message-ID: <20180806100928.x7anab3c3y5q4ssa@quack2.suse.cz>
+References: <0000000000009ce88d05714242a8@google.com>
+ <4b349bff-8ad4-6410-250d-593b13d8d496@I-love.SAKURA.ne.jp>
+ <9b9fcdda-c347-53ee-fdbb-8a7d11cf430e@I-love.SAKURA.ne.jp>
+ <20180720130602.f3d6dc4c943558875a36cb52@linux-foundation.org>
+ <a2df1f24-f649-f5d8-0b2d-66d45b6cb61f@i-love.sakura.ne.jp>
 MIME-Version: 1.0
-In-Reply-To: <CAKfTPtBT-p-Z0EneirfOTwUw=5jEeDGa+4_EE4ogi2Ht7GU9Bg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a2df1f24-f649-f5d8-0b2d-66d45b6cb61f@i-love.sakura.ne.jp>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/06/2018 10:40 AM, Vincent Guittot wrote:
-> On Fri, 3 Aug 2018 at 17:55, Quentin Perret <quentin.perret@arm.com> wrote:
->>
->> On Friday 03 Aug 2018 at 15:49:24 (+0200), Vincent Guittot wrote:
->>> On Fri, 3 Aug 2018 at 10:18, Quentin Perret <quentin.perret@arm.com> wrote:
->>>>
->>>> On Friday 03 Aug 2018 at 09:48:47 (+0200), Vincent Guittot wrote:
->>>>> On Thu, 2 Aug 2018 at 18:59, Quentin Perret <quentin.perret@arm.com> wrote:
-
-[...]
-
->> I think we're discussing two different things right now:
->>      1. Should forkees go in find_energy_efficient_cpu() ?
->>      2. Should forkees have 0 of initial util_avg when EAS is enabled ?
+On Tue 31-07-18 00:07:22, Tetsuo Handa wrote:
+> On 2018/07/21 5:06, Andrew Morton wrote:
+> > On Fri, 20 Jul 2018 19:36:23 +0900 Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp> wrote:
+> > 
+> >>>
+> >>> This report is stalling after mount() completed and process used remap_file_pages().
+> >>> I think that we might need to use debug printk(). But I don't know what to examine.
+> >>>
+> >>
+> >> Andrew, can you pick up this debug printk() patch?
+> >> I guess we can get the result within one week.
+> > 
+> > Sure, let's toss it in -next for a while.
+> > 
+> >> >From 8f55e00b21fefffbc6abd9085ac503c52a302464 Mon Sep 17 00:00:00 2001
+> >> From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> >> Date: Fri, 20 Jul 2018 19:29:06 +0900
+> >> Subject: [PATCH] fs/buffer.c: add debug print for __getblk_gfp() stall problem
+> >>
+> >> Among syzbot's unresolved hung task reports, 18 out of 65 reports contain
+> >> __getblk_gfp() line in the backtrace. Since there is a comment block that
+> >> says that __getblk_gfp() will lock up the machine if try_to_free_buffers()
+> >> attempt from grow_dev_page() is failing, let's start from checking whether
+> >> syzbot is hitting that case. This change will be removed after the bug is
+> >> fixed.
+> > 
+> > I'm not sure that grow_dev_page() is hanging.  It has often been
+> > suspected, but always is proven innocent.  Lets see.
 > 
-> It's the same topic: How EAS should consider a newly created task ?
-> 
-> For now, we let the "performance" mode selects a CPU. This CPU will
-> most probably be worst CPU from a EAS pov because it's the idlest CPU
-> in the idlest group which is the opposite of what EAS tries to do
-> 
-> The current behavior is :
-> For every new task, the cpu selection is done assuming it's a heavy
-> task with the max possible load_avg,  and it looks for the idlest cpu.
-> This means that if the system is lightly loaded, scheduler will select
-> most probably a idle big core.
+> syzbot reproduced this problem ( https://syzkaller.appspot.com/text?tag=CrashLog&x=11f2fc44400000 ) .
+> It says that grow_dev_page() is returning 1 but __find_get_block() is failing forever. Any idea?
 
-AFAICS, task load doesn't seem to be used for find_idlest_cpu() ( 
-find_idlest_group() and find_idlest_group_cpu()). So the forkee 
-(SD_BALANCE_FORK) is placed independently of his task load.
-Task load (task_h_load(p)) is used in 
-wake_affine()->wake_affine_weight() but for this to be called it has to 
-be a wakeup (SD_BALANCE_WAKE).
+Looks like some kind of a race where device block size gets changed while
+getblk() runs (and creates buffers for underlying page). I don't have time
+to nail it down at this moment can have a look into it later unless someone
+beats me to it.
 
-> The utilization of this new task is then set to half of the remaining
-> capacity of the selected CPU which means that the idlest you are, the
-> biggest the task will be initialized to. This can easily be half a big
-> core which can be bigger than the max capacity of a little like on
-> hikey960. Then, util_est  will keep track of this value for a while
-> which will make this task like a big one.
-
-[...]
-
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
