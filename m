@@ -7,56 +7,57 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C9B6C46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 09:14:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB214C46472
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 09:14:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3903D219E5
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 09:14:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A5507219E5
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 09:14:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A9W+FFIN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3903D219E5
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="q3ZCT2QF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5507219E5
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727870AbeHFLWP (ORCPT
+        id S1728089AbeHFLWQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 07:22:15 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:45611 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726468AbeHFLWO (ORCPT
+        Mon, 6 Aug 2018 07:22:16 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:40355 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727451AbeHFLWP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 07:22:14 -0400
-Received: by mail-lj1-f196.google.com with SMTP id w16-v6so9971378ljh.12;
-        Mon, 06 Aug 2018 02:14:06 -0700 (PDT)
+        Mon, 6 Aug 2018 07:22:15 -0400
+Received: by mail-lj1-f195.google.com with SMTP id j19-v6so9980114ljc.7;
+        Mon, 06 Aug 2018 02:14:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=saMR/6gfdyKAMhicqzFP5W6VqmJ4SzH5aSP/KO4QbS0=;
-        b=A9W+FFINZe8EIECKihoMR0ihwug/TXQQvLn7pbKeMvGD+Bzny5iYQCQnjywWPYzpl/
-         Cdl2azFDXKmRubaPK5rUR6B1n4FLlxFl0odT8YjL34Oabut4FSZVIP5uFQFzFQj3URmp
-         iATNF3LlZ6pJMolN/pZrAwAEfD2NHRtdU5XkJtZq2oeYgbdclpIv5QF/y6dt1M9zFnZ9
-         G/j6m++y6wOqJxtLhvdKI1883OGGzG6Y8YYXm/VkcWiLm6VI5Y7o7gFx1vQMCpVs/lRt
-         3J5SqEe+4M3GoBrXJFtBQnvwoIRBOvevWesavbKenVNSAf2a/fNgAt5HhR2I3q2hvqGF
-         y/2g==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=I+polcD2ykwKvj37N170Ls6rreDUc3NfcfZ5LU1FjzU=;
+        b=q3ZCT2QFpusGA9zrxcVZcrLrM6TebSmRtaOy/iOVq/gxQwre0BooaxJnIkYjWt+6fj
+         4ZAytqm/OvAol7TeSXS5FdjwthGS6nqadyfU9iHepvWlAcqbtd0eGZn8j5XJOSNlK1kr
+         lYBQcpUaOCUqi5FcVbsNvipznrmyH9BPVUGVRFLI2okD++Oe1WGV5Vd6ang8zWs3Vesk
+         xeydC8u62HLneOS6aj64P4QCc7OMpdqT8pK/TXXXzv/YzhGr4pWM+hfl/JJIfJBxvnBf
+         PAG0Gq5PZWNjKodSwCPKPYhimQctyau3NE/0zIEijszoATGVCUYZdsnC39opSrKhHLhx
+         sbmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=saMR/6gfdyKAMhicqzFP5W6VqmJ4SzH5aSP/KO4QbS0=;
-        b=YlfzM/6lD1etXB4dLHEe1uLLKb5X6Xb7EMueGBAcYLBjBtbnRXbkOqbMZEutJnl1/n
-         mbIjbg35WEJuLQlCjuvHXzRw3koCBcnaRNmiwFsxZBEsbQ/SxWysYU9u15mUjun8EDnJ
-         c8lVVEafMAkmNEMh7Etg/Q26xd9xreM5trzwnJiBsLgKYnxwwTMln7L/xiRHlpiipe+L
-         MqmgCN4kEiE7aCfhKUmrPfDjvGornCAbkXmF5qaGogYafn/nC5fARrXd7qwGrd57x1U+
-         IELNNVJ00eyWkPz6BxCJQ6f93r5b9ZkB3q9i9afaa80FquY2E90j3ws/866DyDaomzTt
-         EQ+g==
-X-Gm-Message-State: AOUpUlHfu6WVKxJJzor9XKpd4oPd+wsVpxYoHevfgh07djD9XTd2BFxk
-        C313YnhcQabcvk09RqbFAf8=
-X-Google-Smtp-Source: AAOMgpfPDq+mBVE0aPO9KhZKL2sZqb/GLVjlfv9LCFaiW7Jcpeb0nZtuE2dFRGJFDV0zQxgthbkxKA==
-X-Received: by 2002:a2e:92c4:: with SMTP id k4-v6mr12785509ljh.18.1533546845419;
-        Mon, 06 Aug 2018 02:14:05 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=I+polcD2ykwKvj37N170Ls6rreDUc3NfcfZ5LU1FjzU=;
+        b=uEMZzU9Uo14q6sCnJkBvlD1pLZJO5CfOr1E4tT94qukS90A9NduUO4M5JTj1lJJJwK
+         nNH8qnPTnlzIvV9c/wv9/qdB5fUVp2M9WzhZMI0v//fYovd7cJgcm6DZ17KEyN0yaqny
+         RRNwMyed1x/Lt4dr/sJKc4Hkh06ov2mGVpAzoZiJcZdjMm7jKy3Ih7faqj9TY+m49ClL
+         uU3oGWiBjIq20/41lnJI3nRpZENAkZTgCd1G2g4leYpnOrftvj7Iv+JODmkvffAI9E79
+         ZuBBAAaperKOPebDYYa4zIfXVaSraDBLIXHwu1mcId2vRTmyJdKg7NK0nDRaze9b+DM5
+         JVOg==
+X-Gm-Message-State: AOUpUlEM8cD6JKjraDCEm+XfKnVqMzSNIcw+DClJVXdk2BiHXdcGmihI
+        GI0naQCOkES5lCpAnbPPpq4=
+X-Google-Smtp-Source: AAOMgpc/YwGShoPeIkQ2mVlxnJb/sAeLjFUzZ8Ei9DyK4bP2Yu274qHU/gf0QJDRCGQbUbgDcLRGew==
+X-Received: by 2002:a2e:8950:: with SMTP id b16-v6mr13097264ljk.111.1533546846521;
+        Mon, 06 Aug 2018 02:14:06 -0700 (PDT)
 Received: from localhost.localdomain (109-252-90-13.nat.spd-mgts.ru. [109.252.90.13])
-        by smtp.gmail.com with ESMTPSA id q16-v6sm2175912ljj.68.2018.08.06.02.14.04
+        by smtp.gmail.com with ESMTPSA id q16-v6sm2175912ljj.68.2018.08.06.02.14.05
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 06 Aug 2018 02:14:04 -0700 (PDT)
+        Mon, 06 Aug 2018 02:14:05 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Thierry Reding <thierry.reding@gmail.com>,
@@ -65,10 +66,12 @@ To:     Linus Walleij <linus.walleij@linaro.org>,
         Marcel Ziswiler <marcel@ziswiler.com>
 Cc:     linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/2] pinctrl: tegra: Move drivers registration to arch_init level
-Date:   Mon,  6 Aug 2018 12:12:06 +0300
-Message-Id: <20180806091207.12586-1-digetx@gmail.com>
+Subject: [PATCH v2 2/2] gpio: tegra: Move driver registration to subsys_init level
+Date:   Mon,  6 Aug 2018 12:12:07 +0300
+Message-Id: <20180806091207.12586-2-digetx@gmail.com>
 X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180806091207.12586-1-digetx@gmail.com>
+References: <20180806091207.12586-1-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -95,88 +98,19 @@ v2: Corrected commit message with s/to suspend after/to suspend before/.
 
 
 
- drivers/pinctrl/tegra/pinctrl-tegra114.c | 7 ++++++-
- drivers/pinctrl/tegra/pinctrl-tegra124.c | 7 ++++++-
- drivers/pinctrl/tegra/pinctrl-tegra20.c  | 7 ++++++-
- drivers/pinctrl/tegra/pinctrl-tegra210.c | 7 ++++++-
- drivers/pinctrl/tegra/pinctrl-tegra30.c  | 7 ++++++-
- 5 files changed, 30 insertions(+), 5 deletions(-)
+ drivers/gpio/gpio-tegra.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra114.c b/drivers/pinctrl/tegra/pinctrl-tegra114.c
-index 511a8774fd8d..d43c209e9c30 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra114.c
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra114.c
-@@ -1868,4 +1868,9 @@ static struct platform_driver tegra114_pinctrl_driver = {
- 	},
- 	.probe = tegra114_pinctrl_probe,
- };
--builtin_platform_driver(tegra114_pinctrl_driver);
-+
-+static int __init tegra114_pinctrl_init(void)
-+{
-+	return platform_driver_register(&tegra114_pinctrl_driver);
-+}
-+arch_initcall(tegra114_pinctrl_init);
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra124.c b/drivers/pinctrl/tegra/pinctrl-tegra124.c
-index 57e3cdcf4503..5b07a5834d15 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra124.c
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra124.c
-@@ -2080,4 +2080,9 @@ static struct platform_driver tegra124_pinctrl_driver = {
- 	},
- 	.probe = tegra124_pinctrl_probe,
- };
--builtin_platform_driver(tegra124_pinctrl_driver);
-+
-+static int __init tegra124_pinctrl_init(void)
-+{
-+	return platform_driver_register(&tegra124_pinctrl_driver);
-+}
-+arch_initcall(tegra124_pinctrl_init);
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra20.c b/drivers/pinctrl/tegra/pinctrl-tegra20.c
-index 624889ed3a9d..1fc82a9576e0 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra20.c
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra20.c
-@@ -2277,4 +2277,9 @@ static struct platform_driver tegra20_pinctrl_driver = {
- 	},
- 	.probe = tegra20_pinctrl_probe,
- };
--builtin_platform_driver(tegra20_pinctrl_driver);
-+
-+static int __init tegra20_pinctrl_init(void)
-+{
-+	return platform_driver_register(&tegra20_pinctrl_driver);
-+}
-+arch_initcall(tegra20_pinctrl_init);
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra210.c b/drivers/pinctrl/tegra/pinctrl-tegra210.c
-index 0956a1c73391..3e77f5474dd8 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra210.c
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra210.c
-@@ -1582,4 +1582,9 @@ static struct platform_driver tegra210_pinctrl_driver = {
- 	},
- 	.probe = tegra210_pinctrl_probe,
- };
--builtin_platform_driver(tegra210_pinctrl_driver);
-+
-+static int __init tegra210_pinctrl_init(void)
-+{
-+	return platform_driver_register(&tegra210_pinctrl_driver);
-+}
-+arch_initcall(tegra210_pinctrl_init);
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra30.c b/drivers/pinctrl/tegra/pinctrl-tegra30.c
-index c923ad58af84..10e617003e9c 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra30.c
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra30.c
-@@ -2503,4 +2503,9 @@ static struct platform_driver tegra30_pinctrl_driver = {
- 	},
- 	.probe = tegra30_pinctrl_probe,
- };
--builtin_platform_driver(tegra30_pinctrl_driver);
-+
-+static int __init tegra30_pinctrl_init(void)
-+{
-+	return platform_driver_register(&tegra30_pinctrl_driver);
-+}
-+arch_initcall(tegra30_pinctrl_init);
+diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
+index 2d940785bad0..a53c77db9744 100644
+--- a/drivers/gpio/gpio-tegra.c
++++ b/drivers/gpio/gpio-tegra.c
+@@ -712,4 +712,4 @@ static int __init tegra_gpio_init(void)
+ {
+ 	return platform_driver_register(&tegra_gpio_driver);
+ }
+-postcore_initcall(tegra_gpio_init);
++subsys_initcall(tegra_gpio_init);
 -- 
 2.18.0
 
