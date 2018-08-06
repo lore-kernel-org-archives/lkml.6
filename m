@@ -2,118 +2,107 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8FFBC46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:03:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C545C46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:03:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B34E21473
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:03:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C9FED217B9
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:03:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J18qmaQg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B34E21473
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="bSkuTjxY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9FED217B9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733113AbeHFSNX (ORCPT
+        id S1733132AbeHFSN0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 14:13:23 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:45872 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730724AbeHFSNX (ORCPT
+        Mon, 6 Aug 2018 14:13:26 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:48820 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730724AbeHFSNZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 14:13:23 -0400
-Received: by mail-pg1-f195.google.com with SMTP id f1-v6so6416091pgq.12;
-        Mon, 06 Aug 2018 09:03:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=lpseXCozhj4Lnwlm39GbYbPDVhnHvO8cfqBhSXIH6Y0=;
-        b=J18qmaQgwM3nY15TUaN2euXyH46HM7gM+jyXBs2bG0VAmcklhSTHAP1/Yzbtnr2bJ+
-         RUGijj7GZHpFiPrhPwCe1aXTs1YhF9678WpSalxrzEsHy6hE2epnvbDe4GI0cdk9btQA
-         oHm/t1tSfMawrEZf8n2bVldtAtVX5WwF8PkUVUj30vDIwJ8TjxChzHtKXHHx+WZWF5Z5
-         qJjiV3nUL5gth5SVDasJ3fU1YkqsRtuGb7sTkGvNPQgDP3/leHb3iXDwSWyfaWqT9AZs
-         jRHWodZimKhXcljQwUAdO2b37m6IE1EwutAIl89SqkYkcTVbMf0CmMQ6flNnwJkJWCNW
-         YH+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=lpseXCozhj4Lnwlm39GbYbPDVhnHvO8cfqBhSXIH6Y0=;
-        b=uQxhDulTQWKi0PlzD4F2E2xaGWUmsiXhCdIP961TsRiyEmPwnSgd90g90SczJdbgeH
-         /0zdhxvYNSLiBa5xHLg9hMCscc8ZuFnNwDLJW+wH70yVG2BEthCaOteg0uAIuDmEWVNv
-         5jjtb3t77LRCSVi0ubQfKOuLpV1Qwr63GpML/+ysKECTlZKQFz1smli3bnub6bZo/ijN
-         B5ulDqN1RYylICd4a/DNHg68VLh0i3Me4GEQLiompFnRthafz5FLyiJIIrrMkAcoDblJ
-         hc8ix5GkuodZkOBhGNvy7ccI23On+3dqOzSXe+tsOOKuYo+7NNR2OZA+ZMQ8Hfj1UYGb
-         TLnQ==
-X-Gm-Message-State: AOUpUlG3w368caHh8syVDYsIoHoW+4LuJC6sEv6o9Gvb6m0Bo1RKi3Tn
-        CpoHLVumS34sxuI99qkKdbH9QADp
-X-Google-Smtp-Source: AAOMgpdhRw5F0Y3dHiAdbrbg5aZMTipb6sO8zyXYyYaHhPeFkSDSgzAIQ+OU6pby/Lq/QQIVPK0xZg==
-X-Received: by 2002:a65:5a01:: with SMTP id y1-v6mr13775978pgs.125.1533571417111;
-        Mon, 06 Aug 2018 09:03:37 -0700 (PDT)
-Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id f5-v6sm13197664pga.58.2018.08.06.09.03.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 06 Aug 2018 09:03:36 -0700 (PDT)
-Subject: Re: [PATCH] USB: OHCI: ohci-sm501: complete URBs in BH context
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Alan Stern <stern@rowland.harvard.edu>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1533355279-26725-1-git-send-email-linux@roeck-us.net>
- <20180806083730.GA32650@infradead.org>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <cbbcbe2c-28c6-faa1-4ef4-8e59c486e2a4@roeck-us.net>
-Date:   Mon, 6 Aug 2018 09:03:35 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 6 Aug 2018 14:13:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=8IaTbGiI2kBzPlXkTibDxExERHMd3REdT8BW2Nz2qnY=; b=bSkuTjxYN4NMHmlhw2dJhmPpJ
+        P/0O5ZWufJug37n30eMX6zn9IQ0QpAMnZAkNcmK7ou43dU+XTgCRkMmrSLxP6K8g2QeSdU49zFQUk
+        UKVCQQkrwn65ney/0EdNe2Jnp9GQB66ViYynnHVgRlOeS4wcg/b791Co6Qn7TbL5q8sJcAQTAGpKP
+        qK6iCvfApWakeMjob3w18AAJ53W+BD+pkUu590MFo5HHgYEY4zeE3PDYCg9VX6qeP2R/r5aVuarbv
+        nPOtSdbtiXpN80LRv/aCX3eAYocf/L9kvVddGLD3aVruUatVCx0nrIh8Rcf/LEUn+5bFekxQ4rWVI
+        17xROMavw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fmhyl-0006hP-05; Mon, 06 Aug 2018 16:03:31 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 7547920589AA1; Mon,  6 Aug 2018 18:03:29 +0200 (CEST)
+Date:   Mon, 6 Aug 2018 18:03:29 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Johannes Weiner <hannes@cmpxchg.org>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Tejun Heo <tj@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Daniel Drake <drake@endlessm.com>,
+        Vinayak Menon <vinmenon@codeaurora.org>,
+        Christopher Lameter <cl@linux.com>,
+        Mike Galbraith <efault@gmx.de>,
+        Shakeel Butt <shakeelb@google.com>,
+        Peter Enderborg <peter.enderborg@sony.com>, linux-mm@kvack.org,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@fb.com
+Subject: Re: [PATCH 8/9] psi: pressure stall information for CPU, memory, and
+ IO
+Message-ID: <20180806160329.GP2494@hirez.programming.kicks-ass.net>
+References: <20180801151958.32590-1-hannes@cmpxchg.org>
+ <20180801151958.32590-9-hannes@cmpxchg.org>
+ <20180803165641.GA2476@hirez.programming.kicks-ass.net>
+ <20180806151928.GB9888@cmpxchg.org>
 MIME-Version: 1.0
-In-Reply-To: <20180806083730.GA32650@infradead.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180806151928.GB9888@cmpxchg.org>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/06/2018 01:37 AM, Christoph Hellwig wrote:
-> On Fri, Aug 03, 2018 at 09:01:19PM -0700, Guenter Roeck wrote:
->> Testing an USB drive connected to ohci-sm501 results in a large number
->> of runtime warnings.
+On Mon, Aug 06, 2018 at 11:19:28AM -0400, Johannes Weiner wrote:
+> On Fri, Aug 03, 2018 at 06:56:41PM +0200, Peter Zijlstra wrote:
+> > On Wed, Aug 01, 2018 at 11:19:57AM -0400, Johannes Weiner wrote:
+
+> > > +		u32 uninitialized_var(nonidle);
+> > 
+> > urgh.. I can see why the compiler got confused. Dodgy :-)
 > 
-> As far as I can tell this driver uses the HCD_LOCAL_MEM feature flag
-> for memory declared using dma_declare_coherent_memory.  Unlike the
-> mormal dma mapping interfaces this special case can actually be freed
-> from interrupt context, and we have a fix for this warning queued
-> up in linux-next:
-> 
-> http://git.infradead.org/users/hch/dma-mapping.git/commitdiff/d27fb99f62af7b79c542d161aa5155ed57271ddc
-> 
-> That being said I'm generally very unhappy how dma_init_coherent_memory
-> turned out.  The idea was to allow device local memory to be hidden
-> behind the DMA API, but in general we use it either as a way to declare
-> special uncache system memory (which would really be the plaform codes
-> job), or as a magic bounce buffer like in the USB code.  I plan to
-> eventually untangle this, but it is going to take some time.
+> :-) I think we can make this cleaner. Something like this (modulo the
+> READ_ONCE/WRITE_ONCE you pointed out in the other email)?
 > 
 
-Yes, I can confirm that the warning is gone in -next. Problem solved,
-except of course there are still the warnings about the missing
-coherent_dma_mask.
+> @@ -244,60 +287,17 @@ static bool psi_update_stats(struct psi_group *group)
+>  	 */
+>  	for_each_online_cpu(cpu) {
+>  		struct psi_group_cpu *groupc = per_cpu_ptr(group->pcpu, cpu);
+> +		u32 nonidle;
+> +
+> +		nonidle = read_update_delta(groupc, PSI_NONIDLE, cpu);
+> +		nonidle = nsecs_to_jiffies(nonidle);
+> +		nonidle_total += nonidle;
+> +
+> +		for (s = 0; s < PSI_NONIDLE; s++) {
+> +			u32 delta;
+> +
+> +			delta = read_update_delta(groupc, s, cpu);
+> +			deltas[s] += (u64)delta * nonidle;
+>  		}
+>  	}
 
-sm501-usb sm501-usb: SM501 OHCI
-sm501-usb sm501-usb: new USB bus registered, assigned bus number 1
-WARNING: CPU: 0 PID: 1 at ./include/linux/dma-mapping.h:516 ohci_init+0x194/0x2d8
-
-Is that warning also not warranted for the given use case, or is
-the missing mask indeed necessary ? It is easy to add - see
-https://lore.kernel.org/patchwork/patch/971411/ - but I do wonder
-if that change is appropriate.
-
-Thanks,
-Guenter
+Yes, much clearer, thanks!
