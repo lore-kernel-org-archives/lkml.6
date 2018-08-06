@@ -2,87 +2,147 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5EDDC4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 19:35:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BC2EC4646D
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 19:37:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 352A821A5E
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 19:35:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 352A821A5E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+	by mail.kernel.org (Postfix) with ESMTP id A821C21A5E
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 19:37:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZQ/vbPUt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A821C21A5E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732377AbeHFVpe (ORCPT
+        id S1731665AbeHFVsS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 17:45:34 -0400
-Received: from bmailout1.hostsharing.net ([83.223.95.100]:39409 "EHLO
-        bmailout1.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727585AbeHFVpe (ORCPT
+        Mon, 6 Aug 2018 17:48:18 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:37259 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727585AbeHFVsS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 17:45:34 -0400
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
-        by bmailout1.hostsharing.net (Postfix) with ESMTPS id 3C74D3004D18E;
-        Mon,  6 Aug 2018 21:34:58 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-        id 01E102FE97; Mon,  6 Aug 2018 21:34:57 +0200 (CEST)
-Date:   Mon, 6 Aug 2018 21:34:57 +0200
-From:   Lukas Wunner <lukas@wunner.de>
-To:     Lyude Paul <lyude@redhat.com>
-Cc:     Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>,
-        nouveau@lists.freedesktop.org,
-        Karol Herbst <karolherbst@gmail.com>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH v3 3/8] drm/fb_helper: Introduce hotplug_suspend/resume()
-Message-ID: <20180806193457.GA7028@wunner.de>
-References: <20180731003954.19962-1-lyude@redhat.com>
- <20180731003954.19962-4-lyude@redhat.com>
- <20180806084322.GK3008@phenom.ffwll.local>
- <4e72a10062166d646ebd3eb28b6c186d4c00a63f.camel@redhat.com>
+        Mon, 6 Aug 2018 17:48:18 -0400
+Received: by mail-lf1-f68.google.com with SMTP id j8-v6so9910782lfb.4
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Aug 2018 12:37:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=Wcgcqp5msO3ui2DnnZpmlYGy7KEeFYNAHjoKNZ9a8D8=;
+        b=ZQ/vbPUtK22lLy+c6VSNFXgA/RRKgBljHkuJQUdWIigLJjsNWPitAkgUIx0roMildS
+         KzdwNL291XSQKkLWIoI5HZYAg5TaHgUI7qmu2ICY+0kwg7+SunFaLR1BQcKw65KnknkV
+         CVIyZFOnxTK/1nvmra/eVx+aZSAtDwAMC93Vu+th78Kwm6LEOQ3hJYKNrVZzv7I+BGXJ
+         u02TtENKVLbAU6jzN4uRdu8u1qj8BnzRIQ72dXsotwhLVqCFc/N4hjEnBrvXsvRT/Inc
+         hIPS50X3Iy4ORPWtpzgVTSThIwNkTaHrq/+Mu5yKIZ4s7BkfG1+NLdB01MTe9rLL6yAb
+         wnKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=Wcgcqp5msO3ui2DnnZpmlYGy7KEeFYNAHjoKNZ9a8D8=;
+        b=SMVef+E/uLQvj9+Aezr86XmvPF/yv7nOzSJV8zafY5BCr5KE5meCZaug6cLtzpCtCW
+         BTq+08SEW15jlm1b2iB1ndfgysRzp4Pn8GIv1jFWusGkQ8rNG3ZPuVBzgGZ72/uXw4WR
+         A4/iDvbuT4tMjnRd4OnvfGSgMLFDUTIf8OndjrbIaLCqCjtznoSUu3OM4rqCFnwT52Qe
+         3sP1yz9fe8uUMCOD26a+S3cIva8tIEsQIpZbRShMn/b1TA+GBdp08yDGcX9641qLm/En
+         BuUwqz+5tLIunJyMGpLLRPMXkiSzVHeE0K7KFZ0A+rzZWvY+VcfDaJYTs7CohMLybMrc
+         7peA==
+X-Gm-Message-State: AOUpUlHnmXKZMWxp/lwTDN478TNAU9Db3+thfQZkbqsum0xPpqeZmrFt
+        0zWIXNnL+JVzJWrJ1ohrfO4=
+X-Google-Smtp-Source: AAOMgpfdgCvZomSNSXUcg4YOzw4z3FT5TitCGLRMe5zEDlQtdfIaE12DsyLX/q0rCZn3ePngn0b7yg==
+X-Received: by 2002:a19:e40d:: with SMTP id b13-v6mr12892247lfh.141.1533584262145;
+        Mon, 06 Aug 2018 12:37:42 -0700 (PDT)
+Received: from localhost.localdomain (185.59.110.199.maxnet.net.pl. [185.59.110.199])
+        by smtp.gmail.com with ESMTPSA id w27-v6sm2379157lfk.5.2018.08.06.12.37.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 06 Aug 2018 12:37:41 -0700 (PDT)
+From:   Arkadiusz Lis <areklis909@gmail.com>
+To:     jfrederich@gmail.com, dsd@laptop.org, jon.nettleton@gmail.com,
+        gregkh@linuxfoundation.org
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        Arkadiusz Lis <areklis909@gmail.com>
+Subject: [PATCH v2] Staging: One Laptop Per Child: fix SPDX-License-Identifier issue
+Date:   Mon,  6 Aug 2018 21:35:52 +0200
+Message-Id: <1533584152-5792-1-git-send-email-areklis909@gmail.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1533575300-5001-1-git-send-email-areklis909@gmail.com>
+References: <1533575300-5001-1-git-send-email-areklis909@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4e72a10062166d646ebd3eb28b6c186d4c00a63f.camel@redhat.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 06, 2018 at 03:15:31PM -0400, Lyude Paul wrote:
-> You did mention in the review of one of my other patches that we should avoid
-> disabling polling during runtime suspend, and you're definitely right. I feel
-> a bit silly for not remembering that since I was the one who made it so that
-> i915 does polling in runtime suspend for chips without RPM HPD detection in
-> the first place because it was causing people's displays not to come up on
-> vlv...
-> Anyway: I think if we just leave output polling enabled during runtime suspend
-> that might actually fix all of the fb_helper locking issues since we won't
-> need to wait on any of the output poll workers to finish, at least I think it
-> should: I'll confirm this when I get into the office
+Add SPDX-License-Identifier to the source files.
+Remove redundant, old license.
 
-Quoth Imre Deak:
+Signed-off-by: Arkadiusz Lis <areklis909@gmail.com>
+---
+ drivers/staging/olpc_dcon/olpc_dcon.c        | 5 +----
+ drivers/staging/olpc_dcon/olpc_dcon_xo_1.c   | 5 +----
+ drivers/staging/olpc_dcon/olpc_dcon_xo_1_5.c | 5 +----
+ 3 files changed, 3 insertions(+), 12 deletions(-)
 
-   "In i915 polling is on during runtime suspend only if there are outputs
-    without hotplug interrupt support. A special case is when an output has
-    working HPD interrupts when in D0, but no interrupts when runtime
-    suspended. For these we start polling (from a scheduled work) in the
-    runtime suspend hook and stop it in the runtime resume hook (again from
-    a scheduled work)."
-    https://lkml.org/lkml/2018/2/12/330
+diff --git a/drivers/staging/olpc_dcon/olpc_dcon.c b/drivers/staging/olpc_dcon/olpc_dcon.c
+index 2744c9f..6b714f7 100644
+--- a/drivers/staging/olpc_dcon/olpc_dcon.c
++++ b/drivers/staging/olpc_dcon/olpc_dcon.c
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Mainly by David Woodhouse, somewhat modified by Jordan Crouse
+  *
+@@ -5,10 +6,6 @@
+  * Copyright © 2006-2007  Advanced Micro Devices, Inc.
+  * Copyright © 2009       VIA Technology, Inc.
+  * Copyright (c) 2010-2011  Andres Salomon <dilinger@queued.net>
+- *
+- * This program is free software.  You can redistribute it and/or
+- * modify it under the terms of version 2 of the GNU General Public
+- * License as published by the Free Software Foundation.
+  */
+ 
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+diff --git a/drivers/staging/olpc_dcon/olpc_dcon_xo_1.c b/drivers/staging/olpc_dcon/olpc_dcon_xo_1.c
+index 633c58c..ff145d4 100644
+--- a/drivers/staging/olpc_dcon/olpc_dcon_xo_1.c
++++ b/drivers/staging/olpc_dcon/olpc_dcon_xo_1.c
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Mainly by David Woodhouse, somewhat modified by Jordan Crouse
+  *
+@@ -5,10 +6,6 @@
+  * Copyright © 2006-2007  Advanced Micro Devices, Inc.
+  * Copyright © 2009       VIA Technology, Inc.
+  * Copyright (c) 2010  Andres Salomon <dilinger@queued.net>
+- *
+- * This program is free software.  You can redistribute it and/or
+- * modify it under the terms of version 2 of the GNU General Public
+- * License as published by the Free Software Foundation.
+  */
+ 
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+diff --git a/drivers/staging/olpc_dcon/olpc_dcon_xo_1_5.c b/drivers/staging/olpc_dcon/olpc_dcon_xo_1_5.c
+index 6458442..838daa2 100644
+--- a/drivers/staging/olpc_dcon/olpc_dcon_xo_1_5.c
++++ b/drivers/staging/olpc_dcon/olpc_dcon_xo_1_5.c
+@@ -1,9 +1,6 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Copyright (c) 2009,2010       One Laptop per Child
+- *
+- * This program is free software.  You can redistribute it and/or
+- * modify it under the terms of version 2 of the GNU General Public
+- * License as published by the Free Software Foundation.
+  */
+ 
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+-- 
+1.9.1
 
-nouveau only uses runtime PM on discrete GPUs in dual GPU laptops.
-Resuming the GPU from D3cold to D0 every few seconds to poll the
-outputs would waste too much power on such machines.
-
-The question is, why is polling running at all, since all modern
-laptops have HPD-capable ports such as DP?
-
-Thanks,
-
-Lukas
