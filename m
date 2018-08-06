@@ -2,345 +2,103 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D9C3C46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 03:17:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD0DEC46470
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 03:19:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3D9121992
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 03:17:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3D9121992
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 806FC218FC
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 03:19:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 806FC218FC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727485AbeHFFYz (ORCPT
+        id S1727528AbeHFF0H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 01:24:55 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44780 "EHLO mx1.redhat.com"
+        Mon, 6 Aug 2018 01:26:07 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:56043 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726338AbeHFFYy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 01:24:54 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 136D140241C3;
-        Mon,  6 Aug 2018 03:17:54 +0000 (UTC)
-Received: from jason-ThinkPad-T450s.redhat.com (ovpn-12-33.pek2.redhat.com [10.72.12.33])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id DCB172026D69;
-        Mon,  6 Aug 2018 03:17:49 +0000 (UTC)
-From:   Jason Wang <jasowang@redhat.com>
-To:     mst@redhat.com, jasowang@redhat.com
-Cc:     kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH net-next V2] vhost: switch to use new message format
-Date:   Mon,  6 Aug 2018 11:17:47 +0800
-Message-Id: <1533525467-17787-1-git-send-email-jasowang@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 06 Aug 2018 03:17:54 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 06 Aug 2018 03:17:54 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jasowang@redhat.com' RCPT:''
+        id S1727217AbeHFF0H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 01:26:07 -0400
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id AB843B88C54A6;
+        Mon,  6 Aug 2018 11:19:03 +0800 (CST)
+Received: from linux-ibm.site (10.175.102.37) by
+ DGGEMS410-HUB.china.huawei.com (10.3.19.210) with Microsoft SMTP Server id
+ 14.3.399.0; Mon, 6 Aug 2018 11:19:02 +0800
+From:   zhong jiang <zhongjiang@huawei.com>
+To:     <davem@davemloft.net>, <stephen@networkplumber.org>
+CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2] net/bridge/br_multicast: remove redundant variable "err"
+Date:   Mon, 6 Aug 2018 11:07:23 +0800
+Message-ID: <1533524843-51236-1-git-send-email-zhongjiang@huawei.com>
+X-Mailer: git-send-email 1.7.12.4
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.175.102.37]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We use to have message like:
+The err is not modified after initalization, So remove it and make
+it to be void function.
 
-struct vhost_msg {
-	int type;
-	union {
-		struct vhost_iotlb_msg iotlb;
-		__u8 padding[64];
-	};
-};
-
-Unfortunately, there will be a hole of 32bit in 64bit machine because
-of the alignment. This leads a different formats between 32bit API and
-64bit API. What's more it will break 32bit program running on 64bit
-machine.
-
-So fixing this by introducing a new message type with an explicit
-32bit reserved field after type like:
-
-struct vhost_msg_v2 {
-	__u32 type;
-	__u32 reserved;
-	union {
-		struct vhost_iotlb_msg iotlb;
-		__u8 padding[64];
-	};
-};
-
-We will have a consistent ABI after switching to use this. To enable
-this capability, introduce a new ioctl (VHOST_SET_BAKCEND_FEATURE) for
-userspace to enable this feature (VHOST_BACKEND_F_IOTLB_V2).
-
-Fixes: 6b1e6cc7855b ("vhost: new device IOTLB API")
-Signed-off-by: Jason Wang <jasowang@redhat.com>
+Signed-off-by: zhong jiang <zhongjiang@huawei.com>
 ---
-Changes from V1:
-- use __u32 instead of int for type
----
- drivers/vhost/net.c        | 30 ++++++++++++++++++++
- drivers/vhost/vhost.c      | 71 ++++++++++++++++++++++++++++++++++------------
- drivers/vhost/vhost.h      | 11 ++++++-
- include/uapi/linux/vhost.h | 18 ++++++++++++
- 4 files changed, 111 insertions(+), 19 deletions(-)
+v1->v2:
+ -  The initalization of err  to '0' is unnecesary. so drop the change
 
-diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
-index 367d802..4e656f8 100644
---- a/drivers/vhost/net.c
-+++ b/drivers/vhost/net.c
-@@ -78,6 +78,10 @@ enum {
- };
- 
- enum {
-+	VHOST_NET_BACKEND_FEATURES = (1ULL << VHOST_BACKEND_F_IOTLB_MSG_V2)
-+};
-+
-+enum {
- 	VHOST_NET_VQ_RX = 0,
- 	VHOST_NET_VQ_TX = 1,
- 	VHOST_NET_VQ_MAX = 2,
-@@ -1399,6 +1403,21 @@ static long vhost_net_reset_owner(struct vhost_net *n)
- 	return err;
+ net/bridge/br_multicast.c | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
+
+diff --git a/net/bridge/br_multicast.c b/net/bridge/br_multicast.c
+index 920665d..20ed7ad 100644
+--- a/net/bridge/br_multicast.c
++++ b/net/bridge/br_multicast.c
+@@ -1423,10 +1423,10 @@ static void br_multicast_query_received(struct net_bridge *br,
+ 	br_multicast_mark_router(br, port);
  }
  
-+static int vhost_net_set_backend_features(struct vhost_net *n, u64 features)
-+{
-+	int i;
-+
-+	mutex_lock(&n->dev.mutex);
-+	for (i = 0; i < VHOST_NET_VQ_MAX; ++i) {
-+		mutex_lock(&n->vqs[i].vq.mutex);
-+		n->vqs[i].vq.acked_backend_features = features;
-+		mutex_unlock(&n->vqs[i].vq.mutex);
-+	}
-+	mutex_unlock(&n->dev.mutex);
-+
-+	return 0;
-+}
-+
- static int vhost_net_set_features(struct vhost_net *n, u64 features)
+-static int br_ip4_multicast_query(struct net_bridge *br,
+-				  struct net_bridge_port *port,
+-				  struct sk_buff *skb,
+-				  u16 vid)
++static void br_ip4_multicast_query(struct net_bridge *br,
++				   struct net_bridge_port *port,
++				   struct sk_buff *skb,
++				   u16 vid)
  {
- 	size_t vhost_hlen, sock_hlen, hdr_len;
-@@ -1489,6 +1508,17 @@ static long vhost_net_ioctl(struct file *f, unsigned int ioctl,
- 		if (features & ~VHOST_NET_FEATURES)
- 			return -EOPNOTSUPP;
- 		return vhost_net_set_features(n, features);
-+	case VHOST_GET_BACKEND_FEATURES:
-+		features = VHOST_NET_BACKEND_FEATURES;
-+		if (copy_to_user(featurep, &features, sizeof(features)))
-+			return -EFAULT;
-+		return 0;
-+	case VHOST_SET_BACKEND_FEATURES:
-+		if (copy_from_user(&features, featurep, sizeof(features)))
-+			return -EFAULT;
-+		if (features & ~VHOST_NET_BACKEND_FEATURES)
-+			return -EOPNOTSUPP;
-+		return vhost_net_set_backend_features(n, features);
- 	case VHOST_RESET_OWNER:
- 		return vhost_net_reset_owner(n);
- 	case VHOST_SET_OWNER:
-diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-index a502f1a..6f6c42d 100644
---- a/drivers/vhost/vhost.c
-+++ b/drivers/vhost/vhost.c
-@@ -315,6 +315,7 @@ static void vhost_vq_reset(struct vhost_dev *dev,
- 	vq->log_addr = -1ull;
- 	vq->private_data = NULL;
- 	vq->acked_features = 0;
-+	vq->acked_backend_features = 0;
- 	vq->log_base = NULL;
- 	vq->error_ctx = NULL;
- 	vq->kick = NULL;
-@@ -1027,28 +1028,40 @@ static int vhost_process_iotlb_msg(struct vhost_dev *dev,
- ssize_t vhost_chr_write_iter(struct vhost_dev *dev,
- 			     struct iov_iter *from)
- {
--	struct vhost_msg_node node;
--	unsigned size = sizeof(struct vhost_msg);
--	size_t ret;
--	int err;
-+	struct vhost_iotlb_msg msg;
-+	size_t offset;
-+	int type, ret;
+ 	const struct iphdr *iph = ip_hdr(skb);
+ 	struct igmphdr *ih = igmp_hdr(skb);
+@@ -1439,7 +1439,6 @@ static int br_ip4_multicast_query(struct net_bridge *br,
+ 	unsigned long now = jiffies;
+ 	unsigned int offset = skb_transport_offset(skb);
+ 	__be32 group;
+-	int err = 0;
  
--	if (iov_iter_count(from) < size)
--		return 0;
--	ret = copy_from_iter(&node.msg, size, from);
--	if (ret != size)
-+	ret = copy_from_iter(&type, sizeof(type), from);
-+	if (ret != sizeof(type))
- 		goto done;
+ 	spin_lock(&br->multicast_lock);
+ 	if (!netif_running(br->dev) ||
+@@ -1498,7 +1497,6 @@ static int br_ip4_multicast_query(struct net_bridge *br,
  
--	switch (node.msg.type) {
-+	switch (type) {
- 	case VHOST_IOTLB_MSG:
--		err = vhost_process_iotlb_msg(dev, &node.msg.iotlb);
--		if (err)
--			ret = err;
-+		/* There maybe a hole after type for V1 message type,
-+		 * so skip it here.
-+		 */
-+		offset = offsetof(struct vhost_msg, iotlb) - sizeof(int);
-+		break;
-+	case VHOST_IOTLB_MSG_V2:
-+		offset = sizeof(__u32);
+ out:
+ 	spin_unlock(&br->multicast_lock);
+-	return err;
+ }
+ 
+ #if IS_ENABLED(CONFIG_IPV6)
+@@ -1828,7 +1826,7 @@ static int br_multicast_ipv4_rcv(struct net_bridge *br,
+ 		err = br_ip4_multicast_igmp3_report(br, port, skb_trimmed, vid);
  		break;
- 	default:
- 		ret = -EINVAL;
--		break;
-+		goto done;
-+	}
-+
-+	iov_iter_advance(from, offset);
-+	ret = copy_from_iter(&msg, sizeof(msg), from);
-+	if (ret != sizeof(msg))
-+		goto done;
-+	if (vhost_process_iotlb_msg(dev, &msg)) {
-+		ret = -EFAULT;
-+		goto done;
- 	}
- 
-+	ret = (type == VHOST_IOTLB_MSG) ? sizeof(struct vhost_msg) :
-+	      sizeof(struct vhost_msg_v2);
- done:
- 	return ret;
- }
-@@ -1107,13 +1120,28 @@ ssize_t vhost_chr_read_iter(struct vhost_dev *dev, struct iov_iter *to,
- 		finish_wait(&dev->wait, &wait);
- 
- 	if (node) {
--		ret = copy_to_iter(&node->msg, size, to);
-+		struct vhost_iotlb_msg *msg;
-+		void *start = &node->msg;
-+
-+		switch (node->msg.type) {
-+		case VHOST_IOTLB_MSG:
-+			size = sizeof(node->msg);
-+			msg = &node->msg.iotlb;
-+			break;
-+		case VHOST_IOTLB_MSG_V2:
-+			size = sizeof(node->msg_v2);
-+			msg = &node->msg_v2.iotlb;
-+			break;
-+		default:
-+			BUG();
-+			break;
-+		}
- 
--		if (ret != size || node->msg.type != VHOST_IOTLB_MISS) {
-+		ret = copy_to_iter(start, size, to);
-+		if (ret != size || msg->type != VHOST_IOTLB_MISS) {
- 			kfree(node);
- 			return ret;
- 		}
--
- 		vhost_enqueue_msg(dev, &dev->pending_list, node);
- 	}
- 
-@@ -1126,12 +1154,19 @@ static int vhost_iotlb_miss(struct vhost_virtqueue *vq, u64 iova, int access)
- 	struct vhost_dev *dev = vq->dev;
- 	struct vhost_msg_node *node;
- 	struct vhost_iotlb_msg *msg;
-+	bool v2 = vhost_backend_has_feature(vq, VHOST_BACKEND_F_IOTLB_MSG_V2);
- 
--	node = vhost_new_msg(vq, VHOST_IOTLB_MISS);
-+	node = vhost_new_msg(vq, v2 ? VHOST_IOTLB_MSG_V2 : VHOST_IOTLB_MSG);
- 	if (!node)
- 		return -ENOMEM;
- 
--	msg = &node->msg.iotlb;
-+	if (v2) {
-+		node->msg_v2.type = VHOST_IOTLB_MSG_V2;
-+		msg = &node->msg_v2.iotlb;
-+	} else {
-+		msg = &node->msg.iotlb;
-+	}
-+
- 	msg->type = VHOST_IOTLB_MISS;
- 	msg->iova = iova;
- 	msg->perm = access;
-diff --git a/drivers/vhost/vhost.h b/drivers/vhost/vhost.h
-index 6c844b9..466ef75 100644
---- a/drivers/vhost/vhost.h
-+++ b/drivers/vhost/vhost.h
-@@ -132,6 +132,7 @@ struct vhost_virtqueue {
- 	struct vhost_umem *iotlb;
- 	void *private_data;
- 	u64 acked_features;
-+	u64 acked_backend_features;
- 	/* Log write descriptors */
- 	void __user *log_base;
- 	struct vhost_log *log;
-@@ -147,7 +148,10 @@ struct vhost_virtqueue {
- };
- 
- struct vhost_msg_node {
--  struct vhost_msg msg;
-+  union {
-+	  struct vhost_msg msg;
-+	  struct vhost_msg_v2 msg_v2;
-+  };
-   struct vhost_virtqueue *vq;
-   struct list_head node;
- };
-@@ -238,6 +242,11 @@ static inline bool vhost_has_feature(struct vhost_virtqueue *vq, int bit)
- 	return vq->acked_features & (1ULL << bit);
- }
- 
-+static inline bool vhost_backend_has_feature(struct vhost_virtqueue *vq, int bit)
-+{
-+	return vq->acked_backend_features & (1ULL << bit);
-+}
-+
- #ifdef CONFIG_VHOST_CROSS_ENDIAN_LEGACY
- static inline bool vhost_is_little_endian(struct vhost_virtqueue *vq)
- {
-diff --git a/include/uapi/linux/vhost.h b/include/uapi/linux/vhost.h
-index c51f8e5..b1e22c4 100644
---- a/include/uapi/linux/vhost.h
-+++ b/include/uapi/linux/vhost.h
-@@ -65,6 +65,7 @@ struct vhost_iotlb_msg {
- };
- 
- #define VHOST_IOTLB_MSG 0x1
-+#define VHOST_IOTLB_MSG_V2 0x2
- 
- struct vhost_msg {
- 	int type;
-@@ -74,6 +75,15 @@ struct vhost_msg {
- 	};
- };
- 
-+struct vhost_msg_v2 {
-+	__u32 type;
-+	__u32 reserved;
-+	union {
-+		struct vhost_iotlb_msg iotlb;
-+		__u8 padding[64];
-+	};
-+};
-+
- struct vhost_memory_region {
- 	__u64 guest_phys_addr;
- 	__u64 memory_size; /* bytes */
-@@ -160,6 +170,14 @@ struct vhost_memory {
- #define VHOST_GET_VRING_BUSYLOOP_TIMEOUT _IOW(VHOST_VIRTIO, 0x24,	\
- 					 struct vhost_vring_state)
- 
-+/* Set or get vhost backend capability */
-+
-+/* Use message type V2 */
-+#define VHOST_BACKEND_F_IOTLB_MSG_V2 0x1
-+
-+#define VHOST_SET_BACKEND_FEATURES _IOW(VHOST_VIRTIO, 0x25, __u64)
-+#define VHOST_GET_BACKEND_FEATURES _IOW(VHOST_VIRTIO, 0x26, __u64)
-+
- /* VHOST_NET specific defines */
- 
- /* Attach virtio net ring to a raw socket, or tap device.
+ 	case IGMP_HOST_MEMBERSHIP_QUERY:
+-		err = br_ip4_multicast_query(br, port, skb_trimmed, vid);
++		br_ip4_multicast_query(br, port, skb_trimmed, vid);
+ 		break;
+ 	case IGMP_HOST_LEAVE_MESSAGE:
+ 		br_ip4_multicast_leave_group(br, port, ih->group, vid, src);
 -- 
-2.7.4
+1.7.12.4
 
