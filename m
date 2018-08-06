@@ -6,126 +6,119 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3D05C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 14:24:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADB46C46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 14:26:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4EAC21A38
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 14:24:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4EAC21A38
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 6C4D521A38
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 14:26:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C4D521A38
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731979AbeHFQeN (ORCPT
+        id S1732174AbeHFQfm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 12:34:13 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34106 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727451AbeHFQeM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 12:34:12 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E08D040241F3;
-        Mon,  6 Aug 2018 14:24:50 +0000 (UTC)
-Received: from krava (unknown [10.43.17.214])
-        by smtp.corp.redhat.com (Postfix) with SMTP id AE9001C4E7;
-        Mon,  6 Aug 2018 14:24:48 +0000 (UTC)
-Date:   Mon, 6 Aug 2018 16:24:47 +0200
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Namhyung Kim <namhyung@kernel.org>
-Cc:     Jiri Olsa <jolsa@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        David Ahern <dsahern@gmail.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Stephane Eranian <eranian@google.com>, kernel-team@lge.com
-Subject: Re: [PATCH 14/20] perf annotate: Pass struct annotation_options to
- map_symbol__annotation_dump
-Message-ID: <20180806142447.GB16446@krava>
-References: <20180804130521.11408-1-jolsa@kernel.org>
- <20180804130521.11408-15-jolsa@kernel.org>
- <20180806134507.GA6983@danjae.aot.lge.com>
+        Mon, 6 Aug 2018 12:35:42 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39856 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727451AbeHFQfl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 12:35:41 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D1B387A9;
+        Mon,  6 Aug 2018 07:26:20 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id A24043F5D0;
+        Mon,  6 Aug 2018 07:26:20 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id 702621AE2D8E; Mon,  6 Aug 2018 15:26:24 +0100 (BST)
+Date:   Mon, 6 Aug 2018 15:26:24 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     gengdongjiu <gengdj.1984@gmail.com>
+Cc:     Dongjiu Geng <gengdongjiu@huawei.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        mark.rutland@arm.com, Len Brown <lenb@kernel.org>,
+        rafael.j.wysocki@intel.com, erik.schmauss@intel.com,
+        robert.moore@intel.com,
+        arm-mail-list <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-acpi@vger.kernel.org, devel@acpica.org
+Subject: Re: [PATCH] arm64: clean the additional checks before calling
+ ghes_notify_sea()
+Message-ID: <20180806142623.GA15275@arm.com>
+References: <1532638907-46129-1-git-send-email-gengdongjiu@huawei.com>
+ <20180727100617.GB25592@arm.com>
+ <CAMj-D2Ab9Txk27GDQbOy3X=Qup7BuA3sWSovsOpffpxe6UcBFQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180806134507.GA6983@danjae.aot.lge.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 06 Aug 2018 14:24:50 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 06 Aug 2018 14:24:50 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@redhat.com' RCPT:''
+In-Reply-To: <CAMj-D2Ab9Txk27GDQbOy3X=Qup7BuA3sWSovsOpffpxe6UcBFQ@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 06, 2018 at 10:45:07PM +0900, Namhyung Kim wrote:
-> Hi Jiri,
+On Sun, Aug 05, 2018 at 10:35:03AM +0800, gengdongjiu wrote:
+> 2018-07-27 18:06 GMT+08:00 Will Deacon <will.deacon@arm.com>:
+> > On Thu, Jul 26, 2018 at 05:01:47PM -0400, Dongjiu Geng wrote:
+> >> In order to remove the additional check before calling the
+> >> ghes_notify_sea(), make stub definition when !CONFIG_ACPI_APEI_SEA.
+> >>
+> >> Signed-off-by: Dongjiu Geng <gengdongjiu@huawei.com>
+> >> ---
+> >
+> > Acked-by: Will Deacon <will.deacon@arm.com>
 > 
-> On Sat, Aug 04, 2018 at 03:05:15PM +0200, Jiri Olsa wrote:
-> > Passing struct annotation_options to map_symbol__annotation_dump,
-> > to carry on and pass the percent_type value.
-> > 
-> > Link: http://lkml.kernel.org/n/tip-5toohgdkgpk3vn6zebusr3bb@git.kernel.org
-> > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-> > ---
-> 
-> [SNIP]
-> > @@ -2523,7 +2526,7 @@ static void disasm_line__write(struct disasm_line *dl, struct annotation *notes,
-> >  
-> >  static void __annotation_line__write(struct annotation_line *al, struct annotation *notes,
-> >  				     bool first_line, bool current_entry, bool change_color, int width,
-> > -				     void *obj,
-> > +				     void *obj, unsigned int percent_type,
-> >  				     int  (*obj__set_color)(void *obj, int color),
-> >  				     void (*obj__set_percent_color)(void *obj, double percent, bool current),
-> >  				     int  (*obj__set_jumps_percent_color)(void *obj, int nr, bool current),
-> > @@ -2531,7 +2534,7 @@ static void __annotation_line__write(struct annotation_line *al, struct annotati
-> >  				     void (*obj__write_graph)(void *obj, int graph))
-> >  
-> >  {
-> > -	double percent_max = annotation_line__max_percent(al, notes);
-> > +	double percent_max = annotation_line__max_percent(al, notes, percent_type);
-> >  	int pcnt_width = annotation__pcnt_width(notes),
-> >  	    cycles_width = annotation__cycles_width(notes);
-> >  	bool show_title = false;
-> > @@ -2552,8 +2555,7 @@ static void __annotation_line__write(struct annotation_line *al, struct annotati
-> >  		for (i = 0; i < notes->nr_events; i++) {
-> >  			double percent;
-> >  
-> > -			percent = annotation_data__percent(&al->data[i],
-> > -							   PERCENT_HITS_LOCAL);
-> > +			percent = annotation_data__percent(&al->data[i], percent_type);
-> >  
-> >  			obj__set_percent_color(obj, percent, current_entry);
-> >  			if (notes->options->show_total_period) {
-> > @@ -2680,13 +2682,15 @@ static void __annotation_line__write(struct annotation_line *al, struct annotati
-> >  }
-> >  
-> >  void annotation_line__write(struct annotation_line *al, struct annotation *notes,
-> > -			    struct annotation_write_ops *ops)
-> > +			    struct annotation_write_ops *wops,
-> > +			    struct annotation_options *opts)
-> >  {
-> > -	__annotation_line__write(al, notes, ops->first_line, ops->current_entry,
-> > -				 ops->change_color, ops->width, ops->obj,
-> > -				 ops->set_color, ops->set_percent_color,
-> > -				 ops->set_jumps_percent_color, ops->printf,
-> > -				 ops->write_graph);
-> > +	__annotation_line__write(al, notes, wops->first_line, wops->current_entry,
-> > +				 wops->change_color, wops->width, wops->obj,
-> > +				 opts->percent_type,
-> > +				 wops->set_color, wops->set_percent_color,
-> > +				 wops->set_jumps_percent_color, wops->printf,
-> > +				 wops->write_graph);
-> 
-> This doesn't look good.  Why not just passing a pointer to wops
-> instead of each fields separately?
+> Will,
+>      This patch will be applied, right? thanks
 
-yep, my thoughts exactly when I saw this ;-) we probably had some
-other caller..  however I only wanted to add one more param ;-)
+I haven't queued it in the arm64 tree, since it touches include/acpi/ghes.h
+and you don't have an ack from the acpi folks. I acked it so that you could
+route it via the acpi tree without me holding you up.
 
-I'll check what we can do with this in v2
+Will
 
-jirka
+> >> This cleanup is ever mentioned by Mark Rutland in [1]
+> >>
+> >> [1]:
+> >> https://lkml.org/lkml/2018/5/31/289
+> >> ---
+> >>  arch/arm64/mm/fault.c | 7 +------
+> >>  include/acpi/ghes.h   | 4 ++++
+> >>  2 files changed, 5 insertions(+), 6 deletions(-)
+> >>
+> >> diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
+> >> index b8eecc7..9ffe01d 100644
+> >> --- a/arch/arm64/mm/fault.c
+> >> +++ b/arch/arm64/mm/fault.c
+> >> @@ -727,12 +727,7 @@ static int do_sea(unsigned long addr, unsigned int esr, struct pt_regs *regs)
+> >>
+> >>  int handle_guest_sea(phys_addr_t addr, unsigned int esr)
+> >>  {
+> >> -     int ret = -ENOENT;
+> >> -
+> >> -     if (IS_ENABLED(CONFIG_ACPI_APEI_SEA))
+> >> -             ret = ghes_notify_sea();
+> >> -
+> >> -     return ret;
+> >> +     return ghes_notify_sea();
+> >>  }
+> >>
+> >>  asmlinkage void __exception do_mem_abort(unsigned long addr, unsigned int esr,
+> >> diff --git a/include/acpi/ghes.h b/include/acpi/ghes.h
+> >> index 1624e2b..82cb4eb 100644
+> >> --- a/include/acpi/ghes.h
+> >> +++ b/include/acpi/ghes.h
+> >> @@ -118,6 +118,10 @@ static inline void *acpi_hest_get_next(struct acpi_hest_generic_data *gdata)
+> >>            (void *)section - (void *)(estatus + 1) < estatus->data_length; \
+> >>            section = acpi_hest_get_next(section))
+> >>
+> >> +#ifdef CONFIG_ACPI_APEI_SEA
+> >>  int ghes_notify_sea(void);
+> >> +#else
+> >> +static inline int ghes_notify_sea(void) { return -ENOENT; }
+> >> +#endif
+> >>
+> >>  #endif /* GHES_H */
+> >> --
+> >> 1.9.1
+> >>
