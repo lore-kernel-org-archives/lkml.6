@@ -2,129 +2,96 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCB75C46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 22:18:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E6ACC46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 22:19:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A2FD208B7
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 22:18:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R5FjXRTZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A2FD208B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 48F8C21A56
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 22:19:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48F8C21A56
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733112AbeHGA3r (ORCPT
+        id S1733188AbeHGAaf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 20:29:47 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:46637 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732106AbeHGA3r (ORCPT
+        Mon, 6 Aug 2018 20:30:35 -0400
+Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:42526 "EHLO
+        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732106AbeHGAaf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 20:29:47 -0400
-Received: by mail-pg1-f193.google.com with SMTP id f14-v6so6308422pgv.13;
-        Mon, 06 Aug 2018 15:18:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=7OufTL9uIyO71Njch/UbCGdSbo/gh+FH/4qlnwRVFOw=;
-        b=R5FjXRTZ5nrvZCjDTJsdhOXMDh4xjB3iKpouf+KcHWc42kIX2ZOCy6iDxqyBz8dLK6
-         bK3Z5m18ipx+jTUpnDcs4kBdvb3rMqTl0CSOCiVWLuxQ73rbHTDH/7KjqbZv71OBIysX
-         O+aAlXgrvb/5BYBt4HPdSzT73VlrVCHsqVosoQLOAy2XsqkVP5/tn59OIwEzzBW78HcF
-         z68QX4jmOsExTc5EzA0VZo643RWNCGuByOATOzLeHtsSWoZdHa1XPookrKLtPWP63RJC
-         Ix+A8u7+mSfA/GKKDbn0nkYkwRZjto+guUB4gIflgMyTKvy7gQjL+0CFsEtZYw85a/qI
-         TSOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=7OufTL9uIyO71Njch/UbCGdSbo/gh+FH/4qlnwRVFOw=;
-        b=qu0GkaP4Ssz5Zm9ikwFmDACQ3lLr068RmRIEXUB3JjD6of0TJLWKHQOmt5U8zo1SWq
-         2Ul77Lm5wWeGba4WNi9O9fhDWVn29iPW/VrsYKfTWUiXjAO96CQDTMa+vrBkkY/u5NOj
-         YuKrUv9Z+t2yyDuXHySQOLCCd0PTeuGJAsw7AKkxam2zsPangvNsJWYC2M676miLOwPo
-         FgFJBBg63d3zvGP1WIBtwDoWaRHSMIs5TKn+7qoJsZVOcrUwGSSmx8GNseT0qa3IVRp4
-         yoMhiKF8HH8Grr8fM0bl2KSS+My+sEy2frWtiPq26jMhjxyqwH1pMVGDWi2orXw5417a
-         SHyA==
-X-Gm-Message-State: AOUpUlGzhL0MIg21ItFYYOobS6RNTk10qO7dhrrbyj0r3JYEMo646mq/
-        Y1JkmYk5PC9ouLM9pFk6tHCXoVLZ
-X-Google-Smtp-Source: AAOMgpe4vEfRgzSSt7jcgUsou/oJ9+tzWt5EfqvJV88tAiMZ20Fee4FXYCataVX5vFbrCPdQClsOhg==
-X-Received: by 2002:a65:4849:: with SMTP id i9-v6mr16078836pgs.350.1533593917678;
-        Mon, 06 Aug 2018 15:18:37 -0700 (PDT)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id l27-v6sm25232084pfi.180.2018.08.06.15.18.36
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 06 Aug 2018 15:18:36 -0700 (PDT)
-Date:   Mon, 6 Aug 2018 15:18:34 -0700
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     linux-input@vger.kernel.org
-Cc:     Dmitry Vyukov <dvyukov@google.com>,
-        Henrik Rydberg <rydberg@bitmath.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] Input: do not use WARN() in input_alloc_absinfo()
-Message-ID: <20180806221834.GA140172@dtor-ws>
+        Mon, 6 Aug 2018 20:30:35 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01353;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0T68SOWV_1533593947;
+Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0T68SOWV_1533593947)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 07 Aug 2018 06:19:09 +0800
+Subject: Re: [RFC v6 PATCH 2/2] mm: mmap: zap pages with read mmap_sem in
+ munmap
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     willy@infradead.org, ldufour@linux.vnet.ibm.com,
+        kirill@shutemov.name, akpm@linux-foundation.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <1532628614-111702-1-git-send-email-yang.shi@linux.alibaba.com>
+ <1532628614-111702-3-git-send-email-yang.shi@linux.alibaba.com>
+ <20180803090759.GI27245@dhcp22.suse.cz>
+ <aff7e86d-2e48-ff58-5d5d-9c67deb68674@linux.alibaba.com>
+ <20180806094005.GG19540@dhcp22.suse.cz>
+ <76c0fc2b-fca7-9f22-214a-920ee2537898@linux.alibaba.com>
+ <20180806204119.GL10003@dhcp22.suse.cz>
+ <28de768b-c740-37b3-ea5a-8e2cb07d2bdc@linux.alibaba.com>
+ <20180806205232.GN10003@dhcp22.suse.cz>
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <0cdff13a-2713-c5be-a33e-28c07e093bcc@linux.alibaba.com>
+Date:   Mon, 6 Aug 2018 15:19:06 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180806205232.GN10003@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some of fuzzers set panic_on_warn=1 so that they can handle WARN()ings
-the same way they handle full-blown kernel crashes. We used WARN() in
-input_alloc_absinfo() to get a better idea where memory allocation
-failed, but since then kmalloc() and friends started dumping call stack
-on memory allocation failures anyway, so we are not getting anything
-extra from WARN().
-
-Because of the above, let's replace WARN with dev_err(). We use dev_err()
-instead of simply removing message and relying on kcalloc() to give us
-stack dump so that we'd know the instance of hardware device to which we
-were trying to attach input device.
-
-Reported-by: Dmitry Vyukov <dvyukov@google.com>
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
----
- drivers/input/input.c | 16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/input/input.c b/drivers/input/input.c
-index 90453e2ab6cf..260f00ebe34d 100644
---- a/drivers/input/input.c
-+++ b/drivers/input/input.c
-@@ -481,11 +481,19 @@ EXPORT_SYMBOL(input_inject_event);
-  */
- void input_alloc_absinfo(struct input_dev *dev)
- {
--	if (!dev->absinfo)
--		dev->absinfo = kcalloc(ABS_CNT, sizeof(*dev->absinfo),
--					GFP_KERNEL);
-+	if (dev->absinfo)
-+		return;
- 
--	WARN(!dev->absinfo, "%s(): kcalloc() failed?\n", __func__);
-+	dev->absinfo = kcalloc(ABS_CNT, sizeof(*dev->absinfo), GFP_KERNEL);
-+	if (!dev->absinfo) {
-+		dev_err(dev->dev.parent ?: &dev->dev,
-+			"%s: unable to allocate memory\n", __func__);
-+		/*
-+		 * We will handle this allocation failure in
-+		 * input_register_device() when we refuse to register input
-+		 * device with ABS bits but without absinfo.
-+		 */
-+	}
- }
- EXPORT_SYMBOL(input_alloc_absinfo);
- 
--- 
-2.18.0.597.ga71716f1ad-goog
 
 
--- 
-Dmitry
+On 8/6/18 1:52 PM, Michal Hocko wrote:
+> On Mon 06-08-18 13:48:35, Yang Shi wrote:
+>>
+>> On 8/6/18 1:41 PM, Michal Hocko wrote:
+>>> On Mon 06-08-18 09:46:30, Yang Shi wrote:
+>>>> On 8/6/18 2:40 AM, Michal Hocko wrote:
+>>>>> On Fri 03-08-18 14:01:58, Yang Shi wrote:
+>>>>>> On 8/3/18 2:07 AM, Michal Hocko wrote:
+>>>>>>> On Fri 27-07-18 02:10:14, Yang Shi wrote:
+>>> [...]
+>>>>>>>> If the vma has VM_LOCKED | VM_HUGETLB | VM_PFNMAP or uprobe, they are
+>>>>>>>> considered as special mappings. They will be dealt with before zapping
+>>>>>>>> pages with write mmap_sem held. Basically, just update vm_flags.
+>>>>>>> Well, I think it would be safer to simply fallback to the current
+>>>>>>> implementation with these mappings and deal with them on top. This would
+>>>>>>> make potential issues easier to bisect and partial reverts as well.
+>>>>>> Do you mean just call do_munmap()? It sounds ok. Although we may waste some
+>>>>>> cycles to repeat what has done, it sounds not too bad since those special
+>>>>>> mappings should be not very common.
+>>>>> VM_HUGETLB is quite spread. Especially for DB workloads.
+>>>> Wait a minute. In this way, it sounds we go back to my old implementation
+>>>> with special handling for those mappings with write mmap_sem held, right?
+>>> Yes, I would really start simple and add further enhacements on top.
+>> If updating vm_flags with read lock is safe in this case, we don't have to
+>> do this. The only reason for this special handling is about vm_flags update.
+>   
+> Yes, maybe you are right that this is safe. I would still argue to have
+> it in a separate patch for easier review, bisectability etc...
+
+Sorry, I'm a little bit confused. Do you mean I should have the patch 
+*without* handling the special case (just like to assume it is safe to 
+update vm_flags with read lock), then have the other patch on top of it, 
+which simply calls do_munmap() to deal with the special cases?
+
+>
+
