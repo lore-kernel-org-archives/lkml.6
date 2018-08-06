@@ -2,120 +2,271 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4A8EC46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 15:49:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0747EC46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 15:49:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21A3E21A52
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 15:49:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="jnxch544"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21A3E21A52
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+	by mail.kernel.org (Postfix) with ESMTP id 6086B21A56
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 15:49:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6086B21A56
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732990AbeHFR67 (ORCPT
+        id S1733009AbeHFR7Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 13:58:59 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:37018 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728626AbeHFR67 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 13:58:59 -0400
-Received: from [192.168.0.67] (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id CD6541BEB;
-        Mon,  6 Aug 2018 17:49:14 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1533570555;
-        bh=InzS7AsdJaFHmxa6AQSDUxEnqs5wtUvC4UHPxQPS8FU=;
-        h=Subject:To:Cc:References:Reply-To:From:Date:In-Reply-To:From;
-        b=jnxch544XMlttYIcUT1CB/n6egi8Z0PvvZeRTWNUEHCpkxzU70QEEsVmcqH1KHo3/
-         YdosEKkbUdIfBV+RD4Oy/pIrDQrSPBQ6Q0XJk0KU6GoNII9XRfnBAHZhbEVa6NvKcb
-         2+RvQ9uKu8LjcxZnVJ+14b9IuLt+L6XZBPVshL8o=
-Subject: Re: [PATCH 2/3] drm: rcar-du: Rename var to a more precise name
-To:     Jacopo Mondi <jacopo@jmondi.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>
-Cc:     "open list:DRM DRIVERS FOR RENESAS" <dri-devel@lists.freedesktop.org>,
-        "open list:DRM DRIVERS FOR RENESAS" 
-        <linux-renesas-soc@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-References: <1532971214-17962-1-git-send-email-jacopo@jmondi.org>
- <1532971214-17962-3-git-send-email-jacopo@jmondi.org>
-Reply-To: kieran.bingham+renesas@ideasonboard.com
-From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Organization: Ideas on Board
-Message-ID: <8ddd8179-a0c7-1fbe-0390-ea8fd8c0ff7b@ideasonboard.com>
-Date:   Mon, 6 Aug 2018 16:49:12 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 6 Aug 2018 13:59:25 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:48396 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728626AbeHFR7Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 13:59:25 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E76C230E4E91;
+        Mon,  6 Aug 2018 15:49:42 +0000 (UTC)
+Received: from t450s.home (ovpn-116-35.phx2.redhat.com [10.3.116.35])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 276236A854;
+        Mon,  6 Aug 2018 15:49:40 +0000 (UTC)
+Date:   Mon, 6 Aug 2018 09:49:40 -0600
+From:   Alex Williamson <alex.williamson@redhat.com>
+To:     Kenneth Lee <liguozhu@hisilicon.com>
+Cc:     "Tian, Kevin" <kevin.tian@intel.com>,
+        Kenneth Lee <nek.in.cn@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>,
+        Joerg Roedel <joro@8bytes.org>,
+        Hao Fang <fanghao11@huawei.com>,
+        Zhou Wang <wangzhou1@hisilicon.com>,
+        Zaibo Xu <xuzaibo@huawei.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-accelerators@lists.ozlabs.org" 
+        <linux-accelerators@lists.ozlabs.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        <sanjay.k.kumar@intel.com>, <linuxarm@huawei.com>,
+        Cornelia Huck <cohuck@redhat.com>
+Subject: Re: [RFC PATCH 3/7] vfio: add spimdev support
+Message-ID: <20180806094940.47c70be9@t450s.home>
+In-Reply-To: <20180806014004.GF91035@Turing-Arch-b>
+References: <20180801102221.5308-1-nek.in.cn@gmail.com>
+        <20180801102221.5308-4-nek.in.cn@gmail.com>
+        <AADFC41AFE54684AB9EE6CBC0274A5D191290F7B@SHSMSX101.ccr.corp.intel.com>
+        <20180802034727.GK160746@Turing-Arch-b>
+        <AADFC41AFE54684AB9EE6CBC0274A5D19129102C@SHSMSX101.ccr.corp.intel.com>
+        <20180802073440.GA91035@Turing-Arch-b>
+        <20180802103528.0b863030.cohuck@redhat.com>
+        <20180802124327.403b10ab@t450s.home>
+        <20180806014004.GF91035@Turing-Arch-b>
 MIME-Version: 1.0
-In-Reply-To: <1532971214-17962-3-git-send-email-jacopo@jmondi.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Mon, 06 Aug 2018 15:49:43 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jacopo,
+On Mon, 6 Aug 2018 09:40:04 +0800
+Kenneth Lee <liguozhu@hisilicon.com> wrote:
 
-Thankyou for the patch,
-
-On 30/07/18 18:20, Jacopo Mondi wrote:
-> Rename the 'value' variable, only used to for writing to DMSR register to a
-> more precise 'dmsr' name.
+> On Thu, Aug 02, 2018 at 12:43:27PM -0600, Alex Williamson wrote:
+> > Date: Thu, 2 Aug 2018 12:43:27 -0600
+> > From: Alex Williamson <alex.williamson@redhat.com>
+> > To: Cornelia Huck <cohuck@redhat.com>
+> > CC: Kenneth Lee <liguozhu@hisilicon.com>, "Tian, Kevin"
+> >  <kevin.tian@intel.com>, Kenneth Lee <nek.in.cn@gmail.com>, Jonathan Corbet
+> >  <corbet@lwn.net>, Herbert Xu <herbert@gondor.apana.org.au>, "David S .
+> >  Miller" <davem@davemloft.net>, Joerg Roedel <joro@8bytes.org>, Hao Fang
+> >  <fanghao11@huawei.com>, Zhou Wang <wangzhou1@hisilicon.com>, Zaibo Xu
+> >  <xuzaibo@huawei.com>, Philippe Ombredanne <pombredanne@nexb.com>, "Greg
+> >  Kroah-Hartman" <gregkh@linuxfoundation.org>, Thomas Gleixner
+> >  <tglx@linutronix.de>, "linux-doc@vger.kernel.org"
+> >  <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+> >  <linux-kernel@vger.kernel.org>, "linux-crypto@vger.kernel.org"
+> >  <linux-crypto@vger.kernel.org>, "iommu@lists.linux-foundation.org"
+> >  <iommu@lists.linux-foundation.org>, "kvm@vger.kernel.org"
+> >  <kvm@vger.kernel.org>, "linux-accelerators@lists.ozlabs.org\"
+> >          <linux-accelerators@lists.ozlabs.org>, Lu Baolu
+> >  <baolu.lu@linux.intel.com>,  Kumar", <Sanjay K "
+> >  <sanjay.k.kumar@intel.com>, " linuxarm@huawei.com "
+> >  <linuxarm@huawei.com>">
+> > Subject: Re: [RFC PATCH 3/7] vfio: add spimdev support
+> > Message-ID: <20180802124327.403b10ab@t450s.home>
+> > 
+> > On Thu, 2 Aug 2018 10:35:28 +0200
+> > Cornelia Huck <cohuck@redhat.com> wrote:
+> >   
+> > > On Thu, 2 Aug 2018 15:34:40 +0800
+> > > Kenneth Lee <liguozhu@hisilicon.com> wrote:
+> > >   
+> > > > On Thu, Aug 02, 2018 at 04:24:22AM +0000, Tian, Kevin wrote:    
+> > >   
+> > > > > > From: Kenneth Lee [mailto:liguozhu@hisilicon.com]
+> > > > > > Sent: Thursday, August 2, 2018 11:47 AM
+> > > > > >       
+> > > > > > >      
+> > > > > > > > From: Kenneth Lee
+> > > > > > > > Sent: Wednesday, August 1, 2018 6:22 PM
+> > > > > > > >
+> > > > > > > > From: Kenneth Lee <liguozhu@hisilicon.com>
+> > > > > > > >
+> > > > > > > > SPIMDEV is "Share Parent IOMMU Mdev". It is a vfio-mdev. But differ      
+> > > > > > from      
+> > > > > > > > the general vfio-mdev:
+> > > > > > > >
+> > > > > > > > 1. It shares its parent's IOMMU.
+> > > > > > > > 2. There is no hardware resource attached to the mdev is created. The
+> > > > > > > > hardware resource (A `queue') is allocated only when the mdev is
+> > > > > > > > opened.      
+> > > > > > >
+> > > > > > > Alex has concern on doing so, as pointed out in:
+> > > > > > >
+> > > > > > > 	https://www.spinics.net/lists/kvm/msg172652.html
+> > > > > > >
+> > > > > > > resource allocation should be reserved at creation time.      
+> > > > > > 
+> > > > > > Yes. That is why I keep telling that SPIMDEV is not for "VM", it is for "many
+> > > > > > processes", it is just an access point to the process. Not a device to VM. I
+> > > > > > hope
+> > > > > > Alex can accept it:)
+> > > > > >       
+> > > > > 
+> > > > > VFIO is just about assigning device resource to user space. It doesn't care
+> > > > > whether it's native processes or VM using the device so far. Along the direction
+> > > > > which you described, looks VFIO needs to support the configuration that
+> > > > > some mdevs are used for native process only, while others can be used
+> > > > > for both native and VM. I'm not sure whether there is a clean way to
+> > > > > enforce it...      
+> > > > 
+> > > > I had the same idea at the beginning. But finally I found that the life cycle
+> > > > of the virtual device for VM and process were different. Consider you create
+> > > > some mdevs for VM use, you will give all those mdevs to lib-virt, which
+> > > > distribute those mdev to VMs or containers. If the VM or container exits, the
+> > > > mdev is returned to the lib-virt and used for next allocation. It is the
+> > > > administrator who controlled every mdev's allocation.  
+> > 
+> > Libvirt currently does no management of mdev devices, so I believe
+> > this example is fictitious.  The extent of libvirt's interaction with
+> > mdev is that XML may specify an mdev UUID as the source for a hostdev
+> > and set the permissions on the device files appropriately.  Whether
+> > mdevs are created in advance and re-used or created and destroyed
+> > around a VM instance (for example via qemu hooks scripts) is not a
+> > policy that libvirt imposes.
+> >    
+> > > > But for process, it is different. There is no lib-virt in control. The
+> > > > administrator's intension is to grant some type of application to access the
+> > > > hardware. The application can get a handle of the hardware, send request and get
+> > > > the result. That's all. He/She dose not care which mdev is allocated to that
+> > > > application. If it crashes, it should be the kernel's responsibility to withdraw
+> > > > the resource, the system administrator does not want to do it by hand.    
+> > 
+> > Libvirt is also not a required component for VM lifecycles, it's an
+> > optional management interface, but there are also VM lifecycles exactly
+> > as you describe.  A VM may want a given type of vGPU, there might be
+> > multiple sources of that type and any instance is fungible to any
+> > other.  Such an mdev can be dynamically created, assigned to the VM,
+> > and destroyed later.  Why do we need to support "empty" mdevs that do
+> > not reserve reserve resources until opened?  The concept of available
+> > instances is entirely lost with that approach and it creates an
+> > environment that's difficult to support, resources may not be available
+> > at the time the user attempts to access them.
+> >    
+> > > I don't think that you should distinguish the cases by the presence of
+> > > a management application. How can the mdev driver know what the
+> > > intention behind using the device is?  
+> > 
+> > Absolutely, vfio is a userspace driver interface, it's not tailored to
+> > VM usage and we cannot know the intentions of the user.
+> >    
+> > > Would it make more sense to use a different mechanism to enforce that
+> > > applications only use those handles they are supposed to use? Maybe
+> > > cgroups? I don't think it's a good idea to push usage policy into the
+> > > kernel.  
+> > 
+> > I agree, this sounds like a userspace problem, mdev supports dynamic
+> > creation and removal of mdev devices, if there's an issue with
+> > maintaining a set of standby devices that a user has access to, this
+> > sounds like a userspace broker problem.  It makes more sense to me to
+> > have a model where a userspace application can make a request to a
+> > broker and the broker can reply with "none available" rather than
+> > having a set of devices on standby that may or may not work depending
+> > on the system load and other users.  Thanks,
+> > 
+> > Alex  
 > 
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> Signed-off-by: Jacopo Mondi <jacopo@jmondi.org>
-> ---
->  drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
+> I am sorry, I used a wrong mutt command when reply to Cornelia's last mail. The
+> last reply dose not stay within this thread. So please let me repeat my point
+> here.
 > 
-> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-> index 6d55cec..4d7907c 100644
-> --- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-> +++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-> @@ -208,7 +208,7 @@ static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
->  	const struct drm_display_mode *mode = &rcrtc->crtc.state->adjusted_mode;
->  	struct rcar_du_device *rcdu = rcrtc->group->dev;
->  	unsigned long mode_clock = mode->clock * 1000;
-> -	u32 value;
-> +	u32 dsmr;
->  	u32 escr;
->  
->  	if (rcdu->info->dpll_ch & (1 << rcrtc->index)) {
-> @@ -299,11 +299,11 @@ static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
->  	rcar_du_group_write(rcrtc->group, rcrtc->index % 2 ? OTAR2 : OTAR, 0);
->  
->  	/* Signal polarities */
-> -	value = ((mode->flags & DRM_MODE_FLAG_PVSYNC) ? DSMR_VSL : 0)
-> -	      | ((mode->flags & DRM_MODE_FLAG_PHSYNC) ? DSMR_HSL : 0)
-> -	      | ((mode->flags & DRM_MODE_FLAG_INTERLACE) ? DSMR_ODEV : 0)
-> -	      | DSMR_DIPM_DISP | DSMR_CSPM;
-> -	rcar_du_crtc_write(rcrtc, DSMR, value);
-> +	dsmr = ((mode->flags & DRM_MODE_FLAG_PVSYNC) ? DSMR_VSL : 0)
-> +	       | ((mode->flags & DRM_MODE_FLAG_PHSYNC) ? DSMR_HSL : 0)
-> +	       | ((mode->flags & DRM_MODE_FLAG_INTERLACE) ? DSMR_ODEV : 0)
-> +	       | DSMR_DIPM_DISP | DSMR_CSPM;
-
-Quite nit-picky I'm afraid, but here, you have increased the indent such
-that the '|' operator is now aligned with the first '(', rather than the
-'=' as used by the rest of the driver.
-
-Was this intentional ?
-
-I think it should be brought forwards to align under the '=' to match.
-
-
-> +	rcar_du_crtc_write(rcrtc, DSMR, dsmr);
->  
->  	/* Display timings */
->  	rcar_du_crtc_write(rcrtc, HDSR, mode->htotal - mode->hsync_start - 19);
+> I should not have use libvirt as the example. But WarpDrive works in such
+> scenario:
 > 
+> 1. It supports thousands of processes. Take zip accelerator as an example, any
+> application need data compression/decompression will need to interact with the
+> accelerator. To support that, you have to create tens of thousands of mdev for
+> their usage. I don't think it is a good idea to have so many devices in the
+> system.
 
+Each mdev is a device, regardless of whether there are hardware
+resources committed to the device, so I don't understand this argument.
+ 
+> 2. The application does not want to own the mdev for long. It just need an
+> access point for the hardware service. If it has to interact with an management
+> agent for allocation and release, this makes the problem complex.
+
+I don't see how the length of the usage plays a role here either.  Are
+you concerned that the time it takes to create and remove an mdev is
+significant compared to the usage time?  Userspace is certainly welcome
+to create a pool of devices, but why should it be the kernel's
+responsibility to dynamically assign resources to an mdev?  What's the
+usage model when resources are unavailable?  It seems there's
+complexity in either case, but it's generally userspace's responsibility
+to impose a policy.
+
+> 3. The service is bound with the process. When the process exit, the resource
+> should be released automatically. Kernel is the best place to monitor the state
+> of the process.
+
+Mdev already provides that when an mdev is removed, the hardware
+resources attached to it are released back to the mdev parent device.
+A process closing the device simply indicates the end of a usage
+context of the device.  It seems like the request here is simply that
+allocating resources on open allows userspace to be lazy and overcommit
+physical resources without considering what happens when those
+resources are unavailable.
+ 
+> I agree this extending the concept of mdev. But again, it is cleaner than
+> creating another facility for user land DMA. We just need to take mdev as an
+> access point of the device: when it is open, the resource is given. It is not a
+> device for a particular entity or instance. But it is still a device which can
+> provide service of the hardware.
+
+Cleaner for who?  It's asking the kernel to impose a policy for
+delegating resources when we effectively already have a policy that
+userspace is responsible for allocating and delegating resources.
+ 
+> Cornelia is worrying about resource starving. I think that can be solved by set
+> restriction on the mdev itself. Mdev management agent dose not help much here.
+> Management on the mdev itself can still lead to the status of running out of
+> resource.
+
+The restriction on the mdev is that the mdev itself represents allocated
+resources.  Of course we can always run out, but the current model is
+that a user granted access to a vfio device, mdev or otherwise, has
+ownership of the hardware provided through that interface.  I don't see
+how not committing resources to an mdev is anything more than an
+attempt to push policy and error handling from one place to another.
+Thanks,
+
+Alex
