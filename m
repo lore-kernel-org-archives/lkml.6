@@ -2,279 +2,342 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28F37C46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 18:07:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30179C46473
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 18:07:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA3AA208B6
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 18:07:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA3AA208B6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+	by mail.kernel.org (Postfix) with ESMTP id DA314208B6
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 18:07:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA314208B6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387609AbeHFURn (ORCPT
+        id S2387635AbeHFURr convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 16:17:43 -0400
-Received: from relay10.mail.gandi.net ([217.70.178.230]:52223 "EHLO
-        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730755AbeHFURn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 16:17:43 -0400
-Received: from alex.numericable.fr (127.19.86.79.rev.sfr.net [79.86.19.127])
-        (Authenticated sender: alex@ghiti.fr)
-        by relay10.mail.gandi.net (Postfix) with ESMTPSA id E7DB4240005;
-        Mon,  6 Aug 2018 18:07:21 +0000 (UTC)
-From:   Alexandre Ghiti <alex@ghiti.fr>
-To:     linux-mm@kvack.org, mike.kravetz@oracle.com, linux@armlinux.org.uk,
-        catalin.marinas@arm.com, will.deacon@arm.com, tony.luck@intel.com,
-        fenghua.yu@intel.com, ralf@linux-mips.org, paul.burton@mips.com,
-        jhogan@kernel.org, jejb@parisc-linux.org, deller@gmx.de,
-        benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au,
-        ysato@users.sourceforge.jp, dalias@libc.org, davem@davemloft.net,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, arnd@arndb.de,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-ia64@vger.kernel.org, linux-mips@linux-mips.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        linux-arch@vger.kernel.org
-Cc:     Alexandre Ghiti <alex@ghiti.fr>
-Subject: [PATCH v6 09/11] hugetlb: Introduce generic version of huge_ptep_set_wrprotect
-Date:   Mon,  6 Aug 2018 17:57:09 +0000
-Message-Id: <20180806175711.24438-10-alex@ghiti.fr>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180806175711.24438-1-alex@ghiti.fr>
-References: <20180806175711.24438-1-alex@ghiti.fr>
+        Mon, 6 Aug 2018 16:17:47 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39154 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730840AbeHFURq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 16:17:46 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 4B74AADDB;
+        Mon,  6 Aug 2018 18:07:28 +0000 (UTC)
+Date:   Mon, 6 Aug 2018 20:07:25 +0200
+From:   Michal =?UTF-8?B?U3VjaMOhbmVr?= <msuchanek@suse.de>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Takashi Iwai <tiwai@suse.de>, Andreas Schwab <schwab@suse.de>,
+        Michal Kubecek <mkubecek@suse.cz>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jeff Dike <jdike@addtoit.com>,
+        Richard Weinberger <richard@nod.at>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ulf Magnusson <ulfalizer@gmail.com>,
+        Jeff Mahoney <jeffm@suse.com>,
+        "Peter Zijlstra," <peterz@infradead.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        sparclinux <sparclinux@vger.kernel.org>,
+        linux-um@lists.infradead.org
+Subject: Re: due to kconfig changes kernel config file is no longer
+ sufficient for configuring the kernel
+Message-ID: <20180806200725.4efa5d35@kitsune.suse.cz>
+In-Reply-To: <CAK7LNARRKU7Mfa8ZBu1qPFYFRr-5k69sjVyERM2bYcnWoBDN8g@mail.gmail.com>
+References: <20180627143705.5a1fed1c@kitsune.suse.cz>
+        <CAK7LNARVPNx_uC5xTrS_p9T4nMRTC79BO51T4Lytv2eU1c-ynw@mail.gmail.com>
+        <20180628111623.3807fe9b@naga.suse.cz>
+        <CAK7LNARRKU7Mfa8ZBu1qPFYFRr-5k69sjVyERM2bYcnWoBDN8g@mail.gmail.com>
+Organization: SUSE Linux
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-suse-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-arm, ia64, mips, powerpc, sh, x86 architectures use the same version
-of huge_ptep_set_wrprotect, so move this generic implementation into
-asm-generic/hugetlb.h.
+On Mon, 30 Jul 2018 17:02:42 +0900
+Masahiro Yamada <yamada.masahiro@socionext.com> wrote:
 
-Signed-off-by: Alexandre Ghiti <alex@ghiti.fr>
-Tested-by: Helge Deller <deller@gmx.de> # parisc
-Acked-by: Catalin Marinas <catalin.marinas@arm.com> # arm64
-Acked-by: Paul Burton <paul.burton@mips.com> # MIPS parts
-Reviewed-by: Luiz Capitulino <lcapitulino@redhat.com>
-Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
----
- arch/arm/include/asm/hugetlb-3level.h        | 6 ------
- arch/arm64/include/asm/hugetlb.h             | 1 +
- arch/ia64/include/asm/hugetlb.h              | 6 ------
- arch/mips/include/asm/hugetlb.h              | 6 ------
- arch/parisc/include/asm/hugetlb.h            | 1 +
- arch/powerpc/include/asm/book3s/32/pgtable.h | 6 ------
- arch/powerpc/include/asm/book3s/64/pgtable.h | 1 +
- arch/powerpc/include/asm/nohash/32/pgtable.h | 6 ------
- arch/powerpc/include/asm/nohash/64/pgtable.h | 1 +
- arch/sh/include/asm/hugetlb.h                | 6 ------
- arch/sparc/include/asm/hugetlb.h             | 1 +
- arch/x86/include/asm/hugetlb.h               | 6 ------
- include/asm-generic/hugetlb.h                | 8 ++++++++
- 13 files changed, 13 insertions(+), 42 deletions(-)
+> 2018-06-28 18:16 GMT+09:00 Michal Suchánek <msuchanek@suse.de>:
+> > On Wed, 27 Jun 2018 23:07:21 +0900
+> > Masahiro Yamada <yamada.masahiro@socionext.com> wrote:
+> >  
+> >> Hi.
+> >>
+> >>
+> >> 2018-06-27 21:37 GMT+09:00 Michal Suchánek <msuchanek@suse.de>:  
+> >> > Hello,
+> >> >
+> >> > in the x86 Kconfig we have this:
+> >> >
+> >> > # Select 32 or 64 bit
+> >> > config 64BIT
+> >> >         bool "64-bit kernel" if "$(ARCH)" = "x86"
+> >> >         default "$(ARCH)" != "i386"
+> >> >         ---help---
+> >> >           Say yes to build a 64-bit kernel - formerly known as
+> >> > x86_64 Say no to build a 32-bit kernel - formerly known as i386
+> >> >
+> >> > Since commit 104daea149c4 ("kconfig: reference environment
+> >> > variables directly and remove 'option env='") the value of ARCH
+> >> > is not saved in the kernel config.  
+> >>
+> >> I think this commit is unrelated.  It was just a syntax change.  
+> >
+> > This does not look like syntax only change to me:
+> >
+> > diff --git a/init/Kconfig b/init/Kconfig
+> > index 15aae32e0719..1217fc62ca61 100644
+> > --- a/init/Kconfig
+> > +++ b/init/Kconfig
+> > @@ -1,20 +1,12 @@
+> > -config ARCH
+> > -       string
+> > -       option env="ARCH"
+> > -
+> > -config KERNELVERSION
+> > -       string
+> > -       option env="KERNELVERSION"
+> > -  
+> 
+> This is just syntax change.
+> 
+> 'option env=' was used to reference an environment variable.
+> 
+> Now, $(ARCH), $(KERNELVERSION) are simpler forms.
+> 
+> 
+> >>
+> >> Unless I am missing something,
+> >> we have never saved ARCH in the .config in the past.  
+> >
+> > There was a config symbol defined for it before the commit removed
+> > it.  
+> 
+> No.
+> 
+> CONFIG symbols with'option env='
+> are not written out to the .config file.
+> 
+> We have never had CONFIG_ARCH or CONFIG_KERNELVERSION.
+> 
+> 
+> 
+> 
+> >>
+> >>  
+> >> > Since commit f467c5640c29 ("kconfig: only write '#
+> >> > CONFIG_FOO is not set' for visible symbols") the value of 64BIT
+> >> > is not saved if the ARCH is set i386 or x86_64 because the
+> >> > symbol is not visible.  
+> >>
+> >> This is correct.
+> >>
+> >> It was discussed a few weeks ago.
+> >>
+> >> https://lkml.org/lkml/2018/6/5/847
+> >>
+> >>  
+> >> > There is a number of ways to hack this particular case to work.
+> >> >
+> >> > However, there is a more general problem with this. Some config
+> >> > options may depend on the environment, may not be saved, and the
+> >> > environment is not saved either.  
+> >>
+> >> Which environment variables in particular are in your mind?  
+> >
+> > Any that is used in Kconfig.  
+> 
+> They are provided from outside of Kconfig.
+> This is the behavior we keep since a long time ago.
+> 
+> ARCH is given by the environment variable or the command line.
+> KERNELVERSION is supplied by the top Makefile.
+> 
+> >>
+> >> As for ARCH, you need to pass the same ARCH as you used for
+> >> building the kernel. (For native building, you do not have to pass
+> >> ARCH explicitly, though.)  
+> >
+> > Except if you do pass it to make config you may need to pass it to
+> > to make later as well.  
+> 
+> Right.
+> 
+> For exmaple 'make ARCH=arm config' will create the config suitable
+> only for ARM architecture.
+> Then, you need to do 'make ARCH=arm' to build the kernel.
+> 
+> If it is tedious to give 'ARCH=arm' to every make command,
+> you can do 'export ARCH=arm' in your shell.
+> 
+> Again, this is the behavior we have for a long time.
 
-diff --git a/arch/arm/include/asm/hugetlb-3level.h b/arch/arm/include/asm/hugetlb-3level.h
-index b897541520ef..8247cd6a2ac6 100644
---- a/arch/arm/include/asm/hugetlb-3level.h
-+++ b/arch/arm/include/asm/hugetlb-3level.h
-@@ -37,12 +37,6 @@ static inline pte_t huge_ptep_get(pte_t *ptep)
- 	return retval;
- }
- 
--static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
--					   unsigned long addr, pte_t *ptep)
--{
--	ptep_set_wrprotect(mm, addr, ptep);
--}
--
- static inline int huge_ptep_set_access_flags(struct vm_area_struct *vma,
- 					     unsigned long addr, pte_t *ptep,
- 					     pte_t pte, int dirty)
-diff --git a/arch/arm64/include/asm/hugetlb.h b/arch/arm64/include/asm/hugetlb.h
-index 3e7f6e69b28d..f4f69ae5466e 100644
---- a/arch/arm64/include/asm/hugetlb.h
-+++ b/arch/arm64/include/asm/hugetlb.h
-@@ -48,6 +48,7 @@ extern int huge_ptep_set_access_flags(struct vm_area_struct *vma,
- #define __HAVE_ARCH_HUGE_PTEP_GET_AND_CLEAR
- extern pte_t huge_ptep_get_and_clear(struct mm_struct *mm,
- 				     unsigned long addr, pte_t *ptep);
-+#define __HAVE_ARCH_HUGE_PTEP_SET_WRPROTECT
- extern void huge_ptep_set_wrprotect(struct mm_struct *mm,
- 				    unsigned long addr, pte_t *ptep);
- #define __HAVE_ARCH_HUGE_PTEP_CLEAR_FLUSH
-diff --git a/arch/ia64/include/asm/hugetlb.h b/arch/ia64/include/asm/hugetlb.h
-index cbe296271030..49d1f7949f3a 100644
---- a/arch/ia64/include/asm/hugetlb.h
-+++ b/arch/ia64/include/asm/hugetlb.h
-@@ -27,12 +27,6 @@ static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
- {
- }
- 
--static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
--					   unsigned long addr, pte_t *ptep)
--{
--	ptep_set_wrprotect(mm, addr, ptep);
--}
--
- static inline int huge_ptep_set_access_flags(struct vm_area_struct *vma,
- 					     unsigned long addr, pte_t *ptep,
- 					     pte_t pte, int dirty)
-diff --git a/arch/mips/include/asm/hugetlb.h b/arch/mips/include/asm/hugetlb.h
-index 6ff2531cfb1d..3dcf5debf8c4 100644
---- a/arch/mips/include/asm/hugetlb.h
-+++ b/arch/mips/include/asm/hugetlb.h
-@@ -63,12 +63,6 @@ static inline int huge_pte_none(pte_t pte)
- 	return !val || (val == (unsigned long)invalid_pte_table);
- }
- 
--static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
--					   unsigned long addr, pte_t *ptep)
--{
--	ptep_set_wrprotect(mm, addr, ptep);
--}
--
- static inline int huge_ptep_set_access_flags(struct vm_area_struct *vma,
- 					     unsigned long addr,
- 					     pte_t *ptep, pte_t pte,
-diff --git a/arch/parisc/include/asm/hugetlb.h b/arch/parisc/include/asm/hugetlb.h
-index fb7e0fd858a3..9c3950ca2974 100644
---- a/arch/parisc/include/asm/hugetlb.h
-+++ b/arch/parisc/include/asm/hugetlb.h
-@@ -39,6 +39,7 @@ static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
- {
- }
- 
-+#define __HAVE_ARCH_HUGE_PTEP_SET_WRPROTECT
- void huge_ptep_set_wrprotect(struct mm_struct *mm,
- 					   unsigned long addr, pte_t *ptep);
- 
-diff --git a/arch/powerpc/include/asm/book3s/32/pgtable.h b/arch/powerpc/include/asm/book3s/32/pgtable.h
-index 02f5acd7ccc4..fc1511ce33a4 100644
---- a/arch/powerpc/include/asm/book3s/32/pgtable.h
-+++ b/arch/powerpc/include/asm/book3s/32/pgtable.h
-@@ -228,12 +228,6 @@ static inline void ptep_set_wrprotect(struct mm_struct *mm, unsigned long addr,
- {
- 	pte_update(ptep, (_PAGE_RW | _PAGE_HWWRITE), _PAGE_RO);
- }
--static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
--					   unsigned long addr, pte_t *ptep)
--{
--	ptep_set_wrprotect(mm, addr, ptep);
--}
--
- 
- static inline void __ptep_set_access_flags(struct vm_area_struct *vma,
- 					   pte_t *ptep, pte_t entry,
-diff --git a/arch/powerpc/include/asm/book3s/64/pgtable.h b/arch/powerpc/include/asm/book3s/64/pgtable.h
-index 42aafba7a308..7d957f7c47cd 100644
---- a/arch/powerpc/include/asm/book3s/64/pgtable.h
-+++ b/arch/powerpc/include/asm/book3s/64/pgtable.h
-@@ -451,6 +451,7 @@ static inline void ptep_set_wrprotect(struct mm_struct *mm, unsigned long addr,
- 		pte_update(mm, addr, ptep, 0, _PAGE_PRIVILEGED, 0);
- }
- 
-+#define __HAVE_ARCH_HUGE_PTEP_SET_WRPROTECT
- static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
- 					   unsigned long addr, pte_t *ptep)
- {
-diff --git a/arch/powerpc/include/asm/nohash/32/pgtable.h b/arch/powerpc/include/asm/nohash/32/pgtable.h
-index 7c46a98cc7f4..6cabbd04a6fa 100644
---- a/arch/powerpc/include/asm/nohash/32/pgtable.h
-+++ b/arch/powerpc/include/asm/nohash/32/pgtable.h
-@@ -249,12 +249,6 @@ static inline void ptep_set_wrprotect(struct mm_struct *mm, unsigned long addr,
- {
- 	pte_update(ptep, (_PAGE_RW | _PAGE_HWWRITE), _PAGE_RO);
- }
--static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
--					   unsigned long addr, pte_t *ptep)
--{
--	ptep_set_wrprotect(mm, addr, ptep);
--}
--
- 
- static inline void __ptep_set_access_flags(struct vm_area_struct *vma,
- 					   pte_t *ptep, pte_t entry,
-diff --git a/arch/powerpc/include/asm/nohash/64/pgtable.h b/arch/powerpc/include/asm/nohash/64/pgtable.h
-index dd0c7236208f..69fbf7e9b4db 100644
---- a/arch/powerpc/include/asm/nohash/64/pgtable.h
-+++ b/arch/powerpc/include/asm/nohash/64/pgtable.h
-@@ -238,6 +238,7 @@ static inline void ptep_set_wrprotect(struct mm_struct *mm, unsigned long addr,
- 	pte_update(mm, addr, ptep, _PAGE_RW, 0, 0);
- }
- 
-+#define __HAVE_ARCH_HUGE_PTEP_SET_WRPROTECT
- static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
- 					   unsigned long addr, pte_t *ptep)
- {
-diff --git a/arch/sh/include/asm/hugetlb.h b/arch/sh/include/asm/hugetlb.h
-index f1bbd255ee43..8df4004977b9 100644
---- a/arch/sh/include/asm/hugetlb.h
-+++ b/arch/sh/include/asm/hugetlb.h
-@@ -32,12 +32,6 @@ static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
- {
- }
- 
--static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
--					   unsigned long addr, pte_t *ptep)
--{
--	ptep_set_wrprotect(mm, addr, ptep);
--}
--
- static inline int huge_ptep_set_access_flags(struct vm_area_struct *vma,
- 					     unsigned long addr, pte_t *ptep,
- 					     pte_t pte, int dirty)
-diff --git a/arch/sparc/include/asm/hugetlb.h b/arch/sparc/include/asm/hugetlb.h
-index 2101ea217f33..c41754a113f3 100644
---- a/arch/sparc/include/asm/hugetlb.h
-+++ b/arch/sparc/include/asm/hugetlb.h
-@@ -32,6 +32,7 @@ static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
- {
- }
- 
-+#define __HAVE_ARCH_HUGE_PTEP_SET_WRPROTECT
- static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
- 					   unsigned long addr, pte_t *ptep)
- {
-diff --git a/arch/x86/include/asm/hugetlb.h b/arch/x86/include/asm/hugetlb.h
-index 59c056adb3c9..a3f781f7a264 100644
---- a/arch/x86/include/asm/hugetlb.h
-+++ b/arch/x86/include/asm/hugetlb.h
-@@ -13,12 +13,6 @@ static inline int is_hugepage_only_range(struct mm_struct *mm,
- 	return 0;
- }
- 
--static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
--					   unsigned long addr, pte_t *ptep)
--{
--	ptep_set_wrprotect(mm, addr, ptep);
--}
--
- static inline int huge_ptep_set_access_flags(struct vm_area_struct *vma,
- 					     unsigned long addr, pte_t *ptep,
- 					     pte_t pte, int dirty)
-diff --git a/include/asm-generic/hugetlb.h b/include/asm-generic/hugetlb.h
-index 6c0c8b0c71e0..9b9039845278 100644
---- a/include/asm-generic/hugetlb.h
-+++ b/include/asm-generic/hugetlb.h
-@@ -102,4 +102,12 @@ static inline int prepare_hugepage_range(struct file *file,
- }
- #endif
- 
-+#ifndef __HAVE_ARCH_HUGE_PTEP_SET_WRPROTECT
-+static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
-+		unsigned long addr, pte_t *ptep)
-+{
-+	ptep_set_wrprotect(mm, addr, ptep);
-+}
-+#endif
-+
- #endif /* _ASM_GENERIC_HUGETLB_H */
--- 
-2.16.2
+No, that's not what we had. The kernel build would fail instead of
+reconfiguring the kernel for the current arch. At least it used to work
+that way at some point.
 
+> 
+> 
+> 
+> >>
+> >> As for CC, HOSTCC, etc.
+> >> yes, these are new 'unsaved' environments.
+> >>
+> >> CONFIG options now depend on the compiler.
+> >> This is the concept suggested by Linus Torvalds.
+> >>
+> >>  
+> >> > So in the end all the infrastructure with symlinks
+> >> > from module directory pointing to the kernel source and object
+> >> > directory is useless. To interpret the config stored there you
+> >> > need the environment and that is not saved anywhere. So if you
+> >> > try to build out-of-tree module it might end up reconfiguring
+> >> > your kernel and producing useless modules.  
+> >>
+> >> No. out-of-tree module building never ever re-configures the
+> >> kernel.  
+> >
+> > It does implicitly because the config values depend on environment
+> > that is not saved and the values themselves are not saved either.
+> > If that happens to expose a new variable it is even explicitly
+> > reconfigured.  
+> 
+> 
+> You should have a built kernel tree
+> before building external modules.
+> 
+> The .config is already there.
+> 
+> The .config works for external modules, given that
+> 
+>   - ARCH is the same
+>   - the compiler is the same
+
+ - the compiler additional plugins and/or external libraries used to
+   implement advanced features are the same
+
+> 
+> 
+> 
+> >>
+> >> out-of-tree modules are built with exactly the same configuration
+> >> as used for the kernel.  
+> >
+> > It is not true. And that is the problem. You need the config file
+> > and dump of the environment passed to the make command at
+> > configuration time to get the exact same configuration. The
+> > environment is not saved anywhere, though.  
+> 
+> 
+> Why dump of the environment?
+> 
+> 
+> If you are building external modules natively
+> your distribution provides /lib/modules/$(uname -r)/build,
+> which contains files enough for building external modules.
+> 
+> You can pass the directory path to M=... parameter.  That's it.
+
+No, that's not it. Since passing ARCH=i386 is the de-facto standard to
+configure a 32bit kernel and the result of passing that was not saved
+you need to pass it to make as well. And you need to patch a number of
+3rd party build scripts that build a kernel module as part of a bigger
+project.
+
+> 
+> 
+> 
+> If you are cross-building external modules,
+> you also need to
+> 
+>  - pass ARCH=
+>  - use the same compiler with CROSS_COMPILE=
+> 
+> You should know both
+> because you have built the kernel by your self.
+
+No, I am not cross-compiling. I am building 32bit modules and because
+the kconfig system did not save the information that the kernel is
+32bit I get 64bit modules instead.
+
+> 
+> You do not need any other information, do you?
+
+I need the information what ARCH was passed to the x86 kernel at
+configuration time when building on x86. This is new.
+
+To avoid this and similar surprises in the future I suggest to flag any
+option that depends on something dynamic (compiler option, environment
+variable) so that kconfig saves it even if it would not be saved
+otherwise.
+
+Then kconfig can do whatever seems sensible for oldconfig but
+syncconfig should not change any options based on dynamic input. It
+should verify that the option matches (ie compiler can accept -foobar
+if the option is on and defaults to cc-option -foobar) and fail if it
+does not.
+
+
+> 
+> > And it went nowhere.
+> >
+> > Anyway, the observed issue with CONFIG_64BIT on x86 is the tip of a
+> > larger problem which was unnoticed for ages. The .config simply does
+> > not contain the whole kernel configuration. ie. make oldconfig (and
+> > make syncconfig) is *not* expected to just work. It used to work
+> > just by luck until f467c5640c29 ("kconfig: only write '# CONFIG_FOO
+> > is not set' for visible symbols") finally exposed the problem.  
+> 
+> If you want to build the kernel for an architecture
+> other than the host machine architecture, you need to pass ARCH=.
+> 
+> Building the i386 kernel on a x86_64 machine, it is a _kind_ of
+> cross-compiling. So, passing ARCH=i386 is not so weird.
+> 
+> 
+> > So is .config supposed to contain the kernel configuration or is it
+> > just some byproduct of the kernel build which is meaningless
+> > outside of your build environment (the object tree, shell
+> > environment, etc).  
+> 
+> The .config is supposed to contain the kernel configuration,
+> 'ARCH' and the compiler are exceptions.
+> 
+> 'ARCH' must be passed separately.
+> 
+> The .config now depends on the compiler.  So, if you pass your .config
+> to somebody else, some symbols that depend on the compiler support
+> might be configured differently.
+> 
+> 'make syncconfig' will notice the compiler difference,
+> and show prompts for user input as needed.
+
+It should not prompt. I want to build the kernel non-interactively. I
+do not want kernel rpm build to wait for user input or silently
+change the kernel ABI just because I installed a new gcc plugin. 
+
+Thanks
+
+Michal
