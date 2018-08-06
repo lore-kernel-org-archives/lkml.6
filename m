@@ -2,104 +2,77 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08C0DC46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 20:38:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B90DDC46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 20:41:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B17E321A5A
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 20:38:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B17E321A5A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id 404B6217B7
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 20:41:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 404B6217B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732743AbeHFWtg (ORCPT
+        id S1732945AbeHFWwD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 18:49:36 -0400
-Received: from gateway21.websitewelcome.com ([192.185.45.38]:43953 "EHLO
-        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729818AbeHFWtf (ORCPT
+        Mon, 6 Aug 2018 18:52:03 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:57858 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731432AbeHFWwD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 18:49:35 -0400
-Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
-        by gateway21.websitewelcome.com (Postfix) with ESMTP id 8CC724012EF0D
-        for <linux-kernel@vger.kernel.org>; Mon,  6 Aug 2018 15:38:49 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id mmGvfzOOKbXuJmmH4fOaf6; Mon, 06 Aug 2018 15:38:49 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.50.82] (port=35826 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1fmmGu-001Duo-ST; Mon, 06 Aug 2018 15:38:32 -0500
-Date:   Mon, 6 Aug 2018 15:38:32 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     "Lee, Chun-Yi" <jlee@suse.com>, Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Joe Perches <joe@perches.com>,
-        David Laight <David.Laight@aculab.com>
-Cc:     platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH v2] platform/x86: acer-wmi: refactor function has_cap
-Message-ID: <20180806203832.GA11751@embeddedor.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.50.82
-X-Source-L: No
-X-Exim-ID: 1fmmGu-001Duo-ST
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.50.82]:35826
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 22
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+        Mon, 6 Aug 2018 18:52:03 -0400
+Received: from localhost (71-36-117-41.ptld.qwest.net [71.36.117.41])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 6174C136A4AA3;
+        Mon,  6 Aug 2018 13:41:17 -0700 (PDT)
+Date:   Mon, 06 Aug 2018 13:41:16 -0700 (PDT)
+Message-Id: <20180806.134116.1016660959593702560.davem@davemloft.net>
+To:     laoar.shao@gmail.com
+Cc:     edumazet@google.com, yanhaishuang@cmss.chinamobile.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] tcp: fix the calculation of
+ sysctl_max_tw_buckets in tcp_sk_init()
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <1533556020-20778-1-git-send-email-laoar.shao@gmail.com>
+References: <1533556020-20778-1-git-send-email-laoar.shao@gmail.com>
+X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 06 Aug 2018 13:41:17 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Refactor function has_cap in order to avoid returning integer
-values, when instead it should return booleans.
+From: Yafang Shao <laoar.shao@gmail.com>
+Date: Mon,  6 Aug 2018 19:47:00 +0800
 
-This code was detected with the help of Coccinelle.
+> tcp_hashinfo.ehash_mask is always an odd number, which is set in function
+> alloc_large_system_hash(). See bellow,
+> 	if (_hash_mask)
+> 		*_hash_mask = (1 << log2qty) - 1; <<< always odd number
+> 
+> Hence the local variable 'cnt' is a even number, as a result of that it is
+> no difference to do the incrementation here.
+> 
+> Maybe the compiler could also optimize it, but this code is a little ugly.
+> 
+> Fix: fee83d09 ("ipv4: Namespaceify tcp_max_syn_backlog knob")
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
-Changes in v2:
-	Remove parentheses and unnecessary code. Thank you all for
-	the feedback!
+The correct tag is "Fixes: "
 
- drivers/platform/x86/acer-wmi.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+> @@ -2543,7 +2543,7 @@ static int __net_init tcp_sk_init(struct net *net)
+>  	net->ipv4.sysctl_tcp_tw_reuse = 2;
+>  
+>  	cnt = tcp_hashinfo.ehash_mask + 1;
+> -	net->ipv4.tcp_death_row.sysctl_max_tw_buckets = (cnt + 1) / 2;
+> +	net->ipv4.tcp_death_row.sysctl_max_tw_buckets = cnt / 2;
+>  	net->ipv4.tcp_death_row.hashinfo = &tcp_hashinfo;
 
-diff --git a/drivers/platform/x86/acer-wmi.c b/drivers/platform/x86/acer-wmi.c
-index 8952173..3294bb2 100644
---- a/drivers/platform/x86/acer-wmi.c
-+++ b/drivers/platform/x86/acer-wmi.c
-@@ -672,10 +672,7 @@ static void __init find_quirks(void)
- 
- static bool has_cap(u32 cap)
- {
--	if ((interface->capability & cap) != 0)
--		return 1;
--
--	return 0;
-+	return interface->capability & cap;
- }
- 
- /*
--- 
-2.7.4
+This is completely harmless, and does no harm.
 
+You aren't "fixing" anything.
