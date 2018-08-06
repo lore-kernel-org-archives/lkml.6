@@ -2,87 +2,275 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AFF9C46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 18:06:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71D30C4646D
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 18:06:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE2FF208B6
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 18:06:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MhTB0nGh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE2FF208B6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 2FB4C208B6
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 18:06:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FB4C208B6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387543AbeHFUQc (ORCPT
+        id S2387576AbeHFUQl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 16:16:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36544 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387423AbeHFUQc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 16:16:32 -0400
-Received: from tleilax.poochiereds.net (cpe-71-70-156-158.nc.res.rr.com [71.70.156.158])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 478F8208B6;
-        Mon,  6 Aug 2018 18:06:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1533578778;
-        bh=+ho6jDYqnievsHzsTmCspmvfJNHa/SW4ZD3Es/3J9ZY=;
-        h=From:To:Cc:Subject:Date:From;
-        b=MhTB0nGh4QgQTJT6JqH0NBr+HQAZq+ODH+rlcTL8Z3ZaROHhj8mV6sTvTVCPO6mMm
-         mfBJpDIsrMxIq+3mPTWU6ja7HVyjGdfB4QFpNnVCycS3vjIs63DHR7QrwCCF36XpQ7
-         9GsrOnH7HigDFoIi5S/tD8fyakkLs/eFhVJa1z5Y=
-From:   Jeff Layton <jlayton@kernel.org>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH] locks: add tracepoint in flock codepath
-Date:   Mon,  6 Aug 2018 14:06:16 -0400
-Message-Id: <20180806180616.9889-1-jlayton@kernel.org>
-X-Mailer: git-send-email 2.17.1
+        Mon, 6 Aug 2018 16:16:41 -0400
+Received: from relay10.mail.gandi.net ([217.70.178.230]:51401 "EHLO
+        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387423AbeHFUQk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 16:16:40 -0400
+Received: from alex.numericable.fr (127.19.86.79.rev.sfr.net [79.86.19.127])
+        (Authenticated sender: alex@ghiti.fr)
+        by relay10.mail.gandi.net (Postfix) with ESMTPSA id 99F88240005;
+        Mon,  6 Aug 2018 18:06:11 +0000 (UTC)
+From:   Alexandre Ghiti <alex@ghiti.fr>
+To:     linux-mm@kvack.org, mike.kravetz@oracle.com, linux@armlinux.org.uk,
+        catalin.marinas@arm.com, will.deacon@arm.com, tony.luck@intel.com,
+        fenghua.yu@intel.com, ralf@linux-mips.org, paul.burton@mips.com,
+        jhogan@kernel.org, jejb@parisc-linux.org, deller@gmx.de,
+        benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au,
+        ysato@users.sourceforge.jp, dalias@libc.org, davem@davemloft.net,
+        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, arnd@arndb.de,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-ia64@vger.kernel.org, linux-mips@linux-mips.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-arch@vger.kernel.org
+Cc:     Alexandre Ghiti <alex@ghiti.fr>
+Subject: [PATCH v6 08/11] hugetlb: Introduce generic version of prepare_hugepage_range
+Date:   Mon,  6 Aug 2018 17:57:08 +0000
+Message-Id: <20180806175711.24438-9-alex@ghiti.fr>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180806175711.24438-1-alex@ghiti.fr>
+References: <20180806175711.24438-1-alex@ghiti.fr>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/locks.c                      | 1 +
- include/trace/events/filelock.h | 5 ++++-
- 2 files changed, 5 insertions(+), 1 deletion(-)
+arm, arm64, powerpc, sparc, x86 architectures use the same version of
+prepare_hugepage_range, so move this generic implementation into
+asm-generic/hugetlb.h.
 
-diff --git a/fs/locks.c b/fs/locks.c
-index e533623e2e99..6138a9bcd924 100644
---- a/fs/locks.c
-+++ b/fs/locks.c
-@@ -990,6 +990,7 @@ static int flock_lock_inode(struct inode *inode, struct file_lock *request)
- 	if (new_fl)
- 		locks_free_lock(new_fl);
- 	locks_dispose_list(&dispose);
-+	trace_flock_lock_inode(inode, request, error);
- 	return error;
+Signed-off-by: Alexandre Ghiti <alex@ghiti.fr>
+Tested-by: Helge Deller <deller@gmx.de> # parisc
+Acked-by: Catalin Marinas <catalin.marinas@arm.com> # arm64
+Acked-by: Paul Burton <paul.burton@mips.com> # MIPS parts
+Reviewed-by: Luiz Capitulino <lcapitulino@redhat.com>
+Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
+---
+ arch/arm/include/asm/hugetlb.h     | 11 -----------
+ arch/arm64/include/asm/hugetlb.h   | 11 -----------
+ arch/ia64/include/asm/hugetlb.h    |  1 +
+ arch/mips/include/asm/hugetlb.h    |  1 +
+ arch/parisc/include/asm/hugetlb.h  |  1 +
+ arch/powerpc/include/asm/hugetlb.h | 15 ---------------
+ arch/sh/include/asm/hugetlb.h      |  1 +
+ arch/sparc/include/asm/hugetlb.h   | 16 ----------------
+ arch/x86/include/asm/hugetlb.h     | 15 ---------------
+ include/asm-generic/hugetlb.h      | 15 +++++++++++++++
+ 10 files changed, 19 insertions(+), 68 deletions(-)
+
+diff --git a/arch/arm/include/asm/hugetlb.h b/arch/arm/include/asm/hugetlb.h
+index 9ca14227eeb7..3fcef21ff2c2 100644
+--- a/arch/arm/include/asm/hugetlb.h
++++ b/arch/arm/include/asm/hugetlb.h
+@@ -33,17 +33,6 @@ static inline int is_hugepage_only_range(struct mm_struct *mm,
+ 	return 0;
  }
  
-diff --git a/include/trace/events/filelock.h b/include/trace/events/filelock.h
-index d1faf3597b9d..68b17c116907 100644
---- a/include/trace/events/filelock.h
-+++ b/include/trace/events/filelock.h
-@@ -112,8 +112,11 @@ DEFINE_EVENT(filelock_lock, locks_remove_posix,
- 		TP_PROTO(struct inode *inode, struct file_lock *fl, int ret),
- 		TP_ARGS(inode, fl, ret));
+-static inline int prepare_hugepage_range(struct file *file,
+-					 unsigned long addr, unsigned long len)
+-{
+-	struct hstate *h = hstate_file(file);
+-	if (len & ~huge_page_mask(h))
+-		return -EINVAL;
+-	if (addr & ~huge_page_mask(h))
+-		return -EINVAL;
+-	return 0;
+-}
+-
+ static inline void arch_clear_hugepage_flags(struct page *page)
+ {
+ 	clear_bit(PG_dcache_clean, &page->flags);
+diff --git a/arch/arm64/include/asm/hugetlb.h b/arch/arm64/include/asm/hugetlb.h
+index 1fd64ebf0cd7..3e7f6e69b28d 100644
+--- a/arch/arm64/include/asm/hugetlb.h
++++ b/arch/arm64/include/asm/hugetlb.h
+@@ -31,17 +31,6 @@ static inline int is_hugepage_only_range(struct mm_struct *mm,
+ 	return 0;
+ }
  
--DECLARE_EVENT_CLASS(filelock_lease,
-+DEFINE_EVENT(filelock_lock, flock_lock_inode,
-+		TP_PROTO(struct inode *inode, struct file_lock *fl, int ret),
-+		TP_ARGS(inode, fl, ret));
+-static inline int prepare_hugepage_range(struct file *file,
+-					 unsigned long addr, unsigned long len)
+-{
+-	struct hstate *h = hstate_file(file);
+-	if (len & ~huge_page_mask(h))
+-		return -EINVAL;
+-	if (addr & ~huge_page_mask(h))
+-		return -EINVAL;
+-	return 0;
+-}
+-
+ static inline void arch_clear_hugepage_flags(struct page *page)
+ {
+ 	clear_bit(PG_dcache_clean, &page->flags);
+diff --git a/arch/ia64/include/asm/hugetlb.h b/arch/ia64/include/asm/hugetlb.h
+index 82fe3d7a38d9..cbe296271030 100644
+--- a/arch/ia64/include/asm/hugetlb.h
++++ b/arch/ia64/include/asm/hugetlb.h
+@@ -9,6 +9,7 @@ void hugetlb_free_pgd_range(struct mmu_gather *tlb, unsigned long addr,
+ 			    unsigned long end, unsigned long floor,
+ 			    unsigned long ceiling);
  
-+DECLARE_EVENT_CLASS(filelock_lease,
- 	TP_PROTO(struct inode *inode, struct file_lock *fl),
++#define __HAVE_ARCH_PREPARE_HUGEPAGE_RANGE
+ int prepare_hugepage_range(struct file *file,
+ 			unsigned long addr, unsigned long len);
  
- 	TP_ARGS(inode, fl),
+diff --git a/arch/mips/include/asm/hugetlb.h b/arch/mips/include/asm/hugetlb.h
+index b3d6bb53ee6e..6ff2531cfb1d 100644
+--- a/arch/mips/include/asm/hugetlb.h
++++ b/arch/mips/include/asm/hugetlb.h
+@@ -18,6 +18,7 @@ static inline int is_hugepage_only_range(struct mm_struct *mm,
+ 	return 0;
+ }
+ 
++#define __HAVE_ARCH_PREPARE_HUGEPAGE_RANGE
+ static inline int prepare_hugepage_range(struct file *file,
+ 					 unsigned long addr,
+ 					 unsigned long len)
+diff --git a/arch/parisc/include/asm/hugetlb.h b/arch/parisc/include/asm/hugetlb.h
+index 5a102d7251e4..fb7e0fd858a3 100644
+--- a/arch/parisc/include/asm/hugetlb.h
++++ b/arch/parisc/include/asm/hugetlb.h
+@@ -22,6 +22,7 @@ static inline int is_hugepage_only_range(struct mm_struct *mm,
+  * If the arch doesn't supply something else, assume that hugepage
+  * size aligned regions are ok without further preparation.
+  */
++#define __HAVE_ARCH_PREPARE_HUGEPAGE_RANGE
+ static inline int prepare_hugepage_range(struct file *file,
+ 			unsigned long addr, unsigned long len)
+ {
+diff --git a/arch/powerpc/include/asm/hugetlb.h b/arch/powerpc/include/asm/hugetlb.h
+index 7123599089c6..69c14ecac133 100644
+--- a/arch/powerpc/include/asm/hugetlb.h
++++ b/arch/powerpc/include/asm/hugetlb.h
+@@ -117,21 +117,6 @@ void hugetlb_free_pgd_range(struct mmu_gather *tlb, unsigned long addr,
+ 			    unsigned long end, unsigned long floor,
+ 			    unsigned long ceiling);
+ 
+-/*
+- * If the arch doesn't supply something else, assume that hugepage
+- * size aligned regions are ok without further preparation.
+- */
+-static inline int prepare_hugepage_range(struct file *file,
+-			unsigned long addr, unsigned long len)
+-{
+-	struct hstate *h = hstate_file(file);
+-	if (len & ~huge_page_mask(h))
+-		return -EINVAL;
+-	if (addr & ~huge_page_mask(h))
+-		return -EINVAL;
+-	return 0;
+-}
+-
+ #define __HAVE_ARCH_HUGE_PTEP_GET_AND_CLEAR
+ static inline pte_t huge_ptep_get_and_clear(struct mm_struct *mm,
+ 					    unsigned long addr, pte_t *ptep)
+diff --git a/arch/sh/include/asm/hugetlb.h b/arch/sh/include/asm/hugetlb.h
+index 54f65094efe6..f1bbd255ee43 100644
+--- a/arch/sh/include/asm/hugetlb.h
++++ b/arch/sh/include/asm/hugetlb.h
+@@ -15,6 +15,7 @@ static inline int is_hugepage_only_range(struct mm_struct *mm,
+  * If the arch doesn't supply something else, assume that hugepage
+  * size aligned regions are ok without further preparation.
+  */
++#define __HAVE_ARCH_PREPARE_HUGEPAGE_RANGE
+ static inline int prepare_hugepage_range(struct file *file,
+ 			unsigned long addr, unsigned long len)
+ {
+diff --git a/arch/sparc/include/asm/hugetlb.h b/arch/sparc/include/asm/hugetlb.h
+index f661362376e0..2101ea217f33 100644
+--- a/arch/sparc/include/asm/hugetlb.h
++++ b/arch/sparc/include/asm/hugetlb.h
+@@ -26,22 +26,6 @@ static inline int is_hugepage_only_range(struct mm_struct *mm,
+ 	return 0;
+ }
+ 
+-/*
+- * If the arch doesn't supply something else, assume that hugepage
+- * size aligned regions are ok without further preparation.
+- */
+-static inline int prepare_hugepage_range(struct file *file,
+-			unsigned long addr, unsigned long len)
+-{
+-	struct hstate *h = hstate_file(file);
+-
+-	if (len & ~huge_page_mask(h))
+-		return -EINVAL;
+-	if (addr & ~huge_page_mask(h))
+-		return -EINVAL;
+-	return 0;
+-}
+-
+ #define __HAVE_ARCH_HUGE_PTEP_CLEAR_FLUSH
+ static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
+ 					 unsigned long addr, pte_t *ptep)
+diff --git a/arch/x86/include/asm/hugetlb.h b/arch/x86/include/asm/hugetlb.h
+index 3cd3a2c9840e..59c056adb3c9 100644
+--- a/arch/x86/include/asm/hugetlb.h
++++ b/arch/x86/include/asm/hugetlb.h
+@@ -13,21 +13,6 @@ static inline int is_hugepage_only_range(struct mm_struct *mm,
+ 	return 0;
+ }
+ 
+-/*
+- * If the arch doesn't supply something else, assume that hugepage
+- * size aligned regions are ok without further preparation.
+- */
+-static inline int prepare_hugepage_range(struct file *file,
+-			unsigned long addr, unsigned long len)
+-{
+-	struct hstate *h = hstate_file(file);
+-	if (len & ~huge_page_mask(h))
+-		return -EINVAL;
+-	if (addr & ~huge_page_mask(h))
+-		return -EINVAL;
+-	return 0;
+-}
+-
+ static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
+ 					   unsigned long addr, pte_t *ptep)
+ {
+diff --git a/include/asm-generic/hugetlb.h b/include/asm-generic/hugetlb.h
+index cd9697672b79..6c0c8b0c71e0 100644
+--- a/include/asm-generic/hugetlb.h
++++ b/include/asm-generic/hugetlb.h
+@@ -87,4 +87,19 @@ static inline pte_t huge_pte_wrprotect(pte_t pte)
+ }
+ #endif
+ 
++#ifndef __HAVE_ARCH_PREPARE_HUGEPAGE_RANGE
++static inline int prepare_hugepage_range(struct file *file,
++		unsigned long addr, unsigned long len)
++{
++	struct hstate *h = hstate_file(file);
++
++	if (len & ~huge_page_mask(h))
++		return -EINVAL;
++	if (addr & ~huge_page_mask(h))
++		return -EINVAL;
++
++	return 0;
++}
++#endif
++
+ #endif /* _ASM_GENERIC_HUGETLB_H */
 -- 
-2.17.1
+2.16.2
 
