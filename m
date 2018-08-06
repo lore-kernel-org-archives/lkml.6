@@ -2,130 +2,152 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74CE1C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 19:43:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1747C4646D
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 19:43:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23E0021A63
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 19:43:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6BE59219E2
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 19:43:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="bbMPQGA6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23E0021A63
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b9zwKKX1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BE59219E2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732579AbeHFVxn (ORCPT
+        id S1732699AbeHFVyR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 17:53:43 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:43716 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731143AbeHFVxn (ORCPT
+        Mon, 6 Aug 2018 17:54:17 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:38557 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731143AbeHFVyR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 17:53:43 -0400
-Received: by mail-ed1-f67.google.com with SMTP id j21-v6so3332750edp.10
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Aug 2018 12:43:06 -0700 (PDT)
+        Mon, 6 Aug 2018 17:54:17 -0400
+Received: by mail-wr1-f65.google.com with SMTP id v14-v6so13463484wro.5;
+        Mon, 06 Aug 2018 12:43:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=AAH2DZZlRxXs+lGxhonaJAm3wnkPvGBVewhynb6ZLW4=;
-        b=bbMPQGA6bbOQPWkFt+taTZxAHZYngZ81KxE13dxwrorxZlAQ10dWZGcM1x8NwrDxJy
-         fFbGK7CGY/y/a6W9oOJ9i5a6p9Ov2q4OZmk+pop2au/nIuh3fu7x2n9b8xyxs4zAsjD/
-         WiPKy1Nw/KcvOeswKKmXl4vIyEO50NksH5v5U=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=C6/v07wnqmaeTd4aYvY3zDIu4/H5KgO8k+WoAXJQDKs=;
+        b=b9zwKKX1v6Dr/Evbb1Jtae2hzwuowhktAHjmrjyJo3nVz1iN7mkqQ3vzXsxZNuURQf
+         mnlmCI+yemhBO6ZituTXIywIUl7OfPOcY3qfhjPpZb7UNausaP8bfdnH41k98b8hYE9a
+         OCq91Xb1fu4DrnO5o+fQk9QoPoFjhQ9KZ26S4bxbv/Sxb4NmaDMIXy8lAK7XT/+GbrE7
+         mE5VCe3DAfTS9XzUfdsuOvPsACselAcdGNBC7HNYFi85h4N1KRSMlkO+DlCIMyd0B0b7
+         /GxFig89ehr2zPUnkLx+so23KEnzrgGlSR93KL/AY5kM4H/mwmMbx2jkL9T2Fipc0sIk
+         GhcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=AAH2DZZlRxXs+lGxhonaJAm3wnkPvGBVewhynb6ZLW4=;
-        b=fwI8kbfVUzMYCJwMWZ6GZvUIwE2j5DPm5SsViDY9+tsr5UYAGa3/EDDt5bbInbsUNA
-         N3cKZHWXc744Rg8HIt6Hm+RlirkbBg4ngj5C2DwwbtzSLvmvtS8peSfiIXPCXRnA+Tnl
-         I0Rl6es4nuWxfVQW4Xnl2cY5YKA93c3WtarDSTyM6s5V8ZYGk4dpI2Nd0yT3e0VhEv6/
-         cP3l31lXr2a1u0FJrgtEYWnXxe1te5b76nNZXvMVvdu8+wBoNldh8XeWVXqg19Gy0Gt9
-         bKqHVnZ+SasThxpFr4f2klP1XdQ2XNPEwZNmW5hfG192REQ9sYbtdOKC4aytOrbC/TKy
-         COIQ==
-X-Gm-Message-State: AOUpUlFouu5HENixMIVavR6sTvtTCiUrui1MQ39FJdqLgBdvwEq0voBA
-        cmwAB7pXZ5nsOR61EikUVTT+KbOKCi4=
-X-Google-Smtp-Source: AAOMgpfx+8i7DeCcLhhpPV+dyNQNLPCAzCEC6nx2iuZVpoOjRK/D8Hw5h0ArOwbBmEOnL1ubRG/Dvg==
-X-Received: by 2002:a50:8818:: with SMTP id b24-v6mr20211788edb.274.1533584586135;
-        Mon, 06 Aug 2018 12:43:06 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:56fc:0:d707:d7d8:b180:96e5])
-        by smtp.gmail.com with ESMTPSA id p20-v6sm4963619edr.12.2018.08.06.12.43.04
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 06 Aug 2018 12:43:05 -0700 (PDT)
-Date:   Mon, 6 Aug 2018 21:43:03 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Lukas Wunner <lukas@wunner.de>
-Cc:     Lyude Paul <lyude@redhat.com>, Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>, nouveau@lists.freedesktop.org,
-        Karol Herbst <karolherbst@gmail.com>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH v3 3/8] drm/fb_helper: Introduce hotplug_suspend/resume()
-Message-ID: <20180806194303.GT3008@phenom.ffwll.local>
-Mail-Followup-To: Lukas Wunner <lukas@wunner.de>,
-        Lyude Paul <lyude@redhat.com>, David Airlie <airlied@linux.ie>,
-        nouveau@lists.freedesktop.org, Karol Herbst <karolherbst@gmail.com>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-References: <20180731003954.19962-1-lyude@redhat.com>
- <20180731003954.19962-4-lyude@redhat.com>
- <20180806084322.GK3008@phenom.ffwll.local>
- <4e72a10062166d646ebd3eb28b6c186d4c00a63f.camel@redhat.com>
- <20180806193457.GA7028@wunner.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180806193457.GA7028@wunner.de>
-X-Operating-System: Linux phenom 4.14.0-3-amd64 
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=C6/v07wnqmaeTd4aYvY3zDIu4/H5KgO8k+WoAXJQDKs=;
+        b=r5eaayHwHnPJBoWUILZQFTpzOl6nvXnZ0OAKf3VkRGWO4FJcDMLKNnHCCR35Xcm0i9
+         ez1pFnE1QkRj0JtHFAqpo96a6byhXDTdRcGiHrsSEWHvBSC5heiX2P6AseVoscz4lJDG
+         vtcIFdd6DCHZfaEjFUd7p4HyJtAnWaQ6H38vC8nJggDMYjuuF1LiIvhiKG6ur7fZXr2j
+         LGMypUYWt9fATwg4NH0unGNmKg+9cMRK2SPj+yIRUdaqZOvbqmpz3ROL1h6W+kYkwgCT
+         sTn42pZuxtT8KWBbgTL34k4SJcaV+2vnDEAMLHKYaeAJuhZXGrusf97prl/5DTF4eG3z
+         t3FA==
+X-Gm-Message-State: AOUpUlH74xgJSOc5YdPDoQBbD9hA/L9oDCdN1E3FNrqtpom+85PC+UU8
+        I+fYdvXZ87viVafUw8JAMhy2bmBY8a0=
+X-Google-Smtp-Source: AAOMgpdAGVACPqM3qXvYCHqnJjHRin57dTIMsvW+oIqlHdutwnLjZULAxUtx3yHtW6zgxizDF5/Bxw==
+X-Received: by 2002:adf:cd82:: with SMTP id q2-v6mr10998936wrj.118.1533584619272;
+        Mon, 06 Aug 2018 12:43:39 -0700 (PDT)
+Received: from kostamach.yok.int.mrv.com (194-90-138-234.bb.netvision.net.il. [194.90.138.234])
+        by smtp.gmail.com with ESMTPSA id d8-v6sm10613813wrv.68.2018.08.06.12.43.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 06 Aug 2018 12:43:38 -0700 (PDT)
+From:   Kosta Zertsekel <zertsekel@gmail.com>
+To:     Mark Brown <broonie@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+        linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Kosta Zertsekel <zertsekel@gmail.com>,
+        =?UTF-8?q?Jan=20Kundr=C3=A1t?= <jan.kundrat@cesnet.cz>,
+        Stefan Roese <sr@denx.de>, Ken Wilson <ken.wilson@opengear.com>
+Subject: [PATCH v2] spi: orion: cosmetics - alias long direct_access variables
+Date:   Mon,  6 Aug 2018 22:43:27 +0300
+Message-Id: <20180806194327.13389-1-zertsekel@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 06, 2018 at 09:34:57PM +0200, Lukas Wunner wrote:
-> On Mon, Aug 06, 2018 at 03:15:31PM -0400, Lyude Paul wrote:
-> > You did mention in the review of one of my other patches that we should avoid
-> > disabling polling during runtime suspend, and you're definitely right. I feel
-> > a bit silly for not remembering that since I was the one who made it so that
-> > i915 does polling in runtime suspend for chips without RPM HPD detection in
-> > the first place because it was causing people's displays not to come up on
-> > vlv...
-> > Anyway: I think if we just leave output polling enabled during runtime suspend
-> > that might actually fix all of the fb_helper locking issues since we won't
-> > need to wait on any of the output poll workers to finish, at least I think it
-> > should: I'll confirm this when I get into the office
-> 
-> Quoth Imre Deak:
-> 
->    "In i915 polling is on during runtime suspend only if there are outputs
->     without hotplug interrupt support. A special case is when an output has
->     working HPD interrupts when in D0, but no interrupts when runtime
->     suspended. For these we start polling (from a scheduled work) in the
->     runtime suspend hook and stop it in the runtime resume hook (again from
->     a scheduled work)."
->     https://lkml.org/lkml/2018/2/12/330
-> 
-> nouveau only uses runtime PM on discrete GPUs in dual GPU laptops.
-> Resuming the GPU from D3cold to D0 every few seconds to poll the
-> outputs would waste too much power on such machines.
-> 
-> The question is, why is polling running at all, since all modern
-> laptops have HPD-capable ports such as DP?
+This change increases the source code readability.
+Instead of using `spi->child[cs].direct_access.XXX` use `dacc->XXX`.
+Instead of using `orion_spi->child[cs].direct_access.vaddr` use `vaddr`.
 
-Note we don't fully sync with the poll worker here, we just update the
-polling flags and let the poll worker lazily notice the change (and stop
-itsefl). That avoids the deadlock. It also means that the poll worker must
-call pm_runtime_get() in all the right places though.
+Signed-off-by: Kosta Zertsekel <zertsekel@gmail.com>
+---
+ drivers/spi/spi-orion.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
-On resume we need to kick it again, but that doesn't have a deadlock
-potential.
--Daniel
+diff --git a/drivers/spi/spi-orion.c b/drivers/spi/spi-orion.c
+index d01a6adc726e..184ba91abeee 100644
+--- a/drivers/spi/spi-orion.c
++++ b/drivers/spi/spi-orion.c
+@@ -430,6 +430,7 @@ orion_spi_write_read(struct spi_device *spi, struct spi_transfer *xfer)
+ 	int word_len;
+ 	struct orion_spi *orion_spi;
+ 	int cs = spi->chip_select;
++	void __iomem *vaddr;
+ 
+ 	word_len = spi->bits_per_word;
+ 	count = xfer->len;
+@@ -440,8 +441,9 @@ orion_spi_write_read(struct spi_device *spi, struct spi_transfer *xfer)
+ 	 * Use SPI direct write mode if base address is available. Otherwise
+ 	 * fall back to PIO mode for this transfer.
+ 	 */
+-	if ((orion_spi->child[cs].direct_access.vaddr) && (xfer->tx_buf) &&
+-	    (word_len == 8)) {
++	vaddr = orion_spi->child[cs].direct_access.vaddr;
++
++	if (vaddr && xfer->tx_buf && word_len == 8) {
+ 		unsigned int cnt = count / 4;
+ 		unsigned int rem = count % 4;
+ 
+@@ -449,13 +451,11 @@ orion_spi_write_read(struct spi_device *spi, struct spi_transfer *xfer)
+ 		 * Send the TX-data to the SPI device via the direct
+ 		 * mapped address window
+ 		 */
+-		iowrite32_rep(orion_spi->child[cs].direct_access.vaddr,
+-			      xfer->tx_buf, cnt);
++		iowrite32_rep(vaddr, xfer->tx_buf, cnt);
+ 		if (rem) {
+ 			u32 *buf = (u32 *)xfer->tx_buf;
+ 
+-			iowrite8_rep(orion_spi->child[cs].direct_access.vaddr,
+-				     &buf[cnt], rem);
++			iowrite8_rep(vaddr, &buf[cnt], rem);
+ 		}
+ 
+ 		return count;
+@@ -683,6 +683,7 @@ static int orion_spi_probe(struct platform_device *pdev)
+ 
+ 	/* Scan all SPI devices of this controller for direct mapped devices */
+ 	for_each_available_child_of_node(pdev->dev.of_node, np) {
++		struct orion_direct_acc *dir_acc;
+ 		u32 cs;
+ 
+ 		/* Get chip-select number from the "reg" property */
+@@ -711,14 +712,13 @@ static int orion_spi_probe(struct platform_device *pdev)
+ 		 * This needs to get extended for the direct SPI-NOR / SPI-NAND
+ 		 * support, once this gets implemented.
+ 		 */
+-		spi->child[cs].direct_access.vaddr = devm_ioremap(&pdev->dev,
+-							    r->start,
+-							    PAGE_SIZE);
+-		if (!spi->child[cs].direct_access.vaddr) {
++		dir_acc = &spi->child[cs].direct_access;
++		dir_acc->vaddr = devm_ioremap(&pdev->dev, r->start, PAGE_SIZE);
++		if (!dir_acc->vaddr) {
+ 			status = -ENOMEM;
+ 			goto out_rel_axi_clk;
+ 		}
+-		spi->child[cs].direct_access.size = PAGE_SIZE;
++		dir_acc->size = PAGE_SIZE;
+ 
+ 		dev_info(&pdev->dev, "CS%d configured for direct access\n", cs);
+ 	}
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+2.17.1
+
