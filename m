@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18A06C46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:40:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87AACC46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:40:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C669521A18
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:40:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C669521A18
+	by mail.kernel.org (Postfix) with ESMTP id 4AA9021A28
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:40:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AA9021A28
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387495AbeHFSum (ORCPT
+        id S2387516AbeHFSup (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 14:50:42 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41814 "EHLO
+        Mon, 6 Aug 2018 14:50:45 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41834 "EHLO
         foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727561AbeHFSul (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 14:50:41 -0400
+        id S1727561AbeHFSuo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 14:50:44 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 189E815A2;
-        Mon,  6 Aug 2018 09:40:48 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2767E15AB;
+        Mon,  6 Aug 2018 09:40:51 -0700 (PDT)
 Received: from e110439-lin.Cambridge.Arm.com (e110439-lin.emea.arm.com [10.4.12.126])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 4B9883F5D0;
-        Mon,  6 Aug 2018 09:40:45 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 5A1FF3F5D0;
+        Mon,  6 Aug 2018 09:40:48 -0700 (PDT)
 From:   Patrick Bellasi <patrick.bellasi@arm.com>
 To:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
 Cc:     Ingo Molnar <mingo@redhat.com>,
@@ -44,9 +44,9 @@ Cc:     Ingo Molnar <mingo@redhat.com>,
         Joel Fernandes <joelaf@google.com>,
         Steve Muckle <smuckle@google.com>,
         Suren Baghdasaryan <surenb@google.com>
-Subject: [PATCH v3 06/14] sched/cpufreq: uclamp: add utilization clamping for RT tasks
-Date:   Mon,  6 Aug 2018 17:39:38 +0100
-Message-Id: <20180806163946.28380-7-patrick.bellasi@arm.com>
+Subject: [PATCH v3 07/14] sched/core: uclamp: enforce last task UCLAMP_MAX
+Date:   Mon,  6 Aug 2018 17:39:39 +0100
+Message-Id: <20180806163946.28380-8-patrick.bellasi@arm.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180806163946.28380-1-patrick.bellasi@arm.com>
 References: <20180806163946.28380-1-patrick.bellasi@arm.com>
@@ -55,42 +55,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently schedutil enforces a maximum frequency when RT tasks are
-RUNNABLE.  Such a mandatory policy can be made more tunable from
-userspace thus allowing for example to define a max frequency which is
-still reasonable for the execution of a specific RT workload. This
-will contribute to make the RT class more friendly for power/energy
-sensitive use-cases.
+When a util_max clamped task sleeps, its clamp constraints are removed
+from the CPU. However, the blocked utilization on that CPU can still be
+higher than the max clamp value enforced while that task was running.
+This max clamp removal when a CPU is going to be idle could thus allow
+unwanted CPU frequency increases, right while the task is not running.
 
-This patch extends the usage of util_{min,max} to the RT scheduling
-class.  Whenever a task in this class is RUNNABLE, the util required is
-defined by the constraints of the CPU control group the task belongs to.
+This can happen, for example, where there is another (smaller) task
+running on a different CPU of the same frequency domain.
+In this case, when we aggregate the utilization of all the CPUs in a
+shared frequency domain, schedutil can still see the full non clamped
+blocked utilization of all the CPUs and thus eventually increase the
+frequency.
 
-Since utilization clamping applies now to both CFS and RT task, there
-can be two alternative approaches:
- A) clamp the combined utilization
- B) combine the clamped utilizations
-which have pros and cons.
-Approach A) is more power efficient, since it generally selects lower
-frequencies when we have both RT and CFS utilization. However, this
-could affect performance of the lower priority CFS class, since the
-minimum utilization clamp could be completely eclipsed by the RT
-utilization.
-Approach B) is more fair to the lower priority CFS class since it always
-adds the required minimum utilization to that class too. For that reason
-it could be less power efficient and, since we do not distinguish clamp
-values based on the scheduling class, it could also end up boosting CFS
-tasks more then required (e.g. when the current min utilization of a CPU
-is required by an RT task). That's why this approach is masked behind a
-sched feature.
+Let's fix this by using:
 
-The IO wait boost value is thus subject to clamping for RT tasks too.
-This is to ensure that RT tasks as well as CFS ones are always subject
-to the set of current utilization clamping constraints.
-It's worth to notice that, by default, clamp values are
-    min_util, max_util = (0, SCHED_CAPACITY_SCALE)
-and thus, RT tasks always run at the maximum OPP if not otherwise
-constrained by userspace.
+   uclamp_cpu_put_id(UCLAMP_MAX)
+      uclamp_cpu_update(last_clamp_value)
+
+to detect when a CPU has no more RUNNABLE clamped tasks and to flag this
+condition. Thus, while a CPU is idle, we can still enforce the last used
+clamp value for it.
+
+To the contrary, we do not track any UCLAMP_MIN since, while a CPU is
+idle, we don't want to enforce any minimum frequency
+Indeed, we rely just on blocked load decay to smoothly reduce the
+frequency.
 
 Signed-off-by: Patrick Bellasi <patrick.bellasi@arm.com>
 Cc: Ingo Molnar <mingo@redhat.com>
@@ -108,89 +98,102 @@ Cc: linux-pm@vger.kernel.org
 
 ---
 Changes in v3:
- - rebased on tip/sched/core
+ Message-ID: <CAJuCfpFnj2g3+ZpR4fP4yqfxs0zd=c-Zehr2XM7m_C+WdL9jNA@mail.gmail.com>
+ - rename UCLAMP_NONE into UCLAMP_NOT_VALID
 
 Changes in v2:
- - rebased on v4.18-rc4
+ - rabased on v4.18-rc4
+ - new patch to improve a specific issue
 ---
- kernel/sched/cpufreq_schedutil.c | 33 +++++++++++++++++++++-----------
- kernel/sched/features.h          |  5 +++++
- 2 files changed, 27 insertions(+), 11 deletions(-)
+ kernel/sched/core.c  | 35 +++++++++++++++++++++++++++++++----
+ kernel/sched/sched.h |  2 ++
+ 2 files changed, 33 insertions(+), 4 deletions(-)
 
-diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
-index a7affc729c25..bb25ef66c2d3 100644
---- a/kernel/sched/cpufreq_schedutil.c
-+++ b/kernel/sched/cpufreq_schedutil.c
-@@ -200,6 +200,7 @@ static unsigned int get_next_freq(struct sugov_policy *sg_policy,
- static unsigned long sugov_get_util(struct sugov_cpu *sg_cpu)
- {
- 	struct rq *rq = cpu_rq(sg_cpu->cpu);
-+	unsigned long util_cfs, util_rt;
- 	unsigned long util, irq, max;
- 
- 	sg_cpu->max = max = arch_scale_cpu_capacity(NULL, sg_cpu->cpu);
-@@ -223,13 +224,25 @@ static unsigned long sugov_get_util(struct sugov_cpu *sg_cpu)
- 	 * utilization (PELT windows are synchronized) we can directly add them
- 	 * to obtain the CPU's actual utilization.
- 	 *
--	 * CFS utilization can be boosted or capped, depending on utilization
--	 * clamp constraints configured for currently RUNNABLE tasks.
-+	 * CFS and RT utilizations can be boosted or capped, depending on
-+	 * utilization constraints enforce by currently RUNNABLE tasks.
-+	 * They are individually clamped to ensure fairness across classes,
-+	 * meaning that CFS always gets (if possible) the (minimum) required
-+	 * bandwidth on top of that required by higher priority classes.
- 	 */
--	util = cpu_util_cfs(rq);
--	if (util)
--		util = uclamp_util(cpu_of(rq), util);
--	util += cpu_util_rt(rq);
-+	util_cfs = cpu_util_cfs(rq);
-+	util_rt  = cpu_util_rt(rq);
-+	if (sched_feat(UCLAMP_SCHED_CLASS)) {
-+		util = 0;
-+		if (util_cfs)
-+			util += uclamp_util(cpu_of(rq), util_cfs);
-+		if (util_rt)
-+			util += uclamp_util(cpu_of(rq), util_rt);
-+	} else {
-+		util  = cpu_util_cfs(rq);
-+		util += cpu_util_rt(rq);
-+		util  = uclamp_util(cpu_of(rq), util);
-+	}
- 
- 	/*
- 	 * We do not make cpu_util_dl() a permanent part of this sum because we
-@@ -333,13 +346,11 @@ static void sugov_iowait_boost(struct sugov_cpu *sg_cpu, u64 time,
- 	 *
- 	 * Since DL tasks have a much more advanced bandwidth control, it's
- 	 * safe to assume that IO boost does not apply to those tasks.
--	 * Instead, since RT tasks are currently not utiliation clamped,
--	 * we don't want to apply clamping on IO boost while there is
--	 * blocked RT utilization.
-+	 * Instead, for CFS and RT tasks we clamp the IO boost max value
-+	 * considering the current constraints for the CPU.
- 	 */
- 	max_boost = sg_cpu->iowait_boost_max;
--	if (!cpu_util_rt(cpu_rq(sg_cpu->cpu)))
--		max_boost = uclamp_util(sg_cpu->cpu, max_boost);
-+	max_boost = uclamp_util(sg_cpu->cpu, max_boost);
- 
- 	/* Double the boost at each request */
- 	if (sg_cpu->iowait_boost) {
-diff --git a/kernel/sched/features.h b/kernel/sched/features.h
-index 85ae8488039c..a3ca449e36c1 100644
---- a/kernel/sched/features.h
-+++ b/kernel/sched/features.h
-@@ -90,3 +90,8 @@ SCHED_FEAT(WA_BIAS, true)
-  * UtilEstimation. Use estimated CPU utilization.
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index bc2beedec7bf..ff76b000bbe8 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -906,7 +906,8 @@ uclamp_group_find(int clamp_id, unsigned int clamp_value)
+  * For the specified clamp index, this method computes the new CPU utilization
+  * clamp to use until the next change on the set of RUNNABLE tasks on that CPU.
   */
- SCHED_FEAT(UTIL_EST, true)
+-static inline void uclamp_cpu_update(struct rq *rq, int clamp_id)
++static inline void uclamp_cpu_update(struct rq *rq, int clamp_id,
++				     unsigned int last_clamp_value)
+ {
+ 	struct uclamp_group *uc_grp = &rq->uclamp.group[clamp_id][0];
+ 	int max_value = UCLAMP_NOT_VALID;
+@@ -924,6 +925,19 @@ static inline void uclamp_cpu_update(struct rq *rq, int clamp_id)
+ 		if (max_value >= SCHED_CAPACITY_SCALE)
+ 			break;
+ 	}
 +
-+/*
-+ * Per class CPU's utilization clamping.
-+ */
-+SCHED_FEAT(UCLAMP_SCHED_CLASS, false)
++	/*
++	 * Just for the UCLAMP_MAX value, in case there are no RUNNABLE
++	 * task, we keep the CPU clamped to the last task's clamp value.
++	 * This avoids frequency spikes to MAX when one CPU, with an high
++	 * blocked utilization, sleeps and another CPU, in the same frequency
++	 * domain, do not see anymore the clamp on the first CPU.
++	 */
++	if (clamp_id == UCLAMP_MAX && max_value == UCLAMP_NOT_VALID) {
++		rq->uclamp.flags |= UCLAMP_FLAG_IDLE;
++		max_value = last_clamp_value;
++	}
++
+ 	rq->uclamp.value[clamp_id] = max_value;
+ }
+ 
+@@ -953,13 +967,26 @@ static inline void uclamp_cpu_get_id(struct task_struct *p,
+ 	uc_grp = &rq->uclamp.group[clamp_id][0];
+ 	uc_grp[group_id].tasks += 1;
+ 
++	/* Force clamp update on idle exit */
++	uc_cpu = &rq->uclamp;
++	clamp_value = p->uclamp[clamp_id].value;
++	if (unlikely(uc_cpu->flags & UCLAMP_FLAG_IDLE)) {
++		/*
++		 * This function is called for both UCLAMP_MIN (before) and
++		 * UCLAMP_MAX (after). Let's reset the flag only the second
++		 * once we know that UCLAMP_MIN has been already updated.
++		 */
++		if (clamp_id == UCLAMP_MAX)
++			uc_cpu->flags &= ~UCLAMP_FLAG_IDLE;
++		uc_cpu->value[clamp_id] = clamp_value;
++		return;
++	}
++
+ 	/*
+ 	 * If this is the new max utilization clamp value, then we can update
+ 	 * straight away the CPU clamp value. Otherwise, the current CPU clamp
+ 	 * value is still valid and we are done.
+ 	 */
+-	uc_cpu = &rq->uclamp;
+-	clamp_value = p->uclamp[clamp_id].value;
+ 	if (uc_cpu->value[clamp_id] < clamp_value)
+ 		uc_cpu->value[clamp_id] = clamp_value;
+ }
+@@ -1011,7 +1038,7 @@ static inline void uclamp_cpu_put_id(struct task_struct *p,
+ 	uc_cpu = &rq->uclamp;
+ 	clamp_value = uc_grp[group_id].value;
+ 	if (clamp_value >= uc_cpu->value[clamp_id])
+-		uclamp_cpu_update(rq, clamp_id);
++		uclamp_cpu_update(rq, clamp_id, clamp_value);
+ }
+ 
+ /**
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index bb305e3d5737..d5855babb9c9 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -803,6 +803,8 @@ struct uclamp_group {
+  * values, i.e. no min/max clamping at all.
+  */
+ struct uclamp_cpu {
++#define UCLAMP_FLAG_IDLE 0x01
++	int flags;
+ 	int value[UCLAMP_CNT];
+ 	struct uclamp_group group[UCLAMP_CNT][CONFIG_UCLAMP_GROUPS_COUNT + 1];
+ };
 -- 
 2.18.0
 
