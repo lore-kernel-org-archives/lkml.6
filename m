@@ -3,144 +3,192 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4052EC46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 19:53:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C1C0C46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 19:54:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CCC1C2150E
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 19:53:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCC1C2150E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
+	by mail.kernel.org (Postfix) with ESMTP id 1FC2E208A3
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 19:54:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FC2E208A3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387529AbeHFWEN (ORCPT
+        id S1733007AbeHFWFP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 18:04:13 -0400
-Received: from gate.crashing.org ([63.228.1.57]:52721 "EHLO gate.crashing.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731258AbeHFWEN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 18:04:13 -0400
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w76JqCAv002188;
-        Mon, 6 Aug 2018 14:52:13 -0500
-Message-ID: <6c707d6d33ac25a42265c2e9b521c2416d72c739.camel@kernel.crashing.org>
-Subject: Re: [RFC 0/4] Virtio uses DMA API for all devices
-From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Mon, 6 Aug 2018 18:05:15 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58992 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729972AbeHFWFP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 18:05:15 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C38D1402243B;
+        Mon,  6 Aug 2018 19:54:34 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6F61F76C0;
+        Mon,  6 Aug 2018 19:54:34 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id w76JsYT2012599;
+        Mon, 6 Aug 2018 15:54:34 -0400
+Received: from localhost (mpatocka@localhost)
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id w76JsXr2012595;
+        Mon, 6 Aug 2018 15:54:33 -0400
+X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
+Date:   Mon, 6 Aug 2018 15:54:33 -0400 (EDT)
+From:   Mikulas Patocka <mpatocka@redhat.com>
+X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+cc:     Robin Murphy <robin.murphy@arm.com>,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        Joao Pinto <Joao.Pinto@synopsys.com>,
+        linux-pci <linux-pci@vger.kernel.org>,
+        Jingoo Han <jingoohan1@gmail.com>,
         Will Deacon <will.deacon@arm.com>,
-        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        aik@ozlabs.ru, robh@kernel.org, joe@perches.com,
-        elfring@users.sourceforge.net, david@gibson.dropbear.id.au,
-        jasowang@redhat.com, mpe@ellerman.id.au, linuxram@us.ibm.com,
-        haren@linux.vnet.ibm.com, paulus@samba.org,
-        srikar@linux.vnet.ibm.com, robin.murphy@arm.com,
-        jean-philippe.brucker@arm.com, marc.zyngier@arm.com
-Date:   Tue, 07 Aug 2018 05:52:12 +1000
-In-Reply-To: <20180806094243.GA16032@infradead.org>
-References: <20180802225738-mutt-send-email-mst@kernel.org>
-         <de4888b6457e220776e16a9c8958ff0886ffc66c.camel@kernel.crashing.org>
-         <20180803070507.GA1344@infradead.org>
-         <eb1750e90e4bd45da297fa6f78f8ef93671b7c2f.camel@kernel.crashing.org>
-         <20180803160246.GA13794@infradead.org>
-         <22310f58605169fe9de83abf78b59f593ff7fbb7.camel@kernel.crashing.org>
-         <20180804082120.GB4421@infradead.org>
-         <a3ec0a454928e880dabc3782ea906e318634abf9.camel@kernel.crashing.org>
-         <20180805072930.GB23288@infradead.org>
-         <b7e8294e3e70d24072883a7e8e5375719d5af870.camel@kernel.crashing.org>
-         <20180806094243.GA16032@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.4 (3.28.4-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Russell King <linux@armlinux.org.uk>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Matt Sealey <neko@bakuhatsu.net>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Subject: Re: framebuffer corruption due to overlapping stp instructions on
+ arm64
+In-Reply-To: <CAKv+Gu_8Rq6X24ZOYvG7+kQQGSGYAZuu_co4k1nJS8K7rkrWMA@mail.gmail.com>
+Message-ID: <alpine.LRH.2.02.1808061552090.11930@file01.intranet.prod.int.rdu2.redhat.com>
+References: <alpine.LRH.2.02.1808021242320.31834@file01.intranet.prod.int.rdu2.redhat.com> <alpine.LRH.2.02.1808030212340.17672@file01.intranet.prod.int.rdu2.redhat.com> <CAKv+Gu8DeuksZhk1g3q_msSKV_hSY_2e1uzVten9-oGO3j9Sqg@mail.gmail.com> <20180803094129.GB17798@arm.com>
+ <alpine.LRH.2.02.1808031235410.31584@file01.intranet.prod.int.rdu2.redhat.com> <CAKv+Gu-aNFh1fsr_05SEwDp99n3pLrguP7=tEcFQPNY53=K7Fw@mail.gmail.com> <alpine.LRH.2.02.1808031424140.14030@file01.intranet.prod.int.rdu2.redhat.com>
+ <CAHCPf3s-+Qf=WBZz1KpisDMG3520jCUh8PLAO3PHa4jdt8kCTw@mail.gmail.com> <CAKv+Gu9_h-WFi1j4+DWUN_dMj75SKKHxWoDH8WQ9P7S7MNpZQg@mail.gmail.com> <alpine.LRH.2.02.1808060553130.30832@file01.intranet.prod.int.rdu2.redhat.com> <99fff4fe-afa9-f12f-a518-472a9dd1c530@arm.com>
+ <CAKv+Gu_C2g=C=gMpk4a5jpDORnxZY6t1v=HDoy59m5vwNBxBBg@mail.gmail.com> <alpine.LRH.2.02.1808061306490.12989@file01.intranet.prod.int.rdu2.redhat.com> <CAKv+Gu_8Rq6X24ZOYvG7+kQQGSGYAZuu_co4k1nJS8K7rkrWMA@mail.gmail.com>
+User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Mon, 06 Aug 2018 19:54:34 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Mon, 06 Aug 2018 19:54:34 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mpatocka@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-08-06 at 02:42 -0700, Christoph Hellwig wrote:
-> On Mon, Aug 06, 2018 at 07:16:47AM +1000, Benjamin Herrenschmidt wrote:
-> > Who would set this bit ? qemu ? Under what circumstances ?
+
+
+On Mon, 6 Aug 2018, Ard Biesheuvel wrote:
+
+> On 6 August 2018 at 19:09, Mikulas Patocka <mpatocka@redhat.com> wrote:
+> >
+> >
+> > On Mon, 6 Aug 2018, Ard Biesheuvel wrote:
+> >
+> >> On 6 August 2018 at 14:42, Robin Murphy <robin.murphy@arm.com> wrote:
+> >> > On 06/08/18 11:25, Mikulas Patocka wrote:
+> >> > [...]
+> >> >>>
+> >> >>> None of this explains why some transactions fail to make it across
+> >> >>> entirely. The overlapping writes in question write the same data to
+> >> >>> the memory locations that are covered by both, and so the ordering in
+> >> >>> which the transactions are received should not affect the outcome.
+> >> >>
+> >> >>
+> >> >> You're right that the corruption couldn't be explained just by reordering
+> >> >> writes. My hypothesis is that the PCIe controller tries to disambiguate
+> >> >> the overlapping writes, but the disambiguation logic was not tested and it
+> >> >> is buggy. If there's a barrier between the overlapping writes, the PCIe
+> >> >> controller won't see any overlapping writes, so it won't trigger the
+> >> >> faulty disambiguation logic and it works.
+> >> >>
+> >> >> Could the ARM engineers look if there's some chicken bit in Cortex-A72
+> >> >> that could insert barriers between non-cached writes automatically?
+> >> >
+> >> >
+> >> > I don't think there is, and even if there was I imagine it would have a
+> >> > pretty hideous effect on non-coherent DMA buffers and the various other
+> >> > places in which we have Normal-NC mappings of actual system RAM.
+> >> >
+> >>
+> >> Looking at the A72 manual, there is one chicken bit that looks like it
+> >> may be related:
+> >>
+> >> CPUACTLR_EL1 bit #50:
+> >>
+> >> 0 Enables store streaming on NC/GRE memory type. This is the reset value.
+> >> 1 Disables store streaming on NC/GRE memory type.
+> >>
+> >> so putting something like
+> >>
+> >> mrs x0, S3_1_C15_C2_0
+> >> orr x0, x0, #(1 << 50)
+> >> msr S3_1_C15_C2_0, x0
+> >>
+> >> in __cpu_setup() would be worth a try.
+> >
+> > It won't boot.
+> >
+> > But if i write the same value that was read, it also won't boot.
+> >
+> > I created a simple kernel module that reads this register and it has bit
+> > 32 set, all other bits clear. But when I write the same value into it, the
+> > core that does the write is stuck in infinite loop.
+> >
+> > So, it seems that we are writing this register from a wrong place.
+> >
 > 
-> I don't really care who sets what.  The implementation might not even
-> involved qemu.
+> Ah, my bad. I didn't look closely enough at the description:
 > 
-> It is your job to write a coherent interface specification that does
-> not depend on the used components.  The hypervisor might be PAPR,
-> Linux + qemu, VMware, Hyperv or something so secret that you'd have
-> to shoot me if you had to tell me.  The guest might be Linux, FreeBSD,
-> AIX, OS400 or a Hipster project of the day in Rust.  As long as we
-> properly specify the interface it simplify does not matter.
-
-That's the point Christoph. The interface is today's interface. It does
-NOT change. That information is not part of the interface.
-
-It's the VM itself that is stashing away its memory in a secret place,
-and thus needs to do bounce buffering. There is no change to the virtio
-interface per-se.
-
-> > What would be the effect of this bit while VIRTIO_F_IOMMU is NOT set,
-> > ie, what would qemu do and what would Linux do ? I'm not sure I fully
-> > understand your idea.
+> """
+> The accessibility to the CPUACTLR_EL1 by Exception level is:
 > 
-> In a perfect would we'd just reuse VIRTIO_F_IOMMU and clarify the
-> description which currently is rather vague but basically captures
-> the use case.  Currently is is:
+> EL0              -
+> EL1(NS)          RW (a)
+> EL1(S)           RW (a)
+> EL2              RW (b)
+> EL3(SCR.NS = 1)  RW
+> EL3(SCR.NS = 0)  RW
 > 
-> VIRTIO_F_IOMMU_PLATFORM(33)
->     This feature indicates that the device is behind an IOMMU that
->     translates bus addresses from the device into physical addresses in
->     memory. If this feature bit is set to 0, then the device emits
->     physical addresses which are not translated further, even though an
->     IOMMU may be present.
+> (a) Write access if ACTLR_EL3.CPUACTLR is 1 and ACTLR_EL2.CPUACTLR is
+> 1, or ACTLR_EL3.CPUACTLR is 1 and SCR.NS is 0.
+> """
 > 
-> And I'd change it to something like:
+> so you'll have to do this from ARM Trusted Firmware. If you're
+> comfortable rebuilding that:
 > 
-> VIRTIO_F_PLATFORM_DMA(33)
->     This feature indicates that the device emits platform specific
->     bus addresses that might not be identical to physical address.
->     The translation of physical to bus address is platform speific
->     and defined by the plaform specification for the bus that the virtio
->     device is attached to.
->     If this feature bit is set to 0, then the device emits
->     physical addresses which are not translated further, even if
->     the platform would normally require translations for the bus that
->     the virtio device is attached to.
+> diff --git a/include/lib/cpus/aarch64/cortex_a72.h
+> b/include/lib/cpus/aarch64/cortex_a72.h
+> index bfd64918625b..a7b8cf4be0c6 100644
+> --- a/include/lib/cpus/aarch64/cortex_a72.h
+> +++ b/include/lib/cpus/aarch64/cortex_a72.h
+> @@ -31,6 +31,7 @@
+>  #define CORTEX_A72_ACTLR_EL1                   S3_1_C15_C2_0
 > 
-> If we can't change the defintion any more we should deprecate the
-> old VIRTIO_F_IOMMU_PLATFORM bit, and require the VIRTIO_F_IOMMU_PLATFORM
-> and VIRTIO_F_PLATFORM_DMA to be not set at the same time.
+>  #define CORTEX_A72_ACTLR_DISABLE_L1_DCACHE_HW_PFTCH    (1 << 56)
+> +#define CORTEX_A72_ACTLR_DIS_NC_GRE_STORE_STREAMING    (1 << 50)
+>  #define CORTEX_A72_ACTLR_NO_ALLOC_WBWA         (1 << 49)
+>  #define CORTEX_A72_ACTLR_DCC_AS_DCCI           (1 << 44)
+>  #define CORTEX_A72_ACTLR_EL1_DIS_INSTR_PREFETCH                (1 << 32)
+> diff --git a/lib/cpus/aarch64/cortex_a72.S b/lib/cpus/aarch64/cortex_a72.S
+> index 55e508678284..5914d6ee3ba6 100644
+> --- a/lib/cpus/aarch64/cortex_a72.S
+> +++ b/lib/cpus/aarch64/cortex_a72.S
+> @@ -133,6 +133,15 @@ func cortex_a72_reset_func
+>         orr     x0, x0, #CORTEX_A72_ECTLR_SMP_BIT
+>         msr     CORTEX_A72_ECTLR_EL1, x0
+>         isb
+> +
+> +       /* ---------------------------------------------
+> +        * Disables store streaming on NC/GRE memory type.
+> +        * ---------------------------------------------
+> +        */
+> +       mrs     x0, CORTEX_A72_ACTLR_EL1
+> +       orr     x0, x0, #CORTEX_A72_ACTLR_DIS_NC_GRE_STORE_STREAMING
+> +       msr     CORTEX_A72_ACTLR_EL1, x0
+> +       isb
+>         ret x19
+>  endfunc cortex_a72_reset_func
 
-But this doesn't really change our problem does it ?
+Unfortunatelly, it doesn't work. I verified that the bit is set after 
+booting Linux, but the memcpy corruption was still present.
 
-None of what happens in our case is part of the "interface". The
-suggestion to force the iommu ON was simply that it was a "workaround"
-as by doing so, we get to override the DMA ops, but that's just a
-trick.
+I also tried the other chicken bits, it slowed down the system noticeably, 
+but had no effect on the memcpy corruption.
 
-Fundamentally, what we need to solve is pretty much entirely a guest
-problem.
-
-> > I'm trying to understand because the limitation is not a device side
-> > limitation, it's not a qemu limitation, it's actually more of a VM
-> > limitation. It has most of its memory pages made inaccessible for
-> > security reasons. The platform from a qemu/KVM perspective is almost
-> > entirely normal.
-> 
-> Well, find a way to describe this either in the qemu specification using
-> new feature bits, or by using something like the above.
-
-But again, why do you want to involve the interface, and thus the
-hypervisor for something that is essentially what the guest is doign to
-itself ?
-
-It really is something we need to solve locally to the guest, it's not
-part of the interface.
-
-Cheers,
-Ben.
-
-
+Mikulas
