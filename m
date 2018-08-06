@@ -2,194 +2,167 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70919C46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 09:40:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67EB4C46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 09:41:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29D55219EB
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 09:40:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29D55219EB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 2BA05219EB
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 09:41:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BA05219EB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727769AbeHFLsY (ORCPT
+        id S1728060AbeHFLtd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 07:48:24 -0400
-Received: from mx2.suse.de ([195.135.220.15]:52196 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726572AbeHFLsX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 07:48:23 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 14AA4ADAC;
-        Mon,  6 Aug 2018 09:40:06 +0000 (UTC)
-Date:   Mon, 6 Aug 2018 11:40:05 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Yang Shi <yang.shi@linux.alibaba.com>
-Cc:     willy@infradead.org, ldufour@linux.vnet.ibm.com,
-        kirill@shutemov.name, akpm@linux-foundation.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC v6 PATCH 2/2] mm: mmap: zap pages with read mmap_sem in
- munmap
-Message-ID: <20180806094005.GG19540@dhcp22.suse.cz>
-References: <1532628614-111702-1-git-send-email-yang.shi@linux.alibaba.com>
- <1532628614-111702-3-git-send-email-yang.shi@linux.alibaba.com>
- <20180803090759.GI27245@dhcp22.suse.cz>
- <aff7e86d-2e48-ff58-5d5d-9c67deb68674@linux.alibaba.com>
+        Mon, 6 Aug 2018 07:49:33 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:33269 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726699AbeHFLtd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 07:49:33 -0400
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <sha@pengutronix.de>)
+        id 1fmc0m-0000RO-Qh; Mon, 06 Aug 2018 11:41:12 +0200
+Received: from sha by ptx.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <sha@pengutronix.de>)
+        id 1fmc0l-0001tc-GP; Mon, 06 Aug 2018 11:41:11 +0200
+Date:   Mon, 6 Aug 2018 11:41:11 +0200
+From:   Sascha Hauer <s.hauer@pengutronix.de>
+To:     Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc:     Mark Brown <broonie@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
+        alexandre.belloni@bootlin.com
+Subject: Re: [PATCH RESEND 2/5] spi: imx: Use dynamic bursts only when
+ bits_per_word is 8, 16 or 32
+Message-ID: <20180806094111.uutolczqccm2e2ot@pengutronix.de>
+References: <20180717143154.28241-1-maxime.chevallier@bootlin.com>
+ <20180717143154.28241-3-maxime.chevallier@bootlin.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aff7e86d-2e48-ff58-5d5d-9c67deb68674@linux.alibaba.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180717143154.28241-3-maxime.chevallier@bootlin.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-IRC:  #ptxdist @freenode
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-Uptime: 11:40:30 up 54 days, 18:49, 57 users,  load average: 0.29, 0.15,
+ 0.14
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 03-08-18 14:01:58, Yang Shi wrote:
+On Tue, Jul 17, 2018 at 04:31:51PM +0200, Maxime Chevallier wrote:
+> The dynamic bursts mode allows to group together multiple words into a
+> single burst. To do so, it's necessary that words can be packed into the
+> 32-bits FIFO entries, so we can't allow using this mode with bit_per_words
+> different to 8, 16 or 32.
+> 
+> This prevents shitfing out extra clock ticks for transfers with
+
+s/shitfing/shifting/
+
+> bit_per_word values not aligned on 8 bits.
+> 
+> With that , we are sure that only the correct number of bits is
+> shifted out at each transfer, so we don't need to mask out the remaining
+> parts of the words.
+> 
+> Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+
+Reviewed-by: Sascha Hauer <s.hauer@pengutronix.de>
+
+Sascha
+
+> ---
+>  drivers/spi/spi-imx.c | 23 +++++++++--------------
+>  1 file changed, 9 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/spi/spi-imx.c b/drivers/spi/spi-imx.c
+> index d75153c995af..ecafbda5ec94 100644
+> --- a/drivers/spi/spi-imx.c
+> +++ b/drivers/spi/spi-imx.c
+> @@ -95,7 +95,6 @@ struct spi_imx_data {
+>  	const void *tx_buf;
+>  	unsigned int txfifo; /* number of words pushed in tx FIFO */
+>  	unsigned int dynamic_burst, read_u32;
+> -	unsigned int word_mask;
+>  
+>  	/* Slave mode */
+>  	bool slave_mode;
+> @@ -291,7 +290,6 @@ static void spi_imx_buf_rx_swap_u32(struct spi_imx_data *spi_imx)
+>  		else if (bytes_per_word == 2)
+>  			val = (val << 16) | (val >> 16);
+>  #endif
+> -		val &= spi_imx->word_mask;
+>  		*(u32 *)spi_imx->rx_buf = val;
+>  		spi_imx->rx_buf += sizeof(u32);
+>  	}
+> @@ -322,7 +320,6 @@ static void spi_imx_buf_tx_swap_u32(struct spi_imx_data *spi_imx)
+>  
+>  	if (spi_imx->tx_buf) {
+>  		val = *(u32 *)spi_imx->tx_buf;
+> -		val &= spi_imx->word_mask;
+>  		spi_imx->tx_buf += sizeof(u32);
+>  	}
+>  
+> @@ -1102,25 +1099,23 @@ static int spi_imx_setupxfer(struct spi_device *spi,
+>  	spi_imx->bits_per_word = t->bits_per_word;
+>  	spi_imx->speed_hz  = t->speed_hz;
+>  
+> -	/* Initialize the functions for transfer */
+> -	if (spi_imx->devtype_data->dynamic_burst && !spi_imx->slave_mode) {
+> -		u32 mask;
+> +	/*
+> +	 * Initialize the functions for transfer. To transfer non byte-aligned
+> +	 * words, we have to use multiple word-size bursts, we can't use
+> +	 * dynamic_burst in that case.
+> +	 */
+> +	if (spi_imx->devtype_data->dynamic_burst && !spi_imx->slave_mode &&
+> +	    (spi_imx->bits_per_word == 8 ||
+> +	    spi_imx->bits_per_word == 16 ||
+> +	    spi_imx->bits_per_word == 32)) {
+>  
+>  		spi_imx->read_u32  = 1;
+>  
+> -		mask = (1 << spi_imx->bits_per_word) - 1;
+>  		spi_imx->rx = spi_imx_buf_rx_swap;
+>  		spi_imx->tx = spi_imx_buf_tx_swap;
+>  		spi_imx->dynamic_burst = 1;
+>  		spi_imx->remainder = t->len;
+>  
+> -		if (spi_imx->bits_per_word <= 8)
+> -			spi_imx->word_mask = mask << 24 | mask << 16
+> -					     | mask << 8 | mask;
+> -		else if (spi_imx->bits_per_word <= 16)
+> -			spi_imx->word_mask = mask << 16 | mask;
+> -		else
+> -			spi_imx->word_mask = mask;
+>  	} else {
+>  		if (spi_imx->bits_per_word <= 8) {
+>  			spi_imx->rx = spi_imx_buf_rx_u8;
+> -- 
+> 2.11.0
 > 
 > 
-> On 8/3/18 2:07 AM, Michal Hocko wrote:
-> > On Fri 27-07-18 02:10:14, Yang Shi wrote:
-> > > When running some mmap/munmap scalability tests with large memory (i.e.
-> > > > 300GB), the below hung task issue may happen occasionally.
-> > > INFO: task ps:14018 blocked for more than 120 seconds.
-> > >         Tainted: G            E 4.9.79-009.ali3000.alios7.x86_64 #1
-> > >   "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this
-> > > message.
-> > >   ps              D    0 14018      1 0x00000004
-> > >    ffff885582f84000 ffff885e8682f000 ffff880972943000 ffff885ebf499bc0
-> > >    ffff8828ee120000 ffffc900349bfca8 ffffffff817154d0 0000000000000040
-> > >    00ffffff812f872a ffff885ebf499bc0 024000d000948300 ffff880972943000
-> > >   Call Trace:
-> > >    [<ffffffff817154d0>] ? __schedule+0x250/0x730
-> > >    [<ffffffff817159e6>] schedule+0x36/0x80
-> > >    [<ffffffff81718560>] rwsem_down_read_failed+0xf0/0x150
-> > >    [<ffffffff81390a28>] call_rwsem_down_read_failed+0x18/0x30
-> > >    [<ffffffff81717db0>] down_read+0x20/0x40
-> > >    [<ffffffff812b9439>] proc_pid_cmdline_read+0xd9/0x4e0
-> > >    [<ffffffff81253c95>] ? do_filp_open+0xa5/0x100
-> > >    [<ffffffff81241d87>] __vfs_read+0x37/0x150
-> > >    [<ffffffff812f824b>] ? security_file_permission+0x9b/0xc0
-> > >    [<ffffffff81242266>] vfs_read+0x96/0x130
-> > >    [<ffffffff812437b5>] SyS_read+0x55/0xc0
-> > >    [<ffffffff8171a6da>] entry_SYSCALL_64_fastpath+0x1a/0xc5
-> > > 
-> > > It is because munmap holds mmap_sem exclusively from very beginning to
-> > > all the way down to the end, and doesn't release it in the middle. When
-> > > unmapping large mapping, it may take long time (take ~18 seconds to
-> > > unmap 320GB mapping with every single page mapped on an idle machine).
-> > > 
-> > > Zapping pages is the most time consuming part, according to the
-> > > suggestion from Michal Hocko [1], zapping pages can be done with holding
-> > > read mmap_sem, like what MADV_DONTNEED does. Then re-acquire write
-> > > mmap_sem to cleanup vmas.
-> > > 
-> > > But, some part may need write mmap_sem, for example, vma splitting. So,
-> > > the design is as follows:
-> > >          acquire write mmap_sem
-> > >          lookup vmas (find and split vmas)
-> > > 	detach vmas
-> > >          deal with special mappings
-> > >          downgrade_write
-> > > 
-> > >          zap pages
-> > > 	free page tables
-> > >          release mmap_sem
-> > > 
-> > > The vm events with read mmap_sem may come in during page zapping, but
-> > > since vmas have been detached before, they, i.e. page fault, gup, etc,
-> > > will not be able to find valid vma, then just return SIGSEGV or -EFAULT
-> > > as expected.
-> > > 
-> > > If the vma has VM_LOCKED | VM_HUGETLB | VM_PFNMAP or uprobe, they are
-> > > considered as special mappings. They will be dealt with before zapping
-> > > pages with write mmap_sem held. Basically, just update vm_flags.
-> > Well, I think it would be safer to simply fallback to the current
-> > implementation with these mappings and deal with them on top. This would
-> > make potential issues easier to bisect and partial reverts as well.
-> 
-> Do you mean just call do_munmap()? It sounds ok. Although we may waste some
-> cycles to repeat what has done, it sounds not too bad since those special
-> mappings should be not very common.
 
-VM_HUGETLB is quite spread. Especially for DB workloads.
-
-> > > And, since they are also manipulated by unmap_single_vma() which is
-> > > called by unmap_vma() with read mmap_sem held in this case, to
-> > > prevent from updating vm_flags in read critical section, a new
-> > > parameter, called "skip_flags" is added to unmap_region(), unmap_vmas()
-> > > and unmap_single_vma(). If it is true, then just skip unmap those
-> > > special mappings. Currently, the only place which pass true to this
-> > > parameter is us.
-> > skip parameters are usually ugly and lead to more mess later on. Can we
-> > do without them?
-> 
-> We need a way to tell unmap_region() that it is called in a kind of special
-> context which updating vm_flags is not allowed. I didn't think of a better
-> way.
-> 
-> We could add a new API to do what unmap_region() does without updating
-> vm_flags, but we would have to  duplicate some code.
-
-I really didn't get to think about a better way myself but I strongly
-suspect we can do without special hacks here. Is updating flags under
-read lock a real problem? Assuming that special mappings are not really
-considered at this stage.
-
-> > > With this approach we don't have to re-acquire mmap_sem again to clean
-> > > up vmas to avoid race window which might get the address space changed.
-> > By with this approach you mean detaching right?
-> 
-> Yes, the detaching approach.
-
-Please make it explicit in the changelog.
- 
-> > > And, since the lock acquire/release cost is managed to the minimum and
-> > > almost as same as before, the optimization could be extended to any size
-> > > of mapping without incurring significant penalty to small mappings.
-> > I guess you mean to say that lock downgrade approach doesn't lead to
-> > regressions because the overal time mmap_sem is taken is not longer?
-> 
-> Yes. And, there is not lock take/retake cost since we don't release it.
-
-Please also be explicit.
- 
-> > > For the time being, just do this in munmap syscall path. Other
-> > > vm_munmap() or do_munmap() call sites (i.e mmap, mremap, etc) remain
-> > > intact for stability reason.
-> > You have used this argument previously and several people have asked.
-> > I think it is just wrong. Either the concept is safe and all callers can
-> > use it or it is not and then those subtle differences should be called
-> > out. Your previous response was that you simply haven't tested other
-> > paths. Well, that is not an argument, I am afraid. The whole thing
-> > should be done at a proper layer. If there are some difficulties to
-> > achieve that for all callers then OK just be explicit about that. I can
-> > imagine some callers really require the exclusive look when munmap
-> > returns for example.
-> 
-> Yes, the statement here sounds ambiguous. There are definitely some
-> difficulties to achieve that in mmap and mremap. Since they acquire write
-> mmap_sem at the very beginning, then do their stuff, which may call
-> do_munmap if overlapped address space has to be changed.
-
-Do call them out. Maybe even add a comment in the code so that people
-who would like those other paths know what they need to look at.
-
-> But, the optimized do_munmap would like to be called without mmap_sem held
-> so that we can do the optimization. So, if we want to do the similar
-> optimization for mmap/mremap path, I'm afraid we would have to redesign
-> them.
-> 
-> I assumes munmap itself is the main source of the latency issue. mmap/mremap
-> might hit the latency problem if they are trying to map or remap a huge
-> overlapped address space, but it should be rare. So, I leave them untouched.
-
-That depends on usecases very much. mremap might be called on very large
-areas as well. But let's go in smaller steps and build on top...
 -- 
-Michal Hocko
-SUSE Labs
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
