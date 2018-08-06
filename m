@@ -2,129 +2,152 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29811C46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 15:21:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F3ACC4646D
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 15:22:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2BBC21A52
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 15:21:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BCBC221A52
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 15:22:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20150623.gappssmtp.com header.i=@cmpxchg-org.20150623.gappssmtp.com header.b="CoCMzqzo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2BBC21A52
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cmpxchg.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zHe2AClU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCBC221A52
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732536AbeHFRac (ORCPT
+        id S1732662AbeHFRb7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 13:30:32 -0400
-Received: from mail-qk0-f194.google.com ([209.85.220.194]:42977 "EHLO
-        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727665AbeHFRac (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 13:30:32 -0400
-Received: by mail-qk0-f194.google.com with SMTP id 13-v6so6479212qkl.9
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Aug 2018 08:20:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=h+72NQHnVkw3JzF7vSCUqCLRqDUBnExu3aTIRjzL7UQ=;
-        b=CoCMzqzoYcTFmx000b8rNbHI4R45SGuXMX7WwraKp1WQingX7hWPLQsH2yLNZZNKA4
-         VwfNXJqbPKUPqtsle2r4g8kRNsolpAe8qZhoKlTJh9KUJ9X11zGks/ZrNuzDt8y2Ktpz
-         0o8CGXsBjD+ds/MEGkt0Q8pKvRqmr+wvvU9RglL0BdEsSpryYENJq1GOva3nzzjlK48L
-         PpoZ4Sj0NQ9PFwNHzFaPHWDOgAMa/RrxYewv+FyPfCkT7MyKmYo/wlU19VXehfy0dmpR
-         trRqAAHGL7mOcPuSnziZkWO/HqBk7uS5PtodZ0ce4yIbB/wYlYlm5RJVl62ItLPUO1TS
-         bbRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=h+72NQHnVkw3JzF7vSCUqCLRqDUBnExu3aTIRjzL7UQ=;
-        b=ndXcU0hl7jF7/yGZOMS+z3ozfzKAvSUjWxtTDZDNqnLjZD4uEsQDWz3QZMlda+r2Xm
-         Fv7abS3AqX6ScY4CHg2kCHCVFAtfYr2dxOtaMcAS4FY7XQXTF8yfy4bVrnBwjnw70kQU
-         z4g/sptGxiv8B3EOvUxVnKbW43nRLNHFkuesCPxk3gJ3Ch+boQcizhdOQAPo60lJLD5+
-         TeMohHZkV4kCNWnCutVvJR92bxSNdSB6inokszGuR+1S545mRP9ZCL4BWTq9fvkIzL13
-         3KYl93OCd3gy6sNE1Fv7je6aQpx3JYCy53bkVbY9Afcv0BBS/qMtjmtGlqouqtR0HU/P
-         bOTA==
-X-Gm-Message-State: AOUpUlHgeDyQlvtv8AtRH+7OG87zOxsbbtwvYpy7kHJ4itmfvbv8cDGX
-        HCTlZMWGud5Poatrev6WZ6++oA==
-X-Google-Smtp-Source: AAOMgpcZ6CXyW5rS5m1nixaTvdFXb8PkEhl8sStzhgBazxV6ZOf+DHQXSvx8jO3lKJjqgAr6GESIdQ==
-X-Received: by 2002:a37:2a04:: with SMTP id q4-v6mr13014144qkh.191.1533568856885;
-        Mon, 06 Aug 2018 08:20:56 -0700 (PDT)
-Received: from localhost (pool-96-246-38-36.nycmny.fios.verizon.net. [96.246.38.36])
-        by smtp.gmail.com with ESMTPSA id j45-v6sm10753705qta.46.2018.08.06.08.20.55
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 06 Aug 2018 08:20:55 -0700 (PDT)
-Date:   Mon, 6 Aug 2018 11:23:54 -0400
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Tejun Heo <tj@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Daniel Drake <drake@endlessm.com>,
-        Vinayak Menon <vinmenon@codeaurora.org>,
-        Christopher Lameter <cl@linux.com>,
-        Mike Galbraith <efault@gmx.de>,
-        Shakeel Butt <shakeelb@google.com>,
-        Peter Enderborg <peter.enderborg@sony.com>, linux-mm@kvack.org,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@fb.com
-Subject: Re: [PATCH 8/9] psi: pressure stall information for CPU, memory, and
- IO
-Message-ID: <20180806152354.GC9888@cmpxchg.org>
-References: <20180801151958.32590-1-hannes@cmpxchg.org>
- <20180801151958.32590-9-hannes@cmpxchg.org>
- <20180803170733.GC2494@hirez.programming.kicks-ass.net>
+        Mon, 6 Aug 2018 13:31:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53012 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727665AbeHFRb7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 13:31:59 -0400
+Received: from jouet.infradead.org (unknown [177.79.84.44])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C117A21A50;
+        Mon,  6 Aug 2018 15:22:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1533568943;
+        bh=YZPxcQI9u5yKnJnQspVCg1JNuOBTszi4L+qLoTRBB9U=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=zHe2AClU2bLkZn/Kzz0aqzkQf31Jti2EeeNBSbQohggfxVEFSrPT4x/sliQfenKxs
+         9N/XGvpW2eNBx3VtFuUppFmZTuDUF64G1bfBOmzhYLKL59BQiqODl5ltWD6XITit1m
+         cIw9jP7MLNxvDZesX3xm2MvaoD7DDqBVoAg6MIxI=
+Received: by jouet.infradead.org (Postfix, from userid 1000)
+        id 778C3140A1C; Mon,  6 Aug 2018 12:22:19 -0300 (-03)
+Date:   Mon, 6 Aug 2018 12:22:19 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     Namhyung Kim <namhyung@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        David Ahern <dsahern@gmail.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Stephane Eranian <eranian@google.com>, kernel-team@lge.com
+Subject: Re: [PATCH 14/20] perf annotate: Pass struct annotation_options to
+ map_symbol__annotation_dump
+Message-ID: <20180806152219.GA14525@kernel.org>
+References: <20180804130521.11408-1-jolsa@kernel.org>
+ <20180804130521.11408-15-jolsa@kernel.org>
+ <20180806134507.GA6983@danjae.aot.lge.com>
+ <20180806142447.GB16446@krava>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180803170733.GC2494@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180806142447.GB16446@krava>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 03, 2018 at 07:07:33PM +0200, Peter Zijlstra wrote:
-> On Wed, Aug 01, 2018 at 11:19:57AM -0400, Johannes Weiner wrote:
-> > +static bool psi_update_stats(struct psi_group *group)
-> > +{
-> > +	u64 deltas[NR_PSI_STATES - 1] = { 0, };
-> > +	unsigned long missed_periods = 0;
-> > +	unsigned long nonidle_total = 0;
-> > +	u64 now, expires, period;
-> > +	int cpu;
-> > +	int s;
-> > +
-> > +	mutex_lock(&group->stat_lock);
-> > +
-> > +	/*
-> > +	 * Collect the per-cpu time buckets and average them into a
-> > +	 * single time sample that is normalized to wallclock time.
-> > +	 *
-> > +	 * For averaging, each CPU is weighted by its non-idle time in
-> > +	 * the sampling period. This eliminates artifacts from uneven
-> > +	 * loading, or even entirely idle CPUs.
-> > +	 *
-> > +	 * We don't need to synchronize against CPU hotplugging. If we
-> > +	 * see a CPU that's online and has samples, we incorporate it.
-> > +	 */
-> > +	for_each_online_cpu(cpu) {
+Em Mon, Aug 06, 2018 at 04:24:47PM +0200, Jiri Olsa escreveu:
+> On Mon, Aug 06, 2018 at 10:45:07PM +0900, Namhyung Kim wrote:
+> > Hi Jiri,
+> > 
+> > On Sat, Aug 04, 2018 at 03:05:15PM +0200, Jiri Olsa wrote:
+> > > Passing struct annotation_options to map_symbol__annotation_dump,
+> > > to carry on and pass the percent_type value.
+> > > 
+> > > Link: http://lkml.kernel.org/n/tip-5toohgdkgpk3vn6zebusr3bb@git.kernel.org
+> > > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> > > ---
+> > 
+> > [SNIP]
+> > > @@ -2523,7 +2526,7 @@ static void disasm_line__write(struct disasm_line *dl, struct annotation *notes,
+> > >  
+> > >  static void __annotation_line__write(struct annotation_line *al, struct annotation *notes,
+> > >  				     bool first_line, bool current_entry, bool change_color, int width,
+> > > -				     void *obj,
+> > > +				     void *obj, unsigned int percent_type,
+> > >  				     int  (*obj__set_color)(void *obj, int color),
+> > >  				     void (*obj__set_percent_color)(void *obj, double percent, bool current),
+> > >  				     int  (*obj__set_jumps_percent_color)(void *obj, int nr, bool current),
+> > > @@ -2531,7 +2534,7 @@ static void __annotation_line__write(struct annotation_line *al, struct annotati
+> > >  				     void (*obj__write_graph)(void *obj, int graph))
+> > >  
+> > >  {
+> > > -	double percent_max = annotation_line__max_percent(al, notes);
+> > > +	double percent_max = annotation_line__max_percent(al, notes, percent_type);
+> > >  	int pcnt_width = annotation__pcnt_width(notes),
+> > >  	    cycles_width = annotation__cycles_width(notes);
+> > >  	bool show_title = false;
+> > > @@ -2552,8 +2555,7 @@ static void __annotation_line__write(struct annotation_line *al, struct annotati
+> > >  		for (i = 0; i < notes->nr_events; i++) {
+> > >  			double percent;
+> > >  
+> > > -			percent = annotation_data__percent(&al->data[i],
+> > > -							   PERCENT_HITS_LOCAL);
+> > > +			percent = annotation_data__percent(&al->data[i], percent_type);
+> > >  
+> > >  			obj__set_percent_color(obj, percent, current_entry);
+> > >  			if (notes->options->show_total_period) {
+> > > @@ -2680,13 +2682,15 @@ static void __annotation_line__write(struct annotation_line *al, struct annotati
+> > >  }
+> > >  
+> > >  void annotation_line__write(struct annotation_line *al, struct annotation *notes,
+> > > -			    struct annotation_write_ops *ops)
+> > > +			    struct annotation_write_ops *wops,
+> > > +			    struct annotation_options *opts)
+> > >  {
+> > > -	__annotation_line__write(al, notes, ops->first_line, ops->current_entry,
+> > > -				 ops->change_color, ops->width, ops->obj,
+> > > -				 ops->set_color, ops->set_percent_color,
+> > > -				 ops->set_jumps_percent_color, ops->printf,
+> > > -				 ops->write_graph);
+> > > +	__annotation_line__write(al, notes, wops->first_line, wops->current_entry,
+> > > +				 wops->change_color, wops->width, wops->obj,
+> > > +				 opts->percent_type,
+> > > +				 wops->set_color, wops->set_percent_color,
+> > > +				 wops->set_jumps_percent_color, wops->printf,
+> > > +				 wops->write_graph);
+> > 
+> > This doesn't look good.  Why not just passing a pointer to wops
+> > instead of each fields separately?
 > 
-> I'm still puzzled by this.. for 99% of the machines online == possible.
-> Why not always iterate possible and leave it at that? This is hardly a
-> fast path.
+> yep, my thoughts exactly when I saw this ;-) we probably had some
 
-Hmm, you're right, that makes things much simpler. I guess I'm mostly
-worried about the 1% where this significantly differs, but it looks
-like we're smarter than simply doing CONFIG_NR_CPUS for the possible
-map, and we can easily stomach a bit of discrepancy in this path.
+But then, while this is a valid observation, it is not related to this
+patchkit, that is just adding an extra config variable, percent_type, at
+some point one can try to shorten that function signature, looking at
+why it was done this way originally to see if there was any reason or if
+its just something to improve by shortening the function signature.
 
-I'll change that to possible and delete/update the third paragraph.
+Applying Jiri's patch,
 
-Thanks
+> other caller..  however I only wanted to add one more param ;-)
+
+Right
+ 
+> I'll check what we can do with this in v2
+
+I'm going thru v2 already, so far its an uncontrovertial, trivial, so
+I think you better just wait a teeny bit for this to be applied and then
+get on over with followup patches, ok?
+
+- Arnaldo
