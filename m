@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C63F4C46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 22:29:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC827C46472
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 22:29:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31C9C21A60
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 22:29:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 83717208A2
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 22:29:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WhVqN1At"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31C9C21A60
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f4TupVyG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83717208A2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388150AbeHGAk5 (ORCPT
+        id S2388375AbeHGAk6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 20:40:57 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:41361 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387774AbeHGAk4 (ORCPT
+        Mon, 6 Aug 2018 20:40:58 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:45369 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387889AbeHGAk5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 20:40:56 -0400
-Received: by mail-lf1-f65.google.com with SMTP id v22-v6so10200994lfe.8;
-        Mon, 06 Aug 2018 15:29:42 -0700 (PDT)
+        Mon, 6 Aug 2018 20:40:57 -0400
+Received: by mail-lf1-f68.google.com with SMTP id j143-v6so10188048lfj.12;
+        Mon, 06 Aug 2018 15:29:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=ebIIlYMRwOV2gYgWi7T9qT+QmjkOUcUsHwsxQZ0n6Tk=;
-        b=WhVqN1At68jh0Y7HUfCj4y3WSZTCj9P89b9nXlw1PQ5rNy/IL1jpTWuCmtpfoPOY5v
-         FuKeruPHb2LFCCkefM4a38qkltc7Z/OxFQreVur2EJFzQaUmhKykhcSJkIKsS5x/5WAL
-         gmq4YoM86EfL7xH591j4hLOipTrI3ZvQ7uQ5my67n/bnsejrZftrqBD+P3aGYztAOxPJ
-         aN/ePJL8CCYoSGIfda/+uHePDu23bZwMp3O6qFC2NIVz7GyR/y2wnBVWQHJ3qF1WDPGx
-         gu08VrnAtUogqQWJSFijFjwBFj4Qz5qAyxt5H+BiuGLQ9ZKEjkwbJUcK8Bh452DMCNI5
-         0w6g==
+        bh=UZjTLX7QnQr/t1695VcV1KTsYiUTLZK2WnrZPxW0nQ0=;
+        b=f4TupVyGulWb3GeTA5wNIXDgA28jrcBpoND1Ko4n43chjDMerygFxt+GgpBmhCWCEh
+         K/A8/d6es6eXkmxlKoHfZjx30fvveGPjnB182ekcFQetalYPOaF4T9hu0nUk85K7igRD
+         pFaf34gyE0Zk2i1ShroXnPSN5wopTGpVpI1c/n9zik+LN0rqjfs7uR3Gro5ITP9UccJk
+         gxvw9AxP+3OeRFlgDcpoSvLkaHLUAWI/ABqKHR/WspP52lLK5uBZn4q3a4MufOHAaCYx
+         pZWK2+kUNIZ1qoXXJfb7/ohkBoX7If/OVQRjuGQrfmXfv5c61AbP5/BLb6/0Yc4wYlwU
+         kEYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=ebIIlYMRwOV2gYgWi7T9qT+QmjkOUcUsHwsxQZ0n6Tk=;
-        b=mLamM48CXCEnuME7PD/7OLxZuLdSuaeX2ivhJusakDqoYAqzjeQMFq9kt/puZn3Cv+
-         Ef2ZkLexJTY8I9a1PraZq6uX6JhLuKtudBrtaKeFA9LV6Sj7IOZ8JtlkNRYaXeckbDRI
-         s6rYdP3NBwsrnkJnLNRoodLyWy4V4fD5Wk3WiTWNTghNNL5UqwHTNVHOt+ruGc2hQeH7
-         tK8dtEMetJszeOSNEEmGFqtRyJeUOXaxSwtcfyUVwpDuYy0dFVS/yL145j+rMMLF5ipw
-         zrxLzrrW39gbOM3hLL4JYqWG4UV0Y7UWXDEyF4gKXcqmAvDFBrtxw+Ayk6fgsdQdIPIx
-         6P/g==
-X-Gm-Message-State: AOUpUlFt9YKRchnUYkBq9M4XIY1vncs/ailkkwDNnc2ZsI6ReFTlqXHr
-        kaSAZ2iWA9KhimuRXv2UQt8=
-X-Google-Smtp-Source: AAOMgpdN9LZehLcDgBA7w0nORZ3SY79wH/6RfscsmGRAExgcZ4fMvUNIaZmKPIAqkV0EoWG/wHvlrw==
-X-Received: by 2002:a19:7609:: with SMTP id c9-v6mr11952619lff.73.1533594581791;
-        Mon, 06 Aug 2018 15:29:41 -0700 (PDT)
+        bh=UZjTLX7QnQr/t1695VcV1KTsYiUTLZK2WnrZPxW0nQ0=;
+        b=Jqvi0lJmOaw9wwXyL5s6YI8thPaE609XO1MbjkhBSqG3Z3bI50y4vXx0bBgZUiLVmt
+         T2LDfqv54dop88CTQtQuNtAjGEi59CA4Iyr7hbtgl0Gr0TXz55b56+dozqHvgSaeKjqK
+         DG+1GNJeecByF0mlSRvC3YiMEBdJJDLCAyemMp86oJqDAWv+tCDavpPRoXyNyyKsCQeE
+         qQn1bLHmqMM6v6pwBagIlXsuO3omc9SdM+7v9izBYtLTGIuTRZSgJ8KN4kXAYQUZhkuo
+         +eLVRjI2FAsLiyv3f9dkZkrwQomW1h4lR4PbT/403TWxDW1BpMeuR42VPtQzQ+Spe/aF
+         7Cyw==
+X-Gm-Message-State: AOUpUlH8ulOhm8PMKoyMAmlFCnh8XYZHTz5aauMgUGZgSuVZ0GosOYj6
+        438obxVcwm5+iqAFeNt7bgQ=
+X-Google-Smtp-Source: AAOMgpdOVignCZnEeCBAFO3oZT9ssWE7eymuQTN++pgaa4W5/B4vcnak1+wEbM2FXkRJkCqWvtg9Vw==
+X-Received: by 2002:a19:5a56:: with SMTP id o83-v6mr11909803lfb.50.1533594584634;
+        Mon, 06 Aug 2018 15:29:44 -0700 (PDT)
 Received: from z50.lan (93-181-165-181.internetia.net.pl. [93.181.165.181])
-        by smtp.gmail.com with ESMTPSA id o4-v6sm2438561ljc.67.2018.08.06.15.29.40
+        by smtp.gmail.com with ESMTPSA id o4-v6sm2438561ljc.67.2018.08.06.15.29.43
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 06 Aug 2018 15:29:41 -0700 (PDT)
+        Mon, 06 Aug 2018 15:29:44 -0700 (PDT)
 From:   Janusz Krzysztofik <jmkrzyszt@gmail.com>
 To:     Boris Brezillon <boris.brezillon@bootlin.com>,
         Linus Walleij <linus.walleij@linaro.org>
@@ -73,9 +73,9 @@ Cc:     Jonathan Corbet <corbet@lwn.net>,
         linux-mtd@lists.infradead.org, linux-doc@vger.kernel.org,
         linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Subject: [RFC PATCH v2 10/12] gpiolib: Introduce bitmap get/set array API extension
-Date:   Tue,  7 Aug 2018 00:29:16 +0200
-Message-Id: <20180806222918.12644-11-jmkrzyszt@gmail.com>
+Subject: [RFC PATCH v2 12/12] gpiolib: Add fast processing path to bitmap API functions
+Date:   Tue,  7 Aug 2018 00:29:18 +0200
+Message-Id: <20180806222918.12644-13-jmkrzyszt@gmail.com>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20180806222918.12644-1-jmkrzyszt@gmail.com>
 References: <20180718235710.18242-1-jmkrzyszt@gmail.com>
@@ -85,376 +85,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Certain GPIO array lookups may return arrays marked as applicable for
-fast get/set array operations.  In order to make use of that
-information, a new API extension which allows passing it to get/set
-functions is needed.
+Certain GPIO descriptor arrays returned by gpio_get_array() may contain
+information on a single GPIO chip driving array member pins in hardware
+order.  In such cases, bitmaps of values can be passed directly to the
+chip callback functions without wasting time on iterations.
 
-Create a set of frontends to get/set array functions which accept
-strict descriptor array structures returned by gpiod_get_array()
-instead of arbitrary descriptor arrays.
-
-Since the intended purpose of the new API extension is to speed up
-get/set array operations, also replace array of integer values argument
-with their bitmap representation, ready for being passed directly to
-chip callback functions, without iterating them.
-
-Applicability of the new API is limited to arrays not exceeding bit
-length of type unsigned long (32 pins).
+Add respective code to gpiod_get/set_array_bitmap_complex() functions.
 
 Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
 ---
- Documentation/driver-api/gpio/consumer.rst |  26 ++++
- drivers/gpio/gpiolib.c                     | 209 +++++++++++++++++++++++++++++
- include/linux/gpio/consumer.h              |  14 ++
- 3 files changed, 249 insertions(+)
+ Documentation/driver-api/gpio/consumer.rst |  6 ++++++
+ drivers/gpio/gpiolib.c                     | 14 ++++++++++++++
+ 2 files changed, 20 insertions(+)
 
 diff --git a/Documentation/driver-api/gpio/consumer.rst b/Documentation/driver-api/gpio/consumer.rst
-index 38a990b5f3b6..bec4eab3b87c 100644
+index bec4eab3b87c..b82f134dc352 100644
 --- a/Documentation/driver-api/gpio/consumer.rst
 +++ b/Documentation/driver-api/gpio/consumer.rst
-@@ -383,6 +383,32 @@ or negative on error. Note the difference to gpiod_get_value(), which returns
- 0 or 1 on success to convey the GPIO value. With the array functions, the GPIO
- values are stored in value_array rather than passed back as return value.
+@@ -409,6 +409,12 @@ descriptor arrays, only those of type struct gpio_descs returned by
+ gpiod_get_array() and its variants.  Supported array size is limited to the size
+ of the bitmap, i.e., sizeof(unsigned long).
  
-+Additionally, the following variants of the above functions exist which operate
-+on bitmaps of values instead of arrays of values::
-+
-+	int gpiod_get_array_bitmap(struct gpio_descs *desc_array,
-+				   unsigned long *bits);
-+	int gpiod_get_raw_array_bitmap(struct gpio_descs *desc_array,
-+				       unsigned long *bits);
-+	int gpiod_get_array_bitmap_cansleep(struct gpio_desc *desc_array,
-+					    unsigned long *bits);
-+	int gpiod_get_raw_array_bitmap_cansleep(struct gpio_desc **desc_array,
-+						unsigned long *bits)
-+
-+	void gpiod_set_array_bitmap(struct gpio_descs *desc_array,
-+				    unsigned long *bits)
-+	void gpiod_set_raw_array_bitmap(struct gpio_descs *desc_array,
-+				        unsigned long *bitmap)
-+	void gpiod_set_array_bitmap_cansleep(struct gpio_descs *desc_array,
-+					     unsigned long *bits)
-+	void gpiod_set_raw_array_bitmap_cansleep(struct gpio_descs *desc_array,
-+						 unsigned long *bits)
-+
-+Unlike their counterparts, these functions don't accept arbitrary GPIO
-+descriptor arrays, only those of type struct gpio_descs returned by
-+gpiod_get_array() and its variants.  Supported array size is limited to the size
-+of the bitmap, i.e., sizeof(unsigned long).
++If the .chip member of the array structure, filled in by gpiod_get_array() in
++certain circumstances, contains a valid GPIO chip descriptor, the raw variants
++of the functions can take fast processing paths, passing bitmap arguments
++directly to the chip callback functions.  That allows for utilization of GPIO
++banks as data I/O ports without much loss of performance.
 +
  
  GPIOs mapped to IRQs
  --------------------
 diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index c50bcec6e2d7..5b541364dee0 100644
+index 5b541364dee0..bf95f2964bc5 100644
 --- a/drivers/gpio/gpiolib.c
 +++ b/drivers/gpio/gpiolib.c
-@@ -2836,6 +2836,27 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
- 	return 0;
- }
+@@ -2846,6 +2846,12 @@ int gpiod_get_array_bitmap_complex(bool raw, bool can_sleep,
+ 	if (array->ndescs > sizeof(*bits))
+ 		return -EINVAL;
  
-+int gpiod_get_array_bitmap_complex(bool raw, bool can_sleep,
-+				   struct gpio_descs *array,
-+				   unsigned long *bits)
-+{
-+	int value_array[sizeof(*bits)];
-+	int i;
++	if (raw && !IS_ERR_OR_NULL(array->chip)) {
++		unsigned long mask = (1ULL << array->ndescs) - 1;
 +
-+	if (array->ndescs > sizeof(*bits))
-+		return -EINVAL;
++		return gpio_chip_get_multiple(array->chip, &mask, bits);
++	}
 +
-+	i = gpiod_get_array_value_complex(raw, can_sleep, array->ndescs,
-+					  array->desc, value_array);
-+	if (i)
-+		return i;
-+
-+	for (i = 0; i < array->ndescs; i++)
-+		__assign_bit(i, bits, value_array[i]);
-+
-+	return 0;
-+}
-+
- /**
-  * gpiod_get_raw_value() - return a gpio's raw value
-  * @desc: gpio whose value will be returned
-@@ -2929,6 +2950,50 @@ int gpiod_get_array_value(unsigned int array_size,
- }
- EXPORT_SYMBOL_GPL(gpiod_get_array_value);
+ 	i = gpiod_get_array_value_complex(raw, can_sleep, array->ndescs,
+ 					  array->desc, value_array);
+ 	if (i)
+@@ -3156,6 +3162,14 @@ int gpiod_set_array_bitmap_complex(bool raw, bool can_sleep,
+ 	if (array->ndescs > sizeof(*bits))
+ 		return -EINVAL;
  
-+/**
-+ * gpiod_get_raw_array_bitmap() - read raw values from an array of GPIOs
-+ * @desc_array: array of GPIO descriptors whose values will be read, obtained
-+ *		with gpiod_get_array(),
-+ * @bits: bitmap to store the read values
-+ *
-+ * Read the raw values of the GPIOs, i.e. the values of the physical lines
-+ * without regard for their ACTIVE_LOW status.  Return 0 in case of success,
-+ * else an error code.
-+ *
-+ * This function should be called from contexts where we cannot sleep,
-+ * and it will complain if the GPIO chip functions potentially sleep.
-+ */
-+int gpiod_get_raw_array_bitmap(struct gpio_descs *desc_array,
-+			       unsigned long *bits)
-+{
-+	if (!desc_array)
-+		return -EINVAL;
-+	return gpiod_get_array_bitmap_complex(true, false, desc_array, bits);
-+}
-+EXPORT_SYMBOL_GPL(gpiod_get_raw_array_bitmap);
++	if (raw && !IS_ERR_OR_NULL(array->chip)) {
++		unsigned long mask = (1ULL << array->ndescs) - 1;
 +
-+/**
-+ * gpiod_get_array_bitmap() - read values from an array of GPIOs
-+ * @desc_array: array of GPIO descriptors whose values will be read, obtained
-+ *		with gpiod_get_array(),
-+ * @bits: bitmap to store the read values
-+ *
-+ * Read the logical values of the GPIOs, i.e. taking their ACTIVE_LOW status
-+ * into account.  Return 0 in case of success, else an error code.
-+ *
-+ * This function should be called from contexts where we cannot sleep,
-+ * and it will complain if the GPIO chip functions potentially sleep.
-+ */
++		gpio_chip_set_multiple(array->chip, &mask, bits);
 +
-+int gpiod_get_array_bitmap(struct gpio_descs *desc_array,
-+			   unsigned long *bits)
-+{
-+	if (!desc_array)
-+		return -EINVAL;
-+	return gpiod_get_array_bitmap_complex(false, false, desc_array, bits);
-+}
-+EXPORT_SYMBOL_GPL(gpiod_get_raw_array_bitmap);
++		return 0;
++	}
 +
- /*
-  *  gpio_set_open_drain_value_commit() - Set the open drain gpio's value.
-  * @desc: gpio descriptor whose state need to be set.
-@@ -3081,6 +3146,23 @@ int gpiod_set_array_value_complex(bool raw, bool can_sleep,
- 	return 0;
- }
+ 	for (i = 0; i < array->ndescs; i++)
+ 		value_array[i] = test_bit(i, bits);
  
-+int gpiod_set_array_bitmap_complex(bool raw, bool can_sleep,
-+				   struct gpio_descs *array,
-+				   unsigned long *bits)
-+{
-+	int value_array[sizeof(*bits)];
-+	int i;
-+
-+	if (array->ndescs > sizeof(*bits))
-+		return -EINVAL;
-+
-+	for (i = 0; i < array->ndescs; i++)
-+		value_array[i] = test_bit(i, bits);
-+
-+	return gpiod_set_array_value_complex(raw, can_sleep, array->ndescs,
-+					     array->desc, value_array);
-+}
-+
- /**
-  * gpiod_set_raw_value() - assign a gpio's raw value
-  * @desc: gpio whose value will be assigned
-@@ -3185,6 +3267,48 @@ void gpiod_set_array_value(unsigned int array_size,
- }
- EXPORT_SYMBOL_GPL(gpiod_set_array_value);
- 
-+/**
-+ * gpiod_set_raw_array_bitmap() - assign values to an array of GPIOs
-+ * @desc_array: array of GPIO descriptors whose values will be assigned,
-+ *		obtained with gpiod_get_array(),
-+ * @bits: bitmap of values to assign
-+ *
-+ * Set the raw values of the GPIOs, i.e. the values of the physical lines
-+ * without regard for their ACTIVE_LOW status.
-+ *
-+ * This function should be called from contexts where we cannot sleep, and will
-+ * complain if the GPIO chip functions potentially sleep.
-+ */
-+int gpiod_set_raw_array_bitmap(struct gpio_descs *desc_array,
-+			       unsigned long *bits)
-+{
-+	if (!desc_array)
-+		return -EINVAL;
-+	return gpiod_set_array_bitmap_complex(true, false, desc_array, bits);
-+}
-+EXPORT_SYMBOL_GPL(gpiod_set_raw_array_bitmap);
-+
-+/**
-+ * gpiod_set_array_bitmap() - assign values to an array of GPIOs
-+ * @array_size: number of elements in the descriptor / value arrays
-+ * @desc_array: array of GPIO descriptors whose values will be assigned
-+ * @bits: bitmap of values to assign
-+ *
-+ * Set the logical values of the GPIOs, i.e. taking their ACTIVE_LOW status
-+ * into account.
-+ *
-+ * This function should be called from contexts where we cannot sleep, and will
-+ * complain if the GPIO chip functions potentially sleep.
-+ */
-+void gpiod_set_array_bitmap(struct gpio_descs *desc_array,
-+			    unsigned long *bits)
-+{
-+	if (!desc_array)
-+		return;
-+	gpiod_set_array_bitmap_complex(false, false, desc_array, bits);
-+}
-+EXPORT_SYMBOL_GPL(gpiod_set_array_bitmap);
-+
- /**
-  * gpiod_cansleep() - report whether gpio value access may sleep
-  * @desc: gpio to check
-@@ -3446,6 +3570,49 @@ int gpiod_get_array_value_cansleep(unsigned int array_size,
- }
- EXPORT_SYMBOL_GPL(gpiod_get_array_value_cansleep);
- 
-+/**
-+ * gpiod_get_raw_array_bitmap_cansleep() - read raw values from array of GPIOs
-+ * @desc_array: array of GPIO descriptors whose values will be read, obtained
-+ *		with gpiod_get_array(),
-+ * @bits: bitmap to store the read values
-+ *
-+ * Read the raw values of the GPIOs, i.e. the values of the physical lines
-+ * without regard for their ACTIVE_LOW status.  Return 0 in case of success,
-+ * else an error code.
-+ *
-+ * This function is to be called from contexts that can sleep.
-+ */
-+int gpiod_get_raw_array_bitmap_cansleep(struct gpio_descs *desc_array,
-+					unsigned long *bits)
-+{
-+	might_sleep_if(extra_checks);
-+	if (!desc_array)
-+		return -EINVAL;
-+	return gpiod_get_array_bitmap_complex(true, true, desc_array, bits);
-+}
-+EXPORT_SYMBOL_GPL(gpiod_get_raw_array_bitmap_cansleep);
-+
-+/**
-+ * gpiod_get_array_bitmap_cansleep() - read values from an array of GPIOs
-+ * @desc_array: array of GPIO descriptors whose values will be read, obtained
-+ *		with gpiod_get_array(),
-+ * @bits: bitmap to store the read values
-+ *
-+ * Read the logical values of the GPIOs, i.e. taking their ACTIVE_LOW status
-+ * into account.  Return 0 in case of success, else an error code.
-+ *
-+ * This function is to be called from contexts that can sleep.
-+ */
-+int gpiod_get_array_bitmap_cansleep(struct gpio_descs *desc_array,
-+				    unsigned long *bits)
-+{
-+	might_sleep_if(extra_checks);
-+	if (!desc_array)
-+		return -EINVAL;
-+	return gpiod_get_array_bitmap_complex(false, true, desc_array, bits);
-+}
-+EXPORT_SYMBOL_GPL(gpiod_get_array_bitmap_cansleep);
-+
- /**
-  * gpiod_set_raw_value_cansleep() - assign a gpio's raw value
-  * @desc: gpio whose value will be assigned
-@@ -3545,6 +3712,48 @@ void gpiod_set_array_value_cansleep(unsigned int array_size,
- }
- EXPORT_SYMBOL_GPL(gpiod_set_array_value_cansleep);
- 
-+/**
-+ * gpiod_set_raw_array_bitmap_cansleep() - assign values to an array of GPIOs
-+ * @desc_array: array of GPIO descriptors whose values will be assigned,
-+ *		obtained with gpiod_get_array(),
-+ * @bits: bitmap of values to assign
-+ *
-+ * Set the raw values of the GPIOs, i.e. the values of the physical lines
-+ * without regard for their ACTIVE_LOW status.
-+ *
-+ * This function is to be called from contexts that can sleep.
-+ */
-+int gpiod_set_raw_array_bitmap_cansleep(struct gpio_descs *desc_array,
-+					unsigned long *bits)
-+{
-+	might_sleep_if(extra_checks);
-+	if (!desc_array)
-+		return -EINVAL;
-+	return gpiod_set_array_bitmap_complex(true, true, desc_array, bits);
-+}
-+EXPORT_SYMBOL_GPL(gpiod_set_raw_array_bitmap_cansleep);
-+
-+/**
-+ * gpiod_set_array_bitmap_cansleep() - assign values to an array of GPIOs
-+ * @desc_array: array of GPIO descriptors whose values will be assigned,
-+ *		obtained with gpiod_get_array(),
-+ * @bits: bitmap of values to assign
-+ *
-+ * Set the logical values of the GPIOs, i.e. taking their ACTIVE_LOW status
-+ * into account.
-+ *
-+ * This function is to be called from contexts that can sleep.
-+ */
-+void gpiod_set_array_bitmap_cansleep(struct gpio_descs *desc_array,
-+				     unsigned long *bits)
-+{
-+	might_sleep_if(extra_checks);
-+	if (!desc_array)
-+		return;
-+	gpiod_set_array_bitmap_complex(false, true, desc_array, bits);
-+}
-+EXPORT_SYMBOL_GPL(gpiod_set_array_bitmap_cansleep);
-+
- /**
-  * gpiod_add_lookup_table() - register GPIO device consumers
-  * @table: table of consumers to register
-diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
-index 862ee027a02f..1eabce4fc6c5 100644
---- a/include/linux/gpio/consumer.h
-+++ b/include/linux/gpio/consumer.h
-@@ -106,35 +106,49 @@ int gpiod_direction_output_raw(struct gpio_desc *desc, int value);
- int gpiod_get_value(const struct gpio_desc *desc);
- int gpiod_get_array_value(unsigned int array_size,
- 			  struct gpio_desc **desc_array, int *value_array);
-+int gpiod_get_array_bitmap(struct gpio_descs *desc_array, unsigned long *bits);
- void gpiod_set_value(struct gpio_desc *desc, int value);
- void gpiod_set_array_value(unsigned int array_size,
- 			   struct gpio_desc **desc_array, int *value_array);
-+void gpiod_set_array_bitmap(struct gpio_descs *desc_array, unsigned long *bits);
- int gpiod_get_raw_value(const struct gpio_desc *desc);
- int gpiod_get_raw_array_value(unsigned int array_size,
- 			      struct gpio_desc **desc_array,
- 			      int *value_array);
-+int gpiod_get_raw_array_bitmap(struct gpio_descs *desc_array,
-+			       unsigned long *bits);
- void gpiod_set_raw_value(struct gpio_desc *desc, int value);
- int gpiod_set_raw_array_value(unsigned int array_size,
- 			       struct gpio_desc **desc_array,
- 			       int *value_array);
-+int gpiod_set_raw_array_bitmap(struct gpio_descs *desc_array,
-+			       unsigned long *bits);
- 
- /* Value get/set from sleeping context */
- int gpiod_get_value_cansleep(const struct gpio_desc *desc);
- int gpiod_get_array_value_cansleep(unsigned int array_size,
- 				   struct gpio_desc **desc_array,
- 				   int *value_array);
-+int gpiod_get_array_bitmap_cansleep(struct gpio_descs *desc_array,
-+				    unsigned long *bits);
- void gpiod_set_value_cansleep(struct gpio_desc *desc, int value);
- void gpiod_set_array_value_cansleep(unsigned int array_size,
- 				    struct gpio_desc **desc_array,
- 				    int *value_array);
-+void gpiod_set_array_bitmap_cansleep(struct gpio_descs *desc_array,
-+				     unsigned long *bits);
- int gpiod_get_raw_value_cansleep(const struct gpio_desc *desc);
- int gpiod_get_raw_array_value_cansleep(unsigned int array_size,
- 				       struct gpio_desc **desc_array,
- 				       int *value_array);
-+int gpiod_get_raw_array_bitmap_cansleep(struct gpio_descs *desc_array,
-+					unsigned long *bits);
- void gpiod_set_raw_value_cansleep(struct gpio_desc *desc, int value);
- int gpiod_set_raw_array_value_cansleep(unsigned int array_size,
- 					struct gpio_desc **desc_array,
- 					int *value_array);
-+int gpiod_set_raw_array_bitmap_cansleep(struct gpio_descs *desc_array,
-+					unsigned long *bits);
- 
- int gpiod_set_debounce(struct gpio_desc *desc, unsigned debounce);
- int gpiod_set_transitory(struct gpio_desc *desc, bool transitory);
 -- 
 2.16.4
 
