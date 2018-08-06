@@ -2,114 +2,72 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04EFFC46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 11:19:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8034C46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 11:19:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 778FA21A03
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 11:19:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=gotplt.org header.i=@gotplt.org header.b="cGH7EUrl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 778FA21A03
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gotplt.org
+	by mail.kernel.org (Postfix) with ESMTP id 8E5E821A03
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 11:19:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E5E821A03
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730436AbeHFN2J (ORCPT
+        id S1730521AbeHFN2a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 09:28:09 -0400
-Received: from sub5.mail.dreamhost.com ([208.113.200.129]:43506 "EHLO
-        homiemail-a52.g.dreamhost.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726678AbeHFN2J (ORCPT
+        Mon, 6 Aug 2018 09:28:30 -0400
+Received: from esa1.microchip.iphmx.com ([68.232.147.91]:24560 "EHLO
+        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726678AbeHFN2a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 09:28:09 -0400
-Received: from homiemail-a52.g.dreamhost.com (localhost [127.0.0.1])
-        by homiemail-a52.g.dreamhost.com (Postfix) with ESMTP id A4A806004114;
-        Mon,  6 Aug 2018 04:19:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=gotplt.org; h=subject:to
-        :cc:references:from:message-id:date:mime-version:in-reply-to
-        :content-type:content-transfer-encoding; s=gotplt.org; bh=LLV/Og
-        JNdFfTphNDzrkqiL8SjW8=; b=cGH7EUrlrSsjD7VwFEjcqV8vBiMF6wpB1/khQk
-        7NWJ6D1ccqLq75aanF3KgDYuFYGvl4gnm6elAdn7l5NFtu50ZQGrRxdHRlmdLusH
-        7bHxjDGo0H35TlB+I7VqX+Yt/wMa1uPL047KZgx49ySUZjUe0KdLMfhrPBlw3lzu
-        bc4BM=
-Received: from [192.168.0.48] (unknown [202.189.238.75])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: siddhesh@gotplt.org)
-        by homiemail-a52.g.dreamhost.com (Postfix) with ESMTPSA id A1F4E600410B;
-        Mon,  6 Aug 2018 04:19:28 -0700 (PDT)
-Subject: Re: framebuffer corruption due to overlapping stp instructions on
- arm64
-To:     Mikulas Patocka <mpatocka@redhat.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     Florian Weimer <fweimer@redhat.com>,
-        Andrew Pinski <pinskia@gmail.com>,
-        Richard Earnshaw <Richard.Earnshaw@arm.com>,
-        Ramana Radhakrishnan <ramana.gcc@googlemail.com>,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        GNU C Library <libc-alpha@sourceware.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Tulio Magno Quites Machado Filho <tuliom@linux.ibm.com>
-References: <alpine.LRH.2.02.1808021242320.31834@file01.intranet.prod.int.rdu2.redhat.com>
- <CA+=Sn1mWkjuwVnjw6OWWUM=UcP76bdFa680FebCseewHfx3NpA@mail.gmail.com>
- <9acdacdb-3bd5-b71a-3003-e48132ee1371@redhat.com>
- <CAJA7tRZbmnZq7RfvQeYEy_a1ZObWqpFpVdvgsXgsioQ3RyPMuA@mail.gmail.com>
- <CAKv+Gu97QvwoLLK_zueiA_gjg_4Q5cqU4YVUyHUVFFfffdyJaw@mail.gmail.com>
- <11f9185a-7f71-83df-3a57-0a0ae9c1f934@arm.com>
- <alpine.LRH.2.02.1808032046540.24748@file01.intranet.prod.int.rdu2.redhat.com>
- <CA+=Sn1=6F-fGLmXE0VqQHTqTCUKUT=Fz29mMT7349SPFisbZ9A@mail.gmail.com>
- <alpine.LRH.2.02.1808040611070.23762@file01.intranet.prod.int.rdu2.redhat.com>
- <fd2cae87-b2df-d8ef-8836-e6cbf8c5f851@redhat.com>
- <alpine.LRH.2.02.1808060325110.3756@file01.intranet.prod.int.rdu2.redhat.com>
- <CAKv+Gu_y6La77sWOSROrwfRy65jrFVYVvRZt+ewNheYhdhHCkQ@mail.gmail.com>
- <alpine.LRH.2.02.1808060626060.2986@file01.intranet.prod.int.rdu2.redhat.com>
-From:   Siddhesh Poyarekar <siddhesh@gotplt.org>
-Message-ID: <df77857e-1674-38ea-2337-366182afb41e@gotplt.org>
-Date:   Mon, 6 Aug 2018 16:49:25 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 6 Aug 2018 09:28:30 -0400
+X-IronPort-AV: E=Sophos;i="5.51,452,1526367600"; 
+   d="scan'208";a="18193905"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 06 Aug 2018 04:19:54 -0700
+Received: from rob-ult-m19940.microchip.com (10.10.76.4) by
+ chn-sv-exch02.mchp-main.com (10.10.76.38) with Microsoft SMTP Server id
+ 14.3.352.0; Mon, 6 Aug 2018 04:19:55 -0700
+From:   Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+To:     <alexandre.belloni@bootlin.com>, <nicolas.ferre@microchip.com>,
+        <Claudiu.Beznea@microchip.com>
+CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <Cristian.Birsan@microchip.com>
+Subject: [PATCH v7 0/3] ARM: dts: at91: sama5d2: Add nodes for I2S
+Date:   Mon, 6 Aug 2018 14:19:45 +0300
+Message-ID: <20180806111948.4522-1-codrin.ciubotariu@microchip.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-In-Reply-To: <alpine.LRH.2.02.1808060626060.2986@file01.intranet.prod.int.rdu2.redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/06/2018 04:01 PM, Mikulas Patocka wrote:
-> I think there are three possible solutions:
-> 
-> 1. provide an alternative memcpy implementation that doesn't do unaligned
-> accesses and recompile the graphics software with -mstrict-align
+These are the remaining dts patches from the series:
+[PATCH v5 0/5] ASoC: add driver for Atmel I2S controller
 
-Given that there's already a tunable glibc.cpu.cached_memopt for powerpc 
-that (as Tulio clarified elsewhere) essentially does the same thing for 
-cache-inhibited memory, it wouldn't be too much of an overhead to put in 
-another ifunc implementation that gets chosen only when one sets this 
-tunable.  In fact, we could reuse the C string routines for this to 
-avoid adding yet another assembly implementation to have to support. 
-That way we can minimally fix the issue at hand without regressing 
-existing uses.
+v6 -> v7
+ - addressed some comments regarding pin conflicts;
 
-You can then set the glibc.cpu.cached_memopt tunable in the default 
-environment for your board[1] or for applications that need it (e.g. 
-whenever DISPLAY is exported or something like that).
+v5 -> v6
+ - removed unnecessary phandles to audio PLL clock from the I2S nodes;
+ - using assigned clocks to set gclk as parent of i2smuxclk;
 
-The only difference from Power would be that cpu.noncached==0 for Power 
-by default whereas for aarch64 it will be the other way around.  It 
-shouldn't be too hard to enhance the framework to set platform-specific 
-defaults.
+Codrin Ciubotariu (1):
+  ARM: dts: at91: sama5d2: add I2S clock muxing nodes
 
-Siddhesh
+Cyrille Pitchen (2):
+  ARM: dts: at91: sama5d2: add nodes for I2S controllers
+  ARM: dts: at91: sama5d2 Xplained: add pin muxing for I2S
 
-[1] Or if you're feeling particularly generous, help us implement 
-systemwide tunables since you have an actual use case for it :)
+ arch/arm/boot/dts/at91-sama5d2_xplained.dts | 30 +++++++++++
+ arch/arm/boot/dts/sama5d2.dtsi              | 56 +++++++++++++++++++++
+ 2 files changed, 86 insertions(+)
+
+-- 
+2.17.1
+
