@@ -2,264 +2,420 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CE0FC4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 12:30:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF6ABC4646D
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 12:30:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C570521945
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 12:30:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C570521945
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 5E6C021945
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 12:30:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E6C021945
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731969AbeHFOiz (ORCPT
+        id S1732193AbeHFOjK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 10:38:55 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:43649 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730822AbeHFOiz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 10:38:55 -0400
-Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
-        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
-        (envelope-from <l.stach@pengutronix.de>)
-        id 1fmee1-0000E4-Hw; Mon, 06 Aug 2018 14:29:53 +0200
-Message-ID: <1533558590.2809.1.camel@pengutronix.de>
-Subject: Re: [PATCH v3 3/3] dmaengine: imx-sdma: allocate max 20 bds for one
- transfer
-From:   Lucas Stach <l.stach@pengutronix.de>
-To:     Robin Gong <yibin.gong@nxp.com>,
-        "vkoul@kernel.org" <vkoul@kernel.org>,
-        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "linux@armlinux.org.uk" <linux@armlinux.org.uk>
-Cc:     "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Date:   Mon, 06 Aug 2018 14:29:50 +0200
-In-Reply-To: <DB6PR04MB3223BB3159EB8D376BE64B3E89200@DB6PR04MB3223.eurprd04.prod.outlook.com>
-References: <1532367972-29707-1-git-send-email-yibin.gong@nxp.com>
-         <1532367972-29707-4-git-send-email-yibin.gong@nxp.com>
-         <1532343252.3163.99.camel@pengutronix.de>
-         <DB6PR04MB322323354B2184421502FC5889560@DB6PR04MB3223.eurprd04.prod.outlook.com>
-         <1532424136.32306.3.camel@pengutronix.de>
-         <DB6PR04MB32233768DB36BB208206EBCE89540@DB6PR04MB3223.eurprd04.prod.outlook.com>
-         <DB6PR04MB3223BB3159EB8D376BE64B3E89200@DB6PR04MB3223.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
-X-SA-Exim-Mail-From: l.stach@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        Mon, 6 Aug 2018 10:39:10 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:10638 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1732003AbeHFOjK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 10:39:10 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id DC1C988EB9710;
+        Mon,  6 Aug 2018 20:30:11 +0800 (CST)
+Received: from szvp000201624.huawei.com (10.120.216.130) by
+ DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
+ 14.3.399.0; Mon, 6 Aug 2018 20:30:08 +0800
+From:   Chao Yu <yuchao0@huawei.com>
+To:     <jaegeuk@kernel.org>
+CC:     <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH v4] f2fs: split discard command in prior to block layer
+Date:   Mon, 6 Aug 2018 20:30:04 +0800
+Message-ID: <20180806123004.14851-1-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.18.0.rc1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.120.216.130]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Robin,
+Some devices has small max_{hw,}discard_sectors, so that in
+__blkdev_issue_discard(), one big size discard bio can be split
+into multiple small size discard bios, result in heavy load in IO
+scheduler and device, which can hang other sync IO for long time.
 
-Am Montag, den 06.08.2018, 08:04 +0000 schrieb Robin Gong:
-> Hello Lucas,
-> 	Any comment for my reply?
+Now, f2fs is trying to control discard commands more elaboratively,
+in order to make less conflict in between discard IO and user IO
+to enhance application's performance, so in this patch, we will
+split discard bio in f2fs in prior to in block layer to reduce
+issuing multiple discard bios in a short time.
 
-So I've looked at this again and sadly I need to NACK this patch. It is
-a total API abuse of the dma_pool API and even the patch introducing
-the dma_pool usage in this driver is wrong and should be reverted.
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+v4:
+- add spin lock to update state and bio_ref atomically.
+- add a new state D_PARTIAL to indicate partially submission.
+- fix to update dcc->issing_discard correctly
+- handle race case between __submit_discard_cmd/__remove_discard_cmd and
+f2fs_submit_discard_endio
+- fix to update dc->len correctly.
+ fs/f2fs/f2fs.h    |  23 +++----
+ fs/f2fs/segment.c | 148 +++++++++++++++++++++++++++++++++++-----------
+ 2 files changed, 127 insertions(+), 44 deletions(-)
 
-The SDMA need contiguous buffer descriptors for each channel, something
-the dma_pool abstraction isn't able to provide. So either the dma_pool
-implementation needs to be extended to support this use-case, or you
-can't use this at all in the sdma driver. Adding hacks, which are
-abusing the API, to cram a dma_pool into the sdma driver is not a valid
-way to implement things for upstream.
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index ca23fbc8da30..a83ea4416e03 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -178,7 +178,6 @@ enum {
+ 
+ #define MAX_DISCARD_BLOCKS(sbi)		BLKS_PER_SEC(sbi)
+ #define DEF_MAX_DISCARD_REQUEST		8	/* issue 8 discards per round */
+-#define DEF_MAX_DISCARD_LEN		512	/* Max. 2MB per discard */
+ #define DEF_MIN_DISCARD_ISSUE_TIME	50	/* 50 ms, if exists */
+ #define DEF_MID_DISCARD_ISSUE_TIME	500	/* 500 ms, if device busy */
+ #define DEF_MAX_DISCARD_ISSUE_TIME	60000	/* 60 s, if no candidates */
+@@ -250,9 +249,10 @@ struct discard_entry {
+ 					(MAX_PLIST_NUM - 1) : (blk_num - 1))
+ 
+ enum {
+-	D_PREP,
+-	D_SUBMIT,
+-	D_DONE,
++	D_PREP,			/* initial */
++	D_PARTIAL,		/* partially submitted */
++	D_SUBMIT,		/* all submitted */
++	D_DONE,			/* finished */
+ };
+ 
+ struct discard_info {
+@@ -277,7 +277,10 @@ struct discard_cmd {
+ 	struct block_device *bdev;	/* bdev */
+ 	unsigned short ref;		/* reference count */
+ 	unsigned char state;		/* state */
++	unsigned char issuing;		/* issuing discard */
+ 	int error;			/* bio error */
++	spinlock_t lock;		/* for state/bio_ref updating */
++	unsigned short bio_ref;		/* bio reference count */
+ };
+ 
+ enum {
+@@ -710,22 +713,22 @@ static inline void set_extent_info(struct extent_info *ei, unsigned int fofs,
+ }
+ 
+ static inline bool __is_discard_mergeable(struct discard_info *back,
+-						struct discard_info *front)
++			struct discard_info *front, unsigned int max_len)
+ {
+ 	return (back->lstart + back->len == front->lstart) &&
+-		(back->len + front->len < DEF_MAX_DISCARD_LEN);
++		(back->len + front->len <= max_len);
+ }
+ 
+ static inline bool __is_discard_back_mergeable(struct discard_info *cur,
+-						struct discard_info *back)
++			struct discard_info *back, unsigned int max_len)
+ {
+-	return __is_discard_mergeable(back, cur);
++	return __is_discard_mergeable(back, cur, max_len);
+ }
+ 
+ static inline bool __is_discard_front_mergeable(struct discard_info *cur,
+-						struct discard_info *front)
++			struct discard_info *front, unsigned int max_len)
+ {
+-	return __is_discard_mergeable(cur, front);
++	return __is_discard_mergeable(cur, front, max_len);
+ }
+ 
+ static inline bool __is_extent_mergeable(struct extent_info *back,
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 96f225b1596e..827cd3577756 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -843,9 +843,12 @@ static struct discard_cmd *__create_discard_cmd(struct f2fs_sb_info *sbi,
+ 	dc->len = len;
+ 	dc->ref = 0;
+ 	dc->state = D_PREP;
++	dc->issuing = 0;
+ 	dc->error = 0;
+ 	init_completion(&dc->wait);
+ 	list_add_tail(&dc->list, pend_list);
++	spin_lock_init(&dc->lock);
++	dc->bio_ref = 0;
+ 	atomic_inc(&dcc->discard_cmd_cnt);
+ 	dcc->undiscard_blks += len;
+ 
+@@ -872,7 +875,7 @@ static void __detach_discard_cmd(struct discard_cmd_control *dcc,
+ 							struct discard_cmd *dc)
+ {
+ 	if (dc->state == D_DONE)
+-		atomic_dec(&dcc->issing_discard);
++		atomic_sub(dc->issuing, &dcc->issing_discard);
+ 
+ 	list_del(&dc->list);
+ 	rb_erase(&dc->rb_node, &dcc->root);
+@@ -887,9 +890,17 @@ static void __remove_discard_cmd(struct f2fs_sb_info *sbi,
+ 							struct discard_cmd *dc)
+ {
+ 	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
++	unsigned long flags;
+ 
+ 	trace_f2fs_remove_discard(dc->bdev, dc->start, dc->len);
+ 
++	spin_lock_irqsave(&dc->lock, flags);
++	if (dc->bio_ref) {
++		spin_unlock_irqrestore(&dc->lock, flags);
++		return;
++	}
++	spin_unlock_irqrestore(&dc->lock, flags);
++
+ 	f2fs_bug_on(sbi, dc->ref);
+ 
+ 	if (dc->error == -EOPNOTSUPP)
+@@ -905,10 +916,17 @@ static void __remove_discard_cmd(struct f2fs_sb_info *sbi,
+ static void f2fs_submit_discard_endio(struct bio *bio)
+ {
+ 	struct discard_cmd *dc = (struct discard_cmd *)bio->bi_private;
++	unsigned long flags;
+ 
+ 	dc->error = blk_status_to_errno(bio->bi_status);
+-	dc->state = D_DONE;
+-	complete_all(&dc->wait);
++
++	spin_lock_irqsave(&dc->lock, flags);
++	dc->bio_ref--;
++	if (!dc->bio_ref && dc->state == D_SUBMIT) {
++		dc->state = D_DONE;
++		complete_all(&dc->wait);
++	}
++	spin_unlock_irqrestore(&dc->lock, flags);
+ 	bio_put(bio);
+ }
+ 
+@@ -976,17 +994,25 @@ static void __init_discard_policy(struct f2fs_sb_info *sbi,
+ 	}
+ }
+ 
+-
++static void __update_discard_tree_range(struct f2fs_sb_info *sbi,
++				struct block_device *bdev, block_t lstart,
++				block_t start, block_t len);
+ /* this function is copied from blkdev_issue_discard from block/blk-lib.c */
+ static void __submit_discard_cmd(struct f2fs_sb_info *sbi,
+ 						struct discard_policy *dpolicy,
+-						struct discard_cmd *dc)
++						struct discard_cmd *dc,
++						unsigned int *issued)
+ {
++	struct block_device *bdev = dc->bdev;
++	struct request_queue *q = bdev_get_queue(bdev);
++	unsigned int max_discard_blocks =
++			SECTOR_TO_BLOCK(q->limits.max_discard_sectors);
+ 	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
+ 	struct list_head *wait_list = (dpolicy->type == DPOLICY_FSTRIM) ?
+ 					&(dcc->fstrim_list) : &(dcc->wait_list);
+-	struct bio *bio = NULL;
+ 	int flag = dpolicy->sync ? REQ_SYNC : 0;
++	block_t lstart, start, len, total_len;
++	int err = 0;
+ 
+ 	if (dc->state != D_PREP)
+ 		return;
+@@ -994,30 +1020,81 @@ static void __submit_discard_cmd(struct f2fs_sb_info *sbi,
+ 	if (is_sbi_flag_set(sbi, SBI_NEED_FSCK))
+ 		return;
+ 
+-	trace_f2fs_issue_discard(dc->bdev, dc->start, dc->len);
+-
+-	dc->error = __blkdev_issue_discard(dc->bdev,
+-				SECTOR_FROM_BLOCK(dc->start),
+-				SECTOR_FROM_BLOCK(dc->len),
+-				GFP_NOFS, 0, &bio);
+-	if (!dc->error) {
+-		/* should keep before submission to avoid D_DONE right away */
+-		dc->state = D_SUBMIT;
+-		atomic_inc(&dcc->issued_discard);
+-		atomic_inc(&dcc->issing_discard);
+-		if (bio) {
++	trace_f2fs_issue_discard(bdev, dc->start, dc->len);
++
++	lstart = dc->lstart;
++	start = dc->start;
++	len = dc->len;
++	total_len = len;
++
++	dc->len = 0;
++
++	while (total_len && *issued < dpolicy->max_requests && !err) {
++		struct bio *bio = NULL;
++		unsigned long flags;
++		bool last = true;
++
++		if (len > max_discard_blocks)
++			len = max_discard_blocks;
++			last = false;
++		}
++
++		(*issued)++;
++		if (*issued == dpolicy->max_requests)
++			last = true;
++
++		dc->len += len;
++
++		err = __blkdev_issue_discard(bdev,
++					SECTOR_FROM_BLOCK(start),
++					SECTOR_FROM_BLOCK(len),
++					GFP_NOFS, 0, &bio);
++		if (!err && bio) {
++			/*
++			 * should keep before submission to avoid D_DONE
++			 * right away
++			 */
++			spin_lock_irqsave(&dc->lock, flags);
++			if (last)
++				dc->state = D_SUBMIT;
++			else
++				dc->state = D_PARTIAL;
++			dc->bio_ref++;
++			spin_unlock_irqrestore(&dc->lock, flags);
++
++			atomic_inc(&dcc->issing_discard);
++			dc->issuing++;
++			list_move_tail(&dc->list, wait_list);
++
++			/* sanity check on discard range */
++			__check_sit_bitmap(sbi, start, start + len);
++
+ 			bio->bi_private = dc;
+ 			bio->bi_end_io = f2fs_submit_discard_endio;
+ 			bio->bi_opf |= flag;
+ 			submit_bio(bio);
+-			list_move_tail(&dc->list, wait_list);
+-			__check_sit_bitmap(sbi, dc->start, dc->start + dc->len);
++
++			atomic_inc(&dcc->issued_discard);
+ 
+ 			f2fs_update_iostat(sbi, FS_DISCARD, 1);
++		} else {
++			spin_lock_irqsave(&dc->lock, flags);
++			if (dc->state == D_PARTIAL)
++				dc->state = D_SUBMIT;
++			spin_unlock_irqrestore(&dc->lock, flags);
++
++			__remove_discard_cmd(sbi, dc);
++			err = -EIO;
+ 		}
+-	} else {
+-		__remove_discard_cmd(sbi, dc);
++
++		lstart += len;
++		start += len;
++		total_len -= len;
++		len = total_len;
+ 	}
++
++	if (len)
++		__update_discard_tree_range(sbi, bdev, lstart, start, len);
+ }
+ 
+ static struct discard_cmd *__insert_discard_tree(struct f2fs_sb_info *sbi,
+@@ -1098,10 +1175,11 @@ static void __update_discard_tree_range(struct f2fs_sb_info *sbi,
+ 	struct discard_cmd *dc;
+ 	struct discard_info di = {0};
+ 	struct rb_node **insert_p = NULL, *insert_parent = NULL;
++	struct request_queue *q = bdev_get_queue(bdev);
++	unsigned int max_discard_blocks =
++			SECTOR_TO_BLOCK(q->limits.max_discard_sectors);
+ 	block_t end = lstart + len;
+ 
+-	mutex_lock(&dcc->cmd_lock);
+-
+ 	dc = (struct discard_cmd *)f2fs_lookup_rb_tree_ret(&dcc->root,
+ 					NULL, lstart,
+ 					(struct rb_entry **)&prev_dc,
+@@ -1141,7 +1219,8 @@ static void __update_discard_tree_range(struct f2fs_sb_info *sbi,
+ 
+ 		if (prev_dc && prev_dc->state == D_PREP &&
+ 			prev_dc->bdev == bdev &&
+-			__is_discard_back_mergeable(&di, &prev_dc->di)) {
++			__is_discard_back_mergeable(&di, &prev_dc->di,
++							max_discard_blocks)) {
+ 			prev_dc->di.len += di.len;
+ 			dcc->undiscard_blks += di.len;
+ 			__relocate_discard_cmd(dcc, prev_dc);
+@@ -1152,7 +1231,8 @@ static void __update_discard_tree_range(struct f2fs_sb_info *sbi,
+ 
+ 		if (next_dc && next_dc->state == D_PREP &&
+ 			next_dc->bdev == bdev &&
+-			__is_discard_front_mergeable(&di, &next_dc->di)) {
++			__is_discard_front_mergeable(&di, &next_dc->di,
++							max_discard_blocks)) {
+ 			next_dc->di.lstart = di.lstart;
+ 			next_dc->di.len += di.len;
+ 			next_dc->di.start = di.start;
+@@ -1175,8 +1255,6 @@ static void __update_discard_tree_range(struct f2fs_sb_info *sbi,
+ 		node = rb_next(&prev_dc->rb_node);
+ 		next_dc = rb_entry_safe(node, struct discard_cmd, rb_node);
+ 	}
+-
+-	mutex_unlock(&dcc->cmd_lock);
+ }
+ 
+ static int __queue_discard_cmd(struct f2fs_sb_info *sbi,
+@@ -1191,7 +1269,9 @@ static int __queue_discard_cmd(struct f2fs_sb_info *sbi,
+ 
+ 		blkstart -= FDEV(devi).start_blk;
+ 	}
++	mutex_lock(&SM_I(sbi)->dcc_info->cmd_lock);
+ 	__update_discard_tree_range(sbi, bdev, lblkstart, blkstart, blklen);
++	mutex_unlock(&SM_I(sbi)->dcc_info->cmd_lock);
+ 	return 0;
+ }
+ 
+@@ -1230,9 +1310,9 @@ static unsigned int __issue_discard_cmd_orderly(struct f2fs_sb_info *sbi,
+ 		}
+ 
+ 		dcc->next_pos = dc->lstart + dc->len;
+-		__submit_discard_cmd(sbi, dpolicy, dc);
++		__submit_discard_cmd(sbi, dpolicy, dc, &issued);
+ 
+-		if (++issued >= dpolicy->max_requests)
++		if (issued >= dpolicy->max_requests)
+ 			break;
+ next:
+ 		node = rb_next(&dc->rb_node);
+@@ -1287,9 +1367,9 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+ 				break;
+ 			}
+ 
+-			__submit_discard_cmd(sbi, dpolicy, dc);
++			__submit_discard_cmd(sbi, dpolicy, dc, &issued);
+ 
+-			if (++issued >= dpolicy->max_requests)
++			if (issued >= dpolicy->max_requests)
+ 				break;
+ 		}
+ 		blk_finish_plug(&plug);
+@@ -2496,9 +2576,9 @@ static unsigned int __issue_discard_cmd_range(struct f2fs_sb_info *sbi,
+ 			goto skip;
+ 		}
+ 
+-		__submit_discard_cmd(sbi, dpolicy, dc);
++		__submit_discard_cmd(sbi, dpolicy, dc, &issued);
+ 
+-		if (++issued >= dpolicy->max_requests) {
++		if (issued >= dpolicy->max_requests) {
+ 			start = dc->lstart + dc->len;
+ 
+ 			blk_finish_plug(&plug);
+-- 
+2.18.0.rc1
 
-Regards,
-Lucas
-
-> > -----Original Message-----
-> > From: Robin Gong
-> > Sent: 2018年7月25日 9:25
-> > To: 'Lucas Stach' <l.stach@pengutronix.de>; vkoul@kernel.org;
-> > dan.j.williams@intel.com; s.hauer@pengutronix.de; linux@armlinux.or
-> > g.uk
-> > Cc: dmaengine@vger.kernel.org; dl-linux-imx <linux-imx@nxp.com>;
-> > kernel@pengutronix.de; linux-arm-kernel@lists.infradead.org;
-> > linux-kernel@vger.kernel.org
-> > Subject: RE: [PATCH v3 3/3] dmaengine: imx-sdma: allocate max 20
-> > bds for one
-> > transfer
-> > 
-> > > -----Original Message-----
-> > > From: Lucas Stach [mailto:l.stach@pengutronix.de]
-> > > Sent: 2018年7月24日 17:22
-> > > To: Robin Gong <yibin.gong@nxp.com>; vkoul@kernel.org;
-> > > dan.j.williams@intel.com; s.hauer@pengutronix.de;
-> > > linux@armlinux.org.uk
-> > > Cc: dmaengine@vger.kernel.org; dl-linux-imx <linux-imx@nxp.com>;
-> > > kernel@pengutronix.de; linux-arm-kernel@lists.infradead.org;
-> > > linux-kernel@vger.kernel.org
-> > > Subject: Re: [PATCH v3 3/3] dmaengine: imx-sdma: allocate max 20
-> > > bds
-> > > for one transfer
-> > > 
-> > > Am Montag, den 23.07.2018, 13:55 +0000 schrieb Robin Gong:
-> > > > > -----Original Message-----
-> > > > > From: Lucas Stach [mailto:l.stach@pengutronix.de]
-> > > > > Sent: 2018年7月23日 18:54
-> > > > > To: Robin Gong <yibin.gong@nxp.com>; vkoul@kernel.org;
-> > > > > dan.j.williams@intel.com; s.hauer@pengutronix.de;
-> > > > > linux@armlinux.or g.uk
-> > > > > Cc: dmaengine@vger.kernel.org; dl-linux-imx <linux-imx@nxp.co
-> > > > > m>;
-> > > > > kernel@pengutronix.de; linux-arm-kernel@lists.infradead.org;
-> > > > > linux-kernel@vger.kernel.org
-> > > > > Subject: Re: [PATCH v3 3/3] dmaengine: imx-sdma: allocate max
-> > > > > 20
-> > > > > bds for one transfer
-> > > > > 
-> > > > > Am Dienstag, den 24.07.2018, 01:46 +0800 schrieb Robin Gong:
-> > > > > > If multi-bds used in one transfer, all bds should be
-> > > > > > consisten
-> > > > > > memory.To easily follow it, enlarge the dma pool size into
-> > > > > > 20
-> > > > > > bds, and it will report error if the number of bds is over
-> > > > > > than
-> > > > > > 20. For dmatest, the max count for single transfer is
-> > > > > > NUM_BD *
-> > > > > 
-> > > > > SDMA_BD_MAX_CNT
-> > > > > > = 20 * 65535 = ~1.28MB.
-> > > > > 
-> > > > > Both the commit message and the comment need a lot more care
-> > > > > to
-> > > > > actually tell what this commit is trying to achieve.
-> > > > > Currently I
-> > > > > don't follow at all. What does "consisten" mean? Do you mean
-> > > > > BDs
-> > > > > should be contiguous in memory?
-> > > > 
-> > > > Yes, BDs should be contiguous  one by one in memory.
-> > > 
-> > > Okay, but this isn't what the code change does. By increasing the
-> > > size
-> > > parameter of the dma pool you just allocate 20 times as much
-> > > memory as
-> > > needed for each BD. So actually the BDs end up being very non-
-> > > contiguous in memory as there are now holes of 19 BD sizes
-> > > between the
-> > 
-> > start of each BD.
-> > Please notice only allocate bds memory from dma pool one time even
-> > in multi
-> > bds.
-> > That's different with the common use case that allocate memory from
-> > dma
-> > pool everytime for every bd. Why do this is to make sure all bd
-> > memory is
-> > contiguous for single transfer whatever single bd or multi-bds,
-> > since two call
-> > dma_pool_alloc() can't promise the address is contiguous especially
-> > for multi
-> > thread case such as dmatest 'threads_per_chan = 5'. You can change
-> > to '
-> > norandom=true ' and ' test_buf_size = 163840' in dmatest.c to look
-> > what issue
-> > coming without this patch.
-> > > 
-> > > So something isn't right with this change.
-> > 
-> > I think this patch is the easy way to resolve the bd contiguous
-> > issue, but the
-> > cost is to allocate more dma pool memory which may not used.
-> > > 
-> > > Regards,
-> > > Lucas
-> > > 
-> > > > > 
-> > > > > What do you gain by over-allocating each BD by a factor of
-> > > > > 20?
-> > > > 
-> > > > I guess dma_pool_alloc will return error in such case, and then
-> > > > cause dma setup transfer failure.
-> > > > > 
-> > > > > Regards,
-> > > > > Lucas
-> > > > > 
-> > > > > > Signed-off-by: Robin Gong <yibin.gong@nxp.com>
-> > > > > > ---
-> > > > > >  drivers/dma/imx-sdma.c | 17 ++++++++++++++++-
-> > > > > >  1 file changed, 16 insertions(+), 1 deletion(-)
-> > > > > > 
-> > > > > > diff --git a/drivers/dma/imx-sdma.c b/drivers/dma/imx-
-> > > > > > sdma.c
-> > > > > > index
-> > > > > > b4ec2d2..5973489 100644
-> > > > > > --- a/drivers/dma/imx-sdma.c
-> > > > > > +++ b/drivers/dma/imx-sdma.c
-> > > > > > @@ -298,6 +298,15 @@ struct sdma_context_data {
-> > > > > > >  	u32  scratch7;
-> > > > > > 
-> > > > > >  } __attribute__ ((packed));
-> > > > > > 
-> > > > > > +/*
-> > > > > > + * All bds in one transfer should be consitent on SDMA. To
-> > > > > > easily
-> > > > > > +follow it,just
-> > > > > > + * set the dma pool size as the enough bds. For example,
-> > > > > > in
-> > > > > > dmatest
-> > > > > > +case, the
-> > > > > > + * max 20 bds means the max for single transfer is NUM_BD
-> > > > > > *
-> > > > > > +SDMA_BD_MAX_CNT = 20
-> > > > > > + * * 65535 = ~1.28MB. 20 bds supposed to be enough
-> > > > > > basically.If
-> > > > > > it's
-> > > > > > +still not
-> > > > > > + * enough in some specific cases, enlarge it here.Warning
-> > > > > > message
-> > > > > > +would also
-> > > > > > + * appear if the bd numbers is over than 20.
-> > > > > > + */
-> > > > > > +#define NUM_BD 20
-> > > > > > 
-> > > > > >  struct sdma_engine;
-> > > > > > 
-> > > > > > @@ -1273,7 +1282,7 @@ static int
-> > > > > > sdma_alloc_chan_resources(struct dma_chan *chan)
-> > > > > > >  		goto disable_clk_ahb;
-> > > > > > >  	sdmac->bd_pool = dma_pool_create("bd_pool",
-> > > > > > > chan-
-> > > > > > > > device->dev,
-> > > > > > > 
-> > > > > > > -				sizeof(struct
-> > > > > > > sdma_buffer_descriptor),
-> > > > > > > +				NUM_BD * sizeof(struct
-> > > > > > > sdma_buffer_descriptor),
-> > > > > > >  				32, 0);
-> > > > > > >  	return 0;
-> > > > > > 
-> > > > > > @@ -1314,6 +1323,12 @@ static struct sdma_desc
-> > > > > > *sdma_transfer_init(struct sdma_channel *sdmac,
-> > > > > >  {
-> > > > > > >  	struct sdma_desc *desc;
-> > > > > > > +	if (bds > NUM_BD) {
-> > > > > > > +		dev_err(sdmac->sdma->dev, "%d bds exceed
-> > > > > > > the
-> > > > > > > max %d\n",
-> > > > > > > +			bds, NUM_BD);
-> > > > > > > +		goto err_out;
-> > > > > > > +	}
-> > > > > > 
-> > > > > > +
-> > > > > > >  	desc = kzalloc((sizeof(*desc)), GFP_NOWAIT);
-> > > > > > >  	if (!desc)
-> > > > > > >  		goto err_out;
