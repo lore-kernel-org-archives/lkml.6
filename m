@@ -2,113 +2,174 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+X-Spam-Status: No, score=-2.9 required=3.0 tests=FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7792C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 15:58:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67642C46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 15:59:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6521421A56
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 15:58:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HEvm2+nS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6521421A56
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	by mail.kernel.org (Postfix) with ESMTP id 1CDE121A51
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 15:59:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CDE121A51
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=citrix.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733052AbeHFSHy (ORCPT
+        id S1733075AbeHFSJX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 14:07:54 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:45478 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729724AbeHFSHx (ORCPT
+        Mon, 6 Aug 2018 14:09:23 -0400
+Received: from smtp.ctxuk.citrix.com ([185.25.65.24]:37685 "EHLO
+        SMTP.EU.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733018AbeHFSJW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 14:07:53 -0400
-Received: by mail-pg1-f193.google.com with SMTP id f1-v6so6409234pgq.12;
-        Mon, 06 Aug 2018 08:58:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=o9BGUIoR9dQeHFZ+jaLx88+uAAXJDKqdB19eQwcQhuM=;
-        b=HEvm2+nSj4PH5LU/6gxr8UxPRWMYb3AtkYKihCqVBhS7YOU/xvrzrRu9r5ah6CM+9G
-         ES87rfEJeMNQAp564UWWCjN0LVGVltkh/v3OEder/IW+JubLDdt0/rvwGH9+F7DY6KX3
-         /4nGX+MugSd8TxTDDDFx8wslUTNl0VeVry9YLDRwpcCKUYDh9kPkxE5k0j9mz2WpOIoU
-         C0JKsEuWyYOcrvtC+5vTTlnhFLy32r9tr3u+etkth7wVH9DUhmWAcbT78Ts7p9bG36ZJ
-         CdTVga3Th/jO/r0/ukHZuoyZPMrwuXEMkOXzOgoFSbPdh+s8NiR07wdBCiCsa7Q6oD5p
-         cStw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=o9BGUIoR9dQeHFZ+jaLx88+uAAXJDKqdB19eQwcQhuM=;
-        b=Dx2ws7rnYqMFINPMbuZiEKZL9hGzmibQrG90G5NcopmlGIwe91H8ylvjnBVlgwA4+x
-         NIN4IM2SM71UsSe9qbv7CAVcmMC+IU59fZsq7PEYSyh4V5ANI/j2QhTHhW9DchSuLEzm
-         8TKTJI3debxf72x4kTiyFJbcxBIa2O/UEzdFnR1DdITK5xPv1+2SVi4PAL3lQf9x6P96
-         lnRPNwEjsamX8Hbz2PknN3a+O8rOemmXmhYO4KSPWxv+3TyLyE72HitFaz7SViZeIU0c
-         BZldpWIwrWqgIjB8ULre4/xB0uLfhUWO7mY4ke1KdVz4aO7iuTa7gnCzKsZTeQ9jQLUi
-         eWZQ==
-X-Gm-Message-State: AOUpUlE6eZXzFr6GHfDk6sPTFTYCzx5opIDL3Ywh9kToAoZH2JsW5lRn
-        6DDChqOAqZWHoSPZeJIrY+iEL8Rl
-X-Google-Smtp-Source: AAOMgpf4Cr/qnZUwztoWFRW6LuY3Jsgv/KHHubeRnoDZTx1g2nH/B2avCSnaJrC4Khm33YLpli+Pcw==
-X-Received: by 2002:a62:51c6:: with SMTP id f189-v6mr7663108pfb.7.1533571089403;
-        Mon, 06 Aug 2018 08:58:09 -0700 (PDT)
-Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id p5-v6sm15943970pfn.57.2018.08.06.08.58.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 06 Aug 2018 08:58:08 -0700 (PDT)
-Subject: Re: [PATCH] USB: OHCI: ohci-sm501: complete URBs in BH context
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Alan Stern <stern@rowland.harvard.edu>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <Pine.LNX.4.44L0.1808051424440.29532-100000@netrider.rowland.org>
- <55fffb30-1388-af6a-70a6-cb738dab062f@roeck-us.net>
- <20180806083322.GA31637@lst.de>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <2035bda7-90ce-0ec3-757a-5c2ca8113bf4@roeck-us.net>
-Date:   Mon, 6 Aug 2018 08:58:07 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 6 Aug 2018 14:09:22 -0400
+X-IronPort-AV: E=Sophos;i="5.51,452,1526342400"; 
+   d="scan'208";a="77237251"
+Date:   Mon, 6 Aug 2018 17:58:52 +0200
+From:   Roger Pau =?utf-8?B?TW9ubsOp?= <roger.pau@citrix.com>
+To:     Juergen Gross <jgross@suse.com>
+CC:     <linux-kernel@vger.kernel.org>, <xen-devel@lists.xenproject.org>,
+        <linux-block@vger.kernel.org>, <konrad.wilk@oracle.com>,
+        <axboe@kernel.dk>, <boris.ostrovsky@oracle.com>
+Subject: Re: [PATCH 1/4] xen/blkback: don't keep persistent grants too long
+Message-ID: <20180806155852.7jvudjpzzq6fdp33@mac>
+References: <20180806113403.24728-1-jgross@suse.com>
+ <20180806113403.24728-2-jgross@suse.com>
 MIME-Version: 1.0
-In-Reply-To: <20180806083322.GA31637@lst.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20180806113403.24728-2-jgross@suse.com>
+User-Agent: NeoMutt/20180716
+X-ClientProxiedBy: AMSPEX02CAS02.citrite.net (10.69.22.113) To
+ AMSPEX02CL02.citrite.net (10.69.22.126)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/06/2018 01:33 AM, Christoph Hellwig wrote:
-> On Sun, Aug 05, 2018 at 02:38:22PM -0700, Guenter Roeck wrote:
->> AFAICS it used to be interrupt tolerant for all but x86 up to commit
->> 6894258eda ("dma-mapping: consolidate dma_{alloc,free}_{attrs,coherent}").
->> A quick test shows that the warning is indeed not seen if I run my test
->> on v3.18.y.
->>
->> You would have to ask Christoph why it is now interrupt-intolerant for all
->> architectures.
+On Mon, Aug 06, 2018 at 01:33:59PM +0200, Juergen Gross wrote:
+> Persistent grants are allocated until a threshold per ring is being
+> reached. Those grants won't be freed until the ring is being destroyed
+> meaning there will be resources kept busy which might no longer be
+> used.
 > 
-> interrupt-tolerant actually is a very odd wording.  x86 itself (at least
-> unless using an iommu) actually is fine with calling dma_free_* with
-> interrupts disabled, but many other architectures are not.  For many
-> architectures that are not cache coherent we'll have to manipulale
-> the kernel page tables when freeing coherent memory, which we absolutely
-> can't do from irq context.  And as usual in the kernel we try to enforce
-> the same rules on everyone to allow for portable code.
+> Instead of freeing only persistent grants until the threshold is
+> reached add a timestamp and remove all persistent grants not having
+> been in use for a minute.
 > 
-> Also except for the odd USB use cases that abuses dma_alloc_coherent
-> for the bounce buffers in device local memory you are doing something
-> wrong if you call dma_alloc*/dma_free* anywhere but during device
-> initialization and removal.  These are slow path interfaces for
-> allocating memory for things like descriptors and similar.  Your fast
-> path should be using dma_map*/dma_unmap*.
-> 
+> Signed-off-by: Juergen Gross <jgross@suse.com>
+> ---
+>  drivers/block/xen-blkback/blkback.c | 77 +++++++++++++++++++++++--------------
+>  drivers/block/xen-blkback/common.h  |  1 +
+>  2 files changed, 50 insertions(+), 28 deletions(-)
 
-FWIW, that isn't "my" code. I just had the impunity to test it.
+You should document this new parameter in
+Documentation/ABI/testing/sysfs-driver-xen-blkback.
 
-Cheers,
-Guenter
+> 
+> diff --git a/drivers/block/xen-blkback/blkback.c b/drivers/block/xen-blkback/blkback.c
+> index b55b245e8052..485e3ecab144 100644
+> --- a/drivers/block/xen-blkback/blkback.c
+> +++ b/drivers/block/xen-blkback/blkback.c
+> @@ -84,6 +84,18 @@ MODULE_PARM_DESC(max_persistent_grants,
+>                   "Maximum number of grants to map persistently");
+>  
+>  /*
+> + * How long a persistent grant is allowed to remain allocated without being in
+> + * use. The time is in seconds, 0 means indefinitely long.
+> + */
+> +
+> +unsigned int xen_blkif_pgrant_timeout = 60;
+> +module_param_named(persistent_grant_unused_seconds, xen_blkif_pgrant_timeout,
+> +		   uint, 0644);
+> +MODULE_PARM_DESC(persistent_grant_unused_seconds,
+> +		 "Time in seconds an unused persistent grant is allowed to "
+> +		 "remain allocated. Default is 60, 0 means unlimited.");
+> +
+> +/*
+>   * Maximum number of rings/queues blkback supports, allow as many queues as there
+>   * are CPUs if user has not specified a value.
+>   */
+> @@ -123,6 +135,13 @@ module_param(log_stats, int, 0644);
+>  /* Number of free pages to remove on each call to gnttab_free_pages */
+>  #define NUM_BATCH_FREE_PAGES 10
+>  
+> +static inline bool persistent_gnt_timeout(struct persistent_gnt *persistent_gnt)
+> +{
+> +	return xen_blkif_pgrant_timeout &&
+> +	       (jiffies - persistent_gnt->last_used >=
+> +		HZ * xen_blkif_pgrant_timeout);
+> +}
+> +
+>  static inline int get_free_page(struct xen_blkif_ring *ring, struct page **page)
+>  {
+>  	unsigned long flags;
+> @@ -278,6 +297,7 @@ static void put_persistent_gnt(struct xen_blkif_ring *ring,
+>  {
+>  	if(!test_bit(PERSISTENT_GNT_ACTIVE, persistent_gnt->flags))
+>  		pr_alert_ratelimited("freeing a grant already unused\n");
+> +	persistent_gnt->last_used = jiffies;
+>  	set_bit(PERSISTENT_GNT_WAS_ACTIVE, persistent_gnt->flags);
+>  	clear_bit(PERSISTENT_GNT_ACTIVE, persistent_gnt->flags);
+>  	atomic_dec(&ring->persistent_gnt_in_use);
+> @@ -374,23 +394,23 @@ static void purge_persistent_gnt(struct xen_blkif_ring *ring)
+>  	bool scan_used = false, clean_used = false;
+>  	struct rb_root *root;
+>  
+> -	if (ring->persistent_gnt_c < xen_blkif_max_pgrants ||
+> -	    (ring->persistent_gnt_c == xen_blkif_max_pgrants &&
+> -	    !ring->blkif->vbd.overflow_max_grants)) {
+> -		goto out;
+> -	}
+> -
+>  	if (work_busy(&ring->persistent_purge_work)) {
+>  		pr_alert_ratelimited("Scheduled work from previous purge is still busy, cannot purge list\n");
+>  		goto out;
+>  	}
+>  
+> -	num_clean = (xen_blkif_max_pgrants / 100) * LRU_PERCENT_CLEAN;
+> -	num_clean = ring->persistent_gnt_c - xen_blkif_max_pgrants + num_clean;
+> -	num_clean = min(ring->persistent_gnt_c, num_clean);
+> -	if ((num_clean == 0) ||
+> -	    (num_clean > (ring->persistent_gnt_c - atomic_read(&ring->persistent_gnt_in_use))))
+> -		goto out;
+> +	if (ring->persistent_gnt_c < xen_blkif_max_pgrants ||
+> +	    (ring->persistent_gnt_c == xen_blkif_max_pgrants &&
+> +	    !ring->blkif->vbd.overflow_max_grants)) {
+> +		num_clean = 0;
+> +	} else {
+> +		num_clean = (xen_blkif_max_pgrants / 100) * LRU_PERCENT_CLEAN;
+> +		num_clean = ring->persistent_gnt_c - xen_blkif_max_pgrants +
+> +			    num_clean;
+> +		num_clean = min(ring->persistent_gnt_c, num_clean);
+> +		pr_debug("Going to purge at least %u persistent grants\n",
+> +			 num_clean);
+> +	}
+>  
+>  	/*
+>  	 * At this point, we can assure that there will be no calls
+> @@ -401,9 +421,7 @@ static void purge_persistent_gnt(struct xen_blkif_ring *ring)
+>           * number of grants.
+>  	 */
+>  
+> -	total = num_clean;
+> -
+> -	pr_debug("Going to purge %u persistent grants\n", num_clean);
+> +	total = 0;
+>  
+>  	BUG_ON(!list_empty(&ring->persistent_purge_list));
+>  	root = &ring->persistent_gnts;
+> @@ -419,39 +437,42 @@ static void purge_persistent_gnt(struct xen_blkif_ring *ring)
+>  
+>  		if (test_bit(PERSISTENT_GNT_ACTIVE, persistent_gnt->flags))
+>  			continue;
+> -		if (!scan_used &&
+> +		if (!scan_used && !persistent_gnt_timeout(persistent_gnt) &&
+>  		    (test_bit(PERSISTENT_GNT_WAS_ACTIVE, persistent_gnt->flags)))
+
+If you store the jiffies of the time when the grant was last used it
+seems like we could get rid of the PERSISTENT_GNT_WAS_ACTIVE flag and
+instead use the per-grant jiffies and the jiffies from the last scan
+in order to decide which grants to remove?
+
+Thanks, Roger.
