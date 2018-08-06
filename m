@@ -3,39 +3,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBF08C46472
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 22:35:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C0B2C46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 22:35:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C82321A74
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 22:35:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C70CD21A73
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 22:35:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LtFW08u4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C82321A74
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PXaPgFD0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C70CD21A73
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732713AbeHGAqO (ORCPT
+        id S1733152AbeHGAqQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 20:46:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45134 "EHLO mail.kernel.org"
+        Mon, 6 Aug 2018 20:46:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45154 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732295AbeHGAqN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 20:46:13 -0400
+        id S1732383AbeHGAqO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 20:46:14 -0400
 Received: from ebiggers-linuxstation.kir.corp.google.com (unknown [104.132.51.88])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A798E21A6E;
-        Mon,  6 Aug 2018 22:34:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3A6D421A71;
+        Mon,  6 Aug 2018 22:35:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1533594899;
-        bh=Fl+z/fw7th53OB8OCy3uOHbhqBvoGVHD5NhmQGOkfJY=;
+        s=default; t=1533594900;
+        bh=Fu9EZ7j9F5XIRhoXaF7Vw7tS9+mrW0u4jU/bOqxWYzk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LtFW08u47cAJ8ITgsrkQ8vXB0He8SJXGkv38O2BXqNr4D1tLPFeEGybNPvY9J2Oct
-         Qx+PQoH0KRkvWgnjWjmUvzk7A/kX05vOVRA36AyM7cW4zDCAshghi8PcnRnpJy4efS
-         83fr0ad8BAiyHE35htmtqs5y7YNam6p17Z3pvEBI=
+        b=PXaPgFD0e6vaJQgHQpLyYo8R5ozcEsTFWKDPvu1OnSfrBVIfb1HeWlN23vTtkvFiR
+         zsEimRbZqii4bThmqzR2jKcp56DWSbqOHx57MjBsuvnmTXCxg3HlGJ5yUzqI6B9ZV1
+         tC9z7nFm7lO5oPaX+peeiPjhfvSmwIF5myffoBbc=
 From:   Eric Biggers <ebiggers@kernel.org>
 To:     linux-crypto@vger.kernel.org
 Cc:     linux-fscrypt@vger.kernel.org,
@@ -48,9 +48,9 @@ Cc:     linux-fscrypt@vger.kernel.org,
         Samuel Neves <samuel.c.p.neves@gmail.com>,
         Tomer Ashur <tomer.ashur@esat.kuleuven.be>,
         Eric Biggers <ebiggers@google.com>
-Subject: [RFC PATCH 5/9] crypto: arm/chacha20 - add XChaCha20 support
-Date:   Mon,  6 Aug 2018 15:32:56 -0700
-Message-Id: <20180806223300.113891-6-ebiggers@kernel.org>
+Subject: [RFC PATCH 8/9] crypto: arm/poly1305 - add NEON accelerated Poly1305 implementation
+Date:   Mon,  6 Aug 2018 15:32:59 -0700
+Message-Id: <20180806223300.113891-9-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.18.0.597.ga71716f1ad-goog
 In-Reply-To: <20180806223300.113891-1-ebiggers@kernel.org>
 References: <20180806223300.113891-1-ebiggers@kernel.org>
@@ -63,300 +63,1515 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Eric Biggers <ebiggers@google.com>
 
-Add an XChaCha20 implementation that is hooked up to the ARM NEON
-implementation of ChaCha20.  This is needed for use in the HPolyC
-construction for disk/file encryption; see the generic code patch,
-"crypto: chacha20-generic - add XChaCha20 support", for more details.
+Add the Poly1305 code from OpenSSL, which was written by Andy Polyakov.
+I took the .S file from WireGuard, whose author has made the needed
+tweaks for Linux kernel integration and verified that Andy had given
+permission for GPLv2 distribution.  I didn't make any additional changes
+to the .S file.
 
-We also update the NEON code to support HChaCha20 on one block, so we
-can use that in XChaCha20 rather than calling the generic HChaCha20.
-This required factoring the permutation out into its own macro.
+Note, for HPolyC I'd eventually like a Poly1305 implementation that
+allows precomputing powers of the key.  But for now this implementation
+just provides the existing semantics where the key and nonce are treated
+as a "one-time key" that must be provided for every message.
 
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- arch/arm/crypto/Kconfig              |   2 +-
- arch/arm/crypto/chacha20-neon-core.S |  68 ++++++++++------
- arch/arm/crypto/chacha20-neon-glue.c | 111 ++++++++++++++++++++-------
- 3 files changed, 130 insertions(+), 51 deletions(-)
+ arch/arm/crypto/Kconfig              |    5 +
+ arch/arm/crypto/Makefile             |    2 +
+ arch/arm/crypto/poly1305-neon-core.S | 1115 ++++++++++++++++++++++++++
+ arch/arm/crypto/poly1305-neon-glue.c |  325 ++++++++
+ 4 files changed, 1447 insertions(+)
+ create mode 100644 arch/arm/crypto/poly1305-neon-core.S
+ create mode 100644 arch/arm/crypto/poly1305-neon-glue.c
 
 diff --git a/arch/arm/crypto/Kconfig b/arch/arm/crypto/Kconfig
-index 925d1364727a..896dcf142719 100644
+index 75c613413e31..8c205994120e 100644
 --- a/arch/arm/crypto/Kconfig
 +++ b/arch/arm/crypto/Kconfig
-@@ -116,7 +116,7 @@ config CRYPTO_CRC32_ARM_CE
- 	select CRYPTO_HASH
- 
- config CRYPTO_CHACHA20_NEON
--	tristate "NEON accelerated ChaCha20 symmetric cipher"
-+	tristate "NEON accelerated ChaCha20 stream cipher algorithms"
- 	depends on KERNEL_MODE_NEON
+@@ -121,6 +121,11 @@ config CRYPTO_CHACHA20_NEON
  	select CRYPTO_BLKCIPHER
  	select CRYPTO_CHACHA20
-diff --git a/arch/arm/crypto/chacha20-neon-core.S b/arch/arm/crypto/chacha20-neon-core.S
-index 451a849ad518..8e63208cc025 100644
---- a/arch/arm/crypto/chacha20-neon-core.S
-+++ b/arch/arm/crypto/chacha20-neon-core.S
-@@ -24,31 +24,20 @@
- 	.fpu		neon
- 	.align		5
  
--ENTRY(chacha20_block_xor_neon)
--	// r0: Input state matrix, s
--	// r1: 1 data block output, o
--	// r2: 1 data block input, i
--
--	//
--	// This function encrypts one ChaCha20 block by loading the state matrix
--	// in four NEON registers. It performs matrix operation on four words in
--	// parallel, but requireds shuffling to rearrange the words after each
--	// round.
--	//
--
--	// x0..3 = s0..3
--	add		ip, r0, #0x20
--	vld1.32		{q0-q1}, [r0]
--	vld1.32		{q2-q3}, [ip]
--
--	vmov		q8, q0
--	vmov		q9, q1
--	vmov		q10, q2
--	vmov		q11, q3
-+/*
-+ * _chacha20_permute - permute one block
++config CRYPTO_POLY1305_NEON
++	tristate "NEON accelerated Poly1305 authenticator algorithm"
++	depends on KERNEL_MODE_NEON
++	select CRYPTO_POLY1305
++
+ config CRYPTO_SPECK_NEON
+ 	tristate "NEON accelerated Speck cipher algorithms"
+ 	depends on KERNEL_MODE_NEON
+diff --git a/arch/arm/crypto/Makefile b/arch/arm/crypto/Makefile
+index 6f58a24faa4a..6423442c86fe 100644
+--- a/arch/arm/crypto/Makefile
++++ b/arch/arm/crypto/Makefile
+@@ -10,6 +10,7 @@ obj-$(CONFIG_CRYPTO_SHA1_ARM_NEON) += sha1-arm-neon.o
+ obj-$(CONFIG_CRYPTO_SHA256_ARM) += sha256-arm.o
+ obj-$(CONFIG_CRYPTO_SHA512_ARM) += sha512-arm.o
+ obj-$(CONFIG_CRYPTO_CHACHA20_NEON) += chacha-neon.o
++obj-$(CONFIG_CRYPTO_POLY1305_NEON) += poly1305-neon.o
+ obj-$(CONFIG_CRYPTO_SPECK_NEON) += speck-neon.o
+ 
+ ce-obj-$(CONFIG_CRYPTO_AES_ARM_CE) += aes-arm-ce.o
+@@ -54,6 +55,7 @@ ghash-arm-ce-y	:= ghash-ce-core.o ghash-ce-glue.o
+ crct10dif-arm-ce-y	:= crct10dif-ce-core.o crct10dif-ce-glue.o
+ crc32-arm-ce-y:= crc32-ce-core.o crc32-ce-glue.o
+ chacha-neon-y := chacha-neon-core.o chacha-neon-glue.o
++poly1305-neon-y := poly1305-neon-core.o poly1305-neon-glue.o
+ speck-neon-y := speck-neon-core.o speck-neon-glue.o
+ 
+ ifdef REGENERATE_ARM_CRYPTO
+diff --git a/arch/arm/crypto/poly1305-neon-core.S b/arch/arm/crypto/poly1305-neon-core.S
+new file mode 100644
+index 000000000000..d6b9a80dcc8b
+--- /dev/null
++++ b/arch/arm/crypto/poly1305-neon-core.S
+@@ -0,0 +1,1115 @@
++/* SPDX-License-Identifier: OpenSSL OR (BSD-3-Clause OR GPL-2.0)
 + *
-+ * Permute one 64-byte block where the state matrix is stored in the four NEON
-+ * registers q0-q3.  It performs matrix operation on four words in parallel, but
-+ * requires shuffling to rearrange the words after each round.
-+ *
-+ * Clobbers: r3, q4
++ * Copyright (C) 2015-2018 Jason A. Donenfeld <Jason@zx2c4.com>. All Rights Reserved.
++ * Copyright 2016 The OpenSSL Project Authors. All Rights Reserved.
 + */
-+.macro	_chacha_permute
- 
- 	mov		r3, #10
- 
--.Ldoubleround:
-+.Ldoubleround_\@:
- 	// x0 += x1, x3 = rotl32(x3 ^ x0, 16)
- 	vadd.i32	q0, q0, q1
- 	veor		q3, q3, q0
-@@ -110,7 +99,25 @@ ENTRY(chacha20_block_xor_neon)
- 	vext.8		q3, q3, q3, #4
- 
- 	subs		r3, r3, #1
--	bne		.Ldoubleround
-+	bne		.Ldoubleround_\@
-+.endm
 +
-+ENTRY(chacha20_block_xor_neon)
-+	// r0: Input state matrix, s
-+	// r1: 1 data block output, o
-+	// r2: 1 data block input, i
++#include <linux/linkage.h>
 +
-+	// x0..3 = s0..3
-+	add		ip, r0, #0x20
-+	vld1.32		{q0-q1}, [r0]
-+	vld1.32		{q2-q3}, [ip]
++.text
++#if defined(__thumb2__)
++.syntax	unified
++.thumb
++#else
++.code	32
++#endif
 +
-+	vmov		q8, q0
-+	vmov		q9, q1
-+	vmov		q10, q2
-+	vmov		q11, q3
++.align	5
++ENTRY(poly1305_init_arm)
++	stmdb	sp!,{r4-r11}
 +
-+	_chacha20_permute
- 
- 	add		ip, r2, #0x20
- 	vld1.8		{q4-q5}, [r2]
-@@ -139,6 +146,21 @@ ENTRY(chacha20_block_xor_neon)
- 	bx		lr
- ENDPROC(chacha20_block_xor_neon)
- 
-+ENTRY(hchacha20_block_neon)
-+	// r0: Input state matrix, s
-+	// r1: output (8 32-bit words)
++	eor	r3,r3,r3
++	cmp	r1,#0
++	str	r3,[r0,#0]		@ zero hash value
++	str	r3,[r0,#4]
++	str	r3,[r0,#8]
++	str	r3,[r0,#12]
++	str	r3,[r0,#16]
++	str	r3,[r0,#36]		@ is_base2_26
++	add	r0,r0,#20
 +
-+	vld1.32		{q0-q1}, [r0]!
-+	vld1.32		{q2-q3}, [r0]
++#ifdef	__thumb2__
++	it	eq
++#endif
++	moveq	r0,#0
++	beq	.Lno_key
 +
-+	_chacha20_permute
++	ldrb	r4,[r1,#0]
++	mov	r10,#0x0fffffff
++	ldrb	r5,[r1,#1]
++	and	r3,r10,#-4		@ 0x0ffffffc
++	ldrb	r6,[r1,#2]
++	ldrb	r7,[r1,#3]
++	orr	r4,r4,r5,lsl#8
++	ldrb	r5,[r1,#4]
++	orr	r4,r4,r6,lsl#16
++	ldrb	r6,[r1,#5]
++	orr	r4,r4,r7,lsl#24
++	ldrb	r7,[r1,#6]
++	and	r4,r4,r10
 +
-+	vst1.8		{q0}, [r1]!
-+	vst1.8		{q3}, [r1]
++	ldrb	r8,[r1,#7]
++	orr	r5,r5,r6,lsl#8
++	ldrb	r6,[r1,#8]
++	orr	r5,r5,r7,lsl#16
++	ldrb	r7,[r1,#9]
++	orr	r5,r5,r8,lsl#24
++	ldrb	r8,[r1,#10]
++	and	r5,r5,r3
 +
-+	bx		lr
-+ENDPROC(hchacha20_block_neon)
++	ldrb	r9,[r1,#11]
++	orr	r6,r6,r7,lsl#8
++	ldrb	r7,[r1,#12]
++	orr	r6,r6,r8,lsl#16
++	ldrb	r8,[r1,#13]
++	orr	r6,r6,r9,lsl#24
++	ldrb	r9,[r1,#14]
++	and	r6,r6,r3
 +
- 	.align		5
- ENTRY(chacha20_4block_xor_neon)
- 	push		{r4-r6, lr}
-diff --git a/arch/arm/crypto/chacha20-neon-glue.c b/arch/arm/crypto/chacha20-neon-glue.c
-index ed8dec0f1768..becc7990b1d3 100644
---- a/arch/arm/crypto/chacha20-neon-glue.c
-+++ b/arch/arm/crypto/chacha20-neon-glue.c
-@@ -1,5 +1,5 @@
- /*
-- * ChaCha20 256-bit cipher algorithm, RFC7539, ARM NEON functions
-+ * ChaCha20 (RFC7539) and XChaCha20 stream ciphers, NEON accelerated
-  *
-  * Copyright (C) 2016 Linaro, Ltd. <ard.biesheuvel@linaro.org>
-  *
-@@ -30,6 +30,7 @@
- 
- asmlinkage void chacha20_block_xor_neon(u32 *state, u8 *dst, const u8 *src);
- asmlinkage void chacha20_4block_xor_neon(u32 *state, u8 *dst, const u8 *src);
-+asmlinkage void hchacha20_block_neon(const u32 *state, u32 *out);
- 
- static void chacha20_doneon(u32 *state, u8 *dst, const u8 *src,
- 			    unsigned int bytes)
-@@ -57,22 +58,17 @@ static void chacha20_doneon(u32 *state, u8 *dst, const u8 *src,
- 	}
- }
- 
--static int chacha20_neon(struct skcipher_request *req)
-+static int chacha20_neon_stream_xor(struct skcipher_request *req,
-+				    struct chacha_ctx *ctx, u8 *iv)
- {
--	struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(req);
--	struct chacha_ctx *ctx = crypto_skcipher_ctx(tfm);
- 	struct skcipher_walk walk;
- 	u32 state[16];
- 	int err;
- 
--	if (req->cryptlen <= CHACHA_BLOCK_SIZE || !may_use_simd())
--		return crypto_chacha_crypt(req);
--
- 	err = skcipher_walk_virt(&walk, req, true);
- 
--	crypto_chacha_init(state, ctx, walk.iv);
-+	crypto_chacha_init(state, ctx, iv);
- 
--	kernel_neon_begin();
- 	while (walk.nbytes > 0) {
- 		unsigned int nbytes = walk.nbytes;
- 
-@@ -83,27 +79,85 @@ static int chacha20_neon(struct skcipher_request *req)
- 				nbytes);
- 		err = skcipher_walk_done(&walk, walk.nbytes - nbytes);
- 	}
++	ldrb	r10,[r1,#15]
++	orr	r7,r7,r8,lsl#8
++	str	r4,[r0,#0]
++	orr	r7,r7,r9,lsl#16
++	str	r5,[r0,#4]
++	orr	r7,r7,r10,lsl#24
++	str	r6,[r0,#8]
++	and	r7,r7,r3
++	str	r7,[r0,#12]
++.Lno_key:
++	ldmia	sp!,{r4-r11}
++#if __LINUX_ARM_ARCH__ >= 5
++	bx	lr				@ bx	lr
++#else
++	tst	lr,#1
++	moveq	pc,lr			@ be binary compatible with V4, yet
++	.word	0xe12fff1e			@ interoperable with Thumb ISA:-)
++#endif
++ENDPROC(poly1305_init_arm)
 +
-+	return err;
++.align	5
++ENTRY(poly1305_blocks_arm)
++.Lpoly1305_blocks_arm:
++	stmdb	sp!,{r3-r11,lr}
++
++	ands	r2,r2,#-16
++	beq	.Lno_data
++
++	cmp	r3,#0
++	add	r2,r2,r1		@ end pointer
++	sub	sp,sp,#32
++
++	ldmia	r0,{r4-r12}		@ load context
++
++	str	r0,[sp,#12]		@ offload stuff
++	mov	lr,r1
++	str	r2,[sp,#16]
++	str	r10,[sp,#20]
++	str	r11,[sp,#24]
++	str	r12,[sp,#28]
++	b	.Loop
++
++.Loop:
++#if __LINUX_ARM_ARCH__ < 7
++	ldrb	r0,[lr],#16		@ load input
++#ifdef	__thumb2__
++	it	hi
++#endif
++	addhi	r8,r8,#1		@ 1<<128
++	ldrb	r1,[lr,#-15]
++	ldrb	r2,[lr,#-14]
++	ldrb	r3,[lr,#-13]
++	orr	r1,r0,r1,lsl#8
++	ldrb	r0,[lr,#-12]
++	orr	r2,r1,r2,lsl#16
++	ldrb	r1,[lr,#-11]
++	orr	r3,r2,r3,lsl#24
++	ldrb	r2,[lr,#-10]
++	adds	r4,r4,r3		@ accumulate input
++
++	ldrb	r3,[lr,#-9]
++	orr	r1,r0,r1,lsl#8
++	ldrb	r0,[lr,#-8]
++	orr	r2,r1,r2,lsl#16
++	ldrb	r1,[lr,#-7]
++	orr	r3,r2,r3,lsl#24
++	ldrb	r2,[lr,#-6]
++	adcs	r5,r5,r3
++
++	ldrb	r3,[lr,#-5]
++	orr	r1,r0,r1,lsl#8
++	ldrb	r0,[lr,#-4]
++	orr	r2,r1,r2,lsl#16
++	ldrb	r1,[lr,#-3]
++	orr	r3,r2,r3,lsl#24
++	ldrb	r2,[lr,#-2]
++	adcs	r6,r6,r3
++
++	ldrb	r3,[lr,#-1]
++	orr	r1,r0,r1,lsl#8
++	str	lr,[sp,#8]		@ offload input pointer
++	orr	r2,r1,r2,lsl#16
++	add	r10,r10,r10,lsr#2
++	orr	r3,r2,r3,lsl#24
++#else
++	ldr	r0,[lr],#16		@ load input
++#ifdef	__thumb2__
++	it	hi
++#endif
++	addhi	r8,r8,#1		@ padbit
++	ldr	r1,[lr,#-12]
++	ldr	r2,[lr,#-8]
++	ldr	r3,[lr,#-4]
++#ifdef	__ARMEB__
++	rev	r0,r0
++	rev	r1,r1
++	rev	r2,r2
++	rev	r3,r3
++#endif
++	adds	r4,r4,r0		@ accumulate input
++	str	lr,[sp,#8]		@ offload input pointer
++	adcs	r5,r5,r1
++	add	r10,r10,r10,lsr#2
++	adcs	r6,r6,r2
++#endif
++	add	r11,r11,r11,lsr#2
++	adcs	r7,r7,r3
++	add	r12,r12,r12,lsr#2
++
++	umull	r2,r3,r5,r9
++	 adc	r8,r8,#0
++	umull	r0,r1,r4,r9
++	umlal	r2,r3,r8,r10
++	umlal	r0,r1,r7,r10
++	ldr	r10,[sp,#20]		@ reload r10
++	umlal	r2,r3,r6,r12
++	umlal	r0,r1,r5,r12
++	umlal	r2,r3,r7,r11
++	umlal	r0,r1,r6,r11
++	umlal	r2,r3,r4,r10
++	str	r0,[sp,#0]		@ future r4
++	 mul	r0,r11,r8
++	ldr	r11,[sp,#24]		@ reload r11
++	adds	r2,r2,r1		@ d1+=d0>>32
++	 eor	r1,r1,r1
++	adc	lr,r3,#0		@ future r6
++	str	r2,[sp,#4]		@ future r5
++
++	mul	r2,r12,r8
++	eor	r3,r3,r3
++	umlal	r0,r1,r7,r12
++	ldr	r12,[sp,#28]		@ reload r12
++	umlal	r2,r3,r7,r9
++	umlal	r0,r1,r6,r9
++	umlal	r2,r3,r6,r10
++	umlal	r0,r1,r5,r10
++	umlal	r2,r3,r5,r11
++	umlal	r0,r1,r4,r11
++	umlal	r2,r3,r4,r12
++	ldr	r4,[sp,#0]
++	mul	r8,r9,r8
++	ldr	r5,[sp,#4]
++
++	adds	r6,lr,r0		@ d2+=d1>>32
++	ldr	lr,[sp,#8]		@ reload input pointer
++	adc	r1,r1,#0
++	adds	r7,r2,r1		@ d3+=d2>>32
++	ldr	r0,[sp,#16]		@ reload end pointer
++	adc	r3,r3,#0
++	add	r8,r8,r3		@ h4+=d3>>32
++
++	and	r1,r8,#-4
++	and	r8,r8,#3
++	add	r1,r1,r1,lsr#2		@ *=5
++	adds	r4,r4,r1
++	adcs	r5,r5,#0
++	adcs	r6,r6,#0
++	adcs	r7,r7,#0
++	adc	r8,r8,#0
++
++	cmp	r0,lr			@ done yet?
++	bhi	.Loop
++
++	ldr	r0,[sp,#12]
++	add	sp,sp,#32
++	stmia	r0,{r4-r8}		@ store the result
++
++.Lno_data:
++#if __LINUX_ARM_ARCH__ >= 5
++	ldmia	sp!,{r3-r11,pc}
++#else
++	ldmia	sp!,{r3-r11,lr}
++	tst	lr,#1
++	moveq	pc,lr			@ be binary compatible with V4, yet
++	.word	0xe12fff1e			@ interoperable with Thumb ISA:-)
++#endif
++ENDPROC(poly1305_blocks_arm)
++
++.align	5
++ENTRY(poly1305_emit_arm)
++	stmdb	sp!,{r4-r11}
++.Lpoly1305_emit_enter:
++	ldmia	r0,{r3-r7}
++	adds	r8,r3,#5		@ compare to modulus
++	adcs	r9,r4,#0
++	adcs	r10,r5,#0
++	adcs	r11,r6,#0
++	adc	r7,r7,#0
++	tst	r7,#4			@ did it carry/borrow?
++
++#ifdef	__thumb2__
++	it	ne
++#endif
++	movne	r3,r8
++	ldr	r8,[r2,#0]
++#ifdef	__thumb2__
++	it	ne
++#endif
++	movne	r4,r9
++	ldr	r9,[r2,#4]
++#ifdef	__thumb2__
++	it	ne
++#endif
++	movne	r5,r10
++	ldr	r10,[r2,#8]
++#ifdef	__thumb2__
++	it	ne
++#endif
++	movne	r6,r11
++	ldr	r11,[r2,#12]
++
++	adds	r3,r3,r8
++	adcs	r4,r4,r9
++	adcs	r5,r5,r10
++	adc	r6,r6,r11
++
++#if __LINUX_ARM_ARCH__ >= 7
++#ifdef __ARMEB__
++	rev	r3,r3
++	rev	r4,r4
++	rev	r5,r5
++	rev	r6,r6
++#endif
++	str	r3,[r1,#0]
++	str	r4,[r1,#4]
++	str	r5,[r1,#8]
++	str	r6,[r1,#12]
++#else
++	strb	r3,[r1,#0]
++	mov	r3,r3,lsr#8
++	strb	r4,[r1,#4]
++	mov	r4,r4,lsr#8
++	strb	r5,[r1,#8]
++	mov	r5,r5,lsr#8
++	strb	r6,[r1,#12]
++	mov	r6,r6,lsr#8
++
++	strb	r3,[r1,#1]
++	mov	r3,r3,lsr#8
++	strb	r4,[r1,#5]
++	mov	r4,r4,lsr#8
++	strb	r5,[r1,#9]
++	mov	r5,r5,lsr#8
++	strb	r6,[r1,#13]
++	mov	r6,r6,lsr#8
++
++	strb	r3,[r1,#2]
++	mov	r3,r3,lsr#8
++	strb	r4,[r1,#6]
++	mov	r4,r4,lsr#8
++	strb	r5,[r1,#10]
++	mov	r5,r5,lsr#8
++	strb	r6,[r1,#14]
++	mov	r6,r6,lsr#8
++
++	strb	r3,[r1,#3]
++	strb	r4,[r1,#7]
++	strb	r5,[r1,#11]
++	strb	r6,[r1,#15]
++#endif
++	ldmia	sp!,{r4-r11}
++#if __LINUX_ARM_ARCH__ >= 5
++	bx	lr				@ bx	lr
++#else
++	tst	lr,#1
++	moveq	pc,lr			@ be binary compatible with V4, yet
++	.word	0xe12fff1e			@ interoperable with Thumb ISA:-)
++#endif
++ENDPROC(poly1305_emit_arm)
++
++
++#if __LINUX_ARM_ARCH__ >= 7
++.fpu	neon
++
++.align	5
++ENTRY(poly1305_init_neon)
++.Lpoly1305_init_neon:
++	ldr	r4,[r0,#20]		@ load key base 2^32
++	ldr	r5,[r0,#24]
++	ldr	r6,[r0,#28]
++	ldr	r7,[r0,#32]
++
++	and	r2,r4,#0x03ffffff	@ base 2^32 -> base 2^26
++	mov	r3,r4,lsr#26
++	mov	r4,r5,lsr#20
++	orr	r3,r3,r5,lsl#6
++	mov	r5,r6,lsr#14
++	orr	r4,r4,r6,lsl#12
++	mov	r6,r7,lsr#8
++	orr	r5,r5,r7,lsl#18
++	and	r3,r3,#0x03ffffff
++	and	r4,r4,#0x03ffffff
++	and	r5,r5,#0x03ffffff
++
++	vdup.32	d0,r2			@ r^1 in both lanes
++	add	r2,r3,r3,lsl#2		@ *5
++	vdup.32	d1,r3
++	add	r3,r4,r4,lsl#2
++	vdup.32	d2,r2
++	vdup.32	d3,r4
++	add	r4,r5,r5,lsl#2
++	vdup.32	d4,r3
++	vdup.32	d5,r5
++	add	r5,r6,r6,lsl#2
++	vdup.32	d6,r4
++	vdup.32	d7,r6
++	vdup.32	d8,r5
++
++	mov	r5,#2		@ counter
++
++.Lsquare_neon:
++	@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
++	@ d0 = h0*r0 + h4*5*r1 + h3*5*r2 + h2*5*r3 + h1*5*r4
++	@ d1 = h1*r0 + h0*r1   + h4*5*r2 + h3*5*r3 + h2*5*r4
++	@ d2 = h2*r0 + h1*r1   + h0*r2   + h4*5*r3 + h3*5*r4
++	@ d3 = h3*r0 + h2*r1   + h1*r2   + h0*r3   + h4*5*r4
++	@ d4 = h4*r0 + h3*r1   + h2*r2   + h1*r3   + h0*r4
++
++	vmull.u32	q5,d0,d0[1]
++	vmull.u32	q6,d1,d0[1]
++	vmull.u32	q7,d3,d0[1]
++	vmull.u32	q8,d5,d0[1]
++	vmull.u32	q9,d7,d0[1]
++
++	vmlal.u32	q5,d7,d2[1]
++	vmlal.u32	q6,d0,d1[1]
++	vmlal.u32	q7,d1,d1[1]
++	vmlal.u32	q8,d3,d1[1]
++	vmlal.u32	q9,d5,d1[1]
++
++	vmlal.u32	q5,d5,d4[1]
++	vmlal.u32	q6,d7,d4[1]
++	vmlal.u32	q8,d1,d3[1]
++	vmlal.u32	q7,d0,d3[1]
++	vmlal.u32	q9,d3,d3[1]
++
++	vmlal.u32	q5,d3,d6[1]
++	vmlal.u32	q8,d0,d5[1]
++	vmlal.u32	q6,d5,d6[1]
++	vmlal.u32	q7,d7,d6[1]
++	vmlal.u32	q9,d1,d5[1]
++
++	vmlal.u32	q8,d7,d8[1]
++	vmlal.u32	q5,d1,d8[1]
++	vmlal.u32	q6,d3,d8[1]
++	vmlal.u32	q7,d5,d8[1]
++	vmlal.u32	q9,d0,d7[1]
++
++	@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
++	@ lazy reduction as discussed in "NEON crypto" by D.J. Bernstein
++	@ and P. Schwabe
++	@
++	@ H0>>+H1>>+H2>>+H3>>+H4
++	@ H3>>+H4>>*5+H0>>+H1
++	@
++	@ Trivia.
++	@
++	@ Result of multiplication of n-bit number by m-bit number is
++	@ n+m bits wide. However! Even though 2^n is a n+1-bit number,
++	@ m-bit number multiplied by 2^n is still n+m bits wide.
++	@
++	@ Sum of two n-bit numbers is n+1 bits wide, sum of three - n+2,
++	@ and so is sum of four. Sum of 2^m n-m-bit numbers and n-bit
++	@ one is n+1 bits wide.
++	@
++	@ >>+ denotes Hnext += Hn>>26, Hn &= 0x3ffffff. This means that
++	@ H0, H2, H3 are guaranteed to be 26 bits wide, while H1 and H4
++	@ can be 27. However! In cases when their width exceeds 26 bits
++	@ they are limited by 2^26+2^6. This in turn means that *sum*
++	@ of the products with these values can still be viewed as sum
++	@ of 52-bit numbers as long as the amount of addends is not a
++	@ power of 2. For example,
++	@
++	@ H4 = H4*R0 + H3*R1 + H2*R2 + H1*R3 + H0 * R4,
++	@
++	@ which can't be larger than 5 * (2^26 + 2^6) * (2^26 + 2^6), or
++	@ 5 * (2^52 + 2*2^32 + 2^12), which in turn is smaller than
++	@ 8 * (2^52) or 2^55. However, the value is then multiplied by
++	@ by 5, so we should be looking at 5 * 5 * (2^52 + 2^33 + 2^12),
++	@ which is less than 32 * (2^52) or 2^57. And when processing
++	@ data we are looking at triple as many addends...
++	@
++	@ In key setup procedure pre-reduced H0 is limited by 5*4+1 and
++	@ 5*H4 - by 5*5 52-bit addends, or 57 bits. But when hashing the
++	@ input H0 is limited by (5*4+1)*3 addends, or 58 bits, while
++	@ 5*H4 by 5*5*3, or 59[!] bits. How is this relevant? vmlal.u32
++	@ instruction accepts 2x32-bit input and writes 2x64-bit result.
++	@ This means that result of reduction have to be compressed upon
++	@ loop wrap-around. This can be done in the process of reduction
++	@ to minimize amount of instructions [as well as amount of
++	@ 128-bit instructions, which benefits low-end processors], but
++	@ one has to watch for H2 (which is narrower than H0) and 5*H4
++	@ not being wider than 58 bits, so that result of right shift
++	@ by 26 bits fits in 32 bits. This is also useful on x86,
++	@ because it allows to use paddd in place for paddq, which
++	@ benefits Atom, where paddq is ridiculously slow.
++
++	vshr.u64	q15,q8,#26
++	vmovn.i64	d16,q8
++	 vshr.u64	q4,q5,#26
++	 vmovn.i64	d10,q5
++	vadd.i64	q9,q9,q15		@ h3 -> h4
++	vbic.i32	d16,#0xfc000000	@ &=0x03ffffff
++	 vadd.i64	q6,q6,q4		@ h0 -> h1
++	 vbic.i32	d10,#0xfc000000
++
++	vshrn.u64	d30,q9,#26
++	vmovn.i64	d18,q9
++	 vshr.u64	q4,q6,#26
++	 vmovn.i64	d12,q6
++	 vadd.i64	q7,q7,q4		@ h1 -> h2
++	vbic.i32	d18,#0xfc000000
++	 vbic.i32	d12,#0xfc000000
++
++	vadd.i32	d10,d10,d30
++	vshl.u32	d30,d30,#2
++	 vshrn.u64	d8,q7,#26
++	 vmovn.i64	d14,q7
++	vadd.i32	d10,d10,d30	@ h4 -> h0
++	 vadd.i32	d16,d16,d8	@ h2 -> h3
++	 vbic.i32	d14,#0xfc000000
++
++	vshr.u32	d30,d10,#26
++	vbic.i32	d10,#0xfc000000
++	 vshr.u32	d8,d16,#26
++	 vbic.i32	d16,#0xfc000000
++	vadd.i32	d12,d12,d30	@ h0 -> h1
++	 vadd.i32	d18,d18,d8	@ h3 -> h4
++
++	subs		r5,r5,#1
++	beq		.Lsquare_break_neon
++
++	add		r6,r0,#(48+0*9*4)
++	add		r7,r0,#(48+1*9*4)
++
++	vtrn.32		d0,d10		@ r^2:r^1
++	vtrn.32		d3,d14
++	vtrn.32		d5,d16
++	vtrn.32		d1,d12
++	vtrn.32		d7,d18
++
++	vshl.u32	d4,d3,#2		@ *5
++	vshl.u32	d6,d5,#2
++	vshl.u32	d2,d1,#2
++	vshl.u32	d8,d7,#2
++	vadd.i32	d4,d4,d3
++	vadd.i32	d2,d2,d1
++	vadd.i32	d6,d6,d5
++	vadd.i32	d8,d8,d7
++
++	vst4.32		{d0[0],d1[0],d2[0],d3[0]},[r6]!
++	vst4.32		{d0[1],d1[1],d2[1],d3[1]},[r7]!
++	vst4.32		{d4[0],d5[0],d6[0],d7[0]},[r6]!
++	vst4.32		{d4[1],d5[1],d6[1],d7[1]},[r7]!
++	vst1.32		{d8[0]},[r6,:32]
++	vst1.32		{d8[1]},[r7,:32]
++
++	b		.Lsquare_neon
++
++.align	4
++.Lsquare_break_neon:
++	add		r6,r0,#(48+2*4*9)
++	add		r7,r0,#(48+3*4*9)
++
++	vmov		d0,d10		@ r^4:r^3
++	vshl.u32	d2,d12,#2		@ *5
++	vmov		d1,d12
++	vshl.u32	d4,d14,#2
++	vmov		d3,d14
++	vshl.u32	d6,d16,#2
++	vmov		d5,d16
++	vshl.u32	d8,d18,#2
++	vmov		d7,d18
++	vadd.i32	d2,d2,d12
++	vadd.i32	d4,d4,d14
++	vadd.i32	d6,d6,d16
++	vadd.i32	d8,d8,d18
++
++	vst4.32		{d0[0],d1[0],d2[0],d3[0]},[r6]!
++	vst4.32		{d0[1],d1[1],d2[1],d3[1]},[r7]!
++	vst4.32		{d4[0],d5[0],d6[0],d7[0]},[r6]!
++	vst4.32		{d4[1],d5[1],d6[1],d7[1]},[r7]!
++	vst1.32		{d8[0]},[r6]
++	vst1.32		{d8[1]},[r7]
++
++	bx	lr				@ bx	lr
++ENDPROC(poly1305_init_neon)
++
++.align	5
++ENTRY(poly1305_blocks_neon)
++	ldr	ip,[r0,#36]		@ is_base2_26
++	ands	r2,r2,#-16
++	beq	.Lno_data_neon
++
++	cmp	r2,#64
++	bhs	.Lenter_neon
++	tst	ip,ip			@ is_base2_26?
++	beq	.Lpoly1305_blocks_arm
++
++.Lenter_neon:
++	stmdb	sp!,{r4-r7}
++	vstmdb	sp!,{d8-d15}		@ ABI specification says so
++
++	tst	ip,ip			@ is_base2_26?
++	bne	.Lbase2_26_neon
++
++	stmdb	sp!,{r1-r3,lr}
++	bl	.Lpoly1305_init_neon
++
++	ldr	r4,[r0,#0]		@ load hash value base 2^32
++	ldr	r5,[r0,#4]
++	ldr	r6,[r0,#8]
++	ldr	r7,[r0,#12]
++	ldr	ip,[r0,#16]
++
++	and	r2,r4,#0x03ffffff	@ base 2^32 -> base 2^26
++	mov	r3,r4,lsr#26
++	 veor	d10,d10,d10
++	mov	r4,r5,lsr#20
++	orr	r3,r3,r5,lsl#6
++	 veor	d12,d12,d12
++	mov	r5,r6,lsr#14
++	orr	r4,r4,r6,lsl#12
++	 veor	d14,d14,d14
++	mov	r6,r7,lsr#8
++	orr	r5,r5,r7,lsl#18
++	 veor	d16,d16,d16
++	and	r3,r3,#0x03ffffff
++	orr	r6,r6,ip,lsl#24
++	 veor	d18,d18,d18
++	and	r4,r4,#0x03ffffff
++	mov	r1,#1
++	and	r5,r5,#0x03ffffff
++	str	r1,[r0,#36]		@ is_base2_26
++
++	vmov.32	d10[0],r2
++	vmov.32	d12[0],r3
++	vmov.32	d14[0],r4
++	vmov.32	d16[0],r5
++	vmov.32	d18[0],r6
++	adr	r5,.Lzeros
++
++	ldmia	sp!,{r1-r3,lr}
++	b	.Lbase2_32_neon
++
++.align	4
++.Lbase2_26_neon:
++	@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
++	@ load hash value
++
++	veor		d10,d10,d10
++	veor		d12,d12,d12
++	veor		d14,d14,d14
++	veor		d16,d16,d16
++	veor		d18,d18,d18
++	vld4.32		{d10[0],d12[0],d14[0],d16[0]},[r0]!
++	adr		r5,.Lzeros
++	vld1.32		{d18[0]},[r0]
++	sub		r0,r0,#16		@ rewind
++
++.Lbase2_32_neon:
++	add		r4,r1,#32
++	mov		r3,r3,lsl#24
++	tst		r2,#31
++	beq		.Leven
++
++	vld4.32		{d20[0],d22[0],d24[0],d26[0]},[r1]!
++	vmov.32		d28[0],r3
++	sub		r2,r2,#16
++	add		r4,r1,#32
++
++#ifdef	__ARMEB__
++	vrev32.8	q10,q10
++	vrev32.8	q13,q13
++	vrev32.8	q11,q11
++	vrev32.8	q12,q12
++#endif
++	vsri.u32	d28,d26,#8	@ base 2^32 -> base 2^26
++	vshl.u32	d26,d26,#18
++
++	vsri.u32	d26,d24,#14
++	vshl.u32	d24,d24,#12
++	vadd.i32	d29,d28,d18	@ add hash value and move to #hi
++
++	vbic.i32	d26,#0xfc000000
++	vsri.u32	d24,d22,#20
++	vshl.u32	d22,d22,#6
++
++	vbic.i32	d24,#0xfc000000
++	vsri.u32	d22,d20,#26
++	vadd.i32	d27,d26,d16
++
++	vbic.i32	d20,#0xfc000000
++	vbic.i32	d22,#0xfc000000
++	vadd.i32	d25,d24,d14
++
++	vadd.i32	d21,d20,d10
++	vadd.i32	d23,d22,d12
++
++	mov		r7,r5
++	add		r6,r0,#48
++
++	cmp		r2,r2
++	b		.Long_tail
++
++.align	4
++.Leven:
++	subs		r2,r2,#64
++	it		lo
++	movlo		r4,r5
++
++	vmov.i32	q14,#1<<24		@ padbit, yes, always
++	vld4.32		{d20,d22,d24,d26},[r1]	@ inp[0:1]
++	add		r1,r1,#64
++	vld4.32		{d21,d23,d25,d27},[r4]	@ inp[2:3] (or 0)
++	add		r4,r4,#64
++	itt		hi
++	addhi		r7,r0,#(48+1*9*4)
++	addhi		r6,r0,#(48+3*9*4)
++
++#ifdef	__ARMEB__
++	vrev32.8	q10,q10
++	vrev32.8	q13,q13
++	vrev32.8	q11,q11
++	vrev32.8	q12,q12
++#endif
++	vsri.u32	q14,q13,#8		@ base 2^32 -> base 2^26
++	vshl.u32	q13,q13,#18
++
++	vsri.u32	q13,q12,#14
++	vshl.u32	q12,q12,#12
++
++	vbic.i32	q13,#0xfc000000
++	vsri.u32	q12,q11,#20
++	vshl.u32	q11,q11,#6
++
++	vbic.i32	q12,#0xfc000000
++	vsri.u32	q11,q10,#26
++
++	vbic.i32	q10,#0xfc000000
++	vbic.i32	q11,#0xfc000000
++
++	bls		.Lskip_loop
++
++	vld4.32		{d0[1],d1[1],d2[1],d3[1]},[r7]!	@ load r^2
++	vld4.32		{d0[0],d1[0],d2[0],d3[0]},[r6]!	@ load r^4
++	vld4.32		{d4[1],d5[1],d6[1],d7[1]},[r7]!
++	vld4.32		{d4[0],d5[0],d6[0],d7[0]},[r6]!
++	b		.Loop_neon
++
++.align	5
++.Loop_neon:
++	@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
++	@ ((inp[0]*r^4+inp[2]*r^2+inp[4])*r^4+inp[6]*r^2
++	@ ((inp[1]*r^4+inp[3]*r^2+inp[5])*r^3+inp[7]*r
++	@   ___________________/
++	@ ((inp[0]*r^4+inp[2]*r^2+inp[4])*r^4+inp[6]*r^2+inp[8])*r^2
++	@ ((inp[1]*r^4+inp[3]*r^2+inp[5])*r^4+inp[7]*r^2+inp[9])*r
++	@   ___________________/ ____________________/
++	@
++	@ Note that we start with inp[2:3]*r^2. This is because it
++	@ doesn't depend on reduction in previous iteration.
++	@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
++	@ d4 = h4*r0 + h3*r1   + h2*r2   + h1*r3   + h0*r4
++	@ d3 = h3*r0 + h2*r1   + h1*r2   + h0*r3   + h4*5*r4
++	@ d2 = h2*r0 + h1*r1   + h0*r2   + h4*5*r3 + h3*5*r4
++	@ d1 = h1*r0 + h0*r1   + h4*5*r2 + h3*5*r3 + h2*5*r4
++	@ d0 = h0*r0 + h4*5*r1 + h3*5*r2 + h2*5*r3 + h1*5*r4
++
++	@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
++	@ inp[2:3]*r^2
++
++	vadd.i32	d24,d24,d14	@ accumulate inp[0:1]
++	vmull.u32	q7,d25,d0[1]
++	vadd.i32	d20,d20,d10
++	vmull.u32	q5,d21,d0[1]
++	vadd.i32	d26,d26,d16
++	vmull.u32	q8,d27,d0[1]
++	vmlal.u32	q7,d23,d1[1]
++	vadd.i32	d22,d22,d12
++	vmull.u32	q6,d23,d0[1]
++
++	vadd.i32	d28,d28,d18
++	vmull.u32	q9,d29,d0[1]
++	subs		r2,r2,#64
++	vmlal.u32	q5,d29,d2[1]
++	it		lo
++	movlo		r4,r5
++	vmlal.u32	q8,d25,d1[1]
++	vld1.32		d8[1],[r7,:32]
++	vmlal.u32	q6,d21,d1[1]
++	vmlal.u32	q9,d27,d1[1]
++
++	vmlal.u32	q5,d27,d4[1]
++	vmlal.u32	q8,d23,d3[1]
++	vmlal.u32	q9,d25,d3[1]
++	vmlal.u32	q6,d29,d4[1]
++	vmlal.u32	q7,d21,d3[1]
++
++	vmlal.u32	q8,d21,d5[1]
++	vmlal.u32	q5,d25,d6[1]
++	vmlal.u32	q9,d23,d5[1]
++	vmlal.u32	q6,d27,d6[1]
++	vmlal.u32	q7,d29,d6[1]
++
++	vmlal.u32	q8,d29,d8[1]
++	vmlal.u32	q5,d23,d8[1]
++	vmlal.u32	q9,d21,d7[1]
++	vmlal.u32	q6,d25,d8[1]
++	vmlal.u32	q7,d27,d8[1]
++
++	vld4.32		{d21,d23,d25,d27},[r4]	@ inp[2:3] (or 0)
++	add		r4,r4,#64
++
++	@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
++	@ (hash+inp[0:1])*r^4 and accumulate
++
++	vmlal.u32	q8,d26,d0[0]
++	vmlal.u32	q5,d20,d0[0]
++	vmlal.u32	q9,d28,d0[0]
++	vmlal.u32	q6,d22,d0[0]
++	vmlal.u32	q7,d24,d0[0]
++	vld1.32		d8[0],[r6,:32]
++
++	vmlal.u32	q8,d24,d1[0]
++	vmlal.u32	q5,d28,d2[0]
++	vmlal.u32	q9,d26,d1[0]
++	vmlal.u32	q6,d20,d1[0]
++	vmlal.u32	q7,d22,d1[0]
++
++	vmlal.u32	q8,d22,d3[0]
++	vmlal.u32	q5,d26,d4[0]
++	vmlal.u32	q9,d24,d3[0]
++	vmlal.u32	q6,d28,d4[0]
++	vmlal.u32	q7,d20,d3[0]
++
++	vmlal.u32	q8,d20,d5[0]
++	vmlal.u32	q5,d24,d6[0]
++	vmlal.u32	q9,d22,d5[0]
++	vmlal.u32	q6,d26,d6[0]
++	vmlal.u32	q8,d28,d8[0]
++
++	vmlal.u32	q7,d28,d6[0]
++	vmlal.u32	q5,d22,d8[0]
++	vmlal.u32	q9,d20,d7[0]
++	vmov.i32	q14,#1<<24		@ padbit, yes, always
++	vmlal.u32	q6,d24,d8[0]
++	vmlal.u32	q7,d26,d8[0]
++
++	vld4.32		{d20,d22,d24,d26},[r1]	@ inp[0:1]
++	add		r1,r1,#64
++#ifdef	__ARMEB__
++	vrev32.8	q10,q10
++	vrev32.8	q11,q11
++	vrev32.8	q12,q12
++	vrev32.8	q13,q13
++#endif
++
++	@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
++	@ lazy reduction interleaved with base 2^32 -> base 2^26 of
++	@ inp[0:3] previously loaded to q10-q13 and smashed to q10-q14.
++
++	vshr.u64	q15,q8,#26
++	vmovn.i64	d16,q8
++	 vshr.u64	q4,q5,#26
++	 vmovn.i64	d10,q5
++	vadd.i64	q9,q9,q15		@ h3 -> h4
++	vbic.i32	d16,#0xfc000000
++	  vsri.u32	q14,q13,#8		@ base 2^32 -> base 2^26
++	 vadd.i64	q6,q6,q4		@ h0 -> h1
++	  vshl.u32	q13,q13,#18
++	 vbic.i32	d10,#0xfc000000
++
++	vshrn.u64	d30,q9,#26
++	vmovn.i64	d18,q9
++	 vshr.u64	q4,q6,#26
++	 vmovn.i64	d12,q6
++	 vadd.i64	q7,q7,q4		@ h1 -> h2
++	  vsri.u32	q13,q12,#14
++	vbic.i32	d18,#0xfc000000
++	  vshl.u32	q12,q12,#12
++	 vbic.i32	d12,#0xfc000000
++
++	vadd.i32	d10,d10,d30
++	vshl.u32	d30,d30,#2
++	  vbic.i32	q13,#0xfc000000
++	 vshrn.u64	d8,q7,#26
++	 vmovn.i64	d14,q7
++	vaddl.u32	q5,d10,d30	@ h4 -> h0 [widen for a sec]
++	  vsri.u32	q12,q11,#20
++	 vadd.i32	d16,d16,d8	@ h2 -> h3
++	  vshl.u32	q11,q11,#6
++	 vbic.i32	d14,#0xfc000000
++	  vbic.i32	q12,#0xfc000000
++
++	vshrn.u64	d30,q5,#26		@ re-narrow
++	vmovn.i64	d10,q5
++	  vsri.u32	q11,q10,#26
++	  vbic.i32	q10,#0xfc000000
++	 vshr.u32	d8,d16,#26
++	 vbic.i32	d16,#0xfc000000
++	vbic.i32	d10,#0xfc000000
++	vadd.i32	d12,d12,d30	@ h0 -> h1
++	 vadd.i32	d18,d18,d8	@ h3 -> h4
++	  vbic.i32	q11,#0xfc000000
++
++	bhi		.Loop_neon
++
++.Lskip_loop:
++	@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
++	@ multiply (inp[0:1]+hash) or inp[2:3] by r^2:r^1
++
++	add		r7,r0,#(48+0*9*4)
++	add		r6,r0,#(48+1*9*4)
++	adds		r2,r2,#32
++	it		ne
++	movne		r2,#0
++	bne		.Long_tail
++
++	vadd.i32	d25,d24,d14	@ add hash value and move to #hi
++	vadd.i32	d21,d20,d10
++	vadd.i32	d27,d26,d16
++	vadd.i32	d23,d22,d12
++	vadd.i32	d29,d28,d18
++
++.Long_tail:
++	vld4.32		{d0[1],d1[1],d2[1],d3[1]},[r7]!	@ load r^1
++	vld4.32		{d0[0],d1[0],d2[0],d3[0]},[r6]!	@ load r^2
++
++	vadd.i32	d24,d24,d14	@ can be redundant
++	vmull.u32	q7,d25,d0
++	vadd.i32	d20,d20,d10
++	vmull.u32	q5,d21,d0
++	vadd.i32	d26,d26,d16
++	vmull.u32	q8,d27,d0
++	vadd.i32	d22,d22,d12
++	vmull.u32	q6,d23,d0
++	vadd.i32	d28,d28,d18
++	vmull.u32	q9,d29,d0
++
++	vmlal.u32	q5,d29,d2
++	vld4.32		{d4[1],d5[1],d6[1],d7[1]},[r7]!
++	vmlal.u32	q8,d25,d1
++	vld4.32		{d4[0],d5[0],d6[0],d7[0]},[r6]!
++	vmlal.u32	q6,d21,d1
++	vmlal.u32	q9,d27,d1
++	vmlal.u32	q7,d23,d1
++
++	vmlal.u32	q8,d23,d3
++	vld1.32		d8[1],[r7,:32]
++	vmlal.u32	q5,d27,d4
++	vld1.32		d8[0],[r6,:32]
++	vmlal.u32	q9,d25,d3
++	vmlal.u32	q6,d29,d4
++	vmlal.u32	q7,d21,d3
++
++	vmlal.u32	q8,d21,d5
++	 it		ne
++	 addne		r7,r0,#(48+2*9*4)
++	vmlal.u32	q5,d25,d6
++	 it		ne
++	 addne		r6,r0,#(48+3*9*4)
++	vmlal.u32	q9,d23,d5
++	vmlal.u32	q6,d27,d6
++	vmlal.u32	q7,d29,d6
++
++	vmlal.u32	q8,d29,d8
++	 vorn		q0,q0,q0	@ all-ones, can be redundant
++	vmlal.u32	q5,d23,d8
++	 vshr.u64	q0,q0,#38
++	vmlal.u32	q9,d21,d7
++	vmlal.u32	q6,d25,d8
++	vmlal.u32	q7,d27,d8
++
++	beq		.Lshort_tail
++
++	@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
++	@ (hash+inp[0:1])*r^4:r^3 and accumulate
++
++	vld4.32		{d0[1],d1[1],d2[1],d3[1]},[r7]!	@ load r^3
++	vld4.32		{d0[0],d1[0],d2[0],d3[0]},[r6]!	@ load r^4
++
++	vmlal.u32	q7,d24,d0
++	vmlal.u32	q5,d20,d0
++	vmlal.u32	q8,d26,d0
++	vmlal.u32	q6,d22,d0
++	vmlal.u32	q9,d28,d0
++
++	vmlal.u32	q5,d28,d2
++	vld4.32		{d4[1],d5[1],d6[1],d7[1]},[r7]!
++	vmlal.u32	q8,d24,d1
++	vld4.32		{d4[0],d5[0],d6[0],d7[0]},[r6]!
++	vmlal.u32	q6,d20,d1
++	vmlal.u32	q9,d26,d1
++	vmlal.u32	q7,d22,d1
++
++	vmlal.u32	q8,d22,d3
++	vld1.32		d8[1],[r7,:32]
++	vmlal.u32	q5,d26,d4
++	vld1.32		d8[0],[r6,:32]
++	vmlal.u32	q9,d24,d3
++	vmlal.u32	q6,d28,d4
++	vmlal.u32	q7,d20,d3
++
++	vmlal.u32	q8,d20,d5
++	vmlal.u32	q5,d24,d6
++	vmlal.u32	q9,d22,d5
++	vmlal.u32	q6,d26,d6
++	vmlal.u32	q7,d28,d6
++
++	vmlal.u32	q8,d28,d8
++	 vorn		q0,q0,q0	@ all-ones
++	vmlal.u32	q5,d22,d8
++	 vshr.u64	q0,q0,#38
++	vmlal.u32	q9,d20,d7
++	vmlal.u32	q6,d24,d8
++	vmlal.u32	q7,d26,d8
++
++.Lshort_tail:
++	@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
++	@ horizontal addition
++
++	vadd.i64	d16,d16,d17
++	vadd.i64	d10,d10,d11
++	vadd.i64	d18,d18,d19
++	vadd.i64	d12,d12,d13
++	vadd.i64	d14,d14,d15
++
++	@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
++	@ lazy reduction, but without narrowing
++
++	vshr.u64	q15,q8,#26
++	vand.i64	q8,q8,q0
++	 vshr.u64	q4,q5,#26
++	 vand.i64	q5,q5,q0
++	vadd.i64	q9,q9,q15		@ h3 -> h4
++	 vadd.i64	q6,q6,q4		@ h0 -> h1
++
++	vshr.u64	q15,q9,#26
++	vand.i64	q9,q9,q0
++	 vshr.u64	q4,q6,#26
++	 vand.i64	q6,q6,q0
++	 vadd.i64	q7,q7,q4		@ h1 -> h2
++
++	vadd.i64	q5,q5,q15
++	vshl.u64	q15,q15,#2
++	 vshr.u64	q4,q7,#26
++	 vand.i64	q7,q7,q0
++	vadd.i64	q5,q5,q15		@ h4 -> h0
++	 vadd.i64	q8,q8,q4		@ h2 -> h3
++
++	vshr.u64	q15,q5,#26
++	vand.i64	q5,q5,q0
++	 vshr.u64	q4,q8,#26
++	 vand.i64	q8,q8,q0
++	vadd.i64	q6,q6,q15		@ h0 -> h1
++	 vadd.i64	q9,q9,q4		@ h3 -> h4
++
++	cmp		r2,#0
++	bne		.Leven
++
++	@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
++	@ store hash value
++
++	vst4.32		{d10[0],d12[0],d14[0],d16[0]},[r0]!
++	vst1.32		{d18[0]},[r0]
++
++	vldmia	sp!,{d8-d15}			@ epilogue
++	ldmia	sp!,{r4-r7}
++.Lno_data_neon:
++	bx	lr					@ bx	lr
++ENDPROC(poly1305_blocks_neon)
++
++.align	5
++ENTRY(poly1305_emit_neon)
++	ldr	ip,[r0,#36]		@ is_base2_26
++
++	stmdb	sp!,{r4-r11}
++
++	tst	ip,ip
++	beq	.Lpoly1305_emit_enter
++
++	ldmia	r0,{r3-r7}
++	eor	r8,r8,r8
++
++	adds	r3,r3,r4,lsl#26	@ base 2^26 -> base 2^32
++	mov	r4,r4,lsr#6
++	adcs	r4,r4,r5,lsl#20
++	mov	r5,r5,lsr#12
++	adcs	r5,r5,r6,lsl#14
++	mov	r6,r6,lsr#18
++	adcs	r6,r6,r7,lsl#8
++	adc	r7,r8,r7,lsr#24	@ can be partially reduced ...
++
++	and	r8,r7,#-4		@ ... so reduce
++	and	r7,r6,#3
++	add	r8,r8,r8,lsr#2	@ *= 5
++	adds	r3,r3,r8
++	adcs	r4,r4,#0
++	adcs	r5,r5,#0
++	adcs	r6,r6,#0
++	adc	r7,r7,#0
++
++	adds	r8,r3,#5		@ compare to modulus
++	adcs	r9,r4,#0
++	adcs	r10,r5,#0
++	adcs	r11,r6,#0
++	adc	r7,r7,#0
++	tst	r7,#4			@ did it carry/borrow?
++
++	it	ne
++	movne	r3,r8
++	ldr	r8,[r2,#0]
++	it	ne
++	movne	r4,r9
++	ldr	r9,[r2,#4]
++	it	ne
++	movne	r5,r10
++	ldr	r10,[r2,#8]
++	it	ne
++	movne	r6,r11
++	ldr	r11,[r2,#12]
++
++	adds	r3,r3,r8		@ accumulate nonce
++	adcs	r4,r4,r9
++	adcs	r5,r5,r10
++	adc	r6,r6,r11
++
++#ifdef __ARMEB__
++	rev	r3,r3
++	rev	r4,r4
++	rev	r5,r5
++	rev	r6,r6
++#endif
++	str	r3,[r1,#0]		@ store the result
++	str	r4,[r1,#4]
++	str	r5,[r1,#8]
++	str	r6,[r1,#12]
++
++	ldmia	sp!,{r4-r11}
++	bx	lr				@ bx	lr
++ENDPROC(poly1305_emit_neon)
++
++.align	5
++.Lzeros:
++.long	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
++#endif
+diff --git a/arch/arm/crypto/poly1305-neon-glue.c b/arch/arm/crypto/poly1305-neon-glue.c
+new file mode 100644
+index 000000000000..633ac0d157db
+--- /dev/null
++++ b/arch/arm/crypto/poly1305-neon-glue.c
+@@ -0,0 +1,325 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Poly1305 authenticator, NEON-accelerated -
++ * glue code for OpenSSL implementation
++ *
++ * Copyright (c) 2018 Google LLC
++ */
++
++#include <asm/hwcap.h>
++#include <asm/neon.h>
++#include <asm/simd.h>
++#include <asm/unaligned.h>
++#include <crypto/cryptd.h>
++#include <crypto/internal/hash.h>
++#include <crypto/poly1305.h>
++#include <linux/cpufeature.h>
++#include <linux/crypto.h>
++#include <linux/module.h>
++
++asmlinkage void poly1305_init_arm(void *ctx, const u8 key[16]);
++asmlinkage void poly1305_blocks_neon(void *ctx, const u8 *inp, size_t len,
++				     u32 padbit);
++asmlinkage void poly1305_emit_neon(void *ctx, u8 mac[16], const u32 nonce[4]);
++
++struct poly1305_neon_desc_ctx {
++	u8 buf[POLY1305_BLOCK_SIZE];
++	unsigned int buflen;
++	bool key_set;
++	bool nonce_set;
++	u32 nonce[4];
++	u8 neon_ctx[192] __aligned(16);
++} __aligned(16);
++
++static int poly1305_neon_init(struct shash_desc *desc)
++{
++	struct poly1305_neon_desc_ctx *dctx = shash_desc_ctx(desc);
++
++	dctx->buflen = 0;
++	dctx->key_set = false;
++	dctx->nonce_set = false;
++	return 0;
 +}
 +
-+static int chacha20_neon(struct skcipher_request *req)
++static void poly1305_neon_blocks(struct poly1305_neon_desc_ctx *dctx,
++				 const u8 *src, unsigned int srclen, u32 padbit)
 +{
-+	struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(req);
-+	struct chacha_ctx *ctx = crypto_skcipher_ctx(tfm);
-+	int err;
-+
-+	if (req->cryptlen <= CHACHA_BLOCK_SIZE || !may_use_simd())
-+		return crypto_chacha_crypt(req);
-+
-+	kernel_neon_begin();
-+	err = chacha20_neon_stream_xor(req, ctx, req->iv);
-+	kernel_neon_end();
-+	return err;
-+}
-+
-+static int xchacha20_neon(struct skcipher_request *req)
-+{
-+	struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(req);
-+	struct chacha_ctx *ctx = crypto_skcipher_ctx(tfm);
-+	struct chacha_ctx subctx;
-+	u32 state[16];
-+	u8 real_iv[16];
-+	int err;
-+
-+	if (req->cryptlen <= CHACHA_BLOCK_SIZE || !may_use_simd())
-+		return crypto_xchacha_crypt(req);
-+
-+	crypto_chacha_init(state, ctx, req->iv);
-+
-+	kernel_neon_begin();
-+
-+	hchacha20_block_neon(state, subctx.key);
-+	memcpy(&real_iv[0], req->iv + 24, 8);
-+	memcpy(&real_iv[8], req->iv + 16, 8);
-+	err = chacha20_neon_stream_xor(req, &subctx, real_iv);
-+
- 	kernel_neon_end();
- 
- 	return err;
- }
- 
--static struct skcipher_alg alg = {
--	.base.cra_name		= "chacha20",
--	.base.cra_driver_name	= "chacha20-neon",
--	.base.cra_priority	= 300,
--	.base.cra_blocksize	= 1,
--	.base.cra_ctxsize	= sizeof(struct chacha_ctx),
--	.base.cra_module	= THIS_MODULE,
--
--	.min_keysize		= CHACHA_KEY_SIZE,
--	.max_keysize		= CHACHA_KEY_SIZE,
--	.ivsize			= CHACHA_IV_SIZE,
--	.chunksize		= CHACHA_BLOCK_SIZE,
--	.walksize		= 4 * CHACHA_BLOCK_SIZE,
--	.setkey			= crypto_chacha20_setkey,
--	.encrypt		= chacha_neon,
--	.decrypt		= chacha_neon,
-+static struct skcipher_alg algs[] = {
-+	{
-+		.base.cra_name		= "chacha20",
-+		.base.cra_driver_name	= "chacha20-neon",
-+		.base.cra_priority	= 300,
-+		.base.cra_blocksize	= 1,
-+		.base.cra_ctxsize	= sizeof(struct chacha_ctx),
-+		.base.cra_module	= THIS_MODULE,
-+
-+		.min_keysize		= CHACHA_KEY_SIZE,
-+		.max_keysize		= CHACHA_KEY_SIZE,
-+		.ivsize			= CHACHA_IV_SIZE,
-+		.chunksize		= CHACHA_BLOCK_SIZE,
-+		.walksize		= 4 * CHACHA_BLOCK_SIZE,
-+		.setkey			= crypto_chacha20_setkey,
-+		.encrypt		= chacha20_neon,
-+		.decrypt		= chacha20_neon,
-+	}, {
-+		.base.cra_name		= "xchacha20",
-+		.base.cra_driver_name	= "xchacha20-neon",
-+		.base.cra_priority	= 300,
-+		.base.cra_blocksize	= 1,
-+		.base.cra_ctxsize	= sizeof(struct chacha_ctx),
-+		.base.cra_module	= THIS_MODULE,
-+
-+		.min_keysize		= CHACHA_KEY_SIZE,
-+		.max_keysize		= CHACHA_KEY_SIZE,
-+		.ivsize			= XCHACHA_IV_SIZE,
-+		.chunksize		= CHACHA_BLOCK_SIZE,
-+		.walksize		= 4 * CHACHA_BLOCK_SIZE,
-+		.setkey			= crypto_chacha20_setkey,
-+		.encrypt		= xchacha20_neon,
-+		.decrypt		= xchacha20_neon,
++	if (!dctx->key_set) {
++		poly1305_init_arm(dctx->neon_ctx, src);
++		dctx->key_set = true;
++		src += POLY1305_BLOCK_SIZE;
++		srclen -= POLY1305_BLOCK_SIZE;
++		if (!srclen)
++			return;
 +	}
- };
- 
- static int __init chacha20_simd_mod_init(void)
-@@ -111,12 +165,12 @@ static int __init chacha20_simd_mod_init(void)
- 	if (!(elf_hwcap & HWCAP_NEON))
- 		return -ENODEV;
- 
--	return crypto_register_skcipher(&alg);
-+	return crypto_register_skciphers(algs, ARRAY_SIZE(algs));
- }
- 
- static void __exit chacha20_simd_mod_fini(void)
- {
--	crypto_unregister_skcipher(&alg);
-+	crypto_unregister_skciphers(algs, ARRAY_SIZE(algs));
- }
- 
- module_init(chacha20_simd_mod_init);
-@@ -125,3 +179,6 @@ module_exit(chacha20_simd_mod_fini);
- MODULE_AUTHOR("Ard Biesheuvel <ard.biesheuvel@linaro.org>");
- MODULE_LICENSE("GPL v2");
- MODULE_ALIAS_CRYPTO("chacha20");
-+MODULE_ALIAS_CRYPTO("chacha20-neon");
-+MODULE_ALIAS_CRYPTO("xchacha20");
-+MODULE_ALIAS_CRYPTO("xchacha20-neon");
++
++	if (!dctx->nonce_set) {
++		dctx->nonce[0] = get_unaligned_le32(src +  0);
++		dctx->nonce[1] = get_unaligned_le32(src +  4);
++		dctx->nonce[2] = get_unaligned_le32(src +  8);
++		dctx->nonce[3] = get_unaligned_le32(src + 12);
++		dctx->nonce_set = true;
++		src += POLY1305_BLOCK_SIZE;
++		srclen -= POLY1305_BLOCK_SIZE;
++		if (!srclen)
++			return;
++	}
++
++	kernel_neon_begin();
++	poly1305_blocks_neon(dctx->neon_ctx, src, srclen, padbit);
++	kernel_neon_end();
++}
++
++static int poly1305_neon_update(struct shash_desc *desc,
++				const u8 *src, unsigned int srclen)
++{
++	struct poly1305_neon_desc_ctx *dctx = shash_desc_ctx(desc);
++	unsigned int bytes;
++
++	if (dctx->buflen) {
++		bytes = min(srclen, POLY1305_BLOCK_SIZE - dctx->buflen);
++		memcpy(&dctx->buf[dctx->buflen], src, bytes);
++		dctx->buflen += bytes;
++		src += bytes;
++		srclen -= bytes;
++
++		if (dctx->buflen == POLY1305_BLOCK_SIZE) {
++			poly1305_neon_blocks(dctx, dctx->buf,
++					     POLY1305_BLOCK_SIZE, 1);
++			dctx->buflen = 0;
++		}
++	}
++
++	if (srclen >= POLY1305_BLOCK_SIZE) {
++		bytes = round_down(srclen, POLY1305_BLOCK_SIZE);
++		poly1305_neon_blocks(dctx, src, bytes, 1);
++		src += bytes;
++		srclen -= bytes;
++	}
++
++	if (srclen) {
++		memcpy(dctx->buf, src, srclen);
++		dctx->buflen = srclen;
++	}
++
++	return 0;
++}
++
++static int poly1305_neon_final(struct shash_desc *desc, u8 *dst)
++{
++	struct poly1305_neon_desc_ctx *dctx = shash_desc_ctx(desc);
++
++	if (!dctx->nonce_set)
++		return -ENOKEY;
++
++	if (dctx->buflen) {
++		dctx->buf[dctx->buflen++] = 1;
++		memset(&dctx->buf[dctx->buflen], 0,
++		       POLY1305_BLOCK_SIZE - dctx->buflen);
++		poly1305_neon_blocks(dctx, dctx->buf, POLY1305_BLOCK_SIZE, 0);
++	}
++
++	/*
++	 * This part doesn't actually use NEON instructions, so no need for
++	 * kernel_neon_begin().
++	 */
++	poly1305_emit_neon(dctx->neon_ctx, dst, dctx->nonce);
++	return 0;
++}
++
++static struct shash_alg poly1305_alg = {
++	.digestsize		= POLY1305_DIGEST_SIZE,
++	.init			= poly1305_neon_init,
++	.update			= poly1305_neon_update,
++	.final			= poly1305_neon_final,
++	.descsize		= sizeof(struct poly1305_desc_ctx),
++	.base			= {
++		.cra_name	= "__poly1305",
++		.cra_driver_name = "__driver-poly1305-neon",
++		.cra_priority	= 0,
++		.cra_flags	= CRYPTO_ALG_INTERNAL,
++		.cra_blocksize	= POLY1305_BLOCK_SIZE,
++		.cra_module	= THIS_MODULE,
++	},
++};
++
++/* Boilerplate to wrap the use of kernel_neon_begin() */
++
++struct poly1305_async_ctx {
++	struct cryptd_ahash *cryptd_tfm;
++};
++
++static int poly1305_async_init(struct ahash_request *req)
++{
++	struct crypto_ahash *tfm = crypto_ahash_reqtfm(req);
++	struct poly1305_async_ctx *ctx = crypto_ahash_ctx(tfm);
++	struct ahash_request *cryptd_req = ahash_request_ctx(req);
++	struct cryptd_ahash *cryptd_tfm = ctx->cryptd_tfm;
++	struct shash_desc *desc = cryptd_shash_desc(cryptd_req);
++	struct crypto_shash *child = cryptd_ahash_child(cryptd_tfm);
++
++	desc->tfm = child;
++	desc->flags = req->base.flags;
++	return crypto_shash_init(desc);
++}
++
++static int poly1305_async_update(struct ahash_request *req)
++{
++	struct ahash_request *cryptd_req = ahash_request_ctx(req);
++	struct crypto_ahash *tfm = crypto_ahash_reqtfm(req);
++	struct poly1305_async_ctx *ctx = crypto_ahash_ctx(tfm);
++	struct cryptd_ahash *cryptd_tfm = ctx->cryptd_tfm;
++
++	if (!may_use_simd() ||
++	    (in_atomic() && cryptd_ahash_queued(cryptd_tfm))) {
++		memcpy(cryptd_req, req, sizeof(*req));
++		ahash_request_set_tfm(cryptd_req, &cryptd_tfm->base);
++		return crypto_ahash_update(cryptd_req);
++	} else {
++		struct shash_desc *desc = cryptd_shash_desc(cryptd_req);
++		return shash_ahash_update(req, desc);
++	}
++}
++
++static int poly1305_async_final(struct ahash_request *req)
++{
++	struct ahash_request *cryptd_req = ahash_request_ctx(req);
++	struct crypto_ahash *tfm = crypto_ahash_reqtfm(req);
++	struct poly1305_async_ctx *ctx = crypto_ahash_ctx(tfm);
++	struct cryptd_ahash *cryptd_tfm = ctx->cryptd_tfm;
++
++	if (!may_use_simd() ||
++	    (in_atomic() && cryptd_ahash_queued(cryptd_tfm))) {
++		memcpy(cryptd_req, req, sizeof(*req));
++		ahash_request_set_tfm(cryptd_req, &cryptd_tfm->base);
++		return crypto_ahash_final(cryptd_req);
++	} else {
++		struct shash_desc *desc = cryptd_shash_desc(cryptd_req);
++		return crypto_shash_final(desc, req->result);
++	}
++}
++
++static int poly1305_async_digest(struct ahash_request *req)
++{
++	struct crypto_ahash *tfm = crypto_ahash_reqtfm(req);
++	struct poly1305_async_ctx *ctx = crypto_ahash_ctx(tfm);
++	struct ahash_request *cryptd_req = ahash_request_ctx(req);
++	struct cryptd_ahash *cryptd_tfm = ctx->cryptd_tfm;
++
++	if (!may_use_simd() ||
++	    (in_atomic() && cryptd_ahash_queued(cryptd_tfm))) {
++		memcpy(cryptd_req, req, sizeof(*req));
++		ahash_request_set_tfm(cryptd_req, &cryptd_tfm->base);
++		return crypto_ahash_digest(cryptd_req);
++	} else {
++		struct shash_desc *desc = cryptd_shash_desc(cryptd_req);
++		struct crypto_shash *child = cryptd_ahash_child(cryptd_tfm);
++
++		desc->tfm = child;
++		desc->flags = req->base.flags;
++		return shash_ahash_digest(req, desc);
++	}
++}
++
++static int poly1305_async_import(struct ahash_request *req, const void *in)
++{
++	struct ahash_request *cryptd_req = ahash_request_ctx(req);
++	struct crypto_ahash *tfm = crypto_ahash_reqtfm(req);
++	struct poly1305_async_ctx *ctx = crypto_ahash_ctx(tfm);
++	struct shash_desc *desc = cryptd_shash_desc(cryptd_req);
++
++	desc->tfm = cryptd_ahash_child(ctx->cryptd_tfm);
++	desc->flags = req->base.flags;
++
++	return crypto_shash_import(desc, in);
++}
++
++static int poly1305_async_export(struct ahash_request *req, void *out)
++{
++	struct ahash_request *cryptd_req = ahash_request_ctx(req);
++	struct shash_desc *desc = cryptd_shash_desc(cryptd_req);
++
++	return crypto_shash_export(desc, out);
++}
++
++static int poly1305_async_init_tfm(struct crypto_tfm *tfm)
++{
++	struct cryptd_ahash *cryptd_tfm;
++	struct poly1305_async_ctx *ctx = crypto_tfm_ctx(tfm);
++
++	cryptd_tfm = cryptd_alloc_ahash("__driver-poly1305-neon",
++					CRYPTO_ALG_INTERNAL,
++					CRYPTO_ALG_INTERNAL);
++	if (IS_ERR(cryptd_tfm))
++		return PTR_ERR(cryptd_tfm);
++	ctx->cryptd_tfm = cryptd_tfm;
++	crypto_ahash_set_reqsize(__crypto_ahash_cast(tfm),
++				 sizeof(struct ahash_request) +
++				 crypto_ahash_reqsize(&cryptd_tfm->base));
++
++	return 0;
++}
++
++static void poly1305_async_exit_tfm(struct crypto_tfm *tfm)
++{
++	struct poly1305_async_ctx *ctx = crypto_tfm_ctx(tfm);
++
++	cryptd_free_ahash(ctx->cryptd_tfm);
++}
++
++static struct ahash_alg poly1305_async_alg = {
++	.init			= poly1305_async_init,
++	.update			= poly1305_async_update,
++	.final			= poly1305_async_final,
++	.digest			= poly1305_async_digest,
++	.import			= poly1305_async_import,
++	.export			= poly1305_async_export,
++	.halg.digestsize	= POLY1305_DIGEST_SIZE,
++	.halg.statesize		= sizeof(struct poly1305_neon_desc_ctx),
++	.halg.base		= {
++		.cra_name	= "poly1305",
++		.cra_driver_name = "poly1305-neon",
++		.cra_priority	= 300,
++		.cra_flags	= CRYPTO_ALG_ASYNC,
++		.cra_blocksize	= POLY1305_BLOCK_SIZE,
++		.cra_ctxsize	= sizeof(struct poly1305_async_ctx),
++		.cra_module	= THIS_MODULE,
++		.cra_init	= poly1305_async_init_tfm,
++		.cra_exit	= poly1305_async_exit_tfm,
++	},
++};
++
++static int __init poly1305_neon_module_init(void)
++{
++	int err;
++
++	if (!(elf_hwcap & HWCAP_NEON))
++		return -ENODEV;
++
++	err = crypto_register_shash(&poly1305_alg);
++	if (err)
++		return err;
++	err = crypto_register_ahash(&poly1305_async_alg);
++	if (err)
++		goto err_shash;
++
++	return 0;
++
++err_shash:
++	crypto_unregister_shash(&poly1305_alg);
++	return err;
++}
++
++static void __exit poly1305_neon_module_exit(void)
++{
++	crypto_unregister_shash(&poly1305_alg);
++	crypto_unregister_ahash(&poly1305_async_alg);
++}
++
++module_init(poly1305_neon_module_init);
++module_exit(poly1305_neon_module_exit);
++
++MODULE_DESCRIPTION("Poly1305 authenticator (NEON-accelerated)");
++MODULE_LICENSE("GPL");
++MODULE_ALIAS_CRYPTO("poly1305");
++MODULE_ALIAS_CRYPTO("poly1305-neon");
 -- 
 2.18.0.597.ga71716f1ad-goog
 
