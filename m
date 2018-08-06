@@ -2,139 +2,74 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E85D2C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 20:54:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AF86C46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 20:54:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F6C921770
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 20:54:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="WJprwpaY";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ZIJasPZh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F6C921770
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id CF10021A5E
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 20:54:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF10021A5E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732702AbeHFXFP (ORCPT
+        id S1732853AbeHFXFd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 19:05:15 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:36756 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728948AbeHFXFP (ORCPT
+        Mon, 6 Aug 2018 19:05:33 -0400
+Received: from lithops.sigma-star.at ([195.201.40.130]:59052 "EHLO
+        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728948AbeHFXFd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 19:05:15 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 03CD66044E; Mon,  6 Aug 2018 20:54:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533588865;
-        bh=b2HVmlEHi3N6dH02vQE+CukubyZaXhEPkvhbS4lp1MA=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=WJprwpaYE+9qlYR7LiSdwgJCkjihu+ovi7qty8mxIk3r7l8TIItieu2ecc/T8KRhM
-         KGXkXhH9uQFbC0hQjxbuBA1zPlc2CQvmDbucKn8bTB4/SpcyaxqGatFpi82SBD1dq4
-         QHxxOqZZpa9x60lPzE5kqW1WuSikFQ6aLPmRmQt8=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 46CBF6044E;
-        Mon,  6 Aug 2018 20:54:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533588864;
-        bh=b2HVmlEHi3N6dH02vQE+CukubyZaXhEPkvhbS4lp1MA=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=ZIJasPZhQ/o3hs3KWX7Zr7BUKO8Wpw7PJqVJsd/oTAkEXbew17hOGiuA3+pYp5/Bn
-         tNKqZ1tukAF6L2DHs/ExBhi1REyq3aq4DYYScbQlNC4kzzv7q3dMZ6dYM2MfAvbuPz
-         JEVbLVgzMKEwtfL3hN37JfnHxRCpwQuL2dX0ojo0=
+        Mon, 6 Aug 2018 19:05:33 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id E233860A0738;
+        Mon,  6 Aug 2018 22:54:40 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id wCORQkEK53SM; Mon,  6 Aug 2018 22:54:40 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 6F62F609F83D;
+        Mon,  6 Aug 2018 22:54:40 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id 6xqfnn0QTW6I; Mon,  6 Aug 2018 22:54:40 +0200 (CEST)
+Received: from blindfold.localnet (213-47-184-186.cable.dynamic.surfer.at [213.47.184.186])
+        by lithops.sigma-star.at (Postfix) with ESMTPSA id 46729608D734;
+        Mon,  6 Aug 2018 22:54:40 +0200 (CEST)
+From:   Richard Weinberger <richard@nod.at>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     linux-kbuild@vger.kernel.org, Jeff Dike <jdike@addtoit.com>,
+        linux-um@lists.infradead.org, Randy Dunlap <rdunlap@infradead.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Sam Ravnborg <sam@ravnborg.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/3] Kbuild: fix and clean-up arch/um/Makefile
+Date:   Mon, 06 Aug 2018 22:54:33 +0200
+Message-ID: <1901723.5RX4ofS7Gn@blindfold>
+In-Reply-To: <1533358023-5801-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1533358023-5801-1-git-send-email-yamada.masahiro@socionext.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Mon, 06 Aug 2018 13:54:24 -0700
-From:   skannan@codeaurora.org
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Taniya Das <tdas@codeaurora.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Amit Nischal <anischal@codeaurora.org>,
-        devicetree@vger.kernel.org, robh@kernel.org,
-        amit.kucheria@linaro.org, evgreen@google.com
-Subject: Re: [PATCH v7 1/2] dt-bindings: cpufreq: Introduce QCOM CPUFREQ
- Firmware bindings
-In-Reply-To: <153334001055.10763.8002698033760154254@swboyd.mtv.corp.google.com>
-References: <1532428970-18122-1-git-send-email-tdas@codeaurora.org>
- <1532428970-18122-2-git-send-email-tdas@codeaurora.org>
- <153334001055.10763.8002698033760154254@swboyd.mtv.corp.google.com>
-Message-ID: <b362d9f769fde3ce1a2dcd89f20eb476@codeaurora.org>
-X-Sender: skannan@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-08-03 16:46, Stephen Boyd wrote:
-> Quoting Taniya Das (2018-07-24 03:42:49)
->> diff --git 
->> a/Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-hw.txt 
->> b/Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-hw.txt
->> new file mode 100644
->> index 0000000..22d4355
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-hw.txt
->> @@ -0,0 +1,172 @@
-> [...]
->> +
->> +               CPU7: cpu@700 {
->> +                       device_type = "cpu";
->> +                       compatible = "qcom,kryo385";
->> +                       reg = <0x0 0x700>;
->> +                       enable-method = "psci";
->> +                       next-level-cache = <&L2_700>;
->> +                       qcom,freq-domain = <&freq_domain_table1>;
->> +                       L2_700: l2-cache {
->> +                               compatible = "cache";
->> +                               next-level-cache = <&L3_0>;
->> +                       };
->> +               };
->> +       };
->> +
->> +       qcom,cpufreq-hw {
->> +               compatible = "qcom,cpufreq-hw";
->> +
->> +               clocks = <&rpmhcc RPMH_CXO_CLK>;
->> +               clock-names = "xo";
->> +
->> +               #address-cells = <2>;
->> +               #size-cells = <2>;
->> +               ranges;
->> +               freq_domain_table0: freq_table0 {
->> +                       reg = <0 0x17d43000 0 0x1400>;
->> +               };
->> +
->> +               freq_domain_table1: freq_table1 {
->> +                       reg = <0 0x17d45800 0 0x1400>;
->> +               };
+Am Samstag, 4. August 2018, 06:47:00 CEST schrieb Masahiro Yamada:
 > 
-> Sorry, this is just not proper DT design. The whole node should have a
-> reg property, and it should contain two (or three if we're handling the
-> L3 clk domain?) different offsets for the different power clusters. The
-> problem seems to still be that we don't have a way to map the CPUs to
-> the clk domains they're in provided by this hardware block. Making
-> subnodes is not the solution.
+> 1/3 fixes the build failure reported by Randy.
+> (I may have seen a similar report before, but I cannot recall it.)
+> 
+> 2/3 and 3/3 clean-up the Makefile a bit more.
+> 
+> I'd like to apply this series to kbuild tree.
+> Ack from UML folks are appreciated.
 
-The problem is mapping clock domains to logical CPUs that CPUfreq uses. 
-The physical CPU to logical CPU mapping can be changed by the kernel 
-(even through DT if I'm not mistaken). So we need to have a way to tell 
-in DT which physical CPUs are connected to which CPU freq clock domain.
+Nice to see this fixed, Masahiro! :-)
 
-As for subnodes or not, we don't have any strong opinion, but couple of 
-other points to consider. Two or more CPUfreq policies might have a 
-common frequency table (read from HW), but separate control of 
-frequency. So, you also need a way to group frequency table with CPU 
-freq policies. If you have a better design, we are open to that 
-suggestion.
+Acked-by: Richard Weinberger <richard@nod.at>
 
 Thanks,
-Saravana
+//richard
