@@ -3,76 +3,104 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F7D7C46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 10:29:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3B76C46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 10:30:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7FB121A04
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 10:29:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7FB121A04
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id 60D0521A03
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 10:30:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60D0521A03
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729747AbeHFMhu (ORCPT
+        id S1729776AbeHFMiy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 08:37:50 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:36793 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727517AbeHFMhu (ORCPT
+        Mon, 6 Aug 2018 08:38:54 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:52441 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727517AbeHFMiy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 08:37:50 -0400
-Received: from fsav103.sakura.ne.jp (fsav103.sakura.ne.jp [27.133.134.230])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w76ATO1N077379;
-        Mon, 6 Aug 2018 19:29:24 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav103.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav103.sakura.ne.jp);
- Mon, 06 Aug 2018 19:29:24 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav103.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126074194044.bbtec.net [126.74.194.44])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w76ATJpO077347
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Mon, 6 Aug 2018 19:29:24 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [PATCH v3 2/2] virtio_balloon: replace oom notifier with shrinker
-To:     Wei Wang <wei.w.wang@intel.com>
-References: <1533285146-25212-1-git-send-email-wei.w.wang@intel.com>
- <1533285146-25212-3-git-send-email-wei.w.wang@intel.com>
- <16c56ee5-eef7-dd5f-f2b6-e3c11df2765c@i-love.sakura.ne.jp>
- <5B681B41.6070205@intel.com>
-Cc:     virtio-dev@lists.oasis-open.org, linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, linux-mm@kvack.org,
-        mst@redhat.com, mhocko@kernel.org, akpm@linux-foundation.org
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <c8d25019-1990-f0dd-c83d-e4def5b5f7fe@i-love.sakura.ne.jp>
-Date:   Mon, 6 Aug 2018 19:29:17 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 6 Aug 2018 08:38:54 -0400
+Received: from 79.184.254.16.ipv4.supernova.orange.pl (79.184.254.16) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83)
+ id 54a2155ba66b4be0; Mon, 6 Aug 2018 12:30:27 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Eric Biggers <ebiggers@google.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Alasdair Kergon <agk@redhat.com>,
+        Rabin Vincent <rabinv@axis.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Philipp Reisner <philipp.reisner@linbit.com>,
+        Lars Ellenberg <lars.ellenberg@linbit.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        David Howells <dhowells@redhat.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Tudor-Dan Ambarus <tudor.ambarus@microchip.com>,
+        Jia-Ju Bai <baijiaju1990@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Will Deacon <will.deacon@arm.com>,
+        device-mapper development <dm-devel@redhat.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        linux-crypto <linux-crypto@vger.kernel.org>,
+        drbd-dev@lists.linbit.com,
+        linux-block <linux-block@vger.kernel.org>, qat-linux@intel.com,
+        linux-ppp@vger.kernel.org, netdev <netdev@vger.kernel.org>,
+        "open list:ANDROID DRIVERS" <devel@driverdev.osuosl.org>,
+        linux-afs@lists.infradead.org,
+        "open list:NETWORKING DRIVERS (WIRELESS)" 
+        <linux-wireless@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v6 10/18] x86/power/64: Remove VLA usage
+Date:   Mon, 06 Aug 2018 12:28:28 +0200
+Message-ID: <1782361.6NaZWiq7ky@aspire.rjw.lan>
+In-Reply-To: <CAGXu5j+NPCc2hq5x7JUwgKYvY6zKN28YdtHbHVapnpgC3GwCsg@mail.gmail.com>
+References: <20180724164936.37477-1-keescook@chromium.org> <CAJZ5v0gVDotjufLKUW0YuQu2vA4fmU_gqia=ZA4DocW4XHxx0w@mail.gmail.com> <CAGXu5j+NPCc2hq5x7JUwgKYvY6zKN28YdtHbHVapnpgC3GwCsg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <5B681B41.6070205@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/08/06 18:56, Wei Wang wrote:
-> On 08/03/2018 08:11 PM, Tetsuo Handa wrote:
->> On 2018/08/03 17:32, Wei Wang wrote:
->>> +static int virtio_balloon_register_shrinker(struct virtio_balloon *vb)
->>> +{
->>> +    vb->shrinker.scan_objects = virtio_balloon_shrinker_scan;
->>> +    vb->shrinker.count_objects = virtio_balloon_shrinker_count;
->>> +    vb->shrinker.batch = 0;
->>> +    vb->shrinker.seeks = DEFAULT_SEEKS;
->> Why flags field is not set? If vb is allocated by kmalloc(GFP_KERNEL)
->> and is nowhere zero-cleared, KASAN would complain it.
+On Wednesday, July 25, 2018 8:01:47 PM CEST Kees Cook wrote:
+> On Wed, Jul 25, 2018 at 4:32 AM, Rafael J. Wysocki <rafael@kernel.org> wrote:
+> > On Tue, Jul 24, 2018 at 6:49 PM, Kees Cook <keescook@chromium.org> wrote:
+> >> In the quest to remove all stack VLA usage from the kernel[1], this
+> >> removes the discouraged use of AHASH_REQUEST_ON_STACK by switching to
+> >> shash directly and allocating the descriptor in heap memory (which should
+> >> be fine: the tfm has already been allocated there too).
+> >>
+> >> [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
+> >>
+> >> Signed-off-by: Kees Cook <keescook@chromium.org>
+> >> Acked-by: Pavel Machek <pavel@ucw.cz>
+> >
+> > I think I can queue this up if there are no objections from others.
+> >
+> > Do you want me to do that?
 > 
-> Could you point where in the code that would complain it?
-> I only see two shrinker flags (NUMA_AWARE and MEMCG_AWARE), and they seem not related to that.
+> Sure thing. It looks like the other stand-alone patches like this one
+> are getting taken into the non-crypto trees, so that's fine.
+> 
 
-Where is vb->shrinker.flags initialized?
+Applied now, thanks!
+
