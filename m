@@ -2,104 +2,138 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C353C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:59:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45B24C46472
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 17:04:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 581FC21A5A
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:59:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 581FC21A5A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id F3EC921A56
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 17:04:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3EC921A56
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731469AbeHFTI5 (ORCPT
+        id S1732033AbeHFTOY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 15:08:57 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53724 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728071AbeHFTI5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 15:08:57 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Mon, 6 Aug 2018 15:14:24 -0400
+Received: from mailout.easymail.ca ([64.68.200.34]:50297 "EHLO
+        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728071AbeHFTOX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 15:14:23 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mailout.easymail.ca (Postfix) with ESMTP id AAAE340EB9;
+        Mon,  6 Aug 2018 17:04:22 +0000 (UTC)
+Received: from mailout.easymail.ca ([127.0.0.1])
+        by localhost (emo03-pco.easydns.vpn [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id k-BD-Shx30nq; Mon,  6 Aug 2018 17:04:22 +0000 (UTC)
+Received: from [192.168.1.87] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9380640201A0;
-        Mon,  6 Aug 2018 16:58:57 +0000 (UTC)
-Received: from [10.36.116.32] (ovpn-116-32.ams2.redhat.com [10.36.116.32])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 770531C5A2;
-        Mon,  6 Aug 2018 16:58:54 +0000 (UTC)
-Subject: Re: [PATCH 0/3] KVM: x86: expose a few new features into VM.
-To:     "Liu, Jingqi" <jingqi.liu@intel.com>, rkrcmar@redhat.com,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
-Cc:     x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        wei.w.wang@intel.com
-References: <1531212883-63173-1-git-send-email-jingqi.liu@intel.com>
- <ec45e69c-8c1f-b3f3-eab7-0734d0ce0800@intel.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <0926b906-917b-8b62-a525-c27e7bc89315@redhat.com>
-Date:   Mon, 6 Aug 2018 18:58:52 +0200
+        by mailout.easymail.ca (Postfix) with ESMTPSA id E35E040E79;
+        Mon,  6 Aug 2018 17:04:01 +0000 (UTC)
+Subject: Re: [PATCH v4] selftests: add headers_install to lib.mk
+To:     Anders Roxell <anders.roxell@linaro.org>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Bamvor Zhang <bamv2005@gmail.com>, brgl@bgdev.pl,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>, aarcange@redhat.com,
+        linux-kbuild@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Networking <netdev@vger.kernel.org>,
+        Shuah Khan <shuah@kernel.org>
+References: <20180413090351.25662-1-anders.roxell@linaro.org>
+ <20180607110911.12252-1-anders.roxell@linaro.org>
+ <CADYN=9J=hSFb2wCZ1+dXL=023p9y05MEGUPvH48WfPX7XDZvwQ@mail.gmail.com>
+ <f222aa8d-88b8-140c-30ed-83fd908bfd09@kernel.org>
+ <CADYN=9LSA60E4mFwrbeY-RGi4kZV6hO0ygz0-C6QB3+KKaoxQg@mail.gmail.com>
+From:   Shuah Khan <shuah@kernel.org>
+Message-ID: <3f332e65-0b33-9952-6aba-f9c8953a1f26@kernel.org>
+Date:   Mon, 6 Aug 2018 11:03:54 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <ec45e69c-8c1f-b3f3-eab7-0734d0ce0800@intel.com>
+In-Reply-To: <CADYN=9LSA60E4mFwrbeY-RGi4kZV6hO0ygz0-C6QB3+KKaoxQg@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Mon, 06 Aug 2018 16:58:57 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Mon, 06 Aug 2018 16:58:57 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'pbonzini@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/08/2018 10:17, Liu, Jingqi wrote:
-> Hi Paolo,
+Hi Anders,
+
+On 07/25/2018 10:08 AM, Anders Roxell wrote:
+> On Tue, 24 Jul 2018 at 19:11, Shuah Khan <shuah@kernel.org> wrote:
+>>
+>> On 07/23/2018 02:49 PM, Anders Roxell wrote:
+>>> On Thu, 7 Jun 2018 at 13:09, Anders Roxell <anders.roxell@linaro.org> wrote:
+>>>>
+>>>> If the kernel headers aren't installed we can't build all the tests.
+>>>> Add a new make target rule 'khdr' in the file lib.mk to generate the
+>>>> kernel headers and that gets include for every test-dir Makefile that
+>>>> includes lib.mk If the testdir in turn have its own sub-dirs the
+>>>> top_srcdir needs to be set to the linux-rootdir to be able to generate
+>>>> the kernel headers.
+>>>>
+>>>> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+>>>> Reviewed-by: Fathi Boudra <fathi.boudra@linaro.org>
+>>>> ---
+>>>>  Makefile                                           | 14 +-------------
+>>>>  scripts/subarch.include                            | 13 +++++++++++++
+>>>>  tools/testing/selftests/android/Makefile           |  2 +-
+>>>>  tools/testing/selftests/android/ion/Makefile       |  2 ++
+>>>>  tools/testing/selftests/futex/functional/Makefile  |  1 +
+>>>>  tools/testing/selftests/gpio/Makefile              |  7 ++-----
+>>>>  tools/testing/selftests/kvm/Makefile               |  7 ++-----
+>>>>  tools/testing/selftests/lib.mk                     | 12 ++++++++++++
+>>>>  tools/testing/selftests/net/Makefile               |  1 +
+>>>>  .../selftests/networking/timestamping/Makefile     |  1 +
+>>>>  tools/testing/selftests/vm/Makefile                |  4 ----
+>>>>  11 files changed, 36 insertions(+), 28 deletions(-)
+>>>>  create mode 100644 scripts/subarch.include
+>>>>
+>>>> diff --git a/Makefile b/Makefile
+>>>> index 6b9aea95ae3a..8050072300fa 100644
+>>>> --- a/Makefile
+>>>> +++ b/Makefile
+>>>> @@ -286,19 +286,7 @@ KERNELRELEASE = $(shell cat include/config/kernel.release 2> /dev/null)
+>>>>  KERNELVERSION = $(VERSION)$(if $(PATCHLEVEL),.$(PATCHLEVEL)$(if $(SUBLEVEL),.$(SUBLEVEL)))$(EXTRAVERSION)
+>>>>  export VERSION PATCHLEVEL SUBLEVEL KERNELRELEASE KERNELVERSION
+>>>>
+>>>> -# SUBARCH tells the usermode build what the underlying arch is.  That is set
+>>>> -# first, and if a usermode build is happening, the "ARCH=um" on the command
+>>>> -# line overrides the setting of ARCH below.  If a native build is happening,
+>>>> -# then ARCH is assigned, getting whatever value it gets normally, and
+>>>> -# SUBARCH is subsequently ignored.
+>>>> -
+>>>> -SUBARCH := $(shell uname -m | sed -e s/i.86/x86/ -e s/x86_64/x86/ \
+>>>> -                                 -e s/sun4u/sparc64/ \
+>>>> -                                 -e s/arm.*/arm/ -e s/sa110/arm/ \
+>>>> -                                 -e s/s390x/s390/ -e s/parisc64/parisc/ \
+>>>> -                                 -e s/ppc.*/powerpc/ -e s/mips.*/mips/ \
+>>>> -                                 -e s/sh[234].*/sh/ -e s/aarch64.*/arm64/ \
+>>>> -                                 -e s/riscv.*/riscv/)
+>>>> +include scripts/subarch.include
+>>
+>> What is the reason for this SUBARCH block move to to scripts/subarch.include?
+>> Is this necessary for adding headers install dependency to lib.mk?
 > 
-> Do you have any comments for the series ?
-> Thanks
-> Jingqi
+> This is needed to create headers for cross build.
+> 
 
-Hi,
+I am sorry for the delay on this patch. I am going to get this into 4.19.
+If anybody has objections, please let me.
 
-the features are not yet available in Linus's tree, so I have to wait
-before including this series.
+Anders! Will be able to rebase the patch and send me the latest. I think
+I have Acks from kvm, android, and vm so far.
 
-Paolo
+thanks,
+-- Shuah
+
