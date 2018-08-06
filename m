@@ -3,104 +3,149 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3B76C46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 10:30:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A033C4646D
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 10:31:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 60D0521A03
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 10:30:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60D0521A03
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+	by mail.kernel.org (Postfix) with ESMTP id CF7D821A03
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 10:31:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF7D821A03
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729776AbeHFMiy (ORCPT
+        id S1729805AbeHFMkS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 08:38:54 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:52441 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727517AbeHFMiy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 08:38:54 -0400
-Received: from 79.184.254.16.ipv4.supernova.orange.pl (79.184.254.16) (HELO aspire.rjw.lan)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83)
- id 54a2155ba66b4be0; Mon, 6 Aug 2018 12:30:27 +0200
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Eric Biggers <ebiggers@google.com>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Alasdair Kergon <agk@redhat.com>,
-        Rabin Vincent <rabinv@axis.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Philipp Reisner <philipp.reisner@linbit.com>,
-        Lars Ellenberg <lars.ellenberg@linbit.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        David Howells <dhowells@redhat.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Tudor-Dan Ambarus <tudor.ambarus@microchip.com>,
-        Jia-Ju Bai <baijiaju1990@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
+        Mon, 6 Aug 2018 08:40:18 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53344 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727517AbeHFMkS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 08:40:18 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0A5218011454;
+        Mon,  6 Aug 2018 10:31:52 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id D8132178BE;
+        Mon,  6 Aug 2018 10:31:51 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id w76AVpX7004481;
+        Mon, 6 Aug 2018 06:31:51 -0400
+Received: from localhost (mpatocka@localhost)
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id w76AVpgd004373;
+        Mon, 6 Aug 2018 06:31:51 -0400
+X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
+Date:   Mon, 6 Aug 2018 06:31:51 -0400 (EDT)
+From:   Mikulas Patocka <mpatocka@redhat.com>
+X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+cc:     Florian Weimer <fweimer@redhat.com>,
+        Andrew Pinski <pinskia@gmail.com>,
+        Richard Earnshaw <Richard.Earnshaw@arm.com>,
+        Ramana Radhakrishnan <ramana.gcc@googlemail.com>,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        GNU C Library <libc-alpha@sourceware.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>,
-        device-mapper development <dm-devel@redhat.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        linux-crypto <linux-crypto@vger.kernel.org>,
-        drbd-dev@lists.linbit.com,
-        linux-block <linux-block@vger.kernel.org>, qat-linux@intel.com,
-        linux-ppp@vger.kernel.org, netdev <netdev@vger.kernel.org>,
-        "open list:ANDROID DRIVERS" <devel@driverdev.osuosl.org>,
-        linux-afs@lists.infradead.org,
-        "open list:NETWORKING DRIVERS (WIRELESS)" 
-        <linux-wireless@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6 10/18] x86/power/64: Remove VLA usage
-Date:   Mon, 06 Aug 2018 12:28:28 +0200
-Message-ID: <1782361.6NaZWiq7ky@aspire.rjw.lan>
-In-Reply-To: <CAGXu5j+NPCc2hq5x7JUwgKYvY6zKN28YdtHbHVapnpgC3GwCsg@mail.gmail.com>
-References: <20180724164936.37477-1-keescook@chromium.org> <CAJZ5v0gVDotjufLKUW0YuQu2vA4fmU_gqia=ZA4DocW4XHxx0w@mail.gmail.com> <CAGXu5j+NPCc2hq5x7JUwgKYvY6zKN28YdtHbHVapnpgC3GwCsg@mail.gmail.com>
+        Russell King <linux@armlinux.org.uk>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Subject: Re: framebuffer corruption due to overlapping stp instructions on
+ arm64
+In-Reply-To: <CAKv+Gu_y6La77sWOSROrwfRy65jrFVYVvRZt+ewNheYhdhHCkQ@mail.gmail.com>
+Message-ID: <alpine.LRH.2.02.1808060626060.2986@file01.intranet.prod.int.rdu2.redhat.com>
+References: <alpine.LRH.2.02.1808021242320.31834@file01.intranet.prod.int.rdu2.redhat.com> <CA+=Sn1mWkjuwVnjw6OWWUM=UcP76bdFa680FebCseewHfx3NpA@mail.gmail.com> <9acdacdb-3bd5-b71a-3003-e48132ee1371@redhat.com> <CAJA7tRZbmnZq7RfvQeYEy_a1ZObWqpFpVdvgsXgsioQ3RyPMuA@mail.gmail.com>
+ <CAKv+Gu97QvwoLLK_zueiA_gjg_4Q5cqU4YVUyHUVFFfffdyJaw@mail.gmail.com> <11f9185a-7f71-83df-3a57-0a0ae9c1f934@arm.com> <alpine.LRH.2.02.1808032046540.24748@file01.intranet.prod.int.rdu2.redhat.com> <CA+=Sn1=6F-fGLmXE0VqQHTqTCUKUT=Fz29mMT7349SPFisbZ9A@mail.gmail.com>
+ <alpine.LRH.2.02.1808040611070.23762@file01.intranet.prod.int.rdu2.redhat.com> <fd2cae87-b2df-d8ef-8836-e6cbf8c5f851@redhat.com> <alpine.LRH.2.02.1808060325110.3756@file01.intranet.prod.int.rdu2.redhat.com>
+ <CAKv+Gu_y6La77sWOSROrwfRy65jrFVYVvRZt+ewNheYhdhHCkQ@mail.gmail.com>
+User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Mon, 06 Aug 2018 10:31:52 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Mon, 06 Aug 2018 10:31:52 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mpatocka@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wednesday, July 25, 2018 8:01:47 PM CEST Kees Cook wrote:
-> On Wed, Jul 25, 2018 at 4:32 AM, Rafael J. Wysocki <rafael@kernel.org> wrote:
-> > On Tue, Jul 24, 2018 at 6:49 PM, Kees Cook <keescook@chromium.org> wrote:
-> >> In the quest to remove all stack VLA usage from the kernel[1], this
-> >> removes the discouraged use of AHASH_REQUEST_ON_STACK by switching to
-> >> shash directly and allocating the descriptor in heap memory (which should
-> >> be fine: the tfm has already been allocated there too).
-> >>
-> >> [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
-> >>
-> >> Signed-off-by: Kees Cook <keescook@chromium.org>
-> >> Acked-by: Pavel Machek <pavel@ucw.cz>
-> >
-> > I think I can queue this up if there are no objections from others.
-> >
-> > Do you want me to do that?
-> 
-> Sure thing. It looks like the other stand-alone patches like this one
-> are getting taken into the non-crypto trees, so that's fine.
-> 
 
-Applied now, thanks!
 
+On Mon, 6 Aug 2018, Ard Biesheuvel wrote:
+
+> On 6 August 2018 at 10:02, Mikulas Patocka <mpatocka@redhat.com> wrote:
+> >
+> >
+> > On Sun, 5 Aug 2018, Florian Weimer wrote:
+> >
+> >> On 08/04/2018 01:04 PM, Mikulas Patocka wrote:
+> >> > There's plenty of memcpy's in the graphics stack. No one will be rewriting
+> >> > all the graphics drivers because of tiny market share that ARM has in
+> >> > desktop computers. So if you refuse to fix things and blame everyone else,
+> >> > you can as well announce that you don't want to have PCIe graphics on ARM
+> >> > at all.
+> >>
+> >> The POWER toolchain maintainers said pretty much the same thing not too
+> >> long ago. I wonder how many architectures need to fail until the
+> >> graphics stack is finally fixed.
+> >>
+> >> Thanks,
+> >> Florian
+> >
+> > If you say that your architecture doesn't support unaligned accesses at
+> > all, there's no problem - the compiler won't generate them and the libc
+> > won't contain them.
+> >
+> > But if you say that your architecture supports unaligned accesses except
+> > for the framebuffer, then you have a problem - the compiler can't know
+> > which pointers point to the framebuffer and libc can't know either - you
+> > caused this problem by your architectural decision.
+> >
+> > You can use 'volatile' to suppress memory optimizations, but it's
+> > impossible to go through the whole Linux graphics stack and add volatile
+> > to every pointer that may point to videoram. Even if you succeesed, new
+> > videoram accesses without volatile will appear after a year of
+> > development.
+> >
+> > See for example the macros READ_ONCE and WRITE_ONCE in Linux kernel - they
+> > should be used when there's concurrent access to the particular variable,
+> > but mainstream architectures don't require them, so many kernel developers
+> > are omitting them in their code.
+> >
+> > If you are building a supercomputer with a particular GPU, you can force
+> > the GPU vendor to provide POWER-compliant drivers. If you are building a
+> > workstation where the user can plug any GPU, forcing developers will go
+> > nowhere. You have to emulate the unaligned accesses and make sure that the
+> > next versions of your architecture support them in hardware.
+> >
+> 
+> I have the feeling this discussion is going off the rails again.
+> 
+> The original report is about corruption when doing overlapping writes.
+> Matt Sealey said you cannot have PCI outbound windows with memory
+> semantics on ARM, and so you should be using device mappings (which do
+> not tolerate unaligned accesses)
+> 
+> In this context, 'device mapping' does not mean 'any non-DRAM region',
+> but it refers to a particular type of MMU mapping attribute defined by
+> the ARM architecture.
+> 
+> I think we can all agree that memcpy() should be usable on any region
+> of memory that has true memory semantics, even if it is backed by VRAM
+> on a graphics card.
+> 
+> The question is if PCIe can provide such regions on ARM.
+
+I think there are three possible solutions:
+
+1. provide an alternative memcpy implementation that doesn't do unaligned 
+accesses and recompile the graphics software with -mstrict-align
+
+2. map the PCI BAR as device memory and emulate the unaligned instructions
+
+3. find some hardware workaround that could insert delays between the PCIe 
+accesses (but the hardware engineers need to cooperate on this instead of 
+asserting that they refuse tu support it)
+
+Mikulas
