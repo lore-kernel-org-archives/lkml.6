@@ -2,154 +2,177 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FORGED_MUA_MOZILLA,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C18DC46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 05:25:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76061C46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 05:29:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3EADA219C9
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 05:25:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EADA219C9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 20C37219D2
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 05:29:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="K4aUYzvl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20C37219D2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727336AbeHFHc2 (ORCPT
+        id S1726961AbeHFHhR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 03:32:28 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:47648 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726954AbeHFHc2 (ORCPT
+        Mon, 6 Aug 2018 03:37:17 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:50740 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726449AbeHFHhQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 03:32:28 -0400
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w765OGsZ002140
-        for <linux-kernel@vger.kernel.org>; Mon, 6 Aug 2018 01:25:05 -0400
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2kpanj0qwu-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Aug 2018 01:25:05 -0400
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <schwidefsky@de.ibm.com>;
-        Mon, 6 Aug 2018 06:25:02 +0100
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 6 Aug 2018 06:24:57 +0100
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w765OuhY16187532
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 6 Aug 2018 05:24:56 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 93C6611C054;
-        Mon,  6 Aug 2018 08:25:04 +0100 (BST)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D320311C04C;
-        Mon,  6 Aug 2018 08:25:03 +0100 (BST)
-Received: from mschwideX1 (unknown [9.145.57.226])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon,  6 Aug 2018 08:25:03 +0100 (BST)
-Date:   Mon, 6 Aug 2018 07:24:54 +0200
-From:   Martin Schwidefsky <schwidefsky@de.ibm.com>
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     heiko.carstens@de.ibm.com,
-        Yoshinori Sato <ysato@users.sourceforge.jp>, dalias@libc.org,
-        tony.luck@intel.com, fenghua.yu@intel.com, msalter@redhat.com,
-        jacquiot.aurelien@gmail.com,
-        "David S. Miller" <davem@davemloft.net>,
-        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
-        Pirama Arumuga Nainar <pirama@google.com>,
-        Greg Hackmann <ghackmann@google.com>,
-        Mark Salyzyn <salyzyn@google.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-c6x-dev@linux-c6x.org, sparclinux@vger.kernel.org
-Subject: Re: Getting the instruction pointer on a per arch basis
-In-Reply-To: <CAKwvOdnAzsF_vXH4UQiQd9HwjUju_sU9R4523zxqJSphuut-7Q@mail.gmail.com>
-References: <CAKwvOdku_BOi6m2ugaef6=8+VH_+KAHH-Ch+uZZqMr8WAKARCw@mail.gmail.com>
-        <CAKwvOdn1Ri2VP9hNfKwQ3WMzL278e7-3DGusZc1cwQZbk9H6nw@mail.gmail.com>
-        <20180801074051.11fa62b3@mschwideX1>
-        <CAKwvOdnAzsF_vXH4UQiQd9HwjUju_sU9R4523zxqJSphuut-7Q@mail.gmail.com>
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        Mon, 6 Aug 2018 03:37:16 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20180806052951euoutp027f9863766cb148f7ec33c2aff5a603a3~INH6tNakQ2410224102euoutp02g
+        for <linux-kernel@vger.kernel.org>; Mon,  6 Aug 2018 05:29:51 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180806052951euoutp027f9863766cb148f7ec33c2aff5a603a3~INH6tNakQ2410224102euoutp02g
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1533533391;
+        bh=ckZX4RL09L1dAbEdzgulligr2UYwyjmQ65+FpjhEoRU=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=K4aUYzvlkbpkne6F6A8tvbSZVfyD5Y6nhM00SI00GSPQotIwSZqK/8ZpwkaN5xeUl
+         UjhYLdnAnaXs+BhmsAwwRkBOMqXbjvYsSZOT+EDsIXT5/7tuDAoWaSkBxnNLKL4Pi4
+         g5VV8NmQB96Z/hMmgzKphVles4WeX/dsLAJtEAes=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20180806052951eucas1p26b5f9e9e4f6f7c66d905ad3cd0add54d~INH6CxCQx2112521125eucas1p2x;
+        Mon,  6 Aug 2018 05:29:51 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id D7.E5.04806.ECCD76B5; Mon,  6
+        Aug 2018 06:29:50 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20180806052949eucas1p2483800c02730febd03d4a661a25fa405~INH40XvCx2719627196eucas1p2X;
+        Mon,  6 Aug 2018 05:29:49 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20180806052949eusmtrp2c9811cf380e84c222300d3e043875047~INH4kGg6s2043220432eusmtrp2T;
+        Mon,  6 Aug 2018 05:29:49 +0000 (GMT)
+X-AuditID: cbfec7f5-367ff700000012c6-c0-5b67dcce22b7
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id D9.42.04128.DCCD76B5; Mon,  6
+        Aug 2018 06:29:49 +0100 (BST)
+Received: from [106.116.147.30] (unknown [106.116.147.30]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20180806052949eusmtip1e038b2b1d19c8fce591501aa811423b3~INH4NQQBq2031320313eusmtip1V;
+        Mon,  6 Aug 2018 05:29:49 +0000 (GMT)
+Subject: Re: [PATCH] Input: cros_ec_keyb: Remove check before calling
+ pm_wakeup_event.
+To:     Ravi Chandra Sadineni <ravisadineni@chromium.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     Ravi Chandra Sadineni <ravisadineni@google.com>,
+        Dmitry Torokhov <dtor@google.com>,
+        Todd Broch <tbroch@google.com>, linux-kernel@vger.kernel.org,
+        linux-input@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+Date:   Mon, 6 Aug 2018 07:29:48 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+        Thunderbird/52.9.1
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-x-cbid: 18080605-0012-0000-0000-000002956BD4
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18080605-0013-0000-0000-000020C770D6
-Message-Id: <20180806072454.6efb5973@mschwideX1>
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <CAEZbON4O0X8Fo6eAbmPOSiB1_Tw7x+Ox3ROoGfZQn72uQGQLkg@mail.gmail.com>
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-06_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808060061
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrBKsWRmVeSWpSXmKPExsWy7djPc7rn7qRHG2zerGtxeNELRov5LzvZ
+        LW5++sZqcXnXHDaLGef3MVmsa/nGaHH+7W9Wi0XfH7I6cHjMbrjI4rFz1l12jwWbSj0+b5IL
+        YInisklJzcksSy3St0vgyriysoO14BxvxdyHj9gaGI9wdTFyckgImEhM+HCfrYuRi0NIYAWj
+        xPTzl9lAEkICXxglXs4QgUh8ZpS4t20rG0zH9OOboDqWM0o8utfOAuG8Z5Q41HgdrEpYIELi
+        fc8K9i5GDg4RgRSJC4fNQGqYBW4xSsyedwOshk3AUKLrbReYzSKgIvHt6T1mkHpRgRiJ37us
+        QcK8AoISJ2c+YQGxOQUCJU782MMOYjMLyEs0b53NDGGLS9x6Mp8JZL6EwDp2iVe/9rBBNJdJ
+        PHlzkQniaheJv8s7WCBsYYlXx7ewQ9gyEv93wjQ3M0q0z5jFDuH0MEpsnbMD6mdricPHL7KC
+        XMcsoCmxfpc+iCkh4Cjxd5IEhMknceOtIMQ9fBKTtk1nhgjzSnS0CUHMUJOYdXwd3NaDFy4x
+        T2BUmoXky1lIPpuF5LNZCGsXMLKsYhRPLS3OTU8tNs5LLdcrTswtLs1L10vOz93ECEw/p/8d
+        /7qDcd+fpEOMAhyMSjy8K9LTo4VYE8uKK3MPMUpwMCuJ8K6YDRTiTUmsrEotyo8vKs1JLT7E
+        KM3BoiTOy6eVFi0kkJ5YkpqdmlqQWgSTZeLglGpgXJ4+Xae1KXtmgEbAQ8dZX2ZJt0vkLRet
+        WqJTc/fnimleq96siZjxSNPrkDbfjot7G72UtoaePlkVF9q67YfyBIOrITNf/bD5e69Adqrp
+        52kbzALYXrlOYzPhXCMezdNkrmzieT0ma3XO4zMMUjmR7Kse/jXydzVJrE5+0uZ4WOeJJ9+K
+        qOZHSizFGYmGWsxFxYkAyDevyTsDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrHIsWRmVeSWpSXmKPExsVy+t/xu7pn76RHGyxsl7E4vOgFo8X8l53s
+        Fjc/fWO1uLxrDpvFjPP7mCzWtXxjtDj/9jerxaLvD1kdODxmN1xk8dg56y67x4JNpR6fN8kF
+        sETp2RTll5akKmTkF5fYKkUbWhjpGVpa6BmZWOoZGpvHWhmZKunb2aSk5mSWpRbp2yXoZVxZ
+        2cFacI63Yu7DR2wNjEe4uhg5OSQETCSmH9/E1sXIxSEksJRRouX+MlaIhIzEyWkNULawxJ9r
+        XVBFbxkl3r/vZAZJCAtESLzvWcEOYosIpEhs3HeaCaSIWeAWo8SiJXOYITquMEtMfbcDbBSb
+        gKFE11uQUZwcvAJ2El/WvQGzWQRUJL49vQc2VVQgRuLo5BaoGkGJkzOfsIDYnAKBEid+7AHb
+        xixgJjFv80NmCFteonnrbChbXOLWk/lMExiFZiFpn4WkZRaSlllIWhYwsqxiFEktLc5Nzy02
+        0itOzC0uzUvXS87P3cQIjLttx35u2cHY9S74EKMAB6MSD++K9PRoIdbEsuLK3EOMEhzMSiK8
+        K2YDhXhTEiurUovy44tKc1KLDzGaAj03kVlKNDkfmBLySuINTQ3NLSwNzY3Njc0slMR5zxtU
+        RgkJpCeWpGanphakFsH0MXFwSjUwLiny+yDKpc+wTe5O7twdeu9/Kp06/Ib/m8TptY7LVlTL
+        b9rDW1q44/He8wXszj+PGNu1pC/3klpdPmuTpG3RWnalkHrNgw07U5Pi/U7fzOq7w3z/qtlN
+        /d3i80wV/s7NmHLS0G/x/t4Nzq3XJ6cdfrX/2Nk3SZ82lbz+mCXavMekJvDnNP1VN5VYijMS
+        DbWYi4oTAaQwqhHRAgAA
+Message-Id: <20180806052949eucas1p2483800c02730febd03d4a661a25fa405~INH40XvCx2719627196eucas1p2X@eucas1p2.samsung.com>
+X-CMS-MailID: 20180806052949eucas1p2483800c02730febd03d4a661a25fa405
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20180803072628eucas1p26abe0cb121b974401759502f8807bb96
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20180803072628eucas1p26abe0cb121b974401759502f8807bb96
+References: <CGME20180803072628eucas1p26abe0cb121b974401759502f8807bb96@eucas1p2.samsung.com>
+        <20180605224458.62692-1-ravisadineni@chromium.org>
+        <20180803072628eucas1p26abe0cb121b974401759502f8807bb96~HTx4BGQjl1119311193eucas1p2U@eucas1p2.samsung.com>
+        <CAEZbON7qLheHFuU6zwArCz=CG03JvnFjcehBGjE4RqROYrMLhQ@mail.gmail.com>
+        <CAKdAkRQG08d_duPiKFi_=xUNO93c0Rcw9kpaYFFJahjJM-NdGw@mail.gmail.com>
+        <CAEZbON4O0X8Fo6eAbmPOSiB1_Tw7x+Ox3ROoGfZQn72uQGQLkg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 1 Aug 2018 11:21:13 -0700
-Nick Desaulniers <ndesaulniers@google.com> wrote:
+Hi Ravi,
 
-> On Tue, Jul 31, 2018 at 10:41 PM Martin Schwidefsky
-> <schwidefsky@de.ibm.com> wrote:
-> >
-> > On Tue, 31 Jul 2018 16:09:06 -0700
-> > Nick Desaulniers <ndesaulniers@google.com> wrote:
-> >  
-> > > + More maintainers and lists for visibility
-> > >
-> > > On Tue, Jul 31, 2018 at 3:32 PM Nick Desaulniers
-> > > <ndesaulniers@google.com> wrote:  
-> > > >
-> > > > I'm currently looking into cleaning up the code duplication between
-> > > > current_text_addr() and _THIS_IP_, virtually every implementation of
-> > > > current_text_addr() and _THIS_IP_ itself are basically:
-> > > >
-> > > > #define _THIS_IP_ ({ __label__ _l; _l: &&_l; })
-> > > >
-> > > > For a few arch's, they have inline assembly instead (for
-> > > > current_text_addr()).  Examples:
-> > > > * s390
-> > > > * sh
-> > > > * ia64
-> > > > * x86 (um and 32b)
-> > > > * c6x
-> > > > * sparc
-> > > >
-> > > > I have a patch that cuts down on the duplication, but I don't
-> > > > understand why the few arch specific implementations are necessary.  I
-> > > > could reduce the duplication further if it's ok to just use the
-> > > > statement expression.
-> > > >
-> > > > Does anyone know why this is the case?  
-> >
-> > For s390 it is just that we did not know about the label trick when we
-> > introduced the define. The inline has an advantage though, the code
-> > generated with the label trick is using a LARL instruction which is
-> > 4 bytes, the inline assembly uses a BASR which is 2 bytes.
-> >
-> > If I use the label method in current_text_addr() the size of vmlinux
-> > increases by a small amount:
-> >
-> > add/remove: 33/13 grow/shrink: 101/48 up/down: 11941/-8887 (3054)  
-> 
-> Thanks for the measurements.  Was this output produced by a utility?
+On 2018-08-03 18:53, Ravi Chandra Sadineni wrote:
+> Understood. I am trying to reproduce this issue locally. Wanted to 
+> know the version of the kernel so I can give a try. Marek, can you 
+> please confirm the kernel version.
+>
 
-Yes, ./scripts/bloat-o-meter
+Yes, sorry for the missing context, I was in hurry writing the report and
+I wanted to send it before leaving the office. I'm testing mainline on Snow
+with exynos_defconfig.
 
-> > This is acceptable though, I would not mind if _THIS_IP_ and
-> > current_text_addr use a common definition using labels.  
-> 
-> Thank you for this feedback Martin, I appreciate it.  Patches soon.
+Suspend/resume is partially broken already with mainline, but if you disable
+CPUfreq support, it works fine on Linux v4.17.
 
+I've posted CPUfreq related fixes here if you are interested:
+https://patchwork.kernel.org/patch/10554607/
+https://patchwork.kernel.org/patch/10554603/
+
+The issue with cros_ec_keyb patch appears first on Linux v4.18-rc1, which is
+the first release with that patch. Linux -next from 20180803, which has 
+a few
+more patches for cros_ec_keyb suffers from the same issue.
+
+
+>
+> On Fri, Aug 3, 2018 at 9:08 AM Dmitry Torokhov 
+> <dmitry.torokhov@gmail.com <mailto:dmitry.torokhov@gmail.com>> wrote:
+>
+>     On Fri, Aug 3, 2018 at 8:51 AM Ravi Chandra Sadineni
+>     <ravisadineni@chromium.org <mailto:ravisadineni@chromium.org>> wrote:
+>     >
+>     > Hi Marek,
+>     >
+>     > Can you please give me little more context ? Snow is still on
+>     3.8.11. This patch is not backported to 3.8.11. Are you trying to
+>     flash a different kernel  on snow?
+>     >
+>
+>     Ravi, from upstream perspective what kernel Google uses when shipping
+>     Snow is completely immaterial. Mainline is supposed to work equally
+>     well on all devices.
+>
+>     Thanks.
+>
+>     -- 
+>     Dmitry
+>
+
+Best regards
 -- 
-blue skies,
-   Martin.
-
-"Reality continues to ruin my life." - Calvin.
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
