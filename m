@@ -2,84 +2,74 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8CDFC46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 18:18:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9769C4646D
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 18:21:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7965620685
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 18:18:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7965620685
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 88D5D21990
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 18:21:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YB+xCOL8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88D5D21990
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387663AbeHFU2u (ORCPT
+        id S1732794AbeHFUbW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 16:28:50 -0400
-Received: from mga17.intel.com ([192.55.52.151]:46278 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726279AbeHFU2t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 16:28:49 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Aug 2018 11:18:33 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,452,1526367600"; 
-   d="scan'208";a="78975165"
-Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.126])
-  by fmsmga001.fm.intel.com with ESMTP; 06 Aug 2018 11:07:40 -0700
-Received: by tassilo.localdomain (Postfix, from userid 1000)
-        id 12A42301388; Mon,  6 Aug 2018 11:07:40 -0700 (PDT)
-Date:   Mon, 6 Aug 2018 11:07:40 -0700
-From:   Andi Kleen <ak@linux.intel.com>
-To:     Vasily Gorbik <gor@linux.ibm.com>
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>, linux-kbuild@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
-Subject: Re: [PATCH 2/4] trace: avoid calling cc-option -mrecord-mcount for
- every Makefile
-Message-ID: <20180806180740.GI4238@tassilo.jf.intel.com>
-References: <cover.thread-aa7b8d.your-ad-here.call-01533557518-ext-9465@work.hours>
- <patch-2.thread-aa7b8d.git-de935bace15a.your-ad-here.call-01533557518-ext-9465@work.hours>
+        Mon, 6 Aug 2018 16:31:22 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:38224 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727585AbeHFUbV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 16:31:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=SKwwxZC6fbcNN5ShM6Jqz5WpuKDvc2DQ0/7dlxDOSJg=; b=YB+xCOL81z8ve3MvBIzvPcCIG
+        GAZNll32FoWb9Mn2vvn5Xm/ohIhiYnNYSeq45d6Y3b64oZYAmkhQCimLUS+3kZHVpHa5Pe/6McdVT
+        oXLBPzXcEXt46B3zxxnq9EdxgB5TPTr54/pGem2y4CHgI2DP+RfjauHxEWE5QdVGPzeoweU4tz2Do
+        GUDzpoelaoU1/BykGsGDG+csgpN1KnA/v7FHb1/CgkrClzxXSOjpfdApqUZ4HYa08ZJERBefkqUEX
+        vCgZEFMgrpyWivIuFDiDAQgThkF03xdkl711fBEvOy6xDeLyPiLWQlXJ3fA6vUHUKANSXfcW4M4h4
+        UO4IpCSEg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fmk7k-000361-JT; Mon, 06 Aug 2018 18:20:57 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 53FE8205881DA; Mon,  6 Aug 2018 20:20:55 +0200 (CEST)
+Date:   Mon, 6 Aug 2018 20:20:55 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     kan.liang@linux.intel.com
+Cc:     tglx@linutronix.de, mingo@redhat.com, acme@kernel.org,
+        linux-kernel@vger.kernel.org, eranian@google.com,
+        ak@linux.intel.com, alexander.shishkin@linux.intel.com
+Subject: Re: [PATCH 1/3] perf/x86/intel: Factor out common code of PMI handler
+Message-ID: <20180806182055.GQ2494@hirez.programming.kicks-ass.net>
+References: <1533576223-11588-1-git-send-email-kan.liang@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <patch-2.thread-aa7b8d.git-de935bace15a.your-ad-here.call-01533557518-ext-9465@work.hours>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1533576223-11588-1-git-send-email-kan.liang@linux.intel.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 06, 2018 at 03:17:44PM +0200, Vasily Gorbik wrote:
-> Currently if CONFIG_FTRACE_MCOUNT_RECORD is enabled -mrecord-mcount
-> compiler flag support is tested for every Makefile.
+On Mon, Aug 06, 2018 at 10:23:41AM -0700, kan.liang@linux.intel.com wrote:
+> +	if (++loops > 100) {
+> +		static bool warned;
+> +
+> +		if (!warned) {
+> +			WARN(1, "perfevents: irq loop stuck!\n");
+> +			perf_event_print_debug();
+> +			warned = true;
+> +		}
 
-Good catch.  Does it make a measurable compile time difference?
-
-> 
-> Top 4 cc-option usages:
->     511 -mrecord-mcount
->      11  -fno-stack-protector
->       9 -Wno-override-init
->       2 -fsched-pressure
-> 
-> To address that move cc-option from scripts/Makefile.build to top Makefile
-> and export CC_USING_RECORD_MCOUNT to be used in original place.
-> 
-> While doing that also add -mrecord-mcount to CC_FLAGS_FTRACE (if gcc
-> actually supports it).
-> 
-> Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
-
-Acked-by: Andi Kleen <ak@linux.intel.com>
-
--Andi
+Bah, that really reads like we want WARN_ONCE(), except for that
+perf_event_print_debug() thing :/
