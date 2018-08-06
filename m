@@ -2,177 +2,91 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71383C46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 21:37:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A530C46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 21:39:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E5FA21A60
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 21:37:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 05E1D21A60
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 21:39:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VkvG2XQd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E5FA21A60
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="AY3KBdg8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05E1D21A60
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733275AbeHFXsn (ORCPT
+        id S1733309AbeHFXu1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 19:48:43 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:44988 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727665AbeHFXsm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 19:48:42 -0400
-Received: by mail-pg1-f196.google.com with SMTP id r1-v6so6781634pgp.11
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Aug 2018 14:37:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version:content-id;
-        bh=BM7m1gI0a/MmuMwdM17vqcIZAxG1kAIfjx0q+JFvBH8=;
-        b=VkvG2XQdXcfKwoAp3DZYJzlw5L2MQ1DZJe7syWhoY1L0ktzpH0uvPms1ERSy/aPJCo
-         hv45fbnJ3P6hMdaav9/pjw0Lcd2zbVRqq0t5wDgXyoNF8Wt1pFk6XEEuLRqmtP8afWQV
-         WgAZ/MLDOkPNJTFNFzMWPPdIAKLvjLo51yOKrsF6ZbZEs8VUjLkbKNY1VZeqRISCPT3T
-         vr2y+VJUPRF0+vvpvsU3t6FjS07BkIqByAw9jRF4MIsg9WswEnoLHCvqFOM3rgm3zOTL
-         MN5pL2rr5YOlrM1r4oQX75B3cKeAQmrz3BkQR8cJBfEiQmR1P/Ecl/N3Hx4kmCneEogS
-         XXEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version:content-id;
-        bh=BM7m1gI0a/MmuMwdM17vqcIZAxG1kAIfjx0q+JFvBH8=;
-        b=FqXpeXXA9mNQOJsa8OpI8ZlUtkyvUNV2RptMJIRU1r4/snXS1g7gkmq6fDPA3sMh2l
-         Jv+Zc9aMPeo038tWcKGWyFqZXBiYydSuEN3/i4ou+9uLYN494qHr4nd57E+k0c21VPx9
-         Ndsiz2gjhkKDt/0z5/vPd7AlyiLIarQhAKqNq/LWUQKOmo/Y5QrBVG4XxrHz9D8mbpYe
-         7VB+IkRH9f+z5hAg5dWv4ie62+HGkt/U9HtRrWQb65p9f8in76k4euPknYTe5N0VSUC0
-         HbulZuaFzli3i7jbTVXYm6hd7AqP2nqi9mNXiyy30iKaMV5Ge5qYs0dOhtCoR1HssWHb
-         8eMw==
-X-Gm-Message-State: AOUpUlHy0eOsKH+1E+JFD+Mtf1bTTKuIkukVy366AdMGBOrIxnEKicCj
-        RFIQ2ePTriRpxxs6FdWlqQeH8g==
-X-Google-Smtp-Source: AAOMgpcgJ4RqoTVlCrjr9HaG7isQICw/EMDLbCQy4G76OWzXqfC9BflFt33GaN7j8nBQAXUb3NL3tg==
-X-Received: by 2002:a62:fccd:: with SMTP id e196-v6mr18841201pfh.245.1533591461721;
-        Mon, 06 Aug 2018 14:37:41 -0700 (PDT)
-Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
-        by smtp.gmail.com with ESMTPSA id r11-v6sm12954873pgn.62.2018.08.06.14.37.40
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 06 Aug 2018 14:37:40 -0700 (PDT)
-Date:   Mon, 6 Aug 2018 14:37:40 -0700 (PDT)
-From:   David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To:     =?UTF-8?B?56a56Iif6ZSu?= <ufo19890607@gmail.com>
-cc:     mhocko@kernel.org, Wind Yu <yuzhoujian@didichuxing.com>,
-        rong.a.chen@intel.com, Stephen Rothwell <sfr@canb.auug.org.au>,
-        kirill.shutemov@linux.intel.com, aarcange@redhat.com,
-        penguin-kernel@i-love.sakura.ne.jp, guro@fb.com,
-        yang.s@alibaba-inc.com, akpm@linux-foundation.org,
-        linux-kernel@vger.kernel.org, lkp@01.org
-Subject: Re: [LKP] [mm, oom] c1e4c54f9c: BUG:KASAN:null-ptr-deref_in_d
-In-Reply-To: <CAHCio2j-oH2v5xY9F=Naoj9ao4cYw+LP6kqi_GELafqJ4qB6iw@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.1808061436270.43071@chino.kir.corp.google.com>
-References: <0d4090532f15434aa71779e9dc8a0014@BJSGEXMBX10.didichuxing.com> <CAHCio2idn3oh55n7urkRPqkdyo+Y-0Qhg=Vc2VHXy2Wy2q1wiA@mail.gmail.com> <20180806060649.GA19540@dhcp22.suse.cz> <CAHCio2j-oH2v5xY9F=Naoj9ao4cYw+LP6kqi_GELafqJ4qB6iw@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Mon, 6 Aug 2018 19:50:27 -0400
+Received: from ozlabs.org ([203.11.71.1]:50689 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727665AbeHFXu1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 19:50:27 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 41krdS38s8z9ryt;
+        Tue,  7 Aug 2018 07:39:24 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1533591564;
+        bh=euiFTVXFHe5c8tU1c8yR79EAG+qGSGISDJUnsDQP0+M=;
+        h=Date:From:To:Cc:Subject:From;
+        b=AY3KBdg8+RVYnuY20TJFupWCBW54llw4ED6QuRpx5l/6GX6an24xviQ6mROsvkOu7
+         mdGfrG3gWOoaoJ0MuFPVqv5x6qQtg1soSAdKfb7yZc8A6xpTWvtuAN7hfY4XddF87B
+         k9qStLhz1YsqUxfPyL6bHO6A6L5yskGkWthCfjdX38vITEIhs0zrUUSI9VAhf13xE/
+         y0UC0/EIqbXAKrelX/Ze4LinSfeF+qtG2a2dAnvpPInhTyefpeJKrdDJeabKl4//yr
+         2DJrPFj3AWUF9XFe8lB+07PE7Z51EhegrGCQJiH+0KqorNa6gD/XTQHnFt2phAxynt
+         M4Z+GMBCfS9xA==
+Date:   Tue, 7 Aug 2018 07:39:22 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        KVM <kvm@vger.kernel.org>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the kvm tree
+Message-ID: <20180807073922.665e1d63@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; BOUNDARY="1113858990-1966416849-1533591451=:43071"
-Content-ID: <alpine.DEB.2.21.1808061437370.43071@chino.kir.corp.google.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/Fu_SOGjO3Eh1=cHJi0/AMIS"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+--Sig_/Fu_SOGjO3Eh1=cHJi0/AMIS
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
---1113858990-1966416849-1533591451=:43071
-Content-Type: text/plain; CHARSET=UTF-8
-Content-Transfer-Encoding: 8BIT
-Content-ID: <alpine.DEB.2.21.1808061437371.43071@chino.kir.corp.google.com>
+Hi all,
 
-On Mon, 6 Aug 2018, 禹舟键 wrote:
+Commit
 
-> Hi Michal
-> Sorry, I cannot open the link you shared.
-> 
+  81781b6884bd ("KVM/x86: Use CC_SET()/CC_OUT in arch/x86/kvm/vmx.c")
 
-The suggestion atop your previous patch was
+is missing a Signed-off-by from its committer.
 
-diff --git a/mm/oom_kill.c b/mm/oom_kill.c
---- a/mm/oom_kill.c
-+++ b/mm/oom_kill.c
-@@ -438,14 +438,6 @@ static void dump_header(struct oom_control *oc, struct task_struct *p)
- 
- 	dump_stack();
- 
--	/* one line summary of the oom killer context. */
--	pr_info("oom-kill:constraint=%s,nodemask=%*pbl",
--			oom_constraint_text[oc->constraint],
--			nodemask_pr_args(oc->nodemask));
--	cpuset_print_current_mems_allowed();
--	mem_cgroup_print_oom_context(oc->memcg, p);
--	pr_cont(",task=%s,pid=%d,uid=%d\n", p->comm, p->pid,
--		from_kuid(&init_user_ns, task_uid(p)));
- 	if (is_memcg_oom(oc))
- 		mem_cgroup_print_oom_meminfo(oc->memcg);
- 	else {
-@@ -836,7 +828,8 @@ static bool task_will_free_mem(struct task_struct *task)
- 	return ret;
- }
- 
--static void __oom_kill_process(struct task_struct *victim)
-+static void __oom_kill_process(struct task_struct *victim,
-+			       struct oom_control *oc)
- {
- 	struct task_struct *p;
- 	struct mm_struct *mm;
-@@ -883,6 +876,18 @@ static void __oom_kill_process(struct task_struct *victim)
- 		K(get_mm_counter(victim->mm, MM_ANONPAGES)),
- 		K(get_mm_counter(victim->mm, MM_FILEPAGES)),
- 		K(get_mm_counter(victim->mm, MM_SHMEMPAGES)));
-+
-+	if (oc) {
-+		/* One line summary for non-group oom kills */
-+		pr_info("oom-kill: constraint=%s, nodemask=%*pbl",
-+			oom_constraint_text[oc->constraint],
-+			nodemask_pr_args(oc->nodemask));
-+		cpuset_print_current_mems_allowed();
-+		mem_cgroup_print_oom_context(oc->memcg, victim);
-+		pr_cont(", task=%s, pid=%d, uid=%d\n",
-+			victim->comm, victim->pid,
-+			from_kuid(&init_user_ns, task_uid(victim)));
-+	}
- 	task_unlock(victim);
- 
- 	/*
-@@ -986,13 +991,13 @@ static void oom_kill_process(struct oom_control *oc, const char *message)
- 	}
- 	read_unlock(&tasklist_lock);
- 
--	__oom_kill_process(victim);
-+	__oom_kill_process(victim, oc);
- }
- 
- static int oom_kill_memcg_member(struct task_struct *task, void *unused)
- {
- 	get_task_struct(task);
--	__oom_kill_process(task);
-+	__oom_kill_process(task, NULL);
- 	return 0;
- }
- 
-@@ -1020,7 +1025,7 @@ static bool oom_kill_memcg_victim(struct oom_control *oc)
- 		    oc->chosen_task == INFLIGHT_VICTIM)
- 			goto out;
- 
--		__oom_kill_process(oc->chosen_task);
-+		__oom_kill_process(oc->chosen_task, oc);
- 	}
- 
- out:
+--=20
+Cheers,
+Stephen Rothwell
 
+--Sig_/Fu_SOGjO3Eh1=cHJi0/AMIS
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-You should be able to find this in your email.  We don't want to emit the 
-line when a victim is not chosen.  I also did a couple of cleanups like 
-spaces between commas.
---1113858990-1966416849-1533591451=:43071--
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltowAoACgkQAVBC80lX
+0GwBPgf/a0nOKk+yWTIVR5F61U6gBcqKR7e4LYBxnxcrjMJIStc+PCrZUMPSkAOR
+w7fBIZI6CTZWoR7YrAxF6GUvVzjAZsPwf9OFp50zmkFAjUVoUB3n+7TlEerbfBUC
+ztbvcfEPGevv1I4d0aFPDZFSlAgwR/Ti0Px8Pc6WWXxUiAf04VDCIFo1zw3Wz+l5
+EbJSKJHU/KsWUGIsAL18H0Jtwu39rgC7DKBq7h3JcrfhyoOtWuE5aCi8FCqt7X3L
+dDhXMQEn/XTDbbAigNXII/aqc4r+sRwDzK2cWfOuKpoq+ABEH7ewHNcbzkVqgg+O
+TY+nZqktS16wTs5zg+jxtzAPM1xlDg==
+=7vws
+-----END PGP SIGNATURE-----
+
+--Sig_/Fu_SOGjO3Eh1=cHJi0/AMIS--
