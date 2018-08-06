@@ -4,444 +4,211 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61318C46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 22:50:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65A20C4646D
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 22:54:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E652121A56
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 22:50:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EFA3E21A53
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 22:54:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="erN817eK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E652121A56
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="O38EVgIu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFA3E21A53
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733170AbeHGBCC (ORCPT
+        id S1733269AbeHGBFa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 21:02:02 -0400
-Received: from mailout2.samsung.com ([203.254.224.25]:64345 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732135AbeHGBCC (ORCPT
+        Mon, 6 Aug 2018 21:05:30 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:39519 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732135AbeHGBFa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 21:02:02 -0400
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20180806225043epoutp02b70bdeda63bd330be4449d107eb5178e~IbUtYuIHi1506815068epoutp02g;
-        Mon,  6 Aug 2018 22:50:43 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20180806225043epoutp02b70bdeda63bd330be4449d107eb5178e~IbUtYuIHi1506815068epoutp02g
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1533595843;
-        bh=9j9trWKbOOumatepgi5XD2yjZa+N+hmxBW9ABRcQgnE=;
-        h=Date:From:To:Cc:Subject:In-reply-to:References:From;
-        b=erN817eKYyVYB01yym2CBxDUetbsG3NKj3ZekOqIXv/fqNN2ykxLj7ENtOT7cSm3H
-         69f+CkOTdS8tIUubTHhRkDL45I1fASAuUc+s0W7H/hyu7b/8mgosvS0V2w/eXIGlbb
-         TKiU5XhbDAig4rTqk+oMr2ux5NjmG1eeyu4BewIY=
-Received: from epsmges1p4.samsung.com (unknown [182.195.40.157]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-        20180806225041epcas1p46b3ec9f2169257926e13a081f9d8388c~IbUrItC9S2798727987epcas1p45;
-        Mon,  6 Aug 2018 22:50:41 +0000 (GMT)
-Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
-        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        94.03.04292.0C0D86B5; Tue,  7 Aug 2018 07:50:41 +0900 (KST)
-Received: from epsmgms2p1new.samsung.com (unknown [182.195.42.142]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20180806225040epcas1p1e249c3eaca06270fa23e4d63723e5c22~IbUqoRRZw0612006120epcas1p1R;
-        Mon,  6 Aug 2018 22:50:40 +0000 (GMT)
-X-AuditID: b6c32a38-d3bff700000010c4-22-5b68d0c0352a
-Received: from epmmp2 ( [203.254.227.17]) by epsmgms2p1new.samsung.com
-        (Symantec Messaging Gateway) with SMTP id E5.11.03704.0C0D86B5; Tue,  7 Aug
-        2018 07:50:40 +0900 (KST)
-MIME-version: 1.0
-Content-transfer-encoding: 8BIT
-Content-type: text/plain; charset="utf-8"
-Received: from [10.113.63.77] by mmp2.samsung.com (Oracle Communications
-        Messaging Server 7.0.5.31.0 64bit (built May  5 2014)) with ESMTPA id
-        <0PD20000SA4FLR20@mmp2.samsung.com>; Tue, 07 Aug 2018 07:50:40 +0900 (KST)
-Message-id: <5B68D0BF.5020709@samsung.com>
-Date:   Tue, 07 Aug 2018 07:50:39 +0900
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
-        Thunderbird/31.6.0
-To:     Matthias Kaehlcke <mka@chromium.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Brian Norris <briannorris@chromium.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Lee Jones <lee.jones@linaro.org>,
-        Benson Leung <bleung@chromium.org>,
-        Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH v5 05/12] PM / devfreq: Add support for policy notifiers
-In-reply-to: <5B68CC34.8040102@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrCJsWRmVeSWpSXmKPExsWy7bCmge7BCxnRBjPWMln8nXSM3WL6k8ss
-        Fps+vme1mH/kHKvF2WUH2SzW3D7EaNG8eD2bxdmmN+wW978eZbS4vGsOm8Xn3iOMFkuvX2Sy
-        +LzhMaPF7cYVbBanrn9mszhz+hKrReveI+wWG796OAh5rJm3htHj969JjB6zGy6yeOy4u4TR
-        Y9OqTjaPO9f2sHnsn7uG3ePKiSZWjy1X21k8+rasYvT4vEkugDsq1SYjNTEltUghNS85PyUz
-        L91WyTs43jne1MzAUNfQ0sJcSSEvMTfVVsnFJ0DXLTMH6DUlhbLEnFKgUEBicbGSvp1NUX5p
-        SapCRn5xia1StKGhkZ6hgbmekRGQNo61MjIFKklIzfjwppm94GlOxexHH1gbGHdGdDFyckgI
-        mEi8evOarYuRi0NIYAejxNIZn1khnO+MEh/PvQDKcIBVnTiTCBHfwChx9uUmZpBuXgFBiR+T
-        77GA1DALyEscuZQNEmYW0JR48WUSC0T9XUaJ7l29UPVaEtduvmcEsVkEVCU+797PDmKzAcX3
-        v7jBBmLzCyhKXP3xGKxGVCBCYuf8b2A1IgJBEqe3XmICGcos8I5F4unUiywgCWEBH4l7HSBX
-        c3JwCmhLTGrdywxSJCFwil1i6SGISRICLhIH9k2AsoUlXh3fwg7xmbTEpaO2EPXtjBJfXjSz
-        QjgTGCU+nNrMBNFgLPFsYRcTxG98Eu++9rBCNPNKdLQJQZR4SLQsuM4O8fInZol5U3pYJzDK
-        zkIKpVmIUJqFFEoLGJlXMYqlFhTnpqcWGxaY6BUn5haX5qXrJefnbmIEp2Atix2Me875HGIU
-        4GBU4uEVWJIRLcSaWFZcmXuIUYKDWUmElzcTKMSbklhZlVqUH19UmpNafIjRFBjIE5mlRJPz
-        gfkhryTe0NTI2NjYwsTQzNTQUEmc18gvOFpIID2xJDU7NbUgtQimj4mDU6qB0TGrvXXJM+mI
-        Cfl7/55Z7+C37r8nI8P6/qr4qjtJW86kbo+45zi15Pg6pv/ncpm5VPnN87/Ot4jLm5Yq/qp6
-        xdz7+6xl7S9t/yL8/VMzS56BmtHWK/MOB8W0Xw6utTMMilnNfEzboHa1ATtPhs2lU9rHF+4s
-        C9qxRHtZV8IbfocpGzuy1bMTlFiKMxINtZiLihMBVqlML9cDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrAIsWRmVeSWpSXmKPExsVy+t9jQd0DFzKiDeY8l7X4O+kYu8X0J5dZ
-        LDZ9fM9qMf/IOVaLs8sOslmsuX2I0aJ58Xo2i7NNb9gt7n89ymhxedccNovPvUcYLZZev8hk
-        8XnDY0aL240r2CxOXf/MZnHm9CVWi9a9R9gtNn71cBDyWDNvDaPH71+TGD1mN1xk8dhxdwmj
-        x6ZVnWwed67tYfPYP3cNu8eVE02sHluutrN49G1ZxejxeZNcAHcUl01Kak5mWWqRvl0CV8aH
-        N83sBU9zKmY/+sDawLgzoouRg0NCwETixJnELkYuDiGBdYwSkx7cYu1i5OTgFRCU+DH5HgtI
-        DbOAvMSRS9kQprrElCm5EOX3GSW+Lj3MBlGuJXHt5ntGEJtFQFXi8+797CA2G1B8/4sbYDX8
-        AooSV388ZgSZIyoQIdF9ohIkLCIQINHe/IQdZCazwDsWiSkzHjODJIQFfCTudXxmhVj2iVli
-        zqq3YEM5BbQlJrXuZZ7AKDALyamzEE6dhXDqAkbmVYySqQXFuem5xUYFhnmp5XrFibnFpXnp
-        esn5uZsYgfG47bBW3w7G+0viDzEKcDAq8fAKLMmIFmJNLCuuzD3EKMHBrCTCy5sJFOJNSays
-        Si3Kjy8qzUktPsQozcGiJM57O+9YpJBAemJJanZqakFqEUyWiYNTqoGRp95EYO2aeSEuRY9y
-        +PecsDLzNyvZ8SrvWlvPnOrPnYrr99RcUamfFxLjMT04dreRskVX4Lrk98axsySPRMlYmCif
-        ypJet/aE74IJ5/6+iXkVc65uevttpYJbM19vuCPzM48rauvnGP+AJ0JplpxBKpve64lYB00z
-        8fryIbjROsbt0apWRSElluKMREMt5qLiRAAA+lNkwwIAAA==
-X-CMS-MailID: 20180806225040epcas1p1e249c3eaca06270fa23e4d63723e5c22
-X-Msg-Generator: CA
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20180802234831epcas5p3951e8f64381a27d40865d339878751d1
-References: <5399c191-e140-e2b8-629b-72ddfbf99b0f@samsung.com>
-        <20180716175050.GZ129942@google.com> <20180731193953.GH68975@google.com>
-        <5B610B48.4030802@samsung.com> <20180801170824.GJ68975@google.com>
-        <5B626563.1090302@samsung.com> <20180802231343.GS68975@google.com>
-        <CGME20180802234831epcas5p3951e8f64381a27d40865d339878751d1@epcas5p3.samsung.com>
-        <20180802234820.GU68975@google.com> <5B639E76.6050901@samsung.com>
-        <20180806192111.GB160295@google.com> <5B68CC34.8040102@samsung.com>
+        Mon, 6 Aug 2018 21:05:30 -0400
+Received: by mail-ed1-f68.google.com with SMTP id h4-v6so5982526edi.6
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Aug 2018 15:54:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rasmusvillemoes.dk; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=P1z13r1SkfWkkyl78PjbAIDLrJ/9NM5yzO/2Q1KxROw=;
+        b=O38EVgIurxAORFL8JnmAcjuOmptpo9RYsCbIQlpAgonulV5rR+QYiLkP0qALUEcHN7
+         1b+k6mFz5SzJs05bq4LWSc5NVRCiC8bujQGlfOm2XA3yWoUj7uBKXOQLESh8kvx4WNby
+         r8YdfLuYPX90qJCkUtxRXXTFVbfm028yqcOsA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=P1z13r1SkfWkkyl78PjbAIDLrJ/9NM5yzO/2Q1KxROw=;
+        b=gFpH3pfKDYyYh0r8MlPApWev3MxWGqWk5ypE0uJWo4wFGKo1PJ9C6FItLP3f0m8o1G
+         kl2b//8m7J9DGQXshlg+GEVI1v+hMlNF21TMIBbIOlDaUu9lJ0XlqDFVScvpVzRVPzVO
+         79WCzViW9orbazRbxO+TI49QuFtcHc65j8oiJQsMc+H7RTbbtt6J1pfJOlz0ldpn5OIv
+         7kl8TdZdEa2YxVbIb7919v2qqZeKrsUNAzTGoS3/6Fd1O2pIKyr5vpPMeQZnYF97hWkv
+         6hNGeXjZXDG5HkNfP1xHTiy9uzmHjXEVux64GgzMXmmLpytVaJmctUKygxYJRfmKZDFU
+         TcZw==
+X-Gm-Message-State: AOUpUlFEbwn5Z8QtFZPvUyk6vVY2RkzZHGIdU1Nl67W6BHfRLdPhZO55
+        4w7uY1qpCVGlCtN97/GYjL/3F/OXV0g=
+X-Google-Smtp-Source: AAOMgpcf6qUoBWHiZNFmEETxa+EsXJZ3BzVtWvUUgBSh7JYsdXbsWD9Ha8jacAqtLo9ggjOXj1+Vow==
+X-Received: by 2002:a50:a0a6:: with SMTP id 35-v6mr20254188edo.280.1533596051069;
+        Mon, 06 Aug 2018 15:54:11 -0700 (PDT)
+Received: from [192.168.0.189] (dhcp-5-186-126-104.cgn.ip.fibianet.dk. [5.186.126.104])
+        by smtp.gmail.com with ESMTPSA id v26-v6sm2495eds.43.2018.08.06.15.54.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 06 Aug 2018 15:54:10 -0700 (PDT)
+Subject: Re: [PATCH rdma-next v4 2/3] test_overflow: Add shift overflow tests
+To:     Kees Cook <keescook@chromium.org>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Cc:     Leon Romanovsky <leon@kernel.org>,
+        Bart Van Assche <Bart.VanAssche@wdc.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180801212541.22889-1-keescook@chromium.org>
+ <20180801212541.22889-3-keescook@chromium.org>
+From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Message-ID: <c6ca9a92-85fc-3cdf-823c-2260145049b0@rasmusvillemoes.dk>
+Date:   Tue, 7 Aug 2018 00:54:08 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180801212541.22889-3-keescook@chromium.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Viresh Kumar,
-
-I have a question about dev_pm_opp_enable() and dev_pm_opp_disable().
-Two functions have 'available' field to indicate the status of specific OPP.
-
-If different device drivers try to control the same OPP,
-dev_pm_opp_enable() and dev_pm_opp_disable() will consider only last operation.
-It means that OPP should be enabled/disabled by only one device driver.
-
-For example,
-opp_table of driver a(dev_a)
-- 500Mhz
-- 400Mhz
-- 300Mhz
-- 200Mhz
-- 100Mhz
-
-Driver B, opp_disable(dev_a, 500)
-Driver C, opp_enable(dev_a, 500)
--> 500Mhz is enabled. But, driver B might want to enable 500Mhz at this time such as cooling.
-
-I think that if OPP support the use of multiple device drivers,
-dev_pm_opp_enable() and dev_pm_opp_disable() should support the usage count
-such as regulator/clock.
-
-I would like your opinion.
-
-Regards,
-Chanwoo Choi
-
-
-On 2018년 08월 07일 07:31, Chanwoo Choi wrote:
-> Hi Matthias,
+On 2018-08-01 23:25, Kees Cook wrote:
+> This adds overflow tests for the new check_shift_overflow() helper to
+> validate overflow, signedness glitches, storage glitches, etc.
 > 
-> On 2018년 08월 07일 04:21, Matthias Kaehlcke wrote:
->> Hi Chanwoo,
->>
->> On Fri, Aug 03, 2018 at 09:14:46AM +0900, Chanwoo Choi wrote:
->>> Hi Matthias,
->>>
->>> On 2018년 08월 03일 08:48, Matthias Kaehlcke wrote:
->>>> On Thu, Aug 02, 2018 at 04:13:43PM -0700, Matthias Kaehlcke wrote:
->>>>> Hi Chanwoo,
->>>>>
->>>>> On Thu, Aug 02, 2018 at 10:58:59AM +0900, Chanwoo Choi wrote:
->>>>>> Hi Matthias,
->>>>>>
->>>>>> On 2018년 08월 02일 02:08, Matthias Kaehlcke wrote:
->>>>>>> Hi Chanwoo,
->>>>>>>
->>>>>>> On Wed, Aug 01, 2018 at 10:22:16AM +0900, Chanwoo Choi wrote:
->>>>>>>> On 2018년 08월 01일 04:39, Matthias Kaehlcke wrote:
->>>>>>>>> On Mon, Jul 16, 2018 at 10:50:50AM -0700, Matthias Kaehlcke wrote:
->>>>>>>>>> On Thu, Jul 12, 2018 at 05:44:33PM +0900, Chanwoo Choi wrote:
->>>>>>>>>>> Hi Matthias,
->>>>>>>>>>>
->>>>>>>>>>> On 2018년 07월 07일 02:53, Matthias Kaehlcke wrote:
->>>>>>>>>>>> Hi Chanwoo,
->>>>>>>>>>>>
->>>>>>>>>>>> On Wed, Jul 04, 2018 at 03:41:46PM +0900, Chanwoo Choi wrote:
->>>>>>>>>>>>
->>>>>>>>>>>>> Firstly,
->>>>>>>>>>>>> I'm not sure why devfreq needs the devfreq_verify_within_limits() function.
->>>>>>>>>>>>>
->>>>>>>>>>>>> devfreq already used the OPP interface as default. It means that
->>>>>>>>>>>>> the outside of 'drivers/devfreq' can disable/enable the frequency
->>>>>>>>>>>>> such as drivers/thermal/devfreq_cooling.c. Also, when some device
->>>>>>>>>>>>> drivers disable/enable the specific frequency, the devfreq core
->>>>>>>>>>>>> consider them.
->>>>>>>>>>>>>
->>>>>>>>>>>>> So, devfreq doesn't need to devfreq_verify_within_limits() because
->>>>>>>>>>>>> already support some interface to change the minimum/maximum frequency
->>>>>>>>>>>>> of devfreq device. 
->>>>>>>>>>>>>
->>>>>>>>>>>>> In case of cpufreq subsystem, cpufreq only provides 'cpufreq_verify_with_limits()'
->>>>>>>>>>>>> to change the minimum/maximum frequency of cpu. some device driver cannot
->>>>>>>>>>>>> change the minimum/maximum frequency through OPP interface.
->>>>>>>>>>>>>
->>>>>>>>>>>>> But, in case of devfreq subsystem, as I explained already, devfreq support
->>>>>>>>>>>>> the OPP interface as default way. devfreq subsystem doesn't need to add
->>>>>>>>>>>>> other way to change the minimum/maximum frequency.
->>>>>>>>>>>>
->>>>>>>>>>>> Using the OPP interface exclusively works as long as a
->>>>>>>>>>>> enabling/disabling of OPPs is limited to a single driver
->>>>>>>>>>>> (drivers/thermal/devfreq_cooling.c). When multiple drivers are
->>>>>>>>>>>> involved you need a way to resolve conflicts, that's the purpose of
->>>>>>>>>>>> devfreq_verify_within_limits(). Please let me know if there are
->>>>>>>>>>>> existing mechanisms for conflict resolution that I overlooked.
->>>>>>>>>>>>
->>>>>>>>>>>> Possibly drivers/thermal/devfreq_cooling.c could be migrated to use
->>>>>>>>>>>> devfreq_verify_within_limits() instead of the OPP interface if
->>>>>>>>>>>> desired, however this seems beyond the scope of this series.
->>>>>>>>>>>
->>>>>>>>>>> Actually, if we uses this approach, it doesn't support the multiple drivers too.
->>>>>>>>>>> If non throttler drivers uses devfreq_verify_within_limits(), the conflict
->>>>>>>>>>> happen.
->>>>>>>>>>
->>>>>>>>>> As long as drivers limit the max freq there is no conflict, the lowest
->>>>>>>>>> max freq wins. I expect this to be the usual case, apparently it
->>>>>>>>>> worked for cpufreq for 10+ years.
->>>>>>>>>>
->>>>>>>>>> However it is correct that there would be a conflict if a driver
->>>>>>>>>> requests a min freq that is higher than the max freq requested by
->>>>>>>>>> another. In this case devfreq_verify_within_limits() resolves the
->>>>>>>>>> conflict by raising p->max to the min freq. Not sure if this is
->>>>>>>>>> something that would ever occur in practice though.
->>>>>>>>>>
->>>>>>>>>> If we are really concerned about this case it would also be an option
->>>>>>>>>> to limit the adjustment to the max frequency.
->>>>>>>>>>
->>>>>>>>>>> To resolve the conflict for multiple device driver, maybe OPP interface
->>>>>>>>>>> have to support 'usage_count' such as clk_enable/disable().
->>>>>>>>>>
->>>>>>>>>> This would require supporting negative usage count values, since a OPP
->>>>>>>>>> should not be enabled if e.g. thermal enables it but the throttler
->>>>>>>>>> disabled it or viceversa.
->>>>>>>>>>
->>>>>>>>>> Theoretically there could also be conflicts, like one driver disabling
->>>>>>>>>> the higher OPPs and another the lower ones, with the outcome of all
->>>>>>>>>> OPPs being disabled, which would be a more drastic conflict resolution
->>>>>>>>>> than that of devfreq_verify_within_limits().
->>>>>>>>>>
->>>>>>>>>> Viresh, what do you think about an OPP usage count?
->>>>>>>>>
->>>>>>>>> Ping, can we try to reach a conclusion on this or at least keep the
->>>>>>>>> discussion going?
->>>>>>>>>
->>>>>>>>> Not that it matters, but my preferred solution continues to be
->>>>>>>>> devfreq_verify_within_limits(). It solves conflicts in some way (which
->>>>>>>>> could be adjusted if needed) and has proven to work in practice for
->>>>>>>>> 10+ years in a very similar sub-system.
->>>>>>>>
->>>>>>>> It is not true. Current cpufreq subsystem doesn't support external OPP
->>>>>>>> control to enable/disable the OPP entry. If some device driver
->>>>>>>> controls the OPP entry of cpufreq driver with opp_disable/enable(),
->>>>>>>> the operation is not working. Because cpufreq considers the limit
->>>>>>>> through 'cpufreq_verify_with_limits()' only.
->>>>>>>
->>>>>>> Ok, we can probably agree that using cpufreq_verify_with_limits()
->>>>>>> exclusively seems to have worked well for cpufreq, and that in their
->>>>>>> overall purpose cpufreq and devfreq are similar subsystems.
->>>>>>>
->>>>>>> The current throttler series with devfreq_verify_within_limits() takes
->>>>>>> the enabled OPPs into account, the lowest and highest OPP are used as
->>>>>>> a starting point for the frequency adjustment and (in theory) the
->>>>>>> frequency range should only be narrowed by
->>>>>>> devfreq_verify_within_limits().
->>>>>>>
->>>>>>>> As I already commented[1], there is different between cpufreq and devfreq.
->>>>>>>> [1] https://lkml.org/lkml/2018/7/4/80
->>>>>>>>
->>>>>>>> Already, subsystem already used OPP interface in order to control
->>>>>>>> specific OPP entry. I don't want to provide two outside method
->>>>>>>> to control the frequency of devfreq driver. It might make the confusion.
->>>>>>>
->>>>>>> I understand your point, it would indeed be preferable to have a
->>>>>>> single method. However I'm not convinced that the OPP interface is
->>>>>>> a suitable solution, as I exposed earlier in this thread (quoted
->>>>>>> below).
->>>>>>>
->>>>>>> I would like you to at least consider the possibility of changing
->>>>>>> drivers/thermal/devfreq_cooling.c to devfreq_verify_within_limits().
->>>>>>> Besides that it's not what is currently used, do you see any technical
->>>>>>> concerns that would make devfreq_verify_within_limits() an unsuitable
->>>>>>> or inferior solution?
->>>>>>
->>>>>> As we already discussed, devfreq_verify_within_limits() doesn't support
->>>>>> the multiple outside controllers (e.g., devfreq-cooling.c).
->>>>>
->>>>> That's incorrect, its purpose is precisely that.
->>>>>
->>>>> Are you suggesting that cpufreq with its use of
->>>>> cpufreq_verify_within_limits() (the inspiration for
->>>>> devfreq_verify_within_limits()) is broken? It is used by cpu_cooling.c
->>>>> and other drivers when receiving a CPUFREQ_ADJUST event, essentially
->>>>> what I am proposing with DEVFREQ_ADJUST.
->>>>>
->>>>> Could you elaborate why this model wouldn't work for devfreq? "OPP
->>>>> interface is mandatory for devfreq" isn't really a technical argument,
->>>>> is it mandatory for any other reason than that it is the interface
->>>>> that is currently used?
->>>>>
->>>>>> After you are suggesting the throttler core, there are at least two
->>>>>> outside controllers (e.g., devfreq-cooling.c and throttler driver).
->>>>>> As I knew the problem about conflict, I cannot agree the temporary
->>>>>> method. OPP interface is mandatory for devfreq in order to control
->>>>>> the OPP (frequency/voltage). In this situation, we have to try to
->>>>>> find the method through OPP interface.
->>>>>
->>>>> What do you mean with "temporary method"?
->>>>>
->>>>> We can try to find a method through the OPP interface, but at this
->>>>> point I'm not convinced that it is technically necessary or even
->>>>> preferable.
->>>>>
->>>>> Another inconvenient of the OPP approach for both devfreq-cooling.c
->>>>> and the throttler is that they have to bother with disabling all OPPs
->>>>> above/below the max/min (they don't/shouldn't have to care), instead
->>>>> of just telling devfreq the max/min.
->>>>
->>>> And a more important one: both drivers now have to keep track which
->>>> OPPs they enabled/disabled previously, done are the days of a simple
->>>> dev_pm_opp_enable/disable() in devfreq_cooling. Certainly it is
->>>> possible and not very complex to implement, but is it really the
->>>> best/a good solution?
->>>
->>>
->>> As I replied them right before, Each outside driver has their own throttling
->>> policy to control OPP entries. They don't care the requirement of other
->>> driver and cannot know the requirement of other driver. devfreq core can only
->>> recognize them and then only consider enabled OPP entris without disabled OPP entries.
->>>
->>> For example1,
->>>        | devfreq-cooling| throttler
->>> ---------------------------------------
->>> 500Mhz | disabled       | disabled
->>> 400Mhz | disabled       | disabled
->>> 300Mhz |                | disabled
->>> 200Mhz |                |
->>> 100Mhz |                |
->>> => devfreq driver can use only 100/200Mhz
->>>
->>>
->>> For example2,
->>>        | devfreq-cooling| throttler
->>> ---------------------------------------
->>> 500Mhz | disabled       | disabled
->>> 400Mhz | disabled       |
->>> 300Mhz | disabled       |
->>> 200Mhz |                |
->>> 100Mhz |                |
->>> => devfreq driver can use only 100/200Mhz
->>>
->>>
->>> For example3,
->>>        | devfreq-cooling| throttler
->>> ---------------------------------------
->>> 500Mhz | disabled       | disabled
->>> 400Mhz |                |
->>> 300Mhz |                |
->>> 200Mhz |                | disabled
->>> 100Mhz |                | disabled
->>> => devfreq driver can use only 300/400Mhz
->>
->> These are all cases without conflicts, my concern is about this:
->>
->>>        | devfreq-cooling| throttler
->>> ---------------------------------------
->>> 500Mhz | disabled       |
->>> 400Mhz | disabled       |
->>> 300Mhz |                | disabled
->>> 200Mhz |                | disabled
->>> 100Mhz |                | disabled
->>> => devfreq driver can't use any frequency?
-> 
-> There are no any enabled frequency. Because device driver
-> (devfreq-cooling, throttler) disable all frequencies.
-> 
-> Outside drivers(devfreq-cooling, throttler) can enable/disable
-> specific OPP entries. As I already commented, each outside driver
-> doesn't consider the policy of other device driver about OPP entries.
-> 
-> OPP interface is independent on devfreq and just control OPP entries.
-> After that, devfreq just consider the only enabled OPP entries.
 
-In this case, at least one OPP should be remained on enabled state.
-Maybe, OPP interface should provide the function which cannot disable
-specific OPP entry.
+Just a few random comments, not really anything worth a v5 by itself.
+IOW, I can live with this being sent upstream during next merge window.
 
-> 
->>
->> Actually my above comment wasn't about this case, but about the
->> added complexity in devfreq-cooling.c and the throttler:
->>
->> A bit simplified partition_enable_opps() currently does this:
->>
->> for_each_opp(opp) {
->>   if (opp->freq <= max)
->>      opp_enable(opp)
->>   else
->>      opp_disable(opp)
->> }
->>
->> With the OPP usage/disable count this doesn't work any longer. Now we
->> need to keep track of the enabled/disabled state of the OPP, something
->> like:
->>
->> dev_pm_opp_enable(opp) {
->>   if (opp->freq <= max) {
->>     if (opp->freq > prev_max)
->>       opp_enable(opp)
->>   } else {
->>     if (opp->freq < prev_max)
->>       opp_disable(opp)
->>   }
->> }
->>
->> And duplicate the same in the throttler (and other possible
->> drivers). Obviously it can be done, but is there really any gain
->> from it?
->>
->> Instead they just could do:
->>
->> devfreq_verify_within_limits(policy/freq_pair, 0, max_freq)
->>
->> without being concerned about implementation details of devfreq.
->>
-> 
-> I don't think so. dev_pm_opp_enable()/dev_pm_opp_disable()
-> have to consider only one OPP entry without any other OPP entry.
-> 
-> dev_pm_opp_enable()/dev_pm_opp_disable() can never know the other
-> OPP entries. After some driver(devfreq-cooling.c and throttler) 
-> enable or disable specific OPP entries, the remaining OPP entry 
-> with enabled state will be considered on devfreq driver.
-> 
+> Co-developed-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> ---
+> +static int __init test_overflow_shift(void)
+> +{
+> +	int err = 0;
+> +
+> +/* Args are: value, shift, type, expected result, overflow expected */
+> +#define TEST_ONE_SHIFT(a, s, t, expect, of) ({				\
+> +	int __failed = 0;						\
+> +	typeof(a) __a = (a);						\
+> +	typeof(s) __s = (s);						\
+> +	t __e = (expect);						\
+> +	t __d;								\
+> +	bool __of = check_shl_overflow(__a, __s, &__d);			\
+> +	if (__of != of) {						\
+> +		pr_warn("expected (%s)(%s << %s) to%s overflow\n",	\
+> +			#t, #a, #s, of ? "" : " not");			\
+> +		__failed = 1;						\
+> +	} else if (!__of && __d != __e) {				\
+> +		pr_warn("expected (%s)(%s << %s) == %s\n",		\
+> +			#t, #a, #s, #expect);				\
+> +		if ((t)-1 < 0)						\
+> +			pr_warn("got %lld\n", (s64)__d);		\
+> +		else							\
+> +			pr_warn("got %llu\n", (u64)__d);		\
+> +		__failed = 1;						\
+> +	}								\
+> +	if (!__failed)							\
+> +		pr_info("ok: (%s)(%s << %s) == %s\n", #t, #a, #s,	\
+> +			of ? "overflow" : #expect);			\
+
+Isn't that a bit much, one pr_info for every test case (especially with
+the number of test cases you've done, and thanks for that btw.)? For the
+others, there's just one "doing nnn tests". It's harder here because we
+can only let the tests count themselves, but we could have
+TEST_ONE_SHIFT do exactly that and then print a pr_info at the end (or
+pr_warn if any failed).
+
+[Or, if we're willing to do something a bit ugly, forward-declaring
+file-scope statics is actually allowed, and can be combined with
+__COUNTER__...
+
+#define foo() printf("test number %d\n", __COUNTER__)
+
+static int start;
+static int end;
+
+static int start = __COUNTER__;
+void t(void)
+{
+	printf("Will do %d tests\n", end - start);
+	foo();
+	foo();
+}
+static int end = __COUNTER__ - 1;
+
+the expansion of TEST_ONE_SHIFT wouldn't have to use __COUNTER__ in any
+meaningful way. This of course goes out the window if
+check_shl_overflow is robustified with UNIQUE_ID. There's even a way to
+work around that, but I'd better stop here.]
+
+
+> +	__failed;							\
+> +})
+> +
+> +	err |= TEST_ONE_SHIFT(1, 0, int, 1 << 0, false);
+> +	err |= TEST_ONE_SHIFT(1, 16, int, 1 << 16, false);
+> +	err |= TEST_ONE_SHIFT(1, 30, int, 1 << 30, false);
+> +	err |= TEST_ONE_SHIFT(1, 0, s32, 1 << 0, false);
+> +	err |= TEST_ONE_SHIFT(1, 16, s32, 1 << 16, false);
+> +	err |= TEST_ONE_SHIFT(1, 30, s32, 1 << 30, false);
+
+I don't see much point in doing both int and s32 as they are AFAIK
+unconditionally the same on all architectures. Similarly for unsigned
+int/u32.
+
+> +
+> +	/* Overflow: shifted at or beyond entire type's bit width. */
+> +	err |= TEST_ONE_SHIFT(0, 8, u8, 0, true);
+> +	err |= TEST_ONE_SHIFT(0, 9, u8, 0, true);
+
+Hmm, seeing these I'd actually rather we didn't base the upper bound for
+the shift count on sizeof(*d) but rather used a fixed 64, since that's
+what we use for the temporary variable, and capping the shift count is
+mostly for avoiding UB in the implementation. For any non-zero input
+value, a shift count greater than 8 would still report overflow because
+of the truncation.
+
+More generally, I think that if the actual C expression
+
+  a << s
+
+doesn't invoke UB (i.e., a is non-negative and s is sane according to
+the type of a), no bits are lots during the shift, and the result fits
+in *d, we should not report overflow. Hence we should not impose
+arbitrary limits on s just because the destination happens to be u8.
+That some shift count/destination type combos then happen to guarantee
+overflow for all but an input of 0 is just the way the math works.
+
+> +
+> +	/*
+> +	 * Corner case: for unsigned types, we fail when we've shifted
+> +	 * through the entire width of bits. For signed types, we might
+> +	 * want to match this behavior, but that would mean noticing if
+> +	 * we shift through all but the signed bit, and this is not
+> +	 * currently detected (but we'll notice an overflow into the
+> +	 * signed bit). So, for now, we will test this condition but
+> +	 * mark it as not expected to overflow.
+> +	 */
+> +	err |= TEST_ONE_SHIFT(0, 7, s8, 0, false);
+> +	err |= TEST_ONE_SHIFT(0, 15, s16, 0, false);
+> +	err |= TEST_ONE_SHIFT(0, 31, int, 0, false);
+> +	err |= TEST_ONE_SHIFT(0, 31, s32, 0, false);
+> +	err |= TEST_ONE_SHIFT(0, 63, s64, 0, false);
+
+I can't really see how this is a "corner case". For an s8 destination
+and a shift count of, say, 4, there happens to be 8 input values that
+won't lead to "overflow". When the shift count is 7, there's 1 input
+value that won't lead to "overflow". So?
+
+Rasmus
