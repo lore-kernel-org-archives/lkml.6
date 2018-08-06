@@ -6,866 +6,534 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C870CC4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 15:06:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C72B3C46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 15:07:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A621219E8
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 15:06:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A621219E8
+	by mail.kernel.org (Postfix) with ESMTP id 694F721A51
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 15:07:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 694F721A51
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732707AbeHFRP7 (ORCPT
+        id S1732718AbeHFRQm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 13:15:59 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42876 "EHLO
+        Mon, 6 Aug 2018 13:16:42 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:43198 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727541AbeHFRP6 (ORCPT
+        with ESMTP id S1731932AbeHFRQm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 13:15:58 -0400
+        Mon, 6 Aug 2018 13:16:42 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 11AAA25A;
-        Mon,  6 Aug 2018 15:06:23 +0000 (UTC)
-Date:   Mon, 6 Aug 2018 17:06:21 +0200
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2896FC8A;
+        Mon,  6 Aug 2018 15:07:09 +0000 (UTC)
+Date:   Mon, 6 Aug 2018 17:07:07 +0200
 From:   Greg KH <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org,
         Andrew Morton <akpm@linux-foundation.org>,
         torvalds@linux-foundation.org, stable@vger.kernel.org
 Cc:     lwn@lwn.net, Jiri Slaby <jslaby@suse.cz>
-Subject: Re: Linux 4.9.118
-Message-ID: <20180806150621.GB12005@kroah.com>
-References: <20180806150614.GA12005@kroah.com>
+Subject: Linux 4.4.146
+Message-ID: <20180806150707.GA12139@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="pf9I7BMVVzbSWLtt"
 Content-Disposition: inline
-In-Reply-To: <20180806150614.GA12005@kroah.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-diff --git a/Makefile b/Makefile
-index 773c26c95d98..0940f11fa071 100644
---- a/Makefile
-+++ b/Makefile
-@@ -1,6 +1,6 @@
- VERSION = 4
- PATCHLEVEL = 9
--SUBLEVEL = 117
-+SUBLEVEL = 118
- EXTRAVERSION =
- NAME = Roaring Lionus
- 
-diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index 4e0292e0aafb..30b74b491909 100644
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -7085,6 +7085,8 @@ static int handle_vmon(struct kvm_vcpu *vcpu)
- 		     HRTIMER_MODE_REL_PINNED);
- 	vmx->nested.preemption_timer.function = vmx_preemption_timer_fn;
- 
-+	vmx->nested.vpid02 = allocate_vpid();
-+
- 	vmx->nested.vmxon = true;
- 
- 	skip_emulated_instruction(vcpu);
-@@ -9264,10 +9266,8 @@ static struct kvm_vcpu *vmx_create_vcpu(struct kvm *kvm, unsigned int id)
- 			goto free_vmcs;
- 	}
- 
--	if (nested) {
-+	if (nested)
- 		nested_vmx_setup_ctls_msrs(vmx);
--		vmx->nested.vpid02 = allocate_vpid();
--	}
- 
- 	vmx->nested.posted_intr_nv = -1;
- 	vmx->nested.current_vmptr = -1ull;
-@@ -9285,7 +9285,6 @@ static struct kvm_vcpu *vmx_create_vcpu(struct kvm *kvm, unsigned int id)
- 	return &vmx->vcpu;
- 
- free_vmcs:
--	free_vpid(vmx->nested.vpid02);
- 	free_loaded_vmcs(vmx->loaded_vmcs);
- free_msrs:
- 	kfree(vmx->guest_msrs);
-diff --git a/drivers/crypto/padlock-aes.c b/drivers/crypto/padlock-aes.c
-index 9126627cbf4d..75f2bef79718 100644
---- a/drivers/crypto/padlock-aes.c
-+++ b/drivers/crypto/padlock-aes.c
-@@ -266,6 +266,8 @@ static inline void padlock_xcrypt_ecb(const u8 *input, u8 *output, void *key,
- 		return;
- 	}
- 
-+	count -= initial;
-+
- 	if (initial)
- 		asm volatile (".byte 0xf3,0x0f,0xa7,0xc8"	/* rep xcryptecb */
- 			      : "+S"(input), "+D"(output)
-@@ -273,7 +275,7 @@ static inline void padlock_xcrypt_ecb(const u8 *input, u8 *output, void *key,
- 
- 	asm volatile (".byte 0xf3,0x0f,0xa7,0xc8"	/* rep xcryptecb */
- 		      : "+S"(input), "+D"(output)
--		      : "d"(control_word), "b"(key), "c"(count - initial));
-+		      : "d"(control_word), "b"(key), "c"(count));
- }
- 
- static inline u8 *padlock_xcrypt_cbc(const u8 *input, u8 *output, void *key,
-@@ -284,6 +286,8 @@ static inline u8 *padlock_xcrypt_cbc(const u8 *input, u8 *output, void *key,
- 	if (count < cbc_fetch_blocks)
- 		return cbc_crypt(input, output, key, iv, control_word, count);
- 
-+	count -= initial;
-+
- 	if (initial)
- 		asm volatile (".byte 0xf3,0x0f,0xa7,0xd0"	/* rep xcryptcbc */
- 			      : "+S" (input), "+D" (output), "+a" (iv)
-@@ -291,7 +295,7 @@ static inline u8 *padlock_xcrypt_cbc(const u8 *input, u8 *output, void *key,
- 
- 	asm volatile (".byte 0xf3,0x0f,0xa7,0xd0"	/* rep xcryptcbc */
- 		      : "+S" (input), "+D" (output), "+a" (iv)
--		      : "d" (control_word), "b" (key), "c" (count-initial));
-+		      : "d" (control_word), "b" (key), "c" (count));
- 	return iv;
- }
- 
-diff --git a/drivers/gpu/drm/vc4/vc4_plane.c b/drivers/gpu/drm/vc4/vc4_plane.c
-index 75056553b06c..f8c9f6f4f822 100644
---- a/drivers/gpu/drm/vc4/vc4_plane.c
-+++ b/drivers/gpu/drm/vc4/vc4_plane.c
-@@ -350,6 +350,9 @@ static int vc4_plane_setup_clipping_and_scaling(struct drm_plane_state *state)
- 			vc4_state->x_scaling[0] = VC4_SCALING_TPZ;
- 		if (vc4_state->y_scaling[0] == VC4_SCALING_NONE)
- 			vc4_state->y_scaling[0] = VC4_SCALING_TPZ;
-+	} else {
-+		vc4_state->x_scaling[1] = VC4_SCALING_NONE;
-+		vc4_state->y_scaling[1] = VC4_SCALING_NONE;
- 	}
- 
- 	vc4_state->is_unity = (vc4_state->x_scaling[0] == VC4_SCALING_NONE &&
-diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_main.c
-index f5fcc0850dac..8a5e0ae4e4c0 100644
---- a/drivers/net/bonding/bond_main.c
-+++ b/drivers/net/bonding/bond_main.c
-@@ -1682,6 +1682,8 @@ int bond_enslave(struct net_device *bond_dev, struct net_device *slave_dev)
- 		goto err_upper_unlink;
- 	}
- 
-+	bond->nest_level = dev_get_nest_level(bond_dev) + 1;
-+
- 	/* If the mode uses primary, then the following is handled by
- 	 * bond_change_active_slave().
- 	 */
-@@ -1729,7 +1731,6 @@ int bond_enslave(struct net_device *bond_dev, struct net_device *slave_dev)
- 	if (bond_mode_uses_xmit_hash(bond))
- 		bond_update_slave_arr(bond, NULL);
- 
--	bond->nest_level = dev_get_nest_level(bond_dev);
- 
- 	netdev_info(bond_dev, "Enslaving %s as %s interface with %s link\n",
- 		    slave_dev->name,
-@@ -3359,6 +3360,13 @@ static void bond_fold_stats(struct rtnl_link_stats64 *_res,
- 	}
- }
- 
-+static int bond_get_nest_level(struct net_device *bond_dev)
-+{
-+	struct bonding *bond = netdev_priv(bond_dev);
-+
-+	return bond->nest_level;
-+}
-+
- static struct rtnl_link_stats64 *bond_get_stats(struct net_device *bond_dev,
- 						struct rtnl_link_stats64 *stats)
- {
-@@ -3367,7 +3375,7 @@ static struct rtnl_link_stats64 *bond_get_stats(struct net_device *bond_dev,
- 	struct list_head *iter;
- 	struct slave *slave;
- 
--	spin_lock(&bond->stats_lock);
-+	spin_lock_nested(&bond->stats_lock, bond_get_nest_level(bond_dev));
- 	memcpy(stats, &bond->bond_stats, sizeof(*stats));
- 
- 	rcu_read_lock();
-@@ -4163,6 +4171,7 @@ static const struct net_device_ops bond_netdev_ops = {
- 	.ndo_neigh_setup	= bond_neigh_setup,
- 	.ndo_vlan_rx_add_vid	= bond_vlan_rx_add_vid,
- 	.ndo_vlan_rx_kill_vid	= bond_vlan_rx_kill_vid,
-+	.ndo_get_lock_subclass  = bond_get_nest_level,
- #ifdef CONFIG_NET_POLL_CONTROLLER
- 	.ndo_netpoll_setup	= bond_netpoll_setup,
- 	.ndo_netpoll_cleanup	= bond_netpoll_cleanup,
-@@ -4655,6 +4664,7 @@ static int bond_init(struct net_device *bond_dev)
- 	if (!bond->wq)
- 		return -ENOMEM;
- 
-+	bond->nest_level = SINGLE_DEPTH_NESTING;
- 	netdev_lockdep_set_classes(bond_dev);
- 
- 	list_add_tail(&bond->bond_list, &bn->dev_list);
-diff --git a/drivers/net/can/usb/ems_usb.c b/drivers/net/can/usb/ems_usb.c
-index b00358297424..d0846ae9e0e4 100644
---- a/drivers/net/can/usb/ems_usb.c
-+++ b/drivers/net/can/usb/ems_usb.c
-@@ -1071,6 +1071,7 @@ static void ems_usb_disconnect(struct usb_interface *intf)
- 		usb_free_urb(dev->intr_urb);
- 
- 		kfree(dev->intr_in_buffer);
-+		kfree(dev->tx_msg_buffer);
- 	}
- }
- 
-diff --git a/drivers/net/ethernet/amazon/ena/ena_com.c b/drivers/net/ethernet/amazon/ena/ena_com.c
-index e13c9cd45dc0..bcd993140f84 100644
---- a/drivers/net/ethernet/amazon/ena/ena_com.c
-+++ b/drivers/net/ethernet/amazon/ena/ena_com.c
-@@ -331,6 +331,7 @@ static int ena_com_init_io_sq(struct ena_com_dev *ena_dev,
- 
- 	memset(&io_sq->desc_addr, 0x0, sizeof(struct ena_com_io_desc_addr));
- 
-+	io_sq->dma_addr_bits = ena_dev->dma_addr_bits;
- 	io_sq->desc_entry_size =
- 		(io_sq->direction == ENA_COM_IO_QUEUE_DIRECTION_TX) ?
- 		sizeof(struct ena_eth_io_tx_desc) :
-diff --git a/drivers/net/ethernet/amd/xgbe/xgbe-mdio.c b/drivers/net/ethernet/amd/xgbe/xgbe-mdio.c
-index 84c5d296d13e..684835833fe3 100644
---- a/drivers/net/ethernet/amd/xgbe/xgbe-mdio.c
-+++ b/drivers/net/ethernet/amd/xgbe/xgbe-mdio.c
-@@ -877,14 +877,14 @@ static void xgbe_phy_adjust_link(struct xgbe_prv_data *pdata)
- 
- 		if (pdata->tx_pause != pdata->phy.tx_pause) {
- 			new_state = 1;
--			pdata->hw_if.config_tx_flow_control(pdata);
- 			pdata->tx_pause = pdata->phy.tx_pause;
-+			pdata->hw_if.config_tx_flow_control(pdata);
- 		}
- 
- 		if (pdata->rx_pause != pdata->phy.rx_pause) {
- 			new_state = 1;
--			pdata->hw_if.config_rx_flow_control(pdata);
- 			pdata->rx_pause = pdata->phy.rx_pause;
-+			pdata->hw_if.config_rx_flow_control(pdata);
- 		}
- 
- 		/* Speed support */
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index b3bc1287b2a7..0df71865fab1 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -55,7 +55,7 @@
- #include <linux/of_mdio.h>
- #include "dwmac1000.h"
- 
--#define STMMAC_ALIGN(x)	L1_CACHE_ALIGN(x)
-+#define	STMMAC_ALIGN(x)		__ALIGN_KERNEL(x, SMP_CACHE_BYTES)
- #define	TSO_MAX_BUFF_SIZE	(SZ_16K - 1)
- 
- /* Module parameters */
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c
-index 56c8a2342c14..eafc28142cd2 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c
-@@ -183,7 +183,7 @@ static int stmmac_pci_probe(struct pci_dev *pdev,
- 		return -ENOMEM;
- 
- 	/* Enable pci device */
--	ret = pcim_enable_device(pdev);
-+	ret = pci_enable_device(pdev);
- 	if (ret) {
- 		dev_err(&pdev->dev, "%s: ERROR: failed to enable device\n",
- 			__func__);
-@@ -232,9 +232,45 @@ static int stmmac_pci_probe(struct pci_dev *pdev,
- static void stmmac_pci_remove(struct pci_dev *pdev)
- {
- 	stmmac_dvr_remove(&pdev->dev);
-+	pci_disable_device(pdev);
- }
- 
--static SIMPLE_DEV_PM_OPS(stmmac_pm_ops, stmmac_suspend, stmmac_resume);
-+static int stmmac_pci_suspend(struct device *dev)
-+{
-+	struct pci_dev *pdev = to_pci_dev(dev);
-+	int ret;
-+
-+	ret = stmmac_suspend(dev);
-+	if (ret)
-+		return ret;
-+
-+	ret = pci_save_state(pdev);
-+	if (ret)
-+		return ret;
-+
-+	pci_disable_device(pdev);
-+	pci_wake_from_d3(pdev, true);
-+	return 0;
-+}
-+
-+static int stmmac_pci_resume(struct device *dev)
-+{
-+	struct pci_dev *pdev = to_pci_dev(dev);
-+	int ret;
-+
-+	pci_restore_state(pdev);
-+	pci_set_power_state(pdev, PCI_D0);
-+
-+	ret = pci_enable_device(pdev);
-+	if (ret)
-+		return ret;
-+
-+	pci_set_master(pdev);
-+
-+	return stmmac_resume(dev);
-+}
-+
-+static SIMPLE_DEV_PM_OPS(stmmac_pm_ops, stmmac_pci_suspend, stmmac_pci_resume);
- 
- #define STMMAC_VENDOR_ID 0x700
- #define STMMAC_QUARK_ID  0x0937
-diff --git a/drivers/net/phy/mdio-mux-bcm-iproc.c b/drivers/net/phy/mdio-mux-bcm-iproc.c
-index 0a5f62e0efcc..487bf5b8f545 100644
---- a/drivers/net/phy/mdio-mux-bcm-iproc.c
-+++ b/drivers/net/phy/mdio-mux-bcm-iproc.c
-@@ -218,7 +218,7 @@ static int mdio_mux_iproc_probe(struct platform_device *pdev)
- 
- static int mdio_mux_iproc_remove(struct platform_device *pdev)
- {
--	struct iproc_mdiomux_desc *md = dev_get_platdata(&pdev->dev);
-+	struct iproc_mdiomux_desc *md = platform_get_drvdata(pdev);
- 
- 	mdio_mux_uninit(md->mux_handle);
- 	mdiobus_unregister(md->mii_bus);
-diff --git a/drivers/net/usb/lan78xx.c b/drivers/net/usb/lan78xx.c
-index 5e0626c80b81..c5e04d1ad73a 100644
---- a/drivers/net/usb/lan78xx.c
-+++ b/drivers/net/usb/lan78xx.c
-@@ -1170,6 +1170,8 @@ static int lan78xx_link_reset(struct lan78xx_net *dev)
- 			mod_timer(&dev->stat_monitor,
- 				  jiffies + STAT_UPDATE_TIMER);
- 		}
-+
-+		tasklet_schedule(&dev->bh);
- 	}
- 
- 	return ret;
-diff --git a/drivers/net/xen-netfront.c b/drivers/net/xen-netfront.c
-index a5908e4c06cb..681256f97cb3 100644
---- a/drivers/net/xen-netfront.c
-+++ b/drivers/net/xen-netfront.c
-@@ -86,6 +86,7 @@ struct netfront_cb {
- /* IRQ name is queue name with "-tx" or "-rx" appended */
- #define IRQ_NAME_SIZE (QUEUE_NAME_SIZE + 3)
- 
-+static DECLARE_WAIT_QUEUE_HEAD(module_load_q);
- static DECLARE_WAIT_QUEUE_HEAD(module_unload_q);
- 
- struct netfront_stats {
-@@ -1349,6 +1350,11 @@ static struct net_device *xennet_create_dev(struct xenbus_device *dev)
- 	netif_carrier_off(netdev);
- 
- 	xenbus_switch_state(dev, XenbusStateInitialising);
-+	wait_event(module_load_q,
-+			   xenbus_read_driver_state(dev->otherend) !=
-+			   XenbusStateClosed &&
-+			   xenbus_read_driver_state(dev->otherend) !=
-+			   XenbusStateUnknown);
- 	return netdev;
- 
-  exit:
-diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
-index b40a074822cf..15aeeb2159cc 100644
---- a/drivers/pinctrl/intel/pinctrl-intel.c
-+++ b/drivers/pinctrl/intel/pinctrl-intel.c
-@@ -604,12 +604,17 @@ static int intel_gpio_get(struct gpio_chip *chip, unsigned offset)
- {
- 	struct intel_pinctrl *pctrl = gpiochip_get_data(chip);
- 	void __iomem *reg;
-+	u32 padcfg0;
- 
- 	reg = intel_get_padcfg(pctrl, offset, PADCFG0);
- 	if (!reg)
- 		return -EINVAL;
- 
--	return !!(readl(reg) & PADCFG0_GPIORXSTATE);
-+	padcfg0 = readl(reg);
-+	if (!(padcfg0 & PADCFG0_GPIOTXDIS))
-+		return !!(padcfg0 & PADCFG0_GPIOTXSTATE);
-+
-+	return !!(padcfg0 & PADCFG0_GPIORXSTATE);
- }
- 
- static void intel_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
-diff --git a/drivers/scsi/sg.c b/drivers/scsi/sg.c
-index 2065a0f9dca6..8d9b416399f9 100644
---- a/drivers/scsi/sg.c
-+++ b/drivers/scsi/sg.c
-@@ -2185,6 +2185,7 @@ sg_add_sfp(Sg_device * sdp)
- 	write_lock_irqsave(&sdp->sfd_lock, iflags);
- 	if (atomic_read(&sdp->detaching)) {
- 		write_unlock_irqrestore(&sdp->sfd_lock, iflags);
-+		kfree(sfp);
- 		return ERR_PTR(-ENODEV);
- 	}
- 	list_add_tail(&sfp->sfd_siblings, &sdp->sfds);
-diff --git a/drivers/virtio/virtio_balloon.c b/drivers/virtio/virtio_balloon.c
-index a7c08cc4c1b7..30076956a096 100644
---- a/drivers/virtio/virtio_balloon.c
-+++ b/drivers/virtio/virtio_balloon.c
-@@ -493,7 +493,9 @@ static int virtballoon_migratepage(struct balloon_dev_info *vb_dev_info,
- 	tell_host(vb, vb->inflate_vq);
- 
- 	/* balloon's page migration 2nd step -- deflate "page" */
-+	spin_lock_irqsave(&vb_dev_info->pages_lock, flags);
- 	balloon_page_delete(page);
-+	spin_unlock_irqrestore(&vb_dev_info->pages_lock, flags);
- 	vb->num_pfns = VIRTIO_BALLOON_PAGES_PER_PAGE;
- 	set_page_pfns(vb, vb->pfns, page);
- 	tell_host(vb, vb->deflate_vq);
-diff --git a/fs/squashfs/block.c b/fs/squashfs/block.c
-index ce62a380314f..cec0fa208078 100644
---- a/fs/squashfs/block.c
-+++ b/fs/squashfs/block.c
-@@ -166,6 +166,8 @@ int squashfs_read_data(struct super_block *sb, u64 index, int length,
- 	}
- 
- 	if (compressed) {
-+		if (!msblk->stream)
-+			goto read_failure;
- 		length = squashfs_decompress(msblk, bh, b, offset, length,
- 			output);
- 		if (length < 0)
-diff --git a/fs/squashfs/fragment.c b/fs/squashfs/fragment.c
-index 86ad9a4b8c36..0681feab4a84 100644
---- a/fs/squashfs/fragment.c
-+++ b/fs/squashfs/fragment.c
-@@ -49,11 +49,16 @@ int squashfs_frag_lookup(struct super_block *sb, unsigned int fragment,
- 				u64 *fragment_block)
- {
- 	struct squashfs_sb_info *msblk = sb->s_fs_info;
--	int block = SQUASHFS_FRAGMENT_INDEX(fragment);
--	int offset = SQUASHFS_FRAGMENT_INDEX_OFFSET(fragment);
--	u64 start_block = le64_to_cpu(msblk->fragment_index[block]);
-+	int block, offset, size;
- 	struct squashfs_fragment_entry fragment_entry;
--	int size;
-+	u64 start_block;
-+
-+	if (fragment >= msblk->fragments)
-+		return -EIO;
-+	block = SQUASHFS_FRAGMENT_INDEX(fragment);
-+	offset = SQUASHFS_FRAGMENT_INDEX_OFFSET(fragment);
-+
-+	start_block = le64_to_cpu(msblk->fragment_index[block]);
- 
- 	size = squashfs_read_metadata(sb, &fragment_entry, &start_block,
- 					&offset, sizeof(fragment_entry));
-diff --git a/fs/squashfs/squashfs_fs_sb.h b/fs/squashfs/squashfs_fs_sb.h
-index 1da565cb50c3..ef69c31947bf 100644
---- a/fs/squashfs/squashfs_fs_sb.h
-+++ b/fs/squashfs/squashfs_fs_sb.h
-@@ -75,6 +75,7 @@ struct squashfs_sb_info {
- 	unsigned short				block_log;
- 	long long				bytes_used;
- 	unsigned int				inodes;
-+	unsigned int				fragments;
- 	int					xattr_ids;
- };
- #endif
-diff --git a/fs/squashfs/super.c b/fs/squashfs/super.c
-index cf01e15a7b16..1516bb779b8d 100644
---- a/fs/squashfs/super.c
-+++ b/fs/squashfs/super.c
-@@ -175,6 +175,7 @@ static int squashfs_fill_super(struct super_block *sb, void *data, int silent)
- 	msblk->inode_table = le64_to_cpu(sblk->inode_table_start);
- 	msblk->directory_table = le64_to_cpu(sblk->directory_table_start);
- 	msblk->inodes = le32_to_cpu(sblk->inodes);
-+	msblk->fragments = le32_to_cpu(sblk->fragments);
- 	flags = le16_to_cpu(sblk->flags);
- 
- 	TRACE("Found valid superblock on %pg\n", sb->s_bdev);
-@@ -185,7 +186,7 @@ static int squashfs_fill_super(struct super_block *sb, void *data, int silent)
- 	TRACE("Filesystem size %lld bytes\n", msblk->bytes_used);
- 	TRACE("Block size %d\n", msblk->block_size);
- 	TRACE("Number of inodes %d\n", msblk->inodes);
--	TRACE("Number of fragments %d\n", le32_to_cpu(sblk->fragments));
-+	TRACE("Number of fragments %d\n", msblk->fragments);
- 	TRACE("Number of ids %d\n", le16_to_cpu(sblk->no_ids));
- 	TRACE("sblk->inode_table_start %llx\n", msblk->inode_table);
- 	TRACE("sblk->directory_table_start %llx\n", msblk->directory_table);
-@@ -272,7 +273,7 @@ static int squashfs_fill_super(struct super_block *sb, void *data, int silent)
- 	sb->s_export_op = &squashfs_export_ops;
- 
- handle_fragments:
--	fragments = le32_to_cpu(sblk->fragments);
-+	fragments = msblk->fragments;
- 	if (fragments == 0)
- 		goto check_directory_table;
- 
-diff --git a/include/net/tcp.h b/include/net/tcp.h
-index 5d440bb0e409..97d210535cdd 100644
---- a/include/net/tcp.h
-+++ b/include/net/tcp.h
-@@ -363,7 +363,7 @@ ssize_t tcp_splice_read(struct socket *sk, loff_t *ppos,
- 			struct pipe_inode_info *pipe, size_t len,
- 			unsigned int flags);
- 
--void tcp_enter_quickack_mode(struct sock *sk);
-+void tcp_enter_quickack_mode(struct sock *sk, unsigned int max_quickacks);
- static inline void tcp_dec_quickack_mode(struct sock *sk,
- 					 const unsigned int pkts)
- {
-diff --git a/kernel/sched/swait.c b/kernel/sched/swait.c
-index 82f0dff90030..9c2da06a8869 100644
---- a/kernel/sched/swait.c
-+++ b/kernel/sched/swait.c
-@@ -33,9 +33,6 @@ void swake_up(struct swait_queue_head *q)
- {
- 	unsigned long flags;
- 
--	if (!swait_active(q))
--		return;
--
- 	raw_spin_lock_irqsave(&q->lock, flags);
- 	swake_up_locked(q);
- 	raw_spin_unlock_irqrestore(&q->lock, flags);
-@@ -51,9 +48,6 @@ void swake_up_all(struct swait_queue_head *q)
- 	struct swait_queue *curr;
- 	LIST_HEAD(tmp);
- 
--	if (!swait_active(q))
--		return;
--
- 	raw_spin_lock_irq(&q->lock);
- 	list_splice_init(&q->task_list, &tmp);
- 	while (!list_empty(&tmp)) {
-diff --git a/net/dsa/slave.c b/net/dsa/slave.c
-index 5000e6f20f4a..339d9c678d3e 100644
---- a/net/dsa/slave.c
-+++ b/net/dsa/slave.c
-@@ -1199,6 +1199,9 @@ int dsa_slave_suspend(struct net_device *slave_dev)
- {
- 	struct dsa_slave_priv *p = netdev_priv(slave_dev);
- 
-+	if (!netif_running(slave_dev))
-+		return 0;
-+
- 	netif_device_detach(slave_dev);
- 
- 	if (p->phy) {
-@@ -1216,6 +1219,9 @@ int dsa_slave_resume(struct net_device *slave_dev)
- {
- 	struct dsa_slave_priv *p = netdev_priv(slave_dev);
- 
-+	if (!netif_running(slave_dev))
-+		return 0;
-+
- 	netif_device_attach(slave_dev);
- 
- 	if (p->phy) {
-diff --git a/net/ipv4/fib_frontend.c b/net/ipv4/fib_frontend.c
-index 7bdd89354db5..6a2ef162088d 100644
---- a/net/ipv4/fib_frontend.c
-+++ b/net/ipv4/fib_frontend.c
-@@ -282,19 +282,19 @@ __be32 fib_compute_spec_dst(struct sk_buff *skb)
- 		return ip_hdr(skb)->daddr;
- 
- 	in_dev = __in_dev_get_rcu(dev);
--	BUG_ON(!in_dev);
- 
- 	net = dev_net(dev);
- 
- 	scope = RT_SCOPE_UNIVERSE;
- 	if (!ipv4_is_zeronet(ip_hdr(skb)->saddr)) {
-+		bool vmark = in_dev && IN_DEV_SRC_VMARK(in_dev);
- 		struct flowi4 fl4 = {
- 			.flowi4_iif = LOOPBACK_IFINDEX,
- 			.flowi4_oif = l3mdev_master_ifindex_rcu(dev),
- 			.daddr = ip_hdr(skb)->saddr,
- 			.flowi4_tos = RT_TOS(ip_hdr(skb)->tos),
- 			.flowi4_scope = scope,
--			.flowi4_mark = IN_DEV_SRC_VMARK(in_dev) ? skb->mark : 0,
-+			.flowi4_mark = vmark ? skb->mark : 0,
- 		};
- 		if (!fib_lookup(net, &fl4, &res, 0))
- 			return FIB_RES_PREFSRC(net, res);
-diff --git a/net/ipv4/inet_fragment.c b/net/ipv4/inet_fragment.c
-index 8effac0f2219..f8b41aaac76f 100644
---- a/net/ipv4/inet_fragment.c
-+++ b/net/ipv4/inet_fragment.c
-@@ -356,11 +356,6 @@ static struct inet_frag_queue *inet_frag_alloc(struct netns_frags *nf,
- {
- 	struct inet_frag_queue *q;
- 
--	if (!nf->high_thresh || frag_mem_limit(nf) > nf->high_thresh) {
--		inet_frag_schedule_worker(f);
--		return NULL;
--	}
--
- 	q = kmem_cache_zalloc(f->frags_cachep, GFP_ATOMIC);
- 	if (!q)
- 		return NULL;
-@@ -397,6 +392,11 @@ struct inet_frag_queue *inet_frag_find(struct netns_frags *nf,
- 	struct inet_frag_queue *q;
- 	int depth = 0;
- 
-+	if (!nf->high_thresh || frag_mem_limit(nf) > nf->high_thresh) {
-+		inet_frag_schedule_worker(f);
-+		return NULL;
-+	}
-+
- 	if (frag_mem_limit(nf) > nf->low_thresh)
- 		inet_frag_schedule_worker(f);
- 
-diff --git a/net/ipv4/ip_fragment.c b/net/ipv4/ip_fragment.c
-index 4bf3b8af0257..752711cd4834 100644
---- a/net/ipv4/ip_fragment.c
-+++ b/net/ipv4/ip_fragment.c
-@@ -446,11 +446,16 @@ static int ip_frag_queue(struct ipq *qp, struct sk_buff *skb)
- 		int i = end - FRAG_CB(next)->offset; /* overlap is 'i' bytes */
- 
- 		if (i < next->len) {
-+			int delta = -next->truesize;
-+
- 			/* Eat head of the next overlapped fragment
- 			 * and leave the loop. The next ones cannot overlap.
- 			 */
- 			if (!pskb_pull(next, i))
- 				goto err;
-+			delta += next->truesize;
-+			if (delta)
-+				add_frag_mem_limit(qp->q.net, delta);
- 			FRAG_CB(next)->offset += i;
- 			qp->q.meat -= i;
- 			if (next->ip_summed != CHECKSUM_UNNECESSARY)
-diff --git a/net/ipv4/tcp_bbr.c b/net/ipv4/tcp_bbr.c
-index 9169859506b7..7e44d23b0328 100644
---- a/net/ipv4/tcp_bbr.c
-+++ b/net/ipv4/tcp_bbr.c
-@@ -324,6 +324,10 @@ static u32 bbr_target_cwnd(struct sock *sk, u32 bw, int gain)
- 	/* Reduce delayed ACKs by rounding up cwnd to the next even number. */
- 	cwnd = (cwnd + 1) & ~1U;
- 
-+	/* Ensure gain cycling gets inflight above BDP even for small BDPs. */
-+	if (bbr->mode == BBR_PROBE_BW && gain > BBR_UNIT)
-+		cwnd += 2;
-+
- 	return cwnd;
- }
- 
-diff --git a/net/ipv4/tcp_dctcp.c b/net/ipv4/tcp_dctcp.c
-index dd52ccb812ea..8905a0aec8ee 100644
---- a/net/ipv4/tcp_dctcp.c
-+++ b/net/ipv4/tcp_dctcp.c
-@@ -138,7 +138,7 @@ static void dctcp_ce_state_0_to_1(struct sock *sk)
- 		 */
- 		if (inet_csk(sk)->icsk_ack.pending & ICSK_ACK_TIMER)
- 			__tcp_send_ack(sk, ca->prior_rcv_nxt);
--		tcp_enter_quickack_mode(sk);
-+		tcp_enter_quickack_mode(sk, 1);
- 	}
- 
- 	ca->prior_rcv_nxt = tp->rcv_nxt;
-@@ -159,7 +159,7 @@ static void dctcp_ce_state_1_to_0(struct sock *sk)
- 		 */
- 		if (inet_csk(sk)->icsk_ack.pending & ICSK_ACK_TIMER)
- 			__tcp_send_ack(sk, ca->prior_rcv_nxt);
--		tcp_enter_quickack_mode(sk);
-+		tcp_enter_quickack_mode(sk, 1);
- 	}
- 
- 	ca->prior_rcv_nxt = tp->rcv_nxt;
-diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
-index 44d136fd2af5..a9be8df108b4 100644
---- a/net/ipv4/tcp_input.c
-+++ b/net/ipv4/tcp_input.c
-@@ -198,21 +198,23 @@ static void tcp_measure_rcv_mss(struct sock *sk, const struct sk_buff *skb)
- 	}
- }
- 
--static void tcp_incr_quickack(struct sock *sk)
-+static void tcp_incr_quickack(struct sock *sk, unsigned int max_quickacks)
- {
- 	struct inet_connection_sock *icsk = inet_csk(sk);
- 	unsigned int quickacks = tcp_sk(sk)->rcv_wnd / (2 * icsk->icsk_ack.rcv_mss);
- 
- 	if (quickacks == 0)
- 		quickacks = 2;
-+	quickacks = min(quickacks, max_quickacks);
- 	if (quickacks > icsk->icsk_ack.quick)
--		icsk->icsk_ack.quick = min(quickacks, TCP_MAX_QUICKACKS);
-+		icsk->icsk_ack.quick = quickacks;
- }
- 
--void tcp_enter_quickack_mode(struct sock *sk)
-+void tcp_enter_quickack_mode(struct sock *sk, unsigned int max_quickacks)
- {
- 	struct inet_connection_sock *icsk = inet_csk(sk);
--	tcp_incr_quickack(sk);
-+
-+	tcp_incr_quickack(sk, max_quickacks);
- 	icsk->icsk_ack.pingpong = 0;
- 	icsk->icsk_ack.ato = TCP_ATO_MIN;
- }
-@@ -248,8 +250,10 @@ static void tcp_ecn_withdraw_cwr(struct tcp_sock *tp)
- 	tp->ecn_flags &= ~TCP_ECN_DEMAND_CWR;
- }
- 
--static void __tcp_ecn_check_ce(struct tcp_sock *tp, const struct sk_buff *skb)
-+static void __tcp_ecn_check_ce(struct sock *sk, const struct sk_buff *skb)
- {
-+	struct tcp_sock *tp = tcp_sk(sk);
-+
- 	switch (TCP_SKB_CB(skb)->ip_dsfield & INET_ECN_MASK) {
- 	case INET_ECN_NOT_ECT:
- 		/* Funny extension: if ECT is not set on a segment,
-@@ -257,31 +261,31 @@ static void __tcp_ecn_check_ce(struct tcp_sock *tp, const struct sk_buff *skb)
- 		 * it is probably a retransmit.
- 		 */
- 		if (tp->ecn_flags & TCP_ECN_SEEN)
--			tcp_enter_quickack_mode((struct sock *)tp);
-+			tcp_enter_quickack_mode(sk, 2);
- 		break;
- 	case INET_ECN_CE:
--		if (tcp_ca_needs_ecn((struct sock *)tp))
--			tcp_ca_event((struct sock *)tp, CA_EVENT_ECN_IS_CE);
-+		if (tcp_ca_needs_ecn(sk))
-+			tcp_ca_event(sk, CA_EVENT_ECN_IS_CE);
- 
- 		if (!(tp->ecn_flags & TCP_ECN_DEMAND_CWR)) {
- 			/* Better not delay acks, sender can have a very low cwnd */
--			tcp_enter_quickack_mode((struct sock *)tp);
-+			tcp_enter_quickack_mode(sk, 2);
- 			tp->ecn_flags |= TCP_ECN_DEMAND_CWR;
- 		}
- 		tp->ecn_flags |= TCP_ECN_SEEN;
- 		break;
- 	default:
--		if (tcp_ca_needs_ecn((struct sock *)tp))
--			tcp_ca_event((struct sock *)tp, CA_EVENT_ECN_NO_CE);
-+		if (tcp_ca_needs_ecn(sk))
-+			tcp_ca_event(sk, CA_EVENT_ECN_NO_CE);
- 		tp->ecn_flags |= TCP_ECN_SEEN;
- 		break;
- 	}
- }
- 
--static void tcp_ecn_check_ce(struct tcp_sock *tp, const struct sk_buff *skb)
-+static void tcp_ecn_check_ce(struct sock *sk, const struct sk_buff *skb)
- {
--	if (tp->ecn_flags & TCP_ECN_OK)
--		__tcp_ecn_check_ce(tp, skb);
-+	if (tcp_sk(sk)->ecn_flags & TCP_ECN_OK)
-+		__tcp_ecn_check_ce(sk, skb);
- }
- 
- static void tcp_ecn_rcv_synack(struct tcp_sock *tp, const struct tcphdr *th)
-@@ -675,7 +679,7 @@ static void tcp_event_data_recv(struct sock *sk, struct sk_buff *skb)
- 		/* The _first_ data packet received, initialize
- 		 * delayed ACK engine.
- 		 */
--		tcp_incr_quickack(sk);
-+		tcp_incr_quickack(sk, TCP_MAX_QUICKACKS);
- 		icsk->icsk_ack.ato = TCP_ATO_MIN;
- 	} else {
- 		int m = now - icsk->icsk_ack.lrcvtime;
-@@ -691,13 +695,13 @@ static void tcp_event_data_recv(struct sock *sk, struct sk_buff *skb)
- 			/* Too long gap. Apparently sender failed to
- 			 * restart window, so that we send ACKs quickly.
- 			 */
--			tcp_incr_quickack(sk);
-+			tcp_incr_quickack(sk, TCP_MAX_QUICKACKS);
- 			sk_mem_reclaim(sk);
- 		}
- 	}
- 	icsk->icsk_ack.lrcvtime = now;
- 
--	tcp_ecn_check_ce(tp, skb);
-+	tcp_ecn_check_ce(sk, skb);
- 
- 	if (skb->len >= 128)
- 		tcp_grow_window(sk, skb);
-@@ -4210,7 +4214,7 @@ static void tcp_send_dupack(struct sock *sk, const struct sk_buff *skb)
- 	if (TCP_SKB_CB(skb)->end_seq != TCP_SKB_CB(skb)->seq &&
- 	    before(TCP_SKB_CB(skb)->seq, tp->rcv_nxt)) {
- 		NET_INC_STATS(sock_net(sk), LINUX_MIB_DELAYEDACKLOST);
--		tcp_enter_quickack_mode(sk);
-+		tcp_enter_quickack_mode(sk, TCP_MAX_QUICKACKS);
- 
- 		if (tcp_is_sack(tp) && sysctl_tcp_dsack) {
- 			u32 end_seq = TCP_SKB_CB(skb)->end_seq;
-@@ -4454,7 +4458,7 @@ static void tcp_data_queue_ofo(struct sock *sk, struct sk_buff *skb)
- 	u32 seq, end_seq;
- 	bool fragstolen;
- 
--	tcp_ecn_check_ce(tp, skb);
-+	tcp_ecn_check_ce(sk, skb);
- 
- 	if (unlikely(tcp_try_rmem_schedule(sk, skb, skb->truesize))) {
- 		NET_INC_STATS(sock_net(sk), LINUX_MIB_TCPOFODROP);
-@@ -4734,7 +4738,7 @@ static void tcp_data_queue(struct sock *sk, struct sk_buff *skb)
- 		tcp_dsack_set(sk, TCP_SKB_CB(skb)->seq, TCP_SKB_CB(skb)->end_seq);
- 
- out_of_window:
--		tcp_enter_quickack_mode(sk);
-+		tcp_enter_quickack_mode(sk, TCP_MAX_QUICKACKS);
- 		inet_csk_schedule_ack(sk);
- drop:
- 		tcp_drop(sk, skb);
-@@ -4745,8 +4749,6 @@ static void tcp_data_queue(struct sock *sk, struct sk_buff *skb)
- 	if (!before(TCP_SKB_CB(skb)->seq, tp->rcv_nxt + tcp_receive_window(tp)))
- 		goto out_of_window;
- 
--	tcp_enter_quickack_mode(sk);
--
- 	if (before(TCP_SKB_CB(skb)->seq, tp->rcv_nxt)) {
- 		/* Partial packet, seq < rcv_next < end_seq */
- 		SOCK_DEBUG(sk, "partial packet: rcv_next %X seq %X - %X\n",
-@@ -5830,7 +5832,7 @@ static int tcp_rcv_synsent_state_process(struct sock *sk, struct sk_buff *skb,
- 			 * to stand against the temptation 8)     --ANK
- 			 */
- 			inet_csk_schedule_ack(sk);
--			tcp_enter_quickack_mode(sk);
-+			tcp_enter_quickack_mode(sk, TCP_MAX_QUICKACKS);
- 			inet_csk_reset_xmit_timer(sk, ICSK_TIME_DACK,
- 						  TCP_DELACK_MAX, TCP_RTO_MAX);
- 
-diff --git a/net/netlink/af_netlink.c b/net/netlink/af_netlink.c
-index 15e6e7b9fd2b..8d0aafbdbbc3 100644
---- a/net/netlink/af_netlink.c
-+++ b/net/netlink/af_netlink.c
-@@ -62,6 +62,7 @@
- #include <asm/cacheflush.h>
- #include <linux/hash.h>
- #include <linux/genetlink.h>
-+#include <linux/nospec.h>
- 
- #include <net/net_namespace.h>
- #include <net/sock.h>
-@@ -654,6 +655,7 @@ static int netlink_create(struct net *net, struct socket *sock, int protocol,
- 
- 	if (protocol < 0 || protocol >= MAX_LINKS)
- 		return -EPROTONOSUPPORT;
-+	protocol = array_index_nospec(protocol, MAX_LINKS);
- 
- 	netlink_lock_table();
- #ifdef CONFIG_MODULES
-diff --git a/net/socket.c b/net/socket.c
-index bd3b33988ee0..35fa349ba274 100644
---- a/net/socket.c
-+++ b/net/socket.c
-@@ -89,6 +89,7 @@
- #include <linux/magic.h>
- #include <linux/slab.h>
- #include <linux/xattr.h>
-+#include <linux/nospec.h>
- 
- #include <asm/uaccess.h>
- #include <asm/unistd.h>
-@@ -2338,6 +2339,7 @@ SYSCALL_DEFINE2(socketcall, int, call, unsigned long __user *, args)
- 
- 	if (call < 1 || call > SYS_SENDMMSG)
- 		return -EINVAL;
-+	call = array_index_nospec(call, SYS_SENDMMSG + 1);
- 
- 	len = nargs[call];
- 	if (len > sizeof(a))
+
+--pf9I7BMVVzbSWLtt
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+I'm announcing the release of the 4.4.146 kernel.
+
+All users of the 4.4 kernel series must upgrade.
+
+The updated 4.4.y git tree can be found at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linu=
+x-4.4.y
+and can be browsed at the normal kernel.org git web browser:
+	http://git.kernel.org/?p=3Dlinux/kernel/git/stable/linux-stable.git;a=3Dsu=
+mmary
+
+thanks,
+
+greg k-h
+
+------------
+
+ Makefile                                            |    2=20
+ arch/microblaze/boot/Makefile                       |   10 ++--
+ arch/mips/include/asm/pci.h                         |    2=20
+ arch/powerpc/kernel/head_8xx.S                      |    2=20
+ arch/powerpc/kernel/pci_32.c                        |    1=20
+ arch/powerpc/mm/slb.c                               |    8 +--
+ arch/powerpc/platforms/chrp/time.c                  |    6 +-
+ arch/powerpc/platforms/embedded6xx/hlwd-pic.c       |    5 ++
+ arch/powerpc/platforms/powermac/bootx_init.c        |    4 +
+ arch/powerpc/platforms/powermac/setup.c             |    1=20
+ arch/s390/include/asm/cpu_mf.h                      |    6 +-
+ arch/x86/kernel/cpu/perf_event_intel_uncore.c       |    2=20
+ arch/x86/kernel/cpu/perf_event_intel_uncore_nhmex.c |    2=20
+ arch/x86/kvm/vmx.c                                  |    7 +-
+ crypto/authenc.c                                    |    1=20
+ crypto/authencesn.c                                 |    1=20
+ drivers/acpi/pci_root.c                             |    4 +
+ drivers/ata/libata-eh.c                             |   12 +++--
+ drivers/bluetooth/btusb.c                           |    3 +
+ drivers/bluetooth/hci_qca.c                         |    2=20
+ drivers/char/random.c                               |   10 +++-
+ drivers/crypto/padlock-aes.c                        |    8 ++-
+ drivers/dma/pxa_dma.c                               |    2=20
+ drivers/gpu/drm/drm_atomic.c                        |    4 +
+ drivers/gpu/drm/gma500/psb_intel_drv.h              |    2=20
+ drivers/gpu/drm/gma500/psb_intel_lvds.c             |    2=20
+ drivers/gpu/drm/radeon/radeon_connectors.c          |   10 ++--
+ drivers/hid/hid-plantronics.c                       |    6 ++
+ drivers/hid/i2c-hid/i2c-hid.c                       |    8 +++
+ drivers/infiniband/core/mad.c                       |   11 ++--
+ drivers/infiniband/core/ucma.c                      |    6 ++
+ drivers/input/mouse/elan_i2c_core.c                 |    2=20
+ drivers/input/serio/i8042-x86ia64io.h               |    7 ++
+ drivers/md/md.c                                     |    3 +
+ drivers/media/common/siano/smsendian.c              |   14 ++---
+ drivers/media/i2c/smiapp/smiapp-core.c              |   11 ++--
+ drivers/media/pci/saa7164/saa7164-fw.c              |    3 -
+ drivers/media/platform/omap3isp/isp.c               |    7 +-
+ drivers/media/platform/rcar_jpu.c                   |    4 +
+ drivers/media/radio/si470x/radio-si470x-i2c.c       |    6 +-
+ drivers/media/v4l2-core/videobuf2-core.c            |    9 ++-
+ drivers/memory/tegra/mc.c                           |   22 ++-------
+ drivers/memory/tegra/mc.h                           |    9 +++
+ drivers/memory/tegra/tegra114.c                     |    2=20
+ drivers/memory/tegra/tegra124.c                     |    6 ++
+ drivers/memory/tegra/tegra210.c                     |    3 +
+ drivers/memory/tegra/tegra30.c                      |    2=20
+ drivers/mfd/cros_ec.c                               |    6 ++
+ drivers/mtd/nand/fsl_ifc_nand.c                     |   17 ++++---
+ drivers/net/can/usb/ems_usb.c                       |    1=20
+ drivers/net/ethernet/amd/xgbe/xgbe-mdio.c           |    4 -
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c   |    2=20
+ drivers/net/usb/lan78xx.c                           |    2=20
+ drivers/net/wireless/ath/regd.h                     |    5 ++
+ drivers/net/wireless/ath/regd_common.h              |   13 +++++
+ drivers/net/wireless/brcm80211/brcmfmac/bcmsdh.c    |    1=20
+ drivers/net/wireless/iwlwifi/pcie/rx.c              |    2=20
+ drivers/net/wireless/mwifiex/usb.c                  |    3 +
+ drivers/net/wireless/mwifiex/util.c                 |    8 ++-
+ drivers/net/wireless/rsi/rsi_91x_sdio.c             |    2=20
+ drivers/net/wireless/ti/wlcore/sdio.c               |    5 ++
+ drivers/net/xen-netfront.c                          |   10 +++-
+ drivers/pci/pci-sysfs.c                             |   15 +++---
+ drivers/pinctrl/pinctrl-at91-pio4.c                 |    4 +
+ drivers/regulator/pfuze100-regulator.c              |    1=20
+ drivers/rtc/interface.c                             |    5 ++
+ drivers/scsi/3w-9xxx.c                              |    5 ++
+ drivers/scsi/3w-xxxx.c                              |    3 +
+ drivers/scsi/megaraid.c                             |    3 +
+ drivers/scsi/megaraid/megaraid_sas_fusion.c         |    3 +
+ drivers/scsi/scsi_dh.c                              |    5 +-
+ drivers/scsi/sg.c                                   |    1=20
+ drivers/scsi/ufs/ufshcd.c                           |    2=20
+ drivers/thermal/samsung/exynos_tmu.c                |    1=20
+ drivers/tty/hvc/hvc_opal.c                          |    1=20
+ drivers/tty/pty.c                                   |    3 +
+ drivers/usb/core/hub.c                              |    4 +
+ drivers/virtio/virtio_balloon.c                     |    2=20
+ fs/btrfs/qgroup.c                                   |   19 +++++++
+ fs/btrfs/tree-log.c                                 |   10 +++-
+ fs/ext4/balloc.c                                    |    3 +
+ fs/ext4/ialloc.c                                    |    3 +
+ fs/ext4/inline.c                                    |   19 ++++---
+ fs/ext4/inode.c                                     |   16 ++----
+ fs/f2fs/segment.c                                   |    3 +
+ fs/f2fs/super.c                                     |    6 ++
+ fs/nfsd/nfs4xdr.c                                   |    2=20
+ fs/squashfs/block.c                                 |    2=20
+ fs/squashfs/cache.c                                 |    3 +
+ fs/squashfs/file.c                                  |    8 ++-
+ fs/squashfs/fragment.c                              |   17 ++++---
+ fs/squashfs/squashfs_fs.h                           |    6 ++
+ fs/squashfs/squashfs_fs_sb.h                        |    1=20
+ fs/squashfs/super.c                                 |    5 +-
+ include/drm/drm_dp_helper.h                         |    1=20
+ include/linux/dma-iommu.h                           |    1=20
+ include/linux/mmc/sdio_ids.h                        |    1=20
+ include/linux/netfilter/ipset/ip_set_timeout.h      |   10 +++-
+ include/net/tcp.h                                   |    2=20
+ include/soc/tegra/mc.h                              |    2=20
+ kernel/auditfilter.c                                |    2=20
+ kernel/auditsc.c                                    |    2=20
+ kernel/bpf/verifier.c                               |    4 -
+ kernel/trace/trace_events_trigger.c                 |   18 +++++--
+ kernel/trace/trace_kprobe.c                         |   15 +++++-
+ mm/slub.c                                           |    2=20
+ mm/vmalloc.c                                        |    3 -
+ net/dsa/slave.c                                     |    6 ++
+ net/ipv4/fib_frontend.c                             |    4 -
+ net/ipv4/inet_fragment.c                            |   10 ++--
+ net/ipv4/ipconfig.c                                 |   13 +++++
+ net/ipv4/tcp_dctcp.c                                |    4 -
+ net/ipv4/tcp_input.c                                |   48 ++++++++++-----=
+-----
+ net/netlink/af_netlink.c                            |    2=20
+ net/socket.c                                        |    2=20
+ sound/pci/emu10k1/emupcm.c                          |    4 +
+ sound/pci/emu10k1/memory.c                          |    6 +-
+ sound/pci/fm801.c                                   |   16 +++++-
+ sound/pci/hda/patch_ca0132.c                        |    8 ++-
+ sound/soc/pxa/brownstone.c                          |    1=20
+ sound/soc/pxa/mioa701_wm9713.c                      |    1=20
+ sound/soc/pxa/mmp-pcm.c                             |    1=20
+ sound/soc/pxa/mmp-sspa.c                            |    1=20
+ sound/soc/pxa/palm27x.c                             |    1=20
+ sound/soc/pxa/pxa-ssp.c                             |    1=20
+ sound/soc/pxa/pxa2xx-ac97.c                         |    1=20
+ sound/soc/pxa/pxa2xx-pcm.c                          |    1=20
+ sound/soc/soc-pcm.c                                 |    6 +-
+ sound/usb/pcm.c                                     |    2=20
+ tools/usb/usbip/src/usbip_detach.c                  |    9 ++-
+ 130 files changed, 526 insertions(+), 207 deletions(-)
+
+Alexandre Belloni (1):
+      rtc: ensure rtc_set_alarm fails when alarms are not supported
+
+Anatoly Pugachev (1):
+      disable loading f2fs module on PAGE_SIZE > 4KB
+
+Andrea Adami (1):
+      ASoC: pxa: Fix module autoload for platform drivers
+
+Anson Huang (1):
+      regulator: pfuze100: add .is_enable() for pfuze100_swb_regulator_ops
+
+Anton Vasilyev (1):
+      can: ems_usb: Fix memory leak on ems_usb_disconnect()
+
+Artem Savkov (1):
+      tracing/kprobes: Fix trace_probe flags on enable_trace_kprobe() failu=
+re
+
+Bartlomiej Zolnierkiewicz (1):
+      thermal: exynos: fix setting rising_threshold for Exynos5433
+
+Brad Love (1):
+      media: saa7164: Fix driver name in debug output
+
+Chao Yu (1):
+      f2fs: fix to don't trigger writeback during recovery
+
+Chen-Yu Tsai (1):
+      Input: i8042 - add Lenovo LaVie Z to the i8042 reset list
+
+Chintan Pandya (1):
+      mm: vmalloc: avoid racy handling of debugobjects in vunmap
+
+Chris Novakovic (1):
+      ipconfig: Correctly initialise ic_nameservers
+
+Christoph Hellwig (1):
+      PCI: Prevent sysfs disable of device while driver is attached
+
+Christophe Leroy (1):
+      powerpc/8xx: fix invalid register expression in head_8xx.S
+
+Colin Ian King (1):
+      media: smiapp: fix timeout checking in smiapp_read_nvm
+
+Cong Wang (1):
+      infiniband: fix a possible use-after-free bug
+
+DaeRyong Jeong (1):
+      tty: Fix data race in tty_insert_flip_string_fixed_flag
+
+Damien Le Moal (1):
+      libata: Fix command retry decision
+
+Dan Carpenter (1):
+      scsi: megaraid: silence a static checker bug
+
+David Sterba (1):
+      btrfs: add barriers to btrfs_sync_log before log_commit_wait wakeups
+
+Dmitry Osipenko (2):
+      memory: tegra: Do not handle spurious interrupts
+      memory: tegra: Apply interrupts mask per SoC
+
+Dmitry Torokhov (1):
+      HID: i2c-hid: check if device is there before really probing
+
+Dominik Bozek (1):
+      usb: hub: Don't wait for connect state at resume for powered-off ports
+
+Donald Shanty III (1):
+      Input: elan_i2c - add ACPI ID for lenovo ideapad 330
+
+Eric Dumazet (5):
+      tcp: do not force quickack when receiving out-of-order packets
+      tcp: add max_quickacks param to tcp_incr_quickack and tcp_enter_quick=
+ack_mode
+      tcp: do not aggressively quick ack after ECN events
+      tcp: add one more quick ack after after ECN events
+      inet: frag: enforce memory limits earlier
+
+Eric Engestrom (1):
+      dmaengine: pxa_dma: remove duplicate const qualifier
+
+Eugeniy Paltsev (1):
+      NET: stmmac: align DMA stuff to largest cache line length
+
+Eyal Reizer (1):
+      wlcore: sdio: check for valid platform device data before suspend
+
+Florian Fainelli (1):
+      net: dsa: Do not suspend/resume closed slave_dev
+
+Ganapathi Bhat (1):
+      mwifiex: handle race during mwifiex_usb_disconnect
+
+Greg Kroah-Hartman (1):
+      Linux 4.4.146
+
+Hans Verkuil (1):
+      media: videobuf2-core: don't call memop 'finish' when queueing
+
+Herbert Xu (1):
+      crypto: padlock-aes - Fix Nano workaround data corruption
+
+Jakub Kicinski (1):
+      bpf: fix references to free_bpf_prog_info() in comments
+
+Jane Wan (1):
+      mtd: rawnand: fsl_ifc: fix FSL NAND driver to read all ONFI parameter=
+ pages
+
+Jeremy Cline (2):
+      netlink: Fix spectre v1 gadget in netlink_create()
+      net: socket: fix potential spectre v1 gadget in socketcall
+
+Jian-Hong Pan (1):
+      Bluetooth: btusb: Add a new Realtek 8723DE ID 2ff8:b011
+
+Jiang Biao (1):
+      virtio_balloon: fix another race between migration and ballooning
+
+Jonathan Neusch=C3=A4fer (1):
+      powerpc/embedded6xx/hlwd-pic: Prevent interrupts from being handled b=
+y Starlet
+
+Jos=C3=A9 Roberto de Souza (1):
+      drm: Add DP PSR2 sink enable bit
+
+Jozsef Kadlecsik (1):
+      netfilter: ipset: List timing out entries with "timeout 1" instead of=
+ zero
+
+Juergen Gross (1):
+      xen/netfront: raise max number of slots in xennet_get_responses()
+
+Julia Lawall (1):
+      pinctrl: at91-pio4: add missing of_node_put
+
+KT Liao (1):
+      Input: elan_i2c - add another ACPI ID for Lenovo Ideapad 330-15AST
+
+Kai Chieh Chuang (1):
+      ASoC: dpcm: fix BE dai not hw_free and shutdown
+
+Kan Liang (2):
+      perf/x86/intel/uncore: Correct fixed counter index check in generic c=
+ode
+      perf/x86/intel/uncore: Correct fixed counter index check for NHM
+
+Leon Romanovsky (1):
+      RDMA/mad: Convert BUG_ONs to error flows
+
+Linus Torvalds (3):
+      squashfs: be more careful about metadata corruption
+      squashfs: more metadata hardening
+      squashfs: more metadata hardenings
+
+Lorenzo Bianconi (1):
+      ipv4: remove BUG_ON() from fib_compute_spec_dst
+
+Luc Van Oostenryck (2):
+      drm/radeon: fix mode_valid's return type
+      drm/gma500: fix psb_intel_lvds_mode_valid()'s return type
+
+Marc Zyngier (1):
+      dma-iommu: Fix compilation when !CONFIG_IOMMU_DMA
+
+Mathieu Malaterre (5):
+      mm/slub.c: add __printf verification to slab_err()
+      powerpc/32: Add a missing include header
+      powerpc/chrp/time: Make some functions static, add missing header inc=
+lude
+      powerpc/powermac: Add missing prototype for note_bootable_part()
+      powerpc/powermac: Mark variable x as unused
+
+Mauro Carvalho Chehab (2):
+      media: siano: get rid of __le32/__le16 cast warnings
+      media: si470x: fix __be16 annotations
+
+Maya Erez (1):
+      scsi: ufs: fix exception event handling
+
+Michal Simek (1):
+      microblaze: Fix simpleImage format generation
+
+Mika Westerberg (1):
+      PCI: pciehp: Request control of native hotplug only if supported
+
+Nicholas Piggin (1):
+      powerpc/64s: Fix compiler store ordering to SLB shadow area
+
+Ondrej Mosn=C3=A1=C4=8Dek (1):
+      audit: allow not equal op for audit by executable
+
+Paul Burton (1):
+      MIPS: Fix off-by-one in pci_resource_to_user()
+
+Qu Wenruo (1):
+      btrfs: qgroup: Finish rescan when hit the last leaf of extent tree
+
+Roman Kagan (1):
+      kvm: x86: vmx: fix vpid leak
+
+Satendra Singh Thakur (1):
+      drm/atomic: Handling the case when setting old crtc for plane
+
+Scott Mayhew (1):
+      nfsd: fix potential use-after-free in nfsd4_decode_getdeviceinfo
+
+Sean Lanigan (1):
+      brcmfmac: Add support for bcm43364 wireless chipset
+
+Shaul Triebitz (1):
+      iwlwifi: pcie: fix race in Rx buffer allocator
+
+Shivasharan S (1):
+      scsi: megaraid_sas: Increase timeout by 1 sec for non-RAID fastpath I=
+Os
+
+Shuah Khan (Samsung OSG) (1):
+      usbip: usbip_detach: Fix memory, udev context and udev leak
+
+Siva Rebbagondla (1):
+      rsi: Fix 'invalid vdd' warning in mmc
+
+Stefan Wahren (1):
+      net: lan78xx: fix rx handling before first packet is send
+
+Steven Rostedt (VMware) (3):
+      tracing: Fix double free of event_trigger_data
+      tracing: Fix possible double free in event_enable_trigger_func()
+      tracing: Quiet gcc warning about maybe unused link variable
+
+Stewart Smith (1):
+      hvc_opal: don't set tb_ticks_per_usec in udbg_init_opal_common()
+
+Suman Anna (1):
+      media: omap3isp: fix unbalanced dma_iommu_mapping
+
+Sven Eckelmann (9):
+      ath: Add regulatory mapping for FCC3_ETSIC
+      ath: Add regulatory mapping for ETSI8_WORLD
+      ath: Add regulatory mapping for APL13_WORLD
+      ath: Add regulatory mapping for APL2_FCCA
+      ath: Add regulatory mapping for Uganda
+      ath: Add regulatory mapping for Tanzania
+      ath: Add regulatory mapping for Serbia
+      ath: Add regulatory mapping for Bermuda
+      ath: Add regulatory mapping for Bahamas
+
+Takashi Iwai (2):
+      ALSA: emu10k1: Rate-limit error messages about page errors
+      ALSA: usb-audio: Apply rate limit to warning messages in URB complete=
+ callback
+
+Takashi Sakamoto (1):
+      ALSA: hda/ca0132: fix build failure when a local macro is defined
+
+Terry Junge (1):
+      HID: hid-plantronics: Re-resend Update to map button for PTT products
+
+Theodore Ts'o (3):
+      random: mix rdrand with entropy sent in from userspace
+      ext4: fix inline data updates with checksums enabled
+      ext4: check for allocation block validity with block group locked
+
+Thierry Escande (1):
+      Bluetooth: hci_qca: Fix "Sleep inside atomic section" warning
+
+Thomas Richter (2):
+      s390/cpum_sf: Add data entry sizes to sampling trailer entry
+      perf: fix invalid bit in diagnostic entry
+
+Tony Battersby (1):
+      scsi: sg: fix minor memory leak in error path
+
+Tudor-Dan Ambarus (2):
+      crypto: authencesn - don't leak pointers to authenc keys
+      crypto: authenc - don't leak pointers to authenc keys
+
+Vincent Palatin (1):
+      mfd: cros_ec: Fail early if we cannot identify the EC
+
+Wei Yongjun (1):
+      media: rcar_jpu: Add missing clk_disable_unprepare() on error in jpu_=
+open()
+
+Wenwen Wang (2):
+      scsi: 3w-9xxx: fix a missing-check bug
+      scsi: 3w-xxxx: fix a missing-check bug
+
+Xiao Liang (1):
+      xen-netfront: wait xenbus state change when load module manually
+
+Xinming Hu (1):
+      mwifiex: correct histogram data with appropriate index
+
+Xose Vazquez Perez (1):
+      scsi: scsi_dh: replace too broad "TP9" string with the exact models
+
+Yousuk Seung (1):
+      tcp: refactor tcp_ecn_check_ce to remove sk type cast
+
+Yufen Yu (1):
+      md: fix NULL dereference of mddev->pers in remove_and_add_spares()
+
+Zhouyang Jia (2):
+      ALSA: emu10k1: add error handling for snd_ctl_add
+      ALSA: fm801: add error handling for snd_ctl_add
+
+tangpengpeng (1):
+      net: fix amd-xgbe flow-control issue
+
+
+--pf9I7BMVVzbSWLtt
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEZH8oZUiU471FcZm+ONu9yGCSaT4FAltoZBsACgkQONu9yGCS
+aT6n3RAAoYFH0UoIQ28hRBXRk9O3CTMZooC0CyxGydmJ8Up70c0p7SK4KqXKACWf
+ZbdB+Q5nfny38QVsdiMTo9521OUtNjc+nQisA1rLrZAByx7+DdTfm4IkSzJqBEx3
+XVJmSDHPEZ2GcxuCibalE9U1etK36jwxaaLzkxR7sYH6DxmTxrSZkMWLdN8XN4wO
+iQGEJ0+JLrk/nHymNUWIOLAwjKKx5/BU2bPwLcumfjQGc6AJEylsYl1OgIR9qGTK
+Pk2WuvKCwbbn0qDLSRD4nCGi6lCbMTdi8MazL8kK82loV0rLs3qp41oPubqOgXpN
+KjEtbUPRVi38f5Mu5No/JlWDHeiej022TpuN+pED5IqYqm93Qyw2BJFyZGoj282M
+uCYmxdGhKxe+Ec0NbPhW2XueS7cMIxWDtsiNpJ1jeEkwS60jzLKiVd+n7yWD2JXe
+oZg1DqfuKxtHiOlpSpog6dr2fmhe4WOJPXK/Jg5uJv+Ov1ktG3XVrmMLhQWCnwof
+uuf0F+naI1HIWrjyRVRFHP5jnWF9LgFB2ZJJa2MqC2zcwYOE+W6LbBF5uqdmbiIx
+mswkydyCxBnLr77vNAdSqydW+ZsODxDiUuvtsybHIf/KN2HBZKvzKGmcwVzeJ8Jc
+iboTe3m9EwdYwz5TjQ6qdPmqCDWkUcefEdWFXqBoPK+BQgel+hg=
+=kqxo
+-----END PGP SIGNATURE-----
+
+--pf9I7BMVVzbSWLtt--
