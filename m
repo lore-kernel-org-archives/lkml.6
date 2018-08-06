@@ -2,101 +2,118 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2F9BC4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:49:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3E50C46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:50:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6467621A32
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:49:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6467621A32
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 5CE7E21A32
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:50:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DXjl8eIy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CE7E21A32
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732672AbeHFS7s (ORCPT
+        id S1731621AbeHFTAe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 14:59:48 -0400
-Received: from mga18.intel.com ([134.134.136.126]:51317 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731993AbeHFS7r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 14:59:47 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Aug 2018 09:49:50 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,452,1526367600"; 
-   d="scan'208";a="62958079"
-Received: from spandruv-desk.jf.intel.com ([10.54.75.31])
-  by orsmga008.jf.intel.com with ESMTP; 06 Aug 2018 09:49:29 -0700
-Message-ID: <cd2287153b369d88cc240068adc7d341ef675acf.camel@linux.intel.com>
-Subject: Re: [PATCH] Revert "cpufreq: intel_pstate: Fix ->set_policy()
- interface for no_turbo"
-From:   Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Gabriele Mazzotta <gabriele.mzt@gmail.com>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
+        Mon, 6 Aug 2018 15:00:34 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:37612 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728349AbeHFTAd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 15:00:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=NvGQhNJMx9wuXGsgGxJ6w/feqMHwYic2rr5nrgRVonU=; b=DXjl8eIyGP0iIgVwLpmyev+xMk
+        E/uD9Yp7EiO11DKMdTkwiQpKbe7NTiybY3HB9GESNs44JyhO4oZ0X7liz4RvSKE6qKntL7ILne+26
+        nAGLvOqzknJ41Qo5G7ACpDA09gGOjNXstTSLF1W36IrTGO4L7Ksfy2tqOEY1mO22wKAWghNewMy9q
+        xK1ERkU08MeQ1KaBhbC0nwDdVgzC1eYkQpEqiR3NQBKx68TiRLrHtD7SpecUdP8KYogViCHQGarAI
+        un1c1WArpjXRIe3Y7DdboE7lJnrsHvObJkV4xXvANTtw+NHfN+p0KYvipH52dR8vzdL6+zSZy5zY4
+        qWU+n2TA==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fmii8-0002af-Hf; Mon, 06 Aug 2018 16:50:24 +0000
+Subject: Re: [PATCH v3 01/14] sched/core: uclamp: extend sched_setattr to
+ support utilization clamping
+To:     Patrick Bellasi <patrick.bellasi@arm.com>,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
         Viresh Kumar <viresh.kumar@linaro.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date:   Mon, 06 Aug 2018 09:49:29 -0700
-In-Reply-To: <CAJZ5v0iwhVu6PwztsbN8cYmQtnjD2SyFkazkObc1o-1JX6GO5g@mail.gmail.com>
-References: <20180804152932.3861-1-gabriele.mzt@gmail.com>
-         <ccf46de4-d75e-306b-9554-9d33f68d2379@gmail.com>
-         <CAJZ5v0iwhVu6PwztsbN8cYmQtnjD2SyFkazkObc1o-1JX6GO5g@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.2 (3.28.2-1.fc28) 
-Mime-Version: 1.0
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+References: <20180806163946.28380-1-patrick.bellasi@arm.com>
+ <20180806163946.28380-2-patrick.bellasi@arm.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <d8a3d533-84df-bfc7-96ae-790141be4926@infradead.org>
+Date:   Mon, 6 Aug 2018 09:50:20 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180806163946.28380-2-patrick.bellasi@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-08-06 at 10:30 +0200, Rafael J. Wysocki wrote:
-> On Sat, Aug 4, 2018 at 7:31 PM, Gabriele Mazzotta
-> <gabriele.mzt@gmail.com> wrote:
-> > On 04/08/2018 17:29, Gabriele Mazzotta wrote:
-> > > This change does not take into account that some BIOSes change
-> > > MSR_IA32_MISC_ENABLE_TURBO_DISABLE depending on the power source.
-> > > If the turbo is disabled when the system boots, policy.max_freq
-> > > is set to pstate.max_pstate. However, if the BIOS later enables
-> > > the turbo, the CPU will never be able to run at
-> > > pstate.turbo_pstate.
-> > > 
-> > > Since now intel_pstate_set_policy() does its calculations using
-> > > pstate.max_freq and pstate.turbo_freq, we can always calculate
-> > > cpuinfo.max_freq using pstate.turbo_pstate, thus allowing system
-> > > with varying MSR_IA32_MISC_ENABLE_TURBO_DISABLE to run at full
-> > > speed when the turbo is enabled.
-> 
-> Well, the problem with this approach is that always using
-> pstate.turbo_pstate as the max causes the governor to overestimate
-> the
-> target frequency when the turbo range is not available (the target
-> depends on the width of the entire available P-state range including
-> turbo, so if the turbo range is not available, the number take into
-> that computation is too large).
-> 
-> Are we expected to get notified when the BIOS updates
-> MSR_IA32_MISC_ENABLE_TURBO_DISABLE?
+Hi,
 
-Let's try this:
-- boot with kernel command line 
+On 08/06/2018 09:39 AM, Patrick Bellasi wrote:
+> diff --git a/init/Kconfig b/init/Kconfig
+> index 041f3a022122..1d45a6877d6f 100644
+> --- a/init/Kconfig
+> +++ b/init/Kconfig
+> @@ -583,6 +583,25 @@ config HAVE_UNSTABLE_SCHED_CLOCK
+>  config GENERIC_SCHED_CLOCK
+>  	bool
+>  
+> +menu "Scheduler features"
+> +
+> +config UCLAMP_TASK
+> +	bool "Enable utilization clamping for RT/FAIR tasks"
+> +	depends on CPU_FREQ_GOV_SCHEDUTIL
+> +	default false
 
-intel_pstate=support_acpi_ppc dyndbg="file processor_perflib.c +p"
-dyndbg="file intel_pstate.c +p"
+	default n
+but just omit the line completely since "n" is already the default.
 
-and send dmesg after you change power sources.
+> +	help
+> +	  This feature enables the scheduler to track the clamped utilization
+> +	  of each CPU based on RUNNABLE tasks currently scheduled on that CPU.
+> +
+> +	  When this option is enabled, the user can specify a min and max CPU
+> +          bandwidth which is allowed for a task.
+> +	  The max bandwidth allows to clamp the maximum frequency a task can
+> +	  use, while the min bandwidth allows to define a minimum frequency a
+> +          task will always use.
 
-- Also try with
-intel_pstate=disable dyndbg="file processor_perflib.c +p"
+Please clean up the indentation above to use one tab + 2 spaces on all lines.
 
-and send dmesg.
-
-Thanks,
-Srinivas
+> +
+> +	  If in doubt, say N.
+> +
+> +endmenu
 
 
+thanks,
+-- 
+~Randy
