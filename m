@@ -3,73 +3,200 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08DCFC46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 08:10:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC4B8C46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 08:15:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1BBE219DA
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 08:10:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1BBE219DA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sntech.de
+	by mail.kernel.org (Postfix) with ESMTP id 736DF2192C
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 08:15:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 736DF2192C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727431AbeHFKSV (ORCPT
+        id S1727131AbeHFKX2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 06:18:21 -0400
-Received: from gloria.sntech.de ([185.11.138.130]:40110 "EHLO gloria.sntech.de"
+        Mon, 6 Aug 2018 06:23:28 -0400
+Received: from foss.arm.com ([217.140.101.70]:34182 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727102AbeHFKSU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 06:18:20 -0400
-Received: from wd0970.dip.tu-dresden.de ([141.76.111.202] helo=phil.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1fmaam-0001QW-Qn; Mon, 06 Aug 2018 10:10:16 +0200
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     djw@t-chip.com.cn
-Cc:     linux-rockchip@lists.infradead.org, Wayne Chou <zxf@t-chip.com.cn>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v0] clk: rockchip: Add pclk_rkpwm_pmu to PMU critical clocks in rk3399
-Date:   Mon, 06 Aug 2018 10:10:15 +0200
-Message-ID: <2499930.7n9Q7JauMx@phil>
-In-Reply-To: <1533367862-7212-1-git-send-email-djw@t-chip.com.cn>
-References: <1533367862-7212-1-git-send-email-djw@t-chip.com.cn>
+        id S1726482AbeHFKX2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 06:23:28 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E196A18A;
+        Mon,  6 Aug 2018 01:15:34 -0700 (PDT)
+Received: from [10.4.13.119] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 228653F5D0;
+        Mon,  6 Aug 2018 01:15:33 -0700 (PDT)
+Subject: Re: [PATCH 2/2] irqchip/gic-v3-its: Move ITS' ->pend_page allocation
+ into an early CPU up callback
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        linux-kernel@vger.kernel.org
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>
+References: <20180718154205.13704-1-bigeasy@linutronix.de>
+ <20180718154205.13704-3-bigeasy@linutronix.de>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <3302f069-8f4e-8d97-5166-0dec01b43c4c@arm.com>
+Date:   Mon, 6 Aug 2018 09:15:32 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20180718154205.13704-3-bigeasy@linutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Levin,
+Hi Sebastian,
 
-Am Samstag, 4. August 2018, 09:31:02 CEST schrieb djw@t-chip.com.cn:
-> From: Levin Du <djw@t-chip.com.cn>
+On 18/07/18 16:42, Sebastian Andrzej Siewior wrote:
+> The AP-GIC-starting callback allocates memory for the ->pend_page while
+> the CPU is started during boot-up. This callback is invoked on the
+> target CPU with disabled interrupts.
+> This does not work on -RT because memory allocations are not possible
+> with disabled interrupts.
+> Move the memory allocation to an earlier hotplug step which is invoked
+> with enabled interrupts on the boot CPU.
 > 
-> PWM2 is commonly used to control voltage of PWM regulator of VDD_LOG in
-> RK3399. On the Firefly-RK3399 board, PWM2 outputs 40 KHz square wave
-> from power on and the VDD_LOG is about 0.9V. When the kernel boots
-> normally into the system, the PWM2 keeps outputing PWM signal.
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> ---
+>  drivers/irqchip/irq-gic-v3-its.c | 60 ++++++++++++++++++++++----------
+>  1 file changed, 41 insertions(+), 19 deletions(-)
 > 
-> But the kernel hangs randomly after "Starting kernel ..." line on that
-> board. When it happens, PWM2 outputs high level which causes VDD_LOG
-> drops to 0.4V below the normal operating voltage.
+> diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+> index a616043d25ee..acc3d44c356d 100644
+> --- a/drivers/irqchip/irq-gic-v3-its.c
+> +++ b/drivers/irqchip/irq-gic-v3-its.c
+> @@ -171,6 +171,7 @@ static DEFINE_RAW_SPINLOCK(vmovp_lock);
+>  static DEFINE_IDA(its_vpeid_ida);
+>  
+>  #define gic_data_rdist()		(raw_cpu_ptr(gic_rdists->rdist))
+> +#define gic_data_rdist_cpu(cpu)		(per_cpu_ptr(gic_rdists->rdist, cpu))
+>  #define gic_data_rdist_rd_base()	(gic_data_rdist()->rd_base)
+>  #define gic_data_rdist_vlpi_base()	(gic_data_rdist_rd_base() + SZ_128K)
+>  
+> @@ -1853,15 +1854,17 @@ static int its_alloc_collections(struct its_node *its)
+>  	return 0;
+>  }
+>  
+> -static struct page *its_allocate_pending_table(gfp_t gfp_flags)
+> +static struct page *its_allocate_pending_table(unsigned int cpu)
+>  {
+>  	struct page *pend_page;
+> +	unsigned int order;
+>  	/*
+>  	 * The pending pages have to be at least 64kB aligned,
+>  	 * hence the 'max(LPI_PENDBASE_SZ, SZ_64K)' below.
+>  	 */
+> -	pend_page = alloc_pages(gfp_flags | __GFP_ZERO,
+> -				get_order(max_t(u32, LPI_PENDBASE_SZ, SZ_64K)));
+> +	order = get_order(max_t(u32, LPI_PENDBASE_SZ, SZ_64K));
+> +	pend_page = alloc_pages_node(cpu_to_node(cpu), GFP_KERNEL | __GFP_ZERO,
+> +				     order);
+>  	if (!pend_page)
+>  		return NULL;
+>  
+> @@ -1877,6 +1880,28 @@ static void its_free_pending_table(struct page *pt)
+>  		   get_order(max_t(u32, LPI_PENDBASE_SZ, SZ_64K)));
+>  }
+>  
+> +static int its_alloc_pend_page(unsigned int cpu)
+> +{
+> +	struct page *pend_page;
+> +	phys_addr_t paddr;
+> +
+> +	pend_page = gic_data_rdist_cpu(cpu)->pend_page;
+> +	if (pend_page)
+> +		return 0;
+> +
+> +	pend_page = its_allocate_pending_table(cpu);
+> +	if (!pend_page) {
+> +		pr_err("Failed to allocate PENDBASE for CPU%d\n",
+> +		       smp_processor_id());
+> +		return -ENOMEM;
+> +	}
+> +
+> +	paddr = page_to_phys(pend_page);
+> +	pr_info("CPU%d: using LPI pending table @%pa\n", cpu, &paddr);
+> +	gic_data_rdist_cpu(cpu)->pend_page = pend_page;
+> +	return 0;
+> +}
+> +
+>  static void its_cpu_init_lpis(void)
+>  {
+>  	void __iomem *rbase = gic_data_rdist_rd_base();
+> @@ -1885,21 +1910,8 @@ static void its_cpu_init_lpis(void)
+>  
+>  	/* If we didn't allocate the pending table yet, do it now */
+>  	pend_page = gic_data_rdist()->pend_page;
+> -	if (!pend_page) {
+> -		phys_addr_t paddr;
+> -
+> -		pend_page = its_allocate_pending_table(GFP_NOWAIT);
+> -		if (!pend_page) {
+> -			pr_err("Failed to allocate PENDBASE for CPU%d\n",
+> -			       smp_processor_id());
+> -			return;
+> -		}
+> -
+> -		paddr = page_to_phys(pend_page);
+> -		pr_info("CPU%d: using LPI pending table @%pa\n",
+> -			smp_processor_id(), &paddr);
+> -		gic_data_rdist()->pend_page = pend_page;
+> -	}
+> +	if (WARN_ON(!pend_page))
+> +		return;
+>  
+>  	/* set PROPBASE */
+>  	val = (page_to_phys(gic_rdists->prop_page) |
+> @@ -2732,7 +2744,7 @@ static int its_vpe_init(struct its_vpe *vpe)
+>  		return vpe_id;
+>  
+>  	/* Allocate VPT */
+> -	vpt_page = its_allocate_pending_table(GFP_KERNEL);
+> +	vpt_page = its_allocate_pending_table(raw_smp_processor_id());
+>  	if (!vpt_page) {
+>  		its_vpe_id_free(vpe_id);
+>  		return -ENOMEM;
+> @@ -3706,6 +3718,16 @@ int __init its_init(struct fwnode_handle *handle, struct rdists *rdists,
+>  	if (err)
+>  		return err;
+>  
+> +	err = cpuhp_setup_state(CPUHP_BP_PREPARE_DYN, "irqchip/arm/gicv3:prepare",
+> +				its_alloc_pend_page, NULL);
+> +	if (err < 0) {
+> +		pr_warn("ITS: Can't register CPU-hoplug callback.\n");
+> +		return err;
+> +	}
+> +	err = its_alloc_pend_page(smp_processor_id());
+> +	if (err < 0)
+> +		return err;
+> +
+>  	list_for_each_entry(its, &its_nodes, entry)
+>  		has_v4 |= its->is_v4;
+>  
 > 
-> By adding "pclk_rkpwm_pmu" to the rk3399_pmucru_critical_clocks array,
-> PWM clock is ensured to be prepared at startup and the PWM2 output is
-> normal. After repeated tests, the early boot hang is gone.
-> 
-> This patch works on both Firefly-RK3399 and ROC-RK3399-PC boards.
-> 
-> Signed-off-by: Levin Du <djw@t-chip.com.cn>
 
-applied to my clk-branch
+I must say I'm not overly keen on the extra hotplug notifier, and I'd
+rather allocate all the memory upfront on the boot CPU.
 
-Thanks for tracking that down
-Heiko
+I've implemented this as part of a series that is required for
+kexec/kdump support[1] (and specifically this[2] patch). Could you
+please have a look and let me know if that works for you? I otherwise
+plan to post it for review once the 4.19 merge window has closed.
 
+Thanks,
 
+	M.
+
+[1]
+https://git.kernel.org/pub/scm/linux/kernel/git/maz/arm-platforms.git/log/?h=irq/gicv3-kdump
+[2]
+https://git.kernel.org/pub/scm/linux/kernel/git/maz/arm-platforms.git/commit/?h=irq/gicv3-kdump&id=effe377d415900af10e206173d60dc6cc3f0662c
+-- 
+Jazz is not dead. It just smells funny...
