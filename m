@@ -2,120 +2,130 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46E74C46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:34:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74005C46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:35:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B83621A52
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:34:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B83621A52
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 229B421A52
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:35:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="WEOOJlQI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 229B421A52
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733285AbeHFSoe (ORCPT
+        id S1733296AbeHFSpN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 14:44:34 -0400
-Received: from mga14.intel.com ([192.55.52.115]:16870 "EHLO mga14.intel.com"
+        Mon, 6 Aug 2018 14:45:13 -0400
+Received: from vern.gendns.com ([206.190.152.46]:43846 "EHLO vern.gendns.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729230AbeHFSod (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 14:44:33 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Aug 2018 09:34:40 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,452,1526367600"; 
-   d="scan'208";a="62692972"
-Received: from otc-nc-03.jf.intel.com (HELO otc-nc-03) ([10.54.39.32])
-  by orsmga007.jf.intel.com with ESMTP; 06 Aug 2018 09:34:28 -0700
-Date:   Mon, 6 Aug 2018 09:34:28 -0700
-From:   "Raj, Ashok" <ashok.raj@intel.com>
-To:     Alex Williamson <alex.williamson@redhat.com>
-Cc:     Kenneth Lee <liguozhu@hisilicon.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        Zaibo Xu <xuzaibo@huawei.com>, sanjay.k.kumar@intel.com,
-        Kenneth Lee <nek.in.cn@gmail.com>,
-        Hao Fang <fanghao11@huawei.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Joerg Roedel <joro@8bytes.org>,
-        Zhou Wang <wangzhou1@hisilicon.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>, linuxarm@huawei.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Cornelia Huck <cohuck@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        "linux-accelerators@lists.ozlabs.org" 
-        <linux-accelerators@lists.ozlabs.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Ashok Raj <ashok.raj@intel.com>
-Subject: Re: [RFC PATCH 3/7] vfio: add spimdev support
-Message-ID: <20180806163428.GB32409@otc-nc-03>
-References: <20180801102221.5308-1-nek.in.cn@gmail.com>
- <20180801102221.5308-4-nek.in.cn@gmail.com>
- <AADFC41AFE54684AB9EE6CBC0274A5D191290F7B@SHSMSX101.ccr.corp.intel.com>
- <20180802034727.GK160746@Turing-Arch-b>
- <AADFC41AFE54684AB9EE6CBC0274A5D19129102C@SHSMSX101.ccr.corp.intel.com>
- <20180802073440.GA91035@Turing-Arch-b>
- <20180802103528.0b863030.cohuck@redhat.com>
- <20180802124327.403b10ab@t450s.home>
- <20180806014004.GF91035@Turing-Arch-b>
- <20180806094940.47c70be9@t450s.home>
+        id S1729230AbeHFSpN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 14:45:13 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=LvymvdjcDZ4k4aN4cE1nQJzY4mXwHTBXsoDzWFrwVE8=; b=WEOOJlQI7aS7mBb3+kUGsynwZg
+        +4e6CwFg2k9LBSyGtMv+cVZeNHgrZmf1LY4h1YWMBW2E1HTTCxzqdVTDrJA6ti+v2fGYmq9R/XZuu
+        kOMavaeE7ANPlRZMNJWkxx2zhGYm6ovs/Kh2CGMJTvt6CdhY2CC5ffiRbxulL6lJ98AaGBGSVFqpQ
+        /qisH/IdYTn/I8df6hrNydEg36/eys2iG0jRvEmJDLd/7Kwa2r7/Mr56KLFjpQI2AklmA8ErFdujh
+        DRoEH/e8XlqqvBvSnBf4zOv0qxFqrspTm8g8aFEmX+akFwY3AFe8eB9cJmmMstsNuhfvNEbULU80g
+        sNUJZv+g==;
+Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:49224 helo=[192.168.0.134])
+        by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <david@lechnology.com>)
+        id 1fmiTW-008A3I-2u; Mon, 06 Aug 2018 12:35:18 -0400
+Subject: Re: [PATCH v3 00/13] ARM: davinci: remove duplicate aemif support
+To:     Sekhar Nori <nsekhar@ti.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Kevin Hilman <khilman@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20180628095748.4462-1-brgl@bgdev.pl>
+ <52a274f1-283a-a14a-54f3-4b95b6605c4f@ti.com>
+ <59fdc532-bb72-ffae-cfb6-a7f156c14771@lechnology.com>
+ <e1222b3c-dfa4-4cb0-eebf-8e2550e9d674@ti.com>
+ <125d73f7-7311-866f-1e9d-d3c1f9473899@lechnology.com>
+ <92e41afc-cf3a-e713-11d5-247b8d6e3a64@ti.com>
+From:   David Lechner <david@lechnology.com>
+Message-ID: <4154b955-4f89-035a-8a02-a3e8bd8d9ede@lechnology.com>
+Date:   Mon, 6 Aug 2018 11:35:16 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180806094940.47c70be9@t450s.home>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <92e41afc-cf3a-e713-11d5-247b8d6e3a64@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 06, 2018 at 09:49:40AM -0600, Alex Williamson wrote:
-> On Mon, 6 Aug 2018 09:40:04 +0800
-> Kenneth Lee <liguozhu@hisilicon.com> wrote:
-> > 
-> > 1. It supports thousands of processes. Take zip accelerator as an example, any
-> > application need data compression/decompression will need to interact with the
-> > accelerator. To support that, you have to create tens of thousands of mdev for
-> > their usage. I don't think it is a good idea to have so many devices in the
-> > system.
+On 07/10/2018 05:19 AM, Sekhar Nori wrote:
+> On Friday 06 July 2018 11:09 PM, David Lechner wrote:
+>> On 07/04/2018 01:35 AM, Sekhar Nori wrote:
+>>> Hi David,
+>>>
+>>> On Monday 02 July 2018 09:02 PM, David Lechner wrote:
+>>>> On 07/02/2018 07:28 AM, Sekhar Nori wrote:
+>>>>> Hi David, Stephen,
+>>>>>
+>>>>> On Thursday 28 June 2018 03:27 PM, Bartosz Golaszewski wrote:
+>>>>>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>>>>>
+>>>>>> This series moves all aemif/nand users to using the ti-aemif platform
+>>>>>> driver located in drivers/memory instead of the older API located in
+>>>>>> mach-davinci.
+>>>>>>
+>>>>>> First five patches add necessary changes to the clock driver. Next
+>>>>>> seven convert the board files to using the ti-aemif driver. Last patch
+>>>>>> removes now dead code.
+>>>>>
+>>>>> How do you want to handle this series? I can apply the series and
+>>>>> provide you an immutable branch on v4.18-rc1 with the clock patches
+>>>>> applied if that can work.
+>>>>
+>>>> Sounds good to me. But I'm new to this maintainer thing, so maybe
+>>>> there is something to consider that I haven't thought of?
+>>>
+>>> I don't think there is more to it. Ultimately there should not be two
+>>> commits for the same patch. Either you can apply and share the commit to
+>>> use or I can do that as well. I am equally fine either way.
+>>>
+>>> Regards,
+>>> Sekhar
+>>>
+>>
+>> I've created a branch for-sekhar at https://github.com/dlech/linux.git
+>> with the clk commits.
 > 
-> Each mdev is a device, regardless of whether there are hardware
-> resources committed to the device, so I don't understand this argument.
->  
-> > 2. The application does not want to own the mdev for long. It just need an
-> > access point for the hardware service. If it has to interact with an management
-> > agent for allocation and release, this makes the problem complex.
-> 
-> I don't see how the length of the usage plays a role here either.  Are
-> you concerned that the time it takes to create and remove an mdev is
-> significant compared to the usage time?  Userspace is certainly welcome
-> to create a pool of devices, but why should it be the kernel's
-> responsibility to dynamically assign resources to an mdev?  What's the
-> usage model when resources are unavailable?  It seems there's
-> complexity in either case, but it's generally userspace's responsibility
-> to impose a policy.
+> Thanks. I merged commit f917ff75ac55b6d829c9d1142e83913064565d5b (top of
+> that branch) to my v4.19/soc branch. Please do let Stephen and Mike know
+> about this then when you send your stuff for v4.19.
 > 
 
-Can vfio dev's created representing an mdev be shared between several 
-processes?  It doesn't need to be exclusive.
+Since there have been no more clk-davinci patches for v4.19, I assume that
+it is OK to just let this go through the ARM tree via Sekhar?
 
-The path to hardware is established by the processes binding to SVM and
-IOMMU ensuring that the PASID is plummed properly.  One can think the 
-same hardware is shared between several processes, hardware knows the 
-isolation is via the PASID. 
 
-For these cases it isn't required to create a dev per process. 
-
-Cheers,
-Ashok
