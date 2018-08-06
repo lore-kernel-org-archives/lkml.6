@@ -2,129 +2,148 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83832C46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 08:39:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E534C4646D
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 08:39:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42099219E2
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 08:39:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42099219E2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id DEE1B219E2
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 08:39:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="i3j6l3gV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEE1B219E2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727146AbeHFKrU (ORCPT
+        id S1727527AbeHFKrf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 06:47:20 -0400
-Received: from mga14.intel.com ([192.55.52.115]:54585 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725951AbeHFKrU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 06:47:20 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Aug 2018 01:39:20 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,451,1526367600"; 
-   d="scan'208";a="251613960"
-Received: from chenyu-desktop.sh.intel.com (HELO chenyu-desktop) ([10.239.160.116])
-  by fmsmga005.fm.intel.com with ESMTP; 06 Aug 2018 01:39:18 -0700
-Date:   Mon, 6 Aug 2018 16:45:34 +0800
-From:   Yu Chen <yu.c.chen@intel.com>
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     Ryan Chen <yu.chen.surf@gmail.com>, jlee@suse.com,
-        oneukum@suse.com, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        ebiggers@google.com, Theodore Ts'o <tytso@mit.edu>,
-        smueller@chronox.de, denkenz@gmail.com,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        linux-crypto@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kookoo.gu@intel.com, Zhang Rui <rui.zhang@intel.com>
-Subject: Re: [PATCH 0/4][RFC v2] Introduce the in-kernel hibernation
- encryption
-Message-ID: <20180806084534.GB12124@chenyu-desktop>
-References: <20180720102532.GA20284@amd>
- <1532346156.3057.11.camel@suse.com>
- <20180723162302.GA4503@sandybridge-desktop>
- <1532590246.7411.3.camel@suse.com>
- <20180726081404.GG4244@linux-l9pv.suse>
- <20180730170415.GQ4244@linux-l9pv.suse>
- <20180803033702.GB416@sandybridge-desktop>
- <20180803053445.GC4244@linux-l9pv.suse>
- <CADjb_WSURQz86+E8kakNf7UBDM+aho+uaz3QdDkuGsEgan=szw@mail.gmail.com>
- <20180805100200.GB22948@amd>
+        Mon, 6 Aug 2018 06:47:35 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:46434 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725951AbeHFKrf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 06:47:35 -0400
+Received: by mail-ed1-f68.google.com with SMTP id o8-v6so4718480edt.13
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Aug 2018 01:39:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=KvZ2rQrBfvE1jRF1chd3Ge/9IAkQCD+b8XTWZVZMKqI=;
+        b=i3j6l3gVGV7LWmIX0qa5gj47iRlsn6ieJ4Rr4ydGKH9y83lVwFv0VSUtCJ2PjJgTue
+         nKA0F+oJO5mKM0Xq+3MIzRt9lY9UNSfVO5XMAhhOIkc2oDU30+lYUOQ9wicxBov7KX49
+         mIuVH1SuyCzmh4XFf7IMuh6g7nmmJR1UhAwvY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=KvZ2rQrBfvE1jRF1chd3Ge/9IAkQCD+b8XTWZVZMKqI=;
+        b=QKuSca9Fgt1r/4MOA826KvuCuIZf3NsNbUyWfWB5LBpOR/ay6nkQc0avGHr938gOUi
+         2VmTYMnRd4RpYqm2AFh9ICaSbL55B0dOox5C77Od33laJPk+r6fNBN42Gh2ujmnTyDjG
+         Ov9xuKDrMNEnmm6mljIqJbQDHmdZo8731vkUkO7G/5+xClsrD2dzbODTcWOhmUTEmdyx
+         oUwVr+r3N5dqKtLZoiJWVuQRDWfbErojU8yDMBk4fHkD3t9I31G3/mkYQdevpMjZcxnq
+         15bgEyVV58qxj6S8OrLIf7iLNh1Zc1nH8YUViqQi0YFDVurNd5n244IzsVS9jm/A6Q8w
+         +CbQ==
+X-Gm-Message-State: AOUpUlGOUesZqqRIpPqhhxK28ZiO8k07lKMEdMuIRIrXkOY19gnMIaOl
+        ffbHuEYDtH0ckEwsOoikET4o8Q==
+X-Google-Smtp-Source: AAOMgpfCe+prjuxleY4cxmrKrS7ByDupPkJue/LAYk6R+4szVXbzAO/mU/qYTnQXkjKYaZYoGoldcA==
+X-Received: by 2002:a50:9286:: with SMTP id k6-v6mr17434128eda.66.1533544774232;
+        Mon, 06 Aug 2018 01:39:34 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:56fc:0:d707:d7d8:b180:96e5])
+        by smtp.gmail.com with ESMTPSA id i3-v6sm4855407edt.42.2018.08.06.01.39.32
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 06 Aug 2018 01:39:32 -0700 (PDT)
+Date:   Mon, 6 Aug 2018 10:39:30 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Souptick Joarder <jrdr.linux@gmail.com>
+Cc:     gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
+        seanpaul@chromium.org, airlied@linux.ie,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH] drm: Remove drm_fbdev_cma_set_suspend()
+Message-ID: <20180806083930.GJ3008@phenom.ffwll.local>
+Mail-Followup-To: Souptick Joarder <jrdr.linux@gmail.com>,
+        gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
+        seanpaul@chromium.org, airlied@linux.ie,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+References: <20180730192326.GA31354@jordon-HP-15-Notebook-PC>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180805100200.GB22948@amd>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180730192326.GA31354@jordon-HP-15-Notebook-PC>
+X-Operating-System: Linux phenom 4.14.0-3-amd64 
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Pavel,
-On Sun, Aug 05, 2018 at 12:02:00PM +0200, Pavel Machek wrote:
-> Hi!
+On Tue, Jul 31, 2018 at 12:53:26AM +0530, Souptick Joarder wrote:
+> drm_fbdev_cma_set_suspend() is not getting called from
+> any other places. If there is no plan to use it in future
+> we can remove this API.
 > 
-> > > User space doesn't need to involve. The EFI root key is generated by
-> > > EFI boot stub and be transfer to kernel. It's stored in EFI boot service
-> > > variable that it can only be accessed by trusted EFI binary when
-> > > secure boot is enabled.
-> > >
-> > Okay, this apply to the 'suspend' phase, right?
-> > I'm still a little confused about the 'resume' phase.
-> > Taking encryption as example(not signature),
-> > the purpose of doing hibernation encryption is to prevent other users
-> > from stealing ram content. Say, user A uses a  passphrase to generate the
-> 
-> No, I don't think that's purpose here.
-> 
-> Purpose here is to prevent user from reading/modifying kernel memory
-> content on machine he owns.
->
-Say, A puts his laptop into hibernation and walks away,
-and B walks by, and opens A's laptop and wakes up the system and he
-can do what he wants. Although EFI key/TPM trusted key is enabled,
-currently there's no certification during resume, which sounds
-unsafe to me. Afterall, the original requirement is to probe
-user for password during resume, which sounds more natural.
-> Strange as it may sound, that is what "secure" boot requires (and what
-> Disney wants).
-> 
-Ok, I understand this requirement, and I'm also concerning how to
-distinguish different users from seeing data of each other.
+> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
 
-Joey,
-I'm thinking of a possible direction which could take advantage
-of the password.  It leverages either EFI key or TPM
-trusted key to get it done. Does it make sense?
+cma version of fbdev helpers are indeed getting subsumed by fbdev helpers
+at large, so this makes sense I think.
 
-1. The user space generates a symetric key key_user using
-   the password, and passes the key_user to the kernel as the master
-   key.
-2. The kernel uses the EFI key or TPM trusted key to encrypt
-   the key_user thus gets a encrypt_key.
-3. Uses the encrypt_key to do snapshot encryption
-4. During resume, the same encrypt_key is generated following
-   the same steps(I assume the same EFI key or TPM key could be fetched
-   during resumed, right?) and do the snapshot decryption.
-
-And this is what fscrypt is doing:
-Documentation/filesystems/fscrypt.rst
-
-Best,
-Yu
-> I guess it may have some non-evil uses,
-> too... https://www.linux.com/news/matthew-garrett-explains-how-increase-security-boot-time
+Applied for 4.20, thanks for your patch.
+-Daniel
+> ---
+>  drivers/gpu/drm/drm_fb_cma_helper.c | 15 ---------------
+>  include/drm/drm_fb_cma_helper.h     |  1 -
+>  2 files changed, 16 deletions(-)
 > 
-> 									
-> 									Pavel
+> diff --git a/drivers/gpu/drm/drm_fb_cma_helper.c b/drivers/gpu/drm/drm_fb_cma_helper.c
+> index 186d00a..4c283d9 100644
+> --- a/drivers/gpu/drm/drm_fb_cma_helper.c
+> +++ b/drivers/gpu/drm/drm_fb_cma_helper.c
+> @@ -516,21 +516,6 @@ void drm_fbdev_cma_hotplug_event(struct drm_fbdev_cma *fbdev_cma)
+>  EXPORT_SYMBOL_GPL(drm_fbdev_cma_hotplug_event);
+>  
+>  /**
+> - * drm_fbdev_cma_set_suspend - wrapper around drm_fb_helper_set_suspend
+> - * @fbdev_cma: The drm_fbdev_cma struct, may be NULL
+> - * @state: desired state, zero to resume, non-zero to suspend
+> - *
+> - * Calls drm_fb_helper_set_suspend, which is a wrapper around
+> - * fb_set_suspend implemented by fbdev core.
+> - */
+> -void drm_fbdev_cma_set_suspend(struct drm_fbdev_cma *fbdev_cma, bool state)
+> -{
+> -	if (fbdev_cma)
+> -		drm_fb_helper_set_suspend(&fbdev_cma->fb_helper, state);
+> -}
+> -EXPORT_SYMBOL(drm_fbdev_cma_set_suspend);
+> -
+> -/**
+>   * drm_fbdev_cma_set_suspend_unlocked - wrapper around
+>   *                                      drm_fb_helper_set_suspend_unlocked
+>   * @fbdev_cma: The drm_fbdev_cma struct, may be NULL
+> diff --git a/include/drm/drm_fb_cma_helper.h b/include/drm/drm_fb_cma_helper.h
+> index d532f88a..52f09dc 100644
+> --- a/include/drm/drm_fb_cma_helper.h
+> +++ b/include/drm/drm_fb_cma_helper.h
+> @@ -32,7 +32,6 @@ struct drm_fbdev_cma *drm_fbdev_cma_init(struct drm_device *dev,
+>  
+>  void drm_fbdev_cma_restore_mode(struct drm_fbdev_cma *fbdev_cma);
+>  void drm_fbdev_cma_hotplug_event(struct drm_fbdev_cma *fbdev_cma);
+> -void drm_fbdev_cma_set_suspend(struct drm_fbdev_cma *fbdev_cma, bool state);
+>  void drm_fbdev_cma_set_suspend_unlocked(struct drm_fbdev_cma *fbdev_cma,
+>  					bool state);
+>  
 > -- 
-> (english) http://www.livejournal.com/~pavelmachek
-> (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+> 1.9.1
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 
-
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
