@@ -2,158 +2,158 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB729C46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 03:29:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 958EDC46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 03:34:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8545A219CB
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 03:29:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2AB0C219CB
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 03:34:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=iluvatar.ai header.i=@iluvatar.ai header.b="gJS+YqWt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8545A219CB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=iluvatar.ai
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="eeEk48QL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AB0C219CB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727539AbeHFFgD (ORCPT
+        id S1727508AbeHFFlT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 01:36:03 -0400
-Received: from mail.iluvatar.ai ([58.213.90.100]:5265 "EHLO mail.iluvatar.ai"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727168AbeHFFgD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 01:36:03 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mail.iluvatar.ai (Postfix) with ESMTP id BC1CD1071E33E;
-        Mon,  6 Aug 2018 11:32:30 +0800 (CST)
-Received: from mail.iluvatar.ai ([127.0.0.1])
-        by localhost (mail.iluvatar.ai [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id s3qeorhY9623; Mon,  6 Aug 2018 11:32:30 +0800 (CST)
-Received: from localhost (localhost [127.0.0.1])
-        by mail.iluvatar.ai (Postfix) with ESMTP id EDCD710C742AA;
-        Mon,  6 Aug 2018 11:32:29 +0800 (CST)
-DKIM-Filter: OpenDKIM Filter v2.9.2 mail.iluvatar.ai EDCD710C742AA
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iluvatar.ai;
-        s=809B2F8E-810B-11E8-86FD-A0A654EEFFEB; t=1533526350;
-        bh=oasZ1O0zqr4bqmIUCkLzqR6RgN8dO1/xgBGfEgsO/sk=;
-        h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-        b=gJS+YqWtIeFPdydF70IoW2OGoulrtDBgbIEL5jM55MHVA8NapkwA8rfvaZMIeXxKt
-         HfUvjDISsUtHUjnaSjZIKrw9reHJY+8B3OjmM2ou+u2A0iK+WNWcpo2xENvgDoXL+M
-         SIKZF9VDtuFHDsew/3vXLiou3bTXJadwFRlhlJ64=
-X-Virus-Scanned: amavisd-new at iluvatar.ai
-Received: from mail.iluvatar.ai ([127.0.0.1])
-        by localhost (mail.iluvatar.ai [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id M7D-clwsZ2fD; Mon,  6 Aug 2018 11:32:29 +0800 (CST)
-Received: from hsj-Precision-5520 (unknown [192.168.128.73])
-        by mail.iluvatar.ai (Postfix) with ESMTPSA id 6A93C1071E33E;
-        Mon,  6 Aug 2018 11:32:29 +0800 (CST)
-Date:   Mon, 6 Aug 2018 11:28:47 +0800
-From:   Huang Shijie <sjhuang@iluvatar.ai>
-To:     Peter Ujfalusi <peter.ujfalusi@ti.com>
-Cc:     vkoul@kernel.org, dmaengine@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dave.jiang@intel.com,
-        radhey.shyam.pandey@xilinx.com, appana.durga.rao@xilinx.com,
-        jmkrzyszt@gmail.com, gomonovych@gmail.com, keescook@chromium.org,
-        horms+renesas@verge.net.au, geert+renesas@glider.be,
-        shawnguo@kernel.org, baoyou.xie@linaro.org,
-        michal.simek@xilinx.com, baohua@kernel.org,
-        ludovic.desroches@microchip.com, linus.walleij@linaro.org,
-        david.brown@linaro.org
-Subject: Re: [PATCH 09/46] dmaengine: cppi41: use
- dmaenginem_async_device_register to simplify the code
-Message-ID: <20180806032847.GA4452@hsj-Precision-5520>
-References: <20180803072016.21544-1-sjhuang@iluvatar.ai>
- <20180803072016.21544-10-sjhuang@iluvatar.ai>
- <43458794-d124-13df-c944-e473dc8ee1c2@ti.com>
+        Mon, 6 Aug 2018 01:41:19 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:56804 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726554AbeHFFlT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 01:41:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        MIME-Version:Date:Message-ID:Subject:From:Cc:To:Sender:Reply-To:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=9XU9Tc+2s4Xjq++ogQe5Jx1yTr1jUpqprWLW371Rj1A=; b=eeEk48QLpaOujbZG9r2MbItchc
+        LqeX8pMKdNMFV1+PlD2L0OV/sVaViumHnC5Qcqn7C9vICSJhwTswB06PShRqcu65WijabfLLy7ZYk
+        qeM2pH6LrY3582dKxJG4uTmlHQ7XQO5rOYsma/Wg3/VJbBHMk9zjdTPVn5IJ3CzmZOL7ZDKq46oTd
+        n3Q0bP8JiwBKCKs6yNIkUTHfOUBnyWRruVXasmDzxguQg1pXuBfku6+gXJgwDuK/ILDprL61X14KH
+        iH8P3CHq5zxTLRa8E8yyPYYCIK3xX/eVAmLZAl+dLSoJdHN2ExFw5klZ3BGLG0YsDRH5dNRsokaT+
+        5BfCRiHw==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fmWHb-0005fi-56; Mon, 06 Aug 2018 03:34:12 +0000
+To:     LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>
+Cc:     Jason Wessel <jason.wessel@windriver.com>,
+        Yinghai Lu <yinghai@kernel.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        USB list <linux-usb@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH] x86: corrections to Documentation/x86/earlyprintk.txt
+Message-ID: <d0c40ac3-7659-6374-dbda-23d3d2577f30@infradead.org>
+Date:   Sun, 5 Aug 2018 20:34:05 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <43458794-d124-13df-c944-e473dc8ee1c2@ti.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 03, 2018 at 10:55:25AM +0300, Peter Ujfalusi wrote:
-> 
-> 
-> On 2018-08-03 10:19, Huang Shijie wrote:
-> > Use dmaenginem_async_device_register to simplify the code:
-> >    remove dma_async_device_unregister
-> > 
-> > Signed-off-by: Huang Shijie <sjhuang@iluvatar.ai>
-> > ---
-> >  drivers/dma/ti/cppi41.c | 7 ++-----
-> >  1 file changed, 2 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/drivers/dma/ti/cppi41.c b/drivers/dma/ti/cppi41.c
-> > index 1497da367710..d2998a19ed2e 100644
-> > --- a/drivers/dma/ti/cppi41.c
-> > +++ b/drivers/dma/ti/cppi41.c
-> > @@ -1096,21 +1096,19 @@ static int cppi41_dma_probe(struct platform_device *pdev)
-> >  		goto err_chans;
-> >  	cdd->irq = irq;
-> >  
-> > -	ret = dma_async_device_register(&cdd->ddev);
-> > +	ret = dmaenginem_async_device_register(&cdd->ddev);
-> >  	if (ret)
-> >  		goto err_chans;
-> >  
-> >  	ret = of_dma_controller_register(dev->of_node,
-> >  			cppi41_dma_xlate, &cpp41_dma_info);
-> >  	if (ret)
-> > -		goto err_of;
-> > +		goto err_chans;
-> >  
-> >  	pm_runtime_mark_last_busy(dev);
-> >  	pm_runtime_put_autosuspend(dev);
-> >  
-> >  	return 0;
-> > -err_of:
-> > -	dma_async_device_unregister(&cdd->ddev);
-> >  err_chans:
-> >  	deinit_cppi41(dev, cdd);
-> >  err_init_cppi:
-> > @@ -1132,7 +1130,6 @@ static int cppi41_dma_remove(struct platform_device *pdev)
-> >  		dev_err(&pdev->dev, "%s could not pm_runtime_get: %i\n",
-> >  			__func__, error);
-> >  	of_dma_controller_free(pdev->dev.of_node);
-> > -	dma_async_device_unregister(&cdd->ddev);
-> 
-> If I read the code right then this is not safe.
-I read the code again, and find it is okay.
+From: Randy Dunlap <rdunlap@infradead.org>
 
-> We would have deinitalized cppi41 driver which is not functional, but we
-> will still have the dma device registered and if a channel is requested
-> we will have kernel crash.
-We cannot succeed to request a channel when the drv->remove() is called.
+Fix a few issues in Documentation/x86/earlyprintk.txt:
 
-Please see __device_release_driver:
-  ---------------------------------------------------------------------
-		if (dev->bus && dev->bus->remove)
-			dev->bus->remove(dev);
-		else if (drv->remove)
-			drv->remove(dev);
+- correct typos, punctuation, missing word, wrong word
+- change product name from Netchip to NetChip
+- expand where to add "earlyprintk=dbg"
 
-		device_links_driver_cleanup(dev);
-		dma_deconfigure(dev);
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Jason Wessel <jason.wessel@windriver.com>
+Cc: Yinghai Lu <yinghai@kernel.org>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: x86@kernel.org
+Cc: linux-usb@vger.kernel.org
+Cc: linux-doc@vger.kernel.org
+---
+ Documentation/x86/earlyprintk.txt |   25 +++++++++++++++----------
+ 1 file changed, 15 insertions(+), 10 deletions(-)
 
-		devres_release_all(dev);    ============> Devres release
-  ---------------------------------------------------------------------
+--- lnx-418-rc8.orig/Documentation/x86/earlyprintk.txt
++++ lnx-418-rc8/Documentation/x86/earlyprintk.txt
+@@ -35,25 +35,25 @@ and two USB cables, connected like this:
+ ( If your system does not list a debug port capability then you probably
+   won't be able to use the USB debug key. )
+ 
+- b.) You also need a Netchip USB debug cable/key:
++ b.) You also need a NetChip USB debug cable/key:
+ 
+         http://www.plxtech.com/products/NET2000/NET20DC/default.asp
+ 
+-     This is a small blue plastic connector with two USB connections,
++     This is a small blue plastic connector with two USB connections;
+      it draws power from its USB connections.
+ 
+  c.) You need a second client/console system with a high speed USB 2.0
+      port.
+ 
+- d.) The Netchip device must be plugged directly into the physical
++ d.) The NetChip device must be plugged directly into the physical
+      debug port on the "host/target" system.  You cannot use a USB hub in
+      between the physical debug port and the "host/target" system.
+ 
+      The EHCI debug controller is bound to a specific physical USB
+-     port and the Netchip device will only work as an early printk
++     port and the NetChip device will only work as an early printk
+      device in this port.  The EHCI host controllers are electrically
+      wired such that the EHCI debug controller is hooked up to the
+-     first physical and there is no way to change this via software.
++     first physical port and there is no way to change this via software.
+      You can find the physical port through experimentation by trying
+      each physical port on the system and rebooting.  Or you can try
+      and use lsusb or look at the kernel info messages emitted by the
+@@ -65,9 +65,9 @@ and two USB cables, connected like this:
+      to the hardware vendor, because there is no reason not to wire
+      this port into one of the physically accessible ports.
+ 
+- e.) It is also important to note, that many versions of the Netchip
++ e.) It is also important to note, that many versions of the NetChip
+      device require the "client/console" system to be plugged into the
+-     right and side of the device (with the product logo facing up and
++     right hand side of the device (with the product logo facing up and
+      readable left to right).  The reason being is that the 5 volt
+      power supply is taken from only one side of the device and it
+      must be the side that does not get rebooted.
+@@ -81,13 +81,18 @@ and two USB cables, connected like this:
+       CONFIG_EARLY_PRINTK_DBGP=y
+ 
+     And you need to add the boot command line: "earlyprintk=dbgp".
++
+     (If you are using Grub, append it to the 'kernel' line in
+-     /etc/grub.conf)
++     /etc/grub.conf.  If you are using Grub2 on a BIOS firmware system,
++     append it to the 'linux' line in /boot/grub2/grub.cfg. If you are
++     using Grub2 on an EFI firmware system, append it to the 'linux'
++     or 'linuxefi' line in /boot/grub2/grub.cfg or
++     /boot/efi/EFI/<distro>/grub.cfg.)
+ 
+     On systems with more than one EHCI debug controller you must
+     specify the correct EHCI debug controller number.  The ordering
+     comes from the PCI bus enumeration of the EHCI controllers.  The
+-    default with no number argument is "0" the first EHCI debug
++    default with no number argument is "0" or the first EHCI debug
+     controller.  To use the second EHCI debug controller, you would
+     use the command line: "earlyprintk=dbgp1"
+ 
+@@ -111,7 +116,7 @@ and two USB cables, connected like this:
+     see the raw output.
+ 
+  c.) On Nvidia Southbridge based systems: the kernel will try to probe
+-     and find out which port has debug device connected.
++     and find out which port has a debug device connected.
+ 
+ 3. Testing that it works fine:
+ 
 
-For the DMA engine driver, there is only one case which will calls drv->remove():
-        Use the rmmod(or modprobe -r).
 
-We do not use the device_link_add API for DMA engines.
-And we not manually call the device_release_driver() for DMA engines.
-
-But when we use the rmmod, the module state will be MODULE_STATE_GOING.
-In the find_candidate(), dma_chan_get() will fail.
-And we cannot get a channel.
-
-Please correct me if I am wrong :)
-
-Thanks
-Huang Shijie
