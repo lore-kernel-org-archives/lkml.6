@@ -2,119 +2,194 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9072C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 09:40:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70919C46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 09:40:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACF08219F0
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 09:40:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACF08219F0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 29D55219EB
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 09:40:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29D55219EB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727526AbeHFLsR (ORCPT
+        id S1727769AbeHFLsY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 07:48:17 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:44823 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726572AbeHFLsR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 07:48:17 -0400
-Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=somnus.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA1:256)
-        (Exim 4.80)
-        (envelope-from <anna-maria@linutronix.de>)
-        id 1fmbzb-0002oV-Ux; Mon, 06 Aug 2018 11:40:00 +0200
-From:   Anna-Maria Gleixner <anna-maria@linutronix.de>
-To:     linux-kernel@vger.kernel.org
-Cc:     Arnd Bergmann <arnd@arndb.de>, Jonathan Corbet <corbet@lwn.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>
-Subject: [PATCH] bitops/find: Fix function description argument ordering
-Date:   Mon,  6 Aug 2018 11:39:53 +0200
-Message-Id: <20180806093953.14559-1-anna-maria@linutronix.de>
-X-Mailer: git-send-email 2.18.0
+        Mon, 6 Aug 2018 07:48:24 -0400
+Received: from mx2.suse.de ([195.135.220.15]:52196 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726572AbeHFLsX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 07:48:23 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 14AA4ADAC;
+        Mon,  6 Aug 2018 09:40:06 +0000 (UTC)
+Date:   Mon, 6 Aug 2018 11:40:05 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Yang Shi <yang.shi@linux.alibaba.com>
+Cc:     willy@infradead.org, ldufour@linux.vnet.ibm.com,
+        kirill@shutemov.name, akpm@linux-foundation.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC v6 PATCH 2/2] mm: mmap: zap pages with read mmap_sem in
+ munmap
+Message-ID: <20180806094005.GG19540@dhcp22.suse.cz>
+References: <1532628614-111702-1-git-send-email-yang.shi@linux.alibaba.com>
+ <1532628614-111702-3-git-send-email-yang.shi@linux.alibaba.com>
+ <20180803090759.GI27245@dhcp22.suse.cz>
+ <aff7e86d-2e48-ff58-5d5d-9c67deb68674@linux.alibaba.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aff7e86d-2e48-ff58-5d5d-9c67deb68674@linux.alibaba.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The order of the arguments in function documentation doesn't fit with
-the implementation. Change the documentation so that it corresponds to
-the code. This prevents to confuse people reading the documentation.
+On Fri 03-08-18 14:01:58, Yang Shi wrote:
+> 
+> 
+> On 8/3/18 2:07 AM, Michal Hocko wrote:
+> > On Fri 27-07-18 02:10:14, Yang Shi wrote:
+> > > When running some mmap/munmap scalability tests with large memory (i.e.
+> > > > 300GB), the below hung task issue may happen occasionally.
+> > > INFO: task ps:14018 blocked for more than 120 seconds.
+> > >         Tainted: G            E 4.9.79-009.ali3000.alios7.x86_64 #1
+> > >   "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this
+> > > message.
+> > >   ps              D    0 14018      1 0x00000004
+> > >    ffff885582f84000 ffff885e8682f000 ffff880972943000 ffff885ebf499bc0
+> > >    ffff8828ee120000 ffffc900349bfca8 ffffffff817154d0 0000000000000040
+> > >    00ffffff812f872a ffff885ebf499bc0 024000d000948300 ffff880972943000
+> > >   Call Trace:
+> > >    [<ffffffff817154d0>] ? __schedule+0x250/0x730
+> > >    [<ffffffff817159e6>] schedule+0x36/0x80
+> > >    [<ffffffff81718560>] rwsem_down_read_failed+0xf0/0x150
+> > >    [<ffffffff81390a28>] call_rwsem_down_read_failed+0x18/0x30
+> > >    [<ffffffff81717db0>] down_read+0x20/0x40
+> > >    [<ffffffff812b9439>] proc_pid_cmdline_read+0xd9/0x4e0
+> > >    [<ffffffff81253c95>] ? do_filp_open+0xa5/0x100
+> > >    [<ffffffff81241d87>] __vfs_read+0x37/0x150
+> > >    [<ffffffff812f824b>] ? security_file_permission+0x9b/0xc0
+> > >    [<ffffffff81242266>] vfs_read+0x96/0x130
+> > >    [<ffffffff812437b5>] SyS_read+0x55/0xc0
+> > >    [<ffffffff8171a6da>] entry_SYSCALL_64_fastpath+0x1a/0xc5
+> > > 
+> > > It is because munmap holds mmap_sem exclusively from very beginning to
+> > > all the way down to the end, and doesn't release it in the middle. When
+> > > unmapping large mapping, it may take long time (take ~18 seconds to
+> > > unmap 320GB mapping with every single page mapped on an idle machine).
+> > > 
+> > > Zapping pages is the most time consuming part, according to the
+> > > suggestion from Michal Hocko [1], zapping pages can be done with holding
+> > > read mmap_sem, like what MADV_DONTNEED does. Then re-acquire write
+> > > mmap_sem to cleanup vmas.
+> > > 
+> > > But, some part may need write mmap_sem, for example, vma splitting. So,
+> > > the design is as follows:
+> > >          acquire write mmap_sem
+> > >          lookup vmas (find and split vmas)
+> > > 	detach vmas
+> > >          deal with special mappings
+> > >          downgrade_write
+> > > 
+> > >          zap pages
+> > > 	free page tables
+> > >          release mmap_sem
+> > > 
+> > > The vm events with read mmap_sem may come in during page zapping, but
+> > > since vmas have been detached before, they, i.e. page fault, gup, etc,
+> > > will not be able to find valid vma, then just return SIGSEGV or -EFAULT
+> > > as expected.
+> > > 
+> > > If the vma has VM_LOCKED | VM_HUGETLB | VM_PFNMAP or uprobe, they are
+> > > considered as special mappings. They will be dealt with before zapping
+> > > pages with write mmap_sem held. Basically, just update vm_flags.
+> > Well, I think it would be safer to simply fallback to the current
+> > implementation with these mappings and deal with them on top. This would
+> > make potential issues easier to bisect and partial reverts as well.
+> 
+> Do you mean just call do_munmap()? It sounds ok. Although we may waste some
+> cycles to repeat what has done, it sounds not too bad since those special
+> mappings should be not very common.
 
-While at it fixing the line breaks between the type of an argument and
-the arguments name in function declaration for better readability.
+VM_HUGETLB is quite spread. Especially for DB workloads.
 
-Signed-off-by: Anna-Maria Gleixner <anna-maria@linutronix.de>
----
- include/asm-generic/bitops/find.h | 22 ++++++++++++----------
- 1 file changed, 12 insertions(+), 10 deletions(-)
+> > > And, since they are also manipulated by unmap_single_vma() which is
+> > > called by unmap_vma() with read mmap_sem held in this case, to
+> > > prevent from updating vm_flags in read critical section, a new
+> > > parameter, called "skip_flags" is added to unmap_region(), unmap_vmas()
+> > > and unmap_single_vma(). If it is true, then just skip unmap those
+> > > special mappings. Currently, the only place which pass true to this
+> > > parameter is us.
+> > skip parameters are usually ugly and lead to more mess later on. Can we
+> > do without them?
+> 
+> We need a way to tell unmap_region() that it is called in a kind of special
+> context which updating vm_flags is not allowed. I didn't think of a better
+> way.
+> 
+> We could add a new API to do what unmap_region() does without updating
+> vm_flags, but we would have to  duplicate some code.
 
-diff --git a/include/asm-generic/bitops/find.h b/include/asm-generic/bitops/find.h
-index 8a1ee10014de..30f0f8d0bd79 100644
---- a/include/asm-generic/bitops/find.h
-+++ b/include/asm-generic/bitops/find.h
-@@ -6,14 +6,15 @@
- /**
-  * find_next_bit - find the next set bit in a memory region
-  * @addr: The address to base the search on
-- * @offset: The bitnumber to start searching at
-  * @size: The bitmap size in bits
-+ * @offset: The bitnumber to start searching at
-  *
-  * Returns the bit number for the next set bit
-  * If no bits are set, returns @size.
-  */
--extern unsigned long find_next_bit(const unsigned long *addr, unsigned long
--		size, unsigned long offset);
-+extern unsigned long
-+find_next_bit(const unsigned long *addr, unsigned long size,
-+	      unsigned long offset);
- #endif
+I really didn't get to think about a better way myself but I strongly
+suspect we can do without special hacks here. Is updating flags under
+read lock a real problem? Assuming that special mappings are not really
+considered at this stage.
+
+> > > With this approach we don't have to re-acquire mmap_sem again to clean
+> > > up vmas to avoid race window which might get the address space changed.
+> > By with this approach you mean detaching right?
+> 
+> Yes, the detaching approach.
+
+Please make it explicit in the changelog.
  
- #ifndef find_next_and_bit
-@@ -21,29 +22,30 @@ extern unsigned long find_next_bit(const unsigned long *addr, unsigned long
-  * find_next_and_bit - find the next set bit in both memory regions
-  * @addr1: The first address to base the search on
-  * @addr2: The second address to base the search on
-- * @offset: The bitnumber to start searching at
-  * @size: The bitmap size in bits
-+ * @offset: The bitnumber to start searching at
-  *
-  * Returns the bit number for the next set bit
-  * If no bits are set, returns @size.
-  */
--extern unsigned long find_next_and_bit(const unsigned long *addr1,
--		const unsigned long *addr2, unsigned long size,
--		unsigned long offset);
-+extern unsigned long
-+find_next_and_bit(const unsigned long *addr1, const unsigned long *addr2,
-+		  unsigned long size, unsigned long offset);
- #endif
+> > > And, since the lock acquire/release cost is managed to the minimum and
+> > > almost as same as before, the optimization could be extended to any size
+> > > of mapping without incurring significant penalty to small mappings.
+> > I guess you mean to say that lock downgrade approach doesn't lead to
+> > regressions because the overal time mmap_sem is taken is not longer?
+> 
+> Yes. And, there is not lock take/retake cost since we don't release it.
+
+Please also be explicit.
  
- #ifndef find_next_zero_bit
- /**
-  * find_next_zero_bit - find the next cleared bit in a memory region
-  * @addr: The address to base the search on
-- * @offset: The bitnumber to start searching at
-  * @size: The bitmap size in bits
-+ * @offset: The bitnumber to start searching at
-  *
-  * Returns the bit number of the next zero bit
-  * If no bits are zero, returns @size.
-  */
--extern unsigned long find_next_zero_bit(const unsigned long *addr, unsigned
--		long size, unsigned long offset);
-+extern unsigned long
-+find_next_zero_bit(const unsigned long *addr, unsigned long size,
-+		   unsigned long offset);
- #endif
- 
- #ifdef CONFIG_GENERIC_FIND_FIRST_BIT
+> > > For the time being, just do this in munmap syscall path. Other
+> > > vm_munmap() or do_munmap() call sites (i.e mmap, mremap, etc) remain
+> > > intact for stability reason.
+> > You have used this argument previously and several people have asked.
+> > I think it is just wrong. Either the concept is safe and all callers can
+> > use it or it is not and then those subtle differences should be called
+> > out. Your previous response was that you simply haven't tested other
+> > paths. Well, that is not an argument, I am afraid. The whole thing
+> > should be done at a proper layer. If there are some difficulties to
+> > achieve that for all callers then OK just be explicit about that. I can
+> > imagine some callers really require the exclusive look when munmap
+> > returns for example.
+> 
+> Yes, the statement here sounds ambiguous. There are definitely some
+> difficulties to achieve that in mmap and mremap. Since they acquire write
+> mmap_sem at the very beginning, then do their stuff, which may call
+> do_munmap if overlapped address space has to be changed.
+
+Do call them out. Maybe even add a comment in the code so that people
+who would like those other paths know what they need to look at.
+
+> But, the optimized do_munmap would like to be called without mmap_sem held
+> so that we can do the optimization. So, if we want to do the similar
+> optimization for mmap/mremap path, I'm afraid we would have to redesign
+> them.
+> 
+> I assumes munmap itself is the main source of the latency issue. mmap/mremap
+> might hit the latency problem if they are trying to map or remap a huge
+> overlapped address space, but it should be rare. So, I leave them untouched.
+
+That depends on usecases very much. mremap might be called on very large
+areas as well. But let's go in smaller steps and build on top...
 -- 
-2.18.0
-
+Michal Hocko
+SUSE Labs
