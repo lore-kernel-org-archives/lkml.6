@@ -3,30 +3,30 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFF95C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 18:54:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 488B1C4646D
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 18:54:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B75F021A29
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 18:54:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B75F021A29
+	by mail.kernel.org (Postfix) with ESMTP id 0EF7221A53
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 18:54:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EF7221A53
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733106AbeHFVFB (ORCPT
+        id S1732692AbeHFVEm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 17:05:01 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:37152 "EHLO mail.bootlin.com"
+        Mon, 6 Aug 2018 17:04:42 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:37107 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732832AbeHFVEo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 17:04:44 -0400
+        id S1728198AbeHFVEm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 17:04:42 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id D863220875; Mon,  6 Aug 2018 20:54:16 +0200 (CEST)
+        id C19C5207B5; Mon,  6 Aug 2018 20:54:13 +0200 (CEST)
 Received: from localhost (LPuteaux-656-1-243-71.w82-127.abo.wanadoo.fr [82.127.120.71])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 99B292072D;
-        Mon,  6 Aug 2018 20:54:16 +0200 (CEST)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 81B4C2072D;
+        Mon,  6 Aug 2018 20:54:13 +0200 (CEST)
 From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
 To:     Wolfram Sang <wsa@the-dreams.de>,
         Jarkko Nikula <jarkko.nikula@linux.intel.com>,
@@ -39,61 +39,53 @@ Cc:     Paul Burton <paul.burton@mips.com>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Allan Nielsen <allan.nielsen@microsemi.com>,
         Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH v3 5/6] MIPS: dts: mscc: Add i2c on ocelot
-Date:   Mon,  6 Aug 2018 20:54:11 +0200
-Message-Id: <20180806185412.7210-6-alexandre.belloni@bootlin.com>
+Subject: [PATCH v3 0/6] Add support for MSCC Ocelot i2c
+Date:   Mon,  6 Aug 2018 20:54:06 +0200
+Message-Id: <20180806185412.7210-1-alexandre.belloni@bootlin.com>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180806185412.7210-1-alexandre.belloni@bootlin.com>
-References: <20180806185412.7210-1-alexandre.belloni@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ocelot has an i2c controller, add it. There is only one possible pinmux
-configuration so add it as well.
+Hello,
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
----
- arch/mips/boot/dts/mscc/ocelot.dtsi | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+Because the designware IP was not able to handle the SDA hold time before
+version 1.11a, MSCC has its own implementation. Add support for it and then add
+i2c on ocelot boards.
 
-diff --git a/arch/mips/boot/dts/mscc/ocelot.dtsi b/arch/mips/boot/dts/mscc/ocelot.dtsi
-index 4f33dbc67348..34093acebc0d 100644
---- a/arch/mips/boot/dts/mscc/ocelot.dtsi
-+++ b/arch/mips/boot/dts/mscc/ocelot.dtsi
-@@ -78,6 +78,19 @@
- 			status = "disabled";
- 		};
- 
-+		i2c: i2c@100400 {
-+			compatible = "mscc,ocelot-i2c", "snps,designware-i2c";
-+			pinctrl-0 = <&i2c_pins>;
-+			pinctrl-names = "default";
-+			reg = <0x100400 0x100>, <0x198 0x8>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			interrupts = <8>;
-+			clocks = <&ahb_clk>;
-+
-+			status = "disabled";
-+		};
-+
- 		uart2: serial@100800 {
- 			pinctrl-0 = <&uart2_pins>;
- 			pinctrl-names = "default";
-@@ -178,6 +191,11 @@
- 				pins = "GPIO_12", "GPIO_13";
- 				function = "uart2";
- 			};
-+
-+			i2c_pins: i2c-pins {
-+				pins = "GPIO_16", "GPIO_17";
-+				function = "twi";
-+			};
- 		};
- 
- 		mdio0: mdio@107009c {
+I would expect patches 1 to 4 to go through the i2c tree and 5-6 through
+the mips tree once patch 4 has been reviewed by the DT maintainers.
+
+This is based on top of i2c-next plus on
+https://patchwork.ozlabs.org/project/linux-i2c/list/?series=57551
+
+Changes in v3:
+ - collected review tags
+ - fixed build warnings on 64bit machines
+
+Changes in v2:
+ - removed first patch as a similar one is in i2c-next
+ - rebase on top of i2c-next
+ - Added two patches to implement ideas from Andy
+
+
+Alexandre Belloni (6):
+  i2c: designware: use generic table matching
+  i2c: designware: move #ifdef CONFIG_OF to the top
+  i2c: designware: allow IP specific sda_hold_time
+  i2c: designware: add MSCC Ocelot support
+  MIPS: dts: mscc: Add i2c on ocelot
+  MIPS: dts: mscc: enable i2c on ocelot_pcb123
+
+ .../bindings/i2c/i2c-designware.txt           |  9 ++-
+ arch/mips/boot/dts/mscc/ocelot.dtsi           | 18 ++++++
+ arch/mips/boot/dts/mscc/ocelot_pcb123.dts     |  6 ++
+ drivers/i2c/busses/i2c-designware-common.c    |  2 +
+ drivers/i2c/busses/i2c-designware-core.h      |  4 ++
+ drivers/i2c/busses/i2c-designware-platdrv.c   | 63 +++++++++++++++----
+ 6 files changed, 87 insertions(+), 15 deletions(-)
+
 -- 
 2.18.0
 
