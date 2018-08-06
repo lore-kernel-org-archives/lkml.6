@@ -5,207 +5,211 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68982C46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 19:51:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99E24C46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 19:51:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25BDB21A6C
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 19:51:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25BDB21A6C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 3FEF721A68
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 19:51:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FEF721A68
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387494AbeHFWBf (ORCPT
+        id S2387521AbeHFWBk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 18:01:35 -0400
-Received: from mga12.intel.com ([192.55.52.136]:23205 "EHLO mga12.intel.com"
+        Mon, 6 Aug 2018 18:01:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46156 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727585AbeHFWBf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 18:01:35 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Aug 2018 12:50:56 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,452,1526367600"; 
-   d="scan'208";a="77991857"
-Received: from rchatre-mobl.amr.corp.intel.com (HELO [10.24.14.136]) ([10.24.14.136])
-  by fmsmga004.fm.intel.com with ESMTP; 06 Aug 2018 12:50:53 -0700
-Subject: Re: [PATCH 0/2] x86/intel_rdt and perf/x86: Fix lack of coordination
- with perf
-From:   Reinette Chatre <reinette.chatre@intel.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Dave Hansen <dave.hansen@intel.com>, tglx@linutronix.de,
-        mingo@redhat.com, fenghua.yu@intel.com, tony.luck@intel.com,
-        vikas.shivappa@linux.intel.com, gavin.hindman@intel.com,
-        jithu.joseph@intel.com, hpa@zytor.com, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180802161823.GJ2458@hirez.programming.kicks-ass.net>
- <f990df31-ab75-974e-b142-47af07a33a08@intel.com>
- <20180802173727.GP2494@hirez.programming.kicks-ass.net>
- <653e874f-5e77-a9b5-996a-ed9daa3c6d43@intel.com>
- <20180802195410.GR2494@hirez.programming.kicks-ass.net>
- <d64f85e8-98ca-a81d-bf2d-13dd72fc411e@intel.com>
- <20180802201312.GS2494@hirez.programming.kicks-ass.net>
- <086b93f5-da5b-b5e5-148a-cef25117b963@intel.com>
- <20180803104956.GU2494@hirez.programming.kicks-ass.net>
- <1eece033-fbae-c904-13ad-1904be91c049@intel.com>
- <20180803152523.GY2476@hirez.programming.kicks-ass.net>
- <d6df8a8a-f0f2-48f7-1c1d-c8893e1583c9@intel.com>
-Message-ID: <57c011e1-113d-c38f-c318-defbad085843@intel.com>
-Date:   Mon, 6 Aug 2018 12:50:50 -0700
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S1727585AbeHFWBj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 18:01:39 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D037721A65;
+        Mon,  6 Aug 2018 19:50:59 +0000 (UTC)
+Date:   Mon, 6 Aug 2018 15:50:58 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-team@android.com,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Byungchul Park <byungchul.park@lge.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Glexiner <tglx@linutronix.de>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>
+Subject: Re: [PATCH v12 3/3] tracing: Centralize preemptirq tracepoints and
+ unify their usage
+Message-ID: <20180806155058.5ee875f4@gandalf.local.home>
+In-Reply-To: <20180730222423.196630-4-joel@joelfernandes.org>
+References: <20180730222423.196630-1-joel@joelfernandes.org>
+        <20180730222423.196630-4-joel@joelfernandes.org>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <d6df8a8a-f0f2-48f7-1c1d-c8893e1583c9@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Peter,
 
-On 8/3/2018 11:37 AM, Reinette Chatre wrote:
-> On 8/3/2018 8:25 AM, Peter Zijlstra wrote:
->> On Fri, Aug 03, 2018 at 08:18:09AM -0700, Reinette Chatre wrote:
->>> You state that you understand what we are trying to do and I hope that I
->>> convinced you that we are not able to accomplish the same by following
->>> your guidance.
->>
->> No, I said I understood your pmc reserve patch and its implications.
->>
->> I have no clue what you're trying to do with resctl, nor why you think
->> this is not feasible with perf. And if it really is not feasible, you'll
->> have to live without it.
+With this patch applied, I'm constantly getting lockdep errors. Instead
+of doing a full revert of the patch, I did this, which makes all those
+errors go away. I may apply this for now, and we can revisit having
+lockdep use the tracepoint code. But since it's currently always
+enabled, I'm thinking of just leaving this as is. The macros are still
+clean from Joel's patch.
 
-In my previous email I provided the details of the Cache Pseudo-Locking
-feature implemented on top of resctrl. Please let me know if you would
-like any more details about that. I can send you more materials.
+Thoughts?
 
-In my previous message I also provided the thoughts on why I believe
-same is not feasible with perf as commented below ...
+-- Steve
 
-> Looking at if we were to build on top of the kernel perf event API
-> (perf_event_create_kernel_counter(), perf_event_enable(),
-> perf_event_disable(), ...). Just looking at perf_event_enable() -
-> ideally this would be as lean as possible to only enable the event and
-> not result in itself contributing the the measurement. First, the
-> enabling of the event is not as lean to fulfill this requirement since
-> it executes more code after the event was actually enabled. Also, the
-> code relies on a mutex so we cannot use it with interrupts disabled.
-
-I proceeded to modify the implemented debugfs measurements to build on
-top of the perf APIs mentioned above. As anticipated the events could
-not be enabled in interrupt context. I get a clear message in this regard:
-
-BUG: sleeping function called from invalid context at
-kernel/locking/mutex.c:748
-
-I thus continued to use the API with interrupts enabled did the following:
-
-Two new event attributes:
-static struct perf_event_attr l2_miss_attr = {
-        .type           = PERF_TYPE_RAW,
-        .config         = (0x10ULL << 8) | 0xd1,
-        .size           = sizeof(struct perf_event_attr),
-        .pinned         = 1,
-        .disabled       = 1,
-        .exclude_user   = 1
-};
-
-static struct perf_event_attr l2_hit_attr = {
-        .type           = PERF_TYPE_RAW,
-        .config         = (0x2ULL << 8) | 0xd1,
-        .size           = sizeof(struct perf_event_attr),
-        .pinned         = 1,
-        .disabled       = 1,
-        .exclude_user   = 1
-};
-
-Create the two new events using these attributes:
-l2_miss_event = perf_event_create_kernel_counter(&l2_miss_attr, cpu,
-NULL, NULL, NULL);
-l2_hit_event = perf_event_create_kernel_counter(&l2_hit_attr, cpu, NULL,
-NULL, NULL);
-
-Take measurements:
-perf_event_enable(l2_miss_event);
-perf_event_enable(l2_hit_event);
-local_irq_disable();
-/* Disable hardware prefetchers */
-/* Loop through pseudo-locked memory */
-/* Enable hardware prefetchers */
-local_irq_enable();
-perf_event_disable(l2_hit_event);
-perf_event_disable(l2_miss_event);
-
-Read results:
-l2_hits = perf_event_read_value(l2_hit_event, &enabled, &running);
-l2_miss = perf_event_read_value(l2_miss_event, &enabled, &running);
-/* Make results available in tracepoints */
-
-
-With the above implementation and a 256KB pseudo-locked memory region I
-obtain the following results:
-pseudo_lock_mea-755   [002] ....   396.946953: pseudo_lock_l2: hits=4140
-miss=5
-pseudo_lock_mea-762   [002] ....   397.998864: pseudo_lock_l2: hits=4138
-miss=8
-pseudo_lock_mea-765   [002] ....   399.041868: pseudo_lock_l2: hits=4142
-miss=5
-pseudo_lock_mea-768   [002] ....   400.086871: pseudo_lock_l2: hits=4141
-miss=7
-pseudo_lock_mea-771   [002] ....   401.132921: pseudo_lock_l2: hits=4138
-miss=10
-pseudo_lock_mea-774   [002] ....   402.216700: pseudo_lock_l2: hits=4238
-miss=46
-pseudo_lock_mea-777   [002] ....   403.312148: pseudo_lock_l2: hits=4142
-miss=5
-pseudo_lock_mea-780   [002] ....   404.381674: pseudo_lock_l2: hits=4139
-miss=8
-pseudo_lock_mea-783   [002] ....   405.422820: pseudo_lock_l2: hits=4472
-miss=79
-pseudo_lock_mea-786   [002] ....   406.495065: pseudo_lock_l2: hits=4140
-miss=8
-pseudo_lock_mea-793   [002] ....   407.561383: pseudo_lock_l2: hits=4143
-miss=4
-
-The above results are not accurate since it does not reflect the success
-of the pseudo-locked region. Expected results are as we can currently
-obtain (copying results from previous email):
-pseudo_lock_mea-26090 [002] .... 61838.488027: pseudo_lock_l2: hits=4096
-miss=0
-pseudo_lock_mea-26097 [002] .... 61843.689381: pseudo_lock_l2: hits=4096
-miss=0
-pseudo_lock_mea-26100 [002] .... 61848.751411: pseudo_lock_l2: hits=4096
-miss=0
-pseudo_lock_mea-26108 [002] .... 61853.820361: pseudo_lock_l2: hits=4096
-miss=0
-pseudo_lock_mea-26111 [002] .... 61858.880364: pseudo_lock_l2: hits=4096
-miss=0
-pseudo_lock_mea-26118 [002] .... 61863.937343: pseudo_lock_l2: hits=4096
-miss=0
-pseudo_lock_mea-26121 [002] .... 61869.008341: pseudo_lock_l2: hits=4096
-miss=0
-
-Could you please guide me on how you would prefer us to use perf in
-order to obtain the same accurate results we can now?
-
-Thank you very much
-
-Reinette
-
-
-
-
-
-
-
-
-
-
-
-
-
+diff --git a/include/linux/irqflags.h b/include/linux/irqflags.h
+index 50edb9cbbd26..a93476c6c954 100644
+--- a/include/linux/irqflags.h
++++ b/include/linux/irqflags.h
+@@ -19,6 +19,8 @@
+ #ifdef CONFIG_PROVE_LOCKING
+   extern void trace_softirqs_on(unsigned long ip);
+   extern void trace_softirqs_off(unsigned long ip);
++  extern void lockdep_hardirqs_on(unsigned long ip);
++  extern void lockdep_hardirqs_off(unsigned long ip);
+ #else
+ # define trace_softirqs_on(ip)	do { } while (0)
+ # define trace_softirqs_off(ip)	do { } while (0)
+diff --git a/include/linux/lockdep.h b/include/linux/lockdep.h
+index a8113357ceeb..30d0eb857f2e 100644
+--- a/include/linux/lockdep.h
++++ b/include/linux/lockdep.h
+@@ -267,7 +267,6 @@ struct held_lock {
+  * Initialization, self-test and debugging-output methods:
+  */
+ extern void lockdep_init(void);
+-extern void lockdep_init_early(void);
+ extern void lockdep_reset(void);
+ extern void lockdep_reset_lock(struct lockdep_map *lock);
+ extern void lockdep_free_key_range(void *start, unsigned long size);
+@@ -408,7 +407,6 @@ static inline void lockdep_on(void)
+ # define lock_set_class(l, n, k, s, i)		do { } while (0)
+ # define lock_set_subclass(l, s, i)		do { } while (0)
+ # define lockdep_init()				do { } while (0)
+-# define lockdep_init_early()			do { } while (0)
+ # define lockdep_init_map(lock, name, key, sub) \
+ 		do { (void)(name); (void)(key); } while (0)
+ # define lockdep_set_class(lock, key)		do { (void)(key); } while (0)
+diff --git a/init/main.c b/init/main.c
+index 44fe43be84c1..5d42e577643a 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -649,8 +649,6 @@ asmlinkage __visible void __init start_kernel(void)
+ 	call_function_init();
+ 	WARN(!irqs_disabled(), "Interrupts were enabled early\n");
+ 
+-	lockdep_init_early();
+-
+ 	early_boot_irqs_disabled = false;
+ 	local_irq_enable();
+ 
+diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+index 03bfaeb9f4e6..e406c5fdb41e 100644
+--- a/kernel/locking/lockdep.c
++++ b/kernel/locking/lockdep.c
+@@ -2840,8 +2840,7 @@ static void __trace_hardirqs_on_caller(unsigned long ip)
+ 	debug_atomic_inc(hardirqs_on_events);
+ }
+ 
+-static void lockdep_hardirqs_on(void *none, unsigned long ignore,
+-				unsigned long ip)
++void lockdep_hardirqs_on(unsigned long ip)
+ {
+ 	if (unlikely(!debug_locks || current->lockdep_recursion))
+ 		return;
+@@ -2885,8 +2884,7 @@ static void lockdep_hardirqs_on(void *none, unsigned long ignore,
+ /*
+  * Hardirqs were disabled:
+  */
+-static void lockdep_hardirqs_off(void *none, unsigned long ignore,
+-				 unsigned long ip)
++void lockdep_hardirqs_off(unsigned long ip)
+ {
+ 	struct task_struct *curr = current;
+ 
+@@ -4315,14 +4313,6 @@ void lockdep_reset_lock(struct lockdep_map *lock)
+ 	raw_local_irq_restore(flags);
+ }
+ 
+-void __init lockdep_init_early(void)
+-{
+-#ifdef CONFIG_PROVE_LOCKING
+-	register_trace_prio_irq_disable(lockdep_hardirqs_off, NULL, INT_MAX);
+-	register_trace_prio_irq_enable(lockdep_hardirqs_on, NULL, INT_MIN);
+-#endif
+-}
+-
+ void __init lockdep_init(void)
+ {
+ 	printk("Lock dependency validator: Copyright (c) 2006 Red Hat, Inc., Ingo Molnar\n");
+diff --git a/kernel/trace/trace_preemptirq.c b/kernel/trace/trace_preemptirq.c
+index e76b78bf258e..8326adcab0dc 100644
+--- a/kernel/trace/trace_preemptirq.c
++++ b/kernel/trace/trace_preemptirq.c
+@@ -20,40 +20,52 @@ static DEFINE_PER_CPU(int, tracing_irq_cpu);
+ void trace_hardirqs_on(void)
+ {
+ 	if (!this_cpu_read(tracing_irq_cpu))
+-		return;
++		goto out;
+ 
+ 	trace_irq_enable_rcuidle(CALLER_ADDR0, CALLER_ADDR1);
+ 	this_cpu_write(tracing_irq_cpu, 0);
++
++ out:
++	lockdep_hardirqs_on(CALLER_ADDR0);
+ }
+ EXPORT_SYMBOL(trace_hardirqs_on);
+ 
+ void trace_hardirqs_off(void)
+ {
+ 	if (this_cpu_read(tracing_irq_cpu))
+-		return;
++		goto out;
+ 
+ 	this_cpu_write(tracing_irq_cpu, 1);
+ 	trace_irq_disable_rcuidle(CALLER_ADDR0, CALLER_ADDR1);
++
++ out:
++	lockdep_hardirqs_off(CALLER_ADDR0);
+ }
+ EXPORT_SYMBOL(trace_hardirqs_off);
+ 
+ __visible void trace_hardirqs_on_caller(unsigned long caller_addr)
+ {
+ 	if (!this_cpu_read(tracing_irq_cpu))
+-		return;
++		goto out;
+ 
+ 	trace_irq_enable_rcuidle(CALLER_ADDR0, caller_addr);
+ 	this_cpu_write(tracing_irq_cpu, 0);
++
++ out:
++	lockdep_hardirqs_on(CALLER_ADDR0);
+ }
+ EXPORT_SYMBOL(trace_hardirqs_on_caller);
+ 
+ __visible void trace_hardirqs_off_caller(unsigned long caller_addr)
+ {
+ 	if (this_cpu_read(tracing_irq_cpu))
+-		return;
++		goto out;
+ 
+ 	this_cpu_write(tracing_irq_cpu, 1);
+ 	trace_irq_disable_rcuidle(CALLER_ADDR0, caller_addr);
++
++ out:
++	lockdep_hardirqs_off(CALLER_ADDR0);
+ }
+ EXPORT_SYMBOL(trace_hardirqs_off_caller);
+ #endif /* CONFIG_TRACE_IRQFLAGS */
