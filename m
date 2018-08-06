@@ -2,213 +2,73 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65A20C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 22:54:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C30BC46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 22:54:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFA3E21A53
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 22:54:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="O38EVgIu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFA3E21A53
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk
+	by mail.kernel.org (Postfix) with ESMTP id 5088521A53
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 22:54:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5088521A53
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733269AbeHGBFa (ORCPT
+        id S2387483AbeHGBF7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 21:05:30 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:39519 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732135AbeHGBFa (ORCPT
+        Mon, 6 Aug 2018 21:05:59 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44106 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732135AbeHGBF6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 21:05:30 -0400
-Received: by mail-ed1-f68.google.com with SMTP id h4-v6so5982526edi.6
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Aug 2018 15:54:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=P1z13r1SkfWkkyl78PjbAIDLrJ/9NM5yzO/2Q1KxROw=;
-        b=O38EVgIurxAORFL8JnmAcjuOmptpo9RYsCbIQlpAgonulV5rR+QYiLkP0qALUEcHN7
-         1b+k6mFz5SzJs05bq4LWSc5NVRCiC8bujQGlfOm2XA3yWoUj7uBKXOQLESh8kvx4WNby
-         r8YdfLuYPX90qJCkUtxRXXTFVbfm028yqcOsA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=P1z13r1SkfWkkyl78PjbAIDLrJ/9NM5yzO/2Q1KxROw=;
-        b=gFpH3pfKDYyYh0r8MlPApWev3MxWGqWk5ypE0uJWo4wFGKo1PJ9C6FItLP3f0m8o1G
-         kl2b//8m7J9DGQXshlg+GEVI1v+hMlNF21TMIBbIOlDaUu9lJ0XlqDFVScvpVzRVPzVO
-         79WCzViW9orbazRbxO+TI49QuFtcHc65j8oiJQsMc+H7RTbbtt6J1pfJOlz0ldpn5OIv
-         7kl8TdZdEa2YxVbIb7919v2qqZeKrsUNAzTGoS3/6Fd1O2pIKyr5vpPMeQZnYF97hWkv
-         6hNGeXjZXDG5HkNfP1xHTiy9uzmHjXEVux64GgzMXmmLpytVaJmctUKygxYJRfmKZDFU
-         TcZw==
-X-Gm-Message-State: AOUpUlFEbwn5Z8QtFZPvUyk6vVY2RkzZHGIdU1Nl67W6BHfRLdPhZO55
-        4w7uY1qpCVGlCtN97/GYjL/3F/OXV0g=
-X-Google-Smtp-Source: AAOMgpcf6qUoBWHiZNFmEETxa+EsXJZ3BzVtWvUUgBSh7JYsdXbsWD9Ha8jacAqtLo9ggjOXj1+Vow==
-X-Received: by 2002:a50:a0a6:: with SMTP id 35-v6mr20254188edo.280.1533596051069;
-        Mon, 06 Aug 2018 15:54:11 -0700 (PDT)
-Received: from [192.168.0.189] (dhcp-5-186-126-104.cgn.ip.fibianet.dk. [5.186.126.104])
-        by smtp.gmail.com with ESMTPSA id v26-v6sm2495eds.43.2018.08.06.15.54.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 06 Aug 2018 15:54:10 -0700 (PDT)
-Subject: Re: [PATCH rdma-next v4 2/3] test_overflow: Add shift overflow tests
-To:     Kees Cook <keescook@chromium.org>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Cc:     Leon Romanovsky <leon@kernel.org>,
-        Bart Van Assche <Bart.VanAssche@wdc.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180801212541.22889-1-keescook@chromium.org>
- <20180801212541.22889-3-keescook@chromium.org>
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Message-ID: <c6ca9a92-85fc-3cdf-823c-2260145049b0@rasmusvillemoes.dk>
-Date:   Tue, 7 Aug 2018 00:54:08 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180801212541.22889-3-keescook@chromium.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        Mon, 6 Aug 2018 21:05:58 -0400
+Received: from localhost.localdomain (c-24-4-125-7.hsd1.ca.comcast.net [24.4.125.7])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8E187EC3;
+        Mon,  6 Aug 2018 22:54:41 +0000 (UTC)
+Date:   Mon, 6 Aug 2018 15:54:40 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Subject: Re: Build regressions/improvements in v4.17-rc1
+Message-Id: <20180806155440.9dcb271a3b075bd964aec60f@linux-foundation.org>
+In-Reply-To: <CAMuHMdXxV1nWGWAAXSkBWm-9VWHVc57nhFLfQ4BijbKGh-vaUQ@mail.gmail.com>
+References: <1523884165-17044-1-git-send-email-geert@linux-m68k.org>
+        <CAMuHMdXxV1nWGWAAXSkBWm-9VWHVc57nhFLfQ4BijbKGh-vaUQ@mail.gmail.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-08-01 23:25, Kees Cook wrote:
-> This adds overflow tests for the new check_shift_overflow() helper to
-> validate overflow, signedness glitches, storage glitches, etc.
+On Mon, 6 Aug 2018 12:39:21 +0200 Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+
+> CC Dan, Michael, AKPM, powerpc
 > 
+> On Mon, Apr 16, 2018 at 3:10 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > Below is the list of build error/warning regressions/improvements in
+> > v4.17-rc1[1] compared to v4.16[2].
+> 
+> I'd like to point your attention to:
+> 
+> >   + warning: vmlinux.o(.text+0x376518): Section mismatch in reference from the function .devm_memremap_pages() to the function .meminit.text:.arch_add_memory():  => N/A
+> >   + warning: vmlinux.o(.text+0x376d64): Section mismatch in reference from the function .devm_memremap_pages_release() to the function .meminit.text:.arch_remove_memory():  => N/A
 
-Just a few random comments, not really anything worth a v5 by itself.
-IOW, I can live with this being sent upstream during next merge window.
+hm.  Dan isn't around at present so we're on our own with this one.
 
-> Co-developed-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-> Signed-off-by: Kees Cook <keescook@chromium.org>
-> ---
-> +static int __init test_overflow_shift(void)
-> +{
-> +	int err = 0;
-> +
-> +/* Args are: value, shift, type, expected result, overflow expected */
-> +#define TEST_ONE_SHIFT(a, s, t, expect, of) ({				\
-> +	int __failed = 0;						\
-> +	typeof(a) __a = (a);						\
-> +	typeof(s) __s = (s);						\
-> +	t __e = (expect);						\
-> +	t __d;								\
-> +	bool __of = check_shl_overflow(__a, __s, &__d);			\
-> +	if (__of != of) {						\
-> +		pr_warn("expected (%s)(%s << %s) to%s overflow\n",	\
-> +			#t, #a, #s, of ? "" : " not");			\
-> +		__failed = 1;						\
-> +	} else if (!__of && __d != __e) {				\
-> +		pr_warn("expected (%s)(%s << %s) == %s\n",		\
-> +			#t, #a, #s, #expect);				\
-> +		if ((t)-1 < 0)						\
-> +			pr_warn("got %lld\n", (s64)__d);		\
-> +		else							\
-> +			pr_warn("got %llu\n", (u64)__d);		\
-> +		__failed = 1;						\
-> +	}								\
-> +	if (!__failed)							\
-> +		pr_info("ok: (%s)(%s << %s) == %s\n", #t, #a, #s,	\
-> +			of ? "overflow" : #expect);			\
+x86 doesn't put arch_add_memory and arch_remove_memory into __meminit. 
+x86 does
 
-Isn't that a bit much, one pr_info for every test case (especially with
-the number of test cases you've done, and thanks for that btw.)? For the
-others, there's just one "doing nnn tests". It's harder here because we
-can only let the tests count themselves, but we could have
-TEST_ONE_SHIFT do exactly that and then print a pr_info at the end (or
-pr_warn if any failed).
-
-[Or, if we're willing to do something a bit ugly, forward-declaring
-file-scope statics is actually allowed, and can be combined with
-__COUNTER__...
-
-#define foo() printf("test number %d\n", __COUNTER__)
-
-static int start;
-static int end;
-
-static int start = __COUNTER__;
-void t(void)
+#ifdef CONFIG_MEMORY_HOTPLUG
+int arch_add_memory(int nid, u64 start, u64 size, struct vmem_altmap *altmap,
+		bool want_memblock)
 {
-	printf("Will do %d tests\n", end - start);
-	foo();
-	foo();
-}
-static int end = __COUNTER__ - 1;
-
-the expansion of TEST_ONE_SHIFT wouldn't have to use __COUNTER__ in any
-meaningful way. This of course goes out the window if
-check_shl_overflow is robustified with UNIQUE_ID. There's even a way to
-work around that, but I'd better stop here.]
+	...
 
 
-> +	__failed;							\
-> +})
-> +
-> +	err |= TEST_ONE_SHIFT(1, 0, int, 1 << 0, false);
-> +	err |= TEST_ONE_SHIFT(1, 16, int, 1 << 16, false);
-> +	err |= TEST_ONE_SHIFT(1, 30, int, 1 << 30, false);
-> +	err |= TEST_ONE_SHIFT(1, 0, s32, 1 << 0, false);
-> +	err |= TEST_ONE_SHIFT(1, 16, s32, 1 << 16, false);
-> +	err |= TEST_ONE_SHIFT(1, 30, s32, 1 << 30, false);
-
-I don't see much point in doing both int and s32 as they are AFAIK
-unconditionally the same on all architectures. Similarly for unsigned
-int/u32.
-
-> +
-> +	/* Overflow: shifted at or beyond entire type's bit width. */
-> +	err |= TEST_ONE_SHIFT(0, 8, u8, 0, true);
-> +	err |= TEST_ONE_SHIFT(0, 9, u8, 0, true);
-
-Hmm, seeing these I'd actually rather we didn't base the upper bound for
-the shift count on sizeof(*d) but rather used a fixed 64, since that's
-what we use for the temporary variable, and capping the shift count is
-mostly for avoiding UB in the implementation. For any non-zero input
-value, a shift count greater than 8 would still report overflow because
-of the truncation.
-
-More generally, I think that if the actual C expression
-
-  a << s
-
-doesn't invoke UB (i.e., a is non-negative and s is sane according to
-the type of a), no bits are lots during the shift, and the result fits
-in *d, we should not report overflow. Hence we should not impose
-arbitrary limits on s just because the destination happens to be u8.
-That some shift count/destination type combos then happen to guarantee
-overflow for all but an input of 0 is just the way the math works.
-
-> +
-> +	/*
-> +	 * Corner case: for unsigned types, we fail when we've shifted
-> +	 * through the entire width of bits. For signed types, we might
-> +	 * want to match this behavior, but that would mean noticing if
-> +	 * we shift through all but the signed bit, and this is not
-> +	 * currently detected (but we'll notice an overflow into the
-> +	 * signed bit). So, for now, we will test this condition but
-> +	 * mark it as not expected to overflow.
-> +	 */
-> +	err |= TEST_ONE_SHIFT(0, 7, s8, 0, false);
-> +	err |= TEST_ONE_SHIFT(0, 15, s16, 0, false);
-> +	err |= TEST_ONE_SHIFT(0, 31, int, 0, false);
-> +	err |= TEST_ONE_SHIFT(0, 31, s32, 0, false);
-> +	err |= TEST_ONE_SHIFT(0, 63, s64, 0, false);
-
-I can't really see how this is a "corner case". For an s8 destination
-and a shift count of, say, 4, there happens to be 8 input values that
-won't lead to "overflow". When the shift count is 7, there's 1 input
-value that won't lead to "overflow". So?
-
-Rasmus
+So I guess powerpc should do that as well?
