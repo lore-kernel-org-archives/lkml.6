@@ -6,76 +6,64 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B31CC46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 08:17:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB8A4C4646D
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 08:17:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F2FC2192C
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 08:17:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F2FC2192C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 9D681219DA
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 08:17:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D681219DA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727493AbeHFKZA (ORCPT
+        id S1727530AbeHFKZf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 06:25:00 -0400
-Received: from mga11.intel.com ([192.55.52.93]:40224 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725951AbeHFKZA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 06:25:00 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Aug 2018 01:17:06 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,451,1526367600"; 
-   d="scan'208";a="73037804"
-Received: from jingqili-mobl1.ccr.corp.intel.com (HELO [10.239.192.223]) ([10.239.192.223])
-  by orsmga003.jf.intel.com with ESMTP; 06 Aug 2018 01:17:03 -0700
-Subject: Re: [PATCH 0/3] KVM: x86: expose a few new features into VM.
-To:     pbonzini@redhat.com, rkrcmar@redhat.com, tglx@linutronix.de,
-        mingo@redhat.com, hpa@zytor.com
-Cc:     x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        wei.w.wang@intel.com
-References: <1531212883-63173-1-git-send-email-jingqi.liu@intel.com>
-From:   "Liu, Jingqi" <jingqi.liu@intel.com>
-Message-ID: <ec45e69c-8c1f-b3f3-eab7-0734d0ce0800@intel.com>
-Date:   Mon, 6 Aug 2018 16:17:03 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+        Mon, 6 Aug 2018 06:25:35 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:34200 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726746AbeHFKZf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 06:25:35 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 63D4C18A;
+        Mon,  6 Aug 2018 01:17:41 -0700 (PDT)
+Received: from [10.4.13.119] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 954F23F5D0;
+        Mon,  6 Aug 2018 01:17:40 -0700 (PDT)
+Subject: Re: [PATCH 1/2] irqchip/gic-v3-its: Make its_lock a raw_spin_lock_t
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        linux-kernel@vger.kernel.org
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>
+References: <20180718154205.13704-1-bigeasy@linutronix.de>
+ <20180718154205.13704-2-bigeasy@linutronix.de>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <86fdf639-32c7-5657-d8ae-f8dbf681f399@arm.com>
+Date:   Mon, 6 Aug 2018 09:17:39 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <1531212883-63173-1-git-send-email-jingqi.liu@intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20180718154205.13704-2-bigeasy@linutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Paolo,
+On 18/07/18 16:42, Sebastian Andrzej Siewior wrote:
+> The its_lock lock is held while a new device is added to the list and
+> during setup while the CPU is booted. Even on -RT the CPU-bootup is
+> performed with disabled interrupts.
+> 
+> Make its_lock a raw_spin_lock_t.
+> 
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-Do you have any comments for the series ?
-Thanks
-Jingqi
+Applied to irq/irqchip-next.
 
-On 7/10/2018 4:54 PM, Jingqi Liu wrote:
-> A few new features including user wait (umwait, umonitor, tpause)
-> and direct stores (movdiri and movdir64b) will be available in
-> Intel Snow Ridge, and need to be exposed to guest VM.
->
-> The release document ref below link:
-> https://software.intel.com/sites/default/files/managed/c5/15/\
-> architecture-instruction-set-extensions-programming-reference.pdf
->
-> This series expose umonitor,umwait, tpause, movdiri and movdir64b
-> features to guest VM.
->
-> Jingqi Liu (3):
->    KVM: x86: expose UMWAIT/UMONITOR/TPAUSE CPU features into VM.
->    KVM: x86: expose MOVDIRI CPU feature into VM.
->    KVM: x86: expose MOVDIR64B CPU feature into VM.
->
->   arch/x86/kvm/cpuid.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-
+Thanks,
+	
+	M.
+-- 
+Jazz is not dead. It just smells funny...
