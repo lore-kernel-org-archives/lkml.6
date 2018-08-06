@@ -2,206 +2,101 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74579C46472
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 12:07:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA4C6C46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 12:07:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3015721A0C
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 12:07:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3015721A0C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=asem.it
+	by mail.kernel.org (Postfix) with ESMTP id 50C9521A0F
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 12:07:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50C9521A0F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ravnborg.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732299AbeHFOPu (ORCPT
+        id S1732316AbeHFOQF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 10:15:50 -0400
-Received: from smtp.asem.it ([151.1.184.197]:58551 "EHLO smtp.asem.it"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731298AbeHFOPu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 10:15:50 -0400
-X-Greylist: delayed 306 seconds by postgrey-1.27 at vger.kernel.org; Mon, 06 Aug 2018 10:15:48 EDT
-Received: from webmail.asem.it
-        by asem.it (smtp.asem.it)
-        (SecurityGateway 4.0.1)
-        with ESMTP id SG003401059.MSG 
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Aug 2018 14:01:50 +0200S
-Received: from ASAS044.asem.intra (172.16.16.44) by ASAS044.asem.intra
- (172.16.16.44) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1261.35; Mon, 6
- Aug 2018 14:01:51 +0200
-Received: from flavio-x.asem.intra (172.16.17.160) by ASAS044.asem.intra
- (172.16.16.44) with Microsoft SMTP Server id 15.1.1261.35 via Frontend
- Transport; Mon, 6 Aug 2018 14:01:51 +0200
-From:   Flavio Suligoi <f.suligoi@asem.it>
-To:     Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>
-CC:     "David S . Miller" <davem@davemloft.net>,
-        <linux-can@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Flavio Suligoi <f.suligoi@asem.it>
-Subject: [PATCH] can: sja1000: plx_pci: add support for ASEM CAN raw device
-Date:   Mon, 6 Aug 2018 14:00:50 +0200
-Message-ID: <1533556850-4297-1-git-send-email-f.suligoi@asem.it>
-X-Mailer: git-send-email 2.7.4
+        Mon, 6 Aug 2018 10:16:05 -0400
+Received: from asavdk3.altibox.net ([109.247.116.14]:42567 "EHLO
+        asavdk3.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731755AbeHFOQF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 10:16:05 -0400
+Received: from ravnborg.org (unknown [158.248.196.126])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by asavdk3.altibox.net (Postfix) with ESMTPS id DFB8F20026;
+        Mon,  6 Aug 2018 14:07:12 +0200 (CEST)
+Date:   Mon, 6 Aug 2018 14:07:11 +0200
+From:   Sam Ravnborg <sam@ravnborg.org>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     kbuild@01.org, kbuild-all@01.org, Noralf T <noralf@tronnes.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v1 5/5] tinydrm: add winstar wg160160 driver
+Message-ID: <20180806120711.GA27045@ravnborg.org>
+References: <20180802194536.10820-5-sam@ravnborg.org>
+ <20180806091548.yccqipmfyymwnrvy@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-SGHeloLookup-Result: hardfail smtp.helo=webmail.asem.it (does not match 172.16.16.44)
-X-SGSPF-Result: none (smtp.asem.it)
-X-SGOP-RefID: str=0001.0A0B0212.5B6838AF.0093,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0 (_st=1 _vt=0 _iwf=0)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180806091548.yccqipmfyymwnrvy@mwanda>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-CMAE-Score: 0
+X-CMAE-Analysis: v=2.3 cv=dqr19Wo4 c=1 sm=1 tr=0
+        a=ddpE2eP9Sid01c7MzoqXPA==:117 a=ddpE2eP9Sid01c7MzoqXPA==:17
+        a=kj9zAlcOel0A:10 a=NEAV23lmAAAA:8 a=Gk0PAxhvkSZugz_Q9xQA:9
+        a=FpRySbTjOSpQ5l-6:21 a=pIIK8Gup-Tgvnk3w:21 a=CjuIK1q_8ugA:10
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds support for ASEM opto-isolated dual channels
-CAN raw device (http://www.asem.it)
+On Mon, Aug 06, 2018 at 12:15:48PM +0300, Dan Carpenter wrote:
+> Hi Sam,
+> 
+> I love your patch! Perhaps something to improve:
+> 
+> url:    https://github.com/0day-ci/linux/commits/Sam-Ravnborg/dt-bindings-add-parallel-data-bus-pardata/20180803-090135
+> 
+> smatch warnings:
+> drivers/gpu/drm/tinydrm/wg160160.c:145 write_buf() warn: right shifting more than type allows 8 vs 8
+> include/drm/tinydrm/pardata-dbi.h:165 pardata_write_buf() error: we previously assumed 'pdd' could be null (see line 162)
+> 
+> # https://github.com/0day-ci/linux/commit/9fcebca9e208029e06eea5e4858c1055132f06b6
+> git remote add linux-review https://github.com/0day-ci/linux
+> git remote update linux-review
+> git checkout 9fcebca9e208029e06eea5e4858c1055132f06b6
+> vim +145 drivers/gpu/drm/tinydrm/wg160160.c
+> 
+> 9fcebca9 Sam Ravnborg 2018-08-02  124  
+> 9fcebca9 Sam Ravnborg 2018-08-02  125  /**
+> 9fcebca9 Sam Ravnborg 2018-08-02  126   * write_buf - write buffer on parallel bus to controller
+> 9fcebca9 Sam Ravnborg 2018-08-02  127   *
+> 9fcebca9 Sam Ravnborg 2018-08-02  128   * @pdd: pardata data
+> 9fcebca9 Sam Ravnborg 2018-08-02  129   * @offset: offset into display RAM
+> 9fcebca9 Sam Ravnborg 2018-08-02  130   * @data: pointer to data to write
+> 9fcebca9 Sam Ravnborg 2018-08-02  131   * @len: number of bytes to write
+> 9fcebca9 Sam Ravnborg 2018-08-02  132   *
+> 9fcebca9 Sam Ravnborg 2018-08-02  133   * Returns:
+> 9fcebca9 Sam Ravnborg 2018-08-02  134   * Zero on success, negative error code on failure
+> 9fcebca9 Sam Ravnborg 2018-08-02  135   */
+> 9fcebca9 Sam Ravnborg 2018-08-02  136  int write_buf(struct pardata_data *pdd, u8 offset, u8 *data, size_t len)
+> 9fcebca9 Sam Ravnborg 2018-08-02  137  {
+> 9fcebca9 Sam Ravnborg 2018-08-02  138  	int ins[PIN_NUM];
+> 9fcebca9 Sam Ravnborg 2018-08-02  139  	int val[PIN_NUM];
+> 9fcebca9 Sam Ravnborg 2018-08-02  140  	int bit;
+> 9fcebca9 Sam Ravnborg 2018-08-02  141  	int i;
+> 9fcebca9 Sam Ravnborg 2018-08-02  142  
+> 9fcebca9 Sam Ravnborg 2018-08-02  143  	/* Setup address */
+> 9fcebca9 Sam Ravnborg 2018-08-02  144  	write_reg(pdd, WG160160_ADDRSL_REG, offset & 0xff);
+> 9fcebca9 Sam Ravnborg 2018-08-02 @145  	write_reg(pdd, WG160160_ADDRSL_REG, (offset >> 8) & 0xff);
+>                                                                             ^^^^^^^^^^^^^^^^^^^^
+> Probably this is fine.  I don't know.  If so then feel free to ignore
+> the warning.
 
-Signed-off-by: Flavio Suligoi <f.suligoi@asem.it>
----
- drivers/net/can/sja1000/Kconfig   |  1 +
- drivers/net/can/sja1000/plx_pci.c | 68 ++++++++++++++++++++++++++++++++++++++-
- 2 files changed, 68 insertions(+), 1 deletion(-)
+Thanks!
+I will fix both issues in v2.
 
-diff --git a/drivers/net/can/sja1000/Kconfig b/drivers/net/can/sja1000/Kconfig
-index 1e65cb6..f6dc899 100644
---- a/drivers/net/can/sja1000/Kconfig
-+++ b/drivers/net/can/sja1000/Kconfig
-@@ -88,6 +88,7 @@ config CAN_PLX_PCI
- 	   - TEWS TECHNOLOGIES TPMC810 card (http://www.tews.com/)
- 	   - IXXAT Automation PC-I 04/PCI card (http://www.ixxat.com/)
- 	   - Connect Tech Inc. CANpro/104-Plus Opto (CRG001) card (http://www.connecttech.com)
-+	   - ASEM CAN raw - 2 isolated CAN channels (www.asem.it)
- 
- config CAN_TSCAN1
- 	tristate "TS-CAN1 PC104 boards"
-diff --git a/drivers/net/can/sja1000/plx_pci.c b/drivers/net/can/sja1000/plx_pci.c
-index f8ff25c..864fe8d 100644
---- a/drivers/net/can/sja1000/plx_pci.c
-+++ b/drivers/net/can/sja1000/plx_pci.c
-@@ -46,7 +46,8 @@ MODULE_SUPPORTED_DEVICE("Adlink PCI-7841/cPCI-7841, "
- 			"esd CAN-PCIe/2000, "
- 			"Connect Tech Inc. CANpro/104-Plus Opto (CRG001), "
- 			"IXXAT PC-I 04/PCI, "
--			"ELCUS CAN-200-PCI")
-+			"ELCUS CAN-200-PCI, "
-+			"ASEM DUAL CAN-RAW")
- MODULE_LICENSE("GPL v2");
- 
- #define PLX_PCI_MAX_CHAN 2
-@@ -70,7 +71,9 @@ struct plx_pci_card {
- 					 */
- 
- #define PLX_LINT1_EN	0x1		/* Local interrupt 1 enable */
-+#define PLX_LINT1_POL	(1 << 1)	/* Local interrupt 1 polarity */
- #define PLX_LINT2_EN	(1 << 3)	/* Local interrupt 2 enable */
-+#define PLX_LINT2_POL	(1 << 4)	/* Local interrupt 1 polarity */
- #define PLX_PCI_INT_EN	(1 << 6)	/* PCI Interrupt Enable */
- #define PLX_PCI_RESET	(1 << 30)	/* PCI Adapter Software Reset */
- 
-@@ -92,6 +95,9 @@ struct plx_pci_card {
-  */
- #define PLX_PCI_OCR	(OCR_TX0_PUSHPULL | OCR_TX1_PUSHPULL)
- 
-+/* OCR setting for ASEM Dual CAN raw */
-+#define ASEM_PCI_OCR	0xfe
-+
- /*
-  * In the CDR register, you should set CBP to 1.
-  * You will probably also want to set the clock divider value to 7
-@@ -145,10 +151,20 @@ struct plx_pci_card {
- #define MOXA_PCI_VENDOR_ID		0x1393
- #define MOXA_PCI_DEVICE_ID		0x0100
- 
-+#define ASEM_DUAL_CAN_VENDOR_ID		0x10b5
-+#define ASEM_DUAL_CAN_DEVICE_ID		0x9030
-+#define ASEM_DUAL_CAN_SUB_VENDOR_ID	0x3000
-+#define ASEM_DUAL_CAN_SUB_DEVICE_ID	0x1001
-+#define ASEM_DUAL_CAN_SUB_DEVICE_ID_BIS	0x1002
-+#define ASEM_DUAL_CAN_RESET_REGISTER	0x54
-+#define ASEM_DUAL_CAN_RESET_MASK_CAN1	0x20
-+#define ASEM_DUAL_CAN_RESET_MASK_CAN2	0x04
-+
- static void plx_pci_reset_common(struct pci_dev *pdev);
- static void plx9056_pci_reset_common(struct pci_dev *pdev);
- static void plx_pci_reset_marathon_pci(struct pci_dev *pdev);
- static void plx_pci_reset_marathon_pcie(struct pci_dev *pdev);
-+static void plx_pci_reset_asem_dual_can_raw(struct pci_dev *pdev);
- 
- struct plx_pci_channel_map {
- 	u32 bar;
-@@ -269,6 +285,14 @@ static struct plx_pci_card_info plx_pci_card_info_moxa = {
- 	 /* based on PLX9052 */
- };
- 
-+static struct plx_pci_card_info plx_pci_card_info_asem_dual_can = {
-+	"ASEM Dual CAN raw PCI", 2,
-+	PLX_PCI_CAN_CLOCK, ASEM_PCI_OCR, PLX_PCI_CDR,
-+	{0, 0x00, 0x00}, { {2, 0x00, 0x00}, {4, 0x00, 0x00} },
-+	&plx_pci_reset_asem_dual_can_raw
-+	/* based on PLX9030 */
-+};
-+
- static const struct pci_device_id plx_pci_tbl[] = {
- 	{
- 		/* Adlink PCI-7841/cPCI-7841 */
-@@ -375,6 +399,20 @@ static const struct pci_device_id plx_pci_tbl[] = {
- 		0, 0,
- 		(kernel_ulong_t)&plx_pci_card_info_moxa
- 	},
-+	{
-+		/* ASEM Dual CAN raw */
-+		ASEM_DUAL_CAN_VENDOR_ID, ASEM_DUAL_CAN_DEVICE_ID,
-+		ASEM_DUAL_CAN_SUB_VENDOR_ID, ASEM_DUAL_CAN_SUB_DEVICE_ID,
-+		0, 0,
-+		(kernel_ulong_t)&plx_pci_card_info_asem_dual_can
-+	},
-+	{
-+		/* ASEM Dual CAN raw -new model */
-+		ASEM_DUAL_CAN_VENDOR_ID, ASEM_DUAL_CAN_DEVICE_ID,
-+		ASEM_DUAL_CAN_SUB_VENDOR_ID, ASEM_DUAL_CAN_SUB_DEVICE_ID_BIS,
-+		0, 0,
-+		(kernel_ulong_t)&plx_pci_card_info_asem_dual_can
-+	},
- 	{ 0,}
- };
- MODULE_DEVICE_TABLE(pci, plx_pci_tbl);
-@@ -524,6 +562,34 @@ static void plx_pci_reset_marathon_pcie(struct pci_dev *pdev)
- 	}
- }
- 
-+/* Special reset function for ASEM Dual CAN raw card */
-+static void plx_pci_reset_asem_dual_can_raw(struct pci_dev *pdev)
-+{
-+	void __iomem *bar0_addr;
-+	static const int reset_bar;
-+	u8 tmpval;
-+
-+	plx_pci_reset_common(pdev);
-+
-+	bar0_addr = pci_iomap(pdev, reset_bar, 0);
-+	if (!bar0_addr) {
-+		dev_err(&pdev->dev, "Failed to remap reset "
-+		"space %d (BAR%d)\n", 0, reset_bar);
-+	} else {
-+		/* reset the two SJA1000 chips */
-+		tmpval = ioread8(bar0_addr + ASEM_DUAL_CAN_RESET_REGISTER);
-+		tmpval &= ~(ASEM_DUAL_CAN_RESET_MASK_CAN1 |
-+			ASEM_DUAL_CAN_RESET_MASK_CAN2);
-+		iowrite8(tmpval, bar0_addr + ASEM_DUAL_CAN_RESET_REGISTER);
-+		usleep_range(300, 400);
-+		tmpval |= ASEM_DUAL_CAN_RESET_MASK_CAN1 |
-+			ASEM_DUAL_CAN_RESET_MASK_CAN2;
-+		iowrite8(tmpval, bar0_addr + ASEM_DUAL_CAN_RESET_REGISTER);
-+		usleep_range(300, 400);
-+		pci_iounmap(pdev, bar0_addr);
-+	}
-+}
-+
- static void plx_pci_del_card(struct pci_dev *pdev)
- {
- 	struct plx_pci_card *card = pci_get_drvdata(pdev);
--- 
-2.7.4
-
+	Sam
