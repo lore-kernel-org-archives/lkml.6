@@ -2,128 +2,131 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2FE8C46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 23:48:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0BCBC46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 23:55:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9057C21A51
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 23:48:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C9E521A52
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 23:55:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EOP7qbBN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9057C21A51
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="nVHyTe4S"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C9E521A52
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387983AbeHGCAW (ORCPT
+        id S2388266AbeHGCGo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 22:00:22 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:38649 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731096AbeHGCAW (ORCPT
+        Mon, 6 Aug 2018 22:06:44 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:47426 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731096AbeHGCGo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 22:00:22 -0400
-Received: by mail-oi0-f65.google.com with SMTP id v8-v6so25334646oie.5
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Aug 2018 16:48:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=jkBiaToi/uo9OrWM9aAgk5o8cI/FWPbBDKYQcZNiDvo=;
-        b=EOP7qbBNlUcyRRz9Bk5xsjGTTu9Zp2o29ayI2YG0SZHEZSqxC1ZI6Xh5FuXnyZhQgm
-         zsIw8UUWkH9HVLi7jZqozx58jOTL/SnayCqE53lBWOXvbR4PCedu3xqNrt2404njsVSY
-         HTdhpo1QjJZctmy43ZXn21Qzc+7zEIdBrfKkdb8mPcX1lnrCqf43ce1gDW3GEeXjb/U0
-         D3x4AQvaNjCMYZ8yignQvK7nmKWr7Ppv28lEzfcHSMWFd46N/Lv0c7q4cxyOD0tgel5f
-         beKgUSutlAtkX8H0pP8KruNlD/fS37ZLgNkph+gyXjzjIApME7jIiPZhWPvKNY8TgVHp
-         WstQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jkBiaToi/uo9OrWM9aAgk5o8cI/FWPbBDKYQcZNiDvo=;
-        b=bovtas5aLTeyIUceAC23WIcOYY+CrbD4GXLxZzqboPitAmySG28K1MUWSNXGs/e7Io
-         N3OOBD+Jgh3KzSs7fiLTurugrpEaUipbZ2nq3V2ffoT00xvvlyjL0LPJGJbvOm2oT7ha
-         tFfCtPlezrYVkGUR0SJzeIOZyVYm2G31N/8KwrWJh8MTbw/MzZXw7MFsgQR6weBcKhsk
-         jFLGTAI0AyIZd8nwP4XuMCdaBKOMjcqPAJRGQC9HijnEXCa1SlKc57IliyFXBZSrLfdT
-         ROaLBFcEyLXaz3b+Ls5ws4S2ULuOtC8mcJvBxvwq+54c5HHFuX53KCLRKJMA8xTGTiIB
-         NQNg==
-X-Gm-Message-State: AOUpUlG22D/FKH34emFLb1IpjhS4ftFc4RWPUWCcK+cRMZJBiS91uSWk
-        /FdqKzHhFEKq0mdb8Mr+BxHCVOTvvsVpy9gPLni6/Q==
-X-Google-Smtp-Source: AAOMgpeOCiPHau4px/XukwmxHBGQgVFreVqhIKGu243/PqLq30xTEJP7khfGr2O90FyPYa4LME96k+l7XeP+Yjt8SwA=
-X-Received: by 2002:aca:5754:: with SMTP id l81-v6mr18125268oib.100.1533599333356;
- Mon, 06 Aug 2018 16:48:53 -0700 (PDT)
+        Mon, 6 Aug 2018 22:06:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=gFq+bCk+CACvqfb5lGpf/IZ/i4wWNQWgNy2g6GJr/VA=; b=nVHyTe4SqQSv6kje7IB0+teW1
+        sxZSdWK3A4mLvgshVFMEsHbwuGZupDXSbPgqajQEWpyXyjsbxMMs5t9sepv+jDt9LwU4JWymeO2KH
+        435aluiJbhpoPi+xTJiMtrno7/+ofxakYlrHrsW6osjvChIoZtUe4WF9InBDQB+G8nQPQ=;
+Received: from [2001:470:1f1d:6b5:7e7a:91ff:fede:4a45] (helo=finisterre.ee.mobilebroadband)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1fmpL9-0008Qe-JM; Mon, 06 Aug 2018 23:55:07 +0000
+Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
+        id D5A36440078; Tue,  7 Aug 2018 00:55:06 +0100 (BST)
+Date:   Tue, 7 Aug 2018 00:55:06 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Doug Anderson <dianders@chromium.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Collins <collinsd@codeaurora.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH v9 1/2] regulator: dt-bindings: add QCOM RPMh regulator
+ bindings
+Message-ID: <20180806235506.GU2414@sirena.org.uk>
+References: <cover.1531531808.git.collinsd@codeaurora.org>
+ <56b9d5c38cfe46da1228c54f001a49773c3e31dc.1531531808.git.collinsd@codeaurora.org>
+ <CAD=FV=VmfqWRGRMEn+0dzZ8x4R5vVaHbkthXAN91Lm-XmP9Gqg@mail.gmail.com>
+ <20180724145755.GF13268@sirena.org.uk>
+ <CAD=FV=Uo8sT72a0gRitOVoK0SfC-_QixsovW94_LnL6H7QdKvA@mail.gmail.com>
+ <20180724152514.GJ13268@sirena.org.uk>
+ <CAD=FV=WHJcAoR7Y_uhi7_GbVzy6K8FnovVFVRz8js0REONox=w@mail.gmail.com>
+ <20180724165942.GP13268@sirena.org.uk>
+ <20180726183922.GA4402@hector.mosconeconnections.com>
+ <CAD=FV=VJN4vj9eU7wzPV8=WC_+MgRPYx1smF+FUmfDiP3uuTqw@mail.gmail.com>
 MIME-Version: 1.0
-References: <20180806223300.113891-1-ebiggers@kernel.org> <20180806223300.113891-4-ebiggers@kernel.org>
- <CAHmME9rbe6eT6dkUqKnp-GxcqGrp-tvMfTMr8kZtsn=S3cmP8A@mail.gmail.com>
-In-Reply-To: <CAHmME9rbe6eT6dkUqKnp-GxcqGrp-tvMfTMr8kZtsn=S3cmP8A@mail.gmail.com>
-From:   Paul Crowley <paulcrowley@google.com>
-Date:   Mon, 6 Aug 2018 16:48:41 -0700
-Message-ID: <CA+_SqcD+KpQ_X6iXUCpQh0N6pWzBorstBJDx7eBqcybY4Dvy8Q@mail.gmail.com>
-Subject: Re: [RFC PATCH 3/9] crypto: chacha20-generic - refactor to allow
- varying number of rounds
-To:     Jason@zx2c4.com
-Cc:     ebiggers@kernel.org, linux-crypto@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Greg Kaiser <gkaiser@google.com>,
-        Michael Halcrow <mhalcrow@google.com>,
-        samuel.c.p.neves@gmail.com, tomer.ashur@esat.kuleuven.be,
-        Eric Biggers <ebiggers@google.com>, djb@cr.yp.to
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="BVQ1RKc6+nLPB5pT"
+Content-Disposition: inline
+In-Reply-To: <CAD=FV=VJN4vj9eU7wzPV8=WC_+MgRPYx1smF+FUmfDiP3uuTqw@mail.gmail.com>
+X-Cookie: Many are called, few volunteer.
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Salsa20 was one of the earlier ARX proposals, and set a very
-conservative number of rounds as befits our state of knowledge at the
-time. Since then we've learned a lot more about cryptanalysis of such
-offerings, and I think we can be comfortable with fewer rounds. The
-best attack on ChaCha breaks 7 rounds, and that attack requires 2^248
-operations. Every round of ChaCha makes attacks vastly harder.
 
-Performance is absolutely crucial when it comes to disk encryption;
-users and vendors will push back hard against encryption that degrades
-the user experience. So we're always going to choose the fastest
-option that gives us a solid margin of security, and here that's
-ChaCha12.
+--BVQ1RKc6+nLPB5pT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I'd like to turn the question around. Why 20? DJB's 20 round proposal
-predates his 12 round proposal, but I don't think that's a reason to
-choose it when all cryptanalysis has considered reduced-round
-variants. The 20 round variant is more widely used, but again I think
-that's informative more about the historical order of things than the
-security. If 20 is better than 12, is 24 better than 20? What is it
-that draws you to 20 rounds specifically?
+On Mon, Aug 06, 2018 at 03:55:53PM -0700, Doug Anderson wrote:
+> On Thu, Jul 26, 2018 at 11:39 AM, Andy Gross <andy.gross@linaro.org> wrote:
 
-(apologies for reposting, I forgot to set Plain Text Mode.)
+> > The arm-soc guys merged the Qualcomm pull requests.  So you can just use my
+> > qcom-drivers-for-4.19 tag.  That won't change at this point.
 
-On Mon, 6 Aug 2018 at 16:16, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
->
-> Hey Eric,
->
-> On Tue, Aug 7, 2018 at 12:35 AM Eric Biggers <ebiggers@kernel.org> wrote:
-> > In preparation for adding XChaCha12 support, rename/refactor
-> > chacha20-generic to support different numbers of rounds.
->
-> I'm interested in learning the motivation behind going with ChaCha12.
-> So far, the vast majority of users of ChaCha have been getting along
-> quite fine with ChaCha20 and enjoying the very large security margin
-> this provides. In some ways, introducing ChaCha12 into the ecosystem
-> feels like a bit of a step backwards, even if it probably still
-> provides adequate security (though ChaCha8 probably shouldn't be used
-> or included at all). I realize the simple answer is just, "because
-> it's faster." But I'm wondering specifically about the speed
-> requirements and on what hardware and in what circumstances you found
-> ChaCha20 was too slow, and if this is the kind of circumstance you
-> expect to persist into the future.
->
-> Jason
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-fscrypt" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> > git://git.kernel.org/pub/scm/linux/kernel/git/agross/linux.git
+> > qcom-drivers-for-4.19
+
+> Did Andy's idea of using the above tag work for you?  It appears that
+> there are a few patches you don't need there, but it shouldn't hurt to
+> pick them up too I think?  Here's what I see:
+
+It does make my pull request look larger which is hard to get enthused
+about.
+
+> a3134fb09e0b drivers: soc: Add LLCC driver
+
+Stuff like this jumped out for example.
+
+> It seems like it's too late to land RPMh-regulator for 4.19, so I
+> guess we'll have to aim for 4.20.  I'm not sure if that means you're
+> going to want to wait until 4.20-rc1 comes out to use as a base before
+> thinking about landing RPMh-regulator?  If so then I guess we've got
+
+If I apply it after the merge window it's going to be based on -rc1.  If
+I get to it this week I guess I'll have to pull in the drivers tag.
+
+--BVQ1RKc6+nLPB5pT
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlto39oACgkQJNaLcl1U
+h9CxiQf+IPeB3+xZzo4H37XGT8YIYrCvtPobLZy5+AR9/Z3eWcjQmZsfv8IXpubA
+a8lr2cAVApP+HeqR+X0ZjNPVWsw7m59v7Ug2GHM6YosgF5ULW4YcR650k5/iZ/EF
+saAaWKW4YTnHAedaSPa9MnrXQPJgsG2S5h7ORauD42ANsQAytlJrulEcpx00Q1Id
+3R25FR+7F1vrpHBRcg/eeNsh6jFv5rdidUSgXpsilMzoeeUbRei8ITyKEWnHQdX6
+bHlIDQRTj7A9CX/GwwdHfN5fzo2oZb0aVWFy8pLrGNqmCgw34urXZAR0JJE7Wm/z
+YICfllYPZTWTyWwCxnSkteXJq8a2XQ==
+=WoXL
+-----END PGP SIGNATURE-----
+
+--BVQ1RKc6+nLPB5pT--
