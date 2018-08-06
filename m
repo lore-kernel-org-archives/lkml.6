@@ -2,91 +2,106 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D3A0C46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 23:16:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3582CC46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 23:17:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5165219ED
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 23:16:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE267219C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 23:17:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="YcegU8tn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5165219ED
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="oWYC13MA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE267219C4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733290AbeHGB1y (ORCPT
+        id S2387584AbeHGB27 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 21:27:54 -0400
-Received: from frisell.zx2c4.com ([192.95.5.64]:47203 "EHLO frisell.zx2c4.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733134AbeHGB1y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 21:27:54 -0400
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 13b2a031;
-        Mon, 6 Aug 2018 23:04:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
-        :references:in-reply-to:from:date:message-id:subject:to:cc
-        :content-type; s=mail; bh=AsPT6yrHznTEGHP2KZcVei6BUQY=; b=YcegU8
-        tn6GATRIBNNzCeCi6mQrygK5Mfubva2QbJUQjKFpGblRnjvMWw/7y077kM/1mPJV
-        RdVagzc6RyVe9y+0ghJs0kbhWivJnyKfSsWtIP9ZZ4F/NlAP3tWMifSgqNY75gRR
-        TvbV+mXBFMfN2uZtwBSPdropiammZc0FCscYqng9mN+CYFHfbD63THDrO5RcVgKM
-        4eHoIMB9rpwbg9XqFXP/SISRNYpst+040qYp3HHJ0WvVQZbnsSzqi7szHr8Qyptk
-        lazKRTR169+NzBFhAjDT2QXC+DAfCMi/d5XT0EygBdyqpH81dECC7Wogpg2hojfj
-        OkVixY5AY4U40UUg==
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 5a39af2c (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128:NO);
-        Mon, 6 Aug 2018 23:04:23 +0000 (UTC)
-Received: by mail-oi0-f54.google.com with SMTP id b16-v6so11865346oic.9;
-        Mon, 06 Aug 2018 16:16:31 -0700 (PDT)
-X-Gm-Message-State: AOUpUlE5tQZU6dIK8XEohodQcXAWe1jluRo7vU0vEgm5FtO2yif6V4sl
-        iajW6LBpv8SLcqRSJoQ9/3h4iaR4lKj6QASR0g4=
-X-Google-Smtp-Source: AAOMgpdMNlXDA4cJrdlmbrtXaMK1cPPh6+vj71hmgc0tp9xzHDEjaLAg4YoJC+CHrDD+6CnFEpHMlD4KGm8kzfrhOxI=
-X-Received: by 2002:aca:7596:: with SMTP id q144-v6mr17701006oic.105.1533597390507;
- Mon, 06 Aug 2018 16:16:30 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180806223300.113891-1-ebiggers@kernel.org> <20180806223300.113891-4-ebiggers@kernel.org>
-In-Reply-To: <20180806223300.113891-4-ebiggers@kernel.org>
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date:   Tue, 7 Aug 2018 01:16:18 +0200
-X-Gmail-Original-Message-ID: <CAHmME9rbe6eT6dkUqKnp-GxcqGrp-tvMfTMr8kZtsn=S3cmP8A@mail.gmail.com>
-Message-ID: <CAHmME9rbe6eT6dkUqKnp-GxcqGrp-tvMfTMr8kZtsn=S3cmP8A@mail.gmail.com>
-Subject: Re: [RFC PATCH 3/9] crypto: chacha20-generic - refactor to allow
- varying number of rounds
-To:     ebiggers@kernel.org
-Cc:     Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        linux-fscrypt@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Paul Crowley <paulcrowley@google.com>,
-        Greg Kaiser <gkaiser@google.com>,
-        Michael Halcrow <mhalcrow@google.com>,
-        samuel.c.p.neves@gmail.com, tomer.ashur@esat.kuleuven.be,
-        Eric Biggers <ebiggers@google.com>,
-        "Daniel J . Bernstein" <djb@cr.yp.to>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 6 Aug 2018 21:28:59 -0400
+Received: from esa3.hgst.iphmx.com ([216.71.153.141]:51936 "EHLO
+        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733047AbeHGB26 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 21:28:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1533597457; x=1565133457;
+  h=from:to:cc:subject:date:message-id;
+  bh=ipv6tWgq6qAfG/G5bk1aSzdm0trGXlzAS8On7sGDFEQ=;
+  b=oWYC13MAOmKRgs/Xc2iWmJIWEw1+GqNl/Y5FN3ifLS6dzFfXB8Ul2gZP
+   TY3/XFf9lie+paR0fTq5sDs4dt97VcKLuBfPL4Z9V0BhLw2juYV389otD
+   BBn9QbivIj2tGaTxUV9libwGBeJ24NWMgloXNKmG3IyWx5aeFHd+Afo26
+   +f12guABJW1SLTxQoFfNIvjc0ocF1Du7WLYiFq/nw53+H5mKBhNnVMvOG
+   2niYl76ghH6C1pKlAH/TwvrXJ5WRXFvEEDxGVG3D5R5cE3WJwWmocRsF0
+   NTO4TOBOJsb9d2roL7ZN4JZyTMgZJ9hE2HHVEoP4/n9XEz0bJznQ54gme
+   A==;
+X-IronPort-AV: E=Sophos;i="5.51,452,1526313600"; 
+   d="scan'208";a="90476811"
+Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 07 Aug 2018 07:17:37 +0800
+Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
+  by uls-op-cesaep01.wdc.com with ESMTP; 06 Aug 2018 16:05:53 -0700
+Received: from jedi-01.sdcorp.global.sandisk.com (HELO jedi-01.int.fusionio.com) ([10.11.143.218])
+  by uls-op-cesaip01.wdc.com with ESMTP; 06 Aug 2018 16:17:37 -0700
+From:   Atish Patra <atish.patra@wdc.com>
+To:     linux-riscv@lists.infradead.org, palmer@sifive.com,
+        alankao@andestech.com, sols@sifive.com
+Cc:     peterz@infradead.org, nickhu@andestech.com, acme@kernel.org,
+        jolsa@redhat.com, namhyung@kernel.org,
+        linux-kernel@vger.kernel.org, atish.patra@wdc.com
+Subject: [RFC] RISC-V: Fix !CONFIG_SMP compilation error
+Date:   Mon,  6 Aug 2018 16:17:36 -0700
+Message-Id: <1533597456-245169-1-git-send-email-atish.patra@wdc.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hey Eric,
+Enabling both CONFIG_PERF_EVENTS without !CONFIG_SMP
+generates following compilation error.
 
-On Tue, Aug 7, 2018 at 12:35 AM Eric Biggers <ebiggers@kernel.org> wrote:
-> In preparation for adding XChaCha12 support, rename/refactor
-> chacha20-generic to support different numbers of rounds.
+arch/riscv/include/asm/perf_event.h:80:2: error: expected
+specifier-qualifier-list before 'irqreturn_t'
 
-I'm interested in learning the motivation behind going with ChaCha12.
-So far, the vast majority of users of ChaCha have been getting along
-quite fine with ChaCha20 and enjoying the very large security margin
-this provides. In some ways, introducing ChaCha12 into the ecosystem
-feels like a bit of a step backwards, even if it probably still
-provides adequate security (though ChaCha8 probably shouldn't be used
-or included at all). I realize the simple answer is just, "because
-it's faster." But I'm wondering specifically about the speed
-requirements and on what hardware and in what circumstances you found
-ChaCha20 was too slow, and if this is the kind of circumstance you
-expect to persist into the future.
+  irqreturn_t (*handle_irq)(int irq_num, void *dev);
+  ^~~~~~~~~~~
 
-Jason
+Include interrupt.h in proper place to avoid compilation
+error.
+
+Signed-off-by: Atish Patra <atish.patra@wdc.com>
+---
+ arch/riscv/include/asm/perf_event.h | 1 +
+ arch/riscv/kernel/perf_event.c      | 1 -
+ 2 files changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/riscv/include/asm/perf_event.h b/arch/riscv/include/asm/perf_event.h
+index 0e638a0c..aefbfaa6 100644
+--- a/arch/riscv/include/asm/perf_event.h
++++ b/arch/riscv/include/asm/perf_event.h
+@@ -10,6 +10,7 @@
+ 
+ #include <linux/perf_event.h>
+ #include <linux/ptrace.h>
++#include <linux/interrupt.h>
+ 
+ #define RISCV_BASE_COUNTERS	2
+ 
+diff --git a/arch/riscv/kernel/perf_event.c b/arch/riscv/kernel/perf_event.c
+index b0e10c4e..a243fae1 100644
+--- a/arch/riscv/kernel/perf_event.c
++++ b/arch/riscv/kernel/perf_event.c
+@@ -27,7 +27,6 @@
+ #include <linux/mutex.h>
+ #include <linux/bitmap.h>
+ #include <linux/irq.h>
+-#include <linux/interrupt.h>
+ #include <linux/perf_event.h>
+ #include <linux/atomic.h>
+ #include <linux/of.h>
+-- 
+2.7.4
+
