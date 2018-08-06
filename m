@@ -2,236 +2,272 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA526C46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 09:21:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCA21C4646D
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 09:21:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55335219E8
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 09:21:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i/cv5Iit"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55335219E8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 8759D219EC
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 09:21:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8759D219EC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730063AbeHFL3K (ORCPT
+        id S1730169AbeHFL3U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 07:29:10 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:34636 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726969AbeHFL3K (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 07:29:10 -0400
-Received: by mail-oi0-f67.google.com with SMTP id 13-v6so20989523ois.1;
-        Mon, 06 Aug 2018 02:21:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=rBVMgdFayM8gfo0jLfieFja7xecShzptmiNNZ+f44BE=;
-        b=i/cv5IitxBzl4lSYHyIMWDUYlf2ZKCx+lqQLkxdQOPvrMer6NFCUg7YxLGvHaJYtqL
-         xECvAteey39Mpnpyh7nc9Y3ZfpGqdhi9MBOfsD5aIPlft37IBvl6AA4GDkohI6qc6Shv
-         c5tYo0qYTR8PNcjeQuLqT3Q5ReYeRoJQoSDqz/hprz49V0dF2HeHK1fKiOrCvyQAg/3L
-         nPE6JI2oMX+pYyCcM9mwLOyOwPiRLwPizszJ1NNJyrHhh4GPrZUva/WbbW3XiUwO9AlV
-         rfRRSH0UaHb81lWWlA0kfBlVxGkadcNg8UWT69PitDxrglyFswpTfp8jTztC8WSGzT9r
-         +fjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=rBVMgdFayM8gfo0jLfieFja7xecShzptmiNNZ+f44BE=;
-        b=TkUN9DO0cu1VKh+m/7IcsAgkMNcfWmZJlxU6657+MRoPU7F/Qu3qltw7TNWcaguM4Z
-         e3A8JP23BGw5o5vKeyDJrwhPsf3QyYny4PSI0+YYMkqCI3OytyMHDg6eAhDTQe8hFa8P
-         PqYdFBJQRvGq9weBRTV4BZvVeWcjc8BWhuyntUNxgS5XPQsVtiSkp8XqYw6CPXngX0an
-         Nt6LrX5qC3GlKwdOHa0Trzbxf3q231F2BzcPy28kk/LniPkcyvsIGuxKx3ZzNJYu/Alv
-         AL35ls8WadCzuBUCKd321t9s6Op8AjOaEYtTCpkfq1o00VPoKNlNmRulRXr9ujV9pKrU
-         RIrg==
-X-Gm-Message-State: AOUpUlHtirIk9/LMzWU9Fc2HoJmuofYjl3sf4z8egAu0FTyZjcw+9KOP
-        IIGowvjl2Hy6k3ZCSGfZfXHzw5SC/T2WZYu/lxk=
-X-Google-Smtp-Source: AAOMgpe+cbHvWmhZ5l+I0AUrHMDg1DzCohfFqkjUU7QhfV5iRiDZkFCqhZPP8stoBEF1yEjPg1sq2pywqCKnvQIJWd0=
-X-Received: by 2002:aca:b841:: with SMTP id i62-v6mr13186164oif.358.1533547259919;
- Mon, 06 Aug 2018 02:20:59 -0700 (PDT)
+        Mon, 6 Aug 2018 07:29:20 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47982 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727490AbeHFL3U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 07:29:20 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 191DEAEC1;
+        Mon,  6 Aug 2018 09:21:08 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 5502F1E0501; Mon,  6 Aug 2018 11:21:07 +0200 (CEST)
+Date:   Mon, 6 Aug 2018 11:21:07 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     linux-nvdimm@lists.01.org, Christoph Hellwig <hch@lst.de>,
+        Matthew Wilcox <willy@infradead.org>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 09/13] filesystem-dax: Introduce
+ dax_lock_mapping_entry()
+Message-ID: <20180806092107.ipenq22xxna6ts5i@quack2.suse.cz>
+References: <153154376846.34503.15480221419473501643.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <153154381675.34503.4471648812866312162.stgit@dwillia2-desk3.amr.corp.intel.com>
 MIME-Version: 1.0
-Received: by 2002:a9d:63d2:0:0:0:0:0 with HTTP; Mon, 6 Aug 2018 02:20:59 -0700 (PDT)
-In-Reply-To: <CAPDyKFonHYSq32WxvB1x5PXissXZvraqazgU_ZyLR=tsyD9vAA@mail.gmail.com>
-References: <20180620172226.15012-1-ulf.hansson@linaro.org>
- <20180620172226.15012-8-ulf.hansson@linaro.org> <3574880.GjmnMm1lMq@aspire.rjw.lan>
- <10360149.m4MlxDWZY5@aspire.rjw.lan> <CAPDyKFonHYSq32WxvB1x5PXissXZvraqazgU_ZyLR=tsyD9vAA@mail.gmail.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Mon, 6 Aug 2018 11:20:59 +0200
-X-Google-Sender-Auth: Unj4EQYNitbS7q-ScCDTtle4iv8
-Message-ID: <CAJZ5v0hX3gC0J_z1tMu-KkNBRf3GuJ91tbFC2Z+0D1BnHkY8kg@mail.gmail.com>
-Subject: Re: [PATCH v8 07/26] PM / Domains: Add genpd governor for CPUs
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Lina Iyer <ilina@codeaurora.org>,
-        Lina Iyer <lina.iyer@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Juri Lelli <juri.lelli@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <153154381675.34503.4471648812866312162.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 3, 2018 at 4:28 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> On 26 July 2018 at 11:14, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
->> On Thursday, July 19, 2018 12:32:52 PM CEST Rafael J. Wysocki wrote:
->>> On Wednesday, June 20, 2018 7:22:07 PM CEST Ulf Hansson wrote:
->>> > As it's now perfectly possible that a PM domain managed by genpd contains
->>> > devices belonging to CPUs, we should start to take into account the
->>> > residency values for the idle states during the state selection process.
->>> > The residency value specifies the minimum duration of time, the CPU or a
->>> > group of CPUs, needs to spend in an idle state to not waste energy entering
->>> > it.
->>> >
->>> > To deal with this, let's add a new genpd governor, pm_domain_cpu_gov, that
->>> > may be used for a PM domain that have CPU devices attached or if the CPUs
->>> > are attached through subdomains.
->>> >
->>> > The new governor computes the minimum expected idle duration time for the
->>> > online CPUs being attached to the PM domain and its subdomains. Then in the
->>> > state selection process, trying the deepest state first, it verifies that
->>> > the idle duration time satisfies the state's residency value.
->>> >
->>> > It should be noted that, when computing the minimum expected idle duration
->>> > time, we use the information from tick_nohz_get_next_wakeup(), to find the
->>> > next wakeup for the related CPUs. Future wise, this may deserve to be
->>> > improved, as there are more reasons to why a CPU may be woken up from idle.
->>> >
->>> > Cc: Thomas Gleixner <tglx@linutronix.de>
->>> > Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
->>> > Cc: Lina Iyer <ilina@codeaurora.org>
->>> > Cc: Frederic Weisbecker <fweisbec@gmail.com>
->>> > Cc: Ingo Molnar <mingo@kernel.org>
->>> > Co-developed-by: Lina Iyer <lina.iyer@linaro.org>
->>> > Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
->>> > ---
->>> >  drivers/base/power/domain_governor.c | 58 ++++++++++++++++++++++++++++
->>> >  include/linux/pm_domain.h            |  2 +
->>> >  2 files changed, 60 insertions(+)
->>> >
->>> > diff --git a/drivers/base/power/domain_governor.c b/drivers/base/power/domain_governor.c
->>> > index 99896fbf18e4..1aad55719537 100644
->>> > --- a/drivers/base/power/domain_governor.c
->>> > +++ b/drivers/base/power/domain_governor.c
->>> > @@ -10,6 +10,9 @@
->>> >  #include <linux/pm_domain.h>
->>> >  #include <linux/pm_qos.h>
->>> >  #include <linux/hrtimer.h>
->>> > +#include <linux/cpumask.h>
->>> > +#include <linux/ktime.h>
->>> > +#include <linux/tick.h>
->>> >
->>> >  static int dev_update_qos_constraint(struct device *dev, void *data)
->>> >  {
->>> > @@ -245,6 +248,56 @@ static bool always_on_power_down_ok(struct dev_pm_domain *domain)
->>> >     return false;
->>> >  }
->>> >
->>> > +static bool cpu_power_down_ok(struct dev_pm_domain *pd)
->>> > +{
->>> > +   struct generic_pm_domain *genpd = pd_to_genpd(pd);
->>> > +   ktime_t domain_wakeup, cpu_wakeup;
->>> > +   s64 idle_duration_ns;
->>> > +   int cpu, i;
->>> > +
->>> > +   if (!(genpd->flags & GENPD_FLAG_CPU_DOMAIN))
->>> > +           return true;
->>> > +
->>> > +   /*
->>> > +    * Find the next wakeup for any of the online CPUs within the PM domain
->>> > +    * and its subdomains. Note, we only need the genpd->cpus, as it already
->>> > +    * contains a mask of all CPUs from subdomains.
->>> > +    */
->>> > +   domain_wakeup = ktime_set(KTIME_SEC_MAX, 0);
->>> > +   for_each_cpu_and(cpu, genpd->cpus, cpu_online_mask) {
->>> > +           cpu_wakeup = tick_nohz_get_next_wakeup(cpu);
->>> > +           if (ktime_before(cpu_wakeup, domain_wakeup))
->>> > +                   domain_wakeup = cpu_wakeup;
->>> > +   }
->>
->> Here's a concern I have missed before. :-/
->>
->> Say, one of the CPUs you're walking here is woken up in the meantime.
->
-> Yes, that can happen - when we miss-predicted "next wakeup".
->
->>
->> I don't think it is valid to evaluate tick_nohz_get_next_wakeup() for it then
->> to update domain_wakeup.  We really should just avoid the domain power off in
->> that case at all IMO.
->
-> Correct.
->
-> However, we also want to avoid locking contentions in the idle path,
-> which is what this boils done to.
+On Fri 13-07-18 21:50:16, Dan Williams wrote:
+> In preparation for implementing support for memory poison (media error)
+> handling via dax mappings, implement a lock_page() equivalent. Poison
+> error handling requires rmap and needs guarantees that the page->mapping
+> association is maintained / valid (inode not freed) for the duration of
+> the lookup.
+> 
+> In the device-dax case it is sufficient to simply hold a dev_pagemap
+> reference. In the filesystem-dax case we need to use the entry lock.
+> 
+> Export the entry lock via dax_lock_mapping_entry() that uses
+> rcu_read_lock() to protect against the inode being freed, and
+> revalidates the page->mapping association under xa_lock().
+> 
+> Cc: Christoph Hellwig <hch@lst.de>
+> Cc: Matthew Wilcox <willy@infradead.org>
+> Cc: Ross Zwisler <ross.zwisler@linux.intel.com>
+> Cc: Jan Kara <jack@suse.cz>
+> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 
-This already is done under genpd_lock() AFAICS, so I'm not quite sure
-what exactly you mean.
+Just got back from vacation... This patch looks good to me. You can add:
 
-Besides, this is not just about increased latency, which is a concern
-by itself but maybe not so much in all environments, but also about
-possibility of missing a CPU wakeup, which is a major issue.
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-If one of the CPUs sharing the domain with the current one is woken up
-during cpu_power_down_ok() and the wakeup is an edge-triggered
-interrupt and the domain is turned off regardless, the wakeup may be
-missed entirely if I'm not mistaken.
+								Honza
 
-It looks like there needs to be a way for the hardware to prevent a
-domain poweroff when there's a pending interrupt or I don't quite see
-how this can be handled correctly.
 
->> Sure enough, if the domain power off is already started and one of the CPUs
->> in the domain is woken up then, too bad, it will suffer the latency (but in
->> that case the hardware should be able to help somewhat), but otherwise CPU
->> wakeup should prevent domain power off from being carried out.
->
-> The CPU is not prevented from waking up, as we rely on the FW to deal with that.
->
-> Even if the above computation turns out to wrongly suggest that the
-> cluster can be powered off, the FW shall together with the genpd
-> backend driver prevent it.
-
-Fine, but then the solution depends on specific FW/HW behavior, so I'm
-not sure how generic it really is.  At least, that expectation should
-be clearly documented somewhere, preferably in code comments.
-
-> To cover this case for PSCI, we also use a per cpu variable for the
-> CPU's power off state, as can be seen later in the series.
-
-Oh great, but the generic part should be independent on the underlying
-implementation of the driver.  If it isn't, then it also is not
-generic.
-
-> Hope this clarifies your concern, else tell and will to elaborate a bit more.
-
-Not really.
-
-There also is one more problem and that is the interaction between
-this code and the idle governor.
-
-Namely, the idle governor may select a shallower state for some
-reason, for example due to an additional latency limit derived from
-CPU utilization (like in the menu governor), and how does the code in
-cpu_power_down_ok() know what state has been selected and how does it
-honor the selection made by the idle governor?
+> ---
+>  fs/dax.c            |  109 ++++++++++++++++++++++++++++++++++++++++++++++++---
+>  include/linux/dax.h |   13 ++++++
+>  2 files changed, 116 insertions(+), 6 deletions(-)
+> 
+> diff --git a/fs/dax.c b/fs/dax.c
+> index 4de11ed463ce..57ec272038da 100644
+> --- a/fs/dax.c
+> +++ b/fs/dax.c
+> @@ -226,8 +226,8 @@ static inline void *unlock_slot(struct address_space *mapping, void **slot)
+>   *
+>   * Must be called with the i_pages lock held.
+>   */
+> -static void *get_unlocked_mapping_entry(struct address_space *mapping,
+> -					pgoff_t index, void ***slotp)
+> +static void *__get_unlocked_mapping_entry(struct address_space *mapping,
+> +		pgoff_t index, void ***slotp, bool (*wait_fn)(void))
+>  {
+>  	void *entry, **slot;
+>  	struct wait_exceptional_entry_queue ewait;
+> @@ -237,6 +237,8 @@ static void *get_unlocked_mapping_entry(struct address_space *mapping,
+>  	ewait.wait.func = wake_exceptional_entry_func;
+>  
+>  	for (;;) {
+> +		bool revalidate;
+> +
+>  		entry = __radix_tree_lookup(&mapping->i_pages, index, NULL,
+>  					  &slot);
+>  		if (!entry ||
+> @@ -251,14 +253,31 @@ static void *get_unlocked_mapping_entry(struct address_space *mapping,
+>  		prepare_to_wait_exclusive(wq, &ewait.wait,
+>  					  TASK_UNINTERRUPTIBLE);
+>  		xa_unlock_irq(&mapping->i_pages);
+> -		schedule();
+> +		revalidate = wait_fn();
+>  		finish_wait(wq, &ewait.wait);
+>  		xa_lock_irq(&mapping->i_pages);
+> +		if (revalidate)
+> +			return ERR_PTR(-EAGAIN);
+>  	}
+>  }
+>  
+> -static void dax_unlock_mapping_entry(struct address_space *mapping,
+> -				     pgoff_t index)
+> +static bool entry_wait(void)
+> +{
+> +	schedule();
+> +	/*
+> +	 * Never return an ERR_PTR() from
+> +	 * __get_unlocked_mapping_entry(), just keep looping.
+> +	 */
+> +	return false;
+> +}
+> +
+> +static void *get_unlocked_mapping_entry(struct address_space *mapping,
+> +		pgoff_t index, void ***slotp)
+> +{
+> +	return __get_unlocked_mapping_entry(mapping, index, slotp, entry_wait);
+> +}
+> +
+> +static void unlock_mapping_entry(struct address_space *mapping, pgoff_t index)
+>  {
+>  	void *entry, **slot;
+>  
+> @@ -277,7 +296,7 @@ static void dax_unlock_mapping_entry(struct address_space *mapping,
+>  static void put_locked_mapping_entry(struct address_space *mapping,
+>  		pgoff_t index)
+>  {
+> -	dax_unlock_mapping_entry(mapping, index);
+> +	unlock_mapping_entry(mapping, index);
+>  }
+>  
+>  /*
+> @@ -374,6 +393,84 @@ static struct page *dax_busy_page(void *entry)
+>  	return NULL;
+>  }
+>  
+> +static bool entry_wait_revalidate(void)
+> +{
+> +	rcu_read_unlock();
+> +	schedule();
+> +	rcu_read_lock();
+> +
+> +	/*
+> +	 * Tell __get_unlocked_mapping_entry() to take a break, we need
+> +	 * to revalidate page->mapping after dropping locks
+> +	 */
+> +	return true;
+> +}
+> +
+> +bool dax_lock_mapping_entry(struct page *page)
+> +{
+> +	pgoff_t index;
+> +	struct inode *inode;
+> +	bool did_lock = false;
+> +	void *entry = NULL, **slot;
+> +	struct address_space *mapping;
+> +
+> +	rcu_read_lock();
+> +	for (;;) {
+> +		mapping = READ_ONCE(page->mapping);
+> +
+> +		if (!dax_mapping(mapping))
+> +			break;
+> +
+> +		/*
+> +		 * In the device-dax case there's no need to lock, a
+> +		 * struct dev_pagemap pin is sufficient to keep the
+> +		 * inode alive, and we assume we have dev_pagemap pin
+> +		 * otherwise we would not have a valid pfn_to_page()
+> +		 * translation.
+> +		 */
+> +		inode = mapping->host;
+> +		if (S_ISCHR(inode->i_mode)) {
+> +			did_lock = true;
+> +			break;
+> +		}
+> +
+> +		xa_lock_irq(&mapping->i_pages);
+> +		if (mapping != page->mapping) {
+> +			xa_unlock_irq(&mapping->i_pages);
+> +			continue;
+> +		}
+> +		index = page->index;
+> +
+> +		entry = __get_unlocked_mapping_entry(mapping, index, &slot,
+> +				entry_wait_revalidate);
+> +		if (!entry) {
+> +			xa_unlock_irq(&mapping->i_pages);
+> +			break;
+> +		} else if (IS_ERR(entry)) {
+> +			WARN_ON_ONCE(PTR_ERR(entry) != -EAGAIN);
+> +			continue;
+> +		}
+> +		lock_slot(mapping, slot);
+> +		did_lock = true;
+> +		xa_unlock_irq(&mapping->i_pages);
+> +		break;
+> +	}
+> +	rcu_read_unlock();
+> +
+> +	return did_lock;
+> +}
+> +
+> +void dax_unlock_mapping_entry(struct page *page)
+> +{
+> +	struct address_space *mapping = page->mapping;
+> +	struct inode *inode = mapping->host;
+> +
+> +	if (S_ISCHR(inode->i_mode))
+> +		return;
+> +
+> +	unlock_mapping_entry(mapping, page->index);
+> +}
+> +
+>  /*
+>   * Find radix tree entry at given index. If it points to an exceptional entry,
+>   * return it with the radix tree entry locked. If the radix tree doesn't
+> diff --git a/include/linux/dax.h b/include/linux/dax.h
+> index 3855e3800f48..cf8ac51cf0d7 100644
+> --- a/include/linux/dax.h
+> +++ b/include/linux/dax.h
+> @@ -88,6 +88,8 @@ int dax_writeback_mapping_range(struct address_space *mapping,
+>  		struct block_device *bdev, struct writeback_control *wbc);
+>  
+>  struct page *dax_layout_busy_page(struct address_space *mapping);
+> +bool dax_lock_mapping_entry(struct page *page);
+> +void dax_unlock_mapping_entry(struct page *page);
+>  #else
+>  static inline bool bdev_dax_supported(struct block_device *bdev,
+>  		int blocksize)
+> @@ -119,6 +121,17 @@ static inline int dax_writeback_mapping_range(struct address_space *mapping,
+>  {
+>  	return -EOPNOTSUPP;
+>  }
+> +
+> +static inline bool dax_lock_mapping_entry(struct page *page)
+> +{
+> +	if (IS_DAX(page->mapping->host))
+> +		return true;
+> +	return false;
+> +}
+> +
+> +static inline void dax_unlock_mapping_entry(struct page *page)
+> +{
+> +}
+>  #endif
+>  
+>  int dax_read_lock(void);
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
