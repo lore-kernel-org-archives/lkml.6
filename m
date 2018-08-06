@@ -2,118 +2,128 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B11DC46470
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 03:38:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08595C46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 03:38:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43DC9219C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 03:38:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B4230219C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 03:38:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ghzk5Ipb";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="gkh5m1JZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43DC9219C4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="y9YzBAQc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4230219C4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727496AbeHFFpI (ORCPT
+        id S1727584AbeHFFpM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 01:45:08 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:34744 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726559AbeHFFpI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 01:45:08 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 650A560B11; Mon,  6 Aug 2018 03:38:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533526684;
-        bh=vCepNhQdijnbyBn/vfDPr3AV5rxrrzGt0MtSiNfO39I=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=ghzk5IpbhE7orVnqdGmKE6vM04xhR6Pjw/7Zu8R6tk5LjLQNF98DvpUvzU5Wzqj00
-         /6+IRmGUi0mKOZ0ZyS8JiVKyMVa/a8NB1FgzVa4uneFI8jtgGWPj68BT3k01R49msd
-         WihHcadNBT4cU2jEXdI57PF+FQBj0OmHYA5xdpPM=
-Received: from [10.79.128.16] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: rnayak@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 55FD560541;
-        Mon,  6 Aug 2018 03:38:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533526683;
-        bh=vCepNhQdijnbyBn/vfDPr3AV5rxrrzGt0MtSiNfO39I=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=gkh5m1JZlKq27QgJmQZN5riHB/NoXvdEiynALKcwQ7tumHcR9mVrsrjef0l8dHJgk
-         FH/6uPdHrYnT/qojP79frp6DpYeieDexCgMcnArUeEDxrd6uCqpylN/xwiNnm4HEWr
-         nifQGzyt7r7oeLTHzpMSSnoTmY+gUXguu2p1weQE=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 55FD560541
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
-Subject: Re: [PATCH] remoteproc: q6v5: Add support to vote for rpmh power
- domains
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>, sibis@codeaurora.org,
-        linux-remoteproc@vger.kernel.org,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20180629102035.2757-1-rnayak@codeaurora.org>
- <CAPDyKFq=7RrUcspzyZGxYrv8bFHC=hkqMTT1SFeb+H_=Yv_Cxg@mail.gmail.com>
-From:   Rajendra Nayak <rnayak@codeaurora.org>
-Message-ID: <33aa19da-314d-f349-6750-0216ac9ab891@codeaurora.org>
-Date:   Mon, 6 Aug 2018 09:08:00 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 6 Aug 2018 01:45:12 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:55986 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726559AbeHFFpL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 01:45:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
+        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=qPsd2eaJs7rzfqFdyYsjDqlyo1TFKdf7sAWS4BBbSvE=;
+        b=y9YzBAQcjd5SyOxDRUlbLdY7QHKQ50hp7Jw61CEnXiSHTiq+4tRpwERrT1OnFyfnzimPFh8Cc1RWBoNbIQKkubRgduMDG0OQUHrYULuWFtNrPx3RRQOFm7xjp/tItHpeGZ1yOf/afHBPO18cKPuAg5861YMdzjoIAKg1SdSjwaE=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1fmWLK-0008UQ-J6; Mon, 06 Aug 2018 05:38:02 +0200
+Date:   Mon, 6 Aug 2018 05:38:02 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Aditya Prayoga <aditya@kobol.io>
+Cc:     linux-gpio@vger.kernel.org,
+        Richard Genoud <richard.genoud@gmail.com>,
+        Gregory CLEMENT <gregory.clement@bootlin.com>,
+        Gauthier Provost <gauthier@kobol.io>,
+        Alban Browaeys <alban.browaeys@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Dennis Gilmore <dennis@ausil.us>,
+        Ralph Sennhauser <ralph.sennhauser@gmail.com>
+Subject: Re: [PATCH RESEND 1/2] gpio: mvebu: Add support for multiple PWM
+ lines per GPIO chip
+Message-ID: <20180806033802.GA32450@lunn.ch>
+References: <1533522556-55055-1-git-send-email-aditya@kobol.io>
+ <1533522556-55055-2-git-send-email-aditya@kobol.io>
 MIME-Version: 1.0
-In-Reply-To: <CAPDyKFq=7RrUcspzyZGxYrv8bFHC=hkqMTT1SFeb+H_=Yv_Cxg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1533522556-55055-2-git-send-email-aditya@kobol.io>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Aug 06, 2018 at 10:29:15AM +0800, Aditya Prayoga wrote:
 
+Hi Aditya
 
-On 8/3/2018 3:40 PM, Ulf Hansson wrote:
-> On 29 June 2018 at 12:20, Rajendra Nayak <rnayak@codeaurora.org> wrote:
->> With rpmh ARC resources being modelled as power domains with
->> performance state, add support to proxy vote on these for SDM845.
->> Add support to vote on multiple of them, now that genpd supports
->> associating multiple power domains to a device.
->>
->> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
->> ---
->> This patch is dependent on the rpmh powerdomain driver
->> still under review,
->> https://lkml.org/lkml/2018/6/27/7
-> 
-> I assume you intend to re-spin this to use the new
-> dev_pm_domain_attach_by_name(), once 4.19 rc1 is out, right!?
-> 
-> Anyway, please keep me in the loop.
+> +	item = kzalloc(sizeof(*item), GFP_KERNEL);
+> +	if (!item)
+> +		return -ENODEV;
 
-Yes, I do plan to respin this one with the new api.
+ENOMEM would be better, since it is a memory allocation which is
+failing.
 
-> 
-> [...]
-> 
->> +       if (num_pds > 1) {
->> +               for (i = 0; i < num_pds; i++) {
->> +                       devs[i] = genpd_dev_pm_attach_by_id(dev, i);
-> 
-> This API is supposed to be called only by the driver core. Please use
-> dev_pm_domain_attach_by_id|name() instead.
+>  
+> -		ret = gpiod_direction_output(desc, 0);
+> -		if (ret) {
+> -			gpiochip_free_own_desc(desc);
+> -			goto out;
+> -		}
+> +	spin_lock_irqsave(&mvpwm->lock, flags);
+> +	desc = gpiochip_request_own_desc(&mvchip->chip,
+> +					 pwm->hwpwm, "mvebu-pwm");
+> +	if (IS_ERR(desc)) {
+> +		ret = PTR_ERR(desc);
+> +		goto out;
+> +	}
+>  
+> -		mvpwm->gpiod = desc;
+> +	ret = gpiod_direction_output(desc, 0);
+> +	if (ret) {
+> +		gpiochip_free_own_desc(desc);
+> +		goto out;
+>  	}
+> +	item->gpiod = desc;
+> +	item->device = pwm;
+> +	INIT_LIST_HEAD(&item->node);
+> +	list_add_tail(&item->node, &mvpwm->pwms);
+>  out:
+>  	spin_unlock_irqrestore(&mvpwm->lock, flags);
+>  	return ret;
 
-thanks, will change.
+You don't cleanup item on the error path.
 
-regards,
-Rajendra
-> 
-> [...]
-> 
-> Kind regards
-> Uffe
-> 
+> @@ -630,12 +639,20 @@ static int mvebu_pwm_request(struct pwm_chip *chip, struct pwm_device *pwm)
+>  static void mvebu_pwm_free(struct pwm_chip *chip, struct pwm_device *pwm)
+>  {
+>  	struct mvebu_pwm *mvpwm = to_mvebu_pwm(chip);
+> +	struct mvebu_pwm_item *item, *tmp;
+>  	unsigned long flags;
+>  
+> -	spin_lock_irqsave(&mvpwm->lock, flags);
+> -	gpiochip_free_own_desc(mvpwm->gpiod);
+> -	mvpwm->gpiod = NULL;
+> -	spin_unlock_irqrestore(&mvpwm->lock, flags);
+> +	list_for_each_entry_safe(item, tmp, &mvpwm->pwms, node) {
+> +		if (item->device == pwm) {
+> +			spin_lock_irqsave(&mvpwm->lock, flags);
+> +			gpiochip_free_own_desc(item->gpiod);
+> +			item->gpiod = NULL;
+> +			item->device = NULL;
+
+Since you are about to free item, these two lines are pointless.
+
+> +			list_del(&item->node);
+> +			spin_unlock_irqrestore(&mvpwm->lock, flags);
+> +			kfree(item);
+> +		}
+> +	}
+>  }
+
+   Andrew
