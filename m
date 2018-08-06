@@ -2,303 +2,275 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2685CC46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 11:56:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0E14C46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 11:57:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D22B821A07
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 11:56:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D22B821A07
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 94AE821A0A
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 11:57:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94AE821A0A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731341AbeHFOFY (ORCPT
+        id S1731456AbeHFOG3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 10:05:24 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35204 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729775AbeHFOFX (ORCPT
+        Mon, 6 Aug 2018 10:06:29 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:33090 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729775AbeHFOG3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 10:05:23 -0400
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w76BrXn5086806
-        for <linux-kernel@vger.kernel.org>; Mon, 6 Aug 2018 07:56:38 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2kpmuvtjmg-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Aug 2018 07:56:37 -0400
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <tmricht@linux.ibm.com>;
-        Mon, 6 Aug 2018 12:56:35 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 6 Aug 2018 12:56:32 +0100
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w76BuV8o9371734
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 6 Aug 2018 11:56:31 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 72330AE045;
-        Mon,  6 Aug 2018 14:56:26 +0100 (BST)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2D57DAE051;
-        Mon,  6 Aug 2018 14:56:26 +0100 (BST)
-Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon,  6 Aug 2018 14:56:26 +0100 (BST)
-From:   Thomas Richter <tmricht@linux.ibm.com>
-To:     linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        acme@kernel.org
-Cc:     brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, Thomas Richter <tmricht@linux.ibm.com>
-Subject: [PATCH] perf report: Create auxiliary trace data files for s390
-Date:   Mon,  6 Aug 2018 13:56:24 +0200
-X-Mailer: git-send-email 2.16.4
-X-TM-AS-GCONF: 00
-x-cbid: 18080611-0016-0000-0000-000001F1EBCB
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18080611-0017-0000-0000-000032472B38
-Message-Id: <20180806115624.23506-1-tmricht@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-06_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808060129
+        Mon, 6 Aug 2018 10:06:29 -0400
+Received: from fsav402.sakura.ne.jp (fsav402.sakura.ne.jp [133.242.250.101])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w76BuYHB011047;
+        Mon, 6 Aug 2018 20:56:34 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav402.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav402.sakura.ne.jp);
+ Mon, 06 Aug 2018 20:56:34 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav402.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126074194044.bbtec.net [126.74.194.44])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w76BuXlx011044
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Mon, 6 Aug 2018 20:56:34 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: INFO: task hung in generic_file_write_iter
+To:     Jan Kara <jack@suse.cz>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        syzbot <syzbot+9933e4476f365f5d5a1b@syzkaller.appspotmail.com>,
+        linux-mm@kvack.org, mgorman@techsingularity.net,
+        Michal Hocko <mhocko@kernel.org>, ak@linux.intel.com,
+        jlayton@redhat.com, linux-kernel@vger.kernel.org,
+        mawilcox@microsoft.com, syzkaller-bugs@googlegroups.com,
+        tim.c.chen@linux.intel.com,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <0000000000009ce88d05714242a8@google.com>
+ <4b349bff-8ad4-6410-250d-593b13d8d496@I-love.SAKURA.ne.jp>
+ <9b9fcdda-c347-53ee-fdbb-8a7d11cf430e@I-love.SAKURA.ne.jp>
+ <20180720130602.f3d6dc4c943558875a36cb52@linux-foundation.org>
+ <a2df1f24-f649-f5d8-0b2d-66d45b6cb61f@i-love.sakura.ne.jp>
+ <20180806100928.x7anab3c3y5q4ssa@quack2.suse.cz>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <8248f4e9-3567-b8f5-4751-8b38c1807eff@i-love.sakura.ne.jp>
+Date:   Mon, 6 Aug 2018 20:56:30 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180806100928.x7anab3c3y5q4ssa@quack2.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support to create auxiliary trace data log files.
-When invoked with option --itrace=d as in
+On 2018/08/06 19:09, Jan Kara wrote:
+>> syzbot reproduced this problem ( https://syzkaller.appspot.com/text?tag=CrashLog&x=11f2fc44400000 ) .
+>> It says that grow_dev_page() is returning 1 but __find_get_block() is failing forever. Any idea?
 
-[root@s35lp76 perf] ./perf report -i perf.data.aux1 --stdio --itrace=d
+So far syzbot reproduced 7 times, and all reports are saying that
+grow_dev_page() is returning 1 but __find_get_block() is failing forever.
 
-perf report creates several data files in the current directory
-named aux.smp.## where ## is a 2 digit hex number with
-leading zeros representing the CPU number this trace data
-was recorded from. The file contents is binary and contains
-the CPU-Measurement Sampling Data Blocks (SDBs).
+  INFO: task hung in __get_super
+  https://syzkaller.appspot.com/text?tag=CrashLog&x=17347272400000
 
-The directory to save the auxiliary trace buffer can be
-changed using the perf config file and command. Specify
-section 'auxtrace' keyword 'dumpdir' and assign it a valid
-directory name. If the directory does not exist or has the
-wrong file type, the current directory is used.
+  INFO: task hung in __blkdev_get (2)
+  https://syzkaller.appspot.com/text?tag=CrashLog&x=144347fc400000
+  https://syzkaller.appspot.com/text?tag=CrashLog&x=12382bfc400000
 
-[root@p23lp27 perf]# ./perf config auxtrace.dumpdir=/tmp
-[root@p23lp27 perf]# ./perf config --user -l
-auxtrace.dumpdir=/tmp
-[root@p23lp27 perf]# ./perf report ...
-[root@p23lp27 perf]# ll /tmp/aux.smp.00
--rw-r--r-- 1 root root 204800 Aug  2 13:48 /tmp/aux.smp.00
-[root@p23lp27 perf]#
+  INFO: task hung in __writeback_inodes_sb_nr
+  https://syzkaller.appspot.com/text?tag=CrashLog&x=11f2fc44400000
+  https://syzkaller.appspot.com/text?tag=CrashLog&x=13c2449c400000
 
-Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
-Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
----
- tools/perf/util/s390-cpumsf.c | 94 +++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 91 insertions(+), 3 deletions(-)
+  INFO: task hung in filename_create
+  https://syzkaller.appspot.com/text?tag=CrashLog&x=174a672c400000
 
-diff --git a/tools/perf/util/s390-cpumsf.c b/tools/perf/util/s390-cpumsf.c
-index 15555604ddb3..fa908aa729e0 100644
---- a/tools/perf/util/s390-cpumsf.c
-+++ b/tools/perf/util/s390-cpumsf.c
-@@ -147,6 +147,9 @@
- #include <linux/bitops.h>
- #include <linux/log2.h>
- 
-+#include <sys/stat.h>
-+#include <sys/types.h>
-+
- #include "cpumap.h"
- #include "color.h"
- #include "evsel.h"
-@@ -159,6 +162,7 @@
- #include "auxtrace.h"
- #include "s390-cpumsf.h"
- #include "s390-cpumsf-kernel.h"
-+#include "config.h"
- 
- struct s390_cpumsf {
- 	struct auxtrace		auxtrace;
-@@ -170,6 +174,8 @@ struct s390_cpumsf {
- 	u32			pmu_type;
- 	u16			machine_type;
- 	bool			data_queued;
-+	bool			use_logfile;
-+	char			*logdir;
- };
- 
- struct s390_cpumsf_queue {
-@@ -177,6 +183,7 @@ struct s390_cpumsf_queue {
- 	unsigned int		queue_nr;
- 	struct auxtrace_buffer	*buffer;
- 	int			cpu;
-+	FILE			*logfile;
- };
- 
- /* Display s390 CPU measurement facility basic-sampling data entry */
-@@ -592,6 +599,12 @@ static int s390_cpumsf_run_decoder(struct s390_cpumsf_queue *sfq,
- 			buffer->use_size = buffer->size;
- 			buffer->use_data = buffer->data;
- 		}
-+		if (sfq->logfile) {	/* Write into log file */
-+			size_t rc = fwrite(buffer->data, buffer->size, 1,
-+					   sfq->logfile);
-+			if (rc != 1)
-+				pr_err("Failed to write auxiliary data\n");
-+		}
- 	} else
- 		buffer = sfq->buffer;
- 
-@@ -603,6 +616,13 @@ static int s390_cpumsf_run_decoder(struct s390_cpumsf_queue *sfq,
- 			return -ENOMEM;
- 		buffer->use_size = buffer->size;
- 		buffer->use_data = buffer->data;
-+
-+		if (sfq->logfile) {	/* Write into log file */
-+			size_t rc = fwrite(buffer->data, buffer->size, 1,
-+					   sfq->logfile);
-+			if (rc != 1)
-+				pr_err("Failed to write auxiliary data\n");
-+		}
- 	}
- 	pr_debug4("%s queue_nr:%d buffer:%ld offset:%#lx size:%#zx rest:%#zx\n",
- 		  __func__, sfq->queue_nr, buffer->buffer_nr, buffer->offset,
-@@ -637,6 +657,23 @@ s390_cpumsf_alloc_queue(struct s390_cpumsf *sf, unsigned int queue_nr)
- 	sfq->sf = sf;
- 	sfq->queue_nr = queue_nr;
- 	sfq->cpu = -1;
-+	if (sf->use_logfile) {
-+		char *name;
-+		int rc;
-+
-+		rc = (sf->logdir)
-+			? asprintf(&name, "%s/aux.smp.%02x",
-+				 sf->logdir, queue_nr)
-+			: asprintf(&name, "aux.smp.%02x", queue_nr);
-+		if (rc > 0)
-+			sfq->logfile = fopen(name, "w");
-+		if (sfq->logfile == NULL) {
-+			pr_err("Failed to open auxiliary log file %s,"
-+			       "continue...\n", name);
-+			sf->use_logfile = false;
-+		}
-+		free(name);
-+	}
- 	return sfq;
- }
- 
-@@ -847,8 +884,16 @@ static void s390_cpumsf_free_queues(struct perf_session *session)
- 	struct auxtrace_queues *queues = &sf->queues;
- 	unsigned int i;
- 
--	for (i = 0; i < queues->nr_queues; i++)
-+	for (i = 0; i < queues->nr_queues; i++) {
-+		struct s390_cpumsf_queue *sfq = (struct s390_cpumsf_queue *)
-+						queues->queue_array[i].priv;
-+
-+		if (sfq != NULL && sfq->logfile) {
-+			fclose(sfq->logfile);
-+			sfq->logfile = NULL;
-+		}
- 		zfree(&queues->queue_array[i].priv);
-+	}
- 	auxtrace_queues__free(queues);
- }
- 
-@@ -861,6 +906,7 @@ static void s390_cpumsf_free(struct perf_session *session)
- 	auxtrace_heap__free(&sf->heap);
- 	s390_cpumsf_free_queues(session);
- 	session->auxtrace = NULL;
-+	free(sf->logdir);
- 	free(sf);
- }
- 
-@@ -874,17 +920,55 @@ static int s390_cpumsf_get_type(const char *cpuid)
- 
- /* Check itrace options set on perf report command.
-  * Return true, if none are set or all options specified can be
-- * handled on s390.
-+ * handled on s390 (currently only option 'd' for logging.
-  * Return false otherwise.
-  */
- static bool check_auxtrace_itrace(struct itrace_synth_opts *itops)
- {
-+	bool ison = false;
-+
- 	if (!itops || !itops->set)
- 		return true;
--	pr_err("No --itrace options supported\n");
-+	ison = itops->inject || itops->instructions || itops->branches ||
-+		itops->transactions || itops->ptwrites ||
-+		itops->pwr_events || itops->errors ||
-+		itops->dont_decode || itops->calls || itops->returns ||
-+		itops->callchain || itops->thread_stack ||
-+		itops->last_branch;
-+	if (!ison)
-+		return true;
-+	pr_err("Unsupported --itrace options specified\n");
- 	return false;
- }
- 
-+/* Check for AUXTRACE dump directory if it is needed.
-+ * On failure print an error message but continue.
-+ * Return 0 on wrong keyword in config file and 1 otherwise.
-+ */
-+static int s390_cpumsf__config(const char *var, const char *value, void *cb)
-+{
-+	struct s390_cpumsf *sf = cb;
-+	struct stat stbuf;
-+	int rc;
-+
-+	if (strcmp(var, "auxtrace.dumpdir"))
-+		return 0;
-+	sf->logdir = strdup(value);
-+	if (sf->logdir == NULL) {
-+		pr_err("Failed to find auxtrace log directory %s,"
-+		       " continue with current directory...\n", value);
-+		return 1;
-+	}
-+	rc = stat(sf->logdir, &stbuf);
-+	if (rc == -1 || !S_ISDIR(stbuf.st_mode)) {
-+		pr_err("Missing auxtrace log directory %s,"
-+		       " continue with current directory...\n", value);
-+		free(sf->logdir);
-+		sf->logdir = NULL;
-+	}
-+	return 1;
-+}
-+
- int s390_cpumsf_process_auxtrace_info(union perf_event *event,
- 				      struct perf_session *session)
- {
-@@ -903,6 +987,9 @@ int s390_cpumsf_process_auxtrace_info(union perf_event *event,
- 		err = -EINVAL;
- 		goto err_free;
- 	}
-+	sf->use_logfile = session->itrace_synth_opts->log;
-+	if (sf->use_logfile)
-+		perf_config(s390_cpumsf__config, sf);
- 
- 	err = auxtrace_queues__init(&sf->queues);
- 	if (err)
-@@ -937,6 +1024,7 @@ int s390_cpumsf_process_auxtrace_info(union perf_event *event,
- 	auxtrace_queues__free(&sf->queues);
- 	session->auxtrace = NULL;
- err_free:
-+	free(sf->logdir);
- 	free(sf);
- 	return err;
- }
--- 
-2.14.3
+  INFO: task hung in lookup_slow
+  https://syzkaller.appspot.com/text?tag=CrashLog&x=16113bdc400000
+
+> 
+> Looks like some kind of a race where device block size gets changed while
+> getblk() runs (and creates buffers for underlying page). I don't have time
+> to nail it down at this moment can have a look into it later unless someone
+> beats me to it.
+> 
+
+It seems that loop device is relevant to this problem.
+
+144347fc400000:
+
+[  557.484258] syz-executor0(7883): getblk(): executed=9 bh_count=0 bh_state=0
+[  560.491589] syz-executor0(7883): getblk(): executed=9 bh_count=0 bh_state=0
+[  563.500432] syz-executor0(7883): getblk(): executed=9 bh_count=0 bh_state=0
+[  566.508502] syz-executor0(7883): getblk(): executed=9 bh_count=0 bh_state=0
+[  569.516546] syz-executor0(7883): getblk(): executed=9 bh_count=0 bh_state=0
+[  572.524800] syz-executor0(7883): getblk(): executed=9 bh_count=0 bh_state=0
+[  575.532499] syz-executor0(7883): getblk(): executed=9 bh_count=0 bh_state=0
+[  575.803688] INFO: task syz-executor7:7893 blocked for more than 140 seconds.
+[  575.810957]       Not tainted 4.18.0-rc7-next-20180801+ #29
+[  575.816685] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+[  575.824663] syz-executor7   D24464  7893   4272 0x00000004
+[  575.830298] Call Trace:
+[  575.832911]  __schedule+0x87c/0x1ec0
+[  575.879299]  schedule+0xfb/0x450
+[  575.912448]  rwsem_down_read_failed+0x362/0x610
+[  575.951922]  call_rwsem_down_read_failed+0x18/0x30
+[  575.956843]  down_read+0xc3/0x1d0
+[  575.990222]  __get_super.part.12+0x20f/0x2e0
+[  575.994654]  get_super+0x2d/0x50
+[  575.998016]  fsync_bdev+0x17/0xc0
+[  576.001469]  invalidate_partition+0x35/0x60
+[  576.005800]  drop_partitions.isra.13+0xe8/0x200
+[  576.023366]  rescan_partitions+0x75/0x910
+[  576.037534]  __blkdev_reread_part+0x1ad/0x230
+[  576.042023]  blkdev_reread_part+0x26/0x40
+[  576.046173]  loop_reread_partitions+0x163/0x190
+[  576.055795]  loop_set_status+0xb95/0x1010
+[  576.059938]  loop_set_status64+0xaa/0x100
+[  576.078629]  lo_ioctl+0x90e/0x1d70
+[  576.095290]  blkdev_ioctl+0x9cd/0x2030
+[  576.146746]  block_ioctl+0xee/0x130
+[  576.154704]  do_vfs_ioctl+0x1de/0x1720
+[  576.183069]  ksys_ioctl+0xa9/0xd0
+[  576.186519]  __x64_sys_ioctl+0x73/0xb0
+[  576.190423]  do_syscall_64+0x1b9/0x820
+
+
+
+It seems that there was loop_reread_partitions() failure before this message starts.
+
+12382bfc400000:
+
+[  205.467816] loop_reread_partitions: partition scan of loop0 (<E1><D3><F8>w<E5><EA><E4>S<E5>]}d<D0>^MI^A<BA><ED>!<F7><DE><92><A8>f<9B>8<CC><D6>W<DB><F5><AE>F5Eice^W<B5>^O<80>Z<E2>^H%<8D><BA>}
+[  205.467816] <BE><8D> <8F>^OESC<CC><88>\<8B><A9>) failed (rc=1)
+
+[  205.905418] loop_reread_partitions: partition scan of loop0 (<E1><D3><F8>w<E5><EA><E4>S<E5>]}d<D0>^MI^A<BA><ED>!<F7><DE><92><A8>f<9B>8<CC><D6>W<DB><F5><AE>F5Eice^W<B5>^O<80>Z<E2>^H%<8D><BA>}
+[  205.905418] <BE><8D> <8F>^OESC<CC><88>\<8B><A9>) failed (rc=-16)
+
+[  206.113592] loop_reread_partitions: partition scan of loop0 (<E1><D3><F8>w<E5><EA><E4>S<E5>]}d<D0>^MI^A<BA><ED>!<F7><DE><92><A8>f<9B>8<CC><D6>W<DB><F5><AE>F5Eice^W<B5>^O<80>Z<E2>^H%<8D><BA>}
+[  206.113592] <BE><8D> <8F>^OESC<CC><88>\<8B><A9>) failed (rc=-16)
+
+[  206.767225] loop_reread_partitions: partition scan of loop0 (<E1><D3><F8>w<E5><EA><E4>S<E5>]}d<D0>^MI^A<BA><ED>!<F7><DE><92><A8>f<9B>8<CC><D6>W<DB><F5><AE>F5Eice^W<B5>^O<80>Z<E2>^H%<8D><BA>}
+[  206.767225] <BE><8D> <8F>^OESC<CC><88>\<8B><A9>) failed (rc=-16)
+
+[  206.990060] loop_reread_partitions: partition scan of loop0 (<E1><D3><F8>w<E5><EA><E4>S<E5>]}d<D0>^MI^A<BA><ED>!<F7><DE><92><A8>f<9B>8<CC><D6>W<DB><F5><AE>F5Eice^W<B5>^O<80>Z<E2>^H%<8D><BA>}
+[  206.990060] <BE><8D> <8F>^OESC<CC><88>\<8B><A9>) failed (rc=1)
+
+[  208.630329] loop_reread_partitions: partition scan of loop0 (<E1><D3><F8>w<E5><EA><E4>S<E5>]}d<D0>^MI^A<BA><ED>!<F7><DE><92><A8>f<9B>8<CC><D6>W<DB><F5><AE>F5Eice^W<B5>^O<80>Z<E2>^H%<8D><BA>}
+[  208.630329] <BE><8D> <8F>^OESC<CC><88>\<8B><A9>) failed (rc=-16)
+
+[  228.101929] loop_reread_partitions: partition scan of loop0 (<E1><D3><F8>w<E5><EA><E4>S<E5>]}d<D0>^MI^A<BA><ED>!<F7><DE><92><A8>f<9B>8<CC><D6>W<DB><F5><AE>F5Eice^W<B5>^O<80>Z<E2>^H%<8D><BA>}
+[  228.101929] <BE><8D> <8F>^OESC<CC><88>\<8B><A9>) failed (rc=-16)
+
+[  228.605840] loop_reread_partitions: partition scan of loop0 (<E1><D3><F8>w<E5><EA><E4>S<E5>]}d<D0>^MI^A<BA><ED>!<F7><DE><92><A8>f<9B>8<CC><D6>W<DB><F5><AE>F5Eice^W<B5>^O<80>Z<E2>^H%<8D><BA>}
+[  228.605840] <BE><8D> <8F>^OESC<CC><88>\<8B><A9>) failed (rc=1)
+
+[  229.400629] loop_reread_partitions: partition scan of loop0 (<E1><D3><F8>w<E5><EA><E4>S<E5>]}d<D0>^MI^A<BA><ED>!<F7><DE><92><A8>f<9B>8<CC><D6>W<DB><F5><AE>F5Eice^W<B5>^O<80>Z<E2>^H%<8D><BA>}
+[  229.400629] <BE><8D> <8F>^OESC<CC><88>\<8B><A9>) failed (rc=1)
+
+[  229.622379] loop_reread_partitions: partition scan of loop0 (<E1><D3><F8>w<E5><EA><E4>S<E5>]}d<D0>^MI^A<BA><ED>!<F7><DE><92><A8>f<9B>8<CC><D6>W<DB><F5><AE>F5Eice^W<B5>^O<80>Z<E2>^H%<8D><BA>}
+[  229.622379] <BE><8D> <8F>^OESC<CC><88>\<8B><A9>) failed (rc=1)
+
+[  233.406342] syz-executor0(18214): getblk(): executed=9 bh_count=0 bh_state=0
+[  236.414328] syz-executor0(18214): getblk(): executed=9 bh_count=0 bh_state=0
+[  239.422327] syz-executor0(18214): getblk(): executed=9 bh_count=0 bh_state=0
+[  242.430332] syz-executor0(18214): getblk(): executed=9 bh_count=0 bh_state=0
+(...snipped...)
+[  416.894327] syz-executor0(18214): getblk(): executed=9 bh_count=0 bh_state=0
+[  419.902327] syz-executor0(18214): getblk(): executed=9 bh_count=0 bh_state=0
+[  422.910325] syz-executor0(18214): getblk(): executed=9 bh_count=0 bh_state=0
+[  425.918329] syz-executor0(18214): getblk(): executed=9 bh_count=0 bh_state=0
+
+[  431.005871] NMI backtrace for cpu 0
+[  431.005876] CPU: 0 PID: 18214 Comm: syz-executor0 Not tainted 4.18.0-rc6-next-20180725+ #18
+[  431.005881] Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+[  431.005884] RIP: 0010:write_comp_data+0x14/0x70
+[  431.005893] Code: 4c 89 ef e8 1e 93 3e 00 e9 76 fc ff ff e8 b4 9c ca ff 90 90 90 90 55 65 4c 8b 04 25 40 ee 01 00 65 8b 05 2f 46 85 7e 48 89 e5 <a9> 00 01 1f 00 75 51 41 8b 80 98 12 00 00 83 f8 03 75 45 49 8b 80
+[  431.005896] RSP: 0018:ffff880192487130 EFLAGS: 00000046
+[  431.005903] RAX: 0000000080000000 RBX: ffff880168426b28 RCX: ffffffff81d704dd
+[  431.005906] RDX: 000000000003085f RSI: 000000000000000d RDI: 0000000000000006
+[  431.005910] RBP: ffff880192487130 R08: ffff8801d9696200 R09: fffff94000af6a66
+[  431.005914] R10: fffff94000af6a66 R11: ffffea00057b5337 R12: 0000000000000006
+[  431.005918] R13: dffffc0000000000 R14: 0000000000000006 R15: 000000000003085f
+[  431.005923] FS:  00007f6c291f1700(0000) GS:ffff8801db000000(0000) knlGS:0000000000000000
+[  431.005926] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  431.005930] CR2: ffffffffff600400 CR3: 00000001c5ff4000 CR4: 00000000001406f0
+[  431.005935] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[  431.005938] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[  431.005941] Call Trace:
+[  431.005944]  __sanitizer_cov_trace_cmp8+0x18/0x20
+[  431.005946]  __find_get_block+0x1bd/0xe60
+[  431.005969]  __getblk_gfp+0x3dc/0xe00
+[  431.005996]  __bread_gfp+0x2d/0x310
+[  431.005999]  fat__get_entry+0x59c/0xa30
+[  431.006017]  fat_get_short_entry+0x13c/0x2c0
+[  431.006020]  fat_subdirs+0x13c/0x290
+[  431.006043]  fat_fill_super+0x29f6/0x4430
+[  431.006068]  vfat_fill_super+0x31/0x40
+[  431.006070]  mount_bdev+0x314/0x3e0
+[  431.006075]  vfat_mount+0x3c/0x50
+[  431.006080]  legacy_get_tree+0x131/0x460
+[  431.006083]  vfs_get_tree+0x1cb/0x5c0
+[  431.006088]  do_mount+0x6f2/0x1e20
+[  431.006113]  ksys_mount+0x12d/0x140
+[  431.006116]  __x64_sys_mount+0xbe/0x150
+[  431.006118]  do_syscall_64+0x1b9/0x820
+[  431.006143]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+
+
+There were a lot of directory bread failure messages before this message starts.
+
+17347272400000:
+
+[  431.497237] FAT-fs (loop3): Directory bread(block 2574) failed
+[  431.505561] FAT-fs (loop3): Directory bread(block 2575) failed
+[  431.516048] FAT-fs (loop3): Directory bread(block 2576) failed
+[  431.525740] FAT-fs (loop3): Directory bread(block 2577) failed
+[  431.535899] FAT-fs (loop3): Directory bread(block 2578) failed
+[  431.636001] FAT-fs (loop5): bogus number of reserved sectors
+[  431.641910] FAT-fs (loop5): Can't find a valid FAT filesystem
+[  434.145080] syz-executor0(7883): getblk(): executed=9 bh_count=0 bh_state=0
+[  437.152496] syz-executor0(7883): getblk(): executed=9 bh_count=0 bh_state=0
+[  440.161598] syz-executor0(7883): getblk(): executed=9 bh_count=0 bh_state=0
+[  443.169498] syz-executor0(7883): getblk(): executed=9 bh_count=0 bh_state=0
+(...snipped...)
+[  563.500432] syz-executor0(7883): getblk(): executed=9 bh_count=0 bh_state=0
+[  566.508502] syz-executor0(7883): getblk(): executed=9 bh_count=0 bh_state=0
+[  569.516546] syz-executor0(7883): getblk(): executed=9 bh_count=0 bh_state=0
+[  572.524800] syz-executor0(7883): getblk(): executed=9 bh_count=0 bh_state=0
+[  575.532499] syz-executor0(7883): getblk(): executed=9 bh_count=0 bh_state=0
+[  575.803688] INFO: task syz-executor7:7893 blocked for more than 140 seconds.
+[  575.810957]       Not tainted 4.18.0-rc7-next-20180801+ #29
+[  575.816685] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+[  575.824663] syz-executor7   D24464  7893   4272 0x00000004
+[  575.830298] Call Trace:
+[  575.832911]  __schedule+0x87c/0x1ec0
+[  575.879299]  schedule+0xfb/0x450
+[  575.912448]  rwsem_down_read_failed+0x362/0x610
+[  575.951922]  call_rwsem_down_read_failed+0x18/0x30
+[  575.956843]  down_read+0xc3/0x1d0
+[  575.990222]  __get_super.part.12+0x20f/0x2e0
+[  575.994654]  get_super+0x2d/0x50
+[  575.998016]  fsync_bdev+0x17/0xc0
+[  576.001469]  invalidate_partition+0x35/0x60
+[  576.005800]  drop_partitions.isra.13+0xe8/0x200
+[  576.023366]  rescan_partitions+0x75/0x910
+[  576.037534]  __blkdev_reread_part+0x1ad/0x230
+[  576.042023]  blkdev_reread_part+0x26/0x40
+[  576.046173]  loop_reread_partitions+0x163/0x190
+[  576.055795]  loop_set_status+0xb95/0x1010
+[  576.059938]  loop_set_status64+0xaa/0x100
+[  576.078629]  lo_ioctl+0x90e/0x1d70
+[  576.095290]  blkdev_ioctl+0x9cd/0x2030
+[  576.146746]  block_ioctl+0xee/0x130
+[  576.154704]  do_vfs_ioctl+0x1de/0x1720
+[  576.183069]  ksys_ioctl+0xa9/0xd0
+[  576.186519]  __x64_sys_ioctl+0x73/0xb0
+[  576.190423]  do_syscall_64+0x1b9/0x820
+[  576.246994]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
