@@ -2,125 +2,118 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80E4CC46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 06:00:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 045BCC46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 06:06:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F476219D0
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 06:00:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F476219D0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id A121C219A3
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 06:06:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H+kJLmOO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A121C219A3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727348AbeHFIHx (ORCPT
+        id S1726494AbeHFIOE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 04:07:53 -0400
-Received: from smtp.nue.novell.com ([195.135.221.5]:42435 "EHLO
-        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726412AbeHFIHx (ORCPT
-        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
-        Mon, 6 Aug 2018 04:07:53 -0400
-Received: from linux-l9pv.suse (unknown.telstraglobal.net [134.159.103.118])
-        by smtp.nue.novell.com with ESMTP (TLS encrypted); Mon, 06 Aug 2018 08:00:16 +0200
-Date:   Mon, 6 Aug 2018 14:00:11 +0800
-From:   joeyli <jlee@suse.com>
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "Lee, Chun-Yi" <joeyli.kernel@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        keyrings@vger.kernel.org,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Pavel Machek <pavel@ucw.cz>, Chen Yu <yu.c.chen@intel.com>,
-        Oliver Neukum <oneukum@suse.com>,
-        Ryan Chen <yu.chen.surf@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>
-Subject: Re: [PATCH 0/6][RFC] Add EFI secure key to key retention service
-Message-ID: <20180806060011.GE27062@linux-l9pv.suse>
-References: <20180805032119.20485-1-jlee@suse.com>
- <CAKv+Gu81vEGNggcWv1NyPJsMeK0HRi_DanH2+Z_4metoNG=txA@mail.gmail.com>
- <1533491246.4087.1.camel@HansenPartnership.com>
+        Mon, 6 Aug 2018 04:14:04 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:46288 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725735AbeHFIOD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 04:14:03 -0400
+Received: by mail-lj1-f193.google.com with SMTP id 203-v6so9549012ljj.13
+        for <linux-kernel@vger.kernel.org>; Sun, 05 Aug 2018 23:06:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=aX/hXeWXzWUjwQPIfcrhQPJQVVlkzFyWGTr4KRH4nWQ=;
+        b=H+kJLmOOqSt2zrVNeJvUjvQ2/n/AsuKI7D1CT2YXHnKartdKCM6JzW9o198flFqvWz
+         PH5qaKQx1GGd4qUvMJVzGYCJQKLQIo5sMBoM74sDPpWmKChdpsev26E1nWfO4r4Lt58r
+         Q/hi6i+yKTwyKU8hNEhpTUE+xFmNAdjRucJlm1z6jDvhLwlGcBwsqDSyA/ko0s2WZ/xX
+         7F5qbHglL/fVllzuXaPEDPjJQC/OeKwdyRxSPdddJYgY+I16ibbj2Yh/C9bxIr6HDc+V
+         M51ybe8r94tJRleg4XTKOuXJ9NWLFjAqCfT0cB/iAUA1ucrWEBJennvBclN4CUn2etm+
+         TJXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=aX/hXeWXzWUjwQPIfcrhQPJQVVlkzFyWGTr4KRH4nWQ=;
+        b=DNOZJcDaN0UhZZvRxk+vgVE5M/Qqu9lh2DIo2soLPLRkBisNuFpcB6zosozrrjPfAs
+         3L2Qj2a6ZVHonZ4UUW3qulqsf+po180C4jhH31FtnnbJrIWTU1rtyha0MklidordNZJR
+         9Goh+eb0jhniI4nl94lEl+4EeBsaRU2b9vjRgAn3x+nwktZiTR+NmCdPlUW7EhuJ97ci
+         uekY2M+WLpcSr8R7mH12Q2cf3jsQv5bThU/6MDcu8xP0y2YYEsb07C7TwymHprbrXkUy
+         IwAoMdMG9A2/yu168qy9W9yqjhWeac3sP9VPmOoFjpY85lnvkg3Me2bG1b9y0GVK4WMC
+         WIbQ==
+X-Gm-Message-State: AOUpUlEGFrt2k3K+io4r5zORnTFUwCiLC1FM6peWtZRKQnsvM4QwkN/T
+        I8njMhrddGckw8rmAiD0m61t2okHPR+71SDM16bmzg==
+X-Google-Smtp-Source: AAOMgpf4i1BpSnD4wX1JJQqw/y7YGYxlecb7PFJBeVOuPaMSVld0eodboP4CUcb/nrtbDvsdxnn35CCC0n4WcUVOzo4=
+X-Received: by 2002:a2e:8617:: with SMTP id a23-v6mr12216050lji.43.1533535593129;
+ Sun, 05 Aug 2018 23:06:33 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1533491246.4087.1.camel@HansenPartnership.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Received: by 2002:a19:2b14:0:0:0:0:0 with HTTP; Sun, 5 Aug 2018 23:06:32 -0700 (PDT)
+In-Reply-To: <5B63FE39.4070402@hisilicon.com>
+References: <20180719160426.GA21958@jordon-HP-15-Notebook-PC>
+ <CAFqt6zY_KUx0RgRiuTt6x6xmtfwD=iR8xR6665eZYmKmXKgDNA@mail.gmail.com>
+ <CAFqt6zZdOJe1VmCC3=cEANEU_X05whezkFZsG+FtoS64FXnpeg@mail.gmail.com> <5B63FE39.4070402@hisilicon.com>
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+Date:   Mon, 6 Aug 2018 11:36:32 +0530
+Message-ID: <CAFqt6zbuTRTxf+dw_C-YMK_qn8cB=5xWq+b_M22dep_NEWWghw@mail.gmail.com>
+Subject: Re: [PATCH] gpu/drm/hisilicon: Convert drm_atomic_helper_suspend/resume()
+To:     xinliang <z.liuxinliang@hisilicon.com>
+Cc:     Zou Rongrong <zourongrong@gmail.com>,
+        kong.kongxinwei@hisilicon.com, puck.chen@hisilicon.com,
+        airlied@linux.ie, noralf@tronnes.org,
+        Sean Paul <seanpaul@chromium.org>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Ajit Linux <ajitn.linux@gmail.com>,
+        Sabyasachi Gupta <sabyasachi.linux@gmail.com>,
+        Brajeswar Ghosh <brajeswar.linux@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi James,
-
-On Sun, Aug 05, 2018 at 10:47:26AM -0700, James Bottomley wrote:
-> On Sun, 2018-08-05 at 09:25 +0200, Ard Biesheuvel wrote:
-> > Hello Chun,yi,
-> > 
-> > On 5 August 2018 at 05:21, Lee, Chun-Yi <joeyli.kernel@gmail.com>
-> > wrote:
-> > > When secure boot is enabled, only signed EFI binary can access
-> > > EFI boot service variable before ExitBootService. Which means that
-> > > the EFI boot service variable is secure.
-> > > 
-> > 
-> > No it, isn't, and this is a very dangerous assumption to make.
-> > 
-> > 'Secure' means different things to different people. 'Secure boot' is
-> > a misnomer, since it is too vague: it should be called 'authenticated
-> > boot', and the catch is that authentication using public-key crypto
-> > does not involve secrets at all.
-> 
-> Hang on, let's not throw the baby out with the bathwater here.
-> 
-> The design of "secure boot" is to create a boot time environment where
-> only trusted code may execute.  We rely on this trust guarantee when we
-> pivot from the EFI to the MoK root of trust in shim.
-> 
-> The reason we in Linux trust this guarantee is that it pertains to the
-> boot environment only, so any violation would allow Windows boot to be
-> compromised as well and we trust Microsoft's Business interests in
-> securing windows far enough to think this would be dealt with very
-> severely and it's an outcome the ODMs (who also add secure boot keys)
-> are worried enough about to be very careful.
-> 
-> The rub (and this is where I'm agreeing with Ard) is that any use case
-> we come up with where a violation wouldn't cause a problem in windows
-> is a use case where we cannot rely on the guarantee because Microsoft
-> no longer has a strong business interest in policing it.  This, for
-> instance, is why we don't populate the Linux trusted keyrings with the
-> secure boot keys (we may trust them in the boot environment where
-> compromise would be shared with windows but we can't trust them in the
-> Linux OS environment where it wouldn't).  So this means we have to be
-> very careful coming up with uses for secure boot that aren't strictly
-> rooted in the guarantee as enforced by the business interests of
-> Microsoft and the ODMs.
+On Fri, Aug 3, 2018 at 12:33 PM, xinliang <z.liuxinliang@hisilicon.com> wrote:
 >
-
-Thank you for providing the view point from Microsoft bussiness ineterests.
-I agreed with you. Honestly I didn't think this point before.
- 
-> >  The UEFI variable store was not designed with confidentiality in
-> > mind, and assuming [given the reputation of EFI on the implementation
-> > side] that you can use it to keep secrets is rather unwise imho.
-> 
-> Agree completely here: Microsoft doesn't use UEFI variables for
-> confidentiality, so we shouldn't either.  If you want confidentiality,
-> use a TPM (like Microsoft does for the bitlocker key).
 >
+> On 2018/8/2 17:57, Souptick Joarder wrote:
+>>
+>> On Thu, Jul 26, 2018 at 1:37 PM, Souptick Joarder<jrdr.linux@gmail.com>
+>> wrote:
+>>>
+>>> >On Thu, Jul 19, 2018 at 9:34 PM, Souptick Joarder<jrdr.linux@gmail.com>
+>>> > wrote:
+>>>>
+>>>> >>convert drm_atomic_helper_suspend/resume() to use
+>>>> >>drm_mode_config_helper_suspend/resume().
+>>>> >>
+>>>> >>Fixed one sparse warning by making hibmc_drm_interrupt
+>>>> >>static.
+>>>> >>
+>>>> >>Signed-off-by: Souptick Joarder<jrdr.linux@gmail.com>
+>>>> >>Signed-off-by: Ajit Negi<ajitn.linux@gmail.com>
+>>>> >>---
+>>>
+>>> >
+>>> >Any comment on this patch ?
+>>
+>> Any review comment for this patch ?
+>
+> Sorry for late reply. Looks good to me. Thanks.
+> Reviewed-by: Xinliang Liu <z.liuxinliang@hisilicon.com>
 
-OK~~ Then I will use TPM trusted key + encrypted key in hibernation
-encryption/authentication.
+Xinliang,
 
-Thanks for James and Ard's comments.
+I will do little more clean up by removing ret variable from
+suspend / resume function and post v2.
 
-Joey Lee 
+>
+>
