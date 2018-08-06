@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06B49C46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 06:19:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7912BC46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 06:19:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9EF05219DB
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 06:19:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 16314219DD
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 06:19:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=axentia.se header.i=@axentia.se header.b="ZMG20aGG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EF05219DB
+	dkim=pass (1024-bit key) header.d=axentia.se header.i=@axentia.se header.b="C6+OMh6V"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16314219DD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=axentia.se
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726982AbeHFI1G (ORCPT
+        id S1727104AbeHFI1R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 04:27:06 -0400
-Received: from mail-eopbgr60107.outbound.protection.outlook.com ([40.107.6.107]:37280
+        Mon, 6 Aug 2018 04:27:17 -0400
+Received: from mail-eopbgr60096.outbound.protection.outlook.com ([40.107.6.96]:49134
         "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725735AbeHFI1G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 04:27:06 -0400
+        id S1725735AbeHFI1R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 04:27:17 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axentia.se;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BJiRPGcq/TXCn6LuAiRJ8Ru16DoMGais5tmtIH2xYHY=;
- b=ZMG20aGGqVyc2HV4ALoXBMF0iyjyipnFKAzRHch8tDjZhipjSRd3JX5IZY2DH6/6Yg1bJde+/ZQBchw2VkZah3JRptiNfCZ4tKIHkwb19aoDioIPLy6XqA5Zt76QleU1C7ovA/vxiRsNiGBB9FoalpK5FBCkAJ/wXoM9GFpe6dQ=
+ bh=dcca0Yh3z2Xre7AtX5CvsPKq/YapidH8+EOSUrRxFAQ=;
+ b=C6+OMh6VgKHK21dS2i7UZZne7ALK8s3KF1rpIlvvgW7jf5SWgL1FlDSu3Kdayd+nzvs8pGJ83mSdtGUxUnXra36KAIVnsHyrOAKYmJz8vo/6XI96UGcuo6tmkCICBdNMaOoaX6sP8r3HRSSTnMvLNWQjIJ6p5yI4sk7loyYPh4Y=
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=peda@axentia.se; 
 Received: from orc.pedanet (85.226.244.23) by
  DB6PR0201MB2455.eurprd02.prod.outlook.com (2603:10a6:4:35::7) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1017.18; Mon, 6 Aug 2018 06:19:28 +0000
+ 15.20.1017.18; Mon, 6 Aug 2018 06:19:37 +0000
 From:   Peter Rosin <peda@axentia.se>
 To:     linux-kernel@vger.kernel.org
 Cc:     Peter Rosin <peda@axentia.se>,
@@ -46,9 +46,9 @@ Cc:     Peter Rosin <peda@axentia.se>,
         Benjamin Gaignard <benjamin.gaignard@linaro.org>,
         Vincent Abriou <vincent.abriou@st.com>,
         dri-devel@lists.freedesktop.org, Daniel Vetter <daniel@ffwll.ch>
-Subject: [PATCH v2 1/2] drm/sti: do not remove the drm_bridge that was never added
-Date:   Mon,  6 Aug 2018 08:19:09 +0200
-Message-Id: <20180806061910.29914-2-peda@axentia.se>
+Subject: [PATCH v2 2/2] drm: bridge: document bridge attach/detach imbalance
+Date:   Mon,  6 Aug 2018 08:19:10 +0200
+Message-Id: <20180806061910.29914-3-peda@axentia.se>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180806061910.29914-1-peda@axentia.se>
 References: <20180806061910.29914-1-peda@axentia.se>
@@ -59,49 +59,49 @@ X-ClientProxiedBy: HE1PR05CA0334.eurprd05.prod.outlook.com
  (2603:10a6:7:92::29) To DB6PR0201MB2455.eurprd02.prod.outlook.com
  (2603:10a6:4:35::7)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 24bbea72-9ecf-4345-be0d-08d5fb649132
+X-MS-Office365-Filtering-Correlation-Id: 42310688-cc23-490c-c1fa-08d5fb6496b4
 X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(7021125)(8989117)(5600074)(711020)(4534165)(7022125)(4603075)(4627221)(201702281549075)(8990107)(7048125)(7024125)(7027125)(7028125)(7023125)(2017052603328)(7153060)(7193020);SRVR:DB6PR0201MB2455;
-X-Microsoft-Exchange-Diagnostics: 1;DB6PR0201MB2455;3:E1zvlA8xzgh1Vp2n1B/OLp0pMFd/OsZt0/LHbbnaSV7/KRSs4fk0Qs/jxFt0C33SY72TZgH6SSb0BF8R2zpnSaAWCCyiD+3sSWJY4hrsmWxbZfyW4cmiO194ynopRaRkaxlZikfDo6YUBnUBOuLyAj3J3nxJAj+MsI935T2Th3PwekSCbj5eg7KHI2/WbjrBHG+L3oWBrhWOXYtXtQtLOxSAFiseZdvzVQnalKxkbHL80ynjuP1GjIvgrolj4YMj;25:JjJq28pGOj1dY5muSUDO2mULrW18LYHTMwGRmi5Bm02nKO1K+oap/nV6Gpdt1sJSY0MwPJtXBg3m85hovP7lfHQoY2zw0gRwEJEb8OMuXwe8L+xcYeLNHTKRGDHD6paLOQXmQHrs2JAoLi39tnEUL5gcBimBjhaN2jvl9ETmGb15drvDnZn0X/kKcQTGtUaYUUvXNsI7wt5rFyCt6p3t9Evs6f9WxGZC82SFHLbv2yy+WN+CepGfi2YuzcpWyi02Z1rHg9gU0t+EiVe/N9ZAZf3WZqkFhVyVwoh1k+FDRnK+hPzxzT620dgn2NNOOhmadIt5nRSdRB+XvN8Qp3KHxw==;31:bhYxh1uCniDuqIS6hCcgFg0L6VC+PLGAT7SUCnosj1VYJJIjknnS2QPCgeD7L8NL6UKxVboq8GxW7rPJhmrPauoJ4+7hngvXb+CIen0XDitfJO8BOwr5MxiOjQVzBu/z9X0vz0koyQ9X+umd4oRdzyiFmaH8DOAAtFijB75CsizCdwn6b4m8ea13r0p95VcBT6JZnRvVh8eU0W0PSGlMqPGN5XmOWIZLRv7xIB1qavc=
+X-Microsoft-Exchange-Diagnostics: 1;DB6PR0201MB2455;3:j/zK3B7lmAyFxXhQ4mP5QGe1OM9Y/6hBDTbGQ595VlmaUCHRXYIPc/jq1FS81B+kLsWbsdVUxWFeEInsriVcL3yME7b+DOPW6BhwpnIXnTsQeHDFPQUew3NfJHxOyiiCAZmg3COnA4dxWNFXAT5VKQ4+c2L6lemWe0wNCqFTq6nuuu9x8cV1DeD3V9y4fnQVx5M9isLZ9LKbHNSKvYweRiIMhOV3lZTWReTl5I6IOKjUU9A6N9vczC1mQ76Q7Ssd;25:jomSuoEIFtOXPFrhM4JNj63KqNoVC4SeT1bU4zMJRs28i4II6sxXPvyty21++loeIfeBS00uUe3kigj6mgka5kbRPjbNpnT4Jv/Xp7t5o0raAu4okpCZStkoUsItPgUKHLOr+z3liuQR+B7s/qAzlROOsSDYImsui0HTD+05QzW8NE7l/HCbYibx677aIgVAZaxZcsLxA/M1XJ0u6EEE6WqayA1Hrwqv1l4ginVA1qjQ2kxd4IPN9wG4tnWk8Y5ept6V+vgRcy50wIdZrt6+GBDxXCAThhG0lISboT4rO8+Sr3lSrdVtjYi1UW9rf3x/2AAanoc/GcmhGFq4wVvoGA==;31:zketCYhze2f8kIkks2pkmkJuwJgO/LpAFHA6zwcJC8rKQqrKRl5vqw0qqXXfJ654V2gU1noPhSAAD2FuRjkZZ/TMdMmas0Z0qikrbHrkwd2y117EK9E08iqmQSwSxmXfjxrZ0znzI9RIJuIGpkfDQANc6g+o7iEiKsnfToJkzJPFvFU02YY0iYaS1HctFtjr7TTKk5tn7WD4unFimsiPBiCKjanhTZgaY4+igNHfXG4=
 X-MS-TrafficTypeDiagnostic: DB6PR0201MB2455:
-X-Microsoft-Antispam-PRVS: <DB6PR0201MB2455DEC156169EC41583C292BC200@DB6PR0201MB2455.eurprd02.prod.outlook.com>
+X-Microsoft-Antispam-PRVS: <DB6PR0201MB245514BB3E4883D713ADB909BC200@DB6PR0201MB2455.eurprd02.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:;
 X-MS-Exchange-SenderADCheck: 1
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(10201501046)(3231311)(944501410)(52105095)(93006095)(93001095)(3002001)(149027)(150027)(6041310)(20161123564045)(20161123562045)(20161123558120)(2016111802025)(20161123560045)(6072148)(6043046)(201708071742011)(7699016);SRVR:DB6PR0201MB2455;BCL:0;PCL:0;RULEID:;SRVR:DB6PR0201MB2455;
-X-Microsoft-Exchange-Diagnostics: 1;DB6PR0201MB2455;4:w/26OB43hSZpOPtptSkQHh2qo5UxX7tuxOyDluOqob2UnHJREN8BR3/EH9sNtvIjAWIWVO58uvZHiU0LIjz/CyM7jgYagcxAQzkoOxuogREm6YtHTJfnPpsAa2bUTU7gYtyoE+qMT2jQ73QgBo5799h9tp1rDYHxPHeE7mNvI+rAWstSsIixheGrt3Qw1MQ94XfFP5UY6RpTrNw7Q8ikyS5QKBZ/PX16ONBq9tleLeOvJ64gngzlEZTy9TXWSaguHNnqE0geWz8kCMnH6hgBSA==
+X-Microsoft-Exchange-Diagnostics: 1;DB6PR0201MB2455;4:DWW3M1Xy9is4Mw+FnKJszX/Iopb6k2L689+fWzPQir45SU3XVt1A2+nEQp9CoxsCKmad0Y3QNIKOYCep5e97Hgu2k2OSzaVRZoHUTemwnkD6USU9TKEM39G57JV6hfCghO8g64jbbGIxqABZiLXAxSJO7SAUXDW/SwfZWTqjSj/bCckTeZdQuyo4vx4M+tmHCUEFZrlPJrH/FCe+BeBgKiFvpI1hQq+4oj704idw4GOZkbS89gIeqHBBtc31EWSNFixGm3XERrAEqLHelSGF2Q==
 X-Forefront-PRVS: 07562C22DA
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(366004)(39830400003)(396003)(136003)(346002)(376002)(199004)(189003)(2351001)(11346002)(106356001)(446003)(74482002)(105586002)(316002)(4326008)(47776003)(6116002)(386003)(66066001)(3846002)(25786009)(6506007)(16526019)(186003)(1076002)(97736004)(956004)(50466002)(48376002)(2616005)(476003)(68736007)(486006)(76176011)(2361001)(26005)(16586007)(52116002)(8676002)(53936002)(478600001)(6512007)(36756003)(86362001)(305945005)(5660300001)(54906003)(81156014)(8936002)(6486002)(2906002)(6666003)(6916009)(81166006)(51416003)(50226002)(7736002)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:DB6PR0201MB2455;H:orc.pedanet;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(366004)(39830400003)(396003)(136003)(346002)(376002)(199004)(189003)(2351001)(11346002)(106356001)(446003)(74482002)(105586002)(316002)(4326008)(47776003)(6116002)(386003)(66066001)(3846002)(25786009)(6506007)(16526019)(186003)(1076002)(97736004)(956004)(50466002)(48376002)(2616005)(476003)(68736007)(486006)(5024004)(76176011)(14444005)(2361001)(26005)(16586007)(52116002)(8676002)(53936002)(478600001)(6512007)(36756003)(86362001)(305945005)(5660300001)(54906003)(81156014)(8936002)(6486002)(2906002)(6666003)(6916009)(81166006)(51416003)(50226002)(7736002)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:DB6PR0201MB2455;H:orc.pedanet;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 Received-SPF: None (protection.outlook.com: axentia.se does not designate
  permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DB6PR0201MB2455;23:5fXkhIlo7+XJUcBHdihQs+NdNRKBdVXs6wBwvaW?=
- =?us-ascii?Q?75l47YOw7dD/hyQtaWUV58AK7zJ5gUO8HbJ/7p6JwEaHMEinWBErioaT3jEp?=
- =?us-ascii?Q?/D97c9lA4CGiJaVKBGE97GmXjXo6+/IWoybEaLoXNl7VeuDH2ZT1xEKS9/fz?=
- =?us-ascii?Q?o3KMjzQjlbefZsDCp2yqE6h7c+P4o4a/wPajEwQlt3kQCNXEEETVaW42Qt+g?=
- =?us-ascii?Q?BOM7tM+eAVxOx1HTVGFuQPGGCN+ouI0X14frLb02VXUxaTdj5F4hWg6uSY3a?=
- =?us-ascii?Q?w94FibH53Jx9GkU3M2aNs9o5BrBcbeIYrJBOLSulP/B3i1xYgLGzHZ/vAvtQ?=
- =?us-ascii?Q?iOOt1jba1a5Zu+Zp7YexhdTNnFV1A/RpozuktTXvIlHpatQ2DDEBTj4diDu/?=
- =?us-ascii?Q?ppeOQgRqKr+x9ICYYDpPW7HDqUF8P2t6fxQbC2uPO/XVwg0Ut5F6wijAPkjQ?=
- =?us-ascii?Q?7IazIPu5AYMZnc9T8ntulGOlI2W1sZjpqqLbQINHfKQF3WzbZ1WthiAJ6b9y?=
- =?us-ascii?Q?IPevNzi4vNCeVbVD47dL1V3ZlYvPYrLENyqrRqXzKu6jdvURiShXuwHjTOAr?=
- =?us-ascii?Q?LXfhhbZ4Zkft6AdUPgyor5zkSVEEqbKGeMkwbxsaesVlY5RHGmGshZAtVrPG?=
- =?us-ascii?Q?9447hQKna11HOC/reOXtWRw4HhAa10KJzpbQTNXQ9LIh+DFnoYMslHwh3tUO?=
- =?us-ascii?Q?dwTfnQr/U29OFbYYhEvT/JLtESYy+d4tL2UNzr0sBfwMhDdOlnZA3u42KzZZ?=
- =?us-ascii?Q?7W4l1HO64I0EE/LF8Sruv3L3YIZCDUKTwJuALd5Y6CsFwzPDbUH+b4/U+YIM?=
- =?us-ascii?Q?xiVV1ZsC3YTIiIK6QjXMV09VOZRWzXLWu0HnpZiCpynGX8VeQEhJse3iWYLk?=
- =?us-ascii?Q?imcle/LJDSNiv+FIQpc1oW1Zc9vEZh+Nhe93NC7Fwf8kAYUAreDGrsn6G0G2?=
- =?us-ascii?Q?bJU+Q7Kija+F3udIcrNOby+3MEEzh6NtIK/Jlnc8xz5HK30i3CIulOSVLDU5?=
- =?us-ascii?Q?QwNTbni6Yyn57BzZhPLLSDb+a4xVTuQDI2uMx9EiwNLhp8ojIiIR1eP6y+nk?=
- =?us-ascii?Q?phUbHMu2QcHIfqlgqbX3ZBawQI8GW+/jdNwgmEkKTkuiWcbcfFEHZkUten06?=
- =?us-ascii?Q?XtEwZkFQHvsuTQ7v27E5La4KXma8rG7Uf3QqqkpahPUa4OLbQ0yka+W/kg2i?=
- =?us-ascii?Q?i8ohDbr2FFO7Rn/jV11HcTFCiWSRMy3dPwmcfCJ4fwc7mRHIM0E7s6yaNx15?=
- =?us-ascii?Q?4dY4+e87+Fvq4NrIgNY0HmGN4dhfip1UoD7TrJ4cbC19O7/CoZfs7uxsMYgc?=
- =?us-ascii?Q?Usg=3D=3D?=
-X-Microsoft-Antispam-Message-Info: IW1cEhofaaTdMD7kftFpPR/UjV/C/BKIc/uAmlPVq38w6Bf7fWeCqzxEJBa0gvJCmCPqy6REKOrhJav4B13uZAbk7KV/+Alvx0IK6tZRrH/ePBNLVivkbf5eSwgkRjloBRlsC1on3BZizyKMwtCif4MOdXHt+YuurdACNIEE2MCnsECkjPVVGM0lPgYpPGiuoGwEvKQOT/R302DJFW8cTHiWcFd11vBXpIN7B8nPzf2KUn4O+Mq6afw3tn3krWENhmCtmSkfkkFVmhMsRA+ixMGK7cB/hjDgv+40NiNUKfREb8ztxTfEWXRBtUFdimjOVsQyRTywnl8lFZ2MHPdmOCSF53dgnFj2/d1GHvwQSAk=
-X-Microsoft-Exchange-Diagnostics: 1;DB6PR0201MB2455;6:XxYR44QL2IWtWUBltYEm1nJRejRIx9sjYI8GXVmtphyNpuZ80A9gmYKnCYyK0JgILDK2cErf9yoyEpLvzxLx3366Q+IHe3k5x4mN5SP1Rby6/lJnxNlbsqe49EYp/pMmmB0iobftl+yoImj4z03sDuUoES2GmE9arLkur0UQZ+NREl0tCbR7WUSFKwiiQ47Xs7CoIT+vXPHdVx5TL7CxHW3k4BQCrbjYREpdHDKjINO6QsSV7+Ohq0AkJkgiZm1AtIpbJ505PwM2kt/6gku2yV5UXUszHBEFjwFNU/iPlN9PaaZ0vrBvCBIReBjAkEX8zB7FTuvf8oZwfogd7yhZm8nKJrWtBzZTLxE+DrCx2jSyhd1B/Javlf3BdpybgrPVCol5oUvksuOZ7kYwl6QgE7BXjEe472Utzmt0FCH7BLyrZNejkkgNydTxTAcpzXnPqIAMsvXIIhMjj1FHwTQdAw==;5:mTgttTS/P9yQ6kwV7hf4s1P7siKzyyyhktgB8UmGQ5n4UBHUW/C3/FQMDvcSsoBgARCUup0KTMNPA/KeuQ+dhCCDLen5vvzlmCSCmyqN6GZChseXHQasa5KYyexoeqH3JgPlZdLa6qtQ1yDiseJWuFyfEUt4PAA5mQ2iC5Lv6+c=;7:Nx6cG15AD8rArLKBS9HK44ddo2fH6/xrC3RKHaG28jejuv33MJTqYkM/mrxPA+ZfHvamFw65s4R5lzPosVZJv9Epl6CVLiLVoYf+mTVvbzGr8ptTko+5Jt1sUa/8AxYqffLlbVfHoZeWGD7Fqrw1eDUT7hPoMx65vJ846CvkCTegJ8xr9u7MfISKukcE+mOOmzpLcnppgS5aeCvmsHyk7lCEtSMtXtKZ6+e3MVGvvdZGs/VU/FPE3YdoumgJcIcP
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DB6PR0201MB2455;23:LhGjsDTETUAW0qzwDjxeHpB5Q9ayGVvOt3oS5ty?=
+ =?us-ascii?Q?nLul5Cwi5whdHp+VYbazNI6eIApXIs5oz/rIlVPnoEhN7+c/reKxs7cA9y5F?=
+ =?us-ascii?Q?BruUdUCPib2xDlOJe9A27GnkyOprrIQKlruEVP1I5gyf9ByfMWbOFPZizuZ6?=
+ =?us-ascii?Q?g5RVuloJXo9diW7ew00XC3z6rP180qvwlNLZjad1BjYNeNXCCXd3zP+4dQeZ?=
+ =?us-ascii?Q?W4YtwWsdxAlLtULAGp01fRLwWDaaW1EPWUtyVvm15SgzC7w+TDyy2kVWZPJN?=
+ =?us-ascii?Q?hhn+R7gRY3akRxWZQa5BPo0zwVXhiPwxnKOINKG2o3ViQoRCvpKVsL65RlvA?=
+ =?us-ascii?Q?Ep46x6NyQiMsJqZfnDy8qyqtgMzv2jeT5NNFh3YnoAHEJdZqAKOcoCnf+HN1?=
+ =?us-ascii?Q?uCE0m62d7Z82NQFlx89m4qyF0QzSIXrLtNE9FXqPSYuY4EliGmLpdKB44Gwg?=
+ =?us-ascii?Q?LVo3MYOm9VwNRr42CaKfVttG9mmSpfNiNRrO1FHI6lqjMHzUF0NhZ+sdmd2s?=
+ =?us-ascii?Q?eJgICl5ynykM50i13YYUm4vXUjbuiyl/INLMN5OGcmhXi/XcZX4GH/YkKDEW?=
+ =?us-ascii?Q?eYk6Im+RYUq/LoXULpqMQqFMbCwN2jfGEy6uy6wVPyTnl/G5gu3I3f++X2QY?=
+ =?us-ascii?Q?fvlTSsMrSCLCH5d/iKlclRv66tQZP7bNqWCavx8j784fYORSPTCEAttorc/8?=
+ =?us-ascii?Q?lJAcxsVigTItwv3J9ew2m4xVRzWZjBxaN0qJUeYR5rrBhL0+w6+/NgzxEg+K?=
+ =?us-ascii?Q?5DIZEY8FrvEWNkZ5TFZiE1KpoJd/QbYxV53rkWd7/jG5QHaQYu3EcQk/Ah9H?=
+ =?us-ascii?Q?uUAxglZ1ft3NIeFrJnZ/u+7XIlqs/R5yaqZAWuCQpd8PqMlPQCZXB/i0SzjH?=
+ =?us-ascii?Q?3H9ByXjCfk3fqgQ9xb+Vy8mgu5U3xZbk4+rrWfePi1k84j7qEqT/p25KEKnF?=
+ =?us-ascii?Q?TpmYk37izn+9r9jyvtFks8nlKPIhpmoxR2IAfNQA4FIsvTiCa1Z2WJi17gQl?=
+ =?us-ascii?Q?tWZev6QeW0RhYWVdVeKsmGis5zMBLBvdAhVjMZPE1NiCc2huzhnJRryYvujl?=
+ =?us-ascii?Q?63HFCW0WT0OMb+p+2uD0D0rbg2CBFoXuGQDrLiXRQWRcOTTeL/dklaU3ypw5?=
+ =?us-ascii?Q?Tb2mvLu21KcH+VbCcda+X4OjwG08gmeWIdzy3OoghUtfCZX6qfWcER28QdcE?=
+ =?us-ascii?Q?nE3PAc8WUEfDwaPMfJ29ot1d0PvakgxCVlvl95RDcL/mWOBx+SYtgxa/MApA?=
+ =?us-ascii?Q?9Fy/0lIypYmvuqDJyn9X5ma2u5dacdVgf9ZJFAWhwZwos856A59l4fht4oCj?=
+ =?us-ascii?Q?fTzlGmPWqUJSHHvtvKXxEsM+UMcoUtKP+d7rsqJeyqvEL?=
+X-Microsoft-Antispam-Message-Info: nkR8kmgjJZhpfMnA4IjouPmaSYiY60ugNkjc/9xfirJtIr8UJ6SMbFgB+17VJ+1j6CHRh2tvLpGX+4o5vgKUL4TpFEYq1mPpb0GGDv+zNrENNh2SASbGaXSeW07yj0g2EXvklD3sXkxBvTE9+hWAGwh5OzRkW15q90ViWYgT/e7tcjaCseLmqt22NxN737Bwk/VPCumDvOUmVKnLsYFj6wt3Txlq8VMA+djvJ2w0/ZAl8Kj4HP6BnByQqCuSjvbr19fWd1MeNYnPx3qJNnXlOs89OZ9ptoFjE4Mcle+C+R9bibqJ6rKY/H479wCIUuozD9hYtUlWHYVJMgNQ0W5Hy8daQP0JPIWahKU+fK/aTn4=
+X-Microsoft-Exchange-Diagnostics: 1;DB6PR0201MB2455;6:D9RdqURd+3oJVlUxxXsCnSAUJc+z6mcIzsmqSYTUAxUrwc12OcSMcfa7dZCxOdDjFtVBnaooznhzu/MqfHnb02/APPtkHiPO7nEGgVQINAaWo3QMxFoPv+rf/kVFSvQx/+ZTx/53uSPnYLvWB1qUjMSFnB18/tZOLuedtxvE0GKu6PPzmokHfDXBoPTOGr/Uj5T8k+NCZkENFup8yCAnSwjDeuYaOWrfEhd+GXEcWx4hW17W4mmblOihlFKpzC7rNUkftRK1q4gCOg0gZ2mNDP+rX6HWyp3VDcNV/jpCAjw1lYQkkui8zOmXTkZbBYGmD4WElWxi+qfPW37zZON9d13isVYHHRr1hRM7R3fm63oXx8vIxCxK+zmtClmOlW/X5jFcZ59QdIe7qEpD9izAW1gey2P378X0ZxUM9u3Z7iFxvWrnVEg5A/iYeKZo+//y6DKvPBZchIsCXL5q72EstQ==;5:K2u425s5P9SeT6DWp+PImVQRbJfYjSvUcDRno3PaWN98qAY7PyXzhRKzcOn4qhl/FV/o+koIjGhF9vOfXx6bAuF2tWQ7uF4rQVXhbnkrEZsumVL7jrqZb0I24kW69PvpJBH9ICipKiwJGPazfoWzVCG2ZHaPUWyvhDK2bxesGKY=;7:MeqsjAl95Egr3W68/opZ3WZS0/U6qIS6SdrdyyYOQ7g6YrA+l8v85bqsfqERFsLYZWIGpXVYxcfLC6DuoPdYqxroktfNhB5s1ER21lPz8X8me7cDCH8EoBT1IMbnYWOUrV9p+K7LbkhmtibicUSIhBFaxbRDUbfJ0l/kkJ+vFqAtqn9YSF2K4ks4gafWWTwXTUdLyL0D3lFW4pEcnYt9iHfLC7TW9XvtOO0fP2rDu4L285iDW0NVjwPtoQyxkJyQ
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
 X-OriginatorOrg: axentia.se
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2018 06:19:28.6299 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 24bbea72-9ecf-4345-be0d-08d5fb649132
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2018 06:19:37.8686 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 42310688-cc23-490c-c1fa-08d5fb6496b4
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 4ee68585-03e1-4785-942a-df9c1871a234
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0201MB2455
@@ -110,46 +110,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Removing the drm_bridge_remove call should avoid a NULL dereference
-during list processing in drm_bridge_remove if the error path is ever
-taken.
+Since 4a878c03d562 ("drm: bridge: Detach bridge from encoder at encoder
+cleanup time"), it is generally no longer correct to detach bridges from
+encoders manually. Document that.
 
-The more natural approach would perhaps be to add a drm_bridge_add,
-but there are several other bridges that never call drm_bridge_add.
-Just removing the drm_bridge_remove is the easier fix.
-
-Fixes: 84601dbdea36 ("drm: sti: rework init sequence")
-Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
 Signed-off-by: Peter Rosin <peda@axentia.se>
 ---
- drivers/gpu/drm/sti/sti_hda.c  | 1 -
- drivers/gpu/drm/sti/sti_hdmi.c | 1 -
- 2 files changed, 2 deletions(-)
+ drivers/gpu/drm/drm_bridge.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/gpu/drm/sti/sti_hda.c b/drivers/gpu/drm/sti/sti_hda.c
-index 67bbdb49fffc..199db13f565c 100644
---- a/drivers/gpu/drm/sti/sti_hda.c
-+++ b/drivers/gpu/drm/sti/sti_hda.c
-@@ -721,7 +721,6 @@ static int sti_hda_bind(struct device *dev, struct device *master, void *data)
- 	return 0;
- 
- err_sysfs:
--	drm_bridge_remove(bridge);
- 	return -EINVAL;
- }
- 
-diff --git a/drivers/gpu/drm/sti/sti_hdmi.c b/drivers/gpu/drm/sti/sti_hdmi.c
-index 58f431102512..932724784942 100644
---- a/drivers/gpu/drm/sti/sti_hdmi.c
-+++ b/drivers/gpu/drm/sti/sti_hdmi.c
-@@ -1315,7 +1315,6 @@ static int sti_hdmi_bind(struct device *dev, struct device *master, void *data)
- 	return 0;
- 
- err_sysfs:
--	drm_bridge_remove(bridge);
- 	hdmi->drm_connector = NULL;
- 	return -EINVAL;
- }
+diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
+index 1638bfe9627c..ba7025041e46 100644
+--- a/drivers/gpu/drm/drm_bridge.c
++++ b/drivers/gpu/drm/drm_bridge.c
+@@ -104,6 +104,10 @@ EXPORT_SYMBOL(drm_bridge_remove);
+  * If non-NULL the previous bridge must be already attached by a call to this
+  * function.
+  *
++ * Note that bridges attached to encoders are auto-detached during encoder
++ * cleanup in drm_encoder_cleanup(), so drm_bridge_attach() should generally
++ * *not* be balanced with a drm_bridge_detach() in driver code.
++ *
+  * RETURNS:
+  * Zero on success, error code on failure
+  */
 -- 
 2.11.0
 
