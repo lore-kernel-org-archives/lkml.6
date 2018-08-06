@@ -3,108 +3,122 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73ACEC46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 23:57:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB807C4646D
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 23:58:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2757A21A16
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 23:57:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E198208A5
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 23:58:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="l4L6vyqU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2757A21A16
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FRcYakCZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E198208A5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388309AbeHGCJQ (ORCPT
+        id S2388453AbeHGCKF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 22:09:16 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:47740 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728187AbeHGCJQ (ORCPT
+        Mon, 6 Aug 2018 22:10:05 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:39382 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732394AbeHGCKF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 22:09:16 -0400
-Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id F0C3157;
-        Tue,  7 Aug 2018 01:57:43 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1533599864;
-        bh=xp4B6yJQBpkhKKnt2O6K7WK2Z4I3CNAn83p9oTHIKyk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=l4L6vyqU8+8x1FsVnBXldp12ELnK3gK0yrTO69bpOYdWm9mORnJyt8jqSF2AnsT+h
-         3HaHIOnWSPSsliWOAf3RoH08aURtiCfyx6O+evcXXCeJDumlLIFEZbN2AVvqnW46bC
-         9T7kjNHtcyVcwBel2oBh6WpsP3xVlS4sO/lGT+jo=
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Nadav Amit <namit@vmware.com>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] usb: fix uvc_alloc_entity() allocation alignment
-Date:   Tue, 07 Aug 2018 02:58:27 +0300
-Message-ID: <15813968.YrTFj7ZbY9@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <20180604134713.101064-1-namit@vmware.com>
-References: <20180604134713.101064-1-namit@vmware.com>
+        Mon, 6 Aug 2018 22:10:05 -0400
+Received: by mail-wm0-f68.google.com with SMTP id q8-v6so16121824wmq.4;
+        Mon, 06 Aug 2018 16:58:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=B3rsPEdb5Hpz4RchKdgBtO0OTELLFpI8qp1QdKfH8Dw=;
+        b=FRcYakCZOCTxAiVLjQCJFPRelCVxXLSPLpsmMYTxphb6hBg8xvkfzTe1CMeuzzC5cW
+         DOZzZIbUblIOw0ZDZQNX3TeFar72UzZWoZnlfN3vwXfFquUCK6EKJIQPDhvSXEohmHLu
+         sZQoqF4wnE7AlfFhbG19SSfOxJ7gN3lVw5pZTlv/A9dHODcRS7SpQ9DsxsEDdsaDzdgU
+         OLcXa/l7mao+OIwBXf0tNbLrWzJJUzUvhbn4etPZjprpSpBhjMYw7wmiAO26m6eUSvik
+         P4k4p2ipK86ThqaaXsxeSSqjw0kyYQIj65evkf9gFLQ33IpGHjpaH3aRPeOvN9RxHfkt
+         OyIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=B3rsPEdb5Hpz4RchKdgBtO0OTELLFpI8qp1QdKfH8Dw=;
+        b=RVy9CJKzABvfSrLPLehWXuM8q6Q4VJOsJolmPM8NOPpNylSD9NP8H5gFpVuMQpMdVA
+         OHzY93MHwIgTC/59nRGVYVZ5529HoaNXjXov6pejaTeIlNPEBma6gbtPN3e7BFj8+dMm
+         o++H0cJGVFYK0mefF3LiOkt9idDPJlWUrBnVIn1Q0BmJAL91rxFYRnvflPKhj0ze9eab
+         yTq63sdV2Kb4naSmojcAJiyU550eKHJZsd/JN1frI+2MOa3C6biQc7q0LJgYd7nWf4um
+         1UkX5RIfsFL6FPFR1m+1+KNrnpEWrn/9Aop4y7Qga3kbCnb3I/PKUlP3SlQIB9Nzqa2e
+         q/XQ==
+X-Gm-Message-State: AOUpUlEaW3yMCEpSIR/iNYHJ20LZoqHOfR9slZ42XZJK2E9Uz7r+vaor
+        E2cWPxv3Wqvy2d06TQJVt9easRuY
+X-Google-Smtp-Source: AA+uWPzo4XeaebpwWb9rz0taaAF88ICfCDWEX9oogiu+iygdO7R4NemgFrpqRoTUdoAH6fFn1ITCsA==
+X-Received: by 2002:a1c:b6d6:: with SMTP id g205-v6mr115833wmf.17.1533599912335;
+        Mon, 06 Aug 2018 16:58:32 -0700 (PDT)
+Received: from [192.168.1.4] (ip-86-49-107-50.net.upcbroadband.cz. [86.49.107.50])
+        by smtp.gmail.com with ESMTPSA id i205-v6sm115325wmf.30.2018.08.06.16.58.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 06 Aug 2018 16:58:31 -0700 (PDT)
+Subject: Re: [RFC PATCH v2 01/12] mtd: rawnand: ams-delta: Assign
+ mtd->dev.parent, not mtd->owner
+To:     Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-doc@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180718235710.18242-1-jmkrzyszt@gmail.com>
+ <20180806222918.12644-1-jmkrzyszt@gmail.com>
+ <20180806222918.12644-2-jmkrzyszt@gmail.com>
+From:   Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <604ff0fb-07d5-9068-2f69-41198f3d9854@gmail.com>
+Date:   Tue, 7 Aug 2018 01:54:10 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20180806222918.12644-2-jmkrzyszt@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Nadav,
+On 08/07/2018 12:29 AM, Janusz Krzysztofik wrote:
+> Fix missing mtd->dev.parent assignment and drop useless mtd->owner.
 
-Thank you for the patch.
+You fail to explain why this fix is required.
 
-On Monday, 4 June 2018 16:47:13 EEST Nadav Amit wrote:
-> The use of ALIGN() in uvc_alloc_entity() is incorrect, since the size of
-> (entity->pads) is not a power of two. As a stop-gap, until a better
-> solution is adapted, use roundup() instead.
-> 
-> Found by a static assertion. Compile-tested only.
-> 
-> Fixes: 4ffc2d89f38a ("uvcvideo: Register subdevices for each entity")
-> 
-> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-> Cc: linux-media@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> 
-> Signed-off-by: Nadav Amit <namit@vmware.com>
+> Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
 > ---
->  drivers/media/usb/uvc/uvc_driver.c | 2 +-
+>  drivers/mtd/nand/raw/ams-delta.c | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/media/usb/uvc/uvc_driver.c
-> b/drivers/media/usb/uvc/uvc_driver.c index 2469b49b2b30..6b989d41c034
-> 100644
-> --- a/drivers/media/usb/uvc/uvc_driver.c
-> +++ b/drivers/media/usb/uvc/uvc_driver.c
-> @@ -909,7 +909,7 @@ static struct uvc_entity *uvc_alloc_entity(u16 type, u8
-> id, unsigned int size;
->  	unsigned int i;
+> diff --git a/drivers/mtd/nand/raw/ams-delta.c b/drivers/mtd/nand/raw/ams-delta.c
+> index 2a8872ebd14a..af313c620264 100644
+> --- a/drivers/mtd/nand/raw/ams-delta.c
+> +++ b/drivers/mtd/nand/raw/ams-delta.c
+> @@ -162,7 +162,7 @@ static int ams_delta_init(struct platform_device *pdev)
+>  	}
+>  
+>  	ams_delta_mtd = nand_to_mtd(this);
+> -	ams_delta_mtd->owner = THIS_MODULE;
+> +	ams_delta_mtd->dev.parent = &pdev->dev;
+>  
+>  	/*
+>  	 * Don't try to request the memory region from here,
 > 
-> -	extra_size = ALIGN(extra_size, sizeof(*entity->pads));
-> +	extra_size = roundup(extra_size, sizeof(*entity->pads));
->  	num_inputs = (type & UVC_TERM_OUTPUT) ? num_pads : num_pads - 1;
->  	size = sizeof(*entity) + extra_size + sizeof(*entity->pads) * num_pads
->  	     + num_inputs;
 
-The purpose of this alignment is to make sure that entity->pads will be 
-properly aligned. In theory the size of uvc_entity should be taken into 
-account too, but the structure contains pointers, so its size should already 
-be properly aligned. This patch thus looks good to me. What made you say it's 
-a stop-gap measure ?
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-and applied to my tree.
 
 -- 
-Regards,
-
-Laurent Pinchart
-
-
-
+Best regards,
+Marek Vasut
