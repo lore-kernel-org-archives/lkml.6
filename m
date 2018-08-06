@@ -2,96 +2,153 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CB04C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 12:46:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5260BC4646D
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 12:48:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5414021916
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 12:46:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5414021916
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 0062321916
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 12:48:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0062321916
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731690AbeHFOzD (ORCPT
+        id S1732053AbeHFO5A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 10:55:03 -0400
-Received: from mga05.intel.com ([192.55.52.43]:63409 "EHLO mga05.intel.com"
+        Mon, 6 Aug 2018 10:57:00 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:54122 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727561AbeHFOzD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 10:55:03 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Aug 2018 05:46:05 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,452,1526367600"; 
-   d="scan'208";a="60224545"
-Received: from fmsmsx104.amr.corp.intel.com ([10.18.124.202])
-  by fmsmga007.fm.intel.com with ESMTP; 06 Aug 2018 05:44:47 -0700
-Received: from shsmsx102.ccr.corp.intel.com (10.239.4.154) by
- fmsmsx104.amr.corp.intel.com (10.18.124.202) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Mon, 6 Aug 2018 05:44:46 -0700
-Received: from shsmsx101.ccr.corp.intel.com ([169.254.1.57]) by
- shsmsx102.ccr.corp.intel.com ([169.254.2.124]) with mapi id 14.03.0319.002;
- Mon, 6 Aug 2018 20:44:44 +0800
-From:   "Wang, Wei W" <wei.w.wang@intel.com>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-CC:     "virtio-dev@lists.oasis-open.org" <virtio-dev@lists.oasis-open.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "mst@redhat.com" <mst@redhat.com>,
-        "mhocko@kernel.org" <mhocko@kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
-Subject: RE: [PATCH v3 2/2] virtio_balloon: replace oom notifier with
- shrinker
-Thread-Topic: [PATCH v3 2/2] virtio_balloon: replace oom notifier with
- shrinker
-Thread-Index: AQHUKwiIDee4cjzfrU+xxAdAaZxPKaStafKAgAUXbID//4McgIAAqoJw
-Date:   Mon, 6 Aug 2018 12:44:42 +0000
-Message-ID: <286AC319A985734F985F78AFA26841F7397222E8@SHSMSX101.ccr.corp.intel.com>
-References: <1533285146-25212-1-git-send-email-wei.w.wang@intel.com>
- <1533285146-25212-3-git-send-email-wei.w.wang@intel.com>
- <16c56ee5-eef7-dd5f-f2b6-e3c11df2765c@i-love.sakura.ne.jp>
- <5B681B41.6070205@intel.com>
- <c8d25019-1990-f0dd-c83d-e4def5b5f7fe@i-love.sakura.ne.jp>
-In-Reply-To: <c8d25019-1990-f0dd-c83d-e4def5b5f7fe@i-love.sakura.ne.jp>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMWY2M2I2YzktZmU3Ni00ZjM2LWE3ZTAtODY4ZGQ0YzUwMmM2IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiKzlhYWcyV3JSdkRZOVwvRVY4cHVnNlhLY0dGUE93WFg4aU5iYXVaWThPbFkrXC9nRCtQV0RuQXdGK0k0U1hFV1dwIn0=
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1727561AbeHFO5A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 10:57:00 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 980F2207B5; Mon,  6 Aug 2018 14:47:59 +0200 (CEST)
+Received: from qschulz (AAubervilliers-681-1-99-143.w90-88.abo.wanadoo.fr [90.88.4.143])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 3B32D206A6;
+        Mon,  6 Aug 2018 14:47:59 +0200 (CEST)
+Date:   Mon, 6 Aug 2018 14:47:59 +0200
+From:   Quentin Schulz <quentin.schulz@bootlin.com>
+To:     Andrew Lunn <andrew@lunn.ch>
+Cc:     alexandre.belloni@bootlin.com, ralf@linux-mips.org,
+        paul.burton@mips.com, jhogan@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, davem@davemloft.net, kishon@ti.com,
+        f.fainelli@gmail.com, linux-mips@linux-mips.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, allan.nielsen@microsemi.com,
+        thomas.petazzoni@bootlin.com
+Subject: Re: [PATCH 07/10] dt-bindings: phy: add DT binding for Microsemi
+ Ocelot SerDes muxing
+Message-ID: <20180806124759.7e2uz7jvoycalris@qschulz>
+References: <cover.aa759035f6eefdd0bb2a5ae335dab5bd5399bd46.1532954208.git-series.quentin.schulz@bootlin.com>
+ <cd75c96640cc7fe306ee355acb1db85adb5b796f.1532954208.git-series.quentin.schulz@bootlin.com>
+ <20180730133448.GD13198@lunn.ch>
+ <20180801082413.2mjm52vwxw3anun6@qschulz>
+ <20180801143147.GA16322@lunn.ch>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="dwtbtpadbufkaztq"
+Content-Disposition: inline
+In-Reply-To: <20180801143147.GA16322@lunn.ch>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gTW9uZGF5LCBBdWd1c3QgNiwgMjAxOCA2OjI5IFBNLCBUZXRzdW8gSGFuZGEgd3JvdGU6DQo+
-IE9uIDIwMTgvMDgvMDYgMTg6NTYsIFdlaSBXYW5nIHdyb3RlOg0KPiA+IE9uIDA4LzAzLzIwMTgg
-MDg6MTEgUE0sIFRldHN1byBIYW5kYSB3cm90ZToNCj4gPj4gT24gMjAxOC8wOC8wMyAxNzozMiwg
-V2VpIFdhbmcgd3JvdGU6DQo+ID4+PiArc3RhdGljIGludCB2aXJ0aW9fYmFsbG9vbl9yZWdpc3Rl
-cl9zaHJpbmtlcihzdHJ1Y3QgdmlydGlvX2JhbGxvb24NCj4gPj4+ICsqdmIpIHsNCj4gPj4+ICvC
-oMKgwqAgdmItPnNocmlua2VyLnNjYW5fb2JqZWN0cyA9IHZpcnRpb19iYWxsb29uX3Nocmlua2Vy
-X3NjYW47DQo+ID4+PiArwqDCoMKgIHZiLT5zaHJpbmtlci5jb3VudF9vYmplY3RzID0gdmlydGlv
-X2JhbGxvb25fc2hyaW5rZXJfY291bnQ7DQo+ID4+PiArwqDCoMKgIHZiLT5zaHJpbmtlci5iYXRj
-aCA9IDA7DQo+ID4+PiArwqDCoMKgIHZiLT5zaHJpbmtlci5zZWVrcyA9IERFRkFVTFRfU0VFS1M7
-DQo+ID4+IFdoeSBmbGFncyBmaWVsZCBpcyBub3Qgc2V0PyBJZiB2YiBpcyBhbGxvY2F0ZWQgYnkg
-a21hbGxvYyhHRlBfS0VSTkVMKQ0KPiA+PiBhbmQgaXMgbm93aGVyZSB6ZXJvLWNsZWFyZWQsIEtB
-U0FOIHdvdWxkIGNvbXBsYWluIGl0Lg0KPiA+DQo+ID4gQ291bGQgeW91IHBvaW50IHdoZXJlIGlu
-IHRoZSBjb2RlIHRoYXQgd291bGQgY29tcGxhaW4gaXQ/DQo+ID4gSSBvbmx5IHNlZSB0d28gc2hy
-aW5rZXIgZmxhZ3MgKE5VTUFfQVdBUkUgYW5kIE1FTUNHX0FXQVJFKSwgYW5kDQo+IHRoZXkgc2Vl
-bSBub3QgcmVsYXRlZCB0byB0aGF0Lg0KPiANCj4gV2hlcmUgaXMgdmItPnNocmlua2VyLmZsYWdz
-IGluaXRpYWxpemVkPw0KDQpJcyB0aGF0IG1hbmRhdG9yeSB0byBiZSBpbml0aWFsaXplZD8gSSBm
-aW5kIGl0J3Mgbm90IGluaXRpYWxpemVkIGluIG1vc3Qgc2hyaW5rZXJzIChlLmcuIHpzX3JlZ2lz
-dGVyX3Nocmlua2VyLCBodWdlX3plcm9fcGFnZV9zaHJpbmtlcikuDQoNCkJlc3QsDQpXZWkNCg==
+
+--dwtbtpadbufkaztq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Andrew,
+
+On Wed, Aug 01, 2018 at 04:31:47PM +0200, Andrew Lunn wrote:
+> > > Maybe this should be serdes-mux? The SERDES itself should have some
+> > > registers somewhere. If you ever decide to make use of phylink,
+> > > e.g. to support SFP, you are going to need to know if the SERDES is
+> > > up. So you might need to add the actual SERDES device, in addition to
+> > > the mux for the SERDES.
+> > >=20
+> >=20
+> > I'm not sure to follow.
+> >=20
+> > To be honest, I might have mislead you. The whole configuration of the
+> > serdes is in the hsio register address space. For now, muxing is the
+> > only reason there is a driver for the serdes but there are other things
+> > that can be configured (though not used yet): de/serializer, input/outp=
+ut
+> > buffers, PLL, ... configuration registers for the SerDes.
+>=20
+> When you are using the SERDES for networking, you need to know if the
+> SERDES has achieved sync. For example, when the SERDES connects to an
+> optical SFP module, the SERDES bit stream continues unmodified over
+> the optical link to the SERDES in the peer. The optical module can
+> tell you if it is receiving optical power, but it cannot tell you if
+> the optical signal makes any sense. The SERDES however knows how to
+> decode the bitstream, sync to it, etc. So you need some registers in
+> the SERDES to get this status information. Typically, you can also get
+> access to the SGMII/1000Base-X code word, so you can do
+> auto-negotiation, or know if you need to send each bit 10 or 100 times
+> in order to do 100Mbps or 10Mbps. If you are connecting to a PHY which
+> can do > 1Gbps, you need to change the SERDES between SGMII,
+> 1000Base-X, 2500Base-X, etc. Before you can say the link is up, you
+> want the PHY to tell you it has link to its peer PHY, and you want to
+> know the SERDES is ready. Typically the SERDES is last, since you
+> don't know what to configure the SERDES to until the PHY is finished
+> negotiating the link to its peer.
+>=20
+> If you look at any of the Marvell SERDES interfaces, found in PHYs or
+> switches, there are dozens of registers for controlling the SERDES.
+>=20
+> Now, it could be we don't have a clear definition of what a SERDES
+> is. The Marvell documents has a lot in its definition of SERDES, where
+> as what you could be purely a 'dumb' parallel to serial convert, and
+> all the rest of the logic is in the Ethernet MAC and the PCIe device?
+>=20
+> Now, back to my original point. Where are the registers for 'the rest
+> of this logic'? If they are in the MAC address space, we don't have a
+> problem. If they are somewhere else, maybe you will need to add
+> another device. What is this device called? That is why i'm trying to
+> differentiate between the 'SERDES-MUX' and the 'SERDES'.
+>=20
+
+If I've correctly read the datasheet of the switch, the sync status bit
+is in the MAC address space. Same for 1000BASE-X/SGMII, autonegotiation.
+
+The point I was trying to make was that this driver isn't only for
+"muxing". There are also a handful of registers for
+(electronically-related ?) features of SerDes (e.g. "control of phase
+regulator logic", "deserializer phase control", a few
+thresholds/hysteresis/frequencies, etc...
+
+I understand that "serdes" isn't also fully matching the work done by
+this driver as some features are handled within the MAC controller
+address space.
+
+Let me know if something bothers you/does not make sense,
+Thanks,
+Quentin
+
+--dwtbtpadbufkaztq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEXeEYjDsJh38OoyMzhLiadT7g8aMFAltoQ38ACgkQhLiadT7g
+8aNNmRAAj3K9XzeEroN7RKAVvgvpx7JR0bTMte0G2EebUPsrmM1SYW9MD7zypbzA
+7JKgVaQdeYy0DIf6TCUfLb9Q9w7EETlnF2iWawDPt5OpvD+sYOYOSmUbCkUOBk56
+r4EI1HLCyo2tTcHtKcnDOw7b55Racgmc2ToSOLiL/u3koVZwgHFStrNP1Y+woQ8N
+saLzxwhhCGQhb+GLL3U2Silk6WO+Pbj3TG0YDf0YFhufaFHaux+Ni6kHaFjGuHy8
+68RQwrGBwjXdgopf5o7aqcEuUXUN6Lx2Q4eEHdxJZXxN7y+eo5uJLntRj+fk2Nn1
+AWW+f5fsHju5LYy+icEBYFDAzH2aBsgLCNtD1zxmoEv6Ot/HHJRIFOF1noQB79D/
+ZU4pKZsftOxCb3dLkDnRg3WrA7M1jIbmVGsFM3fIro7+oebhJjdGyLTPmOC2UmS5
+w9JgFVkEh+uCnACJyclgORW9Xydbn7BhiU3AKUehpKUJ7FYArFGozHaMC9oxeYdj
+Skj9M0+1FOanAcsXOO+pcHock11Fn7vDBc8HOpq4OXvPSFTeHYDE5DHOwvFgqGDI
+QKb6R2bZqy2VXlluhxbGbnz+57xZ1KjtA3Mcb+XVZlaxsiDWL91OA8o1Bjk0VRwQ
+wTvgzjRnqMOrp7TJPxhSDk12KPTvz74ShQRoM6zaJNBWN8yUsAA=
+=0PCv
+-----END PGP SIGNATURE-----
+
+--dwtbtpadbufkaztq--
