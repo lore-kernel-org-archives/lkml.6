@@ -2,145 +2,214 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93853C46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 15:04:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE8FCC4646D
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 15:05:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 474AE21A52
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 15:04:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="XOwgtVfi";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="XOwgtVfi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 474AE21A52
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 99825219E8
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 15:05:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99825219E8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732614AbeHFRON (ORCPT
+        id S1732629AbeHFRO7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 13:14:13 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:45542 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732377AbeHFRON (ORCPT
+        Mon, 6 Aug 2018 13:14:59 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42370 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730869AbeHFRO7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 13:14:13 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id E8B2C60541; Mon,  6 Aug 2018 15:04:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533567881;
-        bh=Ks+M+x+/4l8vooNjxrJS767hdHiAjuZNtDgXwYpIyjg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=XOwgtVfik3qtzLcxFO6PffoBnQJMpdHU2UVA6+8XxMUEp4zQ1CyjO5s/0Td0zGufi
-         69Y6WTX8SiTYG7BYx0DidlsdKDc3xlYAHnJlJemC+bqqLSeTq5lNgBosYcDyuLWvDK
-         ijU0RdJ3rlE6GtUQzvY77prM5ZHyDgvKLbIP+2IQ=
-Received: from jcrouse-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: jcrouse@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 498526037C;
-        Mon,  6 Aug 2018 15:04:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533567881;
-        bh=Ks+M+x+/4l8vooNjxrJS767hdHiAjuZNtDgXwYpIyjg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=XOwgtVfik3qtzLcxFO6PffoBnQJMpdHU2UVA6+8XxMUEp4zQ1CyjO5s/0Td0zGufi
-         69Y6WTX8SiTYG7BYx0DidlsdKDc3xlYAHnJlJemC+bqqLSeTq5lNgBosYcDyuLWvDK
-         ijU0RdJ3rlE6GtUQzvY77prM5ZHyDgvKLbIP+2IQ=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 498526037C
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jcrouse@codeaurora.org
-Date:   Mon, 6 Aug 2018 09:04:37 -0600
-From:   Jordan Crouse <jcrouse@codeaurora.org>
-To:     Amit Nischal <anischal@codeaurora.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Odelu Kukatla <okukatla@codeaurora.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk-owner@vger.kernel.org
-Subject: Re: [PATCH 2/4] clk: qcom: Add clk_rcg2_gfx3d_ops for SDM845
-Message-ID: <20180806150437.GE21283@jcrouse-lnx.qualcomm.com>
-Mail-Followup-To: Amit Nischal <anischal@codeaurora.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Odelu Kukatla <okukatla@codeaurora.org>,
-        Taniya Das <tdas@codeaurora.org>, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk-owner@vger.kernel.org
-References: <1528285308-25477-1-git-send-email-anischal@codeaurora.org>
- <1528285308-25477-3-git-send-email-anischal@codeaurora.org>
- <153111693472.143105.11303543263643845656@swboyd.mtv.corp.google.com>
- <1e6d9fc284c3c118203728867f504ec6@codeaurora.org>
- <153250192252.48062.9210075387954345932@swboyd.mtv.corp.google.com>
- <07e0321116993d27d6585bd1a186328d@codeaurora.org>
- <153324986956.10763.5124619734269160725@swboyd.mtv.corp.google.com>
- <ee2113c9dd6a44e9669e60f760c76409@codeaurora.org>
+        Mon, 6 Aug 2018 13:14:59 -0400
+Received: from localhost (unknown [194.244.16.108])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3510BCA1;
+        Mon,  6 Aug 2018 15:05:28 +0000 (UTC)
+Date:   Mon, 6 Aug 2018 17:05:25 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        torvalds@linux-foundation.org, stable@vger.kernel.org
+Cc:     lwn@lwn.net, Jiri Slaby <jslaby@suse.cz>
+Subject: Linux 4.17.13
+Message-ID: <20180806150525.GA11838@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="RnlQjJ0d97Da+TV1"
 Content-Disposition: inline
-In-Reply-To: <ee2113c9dd6a44e9669e60f760c76409@codeaurora.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 06, 2018 at 02:37:18PM +0530, Amit Nischal wrote:
-> On 2018-08-03 04:14, Stephen Boyd wrote:
-> >Quoting Amit Nischal (2018-07-30 04:28:56)
-> >>On 2018-07-25 12:28, Stephen Boyd wrote:
-> >>>
-> >>> Ok. Sounds good! Is the rate range call really needed? It can't be
-> >>> determined in the PLL code with some table or avoided by making sure
-> >>> GPU
-> >>> uses OPP table with only approved frequencies?
-> >>>
-> >>
-> >>Currently fabia PLL code does not have any table to check this and
-> >>intention
-> >>was to avoid relying on the client to call set_rate with only approved
-> >>frequencies so we have added the set_rate_range() call in the GPUCC
-> >>driver
-> >>in order to set the rate range.
-> >>
-> >
-> >But GPU will use OPP so it doesn't seem like it really buys us anything
-> >here. And it really doesn't matter when the clk driver implementation
-> >doesn't use the min/max to clamp the values of the round_rate()
-> >call. Is
-> >that being done here? I need to double check. I would be more convinced
-> >if the implementation was looking at min/max to constrain the rate
-> >requested.
-> >
-> 
-> So our understanding is that GPU(client) driver will always call the
-> set_rate with approved frequencies only and we can completely rely
-> on the
-> client. Is our understanding is correct?
+
+--RnlQjJ0d97Da+TV1
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+I'm announcing the release of the 4.17.13 kernel.
+
+All users of the 4.17 kernel series must upgrade.
+
+The updated 4.17.y git tree can be found at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linu=
+x-4.17.y
+and can be browsed at the normal kernel.org git web browser:
+	http://git.kernel.org/?p=3Dlinux/kernel/git/stable/linux-stable.git;a=3Dsu=
+mmary
+
+thanks,
+
+greg k-h
+
+------------
+
+ Makefile                                                |    2=20
+ arch/x86/entry/entry_64.S                               |   18 ----
+ arch/x86/kernel/apic/apic.c                             |    3=20
+ arch/x86/kvm/vmx.c                                      |    7 -
+ arch/x86/platform/efi/efi_64.c                          |    2=20
+ drivers/crypto/padlock-aes.c                            |    8 +
+ drivers/gpu/drm/drm_atomic_helper.c                     |    8 +
+ drivers/gpu/drm/vc4/vc4_plane.c                         |    3=20
+ drivers/infiniband/core/uverbs_cmd.c                    |   59 +++++++++++=
++-
+ drivers/net/bonding/bond_main.c                         |   14 ++-
+ drivers/net/can/usb/ems_usb.c                           |    1=20
+ drivers/net/ethernet/mellanox/mlx5/core/en_dcbnl.c      |    2=20
+ drivers/net/ethernet/mellanox/mlx5/core/eswitch.c       |    4=20
+ drivers/net/ethernet/mellanox/mlx5/core/ipoib/ipoib.c   |    4=20
+ drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c        |   40 ++++++++-
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/pcie.c |    3=20
+ drivers/net/wireless/intel/iwlwifi/cfg/9000.c           |   69 +++++++++++=
++++++
+ drivers/net/wireless/intel/iwlwifi/iwl-config.h         |    5 +
+ drivers/net/wireless/intel/iwlwifi/pcie/drv.c           |   22 +++++
+ drivers/scsi/sg.c                                       |    1=20
+ drivers/virtio/virtio_balloon.c                         |    2=20
+ fs/squashfs/block.c                                     |    2=20
+ fs/squashfs/fragment.c                                  |   13 ++-
+ fs/squashfs/squashfs_fs_sb.h                            |    1=20
+ fs/squashfs/super.c                                     |    5 -
+ fs/userfaultfd.c                                        |    4=20
+ ipc/shm.c                                               |   12 ++
+ kernel/auditsc.c                                        |   13 ++-
+ mm/hugetlb.c                                            |    7 +
+ net/dsa/slave.c                                         |    6 +
+ net/ipv4/inet_fragment.c                                |    6 -
+ net/ipv4/ip_fragment.c                                  |    5 +
+ net/netlink/af_netlink.c                                |    2=20
+ net/rxrpc/call_accept.c                                 |    4=20
+ net/socket.c                                            |    5 -
+ 35 files changed, 308 insertions(+), 54 deletions(-)
+
+Andy Lutomirski (1):
+      x86/entry/64: Remove %ebx handling from error_entry/exit
+
+Anton Vasilyev (1):
+      can: ems_usb: Fix memory leak on ems_usb_disconnect()
+
+Boris Brezillon (3):
+      drm/vc4: Reset ->{x, y}_scaling[1] when dealing with uniplanar formats
+      drm/atomic: Check old_plane_state->crtc in drm_atomic_helper_async_ch=
+eck()
+      drm/atomic: Initialize variables in drm_atomic_helper_async_check() t=
+o make gcc happy
+
+Brijesh Singh (1):
+      x86/efi: Access EFI MMIO data as unencrypted when SEV is active
+
+Eli Cohen (1):
+      net/mlx5e: E-Switch, Initialize eswitch only if eswitch manager
+
+Emmanuel Grumbach (1):
+      iwlwifi: add more card IDs for 9000 series
+
+Eric Dumazet (3):
+      bonding: avoid lockdep confusion in bond_get_stats()
+      inet: frag: enforce memory limits earlier
+      ipv4: frags: handle possible skb truesize change
+
+Feras Daoud (1):
+      net/mlx5e: IPoIB, Set the netdevice sw mtu in ipoib enhanced flow
+
+Florian Fainelli (1):
+      net: dsa: Do not suspend/resume closed slave_dev
+
+Greg Kroah-Hartman (1):
+      Linux 4.17.13
+
+Herbert Xu (1):
+      crypto: padlock-aes - Fix Nano workaround data corruption
+
+Jack Morgenstein (1):
+      RDMA/uverbs: Expand primary and alt AV port checks
+
+Jane Chu (1):
+      ipc/shm.c add ->pagesize function to shm_vm_ops
+
+Jeremy Cline (3):
+      netlink: Fix spectre v1 gadget in netlink_create()
+      net: socket: fix potential spectre v1 gadget in socketcall
+      net: socket: Fix potential spectre v1 gadget in sock_is_registered
+
+Jiang Biao (1):
+      virtio_balloon: fix another race between migration and ballooning
+
+Jose Abreu (1):
+      net: stmmac: Fix WoL for PCI-based setups
+
+Len Brown (1):
+      x86/apic: Future-proof the TSC_DEADLINE quirk for SKX
+
+Linus Torvalds (2):
+      squashfs: more metadata hardening
+      squashfs: more metadata hardenings
+
+Mike Rapoport (1):
+      userfaultfd: remove uffd flags from vma->vm_flags if UFFD_EVENT_FORK =
+fails
+
+Or Gerlitz (1):
+      net/mlx5e: Set port trust mode to PCP as default
+
+Rafa=C5=82 Mi=C5=82ecki (1):
+      brcmfmac: fix regression in parsing NVRAM for multiple devices
+
+Roman Kagan (1):
+      kvm: x86: vmx: fix vpid leak
+
+Tony Battersby (1):
+      scsi: sg: fix minor memory leak in error path
+
+Yi Wang (1):
+      audit: fix potential null dereference 'context->module.name'
+
+YueHaibing (1):
+      rxrpc: Fix user call ID check in rxrpc_service_prealloc_one
 
 
-First: on sdm845 the software doesn't set the GPU clocks - we rely on the GMU
-firmware to do that on our behalf but for the GPU at least this is an academic
-exercise.
+--RnlQjJ0d97Da+TV1
+Content-Type: application/pgp-signature; name="signature.asc"
 
-But that said: traditionally we've expected that the clock driver correctly
-clamp the requested rate to the correct values. In the past we have taken
-advantage of this and we may in the future. I don't think it is reasonable
-to require the leaf driver to only pass "approved" frequencies especially
-since we depend on our own OPP table that may or may not be similar to the
-one used by the clock driver.
+-----BEGIN PGP SIGNATURE-----
 
-Jordan
+iQIzBAEBCAAdFiEEZH8oZUiU471FcZm+ONu9yGCSaT4FAltoY7IACgkQONu9yGCS
+aT53MQ/+MXeCJWHHCuAfPFqyPlY4Um14x5l2FIG/tq3cnAMh+MzZL3RvfXEZeJda
+Q2MIFiRGl/MZ3vofJAtcfnE9/R2xYf/M2yoESo8WG7IlKn5ab4inFmkFYY15J31E
+l4OKceki4GXc4AEOQiqTGqmHCva45L8KJxMuFJlnKd5QmgiuXc1tIhBNmBTgBaDm
+G8ov0ex864AJx+DhUPst8jkBCCUj70LPbrMOE8w9DE4kFL+I/kf2uPKrOcau2pt0
+JWAcwCCGSkpVDV9jsi8M4j0oQoWNDVI+WpZC+ZGAHjVtwC9svKDXIpVReijW7iA0
+b+d5ELUZh3C4F8UP8zh0YpFZ5v6qvflrz3tfWsqSbPUJ1wwupcV9ywRquPJNtUob
+9zHpBS4puOQv+9V4hKOFvAtF67vNoNuEaShXFqwPpCmyP9LGWfDGBBrFoLx+NYad
+wqumlKJt7AatrE+wUQ0U99mUoHf7AtPRsXDBWu0JwsiqMdkxkcdplIbxLzSOPmK6
+3sIX9GNjNkjiqrHgWJ35Oj+g2L0WkOkI/y9cGeeYlSixMLxT4bK8F+j74bERG6hR
+MJ7wi1LhCXntgZOwjuu+t2qUKk1MtV9Oj5tw/4O4L+7Qmba7c7ubM76OXL+59Wa7
++Bqbd0E+DHUibr1ZbipnNEWKIjnWJrABKLblCEuT5YC5HNk20mc=
+=4iu7
+-----END PGP SIGNATURE-----
 
--- 
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+--RnlQjJ0d97Da+TV1--
