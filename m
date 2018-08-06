@@ -2,211 +2,217 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4C74C46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:45:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A204C4646D
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:46:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D15521A67
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:45:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jIzg0zae"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D15521A67
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 0E6B121A67
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:46:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E6B121A67
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732231AbeHFSzZ (ORCPT
+        id S1732336AbeHFS4p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 14:55:25 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:44292 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727834AbeHFSzZ (ORCPT
+        Mon, 6 Aug 2018 14:56:45 -0400
+Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:42586 "EHLO
+        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727834AbeHFS4p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 14:55:25 -0400
-Received: by mail-pg1-f196.google.com with SMTP id r1-v6so6468519pgp.11
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Aug 2018 09:45:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=QmggztETeJTY/9ckwRA94v4E424lF7pzp0NKo+mgo4c=;
-        b=jIzg0zaeoNyWcouRDg0d1VAe7l0r5o1WNr078Zhg9F7vhFAmPjElg6zllU1djLHp6j
-         rmBXmwd//mb6x1pz+oJ5a6Gsq3jveZZjJJ74pcEPw5mLuJoheVZEjgs/FB0bGwda0Taj
-         r/w4iaCdOdDCtp5PN4xkueK85EALy/F5Ok5EM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=QmggztETeJTY/9ckwRA94v4E424lF7pzp0NKo+mgo4c=;
-        b=a0Kvz0QnD2hAUtMPWzjfOXES4Zz1t7OPDyAXgf188qbKNa5CGUS+qU5eGyB36tncVV
-         nvyUXk9XNIKW4YfiUsgNCMRFi1NvHXLKK9TtQvktA/5Y9fGmta4HvKbL3bqviWfEl+wf
-         xoaKQ2IWYOc+uIvTYBkyoFRlHJaLDTwYnoeRfrVDmwHh90KpyQu72iCMptpux91qmUtU
-         yOqPCxZ+vfA+X+9hWY9XUWdZ4RglYw1ezKP1yPGBuug6AhrMZkB0gh4KzMmWdMQPxhnr
-         bp7JfDzvWcMJQRrZlLr9z1aqOQ4t7ZOZu5DBO/lIo6MwOxCpU97TAkJOmhviXbvunBmh
-         aDow==
-X-Gm-Message-State: AOUpUlGq0HeOiAfuyBiErEVCSAR0eGnIY5JAZmP4QbBlsqoepdkqVLLE
-        iJX3vXBP6F13o2zGaPqKPrv+Cw==
-X-Google-Smtp-Source: AAOMgpeEDG9NwFJkEXaZtMtXva2o5STKwob72ktzwhyo4C6lYzvnlBRgN9fJH0S0WF0ayYD5JvqdoA==
-X-Received: by 2002:a62:954:: with SMTP id e81-v6mr17911642pfd.231.1533573930147;
-        Mon, 06 Aug 2018 09:45:30 -0700 (PDT)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id m15-v6sm18634270pfk.149.2018.08.06.09.45.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 06 Aug 2018 09:45:29 -0700 (PDT)
-Date:   Mon, 6 Aug 2018 09:48:48 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Rajendra Nayak <rnayak@codeaurora.org>
-Cc:     viresh.kumar@linaro.org, sibis@codeaurora.org,
-        ulf.hansson@linaro.org, linux-remoteproc@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] remoteproc: q6v5: Add support to vote for rpmh power
- domains
-Message-ID: <20180806164848.GA21235@tuxbook-pro>
-References: <20180629102035.2757-1-rnayak@codeaurora.org>
+        Mon, 6 Aug 2018 14:56:45 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01422;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0T68M2G5_1533573999;
+Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0T68M2G5_1533573999)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 07 Aug 2018 00:46:41 +0800
+Subject: Re: [RFC v6 PATCH 2/2] mm: mmap: zap pages with read mmap_sem in
+ munmap
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     willy@infradead.org, ldufour@linux.vnet.ibm.com,
+        kirill@shutemov.name, akpm@linux-foundation.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <1532628614-111702-1-git-send-email-yang.shi@linux.alibaba.com>
+ <1532628614-111702-3-git-send-email-yang.shi@linux.alibaba.com>
+ <20180803090759.GI27245@dhcp22.suse.cz>
+ <aff7e86d-2e48-ff58-5d5d-9c67deb68674@linux.alibaba.com>
+ <20180806094005.GG19540@dhcp22.suse.cz>
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <76c0fc2b-fca7-9f22-214a-920ee2537898@linux.alibaba.com>
+Date:   Mon, 6 Aug 2018 09:46:30 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180629102035.2757-1-rnayak@codeaurora.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180806094005.GG19540@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 29 Jun 03:20 PDT 2018, Rajendra Nayak wrote:
-
-> With rpmh ARC resources being modelled as power domains with
-> performance state, add support to proxy vote on these for SDM845.
-> Add support to vote on multiple of them, now that genpd supports
-> associating multiple power domains to a device.
-> 
-
-Thanks for writing up this patch Rajendra.
-
-> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-> ---
-> This patch is dependent on the rpmh powerdomain driver
-> still under review,
-> https://lkml.org/lkml/2018/6/27/7
-> 
->  drivers/remoteproc/qcom_q6v5_pil.c | 77 +++++++++++++++++++++++++++++-
->  1 file changed, 75 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
-> index 2bf8e7c49f2a..2b5be6d15779 100644
-> --- a/drivers/remoteproc/qcom_q6v5_pil.c
-> +++ b/drivers/remoteproc/qcom_q6v5_pil.c
-> @@ -25,6 +25,8 @@
->  #include <linux/of_address.h>
->  #include <linux/of_device.h>
->  #include <linux/platform_device.h>
-> +#include <linux/pm_domain.h>
-> +#include <linux/pm_runtime.h>
->  #include <linux/regmap.h>
->  #include <linux/regulator/consumer.h>
->  #include <linux/remoteproc.h>
-> @@ -132,6 +134,7 @@ struct rproc_hexagon_res {
->  	char **proxy_clk_names;
->  	char **reset_clk_names;
->  	char **active_clk_names;
-> +	char **pd_names;
->  	int version;
->  	bool need_mem_protection;
->  	bool has_alt_reset;
-> @@ -161,9 +164,11 @@ struct q6v5 {
->  	struct clk *active_clks[8];
->  	struct clk *reset_clks[4];
->  	struct clk *proxy_clks[4];
-> +	struct device *pd_devs[3];
->  	int active_clk_count;
->  	int reset_clk_count;
->  	int proxy_clk_count;
-> +	int pd_count;
->  
->  	struct reg_info active_regs[1];
->  	struct reg_info proxy_regs[3];
-> @@ -324,6 +329,23 @@ static void q6v5_clk_disable(struct device *dev,
->  		clk_disable_unprepare(clks[i]);
->  }
->  
-> +static int q6v5_powerdomain_enable(struct device *dev, struct device **devs,
-> +				   int count)
-> +{
-> +	int i;
-> +
-> +	if (!count)
-> +		return 0;
-> +
-> +	if (count > 1)
-> +		for (i = 0; i < count; i++)
-> +			dev_pm_genpd_set_performance_state(devs[i], INT_MAX);
-> +	else
-> +		dev_pm_genpd_set_performance_state(dev, INT_MAX);
-
-I would prefer if we could just set the performance state during
-initialization, but I see that we only aggregate the state during
-dev_pm_genpd_set_performance_state().
-
-As such you need to also reduce the votes in the disable path; or we
-will just max out any shared corners from the first time we boot this
-remoteproc.
 
 
-For this to work I believe _genpd_power_o{n,ff}() would need to
-aggregate the performance state of all enabled consumers, something that
-would make the interface more convenient to use.
+On 8/6/18 2:40 AM, Michal Hocko wrote:
+> On Fri 03-08-18 14:01:58, Yang Shi wrote:
+>>
+>> On 8/3/18 2:07 AM, Michal Hocko wrote:
+>>> On Fri 27-07-18 02:10:14, Yang Shi wrote:
+>>>> When running some mmap/munmap scalability tests with large memory (i.e.
+>>>>> 300GB), the below hung task issue may happen occasionally.
+>>>> INFO: task ps:14018 blocked for more than 120 seconds.
+>>>>          Tainted: G            E 4.9.79-009.ali3000.alios7.x86_64 #1
+>>>>    "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this
+>>>> message.
+>>>>    ps              D    0 14018      1 0x00000004
+>>>>     ffff885582f84000 ffff885e8682f000 ffff880972943000 ffff885ebf499bc0
+>>>>     ffff8828ee120000 ffffc900349bfca8 ffffffff817154d0 0000000000000040
+>>>>     00ffffff812f872a ffff885ebf499bc0 024000d000948300 ffff880972943000
+>>>>    Call Trace:
+>>>>     [<ffffffff817154d0>] ? __schedule+0x250/0x730
+>>>>     [<ffffffff817159e6>] schedule+0x36/0x80
+>>>>     [<ffffffff81718560>] rwsem_down_read_failed+0xf0/0x150
+>>>>     [<ffffffff81390a28>] call_rwsem_down_read_failed+0x18/0x30
+>>>>     [<ffffffff81717db0>] down_read+0x20/0x40
+>>>>     [<ffffffff812b9439>] proc_pid_cmdline_read+0xd9/0x4e0
+>>>>     [<ffffffff81253c95>] ? do_filp_open+0xa5/0x100
+>>>>     [<ffffffff81241d87>] __vfs_read+0x37/0x150
+>>>>     [<ffffffff812f824b>] ? security_file_permission+0x9b/0xc0
+>>>>     [<ffffffff81242266>] vfs_read+0x96/0x130
+>>>>     [<ffffffff812437b5>] SyS_read+0x55/0xc0
+>>>>     [<ffffffff8171a6da>] entry_SYSCALL_64_fastpath+0x1a/0xc5
+>>>>
+>>>> It is because munmap holds mmap_sem exclusively from very beginning to
+>>>> all the way down to the end, and doesn't release it in the middle. When
+>>>> unmapping large mapping, it may take long time (take ~18 seconds to
+>>>> unmap 320GB mapping with every single page mapped on an idle machine).
+>>>>
+>>>> Zapping pages is the most time consuming part, according to the
+>>>> suggestion from Michal Hocko [1], zapping pages can be done with holding
+>>>> read mmap_sem, like what MADV_DONTNEED does. Then re-acquire write
+>>>> mmap_sem to cleanup vmas.
+>>>>
+>>>> But, some part may need write mmap_sem, for example, vma splitting. So,
+>>>> the design is as follows:
+>>>>           acquire write mmap_sem
+>>>>           lookup vmas (find and split vmas)
+>>>> 	detach vmas
+>>>>           deal with special mappings
+>>>>           downgrade_write
+>>>>
+>>>>           zap pages
+>>>> 	free page tables
+>>>>           release mmap_sem
+>>>>
+>>>> The vm events with read mmap_sem may come in during page zapping, but
+>>>> since vmas have been detached before, they, i.e. page fault, gup, etc,
+>>>> will not be able to find valid vma, then just return SIGSEGV or -EFAULT
+>>>> as expected.
+>>>>
+>>>> If the vma has VM_LOCKED | VM_HUGETLB | VM_PFNMAP or uprobe, they are
+>>>> considered as special mappings. They will be dealt with before zapping
+>>>> pages with write mmap_sem held. Basically, just update vm_flags.
+>>> Well, I think it would be safer to simply fallback to the current
+>>> implementation with these mappings and deal with them on top. This would
+>>> make potential issues easier to bisect and partial reverts as well.
+>> Do you mean just call do_munmap()? It sounds ok. Although we may waste some
+>> cycles to repeat what has done, it sounds not too bad since those special
+>> mappings should be not very common.
+> VM_HUGETLB is quite spread. Especially for DB workloads.
 
-> +
-> +	return pm_runtime_get_sync(dev);
-> +}
-> +
-[..]
-> @@ -1142,6 +1173,35 @@ static int q6v5_init_clocks(struct device *dev, struct clk **clks,
->  	return i;
->  }
->  
-> +static int q6v5_powerdomain_init(struct device *dev, struct device **devs,
-> +				 char **pd_names)
-> +{
-> +	int i = 0, num_pds;
-> +
-> +	if (!pd_names)
-> +		return 0;
-> +
-> +	while (pd_names[i])
-> +		i++;
-> +
-> +	num_pds = i;
-> +
-> +	if (num_pds > 1) {
-> +		for (i = 0; i < num_pds; i++) {
-> +			devs[i] = genpd_dev_pm_attach_by_id(dev, i);
+Wait a minute. In this way, it sounds we go back to my old 
+implementation with special handling for those mappings with write 
+mmap_sem held, right?
 
-This should be done by_name
+>
+>>>> And, since they are also manipulated by unmap_single_vma() which is
+>>>> called by unmap_vma() with read mmap_sem held in this case, to
+>>>> prevent from updating vm_flags in read critical section, a new
+>>>> parameter, called "skip_flags" is added to unmap_region(), unmap_vmas()
+>>>> and unmap_single_vma(). If it is true, then just skip unmap those
+>>>> special mappings. Currently, the only place which pass true to this
+>>>> parameter is us.
+>>> skip parameters are usually ugly and lead to more mess later on. Can we
+>>> do without them?
+>> We need a way to tell unmap_region() that it is called in a kind of special
+>> context which updating vm_flags is not allowed. I didn't think of a better
+>> way.
+>>
+>> We could add a new API to do what unmap_region() does without updating
+>> vm_flags, but we would have to  duplicate some code.
+> I really didn't get to think about a better way myself but I strongly
+> suspect we can do without special hacks here. Is updating flags under
+> read lock a real problem? Assuming that special mappings are not really
+> considered at this stage.
 
-> +			if (IS_ERR(devs[i]))
-> +				return PTR_ERR(devs[i]);
-> +			if (!device_link_add(dev, devs[i], DL_FLAG_STATELESS |
-> +					     DL_FLAG_PM_RUNTIME))
-> +				return -EINVAL;
-> +		}
-> +	}
-> +
-> +	pm_runtime_enable(dev);
+In normal case, I don't think vm_flags can be updated with read 
+mmap_sem, but in this patch the vmas have been detached from the rb 
+tree, nobody can find them anymore (I'm supposed all vma looking up is 
+done by find_vma), so it might be safe to update vm_flags with read 
+mmap_sem.
 
-Don't you need a call to something like pm_suspend_ignore_children()
-here as well, to prevent a pm_runtime_get_sync() in a child device to
-power on our rails at runtime?
+If it is safe, we don't have to have any special handling to those 
+special mappings anymore.
 
-> +
-> +	return num_pds;
-> +};
-> +
->  static int q6v5_init_reset(struct q6v5 *qproc)
->  {
->  	qproc->mss_restart = devm_reset_control_get_exclusive(qproc->dev,
+>
+>>>> With this approach we don't have to re-acquire mmap_sem again to clean
+>>>> up vmas to avoid race window which might get the address space changed.
+>>> By with this approach you mean detaching right?
+>> Yes, the detaching approach.
+> Please make it explicit in the changelog.
 
-Regards,
-Bjorn
+Sure.
+
+>   
+>>>> And, since the lock acquire/release cost is managed to the minimum and
+>>>> almost as same as before, the optimization could be extended to any size
+>>>> of mapping without incurring significant penalty to small mappings.
+>>> I guess you mean to say that lock downgrade approach doesn't lead to
+>>> regressions because the overal time mmap_sem is taken is not longer?
+>> Yes. And, there is not lock take/retake cost since we don't release it.
+> Please also be explicit.
+
+Sure.
+
+>   
+>>>> For the time being, just do this in munmap syscall path. Other
+>>>> vm_munmap() or do_munmap() call sites (i.e mmap, mremap, etc) remain
+>>>> intact for stability reason.
+>>> You have used this argument previously and several people have asked.
+>>> I think it is just wrong. Either the concept is safe and all callers can
+>>> use it or it is not and then those subtle differences should be called
+>>> out. Your previous response was that you simply haven't tested other
+>>> paths. Well, that is not an argument, I am afraid. The whole thing
+>>> should be done at a proper layer. If there are some difficulties to
+>>> achieve that for all callers then OK just be explicit about that. I can
+>>> imagine some callers really require the exclusive look when munmap
+>>> returns for example.
+>> Yes, the statement here sounds ambiguous. There are definitely some
+>> difficulties to achieve that in mmap and mremap. Since they acquire write
+>> mmap_sem at the very beginning, then do their stuff, which may call
+>> do_munmap if overlapped address space has to be changed.
+> Do call them out. Maybe even add a comment in the code so that people
+> who would like those other paths know what they need to look at.
+
+OK
+
+>
+>> But, the optimized do_munmap would like to be called without mmap_sem held
+>> so that we can do the optimization. So, if we want to do the similar
+>> optimization for mmap/mremap path, I'm afraid we would have to redesign
+>> them.
+>>
+>> I assumes munmap itself is the main source of the latency issue. mmap/mremap
+>> might hit the latency problem if they are trying to map or remap a huge
+>> overlapped address space, but it should be rare. So, I leave them untouched.
+> That depends on usecases very much. mremap might be called on very large
+> areas as well. But let's go in smaller steps and build on top...
+
+Yes, agree. And, I agree to achieve it step by step.
+
+Thanks,
+Yang
+
+
