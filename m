@@ -2,116 +2,108 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3206C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 11:07:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71294C4646D
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 11:08:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FB3521A03
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 11:07:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=endlessm-com.20150623.gappssmtp.com header.i=@endlessm-com.20150623.gappssmtp.com header.b="0duoC++d"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FB3521A03
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=endlessm.com
+	by mail.kernel.org (Postfix) with ESMTP id 33E9521A03
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 11:08:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33E9521A03
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729974AbeHFNQA (ORCPT
+        id S1730027AbeHFNRW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 09:16:00 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:41797 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727613AbeHFNP7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 09:15:59 -0400
-Received: by mail-io0-f196.google.com with SMTP id g7-v6so358868ioq.8
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Aug 2018 04:07:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=4qJkcs4HfzL51knKen5vWZTfKdLM4oBGlqsw37SpMq4=;
-        b=0duoC++dUzj2rkMMh7bFeTf3UGlVSK9YS4bfKUsBleoTcn5n1xKxziAP3SqX3p3/2/
-         Psyd11VO/nNK+S3JB4XZaQALbxYhLNIQXlPJ2zcXjr3NOGbg72C3nE66ytXYWCfDzYkm
-         exgV+3nsY++2RDjic1cX3dTt6soSDR2RHGsWy3kTatabIT3UVix/175cyfycar1i0yQV
-         uYynidr/8bMenweyW66tzWiPAtLMwZX9ywFSy2Yq3KCJPzZwutrsMHZajrM8wRTGd7NM
-         MNHIEZI4SHDWBYkFj08WakVwPLSf//4HkwMxBiLkUS9GMAH6Y5sG82HMMSCywglSLk3W
-         fuTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=4qJkcs4HfzL51knKen5vWZTfKdLM4oBGlqsw37SpMq4=;
-        b=Kyttbe5kaCoekmT9/DNmpi+hG1gpFhYjWXQDyVn30G3ysAO0bQTAKVFQr11JuyGz6P
-         QWlmN8jGUrQBAoHqUBTE+tM/AhiuN21lIg9lccIdUeSZWGRT08zju6BZM7Cx+BWxp5CK
-         UuBqz7PK4hNwOHHrsDYSDzdydo0UGooaLvUVAjC9y32vW3fvagWWmIkvN3VdjuZWvaZq
-         E1xK4RUmdYWicpZahRBQFzaPJwu88Yxr+DOqIcXizgRKlcGAg/+yaasGxNycMUaEHmi8
-         xeFAHtKlb4wLzw0qeHjFZiUqLnmIUIKG/rYma/A5Yr8eIQDLM5dIlY+O7NU3f4kZR7DR
-         s3sA==
-X-Gm-Message-State: AOUpUlFdM5LsSR9wxXKJU7960BCtv+tE/ynoITdWtRdtDLyaldlxAGmv
-        aGjwwUk8+FnQvZ/p3QzXOgjA1Z7KRXN22ur37AgE7A==
-X-Google-Smtp-Source: AAOMgpclMwvYmmb69+bPgNJIck6dyg1EUkocv6I2vGTHB20p3zNivnWn2kMsltdU45u8fergJLd5sAYn6FBYRfrbyc4=
-X-Received: by 2002:a6b:cd8f:: with SMTP id d137-v6mr14497853iog.154.1533553646269;
- Mon, 06 Aug 2018 04:07:26 -0700 (PDT)
+        Mon, 6 Aug 2018 09:17:22 -0400
+Received: from mga12.intel.com ([192.55.52.136]:57380 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727502AbeHFNRW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 09:17:22 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Aug 2018 04:08:50 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,452,1526367600"; 
+   d="scan'208";a="73992909"
+Received: from mattu-haswell.fi.intel.com (HELO [10.237.72.164]) ([10.237.72.164])
+  by fmsmga002.fm.intel.com with ESMTP; 06 Aug 2018 04:08:47 -0700
+Subject: Re: [PATCH] usb: host: xhci-plat: Iterate over parent nodes for
+ finding quirks
+To:     Anurag Kumar Vulisha <anuragku@xilinx.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "v.anuragkumar@gmail.com" <v.anuragkumar@gmail.com>
+References: <1528212056-28390-1-git-send-email-anurag.kumar.vulisha@xilinx.com>
+ <20180605152524.GA23280@kroah.com>
+ <MWHPR02MB2816106466BD2AF8F7FB7BF8A7660@MWHPR02MB2816.namprd02.prod.outlook.com>
+ <MWHPR02MB2816ACB30A1142BD1B83F25CA77F0@MWHPR02MB2816.namprd02.prod.outlook.com>
+ <20180612080256.GA17399@kroah.com>
+ <MWHPR02MB2816AE6D9F6C065DADA78D7EA75F0@MWHPR02MB2816.namprd02.prod.outlook.com>
+ <20180715080206.GA19377@kroah.com> <20180715081134.GA20758@kroah.com>
+ <541ba9a3-058e-028a-2a6c-a5d4334ddf96@intel.com>
+ <BN3PR0201MB0993AA3A96D98AA6799C706DA7200@BN3PR0201MB0993.namprd02.prod.outlook.com>
+From:   Mathias Nyman <mathias.nyman@intel.com>
+Message-ID: <b5078cd5-05ad-7e3f-a8de-f4ae43aa0815@intel.com>
+Date:   Mon, 6 Aug 2018 14:11:46 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Received: by 2002:ac0:8704:0:0:0:0:0 with HTTP; Mon, 6 Aug 2018 04:07:25 -0700 (PDT)
-In-Reply-To: <73029405.6ZXyByzer1@aspire.rjw.lan>
-References: <CAB4CAwfQ0mPMqCLp95TVjw4J0r5zKPWkSvvkK4cpZUGE--w8bQ@mail.gmail.com>
- <73029405.6ZXyByzer1@aspire.rjw.lan>
-From:   Chris Chiu <chiu@endlessm.com>
-Date:   Mon, 6 Aug 2018 19:07:25 +0800
-Message-ID: <CAB4CAwcXg2ROwz17rZHzMpTEDYYfD1nteNgX=HE8EkOmyK3wag@mail.gmail.com>
-Subject: Re: Built in PS2 keyboard in new ASUS/acer laptops can not wake up
- system after s2idle
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-input <linux-input@vger.kernel.org>,
-        linux-pm@vger.kernel.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Linux Upstreaming Team <linux@endlessm.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <BN3PR0201MB0993AA3A96D98AA6799C706DA7200@BN3PR0201MB0993.namprd02.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 6, 2018 at 5:37 PM, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
-> On Friday, August 3, 2018 10:04:09 AM CEST Chris Chiu wrote:
->> Hi guys,
->>     We have some new laptops with Intel new Intel WiskyLake CPU come
->> in and they all have the same problem. They all have the so-called
->> "Modern Standby" feature which is s2idle in Linux.
+On 06.08.2018 10:58, Anurag Kumar Vulisha wrote:
+> Hi Greg,
+> 
+>> -----Original Message-----
+>> From: Mathias Nyman [mailto:mathias.nyman@intel.com]
+>> Sent: Friday, July 20, 2018 8:24 PM
+>> To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>; Anurag Kumar Vulisha
+>> <anuragku@xilinx.com>
+>> Cc: linux-usb@vger.kernel.org; linux-kernel@vger.kernel.org;
+>> v.anuragkumar@gmail.com
+>> Subject: Re: [PATCH] usb: host: xhci-plat: Iterate over parent nodes for finding quirks
 >>
->>     The problem is the built-in keyboard no longer wake up the system
->> after it goes to s2idle. Only the power button can wake up. It's
->> different from the other laptops with old Intel CPUs (CoffeeLake,
->> KaybeLake...etc). We found the difference is that the EC (embedded
->> controller) no longer signals SCI event when in s2idle.
+>> On 15.07.2018 11:11, Greg Kroah-Hartman wrote:
+>>> On Sun, Jul 15, 2018 at 10:02:06AM +0200, Greg Kroah-Hartman wrote:
+>>>> On Sat, Jul 14, 2018 at 03:37:20PM +0000, Anurag Kumar Vulisha wrote:
+>>>>> HI Greg,
+>>>>>
+>>>>> Ping!
+>>>>> Thought of giving a friendly remainder about this patch.
+>>>>
+>>>> I am not the xhci maintainer, I need to wait from an ack from him
+>>>> before I can take it.
+>>>
+>>> And he's on vacation until later this week, so just relax.
+>>>
 >>
->>     Confirmed with ASUS EC engineer, he also admits that the EC code
->> for signaling SCI event in modern standby has been removed on
->> WiskyLake models. Because the built-in PS2 keyboard can still wake up
->> the system on WisksyLake+Windows10 RS4 combination without EC
->> intervention.
+>> I added a couple minor comments.
+>> I will be away for two more weeks, and I don't want to block this, so if it is important
+>> to get this to 4.18 I won't object picking it as is.
 >>
->>     Based on this information, we suspect that maybe the built-in
->> keyboard wakeup on Windows 10 RS4 in enabled by default (although we
->> don't know how to prove that). It's easy to simply do
->> 'device_set_wakeup_enable' and 'enable_irq_wake' for the i8042
->> keyboard port to wake up the system without EC, but it's nasty.
->>
->>     Any suggestion about how to achieve the keyboard wake up function
->> on these new laptops in a generic way? Thanks
->
-> What about echoing "enabled" to the keyboard's power/wakeup file in sysfs?
->
+> 
+> I have replied to the comments that Mathias has previously given on this patch and waiting
+> on his reply, but looks like Mathias is on vacation. Since he is okay with applying the patch,
+> would it be possible to get this patch applied? If you have any suggestions I can work on
+> fixing them and re-send the patch. Thanks for your help in this regard.
+> 
 
-'echo enabled > /sys/devices/platform/i8042/serio0/power/wakeup' can get the
-keyboard wake up the system as expected. We considered to work out a DMI
-based quirk for this. But based on the information that EC would not signal SCI
-event for WiskyLake models, we'd like to know if there's any generic solution?
-Maybe a 'udev' rule to identify WiskyLake NoteBook then enable the keyboard
-wake up?
+I'm back.
+Just noted that there is one change still needed, (commented on actual patch)
+I'll pick up the next version of the patch, but we are in rc8 already so your fix will go
+to 4.19-rc2 earliest.
 
-Chris
+-Mathias
+
+
