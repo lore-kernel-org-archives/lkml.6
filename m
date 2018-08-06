@@ -2,110 +2,129 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7947C46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 23:24:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F772C4646D
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 23:24:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 733EA21A12
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 23:24:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 733EA21A12
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
+	by mail.kernel.org (Postfix) with ESMTP id 5A89821A12
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 23:24:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BL6EdVRK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A89821A12
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732615AbeHGBgK (ORCPT
+        id S1733134AbeHGBgU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 21:36:10 -0400
-Received: from gate.crashing.org ([63.228.1.57]:56567 "EHLO gate.crashing.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730444AbeHGBgJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 21:36:09 -0400
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w76NIiUI013364;
-        Mon, 6 Aug 2018 18:18:45 -0500
-Message-ID: <8e985b8117407b256e2dd8f1c0a5c2e560ef03d7.camel@kernel.crashing.org>
-Subject: Re: [RFC 0/4] Virtio uses DMA API for all devices
-From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        aik@ozlabs.ru, robh@kernel.org, joe@perches.com,
-        elfring@users.sourceforge.net, david@gibson.dropbear.id.au,
-        jasowang@redhat.com, mpe@ellerman.id.au, linuxram@us.ibm.com,
-        haren@linux.vnet.ibm.com, paulus@samba.org,
-        srikar@linux.vnet.ibm.com, robin.murphy@arm.com,
-        jean-philippe.brucker@arm.com, marc.zyngier@arm.com
-Date:   Tue, 07 Aug 2018 09:18:44 +1000
-In-Reply-To: <20180806233024-mutt-send-email-mst@kernel.org>
-References: <20180802225738-mutt-send-email-mst@kernel.org>
-         <de4888b6457e220776e16a9c8958ff0886ffc66c.camel@kernel.crashing.org>
-         <20180803070507.GA1344@infradead.org>
-         <eb1750e90e4bd45da297fa6f78f8ef93671b7c2f.camel@kernel.crashing.org>
-         <20180803220443-mutt-send-email-mst@kernel.org>
-         <051fd78e15595b414839fa8f9d445b9f4d7576c6.camel@kernel.crashing.org>
-         <20180805031046-mutt-send-email-mst@kernel.org>
-         <fd8fee94cf42e436878f179c7895de3a4dab3355.camel@kernel.crashing.org>
-         <20180806164106-mutt-send-email-mst@kernel.org>
-         <ef6d5d7c7b812bd797a1c3fd6bc7a26d0074020f.camel@kernel.crashing.org>
-         <20180806233024-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.4 (3.28.4-1.fc28) 
-Mime-Version: 1.0
+        Mon, 6 Aug 2018 21:36:20 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:58542 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730444AbeHGBgU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 21:36:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:MIME-Version:Date:Message-ID:Subject:From:Cc:To:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=ixLSEUUtgzNI2qa50DSPg7M0zmkJltFp/B7667wu8q4=; b=BL6EdVRKRc9lO4xkAUHGwpsSA
+        rz9wMnVzjZfSgUWMPkof+5Sl8Qp13LBqWGXtin0XoUStJI4e63xU1RxnjpvVQDAY0YungGj2k55bF
+        Kxjk4gcpPxM7TLRdF+CnhZVsaCs5Rwe3koH76EYode5RSA9lp9JbQo22dYPDQj6XGvIuu9j1jrnGe
+        ZKY+s9RL5paflMvbRIVfDn5xMFFIqOcXU9t7nBb+wqhhc8Abyd9K2ZV/oU8rVjK9KtvEKTVnAoJP1
+        /OvdlE5LsAkDRNaUPnfttZLEx5Kt9Qh4FxOYcXKzGERBGDJd0ngdTp6UaVKHd4gIZPKDS3fkm3xFL
+        flCOzNiwg==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fmorw-0006ux-I3; Mon, 06 Aug 2018 23:24:56 +0000
+To:     "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        "Antonino A. Daplas" <adaplas@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH] Documentation: corrections to console/console.txt
+Message-ID: <933b90be-5fff-d0c7-a7a1-4e4362713846@infradead.org>
+Date:   Mon, 6 Aug 2018 16:24:55 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-08-06 at 23:35 +0300, Michael S. Tsirkin wrote:
-> On Tue, Aug 07, 2018 at 05:56:59AM +1000, Benjamin Herrenschmidt wrote:
-> > On Mon, 2018-08-06 at 16:46 +0300, Michael S. Tsirkin wrote:
-> > > 
-> > > > Right, we'll need some quirk to disable balloons  in the guest I
-> > > > suppose.
-> > > > 
-> > > > Passing something from libvirt is cumbersome because the end user may
-> > > > not even need to know about secure VMs. There are use cases where the
-> > > > security is a contract down to some special application running inside
-> > > > the secure VM, the sysadmin knows nothing about.
-> > > > 
-> > > > Also there's repercussions all the way to admin tools, web UIs etc...
-> > > > so it's fairly wide ranging.
-> > > > 
-> > > > So as long as we only need to quirk a couple of devices, it's much
-> > > > better contained that way.
-> > > 
-> > > So just the balloon thing already means that yes management and all the
-> > > way to the user tools must know this is going on. Otherwise
-> > > user will try to inflate the balloon and wonder why this does not work.
-> > 
-> > There is *dozens* of management systems out there, not even all open
-> > source, we won't ever be able to see the end of the tunnel if we need
-> > to teach every single of them, including end users, about platform
-> > specific new VM flags like that.
-> > 
-> > .../...
-> 
-> In the end I suspect you will find you have to.
+From: Randy Dunlap <rdunlap@infradead.org>
 
-Maybe... we'll tackle this if/when we have to.
+Fix typos, line length, grammar, punctuation, and capitalization
+in console.txt.
 
-For balloon I suspect it's not such a big deal because once secure, all
-the guest memory goes into the secure memory which isn't visible or
-accounted by the hypervisor, so there's nothing to steal but the guest
-is also using no HV memory (other than the few "non-secure" pages used
-for swiotlb and a couple of other kernel things).
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Antonino A. Daplas <adaplas@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ Documentation/console/console.txt |   15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
-Future versions of our secure architecture might allow to turn
-arbitrary pages of memory secure/non-secure rather than relying on a
-separate physical pool, in which case, the balloon will be able to work
-normally.
-
-Cheers,
-Ben.
+--- lnx-418-rc8.orig/Documentation/console/console.txt
++++ lnx-418-rc8/Documentation/console/console.txt
+@@ -1,7 +1,7 @@
+ Console Drivers
+ ===============
+ 
+-The linux kernel has 2 general types of console drivers.  The first type is
++The Linux kernel has 2 general types of console drivers.  The first type is
+ assigned by the kernel to all the virtual consoles during the boot process.
+ This type will be called 'system driver', and only one system driver is allowed
+ to exist. The system driver is persistent and it can never be unloaded, though
+@@ -17,10 +17,11 @@ of driver occupying the consoles.) They
+ occupied by the system driver. In the same token, if the modular driver is
+ released by the console, the system driver will take over.
+ 
+-Modular drivers, from the programmer's point of view, has to call:
++Modular drivers, from the programmer's point of view, have to call:
+ 
+ 	 do_take_over_console() - load and bind driver to console layer
+-	 give_up_console() - unload driver, it will only work if driver is fully unbond
++	 give_up_console() - unload driver; it will only work if driver
++			     is fully unbound
+ 
+ In newer kernels, the following are also available:
+ 
+@@ -56,7 +57,7 @@ What do these files signify?
+ 	cat /sys/class/vtconsole/vtcon0/name
+ 	(S) VGA+
+ 
+-	    '(S)' stands for a (S)ystem driver, ie, it cannot be directly
++	    '(S)' stands for a (S)ystem driver, i.e., it cannot be directly
+ 	    commanded to bind or unbind
+ 
+ 	    'VGA+' is the name of the driver
+@@ -89,7 +90,7 @@ driver, make changes, recompile, reload
+ for rebooting the kernel. For regular users who may want to switch from
+ framebuffer console to VGA console and vice versa, this feature also makes
+ this possible. (NOTE NOTE NOTE: Please read fbcon.txt under Documentation/fb
+-for more details).
++for more details.)
+ 
+ Notes for developers:
+ =====================
+@@ -110,8 +111,8 @@ In order for binding to and unbinding fr
+ console drivers must follow these guidelines:
+ 
+ 1. All drivers, except system drivers, must call either do_register_con_driver()
+-   or do_take_over_console(). do_register_con_driver() will just add the driver to
+-   the console's internal list. It won't take over the
++   or do_take_over_console(). do_register_con_driver() will just add the driver
++   to the console's internal list. It won't take over the
+    console. do_take_over_console(), as it name implies, will also take over (or
+    bind to) the console.
+ 
 
 
