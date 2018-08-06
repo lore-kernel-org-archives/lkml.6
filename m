@@ -6,142 +6,55 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=FROM_EXCESS_BASE64,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31F83C46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:16:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B467C4646D
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:19:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFF5D208AF
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:16:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFF5D208AF
+	by mail.kernel.org (Postfix) with ESMTP id C69C421A56
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:19:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C69C421A56
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=citrix.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733187AbeHFS0j (ORCPT
+        id S1733209AbeHFS24 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 14:26:39 -0400
-Received: from smtp.ctxuk.citrix.com ([185.25.65.24]:38463 "EHLO
+        Mon, 6 Aug 2018 14:28:56 -0400
+Received: from smtp.eu.citrix.com ([185.25.65.24]:38552 "EHLO
         SMTP.EU.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730876AbeHFS0j (ORCPT
+        with ESMTP id S1730876AbeHFS24 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 14:26:39 -0400
+        Mon, 6 Aug 2018 14:28:56 -0400
 X-IronPort-AV: E=Sophos;i="5.51,452,1526342400"; 
-   d="scan'208";a="77238302"
-Date:   Mon, 6 Aug 2018 18:16:38 +0200
+   d="scan'208";a="77238387"
+Date:   Mon, 6 Aug 2018 18:18:59 +0200
 From:   Roger Pau =?utf-8?B?TW9ubsOp?= <roger.pau@citrix.com>
 To:     Juergen Gross <jgross@suse.com>
 CC:     <linux-kernel@vger.kernel.org>, <xen-devel@lists.xenproject.org>,
         <linux-block@vger.kernel.org>, <konrad.wilk@oracle.com>,
         <axboe@kernel.dk>, <boris.ostrovsky@oracle.com>
-Subject: Re: [PATCH 2/4] xen/blkfront: cleanup stale persistent grants
-Message-ID: <20180806161638.nmjamflckekeuyzb@mac>
+Subject: Re: [PATCH 3/4] xen/blkfront: reorder tests in xlblk_init()
+Message-ID: <20180806161859.gqcc4xze5jbbuu4v@mac>
 References: <20180806113403.24728-1-jgross@suse.com>
- <20180806113403.24728-4-jgross@suse.com>
+ <20180806113403.24728-5-jgross@suse.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Disposition: inline
-In-Reply-To: <20180806113403.24728-4-jgross@suse.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180806113403.24728-5-jgross@suse.com>
 User-Agent: NeoMutt/20180716
-X-ClientProxiedBy: AMSPEX02CAS02.citrite.net (10.69.22.113) To
+X-ClientProxiedBy: AMSPEX02CAS01.citrite.net (10.69.22.112) To
  AMSPEX02CL02.citrite.net (10.69.22.126)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 06, 2018 at 01:34:01PM +0200, Juergen Gross wrote:
-> Add a periodic cleanup function to remove old persistent grants which
-> are no longer in use on the backend side. This avoids starvation in
-> case there are lots of persistent grants for a device which no longer
-> is involved in I/O business.
+On Mon, Aug 06, 2018 at 01:34:02PM +0200, Juergen Gross wrote:
+> In case we don't want pv block devices we should not test parameters
+> for sanity and eventually print out error messages. So test precluding
+> conditions before checking parameters.
 > 
 > Signed-off-by: Juergen Gross <jgross@suse.com>
-> ---
->  drivers/block/xen-blkfront.c | 99 ++++++++++++++++++++++++++++++++++++++++++--
->  1 file changed, 95 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/block/xen-blkfront.c b/drivers/block/xen-blkfront.c
-> index b5cedccb5d7d..19feb8835fc4 100644
-> --- a/drivers/block/xen-blkfront.c
-> +++ b/drivers/block/xen-blkfront.c
-> @@ -46,6 +46,7 @@
->  #include <linux/scatterlist.h>
->  #include <linux/bitmap.h>
->  #include <linux/list.h>
-> +#include <linux/workqueue.h>
->  
->  #include <xen/xen.h>
->  #include <xen/xenbus.h>
-> @@ -121,6 +122,9 @@ static inline struct blkif_req *blkif_req(struct request *rq)
->  
->  static DEFINE_MUTEX(blkfront_mutex);
->  static const struct block_device_operations xlvbd_block_fops;
-> +static struct delayed_work blkfront_work;
-> +static LIST_HEAD(info_list);
-> +static bool blkfront_work_active;
->  
->  /*
->   * Maximum number of segments in indirect requests, the actual value used by
-> @@ -216,6 +220,7 @@ struct blkfront_info
->  	/* Save uncomplete reqs and bios for migration. */
->  	struct list_head requests;
->  	struct bio_list bio_list;
-> +	struct list_head info_list;
->  };
->  
->  static unsigned int nr_minors;
-> @@ -1764,6 +1769,12 @@ static int write_per_ring_nodes(struct xenbus_transaction xbt,
->  	return err;
->  }
->  
-> +static void free_info(struct blkfront_info *info)
-> +{
-> +	list_del(&info->info_list);
-> +	kfree(info);
-> +}
-> +
->  /* Common code used when first setting up, and when resuming. */
->  static int talk_to_blkback(struct xenbus_device *dev,
->  			   struct blkfront_info *info)
-> @@ -1885,7 +1896,10 @@ static int talk_to_blkback(struct xenbus_device *dev,
->   destroy_blkring:
->  	blkif_free(info, 0);
->  
-> -	kfree(info);
-> +	mutex_lock(&blkfront_mutex);
-> +	free_info(info);
-> +	mutex_unlock(&blkfront_mutex);
-> +
->  	dev_set_drvdata(&dev->dev, NULL);
->  
->  	return err;
-> @@ -1996,6 +2010,10 @@ static int blkfront_probe(struct xenbus_device *dev,
->  	info->handle = simple_strtoul(strrchr(dev->nodename, '/')+1, NULL, 0);
->  	dev_set_drvdata(&dev->dev, info);
->  
-> +	mutex_lock(&blkfront_mutex);
-> +	list_add(&info->info_list, &info_list);
-> +	mutex_unlock(&blkfront_mutex);
-> +
->  	return 0;
->  }
->  
-> @@ -2306,6 +2324,15 @@ static void blkfront_gather_backend_features(struct blkfront_info *info)
->  	if (indirect_segments <= BLKIF_MAX_SEGMENTS_PER_REQUEST)
->  		indirect_segments = 0;
->  	info->max_indirect_segments = indirect_segments;
-> +
-> +	if (info->feature_persistent) {
-> +		mutex_lock(&blkfront_mutex);
-> +		if (!blkfront_work_active) {
-> +			blkfront_work_active = true;
-> +			schedule_delayed_work(&blkfront_work, HZ * 10);
 
-Does it make sense to provide a module parameter to rune the schedule
-of the cleanup routine?
-
-> +		}
-> +		mutex_unlock(&blkfront_mutex);
-
-Is it really necessary to have the blkfront_work_active boolean? What
-happens if you queue the same delayed work more than once?
+Reviewed-by: Roger Pau Monné <roger.pau@citrix.com>
 
 Thanks, Roger.
