@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D0EAC4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 11:58:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6055C46472
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 11:58:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15AF221A0B
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 11:58:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15AF221A0B
+	by mail.kernel.org (Postfix) with ESMTP id 788D121A0B
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 11:58:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 788D121A0B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731733AbeHFOHO (ORCPT
+        id S1731841AbeHFOHP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 10:07:14 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:31001 "EHLO
+        Mon, 6 Aug 2018 10:07:15 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:33479 "EHLO
         mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1731533AbeHFOHO (ORCPT
+        with ESMTP id S1729775AbeHFOHO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 6 Aug 2018 10:07:14 -0400
-X-UUID: cf96fddb2417428180e9db789e00ebea-20180806
+X-UUID: 9bb6e46ecb0149ed9fbcadcaef58e613-20180806
 Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
         (envelope-from <stu.hsieh@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 53610099; Mon, 06 Aug 2018 19:58:24 +0800
+        with ESMTP id 88344231; Mon, 06 Aug 2018 19:58:24 +0800
 Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
  mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
  15.0.1210.3; Mon, 6 Aug 2018 19:58:22 +0800
 Received: from mtksdccf07.mediatek.inc (172.21.84.99) by MTKCAS06.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Mon, 6 Aug 2018 19:58:22 +0800
+ Transport; Mon, 6 Aug 2018 19:58:23 +0800
 From:   Stu Hsieh <stu.hsieh@mediatek.com>
 To:     CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>
 CC:     David Airlie <airlied@linux.ie>,
@@ -43,9 +43,9 @@ CC:     David Airlie <airlied@linux.ie>,
         <linux-mediatek@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, <srv_heupstream@mediatek.com>,
         Stu Hsieh <stu.hsieh@mediatek.com>
-Subject: [PATCH v3 02/13] drm/mediatek: add connection from RDMA0 to DSI1
-Date:   Mon, 6 Aug 2018 19:58:09 +0800
-Message-ID: <1533556700-26525-3-git-send-email-stu.hsieh@mediatek.com>
+Subject: [PATCH v3 04/13] drm/mediatek: add connection from RDMA2 to DSI0
+Date:   Mon, 6 Aug 2018 19:58:11 +0800
+Message-ID: <1533556700-26525-5-git-send-email-stu.hsieh@mediatek.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1533556700-26525-1-git-send-email-stu.hsieh@mediatek.com>
 References: <1533556700-26525-1-git-send-email-stu.hsieh@mediatek.com>
@@ -57,7 +57,7 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch add connection from RDMA0 to DSI1
+This patch add connection from RDMA2 to DSI0
 
 Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
 Reviewed-by: CK Hu <ck.hu@mediatek.com>
@@ -66,27 +66,27 @@ Reviewed-by: CK Hu <ck.hu@mediatek.com>
  1 file changed, 4 insertions(+)
 
 diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-index 03e3628b5b0d..310d8482d5a0 100644
+index 31189fad8d4e..3239f22785fd 100644
 --- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
 +++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-@@ -107,6 +107,7 @@
- #define GAMMA_MOUT_EN_RDMA1		0x1
- #define RDMA0_SOUT_DPI0			0x2
- #define RDMA0_SOUT_DPI1			0x3
-+#define RDMA0_SOUT_DSI1			0x1
- #define RDMA0_SOUT_DSI2			0x4
- #define RDMA0_SOUT_DSI3			0x5
- #define RDMA1_SOUT_DPI0			0x2
-@@ -228,6 +229,9 @@ static unsigned int mtk_ddp_mout_en(enum mtk_ddp_comp_id cur,
- 	} else if (cur == DDP_COMPONENT_RDMA0 && next == DDP_COMPONENT_DPI1) {
- 		*addr = DISP_REG_CONFIG_DISP_RDMA0_SOUT_EN;
- 		value = RDMA0_SOUT_DPI1;
-+	} else if (cur == DDP_COMPONENT_RDMA0 && next == DDP_COMPONENT_DSI1) {
-+		*addr = DISP_REG_CONFIG_DISP_RDMA0_SOUT_EN;
-+		value = RDMA0_SOUT_DSI1;
- 	} else if (cur == DDP_COMPONENT_RDMA0 && next == DDP_COMPONENT_DSI2) {
- 		*addr = DISP_REG_CONFIG_DISP_RDMA0_SOUT_EN;
- 		value = RDMA0_SOUT_DSI2;
+@@ -125,6 +125,7 @@
+ #define DPI1_SEL_IN_RDMA1		(0x1 << 8)
+ #define DPI1_SEL_IN_RDMA2		(0x3 << 8)
+ #define DSI0_SEL_IN_RDMA1		0x1
++#define DSI0_SEL_IN_RDMA2		0x4
+ #define DSI1_SEL_IN_RDMA1		0x1
+ #define DSI1_SEL_IN_RDMA2		0x4
+ #define DSI2_SEL_IN_RDMA1		(0x1 << 16)
+@@ -309,6 +310,9 @@ static unsigned int mtk_ddp_sel_in(enum mtk_ddp_comp_id cur,
+ 	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DPI1) {
+ 		*addr = DISP_REG_CONFIG_DPI_SEL_IN;
+ 		value = DPI1_SEL_IN_RDMA2;
++	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DSI0) {
++		*addr = DISP_REG_CONFIG_DSIE_SEL_IN;
++		value = DSI0_SEL_IN_RDMA2;
+ 	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DSI1) {
+ 		*addr = DISP_REG_CONFIG_DSIE_SEL_IN;
+ 		value = DSI1_SEL_IN_RDMA2;
 -- 
 2.12.5.2.gbdf23ab
 
