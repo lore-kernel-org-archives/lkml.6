@@ -6,268 +6,124 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCA21C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 09:21:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E196C46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 09:21:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8759D219EC
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 09:21:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8759D219EC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id C854B219EC
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 09:21:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C854B219EC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730169AbeHFL3U (ORCPT
+        id S1730215AbeHFL3h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 07:29:20 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47982 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727490AbeHFL3U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 07:29:20 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 191DEAEC1;
-        Mon,  6 Aug 2018 09:21:08 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 5502F1E0501; Mon,  6 Aug 2018 11:21:07 +0200 (CEST)
-Date:   Mon, 6 Aug 2018 11:21:07 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     linux-nvdimm@lists.01.org, Christoph Hellwig <hch@lst.de>,
-        Matthew Wilcox <willy@infradead.org>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 09/13] filesystem-dax: Introduce
- dax_lock_mapping_entry()
-Message-ID: <20180806092107.ipenq22xxna6ts5i@quack2.suse.cz>
-References: <153154376846.34503.15480221419473501643.stgit@dwillia2-desk3.amr.corp.intel.com>
- <153154381675.34503.4471648812866312162.stgit@dwillia2-desk3.amr.corp.intel.com>
+        Mon, 6 Aug 2018 07:29:37 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:52247 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727490AbeHFL3h (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 07:29:37 -0400
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <sha@pengutronix.de>)
+        id 1fmbha-0006kB-8i; Mon, 06 Aug 2018 11:21:22 +0200
+Received: from sha by ptx.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <sha@pengutronix.de>)
+        id 1fmbhZ-0001Po-Ts; Mon, 06 Aug 2018 11:21:21 +0200
+Date:   Mon, 6 Aug 2018 11:21:21 +0200
+From:   Sascha Hauer <s.hauer@pengutronix.de>
+To:     Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc:     Mark Brown <broonie@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
+        alexandre.belloni@bootlin.com
+Subject: Re: [PATCH RESEND 3/5] spi: imx: Use correct number of bytes per
+ words
+Message-ID: <20180806092121.s7kuwf3yamrerw24@pengutronix.de>
+References: <20180717143154.28241-1-maxime.chevallier@bootlin.com>
+ <20180717143154.28241-4-maxime.chevallier@bootlin.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <153154381675.34503.4471648812866312162.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: NeoMutt/20170912 (1.9.0)
+In-Reply-To: <20180717143154.28241-4-maxime.chevallier@bootlin.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-IRC:  #ptxdist @freenode
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-Uptime: 11:21:07 up 54 days, 18:30, 56 users,  load average: 0.15, 0.13,
+ 0.21
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 13-07-18 21:50:16, Dan Williams wrote:
-> In preparation for implementing support for memory poison (media error)
-> handling via dax mappings, implement a lock_page() equivalent. Poison
-> error handling requires rmap and needs guarantees that the page->mapping
-> association is maintained / valid (inode not freed) for the duration of
-> the lookup.
+On Tue, Jul 17, 2018 at 04:31:52PM +0200, Maxime Chevallier wrote:
+> The SPI core enforces that we always use the next power-of-two number of
+> bytes to store words. As a result, a 24 bits word will be stored in 4
+> bytes.
 > 
-> In the device-dax case it is sufficient to simply hold a dev_pagemap
-> reference. In the filesystem-dax case we need to use the entry lock.
+> This commit fixes the spi_imx_bytes_per_word function to return the
+> correct number of bytes.
 > 
-> Export the entry lock via dax_lock_mapping_entry() that uses
-> rcu_read_lock() to protect against the inode being freed, and
-> revalidates the page->mapping association under xa_lock().
+> This also allows to get rid of unnecessary checks in the can_dma
+> function, since the SPI core validates that we always have a transfer
+> length that is a multiple of the number of bytes per word.
 > 
-> Cc: Christoph Hellwig <hch@lst.de>
-> Cc: Matthew Wilcox <willy@infradead.org>
-> Cc: Ross Zwisler <ross.zwisler@linux.intel.com>
-> Cc: Jan Kara <jack@suse.cz>
-> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+> Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
 
-Just got back from vacation... This patch looks good to me. You can add:
+Reviewed-by: Sascha Hauer <s.hauer@pengutronix.de>
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
+Sascha
 
 > ---
->  fs/dax.c            |  109 ++++++++++++++++++++++++++++++++++++++++++++++++---
->  include/linux/dax.h |   13 ++++++
->  2 files changed, 116 insertions(+), 6 deletions(-)
+>  drivers/spi/spi-imx.c | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
 > 
-> diff --git a/fs/dax.c b/fs/dax.c
-> index 4de11ed463ce..57ec272038da 100644
-> --- a/fs/dax.c
-> +++ b/fs/dax.c
-> @@ -226,8 +226,8 @@ static inline void *unlock_slot(struct address_space *mapping, void **slot)
->   *
->   * Must be called with the i_pages lock held.
->   */
-> -static void *get_unlocked_mapping_entry(struct address_space *mapping,
-> -					pgoff_t index, void ***slotp)
-> +static void *__get_unlocked_mapping_entry(struct address_space *mapping,
-> +		pgoff_t index, void ***slotp, bool (*wait_fn)(void))
->  {
->  	void *entry, **slot;
->  	struct wait_exceptional_entry_queue ewait;
-> @@ -237,6 +237,8 @@ static void *get_unlocked_mapping_entry(struct address_space *mapping,
->  	ewait.wait.func = wake_exceptional_entry_func;
+> diff --git a/drivers/spi/spi-imx.c b/drivers/spi/spi-imx.c
+> index ecafbda5ec94..3ae706dac660 100644
+> --- a/drivers/spi/spi-imx.c
+> +++ b/drivers/spi/spi-imx.c
+> @@ -202,7 +202,12 @@ static unsigned int spi_imx_clkdiv_2(unsigned int fin,
 >  
->  	for (;;) {
-> +		bool revalidate;
-> +
->  		entry = __radix_tree_lookup(&mapping->i_pages, index, NULL,
->  					  &slot);
->  		if (!entry ||
-> @@ -251,14 +253,31 @@ static void *get_unlocked_mapping_entry(struct address_space *mapping,
->  		prepare_to_wait_exclusive(wq, &ewait.wait,
->  					  TASK_UNINTERRUPTIBLE);
->  		xa_unlock_irq(&mapping->i_pages);
-> -		schedule();
-> +		revalidate = wait_fn();
->  		finish_wait(wq, &ewait.wait);
->  		xa_lock_irq(&mapping->i_pages);
-> +		if (revalidate)
-> +			return ERR_PTR(-EAGAIN);
->  	}
+>  static int spi_imx_bytes_per_word(const int bits_per_word)
+>  {
+> -	return DIV_ROUND_UP(bits_per_word, BITS_PER_BYTE);
+> +	if (bits_per_word <= 8)
+> +		return 1;
+> +	else if (bits_per_word <= 16)
+> +		return 2;
+> +	else
+> +		return 4;
 >  }
 >  
-> -static void dax_unlock_mapping_entry(struct address_space *mapping,
-> -				     pgoff_t index)
-> +static bool entry_wait(void)
-> +{
-> +	schedule();
-> +	/*
-> +	 * Never return an ERR_PTR() from
-> +	 * __get_unlocked_mapping_entry(), just keep looping.
-> +	 */
-> +	return false;
-> +}
-> +
-> +static void *get_unlocked_mapping_entry(struct address_space *mapping,
-> +		pgoff_t index, void ***slotp)
-> +{
-> +	return __get_unlocked_mapping_entry(mapping, index, slotp, entry_wait);
-> +}
-> +
-> +static void unlock_mapping_entry(struct address_space *mapping, pgoff_t index)
->  {
->  	void *entry, **slot;
+>  static bool spi_imx_can_dma(struct spi_master *master, struct spi_device *spi,
+> @@ -219,9 +224,6 @@ static bool spi_imx_can_dma(struct spi_master *master, struct spi_device *spi,
 >  
-> @@ -277,7 +296,7 @@ static void dax_unlock_mapping_entry(struct address_space *mapping,
->  static void put_locked_mapping_entry(struct address_space *mapping,
->  		pgoff_t index)
->  {
-> -	dax_unlock_mapping_entry(mapping, index);
-> +	unlock_mapping_entry(mapping, index);
->  }
+>  	bytes_per_word = spi_imx_bytes_per_word(transfer->bits_per_word);
 >  
->  /*
-> @@ -374,6 +393,84 @@ static struct page *dax_busy_page(void *entry)
->  	return NULL;
->  }
->  
-> +static bool entry_wait_revalidate(void)
-> +{
-> +	rcu_read_unlock();
-> +	schedule();
-> +	rcu_read_lock();
-> +
-> +	/*
-> +	 * Tell __get_unlocked_mapping_entry() to take a break, we need
-> +	 * to revalidate page->mapping after dropping locks
-> +	 */
-> +	return true;
-> +}
-> +
-> +bool dax_lock_mapping_entry(struct page *page)
-> +{
-> +	pgoff_t index;
-> +	struct inode *inode;
-> +	bool did_lock = false;
-> +	void *entry = NULL, **slot;
-> +	struct address_space *mapping;
-> +
-> +	rcu_read_lock();
-> +	for (;;) {
-> +		mapping = READ_ONCE(page->mapping);
-> +
-> +		if (!dax_mapping(mapping))
-> +			break;
-> +
-> +		/*
-> +		 * In the device-dax case there's no need to lock, a
-> +		 * struct dev_pagemap pin is sufficient to keep the
-> +		 * inode alive, and we assume we have dev_pagemap pin
-> +		 * otherwise we would not have a valid pfn_to_page()
-> +		 * translation.
-> +		 */
-> +		inode = mapping->host;
-> +		if (S_ISCHR(inode->i_mode)) {
-> +			did_lock = true;
-> +			break;
-> +		}
-> +
-> +		xa_lock_irq(&mapping->i_pages);
-> +		if (mapping != page->mapping) {
-> +			xa_unlock_irq(&mapping->i_pages);
-> +			continue;
-> +		}
-> +		index = page->index;
-> +
-> +		entry = __get_unlocked_mapping_entry(mapping, index, &slot,
-> +				entry_wait_revalidate);
-> +		if (!entry) {
-> +			xa_unlock_irq(&mapping->i_pages);
-> +			break;
-> +		} else if (IS_ERR(entry)) {
-> +			WARN_ON_ONCE(PTR_ERR(entry) != -EAGAIN);
-> +			continue;
-> +		}
-> +		lock_slot(mapping, slot);
-> +		did_lock = true;
-> +		xa_unlock_irq(&mapping->i_pages);
-> +		break;
-> +	}
-> +	rcu_read_unlock();
-> +
-> +	return did_lock;
-> +}
-> +
-> +void dax_unlock_mapping_entry(struct page *page)
-> +{
-> +	struct address_space *mapping = page->mapping;
-> +	struct inode *inode = mapping->host;
-> +
-> +	if (S_ISCHR(inode->i_mode))
-> +		return;
-> +
-> +	unlock_mapping_entry(mapping, page->index);
-> +}
-> +
->  /*
->   * Find radix tree entry at given index. If it points to an exceptional entry,
->   * return it with the radix tree entry locked. If the radix tree doesn't
-> diff --git a/include/linux/dax.h b/include/linux/dax.h
-> index 3855e3800f48..cf8ac51cf0d7 100644
-> --- a/include/linux/dax.h
-> +++ b/include/linux/dax.h
-> @@ -88,6 +88,8 @@ int dax_writeback_mapping_range(struct address_space *mapping,
->  		struct block_device *bdev, struct writeback_control *wbc);
->  
->  struct page *dax_layout_busy_page(struct address_space *mapping);
-> +bool dax_lock_mapping_entry(struct page *page);
-> +void dax_unlock_mapping_entry(struct page *page);
->  #else
->  static inline bool bdev_dax_supported(struct block_device *bdev,
->  		int blocksize)
-> @@ -119,6 +121,17 @@ static inline int dax_writeback_mapping_range(struct address_space *mapping,
->  {
->  	return -EOPNOTSUPP;
->  }
-> +
-> +static inline bool dax_lock_mapping_entry(struct page *page)
-> +{
-> +	if (IS_DAX(page->mapping->host))
-> +		return true;
-> +	return false;
-> +}
-> +
-> +static inline void dax_unlock_mapping_entry(struct page *page)
-> +{
-> +}
->  #endif
->  
->  int dax_read_lock(void);
+> -	if (bytes_per_word != 1 && bytes_per_word != 2 && bytes_per_word != 4)
+> -		return false;
+> -
+>  	for (i = spi_imx->devtype_data->fifo_size / 2; i > 0; i--) {
+>  		if (!(transfer->len % (i * bytes_per_word)))
+>  			break;
+> -- 
+> 2.11.0
 > 
+> 
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
