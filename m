@@ -3,31 +3,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BC92C46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:40:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEC4FC46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:40:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47B9621A18
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:40:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47B9621A18
+	by mail.kernel.org (Postfix) with ESMTP id 8C27C21A18
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:40:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C27C21A18
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733161AbeHFSuS (ORCPT
+        id S1733302AbeHFSuY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 14:50:18 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41692 "EHLO
+        Mon, 6 Aug 2018 14:50:24 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41724 "EHLO
         foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727561AbeHFSuS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 14:50:18 -0400
+        id S1727561AbeHFSuY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 14:50:24 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7E20380D;
-        Mon,  6 Aug 2018 09:40:24 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6F7B615A2;
+        Mon,  6 Aug 2018 09:40:30 -0700 (PDT)
 Received: from e110439-lin.Cambridge.Arm.com (e110439-lin.emea.arm.com [10.4.12.126])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id AE0013F5D0;
-        Mon,  6 Aug 2018 09:40:21 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id A28D23F5D0;
+        Mon,  6 Aug 2018 09:40:27 -0700 (PDT)
 From:   Patrick Bellasi <patrick.bellasi@arm.com>
 To:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
 Cc:     Ingo Molnar <mingo@redhat.com>,
@@ -44,277 +44,340 @@ Cc:     Ingo Molnar <mingo@redhat.com>,
         Joel Fernandes <joelaf@google.com>,
         Steve Muckle <smuckle@google.com>,
         Suren Baghdasaryan <surenb@google.com>
-Subject: [PATCH v3 00/14] Add utilization clamping support
-Date:   Mon,  6 Aug 2018 17:39:32 +0100
-Message-Id: <20180806163946.28380-1-patrick.bellasi@arm.com>
+Subject: [PATCH v3 01/14] sched/core: uclamp: extend sched_setattr to support utilization clamping
+Date:   Mon,  6 Aug 2018 17:39:33 +0100
+Message-Id: <20180806163946.28380-2-patrick.bellasi@arm.com>
 X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180806163946.28380-1-patrick.bellasi@arm.com>
+References: <20180806163946.28380-1-patrick.bellasi@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a respin of:
+The SCHED_DEADLINE scheduling class provides an advanced and formal
+model to define tasks requirements which can be translated into proper
+decisions for both task placements and frequencies selections.
+Other classes have a more simplified model which is essentially based on
+the relatively simple concept of POSIX priorities.
 
-   https://lore.kernel.org/lkml/20180716082906.6061-1-patrick.bellasi@arm.com
+Such a simple priority based model however does not allow to exploit
+some of the most advanced features of the Linux scheduler like, for
+example, driving frequencies selection via the schedutil cpufreq
+governor. However, also for non SCHED_DEADLINE tasks, it's still
+interesting to define tasks properties which can be used to better
+support certain scheduler decisions.
 
-Which has been rebased on today's tip/sched/core:
+Utilization clamping aims at exposing to user-space a new set of
+per-task attributes which can be used to provide the scheduler with some
+hints about the expected/required utilization for a task.
+This will allow to implement a more advanced per-task frequency control
+mechanism which is not based just on a "passive" measured task
+utilization but on a more "active" approach. For example, it could be
+possible to boost interactive tasks, thus getting better performance, or
+cap background tasks, thus being more energy efficient.
+Ultimately, such a mechanism can be considered similar to the cpufreq's
+powersave, performance and userspace governor but with a much fine
+grained and per-task control.
 
-   commit 1b6266ebe3da ("watchdog: Reduce message verbosity")
+Let's introduce a new API to set utilization clamping values for a
+specified task by extending sched_setattr, a syscall which already
+allows to define task specific properties for different scheduling
+classes.
+Specifically, a new pair of attributes allows to specify a minimum and
+maximum utilization which the scheduler should consider for a task.
 
-and addresses all the comments from Tejun and Suren, thanks for your feedback!
+Signed-off-by: Patrick Bellasi <patrick.bellasi@arm.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Paul Turner <pjt@google.com>
+Cc: Suren Baghdasaryan <surenb@google.com>
+Cc: Todd Kjos <tkjos@google.com>
+Cc: Joel Fernandes <joelaf@google.com>
+Cc: Steve Muckle <smuckle@google.com>
+Cc: Juri Lelli <juri.lelli@redhat.com>
+Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc: Morten Rasmussen <morten.rasmussen@arm.com>
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-pm@vger.kernel.org
 
-Further comments and feedbacks are more than welcome!
-
-Cheers Patrick
-
-
-Main changes
-============
-
-.:: Properly implemented the cgroup delegation model
-----------------------------------------------------
-
- As Tejun pointed out in:
-
-    https://lore.kernel.org/lkml/20180409222417.GK3126663@devbig577.frc2.facebook.com
-
- the cgroup delegation model requires that a parent group can always restrict
- the resources of a child group. To properly support this behavior we need to
- add a concept of "effective" clamp values beside the one of "requested" clamp
- values.
-
- This means that a child group can always ask for certain clamp values but the
- effective clamps it get depends on the parent group configuration. More
- specifically, the effective clamps for a group are defined as the most
- restrictive value (i.e. the minimum) between a task group clamp value and the
- effective value of its parent task group.
-
- This new feature is introduced by this new patch in this series:
-
-    [PATCH v3 09/14] sched/core: uclamp: propagate parent clamps
-
-
-.:: Added support for system defaults
--------------------------------------
-
- The introduction of the previous patch implies that the root task group must be
- configured with a default min utilization clamping which corresponds to the
- maximum value, i.e. root_task_group::uclamp[UTIL_MIN].value = 100%.
- Otherwise, subgroups will always have an effective 0% minimum clamp.
-
- To fix this misbehavior, as well as to overcome the (cgroup imposed) limitation
- of non configurable attributes of the root task group, in this new patch:
-
-    [PATCH v3 12/14] sched/core: uclamp: add system default clamps
-
- we add sysfs support for system wide defaults.
-
- This should satisfy another comment by Tejun and it also provides a convenient
- system wide configuration API, which is available independently from cgroup.
-
-
-.:: Improved syscall API semantics
-----------------------------------
-
- As pointed out and suggested by Suren, the __sched_setscheduler() syscall
- semantics has been improved to support:
- - single attribute configuration
-   by using a new set of dedicated sched_attr::sched_flags we can now specify
-   which clamp values we want to configure
- - atomic setting or failure in case of two attributes being configured at the
-   same time.
-
- These changes affect mainly:
-
-    [PATCH v3 01/14] sched/core: uclamp: extend sched_setattr to support utilization clamping
-    [PATCH v3 02/14] sched/core: uclamp: map TASK's clamp values into CPU's clamp groups
-
-
-.:: Other notes
----------------
-
-The rest of the series is similar to v2 and split into these sections:
-
-- Patches [01-04]: Per task (primary) API
-- Patches [05-06]: Schedutil integration
-- Patches [08-13]: Per task group (secondary) API
-- Patches [07,14]: Additional improvements
-
-
-Newcomer's Short Abstract (Updated)
-===================================
-
-The Linux scheduler is able to drive frequency selection, when the schedutil
-cpufreq's governor is in use, based on task utilization aggregated at CPU
-level. The CPU utilization is then used to select the frequency which best
-fits the task's generated workload.  The current translation of utilization
-values into a frequency selection is pretty simple: we just go to max for RT
-tasks or to the minimum frequency which can accommodate the utilization of
-DL+FAIR tasks.
-
-While this simple mechanism is good enough for DL tasks, for RT and FAIR tasks
-we can aim at some better frequency driving which can take into consideration
-hints coming from user-space.
-
-Utilization clamping is a mechanism which allows to "clamp" (i.e. filter) the
-utilization generated by RT and FAIR tasks within a range defined from
-user-space. The clamped utilization value can then be used to enforce a minimum
-and/or maximum frequency depending on which tasks are currently active on a
-CPU.
-
-The main use-cases for utilization clamping are:
-
- - boosting: better interactive response for small tasks which
-   are affecting the user experience.
-   Consider for example the case of a small control thread for an external
-   accelerator (e.g. GPU, DSP, other devices). In this case, from its
-   utilization the scheduler does not have a complete view of what are the task
-   requirements and, if it's a small utilization task, schedutil will keep
-   selecting a more energy efficient CPU, with smaller capacity and lower
-   frequency, thus affecting the overall time required to complete the task
-   activations.
-
- - capping: increase energy efficiency for background tasks not directly
-   affecting the user experience.
-   Since running on a lower capacity CPU at a lower frequency is in general
-   more energy efficient, when the completion time is not a main goal, then
-   capping the utilization considered for certain (maybe big) tasks can have
-   positive effects, both on energy consumption and thermal stress.
-   Moreover, this last support allows also to make RT tasks more energy
-   friendly on mobile systems, where running them on high capacity CPUs and at
-   the maximum frequency is not strictly required.
-
-From these two use-cases, it's worth to notice that frequency selection
-biasing, introduced by patches 5 and 6 of this series, is just one possible
-usage of utilization clamping. Another compelling extension of utilization
-clamping is in helping the scheduler on tasks placement decisions.
-
-Utilization is a task specific property which is used by the scheduler to know
-how much CPU bandwidth a task requires (under certain conditions).
-Thus, the utilization clamp values defined either per-task or via the CPU
-controller, can be used to represent tasks to the scheduler as being bigger
-(or smaller) than what they really are.
-
-Utilization clamping thus ultimately enable interesting additional
-optimizations, especially on asymmetric capacity systems like Arm
-big.LITTLE and DynamIQ CPUs, where:
-
- - boosting: small tasks are preferably scheduled on higher-capacity CPUs
-   where, despite being less energy efficient, they can complete faster
-
- - capping: big/background tasks are preferably scheduled on low-capacity CPUs
-   where, being more energy efficient, they can still run but save power and
-   thermal headroom for more important tasks.
-
-This additional usage of the utilization clamping is not presented in this
-series but it's an integral part of the Energy Aware Scheduler (EAS) feature
-set. A similar solution (SchedTune) is already used on Android kernels, which
-targets the biasing of both 'frequency selection' and 'task placement'.
-This series provides the foundation bits to add similar features in mainline
-and its first simple client with the schedutil integration.
-
-
-Detailed Changelog
-==================
-
+---
 Changes in v3:
  Message-ID: <CAJuCfpF6=L=0LrmNnJrTNPazT4dWKqNv+thhN0dwpKCgUzs9sg@mail.gmail.com>
  - removed UCLAMP_NONE not used by this patch
- - remove not necessary checks in uclamp_group_find()
- - add WARN on unlikely un-referenced decrement in uclamp_group_put()
- - add WARN on unlikely un-referenced decrement in uclamp_cpu_put_id()
- - make __setscheduler_uclamp() able to set just one clamp value
- - make __setscheduler_uclamp() failing if both clamps are required but
-   there is no clamp groups available for one of them
- - remove uclamp_group_find() from uclamp_group_get() which now takes a
-   group_id as a parameter
- - add explicit calls to uclamp_group_find()
-   which is now not more part of uclamp_group_get()
- - fixed a not required override
- - fixed some typos in comments and changelog
- Message-ID: <CAJuCfpGaKvxKcO=RLcmveHRB9qbMrvFs2yFVrk=k-v_m7JkxwQ@mail.gmail.com>
- - few typos fixed
- Message-ID: <20180409222417.GK3126663@devbig577.frc2.facebook.com>
- - use "." notation for attributes naming
-   i.e. s/util_{min,max}/util.{min,max}/
- - added new patches: 09 and 12
- Other changes:
+ Others:
  - rebased on tip/sched/core
 
 Changes in v2:
- Message-ID: <20180413093822.GM4129@hirez.programming.kicks-ass.net>
- - refactored struct rq::uclamp_cpu to be more cache efficient
-   no more holes, re-arranged vectors to match cache lines with expected
-   data locality
- Message-ID: <20180413094615.GT4043@hirez.programming.kicks-ass.net>
- - use *rq as parameter whenever already available
- - add scheduling class's uclamp_enabled marker
- - get rid of the "confusing" single callback uclamp_task_update()
-   and use uclamp_cpu_{get,put}() directly from {en,de}queue_task()
- - fix/remove "bad" comments
- Message-ID: <20180413113337.GU14248@e110439-lin>
- - remove inline from init_uclamp, flag it __init
- Message-ID: <20180413111900.GF4082@hirez.programming.kicks-ass.net>
- - get rid of the group_id back annotation
-   which is not requires at this stage where we have only per-task
-   clamping support. It will be introduce later when cgroup support is
-   added.
- Message-ID: <20180409222417.GK3126663@devbig577.frc2.facebook.com>
- - make attributes available only on non-root nodes
-   a system wide API seems of not immediate interest and thus it's not
-   supported anymore
- - remove implicit parent-child constraints and dependencies
- Message-ID: <20180410200514.GA793541@devbig577.frc2.facebook.com>
- - add some cgroup-v2 documentation for the new attributes
- - (hopefully) better explain intended use-cases
-   the changelog above has been extended to better justify the naming
-   proposed by the new attributes
- Other changes:
- - improved documentation to make more explicit some concepts
- - set UCLAMP_GROUPS_COUNT=2 by default
-   which allows to fit all the hot-path CPU clamps data into a single cache
-   line while still supporting up to 2 different {min,max}_utiql clamps.
- - use -ERANGE as range violation error
- - add attributes to the default hierarchy as well as the legacy one
- - implement a "nice" semantics where cgroup clamp values are always
-   used to restrict task specific clamp values,
-   i.e. tasks running on a TG are only allowed to demote themself.
- - patches re-ordering in top-down way
  - rebased on v4.18-rc4
+ - move at the head of the series
 
+As discussed at OSPM, using a [0..SCHED_CAPACITY_SCALE] range seems to
+be acceptable. However, an additional patch has been added at the end of
+the series which introduces a simple abstraction to use a more
+generic [0..100] range.
 
-Patrick Bellasi (14):
-  sched/core: uclamp: extend sched_setattr to support utilization
-    clamping
-  sched/core: uclamp: map TASK's clamp values into CPU's clamp groups
-  sched/core: uclamp: add CPU's clamp groups accounting
-  sched/core: uclamp: update CPU's refcount on clamp changes
-  sched/cpufreq: uclamp: add utilization clamping for FAIR tasks
-  sched/cpufreq: uclamp: add utilization clamping for RT tasks
-  sched/core: uclamp: enforce last task UCLAMP_MAX
-  sched/core: uclamp: extend cpu's cgroup controller
-  sched/core: uclamp: propagate parent clamps
-  sched/core: uclamp: map TG's clamp values into CPU's clamp groups
-  sched/core: uclamp: use TG's clamps to restrict Task's clamps
-  sched/core: uclamp: add system default clamps
-  sched/core: uclamp: update CPU's refcount on TG's clamp changes
-  sched/core: uclamp: use percentage clamp values
+At OSPM we also discarded the idea to "recycle" the usage of
+sched_runtime and sched_period which would have made the API too
+much complex for limited benefits.
+---
+ include/linux/sched.h            | 13 +++++++
+ include/uapi/linux/sched.h       |  4 +-
+ include/uapi/linux/sched/types.h | 64 +++++++++++++++++++++++++++-----
+ init/Kconfig                     | 19 ++++++++++
+ kernel/sched/core.c              | 39 +++++++++++++++++++
+ 5 files changed, 129 insertions(+), 10 deletions(-)
 
- Documentation/admin-guide/cgroup-v2.rst |   46 +
- include/linux/sched.h                   |   58 ++
- include/linux/sched/sysctl.h            |   11 +
- include/uapi/linux/sched.h              |    8 +-
- include/uapi/linux/sched/types.h        |   66 +-
- init/Kconfig                            |   61 ++
- kernel/sched/core.c                     | 1186 +++++++++++++++++++++++
- kernel/sched/cpufreq_schedutil.c        |   38 +-
- kernel/sched/fair.c                     |    4 +
- kernel/sched/features.h                 |   10 +
- kernel/sched/rt.c                       |    4 +
- kernel/sched/sched.h                    |  194 ++++
- kernel/sysctl.c                         |   16 +
- 13 files changed, 1688 insertions(+), 14 deletions(-)
-
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index e0f4f56c9310..42f6439378e1 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -279,6 +279,14 @@ struct vtime {
+ 	u64			gtime;
+ };
+ 
++enum uclamp_id {
++	UCLAMP_MIN = 0, /* Minimum utilization */
++	UCLAMP_MAX,     /* Maximum utilization */
++
++	/* Utilization clamping constraints count */
++	UCLAMP_CNT
++};
++
+ struct sched_info {
+ #ifdef CONFIG_SCHED_INFO
+ 	/* Cumulative counters: */
+@@ -649,6 +657,11 @@ struct task_struct {
+ #endif
+ 	struct sched_dl_entity		dl;
+ 
++#ifdef CONFIG_UCLAMP_TASK
++	/* Utlization clamp values for this task */
++	int				uclamp[UCLAMP_CNT];
++#endif
++
+ #ifdef CONFIG_PREEMPT_NOTIFIERS
+ 	/* List of struct preempt_notifier: */
+ 	struct hlist_head		preempt_notifiers;
+diff --git a/include/uapi/linux/sched.h b/include/uapi/linux/sched.h
+index 22627f80063e..c27d6e81517b 100644
+--- a/include/uapi/linux/sched.h
++++ b/include/uapi/linux/sched.h
+@@ -50,9 +50,11 @@
+ #define SCHED_FLAG_RESET_ON_FORK	0x01
+ #define SCHED_FLAG_RECLAIM		0x02
+ #define SCHED_FLAG_DL_OVERRUN		0x04
++#define SCHED_FLAG_UTIL_CLAMP		0x08
+ 
+ #define SCHED_FLAG_ALL	(SCHED_FLAG_RESET_ON_FORK	| \
+ 			 SCHED_FLAG_RECLAIM		| \
+-			 SCHED_FLAG_DL_OVERRUN)
++			 SCHED_FLAG_DL_OVERRUN		| \
++			 SCHED_FLAG_UTIL_CLAMP)
+ 
+ #endif /* _UAPI_LINUX_SCHED_H */
+diff --git a/include/uapi/linux/sched/types.h b/include/uapi/linux/sched/types.h
+index 10fbb8031930..7421cd25354d 100644
+--- a/include/uapi/linux/sched/types.h
++++ b/include/uapi/linux/sched/types.h
+@@ -21,8 +21,33 @@ struct sched_param {
+  * the tasks may be useful for a wide variety of application fields, e.g.,
+  * multimedia, streaming, automation and control, and many others.
+  *
+- * This variant (sched_attr) is meant at describing a so-called
+- * sporadic time-constrained task. In such model a task is specified by:
++ * This variant (sched_attr) allows to define additional attributes to
++ * improve the scheduler knowledge about task requirements.
++ *
++ * Scheduling Class Attributes
++ * ===========================
++ *
++ * A subset of sched_attr attributes specifies the
++ * scheduling policy and relative POSIX attributes:
++ *
++ *  @size		size of the structure, for fwd/bwd compat.
++ *
++ *  @sched_policy	task's scheduling policy
++ *  @sched_nice		task's nice value      (SCHED_NORMAL/BATCH)
++ *  @sched_priority	task's static priority (SCHED_FIFO/RR)
++ *
++ * Certain more advanced scheduling features can be controlled by a
++ * predefined set of flags via the attribute:
++ *
++ *  @sched_flags	for customizing the scheduler behaviour
++ *
++ * Sporadic Time-Constrained Tasks Attributes
++ * ==========================================
++ *
++ * A subset of sched_attr attributes allows to describe a so-called
++ * sporadic time-constrained task.
++ *
++ * In such model a task is specified by:
+  *  - the activation period or minimum instance inter-arrival time;
+  *  - the maximum (or average, depending on the actual scheduling
+  *    discipline) computation time of all instances, a.k.a. runtime;
+@@ -34,14 +59,8 @@ struct sched_param {
+  * than the runtime and must be completed by time instant t equal to
+  * the instance activation time + the deadline.
+  *
+- * This is reflected by the actual fields of the sched_attr structure:
++ * This is reflected by the following fields of the sched_attr structure:
+  *
+- *  @size		size of the structure, for fwd/bwd compat.
+- *
+- *  @sched_policy	task's scheduling policy
+- *  @sched_flags	for customizing the scheduler behaviour
+- *  @sched_nice		task's nice value      (SCHED_NORMAL/BATCH)
+- *  @sched_priority	task's static priority (SCHED_FIFO/RR)
+  *  @sched_deadline	representative of the task's deadline
+  *  @sched_runtime	representative of the task's runtime
+  *  @sched_period	representative of the task's period
+@@ -53,6 +72,28 @@ struct sched_param {
+  * As of now, the SCHED_DEADLINE policy (sched_dl scheduling class) is the
+  * only user of this new interface. More information about the algorithm
+  * available in the scheduling class file or in Documentation/.
++ *
++ * Task Utilization Attributes
++ * ===========================
++ *
++ * A subset of sched_attr attributes allows to specify the utilization which
++ * should be expected by a task. These attributes allows to inform the
++ * scheduler about the utilization boundaries within which is safe to schedule
++ * the task. These utilization boundaries are valuable information to support
++ * scheduler decisions on both task placement and frequencies selection.
++ *
++ *  @sched_util_min	represents the minimum utilization
++ *  @sched_util_max	represents the maximum utilization
++ *
++ * Utilization is a value in the range [0..SCHED_CAPACITY_SCALE] which
++ * represents the percentage of CPU time used by a task when running at the
++ * maximum frequency on the highest capacity CPU of the system. Thus, for
++ * example, a 20% utilization task is a task running for 2ms every 10ms.
++ *
++ * A task with a min utilization value bigger then 0 is more likely to be
++ * scheduled on a CPU which can provide that bandwidth.
++ * A task with a max utilization value smaller then 1024 is more likely to be
++ * scheduled on a CPU which do not provide more then the required bandwidth.
+  */
+ struct sched_attr {
+ 	__u32 size;
+@@ -70,6 +111,11 @@ struct sched_attr {
+ 	__u64 sched_runtime;
+ 	__u64 sched_deadline;
+ 	__u64 sched_period;
++
++	/* Utilization hints */
++	__u32 sched_util_min;
++	__u32 sched_util_max;
++
+ };
+ 
+ #endif /* _UAPI_LINUX_SCHED_TYPES_H */
+diff --git a/init/Kconfig b/init/Kconfig
+index 041f3a022122..1d45a6877d6f 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -583,6 +583,25 @@ config HAVE_UNSTABLE_SCHED_CLOCK
+ config GENERIC_SCHED_CLOCK
+ 	bool
+ 
++menu "Scheduler features"
++
++config UCLAMP_TASK
++	bool "Enable utilization clamping for RT/FAIR tasks"
++	depends on CPU_FREQ_GOV_SCHEDUTIL
++	default false
++	help
++	  This feature enables the scheduler to track the clamped utilization
++	  of each CPU based on RUNNABLE tasks currently scheduled on that CPU.
++
++	  When this option is enabled, the user can specify a min and max CPU
++          bandwidth which is allowed for a task.
++	  The max bandwidth allows to clamp the maximum frequency a task can
++	  use, while the min bandwidth allows to define a minimum frequency a
++          task will always use.
++
++	  If in doubt, say N.
++
++endmenu
+ #
+ # For architectures that want to enable the support for NUMA-affine scheduler
+ # balancing logic:
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index deafa9fe602b..2cabbbcaa447 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -716,6 +716,28 @@ static void set_load_weight(struct task_struct *p, bool update_load)
+ 	}
+ }
+ 
++#ifdef CONFIG_UCLAMP_TASK
++static inline int __setscheduler_uclamp(struct task_struct *p,
++					const struct sched_attr *attr)
++{
++	if (attr->sched_util_min > attr->sched_util_max)
++		return -EINVAL;
++	if (attr->sched_util_max > SCHED_CAPACITY_SCALE)
++		return -EINVAL;
++
++	p->uclamp[UCLAMP_MIN] = attr->sched_util_min;
++	p->uclamp[UCLAMP_MAX] = attr->sched_util_max;
++
++	return 0;
++}
++#else /* CONFIG_UCLAMP_TASK */
++static inline int __setscheduler_uclamp(struct task_struct *p,
++					const struct sched_attr *attr)
++{
++	return -EINVAL;
++}
++#endif /* CONFIG_UCLAMP_TASK */
++
+ static inline void enqueue_task(struct rq *rq, struct task_struct *p, int flags)
+ {
+ 	if (!(flags & ENQUEUE_NOCLOCK))
+@@ -2156,6 +2178,11 @@ static void __sched_fork(unsigned long clone_flags, struct task_struct *p)
+ 	p->se.cfs_rq			= NULL;
+ #endif
+ 
++#ifdef CONFIG_UCLAMP_TASK
++	p->uclamp[UCLAMP_MIN] = 0;
++	p->uclamp[UCLAMP_MAX] = SCHED_CAPACITY_SCALE;
++#endif
++
+ #ifdef CONFIG_SCHEDSTATS
+ 	/* Even if schedstat is disabled, there should not be garbage */
+ 	memset(&p->se.statistics, 0, sizeof(p->se.statistics));
+@@ -4218,6 +4245,13 @@ static int __sched_setscheduler(struct task_struct *p,
+ 			return retval;
+ 	}
+ 
++	/* Configure utilization clamps for the task */
++	if (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP) {
++		retval = __setscheduler_uclamp(p, attr);
++		if (retval)
++			return retval;
++	}
++
+ 	/*
+ 	 * Make sure no PI-waiters arrive (or leave) while we are
+ 	 * changing the priority of the task:
+@@ -4724,6 +4758,11 @@ SYSCALL_DEFINE4(sched_getattr, pid_t, pid, struct sched_attr __user *, uattr,
+ 	else
+ 		attr.sched_nice = task_nice(p);
+ 
++#ifdef CONFIG_UCLAMP_TASK
++	attr.sched_util_min = p->uclamp[UCLAMP_MIN];
++	attr.sched_util_max = p->uclamp[UCLAMP_MAX];
++#endif
++
+ 	rcu_read_unlock();
+ 
+ 	retval = sched_read_attr(uattr, &attr, size);
 -- 
 2.18.0
 
