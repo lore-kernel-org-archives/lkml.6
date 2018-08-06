@@ -2,162 +2,104 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E7D8C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 14:21:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C480C46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 14:21:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACF8621A3B
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 14:21:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACF8621A3B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id E512E21A3B
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 14:21:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E512E21A3B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731280AbeHFQaZ (ORCPT
+        id S1731756AbeHFQar (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 12:30:25 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:57563 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727451AbeHFQaZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 12:30:25 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 69040207B5; Mon,  6 Aug 2018 16:21:01 +0200 (CEST)
-Received: from aptenodytes (AAubervilliers-681-1-99-143.w90-88.abo.wanadoo.fr [90.88.4.143])
-        by mail.bootlin.com (Postfix) with ESMTPSA id DC07D203EC;
-        Mon,  6 Aug 2018 16:21:00 +0200 (CEST)
-Message-ID: <130e4f08534d0dfbd26f97f9b95d533ce86ceada.camel@bootlin.com>
-Subject: Re: [PATCH v6 4/8] media: platform: Add Cedrus VPU decoder driver
-From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-To:     Ezequiel Garcia <ezequiel@collabora.com>,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devel@driverdev.osuosl.org
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-sunxi@googlegroups.com,
-        Hugues Fruchet <hugues.fruchet@st.com>,
-        Randy Li <ayaka@soulik.info>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>
-Date:   Mon, 06 Aug 2018 16:21:01 +0200
-In-Reply-To: <faa0436aad809ca562b5c152420b1e4d4b6f507b.camel@collabora.com>
-References: <20180725100256.22833-1-paul.kocialkowski@bootlin.com>
-         <20180725100256.22833-5-paul.kocialkowski@bootlin.com>
-         <faa0436aad809ca562b5c152420b1e4d4b6f507b.camel@collabora.com>
-Organization: Bootlin
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-r7SMzHuFY9GvmukQMWuj"
-X-Mailer: Evolution 3.28.4 
-Mime-Version: 1.0
+        Mon, 6 Aug 2018 12:30:47 -0400
+Received: from mx2.suse.de ([195.135.220.15]:44872 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729233AbeHFQar (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 12:30:47 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D599BADE6;
+        Mon,  6 Aug 2018 14:21:25 +0000 (UTC)
+Date:   Mon, 6 Aug 2018 16:21:24 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     syzbot <syzbot+bab151e82a4e973fa325@syzkaller.appspotmail.com>,
+        cgroups@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Dmitry Torokhov <dtor@google.com>
+Subject: Re: WARNING in try_charge
+Message-ID: <20180806142124.GP19540@dhcp22.suse.cz>
+References: <0000000000005e979605729c1564@google.com>
+ <20180806091552.GE19540@dhcp22.suse.cz>
+ <CACT4Y+Ystnwv4M6Uh+HBKbdADAnJ6otfR0GoA20crzqV+b2onQ@mail.gmail.com>
+ <20180806094827.GH19540@dhcp22.suse.cz>
+ <CACT4Y+ZJsDo1gjzHvbFVqHcrL=tFJXTAAWLs9mAJSv3+LiCdmA@mail.gmail.com>
+ <20180806110224.GI19540@dhcp22.suse.cz>
+ <CACT4Y+awxBatn3GQc7EWHVfHqMLKC9eVKjQMbJkCk0Po-X4VDQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACT4Y+awxBatn3GQc7EWHVfHqMLKC9eVKjQMbJkCk0Po-X4VDQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon 06-08-18 13:57:38, Dmitry Vyukov wrote:
+> On Mon, Aug 6, 2018 at 1:02 PM, Michal Hocko <mhocko@kernel.org> wrote:
+[...]
+> >> A much
+> >> friendlier for user way to say this would be print a message at the
+> >> point of misconfiguration saying what exactly is wrong, e.g. "pid $PID
+> >> misconfigures cgroup /cgroup/path with mem.limit=0" without a stack
+> >> trace (does not give any useful info for user). And return EINVAL if
+> >> it can't fly at all? And then leave the "or a kernel bug" part for the
+> >> WARNING each occurrence of which we do want to be reported to kernel
+> >> developers.
+> >
+> > But this is not applicable here. Your misconfiguration is quite obvious
+> > because you simply set the hard limit to 0. This is not the only
+> > situation when this can happen. There is no clear point to tell, you are
+> > doing this wrong. If it was we would do it at that point obviously.
+> 
+> But, isn't there a point were hard limit is set to 0? I would expect
+> there is a something like cgroup file write handler with a value of 0
+> or something.
 
---=-r7SMzHuFY9GvmukQMWuj
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Yeah, but this is only one instance of the problem. Other is that the
+memcg is not reclaimable for any other reasons. And we do not know what
+those might be
 
-Hi,
+> 
+> > If you have a strong reason to believe that this is an abuse of WARN I
+> > am all happy to change that. But I haven't heard any yet, to be honest.
+> 
+> WARN must not be used for anything that is not kernel bugs. If this is
+> not kernel bug, WARN must not be used here.
 
-On Fri, 2018-08-03 at 17:49 -0300, Ezequiel Garcia wrote:
-> On Wed, 2018-07-25 at 12:02 +0200, Paul Kocialkowski wrote:
-> > This introduces the Cedrus VPU driver that supports the VPU found in
-> > Allwinner SoCs, also known as Video Engine. It is implemented through
-> > a v4l2 m2m decoder device and a media device (used for media requests).
-> > So far, it only supports MPEG2 decoding.
-> >=20
-> > Since this VPU is stateless, synchronization with media requests is
-> > required in order to ensure consistency between frame headers that
-> > contain metadata about the frame to process and the raw slice data that
-> > is used to generate the frame.
-> >=20
-> > This driver was made possible thanks to the long-standing effort
-> > carried out by the linux-sunxi community in the interest of reverse
-> > engineering, documenting and implementing support for Allwinner VPU.
-> >=20
-> > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
->=20
-> [..]
-> > +static int cedrus_probe(struct platform_device *pdev)
-> > +{
-> > +	struct cedrus_dev *dev;
-> > +	struct video_device *vfd;
-> > +	int ret;
-> > +
-> > +	dev =3D devm_kzalloc(&pdev->dev, sizeof(*dev), GFP_KERNEL);
-> > +	if (!dev)
-> > +		return -ENOMEM;
-> > +
-> > +	dev->dev =3D &pdev->dev;
-> > +	dev->pdev =3D pdev;
-> > +
-> > +	ret =3D cedrus_hw_probe(dev);
-> > +	if (ret) {
-> > +		dev_err(&pdev->dev, "Failed to probe hardware\n");
-> > +		return ret;
-> > +	}
-> > +
-> > +	dev->dec_ops[CEDRUS_CODEC_MPEG2] =3D &cedrus_dec_ops_mpeg2;
-> > +
-> > +	mutex_init(&dev->dev_mutex);
-> > +	spin_lock_init(&dev->irq_lock);
-> > +
->=20
-> A minor thing.
->=20
-> I believe this spinlock is not needed. All the data structures
-> it's accessing are already protected, and some operations
-> (stop_streaming) are guaranteed to not run at the same
-> time as a job.
+This is rather strong wording without any backing arguments. I strongly
+doubt 90% of existing WARN* match this expectation. WARN* has
+traditionally been a way to tell that something suspicious is going on.
+Those situation are mostly likely not fatal but it is good to know they
+are happening.
 
-I think we were afraid of this kind of scenario happening, but
-everything seems to indicate that these data structures are already
-properly protected by the core, as you're suggesting.
+Sure there is that panic_on_warn thingy which you seem to be using and I
+suspect it is a reason why you are so careful about warnings in general
+but my experience tells me that this configuration is barely usable
+except for testing (which is your case).
 
-Removing the lock does not cause any noticeable issue at first try, but
-I'd like to test decoding for a few hours in a row to reduce the
-probability of missing a corner case that our lock was preventing.
-
-If that goes well, I guess we can remove it from our driver.
-
-Cheers,
-
-Paul
-
---=20
-Paul Kocialkowski, Bootlin (formerly Free Electrons)
-Embedded Linux and kernel engineering
-https://bootlin.com
-
---=-r7SMzHuFY9GvmukQMWuj
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEJZpWjZeIetVBefti3cLmz3+fv9EFAltoWU0ACgkQ3cLmz3+f
-v9FoWAf/WG03qz9Fjv7JGnd7X5HALk//tyU8gOO6QPBxy76EGuvrPjv/JethusXV
-RUUYVbEarEXgfk8JrEGlewzbM7Zlwi5F1AFSRbVZTTB871buDt8W7hjzXIVJu9yR
-Ie5K1jB6lh7prMRPjPodOli8EuE4b7GM30R+IbMnUrVr8cJfTN09IAb0Pzr1iM6/
-1nYCvQyhB88kxm+KVTNEIJiDDMSmFia5pBQw5TgInO1G1QKi0beTICqTv5hUnw6l
-Rfs5/g1apthU/eDVqQrh0b9Gf/QPyJLc118ISxXgKfNetOQ/35B9hyJCAUq7bveT
-VZQj3QqckS6YTocGreXR/nol0jKH8Q==
-=XOnT
------END PGP SIGNATURE-----
-
---=-r7SMzHuFY9GvmukQMWuj--
-
+But as I've said, I do not insist on WARN here. All I care about is to
+warn user that something might go south and this may be either due to
+misconfiguration or a subtly wrong memcg reclaim/OOM handler behavior.
+-- 
+Michal Hocko
+SUSE Labs
