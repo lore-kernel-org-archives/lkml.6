@@ -2,217 +2,87 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A204C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:46:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71108C4646D
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:49:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E6B121A67
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:46:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E6B121A67
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
+	by mail.kernel.org (Postfix) with ESMTP id 1E01421A28
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:49:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="cTBAz4hX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E01421A28
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732336AbeHFS4p (ORCPT
+        id S1731810AbeHFS7d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 14:56:45 -0400
-Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:42586 "EHLO
-        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727834AbeHFS4p (ORCPT
+        Mon, 6 Aug 2018 14:59:33 -0400
+Received: from mail-io0-f173.google.com ([209.85.223.173]:33919 "EHLO
+        mail-io0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728475AbeHFS7d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 14:56:45 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01422;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0T68M2G5_1533573999;
-Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0T68M2G5_1533573999)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 07 Aug 2018 00:46:41 +0800
-Subject: Re: [RFC v6 PATCH 2/2] mm: mmap: zap pages with read mmap_sem in
- munmap
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     willy@infradead.org, ldufour@linux.vnet.ibm.com,
-        kirill@shutemov.name, akpm@linux-foundation.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <1532628614-111702-1-git-send-email-yang.shi@linux.alibaba.com>
- <1532628614-111702-3-git-send-email-yang.shi@linux.alibaba.com>
- <20180803090759.GI27245@dhcp22.suse.cz>
- <aff7e86d-2e48-ff58-5d5d-9c67deb68674@linux.alibaba.com>
- <20180806094005.GG19540@dhcp22.suse.cz>
-From:   Yang Shi <yang.shi@linux.alibaba.com>
-Message-ID: <76c0fc2b-fca7-9f22-214a-920ee2537898@linux.alibaba.com>
-Date:   Mon, 6 Aug 2018 09:46:30 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.7.0
+        Mon, 6 Aug 2018 14:59:33 -0400
+Received: by mail-io0-f173.google.com with SMTP id l7-v6so11612204ioj.1;
+        Mon, 06 Aug 2018 09:49:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/eKqIfkrpHsq7u3VSrp7q/25kt84IdzZyAUgLYIEoWU=;
+        b=cTBAz4hXFudOyI0l8TXEF/Zw/bT6PB51Pv7MIyHqV4A+IppvjMf8OszG0sMs0O1XJV
+         UAFXwrqv8M3lkVvyjQJQhcu5jVCsQ8JuYFhow5JGjM1BW6QpCXVjs4IYHMnhH66ta7YU
+         5zmL978bBguEkAnTXiXTUFKAVGQK/AjAlyJSQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/eKqIfkrpHsq7u3VSrp7q/25kt84IdzZyAUgLYIEoWU=;
+        b=XRvSrlQY5seCCITBC/3+/+kVDt2iz4c61MmZppampkgN/TeExnOSPrK20kB+5Wj4dp
+         cynm9ZeE0gC7nULywNlcoQ5vLXh+pRYSgPdnQ5h4EAyjxPxxuSjiqpumMWQYbq3C11W6
+         /qmX/Xy4Nu56ItRtPGpq+5veAI7Z0Y+kF6MjrNvQ9ySR3IjsY+Tt0ClEd3OgwUi0sZsa
+         UEkuBltZ3R1gAuJLpPTfmWvn3A0HwyD5d89vzytJUZ5Sk+fvRVhgnAHngREyxmi6e5gv
+         3pIZl0b4xuwCvQ1CNVzCuP2QHdy82A0+trNLk1vYTqeeSB1AKeufhx0ujZOAt/vZXBLH
+         xhyg==
+X-Gm-Message-State: AOUpUlEpsdotd0M8cfmM3zrDE6xuBMC9jiKo17r94MyprVWoT3iywePY
+        lsRF7W29HK0Rl8iSELzIKZj5e49GYZxTumHF3eBZwA==
+X-Google-Smtp-Source: AA+uWPyPK3KELWBwHmSH4ngK1ixA0uW8ishHOIod472CzXgh0JeIzZBCccgJvE9R3Pc/S2is/jxxhGwCnO5E4W1ysHM=
+X-Received: by 2002:a6b:7a05:: with SMTP id h5-v6mr16473397iom.238.1533574175920;
+ Mon, 06 Aug 2018 09:49:35 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180806094005.GG19540@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+References: <20180806083058.14724-1-hch@lst.de>
+In-Reply-To: <20180806083058.14724-1-hch@lst.de>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 6 Aug 2018 09:49:24 -0700
+Message-ID: <CA+55aFw84zP23hrQppCBLL++4kwAtgYHnQvrvanEKVScAc3DZA@mail.gmail.com>
+Subject: Re: aio poll V22 (aka 2.0)
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, Avi Kivity <avi@scylladb.com>,
+        linux-aio@kvack.org, linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 8/6/18 2:40 AM, Michal Hocko wrote:
-> On Fri 03-08-18 14:01:58, Yang Shi wrote:
->>
->> On 8/3/18 2:07 AM, Michal Hocko wrote:
->>> On Fri 27-07-18 02:10:14, Yang Shi wrote:
->>>> When running some mmap/munmap scalability tests with large memory (i.e.
->>>>> 300GB), the below hung task issue may happen occasionally.
->>>> INFO: task ps:14018 blocked for more than 120 seconds.
->>>>          Tainted: G            E 4.9.79-009.ali3000.alios7.x86_64 #1
->>>>    "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this
->>>> message.
->>>>    ps              D    0 14018      1 0x00000004
->>>>     ffff885582f84000 ffff885e8682f000 ffff880972943000 ffff885ebf499bc0
->>>>     ffff8828ee120000 ffffc900349bfca8 ffffffff817154d0 0000000000000040
->>>>     00ffffff812f872a ffff885ebf499bc0 024000d000948300 ffff880972943000
->>>>    Call Trace:
->>>>     [<ffffffff817154d0>] ? __schedule+0x250/0x730
->>>>     [<ffffffff817159e6>] schedule+0x36/0x80
->>>>     [<ffffffff81718560>] rwsem_down_read_failed+0xf0/0x150
->>>>     [<ffffffff81390a28>] call_rwsem_down_read_failed+0x18/0x30
->>>>     [<ffffffff81717db0>] down_read+0x20/0x40
->>>>     [<ffffffff812b9439>] proc_pid_cmdline_read+0xd9/0x4e0
->>>>     [<ffffffff81253c95>] ? do_filp_open+0xa5/0x100
->>>>     [<ffffffff81241d87>] __vfs_read+0x37/0x150
->>>>     [<ffffffff812f824b>] ? security_file_permission+0x9b/0xc0
->>>>     [<ffffffff81242266>] vfs_read+0x96/0x130
->>>>     [<ffffffff812437b5>] SyS_read+0x55/0xc0
->>>>     [<ffffffff8171a6da>] entry_SYSCALL_64_fastpath+0x1a/0xc5
->>>>
->>>> It is because munmap holds mmap_sem exclusively from very beginning to
->>>> all the way down to the end, and doesn't release it in the middle. When
->>>> unmapping large mapping, it may take long time (take ~18 seconds to
->>>> unmap 320GB mapping with every single page mapped on an idle machine).
->>>>
->>>> Zapping pages is the most time consuming part, according to the
->>>> suggestion from Michal Hocko [1], zapping pages can be done with holding
->>>> read mmap_sem, like what MADV_DONTNEED does. Then re-acquire write
->>>> mmap_sem to cleanup vmas.
->>>>
->>>> But, some part may need write mmap_sem, for example, vma splitting. So,
->>>> the design is as follows:
->>>>           acquire write mmap_sem
->>>>           lookup vmas (find and split vmas)
->>>> 	detach vmas
->>>>           deal with special mappings
->>>>           downgrade_write
->>>>
->>>>           zap pages
->>>> 	free page tables
->>>>           release mmap_sem
->>>>
->>>> The vm events with read mmap_sem may come in during page zapping, but
->>>> since vmas have been detached before, they, i.e. page fault, gup, etc,
->>>> will not be able to find valid vma, then just return SIGSEGV or -EFAULT
->>>> as expected.
->>>>
->>>> If the vma has VM_LOCKED | VM_HUGETLB | VM_PFNMAP or uprobe, they are
->>>> considered as special mappings. They will be dealt with before zapping
->>>> pages with write mmap_sem held. Basically, just update vm_flags.
->>> Well, I think it would be safer to simply fallback to the current
->>> implementation with these mappings and deal with them on top. This would
->>> make potential issues easier to bisect and partial reverts as well.
->> Do you mean just call do_munmap()? It sounds ok. Although we may waste some
->> cycles to repeat what has done, it sounds not too bad since those special
->> mappings should be not very common.
-> VM_HUGETLB is quite spread. Especially for DB workloads.
-
-Wait a minute. In this way, it sounds we go back to my old 
-implementation with special handling for those mappings with write 
-mmap_sem held, right?
-
+On Mon, Aug 6, 2018 at 1:31 AM Christoph Hellwig <hch@lst.de> wrote:
 >
->>>> And, since they are also manipulated by unmap_single_vma() which is
->>>> called by unmap_vma() with read mmap_sem held in this case, to
->>>> prevent from updating vm_flags in read critical section, a new
->>>> parameter, called "skip_flags" is added to unmap_region(), unmap_vmas()
->>>> and unmap_single_vma(). If it is true, then just skip unmap those
->>>> special mappings. Currently, the only place which pass true to this
->>>> parameter is us.
->>> skip parameters are usually ugly and lead to more mess later on. Can we
->>> do without them?
->> We need a way to tell unmap_region() that it is called in a kind of special
->> context which updating vm_flags is not allowed. I didn't think of a better
->> way.
->>
->> We could add a new API to do what unmap_region() does without updating
->> vm_flags, but we would have to  duplicate some code.
-> I really didn't get to think about a better way myself but I strongly
-> suspect we can do without special hacks here. Is updating flags under
-> read lock a real problem? Assuming that special mappings are not really
-> considered at this stage.
+> As our dear leader didn't like the ->poll_mask method this tries to
+> implement the behavior using plain old ->poll which is rather painful.
 
-In normal case, I don't think vm_flags can be updated with read 
-mmap_sem, but in this patch the vmas have been detached from the rb 
-tree, nobody can find them anymore (I'm supposed all vma looking up is 
-done by find_vma), so it might be safe to update vm_flags with read 
-mmap_sem.
+I'm not seeing what's painful for this. Looking at the patches, this
+is *much* more straightforward than your previous patch,
 
-If it is safe, we don't have to have any special handling to those 
-special mappings anymore.
+It adds refcounting to aio_iocb, but that's *much* better than messing
+up every other subsystem.
 
->
->>>> With this approach we don't have to re-acquire mmap_sem again to clean
->>>> up vmas to avoid race window which might get the address space changed.
->>> By with this approach you mean detaching right?
->> Yes, the detaching approach.
-> Please make it explicit in the changelog.
+Or is there some follow-up patches that are pending but you didn't
+post that are the painful part? Because the diffstat says that this
+second version is *way* less painful, at about 200 lines of code in a
+couple of files, mostly aio, vs ~700 lines of changes all over the
+place, together with a performance regression.
 
-Sure.
-
->   
->>>> And, since the lock acquire/release cost is managed to the minimum and
->>>> almost as same as before, the optimization could be extended to any size
->>>> of mapping without incurring significant penalty to small mappings.
->>> I guess you mean to say that lock downgrade approach doesn't lead to
->>> regressions because the overal time mmap_sem is taken is not longer?
->> Yes. And, there is not lock take/retake cost since we don't release it.
-> Please also be explicit.
-
-Sure.
-
->   
->>>> For the time being, just do this in munmap syscall path. Other
->>>> vm_munmap() or do_munmap() call sites (i.e mmap, mremap, etc) remain
->>>> intact for stability reason.
->>> You have used this argument previously and several people have asked.
->>> I think it is just wrong. Either the concept is safe and all callers can
->>> use it or it is not and then those subtle differences should be called
->>> out. Your previous response was that you simply haven't tested other
->>> paths. Well, that is not an argument, I am afraid. The whole thing
->>> should be done at a proper layer. If there are some difficulties to
->>> achieve that for all callers then OK just be explicit about that. I can
->>> imagine some callers really require the exclusive look when munmap
->>> returns for example.
->> Yes, the statement here sounds ambiguous. There are definitely some
->> difficulties to achieve that in mmap and mremap. Since they acquire write
->> mmap_sem at the very beginning, then do their stuff, which may call
->> do_munmap if overlapped address space has to be changed.
-> Do call them out. Maybe even add a comment in the code so that people
-> who would like those other paths know what they need to look at.
-
-OK
-
->
->> But, the optimized do_munmap would like to be called without mmap_sem held
->> so that we can do the optimization. So, if we want to do the similar
->> optimization for mmap/mremap path, I'm afraid we would have to redesign
->> them.
->>
->> I assumes munmap itself is the main source of the latency issue. mmap/mremap
->> might hit the latency problem if they are trying to map or remap a huge
->> overlapped address space, but it should be rare. So, I leave them untouched.
-> That depends on usecases very much. mremap might be called on very large
-> areas as well. But let's go in smaller steps and build on top...
-
-Yes, agree. And, I agree to achieve it step by step.
-
-Thanks,
-Yang
-
-
+                 Linus
