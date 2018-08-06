@@ -2,106 +2,84 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14293C46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 18:13:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8CDFC46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 18:18:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B76FB21A50
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 18:13:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B76FB21A50
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 7965620685
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 18:18:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7965620685
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387645AbeHFUX5 (ORCPT
+        id S2387663AbeHFU2u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 16:23:57 -0400
-Received: from mx2.suse.de ([195.135.220.15]:40346 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726279AbeHFUX4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 16:23:56 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 08451ACE1;
-        Mon,  6 Aug 2018 18:13:39 +0000 (UTC)
-Date:   Mon, 6 Aug 2018 20:13:39 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     syzbot <syzbot+bab151e82a4e973fa325@syzkaller.appspotmail.com>
-Cc:     cgroups@vger.kernel.org, dvyukov@google.com, hannes@cmpxchg.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        penguin-kernel@I-love.SAKURA.ne.jp,
-        syzkaller-bugs@googlegroups.com, vdavydov.dev@gmail.com
-Subject: Re: WARNING in try_charge
-Message-ID: <20180806181339.GD10003@dhcp22.suse.cz>
-References: <fc6e173e-8bda-269f-d44f-1c5f5215beac@I-love.SAKURA.ne.jp>
- <0000000000006350880572c61e62@google.com>
- <20180806174410.GB10003@dhcp22.suse.cz>
- <20180806175627.GC10003@dhcp22.suse.cz>
+        Mon, 6 Aug 2018 16:28:50 -0400
+Received: from mga17.intel.com ([192.55.52.151]:46278 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726279AbeHFU2t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 16:28:49 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Aug 2018 11:18:33 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,452,1526367600"; 
+   d="scan'208";a="78975165"
+Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.126])
+  by fmsmga001.fm.intel.com with ESMTP; 06 Aug 2018 11:07:40 -0700
+Received: by tassilo.localdomain (Postfix, from userid 1000)
+        id 12A42301388; Mon,  6 Aug 2018 11:07:40 -0700 (PDT)
+Date:   Mon, 6 Aug 2018 11:07:40 -0700
+From:   Andi Kleen <ak@linux.intel.com>
+To:     Vasily Gorbik <gor@linux.ibm.com>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
+Subject: Re: [PATCH 2/4] trace: avoid calling cc-option -mrecord-mcount for
+ every Makefile
+Message-ID: <20180806180740.GI4238@tassilo.jf.intel.com>
+References: <cover.thread-aa7b8d.your-ad-here.call-01533557518-ext-9465@work.hours>
+ <patch-2.thread-aa7b8d.git-de935bace15a.your-ad-here.call-01533557518-ext-9465@work.hours>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180806175627.GC10003@dhcp22.suse.cz>
+In-Reply-To: <patch-2.thread-aa7b8d.git-de935bace15a.your-ad-here.call-01533557518-ext-9465@work.hours>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I simply do not see how this is possible. Let's try with the following
-extended debugging patch.
+On Mon, Aug 06, 2018 at 03:17:44PM +0200, Vasily Gorbik wrote:
+> Currently if CONFIG_FTRACE_MCOUNT_RECORD is enabled -mrecord-mcount
+> compiler flag support is tested for every Makefile.
 
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git 116b181bb646afedd770985de20a68721bdb2648
+Good catch.  Does it make a measurable compile time difference?
 
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index 4603ad75c9a9..e2dfdf4361ba 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -1388,6 +1388,8 @@ static bool mem_cgroup_out_of_memory(struct mem_cgroup *memcg, gfp_t gfp_mask,
- 	bool ret;
- 
- 	mutex_lock(&oom_lock);
-+	pr_info("task=%s pid=%d invoked memcg oom killer. oom_victim=%d\n",
-+			current->comm, current->pid, tsk_is_oom_victim(current));
- 	ret = out_of_memory(&oc);
- 	mutex_unlock(&oom_lock);
- 	return ret;
-@@ -2108,6 +2110,9 @@ static int try_charge(struct mem_cgroup *memcg, gfp_t gfp_mask,
- 
- 	if (mem_cgroup_is_root(memcg))
- 		return 0;
-+	if (tsk_is_oom_victim(current))
-+		pr_info("task=%s pid=%d charge for nr_pages=%d\n",
-+			current->comm, current->pid, nr_pages);
- retry:
- 	if (consume_stock(memcg, nr_pages))
- 		return 0;
-@@ -2137,8 +2142,11 @@ static int try_charge(struct mem_cgroup *memcg, gfp_t gfp_mask,
- 	 */
- 	if (unlikely(tsk_is_oom_victim(current) ||
- 		     fatal_signal_pending(current) ||
--		     current->flags & PF_EXITING))
-+		     current->flags & PF_EXITING)) {
-+		pr_info("task=%s pid=%d charge bypass\n",
-+			current->comm, current->pid);
- 		goto force;
-+	}
- 
- 	/*
- 	 * Prevent unbounded recursion when reclaim operations need to
-diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-index 104ef4a01a55..7d9adcde8cf6 100644
---- a/mm/oom_kill.c
-+++ b/mm/oom_kill.c
-@@ -692,6 +692,8 @@ static void mark_oom_victim(struct task_struct *tsk)
- 	__thaw_task(tsk);
- 	atomic_inc(&oom_victims);
- 	trace_mark_victim(tsk->pid);
-+	pr_info("task=%s pid=%d is oom victim now\n",
-+			current->comm, current->pid);
- }
- 
- /**
--- 
-Michal Hocko
-SUSE Labs
+> 
+> Top 4 cc-option usages:
+>     511 -mrecord-mcount
+>      11  -fno-stack-protector
+>       9 -Wno-override-init
+>       2 -fsched-pressure
+> 
+> To address that move cc-option from scripts/Makefile.build to top Makefile
+> and export CC_USING_RECORD_MCOUNT to be used in original place.
+> 
+> While doing that also add -mrecord-mcount to CC_FLAGS_FTRACE (if gcc
+> actually supports it).
+> 
+> Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
+
+Acked-by: Andi Kleen <ak@linux.intel.com>
+
+-Andi
