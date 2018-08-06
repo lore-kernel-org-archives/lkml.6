@@ -3,30 +3,30 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45463C46472
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFF95C4646D
 	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 18:54:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0313B21A29
+	by mail.kernel.org (Postfix) with ESMTP id B75F021A29
 	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 18:54:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0313B21A29
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B75F021A29
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732878AbeHFVEn (ORCPT
+        id S1733106AbeHFVFB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 17:04:43 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:37131 "EHLO mail.bootlin.com"
+        Mon, 6 Aug 2018 17:05:01 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:37152 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728948AbeHFVEn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 17:04:43 -0400
+        id S1732832AbeHFVEo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 17:04:44 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 042A7207D4; Mon,  6 Aug 2018 20:54:15 +0200 (CEST)
+        id D863220875; Mon,  6 Aug 2018 20:54:16 +0200 (CEST)
 Received: from localhost (LPuteaux-656-1-243-71.w82-127.abo.wanadoo.fr [82.127.120.71])
-        by mail.bootlin.com (Postfix) with ESMTPSA id B4F9A2072D;
-        Mon,  6 Aug 2018 20:54:14 +0200 (CEST)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 99B292072D;
+        Mon,  6 Aug 2018 20:54:16 +0200 (CEST)
 From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
 To:     Wolfram Sang <wsa@the-dreams.de>,
         Jarkko Nikula <jarkko.nikula@linux.intel.com>,
@@ -39,9 +39,9 @@ Cc:     Paul Burton <paul.burton@mips.com>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Allan Nielsen <allan.nielsen@microsemi.com>,
         Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH v3 2/6] i2c: designware: move #ifdef CONFIG_OF to the top
-Date:   Mon,  6 Aug 2018 20:54:08 +0200
-Message-Id: <20180806185412.7210-3-alexandre.belloni@bootlin.com>
+Subject: [PATCH v3 5/6] MIPS: dts: mscc: Add i2c on ocelot
+Date:   Mon,  6 Aug 2018 20:54:11 +0200
+Message-Id: <20180806185412.7210-6-alexandre.belloni@bootlin.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180806185412.7210-1-alexandre.belloni@bootlin.com>
 References: <20180806185412.7210-1-alexandre.belloni@bootlin.com>
@@ -50,49 +50,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move the #ifdef CONFIG_OF section to the top of the file, after the ACPI
-section so functions defined there can be used in dw_i2c_plat_probe.
+Ocelot has an i2c controller, add it. There is only one possible pinmux
+configuration so add it as well.
 
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 ---
- drivers/i2c/busses/i2c-designware-platdrv.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ arch/mips/boot/dts/mscc/ocelot.dtsi | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-diff --git a/drivers/i2c/busses/i2c-designware-platdrv.c b/drivers/i2c/busses/i2c-designware-platdrv.c
-index d117c120730d..1bcaab777a2e 100644
---- a/drivers/i2c/busses/i2c-designware-platdrv.c
-+++ b/drivers/i2c/busses/i2c-designware-platdrv.c
-@@ -156,6 +156,14 @@ static inline int dw_i2c_acpi_configure(struct platform_device *pdev)
- }
- #endif
+diff --git a/arch/mips/boot/dts/mscc/ocelot.dtsi b/arch/mips/boot/dts/mscc/ocelot.dtsi
+index 4f33dbc67348..34093acebc0d 100644
+--- a/arch/mips/boot/dts/mscc/ocelot.dtsi
++++ b/arch/mips/boot/dts/mscc/ocelot.dtsi
+@@ -78,6 +78,19 @@
+ 			status = "disabled";
+ 		};
  
-+#ifdef CONFIG_OF
-+static const struct of_device_id dw_i2c_of_match[] = {
-+	{ .compatible = "snps,designware-i2c", },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, dw_i2c_of_match);
-+#endif
++		i2c: i2c@100400 {
++			compatible = "mscc,ocelot-i2c", "snps,designware-i2c";
++			pinctrl-0 = <&i2c_pins>;
++			pinctrl-names = "default";
++			reg = <0x100400 0x100>, <0x198 0x8>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			interrupts = <8>;
++			clocks = <&ahb_clk>;
 +
- static void i2c_dw_configure_master(struct dw_i2c_dev *dev)
- {
- 	struct i2c_timings *t = &dev->timings;
-@@ -390,14 +398,6 @@ static int dw_i2c_plat_remove(struct platform_device *pdev)
- 	return 0;
- }
++			status = "disabled";
++		};
++
+ 		uart2: serial@100800 {
+ 			pinctrl-0 = <&uart2_pins>;
+ 			pinctrl-names = "default";
+@@ -178,6 +191,11 @@
+ 				pins = "GPIO_12", "GPIO_13";
+ 				function = "uart2";
+ 			};
++
++			i2c_pins: i2c-pins {
++				pins = "GPIO_16", "GPIO_17";
++				function = "twi";
++			};
+ 		};
  
--#ifdef CONFIG_OF
--static const struct of_device_id dw_i2c_of_match[] = {
--	{ .compatible = "snps,designware-i2c", },
--	{},
--};
--MODULE_DEVICE_TABLE(of, dw_i2c_of_match);
--#endif
--
- #ifdef CONFIG_PM_SLEEP
- static int dw_i2c_plat_prepare(struct device *dev)
- {
+ 		mdio0: mdio@107009c {
 -- 
 2.18.0
 
