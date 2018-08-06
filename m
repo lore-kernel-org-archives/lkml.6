@@ -2,128 +2,163 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EA3CC46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 13:03:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87A80C4646D
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 13:04:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26E5B219CB
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 13:03:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="b99iZZz3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26E5B219CB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
+	by mail.kernel.org (Postfix) with ESMTP id 4BDAA21990
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 13:04:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BDAA21990
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732327AbeHFPME (ORCPT
+        id S1732341AbeHFPM6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 11:12:04 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:54788 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727340AbeHFPME (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 11:12:04 -0400
-Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id 31BFB5C05A2;
-        Mon,  6 Aug 2018 15:03:01 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1533560581;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=BaVLRCSdY5vRmupC116BnQPio1JUDtggAKLb27LmI14=;
-        b=b99iZZz3m8cly754gIzfFHRUqHpj4mlS9cClGwxiWY/07qqyFfjZ6I24OIhUuLZScnO/Y9
-        qk05tYcUww7xjKW/Qxm+ZaalUrywKdVfgP3GnsLcDl8G1/e5JzAeKL3wD0ReTKjwvu9feE
-        RfvTav7wMDICy27QZDWXN0pSb8eidfw=
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Date:   Mon, 06 Aug 2018 15:03:01 +0200
-From:   Stefan Agner <stefan@agner.ch>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>, thierry.reding@gmail.com,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Marcel Ziswiler <marcel@ziswiler.com>,
-        linux-tegra@vger.kernel.org,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Mon, 6 Aug 2018 11:12:58 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54702 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727340AbeHFPM6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 11:12:58 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 996997C6CA;
+        Mon,  6 Aug 2018 13:03:56 +0000 (UTC)
+Received: from [10.43.2.69] (unknown [10.43.2.69])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 39574178BC;
+        Mon,  6 Aug 2018 13:03:55 +0000 (UTC)
+Subject: Re: [PATCH] Use Kconfig flag to remove support of deprecated BE2/BE3
+ adapters
+To:     Petr Oros <poros@redhat.com>, netdev@vger.kernel.org
+Cc:     Sathya Perla <sathya.perla@broadcom.com>,
+        Ajit Khaparde <ajit.khaparde@broadcom.com>,
+        Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>,
+        Somnath Kotur <somnath.kotur@broadcom.com>,
+        "David S. Miller" <davem@davemloft.net>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/2] pinctrl: tegra: Move drivers registration to
- arch_init level
-In-Reply-To: <2738202.Xfnp0pFbCN@dimapc>
-References: <20180802111144.12512-1-digetx@gmail.com>
- <20a52a0461e32e776e526171c250551a@agner.ch>
- <CACRpkda+t=0aJMSKre+U-GHN2d47pV3b_g13PcinXScP_UX5Ng@mail.gmail.com>
- <2738202.Xfnp0pFbCN@dimapc>
-Message-ID: <e60cd1f07f7c7515c117fa3446914c7f@agner.ch>
-X-Sender: stefan@agner.ch
-User-Agent: Roundcube Webmail/1.3.4
+References: <20180806121230.23690-1-poros@redhat.com>
+From:   Ivan Vecera <ivecera@redhat.com>
+Message-ID: <1ecb6ab3-cc96-43a7-bb2e-aecc45a8ddb0@redhat.com>
+Date:   Mon, 6 Aug 2018 15:03:54 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.0
+MIME-Version: 1.0
+In-Reply-To: <20180806121230.23690-1-poros@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 06 Aug 2018 13:03:56 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 06 Aug 2018 13:03:56 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'ivecera@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04.08.2018 16:01, Dmitry Osipenko wrote:
-> On Friday, 3 August 2018 20:24:56 MSK Linus Walleij wrote:
->> On Thu, Aug 2, 2018 at 1:31 PM Stefan Agner <stefan@agner.ch> wrote:
->> > A while back at least using those init lists were not well received even
->> > for GPIO/pinctrl drivers:
->> >
->> > https://lore.kernel.org/lkml/CACRpkdYk0zW12qNXgOstTLmdVDYacu0Un+8quTN+J_az
->> > Oic7AA@mail.gmail.com/T/#mf0596982324a6489b5537b0531ac5aed60a316ba
->> You shouldn't listen too much to that guy he's not trustworthy.
-
-;-)
-
->>
->> > I still think we should make an exception for GPIO/pinctrl and use
->> > earlier initcalls. Platform GPIO/pinctrl drivers provide basic
->> > infrastructure often used by many other drivers, we want to have them
->> > loaded early. It avoids unnecessary EPROBE_DEFER and hence probably even
->> > boots faster.
->>
->> When we have the pin control and GPIO at different initlevels it makes me
->> uneasy because I feel we have implicit init dependencies that seem more
->> than a little fragile.
+On 6.8.2018 14:12, Petr Oros wrote:
+>   Add flags to remove support of deprecated BE2/BE3 adapters.
+>   BE2 disable will reduce .ko size by 2kb and BE3 by 3kb.
+>   Disable both will reduce .ko size by 9kb.
 > 
-> Yes, it is not very good.
+>   With dissabled support is also removed coresponding PCI IDs
+>   and codepath with [BE2|BE3|BEx]_chip checks.
+> 
+>   New help style in Kconfig
+> 
+> Signed-off-by: Petr Oros <poros@redhat.com>
+
+Note that this should be placed to -next...
+
+Reviewed-by: Ivan Vecera <ivecera@redhat.com>
+
+> ---
+>  drivers/net/ethernet/emulex/benet/Kconfig   | 20 ++++++++++++++++++--
+>  drivers/net/ethernet/emulex/benet/be.h      |  8 ++++++++
+>  drivers/net/ethernet/emulex/benet/be_main.c |  6 +++++-
+>  3 files changed, 31 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/emulex/benet/Kconfig b/drivers/net/ethernet/emulex/benet/Kconfig
+> index b4853ec9de8d..68a9c40adc2a 100644
+> --- a/drivers/net/ethernet/emulex/benet/Kconfig
+> +++ b/drivers/net/ethernet/emulex/benet/Kconfig
+> @@ -1,7 +1,7 @@
+>  config BE2NET
+>  	tristate "ServerEngines' 10Gbps NIC - BladeEngine"
+>  	depends on PCI
+> -	---help---
+> +	help
+>  	  This driver implements the NIC functionality for ServerEngines'
+>  	  10Gbps network adapter - BladeEngine.
+>  
+> @@ -10,6 +10,22 @@ config BE2NET_HWMON
+>  	depends on BE2NET && HWMON
+>  	depends on !(BE2NET=y && HWMON=m)
+>  	default y
+> -	---help---
+> +	help
+>  	  Say Y here if you want to expose thermal sensor data on
+>  	  be2net network adapter.
+> +
+> +config BE2NET_BE2
+> +	bool "Support for deprecated BE2 chipsets"
+> +	depends on BE2NET
+> +	default y
+> +	help
+> +	  Say Y here if you want to use deprecated Emulex devices based
+> +	  on BE2 chipsets.
+> +
+> +config BE2NET_BE3
+> +	bool "Support for deprecated BE3 chipsets"
+> +	depends on BE2NET
+> +	default y
+> +	help
+> +	  Say Y here if you want to use deprecated Emulex devices based
+> +	  on BE3 chipsets.
+> diff --git a/drivers/net/ethernet/emulex/benet/be.h b/drivers/net/ethernet/emulex/benet/be.h
+> index 382891f81e09..3038578ec7a7 100644
+> --- a/drivers/net/ethernet/emulex/benet/be.h
+> +++ b/drivers/net/ethernet/emulex/benet/be.h
+> @@ -779,11 +779,19 @@ static inline u16 be_max_any_irqs(struct be_adapter *adapter)
+>  #define skyhawk_chip(adapter)	(adapter->pdev->device == OC_DEVICE_ID5 || \
+>  				 adapter->pdev->device == OC_DEVICE_ID6)
+>  
+> +#ifdef CONFIG_BE2NET_BE3
+>  #define BE3_chip(adapter)	(adapter->pdev->device == BE_DEVICE_ID2 || \
+>  				 adapter->pdev->device == OC_DEVICE_ID2)
+> +#else
+> +#define BE3_chip(adapter)	(0)
+> +#endif /* CONFIG_BE2NET_BE3 */
+>  
+> +#ifdef CONFIG_BE2NET_BE2
+>  #define BE2_chip(adapter)	(adapter->pdev->device == BE_DEVICE_ID1 || \
+>  				 adapter->pdev->device == OC_DEVICE_ID1)
+> +#else
+> +#define BE2_chip(adapter)	(0)
+> +#endif /* CONFIG_BE2NET_BE2 */
+>  
+>  #define BEx_chip(adapter)	(BE3_chip(adapter) || BE2_chip(adapter))
+>  
+> diff --git a/drivers/net/ethernet/emulex/benet/be_main.c b/drivers/net/ethernet/emulex/benet/be_main.c
+> index 8f755009ff38..d5b3f0139832 100644
+> --- a/drivers/net/ethernet/emulex/benet/be_main.c
+> +++ b/drivers/net/ethernet/emulex/benet/be_main.c
+> @@ -47,10 +47,14 @@ MODULE_PARM_DESC(rx_frag_size, "Size of a fragment that holds rcvd data.");
+>  static struct workqueue_struct *be_err_recovery_workq;
+>  
+>  static const struct pci_device_id be_dev_ids[] = {
+> +#ifdef CONFIG_BE2NET_BE2
+>  	{ PCI_DEVICE(BE_VENDOR_ID, BE_DEVICE_ID1) },
+> -	{ PCI_DEVICE(BE_VENDOR_ID, BE_DEVICE_ID2) },
+>  	{ PCI_DEVICE(BE_VENDOR_ID, OC_DEVICE_ID1) },
+> +#endif /* CONFIG_BE2NET_BE2 */
+> +#ifdef CONFIG_BE2NET_BE3
+> +	{ PCI_DEVICE(BE_VENDOR_ID, BE_DEVICE_ID2) },
+>  	{ PCI_DEVICE(BE_VENDOR_ID, OC_DEVICE_ID2) },
+> +#endif /* CONFIG_BE2NET_BE3 */
+>  	{ PCI_DEVICE(EMULEX_VENDOR_ID, OC_DEVICE_ID3)},
+>  	{ PCI_DEVICE(EMULEX_VENDOR_ID, OC_DEVICE_ID4)},
+>  	{ PCI_DEVICE(EMULEX_VENDOR_ID, OC_DEVICE_ID5)},
 > 
 
-Btw, just noticed this now:
-GPIO driver -> arch_initcall
-pinctrl driver -> subsys_initcall
-
-And arch is before subsys. So we initialize GPIO driver first? But isn't
-pinctrl required for the GPIO range?
-
-Afaik, especially with gpio-ranges enabled, the GPIO probe will return
--EPROBE_DEFER (I think due to pinctrl_get_device_gpio_range).
-
-So my intuition would be that it should be the other way around...
-
---
-Stefan
-
->> My recent thinking has involved the component method used in DRM drivers
->> such as drivers/gpu/drm/vc4/vc4_drv.c where a few different component
->> subdrivers are linked together at bind time (not probe time!) into a master
->> component.
->> Rob was no big fan of this but the DRM people like it and I was thinking to
->> make a try at it.
->>
->> This way we could at least probe and bind the pin control and GPIO drivers
->> at the *same* initlevel and express the dependencies between them
->> somewhat.
-> 
-> Sounds interesting, maybe you could help to convert Tegra drivers to a such 
-> method and others will follow afterwards.
-> 
->> > This should definitely go in, at least as a stop gap solution.
->>
->> Agreed. (And patch applied.)
-> 
-> The best solution will be to fix the deferred probing, it's awkward that it 
-> could break suspend-resume order. Hopefully somebody with a good knowledge of 
-> driver/base will manage to fix it eventually.
