@@ -2,152 +2,177 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CF44C46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 21:46:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F29AC4646D
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 21:48:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C336B21A56
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 21:46:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C336B21A56
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id B045B2089E
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 21:48:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2EfzWQWx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B045B2089E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732873AbeHFX5n (ORCPT
+        id S1733026AbeHFX7k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 19:57:43 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46836 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728671AbeHFX5n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 19:57:43 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Mon, 6 Aug 2018 19:59:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37266 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731982AbeHFX7j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 19:59:39 -0400
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B3E2C81663CC;
-        Mon,  6 Aug 2018 21:46:39 +0000 (UTC)
-Received: from redhat.com (unknown [10.36.118.7])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 25A5B101043F;
-        Mon,  6 Aug 2018 21:46:34 +0000 (UTC)
-Date:   Tue, 7 Aug 2018 00:46:34 +0300
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        aik@ozlabs.ru, robh@kernel.org, joe@perches.com,
-        elfring@users.sourceforge.net, david@gibson.dropbear.id.au,
-        jasowang@redhat.com, mpe@ellerman.id.au, linuxram@us.ibm.com,
-        haren@linux.vnet.ibm.com, paulus@samba.org,
-        srikar@linux.vnet.ibm.com, robin.murphy@arm.com,
-        jean-philippe.brucker@arm.com, marc.zyngier@arm.com
-Subject: Re: [RFC 0/4] Virtio uses DMA API for all devices
-Message-ID: <20180807002857-mutt-send-email-mst@kernel.org>
-References: <20180803070507.GA1344@infradead.org>
- <eb1750e90e4bd45da297fa6f78f8ef93671b7c2f.camel@kernel.crashing.org>
- <20180803220443-mutt-send-email-mst@kernel.org>
- <051fd78e15595b414839fa8f9d445b9f4d7576c6.camel@kernel.crashing.org>
- <20180805031046-mutt-send-email-mst@kernel.org>
- <fd8fee94cf42e436878f179c7895de3a4dab3355.camel@kernel.crashing.org>
- <20180806164106-mutt-send-email-mst@kernel.org>
- <ef6d5d7c7b812bd797a1c3fd6bc7a26d0074020f.camel@kernel.crashing.org>
- <20180806233024-mutt-send-email-mst@kernel.org>
- <0967fc30001323e6e38ed12c8dba8ee3d1aa13f5.camel@kernel.crashing.org>
+        by mail.kernel.org (Postfix) with ESMTPSA id 1588421A56;
+        Mon,  6 Aug 2018 21:48:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1533592115;
+        bh=reczzPBNI/GYxn99KC7WtxC2ofSJatE+Teb1c4ZCdWk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=2EfzWQWx1RCIOTZihwdoljMg2H13D4tqyMfb19dD4pBBIijSYu6Zgknv0/uqvhhVU
+         iG3If8y7Q6MshPYgdurQ9vDu49q2mCZYGXU1x8f5hd8YmTXGZg6xgWJJSuvz0tgqu6
+         dxn/kTA4A3yqEu8+vqitZ6gSfEnPrWoazEZhb34I=
+Date:   Mon, 6 Aug 2018 16:48:07 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     "Lee, Chun-Yi" <joeyli.kernel@gmail.com>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Lee, Chun-Yi" <jlee@suse.com>
+Subject: Re: [PATCH] x86/PCI: Claim the resources of firmware enabled IOAPIC
+ before children bus
+Message-ID: <20180806214807.GE30691@bhelgaas-glaptop.roam.corp.google.com>
+References: <20180724110144.16442-1-jlee@suse.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0967fc30001323e6e38ed12c8dba8ee3d1aa13f5.camel@kernel.crashing.org>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Mon, 06 Aug 2018 21:46:39 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Mon, 06 Aug 2018 21:46:39 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mst@redhat.com' RCPT:''
+In-Reply-To: <20180724110144.16442-1-jlee@suse.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 07, 2018 at 07:26:35AM +1000, Benjamin Herrenschmidt wrote:
-> On Mon, 2018-08-06 at 23:35 +0300, Michael S. Tsirkin wrote:
-> > > As I said replying to Christoph, we are "leaking" into the interface
-> > > something here that is really what's the VM is doing to itself, which
-> > > is to stash its memory away in an inaccessible place.
-> > > 
-> > > Cheers,
-> > > Ben.
-> > 
-> > I think Christoph merely objects to the specific implementation.  If
-> > instead you do something like tweak dev->bus_dma_mask for the virtio
-> > device I think he won't object.
+On Tue, Jul 24, 2018 at 07:01:44PM +0800, Lee, Chun-Yi wrote:
+> I got a machine that the resource of firmware enabled IOAPIC conflicts
+> with the resource of a children bus when the PCI host bus be hotplug.
 > 
-> Well, we don't have "bus_dma_mask" yet ..or you mean dma_mask ?
+> [ 3182.243325] PCI host bridge to bus 0001:40
+> [ 3182.243328] pci_bus 0001:40: root bus resource [io  0xc000-0xdfff window]
+> [ 3182.243330] pci_bus 0001:40: root bus resource [mem 0xdc000000-0xebffffff window]
+> [ 3182.243331] pci_bus 0001:40: root bus resource [mem 0x212400000000-0x2125ffffffff window]
+> [ 3182.243334] pci_bus 0001:40: root bus resource [bus 40-7e]
+> ...
+> [ 3182.244737] pci 0001:40:05.4: [8086:6f2c] type 00 class 0x080020
+> [ 3182.244746] pci 0001:40:05.4: reg 0x10: [mem 0xdc000000-0xdc000fff]
+> ...
+> [ 3182.246697] pci 0001:40:02.0: PCI bridge to [bus 41]
+> [ 3182.246702] pci 0001:40:02.0:   bridge window [mem 0xdc000000-0xdc7fffff]
+> ...
+> pci 0001:40:05.4: can't claim BAR 0 [mem 0xdc000000-0xdc000fff]: address conflict with PCI Bus 0001:41 [mem 0xdc000000-0xdc7fffff]
 > 
-> So, something like that would be a possibility, but the problem is that
-> the current virtio (guest side) implementation doesn't honor this when
-> not using dma ops and will not use dma ops if not using iommu, so back
-> to square one.
+> The bus topology:
+> 
+>  +-[0001:40]-+-02.0-[41]--
+>  |           +-03.0-[41]--
+>  |           +-03.2-[41]--+-00.0  Intel Corporation I350 Gigabit Network Connection
+>  |           |            +-00.1  Intel Corporation I350 Gigabit Network Connection
+>  |           |            +-00.2  Intel Corporation I350 Gigabit Network Connection
+>  |           |            \-00.3  Intel Corporation I350 Gigabit Network Connection
+>  |           +-05.0  Intel Corporation Xeon E7 v4/Xeon E5 v4/Xeon E3 v4/Xeon D Map/VTd_Misc/System Management
+>  |           +-05.1  Intel Corporation Xeon E7 v4/Xeon E5 v4/Xeon E3 v4/Xeon D IIO Hot Plug
+>  |           +-05.2  Intel Corporation Xeon E7 v4/Xeon E5 v4/Xeon E3 v4/Xeon D IIO RAS/Control Status/Global Errors
+>  |           \-05.4  Intel Corporation Xeon E7 v4/Xeon E5 v4/Xeon E3 v4/Xeon D I/O APIC
+> 
+> This problem causes that the NIC behine the child bus was not available
+> after PCI host bridge hotpluged.
+> 
+> Kernel does not want to change resource of firmware enabled IOAPIC, but
+> the priority of children bus's resources are higher than any other devices.
+> So this conflict can not be handled by the reassigning logic of kernel.
 
-Well we have the RFC for that - the switch to using DMA ops unconditionally isn't
-problematic itself IMHO, for now that RFC is blocked
-by its perfromance overhead for now but Christoph says
-he's trying to remove that for direct mappings,
-so we should hopefully be able to get there in X weeks.
+I don't understand this paragraph.  AFAIK, if two devices on a bus
+both decode the same address, as the IOAPIC and the bridge do here,
+the only real "priority" in PCI would be subtractive decode.  But I
+don't think that applies here since the bridge is using a positive
+decode window.
 
-> Christoph seems to be wanting to use a flag in the interface to make
-> the guest use dma_ops which is what I don't understand.
+I would expect that a read to the [mem 0xdc000000-0xdc000fff] range
+would potentially receive two read completions, which would cause an
+Unexpected Completion error.
+
+Maybe you mean that we don't want to change the IOAPIC resources, but
+it's OK if we move the bridge window, so in that sense, the IOAPIC is
+"higher priority" than the bridge window?  This is the reverse of what
+your paragraph seems to say.
+
+> This patch claims the resources of firmware enabled IOAPIC before
+> children bus. Then kernel gets a chance to reassign the resources of
+> children bus to avoid the conflict.
+
+Can you open a report at https://bugzilla.kernel.org, attach the
+before and after dmesg logs, and include the URL in the commit log?
+
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: "H. Peter Anvin" <hpa@zytor.com>
+> Signed-off-by: "Lee, Chun-Yi" <jlee@suse.com>
+> ---
+>  arch/x86/pci/i386.c | 27 +++++++++++++++++++++++++++
+>  1 file changed, 27 insertions(+)
 > 
-> What would be needed then would be something along the lines of virtio
-> noticing that dma_mask isn't big enough to cover all of memory (which
-> isn't something generic code can easily do here for various reasons I
-> can elaborate if you want, but that specific test more/less has to be
-> arch specific), and in that case, force itself to use DMA ops routed to
-> swiotlb.
-> 
-> I'd rather have arch code do the bulk of that work, don't you think ?
-> 
-> Which brings me back to this option, which may be the simplest and
-> avoids the overhead of the proposed series (I found the series to be a
-> nice cleanup but retpoline does kick us in the nuts here).
-> 
-> So what about this ?
-> 
-> --- a/drivers/virtio/virtio_ring.c
-> +++ b/drivers/virtio/virtio_ring.c
-> @@ -155,7 +155,7 @@ static bool vring_use_dma_api(struct virtio_device
-> *vdev)
->          * the DMA API if we're a Xen guest, which at least allows
->          * all of the sensible Xen configurations to work correctly.
->          */
-> -       if (xen_domain())
-> +       if (xen_domain() || arch_virtio_direct_dma_ops(&vdev->dev))
->                 return true;
+> diff --git a/arch/x86/pci/i386.c b/arch/x86/pci/i386.c
+> index ed4ac215305d..6413eda87c72 100644
+> --- a/arch/x86/pci/i386.c
+> +++ b/arch/x86/pci/i386.c
+> @@ -230,13 +230,40 @@ static void pcibios_allocate_bridge_resources(struct pci_dev *dev)
+>  	}
+>  }
 >  
->         return false;
-
-Right but can't we fix the retpoline overhead such that
-vring_use_dma_api will not be called on data path any longer, making
-this a setup time check?
-
-
-> (Passing the dev allows the arch to know this is a virtio device in
-> "direct" mode or whatever we want to call the !iommu case, and
-> construct appropriate DMA ops for it, which aren't the same as the DMA
-> ops of any other PCI device who *do* use the iommu).
-
-I think that's where Christoph might have specific ideas about it.
-
-> Otherwise, the harder option would be for us to hack so that
-> xen_domain() returns true in our setup (gross), and have the arch code,
-> when it sets up PCI device DMA ops, have a gross hack to identify
-> virtio PCI devices, checks their F_IOMMU flag itself, and sets up the
-> different ops at that point.
+> +static bool ioapic_firmware_enabled(struct pci_dev *dev)
+> +{
+> +	u16 class = dev->class >> 8;
+> +
+> +	if (class == PCI_CLASS_SYSTEM_PIC) {
+> +		u16 command;
+> +
+> +		pci_read_config_word(dev, PCI_COMMAND, &command);
+> +		if (command & (PCI_COMMAND_IO | PCI_COMMAND_MEMORY))
+> +			return true;
+> +	}
+> +
+> +	return false;
+> +}
+> +
+> +static void pcibios_allocate_dev_resources(struct pci_dev *dev, int pass);
+> +
+>  static void pcibios_allocate_bus_resources(struct pci_bus *bus)
+>  {
+>  	struct pci_bus *child;
+> +	struct pci_dev *dev;
+>  
+>  	/* Depth-First Search on bus tree */
+>  	if (bus->self)
+>  		pcibios_allocate_bridge_resources(bus->self);
+> +
+> +	/* allocate firmware enabled APIC before children bus */
+> +	list_for_each_entry(dev, &bus->devices, bus_list) {
+> +		if (ioapic_firmware_enabled(dev)) {
+> +			pcibios_allocate_dev_resources(dev, 0);
+> +			pcibios_allocate_dev_resources(dev, 1);
+> +		}
+> +	}
+> +
+>  	list_for_each_entry(child, &bus->children, node)
+>  		pcibios_allocate_bus_resources(child);
+>  }
+> -- 
+> 2.13.6
 > 
-> As for those "special" ops, they are of course just normal swiotlb ops,
-> there's nothing "special" other that they aren't the ops that other PCI
-> device on that bus use.
-> 
-> Cheers,
-> Ben.
-
--- 
-MST
