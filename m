@@ -5,794 +5,556 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D3C4C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 13:17:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBE3EC46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 13:17:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3295821A0C
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 13:17:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3295821A0C
+	by mail.kernel.org (Postfix) with ESMTP id 6B93221A0C
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 13:17:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B93221A0C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732499AbeHFP0N (ORCPT
+        id S1732517AbeHFP0V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 11:26:13 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45714 "EHLO mx1.redhat.com"
+        Mon, 6 Aug 2018 11:26:21 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60310 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729714AbeHFP0N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 11:26:13 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        id S1729714AbeHFP0V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 11:26:21 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B879287A87;
-        Mon,  6 Aug 2018 13:17:07 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5C395406E897;
+        Mon,  6 Aug 2018 13:17:14 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-120-78.rdu2.redhat.com [10.10.120.78])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7147176F2;
-        Mon,  6 Aug 2018 13:17:05 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 65EC21010427;
+        Mon,  6 Aug 2018 13:17:13 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
  Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
  Kingdom.
  Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 04/10] iov_iter: Add mapping and discard iterator types
+Subject: [PATCH 05/10] afs: Better tracing of protocol errors
 From:   David Howells <dhowells@redhat.com>
 To:     viro@zeniv.linux.org.uk
 Cc:     dhowells@redhat.com, linux-afs@lists.infradead.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         matthew@wil.cx
-Date:   Mon, 06 Aug 2018 14:17:05 +0100
-Message-ID: <153356142497.1195.12462638099995772468.stgit@warthog.procyon.org.uk>
+Date:   Mon, 06 Aug 2018 14:17:12 +0100
+Message-ID: <153356143289.1195.4273438888751674593.stgit@warthog.procyon.org.uk>
 In-Reply-To: <153356139813.1195.8360582774280288285.stgit@warthog.procyon.org.uk>
 References: <153356139813.1195.8360582774280288285.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/unknown-version
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 06 Aug 2018 13:17:07 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 06 Aug 2018 13:17:07 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 06 Aug 2018 13:17:14 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 06 Aug 2018 13:17:14 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add two new iterator types to iov_iter:
-
- (1) ITER_MAPPING
-
-     This walks through a set of pages attached to an address_space that
-     are pinned or locked, starting at a given page and offset and walking
-     for the specified amount of space.  A facility to get a callback each
-     time a page is entirely processed is provided.
-
-     This is useful for copying data from socket buffers to inodes in
-     network filesystems.
-
- (2) ITER_DISCARD
-
-     This is a sink iterator that can only be used in READ mode and just
-     discards any data copied to it.
-
-     This is useful in a network filesystem for discarding any unwanted
-     data sent by a server.
+Include the site of detection of AFS protocol errors in trace lines to
+better be able to determine what went wrong.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- include/linux/uio.h |    8 +
- lib/iov_iter.c      |  365 +++++++++++++++++++++++++++++++++++++++++++++------
- 2 files changed, 330 insertions(+), 43 deletions(-)
+ fs/afs/cmservice.c         |    6 ++
+ fs/afs/fsclient.c          |  117 +++++++++++++++++++++++++++-----------------
+ fs/afs/inode.c             |    2 -
+ fs/afs/internal.h          |    2 -
+ fs/afs/rxrpc.c             |    5 +-
+ fs/afs/vlclient.c          |   30 ++++++++---
+ include/trace/events/afs.h |   54 +++++++++++++++++---
+ 7 files changed, 146 insertions(+), 70 deletions(-)
 
-diff --git a/include/linux/uio.h b/include/linux/uio.h
-index d0655b74fd7e..24f6901472e9 100644
---- a/include/linux/uio.h
-+++ b/include/linux/uio.h
-@@ -14,6 +14,7 @@
- #include <uapi/linux/uio.h>
+diff --git a/fs/afs/cmservice.c b/fs/afs/cmservice.c
+index 9e51d6fe7e8f..58f79301a716 100644
+--- a/fs/afs/cmservice.c
++++ b/fs/afs/cmservice.c
+@@ -189,7 +189,8 @@ static int afs_deliver_cb_callback(struct afs_call *call)
+ 		call->count = ntohl(call->tmp);
+ 		_debug("FID count: %u", call->count);
+ 		if (call->count > AFSCBMAX)
+-			return afs_protocol_error(call, -EBADMSG);
++			return afs_protocol_error(call, -EBADMSG,
++						  afs_eproto_cb_fid_count);
  
- struct page;
-+struct address_space;
- struct pipe_inode_info;
+ 		call->buffer = kmalloc(array3_size(call->count, 3, 4),
+ 				       GFP_KERNEL);
+@@ -234,7 +235,8 @@ static int afs_deliver_cb_callback(struct afs_call *call)
+ 		call->count2 = ntohl(call->tmp);
+ 		_debug("CB count: %u", call->count2);
+ 		if (call->count2 != call->count && call->count2 != 0)
+-			return afs_protocol_error(call, -EBADMSG);
++			return afs_protocol_error(call, -EBADMSG,
++						  afs_eproto_cb_count);
+ 		call->offset = 0;
+ 		call->unmarshall++;
  
- struct kvec {
-@@ -26,6 +27,8 @@ enum iter_type {
- 	ITER_KVEC,
- 	ITER_BVEC,
- 	ITER_PIPE,
-+	ITER_DISCARD,
-+	ITER_MAPPING,
- };
+diff --git a/fs/afs/fsclient.c b/fs/afs/fsclient.c
+index 50929cb91732..d9a5815945dc 100644
+--- a/fs/afs/fsclient.c
++++ b/fs/afs/fsclient.c
+@@ -233,7 +233,7 @@ static int xdr_decode_AFSFetchStatus(struct afs_call *call,
  
- struct iov_iter {
-@@ -37,6 +40,7 @@ struct iov_iter {
- 		const struct iovec *iov;
- 		const struct kvec *kvec;
- 		const struct bio_vec *bvec;
-+		struct address_space *mapping;
- 		struct pipe_inode_info *pipe;
- 	};
- 	union {
-@@ -45,6 +49,7 @@ struct iov_iter {
- 			int idx;
- 			int start_idx;
- 		};
-+		void (*page_done)(const struct iov_iter *, const struct bio_vec *);
- 	};
- };
- 
-@@ -211,6 +216,9 @@ void iov_iter_bvec(struct iov_iter *i, unsigned int direction, const struct bio_
- 			unsigned long nr_segs, size_t count);
- void iov_iter_pipe(struct iov_iter *i, unsigned int direction, struct pipe_inode_info *pipe,
- 			size_t count);
-+void iov_iter_mapping(struct iov_iter *i, unsigned int direction, struct address_space *mapping,
-+		      loff_t start, size_t count);
-+void iov_iter_discard(struct iov_iter *i, unsigned int direction, size_t count);
- ssize_t iov_iter_get_pages(struct iov_iter *i, struct page **pages,
- 			size_t maxsize, unsigned maxpages, size_t *start);
- ssize_t iov_iter_get_pages_alloc(struct iov_iter *i, struct page ***pages,
-diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-index 8231f0e38f20..22b35464891b 100644
---- a/lib/iov_iter.c
-+++ b/lib/iov_iter.c
-@@ -72,7 +72,35 @@
- 	}						\
+ bad:
+ 	xdr_dump_bad(*_bp);
+-	return afs_protocol_error(call, -EBADMSG);
++	return afs_protocol_error(call, -EBADMSG, afs_eproto_bad_status);
  }
  
--#define iterate_all_kinds(i, n, v, I, B, K) {			\
-+#define iterate_mapping(i, n, __v, do_done, skip, STEP) {	\
-+	struct radix_tree_iter cursor;				\
-+	size_t wanted = n, seg, offset;				\
-+	pgoff_t index = skip >> PAGE_SHIFT;			\
-+	void __rcu **slot;					\
-+								\
-+	rcu_read_lock();					\
-+	radix_tree_for_each_contig(slot, &i->mapping->i_pages,	\
-+				   &cursor, index) {		\
-+		if (!n)						\
-+			break;					\
-+		__v.bv_page = radix_tree_deref_slot(slot);	\
-+		if (!__v.bv_page)				\
-+			break;					\
-+		offset = skip & ~PAGE_MASK;			\
-+		seg = PAGE_SIZE - offset;			\
-+		__v.bv_offset = offset;				\
-+		__v.bv_len = min(n, seg);			\
-+		(void)(STEP);					\
-+		if (do_done && __v.bv_offset + __v.bv_len == PAGE_SIZE)	\
-+			i->page_done(i, &__v);			\
-+		n -= __v.bv_len;				\
-+		skip += __v.bv_len;				\
-+	}							\
-+	rcu_read_unlock();					\
-+	n = wanted - n;						\
-+}
-+
-+#define iterate_all_kinds(i, n, v, I, B, K, M) {		\
- 	if (likely(n)) {					\
- 		loff_t skip = i->iov_offset;			\
- 		switch (iov_iter_type(i)) {			\
-@@ -91,6 +119,14 @@
- 		case ITER_PIPE: {				\
- 			break;					\
- 		}						\
-+		case ITER_MAPPING: {				\
-+			struct bio_vec v;			\
-+			iterate_mapping(i, n, v, false, skip, (M));	\
-+			break;					\
-+		}						\
-+		case ITER_DISCARD: {				\
-+			break;					\
-+		}						\
- 		case ITER_IOVEC: {				\
- 			const struct iovec *iov;		\
- 			struct iovec v;				\
-@@ -101,7 +137,7 @@
- 	}							\
- }
+ /*
+@@ -399,9 +399,10 @@ static int afs_deliver_fs_fetch_status_vnode(struct afs_call *call)
  
--#define iterate_and_advance(i, n, v, I, B, K) {			\
-+#define iterate_and_advance(i, n, v, I, B, K, M) {		\
- 	if (unlikely(i->count < n))				\
- 		n = i->count;					\
- 	if (i->count) {						\
-@@ -129,6 +165,11 @@
- 			i->kvec = kvec;				\
- 			break;					\
- 		}						\
-+		case ITER_MAPPING: {				\
-+			struct bio_vec v;			\
-+			iterate_mapping(i, n, v, i->page_done, skip, (M))	\
-+			break;					\
-+		}						\
- 		case ITER_IOVEC: {				\
- 			const struct iovec *iov;		\
- 			struct iovec v;				\
-@@ -144,6 +185,10 @@
- 		case ITER_PIPE: {				\
- 			break;					\
- 		}						\
-+		case ITER_DISCARD: {				\
-+			skip += n;				\
-+			break;					\
-+		}						\
- 		}						\
- 		i->count -= n;					\
- 		i->iov_offset = skip;				\
-@@ -448,6 +493,8 @@ int iov_iter_fault_in_readable(struct iov_iter *i, size_t bytes)
- 		break;
- 	case ITER_KVEC:
- 	case ITER_BVEC:
-+	case ITER_MAPPING:
-+	case ITER_DISCARD:
- 		break;
+ 	/* unmarshall the reply once we've received all of it */
+ 	bp = call->buffer;
+-	if (afs_decode_status(call, &bp, &vnode->status, vnode,
+-			      &call->expected_version, NULL) < 0)
+-		return afs_protocol_error(call, -EBADMSG);
++	ret = afs_decode_status(call, &bp, &vnode->status, vnode,
++				&call->expected_version, NULL);
++	if (ret < 0)
++		return ret;
+ 	xdr_decode_AFSCallBack(call, vnode, &bp);
+ 	if (call->reply[1])
+ 		xdr_decode_AFSVolSync(&bp, call->reply[1]);
+@@ -580,9 +581,10 @@ static int afs_deliver_fs_fetch_data(struct afs_call *call)
+ 			return ret;
+ 
+ 		bp = call->buffer;
+-		if (afs_decode_status(call, &bp, &vnode->status, vnode,
+-				      &vnode->status.data_version, req) < 0)
+-			return afs_protocol_error(call, -EBADMSG);
++		ret = afs_decode_status(call, &bp, &vnode->status, vnode,
++					&vnode->status.data_version, req);
++		if (ret < 0)
++			return ret;
+ 		xdr_decode_AFSCallBack(call, vnode, &bp);
+ 		if (call->reply[1])
+ 			xdr_decode_AFSVolSync(&bp, call->reply[1]);
+@@ -733,10 +735,13 @@ static int afs_deliver_fs_create_vnode(struct afs_call *call)
+ 	/* unmarshall the reply once we've received all of it */
+ 	bp = call->buffer;
+ 	xdr_decode_AFSFid(&bp, call->reply[1]);
+-	if (afs_decode_status(call, &bp, call->reply[2], NULL, NULL, NULL) < 0 ||
+-	    afs_decode_status(call, &bp, &vnode->status, vnode,
+-			      &call->expected_version, NULL) < 0)
+-		return afs_protocol_error(call, -EBADMSG);
++	ret = afs_decode_status(call, &bp, call->reply[2], NULL, NULL, NULL);
++	if (ret < 0)
++		return ret;
++	ret = afs_decode_status(call, &bp, &vnode->status, vnode,
++				&call->expected_version, NULL);
++	if (ret < 0)
++		return ret;
+ 	xdr_decode_AFSCallBack_raw(&bp, call->reply[3]);
+ 	/* xdr_decode_AFSVolSync(&bp, call->reply[X]); */
+ 
+@@ -839,9 +844,10 @@ static int afs_deliver_fs_remove(struct afs_call *call)
+ 
+ 	/* unmarshall the reply once we've received all of it */
+ 	bp = call->buffer;
+-	if (afs_decode_status(call, &bp, &vnode->status, vnode,
+-			      &call->expected_version, NULL) < 0)
+-		return afs_protocol_error(call, -EBADMSG);
++	ret = afs_decode_status(call, &bp, &vnode->status, vnode,
++				&call->expected_version, NULL);
++	if (ret < 0)
++		return ret;
+ 	/* xdr_decode_AFSVolSync(&bp, call->reply[X]); */
+ 
+ 	_leave(" = 0 [done]");
+@@ -929,10 +935,13 @@ static int afs_deliver_fs_link(struct afs_call *call)
+ 
+ 	/* unmarshall the reply once we've received all of it */
+ 	bp = call->buffer;
+-	if (afs_decode_status(call, &bp, &vnode->status, vnode, NULL, NULL) < 0 ||
+-	    afs_decode_status(call, &bp, &dvnode->status, dvnode,
+-			      &call->expected_version, NULL) < 0)
+-		return afs_protocol_error(call, -EBADMSG);
++	ret = afs_decode_status(call, &bp, &vnode->status, vnode, NULL, NULL);
++	if (ret < 0)
++		return ret;
++	ret = afs_decode_status(call, &bp, &dvnode->status, dvnode,
++				&call->expected_version, NULL);
++	if (ret < 0)
++		return ret;
+ 	/* xdr_decode_AFSVolSync(&bp, call->reply[X]); */
+ 
+ 	_leave(" = 0 [done]");
+@@ -1016,10 +1025,13 @@ static int afs_deliver_fs_symlink(struct afs_call *call)
+ 	/* unmarshall the reply once we've received all of it */
+ 	bp = call->buffer;
+ 	xdr_decode_AFSFid(&bp, call->reply[1]);
+-	if (afs_decode_status(call, &bp, call->reply[2], NULL, NULL, NULL) ||
+-	    afs_decode_status(call, &bp, &vnode->status, vnode,
+-			      &call->expected_version, NULL) < 0)
+-		return afs_protocol_error(call, -EBADMSG);
++	ret = afs_decode_status(call, &bp, call->reply[2], NULL, NULL, NULL);
++	if (ret < 0)
++		return ret;
++	ret = afs_decode_status(call, &bp, &vnode->status, vnode,
++				&call->expected_version, NULL);
++	if (ret < 0)
++		return ret;
+ 	/* xdr_decode_AFSVolSync(&bp, call->reply[X]); */
+ 
+ 	_leave(" = 0 [done]");
+@@ -1122,13 +1134,16 @@ static int afs_deliver_fs_rename(struct afs_call *call)
+ 
+ 	/* unmarshall the reply once we've received all of it */
+ 	bp = call->buffer;
+-	if (afs_decode_status(call, &bp, &orig_dvnode->status, orig_dvnode,
+-			      &call->expected_version, NULL) < 0)
+-		return afs_protocol_error(call, -EBADMSG);
+-	if (new_dvnode != orig_dvnode &&
+-	    afs_decode_status(call, &bp, &new_dvnode->status, new_dvnode,
+-			      &call->expected_version_2, NULL) < 0)
+-		return afs_protocol_error(call, -EBADMSG);
++	ret = afs_decode_status(call, &bp, &orig_dvnode->status, orig_dvnode,
++				&call->expected_version, NULL);
++	if (ret < 0)
++		return ret;
++	if (new_dvnode != orig_dvnode) {
++		ret = afs_decode_status(call, &bp, &new_dvnode->status, new_dvnode,
++					&call->expected_version_2, NULL);
++		if (ret < 0)
++			return ret;
++	}
+ 	/* xdr_decode_AFSVolSync(&bp, call->reply[X]); */
+ 
+ 	_leave(" = 0 [done]");
+@@ -1231,9 +1246,10 @@ static int afs_deliver_fs_store_data(struct afs_call *call)
+ 
+ 	/* unmarshall the reply once we've received all of it */
+ 	bp = call->buffer;
+-	if (afs_decode_status(call, &bp, &vnode->status, vnode,
+-			      &call->expected_version, NULL) < 0)
+-		return afs_protocol_error(call, -EBADMSG);
++	ret = afs_decode_status(call, &bp, &vnode->status, vnode,
++				&call->expected_version, NULL);
++	if (ret < 0)
++		return ret;
+ 	/* xdr_decode_AFSVolSync(&bp, call->reply[X]); */
+ 
+ 	afs_pages_written_back(vnode, call);
+@@ -1407,9 +1423,10 @@ static int afs_deliver_fs_store_status(struct afs_call *call)
+ 
+ 	/* unmarshall the reply once we've received all of it */
+ 	bp = call->buffer;
+-	if (afs_decode_status(call, &bp, &vnode->status, vnode,
+-			      &call->expected_version, NULL) < 0)
+-		return afs_protocol_error(call, -EBADMSG);
++	ret = afs_decode_status(call, &bp, &vnode->status, vnode,
++				&call->expected_version, NULL);
++	if (ret < 0)
++		return ret;
+ 	/* xdr_decode_AFSVolSync(&bp, call->reply[X]); */
+ 
+ 	_leave(" = 0 [done]");
+@@ -1612,7 +1629,8 @@ static int afs_deliver_fs_get_volume_status(struct afs_call *call)
+ 		call->count = ntohl(call->tmp);
+ 		_debug("volname length: %u", call->count);
+ 		if (call->count >= AFSNAMEMAX)
+-			return afs_protocol_error(call, -EBADMSG);
++			return afs_protocol_error(call, -EBADMSG,
++						  afs_eproto_volname_len);
+ 		call->offset = 0;
+ 		call->unmarshall++;
+ 
+@@ -1659,7 +1677,8 @@ static int afs_deliver_fs_get_volume_status(struct afs_call *call)
+ 		call->count = ntohl(call->tmp);
+ 		_debug("offline msg length: %u", call->count);
+ 		if (call->count >= AFSNAMEMAX)
+-			return afs_protocol_error(call, -EBADMSG);
++			return afs_protocol_error(call, -EBADMSG,
++						  afs_eproto_offline_msg_len);
+ 		call->offset = 0;
+ 		call->unmarshall++;
+ 
+@@ -1706,7 +1725,8 @@ static int afs_deliver_fs_get_volume_status(struct afs_call *call)
+ 		call->count = ntohl(call->tmp);
+ 		_debug("motd length: %u", call->count);
+ 		if (call->count >= AFSNAMEMAX)
+-			return afs_protocol_error(call, -EBADMSG);
++			return afs_protocol_error(call, -EBADMSG,
++						  afs_eproto_motd_len);
+ 		call->offset = 0;
+ 		call->unmarshall++;
+ 
+@@ -2109,8 +2129,10 @@ static int afs_deliver_fs_fetch_status(struct afs_call *call)
+ 
+ 	/* unmarshall the reply once we've received all of it */
+ 	bp = call->buffer;
+-	afs_decode_status(call, &bp, status, vnode,
+-			  &call->expected_version, NULL);
++	ret = afs_decode_status(call, &bp, status, vnode,
++				&call->expected_version, NULL);
++	if (ret < 0)
++		return ret;
+ 	callback[call->count].version	= ntohl(bp[0]);
+ 	callback[call->count].expiry	= ntohl(bp[1]);
+ 	callback[call->count].type	= ntohl(bp[2]);
+@@ -2206,7 +2228,8 @@ static int afs_deliver_fs_inline_bulk_status(struct afs_call *call)
+ 		tmp = ntohl(call->tmp);
+ 		_debug("status count: %u/%u", tmp, call->count2);
+ 		if (tmp != call->count2)
+-			return afs_protocol_error(call, -EBADMSG);
++			return afs_protocol_error(call, -EBADMSG,
++						  afs_eproto_ibulkst_count);
+ 
+ 		call->count = 0;
+ 		call->unmarshall++;
+@@ -2221,10 +2244,11 @@ static int afs_deliver_fs_inline_bulk_status(struct afs_call *call)
+ 
+ 		bp = call->buffer;
+ 		statuses = call->reply[1];
+-		if (afs_decode_status(call, &bp, &statuses[call->count],
+-				      call->count == 0 ? vnode : NULL,
+-				      NULL, NULL) < 0)
+-			return afs_protocol_error(call, -EBADMSG);
++		ret = afs_decode_status(call, &bp, &statuses[call->count],
++					call->count == 0 ? vnode : NULL,
++					NULL, NULL);
++		if (ret < 0)
++			return ret;
+ 
+ 		call->count++;
+ 		if (call->count < call->count2)
+@@ -2244,7 +2268,8 @@ static int afs_deliver_fs_inline_bulk_status(struct afs_call *call)
+ 		tmp = ntohl(call->tmp);
+ 		_debug("CB count: %u", tmp);
+ 		if (tmp != call->count2)
+-			return afs_protocol_error(call, -EBADMSG);
++			return afs_protocol_error(call, -EBADMSG,
++						  afs_eproto_ibulkst_cb_count);
+ 		call->count = 0;
+ 		call->unmarshall++;
+ 	more_cbs:
+diff --git a/fs/afs/inode.c b/fs/afs/inode.c
+index 479b7fdda124..ab4e7a15c205 100644
+--- a/fs/afs/inode.c
++++ b/fs/afs/inode.c
+@@ -82,7 +82,7 @@ static int afs_inode_init_from_status(struct afs_vnode *vnode, struct key *key)
+ 	default:
+ 		printk("kAFS: AFS vnode with undefined type\n");
+ 		read_sequnlock_excl(&vnode->cb_lock);
+-		return afs_protocol_error(NULL, -EBADMSG);
++		return afs_protocol_error(NULL, -EBADMSG, afs_eproto_file_type);
  	}
- 	return 0;
-@@ -593,7 +640,9 @@ size_t _copy_to_iter(const void *addr, size_t bytes, struct iov_iter *i)
- 		copyout(v.iov_base, (from += v.iov_len) - v.iov_len, v.iov_len),
- 		memcpy_to_page(v.bv_page, v.bv_offset,
- 			       (from += v.bv_len) - v.bv_len, v.bv_len),
--		memcpy(v.iov_base, (from += v.iov_len) - v.iov_len, v.iov_len)
-+		memcpy(v.iov_base, (from += v.iov_len) - v.iov_len, v.iov_len),
-+		memcpy_to_page(v.bv_page, v.bv_offset,
-+			       (from += v.bv_len) - v.bv_len, v.bv_len)
- 	)
  
- 	return bytes;
-@@ -708,6 +757,15 @@ size_t _copy_to_iter_mcsafe(const void *addr, size_t bytes, struct iov_iter *i)
- 			bytes = curr_addr - s_addr - rem;
- 			return bytes;
- 		}
-+		}),
-+		({
-+		rem = memcpy_mcsafe_to_page(v.bv_page, v.bv_offset,
-+                               (from += v.bv_len) - v.bv_len, v.bv_len);
-+		if (rem) {
-+			curr_addr = (unsigned long) from;
-+			bytes = curr_addr - s_addr - rem;
-+			return bytes;
-+		}
- 		})
- 	)
+ 	inode->i_blocks		= 0;
+diff --git a/fs/afs/internal.h b/fs/afs/internal.h
+index 35aa4bd79145..852f68a400b8 100644
+--- a/fs/afs/internal.h
++++ b/fs/afs/internal.h
+@@ -928,7 +928,7 @@ extern void afs_flat_call_destructor(struct afs_call *);
+ extern void afs_send_empty_reply(struct afs_call *);
+ extern void afs_send_simple_reply(struct afs_call *, const void *, size_t);
+ extern int afs_extract_data(struct afs_call *, void *, size_t, bool);
+-extern int afs_protocol_error(struct afs_call *, int);
++extern int afs_protocol_error(struct afs_call *, int, enum afs_eproto_cause);
  
-@@ -729,7 +787,9 @@ size_t _copy_from_iter(void *addr, size_t bytes, struct iov_iter *i)
- 		copyin((to += v.iov_len) - v.iov_len, v.iov_base, v.iov_len),
- 		memcpy_from_page((to += v.bv_len) - v.bv_len, v.bv_page,
- 				 v.bv_offset, v.bv_len),
--		memcpy((to += v.iov_len) - v.iov_len, v.iov_base, v.iov_len)
-+		memcpy((to += v.iov_len) - v.iov_len, v.iov_base, v.iov_len),
-+		memcpy_from_page((to += v.bv_len) - v.bv_len, v.bv_page,
-+				 v.bv_offset, v.bv_len)
- 	)
- 
- 	return bytes;
-@@ -755,7 +815,9 @@ bool _copy_from_iter_full(void *addr, size_t bytes, struct iov_iter *i)
- 		0;}),
- 		memcpy_from_page((to += v.bv_len) - v.bv_len, v.bv_page,
- 				 v.bv_offset, v.bv_len),
--		memcpy((to += v.iov_len) - v.iov_len, v.iov_base, v.iov_len)
-+		memcpy((to += v.iov_len) - v.iov_len, v.iov_base, v.iov_len),
-+		memcpy_from_page((to += v.bv_len) - v.bv_len, v.bv_page,
-+				 v.bv_offset, v.bv_len)
- 	)
- 
- 	iov_iter_advance(i, bytes);
-@@ -775,7 +837,9 @@ size_t _copy_from_iter_nocache(void *addr, size_t bytes, struct iov_iter *i)
- 					 v.iov_base, v.iov_len),
- 		memcpy_from_page((to += v.bv_len) - v.bv_len, v.bv_page,
- 				 v.bv_offset, v.bv_len),
--		memcpy((to += v.iov_len) - v.iov_len, v.iov_base, v.iov_len)
-+		memcpy((to += v.iov_len) - v.iov_len, v.iov_base, v.iov_len),
-+		memcpy_from_page((to += v.bv_len) - v.bv_len, v.bv_page,
-+				 v.bv_offset, v.bv_len)
- 	)
- 
- 	return bytes;
-@@ -810,7 +874,9 @@ size_t _copy_from_iter_flushcache(void *addr, size_t bytes, struct iov_iter *i)
- 		memcpy_page_flushcache((to += v.bv_len) - v.bv_len, v.bv_page,
- 				 v.bv_offset, v.bv_len),
- 		memcpy_flushcache((to += v.iov_len) - v.iov_len, v.iov_base,
--			v.iov_len)
-+			v.iov_len),
-+		memcpy_page_flushcache((to += v.bv_len) - v.bv_len, v.bv_page,
-+				 v.bv_offset, v.bv_len)
- 	)
- 
- 	return bytes;
-@@ -834,7 +900,9 @@ bool _copy_from_iter_full_nocache(void *addr, size_t bytes, struct iov_iter *i)
- 		0;}),
- 		memcpy_from_page((to += v.bv_len) - v.bv_len, v.bv_page,
- 				 v.bv_offset, v.bv_len),
--		memcpy((to += v.iov_len) - v.iov_len, v.iov_base, v.iov_len)
-+		memcpy((to += v.iov_len) - v.iov_len, v.iov_base, v.iov_len),
-+		memcpy_from_page((to += v.bv_len) - v.bv_len, v.bv_page,
-+				 v.bv_offset, v.bv_len)
- 	)
- 
- 	iov_iter_advance(i, bytes);
-@@ -860,7 +928,8 @@ size_t copy_page_to_iter(struct page *page, size_t offset, size_t bytes,
- 		return 0;
- 	switch (iov_iter_type(i)) {
- 	case ITER_BVEC:
--	case ITER_KVEC: {
-+	case ITER_KVEC:
-+	case ITER_MAPPING: {
- 		void *kaddr = kmap_atomic(page);
- 		size_t wanted = copy_to_iter(kaddr + offset, bytes, i);
- 		kunmap_atomic(kaddr);
-@@ -870,6 +939,8 @@ size_t copy_page_to_iter(struct page *page, size_t offset, size_t bytes,
- 		return copy_page_to_iter_iovec(page, offset, bytes, i);
- 	case ITER_PIPE:
- 		return copy_page_to_iter_pipe(page, offset, bytes, i);
-+	case ITER_DISCARD:
-+		return bytes;
- 	}
- 	BUG();
- }
-@@ -882,7 +953,9 @@ size_t copy_page_from_iter(struct page *page, size_t offset, size_t bytes,
- 		return 0;
- 	switch (iov_iter_type(i)) {
- 	case ITER_PIPE:
-+	case ITER_DISCARD:
- 		break;
-+	case ITER_MAPPING:
- 	case ITER_BVEC:
- 	case ITER_KVEC: {
- 		void *kaddr = kmap_atomic(page);
-@@ -930,7 +1003,8 @@ size_t iov_iter_zero(size_t bytes, struct iov_iter *i)
- 	iterate_and_advance(i, bytes, v,
- 		clear_user(v.iov_base, v.iov_len),
- 		memzero_page(v.bv_page, v.bv_offset, v.bv_len),
--		memset(v.iov_base, 0, v.iov_len)
-+		memset(v.iov_base, 0, v.iov_len),
-+		memzero_page(v.bv_page, v.bv_offset, v.bv_len)
- 	)
- 
- 	return bytes;
-@@ -945,7 +1019,7 @@ size_t iov_iter_copy_from_user_atomic(struct page *page,
- 		kunmap_atomic(kaddr);
- 		return 0;
- 	}
--	if (unlikely(iov_iter_is_pipe(i))) {
-+	if (unlikely(iov_iter_is_pipe(i) || iov_iter_type(i) == ITER_DISCARD)) {
- 		kunmap_atomic(kaddr);
- 		WARN_ON(1);
- 		return 0;
-@@ -954,7 +1028,9 @@ size_t iov_iter_copy_from_user_atomic(struct page *page,
- 		copyin((p += v.iov_len) - v.iov_len, v.iov_base, v.iov_len),
- 		memcpy_from_page((p += v.bv_len) - v.bv_len, v.bv_page,
- 				 v.bv_offset, v.bv_len),
--		memcpy((p += v.iov_len) - v.iov_len, v.iov_base, v.iov_len)
-+		memcpy((p += v.iov_len) - v.iov_len, v.iov_base, v.iov_len),
-+		memcpy_from_page((p += v.bv_len) - v.bv_len, v.bv_page,
-+				 v.bv_offset, v.bv_len)
- 	)
- 	kunmap_atomic(kaddr);
- 	return bytes;
-@@ -1016,7 +1092,14 @@ void iov_iter_advance(struct iov_iter *i, size_t size)
- 	case ITER_IOVEC:
- 	case ITER_KVEC:
- 	case ITER_BVEC:
--		iterate_and_advance(i, size, v, 0, 0, 0);
-+		iterate_and_advance(i, size, v, 0, 0, 0, 0);
-+		return;
-+	case ITER_MAPPING:
-+		/* We really don't want to fetch pages is we can avoid it */
-+		i->iov_offset += size;
-+		/* Fall through */
-+	case ITER_DISCARD:
-+		i->count -= size;
- 		return;
- 	}
- 	BUG();
-@@ -1060,6 +1143,14 @@ void iov_iter_revert(struct iov_iter *i, size_t unroll)
- 	}
- 	unroll -= i->iov_offset;
- 	switch (iov_iter_type(i)) {
-+	case ITER_MAPPING:
-+		BUG(); /* We should never go beyond the start of the mapping
-+			* since iov_offset includes that page number as well as
-+			* the in-page offset.
-+			*/
-+	case ITER_DISCARD:
-+		i->iov_offset = 0;
-+		return;
- 	case ITER_BVEC: {
- 		const struct bio_vec *bvec = i->bvec;
- 		while (1) {
-@@ -1103,6 +1194,8 @@ size_t iov_iter_single_seg_count(const struct iov_iter *i)
- 		return i->count;
- 	switch (iov_iter_type(i)) {
- 	case ITER_PIPE:
-+	case ITER_DISCARD:
-+	case ITER_MAPPING:
- 		return i->count;	// it is a silly place, anyway
- 	case ITER_BVEC:
- 		return min_t(size_t, i->count, i->bvec->bv_len - i->iov_offset);
-@@ -1158,6 +1251,52 @@ void iov_iter_pipe(struct iov_iter *i, unsigned int direction,
- }
- EXPORT_SYMBOL(iov_iter_pipe);
- 
-+/**
-+ * iov_iter_mapping - Initialise an I/O iterator to use the pages in a mapping
-+ * @i: The iterator to initialise.
-+ * @direction: The direction of the transfer.
-+ * @mapping: The mapping to access.
-+ * @start: The start file position.
-+ * @count: The size of the I/O buffer in bytes.
-+ *
-+ * Set up an I/O iterator to either draw data out of the pages attached to an
-+ * inode or to inject data into those pages.  The pages *must* be prevented
-+ * from evaporation, either by taking a ref on them or locking them by the
-+ * caller.
-+ */
-+void iov_iter_mapping(struct iov_iter *i, unsigned int direction,
-+		      struct address_space *mapping,
-+		      loff_t start, size_t count)
-+{
-+	BUG_ON(direction & ~1);
-+	i->iter_dir = direction;
-+	i->iter_type = ITER_MAPPING;
-+	i->mapping = mapping;
-+	i->count = count;
-+	i->iov_offset = start;
-+	i->page_done = NULL;
-+}
-+EXPORT_SYMBOL(iov_iter_mapping);
-+
-+/**
-+ * iov_iter_discard - Initialise an I/O iterator that discards data
-+ * @i: The iterator to initialise.
-+ * @direction: The direction of the transfer.
-+ * @count: The size of the I/O buffer in bytes.
-+ *
-+ * Set up an I/O iterator that just discards everything that's written to it.
-+ * It's only available as a READ iterator.
-+ */
-+void iov_iter_discard(struct iov_iter *i, unsigned int direction, size_t count)
-+{
-+	BUG_ON(direction != READ);
-+	i->iter_dir = READ;
-+	i->iter_type = ITER_DISCARD;
-+	i->count = count;
-+	i->iov_offset = 0;
-+}
-+EXPORT_SYMBOL(iov_iter_discard);
-+
- unsigned long iov_iter_alignment(const struct iov_iter *i)
+ static inline int afs_transfer_reply(struct afs_call *call)
  {
- 	unsigned long res = 0;
-@@ -1171,7 +1310,8 @@ unsigned long iov_iter_alignment(const struct iov_iter *i)
- 	iterate_all_kinds(i, size, v,
- 		(res |= (unsigned long)v.iov_base | v.iov_len, 0),
- 		res |= v.bv_offset | v.bv_len,
--		res |= (unsigned long)v.iov_base | v.iov_len
-+		res |= (unsigned long)v.iov_base | v.iov_len,
-+		res |= v.bv_offset | v.bv_len
- 	)
- 	return res;
+diff --git a/fs/afs/rxrpc.c b/fs/afs/rxrpc.c
+index 55441af2de53..37811901a5c9 100644
+--- a/fs/afs/rxrpc.c
++++ b/fs/afs/rxrpc.c
+@@ -941,8 +941,9 @@ int afs_extract_data(struct afs_call *call, void *buf, size_t count,
+ /*
+  * Log protocol error production.
+  */
+-noinline int afs_protocol_error(struct afs_call *call, int error)
++noinline int afs_protocol_error(struct afs_call *call, int error,
++				enum afs_eproto_cause cause)
+ {
+-	trace_afs_protocol_error(call, error, __builtin_return_address(0));
++	trace_afs_protocol_error(call, error, cause);
+ 	return error;
  }
-@@ -1182,7 +1322,7 @@ unsigned long iov_iter_gap_alignment(const struct iov_iter *i)
- 	unsigned long res = 0;
- 	size_t size = i->count;
+diff --git a/fs/afs/vlclient.c b/fs/afs/vlclient.c
+index c3b740813fc7..d0f95c4ab05e 100644
+--- a/fs/afs/vlclient.c
++++ b/fs/afs/vlclient.c
+@@ -451,7 +451,8 @@ static int afs_deliver_yfsvl_get_endpoints(struct afs_call *call)
+ 		call->count2	= ntohl(*bp); /* Type or next count */
  
--	if (unlikely(iov_iter_is_pipe(i))) {
-+	if (unlikely(iov_iter_is_pipe(i) || iov_iter_type(i) == ITER_DISCARD)) {
- 		WARN_ON(1);
- 		return ~0U;
- 	}
-@@ -1193,7 +1333,9 @@ unsigned long iov_iter_gap_alignment(const struct iov_iter *i)
- 		(res |= (!res ? 0 : (unsigned long)v.bv_offset) |
- 			(size != v.bv_len ? size : 0)),
- 		(res |= (!res ? 0 : (unsigned long)v.iov_base) |
--			(size != v.iov_len ? size : 0))
-+			(size != v.iov_len ? size : 0)),
-+		(res |= (!res ? 0 : (unsigned long)v.bv_offset) |
-+			(size != v.bv_len ? size : 0))
- 		);
- 	return res;
- }
-@@ -1243,6 +1385,43 @@ static ssize_t pipe_get_pages(struct iov_iter *i,
- 	return __pipe_get_pages(i, min(maxsize, capacity), pages, idx, start);
- }
+ 		if (call->count > YFS_MAXENDPOINTS)
+-			return afs_protocol_error(call, -EBADMSG);
++			return afs_protocol_error(call, -EBADMSG,
++						  afs_eproto_yvl_fsendpt_num);
  
-+static ssize_t iter_mapping_get_pages(struct iov_iter *i,
-+				      struct page **pages, size_t maxsize,
-+				      unsigned maxpages, size_t *start)
-+{
-+	unsigned nr, offset;
-+	pgoff_t index, count;
-+	size_t size = maxsize;
-+
-+	if (!size || !maxpages)
-+		return 0;
-+
-+	index = i->iov_offset >> PAGE_SHIFT;
-+	offset = i->iov_offset & ~PAGE_MASK;
-+	*start = offset;
-+
-+	count = 1;
-+	if (size > PAGE_SIZE - offset) {
-+		size -= PAGE_SIZE - offset;
-+		count += size >> PAGE_SHIFT;
-+		size &= ~PAGE_MASK;
-+		if (size)
-+			count++;
-+	}
-+
-+	if (count > maxpages)
-+		count = maxpages;
-+
-+	nr = find_get_pages_contig(i->mapping, index, count, pages);
-+	if (nr == count)
-+		return maxsize;
-+	if (nr == 0)
-+		return 0;
-+	if (nr == 1)
-+		return PAGE_SIZE - offset;
-+	return (PAGE_SIZE - offset) + count * PAGE_SIZE;
-+}
-+
- ssize_t iov_iter_get_pages(struct iov_iter *i,
- 		   struct page **pages, size_t maxsize, unsigned maxpages,
- 		   size_t *start)
-@@ -1253,6 +1432,9 @@ ssize_t iov_iter_get_pages(struct iov_iter *i,
- 	switch (iov_iter_type(i)) {
- 	case ITER_PIPE:
- 		return pipe_get_pages(i, pages, maxsize, maxpages, start);
-+	case ITER_MAPPING:
-+		return iter_mapping_get_pages(i, pages, maxsize, maxpages, start);
-+	case ITER_DISCARD:
- 	case ITER_KVEC:
- 		return -EFAULT;
- 	case ITER_IOVEC:
-@@ -1279,9 +1461,7 @@ ssize_t iov_iter_get_pages(struct iov_iter *i,
- 		*start = v.bv_offset;
- 		get_page(*pages = v.bv_page);
- 		return v.bv_len;
--	}),({
--		return -EFAULT;
--	})
-+	}), 0, 0
- 	)
- 	return 0;
- }
-@@ -1326,6 +1506,48 @@ static ssize_t pipe_get_pages_alloc(struct iov_iter *i,
- 	return n;
- }
+ 		alist = afs_alloc_addrlist(call->count, FS_SERVICE, AFS_FS_PORT);
+ 		if (!alist)
+@@ -475,7 +476,8 @@ static int afs_deliver_yfsvl_get_endpoints(struct afs_call *call)
+ 			size = sizeof(__be32) * (1 + 4 + 1);
+ 			break;
+ 		default:
+-			return afs_protocol_error(call, -EBADMSG);
++			return afs_protocol_error(call, -EBADMSG,
++						  afs_eproto_yvl_fsendpt_type);
+ 		}
  
-+static ssize_t iter_mapping_get_pages_alloc(struct iov_iter *i,
-+					    struct page ***pages, size_t maxsize,
-+					    size_t *start)
-+{
-+	struct page **p;
-+	unsigned nr, offset;
-+	pgoff_t index, count;
-+	size_t size = maxsize;
-+
-+	if (!size)
-+		return 0;
-+
-+	index = i->iov_offset >> PAGE_SHIFT;
-+	offset = i->iov_offset & ~PAGE_MASK;
-+	*start = offset;
-+
-+	count = 1;
-+	if (size > PAGE_SIZE - offset) {
-+		size -= PAGE_SIZE - offset;
-+		count += size >> PAGE_SHIFT;
-+		size &= ~PAGE_MASK;
-+		if (size)
-+			count++;
-+	}
-+
-+	p = get_pages_array(count);
-+	if (!p)
-+		return -ENOMEM;
-+	*pages = p;
-+
-+	nr = find_get_pages_contig(i->mapping, index, count, p);
-+	if (nr == count)
-+		return maxsize;
-+	if (nr == 0) {
-+		kvfree(p);
-+		return 0;
-+	}
-+	if (nr == 1)
-+		return PAGE_SIZE - offset;
-+	return (PAGE_SIZE - offset) + count * PAGE_SIZE;
-+}
-+
- ssize_t iov_iter_get_pages_alloc(struct iov_iter *i,
- 		   struct page ***pages, size_t maxsize,
- 		   size_t *start)
-@@ -1338,6 +1560,9 @@ ssize_t iov_iter_get_pages_alloc(struct iov_iter *i,
- 	switch (iov_iter_type(i)) {
- 	case ITER_PIPE:
- 		return pipe_get_pages_alloc(i, pages, maxsize, start);
-+	case ITER_MAPPING:
-+		return iter_mapping_get_pages_alloc(i, pages, maxsize, start);
-+	case ITER_DISCARD:
- 	case ITER_KVEC:
- 		return -EFAULT;
- 	case ITER_IOVEC:
-@@ -1371,9 +1596,7 @@ ssize_t iov_iter_get_pages_alloc(struct iov_iter *i,
- 			return -ENOMEM;
- 		get_page(*p = v.bv_page);
- 		return v.bv_len;
--	}),({
--		return -EFAULT;
--	})
-+	}), 0, 0
- 	)
- 	return 0;
- }
-@@ -1386,7 +1609,7 @@ size_t csum_and_copy_from_iter(void *addr, size_t bytes, __wsum *csum,
- 	__wsum sum, next;
- 	size_t off = 0;
- 	sum = *csum;
--	if (unlikely(iov_iter_is_pipe(i))) {
-+	if (unlikely(iov_iter_is_pipe(i) || iov_iter_type(i) == ITER_DISCARD)) {
- 		WARN_ON(1);
- 		return 0;
- 	}
-@@ -1414,6 +1637,14 @@ size_t csum_and_copy_from_iter(void *addr, size_t bytes, __wsum *csum,
- 						 v.iov_len, 0);
- 		sum = csum_block_add(sum, next, off);
- 		off += v.iov_len;
-+	}), ({
-+		char *p = kmap_atomic(v.bv_page);
-+		next = csum_partial_copy_nocheck(p + v.bv_offset,
-+						 (to += v.bv_len) - v.bv_len,
-+						 v.bv_len, 0);
-+		kunmap_atomic(p);
-+		sum = csum_block_add(sum, next, off);
-+		off += v.bv_len;
- 	})
- 	)
- 	*csum = sum;
-@@ -1428,7 +1659,7 @@ bool csum_and_copy_from_iter_full(void *addr, size_t bytes, __wsum *csum,
- 	__wsum sum, next;
- 	size_t off = 0;
- 	sum = *csum;
--	if (unlikely(iov_iter_is_pipe(i))) {
-+	if (unlikely(iov_iter_is_pipe(i) || iov_iter_type(i) == ITER_DISCARD)) {
- 		WARN_ON(1);
- 		return false;
- 	}
-@@ -1458,6 +1689,14 @@ bool csum_and_copy_from_iter_full(void *addr, size_t bytes, __wsum *csum,
- 						 v.iov_len, 0);
- 		sum = csum_block_add(sum, next, off);
- 		off += v.iov_len;
-+	}), ({
-+		char *p = kmap_atomic(v.bv_page);
-+		next = csum_partial_copy_nocheck(p + v.bv_offset,
-+						 (to += v.bv_len) - v.bv_len,
-+						 v.bv_len, 0);
-+		kunmap_atomic(p);
-+		sum = csum_block_add(sum, next, off);
-+		off += v.bv_len;
- 	})
- 	)
- 	*csum = sum;
-@@ -1473,7 +1712,7 @@ size_t csum_and_copy_to_iter(const void *addr, size_t bytes, __wsum *csum,
- 	__wsum sum, next;
- 	size_t off = 0;
- 	sum = *csum;
--	if (unlikely(iov_iter_is_pipe(i))) {
-+	if (unlikely(iov_iter_is_pipe(i) || iov_iter_type(i) == ITER_DISCARD)) {
- 		WARN_ON(1);	/* for now */
- 		return 0;
- 	}
-@@ -1501,6 +1740,14 @@ size_t csum_and_copy_to_iter(const void *addr, size_t bytes, __wsum *csum,
- 						 v.iov_len, 0);
- 		sum = csum_block_add(sum, next, off);
- 		off += v.iov_len;
-+	}), ({
-+		char *p = kmap_atomic(v.bv_page);
-+		next = csum_partial_copy_nocheck((from += v.bv_len) - v.bv_len,
-+						 p + v.bv_offset,
-+						 v.bv_len, 0);
-+		kunmap_atomic(p);
-+		sum = csum_block_add(sum, next, off);
-+		off += v.bv_len;
- 	})
- 	)
- 	*csum = sum;
-@@ -1516,7 +1763,8 @@ int iov_iter_npages(const struct iov_iter *i, int maxpages)
- 	if (!size)
- 		return 0;
+ 		size += sizeof(__be32);
+@@ -488,18 +490,21 @@ static int afs_deliver_yfsvl_get_endpoints(struct afs_call *call)
+ 		switch (call->count2) {
+ 		case YFS_ENDPOINT_IPV4:
+ 			if (ntohl(bp[0]) != sizeof(__be32) * 2)
+-				return afs_protocol_error(call, -EBADMSG);
++				return afs_protocol_error(call, -EBADMSG,
++							  afs_eproto_yvl_fsendpt4_len);
+ 			afs_merge_fs_addr4(alist, bp[1], ntohl(bp[2]));
+ 			bp += 3;
+ 			break;
+ 		case YFS_ENDPOINT_IPV6:
+ 			if (ntohl(bp[0]) != sizeof(__be32) * 5)
+-				return afs_protocol_error(call, -EBADMSG);
++				return afs_protocol_error(call, -EBADMSG,
++							  afs_eproto_yvl_fsendpt6_len);
+ 			afs_merge_fs_addr6(alist, bp + 1, ntohl(bp[5]));
+ 			bp += 6;
+ 			break;
+ 		default:
+-			return afs_protocol_error(call, -EBADMSG);
++			return afs_protocol_error(call, -EBADMSG,
++						  afs_eproto_yvl_fsendpt_type);
+ 		}
  
--	if (unlikely(iov_iter_is_pipe(i))) {
-+	switch (iov_iter_type(i)) {
-+	case ITER_PIPE: {
- 		struct pipe_inode_info *pipe = i->pipe;
- 		size_t off;
- 		int idx;
-@@ -1529,24 +1777,47 @@ int iov_iter_npages(const struct iov_iter *i, int maxpages)
- 		npages = ((pipe->curbuf - idx - 1) & (pipe->buffers - 1)) + 1;
- 		if (npages >= maxpages)
- 			return maxpages;
--	} else iterate_all_kinds(i, size, v, ({
--		unsigned long p = (unsigned long)v.iov_base;
--		npages += DIV_ROUND_UP(p + v.iov_len, PAGE_SIZE)
--			- p / PAGE_SIZE;
--		if (npages >= maxpages)
--			return maxpages;
--	0;}),({
--		npages++;
--		if (npages >= maxpages)
--			return maxpages;
--	}),({
--		unsigned long p = (unsigned long)v.iov_base;
--		npages += DIV_ROUND_UP(p + v.iov_len, PAGE_SIZE)
--			- p / PAGE_SIZE;
-+	}
-+	case ITER_MAPPING: {
-+		unsigned offset;
-+
-+		offset = i->iov_offset & ~PAGE_MASK;
-+
-+		npages = 1;
-+		if (size > PAGE_SIZE - offset) {
-+			size -= PAGE_SIZE - offset;
-+			npages += size >> PAGE_SHIFT;
-+			size &= ~PAGE_MASK;
-+			if (size)
-+				npages++;
-+		}
- 		if (npages >= maxpages)
- 			return maxpages;
--	})
--	)
-+	}
-+	case ITER_DISCARD:
-+		return 0;
-+
-+	default:
-+		iterate_all_kinds(i, size, v, ({
-+			unsigned long p = (unsigned long)v.iov_base;
-+			npages += DIV_ROUND_UP(p + v.iov_len, PAGE_SIZE)
-+				- p / PAGE_SIZE;
-+			if (npages >= maxpages)
-+				return maxpages;
-+		0;}),({
-+			npages++;
-+			if (npages >= maxpages)
-+				return maxpages;
-+		}),({
-+			unsigned long p = (unsigned long)v.iov_base;
-+			npages += DIV_ROUND_UP(p + v.iov_len, PAGE_SIZE)
-+				- p / PAGE_SIZE;
-+			if (npages >= maxpages)
-+				return maxpages;
-+		}),
-+		0
-+		)
-+	}
- 	return npages;
- }
- EXPORT_SYMBOL(iov_iter_npages);
-@@ -1567,6 +1838,9 @@ const void *dup_iter(struct iov_iter *new, struct iov_iter *old, gfp_t flags)
- 		return new->iov = kmemdup(new->iov,
- 				   new->nr_segs * sizeof(struct iovec),
- 				   flags);
-+	case ITER_MAPPING:
-+	case ITER_DISCARD:
-+		return NULL;
- 	}
+ 		/* Got either the type of the next entry or the count of
+@@ -518,7 +523,8 @@ static int afs_deliver_yfsvl_get_endpoints(struct afs_call *call)
+ 		if (!call->count)
+ 			goto end;
+ 		if (call->count > YFS_MAXENDPOINTS)
+-			return afs_protocol_error(call, -EBADMSG);
++			return afs_protocol_error(call, -EBADMSG,
++						  afs_eproto_yvl_vlendpt_type);
  
- 	WARN_ON(1);
-@@ -1670,7 +1944,12 @@ int iov_iter_for_each_range(struct iov_iter *i, size_t bytes,
- 		kunmap(v.bv_page);
- 		err;}), ({
- 		w = v;
--		err = f(&w, context);})
-+		err = f(&w, context);}), ({
-+		w.iov_base = kmap(v.bv_page) + v.bv_offset;
-+		w.iov_len = v.bv_len;
-+		err = f(&w, context);
-+		kunmap(v.bv_page);
-+		err;})
- 	)
- 	return err;
- }
+ 		call->unmarshall = 3;
+ 
+@@ -546,7 +552,8 @@ static int afs_deliver_yfsvl_get_endpoints(struct afs_call *call)
+ 			size = sizeof(__be32) * (1 + 4 + 1);
+ 			break;
+ 		default:
+-			return afs_protocol_error(call, -EBADMSG);
++			return afs_protocol_error(call, -EBADMSG,
++						  afs_eproto_yvl_vlendpt_type);
+ 		}
+ 
+ 		if (call->count > 1)
+@@ -559,16 +566,19 @@ static int afs_deliver_yfsvl_get_endpoints(struct afs_call *call)
+ 		switch (call->count2) {
+ 		case YFS_ENDPOINT_IPV4:
+ 			if (ntohl(bp[0]) != sizeof(__be32) * 2)
+-				return afs_protocol_error(call, -EBADMSG);
++				return afs_protocol_error(call, -EBADMSG,
++							  afs_eproto_yvl_vlendpt4_len);
+ 			bp += 3;
+ 			break;
+ 		case YFS_ENDPOINT_IPV6:
+ 			if (ntohl(bp[0]) != sizeof(__be32) * 5)
+-				return afs_protocol_error(call, -EBADMSG);
++				return afs_protocol_error(call, -EBADMSG,
++							  afs_eproto_yvl_vlendpt6_len);
+ 			bp += 6;
+ 			break;
+ 		default:
+-			return afs_protocol_error(call, -EBADMSG);
++			return afs_protocol_error(call, -EBADMSG,
++						  afs_eproto_yvl_vlendpt_type);
+ 		}
+ 
+ 		/* Got either the type of the next entry or the count of
+diff --git a/include/trace/events/afs.h b/include/trace/events/afs.h
+index d0a341bc4540..5c60ade2c7d8 100644
+--- a/include/trace/events/afs.h
++++ b/include/trace/events/afs.h
+@@ -84,6 +84,25 @@ enum afs_edit_dir_reason {
+ 	afs_edit_dir_for_unlink,
+ };
+ 
++enum afs_eproto_cause {
++	afs_eproto_bad_status,
++	afs_eproto_cb_count,
++	afs_eproto_cb_fid_count,
++	afs_eproto_file_type,
++	afs_eproto_ibulkst_cb_count,
++	afs_eproto_ibulkst_count,
++	afs_eproto_motd_len,
++	afs_eproto_offline_msg_len,
++	afs_eproto_volname_len,
++	afs_eproto_yvl_fsendpt4_len,
++	afs_eproto_yvl_fsendpt6_len,
++	afs_eproto_yvl_fsendpt_num,
++	afs_eproto_yvl_fsendpt_type,
++	afs_eproto_yvl_vlendpt4_len,
++	afs_eproto_yvl_vlendpt6_len,
++	afs_eproto_yvl_vlendpt_type,
++};
++
+ #endif /* end __AFS_DECLARE_TRACE_ENUMS_ONCE_ONLY */
+ 
+ /*
+@@ -146,6 +165,24 @@ enum afs_edit_dir_reason {
+ 	EM(afs_edit_dir_for_symlink,		"Symlnk") \
+ 	E_(afs_edit_dir_for_unlink,		"Unlink")
+ 
++#define afs_eproto_causes			\
++	EM(afs_eproto_bad_status,	"BadStatus") \
++	EM(afs_eproto_cb_count,		"CbCount") \
++	EM(afs_eproto_cb_fid_count,	"CbFidCount") \
++	EM(afs_eproto_file_type,	"FileTYpe") \
++	EM(afs_eproto_ibulkst_cb_count,	"IBS.CbCount") \
++	EM(afs_eproto_ibulkst_count,	"IBS.FidCount") \
++	EM(afs_eproto_motd_len,		"MotdLen") \
++	EM(afs_eproto_offline_msg_len,	"OfflineMsgLen") \
++	EM(afs_eproto_volname_len,	"VolNameLen") \
++	EM(afs_eproto_yvl_fsendpt4_len,	"YVL.FsEnd4Len") \
++	EM(afs_eproto_yvl_fsendpt6_len,	"YVL.FsEnd6Len") \
++	EM(afs_eproto_yvl_fsendpt_num,	"YVL.FsEndCount") \
++	EM(afs_eproto_yvl_fsendpt_type,	"YVL.FsEndType") \
++	EM(afs_eproto_yvl_vlendpt4_len,	"YVL.VlEnd4Len") \
++	EM(afs_eproto_yvl_vlendpt6_len,	"YVL.VlEnd6Len") \
++	E_(afs_eproto_yvl_vlendpt_type,	"YVL.VlEndType")
++
+ 
+ /*
+  * Export enum symbols via userspace.
+@@ -555,24 +592,25 @@ TRACE_EVENT(afs_edit_dir,
+ 	    );
+ 
+ TRACE_EVENT(afs_protocol_error,
+-	    TP_PROTO(struct afs_call *call, int error, const void *where),
++	    TP_PROTO(struct afs_call *call, int error, enum afs_eproto_cause cause),
+ 
+-	    TP_ARGS(call, error, where),
++	    TP_ARGS(call, error, cause),
+ 
+ 	    TP_STRUCT__entry(
+-		    __field(unsigned int,	call		)
+-		    __field(int,		error		)
+-		    __field(const void *,	where		)
++		    __field(unsigned int,		call		)
++		    __field(int,			error		)
++		    __field(enum afs_eproto_cause,	cause		)
+ 			     ),
+ 
+ 	    TP_fast_assign(
+ 		    __entry->call = call ? call->debug_id : 0;
+ 		    __entry->error = error;
+-		    __entry->where = where;
++		    __entry->cause = cause;
+ 			   ),
+ 
+-	    TP_printk("c=%08x r=%d sp=%pSR",
+-		      __entry->call, __entry->error, __entry->where)
++	    TP_printk("c=%08x r=%d %s",
++		      __entry->call, __entry->error,
++		      __print_symbolic(__entry->cause, afs_eproto_causes))
+ 	    );
+ 
+ TRACE_EVENT(afs_cm_no_server,
 
