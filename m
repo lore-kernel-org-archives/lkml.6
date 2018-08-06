@@ -5,113 +5,74 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 414B4C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 19:58:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F057EC46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 20:01:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBD1A208A3
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 19:58:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBD1A208A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
+	by mail.kernel.org (Postfix) with ESMTP id 9EC6E21A33
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 20:01:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EC6E21A33
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387528AbeHFWIv (ORCPT
+        id S2387567AbeHFWMU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 18:08:51 -0400
-Received: from gate.crashing.org ([63.228.1.57]:52613 "EHLO gate.crashing.org"
+        Mon, 6 Aug 2018 18:12:20 -0400
+Received: from mga14.intel.com ([192.55.52.115]:30830 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732921AbeHFWIv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 18:08:51 -0400
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w76Jv0VW002428;
-        Mon, 6 Aug 2018 14:57:01 -0500
-Message-ID: <ef6d5d7c7b812bd797a1c3fd6bc7a26d0074020f.camel@kernel.crashing.org>
-Subject: Re: [RFC 0/4] Virtio uses DMA API for all devices
-From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        aik@ozlabs.ru, robh@kernel.org, joe@perches.com,
-        elfring@users.sourceforge.net, david@gibson.dropbear.id.au,
-        jasowang@redhat.com, mpe@ellerman.id.au, linuxram@us.ibm.com,
-        haren@linux.vnet.ibm.com, paulus@samba.org,
-        srikar@linux.vnet.ibm.com, robin.murphy@arm.com,
-        jean-philippe.brucker@arm.com, marc.zyngier@arm.com
-Date:   Tue, 07 Aug 2018 05:56:59 +1000
-In-Reply-To: <20180806164106-mutt-send-email-mst@kernel.org>
-References: <20180802200646-mutt-send-email-mst@kernel.org>
-         <e9beb6bba5a7d05741e27e85b24a3b23ba7c2762.camel@kernel.crashing.org>
-         <20180802225738-mutt-send-email-mst@kernel.org>
-         <de4888b6457e220776e16a9c8958ff0886ffc66c.camel@kernel.crashing.org>
-         <20180803070507.GA1344@infradead.org>
-         <eb1750e90e4bd45da297fa6f78f8ef93671b7c2f.camel@kernel.crashing.org>
-         <20180803220443-mutt-send-email-mst@kernel.org>
-         <051fd78e15595b414839fa8f9d445b9f4d7576c6.camel@kernel.crashing.org>
-         <20180805031046-mutt-send-email-mst@kernel.org>
-         <fd8fee94cf42e436878f179c7895de3a4dab3355.camel@kernel.crashing.org>
-         <20180806164106-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.4 (3.28.4-1.fc28) 
-Mime-Version: 1.0
+        id S2387428AbeHFWMU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 18:12:20 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Aug 2018 13:01:40 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,452,1526367600"; 
+   d="scan'208";a="252423142"
+Received: from ahkircos-mobl1.amr.corp.intel.com (HELO [10.255.32.219]) ([10.255.32.219])
+  by fmsmga006.fm.intel.com with ESMTP; 06 Aug 2018 12:59:04 -0700
+Subject: Re: [alsa-devel] [PATCH 9/9] ALSA: intel_hdmi: remove redundant
+ variable cfg_val
+To:     Takashi Iwai <tiwai@suse.de>
+Cc:     alsa-devel@alsa-project.org,
+        Olivier Moysan <olivier.moysan@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        kernel-janitors@vger.kernel.org,
+        Arnaud Pouliquen <arnaud.pouliquen@st.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Colin King <colin.king@canonical.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Jaya Kumar <jayakumar.alsa@gmail.com>
+References: <20180801104742.4328-1-colin.king@canonical.com>
+ <20180801104742.4328-10-colin.king@canonical.com>
+ <s5hin4unyh0.wl-tiwai@suse.de>
+ <a5a408bc-cc58-946e-5b36-496548a6316f@linux.intel.com>
+ <s5hwot3gub3.wl-tiwai@suse.de>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <eba27606-0d1e-93d1-4eee-382595fa78f0@linux.intel.com>
+Date:   Mon, 6 Aug 2018 14:59:03 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <s5hwot3gub3.wl-tiwai@suse.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-08-06 at 16:46 +0300, Michael S. Tsirkin wrote:
-> 
-> > Right, we'll need some quirk to disable balloons  in the guest I
-> > suppose.
-> > 
-> > Passing something from libvirt is cumbersome because the end user may
-> > not even need to know about secure VMs. There are use cases where the
-> > security is a contract down to some special application running inside
-> > the secure VM, the sysadmin knows nothing about.
-> > 
-> > Also there's repercussions all the way to admin tools, web UIs etc...
-> > so it's fairly wide ranging.
-> > 
-> > So as long as we only need to quirk a couple of devices, it's much
-> > better contained that way.
-> 
-> So just the balloon thing already means that yes management and all the
-> way to the user tools must know this is going on. Otherwise
-> user will try to inflate the balloon and wonder why this does not work.
 
-There is *dozens* of management systems out there, not even all open
-source, we won't ever be able to see the end of the tunnel if we need
-to teach every single of them, including end users, about platform
-specific new VM flags like that.
-
-.../...
-
-> Here's another example: you can't migrate a secure vm to hypervisor
-> which doesn't support this feature. Again management tools above libvirt
-> need to know otherwise they will try.
-
-There will have to be a new machine type for that I suppose, yes,
-though it's not just the hypervisor that needs to know about the
-modified migration stream, it's also the need to have a compatible
-ultravisor with the right keys on the other side.
-
-So migration is going to be special and require extra admin work in all
-cases yes. But not all secure VMs are meant to be migratable.
-
-In any case, back to the problem at hand. What a qemu flag gives us is
-just a way to force iommu at VM creation time.
-
-This is rather sub-optimal, we don't really want the iommu in the way,
-so it's at best a "workaround", and it's not really solving the real
-problem.
-
-As I said replying to Christoph, we are "leaking" into the interface
-something here that is really what's the VM is doing to itself, which
-is to stash its memory away in an inaccessible place.
-
-Cheers,
-Ben.
-
-
+> Good to hear, applied the patch now.
+>
+>> BTW looking at the structures in intel_hdmi_lpe_audio.h, the field
+>> format:3 in audio_ch_status_0 is misleading at best, it should be the
+>> emphasis if I look at the SPDIF/AES docs. It's not used but I'll have
+>> to relook at all this when I find some time... We should really set
+>> the registers to mirror what the aes_bits are, not just the non_audio
+>> and clock accuracy fields.
+> A fix patch is always welcome ;)
+This sort of fixes is straighforward, the hard part is to locate an HDMI 
+analyzer to double-check that the changes result in something meaningful...
