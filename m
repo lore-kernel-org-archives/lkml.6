@@ -3,161 +3,144 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4B8BC4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 21:50:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0D5FC46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 21:55:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 436F321920
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 21:50:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 436F321920
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id AD6E021946
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 21:55:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD6E021946
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387466AbeHGABV (ORCPT
+        id S1732385AbeHGAGt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 20:01:21 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:45600 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729926AbeHGABU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 20:01:20 -0400
-Received: from fsav101.sakura.ne.jp (fsav101.sakura.ne.jp [27.133.134.228])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w76LoG9j077401;
-        Tue, 7 Aug 2018 06:50:16 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav101.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav101.sakura.ne.jp);
- Tue, 07 Aug 2018 06:50:16 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav101.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126074194044.bbtec.net [126.74.194.44])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w76LoC7i077390
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Tue, 7 Aug 2018 06:50:16 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: WARNING in try_charge
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     syzbot <syzbot+bab151e82a4e973fa325@syzkaller.appspotmail.com>,
-        cgroups@vger.kernel.org, dvyukov@google.com, hannes@cmpxchg.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        syzkaller-bugs@googlegroups.com, vdavydov.dev@gmail.com
-References: <fc6e173e-8bda-269f-d44f-1c5f5215beac@I-love.SAKURA.ne.jp>
- <0000000000006350880572c61e62@google.com>
- <20180806174410.GB10003@dhcp22.suse.cz>
- <20180806175627.GC10003@dhcp22.suse.cz>
- <078bde8d-b1b5-f5ad-ed23-0cd94b579f9e@i-love.sakura.ne.jp>
- <20180806203437.GK10003@dhcp22.suse.cz>
- <3cf8f630-73b7-20d4-8ad1-bb1c657ee30d@i-love.sakura.ne.jp>
- <20180806205519.GO10003@dhcp22.suse.cz>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <9c03213f-c099-378b-e9fd-ed6f2a2afdc3@i-love.sakura.ne.jp>
-Date:   Tue, 7 Aug 2018 06:50:09 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+        Mon, 6 Aug 2018 20:06:49 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36914 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730220AbeHGAGt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 20:06:49 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6434D8780F;
+        Mon,  6 Aug 2018 21:55:43 +0000 (UTC)
+Received: from [10.36.116.32] (ovpn-116-32.ams2.redhat.com [10.36.116.32])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 106D82026D76;
+        Mon,  6 Aug 2018 21:55:41 +0000 (UTC)
+Subject: Re: linux-next: Signed-off-by missing for commit in the kvm tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        KVM <kvm@vger.kernel.org>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20180807073922.665e1d63@canb.auug.org.au>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <0423431e-bc44-91a0-ce4c-d7fc430f66ab@redhat.com>
+Date:   Mon, 6 Aug 2018 23:55:40 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180806205519.GO10003@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180807073922.665e1d63@canb.auug.org.au>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="FiCqHZbcwJJYxsjUzWc98noVLcTMfClV5"
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 06 Aug 2018 21:55:43 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 06 Aug 2018 21:55:43 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'pbonzini@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/08/07 5:55, Michal Hocko wrote:
-> On Tue 07-08-18 05:46:04, Tetsuo Handa wrote:
->> On 2018/08/07 5:34, Michal Hocko wrote:
->>> On Tue 07-08-18 05:26:23, Tetsuo Handa wrote:
->>>> On 2018/08/07 2:56, Michal Hocko wrote:
->>>>> So the oom victim indeed passed the above force path after the oom
->>>>> invocation. But later on hit the page fault path and that behaved
->>>>> differently and for some reason the force path hasn't triggered. I am
->>>>> wondering how could we hit the page fault path in the first place. The
->>>>> task is already killed! So what the hell is going on here.
->>>>>
->>>>> I must be missing something obvious here.
->>>>>
->>>> YOU ARE OBVIOUSLY MISSING MY MAIL!
->>>>
->>>> I already said this is "mm, oom: task_will_free_mem(current) should ignore MMF_OOM_SKIP for once."
->>>> problem which you are refusing at https://www.spinics.net/lists/linux-mm/msg133774.html .
->>>> And you again ignored my mail. Very sad...
->>>
->>> Your suggestion simply didn't make much sense. There is nothing like
->>> first check is different from the rest.
->>>
->>
->> I don't think your patch is appropriate. It avoids hitting WARN(1) but does not avoid
->> unnecessary killing of OOM victims.
->>
->> If you look at https://syzkaller.appspot.com/text?tag=CrashLog&x=15a1c770400000 , you will
->> notice that both 23766 and 23767 are killed due to task_will_free_mem(current) == false.
->> This is "unnecessary killing of additional processes".
-> 
-> Have you noticed the mere detail that the memcg has to kill any task
-> attempting the charge because the hard limit is 0? There is simply no
-> other way around. You cannot charge. There is no unnecessary killing.
-> Full stop. We do allow temporary breach of the hard limit just to let
-> the task die and uncharge on the way out.
-> 
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--FiCqHZbcwJJYxsjUzWc98noVLcTMfClV5
+Content-Type: multipart/mixed; boundary="WEFXiDQc1LKZsxVhLvlXX6PnLABZ0nu7G";
+ protected-headers="v1"
+From: Paolo Bonzini <pbonzini@redhat.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?=
+ <rkrcmar@redhat.com>, KVM <kvm@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Message-ID: <0423431e-bc44-91a0-ce4c-d7fc430f66ab@redhat.com>
+Subject: Re: linux-next: Signed-off-by missing for commit in the kvm tree
+References: <20180807073922.665e1d63@canb.auug.org.au>
+In-Reply-To: <20180807073922.665e1d63@canb.auug.org.au>
 
-select_bad_process() is called just because
-task_will_free_mem("already killed current thread which has not completed __mmput()") == false
-is a bug. I'm saying that the OOM killer should not give up as soon as MMF_OOM_SKIP is set.
+--WEFXiDQc1LKZsxVhLvlXX6PnLABZ0nu7G
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
- static bool oom_has_pending_victims(struct oom_control *oc)
- {
- 	struct task_struct *p, *tmp;
- 	bool ret = false;
- 	bool gaveup = false;
- 
- 	if (is_sysrq_oom(oc))
- 		return false;
- 	/*
- 	 * Wait for pending victims until __mmput() completes or stalled
- 	 * too long.
- 	 */
- 	list_for_each_entry_safe(p, tmp, &oom_victim_list, oom_victim_list) {
- 		struct mm_struct *mm = p->signal->oom_mm;
- 
- 		if (oom_unkillable_task(p, oc->memcg, oc->nodemask))
- 			continue;
- 		ret = true;
-+		/*
-+		 * Since memcg OOM allows forced charge, we can safely wait
-+		 * until __mmput() completes.
-+		 */
-+		if (is_memcg_oom(oc))
-+			return true;
- #ifdef CONFIG_MMU
- 		/*
- 		 * Since the OOM reaper exists, we can safely wait until
- 		 * MMF_OOM_SKIP is set.
- 		 */
- 		if (!test_bit(MMF_OOM_SKIP, &mm->flags)) {
- 			if (!oom_reap_target) {
- 				get_task_struct(p);
- 				oom_reap_target = p;
- 				trace_wake_reaper(p->pid);
- 				wake_up(&oom_reaper_wait);
- 			}
- #endif
- 			continue;
- 		}
- #endif
- 		/* We can wait as long as OOM score is decreasing over time. */
- 		if (!victim_mm_stalling(p, mm))
- 			continue;
- 		gaveup = true;
- 		list_del(&p->oom_victim_list);
- 		/* Drop a reference taken by mark_oom_victim(). */
- 		put_task_struct(p);
- 	}
- 	if (gaveup)
- 		debug_show_all_locks();
- 
- 	return ret;
- }
+On 06/08/2018 23:39, Stephen Rothwell wrote:
+> Hi all,
+>=20
+> Commit
+>=20
+>   81781b6884bd ("KVM/x86: Use CC_SET()/CC_OUT in arch/x86/kvm/vmx.c")
+>=20
+> is missing a Signed-off-by from its committer.
+>=20
 
+Fixed at the same time as resolving the conflicts.
+
+Paolo
+
+
+--WEFXiDQc1LKZsxVhLvlXX6PnLABZ0nu7G--
+
+--FiCqHZbcwJJYxsjUzWc98noVLcTMfClV5
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEE8TM4V0tmI4mGbHaCv/vSX3jHroMFAltow9wACgkQv/vSX3jH
+roOhTQf/dHc75v5TGMbGiJ2HAdoZ9lwttf9sCknKzmMvzpAKkkr6jUXhuyG83cf+
+PSg4LKmxg6C/az295sTMOXh8CGXSGEHLQNzbO9MN3wVqoH9F34KxyNPY44WFMqvQ
+YF8C7TjIjCcAxcNI/Sk0t2C6s0ndDIJ7cqLRH9aedNv5jQxE64qtbCZ/NkknTtFv
+G6Ds3Kf1WNM0/cy/CEBOzOxrcdQi9eR58oDZotmKP/O0ORqeuODvcuRBWBe45JhZ
+uQqqWFGb3HzqqX0edrAJWxxaxlKWjAUUt11iD5FAMRpTe95JsyoF2B0WSPF4QtEi
+h44hSymRVWd74JvBPKJgftFF5UXi2w==
+=Ut1a
+-----END PGP SIGNATURE-----
+
+--FiCqHZbcwJJYxsjUzWc98noVLcTMfClV5--
