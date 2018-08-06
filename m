@@ -6,118 +6,123 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F8FFC4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 17:39:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7579EC46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 17:40:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E11921A03
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 17:39:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E11921A03
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 36DEA21A03
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 17:40:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36DEA21A03
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732869AbeHFTtl (ORCPT
+        id S1732902AbeHFTuI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 15:49:41 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:50422 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1732388AbeHFTtl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 15:49:41 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w76HYXeu067103
-        for <linux-kernel@vger.kernel.org>; Mon, 6 Aug 2018 13:39:32 -0400
-Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2kprpynsw3-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Aug 2018 13:39:32 -0400
-Received: from localhost
-        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Mon, 6 Aug 2018 13:39:31 -0400
-Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
-        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 6 Aug 2018 13:39:29 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w76HdS3g7143794
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 6 Aug 2018 17:39:28 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 758B8B2068;
-        Mon,  6 Aug 2018 13:38:54 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 621A6B2067;
-        Mon,  6 Aug 2018 13:38:54 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Mon,  6 Aug 2018 13:38:54 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 1470016CA7E9; Mon,  6 Aug 2018 10:39:30 -0700 (PDT)
-Date:   Mon, 6 Aug 2018 10:39:30 -0700
-From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To:     dwmw2@infradead.org
-Cc:     linux-kernel@vger.kernel.org
-Subject: FYI, critical bug in rcutorture
-Reply-To: paulmck@linux.vnet.ibm.com
+        Mon, 6 Aug 2018 15:50:08 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:49850 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732388AbeHFTuI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 15:50:08 -0400
+Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.phx2.redhat.com [10.5.11.24])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9322630E6864;
+        Mon,  6 Aug 2018 17:40:00 +0000 (UTC)
+Received: from sky.random (ovpn-120-41.rdu2.redhat.com [10.10.120.41])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5F442308BDA4;
+        Mon,  6 Aug 2018 17:40:00 +0000 (UTC)
+Date:   Mon, 6 Aug 2018 13:39:59 -0400
+From:   Andrea Arcangeli <aarcange@redhat.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Xiao Guangrong <guangrong.xiao@gmail.com>,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        rkrcmar@redhat.com, Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Junaid Shahid <junaids@google.com>,
+        Xiao Guangrong <xiaoguangrong@tencent.com>
+Subject: Re: [PATCH] KVM: try __get_user_pages_fast even if not in atomic
+ context
+Message-ID: <20180806173959.GF1967@redhat.com>
+References: <1532706407-11380-1-git-send-email-pbonzini@redhat.com>
+ <54a94492-bb0a-3d2c-6c34-64b6c4336b0a@gmail.com>
+ <6552edb5-f874-494a-08a4-381d0f438077@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18080617-0064-0000-0000-000003361FA0
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009496; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01070389; UDB=6.00550845; IPR=6.00849614;
- MB=3.00022541; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-06 17:39:30
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18080617-0065-0000-0000-00003A35802E
-Message-Id: <20180806173930.GA29642@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-06_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=772 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808060183
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <6552edb5-f874-494a-08a4-381d0f438077@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.24
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Mon, 06 Aug 2018 17:40:00 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello, David,
+Hello,
 
-So I have updated rcutorture to include need_resched()-protected calls to
-cond_resched() in a tight loop that includes an RCU read-side critical
-section on each pass.  This loop runs for five seconds by default and
-complains bitterly if grace periods did not complete during that time.
+On Mon, Aug 06, 2018 at 01:44:49PM +0200, Paolo Bonzini wrote:
+> On 06/08/2018 09:51, Xiao Guangrong wrote:
+> > 
+> > 
+> > On 07/27/2018 11:46 PM, Paolo Bonzini wrote:
+> >> We are currently cutting hva_to_pfn_fast short if we do not want an
+> >> immediate exit, which is represented by !async && !atomic.  However,
+> >> this is unnecessary, and __get_user_pages_fast is *much* faster
+> >> because the regular get_user_pages takes pmd_lock/pte_lock.
+> >> In fact, when many CPUs take a nested vmexit at the same time
+> >> the contention on those locks is visible, and this patch removes
+> >> about 25% (compared to 4.18) from vmexit.flat on a 16 vCPU
+> >> nested guest.
+> >>
+> > 
+> > Nice improvement.
+> > 
+> > Then after that, we will unconditionally try hva_to_pfn_fast(), does
+> > it hurt the case that the mappings in the host's page tables have not
+> > been present yet?
+> 
+> I don't think so, because that's quite slow anyway.
 
-But my over-the-weekend rcutorture run completed 30 hours on each of 16
-RCU scenario without any errors whatsoever, not even forward-progress
-failures (see below).  Since I know that there have to be bugs somewhere
-in RCU, this result represents a critical bug against rcutorture.
-Fortunately, I do have a list of things to improve rcutorture.  ;-)
+There will be a minimal impact, but it's worth it.
 
-							Thanx, Paul
+The reason it's worth is that we shouldn't be calling
+get_user_pages_unlocked in hva_to_pfn_slow if we could pass
+FOLL_HWPOISON to get_user_pages_fast.
 
-------------------------------------------------------------------------
+And get_user_pages_fast is really just __get_user_pages_fast +
+get_user_pages_unlocked with just a difference (see below).
 
- --- Fri Aug  3 15:53:08 PDT 2018 Test summary:
-Results directory: /home/paulmck/public_git/linux-rcu/tools/testing/selftests/rcutorture/res/2018.08.03-15:53:08
-tools/testing/selftests/rcutorture/bin/kvm.sh --cpus 43 --duration 1800
-SRCU-N ------- 15203951 GPs (140.777/s) [srcu: g195826884 f0x0 ]
-SRCU-P ------- 7528468 GPs (69.708/s) [srcud: g87633528 f0x0 ]
-SRCU-t ------- 21870375 GPs (202.503/s) [srcu: g1 f0x0 ]
-SRCU-u ------- 21374470 GPs (197.912/s) [srcud: g1 f0x0 ]
-TASKS01 ------- 395438 GPs (3.66146/s) [tasks: g0 f0x0 ]
-TASKS02 ------- 412989 GPs (3.82397/s) [tasks: g0 f0x0 ]
-TASKS03 ------- 421585 GPs (3.90356/s) [tasks: g0 f0x0 ]
-TINY01 ------- 12811682 GPs (118.627/s) [rcu: g0 f0x0 ]
-TINY02 ------- 11254299 GPs (104.206/s) [rcu: g0 f0x0 ]
-TREE01 ------- 2090954 GPs (19.3607/s) [rcu: g38972161 f0x0 ]
-TREE02 ------- 3073826 GPs (28.4614/s) [rcu: g64778613 f0x0 ]
-TREE03 ------- 3511639 GPs (32.5152/s) [rcu: g64357389 f0x2 ]
-TREE04 ------- 1106148 GPs (10.2421/s) [rcu: g44600225 f0x0 ]
-TREE05 ------- 3999197 GPs (37.0296/s) [rcu: g65814873 f0x0 ]
-TREE07 ------- 624753 GPs (5.78475/s) [rcu: g44894817 f0x0 ]
-TREE09 ------- 9566891 GPs (88.5823/s) [rcu: g420697921 f0x0 ]
+Reviewed-by: Andrea Arcangeli <aarcange@redhat.com>
 
+> 
+> > Can we apply this tech to other places using gup or even squash it
+> > into  get_user_pages()?
+> 
+> That may make sense.  Andrea, do you have an idea?
+
+About further improvements looking at commit
+5b65c4677a57a1d4414212f9995aa0e46a21ff80 it looks like it may be worth
+adding a new gup variant __get_user_pages_fast_irq_enabled to make our
+slow path "__get_user_pages_fast_irq_enabled +
+get_user_pages_unlocked" really as fast as get_user_pages_fast (which
+we can't call in the atomic case and can't take the foll flags, making
+it take the foll flags would also make it somewhat slower by adding
+branches).
+
+If I understand correctly the commit header Before refers to when
+get_user_pages_fast was calling __get_user_pages_fast, and After is
+the optimized version without local_irq_save/restore but instead using
+local_irq_disable/enable.
+
+So we'd need to call a new __get_user_pages_fast_irq_enabled instead
+of __get_user_pages_fast that would only safe to call when irq are
+enabled and that's always the case for KVM also for the atomic case
+(KVM's atomic case is atomic only because of the spinlock, not because
+irqs are disabled). Such new method would then also be ok to be called
+from interrupts as long as irq are enabled when it is being called.
+
+Such change would also contribute to reduce the minimal impact to the
+_slow case. x86 would be sure fine with the generic version and it's
+trivial to implement, I haven't checked other arch details.
+
+Thanks,
+Andrea
