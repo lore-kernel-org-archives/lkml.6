@@ -2,165 +2,330 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 723B0C46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 17:24:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B084EC46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 17:25:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2EC7B21A5E
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 17:24:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EC7B21A5E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id 6C49821A53
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 17:25:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C49821A53
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732742AbeHFTef (ORCPT
+        id S1732781AbeHFTfR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 15:34:35 -0400
-Received: from gateway21.websitewelcome.com ([192.185.45.159]:11304 "EHLO
-        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730888AbeHFTed (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 15:34:33 -0400
-Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
-        by gateway21.websitewelcome.com (Postfix) with ESMTP id 2C19C400D1C47
-        for <linux-kernel@vger.kernel.org>; Mon,  6 Aug 2018 12:24:28 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id mjF6fEP2caSeymjF6fmi12; Mon, 06 Aug 2018 12:24:28 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.50.82] (port=42914 helo=[192.168.1.71])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1fmjF5-003wFS-KC; Mon, 06 Aug 2018 12:24:27 -0500
-Subject: Re: [PATCH] platform/x86: acer-wmi: use true and false for boolean
- values
-To:     Joe Perches <joe@perches.com>,
-        David Laight <David.Laight@ACULAB.COM>,
-        'Andy Shevchenko' <andy.shevchenko@gmail.com>
-Cc:     "Lee, Chun-Yi" <jlee@suse.com>, Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20180805001839.GA22975@embeddedor.com>
- <CAHp75Vc=HLMVhQ30z9LTM7z+nmYgYPSRJib0PVTVW8H25eYg5g@mail.gmail.com>
- <e92131c3b6e04a848f2a7922719f4747@AcuMS.aculab.com>
- <fa7980ee38e6cbb31883e1b942fa1e1d6f0e72b0.camel@perches.com>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <bae13020-ca76-ca57-c14c-93e5f64c295d@embeddedor.com>
-Date:   Mon, 6 Aug 2018 12:24:26 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <fa7980ee38e6cbb31883e1b942fa1e1d6f0e72b0.camel@perches.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.50.82
-X-Source-L: No
-X-Exim-ID: 1fmjF5-003wFS-KC
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.71]) [189.250.50.82]:42914
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 8
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+        Mon, 6 Aug 2018 15:35:17 -0400
+Received: from mga04.intel.com ([192.55.52.120]:31359 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729861AbeHFTfR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 15:35:17 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Aug 2018 10:25:12 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,452,1526367600"; 
+   d="scan'208";a="62707853"
+Received: from otc-kbl-h-01.jf.intel.com ([10.54.55.131])
+  by orsmga007.jf.intel.com with ESMTP; 06 Aug 2018 10:25:00 -0700
+From:   kan.liang@linux.intel.com
+To:     peterz@infradead.org, tglx@linutronix.de, mingo@redhat.com,
+        acme@kernel.org, linux-kernel@vger.kernel.org
+Cc:     eranian@google.com, ak@linux.intel.com,
+        alexander.shishkin@linux.intel.com,
+        Kan Liang <kan.liang@linux.intel.com>
+Subject: [PATCH 2/3] x86, perf: Add a separate Arch Perfmon v4 PMI handler
+Date:   Mon,  6 Aug 2018 10:23:42 -0700
+Message-Id: <1533576223-11588-2-git-send-email-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1533576223-11588-1-git-send-email-kan.liang@linux.intel.com>
+References: <1533576223-11588-1-git-send-email-kan.liang@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Andi Kleen <ak@linux.intel.com>
 
+Implements counter freezing for Arch Perfmon v4 (Skylake and
+newer). This allows to speed up the PMI handler by avoiding
+unnecessary MSR writes and make it more accurate.
 
-On 08/06/2018 11:42 AM, Joe Perches wrote:
-> On Mon, 2018-08-06 at 16:41 +0000, David Laight wrote:
->> From: Andy Shevchenko
->>> Sent: 05 August 2018 11:26
->>>
->>> On Sun, Aug 5, 2018 at 3:18 AM, Gustavo A. R. Silva
->>> <gustavo@embeddedor.com> wrote:
->>>> Return statements in functions returning bool should use true or false
->>>> instead of an integer value.
->>>>
->>>> This code was detected with the help of Coccinelle.
->>>>  static bool has_cap(u32 cap)
->>>>  {
->>>>         if ((interface->capability & cap) != 0)
->>>> -               return 1;
->>>> +               return true;
->>>>
->>>> -       return 0;
->>>> +       return false;
->>>>  }
->>>
->>> this entire function can be oneliner:
->>>
->>> return !!(...);
->>
->> Why the !! ?? Just:
->> 	return (interface->capability & cap) != 0;
-> 
-> Because the return is bool you don't need the !! either.
-> The compiler does that.
-> 
+The Arch Perfmon v4 PMI handler is substantially different than
+the older PMI handler.
 
-Hi all,
+Differences to the old handler:
+- It relies on counter freezing, which eliminates several MSR
+writes from the PMI handler and lowers the overhead significantly.
 
-I'll send v2 with the suggested improvements.
+It makes the PMI handler more accurate, as all counters get
+frozen atomically as soon as any counter overflows. So there is
+much less counting of the PMI handler itself.
 
-Thanks for your feedback.
---
-Gustavo
+With the freezing we don't need to disable or enable counters or
+PEBS. Only BTS which does not support auto-freezing still needs to
+be explicitly managed.
+
+- The PMU acking is done at the end, not the beginning.
+This makes it possible to avoid manual enabling/disabling
+of the PMU, instead we just rely on the freezing/acking.
+
+- The APIC is acked before reenabling the PMU, which avoids
+problems with LBRs occasionally not getting unfreezed on Skylake.
+
+- Looping is only needed to workaround a corner case which several PMIs
+are very close to each other. For common cases, the counters are freezed
+during PMI handler. It doesn't need to do re-check.
+
+This patch
+- Adds code to enable v4 counter freezing
+- Fork <=v3 and >=v4 PMI handlers into separate functions.
+- Add kernel parameter to disable counter freezing. It took some time to
+  debug counter freezing, so in case there are new problems we added an
+  option to turn it off. Would not expect this to be used until there
+  are new bugs.
+- Only for big core. The patch for small core will be posted later
+  separately.
+
+Performance:
+
+When profiling a kernel build on Kabylake with different perf options,
+measuring the length of all NMI handlers using the nmi handler
+trace point:
+
+V3 is without counter freezing.
+V4 is with counter freezing.
+The value is the average cost of the PMI handler.
+(lower is better)
+
+perf options    `           V3(ns) V4(ns)  delta
+-c 100000                   1088   894     -18%
+-g -c 100000                1862   1646    -12%
+--call-graph lbr -c 100000  3649   3367    -8%
+--c.g. dwarf -c 100000      2248   1982    -12%
+
+Signed-off-by: Andi Kleen <ak@linux.intel.com>
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+---
+ arch/x86/events/intel/core.c     | 122 +++++++++++++++++++++++++++++++++++++++
+ arch/x86/events/perf_event.h     |   6 ++
+ arch/x86/include/asm/msr-index.h |   1 +
+ 3 files changed, 129 insertions(+)
+
+diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+index 9b320a5..03778ce 100644
+--- a/arch/x86/events/intel/core.c
++++ b/arch/x86/events/intel/core.c
+@@ -1995,6 +1995,18 @@ static void intel_pmu_nhm_enable_all(int added)
+ 	intel_pmu_enable_all(added);
+ }
+ 
++static void enable_counter_freeze(void)
++{
++	update_debugctlmsr(get_debugctlmsr() |
++			DEBUGCTLMSR_FREEZE_PERFMON_ON_PMI);
++}
++
++static void disable_counter_freeze(void)
++{
++	update_debugctlmsr(get_debugctlmsr() &
++			~DEBUGCTLMSR_FREEZE_PERFMON_ON_PMI);
++}
++
+ static inline u64 intel_pmu_get_status(void)
+ {
+ 	u64 status;
+@@ -2044,6 +2056,14 @@ static void intel_pmu_disable_event(struct perf_event *event)
+ 	if (unlikely(event->attr.precise_ip))
+ 		intel_pmu_pebs_disable(event);
+ 
++	/*
++	 * We could disable freezing here, but doesn't hurt if it's on.
++	 * perf remembers the state, and someone else will likely
++	 * reinitialize.
++	 *
++	 * This avoids an extra MSR write in many situations.
++	 */
++
+ 	if (unlikely(hwc->config_base == MSR_ARCH_PERFMON_FIXED_CTR_CTRL)) {
+ 		intel_pmu_disable_fixed(hwc);
+ 		return;
+@@ -2119,6 +2139,11 @@ static void intel_pmu_enable_event(struct perf_event *event)
+ 	if (event->attr.exclude_guest)
+ 		cpuc->intel_ctrl_host_mask |= (1ull << hwc->idx);
+ 
++	if (x86_pmu.counter_freezing && !cpuc->frozen_enabled) {
++		enable_counter_freeze();
++		cpuc->frozen_enabled = 1;
++	}
++
+ 	if (unlikely(event_is_checkpointed(event)))
+ 		cpuc->intel_cp_status |= (1ull << hwc->idx);
+ 
+@@ -2290,6 +2315,87 @@ static int handle_pmi_common(struct pt_regs *regs, u64 status)
+ 	return handled;
+ }
+ 
++static bool disable_counter_freezing;
++module_param(disable_counter_freezing, bool, 0444);
++MODULE_PARM_DESC(disable_counter_freezing, "Disable counter freezing feature."
++		"The PMI handler will fall back to generic handler."
++		"Default is false (enable counter freezing feature).");
++
++/*
++ * Simplified handler for Arch Perfmon v4:
++ * - We rely on counter freezing/unfreezing to enable/disable the PMU.
++ * This is done automatically on PMU ack.
++ * - Ack the PMU only after the APIC.
++ */
++
++static int intel_pmu_handle_irq_v4(struct pt_regs *regs)
++{
++	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
++	int handled = 0;
++	bool bts = false;
++	u64 status;
++	int pmu_enabled = cpuc->enabled;
++	int loops = 0;
++
++	/* PMU has been disabled because of counter freezing */
++	cpuc->enabled = 0;
++	if (test_bit(INTEL_PMC_IDX_FIXED_BTS, cpuc->active_mask)) {
++		bts = true;
++		intel_bts_disable_local();
++		handled = intel_pmu_drain_bts_buffer();
++		handled += intel_bts_interrupt();
++	}
++	status = intel_pmu_get_status();
++	if (!status)
++		goto done;
++again:
++	intel_pmu_lbr_read();
++	if (++loops > 100) {
++		static bool warned;
++
++		if (!warned) {
++			WARN(1, "perfevents: irq loop stuck!\n");
++			perf_event_print_debug();
++			warned = true;
++		}
++		intel_pmu_reset();
++		goto done;
++	}
++
++
++	handled += handle_pmi_common(regs, status);
++done:
++	/* Ack the PMI in the APIC */
++	apic_write(APIC_LVTPC, APIC_DM_NMI);
++
++	/*
++	 * Ack the PMU late after the APIC.  This avoids bogus
++	 * freezing on Skylake CPUs.  The acking unfreezes the PMU
++	 */
++	if (status) {
++		intel_pmu_ack_status(status);
++	} else {
++		/*
++		 * CPU may issues two PMIs very close to each other.
++		 * When the PMI handler services the first one, the
++		 * GLOBAL_STATUS is already updated to reflect both.
++		 * When it IRETs, the second PMI is immediately
++		 * handled and it sees clear status. At the meantime,
++		 * there may be a third PMI, because the freezing bit
++		 * isn't set since the ack in first PMI handlers.
++		 * Double check if there is more work to be done.
++		 */
++		status = intel_pmu_get_status();
++		if (status)
++			goto again;
++	}
++
++	if (bts)
++		intel_bts_enable_local();
++	cpuc->enabled = pmu_enabled;
++	return handled;
++}
++
+ /*
+  * This handler is triggered by the local APIC, so the APIC IRQ handling
+  * rules apply:
+@@ -3432,6 +3538,11 @@ static void intel_pmu_cpu_dying(int cpu)
+ 	free_excl_cntrs(cpu);
+ 
+ 	fini_debug_store_on_cpu(cpu);
++
++	if (cpuc->frozen_enabled) {
++		cpuc->frozen_enabled = 0;
++		disable_counter_freeze();
++	}
+ }
+ 
+ static void intel_pmu_sched_task(struct perf_event_context *ctx,
+@@ -4325,6 +4436,8 @@ __init int intel_pmu_init(void)
+ 		x86_pmu.extra_regs = intel_skl_extra_regs;
+ 		x86_pmu.pebs_aliases = intel_pebs_aliases_skl;
+ 		x86_pmu.pebs_prec_dist = true;
++		x86_pmu.counter_freezing = disable_counter_freezing ?
++					   false : true;
+ 		/* all extra regs are per-cpu when HT is on */
+ 		x86_pmu.flags |= PMU_FL_HAS_RSP_1;
+ 		x86_pmu.flags |= PMU_FL_NO_HT_SHARING;
+@@ -4442,6 +4555,15 @@ __init int intel_pmu_init(void)
+ 		pr_cont("full-width counters, ");
+ 	}
+ 
++	/*
++	 * For arch perfmon 4 use counter freezing to avoid
++	 * several MSR accesses in the PMI.
++	 */
++	if (x86_pmu.counter_freezing) {
++		x86_pmu.handle_irq = intel_pmu_handle_irq_v4;
++		pr_cont("counter freezing, ");
++	}
++
+ 	kfree(to_free);
+ 	return 0;
+ }
+diff --git a/arch/x86/events/perf_event.h b/arch/x86/events/perf_event.h
+index 1562863..f9d153e 100644
+--- a/arch/x86/events/perf_event.h
++++ b/arch/x86/events/perf_event.h
+@@ -243,6 +243,11 @@ struct cpu_hw_events {
+ 	int excl_thread_id; /* 0 or 1 */
+ 
+ 	/*
++	 * Counter freezing state.
++	 */
++	int				frozen_enabled;
++
++	/*
+ 	 * AMD specific bits
+ 	 */
+ 	struct amd_nb			*amd_nb;
+@@ -561,6 +566,7 @@ struct x86_pmu {
+ 	struct x86_pmu_quirk *quirks;
+ 	int		perfctr_second_write;
+ 	bool		late_ack;
++	bool		counter_freezing;
+ 	u64		(*limit_period)(struct perf_event *event, u64 l);
+ 
+ 	/*
+diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
+index 68b2c31..4ae4a59 100644
+--- a/arch/x86/include/asm/msr-index.h
++++ b/arch/x86/include/asm/msr-index.h
+@@ -157,6 +157,7 @@
+ #define DEBUGCTLMSR_BTS_OFF_OS		(1UL <<  9)
+ #define DEBUGCTLMSR_BTS_OFF_USR		(1UL << 10)
+ #define DEBUGCTLMSR_FREEZE_LBRS_ON_PMI	(1UL << 11)
++#define DEBUGCTLMSR_FREEZE_PERFMON_ON_PMI	(1UL << 12)
+ #define DEBUGCTLMSR_FREEZE_IN_SMM_BIT	14
+ #define DEBUGCTLMSR_FREEZE_IN_SMM	(1UL << DEBUGCTLMSR_FREEZE_IN_SMM_BIT)
+ 
+-- 
+2.7.4
+
