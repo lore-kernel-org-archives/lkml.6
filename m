@@ -2,127 +2,122 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C730C46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:41:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45D5CC4646D
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:42:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E80FE21A67
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:41:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EFAD521A67
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:42:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TdFiCJWQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E80FE21A67
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FlAaJ/7E"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFAD521A67
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387694AbeHFSvn (ORCPT
+        id S2387656AbeHFSuz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 14:51:43 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:37009 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387695AbeHFSu7 (ORCPT
+        Mon, 6 Aug 2018 14:50:55 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:42797 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387602AbeHFSuy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 14:50:59 -0400
-Received: by mail-wm0-f65.google.com with SMTP id n11-v6so14971519wmc.2
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Aug 2018 09:41:04 -0700 (PDT)
+        Mon, 6 Aug 2018 14:50:54 -0400
+Received: by mail-lf1-f66.google.com with SMTP id u202-v6so9527023lff.9
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Aug 2018 09:40:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=YhiwXQETzFyRuKUoiUientUUS69FHU4d1USosDKGiBg=;
-        b=TdFiCJWQV1yY7auvDE3OMD8elRn00ZYfTJx5VBDb0vmH70JjcnkbCr00a2DIqbTxkS
-         u7P78OkVA7gQ2mUn3ucxrt0JtyrX1cqTglzaw1x/dguRXxGb50g/t8CD+nUQK1HGE0Zp
-         glmM2eLYnNtONsT7coR0+ZV/xEq9YDzXdaTDB163co13OWzCFpLqTdc6t/n/9mu5/ri7
-         jX1FY0jxM1iC2UpEDrLPzuZMntSNz0ZVEPRb3jD0WGCqCJ9fJXFePlZnlDJrBFnRiOvN
-         tvYvAMZWoxtpd7wNSEtF6rRizE0sA+pJRhf7h3xozmr3qrKnhPbxGuFUAgAjiDuMzDpo
-         Jisg==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Do+8CoceSHk1pQOfSqGWPIYMp+v3IIe+xvtyrDdHmWg=;
+        b=FlAaJ/7ELcwajCc/VX6I3t97UmWA21XUTNXVAsCWRBqjKmDgTMYRW2mQpeqgyuCQiM
+         mRUuoaM2jVoOGCUA+65dQ+WC7w87gPoxAAKC12C/ViEXGDeXcPz7bIWraxu4BgWArmUp
+         nedH9UQOeWSN0jPB0xbmJQA83ZPHHFVLID2VY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=YhiwXQETzFyRuKUoiUientUUS69FHU4d1USosDKGiBg=;
-        b=YmmA10vnwsrBqcp+G5pHckN9uQAkjX4Q9NmYtRc31Q8O7ddK8Dh251vbtOM4r7RWY7
-         w0B0BbiEa0Hj3m2dI0Zp9RtN7hT4H8I9v1tal/tbMbw4BZznFJ3AlCmtQANdwY72GD8d
-         lon8Dcu89R4ajIp1Fb8ZQ6+WKlsVJzL4zaSWZzGkKsXl6XLE309zPc/JEuYxY4hGNGvb
-         JXvPYzo0ukOBnuzG6kUZWH5XzEEz0DVXHJ9x4JRNB+8FO5gl2Ufo3mJ2XHJ0JNTSS4sA
-         zihwFgf7i7koOjO4QAP9iCHXyRWMPr/oeJz2LyhzDhNcN9vyCrdtbQCs8XDaK5KRlBmA
-         tNPw==
-X-Gm-Message-State: AOUpUlFUSZswk7KfqJj+IK2y/DcHw/zloYGYfTEh09Mxad36HL8L0Rrz
-        BH6NclrAaIWFQrLwhQheHKLUgQ==
-X-Google-Smtp-Source: AAOMgpfgr6iQdZfaudH/1Dxp198cQUe5jRBwkr+pUFpoQTY/gYwoncrlREotSNcycesndSR3fYlmIw==
-X-Received: by 2002:a1c:6d9a:: with SMTP id b26-v6mr11379886wmi.74.1533573663633;
-        Mon, 06 Aug 2018 09:41:03 -0700 (PDT)
-Received: from andreyknvl0.muc.corp.google.com ([2a00:79e0:15:10:84be:a42a:826d:c530])
-        by smtp.gmail.com with ESMTPSA id 66-v6sm16385790wmw.34.2018.08.06.09.41.02
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Do+8CoceSHk1pQOfSqGWPIYMp+v3IIe+xvtyrDdHmWg=;
+        b=peZs4FnllgRp9DhRIo97uB2FuZEVntwwPdoTkFQ0Vnq4QCPsnbKfiUpRBnyS6ty6rJ
+         DR9l6aSPMJ0Mg3qaiFDuAqbZIwbYJocp/NUrQa4gn7wvm++y3IZBC1YxpCAyihi50j2v
+         Ab9e8Vc9EMTfMRvQ0eSA+8u0lWLsM8TYPoIfZ2NiqnWfhbNS4MU/4G3zJBlE7ty4rMEI
+         Ggk8xdcmMRu70P0XnF7U8Yq9nevFxeCkuYoYBZuKSsLm/ZuoVNGyAACZLwd+9oPzDDdO
+         KsEHDkrDxYhqNuudnCSETvIlCckxjiwNrRI4f2moTmYD3NX+DsX+7Io3ylCV0aasFNlg
+         eDdA==
+X-Gm-Message-State: AOUpUlFpsZ8gRz56cTXSNZW1qIzyAY7dOoEd8la3jJqYmih6YCjXrOeE
+        S2f2phiAD7PbOXdG7Jq7IRfvlLyqCRw=
+X-Google-Smtp-Source: AAOMgpd9tiBh8BDq/ZIDutgZ7lNgnxHKYfNmLi+U4WfPwq2vu9rKgcJ4GtaSyO24tsTEyxrqnBEPVw==
+X-Received: by 2002:a19:14dc:: with SMTP id 89-v6mr11365000lfu.45.1533573658255;
+        Mon, 06 Aug 2018 09:40:58 -0700 (PDT)
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com. [209.85.167.46])
+        by smtp.gmail.com with ESMTPSA id p65-v6sm2366321lja.44.2018.08.06.09.40.55
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 06 Aug 2018 09:41:02 -0700 (PDT)
-From:   Andrey Konovalov <andreyknvl@google.com>
-To:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-        linux-mm@kvack.org, linux-arch@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Dmitry Vyukov <dvyukov@google.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Evgeniy Stepanov <eugenis@google.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Chintan Pandya <cpandya@codeaurora.org>
-Subject: [PATCH v5 07/10] fs, arm64: untag user address in copy_mount_options
-Date:   Mon,  6 Aug 2018 18:40:42 +0200
-Message-Id: <dbacdbf3f3d66c853fafcbfdbf5c1f0afb464981.1533573460.git.andreyknvl@google.com>
-X-Mailer: git-send-email 2.18.0.597.ga71716f1ad-goog
-In-Reply-To: <cover.1533573460.git.andreyknvl@google.com>
-References: <cover.1533573460.git.andreyknvl@google.com>
+        Mon, 06 Aug 2018 09:40:57 -0700 (PDT)
+Received: by mail-lf1-f46.google.com with SMTP id l16-v6so9511753lfc.13
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Aug 2018 09:40:55 -0700 (PDT)
+X-Received: by 2002:a19:c742:: with SMTP id x63-v6mr331802lff.9.1533573655344;
+ Mon, 06 Aug 2018 09:40:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <1533113338-31750-1-git-send-email-sayalil@codeaurora.org> <1533113338-31750-3-git-send-email-sayalil@codeaurora.org>
+In-Reply-To: <1533113338-31750-3-git-send-email-sayalil@codeaurora.org>
+From:   Evan Green <evgreen@chromium.org>
+Date:   Mon, 6 Aug 2018 09:40:18 -0700
+X-Gmail-Original-Message-ID: <CAE=gft46yHTxG5rpBLJ-x5AiETaGGdnsnEHjzSx2BsG4=sUKHA@mail.gmail.com>
+Message-ID: <CAE=gft46yHTxG5rpBLJ-x5AiETaGGdnsnEHjzSx2BsG4=sUKHA@mail.gmail.com>
+Subject: Re: [PATCH V7 2/2] scsi: ufs: Add configfs support for UFS provisioning
+To:     sayalil@codeaurora.org
+Cc:     subhashj@codeaurora.org, cang@codeaurora.org,
+        vivek.gautam@codeaurora.org,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Vinayak Holikatti <vinholikatti@gmail.com>,
+        jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
+        asutoshd@codeaurora.org, riteshh@codeaurora.org,
+        adrian.hunter@intel.com, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In copy_mount_options a user address is being subtracted from TASK_SIZE.
-If the address is lower than TASK_SIZE, the size is calculated to not
-allow the exact_copy_from_user() call to cross TASK_SIZE boundary.
-However if the address is tagged, then the size will be calculated
-incorrectly.
+Hi Sayali,
 
-Untag the address before subtracting.
+On Wed, Aug 1, 2018 at 1:49 AM Sayali Lokhande <sayalil@codeaurora.org> wrote:
+>
+> This patch adds configfs support to provision UFS device at
+> runtime. This feature can be primarily useful in factory or
+> assembly line as some devices may be required to be configured
+> multiple times during initial system development phase.
+> Configuration Descriptors can be written multiple times until
+> bConfigDescrLock attribute is zero.
+>
+> Configuration descriptor buffer consists of Device and Unit
+> descriptor configurable parameters which are parsed from vendor
+> specific provisioning file and then passed via configfs node at
+> runtime to provision ufs device.
+> CONFIG_CONFIGFS_FS needs to be enabled for using this feature.
+>
+> Usage:
+> 1) To read current configuration descriptor :
+>    cat /config/XXXX.ufshc/ufs_provision
+> 2) To provision ufs device:
+>    echo <config_desc_buf> > /config/XXXX.ufshc/ufs_provision
+>
+> Signed-off-by: Sayali Lokhande <sayalil@codeaurora.org>
+> ---
+>  Documentation/ABI/testing/configfs-driver-ufs |  18 +++
+>  drivers/scsi/ufs/Kconfig                      |  10 ++
+>  drivers/scsi/ufs/Makefile                     |   1 +
+>  drivers/scsi/ufs/ufs-configfs.c               | 162 ++++++++++++++++++++++++++
+>  drivers/scsi/ufs/ufshcd.c                     |   7 +-
+>  drivers/scsi/ufs/ufshcd.h                     |  10 ++
+>  6 files changed, 207 insertions(+), 1 deletion(-)
+>  create mode 100644 Documentation/ABI/testing/configfs-driver-ufs
+>  create mode 100644 drivers/scsi/ufs/ufs-configfs.c
+>
 
-Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
----
- fs/namespace.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 8ddd14806799..fd070e65e529 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -2733,7 +2733,7 @@ void *copy_mount_options(const void __user * data)
- 	 * the remainder of the page.
- 	 */
- 	/* copy_from_user cannot cross TASK_SIZE ! */
--	size = TASK_SIZE - (unsigned long)data;
-+	size = TASK_SIZE - (unsigned long)untagged_addr(data);
- 	if (size > PAGE_SIZE)
- 		size = PAGE_SIZE;
- 
--- 
-2.18.0.597.ga71716f1ad-goog
-
+You didn't address any of my feedback from V6. All of that still applies.
+-Evan
