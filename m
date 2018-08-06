@@ -2,96 +2,161 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7178C46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 11:02:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98499C46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 11:02:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9961B21A0E
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 11:02:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9961B21A0E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 5577C21A01
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 11:02:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5577C21A01
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729644AbeHFNKu (ORCPT
+        id S1729938AbeHFNLA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 09:10:50 -0400
-Received: from foss.arm.com ([217.140.101.70]:36332 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727004AbeHFNKu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 09:10:50 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DBBAF18A;
-        Mon,  6 Aug 2018 04:02:18 -0700 (PDT)
-Received: from queper01-lin (queper01-lin.Emea.Arm.com [10.4.13.27])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E6A163F5D4;
-        Mon,  6 Aug 2018 04:02:14 -0700 (PDT)
-Date:   Mon, 6 Aug 2018 12:02:13 +0100
-From:   Quentin Perret <quentin.perret@arm.com>
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Chris Redpath <chris.redpath@arm.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Thara Gopinath <thara.gopinath@linaro.org>,
-        viresh kumar <viresh.kumar@linaro.org>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        "Cc: Steve Muckle" <smuckle@google.com>, adharmap@quicinc.com,
-        "Kannan, Saravana" <skannan@quicinc.com>, pkondeti@codeaurora.org,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        currojerez@riseup.net, Javi Merino <javi.merino@kernel.org>
-Subject: Re: [PATCH v5 09/14] sched: Add over-utilization/tipping point
- indicator
-Message-ID: <20180806110211.kvibet576unwaowl@queper01-lin>
-References: <20180802161027.v2ctgscuc4uxbb7u@queper01-lin>
- <CAKfTPtDtaF9Qs4NWkKWUSr8Ryi-ScYNmPyacocPQUPxT00XAYg@mail.gmail.com>
- <20180802165924.7ywgoxj2jwftxycz@queper01-lin>
- <CAKfTPtDsG4FJy5xBO8+6pJzehEM668=SZ4yQ-szVTduofN3QZg@mail.gmail.com>
- <20180803081850.hj7bp5ognuywapmd@queper01-lin>
- <CAKfTPtDkJY=JYicZk8sM9_mJ-iq+Jwse0oVRbW=wpxXKKnEoeQ@mail.gmail.com>
- <20180803155547.sxlhxpmhwcoappit@queper01-lin>
- <CAKfTPtBT-p-Z0EneirfOTwUw=5jEeDGa+4_EE4ogi2Ht7GU9Bg@mail.gmail.com>
- <20180806094342.lonjz4g3lspcatcy@queper01-lin>
- <CAKfTPtBh2Z8Lc28avBOzOtz72eN-6vyuQZ1=5Wgbj4kJ=yn8FA@mail.gmail.com>
+        Mon, 6 Aug 2018 09:11:00 -0400
+Received: from mx2.suse.de ([195.135.220.15]:48502 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727004AbeHFNLA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 09:11:00 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 82AA8AE5D;
+        Mon,  6 Aug 2018 11:02:26 +0000 (UTC)
+Date:   Mon, 6 Aug 2018 13:02:24 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     syzbot <syzbot+bab151e82a4e973fa325@syzkaller.appspotmail.com>,
+        cgroups@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Dmitry Torokhov <dtor@google.com>
+Subject: Re: WARNING in try_charge
+Message-ID: <20180806110224.GI19540@dhcp22.suse.cz>
+References: <0000000000005e979605729c1564@google.com>
+ <20180806091552.GE19540@dhcp22.suse.cz>
+ <CACT4Y+Ystnwv4M6Uh+HBKbdADAnJ6otfR0GoA20crzqV+b2onQ@mail.gmail.com>
+ <20180806094827.GH19540@dhcp22.suse.cz>
+ <CACT4Y+ZJsDo1gjzHvbFVqHcrL=tFJXTAAWLs9mAJSv3+LiCdmA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAKfTPtBh2Z8Lc28avBOzOtz72eN-6vyuQZ1=5Wgbj4kJ=yn8FA@mail.gmail.com>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <CACT4Y+ZJsDo1gjzHvbFVqHcrL=tFJXTAAWLs9mAJSv3+LiCdmA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Monday 06 Aug 2018 at 12:45:44 (+0200), Vincent Guittot wrote:
-> On Mon, 6 Aug 2018 at 11:43, Quentin Perret <quentin.perret@arm.com> wrote:
-> I would have preferred to have a full power policy for all task when
-> EAS is in used by default and then see if there is any performance
-> problem instead of letting some UC unclear but that's a personal
-> opinion.
+On Mon 06-08-18 12:34:30, Dmitry Vyukov wrote:
+> On Mon, Aug 6, 2018 at 11:48 AM, Michal Hocko <mhocko@kernel.org> wrote:
+> > On Mon 06-08-18 11:30:37, Dmitry Vyukov wrote:
+> >> On Mon, Aug 6, 2018 at 11:15 AM, Michal Hocko <mhocko@kernel.org> wrote:
+> > [...]
+> >> > More interesting stuff is higher in the kernel log
+> >> > : [  366.435015] oom-kill:constraint=CONSTRAINT_MEMCG,nodemask=(null),cpuset=/,mems_allowed=0,oom_memcg=/ile0,task_memcg=/ile0,task=syz-executor3,pid=23766,uid=0
+> >> > : [  366.449416] memory: usage 112kB, limit 0kB, failcnt 1605
+> >> >
+> >> > Are you sure you want to have hard limit set to 0?
+> >>
+> >> syzkaller really does not mind to have it.
+> >
+> > So what do you use it for? What do you actually test by this setting?
+> 
+> syzkaller is kernel fuzzer, it finds kernel bugs by doing whatever is
+> doable from user-space. Some of that may not make sense, but it does
+> not matter because kernel should still stand still.
 
-Understood. I'd say let's keep things simple for now unless there is a
-consensus that this is must-have form the start.
+I am not questioning that. What I am saying is that the configuration
+doesn't make much sense and the kernel warns about it.
 
-> so IMO, the minimum is to add a comment in the code that describes
-> this behavior for fork tasks so people will understand why EAS puts
-> newly created task on not "EAS friendly" cpus when they will look at
-> the code trying to understand the behavior
+> > [...]
+> >> > diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> >> > index 4603ad75c9a9..852cd3dbdcd9 100644
+> >> > --- a/mm/memcontrol.c
+> >> > +++ b/mm/memcontrol.c
+> >> > @@ -1388,6 +1388,8 @@ static bool mem_cgroup_out_of_memory(struct mem_cgroup *memcg, gfp_t gfp_mask,
+> >> >         bool ret;
+> >> >
+> >> >         mutex_lock(&oom_lock);
+> >> > +       pr_info("task=%s pid=%d invoked memcg oom killer. oom_victim=%d\n",
+> >> > +                       current->comm, current->pid, tsk_is_oom_victim(current));
+> >> >         ret = out_of_memory(&oc);
+> >> >         mutex_unlock(&oom_lock);
+> >> >         return ret;
+> >> >
+> >> > Anyway your memcg setup is indeed misconfigured. Memcg with 0 hard limit
+> >> > and basically no memory charged by existing tasks is not going to fly
+> >> > and the warning is exactly to call that out.
+> >>
+> >>
+> >> Please-please-please do not mix kernel bugs and notices to user into
+> >> the same bucket:
+> >
+> > Well, WARN_ON used to be a standard way to make user aware of a
+> > misbehavior. In this case it warns about a pottential runaway when memcg
+> > is misconfigured. I do not insist on using WARN_ON here of course. If
+> > there is a general agreement that such a condition is better handled by
+> > pr_err then I am fine with it. Users tend to be more sensitive on
+> > WARN_ONs though.
+> 
+> The docs change was acked by Greg, and Andrew took it into mm, Linus
+> was CCed too. It missed the release because I guess it's comments only
+> change, but otherwise it should reach upstream tree on the next merge
+> window.
+> 
+> WARN is _not_ a common way to notify users today. syzbot reports _all_
+> WARN occurrences and you can see there are not many of them now
+> (probably 1 another now, +dtor for that one):
+> https://syzkaller.appspot.com#upstream
+> There is probably some long tail that we need to fix. We really do
+> want systematic testing capability. You do not want every of 2 billion
+> linux users to come to you with this kernel splat, just so that you
+> can explain to them that it's some programs of their machines doing
+> something wrong, right?
 
-Agreed, that really needs to be documented. I'll add a comment somewhere
-in v6.
+[This is an orthogonal discussion I believe]
 
-Thanks,
-Quentin
+How does it differ from pr_err though?
+
+> WARN is really a bad way to inform a user about something. Consider a
+> non-kernel developer, perhaps even non-programmer. What they see is
+> "WARNING: CPU: 1 PID: 23767 at mm/memcontrol.c:1710
+> try_charge+0x734/0x1680" followed by some obscure things and hex
+> numbers. File:line reference is pointless, they don't what what/where
+> it is.
+
+Well, you get a precise location where the problem happens and the
+backtrace to see how it happened. This is much more information than,
+pr_err without dump_stack.
+
+> This one is slightly better because it prints "Memory cgroup
+> charge failed because of no reclaimable memory! This looks like a
+> misconfiguration or a kernel bug." before the warning. But still it
+> says "or a kernel bug", which means that they will come to you.
+
+Yeah, and that was the purpose of the thing.
+
+> A much
+> friendlier for user way to say this would be print a message at the
+> point of misconfiguration saying what exactly is wrong, e.g. "pid $PID
+> misconfigures cgroup /cgroup/path with mem.limit=0" without a stack
+> trace (does not give any useful info for user). And return EINVAL if
+> it can't fly at all? And then leave the "or a kernel bug" part for the
+> WARNING each occurrence of which we do want to be reported to kernel
+> developers.
+
+But this is not applicable here. Your misconfiguration is quite obvious
+because you simply set the hard limit to 0. This is not the only
+situation when this can happen. There is no clear point to tell, you are
+doing this wrong. If it was we would do it at that point obviously.
+
+If you have a strong reason to believe that this is an abuse of WARN I
+am all happy to change that. But I haven't heard any yet, to be honest.
+-- 
+Michal Hocko
+SUSE Labs
