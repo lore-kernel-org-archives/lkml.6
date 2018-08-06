@@ -2,152 +2,135 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF152C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 05:12:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DEC8C4646D
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 05:14:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78DDF219D0
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 05:12:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Y+30seqL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78DDF219D0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 39300219D0
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 05:14:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39300219D0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727118AbeHFHTg (ORCPT
+        id S1727187AbeHFHVj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 03:19:36 -0400
-Received: from ozlabs.org ([203.11.71.1]:59223 "EHLO ozlabs.org"
+        Mon, 6 Aug 2018 03:21:39 -0400
+Received: from mga12.intel.com ([192.55.52.136]:20607 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726449AbeHFHTf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 03:19:35 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41kQkN2Kr6z9s0R;
-        Mon,  6 Aug 2018 15:12:12 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1533532332;
-        bh=m7p4iw65+2TZJyOEqq4ysiMZHvFRN8ElVUfVn8VLVc0=;
-        h=Date:From:To:Cc:Subject:From;
-        b=Y+30seqLR343nA2VdtoMyAhhPDTHXYq7mzuj/lp/OhKdGgmnf6UCL7SHBeSVhTROt
-         I5Ba+mZv3BmDVXDyY1GN9o6ikKOnOzFw3fXi7FiBcsKIO6pnCap2nUQirJhHPbU8Yi
-         Tu1OdGEfIzRNZ+Tu/QZ2R5XSdk+eU7NMW/sSGSze+gu0bQRTB/x9q/HAzf8vp3Wmvl
-         Wk/zGvB4XC6g1Zuj64j3ZZiJohRid22p094X5pCEgT/1GVBctPX0nQmupCU8efMC0Q
-         31XfRyCLL6sPTwcpM61480WT3QmS+6PGKrQTJ/rzZAFEBhZ9/3Mt6FwJBWkfR/RtU4
-         hfPB3Rr1UR1Ag==
-Date:   Mon, 6 Aug 2018 15:12:11 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        KVM <kvm@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Tianyu Lan <Tianyu.Lan@microsoft.com>
-Subject: linux-next: manual merge of the kvm tree with the tip tree
-Message-ID: <20180806151211.710b8615@canb.auug.org.au>
+        id S1726449AbeHFHVi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 03:21:38 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Aug 2018 22:14:18 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,451,1526367600"; 
+   d="scan'208";a="70448102"
+Received: from fmsmsx108.amr.corp.intel.com ([10.18.124.206])
+  by FMSMGA003.fm.intel.com with ESMTP; 05 Aug 2018 22:13:20 -0700
+Received: from fmsmsx155.amr.corp.intel.com (10.18.116.71) by
+ FMSMSX108.amr.corp.intel.com (10.18.124.206) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Sun, 5 Aug 2018 22:13:20 -0700
+Received: from shsmsx101.ccr.corp.intel.com (10.239.4.153) by
+ FMSMSX155.amr.corp.intel.com (10.18.116.71) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Sun, 5 Aug 2018 22:13:19 -0700
+Received: from shsmsx104.ccr.corp.intel.com ([169.254.5.81]) by
+ SHSMSX101.ccr.corp.intel.com ([169.254.1.57]) with mapi id 14.03.0319.002;
+ Mon, 6 Aug 2018 13:13:18 +0800
+From:   "Zhang, Ning A" <ning.a.zhang@intel.com>
+To:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+CC:     "pombredanne@nexb.com" <pombredanne@nexb.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Li, Ting" <ting.li@intel.com>,
+        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
+        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
+        "markus@trippelsdorf.de" <markus@trippelsdorf.de>
+Subject: Re: [PATCH] firmware: make sure builtin firmware is page alignment
+Thread-Topic: [PATCH] firmware: make sure builtin firmware is page alignment
+Thread-Index: AQHUKsvC0DwQCuNy/kuL3+VLNIom66Ss/RQAgAAzBACAAB5xgIAEJPmAgAA5KIA=
+Date:   Mon, 6 Aug 2018 05:13:17 +0000
+Message-ID: <1533532397.20683.74.camel@intel.com>
+References: <20180803014521.21527-1-ning.a.zhang@intel.com>
+         <20180803053948.GB1852@kroah.com> <1533285744.20683.67.camel@intel.com>
+         <20180803103121.GB6557@kroah.com> <1533520123.20683.71.camel@intel.com>
+In-Reply-To: <1533520123.20683.71.camel@intel.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.239.16.9]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <DB6971E5EAEA7F469A56FF3EA7D321EF@intel.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/_bOe+tZbLn./B9yM7NCAmO_"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/_bOe+tZbLn./B9yM7NCAmO_
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi all,
-
-Today's linux-next merge of the kvm tree got a conflict in:
-
-  arch/x86/include/asm/trace/hyperv.h
-
-between commit:
-
-  58ec5e9c9044 ("x86/hyper-v: Trace PV IPI send")
-
-from the tip tree and commit:
-
-  47c054685621 ("X86/Hyper-V: Add hyperv_nested_flush_guest_mapping ftrace =
-support")
-
-from the kvm tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc arch/x86/include/asm/trace/hyperv.h
-index 9c0d4b588e3f,e1ffe61de8d6..000000000000
---- a/arch/x86/include/asm/trace/hyperv.h
-+++ b/arch/x86/include/asm/trace/hyperv.h
-@@@ -28,21 -28,20 +28,35 @@@ TRACE_EVENT(hyperv_mmu_flush_tlb_others
-  		      __entry->addr, __entry->end)
-  	);
- =20
- +TRACE_EVENT(hyperv_send_ipi_mask,
- +	    TP_PROTO(const struct cpumask *cpus,
- +		     int vector),
- +	    TP_ARGS(cpus, vector),
- +	    TP_STRUCT__entry(
- +		    __field(unsigned int, ncpus)
- +		    __field(int, vector)
- +		    ),
- +	    TP_fast_assign(__entry->ncpus =3D cpumask_weight(cpus);
- +			   __entry->vector =3D vector;
- +		    ),
- +	    TP_printk("ncpus %d vector %x",
- +		      __entry->ncpus, __entry->vector)
- +	);
- +
-+ TRACE_EVENT(hyperv_nested_flush_guest_mapping,
-+ 	    TP_PROTO(u64 as, int ret),
-+ 	    TP_ARGS(as, ret),
-+=20
-+ 	    TP_STRUCT__entry(
-+ 		    __field(u64, as)
-+ 		    __field(int, ret)
-+ 		    ),
-+ 	    TP_fast_assign(__entry->as =3D as;
-+ 			   __entry->ret =3D ret;
-+ 		    ),
-+ 	    TP_printk("address space %llx ret %d", __entry->as, __entry->ret)
-+ 	);
-+=20
-  #endif /* CONFIG_HYPERV */
- =20
-  #undef TRACE_INCLUDE_PATH
-
---Sig_/_bOe+tZbLn./B9yM7NCAmO_
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltn2KsACgkQAVBC80lX
-0GxyzwgApK/mlth2oBwl+B6s4lGI6/1sOm7yPMFsdixDY8QVHGGx53DN5RL165b7
-4Z+aNyXYgxOdxL/BpqdlEahoO11RrGL/n5q9ola2wE0orX1XdddwWlrrQ0YMw0YJ
-yF1v56OqsP5fVqwYIRAC39DjV46Xs3ueoeXB952gNXmLglcKUfZdpfAvx4yjJh7w
-JlBaGG+Osf/DsdBR4GrSIdrnXpGB3ImPv2cR/fa3GdpjTxOXcrkNxu0nDD+1c2YG
-Gmef64ft5i3wFI0kw1PyeqzdYJa4ebQHw4cI5JG4vEk54T+NCtiEsUXv7NKS5Zmx
-wNvHOX2+pXKZ+2oWp+0teQHWtMq4kA==
-=Z4ON
------END PGP SIGNATURE-----
-
---Sig_/_bOe+tZbLn./B9yM7NCAmO_--
+5ZyoIDIwMTgtMDgtMDbkuIDnmoQgMDE6NDggKzAwMDDvvIxaaGFuZywgTmluZyBB5YaZ6YGT77ya
+DQo+IOWcqCAyMDE4LTA4LTAz5LqU55qEIDEyOjMxICswMjAw77yMZ3JlZ2toQGxpbnV4Zm91bmRh
+dGlvbi5vcmflhpnpgZPvvJoNCj4gPiBPbiBGcmksIEF1ZyAwMywgMjAxOCBhdCAwODo0MjoyNUFN
+ICswMDAwLCBaaGFuZywgTmluZyBBIHdyb3RlOg0KPiA+ID4g5ZyoIDIwMTgtMDgtMDPkupTnmoQg
+MDc6MzkgKzAyMDDvvIxHcmVnIEtI5YaZ6YGT77yaDQo+ID4gPiA+IE9uIEZyaSwgQXVnIDAzLCAy
+MDE4IGF0IDA5OjQ1OjIxQU0gKzA4MDAsIFpoYW5nIE5pbmcgd3JvdGU6DQo+ID4gPiA+ID4gd2hl
+biBmaXJtd2FyZSBpcyBpbiBmaWxlc3lzdGVtLCByZXF1ZXN0X2Zpcm13YXJlIHdpbGwgbG9hZA0K
+PiA+ID4gPiA+IGl0LA0KPiA+ID4gPiA+IGFuZCBjb3B5IGl0IHRvIHZtYWxsb2MgbWVtb3J5LCB0
+aGF0IGlzIHBhZ2UgYWxpZ24gbWVtb3J5Lg0KPiA+ID4gPiA+IA0KPiA+ID4gPiA+IGJ1dCB3aGVu
+IGZpcm13YXJlIGlzIGJ1aWx0aW4sIGl0IGlzIDggYnl0ZXMgb3IgNCBieXRlcw0KPiA+ID4gPiA+
+IGFsaWdubWVudC4NCj4gPiA+ID4gPiANCj4gPiA+ID4gPiBtYWtlIHN1cmUgYnVpbHRpbiBmaXJt
+d2FyZSBpcyBwYWdlIGFsZ25tZW50LCB0aGF0IGNhbg0KPiA+ID4gPiA+IHNpbXBsaWZ5DQo+ID4g
+PiA+ID4gYWxnb3JpdGhtDQo+ID4gPiA+ID4gdG8gaGFuZGxlIGZpcm13YXJlLg0KPiA+ID4gPiAN
+Cj4gPiA+ID4gSG93IGlzIGl0IHNpbXBsaWZpZWQ/wqDCoEkgZG9uJ3Qgc2VlIGFueSBzdWNoIGNo
+YW5nZSBsaWtlIHRoYXQNCj4gPiA+ID4gaGVyZQ0KPiA+ID4gPiA6KA0KPiA+ID4gPiANCj4gPiA+
+IA0KPiA+ID4gVGhhbmsgeW91IGZvciByZXZpZXcgdGhpcyBwYXRjaC4NCj4gPiA+IA0KPiA+ID4g
+V2hlbiBkcml2ZXIgaGFuZGxlcyBpdHMgZmlybXdhcmUgYmFzZWQgb27CoMKgcGFnZSwgbGlrZSBi
+ZWxvdzoNCj4gPiA+IA0KPiA+ID4gCXN0cnVjdCBwYWdlICpwOw0KPiA+ID4gCXAgPSB2bWFsbG9j
+X3RvX3BhZ2UoZnctPmRhdGEpO8KgwqAvLyBmb3IgZmlsZXN5c3RlbSBmaXJtd2FyZQ0KPiA+ID4g
+CXAgPSB2aXJ0X3RvX3BhZ2UoZnctPmRhdGEpOyAvLyBmb3IgYnVpbHRpbiBmaXJtd2FyZQ0KPiA+
+ID4gDQo+ID4gPiBidXQgaWYgYnVpbHRpbiBmaXJtd2FyZSBpcyBub3QgcGFnZSBhbGlnbm1lbnQs
+IHBhZ2UgcG9pbnRlciBmb3INCj4gPiA+IGJ1aWx0aW4NCj4gPiA+IGZpcm13YXJlIGlzIHdyb25n
+LCBpdCBjb250YWlucyBtZW1vcnkgbm90IGJlbG9uZyB0byBmaXJtd2FyZS4NCj4gPiA+IGRyaXZl
+cnMNCj4gPiA+IGhhcyB0byB1c2UgYWRkaXRpb25hbCBjb2RlIHRvIGhhbmRsZSB0aGlzLsKgDQo+
+ID4gPiANCj4gPiA+IGlmIGJ1aWx0aW4gZmlybXdhcmUgaXMgYWxzbyBwYWdlIGFsaWdubWVudCwg
+bm8gbmVlZCBhZGRpdGlvbmFsDQo+ID4gPiBjb2RlDQo+ID4gPiB0bw0KPiA+ID4gaGFuZGxlIGJ1
+aWx0aW4gZmlybXdhcmUuIHNpbXBsaWZpZWQuDQo+ID4gDQo+ID4gQnV0IHlvdSBkaWQgbm90IGNo
+YW5nZSBhbnl0aGluZyBsaWtlIHRoaXMgaW4geW91ciBjb2RlLCBzbyB3aHkNCj4gPiB3b3VsZA0K
+PiA+IEkNCj4gPiBrbm93IHRoaXM/DQo+IA0KPiBJIHVuZGVyc3RhbmQgaXQgaXMgdmVyeSBkaWZm
+aWN1bHQgdG8gcmV2aWV3IHRoaXMgcGF0Y2ggd2l0aG91dA0KPiBjb250ZXh0Lg0KPiBUaGUgZHJp
+dmVyIGlzIG5vdCBvcGVuc291cmNlLCBJIGNhbid0IHNob3cgdGhlIHBhdGNoIGZvciBkcml2ZXIu
+DQo+IA0KPiB0aGlzIHBhdGNoIGNoYW5nZXMga2VybmVsIGNvbW1vbiBjb2RlLCBhbmQgaXQgaGFz
+IHZhbHVlIHRvIHVwc3RyZWFtLA0KPiBzbw0KPiBJIHN1Ym1pdCB0aGlzIHBhdGNoIGZvciByZXZp
+ZXcgYW5kIGFsc28gbG9vayBmb3J3YXJkIHNvbWUgYWR2aXNlcw0KPiBmcm9tDQo+IGNvbW11bml0
+eS4gT25jZSB3ZSBkZWNpZGUgdG8gb3BlbnNvdXJjZSwgdGhlIGRyaXZlciBjaGFuZ2VzIHdpbGwg
+YmUNCj4gdGhlcmUuDQo+IA0KPiANCg0KYXMgc2FpZCBvdXIgZHJpdmVyIGhhbmRsZXMgZmlybXdh
+cmUgYmFzZWQgb24gcGFnZSwgYW5kIGlmIGZpcm13YXJlIGlzDQpidWlsdGluLCBwYWdlIHBvaW50
+IGZyb20gdmlydF90b19wYWdlKGZ3LT5kYXRhKSBjb250YWlucyBtZW1vcnkgZG9lc24ndA0KYmVs
+b25nIHRvIGZpcm13YXJlLiB0aGVyZSBhcmUgdHdvIHdheSB0byBmaXggaXQuDQoNCjEsIGNvcHkg
+YnVpbHRpbiBmaXJtd2FyZSB0byB2bWFsbG9jIG1lbW9yeSwgdGhpcyBpcyBhZGRpdGlvbmFsIHdv
+cmsgdG8NCmhhbmRsZSBmaXJtd2FyZS4gSSBjcmVhdGUgYSB3cmFwIGZ1bmN0aW9uIGZvciBmaXJt
+d2FyZSByZXF1ZXN0Lg0KDQppbnQgcmVxdWVzdF9YWVpfZncoY29uc3Qgc3RydWN0IGZpcm13YXJl
+ICoqZmlybXdhcmVfcCwgY29uc3QgY2hhcg0KKm5hbWUsDQoJCcKgc3RydWN0IGRldmljZSAqZGV2
+aWNlKQ0Kew0KCWNvbnN0IHN0cnVjdCBmaXJtd2FyZSAqZnc7DQoJc3RydWN0IGZpcm13YXJlICp0
+bXA7DQoJaW50IHJldDsNCg0KCXJldCA9IHJlcXVlc3RfZmlybXdhcmUoJmZ3LCBuYW1lLCBkZXZp
+Y2UpOw0KDQoJaWYgKHJldCA8IDApDQoJCXJldHVybiByZXQ7DQoNCglpZiAoaXNfdm1hbGxvY19h
+ZGRyKGZ3LT5kYXRhKSkNCgkJKmZpcm13YXJlX3AgPSBmdzsNCgllbHNlIHsNCgkJdG1wID0gKHN0
+cnVjdCBmaXJtd2FyZSAqKWt6YWxsb2Moc2l6ZW9mKHN0cnVjdA0KZmlybXdhcmUpLCBHRlBfS0VS
+TkVMKTsNCgkJaWYgKCF0bXApDQoJCQlyZXR1cm4gLUVOT01FTTsNCgkJdG1wLT5zaXplID0gZnct
+PnNpemU7DQoJCXRtcC0+ZGF0YSA9IHZtYWxsb2MoZnctPnNpemUpOw0KCQltZW1jcHkodG1wLT5k
+YXRhLCBmdy0+ZGF0YSwgZnctPnNpemUpOw0KCQkqZmlybXdhcmVfcCA9IHRtcDsNCgl9DQoJcmV0
+dXJuIHJldDsNCn0NCg0KMiwgbWFrZSBidWlsdGluIGZpcm13YXJlIGlzIGFsc28gcGFnZSBhbGln
+bm1lbnQuIHRoZSBjaGFuZ2UgaW4gZHJpdmVyDQpjb2RlIGlzIHRvIGNoZWNrIG1lbW9yeSB0eXBl
+IG9mIGZ3LT5kYXRhLCBhbmQgdXNlIGRpZmZlcmVudCBYWFhfdG9fcGFnZQ0KZnVuY3Rpb24uDQoN
+CnN0cnVjdCBwYWdlICpwOw0KaWYgKGlzX3ZtYWxsb2NfYWRkcihmdy0+ZGF0YSkpICAvLyBuZXcN
+CglwID0gdm1hbGxvY190b19wYWdlKGZ3LT5kYXRhKTsNCmVsc2UgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgLy8gbmV3DQoJcCA9IHZpcnRfdG9fcGFnZShmdy0+ZGF0YSk7IC8vIG5ldw0KDQoN
+CmNvbXBhcmUgdG8gc29sdXRpb24sIHNvbHV0aW9uIDIgaXMgc2ltcGxlLCB0aGlzIGlzIHdoYXQg
+SSBzYWlkDQpzaW1wbGlmaWVkLiBhbmQgc29sdXRpb24gMiBhbHNvIHNhdmUgbWVtb3J5IChJIGRv
+bid0IGtub3cgdGhlIGFmZmVjdA0KY2hhbmdlIG1lbW9yeSBhbGlnbm1lbnQgb24gbWVtb3J5IHVz
+YWdlLikNCg0KSGksIEdyZWcNCmlzIHRoaXMgZWFzaWVyIGZvciB5b3UgdG8gcmV2aWV3Pw0KDQpC
+Ui4NCk5pbmcuDQo+IA0KDQo+IA0KUGxlYXNlIGZpeCB0aGlzIHVwIHN1Ym1pdCB0aGlzIHByb3Bl
+cmx5Lg0KDQpncmVnIGstaA==
