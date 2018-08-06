@@ -2,453 +2,417 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1404AC4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 21:14:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FEAAC4646D
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 21:19:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A56CA21A5A
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 21:14:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A56CA21A5A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id CE2B821A5A
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 21:19:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="X6m4ApkC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE2B821A5A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732669AbeHFXZO (ORCPT
+        id S1732679AbeHFXaf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 19:25:14 -0400
-Received: from mga06.intel.com ([134.134.136.31]:29785 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729096AbeHFXZN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 19:25:13 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Aug 2018 14:14:18 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,452,1526367600"; 
-   d="scan'208";a="222429254"
-Received: from tstruk-mobl1.jf.intel.com ([10.7.196.170])
-  by orsmga004.jf.intel.com with ESMTP; 06 Aug 2018 14:14:18 -0700
-Subject: [PATCH v3 RESEND 2/2] tpm: add support for nonblocking operation
-From:   Tadeusz Struk <tadeusz.struk@intel.com>
-To:     jarkko.sakkinen@linux.intel.com
-Cc:     flihp@twobit.us, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, tadeusz.struk@intel.com
-Date:   Mon, 06 Aug 2018 14:14:18 -0700
-Message-ID: <153359005823.27531.1050952672299708433.stgit@tstruk-mobl1.jf.intel.com>
-In-Reply-To: <153358975874.26901.16081444242758666628.stgit@tstruk-mobl1.jf.intel.com>
-References: <153358975874.26901.16081444242758666628.stgit@tstruk-mobl1.jf.intel.com>
-User-Agent: StGit/unknown-version
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        Mon, 6 Aug 2018 19:30:35 -0400
+Received: from mail-io0-f202.google.com ([209.85.223.202]:55853 "EHLO
+        mail-io0-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728908AbeHFXaf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 19:30:35 -0400
+Received: by mail-io0-f202.google.com with SMTP id p2-v6so1558597iom.22
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Aug 2018 14:19:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=z1YkuEhJSa76Eh6u3qIGx1kWICWudnLuyFUEwJXWRR8=;
+        b=X6m4ApkCej0KtfXj0K/xomJcEVwyvE3BUab/zxolddebuNo9pmkQ+yQJ9pybskcQV5
+         bUcREjvkgaih/xa7OkJp6eDqCC4+CzkuQDe1HTXbBEJ5DW0lzSWMfC9vUoFkFnZW0KN1
+         7A1XjyznOIZmvLREqoLFoaMnBRyNTrJAX814t0Xrdh/y+evhFMVRX7SwJjRithodK/9i
+         JTJb3luhVs1lxFtw6ez0g+55isRrxNhbm1+OpuiLcezd2UrB0V4RyX1ReYsWpaHMSpmj
+         Co8A87JMnxy2q/MsNwJwSmzdmTePJjE7XlKrQmahLWC0JRP0Bv6OZztDPPOsTdA5La5b
+         LeAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=z1YkuEhJSa76Eh6u3qIGx1kWICWudnLuyFUEwJXWRR8=;
+        b=mfI+eQhM+v7H4ZlzrwedMGNunzzKsuNwTcvZi97wH1yMOJBePg7BNVBwq2xgt47p1g
+         gf7a1gpzww0UijYlBKBSU1QCpUrtbjqE1jeTqP15mXZJBxcKqEFfI6sc26nXWcyuXMSZ
+         Bvth3ed9UNnPNDUD+TwWelplhdROYTx8HCfaeu8c5PsTa2TLOuAepyiH7jA6jbUs5j0S
+         g/stnmhI7O9rQdmD51t5HfjCP0Cii4J4/64CAqCw85NoRYH9BpDlVW7D6UKek/kzE3Lh
+         RRd0wnqhWYE8XSJOExKCu3kpUK7BMyKm0yvqvAQDz5RVg5S0fM5AxwtHP+FWtzseYo+C
+         I2zA==
+X-Gm-Message-State: AOUpUlGQq/p59ObNQx881Co0bqlsNkYtliMR5lqNMe3Yd5EXp8YULzUd
+        Av6jw684EQGRmamZ97GVMc5EV/8CdQ==
+X-Google-Smtp-Source: AA+uWPw3+e8RGAdyw6tf8Pah9CMPbjOwRpDCivdq588qJ4+zclQU0zS0rI2HkgtYsMRzwueN2QDwtoJ8eg==
+X-Received: by 2002:a6b:b251:: with SMTP id b78-v6mr8303163iof.128.1533590378252;
+ Mon, 06 Aug 2018 14:19:38 -0700 (PDT)
+Date:   Mon,  6 Aug 2018 23:19:32 +0200
+Message-Id: <20180806211932.198488-1-jannh@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.18.0.597.ga71716f1ad-goog
+Subject: [PATCH] selinux: refactor mls_context_to_sid() and make it stricter
+From:   Jann Horn <jannh@google.com>
+To:     Stephen Smalley <sds@tycho.nsa.gov>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>, selinux@tycho.nsa.gov,
+        jannh@google.com
+Cc:     James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently the TPM driver only supports blocking calls, which doesn't allow
-asynchronous IO operations to the TPM hardware.
-This patch changes it and adds support for nonblocking write and a new poll
-function to enable applications, which want to take advantage of this.
+The intended behavior change for this patch is to reject any MLS strings
+that contain (trailing) garbage if p->mls_enabled is true.
 
-Tested-by: Philip Tricca <philip.b.tricca@intel.com>
-Signed-off-by: Tadeusz Struk <tadeusz.struk@intel.com>
+As suggested by Paul Moore, change mls_context_to_sid() so that the two
+parts of the range are extracted before the rest of the parsing. Because
+now we don't have to scan for two different separators simultaneously
+everywhere, we can actually switch to strchr() everywhere instead of the
+open-coded loops that scan for two separators at once.
+
+mls_context_to_sid() used to signal how much of the input string was parsed
+by updating `*scontext`. However, there is actually no case in which
+mls_context_to_sid() only parses a subset of the input and still returns
+a success (other than the buggy case with a second '-' in which it
+incorrectly claims to have consumed the entire string). Turn `scontext`
+into a simple pointer argument and stop redundantly checking whether the
+entire input was consumed in string_to_context_struct(). This also lets us
+remove the `scontext_len` argument from `string_to_context_struct()`.
+
+Signed-off-by: Jann Horn <jannh@google.com>
 ---
- drivers/char/tpm/tpm-dev-common.c |  145 +++++++++++++++++++++++++++----------
- drivers/char/tpm/tpm-dev.c        |   16 +++-
- drivers/char/tpm/tpm-dev.h        |   16 +++-
- drivers/char/tpm/tpm-interface.c  |    1 
- drivers/char/tpm/tpm.h            |    1 
- drivers/char/tpm/tpmrm-dev.c      |   19 ++++-
- 6 files changed, 145 insertions(+), 53 deletions(-)
+Refactored version of
+"[PATCH] selinux: stricter parsing in mls_context_to_sid()" based on
+Paul's comments. WDYT?
+I've thrown some inputs at it, and it seems to work.
 
-diff --git a/drivers/char/tpm/tpm-dev-common.c b/drivers/char/tpm/tpm-dev-common.c
-index f0c033b69b62..3f2089f75c30 100644
---- a/drivers/char/tpm/tpm-dev-common.c
-+++ b/drivers/char/tpm/tpm-dev-common.c
-@@ -17,11 +17,34 @@
-  * License.
+ security/selinux/ss/mls.c      | 178 ++++++++++++++-------------------
+ security/selinux/ss/mls.h      |   2 +-
+ security/selinux/ss/services.c |  12 +--
+ 3 files changed, 82 insertions(+), 110 deletions(-)
+
+diff --git a/security/selinux/ss/mls.c b/security/selinux/ss/mls.c
+index 39475fb455bc..2fe459df3c85 100644
+--- a/security/selinux/ss/mls.c
++++ b/security/selinux/ss/mls.c
+@@ -218,9 +218,7 @@ int mls_context_isvalid(struct policydb *p, struct context *c)
+ /*
+  * Set the MLS fields in the security context structure
+  * `context' based on the string representation in
+- * the string `*scontext'.  Update `*scontext' to
+- * point to the end of the string representation of
+- * the MLS fields.
++ * the string `scontext'.
   *
+  * This function modifies the string in place, inserting
+  * NULL characters to terminate the MLS fields.
+@@ -235,22 +233,21 @@ int mls_context_isvalid(struct policydb *p, struct context *c)
   */
-+#include <linux/poll.h>
- #include <linux/slab.h>
- #include <linux/uaccess.h>
-+#include <linux/workqueue.h>
- #include "tpm.h"
- #include "tpm-dev.h"
- 
-+static struct workqueue_struct *tpm_dev_wq;
-+static DEFINE_MUTEX(tpm_dev_wq_lock);
-+
-+static void tpm_async_work(struct work_struct *work)
-+{
-+	struct file_priv *priv =
-+			container_of(work, struct file_priv, async_work);
-+	ssize_t ret;
-+
-+	ret = tpm_transmit(priv->chip, priv->space, priv->data_buffer,
-+			   sizeof(priv->data_buffer), 0);
-+
-+	tpm_put_ops(priv->chip);
-+	if (ret > 0) {
-+		priv->data_pending = ret;
-+		mod_timer(&priv->user_read_timer, jiffies + (120 * HZ));
-+	}
-+	mutex_unlock(&priv->buffer_mutex);
-+	wake_up_interruptible(&priv->async_wait);
-+}
-+
- static void user_reader_timeout(struct timer_list *t)
+ int mls_context_to_sid(struct policydb *pol,
+ 		       char oldc,
+-		       char **scontext,
++		       char *scontext,
+ 		       struct context *context,
+ 		       struct sidtab *s,
+ 		       u32 def_sid)
  {
- 	struct file_priv *priv = from_timer(priv, t, user_read_timer);
-@@ -29,30 +52,44 @@ static void user_reader_timeout(struct timer_list *t)
- 	pr_warn("TPM user space timeout is deprecated (pid=%d)\n",
- 		task_tgid_nr(current));
- 
--	schedule_work(&priv->work);
-+	schedule_work(&priv->timeout_work);
- }
- 
--static void timeout_work(struct work_struct *work)
-+static void tpm_timeout_work(struct work_struct *work)
- {
--	struct file_priv *priv = container_of(work, struct file_priv, work);
-+	struct file_priv *priv = container_of(work, struct file_priv,
-+					      timeout_work);
- 
- 	mutex_lock(&priv->buffer_mutex);
- 	priv->data_pending = 0;
- 	memset(priv->data_buffer, 0, sizeof(priv->data_buffer));
- 	mutex_unlock(&priv->buffer_mutex);
-+	wake_up_interruptible(&priv->async_wait);
- }
- 
--void tpm_common_open(struct file *file, struct tpm_chip *chip,
--		     struct file_priv *priv, struct tpm_space *space)
-+int tpm_common_open(struct file *file, struct tpm_chip *chip,
-+		    struct file_priv *priv, struct tpm_space *space)
- {
- 	priv->chip = chip;
- 	priv->space = space;
- 
- 	mutex_init(&priv->buffer_mutex);
- 	timer_setup(&priv->user_read_timer, user_reader_timeout, 0);
--	INIT_WORK(&priv->work, timeout_work);
 -
-+	INIT_WORK(&priv->timeout_work, tpm_timeout_work);
-+	INIT_WORK(&priv->async_work, tpm_async_work);
-+	init_waitqueue_head(&priv->async_wait);
- 	file->private_data = priv;
-+	mutex_lock(&tpm_dev_wq_lock);
-+	if (!tpm_dev_wq) {
-+		tpm_dev_wq = alloc_workqueue("tpm_dev_wq", WQ_MEM_RECLAIM, 0);
-+		if (!tpm_dev_wq) {
-+			mutex_unlock(&tpm_dev_wq_lock);
-+			return -ENOMEM;
-+		}
+-	char delim;
+-	char *scontextp, *p, *rngptr;
++	char *sensitivity, *cur_cat, *next_cat, *rngptr;
+ 	struct level_datum *levdatum;
+ 	struct cat_datum *catdatum, *rngdatum;
+-	int l, rc = -EINVAL;
++	int l, rc, i;
++	char *rangep[2];
+ 
+ 	if (!pol->mls_enabled) {
+-		if (def_sid != SECSID_NULL && oldc)
+-			*scontext += strlen(*scontext) + 1;
+-		return 0;
++		if ((def_sid != SECSID_NULL && oldc) || (*scontext) == '\0')
++			return 0;
++		return -EINVAL;
+ 	}
+ 
+ 	/*
+@@ -261,113 +258,94 @@ int mls_context_to_sid(struct policydb *pol,
+ 		struct context *defcon;
+ 
+ 		if (def_sid == SECSID_NULL)
+-			goto out;
++			return -EINVAL;
+ 
+ 		defcon = sidtab_search(s, def_sid);
+ 		if (!defcon)
+-			goto out;
++			return -EINVAL;
+ 
+-		rc = mls_context_cpy(context, defcon);
+-		goto out;
++		return mls_context_cpy(context, defcon);
+ 	}
+ 
+-	/* Extract low sensitivity. */
+-	scontextp = p = *scontext;
+-	while (*p && *p != ':' && *p != '-')
+-		p++;
+-
+-	delim = *p;
+-	if (delim != '\0')
+-		*p++ = '\0';
++	/*
++	 * If we're dealing with a range, figure out where the two parts
++	 * of the range begin.
++	 */
++	rangep[0] = scontext;
++	rangep[1] = strchr(scontext, '-');
++	if (rangep[1]) {
++		rangep[1][0] = '\0';
++		rangep[1]++;
 +	}
+ 
++	/* For each part of the range: */
+ 	for (l = 0; l < 2; l++) {
+-		levdatum = hashtab_search(pol->p_levels.table, scontextp);
+-		if (!levdatum) {
+-			rc = -EINVAL;
+-			goto out;
+-		}
++		/* Split sensitivity and category set. */
++		sensitivity = rangep[l];
++		if (sensitivity == NULL)
++			break;
++		next_cat = strchr(sensitivity, ':');
++		if (next_cat)
++			*(next_cat++) = '\0';
+ 
++		/* Parse sensitivity. */
++		levdatum = hashtab_search(pol->p_levels.table, sensitivity);
++		if (!levdatum)
++			return -EINVAL;
+ 		context->range.level[l].sens = levdatum->level->sens;
+ 
+-		if (delim == ':') {
+-			/* Extract category set. */
+-			while (1) {
+-				scontextp = p;
+-				while (*p && *p != ',' && *p != '-')
+-					p++;
+-				delim = *p;
+-				if (delim != '\0')
+-					*p++ = '\0';
+-
+-				/* Separate into range if exists */
+-				rngptr = strchr(scontextp, '.');
+-				if (rngptr != NULL) {
+-					/* Remove '.' */
+-					*rngptr++ = '\0';
+-				}
++		/* Extract category set. */
++		while (next_cat != NULL) {
++			cur_cat = next_cat;
++			next_cat = strchr(next_cat, ',');
++			if (next_cat != NULL)
++				*(next_cat++) = '\0';
 +
-+	mutex_unlock(&tpm_dev_wq_lock);
++			/* Separate into range if exists */
++			rngptr = strchr(cur_cat, '.');
++			if (rngptr != NULL) {
++				/* Remove '.' */
++				*rngptr++ = '\0';
++			}
+ 
+-				catdatum = hashtab_search(pol->p_cats.table,
+-							  scontextp);
+-				if (!catdatum) {
+-					rc = -EINVAL;
+-					goto out;
+-				}
++			catdatum = hashtab_search(pol->p_cats.table, cur_cat);
++			if (!catdatum)
++				return -EINVAL;
+ 
+-				rc = ebitmap_set_bit(&context->range.level[l].cat,
+-						     catdatum->value - 1, 1);
+-				if (rc)
+-					goto out;
+-
+-				/* If range, set all categories in range */
+-				if (rngptr) {
+-					int i;
+-
+-					rngdatum = hashtab_search(pol->p_cats.table, rngptr);
+-					if (!rngdatum) {
+-						rc = -EINVAL;
+-						goto out;
+-					}
+-
+-					if (catdatum->value >= rngdatum->value) {
+-						rc = -EINVAL;
+-						goto out;
+-					}
+-
+-					for (i = catdatum->value; i < rngdatum->value; i++) {
+-						rc = ebitmap_set_bit(&context->range.level[l].cat, i, 1);
+-						if (rc)
+-							goto out;
+-					}
+-				}
++			rc = ebitmap_set_bit(&context->range.level[l].cat,
++					     catdatum->value - 1, 1);
++			if (rc)
++				return rc;
++
++			/* If range, set all categories in range */
++			if (rngptr == NULL)
++				continue;
++
++			rngdatum = hashtab_search(pol->p_cats.table, rngptr);
++			if (!rngdatum)
++				return -EINVAL;
++
++			if (catdatum->value >= rngdatum->value)
++				return -EINVAL;
+ 
+-				if (delim != ',')
+-					break;
++			for (i = catdatum->value; i < rngdatum->value; i++) {
++				rc = ebitmap_set_bit(&context->range.level[l].cat, i, 1);
++				if (rc)
++					return rc;
+ 			}
+ 		}
+-		if (delim == '-') {
+-			/* Extract high sensitivity. */
+-			scontextp = p;
+-			while (*p && *p != ':')
+-				p++;
+-
+-			delim = *p;
+-			if (delim != '\0')
+-				*p++ = '\0';
+-		} else
+-			break;
+ 	}
+ 
+-	if (l == 0) {
++	/* If we didn't see a '-', the range start is also the range end. */
++	if (rangep[1] == NULL) {
+ 		context->range.level[1].sens = context->range.level[0].sens;
+ 		rc = ebitmap_cpy(&context->range.level[1].cat,
+ 				 &context->range.level[0].cat);
+ 		if (rc)
+-			goto out;
++			return rc;
+ 	}
+-	*scontext = ++p;
+-	rc = 0;
+-out:
+-	return rc;
++
 +	return 0;
  }
  
- ssize_t tpm_common_read(struct file *file, char __user *buf,
-@@ -63,15 +100,17 @@ ssize_t tpm_common_read(struct file *file, char __user *buf,
+ /*
+@@ -379,21 +357,19 @@ int mls_context_to_sid(struct policydb *pol,
+ int mls_from_string(struct policydb *p, char *str, struct context *context,
+ 		    gfp_t gfp_mask)
+ {
+-	char *tmpstr, *freestr;
++	char *tmpstr;
  	int rc;
  
- 	del_singleshot_timer_sync(&priv->user_read_timer);
--	flush_work(&priv->work);
-+	flush_work(&priv->timeout_work);
- 	mutex_lock(&priv->buffer_mutex);
+ 	if (!p->mls_enabled)
+ 		return -EINVAL;
  
- 	if (priv->data_pending) {
- 		ret_size = min_t(ssize_t, size, priv->data_pending);
--		rc = copy_to_user(buf, priv->data_buffer, ret_size);
--		memset(priv->data_buffer, 0, priv->data_pending);
--		if (rc)
--			ret_size = -EFAULT;
-+		if (ret_size > 0) {
-+			rc = copy_to_user(buf, priv->data_buffer, ret_size);
-+			memset(priv->data_buffer, 0, priv->data_pending);
-+			if (rc)
-+				ret_size = -EFAULT;
-+		}
- 
- 		priv->data_pending = 0;
+-	/* we need freestr because mls_context_to_sid will change
+-	   the value of tmpstr */
+-	tmpstr = freestr = kstrdup(str, gfp_mask);
++	tmpstr = kstrdup(str, gfp_mask);
+ 	if (!tmpstr) {
+ 		rc = -ENOMEM;
+ 	} else {
+-		rc = mls_context_to_sid(p, ':', &tmpstr, context,
++		rc = mls_context_to_sid(p, ':', tmpstr, context,
+ 					NULL, SECSID_NULL);
+-		kfree(freestr);
++		kfree(tmpstr);
  	}
-@@ -84,10 +123,9 @@ ssize_t tpm_common_write(struct file *file, const char __user *buf,
- 			 size_t size, loff_t *off)
+ 
+ 	return rc;
+diff --git a/security/selinux/ss/mls.h b/security/selinux/ss/mls.h
+index 9a3ff7af70ad..67093647576d 100644
+--- a/security/selinux/ss/mls.h
++++ b/security/selinux/ss/mls.h
+@@ -34,7 +34,7 @@ int mls_level_isvalid(struct policydb *p, struct mls_level *l);
+ 
+ int mls_context_to_sid(struct policydb *p,
+ 		       char oldc,
+-		       char **scontext,
++		       char *scontext,
+ 		       struct context *context,
+ 		       struct sidtab *s,
+ 		       u32 def_sid);
+diff --git a/security/selinux/ss/services.c b/security/selinux/ss/services.c
+index dd2ceec06fef..9212d4dd817a 100644
+--- a/security/selinux/ss/services.c
++++ b/security/selinux/ss/services.c
+@@ -1367,7 +1367,6 @@ int security_sid_to_context_force(struct selinux_state *state, u32 sid,
+ static int string_to_context_struct(struct policydb *pol,
+ 				    struct sidtab *sidtabp,
+ 				    char *scontext,
+-				    u32 scontext_len,
+ 				    struct context *ctx,
+ 				    u32 def_sid)
  {
- 	struct file_priv *priv = file->private_data;
--	size_t in_size = size;
--	ssize_t out_size;
-+	int ret = 0;
+@@ -1428,15 +1427,12 @@ static int string_to_context_struct(struct policydb *pol,
  
--	if (in_size > TPM_BUFSIZE)
-+	if (size > TPM_BUFSIZE)
- 		return -E2BIG;
+ 	ctx->type = typdatum->value;
  
- 	mutex_lock(&priv->buffer_mutex);
-@@ -97,20 +135,19 @@ ssize_t tpm_common_write(struct file *file, const char __user *buf,
- 	 * buffered writes from blocking here.
- 	 */
- 	if (priv->data_pending != 0) {
--		mutex_unlock(&priv->buffer_mutex);
--		return -EBUSY;
-+		ret = -EBUSY;
-+		goto out;
- 	}
+-	rc = mls_context_to_sid(pol, oldc, &p, ctx, sidtabp, def_sid);
++	rc = mls_context_to_sid(pol, oldc, p, ctx, sidtabp, def_sid);
+ 	if (rc)
+ 		goto out;
  
--	if (copy_from_user
--	    (priv->data_buffer, (void __user *) buf, in_size)) {
--		mutex_unlock(&priv->buffer_mutex);
--		return -EFAULT;
-+	if (copy_from_user(priv->data_buffer, buf, size)) {
-+		ret = -EFAULT;
-+		goto out;
- 	}
- 
--	if (in_size < 6 ||
--	    in_size < be32_to_cpu(*((__be32 *) (priv->data_buffer + 2)))) {
--		mutex_unlock(&priv->buffer_mutex);
--		return -EINVAL;
-+	if (size < 6 ||
-+	    size < be32_to_cpu(*((__be32 *)(priv->data_buffer + 2)))) {
-+		ret = -EINVAL;
-+		goto out;
- 	}
- 
- 	/* atomic tpm command send and result receive. We only hold the ops
-@@ -118,25 +155,48 @@ ssize_t tpm_common_write(struct file *file, const char __user *buf,
- 	 * the char dev is held open.
- 	 */
- 	if (tpm_try_get_ops(priv->chip)) {
--		mutex_unlock(&priv->buffer_mutex);
--		return -EPIPE;
-+		ret = -EPIPE;
-+		goto out;
- 	}
--	out_size = tpm_transmit(priv->chip, priv->space, priv->data_buffer,
--				sizeof(priv->data_buffer), 0);
- 
--	tpm_put_ops(priv->chip);
--	if (out_size < 0) {
--		mutex_unlock(&priv->buffer_mutex);
--		return out_size;
-+	/*
-+	 * If in nonblocking mode schedule an async job to send
-+	 * the command return the size.
-+	 * In case of error the err code will be returned in
-+	 * the subsequent read call.
-+	 */
-+	if (file->f_flags & O_NONBLOCK) {
-+		queue_work(tpm_dev_wq, &priv->async_work);
-+		return size;
- 	}
- 
--	priv->data_pending = out_size;
-+	ret = tpm_transmit(priv->chip, priv->space, priv->data_buffer,
-+			   sizeof(priv->data_buffer), 0);
-+	tpm_put_ops(priv->chip);
-+
-+	if (ret > 0) {
-+		priv->data_pending = ret;
-+		mod_timer(&priv->user_read_timer, jiffies + (120 * HZ));
-+		ret = size;
-+	}
-+out:
- 	mutex_unlock(&priv->buffer_mutex);
-+	return ret;
-+}
- 
--	/* Set a timeout by which the reader must come claim the result */
--	mod_timer(&priv->user_read_timer, jiffies + (120 * HZ));
-+__poll_t tpm_common_poll(struct file *file, poll_table *wait)
-+{
-+	struct file_priv *priv = file->private_data;
-+	__poll_t mask = 0;
- 
--	return in_size;
-+	poll_wait(file, &priv->async_wait, wait);
-+
-+	if (priv->data_pending)
-+		mask = EPOLLIN | EPOLLRDNORM;
-+	else
-+		mask = EPOLLOUT | EPOLLWRNORM;
-+
-+	return mask;
- }
- 
- /*
-@@ -144,8 +204,17 @@ ssize_t tpm_common_write(struct file *file, const char __user *buf,
-  */
- void tpm_common_release(struct file *file, struct file_priv *priv)
- {
-+	flush_work(&priv->async_work);
- 	del_singleshot_timer_sync(&priv->user_read_timer);
--	flush_work(&priv->work);
-+	flush_work(&priv->timeout_work);
- 	file->private_data = NULL;
- 	priv->data_pending = 0;
- }
-+
-+void __exit tpm_dev_common_exit(void)
-+{
-+	if (tpm_dev_wq) {
-+		destroy_workqueue(tpm_dev_wq);
-+		tpm_dev_wq = NULL;
-+	}
-+}
-diff --git a/drivers/char/tpm/tpm-dev.c b/drivers/char/tpm/tpm-dev.c
-index 98b9630c3a36..1e353a4f4b7e 100644
---- a/drivers/char/tpm/tpm-dev.c
-+++ b/drivers/char/tpm/tpm-dev.c
-@@ -24,6 +24,7 @@ static int tpm_open(struct inode *inode, struct file *file)
- {
- 	struct tpm_chip *chip;
- 	struct file_priv *priv;
-+	int rc = -ENOMEM;
- 
- 	chip = container_of(inode->i_cdev, struct tpm_chip, cdev);
- 
-@@ -37,15 +38,21 @@ static int tpm_open(struct inode *inode, struct file *file)
- 
- 	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
- 	if (priv == NULL)
+-	rc = -EINVAL;
+-	if ((p - scontext) < scontext_len)
 -		goto out;
-+		goto out_clear;
+-
+ 	/* Check the validity of the new context. */
++	rc = -EINVAL;
+ 	if (!policydb_context_isvalid(pol, ctx))
+ 		goto out;
+ 	rc = 0;
+@@ -1491,7 +1487,7 @@ static int security_context_to_sid_core(struct selinux_state *state,
+ 	policydb = &state->ss->policydb;
+ 	sidtab = &state->ss->sidtab;
+ 	rc = string_to_context_struct(policydb, sidtab, scontext2,
+-				      scontext_len, &context, def_sid);
++				      &context, def_sid);
+ 	if (rc == -EINVAL && force) {
+ 		context.str = str;
+ 		context.len = strlen(str) + 1;
+@@ -1959,7 +1955,7 @@ static int convert_context(u32 key,
+ 			goto out;
  
--	tpm_common_open(file, chip, priv, NULL);
-+	rc = tpm_common_open(file, chip, priv, NULL);
-+	if (rc)
-+		goto out_free;
- 
- 	return 0;
- 
-- out:
-+out_free:
-+	kfree(priv);
-+
-+out_clear:
- 	clear_bit(0, &chip->is_open);
--	return -ENOMEM;
-+
-+	return rc;
- }
- 
- /*
-@@ -68,5 +75,6 @@ const struct file_operations tpm_fops = {
- 	.open = tpm_open,
- 	.read = tpm_common_read,
- 	.write = tpm_common_write,
-+	.poll = tpm_common_poll,
- 	.release = tpm_release,
- };
-diff --git a/drivers/char/tpm/tpm-dev.h b/drivers/char/tpm/tpm-dev.h
-index 4048677bbd78..fa49c885a2cb 100644
---- a/drivers/char/tpm/tpm-dev.h
-+++ b/drivers/char/tpm/tpm-dev.h
-@@ -2,28 +2,32 @@
- #ifndef _TPM_DEV_H
- #define _TPM_DEV_H
- 
-+#include <linux/poll.h>
- #include "tpm.h"
- 
- struct file_priv {
- 	struct tpm_chip *chip;
- 	struct tpm_space *space;
- 
--	/* Data passed to and from the tpm via the read/write calls */
--	size_t data_pending;
-+	/* Holds the amount of data passed or an error code from async op */
-+	ssize_t data_pending;
- 	struct mutex buffer_mutex;
- 
- 	struct timer_list user_read_timer;      /* user needs to claim result */
--	struct work_struct work;
-+	struct work_struct timeout_work;
-+	struct work_struct async_work;
-+	wait_queue_head_t async_wait;
- 
- 	u8 data_buffer[TPM_BUFSIZE];
- };
- 
--void tpm_common_open(struct file *file, struct tpm_chip *chip,
--		     struct file_priv *priv, struct tpm_space *space);
-+int tpm_common_open(struct file *file, struct tpm_chip *chip,
-+		    struct file_priv *priv, struct tpm_space *space);
- ssize_t tpm_common_read(struct file *file, char __user *buf,
- 			size_t size, loff_t *off);
- ssize_t tpm_common_write(struct file *file, const char __user *buf,
- 			 size_t size, loff_t *off);
--void tpm_common_release(struct file *file, struct file_priv *priv);
-+__poll_t tpm_common_poll(struct file *file, poll_table *wait);
- 
-+void tpm_common_release(struct file *file, struct file_priv *priv);
- #endif
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index 1a803b0cf980..9e3de6447512 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -1428,6 +1428,7 @@ static void __exit tpm_exit(void)
- 	class_destroy(tpm_class);
- 	class_destroy(tpmrm_class);
- 	unregister_chrdev_region(tpm_devt, 2*TPM_NUM_DEVICES);
-+	tpm_dev_common_exit();
- }
- 
- subsys_initcall(tpm_init);
-diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index f3501d05264f..b909dc9e251f 100644
---- a/drivers/char/tpm/tpm.h
-+++ b/drivers/char/tpm/tpm.h
-@@ -604,4 +604,5 @@ int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space,
- 
- int tpm_bios_log_setup(struct tpm_chip *chip);
- void tpm_bios_log_teardown(struct tpm_chip *chip);
-+void tpm_dev_common_exit(void);
- #endif
-diff --git a/drivers/char/tpm/tpmrm-dev.c b/drivers/char/tpm/tpmrm-dev.c
-index 96006c6b9696..f131c97c1577 100644
---- a/drivers/char/tpm/tpmrm-dev.c
-+++ b/drivers/char/tpm/tpmrm-dev.c
-@@ -23,14 +23,22 @@ static int tpmrm_open(struct inode *inode, struct file *file)
- 		return -ENOMEM;
- 
- 	rc = tpm2_init_space(&priv->space);
--	if (rc) {
--		kfree(priv);
--		return -ENOMEM;
--	}
-+	if (rc)
-+		goto out_free;
- 
--	tpm_common_open(file, chip, &priv->priv, &priv->space);
-+	rc = tpm_common_open(file, chip, &priv->priv, &priv->space);
-+	if (rc)
-+		goto out_del_space;
- 
- 	return 0;
-+
-+out_del_space:
-+	tpm2_del_space(chip, &priv->space);
-+
-+out_free:
-+	kfree(priv);
-+
-+	return rc;
- }
- 
- static int tpmrm_release(struct inode *inode, struct file *file)
-@@ -51,5 +59,6 @@ const struct file_operations tpmrm_fops = {
- 	.open = tpmrm_open,
- 	.read = tpm_common_read,
- 	.write = tpm_common_write,
-+	.poll = tpm_common_poll,
- 	.release = tpmrm_release,
- };
+ 		rc = string_to_context_struct(args->newp, NULL, s,
+-					      c->len, &ctx, SECSID_NULL);
++					      &ctx, SECSID_NULL);
+ 		kfree(s);
+ 		if (!rc) {
+ 			printk(KERN_INFO "SELinux:  Context %s became valid (mapped).\n",
+-- 
+2.18.0.597.ga71716f1ad-goog
 
