@@ -3,175 +3,337 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DF8FC4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 06:45:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5600C46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 06:52:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27953219DD
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 06:45:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 68436219DB
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 06:52:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="i0MgBI+y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27953219DD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pl1fuSCA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68436219DB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727285AbeHFIwg (ORCPT
+        id S1726672AbeHFJAR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 04:52:36 -0400
-Received: from mail-db5eur01on0063.outbound.protection.outlook.com ([104.47.2.63]:28608
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725739AbeHFIwf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 04:52:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4xpW+TEGULKyl4MTv9nLkaaQsSSpu77JqGoykO0pjSI=;
- b=i0MgBI+y3cCKTccuI9ErH9UC0QVZJ05ZwdVXCRFEmeoZa8qSAt7tAxqmNo6bRxS5KEDXmdsQ87xhPeX6mH7Ik72jP9RP0T4prR8AlWA0a7xlorEEb/Vc5M7PpUP/WJbPLUoI0NaQo/tyWP5AlsYSYhGM6c2jR+SqCstZZ/iQz88=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=anson.huang@nxp.com; 
-Received: from anson-OptiPlex-790.ap.freescale.net (119.31.174.66) by
- AM3PR04MB1315.eurprd04.prod.outlook.com (2a01:111:e400:586e::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1017.17; Mon, 6 Aug
- 2018 06:44:10 +0000
-From:   Anson Huang <Anson.Huang@nxp.com>
-To:     shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        fabio.estevam@nxp.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH 1/2] soc: imx: gpc: use A_CORE instread of A7 for more i.MX platforms
-Date:   Mon,  6 Aug 2018 14:39:48 +0800
-Message-Id: <1533537589-7202-1-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [119.31.174.66]
-X-ClientProxiedBy: HK0PR03CA0078.apcprd03.prod.outlook.com
- (2603:1096:203:72::18) To AM3PR04MB1315.eurprd04.prod.outlook.com
- (2a01:111:e400:586e::13)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 4ec30f15-dc51-461f-e126-08d5fb6805a8
-X-MS-Office365-Filtering-HT: Tenant
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM3PR04MB1315;
-X-Microsoft-Exchange-Diagnostics: 1;AM3PR04MB1315;3:k0RIj17A7P29zC2McKzLvm+zeinf2TXyCdkRQ1SGam81enxJzuq4w2X9WOLca3pq4958We3dUy0xFE/+gMzIQmPa7GmcuLsTX0RPeaysEiuSLHzWHvlr/O/Y7K7XbUhVlQ8vIG0ByPD/K5TQU+3Y2mU7oar03bOu80b/BAF8ozrlzX2wNZ558nKc69Fo6aVoCR+wqLt5vilErF4UOYIbG3Rh7/mp+zEG9p7hB8KLJyZhdKIPLgsVZtp/H594yXKc;25:CR4XWV2J5M1Wrpw29qINeq8Ogylf/O4CzSSoloZ0EBEBJQAxJw5tzo+wri2WCBgg/7czCrcr3msR2f/KGJuRcKiVe+OYkmnHcvcBjK+H8aqh5UcfyVSfkKDwK/vIHqn0gnW5iktWY51iVpJiUQQQIwqnzZrfpuZxAxImxzfxkYit2N4+rH72AZzeGpiVvPLuE92qkpr0C5ZtlP7zOtxPhdzkc6clQQ8wME8vFgv/pIpnXGfvOxQf+GJMEXuGrtftr0ndeNUjDy9lnHasmIIUbgBYsLyHlgmRkHlyG6prkMSm4xlSoMmnwhrFL0PgJDe7X0UzPsuCU7CaWe++arLsQA==;31:fQoeS9C9UoF+m2NMr5yugxKaJjC2YmnbgIIgBHISuKw9rW4RJxVAP7PqJKDvSwqCX1bO/hbITPur3IXMw5DasV3zkorT0M+97DxQD+6MxJ6nMaZurQRyvPPOrkQeFc9RfRiJGEzDAHYhoNiMvayuZnTB4zpu9aSx/r03sez1hxXybrQYHyYBDTQiAM+1ZDktiBVVOSHmkPhp2WSqxFnDEfwR1s0uHfTZZftEak69TMI=
-X-MS-TrafficTypeDiagnostic: AM3PR04MB1315:
-X-Microsoft-Exchange-Diagnostics: 1;AM3PR04MB1315;20:UX3dj8bE1H2jQBQO4c14J60KlJdUkyB5ciDAWirSfNGig2KiA4gKWScEo9UPf6E6fFh1C0ZYKBhngoLqh9tLAnMMjHrp3gspQe8mjNN/ATvBEl0tFIoo9FDS9RpZb0fjw+jiAyY0ktexFQxvoyt671zuFWr5vxFgpVO1Ltu/9WZ4nMvCySwJpwTDLQ2+ytS7akqAnUotymwrcZrF5BaydeFIjKDbh/w7yld9cJx+lzZbME99IN4cqmegwI+Jg+1DlfXIl7T8Dpx5/qXOMOB3dN059ty8hllFA1w5c56lYRK6r/KpA3YHI7WhVb++TWAEpcKXaQyGztAIeycbrlFITtijGpjHMktZ7UBTnX8yKeYhZvQx0QGEUuQ9W3WpYJO0kTIWlpAWNRLPbtVK/aiZteakJSE6F/sDlh7cTzcy9sQPx0twLO/VUX+i7GrJX9sEl0pK36PTuF1pKanAkNsVVeQWA+ezvubg9LWB4vSqj9JpdWUC7bHsiSiu0QwikB8R;4:E5r1URhUcI63hEFoxFw0aG046cyQKAZeeZax8/3cluh+D0BPhn6s/cPb549GqVk7WwPzmityUUwKHIvmK91uW6kFO5xsGlHcBigKhryK+hkBrwi8UyH4ceYcZGiLWKv5iRwcYHLyigkR7DYLSaEZzX1Ppm7v5Lr4O45bHK0NeFI3DrR+1o1uPBCtrFv/IJ6K6PQFNK33wdLhKkuYkdNfOKZyx5lWyzsRCksQNYQBIkl4J+iigdOm01Xcb/j6G5GvQBmIvUDzDGiB/u3lv5kzBRaAaWh957bNA82o4U0doB5/ANevyu+EMyafvWC3EW4l
-X-Microsoft-Antispam-PRVS: <AM3PR04MB131527184B2F7E6F16D72447F5200@AM3PR04MB1315.eurprd04.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(185117386973197);
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3002001)(3231311)(944501410)(52105095)(10201501046)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(20161123562045)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:AM3PR04MB1315;BCL:0;PCL:0;RULEID:;SRVR:AM3PR04MB1315;
-X-Forefront-PRVS: 07562C22DA
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(346002)(396003)(376002)(136003)(366004)(39860400002)(199004)(189003)(316002)(5660300001)(6486002)(36756003)(16586007)(6666003)(53936002)(7736002)(6512007)(25786009)(97736004)(305945005)(4326008)(106356001)(105586002)(486006)(956004)(476003)(47776003)(8676002)(48376002)(50466002)(66066001)(81156014)(81166006)(8936002)(50226002)(2906002)(86362001)(575784001)(52116002)(26005)(478600001)(68736007)(6116002)(386003)(6506007)(51416003)(186003)(16526019)(3846002)(2616005);DIR:OUT;SFP:1101;SCL:1;SRVR:AM3PR04MB1315;H:anson-OptiPlex-790.ap.freescale.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-Received-SPF: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM3PR04MB1315;23:olMCCC9H7LUyP9Wufq5TcavtZRlQ/h90suAsJyBbm?=
- =?us-ascii?Q?XIT2u72fVEA5+igPQLWfl1DVohnhT7r6+pKdFvL1Wlz8EK3bbHqiyklD0G6S?=
- =?us-ascii?Q?KQSJvZo2JT4b2GjhXXWuK4s+EyIRe5dS27Xl83GnhQ/PWFBl24ey0L5kmgAE?=
- =?us-ascii?Q?9fE7rklvKfaqe28+wcuLlrzB608iKfTeHQGRbALf/EJQhSYJkPcLI61KCFbx?=
- =?us-ascii?Q?7rk7Bdh/Sy0oCN08gXJPuUp0ucQVbxWm43GoNRy6pgZJljy5jnSnHfJnImNG?=
- =?us-ascii?Q?mgMuEP70ZChzefmXUjAgCRPKDSq89thN1rjiESNz9zrM9RN1o35N0ZkQgdzi?=
- =?us-ascii?Q?yXaW5TdDdstlYNYQ70Li5OC8vS7vXhNBwZaq2dzlWhyiBvaH6g6O5HFlZxWD?=
- =?us-ascii?Q?gDtuDWmAL/hfIaakcY5Mg1M2zZJ5mtxQ3Kry85igVN7TwFWFl3XqJu2p0y0b?=
- =?us-ascii?Q?KqX4l6x1OEab4Kb5d4OPL1DM+ZoteTUq0+NYo6KpDTZi3M/Ev0eV7Dlq938L?=
- =?us-ascii?Q?7ATFc/5YkVtHhZSY3K1EIjeSEBOl3/91QClzZbJbRReawfwWIiZkdBO8KVh9?=
- =?us-ascii?Q?5Kdpb5KKfDID8sxP7/am7jjIwxSvW68NLA8JKy77YcwolprEwEEjZ/lKyI6/?=
- =?us-ascii?Q?FG1cGPwmv3GpOjHiS76nf4jZd8gZyNnaEAnarx+vUTWtJraSforV04wmPGaO?=
- =?us-ascii?Q?OomHA6l7uZT8see+k8q8hp5kC01oMxSDITAXp2NG0Iv2ROtw9ubn61s0ntzX?=
- =?us-ascii?Q?1xLWJMYlhX1OnQUKcgUyW28m4ckuTX5MpnRVDGQqnnp/ISv0wjYSueY74FA8?=
- =?us-ascii?Q?0yfzmrOhISsxTLkE599Sx4C56meab8eQNErUZrJlSJPcMatsCqGLD0R9BWhK?=
- =?us-ascii?Q?fLGosh4e/AR9OJhcho5ZycklLUBgyASGO6d1xwmYnC1Pgq9++qp0IlHLdcyC?=
- =?us-ascii?Q?GU+ewRi4kxTRc4w8qljJgrQyqwvwA5yrjey+uhBRAbsmxDDcUHrk16wG9oHb?=
- =?us-ascii?Q?Y7A0sYNeh7KCl+24irOOpwDpiMc10O462XGzvDXxHwWvio3yC2GzAQzYx0gd?=
- =?us-ascii?Q?CA4M9lKNPF2mTbbLtKZpZIvjpufDiTpQfGrR6LgXLbjlP/m5rIlrtskhFfdw?=
- =?us-ascii?Q?bctgTfrCpE=3D?=
-X-Microsoft-Antispam-Message-Info: OeuwBV+ULVQJM3xP/fbRpovTT6MuB81+r2/MUvHtU/4oGwpRg350PfsPTBJfOV2WXBbrmUQu8xfeEAOmcfcsXE0Pm+OQA0raWekdeBh9/YhFzRdDSQQuUYtiwMhJ0VAedCl/MR0jwtLrGm3WbXkiWT2PbVGvjQtyRwfsA+BVUqv0G2/VvhTlOyWRONpvlwuPvxkPcspLD43g8UBjS9qbTNFiJgSjnQWQCKeuIM1DTKv9bxg0NhdoQLqGGlsFg/6hDyO4uBgE2WaIDzPz0K/gwW/iUfbmgT8IQY9X6KJQk4jiP9L7RrNUVQk2HtJhyDVxAIdCqgPY+LGzrr+Mo8sI4r7Sq0l4A2djidqvaNtb+Vg=
-X-Microsoft-Exchange-Diagnostics: 1;AM3PR04MB1315;6:Kmxi6/OVk6IT62CasZC3hD2dg/C6zZ4WngIjVmIfN2vWmUtSQXiaM1l+LVQRnrIH4iJN3OA0QtB165GGKabH5OnPpnxzl/5EL8qzcA47izTva167pOLpWYNe2zen/ix/gdWak5ekZt9lVTTlPCbFuZdr5batpyjRg0fX+DSuL/CkYlUzo/eIy974/ia2nrKw18+pqDrWuAfO3CitdpgqBLgwLZg0usPErgTPyPmLVN4KVROe9uwXIJfMNo/+K0fbV/3/VBM6rzPy/s6lOJTcSZa2MJEMeSho8OoBiEMzi2FHGAwmMf/smQjtZPejpvzGgBayOTWY4YKAsbhn94biYQujpIbi6T5KnysHzmNh2r/1vfAbFFVCyNJwBqblNudvsSzVd+wg5FEY2l+cJBS/SD6hM56FW1298dE29BA9+InewGoiLefzr0NNzzYJ8rkeQ+gPewkkEKIpgHvvPWXrBw==;5:WxWoZ+fEndWuIs5es9ZLSTmMlZOpJ7ZeD9KqIub71r7pOYvL5jqyucZ0rohQYhSLLaJbQe2y5p2VMRfl2RrbcWrgO3976XLNNSaOaKq7L1bPyeAu6tcoxXoS3KPwxfzNtN9gQ00Klnr+7VCgDBykklmfzo4/PxDSQlbsllJDuNE=;7:cDgAwnQBYAJpbCj2IgNsHrQzWaBIl8urRtebZFOS7WFfWTwq+p8GJ+uYgQDgOxqnIKzhGj8uY5LIkhdWlcSDHzVYp8q8vqHRl+AT2td/P7OAMCgZ01ZCyYWg7Zjz5/TgIyuNB9gcCO73ewFgU/wscpAR5Vk9AuzHHzaZmzOcuqt9QZY3kThWzHE/rd9u6rxdpKK+D3pGv3EUst8QgU2jjgdxxd8TG+JOa3QNxdHPfu+0lw+mXDxLsQEMDCmKDH9X
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2018 06:44:10.7176
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4ec30f15-dc51-461f-e126-08d5fb6805a8
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM3PR04MB1315
+        Mon, 6 Aug 2018 05:00:17 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:36096 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725739AbeHFJAR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 05:00:17 -0400
+Received: by mail-pf1-f193.google.com with SMTP id b11-v6so6389382pfo.3
+        for <linux-kernel@vger.kernel.org>; Sun, 05 Aug 2018 23:52:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=RebaPz0B9wqlISsSANy3Aci2tPDS3tePtEKrKOVEVSQ=;
+        b=Pl1fuSCALUmHz0rwDG1HOpuTVQbMCqPGCB5PWrIoDR0RAgtbFY8HCYqL+a9999SsPG
+         tuxpGPbAxNplk09bHfHKcoepulQtqXV/7gL9v2ZREturWMVbYKGwaqKG304MBxLhiSuO
+         AftCoEgRfaApeRmF+iQdPhxvw1qYE2d3QHV0Dj5sMwnkbRTRVN4nvtoe6vX8FZ42aRFF
+         LZ9UcyxwcSxvgfALoGQL1Fx8Hx0A60dc/MygZRGMxGXPCbmt6UOulbpcFSBlgcD9wq68
+         aZ9M1vxCVHFWAZy+oiZklIhv/don2PyU3Su32H7gOpO7ur7OFaTSWmU3q8I2Q7LolLQy
+         wqpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=RebaPz0B9wqlISsSANy3Aci2tPDS3tePtEKrKOVEVSQ=;
+        b=ioFhh2cltt92Acj8n+tArtIHHNx7iILnk5mE7MCOEO9UUNF//9UflN5OemVdCy1KBa
+         FPxsaUCa3pm2B6WhFITs0bu48ijXbMc66o5i/BOUSBahbNEcPAutZ1ZiSpkYKUixqQ3S
+         nZM5cZnfT7gHo6CVHL8eRPPZTGDxrZl1xCbrVACNxQ2tarAWvP8AZPuBLRmlf+57QyIC
+         WQh+AaDd3z/xMjXIOCezSpgyH5stkeDBkCSAGbQONt6V85rxbZM1mmGmU9st6QSXGr52
+         lpzcZ+coVUAPRgnjKg0qjVAFIq/qpbfrkjp2wO98BdzxMExEUGr5IJJnG1+bH81TIH0y
+         cPxQ==
+X-Gm-Message-State: AOUpUlGg8ghX7d1/8OdkdWnPIiEjIp31x6r4Dsq2cxnkJCI9BLoJ7KiS
+        rREvArnx9iGDHvGHA1wbYVw=
+X-Google-Smtp-Source: AAOMgpfrruooCbuK1ERDW0dzkJNfV964Q3EhVnDJBRbJ8pobV3aPyrTv9mZqi74+0gUOgj+lV3KEPw==
+X-Received: by 2002:a62:d842:: with SMTP id e63-v6mr15901893pfg.88.1533538359273;
+        Sun, 05 Aug 2018 23:52:39 -0700 (PDT)
+Received: from rashmica.ozlabs.ibm.com ([122.99.82.10])
+        by smtp.gmail.com with ESMTPSA id e26-v6sm13365083pfi.70.2018.08.05.23.52.32
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 05 Aug 2018 23:52:38 -0700 (PDT)
+From:   Rashmica Gupta <rashmica.g@gmail.com>
+To:     toshi.kani@hpe.com, tglx@linutronix.de, akpm@linux-foundation.org,
+        bp@suse.de, brijesh.singh@amd.com, thomas.lendacky@amd.com,
+        jglisse@redhat.com, gregkh@linuxfoundation.org,
+        baiyaowei@cmss.chinamobile.com, dan.j.williams@intel.com,
+        mhocko@suse.com, iamjoonsoo.kim@lge.com, vbabka@suse.cz,
+        malat@debian.org, pasha.tatashin@oracle.com, bhelgaas@google.com,
+        osalvador@techadventures.net, yasu.isimatu@gmail.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Cc:     Rashmica Gupta <rashmica.g@gmail.com>
+Subject: [PATCH v2] resource: Merge resources on a node when hot-adding memory
+Date:   Mon,  6 Aug 2018 16:52:24 +1000
+Message-Id: <20180806065224.31383-1-rashmica.g@gmail.com>
+X-Mailer: git-send-email 2.14.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-gpcv2 driver is NOT just used on i.MX7D which has Cortex-A7
-cores, but also on i.MX8MQ/i.MX8MM platforms which use Cortex-A53
-cores, so let's use A_CORE instread of A7 to avoid confusion.
+When hot-removing memory release_mem_region_adjustable() splits
+iomem resources if they are not the exact size of the memory being
+hot-deleted. Adding this memory back to the kernel adds a new
+resource.
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Eg a node has memory 0x0 - 0xfffffffff. Offlining and hot-removing
+1GB from 0xf40000000 results in the single resource 0x0-0xfffffffff being
+split into two resources: 0x0-0xf3fffffff and 0xf80000000-0xfffffffff.
+
+When we hot-add the memory back we now have three resources:
+0x0-0xf3fffffff, 0xf40000000-0xf7fffffff, and 0xf80000000-0xfffffffff.
+
+Now if we try to remove a section of memory that overlaps these resources,
+like 2GB from 0xf40000000, release_mem_region_adjustable() fails as it
+expects the chunk of memory to be within the boundaries of a single
+resource.
+
+This patch adds a function request_resource_and_merge(). This is called
+instead of request_resource_conflict() when registering a resource in
+add_memory(). It calls request_resource_conflict() and if hot-removing is
+enabled (if it isn't we won't get resource fragmentation) we attempt to
+merge contiguous resources on the node.
+
+Signed-off-by: Rashmica Gupta <rashmica.g@gmail.com>
 ---
- drivers/soc/imx/gpcv2.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+v1->v2: Only attempt to merge resources if hot-remove is enabled.
 
-diff --git a/drivers/soc/imx/gpcv2.c b/drivers/soc/imx/gpcv2.c
-index 6ef18cf..0e31465 100644
---- a/drivers/soc/imx/gpcv2.c
-+++ b/drivers/soc/imx/gpcv2.c
-@@ -20,14 +20,14 @@
- #include <linux/regulator/consumer.h>
- #include <dt-bindings/power/imx7-power.h>
+ include/linux/ioport.h         |   2 +
+ include/linux/memory_hotplug.h |   2 +-
+ kernel/resource.c              | 116 +++++++++++++++++++++++++++++++++++++++++
+ mm/memory_hotplug.c            |  22 ++++----
+ 4 files changed, 130 insertions(+), 12 deletions(-)
+
+diff --git a/include/linux/ioport.h b/include/linux/ioport.h
+index da0ebaec25f0..f5b93a711e86 100644
+--- a/include/linux/ioport.h
++++ b/include/linux/ioport.h
+@@ -189,6 +189,8 @@ extern int allocate_resource(struct resource *root, struct resource *new,
+ 						       resource_size_t,
+ 						       resource_size_t),
+ 			     void *alignf_data);
++extern struct resource *request_resource_and_merge(struct resource *parent,
++						   struct resource *new, int nid);
+ struct resource *lookup_resource(struct resource *root, resource_size_t start);
+ int adjust_resource(struct resource *res, resource_size_t start,
+ 		    resource_size_t size);
+diff --git a/include/linux/memory_hotplug.h b/include/linux/memory_hotplug.h
+index 4e9828cda7a2..9c00f97c8cc6 100644
+--- a/include/linux/memory_hotplug.h
++++ b/include/linux/memory_hotplug.h
+@@ -322,7 +322,7 @@ static inline void remove_memory(int nid, u64 start, u64 size) {}
+ extern int walk_memory_range(unsigned long start_pfn, unsigned long end_pfn,
+ 		void *arg, int (*func)(struct memory_block *, void *));
+ extern int add_memory(int nid, u64 start, u64 size);
+-extern int add_memory_resource(int nid, struct resource *resource, bool online);
++extern int add_memory_resource(int nid, u64 start, u64 size, bool online);
+ extern int arch_add_memory(int nid, u64 start, u64 size,
+ 		struct vmem_altmap *altmap, bool want_memblock);
+ extern void move_pfn_range_to_zone(struct zone *zone, unsigned long start_pfn,
+diff --git a/kernel/resource.c b/kernel/resource.c
+index 30e1bc68503b..5967061f9cea 100644
+--- a/kernel/resource.c
++++ b/kernel/resource.c
+@@ -1621,3 +1621,119 @@ static int __init strict_iomem(char *str)
+ }
  
--#define GPC_LPCR_A7_BSC			0x000
-+#define GPC_LPCR_A_CORE_BSC			0x000
+ __setup("iomem=", strict_iomem);
++
++#ifdef CONFIG_MEMORY_HOTPLUG
++#ifdef CONFIG_MEMORY_HOTREMOVE
++/*
++ * Attempt to merge resource and it's sibling
++ */
++static int merge_resources(struct resource *res)
++{
++	struct resource *next;
++	struct resource *tmp;
++	uint64_t size;
++	int ret = -EINVAL;
++
++	next = res->sibling;
++
++	/*
++	 * Not sure how to handle two different children. So only attempt
++	 * to merge two resources if neither have children, only one has a
++	 * child or if both have the same child.
++	 */
++	if ((res->child && next->child) && (res->child != next->child))
++		return ret;
++
++	if (res->end + 1 != next->start)
++		return ret;
++
++	if (res->flags != next->flags)
++		return ret;
++
++	/* Update sibling and child of resource */
++	res->sibling = next->sibling;
++	tmp = res->child;
++	if (!res->child)
++		res->child = next->child;
++
++	size = next->end - res->start + 1;
++	ret = __adjust_resource(res, res->start, size);
++	if (ret) {
++		/* Failed so restore resource to original state */
++		res->sibling = next;
++		res->child = tmp;
++		return ret;
++	}
++
++	free_resource(next);
++
++	return ret;
++}
++
++/*
++ * Attempt to merge resources on the node
++ */
++static void merge_node_resources(int nid, struct resource *parent)
++{
++	struct resource *res;
++	uint64_t start_addr;
++	uint64_t end_addr;
++	int ret;
++
++	start_addr = node_start_pfn(nid) << PAGE_SHIFT;
++	end_addr = node_end_pfn(nid) << PAGE_SHIFT;
++
++	write_lock(&resource_lock);
++
++	/* Get the first resource */
++	res = parent->child;
++
++	while (res) {
++		/* Check that the resource is within the node */
++		if (res->start < start_addr) {
++			res = res->sibling;
++			continue;
++		}
++		/* Exit if resource is past end of node */
++		if (res->sibling->end > end_addr)
++			break;
++
++		ret = merge_resources(res);
++		if (!ret)
++			continue;
++		res = res->sibling;
++	}
++	write_unlock(&resource_lock);
++}
++#endif /* CONFIG_MEMORY_HOTREMOVE */
++
++/**
++ * request_resource_and_merge() - request an I/O or memory resource for hot-add
++ * @parent: parent resource descriptor
++ * @new: resource descriptor desired by caller
++ * @nid: node id of the node we want the resource on
++ *
++ * Returns NULL for success and conflict resource on error.
++ * If no conflict resource then attempt to merge resources on the node.
++ *
++ * This is intended to cleanup the fragmentation of resources that occurs when
++ * hot-removing memory (see release_mem_region_adjustable). If hot-removing is
++ * not enabled then there is no point trying to merge resources.
++ */
++struct resource *request_resource_and_merge(struct resource *parent,
++					    struct resource *new, int nid)
++{
++	struct resource *conflict;
++
++	conflict = request_resource_conflict(parent, new);
++
++	if (conflict)
++		return conflict;
++
++#ifdef CONFIG_MEMORY_HOTREMOVE
++	merge_node_resources(nid, parent);
++#endif /* CONFIG_MEMORY_HOTREMOVE */
++
++	return NULL;
++}
++#endif /* CONFIG_MEMORY_HOTPLUG */
+diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+index 7deb49f69e27..2e342f5ce322 100644
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@ -97,7 +97,7 @@ void mem_hotplug_done(void)
+ }
  
- #define GPC_PGC_CPU_MAPPING		0x0ec
--#define USB_HSIC_PHY_A7_DOMAIN		BIT(6)
--#define USB_OTG2_PHY_A7_DOMAIN		BIT(5)
--#define USB_OTG1_PHY_A7_DOMAIN		BIT(4)
--#define PCIE_PHY_A7_DOMAIN		BIT(3)
--#define MIPI_PHY_A7_DOMAIN		BIT(2)
-+#define USB_HSIC_PHY_A_CORE_DOMAIN		BIT(6)
-+#define USB_OTG2_PHY_A_CORE_DOMAIN		BIT(5)
-+#define USB_OTG1_PHY_A_CORE_DOMAIN		BIT(4)
-+#define PCIE_PHY_A_CORE_DOMAIN		BIT(3)
-+#define MIPI_PHY_A_CORE_DOMAIN		BIT(2)
- 
- #define GPC_PU_PGC_SW_PUP_REQ		0x0f8
- #define GPC_PU_PGC_SW_PDN_REQ		0x104
-@@ -167,7 +167,7 @@ static const struct imx7_pgc_domain imx7_pgc_domains[] = {
- 		},
- 		.bits  = {
- 			.pxx = MIPI_PHY_SW_Pxx_REQ,
--			.map = MIPI_PHY_A7_DOMAIN,
-+			.map = MIPI_PHY_A_CORE_DOMAIN,
- 		},
- 		.voltage   = 1000000,
- 		.pgc	   = PGC_MIPI,
-@@ -179,7 +179,7 @@ static const struct imx7_pgc_domain imx7_pgc_domains[] = {
- 		},
- 		.bits  = {
- 			.pxx = PCIE_PHY_SW_Pxx_REQ,
--			.map = PCIE_PHY_A7_DOMAIN,
-+			.map = PCIE_PHY_A_CORE_DOMAIN,
- 		},
- 		.voltage   = 1000000,
- 		.pgc	   = PGC_PCIE,
-@@ -191,7 +191,7 @@ static const struct imx7_pgc_domain imx7_pgc_domains[] = {
- 		},
- 		.bits  = {
- 			.pxx = USB_HSIC_PHY_SW_Pxx_REQ,
--			.map = USB_HSIC_PHY_A7_DOMAIN,
-+			.map = USB_HSIC_PHY_A_CORE_DOMAIN,
- 		},
- 		.voltage   = 1200000,
- 		.pgc	   = PGC_USB_HSIC,
-@@ -261,7 +261,7 @@ builtin_platform_driver(imx7_pgc_domain_driver)
- static int imx_gpcv2_probe(struct platform_device *pdev)
+ /* add this memory to iomem resource */
+-static struct resource *register_memory_resource(u64 start, u64 size)
++static struct resource *register_memory_resource(int nid, u64 start, u64 size)
  {
- 	static const struct regmap_range yes_ranges[] = {
--		regmap_reg_range(GPC_LPCR_A7_BSC,
-+		regmap_reg_range(GPC_LPCR_A_CORE_BSC,
- 				 GPC_M4_PU_PDN_FLG),
- 		regmap_reg_range(GPC_PGC_CTRL(PGC_MIPI),
- 				 GPC_PGC_SR(PGC_MIPI)),
+ 	struct resource *res, *conflict;
+ 	res = kzalloc(sizeof(struct resource), GFP_KERNEL);
+@@ -108,7 +108,7 @@ static struct resource *register_memory_resource(u64 start, u64 size)
+ 	res->start = start;
+ 	res->end = start + size - 1;
+ 	res->flags = IORESOURCE_SYSTEM_RAM | IORESOURCE_BUSY;
+-	conflict =  request_resource_conflict(&iomem_resource, res);
++	conflict =  request_resource_and_merge(&iomem_resource, res, nid);
+ 	if (conflict) {
+ 		if (conflict->desc == IORES_DESC_DEVICE_PRIVATE_MEMORY) {
+ 			pr_debug("Device unaddressable memory block "
+@@ -122,11 +122,15 @@ static struct resource *register_memory_resource(u64 start, u64 size)
+ 	return res;
+ }
+ 
+-static void release_memory_resource(struct resource *res)
++static void release_memory_resource(struct resource *res, u64 start, u64 size)
+ {
+ 	if (!res)
+ 		return;
++#ifdef CONFIG_MEMORY_HOTREMOVE
++	release_mem_region_adjustable(&iomem_resource, start, size);
++#else
+ 	release_resource(res);
++#endif
+ 	kfree(res);
+ 	return;
+ }
+@@ -1096,17 +1100,13 @@ static int online_memory_block(struct memory_block *mem, void *arg)
+ }
+ 
+ /* we are OK calling __meminit stuff here - we have CONFIG_MEMORY_HOTPLUG */
+-int __ref add_memory_resource(int nid, struct resource *res, bool online)
++int __ref add_memory_resource(int nid, u64 start, u64 size, bool online)
+ {
+-	u64 start, size;
+ 	pg_data_t *pgdat = NULL;
+ 	bool new_pgdat;
+ 	bool new_node;
+ 	int ret;
+ 
+-	start = res->start;
+-	size = resource_size(res);
+-
+ 	ret = check_hotplug_memory_range(start, size);
+ 	if (ret)
+ 		return ret;
+@@ -1195,13 +1195,13 @@ int __ref add_memory(int nid, u64 start, u64 size)
+ 	struct resource *res;
+ 	int ret;
+ 
+-	res = register_memory_resource(start, size);
++	res = register_memory_resource(nid, start, size);
+ 	if (IS_ERR(res))
+ 		return PTR_ERR(res);
+ 
+-	ret = add_memory_resource(nid, res, memhp_auto_online);
++	ret = add_memory_resource(nid, start, size, memhp_auto_online);
+ 	if (ret < 0)
+-		release_memory_resource(res);
++		release_memory_resource(res, start, size);
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(add_memory);
 -- 
-2.7.4
+2.14.4
 
