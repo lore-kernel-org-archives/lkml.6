@@ -2,122 +2,113 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DF81C46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 12:37:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 909CDC46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 12:42:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FAD6219EF
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 12:37:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=embeddedgreg-com.20150623.gappssmtp.com header.i=@embeddedgreg-com.20150623.gappssmtp.com header.b="bAMqsVNM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FAD6219EF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedgreg.com
+	by mail.kernel.org (Postfix) with ESMTP id 49C9F21A0B
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 12:42:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49C9F21A0B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731298AbeHFOqq (ORCPT
+        id S1730266AbeHFOvV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 10:46:46 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:35829 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726887AbeHFOqq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 10:46:46 -0400
-Received: by mail-oi0-f67.google.com with SMTP id m11-v6so21904956oic.2
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Aug 2018 05:37:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=embeddedgreg-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=89ia0iP3NKGT1f415wnsh7B+eGYaSxuXNRIofakmcRY=;
-        b=bAMqsVNMK2kaHZnz8b7oMLE7+x1+G2pqgVg463YDy+BXq9uyPC3SNlg7iVVWxxcXgK
-         kGxnCLDp1qUlPn6L8I+Xd1cHlurTaW/AyghQ4rUcMYK3pq6I6CW5GW0fkwdURF/kro+z
-         izjNdCoR9JQsk4BQoC4gyzKOpxHPg92mc/NqXeLx5fmGfmWPwzhTFp/OZ75R5uYU2Sbx
-         J6DO2cQzB/PNBf74F3DHwE8wwLONTzHnH+Y4qupS7arSdifI6tCIBsAB03/uz2PzNZZ/
-         bddIvO9YWhk14eSXBw8NugS1iY6mdtOk1Q7iN4/h4z2pq77uUlJw9CPZFTEZhjP4/bSQ
-         bZDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=89ia0iP3NKGT1f415wnsh7B+eGYaSxuXNRIofakmcRY=;
-        b=DOovcMTXkjT09JdeG8SdkurId+E3KuG9zJgh+udPSjIN89o33D9PQNu/kMyP65zWME
-         fHmPVnAObKuNqCXS2jhBbcOlTxvSHBlW5IgILxx6ATPfMbqsvr6iEVhioenDv1wP7SZk
-         dKJiXnyLBVfsxErziHJ1Z3J9SQV55sjQvphrU8pvCFYLcZtQAbsTwQ8vLa9VnSWuK+8D
-         C6VfAX09pBSA3eo4+oOI5y70RjWkKZIr4MaoaQVOLkEC7S1RKCOfBTwYhLxDx8Me78gu
-         GVNBkg+GqhE1g3JMGJbMDZ9/AITQOAPz1r6ZE5y3tZYyI57eSbP6UHTaFkpoLj+Ssegf
-         ctNw==
-X-Gm-Message-State: AOUpUlH/nhiqpefAg/jOPbkfRwJk8ZZ7EzwBwn7ttbDLm7efyc6G6gM3
-        UWtFTpVh/XaVb5/FvH/9bum2vlyqOVRh0CBs4Ddm0TwWUYXbHA==
-X-Google-Smtp-Source: AAOMgpd9wXz0YhPQeeUUoUA49YmdHdoDMHu9Irrsvd6CZupvIH2uEcH6rK04uJT4KJ6fyxPHsodCFNkeynVg/dJSTk8=
-X-Received: by 2002:aca:d088:: with SMTP id j8-v6mr14690554oiy.276.1533559069687;
- Mon, 06 Aug 2018 05:37:49 -0700 (PDT)
+        Mon, 6 Aug 2018 10:51:21 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38100 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726988AbeHFOvV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 10:51:21 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6852580D;
+        Mon,  6 Aug 2018 05:42:24 -0700 (PDT)
+Received: from [10.4.12.131] (e110467-lin.emea.arm.com [10.4.12.131])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 751CD3F2EA;
+        Mon,  6 Aug 2018 05:42:22 -0700 (PDT)
+Subject: Re: framebuffer corruption due to overlapping stp instructions on
+ arm64
+To:     Mikulas Patocka <mpatocka@redhat.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        Joao Pinto <Joao.Pinto@synopsys.com>,
+        linux-pci <linux-pci@vger.kernel.org>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Matt Sealey <neko@bakuhatsu.net>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+References: <alpine.LRH.2.02.1808021242320.31834@file01.intranet.prod.int.rdu2.redhat.com>
+ <CAHCPf3tFGqkYEcWNN4LaWThw_rVqT316pzLv6T7RfxwO-eZ0EA@mail.gmail.com>
+ <alpine.LRH.2.02.1808030212340.17672@file01.intranet.prod.int.rdu2.redhat.com>
+ <CAKv+Gu8DeuksZhk1g3q_msSKV_hSY_2e1uzVten9-oGO3j9Sqg@mail.gmail.com>
+ <20180803094129.GB17798@arm.com>
+ <alpine.LRH.2.02.1808031235410.31584@file01.intranet.prod.int.rdu2.redhat.com>
+ <CAKv+Gu-aNFh1fsr_05SEwDp99n3pLrguP7=tEcFQPNY53=K7Fw@mail.gmail.com>
+ <alpine.LRH.2.02.1808031424140.14030@file01.intranet.prod.int.rdu2.redhat.com>
+ <CAHCPf3s-+Qf=WBZz1KpisDMG3520jCUh8PLAO3PHa4jdt8kCTw@mail.gmail.com>
+ <CAKv+Gu9_h-WFi1j4+DWUN_dMj75SKKHxWoDH8WQ9P7S7MNpZQg@mail.gmail.com>
+ <alpine.LRH.2.02.1808060553130.30832@file01.intranet.prod.int.rdu2.redhat.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <99fff4fe-afa9-f12f-a518-472a9dd1c530@arm.com>
+Date:   Mon, 6 Aug 2018 13:42:20 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Received: by 2002:a4a:8afa:0:0:0:0:0 with HTTP; Mon, 6 Aug 2018 05:37:49 -0700 (PDT)
-In-Reply-To: <a3c26117-1774-f23e-37d0-2312d4312b63@i2se.com>
-References: <20180806040731.5113-1-greg@embeddedgreg.com> <a3c26117-1774-f23e-37d0-2312d4312b63@i2se.com>
-From:   Greg Gallagher <greg@embeddedgreg.com>
-Date:   Mon, 6 Aug 2018 08:37:49 -0400
-Message-ID: <CALLqZ8QiELH0x7a4E-eQyj6ewLmBuwQ7oYmHrZQ9kUcDWhaAMQ@mail.gmail.com>
-Subject: Re: [PATCH] staging/vc04_services: Fix alignment of function arguments
-To:     Stefan Wahren <stefan.wahren@i2se.com>
-Cc:     Eric Anholt <eric@anholt.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <alpine.LRH.2.02.1808060553130.30832@file01.intranet.prod.int.rdu2.redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 06/08/18 11:25, Mikulas Patocka wrote:
+[...]
+>> None of this explains why some transactions fail to make it across
+>> entirely. The overlapping writes in question write the same data to
+>> the memory locations that are covered by both, and so the ordering in
+>> which the transactions are received should not affect the outcome.
+> 
+> You're right that the corruption couldn't be explained just by reordering
+> writes. My hypothesis is that the PCIe controller tries to disambiguate
+> the overlapping writes, but the disambiguation logic was not tested and it
+> is buggy. If there's a barrier between the overlapping writes, the PCIe
+> controller won't see any overlapping writes, so it won't trigger the
+> faulty disambiguation logic and it works.
+> 
+> Could the ARM engineers look if there's some chicken bit in Cortex-A72
+> that could insert barriers between non-cached writes automatically?
 
-On Mon, Aug 6, 2018 at 4:34 AM, Stefan Wahren <stefan.wahren@i2se.com> wrote:
-> Hi,
->
-> Am 06.08.2018 um 06:07 schrieb Greg Gallagher:
->>
->> Fix warning generated by checkpatch.pl for alignment should match open
->> parenthesis.  This is a coding style change only.
->>
->> Signed-off-by: Greg Gallagher <greg@embeddedgreg.com>
->> ---
->>   drivers/staging/vc04_services/bcm2835-audio/bcm2835-ctl.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-ctl.c
->> b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-ctl.c
->> index ec468d5719b1..33ae8ae8663b 100644
->> --- a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-ctl.c
->> +++ b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-ctl.c
->> @@ -174,7 +174,7 @@ static struct snd_kcontrol_new snd_bcm2835_ctl[] = {
->>   };
->>     static int snd_bcm2835_spdif_default_info(struct snd_kcontrol
->> *kcontrol,
->> -       struct snd_ctl_elem_info *uinfo)
->> +                                         struct snd_ctl_elem_info *uinfo)
->>   {
->>         uinfo->type = SNDRV_CTL_ELEM_TYPE_IEC958;
->>         uinfo->count = 1;
->
->
-> in case this is the only alignment issue in the whole driver, you can have
-> my acked-by.
-> Otherwise please fix the other ones in the second version.
->
-> Btw there are more drivers under vc04_services so a "staging: bcm2835-audio:
-> Fix alignment of functions arguments" would be better.
->
-> Stefan
+I don't think there is, and even if there was I imagine it would have a 
+pretty hideous effect on non-coherent DMA buffers and the various other 
+places in which we have Normal-NC mappings of actual system RAM.
 
+> I observe these kinds of corruptions:
+> - failing to write a few bytes
 
-I'll fix the other alignment issues as well in the second version and
-fix up the subject line to staging: bcm2835-audio.
+That could potentially be explained by the reordering/atomicity issues 
+Matt mentioned, i.e. the load is observing part of the store, before the 
+store has fully completed.
 
-thanks
+> - writing a few bytes that were written 16 bytes before
+> - writing a few bytes that were written 16 bytes after
 
-Greg
+Those sound more like the interconnect or root complex ignoring the byte 
+strobes on an unaligned burst, of which I think the simplistic view 
+would be "it's broken".
+
+FWIW I stuck my old Nvidia 7600GT card in my Arm Juno r2 board (2x 
+Cortex-A72), built your test program natively with GCC 8.1.1 at -O2, and 
+it's still happily flickering pixels in the corner of the console after 
+nearly an hour (in parallel with some iperf3 just to ensure plenty of 
+PCIe traffic). I would strongly suspect this issue is particular to 
+Armada 8k, so its' probably one for the Marvell folks to take a closer 
+look at - I believe some previous interconnect issues on those SoCs were 
+actually fixable in firmware.
+
+Robin.
