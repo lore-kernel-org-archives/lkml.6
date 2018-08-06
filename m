@@ -2,171 +2,114 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03F55C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 17:10:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00888C4646D
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 17:14:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE42321A5B
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 17:10:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QDKnSu+W"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE42321A5B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id B31B121A5B
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 17:14:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B31B121A5B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732654AbeHFTUv (ORCPT
+        id S1732479AbeHFTYE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 15:20:51 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:36301 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728349AbeHFTUv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 15:20:51 -0400
-Received: by mail-pg1-f193.google.com with SMTP id h12-v6so6513183pgs.3
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Aug 2018 10:10:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=2uezdt7oHvbRvV99+8KISNdCU5ZABu30Joz22fKYw6A=;
-        b=QDKnSu+WqdAMc++4w3Wi57Icm4gmKWSE5J2Rf8SsPI9rwKtXjAD+JIY7G0K+M+M3B1
-         eGor5FF/crtd1yIiWzCUrwraf5+sadmKa8I1jIYwwkJAjRFY/05jKOSiJ/kAKTRM6Qo9
-         8bY+5GWhR9aIYXiBVC9ATQFAtcZMNqkyMI8gA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=2uezdt7oHvbRvV99+8KISNdCU5ZABu30Joz22fKYw6A=;
-        b=S9u8soEvLl64PTwfAXyKcVU0Pu+v4zvB98RudQak+W33dqwe+frYEsDs2doP5hKsDq
-         dy0BatoTMP3StPzXe+4bEqB40XyrgWoqSrw9YjPbrwI0NxXokwTbg78ijyJpXbbpJrZ8
-         xEYqvtVMfWdFNMhWEleTLUUDx93KfAlsSTIcLkSFaYwUpontQamhKPp7RPrRwFNeKnY3
-         CLilNowQVbR2LO189wub/CtWIuVfFMnNCWjsUOrDwbFDt09cyYqpUTN5dcKr+iPlCn+u
-         FtkGC7ux/L4uFaxNA0raT00O4t8zFGsUM66+Z8im04rcAz+ZnI8JXTu6omPhr9ysUwBq
-         RCcw==
-X-Gm-Message-State: AOUpUlGU14FVpmR71xtDSdKfkuOhj/fbpIrDegZkZQaLzQgeIV9p+sFD
-        9u0eYUJ5ZlfIpRtFhPFiJt2XrA==
-X-Google-Smtp-Source: AAOMgpeCLoZvRj2UXx99vG6gTRIE/MXfcPy1eTk2DFqjPskk+EU9xo2PjUtF1VXafUNTmA9eexugaw==
-X-Received: by 2002:aa7:88d3:: with SMTP id p19-v6mr12559001pfo.160.1533575450049;
-        Mon, 06 Aug 2018 10:10:50 -0700 (PDT)
-Received: from swboyd.mtv.corp.google.com ([2620:15c:202:201:7e28:b9f3:6afc:5326])
-        by smtp.gmail.com with ESMTPSA id c3-v6sm12383333pgw.79.2018.08.06.10.10.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 06 Aug 2018 10:10:49 -0700 (PDT)
-From:   Stephen Boyd <swboyd@chromium.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Wei-Ning Huang <wnhuang@chromium.org>,
-        Julius Werner <jwerner@chromium.org>,
-        Brian Norris <briannorris@chromium.org>,
-        Samuel Holland <samuel@sholland.org>,
-        Thierry Escande <thierry.escande@collabora.com>
-Subject: [PATCH] firmware: coreboot: Let OF core populate platform device
-Date:   Mon,  6 Aug 2018 10:10:47 -0700
-Message-Id: <20180806171047.227835-1-swboyd@chromium.org>
-X-Mailer: git-send-email 2.18.0.597.ga71716f1ad-goog
+        Mon, 6 Aug 2018 15:24:04 -0400
+Received: from foss.arm.com ([217.140.101.70]:42578 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729749AbeHFTYE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 15:24:04 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E78CF80D;
+        Mon,  6 Aug 2018 10:14:01 -0700 (PDT)
+Received: from armageddon.cambridge.arm.com (armageddon.emea.arm.com [10.4.13.16])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D249E3F5D0;
+        Mon,  6 Aug 2018 10:13:59 -0700 (PDT)
+Date:   Mon, 6 Aug 2018 18:13:57 +0100
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     Robin Murphy <robin.murphy@arm.com>,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        Joao Pinto <Joao.Pinto@synopsys.com>,
+        linux-pci <linux-pci@vger.kernel.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mikulas Patocka <mpatocka@redhat.com>,
+        Matt Sealey <neko@bakuhatsu.net>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Subject: Re: framebuffer corruption due to overlapping stp instructions on
+ arm64
+Message-ID: <20180806171356.kk45vd7n5bdi6ka3@armageddon.cambridge.arm.com>
+References: <CAKv+Gu8DeuksZhk1g3q_msSKV_hSY_2e1uzVten9-oGO3j9Sqg@mail.gmail.com>
+ <20180803094129.GB17798@arm.com>
+ <alpine.LRH.2.02.1808031235410.31584@file01.intranet.prod.int.rdu2.redhat.com>
+ <CAKv+Gu-aNFh1fsr_05SEwDp99n3pLrguP7=tEcFQPNY53=K7Fw@mail.gmail.com>
+ <alpine.LRH.2.02.1808031424140.14030@file01.intranet.prod.int.rdu2.redhat.com>
+ <CAHCPf3s-+Qf=WBZz1KpisDMG3520jCUh8PLAO3PHa4jdt8kCTw@mail.gmail.com>
+ <CAKv+Gu9_h-WFi1j4+DWUN_dMj75SKKHxWoDH8WQ9P7S7MNpZQg@mail.gmail.com>
+ <alpine.LRH.2.02.1808060553130.30832@file01.intranet.prod.int.rdu2.redhat.com>
+ <99fff4fe-afa9-f12f-a518-472a9dd1c530@arm.com>
+ <CAKv+Gu_C2g=C=gMpk4a5jpDORnxZY6t1v=HDoy59m5vwNBxBBg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKv+Gu_C2g=C=gMpk4a5jpDORnxZY6t1v=HDoy59m5vwNBxBBg@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that the /firmware/coreboot node in DT is populated by the core DT
-platform code with commit 3aa0582fdb82 ("of: platform: populate
-/firmware/ node from of_platform_default_populate_init()") we should and
-can remove the platform device creation here. Otherwise, the
-of_platform_device_create() call will fail, the coreboot of driver won't
-be registered, and this driver will never bind. At the same time, we can
-move this driver to use platform device APIs instead of DT specific ones
-and drop the of_node handling that was presumably placed there to hold a
-reference to the DT node created during module init.
+On Mon, Aug 06, 2018 at 05:47:36PM +0200, Ard Biesheuvel wrote:
+> On 6 August 2018 at 14:42, Robin Murphy <robin.murphy@arm.com> wrote:
+> > On 06/08/18 11:25, Mikulas Patocka wrote:
+> > [...]
+> >>>
+> >>> None of this explains why some transactions fail to make it across
+> >>> entirely. The overlapping writes in question write the same data to
+> >>> the memory locations that are covered by both, and so the ordering in
+> >>> which the transactions are received should not affect the outcome.
+> >>
+> >> You're right that the corruption couldn't be explained just by reordering
+> >> writes. My hypothesis is that the PCIe controller tries to disambiguate
+> >> the overlapping writes, but the disambiguation logic was not tested and it
+> >> is buggy. If there's a barrier between the overlapping writes, the PCIe
+> >> controller won't see any overlapping writes, so it won't trigger the
+> >> faulty disambiguation logic and it works.
+> >>
+> >> Could the ARM engineers look if there's some chicken bit in Cortex-A72
+> >> that could insert barriers between non-cached writes automatically?
+> >
+> > I don't think there is, and even if there was I imagine it would have a
+> > pretty hideous effect on non-coherent DMA buffers and the various other
+> > places in which we have Normal-NC mappings of actual system RAM.
+> 
+> Looking at the A72 manual, there is one chicken bit that looks like it
+> may be related:
+> 
+> CPUACTLR_EL1 bit #50:
+> 
+> 0 Enables store streaming on NC/GRE memory type. This is the reset value.
+> 1 Disables store streaming on NC/GRE memory type.
+> 
+> so putting something like
+> 
+> mrs x0, S3_1_C15_C2_0
+> orr x0, x0, #(1 << 50)
+> msr S3_1_C15_C2_0, x0
+> 
+> in __cpu_setup() would be worth a try.
 
-Cc: Wei-Ning Huang <wnhuang@chromium.org>
-Cc: Julius Werner <jwerner@chromium.org>
-Cc: Brian Norris <briannorris@chromium.org>
-Cc: Samuel Holland <samuel@sholland.org>
-Cc: Thierry Escande <thierry.escande@collabora.com>
-Signed-off-by: Stephen Boyd <swboyd@chromium.org>
----
- drivers/firmware/google/coreboot_table-of.c | 39 +++++----------------
- 1 file changed, 9 insertions(+), 30 deletions(-)
+Note that access to this register may be disabled at EL3 by firmware
+(ACTLR_EL3.CPUACTLR).
 
-diff --git a/drivers/firmware/google/coreboot_table-of.c b/drivers/firmware/google/coreboot_table-of.c
-index f15bf404c579..270f112bdc54 100644
---- a/drivers/firmware/google/coreboot_table-of.c
-+++ b/drivers/firmware/google/coreboot_table-of.c
-@@ -18,21 +18,20 @@
- #include <linux/device.h>
- #include <linux/io.h>
- #include <linux/module.h>
--#include <linux/of_address.h>
--#include <linux/of_platform.h>
-+#include <linux/mod_devicetable.h>
- #include <linux/platform_device.h>
- 
- #include "coreboot_table.h"
- 
- static int coreboot_table_of_probe(struct platform_device *pdev)
- {
--	struct device_node *fw_dn = pdev->dev.of_node;
- 	void __iomem *ptr;
-+	struct resource *res;
- 
--	ptr = of_iomap(fw_dn, 0);
--	of_node_put(fw_dn);
--	if (!ptr)
--		return -ENOMEM;
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	ptr = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(ptr))
-+		return PTR_ERR(ptr);
- 
- 	return coreboot_table_init(&pdev->dev, ptr);
- }
-@@ -44,8 +43,9 @@ static int coreboot_table_of_remove(struct platform_device *pdev)
- 
- static const struct of_device_id coreboot_of_match[] = {
- 	{ .compatible = "coreboot" },
--	{},
-+	{}
- };
-+MODULE_DEVICE_TABLE(of, coreboot_of_match);
- 
- static struct platform_driver coreboot_table_of_driver = {
- 	.probe = coreboot_table_of_probe,
-@@ -55,28 +55,7 @@ static struct platform_driver coreboot_table_of_driver = {
- 		.of_match_table = coreboot_of_match,
- 	},
- };
--
--static int __init platform_coreboot_table_of_init(void)
--{
--	struct platform_device *pdev;
--	struct device_node *of_node;
--
--	/* Limit device creation to the presence of /firmware/coreboot node */
--	of_node = of_find_node_by_path("/firmware/coreboot");
--	if (!of_node)
--		return -ENODEV;
--
--	if (!of_match_node(coreboot_of_match, of_node))
--		return -ENODEV;
--
--	pdev = of_platform_device_create(of_node, "coreboot_table_of", NULL);
--	if (!pdev)
--		return -ENODEV;
--
--	return platform_driver_register(&coreboot_table_of_driver);
--}
--
--module_init(platform_coreboot_table_of_init);
-+module_platform_driver(coreboot_table_of_driver);
- 
- MODULE_AUTHOR("Google, Inc.");
- MODULE_LICENSE("GPL");
+FWIW, Mikulas' test seems to run fine on a ThunderX1 with AMD
+FirePro W2100 (on /dev/fb1)
+
 -- 
-Sent by a computer through tubes
-
+Catalin
