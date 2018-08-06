@@ -4,80 +4,79 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EF52C46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 00:22:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 127D8C46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 00:23:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E9932198F
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 00:22:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B46E5219C9
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 00:23:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tobin.cc header.i=@tobin.cc header.b="Z28EnD+P";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="njzc4GM4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E9932198F
+	dkim=pass (2048-bit key) header.d=tobin.cc header.i=@tobin.cc header.b="B4HT+ulL";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="HvcnF+Hs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B46E5219C9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tobin.cc
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727121AbeHFC24 (ORCPT
+        id S1727537AbeHFC3r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 5 Aug 2018 22:28:56 -0400
-Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:44251 "EHLO
+        Sun, 5 Aug 2018 22:29:47 -0400
+Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:36377 "EHLO
         wout2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726870AbeHFC24 (ORCPT
+        by vger.kernel.org with ESMTP id S1726870AbeHFC3q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 5 Aug 2018 22:28:56 -0400
+        Sun, 5 Aug 2018 22:29:46 -0400
 Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.west.internal (Postfix) with ESMTP id 3E66A1D0;
-        Sun,  5 Aug 2018 20:22:25 -0400 (EDT)
+        by mailout.west.internal (Postfix) with ESMTP id 5D7CE431;
+        Sun,  5 Aug 2018 20:23:18 -0400 (EDT)
 Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Sun, 05 Aug 2018 20:22:25 -0400
+  by compute5.internal (MEProxy); Sun, 05 Aug 2018 20:23:18 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tobin.cc; h=cc
         :content-type:date:from:in-reply-to:message-id:mime-version
         :references:subject:to:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm3; bh=w3BPqUpyYCxLfiWci77kaDfKc6lvfuB5b8Zjvpj9Fu0=; b=Z28EnD+P
-        u07/tVlggSkRxvDTIqWLBZd8BQa6zNu8/CKLO80GmHGZ45ve2ovGNOpMsF/f7SMF
-        h75xoYXZGLrgqtAO3kv2d7uz6mJqlwv3QI+0wsmaZePVaf0u5iAF1EyHReLvSx6y
-        zb5G+KNSP3kIOt6Nr0YIFvfl/vgY2qlNF9ox0O/NY0hH46POa9ZO2za4PdXGbwv5
-        YsMFjO92LxmZcqZAloDqrsfLK9v/ij1YGu+ULVy9EMPxrWtBJYU/T4LYcTebr2Vz
-        Ee67t9e5LeiAkX+ZTezWWNt9+go7jxKogrXi+r1ADWg6XceoiHH7a6yYEKqJrEw4
-        w4Mry4Nghx4XHg==
+        fm3; bh=IdpQbaQ32i5slcI8UnxKIN+itjJ0QGA9hP7Zha22vzo=; b=B4HT+ulL
+        nonvVSAVPQwhjFJm9j+pDQtFeWlHgtcyVN3Tit1ekjpnDBNwRWkcWsoWIxtdhY05
+        lB+j0YRlElQL3lxVIEImXmv8zaRwZPuHMKkwNJeFsMk6zAFI3ZcoKZpHNxsw51s/
+        GqgIE0HySQdCTLUUpO0fyIAUXIVSlomraNC0kxXvjNZRjJZxEW6cOSDObjZAo6TT
+        9PkbmfZUjhi6O0IHS1p6Fs2gFm/9QJGSqwc8/JoYMEzUidc3ozxYAAvyAOxuekLn
+        Dg95iCdOUuxdk+HfKhQHh8RNpMC6mpt4n4IVYF3OO3DDNVYRohS+LRUynL79pIvu
+        3iY6xe2b4QbmlQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-type:date:from:in-reply-to
         :message-id:mime-version:references:subject:to:x-me-sender
-        :x-me-sender:x-sasl-enc; s=fm3; bh=w3BPqUpyYCxLfiWci77kaDfKc6lvf
-        uB5b8Zjvpj9Fu0=; b=njzc4GM4FRmz7+3tokhNuje0/wwkNX/ydTijH41orxtHH
-        W6ehFBNrSm+X+I2F1vo8sKulFsR+2GZ5Bb/j2kW0pUorMvih4W+OjaMj/MtxiQ5T
-        rmwXqzL0H1dWcGIIMJSLw7BY5WglZetvuzR1LBcHJdMd0o77FkZHEeawSgQB8Wx3
-        c5i+yeuotT9OagMfRZ7vnOyv8SXCuwZMbnZQjoQVk/edYCQl1+6mSobUkcR1JZxB
-        9M2EXQ9TVSvWqupCYT7BgNkqII+8U+F8r/gwcwyXCBbIkl4sSV0f4XGt/2OHvinb
-        W9vaEVuKGaRTqfE8lyWq56ciMVp2lwuS2+0AnP9+g==
-X-ME-Proxy: <xmx:wJRnW48rMbr2wVJN8oMoV6iuhCGRix-5enHCScMgfmypMFr-A7v-fw>
-    <xmx:wJRnW35LwWCZtofa3YL5HY2NRSHZ0zLLZ54zi5BHalmGnu42sw48Cg>
-    <xmx:wJRnWyZPp2AQykSIxkZYJTU01qViaHHpSqsG6kwKWOaJ_VO522DRjQ>
-    <xmx:wJRnWxJB433clD6Yh0Ux_xv2k5pt3UEvIG1C4sbOcKFeo5cwSpr1pA>
-    <xmx:wJRnW1hg_14t4nPtGCmfM2eGpsEDnl1tjJ3z0xX2ApIvZ2I_y-DoqA>
-    <xmx:wJRnWyD1GHdEfKf1sm6ixy2tfAl7j2XQvqDAKCs6D37wNbYxfGRNBA>
-X-ME-Sender: <xms:wJRnW6ZRD-JZBiu4uwt_InBZWCe5hwNERuFWxSopm6yxLfIUkDdeyg>
+        :x-me-sender:x-sasl-enc; s=fm3; bh=IdpQbaQ32i5slcI8UnxKIN+itjJ0Q
+        GA9hP7Zha22vzo=; b=HvcnF+HsESAJDSXr1jLierxAcrbHO7J0ssrS9iuqU8kCr
+        z9XLjZ1Kh7R36PmBDscbtqL4zSqR5yDpPaJvJzE8+vcIl7EEKNw+t7dQn+49UuKt
+        HNmETGDy5IwFVBjuIPi+P2gru4eCrT7djvck0HZDrBFcwyKEacUQYoGRAAVa/B58
+        nn08bPSpj4aJQQrX0e58fF6V6oH2SpNTh/6Cz+gMMXBGXDmunr1rmmNmQrJ7qSdT
+        X88WB0CLBS4hviJ8c2BmskLqdn94ygMLm/X0HAUnyvX4TzGarikdf8iC42tOENdc
+        q2rI+AKk9bVe4pliTIUalyYKAN0ijXPOZ2IzAwYuQ==
+X-ME-Proxy: <xmx:9ZRnW4XDzTZTt4GdgvVTyrwpf4gMHDoDfbllGH1Z4D5BnvlJ2XVlzA>
+    <xmx:9ZRnW1qzUCEpmANop0DYpz5iyg3XC69u3ie1wbIAf0oFwdK5fq9pYA>
+    <xmx:9ZRnW1eW4xfEpYvP1nciUiHYXfL4MfYsl8JE78doMST5Hh3bHH-4rw>
+    <xmx:9ZRnWzGsD9AAS48lps2pAuz_2biUouRKSF9bTrn72JoKFAJjU7xS2g>
+    <xmx:9ZRnW71dZD19uUjyWujiZX6zgWAuSK7wSmgxrLLoKMl7LnKN8YyviQ>
+    <xmx:9ZRnWwwhiD5esXMEQJMLfBJ8hoDBakw7gE-lKmRSwZaVqa3YIJbL0A>
+X-ME-Sender: <xms:9ZRnWz8WySkGXCJLSMGhyNLDoCDeNL0pxv3jR4on8oFUNGpMYxwMHA>
 Received: from localhost (ppp121-44-251-7.bras2.syd2.internode.on.net [121.44.251.7])
-        by mail.messagingengine.com (Postfix) with ESMTPA id CCAEDE4636;
-        Sun,  5 Aug 2018 20:22:23 -0400 (EDT)
-Date:   Mon, 6 Aug 2018 10:22:20 +1000
+        by mail.messagingengine.com (Postfix) with ESMTPA id 1C0E5E455E;
+        Sun,  5 Aug 2018 20:23:16 -0400 (EDT)
+Date:   Mon, 6 Aug 2018 10:23:14 +1000
 From:   "Tobin C. Harding" <me@tobin.cc>
 To:     Daniel Borkmann <daniel@iogearbox.net>
 Cc:     Alexei Starovoitov <ast@kernel.org>,
         Jonathan Corbet <corbet@lwn.net>,
         "David S. Miller" <davem@davemloft.net>, linux-doc@vger.kernel.org,
         netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH bpf-next 05/13] docs: net: Fix indentation issues for
- code snippets
-Message-ID: <20180806002220.GJ3088@eros>
+Subject: Re: [PATCH bpf-next 12/13] docs: net: Fix various minor typos
+Message-ID: <20180806002314.GK3088@eros>
 References: <20180801050908.29970-1-me@tobin.cc>
- <20180801050908.29970-6-me@tobin.cc>
- <8d166300-78f3-db60-c097-4f7c587856f4@iogearbox.net>
+ <20180801050908.29970-13-me@tobin.cc>
+ <76cf11bc-61b3-8068-5546-79d3ff3a58e9@iogearbox.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8d166300-78f3-db60-c097-4f7c587856f4@iogearbox.net>
+In-Reply-To: <76cf11bc-61b3-8068-5546-79d3ff3a58e9@iogearbox.net>
 X-Mailer: Mutt 1.9.4 (2018-02-28)
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -85,115 +84,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 03, 2018 at 10:44:23AM +0200, Daniel Borkmann wrote:
+On Fri, Aug 03, 2018 at 10:41:12AM +0200, Daniel Borkmann wrote:
 > On 08/01/2018 07:09 AM, Tobin C. Harding wrote:
-> [...]
-> > -Starting bpf_dbg is trivial and just requires issuing:
-> > +Starting bpf_dbg is trivial and just requires issuing::
-> >  
-> > -# ./bpf_dbg
-> > +  # ./bpf_dbg
-> >  
-> >  In case input and output do not equal stdin/stdout, bpf_dbg takes an
-> >  alternative stdin source as a first argument, and an alternative stdout
-> > @@ -381,86 +384,87 @@ file "~/.bpf_dbg_init" and the command history is stored in the file
-> >  Interaction in bpf_dbg happens through a shell that also has auto-completion
-> >  support (follow-up example commands starting with '>' denote bpf_dbg shell).
-> >  The usual workflow would be to ...
-> > -
-> > -> load bpf 6,40 0 0 12,21 0 3 2048,48 0 0 23,21 0 1 1,6 0 0 65535,6 0 0 0
-> > -  Loads a BPF filter from standard output of bpf_asm, or transformed via
-> > -  e.g. `tcpdump -iem1 -ddd port 22 | tr '\n' ','`. Note that for JIT
-> > -  debugging (next section), this command creates a temporary socket and
-> > -  loads the BPF code into the kernel. Thus, this will also be useful for
-> > -  JIT developers.
-> > -
-> > -> load pcap foo.pcap
-> > -  Loads standard tcpdump pcap file.
-> > -
-> > -> run [<n>]
-> > -bpf passes:1 fails:9
-> > -  Runs through all packets from a pcap to account how many passes and fails
-> > -  the filter will generate. A limit of packets to traverse can be given.
-> > -
-> > -> disassemble
-> > -l0:	ldh [12]
-> > -l1:	jeq #0x800, l2, l5
-> > -l2:	ldb [23]
-> > -l3:	jeq #0x1, l4, l5
-> > -l4:	ret #0xffff
-> > -l5:	ret #0
-> > -  Prints out BPF code disassembly.
-> > -
-> > -> dump
-> > -/* { op, jt, jf, k }, */
-> > -{ 0x28,  0,  0, 0x0000000c },
-> > -{ 0x15,  0,  3, 0x00000800 },
-> > -{ 0x30,  0,  0, 0x00000017 },
-> > -{ 0x15,  0,  1, 0x00000001 },
-> > -{ 0x06,  0,  0, 0x0000ffff },
-> > -{ 0x06,  0,  0, 0000000000 },
-> > -  Prints out C-style BPF code dump.
-> > -
-> > -> breakpoint 0
-> > -breakpoint at: l0:	ldh [12]
-> > -> breakpoint 1
-> > -breakpoint at: l1:	jeq #0x800, l2, l5
-> > -  ...
-> > -  Sets breakpoints at particular BPF instructions. Issuing a `run` command
-> > -  will walk through the pcap file continuing from the current packet and
-> > -  break when a breakpoint is being hit (another `run` will continue from
-> > -  the currently active breakpoint executing next instructions):
-> > -
-> > -  > run
-> > -  -- register dump --
-> > -  pc:       [0]                       <-- program counter
-> > -  code:     [40] jt[0] jf[0] k[12]    <-- plain BPF code of current instruction
-> > -  curr:     l0:	ldh [12]              <-- disassembly of current instruction
-> > -  A:        [00000000][0]             <-- content of A (hex, decimal)
-> > -  X:        [00000000][0]             <-- content of X (hex, decimal)
-> > -  M[0,15]:  [00000000][0]             <-- folded content of M (hex, decimal)
-> > -  -- packet dump --                   <-- Current packet from pcap (hex)
-> > -  len: 42
-> > -    0: 00 19 cb 55 55 a4 00 14 a4 43 78 69 08 06 00 01
-> > -   16: 08 00 06 04 00 01 00 14 a4 43 78 69 0a 3b 01 26
-> > -   32: 00 00 00 00 00 00 0a 3b 01 01
-> > -  (breakpoint)
-> > -  >
-> > -
-> > -> breakpoint
-> > -breakpoints: 0 1
-> > -  Prints currently set breakpoints.
-> > -
-> > -> step [-<n>, +<n>]
-> > -  Performs single stepping through the BPF program from the current pc
-> > -  offset. Thus, on each step invocation, above register dump is issued.
-> > -  This can go forwards and backwards in time, a plain `step` will break
-> > -  on the next BPF instruction, thus +1. (No `run` needs to be issued here.)
-> > -
-> > -> select <n>
-> > -  Selects a given packet from the pcap file to continue from. Thus, on
-> > -  the next `run` or `step`, the BPF program is being evaluated against
-> > -  the user pre-selected packet. Numbering starts just as in Wireshark
-> > -  with index 1.
-> > -
-> > -> quit
-> > -#
-> > -  Exits bpf_dbg.
-> > +::
-> > +
-> > +  > load bpf 6,40 0 0 12,21 0 3 2048,48 0 0 23,21 0 1 1,6 0 0 65535,6 0 0 0
-> > +    Loads a BPF filter from standard output of bpf_asm, or transformed via
-> > +    e.g. `tcpdump -iem1 -ddd port 22 | tr '\n' ','`. Note that for JIT
-> > +    debugging (next section), this command creates a temporary socket and
-> > +    loads the BPF code into the kernel. Thus, this will also be useful for
-> > +    JIT developers.
+> > There are a few minor typos and grammatical issues.  We should however
+> > try to keep the current flavour of the document.
+> > 
+> > Fix typos and grammar if glaringly required.
+> > 
+> > Signed-off-by: Tobin C. Harding <me@tobin.cc>
 > 
-> Here for the bpf_dbg howto, it would be good to separate explanation from
-> the cmdline code snippets. This would more easily clarify the commands
-> themselves if we already go the rst route, so I'd prefer splitting this up.
+> Overall looks good, just some minor nits:
+> 
+> >  Documentation/networking/filter.rst | 65 +++++++++++++++--------------
+> >  1 file changed, 33 insertions(+), 32 deletions(-)
+> > 
+> > diff --git a/Documentation/networking/filter.rst b/Documentation/networking/filter.rst
+> > index 99dfa74fc4f7..b989a6c882b8 100644
+> > --- a/Documentation/networking/filter.rst
+> > +++ b/Documentation/networking/filter.rst
+> > @@ -32,10 +32,10 @@ removing the old one and placing your new one in its place, assuming your
+> >  filter has passed the checks, otherwise if it fails the old filter will
+> >  remain on that socket.
+> >  
+> > -SO_LOCK_FILTER option allows to lock the filter attached to a socket. Once
+> > -set, a filter cannot be removed or changed. This allows one process to
+> > +SO_LOCK_FILTER option allows locking of the filter attached to a socket.
+> > +Once set, a filter cannot be removed or changed. This allows one process to
+> >  setup a socket, attach a filter, lock it then drop privileges and be
+> > -assured that the filter will be kept until the socket is closed.
+> > +assured  that the filter will be kept until the socket is closed.
+> 
+>           ^-- looks like extra whitespace slipped in?
 
-Sure thing.  Will do as suggested. Thanks for the review.
-
+Fixed in the RFC.  Thanks for taking the time review.
 
 	Tobin
