@@ -6,94 +6,95 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 503F7C46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 08:33:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 361B0C4646D
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 08:34:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBD1E219E5
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 08:33:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBD1E219E5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id ED5D7219E6
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 08:34:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED5D7219E6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i2se.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727248AbeHFKlr (ORCPT
+        id S1727507AbeHFKmi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 06:41:47 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:10670 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725951AbeHFKlr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 06:41:47 -0400
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id C0630ECF301E1;
-        Mon,  6 Aug 2018 16:33:44 +0800 (CST)
-Received: from [10.177.253.249] (10.177.253.249) by smtp.huawei.com
- (10.3.19.205) with Microsoft SMTP Server id 14.3.399.0; Mon, 6 Aug 2018
- 16:33:39 +0800
-Subject: Re: [V9fs-developer] [PATCH] net/9p: avoid request size exceed to the
- virtqueue number in the zero copy
-To:     jiangyiwen <jiangyiwen@huawei.com>,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        Ron Minnich <rminnich@sandia.gov>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        Dominique Martinet <asmadeus@codewreck.org>
-References: <5B63FB4D.1050703@huawei.com>
-CC:     <v9fs-developer@lists.sourceforge.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        <netdev@vger.kernel.org>
-From:   piaojun <piaojun@huawei.com>
-Message-ID: <5B6807BB.9010803@huawei.com>
-Date:   Mon, 6 Aug 2018 16:32:59 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.2.0
+        Mon, 6 Aug 2018 06:42:38 -0400
+Received: from mout.kundenserver.de ([217.72.192.75]:35871 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726412AbeHFKmi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 06:42:38 -0400
+Received: from [192.168.178.69] ([109.104.50.219]) by mrelayeu.kundenserver.de
+ (mreue102 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 0MFtVW-1fju5J1Zyg-00Ex15; Mon, 06 Aug 2018 10:34:15 +0200
+Subject: Re: [PATCH] staging/vc04_services: Fix alignment of function
+ arguments
+To:     Greg Gallagher <greg@embeddedgreg.com>
+Cc:     eric@anholt.net, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+References: <20180806040731.5113-1-greg@embeddedgreg.com>
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+Message-ID: <a3c26117-1774-f23e-37d0-2312d4312b63@i2se.com>
+Date:   Mon, 6 Aug 2018 10:34:13 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <5B63FB4D.1050703@huawei.com>
-Content-Type: text/plain; charset="windows-1252"
+In-Reply-To: <20180806040731.5113-1-greg@embeddedgreg.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.253.249]
-X-CFilter-Loop: Reflected
+Content-Language: en-US
+X-Provags-ID: V03:K1:ec+U9AI8uf/jWlfpOrCgDwbk4TvfijSttmufPvYTVK6xu6utHZg
+ MfJGUpMlhQrYxf0+WKuYWrAECSGp3I5RIZDivrtu8NWiLiAR5e1eyGyHGiEKJeq8jMGxioe
+ MfL+W80tIFsb/OtyUrLiSSR+6ZFkpbsj//2yeF+haOBIo0RnHnO7oTHJnOIBSOvgLaLCI33
+ QdFQ8RhkLjxfpZPTsz6Ig==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:xVWlam5BX2Y=:dM7glSGVibElDo30CKyM9y
+ oUhLioDcbWvfXedOwg1e2ntr1WlCb5zgFkTkkul4Vbd+5Vy80fUl4+JYbvUHhMbUHElaT72hX
+ +daCFRhuLnHO3B82JlADBNnx4f1T9EG8gQza3zW1QnRgi7GUIgDlghSnQJzaUJWP64v4oNZnd
+ wskb+MFe5J16HSrT+/3MJlAY7j/zUsl0nv3xwlg9+aGrjgSGPMzW79I64/vT1+c/nR9wz35U4
+ umic6di3xJxp/1DrlpiwuzXfMOxkfnVG4iRCzAB2wY+NkBh1bODNXhPZW/ggnDOhBckkoXrE4
+ 75YuGa7vd/bdjXycMfpVzo7YirOBfI9GInN5RrQwQno7cQK73tBOHwhlv6XihMTQZvZRs7e12
+ 7ktXElWdlhB7OVZ8G1mFW412utDbKmHkvzoxKb78YrdPZk2qWQdW4p4h5cC4GxA3l7LAIUpPV
+ HNMVUov7k0uKiMc4qvStkbJPASsAsznaKP7eAN/wz6BcMsn2i24PiBpaxTrfy/smA+idmRvnk
+ 9vsZL0Y7s73NmH7XiTTN7Ko4yThsWUcxwZYIDhAUcDDUTOK0PzwDuD7KpS63CvxlPXGIlZuY1
+ u3K1XqUjieO3n9E/FLsJ+PBOv7cj17YJ9n+RQbOvMLlTXdUDW/5tQV16ibeGordQeCOY/RPk8
+ skWVk6szMtU5o7CUjOmBny6uv+0xTh+xzRnBENdSvQE6p3yEVHgffJJBYmsTAhEhPrPFCIZJI
+ 1rYWW37Px05kIxPv
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Yiwen,
+Hi,
 
-On 2018/8/3 14:50, jiangyiwen wrote:
-> Unfortunately, when the address(input and response headers) are not
-> at page boundary, it will need two extra entry in the zero copy, or
-> else it will cause sg array out of bounds.
-> 
-> To avoid the problem, we should subtract two pages for maxsize.
-> 
-> Signed-off-by: Yiwen Jiang <jiangyiwen@huawei.com>
+Am 06.08.2018 um 06:07 schrieb Greg Gallagher:
+> Fix warning generated by checkpatch.pl for alignment should match open
+> parenthesis.  This is a coding style change only.
+>
+> Signed-off-by: Greg Gallagher <greg@embeddedgreg.com>
 > ---
->  net/9p/trans_virtio.c | 9 +++++----
->  1 file changed, 5 insertions(+), 4 deletions(-)
-> 
-> diff --git a/net/9p/trans_virtio.c b/net/9p/trans_virtio.c
-> index 6265d1d..63591b2 100644
-> --- a/net/9p/trans_virtio.c
-> +++ b/net/9p/trans_virtio.c
-> @@ -754,11 +754,12 @@ static void p9_virtio_remove(struct virtio_device *vdev)
->  	.cancel = p9_virtio_cancel,
->  	/*
->  	 * We leave one entry for input and one entry for response
-> -	 * headers. We also skip one more entry to accomodate, address
-> -	 * that are not at page boundary, that can result in an extra
-> -	 * page in zero copy.
-> +	 * headers. We also skip three more entrys to accomodate
-> +	 * (input + response headers + data pages), address
-> +	 * that are not at page boundary, that can result in
-> +	 * an extra page in zero copy.
+>   drivers/staging/vc04_services/bcm2835-audio/bcm2835-ctl.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-ctl.c b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-ctl.c
+> index ec468d5719b1..33ae8ae8663b 100644
+> --- a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-ctl.c
+> +++ b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-ctl.c
+> @@ -174,7 +174,7 @@ static struct snd_kcontrol_new snd_bcm2835_ctl[] = {
+>   };
+>   
+>   static int snd_bcm2835_spdif_default_info(struct snd_kcontrol *kcontrol,
+> -	struct snd_ctl_elem_info *uinfo)
+> +					  struct snd_ctl_elem_info *uinfo)
+>   {
+>   	uinfo->type = SNDRV_CTL_ELEM_TYPE_IEC958;
+>   	uinfo->count = 1;
 
-Here should be two extra pages.
+in case this is the only alignment issue in the whole driver, you can 
+have my acked-by.
+Otherwise please fix the other ones in the second version.
 
-Thanks,
-Jun
+Btw there are more drivers under vc04_services so a "staging: 
+bcm2835-audio: Fix alignment of functions arguments" would be better.
 
->  	 */
-> -	.maxsize = PAGE_SIZE * (VIRTQUEUE_NUM - 3),
-> +	.maxsize = PAGE_SIZE * (VIRTQUEUE_NUM - 5),
->  	.def = 1,
->  	.owner = THIS_MODULE,
->  };
-> 
+Stefan
