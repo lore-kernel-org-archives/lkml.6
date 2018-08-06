@@ -2,114 +2,133 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1715C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 14:02:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E26ABC4646D
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 14:05:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B156121A34
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 14:02:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B156121A34
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 93C7F21A34
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 14:05:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93C7F21A34
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730161AbeHFQLm (ORCPT
+        id S1729389AbeHFQOV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 12:11:42 -0400
-Received: from mga01.intel.com ([192.55.52.88]:55847 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727665AbeHFQLm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 12:11:42 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Aug 2018 07:02:27 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,452,1526367600"; 
-   d="scan'208";a="77896023"
-Received: from fmsmsx104.amr.corp.intel.com ([10.18.124.202])
-  by fmsmga004.fm.intel.com with ESMTP; 06 Aug 2018 07:02:09 -0700
-Received: from fmsmsx101.amr.corp.intel.com (10.18.124.199) by
- fmsmsx104.amr.corp.intel.com (10.18.124.202) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Mon, 6 Aug 2018 07:02:09 -0700
-Received: from shsmsx104.ccr.corp.intel.com (10.239.4.70) by
- fmsmsx101.amr.corp.intel.com (10.18.124.199) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Mon, 6 Aug 2018 07:02:09 -0700
-Received: from shsmsx101.ccr.corp.intel.com ([169.254.1.57]) by
- SHSMSX104.ccr.corp.intel.com ([169.254.5.81]) with mapi id 14.03.0319.002;
- Mon, 6 Aug 2018 22:02:06 +0800
-From:   "Wang, Wei W" <wei.w.wang@intel.com>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-CC:     "virtio-dev@lists.oasis-open.org" <virtio-dev@lists.oasis-open.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "mst@redhat.com" <mst@redhat.com>,
-        "mhocko@kernel.org" <mhocko@kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
-Subject: RE: [PATCH v3 2/2] virtio_balloon: replace oom notifier with
- shrinker
-Thread-Topic: [PATCH v3 2/2] virtio_balloon: replace oom notifier with
- shrinker
-Thread-Index: AQHUKwiIDee4cjzfrU+xxAdAaZxPKaStafKAgAUXbID//4McgIAAqoJw//+Hs4CAAIyV0A==
-Date:   Mon, 6 Aug 2018 14:02:05 +0000
-Message-ID: <286AC319A985734F985F78AFA26841F739722502@SHSMSX101.ccr.corp.intel.com>
-References: <1533285146-25212-1-git-send-email-wei.w.wang@intel.com>
- <1533285146-25212-3-git-send-email-wei.w.wang@intel.com>
- <16c56ee5-eef7-dd5f-f2b6-e3c11df2765c@i-love.sakura.ne.jp>
- <5B681B41.6070205@intel.com>
- <c8d25019-1990-f0dd-c83d-e4def5b5f7fe@i-love.sakura.ne.jp>
- <286AC319A985734F985F78AFA26841F7397222E8@SHSMSX101.ccr.corp.intel.com>
- <109ff5ec-692d-67fe-4c5a-2de8b48e8300@i-love.sakura.ne.jp>
-In-Reply-To: <109ff5ec-692d-67fe-4c5a-2de8b48e8300@i-love.sakura.ne.jp>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiY2I1M2Y1ODEtOThiYi00MGI4LWFkNTgtMTdlNTlhODAwMTQzIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiYjRXWVQxQ1RXbWM3TXhEZnl2U0FROG52SDJcL2FlYWhcL05BbThWZUtvN25IeDI2VXROMnl6WERCaXR3UTdQYzV4In0=
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Mon, 6 Aug 2018 12:14:21 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39522 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727451AbeHFQOU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 12:14:20 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 96F3D7A9;
+        Mon,  6 Aug 2018 07:05:04 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 678323F2EA;
+        Mon,  6 Aug 2018 07:05:04 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id 35E111AE2D8E; Mon,  6 Aug 2018 15:05:08 +0100 (BST)
+Date:   Mon, 6 Aug 2018 15:05:08 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        aik@ozlabs.ru, robh@kernel.org, joe@perches.com,
+        elfring@users.sourceforge.net, david@gibson.dropbear.id.au,
+        jasowang@redhat.com, mpe@ellerman.id.au, linuxram@us.ibm.com,
+        haren@linux.vnet.ibm.com, paulus@samba.org,
+        srikar@linux.vnet.ibm.com, robin.murphy@arm.com,
+        jean-philippe.brucker@arm.com, marc.zyngier@arm.com
+Subject: Re: [RFC 0/4] Virtio uses DMA API for all devices
+Message-ID: <20180806140507.GB15078@arm.com>
+References: <20180720035941.6844-1-khandual@linux.vnet.ibm.com>
+ <20180727095804.GA25592@arm.com>
+ <20180730093414.GD26245@infradead.org>
+ <20180730125100-mutt-send-email-mst@kernel.org>
+ <20180730111802.GA9830@infradead.org>
+ <20180730155633-mutt-send-email-mst@kernel.org>
+ <20180731173052.GA17153@infradead.org>
+ <3d6e81511571260de1c8047aaffa8ac4df093d2e.camel@kernel.crashing.org>
+ <20180801081637.GA14438@arm.com>
+ <20180805032504-mutt-send-email-mst@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180805032504-mutt-send-email-mst@kernel.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gTW9uZGF5LCBBdWd1c3QgNiwgMjAxOCA5OjI5IFBNLCBUZXRzdW8gSGFuZGEgd3JvdGU6DQo+
-IE9uIDIwMTgvMDgvMDYgMjE6NDQsIFdhbmcsIFdlaSBXIHdyb3RlOg0KPiA+IE9uIE1vbmRheSwg
-QXVndXN0IDYsIDIwMTggNjoyOSBQTSwgVGV0c3VvIEhhbmRhIHdyb3RlOg0KPiA+PiBPbiAyMDE4
-LzA4LzA2IDE4OjU2LCBXZWkgV2FuZyB3cm90ZToNCj4gPj4+IE9uIDA4LzAzLzIwMTggMDg6MTEg
-UE0sIFRldHN1byBIYW5kYSB3cm90ZToNCj4gPj4+PiBPbiAyMDE4LzA4LzAzIDE3OjMyLCBXZWkg
-V2FuZyB3cm90ZToNCj4gPj4+Pj4gK3N0YXRpYyBpbnQgdmlydGlvX2JhbGxvb25fcmVnaXN0ZXJf
-c2hyaW5rZXIoc3RydWN0IHZpcnRpb19iYWxsb29uDQo+ID4+Pj4+ICsqdmIpIHsNCj4gPj4+Pj4g
-K8KgwqDCoCB2Yi0+c2hyaW5rZXIuc2Nhbl9vYmplY3RzID0gdmlydGlvX2JhbGxvb25fc2hyaW5r
-ZXJfc2NhbjsNCj4gPj4+Pj4gK8KgwqDCoCB2Yi0+c2hyaW5rZXIuY291bnRfb2JqZWN0cyA9IHZp
-cnRpb19iYWxsb29uX3Nocmlua2VyX2NvdW50Ow0KPiA+Pj4+PiArwqDCoMKgIHZiLT5zaHJpbmtl
-ci5iYXRjaCA9IDA7DQo+ID4+Pj4+ICvCoMKgwqAgdmItPnNocmlua2VyLnNlZWtzID0gREVGQVVM
-VF9TRUVLUzsNCj4gPj4+PiBXaHkgZmxhZ3MgZmllbGQgaXMgbm90IHNldD8gSWYgdmIgaXMgYWxs
-b2NhdGVkIGJ5DQo+ID4+Pj4ga21hbGxvYyhHRlBfS0VSTkVMKSBhbmQgaXMgbm93aGVyZSB6ZXJv
-LWNsZWFyZWQsIEtBU0FOIHdvdWxkDQo+IGNvbXBsYWluIGl0Lg0KPiA+Pj4NCj4gPj4+IENvdWxk
-IHlvdSBwb2ludCB3aGVyZSBpbiB0aGUgY29kZSB0aGF0IHdvdWxkIGNvbXBsYWluIGl0Pw0KPiA+
-Pj4gSSBvbmx5IHNlZSB0d28gc2hyaW5rZXIgZmxhZ3MgKE5VTUFfQVdBUkUgYW5kIE1FTUNHX0FX
-QVJFKSwgYW5kDQo+ID4+IHRoZXkgc2VlbSBub3QgcmVsYXRlZCB0byB0aGF0Lg0KPiA+Pg0KPiA+
-PiBXaGVyZSBpcyB2Yi0+c2hyaW5rZXIuZmxhZ3MgaW5pdGlhbGl6ZWQ/DQo+ID4NCj4gPiBJcyB0
-aGF0IG1hbmRhdG9yeSB0byBiZSBpbml0aWFsaXplZD8NCj4gDQo+IE9mIGNvdXJzZS4gOy0pDQo+
-IA0KPiA+IEkgZmluZCBpdCdzIG5vdCBpbml0aWFsaXplZCBpbiBtb3N0IHNocmlua2VycyAoZS5n
-LiB6c19yZWdpc3Rlcl9zaHJpbmtlciwNCj4gaHVnZV96ZXJvX3BhZ2Vfc2hyaW5rZXIpLg0KPiAN
-Cj4gQmVjYXVzZSBtb3N0IHNocmlua2VycyBhcmUgInN0YXRpY2FsbHkgaW5pdGlhbGl6ZWQgKHdo
-aWNoIG1lYW5zIHRoYXQNCj4gdW5zcGVjaWZpZWQgZmllbGRzIGFyZSBpbXBsaWNpdGx5IHplcm8t
-Y2xlYXJlZCkiIG9yICJkeW5hbWljYWxseSBhbGxvY2F0ZWQgd2l0aA0KPiBfX0dGUF9aRVJPIG9y
-IHplcm8tY2xlYXJlZCB1c2luZw0KPiBtZW1zZXQoKSAod2hpY2ggbWVhbnMgdGhhdCBhbGwgZmll
-bGRzIGFyZSBvbmNlIHplcm8tY2xlYXJlZCkiLg0KPiANCj4gQW5kIGlmIHlvdSBvbmNlIHplcm8t
-Y2xlYXIgdmIgYXQgYWxsb2NhdGlvbiB0aW1lLCB5b3Ugd2lsbCBnZXQgYSBib251cyB0aGF0DQo+
-IGNhbGxpbmcgdW5yZWdpc3Rlcl9zaHJpbmtlcigpIHdpdGhvdXQgY29ycmVzcG9uZGluZyByZWdp
-c3Rlcl9zaHJpbmtlcigpIGlzIHNhZmUNCj4gKHdoaWNoIHdpbGwgc2ltcGxpZnkgaW5pdGlhbGl6
-YXRpb24gZmFpbHVyZSBwYXRoKS4NCg0KT2gsIEkgc2VlLCB0aGFua3MuIFNvIGl0IHNvdW5kcyBi
-ZXR0ZXIgdG8gZGlyZWN0bHkga3phbGxvYyB2Yi4NCg0KQmVzdCwNCldlaQ0K
+Hi Michael,
+
+On Sun, Aug 05, 2018 at 03:27:42AM +0300, Michael S. Tsirkin wrote:
+> On Wed, Aug 01, 2018 at 09:16:38AM +0100, Will Deacon wrote:
+> > On Tue, Jul 31, 2018 at 03:36:22PM -0500, Benjamin Herrenschmidt wrote:
+> > > On Tue, 2018-07-31 at 10:30 -0700, Christoph Hellwig wrote:
+> > > > > However the question people raise is that DMA API is already full of
+> > > > > arch-specific tricks the likes of which are outlined in your post linked
+> > > > > above. How is this one much worse?
+> > > > 
+> > > > None of these warts is visible to the driver, they are all handled in
+> > > > the architecture (possibly on a per-bus basis).
+> > > > 
+> > > > So for virtio we really need to decide if it has one set of behavior
+> > > > as specified in the virtio spec, or if it behaves exactly as if it
+> > > > was on a PCI bus, or in fact probably both as you lined up.  But no
+> > > > magic arch specific behavior inbetween.
+> > > 
+> > > The only arch specific behaviour is needed in the case where it doesn't
+> > > behave like PCI. In this case, the PCI DMA ops are not suitable, but in
+> > > our secure VMs, we still need to make it use swiotlb in order to bounce
+> > > through non-secure pages.
+> > 
+> > On arm/arm64, the problem we have is that legacy virtio devices on the MMIO
+> > transport (so definitely not PCI) have historically been advertised by qemu
+> > as not being cache coherent, but because the virtio core has bypassed DMA
+> > ops then everything has happened to work. If we blindly enable the arch DMA
+> > ops, we'll plumb in the non-coherent ops and start getting data corruption,
+> > so we do need a way to quirk virtio as being "always coherent" if we want to
+> > use the DMA ops (which we do, because our emulation platforms have an IOMMU
+> > for all virtio devices).
+> > 
+> > Will
+> 
+> Right that's not very different from placing the device within the IOMMU
+> domain but in fact bypassing the IOMMU
+
+Hmm, I'm not sure I follow you here -- the IOMMU bypassing is handled
+inside the IOMMU driver, so we'd still end up with non-coherent DMA ops
+for the guest accesses. The presence of an IOMMU doesn't imply coherency for
+us. Or am I missing your point here?
+
+> I wonder whether anyone ever needs a non coherent virtio-mmio. If yes we
+> can extend PLATFORM_IOMMU to cover that or add another bit.
+
+I think that's probably the right way around: assume that legacy virtio-mmio
+devices are coherent by default.
+
+> What exactly do the non-coherent ops do that causes the corruption?
+
+The non-coherent ops mean that the guest ends up allocating the vring queues
+using non-cacheable mappings, whereas qemu/hypervisor uses a cacheable
+mapping despite not advertising the devices as being cache-coherent.
+
+This hits something in the architecture known as "mismatched aliases", which
+means that coherency is lost between the guest and the hypervisor,
+consequently resulting in data not being visible and ordering not being
+guaranteed. The usual symptom is that the device appears to lock up iirc,
+because the guest and the hypervisor are unable to communicate with each
+other.
+
+Does that help to clarify things?
+
+Thanks,
+
+Will
