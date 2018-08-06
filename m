@@ -2,198 +2,172 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87AACC46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:40:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01DA3C46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:40:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4AA9021A28
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:40:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AA9021A28
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id AD78721A59
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:40:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="R/QQR8lw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD78721A59
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387516AbeHFSup (ORCPT
+        id S2387566AbeHFSut (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 14:50:45 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41834 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727561AbeHFSuo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 14:50:44 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2767E15AB;
-        Mon,  6 Aug 2018 09:40:51 -0700 (PDT)
-Received: from e110439-lin.Cambridge.Arm.com (e110439-lin.emea.arm.com [10.4.12.126])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 5A1FF3F5D0;
-        Mon,  6 Aug 2018 09:40:48 -0700 (PDT)
-From:   Patrick Bellasi <patrick.bellasi@arm.com>
-To:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Subject: [PATCH v3 07/14] sched/core: uclamp: enforce last task UCLAMP_MAX
-Date:   Mon,  6 Aug 2018 17:39:39 +0100
-Message-Id: <20180806163946.28380-8-patrick.bellasi@arm.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180806163946.28380-1-patrick.bellasi@arm.com>
-References: <20180806163946.28380-1-patrick.bellasi@arm.com>
+        Mon, 6 Aug 2018 14:50:49 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:41346 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387519AbeHFSus (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 14:50:48 -0400
+Received: by mail-wr1-f65.google.com with SMTP id j5-v6so12977829wrr.8
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Aug 2018 09:40:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=4JRXIJLBl4B77V9Zp1bHxiibsTuS9qYiG3W/7d2vbs4=;
+        b=R/QQR8lwOQTXtE/oXjwJAsQ6MM1WVm3FlazsgX/aoQPMCA3dcLUASxhKx4Pplf+yQ0
+         4V6ug1JKt6ziqBRwZwS6iAO/g/BNVmuE7M2z4Nff3l5qA5wV1pMDNQLQ1p0gtpBorb9e
+         NoeOSZTbjM0O1xmOde+LtERaVHKcYoHkCDQbmqESNjs2LQt8eekMRKU1W7qZSAW6qLVm
+         +Fx6xH5Mcstxa2SY1Bw3MH4BsO/uZ4RxFoG8EwEACbqq2dLYGgzO73m28tBdYs5VGwY6
+         F9xMgGSLTnvUPRGcD/MP48ffV2V5nBKIZ6NP4Oah6+pSKfI1QsVECqebnw0Pac8qDleP
+         BHSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=4JRXIJLBl4B77V9Zp1bHxiibsTuS9qYiG3W/7d2vbs4=;
+        b=pnCzkYeQV9lEi/HrTbUVdbjNBlXHk6MHKi16vkHX05BnPxUelzwpY8VoDptCZfSbkH
+         qu+cOTUMzdOaqBBGjZalcNAGKUNP+bc/ZqxGBsoURosSOIwWg5IaKqNz15Gjn2nFVrbd
+         aRI2Tmqcsv2BB1/t0APX0QnjM03oHsOl+3Znzpa0rC4919Xk5C9um8s4LEIrCu+/ZEqx
+         JIYqQ+wNLuc2t+VDYfCTtQ8ESyUY1Z8dPzk82QQc9XHqBvR3kztou9Hburtmhxv3MrDP
+         rnzHTYgW4qJn/QXnM326mdmeL07sGbVQbAd9dSHMMu8kqZt/IFQDuSzpm1Tp9DaC9X+P
+         +W1A==
+X-Gm-Message-State: AOUpUlErZK+IO2w69FKEdEyTRUecIfJ9KnW1w4mDqcb6SciypuN6Xkwc
+        TOZE2P8kSHjY5MNcklfeRQ1AyA==
+X-Google-Smtp-Source: AAOMgpevV7lqMLifigVw6GPYsm4a3KGutEKLiEuzKRNJ7bqKjYjYA3wEC5YWatl/Eu1t3nonlXKnTg==
+X-Received: by 2002:a5d:504d:: with SMTP id h13-v6mr9764161wrt.18.1533573652777;
+        Mon, 06 Aug 2018 09:40:52 -0700 (PDT)
+Received: from andreyknvl0.muc.corp.google.com ([2a00:79e0:15:10:84be:a42a:826d:c530])
+        by smtp.gmail.com with ESMTPSA id 66-v6sm16385790wmw.34.2018.08.06.09.40.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 06 Aug 2018 09:40:52 -0700 (PDT)
+From:   Andrey Konovalov <andreyknvl@google.com>
+To:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+        linux-mm@kvack.org, linux-arch@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Dmitry Vyukov <dvyukov@google.com>,
+        Kostya Serebryany <kcc@google.com>,
+        Evgeniy Stepanov <eugenis@google.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Chintan Pandya <cpandya@codeaurora.org>
+Subject: [PATCH v5 00/10] arm64: untag user pointers passed to the kernel
+Date:   Mon,  6 Aug 2018 18:40:35 +0200
+Message-Id: <cover.1533573460.git.andreyknvl@google.com>
+X-Mailer: git-send-email 2.18.0.597.ga71716f1ad-goog
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When a util_max clamped task sleeps, its clamp constraints are removed
-from the CPU. However, the blocked utilization on that CPU can still be
-higher than the max clamp value enforced while that task was running.
-This max clamp removal when a CPU is going to be idle could thus allow
-unwanted CPU frequency increases, right while the task is not running.
+arm64 has a feature called Top Byte Ignore, which allows to embed pointer
+tags into the top byte of each pointer. Userspace programs (such as
+HWASan, a memory debugging tool [1]) might use this feature and pass
+tagged user pointers to the kernel through syscalls or other interfaces.
 
-This can happen, for example, where there is another (smaller) task
-running on a different CPU of the same frequency domain.
-In this case, when we aggregate the utilization of all the CPUs in a
-shared frequency domain, schedutil can still see the full non clamped
-blocked utilization of all the CPUs and thus eventually increase the
-frequency.
+This patch makes a few of the kernel interfaces accept tagged user
+pointers. The kernel is already able to handle user faults with tagged
+pointers and has the untagged_addr macro, which this patchset reuses.
 
-Let's fix this by using:
+Thanks!
 
-   uclamp_cpu_put_id(UCLAMP_MAX)
-      uclamp_cpu_update(last_clamp_value)
+[1] http://clang.llvm.org/docs/HardwareAssistedAddressSanitizerDesign.html
 
-to detect when a CPU has no more RUNNABLE clamped tasks and to flag this
-condition. Thus, while a CPU is idle, we can still enforce the last used
-clamp value for it.
+Changes in v5:
+- Added 3 new patches that add untagging to places found with static
+  analysis.
+- Rebased onto 44c929e1 (4.18-rc8).
 
-To the contrary, we do not track any UCLAMP_MIN since, while a CPU is
-idle, we don't want to enforce any minimum frequency
-Indeed, we rely just on blocked load decay to smoothly reduce the
-frequency.
+Changes in v4:
+- Added a selftest for checking that passing tagged pointers to the
+  kernel succeeds.
+- Rebased onto 81e97f013 (4.18-rc1+).
 
-Signed-off-by: Patrick Bellasi <patrick.bellasi@arm.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Suren Baghdasaryan <surenb@google.com>
-Cc: Todd Kjos <tkjos@google.com>
-Cc: Joel Fernandes <joelaf@google.com>
-Cc: Juri Lelli <juri.lelli@redhat.com>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc: Morten Rasmussen <morten.rasmussen@arm.com>
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-pm@vger.kernel.org
-
----
 Changes in v3:
- Message-ID: <CAJuCfpFnj2g3+ZpR4fP4yqfxs0zd=c-Zehr2XM7m_C+WdL9jNA@mail.gmail.com>
- - rename UCLAMP_NONE into UCLAMP_NOT_VALID
+- Rebased onto e5c51f30 (4.17-rc6+).
+- Added linux-arch@ to the list of recipients.
 
 Changes in v2:
- - rabased on v4.18-rc4
- - new patch to improve a specific issue
----
- kernel/sched/core.c  | 35 +++++++++++++++++++++++++++++++----
- kernel/sched/sched.h |  2 ++
- 2 files changed, 33 insertions(+), 4 deletions(-)
+- Rebased onto 2d618bdf (4.17-rc3+).
+- Removed excessive untagging in gup.c.
+- Removed untagging pointers returned from __uaccess_mask_ptr.
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index bc2beedec7bf..ff76b000bbe8 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -906,7 +906,8 @@ uclamp_group_find(int clamp_id, unsigned int clamp_value)
-  * For the specified clamp index, this method computes the new CPU utilization
-  * clamp to use until the next change on the set of RUNNABLE tasks on that CPU.
-  */
--static inline void uclamp_cpu_update(struct rq *rq, int clamp_id)
-+static inline void uclamp_cpu_update(struct rq *rq, int clamp_id,
-+				     unsigned int last_clamp_value)
- {
- 	struct uclamp_group *uc_grp = &rq->uclamp.group[clamp_id][0];
- 	int max_value = UCLAMP_NOT_VALID;
-@@ -924,6 +925,19 @@ static inline void uclamp_cpu_update(struct rq *rq, int clamp_id)
- 		if (max_value >= SCHED_CAPACITY_SCALE)
- 			break;
- 	}
-+
-+	/*
-+	 * Just for the UCLAMP_MAX value, in case there are no RUNNABLE
-+	 * task, we keep the CPU clamped to the last task's clamp value.
-+	 * This avoids frequency spikes to MAX when one CPU, with an high
-+	 * blocked utilization, sleeps and another CPU, in the same frequency
-+	 * domain, do not see anymore the clamp on the first CPU.
-+	 */
-+	if (clamp_id == UCLAMP_MAX && max_value == UCLAMP_NOT_VALID) {
-+		rq->uclamp.flags |= UCLAMP_FLAG_IDLE;
-+		max_value = last_clamp_value;
-+	}
-+
- 	rq->uclamp.value[clamp_id] = max_value;
- }
- 
-@@ -953,13 +967,26 @@ static inline void uclamp_cpu_get_id(struct task_struct *p,
- 	uc_grp = &rq->uclamp.group[clamp_id][0];
- 	uc_grp[group_id].tasks += 1;
- 
-+	/* Force clamp update on idle exit */
-+	uc_cpu = &rq->uclamp;
-+	clamp_value = p->uclamp[clamp_id].value;
-+	if (unlikely(uc_cpu->flags & UCLAMP_FLAG_IDLE)) {
-+		/*
-+		 * This function is called for both UCLAMP_MIN (before) and
-+		 * UCLAMP_MAX (after). Let's reset the flag only the second
-+		 * once we know that UCLAMP_MIN has been already updated.
-+		 */
-+		if (clamp_id == UCLAMP_MAX)
-+			uc_cpu->flags &= ~UCLAMP_FLAG_IDLE;
-+		uc_cpu->value[clamp_id] = clamp_value;
-+		return;
-+	}
-+
- 	/*
- 	 * If this is the new max utilization clamp value, then we can update
- 	 * straight away the CPU clamp value. Otherwise, the current CPU clamp
- 	 * value is still valid and we are done.
- 	 */
--	uc_cpu = &rq->uclamp;
--	clamp_value = p->uclamp[clamp_id].value;
- 	if (uc_cpu->value[clamp_id] < clamp_value)
- 		uc_cpu->value[clamp_id] = clamp_value;
- }
-@@ -1011,7 +1038,7 @@ static inline void uclamp_cpu_put_id(struct task_struct *p,
- 	uc_cpu = &rq->uclamp;
- 	clamp_value = uc_grp[group_id].value;
- 	if (clamp_value >= uc_cpu->value[clamp_id])
--		uclamp_cpu_update(rq, clamp_id);
-+		uclamp_cpu_update(rq, clamp_id, clamp_value);
- }
- 
- /**
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index bb305e3d5737..d5855babb9c9 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -803,6 +803,8 @@ struct uclamp_group {
-  * values, i.e. no min/max clamping at all.
-  */
- struct uclamp_cpu {
-+#define UCLAMP_FLAG_IDLE 0x01
-+	int flags;
- 	int value[UCLAMP_CNT];
- 	struct uclamp_group group[UCLAMP_CNT][CONFIG_UCLAMP_GROUPS_COUNT + 1];
- };
+Changes in v1:
+- Rebased onto 4.17-rc1.
+
+Changes in RFC v2:
+- Added "#ifndef untagged_addr..." fallback in linux/uaccess.h instead of
+  defining it for each arch individually.
+- Updated Documentation/arm64/tagged-pointers.txt.
+- Dropped "mm, arm64: untag user addresses in memory syscalls".
+- Rebased onto 3eb2ce82 (4.16-rc7).
+
+Andrey Konovalov (10):
+  arm64: add type casts to untagged_addr macro
+  uaccess: add untagged_addr definition for other arches
+  arm64: untag user addresses in access_ok and __uaccess_mask_ptr
+  mm, arm64: untag user addresses in mm/gup.c
+  lib, arm64: untag addrs passed to strncpy_from_user and strnlen_user
+  arm64: untag user address in __do_user_fault
+  fs, arm64: untag user address in copy_mount_options
+  usb, arm64: untag user addresses in devio
+  arm64: update Documentation/arm64/tagged-pointers.txt
+  selftests, arm64: add a selftest for passing tagged pointers to kernel
+
+ Documentation/arm64/tagged-pointers.txt       |  5 +++--
+ arch/arm64/include/asm/uaccess.h              | 14 +++++++++-----
+ arch/arm64/mm/fault.c                         |  2 +-
+ drivers/usb/core/devio.c                      |  8 +++++---
+ fs/namespace.c                                |  2 +-
+ include/linux/uaccess.h                       |  4 ++++
+ lib/strncpy_from_user.c                       |  2 ++
+ lib/strnlen_user.c                            |  2 ++
+ mm/gup.c                                      |  4 ++++
+ tools/testing/selftests/arm64/.gitignore      |  1 +
+ tools/testing/selftests/arm64/Makefile        | 11 +++++++++++
+ .../testing/selftests/arm64/run_tags_test.sh  | 12 ++++++++++++
+ tools/testing/selftests/arm64/tags_test.c     | 19 +++++++++++++++++++
+ 13 files changed, 74 insertions(+), 12 deletions(-)
+ create mode 100644 tools/testing/selftests/arm64/.gitignore
+ create mode 100644 tools/testing/selftests/arm64/Makefile
+ create mode 100755 tools/testing/selftests/arm64/run_tags_test.sh
+ create mode 100644 tools/testing/selftests/arm64/tags_test.c
+
 -- 
-2.18.0
+2.18.0.597.ga71716f1ad-goog
 
