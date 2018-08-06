@@ -2,89 +2,232 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44FB2C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 13:53:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAD08C46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 13:54:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E417B21A34
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 13:53:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 98B5721A39
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 13:54:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="RROYp1T5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E417B21A34
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oLdIT2ER"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98B5721A39
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731008AbeHFQCP (ORCPT
+        id S1730094AbeHFQDd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 12:02:15 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:56384 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727517AbeHFQCO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 12:02:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
-        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=F1b8heVRoDa1lGDJgz4V431dJDpfyPryjRXcSuVX62E=;
-        b=RROYp1T5p2bIx6FR33cmMFfDMyWLciJNu2F+eW6Z+WyOaZQz6GueVoDd/1jVNiZLa5Ksl0DwIH3B/rYGJevxOAFkNwOU08lBtXccfnzvF6aoA1nP4mVSmkbpjPFpfn2vjpuOTad2PbHInxS4DmBpCy5t2HkG3KKSw6yMyUYBK7U=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1fmfwP-000227-Hn; Mon, 06 Aug 2018 15:52:57 +0200
-Date:   Mon, 6 Aug 2018 15:52:57 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Aditya Prayoga <aditya@kobol.io>
-Cc:     linux-gpio@vger.kernel.org,
-        Richard Genoud <richard.genoud@gmail.com>,
-        Gregory CLEMENT <gregory.clement@bootlin.com>,
-        Gauthier Provost <gauthier@kobol.io>,
-        Alban Browaeys <alban.browaeys@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Dennis Gilmore <dennis@ausil.us>,
-        Ralph Sennhauser <ralph.sennhauser@gmail.com>
-Subject: Re: [PATCH RESEND 2/2] gpio: mvebu: Allow to use non-default PWM
- counter
-Message-ID: <20180806135257.GB6584@lunn.ch>
-References: <1533522556-55055-1-git-send-email-aditya@kobol.io>
- <1533522556-55055-3-git-send-email-aditya@kobol.io>
+        Mon, 6 Aug 2018 12:03:33 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:36719 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730003AbeHFQDc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 12:03:32 -0400
+Received: by mail-pf1-f193.google.com with SMTP id b11-v6so6911269pfo.3
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Aug 2018 06:54:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=EoCXDd8CPRhAGxGhtg43SvJ9hOo3vQWZBKjhQ4G/9LA=;
+        b=oLdIT2ER3OG9iA7gQjrEZqLlHaE0o1kXEt8ZhKzwlR05BZhD//PV2iWw0lUiUKO/DV
+         +CWxkLTjh9DbO64n3ZbOnBRFF6fAnJ/LKG71x5GEkTQrnQxeh/q5UxqMx+UmkXoCdhWq
+         2Sc/B3piQfdfg1rFvDo5MG2kGl/xKjFCjrR/VtXT8xkxm8V+Y2hO7ZPm4UZNMMAA3iwI
+         2xEMnz/kTvEfB2BnWqOhtnTdlV88WcDWH4nZuZwC6p4Vhmeo/N/bc0O8eiZjP8oj8Ob/
+         Zm1cBsOcmgvrUpyWk3SZp4A0HLIDux5kRE+TBlUXghVT1X2kv4FNwLCbGlv+cHuJUfNz
+         7GpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=EoCXDd8CPRhAGxGhtg43SvJ9hOo3vQWZBKjhQ4G/9LA=;
+        b=IyNole6FH9vZ5bIilaFzbCko205uwCGVcz+/l/Z+j4P4FwRgnafFzLQLCrJnJJWYxx
+         2Yb2maONszkNYrBdG8BMuD8XsmhRX00l2VedyERb/Iu/10bli6B7+2zVvRFxb/mV9HiJ
+         wdn36rswbcMJfo8bKoihi08MUV0/rh6DGTsbdVXH1VGhVABkUlSSGmOC13APpAoyunwg
+         G40vR7wHHy+zvD8f8PXzpUdLsMlNiN0s8DcmIL7J5k3DUx13lNfXyM//Q2VZIa9nNYZo
+         7XYPQTFSN77XuNtR8agXB689/5/fxZZePw6ObgRf+qFWiFW6q8GgSY0t3sFb83XDnflC
+         PasA==
+X-Gm-Message-State: AOUpUlFdcp4gJ++d7ThWCZM+2Z5Ksb+0gafMN/WLWtIDTKkT9HsaNGaO
+        E2KXaStAGLMlOAzFZgk7L+0=
+X-Google-Smtp-Source: AAOMgpeULAaUapfkWNqJ2L+zEdWNqqu6IW01FYV+ntDe14TkH8eaIYIlCMoZjksoE1ykVVOS96xmIg==
+X-Received: by 2002:a63:1c13:: with SMTP id c19-v6mr14703439pgc.332.1533563658546;
+        Mon, 06 Aug 2018 06:54:18 -0700 (PDT)
+Received: from danjae.aot.lge.com ([182.210.106.170])
+        by smtp.gmail.com with ESMTPSA id y20-v6sm12264008pgv.31.2018.08.06.06.54.15
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 06 Aug 2018 06:54:17 -0700 (PDT)
+Date:   Mon, 6 Aug 2018 22:49:12 +0900
+From:   Namhyung Kim <namhyung@kernel.org>
+To:     Jiri Olsa <jolsa@kernel.org>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        David Ahern <dsahern@gmail.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Stephane Eranian <eranian@google.com>, kernel-team@lge.com
+Subject: Re: [PATCH 19/20] perf annotate: Add --percent-type option
+Message-ID: <20180806134912.GB6983@danjae.aot.lge.com>
+References: <20180804130521.11408-1-jolsa@kernel.org>
+ <20180804130521.11408-20-jolsa@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1533522556-55055-3-git-send-email-aditya@kobol.io>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180804130521.11408-20-jolsa@kernel.org>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 06, 2018 at 10:29:16AM +0800, Aditya Prayoga wrote:
-> On multiple PWM lines, if the other PWM counter is unused, allocate it
-> to next PWM request. The priority would be:
-> 1. Default counter assigned to the bank
-> 2. Unused counter that is assigned to other bank
-> 3. Fallback to default counter
+On Sat, Aug 04, 2018 at 03:05:20PM +0200, Jiri Olsa wrote:
+> Adding --percent-type option to set annotation percent type
+> from following choices:
+>   global-period, local-period, global-hits, local-hits
 > 
-> For example on second bank there are three PWM request, first one would
-> use default counter (counter B), second one would try to use counter A,
-> and the third one would use counter B.
+> Examples:
+>   $ perf annotate --percent-type period-local --stdio | head -1
+>    Percent         |      Source code ... es, percent: local period)
+>   $ perf annotate --percent-type hits-local --stdio | head -1
+>    Percent         |      Source code ... es, percent: local hits)
+>   $ perf annotate --percent-type hits-global --stdio | head -1
+>    Percent         |      Source code ... es, percent: global hits)
+>   $ perf annotate --percent-type period-global --stdio | head -1
+>    Percent         |      Source code ... es, percent: global period)
+> 
+> The local/global keywords set if the percentage is computed
+> in the scope of the function (local) or the whole data (global).
+> 
+> The period/hits keywords set the base the percentage is computed
+> on - the samples period or the number of samples (hits).
 
-Hi Aditya
+What about adding "period" as an alias to "local-period" (and same for
+"hits" as well)?
 
-There are only two PWM counters for all the GPIO lines. So you cannot
-support 3 PWM requests. You have to enforce a maximum of two PWMs.
+Thanks,
+Namhyung
 
-When i implemented this PWM code, i only needed one PWM. So it took
-the easy option. GPIO bank 0 uses counter A, GPIO bank1 uses counter
-B. For the hardware you have, this is not sufficient, so you need to
-generalise this. Any PWM can use any counter, whatever is available
-when the PWM is requested.
 
-Rather than have a linked list of PWM, i think it would be better to
-have a static array of two mvebu_pwm structures. Index 0 uses counter
-A, index 1 uses counter B. You can then keep with the concept of
-pwm->pgiod != NULL means the counter is in use. The request() call can
-then find an unused PWM, set pwm->gpiod, and point mvchip->mvpwm to
-one of the two static instances.
-
-    Andrew
+> 
+> Link: http://lkml.kernel.org/n/tip-ahnswy1p9rnjlkudhl2ig3gc@git.kernel.org
+> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> ---
+>  tools/perf/Documentation/perf-annotate.txt |  9 ++++
+>  tools/perf/builtin-annotate.c              |  4 ++
+>  tools/perf/util/annotate.c                 | 53 ++++++++++++++++++++++
+>  tools/perf/util/annotate.h                 |  3 ++
+>  4 files changed, 69 insertions(+)
+> 
+> diff --git a/tools/perf/Documentation/perf-annotate.txt b/tools/perf/Documentation/perf-annotate.txt
+> index 749cc6055dac..e8c972f89357 100644
+> --- a/tools/perf/Documentation/perf-annotate.txt
+> +++ b/tools/perf/Documentation/perf-annotate.txt
+> @@ -118,6 +118,15 @@ OPTIONS
+>  --group::
+>  	Show event group information together
+>  
+> +--percent-type::
+> +	Set annotation percent type from following choices:
+> +	  global-period, local-period, global-hits, local-hits
+> +
+> +	The local/global keywords set if the percentage is computed
+> +	in the scope of the function (local) or the whole data (global).
+> +	The period/hits keywords set the base the percentage is computed
+> +	on - the samples period or the number of samples (hits).
+> +
+>  SEE ALSO
+>  --------
+>  linkperf:perf-record[1], linkperf:perf-report[1]
+> diff --git a/tools/perf/builtin-annotate.c b/tools/perf/builtin-annotate.c
+> index 8180319285af..830481b8db26 100644
+> --- a/tools/perf/builtin-annotate.c
+> +++ b/tools/perf/builtin-annotate.c
+> @@ -542,6 +542,10 @@ int cmd_annotate(int argc, const char **argv)
+>  	OPT_CALLBACK_DEFAULT(0, "stdio-color", NULL, "mode",
+>  			     "'always' (default), 'never' or 'auto' only applicable to --stdio mode",
+>  			     stdio__config_color, "always"),
+> +	OPT_CALLBACK(0, "percent-type", &annotate.opts, "local-period",
+> +		     "Set percent type local/global-period/hits",
+> +		     annotate_parse_percent_type),
+> +
+>  	OPT_END()
+>  	};
+>  	int ret;
+> diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
+> index 6316fa96d984..f68636c0d95a 100644
+> --- a/tools/perf/util/annotate.c
+> +++ b/tools/perf/util/annotate.c
+> @@ -2799,3 +2799,56 @@ void annotation_config__init(void)
+>  	annotation__default_options.show_total_period = symbol_conf.show_total_period;
+>  	annotation__default_options.show_nr_samples   = symbol_conf.show_nr_samples;
+>  }
+> +
+> +static unsigned int parse_percent_type(char *str1, char *str2)
+> +{
+> +	unsigned int type = (unsigned int) -1;
+> +
+> +	if (!strcmp("period", str1)) {
+> +		if (!strcmp("local", str2))
+> +			type = PERCENT_PERIOD_LOCAL;
+> +		else if (!strcmp("global", str2))
+> +			type = PERCENT_PERIOD_GLOBAL;
+> +	}
+> +
+> +	if (!strcmp("hits", str1)) {
+> +		if (!strcmp("local", str2))
+> +			type = PERCENT_HITS_LOCAL;
+> +		else if (!strcmp("global", str2))
+> +			type = PERCENT_HITS_GLOBAL;
+> +	}
+> +
+> +	return type;
+> +}
+> +
+> +int
+> +annotate_parse_percent_type(const struct option *opt, const char *_str,
+> +			    int unset __maybe_unused)
+> +{
+> +	struct annotation_options *opts = opt->value;
+> +	unsigned int type;
+> +	char *str1, *str2;
+> +	int err = -1;
+> +
+> +	str1 = strdup(_str);
+> +	if (!str1)
+> +		return -ENOMEM;
+> +
+> +	str2 = strchr(str1, '-');
+> +	if (!str2)
+> +		goto out;
+> +
+> +	*str2++ = 0;
+> +
+> +	type = parse_percent_type(str1, str2);
+> +	if (type == (unsigned int) -1)
+> +		type = parse_percent_type(str2, str1);
+> +	if (type != (unsigned int) -1) {
+> +		opts->percent_type = type;
+> +		err = 0;
+> +	}
+> +
+> +out:
+> +	free(str1);
+> +	return err;
+> +}
+> diff --git a/tools/perf/util/annotate.h b/tools/perf/util/annotate.h
+> index 760a6678edff..c7337f0a1823 100644
+> --- a/tools/perf/util/annotate.h
+> +++ b/tools/perf/util/annotate.h
+> @@ -397,4 +397,7 @@ static inline int symbol__tui_annotate(struct symbol *sym __maybe_unused,
+>  
+>  void annotation_config__init(void);
+>  
+> +int
+> +annotate_parse_percent_type(const struct option *opt, const char *_str,
+> +			    int unset);
+>  #endif	/* __PERF_ANNOTATE_H */
+> -- 
+> 2.17.1
+> 
