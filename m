@@ -3,113 +3,76 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26425C46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 10:28:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F7D7C46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 10:29:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7BE821A04
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 10:28:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7BE821A04
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id A7FB121A04
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 10:29:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7FB121A04
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729740AbeHFMgh (ORCPT
+        id S1729747AbeHFMhu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 08:36:37 -0400
-Received: from mx2.suse.de ([195.135.220.15]:40422 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727517AbeHFMgh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 08:36:37 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B0978AE1F;
-        Mon,  6 Aug 2018 10:28:11 +0000 (UTC)
-Message-ID: <1533550820.15815.14.camel@suse.com>
-Subject: Re: [PATCH 0/4][RFC v2] Introduce the in-kernel hibernation
- encryption
-From:   Oliver Neukum <oneukum@suse.com>
-To:     Yu Chen <yu.c.chen@intel.com>
-Cc:     Pavel Machek <pavel@ucw.cz>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Eric Biggers <ebiggers@google.com>,
-        "Lee, Chun-Yi" <jlee@suse.com>, Theodore Ts o <tytso@mit.edu>,
-        Stephan Mueller <smueller@chronox.de>,
-        Denis Kenzior <denkenz@gmail.com>, linux-pm@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gu, Kookoo" <kookoo.gu@intel.com>,
-        "Zhang, Rui" <rui.zhang@intel.com>
-Date:   Mon, 06 Aug 2018 12:20:20 +0200
-In-Reply-To: <20180806075754.GA12124@chenyu-desktop>
-References: <cover.1531924968.git.yu.c.chen@intel.com>
-         <20180718202235.GA4132@amd> <20180718235851.GA22170@sandybridge-desktop>
-         <20180719110149.GA4679@amd> <20180719132003.GA30981@sandybridge-desktop>
-         <20180720102532.GA20284@amd> <1532346156.3057.11.camel@suse.com>
-         <20180723162302.GA4503@sandybridge-desktop>
-         <1532590246.7411.3.camel@suse.com> <20180806075754.GA12124@chenyu-desktop>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Mon, 6 Aug 2018 08:37:50 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:36793 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727517AbeHFMhu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 08:37:50 -0400
+Received: from fsav103.sakura.ne.jp (fsav103.sakura.ne.jp [27.133.134.230])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w76ATO1N077379;
+        Mon, 6 Aug 2018 19:29:24 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav103.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav103.sakura.ne.jp);
+ Mon, 06 Aug 2018 19:29:24 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav103.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126074194044.bbtec.net [126.74.194.44])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w76ATJpO077347
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Mon, 6 Aug 2018 19:29:24 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH v3 2/2] virtio_balloon: replace oom notifier with shrinker
+To:     Wei Wang <wei.w.wang@intel.com>
+References: <1533285146-25212-1-git-send-email-wei.w.wang@intel.com>
+ <1533285146-25212-3-git-send-email-wei.w.wang@intel.com>
+ <16c56ee5-eef7-dd5f-f2b6-e3c11df2765c@i-love.sakura.ne.jp>
+ <5B681B41.6070205@intel.com>
+Cc:     virtio-dev@lists.oasis-open.org, linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, linux-mm@kvack.org,
+        mst@redhat.com, mhocko@kernel.org, akpm@linux-foundation.org
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <c8d25019-1990-f0dd-c83d-e4def5b5f7fe@i-love.sakura.ne.jp>
+Date:   Mon, 6 Aug 2018 19:29:17 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <5B681B41.6070205@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mo, 2018-08-06 at 15:57 +0800, Yu Chen wrote:
-> Hi Oliver,
-> On Thu, Jul 26, 2018 at 09:30:46AM +0200, Oliver Neukum wrote:
-> > On Di, 2018-07-24 at 00:23 +0800, Yu Chen wrote:
-> > > 
-> > > Good point, we once tried to generate key in kernel, but people
-> > > suggest to generate key in userspace and provide it to the
-> > > kernel, which is what ecryptfs do currently, so it seems this
-> > > should also be safe for encryption in kernel.
-> > > https://www.spinics.net/lists/linux-crypto/msg33145.html
-> > > Thus Chun-Yi's signature can use EFI key and both the key from
-> > > user space.
-> > 
-> > Hi,
-> > 
-> > ecryptfs can trust user space. It is supposed to keep data
-> > safe while the system is inoperative.
+On 2018/08/06 18:56, Wei Wang wrote:
+> On 08/03/2018 08:11 PM, Tetsuo Handa wrote:
+>> On 2018/08/03 17:32, Wei Wang wrote:
+>>> +static int virtio_balloon_register_shrinker(struct virtio_balloon *vb)
+>>> +{
+>>> +    vb->shrinker.scan_objects = virtio_balloon_shrinker_scan;
+>>> +    vb->shrinker.count_objects = virtio_balloon_shrinker_count;
+>>> +    vb->shrinker.batch = 0;
+>>> +    vb->shrinker.seeks = DEFAULT_SEEKS;
+>> Why flags field is not set? If vb is allocated by kmalloc(GFP_KERNEL)
+>> and is nowhere zero-cleared, KASAN would complain it.
 > 
-> Humm, I did not quite get the point here, let's take fscrypt
+> Could you point where in the code that would complain it?
+> I only see two shrinker flags (NUMA_AWARE and MEMCG_AWARE), and they seem not related to that.
 
-While the system is running and the fs is mounted, your data
-is as secure as root access to your machine, right? You encrypt
-a disk primarily so data cannot be recovered (and altered) while
-the system is not running.
-
-Secure Boot does not trust root fully. There is a cryptographic
-chain of trust and user space is not part of it.
-
-> for example, the kernel gets user generated key from user space,
-> and uses per-inode nonce(random bytes) as the master key to
-> do a KDF(key derivation function) on user provided key, and uses
-> that key for encryption. We can also added similar mechanism
-> to generate the key in kernel space but the key should be
-> original from user's provided key(password derived), because
-> the security boot/signature mechanism could not cover the case
-> that, two different users could resume to each other's context
-> because there isn't any certification during resume if it is
-> on the same physical hardware.
-
-Please explain. You will always have to suspend the whole machine
-with all tasks of all users. And STD with Secure Boot need not
-imply that you encrypt your discs. You need to encrypt only
-kernel memory to meet the requirements.
-
-As STD affects the whole machine it must require root rights.
-So I cannot see how you can talk about a session belonging
-to a user. Please explain.
-
-It seems to me that you can in theory encrypt the password
-by a key coming from user space, so that you need to know
-an additional key to resume the system, but that seems to me
-above and beyond what Secure Boot requires.
-
-	Regards
-		Oliver
-
+Where is vb->shrinker.flags initialized?
