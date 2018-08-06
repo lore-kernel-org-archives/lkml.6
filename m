@@ -2,241 +2,118 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD11AC4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 18:05:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C0D1C46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 18:05:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 862E0208B6
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 18:05:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 862E0208B6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+	by mail.kernel.org (Postfix) with ESMTP id BB367208B6
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 18:05:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MFwl5dPP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB367208B6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387486AbeHFUP1 (ORCPT
+        id S2387498AbeHFUPw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 16:15:27 -0400
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:54843 "EHLO
-        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727665AbeHFUP1 (ORCPT
+        Mon, 6 Aug 2018 16:15:52 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:36053 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727665AbeHFUPv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 16:15:27 -0400
-X-Originating-IP: 79.86.19.127
-Received: from alex.numericable.fr (127.19.86.79.rev.sfr.net [79.86.19.127])
-        (Authenticated sender: alex@ghiti.fr)
-        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 3754DC0003;
-        Mon,  6 Aug 2018 18:05:05 +0000 (UTC)
-From:   Alexandre Ghiti <alex@ghiti.fr>
-To:     linux-mm@kvack.org, mike.kravetz@oracle.com, linux@armlinux.org.uk,
-        catalin.marinas@arm.com, will.deacon@arm.com, tony.luck@intel.com,
-        fenghua.yu@intel.com, ralf@linux-mips.org, paul.burton@mips.com,
-        jhogan@kernel.org, jejb@parisc-linux.org, deller@gmx.de,
-        benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au,
-        ysato@users.sourceforge.jp, dalias@libc.org, davem@davemloft.net,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, arnd@arndb.de,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-ia64@vger.kernel.org, linux-mips@linux-mips.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        linux-arch@vger.kernel.org
-Cc:     Alexandre Ghiti <alex@ghiti.fr>
-Subject: [PATCH v6 07/11] hugetlb: Introduce generic version of huge_pte_wrprotect
-Date:   Mon,  6 Aug 2018 17:57:07 +0000
-Message-Id: <20180806175711.24438-8-alex@ghiti.fr>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180806175711.24438-1-alex@ghiti.fr>
-References: <20180806175711.24438-1-alex@ghiti.fr>
+        Mon, 6 Aug 2018 16:15:51 -0400
+Received: by mail-pf1-f194.google.com with SMTP id b11-v6so7237864pfo.3
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Aug 2018 11:05:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:content-transfer-encoding:to:from:in-reply-to:cc
+         :references:message-id:user-agent:subject:date;
+        bh=yAhoVKyNE5Zk12E7k843gWMlRagJuhU8C9BB7QqHPbI=;
+        b=MFwl5dPPYHxBIBBMSNPVAV39JYmqZqCxnlfdcYoZn1vd6ZS6TIcOi5f0sALT+9i1R6
+         3vfGQYNypqV1kbV8JoXAB3cHLRNoUian4oa7PqOmQezIg0juFINgnfzNnRWdMX8RYPva
+         2wemlrQ3vlxt7HfOweiCHrMrOSnfY7ZXGmYKQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:content-transfer-encoding:to:from
+         :in-reply-to:cc:references:message-id:user-agent:subject:date;
+        bh=yAhoVKyNE5Zk12E7k843gWMlRagJuhU8C9BB7QqHPbI=;
+        b=ZhBdtq0ssv2cRyY2FpQMecCq5JagNkLt3SD98O5S2IX31VhYNJrAaArR8JaDdaQls2
+         4cfk8i9U3R6EW8+GFG8MmJKtkbl0+qoryrNCgFz+/tQVbxj4UUniQvMW6NR6doOH7fsP
+         MnX3SJnLiTUIUp3ajSD3phhKWK+4QKzksdM9pbU7xBAnMvNmhFC1uoh6Ztqc8P4QJHLb
+         fgXSKysiS/sNnhK2C4oQewtS6V+Du36qYCJTqhqC/i9FTVZIiSyvHOltEwKg1Btz23mr
+         9xAQK0bKVfZMW5RnOOX/WzbkDCRnDuRDgpDfLBcIPAYWn23R08fIPd+lDTDwrbIlnVCi
+         5mDw==
+X-Gm-Message-State: AOUpUlGV3YejEwrMk0+AKqdO8keHCIE6TPQD8VBB8H66PQCVsRf3Z8Hi
+        mtuMnv8LEIyqNdkDd+KlKZDY4w==
+X-Google-Smtp-Source: AAOMgpd54/QFgBw8vMP5bRQ8xrBdOljQHn21/W8s6vFl+/iNmOA+opeXturH7I40XCfVCaLhnNXypA==
+X-Received: by 2002:a65:428b:: with SMTP id j11-v6mr12041705pgp.200.1533578737909;
+        Mon, 06 Aug 2018 11:05:37 -0700 (PDT)
+Received: from localhost ([2620:15c:202:201:7e28:b9f3:6afc:5326])
+        by smtp.gmail.com with ESMTPSA id d9-v6sm21320668pfb.86.2018.08.06.11.05.37
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 06 Aug 2018 11:05:37 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+To:     Brian Norris <briannorris@chromium.org>
+From:   Stephen Boyd <swboyd@chromium.org>
+In-Reply-To: <20180806173806.GA26374@ban.mtv.corp.google.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org,
+        Wei-Ning Huang <wnhuang@chromium.org>,
+        Julius Werner <jwerner@chromium.org>,
+        Samuel Holland <samuel@sholland.org>,
+        Thierry Escande <thierry.escande@collabora.com>
+References: <20180806171047.227835-1-swboyd@chromium.org>
+ <20180806173806.GA26374@ban.mtv.corp.google.com>
+Message-ID: <153357873656.220756.13862913888448347196@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH] firmware: coreboot: Let OF core populate platform device
+Date:   Mon, 06 Aug 2018 11:05:36 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-arm, arm64, ia64, mips, parisc, powerpc, sh, sparc, x86
-architectures use the same version of huge_pte_wrprotect, so move
-this generic implementation into asm-generic/hugetlb.h.
+Quoting Brian Norris (2018-08-06 10:38:08)
+> On Mon, Aug 06, 2018 at 10:10:47AM -0700, Stephen Boyd wrote:
+> > Now that the /firmware/coreboot node in DT is populated by the core DT
+> > platform code with commit 3aa0582fdb82 ("of: platform: populate
+> > /firmware/ node from of_platform_default_populate_init()") we should and
+> =
 
-Signed-off-by: Alexandre Ghiti <alex@ghiti.fr>
-Tested-by: Helge Deller <deller@gmx.de> # parisc
-Acked-by: Catalin Marinas <catalin.marinas@arm.com> # arm64
-Acked-by: Paul Burton <paul.burton@mips.com> # MIPS parts
-Reviewed-by: Luiz Capitulino <lcapitulino@redhat.com>
-Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
----
- arch/arm/include/asm/hugetlb.h     | 5 -----
- arch/arm64/include/asm/hugetlb.h   | 5 -----
- arch/ia64/include/asm/hugetlb.h    | 5 -----
- arch/mips/include/asm/hugetlb.h    | 5 -----
- arch/parisc/include/asm/hugetlb.h  | 5 -----
- arch/powerpc/include/asm/hugetlb.h | 5 -----
- arch/sh/include/asm/hugetlb.h      | 5 -----
- arch/sparc/include/asm/hugetlb.h   | 5 -----
- arch/x86/include/asm/hugetlb.h     | 5 -----
- include/asm-generic/hugetlb.h      | 7 +++++++
- 10 files changed, 7 insertions(+), 45 deletions(-)
+> Does this deserve a 'Fixes' tag?
+> =
 
-diff --git a/arch/arm/include/asm/hugetlb.h b/arch/arm/include/asm/hugetlb.h
-index c821b550d6a4..9ca14227eeb7 100644
---- a/arch/arm/include/asm/hugetlb.h
-+++ b/arch/arm/include/asm/hugetlb.h
-@@ -44,11 +44,6 @@ static inline int prepare_hugepage_range(struct file *file,
- 	return 0;
- }
- 
--static inline pte_t huge_pte_wrprotect(pte_t pte)
--{
--	return pte_wrprotect(pte);
--}
--
- static inline void arch_clear_hugepage_flags(struct page *page)
- {
- 	clear_bit(PG_dcache_clean, &page->flags);
-diff --git a/arch/arm64/include/asm/hugetlb.h b/arch/arm64/include/asm/hugetlb.h
-index 49247c6f94db..1fd64ebf0cd7 100644
---- a/arch/arm64/include/asm/hugetlb.h
-+++ b/arch/arm64/include/asm/hugetlb.h
-@@ -42,11 +42,6 @@ static inline int prepare_hugepage_range(struct file *file,
- 	return 0;
- }
- 
--static inline pte_t huge_pte_wrprotect(pte_t pte)
--{
--	return pte_wrprotect(pte);
--}
--
- static inline void arch_clear_hugepage_flags(struct page *page)
- {
- 	clear_bit(PG_dcache_clean, &page->flags);
-diff --git a/arch/ia64/include/asm/hugetlb.h b/arch/ia64/include/asm/hugetlb.h
-index bf573500b3c4..82fe3d7a38d9 100644
---- a/arch/ia64/include/asm/hugetlb.h
-+++ b/arch/ia64/include/asm/hugetlb.h
-@@ -26,11 +26,6 @@ static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
- {
- }
- 
--static inline pte_t huge_pte_wrprotect(pte_t pte)
--{
--	return pte_wrprotect(pte);
--}
--
- static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
- 					   unsigned long addr, pte_t *ptep)
- {
-diff --git a/arch/mips/include/asm/hugetlb.h b/arch/mips/include/asm/hugetlb.h
-index 1c9c4531376c..b3d6bb53ee6e 100644
---- a/arch/mips/include/asm/hugetlb.h
-+++ b/arch/mips/include/asm/hugetlb.h
-@@ -62,11 +62,6 @@ static inline int huge_pte_none(pte_t pte)
- 	return !val || (val == (unsigned long)invalid_pte_table);
- }
- 
--static inline pte_t huge_pte_wrprotect(pte_t pte)
--{
--	return pte_wrprotect(pte);
--}
--
- static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
- 					   unsigned long addr, pte_t *ptep)
- {
-diff --git a/arch/parisc/include/asm/hugetlb.h b/arch/parisc/include/asm/hugetlb.h
-index c09d8c74553c..5a102d7251e4 100644
---- a/arch/parisc/include/asm/hugetlb.h
-+++ b/arch/parisc/include/asm/hugetlb.h
-@@ -38,11 +38,6 @@ static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
- {
- }
- 
--static inline pte_t huge_pte_wrprotect(pte_t pte)
--{
--	return pte_wrprotect(pte);
--}
--
- void huge_ptep_set_wrprotect(struct mm_struct *mm,
- 					   unsigned long addr, pte_t *ptep);
- 
-diff --git a/arch/powerpc/include/asm/hugetlb.h b/arch/powerpc/include/asm/hugetlb.h
-index 3562d46585ba..7123599089c6 100644
---- a/arch/powerpc/include/asm/hugetlb.h
-+++ b/arch/powerpc/include/asm/hugetlb.h
-@@ -152,11 +152,6 @@ static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
- 	flush_hugetlb_page(vma, addr);
- }
- 
--static inline pte_t huge_pte_wrprotect(pte_t pte)
--{
--	return pte_wrprotect(pte);
--}
--
- extern int huge_ptep_set_access_flags(struct vm_area_struct *vma,
- 				      unsigned long addr, pte_t *ptep,
- 				      pte_t pte, int dirty);
-diff --git a/arch/sh/include/asm/hugetlb.h b/arch/sh/include/asm/hugetlb.h
-index a9f8266f33cf..54f65094efe6 100644
---- a/arch/sh/include/asm/hugetlb.h
-+++ b/arch/sh/include/asm/hugetlb.h
-@@ -31,11 +31,6 @@ static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
- {
- }
- 
--static inline pte_t huge_pte_wrprotect(pte_t pte)
--{
--	return pte_wrprotect(pte);
--}
--
- static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
- 					   unsigned long addr, pte_t *ptep)
- {
-diff --git a/arch/sparc/include/asm/hugetlb.h b/arch/sparc/include/asm/hugetlb.h
-index 11115bbd712e..f661362376e0 100644
---- a/arch/sparc/include/asm/hugetlb.h
-+++ b/arch/sparc/include/asm/hugetlb.h
-@@ -48,11 +48,6 @@ static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
- {
- }
- 
--static inline pte_t huge_pte_wrprotect(pte_t pte)
--{
--	return pte_wrprotect(pte);
--}
--
- static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
- 					   unsigned long addr, pte_t *ptep)
- {
-diff --git a/arch/x86/include/asm/hugetlb.h b/arch/x86/include/asm/hugetlb.h
-index 42d872054791..3cd3a2c9840e 100644
---- a/arch/x86/include/asm/hugetlb.h
-+++ b/arch/x86/include/asm/hugetlb.h
-@@ -28,11 +28,6 @@ static inline int prepare_hugepage_range(struct file *file,
- 	return 0;
- }
- 
--static inline pte_t huge_pte_wrprotect(pte_t pte)
--{
--	return pte_wrprotect(pte);
--}
--
- static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
- 					   unsigned long addr, pte_t *ptep)
- {
-diff --git a/include/asm-generic/hugetlb.h b/include/asm-generic/hugetlb.h
-index 2fc3d68424e9..cd9697672b79 100644
---- a/include/asm-generic/hugetlb.h
-+++ b/include/asm-generic/hugetlb.h
-@@ -80,4 +80,11 @@ static inline int huge_pte_none(pte_t pte)
- }
- #endif
- 
-+#ifndef __HAVE_ARCH_HUGE_PTE_WRPROTECT
-+static inline pte_t huge_pte_wrprotect(pte_t pte)
-+{
-+	return pte_wrprotect(pte);
-+}
-+#endif
-+
- #endif /* _ASM_GENERIC_HUGETLB_H */
--- 
-2.16.2
+> Fixes: 3aa0582fdb82 ("of: platform: populate /firmware/ node from of_plat=
+form_default_populate_init()")
+> =
 
+> The coreboot-of driver was in 4.12, and it seems to have broken in 4.16,
+> along with the above patch.
+
+Yes. A fixes tag should be added.
+
+> =
+
+> > can remove the platform device creation here. Otherwise, the
+> > of_platform_device_create() call will fail, the coreboot of driver won't
+> > be registered, and this driver will never bind. At the same time, we can
+> > move this driver to use platform device APIs instead of DT specific ones
+> > and drop the of_node handling that was presumably placed there to hold a
+> > reference to the DT node created during module init.
+> > =
+
+> > Cc: Wei-Ning Huang <wnhuang@chromium.org>
+> > Cc: Julius Werner <jwerner@chromium.org>
+> > Cc: Brian Norris <briannorris@chromium.org>
+> =
+
+> Reviewed-by: Brian Norris <briannorris@chromium.org>
+> =
+
+
+Thanks!
