@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3953AC46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:41:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C730C46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:41:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E24CC21A6E
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:41:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E80FE21A67
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:41:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZGPkGAit"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E24CC21A6E
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TdFiCJWQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E80FE21A67
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387716AbeHFSu7 (ORCPT
+        id S2387694AbeHFSvn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 14:50:59 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:52397 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387689AbeHFSu5 (ORCPT
+        Mon, 6 Aug 2018 14:51:43 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:37009 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387695AbeHFSu7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 14:50:57 -0400
-Received: by mail-wm0-f66.google.com with SMTP id o11-v6so14383188wmh.2
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Aug 2018 09:41:03 -0700 (PDT)
+        Mon, 6 Aug 2018 14:50:59 -0400
+Received: by mail-wm0-f65.google.com with SMTP id n11-v6so14971519wmc.2
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Aug 2018 09:41:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=5fRpq50lZXJwhRR4cll4FW2BMrTPAWBgy5AakciCwzI=;
-        b=ZGPkGAitVZH43xaGKInnHdd7n/tyNFXUzL/qaHmZCe6+KqfeJS77EJC8jpTGmiU2SO
-         FzBsG36dBCTrIkzWu7kBkjDSJ5fbo9HzHHpwULu2+NoF4YKnPx2mMKqPQ6pAqaU+lAht
-         KS8yf0vS/2EMM6y6c5ON02j5qVjYR1ZgccetnnSEPi1qy0nKoCNXeGe3MBLWUTVcG4y5
-         ZfZSGga8z9m37aTIH9e8f0b1iTeoQe63qTqsPyBHuvsvnOwmUUef0zRMpeqgFq8qOZTE
-         KCQcpTxFLAh5tLjD/wxtGyP600A9uQuSjuRPT2mpi2rpLX/7Y0KGnc5Icm5Qoz0w3r+s
-         oyqw==
+        bh=YhiwXQETzFyRuKUoiUientUUS69FHU4d1USosDKGiBg=;
+        b=TdFiCJWQV1yY7auvDE3OMD8elRn00ZYfTJx5VBDb0vmH70JjcnkbCr00a2DIqbTxkS
+         u7P78OkVA7gQ2mUn3ucxrt0JtyrX1cqTglzaw1x/dguRXxGb50g/t8CD+nUQK1HGE0Zp
+         glmM2eLYnNtONsT7coR0+ZV/xEq9YDzXdaTDB163co13OWzCFpLqTdc6t/n/9mu5/ri7
+         jX1FY0jxM1iC2UpEDrLPzuZMntSNz0ZVEPRb3jD0WGCqCJ9fJXFePlZnlDJrBFnRiOvN
+         tvYvAMZWoxtpd7wNSEtF6rRizE0sA+pJRhf7h3xozmr3qrKnhPbxGuFUAgAjiDuMzDpo
+         Jisg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=5fRpq50lZXJwhRR4cll4FW2BMrTPAWBgy5AakciCwzI=;
-        b=th4bZqfdno/hc2VKcHqX+lUmej3Onyp8q/Ia5z5X1RL1XuNd/oWxrGqdlBWXjfZ/qo
-         LznUZfiLQ9UKoZjhDPaYaBljXP9WziaA7YqzCKsYBBeQs87M+U4wvR/O+0panV5fAWep
-         A/MDGiO9IPfyRwdnA92ZSNHBj6BHDYQacZNSypZ8+dVN9rkk4ItQxKbcyehzoaNpL8SM
-         1Od7gU9gYqfFUWIT6qeBSfdrs4wqV08E00/bux6rH4FsY/CD0IwbQ2S9DhNiplAP1Kwd
-         GjI5pvutkr/JDG+3ZuHtEHQz06/JNE8OUS9LISDiQBbmuoi1MnaevKJuGFp8atjOWwdk
-         hl5g==
-X-Gm-Message-State: AOUpUlER0tyyQ5V3bJuw6mhRXg2zFwWXwZJu4Cvtr2Hod1Xavw7rXbUG
-        hVhwXtzc3XOvgxkZ8TK+lVJbSg==
-X-Google-Smtp-Source: AAOMgpfY8aYVRq098HPSl5HcnHIV9H6zFUoOXHqCl8eBn+piyFbVnG/gEtDm0yEYaeKPInUxDQL8Gg==
-X-Received: by 2002:a1c:4405:: with SMTP id r5-v6mr11514009wma.4.1533573662204;
-        Mon, 06 Aug 2018 09:41:02 -0700 (PDT)
+        bh=YhiwXQETzFyRuKUoiUientUUS69FHU4d1USosDKGiBg=;
+        b=YmmA10vnwsrBqcp+G5pHckN9uQAkjX4Q9NmYtRc31Q8O7ddK8Dh251vbtOM4r7RWY7
+         w0B0BbiEa0Hj3m2dI0Zp9RtN7hT4H8I9v1tal/tbMbw4BZznFJ3AlCmtQANdwY72GD8d
+         lon8Dcu89R4ajIp1Fb8ZQ6+WKlsVJzL4zaSWZzGkKsXl6XLE309zPc/JEuYxY4hGNGvb
+         JXvPYzo0ukOBnuzG6kUZWH5XzEEz0DVXHJ9x4JRNB+8FO5gl2Ufo3mJ2XHJ0JNTSS4sA
+         zihwFgf7i7koOjO4QAP9iCHXyRWMPr/oeJz2LyhzDhNcN9vyCrdtbQCs8XDaK5KRlBmA
+         tNPw==
+X-Gm-Message-State: AOUpUlFUSZswk7KfqJj+IK2y/DcHw/zloYGYfTEh09Mxad36HL8L0Rrz
+        BH6NclrAaIWFQrLwhQheHKLUgQ==
+X-Google-Smtp-Source: AAOMgpfgr6iQdZfaudH/1Dxp198cQUe5jRBwkr+pUFpoQTY/gYwoncrlREotSNcycesndSR3fYlmIw==
+X-Received: by 2002:a1c:6d9a:: with SMTP id b26-v6mr11379886wmi.74.1533573663633;
+        Mon, 06 Aug 2018 09:41:03 -0700 (PDT)
 Received: from andreyknvl0.muc.corp.google.com ([2a00:79e0:15:10:84be:a42a:826d:c530])
-        by smtp.gmail.com with ESMTPSA id 66-v6sm16385790wmw.34.2018.08.06.09.41.00
+        by smtp.gmail.com with ESMTPSA id 66-v6sm16385790wmw.34.2018.08.06.09.41.02
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 06 Aug 2018 09:41:01 -0700 (PDT)
+        Mon, 06 Aug 2018 09:41:02 -0700 (PDT)
 From:   Andrey Konovalov <andreyknvl@google.com>
 To:     Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>,
@@ -84,9 +84,9 @@ Cc:     Dmitry Vyukov <dvyukov@google.com>,
         Jacob Bramley <Jacob.Bramley@arm.com>,
         Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
         Chintan Pandya <cpandya@codeaurora.org>
-Subject: [PATCH v5 06/10] arm64: untag user address in __do_user_fault
-Date:   Mon,  6 Aug 2018 18:40:41 +0200
-Message-Id: <d22f893405349d7d26d67161f9577eabfee27214.1533573460.git.andreyknvl@google.com>
+Subject: [PATCH v5 07/10] fs, arm64: untag user address in copy_mount_options
+Date:   Mon,  6 Aug 2018 18:40:42 +0200
+Message-Id: <dbacdbf3f3d66c853fafcbfdbf5c1f0afb464981.1533573460.git.andreyknvl@google.com>
 X-Mailer: git-send-email 2.18.0.597.ga71716f1ad-goog
 In-Reply-To: <cover.1533573460.git.andreyknvl@google.com>
 References: <cover.1533573460.git.andreyknvl@google.com>
@@ -97,30 +97,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In __do_user_fault the fault address is being compared to TASK_SIZE to
-find out whether the address lies in the kernel or in user space. Since
-the fault address is coming from a user it can be tagged.
+In copy_mount_options a user address is being subtracted from TASK_SIZE.
+If the address is lower than TASK_SIZE, the size is calculated to not
+allow the exact_copy_from_user() call to cross TASK_SIZE boundary.
+However if the address is tagged, then the size will be calculated
+incorrectly.
 
-Untag the pointer before comparing.
+Untag the address before subtracting.
 
 Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
 ---
- arch/arm64/mm/fault.c | 2 +-
+ fs/namespace.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
-index b8eecc7b9531..89033d992d28 100644
---- a/arch/arm64/mm/fault.c
-+++ b/arch/arm64/mm/fault.c
-@@ -313,7 +313,7 @@ static void __do_user_fault(struct siginfo *info, unsigned int esr)
- 	 * type", so we ignore this wrinkle and just return the translation
- 	 * fault.)
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 8ddd14806799..fd070e65e529 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -2733,7 +2733,7 @@ void *copy_mount_options(const void __user * data)
+ 	 * the remainder of the page.
  	 */
--	if (current->thread.fault_address >= TASK_SIZE) {
-+	if (untagged_addr(current->thread.fault_address) >= TASK_SIZE) {
- 		switch (ESR_ELx_EC(esr)) {
- 		case ESR_ELx_EC_DABT_LOW:
- 			/*
+ 	/* copy_from_user cannot cross TASK_SIZE ! */
+-	size = TASK_SIZE - (unsigned long)data;
++	size = TASK_SIZE - (unsigned long)untagged_addr(data);
+ 	if (size > PAGE_SIZE)
+ 		size = PAGE_SIZE;
+ 
 -- 
 2.18.0.597.ga71716f1ad-goog
 
