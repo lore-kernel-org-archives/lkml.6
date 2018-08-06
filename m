@@ -2,88 +2,70 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE84EC46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 15:09:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41D47C4646D
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 15:09:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89DE621A51
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 15:09:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89DE621A51
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id EF5C621A52
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 15:09:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ae1Ml3Wh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF5C621A52
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732784AbeHFRSw (ORCPT
+        id S1732790AbeHFRTC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 13:18:52 -0400
-Received: from smtprelay0235.hostedemail.com ([216.40.44.235]:37503 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727541AbeHFRSw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 13:18:52 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay01.hostedemail.com (Postfix) with ESMTP id 011AB100E86C3;
-        Mon,  6 Aug 2018 15:09:20 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: shop27_1718874ac4062
-X-Filterd-Recvd-Size: 2058
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf02.hostedemail.com (Postfix) with ESMTPA;
-        Mon,  6 Aug 2018 15:09:18 +0000 (UTC)
-Message-ID: <47a9f8c7819039f10c01ec238622b4a64bd5217f.camel@perches.com>
-Subject: Re: [PATCH v3] checkpatch: Check for space after "else" keyword
-From:   Joe Perches <joe@perches.com>
-To:     Michal Zylowski <michal.zylowski@intel.com>, apw@canonical.com,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org
-Date:   Mon, 06 Aug 2018 08:09:17 -0700
-In-Reply-To: <1533545753-8870-1-git-send-email-michal.zylowski@intel.com>
-References: <1533545753-8870-1-git-send-email-michal.zylowski@intel.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Mon, 6 Aug 2018 13:19:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48060 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727541AbeHFRTC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 13:19:02 -0400
+Received: from jouet.infradead.org (unknown [177.79.81.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 88A6921A51;
+        Mon,  6 Aug 2018 15:09:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1533568170;
+        bh=VfWiYhkvVHrF4bKHFNqM+PxQxwidkty89fF6gaoTrxM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Ae1Ml3WhbY3XaB1rWHNndRYLrH6luHjSRfbRHsn/pgiVdmG4u3C1hzZEreN66c46K
+         lCjw5/kdE0DJIjGJSRu1Fmy1ivKGlyqJ4zc3sv0ZvTVAbR51sO+mVjvLUrSVDVPSvF
+         SYcIVZaNhWrEWi7w8wytXExgRhsZgKMxv6TKhmog=
+Received: by jouet.infradead.org (Postfix, from userid 1000)
+        id 7A03A140A1C; Mon,  6 Aug 2018 12:09:28 -0300 (-03)
+Date:   Mon, 6 Aug 2018 12:09:28 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Jiri Olsa <jolsa@kernel.org>
+Cc:     lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        David Ahern <dsahern@gmail.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Stephane Eranian <eranian@google.com>
+Subject: Re: [PATCH 05/20] perf annotate: Rename local sample variables to
+ data
+Message-ID: <20180806150928.GM7996@kernel.org>
+References: <20180804130521.11408-1-jolsa@kernel.org>
+ <20180804130521.11408-6-jolsa@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180804130521.11408-6-jolsa@kernel.org>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-08-06 at 10:55 +0200, Michal Zylowski wrote:
-> Current checkpatch implementation permits notation like:
-> } else{
-> in kernel code.
-> It looks like oversight and inconsistency in checkpatch rules (e.g.
-> instruction like 'do' is tested).
-> 
-> Add regex for checking space after 'else' keyword and trigger error if
-> space is not present.
-> 
-> Signed-off-by: Michal Zylowski <michal.zylowski@intel.com>
+Em Sat, Aug 04, 2018 at 03:05:06PM +0200, Jiri Olsa escreveu:
+> Based on previous rename, changing also the local
+> variable names to fit properly.
 
-Acked-by: Joe Perches <joe@perches.com>
-
-> ---
->  scripts/checkpatch.pl | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-> index 447857f..f7e135a 100755
-> --- a/scripts/checkpatch.pl
-> +++ b/scripts/checkpatch.pl
-> @@ -4483,11 +4483,11 @@ sub process {
->  
->  #need space before brace following if, while, etc
->  		if (($line =~ /\(.*\)\{/ && $line !~ /\($Type\)\{/) ||
-> -		    $line =~ /do\{/) {
-> +		    $line =~ /\b(?:else|do)\{/) {
->  			if (ERROR("SPACING",
->  				  "space required before the open brace '{'\n" . $herecurr) &&
->  			    $fix) {
-> -				$fixed[$fixlinenr] =~ s/^(\+.*(?:do|\)))\{/$1 {/;
-> +				$fixed[$fixlinenr] =~ s/^(\+.*(?:do|else|\)))\{/$1 {/;
->  			}
->  		}
->  
+Applied.
