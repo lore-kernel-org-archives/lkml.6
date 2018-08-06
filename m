@@ -2,341 +2,178 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F2EBC46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 23:58:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 015F1C46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 23:59:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA53421A53
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 23:58:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A350D21A16
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 23:59:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="s1br9lJ2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA53421A53
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="u+Xk8uQu";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XJWMUmd4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A350D21A16
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388517AbeHGCKM (ORCPT
+        id S2388545AbeHGCKg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 22:10:12 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:40230 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732394AbeHGCKL (ORCPT
+        Mon, 6 Aug 2018 22:10:36 -0400
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:42922 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732580AbeHGCKg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 22:10:11 -0400
-Received: by mail-wr1-f65.google.com with SMTP id h15-v6so13957866wrs.7;
-        Mon, 06 Aug 2018 16:58:38 -0700 (PDT)
+        Mon, 6 Aug 2018 22:10:36 -0400
+Received: by mail-yw1-f66.google.com with SMTP id y203-v6so4283627ywd.9
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Aug 2018 16:59:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=HZOcve2pj6lUDqqVbstP/7F3gcosRzvFjEZdmi/suXQ=;
-        b=s1br9lJ2J/+Ie8Arn+PjXGL7/KjAwXND5A+vQ6w0A927O4LMpE6at5q2vdeMViDK+g
-         pG8kz9RDvad570FDQ0RmsnlClo8Tl9SBVPI63DSdzgXX6PACURQanHBIY494FXetCPkV
-         HFGoppARxt+rVn3vZBYk1T1nWieEGBC21n5+nXzkUaeuQbIU91XGESI5PiU+UBVDJM+Q
-         1FL6FE9eTBR0ISnzI0Qn2ekOQ9qJ4N9wKrnM6pZIiciKx0WyKd5IHNhDutSQdQGnL9HO
-         qKORDsWDMTywStWB1pDh4VLmtUuX79zvNypek8kw0UPufVFA/plqDd1UxJ9ypwy52BrW
-         u7xg==
+        d=google.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=ZG5TAyA4nNXksOXqLe9olEvdlfmRUFYyWKppal+gWTo=;
+        b=u+Xk8uQuT58obUaFnZN5nrm/+BcG47zJkKf0vSxDn9In23mpx3dGoR/4fiDnL1k+d8
+         mJfyjZiOazGmr847yjdEfvQAgDI6R06WHZXr0qW5sK1sDHxcjFSqotJlfzd/YJaXdvA0
+         Gx5OpUcT5MFXH5lPhNEDlZs1/ENkQ4NA9WJPkVT2Acll9ZJ4UoiPUU3XXW/bXZ9qqcdK
+         m/uJUMIqBMC93Ibu3XHBu8456w1TyXMWUlXtst7JvoOiFwdwHQ9NJHwZpCSv7cmbUplu
+         hqe/IIx6cCfK722yOXu1U9Q6dupzCtHY3lphehqzKxWJ+3x4999oAs7xvi1eOouhtBxj
+         vIeA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=ZG5TAyA4nNXksOXqLe9olEvdlfmRUFYyWKppal+gWTo=;
+        b=XJWMUmd452Pb109LT7Ei/TSkE4zHo+b7ld+Kb5VVEatti6MZDgP8c/e2ki+vNlApzu
+         61oFUfeLnn5N42d7XC9iva/NVMIQ6FnPu02bEY2unBuOOq3I3EnQdIKTZQe9bTmDFGhf
+         Bbqr8cX3/xT9M5KHlkiWAbc1r/eg7onKC/y7g=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=HZOcve2pj6lUDqqVbstP/7F3gcosRzvFjEZdmi/suXQ=;
-        b=sxveIcpLX6m4+0dDykR916oVIPN+XSbxklWq+GATwA1MD6cKLO1QufxE8I6tnjd3sK
-         GErhh5Wc7scerWnaThGTRZ58Y95IBPtY/A5D0dxT8nXNNpmpPL8iBKE43xl3f/OdH5X2
-         NSjh4m5kEBZAWwZWuI6q0j7bpsYZeUk8xKpYyxIca6MRvfhUd5gYHa4uGbwwfYcGSgOs
-         SqdEQzgzQU+HhncRcNlAMKs1DNnf1BQVjMboX3+cF8KW8ADw0lSgGofjSo8KwUH+NMpJ
-         13/DZBxGwZcYvm7RxyTPl0+M/NR7PB1wIK/At+F1U5uYic6RqB8jLpLSvEIEzpWUCU20
-         JJcQ==
-X-Gm-Message-State: AOUpUlHwjvjAFXJushq/vLf+b3OVjgu6JUfzATYyA3UaJFFX3zLbUvOl
-        XImVPDnAIoqW3dKOHZcxOKxSWfTc
-X-Google-Smtp-Source: AAOMgpcg1IqN1iJ3m9mypU3uuIm341G+UYC6V3UdUu7jKzrOBqx/BrKYx6hf9+i+zT8CN6mNAtwSLg==
-X-Received: by 2002:adf:88e3:: with SMTP id g32-v6mr10321453wrg.62.1533599917811;
-        Mon, 06 Aug 2018 16:58:37 -0700 (PDT)
-Received: from [192.168.1.4] (ip-86-49-107-50.net.upcbroadband.cz. [86.49.107.50])
-        by smtp.gmail.com with ESMTPSA id h17-v6sm10455046wrq.73.2018.08.06.16.58.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 06 Aug 2018 16:58:36 -0700 (PDT)
-Subject: Re: [RFC PATCH v2 05/12] mtd: rawnand: ams-delta: use GPIO API for
- data read/write
-To:     Janusz Krzysztofik <jmkrzyszt@gmail.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-doc@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180718235710.18242-1-jmkrzyszt@gmail.com>
- <20180806222918.12644-1-jmkrzyszt@gmail.com>
- <20180806222918.12644-6-jmkrzyszt@gmail.com>
-From:   Marek Vasut <marek.vasut@gmail.com>
-Message-ID: <f4ebe9bf-8ca8-9ad2-3e48-697266b6962b@gmail.com>
-Date:   Tue, 7 Aug 2018 01:57:14 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=ZG5TAyA4nNXksOXqLe9olEvdlfmRUFYyWKppal+gWTo=;
+        b=ZpxNhwOHyEHDabDh8WSwf1jPvFnO6j5caE3Tbk5FDlszEQzI2oHV7lT0HBCl+Mo4os
+         3phFF+X6IbLq7aw+5KbZyDUGDflsiddfN/59NWAksh7Hg51JD3SpZDO9G/MEftDOXF4U
+         K3UfOR7/TdCyAZn8NQd5o6cNR5GZBhddf9yaIpj6uphCo+TdWQrNMFevJSev82HpWooi
+         H5SPdMGdqWGw1QGMPYjH99qSG879v3GSlfxYNDwYFVkZHKWbh+jSc8r9SrzEWB//oBrO
+         M3b8CXwIJwKuZXDtLz4A8lxSCCWKsNQWBsit7qO7Voyq7YUBgcmw824FEm5ZYUDCXb+x
+         Ec2w==
+X-Gm-Message-State: AOUpUlGILEJFsFkA9X9smpHu8OxGQJSlCfcdAcKJSunn2N7AFHBAq075
+        oBZUd7ipA5FO6eyypIPzRORzTjyYgk7volAi9JH3Wg==
+X-Google-Smtp-Source: AAOMgpeDtjUhAvRun49Yy9APlgV+SBWxPC31PamnZaZoY79VNsX8l4uqhkT7woeqezccfafsSsHQda9j7kI4iqyBhtg=
+X-Received: by 2002:a81:2706:: with SMTP id n6-v6mr8683129ywn.88.1533599944887;
+ Mon, 06 Aug 2018 16:59:04 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180806222918.12644-6-jmkrzyszt@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a25:7450:0:0:0:0:0 with HTTP; Mon, 6 Aug 2018 16:59:04 -0700 (PDT)
+In-Reply-To: <111cb1b0-24ba-bcb2-53d5-9665d2b4c421@infradead.org>
+References: <20180731195155.46664-1-keescook@chromium.org> <20180731195155.46664-5-keescook@chromium.org>
+ <111cb1b0-24ba-bcb2-53d5-9665d2b4c421@infradead.org>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Mon, 6 Aug 2018 16:59:04 -0700
+X-Google-Sender-Auth: mVg08e6sgmVipiBIyTeS_GF7sxA
+Message-ID: <CAGXu5jKNeep01VOwC-dWsT4iDXrkBOhHJX0+4BEBotYOx1D0Tg@mail.gmail.com>
+Subject: Re: [PATCH v2 4/9] target: don't depend on SCSI
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        Tejun Heo <tj@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Manoj N. Kumar" <manoj@linux.vnet.ibm.com>,
+        "Matthew R. Ochs" <mrochs@linux.vnet.ibm.com>,
+        Uma Krishnan <ukrishn@linux.vnet.ibm.com>,
+        "Nicholas A. Bellinger" <nab@linux-iscsi.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>,
+        Juergen Gross <jgross@suse.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Sagar Dharia <sdharia@codeaurora.org>,
+        David Kershner <david.kershner@unisys.com>,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-ide@vger.kernel.org, linux-scsi@vger.kernel.org,
+        target-devel <target-devel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Bart Van Assche <bart.vanassche@wdc.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/07/2018 12:29 AM, Janusz Krzysztofik wrote:
-> Don't readw()/writew() data directly from/to GPIO port which is under
-> control of gpio-omap driver, use GPIO API instead.
-> 
-> Degrade of performance on Amstrad Delta is completely not acceptable.
+On Mon, Aug 6, 2018 at 4:38 PM, Randy Dunlap <rdunlap@infradead.org> wrote:
+> On 07/31/2018 12:51 PM, Kees Cook wrote:
+>> From: Christoph Hellwig <hch@lst.de>
+>>
+>> The core target code only needs code from scsi_common.c, which is now
+>> separately selectable.
+>>
+>> Signed-off-by: Christoph Hellwig <hch@lst.de>
+>> Signed-off-by: Kees Cook <keescook@chromium.org>
+>> ---
+>>  drivers/target/Kconfig | 5 +++--
+>>  1 file changed, 3 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/target/Kconfig b/drivers/target/Kconfig
+>> index 4c44d7bed01a..cb6f32ce7de8 100644
+>> --- a/drivers/target/Kconfig
+>> +++ b/drivers/target/Kconfig
+>> @@ -1,10 +1,10 @@
+>>
+>>  menuconfig TARGET_CORE
+>>       tristate "Generic Target Core Mod (TCM) and ConfigFS Infrastructure"
+>> -     depends on SCSI && BLOCK
+>> +     depends on BLOCK
+>>       select CONFIGFS_FS
+>>       select CRC_T10DIF
+>> -     select BLK_SCSI_REQUEST # only for scsi_command_size_tbl..
+>> +     select BLK_SCSI_REQUEST
+>>       select SGL_ALLOC
+>>       default n
+>>       help
+>> @@ -29,6 +29,7 @@ config TCM_FILEIO
+>>
+>>  config TCM_PSCSI
+>>       tristate "TCM/pSCSI Subsystem Plugin for Linux/SCSI"
+>> +     depends on SCSI
+>>       help
+>>       Say Y here to enable the TCM/pSCSI subsystem plugin for non-buffered
+>>       passthrough access to Linux/SCSI device
+>>
+>
+> Hi,
+>
+> This patch causes build errors in linux-next-20180806 when SCSI=m and
+> LOOPBACK_TARGET=y.
+>
+> drivers/target/loopback/tcm_loop.o: In function `tcm_loop_port_link':
+> tcm_loop.c:(.text+0x445): undefined reference to `scsi_add_device'
+> drivers/target/loopback/tcm_loop.o: In function `tcm_loop_driver_remove':
+> tcm_loop.c:(.text+0x55c): undefined reference to `scsi_remove_host'
+> tcm_loop.c:(.text+0x564): undefined reference to `scsi_host_put'
+> drivers/target/loopback/tcm_loop.o: In function `tcm_loop_submission_work':
+> tcm_loop.c:(.text+0x7c4): undefined reference to `scmd_printk'
+> drivers/target/loopback/tcm_loop.o: In function `tcm_loop_driver_probe':
+> tcm_loop.c:(.text+0x7fb): undefined reference to `scsi_host_alloc'
+> tcm_loop.c:(.text+0x85b): undefined reference to `scsi_add_host_with_dma'
+> tcm_loop.c:(.text+0x896): undefined reference to `scsi_host_put'
+> drivers/target/loopback/tcm_loop.o: In function `tcm_loop_port_unlink':
+> tcm_loop.c:(.text+0x962): undefined reference to `scsi_device_lookup'
+> tcm_loop.c:(.text+0x972): undefined reference to `scsi_remove_device'
+> tcm_loop.c:(.text+0x97a): undefined reference to `scsi_device_put'
+> drivers/target/loopback/tcm_loop.o:(.data+0x210): undefined reference to `scsi_change_queue_depth'
 
-I'd expect that changing from direct PIO to access through GPIO API
-would degrade the performance. Maybe I misunderstood something ?
+Can you send your .config? I'm struggling to get a build with SCSI=m. :P
 
-> The driver should work with any 8+-bit bidirectional GPIO port, not
-> only OMAP.
-> 
-> Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-> ---
->  drivers/mtd/nand/raw/ams-delta.c | 97 ++++++++++++++++------------------------
->  1 file changed, 38 insertions(+), 59 deletions(-)
-> 
-> diff --git a/drivers/mtd/nand/raw/ams-delta.c b/drivers/mtd/nand/raw/ams-delta.c
-> index 09d6901fc94d..78996ddf82e0 100644
-> --- a/drivers/mtd/nand/raw/ams-delta.c
-> +++ b/drivers/mtd/nand/raw/ams-delta.c
-> @@ -24,13 +24,10 @@
->  #include <linux/mtd/mtd.h>
->  #include <linux/mtd/rawnand.h>
->  #include <linux/mtd/partitions.h>
-> -#include <linux/platform_data/gpio-omap.h>
-> +#include <linux/platform_device.h>
->  
-> -#include <asm/io.h>
->  #include <asm/sizes.h>
->  
-> -#include <mach/hardware.h>
-> -
->  /*
->   * MTD structure for E3 (Delta)
->   */
-> @@ -44,7 +41,7 @@ struct ams_delta_nand {
->  	struct gpio_desc	*gpiod_nwe;
->  	struct gpio_desc	*gpiod_ale;
->  	struct gpio_desc	*gpiod_cle;
-> -	void __iomem		*io_base;
-> +	struct gpio_descs	*data_gpiods;
->  };
->  
->  /*
-> @@ -76,10 +73,14 @@ static void ams_delta_write_byte(struct mtd_info *mtd, u_char byte)
->  {
->  	struct nand_chip *this = mtd_to_nand(mtd);
->  	struct ams_delta_nand *priv = nand_get_controller_data(this);
-> -	void __iomem *io_base = priv->io_base;
-> +	struct gpio_descs *data_gpiods = priv->data_gpiods;
-> +	unsigned long bits = byte;
-> +	int i;
-> +
-> +	for (i = 0; i < data_gpiods->ndescs; i++)
-> +		gpiod_direction_output_raw(data_gpiods->desc[i],
-> +					   test_bit(i, &bits));
->  
-> -	writew(0, io_base + OMAP_MPUIO_IO_CNTL);
-> -	writew(byte, this->IO_ADDR_W);
->  	gpiod_set_value(priv->gpiod_nwe, 0);
->  	ndelay(40);
->  	gpiod_set_value(priv->gpiod_nwe, 1);
-> @@ -87,18 +88,28 @@ static void ams_delta_write_byte(struct mtd_info *mtd, u_char byte)
->  
->  static u_char ams_delta_read_byte(struct mtd_info *mtd)
->  {
-> -	u_char res;
->  	struct nand_chip *this = mtd_to_nand(mtd);
->  	struct ams_delta_nand *priv = nand_get_controller_data(this);
-> -	void __iomem *io_base = priv->io_base;
-> +	struct gpio_descs *data_gpiods = priv->data_gpiods;
-> +	unsigned long bits = 0;
-> +	int i, value_array[data_gpiods->ndescs];
-> +
-> +	for (i = 0; i < data_gpiods->ndescs; i++)
-> +		gpiod_direction_input(data_gpiods->desc[i]);
->  
->  	gpiod_set_value(priv->gpiod_nre, 0);
->  	ndelay(40);
-> -	writew(~0, io_base + OMAP_MPUIO_IO_CNTL);
-> -	res = readw(this->IO_ADDR_R);
-> +
-> +	gpiod_get_raw_array_value(data_gpiods->ndescs, data_gpiods->desc,
-> +				  value_array);
-> +
->  	gpiod_set_value(priv->gpiod_nre, 1);
->  
-> -	return res;
-> +	for (i = 0; i < data_gpiods->ndescs; i++)
-> +		if (value_array[i])
-> +			__set_bit(i, &bits);
-> +
-> +	return bits;
->  }
->  
->  static void ams_delta_write_buf(struct mtd_info *mtd, const u_char *buf,
-> @@ -159,14 +170,8 @@ static int ams_delta_init(struct platform_device *pdev)
->  	struct ams_delta_nand *priv;
->  	struct nand_chip *this;
->  	struct mtd_info *mtd;
-> -	struct resource *res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	void __iomem *io_base;
-> -	struct gpio_descs *data_gpiods;
->  	int err = 0;
->  
-> -	if (!res)
-> -		return -ENXIO;
-> -
->  	/* Allocate memory for MTD device structure and private data */
->  	priv = devm_kzalloc(&pdev->dev, sizeof(struct ams_delta_nand),
->  			    GFP_KERNEL);
-> @@ -179,25 +184,8 @@ static int ams_delta_init(struct platform_device *pdev)
->  	mtd = nand_to_mtd(this);
->  	mtd->dev.parent = &pdev->dev;
->  
-> -	/*
-> -	 * Don't try to request the memory region from here,
-> -	 * it should have been already requested from the
-> -	 * gpio-omap driver and requesting it again would fail.
-> -	 */
-> -
-> -	io_base = ioremap(res->start, resource_size(res));
-> -	if (io_base == NULL) {
-> -		dev_err(&pdev->dev, "ioremap failed\n");
-> -		err = -EIO;
-> -		goto out_free;
-> -	}
-> -
-> -	priv->io_base = io_base;
->  	nand_set_controller_data(this, priv);
->  
-> -	/* Set address of NAND IO lines */
-> -	this->IO_ADDR_R = io_base + OMAP_MPUIO_INPUT_LATCH;
-> -	this->IO_ADDR_W = io_base + OMAP_MPUIO_OUTPUT;
->  	this->read_byte = ams_delta_read_byte;
->  	this->write_buf = ams_delta_write_buf;
->  	this->read_buf = ams_delta_read_buf;
-> @@ -207,7 +195,7 @@ static int ams_delta_init(struct platform_device *pdev)
->  	if (IS_ERR(priv->gpiod_rdy)) {
->  		err = PTR_ERR(priv->gpiod_rdy);
->  		dev_warn(&pdev->dev, "RDY GPIO request failed (%d)\n", err);
-> -		goto out_mtd;
-> +		return err;
->  	}
->  
->  	if (priv->gpiod_rdy)
-> @@ -225,66 +213,60 @@ static int ams_delta_init(struct platform_device *pdev)
->  	if (IS_ERR(priv->gpiod_nwp)) {
->  		err = PTR_ERR(priv->gpiod_nwp);
->  		dev_err(&pdev->dev, "NWP GPIO request failed (%d)\n", err);
-> -		goto out_mtd;
-> +		return err;
->  	}
->  
->  	priv->gpiod_nce = devm_gpiod_get(&pdev->dev, "nce", GPIOD_OUT_HIGH);
->  	if (IS_ERR(priv->gpiod_nce)) {
->  		err = PTR_ERR(priv->gpiod_nce);
->  		dev_err(&pdev->dev, "NCE GPIO request failed (%d)\n", err);
-> -		goto out_mtd;
-> +		return err;
->  	}
->  
->  	priv->gpiod_nre = devm_gpiod_get(&pdev->dev, "nre", GPIOD_OUT_HIGH);
->  	if (IS_ERR(priv->gpiod_nre)) {
->  		err = PTR_ERR(priv->gpiod_nre);
->  		dev_err(&pdev->dev, "NRE GPIO request failed (%d)\n", err);
-> -		goto out_mtd;
-> +		return err;
->  	}
->  
->  	priv->gpiod_nwe = devm_gpiod_get(&pdev->dev, "nwe", GPIOD_OUT_HIGH);
->  	if (IS_ERR(priv->gpiod_nwe)) {
->  		err = PTR_ERR(priv->gpiod_nwe);
->  		dev_err(&pdev->dev, "NWE GPIO request failed (%d)\n", err);
-> -		goto out_mtd;
-> +		return err;
->  	}
->  
->  	priv->gpiod_ale = devm_gpiod_get(&pdev->dev, "ale", GPIOD_OUT_LOW);
->  	if (IS_ERR(priv->gpiod_ale)) {
->  		err = PTR_ERR(priv->gpiod_ale);
->  		dev_err(&pdev->dev, "ALE GPIO request failed (%d)\n", err);
-> -		goto out_mtd;
-> +		return err;
->  	}
->  
->  	priv->gpiod_cle = devm_gpiod_get(&pdev->dev, "cle", GPIOD_OUT_LOW);
->  	if (IS_ERR(priv->gpiod_cle)) {
->  		err = PTR_ERR(priv->gpiod_cle);
->  		dev_err(&pdev->dev, "CLE GPIO request failed (%d)\n", err);
-> -		goto out_mtd;
-> +		return err;
->  	}
->  	/* Request array of data pins, initialize them as input */
-> -	data_gpiods = devm_gpiod_get_array(&pdev->dev, "data", GPIOD_IN);
-> -	if (IS_ERR(data_gpiods)) {
-> -		err = PTR_ERR(data_gpiods);
-> +	priv->data_gpiods = devm_gpiod_get_array(&pdev->dev, "data", GPIOD_IN);
-> +	if (IS_ERR(priv->data_gpiods)) {
-> +		err = PTR_ERR(priv->data_gpiods);
->  		dev_err(&pdev->dev, "data GPIO request failed: %d\n", err);
-> -		goto out_mtd;
-> +		return err;
->  	}
->  
->  	/* Scan to find existence of the device */
->  	err = nand_scan(mtd, 1);
->  	if (err)
-> -		goto out_mtd;
-> +		return err;
->  
->  	/* Register the partitions */
->  	mtd_device_register(mtd, partition_info, ARRAY_SIZE(partition_info));
->  
-> -	goto out;
-> -
-> - out_mtd:
-> -	iounmap(io_base);
-> -out_free:
-> - out:
-> -	return err;
-> +	return 0;
->  }
->  
->  /*
-> @@ -294,13 +276,10 @@ static int ams_delta_cleanup(struct platform_device *pdev)
->  {
->  	struct ams_delta_nand *priv = platform_get_drvdata(pdev);
->  	struct mtd_info *mtd = nand_to_mtd(&priv->nand_chip);
-> -	void __iomem *io_base = priv->io_base;
->  
-> -	/* Release resources, unregister device */
-> +	/* Unregister device */
->  	nand_release(mtd);
->  
-> -	iounmap(io_base);
-> -
->  	return 0;
->  }
->  
-> 
+I wonder if LOOPBACK_TARGET is just missing a "depends on SCSI" as was
+added for TCM_PSCSI?
 
+-Kees
 
 -- 
-Best regards,
-Marek Vasut
+Kees Cook
+Pixel Security
