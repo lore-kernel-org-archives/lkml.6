@@ -2,95 +2,97 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A429C46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 02:09:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 076F2C46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 02:10:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F2D4219A3
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 02:09:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F2D4219A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 88BDB219A3
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 02:10:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="WehfCMcQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88BDB219A3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726834AbeHFEP5 (ORCPT
+        id S1726971AbeHFERR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 00:15:57 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:59586 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725777AbeHFEP5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 00:15:57 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 1340B4A915AD9;
-        Mon,  6 Aug 2018 10:09:09 +0800 (CST)
-Received: from [10.151.23.176] (10.151.23.176) by smtp.huawei.com
- (10.3.19.203) with Microsoft SMTP Server (TLS) id 14.3.399.0; Mon, 6 Aug 2018
- 10:09:01 +0800
-Subject: Re: [PATCH] drivers/staging: Remove some unneeded semicolon
-To:     Chao Yu <yuchao0@huawei.com>, zhong jiang <zhongjiang@huawei.com>
-CC:     <gregkh@linuxfoundation.org>, <rspringer@google.com>,
-        <jnjoseph@google.com>, <benchan@chromium.org>,
-        "linux-erofs@lists.ozlabs.org" <linux-erofs@lists.ozlabs.org>,
-        <linux-kernel@vger.kernel.org>
-References: <1533477429-17379-1-git-send-email-zhongjiang@huawei.com>
- <687229f8-549f-cec1-c83f-b8acfd32d767@huawei.com>
- <e80780ed-42c8-3f8c-9197-1c6ac386fb30@huawei.com>
-From:   Gao Xiang <gaoxiang25@huawei.com>
-Message-ID: <50b97db3-8cd3-fe68-e23a-d6366f9c014b@huawei.com>
-Date:   Mon, 6 Aug 2018 10:07:56 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        Mon, 6 Aug 2018 00:17:17 -0400
+Received: from ozlabs.org ([203.11.71.1]:44733 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725777AbeHFERR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 00:17:17 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 41kLhj08VNz9s0n;
+        Mon,  6 Aug 2018 12:10:28 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1533521429;
+        bh=Ekhcf6nBQuzTKVnuozw68DJQvVT4NLKRiU1yQrwjROE=;
+        h=Date:From:To:Cc:Subject:From;
+        b=WehfCMcQKzPOyBSplTKzoRm7fPYhnj+dGXOqd95Y5XwurEsZu2DdJ8Hp0f915p5wK
+         RUr8DX2wlIGZ70R4vffmA2R2+YzjvbZXu2oFl51HxYtEGb7Dgc042dht3VCw2QIRYy
+         ojdxMEqrx4pwM90JfVBmE2qyxyPoCuPgOy0oLwI0pGJdgUVPbv70I4Ga0GKeNhGCCd
+         fs1p+M/zy1k5A+ixV/eVqM8w5qbUtrss9cjj8p4cq0x4PPYuvNAu+rcLsGhl9LtnGf
+         sp2/S7Ua+pqJ7AyWE1F8NvRjWHJLfRon/KuapdFWTs9bwG6bnb85bTRdHXs0gNHGR0
+         Lt4EvPiBdNjVg==
+Date:   Mon, 6 Aug 2018 12:10:26 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Yangbo Lu <yangbo.lu@nxp.com>
+Subject: linux-next: build failure after merge of the net-next tree
+Message-ID: <20180806121026.7c4b956b@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <e80780ed-42c8-3f8c-9197-1c6ac386fb30@huawei.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.151.23.176]
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/nUutFw4bxDjgRFO=yUac+tY"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Chao,
+--Sig_/nUutFw4bxDjgRFO=yUac+tY
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On 2018/8/6 9:58, Chao Yu wrote:
-> Hi Xiang,
-> 
-> On 2018/8/6 9:27, Gao Xiang wrote:
->> Hi Jiang,
->>
->> On 2018/8/5 21:57, zhong jiang wrote:
->>> That semicolons are unneeded, JUst remove them.
->>>
->>> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
->>
->> Thanks for your patch. Since erofs and gasket are different feature, it is better to seperate into two patches.
->> and could you please cc linux-erofs mailing list <linux-erofs@lists.ozlabs.org> as well?
->>
->> Yes, there is an extra semicolon in z_erofs_vle_unzip_all, it was reported by Julia Lawall several days ago.
->> Actually, there is a patch in linux-erofs mailing list, but it seems that Chao hasn't reviewed it yet...
-> 
-> Oh, sorry, I missed this one, let me check/review all recent patches again and
-> update them in tree later.
-> 
-> Thanks,
+Hi all,
 
-It is nothing. :) I will send v2 version of this patch if zhong jiang doesn't mind.
+After merging the net-next tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-Thanks,
-Gao Xiang
+drivers/ptp/ptp_qoriq.o: In function `qoriq_ptp_probe':
+ptp_qoriq.c:(.text+0xd0c): undefined reference to `__aeabi_uldivmod'
 
-> 
->>
->> https://lists.ozlabs.org/pipermail/linux-erofs/2018-August/000303.html
->>
->> I will add Signed-off-by: zhong jiang <zhongjiang@huawei.com> to the original patch if if you don't mind, do you?
->>
->> Thanks,
->> Gao Xiang
->>
->> .
->>
-> 
+Caused by commit
+
+  91305f281262 ("ptp_qoriq: support automatic configuration for ptp timer")
+
+I just reverted that commit for today.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/nUutFw4bxDjgRFO=yUac+tY
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltnrhIACgkQAVBC80lX
+0GzTgAf/U0HdKmV+qnw8Yf3Xuwx/7jubhhVRj/4gRBcp62G4pPEcTFfjHbHPqjsa
+Vm4MDhzPsqlw+ldhBlxMQGfC8V+2bHfpNbk41HjdnBTXbwM9B3ZcLRNvJnI8ZTiW
+2TqALUNnqF4aEpODQFaOQLTlenipWuWC00XuBPL9o1dewc70HP8hTaNeA7/Xh/T7
+lRp4gUsQN+1F1ZjW62nHm+3BuwkeRebzWCBZi7lD58n87DDmjHm0tLXeUMVzJyQx
+OWmgBk1xdzysEALE7+peT4S4/CjuFZQYmVqvm26Ysq8qcaGbAaeqb6zopu2cbNPr
+0DsyCZWnZSwlAcxuAaEZxXAMusD8KQ==
+=yMFq
+-----END PGP SIGNATURE-----
+
+--Sig_/nUutFw4bxDjgRFO=yUac+tY--
