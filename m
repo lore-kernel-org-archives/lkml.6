@@ -2,106 +2,129 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BF1DC4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 08:37:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83832C46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 08:39:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CB73214DC
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 08:37:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CB73214DC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=au1.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 42099219E2
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 08:39:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42099219E2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727535AbeHFKpq (ORCPT
+        id S1727146AbeHFKrU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 06:45:46 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54012 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725951AbeHFKpp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 06:45:45 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w768XVSg020277
-        for <linux-kernel@vger.kernel.org>; Mon, 6 Aug 2018 04:37:46 -0400
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2kpgd85y4s-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Aug 2018 04:37:46 -0400
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <andrew.donnellan@au1.ibm.com>;
-        Mon, 6 Aug 2018 09:37:43 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 6 Aug 2018 09:37:41 +0100
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w768beAO36962412
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 6 Aug 2018 08:37:40 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0B2AF4C04A;
-        Mon,  6 Aug 2018 11:37:50 +0100 (BST)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id AC5234C040;
-        Mon,  6 Aug 2018 11:37:49 +0100 (BST)
-Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon,  6 Aug 2018 11:37:49 +0100 (BST)
-Received: from [10.61.2.125] (haven.au.ibm.com [9.192.254.114])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 39BE5A01A5;
-        Mon,  6 Aug 2018 18:37:37 +1000 (AEST)
-Subject: Re: [RFC PATCH 1/2] checkpatch: Correctly detect git commit
- references that span 3 lines
-To:     Joe Perches <joe@perches.com>, linux-kernel@vger.kernel.org,
-        apw@canonical.com
-Cc:     fbarrat@linux.vnet.ibm.com
-References: <20180806035809.24752-1-andrew.donnellan@au1.ibm.com>
- <c99001394ca5cb13fefc56d5b854be1f4c7e0624.camel@perches.com>
-From:   Andrew Donnellan <andrew.donnellan@au1.ibm.com>
-Date:   Mon, 6 Aug 2018 18:37:37 +1000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 6 Aug 2018 06:47:20 -0400
+Received: from mga14.intel.com ([192.55.52.115]:54585 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725951AbeHFKrU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 06:47:20 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Aug 2018 01:39:20 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,451,1526367600"; 
+   d="scan'208";a="251613960"
+Received: from chenyu-desktop.sh.intel.com (HELO chenyu-desktop) ([10.239.160.116])
+  by fmsmga005.fm.intel.com with ESMTP; 06 Aug 2018 01:39:18 -0700
+Date:   Mon, 6 Aug 2018 16:45:34 +0800
+From:   Yu Chen <yu.c.chen@intel.com>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     Ryan Chen <yu.chen.surf@gmail.com>, jlee@suse.com,
+        oneukum@suse.com, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        ebiggers@google.com, Theodore Ts'o <tytso@mit.edu>,
+        smueller@chronox.de, denkenz@gmail.com,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        linux-crypto@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kookoo.gu@intel.com, Zhang Rui <rui.zhang@intel.com>
+Subject: Re: [PATCH 0/4][RFC v2] Introduce the in-kernel hibernation
+ encryption
+Message-ID: <20180806084534.GB12124@chenyu-desktop>
+References: <20180720102532.GA20284@amd>
+ <1532346156.3057.11.camel@suse.com>
+ <20180723162302.GA4503@sandybridge-desktop>
+ <1532590246.7411.3.camel@suse.com>
+ <20180726081404.GG4244@linux-l9pv.suse>
+ <20180730170415.GQ4244@linux-l9pv.suse>
+ <20180803033702.GB416@sandybridge-desktop>
+ <20180803053445.GC4244@linux-l9pv.suse>
+ <CADjb_WSURQz86+E8kakNf7UBDM+aho+uaz3QdDkuGsEgan=szw@mail.gmail.com>
+ <20180805100200.GB22948@amd>
 MIME-Version: 1.0
-In-Reply-To: <c99001394ca5cb13fefc56d5b854be1f4c7e0624.camel@perches.com>
-Content-Language: en-AU
-X-TM-AS-GCONF: 00
-x-cbid: 18080608-0012-0000-0000-000002957F46
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18080608-0013-0000-0000-000020C78545
-Message-Id: <7a9ee916-bf83-1f84-1799-9e668d0b3712@au1.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-06_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=587 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808060095
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180805100200.GB22948@amd>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/08/18 15:07, Joe Perches wrote:
-> The multiple line block code can be difficult to read.
+Hi Pavel,
+On Sun, Aug 05, 2018 at 12:02:00PM +0200, Pavel Machek wrote:
+> Hi!
+> 
+> > > User space doesn't need to involve. The EFI root key is generated by
+> > > EFI boot stub and be transfer to kernel. It's stored in EFI boot service
+> > > variable that it can only be accessed by trusted EFI binary when
+> > > secure boot is enabled.
+> > >
+> > Okay, this apply to the 'suspend' phase, right?
+> > I'm still a little confused about the 'resume' phase.
+> > Taking encryption as example(not signature),
+> > the purpose of doing hibernation encryption is to prevent other users
+> > from stealing ram content. Say, user A uses a  passphrase to generate the
+> 
+> No, I don't think that's purpose here.
+> 
+> Purpose here is to prevent user from reading/modifying kernel memory
+> content on machine he owns.
+>
+Say, A puts his laptop into hibernation and walks away,
+and B walks by, and opens A's laptop and wakes up the system and he
+can do what he wants. Although EFI key/TPM trusted key is enabled,
+currently there's no certification during resume, which sounds
+unsafe to me. Afterall, the original requirement is to probe
+user for password during resume, which sounds more natural.
+> Strange as it may sound, that is what "secure" boot requires (and what
+> Disney wants).
+> 
+Ok, I understand this requirement, and I'm also concerning how to
+distinguish different users from seeing data of each other.
 
-I 100% agree!
+Joey,
+I'm thinking of a possible direction which could take advantage
+of the password.  It leverages either EFI key or TPM
+trusted key to get it done. Does it make sense?
 
-> My suggestion is to instead write a subroutine to get the
-> commit description and compare that against the returned
-> git commit description.
+1. The user space generates a symetric key key_user using
+   the password, and passes the key_user to the kernel as the master
+   key.
+2. The kernel uses the EFI key or TPM trusted key to encrypt
+   the key_user thus gets a encrypt_key.
+3. Uses the encrypt_key to do snapshot encryption
+4. During resume, the same encrypt_key is generated following
+   the same steps(I assume the same EFI key or TPM key could be fetched
+   during resumed, right?) and do the snapshot decryption.
 
-I'll try and do it up more neatly when I've got some spare time over the 
-next few days and send a v2.
+And this is what fscrypt is doing:
+Documentation/filesystems/fscrypt.rst
 
-Thanks,
--- 
-Andrew Donnellan              OzLabs, ADL Canberra
-andrew.donnellan@au1.ibm.com  IBM Australia Limited
+Best,
+Yu
+> I guess it may have some non-evil uses,
+> too... https://www.linux.com/news/matthew-garrett-explains-how-increase-security-boot-time
+> 
+> 									
+> 									Pavel
+> -- 
+> (english) http://www.livejournal.com/~pavelmachek
+> (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+
 
