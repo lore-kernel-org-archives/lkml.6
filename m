@@ -2,132 +2,98 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BECFC4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 21:43:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DAE7C4646D
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 21:44:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E492B21A3B
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 21:43:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E492B21A3B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vt.edu
+	by mail.kernel.org (Postfix) with ESMTP id 422E821A64
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 21:44:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DTp+SXvJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 422E821A64
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732972AbeHFXyG (ORCPT
+        id S1732944AbeHFXz1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 19:54:06 -0400
-Received: from outbound.smtp.vt.edu ([198.82.183.121]:37366 "EHLO
-        omr1.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1731324AbeHFXyE (ORCPT
+        Mon, 6 Aug 2018 19:55:27 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:38351 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731200AbeHFXz1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 19:54:04 -0400
-Received: from mr6.cc.vt.edu (mr6.cc.vt.edu [IPv6:2607:b400:92:8500:0:af:2d00:4488])
-        by omr1.cc.vt.edu (8.14.4/8.14.4) with ESMTP id w76Lh2F2009731
-        for <linux-kernel@vger.kernel.org>; Mon, 6 Aug 2018 17:43:02 -0400
-Received: from mail-qt0-f198.google.com (mail-qt0-f198.google.com [209.85.216.198])
-        by mr6.cc.vt.edu (8.14.7/8.14.7) with ESMTP id w76LgvHe025162
-        for <linux-kernel@vger.kernel.org>; Mon, 6 Aug 2018 17:43:02 -0400
-Received: by mail-qt0-f198.google.com with SMTP id e4-v6so11783848qtj.5
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Aug 2018 14:43:02 -0700 (PDT)
+        Mon, 6 Aug 2018 19:55:27 -0400
+Received: by mail-pl0-f68.google.com with SMTP id u11-v6so6186608plq.5
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Aug 2018 14:44:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=CYPNUrzOit/m6eDwlnNAerqtHtfUsuqj0cN7WJ/sDSg=;
+        b=DTp+SXvJelsRjixbyK4pFnUGsXEa++emQ5OYKW4S0TkPR1aOxXhnNnQiRK9VJUMV6R
+         nK8FjkceqNsbdN2Jrniok6BQ4vDsiTC+DuYF5gZxRG9lszpDg91HhfKBAIhE5fcCGrGH
+         Afi/15H1P+ZAyITWW7baTiJj8dz2wLcOAdX3UEH4N+r3PGX2cx4Oj0oiTWSLV4MNWLD9
+         2LHjQZgwOhD7tHmEKBKJpKzlr/5WimvbMvXHgsJ6bosZg5fKTKUzzcgAu9m542D8KrZ1
+         x5ZIeQA/pJpe0kLbaPR6AYBI0cU0EnnqMAgRxXQWyQZHPhzuz8xGI2f4y6yPA+X5jLbC
+         FK1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
-         :mime-version:content-transfer-encoding:date:message-id;
-        bh=wDforYBfmARGVxejAnw40gD/yifo85cdpeEEjKt5iT0=;
-        b=JJLfZpCzs7jMMEPAMVnZqsM3zHqKqH4uaCgvZm81Gh38jF2b4AP4OoNmbNThu9H2fE
-         7lZormfaJJ0tdnlK7c+paNQwEAVtw7owqY9KBDaQOtQHGN0M527ob2wCIbyUxjqEiUrX
-         /BrfucBei6tiprhBUbrxXPK3q1kR5U4PJzApxrA+2i8973WZycQCGPK3IU/VJMbN4qWV
-         S71czMn9mY9gyDkHQdB4t7RZpMlyTxtWWFJgYCry1wJARC0BYiTYIdiBLAmWMocWji8x
-         BHDWO5JwjyTz3WCATeyy30eeaVDLeWT7pQ2/7vZi9G1ISRvySAp0BqnMAEMTx+uQBdwm
-         C4JA==
-X-Gm-Message-State: AOUpUlFGOTXcKnAMEqPPOxpM7ROQKaUYlrXvNHkzyb8uwki83cn4j2K3
-        NFb6/uKlc9cgFIVtCnY170UHg0+9WqcQ0a79nUgirOdpfccHJX6rEwkwBhnESP+4iFfjqiqqVoq
-        HwqT9s3HjCJ43ZDqYFYKoB9Ueyo8W5ddnf5w=
-X-Received: by 2002:a0c:e28a:: with SMTP id r10-v6mr14679490qvl.59.1533591777461;
-        Mon, 06 Aug 2018 14:42:57 -0700 (PDT)
-X-Google-Smtp-Source: AAOMgpcu8djTkhSpAY11FfY0oneh5K+vm+kWcPyN1bMPMq4ROLXaO+HGajqF2DSQRHDrQaIHCIgYiQ==
-X-Received: by 2002:a0c:e28a:: with SMTP id r10-v6mr14679463qvl.59.1533591777147;
-        Mon, 06 Aug 2018 14:42:57 -0700 (PDT)
-Received: from turing-police.cc.vt.edu (turing-police.cc.ipv6.vt.edu. [2001:468:c80:2103:f21f:afff:fe0c:8ada])
-        by smtp.gmail.com with ESMTPSA id d71-v6sm8935492qke.57.2018.08.06.14.42.55
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=CYPNUrzOit/m6eDwlnNAerqtHtfUsuqj0cN7WJ/sDSg=;
+        b=gJY2YnmLi7oE/skaa2mvDRJb3tPWr2k/4vYAHZHeGEpAUujRRMzNXopbky7zOr+1Mp
+         UUbBXoFM22Ydp2jyttkyaX0Qoi/nrhXIinz3/h2y9MY35pjnfRyUgBJK5bb20w8v0rsd
+         ddj0aj8Qy9fGSS16CAanhB8iUTDdvbc919+DCS5MeUOlgMHl21Xwp74b2TW0ou2F+qUY
+         ZGbvapApzJOHjw5vEc6wPN89WOz2kcVAGp+73h4nYd8apRb/QJPcAOWVQEKsQ07stWLI
+         nOd59BGb29QTwYyHeXT2UVsY11eMb1pgga2Mi1ZTvhND0+Dx+TbHhqX8ubtCJld4hRiR
+         b1iA==
+X-Gm-Message-State: AOUpUlFnfgRENWiQMuALTJEStP894LURwh8TWQWereFbWj8oiXcYaNw3
+        ZOdZEGUKNGejVnsyffQN23MlnA==
+X-Google-Smtp-Source: AAOMgpdT4vIdtqQem8U278w6j8//Dug8EpqZ61QCMe4mDprgwfcH6scZ0WQCV0leXGUjysiMcpd7qw==
+X-Received: by 2002:a17:902:3a2:: with SMTP id d31-v6mr15694458pld.287.1533591865587;
+        Mon, 06 Aug 2018 14:44:25 -0700 (PDT)
+Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
+        by smtp.gmail.com with ESMTPSA id c1-v6sm16251936pfi.142.2018.08.06.14.44.23
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 06 Aug 2018 14:42:55 -0700 (PDT)
-From:   valdis.kletnieks@vt.edu
-X-Google-Original-From: Valdis.Kletnieks@vt.edu
-X-Mailer: exmh version 2.8.0 04/21/2017 with nmh-1.7+dev
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     pkshih@realtek.com, kvalo@codeaurora.org,
-        Larry.Finger@lwfinger.net, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, davem@davemloft.net,
-        colin.king@canonical.com, linux-wireless@vger.kernel.org
-Subject: Re: [PATCH] rtlwifi: btcoex: Fix if == else warnings in halbtc8723b2ant.c
-In-Reply-To: <20180806045440.11920-1-yuehaibing@huawei.com>
-References: <20180806045440.11920-1-yuehaibing@huawei.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1533591774_2560P";
-         micalg=pgp-sha1; protocol="application/pgp-signature"
-Content-Transfer-Encoding: 7bit
-Date:   Mon, 06 Aug 2018 17:42:55 -0400
-Message-ID: <63216.1533591775@turing-police.cc.vt.edu>
+        Mon, 06 Aug 2018 14:44:24 -0700 (PDT)
+Date:   Mon, 6 Aug 2018 14:44:23 -0700 (PDT)
+From:   David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To:     Roman Gushchin <guro@fb.com>
+cc:     linux-mm@kvack.org, Michal Hocko <mhocko@suse.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Tejun Heo <tj@kernel.org>, kernel-team@fb.com,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [PATCH v2 1/3] mm: introduce mem_cgroup_put() helper
+In-Reply-To: <20180802003201.817-2-guro@fb.com>
+Message-ID: <alpine.DEB.2.21.1808061444120.43071@chino.kir.corp.google.com>
+References: <20180802003201.817-1-guro@fb.com> <20180802003201.817-2-guro@fb.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---==_Exmh_1533591774_2560P
-Content-Type: text/plain; charset=us-ascii
+On Wed, 1 Aug 2018, Roman Gushchin wrote:
 
-On Mon, 06 Aug 2018 12:54:40 +0800, YueHaibing said:
-> Fix following coccinelle warning:
->
-> ./drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8723b2ant.c:2952:2-4: WARNING: possible condition with no effect (if == else)
+> Introduce the mem_cgroup_put() helper, which helps to eliminate guarding
+> memcg css release with "#ifdef CONFIG_MEMCG" in multiple places.
+> 
+> Link: http://lkml.kernel.org/r/20180623000600.5818-2-guro@fb.com
+> Signed-off-by: Roman Gushchin <guro@fb.com>
+> Reviewed-by: Shakeel Butt <shakeelb@google.com>
+> Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+> Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+> Acked-by: Michal Hocko <mhocko@kernel.org>
+> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 
->  	/* sw mechanism */
->  	if (BTC_WIFI_BW_HT40 == wifi_bw) {
-> -		if ((wifi_rssi_state == BTC_RSSI_STATE_HIGH) ||
-> -		    (wifi_rssi_state == BTC_RSSI_STATE_STAY_HIGH)) {
-> -			btc8723b2ant_sw_mechanism(btcoexist, true, true,
-> -						  false, false);
-> -		} else {
-> -			btc8723b2ant_sw_mechanism(btcoexist, true, true,
-> -						  false, false);
-> -		}
-> +		btc8723b2ant_sw_mechanism(btcoexist, true, true,
-> +					  false, false);
->  	} else {
-
-Rather than blindly fixing this, perhaps a bit of thought needs to be
-applied to why this code looks like this in the first place.
-
-See commit c6821613e653a  (which looks like the bletcherous "do too many
-things at once" commit indeed), although the actual diff appears to be a
-"no harm, no foul" against this commit, where the issue already existed.
-
-commit aa45a673b291fd761275493bc15316d79555ed55
-Author: Larry Finger <Larry.Finger@lwfinger.net>
-Date:   Fri Feb 28 15:16:43 2014 -0600
-
-    rtlwifi: btcoexist: Add new mini driver
-
-Larry? Can you reach back to 2014 and remember why this code
-looked like this in the first place?
-
-
---==_Exmh_1533591774_2560P
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Comment: Exmh version 2.8.0 04/21/2017
-
-iQEVAwUBW2jA3o0DS38y7CIcAQJ/jAf/XmviMxCyZhpbRc1fx3+jtXSa4o7GqWGZ
-TK1ifksSAuGpytynZM6izSYTnwhHR68SSNflqpyhsDrT3ebNgYAtQHIDitMNtNQB
-XWeNyL2OLoMsMX2F/ifU6UfO5jclfi/0bBdpHqM7IJaHfU42kjrvCqlRu5CqH/BD
-a/K/c62EmGnR8LSy5em1P/39KePU22xEHylw3cq92uunKg5mhm3/TDOvzRyJGuqE
-52D2RCrgJRrNqfZpDaxOC5QZTsLdC8XvQLwYiWzO6Hb3/LGZtuX4ZC8yOCIkeVfU
-Jkgjf+D18Y9wBc5F/B8GwzvTebKfgepyZerK4YMgOuitE/ReR+byCA==
-=0wn3
------END PGP SIGNATURE-----
-
---==_Exmh_1533591774_2560P--
+Acked-by: David Rientjes <rientjes@google.com>
