@@ -2,143 +2,159 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6EEAC4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 10:33:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3596BC4646D
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 10:34:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A066821A03
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 10:33:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D74DC21A03
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 10:34:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="H2nZh8F6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A066821A03
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="s31OAPyz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D74DC21A03
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729825AbeHFMmQ (ORCPT
+        id S1729891AbeHFMnR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 08:42:16 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:51105 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727517AbeHFMmQ (ORCPT
+        Mon, 6 Aug 2018 08:43:17 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:41569 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727517AbeHFMnQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 08:42:16 -0400
-Received: by mail-it0-f68.google.com with SMTP id j81-v6so14959947ite.0
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Aug 2018 03:33:50 -0700 (PDT)
+        Mon, 6 Aug 2018 08:43:16 -0400
+Received: by mail-pg1-f195.google.com with SMTP id z8-v6so6039280pgu.8
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Aug 2018 03:34:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=PzuIBXiYr2yEqrM0q9et4p1OWpyCzWNpJcyYEFtLMYI=;
-        b=H2nZh8F6r4GSFIzz3bkvmMUI7feP2ie+c3bFsgbtayTdgP8uS/3ngORUKncKhEH4W4
-         tuK8OkWMdkeNuzkE0EpI52ZJBQTto3iYaBVjnx3OeT3v0w2XBaFYCmN0m68D6ATA7ABB
-         usajGjIRopSmIYTS+0uWgi/669+ITHZcCgdp8=
+        bh=EOvO6ky/dS/nmCHrL9ZkqthUZTkIuPHfdA3nBASzyOU=;
+        b=s31OAPyz69cMIGyF2Uo4w4fHhn65+lQFQXqZ71S5PEYn1fCDqLX7nQgdUlNuhk6S/S
+         L3B3O4q1LVY4Fbfx+8cV1gPRVAoMp9hHydP+eRC1bFqSyaepkvJz3j8eoXmZOKz0u97g
+         LlRa78CxpvDX0An1Zgd8Vg6nvq9kaSO1bCNnIhqw8wxR/fB5/FhTk7Ap7NX5/Ln1SEDs
+         AOJdLIKYlqYlEpSJVk1RmhyhJ+pZ2bjsh7bevDuorZeNZWoT04u/Lax2PfAEHZp+OQkJ
+         ILVl3GEi87Aaq5Yp1CeYgX9MejgdF6UATPMVhYfjQjo0ZBMQ9URKCMsg4iSSZ50pNxeh
+         ucAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=PzuIBXiYr2yEqrM0q9et4p1OWpyCzWNpJcyYEFtLMYI=;
-        b=ROVniJrrsaow7aHwo6+0FudU8cNQjWU6HYQzDA8ahaGY9lYEpXl8Eul92w712WIoSA
-         K+Y6Ef3PqyuCiaEO9Fx9cjBB7UeFLeqnVmKqSnVpV8Cm6SynyPEvst7zDpzSzKDjHlYt
-         +cMWEycKCf/Jtrw+J+ndiE/zfxApyO0hEgJgJvTbG/rwpfxBOFWmOdrIY8OusZauQwxb
-         cwm73cfVLfN8xF4BrRv++GNnBdWWKR6l1hkbvPhBdaNKbVHgm2pIxm8JRMNfW1ZkFAtv
-         ClmimQdtAnsYDvoFWv09f4BZbqVTT7Omjl0/ytJ41bQhueJAnErZWwTMHdLH4AwRGygZ
-         kTTQ==
-X-Gm-Message-State: AOUpUlGDzNudbHRYh8IHA2iZ7PW5d+Wp8Lg+uGKnOW7AFDUyv+syi8Wf
-        PKYHZxZMN0Aw+5uNoZWSO0p39IP/eJ4e/Kti3w2A7w==
-X-Google-Smtp-Source: AAOMgpd8dKEeAUhCu82kvKEKybe2PP1qL3NChdhEQ57cwMgE2I+gwnGQrlVJ5uJwBuFDcwka8arpS/uYtfkhpjDvPMU=
-X-Received: by 2002:a02:4c16:: with SMTP id a22-v6mr11706467jab.48.1533551630093;
- Mon, 06 Aug 2018 03:33:50 -0700 (PDT)
+        bh=EOvO6ky/dS/nmCHrL9ZkqthUZTkIuPHfdA3nBASzyOU=;
+        b=fjRdjSnV8JiwGvu6lvJ1BvDjfdUC2hs3T3BPjUMv7VE5loirLgWHG0n2duK1YDy5km
+         rRc4OJjgAcV4ytzm0utH8mr+xya7JIefcJdmGMUsHvwidbPRRRrctGYOKr+tnQq6VWi+
+         CkWDgrFT5XzWXs6Y5CZh/1J3BQiO5MBbPyK8QeE1yF+zUhFhOdm+6IwuEO/E+Kjoa3DF
+         mtME3UECk2x1n7OYHebxtsly0jEMO0kkxHkGRJ8bs4WIp+Kt22n6w9TSsPAWGL77r5Rm
+         pbrITPJNJJG86BxLeU/ixSfOqn1cqzBJkFoBxg4rno6Jtp9ObTDJ9RJ0pUt+KyrQHNsU
+         JURQ==
+X-Gm-Message-State: AOUpUlGAI58MRbB20mITq632S80caIMLCaq2Tq/BXJwjaM1Qmt5gDDWR
+        PjjmwWGh4j2KZXLAcCdxiABbCauG58I1Fp1v8Rme+Q==
+X-Google-Smtp-Source: AAOMgpeUq07SJiOqE3cBnnyuci9T4gn/A4daZY9rf3NYqys02OUVgo4WUCkow/UvIiYsiaPM7OtGYx7caIExzH4OdS4=
+X-Received: by 2002:a65:40cd:: with SMTP id u13-v6mr14273656pgp.334.1533551690533;
+ Mon, 06 Aug 2018 03:34:50 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180802153035.vjtmqwdwujvt7ojs@queper01-lin> <CAKfTPtCGGqykN027kxK+chvKvCpNu4bYYdvfZJ+3_7YzT3Utfg@mail.gmail.com>
- <20180802160009.uhwwj3tqrqmv7q5a@queper01-lin> <CAKfTPtB_tWgOPCB3q2Q2rESKczTPGBDUojcXDY7uP8YTQddBMg@mail.gmail.com>
- <20180802161027.v2ctgscuc4uxbb7u@queper01-lin> <CAKfTPtDtaF9Qs4NWkKWUSr8Ryi-ScYNmPyacocPQUPxT00XAYg@mail.gmail.com>
- <20180802165924.7ywgoxj2jwftxycz@queper01-lin> <CAKfTPtDsG4FJy5xBO8+6pJzehEM668=SZ4yQ-szVTduofN3QZg@mail.gmail.com>
- <20180803081850.hj7bp5ognuywapmd@queper01-lin> <CAKfTPtDkJY=JYicZk8sM9_mJ-iq+Jwse0oVRbW=wpxXKKnEoeQ@mail.gmail.com>
- <20180803155547.sxlhxpmhwcoappit@queper01-lin> <CAKfTPtBT-p-Z0EneirfOTwUw=5jEeDGa+4_EE4ogi2Ht7GU9Bg@mail.gmail.com>
- <68689fcb-3cb8-4685-58ef-0bec84be2047@arm.com>
-In-Reply-To: <68689fcb-3cb8-4685-58ef-0bec84be2047@arm.com>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Mon, 6 Aug 2018 12:33:39 +0200
-Message-ID: <CAKfTPtADSDJJaPr17zD8ZNtS7CQGBwfU6JDGRwssLN20zyW7Nw@mail.gmail.com>
-Subject: Re: [PATCH v5 09/14] sched: Add over-utilization/tipping point indicator
-To:     Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc:     Quentin Perret <quentin.perret@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Chris Redpath <chris.redpath@arm.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Thara Gopinath <thara.gopinath@linaro.org>,
-        viresh kumar <viresh.kumar@linaro.org>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        "Cc: Steve Muckle" <smuckle@google.com>, adharmap@quicinc.com,
-        "Kannan, Saravana" <skannan@quicinc.com>, pkondeti@codeaurora.org,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        currojerez@riseup.net, Javi Merino <javi.merino@kernel.org>
+Received: by 2002:a17:90a:ac14:0:0:0:0 with HTTP; Mon, 6 Aug 2018 03:34:30
+ -0700 (PDT)
+In-Reply-To: <20180806094827.GH19540@dhcp22.suse.cz>
+References: <0000000000005e979605729c1564@google.com> <20180806091552.GE19540@dhcp22.suse.cz>
+ <CACT4Y+Ystnwv4M6Uh+HBKbdADAnJ6otfR0GoA20crzqV+b2onQ@mail.gmail.com> <20180806094827.GH19540@dhcp22.suse.cz>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Mon, 6 Aug 2018 12:34:30 +0200
+Message-ID: <CACT4Y+ZJsDo1gjzHvbFVqHcrL=tFJXTAAWLs9mAJSv3+LiCdmA@mail.gmail.com>
+Subject: Re: WARNING in try_charge
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     syzbot <syzbot+bab151e82a4e973fa325@syzkaller.appspotmail.com>,
+        cgroups@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Dmitry Torokhov <dtor@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 6 Aug 2018 at 12:08, Dietmar Eggemann <dietmar.eggemann@arm.com> wrote:
->
-> On 08/06/2018 10:40 AM, Vincent Guittot wrote:
-> > On Fri, 3 Aug 2018 at 17:55, Quentin Perret <quentin.perret@arm.com> wrote:
-> >>
-> >> On Friday 03 Aug 2018 at 15:49:24 (+0200), Vincent Guittot wrote:
-> >>> On Fri, 3 Aug 2018 at 10:18, Quentin Perret <quentin.perret@arm.com> wrote:
-> >>>>
-> >>>> On Friday 03 Aug 2018 at 09:48:47 (+0200), Vincent Guittot wrote:
-> >>>>> On Thu, 2 Aug 2018 at 18:59, Quentin Perret <quentin.perret@arm.com> wrote:
->
+On Mon, Aug 6, 2018 at 11:48 AM, Michal Hocko <mhocko@kernel.org> wrote:
+> On Mon 06-08-18 11:30:37, Dmitry Vyukov wrote:
+>> On Mon, Aug 6, 2018 at 11:15 AM, Michal Hocko <mhocko@kernel.org> wrote:
 > [...]
+>> > More interesting stuff is higher in the kernel log
+>> > : [  366.435015] oom-kill:constraint=CONSTRAINT_MEMCG,nodemask=(null),cpuset=/,mems_allowed=0,oom_memcg=/ile0,task_memcg=/ile0,task=syz-executor3,pid=23766,uid=0
+>> > : [  366.449416] memory: usage 112kB, limit 0kB, failcnt 1605
+>> >
+>> > Are you sure you want to have hard limit set to 0?
+>>
+>> syzkaller really does not mind to have it.
 >
-> >> I think we're discussing two different things right now:
-> >>      1. Should forkees go in find_energy_efficient_cpu() ?
-> >>      2. Should forkees have 0 of initial util_avg when EAS is enabled ?
-> >
-> > It's the same topic: How EAS should consider a newly created task ?
-> >
-> > For now, we let the "performance" mode selects a CPU. This CPU will
-> > most probably be worst CPU from a EAS pov because it's the idlest CPU
-> > in the idlest group which is the opposite of what EAS tries to do
-> >
-> > The current behavior is :
-> > For every new task, the cpu selection is done assuming it's a heavy
-> > task with the max possible load_avg,  and it looks for the idlest cpu.
-> > This means that if the system is lightly loaded, scheduler will select
-> > most probably a idle big core.
->
-> AFAICS, task load doesn't seem to be used for find_idlest_cpu() (
-> find_idlest_group() and find_idlest_group_cpu()). So the forkee
-> (SD_BALANCE_FORK) is placed independently of his task load.
+> So what do you use it for? What do you actually test by this setting?
 
-hmm ... so what is used if load or runnable load are not used ?
-find_idlest_group() uses load and runnable load but skip spare
-capacity in case of fork
+syzkaller is kernel fuzzer, it finds kernel bugs by doing whatever is
+doable from user-space. Some of that may not make sense, but it does
+not matter because kernel should still stand still.
 
-> Task load (task_h_load(p)) is used in
-> wake_affine()->wake_affine_weight() but for this to be called it has to
-> be a wakeup (SD_BALANCE_WAKE).
->
-> > The utilization of this new task is then set to half of the remaining
-> > capacity of the selected CPU which means that the idlest you are, the
-> > biggest the task will be initialized to. This can easily be half a big
-> > core which can be bigger than the max capacity of a little like on
-> > hikey960. Then, util_est  will keep track of this value for a while
-> > which will make this task like a big one.
->
 > [...]
+>> > diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+>> > index 4603ad75c9a9..852cd3dbdcd9 100644
+>> > --- a/mm/memcontrol.c
+>> > +++ b/mm/memcontrol.c
+>> > @@ -1388,6 +1388,8 @@ static bool mem_cgroup_out_of_memory(struct mem_cgroup *memcg, gfp_t gfp_mask,
+>> >         bool ret;
+>> >
+>> >         mutex_lock(&oom_lock);
+>> > +       pr_info("task=%s pid=%d invoked memcg oom killer. oom_victim=%d\n",
+>> > +                       current->comm, current->pid, tsk_is_oom_victim(current));
+>> >         ret = out_of_memory(&oc);
+>> >         mutex_unlock(&oom_lock);
+>> >         return ret;
+>> >
+>> > Anyway your memcg setup is indeed misconfigured. Memcg with 0 hard limit
+>> > and basically no memory charged by existing tasks is not going to fly
+>> > and the warning is exactly to call that out.
+>>
+>>
+>> Please-please-please do not mix kernel bugs and notices to user into
+>> the same bucket:
 >
+> Well, WARN_ON used to be a standard way to make user aware of a
+> misbehavior. In this case it warns about a pottential runaway when memcg
+> is misconfigured. I do not insist on using WARN_ON here of course. If
+> there is a general agreement that such a condition is better handled by
+> pr_err then I am fine with it. Users tend to be more sensitive on
+> WARN_ONs though.
+
+The docs change was acked by Greg, and Andrew took it into mm, Linus
+was CCed too. It missed the release because I guess it's comments only
+change, but otherwise it should reach upstream tree on the next merge
+window.
+
+WARN is _not_ a common way to notify users today. syzbot reports _all_
+WARN occurrences and you can see there are not many of them now
+(probably 1 another now, +dtor for that one):
+https://syzkaller.appspot.com#upstream
+There is probably some long tail that we need to fix. We really do
+want systematic testing capability. You do not want every of 2 billion
+linux users to come to you with this kernel splat, just so that you
+can explain to them that it's some programs of their machines doing
+something wrong, right?
+
+WARN is really a bad way to inform a user about something. Consider a
+non-kernel developer, perhaps even non-programmer. What they see is
+"WARNING: CPU: 1 PID: 23767 at mm/memcontrol.c:1710
+try_charge+0x734/0x1680" followed by some obscure things and hex
+numbers. File:line reference is pointless, they don't what what/where
+it is. This one is slightly better because it prints "Memory cgroup
+charge failed because of no reclaimable memory! This looks like a
+misconfiguration or a kernel bug." before the warning. But still it
+says "or a kernel bug", which means that they will come to you. A much
+friendlier for user way to say this would be print a message at the
+point of misconfiguration saying what exactly is wrong, e.g. "pid $PID
+misconfigures cgroup /cgroup/path with mem.limit=0" without a stack
+trace (does not give any useful info for user). And return EINVAL if
+it can't fly at all? And then leave the "or a kernel bug" part for the
+WARNING each occurrence of which we do want to be reported to kernel
+developers.
