@@ -2,68 +2,110 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB8A4C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 08:17:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 779E6C4646D
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 08:18:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D681219DA
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 08:17:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D681219DA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 29D5D219DE
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 08:18:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="IhZbGJzs";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="QnDr0txr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29D5D219DE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727530AbeHFKZf (ORCPT
+        id S1727531AbeHFK0s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 06:25:35 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:34200 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726746AbeHFKZf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 06:25:35 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 63D4C18A;
-        Mon,  6 Aug 2018 01:17:41 -0700 (PDT)
-Received: from [10.4.13.119] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 954F23F5D0;
-        Mon,  6 Aug 2018 01:17:40 -0700 (PDT)
-Subject: Re: [PATCH 1/2] irqchip/gic-v3-its: Make its_lock a raw_spin_lock_t
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        linux-kernel@vger.kernel.org
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>
-References: <20180718154205.13704-1-bigeasy@linutronix.de>
- <20180718154205.13704-2-bigeasy@linutronix.de>
-From:   Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <86fdf639-32c7-5657-d8ae-f8dbf681f399@arm.com>
-Date:   Mon, 6 Aug 2018 09:17:39 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 6 Aug 2018 06:26:48 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:38040 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726482AbeHFK0s (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 06:26:48 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 524FC60B12; Mon,  6 Aug 2018 08:18:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1533543533;
+        bh=vJl0i1IFzzFlsvmKDqs7sriqASo3nqDA4HcyDzbphtc=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=IhZbGJzsUT15toEhgOr/AFzuSLv1LwEFUWzSbaa42z1+IWR/eNtGHzxw+pfVLs3Yy
+         vut6sIoYTx+9pwK/RqKREjFh6+AApRqQ4YYRU0JIwLqAdECIKTBQtCLeA7VASTUpz0
+         h4bTINrDUil+TgP9cGGvjVaMoE9LGsUBweE5HWQ4=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id B0948604BE;
+        Mon,  6 Aug 2018 08:18:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1533543532;
+        bh=vJl0i1IFzzFlsvmKDqs7sriqASo3nqDA4HcyDzbphtc=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=QnDr0txrskX2fwaRaoo8Jk6nd1FbRP5nLFDEeEzhaQHxdoRVxGzAjZWDCfdF3fP4/
+         BIQyeZy4a/dN5bXCS/BrY1ZCudSr5mfm/ye6BKsQyt0vDAmlUtWe2xEoLG/TUOGbVp
+         9TGWoS0xBmJAI1ULOm9d5nOTeOk/iEMf6Q9Bz2vM=
 MIME-Version: 1.0
-In-Reply-To: <20180718154205.13704-2-bigeasy@linutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
+Date:   Mon, 06 Aug 2018 13:48:52 +0530
+From:   Vikash Garodia <vgarodia@codeaurora.org>
+To:     Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Cc:     hverkuil@xs4all.nl, mchehab@kernel.org, robh@kernel.org,
+        mark.rutland@arm.com, andy.gross@linaro.org, arnd@arndb.de,
+        bjorn.andersson@linaro.org, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        acourbot@chromium.org, linux-media-owner@vger.kernel.org
+Subject: Re: [PATCH v3 3/4] venus: firmware: add no TZ boot and shutdown
+ routine
+In-Reply-To: <4727000d-96ef-2dc5-50df-6bdadcaa156e@linaro.org>
+References: <1530731212-30474-1-git-send-email-vgarodia@codeaurora.org>
+ <1530731212-30474-4-git-send-email-vgarodia@codeaurora.org>
+ <4727000d-96ef-2dc5-50df-6bdadcaa156e@linaro.org>
+Message-ID: <e482a9af27288c9e8a8ffb5c1de8a209@codeaurora.org>
+X-Sender: vgarodia@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18/07/18 16:42, Sebastian Andrzej Siewior wrote:
-> The its_lock lock is held while a new device is added to the list and
-> during setup while the CPU is booted. Even on -RT the CPU-bootup is
-> performed with disabled interrupts.
-> 
-> Make its_lock a raw_spin_lock_t.
-> 
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Hi Stanimir,
 
-Applied to irq/irqchip-next.
+Thanks for your review.
+
+On 2018-07-25 15:06, Stanimir Varbanov wrote:
+> Hi Vikash,
+> 
+> On 07/04/2018 10:06 PM, Vikash Garodia wrote:
+> 
+<snip>
+
+>> 
+>>  #define VENUS_PAS_ID			9
+>> -#define VENUS_FW_MEM_SIZE		(6 * SZ_1M)
+>> +#define VENUS_FW_MEM_SIZE		(5 * SZ_1M)
+> 
+> This change should be subject to a separate patch.
+Ok.
+
+> 
+<snip>
+
+>> +	writel_relaxed(reg, reg_base + WRAPPER_A9SS_SW_RESET);
+>> +
+>> +	/* Make sure reset is asserted before the mapping is removed */
+>> +	mb();
+> 
+> mb() is used for compiler barrier as far as I know, isn't better to 
+> just
+> read the register and keep the comment?
+
+mb() can ensure that the instructions are ordered. This is needed to 
+ensure
+reset before the mapping is removed.
 
 Thanks,
-	
-	M.
--- 
-Jazz is not dead. It just smells funny...
+Vikash
