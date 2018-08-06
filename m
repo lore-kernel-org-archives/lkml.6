@@ -2,113 +2,198 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B55DC4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 12:09:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE88AC4646D
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 12:11:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D46C021A0F
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 12:09:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D46C021A0F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 91A3521A11
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 12:11:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91A3521A11
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732124AbeHFOSm (ORCPT
+        id S1732037AbeHFOTv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 10:18:42 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56104 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731180AbeHFOSm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 10:18:42 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1657B818AAEB;
-        Mon,  6 Aug 2018 12:09:52 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id C962C101042B;
-        Mon,  6 Aug 2018 12:09:51 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id w76C9pYk022731;
-        Mon, 6 Aug 2018 08:09:51 -0400
-Received: from localhost (mpatocka@localhost)
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id w76C9oVn022722;
-        Mon, 6 Aug 2018 08:09:50 -0400
-X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
-Date:   Mon, 6 Aug 2018 08:09:50 -0400 (EDT)
-From:   Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-cc:     Florian Weimer <fweimer@redhat.com>,
-        Andrew Pinski <pinskia@gmail.com>,
-        Richard Earnshaw <Richard.Earnshaw@arm.com>,
-        Ramana Radhakrishnan <ramana.gcc@googlemail.com>,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        GNU C Library <libc-alpha@sourceware.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Subject: Re: framebuffer corruption due to overlapping stp instructions on
- arm64
-In-Reply-To: <CAKv+Gu8HyHX8qjg1qHV2M9Re+RGQJigjdAFVC_yR4niGkk2ikA@mail.gmail.com>
-Message-ID: <alpine.LRH.2.02.1808060700070.10220@file01.intranet.prod.int.rdu2.redhat.com>
-References: <alpine.LRH.2.02.1808021242320.31834@file01.intranet.prod.int.rdu2.redhat.com> <CAKv+Gu97QvwoLLK_zueiA_gjg_4Q5cqU4YVUyHUVFFfffdyJaw@mail.gmail.com> <11f9185a-7f71-83df-3a57-0a0ae9c1f934@arm.com> <alpine.LRH.2.02.1808032046540.24748@file01.intranet.prod.int.rdu2.redhat.com>
- <CA+=Sn1=6F-fGLmXE0VqQHTqTCUKUT=Fz29mMT7349SPFisbZ9A@mail.gmail.com> <alpine.LRH.2.02.1808040611070.23762@file01.intranet.prod.int.rdu2.redhat.com> <fd2cae87-b2df-d8ef-8836-e6cbf8c5f851@redhat.com> <alpine.LRH.2.02.1808060325110.3756@file01.intranet.prod.int.rdu2.redhat.com>
- <CAKv+Gu_y6La77sWOSROrwfRy65jrFVYVvRZt+ewNheYhdhHCkQ@mail.gmail.com> <alpine.LRH.2.02.1808060626060.2986@file01.intranet.prod.int.rdu2.redhat.com> <CAKv+Gu87YqLM=FFZ6V8rHhuhskDdsBUuXFpqNKVbXWqdnuNEyA@mail.gmail.com> <alpine.LRH.2.02.1808060639200.2986@file01.intranet.prod.int.rdu2.redhat.com>
- <CAKv+Gu8HyHX8qjg1qHV2M9Re+RGQJigjdAFVC_yR4niGkk2ikA@mail.gmail.com>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+        Mon, 6 Aug 2018 10:19:51 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:52194 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731081AbeHFOTu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 10:19:50 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 04737206ED; Mon,  6 Aug 2018 14:10:58 +0200 (CEST)
+Received: from qschulz (AAubervilliers-681-1-99-143.w90-88.abo.wanadoo.fr [90.88.4.143])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 88C10203EC;
+        Mon,  6 Aug 2018 14:10:57 +0200 (CEST)
+Date:   Mon, 6 Aug 2018 14:10:57 +0200
+From:   Quentin Schulz <quentin.schulz@bootlin.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>, paul.burton@mips.com,
+        James Hogan <jhogan@kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux MIPS <linux-mips@linux-mips.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH 2/2] pinctrl: ocelot: add support for interrupt controller
+Message-ID: <20180806121057.nvlckdxrdxpopwaw@qschulz>
+References: <20180725122621.31713-1-quentin.schulz@bootlin.com>
+ <20180725122621.31713-2-quentin.schulz@bootlin.com>
+ <CACRpkdbq2Q-J8scsuaUS0hP1x12xh0zd+RMrCp0TYB773bOAdg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Mon, 06 Aug 2018 12:09:52 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Mon, 06 Aug 2018 12:09:52 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mpatocka@redhat.com' RCPT:''
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="spxixv56wptgjyni"
+Content-Disposition: inline
+In-Reply-To: <CACRpkdbq2Q-J8scsuaUS0hP1x12xh0zd+RMrCp0TYB773bOAdg@mail.gmail.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--spxixv56wptgjyni
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 6 Aug 2018, Ard Biesheuvel wrote:
+Hi Linus,
 
-> >> Are we talking about a quirk for the Armada 8040 or about PCIe on ARM
-> >> in general?
+On Mon, Aug 06, 2018 at 01:06:23PM +0200, Linus Walleij wrote:
+> Hi Quentin, sorry for delays!
+>=20
+
+No worries :)
+
+> On Wed, Jul 25, 2018 at 2:27 PM Quentin Schulz
+> <quentin.schulz@bootlin.com> wrote:
+>=20
+> > This GPIO controller can serve as an interrupt controller as well on the
+> > GPIOs it handles.
 > >
-> > I don't know - there are not any other easily available PCIe ARM boards
-> > except for Armada 8040.
-> 
-> ... indeed, and sadly, the ones that are available all have this
-> horrible Synopsys DesignWare PCIe IP that does not implement a true
-> root complex at all, but is simply repurposed endpoint IP with some
-> tweaks so it vaguely resembles a root complex.
-> 
-> But this is exactly why I am asking: I use a AMD Seattle Overdrive as
-> my main Linux development system, and it runs the gnome-shell stack
-> flawlessly (using the nouveau driver), as well as a UEFI framebuffer
-> using efifb. So my suspicion is that this is either a Synopsys IP
-> issue or an interconnect issue, and has nothing to do with the
-> impedance mismatch between AMBA and PCIe.
+> > An interrupt is generated whenever a GPIO line changes and the
+> > interrupt for this GPIO line is enabled. This means that both the
+> > changes from low to high and high to low generate an interrupt.
+> >
+> > For some use cases, it makes sense to ignore the high to low change and
+> > not generate an interrupt. Such a use case is a line that is hold in a
+> > level high/low manner until the event holding the line gets acked.
+> > This can be achieved by making sure the interrupt on the GPIO controller
+> > side gets acked and masked only after the line gets hold in its default
+> > state, this is what's done with the fasteoi functions.
+> >
+> > Only IRQ_TYPE_EDGE_BOTH and IRQ_TYPE_LEVEL_HIGH are supported for now.
+> >
+> > Signed-off-by: Quentin Schulz <quentin.schulz@bootlin.com>
+>=20
+> Patch applied, it's such a pretty and straight-forward patch.
+> Also IRQ is probably very nice to have, so let's get this in and
+> supported.
+>=20
+> Please consider addressing the following in follow-up patch(es):
+>=20
+> > +static int ocelot_irq_set_type(struct irq_data *data, unsigned int typ=
+e);
+>=20
+> Can't you just move the function above so you don't have to forward-decla=
+re
+> this?
+>=20
 
-If you run the program for testing memcpy on framebuffer that I posted in 
-this thread - does it detect some corruption for you?
+No I can't, not in the current implementation at least.
 
+In this function, I set the irq chip handler which needs one of the
+below irq_chip. As you can see, the set_type function is also defined in
+those two structures.
 
-BTW. does the Radeon GPU driver work for you?
+> > +static struct irq_chip ocelot_eoi_irqchip =3D {
+> > +       .name           =3D "gpio",
+> > +       .irq_mask       =3D ocelot_irq_mask,
+> > +       .irq_eoi        =3D ocelot_irq_ack,
+> > +       .irq_unmask     =3D ocelot_irq_unmask,
+> > +       .flags          =3D IRQCHIP_EOI_THREADED | IRQCHIP_EOI_IF_HANDL=
+ED,
+>=20
+> As you see the latter part of the define is "IF_HANDLED".
+>=20
+> > +       .irq_set_type   =3D ocelot_irq_set_type,
+> > +};
+> > +
+> > +static struct irq_chip ocelot_irqchip =3D {
+> > +       .name           =3D "gpio",
+> > +       .irq_mask       =3D ocelot_irq_mask,
+> > +       .irq_ack        =3D ocelot_irq_ack,
+> > +       .irq_unmask     =3D ocelot_irq_unmask,
+> > +       .irq_set_type   =3D ocelot_irq_set_type,
+> > +};
+>=20
+> Is it really neccessary to have two irqchips?
+>=20
+> Is this to separate ACK and EOI because the EOI version
+> doesn't survive an ACK?
+>=20
 
-My observation is that OpenGL with Nouveau works, but it's slow and the 
-whole system locks up when playing video in chromium.
+Let me give you a real world use case, the reason why I used EOI.
 
-Radeon HD 6350 (pre-GCN), doesn't lock up, but OpenGL (and Glamour) has 
-many artifacts and corrupted textures. When I switch it to EXA 
-acceleration and don't use OpenGL, it works.
+I've a PHY interrupt line that connects to a GPIO of this controller.
+The PHY holds the line until the PHY acknowledges the reason for
+generating an interrupt. So we can say that it's a LEVEL_HIGH
+"interrupt".
 
-The artifacts are not fixed by preloading a glibc with fixed memcpy, so 
-there's supposedly some other bug somewhere.
+The GPIO interrupt controller generates an interruption whenever the
+GPIO line has changed (0->1 or 1->0).
 
+In a "normal" use case, I'd have the PHY holding high the line, the GPIO
+controller generating an interrupt because the line has changed. We
+acknowledge the interrupt in the GPIO controller. Later, we acknowledge
+in the PHY the reason why we had to generate an "interrupt" on the PHY
+side, resulting in the line being now held low. This generates another
+interrupt on the GPIO controller side. However, only one actual
+interrupt should have been generated by the GPIO controller as there's
+only one event that resulted in an "interrupt" generation from the PHY.
 
-Unfortunatelly, there's no low-power GCN card.
+So, we need EOI so that the GPIO controller interrupt gets acked only
+when the PHY event is acked so that we don't receive an unexpected
+interrupt.
 
-Mikulas
+However, we also need the common irq handler behaviour as we might want
+to have the interrupt generated for 0->1 AND 1->0 transition depending
+on the IP connected to the GPIO.
+
+I could make my use case work with EOI but I find it very specific to my
+use case and thus added the support for a more commonly found (IMHO) use
+case.
+
+I'd say that, yes, the two irqchips are needed but I may be missing
+another way to handle all that.
+
+Thanks,
+Quentin
+
+--spxixv56wptgjyni
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEXeEYjDsJh38OoyMzhLiadT7g8aMFAltoOtEACgkQhLiadT7g
+8aNVmBAAr/UkRmpUGrarrLTJAEtdTXIWznWVXojklYEiUkpGRqt1oc2ZHwDAbFS/
+bunyihtVD9p4pM3gE5g4Hdccfq6deJrCmauhBzRXz2ULjlh0iwN9652acDhU3hsf
+nACOeo0fE40TZAx6lMw2FndeJRAop6J6wrabzLrBIKxL/DUboUfsGSLSyEN22uSi
+AAlOd4K6LPBmDVP0tLzWT/juiB6Q6vCyvyrjwNpGKT/dqCpsh0CKdtcIJk8a7DZq
+TCKZDGs4ZcJxAMyp9K+Nwi+bJqjY1MuZg9z5QYv2DUUMj7wJHbqI4iQV66xLq35P
+JtiyawfqTs2ixpvPsOtU08nPRXZbZbSxfD/inpypJJWR5IG5kE/CuBnfDNGItKKU
+B3/o1ZcHf60hc2TsWhRUoEvB0rK1LwbP3CD7MDA2Kr/GgyWBRGbJ0o96X3oP9iYn
+Ar4i6FTtMC4yQ7XlHwteCX68CgFRvCywqNSbc5q7g0Y/zU7mtnBQnggqt5cl9SSx
+7xh2+GwsEfuFPJxX0aAXq/0mBPru26nxLtU6b1yAg0SRZw3ieHiTLClS/ZEoBzHX
+THDXJVw4uzdlQSV5J7Ecaj0goeUJuWZRqgrHgd346VPD/N32HMwXGin4CUL6hveY
+uG0RC5MeBsPqrDhoVZcBd1gWjkYovT8NnLv1pHCJqP5/QNon948=
+=qNHL
+-----END PGP SIGNATURE-----
+
+--spxixv56wptgjyni--
