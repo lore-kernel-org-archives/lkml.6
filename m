@@ -2,135 +2,214 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C202C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 14:10:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E957C4646D
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 14:12:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EFBD21A29
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 14:10:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nN+OXmzY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EFBD21A29
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 4A1A321A29
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 14:12:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A1A321A29
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=asem.it
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730688AbeHFQUO (ORCPT
+        id S1730795AbeHFQVT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 12:20:14 -0400
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:40273 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727112AbeHFQUO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 12:20:14 -0400
-Received: by mail-yw1-f66.google.com with SMTP id z143-v6so3632265ywa.7
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Aug 2018 07:10:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=oFm3VfvlNpWxpRmwhR2MnOQ1f6VdRj1M60/+1qowZsQ=;
-        b=nN+OXmzYwOwU2Mxg64SZhGKr5s/sLiw82BcYdgldtrvuyhcam5S5HfF5GKc4RgVOed
-         zCBxcZj2Q58Ao5XAhm5+fXgkglRSGXWrvLY4yceIx68GVOaaMmvldAT16FGE1SL/n/cX
-         lKtfnioHRR97odiBBK+A27lYz4IpOhV/tDumA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=oFm3VfvlNpWxpRmwhR2MnOQ1f6VdRj1M60/+1qowZsQ=;
-        b=QpoQCZdsZttNKEJt2F3B1c5Rz2U2qVWjnnsRr8LrDqaAfBV2IYgrq9xS2W6h6o7cL7
-         VrahfmIo+wWtxNUdKW3KEu50Xz5PbTqlueWo78rHLxe9pgNbh5Arqor9dk1CKE747DVM
-         pAQcLnwc6dek7Ai4MfNbb/YiVSsq8Dopty/FF/b3yJWxIh1XmOHYhtmzd99nffz76FVo
-         YPq8iHl/rN+FY12CNP+l784IoEqNy8mFF/KJkJu6wwrDNL/ya7vu2TrqQOYQcCraYxrp
-         Lk6ZcTESNNNi0eOozRgMhSYz4jUkCNyA7BEoYVdIKWC2oFmQ9fOgvCPtBkL/IG2O0aiA
-         ENiw==
-X-Gm-Message-State: AOUpUlHNbKsuzcXJXJa4vwRxHiVocfEv40K6/RD7YeIbuyDrvNKfFOSE
-        apaZzV1aqoeYvYOii5yI/8egVVsJXtQ=
-X-Google-Smtp-Source: AAOMgpePXjpgtVYfBiwglNKeYuIfgvYUSnJ2Ao7+rGrJFgktsOiIU6RpaPMrqHkfz2OatW6Os3GfdA==
-X-Received: by 2002:a0d:f481:: with SMTP id d123-v6mr7899837ywf.27.1533564655809;
-        Mon, 06 Aug 2018 07:10:55 -0700 (PDT)
-Received: from mail-yw1-f50.google.com (mail-yw1-f50.google.com. [209.85.161.50])
-        by smtp.gmail.com with ESMTPSA id 134-v6sm7293476ywq.66.2018.08.06.07.10.53
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 06 Aug 2018 07:10:54 -0700 (PDT)
-Received: by mail-yw1-f50.google.com with SMTP id z143-v6so3632210ywa.7
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Aug 2018 07:10:53 -0700 (PDT)
-X-Received: by 2002:a0d:e7c1:: with SMTP id q184-v6mr7627190ywe.435.1533564653465;
- Mon, 06 Aug 2018 07:10:53 -0700 (PDT)
+        Mon, 6 Aug 2018 12:21:19 -0400
+Received: from smtp.asem.it ([151.1.184.197]:61412 "EHLO smtp.asem.it"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727940AbeHFQVT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 12:21:19 -0400
+Received: from webmail.asem.it
+        by asem.it (smtp.asem.it)
+        (SecurityGateway 4.0.1)
+        with ESMTP id SG003401346.MSG 
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Aug 2018 16:11:53 +0200S
+Received: from ASAS044.asem.intra (172.16.16.44) by ASAS044.asem.intra
+ (172.16.16.44) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1261.35; Mon, 6
+ Aug 2018 16:11:53 +0200
+Received: from flavio-x.asem.intra (172.16.17.160) by ASAS044.asem.intra
+ (172.16.16.44) with Microsoft SMTP Server id 15.1.1261.35 via Frontend
+ Transport; Mon, 6 Aug 2018 16:11:53 +0200
+From:   Flavio Suligoi <f.suligoi@asem.it>
+To:     Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>
+CC:     "David S . Miller" <davem@davemloft.net>,
+        <linux-can@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Flavio Suligoi <f.suligoi@asem.it>
+Subject: [PATCH v3] can: sja1000: plx_pci: add support for ASEM CAN raw device
+Date:   Mon, 6 Aug 2018 16:11:43 +0200
+Message-ID: <1533564703-32194-1-git-send-email-f.suligoi@asem.it>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <ac6e38c7-f794-6efd-4942-9b2a3fa7a0d0@pengutronix.de>
+References: <ac6e38c7-f794-6efd-4942-9b2a3fa7a0d0@pengutronix.de>
 MIME-Version: 1.0
-References: <20180725100256.22833-1-paul.kocialkowski@bootlin.com>
- <20180725100256.22833-5-paul.kocialkowski@bootlin.com> <b45a8a89-1313-7a08-206d-b93017724754@xs4all.nl>
- <dba0f9496b393c76f355398018b14ae06b2b18c9.camel@bootlin.com>
-In-Reply-To: <dba0f9496b393c76f355398018b14ae06b2b18c9.camel@bootlin.com>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Mon, 6 Aug 2018 23:10:40 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5DgFDFupACthsz1iLpAeYRtUtEfzQC1E5XZQ6gPZAYi1Q@mail.gmail.com>
-Message-ID: <CAAFQd5DgFDFupACthsz1iLpAeYRtUtEfzQC1E5XZQ6gPZAYi1Q@mail.gmail.com>
-Subject: Re: [PATCH v6 4/8] media: platform: Add Cedrus VPU decoder driver
-To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Alexandre Courbot <acourbot@chromium.org>
-Cc:     Hans Verkuil <hverkuil@xs4all.nl>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <linux-arm-kernel@lists.infradead.org>,
-        devel@driverdev.osuosl.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        thomas.petazzoni@bootlin.com, linux-sunxi@googlegroups.com,
-        Hugues FRUCHET <hugues.fruchet@st.com>,
-        ayaka <ayaka@soulik.info>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-SGHeloLookup-Result: pass smtp.helo=webmail.asem.it (ip=172.16.16.44)
+X-SGSPF-Result: none (smtp.asem.it)
+X-SGOP-RefID: str=0001.0A0B020E.5B68572A.0005,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0 (_st=1 _vt=0 _iwf=0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Paul,
+This patch adds support for ASEM opto-isolated dual channels
+CAN raw device (http://www.asem.it)
 
-On Mon, Aug 6, 2018 at 10:50 PM Paul Kocialkowski
-<paul.kocialkowski@bootlin.com> wrote:
->
-> Hi Hans and thanks for the review!
->
-> On Sat, 2018-08-04 at 14:18 +0200, Hans Verkuil wrote:
-> > Hi Paul,
-> >
-> > See below for my review comments. Mostly small fry, the main issue I found is
-> > that there is no support for VIDIOC_DECODER_CMD. That's the proper way of
-> > stopping a decoder. Don't rely on the deprecated allow_zero_bytesused field.
->
-> Mhh, it looks like this was kept around by negligence, but we do expect
-> that streamoff stops the decoder, not a zero bytesused field.
->
-> Is it still required to implement the V4L2_DEC_CMD_STOP
-> VIDIOC_DECODER_CMD in that case? I read in the doc that this ioctl
-> should be optional.
+Signed-off-by: Flavio Suligoi <f.suligoi@asem.it>
+---
 
-If I understand correctly that this decoder is stateless, there should
-be no need for any special flush sequence, since a 1:1 relation
-between OUTPUT and CAPTURE buffers is expected, which means that
-userspace can just stop queuing new OUTPUT buffers and keep dequeuing
-CAPTURE buffers until it matches all OUTPUT buffers queued before.
+v2: - rename ASEM_... constants to reduce space size;
+    - remove "else" in "plx_pci_reset_asem_dual_can_raw" function to avoid 
+      strings breaking
+v3: - fix wrong comment for PLX_LINT2_POL
+    - put string into just one line in "plx_pci_reset_asem_dual_can_raw"
+      function
 
-By the way, I guess we will also need some documentation for the
-stateless codec interface. Do you or Maxime (who sent the H264 part)
-have any plans to work on it? We have some internal documents, which
-should be convertible to rst using pandoc, but we might need some help
-with updating to latest request API and further editing. Alexandre
-(moved from Cc to To) is going to be looking into this.
+ drivers/net/can/sja1000/Kconfig   |  1 +
+ drivers/net/can/sja1000/plx_pci.c | 67 ++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 67 insertions(+), 1 deletion(-)
 
-Best regards,
-Tomasz
+diff --git a/drivers/net/can/sja1000/Kconfig b/drivers/net/can/sja1000/Kconfig
+index 1e65cb6..f6dc899 100644
+--- a/drivers/net/can/sja1000/Kconfig
++++ b/drivers/net/can/sja1000/Kconfig
+@@ -88,6 +88,7 @@ config CAN_PLX_PCI
+ 	   - TEWS TECHNOLOGIES TPMC810 card (http://www.tews.com/)
+ 	   - IXXAT Automation PC-I 04/PCI card (http://www.ixxat.com/)
+ 	   - Connect Tech Inc. CANpro/104-Plus Opto (CRG001) card (http://www.connecttech.com)
++	   - ASEM CAN raw - 2 isolated CAN channels (www.asem.it)
+ 
+ config CAN_TSCAN1
+ 	tristate "TS-CAN1 PC104 boards"
+diff --git a/drivers/net/can/sja1000/plx_pci.c b/drivers/net/can/sja1000/plx_pci.c
+index f8ff25c..f3915db 100644
+--- a/drivers/net/can/sja1000/plx_pci.c
++++ b/drivers/net/can/sja1000/plx_pci.c
+@@ -46,7 +46,8 @@ MODULE_SUPPORTED_DEVICE("Adlink PCI-7841/cPCI-7841, "
+ 			"esd CAN-PCIe/2000, "
+ 			"Connect Tech Inc. CANpro/104-Plus Opto (CRG001), "
+ 			"IXXAT PC-I 04/PCI, "
+-			"ELCUS CAN-200-PCI")
++			"ELCUS CAN-200-PCI, "
++			"ASEM DUAL CAN-RAW")
+ MODULE_LICENSE("GPL v2");
+ 
+ #define PLX_PCI_MAX_CHAN 2
+@@ -70,7 +71,9 @@ struct plx_pci_card {
+ 					 */
+ 
+ #define PLX_LINT1_EN	0x1		/* Local interrupt 1 enable */
++#define PLX_LINT1_POL	(1 << 1)	/* Local interrupt 1 polarity */
+ #define PLX_LINT2_EN	(1 << 3)	/* Local interrupt 2 enable */
++#define PLX_LINT2_POL	(1 << 4)	/* Local interrupt 2 polarity */
+ #define PLX_PCI_INT_EN	(1 << 6)	/* PCI Interrupt Enable */
+ #define PLX_PCI_RESET	(1 << 30)	/* PCI Adapter Software Reset */
+ 
+@@ -92,6 +95,9 @@ struct plx_pci_card {
+  */
+ #define PLX_PCI_OCR	(OCR_TX0_PUSHPULL | OCR_TX1_PUSHPULL)
+ 
++/* OCR setting for ASEM Dual CAN raw */
++#define ASEM_PCI_OCR	0xfe
++
+ /*
+  * In the CDR register, you should set CBP to 1.
+  * You will probably also want to set the clock divider value to 7
+@@ -145,10 +151,20 @@ struct plx_pci_card {
+ #define MOXA_PCI_VENDOR_ID		0x1393
+ #define MOXA_PCI_DEVICE_ID		0x0100
+ 
++#define ASEM_RAW_CAN_VENDOR_ID		0x10b5
++#define ASEM_RAW_CAN_DEVICE_ID		0x9030
++#define ASEM_RAW_CAN_SUB_VENDOR_ID	0x3000
++#define ASEM_RAW_CAN_SUB_DEVICE_ID	0x1001
++#define ASEM_RAW_CAN_SUB_DEVICE_ID_BIS	0x1002
++#define ASEM_RAW_CAN_RST_REGISTER	0x54
++#define ASEM_RAW_CAN_RST_MASK_CAN1	0x20
++#define ASEM_RAW_CAN_RST_MASK_CAN2	0x04
++
+ static void plx_pci_reset_common(struct pci_dev *pdev);
+ static void plx9056_pci_reset_common(struct pci_dev *pdev);
+ static void plx_pci_reset_marathon_pci(struct pci_dev *pdev);
+ static void plx_pci_reset_marathon_pcie(struct pci_dev *pdev);
++static void plx_pci_reset_asem_dual_can_raw(struct pci_dev *pdev);
+ 
+ struct plx_pci_channel_map {
+ 	u32 bar;
+@@ -269,6 +285,14 @@ static struct plx_pci_card_info plx_pci_card_info_moxa = {
+ 	 /* based on PLX9052 */
+ };
+ 
++static struct plx_pci_card_info plx_pci_card_info_asem_dual_can = {
++	"ASEM Dual CAN raw PCI", 2,
++	PLX_PCI_CAN_CLOCK, ASEM_PCI_OCR, PLX_PCI_CDR,
++	{0, 0x00, 0x00}, { {2, 0x00, 0x00}, {4, 0x00, 0x00} },
++	&plx_pci_reset_asem_dual_can_raw
++	/* based on PLX9030 */
++};
++
+ static const struct pci_device_id plx_pci_tbl[] = {
+ 	{
+ 		/* Adlink PCI-7841/cPCI-7841 */
+@@ -375,6 +399,20 @@ static const struct pci_device_id plx_pci_tbl[] = {
+ 		0, 0,
+ 		(kernel_ulong_t)&plx_pci_card_info_moxa
+ 	},
++	{
++		/* ASEM Dual CAN raw */
++		ASEM_RAW_CAN_VENDOR_ID, ASEM_RAW_CAN_DEVICE_ID,
++		ASEM_RAW_CAN_SUB_VENDOR_ID, ASEM_RAW_CAN_SUB_DEVICE_ID,
++		0, 0,
++		(kernel_ulong_t)&plx_pci_card_info_asem_dual_can
++	},
++	{
++		/* ASEM Dual CAN raw -new model */
++		ASEM_RAW_CAN_VENDOR_ID, ASEM_RAW_CAN_DEVICE_ID,
++		ASEM_RAW_CAN_SUB_VENDOR_ID, ASEM_RAW_CAN_SUB_DEVICE_ID_BIS,
++		0, 0,
++		(kernel_ulong_t)&plx_pci_card_info_asem_dual_can
++	},
+ 	{ 0,}
+ };
+ MODULE_DEVICE_TABLE(pci, plx_pci_tbl);
+@@ -524,6 +562,33 @@ static void plx_pci_reset_marathon_pcie(struct pci_dev *pdev)
+ 	}
+ }
+ 
++/* Special reset function for ASEM Dual CAN raw card */
++static void plx_pci_reset_asem_dual_can_raw(struct pci_dev *pdev)
++{
++	void __iomem *bar0_addr;
++	static const int reset_bar;
++	u8 tmpval;
++
++	plx_pci_reset_common(pdev);
++
++	bar0_addr = pci_iomap(pdev, reset_bar, 0);
++	if (!bar0_addr) {
++		dev_err(&pdev->dev, "Failed to remap reset space %d (BAR%d)\n",
++			0, reset_bar);
++		return;
++	}
++
++	/* reset the two SJA1000 chips */
++	tmpval = ioread8(bar0_addr + ASEM_RAW_CAN_RST_REGISTER);
++	tmpval &= ~(ASEM_RAW_CAN_RST_MASK_CAN1 | ASEM_RAW_CAN_RST_MASK_CAN2);
++	iowrite8(tmpval, bar0_addr + ASEM_RAW_CAN_RST_REGISTER);
++	usleep_range(300, 400);
++	tmpval |= ASEM_RAW_CAN_RST_MASK_CAN1 | ASEM_RAW_CAN_RST_MASK_CAN2;
++	iowrite8(tmpval, bar0_addr + ASEM_RAW_CAN_RST_REGISTER);
++	usleep_range(300, 400);
++	pci_iounmap(pdev, bar0_addr);
++}
++
+ static void plx_pci_del_card(struct pci_dev *pdev)
+ {
+ 	struct plx_pci_card *card = pci_get_drvdata(pdev);
+-- 
+2.7.4
+
