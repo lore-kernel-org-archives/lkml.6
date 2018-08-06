@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 838E1C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:42:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 633B4C4646D
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:42:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3934A21A67
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:42:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 19F2121A67
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:42:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AX+6UEOD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3934A21A67
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vwCS2rS+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19F2121A67
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732688AbeHFSwX (ORCPT
+        id S2387593AbeHFSuv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 14:52:23 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:33691 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387621AbeHFSuy (ORCPT
+        Mon, 6 Aug 2018 14:50:51 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:36249 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387521AbeHFSuu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 14:50:54 -0400
-Received: by mail-wm0-f66.google.com with SMTP id r24-v6so12002118wmh.0
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Aug 2018 09:41:00 -0700 (PDT)
+        Mon, 6 Aug 2018 14:50:50 -0400
+Received: by mail-wm0-f65.google.com with SMTP id w24-v6so14983035wmc.1
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Aug 2018 09:40:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=uFRCrIeakYIo90pBPUFlidHqpT0Hqqs6ARXRy/1gDrE=;
-        b=AX+6UEOD4pChSsOaVJW9/HUmRY/Hud5HGf4nl2GADVcqj7RWjxiy1PFox5NDqoN3dO
-         vfpNrriAJ6/Xv52Jjqyqc9GZabpYl6HbtIODPOr9wrot2mbZmq+FrgNtfun2vMh/n8f2
-         0C+SdMEFuWM5HRB7mTci48rybim2ePdWLxmoLET2gDdHVHgj6mmFfrEeaa1EVkcYnlhF
-         K8cnjvJpET1k5OuNulN1TWP84QgVEtmWHZI2SiaPQ+4Aa4nJvZkzmRDejbEC8H7Bcu/a
-         zEh/B23/FKOADejZqHo1wu+YxSnPzMHo8lGXhQkK1Kl7/IzBtzMyTM9i0BHxg+uHp1Yg
-         rCnQ==
+        bh=GegTTjbmNjbsX4HChAan54mquc/Z0XI1PkIXzAwJIOA=;
+        b=vwCS2rS+pYmdg61bP8gDqGFfjdo/PBgT6JVV1eg1zZd9Nr82b0S2clR0RH2K9s8WZb
+         lnWNV7aUQhgx6ozlH2TgLTj8ytb3Gbl/BbeMPpAYV9WOz45c2GWctVCc+0N88H5Go1DV
+         rD7PN/GFtJgW1ZKKhPcgh/1w3TJCnnxeios0hCtkgXFGbIZ9WiU821qQgiiDf1vvJ6Ck
+         dg4ElQes4DdNeBtawrfXt8Py9CeCHaFfZElhvErprQq4g+cVxwUqfhrZuceiB8lvps7e
+         evQ7YS8E34ofUmAzfr6OXPU/0Put4HaH/XQyRfpB6Tbwh2n9YjSEjmLbiSHYQZ/AAk7P
+         bgng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=uFRCrIeakYIo90pBPUFlidHqpT0Hqqs6ARXRy/1gDrE=;
-        b=QfmzisPhJj84LzlpRa0L76VpM6B4kg2upFrnn0bNsD8GaidUjlw2SXgMNzDHM01fC0
-         zNUaoySLNVZiWAbGAtxaVuLpmPjcT39rJ20FMLHx61oiC2/6yDD4sg9+IMsaPldO9HvJ
-         D0+RwyxoBy77dgVPG0EeiXBUgAPBpIR6TjcfiLxA6VMo0U65FdKdeqPkZ5cu5fU+Ds3E
-         6Gj46M/QtLEaxrq+7cEtTAkDgE81YUrbMGqz32YcNVs9byXqogYgiRnCakjk/ht8EYgc
-         ChVPnzFQ1WHo3rfz4VoK2QYCYBTr6cS/J2a2w7SgX1Wk+rSDqv0LwBYVBcuQo7hkJjui
-         sfkg==
-X-Gm-Message-State: AOUpUlFCKAYjI++HBJQe5CStC/zN8kzegnJhC+U/su1sNr6IvvNhkoqE
-        s51wGNwzI77xoJgPIMCzPz3ICw==
-X-Google-Smtp-Source: AAOMgpcfIK1v5kRJhsLZ34SjY23HZ47OTWWZVSIMkNKjxkQyM4NJfzwreb6Ygxh/ZoTjJ068qYgKyQ==
-X-Received: by 2002:a1c:f03:: with SMTP id 3-v6mr12283207wmp.129.1533573659155;
-        Mon, 06 Aug 2018 09:40:59 -0700 (PDT)
+        bh=GegTTjbmNjbsX4HChAan54mquc/Z0XI1PkIXzAwJIOA=;
+        b=Lue6vej/sbLMLWgvIkhFusTuoGoFl0f530DPItYL0EHPk+iQ2t6rLgazVZbqMdptOp
+         b9U7levNgUTC3DI3SxaZttOO9chaaCliB0+P2L6dSO0DcIOYD9zCWSLa0DyqUn/0zgHy
+         kOnR9RVZNAunOVUeQvhBCOOYF+iVKCW4qTjSwlGjj5rElRIL64heOSnZ7IA6rZ5+W+/7
+         1IuzzEAo3ivduhsKtjAzmV6HWc2ljoZmnFwYdz8lBeOXWNk3xxWG+Fnq7fjpjcJ5ZHWm
+         82VghP7diwNayaC1BA74PZxFuWwo/dMcPdeVx8rvEkP6aOL6HZHWuZCSf0pql4PA/SnP
+         T09A==
+X-Gm-Message-State: AOUpUlF+U7RHe/XHCEgANPyjyRm1HkLKb7JWC3Whuixu6vIskRQOVGkV
+        17s89Gyf5h8hQAPcVjf+poN5tA==
+X-Google-Smtp-Source: AAOMgpdCs/vJ4E8irRmzR7MSfblRn+1H6Z0RIGz3mXzRBYhElgG2TSHw5K1OwojBrGMLhngHuZnOFQ==
+X-Received: by 2002:a1c:a691:: with SMTP id p139-v6mr12041466wme.42.1533573655186;
+        Mon, 06 Aug 2018 09:40:55 -0700 (PDT)
 Received: from andreyknvl0.muc.corp.google.com ([2a00:79e0:15:10:84be:a42a:826d:c530])
-        by smtp.gmail.com with ESMTPSA id 66-v6sm16385790wmw.34.2018.08.06.09.40.58
+        by smtp.gmail.com with ESMTPSA id 66-v6sm16385790wmw.34.2018.08.06.09.40.53
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 06 Aug 2018 09:40:58 -0700 (PDT)
+        Mon, 06 Aug 2018 09:40:54 -0700 (PDT)
 From:   Andrey Konovalov <andreyknvl@google.com>
 To:     Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>,
@@ -84,9 +84,9 @@ Cc:     Dmitry Vyukov <dvyukov@google.com>,
         Jacob Bramley <Jacob.Bramley@arm.com>,
         Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
         Chintan Pandya <cpandya@codeaurora.org>
-Subject: [PATCH v5 04/10] mm, arm64: untag user addresses in mm/gup.c
-Date:   Mon,  6 Aug 2018 18:40:39 +0200
-Message-Id: <64762ca688f8611c38cf6a8c8bf50a75d9f2fa3a.1533573460.git.andreyknvl@google.com>
+Subject: [PATCH v5 01/10] arm64: add type casts to untagged_addr macro
+Date:   Mon,  6 Aug 2018 18:40:36 +0200
+Message-Id: <b3ec523879cca4f08d0a27065cfb5583470cdadb.1533573460.git.andreyknvl@google.com>
 X-Mailer: git-send-email 2.18.0.597.ga71716f1ad-goog
 In-Reply-To: <cover.1533573460.git.andreyknvl@google.com>
 References: <cover.1533573460.git.andreyknvl@google.com>
@@ -97,40 +97,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-mm/gup.c provides a kernel interface that accepts user addresses and
-manipulates user pages directly (for example get_user_pages, that is used
-by the futex syscall). Since a user can provided tagged addresses, we need
-to handle such case.
-
-Add untagging to gup.c functions that use user addresses for vma lookup.
+This patch makes the untagged_addr macro accept all kinds of address types
+(void *, unsigned long, etc.) and allows not to specify type casts in each
+place where it is used. This is done by using __typeof__.
 
 Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
 ---
- mm/gup.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/arm64/include/asm/uaccess.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/mm/gup.c b/mm/gup.c
-index fc5f98069f4e..ebb87fb56709 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -666,6 +666,8 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
- 	if (!nr_pages)
- 		return 0;
+diff --git a/arch/arm64/include/asm/uaccess.h b/arch/arm64/include/asm/uaccess.h
+index e66b0fca99c2..2d6451cbaa86 100644
+--- a/arch/arm64/include/asm/uaccess.h
++++ b/arch/arm64/include/asm/uaccess.h
+@@ -102,7 +102,8 @@ static inline unsigned long __range_ok(const void __user *addr, unsigned long si
+  * up with a tagged userland pointer. Clear the tag to get a sane pointer to
+  * pass on to access_ok(), for instance.
+  */
+-#define untagged_addr(addr)		sign_extend64(addr, 55)
++#define untagged_addr(addr)		\
++	((__typeof__(addr))sign_extend64((__u64)(addr), 55))
  
-+	start = untagged_addr(start);
-+
- 	VM_BUG_ON(!!pages != !!(gup_flags & FOLL_GET));
- 
- 	/*
-@@ -820,6 +822,8 @@ int fixup_user_fault(struct task_struct *tsk, struct mm_struct *mm,
- 	struct vm_area_struct *vma;
- 	int ret, major = 0;
- 
-+	address = untagged_addr(address);
-+
- 	if (unlocked)
- 		fault_flags |= FAULT_FLAG_ALLOW_RETRY;
- 
+ #define access_ok(type, addr, size)	__range_ok(addr, size)
+ #define user_addr_max			get_fs
 -- 
 2.18.0.597.ga71716f1ad-goog
 
