@@ -2,180 +2,372 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77F4CC4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 13:50:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 607D0C46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 13:50:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2724D21925
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 13:50:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NXv3oRx4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2724D21925
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 10524217BD
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 13:50:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10524217BD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732269AbeHFP70 (ORCPT
+        id S1732398AbeHFP71 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 11:59:26 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:42932 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731978AbeHFP70 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 11:59:26 -0400
-Received: by mail-pg1-f195.google.com with SMTP id y4-v6so6260137pgp.9
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Aug 2018 06:50:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=FouZBfQpDASkZRb3ZM6EkV9QkAEZM8NYmG5mRiHTFy0=;
-        b=NXv3oRx4bpOTJ6owAvmWArFVLM6TVOTRCsVWWYPN5fMvWs4cBkU1Unv24WJ3eiH4aU
-         qlyz9QWrLYQvIZJ+xo4i5k4QFV7Xjkasac8onuKx42IqNp6jmqPSmCoyBqPJw8QLvg1M
-         9h/gi4S6aaViETEktk2MuilowMrSg7HXSIeE1ZXn9waZEAVriOdOFO3pCfys/sHN8enH
-         TpeJnzGWbIZuHaRpj8OIkgec/6zLGWk7rug54d4hGZAxIi1cakPnmBjeom97gkQqgIYe
-         XsBrH3S/ySwRmg0x2Pk/iMoQcA0V5AIDJVeu/muXTH1AH+D62/S2aVfgvsLpyUqTiEY8
-         vLwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=FouZBfQpDASkZRb3ZM6EkV9QkAEZM8NYmG5mRiHTFy0=;
-        b=Ay713+miOM0fnzcLPjfR8chwcLhrIXOqXLwnfBRMs3QSAWd2xXmy0AjfyLl+BWeJXm
-         P0cms/qZmYTbwIc3YPCv4SzFh3KHqhDCtMLuR/Y3ouLXO6UvStpkSbNKgNCHWTSCgv7e
-         rO1r/BakxY+Qk8oz+81824TCJhAIcA7y0+T+nNbTWSQG5hxDEBt1lGyWYzRWXuYbsWHB
-         OnZ8LlfDgIA2xqL7PhgMqsGAEO51BTViNjhCBjSHxj/7wXkfolG38r6ipaWYcKhjlsmg
-         dav0ennddUy0Az6TQNDImoUICpWjVDcG7SZtU3bobSW2i9tL80ol2ekVechUFkJ3WaU/
-         27QA==
-X-Gm-Message-State: AOUpUlHdVifYo7P062qkATPoeC8mvFpXKGwywiTXDyecnCrYHQLJoTot
-        EWnRxqvYVcC68R+db9Ie8nE=
-X-Google-Smtp-Source: AAOMgpd8OU7aajZXOk/oHu6tB6bouCOESWeVr6wW3dSANmqWhPYaIvtz+pouKLmlTL2TUvxW8Xm2Jw==
-X-Received: by 2002:a62:8a4f:: with SMTP id y76-v6mr17342411pfd.233.1533563413784;
-        Mon, 06 Aug 2018 06:50:13 -0700 (PDT)
-Received: from danjae.aot.lge.com ([182.210.106.170])
-        by smtp.gmail.com with ESMTPSA id t30-v6sm21002381pgm.81.2018.08.06.06.50.10
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 06 Aug 2018 06:50:12 -0700 (PDT)
-Date:   Mon, 6 Aug 2018 22:45:07 +0900
-From:   Namhyung Kim <namhyung@kernel.org>
-To:     Jiri Olsa <jolsa@kernel.org>
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        David Ahern <dsahern@gmail.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Stephane Eranian <eranian@google.com>, kernel-team@lge.com
-Subject: Re: [PATCH 14/20] perf annotate: Pass struct annotation_options to
- map_symbol__annotation_dump
-Message-ID: <20180806134507.GA6983@danjae.aot.lge.com>
-References: <20180804130521.11408-1-jolsa@kernel.org>
- <20180804130521.11408-15-jolsa@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180804130521.11408-15-jolsa@kernel.org>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        Mon, 6 Aug 2018 11:59:27 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:56505 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731008AbeHFP71 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 11:59:27 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 76D23207B5; Mon,  6 Aug 2018 15:50:11 +0200 (CEST)
+Received: from aptenodytes (AAubervilliers-681-1-99-143.w90-88.abo.wanadoo.fr [90.88.4.143])
+        by mail.bootlin.com (Postfix) with ESMTPSA id E77D8203EC;
+        Mon,  6 Aug 2018 15:50:10 +0200 (CEST)
+Message-ID: <dba0f9496b393c76f355398018b14ae06b2b18c9.camel@bootlin.com>
+Subject: Re: [PATCH v6 4/8] media: platform: Add Cedrus VPU decoder driver
+From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To:     Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-sunxi@googlegroups.com,
+        Hugues Fruchet <hugues.fruchet@st.com>,
+        Randy Li <ayaka@soulik.info>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>
+Date:   Mon, 06 Aug 2018 15:50:11 +0200
+In-Reply-To: <b45a8a89-1313-7a08-206d-b93017724754@xs4all.nl>
+References: <20180725100256.22833-1-paul.kocialkowski@bootlin.com>
+         <20180725100256.22833-5-paul.kocialkowski@bootlin.com>
+         <b45a8a89-1313-7a08-206d-b93017724754@xs4all.nl>
+Organization: Bootlin
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-NhzGKRQQLbTuM6yxjJGc"
+X-Mailer: Evolution 3.28.4 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jiri,
 
-On Sat, Aug 04, 2018 at 03:05:15PM +0200, Jiri Olsa wrote:
-> Passing struct annotation_options to map_symbol__annotation_dump,
-> to carry on and pass the percent_type value.
-> 
-> Link: http://lkml.kernel.org/n/tip-5toohgdkgpk3vn6zebusr3bb@git.kernel.org
-> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-> ---
+--=-NhzGKRQQLbTuM6yxjJGc
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-[SNIP]
-> @@ -2523,7 +2526,7 @@ static void disasm_line__write(struct disasm_line *dl, struct annotation *notes,
->  
->  static void __annotation_line__write(struct annotation_line *al, struct annotation *notes,
->  				     bool first_line, bool current_entry, bool change_color, int width,
-> -				     void *obj,
-> +				     void *obj, unsigned int percent_type,
->  				     int  (*obj__set_color)(void *obj, int color),
->  				     void (*obj__set_percent_color)(void *obj, double percent, bool current),
->  				     int  (*obj__set_jumps_percent_color)(void *obj, int nr, bool current),
-> @@ -2531,7 +2534,7 @@ static void __annotation_line__write(struct annotation_line *al, struct annotati
->  				     void (*obj__write_graph)(void *obj, int graph))
->  
->  {
-> -	double percent_max = annotation_line__max_percent(al, notes);
-> +	double percent_max = annotation_line__max_percent(al, notes, percent_type);
->  	int pcnt_width = annotation__pcnt_width(notes),
->  	    cycles_width = annotation__cycles_width(notes);
->  	bool show_title = false;
-> @@ -2552,8 +2555,7 @@ static void __annotation_line__write(struct annotation_line *al, struct annotati
->  		for (i = 0; i < notes->nr_events; i++) {
->  			double percent;
->  
-> -			percent = annotation_data__percent(&al->data[i],
-> -							   PERCENT_HITS_LOCAL);
-> +			percent = annotation_data__percent(&al->data[i], percent_type);
->  
->  			obj__set_percent_color(obj, percent, current_entry);
->  			if (notes->options->show_total_period) {
-> @@ -2680,13 +2682,15 @@ static void __annotation_line__write(struct annotation_line *al, struct annotati
->  }
->  
->  void annotation_line__write(struct annotation_line *al, struct annotation *notes,
-> -			    struct annotation_write_ops *ops)
-> +			    struct annotation_write_ops *wops,
-> +			    struct annotation_options *opts)
->  {
-> -	__annotation_line__write(al, notes, ops->first_line, ops->current_entry,
-> -				 ops->change_color, ops->width, ops->obj,
-> -				 ops->set_color, ops->set_percent_color,
-> -				 ops->set_jumps_percent_color, ops->printf,
-> -				 ops->write_graph);
-> +	__annotation_line__write(al, notes, wops->first_line, wops->current_entry,
-> +				 wops->change_color, wops->width, wops->obj,
-> +				 opts->percent_type,
-> +				 wops->set_color, wops->set_percent_color,
-> +				 wops->set_jumps_percent_color, wops->printf,
-> +				 wops->write_graph);
+Hi Hans and thanks for the review!
 
-This doesn't look good.  Why not just passing a pointer to wops
-instead of each fields separately?
+On Sat, 2018-08-04 at 14:18 +0200, Hans Verkuil wrote:
+> Hi Paul,
+>=20
+> See below for my review comments. Mostly small fry, the main issue I foun=
+d is
+> that there is no support for VIDIOC_DECODER_CMD. That's the proper way of
+> stopping a decoder. Don't rely on the deprecated allow_zero_bytesused fie=
+ld.
 
-Thanks,
-Namhyung
+Mhh, it looks like this was kept around by negligence, but we do expect
+that streamoff stops the decoder, not a zero bytesused field.
 
+Is it still required to implement the V4L2_DEC_CMD_STOP
+VIDIOC_DECODER_CMD in that case? I read in the doc that this ioctl
+should be optional.
 
->  }
->  
->  int symbol__annotate2(struct symbol *sym, struct map *map, struct perf_evsel *evsel,
-> diff --git a/tools/perf/util/annotate.h b/tools/perf/util/annotate.h
-> index 145dec845f33..3d4579e68d28 100644
-> --- a/tools/perf/util/annotate.h
-> +++ b/tools/perf/util/annotate.h
-> @@ -185,7 +185,8 @@ struct annotation_write_ops {
->  };
->  
->  void annotation_line__write(struct annotation_line *al, struct annotation *notes,
-> -			    struct annotation_write_ops *ops);
-> +			    struct annotation_write_ops *ops,
-> +			    struct annotation_options *opts);
->  
->  int __annotation__scnprintf_samples_period(struct annotation *notes,
->  					   char *bf, size_t size,
-> @@ -351,7 +352,8 @@ void symbol__annotate_zero_histogram(struct symbol *sym, int evidx);
->  void symbol__annotate_decay_histogram(struct symbol *sym, int evidx);
->  void annotated_source__purge(struct annotated_source *as);
->  
-> -int map_symbol__annotation_dump(struct map_symbol *ms, struct perf_evsel *evsel);
-> +int map_symbol__annotation_dump(struct map_symbol *ms, struct perf_evsel *evsel,
-> +				struct annotation_options *opts);
->  
->  bool ui__has_annotation(void);
->  
-> -- 
-> 2.17.1
-> 
+[...]
+
+> > +static int cedrus_request_validate(struct media_request *req)
+> > +{
+> > +	struct media_request_object *obj, *obj_safe;
+> > +	struct v4l2_ctrl_handler *parent_hdl, *hdl;
+> > +	struct cedrus_ctx *ctx =3D NULL;
+> > +	struct v4l2_ctrl *ctrl_test;
+> > +	unsigned int i;
+> > +
+> > +	list_for_each_entry_safe(obj, obj_safe, &req->objects, list) {
+> > +		struct vb2_buffer *vb;
+> > +
+> > +		if (vb2_request_object_is_buffer(obj)) {
+> > +			vb =3D container_of(obj, struct vb2_buffer, req_obj);
+> > +			ctx =3D vb2_get_drv_priv(vb->vb2_queue);
+> > +
+> > +			break;
+> > +		}
+> > +	}
+> > +
+> > +	if (!ctx)
+> > +		return -EINVAL;
+>=20
+> Return -ENOENT, just as vb2_request_validate does.
+
+Thanks, will fix this and the following errors in the next revision.
+> > +
+> > +	parent_hdl =3D &ctx->hdl;
+> > +
+> > +	hdl =3D v4l2_ctrl_request_hdl_find(req, parent_hdl);
+> > +	if (!hdl) {
+> > +		v4l2_err(&ctx->dev->v4l2_dev, "Missing codec control(s)\n");
+> > +		return -EINVAL;
+>=20
+> Ditto, return -ENOENT.
+>=20
+> > +	}
+> > +
+> > +	for (i =3D 0; i < CEDRUS_CONTROLS_COUNT; i++) {
+> > +		if (cedrus_controls[i].codec !=3D ctx->current_codec ||
+> > +		    !cedrus_controls[i].required)
+> > +			continue;
+> > +
+> > +		ctrl_test =3D v4l2_ctrl_request_hdl_ctrl_find(hdl,
+> > +			cedrus_controls[i].id);
+> > +		if (!ctrl_test) {
+> > +			v4l2_err(&ctx->dev->v4l2_dev,
+> > +				 "Missing required codec control\n");
+> > +			return -EINVAL;
+>=20
+> Ditto.
+>=20
+> The documentation of MEDIA_REQUEST_IOC_QUEUE says this for ENOENT:
+>=20
+> ENOENT
+>     The request did not contain any buffers. All requests are required
+>     to have at least one buffer. This can also be returned if required
+>     controls are missing.
+>=20
+> So ENOENT is the correct error code when checking for required controls.
+
+Thanks for the explanation!
+
+[...]
+
+> > +static int cedrus_release(struct file *file)
+> > +{
+> > +	struct cedrus_dev *dev =3D video_drvdata(file);
+> > +	struct cedrus_ctx *ctx =3D container_of(file->private_data,
+> > +					      struct cedrus_ctx, fh);
+> > +
+> > +	mutex_lock(&dev->dev_mutex);
+> > +
+> > +	v4l2_fh_del(&ctx->fh);
+> > +	v4l2_m2m_ctx_release(ctx->fh.m2m_ctx);
+> > +
+> > +	v4l2_ctrl_handler_free(&ctx->hdl);
+> > +	kfree(ctx->ctrls);
+> > +
+> > +	v4l2_fh_exit(&ctx->fh);
+> > +	v4l2_fh_exit(&ctx->fh);
+>=20
+> Why call this twice?
+
+Woops, looks like a mistake.
+
+[...]
+
+> > +void cedrus_device_run(void *priv)
+> > +{
+> > +	struct cedrus_ctx *ctx =3D priv;
+> > +	struct cedrus_dev *dev =3D ctx->dev;
+> > +	struct cedrus_run run =3D { 0 };
+> > +	struct media_request *src_req;
+> > +	unsigned long flags;
+> > +
+> > +	run.src =3D v4l2_m2m_next_src_buf(ctx->fh.m2m_ctx);
+> > +	run.dst =3D v4l2_m2m_next_dst_buf(ctx->fh.m2m_ctx);
+> > +
+> > +	/* Apply request(s) controls if needed. */
+> > +	src_req =3D run.src->vb2_buf.req_obj.req;
+> > +
+> > +	if (src_req)
+> > +		v4l2_ctrl_request_setup(src_req, &ctx->hdl);
+> > +
+> > +	ctx->job_abort =3D 0;
+> > +
+> > +	spin_lock_irqsave(&ctx->dev->irq_lock, flags);
+> > +
+> > +	switch (ctx->src_fmt.pixelformat) {
+> > +	case V4L2_PIX_FMT_MPEG2_SLICE:
+> > +		run.mpeg2.slice_params =3D cedrus_find_control_data(ctx,
+> > +			V4L2_CID_MPEG_VIDEO_MPEG2_SLICE_PARAMS);
+> > +		run.mpeg2.quantization =3D cedrus_find_control_data(ctx,
+> > +			V4L2_CID_MPEG_VIDEO_MPEG2_QUANTIZATION);
+> > +		break;
+> > +
+> > +	default:
+> > +		ctx->job_abort =3D 1;
+>=20
+> Add break; here.
+
+Good catch, will do.
+
+[...]
+
+> > +static int cedrus_querycap(struct file *file, void *priv,
+> > +			   struct v4l2_capability *cap)
+> > +{
+> > +	strncpy(cap->driver, CEDRUS_NAME, sizeof(cap->driver) - 1);
+> > +	strncpy(cap->card, CEDRUS_NAME, sizeof(cap->card) - 1);
+> > +	snprintf(cap->bus_info, sizeof(cap->bus_info),
+> > +		 "platform:%s", CEDRUS_NAME);
+> > +
+> > +	cap->device_caps =3D V4L2_CAP_VIDEO_M2M_MPLANE | V4L2_CAP_STREAMING;
+> > +	cap->capabilities =3D cap->device_caps | V4L2_CAP_DEVICE_CAPS;
+>=20
+> Set device_caps in struct video_device and drop these two lines here.
+> The v4l2 core will take care of setting device_caps and capabilities.
+
+Nice, will do!
+
+> > +static int cedrus_start_streaming(struct vb2_queue *q, unsigned int co=
+unt)
+> > +{
+> > +	struct cedrus_ctx *ctx =3D vb2_get_drv_priv(q);
+> > +	struct cedrus_dev *dev =3D ctx->dev;
+> > +	int ret =3D 0;
+> > +
+> > +	switch (ctx->src_fmt.pixelformat) {
+> > +	case V4L2_PIX_FMT_MPEG2_SLICE:
+> > +		ctx->current_codec =3D CEDRUS_CODEC_MPEG2;
+> > +		break;
+> > +	default:
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	if (V4L2_TYPE_IS_OUTPUT(q->type) &&
+> > +	    dev->dec_ops[ctx->current_codec]->start)
+> > +		ret =3D dev->dec_ops[ctx->current_codec]->start(ctx);
+> > +
+> > +	return ret;
+>=20
+> If start_streaming returns an error, then all queued buffers need to
+> be returned to vb2 with state VB2_BUF_STATE_QUEUED.
+
+Okay, so I suppose I will take the code from streamoff, make it common
+and pass it the target buf state.
+
+> > +int cedrus_queue_init(void *priv, struct vb2_queue *src_vq,
+> > +		      struct vb2_queue *dst_vq)
+> > +{
+> > +	struct cedrus_ctx *ctx =3D priv;
+> > +	int ret;
+> > +
+> > +	src_vq->type =3D V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE;
+> > +	src_vq->io_modes =3D VB2_MMAP | VB2_DMABUF;
+> > +	src_vq->drv_priv =3D ctx;
+> > +	src_vq->buf_struct_size =3D sizeof(struct cedrus_buffer);
+> > +	src_vq->allow_zero_bytesused =3D 1;
+>=20
+> Don't use this, it's deprecated. Implement VIDIOC_DECODER_CMD instead.
+
+Looks like we can just get rid of it at this point, it's not used by
+userspace to indicate that there is no data left to send.
+
+> > +	src_vq->min_buffers_needed =3D 1;
+> > +	src_vq->ops =3D &cedrus_qops;
+> > +	src_vq->mem_ops =3D &vb2_dma_contig_memops;
+> > +	src_vq->timestamp_flags =3D V4L2_BUF_FLAG_TIMESTAMP_COPY;
+> > +	src_vq->lock =3D &ctx->dev->dev_mutex;
+> > +	src_vq->dev =3D ctx->dev->dev;
+> > +
+> > +	ret =3D vb2_queue_init(src_vq);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	dst_vq->type =3D V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
+> > +	dst_vq->io_modes =3D VB2_MMAP | VB2_DMABUF;
+> > +	dst_vq->drv_priv =3D ctx;
+> > +	dst_vq->buf_struct_size =3D sizeof(struct cedrus_buffer);
+> > +	dst_vq->allow_zero_bytesused =3D 1;
+>=20
+> Ditto. It's pointless for the capture side anyway.
+>=20
+> > +	dst_vq->min_buffers_needed =3D 1;
+> > +	dst_vq->ops =3D &cedrus_qops;
+> > +	dst_vq->mem_ops =3D &vb2_dma_contig_memops;
+> > +	dst_vq->timestamp_flags =3D V4L2_BUF_FLAG_TIMESTAMP_COPY;
+> > +	dst_vq->lock =3D &ctx->dev->dev_mutex;
+> > +	dst_vq->dev =3D ctx->dev->dev;
+> > +
+> > +	return vb2_queue_init(dst_vq);
+> > +}
+> > diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_video.h b/driver=
+s/staging/media/sunxi/cedrus/cedrus_video.h
+> > new file mode 100644
+> > index 000000000000..56afcc8c02ba
+> > --- /dev/null
+> > +++ b/drivers/staging/media/sunxi/cedrus/cedrus_video.h
+> > @@ -0,0 +1,31 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 */
+> > +/*
+> > + * Sunxi-Cedrus VPU driver
+> > + *
+> > + * Copyright (C) 2018 Paul Kocialkowski <paul.kocialkowski@bootlin.com=
+>
+> > + * Copyright (C) 2016 Florent Revest <florent.revest@free-electrons.co=
+m>
+> > + *
+> > + * Based on the vim2m driver, that is:
+> > + *
+> > + * Copyright (c) 2009-2010 Samsung Electronics Co., Ltd.
+> > + * Pawel Osciak, <pawel@osciak.com>
+> > + * Marek Szyprowski, <m.szyprowski@samsung.com>
+> > + */
+> > +
+> > +#ifndef _CEDRUS_VIDEO_H_
+> > +#define _CEDRUS_VIDEO_H_
+> > +
+> > +struct cedrus_format {
+> > +	u32		pixelformat;
+> > +	u32		directions;
+> > +	unsigned int	num_planes;
+> > +	unsigned int	num_buffers;
+> > +	unsigned int	capabilities;
+> > +};
+> > +
+> > +extern const struct v4l2_ioctl_ops cedrus_ioctl_ops;
+> > +
+> > +int cedrus_queue_init(void *priv, struct vb2_queue *src_vq,
+> > +		      struct vb2_queue *dst_vq);
+> > +
+> > +#endif
+
+Cheers,
+
+Paul
+
+--=20
+Paul Kocialkowski, Bootlin (formerly Free Electrons)
+Embedded Linux and kernel engineering
+https://bootlin.com
+
+--=-NhzGKRQQLbTuM6yxjJGc
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEJZpWjZeIetVBefti3cLmz3+fv9EFAltoUhMACgkQ3cLmz3+f
+v9FJQAgAltMKB5V9ep9P0FXdGJEOI64t9GTvGfxRrk2/Nl2y27H6V28RAS67VUz+
+E0Bf6a8DfUvKPGrHKRASuirza+8ihAj8wcNOm1x7Wu2YzaYxbWjMxLo8ddcDQMUs
+i/c4HWW2r5o87d+F2DUkFxfn2ZTGBkX0756g1LC7N2BeWguQJJywgMUG1mCKavM1
+Z7wLbQB7SjcPBjgsH8M6tdCoaCkdDjUcOY58XM6n3rGFqeGH3gyugVeC82Tnhum8
+Jrv1/jNxqBDB6vDy8JMV32Jw8JLJeMmS/rTV1TRGBEJCW8S9pfll9SNH0CpUVaF2
+KdLdr6ALCnEZIbBMM2cyP2kPmzgD6g==
+=N7mn
+-----END PGP SIGNATURE-----
+
+--=-NhzGKRQQLbTuM6yxjJGc--
+
