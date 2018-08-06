@@ -2,184 +2,101 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFE85C46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 03:58:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97477C46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 04:07:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94D1520839
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 03:58:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94D1520839
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=au1.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 3C793219CB
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 04:07:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=embeddedgreg-com.20150623.gappssmtp.com header.i=@embeddedgreg-com.20150623.gappssmtp.com header.b="rtMTW7xz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C793219CB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedgreg.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727772AbeHFGFk (ORCPT
+        id S1727706AbeHFGOo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 02:05:40 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45450 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726559AbeHFGFk (ORCPT
+        Mon, 6 Aug 2018 02:14:44 -0400
+Received: from mail-qk0-f194.google.com ([209.85.220.194]:46823 "EHLO
+        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726991AbeHFGOn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 02:05:40 -0400
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w763rq9J006394
-        for <linux-kernel@vger.kernel.org>; Sun, 5 Aug 2018 23:58:32 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2kpb4ywums-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sun, 05 Aug 2018 23:58:32 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <andrew.donnellan@au1.ibm.com>;
-        Mon, 6 Aug 2018 04:58:30 +0100
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 6 Aug 2018 04:58:27 +0100
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w763wQRG35586060
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 6 Aug 2018 03:58:27 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 48D69A4051;
-        Mon,  6 Aug 2018 06:58:35 +0100 (BST)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A4051A4040;
-        Mon,  6 Aug 2018 06:58:34 +0100 (BST)
-Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon,  6 Aug 2018 06:58:34 +0100 (BST)
-Received: from intelligence.ozlabs.ibm.com (haven.au.ibm.com [9.192.254.114])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id BC112A01A5;
-        Mon,  6 Aug 2018 13:58:24 +1000 (AEST)
-From:   Andrew Donnellan <andrew.donnellan@au1.ibm.com>
-To:     linux-kernel@vger.kernel.org, apw@canonical.com, joe@perches.com
-Cc:     fbarrat@linux.vnet.ibm.com
-Subject: [RFC PATCH 1/2] checkpatch: Correctly detect git commit references that span 3 lines
-Date:   Mon,  6 Aug 2018 13:58:08 +1000
-X-Mailer: git-send-email 2.11.0
-X-TM-AS-GCONF: 00
-x-cbid: 18080603-4275-0000-0000-000002A44976
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18080603-4276-0000-0000-000037AC6EFB
-Message-Id: <20180806035809.24752-1-andrew.donnellan@au1.ibm.com>
-Content-Type:   text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-06_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=802 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808060043
+        Mon, 6 Aug 2018 02:14:43 -0400
+Received: by mail-qk0-f194.google.com with SMTP id 191-v6so7966507qki.13
+        for <linux-kernel@vger.kernel.org>; Sun, 05 Aug 2018 21:07:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=embeddedgreg-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=IlCHFM3G2D7F2grwGtfqYrJv1Uk/dsrYcavZHg4TSQw=;
+        b=rtMTW7xzIcHpakOviTcjnCk7iQG8TDX9XSR03EQs4sK1raFRHTUkmkE0w8oP3VlyXg
+         +3/l4oO4vSXTXg555xpIPykBZ/fuCao7IzVdAB2ugw+m8GHigq08tFUZCKontjWFM6hT
+         fCXG46UOmzt7zYgNz2YI7dBfaOAjrIt92lrmfHg/Pfw7jRWa6b9g6B1z4LW4MjLVk+mJ
+         /d2NvFNqjaMcfv/NQsHKXcIIgiiLRCS/mN5PIlv16785736V13uC/RK0FFj7PcujPHzj
+         lW4snUvu0djX9xJpS+vBNDyeSNKFt8oe9Zt+vaS7byhe+ADLwsSnAZVHfVPhIFKF3sQu
+         LIow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=IlCHFM3G2D7F2grwGtfqYrJv1Uk/dsrYcavZHg4TSQw=;
+        b=hJFMXX7gyxTEbrNwqOUssp7ETOlZYkrT+a3BIihSjwfJN498qq55udgGHeJwsiH9zM
+         oQRXCxjZ+nAxc/nrFdvI1WcREymjzQqHkP6DMxKvzgb8Z7wwghUkdS3uxCwG9RwNuRW5
+         SnzvGs0YkIfg4IT7FVmZojzXDwdhKbnNS2UWGJibmuvTppq6W5Ss8IEZmd034Cx6XZmU
+         fRWrTOqR4qFMM2jeZ3hbiutBpiEt3nS/jxWhLwBUYjZPRTETChc+EYMcpQPCp98vwMba
+         aJsuWzY3vB3IaENykednq6H1cBkub7M0evI7aAqIwiYErgBCmKXaVVreeaSuJuUyEFdq
+         HEtw==
+X-Gm-Message-State: AOUpUlGaWZZT+r6+cKNBwAdDy9COHkZCOhHOz3mpdUG9lT6v/1jwNE+W
+        GYFXsg2RoGZKMC3gMIkefp6Ayw==
+X-Google-Smtp-Source: AAOMgpes8Cl/7WKpWo7vBKjJJTzRNqfg8q2A1CkYW0TQZ4WzPsprDKMxq3yzTe/oRfzfhuSuczWT4Q==
+X-Received: by 2002:a37:80a:: with SMTP id 10-v6mr12115192qki.168.1533528454258;
+        Sun, 05 Aug 2018 21:07:34 -0700 (PDT)
+Received: from yavin4.lan ([97.107.227.14])
+        by smtp.gmail.com with ESMTPSA id u8-v6sm8819322qtc.76.2018.08.05.21.07.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 05 Aug 2018 21:07:33 -0700 (PDT)
+From:   Greg Gallagher <greg@embeddedgreg.com>
+To:     eric@anholt.net
+Cc:     Stefan Wahren <stefan.wahren@i2se.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] staging/vc04_services: Fix alignment of function arguments
+Date:   Mon,  6 Aug 2018 00:07:30 -0400
+Message-Id: <20180806040731.5113-1-greg@embeddedgreg.com>
+X-Mailer: git-send-email 2.14.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If a patch contains a commit reference that happens to span 3 lines, e.g.:
+Fix warning generated by checkpatch.pl for alignment should match open
+parenthesis.  This is a coding style change only.
 
-===
-With the optimizations for TLB invalidation from commit 0cef77c7798a
-("powerpc/64s/radix: flush remote CPUs out of single-threaded
-mm_cpumask"), the scope of a TLBI (global vs. local) can now be
-influenced by the value of the 'copros' counter of the memory context.
-===
-
-checkpatch will return a GIT_COMMIT_ID error even though the reference
-actually follows the correct format.
-
-Fix the GIT_COMMIT_ID test so it can match against a reference that spans 3
-lines.
-
-Reported-by: Frederic Barrat <fbarrat@linux.ibm.com>
-Signed-off-by: Andrew Donnellan <andrew.donnellan@au1.ibm.com>
-
+Signed-off-by: Greg Gallagher <greg@embeddedgreg.com>
 ---
+ drivers/staging/vc04_services/bcm2835-audio/bcm2835-ctl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Sending this as an RFC because I don't actually know how to Perl or regex,
-this whole test looks pretty gross and this patch just makes it gross-er,
-and it's only lightly tested. Suggestions on how to do this more neatly are
-welcome.
-
-We currently have checkpatch running on every incoming patch on
-linuxppc-dev, and we've already hit this bug at least twice in the past
-couple of weeks.
----
- scripts/checkpatch.pl | 35 ++++++++++++++++++++++++++++++++++-
- 1 file changed, 34 insertions(+), 1 deletion(-)
-
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index 447857ffaf6b..aca4d758112a 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -2669,27 +2669,60 @@ sub process {
- 			} elsif ($line =~ /\b([0-9a-f]{12,40})\b/i) {
- 				$orig_commit = lc($1);
- 			}
--
- 			$short = 0 if ($line =~ /\bcommit\s+[0-9a-f]{12,40}/i);
- 			$long = 1 if ($line =~ /\bcommit\s+[0-9a-f]{41,}/i);
- 			$space = 0 if ($line =~ /\bcommit [0-9a-f]/i);
- 			$case = 0 if ($line =~ /\b[Cc]ommit\s+[0-9a-f]{5,40}[^A-F]/);
-+
- 			if ($line =~ /\bcommit\s+[0-9a-f]{5,}\s+\("([^"]+)"\)/i) {
-+				# Reference fits on 1 line
- 				$orig_desc = $1;
- 				$hasparens = 1;
- 			} elsif ($line =~ /\bcommit\s+[0-9a-f]{5,}\s*$/i &&
- 				 defined $rawlines[$linenr] &&
- 				 $rawlines[$linenr] =~ /^\s*\("([^"]+)"\)/) {
-+				# line 1: 'commit <hash>',
-+				# line 2: '("description")'
- 				$orig_desc = $1;
- 				$hasparens = 1;
- 			} elsif ($line =~ /\bcommit\s+[0-9a-f]{5,}\s+\("[^"]+$/i &&
- 				 defined $rawlines[$linenr] &&
- 				 $rawlines[$linenr] =~ /^\s*[^"]+"\)/) {
-+				# line 1: 'commit <hash> ("description',
-+				# line 2: 'description continued")'
- 				$line =~ /\bcommit\s+[0-9a-f]{5,}\s+\("([^"]+)$/i;
- 				$orig_desc = $1;
- 				$rawlines[$linenr] =~ /^\s*([^"]+)"\)/;
- 				$orig_desc .= " " . $1;
- 				$hasparens = 1;
-+			} elsif ($line =~ /\bcommit\s+[0-9a-f]{5,}\s*$/i &&
-+				 defined $rawlines[$linenr] &&
-+				 defined $rawlines[$linenr + 1] &&
-+				 $rawlines[$linenr] =~ /^\s*\("[^"]+/ &&
-+				 $rawlines[$linenr + 1] =~ /^\s*[^"]+"\)/) {
-+				# line 1: 'commit <hash>',
-+				# line 2: '("description'
-+				# line 3: 'description continued")'
-+				$rawlines[$linenr] =~ /^\s*\("([^"]+)/;
-+				$orig_desc = $1;
-+				$rawlines[$linenr + 1] =~ /^\s*([^"]+)"\)/;
-+				$orig_desc .= " " . $1;
-+				$hasparens = 1;
-+			} elsif ($line =~ /\bcommit\s+[0-9a-f]{5,}\s+\("[^"]+$/i &&
-+				 defined $rawlines[$linenr] &&
-+				 defined $rawlines[$linenr + 1] &&
-+				 $rawlines[$linenr] =~ /^\s*[^"]+$/ &&
-+				 $rawlines[$linenr + 1] =~ /^\s*[^"]+"\)/) {
-+				# line 1: 'commit <hash> ("description',
-+				# line 2: 'description continued'
-+				# line 3: 'description continued")'
-+				$line =~ /\bcommit\s+[0-9a-f]{5,}\s+\("([^"]+)$/i;
-+				$orig_desc = $1;
-+				$rawlines[$linenr] =~ /^\s*([^"]+)$/;
-+				$orig_desc .= " " . $1;
-+				$rawlines[$linenr + 1] =~ /^\s*([^"]+)"\)/;
-+				$orig_desc .= " " . $1;
-+				$hasparens = 1;
- 			}
+diff --git a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-ctl.c b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-ctl.c
+index ec468d5719b1..33ae8ae8663b 100644
+--- a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-ctl.c
++++ b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-ctl.c
+@@ -174,7 +174,7 @@ static struct snd_kcontrol_new snd_bcm2835_ctl[] = {
+ };
  
- 			($id, $description) = git_commit_info($orig_commit,
+ static int snd_bcm2835_spdif_default_info(struct snd_kcontrol *kcontrol,
+-	struct snd_ctl_elem_info *uinfo)
++					  struct snd_ctl_elem_info *uinfo)
+ {
+ 	uinfo->type = SNDRV_CTL_ELEM_TYPE_IEC958;
+ 	uinfo->count = 1;
 -- 
-2.11.0
+2.14.1
 
