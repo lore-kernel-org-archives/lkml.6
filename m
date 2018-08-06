@@ -3,82 +3,67 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02709C46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 12:56:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6EE4C46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 13:01:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A944621976
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 12:56:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A944621976
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
+	by mail.kernel.org (Postfix) with ESMTP id 8584421992
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 13:01:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8584421992
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732278AbeHFPE5 (ORCPT
+        id S1732307AbeHFPKw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 11:04:57 -0400
-Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:40914 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727340AbeHFPE5 (ORCPT
+        Mon, 6 Aug 2018 11:10:52 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:37342 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729333AbeHFPKw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 11:04:57 -0400
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-        by mx0a-001ae601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w76CnUHj022152;
-        Mon, 6 Aug 2018 07:55:01 -0500
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
-Received: from mail1.cirrus.com (mail1.cirrus.com [141.131.3.20])
-        by mx0a-001ae601.pphosted.com with ESMTP id 2kn9j1jcnq-1;
-        Mon, 06 Aug 2018 07:55:01 -0500
-Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
-        by mail1.cirrus.com (Postfix) with ESMTP id AFC7C611C8AD;
-        Mon,  6 Aug 2018 07:55:00 -0500 (CDT)
-Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
- (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Mon, 6 Aug 2018
- 13:54:59 +0100
-Received: from imbe.wolfsonmicro.main (imbe.wolfsonmicro.main [198.61.95.81])
-        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id w76Csx89008530; Mon,
- 6 Aug 2018 13:54:59 +0100
-Date:   Mon, 6 Aug 2018 13:54:59 +0100
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-CC:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        "Valdis Kletnieks" <valdis.kletnieks@vt.edu>,
-        <patches@opensource.cirrus.com>, <alsa-devel@alsa-project.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ASoC: wm8994: Fix missing break in switch
-Message-ID: <20180806125459.GC32322@imbe.wolfsonmicro.main>
-References: <20180806121451.GA14954@embeddedor.com>
+        Mon, 6 Aug 2018 11:10:52 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
+        id 1fmf8t-0005Dt-Hv; Mon, 06 Aug 2018 13:01:47 +0000
+Date:   Mon, 6 Aug 2018 14:01:47 +0100
+From:   Al Viro <viro@ZenIV.linux.org.uk>
+To:     "Dae R. Jeong" <threeearcat@gmail.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        byoungyoung@purdue.edu, kt0755@gmail.com, bammanag@purdue.edu
+Subject: Re: KASAN: use-after-free Read in link_path_walk
+Message-ID: <20180806130147.GL15082@ZenIV.linux.org.uk>
+References: <20180724034542.GA19283@dragonet>
+ <20180724051726.GH30522@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180806121451.GA14954@embeddedor.com>
-User-Agent: Mutt/1.5.20 (2009-12-10)
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=749 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1807170000
- definitions=main-1808060138
+In-Reply-To: <20180724051726.GH30522@ZenIV.linux.org.uk>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 06, 2018 at 07:14:51AM -0500, Gustavo A. R. Silva wrote:
-> Add missing break statement in order to prevent the code from falling
-> through to the default case.
+On Tue, Jul 24, 2018 at 06:17:26AM +0100, Al Viro wrote:
+
+> Do we have LOOKUP_RCU in nd->flags at that point?  And how in hell
+> did we get that dentry there?  In LOOKUP_RCU mode no freeing should
+> be happening until after we call rcu_read_unlock(), unless the final
+> dput() has happened before rcu_read_lock().  In which case we shouldn't
+> have gotten to that dentry in the first place.
+
+... except that we never set DCACHE_RCUACCESS for root dentry.  Which
+invalidates the normal "if we run into dentry in lazy mode, its memory
+won't be freed until we drop rcu_read_lock"...  d_make_root() definitely
+needs to set DCACHE_RCUACCESS; whether it's all there is or you are
+hitting something else is a separate question, of course...
+
+>  And in non-LOOKUP_RCU
+> mode we are bloody well holding references to everything (vfsmount
+> and dentry alike), so that deactivate_super() shouldn't have been
+> called as long as we are holding that reference.
 > 
-> Cc: stable@vger.kernel.org
-> Addresses-Coverity-ID: 115050 ("Missing break in switch")
-> Reported-by: Valdis Kletnieks <valdis.kletnieks@vt.edu>
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
+> Details, please.  Ideally - how to reproduce that.
 
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-
-Thanks,
-Charles
+Is there any way to tell KASAN that we want a crashdump triggered?
+That would've been really useful for post-mortems...
