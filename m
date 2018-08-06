@@ -6,680 +6,425 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F533C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 08:57:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A35EFC4646D
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 08:58:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0784C21582
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 08:57:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E9EC21582
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 08:58:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="HnCXXoBr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0784C21582
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="AbVx8UUf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E9EC21582
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cadence.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727640AbeHFLFM (ORCPT
+        id S1727710AbeHFLGL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 07:05:12 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:39700 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726468AbeHFLFL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 07:05:11 -0400
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w768v5k7024661;
-        Mon, 6 Aug 2018 03:57:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1533545825;
-        bh=rVMvh491M1cqtoh4pqU7IpmvHZPWj2MO+Xw7EDyLGtc=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=HnCXXoBrykGt0pqA/Aqosb/TldMg6DRfNwEfEbEHowBjJ3/n38JkzNZZ2xcRRVYYK
-         5D732KtWayX/Rdp30MsbVKmeV6GG9k39aFzgKFou8r64R5FrOs0i3/QHiCZJKTiQfa
-         PiU4HF3+VnIGQ+8JnvUNst9je0a97HY0CucSaN3I=
-Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w768v4SD017530;
-        Mon, 6 Aug 2018 03:57:04 -0500
-Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Mon, 6 Aug
- 2018 03:57:03 -0500
-Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Mon, 6 Aug 2018 03:57:04 -0500
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w768v1bK015694;
-        Mon, 6 Aug 2018 03:57:02 -0500
-Subject: Re: [PATCH 06/31] usb: usbssp: added template functions used by upper
- layer.
-To:     Pawel Laszczak <pawell@cadence.com>
+        Mon, 6 Aug 2018 07:06:11 -0400
+Received: from mail-by2nam03on0060.outbound.protection.outlook.com ([104.47.42.60]:28970
+        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726572AbeHFLGK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 07:06:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hjqwwiB1LOu8LEZ2JkIxzn4PCPwvxNA66ATpN17sHcY=;
+ b=AbVx8UUf5L1VuRgZYZTbVw5n1R8xb92vREUSEfMFu3rHNvHZCe5ScFNy7WGlSIF6ltXHid9XEIo4tZbvWpwJbNy70LpJzndBfjeCWgFjobivyRzO3Q2P/mifZqxxbuSyZ70hqqHRggaKWIJl9HtnbUI4KqkKd73fS7zuZ151P8M=
+Received: from BYAPR07MB4709.namprd07.prod.outlook.com (52.135.204.159) by
+ BYAPR07MB5031.namprd07.prod.outlook.com (52.135.238.224) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1017.18; Mon, 6 Aug 2018 08:57:37 +0000
+Received: from BYAPR07MB4709.namprd07.prod.outlook.com
+ ([fe80::6cda:d8eb:38e2:9ecb]) by BYAPR07MB4709.namprd07.prod.outlook.com
+ ([fe80::6cda:d8eb:38e2:9ecb%5]) with mapi id 15.20.1017.019; Mon, 6 Aug 2018
+ 08:57:36 +0000
+From:   Pawel Laszczak <pawell@cadence.com>
+To:     Roger Quadros <rogerq@ti.com>
 CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
         Felipe Balbi <balbi@kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Lukasz Tyrala <ltyrala@cadence.com>,
         Alan Douglas <adouglas@cadence.com>
+Subject: RE: [PATCH 05/31] usb: usbssp: Added first part of initialization
+ sequence.
+Thread-Topic: [PATCH 05/31] usb: usbssp: Added first part of initialization
+ sequence.
+Thread-Index: AQHUH4o9LRC3Wul/4kafIKaAjbMO4KSt52YAgASgYfA=
+Date:   Mon, 6 Aug 2018 08:57:36 +0000
+Message-ID: <BYAPR07MB4709E2EB84E8004952772829DD200@BYAPR07MB4709.namprd07.prod.outlook.com>
 References: <1532023084-28083-1-git-send-email-pawell@cadence.com>
- <1532023084-28083-7-git-send-email-pawell@cadence.com>
- <0aad2e70-c630-feac-24a9-35d66360e4b2@ti.com>
- <BYAPR07MB47093370E0143D8E0E42E3EEDD220@BYAPR07MB4709.namprd07.prod.outlook.com>
-From:   Roger Quadros <rogerq@ti.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=rogerq@ti.com; prefer-encrypt=mutual; keydata=
- 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
- IwrfNkJOLj3CvocMIw==
-Message-ID: <a44cf29a-3097-eb11-1dd4-de810eda0406@ti.com>
-Date:   Mon, 6 Aug 2018 11:57:01 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <BYAPR07MB47093370E0143D8E0E42E3EEDD220@BYAPR07MB4709.namprd07.prod.outlook.com>
+ <1532023084-28083-6-git-send-email-pawell@cadence.com>
+ <45dff595-5363-bbef-1240-6b693b4829b2@ti.com>
+In-Reply-To: <45dff595-5363-bbef-1240-6b693b4829b2@ti.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNccGF3ZWxsXGFwcGRhdGFccm9hbWluZ1wwOWQ4NDliNi0zMmQzLTRhNDAtODVlZS02Yjg0YmEyOWUzNWJcbXNnc1xtc2ctYzk2MzMzMjEtOTk1Ni0xMWU4LTg3MTUtMWM0ZDcwMWRmYmE0XGFtZS10ZXN0XGM5NjMzMzIzLTk5NTYtMTFlOC04NzE1LTFjNGQ3MDFkZmJhNGJvZHkudHh0IiBzej0iMTg4NzMiIHQ9IjEzMTc4MDE5NDY2OTkxNjQ1NyIgaD0iVUdsaUhkQ3paUU9OUmE5Q1VUWmRVM3lLVnBnPSIgaWQ9IiIgYmw9IjAiIGJvPSIxIi8+PC9tZXRhPg==
+x-dg-rorf: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=pawell@cadence.com; 
+x-originating-ip: [185.217.253.59]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BYAPR07MB5031;20:y8sHkje2fqcNFtYU4HVI8NlIfjZIeDk8NtVeo0JojVd43OP+4hfzzVJGc4SofUbMcSHjfonRytM5hDPkG/B2xpSmIyv/n6ROKbjGslj5DmIEejH/PmeUDg1o/LTTH3q2e87quA5klGtNJKPJtLtvIS4zx+hedeszDbMv9nVYER9LQPBlesfVJwokqU9MLp3+guWaqHLGVD44kFKgswWShe8vWJFTKUWJTElktvWirqHAqj5NRnWV63UJjVBjBLlT
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(366004)(39860400002)(136003)(346002)(376002)(396003)(36092001)(189003)(199004)(9686003)(74316002)(4326008)(25786009)(486006)(53936002)(11346002)(5250100002)(5660300001)(575784001)(86362001)(476003)(446003)(2900100001)(305945005)(8936002)(105586002)(107886003)(6916009)(8676002)(6246003)(7736002)(81156014)(81166006)(33656002)(53946003)(2906002)(68736007)(106356001)(26005)(53546011)(6436002)(186003)(6506007)(97736004)(76176011)(102836004)(54906003)(316002)(14444005)(256004)(3846002)(7696005)(55016002)(229853002)(14454004)(99286004)(6116002)(478600001)(66066001);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR07MB5031;H:BYAPR07MB4709.namprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-ms-office365-filtering-correlation-id: 407622d2-4225-462a-fe89-08d5fb7aa7ec
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BYAPR07MB5031;
+x-ms-traffictypediagnostic: BYAPR07MB5031:
+x-microsoft-antispam-prvs: <BYAPR07MB5031A1712AE167B20DF7D27BDD200@BYAPR07MB5031.namprd07.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(72806322054110);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(93006095)(93001095)(3002001)(3231311)(944501410)(52105095)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:BYAPR07MB5031;BCL:0;PCL:0;RULEID:;SRVR:BYAPR07MB5031;
+x-forefront-prvs: 07562C22DA
+received-spf: None (protection.outlook.com: cadence.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: dkvHWcvpvxZuscFeJy2MDGs3lKeNvo3htDWPd6NTnUvkOgvgtzp28r65KiDYNkysblvA/2FgGkuilF2xBTR6zA0W/3xIAEo9PuO8niejZpsgRWDPUMN5Hore2O6/7mntv8sAfaa7UJxZWLwWzP8NKTlgFaR3cRTU+tOjwLbCC0G2bbENcj5BidOUjQqQLWS5QSsMG97Zh3bgtjRxAK+w64FI+wZjRFbPIE6ZCE1Fo30HIT4bHrT5XhE4VAHoMR8H7R0QphoegioUdhNqTlEyuJ9VYOxwwZ6rw9Z7ldCZIiZ9KebdIbw226FXbba88CzmiTfh6SDOK+czNx9LtheT88UJsdPVGlElNeY0oOhH0Jk=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="utf-8"
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: cadence.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 407622d2-4225-462a-fe89-08d5fb7aa7ec
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Aug 2018 08:57:36.3500
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR07MB5031
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 04/08/18 09:37, Pawel Laszczak wrote:
->>> Patch adds some functionality for initialization process.
->>> It adds to driver usbssp_reset and usbssp_start function.
->>>
->>> Next elements added are objects usbssp_gadget_ep0_ops,
->>> usbssp_gadget_ep_ops and usbssp_gadget_ops. These objects
->>> constitute the interface used by gadget subsystem.
->>> At this moment functions related to these objects are empty
->>> and do nothing.
->>>
->>> This patch also implements usbssp_gadget_init_endpoint and
->>> usbssp_gadget_free_endpoint used during initialization.
->>>
->>> Signed-off-by: Pawel Laszczak <pawell@cadence.com>
->>> ---
->>>  drivers/usb/usbssp/gadget-ext-caps.h |   3 +
->>>  drivers/usb/usbssp/gadget-if.c       | 269 ++++++++++++++++++++++++++-
->>>  drivers/usb/usbssp/gadget.c          |  84 ++++++++-
->>>  3 files changed, 350 insertions(+), 6 deletions(-)
->>>
->>> diff --git a/drivers/usb/usbssp/gadget-ext-caps.h b/drivers/usb/usbssp/gadget-ext-caps.h
->>> index 2bf327046376..86c0ce331037 100644
->>> --- a/drivers/usb/usbssp/gadget-ext-caps.h
->>> +++ b/drivers/usb/usbssp/gadget-ext-caps.h
->>> @@ -51,3 +51,6 @@
->>>  #define USBSSP_CMD_EWE			BIT(10)
->>>
->>>  #define USBSSP_IRQS	(USBSSP_CMD_EIE | USBSSP_CMD_HSEIE | USBSSP_CMD_EWE)
->>> +
->>> +/* true: Controller Not Ready to accept doorbell or op reg writes after reset */
->>> +#define USBSSP_STS_CNR			BIT(11)
->>> diff --git a/drivers/usb/usbssp/gadget-if.c b/drivers/usb/usbssp/gadget-if.c
->>> index d53e0fb65299..70def978b085 100644
->>> --- a/drivers/usb/usbssp/gadget-if.c
->>> +++ b/drivers/usb/usbssp/gadget-if.c
->>> @@ -12,13 +12,278 @@
->>>  #include <linux/usb/composite.h>
->>>  #include "gadget.h"
->>>
->>> +static int usbssp_gadget_ep_enable(struct usb_ep *ep,
->>> +				   const struct usb_endpoint_descriptor *desc)
->>> +{
->>> +	struct usbssp_ep *ep_priv = to_usbssp_ep(ep);
->>> +	int ret = 0;
->>> +
->>> +	if (!ep_priv)
->>> +		return -EINVAL;
->>> +
->>> +	/*TODO: implements this function*/
->>> +	return ret;
->>> +}
->>> +
->>> +int usbssp_gadget_ep_disable(struct usb_ep *ep)
->>> +{
->>> +	struct usbssp_ep *ep_priv = to_usbssp_ep(ep);
->>> +	int ret = 0;
->>> +
->>> +	if (!ep_priv)
->>> +		return -EINVAL;
->>> +
->>> +	/*TODO: implements this function*/
->>> +	return ret;
->>> +}
->>> +
->>> +static struct usb_request *usbssp_gadget_ep_alloc_request(struct usb_ep *ep,
->>> +							  gfp_t gfp_flags)
->>> +{
->>> +	struct usbssp_ep *ep_priv = to_usbssp_ep(ep);
->>> +
->>> +	if (!ep_priv)
->>> +		return NULL;
->>> +
->>> +	/*TODO: implements this function*/
->>> +	return NULL;
->>> +}
->>> +
->>> +static void usbssp_gadget_ep_free_request(struct usb_ep *ep,
->>> +					  struct usb_request *request)
->>> +{
->>> +	struct usbssp_ep *ep_priv = to_usbssp_ep(ep);
->>> +
->>> +	if (!ep_priv)
->>> +		return;
->>> +
->>> +	/*TODO: implements this function*/
->>> +}
->>> +
->>> +static int usbssp_gadget_ep_queue(struct usb_ep *ep,
->>> +				  struct usb_request *request,
->>> +				  gfp_t gfp_flags)
->>> +{
->>> +	struct usbssp_ep *ep_priv = to_usbssp_ep(ep);
->>> +	int ret = 0;
->>> +
->>> +	if (!ep_priv)
->>> +		return -EINVAL;
->>> +
->>> +	/*TODO: implements this function*/
->>> +	return ret;
->>> +}
->>> +
->>> +static int usbssp_gadget_ep_dequeue(struct usb_ep *ep,
->>> +				    struct usb_request *request)
->>> +{
->>> +	struct usbssp_ep *ep_priv = to_usbssp_ep(ep);
->>> +	int ret = 0;
->>> +
->>> +	if (!ep_priv)
->>> +		return -EINVAL;
->>> +
->>> +	/*TODO: implements this function*/
->>> +	return ret;
->>> +}
->>> +
->>> +static int usbssp_gadget_ep_set_halt(struct usb_ep *ep, int value)
->>> +{
->>> +	struct usbssp_ep *ep_priv = to_usbssp_ep(ep);
->>> +	int ret = 0;
->>> +
->>> +	if (!ep_priv)
->>> +		return -EINVAL;
->>> +
->>> +	/*TODO: implements this function*/
->>> +	return ret;
->>> +}
->>> +
->>> +static int usbssp_gadget_ep_set_wedge(struct usb_ep *ep)
->>> +{
->>> +	struct usbssp_ep *ep_priv = to_usbssp_ep(ep);
->>> +	int ret = 0;
->>> +
->>> +	if (!ep_priv)
->>> +		return -EINVAL;
->>> +
->>> +	/*TODO: implements this function*/
->>> +	return ret;
->>> +}
->>> +
->>> +static const struct usb_ep_ops usbssp_gadget_ep0_ops = {
->>> +	.enable		= usbssp_gadget_ep_enable,
->>> +	.disable	= usbssp_gadget_ep_disable,
->>> +	.alloc_request	= usbssp_gadget_ep_alloc_request,
->>> +	.free_request	= usbssp_gadget_ep_free_request,
->>> +	.queue		= usbssp_gadget_ep_queue,
->>> +	.dequeue	= usbssp_gadget_ep_dequeue,
->>> +	.set_halt	= usbssp_gadget_ep_set_halt,
->>> +	.set_wedge	= usbssp_gadget_ep_set_wedge,
->>> +};
->>> +
->>> +static const struct usb_ep_ops usbssp_gadget_ep_ops = {
->>> +	.enable		= usbssp_gadget_ep_enable,
->>> +	.disable	= usbssp_gadget_ep_disable,
->>> +	.alloc_request	= usbssp_gadget_ep_alloc_request,
->>> +	.free_request	= usbssp_gadget_ep_free_request,
->>> +	.queue		= usbssp_gadget_ep_queue,
->>> +	.dequeue	= usbssp_gadget_ep_dequeue,
->>> +	.set_halt	= usbssp_gadget_ep_set_halt,
->>> +	.set_wedge	= usbssp_gadget_ep_set_wedge,
->>> +};
->>> +
->>> +static struct usb_endpoint_descriptor usbssp_gadget_ep0_desc = {
->>> +	.bLength =		USB_DT_ENDPOINT_SIZE,
->>> +	.bDescriptorType =	USB_DT_ENDPOINT,
->>> +	.bmAttributes =		USB_ENDPOINT_XFER_CONTROL,
->>> +};
->>> +
->>> +static int usbssp_gadget_start(struct usb_gadget *g,
->>> +			       struct usb_gadget_driver *driver)
->>> +{
->>> +	struct usbssp_udc *usbssp_data = gadget_to_usbssp(g);
->>> +	int ret = 0;
->>> +
->>> +	if (usbssp_data->gadget_driver) {
->>> +		dev_err(usbssp_data->dev, "%s is already bound to %s\n",
->>> +				usbssp_data->gadget.name,
->>> +				usbssp_data->gadget_driver->driver.name);
->>> +		ret = -EBUSY;
->>> +	}
->>> +
->>> +	/*TODO: add implementation*/
->>> +	return ret;
->>> +}
->>> +
->>> +static int usbssp_gadget_stop(struct usb_gadget *g)
->>> +{
->>> +	struct usbssp_udc *usbssp_data = gadget_to_usbssp(g);
->>> +
->>> +	if (!usbssp_data)
->>> +		return -EINVAL;
->>> +	/*TODO: add implementation*/
->>> +	return 0;
->>> +}
->>> +
->>> +static int usbssp_gadget_get_frame(struct usb_gadget *g)
->>> +{
->>> +	struct usbssp_udc *usbssp_data = gadget_to_usbssp(g);
->>> +
->>> +	if (!usbssp_data)
->>> +		return -EINVAL;
->>> +
->>> +	/*TODO: add implementation*/
->>> +	return 0;
->>> +}
->>> +
->>> +static int usbssp_gadget_wakeup(struct usb_gadget *g)
->>> +{
->>> +	struct usbssp_udc *usbssp_data = gadget_to_usbssp(g);
->>> +
->>> +	if (!usbssp_data)
->>> +		return -EINVAL;
->>> +
->>> +	/*TODO: add implementation*/
->>> +	return 0;
->>> +}
->>> +
->>> +static int usbssp_gadget_set_selfpowered(struct usb_gadget *g,
->>> +					 int is_selfpowered)
->>> +{
->>> +	struct usbssp_udc *usbssp_data = gadget_to_usbssp(g);
->>> +
->>> +	if (!usbssp_data)
->>> +		return -EINVAL;
->>> +
->>> +	/*TODO: add implementation*/
->>> +	return 0;
->>> +}
->>> +
->>> +static const struct usb_gadget_ops usbssp_gadget_ops = {
->>> +	.get_frame		= usbssp_gadget_get_frame,
->>> +	.wakeup			= usbssp_gadget_wakeup,
->>> +	.set_selfpowered	= usbssp_gadget_set_selfpowered,
->>> +	.udc_start		= usbssp_gadget_start,
->>> +	.udc_stop		= usbssp_gadget_stop,
->>> +};
->>> +
->>>  int usbssp_gadget_init_endpoint(struct usbssp_udc *usbssp_data)
->>
->> Since we're initializing all endpoints this function should be named usbssp_gadget_init_endpoints().
->>
->>>  {
->>> -	/*TODO: it has to be implemented*/
->>> +	int i = 0;
->>> +	struct usbssp_ep *ep_priv;
->>> +
->>> +	usbssp_data->num_endpoints = USBSSP_ENDPOINTS_NUM;
->>> +	INIT_LIST_HEAD(&usbssp_data->gadget.ep_list);
->>> +
->>> +	for (i = 1; i < usbssp_data->num_endpoints; i++) {
->>> +		bool direction = i & 1; /*start from OUT endpoint*/
->>> +		u8 epnum = (i >> 1);
->>> +
->>> +		ep_priv = &usbssp_data->devs.eps[i-1];
->>> +		ep_priv->usbssp_data = usbssp_data;
->>> +		ep_priv->number = epnum;
->>> +		ep_priv->direction = direction; /*0 for OUT, 1 for IN*/
->>> +
->>> +		snprintf(ep_priv->name, sizeof(ep_priv->name), "ep%d%s", epnum,
->>> +				(ep_priv->direction) ? "in" : "out");
->>> +
->>> +		ep_priv->endpoint.name = ep_priv->name;
->>> +
->>> +		if (ep_priv->number < 2) {
->>> +			ep_priv->endpoint.desc = &usbssp_gadget_ep0_desc;
->>> +			ep_priv->endpoint.comp_desc = NULL;
->>> +		}
->>> +
->>> +		if (epnum == 0) {
->>> +			/*EP0 is bidirectional endpoint*/
->>> +			usb_ep_set_maxpacket_limit(&ep_priv->endpoint, 512);
->>> +			dev_dbg(usbssp_data->dev,
->>> +				"Initializing %s, MaxPack: %04x Type: Ctrl\n",
->>> +				ep_priv->name, 512);
->>> +			ep_priv->endpoint.maxburst = 1;
->>> +			ep_priv->endpoint.ops = &usbssp_gadget_ep0_ops;
->>> +			ep_priv->endpoint.caps.type_control = true;
->>> +
->>> +			usbssp_data->usb_req_ep0_in.epnum = ep_priv->number;
->>> +			usbssp_data->usb_req_ep0_in.dep = ep_priv;
->>> +
->>> +			if (!epnum)
->>> +				usbssp_data->gadget.ep0 = &ep_priv->endpoint;
->>> +		} else {
->>> +			usb_ep_set_maxpacket_limit(&ep_priv->endpoint, 1024);
->>> +			ep_priv->endpoint.maxburst = 15;
->>> +			ep_priv->endpoint.ops = &usbssp_gadget_ep_ops;
->>> +			list_add_tail(&ep_priv->endpoint.ep_list,
->>> +					&usbssp_data->gadget.ep_list);
->>> +			ep_priv->endpoint.caps.type_iso = true;
->>> +			ep_priv->endpoint.caps.type_bulk = true;
->>> +			ep_priv->endpoint.caps.type_int = true;
->>> +
->>> +		}
->>> +
->>> +		ep_priv->endpoint.caps.dir_in = direction;
->>> +		ep_priv->endpoint.caps.dir_out = !direction;
->>
->> Since you start from 1, ep0 will only be initialized as dir_in.
->> Is it better to represent EP0in and EP0out separately?
->> If so you can start i from 0 and use
->> 	ep_priv = &usbssp_data->devs.eps[i];
->>
->> This should fix the direction. eps[0] will be ep0out and eps[1] will be ep0in.
-> 
-> I wanted to be consistent with Device Context Data Structure from 
-> XHCI specification (EP Context 0 BiDir, EP Context 1 OUT, EP Context 1 IN ...).
-> 
-> I little change this function, and now it look like this:
-> int usbssp_gadget_init_endpoints(struct usbssp_udc *usbssp_data)
-> {
-> 	int i = 0;
-> 	struct usbssp_ep *ep_priv;
-> 
-> 	usbssp_data->num_endpoints = USBSSP_ENDPOINTS_NUM;
-> 	INIT_LIST_HEAD(&usbssp_data->gadget.ep_list);
-> 
-> 	for (i = 0; i < usbssp_data->num_endpoints; i++) {
-> 		bool direction = i & 1; /*start from OUT endpoint*/
-> 		u8 epnum = ((i + 1) >> 1);
-> 
-> 		ep_priv = &usbssp_data->devs.eps[i];
-> 		ep_priv->usbssp_data = usbssp_data;
-> 		ep_priv->number = epnum;
-> 		ep_priv->direction = direction; /*0 for OUT, 1 for IN*/
-> 
-> 		/*
-> 		 *Ep0 is bidirectional so Ep0In and Ep0Out is represented by
-> 		 * usbssp_data->devs.eps[0]
-> 		 */
-> 		if (epnum == 0) {
-> 			snprintf(ep_priv->name, sizeof(ep_priv->name), "ep%d%s",
-> 				epnum, "BiDir");
-> 
-> 			usb_ep_set_maxpacket_limit(&ep_priv->endpoint, 512);
-> 			ep_priv->endpoint.maxburst = 1;
-> 			ep_priv->endpoint.ops = &usbssp_gadget_ep0_ops;
-> 			ep_priv->endpoint.desc = &usbssp_gadget_ep0_desc;
-> 
-> 			ep_priv->endpoint.comp_desc = NULL;
-> 			ep_priv->endpoint.caps.type_control = true;
-> 			ep_priv->endpoint.caps.dir_in = true;
-> 			ep_priv->endpoint.caps.dir_out = true;
-> 
-> 			usbssp_data->usb_req_ep0_in.epnum = ep_priv->number;
-> 			usbssp_data->usb_req_ep0_in.dep = ep_priv;
-> 			usbssp_data->gadget.ep0 = &ep_priv->endpoint;
-> 
-> 		} else {
-> 			snprintf(ep_priv->name, sizeof(ep_priv->name), "ep%d%s",
-> 				epnum, (ep_priv->direction) ? "in"  : "out");
-> 
-> 			usb_ep_set_maxpacket_limit(&ep_priv->endpoint, 1024);
-> 			ep_priv->endpoint.maxburst = 15;
-> 			ep_priv->endpoint.ops = &usbssp_gadget_ep_ops;
-> 			list_add_tail(&ep_priv->endpoint.ep_list,
-> 					&usbssp_data->gadget.ep_list);
-> 
-> 			ep_priv->endpoint.caps.type_iso = true;
-> 			ep_priv->endpoint.caps.type_bulk = true;
-> 			ep_priv->endpoint.caps.type_int = true;
-> 
-> 			ep_priv->endpoint.caps.dir_in = direction;
-> 			ep_priv->endpoint.caps.dir_out = !direction;
-> 		}
-> 
-> 		ep_priv->endpoint.name = ep_priv->name;
-
-I think this is much better now.
-
-> 
-> 		dev_dbg(usbssp_data->dev, "Init %s, MaxPack: %04x SupType: "
-> 			"CTRL: %s, INT: %s, BULK: %s, ISOC %s, "
-> 			"SupDir IN: %s, OUT: %s\n",
-> 			ep_priv->name, 1024,
-> 			(ep_priv->endpoint.caps.type_control) ? "yes" : "no",
-> 			(ep_priv->endpoint.caps.type_int) ? "yes" : "no",
-> 			(ep_priv->endpoint.caps.type_bulk) ? "yes" : "no",
-> 			(ep_priv->endpoint.caps.type_iso) ? "yes" : "no",
-> 			(ep_priv->endpoint.caps.dir_in) ? "yes" : "no",
-> 			(ep_priv->endpoint.caps.dir_out) ? "yes" : "no");
-> 
-
-In some places you use usbssp_dbg_trace() and at others you use dev_dbg().
-Is it better to stick with one throughout?
-
-> 		INIT_LIST_HEAD(&ep_priv->pending_list);
-> 	}
-> 
-> 	return 0;
-> }
-> 
->>> +
->>> +		dev_dbg(usbssp_data->dev, "Init %s, MaxPack: %04x SupType:"
->>> +				" INT/BULK/ISOC , SupDir %s\n",
->>> +				ep_priv->name, 1024,
->>> +				(ep_priv->endpoint.caps.dir_in) ? "IN" : "OUT");
->>> +
->>> +		INIT_LIST_HEAD(&ep_priv->pending_list);
->>> +	}
->>>  	return 0;
->>>  }
->>>
->>>  void usbssp_gadget_free_endpoint(struct usbssp_udc *usbssp_data)
->>>  {
->>> -	/*TODO: it has to be implemented*/
->>> +	int i;
->>> +	struct usbssp_ep *ep_priv;
->>> +
->>> +	for (i = 0; i < usbssp_data->num_endpoints; i++) {
->>> +		ep_priv = &usbssp_data->devs.eps[i];
->>> +
->>
->> if you start i from 1 then you can skip the if().
->>
->>> +		if (ep_priv->number != 0)
->>> +			list_del(&ep_priv->endpoint.ep_list);
->>> +	}
->>>  }
->>> diff --git a/drivers/usb/usbssp/gadget.c b/drivers/usb/usbssp/gadget.c
->>> index 338ec2ec18b1..195f5777cf8a 100644
->>> --- a/drivers/usb/usbssp/gadget.c
->>> +++ b/drivers/usb/usbssp/gadget.c
->>> @@ -103,6 +103,83 @@ int usbssp_halt(struct usbssp_udc *usbssp_data)
->>>  	return ret;
->>>  }
->>>
->>> +/*
->>> + * Set the run bit and wait for the device to be running.
->>> + */
->>> +int usbssp_start(struct usbssp_udc *usbssp_data)
->>> +{
->>> +	u32 temp;
->>> +	int ret;
->>> +
->>> +	temp = readl(&usbssp_data->op_regs->command);
->>> +	temp |= (CMD_RUN | CMD_DEVEN);
->>> +	usbssp_dbg_trace(usbssp_data, trace_usbssp_dbg_init,
->>> +			"// Turn on USBSSP, cmd = 0x%x.", temp);
->>> +	writel(temp, &usbssp_data->op_regs->command);
->>> +
->>> +	/*
->>> +	 * Wait for the HCHalted Staus bit to be 0 to indicate the device is
->>> +	 * running.
->>> +	 */
->>> +	ret = usbssp_handshake(&usbssp_data->op_regs->status,
->>> +			STS_HALT, 0, USBSSP_MAX_HALT_USEC);
->>> +
->>> +	if (ret == -ETIMEDOUT)
->>> +		dev_err(usbssp_data->dev, "Device took too long to start, waited %u microseconds.\n",
->>> +			USBSSP_MAX_HALT_USEC);
->>> +	if (!ret)
->>> +		/* clear state flags. Including dying, halted or removing */
->>> +		usbssp_data->usbssp_state = 0;
->>> +
->>> +	return ret;
->>> +}
->>> +
->>> +/*
->>> + * Reset a halted DC.
->>> + *
->>> + * This resets pipelines, timers, counters, state machines, etc.
->>> + * Transactions will be terminated immediately, and operational registers
->>> + * will be set to their defaults.
->>> + */
->>> +int usbssp_reset(struct usbssp_udc *usbssp_data)
->>> +{
->>> +	u32 command;
->>> +	u32 state;
->>> +	int ret;
->>> +
->>> +	state = readl(&usbssp_data->op_regs->status);
->>> +
->>> +	if (state == ~(u32)0) {
->>> +		dev_warn(usbssp_data->dev, "Device not accessible, reset failed.\n");
->>> +		return -ENODEV;
->>> +	}
->>> +
->>> +	if ((state & STS_HALT) == 0) {
->>> +		dev_warn(usbssp_data->dev, "DC not halted, aborting reset.\n");
->>
->> DC is not a familiar abbreviation. Mabe just use Controller? or Device controller.
-> 
-> In xhci driver is often used HC for host controller. In device driver I change this abbreviation 
-> to  DC. I will review the patches and change this to Controller.  
-> 
->>
->>> +		return 0;
->>> +	}
->>> +
->>> +	usbssp_dbg_trace(usbssp_data, trace_usbssp_dbg_init, "// Reset the DC");
->>> +	command = readl(&usbssp_data->op_regs->command);
->>> +	command |= CMD_RESET;
->>> +	writel(command, &usbssp_data->op_regs->command);
->>> +
->>> +	ret = usbssp_handshake(&usbssp_data->op_regs->command,
->>> +			CMD_RESET, 0, 10 * 1000 * 1000);
->>> +
->>> +	if (ret)
->>> +		return ret;
->>> +	usbssp_dbg_trace(usbssp_data, trace_usbssp_dbg_init,
->>> +		"Wait for controller to be ready for doorbell rings");
->>> +	/*
->>> +	 * USBSSP cannot write to any doorbells or operational registers other
->>> +	 * than status until the "Controller Not Ready" flag is cleared.
->>> +	 */
->>> +	ret = usbssp_handshake(&usbssp_data->op_regs->status,
->>> +			STS_CNR, 0, 10 * 1000 * 1000);
->>> +
->>> +	return ret;
->>> +}
->>>
->>>  /*
->>>   * Initialize memory for gadget driver and USBSSP (one-time init).
->>> @@ -179,8 +256,7 @@ int usbssp_gen_setup(struct usbssp_udc *usbssp_data)
->>>
->>>  	dev_dbg(usbssp_data->dev, "Resetting Device Controller\n");
->>>  	/* Reset the internal DC memory state and registers. */
->>> -	/*TODO: add implementation of usbssp_reset function*/
->>> -	//retval = usbssp_reset(usbssp_data);
->>> +	retval = usbssp_reset(usbssp_data);
->>>  	if (retval)
->>>  		return retval;
->>>  	dev_dbg(usbssp_data->dev, "Reset complete\n");
->>> @@ -244,8 +320,7 @@ int usbssp_gadget_init(struct usbssp_udc *usbssp_data)
->>>  	BUILD_BUG_ON(sizeof(struct usbssp_run_regs) != (8+8*128)*32/8);
->>>
->>>  	/* fill gadget fields */
->>> -	/*TODO: implements usbssp_gadget_ops object*/
->>> -	//usbssp_data->gadget.ops = &usbssp_gadget_ops;
->>> +	usbssp_data->gadget.ops = &usbssp_gadget_ops;
->>>  	usbssp_data->gadget.name = "usbssp-gadget";
->>>  	usbssp_data->gadget.max_speed = USB_SPEED_SUPER_PLUS;
->>>  	usbssp_data->gadget.speed = USB_SPEED_UNKNOWN;
->>> @@ -288,6 +363,7 @@ int usbssp_gadget_init(struct usbssp_udc *usbssp_data)
->>>  	usbssp_halt(usbssp_data);
->>>  	/*TODO add implementation of usbssp_reset function*/
->>>  	//usbssp_reset(usbssp_data);
->>> +	usbssp_reset(usbssp_data);
->>>  	/*TODO add implementation of freeing memory*/
->>>  	//usbssp_mem_cleanup(usbssp_data);
->>>  err3:
->>>
->>
->> --
->> cheers,
->> -roger
->>
->> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
->> Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
-> 
-> Cheers
-> Pawel
-> 
-
--- 
-cheers,
--roger
-
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+SGksDQo+IA0KPiBIaSwNCj4gDQo+IE9uIDE5LzA3LzE4IDIwOjU3LCBQYXdlbCBMYXN6Y3phayB3
+cm90ZToNCj4gPiBQYXRjaCBhZGRzIHNvbWUgaW5pdGlhbGl6YXRpb24gZnVuY3Rpb24uIFRoZSBp
+bml0aWFsaXphdGlvbiBzZXF1ZW5jZQ0KPiA+IGlzIHF1aXRlIGNvbXBsaWNhdGVkIGFuZCB0aGlz
+IHBhdGNoIGltcGxlbWVudHMgaXQgb25seSBwYXJ0aWFsbHkuDQo+ID4gSW5pdGlhbGl6YXRpb24g
+d2lsbCBiZSBjb21wbGV0ZWQgaW4gbmV4dCBmZXcgcGF0Y2hlcy4NCj4gPg0KPiA+IFBhdGNoIGlu
+dHJvZHVjZSB0aHJlZSBuZXcgZmlsZXM6DQo+ID4gMS4gZ2FkZ2V0LWRiZy5jIC0gZmlsZSBjb250
+YWlucyBmdW5jdGlvbnMgdXNlZCBmb3IgZGVidWdnaW5nIHB1cnBvc2UuDQo+ID4gMi4gZ2FkZ2V0
+LWV4dC1jYXBzLmggLSBob2xkcyBtYWNybyBkZWZpbml0aW9uIHJlbGF0ZWQgdG8NCj4gPiAJCSAg
+ICAgICBFeHRlbmRlZCBDYXBhYmlsaXRpZXMNCj4gPiAzLiBnYWRnZXQtaWYgLSBmaWxlIGltcGxl
+bWVudHMgc3R1ZmYgcmVsYXRlZCB0byB1cHBlciBsYXllcg0KPiA+IAkoZS5nIHVzYl9lcF9vcHMs
+IHVzYl9nYWRnZXRfb3BzIGludGVyZmFjZSkuDQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBQYXdl
+bCBMYXN6Y3phayA8cGF3ZWxsQGNhZGVuY2UuY29tPg0KPiA+IC0tLQ0KPiA+ICBkcml2ZXJzL3Vz
+Yi91c2Jzc3AvTWFrZWZpbGUgICAgICAgICAgfCAgIDEgKw0KPiA+ICBkcml2ZXJzL3VzYi91c2Jz
+c3AvZ2FkZ2V0LWRiZy5jICAgICAgfCAgMzAgKysrKw0KPiA+ICBkcml2ZXJzL3VzYi91c2Jzc3Av
+Z2FkZ2V0LWV4dC1jYXBzLmggfCAgNTMgKysrKysrDQo+ID4gIGRyaXZlcnMvdXNiL3VzYnNzcC9n
+YWRnZXQtaWYuYyAgICAgICB8ICAyNCArKysNCj4gPiAgZHJpdmVycy91c2IvdXNic3NwL2dhZGdl
+dC5jICAgICAgICAgIHwgMjQyICsrKysrKysrKysrKysrKysrKysrKysrKysrKw0KPiA+ICBkcml2
+ZXJzL3VzYi91c2Jzc3AvZ2FkZ2V0LmggICAgICAgICAgfCAgMTUgKysNCj4gPiAgNiBmaWxlcyBj
+aGFuZ2VkLCAzNjUgaW5zZXJ0aW9ucygrKQ0KPiA+ICBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVy
+cy91c2IvdXNic3NwL2dhZGdldC1kYmcuYw0KPiA+ICBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVy
+cy91c2IvdXNic3NwL2dhZGdldC1leHQtY2Fwcy5oDQo+ID4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBk
+cml2ZXJzL3VzYi91c2Jzc3AvZ2FkZ2V0LWlmLmMNCj4gPg0KPiA+IGRpZmYgLS1naXQgYS9kcml2
+ZXJzL3VzYi91c2Jzc3AvTWFrZWZpbGUgYi9kcml2ZXJzL3VzYi91c2Jzc3AvTWFrZWZpbGUNCj4g
+PiBpbmRleCBkODVmMTVhZmI1MWMuLjA2MDZmM2M2M2NkMCAxMDA2NDQNCj4gPiAtLS0gYS9kcml2
+ZXJzL3VzYi91c2Jzc3AvTWFrZWZpbGUNCj4gPiArKysgYi9kcml2ZXJzL3VzYi91c2Jzc3AvTWFr
+ZWZpbGUNCj4gPiBAQCAtNSw2ICs1LDcgQEAgQ0ZMQUdTX2dhZGdldC10cmFjZS5vIDo9IC1JJChz
+cmMpDQo+ID4gIG9iai0kKENPTkZJR19VU0JfVVNCU1NQX0dBREdFVCkgKz0gdXNic3NwLm8NCj4g
+PiAgdXNic3NwLXkgCQkJOj0gdXNic3NwLXBsYXQubyBnYWRnZXQtcmluZy5vIFwNCj4gPiAgCQkJ
+CSAgIGdhZGdldC5vDQo+ID4gKwkJCQkgICAgZ2FkZ2V0LWRiZy5vDQo+ID4NCj4gPiAgaWZuZXEg
+KCQoQ09ORklHX1RSQUNJTkcpLCkNCj4gPiAgCXVzYnNzcC15CQkrPSBnYWRnZXQtdHJhY2Uubw0K
+PiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3VzYi91c2Jzc3AvZ2FkZ2V0LWRiZy5jIGIvZHJpdmVy
+cy91c2IvdXNic3NwL2dhZGdldC1kYmcuYw0KPiA+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0DQo+ID4g
+aW5kZXggMDAwMDAwMDAwMDAwLi4yNzc2MTdkMWE5OTYNCj4gPiAtLS0gL2Rldi9udWxsDQo+ID4g
+KysrIGIvZHJpdmVycy91c2IvdXNic3NwL2dhZGdldC1kYmcuYw0KPiA+IEBAIC0wLDAgKzEsMzAg
+QEANCj4gPiArLy8gU1BEWC1MaWNlbnNlLUlkZW50aWZpZXI6IEdQTC0yLjANCj4gPiArLyoNCj4g
+PiArICogVVNCU1NQIGRldmljZSBjb250cm9sbGVyIGRyaXZlcg0KPiA+ICsgKg0KPiA+ICsgKiBD
+b3B5cmlnaHQgKEMpIDIwMTggQ2FkZW5jZS4NCj4gPiArICoNCj4gPiArICogQXV0aG9yOiBQYXdl
+bCBMYXN6Y3phaw0KPiA+ICsgKg0KPiA+ICsgKiBBIGxvdCBvZiBjb2RlIGJhc2VkIG9uIExpbnV4
+IFhIQ0kgZHJpdmVyLg0KPiA+ICsgKiBPcmlnaW46IENvcHlyaWdodCAoQykgMjAwOCBJbnRlbCBD
+b3JwDQo+ID4gKyAqLw0KPiA+ICsNCj4gPiArI2luY2x1ZGUgImdhZGdldC5oIg0KPiA+ICsNCj4g
+PiArdm9pZCB1c2Jzc3BfZGJnX3RyYWNlKHN0cnVjdCB1c2Jzc3BfdWRjICp1c2Jzc3BfZGF0YSwN
+Cj4gPiArCQkgICAgICB2b2lkICgqdHJhY2UpKHN0cnVjdCB2YV9mb3JtYXQgKiksDQo+ID4gKwkJ
+ICAgICAgY29uc3QgY2hhciAqZm10LCAuLi4pDQo+ID4gK3sNCj4gPiArCXN0cnVjdCB2YV9mb3Jt
+YXQgdmFmOw0KPiA+ICsJdmFfbGlzdCBhcmdzOw0KPiA+ICsNCj4gPiArCXZhX3N0YXJ0KGFyZ3Ms
+IGZtdCk7DQo+ID4gKwl2YWYuZm10ID0gZm10Ow0KPiA+ICsJdmFmLnZhID0gJmFyZ3M7DQo+ID4g
+KwlkZXZfZGJnKHVzYnNzcF9kYXRhLT5kZXYsICIlcFZcbiIsICZ2YWYpOw0KPiANCj4gZGV2X2Ri
+ZyB3aWxsIG1lc3MgdXAgd2l0aCB0aW1pbmdzIHRvIGJlIHVzZWZ1bC4NCj4gV2h5IG5vdCBqdXN0
+IHVzZSBvbmUgb2YgdGhlIHRyYWNlIGV2ZW50cyB5b3UgZGVmaW5lZCBpbiBnYWRnZXQtdHJhY2Uu
+aD8NCg0KRnVuY3Rpb24gaXMgZXF1aXZhbGVudCBvZiB4aGNpX2RiZ190cmFjZSBmcm9tIFhIQ0kg
+ZHJpdmVyLg0KSXQgaXMgYSBmdW5jdGlvbiBvZiBnZW5lcmFsIHVzZS4gDQpUaGUgcHJvYmxlbSB3
+aXRoIHRyYWNlIGlzIHRoYXQgdHJhY2UgbG9nIGlzIGRlbGV0ZWQgYWZ0ZXIgcmVib290aW5nIHN5
+c3RlbS4gDQpVc2luZyB0cmFjZSBsb2cgaXMgcHJvYmxlbWF0aWMgZHVyaW5nIGRldmVsb3Bpbmcg
+YW5kIGRlYnVnZ2luZyBkcml2ZXIuIA0KRG8geW91IGtub3cgd2hldGhlciAgdHJhY2UgbG9nIGlz
+IHNhdmVkIGFueXdoZXJlIG9uIGRpc2sgPyAgDQoNCj4gPiArCXRyYWNlKCZ2YWYpOw0KPiA+ICsJ
+dmFfZW5kKGFyZ3MpOw0KPiA+ICt9DQo+ID4gK0VYUE9SVF9TWU1CT0xfR1BMKHVzYnNzcF9kYmdf
+dHJhY2UpOw0KPiA+ICsNCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy91c2IvdXNic3NwL2dhZGdl
+dC1leHQtY2Fwcy5oIGIvZHJpdmVycy91c2IvdXNic3NwL2dhZGdldC1leHQtY2Fwcy5oDQo+ID4g
+bmV3IGZpbGUgbW9kZSAxMDA2NDQNCj4gPiBpbmRleCAwMDAwMDAwMDAwMDAuLjJiZjMyNzA0NjM3
+Ng0KPiA+IC0tLSAvZGV2L251bGwNCj4gPiArKysgYi9kcml2ZXJzL3VzYi91c2Jzc3AvZ2FkZ2V0
+LWV4dC1jYXBzLmgNCj4gPiBAQCAtMCwwICsxLDUzIEBADQo+ID4gKy8vIFNQRFgtTGljZW5zZS1J
+ZGVudGlmaWVyOiBHUEwtMi4wDQo+ID4gKy8qDQo+ID4gKyAqIFVTQlNTUCBkZXZpY2UgY29udHJv
+bGxlciBkcml2ZXINCj4gPiArICoNCj4gPiArICogQ29weXJpZ2h0IChDKSAyMDE4IENhZGVuY2Uu
+DQo+ID4gKyAqDQo+ID4gKyAqIEF1dGhvcjogUGF3ZWwgTGFzemN6YWsNCj4gPiArICoNCj4gPiAr
+ICogQSBsb3Qgb2YgY29kZSBiYXNlZCBvbiBMaW51eCBYSENJIGRyaXZlci4NCj4gPiArICogT3Jp
+Z2luOiBDb3B5cmlnaHQgKEMpIDIwMDggSW50ZWwgQ29ycA0KPiA+ICsgKi8NCj4gPiArDQo+ID4g
+Ky8qIFVwIHRvIDE2IG1zIHRvIGhhbHQgYW4gREMgKi8NCj4gPiArI2RlZmluZSBVU0JTU1BfTUFY
+X0hBTFRfVVNFQwkJKDE2KjEwMDApDQo+ID4gKw0KPiA+ICsvKiBEQyBub3QgcnVubmluZyAtIHNl
+dCB0byAxIHdoZW4gcnVuL3N0b3AgYml0IGlzIGNsZWFyZWQuICovDQo+ID4gKyNkZWZpbmUgVVNC
+U1NQX1NUU19IQUxUCQkJQklUKDApDQo+ID4gKw0KPiA+ICsvKiBIQ0NQQVJBTVMgb2Zmc2V0IGZy
+b20gUENJIGJhc2UgYWRkcmVzcyAqLw0KPiA+ICsjZGVmaW5lIFVTQlNTUF9IQ0NfUEFSQU1TX09G
+RlNFVAkweDEwDQo+ID4gKy8qIEhDQ1BBUkFNUyBjb250YWlucyB0aGUgZmlyc3QgZXh0ZW5kZWQg
+Y2FwYWJpbGl0eSBwb2ludGVyICovDQo+ID4gKyNkZWZpbmUgVVNCU1NQX0hDQ19FWFRfQ0FQUyhw
+KQkJKCgocCk+PjE2KSYweGZmZmYpDQo+ID4gKw0KPiA+ICsvKiBDb21tYW5kIGFuZCBTdGF0dXMg
+cmVnaXN0ZXJzIG9mZnNldCBmcm9tIHRoZSBPcGVyYXRpb25hbCBSZWdpc3RlcnMgYWRkcmVzcyAq
+Lw0KPiA+ICsjZGVmaW5lIFVTQlNTUF9DTURfT0ZGU0VUCQkweDAwDQo+ID4gKyNkZWZpbmUgVVNC
+U1NQX1NUU19PRkZTRVQJCTB4MDQNCj4gPiArDQo+ID4gKy8qIENhcGFiaWxpdHkgUmVnaXN0ZXIg
+Ki8NCj4gPiArLyogYml0cyA3OjAgLSBob3cgbG9uZyBpcyB0aGUgQ2FwYWJpbGl0aWVzIHJlZ2lz
+dGVyICovDQo+ID4gKyNkZWZpbmUgVVNCU1NQX0hDX0xFTkdUSChwKQkJKCgocCk+PjAwKSYweDAw
+ZmYpDQo+ID4gKw0KPiA+ICsvKiBFeHRlbmRlZCBjYXBhYmlsaXR5IHJlZ2lzdGVyIGZpZWxkcyAq
+Lw0KPiA+ICsjZGVmaW5lIFVTQlNTUF9FWFRfQ0FQU19JRChwKQkJKCgocCk+PjApJjB4ZmYpDQo+
+ID4gKyNkZWZpbmUgVVNCU1NQX0VYVF9DQVBTX05FWFQocCkJCSgoKHApPj44KSYweGZmKQ0KPiA+
+ICsjZGVmaW5lCXZfRVhUX0NBUFNfVkFMKHApCQkoKHApPj4xNikNCj4gPiArLyogRXh0ZW5kZWQg
+Y2FwYWJpbGl0eSBJRHMgLSBJRCAwIHJlc2VydmVkICovDQo+ID4gKyNkZWZpbmUgVVNCU1NQX0VY
+VF9DQVBTX1BST1RPQ09MCTINCj4gPiArDQo+ID4gKy8qIFVTQiAyLjAgaGFyZHdhcmUgTE1QIGNh
+cGFiaWxpdHkqLw0KPiA+ICsjZGVmaW5lIFVTQlNTUF9ITEMJCQlCSVQoMTkpDQo+ID4gKyNkZWZp
+bmUgVVNCU1NQX0JMQwkJCUJJVCgyMCkNCj4gPiArDQo+ID4gKy8qIGNvbW1hbmQgcmVnaXN0ZXIg
+dmFsdWVzIHRvIGRpc2FibGUgaW50ZXJydXB0cyBhbmQgaGFsdCB0aGUgREMgKi8NCj4gPiArLyog
+c3RhcnQvc3RvcCBEQyBleGVjdXRpb24gLSBkbyBub3Qgd3JpdGUgdW5sZXNzIERDIGlzIGhhbHRl
+ZCovDQo+ID4gKyNkZWZpbmUgVVNCU1NQX0NNRF9SVU4JCQlCSVQoMCkNCj4gPiArLyogRXZlbnQg
+SW50ZXJydXB0IEVuYWJsZSAtIGdldCBpcnEgd2hlbiBFSU5UIGJpdCBpcyBzZXQgaW4gVVNCU1RT
+IHJlZ2lzdGVyICovDQo+ID4gKyNkZWZpbmUgVVNCU1NQX0NNRF9FSUUJCQlCSVQoMikNCj4gPiAr
+LyogSG9zdCBTeXN0ZW0gRXJyb3IgSW50ZXJydXB0IEVuYWJsZSAtIGdldCBpcnEgd2hlbiBIU0VJ
+RSBiaXQgc2V0IGluIFVTQlNUUyAqLw0KPiA+ICsjZGVmaW5lIFVTQlNTUF9DTURfSFNFSUUJCUJJ
+VCgzKQ0KPiA+ICsvKiBFbmFibGUgV3JhcCBFdmVudCAtICcxJyBtZWFucyBEQyBnZW5lcmF0ZXMg
+YW4gZXZlbnQgd2hlbiBNRklOREVYIHdyYXBzLiAqLw0KPiA+ICsjZGVmaW5lIFVTQlNTUF9DTURf
+RVdFCQkJQklUKDEwKQ0KPiA+ICsNCj4gPiArI2RlZmluZSBVU0JTU1BfSVJRUwkoVVNCU1NQX0NN
+RF9FSUUgfCBVU0JTU1BfQ01EX0hTRUlFIHwgVVNCU1NQX0NNRF9FV0UpDQo+ID4gZGlmZiAtLWdp
+dCBhL2RyaXZlcnMvdXNiL3VzYnNzcC9nYWRnZXQtaWYuYyBiL2RyaXZlcnMvdXNiL3VzYnNzcC9n
+YWRnZXQtaWYuYw0KPiA+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0DQo+ID4gaW5kZXggMDAwMDAwMDAw
+MDAwLi5kNTNlMGZiNjUyOTkNCj4gPiAtLS0gL2Rldi9udWxsDQo+ID4gKysrIGIvZHJpdmVycy91
+c2IvdXNic3NwL2dhZGdldC1pZi5jDQo+ID4gQEAgLTAsMCArMSwyNCBAQA0KPiA+ICsvLyBTUERY
+LUxpY2Vuc2UtSWRlbnRpZmllcjogR1BMLTIuMA0KPiA+ICsvKg0KPiA+ICsgKiBVU0JTU1AgZGV2
+aWNlIGNvbnRyb2xsZXIgZHJpdmVyDQo+ID4gKyAqDQo+ID4gKyAqIENvcHlyaWdodCAoQykgMjAx
+OCBDYWRlbmNlLg0KPiA+ICsgKg0KPiA+ICsgKiBBdXRob3I6IFBhd2VsIExhc3pjemFrDQo+ID4g
+KyAqDQo+ID4gKyAqLw0KPiA+ICsNCj4gPiArI2luY2x1ZGUgPGxpbnV4L3VzYi9nYWRnZXQuaD4N
+Cj4gPiArI2luY2x1ZGUgPGxpbnV4L3VzYi9jb21wb3NpdGUuaD4NCj4gPiArI2luY2x1ZGUgImdh
+ZGdldC5oIg0KPiA+ICsNCj4gPiAraW50IHVzYnNzcF9nYWRnZXRfaW5pdF9lbmRwb2ludChzdHJ1
+Y3QgdXNic3NwX3VkYyAqdXNic3NwX2RhdGEpDQo+ID4gK3sNCj4gPiArCS8qVE9ETzogaXQgaGFz
+IHRvIGJlIGltcGxlbWVudGVkKi8NCj4gPiArCXJldHVybiAwOw0KPiA+ICt9DQo+ID4gKw0KPiA+
+ICt2b2lkIHVzYnNzcF9nYWRnZXRfZnJlZV9lbmRwb2ludChzdHJ1Y3QgdXNic3NwX3VkYyAqdXNi
+c3NwX2RhdGEpDQo+ID4gK3sNCj4gPiArCS8qVE9ETzogaXQgaGFzIHRvIGJlIGltcGxlbWVudGVk
+Ki8NCj4gPiArfQ0KPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3VzYi91c2Jzc3AvZ2FkZ2V0LmMg
+Yi9kcml2ZXJzL3VzYi91c2Jzc3AvZ2FkZ2V0LmMNCj4gPiBpbmRleCAyZjYwZDdkZDFmZTQuLjMz
+OGVjMmVjMThiMSAxMDA2NDQNCj4gPiAtLS0gYS9kcml2ZXJzL3VzYi91c2Jzc3AvZ2FkZ2V0LmMN
+Cj4gPiArKysgYi9kcml2ZXJzL3VzYi91c2Jzc3AvZ2FkZ2V0LmMNCj4gPiBAQCAtMjMsNiArMjMs
+MTA3IEBADQo+ID4gICNpbmNsdWRlICJnYWRnZXQtdHJhY2UuaCINCj4gPiAgI2luY2x1ZGUgImdh
+ZGdldC5oIg0KPiA+DQo+ID4gKw0KPiA+ICsvKg0KPiANCj4gLyoqDQo+IA0KPiA+ICsgKiB1c2Jz
+c3BfaGFuZHNoYWtlIC0gc3BpbiByZWFkaW5nIGRjIHVudGlsIGhhbmRzaGFrZSBjb21wbGV0ZXMg
+b3IgZmFpbHMNCj4gPiArICogQHB0cjogYWRkcmVzcyBvZiBkYyByZWdpc3RlciB0byBiZSByZWFk
+DQo+ID4gKyAqIEBtYXNrOiBiaXRzIHRvIGxvb2sgYXQgaW4gcmVzdWx0IG9mIHJlYWQNCj4gPiAr
+ICogQGRvbmU6IHZhbHVlIG9mIHRob3NlIGJpdHMgd2hlbiBoYW5kc2hha2Ugc3VjY2VlZHMNCj4g
+PiArICogQHVzZWM6IHRpbWVvdXQgaW4gbWljcm9zZWNvbmRzDQo+ID4gKyAqDQo+ID4gKyAqIFJl
+dHVybnMgbmVnYXRpdmUgZXJybm8sIG9yIHplcm8gb24gc3VjY2Vzcw0KPiA+ICsgKg0KPiA+ICsg
+KiBTdWNjZXNzIGhhcHBlbnMgd2hlbiB0aGUgIm1hc2siIGJpdHMgaGF2ZSB0aGUgc3BlY2lmaWVk
+IHZhbHVlIChoYXJkd2FyZQ0KPiA+ICsgKiBoYW5kc2hha2UgZG9uZSkuIFRoZXJlIGFyZSB0d28g
+ZmFpbHVyZSBtb2RlczogInVzZWMiIGhhdmUgcGFzc2VkIChtYWpvcg0KPiA+ICsgKiBoYXJkd2Fy
+ZSBmbGFrZW91dCksIG9yIHRoZSByZWdpc3RlciByZWFkcyBhcyBhbGwtb25lcyAoaGFyZHdhcmUg
+cmVtb3ZlZCkuDQo+ID4gKyAqLw0KPiA+ICtpbnQgdXNic3NwX2hhbmRzaGFrZSh2b2lkIF9faW9t
+ZW0gKnB0ciwgdTMyIG1hc2ssIHUzMiBkb25lLCBpbnQgdXNlYykNCj4gPiArew0KPiA+ICsJdTMy
+CXJlc3VsdDsNCj4gPiArDQo+ID4gKwlkbyB7DQo+ID4gKwkJcmVzdWx0ID0gcmVhZGwocHRyKTsN
+Cj4gPiArCQlpZiAocmVzdWx0ID09IH4odTMyKTApCS8qIGNhcmQgcmVtb3ZlZCAqLw0KPiA+ICsJ
+CQlyZXR1cm4gLUVOT0RFVjsNCj4gPiArCQlyZXN1bHQgJj0gbWFzazsNCj4gPiArCQlpZiAocmVz
+dWx0ID09IGRvbmUpDQo+ID4gKwkJCXJldHVybiAwOw0KPiA+ICsJCXVkZWxheSgxKTsNCj4gPiAr
+CQl1c2VjLS07DQo+ID4gKwl9IHdoaWxlICh1c2VjID4gMCk7DQo+ID4gKwlyZXR1cm4gLUVUSU1F
+RE9VVDsNCj4gPiArfQ0KPiA+ICsNCj4gPiArLyoNCj4gPiArICogRGlzYWJsZSBpbnRlcnJ1cHRz
+IGFuZCBiZWdpbiB0aGUgREMgaGFsdGluZyBwcm9jZXNzLg0KPiA+ICsgKi8NCj4gPiArdm9pZCB1
+c2Jzc3BfcXVpZXNjZShzdHJ1Y3QgdXNic3NwX3VkYyAqdXNic3NwX2RhdGEpDQo+ID4gK3sNCj4g
+PiArCXUzMiBoYWx0ZWQ7DQo+ID4gKwl1MzIgY21kOw0KPiA+ICsJdTMyIG1hc2s7DQo+ID4gKw0K
+PiA+ICsJbWFzayA9IH4odTMyKShVU0JTU1BfSVJRUyk7DQo+ID4gKw0KPiA+ICsJaGFsdGVkID0g
+cmVhZGwoJnVzYnNzcF9kYXRhLT5vcF9yZWdzLT5zdGF0dXMpICYgU1RTX0hBTFQ7DQo+ID4gKwlp
+ZiAoIWhhbHRlZCkNCj4gPiArCQltYXNrICY9IH5DTURfUlVOOw0KPiA+ICsNCj4gPiArCWNtZCA9
+IHJlYWRsKCZ1c2Jzc3BfZGF0YS0+b3BfcmVncy0+Y29tbWFuZCk7DQo+ID4gKwljbWQgJj0gbWFz
+azsNCj4gPiArCXdyaXRlbChjbWQsICZ1c2Jzc3BfZGF0YS0+b3BfcmVncy0+Y29tbWFuZCk7DQo+
+ID4gK30NCj4gPiArDQo+ID4gKy8qDQo+ID4gKyAqIEZvcmNlIERDIGludG8gaGFsdCBzdGF0ZS4N
+Cj4gPiArICoNCj4gPiArICogRGlzYWJsZSBhbnkgSVJRcyBhbmQgY2xlYXIgdGhlIHJ1bi9zdG9w
+IGJpdC4NCj4gPiArICogVVNCU1NQIHdpbGwgY29tcGxldGUgYW55IGN1cnJlbnQgYW5kIGFjdGl2
+ZWx5IHBpcGVsaW5lZCB0cmFuc2FjdGlvbnMsIGFuZA0KPiA+ICsgKiBzaG91bGQgaGFsdCB3aXRo
+aW4gMTYgbXMgb2YgdGhlIHJ1bi9zdG9wIGJpdCBiZWluZyBjbGVhcmVkLg0KPiA+ICsgKiBSZWFk
+IERDIEhhbHRlZCBiaXQgaW4gdGhlIHN0YXR1cyByZWdpc3RlciB0byBzZWUgd2hlbiB0aGUgREMg
+aXMgZmluaXNoZWQuDQo+ID4gKyAqLw0KPiA+ICtpbnQgdXNic3NwX2hhbHQoc3RydWN0IHVzYnNz
+cF91ZGMgKnVzYnNzcF9kYXRhKQ0KPiA+ICt7DQo+ID4gKwlpbnQgcmV0Ow0KPiA+ICsNCj4gPiAr
+CXVzYnNzcF9kYmdfdHJhY2UodXNic3NwX2RhdGEsIHRyYWNlX3VzYnNzcF9kYmdfaW5pdCwNCj4g
+PiArCQkJIi8vIEhhbHQgdGhlIFVTQlNTUCIpOw0KPiA+ICsJdXNic3NwX3F1aWVzY2UodXNic3Nw
+X2RhdGEpOw0KPiA+ICsNCj4gPiArCXJldCA9IHVzYnNzcF9oYW5kc2hha2UoJnVzYnNzcF9kYXRh
+LT5vcF9yZWdzLT5zdGF0dXMsDQo+ID4gKwkJU1RTX0hBTFQsIFNUU19IQUxULCBVU0JTU1BfTUFY
+X0hBTFRfVVNFQyk7DQo+ID4gKw0KPiA+ICsJaWYgKCFyZXQpIHsNCj4gPiArCQlkZXZfd2Fybih1
+c2Jzc3BfZGF0YS0+ZGV2LCAiRGV2aWNlIGhhbHQgZmFpbGVkLCAlZFxuIiwgcmV0KTsNCj4gPiAr
+CQlyZXR1cm4gcmV0Ow0KPiA+ICsJfQ0KPiA+ICsNCj4gPiArCXVzYnNzcF9kYXRhLT51c2Jzc3Bf
+c3RhdGUgfD0gVVNCU1NQX1NUQVRFX0hBTFRFRDsNCj4gPiArCXVzYnNzcF9kYXRhLT5jbWRfcmlu
+Z19zdGF0ZSA9IENNRF9SSU5HX1NUQVRFX1NUT1BQRUQ7DQo+ID4gKwlyZXR1cm4gcmV0Ow0KPiA+
+ICt9DQo+ID4gKw0KPiA+ICsNCj4gPiArLyoNCj4gPiArICogSW5pdGlhbGl6ZSBtZW1vcnkgZm9y
+IGdhZGdldCBkcml2ZXIgYW5kIFVTQlNTUCAob25lLXRpbWUgaW5pdCkuDQo+ID4gKyAqDQo+ID4g
+KyAqIFByb2dyYW0gdGhlIFBBR0VTSVpFIHJlZ2lzdGVyLCBpbml0aWFsaXplIHRoZSBkZXZpY2Ug
+Y29udGV4dCBhcnJheSwgY3JlYXRlDQo+ID4gKyAqIGRldmljZSBjb250ZXh0cywgc2V0IHVwIGEg
+Y29tbWFuZCByaW5nIHNlZ21lbnQgKG9yIHR3bz8pLCBjcmVhdGUgZXZlbnQNCj4gPiArICogcmlu
+ZyAob25lIGZvciBub3cpLg0KPiA+ICsgKi8NCj4gPiAraW50IHVzYnNzcF9pbml0KHN0cnVjdCB1
+c2Jzc3BfdWRjICp1c2Jzc3BfZGF0YSkNCj4gPiArew0KPiA+ICsJaW50IHJldHZhbCA9IDA7DQo+
+ID4gKw0KPiA+ICsJc3Bpbl9sb2NrX2luaXQoJnVzYnNzcF9kYXRhLT5sb2NrKTsNCj4gPiArCXNw
+aW5fbG9ja19pbml0KCZ1c2Jzc3BfZGF0YS0+aXJxX3RocmVhZF9sb2NrKTsNCj4gPiArDQo+ID4g
+KwkvKlRPRE86IG1lbW9yeSBpbml0aWFsaXphdGlvbiovDQo+ID4gKwkvL3JldHZhbCA9IHVzYnNz
+cF9tZW1faW5pdCh1c2Jzc3BfZGF0YSwgR0ZQX0tFUk5FTCk7DQo+ID4gKw0KPiA+ICsJcmV0dXJu
+IHJldHZhbDsNCj4gPiArfQ0KPiA+ICsNCj4gPiAgI2lmZGVmIENPTkZJR19QTQ0KPiA+ICAvKg0K
+PiA+ICAgKiBTdG9wIERDIChub3QgYnVzLXNwZWNpZmljKQ0KPiA+IEBAIC01MCw5ICsxNTEsMTQ2
+IEBAIGludCB1c2Jzc3BfcmVzdW1lKHN0cnVjdCB1c2Jzc3BfdWRjICp1c2Jzc3BfZGF0YSwgYm9v
+bCBoaWJlcm5hdGVkKQ0KPiA+DQo+ID4gICNlbmRpZgkvKiBDT05GSUdfUE0gKi8NCj4gPg0KPiA+
+ICtpbnQgdXNic3NwX2dlbl9zZXR1cChzdHJ1Y3QgdXNic3NwX3VkYyAqdXNic3NwX2RhdGEpDQo+
+ID4gK3sNCj4gPiArCWludCByZXR2YWw7DQo+ID4gKw0KPiA+ICsJbXV0ZXhfaW5pdCgmdXNic3Nw
+X2RhdGEtPm11dGV4KTsNCj4gPiArDQo+ID4gKwl1c2Jzc3BfZGF0YS0+Y2FwX3JlZ3MgPSB1c2Jz
+c3BfZGF0YS0+cmVnczsNCj4gPiArCXVzYnNzcF9kYXRhLT5vcF9yZWdzID0gdXNic3NwX2RhdGEt
+PnJlZ3MgKw0KPiA+ICsJCUhDX0xFTkdUSChyZWFkbCgmdXNic3NwX2RhdGEtPmNhcF9yZWdzLT5o
+Y19jYXBiYXNlKSk7DQo+ID4gKw0KPiA+ICsJdXNic3NwX2RhdGEtPnJ1bl9yZWdzID0gdXNic3Nw
+X2RhdGEtPnJlZ3MgKw0KPiA+ICsJCShyZWFkbCgmdXNic3NwX2RhdGEtPmNhcF9yZWdzLT5ydW5f
+cmVnc19vZmYpICYgUlRTT0ZGX01BU0spOw0KPiA+ICsJLyogQ2FjaGUgcmVhZC1vbmx5IGNhcGFi
+aWxpdHkgcmVnaXN0ZXJzICovDQo+ID4gKwl1c2Jzc3BfZGF0YS0+aGNzX3BhcmFtczEgPSByZWFk
+bCgmdXNic3NwX2RhdGEtPmNhcF9yZWdzLT5oY3NfcGFyYW1zMSk7DQo+ID4gKwl1c2Jzc3BfZGF0
+YS0+aGNzX3BhcmFtczIgPSByZWFkbCgmdXNic3NwX2RhdGEtPmNhcF9yZWdzLT5oY3NfcGFyYW1z
+Mik7DQo+ID4gKwl1c2Jzc3BfZGF0YS0+aGNzX3BhcmFtczMgPSByZWFkbCgmdXNic3NwX2RhdGEt
+PmNhcF9yZWdzLT5oY3NfcGFyYW1zMyk7DQo+ID4gKwl1c2Jzc3BfZGF0YS0+aGNjX3BhcmFtcyA9
+IHJlYWRsKCZ1c2Jzc3BfZGF0YS0+Y2FwX3JlZ3MtPmhjX2NhcGJhc2UpOw0KPiA+ICsJdXNic3Nw
+X2RhdGEtPmhjaV92ZXJzaW9uID0gSENfVkVSU0lPTih1c2Jzc3BfZGF0YS0+aGNjX3BhcmFtcyk7
+DQo+ID4gKwl1c2Jzc3BfZGF0YS0+aGNjX3BhcmFtcyA9IHJlYWRsKCZ1c2Jzc3BfZGF0YS0+Y2Fw
+X3JlZ3MtPmhjY19wYXJhbXMpOw0KPiA+ICsJdXNic3NwX2RhdGEtPmhjY19wYXJhbXMyID0gcmVh
+ZGwoJnVzYnNzcF9kYXRhLT5jYXBfcmVncy0+aGNjX3BhcmFtczIpOw0KPiA+ICsNCj4gPiArCS8q
+IE1ha2Ugc3VyZSB0aGUgRGV2aWNlIENvbnRyb2xsZXIgaXMgaGFsdGVkLiAqLw0KPiA+ICsJcmV0
+dmFsID0gdXNic3NwX2hhbHQodXNic3NwX2RhdGEpOw0KPiA+ICsJaWYgKHJldHZhbCkNCj4gPiAr
+CQlyZXR1cm4gcmV0dmFsOw0KPiA+ICsNCj4gPiArCWRldl9kYmcodXNic3NwX2RhdGEtPmRldiwg
+IlJlc2V0dGluZyBEZXZpY2UgQ29udHJvbGxlclxuIik7DQo+IA0KPiBkbyB5b3UgcmVhbGx5IG5l
+ZWQgYWxsIHRoZXNlIGRldl9kYmcgcHJpbnRzPyBZb3Ugc2hvdWxkIGp1c3QgZml0IHRoZW0gdG8g
+b25lDQo+IG9mIHRoZSB0cmFjZSBldmVudCBjbGFzc2VzIHRoYXQgeW91IGFscmVhZHkgaGF2ZSBv
+ciBhZGQgYSBuZXcgb25lIGlmIG5lZWRlZC4NCg0KVGhleSBhcmUgbm90IHZlcnkgdXNlZnVsIC4g
+SSBkZWxldGVkIHRoZW0uDQogDQo+ID4gKwkvKiBSZXNldCB0aGUgaW50ZXJuYWwgREMgbWVtb3J5
+IHN0YXRlIGFuZCByZWdpc3RlcnMuICovDQo+ID4gKwkvKlRPRE86IGFkZCBpbXBsZW1lbnRhdGlv
+biBvZiB1c2Jzc3BfcmVzZXQgZnVuY3Rpb24qLw0KPiA+ICsJLy9yZXR2YWwgPSB1c2Jzc3BfcmVz
+ZXQodXNic3NwX2RhdGEpOw0KPiA+ICsJaWYgKHJldHZhbCkNCj4gPiArCQlyZXR1cm4gcmV0dmFs
+Ow0KPiA+ICsJZGV2X2RiZyh1c2Jzc3BfZGF0YS0+ZGV2LCAiUmVzZXQgY29tcGxldGVcbiIpOw0K
+PiA+ICsNCj4gPiArCS8qIFNldCBkbWFfbWFzayBhbmQgY29oZXJlbnRfZG1hX21hc2sgdG8gNjQt
+Yml0cywNCj4gPiArCSAqIGlmIFVTQlNTUCBzdXBwb3J0cyA2NC1iaXQgYWRkcmVzc2luZw0KPiA+
+ICsJICovDQo+ID4gKwlpZiAoSENDXzY0QklUX0FERFIodXNic3NwX2RhdGEtPmhjY19wYXJhbXMp
+ICYmDQo+ID4gKwkgICAgIWRtYV9zZXRfbWFzayh1c2Jzc3BfZGF0YS0+ZGV2LCBETUFfQklUX01B
+U0soNjQpKSkgew0KPiA+ICsJCWRldl9kYmcodXNic3NwX2RhdGEtPmRldiwgIkVuYWJsaW5nIDY0
+LWJpdCBETUEgYWRkcmVzc2VzLlxuIik7DQo+ID4gKwkJZG1hX3NldF9jb2hlcmVudF9tYXNrKHVz
+YnNzcF9kYXRhLT5kZXYsIERNQV9CSVRfTUFTSyg2NCkpOw0KPiA+ICsJfSBlbHNlIHsNCj4gPiAr
+CQkvKg0KPiA+ICsJCSAqIFRoaXMgaXMgdG8gYXZvaWQgZXJyb3IgaW4gY2FzZXMgd2hlcmUgYSAz
+Mi1iaXQgVVNCDQo+ID4gKwkJICogY29udHJvbGxlciBpcyB1c2VkIG9uIGEgNjQtYml0IGNhcGFi
+bGUgc3lzdGVtLg0KPiA+ICsJCSAqLw0KPiA+ICsJCXJldHZhbCA9IGRtYV9zZXRfbWFzayh1c2Jz
+c3BfZGF0YS0+ZGV2LCBETUFfQklUX01BU0soMzIpKTsNCj4gPiArCQlpZiAocmV0dmFsKQ0KPiA+
+ICsJCQlyZXR1cm4gcmV0dmFsOw0KPiA+ICsJCWRldl9kYmcodXNic3NwX2RhdGEtPmRldiwgIkVu
+YWJsaW5nIDMyLWJpdCBETUEgYWRkcmVzc2VzLlxuIik7DQo+ID4gKwkJZG1hX3NldF9jb2hlcmVu
+dF9tYXNrKHVzYnNzcF9kYXRhLT5kZXYsIERNQV9CSVRfTUFTSygzMikpOw0KPiA+ICsJfQ0KPiA+
+ICsNCj4gPiArCS8qIEluaXRpYWxpemUgVVNCU1NQIGNvbnRyb2xsZXIgZGF0YSBzdHJ1Y3R1cmVz
+LiAqLw0KPiA+ICsJcmV0dmFsID0gdXNic3NwX2luaXQodXNic3NwX2RhdGEpOw0KPiA+ICsJaWYg
+KHJldHZhbCkNCj4gPiArCQlyZXR1cm4gcmV0dmFsOw0KPiA+ICsNCj4gPiArCWRldl9pbmZvKHVz
+YnNzcF9kYXRhLT5kZXYsICJVU0JTU1AgcGFyYW1zIDB4JTA4eCBVU0JTU1AgdmVyc2lvbiAweCV4
+XG4iLA0KPiA+ICsJCXVzYnNzcF9kYXRhLT5oY2NfcGFyYW1zLCB1c2Jzc3BfZGF0YS0+aGNpX3Zl
+cnNpb24pOw0KPiA+ICsNCj4gPiArCXJldHVybiAwOw0KPiA+ICt9DQo+ID4gKw0KPiA+ICsvKg0K
+PiA+ICsgKiBnYWRnZXQtaWYuYyBmaWxlIGlzIHBhcnQgb2YgZ2FkZ2V0LmMgZmlsZSBhbmQgaW1w
+bGVtZW50cyBpbnRlcmZhY2UNCj4gPiArICogZm9yIGdhZGdldCBkcml2ZXINCj4gPiArICovDQo+
+ID4gKyNpbmNsdWRlICJnYWRnZXQtaWYuYyINCj4gPiArDQo+IA0KPiBBbGwgaW5jbHVkZXMgc2hv
+dWxkIGJlIHRvZ2V0aGVyIGF0IHRoZSBiZWdpbm5pbmcgb2YgdGhlIGZpbGUuDQoNCkdyZWcgS3Jv
+YWNoLUhhcm1hbiB3cm90ZSBhYm91dCBpbmNsdWRpbmcgIC5jIGZpbGVzOiANCiJVZ2gsIEkga25v
+dyBVU0IgaGNkIGRyaXZlcnMgbG92ZSB0byBpbmNsdWRlIC5jIGZpbGVzIGluIHRoZSBtaWRkbGUg
+b2YNCnRoZW0sIGJ1dCBkbyB3ZSBoYXZlIHRvIGNvbnRpbnVlIHRoYXQgY3JhenkgcHJhY3RpY2Ug
+aW4gbmV3ZXIgZHJpdmVycz8NCklzIGl0IHJlYWxseSBuZWNlc3Nhcnk/Ig0KDQpJIGZvcmdvdCB0
+byBjaGFuZ2UgdGhpcywgSSB3aWxsIHJlbW92ZSB0aGlzIGFuZCBJIHdpbGwgYWRkIGFsbCBuZWNl
+c3NhcnkgZGVjbGFyYXRpb24gdG8gZ2FkZ2V0LmggZmlsZS4NCiANCj4gPiAgaW50IHVzYnNzcF9n
+YWRnZXRfaW5pdChzdHJ1Y3QgdXNic3NwX3VkYyAqdXNic3NwX2RhdGEpDQo+ID4gIHsNCj4gPiAg
+CWludCByZXQ7DQo+ID4gKw0KPiA+ICsJLyoNCj4gPiArCSAqIENoZWNrIHRoZSBjb21waWxlciBn
+ZW5lcmF0ZWQgc2l6ZXMgb2Ygc3RydWN0dXJlcyB0aGF0IG11c3QgYmUgbGFpZA0KPiA+ICsJICog
+b3V0IGluIHNwZWNpZmljIHdheXMgZm9yIGhhcmR3YXJlIGFjY2Vzcy4NCj4gPiArCSAqLw0KPiA+
+ICsJQlVJTERfQlVHX09OKHNpemVvZihzdHJ1Y3QgdXNic3NwX2Rvb3JiZWxsX2FycmF5KSAhPSAy
+KjMyLzgpOw0KPiA+ICsJQlVJTERfQlVHX09OKHNpemVvZihzdHJ1Y3QgdXNic3NwX3Nsb3RfY3R4
+KSAhPSA4KjMyLzgpOw0KPiA+ICsJQlVJTERfQlVHX09OKHNpemVvZihzdHJ1Y3QgdXNic3NwX2Vw
+X2N0eCkgIT0gOCozMi84KTsNCj4gPiArCS8qIHVzYnNzcF9kZXZpY2UgaGFzIGVpZ2h0IGZpZWxk
+cywgYW5kIGFsc28NCj4gPiArCSAqIGVtYmVkcyBvbmUgdXNic3NwX3Nsb3RfY3R4IGFuZCAzMSB1
+c2Jzc3BfZXBfY3R4DQo+ID4gKwkgKi8NCj4gPiArCUJVSUxEX0JVR19PTihzaXplb2Yoc3RydWN0
+IHVzYnNzcF9zdHJlYW1fY3R4KSAhPSA0KjMyLzgpOw0KPiA+ICsJQlVJTERfQlVHX09OKHNpemVv
+Zih1bmlvbiB1c2Jzc3BfdHJiKSAhPSA0KjMyLzgpOw0KPiA+ICsJQlVJTERfQlVHX09OKHNpemVv
+ZihzdHJ1Y3QgdXNic3NwX2Vyc3RfZW50cnkpICE9IDQqMzIvOCk7DQo+ID4gKwlCVUlMRF9CVUdf
+T04oc2l6ZW9mKHN0cnVjdCB1c2Jzc3BfY2FwX3JlZ3MpICE9IDgqMzIvOCk7DQo+ID4gKwlCVUlM
+RF9CVUdfT04oc2l6ZW9mKHN0cnVjdCB1c2Jzc3BfaW50cl9yZWcpICE9IDgqMzIvOCk7DQo+ID4g
+KwkvKiB1c2Jzc3BfcnVuX3JlZ3MgaGFzIGVpZ2h0IGZpZWxkcyBhbmQgZW1iZWRzIDEyOCB1c2Jz
+c3BfaW50cl9yZWdzICovDQo+ID4gKwlCVUlMRF9CVUdfT04oc2l6ZW9mKHN0cnVjdCB1c2Jzc3Bf
+cnVuX3JlZ3MpICE9ICg4KzgqMTI4KSozMi84KTsNCj4gPiArDQo+ID4gKwkvKiBmaWxsIGdhZGdl
+dCBmaWVsZHMgKi8NCj4gPiArCS8qVE9ETzogaW1wbGVtZW50cyB1c2Jzc3BfZ2FkZ2V0X29wcyBv
+YmplY3QqLw0KPiA+ICsJLy91c2Jzc3BfZGF0YS0+Z2FkZ2V0Lm9wcyA9ICZ1c2Jzc3BfZ2FkZ2V0
+X29wczsNCj4gPiArCXVzYnNzcF9kYXRhLT5nYWRnZXQubmFtZSA9ICJ1c2Jzc3AtZ2FkZ2V0IjsN
+Cj4gPiArCXVzYnNzcF9kYXRhLT5nYWRnZXQubWF4X3NwZWVkID0gVVNCX1NQRUVEX1NVUEVSX1BM
+VVM7DQo+ID4gKwl1c2Jzc3BfZGF0YS0+Z2FkZ2V0LnNwZWVkID0gVVNCX1NQRUVEX1VOS05PV047
+DQo+ID4gKwl1c2Jzc3BfZGF0YS0+Z2FkZ2V0LnNnX3N1cHBvcnRlZCA9IHRydWU7DQo+ID4gKwl1
+c2Jzc3BfZGF0YS0+Z2FkZ2V0LmxwbV9jYXBhYmxlID0gMTsNCj4gPiArDQo+ID4gKwl1c2Jzc3Bf
+ZGF0YS0+c2V0dXBfYnVmID0ga3phbGxvYyhVU0JTU1BfRVAwX1NFVFVQX1NJWkUsIEdGUF9LRVJO
+RUwpOw0KPiA+ICsJaWYgKCF1c2Jzc3BfZGF0YS0+c2V0dXBfYnVmKQ0KPiA+ICsJCXJldHVybiAt
+RU5PTUVNOw0KPiA+ICsNCj4gPiArCS8qVVNCU1NQIHN1cHBvcnQgbm90IGFsaWduZWQgYnVmZmVy
+IGJ1dCB0aGlzIG9wdGlvbg0KPiA+ICsJICogaW1wcm92ZSBwZXJmb3JtYW5jZSBvZiB0aGlzIGNv
+bnRyb2xsZXIuDQo+ID4gKwkgKi8NCj4gDQo+IE11bHRpLWxpbmUgY29tbWVudCBmb3JtYXR0aW5n
+LiBDaGVja3BhY2ggc2hvdWxkIGNvbXBsYWluLg0KSXQgZG9lc24ndCBjb21wbGFpbiBhYm91dCB0
+aGlzIGNhc2UuIEkgZG9uJ3Qga25vdyB3aHkuDQoNCj4gPiArCXVzYnNzcF9kYXRhLT5nYWRnZXQu
+cXVpcmtfZXBfb3V0X2FsaWduZWRfc2l6ZSA9IHRydWU7DQo+ID4gKwlyZXQgPSB1c2Jzc3BfZ2Vu
+X3NldHVwKHVzYnNzcF9kYXRhKTsNCj4gPiArCWlmIChyZXQgPCAwKSB7DQo+ID4gKwkJZGV2X2Vy
+cih1c2Jzc3BfZGF0YS0+ZGV2LA0KPiA+ICsJCQkJIkdlbmVyaWMgaW5pdGlhbGl6YXRpb24gZmFp
+bGVkIHdpdGggZXJyb3IgY29kZSVkXG4iLA0KPiA+ICsJCQkJcmV0KTsNCj4gPiArCQlnb3RvIGVy
+cjM7DQo+ID4gKwl9DQo+ID4gKw0KPiA+ICsJcmV0ID0gdXNic3NwX2dhZGdldF9pbml0X2VuZHBv
+aW50KHVzYnNzcF9kYXRhKTsNCj4gPiArCWlmIChyZXQgPCAwKSB7DQo+ID4gKwkJZGV2X2Vycih1
+c2Jzc3BfZGF0YS0+ZGV2LCAiZmFpbGVkIHRvIGluaXRpYWxpemUgZW5kcG9pbnRzXG4iKTsNCj4g
+PiArCQlnb3RvIGVycjE7DQo+ID4gKwl9DQo+ID4gKw0KPiA+ICsJcmV0ID0gdXNiX2FkZF9nYWRn
+ZXRfdWRjKHVzYnNzcF9kYXRhLT5kZXYsICZ1c2Jzc3BfZGF0YS0+Z2FkZ2V0KTsNCj4gPiArDQo+
+ID4gKwlpZiAocmV0KSB7DQo+ID4gKwkJZGV2X2Vycih1c2Jzc3BfZGF0YS0+ZGV2LCAiZmFpbGVk
+IHRvIHJlZ2lzdGVyIHVkY1xuIik7DQo+ID4gKwkJZ290byBlcnIyOw0KPiA+ICsJfQ0KPiA+ICsN
+Cj4gPiArCXJldHVybiByZXQ7DQo+ID4gK2VycjI6DQo+ID4gKwl1c2Jzc3BfZ2FkZ2V0X2ZyZWVf
+ZW5kcG9pbnQodXNic3NwX2RhdGEpOw0KPiA+ICtlcnIxOg0KPiA+ICsJdXNic3NwX2hhbHQodXNi
+c3NwX2RhdGEpOw0KPiA+ICsJLypUT0RPIGFkZCBpbXBsZW1lbnRhdGlvbiBvZiB1c2Jzc3BfcmVz
+ZXQgZnVuY3Rpb24qLw0KPiA+ICsJLy91c2Jzc3BfcmVzZXQodXNic3NwX2RhdGEpOw0KPiA+ICsJ
+LypUT0RPIGFkZCBpbXBsZW1lbnRhdGlvbiBvZiBmcmVlaW5nIG1lbW9yeSovDQo+ID4gKwkvL3Vz
+YnNzcF9tZW1fY2xlYW51cCh1c2Jzc3BfZGF0YSk7DQo+ID4gK2VycjM6DQo+ID4gIAlyZXR1cm4g
+cmV0Ow0KPiA+ICB9DQo+ID4NCj4gPiBAQCAtNjAsNSArMjk4LDkgQEAgaW50IHVzYnNzcF9nYWRn
+ZXRfZXhpdChzdHJ1Y3QgdXNic3NwX3VkYyAqdXNic3NwX2RhdGEpDQo+ID4gIHsNCj4gPiAgCWlu
+dCByZXQgPSAwOw0KPiA+DQo+ID4gKwl1c2JfZGVsX2dhZGdldF91ZGMoJnVzYnNzcF9kYXRhLT5n
+YWRnZXQpOw0KPiA+ICsJdXNic3NwX2dhZGdldF9mcmVlX2VuZHBvaW50KHVzYnNzcF9kYXRhKTsN
+Cj4gPiArCS8qVE9ETzogYWRkIHVzYnNzcF9zdG9wIGltcGxlbWVudGF0aW9uKi8NCj4gPiArCS8v
+dXNic3NwX3N0b3AodXNic3NwX2RhdGEpOw0KPiA+ICAJcmV0dXJuIHJldDsNCj4gPiAgfQ0KPiA+
+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3VzYi91c2Jzc3AvZ2FkZ2V0LmggYi9kcml2ZXJzL3VzYi91
+c2Jzc3AvZ2FkZ2V0LmgNCj4gPiBpbmRleCA1NWUyMDc5NWQ5MDAuLjVkODkxOGY4ZGE4NCAxMDA2
+NDQNCj4gPiAtLS0gYS9kcml2ZXJzL3VzYi91c2Jzc3AvZ2FkZ2V0LmgNCj4gPiArKysgYi9kcml2
+ZXJzL3VzYi91c2Jzc3AvZ2FkZ2V0LmgNCj4gPiBAQCAtMTIsOCArMTIsMTAgQEANCj4gPiAgI2lm
+bmRlZiBfX0xJTlVYX1VTQlNTUF9HQURHRVRfSA0KPiA+ICAjZGVmaW5lIF9fTElOVVhfVVNCU1NQ
+X0dBREdFVF9IDQo+ID4NCj4gPiArI2luY2x1ZGUgPGxpbnV4L2lycS5oPg0KPiA+ICAjaW5jbHVk
+ZSA8bGludXgvaW8tNjQtbm9uYXRvbWljLWxvLWhpLmg+DQo+ID4gICNpbmNsdWRlIDxsaW51eC91
+c2IvZ2FkZ2V0Lmg+DQo+ID4gKyNpbmNsdWRlICJnYWRnZXQtZXh0LWNhcHMuaCINCj4gPg0KPiA+
+ICAvKiBNYXggbnVtYmVyIHNsb3RzIC0gb25seSAxIGlzIGFsbG93ZWQgKi8NCj4gPiAgI2RlZmlu
+ZSBERVZfTUFYX1NMT1RTCQkxDQo+ID4gQEAgLTE2NzYsNyArMTY3OCwxOCBAQCBzdGF0aWMgaW5s
+aW5lIHZvaWQgdXNic3NwX3dyaXRlXzY0KHN0cnVjdCB1c2Jzc3BfdWRjICp1c2Jzc3BfZGF0YSwN
+Cj4gPiAgCWxvX2hpX3dyaXRlcSh2YWwsIHJlZ3MpOw0KPiA+ICB9DQo+ID4NCj4gPiArLyogVVNC
+U1NQIG1lbW9yeSBtYW5hZ2VtZW50ICovDQo+ID4gK3ZvaWQgdXNic3NwX2RiZ190cmFjZShzdHJ1
+Y3QgdXNic3NwX3VkYyAqdXNic3NwX2RhdGEsDQo+ID4gKwkJdm9pZCAoKnRyYWNlKShzdHJ1Y3Qg
+dmFfZm9ybWF0ICopLA0KPiA+ICsJCWNvbnN0IGNoYXIgKmZtdCwgLi4uKTsNCj4gDQo+IHdoYXQg
+aGFzIHRoaXMgZnVuY3Rpb24gdG8gZG8gd2l0aCBtZW1vcnkgbWFuYWdlbWVudD8NCj4gDQpOb3Ro
+aW5nLCANCg0KPiA+ICAvKiBVU0JTU1AgRGV2aWNlIGNvbnRyb2xsZXIgZ2x1ZSAqLw0KPiA+ICt2
+b2lkIHVzYnNzcF9ib3R0b21faXJxKHN0cnVjdCB3b3JrX3N0cnVjdCAqd29yayk7DQo+IA0KPiB1
+c2Jzc3BfYm90dG9tX2lycSgpIHdhc24ndCBkZWZpbmVkIGluIHRoaXMgcGF0Y2guDQpSZW1vdmVk
+IGZyb20gdGhpcyBwYXRjaA0KDQo+ID4gK2ludCB1c2Jzc3BfaW5pdChzdHJ1Y3QgdXNic3NwX3Vk
+YyAqdXNic3NwX2RhdGEpOw0KPiA+ICt2b2lkIHVzYnNzcF9zdG9wKHN0cnVjdCB1c2Jzc3BfdWRj
+ICp1c2Jzc3BfZGF0YSk7DQo+ID4gK2ludCB1c2Jzc3BfaGFuZHNoYWtlKHZvaWQgX19pb21lbSAq
+cHRyLCB1MzIgbWFzaywgdTMyIGRvbmUsIGludCB1c2VjKTsNCj4gPiArdm9pZCB1c2Jzc3BfcXVp
+ZXNjZShzdHJ1Y3QgdXNic3NwX3VkYyAqdXNic3NwX2RhdGEpOw0KPiA+ICtleHRlcm4gaW50IHVz
+YnNzcF9yZXNldChzdHJ1Y3QgdXNic3NwX3VkYyAqdXNic3NwX2RhdGEpOw0KPiA+ICsNCj4gPiAg
+aW50IHVzYnNzcF9zdXNwZW5kKHN0cnVjdCB1c2Jzc3BfdWRjICp1c2Jzc3BfZGF0YSwgYm9vbCBk
+b193YWtldXApOw0KPiA+ICBpbnQgdXNic3NwX3Jlc3VtZShzdHJ1Y3QgdXNic3NwX3VkYyAqdXNi
+c3NwX2RhdGEsIGJvb2wgaGliZXJuYXRlZCk7DQo+ID4NCj4gPiBAQCAtMTY4OSw2ICsxNzAyLDgg
+QEAgZG1hX2FkZHJfdCB1c2Jzc3BfdHJiX3ZpcnRfdG9fZG1hKHN0cnVjdCB1c2Jzc3Bfc2VnbWVu
+dCAqc2VnLA0KPiA+ICAvKiBVU0JTU1AgZ2FkZ2V0IGludGVyZmFjZSovDQo+ID4gIGludCB1c2Jz
+c3BfZ2FkZ2V0X2luaXQoc3RydWN0IHVzYnNzcF91ZGMgKnVzYnNzcF9kYXRhKTsNCj4gPiAgaW50
+IHVzYnNzcF9nYWRnZXRfZXhpdChzdHJ1Y3QgdXNic3NwX3VkYyAqdXNic3NwX2RhdGEpOw0KPiA+
+ICt2b2lkIHVzYnNzcF9nYWRnZXRfZnJlZV9lbmRwb2ludChzdHJ1Y3QgdXNic3NwX3VkYyAqdXNi
+c3NwX2RhdGEpOw0KPiA+ICtpbnQgdXNic3NwX2dhZGdldF9pbml0X2VuZHBvaW50KHN0cnVjdCB1
+c2Jzc3BfdWRjICp1c2Jzc3BfZGF0YSk7DQo+ID4NCj4gPiAgc3RhdGljIGlubGluZSBjaGFyICp1
+c2Jzc3Bfc2xvdF9zdGF0ZV9zdHJpbmcodTMyIHN0YXRlKQ0KPiA+ICB7DQo+ID4NCj4gDQo+IC0t
+DQo+IGNoZWVycywNCj4gLXJvZ2VyDQo+IA0KPiBUZXhhcyBJbnN0cnVtZW50cyBGaW5sYW5kIE95
+LCBQb3Jra2FsYW5rYXR1IDIyLCAwMDE4MCBIZWxzaW5raS4NCj4gWS10dW5udXMvQnVzaW5lc3Mg
+SUQ6IDA2MTU1MjEtNC4gS290aXBhaWtrYS9Eb21pY2lsZTogSGVsc2lua2kNCg0KdGhhbmtzDQpj
+aGVlcnMsDQpQYXdlbA0K
