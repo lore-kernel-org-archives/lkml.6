@@ -2,128 +2,171 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A93F5C46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 17:09:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03F55C4646D
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 17:10:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F1AF21A5D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 17:09:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F1AF21A5D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id AE42321A5B
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 17:10:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QDKnSu+W"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE42321A5B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732531AbeHFTTY (ORCPT
+        id S1732654AbeHFTUv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 15:19:24 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36450 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728349AbeHFTTY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 15:19:24 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7EBC07C6CA;
-        Mon,  6 Aug 2018 17:09:21 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 302FA1049497;
-        Mon,  6 Aug 2018 17:09:21 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id w76H9LDY013564;
-        Mon, 6 Aug 2018 13:09:21 -0400
-Received: from localhost (mpatocka@localhost)
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id w76H9I0n013559;
-        Mon, 6 Aug 2018 13:09:19 -0400
-X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
-Date:   Mon, 6 Aug 2018 13:09:18 -0400 (EDT)
-From:   Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-cc:     Robin Murphy <robin.murphy@arm.com>,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        Joao Pinto <Joao.Pinto@synopsys.com>,
-        linux-pci <linux-pci@vger.kernel.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Matt Sealey <neko@bakuhatsu.net>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Subject: Re: framebuffer corruption due to overlapping stp instructions on
- arm64
-In-Reply-To: <CAKv+Gu_C2g=C=gMpk4a5jpDORnxZY6t1v=HDoy59m5vwNBxBBg@mail.gmail.com>
-Message-ID: <alpine.LRH.2.02.1808061306490.12989@file01.intranet.prod.int.rdu2.redhat.com>
-References: <alpine.LRH.2.02.1808021242320.31834@file01.intranet.prod.int.rdu2.redhat.com> <CAHCPf3tFGqkYEcWNN4LaWThw_rVqT316pzLv6T7RfxwO-eZ0EA@mail.gmail.com> <alpine.LRH.2.02.1808030212340.17672@file01.intranet.prod.int.rdu2.redhat.com>
- <CAKv+Gu8DeuksZhk1g3q_msSKV_hSY_2e1uzVten9-oGO3j9Sqg@mail.gmail.com> <20180803094129.GB17798@arm.com> <alpine.LRH.2.02.1808031235410.31584@file01.intranet.prod.int.rdu2.redhat.com> <CAKv+Gu-aNFh1fsr_05SEwDp99n3pLrguP7=tEcFQPNY53=K7Fw@mail.gmail.com>
- <alpine.LRH.2.02.1808031424140.14030@file01.intranet.prod.int.rdu2.redhat.com> <CAHCPf3s-+Qf=WBZz1KpisDMG3520jCUh8PLAO3PHa4jdt8kCTw@mail.gmail.com> <CAKv+Gu9_h-WFi1j4+DWUN_dMj75SKKHxWoDH8WQ9P7S7MNpZQg@mail.gmail.com>
- <alpine.LRH.2.02.1808060553130.30832@file01.intranet.prod.int.rdu2.redhat.com> <99fff4fe-afa9-f12f-a518-472a9dd1c530@arm.com> <CAKv+Gu_C2g=C=gMpk4a5jpDORnxZY6t1v=HDoy59m5vwNBxBBg@mail.gmail.com>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+        Mon, 6 Aug 2018 15:20:51 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:36301 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728349AbeHFTUv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 15:20:51 -0400
+Received: by mail-pg1-f193.google.com with SMTP id h12-v6so6513183pgs.3
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Aug 2018 10:10:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2uezdt7oHvbRvV99+8KISNdCU5ZABu30Joz22fKYw6A=;
+        b=QDKnSu+WqdAMc++4w3Wi57Icm4gmKWSE5J2Rf8SsPI9rwKtXjAD+JIY7G0K+M+M3B1
+         eGor5FF/crtd1yIiWzCUrwraf5+sadmKa8I1jIYwwkJAjRFY/05jKOSiJ/kAKTRM6Qo9
+         8bY+5GWhR9aIYXiBVC9ATQFAtcZMNqkyMI8gA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2uezdt7oHvbRvV99+8KISNdCU5ZABu30Joz22fKYw6A=;
+        b=S9u8soEvLl64PTwfAXyKcVU0Pu+v4zvB98RudQak+W33dqwe+frYEsDs2doP5hKsDq
+         dy0BatoTMP3StPzXe+4bEqB40XyrgWoqSrw9YjPbrwI0NxXokwTbg78ijyJpXbbpJrZ8
+         xEYqvtVMfWdFNMhWEleTLUUDx93KfAlsSTIcLkSFaYwUpontQamhKPp7RPrRwFNeKnY3
+         CLilNowQVbR2LO189wub/CtWIuVfFMnNCWjsUOrDwbFDt09cyYqpUTN5dcKr+iPlCn+u
+         FtkGC7ux/L4uFaxNA0raT00O4t8zFGsUM66+Z8im04rcAz+ZnI8JXTu6omPhr9ysUwBq
+         RCcw==
+X-Gm-Message-State: AOUpUlGU14FVpmR71xtDSdKfkuOhj/fbpIrDegZkZQaLzQgeIV9p+sFD
+        9u0eYUJ5ZlfIpRtFhPFiJt2XrA==
+X-Google-Smtp-Source: AAOMgpeCLoZvRj2UXx99vG6gTRIE/MXfcPy1eTk2DFqjPskk+EU9xo2PjUtF1VXafUNTmA9eexugaw==
+X-Received: by 2002:aa7:88d3:: with SMTP id p19-v6mr12559001pfo.160.1533575450049;
+        Mon, 06 Aug 2018 10:10:50 -0700 (PDT)
+Received: from swboyd.mtv.corp.google.com ([2620:15c:202:201:7e28:b9f3:6afc:5326])
+        by smtp.gmail.com with ESMTPSA id c3-v6sm12383333pgw.79.2018.08.06.10.10.49
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 06 Aug 2018 10:10:49 -0700 (PDT)
+From:   Stephen Boyd <swboyd@chromium.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Wei-Ning Huang <wnhuang@chromium.org>,
+        Julius Werner <jwerner@chromium.org>,
+        Brian Norris <briannorris@chromium.org>,
+        Samuel Holland <samuel@sholland.org>,
+        Thierry Escande <thierry.escande@collabora.com>
+Subject: [PATCH] firmware: coreboot: Let OF core populate platform device
+Date:   Mon,  6 Aug 2018 10:10:47 -0700
+Message-Id: <20180806171047.227835-1-swboyd@chromium.org>
+X-Mailer: git-send-email 2.18.0.597.ga71716f1ad-goog
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 06 Aug 2018 17:09:21 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 06 Aug 2018 17:09:21 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mpatocka@redhat.com' RCPT:''
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Now that the /firmware/coreboot node in DT is populated by the core DT
+platform code with commit 3aa0582fdb82 ("of: platform: populate
+/firmware/ node from of_platform_default_populate_init()") we should and
+can remove the platform device creation here. Otherwise, the
+of_platform_device_create() call will fail, the coreboot of driver won't
+be registered, and this driver will never bind. At the same time, we can
+move this driver to use platform device APIs instead of DT specific ones
+and drop the of_node handling that was presumably placed there to hold a
+reference to the DT node created during module init.
 
+Cc: Wei-Ning Huang <wnhuang@chromium.org>
+Cc: Julius Werner <jwerner@chromium.org>
+Cc: Brian Norris <briannorris@chromium.org>
+Cc: Samuel Holland <samuel@sholland.org>
+Cc: Thierry Escande <thierry.escande@collabora.com>
+Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+---
+ drivers/firmware/google/coreboot_table-of.c | 39 +++++----------------
+ 1 file changed, 9 insertions(+), 30 deletions(-)
 
-On Mon, 6 Aug 2018, Ard Biesheuvel wrote:
+diff --git a/drivers/firmware/google/coreboot_table-of.c b/drivers/firmware/google/coreboot_table-of.c
+index f15bf404c579..270f112bdc54 100644
+--- a/drivers/firmware/google/coreboot_table-of.c
++++ b/drivers/firmware/google/coreboot_table-of.c
+@@ -18,21 +18,20 @@
+ #include <linux/device.h>
+ #include <linux/io.h>
+ #include <linux/module.h>
+-#include <linux/of_address.h>
+-#include <linux/of_platform.h>
++#include <linux/mod_devicetable.h>
+ #include <linux/platform_device.h>
+ 
+ #include "coreboot_table.h"
+ 
+ static int coreboot_table_of_probe(struct platform_device *pdev)
+ {
+-	struct device_node *fw_dn = pdev->dev.of_node;
+ 	void __iomem *ptr;
++	struct resource *res;
+ 
+-	ptr = of_iomap(fw_dn, 0);
+-	of_node_put(fw_dn);
+-	if (!ptr)
+-		return -ENOMEM;
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	ptr = devm_ioremap_resource(&pdev->dev, res);
++	if (IS_ERR(ptr))
++		return PTR_ERR(ptr);
+ 
+ 	return coreboot_table_init(&pdev->dev, ptr);
+ }
+@@ -44,8 +43,9 @@ static int coreboot_table_of_remove(struct platform_device *pdev)
+ 
+ static const struct of_device_id coreboot_of_match[] = {
+ 	{ .compatible = "coreboot" },
+-	{},
++	{}
+ };
++MODULE_DEVICE_TABLE(of, coreboot_of_match);
+ 
+ static struct platform_driver coreboot_table_of_driver = {
+ 	.probe = coreboot_table_of_probe,
+@@ -55,28 +55,7 @@ static struct platform_driver coreboot_table_of_driver = {
+ 		.of_match_table = coreboot_of_match,
+ 	},
+ };
+-
+-static int __init platform_coreboot_table_of_init(void)
+-{
+-	struct platform_device *pdev;
+-	struct device_node *of_node;
+-
+-	/* Limit device creation to the presence of /firmware/coreboot node */
+-	of_node = of_find_node_by_path("/firmware/coreboot");
+-	if (!of_node)
+-		return -ENODEV;
+-
+-	if (!of_match_node(coreboot_of_match, of_node))
+-		return -ENODEV;
+-
+-	pdev = of_platform_device_create(of_node, "coreboot_table_of", NULL);
+-	if (!pdev)
+-		return -ENODEV;
+-
+-	return platform_driver_register(&coreboot_table_of_driver);
+-}
+-
+-module_init(platform_coreboot_table_of_init);
++module_platform_driver(coreboot_table_of_driver);
+ 
+ MODULE_AUTHOR("Google, Inc.");
+ MODULE_LICENSE("GPL");
+-- 
+Sent by a computer through tubes
 
-> On 6 August 2018 at 14:42, Robin Murphy <robin.murphy@arm.com> wrote:
-> > On 06/08/18 11:25, Mikulas Patocka wrote:
-> > [...]
-> >>>
-> >>> None of this explains why some transactions fail to make it across
-> >>> entirely. The overlapping writes in question write the same data to
-> >>> the memory locations that are covered by both, and so the ordering in
-> >>> which the transactions are received should not affect the outcome.
-> >>
-> >>
-> >> You're right that the corruption couldn't be explained just by reordering
-> >> writes. My hypothesis is that the PCIe controller tries to disambiguate
-> >> the overlapping writes, but the disambiguation logic was not tested and it
-> >> is buggy. If there's a barrier between the overlapping writes, the PCIe
-> >> controller won't see any overlapping writes, so it won't trigger the
-> >> faulty disambiguation logic and it works.
-> >>
-> >> Could the ARM engineers look if there's some chicken bit in Cortex-A72
-> >> that could insert barriers between non-cached writes automatically?
-> >
-> >
-> > I don't think there is, and even if there was I imagine it would have a
-> > pretty hideous effect on non-coherent DMA buffers and the various other
-> > places in which we have Normal-NC mappings of actual system RAM.
-> >
-> 
-> Looking at the A72 manual, there is one chicken bit that looks like it
-> may be related:
-> 
-> CPUACTLR_EL1 bit #50:
-> 
-> 0 Enables store streaming on NC/GRE memory type. This is the reset value.
-> 1 Disables store streaming on NC/GRE memory type.
-> 
-> so putting something like
-> 
-> mrs x0, S3_1_C15_C2_0
-> orr x0, x0, #(1 << 50)
-> msr S3_1_C15_C2_0, x0
-> 
-> in __cpu_setup() would be worth a try.
-
-It won't boot.
-
-But if i write the same value that was read, it also won't boot.
-
-I created a simple kernel module that reads this register and it has bit 
-32 set, all other bits clear. But when I write the same value into it, the 
-core that does the write is stuck in infinite loop.
-
-So, it seems that we are writing this register from a wrong place.
-
-Mikulas
