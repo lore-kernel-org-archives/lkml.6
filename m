@@ -2,154 +2,93 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2080C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 09:15:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 482EAC46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 09:16:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61B9C219EC
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 09:15:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61B9C219EC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 04278219E5
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 09:16:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SURojWFd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04278219E5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728420AbeHFLYD (ORCPT
+        id S1728075AbeHFLYD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 6 Aug 2018 07:24:03 -0400
-Received: from mx2.suse.de ([195.135.220.15]:45588 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726572AbeHFLYC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:35724 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726855AbeHFLYC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 6 Aug 2018 07:24:02 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D7219AD67;
-        Mon,  6 Aug 2018 09:15:52 +0000 (UTC)
-Date:   Mon, 6 Aug 2018 11:15:52 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     syzbot <syzbot+bab151e82a4e973fa325@syzkaller.appspotmail.com>
-Cc:     cgroups@vger.kernel.org, hannes@cmpxchg.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        syzkaller-bugs@googlegroups.com, vdavydov.dev@gmail.com
-Subject: Re: WARNING in try_charge
-Message-ID: <20180806091552.GE19540@dhcp22.suse.cz>
-References: <0000000000005e979605729c1564@google.com>
+Received: by mail-lj1-f195.google.com with SMTP id p10-v6so10013673ljg.2;
+        Mon, 06 Aug 2018 02:15:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=7o2xnOCKKU/FtNCRK7K5q0SKWiY5oS61VR/pipcER08=;
+        b=SURojWFdGREqWwfFpJuiKH0Xjcdtqw2z0WSEhghrRFap3fXQYAdT5wPcrwoKH6Zc9J
+         OHRzv2mhac1byJXC5a5y60CDQ2/Fo2uj7fZQ+4XKV+EVf6mZk2XJGQYOCn600d1zqUdj
+         uMQV9o8feBEvyqhLDN0cwWEUbycqONFmWBGIQ6uUtSaH3wf8oNqEM/UB1okf1g26rnOJ
+         48crZYnVynk//7fvxZg2KHSpXWZxzpbukpcjGYBK2DXPJkxUJ1QXWgJrd6v764ulZM5B
+         B0DXd3bjCMDNeBmQaSYy41YscmZ3uVY5I1jpi+HGfWFsHeyViAPfKbN3b9U5sla+iP6q
+         edJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=7o2xnOCKKU/FtNCRK7K5q0SKWiY5oS61VR/pipcER08=;
+        b=ly6QSYLTfgnyxs/j6VEzf5vy8whDFC/m9UYHvYU+LbuAzvgxONyipg9N8ge7+3az2n
+         fFE0hgkM9n33TkXwRjGj57kBcrrv1VW12srfCV/ake/uZdHbdTRae5s0Bvz9hJdWVa5g
+         BwT+3t6XNqTv7Q/IS0PDmukhbUhZv/7EXEGhaEZkPED92rUI7VLOqdiRcOOuhchJ94m/
+         oAxOor0vfgWkjQPpSCKEsxX9ipZeKCSoRFI9CAukyN7NzLnuBTj116+G3NSbVI54D4f+
+         TgJegYwoAWiuKaNjsLTMflOcz8f4mHVF52LGHIVLu1ZOt409YJcdQTXIBEe9in2Z7Jwg
+         lBBw==
+X-Gm-Message-State: AOUpUlGXwx7Lne8wkykgkyYAB8TY1rPAW8bUvkLlA38TypAzd8P0aEOe
+        vUY+b8nnF2u2nfraMXuJ3eI=
+X-Google-Smtp-Source: AAOMgpd+Ime0mP2y6WUYLphLDIgn0u8/ygMNlBZDz/xHtnS7DbtH/FP5CLzzujD35gY7KnqyT22c5Q==
+X-Received: by 2002:a2e:1d50:: with SMTP id d77-v6mr11898513ljd.104.1533546953428;
+        Mon, 06 Aug 2018 02:15:53 -0700 (PDT)
+Received: from dimapc.localnet (109-252-90-13.nat.spd-mgts.ru. [109.252.90.13])
+        by smtp.gmail.com with ESMTPSA id u18-v6sm2114691lfg.14.2018.08.06.02.15.52
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 06 Aug 2018 02:15:52 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Stefan Agner <stefan@agner.ch>,
+        Marcel Ziswiler <marcel@ziswiler.com>,
+        linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/2] pinctrl: tegra: Move drivers registration to arch_init level
+Date:   Mon, 06 Aug 2018 12:15:41 +0300
+Message-ID: <2086462.IQpRViTvQm@dimapc>
+In-Reply-To: <4576764.PLucfz68jK@dimapc>
+References: <20180802111144.12512-1-digetx@gmail.com> <4576764.PLucfz68jK@dimapc>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0000000000005e979605729c1564@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat 04-08-18 06:33:02, syzbot wrote:
-> Hello,
+On Thursday, 2 August 2018 16:01:24 MSK Dmitry Osipenko wrote:
+> On Thursday, 2 August 2018 14:11:43 MSK Dmitry Osipenko wrote:
+> > There is a bug in regards to deferred probing within the drivers core
+> > that causes GPIO-driver to suspend after its users. The bug appears if
 > 
-> syzbot found the following crash on:
-> 
-> HEAD commit:    d1e0b8e0cb7a Add linux-next specific files for 20180725
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=15a1c770400000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=eef3552c897e4d33
-> dashboard link: https://syzkaller.appspot.com/bug?extid=bab151e82a4e973fa325
-> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> 
-> Unfortunately, I don't have any reproducer for this crash yet.
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+bab151e82a4e973fa325@syzkaller.appspotmail.com
-> 
-> Killed process 23767 (syz-executor2) total-vm:70472kB, anon-rss:104kB,
-> file-rss:32768kB, shmem-rss:0kB
-> oom_reaper: reaped process 23767 (syz-executor2), now anon-rss:0kB,
-> file-rss:32000kB, shmem-rss:0kB
+> I meant "before its users", of course. If the rest of the patches is fine,
+> please let me know if re-sending is needed or you'll correct the comment in
+> place while applying.
 
-More interesting stuff is higher in the kernel log
-: [  366.435015] oom-kill:constraint=CONSTRAINT_MEMCG,nodemask=(null),cpuset=/,mems_allowed=0,oom_memcg=/ile0,task_memcg=/ile0,task=syz-executor3,pid=23766,uid=0
-: [  366.449416] memory: usage 112kB, limit 0kB, failcnt 1605
+Linus, please pick up the v2.
 
-Are you sure you want to have hard limit set to 0?
 
-: [  366.454963] memory+swap: usage 0kB, limit 9007199254740988kB, failcnt 0
-: [  366.461787] kmem: usage 0kB, limit 9007199254740988kB, failcnt 0
-: [  366.467946] Memory cgroup stats for /ile0: cache:12KB rss:0KB rss_huge:0KB shmem:0KB mapped_file:0KB dirty:0KB writeback:0KB swap:0KB inactive_anon:0KB active_anon:0KB inactive_file:0KB active_file:0KB unevictable:0KB
-
-There are only 3 pages charged to this memcg!
-
-: [  366.487490] Tasks state (memory values in pages):
-: [  366.492349] [  pid  ]   uid  tgid total_vm      rss pgtables_bytes swapents oom_score_adj name
-: [  366.501237] [  23766]     0 23766    17620     8221   126976        0             0 syz-executor3
-: [  366.510367] [  23767]     0 23767    17618     8218   126976        0             0 syz-executor2
-: [  366.519409] Memory cgroup out of memory: Kill process 23766 (syz-executor3) score 8252000 or sacrifice child
-: [  366.529422] Killed process 23766 (syz-executor3) total-vm:70480kB, anon-rss:116kB, file-rss:32768kB, shmem-rss:0kB
-: [  366.540456] oom_reaper: reaped process 23766 (syz-executor3), now anon-rss:0kB, file-rss:32000kB, shmem-rss:0kB
-
-The oom reaper cannot reclaim file backed memory  from a large part. I
-assume this is are shared mappings which are living outside of memcg
-because of the counter.
-
-: [...]
-: [  367.085870] oom-kill:constraint=CONSTRAINT_MEMCG,nodemask=(null),cpuset=/,mems_allowed=0,oom_memcg=/ile0,task_memcg=/ile0,task=syz-executor2,pid=23767,uid=0
-: [  367.100073] memory: usage 112kB, limit 0kB, failcnt 1615
-: [  367.105549] memory+swap: usage 0kB, limit 9007199254740988kB, failcnt 0
-: [  367.112428] kmem: usage 0kB, limit 9007199254740988kB, failcnt 0
-: [  367.118593] Memory cgroup stats for /ile0: cache:12KB rss:0KB rss_huge:0KB shmem:0KB mapped_file:0KB dirty:0KB writeback:0KB swap:0KB inactive_anon:0KB active_anon:0KB inactive_file:0KB active_file:0KB unevictable:0KB
-: [  367.138136] Tasks state (memory values in pages):
-: [  367.142986] [  pid  ]   uid  tgid total_vm      rss pgtables_bytes swapents oom_score_adj name
-: [  367.151889] [  23766]     0 23766    17620     8002   126976        0             0 syz-executor3
-: [  367.160946] [  23767]     0 23767    17618     8218   126976        0             0 syz-executor2
-: [  367.169994] Memory cgroup out of memory: Kill process 23767 (syz-executor2) score 8249000 or sacrifice child
-: [  367.180119] Killed process 23767 (syz-executor2) total-vm:70472kB, anon-rss:104kB, file-rss:32768kB, shmem-rss:0kB
-: [  367.192101] oom_reaper: reaped process 23767 (syz-executor2), now anon-rss:0kB, file-rss:32000kB, shmem-rss:0kB 
-: [  367.202986] ------------[ cut here ]------------
-: [  367.207845] Memory cgroup charge failed because of no reclaimable memory! This looks like a misconfiguration or a kernel bug.
-: [  367.207965] WARNING: CPU: 1 PID: 23767 at mm/memcontrol.c:1710 try_charge+0x734/0x1680
-: [  367.227540] Kernel panic - not syncing: panic_on_warn set ...
-
-This is unexpected though. We have killed a task (23767) which is trying
-to charge the memory which means it should
-trigger the charge retry and that one should force the charge
-
-	/*
-	 * Unlike in global OOM situations, memcg is not in a physical
-	 * memory shortage.  Allow dying and OOM-killed tasks to
-	 * bypass the last charges so that they can exit quickly and
-	 * free their memory.
-	 */
-	if (unlikely(tsk_is_oom_victim(current) ||
-		     fatal_signal_pending(current) ||
-		     current->flags & PF_EXITING))
-		goto force;
-
-There doesn't seem to be any other sign of OOM killer invocation which
-could then indeed lead to the warning as there is no other task to kill
-(both syz-executor[23] have been killed and oom_reaped already). So I
-would be curious what happened between 367.180119 which was the last
-successful oom invocation and 367.207845. An additional printk in
-mem_cgroup_out_of_memory might tell us more.
-
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index 4603ad75c9a9..852cd3dbdcd9 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -1388,6 +1388,8 @@ static bool mem_cgroup_out_of_memory(struct mem_cgroup *memcg, gfp_t gfp_mask,
- 	bool ret;
- 
- 	mutex_lock(&oom_lock);
-+	pr_info("task=%s pid=%d invoked memcg oom killer. oom_victim=%d\n",
-+			current->comm, current->pid, tsk_is_oom_victim(current));
- 	ret = out_of_memory(&oc);
- 	mutex_unlock(&oom_lock);
- 	return ret;
-
-Anyway your memcg setup is indeed misconfigured. Memcg with 0 hard limit
-and basically no memory charged by existing tasks is not going to fly
-and the warning is exactly to call that out.
-
-If this is some sort of race and we warn too eagerly is still to be
-checked and potentially fixed of course.
--- 
-Michal Hocko
-SUSE Labs
