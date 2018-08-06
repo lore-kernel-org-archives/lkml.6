@@ -2,177 +2,105 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F29AC4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 21:48:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71FD7C4646D
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 21:49:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B045B2089E
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 21:48:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2895620685
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 21:49:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2EfzWQWx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B045B2089E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="oA53RGkV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2895620685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733026AbeHFX7k (ORCPT
+        id S1733036AbeHGAAp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 19:59:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37266 "EHLO mail.kernel.org"
+        Mon, 6 Aug 2018 20:00:45 -0400
+Received: from ozlabs.org ([203.11.71.1]:49127 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731982AbeHFX7j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 19:59:39 -0400
-Received: from localhost (unknown [69.71.4.100])
+        id S1729926AbeHGAAo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 20:00:44 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1588421A56;
-        Mon,  6 Aug 2018 21:48:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1533592115;
-        bh=reczzPBNI/GYxn99KC7WtxC2ofSJatE+Teb1c4ZCdWk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=2EfzWQWx1RCIOTZihwdoljMg2H13D4tqyMfb19dD4pBBIijSYu6Zgknv0/uqvhhVU
-         iG3If8y7Q6MshPYgdurQ9vDu49q2mCZYGXU1x8f5hd8YmTXGZg6xgWJJSuvz0tgqu6
-         dxn/kTA4A3yqEu8+vqitZ6gSfEnPrWoazEZhb34I=
-Date:   Mon, 6 Aug 2018 16:48:07 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     "Lee, Chun-Yi" <joeyli.kernel@gmail.com>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Lee, Chun-Yi" <jlee@suse.com>
-Subject: Re: [PATCH] x86/PCI: Claim the resources of firmware enabled IOAPIC
- before children bus
-Message-ID: <20180806214807.GE30691@bhelgaas-glaptop.roam.corp.google.com>
-References: <20180724110144.16442-1-jlee@suse.com>
+        by ozlabs.org (Postfix) with ESMTPSA id 41krsJ0p0Hz9s3x;
+        Tue,  7 Aug 2018 07:49:40 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1533592180;
+        bh=cZhd+vxUmh6GzkAWzpmyGoGZ7C/Twqf6hsNS6qs5iAk=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=oA53RGkVwi/VudZ5DES6aQbf0ywwatM3gtuXIhKDYs8rvrSSwO/xdwNCATavKzQ5h
+         ZDLZm9KvXkQgVBHfDjx8aGmPpYDIFmjObyWi5g9kAicCqehbtCox1WX9Q2NpWCLtFV
+         78qOTX2H6tJO7ahDLM8fkRppaviMBucz27im1EN9m/47qTY3B6/8iAd0Wvy/H2mVPw
+         Sa9ZEs9FZtibJ+c6yJuHz6nUjA46CmqmumMvxXLVJlwhXAfqvF7EOaOchYJIOIwy2S
+         ujJYBR03NXGmowIvZiGKWc+w+DxHD9Rv9DehCxgCgixB6+VTQNxDMNmRJjVfTY8aY7
+         RSvnPazIxxvzA==
+Date:   Tue, 7 Aug 2018 07:49:37 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Jason Gunthorpe <jgg@mellanox.com>
+Cc:     Doug Ledford <dledford@redhat.com>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the rdma tree with Linus' tree
+Message-ID: <20180807074937.59b086f0@canb.auug.org.au>
+In-Reply-To: <20180806194142.GK5007@mellanox.com>
+References: <20180806120131.169f70f3@canb.auug.org.au>
+        <20180806194142.GK5007@mellanox.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180724110144.16442-1-jlee@suse.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/IXKzmnp/hrWGHFW2vmOo0AI"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 24, 2018 at 07:01:44PM +0800, Lee, Chun-Yi wrote:
-> I got a machine that the resource of firmware enabled IOAPIC conflicts
-> with the resource of a children bus when the PCI host bus be hotplug.
-> 
-> [ 3182.243325] PCI host bridge to bus 0001:40
-> [ 3182.243328] pci_bus 0001:40: root bus resource [io  0xc000-0xdfff window]
-> [ 3182.243330] pci_bus 0001:40: root bus resource [mem 0xdc000000-0xebffffff window]
-> [ 3182.243331] pci_bus 0001:40: root bus resource [mem 0x212400000000-0x2125ffffffff window]
-> [ 3182.243334] pci_bus 0001:40: root bus resource [bus 40-7e]
-> ...
-> [ 3182.244737] pci 0001:40:05.4: [8086:6f2c] type 00 class 0x080020
-> [ 3182.244746] pci 0001:40:05.4: reg 0x10: [mem 0xdc000000-0xdc000fff]
-> ...
-> [ 3182.246697] pci 0001:40:02.0: PCI bridge to [bus 41]
-> [ 3182.246702] pci 0001:40:02.0:   bridge window [mem 0xdc000000-0xdc7fffff]
-> ...
-> pci 0001:40:05.4: can't claim BAR 0 [mem 0xdc000000-0xdc000fff]: address conflict with PCI Bus 0001:41 [mem 0xdc000000-0xdc7fffff]
-> 
-> The bus topology:
-> 
->  +-[0001:40]-+-02.0-[41]--
->  |           +-03.0-[41]--
->  |           +-03.2-[41]--+-00.0  Intel Corporation I350 Gigabit Network Connection
->  |           |            +-00.1  Intel Corporation I350 Gigabit Network Connection
->  |           |            +-00.2  Intel Corporation I350 Gigabit Network Connection
->  |           |            \-00.3  Intel Corporation I350 Gigabit Network Connection
->  |           +-05.0  Intel Corporation Xeon E7 v4/Xeon E5 v4/Xeon E3 v4/Xeon D Map/VTd_Misc/System Management
->  |           +-05.1  Intel Corporation Xeon E7 v4/Xeon E5 v4/Xeon E3 v4/Xeon D IIO Hot Plug
->  |           +-05.2  Intel Corporation Xeon E7 v4/Xeon E5 v4/Xeon E3 v4/Xeon D IIO RAS/Control Status/Global Errors
->  |           \-05.4  Intel Corporation Xeon E7 v4/Xeon E5 v4/Xeon E3 v4/Xeon D I/O APIC
-> 
-> This problem causes that the NIC behine the child bus was not available
-> after PCI host bridge hotpluged.
-> 
-> Kernel does not want to change resource of firmware enabled IOAPIC, but
-> the priority of children bus's resources are higher than any other devices.
-> So this conflict can not be handled by the reassigning logic of kernel.
+--Sig_/IXKzmnp/hrWGHFW2vmOo0AI
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I don't understand this paragraph.  AFAIK, if two devices on a bus
-both decode the same address, as the IOAPIC and the bridge do here,
-the only real "priority" in PCI would be subtractive decode.  But I
-don't think that applies here since the bridge is using a positive
-decode window.
+Hi Jason,
 
-I would expect that a read to the [mem 0xdc000000-0xdc000fff] range
-would potentially receive two read completions, which would cause an
-Unexpected Completion error.
+On Mon, 6 Aug 2018 13:41:42 -0600 Jason Gunthorpe <jgg@mellanox.com> wrote:
+>
+> The resolution should end up like this:
+>=20
+>         srcu_key =3D srcu_read_lock(&file->device->disassociate_srcu);
+>=20
+>         if (!verify_command_mask(file, command, extended)) {
+>                 ret =3D -EOPNOTSUPP;
+>                 goto out;
+>         }
+>=20
+> (ie take the hunk from for-next, discard the for-rc stuff)
+>=20
+> As commit 22fa27fbc64d01cbbe1e4da751e64cc22d24a6e4 also removed the
+> 'file->ucontext' stuff
 
-Maybe you mean that we don't want to change the IOAPIC resources, but
-it's OK if we move the bridge window, so in that sense, the IOAPIC is
-"higher priority" than the bridge window?  This is the reverse of what
-your paragraph seems to say.
+Thanks, I have fixed up my resolution today.
 
-> This patch claims the resources of firmware enabled IOAPIC before
-> children bus. Then kernel gets a chance to reassign the resources of
-> children bus to avoid the conflict.
+--=20
+Cheers,
+Stephen Rothwell
 
-Can you open a report at https://bugzilla.kernel.org, attach the
-before and after dmesg logs, and include the URL in the commit log?
+--Sig_/IXKzmnp/hrWGHFW2vmOo0AI
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-> Cc: Bjorn Helgaas <bhelgaas@google.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: "H. Peter Anvin" <hpa@zytor.com>
-> Signed-off-by: "Lee, Chun-Yi" <jlee@suse.com>
-> ---
->  arch/x86/pci/i386.c | 27 +++++++++++++++++++++++++++
->  1 file changed, 27 insertions(+)
-> 
-> diff --git a/arch/x86/pci/i386.c b/arch/x86/pci/i386.c
-> index ed4ac215305d..6413eda87c72 100644
-> --- a/arch/x86/pci/i386.c
-> +++ b/arch/x86/pci/i386.c
-> @@ -230,13 +230,40 @@ static void pcibios_allocate_bridge_resources(struct pci_dev *dev)
->  	}
->  }
->  
-> +static bool ioapic_firmware_enabled(struct pci_dev *dev)
-> +{
-> +	u16 class = dev->class >> 8;
-> +
-> +	if (class == PCI_CLASS_SYSTEM_PIC) {
-> +		u16 command;
-> +
-> +		pci_read_config_word(dev, PCI_COMMAND, &command);
-> +		if (command & (PCI_COMMAND_IO | PCI_COMMAND_MEMORY))
-> +			return true;
-> +	}
-> +
-> +	return false;
-> +}
-> +
-> +static void pcibios_allocate_dev_resources(struct pci_dev *dev, int pass);
-> +
->  static void pcibios_allocate_bus_resources(struct pci_bus *bus)
->  {
->  	struct pci_bus *child;
-> +	struct pci_dev *dev;
->  
->  	/* Depth-First Search on bus tree */
->  	if (bus->self)
->  		pcibios_allocate_bridge_resources(bus->self);
-> +
-> +	/* allocate firmware enabled APIC before children bus */
-> +	list_for_each_entry(dev, &bus->devices, bus_list) {
-> +		if (ioapic_firmware_enabled(dev)) {
-> +			pcibios_allocate_dev_resources(dev, 0);
-> +			pcibios_allocate_dev_resources(dev, 1);
-> +		}
-> +	}
-> +
->  	list_for_each_entry(child, &bus->children, node)
->  		pcibios_allocate_bus_resources(child);
->  }
-> -- 
-> 2.13.6
-> 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltownEACgkQAVBC80lX
+0GyCowf+IA0A6LZG0Fimeo1Vvy67+yzwuWSEv8JUNG9Jgf9lz1wkly8wy0XGIqYh
+sdY/XTMCwsD9hXgC8YaG5T1CNM2CDMykLWrS/N4Q1O/fADvOkDacjLZYswcjSj1X
+ubww5ZdYccmPAfCcmNfv1NCMjrf8CQ7A+PAkdbWLesLvHo4NiMPWRhU3/A/tHON8
+FBzH6OcKcxdfsKBAe+uxBbGyUybiRv1jDk4u6L0tc+f2YayW2Cp9GcP+91zgBR/r
+9M8YLNxXJ5TbDeGUGmt2ligMZ8rgnc38IWfUz8qrbymD8nLd3qkpJxByAEbt3uBo
+LV4OtzrK1jwqQ712Lhk1ArYcbYZPDA==
+=qVIE
+-----END PGP SIGNATURE-----
+
+--Sig_/IXKzmnp/hrWGHFW2vmOo0AI--
