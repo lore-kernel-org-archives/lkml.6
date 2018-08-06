@@ -2,140 +2,133 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D878C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 10:00:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41735C46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 10:01:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB6E3219E2
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 10:00:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="Fzuq/vOb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB6E3219E2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kapsi.fi
+	by mail.kernel.org (Postfix) with ESMTP id 08506219E2
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 10:01:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08506219E2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728929AbeHFMIq (ORCPT
+        id S1729199AbeHFMJ1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 08:08:46 -0400
-Received: from mail.kapsi.fi ([91.232.154.25]:32993 "EHLO mail.kapsi.fi"
+        Mon, 6 Aug 2018 08:09:27 -0400
+Received: from mga06.intel.com ([134.134.136.31]:56956 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726855AbeHFMIq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 08:08:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-         s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
-        MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=EQ/nC9y3KWB5NjEC872Q8V9Ye6oiyKkHJZMNioiUY8A=; b=Fzuq/vOb+tQAa+YrSfo3lubr2H
-        HA2mH/QmiK6m+sB0Yv0agKi8by+30vm7/bD5yESz6XqVAY8ldZxTU4mcCIYdM/PUjnSTekn+4WW4b
-        tQCQwMAvnWS4yxi/9LSgi8fItg/i0FpEdv8/D/3xcCb60PoygEupmAG0tOQJlQi5MD4P66lc2rWEa
-        SiIYAvYHeyOl8UYeXQPVJjR+dhoProI9bUWRS/Eker/57pxrY5iMWj37iSSvh5eZTWbxfkuOSym66
-        UIdoztjGoKnNWR5l/fp2AMFy4JUCH60MUa7X2Ju5iE1hkQSD8JFntP/IQmag16mHcz96xaFz7C7Yv
-        3hY5SsCg==;
-Received: from [193.209.96.43] (helo=[10.21.26.144])
-        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <cyndis@kapsi.fi>)
-        id 1fmcJM-000216-Qu; Mon, 06 Aug 2018 13:00:24 +0300
-Subject: Re: [PATCH v1] gpu: host1x: Cancel only job that actually got stuck
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-References: <20180805170131.29263-1-digetx@gmail.com>
-From:   Mikko Perttunen <cyndis@kapsi.fi>
-Message-ID: <3eb8099b-8dcb-af37-a67d-463fc7c07c33@kapsi.fi>
-Date:   Mon, 6 Aug 2018 13:00:24 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1726855AbeHFMJ1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 08:09:27 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Aug 2018 03:01:07 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,452,1526367600"; 
+   d="scan'208";a="60923203"
+Received: from chenyu-desktop.sh.intel.com (HELO chenyu-desktop) ([10.239.160.116])
+  by fmsmga008.fm.intel.com with ESMTP; 06 Aug 2018 03:01:05 -0700
+Date:   Mon, 6 Aug 2018 18:07:21 +0800
+From:   Yu Chen <yu.c.chen@intel.com>
+To:     joeyli <jlee@suse.com>
+Cc:     Oliver Neukum <oneukum@suse.com>, Pavel Machek <pavel@ucw.cz>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Eric Biggers <ebiggers@google.com>,
+        Theodore Ts o <tytso@mit.edu>,
+        Stephan Mueller <smueller@chronox.de>,
+        Denis Kenzior <denkenz@gmail.com>, linux-pm@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gu, Kookoo" <kookoo.gu@intel.com>,
+        "Zhang, Rui" <rui.zhang@intel.com>
+Subject: Re: [PATCH 0/4][RFC v2] Introduce the in-kernel hibernation
+ encryption
+Message-ID: <20180806100721.GA14905@chenyu-desktop>
+References: <20180718202235.GA4132@amd>
+ <20180718235851.GA22170@sandybridge-desktop>
+ <20180719110149.GA4679@amd>
+ <20180719132003.GA30981@sandybridge-desktop>
+ <20180720102532.GA20284@amd>
+ <1532346156.3057.11.camel@suse.com>
+ <20180723162302.GA4503@sandybridge-desktop>
+ <1532590246.7411.3.camel@suse.com>
+ <20180806075754.GA12124@chenyu-desktop>
+ <20180806094752.GH27062@linux-l9pv.suse>
 MIME-Version: 1.0
-In-Reply-To: <20180805170131.29263-1-digetx@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 193.209.96.43
-X-SA-Exim-Mail-From: cyndis@kapsi.fi
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180806094752.GH27062@linux-l9pv.suse>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
+On Mon, Aug 06, 2018 at 05:48:04PM +0800, joeyli wrote:
+> On Mon, Aug 06, 2018 at 03:57:54PM +0800, Yu Chen wrote:
+> > Hi Oliver,
+> > On Thu, Jul 26, 2018 at 09:30:46AM +0200, Oliver Neukum wrote:
+> > > On Di, 2018-07-24 at 00:23 +0800, Yu Chen wrote:
+> > > > 
+> > > > Good point, we once tried to generate key in kernel, but people
+> > > > suggest to generate key in userspace and provide it to the
+> > > > kernel, which is what ecryptfs do currently, so it seems this
+> > > > should also be safe for encryption in kernel.
+> > > > https://www.spinics.net/lists/linux-crypto/msg33145.html
+> > > > Thus Chun-Yi's signature can use EFI key and both the key from
+> > > > user space.
+> 
+> As Ard and James's comments, the EFI key can not be accepted:
+> 	https://lkml.org/lkml/2018/8/5/135
+> 
+> The lower entropy problem can be covered by RDRAND or EFI random
+> protocol. But the key point is that we can not fully trust manufacturer.
+> And, the secure boot relies on Microsoft's business interests. It's
+> not designed for confidentiality.
+> 
+> So I will move to TPM trusted key + encrypted key.
+>
+OK.
+> > > 
+> > > Hi,
+> > > 
+> > > ecryptfs can trust user space. It is supposed to keep data
+> > > safe while the system is inoperative.
+> > Humm, I did not quite get the point here, let's take fscrypt
+> > for example, the kernel gets user generated key from user space,
+> > and uses per-inode nonce(random bytes) as the master key to
+> > do a KDF(key derivation function) on user provided key, and uses
+> > that key for encryption. We can also added similar mechanism
+> > to generate the key in kernel space but the key should be
+> > original from user's provided key(password derived), because
+> > the security boot/signature mechanism could not cover the case
+> > that, two different users could resume to each other's context
+> > because there isn't any certification during resume if it is
+> > on the same physical hardware.
+> >
+> 
+> Sounds there have two different purposes. One is to prevent that
+> the secret in snapshop image be detected/changed outside the machine.
+> Another one try to prevent that B user resumes to A user's context
+> on the same machine.
+> 
+Yes, it aims to prevent B from resuming to A's context no matter
+whether it is on the same hardware or not, and prevents others
+from getting the plain content on the disk.
+> In the case of B resumes A's context, I still think that the attacker
+> must physical accesses the machine. Which means that it's out of EFI
+> secure boot's design. Could you please explan the detail for the attack?
+> 
+May I know what attack does it refer to? please refer to another mail I sent to Pavel,
+a simple use case has been described.
+> So I think that the password from user space is for user authentication,
+> and the TPM trusted key is for snapshot image encryption/verification.    
+> 
+password generated key could also be used as encryption.
 
-On 05.08.2018 20:01, Dmitry Osipenko wrote:
-> Host1x doesn't have information about jobs inter-dependency, that is
-> something that will become available once host1x will get a proper
-> jobs scheduler implementation. Currently a hang job causes other unrelated
-> jobs to be canceled, that is a relic from downstream driver which is
-> irrelevant to upstream. Let's cancel only the hanging job and not to touch
-> other jobs in queue.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->   drivers/gpu/host1x/cdma.c | 30 ++++++------------------------
->   1 file changed, 6 insertions(+), 24 deletions(-)
-> 
-> diff --git a/drivers/gpu/host1x/cdma.c b/drivers/gpu/host1x/cdma.c
-> index 91df51e631b2..4d94af4a315f 100644
-> --- a/drivers/gpu/host1x/cdma.c
-> +++ b/drivers/gpu/host1x/cdma.c
-> @@ -348,13 +348,11 @@ void host1x_cdma_update_sync_queue(struct host1x_cdma *cdma,
->   	}
->   
->   	/*
-> -	 * Walk the sync_queue, first incrementing with the CPU syncpts that
-> -	 * are partially executed (the first buffer) or fully skipped while
-> -	 * still in the current context (slots are also NOP-ed).
-> +	 * Increment with CPU the remaining syncpts of a partially executed job.
->   	 *
-> -	 * At the point contexts are interleaved, syncpt increments must be
-> -	 * done inline with the pushbuffer from a GATHER buffer to maintain
-> -	 * the order (slots are modified to be a GATHER of syncpt incrs).
-> +	 * Syncpt increments must be done inline with the pushbuffer from a
-> +	 * GATHER buffer to maintain the order (slots are modified to be a
-> +	 * GATHER of syncpt incrs).
->   	 *
->   	 * Note: save in restart_addr the location where the timed out buffer
->   	 * started in the PB, so we can start the refetch from there (with the
-> @@ -370,12 +368,8 @@ void host1x_cdma_update_sync_queue(struct host1x_cdma *cdma,
->   	else
->   		restart_addr = cdma->last_pos;
->   
-> -	/* do CPU increments as long as this context continues */
-> -	list_for_each_entry_from(job, &cdma->sync_queue, list) {
-> -		/* different context, gets us out of this loop */
-> -		if (job->client != cdma->timeout.client)
-> -			break;
-> -
-> +	/* do CPU increments for the remaining syncpts */
-> +	if (job) {
->   		/* won't need a timeout when replayed */
->   		job->timeout = 0;
->   
-> @@ -388,20 +382,8 @@ void host1x_cdma_update_sync_queue(struct host1x_cdma *cdma,
->   		host1x_hw_cdma_timeout_cpu_incr(host1x, cdma, job->first_get,
->   						syncpt_incrs, job->syncpt_end,
->   						job->num_slots);
-> -
-> -		syncpt_val += syncpt_incrs;
->   	}
->   
-> -	/*
-> -	 * The following sumbits from the same client may be dependent on the
-> -	 * failed submit and therefore they may fail. Force a small timeout
-> -	 * to make the queue cleanup faster.
-> -	 */
-> -
-> -	list_for_each_entry_from(job, &cdma->sync_queue, list)
-> -		if (job->client == cdma->timeout.client)
-> -			job->timeout = min_t(unsigned int, job->timeout, 500);
-> -
->   	dev_dbg(dev, "%s: finished sync_queue modification\n", __func__);
->   
->   	/* roll back DMAGET and start up channel again */
-> 
+Best,
+Yu
+> Thanks
+> Joey Lee
