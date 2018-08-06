@@ -3,146 +3,541 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9321CC46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 23:31:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9541C4646D
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 23:32:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3DB7F21A13
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 23:31:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5096F21A13
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 23:32:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="LFs+weJZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DB7F21A13
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DHzjOoBT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5096F21A13
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387477AbeHGBmZ (ORCPT
+        id S2387557AbeHGBnp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 21:42:25 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:38228 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731432AbeHGBmY (ORCPT
+        Mon, 6 Aug 2018 21:43:45 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:45617 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731432AbeHGBnp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 21:42:24 -0400
-Received: by mail-ed1-f68.google.com with SMTP id t2-v6so6017644edr.5
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Aug 2018 16:30:59 -0700 (PDT)
+        Mon, 6 Aug 2018 21:43:45 -0400
+Received: by mail-pf1-f194.google.com with SMTP id i26-v6so7566198pfo.12
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Aug 2018 16:32:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=neZ8FFXpRkV9UxAb1tTs660M5XglbrWKf/vAekDUMOM=;
-        b=LFs+weJZO+phYkViY1ExlR1CYRBlUDkHtWsxqjlmUXIAuqx++YqA3sYRGxa5BY1ZCn
-         gDev/7x5wtItPXZHi/vvXMsSRuFJX5c/rUyE41T4OvX6rfG5TGCxSubeVOHitpW3ki8v
-         yMGC3Vf7NzRRBRRR8ypO5SbdEsk+6+IRa24CE=
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=vXk0fNSyp9DVqzcqIqopK+BTjXS6zS9vvl71lz+b+ko=;
+        b=DHzjOoBTBNjl6YnSmKbmGLoGv315LCaVvS7E6IeGa2tws68k/fmDrH0bJdV/Gukom5
+         ZaTpYBaNdsMNUtXzBhJ6VXif3Nht8JkTH7l+kgL4zxxASppNFYE+4p+/ZdtbtrODPMmW
+         gjWP9jO6dkCT8jj372kGC5rUYYFA6ZBbSP4ok=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=neZ8FFXpRkV9UxAb1tTs660M5XglbrWKf/vAekDUMOM=;
-        b=G+j4HHEfUca9rBgqoS4fYJ6qmmft6oOYd32CKLPWvc3CdBLp6QuJY43nX+oarZ2FOP
-         dPwGakM8xAKoFtlCixnXvdncChKYPLDh/4JpF2rznLZgwa7lXfwkoDAgb6hCCWxXTGsb
-         PcBU5/8WGXlALq3ZAsQP1MKHldDZ78Z+YJiByR8sqxGVIC+7MKNiL0k66aJoqGngRhjB
-         kUVArUpvwAztE2sO8FO3ChbMRamIWeceVpKhFa5KK1KxAa0+C000AKopODIhtRBLVJr3
-         O53DebCl+TT0IY5VlRBeV6PMx0OqFwcm9KuQnQMPR6Y5XkfAziX999lR0Ptvabbsbsy/
-         CvXw==
-X-Gm-Message-State: AOUpUlHZcnihb3X1cGSKZXHtMma32PaaPM1foHT0x/0MjVZQ/DonHtNn
-        03BDCZMh7md2fb91OKxvZAC9SA==
-X-Google-Smtp-Source: AAOMgpf5OVP7MPSuCgiwT8LFZvYIE016ZCXgrC1byc6X2+PuR2Aq6nf+Tt3GhlhNmCZc98j/D9gqyA==
-X-Received: by 2002:a50:8c06:: with SMTP id p6-v6mr19976952edp.282.1533598258496;
-        Mon, 06 Aug 2018 16:30:58 -0700 (PDT)
-Received: from [192.168.0.189] (dhcp-5-186-126-104.cgn.ip.fibianet.dk. [5.186.126.104])
-        by smtp.gmail.com with ESMTPSA id h10-v6sm27478edb.51.2018.08.06.16.30.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 06 Aug 2018 16:30:57 -0700 (PDT)
-Subject: Re: [PATCH] linux/bitmap.h: fix BITMAP_LAST_WORD_MASK
-To:     Wei Wang <wei.w.wang@intel.com>,
-        Yury Norov <ynorov@caviumnetworks.com>
-Cc:     linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-        corbet@lwn.net, dgilbert@redhat.com,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-References: <1532592471-21177-1-git-send-email-wei.w.wang@intel.com>
- <20180726093728.GA9069@yury-thinkpad> <5B599F5F.2070705@intel.com>
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Message-ID: <08410774-8b10-d620-064c-fdf4399d7336@rasmusvillemoes.dk>
-Date:   Tue, 7 Aug 2018 01:30:56 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=vXk0fNSyp9DVqzcqIqopK+BTjXS6zS9vvl71lz+b+ko=;
+        b=WK5J+LCWZltexR5OdNyW4kpqjluY9zszX0IeqNJa+d+0G6OLuYbtzcgqqBl6bHeqbc
+         iqVLpxsYFp7ZfHCfib2450XYffoyMpZ7Dg9s7X9D8ongrVUsuhbeJY95J+SAx2T/N2AH
+         lsSXKyQXvde33m1U/Zjt+pqjZxXWn4JA1sJBqsZhFn7e67ygbTollgjwlWumbo+jWSRg
+         SFCQ3eUWob7hyP7Au9FiabynMm9iBjBn9hWNk0F/+Oj42MvBrwYDRAlO6o0w/tpk7m7f
+         Ju+M0t0zilkNAqabIoFfzjmVjRwEwN+56EEQP9Ur4jANj8grmc6S9iSKcAP/J3h71mG7
+         h4ww==
+X-Gm-Message-State: AOUpUlEONDuoNiNWpFORYBk2QmyD9FBHzPSqAjHkpH+HKk4gZS3/i1Gd
+        SzKTKkAnK/9/SrERkwaAmunNz49kJCA=
+X-Google-Smtp-Source: AAOMgpem8VazPCIe3Jvu7cjo5nI/XJMErVMyu1Ko2ZOGS8+pm3f/e6ENeOKQZZ9rLrVzhvbtXQf/pw==
+X-Received: by 2002:a63:6345:: with SMTP id x66-v6mr16425635pgb.43.1533598338927;
+        Mon, 06 Aug 2018 16:32:18 -0700 (PDT)
+Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
+        by smtp.gmail.com with ESMTPSA id f75-v6sm160045pfk.85.2018.08.06.16.32.17
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 06 Aug 2018 16:32:17 -0700 (PDT)
+Date:   Mon, 6 Aug 2018 16:32:16 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Lars Ellenberg <lars.ellenberg@linbit.com>
+Cc:     Philipp Reisner <philipp.reisner@linbit.com>,
+        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        drbd-dev@lists.linbit.com, linux-kernel@vger.kernel.org
+Subject: [PATCH v7] drbd: Convert from ahash to shash
+Message-ID: <20180806233216.GA6037@beast>
 MIME-Version: 1.0
-In-Reply-To: <5B599F5F.2070705@intel.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-07-26 12:15, Wei Wang wrote:
-> On 07/26/2018 05:37 PM, Yury Norov wrote:
->> On Thu, Jul 26, 2018 at 04:07:51PM +0800, Wei Wang wrote:
->>> The existing BITMAP_LAST_WORD_MASK macro returns 0xffffffff if nbits is
->>> 0. This patch changes the macro to return 0 when there is no bit
->>> needs to
->>> be masked.
->> I think this is intentional behavour. Previous version did return ~0UL
->> explicitly in this case. See patch 89c1e79eb3023 (linux/bitmap.h: improve
->> BITMAP_{LAST,FIRST}_WORD_MASK) from Rasmus.
-> 
-> Yes, I saw that. But it seems confusing for the corner case that nbits=0
-> (no bits to mask), the macro returns with all the bits set.
-> 
-> 
->>
->> Introducing conditional branch would affect performance. All existing
->> code checks nbits for 0 before handling last word where needed
->> explicitly. So I think we'd better change nothing here.
-> 
-> I think that didn't save the conditional branch essentially, because
-> it's just moved from inside this macro to the caller as you mentioned.
-> If callers missed the check for some reason and passed 0 to the macro,
-> they will get something unexpected.
-> 
-> Current callers like __bitmap_weight, __bitmap_equal, and others, they have
-> 
-> if (bits % BITS_PER_LONG)
->     w += hweight_long(bitmap[k] & BITMAP_LAST_WORD_MASK(bits));
-> 
-> we could remove the "if" check by "w += hweight_long(bitmap[k] &
-> BITMAP_LAST_WORD_MASK(bits % BITS_PER_LONG));" the branch is the same.
+In preparing to remove all stack VLA usage from the kernel[1], this
+removes the discouraged use of AHASH_REQUEST_ON_STACK in favor of
+the smaller SHASH_DESC_ON_STACK by converting from ahash-wrapped-shash
+to direct shash. By removing a layer of indirection this both improves
+performance and reduces stack usage. The stack allocation will be made
+a fixed size in a later patch to the crypto subsystem.
 
-Absolutely not! That would access bitmap[lim] (the final value of the k
-variable) despite that word not being part of the bitmap.
+The bulk of the lines in this change are simple s/ahash/shash/, but the
+main logic differences are in drbd_csum_ee() and drbd_csum_bio(), which
+externalizes the page walking with k(un)map_atomic() instead of using
+scattergather.
 
-More generally, look at the name of the macro: last_word_mask. It's a
-mask to apply to the last word of a bitmap. If the bitmap happens to
-consist of a multiple of BITS_PER_LONG bits, than that mask is and must
-be ~0UL. So for nbits=64, 128, etc., that is what we want.
+[1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
 
-OTOH, for nbits=0, there _is_ no last word (since there are no words at
-all), so by the time you want to apply the result of
-BITMAP_LAST_WORD_MASK(0) to anything, you already have a bug, probably
-either having read or being about to write into bitmap[0], which you
-cannot do. Please check that user-space port and see if there are bugs
-of that kind.
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+I'm calling this "v7" just for general sanity over the naming of the
+patch when it was part of the large crypto series of changes. Really,
+it's v2.
 
-So no, the existing users of BITMAP_LAST_WORD_MASK do not check for
-nbits being zero, they check for whether there is a partial last word,
-which is something different. And they mostly (those in lib/bitmap.c) do
-that because they've already handled _all_ the full words. Then there
-are some users in include/linux/bitmap.h, that check for
-small_const_nbits(nbits), and in those cases, we really want ~0UL when
-nbits is BITS_PER_LONG, because small_const_nbits implies there is
-exactly one word. Yeah, there's an implicit assumption that the bitmap
-routines are never called with a compile-time constant nbits==0 (see the
-unconditional accesses to *src and *dst), but changing the semantics of
-BITMAP_LAST_WORD_MASK and making it return different values for nbits=0
-vs nbits=64 wouldn't fix that latent bug.
+v7: use kmap for possible highmem page addresses (Lars).
+---
+ drivers/block/drbd/drbd_int.h      | 13 +++---
+ drivers/block/drbd/drbd_main.c     | 14 +++----
+ drivers/block/drbd/drbd_nl.c       | 39 ++++++------------
+ drivers/block/drbd/drbd_receiver.c | 35 +++++++++--------
+ drivers/block/drbd/drbd_worker.c   | 63 +++++++++++++++---------------
+ 5 files changed, 76 insertions(+), 88 deletions(-)
 
-Andrew, you may consider this a NAK of the v2 patch. Callers should
-indeed avoid using BITMAP_LAST_WORD_MASK with nbits==0, but not because
-the macro returns a wrong or unexpected value in that case, but simply
-because it is meaningless to use it at all.
+diff --git a/drivers/block/drbd/drbd_int.h b/drivers/block/drbd/drbd_int.h
+index bc4ed2ed40a2..97d8e290c2be 100644
+--- a/drivers/block/drbd/drbd_int.h
++++ b/drivers/block/drbd/drbd_int.h
+@@ -726,10 +726,10 @@ struct drbd_connection {
+ 	struct list_head transfer_log;	/* all requests not yet fully processed */
+ 
+ 	struct crypto_shash *cram_hmac_tfm;
+-	struct crypto_ahash *integrity_tfm;  /* checksums we compute, updates protected by connection->data->mutex */
+-	struct crypto_ahash *peer_integrity_tfm;  /* checksums we verify, only accessed from receiver thread  */
+-	struct crypto_ahash *csums_tfm;
+-	struct crypto_ahash *verify_tfm;
++	struct crypto_shash *integrity_tfm;  /* checksums we compute, updates protected by connection->data->mutex */
++	struct crypto_shash *peer_integrity_tfm;  /* checksums we verify, only accessed from receiver thread  */
++	struct crypto_shash *csums_tfm;
++	struct crypto_shash *verify_tfm;
+ 	void *int_dig_in;
+ 	void *int_dig_vv;
+ 
+@@ -1533,8 +1533,9 @@ static inline void ov_out_of_sync_print(struct drbd_device *device)
+ }
+ 
+ 
+-extern void drbd_csum_bio(struct crypto_ahash *, struct bio *, void *);
+-extern void drbd_csum_ee(struct crypto_ahash *, struct drbd_peer_request *, void *);
++extern void drbd_csum_bio(struct crypto_shash *, struct bio *, void *);
++extern void drbd_csum_ee(struct crypto_shash *, struct drbd_peer_request *,
++			 void *);
+ /* worker callbacks */
+ extern int w_e_end_data_req(struct drbd_work *, int);
+ extern int w_e_end_rsdata_req(struct drbd_work *, int);
+diff --git a/drivers/block/drbd/drbd_main.c b/drivers/block/drbd/drbd_main.c
+index a80809bd3057..ccb54791d39c 100644
+--- a/drivers/block/drbd/drbd_main.c
++++ b/drivers/block/drbd/drbd_main.c
+@@ -1377,7 +1377,7 @@ void drbd_send_ack_dp(struct drbd_peer_device *peer_device, enum drbd_packet cmd
+ 		      struct p_data *dp, int data_size)
+ {
+ 	if (peer_device->connection->peer_integrity_tfm)
+-		data_size -= crypto_ahash_digestsize(peer_device->connection->peer_integrity_tfm);
++		data_size -= crypto_shash_digestsize(peer_device->connection->peer_integrity_tfm);
+ 	_drbd_send_ack(peer_device, cmd, dp->sector, cpu_to_be32(data_size),
+ 		       dp->block_id);
+ }
+@@ -1690,7 +1690,7 @@ int drbd_send_dblock(struct drbd_peer_device *peer_device, struct drbd_request *
+ 	sock = &peer_device->connection->data;
+ 	p = drbd_prepare_command(peer_device, sock);
+ 	digest_size = peer_device->connection->integrity_tfm ?
+-		      crypto_ahash_digestsize(peer_device->connection->integrity_tfm) : 0;
++		      crypto_shash_digestsize(peer_device->connection->integrity_tfm) : 0;
+ 
+ 	if (!p)
+ 		return -EIO;
+@@ -1796,7 +1796,7 @@ int drbd_send_block(struct drbd_peer_device *peer_device, enum drbd_packet cmd,
+ 	p = drbd_prepare_command(peer_device, sock);
+ 
+ 	digest_size = peer_device->connection->integrity_tfm ?
+-		      crypto_ahash_digestsize(peer_device->connection->integrity_tfm) : 0;
++		      crypto_shash_digestsize(peer_device->connection->integrity_tfm) : 0;
+ 
+ 	if (!p)
+ 		return -EIO;
+@@ -2561,11 +2561,11 @@ void conn_free_crypto(struct drbd_connection *connection)
+ {
+ 	drbd_free_sock(connection);
+ 
+-	crypto_free_ahash(connection->csums_tfm);
+-	crypto_free_ahash(connection->verify_tfm);
++	crypto_free_shash(connection->csums_tfm);
++	crypto_free_shash(connection->verify_tfm);
+ 	crypto_free_shash(connection->cram_hmac_tfm);
+-	crypto_free_ahash(connection->integrity_tfm);
+-	crypto_free_ahash(connection->peer_integrity_tfm);
++	crypto_free_shash(connection->integrity_tfm);
++	crypto_free_shash(connection->peer_integrity_tfm);
+ 	kfree(connection->int_dig_in);
+ 	kfree(connection->int_dig_vv);
+ 
+diff --git a/drivers/block/drbd/drbd_nl.c b/drivers/block/drbd/drbd_nl.c
+index b4f02768ba47..d15703b1ffe8 100644
+--- a/drivers/block/drbd/drbd_nl.c
++++ b/drivers/block/drbd/drbd_nl.c
+@@ -2303,10 +2303,10 @@ check_net_options(struct drbd_connection *connection, struct net_conf *new_net_c
+ }
+ 
+ struct crypto {
+-	struct crypto_ahash *verify_tfm;
+-	struct crypto_ahash *csums_tfm;
++	struct crypto_shash *verify_tfm;
++	struct crypto_shash *csums_tfm;
+ 	struct crypto_shash *cram_hmac_tfm;
+-	struct crypto_ahash *integrity_tfm;
++	struct crypto_shash *integrity_tfm;
+ };
+ 
+ static int
+@@ -2324,36 +2324,21 @@ alloc_shash(struct crypto_shash **tfm, char *tfm_name, int err_alg)
+ 	return NO_ERROR;
+ }
+ 
+-static int
+-alloc_ahash(struct crypto_ahash **tfm, char *tfm_name, int err_alg)
+-{
+-	if (!tfm_name[0])
+-		return NO_ERROR;
+-
+-	*tfm = crypto_alloc_ahash(tfm_name, 0, CRYPTO_ALG_ASYNC);
+-	if (IS_ERR(*tfm)) {
+-		*tfm = NULL;
+-		return err_alg;
+-	}
+-
+-	return NO_ERROR;
+-}
+-
+ static enum drbd_ret_code
+ alloc_crypto(struct crypto *crypto, struct net_conf *new_net_conf)
+ {
+ 	char hmac_name[CRYPTO_MAX_ALG_NAME];
+ 	enum drbd_ret_code rv;
+ 
+-	rv = alloc_ahash(&crypto->csums_tfm, new_net_conf->csums_alg,
++	rv = alloc_shash(&crypto->csums_tfm, new_net_conf->csums_alg,
+ 			 ERR_CSUMS_ALG);
+ 	if (rv != NO_ERROR)
+ 		return rv;
+-	rv = alloc_ahash(&crypto->verify_tfm, new_net_conf->verify_alg,
++	rv = alloc_shash(&crypto->verify_tfm, new_net_conf->verify_alg,
+ 			 ERR_VERIFY_ALG);
+ 	if (rv != NO_ERROR)
+ 		return rv;
+-	rv = alloc_ahash(&crypto->integrity_tfm, new_net_conf->integrity_alg,
++	rv = alloc_shash(&crypto->integrity_tfm, new_net_conf->integrity_alg,
+ 			 ERR_INTEGRITY_ALG);
+ 	if (rv != NO_ERROR)
+ 		return rv;
+@@ -2371,9 +2356,9 @@ alloc_crypto(struct crypto *crypto, struct net_conf *new_net_conf)
+ static void free_crypto(struct crypto *crypto)
+ {
+ 	crypto_free_shash(crypto->cram_hmac_tfm);
+-	crypto_free_ahash(crypto->integrity_tfm);
+-	crypto_free_ahash(crypto->csums_tfm);
+-	crypto_free_ahash(crypto->verify_tfm);
++	crypto_free_shash(crypto->integrity_tfm);
++	crypto_free_shash(crypto->csums_tfm);
++	crypto_free_shash(crypto->verify_tfm);
+ }
+ 
+ int drbd_adm_net_opts(struct sk_buff *skb, struct genl_info *info)
+@@ -2450,17 +2435,17 @@ int drbd_adm_net_opts(struct sk_buff *skb, struct genl_info *info)
+ 	rcu_assign_pointer(connection->net_conf, new_net_conf);
+ 
+ 	if (!rsr) {
+-		crypto_free_ahash(connection->csums_tfm);
++		crypto_free_shash(connection->csums_tfm);
+ 		connection->csums_tfm = crypto.csums_tfm;
+ 		crypto.csums_tfm = NULL;
+ 	}
+ 	if (!ovr) {
+-		crypto_free_ahash(connection->verify_tfm);
++		crypto_free_shash(connection->verify_tfm);
+ 		connection->verify_tfm = crypto.verify_tfm;
+ 		crypto.verify_tfm = NULL;
+ 	}
+ 
+-	crypto_free_ahash(connection->integrity_tfm);
++	crypto_free_shash(connection->integrity_tfm);
+ 	connection->integrity_tfm = crypto.integrity_tfm;
+ 	if (connection->cstate >= C_WF_REPORT_PARAMS && connection->agreed_pro_version >= 100)
+ 		/* Do this without trying to take connection->data.mutex again.  */
+diff --git a/drivers/block/drbd/drbd_receiver.c b/drivers/block/drbd/drbd_receiver.c
+index be9450f5ad1c..76243e9ef277 100644
+--- a/drivers/block/drbd/drbd_receiver.c
++++ b/drivers/block/drbd/drbd_receiver.c
+@@ -1732,7 +1732,7 @@ static int receive_Barrier(struct drbd_connection *connection, struct packet_inf
+ }
+ 
+ /* quick wrapper in case payload size != request_size (write same) */
+-static void drbd_csum_ee_size(struct crypto_ahash *h,
++static void drbd_csum_ee_size(struct crypto_shash *h,
+ 			      struct drbd_peer_request *r, void *d,
+ 			      unsigned int payload_size)
+ {
+@@ -1769,7 +1769,7 @@ read_in_block(struct drbd_peer_device *peer_device, u64 id, sector_t sector,
+ 
+ 	digest_size = 0;
+ 	if (!trim && peer_device->connection->peer_integrity_tfm) {
+-		digest_size = crypto_ahash_digestsize(peer_device->connection->peer_integrity_tfm);
++		digest_size = crypto_shash_digestsize(peer_device->connection->peer_integrity_tfm);
+ 		/*
+ 		 * FIXME: Receive the incoming digest into the receive buffer
+ 		 *	  here, together with its struct p_data?
+@@ -1905,7 +1905,7 @@ static int recv_dless_read(struct drbd_peer_device *peer_device, struct drbd_req
+ 
+ 	digest_size = 0;
+ 	if (peer_device->connection->peer_integrity_tfm) {
+-		digest_size = crypto_ahash_digestsize(peer_device->connection->peer_integrity_tfm);
++		digest_size = crypto_shash_digestsize(peer_device->connection->peer_integrity_tfm);
+ 		err = drbd_recv_all_warn(peer_device->connection, dig_in, digest_size);
+ 		if (err)
+ 			return err;
+@@ -3540,7 +3540,7 @@ static int receive_protocol(struct drbd_connection *connection, struct packet_in
+ 	int p_proto, p_discard_my_data, p_two_primaries, cf;
+ 	struct net_conf *nc, *old_net_conf, *new_net_conf = NULL;
+ 	char integrity_alg[SHARED_SECRET_MAX] = "";
+-	struct crypto_ahash *peer_integrity_tfm = NULL;
++	struct crypto_shash *peer_integrity_tfm = NULL;
+ 	void *int_dig_in = NULL, *int_dig_vv = NULL;
+ 
+ 	p_proto		= be32_to_cpu(p->protocol);
+@@ -3621,7 +3621,7 @@ static int receive_protocol(struct drbd_connection *connection, struct packet_in
+ 		 * change.
+ 		 */
+ 
+-		peer_integrity_tfm = crypto_alloc_ahash(integrity_alg, 0, CRYPTO_ALG_ASYNC);
++		peer_integrity_tfm = crypto_alloc_shash(integrity_alg, 0, CRYPTO_ALG_ASYNC);
+ 		if (IS_ERR(peer_integrity_tfm)) {
+ 			peer_integrity_tfm = NULL;
+ 			drbd_err(connection, "peer data-integrity-alg %s not supported\n",
+@@ -3629,7 +3629,7 @@ static int receive_protocol(struct drbd_connection *connection, struct packet_in
+ 			goto disconnect;
+ 		}
+ 
+-		hash_size = crypto_ahash_digestsize(peer_integrity_tfm);
++		hash_size = crypto_shash_digestsize(peer_integrity_tfm);
+ 		int_dig_in = kmalloc(hash_size, GFP_KERNEL);
+ 		int_dig_vv = kmalloc(hash_size, GFP_KERNEL);
+ 		if (!(int_dig_in && int_dig_vv)) {
+@@ -3659,7 +3659,7 @@ static int receive_protocol(struct drbd_connection *connection, struct packet_in
+ 	mutex_unlock(&connection->resource->conf_update);
+ 	mutex_unlock(&connection->data.mutex);
+ 
+-	crypto_free_ahash(connection->peer_integrity_tfm);
++	crypto_free_shash(connection->peer_integrity_tfm);
+ 	kfree(connection->int_dig_in);
+ 	kfree(connection->int_dig_vv);
+ 	connection->peer_integrity_tfm = peer_integrity_tfm;
+@@ -3677,7 +3677,7 @@ static int receive_protocol(struct drbd_connection *connection, struct packet_in
+ disconnect_rcu_unlock:
+ 	rcu_read_unlock();
+ disconnect:
+-	crypto_free_ahash(peer_integrity_tfm);
++	crypto_free_shash(peer_integrity_tfm);
+ 	kfree(int_dig_in);
+ 	kfree(int_dig_vv);
+ 	conn_request_state(connection, NS(conn, C_DISCONNECTING), CS_HARD);
+@@ -3689,15 +3689,16 @@ static int receive_protocol(struct drbd_connection *connection, struct packet_in
+  * return: NULL (alg name was "")
+  *         ERR_PTR(error) if something goes wrong
+  *         or the crypto hash ptr, if it worked out ok. */
+-static struct crypto_ahash *drbd_crypto_alloc_digest_safe(const struct drbd_device *device,
++static struct crypto_shash *drbd_crypto_alloc_digest_safe(
++		const struct drbd_device *device,
+ 		const char *alg, const char *name)
+ {
+-	struct crypto_ahash *tfm;
++	struct crypto_shash *tfm;
+ 
+ 	if (!alg[0])
+ 		return NULL;
+ 
+-	tfm = crypto_alloc_ahash(alg, 0, CRYPTO_ALG_ASYNC);
++	tfm = crypto_alloc_shash(alg, 0, 0);
+ 	if (IS_ERR(tfm)) {
+ 		drbd_err(device, "Can not allocate \"%s\" as %s (reason: %ld)\n",
+ 			alg, name, PTR_ERR(tfm));
+@@ -3750,8 +3751,8 @@ static int receive_SyncParam(struct drbd_connection *connection, struct packet_i
+ 	struct drbd_device *device;
+ 	struct p_rs_param_95 *p;
+ 	unsigned int header_size, data_size, exp_max_sz;
+-	struct crypto_ahash *verify_tfm = NULL;
+-	struct crypto_ahash *csums_tfm = NULL;
++	struct crypto_shash *verify_tfm = NULL;
++	struct crypto_shash *csums_tfm = NULL;
+ 	struct net_conf *old_net_conf, *new_net_conf = NULL;
+ 	struct disk_conf *old_disk_conf = NULL, *new_disk_conf = NULL;
+ 	const int apv = connection->agreed_pro_version;
+@@ -3898,14 +3899,14 @@ static int receive_SyncParam(struct drbd_connection *connection, struct packet_i
+ 			if (verify_tfm) {
+ 				strcpy(new_net_conf->verify_alg, p->verify_alg);
+ 				new_net_conf->verify_alg_len = strlen(p->verify_alg) + 1;
+-				crypto_free_ahash(peer_device->connection->verify_tfm);
++				crypto_free_shash(peer_device->connection->verify_tfm);
+ 				peer_device->connection->verify_tfm = verify_tfm;
+ 				drbd_info(device, "using verify-alg: \"%s\"\n", p->verify_alg);
+ 			}
+ 			if (csums_tfm) {
+ 				strcpy(new_net_conf->csums_alg, p->csums_alg);
+ 				new_net_conf->csums_alg_len = strlen(p->csums_alg) + 1;
+-				crypto_free_ahash(peer_device->connection->csums_tfm);
++				crypto_free_shash(peer_device->connection->csums_tfm);
+ 				peer_device->connection->csums_tfm = csums_tfm;
+ 				drbd_info(device, "using csums-alg: \"%s\"\n", p->csums_alg);
+ 			}
+@@ -3949,9 +3950,9 @@ static int receive_SyncParam(struct drbd_connection *connection, struct packet_i
+ 	mutex_unlock(&connection->resource->conf_update);
+ 	/* just for completeness: actually not needed,
+ 	 * as this is not reached if csums_tfm was ok. */
+-	crypto_free_ahash(csums_tfm);
++	crypto_free_shash(csums_tfm);
+ 	/* but free the verify_tfm again, if csums_tfm did not work out */
+-	crypto_free_ahash(verify_tfm);
++	crypto_free_shash(verify_tfm);
+ 	conn_request_state(peer_device->connection, NS(conn, C_DISCONNECTING), CS_HARD);
+ 	return -EIO;
+ }
+diff --git a/drivers/block/drbd/drbd_worker.c b/drivers/block/drbd/drbd_worker.c
+index 5e793dd7adfb..0b41fb0181a6 100644
+--- a/drivers/block/drbd/drbd_worker.c
++++ b/drivers/block/drbd/drbd_worker.c
+@@ -295,60 +295,61 @@ void drbd_request_endio(struct bio *bio)
+ 		complete_master_bio(device, &m);
+ }
+ 
+-void drbd_csum_ee(struct crypto_ahash *tfm, struct drbd_peer_request *peer_req, void *digest)
++void drbd_csum_ee(struct crypto_shash *tfm, struct drbd_peer_request *peer_req, void *digest)
+ {
+-	AHASH_REQUEST_ON_STACK(req, tfm);
+-	struct scatterlist sg;
++	SHASH_DESC_ON_STACK(desc, tfm);
+ 	struct page *page = peer_req->pages;
+ 	struct page *tmp;
+ 	unsigned len;
++	void *src;
+ 
+-	ahash_request_set_tfm(req, tfm);
+-	ahash_request_set_callback(req, 0, NULL, NULL);
++	desc->tfm = tfm;
++	desc->flags = 0;
+ 
+-	sg_init_table(&sg, 1);
+-	crypto_ahash_init(req);
++	crypto_shash_init(desc);
+ 
++	src = kmap_atomic(page);
+ 	while ((tmp = page_chain_next(page))) {
+ 		/* all but the last page will be fully used */
+-		sg_set_page(&sg, page, PAGE_SIZE, 0);
+-		ahash_request_set_crypt(req, &sg, NULL, sg.length);
+-		crypto_ahash_update(req);
++		crypto_shash_update(desc, src, PAGE_SIZE);
++		kunmap_atomic(src);
+ 		page = tmp;
++		src = kmap_atomic(page);
+ 	}
+ 	/* and now the last, possibly only partially used page */
+ 	len = peer_req->i.size & (PAGE_SIZE - 1);
+-	sg_set_page(&sg, page, len ?: PAGE_SIZE, 0);
+-	ahash_request_set_crypt(req, &sg, digest, sg.length);
+-	crypto_ahash_finup(req);
+-	ahash_request_zero(req);
++	crypto_shash_update(desc, src, len ?: PAGE_SIZE);
++	kunmap_atomic(src);
++
++	crypto_shash_final(desc, digest);
++	shash_desc_zero(desc);
+ }
+ 
+-void drbd_csum_bio(struct crypto_ahash *tfm, struct bio *bio, void *digest)
++void drbd_csum_bio(struct crypto_shash *tfm, struct bio *bio, void *digest)
+ {
+-	AHASH_REQUEST_ON_STACK(req, tfm);
+-	struct scatterlist sg;
++	SHASH_DESC_ON_STACK(desc, tfm);
+ 	struct bio_vec bvec;
+ 	struct bvec_iter iter;
+ 
+-	ahash_request_set_tfm(req, tfm);
+-	ahash_request_set_callback(req, 0, NULL, NULL);
++	desc->tfm = tfm;
++	desc->flags = 0;
+ 
+-	sg_init_table(&sg, 1);
+-	crypto_ahash_init(req);
++	crypto_shash_init(desc);
+ 
+ 	bio_for_each_segment(bvec, bio, iter) {
+-		sg_set_page(&sg, bvec.bv_page, bvec.bv_len, bvec.bv_offset);
+-		ahash_request_set_crypt(req, &sg, NULL, sg.length);
+-		crypto_ahash_update(req);
++		u8 *src;
++
++		src = kmap_atomic(bvec.bv_page);
++		crypto_shash_update(desc, src + bvec.bv_offset, bvec.bv_len);
++		kunmap_atomic(src);
++
+ 		/* REQ_OP_WRITE_SAME has only one segment,
+ 		 * checksum the payload only once. */
+ 		if (bio_op(bio) == REQ_OP_WRITE_SAME)
+ 			break;
+ 	}
+-	ahash_request_set_crypt(req, NULL, digest, 0);
+-	crypto_ahash_final(req);
+-	ahash_request_zero(req);
++	crypto_shash_final(desc, digest);
++	shash_desc_zero(desc);
+ }
+ 
+ /* MAYBE merge common code with w_e_end_ov_req */
+@@ -367,7 +368,7 @@ static int w_e_send_csum(struct drbd_work *w, int cancel)
+ 	if (unlikely((peer_req->flags & EE_WAS_ERROR) != 0))
+ 		goto out;
+ 
+-	digest_size = crypto_ahash_digestsize(peer_device->connection->csums_tfm);
++	digest_size = crypto_shash_digestsize(peer_device->connection->csums_tfm);
+ 	digest = kmalloc(digest_size, GFP_NOIO);
+ 	if (digest) {
+ 		sector_t sector = peer_req->i.sector;
+@@ -1205,7 +1206,7 @@ int w_e_end_csum_rs_req(struct drbd_work *w, int cancel)
+ 		 * a real fix would be much more involved,
+ 		 * introducing more locking mechanisms */
+ 		if (peer_device->connection->csums_tfm) {
+-			digest_size = crypto_ahash_digestsize(peer_device->connection->csums_tfm);
++			digest_size = crypto_shash_digestsize(peer_device->connection->csums_tfm);
+ 			D_ASSERT(device, digest_size == di->digest_size);
+ 			digest = kmalloc(digest_size, GFP_NOIO);
+ 		}
+@@ -1255,7 +1256,7 @@ int w_e_end_ov_req(struct drbd_work *w, int cancel)
+ 	if (unlikely(cancel))
+ 		goto out;
+ 
+-	digest_size = crypto_ahash_digestsize(peer_device->connection->verify_tfm);
++	digest_size = crypto_shash_digestsize(peer_device->connection->verify_tfm);
+ 	digest = kmalloc(digest_size, GFP_NOIO);
+ 	if (!digest) {
+ 		err = 1;	/* terminate the connection in case the allocation failed */
+@@ -1327,7 +1328,7 @@ int w_e_end_ov_reply(struct drbd_work *w, int cancel)
+ 	di = peer_req->digest;
+ 
+ 	if (likely((peer_req->flags & EE_WAS_ERROR) == 0)) {
+-		digest_size = crypto_ahash_digestsize(peer_device->connection->verify_tfm);
++		digest_size = crypto_shash_digestsize(peer_device->connection->verify_tfm);
+ 		digest = kmalloc(digest_size, GFP_NOIO);
+ 		if (digest) {
+ 			drbd_csum_ee(peer_device->connection->verify_tfm, peer_req, digest);
+-- 
+2.17.1
 
-Rasmus
+
+-- 
+Kees Cook
+Pixel Security
