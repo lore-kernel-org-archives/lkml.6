@@ -2,89 +2,106 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6C03C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 20:55:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EAACC4646D
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 20:56:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7802121770
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 20:55:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7802121770
+	by mail.kernel.org (Postfix) with ESMTP id 5413921A5E
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 20:56:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KIajLhCg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5413921A5E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732956AbeHFXGM (ORCPT
+        id S1732717AbeHFXHH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 19:06:12 -0400
-Received: from mx2.suse.de ([195.135.220.15]:43774 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728948AbeHFXGM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 19:06:12 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 104B2AE82;
-        Mon,  6 Aug 2018 20:55:20 +0000 (UTC)
-Date:   Mon, 6 Aug 2018 22:55:19 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     syzbot <syzbot+bab151e82a4e973fa325@syzkaller.appspotmail.com>,
-        cgroups@vger.kernel.org, dvyukov@google.com, hannes@cmpxchg.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        syzkaller-bugs@googlegroups.com, vdavydov.dev@gmail.com
-Subject: Re: WARNING in try_charge
-Message-ID: <20180806205519.GO10003@dhcp22.suse.cz>
-References: <fc6e173e-8bda-269f-d44f-1c5f5215beac@I-love.SAKURA.ne.jp>
- <0000000000006350880572c61e62@google.com>
- <20180806174410.GB10003@dhcp22.suse.cz>
- <20180806175627.GC10003@dhcp22.suse.cz>
- <078bde8d-b1b5-f5ad-ed23-0cd94b579f9e@i-love.sakura.ne.jp>
- <20180806203437.GK10003@dhcp22.suse.cz>
- <3cf8f630-73b7-20d4-8ad1-bb1c657ee30d@i-love.sakura.ne.jp>
+        Mon, 6 Aug 2018 19:07:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59332 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730220AbeHFXHH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 19:07:07 -0400
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 18D0C21770;
+        Mon,  6 Aug 2018 20:56:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1533588976;
+        bh=L8me44Nio2ogO64rPqljvIxIdJbjjq7JnZBQR2HU5sA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=KIajLhCgPRex0F3FEx05FjDps12hyNdN0PcV3dbuXxRrOTIWuH4+0kS7RDK4+sJEC
+         2rh2D9lqwaQ7X3kyOH8Lx8MeXYCf6bovNVZZO6vo6Glggc9CQiRyduDCoqLvD1rQdW
+         d8TFqA9Bo5lCmL0qfA8TGAIBV7RzmnQJNCxMxDs8=
+Date:   Mon, 6 Aug 2018 15:56:14 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Sinan Kaya <okaya@kernel.org>
+Cc:     Bharat Kumar Gogada <bharat.kumar.gogada@xilinx.com>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        bhelgaas@google.com, rgummal@xilinx.com
+Subject: Re: [PATCH 3/3] PCI/portdrv: Add support for sharing xilinx
+ controller irq with AER
+Message-ID: <20180806205614.GC30691@bhelgaas-glaptop.roam.corp.google.com>
+References: <1533141889-19962-1-git-send-email-bharat.kumar.gogada@xilinx.com>
+ <1533141889-19962-4-git-send-email-bharat.kumar.gogada@xilinx.com>
+ <7d5ae8ed-5623-3cd2-7769-77702448b2d6@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <3cf8f630-73b7-20d4-8ad1-bb1c657ee30d@i-love.sakura.ne.jp>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <7d5ae8ed-5623-3cd2-7769-77702448b2d6@kernel.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 07-08-18 05:46:04, Tetsuo Handa wrote:
-> On 2018/08/07 5:34, Michal Hocko wrote:
-> > On Tue 07-08-18 05:26:23, Tetsuo Handa wrote:
-> >> On 2018/08/07 2:56, Michal Hocko wrote:
-> >>> So the oom victim indeed passed the above force path after the oom
-> >>> invocation. But later on hit the page fault path and that behaved
-> >>> differently and for some reason the force path hasn't triggered. I am
-> >>> wondering how could we hit the page fault path in the first place. The
-> >>> task is already killed! So what the hell is going on here.
-> >>>
-> >>> I must be missing something obvious here.
-> >>>
-> >> YOU ARE OBVIOUSLY MISSING MY MAIL!
-> >>
-> >> I already said this is "mm, oom: task_will_free_mem(current) should ignore MMF_OOM_SKIP for once."
-> >> problem which you are refusing at https://www.spinics.net/lists/linux-mm/msg133774.html .
-> >> And you again ignored my mail. Very sad...
+On Wed, Aug 01, 2018 at 11:05:09AM -0700, Sinan Kaya wrote:
+> On 8/1/2018 9:44 AM, Bharat Kumar Gogada wrote:
+> > Xilinx ZynqMP PS PCIe does not report AER interrupts using Advanced
+> > Error Interrupt Message Number. The controller has dedicated interrupt line
+> > for reporting PCIe errors along with AER.
 > > 
-> > Your suggestion simply didn't make much sense. There is nothing like
-> > first check is different from the rest.
+> > Using dedicated controller irq number for AER which is shared with misc
+> > interrupt handler in pcie-xilinx-nwl. This irq number is set
+> > using PCI quirk.
 > > 
+> > Signed-off-by: Bharat Kumar Gogada<bharat.kumar.gogada@xilinx.com>
+> > ---
+> >   drivers/pci/pcie/portdrv_core.c |    4 ++++
+> >   1 files changed, 4 insertions(+), 0 deletions(-)
+> > 
+> > diff --git a/drivers/pci/pcie/portdrv_core.c b/drivers/pci/pcie/portdrv_core.c
+> > index e0261ad..fa9150e 100644
+> > --- a/drivers/pci/pcie/portdrv_core.c
+> > +++ b/drivers/pci/pcie/portdrv_core.c
+> > @@ -264,6 +264,10 @@ static int pcie_device_init(struct pci_dev *pdev, int service, int irq)
+> >   	int retval;
+> >   	struct pcie_device *pcie;
+> >   	struct device *device;
+> > +#if defined(CONFIG_ARCH_ZYNQMP) && defined(CONFIG_PCIE_XILINX_NWL)
+> > +	if (service == PCIE_PORT_SERVICE_AER && pdev->sysdata)
+> > +		irq = *(int *)pdev->sysdata;
+> > +#endif
 > 
-> I don't think your patch is appropriate. It avoids hitting WARN(1) but does not avoid
-> unnecessary killing of OOM victims.
-> 
-> If you look at https://syzkaller.appspot.com/text?tag=CrashLog&x=15a1c770400000 , you will
-> notice that both 23766 and 23767 are killed due to task_will_free_mem(current) == false.
-> This is "unnecessary killing of additional processes".
+> I remember seeing a similar patch before. 
 
-Have you noticed the mere detail that the memcg has to kill any task
-attempting the charge because the hard limit is 0? There is simply no
-other way around. You cannot charge. There is no unnecessary killing.
-Full stop. We do allow temporary breach of the hard limit just to let
-the task die and uncharge on the way out.
--- 
-Michal Hocko
-SUSE Labs
+Are you thinking of [1]?
+
+> The patch above looks ugly to be honest. Need to find a way to
+> generalize this. Can you search the mailing list archive to find out
+> what the history is?
+
+I agree, the patch above is too ugly as-is because (a) it puts very
+arch-specific code in a generic code path and (b) it uses a
+compile-time test, which means it probably breaks generic arm64
+kernels that contain support for several platforms.
+
+We also need to know whether this is a hardware defect or just
+something that is allowed by the spec but Linux doesn't support yet.
+The diagram in PCIe r4.0, sec 6.2.6, does leave room for MSI, MSI-X,
+INTx, and platform-specific interrupt schemes.
+
+[1] https://lkml.kernel.org/r/1464242406-20203-1-git-send-email-po.liu@nxp.com
