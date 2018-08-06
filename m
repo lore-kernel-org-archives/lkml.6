@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BCB0C46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 09:18:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D39CC46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 09:18:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFA4421581
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 09:18:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F55B21723
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 09:18:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nio365.onmicrosoft.com header.i=@nio365.onmicrosoft.com header.b="X3V0DQpf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFA4421581
+	dkim=pass (1024-bit key) header.d=nio365.onmicrosoft.com header.i=@nio365.onmicrosoft.com header.b="e/ecsWNv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F55B21723
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ni.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730110AbeHFL0p (ORCPT
+        id S1730209AbeHFL0t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 07:26:45 -0400
-Received: from mx0b-00010702.pphosted.com ([148.163.158.57]:36220 "EHLO
-        mx0b-00010702.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728147AbeHFL0o (ORCPT
+        Mon, 6 Aug 2018 07:26:49 -0400
+Received: from mx0a-00010702.pphosted.com ([148.163.156.75]:47470 "EHLO
+        mx0b-00010702.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728147AbeHFL0s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 07:26:44 -0400
-Received: from pps.filterd (m0098779.ppops.net [127.0.0.1])
-        by mx0b-00010702.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w769BH36000422;
-        Mon, 6 Aug 2018 04:17:54 -0500
+        Mon, 6 Aug 2018 07:26:48 -0400
+Received: from pps.filterd (m0098780.ppops.net [127.0.0.1])
+        by mx0a-00010702.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w769BFX2013915;
+        Mon, 6 Aug 2018 04:17:49 -0500
 Authentication-Results: ppops.net;
         dkim=pass header.d=nio365.onmicrosoft.com header.s=selector1-ni-com
-Received: from nam05-co1-obe.outbound.protection.outlook.com (mail-co1nam05lp0083.outbound.protection.outlook.com [216.32.181.83])
-        by mx0b-00010702.pphosted.com with ESMTP id 2kn9y5kk7y-1
+Received: from nam01-sn1-obe.outbound.protection.outlook.com (mail-sn1nam01lp0113.outbound.protection.outlook.com [207.46.163.113])
+        by mx0a-00010702.pphosted.com with ESMTP id 2kn9nruyu1-2
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Mon, 06 Aug 2018 04:17:54 -0500
+        Mon, 06 Aug 2018 04:17:49 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=nio365.onmicrosoft.com; s=selector1-ni-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GhXOnm/+Df0T8LUW5D/0bgP5ZPODFdrO8CtIVQ56ET0=;
- b=X3V0DQpfh0L+2xnvDijv/NBVoWyj1kGrTm5RqvnRiVaidGbhhV4xfrqiLy1l1+DST0MAqDS8CBXHybhqDwbMcoUEfRCqYF/39L0CMlhD8+bvxIN1+9+uj03uUEJIC1Zvk/hwg+DOYj4WSNNp6aInHijkQaDH6Uzs4Qx2M1Gm9RM=
+ bh=UzrUmLDyu0lSKXWGJNhm/WSYoNV/oLlcEgePFY4JOts=;
+ b=e/ecsWNvfr7x+BzEI9yII7jn/trjtR/SD4TunI4tjK9TipDFtotQuSxrAuQwboX003TayN3QCI1GLCoKWoFZOfuuYN5CoE9RE1HXcjpPCXHpC/iL5JZ2R7mgaVnbPa/oD4i5jRwoYkxSoTq/9JipqfI0acvmmZAver9GsiwATeA=
 Received: from jcartwri.amer.corp.natinst.com (130.164.62.116) by
- MWHPR04MB0975.namprd04.prod.outlook.com (2603:10b6:301:43::36) with Microsoft
+ MWHPR04MB0974.namprd04.prod.outlook.com (2603:10b6:301:43::35) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1017.15; Mon, 6 Aug 2018 09:17:43 +0000
+ 15.20.1017.15; Mon, 6 Aug 2018 09:17:45 +0000
 Received: by jcartwri.amer.corp.natinst.com (Postfix, from userid 1000)
-        id C8606302D73; Mon,  6 Aug 2018 04:17:38 -0500 (CDT)
+        id CE7F7302D74; Mon,  6 Aug 2018 04:17:38 -0500 (CDT)
 From:   Julia Cartwright <julia@ni.com>
 To:     linux-kernel@vger.kernel.org, linux-rt-users@vger.kernel.org
 Cc:     Thomas Gleixner <tglx@linutronix.de>,
@@ -54,70 +54,72 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         John Kacur <jkacur@redhat.com>,
         Paul Gortmaker <paul.gortmaker@windriver.com>,
         Daniel Wagner <daniel.wagner@siemens.com>,
-        tom.zanussi@linux.intel.com, Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "Paul E . McKenney" <paulmck@us.ibm.com>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH RT 04/22] futex: Fix OWNER_DEAD fixup
-Date:   Mon,  6 Aug 2018 04:17:20 -0500
-Message-Id: <464abec1c5e435a618d3dcd6a05f207e8456d53d.1533540554.git.julia@ni.com>
+        tom.zanussi@linux.intel.com, Boqun Feng <boqun.feng@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: [PATCH RT 05/22] rtmutex: Make rt_mutex_futex_unlock() safe for irq-off callsites
+Date:   Mon,  6 Aug 2018 04:17:21 -0500
+Message-Id: <bd21741bb5e918e5ed254b9fa869b5523a469b55.1533540554.git.julia@ni.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <cover.1533540554.git.julia@ni.com>
 References: <cover.1533540554.git.julia@ni.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [130.164.62.116]
-X-ClientProxiedBy: MWHPR1701CA0022.namprd17.prod.outlook.com
- (2603:10b6:301:14::32) To MWHPR04MB0975.namprd04.prod.outlook.com
- (2603:10b6:301:43::36)
+X-ClientProxiedBy: BN6PR2001CA0023.namprd20.prod.outlook.com
+ (2603:10b6:404:b4::33) To MWHPR04MB0974.namprd04.prod.outlook.com
+ (2603:10b6:301:43::35)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 35e662b2-c779-482f-5768-08d5fb7d773c
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:MWHPR04MB0975;
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR04MB0975;3:uvUg+Rj2IecLXbFR4LIparoldNZoirQW8R35ZwU4sP7XU5vwFjQ2I6nZPav6aqpksXmeShcrIVd8V6WyikW0MLqk9OU0iCiuI5ViV4bVOvlagGpjVQ/e6YsX74G2VU6+niNPjm1aiSBSH8I9thpyBDcVjKmbKeVhBSXb6Bmth9xbiF3Oko0QNR5AiFexAJq39EgL24BvzwCbujz7NSMtrj46NZJxWhAXIE20Et5BoIoKFLjftuJnUK71IoCf2n4F;25:8sN8jPz5TOBdDtmSE+YIrM4DH81gmI3+GlV13urIC2GQViQLMOi4IB8XvPcUglkPtWhP+sn4NsLE5CzFSaYn4CBC3k74Z77QIeUVlyjF4UAxmk0GjQinCb7dEWb5HzD9o+RyA/uh+7RG681S0c1NB+r9Vf/hVRl+QcJJTJpJjWomDw5Z1sW2M3xhOaEFoBNfbWBFzzjzZum/waL4iu0x399neGEvdRfwZcjWBeXWByhdE12PmXrjUtUjE1OSUYyWn0nZsZXV0gTSeJObRqXZCD1RqmYOyu3xf/tnd+D1yC8qa4QGbgyY4fAXcMg5dipddM4BmZQHwmMNNwJfr4s0dA==;31:HcKguxmgVGZCCXLrlGBpks6z0HokPn1xBDQrm4AwToTQhgX/Lxawcc+T6lJRtKAry6G7+U5jQ5WWp+w0fC3qPxvMzhH+dXiKtGFwgPb80i0wGyL8VLyUAwsvmZ/N6HwlTfGdBZ+ZOsMN+pjiHDfuoQwxG0VXlvY6D9mCLkAqD3uWj19JSleBt1sVGiUQbyD7tT/A4yncPf9DPbj0/ztcrHeU0IT4nULn6Mf1IF0Gk28=
-X-MS-TrafficTypeDiagnostic: MWHPR04MB0975:
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR04MB0975;20:Uck/D5qjuFqz76P0ecuyP5AduXchXIyLO5ggEPB9cA+rGMgn1q4BV553PY3oDySzzmLc1dCxO0Upbw1iEYvgCCOg2EfxDWVS1KX/LbKZcQrAIbY8ATUxAXusmnZbVSHdxLhykW2bT1mDmj7klDqFc7gDF5aENNJaVJHowCO3uiGUCpaDsfZ2y3oWNJg7lRJTv3wbvJ8mpIuOCmcQB2k66QcvYpJyrBwYJEPhb6F+trQPC3HqXAaLPA4+xUSevLW3gzHxGRZjF/jpS3r0mlRdx4qtoOj8TRpKass5sE79f8GP0nIEnmmrjHVQbJH7udi6di5p9eb3xKxSI7IrdVfDpDYEmgQCkgUc8c3xT21ORpohHMceNsjVk5OIV9To4oItlRDHAK8Wj+HH+qF9Ky/npzcwoPbHGMXTZzn+okc/2dY0u7Ufr1odr9YujtRrcjwwAStjqrGrD+37me8EnXC1dKdwXVfeXJTxe5aVF23vLC4OuWMGle5HW/kJJS31vyxO+XXi9G5CvItT3G4aKC6xkW9lcV335st0zB63WrxGOpclOOy/km7TeR3LjbHduXwjDZMJ1yDtjxqzo/ohlEo9OYP89hvadkAiGlvCzremx6g=
-X-Microsoft-Antispam-PRVS: <MWHPR04MB0975E78F3DCC45EB52BE849EF4200@MWHPR04MB0975.namprd04.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(42068640409301)(274839183919467)(104084551191319)(145744241990776);
+X-MS-Office365-Filtering-Correlation-Id: fffe1a03-37df-497c-c1f2-08d5fb7d7872
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:MWHPR04MB0974;
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR04MB0974;3:eLHz6ScckugbSN0bEeDhwHX+M2gAs42eqbTsyL/0OmAY2WY3WzG8LkyjXCKZ/xyQCa/MTsLmA50mTUIcatTatY2rc2ncT8q4iRk7ZhE4XhEZUg+pgG7/kYrvTSndXgu0oVX44/X0oh6D49/z3nOb1HDrHivlbyRPsP02vO03vJ7ucSMRKRyd9Ldp56evJEKw492zq4/H2CUJ7qXD/G7J89O23LNLjA0slIF8gu0LCahy8WuoiVtYWW7+1fCAZALY;25:LanW48YuPynzolNFDxWylPp5VRWu1vl3iO61yTqZzxgWjcLmRgOvvE4FhkvJm4CdZbLxlZc1czUdRYd8nhta0gYQ32akIGAWvUBOI4nUGSLmJOaWWY98BtIiOiEvg7hfGY0Vhma3hoKupqMQz782pN2+PgKcQNMVfFB/bixakyNQ90CRJGzKWVCu/zJOmco47S2XJ4cyvGe7+OBuafokOP2e5/SpaIkf/bitas+3LKWETduapoIkoRPJ3DbrCPmCtP+LQz/hRe7LyG++Dv6RQRYmvN82v6MZiZ4N0K3PMEPiCmhIlZPD0hfv7iRgXoWN/PIlMCSFp5BjJkB/EHMX+A==;31:0DLMtWwxmAsyJQIeAYrE5aovtxD6l95EwDFC2RrTTZZXJtk2FcKjUQrbUsKOrSw5XfvN0BDawaLBrwjWkRlQjs6iQDgIquTR1tfIRW5WFB0+SKqF1i75thkFfXvp0lwKI72ldBN2MSqx8uYDbbQMMxgsVMpgtoe5emD0XQGbd7VsqzOvuOFrjorbulxy4jPUTOLxO4pVvnyuBC1hWWSEpCUJ02byhTe2Ph/L/BUUrB8=
+X-MS-TrafficTypeDiagnostic: MWHPR04MB0974:
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR04MB0974;20:XV3dE01efLZnUYXoMAz/qTAETUu1IVHnskuu28dk9gQO6EuN0G87i5pgxBjl48jKKyj5Oi4Bey0XzDhcTlsguJ1tSJMyVdT6byk+H4zP9G7bKyd8EA62ie8dYd74Nwwo9CEaX0aHZYPSDY73kd7oa+D2RcyHS4NJwQwYPtFR0PIuWDboMT/2hMqWGzhPFHqcbD7lU1SW7rr4vGcdgXiFNhmXDd6YP8ORoFlNWX2TcPoDf1fjrVJEvZwr0JqdgPmZwV9efBb161aCMNQT9NhRoVeLitvqEFteTAnrq7brnXRXiRGXFLKY3SwPfYLhr786fDIMk15LN8/9QIDcTPORj5ZswueshePt3I4kNPKzMGLiPI+gqJ5Im8OfvImXct/nN26B+8kQTcT7gaI+6gokDQAsh0pB2VSiJSuaKND40LvR66fb9HNMeZ3XgipKnxLtKZ9/mJo3ii3SUY/xsCuVKEnw1frmlPp7HgaHNdF8mpXuD06C7zKASRHybCC49rgUPP48qeXUMtzg0ALFkyvUaW8nQueATDEeho7cq1LhFNGvWnZF/6mD0ATuWMoEUk7JQooIJ/+MWbB3gv9gAWwJdZzEurvSrtVuQwKCl4F42qE=
+X-Microsoft-Antispam-PRVS: <MWHPR04MB0974DE6A7B5DA37CDC05049EF4200@MWHPR04MB0974.namprd04.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(20558992708506)(85827821059158)(788757137089)(42068640409301)(104084551191319)(145744241990776);
 X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3002001)(10201501046)(3231311)(944501410)(52105095)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(20161123562045)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:MWHPR04MB0975;BCL:0;PCL:0;RULEID:;SRVR:MWHPR04MB0975;
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR04MB0975;4:EgSbUtH0J2lwcncVfKHD7Dv52tiNtrAgNua8uzkxhGawsSnRRSCSJ7nb2JYfn7HwuodzUNQ88q/OLzqtwMh5QUFigdBQbX8Dnd2Ba2j+Plu/nddwEy83ip2Pk6p2xoD/XhZJQ3poWhXivjQWNdPhMlcW7FFYJOdAeaj7zCUgKd/BMrNsVmpSlmb2APkgGxdlB8gTSbwQEHxKuS9XpQzTDIP/iTGKTJzHj22YWckhGq/BiF0XeK6tpHkB5wdZLTFU2gkOp08B24ReVuFkhWD+Yj62YfXGjX658jlxjlTif1taK2zvE2ycrFVWugYn/7DHCuaYGwj2vF+eDsp3w+o1YGtpSDWLWvaZt8DULJXVMkREjuPQ9mybJCeS+eZhHUREGGhkJhM6hSOlcSVJzEQyjkBPHr7tCdv+HrInIkr1/Kk=
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231311)(944501410)(52105095)(3002001)(10201501046)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(6072148)(201708071742011)(7699016);SRVR:MWHPR04MB0974;BCL:0;PCL:0;RULEID:;SRVR:MWHPR04MB0974;
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR04MB0974;4:W0tvgamT54d8jwlrJdjjHk6GrHQ67kvtEglOWy2ve2JSuiiJEjS4QbqViZAUOI6wySk9Be0TXdM5YUl61WJbHCKEuGUH0g5cfMn0TpDEwhr/geaqJjEYmHHAOP+stxNQ4fWUH1MlcGl0g+/as5XlNXZNad0lin5gR46TC6Fy/LCa7gD20ThFfexoyxkW5/om0LYUC1zQEiTwzjlw5Qo3NsPwCN9TQq9IfPT54DT09ZKToFjTRAJli99rn7YCqUVT2OCfYFE3coYi/3r/e0OIqXgowg/2RVDZ8YsOFWoE2MwqVfs23IJQYe+X6WJ6QiOgBhCSspdJxT7mp2QkbbpgIVm7JVSpiR55J0aJ7eMwYt/D8Ag2R+mdmEjxS35B9sKnT/0RBduQ6jCMyb4anhlT8OlZu7/IX6L8CMJbjjHbTeaCt5yUCldv6QSmb1X3CJ/K3yfvWMN0sjYZO0xb8bZFmdBxGbtdlW7JKXC0abCHHRs=
 X-Forefront-PRVS: 07562C22DA
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(346002)(366004)(376002)(39850400004)(396003)(136003)(189003)(199004)(478600001)(53936002)(4326008)(6116002)(3846002)(6266002)(105586002)(106356001)(118296001)(47776003)(97736004)(50226002)(8936002)(66066001)(966005)(2906002)(316002)(68736007)(42186006)(486006)(476003)(36756003)(2616005)(6666003)(48376002)(52956003)(16586007)(14444005)(54906003)(11346002)(446003)(122856001)(76176011)(386003)(186003)(26005)(6306002)(90966002)(81156014)(51416003)(52116002)(7736002)(5660300001)(81166006)(305945005)(575784001)(7416002)(8676002)(50466002);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR04MB0975;H:jcartwri.amer.corp.natinst.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(396003)(136003)(376002)(39850400004)(346002)(366004)(189003)(199004)(305945005)(7736002)(386003)(51416003)(118296001)(36756003)(53936002)(48376002)(68736007)(76176011)(6306002)(2906002)(16586007)(316002)(54906003)(52116002)(47776003)(42186006)(50466002)(50226002)(81166006)(8676002)(81156014)(8936002)(122856001)(39060400002)(4326008)(14444005)(106356001)(105586002)(478600001)(11346002)(966005)(446003)(66066001)(486006)(6266002)(476003)(3846002)(5660300001)(2616005)(6116002)(90966002)(7416002)(186003)(26005)(575784001)(6666003)(52956003)(97736004);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR04MB0974;H:jcartwri.amer.corp.natinst.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 Received-SPF: None (protection.outlook.com: ni.com does not designate
  permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;MWHPR04MB0975;23:NJtZb5wNhLdVK1iC6Z03AguMegDegO3ZayGkxA+0O?=
- =?us-ascii?Q?KoDPieRnpNEs+cuscCO6Vr2OS+uwVTHNbfT431T5Awqfe59YVfhgSrkFTA2m?=
- =?us-ascii?Q?TYqGfe9WWMqhPX739p+oQPw3mJRtsXLf8ZZnKUUO9vAwWAXByUC4LA4THoWM?=
- =?us-ascii?Q?CFw4uT/+TtF8LPr5o0iTCu8CLZ4D/k3KcRHBoqO9ZLfzwasuHGbv6Gkg/Piq?=
- =?us-ascii?Q?Z8Eafvcrc23w5ZAHKCj/H/AGU57g6dg3NCM70Mniwly9LqtA6yX1Cal/2W3V?=
- =?us-ascii?Q?Gd2W3sjGIHt3z7tyKPhyFiJqlu6ZSUQzjV/BA6ISh/TgxOxBTNhlcaop27rC?=
- =?us-ascii?Q?G/virdZ+ZYSYj0PWEXJF/lBw6VbAmw6ZsCYa68I1YFTfxi04Dhmmi7MZoGrr?=
- =?us-ascii?Q?41RJqCSTv2hkaGeKDX0+s/TycfT44ggFLRFUUzENfZCn3aJ7B58qzp+im+U7?=
- =?us-ascii?Q?yN0Ltv6H5+vS5YI5Uet5/O9XEL/CAPIPdCadaNzza6U4MVA4jZQU/sH0aouw?=
- =?us-ascii?Q?hYTFqBbuDn5vwfZJfVox/pwr6IKtBJgSfpTY9BWyf3VDvODyoRS3B+2dR0fw?=
- =?us-ascii?Q?p6lSlv3u8deS406b/7OQ3GB6VCAvIrK7q4UPM2ts8ycktl3j9l+Y2A7g5rPV?=
- =?us-ascii?Q?X2mUmjyP7o6TB++hRGj+fcH/p68TZRWSm3rr0R+DfGQaRuriziVgw/RozDfs?=
- =?us-ascii?Q?P1AJyrMNwJBMjbqXnXUNWMuFjaxlFjjNYZa33Zp5wjzj459YS+fZKm+jkBjL?=
- =?us-ascii?Q?Xw0Y7eLufubkxs+wU8sHwGkc/fCxvkKTCpB3uIrHgKxWG4uvtXBh+uvLUI6Y?=
- =?us-ascii?Q?SBwswAbvgIHc9MKTRLQc9Vr2tfuywbPxEpISakO9mjWDuvMJeUbcB+MWufKf?=
- =?us-ascii?Q?UARbzJuJxbx2yiP1Zwqsu9OXKkF+0x5dV0CYYNGG7I5Xb+SbkZknDxPkkGcB?=
- =?us-ascii?Q?Cl25wWwYww1idKtOnPH83WZn+nD/n8f+WLoun7BtTlNVG4xHc5zHsYZ63xDL?=
- =?us-ascii?Q?LlPpfo+1sm0aGLvjAUC9QYP3MGtj0NJ57ferq/8GrZmaJZnI9MOy9kRuHI3+?=
- =?us-ascii?Q?pKE2as89FDtU4kcmmUHogopnh2NO2If1gN/SNlV4ZfddkSjG5/SpPh8m+I/y?=
- =?us-ascii?Q?aOgHCzd+0sWt2AKhnhLI6WNorS+Gw4A78q7/6bDmh97zEZrWB5E28xSCdjqm?=
- =?us-ascii?Q?85Rlf79DvYJG04oOBzg3kf3HnE2ZQx2n+oFre4ykO/nioxvQnY8hUKW1VAMf?=
- =?us-ascii?Q?3Z/vjP76UfljgAszVU=3D?=
-X-Microsoft-Antispam-Message-Info: WAb++P9OtG4Zs3WWAasqkC1lHIKmJ/Lv9+KqootIzQjyDAp2yFK1UZcJwvKEdn/jII5iI25ZlNonOkNNEG9/uS89PbpH2TX6J4QTBNTf4dhgo/N2eyCl+gSBDX9BmH2dlmnTUiLEVuSof27wWW+OjVjk6EnPQt8ScWS8J8ZfkjWImpErne4/EReLRXEDXJH2dI/b1yKqtArEFzkv6rTP190VHszBTx8t9MHWAogbKqq9C3z/j/Qe4w0ktuCpS+n6DCPcC8votbBpnjGG7wVNGUnkaggHyeD33FhE22BENevNSHVKT3IC++nbTmRk+5bUnJpjmNXuWagdooB/78A5fd/1cdicIBooI2+4p6zypZo=
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR04MB0975;6:D3fz3bYG9lqdQHJCM7RXNyUGp/pT+9ZZInky1ZglXfrhOuN0nLmhFq+nUmAJefkT/XWNYSN7VC/PtRAswFWiWh9fQRRH6QVLA7jjXT1VNrMU3BAyOCAfyW0jVCeqme6ihWeuaFJ0oH57PpMaWk2iIqKmJCY8MmIf98y5rcslN4P8JWuoFbcJnSgUOL4HgAhkghYGx6vm1vzPkFs/O4yh+lVdcCYHt4qYHecRHDSvWu/fBbhA4d0zNazmt2I3Hg5vsVLgWfq1Fxbk9VuG+u+vyyT/W9RSlakyrWiMosgssbZl/SKvY/W6foM+J9x+Ec0asdperb3LylV4mzOYplTBP7qdEK+fp7cUXv3RybG07KIYrCQ1rO51uNwcFQ7z/PYShok+qxjDQL9R0ZTUcKHQIYN11uGT3LGb8Kw8wLTQh1pe+OpwxqOiMYIyYFj/0V1NBDL6WGyu6I4A6vjsUfPTAg==;5:LNJx6tA9HgHGOConCDONCobPvy1AqnZ39vcDed7P/v+KXcobW6OLAtKWBTYy5f9U6B+MmnjaDYFDzFxSFOT/oZ8CPaPLEMUnQ1szaxsrP1hhBzyEvGiEdBMX2WVn/NCoXvx/3RahaKTpEwpCR3+CiFeG49zUE5ckHLrwwCKXi0s=;7:xI1AqkMPT8hIBcvujMkKMcOiVV9q3EywJzjj5woKqLAEeqe1S0Rh0R+sR1v8j0H6xhurXMJwoIjSG25cS50GzHGTP4kQZbIEb02onVoQYo7f2NrgKm+OMvPV6OU7AL/pyMt99gH0xj4Mt3yf6wEkqwUMjChaXfXKsMn+qpmVvnGuobc2cE4N3JeAXaLZLvVFa+v+QvE4RvWwS3E2U8ypA4+uIZkAJHNTkReFttA31qFnjff4XqlLPybeqc3mrS19
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;MWHPR04MB0974;23:++uZyHERYwXrP/4/BFvP3IOSMtu/GesQHEreZAYRr?=
+ =?us-ascii?Q?Sj3L2fFuaT8jMYlkh++8II8CRBCZO420RjnRL16AwFpTjarYmqmzjrA6i+he?=
+ =?us-ascii?Q?pqnXG5ZnBycVH/RZJxYE1dpFqAO40zEV8SKqTBLmWQ9dOOrlrZr8vqlA0HXZ?=
+ =?us-ascii?Q?qgSn7NH+LS2P0VDiNdTDF4K9v4C2Vv2aOmp6K+jmNlrKnYV0AN2++Bf81nWA?=
+ =?us-ascii?Q?p5WPv3WTNXenkkRoIOndzKb5aKnq0ByNK+DZSmvsL/YszHbOrUX05yhZMT2t?=
+ =?us-ascii?Q?EUNJLjk/6WbGJ3I61YbVQRDwG6gP/p3osH4D7xjbgwVrfaD+tsYxR3gbdPWq?=
+ =?us-ascii?Q?I8ETY0gE/Rnm+O54zBOf6BhLzGn0Bc/HlcY5UXm36yv4UWI+hBJQf+s9hw5r?=
+ =?us-ascii?Q?CnVxef0UtbaTscrFyPgE0kwDS4r5cBbOThf5YS/HRUb8PBSREjz6sm5KIVCw?=
+ =?us-ascii?Q?CLaQfcEvH9bkSbPm8rW0HY/OnKDHHxtKFt0mrtBe28bRjVHBdczF2yC7CqPZ?=
+ =?us-ascii?Q?i/yS67D0aZt9JJzDQGAhOSwS+jNQ45iPzi8gOHOtf0KNSOpz8Ez674hEaZR6?=
+ =?us-ascii?Q?SNcxBBEkZVL6fspTUM370M8VDlDVTL4GUCLvp20eUh4aI6YG1xGk23Mc3f6j?=
+ =?us-ascii?Q?x221VDdkVlFt41UywwEa3V8ieBKOjeCKGTVtH5p4nqLLUb6SmwHpWvruSgca?=
+ =?us-ascii?Q?nXK4EQkTpd7ZoIw4qw8ZBncO/DHuhxDMK5jGfBpkN5fn/O9kxyX7uZNHlUhs?=
+ =?us-ascii?Q?z68T/TVQBM8AitNTDlIAdxuBYfB6YTWnw5CA4dQGheRHTwXm2kfKW8gWWz95?=
+ =?us-ascii?Q?1QJkNC00Gwti8trBtsqjKbrsQms4QffT0EsIDFCmKqiuHZKYRwTnDKLd0oCi?=
+ =?us-ascii?Q?/u8le23st8Pxj7cRF4Wv4xxgTVN94aBtqvRC7iz6UNVE+BHB9s9BkIuokiJB?=
+ =?us-ascii?Q?bUEbfHO+TYQm/0SObguu7U2IiniMUaQnwgRvFGV6HPksz/lFMLwTFSX1Lkws?=
+ =?us-ascii?Q?HOxN39gonw5VdDGCCHt5iy5jbqiC7fMtn1pNA7jmOOdOokYaYtl865LcDE6P?=
+ =?us-ascii?Q?BQEsyzpU9ewN9KNu+OPqQkUSIgBI4KCx01fgXWDcSb8k+0RlgU7eNYRkBiFU?=
+ =?us-ascii?Q?q42+iU8Lw4dU9FYyGUIVpcYEEjn/fZVvA3fca2Xum2UZVp21HWtG/iDQ093z?=
+ =?us-ascii?Q?Sxc6Ne91B8X2fGoZAROxi5EYd8slTIsLTIOjX2oNDdzzDa5cP+WW44mVPPUq?=
+ =?us-ascii?Q?wQXgNkkmpaPpp0aiV5jGoZxTiMRXs9E5xSkC/97OSlBbztn5lzrj+/6HDXJ3?=
+ =?us-ascii?B?QT09?=
+X-Microsoft-Antispam-Message-Info: 5tji+VtoZdDYM3K+Hsi6FhHB/OrdK4r4QwCptkz+KrRTuxiScX6lIcsFz9ipUixLKrKEGt6pxjWIXDBkre8+YjR4eKWfNz5QZwVqlULOHZRdbDEdkyi/v4Ou6bO1cC4hCHn5cj1PzUKRagsFvqTBdOBBpZMWBN2r8nRDU1ETOA1Wknf8UpYqFGPatqDGOtSLk6Q1l4Kg3bV+6nQDyjX1vBx0iu/49uFwU5Vt/PbQqMRiC6B+hHH2Pfd3QWoYR0/iPdzv+zSj1umUhyuINHL5rI+XP3bgoVuINtdVaPUI5nOq0mzoGQYxyIYhfyEPpv6Vbl90Vv4p66XqEzOXx9VBdh0RPzJVRZanpgypl2it/K0=
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR04MB0974;6:25iZa63WAgqZRUlSjbs/fQQoJK9Kg1nzrKwEUGE7KjsgMheZQLyJtmc1J24EQ0IqFmt81rORhRJQQbb/djLWqzaPEeR1b5xwMOk6H8N5gblpNGCbCY7oDtoo3SvK+IID2tysQCp8W5TGr4lH1e+8Hj/S+nT7JzWFFPRngT6GIzu0Uldr3TYefWH0D9mBiTxtK6M9sQgp6Xg0jF7xBqwNH2p2O8fcpLeLG6w0D0b83dQWCK/ULDYUwRZWAX/BLFj6GussAhcfiwDKYdKO7PyscSwWey9tx5Aw2zYn75BJxSlsnyK4qq7ITwOXuhFEbVrnnppuw9bz1RLVKWA5Nc4mBFbldCHfc4RK6jkTMsl5WsAKK6vmeGEPEYt6BRs67uinSETUJFC1RXYrfkNZqwUT1PEaFwYh24CkDN2aLjUfwSsZoevv/szi2GXfGKFBK64CFBkcnSekE3mIzg8T96rNqQ==;5:Q6WI65YM/4NqshEakCcNM+to9rvZcLHwwJlDsJxKWI2qiinRI67DUJAx22cRK2IrxQ0FUTKL7ucxbMU8s/KkO3DMzLXES8HnLPCU9TShCUQe2b53fHDmwkaIo3OP+rdi4KihFkU8IdMtf7OxEq1DXAPYvjUEcIbeH8pSZybUF0I=;7:OD5dlAV7ldb2ZmKDfWPeAxBKjssjrtTBErrtfyI7R0sIuhbK+i5t+rABndnv++Gnbjxn+ldkKHn+pbz9e+ikEZFeg/HhefnIehQGbW5Ma4X+f8n5h2oDEg9SkP4iQi4OEajNkLF3hf/dkolXSf9K87C3E12vPf7UBcg9UngveCc9Ia2J3GMF7C4RBi76yM43suff7jVKH9OUZpDNx6g6+omF5ATc6Jj+lL0iUgTr848wI/kBVCgNiwa5A2kzkphb
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
 X-OriginatorOrg: ni.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2018 09:17:43.2095 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 35e662b2-c779-482f-5768-08d5fb7d773c
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2018 09:17:45.1912 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: fffe1a03-37df-497c-c1f2-08d5fb7d7872
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 87ba1f9a-44cd-43a6-b008-6fdb45a5204e
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR04MB0975
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR04MB0974
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-06_05:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=inbound_policy_notspam policy=inbound_policy score=30
@@ -130,65 +132,130 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Zijlstra <peterz@infradead.org>
+From: Boqun Feng <boqun.feng@gmail.com>
 
 4.9.115-rt94-rc1 stable review patch.
 If you have any objection to the inclusion of this patch, let me know.
 
 --- 8< --- 8< --- 8< ---
-[ Upstream commit a97cb0e7b3f4c6297fd857055ae8e895f402f501 ]
+[ Upstream commit 6b0ef92fee2a3189eba6d6b827b247cb4f6da7e9 ]
 
-Both Geert and DaveJ reported that the recent futex commit:
+When running rcutorture with TREE03 config, CONFIG_PROVE_LOCKING=y, and
+kernel cmdline argument "rcutorture.gp_exp=1", lockdep reports a
+HARDIRQ-safe->HARDIRQ-unsafe deadlock:
 
-  c1e2f0eaf015 ("futex: Avoid violating the 10th rule of futex")
+ =============================== WARNING: inconsistent lock state
+ 4.16.0-rc4+ #1 Not tainted
+ --------------------------------
+ inconsistent {IN-HARDIRQ-W} -> {HARDIRQ-ON-W} usage.
+ takes:
+ __schedule+0xbe/0xaf0
+ {IN-HARDIRQ-W} state was registered at:
+   _raw_spin_lock+0x2a/0x40
+   scheduler_tick+0x47/0xf0
+...
+ other info that might help us debug this:
+  Possible unsafe locking scenario:
+        CPU0
+        ----
+   lock(&rq->lock);
+   <Interrupt>
+     lock(&rq->lock);
+  *** DEADLOCK ***
+ 1 lock held by rcu_torture_rea/724:
+ rcu_torture_read_lock+0x0/0x70
+ stack backtrace:
+ CPU: 2 PID: 724 Comm: rcu_torture_rea Not tainted 4.16.0-rc4+ #1
+ Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.11.0-20171110_100015-anatol 04/01/2014
+ Call Trace:
+  lock_acquire+0x90/0x200
+  ? __schedule+0xbe/0xaf0
+  _raw_spin_lock+0x2a/0x40
+  ? __schedule+0xbe/0xaf0
+  __schedule+0xbe/0xaf0
+  preempt_schedule_irq+0x2f/0x60
+  retint_kernel+0x1b/0x2d
+ RIP: 0010:rcu_read_unlock_special+0x0/0x680
+  ? rcu_torture_read_unlock+0x60/0x60
+  __rcu_read_unlock+0x64/0x70
+  rcu_torture_read_unlock+0x17/0x60
+  rcu_torture_reader+0x275/0x450
+  ? rcutorture_booster_init+0x110/0x110
+  ? rcu_torture_stall+0x230/0x230
+  ? kthread+0x10e/0x130
+  kthread+0x10e/0x130
+  ? kthread_create_worker_on_cpu+0x70/0x70
+  ? call_usermodehelper_exec_async+0x11a/0x150
+  ret_from_fork+0x3a/0x50
 
-introduced a problem with setting OWNER_DEAD. We set the bit on an
-uninitialized variable and then entirely optimize it away as a
-dead-store.
+This happens with the following even sequence:
 
-Move the setting of the bit to where it is more useful.
+	preempt_schedule_irq();
+	  local_irq_enable();
+	  __schedule():
+	    local_irq_disable(); // irq off
+	    ...
+	    rcu_note_context_switch():
+	      rcu_note_preempt_context_switch():
+	        rcu_read_unlock_special():
+	          local_irq_save(flags);
+	          ...
+		  raw_spin_unlock_irqrestore(...,flags); // irq remains off
+	          rt_mutex_futex_unlock():
+	            raw_spin_lock_irq();
+	            ...
+	            raw_spin_unlock_irq(); // accidentally set irq on
 
-Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Reported-by: Dave Jones <davej@codemonkey.org.uk>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Paul E. McKenney <paulmck@us.ibm.com>
+	    <return to __schedule()>
+	    rq_lock():
+	      raw_spin_lock(); // acquiring rq->lock with irq on
+
+which means rq->lock becomes a HARDIRQ-unsafe lock, which can cause
+deadlocks in scheduler code.
+
+This problem was introduced by commit 02a7c234e540 ("rcu: Suppress
+lockdep false-positive ->boost_mtx complaints"). That brought the user
+of rt_mutex_futex_unlock() with irq off.
+
+To fix this, replace the *lock_irq() in rt_mutex_futex_unlock() with
+*lock_irq{save,restore}() to make it safe to call rt_mutex_futex_unlock()
+with irq off.
+
+Fixes: 02a7c234e540 ("rcu: Suppress lockdep false-positive ->boost_mtx complaints")
+Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Fixes: c1e2f0eaf015 ("futex: Avoid violating the 10th rule of futex")
-Link: http://lkml.kernel.org/r/20180122103947.GD2228@hirez.programming.kicks-ass.net
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Lai Jiangshan <jiangshanlai@gmail.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Josh Triplett <josh@joshtriplett.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>
+Link: https://lkml.kernel.org/r/20180309065630.8283-1-boqun.feng@gmail.com
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Signed-off-by: Julia Cartwright <julia@ni.com>
 ---
- kernel/futex.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ kernel/locking/rtmutex.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/futex.c b/kernel/futex.c
-index cdd68ba6e3a6..57038131ad3f 100644
---- a/kernel/futex.c
-+++ b/kernel/futex.c
-@@ -2301,9 +2301,6 @@ static int fixup_pi_state_owner(u32 __user *uaddr, struct futex_q *q,
- 	raw_spin_lock_irq(&pi_state->pi_mutex.wait_lock);
+diff --git a/kernel/locking/rtmutex.c b/kernel/locking/rtmutex.c
+index 57361d631749..5e15f5c73637 100644
+--- a/kernel/locking/rtmutex.c
++++ b/kernel/locking/rtmutex.c
+@@ -2213,11 +2213,12 @@ void __sched rt_mutex_futex_unlock(struct rt_mutex *lock)
+ {
+ 	WAKE_Q(wake_q);
+ 	WAKE_Q(wake_sleeper_q);
++	unsigned long flags;
+ 	bool postunlock;
  
- 	oldowner = pi_state->owner;
--	/* Owner died? */
--	if (!pi_state->owner)
--		newtid |= FUTEX_OWNER_DIED;
+-	raw_spin_lock_irq(&lock->wait_lock);
++	raw_spin_lock_irqsave(&lock->wait_lock, flags);
+ 	postunlock = __rt_mutex_futex_unlock(lock, &wake_q, &wake_sleeper_q);
+-	raw_spin_unlock_irq(&lock->wait_lock);
++	raw_spin_unlock_irqrestore(&lock->wait_lock, flags);
  
- 	/*
- 	 * We are here because either:
-@@ -2364,6 +2361,9 @@ static int fixup_pi_state_owner(u32 __user *uaddr, struct futex_q *q,
- 	}
- 
- 	newtid = task_pid_vnr(newowner) | FUTEX_WAITERS;
-+	/* Owner died? */
-+	if (!pi_state->owner)
-+		newtid |= FUTEX_OWNER_DIED;
- 
- 	if (get_futex_value_locked(&uval, uaddr))
- 		goto handle_fault;
+ 	if (postunlock)
+ 		rt_mutex_postunlock(&wake_q, &wake_sleeper_q);
 -- 
 2.18.0
 
