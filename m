@@ -2,103 +2,132 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81F2AC4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 11:53:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBD3FC4646D
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 11:54:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35A3821A07
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 11:53:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="LEOVQOPg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35A3821A07
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 9BF6B21A0B
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 11:54:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BF6B21A0B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731015AbeHFOB5 (ORCPT
+        id S1731117AbeHFOCu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 10:01:57 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50068 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729693AbeHFOB5 (ORCPT
+        Mon, 6 Aug 2018 10:02:50 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:62605 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1730245AbeHFOCu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 10:01:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=OM7nWUw7C1g24oLUWb0sR+wnPK8Y3Em408H5UGkTVP0=; b=LEOVQOPgzehYjCSgcRaQjgyy2
-        Ub7viaFeCOw7GigezJQjDcSacO5jjOrMEVMuPxDX7nx5V1WHADzj/dbdMlqudQNbN0nECwIf2j6rs
-        fFxBrB/2/Easz8nE5H/1qGYOk4fsjMeHwWmpwM0wcvktnTdJort4TvnJvMyg4Lqjo8w6w=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fme4H-0007sY-9q; Mon, 06 Aug 2018 11:52:57 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 02A231124240; Mon,  6 Aug 2018 12:52:56 +0100 (BST)
-Date:   Mon, 6 Aug 2018 12:52:56 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     valdis.kletnieks@vt.edu, Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        patches@opensource.cirrus.com, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>
-Subject: Re: [PATCH 11/11] ASoC: wm8994: Mark expected switch fall-through
-Message-ID: <20180806115256.GC17525@sirena.org.uk>
-References: <cover.1533151956.git.gustavo@embeddedor.com>
- <8e3df79b1dca92d49fd9d5c97391d31814ab40f9.1533151956.git.gustavo@embeddedor.com>
- <30613.1533313609@turing-police.cc.vt.edu>
- <85d918a5-6a14-ead0-4d0e-d63b5e43ad81@embeddedor.com>
- <20180803164504.GF6591@sirena.org.uk>
- <684a4fe9-6818-d19c-e7b7-fb8d592a0cee@embeddedor.com>
- <39703.1533318918@turing-police.cc.vt.edu>
- <20180806113426.GA17525@sirena.org.uk>
- <e839abf4-cf54-fe2e-7eb8-57b12106b586@embeddedor.com>
+        Mon, 6 Aug 2018 10:02:50 -0400
+X-UUID: edcc95acbf4648a5b74672c4fb050e32-20180806
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
+        (envelope-from <stu.hsieh@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 719257665; Mon, 06 Aug 2018 19:53:56 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs03n1.mediatek.inc (172.21.101.181) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Mon, 6 Aug 2018 19:53:55 +0800
+Received: from [172.21.84.99] (172.21.84.99) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Mon, 6 Aug 2018 19:53:55 +0800
+Message-ID: <1533556434.11190.70.camel@mtksdccf07>
+Subject: Re: [PATCH v2 12/15] drm/mediatek: add callback function to return
+ RDMA layer number
+From:   Stu Hsieh <stu.hsieh@mediatek.com>
+To:     CK Hu <ck.hu@mediatek.com>
+CC:     Philipp Zabel <p.zabel@pengutronix.de>,
+        David Airlie <airlied@linux.ie>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <dri-devel@lists.freedesktop.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <srv_heupstream@mediatek.com>
+Date:   Mon, 6 Aug 2018 19:53:54 +0800
+In-Reply-To: <1533273202.31144.8.camel@mtksdaap41>
+References: <1533265868-28110-1-git-send-email-stu.hsieh@mediatek.com>
+         <1533265868-28110-13-git-send-email-stu.hsieh@mediatek.com>
+         <1533273202.31144.8.camel@mtksdaap41>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="96YOpH+ONegL0A3E"
-Content-Disposition: inline
-In-Reply-To: <e839abf4-cf54-fe2e-7eb8-57b12106b586@embeddedor.com>
-X-Cookie: A song in time is worth a dime.
-User-Agent: Mutt/1.10.0 (2018-05-17)
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi, CK:
 
---96YOpH+ONegL0A3E
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Fri, 2018-08-03 at 13:13 +0800, CK Hu wrote:
+> Hi, Stu:
+> 
+> On Fri, 2018-08-03 at 11:11 +0800, Stu Hsieh wrote:
+> > This patch add callback function to return RDMA layer number
+> > 
+> > Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
+> > ---
+> >  drivers/gpu/drm/mediatek/mtk_disp_rdma.c | 10 ++++++++++
+> >  1 file changed, 10 insertions(+)
+> > 
+> > diff --git a/drivers/gpu/drm/mediatek/mtk_disp_rdma.c b/drivers/gpu/drm/mediatek/mtk_disp_rdma.c
+> > index b728f0f42611..8c145a87c9e5 100644
+> > --- a/drivers/gpu/drm/mediatek/mtk_disp_rdma.c
+> > +++ b/drivers/gpu/drm/mediatek/mtk_disp_rdma.c
+> > @@ -60,6 +60,7 @@
+> >  
+> >  struct mtk_disp_rdma_data {
+> >  	unsigned int fifo_size;
+> > +	unsigned int layer_nr;
+> >  };
+> >  
+> >  /**
+> > @@ -194,6 +195,13 @@ static unsigned int rdma_fmt_convert(struct mtk_disp_rdma *rdma,
+> >  	}
+> >  }
+> >  
+> > +static unsigned int mtk_rdma_layer_nr(struct mtk_ddp_comp *comp)
+> > +{
+> > +	struct mtk_disp_rdma *rdma = comp_to_rdma(comp);
+> > +
+> > +	return rdma->data->layer_nr;
+> 
+> Maybe RDMA always has one layer, so you could just return 1 here.
+> 
+> Regards,
+> CK
+> 
+OK
 
-On Mon, Aug 06, 2018 at 06:48:13AM -0500, Gustavo A. R. Silva wrote:
+Regards,
+Stu
 
-Please fix your mail client to word wrap within paragraphs at something
-substantially less than 80 columns.  Doing this makes your messages much
-easier to read and reply to.
+> > +}
+> > +
+> >  static void mtk_rdma_layer_config(struct mtk_ddp_comp *comp, unsigned int idx,
+> >  				  struct mtk_plane_state *state)
+> >  {
+> > @@ -227,6 +235,7 @@ static const struct mtk_ddp_comp_funcs mtk_disp_rdma_funcs = {
+> >  	.stop = mtk_rdma_stop,
+> >  	.enable_vblank = mtk_rdma_enable_vblank,
+> >  	.disable_vblank = mtk_rdma_disable_vblank,
+> > +	.layer_nr = mtk_rdma_layer_nr,
+> >  	.layer_config = mtk_rdma_layer_config,
+> >  };
+> >  
+> > @@ -329,6 +338,7 @@ static const struct mtk_disp_rdma_data mt2701_rdma_driver_data = {
+> >  
+> >  static const struct mtk_disp_rdma_data mt8173_rdma_driver_data = {
+> >  	.fifo_size = SZ_8K,
+> > +	.layer_nr = 1,
+> >  };
+> >  
+> >  static const struct of_device_id mtk_disp_rdma_driver_dt_match[] = {
+> 
+> 
 
-> OK. I'll send a patch for this. But I wonder what's the best approach in this case,
-> so the fix can also be applied to stable.
 
-Just send a patch, a fixup can be done when the backport fails.
-
---96YOpH+ONegL0A3E
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAltoNpgACgkQJNaLcl1U
-h9Da6gf/dukgSwGIXxOxmgpBKOx6lqhNe2fZpx7a+q15BfKjqHYs6BQAN2HgVFxH
-rpqZAEaBqAbwzWl19VCVR6mOg1837QyZuLtydHnQRtiJXl+vvDUCvhu8a/ARWINu
-FBYCwHqKKWb8YMsYvzCq5HNYu5v4dIzTeqrTBXrz0XPvJ5Us/r2big1mQXy1jhLl
-FqA9wUOtXX/ItN2I5zOkseOlwiMW68fgLkEK3FqnaWWlTEuCpvEE0TA5P8ubFiK5
-3y+Em38HkQpeKa9P2MBU2iWldO8wxc02/v5F3zCqDAiUQdNVPC3ahHR8BkQ8Y4Kl
-T8pJfB6IFydPp/rAmQBcGML+DegYhQ==
-=v3dR
------END PGP SIGNATURE-----
-
---96YOpH+ONegL0A3E--
