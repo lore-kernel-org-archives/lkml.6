@@ -2,99 +2,78 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 361B0C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 08:34:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02BB4C4646D
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 08:37:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED5D7219E6
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 08:34:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED5D7219E6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i2se.com
+	by mail.kernel.org (Postfix) with ESMTP id 9BB16214DC
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 08:37:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fR7wB85I"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BB16214DC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727507AbeHFKmi (ORCPT
+        id S1726954AbeHFKpc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 06:42:38 -0400
-Received: from mout.kundenserver.de ([217.72.192.75]:35871 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726412AbeHFKmi (ORCPT
+        Mon, 6 Aug 2018 06:45:32 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:54054 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725951AbeHFKpc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 06:42:38 -0400
-Received: from [192.168.178.69] ([109.104.50.219]) by mrelayeu.kundenserver.de
- (mreue102 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 0MFtVW-1fju5J1Zyg-00Ex15; Mon, 06 Aug 2018 10:34:15 +0200
-Subject: Re: [PATCH] staging/vc04_services: Fix alignment of function
- arguments
-To:     Greg Gallagher <greg@embeddedgreg.com>
-Cc:     eric@anholt.net, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-References: <20180806040731.5113-1-greg@embeddedgreg.com>
-From:   Stefan Wahren <stefan.wahren@i2se.com>
-Message-ID: <a3c26117-1774-f23e-37d0-2312d4312b63@i2se.com>
-Date:   Mon, 6 Aug 2018 10:34:13 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 6 Aug 2018 06:45:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=8IPaT0Wobg/0V5tXVnsK2seHVA/CXrBBtwAwP6ULiVc=; b=fR7wB85I3NibxjLUJ5r20WaMu
+        U4a8K39NBdZHEQjID6KkWjrdzWUggKEdh94cCvA3k4qfEcSPFLMqEXo9bG43yy/TOs1EYqOpKrAh1
+        QfcDLoYEGVx8VGSEccv0UofdjCQnicIzMlP2axLXXF67bMjEk6pxWz6AuUFc87jDFn7CCZ0kPv2iR
+        cDBO54eaULaf/zd3sJKEaqpRNEjstv3Ycj2uZhSnCbN5XLvqE8s05Ey9oMPvHdYNWOmXlf/9R8pvZ
+        7GKahEBYuLBEwVwScN45OKPNkEKWbLLoqvOv7zLVbuvFZTmp15AZclPpCF3zPNk1F3/F/7HgO6Ds8
+        0KCqxY5YQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fmb18-0003u3-Vj; Mon, 06 Aug 2018 08:37:30 +0000
+Date:   Mon, 6 Aug 2018 01:37:30 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     Alan Stern <stern@rowland.harvard.edu>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] USB: OHCI: ohci-sm501: complete URBs in BH context
+Message-ID: <20180806083730.GA32650@infradead.org>
+References: <1533355279-26725-1-git-send-email-linux@roeck-us.net>
 MIME-Version: 1.0
-In-Reply-To: <20180806040731.5113-1-greg@embeddedgreg.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Provags-ID: V03:K1:ec+U9AI8uf/jWlfpOrCgDwbk4TvfijSttmufPvYTVK6xu6utHZg
- MfJGUpMlhQrYxf0+WKuYWrAECSGp3I5RIZDivrtu8NWiLiAR5e1eyGyHGiEKJeq8jMGxioe
- MfL+W80tIFsb/OtyUrLiSSR+6ZFkpbsj//2yeF+haOBIo0RnHnO7oTHJnOIBSOvgLaLCI33
- QdFQ8RhkLjxfpZPTsz6Ig==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:xVWlam5BX2Y=:dM7glSGVibElDo30CKyM9y
- oUhLioDcbWvfXedOwg1e2ntr1WlCb5zgFkTkkul4Vbd+5Vy80fUl4+JYbvUHhMbUHElaT72hX
- +daCFRhuLnHO3B82JlADBNnx4f1T9EG8gQza3zW1QnRgi7GUIgDlghSnQJzaUJWP64v4oNZnd
- wskb+MFe5J16HSrT+/3MJlAY7j/zUsl0nv3xwlg9+aGrjgSGPMzW79I64/vT1+c/nR9wz35U4
- umic6di3xJxp/1DrlpiwuzXfMOxkfnVG4iRCzAB2wY+NkBh1bODNXhPZW/ggnDOhBckkoXrE4
- 75YuGa7vd/bdjXycMfpVzo7YirOBfI9GInN5RrQwQno7cQK73tBOHwhlv6XihMTQZvZRs7e12
- 7ktXElWdlhB7OVZ8G1mFW412utDbKmHkvzoxKb78YrdPZk2qWQdW4p4h5cC4GxA3l7LAIUpPV
- HNMVUov7k0uKiMc4qvStkbJPASsAsznaKP7eAN/wz6BcMsn2i24PiBpaxTrfy/smA+idmRvnk
- 9vsZL0Y7s73NmH7XiTTN7Ko4yThsWUcxwZYIDhAUcDDUTOK0PzwDuD7KpS63CvxlPXGIlZuY1
- u3K1XqUjieO3n9E/FLsJ+PBOv7cj17YJ9n+RQbOvMLlTXdUDW/5tQV16ibeGordQeCOY/RPk8
- skWVk6szMtU5o7CUjOmBny6uv+0xTh+xzRnBENdSvQE6p3yEVHgffJJBYmsTAhEhPrPFCIZJI
- 1rYWW37Px05kIxPv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1533355279-26725-1-git-send-email-linux@roeck-us.net>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Fri, Aug 03, 2018 at 09:01:19PM -0700, Guenter Roeck wrote:
+> Testing an USB drive connected to ohci-sm501 results in a large number
+> of runtime warnings.
 
-Am 06.08.2018 um 06:07 schrieb Greg Gallagher:
-> Fix warning generated by checkpatch.pl for alignment should match open
-> parenthesis.  This is a coding style change only.
->
-> Signed-off-by: Greg Gallagher <greg@embeddedgreg.com>
-> ---
->   drivers/staging/vc04_services/bcm2835-audio/bcm2835-ctl.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-ctl.c b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-ctl.c
-> index ec468d5719b1..33ae8ae8663b 100644
-> --- a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-ctl.c
-> +++ b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-ctl.c
-> @@ -174,7 +174,7 @@ static struct snd_kcontrol_new snd_bcm2835_ctl[] = {
->   };
->   
->   static int snd_bcm2835_spdif_default_info(struct snd_kcontrol *kcontrol,
-> -	struct snd_ctl_elem_info *uinfo)
-> +					  struct snd_ctl_elem_info *uinfo)
->   {
->   	uinfo->type = SNDRV_CTL_ELEM_TYPE_IEC958;
->   	uinfo->count = 1;
+As far as I can tell this driver uses the HCD_LOCAL_MEM feature flag
+for memory declared using dma_declare_coherent_memory.  Unlike the
+mormal dma mapping interfaces this special case can actually be freed
+from interrupt context, and we have a fix for this warning queued
+up in linux-next:
 
-in case this is the only alignment issue in the whole driver, you can 
-have my acked-by.
-Otherwise please fix the other ones in the second version.
+http://git.infradead.org/users/hch/dma-mapping.git/commitdiff/d27fb99f62af7b79c542d161aa5155ed57271ddc
 
-Btw there are more drivers under vc04_services so a "staging: 
-bcm2835-audio: Fix alignment of functions arguments" would be better.
-
-Stefan
+That being said I'm generally very unhappy how dma_init_coherent_memory
+turned out.  The idea was to allow device local memory to be hidden
+behind the DMA API, but in general we use it either as a way to declare
+special uncache system memory (which would really be the plaform codes
+job), or as a magic bounce buffer like in the USB code.  I plan to
+eventually untangle this, but it is going to take some time.
