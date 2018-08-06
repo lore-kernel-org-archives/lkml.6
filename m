@@ -2,61 +2,95 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27A82C46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 17:43:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAA1CC46472
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 17:44:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E13D521A32
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 17:43:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E13D521A32
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id 7C0B921A61
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 17:44:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C0B921A61
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732995AbeHFTx5 (ORCPT
+        id S1733017AbeHFTyW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 15:53:57 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:55160 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732102AbeHFTx5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 15:53:57 -0400
-Received: from localhost (c-24-20-22-31.hsd1.or.comcast.net [24.20.22.31])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id B954F133E98F4;
-        Mon,  6 Aug 2018 10:43:48 -0700 (PDT)
-Date:   Mon, 06 Aug 2018 10:43:48 -0700 (PDT)
-Message-Id: <20180806.104348.60564757746017342.davem@davemloft.net>
-To:     yangbo.lu@nxp.com
-Cc:     netdev@vger.kernel.org, richardcochran@gmail.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ptp_qoriq: use div_u64/div_u64_rem for 64-bit division
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20180806043911.15437-1-yangbo.lu@nxp.com>
-References: <20180806043911.15437-1-yangbo.lu@nxp.com>
-X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 06 Aug 2018 10:43:48 -0700 (PDT)
+        Mon, 6 Aug 2018 15:54:22 -0400
+Received: from mx2.suse.de ([195.135.220.15]:34822 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730922AbeHFTyW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 15:54:22 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 2F0F2AE1D;
+        Mon,  6 Aug 2018 17:44:12 +0000 (UTC)
+Date:   Mon, 6 Aug 2018 19:44:10 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     syzbot <syzbot+bab151e82a4e973fa325@syzkaller.appspotmail.com>
+Cc:     cgroups@vger.kernel.org, dvyukov@google.com, hannes@cmpxchg.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        penguin-kernel@I-love.SAKURA.ne.jp,
+        syzkaller-bugs@googlegroups.com, vdavydov.dev@gmail.com
+Subject: Re: WARNING in try_charge
+Message-ID: <20180806174410.GB10003@dhcp22.suse.cz>
+References: <fc6e173e-8bda-269f-d44f-1c5f5215beac@I-love.SAKURA.ne.jp>
+ <0000000000006350880572c61e62@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0000000000006350880572c61e62@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yangbo Lu <yangbo.lu@nxp.com>
-Date: Mon,  6 Aug 2018 12:39:11 +0800
-
-> This is a fix-up patch for below build issue with multi_v7_defconfig.
+On Mon 06-08-18 08:42:02, syzbot wrote:
+> Hello,
 > 
-> drivers/ptp/ptp_qoriq.o: In function `qoriq_ptp_probe':
-> ptp_qoriq.c:(.text+0xd0c): undefined reference to `__aeabi_uldivmod'
+> syzbot has tested the proposed patch but the reproducer still triggered
+> crash:
+> WARNING in try_charge
 > 
-> Fixes: 91305f281262 ("ptp_qoriq: support automatic configuration for ptp timer")
-> Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
+> Killed process 6410 (syz-executor5) total-vm:37708kB, anon-rss:2128kB,
+> file-rss:0kB, shmem-rss:0kB
+> oom_reaper: reaped process 6410 (syz-executor5), now anon-rss:0kB,
+> file-rss:0kB, shmem-rss:0kB
+> task=syz-executor5 pid=6410 invoked memcg oom killer. oom_victim=1
 
-Applied.
+Thank you. This is useful. The full oom picture is this
+: [   65.363983] task=syz-executor5 pid=6415 invoked memcg oom killer. oom_victim=0
+[...]
+: [   65.920355] Task in /ile0 killed as a result of limit of /ile0
+: [   65.926389] memory: usage 0kB, limit 0kB, failcnt 20
+: [   65.931518] memory+swap: usage 0kB, limit 9007199254740988kB, failcnt 0
+: [   65.938296] kmem: usage 0kB, limit 9007199254740988kB, failcnt 0
+: [   65.944467] Memory cgroup stats for /ile0: cache:0KB rss:0KB rss_huge:0KB shmem:0KB mapped_file:0KB dirty:0KB writeback:0KB swap:0KB inactive_anon:0KB active_anon:0KB inactive_file:0KB active_file:0KB unevictable:0KB
+: [   65.963878] Tasks state (memory values in pages):
+: [   65.968743] [  pid  ]   uid  tgid total_vm      rss pgtables_bytes swapents oom_score_adj name
+: [   65.977615] [   6410]     0  6410     9427      532    61440        0             0 syz-executor5
+: [   65.986647] Memory cgroup out of memory: Kill process 6410 (syz-executor5) score 547000 or sacrifice child
+: [   65.996474] Killed process 6410 (syz-executor5) total-vm:37708kB, anon-rss:2128kB, file-rss:0kB, shmem-rss:0kB
+: [   66.007471] oom_reaper: reaped process 6410 (syz-executor5), now anon-rss:0kB, file-rss:0kB, shmem-rss:0kB
+: [   66.017652] task=syz-executor5 pid=6410 invoked memcg oom killer. oom_victim=1
+: [   66.025137] ------------[ cut here ]------------
+: [   66.029927] Memory cgroup charge failed because of no reclaimable memory! This looks like a misconfiguration or a kernel bug.
+: [   66.030061] WARNING: CPU: 1 PID: 6410 at mm/memcontrol.c:1707 try_charge+0x734/0x1680
+
+So we have only a single task in the memcg and it is this task which
+triggers the OOM. It gets killed and oom_reaped. This means that
+out_of_memory should return with true and so we should retry and force
+the charge as I've already mentioned. For some reason this task has
+triggered the oom killer path again and then we haven't found any
+eligible task and resulted in the warning. This shouldn't happen.
+
+I will stare to the code some more to see how the heck we get there
+without passing 
+	if (unlikely(tsk_is_oom_victim(current) ||
+		     fatal_signal_pending(current) ||
+		     current->flags & PF_EXITING))
+		goto force;
+-- 
+Michal Hocko
+SUSE Labs
