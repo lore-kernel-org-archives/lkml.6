@@ -2,155 +2,110 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CFDEC4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 08:31:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32BBEC4646D
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 08:31:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F0DA219E6
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 08:31:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DEDC7219E5
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 08:31:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="DvCzq+IW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F0DA219E6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="C0Q6FcGS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEDC7219E5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728278AbeHFKjn (ORCPT
+        id S1728450AbeHFKjx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 06:39:43 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:39160 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726526AbeHFKjn (ORCPT
+        Mon, 6 Aug 2018 06:39:53 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:37976 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726526AbeHFKjw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 06:39:43 -0400
-Received: by mail-ed1-f65.google.com with SMTP id h4-v6so4722681edi.6
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Aug 2018 01:31:45 -0700 (PDT)
+        Mon, 6 Aug 2018 06:39:52 -0400
+Received: by mail-oi0-f67.google.com with SMTP id v8-v6so20733822oie.5
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Aug 2018 01:31:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=y7eFs2EADbfBpjWdaLKFsPipUILblwKinF/nxAh4n7E=;
-        b=DvCzq+IWfW753RQeDBU3lMpJBNSRW6ANGC+ixh+cziN1i1mkXgqGmvbNMZLjA3X/zu
-         XxHBEs4c/Yd45y8Ozqx9Xlv1Vs1aPEdoSAt5YJJ5HK6E+YZe0Ry7mwjjAg+7/vr8WHg0
-         sg+Z3yWBvsRCgXNFza4YnXIPcKGZlVBBv7qXI=
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=pG4YbU/IINrULhPLQhHaYcTCt0yYRQ3J8bfMTKVcN6w=;
+        b=C0Q6FcGS8tovnTQ4EncHz+fYo7trPOPaJwjSFkHBBJlONrFJAy+lFqwNHq+4qFIIXb
+         JUtWXt0be2/jzVZ2ElsQMgaOErJlXey3MzyQ84dsIr2NUuLQjBMKAHcVBRBMH40ZbTPQ
+         vZ7ODLfxsGc4GW8K4RTFZC6mfX7vC1zrb8yAs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=y7eFs2EADbfBpjWdaLKFsPipUILblwKinF/nxAh4n7E=;
-        b=oGSDTar/ndiqt1ehcu3Z7LZVl+eRsLP66obRMpUhYn4C1MI6QJDGtcqZWpB7QiBxGK
-         rR/4VLG5PqusAmK3bOJlc9m2nbRHi4nlWfVHnhEqmgNIpyu/TPtJkN1B/M+8s9bxgN1q
-         Td/fCtUdJXnTl2T+x7hjjVqTUCgSHjtBHBTguJgj+p2dvSdWLgrXE7xNQoy0LeLpmNoz
-         I5u1hbubngqxAzKhChwIAkM7Ibb6obtiiuktsRcKMAiYa2UQYWYMvXtNFSKqO9u6Gney
-         KkOBlYYiJxvOgTsg+6U2SDniuW+FGNizQ0dSlCg36qCbF0+S/z86Tt3Jn0+pksDiiBmR
-         /iPg==
-X-Gm-Message-State: AOUpUlFVsTj4dmJ6qoKAK3l6PFltOvi4F4cHfLs33l/aMsFDKBt0sSZP
-        USBbpNQWERw1dHmGr7zLeZ9V+g==
-X-Google-Smtp-Source: AAOMgpfV2Whfg5BkjMLBuDRsV1sfLG+Yxm2VqqrPBYAtbq8p28LY3cq79VZi30xqRMmLCx+6tSQmKQ==
-X-Received: by 2002:a50:bec2:: with SMTP id e2-v6mr17367493edk.283.1533544304436;
-        Mon, 06 Aug 2018 01:31:44 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:56fc:0:d707:d7d8:b180:96e5])
-        by smtp.gmail.com with ESMTPSA id v56-v6sm8543482edm.97.2018.08.06.01.31.43
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 06 Aug 2018 01:31:43 -0700 (PDT)
-Date:   Mon, 6 Aug 2018 10:31:41 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Lyude Paul <lyude@redhat.com>
-Cc:     nouveau@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Sean Paul <seanpaul@chromium.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Ville =?iso-8859-1?Q?Syrj=E4l=E4?= 
-        <ville.syrjala@linux.intel.com>
-Subject: Re: [PATCH 0/2] Fix connector probing deadlocks from RPM bugs
-Message-ID: <20180806083141.GH3008@phenom.ffwll.local>
-Mail-Followup-To: Lyude Paul <lyude@redhat.com>,
-        nouveau@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
-        Sean Paul <seanpaul@chromium.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-References: <20180718205645.25924-1-lyude@redhat.com>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=pG4YbU/IINrULhPLQhHaYcTCt0yYRQ3J8bfMTKVcN6w=;
+        b=TN8xR2YUQAZyC0gJNmZXgdkSNxcJBfO5YccuzHL9HA2rb8tLxxQqsVC7yNoS67RoMd
+         N3/bG/JHxltN5Z+zC2eToIEWfqqgAVEl4IU4Pal1WAk7Mo840Ui3Q+oW6NMdCMTna/Qn
+         cH+VI8hwhjsGfol77SVBECZJ5bjX9+qvTIv+SlNFtsHgUA5+g9fF3KQ2TLb02YY3Te4L
+         11ZKrzXOoUHc/c7Naa038EKEkanFppUcV3FZCbNZMut1/vCx38wzgjb+rQ1zbTD3/OHK
+         eN+YxRuhxpcVzFlLLY+4pjwKRpqKTdnMHUEkeb58JoY1i2HIJVbGnAuw8aJyv+y9OP5O
+         iWcg==
+X-Gm-Message-State: AOUpUlFP/CXNgViMtw8OxaTl5WSaF2Rueeva9AmPhe08TyAQNlHaKTkV
+        8KKUKFvXJA6MpyCPjytSeBWFzL1to9M9qdpNhA6D1Q==
+X-Google-Smtp-Source: AAOMgpdq8huxZp2Njr9yZwRXRF+i6WX+0XBQuNw7wACzOkJhGOPDbhCaxcARs11te4d8lwwhyHam/LY2a+WH600qDDY=
+X-Received: by 2002:aca:c5:: with SMTP id 188-v6mr12960731oia.128.1533544315358;
+ Mon, 06 Aug 2018 01:31:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180718205645.25924-1-lyude@redhat.com>
-X-Operating-System: Linux phenom 4.14.0-3-amd64 
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Received: by 2002:a9d:237a:0:0:0:0:0 with HTTP; Mon, 6 Aug 2018 01:31:54 -0700 (PDT)
+In-Reply-To: <20180806080617.GA19523@amd>
+References: <c43374283744539702023053c896efe3c73b7833.1533441631.git.baolin.wang@linaro.org>
+ <3d7e8701-d92b-9f51-befa-a585b5957488@gmail.com> <CAMz4kuLSBLReVSo4zXf8b64kwCmRt2PS=JkeD2wJO41X-WmBQQ@mail.gmail.com>
+ <20180806070958.GA5231@amd> <CAMz4kuKdtFDfvc4Lrx6yG5yu=qYRPj8MS5phxcLBkdKAPwXZyQ@mail.gmail.com>
+ <20180806080617.GA19523@amd>
+From:   Baolin Wang <baolin.wang@linaro.org>
+Date:   Mon, 6 Aug 2018 16:31:54 +0800
+Message-ID: <CAMz4kuJMPc6bVZZbJif2cmx3Ea0xc1Bc4JYyEQjaskppGNddtA@mail.gmail.com>
+Subject: Re: [PATCH v4 1/2] leds: core: Introduce LED pattern trigger
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        rteysseyre@gmail.com, Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 18, 2018 at 04:56:38PM -0400, Lyude Paul wrote:
-> This is a trimmed down version of
-> 
-> https://patchwork.freedesktop.org/series/46637/
-> 
-> with all of the review comments addressed.
-> 
-> The last version of this series had fixes for the i2c and DP aux busses
-> to ensure that the GPU would be turned on whenever anything tried to
-> access the i2c/aux busses. Unfortunately: one of the fixes apparently
-> contained some very incorrect usage of Linux's runtime PM interface in
-> order to prevent runtime suspend/resume requests coming from within
-> nouveau's suspend/resume callbacks from deadlocking the system.
-> 
-> Turns out: fixing the i2c/dp aux problem is a lot harder then I
-> originally anticipated. We either need to come up with helpers for DRM
-> that work around the PM core, which is really not ideal, or come up with
-> a new feature for the RPM core that allows us to inhibit suspend/resume
-> callbacks. The former seems to be somewhat trivial to implement, but
-> coming up with a decent interface for that is going to take a bit more
-> time and I'd much rather have issues causing deadlocks get fixed first.
-> This means that drm_dp_aux_dev is going to be broken on nouveau for
-> laptops with hybrid GPUs using RPM, but it was already broken before
-> anyhow.
-> 
-> So: this just contains the seriously important fixes that will stop
-> people's machines from crashing very hard. Hopefully I can come up with
-> a solution to the i2c/aux problem soon after fixing some other glaring
-> MST bugs nouveau currently has.
+On 6 August 2018 at 16:06, Pavel Machek <pavel@ucw.cz> wrote:
+> On Mon 2018-08-06 15:33:12, Baolin Wang wrote:
+>> Hi Pavel,
+>>
+>> On 6 August 2018 at 15:09, Pavel Machek <pavel@ucw.cz> wrote:
+>> > Hi!
+>> >
+>> >> > In current implementation this file on read returns the number
+>> >> > of remaining repeat intervals. I'd add that to this description.
+>> >>
+>> >> I saw Pavel's comments that he did not suggest do this. So I will keep
+>> >> the original description?
+>> >
+>> > If that is accepted, the code should return originally written number.
+>>
+>> But I think it is more reasonable if user can know how many
+>> repetitions were left. So for your hardware case, can we add
+>> pattern_get() interface back to get the repetition number?
+>
+> Well, I'd say that we are mostly seeing "infinite" repetitions, or one
+> repetition.
+>
+> Yes, interface could be added to the lowlever driver -- but I'm not
+> sure hardware really supports getting that information; could be
+> tricky on N900 for example.
+>
+> I'd keep it simple for now.
 
-Why do we need all this? i915 has full rpm support, including i2c and dp
-aux correctly working, and everything else too. Why is nouveau special?
-
-Also, there's a metric pile of other drivers using the existing helpers an
-infrastructure, with full rpm support, all seemingly being happy too.
-
-Given all that it smells a bit like nouveau has it's rpm design backwards,
-which would indicate that these new helpers should be nouveau-specific
-wrappers and not generic. If that's not the case, then I'd like to first
-understand why nouveau needs them and why no one else seems to need these.
--Daniel
-
-> 
-> Lyude Paul (2):
->   drm/fb_helper: Add drm_fb_helper_output_poll_changed_with_rpm()
->   drm/probe_helper: Add
->     drm_helper_probe_single_connector_modes_with_rpm()
-> 
->  drivers/gpu/drm/drm_fb_helper.c             | 23 +++++++++++++++
->  drivers/gpu/drm/drm_probe_helper.c          | 31 +++++++++++++++++++++
->  drivers/gpu/drm/nouveau/dispnv50/disp.c     |  4 +--
->  drivers/gpu/drm/nouveau/nouveau_connector.c |  4 +--
->  include/drm/drm_crtc_helper.h               |  7 +++--
->  include/drm/drm_fb_helper.h                 |  5 ++++
->  6 files changed, 67 insertions(+), 7 deletions(-)
-> 
-> -- 
-> 2.17.1
-> 
+OK, I also like to keep it simple. I am fine the repeat file returns
+originally written number. If Jacek also agrees with this, then I will
+update new version.
 
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Baolin Wang
+Best Regards
