@@ -2,156 +2,141 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4837BC46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 22:12:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 447C7C46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 22:15:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 003B521A56
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 22:12:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="TgtJJo16"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 003B521A56
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id E818921A5B
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 22:15:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E818921A5B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732884AbeHGAXn (ORCPT
+        id S1732889AbeHGA03 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 20:23:43 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:40190 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727665AbeHGAXn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 20:23:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=in9q7ioRCIVI65NFTp7CjJ6ZKqyEuNvqc6fGZlLiLH4=; b=TgtJJo16G16RKiD7kNUQ6xHtO
-        ULJzINHxdIsn8wbiYW1qyPiAy/VGQdRQHqyXhDW2FzmB2isjeq3D1Bc64fHN1D9h847MEHN6+6uwi
-        SUbDvjqgC4c2B4Sq+Y+ixuLq21s9PILn8cWMMhdYcb9Dr0ZCTsOajS15NtcdVVfT9sa93RiyOUIxE
-        WdLGhkoFtDqIFcaR9xoopCF0CW0W+HMgYigl3JpcpQSczjIgvS9kquRUMbN2y2x1Am7rYw/QWlYJX
-        wvBYklx8F4SeahmhKnCurcpWMyU0RnB5PoUlF8bPbjYpid/ADCxsUqJg0zH+fmsl0FkNl/boLKe4Q
-        eqdv/5Eow==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fmnjn-0004N1-67; Mon, 06 Aug 2018 22:12:27 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id CC2C82058A22B; Tue,  7 Aug 2018 00:12:25 +0200 (CEST)
-Date:   Tue, 7 Aug 2018 00:12:25 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Reinette Chatre <reinette.chatre@intel.com>
-Cc:     Dave Hansen <dave.hansen@intel.com>, tglx@linutronix.de,
-        mingo@redhat.com, fenghua.yu@intel.com, tony.luck@intel.com,
-        vikas.shivappa@linux.intel.com, gavin.hindman@intel.com,
-        jithu.joseph@intel.com, hpa@zytor.com, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] x86/intel_rdt and perf/x86: Fix lack of coordination
- with perf
-Message-ID: <20180806221225.GO2458@hirez.programming.kicks-ass.net>
-References: <653e874f-5e77-a9b5-996a-ed9daa3c6d43@intel.com>
- <20180802195410.GR2494@hirez.programming.kicks-ass.net>
- <d64f85e8-98ca-a81d-bf2d-13dd72fc411e@intel.com>
- <20180802201312.GS2494@hirez.programming.kicks-ass.net>
- <086b93f5-da5b-b5e5-148a-cef25117b963@intel.com>
- <20180803104956.GU2494@hirez.programming.kicks-ass.net>
- <1eece033-fbae-c904-13ad-1904be91c049@intel.com>
- <20180803152523.GY2476@hirez.programming.kicks-ass.net>
- <d6df8a8a-f0f2-48f7-1c1d-c8893e1583c9@intel.com>
- <57c011e1-113d-c38f-c318-defbad085843@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <57c011e1-113d-c38f-c318-defbad085843@intel.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Mon, 6 Aug 2018 20:26:29 -0400
+Received: from gate.crashing.org ([63.228.1.57]:50631 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727665AbeHGA03 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 20:26:29 -0400
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w76MDuYl009510;
+        Mon, 6 Aug 2018 17:13:57 -0500
+Message-ID: <93518075238a07e9f011774d89bdc652c083f1ba.camel@kernel.crashing.org>
+Subject: Re: [RFC 0/4] Virtio uses DMA API for all devices
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        aik@ozlabs.ru, robh@kernel.org, joe@perches.com,
+        elfring@users.sourceforge.net, david@gibson.dropbear.id.au,
+        jasowang@redhat.com, mpe@ellerman.id.au, linuxram@us.ibm.com,
+        haren@linux.vnet.ibm.com, paulus@samba.org,
+        srikar@linux.vnet.ibm.com, robin.murphy@arm.com,
+        jean-philippe.brucker@arm.com, marc.zyngier@arm.com
+Date:   Tue, 07 Aug 2018 08:13:56 +1000
+In-Reply-To: <20180807002857-mutt-send-email-mst@kernel.org>
+References: <20180803070507.GA1344@infradead.org>
+         <eb1750e90e4bd45da297fa6f78f8ef93671b7c2f.camel@kernel.crashing.org>
+         <20180803220443-mutt-send-email-mst@kernel.org>
+         <051fd78e15595b414839fa8f9d445b9f4d7576c6.camel@kernel.crashing.org>
+         <20180805031046-mutt-send-email-mst@kernel.org>
+         <fd8fee94cf42e436878f179c7895de3a4dab3355.camel@kernel.crashing.org>
+         <20180806164106-mutt-send-email-mst@kernel.org>
+         <ef6d5d7c7b812bd797a1c3fd6bc7a26d0074020f.camel@kernel.crashing.org>
+         <20180806233024-mutt-send-email-mst@kernel.org>
+         <0967fc30001323e6e38ed12c8dba8ee3d1aa13f5.camel@kernel.crashing.org>
+         <20180807002857-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.4 (3.28.4-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 06, 2018 at 12:50:50PM -0700, Reinette Chatre wrote:
-> In my previous email I provided the details of the Cache Pseudo-Locking
-> feature implemented on top of resctrl. Please let me know if you would
-> like any more details about that. I can send you more materials.
-
-I've no yet had time to read..
-
-> BUG: sleeping function called from invalid context at
-> kernel/locking/mutex.c:748
+On Tue, 2018-08-07 at 00:46 +0300, Michael S. Tsirkin wrote:
+> On Tue, Aug 07, 2018 at 07:26:35AM +1000, Benjamin Herrenschmidt wrote:
+> > On Mon, 2018-08-06 at 23:35 +0300, Michael S. Tsirkin wrote:
+> > > > As I said replying to Christoph, we are "leaking" into the interface
+> > > > something here that is really what's the VM is doing to itself, which
+> > > > is to stash its memory away in an inaccessible place.
+> > > > 
+> > > > Cheers,
+> > > > Ben.
+> > > 
+> > > I think Christoph merely objects to the specific implementation.  If
+> > > instead you do something like tweak dev->bus_dma_mask for the virtio
+> > > device I think he won't object.
+> > 
+> > Well, we don't have "bus_dma_mask" yet ..or you mean dma_mask ?
+> > 
+> > So, something like that would be a possibility, but the problem is that
+> > the current virtio (guest side) implementation doesn't honor this when
+> > not using dma ops and will not use dma ops if not using iommu, so back
+> > to square one.
 > 
-> I thus continued to use the API with interrupts enabled did the following:
+> Well we have the RFC for that - the switch to using DMA ops unconditionally isn't
+> problematic itself IMHO, for now that RFC is blocked
+> by its perfromance overhead for now but Christoph says
+> he's trying to remove that for direct mappings,
+> so we should hopefully be able to get there in X weeks.
+
+That would be good yes.
+
+ ../..
+
+> > --- a/drivers/virtio/virtio_ring.c
+> > +++ b/drivers/virtio/virtio_ring.c
+> > @@ -155,7 +155,7 @@ static bool vring_use_dma_api(struct virtio_device
+> > *vdev)
+> >          * the DMA API if we're a Xen guest, which at least allows
+> >          * all of the sensible Xen configurations to work correctly.
+> >          */
+> > -       if (xen_domain())
+> > +       if (xen_domain() || arch_virtio_direct_dma_ops(&vdev->dev))
+> >                 return true;
+> >  
+> >         return false;
 > 
-> Two new event attributes:
-> static struct perf_event_attr l2_miss_attr = {
->         .type           = PERF_TYPE_RAW,
->         .config         = (0x10ULL << 8) | 0xd1,
+> Right but can't we fix the retpoline overhead such that
+> vring_use_dma_api will not be called on data path any longer, making
+> this a setup time check?
 
-Please use something like:
+Yes it needs to be a setup time check regardless actually !
 
-		X86_CONFIG(.event=0xd1, .umask=0x10),
+The above is broken, sorry I was a bit quick here (too early in the
+morning... ugh). We don't want the arch to go override the dma ops
+every time that is callled.
 
-that's ever so much more readable.
+But yes, if we can fix the overhead, it becomes just a matter of
+setting up the "right" ops automatically.
 
->         .size           = sizeof(struct perf_event_attr),
->         .pinned         = 1,
->         .disabled       = 1,
->         .exclude_user   = 1
-> };
+> > (Passing the dev allows the arch to know this is a virtio device in
+> > "direct" mode or whatever we want to call the !iommu case, and
+> > construct appropriate DMA ops for it, which aren't the same as the DMA
+> > ops of any other PCI device who *do* use the iommu).
 > 
-> static struct perf_event_attr l2_hit_attr = {
->         .type           = PERF_TYPE_RAW,
->         .config         = (0x2ULL << 8) | 0xd1,
->         .size           = sizeof(struct perf_event_attr),
->         .pinned         = 1,
->         .disabled       = 1,
->         .exclude_user   = 1
-> };
-> 
-> Create the two new events using these attributes:
-> l2_miss_event = perf_event_create_kernel_counter(&l2_miss_attr, cpu,
-> NULL, NULL, NULL);
-> l2_hit_event = perf_event_create_kernel_counter(&l2_hit_attr, cpu, NULL,
-> NULL, NULL);
-> 
-> Take measurements:
-> perf_event_enable(l2_miss_event);
-> perf_event_enable(l2_hit_event);
-> local_irq_disable();
-> /* Disable hardware prefetchers */
-> /* Loop through pseudo-locked memory */
-> /* Enable hardware prefetchers */
-> local_irq_enable();
-> perf_event_disable(l2_hit_event);
-> perf_event_disable(l2_miss_event);
-> 
-> Read results:
-> l2_hits = perf_event_read_value(l2_hit_event, &enabled, &running);
-> l2_miss = perf_event_read_value(l2_miss_event, &enabled, &running);
-> /* Make results available in tracepoints */
+> I think that's where Christoph might have specific ideas about it.
 
-switch to .disabled=0 and try this for measurement:
+OK well, assuming Christoph can solve the direct case in a way that
+also work for the virtio !iommu case, we still want some bit of logic
+somewhere that will "switch" to swiotlb based ops if the DMA mask is
+limited.
 
-	local_irq_disable();
-	perf_event_read_local(l2_miss_event, &miss_val1, NULL, NULL);
-	perf_event_read_local(l2_hit_event, &hit_val1, NULL, NULL);
-	/* do your thing */
-	perf_event_read_local(l2_miss_event, &miss_val2, NULL, NULL);
-	perf_event_read_local(l2_hit_event, &hit_val2, NULL, NULL);
-	local_irq_enable();
+You mentioned an RFC for that ? Do you happen to have a link ?
 
-You're running this on the CPU you created the event for, right?
+It would be indeed ideal if all we had to do was setup some kind of
+bus_dma_mask on all PCI devices and have virtio automagically insert
+swiotlb when necessary.
 
-> With the above implementation and a 256KB pseudo-locked memory region I
-> obtain the following results:
-> pseudo_lock_mea-755   [002] ....   396.946953: pseudo_lock_l2: hits=4140
+Cheers,
+Ben.
 
-> The above results are not accurate since it does not reflect the success
-> of the pseudo-locked region. Expected results are as we can currently
-> obtain (copying results from previous email):
-> pseudo_lock_mea-26090 [002] .... 61838.488027: pseudo_lock_l2: hits=4096
 
-Still fairly close.. only like 44 extra hits or 1% error.
