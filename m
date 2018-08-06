@@ -2,174 +2,186 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67642C46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 15:59:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35DEAC46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:01:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CDE121A51
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 15:59:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CDE121A51
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=citrix.com
+	by mail.kernel.org (Postfix) with ESMTP id E717021A56
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:01:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E717021A56
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733075AbeHFSJX (ORCPT
+        id S1733091AbeHFSK7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 14:09:23 -0400
-Received: from smtp.ctxuk.citrix.com ([185.25.65.24]:37685 "EHLO
-        SMTP.EU.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733018AbeHFSJW (ORCPT
+        Mon, 6 Aug 2018 14:10:59 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:46002 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733014AbeHFSK7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 14:09:22 -0400
-X-IronPort-AV: E=Sophos;i="5.51,452,1526342400"; 
-   d="scan'208";a="77237251"
-Date:   Mon, 6 Aug 2018 17:58:52 +0200
-From:   Roger Pau =?utf-8?B?TW9ubsOp?= <roger.pau@citrix.com>
-To:     Juergen Gross <jgross@suse.com>
-CC:     <linux-kernel@vger.kernel.org>, <xen-devel@lists.xenproject.org>,
-        <linux-block@vger.kernel.org>, <konrad.wilk@oracle.com>,
-        <axboe@kernel.dk>, <boris.ostrovsky@oracle.com>
-Subject: Re: [PATCH 1/4] xen/blkback: don't keep persistent grants too long
-Message-ID: <20180806155852.7jvudjpzzq6fdp33@mac>
-References: <20180806113403.24728-1-jgross@suse.com>
- <20180806113403.24728-2-jgross@suse.com>
+        Mon, 6 Aug 2018 14:10:59 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: eballetbo)
+        with ESMTPSA id E7DB2260C4A
+From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To:     David Airlie <airlied@linux.ie>
+Cc:     dnicoara@chromium.org, alexandros.frantzis@collabora.com,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Gustavo Padovan <gustavo.padovan@collabora.com>,
+        tomasz Figa <tfiga@chromium.org>,
+        Sean Paul <seanpaul@google.com>, kernel@collabora.com,
+        =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu@google.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>
+Subject: [PATCH] drm/atomic: add ATOMIC_AMEND flag to the Atomic IOCTL.
+Date:   Mon,  6 Aug 2018 18:01:02 +0200
+Message-Id: <20180806160102.11877-1-enric.balletbo@collabora.com>
+X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20180806113403.24728-2-jgross@suse.com>
-User-Agent: NeoMutt/20180716
-X-ClientProxiedBy: AMSPEX02CAS02.citrite.net (10.69.22.113) To
- AMSPEX02CL02.citrite.net (10.69.22.126)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 06, 2018 at 01:33:59PM +0200, Juergen Gross wrote:
-> Persistent grants are allocated until a threshold per ring is being
-> reached. Those grants won't be freed until the ring is being destroyed
-> meaning there will be resources kept busy which might no longer be
-> used.
-> 
-> Instead of freeing only persistent grants until the threshold is
-> reached add a timestamp and remove all persistent grants not having
-> been in use for a minute.
-> 
-> Signed-off-by: Juergen Gross <jgross@suse.com>
-> ---
->  drivers/block/xen-blkback/blkback.c | 77 +++++++++++++++++++++++--------------
->  drivers/block/xen-blkback/common.h  |  1 +
->  2 files changed, 50 insertions(+), 28 deletions(-)
+From: Gustavo Padovan <gustavo.padovan@collabora.com>
 
-You should document this new parameter in
-Documentation/ABI/testing/sysfs-driver-xen-blkback.
+This flag tells core to jump ahead the queued update if the conditions
+in drm_atomic_async_check() are met. That means we are only able to do an
+async update if no modeset is pending and update for the same plane is
+not queued.
 
-> 
-> diff --git a/drivers/block/xen-blkback/blkback.c b/drivers/block/xen-blkback/blkback.c
-> index b55b245e8052..485e3ecab144 100644
-> --- a/drivers/block/xen-blkback/blkback.c
-> +++ b/drivers/block/xen-blkback/blkback.c
-> @@ -84,6 +84,18 @@ MODULE_PARM_DESC(max_persistent_grants,
->                   "Maximum number of grants to map persistently");
->  
->  /*
-> + * How long a persistent grant is allowed to remain allocated without being in
-> + * use. The time is in seconds, 0 means indefinitely long.
-> + */
-> +
-> +unsigned int xen_blkif_pgrant_timeout = 60;
-> +module_param_named(persistent_grant_unused_seconds, xen_blkif_pgrant_timeout,
-> +		   uint, 0644);
-> +MODULE_PARM_DESC(persistent_grant_unused_seconds,
-> +		 "Time in seconds an unused persistent grant is allowed to "
-> +		 "remain allocated. Default is 60, 0 means unlimited.");
-> +
-> +/*
->   * Maximum number of rings/queues blkback supports, allow as many queues as there
->   * are CPUs if user has not specified a value.
->   */
-> @@ -123,6 +135,13 @@ module_param(log_stats, int, 0644);
->  /* Number of free pages to remove on each call to gnttab_free_pages */
->  #define NUM_BATCH_FREE_PAGES 10
->  
-> +static inline bool persistent_gnt_timeout(struct persistent_gnt *persistent_gnt)
-> +{
-> +	return xen_blkif_pgrant_timeout &&
-> +	       (jiffies - persistent_gnt->last_used >=
-> +		HZ * xen_blkif_pgrant_timeout);
-> +}
-> +
->  static inline int get_free_page(struct xen_blkif_ring *ring, struct page **page)
->  {
->  	unsigned long flags;
-> @@ -278,6 +297,7 @@ static void put_persistent_gnt(struct xen_blkif_ring *ring,
->  {
->  	if(!test_bit(PERSISTENT_GNT_ACTIVE, persistent_gnt->flags))
->  		pr_alert_ratelimited("freeing a grant already unused\n");
-> +	persistent_gnt->last_used = jiffies;
->  	set_bit(PERSISTENT_GNT_WAS_ACTIVE, persistent_gnt->flags);
->  	clear_bit(PERSISTENT_GNT_ACTIVE, persistent_gnt->flags);
->  	atomic_dec(&ring->persistent_gnt_in_use);
-> @@ -374,23 +394,23 @@ static void purge_persistent_gnt(struct xen_blkif_ring *ring)
->  	bool scan_used = false, clean_used = false;
->  	struct rb_root *root;
->  
-> -	if (ring->persistent_gnt_c < xen_blkif_max_pgrants ||
-> -	    (ring->persistent_gnt_c == xen_blkif_max_pgrants &&
-> -	    !ring->blkif->vbd.overflow_max_grants)) {
-> -		goto out;
-> -	}
-> -
->  	if (work_busy(&ring->persistent_purge_work)) {
->  		pr_alert_ratelimited("Scheduled work from previous purge is still busy, cannot purge list\n");
->  		goto out;
->  	}
->  
-> -	num_clean = (xen_blkif_max_pgrants / 100) * LRU_PERCENT_CLEAN;
-> -	num_clean = ring->persistent_gnt_c - xen_blkif_max_pgrants + num_clean;
-> -	num_clean = min(ring->persistent_gnt_c, num_clean);
-> -	if ((num_clean == 0) ||
-> -	    (num_clean > (ring->persistent_gnt_c - atomic_read(&ring->persistent_gnt_in_use))))
-> -		goto out;
-> +	if (ring->persistent_gnt_c < xen_blkif_max_pgrants ||
-> +	    (ring->persistent_gnt_c == xen_blkif_max_pgrants &&
-> +	    !ring->blkif->vbd.overflow_max_grants)) {
-> +		num_clean = 0;
-> +	} else {
-> +		num_clean = (xen_blkif_max_pgrants / 100) * LRU_PERCENT_CLEAN;
-> +		num_clean = ring->persistent_gnt_c - xen_blkif_max_pgrants +
-> +			    num_clean;
-> +		num_clean = min(ring->persistent_gnt_c, num_clean);
-> +		pr_debug("Going to purge at least %u persistent grants\n",
-> +			 num_clean);
-> +	}
->  
->  	/*
->  	 * At this point, we can assure that there will be no calls
-> @@ -401,9 +421,7 @@ static void purge_persistent_gnt(struct xen_blkif_ring *ring)
->           * number of grants.
->  	 */
->  
-> -	total = num_clean;
-> -
-> -	pr_debug("Going to purge %u persistent grants\n", num_clean);
-> +	total = 0;
->  
->  	BUG_ON(!list_empty(&ring->persistent_purge_list));
->  	root = &ring->persistent_gnts;
-> @@ -419,39 +437,42 @@ static void purge_persistent_gnt(struct xen_blkif_ring *ring)
->  
->  		if (test_bit(PERSISTENT_GNT_ACTIVE, persistent_gnt->flags))
->  			continue;
-> -		if (!scan_used &&
-> +		if (!scan_used && !persistent_gnt_timeout(persistent_gnt) &&
->  		    (test_bit(PERSISTENT_GNT_WAS_ACTIVE, persistent_gnt->flags)))
+It uses the already in place infrastructure for async updates.
 
-If you store the jiffies of the time when the grant was last used it
-seems like we could get rid of the PERSISTENT_GNT_WAS_ACTIVE flag and
-instead use the per-grant jiffies and the jiffies from the last scan
-in order to decide which grants to remove?
+It is useful for cursor updates and async PageFlips over the atomic
+ioctl, otherwise in some cases updates may be delayed to the point the
+user will notice it. Note that for now it's only enabled for cursor
+planes.
 
-Thanks, Roger.
+DRM_MODE_ATOMIC_AMEND should be passed to the Atomic IOCTL to use this
+feature.
+
+Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.com>
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+---
+Hi,
+
+This is an attempt to introduce the new ATOMIC_AMEND flag for atomic
+operations, see the commit message for a more detailed description.
+
+This was tested using a small program that exercises the uAPI for easy
+sanity testing. The program created by Alexandros can be found here
+[2]. To test, just build the program and use the --atomic flag to use the
+cursor plane in normal (blocking mode), and --atomic-async to use the cursor
+plane with the ATOMIC_AMEND flag. E.g.
+
+  drm_cursor --atomic
+
+or
+
+  drm_cursor --atomic-async
+
+The test worked on a Samsung Chromebook Plus on top of mainline plus
+the patch to update cursors asynchronously through atomic for the
+drm/rockchip driver.
+
+Alexandros also did a proof-of-concept to use this flag and draw cursors
+using atomic if possible on ozone [1].
+
+Best regards,
+ Enric
+
+[1] https://chromium-review.googlesource.com/c/chromium/src/+/1092711
+[2] https://gitlab.collabora.com/alf/drm-cursor
+
+
+Changes in v1:
+- Only enable it if userspace requests it.
+- Only allow async update for cursor type planes.
+- Rename ASYNC_UPDATE for ATOMIC_AMEND.
+
+ drivers/gpu/drm/drm_atomic.c        |  5 +++++
+ drivers/gpu/drm/drm_atomic_helper.c | 10 +++++++++-
+ include/uapi/drm/drm_mode.h         |  4 +++-
+ 3 files changed, 17 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c
+index 895741e9cd7d..7b3e4aa2874d 100644
+--- a/drivers/gpu/drm/drm_atomic.c
++++ b/drivers/gpu/drm/drm_atomic.c
+@@ -2338,6 +2338,10 @@ int drm_mode_atomic_ioctl(struct drm_device *dev,
+ 			(arg->flags & DRM_MODE_PAGE_FLIP_EVENT))
+ 		return -EINVAL;
+ 
++	if ((arg->flags & DRM_MODE_ATOMIC_ALLOW_MODESET) &&
++			(arg->flags & DRM_MODE_ATOMIC_AMEND))
++		return -EINVAL;
++
+ 	drm_modeset_acquire_init(&ctx, DRM_MODESET_ACQUIRE_INTERRUPTIBLE);
+ 
+ 	state = drm_atomic_state_alloc(dev);
+@@ -2346,6 +2350,7 @@ int drm_mode_atomic_ioctl(struct drm_device *dev,
+ 
+ 	state->acquire_ctx = &ctx;
+ 	state->allow_modeset = !!(arg->flags & DRM_MODE_ATOMIC_ALLOW_MODESET);
++	state->async_update = !!(arg->flags & DRM_MODE_ATOMIC_AMEND);
+ 
+ retry:
+ 	plane_mask = 0;
+diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
+index 81e32199d3ef..59495f61c583 100644
+--- a/drivers/gpu/drm/drm_atomic_helper.c
++++ b/drivers/gpu/drm/drm_atomic_helper.c
+@@ -902,7 +902,7 @@ int drm_atomic_helper_check(struct drm_device *dev,
+ 	if (ret)
+ 		return ret;
+ 
+-	if (state->legacy_cursor_update)
++	if (state->async_update || state->legacy_cursor_update)
+ 		state->async_update = !drm_atomic_helper_async_check(dev, state);
+ 
+ 	return ret;
+@@ -1539,6 +1539,14 @@ int drm_atomic_helper_async_check(struct drm_device *dev,
+ 	if (new_plane_state->fence)
+ 		return -EINVAL;
+ 
++	/* Only allow async update for cursor type planes. */
++	if (plane->type != DRM_PLANE_TYPE_CURSOR)
++		return -EINVAL;
++
++	/* Don't do an async update if there isn't a pending commit. */
++	if (!old_plane_state->commit)
++		return -EINVAL;
++
+ 	/*
+ 	 * Don't do an async update if there is an outstanding commit modifying
+ 	 * the plane.  This prevents our async update's changes from getting
+diff --git a/include/uapi/drm/drm_mode.h b/include/uapi/drm/drm_mode.h
+index 4b3a1bb58e68..6dae18428123 100644
+--- a/include/uapi/drm/drm_mode.h
++++ b/include/uapi/drm/drm_mode.h
+@@ -724,13 +724,15 @@ struct drm_mode_destroy_dumb {
+ #define DRM_MODE_ATOMIC_TEST_ONLY 0x0100
+ #define DRM_MODE_ATOMIC_NONBLOCK  0x0200
+ #define DRM_MODE_ATOMIC_ALLOW_MODESET 0x0400
++#define DRM_MODE_ATOMIC_AMEND 0x0800
+ 
+ #define DRM_MODE_ATOMIC_FLAGS (\
+ 		DRM_MODE_PAGE_FLIP_EVENT |\
+ 		DRM_MODE_PAGE_FLIP_ASYNC |\
+ 		DRM_MODE_ATOMIC_TEST_ONLY |\
+ 		DRM_MODE_ATOMIC_NONBLOCK |\
+-		DRM_MODE_ATOMIC_ALLOW_MODESET)
++		DRM_MODE_ATOMIC_ALLOW_MODESET |\
++		DRM_MODE_ATOMIC_AMEND)
+ 
+ struct drm_mode_atomic {
+ 	__u32 flags;
+-- 
+2.18.0
+
