@@ -2,142 +2,166 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25BAAC4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 10:40:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BECDC46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 10:42:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE99D21A04
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 10:40:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE99D21A04
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id E7DDB21A06
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 10:42:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7DDB21A06
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729742AbeHFMsh (ORCPT
+        id S1729719AbeHFMua (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 08:48:37 -0400
-Received: from smtp.nue.novell.com ([195.135.221.5]:43422 "EHLO
-        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726969AbeHFMsh (ORCPT
-        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
-        Mon, 6 Aug 2018 08:48:37 -0400
-Received: from linux-l9pv.suse (unknown.telstraglobal.net [134.159.103.118])
-        by smtp.nue.novell.com with ESMTP (TLS encrypted); Mon, 06 Aug 2018 12:40:03 +0200
-Date:   Mon, 6 Aug 2018 18:39:58 +0800
-From:   joeyli <jlee@suse.com>
-To:     Yu Chen <yu.c.chen@intel.com>
-Cc:     Pavel Machek <pavel@ucw.cz>, Ryan Chen <yu.chen.surf@gmail.com>,
-        oneukum@suse.com, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        ebiggers@google.com, Theodore Ts'o <tytso@mit.edu>,
-        smueller@chronox.de, denkenz@gmail.com,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        linux-crypto@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kookoo.gu@intel.com, Zhang Rui <rui.zhang@intel.com>
-Subject: Re: [PATCH 0/4][RFC v2] Introduce the in-kernel hibernation
- encryption
-Message-ID: <20180806103958.GI27062@linux-l9pv.suse>
-References: <1532346156.3057.11.camel@suse.com>
- <20180723162302.GA4503@sandybridge-desktop>
- <1532590246.7411.3.camel@suse.com>
- <20180726081404.GG4244@linux-l9pv.suse>
- <20180730170415.GQ4244@linux-l9pv.suse>
- <20180803033702.GB416@sandybridge-desktop>
- <20180803053445.GC4244@linux-l9pv.suse>
- <CADjb_WSURQz86+E8kakNf7UBDM+aho+uaz3QdDkuGsEgan=szw@mail.gmail.com>
- <20180805100200.GB22948@amd>
- <20180806084534.GB12124@chenyu-desktop>
+        Mon, 6 Aug 2018 08:50:30 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50194 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726969AbeHFMua (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 08:50:30 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 358B07C6A9;
+        Mon,  6 Aug 2018 10:42:02 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id DFA962166BA0;
+        Mon,  6 Aug 2018 10:42:01 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id w76Ag1Ox006051;
+        Mon, 6 Aug 2018 06:42:01 -0400
+Received: from localhost (mpatocka@localhost)
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id w76Ag1Dv006035;
+        Mon, 6 Aug 2018 06:42:01 -0400
+X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
+Date:   Mon, 6 Aug 2018 06:42:01 -0400 (EDT)
+From:   Mikulas Patocka <mpatocka@redhat.com>
+X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+cc:     Florian Weimer <fweimer@redhat.com>,
+        Andrew Pinski <pinskia@gmail.com>,
+        Richard Earnshaw <Richard.Earnshaw@arm.com>,
+        Ramana Radhakrishnan <ramana.gcc@googlemail.com>,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        GNU C Library <libc-alpha@sourceware.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Subject: Re: framebuffer corruption due to overlapping stp instructions on
+ arm64
+In-Reply-To: <CAKv+Gu87YqLM=FFZ6V8rHhuhskDdsBUuXFpqNKVbXWqdnuNEyA@mail.gmail.com>
+Message-ID: <alpine.LRH.2.02.1808060639200.2986@file01.intranet.prod.int.rdu2.redhat.com>
+References: <alpine.LRH.2.02.1808021242320.31834@file01.intranet.prod.int.rdu2.redhat.com> <CA+=Sn1mWkjuwVnjw6OWWUM=UcP76bdFa680FebCseewHfx3NpA@mail.gmail.com> <9acdacdb-3bd5-b71a-3003-e48132ee1371@redhat.com> <CAJA7tRZbmnZq7RfvQeYEy_a1ZObWqpFpVdvgsXgsioQ3RyPMuA@mail.gmail.com>
+ <CAKv+Gu97QvwoLLK_zueiA_gjg_4Q5cqU4YVUyHUVFFfffdyJaw@mail.gmail.com> <11f9185a-7f71-83df-3a57-0a0ae9c1f934@arm.com> <alpine.LRH.2.02.1808032046540.24748@file01.intranet.prod.int.rdu2.redhat.com> <CA+=Sn1=6F-fGLmXE0VqQHTqTCUKUT=Fz29mMT7349SPFisbZ9A@mail.gmail.com>
+ <alpine.LRH.2.02.1808040611070.23762@file01.intranet.prod.int.rdu2.redhat.com> <fd2cae87-b2df-d8ef-8836-e6cbf8c5f851@redhat.com> <alpine.LRH.2.02.1808060325110.3756@file01.intranet.prod.int.rdu2.redhat.com> <CAKv+Gu_y6La77sWOSROrwfRy65jrFVYVvRZt+ewNheYhdhHCkQ@mail.gmail.com>
+ <alpine.LRH.2.02.1808060626060.2986@file01.intranet.prod.int.rdu2.redhat.com> <CAKv+Gu87YqLM=FFZ6V8rHhuhskDdsBUuXFpqNKVbXWqdnuNEyA@mail.gmail.com>
+User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180806084534.GB12124@chenyu-desktop>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 06 Aug 2018 10:42:02 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 06 Aug 2018 10:42:02 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mpatocka@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 06, 2018 at 04:45:34PM +0800, Yu Chen wrote:
-> Hi Pavel,
-> On Sun, Aug 05, 2018 at 12:02:00PM +0200, Pavel Machek wrote:
-> > Hi!
-> > 
-> > > > User space doesn't need to involve. The EFI root key is generated by
-> > > > EFI boot stub and be transfer to kernel. It's stored in EFI boot service
-> > > > variable that it can only be accessed by trusted EFI binary when
-> > > > secure boot is enabled.
-> > > >
-> > > Okay, this apply to the 'suspend' phase, right?
-> > > I'm still a little confused about the 'resume' phase.
-> > > Taking encryption as example(not signature),
-> > > the purpose of doing hibernation encryption is to prevent other users
-> > > from stealing ram content. Say, user A uses a  passphrase to generate the
-> > 
-> > No, I don't think that's purpose here.
-> > 
-> > Purpose here is to prevent user from reading/modifying kernel memory
-> > content on machine he owns.
+
+
+On Mon, 6 Aug 2018, Ard Biesheuvel wrote:
+
+> On 6 August 2018 at 12:31, Mikulas Patocka <mpatocka@redhat.com> wrote:
 > >
-> Say, A puts his laptop into hibernation and walks away,
-> and B walks by, and opens A's laptop and wakes up the system and he
-> can do what he wants. Although EFI key/TPM trusted key is enabled,
-> currently there's no certification during resume, which sounds
-> unsafe to me. Afterall, the original requirement is to probe
-> user for password during resume, which sounds more natural.
-
-OK, I saw your case. This is a physical accessing.
-
-I have a question: The suspend to memory also has the same behavior
-and more people are using suspend. Should we think a common solution
-to cover S3 and S4? 
-
-> > Strange as it may sound, that is what "secure" boot requires (and what
-> > Disney wants).
-> > 
-> Ok, I understand this requirement, and I'm also concerning how to
-> distinguish different users from seeing data of each other.
+> >
+> > On Mon, 6 Aug 2018, Ard Biesheuvel wrote:
+> >
+> >> On 6 August 2018 at 10:02, Mikulas Patocka <mpatocka@redhat.com> wrote:
+> >> >
+> >> >
+> >> > On Sun, 5 Aug 2018, Florian Weimer wrote:
+> >> >
+> >> >> On 08/04/2018 01:04 PM, Mikulas Patocka wrote:
+> >> >> > There's plenty of memcpy's in the graphics stack. No one will be rewriting
+> >> >> > all the graphics drivers because of tiny market share that ARM has in
+> >> >> > desktop computers. So if you refuse to fix things and blame everyone else,
+> >> >> > you can as well announce that you don't want to have PCIe graphics on ARM
+> >> >> > at all.
+> >> >>
+> >> >> The POWER toolchain maintainers said pretty much the same thing not too
+> >> >> long ago. I wonder how many architectures need to fail until the
+> >> >> graphics stack is finally fixed.
+> >> >>
+> >> >> Thanks,
+> >> >> Florian
+> >> >
+> >> > If you say that your architecture doesn't support unaligned accesses at
+> >> > all, there's no problem - the compiler won't generate them and the libc
+> >> > won't contain them.
+> >> >
+> >> > But if you say that your architecture supports unaligned accesses except
+> >> > for the framebuffer, then you have a problem - the compiler can't know
+> >> > which pointers point to the framebuffer and libc can't know either - you
+> >> > caused this problem by your architectural decision.
+> >> >
+> >> > You can use 'volatile' to suppress memory optimizations, but it's
+> >> > impossible to go through the whole Linux graphics stack and add volatile
+> >> > to every pointer that may point to videoram. Even if you succeesed, new
+> >> > videoram accesses without volatile will appear after a year of
+> >> > development.
+> >> >
+> >> > See for example the macros READ_ONCE and WRITE_ONCE in Linux kernel - they
+> >> > should be used when there's concurrent access to the particular variable,
+> >> > but mainstream architectures don't require them, so many kernel developers
+> >> > are omitting them in their code.
+> >> >
+> >> > If you are building a supercomputer with a particular GPU, you can force
+> >> > the GPU vendor to provide POWER-compliant drivers. If you are building a
+> >> > workstation where the user can plug any GPU, forcing developers will go
+> >> > nowhere. You have to emulate the unaligned accesses and make sure that the
+> >> > next versions of your architecture support them in hardware.
+> >> >
+> >>
+> >> I have the feeling this discussion is going off the rails again.
+> >>
+> >> The original report is about corruption when doing overlapping writes.
+> >> Matt Sealey said you cannot have PCI outbound windows with memory
+> >> semantics on ARM, and so you should be using device mappings (which do
+> >> not tolerate unaligned accesses)
+> >>
+> >> In this context, 'device mapping' does not mean 'any non-DRAM region',
+> >> but it refers to a particular type of MMU mapping attribute defined by
+> >> the ARM architecture.
+> >>
+> >> I think we can all agree that memcpy() should be usable on any region
+> >> of memory that has true memory semantics, even if it is backed by VRAM
+> >> on a graphics card.
+> >>
+> >> The question is if PCIe can provide such regions on ARM.
+> >
+> > I think there are three possible solutions:
+> >
+> > 1. provide an alternative memcpy implementation that doesn't do unaligned
+> > accesses and recompile the graphics software with -mstrict-align
+> >
+> > 2. map the PCI BAR as device memory and emulate the unaligned instructions
+> >
+> > 3. find some hardware workaround that could insert delays between the PCIe
+> > accesses (but the hardware engineers need to cooperate on this instead of
+> > asserting that they refuse tu support it)
+> >
 > 
-> Joey,
-> I'm thinking of a possible direction which could take advantage
-> of the password.  It leverages either EFI key or TPM
-> trusted key to get it done. Does it make sense?
-> 
-> 1. The user space generates a symetric key key_user using
->    the password, and passes the key_user to the kernel as the master
->    key.
-> 2. The kernel uses the EFI key or TPM trusted key to encrypt
->    the key_user thus gets a encrypt_key.
-> 3. Uses the encrypt_key to do snapshot encryption
-> 4. During resume, the same encrypt_key is generated following
->    the same steps(I assume the same EFI key or TPM key could be fetched
->    during resumed, right?) and do the snapshot decryption.
->
+> Are we talking about a quirk for the Armada 8040 or about PCIe on ARM
+> in general?
 
-Yes, we can use TPM key to protect the user key. But I suggest that we
-should give user a function to disable the user key because not everyone
-want to key-in a password for hibernate/resume and also snapshot image
-encryption.
+I don't know - there are not any other easily available PCIe ARM boards 
+except for Armada 8040.
 
-Two policies:
-- When user key-in user key, the snapshot image must be encryption.
-- Without key-in user key, I still want the snapshot image can be encryption.
+> If the latter, I still haven't seen an explanation why the particulars
+> of AMBA justify overlapped writes being dropped at will by the
+> interconnect.
 
-No matter that the user key be key-in or not, the snapshot image must be
-encrypted by a kernel key. So I suggest that we treat the user key as a salt
-for snapshot image encryption and authentication. If the user key
-be disabled, then kernel just generates a random number as a salt.
-
-Actually, the kernel must compares the user key before snapshot decryption.
-If the user key doesn't match but user space still triggers furture resume
-process. Then kernel direct drops the snapshot image. 
- 
-> And this is what fscrypt is doing:
-> Documentation/filesystems/fscrypt.rst
->
-The use case is different. We have two key for two purposes. And the two
-functions can be separated.
-
-Thanks
-Joey Lee
+Mikulas
