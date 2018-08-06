@@ -3,136 +3,123 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 782D3C46470
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 02:01:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95862C46470
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 02:07:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25D90219A2
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 02:01:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37CF5219CB
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 02:07:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="dTREDe3U"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25D90219A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZKkTUvzG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37CF5219CB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726640AbeHFEIS (ORCPT
+        id S1726625AbeHFEOV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 00:08:18 -0400
-Received: from ozlabs.org ([203.11.71.1]:41523 "EHLO ozlabs.org"
+        Mon, 6 Aug 2018 00:14:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54578 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725266AbeHFEIS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 00:08:18 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        id S1725777AbeHFEOU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 00:14:20 -0400
+Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41kLVN12Qzz9s0n;
-        Mon,  6 Aug 2018 12:01:31 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1533520892;
-        bh=kdZ5ILMWgOGh2c1BmVD62mLj67SAYgtxh2AuQyL5vNw=;
-        h=Date:From:To:Cc:Subject:From;
-        b=dTREDe3U94ly8otyXhct+Vt1E2sXbhk+w3F1+Jwukda9UKeeEGLZx+t057PmzQI3j
-         Rhex2gr1E6jh7SqPW4nm9n0dVOEJdE6DjK0Sp4c7590hU6RO8o8Owa5KZCbuInpY2s
-         +uCpt7EplYJCtXFXbO+w9nSmLJxO+y2uuD1Q4Z+O1KVYt6YQP4WkG9m3IAxCwNEhlU
-         nquIBgCArefv2HiM8AaeI8FimYVgzDOD10ytI/hsL9K4qSPASzG8lepV0M3t8c2sol
-         jHymkvULSJKjOU5om6cSjBTEY2bJwGGwrubLOyx10NfTPYdkZ1Ncn07q9cycJjxv2J
-         8AC5vnyXtFx2g==
-Date:   Mon, 6 Aug 2018 12:01:31 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: manual merge of the rdma tree with Linus' tree
-Message-ID: <20180806120131.169f70f3@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Zj.KEDY3uN5lYsg_mN5C6Ol"; protocol="application/pgp-signature"
+        by mail.kernel.org (Postfix) with ESMTPSA id 16646219C9;
+        Mon,  6 Aug 2018 02:07:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1533521254;
+        bh=TiMByG+RGH9jlUXoiz1XVA9FnO/yKAfGsMpS9EhxoWY=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=ZKkTUvzGFHIQsobDxhKtZyTN9kPyGnTMlG7V9DK1dQsQa/2z0OSg1fD+CqM6FDum6
+         eQrmdius79MO1m1vEuxlpp0ohdGaXv6Rtl85L35vsAiArCShg26Ek/qaibQa/KaLoW
+         Vel57v+1JQu+SXaGlxyLfkJzVc9qYjyBIjchDNZA=
+Date:   Mon, 6 Aug 2018 11:07:29 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Joel Fernandes <joelaf@google.com>
+Cc:     Joel Fernandes <joel@joelfernandes.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Cc: Android Kernel" <kernel-team@android.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Byungchul Park <byungchul.park@lge.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Thomas Glexiner <tglx@linutronix.de>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>
+Subject: Re: [PATCH v12 0/3] tracing: Centralize preemptirq tracepoints and
+ unify their usage
+Message-Id: <20180806110729.fc79c61d5208cf642e223e90@kernel.org>
+In-Reply-To: <CAJWu+oq3HD3VhYzvRJA-8HQksdrX5zYr4kz7EUpDYvCNQRUGXw@mail.gmail.com>
+References: <20180730222423.196630-1-joel@joelfernandes.org>
+        <20180802235527.ddb0d1837154e3f98571b3b0@kernel.org>
+        <CAJWu+opoT6Ky-pwAwBbjDkyt0Y_UF1QUnDshu-_vLTU5K87_HQ@mail.gmail.com>
+        <20180803162340.32b4b3fde55a4f5a5c28b425@kernel.org>
+        <CAJWu+opO9-bb5RWorbQ54vq0rU1U6NFSnH9BDwGTvXhSaPmPTg@mail.gmail.com>
+        <CAJWu+oq3HD3VhYzvRJA-8HQksdrX5zYr4kz7EUpDYvCNQRUGXw@mail.gmail.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/Zj.KEDY3uN5lYsg_mN5C6Ol
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Sun, 5 Aug 2018 09:46:56 -0700
+Joel Fernandes <joelaf@google.com> wrote:
 
-Hi all,
+> Hi Masami,
+> 
+> On Fri, Aug 3, 2018 at 9:51 PM, Joel Fernandes <joelaf@google.com> wrote:
+> [...]
+> >> On Thu, 2 Aug 2018 19:57:09 -0700
+> >> Joel Fernandes <joelaf@google.com> wrote:
+> >>
+> >>> Hi Masami,
+> >>>
+> >>> On Thu, Aug 2, 2018 at 7:55 AM, Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> >>> > Hi Joel,
+> >>> >
+> >>> > I found this caused several issues when testing ftrace.
+> >>> >
+> >>> > #1) ftrace boottest (FTRACE_STARTUP_TEST) fails
+> >>>
+> >>> This sadly appears to be a real issue. The startup test for
+> >>> "preemptirqsoff" tracer fails, however it passes for only preemptoff
+> >>> or only irqsoff. I tested only the last 2 tracers, not the first one,
+> >>> that's why I didn't catch it. I need to debug this more.
+> 
+> I figured out this one too. Its because I need to account for
+> preempt_count() in tracer_hardirqs_off since the tracer probe is now
+> called with an additional level of preempt disabled from the
+> tracepoint code. Without that accounting, stop_critical_timings may
+> not be called causing an empty trace buffer. That should be easy to
+> fix, I'm on vacation though and back on 13th so can most likely look
+> at it only then (the week after the next).
 
-Today's linux-next merge of the rdma tree got a conflict in:
+Nice! Thank you for identifying the root cause!
+BTW, I'm also on vacation this week :)
 
-  drivers/infiniband/core/uverbs_main.c
+> >>> > #2) mmiotrace reports "IRQs not enabled as expected" error
+> >>> > #3) lock subsystem event boottest causes "IRQs not disabled as expected" error (sometimes)
+> 
+> The only thing left to figure out is #3 ("lock subsystem event
+> boottest"). Could you let me know how to run this test?
 
-between commit:
+The #3 is not always reproducible, I just enabled these 2 configs
 
-  1eb9364ce81d ("IB/uverbs: Fix ordering of ucontext check in ib_uverbs_wri=
-te")
+CONFIG_FTRACE_STARTUP_TEST=y and CONFIG_EVENT_TRACE_TEST_SYSCALLS=y
 
-from Linus' tree and commit:
+and boot on Qemu. I have seen this issue about 10% of system boot.
 
-  a9b66d6453d7 ("IB/uverbs: Do not block disassociate during write()")
+Thank you,
 
-from the rdma tree.
 
-I fixed it up (I am not entirely sure this is correct, but see below) and
-can carry the fix as necessary. This is now fixed as far as linux-next
-is concerned, but any non trivial conflicts should be mentioned to your
-upstream maintainer when your tree is submitted for merging.  You may
-also want to consider cooperating with the maintainer of the conflicting
-tree to minimise any particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/infiniband/core/uverbs_main.c
-index 2094d136513d,6f62146e9738..000000000000
---- a/drivers/infiniband/core/uverbs_main.c
-+++ b/drivers/infiniband/core/uverbs_main.c
-@@@ -748,24 -758,8 +758,18 @@@ static ssize_t ib_uverbs_write(struct f
-  		return ret;
- =20
-  	srcu_key =3D srcu_read_lock(&file->device->disassociate_srcu);
-- 	ib_dev =3D srcu_dereference(file->device->ib_dev,
-- 				  &file->device->disassociate_srcu);
-- 	if (!ib_dev) {
-- 		ret =3D -EIO;
-- 		goto out;
-- 	}
- =20
- +	/*
- +	 * Must be after the ib_dev check, as once the RCU clears ib_dev =3D=3D
- +	 * NULL means ucontext =3D=3D NULL
- +	 */
- +	if (!file->ucontext &&
- +	    (command !=3D IB_USER_VERBS_CMD_GET_CONTEXT || extended)) {
- +		ret =3D -EINVAL;
- +		goto out;
- +	}
- +
-- 	if (!verify_command_mask(ib_dev, command, extended)) {
-+ 	if (!verify_command_mask(file, command, extended)) {
-  		ret =3D -EOPNOTSUPP;
-  		goto out;
-  	}
-
---Sig_/Zj.KEDY3uN5lYsg_mN5C6Ol
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltnq/sACgkQAVBC80lX
-0Gy5gAf9GksJSgpLQ8wN/vpyH5Z7wrL/lg+4FQ0z64925H9MwXl9/ysskiR3m6oh
-BuPGCn6xZbeJfEpwPY8d2Fc0kSvHnzIxfl6M67ePxpM1nx1MsUyNXheq1NtJ3oGt
-tG7WW1L2VLWfoPApBsZN8719L/ADPyl3p2ik96f7qgduzNWX0H714RELgNUesY1A
-a8PE2IjN7pfnzJWA0WjRN2HhU4kmqH9kFggkYZfLNXBtbjKcs8zyn4F5l8S3WgaI
-f5bRw2EVdFop1KKff0ff+mgfVHH1Tj/X3B8226v2NTlQZpYsrlbd9KuG0Bm4zSkW
-C0V2X2UULzYBb6yjkC8Fo10EXkR0dQ==
-=lEbX
------END PGP SIGNATURE-----
-
---Sig_/Zj.KEDY3uN5lYsg_mN5C6Ol--
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
