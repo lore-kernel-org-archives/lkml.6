@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79074C46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:09:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BA11C4646D
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:09:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3375121A5A
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:09:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1329621A5B
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 16:09:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XyKNnccb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3375121A5A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="T6uELYai"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1329621A5B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733218AbeHFSTf (ORCPT
+        id S1733234AbeHFSTj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 14:19:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34860 "EHLO mail.kernel.org"
+        Mon, 6 Aug 2018 14:19:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34900 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733096AbeHFSTf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 14:19:35 -0400
+        id S1733096AbeHFSTi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 14:19:38 -0400
 Received: from localhost.localdomain (xdsl-188-155-58-14.adslplus.ch [188.155.58.14])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1E83C21A59;
-        Mon,  6 Aug 2018 16:09:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8580C21A57;
+        Mon,  6 Aug 2018 16:09:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1533571788;
-        bh=cu0CLV34cxpRdyC2Ie4TElrSwu5vaM2c1O/XN08hnX8=;
+        s=default; t=1533571790;
+        bh=jjvqdikI6S5sVcGBHdNiuuycq8gNW/7J6/6JzNai8aM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XyKNnccbg4aOcPRXxKURjOAkaoRe5f9y/rlJBV7gx/kE6h2nvIE3bJ56fNSdqYlFH
-         +11xkaUSE5xIAdKE0U1vDjaCfDtTWUQFJjvkgQ6Q5agGvm+rA2mDV+XIoQ2uuRFfeo
-         GRBgnWu7TrLVvaF3ZTC11SZ9lu6lx2Z805oey/rY=
+        b=T6uELYai8V/3nwclL+wmYUAwgB3SQ8PlJF5fpB2X9pocT4K5irID6d7X97+ffoJFt
+         OtNrT7XtG1n05YHaGshFI8/iN0UgIYgVu4rN4UcnDnSnoTsiBPZvxuF6XUDth/TNwx
+         HWZszI9E5U1EmY6DFTW71G4tHdn7GSGBibi3HpWM=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -46,9 +46,9 @@ To:     Rob Herring <robh+dt@kernel.org>,
 Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH 2/4] ARM: dts: exynos: Add unused PMIC regulators on Exynos5422 Odroid boards
-Date:   Mon,  6 Aug 2018 18:09:31 +0200
-Message-Id: <20180806160933.6578-2-krzk@kernel.org>
+Subject: [PATCH 3/4] ARM: dts: exynos: Disable unused PMIC regulators on Exynos5422 Odroid boards
+Date:   Mon,  6 Aug 2018 18:09:32 +0200
+Message-Id: <20180806160933.6578-3-krzk@kernel.org>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180806160933.6578-1-krzk@kernel.org>
 References: <20180806160933.6578-1-krzk@kernel.org>
@@ -57,151 +57,95 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Define LDO14, LDO20-22, LDO25 and LOD29-38 unused regulators to
-describe the hardware.
+Disable unused PMIC regulators on Exynos5422 Odroid boards to reduce
+energy used. According to schematics:
+1. LDO12, LDO16 and LDO24 are not connected,
+2. LDO26 is not used on Odroid HC1.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- arch/arm/boot/dts/exynos5422-odroid-core.dtsi | 105 ++++++++++++++++++++++++++
- 1 file changed, 105 insertions(+)
+ arch/arm/boot/dts/exynos5422-odroid-core.dtsi      | 26 +++++++++++-----------
+ arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi |  6 +++++
+ 2 files changed, 19 insertions(+), 13 deletions(-)
 
 diff --git a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-index d0218a82c93a..744fd86a38ad 100644
+index 744fd86a38ad..b0dc9cc81b94 100644
 --- a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
 +++ b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-@@ -235,6 +235,13 @@
- 				regulator-max-microvolt = <2800000>;
+@@ -223,10 +223,10 @@
  			};
  
-+			ldo14_reg: LDO14 {
+ 			ldo12_reg: LDO12 {
 +				/* Unused */
-+				regulator-name = "vdd_ldo14";
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <3950000>;
-+			};
-+
- 			ldo15_reg: LDO15 {
- 				regulator-name = "vdd_ldo15";
- 				regulator-min-microvolt = <3300000>;
-@@ -268,6 +275,27 @@
- 				regulator-max-microvolt = <2800000>;
- 			};
- 
-+			ldo20_reg: LDO20 {
-+				/* Unused */
-+				regulator-name = "vdd_ldo20";
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <3950000>;
-+			};
-+
-+			ldo21_reg: LDO21 {
-+				/* Unused */
-+				regulator-name = "vdd_ldo21";
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <3950000>;
-+			};
-+
-+			ldo22_reg: LDO22 {
-+				/* Unused */
-+				regulator-name = "vdd_ldo22";
+ 				regulator-name = "vdd_ldo12";
+-				regulator-min-microvolt = <1800000>;
+-				regulator-max-microvolt = <1800000>;
+-				regulator-always-on;
 +				regulator-min-microvolt = <800000>;
 +				regulator-max-microvolt = <2375000>;
-+			};
-+
- 			ldo23_reg: LDO23 {
- 				regulator-name = "vdd_mifs";
- 				regulator-min-microvolt = <1100000>;
-@@ -282,6 +310,13 @@
- 				regulator-always-on;
  			};
  
-+			ldo25_reg: LDO25 {
+ 			ldo13_reg: LDO13 {
+@@ -250,10 +250,10 @@
+ 			};
+ 
+ 			ldo16_reg: LDO16 {
 +				/* Unused */
-+				regulator-name = "vdd_ldo25";
+ 				regulator-name = "vdd_ldo16";
+-				regulator-min-microvolt = <2200000>;
+-				regulator-max-microvolt = <2200000>;
+-				regulator-always-on;
 +				regulator-min-microvolt = <800000>;
 +				regulator-max-microvolt = <3950000>;
-+			};
-+
+ 			};
+ 
+ 			ldo17_reg: LDO17 {
+@@ -304,10 +304,10 @@
+ 			};
+ 
+ 			ldo24_reg: LDO24 {
+-				regulator-name = "tsp_io";
+-				regulator-min-microvolt = <2800000>;
+-				regulator-max-microvolt = <2800000>;
+-				regulator-always-on;
++				/* Unused */
++				regulator-name = "vdd_ldo24";
++				regulator-min-microvolt = <800000>;
++				regulator-max-microvolt = <3950000>;
+ 			};
+ 
+ 			ldo25_reg: LDO25 {
+@@ -318,10 +318,10 @@
+ 			};
+ 
  			ldo26_reg: LDO26 {
++				/* Used on XU3, XU3-Lite and XU4 */
  				regulator-name = "vdd_ldo26";
- 				regulator-min-microvolt = <3000000>;
-@@ -296,6 +331,76 @@
- 				regulator-always-on;
+-				regulator-min-microvolt = <3000000>;
+-				regulator-max-microvolt = <3000000>;
+-				regulator-always-on;
++				regulator-min-microvolt = <800000>;
++				regulator-max-microvolt = <3950000>;
  			};
  
-+			ldo29_reg: LDO29 {
-+				/* Unused */
-+				regulator-name = "vdd_ldo29";
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <3950000>;
-+			};
+ 			ldo27_reg: LDO27 {
+diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+index 96e281c0a118..e522edb2bb82 100644
+--- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
++++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+@@ -367,6 +367,12 @@
+ 	status = "okay";
+ };
+ 
++&ldo26_reg {
++	regulator-min-microvolt = <3000000>;
++	regulator-max-microvolt = <3000000>;
++	regulator-always-on;
++};
 +
-+			ldo30_reg: LDO30 {
-+				/* Unused */
-+				regulator-name = "vdd_ldo30";
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <3950000>;
-+			};
-+
-+			ldo31_reg: LDO31 {
-+				/* Unused */
-+				regulator-name = "vdd_ldo31";
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <3950000>;
-+			};
-+
-+			ldo32_reg: LDO32 {
-+				/* Unused */
-+				regulator-name = "vdd_ldo32";
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <3950000>;
-+			};
-+
-+			ldo33_reg: LDO33 {
-+				/* Unused */
-+				regulator-name = "vdd_ldo33";
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <3950000>;
-+			};
-+
-+			ldo34_reg: LDO34 {
-+				/* Unused */
-+				regulator-name = "vdd_ldo34";
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <3950000>;
-+			};
-+
-+			ldo35_reg: LDO35 {
-+				/* Unused */
-+				regulator-name = "vdd_ldo35";
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <2375000>;
-+			};
-+
-+			ldo36_reg: LDO36 {
-+				/* Unused */
-+				regulator-name = "vdd_ldo36";
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <3950000>;
-+			};
-+
-+			ldo37_reg: LDO37 {
-+				/* Unused */
-+				regulator-name = "vdd_ldo37";
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <3950000>;
-+			};
-+
-+			ldo38_reg: LDO38 {
-+				/* Unused */
-+				regulator-name = "vdd_ldo38";
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <3950000>;
-+			};
-+
- 			buck1_reg: BUCK1 {
- 				regulator-name = "vdd_mif";
- 				regulator-min-microvolt = <800000>;
+ &mixer {
+ 	status = "okay";
+ };
 -- 
 2.14.1
 
