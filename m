@@ -2,77 +2,78 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B90DDC46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 20:41:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2E57C4646D
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 20:41:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 404B6217B7
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 20:41:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 404B6217B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id 5F8B521A5B
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 20:41:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F8B521A5B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732945AbeHFWwD (ORCPT
+        id S1733098AbeHFWwO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 18:52:03 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:57858 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731432AbeHFWwD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 18:52:03 -0400
-Received: from localhost (71-36-117-41.ptld.qwest.net [71.36.117.41])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 6174C136A4AA3;
-        Mon,  6 Aug 2018 13:41:17 -0700 (PDT)
-Date:   Mon, 06 Aug 2018 13:41:16 -0700 (PDT)
-Message-Id: <20180806.134116.1016660959593702560.davem@davemloft.net>
-To:     laoar.shao@gmail.com
-Cc:     edumazet@google.com, yanhaishuang@cmss.chinamobile.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] tcp: fix the calculation of
- sysctl_max_tw_buckets in tcp_sk_init()
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <1533556020-20778-1-git-send-email-laoar.shao@gmail.com>
-References: <1533556020-20778-1-git-send-email-laoar.shao@gmail.com>
-X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 06 Aug 2018 13:41:17 -0700 (PDT)
+        Mon, 6 Aug 2018 18:52:14 -0400
+Received: from mx2.suse.de ([195.135.220.15]:41402 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731432AbeHFWwO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 18:52:14 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id CC5ADADBE;
+        Mon,  6 Aug 2018 20:41:26 +0000 (UTC)
+Date:   Mon, 6 Aug 2018 22:41:19 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Yang Shi <yang.shi@linux.alibaba.com>
+Cc:     willy@infradead.org, ldufour@linux.vnet.ibm.com,
+        kirill@shutemov.name, akpm@linux-foundation.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC v6 PATCH 2/2] mm: mmap: zap pages with read mmap_sem in
+ munmap
+Message-ID: <20180806204119.GL10003@dhcp22.suse.cz>
+References: <1532628614-111702-1-git-send-email-yang.shi@linux.alibaba.com>
+ <1532628614-111702-3-git-send-email-yang.shi@linux.alibaba.com>
+ <20180803090759.GI27245@dhcp22.suse.cz>
+ <aff7e86d-2e48-ff58-5d5d-9c67deb68674@linux.alibaba.com>
+ <20180806094005.GG19540@dhcp22.suse.cz>
+ <76c0fc2b-fca7-9f22-214a-920ee2537898@linux.alibaba.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <76c0fc2b-fca7-9f22-214a-920ee2537898@linux.alibaba.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yafang Shao <laoar.shao@gmail.com>
-Date: Mon,  6 Aug 2018 19:47:00 +0800
-
-> tcp_hashinfo.ehash_mask is always an odd number, which is set in function
-> alloc_large_system_hash(). See bellow,
-> 	if (_hash_mask)
-> 		*_hash_mask = (1 << log2qty) - 1; <<< always odd number
+On Mon 06-08-18 09:46:30, Yang Shi wrote:
 > 
-> Hence the local variable 'cnt' is a even number, as a result of that it is
-> no difference to do the incrementation here.
 > 
-> Maybe the compiler could also optimize it, but this code is a little ugly.
+> On 8/6/18 2:40 AM, Michal Hocko wrote:
+> > On Fri 03-08-18 14:01:58, Yang Shi wrote:
+> > > 
+> > > On 8/3/18 2:07 AM, Michal Hocko wrote:
+> > > > On Fri 27-07-18 02:10:14, Yang Shi wrote:
+[...]
+> > > > > If the vma has VM_LOCKED | VM_HUGETLB | VM_PFNMAP or uprobe, they are
+> > > > > considered as special mappings. They will be dealt with before zapping
+> > > > > pages with write mmap_sem held. Basically, just update vm_flags.
+> > > > Well, I think it would be safer to simply fallback to the current
+> > > > implementation with these mappings and deal with them on top. This would
+> > > > make potential issues easier to bisect and partial reverts as well.
+> > > Do you mean just call do_munmap()? It sounds ok. Although we may waste some
+> > > cycles to repeat what has done, it sounds not too bad since those special
+> > > mappings should be not very common.
+> > VM_HUGETLB is quite spread. Especially for DB workloads.
 > 
-> Fix: fee83d09 ("ipv4: Namespaceify tcp_max_syn_backlog knob")
+> Wait a minute. In this way, it sounds we go back to my old implementation
+> with special handling for those mappings with write mmap_sem held, right?
 
-The correct tag is "Fixes: "
-
-> @@ -2543,7 +2543,7 @@ static int __net_init tcp_sk_init(struct net *net)
->  	net->ipv4.sysctl_tcp_tw_reuse = 2;
->  
->  	cnt = tcp_hashinfo.ehash_mask + 1;
-> -	net->ipv4.tcp_death_row.sysctl_max_tw_buckets = (cnt + 1) / 2;
-> +	net->ipv4.tcp_death_row.sysctl_max_tw_buckets = cnt / 2;
->  	net->ipv4.tcp_death_row.hashinfo = &tcp_hashinfo;
-
-This is completely harmless, and does no harm.
-
-You aren't "fixing" anything.
+Yes, I would really start simple and add further enhacements on top.
+-- 
+Michal Hocko
+SUSE Labs
