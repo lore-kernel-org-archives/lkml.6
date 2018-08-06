@@ -6,50 +6,50 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 779E6C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 08:18:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F431C46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 08:24:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29D5D219DE
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 08:18:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A2B4217BF
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 08:24:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="IhZbGJzs";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="QnDr0txr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29D5D219DE
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="LErI2EkP";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Bgpxtg49"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A2B4217BF
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727531AbeHFK0s (ORCPT
+        id S1727446AbeHFKcu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 06:26:48 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:38040 "EHLO
+        Mon, 6 Aug 2018 06:32:50 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:41558 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726482AbeHFK0s (ORCPT
+        with ESMTP id S1725951AbeHFKct (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 06:26:48 -0400
+        Mon, 6 Aug 2018 06:32:49 -0400
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 524FC60B12; Mon,  6 Aug 2018 08:18:53 +0000 (UTC)
+        id 81BF860B72; Mon,  6 Aug 2018 08:24:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533543533;
-        bh=vJl0i1IFzzFlsvmKDqs7sriqASo3nqDA4HcyDzbphtc=;
+        s=default; t=1533543893;
+        bh=X6NsWbxOmbuIisG12zzTg1v0jQgGBBKkNb7MlFz4ruE=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=IhZbGJzsUT15toEhgOr/AFzuSLv1LwEFUWzSbaa42z1+IWR/eNtGHzxw+pfVLs3Yy
-         vut6sIoYTx+9pwK/RqKREjFh6+AApRqQ4YYRU0JIwLqAdECIKTBQtCLeA7VASTUpz0
-         h4bTINrDUil+TgP9cGGvjVaMoE9LGsUBweE5HWQ4=
+        b=LErI2EkPgy2gtYMfQsi0VakwR18MT0FKhI+2+C/dZPJrWoF1nDs/r6RGrm7vjz53S
+         pQI9YqLtxBFFa0Zxhr8G0WLV0ue+2qw9AXY0WxxKII/cKXUXv9iKBbgLJeGixs2ARs
+         QKsbN2+MyfGkZLIKqLh8qW62MZRxByxrJH8gVDas=
 Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id B0948604BE;
-        Mon,  6 Aug 2018 08:18:52 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTP id D564B6037C;
+        Mon,  6 Aug 2018 08:24:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533543532;
-        bh=vJl0i1IFzzFlsvmKDqs7sriqASo3nqDA4HcyDzbphtc=;
+        s=default; t=1533543892;
+        bh=X6NsWbxOmbuIisG12zzTg1v0jQgGBBKkNb7MlFz4ruE=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=QnDr0txrskX2fwaRaoo8Jk6nd1FbRP5nLFDEeEzhaQHxdoRVxGzAjZWDCfdF3fP4/
-         BIQyeZy4a/dN5bXCS/BrY1ZCudSr5mfm/ye6BKsQyt0vDAmlUtWe2xEoLG/TUOGbVp
-         9TGWoS0xBmJAI1ULOm9d5nOTeOk/iEMf6Q9Bz2vM=
+        b=Bgpxtg49eRJBujVJx7Uxa+5cqeh2rrd98Ld5TryadbXch8x4nVNt4WobLvTea+E04
+         8CzfrTdttF4CA+hqQ2v2HlBaCsa5kgW8/TwVRP408YfkfcURR3POtDutWS9poXyhyg
+         pgoJoHTjFhLRTUqCgoUsXAKI9yVsdvKjCZwPAT0M=
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII;
  format=flowed
 Content-Transfer-Encoding: 7bit
-Date:   Mon, 06 Aug 2018 13:48:52 +0530
+Date:   Mon, 06 Aug 2018 13:54:52 +0530
 From:   Vikash Garodia <vgarodia@codeaurora.org>
 To:     Stanimir Varbanov <stanimir.varbanov@linaro.org>
 Cc:     hverkuil@xs4all.nl, mchehab@kernel.org, robh@kernel.org,
@@ -58,13 +58,13 @@ Cc:     hverkuil@xs4all.nl, mchehab@kernel.org, robh@kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         linux-soc@vger.kernel.org, devicetree@vger.kernel.org,
         acourbot@chromium.org, linux-media-owner@vger.kernel.org
-Subject: Re: [PATCH v3 3/4] venus: firmware: add no TZ boot and shutdown
- routine
-In-Reply-To: <4727000d-96ef-2dc5-50df-6bdadcaa156e@linaro.org>
+Subject: Re: [PATCH v3 2/4] venus: firmware: move load firmware in a separate
+ function
+In-Reply-To: <b5ecaa26-2f3b-9a2e-d496-7f9b35e3f761@linaro.org>
 References: <1530731212-30474-1-git-send-email-vgarodia@codeaurora.org>
- <1530731212-30474-4-git-send-email-vgarodia@codeaurora.org>
- <4727000d-96ef-2dc5-50df-6bdadcaa156e@linaro.org>
-Message-ID: <e482a9af27288c9e8a8ffb5c1de8a209@codeaurora.org>
+ <1530731212-30474-3-git-send-email-vgarodia@codeaurora.org>
+ <b5ecaa26-2f3b-9a2e-d496-7f9b35e3f761@linaro.org>
+Message-ID: <6c8c4e7b27000903073ac85a867b0454@codeaurora.org>
 X-Sender: vgarodia@codeaurora.org
 User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
@@ -74,38 +74,27 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi Stanimir,
 
-Thanks for your review.
-
-On 2018-07-25 15:06, Stanimir Varbanov wrote:
+On 2018-07-25 15:05, Stanimir Varbanov wrote:
 > Hi Vikash,
 > 
 > On 07/04/2018 10:06 PM, Vikash Garodia wrote:
-> 
+
 <snip>
 
->> 
->>  #define VENUS_PAS_ID			9
->> -#define VENUS_FW_MEM_SIZE		(6 * SZ_1M)
->> +#define VENUS_FW_MEM_SIZE		(5 * SZ_1M)
-> 
-> This change should be subject to a separate patch.
-Ok.
-
-> 
-<snip>
-
->> +	writel_relaxed(reg, reg_base + WRAPPER_A9SS_SW_RESET);
 >> +
->> +	/* Make sure reset is asserted before the mapping is removed */
->> +	mb();
+>> +	if (!IS_ENABLED(CONFIG_QCOM_MDT_LOADER))
+>> +		return -EPROBE_DEFER;
 > 
-> mb() is used for compiler barrier as far as I know, isn't better to 
-> just
-> read the register and keep the comment?
+> the original venus_boot was checking for || !qcom_scm_is_available() 
+> why
+> is that removed? It was done on purpose.
 
-mb() can ensure that the instructions are ordered. This is needed to 
-ensure
-reset before the mapping is removed.
+For booting venus without tz, scm calls are not needed. Does it look 
+good to
+keep the check for "!core->no_tz" case alone ?
+
+if (!core->no_tz && !qcom_scm_is_available())
+     return -EPROBE_DEFER;
 
 Thanks,
 Vikash
