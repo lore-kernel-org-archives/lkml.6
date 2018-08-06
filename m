@@ -2,114 +2,109 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49E20C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 08:02:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85527C46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 08:04:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0795D219CE
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 08:02:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0795D219CE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 2EE10219CE
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 08:04:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="JGciRXfE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EE10219CE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=googlemail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726930AbeHFKJ4 (ORCPT
+        id S1726875AbeHFKM0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 06:09:56 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47916 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725985AbeHFKJ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 06:09:56 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1CA2740216EA;
-        Mon,  6 Aug 2018 08:02:05 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B6DC22156897;
-        Mon,  6 Aug 2018 08:02:04 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id w76824lK011665;
-        Mon, 6 Aug 2018 04:02:04 -0400
-Received: from localhost (mpatocka@localhost)
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id w76823Uo011656;
-        Mon, 6 Aug 2018 04:02:03 -0400
-X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
-Date:   Mon, 6 Aug 2018 04:02:03 -0400 (EDT)
-From:   Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To:     Florian Weimer <fweimer@redhat.com>
-cc:     Andrew Pinski <pinskia@gmail.com>,
-        Richard Earnshaw <Richard.Earnshaw@arm.com>,
-        ard.biesheuvel@linaro.org,
-        Ramana Radhakrishnan <ramana.gcc@googlemail.com>,
-        thomas.petazzoni@free-electrons.com,
-        GNU C Library <libc-alpha@sourceware.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, linux@armlinux.org.uk,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: framebuffer corruption due to overlapping stp instructions on
- arm64
-In-Reply-To: <fd2cae87-b2df-d8ef-8836-e6cbf8c5f851@redhat.com>
-Message-ID: <alpine.LRH.2.02.1808060325110.3756@file01.intranet.prod.int.rdu2.redhat.com>
-References: <alpine.LRH.2.02.1808021242320.31834@file01.intranet.prod.int.rdu2.redhat.com> <CA+=Sn1mWkjuwVnjw6OWWUM=UcP76bdFa680FebCseewHfx3NpA@mail.gmail.com> <9acdacdb-3bd5-b71a-3003-e48132ee1371@redhat.com> <CAJA7tRZbmnZq7RfvQeYEy_a1ZObWqpFpVdvgsXgsioQ3RyPMuA@mail.gmail.com>
- <CAKv+Gu97QvwoLLK_zueiA_gjg_4Q5cqU4YVUyHUVFFfffdyJaw@mail.gmail.com> <11f9185a-7f71-83df-3a57-0a0ae9c1f934@arm.com> <alpine.LRH.2.02.1808032046540.24748@file01.intranet.prod.int.rdu2.redhat.com> <CA+=Sn1=6F-fGLmXE0VqQHTqTCUKUT=Fz29mMT7349SPFisbZ9A@mail.gmail.com>
- <alpine.LRH.2.02.1808040611070.23762@file01.intranet.prod.int.rdu2.redhat.com> <fd2cae87-b2df-d8ef-8836-e6cbf8c5f851@redhat.com>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+        Mon, 6 Aug 2018 06:12:26 -0400
+Received: from mail-ua0-f172.google.com ([209.85.217.172]:41671 "EHLO
+        mail-ua0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725985AbeHFKM0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 06:12:26 -0400
+Received: by mail-ua0-f172.google.com with SMTP id h1-v6so11127368uao.8
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Aug 2018 01:04:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=qDiEAsd4sD7TfPwTQq1ZenGDEl1JnbBUz+7ehXskaI4=;
+        b=JGciRXfE0hLp3JNumr6zehoaYKdQgpltCYrKA/lUoLOix0Qc39XGdi8fqNaH8BZg2l
+         ZzSdI20Vww6wAG5Yh7vpXa0x4bku4BOQCLHhrOidFRF7MZsk4jwR/Tc7xcrWanMFrLYf
+         4Y9ZbMAw4P//yfADifsRpRAnOM66zN1g36jCTycKp7hA7X9yzEI2dSQKDaZDTvfbCj5G
+         oozK1MW4KWWSSBbK3CtT27z2+eo1SeHxhpDxAugN1InJHlu4b3bG4UWAcx7noVE0F5M8
+         MNlXHHGuTReWAS3ArFww5Q3IRZOarlhPSws/CwEYCCn6ytc/bZthEVKr3oscvcevj2BT
+         ECoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=qDiEAsd4sD7TfPwTQq1ZenGDEl1JnbBUz+7ehXskaI4=;
+        b=TvKdz719e0Nj054zSerQP7iVKD16yNs8ZFBgGGe0J1o6S6VaNS7Q2pq9EViw7dqV7x
+         FVM+hujVhgP36NbDdM8Tp5HEhpHieLeiVuyt/u4Io4bFbmGmZBiRmxL+NLX85gAOHEIK
+         WedFGohijDXn5s5hzy7NH8zPkJfmCpo+TEgGldlA8OTEUJiUVBtaGA3Jyy5yXg6zfoEN
+         mrHa95dxvshATLEhCSOjuvKe3ggwyKBTf2CyLWkqhXRmGxm6FSKIAX0sPAifu7KzybFa
+         dX1IEekzdQmn8Cl46oUoc2cFHQH1LQrB9UQlXIfdnQKTxotXBiStrtjqkhu4EjiEu6Cq
+         1qFA==
+X-Gm-Message-State: AOUpUlFiNUqX158CYUP4RPyFED9UopyEMAuLFDkzYJRAQMDKYaWnWEQy
+        pOGck6yp9Xs0NKoCeFN143Hx5mK2cSdNQI/VRvh2XrSU
+X-Google-Smtp-Source: AAOMgpf8DPecInfqzCttHcIRle0iEZpbct04cRM5LDYo1rn7uxgDc9l7HbQKm+483qMbAQUd92z2LOj9mSNrAJ9F4xw=
+X-Received: by 2002:a1f:6307:: with SMTP id x7-v6mr8660864vkb.111.1533542674455;
+ Mon, 06 Aug 2018 01:04:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Mon, 06 Aug 2018 08:02:05 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Mon, 06 Aug 2018 08:02:05 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mpatocka@redhat.com' RCPT:''
+Received: by 2002:ab0:6044:0:0:0:0:0 with HTTP; Mon, 6 Aug 2018 01:04:33 -0700 (PDT)
+In-Reply-To: <20180805213615.GA1862@amd>
+References: <alpine.LRH.2.02.1808021242320.31834@file01.intranet.prod.int.rdu2.redhat.com>
+ <CA+=Sn1mWkjuwVnjw6OWWUM=UcP76bdFa680FebCseewHfx3NpA@mail.gmail.com> <20180805213615.GA1862@amd>
+From:   Ramana Radhakrishnan <ramana.gcc@googlemail.com>
+Date:   Mon, 6 Aug 2018 09:04:33 +0100
+Message-ID: <CAJA7tRZ69kbyA-Y0n4QBtz1JGFQdTXzNykewsySX0aj-CF5zqQ@mail.gmail.com>
+Subject: Re: framebuffer corruption due to overlapping stp instructions on arm64
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     Andrew Pinski <pinskia@gmail.com>,
+        Mikulas Patocka <mpatocka@redhat.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        GNU C Library <libc-alpha@sourceware.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sun, Aug 5, 2018 at 10:36 PM, Pavel Machek <pavel@ucw.cz> wrote:
+> Hi!
+>
+>> > I tried to use a PCIe graphics card on the MacchiatoBIN board and I hit a
+>> > strange problem.
+>> >
+>> > When I use the links browser in graphics mode on the framebuffer, I get
+>> > occasional pixel corruption. Links does memcpy, memset and 4-byte writes
+>> > on the framebuffer - nothing else.
+>> >
+>> > I found out that the pixel corruption is caused by overlapping unaligned
+>> > stp instructions inside memcpy. In order to avoid branching, the arm64
+>> > memcpy implementation may write the same destination twice with different
+>> > alignment. If I put "dmb sy" between the overlapping stp instructions, the
+>> > pixel corruption goes away.
+>> >
+>> > This seems like a hardware bug. Is it a known errata? Do you have any
+>> > workarounds for it?
+>>
+>> Yes fix Links not to use memcpy on the framebuffer.
+>> It is undefined behavior to use device memory with memcpy.
+>
+> No, I don't think so. Why do you think so?
+
+It is undefined behaviour in the architecture.
 
 
-On Sun, 5 Aug 2018, Florian Weimer wrote:
-
-> On 08/04/2018 01:04 PM, Mikulas Patocka wrote:
-> > There's plenty of memcpy's in the graphics stack. No one will be rewriting
-> > all the graphics drivers because of tiny market share that ARM has in
-> > desktop computers. So if you refuse to fix things and blame everyone else,
-> > you can as well announce that you don't want to have PCIe graphics on ARM
-> > at all.
-> 
-> The POWER toolchain maintainers said pretty much the same thing not too 
-> long ago. I wonder how many architectures need to fail until the 
-> graphics stack is finally fixed.
-> 
-> Thanks,
-> Florian
-
-If you say that your architecture doesn't support unaligned accesses at 
-all, there's no problem - the compiler won't generate them and the libc 
-won't contain them.
-
-But if you say that your architecture supports unaligned accesses except 
-for the framebuffer, then you have a problem - the compiler can't know 
-which pointers point to the framebuffer and libc can't know either - you 
-caused this problem by your architectural decision.
-
-You can use 'volatile' to suppress memory optimizations, but it's 
-impossible to go through the whole Linux graphics stack and add volatile 
-to every pointer that may point to videoram. Even if you succeesed, new 
-videoram accesses without volatile will appear after a year of 
-development.
-
-See for example the macros READ_ONCE and WRITE_ONCE in Linux kernel - they 
-should be used when there's concurrent access to the particular variable, 
-but mainstream architectures don't require them, so many kernel developers 
-are omitting them in their code.
-
-If you are building a supercomputer with a particular GPU, you can force 
-the GPU vendor to provide POWER-compliant drivers. If you are building a 
-workstation where the user can plug any GPU, forcing developers will go 
-nowhere. You have to emulate the unaligned accesses and make sure that the 
-next versions of your architecture support them in hardware.
-
-Mikulas
+Ramana
