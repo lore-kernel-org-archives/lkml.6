@@ -2,185 +2,118 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 843DBC46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 11:39:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E29E5C4646D
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 11:41:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B78021A01
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 11:39:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B78021A01
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id 7D55921A01
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 11:41:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="QnBmm3h+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D55921A01
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729989AbeHFNsf (ORCPT
+        id S1730092AbeHFNuH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 09:48:35 -0400
-Received: from gateway21.websitewelcome.com ([192.185.46.109]:40817 "EHLO
-        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727109AbeHFNsf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 09:48:35 -0400
-Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
-        by gateway21.websitewelcome.com (Postfix) with ESMTP id D382D400DD160
-        for <linux-kernel@vger.kernel.org>; Mon,  6 Aug 2018 06:39:53 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id mdqwfVNjVbXuJmdrLfudG6; Mon, 06 Aug 2018 06:39:53 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.50.82] (port=39178 helo=[192.168.1.71])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1fmdqw-000ZX0-50; Mon, 06 Aug 2018 06:39:10 -0500
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        Linux-MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20180804220827.GA12559@embeddedor.com>
- <CACT4Y+arVJ4qt54LzKKoyh9+NKA+fjyCShKi82NanbovhK_mmQ@mail.gmail.com>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Subject: Re: [PATCH] mm/kasan/kasan_init: use true and false for boolean
- values
-Message-ID: <0413df4d-262d-fee8-f1a3-99ccf1d3a441@embeddedor.com>
-Date:   Mon, 6 Aug 2018 06:39:02 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <CACT4Y+arVJ4qt54LzKKoyh9+NKA+fjyCShKi82NanbovhK_mmQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+        Mon, 6 Aug 2018 09:50:07 -0400
+Received: from mail-eopbgr680042.outbound.protection.outlook.com ([40.107.68.42]:33088
+        "EHLO NAM04-BN3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727553AbeHFNuH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 09:50:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GtZ3gWiGRIMkX5GwxF9EsxvePI8MadXVc/49jTXEPcI=;
+ b=QnBmm3h+WyK9VKb9GNIKf7P08VN3W6zglCPjmh+VCQo8gc9IB0M+8xQJIgJA7c3zJsqFPpZUGwPvaS6vTB9Dj3vimOJZcg4DUUlN6M3Rqz2FY7LTa4qg8aX6jIIduD7Feq9S6GmQiaq6qtdhkjCXzHP3MpkzelZcSm4eUrbPjx4=
+Received: from BN3PR0201MB0993.namprd02.prod.outlook.com (10.161.207.14) by
+ BN3PR0201MB0994.namprd02.prod.outlook.com (10.161.207.140) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1017.15; Mon, 6 Aug 2018 11:41:17 +0000
+Received: from BN3PR0201MB0993.namprd02.prod.outlook.com
+ ([fe80::d4fc:b478:dd6d:55c5]) by BN3PR0201MB0993.namprd02.prod.outlook.com
+ ([fe80::d4fc:b478:dd6d:55c5%8]) with mapi id 15.20.1017.019; Mon, 6 Aug 2018
+ 11:41:16 +0000
+From:   Anurag Kumar Vulisha <anuragku@xilinx.com>
+To:     Mathias Nyman <mathias.nyman@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "v.anuragkumar@gmail.com" <v.anuragkumar@gmail.com>
+Subject: RE: [PATCH] usb: host: xhci-plat: Iterate over parent nodes for
+ finding quirks
+Thread-Topic: [PATCH] usb: host: xhci-plat: Iterate over parent nodes for
+ finding quirks
+Thread-Index: AQHT/OD63PyU9kIWfE6vMX/XM+YDdqRRyRYAgAAzNrCACkAS0IAAEWoAgDLEbDCAARhIAIAAAqUAgAhMEICAGj1cQIAAPDcAgAAA6QA=
+Date:   Mon, 6 Aug 2018 11:41:16 +0000
+Message-ID: <BN3PR0201MB09936E8B2B5995EAEDF46E79A7200@BN3PR0201MB0993.namprd02.prod.outlook.com>
+References: <1528212056-28390-1-git-send-email-anurag.kumar.vulisha@xilinx.com>
+ <20180605152524.GA23280@kroah.com>
+ <MWHPR02MB2816106466BD2AF8F7FB7BF8A7660@MWHPR02MB2816.namprd02.prod.outlook.com>
+ <MWHPR02MB2816ACB30A1142BD1B83F25CA77F0@MWHPR02MB2816.namprd02.prod.outlook.com>
+ <20180612080256.GA17399@kroah.com>
+ <MWHPR02MB2816AE6D9F6C065DADA78D7EA75F0@MWHPR02MB2816.namprd02.prod.outlook.com>
+ <20180715080206.GA19377@kroah.com> <20180715081134.GA20758@kroah.com>
+ <541ba9a3-058e-028a-2a6c-a5d4334ddf96@intel.com>
+ <BN3PR0201MB0993AA3A96D98AA6799C706DA7200@BN3PR0201MB0993.namprd02.prod.outlook.com>
+ <b5078cd5-05ad-7e3f-a8de-f4ae43aa0815@intel.com>
+In-Reply-To: <b5078cd5-05ad-7e3f-a8de-f4ae43aa0815@intel.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.50.82
-X-Source-L: No
-X-Exim-ID: 1fmdqw-000ZX0-50
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.71]) [189.250.50.82]:39178
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 6
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+X-MS-Has-Attach: 
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=anuragku@xilinx.com; 
+x-originating-ip: [149.199.50.133]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BN3PR0201MB0994;6:QJbVBd+emfv3W8c1XyLzkfha5htrbxqDPATWvtai+iURaBeOuc0TmBsLw8v219I5hsJGQhD14MsIzygZmSoHR9ujV6nV2mYPUh26Vxr/YO4ygT4HRwLVRxqyDTZb1SmMRVTcXS9M/6MGPYMznHPYXTSU7J1lNOtatToljZyH2eeLp4Ux9eV2iJgED7q8B1Q4t7/eoxcyeei/2wJ2kcKAPo12A60ok00BHrrP+B6YMvAVzuNrzdKWIr97O7nH2f0vmF4HSGjwYqvOhytw2kyO5u7eyy/hVQnSxCHIQfYl8DQcgLhsGtCQe8nz9q+2y3gZFlYxpgeJvf4Np0O8cyc5JoEG9eGioq/a2RUKkyYdiXGImlHK11o7Hy4zf0yOPQ5eVLQmL4H1b1Lbr1zhvnOvJii78VC63zA88AnqVb+GwFMtXTq5wtgpKW2FFRVtTLDQpkcD6gOq4ipPYayU91Hmfg==;5:NHkckorbgOyqDzMw50uY0KFLZop7w6PQYSUlArYAs+SMz3yKbZYZZDUqNGaQ8TAlfyusjas8lbus7XxAJBZ83yFKNn2s+ZXhE3V0aE/790xXMojFosPV05xC2vACjLIX3BYvj+6fu5HtfC0gRgc3gw23Tt4rRHTukcFqv2W/Wl0=;7:q5Jbc3MYHm5eKhpYgdgugHQiUpWDDQlb1/FmuCtBqNVc7/lqSZR6NXu7r2N99DUZfPuLHVCua6Gx+AzQgphtIkG5yVOeH2jskb3/5CScp1JGv/iiCvLz8zac2+8a5inQdI5H5cmBIg4oExiPQFkza5ju/aLHbYNrSqYBBnRlTgRl5foUFSwWboWMuqkQZDyuaUdnitt9LsBg0aVs2oYgfGeqqduvaD4p6vXBg6DZyBu3yXYWITV8e5zL4HOsR26E
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 4df97a3d-24bf-4c87-11c4-08d5fb91855e
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:BN3PR0201MB0994;
+x-ms-traffictypediagnostic: BN3PR0201MB0994:
+x-ld-processed: 657af505-d5df-48d0-8300-c31994686c5c,ExtAddr
+x-microsoft-antispam-prvs: <BN3PR0201MB09940F388915826606118D5EA7200@BN3PR0201MB0994.namprd02.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(93006095)(93001095)(10201501046)(3231311)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:BN3PR0201MB0994;BCL:0;PCL:0;RULEID:;SRVR:BN3PR0201MB0994;
+x-forefront-prvs: 07562C22DA
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(136003)(346002)(396003)(366004)(39860400002)(189003)(199004)(40764003)(81156014)(5250100002)(8936002)(66066001)(9686003)(76176011)(110136005)(102836004)(3846002)(6116002)(81166006)(229853002)(6506007)(106356001)(74316002)(105586002)(6436002)(8676002)(54906003)(33656002)(486006)(476003)(26005)(7736002)(55016002)(305945005)(99286004)(256004)(14454004)(478600001)(446003)(5660300001)(53936002)(11346002)(6246003)(68736007)(2900100001)(2906002)(25786009)(97736004)(186003)(39060400002)(316002)(7696005)(86362001)(4326008)(93886005);DIR:OUT;SFP:1101;SCL:1;SRVR:BN3PR0201MB0994;H:BN3PR0201MB0993.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: xilinx.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: rhzrek9njfjULI72M0/e9UeI2mCHFFjoPksEAzXvxIs5hAwBf9wYZ4m1h5kWhiELFTZ94qveY8dK9stPi/RMk2uFLqyNvFQlhzh6uMf/p+6tekcpr8zTlIhHsWD0QqBPLOgFpjdsTU67yOoNjnRJI0l71Z5Bo07BZOLjbgg71e/TvbIN4R+pvVL351OfPKcQA/3FFAI1umQyJ1CytLXfQQ2stgRTlQHSusF9kIF0RU34dr4ducs8465plN+ff6dKuoQE/ploju3TfiJvy5SpMcQh+GvaTf0kV2+p4umFq0DnZhpTNTnvaYHwOGHMYVnqHic8Puf9gIeoCOp1QbH6xhyQqRVorr1T1UHTFzcsYUE=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4df97a3d-24bf-4c87-11c4-08d5fb91855e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Aug 2018 11:41:16.7126
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN3PR0201MB0994
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dmitry,
-
-On 08/06/2018 04:04 AM, Dmitry Vyukov wrote:
-> On Sun, Aug 5, 2018 at 12:08 AM, Gustavo A. R. Silva
-> <gustavo@embeddedor.com> wrote:
->> Return statements in functions returning bool should use true or false
->> instead of an integer value.
->>
->> This code was detected with the help of Coccinelle.
->>
->> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> 
-> Hi Gustavo,
-> 
-> I don't see this code in upstream tree. Is it against some other tree? Which?
-> 
-
-Yep. It's against linux-next.
-
-Should I use [PATCH next] in the subject next time?
-
-Thanks
---
-Gustavo
-
-> Thanks
-> 
->> ---
->>  mm/kasan/kasan_init.c | 6 +++---
->>  1 file changed, 3 insertions(+), 3 deletions(-)
->>
->> diff --git a/mm/kasan/kasan_init.c b/mm/kasan/kasan_init.c
->> index 7a2a2f1..c742dc5 100644
->> --- a/mm/kasan/kasan_init.c
->> +++ b/mm/kasan/kasan_init.c
->> @@ -42,7 +42,7 @@ static inline bool kasan_p4d_table(pgd_t pgd)
->>  #else
->>  static inline bool kasan_p4d_table(pgd_t pgd)
->>  {
->> -       return 0;
->> +       return false;
->>  }
->>  #endif
->>  #if CONFIG_PGTABLE_LEVELS > 3
->> @@ -54,7 +54,7 @@ static inline bool kasan_pud_table(p4d_t p4d)
->>  #else
->>  static inline bool kasan_pud_table(p4d_t p4d)
->>  {
->> -       return 0;
->> +       return false;
->>  }
->>  #endif
->>  #if CONFIG_PGTABLE_LEVELS > 2
->> @@ -66,7 +66,7 @@ static inline bool kasan_pmd_table(pud_t pud)
->>  #else
->>  static inline bool kasan_pmd_table(pud_t pud)
->>  {
->> -       return 0;
->> +       return false;
->>  }
->>  #endif
->>  pte_t kasan_zero_pte[PTRS_PER_PTE] __page_aligned_bss;
->> --
->> 2.7.4
+Pj4NCj4+IEkgaGF2ZSByZXBsaWVkIHRvIHRoZSBjb21tZW50cyB0aGF0IE1hdGhpYXMgaGFzIHBy
+ZXZpb3VzbHkgZ2l2ZW4gb24NCj4+IHRoaXMgcGF0Y2ggYW5kIHdhaXRpbmcgb24gaGlzIHJlcGx5
+LCBidXQgbG9va3MgbGlrZSBNYXRoaWFzIGlzIG9uDQo+PiB2YWNhdGlvbi4gU2luY2UgaGUgaXMg
+b2theSB3aXRoIGFwcGx5aW5nIHRoZSBwYXRjaCwgd291bGQgaXQgYmUNCj4+IHBvc3NpYmxlIHRv
+IGdldCB0aGlzIHBhdGNoIGFwcGxpZWQ/IElmIHlvdSBoYXZlIGFueSBzdWdnZXN0aW9ucyBJIGNh
+biB3b3JrIG9uIGZpeGluZw0KPnRoZW0gYW5kIHJlLXNlbmQgdGhlIHBhdGNoLiBUaGFua3MgZm9y
+IHlvdXIgaGVscCBpbiB0aGlzIHJlZ2FyZC4NCj4+DQo+DQo+SSdtIGJhY2suDQo+SnVzdCBub3Rl
+ZCB0aGF0IHRoZXJlIGlzIG9uZSBjaGFuZ2Ugc3RpbGwgbmVlZGVkLCAoY29tbWVudGVkIG9uIGFj
+dHVhbCBwYXRjaCkgSSdsbCBwaWNrDQo+dXAgdGhlIG5leHQgdmVyc2lvbiBvZiB0aGUgcGF0Y2gs
+IGJ1dCB3ZSBhcmUgaW4gcmM4IGFscmVhZHkgc28geW91ciBmaXggd2lsbCBnbyB0byA0LjE5LQ0K
+PnJjMiBlYXJsaWVzdC4NCj4NCkhpIE1hdGhpYXMsDQoNCjQuMTktcmMyIGlzIGZpbmUuIEkgaGF2
+ZSBjb3JyZWN0ZWQgdGhlIHBhdGNoIGFuZCBzZW50IGEgdjIuIFRoYW5rcyBhIGxvdCBmb3INCnlv
+dXIgaGVscCwNCg0KUmVnYXJkcywNCkFudXJhZyBLdW1hciBWdWxpc2hhDQo=
