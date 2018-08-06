@@ -6,67 +6,86 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 719F9C46470
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 02:15:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10814C46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 02:17:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 216E2219A3
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 02:15:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 216E2219A3
+	by mail.kernel.org (Postfix) with ESMTP id B5703219D9
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 02:17:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5703219D9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726893AbeHFEWW (ORCPT
+        id S1726846AbeHFEYa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 00:22:22 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:10231 "EHLO huawei.com"
+        Mon, 6 Aug 2018 00:24:30 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:45389 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725777AbeHFEWV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 00:22:21 -0400
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id C1D05B3F1F409;
-        Mon,  6 Aug 2018 10:15:30 +0800 (CST)
-Received: from [127.0.0.1] (10.177.29.68) by DGGEMS405-HUB.china.huawei.com
- (10.3.19.205) with Microsoft SMTP Server id 14.3.399.0; Mon, 6 Aug 2018
- 10:15:27 +0800
-Message-ID: <5B67AF40.70504@huawei.com>
-Date:   Mon, 6 Aug 2018 10:15:28 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20120428 Thunderbird/12.0.1
+        id S1725777AbeHFEYa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 00:24:30 -0400
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 39232178A4C6C;
+        Mon,  6 Aug 2018 10:17:39 +0800 (CST)
+Received: from [10.151.23.176] (10.151.23.176) by smtp.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server (TLS) id 14.3.399.0; Mon, 6 Aug 2018
+ 10:17:34 +0800
+Subject: Re: [PATCH] drivers/staging: Remove some unneeded semicolon
+To:     zhong jiang <zhongjiang@huawei.com>
+CC:     <gregkh@linuxfoundation.org>, <yuchao0@huawei.com>,
+        <rspringer@google.com>, <jnjoseph@google.com>,
+        <benchan@chromium.org>,
+        "linux-erofs@lists.ozlabs.org" <linux-erofs@lists.ozlabs.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <1533477429-17379-1-git-send-email-zhongjiang@huawei.com>
+ <687229f8-549f-cec1-c83f-b8acfd32d767@huawei.com>
+ <5B67AE47.4080307@huawei.com>
+From:   Gao Xiang <gaoxiang25@huawei.com>
+Message-ID: <af5a1b0e-1aad-abef-d877-8cee3e41e845@huawei.com>
+Date:   Mon, 6 Aug 2018 10:16:21 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-To:     David Miller <davem@davemloft.net>
-CC:     <stephen@networkplumber.org>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] net/bridge/br_multicast: remove redundant variable "err"
-References: <1533478723-18361-1-git-send-email-zhongjiang@huawei.com> <20180805.173336.2098484669514510834.davem@davemloft.net>
-In-Reply-To: <20180805.173336.2098484669514510834.davem@davemloft.net>
-Content-Type: text/plain; charset="ISO-8859-1"
+In-Reply-To: <5B67AE47.4080307@huawei.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.29.68]
+X-Originating-IP: [10.151.23.176]
 X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/8/6 8:33, David Miller wrote:
-> From: zhong jiang <zhongjiang@huawei.com>
-> Date: Sun, 5 Aug 2018 22:18:43 +0800
->
->> @@ -1797,7 +1795,7 @@ static int br_multicast_ipv4_rcv(struct net_bridge *br,
->>  	struct sk_buff *skb_trimmed = NULL;
->>  	const unsigned char *src;
->>  	struct igmphdr *ih;
->> -	int err;
->> +	int err = 0;
->>  
->>  	err = ip_mc_check_igmp(skb, &skb_trimmed);
-> The initialization of err to '0' is unnecessary, it gets assigned on
-> the very next line.
->
-> .
->
- That's right.  I will drop that change and repost.
+
+On 2018/8/6 10:11, zhong jiang wrote:
+> On 2018/8/6 9:27, Gao Xiang wrote:
+>> Hi Jiang,
+>>
+>> On 2018/8/5 21:57, zhong jiang wrote:
+>>> That semicolons are unneeded, JUst remove them.
+>>>
+>>> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+>> Thanks for your patch. Since erofs and gasket are different feature, it is better to seperate into two patches.
+>> and could you please cc linux-erofs mailing list <linux-erofs@lists.ozlabs.org> as well?
+>>
+>> Yes, there is an extra semicolon in z_erofs_vle_unzip_all, it was reported by Julia Lawall several days ago.
+>> Actually, there is a patch in linux-erofs mailing list, but it seems that Chao hasn't reviewed it yet...
+>>
+>> https://lists.ozlabs.org/pipermail/linux-erofs/2018-August/000303.html
+>>
+>> I will add Signed-off-by: zhong jiang <zhongjiang@huawei.com> to the original patch if if you don't mind, do you?
+>  do it.  Thanks.  Then I will just resend the gasket feature separately.
+> 
+
+Thanks for your understanding :)
 
 Thanks,
-zhong jiang
+Gao Xiang
 
+>  Thanks,
+>  zhong jiang
+>> Thanks,
+>> Gao Xiang
+>>
+>> .
+>>
+> 
+> 
