@@ -2,142 +2,131 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0933C46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 21:27:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4E2AC46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 21:27:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7922A21A67
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 21:27:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="lVZiKq2N"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7922A21A67
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 9E7F821A5D
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 21:27:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E7F821A5D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732955AbeHFXh4 (ORCPT
+        id S1733030AbeHFXir (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 19:37:56 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:38770 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732612AbeHFXhz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 19:37:55 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w76LNnO7156881;
-        Mon, 6 Aug 2018 21:26:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=gQzmOF1fSSfSIbGGMHVec+hKNdJwuRVBI5kX1cGimk8=;
- b=lVZiKq2NBxcuC3dQ50SFS07i3si7eXryiKZjWStSC3/wioiVtbTDstVkBjZrMGpman0G
- cDRs7k0rvAQLYzJq0Z8Sj0YGI0Z8uMrNOd+cX65q/JA+2Y+fcVHpPVy4sJq6Gx4qIOi7
- OkYOJuVVVFmAwwWBuYrscXmhVuCV/YNnl84E6NkefraDnqp6odI4r04/WEjFctTijukD
- AKHhxot11+CdKIRpEp7L9hIgklnLmiHkHMQVV0jdNORasvIcuC5skRbDdbAWl+b8tO9z
- e4zx6k5lLfAWDkHLIQjRzeNj6ECzoZTu0wTcNP0Sbr1Dli+UlOlwIK6TWq+uigUctjEC Lw== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2130.oracle.com with ESMTP id 2kn3jsxsaf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 06 Aug 2018 21:26:38 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w76LQbd6002040
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 6 Aug 2018 21:26:37 GMT
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w76LQaTe009161;
-        Mon, 6 Aug 2018 21:26:36 GMT
-Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 06 Aug 2018 14:26:36 -0700
-Subject: Re: [PATCH v2] xen/pv: Call get_cpu_address_sizes to set
- x86_virt/phys_bits
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
-        "M. Vefa Bicakci" <m.v.b@runbox.com>, linux-kernel@vger.kernel.org,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Juergen Gross <jgross@suse.com>,
-        xen-devel@lists.xenproject.org, x86@kernel.org,
-        stable@vger.kernel.org
-References: <20180721194909.23903-2-m.v.b@runbox.com>
- <20180724124547.32562-1-m.v.b@runbox.com>
- <7c07bb2f-e825-66bf-f517-86f893cd9e8b@oracle.com>
- <alpine.DEB.2.21.1808062216130.1788@nanos.tec.linutronix.de>
-From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
- 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
- Jg6OxFYd01z+a+oL
-Message-ID: <a3213a7a-549e-6693-6a7a-b88b42923cf9@oracle.com>
-Date:   Mon, 6 Aug 2018 17:27:38 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1808062216130.1788@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=utf-8
+        Mon, 6 Aug 2018 19:38:47 -0400
+Received: from gate.crashing.org ([63.228.1.57]:40389 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732191AbeHFXir (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 19:38:47 -0400
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w76LQZoT007357;
+        Mon, 6 Aug 2018 16:26:36 -0500
+Message-ID: <0967fc30001323e6e38ed12c8dba8ee3d1aa13f5.camel@kernel.crashing.org>
+Subject: Re: [RFC 0/4] Virtio uses DMA API for all devices
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        aik@ozlabs.ru, robh@kernel.org, joe@perches.com,
+        elfring@users.sourceforge.net, david@gibson.dropbear.id.au,
+        jasowang@redhat.com, mpe@ellerman.id.au, linuxram@us.ibm.com,
+        haren@linux.vnet.ibm.com, paulus@samba.org,
+        srikar@linux.vnet.ibm.com, robin.murphy@arm.com,
+        jean-philippe.brucker@arm.com, marc.zyngier@arm.com
+Date:   Tue, 07 Aug 2018 07:26:35 +1000
+In-Reply-To: <20180806233024-mutt-send-email-mst@kernel.org>
+References: <20180802225738-mutt-send-email-mst@kernel.org>
+         <de4888b6457e220776e16a9c8958ff0886ffc66c.camel@kernel.crashing.org>
+         <20180803070507.GA1344@infradead.org>
+         <eb1750e90e4bd45da297fa6f78f8ef93671b7c2f.camel@kernel.crashing.org>
+         <20180803220443-mutt-send-email-mst@kernel.org>
+         <051fd78e15595b414839fa8f9d445b9f4d7576c6.camel@kernel.crashing.org>
+         <20180805031046-mutt-send-email-mst@kernel.org>
+         <fd8fee94cf42e436878f179c7895de3a4dab3355.camel@kernel.crashing.org>
+         <20180806164106-mutt-send-email-mst@kernel.org>
+         <ef6d5d7c7b812bd797a1c3fd6bc7a26d0074020f.camel@kernel.crashing.org>
+         <20180806233024-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.4 (3.28.4-1.fc28) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8977 signatures=668707
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=970
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1808060224
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/06/2018 04:16 PM, Thomas Gleixner wrote:
-> On Mon, 6 Aug 2018, Boris Ostrovsky wrote:
->
->> x86 maintainers, this needs your ack please.
-> Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
->
+On Mon, 2018-08-06 at 23:35 +0300, Michael S. Tsirkin wrote:
+> > As I said replying to Christoph, we are "leaking" into the interface
+> > something here that is really what's the VM is doing to itself, which
+> > is to stash its memory away in an inaccessible place.
+> > 
+> > Cheers,
+> > Ben.
+> 
+> I think Christoph merely objects to the specific implementation.  If
+> instead you do something like tweak dev->bus_dma_mask for the virtio
+> device I think he won't object.
+
+Well, we don't have "bus_dma_mask" yet ..or you mean dma_mask ?
+
+So, something like that would be a possibility, but the problem is that
+the current virtio (guest side) implementation doesn't honor this when
+not using dma ops and will not use dma ops if not using iommu, so back
+to square one.
+
+Christoph seems to be wanting to use a flag in the interface to make
+the guest use dma_ops which is what I don't understand.
+
+What would be needed then would be something along the lines of virtio
+noticing that dma_mask isn't big enough to cover all of memory (which
+isn't something generic code can easily do here for various reasons I
+can elaborate if you want, but that specific test more/less has to be
+arch specific), and in that case, force itself to use DMA ops routed to
+swiotlb.
+
+I'd rather have arch code do the bulk of that work, don't you think ?
+
+Which brings me back to this option, which may be the simplest and
+avoids the overhead of the proposed series (I found the series to be a
+nice cleanup but retpoline does kick us in the nuts here).
+
+So what about this ?
+
+--- a/drivers/virtio/virtio_ring.c
++++ b/drivers/virtio/virtio_ring.c
+@@ -155,7 +155,7 @@ static bool vring_use_dma_api(struct virtio_device
+*vdev)
+         * the DMA API if we're a Xen guest, which at least allows
+         * all of the sensible Xen configurations to work correctly.
+         */
+-       if (xen_domain())
++       if (xen_domain() || arch_virtio_direct_dma_ops(&vdev->dev))
+                return true;
+ 
+        return false;
+
+(Passing the dev allows the arch to know this is a virtio device in
+"direct" mode or whatever we want to call the !iommu case, and
+construct appropriate DMA ops for it, which aren't the same as the DMA
+ops of any other PCI device who *do* use the iommu).
+
+Otherwise, the harder option would be for us to hack so that
+xen_domain() returns true in our setup (gross), and have the arch code,
+when it sets up PCI device DMA ops, have a gross hack to identify
+virtio PCI devices, checks their F_IOMMU flag itself, and sets up the
+different ops at that point.
+
+As for those "special" ops, they are of course just normal swiotlb ops,
+there's nothing "special" other that they aren't the ops that other PCI
+device on that bus use.
+
+Cheers,
+Ben.
 
 
-Thanks.
-
-Applied to for-linus-4.19
