@@ -2,74 +2,89 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AF86C46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 20:54:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6C03C4646D
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 20:55:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF10021A5E
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 20:54:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF10021A5E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
+	by mail.kernel.org (Postfix) with ESMTP id 7802121770
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 20:55:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7802121770
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732853AbeHFXFd (ORCPT
+        id S1732956AbeHFXGM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 19:05:33 -0400
-Received: from lithops.sigma-star.at ([195.201.40.130]:59052 "EHLO
-        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728948AbeHFXFd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 19:05:33 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id E233860A0738;
-        Mon,  6 Aug 2018 22:54:40 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id wCORQkEK53SM; Mon,  6 Aug 2018 22:54:40 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id 6F62F609F83D;
-        Mon,  6 Aug 2018 22:54:40 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id 6xqfnn0QTW6I; Mon,  6 Aug 2018 22:54:40 +0200 (CEST)
-Received: from blindfold.localnet (213-47-184-186.cable.dynamic.surfer.at [213.47.184.186])
-        by lithops.sigma-star.at (Postfix) with ESMTPSA id 46729608D734;
-        Mon,  6 Aug 2018 22:54:40 +0200 (CEST)
-From:   Richard Weinberger <richard@nod.at>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     linux-kbuild@vger.kernel.org, Jeff Dike <jdike@addtoit.com>,
-        linux-um@lists.infradead.org, Randy Dunlap <rdunlap@infradead.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Sam Ravnborg <sam@ravnborg.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] Kbuild: fix and clean-up arch/um/Makefile
-Date:   Mon, 06 Aug 2018 22:54:33 +0200
-Message-ID: <1901723.5RX4ofS7Gn@blindfold>
-In-Reply-To: <1533358023-5801-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1533358023-5801-1-git-send-email-yamada.masahiro@socionext.com>
+        Mon, 6 Aug 2018 19:06:12 -0400
+Received: from mx2.suse.de ([195.135.220.15]:43774 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728948AbeHFXGM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 19:06:12 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 104B2AE82;
+        Mon,  6 Aug 2018 20:55:20 +0000 (UTC)
+Date:   Mon, 6 Aug 2018 22:55:19 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     syzbot <syzbot+bab151e82a4e973fa325@syzkaller.appspotmail.com>,
+        cgroups@vger.kernel.org, dvyukov@google.com, hannes@cmpxchg.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        syzkaller-bugs@googlegroups.com, vdavydov.dev@gmail.com
+Subject: Re: WARNING in try_charge
+Message-ID: <20180806205519.GO10003@dhcp22.suse.cz>
+References: <fc6e173e-8bda-269f-d44f-1c5f5215beac@I-love.SAKURA.ne.jp>
+ <0000000000006350880572c61e62@google.com>
+ <20180806174410.GB10003@dhcp22.suse.cz>
+ <20180806175627.GC10003@dhcp22.suse.cz>
+ <078bde8d-b1b5-f5ad-ed23-0cd94b579f9e@i-love.sakura.ne.jp>
+ <20180806203437.GK10003@dhcp22.suse.cz>
+ <3cf8f630-73b7-20d4-8ad1-bb1c657ee30d@i-love.sakura.ne.jp>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3cf8f630-73b7-20d4-8ad1-bb1c657ee30d@i-love.sakura.ne.jp>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Samstag, 4. August 2018, 06:47:00 CEST schrieb Masahiro Yamada:
+On Tue 07-08-18 05:46:04, Tetsuo Handa wrote:
+> On 2018/08/07 5:34, Michal Hocko wrote:
+> > On Tue 07-08-18 05:26:23, Tetsuo Handa wrote:
+> >> On 2018/08/07 2:56, Michal Hocko wrote:
+> >>> So the oom victim indeed passed the above force path after the oom
+> >>> invocation. But later on hit the page fault path and that behaved
+> >>> differently and for some reason the force path hasn't triggered. I am
+> >>> wondering how could we hit the page fault path in the first place. The
+> >>> task is already killed! So what the hell is going on here.
+> >>>
+> >>> I must be missing something obvious here.
+> >>>
+> >> YOU ARE OBVIOUSLY MISSING MY MAIL!
+> >>
+> >> I already said this is "mm, oom: task_will_free_mem(current) should ignore MMF_OOM_SKIP for once."
+> >> problem which you are refusing at https://www.spinics.net/lists/linux-mm/msg133774.html .
+> >> And you again ignored my mail. Very sad...
+> > 
+> > Your suggestion simply didn't make much sense. There is nothing like
+> > first check is different from the rest.
+> > 
 > 
-> 1/3 fixes the build failure reported by Randy.
-> (I may have seen a similar report before, but I cannot recall it.)
+> I don't think your patch is appropriate. It avoids hitting WARN(1) but does not avoid
+> unnecessary killing of OOM victims.
 > 
-> 2/3 and 3/3 clean-up the Makefile a bit more.
-> 
-> I'd like to apply this series to kbuild tree.
-> Ack from UML folks are appreciated.
+> If you look at https://syzkaller.appspot.com/text?tag=CrashLog&x=15a1c770400000 , you will
+> notice that both 23766 and 23767 are killed due to task_will_free_mem(current) == false.
+> This is "unnecessary killing of additional processes".
 
-Nice to see this fixed, Masahiro! :-)
-
-Acked-by: Richard Weinberger <richard@nod.at>
-
-Thanks,
-//richard
+Have you noticed the mere detail that the memcg has to kill any task
+attempting the charge because the hard limit is 0? There is simply no
+other way around. You cannot charge. There is no unnecessary killing.
+Full stop. We do allow temporary breach of the hard limit just to let
+the task die and uncharge on the way out.
+-- 
+Michal Hocko
+SUSE Labs
