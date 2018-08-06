@@ -5,146 +5,129 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0C87C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 12:12:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ADEDC4646D
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 12:15:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E1CE21A04
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 12:12:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E1CE21A04
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id E7BE621A04
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 12:15:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7BE621A04
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732036AbeHFOVW (ORCPT
+        id S1732111AbeHFOYi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 10:21:22 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44420 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731081AbeHFOVW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 10:21:22 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5AEB040201A0;
-        Mon,  6 Aug 2018 12:12:32 +0000 (UTC)
-Received: from hive.brq.redhat.com (unknown [10.43.2.4])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id EA7C62026D68;
-        Mon,  6 Aug 2018 12:12:30 +0000 (UTC)
-From:   Petr Oros <poros@redhat.com>
-To:     netdev@vger.kernel.org
-Cc:     ivecera@redhat.com, Sathya Perla <sathya.perla@broadcom.com>,
-        Ajit Khaparde <ajit.khaparde@broadcom.com>,
-        Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>,
-        Somnath Kotur <somnath.kotur@broadcom.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        Mon, 6 Aug 2018 10:24:38 -0400
+Received: from mga04.intel.com ([192.55.52.120]:12816 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730919AbeHFOYi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 10:24:38 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Aug 2018 05:15:47 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,452,1526367600"; 
+   d="scan'208";a="78879358"
+Received: from mattu-haswell.fi.intel.com (HELO [10.237.72.164]) ([10.237.72.164])
+  by fmsmga001.fm.intel.com with ESMTP; 06 Aug 2018 05:15:45 -0700
+Subject: Re: [PATCH v2] usb: host: xhci-plat: Iterate over parent nodes for
+ finding quirks
+To:     Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>,
+        mathias.nyman@intel.com, gregkh@linuxfoundation.org
+Cc:     v.anuragkumar@gmail.com, linux-usb@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] Use Kconfig flag to remove support of deprecated BE2/BE3 adapters
-Date:   Mon,  6 Aug 2018 14:12:28 +0200
-Message-Id: <20180806121230.23690-1-poros@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Mon, 06 Aug 2018 12:12:32 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Mon, 06 Aug 2018 12:12:32 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'poros@redhat.com' RCPT:''
+References: <1533555373-24400-1-git-send-email-anurag.kumar.vulisha@xilinx.com>
+From:   Mathias Nyman <mathias.nyman@linux.intel.com>
+Message-ID: <efb57c01-5b22-ac06-cb7f-c863f9f4a9f6@linux.intel.com>
+Date:   Mon, 6 Aug 2018 15:18:45 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <1533555373-24400-1-git-send-email-anurag.kumar.vulisha@xilinx.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  Add flags to remove support of deprecated BE2/BE3 adapters.
-  BE2 disable will reduce .ko size by 2kb and BE3 by 3kb.
-  Disable both will reduce .ko size by 9kb.
+Hi
 
-  With dissabled support is also removed coresponding PCI IDs
-  and codepath with [BE2|BE3|BEx]_chip checks.
+On 06.08.2018 14:36, Anurag Kumar Vulisha wrote:
+> In xhci_plat_probe() both sysdev and pdev->dev are being used
+> for finding quirks. There are some drivers(like dwc3 host.c)
+> which adds quirks(like usb3-lpm-capable) into pdev and the logic
+> present in xhci_plat_probe() checks for quirks in either sysdev
+> or pdev for finding the quirks. Because of this logic, some of
+> the quirks are getting missed(usb3-lpm-capable quirk added by dwc3
+> host.c driver is getting missed).This patch fixes this by iterating
+> over all the available parents for finding the quirks. In this way
+> all the quirks which are present in child or parent are correctly
+> updated.
+> 
+> Signed-off-by: Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>
+> ---
+>   Changes in v2:
+> 	1. As suggested by Mathias, restoring immod_interval changes to
+> 	   default
+> ---
+>   drivers/usb/host/xhci-plat.c | 24 ++++++++++++++----------
+>   1 file changed, 14 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
+> index c1b22fc..f121238 100644
+> --- a/drivers/usb/host/xhci-plat.c
+> +++ b/drivers/usb/host/xhci-plat.c
+> @@ -152,7 +152,7 @@ static int xhci_plat_probe(struct platform_device *pdev)
+>   {
+>   	const struct xhci_plat_priv *priv_match;
+>   	const struct hc_driver	*driver;
+> -	struct device		*sysdev;
+> +	struct device		*sysdev, *tmpdev;
+>   	struct xhci_hcd		*xhci;
+>   	struct resource         *res;
+>   	struct usb_hcd		*hcd;
+> @@ -272,20 +272,24 @@ static int xhci_plat_probe(struct platform_device *pdev)
+>   		goto disable_clk;
+>   	}
+>   
+> -	if (device_property_read_bool(sysdev, "usb2-lpm-disable"))
+> -		xhci->quirks |= XHCI_HW_LPM_DISABLE;
+> -
+> -	if (device_property_read_bool(sysdev, "usb3-lpm-capable"))
+> -		xhci->quirks |= XHCI_LPM_SUPPORT;
+> -
+> -	if (device_property_read_bool(&pdev->dev, "quirk-broken-port-ped"))
+> -		xhci->quirks |= XHCI_BROKEN_PORT_PED;
+> -
+>   	/* imod_interval is the interrupt moderation value in nanoseconds. */
+>   	xhci->imod_interval = 40000;
 
-  New help style in Kconfig
+xhci->imod_interval = 40000 is now in the correct place
 
-Signed-off-by: Petr Oros <poros@redhat.com>
----
- drivers/net/ethernet/emulex/benet/Kconfig   | 20 ++++++++++++++++++--
- drivers/net/ethernet/emulex/benet/be.h      |  8 ++++++++
- drivers/net/ethernet/emulex/benet/be_main.c |  6 +++++-
- 3 files changed, 31 insertions(+), 3 deletions(-)
+>   	device_property_read_u32(sysdev, "imod-interval-ns",
+>   				 &xhci->imod_interval);
 
-diff --git a/drivers/net/ethernet/emulex/benet/Kconfig b/drivers/net/ethernet/emulex/benet/Kconfig
-index b4853ec9de8d..68a9c40adc2a 100644
---- a/drivers/net/ethernet/emulex/benet/Kconfig
-+++ b/drivers/net/ethernet/emulex/benet/Kconfig
-@@ -1,7 +1,7 @@
- config BE2NET
- 	tristate "ServerEngines' 10Gbps NIC - BladeEngine"
- 	depends on PCI
--	---help---
-+	help
- 	  This driver implements the NIC functionality for ServerEngines'
- 	  10Gbps network adapter - BladeEngine.
- 
-@@ -10,6 +10,22 @@ config BE2NET_HWMON
- 	depends on BE2NET && HWMON
- 	depends on !(BE2NET=y && HWMON=m)
- 	default y
--	---help---
-+	help
- 	  Say Y here if you want to expose thermal sensor data on
- 	  be2net network adapter.
-+
-+config BE2NET_BE2
-+	bool "Support for deprecated BE2 chipsets"
-+	depends on BE2NET
-+	default y
-+	help
-+	  Say Y here if you want to use deprecated Emulex devices based
-+	  on BE2 chipsets.
-+
-+config BE2NET_BE3
-+	bool "Support for deprecated BE3 chipsets"
-+	depends on BE2NET
-+	default y
-+	help
-+	  Say Y here if you want to use deprecated Emulex devices based
-+	  on BE3 chipsets.
-diff --git a/drivers/net/ethernet/emulex/benet/be.h b/drivers/net/ethernet/emulex/benet/be.h
-index 382891f81e09..3038578ec7a7 100644
---- a/drivers/net/ethernet/emulex/benet/be.h
-+++ b/drivers/net/ethernet/emulex/benet/be.h
-@@ -779,11 +779,19 @@ static inline u16 be_max_any_irqs(struct be_adapter *adapter)
- #define skyhawk_chip(adapter)	(adapter->pdev->device == OC_DEVICE_ID5 || \
- 				 adapter->pdev->device == OC_DEVICE_ID6)
- 
-+#ifdef CONFIG_BE2NET_BE3
- #define BE3_chip(adapter)	(adapter->pdev->device == BE_DEVICE_ID2 || \
- 				 adapter->pdev->device == OC_DEVICE_ID2)
-+#else
-+#define BE3_chip(adapter)	(0)
-+#endif /* CONFIG_BE2NET_BE3 */
- 
-+#ifdef CONFIG_BE2NET_BE2
- #define BE2_chip(adapter)	(adapter->pdev->device == BE_DEVICE_ID1 || \
- 				 adapter->pdev->device == OC_DEVICE_ID1)
-+#else
-+#define BE2_chip(adapter)	(0)
-+#endif /* CONFIG_BE2NET_BE2 */
- 
- #define BEx_chip(adapter)	(BE3_chip(adapter) || BE2_chip(adapter))
- 
-diff --git a/drivers/net/ethernet/emulex/benet/be_main.c b/drivers/net/ethernet/emulex/benet/be_main.c
-index 8f755009ff38..d5b3f0139832 100644
---- a/drivers/net/ethernet/emulex/benet/be_main.c
-+++ b/drivers/net/ethernet/emulex/benet/be_main.c
-@@ -47,10 +47,14 @@ MODULE_PARM_DESC(rx_frag_size, "Size of a fragment that holds rcvd data.");
- static struct workqueue_struct *be_err_recovery_workq;
- 
- static const struct pci_device_id be_dev_ids[] = {
-+#ifdef CONFIG_BE2NET_BE2
- 	{ PCI_DEVICE(BE_VENDOR_ID, BE_DEVICE_ID1) },
--	{ PCI_DEVICE(BE_VENDOR_ID, BE_DEVICE_ID2) },
- 	{ PCI_DEVICE(BE_VENDOR_ID, OC_DEVICE_ID1) },
-+#endif /* CONFIG_BE2NET_BE2 */
-+#ifdef CONFIG_BE2NET_BE3
-+	{ PCI_DEVICE(BE_VENDOR_ID, BE_DEVICE_ID2) },
- 	{ PCI_DEVICE(BE_VENDOR_ID, OC_DEVICE_ID2) },
-+#endif /* CONFIG_BE2NET_BE3 */
- 	{ PCI_DEVICE(EMULEX_VENDOR_ID, OC_DEVICE_ID3)},
- 	{ PCI_DEVICE(EMULEX_VENDOR_ID, OC_DEVICE_ID4)},
- 	{ PCI_DEVICE(EMULEX_VENDOR_ID, OC_DEVICE_ID5)},
--- 
-2.16.4
+but the device_propery_read_u32() line above can be moved inside loop below.
 
+>   
+> +	/* Iterate over all parent nodes for finding quirks */
+> +	for (tmpdev = &pdev->dev; tmpdev; tmpdev = tmpdev->parent) {
+> +
+> +		if (device_property_read_bool(tmpdev, "usb2-lpm-disable"))
+> +			xhci->quirks |= XHCI_HW_LPM_DISABLE;
+> +
+> +		if (device_property_read_bool(tmpdev, "usb3-lpm-capable"))
+> +			xhci->quirks |= XHCI_LPM_SUPPORT;
+> +
+> +		if (device_property_read_bool(tmpdev, "quirk-broken-port-ped"))
+> +			xhci->quirks |= XHCI_BROKEN_PORT_PED;
+> +	}
+> +
+>   	hcd->usb_phy = devm_usb_get_phy_by_phandle(sysdev, "usb-phy", 0);
+>   	if (IS_ERR(hcd->usb_phy)) {
+>   		ret = PTR_ERR(hcd->usb_phy);
+> 
+
+-Mathias
