@@ -1,337 +1,213 @@
 Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95428C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 12:05:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B6FFC4646D
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 12:05:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3561D21A0C
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 12:05:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3561D21A0C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 318AA21A0C
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 12:05:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=analog.onmicrosoft.com header.i=@analog.onmicrosoft.com header.b="CTxcJ8Uu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 318AA21A0C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=analog.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731666AbeHFOOJ (ORCPT
+        id S1731950AbeHFOOX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 10:14:09 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:49025 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731048AbeHFOOJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 10:14:09 -0400
-Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=bjornoya.blackshift.org)
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <mkl@pengutronix.de>)
-        id 1fmeGC-0005ji-5C; Mon, 06 Aug 2018 14:05:16 +0200
-Received: from [IPv6:2001:470:7eea:1122:6c91:b8f:4e84:18d1] (unknown [IPv6:2001:470:7eea:1122:6c91:b8f:4e84:18d1])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
-        (Client CN "mkl@blackshift.org", Issuer "StartCom Class 1 Client CA" (not verified))
-        (Authenticated sender: mkl@blackshift.org)
-        by smtp.blackshift.org (Postfix) with ESMTPSA id 5B25A34DB1D;
-        Mon,  6 Aug 2018 12:05:14 +0000 (UTC)
-To:     Flavio Suligoi <f.suligoi@asem.it>,
-        Wolfgang Grandegger <wg@grandegger.com>
-Cc:     "David S . Miller" <davem@davemloft.net>,
-        linux-can@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1533556850-4297-1-git-send-email-f.suligoi@asem.it>
-From:   Marc Kleine-Budde <mkl@pengutronix.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=mkl@pengutronix.de; prefer-encrypt=mutual; keydata=
- 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
-Subject: Re: [PATCH] can: sja1000: plx_pci: add support for ASEM CAN raw
- device
-Message-ID: <a6b6906d-6f53-9bf2-d87e-49ae3f208f00@pengutronix.de>
-Date:   Mon, 6 Aug 2018 14:05:11 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Mon, 6 Aug 2018 10:14:23 -0400
+Received: from mail-by2nam03on0056.outbound.protection.outlook.com ([104.47.42.56]:4480
+        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731048AbeHFOOX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 10:14:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=analog.onmicrosoft.com; s=selector1-analog-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=c+QiH2wEOhX9VlW0KyJrQTqiPK1GevQA95+rq5/Cimw=;
+ b=CTxcJ8UuV4cFaNo3CpisARyqAsxK0k2AgddTKbYDw0s45N/BZ+8wIo5MEFA6I5edgV8mG6LrRkvLn/IIzD0E9UqDnWMWqseLHckLT8U1K7A5RGX0zM7d+FwvZZYheroP19P1K2tXKveGkCxd33Fg2j3YLiKgcYxqfx6QrsxTAhg=
+Received: from BN6PR03CA0087.namprd03.prod.outlook.com (2603:10b6:405:6f::25)
+ by BY2PR03MB553.namprd03.prod.outlook.com (2a01:111:e400:2c38::27) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1017.15; Mon, 6 Aug
+ 2018 12:05:29 +0000
+Received: from BN1AFFO11FD011.protection.gbl (2a01:111:f400:7c10::101) by
+ BN6PR03CA0087.outlook.office365.com (2603:10b6:405:6f::25) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.1017.14 via Frontend Transport; Mon, 6 Aug 2018 12:05:28 +0000
+Authentication-Results: spf=pass (sender IP is 137.71.25.57)
+ smtp.mailfrom=analog.com; gmx.de; dkim=none (message not signed)
+ header.d=none;gmx.de; dmarc=bestguesspass action=none header.from=analog.com;
+Received-SPF: Pass (protection.outlook.com: domain of analog.com designates
+ 137.71.25.57 as permitted sender) receiver=protection.outlook.com;
+ client-ip=137.71.25.57; helo=nwd2mta4.analog.com;
+Received: from nwd2mta4.analog.com (137.71.25.57) by
+ BN1AFFO11FD011.mail.protection.outlook.com (10.58.52.71) with Microsoft SMTP
+ Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1038.13
+ via Frontend Transport; Mon, 6 Aug 2018 12:05:28 +0000
+Received: from NWD2HUBCAS7.ad.analog.com (nwd2hubcas7.ad.analog.com [10.64.69.107])
+        by nwd2mta4.analog.com (8.13.8/8.13.8) with ESMTP id w76C5R2K012447
+        (version=TLSv1/SSLv3 cipher=AES128-SHA bits=128 verify=OK);
+        Mon, 6 Aug 2018 05:05:27 -0700
+Received: from linux.analog.com (10.50.1.110) by NWD2HUBCAS7.ad.analog.com
+ (10.64.69.107) with Microsoft SMTP Server id 14.3.301.0; Mon, 6 Aug 2018
+ 08:05:26 -0400
+From:   Stefan Popa <stefan.popa@analog.com>
+To:     <jic23@kernel.org>, <broonie@kernel.org>
+CC:     Stefan Popa <stefan.popa@analog.com>, <lars@metafoo.de>,
+        <Michael.Hennerich@analog.com>, <knaack.h@gmx.de>,
+        <pmeerw@pmeerw.net>, <mark.rutland@arm.com>, <davem@davemloft.net>,
+        <mchehab+samsung@kernel.org>, <gregkh@linuxfoundation.org>,
+        <akpm@linux-foundation.org>, <robh+dt@kernel.org>,
+        <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v4 0/6] iio: accel: Add adxl372 driver
+Date:   Mon, 6 Aug 2018 15:04:41 +0300
+Message-ID: <1533557087-10401-1-git-send-email-stefan.popa@analog.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <1533556850-4297-1-git-send-email-f.suligoi@asem.it>
-Content-Type: multipart/signed; micalg=pgp-sha512;
- protocol="application/pgp-signature";
- boundary="5cZpHjU3Sz1FmNlq5KUjuLnEILZY1kYnp"
-X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain
+X-ADIRoutedOnPrem: True
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:137.71.25.57;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(136003)(39860400002)(376002)(396003)(346002)(2980300002)(438002)(189003)(199004)(72206003)(478600001)(336012)(48376002)(7696005)(4326008)(476003)(2616005)(50226002)(316002)(44832011)(486006)(7416002)(51416003)(8936002)(426003)(186003)(26005)(77096007)(5660300001)(966005)(126002)(16586007)(2906002)(305945005)(110136005)(54906003)(246002)(6666003)(7636002)(356003)(8676002)(6306002)(106002)(36756003)(50466002)(47776003)(53416004)(14444005)(106466001);DIR:OUT;SFP:1101;SCL:1;SRVR:BY2PR03MB553;H:nwd2mta4.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail11.analog.com;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: 1;BN1AFFO11FD011;1:TWR8p9a7CQhp6nnEiACEiqsRgAottO7h4RO9HtLAZGuWivgTKmG8zGXnu9EsvwHngSpnDj1iqD4UjUiKdwYvN5cchWZc9V/IMqcEjPzFWQUBnyEfdeJvGSBaMUqztcW4
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 3aab129a-c8ec-453e-cce6-08d5fb94e677
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4608076)(2017052603328)(7153060);SRVR:BY2PR03MB553;
+X-Microsoft-Exchange-Diagnostics: 1;BY2PR03MB553;3:KAeloTtMdL+JCUnai1fvEVGVfbKhRkWyvHStlHWm6d8H0Bwj6DDL82Y2etqi3eicMGaU3Rj4UOLE5NQZ7ZjJjhzMYjK3L4cweqCiqGsMxMqNG5861K6l2eH62PRZmutniEOAWbS4opoi4zXCe2RrmctgriyvHCh4QNy27Gmh2E/XPUYarmQf1fDkebVC/U/g43+Ah5HSqwVaPOEsJZVyMzCLtQncttDj/TJFTdsBCz3T498F4fGbj2N2G5GtFIibCqRXxD8ZNd1YUrF050lRACcV3/vqdxHHtvLoZdLWNiuxl1GtuKIiCVjAEMnFhfgWrhF+a9mwm805wyVFmga7rZwsHjpZqfQHnZZKm5HHZOI=;25:t0KtIb26vbgGFCx9eYSqGSvlSYWSr+ohcLBk1AJC4c5Q+BK3Y8qRLBG9WrFdxH7uJN+bxzpo9yKHrTOtmfmksVrDOvkmEgRfYzTCisCmyGMtDl1woTc4+Krd226aPxH/pagldvAFJRCy9WJdPTOWFXRZSSWmgK4GFWxon8k1tpXRWSCiyEG+PY3Sa18iMBZkegARyzocRK0vZnEyrl3csur595gIhYayhwb+sRnSdnn4tDlz4CQiiQngaBR9ip8MhpkZSdvKVGDQBH0ELkSb9OzNGIW8SE9aozZGLC0tDFUN1k1hiKwe+l7reVmBr92paP8wItcAy1Ur6Y7YieynYw==
+X-MS-TrafficTypeDiagnostic: BY2PR03MB553:
+X-Microsoft-Exchange-Diagnostics: 1;BY2PR03MB553;31:L551aN2i3q7YSLWw1Lox4xG+Bwo/ffljysiL8pJsoWppIGl/9GL6yhCKDljTPrQEyikftViq3toCvBOhojhPdnO7FicL+yEDkSl+UqOFlcskW4qj4V01NEUKjJk9FzAcOjmXrlAnBBQbt3T1PjK+q1JPDsI6QoWPIMCjbS8Oir6g+q1AxFFPJaZfZ/IDJ5pJVpE2EQiHbuaNEGl7HGgq2q8fyjKdsRZtF66kMtoAZMM=;20:w6GGbG6NrrzZO8sRuPbgGdvmYFW9zCNtztWthGuIKbUyhlmI/ZwXaAHTNWPTis6exKzSPBk0jjE2uUVGoRF7eWPn4braVpKmXu5V3RxLt3FaaJzqZr8CXqxGBmt8jNZjbmLD7BCjvs6nOSPgPugaNdczyWpvLi+CskbiNbnXGI3RRNvhePy3t2wBJ0gD01QcAWyiTxgnDuoPF6ytxsrM84sKUEO2Y9yFHmPVtDTXvZS64lIXuxPagzyZp4f3J/4MujpRdA1sM7kNSLiGP/Y5AimmllUBpECgu7S3l53C+Uw2RKRjymKO3tL0JYrrEFj7J7yBkGlaV3nIIS5dTeLGI4SDNDKBVwbmxZZ6cVsSwTxRmAqBQH1BNBXK1tKUxXeupjEQJHOcUQpG3OlCdvgTCSWXkuITvgabbvekkYf5B85tCBayOAmhv8rFcd39AU3QjP2wPK0/qBwDsT2MFKtvP9WGiEH0Y4eYYz+qRl4//JX+gADZ8WmC3qBAk2D4Ynv8
+X-Microsoft-Antispam-PRVS: <BY2PR03MB5538C15C03B4EE19C92A5D79D200@BY2PR03MB553.namprd03.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(17755550239193);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231311)(944501410)(52105095)(10201501046)(93006095)(93004095)(3002001)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:BY2PR03MB553;BCL:0;PCL:0;RULEID:;SRVR:BY2PR03MB553;
+X-Microsoft-Exchange-Diagnostics: 1;BY2PR03MB553;4:gn1nEIj469ro6pmmtvUmaEe9/WwU5oFwIfM6djk7Uz3poXP/e49UMTBwCW1RBHexcs/6dKbd6LyCYyoZBVYpMnZNRcBx8wS/pKA/sMnEjyjIVKWuK4FemdbXFlcAK1pQZrbuFOWpRaIiTwdHRHcdpoZw/3N9VQHWcdnUZbYjmdH5Ri3FOa4D3FdaoV9g1SNDRWKp6uqm979htU2sWkhHwkNXRUi0g6YV/WMTZ4K5svfGJlpRjiGZJmSal0LjlxiA1eSCxepArjbjjpSQIDka5eG0brPjDsKblDcCh9aCtMOZjkor0QpDylrMl+WxPQ9e
+X-Forefront-PRVS: 07562C22DA
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BY2PR03MB553;23:dkY5MmH/MNYbFb7iSPJNddVwhacX9CRWiRkJnOpq3I?=
+ =?us-ascii?Q?xlsVOOhN4D3YeC9IzKa9rLF2PJPgCvGmYzCkn1dh2S9r1/24Q8KzUQZ1fJT4?=
+ =?us-ascii?Q?LbGr+fEPAI8UsgIZ+QAFaKKwWtuk4EN16YCCfskcAaz8jSMLir/Mz4Ryn13P?=
+ =?us-ascii?Q?1xL6fHPeLlrK4an8HZhaukZd/8PleRG/LMm9r+O9gQcbem064MU4Mmw+VRD8?=
+ =?us-ascii?Q?L54qgutq1T7QJc+tA7gTy19RmOxaG9F5PF7X9OqMBZiX/bfMPBTBsjpnyQpq?=
+ =?us-ascii?Q?4l390Oc7djo8Oe7YQMgT4oI7caVeCpqYS27WvBIZqvS0HH4Vr+S/NRZHEhyd?=
+ =?us-ascii?Q?DSUM41qQzduKl9mvwXJ6TWe4uX7ZKeRx3MOStzuYFMAqwHez9qy0CuAZnUz+?=
+ =?us-ascii?Q?f9soBNLD/gNMNT5ApgaoZ8g+wt/U5kPBB1P9RA5mbbmabFKRISoGZXOPt6kz?=
+ =?us-ascii?Q?u371dMOIBW9aOB3S+ZwnQDPVAoVIc3Tds4wwqR9BZP+uwK0JPKUm69+dmgr5?=
+ =?us-ascii?Q?LrFZ3XnCtmVJa9cc5O7zsGzOkYLlSljFPz7NPWxZo87XFszrz+YDvJXQanZ7?=
+ =?us-ascii?Q?h3gaQKF2uOMDXXenFrelDyc4FXoqqZZpWUyjy0e6Mu54o3x+s7fyaK7QBjV8?=
+ =?us-ascii?Q?ZRkESIUo7KySMkb/k868p5Wd0PFAObHef24jTwy79JtZTNdJ/ujP8nh0TqcC?=
+ =?us-ascii?Q?HkbFbTSEr02alPYXepVR2QblU0rSgnWOWAvnF3meaq/GTTDgpfQ6KNiTmyWf?=
+ =?us-ascii?Q?tzeSXnidN2CA+qJ4PiUXZD4+2GpmO9SkPNQFjm2wz/7llqJzRZR98HU3enh8?=
+ =?us-ascii?Q?+G8cxLRQJjMaGaWTjZrvAiMURL0Hqz1csFDgyqQ7U19Bg1W0bUlHJyKJKr9+?=
+ =?us-ascii?Q?VkRNlPktunXdv0+jINKk5rbsaUltLBaVuXAi63powjQa5MbViA0aG7XdwVxs?=
+ =?us-ascii?Q?6ELW2fn/+cY3grVFd1Xy/l4CX6e/yt207QsD9c8WHsEAzLhlWgJ0jYTyGJb/?=
+ =?us-ascii?Q?BAgQ0MkHUynlUBW5CmbmRlRwhKETyq6YHHukAL+1t4Dhx9QfDUT37iUcSI62?=
+ =?us-ascii?Q?b61WLDTXVdlGjBkYDuf8ATuJMP?=
+X-Microsoft-Antispam-Message-Info: peDFILLnXH19/v8ctM6Oq0p32K6jNYDD04zCZUsxpvAdsQc9wdXtFsXo51k/PbJRBCUBvZgVzvVStiPAPdA4JBHp/A8h0PCzLbEwQYjlTyQ+Yp7rmqttFJrFq7q4HAmV1I/m6Urp6u/FSh8LoyDx9F2fQgMoQETGBy8F1+zTKRvVJGqZtFdB/ks4s9O9ye+UTh6Xw/cRgQjLzCCue9AnYYoSUkG/xtSK4TbIitS6+6eHnr20vs8rXb5a0M4/m8aHjlAuF60eYT9u5e/uf8uLdhSyZeO4xuulfSXgMtN+EiRY4Rk7nABbZTnX4zYqOusPIghklFcevVGheL6xqDzFTfYpcEp936tUiR+SJKyQgy0=
+X-Microsoft-Exchange-Diagnostics: 1;BY2PR03MB553;6:vYmdf/xhtoVPWbRQV1ltFUiLBtfagKRK2olD3oC3bOaUvI4uEjNHF8In69rVrO5ivhOSUAofzIkSRJ/dJg7J2faCxiq5nkaTiaZWC85OnWLAnvYjkeNJE6YTQtsQ+nPDGTXqVRyAKZ2iB2i6dJh0wWtqyrtOsoBbwgXA4yUQvsl7foxjanHfuPvaVa4hO+PxSdz88x8nfBWx7V0jeF6nSCIHAIH8FgaIkmrQ9BzRwrnVqESG7WUL4sbh3O8p/IsO3WsVXxytUo9yiSIs3ALqSe/OZ8fJ3FrNgmTYZGvrwTtozW+PtP7jQhezDWmzuW8tpPcFMylsGT22pN3OHqD2dw7a5IoUgDCCH9HHt2phXA4uAZHC4h8sIQSYRzcELH6q1sPxFbKPbJ4LmdtgjpA+x4pyInTMQOZS1eRZNruDsWl5lsgqkEw+WvUqAsBwl5g5/Xrrc+M1sdESmn/99ZxGCw==;5:A+5hD6nWyuin0kCjXQ96OzOmYVNh/PJjGWLTeHi86+wIjzjfknCJHL/kY72CODhkRtd02JjhpAVrN5fDGAOd83h8kbdv46//xocrYKz1KC+/iqCzhlO1ihdTDs8C5aP0PWRYOFg49OCvH2YJelpwzp0HbV64t0QDWBcvDzt+4Yg=;7:NM406enGiRlqNusHYslE0VAlhqNezUan59Y/pF58E3q5aLHEmckwPMowFGXsTOxtCT/j07XEuj2o+TTXKAd0U17TTQLnjrCq7fsTqJp7uip5NSn5CKJ6qEK5UNWp/rkEM6Am2+J5OS2fAVgxIjd4PMNZ4uuEyVeYFQaSry9XUv0x5Yq4Rl3yHw2WK72l8I+EF7fGD3m0TeQz/10g83SAxg5xsNAWOoCdqIIQXvK1JWA/U9yfulpGXIsXJuz2Ay3t
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: analog.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2018 12:05:28.2041
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3aab129a-c8ec-453e-cce6-08d5fb94e677
+X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.57];Helo=[nwd2mta4.analog.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY2PR03MB553
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---5cZpHjU3Sz1FmNlq5KUjuLnEILZY1kYnp
-Content-Type: multipart/mixed; boundary="LhL7uebtEiFMYKSzGJfarJJt9wJg2vu9i";
- protected-headers="v1"
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Flavio Suligoi <f.suligoi@asem.it>,
- Wolfgang Grandegger <wg@grandegger.com>
-Cc: "David S . Miller" <davem@davemloft.net>, linux-can@vger.kernel.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-ID: <a6b6906d-6f53-9bf2-d87e-49ae3f208f00@pengutronix.de>
-Subject: Re: [PATCH] can: sja1000: plx_pci: add support for ASEM CAN raw
- device
-References: <1533556850-4297-1-git-send-email-f.suligoi@asem.it>
-In-Reply-To: <1533556850-4297-1-git-send-email-f.suligoi@asem.it>
+Changes in v4:
+Patch 1:
+	- used a lookup table in adxl372_set_activity_threshold() instead
+	  of a switch(case).
+Patch 2: 
+	- removed the interrupt-parent from the bindings.
+Patch 3:
+	- renamed regmap_pipe_read() stub to regmap_noinc_read().
+Patch 4:
+	- removed the adxl372_read_fifo() wrapper and directly called
+	  regmap_noinc_read().
+	- called iio_triggered_buffer_predisable() before doing the local
+	  changes.
+Patch 5:
+	- nothing changed.
+Patch 6:
+	- nothing changed.
 
---LhL7uebtEiFMYKSzGJfarJJt9wJg2vu9i
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: quoted-printable
+Changes in v3:
+Patch 1, 2:
+	- nothing changed
+Patch 3:
+	- changed the name from regmap_pipe_read() to regmap_noinc_read()
+	- added a check for readable registers
+Patch 4:
+	- dropped the fifo peak mode
+	- corrected the patch based on feedback from Peter Meerwald-Stadler.
+Patch 5 and 6:
+	- nothing changed
 
-On 08/06/2018 02:00 PM, Flavio Suligoi wrote:
-> This patch adds support for ASEM opto-isolated dual channels
-> CAN raw device (http://www.asem.it)
->=20
-> Signed-off-by: Flavio Suligoi <f.suligoi@asem.it>
-> ---
->  drivers/net/can/sja1000/Kconfig   |  1 +
->  drivers/net/can/sja1000/plx_pci.c | 68 +++++++++++++++++++++++++++++++=
-+++++++-
->  2 files changed, 68 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/net/can/sja1000/Kconfig b/drivers/net/can/sja1000/=
-Kconfig
-> index 1e65cb6..f6dc899 100644
-> --- a/drivers/net/can/sja1000/Kconfig
-> +++ b/drivers/net/can/sja1000/Kconfig
-> @@ -88,6 +88,7 @@ config CAN_PLX_PCI
->  	   - TEWS TECHNOLOGIES TPMC810 card (http://www.tews.com/)
->  	   - IXXAT Automation PC-I 04/PCI card (http://www.ixxat.com/)
->  	   - Connect Tech Inc. CANpro/104-Plus Opto (CRG001) card (http://www=
-=2Econnecttech.com)
-> +	   - ASEM CAN raw - 2 isolated CAN channels (www.asem.it)
-> =20
->  config CAN_TSCAN1
->  	tristate "TS-CAN1 PC104 boards"
-> diff --git a/drivers/net/can/sja1000/plx_pci.c b/drivers/net/can/sja100=
-0/plx_pci.c
-> index f8ff25c..864fe8d 100644
-> --- a/drivers/net/can/sja1000/plx_pci.c
-> +++ b/drivers/net/can/sja1000/plx_pci.c
-> @@ -46,7 +46,8 @@ MODULE_SUPPORTED_DEVICE("Adlink PCI-7841/cPCI-7841, "=
+Changes in v2:
+Patch 1:
+	- removed ADXL372_RD_FLAG_MSK and ADXL372_WR_FLAG_MSK macros.
+	- handled regmap read/write by setting reg_bits and pad_bits
+	  fields in regmap_config struct.
+	- removed the buffer specifications when defining the channels.
+	- changed the activity and inactivity thresholds.
+	- added two new functions for setting the activity and inactivity
+	  timers: adxl372_set_inactivity_time_ms() and
+	  adxl372_set_activity_time_ms().
+Patch 2:
+	- introduced all the DT bindings in a single patch.
+Patch 3:
+	- backported the patch based on this discussion: 
+          https://lkml.org/lkml/2016/6/16/548.
+	- this patch is required as the regmap_pipe_read() API will be used 
+	  to read the data from the FIFO.
+Patch 4:
+	- removed DT bindings changes from this patch.
+	- removed the linux/gpio/consumer.h header.
+	- used regmap_pipe_read() instead of regmap_bulk_read() when
+	  reading data from the FIFO.
+	- used multiple regmap_write() calls instead of a single
+	  regmap_bulk_write() if there is no fast path.
+	- used be32_to_cpu() inside the adxl372_get_status() function.
+	- added a new in_accel_x&y&z_peak scan element which allows the
+	  user to set the FIFO into XYZ peak mode.
+	- used a adxl372_axis_lookup_table() to determine the fifo format
+	  from the active_scan_mask.
+	- made IRQ optional.
+Patch 5 and 6:
+	- nothing changed
 
->  			"esd CAN-PCIe/2000, "
->  			"Connect Tech Inc. CANpro/104-Plus Opto (CRG001), "
->  			"IXXAT PC-I 04/PCI, "
-> -			"ELCUS CAN-200-PCI")
-> +			"ELCUS CAN-200-PCI, "
-> +			"ASEM DUAL CAN-RAW")
->  MODULE_LICENSE("GPL v2");
-> =20
->  #define PLX_PCI_MAX_CHAN 2
-> @@ -70,7 +71,9 @@ struct plx_pci_card {
->  					 */
-> =20
->  #define PLX_LINT1_EN	0x1		/* Local interrupt 1 enable */
-> +#define PLX_LINT1_POL	(1 << 1)	/* Local interrupt 1 polarity */
->  #define PLX_LINT2_EN	(1 << 3)	/* Local interrupt 2 enable */
-> +#define PLX_LINT2_POL	(1 << 4)	/* Local interrupt 1 polarity */
-                                                                  ^^^ 2?
->  #define PLX_PCI_INT_EN	(1 << 6)	/* PCI Interrupt Enable */
->  #define PLX_PCI_RESET	(1 << 30)	/* PCI Adapter Software Reset */
-> =20
-> @@ -92,6 +95,9 @@ struct plx_pci_card {
->   */
->  #define PLX_PCI_OCR	(OCR_TX0_PUSHPULL | OCR_TX1_PUSHPULL)
-> =20
-> +/* OCR setting for ASEM Dual CAN raw */
-> +#define ASEM_PCI_OCR	0xfe
-> +
->  /*
->   * In the CDR register, you should set CBP to 1.
->   * You will probably also want to set the clock divider value to 7
-> @@ -145,10 +151,20 @@ struct plx_pci_card {
->  #define MOXA_PCI_VENDOR_ID		0x1393
->  #define MOXA_PCI_DEVICE_ID		0x0100
-> =20
-> +#define ASEM_DUAL_CAN_VENDOR_ID		0x10b5
-> +#define ASEM_DUAL_CAN_DEVICE_ID		0x9030
-> +#define ASEM_DUAL_CAN_SUB_VENDOR_ID	0x3000
-> +#define ASEM_DUAL_CAN_SUB_DEVICE_ID	0x1001
-> +#define ASEM_DUAL_CAN_SUB_DEVICE_ID_BIS	0x1002
-> +#define ASEM_DUAL_CAN_RESET_REGISTER	0x54
-> +#define ASEM_DUAL_CAN_RESET_MASK_CAN1	0x20
-> +#define ASEM_DUAL_CAN_RESET_MASK_CAN2	0x04
-> +
->  static void plx_pci_reset_common(struct pci_dev *pdev);
->  static void plx9056_pci_reset_common(struct pci_dev *pdev);
->  static void plx_pci_reset_marathon_pci(struct pci_dev *pdev);
->  static void plx_pci_reset_marathon_pcie(struct pci_dev *pdev);
-> +static void plx_pci_reset_asem_dual_can_raw(struct pci_dev *pdev);
-> =20
->  struct plx_pci_channel_map {
->  	u32 bar;
-> @@ -269,6 +285,14 @@ static struct plx_pci_card_info plx_pci_card_info_=
-moxa =3D {
->  	 /* based on PLX9052 */
->  };
-> =20
-> +static struct plx_pci_card_info plx_pci_card_info_asem_dual_can =3D {
-> +	"ASEM Dual CAN raw PCI", 2,
-> +	PLX_PCI_CAN_CLOCK, ASEM_PCI_OCR, PLX_PCI_CDR,
-> +	{0, 0x00, 0x00}, { {2, 0x00, 0x00}, {4, 0x00, 0x00} },
-> +	&plx_pci_reset_asem_dual_can_raw
-> +	/* based on PLX9030 */
-> +};
-> +
->  static const struct pci_device_id plx_pci_tbl[] =3D {
->  	{
->  		/* Adlink PCI-7841/cPCI-7841 */
-> @@ -375,6 +399,20 @@ static const struct pci_device_id plx_pci_tbl[] =3D=
- {
->  		0, 0,
->  		(kernel_ulong_t)&plx_pci_card_info_moxa
->  	},
-> +	{
-> +		/* ASEM Dual CAN raw */
-> +		ASEM_DUAL_CAN_VENDOR_ID, ASEM_DUAL_CAN_DEVICE_ID,
-> +		ASEM_DUAL_CAN_SUB_VENDOR_ID, ASEM_DUAL_CAN_SUB_DEVICE_ID,
-> +		0, 0,
-> +		(kernel_ulong_t)&plx_pci_card_info_asem_dual_can
-> +	},
-> +	{
-> +		/* ASEM Dual CAN raw -new model */
-> +		ASEM_DUAL_CAN_VENDOR_ID, ASEM_DUAL_CAN_DEVICE_ID,
-> +		ASEM_DUAL_CAN_SUB_VENDOR_ID, ASEM_DUAL_CAN_SUB_DEVICE_ID_BIS,
-> +		0, 0,
-> +		(kernel_ulong_t)&plx_pci_card_info_asem_dual_can
-> +	},
->  	{ 0,}
->  };
->  MODULE_DEVICE_TABLE(pci, plx_pci_tbl);
-> @@ -524,6 +562,34 @@ static void plx_pci_reset_marathon_pcie(struct pci=
-_dev *pdev)
->  	}
->  }
-> =20
-> +/* Special reset function for ASEM Dual CAN raw card */
-> +static void plx_pci_reset_asem_dual_can_raw(struct pci_dev *pdev)
-> +{
-> +	void __iomem *bar0_addr;
-> +	static const int reset_bar;
-> +	u8 tmpval;
-> +
-> +	plx_pci_reset_common(pdev);
-> +
-> +	bar0_addr =3D pci_iomap(pdev, reset_bar, 0);
-> +	if (!bar0_addr) {
-> +		dev_err(&pdev->dev, "Failed to remap reset "
-> +		"space %d (BAR%d)\n", 0, reset_bar);
+Crestez Dan Leonard (1):
+  regmap: Add regmap_noinc_read API
 
-please don't break strings
+Stefan Popa (5):
+  iio: adxl372: New driver for Analog Devices ADXL372 Accelerometer
+  dt-bindings: iio: accel: Add docs for ADXL372
+  iio:adxl372: Add FIFO and interrupts support
+  iio:adxl372: Add sampling frequency support
+  iio:adxl372: Add filter bandwidth support
 
-just return here, so you can remove the indention for the else...
+ .../devicetree/bindings/iio/accel/adxl372.txt      |  22 +
+ MAINTAINERS                                        |   7 +
+ drivers/base/regmap/regmap.c                       |  65 +-
+ drivers/iio/accel/Kconfig                          |  11 +
+ drivers/iio/accel/Makefile                         |   1 +
+ drivers/iio/accel/adxl372.c                        | 977 +++++++++++++++++++++
+ include/linux/regmap.h                             |   9 +
+ 7 files changed, 1091 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/iio/accel/adxl372.txt
+ create mode 100644 drivers/iio/accel/adxl372.c
 
-> +	} else {
-> +		/* reset the two SJA1000 chips */
-> +		tmpval =3D ioread8(bar0_addr + ASEM_DUAL_CAN_RESET_REGISTER);
-> +		tmpval &=3D ~(ASEM_DUAL_CAN_RESET_MASK_CAN1 |
-> +			ASEM_DUAL_CAN_RESET_MASK_CAN2);
-> +		iowrite8(tmpval, bar0_addr + ASEM_DUAL_CAN_RESET_REGISTER);
-> +		usleep_range(300, 400);
-> +		tmpval |=3D ASEM_DUAL_CAN_RESET_MASK_CAN1 |
-> +			ASEM_DUAL_CAN_RESET_MASK_CAN2;
-> +		iowrite8(tmpval, bar0_addr + ASEM_DUAL_CAN_RESET_REGISTER);
-> +		usleep_range(300, 400);
-> +		pci_iounmap(pdev, bar0_addr);
-> +	}
-> +}
-> +
->  static void plx_pci_del_card(struct pci_dev *pdev)
->  {
->  	struct plx_pci_card *card =3D pci_get_drvdata(pdev);
->=20
+-- 
+2.7.4
 
-Marc
-
---=20
-Pengutronix e.K.                  | Marc Kleine-Budde           |
-Industrial Linux Solutions        | Phone: +49-231-2826-924     |
-Vertretung West/Dortmund          | Fax:   +49-5121-206917-5555 |
-Amtsgericht Hildesheim, HRA 2686  | http://www.pengutronix.de   |
-
-
---LhL7uebtEiFMYKSzGJfarJJt9wJg2vu9i--
-
---5cZpHjU3Sz1FmNlq5KUjuLnEILZY1kYnp
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCgAdFiEENrCndlB/VnAEWuH5k9IU1zQoZfEFAltoOXcACgkQk9IU1zQo
-ZfFXYgf+OuQZrN8+yAFMVJ85J2z/naw9MxL5rMHS+eJwO7SeifdY5MTcfsjAuChD
-nP8INYjhI2/5imw0UoUsugrU9kCOvnisV2QD8MvRDEsUecW8ghevMe4pcM5gbTy4
-qMfwpVst+DpaRZDWzH1LJ/gFsoMhIgZNnOiM4CrwDA3F0rkvtIa92RsBT5obnlrm
-RhZgeoCFCVbLTcm3ElHHjdHJhpH04c5oJrpL85sn7cVolXZ4n6mRg1Qq0oJ8tC6G
-z19tJaUWU71C821qTyM4qGeaWRwT2hv1IDqi09fJdo9BUOPHtip3f8znkktdAQ2r
-/jmuKcieSlzL36dt9y2xFC6ZVKvzzw==
-=bpmb
------END PGP SIGNATURE-----
-
---5cZpHjU3Sz1FmNlq5KUjuLnEILZY1kYnp--
