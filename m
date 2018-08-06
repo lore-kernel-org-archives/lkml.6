@@ -2,153 +2,128 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DAC7C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 11:59:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B07DAC46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 12:02:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A77521A0C
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 11:59:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A77521A0C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id 65FEC21A0C
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 12:02:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="2vyDTlT2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65FEC21A0C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732313AbeHFOIf (ORCPT
+        id S1731506AbeHFOKr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 10:08:35 -0400
-Received: from gateway21.websitewelcome.com ([192.185.46.109]:17859 "EHLO
-        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731331AbeHFOIe (ORCPT
+        Mon, 6 Aug 2018 10:10:47 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:39302 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730846AbeHFOKq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 10:08:34 -0400
-Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
-        by gateway21.websitewelcome.com (Postfix) with ESMTP id 40FC740150CD9
-        for <linux-kernel@vger.kernel.org>; Mon,  6 Aug 2018 06:59:48 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id meAuf0sZbBcCXmeAufbIST; Mon, 06 Aug 2018 06:59:48 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.50.82] (port=39644 helo=[192.168.1.71])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1fmeAt-000iJ1-Hx; Mon, 06 Aug 2018 06:59:47 -0500
-Subject: Re: [PATCH 11/11] ASoC: wm8994: Mark expected switch fall-through
-To:     Mark Brown <broonie@kernel.org>
-Cc:     valdis.kletnieks@vt.edu, Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        patches@opensource.cirrus.com, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>
-References: <cover.1533151956.git.gustavo@embeddedor.com>
- <8e3df79b1dca92d49fd9d5c97391d31814ab40f9.1533151956.git.gustavo@embeddedor.com>
- <30613.1533313609@turing-police.cc.vt.edu>
- <85d918a5-6a14-ead0-4d0e-d63b5e43ad81@embeddedor.com>
- <20180803164504.GF6591@sirena.org.uk>
- <684a4fe9-6818-d19c-e7b7-fb8d592a0cee@embeddedor.com>
- <39703.1533318918@turing-police.cc.vt.edu>
- <20180806113426.GA17525@sirena.org.uk>
- <e839abf4-cf54-fe2e-7eb8-57b12106b586@embeddedor.com>
- <20180806115256.GC17525@sirena.org.uk>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <a413a275-3f89-e8fa-df02-b669aa64dbf2@embeddedor.com>
-Date:   Mon, 6 Aug 2018 06:59:46 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 6 Aug 2018 10:10:46 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w76Bx4ai104416;
+        Mon, 6 Aug 2018 12:01:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=BY16AYDEMF35iWPQ4qSOzxnusS53aZYFVYIxx7cqx9U=;
+ b=2vyDTlT2utJUUWJ+zTDIIGrHW8GsMOl8iH07OqciBx02mdUH3C/WjZypkJ4MctO0MZ6a
+ 3dANl+aI/QOm55Ag/Zr0sT7nRCgDmv1p3Xfwc6RIZPZxG5NYnIM/zorSRvpwJg8RU7q9
+ iHwaFY+8UUKYTnDTm/enCB8lCLQeY5jxm6dkcglpLa//imHTZVkvhH6usFswx49Q/v7t
+ Oa1ec1/S8G1eF/USm+KWIVBkkos7EPqI4twc+h4kWkG4BBEXkYVDht+W3cqPtlV6Ld8B
+ EOX4zmfazz1K2yq8AR7/gGvFl5zYBpN/wC/SaOGs5BLi5vTr7FDE97h6seMLpEDx/ZZA Sw== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2120.oracle.com with ESMTP id 2kn4spmf4f-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 06 Aug 2018 12:01:48 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w76C1l6M007923
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 6 Aug 2018 12:01:47 GMT
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w76C1kUK003092;
+        Mon, 6 Aug 2018 12:01:46 GMT
+Received: from mwanda (/197.232.248.111)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 06 Aug 2018 05:01:45 -0700
+Date:   Mon, 6 Aug 2018 15:01:37 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+Cc:     Jheng-Jhong Wu <goodwater.wu@gmail.com>,
+        Palle Christensen <palle.christensen@microsemi.com>,
+        devel@driverdev.osuosl.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Arun Nagendran <arunrasppi@gmail.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Subject: Re: [PATCH] staging:mt29f_spinand: MT29F2G failing as only 16-bit
+ arguments and variables used for addressing.
+Message-ID: <20180806120137.s2lenmmhynw3zndz@mwanda>
+References: <1533093861-9761-1-git-send-email-goodwater.wu@gmail.com>
+ <20180801120551.ju6zhxhoef6w5zim@mwanda>
+ <20180806134648.2976de9e@bbrezillon>
 MIME-Version: 1.0
-In-Reply-To: <20180806115256.GC17525@sirena.org.uk>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.50.82
-X-Source-L: No
-X-Exim-ID: 1fmeAt-000iJ1-Hx
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.71]) [189.250.50.82]:39644
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 21
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180806134648.2976de9e@bbrezillon>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8976 signatures=668707
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1808060130
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 08/06/2018 06:52 AM, Mark Brown wrote:
-> On Mon, Aug 06, 2018 at 06:48:13AM -0500, Gustavo A. R. Silva wrote:
+On Mon, Aug 06, 2018 at 01:46:48PM +0200, Boris Brezillon wrote:
+> Hi Dan,
 > 
-> Please fix your mail client to word wrap within paragraphs at something
-> substantially less than 80 columns.  Doing this makes your messages much
-> easier to read and reply to.
+> On Wed, 1 Aug 2018 15:05:51 +0300
+> Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> 
+> > On Wed, Aug 01, 2018 at 11:24:19AM +0800, Jheng-Jhong Wu wrote:
+> > > For NAND flash chips with more than 1Gbit (e.g. MT29F2G) more than 16 bits
+> > > are necessary to address the correct page. The driver sets the address for
+> > > more than 16 bits, but it uses 16-bit arguments and variables (these are
+> > > page_id, block_id, row) to do address operations. Obviously, these
+> > > arguments and variables cannot deal with more than 16-bit address.
+> > > 
+> > > Signed-off-by: Jheng-Jhong Wu <goodwater.wu@gmail.com>  
+> > 
+> > This seems reasonable...  It would be needed to make commit 6efb21d6d0e7
+> > ("staging:mt29f_spinand: MT29F2G failing as only 16 bits used for
+> > addressing.") work.  It also fixes a static checker warning.
+> > 
+> > My only concern is that the mtd/nand code seems to use -1 as a magical
+> > page_id.  For example:
+> 
+> Yes, -1 means "don't issue the row/page address cycles", though I
+> don't think page can be -1 for NAND_CMD_READ{1,0} commands.
 > 
 
-Sure thing.
+It sure looks like it can be in nand_exit_status_op()...
 
->> OK. I'll send a patch for this. But I wonder what's the best approach in this case,
->> so the fix can also be applied to stable.
-> 
-> Just send a patch, a fixup can be done when the backport fails.
-> 
+> Anyway, if you want this patch merged to fix a static checker warning,
+> I'm fine with that. In any case, I still plan to send a patch removing
+> this driver for v4.20, so, anyone using this driver should start
+> testing the new SPI NAND driver (drivers/mtd/nand/spi) and tweak/fix
+> the new implementation if needed.
 
-I got it.
+I don't think we should make the code more complicated than necessary
+just to make static checkers happy.  When you say "this driver", you
+mean the staging driver?  In that case, there is no need to revert
+commit 6efb21d6d0e7 ("staging:mt29f_spinand: MT29F2G failing as only 16
+bits used for addressing.").
 
-I'll send the patch and I'll take care of the backport when the
-time comes.
+regards,
+dan carpenter
 
-Thanks
---
-Gustavo
