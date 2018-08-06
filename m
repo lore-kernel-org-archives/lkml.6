@@ -2,79 +2,122 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DFD2C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 10:02:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E723BC4646D
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 10:08:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36D6C219E2
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 10:02:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P6r1bmGp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36D6C219E2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id A010B219DA
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 10:08:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A010B219DA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729262AbeHFMKp (ORCPT
+        id S1728440AbeHFMQg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 08:10:45 -0400
-Received: from mail-lf1-f45.google.com ([209.85.167.45]:42469 "EHLO
-        mail-lf1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726746AbeHFMKp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 08:10:45 -0400
-Received: by mail-lf1-f45.google.com with SMTP id u202-v6so8600492lff.9
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Aug 2018 03:02:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=M/kbcRTyRzhy9nQ1Hf9rCViAbPBoiJtiq4R8dsHsw5Y=;
-        b=P6r1bmGp6Dqc9FbTNprL49y7djGWxKmcrIwGwtSx59nRHE/ZJLjI2+3QHoEWKFXB5l
-         xIJT3kes8AVGyPHeK0LrZxBYqaoY+ttzgdw1kxoFQzgkN0NT+1M4J7oiTd9DUWxEVfqS
-         7+ZdTuwZWUzZz4SLCje7udVkvcBcc3dytpBzEadMZhHz6j/mW2YBvsjv88G2Q7kx2HBQ
-         eu3J4WcSPikisZJkjw5uWoPOkVbS3cjBhUuo6pe/h0WyUbzN+bYMShLYTBYaMRvTNDr7
-         FLk0u5sBWt859q2v1QG0swDajKcGP4PyIrROXen73AdP1f6mwb1OcEnC4pSjrrxF6unL
-         2fwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=M/kbcRTyRzhy9nQ1Hf9rCViAbPBoiJtiq4R8dsHsw5Y=;
-        b=Zi0Yk/3/ZTvJR00WmjIIoIU/gqYfrHL/jg+TFyO1YOa/cfwYOZpEEGkdUV1yaWw0wH
-         vpyvNyqk7JmQgsmFswwyMS1h8Sl9Cmu5Pb23oiStFHPnEd6J7ADEcCF2IkwBO3Jsf5gY
-         6nZV9F7nPDAk3ny482bILI0mekz6vUoE51/+jXwn0hK9IXs4HezOcd/BeDvijTQpd6Vn
-         +pF/81k/IGJKU1CLDbzNp6GyR7zjv+Tz5MQoLJkh+mXzsQ/Gp67sWAfLdqoaiV/x2Hke
-         8904+W0AqNRmq3sDoA56XNsmf76pC4rw2EQ3xlcaWm4clmAuU2T+8a9rAmyrOndF8pt7
-         VMSg==
-X-Gm-Message-State: AOUpUlFKvSJucyo7gPZu1Iid8SzW89esVlcSXgJhHSTcyqWvlQQTnJw2
-        wLdWlKdSVgp0izvWn4MeTsnksJ0W0HlYMCxbxf4=
-X-Google-Smtp-Source: AAOMgpeu42WY+HCrCa5fxO7n+Sl7JQ+C2YkTy0A9MHHEHKkYiWfiNWggROdroRPw8TahbmPESXsrXinr7UGzDtmZg3g=
-X-Received: by 2002:a19:12df:: with SMTP id 92-v6mr10392495lfs.80.1533549744102;
- Mon, 06 Aug 2018 03:02:24 -0700 (PDT)
+        Mon, 6 Aug 2018 08:16:36 -0400
+Received: from foss.arm.com ([217.140.101.70]:35670 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726746AbeHFMQf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 08:16:35 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E27227A9;
+        Mon,  6 Aug 2018 03:08:14 -0700 (PDT)
+Received: from [0.0.0.0] (e107985-lin.Emea.Arm.com [10.4.12.239])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0C1C73F5D0;
+        Mon,  6 Aug 2018 03:08:09 -0700 (PDT)
+Subject: Re: [PATCH v5 09/14] sched: Add over-utilization/tipping point
+ indicator
+To:     Vincent Guittot <vincent.guittot@linaro.org>,
+        Quentin Perret <quentin.perret@arm.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Chris Redpath <chris.redpath@arm.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Thara Gopinath <thara.gopinath@linaro.org>,
+        viresh kumar <viresh.kumar@linaro.org>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        "Cc: Steve Muckle" <smuckle@google.com>, adharmap@quicinc.com,
+        "Kannan, Saravana" <skannan@quicinc.com>, pkondeti@codeaurora.org,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        currojerez@riseup.net, Javi Merino <javi.merino@kernel.org>
+References: <20180802153035.vjtmqwdwujvt7ojs@queper01-lin>
+ <CAKfTPtCGGqykN027kxK+chvKvCpNu4bYYdvfZJ+3_7YzT3Utfg@mail.gmail.com>
+ <20180802160009.uhwwj3tqrqmv7q5a@queper01-lin>
+ <CAKfTPtB_tWgOPCB3q2Q2rESKczTPGBDUojcXDY7uP8YTQddBMg@mail.gmail.com>
+ <20180802161027.v2ctgscuc4uxbb7u@queper01-lin>
+ <CAKfTPtDtaF9Qs4NWkKWUSr8Ryi-ScYNmPyacocPQUPxT00XAYg@mail.gmail.com>
+ <20180802165924.7ywgoxj2jwftxycz@queper01-lin>
+ <CAKfTPtDsG4FJy5xBO8+6pJzehEM668=SZ4yQ-szVTduofN3QZg@mail.gmail.com>
+ <20180803081850.hj7bp5ognuywapmd@queper01-lin>
+ <CAKfTPtDkJY=JYicZk8sM9_mJ-iq+Jwse0oVRbW=wpxXKKnEoeQ@mail.gmail.com>
+ <20180803155547.sxlhxpmhwcoappit@queper01-lin>
+ <CAKfTPtBT-p-Z0EneirfOTwUw=5jEeDGa+4_EE4ogi2Ht7GU9Bg@mail.gmail.com>
+From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
+Message-ID: <68689fcb-3cb8-4685-58ef-0bec84be2047@arm.com>
+Date:   Mon, 6 Aug 2018 12:08:07 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <0d4090532f15434aa71779e9dc8a0014@BJSGEXMBX10.didichuxing.com>
- <CAHCio2idn3oh55n7urkRPqkdyo+Y-0Qhg=Vc2VHXy2Wy2q1wiA@mail.gmail.com> <20180806060649.GA19540@dhcp22.suse.cz>
-In-Reply-To: <20180806060649.GA19540@dhcp22.suse.cz>
-From:   =?UTF-8?B?56a56Iif6ZSu?= <ufo19890607@gmail.com>
-Date:   Mon, 6 Aug 2018 18:02:10 +0800
-Message-ID: <CAHCio2j-oH2v5xY9F=Naoj9ao4cYw+LP6kqi_GELafqJ4qB6iw@mail.gmail.com>
-Subject: Re: [LKP] [mm, oom] c1e4c54f9c: BUG:KASAN:null-ptr-deref_in_d
-To:     mhocko@kernel.org
-Cc:     Wind Yu <yuzhoujian@didichuxing.com>, rientjes@google.com,
-        rong.a.chen@intel.com, Stephen Rothwell <sfr@canb.auug.org.au>,
-        kirill.shutemov@linux.intel.com, aarcange@redhat.com,
-        penguin-kernel@i-love.sakura.ne.jp, guro@fb.com,
-        yang.s@alibaba-inc.com, akpm@linux-foundation.org,
-        linux-kernel@vger.kernel.org, lkp@01.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAKfTPtBT-p-Z0EneirfOTwUw=5jEeDGa+4_EE4ogi2Ht7GU9Bg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Michal
-Sorry, I cannot open the link you shared.
+On 08/06/2018 10:40 AM, Vincent Guittot wrote:
+> On Fri, 3 Aug 2018 at 17:55, Quentin Perret <quentin.perret@arm.com> wrote:
+>>
+>> On Friday 03 Aug 2018 at 15:49:24 (+0200), Vincent Guittot wrote:
+>>> On Fri, 3 Aug 2018 at 10:18, Quentin Perret <quentin.perret@arm.com> wrote:
+>>>>
+>>>> On Friday 03 Aug 2018 at 09:48:47 (+0200), Vincent Guittot wrote:
+>>>>> On Thu, 2 Aug 2018 at 18:59, Quentin Perret <quentin.perret@arm.com> wrote:
+
+[...]
+
+>> I think we're discussing two different things right now:
+>>      1. Should forkees go in find_energy_efficient_cpu() ?
+>>      2. Should forkees have 0 of initial util_avg when EAS is enabled ?
+> 
+> It's the same topic: How EAS should consider a newly created task ?
+> 
+> For now, we let the "performance" mode selects a CPU. This CPU will
+> most probably be worst CPU from a EAS pov because it's the idlest CPU
+> in the idlest group which is the opposite of what EAS tries to do
+> 
+> The current behavior is :
+> For every new task, the cpu selection is done assuming it's a heavy
+> task with the max possible load_avg,  and it looks for the idlest cpu.
+> This means that if the system is lightly loaded, scheduler will select
+> most probably a idle big core.
+
+AFAICS, task load doesn't seem to be used for find_idlest_cpu() ( 
+find_idlest_group() and find_idlest_group_cpu()). So the forkee 
+(SD_BALANCE_FORK) is placed independently of his task load.
+Task load (task_h_load(p)) is used in 
+wake_affine()->wake_affine_weight() but for this to be called it has to 
+be a wakeup (SD_BALANCE_WAKE).
+
+> The utilization of this new task is then set to half of the remaining
+> capacity of the selected CPU which means that the idlest you are, the
+> biggest the task will be initialized to. This can easily be half a big
+> core which can be bigger than the max capacity of a little like on
+> hikey960. Then, util_est  will keep track of this value for a while
+> which will make this task like a big one.
+
+[...]
+
