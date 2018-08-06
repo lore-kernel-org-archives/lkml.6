@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90627C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 09:18:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46E24C46472
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 09:18:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13A21219E5
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 09:18:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D5E6F219E5
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 09:18:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nio365.onmicrosoft.com header.i=@nio365.onmicrosoft.com header.b="i+C64HVw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13A21219E5
+	dkim=pass (1024-bit key) header.d=nio365.onmicrosoft.com header.i=@nio365.onmicrosoft.com header.b="hn8WOu1Y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5E6F219E5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ni.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729710AbeHFL0Y (ORCPT
+        id S1729738AbeHFL00 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 07:26:24 -0400
-Received: from mx0a-00010702.pphosted.com ([148.163.156.75]:48032 "EHLO
-        mx0b-00010702.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729478AbeHFL0X (ORCPT
+        Mon, 6 Aug 2018 07:26:26 -0400
+Received: from mx0b-00010702.pphosted.com ([148.163.158.57]:36418 "EHLO
+        mx0b-00010702.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729714AbeHFL0Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 07:26:23 -0400
-Received: from pps.filterd (m0098781.ppops.net [127.0.0.1])
-        by mx0a-00010702.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w769BGSE009132;
+        Mon, 6 Aug 2018 07:26:25 -0400
+Received: from pps.filterd (m0098778.ppops.net [127.0.0.1])
+        by mx0b-00010702.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w769BFKu008035;
         Mon, 6 Aug 2018 04:17:49 -0500
 Authentication-Results: ppops.net;
         dkim=pass header.d=nio365.onmicrosoft.com header.s=selector1-ni-com
-Received: from nam05-dm3-obe.outbound.protection.outlook.com (mail-dm3nam05lp0115.outbound.protection.outlook.com [216.32.181.115])
-        by mx0a-00010702.pphosted.com with ESMTP id 2kn85wc4uj-2
+Received: from nam01-by2-obe.outbound.protection.outlook.com (mail-by2nam01lp0177.outbound.protection.outlook.com [216.32.181.177])
+        by mx0b-00010702.pphosted.com with ESMTP id 2kn93xbp4e-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Mon, 06 Aug 2018 04:17:48 -0500
+        Mon, 06 Aug 2018 04:17:49 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=nio365.onmicrosoft.com; s=selector1-ni-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nDXC7a1lnzVuzFppSr4kRj29BY8T5UO+oUnCxGo9KmA=;
- b=i+C64HVwASICBBtj/pINZKazsPS4paHwA3fQyngjGZBXGPGHKdvoezA/KAwWostipqDLQ4WiOOra4PzilZIqYujUN3Qp/NMyiUb+Aiw5UBivRnVSh0CSYb0o4Z14UHwqs/HKUEHlzQdJboZ8NQx0+m9bHy/TbDJxfbPQDWyD7pU=
+ bh=FVaFIRI6Ebg0Rvw7eeIip/wDFRo/4TItQXs57Cxc8v4=;
+ b=hn8WOu1YjJNt2xPDSK68/qugJP4DBfsN7c801Y+DHHsfFztbfWo5GZWXq8c3pGGzsJItSFP/xCbS/or4Dze3FRGh2YaAawsVtp8QsHF9MtsZ/x8ryKTlaAeMqs7ci6UPFUkgeq4Fnppq+2iR+czFOqxQGZrq/wMQ0Dm1WGdj2x4=
 Received: from jcartwri.amer.corp.natinst.com (130.164.62.116) by
- CY4PR04MB0968.namprd04.prod.outlook.com (2603:10b6:910:55::24) with Microsoft
+ CY4PR04MB0966.namprd04.prod.outlook.com (2603:10b6:910:54::24) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1017.15; Mon, 6 Aug 2018 09:17:45 +0000
+ 15.20.1017.18; Mon, 6 Aug 2018 09:17:47 +0000
 Received: by jcartwri.amer.corp.natinst.com (Postfix, from userid 1000)
-        id E8F75302D78; Mon,  6 Aug 2018 04:17:38 -0500 (CDT)
+        id 1E443302F62; Mon,  6 Aug 2018 04:17:39 -0500 (CDT)
 From:   Julia Cartwright <julia@ni.com>
 To:     linux-kernel@vger.kernel.org, linux-rt-users@vger.kernel.org
 Cc:     Thomas Gleixner <tglx@linutronix.de>,
@@ -55,74 +55,69 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Paul Gortmaker <paul.gortmaker@windriver.com>,
         Daniel Wagner <daniel.wagner@siemens.com>,
         tom.zanussi@linux.intel.com, stable-rt@vger.kernel.org
-Subject: [PATCH RT 09/22] crypto: limit more FPU-enabled sections
-Date:   Mon,  6 Aug 2018 04:17:25 -0500
-Message-Id: <5fc4fe6c1f808230483b805de7bf21ff935707c4.1533540554.git.julia@ni.com>
+Subject: [PATCH RT 16/22] block: blk-mq: move blk_queue_usage_counter_release() into process context
+Date:   Mon,  6 Aug 2018 04:17:32 -0500
+Message-Id: <9dd9d390ebdb534a766887b11bb1666bf87d8ca3.1533540554.git.julia@ni.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <cover.1533540554.git.julia@ni.com>
 References: <cover.1533540554.git.julia@ni.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 X-Originating-IP: [130.164.62.116]
-X-ClientProxiedBy: CO2PR07CA0053.namprd07.prod.outlook.com (2603:10b6:100::21)
- To CY4PR04MB0968.namprd04.prod.outlook.com (2603:10b6:910:55::24)
+X-ClientProxiedBy: CY4PR1701CA0006.namprd17.prod.outlook.com
+ (2603:10b6:910:5e::16) To CY4PR04MB0966.namprd04.prod.outlook.com
+ (2603:10b6:910:54::24)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: c39c79b0-ace3-43f7-8926-08d5fb7d78cf
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:CY4PR04MB0968;
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR04MB0968;3:2samc1g68oeeCU+DLUZwP6XlehJ0zvcT6xViGTPJPfC+0xbN3k1Bj4/AzwwfH0yuXjTaWHzSz5eYdudwiP6LoGUn675UL4EGAM6U4NqlHHXZ1MfibW3mJnHYgJhnPfG57ikEJzegasrxnvTws+M2sd8Y36IwFR4f1FFivn4ojO9JRR/AyiUycCFAN8kfNjf+qp9WBVguR2H/O3fV1D1mPgit5b2pJ9zJMptYf8+AZ3snDdgoV6smzbhNFcUnfqmJ;25:PcR8Wf3qxBti+xs07uE2oDu1BFlR8TLvAWjmpBYeBnGKgqOJ5YwF0H9VqcabjPnCtKw6KYGpBUwg15sOEeLsFq2tEYtZovtSbG4l3lyaau7Z2nvvE0NrMhV/KaRyOg3roSy7RyFcf9TAtXJxBN2Fhr36jx/Fvch0PSAuTlAZ9q9TWyhPXi2Dl7mBws/MngeEXcaroDMnCzwUVz3yc82nPXYaVloX9P9H6oRdjSdmWh5qiZ+LpZv2u7yIKzCgsJpzHK/cBSUMQ306e4ApTbe19ZcuI8z+16A1B/MecMu/p1oHEdEL/zXSVmxp3YlGFdhRPErH3TGdR8SFxc3AnYjMwg==;31:7wHuF2Q9puh+ZowfoEoZDA/fZ4T4fnHzqCPOqx5ur2iD934eRbRc/dSlS3fD3sSa5wduieO8QGL4t9fMmDjXo79pzV/bBUq0ogLoQlY/jukwwTnF6/4JLh0KGBd02yU82NKWLpNHFDYboM/rnEpDIR600xPr6Ji+BLdu5gGuF72sDIUp/OYzq7hinFkDt0capPrL/+DOOaQ/aawKLliaysnge5ZS/ArxpBs+H4XldbM=
-X-MS-TrafficTypeDiagnostic: CY4PR04MB0968:
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR04MB0968;20:jbExrF6M08M5UOakAl5Yyi+ivqfQrmj3Edz6rDv9kkxYaILGW4KK2+fQoWxFHLmEXZ480n6C4mbDPYWdryWmOxw86064EXyoCw9FYmwpQmtg0/Jlv1Tr/HqiSqnxvXS+qhLJyA6YYZYPrvaHld+apwlsrI+D0qYdufHFyz3GIUI+SBTomoMcQbEZ80d+AgbLai6BnVB4PjMF6it04LE0EQnHpcISbccyTGf2YYWBqUCU5tzg3uzoukmmzZPI6vOwi5O/um8FKg3/b5uk2mJiAuWEPYTMkAXeK7nRWikT+hV3ECzGwJYmrn2tq7xGDSe8djACoLNfz1zBMDx6ZmI1AuxcvjVwikGiMYIjUULVI4LC28w2Yk2qvN8ix9IiegABwRgWgN9LA/Te6P37vQhMdYMsRaaxRw5AW8SnUODkNsyIeozXPFD1ya19ONpnakm0RS3p7s4H6p8DKw4j3zxIWZOwteUpxowY7eVzSucc3gwtT7b9w5G2/vGTXEOIfKLpXfTeRg9j84FXom030VDLtFbnDPQ/4GGFWk3blbNfl/PFnP1O73lFsIyRyaRzvXQACyJbwp+9pGH9kxdJ3ecOJZjUBPOdP0ii67S7BQwiYtU=
-X-Microsoft-Antispam-PRVS: <CY4PR04MB096838D866E27514869E5F4FF4200@CY4PR04MB0968.namprd04.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: e6bc97f0-c91f-4000-c25b-08d5fb7d79e2
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:CY4PR04MB0966;
+X-Microsoft-Exchange-Diagnostics: 1;CY4PR04MB0966;3:achpg8slcT3bul2D1v3sh05qT+KX6dA5xPuNxaONr1QMT3428wS78PBdyG2gor8mYTkzVSgZoIPj1BAoretbbMgtm3v7W2kktM93eIsRl7/REwI5s8R5sWpXM6d5JOA5YMmqmq7CGYusbA45+y19pjEI8rxdWjXmRQONW1URsn3JoSAr7cPoSDDtFYOQrRuF7jL1EIhAEJ+wix/aQzjwQjukwqFV+3srbFeB/8AGzlrbZ4HJo+QjntzLqmku9sTJ;25:Hxnhq3N8cMF33toAa69zVAntxz72k814yFVdVzbQB4lLKOp6rqi//WJVzhWfpNeEpKdaQgABjAH2Il63Cyp4t8HRPxwVBuBlARXJWW9F7bdZGKqaCo4WS0PoR1ElRQKFxq69IivbHFTTJ7wgTSpPb09XLRHaEKbucjGJKDJmgT38mWPokL8NwkPc4FYyLIPP1ICB+x5PI+q/wuafpRczvJyFtj+U2w1dMBY5tAmKyghAmX/FBtP56Bx4A9OdA27DSAihXunL8kIJmJRi8ZTi+GI5rdA0r8yKqvKZ3io5oIhwD9dAj8AIDpbxxKfWrMql/fbMFq3jn9sCL53T02hZ4Q==;31:zyPW/UlhQTC7o4NjRJvg9iXGXaVv9vAewrjCQDk1oLwQmYO6754l5H3g2VpnHZHI0WO9lhajlrAbsVdrKIP5ZrK3fZ9QdjL024U28p7boVSkqN1NX58UOSFZZ4r/gm90eTqQYZl/ZP6pwmPj1RDcm8FU5hE4dT0JrFuGEEpg9VvZ8sE+N7Z4wsQ9oIg61MJNrYz+rlAVBfJUwV37+Tr2QD8wc7lzklVJLYonaCQIo5w=
+X-MS-TrafficTypeDiagnostic: CY4PR04MB0966:
+X-Microsoft-Exchange-Diagnostics: 1;CY4PR04MB0966;20:APDX0MHtaHdi+KzaaJxGHNvmVOh2veLHjvhXyQ0/34nvNW7AkCKfQTcixJK4r7r6EfNTqZfW3ibAVJJsZi7Lz318uoz2p2PZyX5K0b8l3/UzCLklU7rYjdSJNt7LZ8WZOTPeMnpWelvJ47lgbnmdNjeRaxqTnWJLZsElEfU88DgqggpRdOSeZed2K23ERzxjnJ19E49oKJUijT1FqKsDQgwv6ASIKP7cgYN17rT1cqQJ30/3WnOo1US9lOFc1tdfn8Hao+aeYIyfOYWbf0hxnrzPYPJqZ06MREBc/iVSWU8PgpOhjwmh/j1O4rgdyJUZaA3ZWerkneogc5GazAxPO0pIjhR4yhM0ibrkgkJASKPz69GsNQrt9KLz07eewfeqJWNqGxFhBKHQxT6sZE1B8bGaYZMX7LlmyL8LTM/IvczUcX+/FnrT/B+uIF0QegEUEkKaBp2rK9CQazPSN84OELVMegHUvX4jO3gTqEGvvvQccRYWfHRk5XHVszPmOiWwZOEWEef2beMpjXPb91rDhNQ3Senx5QOUkS+o/77V0qdQVPjqtwMRbUquUnPT0iqzcTrxKSq6OKktxMDFY4ZqHKrUY6MMzJLMCH0vgVMHs4w=
+X-Microsoft-Antispam-PRVS: <CY4PR04MB09668A414B8F64FD1D352DC4F4200@CY4PR04MB0966.namprd04.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(9452136761055)(145744241990776);
 X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231311)(944501410)(52105095)(3002001)(93006095)(93001095)(10201501046)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(20161123564045)(20161123562045)(6072148)(201708071742011)(7699016);SRVR:CY4PR04MB0968;BCL:0;PCL:0;RULEID:;SRVR:CY4PR04MB0968;
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR04MB0968;4:Q+4tOGgZ/uK7qdHq7jC8vM7fRnUSNcP/I4EytLM4Ikn2rpkR0U2fSvx0QPnZvT/7yH38Xp5l38KmdFKM0cBPbz1Qmy3zl2xoq+S8qr70/jytHPj/qBO1c5l7TMeQo3S8yubmtJfZ1Ghf0XkMcWlsF/o/hYHQ735k4AFMy5LL8b3zp2MAcmZ5XKLo9lwLgCrGkoSvJIL/D3cfl2PvaJVg3kErug6l4C0442urKGuAOWr8QI3rAm+a3cntABYC0cvIwqhECs0+N9GerWq1pZCEIAmTvQ4sh/htD0bF1hEnbh2LCSKoZlDh0a0AflHcmAP42cU0n/u1VBtgjKkP/VJQNe2fCqSlxz44vTzI3L/EfFE=
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231311)(944501410)(52105095)(10201501046)(3002001)(93006095)(93001095)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(6072148)(201708071742011)(7699016);SRVR:CY4PR04MB0966;BCL:0;PCL:0;RULEID:;SRVR:CY4PR04MB0966;
+X-Microsoft-Exchange-Diagnostics: 1;CY4PR04MB0966;4:4kUKadX8C/auktqVL7aNJQ/GfTvfsjqiYkjoq/6gPzN44nMrayZ5vx0kdUmTLLvvsohC1yZpptfyYXr3J4iWmwEMBU4Y8Ffagu74ui2PkaaVy0xmn1ZPlo5wGRwnJtuGu02kHpnopo3Zu4BSgSyWFjzAnB7DcjjJl3PHUwFlvYKwhi2DcAyJX6VKs8VP7oH2B8sZSv5qBEfZ0vfEg6IbFO7aX+HCLcWC24Nf8OooGmBaFEppOjupGifsuhsJxBvk5FrZXEoYpJoh7F5SG1FdElbGk+JcO9zGhJSUwI1zvfL5AuS9caJ4QNe9YwVjlR/Bj6hw3si2+LTKNsJl3Sruy+UhqEtidjl0dPX9Tr+zRZw=
 X-Forefront-PRVS: 07562C22DA
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(396003)(366004)(39850400004)(136003)(346002)(376002)(199004)(189003)(6266002)(47776003)(14444005)(66066001)(54906003)(478600001)(476003)(386003)(97736004)(26005)(6666003)(3846002)(42186006)(6116002)(122856001)(50226002)(316002)(446003)(2616005)(4326008)(186003)(106356001)(52116002)(5660300001)(68736007)(36756003)(2870700001)(105586002)(11346002)(305945005)(50466002)(8936002)(7736002)(81166006)(486006)(23676004)(81156014)(118296001)(76176011)(52956003)(8676002)(2906002)(7416002)(90966002)(53936002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR04MB0968;H:jcartwri.amer.corp.natinst.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(346002)(136003)(396003)(39850400004)(376002)(366004)(51234002)(189003)(199004)(42186006)(51416003)(52116002)(316002)(53936002)(122856001)(76176011)(8676002)(2906002)(81156014)(105586002)(81166006)(106356001)(4326008)(16586007)(478600001)(54906003)(48376002)(5660300001)(50466002)(66066001)(6666003)(118296001)(52956003)(446003)(50226002)(7416002)(90966002)(6266002)(68736007)(8936002)(47776003)(2616005)(26005)(186003)(11346002)(486006)(476003)(386003)(14444005)(3846002)(97736004)(36756003)(7736002)(6116002)(305945005)(575784001);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR04MB0966;H:jcartwri.amer.corp.natinst.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 Received-SPF: None (protection.outlook.com: ni.com does not designate
  permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtDWTRQUjA0TUIwOTY4OzIzOmNqb3ZnQWlsZXRFR1JUK0FGUFBoZmpPSFJI?=
- =?utf-8?B?eUVvQmFkOEd4MmVONWZ4QUhhL25sdUVoWmJhaFJGbEJ3eWVReHd1UHIwWUVk?=
- =?utf-8?B?bGtEWG85dmpzQzlFVlpiUk9LQkxPaDNXSjIvSFlyeVplK0JhNm5Nbm04YnFp?=
- =?utf-8?B?bnlrVzRzN25IMHpveTZKYS91eTdZSXRUb1VHS1h1TE10MTNuSGZvdHczeEcy?=
- =?utf-8?B?K1BtVG56Qit2NStDYS8wS29XT3Y4NWdjdkJiZ1k1OEJEazNhYzlrR3JOMm9v?=
- =?utf-8?B?bE9JUVBrNVM0ZlBXSFkvb29zS1dqWkdKV1IreDhreEZFK2R5MUVVMGw3SFQ1?=
- =?utf-8?B?akRZZGI0eFh4aFljbmloNy91R1NqalZjT05tcGpReDZkRlpmU0NkNXcrakY4?=
- =?utf-8?B?eVVuQVdNMkMxN1RtOFZxWTVsUWswYVRST29iOGFISXFwTVJGeWJBMmRaTDlW?=
- =?utf-8?B?S3VUKzJ1Y3JqbjZpVitPdmo3S0ZwS3BNWjE4ck54OEpBa2UzREdhbjJBc3JH?=
- =?utf-8?B?TDFDSTR4TENlT0pLWWpySSt1c1QzWHVCNzQ3aWRXU0liTmt2NHVRWWFhd1JM?=
- =?utf-8?B?QlJWZys4ZHU1QTE1SS82NWt0ZzJnSE1vMVhFdm1HLzZVcnhZcW1qMnhtN01q?=
- =?utf-8?B?b0JQY2ZlT1VQdmpRSXhIRjBQd3owMytSbHUwM3l5UUxwWDRKMGJZbWVoNXZD?=
- =?utf-8?B?Y0dxWW5UNnJkRVR5NVdxa3ZUOXpaYlgyVDJydnQwOUl4bXNITGRQeGhLZis0?=
- =?utf-8?B?a2ovWXBVR0lmWkZDR3lBUVVUcVcyRVRHZUg4ZmpoMkNsaStaU2UxQk5jTXFE?=
- =?utf-8?B?d1cvZ3lXekJPU0dOYTBBSThsTlZETUNYcGtPUTFDNVQzbUNYaWNXSnNtS1J1?=
- =?utf-8?B?RFkwOFFBaHFIWlVybGpMTVM3NUhjWXJGOXB5c3JlcThTYmExY25iczc4OUpO?=
- =?utf-8?B?aFBJRnN1dHRKVWdGcWVKK2Jla3VYdUUwN2wvcXZrYTgra3dDZVl0VkJqZG9y?=
- =?utf-8?B?VmZVYWovbU9IZW1YOW9RQ1F6YS82VHJCVmMxUEhlQ2ZGTkpqQWYrVDZQUEVT?=
- =?utf-8?B?VzdQNVp6S1NOcmZuUGlITjVqemFQMERaRTVpK1YxYmtRYXlEcUtBQVdrN0d5?=
- =?utf-8?B?RlUyZ2xseFBLNGVwM1NROCt5eW4rT0pkYUp2K3pmVUxyV2hjWU1JMVJTVUJX?=
- =?utf-8?B?cnYzbWZLcktFaGxzQy9aV3ErRnpBZWRWRDJ0SnNMRUtnV0EyUFZPZkFrR2hz?=
- =?utf-8?B?SUgxRG5pRHlER05oTHQycklmL3VDT0p2VTlKMk5uSXh3Q0w3VDRhL1lmYlZs?=
- =?utf-8?B?YzkrdTNRNzdPTkJSRG5WRlZMdUFHdWk1Ny93Smc1emUzK0xtK3JuNGZ1bEF0?=
- =?utf-8?B?UDlXTGFlRmE1SkdIdkdEdlc2cHBRbXdPUnBRbFlvMHUxbC9hak5MT1hrSjh6?=
- =?utf-8?B?UTh1b2ZUaEZyMDJNZDBsY2VCcGN6bXA0SDNkaVRseGJsVEJjVU1INWdIUUhs?=
- =?utf-8?B?eXAzZjVrWU1QT2FJVWJIWGlHaHFKOHpVa2Z0am5WQ1piT3JhaXhZbEtrTGRr?=
- =?utf-8?Q?yOCVdrCP743wsaO72VIzM5r5uHzud88FxrKkDQILm4Ts=3D?=
-X-Microsoft-Antispam-Message-Info: dTNJTUNQvIhwPbLySGNC3pv2J9axc3gaTBDrX3hkDFQ9ZnK2ocJAZz9rReoXmKzxZ2zLFdj6uEyUHthFLARusZFOtM1dCTs7VN3nWObSNHK6uWfmGLwTm73hRjO3GGK56Srl8uHGW3yB/2PPe4mrT23U4olPBuC4uzYDL/54uBL59wELomCHE2Jzk4egmctTQ1Tcrj9dcxBljiGY2gERRFYfpFYrNh0aHl+y2x/enGwBE1NkzrVLb9EfIe8t0hvXiq3D1t9WMYWTuXylHFq9q2XTC2+0koH7VaoIrvXRyf/WQHCNmTFfnsx/EIwYknD0b4uZ8A71JxiR80z9IuyFcCFLUpszIy3lJxPXvsn/mRg=
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR04MB0968;6:E3dkvgZWUnE/dfCgD2sBgrOYX92I2JeSEKqzB9lMArDa2pagzx6jGPGfcgAxFjmQm4PSlRku5juA7eHa/iAWBc1uizQSYsw3yTePyDRrP5mprCq6+YYIkzXuhOZpSOvxK3BEpOj7fAquYvdmcV3i76MFJFieecbISHL65yIDo7F+QsMx6D2UVhiLkPuQ55rDI5bcxmrkWGPiYTYOAbb7DzITyl+XWKiNP+pHxX9P8l40iLuHv7oh23TRT1mACaO4gMNYOUnJOPSWN4A5q3AQcCsbu6Wz3L309+GZ+txUURiyTnv9GHcuM2AOq4y7RkhmkkE3oj8CLgD8+y9Vf2VHNmObGjCeA2Yct32PTgiiDArvXhza9zgyu08h6Rwb6cSYkseFeI6Y77X/cVKZiHemeaojI8gjDHWzmcrDcoPVkF+V9Nh4NV3KcTTOOiOHwOe+mkqfPRAzo1PxrCxBZfFeGw==;5:Y16Pc1FwKac5mC/os4Fz9EVNBAG5GTTzQv//gUdCh57CadTbhHhtZKYQo29CDnJ2ZsimsQMwV1/81Il5BUmYDKiCR/wx2lWAsOKuZzHmE64C+H5adviRdGV1aEmuzyFBJDd+jV9/jfU3PC/gGTgAIQwwTZRGqJt/jxEnOE+gPVw=;7:9Op+RDeqeuEJLnsULyXPfDwwovZCWhq2jRnrOekZdLVzZ6C80o8Q0ZbS6qRfpxcCTGRxxTfJjf7hgiEgBhP4qjKU+kAm2U1kmzkviO8LeWnzJZ/t0LG7cRHQvDZXLjvAnX/l5l9FuW9azjAP1sSzqBELtjrHqtpWt4pLrG6IPn2eXgXwiZ0Br10f+yh6jqwI6t0rKUHb28f34k8PqaERc9fcxdqkS/aAKKyhpDzxHxMVfGL+lB4xg9SjJrlX0PTI
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;CY4PR04MB0966;23:cJFKdKwqF3w5Zn8HokkxYL7NytO1BDWQzQj2F6CCS?=
+ =?us-ascii?Q?zc3zRWhrtFTw1pgj+V8W2YrKNPKukr0dP4+U4b4KfBoOOBWQlCl0fG5vuAVv?=
+ =?us-ascii?Q?U/DDmOdzS1pjMW7MSlOo34Wfs44l3047LnTDDC0Rpfj3ZqjfX5/1JEtdi7IG?=
+ =?us-ascii?Q?v0l776JwKVTXf8mzI4UwxwAySX6cqawSdcXMnmyYSGtogoKUnsL+PSI/dXBl?=
+ =?us-ascii?Q?6UVc/wiuOS5R8r5PbTO0LHSG1d+UaIydoYEX7CMLDyyl81F4oQj2S0Oct2hZ?=
+ =?us-ascii?Q?NpXytDEIIBhne+2KQaAAQM+9SOcy4Ri0eJ6n3GtZ6k39tUPTIx4bIi+sd3Eh?=
+ =?us-ascii?Q?ercUfjsLr80rf9rrh6l/m2uy39fROsYbYAOlAy3eYRUb8aDFoxLLR6taOUiR?=
+ =?us-ascii?Q?L8qzhQy2aFhLqJdMb2LGB/dY0QU4RDR0gT86pkrGselxiWvBxhAErWgT0tIz?=
+ =?us-ascii?Q?BP0QeYCBI6mr/fd9opo2q43fXguijlCNV3wlCWDU01vLKcS2mB3W/+PyjfzW?=
+ =?us-ascii?Q?GBwRIHcU8rwkb6jPWRnG2Buz9gFp8Imxz1gAOrY7MmjZ3JuVGsHtwmvjewHK?=
+ =?us-ascii?Q?qGA4aXmzi/fIeoP/TK5XsS2Vmts20uwK3qUVlddlCQefYSoPdtUqAg2d3+6L?=
+ =?us-ascii?Q?nJv8NafODEAHfwd5xND7k9u2LYkqgWzeI6aJyCWmxTsSmplcJmH77f7bsl8G?=
+ =?us-ascii?Q?Nz/ChAV8qGw2YN9uZAwc833pmEk3fsxp0A88K+RRPpodw5MmI/LzhjWm6AsA?=
+ =?us-ascii?Q?NjwTtMvfhoOTgSeV0ixQ8Bk4s+Os5ExTWTgxZxLIRbe7yvAOxPdsmGCdRvF6?=
+ =?us-ascii?Q?e6hpuXV4gQNBIgPImk2OwfGL2nHbdYDhb2mgRO+Rzi3K57FLm8GC3cxIGMUr?=
+ =?us-ascii?Q?QXd9mDE95tucBcJA2iYY0S/x3Fp16PfwzCa+eHKVRpvDmipeZJQ6kCwcpfb1?=
+ =?us-ascii?Q?IroJ+ZEjhNXV2cNSR0XPEGg5EBWf7hpUz2bPziWXEVL0dRWdkQUxJrsBRqIZ?=
+ =?us-ascii?Q?qQx3lRMof4AI4aOtBmgLTT9pyr96kIwLC+DgxTqgO4Gek3Oz3SiQizNazaAN?=
+ =?us-ascii?Q?tDtHNzZCRNUiDBGTUl8vjr+HONlXiWueNcZwsUDCR2MdR8qq7McjwX2ouSgO?=
+ =?us-ascii?Q?rsyCUyPpmqo0NeHggFheVFtf4FFDxybDaVmDQvBKg29egEvL12YtSKlNHvlF?=
+ =?us-ascii?Q?hpGKJS/7G80ct4qES51h8AD2nCi0B1qMUqjS3LyZe4VYn3LbXiXEcezE9B1w?=
+ =?us-ascii?Q?vDvUacLCwyuc+HNxw4=3D?=
+X-Microsoft-Antispam-Message-Info: JJCqyYbgTD0IKq/P1EHQd9iSGn/crmHYZCVTXACCdZFmGA+v6aZAkxNyna0xAuoxDPOc0WAbgMrmUVBGnbx61gHn2BHC5SzLJYNUrOz+EkcTTI0//O5O0oZVosYWKdFtPD9+ikICqKccx4v9RE3lbvMpqjhqieRmhfLNHizzB3ivaXdcUIYJury36KzTkOFYwUJRqk5Gk6EeS7+jhGYFKKXTre10gVUgMngEF6EsLXSKvtQXXZbEuvop4AwGZ1axVWI7tkwXPes9r2I7RJ/Gn8+wRXITQhkBVUvMXOZc1iVoh0nplGz3WN8dnC4Vh0kQP+dSpNOspBop72qBd/jK1cES036SLSkdepiXV1FF0wk=
+X-Microsoft-Exchange-Diagnostics: 1;CY4PR04MB0966;6:egkKOPc76vX49k/B2nwh/7jSEgRmrRzKS/kpeVN3+Qa5fQTy1WPVGiCTKJAPiteroyONou3ZuPIX2lZ5iF+QsZ3oK6Bkzp3Q0SBz7yWYUuMSO68qsXCJFeAWxGPGF+Usy/Br0Ablslu6TKWLAJ0Wo9agPd4FhXGqoLsuOHJK02k6q9OJxAdDlMA6xMTtujRoLhKr05YL3nMSxr/bIrBm5CzQgeBYPSG5qOzmzX2wVAPskvX8NLua4bEBLVvLHC47AigomDfJtX9fQ9IA70O6A/0nogOHbUn/9g01Y4g3UA1BGp0YaO/MRhFeGqZ49Rz0/kiy5QNNXnufuqg4v7nugCNC2h06YTcI4/FRtZZcH7O8Ny95XjT9dRwKlXC5a6nn3mgUhzWLHs/0U94ASN7diKo8VnTXObp/W33LivU5QHu+kyyY4dX8DsdCYEN3mjzmX5M1iuLTmPg3I7crik8FBQ==;5:0M2rt0w3jnjg1XmUlqv7PNzcGFjwd9QOy1r2fb6YisRA8V1Qbx/8S10n2xLjZmFOY1hui6m6bTzawV+QyZ7KOJyxfufwhlIyDGlHi7ws2vEn+PiU9MbQZvX0P0N4IbJjfBzS0SdOzjkxPdgADGfgq4PTB9Y6LsT0AH42eWzUn4I=;7:TIKwJY2uvBEbrN4lvPZxn0qA11Orzdjo87tpAjBVEQIB0O4Gr8ezy2gYdRtagHW5Ysf/ObhXGJ8wFWQ3+At9aEFdcLg3V6sXs/I2ouNj/o5NboLfcTLs3yTXmZh3bympOCY0gmykX6IUR9MicjhHQKZBjjcjczKMbhOTC0fRg1Gf126MyS81buID2ILx0VeYQoGv6tM98qYE/fOxlAZLkNkq97rkZ+dL7TPgGDTQheK0kg5TJDIx7K3atW8YQ+H1
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
 X-OriginatorOrg: ni.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2018 09:17:45.8343 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c39c79b0-ace3-43f7-8926-08d5fb7d78cf
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2018 09:17:47.6830 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: e6bc97f0-c91f-4000-c25b-08d5fb7d79e2
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 87ba1f9a-44cd-43a6-b008-6fdb45a5204e
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR04MB0968
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR04MB0966
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-06_05:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=inbound_policy_notspam policy=inbound_policy score=30
- priorityscore=1501 malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0
+ priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0
  spamscore=0 clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
  mlxlogscore=999 adultscore=0 classifier=spam adjust=30 reason=mlx
  scancount=1 engine=8.0.1-1807170000 definitions=main-1808060100
@@ -137,497 +132,119 @@ From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 If you have any objection to the inclusion of this patch, let me know.
 
 --- 8< --- 8< --- 8< ---
-Those crypto drivers use SSE/AVX/… for their crypto work and in order to
-do so in kernel they need to enable the "FPU" in kernel mode which
-disables preemption.
-There are two problems with the way they are used:
-- the while loop which processes X bytes may create latency spikes and
-  should be avoided or limited.
-- the cipher-walk-next part may allocate/free memory and may use
-  kmap_atomic().
+| BUG: sleeping function called from invalid context at kernel/locking/rtmutex.c:914
+| in_atomic(): 1, irqs_disabled(): 0, pid: 255, name: kworker/u257:6
+| 5 locks held by kworker/u257:6/255:
+|  #0:  ("events_unbound"){.+.+.+}, at: [<ffffffff8108edf1>] process_one_work+0x171/0x5e0
+|  #1:  ((&entry->work)){+.+.+.}, at: [<ffffffff8108edf1>] process_one_work+0x171/0x5e0
+|  #2:  (&shost->scan_mutex){+.+.+.}, at: [<ffffffffa000faa3>] __scsi_add_device+0xa3/0x130 [scsi_mod]
+|  #3:  (&set->tag_list_lock){+.+...}, at: [<ffffffff812f09fa>] blk_mq_init_queue+0x96a/0xa50
+|  #4:  (rcu_read_lock_sched){......}, at: [<ffffffff8132887d>] percpu_ref_kill_and_confirm+0x1d/0x120
+| Preemption disabled at:[<ffffffff812eff76>] blk_mq_freeze_queue_start+0x56/0x70
+|
+| CPU: 2 PID: 255 Comm: kworker/u257:6 Not tainted 3.18.7-rt0+ #1
+| Workqueue: events_unbound async_run_entry_fn
+|  0000000000000003 ffff8800bc29f998 ffffffff815b3a12 0000000000000000
+|  0000000000000000 ffff8800bc29f9b8 ffffffff8109aa16 ffff8800bc29fa28
+|  ffff8800bc5d1bc8 ffff8800bc29f9e8 ffffffff815b8dd4 ffff880000000000
+| Call Trace:
+|  [<ffffffff815b3a12>] dump_stack+0x4f/0x7c
+|  [<ffffffff8109aa16>] __might_sleep+0x116/0x190
+|  [<ffffffff815b8dd4>] rt_spin_lock+0x24/0x60
+|  [<ffffffff810b6089>] __wake_up+0x29/0x60
+|  [<ffffffff812ee06e>] blk_mq_usage_counter_release+0x1e/0x20
+|  [<ffffffff81328966>] percpu_ref_kill_and_confirm+0x106/0x120
+|  [<ffffffff812eff76>] blk_mq_freeze_queue_start+0x56/0x70
+|  [<ffffffff812f0000>] blk_mq_update_tag_set_depth+0x40/0xd0
+|  [<ffffffff812f0a1c>] blk_mq_init_queue+0x98c/0xa50
+|  [<ffffffffa000dcf0>] scsi_mq_alloc_queue+0x20/0x60 [scsi_mod]
+|  [<ffffffffa000ea35>] scsi_alloc_sdev+0x2f5/0x370 [scsi_mod]
+|  [<ffffffffa000f494>] scsi_probe_and_add_lun+0x9e4/0xdd0 [scsi_mod]
+|  [<ffffffffa000fb26>] __scsi_add_device+0x126/0x130 [scsi_mod]
+|  [<ffffffffa013033f>] ata_scsi_scan_host+0xaf/0x200 [libata]
+|  [<ffffffffa012b5b6>] async_port_probe+0x46/0x60 [libata]
+|  [<ffffffff810978fb>] async_run_entry_fn+0x3b/0xf0
+|  [<ffffffff8108ee81>] process_one_work+0x201/0x5e0
 
-The whole kernel_fpu_begin()/end() processing isn't probably that cheap.
-It most likely makes sense to process as much of those as possible in one
-go. The new *_fpu_sched_rt() schedules only if a RT task is pending.
-
-Probably we should measure the performance those ciphers in pure SW
-mode and with this optimisations to see if it makes sense to keep them
-for RT.
-
-This kernel_fpu_resched() makes the code more preemptible which might hurt
-performance.
+percpu_ref_kill_and_confirm() invokes blk_mq_usage_counter_release() in
+a rcu-sched region. swait based wake queue can't be used due to
+wake_up_all() usage and disabled interrupts in !RT configs (as reported
+by Corey Minyard).
+The wq_has_sleeper() check has been suggested by Peter Zijlstra.
 
 Cc: stable-rt@vger.kernel.org
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-(cherry picked from commit 0dcc4c1693ef37e166da420ef7c68c7047c996f1)
+(cherry picked from commit 2d701058d614554cce412a787f00568b9fdffade)
 Signed-off-by: Julia Cartwright <julia@ni.com>
 ---
- arch/x86/crypto/camellia_aesni_avx2_glue.c | 20 ++++++++++++++++
- arch/x86/crypto/camellia_aesni_avx_glue.c  | 19 +++++++++++++++
- arch/x86/crypto/cast6_avx_glue.c           | 24 +++++++++++++++----
- arch/x86/crypto/chacha20_glue.c            |  9 ++++----
- arch/x86/crypto/serpent_avx2_glue.c        | 19 +++++++++++++++
- arch/x86/crypto/serpent_avx_glue.c         | 23 ++++++++++++++----
- arch/x86/crypto/serpent_sse2_glue.c        | 23 ++++++++++++++----
- arch/x86/crypto/twofish_avx_glue.c         | 27 ++++++++++++++++++++--
- arch/x86/include/asm/fpu/api.h             |  1 +
- arch/x86/kernel/fpu/core.c                 | 12 ++++++++++
- 10 files changed, 158 insertions(+), 19 deletions(-)
+ block/blk-core.c       | 14 +++++++++++++-
+ include/linux/blkdev.h |  2 ++
+ 2 files changed, 15 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/crypto/camellia_aesni_avx2_glue.c b/arch/x86/crypto/camellia_aesni_avx2_glue.c
-index 60907c139c4e..0902db7d326a 100644
---- a/arch/x86/crypto/camellia_aesni_avx2_glue.c
-+++ b/arch/x86/crypto/camellia_aesni_avx2_glue.c
-@@ -206,6 +206,20 @@ struct crypt_priv {
- 	bool fpu_enabled;
- };
- 
-+#ifdef CONFIG_PREEMPT_RT_FULL
-+static void camellia_fpu_end_rt(struct crypt_priv *ctx)
-+{
-+       bool fpu_enabled = ctx->fpu_enabled;
-+
-+       if (!fpu_enabled)
-+               return;
-+       camellia_fpu_end(fpu_enabled);
-+       ctx->fpu_enabled = false;
-+}
-+#else
-+static void camellia_fpu_end_rt(struct crypt_priv *ctx) { }
-+#endif
-+
- static void encrypt_callback(void *priv, u8 *srcdst, unsigned int nbytes)
- {
- 	const unsigned int bsize = CAMELLIA_BLOCK_SIZE;
-@@ -221,16 +235,19 @@ static void encrypt_callback(void *priv, u8 *srcdst, unsigned int nbytes)
- 	}
- 
- 	if (nbytes >= CAMELLIA_AESNI_PARALLEL_BLOCKS * bsize) {
-+		kernel_fpu_resched();
- 		camellia_ecb_enc_16way(ctx->ctx, srcdst, srcdst);
- 		srcdst += bsize * CAMELLIA_AESNI_PARALLEL_BLOCKS;
- 		nbytes -= bsize * CAMELLIA_AESNI_PARALLEL_BLOCKS;
- 	}
- 
- 	while (nbytes >= CAMELLIA_PARALLEL_BLOCKS * bsize) {
-+		kernel_fpu_resched();
- 		camellia_enc_blk_2way(ctx->ctx, srcdst, srcdst);
- 		srcdst += bsize * CAMELLIA_PARALLEL_BLOCKS;
- 		nbytes -= bsize * CAMELLIA_PARALLEL_BLOCKS;
- 	}
-+	camellia_fpu_end_rt(ctx);
- 
- 	for (i = 0; i < nbytes / bsize; i++, srcdst += bsize)
- 		camellia_enc_blk(ctx->ctx, srcdst, srcdst);
-@@ -251,16 +268,19 @@ static void decrypt_callback(void *priv, u8 *srcdst, unsigned int nbytes)
- 	}
- 
- 	if (nbytes >= CAMELLIA_AESNI_PARALLEL_BLOCKS * bsize) {
-+		kernel_fpu_resched();
- 		camellia_ecb_dec_16way(ctx->ctx, srcdst, srcdst);
- 		srcdst += bsize * CAMELLIA_AESNI_PARALLEL_BLOCKS;
- 		nbytes -= bsize * CAMELLIA_AESNI_PARALLEL_BLOCKS;
- 	}
- 
- 	while (nbytes >= CAMELLIA_PARALLEL_BLOCKS * bsize) {
-+		kernel_fpu_resched();
- 		camellia_dec_blk_2way(ctx->ctx, srcdst, srcdst);
- 		srcdst += bsize * CAMELLIA_PARALLEL_BLOCKS;
- 		nbytes -= bsize * CAMELLIA_PARALLEL_BLOCKS;
- 	}
-+	camellia_fpu_end_rt(ctx);
- 
- 	for (i = 0; i < nbytes / bsize; i++, srcdst += bsize)
- 		camellia_dec_blk(ctx->ctx, srcdst, srcdst);
-diff --git a/arch/x86/crypto/camellia_aesni_avx_glue.c b/arch/x86/crypto/camellia_aesni_avx_glue.c
-index d96429da88eb..3b8e91841039 100644
---- a/arch/x86/crypto/camellia_aesni_avx_glue.c
-+++ b/arch/x86/crypto/camellia_aesni_avx_glue.c
-@@ -210,6 +210,21 @@ struct crypt_priv {
- 	bool fpu_enabled;
- };
- 
-+#ifdef CONFIG_PREEMPT_RT_FULL
-+static void camellia_fpu_end_rt(struct crypt_priv *ctx)
-+{
-+	bool fpu_enabled = ctx->fpu_enabled;
-+
-+	if (!fpu_enabled)
-+		return;
-+	camellia_fpu_end(fpu_enabled);
-+	ctx->fpu_enabled = false;
-+}
-+
-+#else
-+static void camellia_fpu_end_rt(struct crypt_priv *ctx) { }
-+#endif
-+
- static void encrypt_callback(void *priv, u8 *srcdst, unsigned int nbytes)
- {
- 	const unsigned int bsize = CAMELLIA_BLOCK_SIZE;
-@@ -225,10 +240,12 @@ static void encrypt_callback(void *priv, u8 *srcdst, unsigned int nbytes)
- 	}
- 
- 	while (nbytes >= CAMELLIA_PARALLEL_BLOCKS * bsize) {
-+		kernel_fpu_resched();
- 		camellia_enc_blk_2way(ctx->ctx, srcdst, srcdst);
- 		srcdst += bsize * CAMELLIA_PARALLEL_BLOCKS;
- 		nbytes -= bsize * CAMELLIA_PARALLEL_BLOCKS;
- 	}
-+	camellia_fpu_end_rt(ctx);
- 
- 	for (i = 0; i < nbytes / bsize; i++, srcdst += bsize)
- 		camellia_enc_blk(ctx->ctx, srcdst, srcdst);
-@@ -249,10 +266,12 @@ static void decrypt_callback(void *priv, u8 *srcdst, unsigned int nbytes)
- 	}
- 
- 	while (nbytes >= CAMELLIA_PARALLEL_BLOCKS * bsize) {
-+		kernel_fpu_resched();
- 		camellia_dec_blk_2way(ctx->ctx, srcdst, srcdst);
- 		srcdst += bsize * CAMELLIA_PARALLEL_BLOCKS;
- 		nbytes -= bsize * CAMELLIA_PARALLEL_BLOCKS;
- 	}
-+	camellia_fpu_end_rt(ctx);
- 
- 	for (i = 0; i < nbytes / bsize; i++, srcdst += bsize)
- 		camellia_dec_blk(ctx->ctx, srcdst, srcdst);
-diff --git a/arch/x86/crypto/cast6_avx_glue.c b/arch/x86/crypto/cast6_avx_glue.c
-index 50e684768c55..8caf9ba8c1da 100644
---- a/arch/x86/crypto/cast6_avx_glue.c
-+++ b/arch/x86/crypto/cast6_avx_glue.c
-@@ -205,19 +205,33 @@ struct crypt_priv {
- 	bool fpu_enabled;
- };
- 
-+#ifdef CONFIG_PREEMPT_RT_FULL
-+static void cast6_fpu_end_rt(struct crypt_priv *ctx)
-+{
-+	bool fpu_enabled = ctx->fpu_enabled;
-+
-+	if (!fpu_enabled)
-+		return;
-+	cast6_fpu_end(fpu_enabled);
-+	ctx->fpu_enabled = false;
-+}
-+
-+#else
-+static void cast6_fpu_end_rt(struct crypt_priv *ctx) { }
-+#endif
-+
- static void encrypt_callback(void *priv, u8 *srcdst, unsigned int nbytes)
- {
- 	const unsigned int bsize = CAST6_BLOCK_SIZE;
- 	struct crypt_priv *ctx = priv;
- 	int i;
- 
--	ctx->fpu_enabled = cast6_fpu_begin(ctx->fpu_enabled, nbytes);
--
- 	if (nbytes == bsize * CAST6_PARALLEL_BLOCKS) {
-+		ctx->fpu_enabled = cast6_fpu_begin(ctx->fpu_enabled, nbytes);
- 		cast6_ecb_enc_8way(ctx->ctx, srcdst, srcdst);
-+		cast6_fpu_end_rt(ctx);
- 		return;
- 	}
--
- 	for (i = 0; i < nbytes / bsize; i++, srcdst += bsize)
- 		__cast6_encrypt(ctx->ctx, srcdst, srcdst);
- }
-@@ -228,10 +242,10 @@ static void decrypt_callback(void *priv, u8 *srcdst, unsigned int nbytes)
- 	struct crypt_priv *ctx = priv;
- 	int i;
- 
--	ctx->fpu_enabled = cast6_fpu_begin(ctx->fpu_enabled, nbytes);
--
- 	if (nbytes == bsize * CAST6_PARALLEL_BLOCKS) {
-+		ctx->fpu_enabled = cast6_fpu_begin(ctx->fpu_enabled, nbytes);
- 		cast6_ecb_dec_8way(ctx->ctx, srcdst, srcdst);
-+		cast6_fpu_end_rt(ctx);
- 		return;
- 	}
- 
-diff --git a/arch/x86/crypto/chacha20_glue.c b/arch/x86/crypto/chacha20_glue.c
-index f910d1d449f0..f9e5820ae06a 100644
---- a/arch/x86/crypto/chacha20_glue.c
-+++ b/arch/x86/crypto/chacha20_glue.c
-@@ -80,23 +80,24 @@ static int chacha20_simd(struct blkcipher_desc *desc, struct scatterlist *dst,
- 
- 	crypto_chacha20_init(state, crypto_blkcipher_ctx(desc->tfm), walk.iv);
- 
--	kernel_fpu_begin();
--
- 	while (walk.nbytes >= CHACHA20_BLOCK_SIZE) {
-+		kernel_fpu_begin();
-+
- 		chacha20_dosimd(state, walk.dst.virt.addr, walk.src.virt.addr,
- 				rounddown(walk.nbytes, CHACHA20_BLOCK_SIZE));
-+		kernel_fpu_end();
- 		err = blkcipher_walk_done(desc, &walk,
- 					  walk.nbytes % CHACHA20_BLOCK_SIZE);
- 	}
- 
- 	if (walk.nbytes) {
-+		kernel_fpu_begin();
- 		chacha20_dosimd(state, walk.dst.virt.addr, walk.src.virt.addr,
- 				walk.nbytes);
-+		kernel_fpu_end();
- 		err = blkcipher_walk_done(desc, &walk, 0);
- 	}
- 
--	kernel_fpu_end();
--
- 	return err;
+diff --git a/block/blk-core.c b/block/blk-core.c
+index 87d3e0a503e5..346d5bba3948 100644
+--- a/block/blk-core.c
++++ b/block/blk-core.c
+@@ -675,12 +675,21 @@ void blk_queue_exit(struct request_queue *q)
+ 	percpu_ref_put(&q->q_usage_counter);
  }
  
-diff --git a/arch/x86/crypto/serpent_avx2_glue.c b/arch/x86/crypto/serpent_avx2_glue.c
-index 870f6d812a2d..5c806bf39f1d 100644
---- a/arch/x86/crypto/serpent_avx2_glue.c
-+++ b/arch/x86/crypto/serpent_avx2_glue.c
-@@ -184,6 +184,21 @@ struct crypt_priv {
- 	bool fpu_enabled;
- };
- 
-+#ifdef CONFIG_PREEMPT_RT_FULL
-+static void serpent_fpu_end_rt(struct crypt_priv *ctx)
++static void blk_queue_usage_counter_release_swork(struct swork_event *sev)
 +{
-+       bool fpu_enabled = ctx->fpu_enabled;
++	struct request_queue *q =
++		container_of(sev, struct request_queue, mq_pcpu_wake);
 +
-+       if (!fpu_enabled)
-+               return;
-+       serpent_fpu_end(fpu_enabled);
-+       ctx->fpu_enabled = false;
++	wake_up_all(&q->mq_freeze_wq);
 +}
 +
-+#else
-+static void serpent_fpu_end_rt(struct crypt_priv *ctx) { }
-+#endif
-+
- static void encrypt_callback(void *priv, u8 *srcdst, unsigned int nbytes)
+ static void blk_queue_usage_counter_release(struct percpu_ref *ref)
  {
- 	const unsigned int bsize = SERPENT_BLOCK_SIZE;
-@@ -199,10 +214,12 @@ static void encrypt_callback(void *priv, u8 *srcdst, unsigned int nbytes)
- 	}
+ 	struct request_queue *q =
+ 		container_of(ref, struct request_queue, q_usage_counter);
  
- 	while (nbytes >= SERPENT_PARALLEL_BLOCKS * bsize) {
-+		kernel_fpu_resched();
- 		serpent_ecb_enc_8way_avx(ctx->ctx, srcdst, srcdst);
- 		srcdst += bsize * SERPENT_PARALLEL_BLOCKS;
- 		nbytes -= bsize * SERPENT_PARALLEL_BLOCKS;
- 	}
-+	serpent_fpu_end_rt(ctx);
- 
- 	for (i = 0; i < nbytes / bsize; i++, srcdst += bsize)
- 		__serpent_encrypt(ctx->ctx, srcdst, srcdst);
-@@ -223,10 +240,12 @@ static void decrypt_callback(void *priv, u8 *srcdst, unsigned int nbytes)
- 	}
- 
- 	while (nbytes >= SERPENT_PARALLEL_BLOCKS * bsize) {
-+		kernel_fpu_resched();
- 		serpent_ecb_dec_8way_avx(ctx->ctx, srcdst, srcdst);
- 		srcdst += bsize * SERPENT_PARALLEL_BLOCKS;
- 		nbytes -= bsize * SERPENT_PARALLEL_BLOCKS;
- 	}
-+	serpent_fpu_end_rt(ctx);
- 
- 	for (i = 0; i < nbytes / bsize; i++, srcdst += bsize)
- 		__serpent_decrypt(ctx->ctx, srcdst, srcdst);
-diff --git a/arch/x86/crypto/serpent_avx_glue.c b/arch/x86/crypto/serpent_avx_glue.c
-index 6f778d3daa22..46dcbdbd0518 100644
---- a/arch/x86/crypto/serpent_avx_glue.c
-+++ b/arch/x86/crypto/serpent_avx_glue.c
-@@ -218,16 +218,31 @@ struct crypt_priv {
- 	bool fpu_enabled;
- };
- 
-+#ifdef CONFIG_PREEMPT_RT_FULL
-+static void serpent_fpu_end_rt(struct crypt_priv *ctx)
-+{
-+	bool fpu_enabled = ctx->fpu_enabled;
-+
-+	if (!fpu_enabled)
-+		return;
-+	serpent_fpu_end(fpu_enabled);
-+	ctx->fpu_enabled = false;
-+}
-+
-+#else
-+static void serpent_fpu_end_rt(struct crypt_priv *ctx) { }
-+#endif
-+
- static void encrypt_callback(void *priv, u8 *srcdst, unsigned int nbytes)
- {
- 	const unsigned int bsize = SERPENT_BLOCK_SIZE;
- 	struct crypt_priv *ctx = priv;
- 	int i;
- 
--	ctx->fpu_enabled = serpent_fpu_begin(ctx->fpu_enabled, nbytes);
--
- 	if (nbytes == bsize * SERPENT_PARALLEL_BLOCKS) {
-+		ctx->fpu_enabled = serpent_fpu_begin(ctx->fpu_enabled, nbytes);
- 		serpent_ecb_enc_8way_avx(ctx->ctx, srcdst, srcdst);
-+		serpent_fpu_end_rt(ctx);
- 		return;
- 	}
- 
-@@ -241,10 +256,10 @@ static void decrypt_callback(void *priv, u8 *srcdst, unsigned int nbytes)
- 	struct crypt_priv *ctx = priv;
- 	int i;
- 
--	ctx->fpu_enabled = serpent_fpu_begin(ctx->fpu_enabled, nbytes);
--
- 	if (nbytes == bsize * SERPENT_PARALLEL_BLOCKS) {
-+		ctx->fpu_enabled = serpent_fpu_begin(ctx->fpu_enabled, nbytes);
- 		serpent_ecb_dec_8way_avx(ctx->ctx, srcdst, srcdst);
-+		serpent_fpu_end_rt(ctx);
- 		return;
- 	}
- 
-diff --git a/arch/x86/crypto/serpent_sse2_glue.c b/arch/x86/crypto/serpent_sse2_glue.c
-index 644f97ab8cac..7b135b4f6262 100644
---- a/arch/x86/crypto/serpent_sse2_glue.c
-+++ b/arch/x86/crypto/serpent_sse2_glue.c
-@@ -187,16 +187,31 @@ struct crypt_priv {
- 	bool fpu_enabled;
- };
- 
-+#ifdef CONFIG_PREEMPT_RT_FULL
-+static void serpent_fpu_end_rt(struct crypt_priv *ctx)
-+{
-+	bool fpu_enabled = ctx->fpu_enabled;
-+
-+	if (!fpu_enabled)
-+		return;
-+	serpent_fpu_end(fpu_enabled);
-+	ctx->fpu_enabled = false;
-+}
-+
-+#else
-+static void serpent_fpu_end_rt(struct crypt_priv *ctx) { }
-+#endif
-+
- static void encrypt_callback(void *priv, u8 *srcdst, unsigned int nbytes)
- {
- 	const unsigned int bsize = SERPENT_BLOCK_SIZE;
- 	struct crypt_priv *ctx = priv;
- 	int i;
- 
--	ctx->fpu_enabled = serpent_fpu_begin(ctx->fpu_enabled, nbytes);
--
- 	if (nbytes == bsize * SERPENT_PARALLEL_BLOCKS) {
-+		ctx->fpu_enabled = serpent_fpu_begin(ctx->fpu_enabled, nbytes);
- 		serpent_enc_blk_xway(ctx->ctx, srcdst, srcdst);
-+		serpent_fpu_end_rt(ctx);
- 		return;
- 	}
- 
-@@ -210,10 +225,10 @@ static void decrypt_callback(void *priv, u8 *srcdst, unsigned int nbytes)
- 	struct crypt_priv *ctx = priv;
- 	int i;
- 
--	ctx->fpu_enabled = serpent_fpu_begin(ctx->fpu_enabled, nbytes);
--
- 	if (nbytes == bsize * SERPENT_PARALLEL_BLOCKS) {
-+		ctx->fpu_enabled = serpent_fpu_begin(ctx->fpu_enabled, nbytes);
- 		serpent_dec_blk_xway(ctx->ctx, srcdst, srcdst);
-+		serpent_fpu_end_rt(ctx);
- 		return;
- 	}
- 
-diff --git a/arch/x86/crypto/twofish_avx_glue.c b/arch/x86/crypto/twofish_avx_glue.c
-index b7a3904b953c..de00fe24927e 100644
---- a/arch/x86/crypto/twofish_avx_glue.c
-+++ b/arch/x86/crypto/twofish_avx_glue.c
-@@ -218,6 +218,21 @@ struct crypt_priv {
- 	bool fpu_enabled;
- };
- 
-+#ifdef CONFIG_PREEMPT_RT_FULL
-+static void twofish_fpu_end_rt(struct crypt_priv *ctx)
-+{
-+	bool fpu_enabled = ctx->fpu_enabled;
-+
-+	if (!fpu_enabled)
-+		return;
-+	twofish_fpu_end(fpu_enabled);
-+	ctx->fpu_enabled = false;
-+}
-+
-+#else
-+static void twofish_fpu_end_rt(struct crypt_priv *ctx) { }
-+#endif
-+
- static void encrypt_callback(void *priv, u8 *srcdst, unsigned int nbytes)
- {
- 	const unsigned int bsize = TF_BLOCK_SIZE;
-@@ -228,12 +243,16 @@ static void encrypt_callback(void *priv, u8 *srcdst, unsigned int nbytes)
- 
- 	if (nbytes == bsize * TWOFISH_PARALLEL_BLOCKS) {
- 		twofish_ecb_enc_8way(ctx->ctx, srcdst, srcdst);
-+		twofish_fpu_end_rt(ctx);
- 		return;
- 	}
- 
--	for (i = 0; i < nbytes / (bsize * 3); i++, srcdst += bsize * 3)
-+	for (i = 0; i < nbytes / (bsize * 3); i++, srcdst += bsize * 3) {
-+		kernel_fpu_resched();
- 		twofish_enc_blk_3way(ctx->ctx, srcdst, srcdst);
-+	}
- 
-+	twofish_fpu_end_rt(ctx);
- 	nbytes %= bsize * 3;
- 
- 	for (i = 0; i < nbytes / bsize; i++, srcdst += bsize)
-@@ -250,11 +269,15 @@ static void decrypt_callback(void *priv, u8 *srcdst, unsigned int nbytes)
- 
- 	if (nbytes == bsize * TWOFISH_PARALLEL_BLOCKS) {
- 		twofish_ecb_dec_8way(ctx->ctx, srcdst, srcdst);
-+		twofish_fpu_end_rt(ctx);
- 		return;
- 	}
- 
--	for (i = 0; i < nbytes / (bsize * 3); i++, srcdst += bsize * 3)
-+	for (i = 0; i < nbytes / (bsize * 3); i++, srcdst += bsize * 3) {
-+		kernel_fpu_resched();
- 		twofish_dec_blk_3way(ctx->ctx, srcdst, srcdst);
-+	}
-+	twofish_fpu_end_rt(ctx);
- 
- 	nbytes %= bsize * 3;
- 
-diff --git a/arch/x86/include/asm/fpu/api.h b/arch/x86/include/asm/fpu/api.h
-index 1429a7c736db..85428df40a22 100644
---- a/arch/x86/include/asm/fpu/api.h
-+++ b/arch/x86/include/asm/fpu/api.h
-@@ -24,6 +24,7 @@ extern void __kernel_fpu_begin(void);
- extern void __kernel_fpu_end(void);
- extern void kernel_fpu_begin(void);
- extern void kernel_fpu_end(void);
-+extern void kernel_fpu_resched(void);
- extern bool irq_fpu_usable(void);
- 
- /*
-diff --git a/arch/x86/kernel/fpu/core.c b/arch/x86/kernel/fpu/core.c
-index 96d80dfac383..6e473a44afb7 100644
---- a/arch/x86/kernel/fpu/core.c
-+++ b/arch/x86/kernel/fpu/core.c
-@@ -158,6 +158,18 @@ void kernel_fpu_end(void)
+-	wake_up_all(&q->mq_freeze_wq);
++	if (wq_has_sleeper(&q->mq_freeze_wq))
++		swork_queue(&q->mq_pcpu_wake);
  }
- EXPORT_SYMBOL_GPL(kernel_fpu_end);
  
-+void kernel_fpu_resched(void)
-+{
-+	WARN_ON_FPU(!this_cpu_read(in_kernel_fpu));
+ static void blk_rq_timed_out_timer(unsigned long data)
+@@ -751,6 +760,7 @@ struct request_queue *blk_alloc_queue_node(gfp_t gfp_mask, int node_id)
+ 	__set_bit(QUEUE_FLAG_BYPASS, &q->queue_flags);
+ 
+ 	init_waitqueue_head(&q->mq_freeze_wq);
++	INIT_SWORK(&q->mq_pcpu_wake, blk_queue_usage_counter_release_swork);
+ 
+ 	/*
+ 	 * Init percpu_ref in atomic mode so that it's faster to shutdown.
+@@ -3556,6 +3566,8 @@ int __init blk_dev_init(void)
+ 	if (!kblockd_workqueue)
+ 		panic("Failed to create kblockd\n");
+ 
++	BUG_ON(swork_get());
 +
-+	if (should_resched(PREEMPT_OFFSET)) {
-+		kernel_fpu_end();
-+		cond_resched();
-+		kernel_fpu_begin();
-+	}
-+}
-+EXPORT_SYMBOL_GPL(kernel_fpu_resched);
-+
- /*
-  * CR0::TS save/restore functions:
-  */
+ 	request_cachep = kmem_cache_create("blkdev_requests",
+ 			sizeof(struct request), 0, SLAB_PANIC, NULL);
+ 
+diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+index fdb449fe3ff7..ab039211ab9f 100644
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@ -24,6 +24,7 @@
+ #include <linux/rcupdate.h>
+ #include <linux/percpu-refcount.h>
+ #include <linux/scatterlist.h>
++#include <linux/swork.h>
+ 
+ struct module;
+ struct scsi_ioctl_command;
+@@ -469,6 +470,7 @@ struct request_queue {
+ #endif
+ 	struct rcu_head		rcu_head;
+ 	wait_queue_head_t	mq_freeze_wq;
++	struct swork_event	mq_pcpu_wake;
+ 	struct percpu_ref	q_usage_counter;
+ 	struct list_head	all_q_node;
+ 
 -- 
 2.18.0
 
