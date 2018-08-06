@@ -3,109 +3,152 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FDDCC4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 15:09:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CBBAC46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 15:09:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5105A21A51
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 15:09:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5105A21A51
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 2CECB21A51
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 15:09:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CECB21A51
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732765AbeHFRSl (ORCPT
+        id S1730770AbeHFRSp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 13:18:41 -0400
-Received: from mga12.intel.com ([192.55.52.136]:4843 "EHLO mga12.intel.com"
+        Mon, 6 Aug 2018 13:18:45 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:24845 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727541AbeHFRSl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 13:18:41 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Aug 2018 08:09:10 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,452,1526367600"; 
-   d="scan'208";a="62667057"
-Received: from unknown (HELO [10.7.201.139]) ([10.7.201.139])
-  by orsmga007.jf.intel.com with ESMTP; 06 Aug 2018 08:09:09 -0700
-Subject: Re: [PATCH 6/7] x86/mm/pageattr: pass named flag instead of 0/1
-To:     Thomas Gleixner <tglx@linutronix.de>
-References: <20180802225823.4711C55B@viggo.jf.intel.com>
- <20180802225833.58861DAF@viggo.jf.intel.com>
- <alpine.DEB.2.21.1808052208170.17359@nanos.tec.linutronix.de>
-Cc:     linux-kernel@vger.kernel.org, keescook@google.com,
-        mingo@kernel.org, aarcange@redhat.com, jgross@suse.com,
-        jpoimboe@redhat.com, gregkh@linuxfoundation.org,
-        peterz@infradead.org, hughd@google.com,
-        torvalds@linux-foundation.org, bp@alien8.de, luto@kernel.org,
-        ak@linux.intel.com
-From:   Dave Hansen <dave.hansen@linux.intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@linux.intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <90583648-3a22-7404-d891-56548b23aaa5@linux.intel.com>
-Date:   Mon, 6 Aug 2018 08:09:06 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1727541AbeHFRSp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 13:18:45 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 41kgz3360Hz9ttmh;
+        Mon,  6 Aug 2018 17:09:03 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id JiHk6CUBId6o; Mon,  6 Aug 2018 17:09:03 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 41kgz32djSz9ttm4;
+        Mon,  6 Aug 2018 17:09:03 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 49ED18B7E2;
+        Mon,  6 Aug 2018 17:09:12 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id OugcvoYIm72R; Mon,  6 Aug 2018 17:09:12 +0200 (CEST)
+Received: from po14934vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.4])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 1BE738B7DD;
+        Mon,  6 Aug 2018 17:09:12 +0200 (CEST)
+Received: by po14934vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id C65317121C; Mon,  6 Aug 2018 15:09:11 +0000 (UTC)
+Message-Id: <975595591e096f4ad3253b5a11713beaf62912c4.1533561636.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH] powerpc/cpm1: fix compilation error with
+ CONFIG_PPC_EARLY_DEBUG_CPM
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1808052208170.17359@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date:   Mon,  6 Aug 2018 15:09:11 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/05/2018 01:09 PM, Thomas Gleixner wrote:
->> From: Dave Hansen <dave.hansen@linux.intel.com>
->>
->> This is a cleanup.  There should be functional changes in this patch.
-> Missing 'no' after 'be', right?
+commit e8cb7a55eb8dc ("powerpc: remove superflous inclusions of
+asm/fixmap.h") removed inclusion of asm/fixmap.h from files not
+including objects from that file.
 
-Correct.  Should be:
+However, asm/mmu-8xx.h includes  call to __fix_to_virt(). The proper
+way would be to include asm/fixmap.h in asm/mmu-8xx.h but it creates
+an inclusion loop.
 
-"This is a cleanup.  There should be no functional changes in this patch."
+So we have to leave asm/fixmap.h in sysdep/cpm_common.c for
+CONFIG_PPC_EARLY_DEBUG_CPM
+
+  CC      arch/powerpc/sysdev/cpm_common.o
+In file included from ./arch/powerpc/include/asm/mmu.h:340:0,
+                 from ./arch/powerpc/include/asm/reg_8xx.h:8,
+                 from ./arch/powerpc/include/asm/reg.h:29,
+                 from ./arch/powerpc/include/asm/processor.h:13,
+                 from ./arch/powerpc/include/asm/thread_info.h:28,
+                 from ./include/linux/thread_info.h:38,
+                 from ./arch/powerpc/include/asm/ptrace.h:159,
+                 from ./arch/powerpc/include/asm/hw_irq.h:12,
+                 from ./arch/powerpc/include/asm/irqflags.h:12,
+                 from ./include/linux/irqflags.h:16,
+                 from ./include/asm-generic/cmpxchg-local.h:6,
+                 from ./arch/powerpc/include/asm/cmpxchg.h:537,
+                 from ./arch/powerpc/include/asm/atomic.h:11,
+                 from ./include/linux/atomic.h:5,
+                 from ./include/linux/mutex.h:18,
+                 from ./include/linux/kernfs.h:13,
+                 from ./include/linux/sysfs.h:16,
+                 from ./include/linux/kobject.h:20,
+                 from ./include/linux/device.h:16,
+                 from ./include/linux/node.h:18,
+                 from ./include/linux/cpu.h:17,
+                 from ./include/linux/of_device.h:5,
+                 from arch/powerpc/sysdev/cpm_common.c:21:
+arch/powerpc/sysdev/cpm_common.c: In function ‘udbg_init_cpm’:
+./arch/powerpc/include/asm/mmu-8xx.h:218:25: error: implicit declaration of function ‘__fix_to_virt’ [-Werror=implicit-function-declaration]
+ #define VIRT_IMMR_BASE (__fix_to_virt(FIX_IMMR_BASE))
+                         ^
+arch/powerpc/sysdev/cpm_common.c:75:7: note: in expansion of macro ‘VIRT_IMMR_BASE’
+       VIRT_IMMR_BASE);
+       ^
+./arch/powerpc/include/asm/mmu-8xx.h:218:39: error: ‘FIX_IMMR_BASE’ undeclared (first use in this function)
+ #define VIRT_IMMR_BASE (__fix_to_virt(FIX_IMMR_BASE))
+                                       ^
+arch/powerpc/sysdev/cpm_common.c:75:7: note: in expansion of macro ‘VIRT_IMMR_BASE’
+       VIRT_IMMR_BASE);
+       ^
+./arch/powerpc/include/asm/mmu-8xx.h:218:39: note: each undeclared identifier is reported only once for each function it appears in
+ #define VIRT_IMMR_BASE (__fix_to_virt(FIX_IMMR_BASE))
+                                       ^
+arch/powerpc/sysdev/cpm_common.c:75:7: note: in expansion of macro ‘VIRT_IMMR_BASE’
+       VIRT_IMMR_BASE);
+       ^
+cc1: all warnings being treated as errors
+make[1]: *** [arch/powerpc/sysdev/cpm_common.o] Error 1
+
+Fixes: e8cb7a55eb8dc ("powerpc: remove superflous inclusions of asm/fixmap.h")
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ arch/powerpc/include/asm/fixmap.h | 1 +
+ arch/powerpc/sysdev/cpm_common.c  | 1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git a/arch/powerpc/include/asm/fixmap.h b/arch/powerpc/include/asm/fixmap.h
+index 40efdf1d2d6e..41cc15c14eee 100644
+--- a/arch/powerpc/include/asm/fixmap.h
++++ b/arch/powerpc/include/asm/fixmap.h
+@@ -16,6 +16,7 @@
+ 
+ #ifndef __ASSEMBLY__
+ #include <asm/page.h>
++#include <asm/pgtable.h>
+ #ifdef CONFIG_HIGHMEM
+ #include <linux/threads.h>
+ #include <asm/kmap_types.h>
+diff --git a/arch/powerpc/sysdev/cpm_common.c b/arch/powerpc/sysdev/cpm_common.c
+index 010975c3422f..b74508175b67 100644
+--- a/arch/powerpc/sysdev/cpm_common.c
++++ b/arch/powerpc/sysdev/cpm_common.c
+@@ -28,6 +28,7 @@
+ #include <asm/udbg.h>
+ #include <asm/io.h>
+ #include <asm/cpm.h>
++#include <asm/fixmap.h>
+ #include <soc/fsl/qe/qe.h>
+ 
+ #include <mm/mmu_decl.h>
+-- 
+2.13.3
+
