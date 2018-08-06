@@ -2,105 +2,110 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29531C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 07:51:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F859C46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 07:53:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D31982198E
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 07:51:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ghJyKE2x"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D31982198E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id B1C77219CE
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 07:53:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1C77219CE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727411AbeHFJ7P (ORCPT
+        id S1727441AbeHFKBg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 05:59:15 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:34344 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725735AbeHFJ7P (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 05:59:15 -0400
-Received: by mail-pl0-f68.google.com with SMTP id f6-v6so5317774plo.1;
-        Mon, 06 Aug 2018 00:51:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Sib7iUGqU4okqA3LvH6W9pRkrNp/0scGTTNxOeHql8o=;
-        b=ghJyKE2x/CZqoH/OPnnujxdPXFW4BW7JEuXxlLpWTwTKI9wYQecFD7AOnt0XrLhWIX
-         QysmiOzFesVnjQqZKoMwVl2tXkxzNMnUCUZizNRD9/DQoYUH0TUZSIseTThrbpf1UMti
-         mOFPZqH8BmVM+8rgV9OoNliqVuJpfZcD7Hc4QFCVNlF63acJ4uDYWJttcTTGtW2zQIUi
-         DW5PZTeEIqDzveT/cj0HsLeHG4FTC3HO/VMDbltVXJMGvSCUHqYBDQ+R7OFhZuW2evz9
-         LkxWRUaPXvqikl9H7WcGy0n3RXFthznYFcj9UFOj59mszz00agVHv1WXNGvkvmnyKLjv
-         +oHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Sib7iUGqU4okqA3LvH6W9pRkrNp/0scGTTNxOeHql8o=;
-        b=qANuNjPHABQUF2mgOS/h0wxdGv5rHscv4VJdQIoWXTLiql9zdrcreFjXkZCmUK1DHY
-         Fs0ZbV+JwXFIEfosJOm+LWKGD/7y0vGWz8QqG68ZN7vNxGpGJbS4aCsjmL1z2ClalJEp
-         iye5fmeepwWNd29PSWZXVSI67tLIZ54WoNbhbAYJNncYp/wxmcXQHWHKjSuosyyHjkct
-         9Pn5/hTazoZMo0hKfEiFCho255zBsGhNKgUxtOFiU7ZtBoFYPINt1e5xkeCYZ91iYdnG
-         mcABwqaYuhmy2tYo3HPAIUl+N0u2gNJ3tJcT9QlIFWnhlh5Q8J57ZqNFFojkP1xX5SG3
-         9SuQ==
-X-Gm-Message-State: AOUpUlHt1xnLcKrw+4QJ6tMjVWNvW9sk9hiH5E8Fd2S+CS7JbhvE+0W+
-        dUjfUEMn+4I1YsgPFqm1rHs=
-X-Google-Smtp-Source: AAOMgpeC+vI3N3/+MnbjmxaAE/sSKeEIiMoWS7UFiGCuuSQdj+G4mVQg3yahdqWP4a0rxvOvLUi7hg==
-X-Received: by 2002:a17:902:bd93:: with SMTP id q19-v6mr12821985pls.238.1533541886751;
-        Mon, 06 Aug 2018 00:51:26 -0700 (PDT)
-Received: from localhost.localdomain ([203.205.141.37])
-        by smtp.gmail.com with ESMTPSA id v8-v6sm15023419pff.120.2018.08.06.00.51.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 06 Aug 2018 00:51:26 -0700 (PDT)
-Subject: Re: [PATCH] KVM: try __get_user_pages_fast even if not in atomic
- context
-To:     Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc:     rkrcmar@redhat.com, Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Junaid Shahid <junaids@google.com>,
-        Xiao Guangrong <xiaoguangrong@tencent.com>
-References: <1532706407-11380-1-git-send-email-pbonzini@redhat.com>
-From:   Xiao Guangrong <guangrong.xiao@gmail.com>
-Message-ID: <54a94492-bb0a-3d2c-6c34-64b6c4336b0a@gmail.com>
-Date:   Mon, 6 Aug 2018 15:51:21 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Mon, 6 Aug 2018 06:01:36 -0400
+Received: from mga17.intel.com ([192.55.52.151]:9513 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725735AbeHFKBg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 06:01:36 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Aug 2018 00:53:47 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,451,1526367600"; 
+   d="scan'208";a="63792643"
+Received: from chenyu-desktop.sh.intel.com (HELO chenyu-desktop) ([10.239.160.116])
+  by orsmga006.jf.intel.com with ESMTP; 06 Aug 2018 00:51:38 -0700
+Date:   Mon, 6 Aug 2018 15:57:54 +0800
+From:   Yu Chen <yu.c.chen@intel.com>
+To:     Oliver Neukum <oneukum@suse.com>
+Cc:     Pavel Machek <pavel@ucw.cz>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Eric Biggers <ebiggers@google.com>,
+        "Lee, Chun-Yi" <jlee@suse.com>, Theodore Ts o <tytso@mit.edu>,
+        Stephan Mueller <smueller@chronox.de>,
+        Denis Kenzior <denkenz@gmail.com>, linux-pm@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gu, Kookoo" <kookoo.gu@intel.com>,
+        "Zhang, Rui" <rui.zhang@intel.com>
+Subject: Re: [PATCH 0/4][RFC v2] Introduce the in-kernel hibernation
+ encryption
+Message-ID: <20180806075754.GA12124@chenyu-desktop>
+References: <cover.1531924968.git.yu.c.chen@intel.com>
+ <20180718202235.GA4132@amd>
+ <20180718235851.GA22170@sandybridge-desktop>
+ <20180719110149.GA4679@amd>
+ <20180719132003.GA30981@sandybridge-desktop>
+ <20180720102532.GA20284@amd>
+ <1532346156.3057.11.camel@suse.com>
+ <20180723162302.GA4503@sandybridge-desktop>
+ <1532590246.7411.3.camel@suse.com>
 MIME-Version: 1.0
-In-Reply-To: <1532706407-11380-1-git-send-email-pbonzini@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1532590246.7411.3.camel@suse.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 07/27/2018 11:46 PM, Paolo Bonzini wrote:
-> We are currently cutting hva_to_pfn_fast short if we do not want an
-> immediate exit, which is represented by !async && !atomic.  However,
-> this is unnecessary, and __get_user_pages_fast is *much* faster
-> because the regular get_user_pages takes pmd_lock/pte_lock.
-> In fact, when many CPUs take a nested vmexit at the same time
-> the contention on those locks is visible, and this patch removes
-> about 25% (compared to 4.18) from vmexit.flat on a 16 vCPU
-> nested guest.
+Hi Oliver,
+On Thu, Jul 26, 2018 at 09:30:46AM +0200, Oliver Neukum wrote:
+> On Di, 2018-07-24 at 00:23 +0800, Yu Chen wrote:
+> > 
+> > Good point, we once tried to generate key in kernel, but people
+> > suggest to generate key in userspace and provide it to the
+> > kernel, which is what ecryptfs do currently, so it seems this
+> > should also be safe for encryption in kernel.
+> > https://www.spinics.net/lists/linux-crypto/msg33145.html
+> > Thus Chun-Yi's signature can use EFI key and both the key from
+> > user space.
 > 
+> Hi,
+> 
+> ecryptfs can trust user space. It is supposed to keep data
+> safe while the system is inoperative.
+Humm, I did not quite get the point here, let's take fscrypt
+for example, the kernel gets user generated key from user space,
+and uses per-inode nonce(random bytes) as the master key to
+do a KDF(key derivation function) on user provided key, and uses
+that key for encryption. We can also added similar mechanism
+to generate the key in kernel space but the key should be
+original from user's provided key(password derived), because
+the security boot/signature mechanism could not cover the case
+that, two different users could resume to each other's context
+because there isn't any certification during resume if it is
+on the same physical hardware.
 
-Nice improvement.
+Best,
+Yu
+> The whole point of Secure
+> Boot is a cryptographic system of trust that does not include
+> user space.
+> 
+> I seriously doubt we want to use trusted computing here. So the
+> key needs to be generated in kernel space and stored in a safe
+> manner. As we have a saolution doing that, can we come to ausable
+> synthesis?
 
-Then after that, we will unconditionally try hva_to_pfn_fast(), does
-it hurt the case that the mappings in the host's page tables have not
-been present yet?
-
-Can we apply this tech to other places using gup or even squash it
-into  get_user_pages()?
+> 
+> 	Regards
+> 		Oliver
+> 
