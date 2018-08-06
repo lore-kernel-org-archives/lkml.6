@@ -2,145 +2,187 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0D5FC46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 21:55:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE5EFC4646D
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 22:12:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD6E021946
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 21:55:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD6E021946
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 6DE8521A56
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 22:12:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ogqG8xVi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DE8521A56
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732385AbeHGAGt (ORCPT
+        id S1732502AbeHGAXM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 20:06:49 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36914 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730220AbeHGAGt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 20:06:49 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6434D8780F;
-        Mon,  6 Aug 2018 21:55:43 +0000 (UTC)
-Received: from [10.36.116.32] (ovpn-116-32.ams2.redhat.com [10.36.116.32])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 106D82026D76;
-        Mon,  6 Aug 2018 21:55:41 +0000 (UTC)
-Subject: Re: linux-next: Signed-off-by missing for commit in the kvm tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        KVM <kvm@vger.kernel.org>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20180807073922.665e1d63@canb.auug.org.au>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <0423431e-bc44-91a0-ce4c-d7fc430f66ab@redhat.com>
-Date:   Mon, 6 Aug 2018 23:55:40 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 6 Aug 2018 20:23:12 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:46196 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729749AbeHGAXM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 20:23:12 -0400
+Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id A0CF157;
+        Tue,  7 Aug 2018 00:12:02 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1533593523;
+        bh=SsOtJjQIpuf94T9eHE43Kz5KS6SLi6iNugGmc/wR3+w=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ogqG8xVin2vPIaSSxelM17e5HsJPyOXAkzHDdV3oKL1rVBcirSSW+TVZzOCGVwa8G
+         LY9I62QsCouT+nReUmyotSffzIdzNY8AK/2h/Wq3e8seE78Dg4H4Mdz/+w0LHAyk07
+         0viDXwyubP+sC5mpK7f9HGklfihL2rzkI5MdEw28=
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Hans Yang <hansy@nvidia.com>,
+        Guennadi Liakhovetski <g.liakhovetski@gmx.de>,
+        mchehab@kernel.org, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+Subject: Re: [PATCH resend] [media] uvcvideo: zero seq number when disabling stream
+Date:   Tue, 07 Aug 2018 01:12:46 +0300
+Message-ID: <15494504.TcLiMcYGsL@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <4325498.0x3d1FfxvC@avalon>
+References: <1505456871-12680-1-git-send-email-hansy@nvidia.com> <4037e7e9-e017-e096-8020-94395260655b@nvidia.com> <4325498.0x3d1FfxvC@avalon>
 MIME-Version: 1.0
-In-Reply-To: <20180807073922.665e1d63@canb.auug.org.au>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="FiCqHZbcwJJYxsjUzWc98noVLcTMfClV5"
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 06 Aug 2018 21:55:43 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 06 Aug 2018 21:55:43 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'pbonzini@redhat.com' RCPT:''
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---FiCqHZbcwJJYxsjUzWc98noVLcTMfClV5
-Content-Type: multipart/mixed; boundary="WEFXiDQc1LKZsxVhLvlXX6PnLABZ0nu7G";
- protected-headers="v1"
-From: Paolo Bonzini <pbonzini@redhat.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?=
- <rkrcmar@redhat.com>, KVM <kvm@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Message-ID: <0423431e-bc44-91a0-ce4c-d7fc430f66ab@redhat.com>
-Subject: Re: linux-next: Signed-off-by missing for commit in the kvm tree
-References: <20180807073922.665e1d63@canb.auug.org.au>
-In-Reply-To: <20180807073922.665e1d63@canb.auug.org.au>
+Hi Hans,
 
---WEFXiDQc1LKZsxVhLvlXX6PnLABZ0nu7G
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+(CC'ing the linux-usb mailing list)
 
-On 06/08/2018 23:39, Stephen Rothwell wrote:
-> Hi all,
+On Thursday, 19 October 2017 15:03:34 EEST Laurent Pinchart wrote:
+> On Thursday, 19 October 2017 10:23:06 EEST Hans Yang wrote:
+> > On 2017=E5=B9=B410=E6=9C=8818=E6=97=A5 16:52, Guennadi Liakhovetski wro=
+te:
+> >> On Mon, 16 Oct 2017, Laurent Pinchart wrote:
+> >>> On Friday, 15 September 2017 09:27:51 EEST Hans Yang wrote:
+> >>>> For bulk-based devices, when disabling the video stream,
+> >>>> in addition to issue CLEAR_FEATURE(HALT), it is better to set
+> >>>> alternate setting 0 as well or the sequnce number in host
+> >>>> side will probably not reset to zero.
+> >>>=20
+> >>> The USB 2.0 specificatin states in the description of the SET_INTERFA=
+CE
+> >>> request that "If a device only supports a default setting for the
+> >>> specified interface, then a STALL may be returned in the Status stage
+> >>> of the request".
+> >>>=20
+> >>> The Linux implementation of usb_set_interface() deals with this by
+> >>> handling STALL conditions and manually clearing HALT for all endpoints
+> >>> in the interface, but I'm still concerned that this change could break
+> >>> existing bulk- based cameras. Do you know what other operating systems
+> >>> do when disabling the stream on bulk cameras ? According to a comment
+> >>> in the driver Windows calls CLEAR_FEATURE(HALT), but the situation
+> >>> might have changed since that was tested.
+> >=20
+> > Sorry I did not mention that it is about SS bulk-based cameras using
+> > sequence number technique.
+> >=20
+> > From my observations, invoking usb_clear_halt() will reset the endpoint
+> > in the device side via CLEAR_FEATURE(HALT)
+> > and reset the sequence number as well; however usb_reset_endpoint() does
+> > not reset the host side endpoint with xhci driver,
+> > then the sequence number will mismatch in next time stream enable.
+> > I can always observe this through a bus analyzer on Linux implementation
+> > whatever X86 or ARM based.
+> > This is not observed on the Windows.
+
+Do your USB analyser traces show whether Windows sends a SET_INTERFACE(0)=20
+request when stopping the stream for bulk-based devices ?
+
+> According to the USB 3.0 specification, section 9.4.5 ("Get Status"),
 >=20
-> Commit
+> "Regardless of whether an endpoint has the Halt feature set, a
+> ClearFeature(ENDPOINT_HALT) request always results in the data sequence
+> being reinitialized to zero, and if Streams are enabled, the Stream State
+> Machine shall be reinitialized to the Disabled state."
 >=20
->   81781b6884bd ("KVM/x86: Use CC_SET()/CC_OUT in arch/x86/kvm/vmx.c")
->=20
-> is missing a Signed-off-by from its committer.
->=20
+> If Linux doesn't reset the sequence number when issuing a
+> CLEAR_FEATURE(HALT), isn't it a Linux USB stack bug that should be fixed =
+in
+> the USB core ?
 
-Fixed at the same time as resolving the conflicts.
+Do you have any update on whether you would consider this to be a Linux USB=
+=20
+stack issue or a uvcvideo driver issue ?
 
-Paolo
+> >>> Guennadi, how do your bulk-based cameras handle this ?
+> >>=20
+> >> I don't know what design decisions are implemented there, but I tested=
+ a
+> >> couple of cameras for sending a STREAMOFF after a few captured buffers,
+> >> sleeping for a couple of seconds, requeuing buffers, sending STREAMON
+> >> and capturing a few more - that seems to have worked. "Seems" because I
+> >> only used a modified version of capture-example, I haven't checked
+> >> buffer contents.
+> >>=20
+> >> BTW, Hans, may I ask - what cameras did you use?
+> >=20
+> > I have three SS bulk-based cameras as follows:
+> > e-con Systems See3CAM_CU130 (2560:c1d0)
+> > Leopard ZED (2b03:f580)
+> > Intel(R) RealSense(TM) Camera SR300 (8086:0aa5)
+> >=20
+> > I can observe the same issue on all above;
+> > besides, to reproduce issue do not let the camera enter suspend because
+> > it will *help* to reset the sequence number through usb_set_interface(0=
+).
+> >=20
+> >>>> Then in next time video stream start, the device will expect
+> >>>> host starts packet from 0 sequence number but host actually
+> >>>> continue the sequence number from last transaction and this
+> >>>> causes transaction errors.
+> >>>=20
+> >>> Do you mean the DATA0/DATA1 toggle ? Why does the host continue
+> >>> toggling the PID from the last transation ? The usb_clear_halt()
+> >>> function calls usb_reset_endpoint() which should reset the DATA PID
+> >>> toggle.
+> >>>=20
+> >>>> This commit fixes this by adding set alternate setting 0 back
+> >>>> as what isoch-based devices do.
+> >>>>=20
+> >>>> Below error message will also be eliminated for some devices:
+> >>>> uvcvideo: Non-zero status (-71) in video completion handler.
+> >>>>=20
+> >>>> Signed-off-by: Hans Yang <hansy@nvidia.com>
+> >>>> ---
+> >>>>=20
+> >>>>   drivers/media/usb/uvc/uvc_video.c | 5 ++---
+> >>>>   1 file changed, 2 insertions(+), 3 deletions(-)
+> >>>>=20
+> >>>> diff --git a/drivers/media/usb/uvc/uvc_video.c
+> >>>> b/drivers/media/usb/uvc/uvc_video.c index fb86d6af398d..ad80c2a6da6a
+> >>>> 100644
+> >>>> --- a/drivers/media/usb/uvc/uvc_video.c
+> >>>> +++ b/drivers/media/usb/uvc/uvc_video.c
+> >>>> @@ -1862,10 +1862,9 @@ int uvc_video_enable(struct uvc_streaming
+> >>>> *stream, int enable)
+> >>>>   	if (!enable) {
+> >>>>   		uvc_uninit_video(stream, 1);
+> >>>>=20
+> >>>> -		if (stream->intf->num_altsetting > 1) {
+> >>>> -			usb_set_interface(stream->dev->udev,
+> >>>> +		usb_set_interface(stream->dev->udev,
+> >>>>   					  stream->intfnum, 0);
+> >>>> -		} else {
+> >>>> +		if (stream->intf->num_altsetting =3D=3D 1) {
+> >>>>   			/* UVC doesn't specify how to inform a bulk-based device
+> >>>>   			 * when the video stream is stopped. Windows sends a
+> >>>>   			 * CLEAR_FEATURE(HALT) request to the video streaming
+
+=2D-=20
+Regards,
+
+Laurent Pinchart
 
 
---WEFXiDQc1LKZsxVhLvlXX6PnLABZ0nu7G--
 
---FiCqHZbcwJJYxsjUzWc98noVLcTMfClV5
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEE8TM4V0tmI4mGbHaCv/vSX3jHroMFAltow9wACgkQv/vSX3jH
-roOhTQf/dHc75v5TGMbGiJ2HAdoZ9lwttf9sCknKzmMvzpAKkkr6jUXhuyG83cf+
-PSg4LKmxg6C/az295sTMOXh8CGXSGEHLQNzbO9MN3wVqoH9F34KxyNPY44WFMqvQ
-YF8C7TjIjCcAxcNI/Sk0t2C6s0ndDIJ7cqLRH9aedNv5jQxE64qtbCZ/NkknTtFv
-G6Ds3Kf1WNM0/cy/CEBOzOxrcdQi9eR58oDZotmKP/O0ORqeuODvcuRBWBe45JhZ
-uQqqWFGb3HzqqX0edrAJWxxaxlKWjAUUt11iD5FAMRpTe95JsyoF2B0WSPF4QtEi
-h44hSymRVWd74JvBPKJgftFF5UXi2w==
-=Ut1a
------END PGP SIGNATURE-----
-
---FiCqHZbcwJJYxsjUzWc98noVLcTMfClV5--
