@@ -2,152 +2,91 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27CA7C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 11:41:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2751C4646D
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 11:42:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D642F21A0B
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 11:41:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fzrZvrWv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D642F21A0B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id A677821A09
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 11:42:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A677821A09
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730315AbeHFNuP (ORCPT
+        id S1730460AbeHFNuy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 09:50:15 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:53234 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727451AbeHFNuP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 09:50:15 -0400
-Received: by mail-wm0-f65.google.com with SMTP id o11-v6so13418263wmh.2;
-        Mon, 06 Aug 2018 04:41:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=odNFYi0NM9qsX/68kIHEhg8FIW1uqOjvQCghCSvHhIs=;
-        b=fzrZvrWvad6GXaRo7PMTTLS0gRcpVXbTt+sZ6ucQQMplkDYF4haAZ09o5+AnjQeVbi
-         KSnA9Mntc5ox+cDCW3qEMvYDJadoOwVjNix5Qvj8wqNINwikILF4XiT7ly0+0Yvrn0RN
-         DtoGk/lKrx1vEgRBvNSTyMXJlYpgcvlf4Qp4d29yhzMePkpVGrZgdHsGLvED4vS1fDyq
-         lsKNsl6iUMXp7aa0A1KhcKEKgsoiLSYjAPDxgpbMsRUDKOlDmGAtGgiGgTgQKO9Uhbvl
-         ELQAVF3lpli3iPZ3BFIGzSZLj3yElMwz2rfza0LMzMPsilEDkaAdOK0ETuf1sHbgMJxA
-         zmQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=odNFYi0NM9qsX/68kIHEhg8FIW1uqOjvQCghCSvHhIs=;
-        b=RGZwIgCl77I6hllQqxzmzCWjOTE4RzjsGZJZ/Bec/IjV67LPkonFWFSIEI6iFNv8Q/
-         kvcscsju6SfCVh0Uhr5YmvTh7jWjfJQ2p86EncVgjuy4mUZkb145VFD0SUA5DYfERIep
-         iSD9JDHJehiUb11EUyQlcuImzEMhHjHkbfwq/fuCM+HWRPIyfLFitBYMZPB/3XHfF6QC
-         77XnNShHaC6EFHwlQG8J8D0fqA+4mUdUZiFoUjIBi6VPV6lv1Jt7faOod0oJ3H4GD804
-         Lc2QfO/t4kxvWjWoFQjpx1ADFpnQy9UwkKS4o+v2BNwl/DVGicQGzxs6ZFwB2FX8Q13N
-         re2A==
-X-Gm-Message-State: AOUpUlEx6BnNTFIJ/heDap9lA8Ku45RptOypxx4opfNOmX+yIHc3taw/
-        KOE9Zze/l1AWwofm6BspL6T8K5mp
-X-Google-Smtp-Source: AAOMgpeP+MRDhnJBxY7lK+9MI4JeNPd56pKt9SwxGNn2Y3dBKb2nkQ6XC81Km4b47Zv//xC8kWThWg==
-X-Received: by 2002:a1c:1d2:: with SMTP id 201-v6mr10934610wmb.4.1533555692868;
-        Mon, 06 Aug 2018 04:41:32 -0700 (PDT)
-Received: from [192.168.1.18] (dnm114.neoplus.adsl.tpnet.pl. [83.24.94.114])
-        by smtp.gmail.com with ESMTPSA id j8-v6sm17671413wrp.11.2018.08.06.04.41.31
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 06 Aug 2018 04:41:31 -0700 (PDT)
-Subject: Re: [PATCH v4 1/2] leds: core: Introduce LED pattern trigger
-To:     Baolin Wang <baolin.wang@linaro.org>
-Cc:     Pavel Machek <pavel@ucw.cz>, rteysseyre@gmail.com,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <c43374283744539702023053c896efe3c73b7833.1533441631.git.baolin.wang@linaro.org>
- <3d7e8701-d92b-9f51-befa-a585b5957488@gmail.com>
- <CAMz4kuLSBLReVSo4zXf8b64kwCmRt2PS=JkeD2wJO41X-WmBQQ@mail.gmail.com>
-From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Message-ID: <b7407dc4-73b3-f819-2c44-03ed65999e32@gmail.com>
-Date:   Mon, 6 Aug 2018 13:41:29 +0200
+        Mon, 6 Aug 2018 09:50:54 -0400
+Received: from mx2.suse.de ([195.135.220.15]:36582 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727451AbeHFNux (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 09:50:53 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 5107AAE83;
+        Mon,  6 Aug 2018 11:42:11 +0000 (UTC)
+Subject: Re: [PATCH] xen/biomerge: Use true and false for boolean values
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc:     xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
+References: <20180805005014.GA2299@embeddedor.com>
+From:   Juergen Gross <jgross@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <9c98c6be-92ba-3045-0888-549376872eb6@suse.com>
+Date:   Mon, 6 Aug 2018 13:42:10 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <CAMz4kuLSBLReVSo4zXf8b64kwCmRt2PS=JkeD2wJO41X-WmBQQ@mail.gmail.com>
+In-Reply-To: <20180805005014.GA2299@embeddedor.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Language: de-DE
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Baolin,
-
-On 08/06/2018 03:53 AM, Baolin Wang wrote:
-> Hi Jacek,
-[...]
->>> +++ b/Documentation/ABI/testing/sysfs-class-led-trigger-pattern
->>> @@ -0,0 +1,21 @@
->>> +What:                /sys/class/leds/<led>/pattern
->>> +Date:                August 2018
->>> +KernelVersion:       4.19
->>> +Description:
->>> +             Specify a pattern for the LED, for LED hardware that support
->>> +             altering the brightness as a function of time.
->>> +
->>> +             The pattern is given by a series of tuples, of brightness and
->>> +             duration (ms). The LED is expected to traverse the series and
->>> +             each brightness value for the specified duration. Duration of
->>> +             0 means brightness should immediately change to new value.
->>> +
->>> +             The format of the pattern values should be:
->>> +             "brightness_1 duration_1 brightness_2 duration_2 brightness_3
->>> +             duration_3 ...".
->>> +
->>> +What:                /sys/class/leds/<led>/repeat
->>> +Date:                August 2018
->>> +KernelVersion:       4.19
->>> +Description:
->>> +             Specify a pattern repeat number. 0 means repeat indefinitely.
->>
->> In current implementation this file on read returns the number
->> of remaining repeat intervals. I'd add that to this description.
+On 05/08/18 02:50, Gustavo A. R. Silva wrote:
+> Return statements in functions returning bool should use true or false
+> instead of an integer value.
 > 
-> I saw Pavel's comments that he did not suggest do this. So I will keep
-> the original description?
-
-Yes, please report always the original value.
-
-[...]
->>> +static ssize_t pattern_trig_store_repeat(struct device *dev,
->>> +                                      struct device_attribute *attr,
->>> +                                      const char *buf, size_t count)
->>> +{
->>> +     struct led_classdev *led_cdev = dev_get_drvdata(dev);
->>> +     struct pattern_trig_data *data = led_cdev->trigger_data;
->>> +     unsigned long res;
->>> +     int err;
->>> +
->>> +     err = kstrtoul(buf, 10, &res);
->>> +     if (err)
->>> +             return err;
->>> +
->>> +     if (!led_cdev->pattern_set)
->>> +             del_timer_sync(&data->timer);
->>
->> Is there a reason for not having this check under mutex?
+> This code was detected with the help of Coccinelle.
 > 
-> We will hold the mutex in pattern_trig_timer_function(), so if we do
-> del_timer_sync() under the mutex protection, we may meet dead-lock
-> issue. Moreover, the del_timer_sync() will make sure deactivating one
-> timer is safe.
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-Ack.
+Reviewed-by: Juergen Gross <jgross@suse.com>
 
--- 
-Best regards,
-Jacek Anaszewski
+
+Juergen
