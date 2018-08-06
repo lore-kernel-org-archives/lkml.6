@@ -3,76 +3,84 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E4BAC4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 20:46:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBCD2C46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 20:48:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5ECB21759
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 20:46:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5ECB21759
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id A4928219C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 20:48:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4928219C4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387429AbeHFW5I (ORCPT
+        id S1732667AbeHFW7n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 18:57:08 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:57964 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733134AbeHFW5I (ORCPT
+        Mon, 6 Aug 2018 18:59:43 -0400
+Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:43924 "EHLO
+        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728671AbeHFW7n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 18:57:08 -0400
-Received: from localhost (71-36-117-41.ptld.qwest.net [71.36.117.41])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id D2AC513534D16;
-        Mon,  6 Aug 2018 13:46:20 -0700 (PDT)
-Date:   Mon, 06 Aug 2018 13:46:20 -0700 (PDT)
-Message-Id: <20180806.134620.124956510948789350.davem@davemloft.net>
-To:     poros@redhat.com
-Cc:     netdev@vger.kernel.org, ivecera@redhat.com,
-        sathya.perla@broadcom.com, ajit.khaparde@broadcom.com,
-        sriharsha.basavapatna@broadcom.com, somnath.kotur@broadcom.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Use Kconfig flag to remove support of deprecated
- BE2/BE3 adapters
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20180806121230.23690-1-poros@redhat.com>
-References: <20180806121230.23690-1-poros@redhat.com>
-X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+        Mon, 6 Aug 2018 18:59:43 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04446;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0T68MHSb_1533588516;
+Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0T68MHSb_1533588516)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 07 Aug 2018 04:48:39 +0800
+Subject: Re: [RFC v6 PATCH 2/2] mm: mmap: zap pages with read mmap_sem in
+ munmap
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     willy@infradead.org, ldufour@linux.vnet.ibm.com,
+        kirill@shutemov.name, akpm@linux-foundation.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <1532628614-111702-1-git-send-email-yang.shi@linux.alibaba.com>
+ <1532628614-111702-3-git-send-email-yang.shi@linux.alibaba.com>
+ <20180803090759.GI27245@dhcp22.suse.cz>
+ <aff7e86d-2e48-ff58-5d5d-9c67deb68674@linux.alibaba.com>
+ <20180806094005.GG19540@dhcp22.suse.cz>
+ <76c0fc2b-fca7-9f22-214a-920ee2537898@linux.alibaba.com>
+ <20180806204119.GL10003@dhcp22.suse.cz>
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <28de768b-c740-37b3-ea5a-8e2cb07d2bdc@linux.alibaba.com>
+Date:   Mon, 6 Aug 2018 13:48:35 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180806204119.GL10003@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 06 Aug 2018 13:46:21 -0700 (PDT)
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Petr Oros <poros@redhat.com>
-Date: Mon,  6 Aug 2018 14:12:28 +0200
 
->   Add flags to remove support of deprecated BE2/BE3 adapters.
->   BE2 disable will reduce .ko size by 2kb and BE3 by 3kb.
->   Disable both will reduce .ko size by 9kb.
-> 
->   With dissabled support is also removed coresponding PCI IDs
->   and codepath with [BE2|BE3|BEx]_chip checks.
-> 
->   New help style in Kconfig
-> 
-> Signed-off-by: Petr Oros <poros@redhat.com>
 
-Sorry, I'm not too hot about this.
+On 8/6/18 1:41 PM, Michal Hocko wrote:
+> On Mon 06-08-18 09:46:30, Yang Shi wrote:
+>>
+>> On 8/6/18 2:40 AM, Michal Hocko wrote:
+>>> On Fri 03-08-18 14:01:58, Yang Shi wrote:
+>>>> On 8/3/18 2:07 AM, Michal Hocko wrote:
+>>>>> On Fri 27-07-18 02:10:14, Yang Shi wrote:
+> [...]
+>>>>>> If the vma has VM_LOCKED | VM_HUGETLB | VM_PFNMAP or uprobe, they are
+>>>>>> considered as special mappings. They will be dealt with before zapping
+>>>>>> pages with write mmap_sem held. Basically, just update vm_flags.
+>>>>> Well, I think it would be safer to simply fallback to the current
+>>>>> implementation with these mappings and deal with them on top. This would
+>>>>> make potential issues easier to bisect and partial reverts as well.
+>>>> Do you mean just call do_munmap()? It sounds ok. Although we may waste some
+>>>> cycles to repeat what has done, it sounds not too bad since those special
+>>>> mappings should be not very common.
+>>> VM_HUGETLB is quite spread. Especially for DB workloads.
+>> Wait a minute. In this way, it sounds we go back to my old implementation
+>> with special handling for those mappings with write mmap_sem held, right?
+> Yes, I would really start simple and add further enhacements on top.
 
-Imagine being one of the people who has one of these cards.
+If updating vm_flags with read lock is safe in this case, we don't have 
+to do this. The only reason for this special handling is about vm_flags 
+update.
 
-Pulling out detection and working'ness of devices from a driver
-is a big step backwards, and I'm sorry I will don't want to be
-part of something that facilitates this.
 
-The S390 folks tried something similar in the past and I reject
-those changes too.
-
-Thanks.
