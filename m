@@ -2,119 +2,71 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDF2FC46472
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 18:38:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D10CEC46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 18:39:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7C2D21A52
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 18:38:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7C2D21A52
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 83D7C21A16
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 18:39:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="R78IMBnP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83D7C21A16
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732740AbeHFUsc (ORCPT
+        id S1732720AbeHFUtf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 16:48:32 -0400
-Received: from mga18.intel.com ([134.134.136.126]:58765 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730840AbeHFUsc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 16:48:32 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Aug 2018 11:38:10 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,452,1526367600"; 
-   d="scan'208";a="222386162"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga004.jf.intel.com with ESMTP; 06 Aug 2018 11:37:55 -0700
-Received: from txhoang-mobl.amr.corp.intel.com (unknown [10.254.17.180])
-        by linux.intel.com (Postfix) with ESMTP id 09A435801BD;
-        Mon,  6 Aug 2018 11:37:53 -0700 (PDT)
-Subject: Re: [alsa-devel] [PATCH 9/9] ALSA: intel_hdmi: remove redundant
- variable cfg_val
-To:     Takashi Iwai <tiwai@suse.de>
-Cc:     alsa-devel@alsa-project.org,
-        Olivier Moysan <olivier.moysan@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        kernel-janitors@vger.kernel.org,
-        Arnaud Pouliquen <arnaud.pouliquen@st.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Colin King <colin.king@canonical.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Jaya Kumar <jayakumar.alsa@gmail.com>
-References: <20180801104742.4328-1-colin.king@canonical.com>
- <20180801104742.4328-10-colin.king@canonical.com>
- <s5hin4unyh0.wl-tiwai@suse.de>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <a5a408bc-cc58-946e-5b36-496548a6316f@linux.intel.com>
-Date:   Mon, 6 Aug 2018 13:37:53 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
+        Mon, 6 Aug 2018 16:49:35 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:47724 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727834AbeHFUte (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 16:49:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=yLRIAaa5dTK2aqDcKxhjXtk2Cd2wkgwlCL01NjOZU9Y=; b=R78IMBnP46ez2nKMHc72UVKhA
+        OtPokvf76f1OQbt5NnI68FLx6JvmJTpcPWc3+2PufqlgMWapjv309T3zKme2MMorcnmgd4HMThfFm
+        oSNacQ2lwVDAKoAD26Ye0ElXcVWNotAORKhDHShvW+wLjSV7+5UE5dbG5QXlltAS6qkXrW+TXubtj
+        4i9CTPx+11G1mvx99Eh4t3KRaGnWVCUkKr9rr9YcBx/Obh4Y4lvRxosQx+O4vzRfF4wHwAEgfFM6O
+        Lxkm5JhvsV6WC6Ir/UjAyktsvrkPfxefIkLck4MWEXLbYEzb5mJceNYL9UQxLqOW90C+A54p0WnTI
+        MT5EG6DVw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fmkPN-0007Pu-4o; Mon, 06 Aug 2018 18:39:09 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 811992016469D; Mon,  6 Aug 2018 20:39:07 +0200 (CEST)
+Date:   Mon, 6 Aug 2018 20:39:07 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     kan.liang@linux.intel.com
+Cc:     tglx@linutronix.de, mingo@redhat.com, acme@kernel.org,
+        linux-kernel@vger.kernel.org, eranian@google.com,
+        ak@linux.intel.com, alexander.shishkin@linux.intel.com
+Subject: Re: [PATCH 3/3] perf/x86/intel: Add quirk for Goldmont Plus
+Message-ID: <20180806183907.GS2494@hirez.programming.kicks-ass.net>
+References: <1533576223-11588-1-git-send-email-kan.liang@linux.intel.com>
+ <1533576223-11588-3-git-send-email-kan.liang@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <s5hin4unyh0.wl-tiwai@suse.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1533576223-11588-3-git-send-email-kan.liang@linux.intel.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/1/18 6:00 AM, Takashi Iwai wrote:
-> On Wed, 01 Aug 2018 12:47:42 +0200,
-> Colin King wrote:
->>
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> Variable cfg_val is being assigned but is never used hence it is
->> redundant and can be removed.
->>
->> Cleans up clang warning:
->> warning: variable 'cfg_val' set but not used [-Wunused-but-set-variable]
->>
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->> ---
->>   sound/x86/intel_hdmi_audio.c | 2 --
->>   1 file changed, 2 deletions(-)
->>
->> diff --git a/sound/x86/intel_hdmi_audio.c b/sound/x86/intel_hdmi_audio.c
->> index edc9f5a34eff..fa7dca5a68c8 100644
->> --- a/sound/x86/intel_hdmi_audio.c
->> +++ b/sound/x86/intel_hdmi_audio.c
->> @@ -290,7 +290,6 @@ static void had_reset_audio(struct snd_intelhad *intelhaddata)
->>   static int had_prog_status_reg(struct snd_pcm_substream *substream,
->>   			struct snd_intelhad *intelhaddata)
->>   {
->> -	union aud_cfg cfg_val = {.regval = 0};
->>   	union aud_ch_status_0 ch_stat0 = {.regval = 0};
->>   	union aud_ch_status_1 ch_stat1 = {.regval = 0};
->>   
->> @@ -298,7 +297,6 @@ static int had_prog_status_reg(struct snd_pcm_substream *substream,
->>   					  IEC958_AES0_NONAUDIO) >> 1;
->>   	ch_stat0.regx.clk_acc = (intelhaddata->aes_bits &
->>   					  IEC958_AES3_CON_CLOCK) >> 4;
->> -	cfg_val.regx.val_bit = ch_stat0.regx.lpcm_id;
-> 
-> Actually this made me wonder what is the definition of val_bit.
-> It seems always 1 in the current code after the commit 964ca8083c02.
-> Pierre?
+On Mon, Aug 06, 2018 at 10:23:43AM -0700, kan.liang@linux.intel.com wrote:
 
-This val_bit is only there for debug/test, it should be set to one by 
-default and has nothing to do with the lpcm_id. This variable was set 
-even in patches before upstream submission and was never needed, I guess 
-it must be a 9-yr old issue. Good catch!
+> +static bool intel_glk_counter_freezing_broken(int cpu)
 
-Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+>  	case INTEL_FAM6_ATOM_GEMINI_LAKE:
+> +		x86_add_quirk(intel_counter_freezing_quirk);
 
-BTW looking at the structures in intel_hdmi_lpe_audio.h, the field 
-format:3 in audio_ch_status_0 is misleading at best, it should be the 
-emphasis if I look at the SPDIF/AES docs. It's not used but I'll have to 
-relook at all this when I find some time... We should really set the 
-registers to mirror what the aes_bits are, not just the non_audio and 
-clock accuracy fields.
+We really should fix that ATOM naming instead of making it worse :/
