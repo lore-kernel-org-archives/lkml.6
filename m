@@ -2,101 +2,105 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97477C46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 04:07:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53B00C46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 04:28:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C793219CB
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 04:07:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F29BA219CB
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 04:28:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=embeddedgreg-com.20150623.gappssmtp.com header.i=@embeddedgreg-com.20150623.gappssmtp.com header.b="rtMTW7xz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C793219CB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedgreg.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rXKe5wSq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F29BA219CB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727706AbeHFGOo (ORCPT
+        id S1727650AbeHFGfX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 02:14:44 -0400
-Received: from mail-qk0-f194.google.com ([209.85.220.194]:46823 "EHLO
-        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726991AbeHFGOn (ORCPT
+        Mon, 6 Aug 2018 02:35:23 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:43977 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727248AbeHFGfX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 02:14:43 -0400
-Received: by mail-qk0-f194.google.com with SMTP id 191-v6so7966507qki.13
-        for <linux-kernel@vger.kernel.org>; Sun, 05 Aug 2018 21:07:34 -0700 (PDT)
+        Mon, 6 Aug 2018 02:35:23 -0400
+Received: by mail-pf1-f193.google.com with SMTP id j26-v6so6190835pfi.10;
+        Sun, 05 Aug 2018 21:28:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=embeddedgreg-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=IlCHFM3G2D7F2grwGtfqYrJv1Uk/dsrYcavZHg4TSQw=;
-        b=rtMTW7xzIcHpakOviTcjnCk7iQG8TDX9XSR03EQs4sK1raFRHTUkmkE0w8oP3VlyXg
-         +3/l4oO4vSXTXg555xpIPykBZ/fuCao7IzVdAB2ugw+m8GHigq08tFUZCKontjWFM6hT
-         fCXG46UOmzt7zYgNz2YI7dBfaOAjrIt92lrmfHg/Pfw7jRWa6b9g6B1z4LW4MjLVk+mJ
-         /d2NvFNqjaMcfv/NQsHKXcIIgiiLRCS/mN5PIlv16785736V13uC/RK0FFj7PcujPHzj
-         lW4snUvu0djX9xJpS+vBNDyeSNKFt8oe9Zt+vaS7byhe+ADLwsSnAZVHfVPhIFKF3sQu
-         LIow==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=4oSDwJDeihfUA+HsgtBsTUowt1giyERk8qdXwsrphSQ=;
+        b=rXKe5wSqva5xt/umXf1YlUnTpI924FKXF5hzOVW0/CY9VL+yYPyiHEEacchlz4acYt
+         qW0zBSkZNZ7uPtotDntXrva4s2pZ9pnkBu1QfOmOSKnDJO0M2LSiRTZ6h9d7VZkbz3Sp
+         G4cV5fg6ADH3Da3rC4WmQPDXMqhXr91oxetJih7YESaU6ji/BF/vQSkZOJdSKC/bkupV
+         23OO1JA0VVW3Hlvxc7dJQU54K210s3bbnZiz60t+jQJe4pITGzPiIsXTLUUSBwu7cxya
+         uT1pYgyS7s/kdVj0X0QQnyjNKLk5hxbOaxYEEuDlRG7ieZddmAwdJsZYrGDwPk49Ont4
+         LubQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=IlCHFM3G2D7F2grwGtfqYrJv1Uk/dsrYcavZHg4TSQw=;
-        b=hJFMXX7gyxTEbrNwqOUssp7ETOlZYkrT+a3BIihSjwfJN498qq55udgGHeJwsiH9zM
-         oQRXCxjZ+nAxc/nrFdvI1WcREymjzQqHkP6DMxKvzgb8Z7wwghUkdS3uxCwG9RwNuRW5
-         SnzvGs0YkIfg4IT7FVmZojzXDwdhKbnNS2UWGJibmuvTppq6W5Ss8IEZmd034Cx6XZmU
-         fRWrTOqR4qFMM2jeZ3hbiutBpiEt3nS/jxWhLwBUYjZPRTETChc+EYMcpQPCp98vwMba
-         aJsuWzY3vB3IaENykednq6H1cBkub7M0evI7aAqIwiYErgBCmKXaVVreeaSuJuUyEFdq
-         HEtw==
-X-Gm-Message-State: AOUpUlGaWZZT+r6+cKNBwAdDy9COHkZCOhHOz3mpdUG9lT6v/1jwNE+W
-        GYFXsg2RoGZKMC3gMIkefp6Ayw==
-X-Google-Smtp-Source: AAOMgpes8Cl/7WKpWo7vBKjJJTzRNqfg8q2A1CkYW0TQZ4WzPsprDKMxq3yzTe/oRfzfhuSuczWT4Q==
-X-Received: by 2002:a37:80a:: with SMTP id 10-v6mr12115192qki.168.1533528454258;
-        Sun, 05 Aug 2018 21:07:34 -0700 (PDT)
-Received: from yavin4.lan ([97.107.227.14])
-        by smtp.gmail.com with ESMTPSA id u8-v6sm8819322qtc.76.2018.08.05.21.07.32
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=4oSDwJDeihfUA+HsgtBsTUowt1giyERk8qdXwsrphSQ=;
+        b=tnrU3drHimH0b2GMdcTfav+GScpqa/Qygys3WO3WfC24P/KyWN8enrD2dDA6fsvyrS
+         h7ov0nNRbuze7M5mSCb3EIgHI3M5zM+JVrLU/5MUILM+2Es16WGC8cI67GlY95okDyoB
+         z+7gfeidU9TDeimDffucPNIE31VD3qCR5GBGMhiujT3iRQgA6p7PyTn2P+HlyQmialmU
+         ft88hXyYfwdDJJ6Tb/+C9/j1H6ri2kN9fmwnHS2DwQwecJmIK75Bp3DmX1qjeNcopegA
+         sTXaNUWmXOv7iukX5BnngDDyZi3mo9zO9dfcrbZESwLaW0BFuDHxsESp2wwobE7VUjmn
+         Y9VA==
+X-Gm-Message-State: AOUpUlFQr1pDQV/fMzBU9ODG69YW3ItI7tqSyrJI9BFhttqlNx0IO9RX
+        w8SxYV4hjf+PGcZmRhRUjG6dYN/u
+X-Google-Smtp-Source: AAOMgpcODcvYD18Ejcpy9SDPm+L4NHbNhUrL0PFoqBLA79ySBVnWL3/P/LmelUI6nRLcEyXGmQLYjQ==
+X-Received: by 2002:a62:106:: with SMTP id 6-v6mr15524758pfb.168.1533529690683;
+        Sun, 05 Aug 2018 21:28:10 -0700 (PDT)
+Received: from Salils-MacBook-Air.local ([2601:600:a27f:d810:2878:20cf:5a20:da30])
+        by smtp.gmail.com with ESMTPSA id 64-v6sm20568029pfi.89.2018.08.05.21.28.09
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 05 Aug 2018 21:07:33 -0700 (PDT)
-From:   Greg Gallagher <greg@embeddedgreg.com>
-To:     eric@anholt.net
-Cc:     Stefan Wahren <stefan.wahren@i2se.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] staging/vc04_services: Fix alignment of function arguments
-Date:   Mon,  6 Aug 2018 00:07:30 -0400
-Message-Id: <20180806040731.5113-1-greg@embeddedgreg.com>
-X-Mailer: git-send-email 2.14.1
+        Sun, 05 Aug 2018 21:28:09 -0700 (PDT)
+Date:   Sun, 5 Aug 2018 21:28:08 -0700
+From:   Salil Kapur <salilkapur93@gmail.com>
+To:     gregkh@linuxfoundation.org
+Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] USB: Removing NULL check for pool since dma_pool_destroy is
+ safe
+Message-ID: <20180806042808.GA91892@Salils-MacBook-Air.local>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix warning generated by checkpatch.pl for alignment should match open
-parenthesis.  This is a coding style change only.
+Removing NULL check for pool since dma_pool_destroy is safe
 
-Signed-off-by: Greg Gallagher <greg@embeddedgreg.com>
+Signed-off-by: Salil Kapur <salilkapur93@gmail.com>
 ---
- drivers/staging/vc04_services/bcm2835-audio/bcm2835-ctl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/core/buffer.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-ctl.c b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-ctl.c
-index ec468d5719b1..33ae8ae8663b 100644
---- a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-ctl.c
-+++ b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-ctl.c
-@@ -174,7 +174,7 @@ static struct snd_kcontrol_new snd_bcm2835_ctl[] = {
- };
+diff --git a/drivers/usb/core/buffer.c b/drivers/usb/core/buffer.c
+index 77eef8acff94..f641342cdec0 100644
+--- a/drivers/usb/core/buffer.c
++++ b/drivers/usb/core/buffer.c
+@@ -101,12 +101,8 @@ void hcd_buffer_destroy(struct usb_hcd *hcd)
+ 		return;
  
- static int snd_bcm2835_spdif_default_info(struct snd_kcontrol *kcontrol,
--	struct snd_ctl_elem_info *uinfo)
-+					  struct snd_ctl_elem_info *uinfo)
- {
- 	uinfo->type = SNDRV_CTL_ELEM_TYPE_IEC958;
- 	uinfo->count = 1;
+ 	for (i = 0; i < HCD_BUFFER_POOLS; i++) {
+-		struct dma_pool *pool = hcd->pool[i];
+-
+-		if (pool) {
+-			dma_pool_destroy(pool);
+-			hcd->pool[i] = NULL;
+-		}
++		dma_pool_destroy(hcd->pool[i]);
++		hcd->pool[i] = NULL;
+ 	}
+ }
+ 
 -- 
-2.14.1
+2.14.4
 
