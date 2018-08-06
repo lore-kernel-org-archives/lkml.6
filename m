@@ -2,138 +2,192 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	TVD_SUBJ_WIPE_DEBT,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D73C9C46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 05:44:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38931C46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 05:51:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E2BB219CE
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 05:44:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="KI9Hgkh2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E2BB219CE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id D4491219CE
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 05:51:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4491219CE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726986AbeHFHvj (ORCPT
+        id S1727078AbeHFH63 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 03:51:39 -0400
-Received: from mail-eopbgr40052.outbound.protection.outlook.com ([40.107.4.52]:59008
-        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
+        Mon, 6 Aug 2018 03:58:29 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44446 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726494AbeHFHvj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 03:51:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EH1kmlsUUsWKgug7gj5SrI4vrRxjWn09MBKRa7iRrKI=;
- b=KI9Hgkh24WXcjjTmJ6ZDgBas1Cq5+HhSgR3XnvEydNJGwE9eAiO+F83Uh7hBxa+HFnI8S0YQ3idT7Sr58cR27vmyZSbRtjwIDEB8TUGks5Q9lkwzjWHQvwwsvT4x1YVZCjr1I9EhpAm5J2dCUsUPkOhjBgrYBlbYR1G+kdf68Fk=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=anson.huang@nxp.com; 
-Received: from anson-OptiPlex-790.ap.freescale.net (119.31.174.66) by
- AM3PR04MB1315.eurprd04.prod.outlook.com (2a01:111:e400:586e::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1017.17; Mon, 6 Aug
- 2018 05:44:07 +0000
-From:   Anson Huang <Anson.Huang@nxp.com>
-To:     shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        fabio.estevam@nxp.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH] ARM: dts: imx7s: remove snvs_poweroff node
-Date:   Mon,  6 Aug 2018 13:40:05 +0800
-Message-Id: <1533534005-18736-1-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.7.4
+        id S1726628AbeHFH63 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 03:58:29 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9576440216EA;
+        Mon,  6 Aug 2018 05:51:02 +0000 (UTC)
+Received: from dhcp-128-65.nay.redhat.com (ovpn-12-47.pek2.redhat.com [10.72.12.47])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id EFAB716873;
+        Mon,  6 Aug 2018 05:50:52 +0000 (UTC)
+Date:   Mon, 6 Aug 2018 13:50:47 +0800
+From:   Dave Young <dyoung@redhat.com>
+To:     AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        Philipp Rudo <prudo@linux.ibm.com>, catalin.marinas@arm.com,
+        will.deacon@arm.com, dhowells@redhat.com, vgoyal@redhat.com,
+        herbert@gondor.apana.org.au, davem@davemloft.net, bhe@redhat.com,
+        arnd@arndb.de, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        ard.biesheuvel@linaro.org, james.morse@arm.com,
+        bhsharma@redhat.com, kexec@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
+Subject: Re: [PATCH v13 03/16] s390, kexec_file: drop arch_kexec_mem_walk()
+Message-ID: <20180806055047.GC4246@dhcp-128-65.nay.redhat.com>
+References: <20180801075820.3753-1-takahiro.akashi@linaro.org>
+ <20180801075820.3753-4-takahiro.akashi@linaro.org>
+ <20180801102951.527cfc57@ThinkPad>
+ <20180802000150.GN11258@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [119.31.174.66]
-X-ClientProxiedBy: HK0PR04CA0005.apcprd04.prod.outlook.com
- (2603:1096:203:36::17) To AM3PR04MB1315.eurprd04.prod.outlook.com
- (2a01:111:e400:586e::13)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 5beead0b-3936-48c5-93d6-08d5fb5fa251
-X-MS-Office365-Filtering-HT: Tenant
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM3PR04MB1315;
-X-Microsoft-Exchange-Diagnostics: 1;AM3PR04MB1315;3:kgxlKzcX1ChVmtftfGcGP3n2HHRYlcucPxtNwJ4wsZg2gUbIlxY6ZPu+WpTmbaVZOkq8ol60mfORU+Ollq6tyRfX7h1Q56ktvU9oiH849V+daVx5AeMC3RgdGMKi/P2+B96nIMcCFK2NPU2iO7I9/GLAwceOnDiHT/Wk9SndoluQsEPT9md4MIpk5mA2/8XjaKFlcwjUKHA4Jwls1y52iTobbDNW6B6cZBNTPHhLADJ8ohHqvpECoPlFtQEgcCIA;25:+NPVmHRdzGehybKPo6ZH7YkVTmJIKi7bpmL+csRni2y+ByZ1KmpIlo1WETdGLW2cq19QL/6qDUnOKH26jmKsEeOVqhI04/aysTyn446Ul+1pxf+GmEq9+0kjqO0MOC7dCJgS7/sbmd75rUxlsL/Ee9g512mHioBHcfJfVweM3n2XCb2XfUZKFO4W4q0Dhf2yUgaIBkGiVDTRibv1+EoMU9JZj6mgmt/LYJgAdi58sPkByQfKe92MJGVs93U7Ivo2m7UEd8vrdbiDaT9y4ofswqJY79U7RCVDNA3/LMotv7uojMfKxpOX2bjZSZzZSZOvCYEYJmaNFDEWT0LHznaurA==;31:gwXgZ9r0G3O7Ac2dYfG2sS1ipgptVRD5jvHZd/CZOBgVYZ1+DUDO+7UgbwEHGwVJpOU1Ba09gi+qc4E+taDv94XpvdJJCt9PfhKufkw9DftbM8etYbzKATSABogZ+NRrmR6LWy8W/Y9PbYwGH6gmZ23R5YdjjC1OF/llNpX3on4f9KntQIT8CuofcrbXPXMxlNuJwcXL0YN7t3aQwdUUSPzIDZPgDRbJdCa8veIdtHQ=
-X-MS-TrafficTypeDiagnostic: AM3PR04MB1315:
-X-Microsoft-Exchange-Diagnostics: 1;AM3PR04MB1315;20:ltxXDVcAjqWJTwKXcT45WsEROp4Q3Sg9pxmEqZFG7kDjjUeZbtJjklTlVUPnEznh6qTbH+/wcTgECGovwVSLsImcWuIEKkwsbxZVD/QCCFFv4ate4xy0WFruNF8i6eLTGlgyKotWXEIV/2F7hqBTFNQTMEnMcRA+8dj8TpO4cVspkppReiDCBtavygPn1hhg+cZ3N6VqBAG0T9aBaJb9s1UYgQ9KqYNmybgYlPnsTuTxf/mABKcVMi2Cq1nKaa1XOuMJK1rbRlrHhuvMoB4egZDPAoRMwVBVWIeS/VzTfstl1+kpmMImn94xY/aZ0Ebwt+9YbJ4BphhdMHYWPbZsbcP3g1Fr2fRGnj4RpinQQhtn9+8lCD8cHACZ6RzguTykb8wwn1heJn7b6Uqu9KAhdcRDzKfaA3OeXVYpL7k/hWH52SoYSr1w+iztCnoZEdWeg6sbRuHWHhUoeHIm6bXw7Yx08S469AYpiWxOlOVZ5X2yxL20gMz1hGnER02BSMI6;4:0DsszjSvnvJ2JLTWO76t46MFiBD5grGqqsH5Y3ASDgcnFDzypP7pIKzpDWr0rEo2RzECKGAS6E/ViSGeWEyl/ihMUWPd8y7VZNoNGRL1wMQvD06IuQJZg8NSBwDMD2m3YKFsZQg/5tdPVlpcAzOrNxDh35bid7xZyURQMnbSZygO0npRRNhniGYfPXiQo3eNmLUzicu0pHom20h9sCZYqeCR0F8vRtv7ng5QC6uTTcKonbMowBYUqTwikSK7AmyYNJHkPYu1yvXUAUhRkcdQeLtvsauEB1YlFSwhWD5Gw7w3yN5GdNfcgdbAU0EtIVE+
-X-Microsoft-Antispam-PRVS: <AM3PR04MB1315F3B882908FECAA99520CF5200@AM3PR04MB1315.eurprd04.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(185117386973197);
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3002001)(3231311)(944501410)(52105095)(10201501046)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(20161123562045)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:AM3PR04MB1315;BCL:0;PCL:0;RULEID:;SRVR:AM3PR04MB1315;
-X-Forefront-PRVS: 07562C22DA
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(346002)(376002)(396003)(136003)(366004)(39860400002)(189003)(199004)(5660300001)(316002)(6486002)(16586007)(36756003)(53936002)(7736002)(6512007)(25786009)(97736004)(305945005)(4326008)(106356001)(105586002)(486006)(956004)(476003)(47776003)(8676002)(1857600001)(48376002)(50466002)(66066001)(81166006)(81156014)(8936002)(50226002)(2906002)(86362001)(52116002)(68736007)(26005)(478600001)(6116002)(386003)(6506007)(51416003)(186003)(16526019)(3846002)(2616005);DIR:OUT;SFP:1101;SCL:1;SRVR:AM3PR04MB1315;H:anson-OptiPlex-790.ap.freescale.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-Received-SPF: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM3PR04MB1315;23:iMAiTXLHY8vlwpWXZFHtO0NcBKaC8ns/j+wT8eUGx?=
- =?us-ascii?Q?HaxMCjvmsy23P/xdhoZj90yYYvcH7AwX6qR3HetZ56fiiRoxn1c0eyIuMja0?=
- =?us-ascii?Q?bgn7vIIauFC6mQPqlBSIHWWI06meZquZU2llCqU2qtALOO6tFIaubrv1SrpU?=
- =?us-ascii?Q?ggOlCIPA7FWLFlGym+ZKvGSVbjpLAYIhoT5HH5O7KjjDaciSAV6jRept2vlD?=
- =?us-ascii?Q?BdtwMNrpPzwNYD1kwyxxi49fWi/OfjLRIQeB29oswCPZo+buvjVQDU6tE9wz?=
- =?us-ascii?Q?yJIzAacar3DdGUJckt6HaX6hYGHwm7FPEA8zNu9QVpG8KSKTRfvMgUL5dlJ+?=
- =?us-ascii?Q?TqpxT/ESGsaLmrAXPQ6/iZny77bFLaY1vDqK1/e2XtVbMBfvBUq9cSvS2m8T?=
- =?us-ascii?Q?gJD9zB0Y/kVK66M1MR9ydL3tp6LRMXEagDP9dJb8Py7d3kjQh2Q6DoAQEWbc?=
- =?us-ascii?Q?N12/BMWM08o69OH7KpkMH+uy/W1CClYjpdllsu36m55fTl8btjeQt7Mo5TY4?=
- =?us-ascii?Q?5HJ2fNNDpwpqKJ0F4y5M+f/vskuR2kw9cFCL/ojDOoqQE20ViMPoS78gn5jq?=
- =?us-ascii?Q?AMVDdMSu7wpF7QBiPdVRWoWpW7LkE1pBO8EkPSpJOAS0svrG2iKL4WGRbsVV?=
- =?us-ascii?Q?KjG/PpiELPixZ6c4suB4QdUWj2zHbKVFf4m3vrGQfJic3yAUPpVgVjqRpGwD?=
- =?us-ascii?Q?8Sc73cRo0nvxFnvr27+JXdN4Q0lbGDE0/4MvQkEkgzOqpleDAUS9g0LS+dwf?=
- =?us-ascii?Q?5ptZiZZbwh+0+TjRuaiTjrTamaW6Vl0UsB7NPI3HDZpxWN/pTtNNeqgww+GL?=
- =?us-ascii?Q?yxdfMjtT6V4I40TJKPVKQ2MdpzqNXrcHK35UWAdCkxf/PQbcxj6wFR8eL0Mr?=
- =?us-ascii?Q?0YENNYR41IpqgO6jKjvmkus4fXPf56SBfE1U0sESprVnvOUn5u2Evj3D8Lsz?=
- =?us-ascii?Q?tAh4KfWk+bA9lfDS6UIueUveZczZ3nYgrOp3j2X1zVdQezdWgN4vYgD2RHJp?=
- =?us-ascii?Q?z7u9Z3toevHI5HyBBQKJRYWQWlo2Gq2BTn6Sg6Q9ysL6UU+Nfvc5vc17Yre6?=
- =?us-ascii?Q?HVwUQah1d4K6SmyCtXHSH7MK0ZyMTJSmYb3vhczOeforqh2Kw=3D=3D?=
-X-Microsoft-Antispam-Message-Info: feZ9EV4NLTWS6PgtvlIRwccnk0lwE3BmPzCxVlkShoEB72iymD7Hr0euAzzS0nP/Zo4BYPFsBqTog+edp0UrWeCIZ5NzaTbAZ0pxQm0yUnB3K8aRoc3dukPJ5bO1fV5TiK9F0IdBOYCYZMoOB3m+qDzFVuoInGC9wqxp8B+sgCMGTiNWNarTeqRwDDF1+DwAfHAFNt2jH0ShIphw/sGPal1CuTVTh3Fpm2kwaB9N0+qlMwJtdkkjgBsw/Dmd47eU6azv3Ac7t0VySvH5dqB4X2daSkyHsYa2Ffa0C7rr2XD+fTzyA0Er3EU5giPKZSeerl0OC8JTp/gemVtgKnO1cBlTvL5Z9gY9iWww5PgKA7k=
-X-Microsoft-Exchange-Diagnostics: 1;AM3PR04MB1315;6:jdwDcSU+gqnM0KwhzKHcvL9mvNobgPf1YFN//hWRmDphVOtYD3y5b+SuzLE9AYvDnblNEuCgXgPas5XCVlxiGpnMhO+Qdm9EawBd4R+451p39jDZNVQHDBRypR0Mk0FpZzc3g7ZNGB+gC5sgNJGSWSIj0fu9DmgkvbzrD+aiJhLm8kG4YXmXlvPyp5ewrPMV8BTJBQVWlL2j0kEpUbVBOjAb5QXYEO3yDiaE7PJhJHSFX/pgF1Ng5I7icuA54J+EiDJCgH0CPKFzzHX0ksJR5of682Y5tG74Qi3T8spTdSK53JwPAekmckYPNFKXWjsjgejJUmzaFiJlO3kksCzCTynamdmbVso6blGUnhG7FJVr/jOFV4Eru+v8N1WuIz38yFwYKobAjNc3OmvMcQzK7vsrwNDmpM4zKL7E74y8WliLK/KF/yCvnFd8yAFs5NDsE9cQFoCs2oKi37O1IuNngQ==;5:YLtTycRG+0dpXzixzHm5Q7+2XfmkxsGZPnHTNlN7oeUb1ZZkdGGIdxxD7SWLE7P3v0w/DjOmgbOiRSTk5lR9dYUQUhXJUYHCr73vqfEHy7FpbBrneGwAamTZJ5UwIPeRVg2C8i04Bt5Pqa3ju2Io038WREsohZ7Rb5P4uGTrC2c=;7:8hHKvoPmksvcE2tTtDID0RE1DL8XDPZbZ3pFIey1XrTUCk5OOhK9KNeUrBFvCDTZ0maqL+bxs8yqVShLKxBySfrxZtEB0i73EMgQUG1KaOpSjE1kYVYyplVOqxqGyyln4RgaMPZv+hPoypOShWwpxGeu3IohApPNnbOm1aCKM1H+D/3/sU6tlfwTGqX4IYKFxMKWqnM1wz7omyvCQHytcQ+a3ALsrL76yVbk0BOTFYMrPIX2/yZCmbnY5AGXXZoD
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2018 05:44:07.6317
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5beead0b-3936-48c5-93d6-08d5fb5fa251
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM3PR04MB1315
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180802000150.GN11258@linaro.org>
+User-Agent: Mutt/1.9.5 (2018-04-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Mon, 06 Aug 2018 05:51:02 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Mon, 06 Aug 2018 05:51:02 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dyoung@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-System poweroff is already supported by PSCI on i.MX7D,
-remove "snvs_poweroff" node to avoid below debug message
-from syscon-poweroff driver:
+Add Thiago in cc so that he can review from powerpc point of view. 
 
-[    1.831414] syscon-poweroff 30370000.snvs:snvs-poweroff: pm_power_off already claimed (ptrval) psci_sys_poweroff
-[    1.841707] syscon-poweroff: probe of 30370000.snvs:snvs-poweroff failed with error -16
+On 08/02/18 at 09:01am, AKASHI Takahiro wrote:
+> Hi,
+> 
+> On Wed, Aug 01, 2018 at 10:29:51AM +0200, Philipp Rudo wrote:
+> > Hey Akashi,
+> > 
+> > I kept thinking about this patch and remembered why I didn't made the change
+> > you are suggesting now.
+> 
+> Hmm.
+> 
+> > The problem is when you only check for kbuf->mem you are excluding address 0,
+> > which might be a valid address to load the kernel to. On s390 this is actually
+> > done when the kernel is not loaded via a boot loader. For kexec_file however,
+> > we cut off the first few kB of the image and jump directly to 'startup'. So
+> > checking for !0 does not cause a problem here.
+> 
+> Yeah, as Dave(RedHat) described, all the current kexec-capable architectures,
+> except arm64, implicitly initialize kbuf.mem to zero with "kbuf = { ... }"
+> initializer. So surely my change would not break anything on the existing code.
+> On the other hand, I also see your concern here.
+> 
+> > Anyway, the long term safer solution would be something like
+> > 
+> > #define KEXEC_BUF_MEM_UNKNOWN (-1UL)
+> > 
+> > for architectures to tell common code to search a fitting mem hole.
+> 
+> This would require the existing code on every arch to be modified, which
+> I think should be avoided if possible. Instead,
+> we'd better define in linux/kexec.h:
+>   #ifndef KEXEC_BUF_MEM_UNKNOWN
+>   #define KEXEC_BUF_MEM_UNKNOWN 0
+>   #endif
+> and then check for kbuf in kexec_locate_mem_hole():
+>   if (kbuf->mem != KEXEC_BUF_MEM_UNKNOWN)
+>         return 0;
+>   ...
+> 
+> This way if some arch wants to treat *zero* as a valid address, it can
+> redefine this macro in arch/asm/kexec.h.
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- arch/arm/boot/dts/imx7s.dtsi | 8 --------
- 1 file changed, 8 deletions(-)
+I think this way works if powerpc is safe for using zero as the unknown
+address in this case.  Thiago, can you provide some review?
 
-diff --git a/arch/arm/boot/dts/imx7s.dtsi b/arch/arm/boot/dts/imx7s.dtsi
-index a052198..a072e7f 100644
---- a/arch/arm/boot/dts/imx7s.dtsi
-+++ b/arch/arm/boot/dts/imx7s.dtsi
-@@ -563,14 +563,6 @@
- 					clock-names = "snvs-rtc";
- 				};
- 
--				snvs_poweroff: snvs-poweroff {
--					compatible = "syscon-poweroff";
--					regmap = <&snvs>;
--					offset = <0x38>;
--					value = <0x60>;
--					mask = <0x60>;
--				};
--
- 				snvs_pwrkey: snvs-powerkey {
- 					compatible = "fsl,sec-v4.0-pwrkey";
- 					regmap = <&snvs>;
--- 
-2.7.4
+Philipp, thanks for catching the problem!
 
+> 
+> Thanks,
+> -Takahiro AKASHI
+> 
+> > 
+> > Back then I didn't do the change because I had the other workaround, which
+> > didn't require a common code change. But when you are touching the code now it
+> > is worth thinking about it.
+> > 
+> > Just wanted to let you know
+> > Philipp
+> > 
+> > 
+> > On Wed,  1 Aug 2018 16:58:07 +0900
+> > AKASHI Takahiro <takahiro.akashi@linaro.org> wrote:
+> > 
+> > > Since s390 already knows where to locate buffers, calling
+> > > arch_kexec_mem_walk() has no sense. So we can just drop it as kbuf->mem
+> > > indicates this while all other architectures sets it to 0 initially.
+> > > 
+> > > This change is a preparatory work for the next patch, where all the
+> > > variant memory walks, either on system resource or memblock, will be
+> > > put in one common place so that it will satisfy all the architectures'
+> > > need.
+> > > 
+> > > Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
+> > > Reviewed-by: Philipp Rudo <prudo@linux.ibm.com>
+> > > Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+> > > Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+> > > Cc: Dave Young <dyoung@redhat.com>
+> > > Cc: Vivek Goyal <vgoyal@redhat.com>
+> > > Cc: Baoquan He <bhe@redhat.com>
+> > > ---
+> > >  arch/s390/kernel/machine_kexec_file.c | 10 ----------
+> > >  kernel/kexec_file.c                   |  4 ++++
+> > >  2 files changed, 4 insertions(+), 10 deletions(-)
+> > > 
+> > > diff --git a/arch/s390/kernel/machine_kexec_file.c b/arch/s390/kernel/machine_kexec_file.c
+> > > index f413f57f8d20..32023b4f9dc0 100644
+> > > --- a/arch/s390/kernel/machine_kexec_file.c
+> > > +++ b/arch/s390/kernel/machine_kexec_file.c
+> > > @@ -134,16 +134,6 @@ int kexec_file_add_initrd(struct kimage *image, struct s390_load_data *data,
+> > >  	return ret;
+> > >  }
+> > >  
+> > > -/*
+> > > - * The kernel is loaded to a fixed location. Turn off kexec_locate_mem_hole
+> > > - * and provide kbuf->mem by hand.
+> > > - */
+> > > -int arch_kexec_walk_mem(struct kexec_buf *kbuf,
+> > > -			int (*func)(struct resource *, void *))
+> > > -{
+> > > -	return 1;
+> > > -}
+> > > -
+> > >  int arch_kexec_apply_relocations_add(struct purgatory_info *pi,
+> > >  				     Elf_Shdr *section,
+> > >  				     const Elf_Shdr *relsec,
+> > > diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
+> > > index 63c7ce1c0c3e..bf39df5e5bb9 100644
+> > > --- a/kernel/kexec_file.c
+> > > +++ b/kernel/kexec_file.c
+> > > @@ -534,6 +534,10 @@ int kexec_locate_mem_hole(struct kexec_buf *kbuf)
+> > >  {
+> > >  	int ret;
+> > >  
+> > > +	/* Arch knows where to place */
+> > > +	if (kbuf->mem)
+> > > +		return 0;
+> > > +
+> > >  	ret = arch_kexec_walk_mem(kbuf, locate_mem_hole_callback);
+> > >  
+> > >  	return ret == 1 ? 0 : -EADDRNOTAVAIL;
+> > 
+> 
+> _______________________________________________
+> kexec mailing list
+> kexec@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/kexec
+
+Thanks
+Dave
