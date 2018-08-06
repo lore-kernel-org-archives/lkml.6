@@ -2,92 +2,191 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42F12C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 14:13:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D85DFC4646D
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 14:14:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05B3821A29
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 14:13:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05B3821A29
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 902EF21A38
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 14:14:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 902EF21A38
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730571AbeHFQWk (ORCPT
+        id S1731114AbeHFQXQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 12:22:40 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60136 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727940AbeHFQWj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 12:22:39 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id CA95A818A6B4;
-        Mon,  6 Aug 2018 14:13:20 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 749CE101041B;
-        Mon,  6 Aug 2018 14:13:20 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id w76EDKpP012797;
-        Mon, 6 Aug 2018 10:13:20 -0400
-Received: from localhost (mpatocka@localhost)
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id w76EDJuL012793;
-        Mon, 6 Aug 2018 10:13:19 -0400
-X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
-Date:   Mon, 6 Aug 2018 10:13:19 -0400 (EDT)
-From:   Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To:     Marcin Wojtas <mw@semihalf.com>
-cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        Joao Pinto <Joao.Pinto@synopsys.com>,
+        Mon, 6 Aug 2018 12:23:16 -0400
+Received: from foss.arm.com ([217.140.101.70]:39716 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727112AbeHFQXQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 12:23:16 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 579C27A9;
+        Mon,  6 Aug 2018 07:13:58 -0700 (PDT)
+Received: from localhost (e113682-lin.copenhagen.arm.com [10.32.144.41])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AE1103F5D0;
+        Mon,  6 Aug 2018 07:13:57 -0700 (PDT)
+Date:   Mon, 6 Aug 2018 16:13:55 +0200
+From:   Christoffer Dall <christoffer.dall@arm.com>
+To:     Jia He <hejianet@gmail.com>
+Cc:     Marc Zyngier <marc.zyngier@arm.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
-        linux-pci@vger.kernel.org, Will Deacon <will.deacon@arm.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Matt Sealey <neko@bakuhatsu.net>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: framebuffer corruption due to overlapping stp instructions on
- arm64
-In-Reply-To: <CAPv3WKeVkWChEE7WjKuu__bg+zvh9dTNy=U_2jiSyWxFWiatbA@mail.gmail.com>
-Message-ID: <alpine.LRH.2.02.1808061008520.9697@file01.intranet.prod.int.rdu2.redhat.com>
-References: <alpine.LRH.2.02.1808021242320.31834@file01.intranet.prod.int.rdu2.redhat.com> <alpine.LRH.2.02.1808030212340.17672@file01.intranet.prod.int.rdu2.redhat.com> <CAKv+Gu8DeuksZhk1g3q_msSKV_hSY_2e1uzVten9-oGO3j9Sqg@mail.gmail.com> <20180803094129.GB17798@arm.com>
- <alpine.LRH.2.02.1808031235410.31584@file01.intranet.prod.int.rdu2.redhat.com> <CAKv+Gu-aNFh1fsr_05SEwDp99n3pLrguP7=tEcFQPNY53=K7Fw@mail.gmail.com> <alpine.LRH.2.02.1808031424140.14030@file01.intranet.prod.int.rdu2.redhat.com>
- <CAHCPf3s-+Qf=WBZz1KpisDMG3520jCUh8PLAO3PHa4jdt8kCTw@mail.gmail.com> <CAKv+Gu9_h-WFi1j4+DWUN_dMj75SKKHxWoDH8WQ9P7S7MNpZQg@mail.gmail.com> <alpine.LRH.2.02.1808060553130.30832@file01.intranet.prod.int.rdu2.redhat.com> <99fff4fe-afa9-f12f-a518-472a9dd1c530@arm.com>
- <CAPv3WKdxwoW5MAOvy6uEBEuMpsigMo98hyO+TpKMsFrKR9oBzg@mail.gmail.com> <CAKv+Gu8XN-vP64G_NLHFcRUJ2fptSrmxfd6CHWDgHkJj073Hbg@mail.gmail.com> <CAPv3WKeVkWChEE7WjKuu__bg+zvh9dTNy=U_2jiSyWxFWiatbA@mail.gmail.com>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+        Eric Auger <eric.auger@redhat.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Andre Przywara <andre.przywara@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
+        linux-kernel@vger.kernel.org, Jia He <jia.he@hxt-semitech.com>
+Subject: Re: [PATCH 2/2] KVM: arm/arm64: vgic: no need to call
+ spin_lock_irqsave/restore when irq is disabled
+Message-ID: <20180806141355.GF5985@e113682-lin.lund.arm.com>
+References: <1533304624-43250-1-git-send-email-jia.he@hxt-semitech.com>
+ <1533304624-43250-2-git-send-email-jia.he@hxt-semitech.com>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Mon, 06 Aug 2018 14:13:20 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Mon, 06 Aug 2018 14:13:20 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mpatocka@redhat.com' RCPT:''
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1533304624-43250-2-git-send-email-jia.he@hxt-semitech.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On Mon, 6 Aug 2018, Marcin Wojtas wrote:
-
-> > Hi Marcin,
-> >
-> > Could you please try running his reproducer?
+On Fri, Aug 03, 2018 at 09:57:04PM +0800, Jia He wrote:
+> Because kvm_vgic_sync_hwstate currently is definitly in the context
+> which irq is disabled (local_irq_disable/enable). There is no need to
+> call spin_lock_irqsave/restore in vgic_fold_lr_state and vgic_prune_ap_list
 > 
-> This is exactly what I plan to do, as soon as I can plug my GFX card
-> back to the board (tomorrow). Just to remain aligned - is it ok, if I
-> boot my debian with GT630 plugged, compile the program with -O2 and
-> simlply run it on /dev/fb0?
+> This patch replace them with the spin_lock/unlock no irq version
 > 
-> Best regards,
-> Marcin
-
-Yes - when you run it, don't switch consoles (it will obviously trigger 
-false warning), don't move the mouse to the upper left corner, and if you 
-want to run it in the long term, turn off console blanking.
-
-Mikulas
+> Signed-off-by: Jia He <jia.he@hxt-semitech.com>
+> ---
+>  virt/kvm/arm/vgic/vgic-v2.c |  7 ++++---
+>  virt/kvm/arm/vgic/vgic-v3.c |  7 ++++---
+>  virt/kvm/arm/vgic/vgic.c    | 13 +++++++------
+>  3 files changed, 15 insertions(+), 12 deletions(-)
+> 
+> diff --git a/virt/kvm/arm/vgic/vgic-v2.c b/virt/kvm/arm/vgic/vgic-v2.c
+> index a5f2e44..487f5f2 100644
+> --- a/virt/kvm/arm/vgic/vgic-v2.c
+> +++ b/virt/kvm/arm/vgic/vgic-v2.c
+> @@ -62,7 +62,8 @@ void vgic_v2_fold_lr_state(struct kvm_vcpu *vcpu)
+>  	struct vgic_cpu *vgic_cpu = &vcpu->arch.vgic_cpu;
+>  	struct vgic_v2_cpu_if *cpuif = &vgic_cpu->vgic_v2;
+>  	int lr;
+> -	unsigned long flags;
+> +
+> +	DEBUG_SPINLOCK_BUG_ON(!irqs_disabled());
+>  
+>  	cpuif->vgic_hcr &= ~GICH_HCR_UIE;
+>  
+> @@ -83,7 +84,7 @@ void vgic_v2_fold_lr_state(struct kvm_vcpu *vcpu)
+>  
+>  		irq = vgic_get_irq(vcpu->kvm, vcpu, intid);
+>  
+> -		spin_lock_irqsave(&irq->irq_lock, flags);
+> +		spin_lock(&irq->irq_lock);
+>  
+>  		/* Always preserve the active bit */
+>  		irq->active = !!(val & GICH_LR_ACTIVE_BIT);
+> @@ -126,7 +127,7 @@ void vgic_v2_fold_lr_state(struct kvm_vcpu *vcpu)
+>  				vgic_irq_set_phys_active(irq, false);
+>  		}
+>  
+> -		spin_unlock_irqrestore(&irq->irq_lock, flags);
+> +		spin_unlock(&irq->irq_lock);
+>  		vgic_put_irq(vcpu->kvm, irq);
+>  	}
+>  
+> diff --git a/virt/kvm/arm/vgic/vgic-v3.c b/virt/kvm/arm/vgic/vgic-v3.c
+> index cdce653..b66b513 100644
+> --- a/virt/kvm/arm/vgic/vgic-v3.c
+> +++ b/virt/kvm/arm/vgic/vgic-v3.c
+> @@ -46,7 +46,8 @@ void vgic_v3_fold_lr_state(struct kvm_vcpu *vcpu)
+>  	struct vgic_v3_cpu_if *cpuif = &vgic_cpu->vgic_v3;
+>  	u32 model = vcpu->kvm->arch.vgic.vgic_model;
+>  	int lr;
+> -	unsigned long flags;
+> +
+> +	DEBUG_SPINLOCK_BUG_ON(!irqs_disabled());
+>  
+>  	cpuif->vgic_hcr &= ~ICH_HCR_UIE;
+>  
+> @@ -75,7 +76,7 @@ void vgic_v3_fold_lr_state(struct kvm_vcpu *vcpu)
+>  		if (!irq)	/* An LPI could have been unmapped. */
+>  			continue;
+>  
+> -		spin_lock_irqsave(&irq->irq_lock, flags);
+> +		spin_lock(&irq->irq_lock);
+>  
+>  		/* Always preserve the active bit */
+>  		irq->active = !!(val & ICH_LR_ACTIVE_BIT);
+> @@ -118,7 +119,7 @@ void vgic_v3_fold_lr_state(struct kvm_vcpu *vcpu)
+>  				vgic_irq_set_phys_active(irq, false);
+>  		}
+>  
+> -		spin_unlock_irqrestore(&irq->irq_lock, flags);
+> +		spin_unlock(&irq->irq_lock);
+>  		vgic_put_irq(vcpu->kvm, irq);
+>  	}
+>  
+> diff --git a/virt/kvm/arm/vgic/vgic.c b/virt/kvm/arm/vgic/vgic.c
+> index c22cea6..7cfdfbc 100644
+> --- a/virt/kvm/arm/vgic/vgic.c
+> +++ b/virt/kvm/arm/vgic/vgic.c
+> @@ -593,10 +593,11 @@ static void vgic_prune_ap_list(struct kvm_vcpu *vcpu)
+>  {
+>  	struct vgic_cpu *vgic_cpu = &vcpu->arch.vgic_cpu;
+>  	struct vgic_irq *irq, *tmp;
+> -	unsigned long flags;
+> +
+> +	DEBUG_SPINLOCK_BUG_ON(!irqs_disabled());
+>  
+>  retry:
+> -	spin_lock_irqsave(&vgic_cpu->ap_list_lock, flags);
+> +	spin_lock(&vgic_cpu->ap_list_lock);
+>  
+>  	list_for_each_entry_safe(irq, tmp, &vgic_cpu->ap_list_head, ap_list) {
+>  		struct kvm_vcpu *target_vcpu, *vcpuA, *vcpuB;
+> @@ -637,7 +638,7 @@ static void vgic_prune_ap_list(struct kvm_vcpu *vcpu)
+>  		/* This interrupt looks like it has to be migrated. */
+>  
+>  		spin_unlock(&irq->irq_lock);
+> -		spin_unlock_irqrestore(&vgic_cpu->ap_list_lock, flags);
+> +		spin_unlock(&vgic_cpu->ap_list_lock);
+>  
+>  		/*
+>  		 * Ensure locking order by always locking the smallest
+> @@ -651,7 +652,7 @@ static void vgic_prune_ap_list(struct kvm_vcpu *vcpu)
+>  			vcpuB = vcpu;
+>  		}
+>  
+> -		spin_lock_irqsave(&vcpuA->arch.vgic_cpu.ap_list_lock, flags);
+> +		spin_lock(&vcpuA->arch.vgic_cpu.ap_list_lock);
+>  		spin_lock_nested(&vcpuB->arch.vgic_cpu.ap_list_lock,
+>  				 SINGLE_DEPTH_NESTING);
+>  		spin_lock(&irq->irq_lock);
+> @@ -676,7 +677,7 @@ static void vgic_prune_ap_list(struct kvm_vcpu *vcpu)
+>  
+>  		spin_unlock(&irq->irq_lock);
+>  		spin_unlock(&vcpuB->arch.vgic_cpu.ap_list_lock);
+> -		spin_unlock_irqrestore(&vcpuA->arch.vgic_cpu.ap_list_lock, flags);
+> +		spin_unlock(&vcpuA->arch.vgic_cpu.ap_list_lock);
+>  
+>  		if (target_vcpu_needs_kick) {
+>  			kvm_make_request(KVM_REQ_IRQ_PENDING, target_vcpu);
+> @@ -686,7 +687,7 @@ static void vgic_prune_ap_list(struct kvm_vcpu *vcpu)
+>  		goto retry;
+>  	}
+>  
+> -	spin_unlock_irqrestore(&vgic_cpu->ap_list_lock, flags);
+> +	spin_unlock(&vgic_cpu->ap_list_lock);
+>  }
+>  
+>  static inline void vgic_fold_lr_state(struct kvm_vcpu *vcpu)
+> -- 
+> 1.8.3.1
+> 
+Acked-by: Christoffer Dall <christoffer.dall@arm.com>
