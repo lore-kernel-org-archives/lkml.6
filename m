@@ -2,113 +2,191 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1099CC46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 10:47:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C7CDC4646D
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 10:48:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA1E221A04
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 10:47:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA1E221A04
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 1DCDD21A04
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 10:48:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="BCiB3pjG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DCDD21A04
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729983AbeHFM4J (ORCPT
+        id S1730052AbeHFM5T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 08:56:09 -0400
-Received: from mga03.intel.com ([134.134.136.65]:29657 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726678AbeHFM4J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 08:56:09 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Aug 2018 03:47:40 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,452,1526367600"; 
-   d="scan'208";a="73988427"
-Received: from mattu-haswell.fi.intel.com (HELO [10.237.72.164]) ([10.237.72.164])
-  by fmsmga002.fm.intel.com with ESMTP; 06 Aug 2018 03:47:39 -0700
-Subject: Re: [PATCH] usb: host: xhci-plat: Iterate over parent nodes for
- finding quirks
-To:     Anurag Kumar Vulisha <anuragku@xilinx.com>,
-        Mathias Nyman <mathias.nyman@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <1528212056-28390-1-git-send-email-anurag.kumar.vulisha@xilinx.com>
- <b819a5fc-82aa-dc9c-4272-fecdacbd5880@intel.com>
- <MWHPR02MB281619CD8CFDA93B9ADB3D89A7510@MWHPR02MB2816.namprd02.prod.outlook.com>
-From:   Mathias Nyman <mathias.nyman@linux.intel.com>
-Message-ID: <51566ca4-1002-5c62-71d0-9da610bff368@linux.intel.com>
-Date:   Mon, 6 Aug 2018 13:50:38 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Mon, 6 Aug 2018 08:57:19 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:39505 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729604AbeHFM5T (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 08:57:19 -0400
+Received: by mail-it0-f67.google.com with SMTP id g141-v6so17448314ita.4
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Aug 2018 03:48:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=BnPhWi2t6IZiIvorvL7rgXu2xs4UO5F/TwYlyJOd+Go=;
+        b=BCiB3pjG2eyVsYaG6bDy3L94VAK7mB0zNS81z3NVJhkt3lyUiW1OZ26QyaB85rF4Zs
+         m7G6dDuLa5WBUi4jE3CL5rv4iSN+6TgfgrvhFDBeFjDD64DUbwSXprfxAJgedYpfEyhM
+         1lPUGLMrMcgv3IF8H4ldjKXOutc5IPu5GUYlk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=BnPhWi2t6IZiIvorvL7rgXu2xs4UO5F/TwYlyJOd+Go=;
+        b=eNhv1yyUTRmIpAd4o7Etm2Mtvdh98mDEByf2UPzIqs7wWik5d4dI2o88rnsIsGNfGN
+         /YJ/+2TaIxXuI0PC9ZEyOGBDtzFm6U7KCwaA85Jy36Bp+sgNiZpQZB9AtTTJ/nGyLtNY
+         yvjK6oNOZPdW/7gpRnPHb+zT0gC9X1hOke54I6rpAMdITkBJxr6RYh1wNFIq9phar4br
+         Owu2ICDh1nnD1QUxj45Z9VQVhYXUvxg0dhaM5IlutLX3lOsZQKMEtrEQvH0JjMTVsc3M
+         X6ui3GFcAcd/8ULgt3udpnaLRosKmnRPwnQYS5d5TBZfeBYdLfLM3OrWDL/zhq0zTjP6
+         of8Q==
+X-Gm-Message-State: AOUpUlHcyZGfdGmRA/UJeJ2SI+F7IihtR9GG1g58xMoNbysGc3zgCnBu
+        WXfX+44lJjbD3SYF42zgl2lbkt/NfYpvNuyLgYVrAA==
+X-Google-Smtp-Source: AAOMgpf0BmTIWm1pU28TIwX3o1H0I1gB7Ji/PxP9J4HkQy6fqNT6LnWSUzMf8rhClUp0VIh/lDdJjZH2GBALO98hbfo=
+X-Received: by 2002:a24:148c:: with SMTP id 134-v6mr14549061itg.50.1533552529804;
+ Mon, 06 Aug 2018 03:48:49 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <MWHPR02MB281619CD8CFDA93B9ADB3D89A7510@MWHPR02MB2816.namprd02.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a6b:ac05:0:0:0:0:0 with HTTP; Mon, 6 Aug 2018 03:48:49 -0700 (PDT)
+In-Reply-To: <alpine.LRH.2.02.1808060639200.2986@file01.intranet.prod.int.rdu2.redhat.com>
+References: <alpine.LRH.2.02.1808021242320.31834@file01.intranet.prod.int.rdu2.redhat.com>
+ <CA+=Sn1mWkjuwVnjw6OWWUM=UcP76bdFa680FebCseewHfx3NpA@mail.gmail.com>
+ <9acdacdb-3bd5-b71a-3003-e48132ee1371@redhat.com> <CAJA7tRZbmnZq7RfvQeYEy_a1ZObWqpFpVdvgsXgsioQ3RyPMuA@mail.gmail.com>
+ <CAKv+Gu97QvwoLLK_zueiA_gjg_4Q5cqU4YVUyHUVFFfffdyJaw@mail.gmail.com>
+ <11f9185a-7f71-83df-3a57-0a0ae9c1f934@arm.com> <alpine.LRH.2.02.1808032046540.24748@file01.intranet.prod.int.rdu2.redhat.com>
+ <CA+=Sn1=6F-fGLmXE0VqQHTqTCUKUT=Fz29mMT7349SPFisbZ9A@mail.gmail.com>
+ <alpine.LRH.2.02.1808040611070.23762@file01.intranet.prod.int.rdu2.redhat.com>
+ <fd2cae87-b2df-d8ef-8836-e6cbf8c5f851@redhat.com> <alpine.LRH.2.02.1808060325110.3756@file01.intranet.prod.int.rdu2.redhat.com>
+ <CAKv+Gu_y6La77sWOSROrwfRy65jrFVYVvRZt+ewNheYhdhHCkQ@mail.gmail.com>
+ <alpine.LRH.2.02.1808060626060.2986@file01.intranet.prod.int.rdu2.redhat.com>
+ <CAKv+Gu87YqLM=FFZ6V8rHhuhskDdsBUuXFpqNKVbXWqdnuNEyA@mail.gmail.com> <alpine.LRH.2.02.1808060639200.2986@file01.intranet.prod.int.rdu2.redhat.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Mon, 6 Aug 2018 12:48:49 +0200
+Message-ID: <CAKv+Gu8HyHX8qjg1qHV2M9Re+RGQJigjdAFVC_yR4niGkk2ikA@mail.gmail.com>
+Subject: Re: framebuffer corruption due to overlapping stp instructions on arm64
+To:     Mikulas Patocka <mpatocka@redhat.com>
+Cc:     Florian Weimer <fweimer@redhat.com>,
+        Andrew Pinski <pinskia@gmail.com>,
+        Richard Earnshaw <Richard.Earnshaw@arm.com>,
+        Ramana Radhakrishnan <ramana.gcc@googlemail.com>,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        GNU C Library <libc-alpha@sourceware.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-Back from vacation
-
-On 20.07.2018 18:39, Anurag Kumar Vulisha wrote:
-> 
-> Hi Mathias,
-> 
-> Thanks for providing your comments, please find my comments inline
-> 
->>>
->>> -	if (device_property_read_bool(sysdev, "usb2-lpm-disable"))
->>> -		xhci->quirks |= XHCI_HW_LPM_DISABLE;
->>> +	/* Iterate over all parent nodes for finding quirks */
->>> +	for (tmpdev = &pdev->dev; tmpdev; tmpdev = tmpdev->parent) {
+On 6 August 2018 at 12:42, Mikulas Patocka <mpatocka@redhat.com> wrote:
+>
+>
+> On Mon, 6 Aug 2018, Ard Biesheuvel wrote:
+>
+>> On 6 August 2018 at 12:31, Mikulas Patocka <mpatocka@redhat.com> wrote:
+>> >
+>> >
+>> > On Mon, 6 Aug 2018, Ard Biesheuvel wrote:
+>> >
+>> >> On 6 August 2018 at 10:02, Mikulas Patocka <mpatocka@redhat.com> wrote:
+>> >> >
+>> >> >
+>> >> > On Sun, 5 Aug 2018, Florian Weimer wrote:
+>> >> >
+>> >> >> On 08/04/2018 01:04 PM, Mikulas Patocka wrote:
+>> >> >> > There's plenty of memcpy's in the graphics stack. No one will be rewriting
+>> >> >> > all the graphics drivers because of tiny market share that ARM has in
+>> >> >> > desktop computers. So if you refuse to fix things and blame everyone else,
+>> >> >> > you can as well announce that you don't want to have PCIe graphics on ARM
+>> >> >> > at all.
+>> >> >>
+>> >> >> The POWER toolchain maintainers said pretty much the same thing not too
+>> >> >> long ago. I wonder how many architectures need to fail until the
+>> >> >> graphics stack is finally fixed.
+>> >> >>
+>> >> >> Thanks,
+>> >> >> Florian
+>> >> >
+>> >> > If you say that your architecture doesn't support unaligned accesses at
+>> >> > all, there's no problem - the compiler won't generate them and the libc
+>> >> > won't contain them.
+>> >> >
+>> >> > But if you say that your architecture supports unaligned accesses except
+>> >> > for the framebuffer, then you have a problem - the compiler can't know
+>> >> > which pointers point to the framebuffer and libc can't know either - you
+>> >> > caused this problem by your architectural decision.
+>> >> >
+>> >> > You can use 'volatile' to suppress memory optimizations, but it's
+>> >> > impossible to go through the whole Linux graphics stack and add volatile
+>> >> > to every pointer that may point to videoram. Even if you succeesed, new
+>> >> > videoram accesses without volatile will appear after a year of
+>> >> > development.
+>> >> >
+>> >> > See for example the macros READ_ONCE and WRITE_ONCE in Linux kernel - they
+>> >> > should be used when there's concurrent access to the particular variable,
+>> >> > but mainstream architectures don't require them, so many kernel developers
+>> >> > are omitting them in their code.
+>> >> >
+>> >> > If you are building a supercomputer with a particular GPU, you can force
+>> >> > the GPU vendor to provide POWER-compliant drivers. If you are building a
+>> >> > workstation where the user can plug any GPU, forcing developers will go
+>> >> > nowhere. You have to emulate the unaligned accesses and make sure that the
+>> >> > next versions of your architecture support them in hardware.
+>> >> >
+>> >>
+>> >> I have the feeling this discussion is going off the rails again.
+>> >>
+>> >> The original report is about corruption when doing overlapping writes.
+>> >> Matt Sealey said you cannot have PCI outbound windows with memory
+>> >> semantics on ARM, and so you should be using device mappings (which do
+>> >> not tolerate unaligned accesses)
+>> >>
+>> >> In this context, 'device mapping' does not mean 'any non-DRAM region',
+>> >> but it refers to a particular type of MMU mapping attribute defined by
+>> >> the ARM architecture.
+>> >>
+>> >> I think we can all agree that memcpy() should be usable on any region
+>> >> of memory that has true memory semantics, even if it is backed by VRAM
+>> >> on a graphics card.
+>> >>
+>> >> The question is if PCIe can provide such regions on ARM.
+>> >
+>> > I think there are three possible solutions:
+>> >
+>> > 1. provide an alternative memcpy implementation that doesn't do unaligned
+>> > accesses and recompile the graphics software with -mstrict-align
+>> >
+>> > 2. map the PCI BAR as device memory and emulate the unaligned instructions
+>> >
+>> > 3. find some hardware workaround that could insert delays between the PCIe
+>> > accesses (but the hardware engineers need to cooperate on this instead of
+>> > asserting that they refuse tu support it)
+>> >
 >>
->> Isn't sysdev at this point the topmost device that can have any of those device
->> properties set?
->> We could loop from &pdev->dev up to and including sysdev.
->>
->> It doesn't matter much but maybe avoid walking some extra parents.
->>> 
-> I have seen some drivers ( like dwc3 host.c) which create a child dev, which is
-> the pdev that is being passed to xhci_plat_probe(). So, sysdev may not be the
-> topmost parent. There could be some properties which may be present in parent
-> and may not be populated in the child. So, I made this change to search on all
-> available parents for finding a valid property
+>> Are we talking about a quirk for the Armada 8040 or about PCIe on ARM
+>> in general?
+>
+> I don't know - there are not any other easily available PCIe ARM boards
+> except for Armada 8040.
+>
 
-Ok, lets keep it like you wrote it
+... indeed, and sadly, the ones that are available all have this
+horrible Synopsys DesignWare PCIe IP that does not implement a true
+root complex at all, but is simply repurposed endpoint IP with some
+tweaks so it vaguely resembles a root complex.
 
-> 
->>>
->>> -	if (device_property_read_bool(sysdev, "usb3-lpm-capable"))
->>> -		xhci->quirks |= XHCI_LPM_SUPPORT;
->>> +		if (device_property_read_bool(tmpdev, "usb2-lpm-disable"))
->>> +			xhci->quirks |= XHCI_HW_LPM_DISABLE;
->>>
->>> -	if (device_property_read_bool(&pdev->dev, "quirk-broken-port-ped"))
->>> -		xhci->quirks |= XHCI_BROKEN_PORT_PED;
->>> +		if (device_property_read_bool(tmpdev, "usb3-lpm-capable"))
->>> +			xhci->quirks |= XHCI_LPM_SUPPORT;
->>>
->>> -	/* imod_interval is the interrupt moderation value in nanoseconds. */
->>> -	xhci->imod_interval = 40000;
->>
->> Setting the default imod_interval could be moved before the for() loop
->>
-> 
-> I thought it would be better if everything related to imod_interval is in one place,
-> so kept it as is. I can fix this in v2 if you suggest.
-
-Default imod_interval needs to be set before the for loop to avoid overwriting a value
-got from device property
-
-So a v2 is needed
-
--Mathias
+But this is exactly why I am asking: I use a AMD Seattle Overdrive as
+my main Linux development system, and it runs the gnome-shell stack
+flawlessly (using the nouveau driver), as well as a UEFI framebuffer
+using efifb. So my suspicion is that this is either a Synopsys IP
+issue or an interconnect issue, and has nothing to do with the
+impedance mismatch between AMBA and PCIe.
