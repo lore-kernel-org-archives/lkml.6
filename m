@@ -2,181 +2,211 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35219C46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 13:17:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F022CC46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 13:17:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DEBCB21A2D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 13:17:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEBCB21A2D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id A064621A29
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 13:17:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A064621A29
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=asem.it
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732578AbeHFP0j (ORCPT
+        id S1732590AbeHFP0m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 11:26:39 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58242 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729714AbeHFP0i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 11:26:38 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A7741814FDCF;
-        Mon,  6 Aug 2018 13:17:34 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-78.rdu2.redhat.com [10.10.120.78])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D2A632027EA0;
-        Mon,  6 Aug 2018 13:17:33 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 08/10] afs: Add O_DIRECT read support
-From:   David Howells <dhowells@redhat.com>
-To:     viro@zeniv.linux.org.uk
-Cc:     dhowells@redhat.com, linux-afs@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        matthew@wil.cx
-Date:   Mon, 06 Aug 2018 14:17:33 +0100
-Message-ID: <153356145336.1195.4157809892662500624.stgit@warthog.procyon.org.uk>
-In-Reply-To: <153356139813.1195.8360582774280288285.stgit@warthog.procyon.org.uk>
-References: <153356139813.1195.8360582774280288285.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
+        Mon, 6 Aug 2018 11:26:42 -0400
+Received: from smtp.asem.it ([151.1.184.197]:61762 "EHLO smtp.asem.it"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729660AbeHFP0l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 11:26:41 -0400
+Received: from webmail.asem.it
+        by asem.it (smtp.asem.it)
+        (SecurityGateway 4.0.1)
+        with ESMTP id SG003401215.MSG 
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Aug 2018 15:17:28 +0200S
+Received: from ASAS044.asem.intra (172.16.16.44) by ASAS044.asem.intra
+ (172.16.16.44) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1261.35; Mon, 6
+ Aug 2018 15:17:28 +0200
+Received: from flavio-x.asem.intra (172.16.17.160) by ASAS044.asem.intra
+ (172.16.16.44) with Microsoft SMTP Server id 15.1.1261.35 via Frontend
+ Transport; Mon, 6 Aug 2018 15:17:28 +0200
+From:   Flavio Suligoi <f.suligoi@asem.it>
+To:     Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>
+CC:     "David S . Miller" <davem@davemloft.net>,
+        <linux-can@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Flavio Suligoi <f.suligoi@asem.it>
+Subject: [PATCH v2] can: sja1000: plx_pci: add support for ASEM CAN raw device
+Date:   Mon, 6 Aug 2018 15:17:12 +0200
+Message-ID: <1533561432-27034-1-git-send-email-f.suligoi@asem.it>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <a6b6906d-6f53-9bf2-d87e-49ae3f208f00@pengutronix.de>
+References: <a6b6906d-6f53-9bf2-d87e-49ae3f208f00@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Mon, 06 Aug 2018 13:17:34 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Mon, 06 Aug 2018 13:17:34 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
+Content-Type: text/plain
+X-SGHeloLookup-Result: pass smtp.helo=webmail.asem.it (ip=172.16.16.44)
+X-SGSPF-Result: none (smtp.asem.it)
+X-SGOP-RefID: str=0001.0A0B020D.5B684A68.0095,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0 (_st=1 _vt=0 _iwf=0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add synchronous O_DIRECT read support to AFS (no AIO yet).  It can
-theoretically handle reads up to the maximum size describable by loff_t -
-and given an iterator with sufficiently capacity to handle that and given
-support on the server.
+This patch adds support for ASEM opto-isolated dual channels
+CAN raw device (http://www.asem.it)
 
-Signed-off-by: David Howells <dhowells@redhat.com>
+Signed-off-by: Flavio Suligoi <f.suligoi@asem.it>
 ---
 
- fs/afs/file.c     |   61 +++++++++++++++++++++++++++++++++++++++++++++++++++++
- fs/afs/internal.h |    1 +
- fs/afs/write.c    |    8 +++++++
- 3 files changed, 70 insertions(+)
+v2: - renamed ASEM_... constants to reduce space size;
+    - remove "else" in "plx_pci_reset_asem_dual_can_raw" function to avoid 
+      strings breaking
 
-diff --git a/fs/afs/file.c b/fs/afs/file.c
-index 7d65efe69929..095ef4b4a0e7 100644
---- a/fs/afs/file.c
-+++ b/fs/afs/file.c
-@@ -27,6 +27,7 @@ static int afs_releasepage(struct page *page, gfp_t gfp_flags);
+ drivers/net/can/sja1000/Kconfig   |  1 +
+ drivers/net/can/sja1000/plx_pci.c | 67 ++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 67 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/can/sja1000/Kconfig b/drivers/net/can/sja1000/Kconfig
+index 1e65cb6..f6dc899 100644
+--- a/drivers/net/can/sja1000/Kconfig
++++ b/drivers/net/can/sja1000/Kconfig
+@@ -88,6 +88,7 @@ config CAN_PLX_PCI
+ 	   - TEWS TECHNOLOGIES TPMC810 card (http://www.tews.com/)
+ 	   - IXXAT Automation PC-I 04/PCI card (http://www.ixxat.com/)
+ 	   - Connect Tech Inc. CANpro/104-Plus Opto (CRG001) card (http://www.connecttech.com)
++	   - ASEM CAN raw - 2 isolated CAN channels (www.asem.it)
  
- static int afs_readpages(struct file *filp, struct address_space *mapping,
- 			 struct list_head *pages, unsigned nr_pages);
-+static ssize_t afs_direct_IO(struct kiocb *iocb, struct iov_iter *iter);
+ config CAN_TSCAN1
+ 	tristate "TS-CAN1 PC104 boards"
+diff --git a/drivers/net/can/sja1000/plx_pci.c b/drivers/net/can/sja1000/plx_pci.c
+index f8ff25c..d8dfa06 100644
+--- a/drivers/net/can/sja1000/plx_pci.c
++++ b/drivers/net/can/sja1000/plx_pci.c
+@@ -46,7 +46,8 @@ MODULE_SUPPORTED_DEVICE("Adlink PCI-7841/cPCI-7841, "
+ 			"esd CAN-PCIe/2000, "
+ 			"Connect Tech Inc. CANpro/104-Plus Opto (CRG001), "
+ 			"IXXAT PC-I 04/PCI, "
+-			"ELCUS CAN-200-PCI")
++			"ELCUS CAN-200-PCI, "
++			"ASEM DUAL CAN-RAW")
+ MODULE_LICENSE("GPL v2");
  
- const struct file_operations afs_file_operations = {
- 	.open		= afs_open,
-@@ -55,6 +56,7 @@ const struct address_space_operations afs_fs_aops = {
- 	.launder_page	= afs_launder_page,
- 	.releasepage	= afs_releasepage,
- 	.invalidatepage	= afs_invalidatepage,
-+	.direct_IO	= afs_direct_IO,
- 	.write_begin	= afs_write_begin,
- 	.write_end	= afs_write_end,
- 	.writepage	= afs_writepage,
-@@ -732,3 +734,62 @@ static int afs_file_mmap(struct file *file, struct vm_area_struct *vma)
- 		vma->vm_ops = &afs_vm_ops;
- 	return ret;
- }
-+
-+/*
-+ * Direct file read operation for an AFS file.
-+ */
-+static ssize_t afs_file_direct_read(struct kiocb *iocb, struct iov_iter *iter)
-+{
-+	struct file *file = iocb->ki_filp;
-+	struct address_space *mapping = file->f_mapping;
-+	struct afs_vnode *vnode = AFS_FS_I(mapping->host);
-+	struct afs_read *req;
-+	struct key *key = afs_file_key(file);
-+	ssize_t ret;
-+	size_t count = iov_iter_count(iter), transferred = 0;
-+
-+	if (!count)
-+		return 0;
-+	if (!is_sync_kiocb(iocb))
-+		return -EOPNOTSUPP;
-+
-+	req = kzalloc(sizeof(struct afs_read), GFP_KERNEL);
-+	if (!req)
-+		return -ENOMEM;
-+
-+	refcount_set(&req->usage, 1);
-+	req->pos = iocb->ki_pos;
-+	req->len = count;
-+	req->iter = *iter;
-+
-+	task_io_account_read(count);
-+
-+
-+	// TODO afs_start_io_direct(inode);
-+	ret = afs_fetch_data(vnode, key, req);
-+	if (ret == 0)
-+		transferred = req->actual_len;
-+	*iter = req->iter;
-+	afs_put_read(req);
-+
-+	// TODO afs_end_io_direct(inode);
-+
-+	BUG_ON(ret == -EIOCBQUEUED); // TODO
-+
-+	if (ret == 0)
-+		ret = transferred;
-+
-+	return ret;
-+}
-+
-+/*
-+ * Do direct I/O.
-+ */
-+static ssize_t afs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
-+{
-+	VM_BUG_ON(iov_iter_count(iter) != PAGE_SIZE);
-+
-+	if (iov_iter_rw(iter) == READ)
-+		return afs_file_direct_read(iocb, iter);
-+	return afs_file_direct_write(iocb, iter);
-+}
-diff --git a/fs/afs/internal.h b/fs/afs/internal.h
-index b12566b640f6..ac763e651c42 100644
---- a/fs/afs/internal.h
-+++ b/fs/afs/internal.h
-@@ -1110,6 +1110,7 @@ extern int afs_fsync(struct file *, loff_t, loff_t, int);
- extern int afs_page_mkwrite(struct vm_fault *);
- extern void afs_prune_wb_keys(struct afs_vnode *);
- extern int afs_launder_page(struct page *);
-+extern ssize_t afs_file_direct_write(struct kiocb *, struct iov_iter *);
+ #define PLX_PCI_MAX_CHAN 2
+@@ -70,7 +71,9 @@ struct plx_pci_card {
+ 					 */
  
+ #define PLX_LINT1_EN	0x1		/* Local interrupt 1 enable */
++#define PLX_LINT1_POL	(1 << 1)	/* Local interrupt 1 polarity */
+ #define PLX_LINT2_EN	(1 << 3)	/* Local interrupt 2 enable */
++#define PLX_LINT2_POL	(1 << 4)	/* Local interrupt 1 polarity */
+ #define PLX_PCI_INT_EN	(1 << 6)	/* PCI Interrupt Enable */
+ #define PLX_PCI_RESET	(1 << 30)	/* PCI Adapter Software Reset */
+ 
+@@ -92,6 +95,9 @@ struct plx_pci_card {
+  */
+ #define PLX_PCI_OCR	(OCR_TX0_PUSHPULL | OCR_TX1_PUSHPULL)
+ 
++/* OCR setting for ASEM Dual CAN raw */
++#define ASEM_PCI_OCR	0xfe
++
  /*
-  * xattr.c
-diff --git a/fs/afs/write.c b/fs/afs/write.c
-index 8ce5142f0f08..18b836b473f2 100644
---- a/fs/afs/write.c
-+++ b/fs/afs/write.c
-@@ -874,3 +874,11 @@ int afs_launder_page(struct page *page)
- #endif
- 	return ret;
- }
+  * In the CDR register, you should set CBP to 1.
+  * You will probably also want to set the clock divider value to 7
+@@ -145,10 +151,20 @@ struct plx_pci_card {
+ #define MOXA_PCI_VENDOR_ID		0x1393
+ #define MOXA_PCI_DEVICE_ID		0x0100
+ 
++#define ASEM_RAW_CAN_VENDOR_ID		0x10b5
++#define ASEM_RAW_CAN_DEVICE_ID		0x9030
++#define ASEM_RAW_CAN_SUB_VENDOR_ID	0x3000
++#define ASEM_RAW_CAN_SUB_DEVICE_ID	0x1001
++#define ASEM_RAW_CAN_SUB_DEVICE_ID_BIS	0x1002
++#define ASEM_RAW_CAN_RST_REGISTER	0x54
++#define ASEM_RAW_CAN_RST_MASK_CAN1	0x20
++#define ASEM_RAW_CAN_RST_MASK_CAN2	0x04
 +
-+/*
-+ * Direct file write operation for an AFS file.
-+ */
-+ssize_t afs_file_direct_write(struct kiocb *iocb, struct iov_iter *iter)
+ static void plx_pci_reset_common(struct pci_dev *pdev);
+ static void plx9056_pci_reset_common(struct pci_dev *pdev);
+ static void plx_pci_reset_marathon_pci(struct pci_dev *pdev);
+ static void plx_pci_reset_marathon_pcie(struct pci_dev *pdev);
++static void plx_pci_reset_asem_dual_can_raw(struct pci_dev *pdev);
+ 
+ struct plx_pci_channel_map {
+ 	u32 bar;
+@@ -269,6 +285,14 @@ static struct plx_pci_card_info plx_pci_card_info_moxa = {
+ 	 /* based on PLX9052 */
+ };
+ 
++static struct plx_pci_card_info plx_pci_card_info_asem_dual_can = {
++	"ASEM Dual CAN raw PCI", 2,
++	PLX_PCI_CAN_CLOCK, ASEM_PCI_OCR, PLX_PCI_CDR,
++	{0, 0x00, 0x00}, { {2, 0x00, 0x00}, {4, 0x00, 0x00} },
++	&plx_pci_reset_asem_dual_can_raw
++	/* based on PLX9030 */
++};
++
+ static const struct pci_device_id plx_pci_tbl[] = {
+ 	{
+ 		/* Adlink PCI-7841/cPCI-7841 */
+@@ -375,6 +399,20 @@ static const struct pci_device_id plx_pci_tbl[] = {
+ 		0, 0,
+ 		(kernel_ulong_t)&plx_pci_card_info_moxa
+ 	},
++	{
++		/* ASEM Dual CAN raw */
++		ASEM_RAW_CAN_VENDOR_ID, ASEM_RAW_CAN_DEVICE_ID,
++		ASEM_RAW_CAN_SUB_VENDOR_ID, ASEM_RAW_CAN_SUB_DEVICE_ID,
++		0, 0,
++		(kernel_ulong_t)&plx_pci_card_info_asem_dual_can
++	},
++	{
++		/* ASEM Dual CAN raw -new model */
++		ASEM_RAW_CAN_VENDOR_ID, ASEM_RAW_CAN_DEVICE_ID,
++		ASEM_RAW_CAN_SUB_VENDOR_ID, ASEM_RAW_CAN_SUB_DEVICE_ID_BIS,
++		0, 0,
++		(kernel_ulong_t)&plx_pci_card_info_asem_dual_can
++	},
+ 	{ 0,}
+ };
+ MODULE_DEVICE_TABLE(pci, plx_pci_tbl);
+@@ -524,6 +562,33 @@ static void plx_pci_reset_marathon_pcie(struct pci_dev *pdev)
+ 	}
+ }
+ 
++/* Special reset function for ASEM Dual CAN raw card */
++static void plx_pci_reset_asem_dual_can_raw(struct pci_dev *pdev)
 +{
-+	return -EOPNOTSUPP;
++	void __iomem *bar0_addr;
++	static const int reset_bar;
++	u8 tmpval;
++
++	plx_pci_reset_common(pdev);
++
++	bar0_addr = pci_iomap(pdev, reset_bar, 0);
++	if (!bar0_addr) {
++		dev_err(&pdev->dev, "Failed to remap reset "
++		"space %d (BAR%d)\n", 0, reset_bar);
++		return;
++	}
++
++	/* reset the two SJA1000 chips */
++	tmpval = ioread8(bar0_addr + ASEM_RAW_CAN_RST_REGISTER);
++	tmpval &= ~(ASEM_RAW_CAN_RST_MASK_CAN1 | ASEM_RAW_CAN_RST_MASK_CAN2);
++	iowrite8(tmpval, bar0_addr + ASEM_RAW_CAN_RST_REGISTER);
++	usleep_range(300, 400);
++	tmpval |= ASEM_RAW_CAN_RST_MASK_CAN1 | ASEM_RAW_CAN_RST_MASK_CAN2;
++	iowrite8(tmpval, bar0_addr + ASEM_RAW_CAN_RST_REGISTER);
++	usleep_range(300, 400);
++	pci_iounmap(pdev, bar0_addr);
 +}
++
+ static void plx_pci_del_card(struct pci_dev *pdev)
+ {
+ 	struct plx_pci_card *card = pci_get_drvdata(pdev);
+-- 
+2.7.4
 
