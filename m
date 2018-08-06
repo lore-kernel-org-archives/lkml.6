@@ -2,129 +2,97 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,UNWANTED_LANGUAGE_BODY,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89AD7C46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 09:04:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC4DFC4646D
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 09:06:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BEB8219EB
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 09:04:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sbVBZ+7E"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BEB8219EB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 8D6A0219E5
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 09:06:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D6A0219E5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727462AbeHFLMs (ORCPT
+        id S1727538AbeHFLO3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 07:12:48 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:33225 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726572AbeHFLMs (ORCPT
+        Mon, 6 Aug 2018 07:14:29 -0400
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:45145 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726572AbeHFLO3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 07:12:48 -0400
-Received: by mail-pl0-f66.google.com with SMTP id b90-v6so4609233plb.0
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Aug 2018 02:04:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=czzFOhmoJku+61MtblKxOikgqQsnpvKD1bRrcCJLO8o=;
-        b=sbVBZ+7EkXnABJNTneoqOIq1RDH34ncjRe0yRV4zDMp8Hir3a1qFC7jXyzJfQRxWbe
-         3Wp6sl+i+shF46ewqVbknO+cP3kQrIpKlzDH2+pIpiMbmWr/5TLP5iIFs3zxg4il8Etr
-         507w12TdjD7qOLJjtM2gPhR74fCG0tDJmTxjTuzNVx7wb5TVyidkNxPX/RQnufEnNevE
-         X2jUIRXVdpOhiQ0lWCxlPCF1kfzb+0ywRaXoCcnwq6YW4lnF887SmtIcjeJ4EhhmotKS
-         QGhUYixgmGnvuoK386AMWlBHTqkx4xekKHrUiU41Kp5iWKTKQS+U79RNxpPjlSs69eaS
-         1+gQ==
+        Mon, 6 Aug 2018 07:14:29 -0400
+Received: by mail-qk0-f193.google.com with SMTP id c192-v6so8337495qkg.12;
+        Mon, 06 Aug 2018 02:06:23 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=czzFOhmoJku+61MtblKxOikgqQsnpvKD1bRrcCJLO8o=;
-        b=jIA4BaJ7ze3hjzJdK4M2Srx/+FT9rN5LplQrLfUIgbgEROUvRiwFUJFDVObbYHLNfB
-         4WOio83Gp/hS6hQOriKMNZj8uqQI+4HZtGmzkUX0sb/7qJGFWkT4JngE92VPJrkBvBXY
-         VOWRGk2blx3W2MCwNdWGLF75i8Bki7nSPc1nQD9q3Ui/C3T6PWbxY3z4PvchIi80mbXA
-         9x29E1jGKiRx8u7FNl0u8/jv/M7jAbjJ1T8x2f62ERoy7oDI7oCx5raHGPPET+rKCa8i
-         /79pgQaa0JGi3NHS5rYM8V1o/lrs+QIHHlopm0pgXlpzqq47dLaIvGpYsWcAJuY+DdAN
-         uBXw==
-X-Gm-Message-State: AOUpUlGPJQKIMGK7qQsj05BWcuhm4eMWFa0L7oeKlMalvoTGeL5xNd79
-        WoptSgyfSoGpqAGzzhnsenAiqlFQuGjw4LhQD2c1Hw==
-X-Google-Smtp-Source: AAOMgpeMapuig0JxIrSSf2VhjpmH7NNQimgCEFbhe5R9TfAS+u4fTiHVSr+LqJUz1rcPjptOlpva3vPeIP20ryne+3c=
-X-Received: by 2002:a17:902:bcc6:: with SMTP id o6-v6mr13072187pls.117.1533546283106;
- Mon, 06 Aug 2018 02:04:43 -0700 (PDT)
+        bh=aAhR4STXYqjO/+LcRVC1qw/9Qh6e3/smxsttZkYecX0=;
+        b=n3TBCbW3dPV8MquVZBJgIn0RN4Q3CjeCFnHOivp79qk/yQyhj+mP6MmZzGKYzevvwf
+         W9fjBn1oP4QuxtWAT7gidK1whDYRO8YhVF8abVGRveologTGsKLfCFplpo0jsk8aW8rP
+         E9v5c6gCWgAxHbmW9cFIwZt89forJd9Zky0Nkb32es2Wc20iRj4wEr8hK2cEchOYK4Bb
+         pBLs+1yTF/eNmMgp+2gPhzDacECIfWZY5fd9vfZ7ZihxIg3KXNxhJir+R0EzQrQjIQBO
+         TdW1iZxhoQ8yAklvhHEcJcRslUaahaYYfnRV66tV3Z5q5YX4Xvy3YMVq55HfyHXTd6Qc
+         oIfg==
+X-Gm-Message-State: AOUpUlGQXAm+0ftWtoN7EvtypNUePTyFZYK5/i4nWZuz67jlx8FsKsSu
+        tzpBoYrZ/rsIt3+z18oQnw3NsQQySfY2f/OPkDS5lA==
+X-Google-Smtp-Source: AAOMgpe6jiaX4FNWO4JOzxckIsL93Y+671MXpaFG8cxStqrPJTJKol431HRXZre+XAHvya6xkj0vzyovqdXtq89dlkM=
+X-Received: by 2002:a37:2a65:: with SMTP id q98-v6mr12427702qkh.174.1533546383025;
+ Mon, 06 Aug 2018 02:06:23 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a17:90a:ac14:0:0:0:0 with HTTP; Mon, 6 Aug 2018 02:04:22
- -0700 (PDT)
-In-Reply-To: <20180804220827.GA12559@embeddedor.com>
-References: <20180804220827.GA12559@embeddedor.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Mon, 6 Aug 2018 11:04:22 +0200
-Message-ID: <CACT4Y+arVJ4qt54LzKKoyh9+NKA+fjyCShKi82NanbovhK_mmQ@mail.gmail.com>
-Subject: Re: [PATCH] mm/kasan/kasan_init: use true and false for boolean values
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        Linux-MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
+References: <20180726134056.18273-1-alexandre.belloni@bootlin.com> <20180726134056.18273-9-alexandre.belloni@bootlin.com>
+In-Reply-To: <20180726134056.18273-9-alexandre.belloni@bootlin.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 6 Aug 2018 11:06:07 +0200
+Message-ID: <CAK8P3a121CrinzrXPZ86f=KkK9yfnVHF70MQQYt2VVr-6jCnGQ@mail.gmail.com>
+Subject: Re: [PATCH 8/8] rtc: remove struct rtc_task
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc:     linux-rtc@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Aug 5, 2018 at 12:08 AM, Gustavo A. R. Silva
-<gustavo@embeddedor.com> wrote:
-> Return statements in functions returning bool should use true or false
-> instead of an integer value.
+On Thu, Jul 26, 2018 at 3:42 PM Alexandre Belloni
+<alexandre.belloni@bootlin.com> wrote:
 >
-> This code was detected with the help of Coccinelle.
+> Include rtc_task members directly in rtc_timer member.
 >
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-
-Hi Gustavo,
-
-I don't see this code in upstream tree. Is it against some other tree? Which?
-
-Thanks
-
+> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 > ---
->  mm/kasan/kasan_init.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+>  drivers/rtc/interface.c | 8 ++++----
+>  include/linux/rtc.h     | 9 ++-------
+>  2 files changed, 6 insertions(+), 11 deletions(-)
 >
-> diff --git a/mm/kasan/kasan_init.c b/mm/kasan/kasan_init.c
-> index 7a2a2f1..c742dc5 100644
-> --- a/mm/kasan/kasan_init.c
-> +++ b/mm/kasan/kasan_init.c
-> @@ -42,7 +42,7 @@ static inline bool kasan_p4d_table(pgd_t pgd)
->  #else
->  static inline bool kasan_p4d_table(pgd_t pgd)
+> diff --git a/drivers/rtc/interface.c b/drivers/rtc/interface.c
+> index d0983ed6c842..a962540faf2e 100644
+> --- a/drivers/rtc/interface.c
+> +++ b/drivers/rtc/interface.c
+> @@ -912,8 +912,8 @@ void rtc_timer_do_work(struct work_struct *work)
+>                 timerqueue_del(&rtc->timerqueue, &timer->node);
+>                 trace_rtc_timer_dequeue(timer);
+>                 timer->enabled = 0;
+> -               if (timer->task.func)
+> -                       timer->task.func(timer->task.private_data);
+> +               if (timer->func)
+> +                       timer->func(timer->private_data);
+>
+>                 trace_rtc_timer_fired(timer);
+>                 /* Re-add/fwd periodic timers */
+> @@ -968,8 +968,8 @@ void rtc_timer_init(struct rtc_timer *timer, void (*f)(void *p), void *data)
 >  {
-> -       return 0;
-> +       return false;
+>         timerqueue_init(&timer->node);
+>         timer->enabled = 0;
+> -       timer->task.func = f;
+> -       timer->task.private_data = data;
+> +       timer->func = f;
+> +       timer->private_data = data;
 >  }
->  #endif
->  #if CONFIG_PGTABLE_LEVELS > 3
-> @@ -54,7 +54,7 @@ static inline bool kasan_pud_table(p4d_t p4d)
->  #else
->  static inline bool kasan_pud_table(p4d_t p4d)
->  {
-> -       return 0;
-> +       return false;
->  }
->  #endif
->  #if CONFIG_PGTABLE_LEVELS > 2
-> @@ -66,7 +66,7 @@ static inline bool kasan_pmd_table(pud_t pud)
->  #else
->  static inline bool kasan_pmd_table(pud_t pud)
->  {
-> -       return 0;
-> +       return false;
->  }
->  #endif
->  pte_t kasan_zero_pte[PTRS_PER_PTE] __page_aligned_bss;
-> --
-> 2.7.4
+
+From what I can see, all remaining users pass the rtc_device pointer as
+'private_data', so maybe make that explicit now instead of the void pointer?
+
+      Arnd
