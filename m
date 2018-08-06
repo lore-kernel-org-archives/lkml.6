@@ -2,133 +2,120 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85B1EC46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 15:47:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4A8EC46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 15:49:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CC4021A56
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 15:47:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 21A3E21A52
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 15:49:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fqg8LS0X"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CC4021A56
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="jnxch544"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21A3E21A52
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732969AbeHFR53 (ORCPT
+        id S1732990AbeHFR67 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 13:57:29 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:37944 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728626AbeHFR53 (ORCPT
+        Mon, 6 Aug 2018 13:58:59 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:37018 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728626AbeHFR67 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 13:57:29 -0400
-Received: by mail-oi0-f66.google.com with SMTP id v8-v6so23029579oie.5;
-        Mon, 06 Aug 2018 08:47:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=NUxULdrAsENRyAZz9hmMd/lFkVRAbPU7a/kClLZEie0=;
-        b=fqg8LS0XKJjBceyYkHdw7qpsqd6x7p7SSQ4kTl0UATuG3LOBo1EyprGyCLcChu1N0L
-         SwYye7GRtxncc9HgwAMwoxCAvDBXU9JcF3JCKPcgD6KXfmJ/SyvoJg+iBydbq4U0IW6y
-         Kk2D/Mu28kSU09yLr5qzbvGQjoZFOurmNRdFMA4dViTHhxLzrfcn7JB05BD5T2ZNe0EU
-         i5JgbmU98mL+e/IGQRMkhOh+8dYiVdBzOpW0b7iMClSLkbJqPUI3hKvO3XOmkBVvfQBE
-         y+zjph5+tgGkuq3CZHmZfoGgGqaKMtrZRVw/QMGgx6S/XLAR/GOxDqTZDB06VZgYhKlf
-         q3MQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=NUxULdrAsENRyAZz9hmMd/lFkVRAbPU7a/kClLZEie0=;
-        b=Ux34pTmYaRkL7BoBafDKVKaYQJjMRGWvlZ1NDPzBd/hQb0vMCt7603R3MVRhdUl7cm
-         gxuUtK4CVMtIZR5jb9MySbd2A4tWKFJ+P1OC7NjLtVMqIHFMmq14EbegXNxhNHGPO+gc
-         QTuOwA7p74eBjoq+8KMd5B4VnWy6EUyXIqK1UD8RK0nomEB3CSouvd555M51TrTm+QaK
-         ASUhw5ygR3P0hTX9g4m4aOWk6YSrDVHoOhsCu2H1bk1wTaHsnZcoVDqzllUSMFxleS0l
-         tbJL7VqYmoSJG7ovrCgYYtxwGO2qFS5mXrrU4Jcc4wL+iju6LYvKM5eJdJ0eBzdimlIV
-         Z4Xg==
-X-Gm-Message-State: AOUpUlE2Y+KhsM7GHmb6hVWvESKt2GBAa59LCw4e7mMM48IL9SFnQobb
-        4YvIRqIrB6YCDZoZ0R3dG5s44hr1
-X-Google-Smtp-Source: AAOMgpdhO41O++DSlvfQh7rH8ZXw0lGRXaXp+qPPwHbBUNq5G8OTZxbqToDKbmZo1lNtdPb3v5aYSA==
-X-Received: by 2002:aca:847:: with SMTP id 68-v6mr16276184oii.312.1533570466713;
-        Mon, 06 Aug 2018 08:47:46 -0700 (PDT)
-Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id p7-v6sm10445656oif.35.2018.08.06.08.47.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 06 Aug 2018 08:47:45 -0700 (PDT)
-Subject: Re: [PATCH][usb-next] USB: typec: fsusb302: remove unused variables
- snk_pdo and toggling_mode_name
-To:     Colin King <colin.king@canonical.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180806111414.9436-1-colin.king@canonical.com>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <554613b4-daec-7db6-d770-7e222ab8d23b@roeck-us.net>
-Date:   Mon, 6 Aug 2018 08:47:43 -0700
+        Mon, 6 Aug 2018 13:58:59 -0400
+Received: from [192.168.0.67] (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id CD6541BEB;
+        Mon,  6 Aug 2018 17:49:14 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1533570555;
+        bh=InzS7AsdJaFHmxa6AQSDUxEnqs5wtUvC4UHPxQPS8FU=;
+        h=Subject:To:Cc:References:Reply-To:From:Date:In-Reply-To:From;
+        b=jnxch544XMlttYIcUT1CB/n6egi8Z0PvvZeRTWNUEHCpkxzU70QEEsVmcqH1KHo3/
+         YdosEKkbUdIfBV+RD4Oy/pIrDQrSPBQ6Q0XJk0KU6GoNII9XRfnBAHZhbEVa6NvKcb
+         2+RvQ9uKu8LjcxZnVJ+14b9IuLt+L6XZBPVshL8o=
+Subject: Re: [PATCH 2/3] drm: rcar-du: Rename var to a more precise name
+To:     Jacopo Mondi <jacopo@jmondi.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>
+Cc:     "open list:DRM DRIVERS FOR RENESAS" <dri-devel@lists.freedesktop.org>,
+        "open list:DRM DRIVERS FOR RENESAS" 
+        <linux-renesas-soc@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+References: <1532971214-17962-1-git-send-email-jacopo@jmondi.org>
+ <1532971214-17962-3-git-send-email-jacopo@jmondi.org>
+Reply-To: kieran.bingham+renesas@ideasonboard.com
+From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Organization: Ideas on Board
+Message-ID: <8ddd8179-a0c7-1fbe-0390-ea8fd8c0ff7b@ideasonboard.com>
+Date:   Mon, 6 Aug 2018 16:49:12 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180806111414.9436-1-colin.king@canonical.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+In-Reply-To: <1532971214-17962-3-git-send-email-jacopo@jmondi.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/06/2018 04:14 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Variables snk_pdo and toggling_mode_name are defined but are not used and
-> hence can be removed.
-> 
-> Cleans up clang warnings:
-> warning: 'snk_pdo' defined but not used [-Wunused-const-variable=]
-> warning: 'toggling_mode_name' defined but not used [-Wunused-const-variable=]
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Hi Jacopo,
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Thankyou for the patch,
 
+On 30/07/18 18:20, Jacopo Mondi wrote:
+> Rename the 'value' variable, only used to for writing to DMSR register to a
+> more precise 'dmsr' name.
+> 
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> Signed-off-by: Jacopo Mondi <jacopo@jmondi.org>
 > ---
->   drivers/usb/typec/fusb302/fusb302.c | 11 -----------
->   1 file changed, 11 deletions(-)
+>  drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
 > 
-> diff --git a/drivers/usb/typec/fusb302/fusb302.c b/drivers/usb/typec/fusb302/fusb302.c
-> index 82bed9810be6..ad7cfed1cea7 100644
-> --- a/drivers/usb/typec/fusb302/fusb302.c
-> +++ b/drivers/usb/typec/fusb302/fusb302.c
-> @@ -48,13 +48,6 @@ enum toggling_mode {
->   	TOGGLING_MODE_SRC,
->   };
->   
-> -static const char * const toggling_mode_name[] = {
-> -	[TOGGLINE_MODE_OFF]	= "toggling_OFF",
-> -	[TOGGLING_MODE_DRP]	= "toggling_DRP",
-> -	[TOGGLING_MODE_SNK]	= "toggling_SNK",
-> -	[TOGGLING_MODE_SRC]	= "toggling_SRC",
-> -};
-> -
->   enum src_current_status {
->   	SRC_CURRENT_DEFAULT,
->   	SRC_CURRENT_MEDIUM,
-> @@ -1178,10 +1171,6 @@ static const u32 src_pdo[] = {
->   	PDO_FIXED(5000, 400, PDO_FIXED_FLAGS),
->   };
->   
-> -static const u32 snk_pdo[] = {
-> -	PDO_FIXED(5000, 400, PDO_FIXED_FLAGS),
-> -};
-> -
->   static const struct tcpc_config fusb302_tcpc_config = {
->   	.src_pdo = src_pdo,
->   	.nr_src_pdo = ARRAY_SIZE(src_pdo),
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+> index 6d55cec..4d7907c 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+> @@ -208,7 +208,7 @@ static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
+>  	const struct drm_display_mode *mode = &rcrtc->crtc.state->adjusted_mode;
+>  	struct rcar_du_device *rcdu = rcrtc->group->dev;
+>  	unsigned long mode_clock = mode->clock * 1000;
+> -	u32 value;
+> +	u32 dsmr;
+>  	u32 escr;
+>  
+>  	if (rcdu->info->dpll_ch & (1 << rcrtc->index)) {
+> @@ -299,11 +299,11 @@ static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
+>  	rcar_du_group_write(rcrtc->group, rcrtc->index % 2 ? OTAR2 : OTAR, 0);
+>  
+>  	/* Signal polarities */
+> -	value = ((mode->flags & DRM_MODE_FLAG_PVSYNC) ? DSMR_VSL : 0)
+> -	      | ((mode->flags & DRM_MODE_FLAG_PHSYNC) ? DSMR_HSL : 0)
+> -	      | ((mode->flags & DRM_MODE_FLAG_INTERLACE) ? DSMR_ODEV : 0)
+> -	      | DSMR_DIPM_DISP | DSMR_CSPM;
+> -	rcar_du_crtc_write(rcrtc, DSMR, value);
+> +	dsmr = ((mode->flags & DRM_MODE_FLAG_PVSYNC) ? DSMR_VSL : 0)
+> +	       | ((mode->flags & DRM_MODE_FLAG_PHSYNC) ? DSMR_HSL : 0)
+> +	       | ((mode->flags & DRM_MODE_FLAG_INTERLACE) ? DSMR_ODEV : 0)
+> +	       | DSMR_DIPM_DISP | DSMR_CSPM;
+
+Quite nit-picky I'm afraid, but here, you have increased the indent such
+that the '|' operator is now aligned with the first '(', rather than the
+'=' as used by the rest of the driver.
+
+Was this intentional ?
+
+I think it should be brought forwards to align under the '=' to match.
+
+
+> +	rcar_du_crtc_write(rcrtc, DSMR, dsmr);
+>  
+>  	/* Display timings */
+>  	rcar_du_crtc_write(rcrtc, HDSR, mode->htotal - mode->hsync_start - 19);
 > 
 
