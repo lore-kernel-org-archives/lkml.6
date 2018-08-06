@@ -2,151 +2,276 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3169C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 07:42:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74DD2C46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 07:51:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 560EF219DB
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 07:42:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E097F219A3
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 07:50:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="VKgrNANj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 560EF219DB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="hu3v8VDa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E097F219A3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726942AbeHFJuK (ORCPT
+        id S1727083AbeHFJ6q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 05:50:10 -0400
-Received: from mail-eopbgr710064.outbound.protection.outlook.com ([40.107.71.64]:64480
-        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725951AbeHFJuJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 05:50:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=94BYJmSjAIZSRF9mWH2T/640WYxx3bQjHL+K7oPPu+Q=;
- b=VKgrNANjZuCyMUjqhhc/r8FWGosvmpVe6wAzpZdIPht34PJ9jJ53IvbYhcxPp780ZKaRvYX/fgJjsJw/vYDqTnShfnTKeTWiscpSfy3ZK5EMciJh1KE9GgmitWJQFwu+MN4inRblso6DyqTFZ72g5r+ieC48hKKrfNSNqStQt0s=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Akshu.Agrawal@amd.com; 
-Received: from [10.136.131.27] (202.56.249.162) by
- BL0PR12MB2354.namprd12.prod.outlook.com (2603:10b6:207:4c::32) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1017.15; Mon, 6 Aug 2018 07:26:56 +0000
-Subject: Re: [PATCH 1/3] ASoC: AMD: Make ACP->SYSMEM DMA non circular
-To:     Mark Brown <broonie@kernel.org>
-Cc:     djkurtz@chromium.org, Alexander.Deucher@amd.com,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        "Mukunda, Vijendar" <Vijendar.Mukunda@amd.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
-        <alsa-devel@alsa-project.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <1533192134-11626-1-git-send-email-akshu.agrawal@amd.com>
- <20180802095617.GC9117@sirena.org.uk>
-From:   "Agrawal, Akshu" <Akshu.Agrawal@amd.com>
-Message-ID: <70bbe810-5a84-85b6-01d3-1226c7645825@amd.com>
-Date:   Mon, 6 Aug 2018 12:56:39 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 6 Aug 2018 05:58:46 -0400
+Received: from ozlabs.org ([203.11.71.1]:48519 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725735AbeHFJ6q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 05:58:46 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 41kVFT6z80z9s5H;
+        Mon,  6 Aug 2018 17:50:53 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1533541854;
+        bh=8WQ5uxrEzSKUBNlYSF6XD+0hrCPhNz+2lrEvgAO3/vk=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=hu3v8VDaGsa2Z4DZ8kviyuf27qlF5HcEyEWjuQPrwkD2N5YYzyJsSF+se1uH0GKh7
+         ESmcdTZXvHC4iuuNf5fRqPvGi8EEhl/9GxuVJk7iJu+A4Qm5KNBSWbemryNyJxuSGf
+         /Ujjr/GDYXQMDtTWCTDAlcvVFp2fHry7E+cRf1kxqgBdLP0GYQRT3lqxhvzj0CHG0z
+         FEUVm/VJz/pSlkbn8sRoUYGMkleziz1O0aOOzRm3Q83Ehe7vhIrJEbPY3pSwvljyAw
+         3Y/WJUKhBdqYf1UAI9T9lbXEVMXFOZP8FS7Fb19T+JhYIKDKY3EUkaeGtSy15pJ0Ps
+         Cq4cOTKfFlJ7g==
+Date:   Mon, 6 Aug 2018 17:50:47 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Al Viro <viro@ZenIV.linux.org.uk>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the userns tree with the vfs tree
+Message-ID: <20180806175047.5b612a77@canb.auug.org.au>
+In-Reply-To: <20180620123905.348181b2@canb.auug.org.au>
+References: <20180620123905.348181b2@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <20180802095617.GC9117@sirena.org.uk>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [202.56.249.162]
-X-ClientProxiedBy: BMXPR01CA0002.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:b00:d::12) To BL0PR12MB2354.namprd12.prod.outlook.com
- (2603:10b6:207:4c::32)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: ca568dc2-0aa4-4e89-8847-08d5fb6dff31
-X-MS-Office365-Filtering-HT: Tenant
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:BL0PR12MB2354;
-X-Microsoft-Exchange-Diagnostics: 1;BL0PR12MB2354;3:HNN1SzX4f/SEQXnr3DFXlY8XDZEKEAwrbvHCclI+/RoQ5cXfCm8+ekR2ULnbLNwJ1AeWmSf6VCBzDZ+UQ/qR0ytaFE5M20BOC8f3t6loKXre4RnTVg//lPudh9kgLUziKo5jUGJvZaxCgYMKyfwxLQoGZOF7qkcf2cUzCfo3syB2wnaiNYitqLFD+F1fxUfyPFjOwlNfGkF+V+okz2v4hTJ3ntXV05JD09Ber8gNleI6ulRe3qsYKwDVe2SIEutH;25:YJghz/hkbNGXqrH8XX+dxkRNjhLHvT8IZPU1bhGHM1WIp6/Cw3m2rUktPQRPXbtKwk10eCDA3xB1eXl/J+4i8gwju9SM+l024UyOLxHcUVjFERY4aNGtts3iEhloFp1DE9jpUg4aovlacALOhSyXMiJopK6ph2VCwqDXvdC+mkhrhp51UetSgwCFSZZ1xvjgzY1DnperajF5NDL8Kq6ONRKoOX47rL2H7xO1/+5awI1K6mmnltS3OVVB9XJUC3opXgWeZ4CC3H98ox/swOQvc4DdogbsRZz/p+IUdC2a747iuo5EqRkc/Q2Z8+zIc/WDM9CcvIfdY6d28xUelQARnA==;31:kD2mNdntWLwG0KbjFgfo7pvGSApsDAS3juH/kncfrA7RZLV7i38IN84E9XAgYrwVBbhTm5ZF5zH2/Z5n3COSFKosAwCx5X2/Ctious3ZiFgnI5Tc5RyLddEbBi3pcVP3VSgnSzpVQTwIb0VxthNkTGmg5x8U3FJi6+/W0pmfIVKA6H+YnH7di64CSr240rO6Q+H4jpH7VtLKAr+8Q/kZuJqpirBuI7xrXUAfX5DLa28=
-X-MS-TrafficTypeDiagnostic: BL0PR12MB2354:
-X-Microsoft-Exchange-Diagnostics: 1;BL0PR12MB2354;20:3Ul8/y5dDMvsCka/uZFEma/Ec4bmNHKSx/RJjTSU6BGvqXH+OBc0f+VRO3hCntOpHoZsV1wVzSMFZyAiBDinjSyQaegEb2N/LzVXZso+PjLbjY+3aEa6WSK9ZwnvrPBTN/uuxo3omRTq2x/qLSxwy7fR3vN71JYrWhqIioCL4wXhFjljhDgikDuJZQ1bWCGeSCnQ4MYCVevq85NOdp7HGgEngZV39xhAQcwjl6kLSMIINCEBUQz10oUYyI4/qdnLj6OUcaNHh9G85D4JJ5OiGqO+MHqHhMbtNXK4+n9nh01FPwSWOd/fWR3PvwRY2VzFrDVC0s311GdBEmni10J7lqOsC/ba7TMCAE3Ae5srqXSrTnK35kw60587C0zooi0PtnRdbWpcMAySTvs0Rvwjh9FALH7vMFGRjEO3RGCqXF2ae2JJTcf04Maj2NPUVbPLk4e5YYlR8/fph0wsUIjf0YeNAZToEHDY8lI6wC5yHe4zKFmAjcKXdVuNzhOfXTr4;4:iNWhQDiZK3Vh0pr84v+xLXSgsxxy8fHF1DVHnzGdp061Isk+wpKli7vyiffVg09xi4lHy1ntONSWxnXdVpgqEmVx73eMO1loDj10vRqCAF/2s0v1UDZZPjEOwfvLOXEYnPSJgq66bUMU3LrtknyuODfitjwjSZPt+idfxSQGMA/GYelUkm3hrJIHUckgdMDwr2yike6sY6qxxEBvQbaYUrgUvzyLKCnGHL+lu0Bp7raC5UJwdI0bAEgKimhqTg7MhIvn2NGjn+64qvosGtA/tw==
-X-Microsoft-Antispam-PRVS: <BL0PR12MB2354F8A6F2B5B4E515FC8F75F8200@BL0PR12MB2354.namprd12.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(10201501046)(3231311)(944501410)(52105095)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:BL0PR12MB2354;BCL:0;PCL:0;RULEID:;SRVR:BL0PR12MB2354;
-X-Forefront-PRVS: 07562C22DA
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6049001)(366004)(376002)(396003)(39860400002)(136003)(346002)(189003)(199004)(86362001)(58126008)(6666003)(7736002)(23746002)(229853002)(5660300001)(65826007)(65806001)(25786009)(3260700006)(65956001)(305945005)(76176011)(16576012)(52116002)(316002)(47776003)(6916009)(39060400002)(31696002)(54906003)(478600001)(72206003)(31686004)(106356001)(2906002)(6246003)(4326008)(6486002)(105586002)(97736004)(50466002)(186003)(16526019)(8936002)(230700001)(36756003)(68736007)(26005)(77096007)(8676002)(66066001)(2616005)(6116002)(476003)(53546011)(53936002)(11346002)(446003)(3846002)(386003)(956004)(64126003)(486006)(81156014)(217873002)(81166006);DIR:OUT;SFP:1101;SCL:1;SRVR:BL0PR12MB2354;H:[10.136.131.27];FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-Received-SPF: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?Windows-1252?Q?1;BL0PR12MB2354;23:pCgxPZDgBho9EdtTbesa27Vx2ZMYXq1RmQOqc?=
- =?Windows-1252?Q?7ySxiTrZszw/atMKKDB1Hw09Imw+5wOiO/hAC5/YjSUHFXZEvwKkjcJk?=
- =?Windows-1252?Q?C+TQ47BMY/3ia8opdrxBhC+1jF3MoAx8uJ8QqOI7zJGuYsdbnI5EkNij?=
- =?Windows-1252?Q?AHWhi06DmQ+7m2Bpb5p4jjdDf6+XCYsCMnriGMF3hvmVSKrPW8rXunIm?=
- =?Windows-1252?Q?ROUNup0uyUnWwg9UKd6d0h3gytFGK0HtWboh2NbJLZI5867EC3fB3ar6?=
- =?Windows-1252?Q?fSUplVnF11OmX0g9Sk+dF0LDpD8ql8MxdyQnI60HujjoRf/nE2aQwSKU?=
- =?Windows-1252?Q?G/0MSIoFG3Ti953l67PHbuomcvjJw5kWdNLpl6Zjra07xbfR+EnnmY2B?=
- =?Windows-1252?Q?RdoIvtVcYDPXIQ3BCMVlzKpvE2ZyaKqZTO/c4ZNy2OeTZ0zaKsw/Ymuy?=
- =?Windows-1252?Q?gXluTLo6w+aiBXVxD2/yuJTSapi+E6v9+wPHAzFoxEN5me1sR8rCziYw?=
- =?Windows-1252?Q?YsC8CXJLWM/ABvDMjuCm2Q+GuBvPhlqox3dTymqyrL24Kj+Vqb6FaHAS?=
- =?Windows-1252?Q?qaiN1ZsXU+lZX8pgWf7jcZp9IZm+IO6t79m823XkBxmubEiYFReQXAn1?=
- =?Windows-1252?Q?vx4agbPx7SkmITmBg/1hmlENOBSTnaPpd0DL9AYqniIWKewVC00noxCC?=
- =?Windows-1252?Q?5OXwsq5yBp+ES/bweZU8PCnDmBsGW3Elz96GttxBZpJ6Q78dtxrP+IUT?=
- =?Windows-1252?Q?UvC7mZ9QI61X7kPoUJcRPPSaG+mbTcMrLLKOaqAaVn3TbJfCINUAiXjY?=
- =?Windows-1252?Q?jhcindD3MQdgDOP1SCtc8f2L2TYYWge1tP9zL6AeEfjsNwsH/pROeOee?=
- =?Windows-1252?Q?M9PbMTNa6Kqlr6ejFIL+8+R+lO2bj+NJxVEn0S5FtllxoTC4lmSAccky?=
- =?Windows-1252?Q?AgKu4AcFHUxAhXjKavrbZeb3DfRPcGHg06Lc/iMX6+8eplDxBuMLGde8?=
- =?Windows-1252?Q?aKeO2elqUkWdvs5K8XMRAUTKsP0ueHum/sDG7cPL4ZVIZfWGYs0kzYg4?=
- =?Windows-1252?Q?sWKds9Sa/AzHKTpXyb6OYLTaIAYi3GPouTQdvS+kuSXRrHykTxfqQ5th?=
- =?Windows-1252?Q?hTCGg/t6hj0hG5l1BnE+1CMt/CJD9PelVA7SHwilb50tDkSJmRpMcOrT?=
- =?Windows-1252?Q?HUgqXTPrrisIYoK6Rwqt7u2l0MiGJzz4n75Ari6r+rYx1MX1zhHubNvY?=
- =?Windows-1252?Q?R5KyC+pq5VxePrqRYVzX6RaBLwN3V3KWPT1V+Tr8CAYFpFwAHapQc66S?=
- =?Windows-1252?Q?VqOsrFBMKVFq/lQFr9/ujsVIOrV6MwmzPG9KNoihzPuPZoQoZ6/5/Qfr?=
- =?Windows-1252?Q?0jBD9+t9GPZHU/RVE/tCQoH/P/ySHqF1kO8pePQ0HgzV+lEJlohbyu3a?=
- =?Windows-1252?Q?kw/LF9u0BImSObGW2ZBrARUpaWpuTL8EbHFwq7FDSpdpynFogO0N1Yjm?=
- =?Windows-1252?Q?Z4H4jXAQ8TKeanmBbwU6Dg6NAc3PKnLICoyrhV4f2j/Ed2HlYzZu9Iw2?=
- =?Windows-1252?Q?CubCVsOqemszzso4bUVkm3K2xvgOoiw0ooJINbNWvTygaVWMhdikkfk6?=
- =?Windows-1252?B?UT09?=
-X-Microsoft-Antispam-Message-Info: 06DFUhIRp/iVX4AI/DGJxPO0RFh8RgljBtFFP8AViqLHO2KpLdJIX0eg7Ine0LdQcLXMa5echD/lyso/14ainBTJIEOFcLL4+9ocNInEEpjA+/D6rOpIRRZU7rLHvyCWp9VU282V4f7evzi0Sh814oNdiCeVBGXq0Uj7sc+euYrwLsdCES22LOV9D0Buj/XByt7WpukHyiGTNGlGgTV07YH0SqJurK5YAAbU+qsx1SAb9w5y4Tbsnt1Z8Y5MUi+WEfawzvYPEcnnZrYxU7F6HpGzqPk0iQSCdvvxj/6UcLwb6RA/MyYKCVkm3oury+zOSoJ+L/ONzKNmteoQwDVhIzEKvMTyaz3R6toVmsHbJuI=
-X-Microsoft-Exchange-Diagnostics: 1;BL0PR12MB2354;6:XQUJiEj7VAUgMu0fRLl5ywZ1NhkphUkhv8KSGbupNCJJrmXIOzH0MZ3Ub2G672dzPZAdlWuHVabLxiRdRDpyNjGNl2OO826t40ssWjYqiVuXFhn5LzbxsYocRqPYf6NAIhNJkq+LxUV5KOdTvOLn7NPxeWyghaiU9n0N242J72tz0p3GW0Lce3atOMxjZ6OQsu96JWy/MTX+e/M6iM8FOgVMzb3dEuTPLAxWKABNBRCOspVDOhP9xT/MDX5780HdfuhYgbNqrQbu5Igh9rK+oNDx//rHoO3S1Znf7OIm5PIPtVl9Ab6pSGZM85OrSykwjRGXMRqAiaTd7rn/VYn5S7ECM5orz8Tlt+EbCw9+j67KaNCAyMIx3V8ddndQzZ0tkCmedlrj3nQXGOW6RR2dCkWke/lq+3kHblMVtt/RIHYCvlQXGxF7qUMUF8iFT1x/nrAuSRrJ0IkDnzA0j0q9hw==;5:K81x0pfoZmJYWbl09Yoo87GiOkGqDVCBTQamYOkiGJWInecjTHZjAvvW3u99av/fGr1sFbDnTXBkZvWaKSNJi6hln9FsVsWxy5nq+kx7eKRan3WDVdjyUc8ewUMTToshBMBgKyNDmn9HGVQLkC43LuYxCSVGplEIQzGfBGAJQlE=;7:rX+uvld1dhXYNpYWYXb1ENrqSm6UKKPKeSVOfAkzluD5IyAvKtmVePz/ngig/NfSOIfUzcTVn9YDYAhF3bzk1ogOm4v5yYl6JT2Y2Uvx9tXvq41BInKgpP70CGnG09CtYRW1hD7oSpXicQvWv2MbUTmxwWkUvU00or81gYYhsPc5t3+0u1m1Lbi4DnFoCbDecwkuSWZRC8CxXqS+6m9vVGiFKhCIeF+aRQmnFiNRZt6kO0BQJ9f6gwfA/Hl74kSA
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;BL0PR12MB2354;20:/hGj/j3umEuFk6N7tFYIUtB0pScLMko3TqfVqWSOteK1LMcn17RVbVQc4tGXtGvTByiRk6XmQbG2t6IzwVLe1QRVbS2JJ2WnbvlsoLkou8IHMI6bOniq4D5pZ2VyyFSHJ9D8w6l/fM0fGuQjN2ZEhZHgtBlG4JwME+SU81b9n7m5xSQ/HxQCuqYZZv65Q+SXrWkSmDHlznJY9WjTdaqKvVhmnrCOshha0XAUF1uv2wF3DFStrWZqOZAX4tyNL2XB
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2018 07:26:56.5105 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: ca568dc2-0aa4-4e89-8847-08d5fb6dff31
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR12MB2354
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/rofUT+4VBDf2TIihD7HKpP4"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+--Sig_/rofUT+4VBDf2TIihD7HKpP4
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
-On 8/2/2018 3:26 PM, Mark Brown wrote:
-> On Thu, Aug 02, 2018 at 12:11:54PM +0530, Akshu Agrawal wrote:
->> In capture case we don't want ACP to SYSMEM dma
->> to be circular. This is because if an in place DSP
->> filter is applied to captured output then circular DMA
->> can overwrite the filter value with stale data.
-> 
-> Isn't that just a problem with userspace not giving itself enough buffer
-> to get the in place processing done before we loop round again.  This
-> will simply change the type of error, it won't actually fix anything
-> AFAICT but perhaps I'm missing something.
-> 
+On Wed, 20 Jun 2018 12:39:05 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> Today's linux-next merge of the userns tree got a conflict in:
+>=20
+>   fs/proc/inode.c
+>   fs/proc/root.c
+>=20
+> between commit:
+>=20
+>   0223e0999be2 ("procfs: Move proc_fill_super() to fs/proc/root.c")
+>   83cd45075c36 ("proc: Add fs_context support to procfs")
+>=20
+> from the vfs tree and commit:
+>=20
+>   cc8cda3af2ba ("proc: Simplify and fix proc by removing the kernel mount=
+")
+>   9303f5f81bd4 ("proc: Change proc_parse_options to return an errno value=
+")
+>   04035aa33a12 ("proc: Don't change mount options on remount failure.")
+>=20
+> from the userns tree.
+>=20
+> I effectively reverted 9303f5f81bd4 and 04035aa33a12 since (I think)
+> they are subsumed by the vfs tree changes.
+>=20
+> I fixed it up (I think I got it mostly right this time - see below) and
+> can carry the fix as necessary. This is now fixed as far as linux-next
+> is concerned, but any non trivial conflicts should be mentioned to your
+> upstream maintainer when your tree is submitted for merging.  You may
+> also want to consider cooperating with the maintainer of the
+> conflicting tree to minimise any particularly complex conflicts.
+>=20
+> --=20
+> Cheers,
+> Stephen Rothwell
+>=20
+> diff --cc fs/proc/root.c
+> index efbdc08a3c86,3dceff6cd121..91e9b417bc6d
+> --- a/fs/proc/root.c
+> +++ b/fs/proc/root.c
+> @@@ -80,71 -78,21 +80,74 @@@ static int proc_parse_option(struct fs_
+>   	return 0;
+>   }
+>  =20
+>  -int proc_remount(struct super_block *sb, int *flags, char *data)
+>  +static void proc_set_options(struct super_block *s,
+>  +			     struct fs_context *fc,
+>  +			     struct pid_namespace *pid_ns,
+>  +			     struct user_namespace *user_ns)
+>   {
+>  -	struct pid_namespace *pid =3D sb->s_fs_info;
+>  -	struct proc_mount_options opts =3D {
+>  -		.pid_gid  =3D pid->pid_gid,
+>  -		.hide_pid =3D pid->hide_pid,
+>  -	};
+>  +	struct proc_fs_context *ctx =3D fc->fs_private;
+>  +
+>  +	if (ctx->mask & (1 << Opt_gid))
+>  +		pid_ns->pid_gid =3D make_kgid(user_ns, ctx->gid);
+>  +	if (ctx->mask & (1 << Opt_hidepid))
+>  +		pid_ns->hide_pid =3D ctx->hidepid;
+>  +}
+>  +
+>  +static int proc_fill_super(struct super_block *s, struct fs_context *fc)
+>  +{
+>  +	struct pid_namespace *pid_ns =3D get_pid_ns(s->s_fs_info);
+>  +	struct inode *root_inode;
+>   	int ret;
+>  =20
+>  -	sync_filesystem(sb);
+>  -	ret =3D proc_parse_options(data, &opts);
+>  -	if (ret)
+>  +	proc_set_options(s, fc, pid_ns, current_user_ns());
+>  +
+>  +	/* User space would break if executables or devices appear on proc */
+>  +	s->s_iflags |=3D SB_I_USERNS_VISIBLE | SB_I_NOEXEC | SB_I_NODEV;
+>  +	s->s_flags |=3D SB_NODIRATIME | SB_NOSUID | SB_NOEXEC;
+>  +	s->s_blocksize =3D 1024;
+>  +	s->s_blocksize_bits =3D 10;
+>  +	s->s_magic =3D PROC_SUPER_MAGIC;
+>  +	s->s_op =3D &proc_sops;
+>  +	s->s_time_gran =3D 1;
+>  +
+>  +	/*
+>  +	 * procfs isn't actually a stacking filesystem; however, there is
+>  +	 * too much magic going on inside it to permit stacking things on
+>  +	 * top of it
+>  +	 */
+>  +	s->s_stack_depth =3D FILESYSTEM_MAX_STACK_DEPTH;
+>  +
+>  +	pde_get(&proc_root);
+>  +	root_inode =3D proc_get_inode(s, &proc_root);
+>  +	if (!root_inode) {
+>  +		pr_err("proc_fill_super: get root inode failed\n");
+>  +		return -ENOMEM;
+>  +	}
+>  +
+>  +	s->s_root =3D d_make_root(root_inode);
+>  +	if (!s->s_root) {
+>  +		pr_err("proc_fill_super: allocate dentry failed\n");
+>  +		return -ENOMEM;
+>  +	}
+>  +
+>  +	ret =3D proc_setup_self(s);
+>  +	if (ret) {
+>   		return ret;
+>  -	pid->pid_gid  =3D opts.pid_gid;
+>  -	pid->hide_pid =3D opts.hide_pid;
+>  +	}
+> - 	return proc_setup_thread_self(s);
+> ++	ret =3D proc_setup_thread_self(s);
+> ++
+> ++	rcu_assign_pointer(pid_ns->proc_super, s);
+> ++	return ret;
+>  +}
+>  +
+>  +int proc_reconfigure(struct super_block *sb, struct fs_context *fc)
+>  +{
+>  +	struct pid_namespace *pid =3D sb->s_fs_info;
+>  +
+>  +	sync_filesystem(sb);
+>  +
+>  +	if (fc)
+>  +		proc_set_options(sb, fc, pid, current_user_ns());
+>   	return 0;
+>   }
+>  =20
+> @@@ -288,44 -208,23 +292,22 @@@ struct proc_dir_entry proc_root =3D=20
+>   	.proc_fops	=3D &proc_root_operations,
+>   	.parent		=3D &proc_root,
+>   	.subdir		=3D RB_ROOT,
+>  -	.name		=3D proc_root.inline_name,
+>  -	.inline_name	=3D "/proc",
+>  +	.name		=3D "/proc",
+>   };
+>  =20
+> - int pid_ns_prepare_proc(struct pid_namespace *ns)
+> + #if defined(CONFIG_SYSCTL_SYSCALL) || defined(CONFIG_MCONSOLE)
+> + struct file *file_open_proc(const char *pathname, int flags, umode_t mo=
+de)
+>   {
+> - 	struct proc_fs_context *ctx;
+> - 	struct fs_context *fc;
+>   	struct vfsmount *mnt;
+> - 	int ret;
+> -=20
+> - 	fc =3D vfs_new_fs_context(&proc_fs_type, NULL, 0,
+> - 				FS_CONTEXT_FOR_KERNEL_MOUNT);
+> - 	if (IS_ERR(fc))
+> - 		return PTR_ERR(fc);
+> -=20
+> - 	ctx =3D fc->fs_private;
+> - 	if (ctx->pid_ns !=3D ns) {
+> - 		put_pid_ns(ctx->pid_ns);
+> - 		get_pid_ns(ns);
+> - 		ctx->pid_ns =3D ns;
+> - 	}
+> + 	struct file *file;
+>  =20
+> - 	ret =3D vfs_get_tree(fc);
+> - 	if (ret < 0) {
+> - 		put_fs_context(fc);
+> - 		return ret;
+> - 	}
+> -=20
+> - 	mnt =3D vfs_create_mount(fc, 0);
+> - 	put_fs_context(fc);
+> + 	mnt =3D kern_mount(&proc_fs_type);
+>   	if (IS_ERR(mnt))
+> - 		return PTR_ERR(mnt);
+> + 		return ERR_CAST(mnt);
+>  =20
+> - 	ns->proc_mnt =3D mnt;
+> - 	return 0;
+> - }
+> + 	file =3D file_open_root(mnt->mnt_root, mnt, pathname, flags, mode);
+> + 	kern_unmount(mnt);
+>  =20
+> - void pid_ns_release_proc(struct pid_namespace *ns)
+> - {
+> - 	kern_unmount(ns->proc_mnt);
+> + 	return file;
+>   }
+> + #endif
 
-Sorry for the delayed reply. Will try and explain more on whats happening:
-We have 2 DMAs, one being I2S->ACP(Audio Co-Processor memory) and the
-second being ACP->SYSMEM. When ACP->SYSMEM is circular then this DMA is
-faster and keeps updating from ACP memory. This leaves no time for user
-space to do any kind of in place post processing. This design works fine
-if the user reads the data from SYSMEM at capture rate (that is the rate
-at which I2S->ACP transfer happens). But, when an in place post
-processing happens on SYSMEM then the data gets overwritten.
+Are there any comments on this resolution.  I just had to do it all
+again due to slight changes in the vfs tree.  What are you guys going
+to tell Linus when he comes to merge this?
 
-Sending and updated series with changes in 2/3 and 3/3 patch.
+--=20
+Cheers,
+Stephen Rothwell
 
-Thanks,
-Akshu
+--Sig_/rofUT+4VBDf2TIihD7HKpP4
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltn/dcACgkQAVBC80lX
+0GzUgAf/fN1WKttEXYQXy0Gm9uUrx6q6cftGCGn95K0e3FsicbZnalLVl1pSQu+1
+So05el+10rSL9yWOLGI/nBqFpnU5fndugYe8TnwffWs2a6nw12q2F/iAR4+w0LlS
+slGHDDEQgxSaqnZ7ixkttxa/Pdm0O+LrthV+hsjKIYLaE5++h2PdipJui7ubpkxe
+gyyzzsW3z4X7ZTGHiyZ5vYnVRjd0Z/36ZfN292p3ZSdKPcSGLdFs9YHXa7NogeHo
+7k1au/LjaC3DbesoXhWa7d6pi3laY/3fKwrQjUFD5N72NRCgBC2oU2fE84hB520f
+gNB470hqdHWDrJB/7t25yXALLHqCtQ==
+=8ttQ
+-----END PGP SIGNATURE-----
+
+--Sig_/rofUT+4VBDf2TIihD7HKpP4--
