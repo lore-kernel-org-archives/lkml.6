@@ -6,98 +6,126 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DA5AC46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 14:24:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3D05C4646D
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 14:24:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB04B21A50
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 14:24:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB04B21A50
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kwaak.net
+	by mail.kernel.org (Postfix) with ESMTP id A4EAC21A38
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 14:24:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4EAC21A38
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731372AbeHFQdq (ORCPT
+        id S1731979AbeHFQeN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 12:33:46 -0400
-Received: from gw-fsck-sorbs.kwaak.net ([84.245.27.153]:44997 "EHLO
-        mail.kwaak.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727451AbeHFQdq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 12:33:46 -0400
-Received: from [192.168.0.44] (port=56627 helo=shell3.kwaak.net)
-        by mail.kwaak.net with esmtp (Exim 4.50)
-        id 1fmgQi-0001Pj-7S; Mon, 06 Aug 2018 16:24:17 +0200
-Received: from ard by shell3.kwaak.net with local (Exim 4.80)
-        (envelope-from <ard@kwaak.net>)
-        id 1fmgQg-0001Pe-9p; Mon, 06 Aug 2018 16:24:14 +0200
-Date:   Mon, 6 Aug 2018 16:24:14 +0200
-From:   ard <ard@kwaak.net>
-To:     Johannes Thumshirn <jthumshirn@suse.de>
-Cc:     "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
-        Linux SCSI Mailinglist <linux-scsi@vger.kernel.org>
-Subject: Re: [PATCH 0/3] scsi: fcoe: memleak fixes
-Message-ID: <20180806142414.GB23827@kwaak.net>
-References: <20180731134603.20089-1-jthumshirn@suse.de>
- <20180806092503.6ed56kukj2i236qt@linux-x5ow.site>
- <20180806132234.GA23827@kwaak.net>
- <20180806132725.ihbi5rxvkuuppajr@linux-x5ow.site>
+        Mon, 6 Aug 2018 12:34:13 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34106 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727451AbeHFQeM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 12:34:12 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E08D040241F3;
+        Mon,  6 Aug 2018 14:24:50 +0000 (UTC)
+Received: from krava (unknown [10.43.17.214])
+        by smtp.corp.redhat.com (Postfix) with SMTP id AE9001C4E7;
+        Mon,  6 Aug 2018 14:24:48 +0000 (UTC)
+Date:   Mon, 6 Aug 2018 16:24:47 +0200
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Namhyung Kim <namhyung@kernel.org>
+Cc:     Jiri Olsa <jolsa@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        David Ahern <dsahern@gmail.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Stephane Eranian <eranian@google.com>, kernel-team@lge.com
+Subject: Re: [PATCH 14/20] perf annotate: Pass struct annotation_options to
+ map_symbol__annotation_dump
+Message-ID: <20180806142447.GB16446@krava>
+References: <20180804130521.11408-1-jolsa@kernel.org>
+ <20180804130521.11408-15-jolsa@kernel.org>
+ <20180806134507.GA6983@danjae.aot.lge.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180806132725.ihbi5rxvkuuppajr@linux-x5ow.site>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Host-Lookup-Failed: Reverse DNS lookup failed for 192.168.0.44 (failed)
-X-Kwaak-Spam-Score: -2.6
-X-kwaak-MailScanner: Found to be clean
-X-kwaak-MailScanner-SpamCheck: not spam, SpamAssassin (score=-2.304,
-        required 5, autolearn=not spam, BAYES_00 -2.60,
-        DNS_FROM_AHBL_RHSBL 0.29)
-X-MailScanner-From: ard@kwaak.net
+In-Reply-To: <20180806134507.GA6983@danjae.aot.lge.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 06 Aug 2018 14:24:50 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 06 Aug 2018 14:24:50 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Johannes,
-
-On Mon, Aug 06, 2018 at 03:27:25PM +0200, Johannes Thumshirn wrote:
-> On Mon, Aug 06, 2018 at 03:22:34PM +0200, ard wrote:
-> > Ahh, yeah, sorry.
-> > I did test them.
-> > I can't say I see a regression.
-> > I also can't say I see progress, although it feels like there is
-> > a tad less leaking.
-> > For that I need to do some statistics.
+On Mon, Aug 06, 2018 at 10:45:07PM +0900, Namhyung Kim wrote:
+> Hi Jiri,
+> 
+> On Sat, Aug 04, 2018 at 03:05:15PM +0200, Jiri Olsa wrote:
+> > Passing struct annotation_options to map_symbol__annotation_dump,
+> > to carry on and pass the percent_type value.
 > > 
-> > But for now I ack that it does not regress further.
+> > Link: http://lkml.kernel.org/n/tip-5toohgdkgpk3vn6zebusr3bb@git.kernel.org
+> > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> > ---
 > 
-> From what I've seen in your kmemleak reports, it wasn't only
-> libfc/fcoe that was leaking memory.
+> [SNIP]
+> > @@ -2523,7 +2526,7 @@ static void disasm_line__write(struct disasm_line *dl, struct annotation *notes,
+> >  
+> >  static void __annotation_line__write(struct annotation_line *al, struct annotation *notes,
+> >  				     bool first_line, bool current_entry, bool change_color, int width,
+> > -				     void *obj,
+> > +				     void *obj, unsigned int percent_type,
+> >  				     int  (*obj__set_color)(void *obj, int color),
+> >  				     void (*obj__set_percent_color)(void *obj, double percent, bool current),
+> >  				     int  (*obj__set_jumps_percent_color)(void *obj, int nr, bool current),
+> > @@ -2531,7 +2534,7 @@ static void __annotation_line__write(struct annotation_line *al, struct annotati
+> >  				     void (*obj__write_graph)(void *obj, int graph))
+> >  
+> >  {
+> > -	double percent_max = annotation_line__max_percent(al, notes);
+> > +	double percent_max = annotation_line__max_percent(al, notes, percent_type);
+> >  	int pcnt_width = annotation__pcnt_width(notes),
+> >  	    cycles_width = annotation__cycles_width(notes);
+> >  	bool show_title = false;
+> > @@ -2552,8 +2555,7 @@ static void __annotation_line__write(struct annotation_line *al, struct annotati
+> >  		for (i = 0; i < notes->nr_events; i++) {
+> >  			double percent;
+> >  
+> > -			percent = annotation_data__percent(&al->data[i],
+> > -							   PERCENT_HITS_LOCAL);
+> > +			percent = annotation_data__percent(&al->data[i], percent_type);
+> >  
+> >  			obj__set_percent_color(obj, percent, current_entry);
+> >  			if (notes->options->show_total_period) {
+> > @@ -2680,13 +2682,15 @@ static void __annotation_line__write(struct annotation_line *al, struct annotati
+> >  }
+> >  
+> >  void annotation_line__write(struct annotation_line *al, struct annotation *notes,
+> > -			    struct annotation_write_ops *ops)
+> > +			    struct annotation_write_ops *wops,
+> > +			    struct annotation_options *opts)
+> >  {
+> > -	__annotation_line__write(al, notes, ops->first_line, ops->current_entry,
+> > -				 ops->change_color, ops->width, ops->obj,
+> > -				 ops->set_color, ops->set_percent_color,
+> > -				 ops->set_jumps_percent_color, ops->printf,
+> > -				 ops->write_graph);
+> > +	__annotation_line__write(al, notes, wops->first_line, wops->current_entry,
+> > +				 wops->change_color, wops->width, wops->obj,
+> > +				 opts->percent_type,
+> > +				 wops->set_color, wops->set_percent_color,
+> > +				 wops->set_jumps_percent_color, wops->printf,
+> > +				 wops->write_graph);
 > 
-> So kmemleak reports are welcome (especially if they confirm libfc/fcoe
-> is clean now ;-)).
-I've updated the ticket:
-https://github.com/hardkernel/linux/issues/360#issuecomment-410721997
-dmesg (with full debugging):
-https://github.com/hardkernel/linux/files/2262858/dmesg-2018-08-06.txt
-and kmemleak:
-https://github.com/hardkernel/linux/files/2262861/kmemleak-2018-08-06.txt
+> This doesn't look good.  Why not just passing a pointer to wops
+> instead of each fields separately?
 
-I'll have to take a good look at the what and why.
-I'm gonna git clean -x -d and rebuild the kernel, because this is
-weird.
+yep, my thoughts exactly when I saw this ;-) we probably had some
+other caller..  however I only wanted to add one more param ;-)
 
-This is the tree I build:
-https://github.com/ardje/linux/tree/gb-4.14-fcoe-patch
-So vanilla linux-4.14 with the patch set:
-https://github.com/ardje/linux/commit/747bf04057a99be5b01f768654cfd61bc9f4fc6c
-Meh, I should try to use git for patching.
+I'll check what we can do with this in v2
 
-I will spam some printk's later on, just to check which flows are
-followed (if the git clean doesn't reveal some problem, although
-I can't imagine).
-
-Regards,
-Ard
-
--- 
-.signature not found
+jirka
