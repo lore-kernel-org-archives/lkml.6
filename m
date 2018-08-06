@@ -2,144 +2,106 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8647C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 08:37:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BF1DC4646D
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 08:37:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80646214DC
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 08:37:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="QBQYVdXp";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="IoJ7TFfG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80646214DC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 1CB73214DC
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 08:37:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CB73214DC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=au1.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727434AbeHFKpn (ORCPT
+        id S1727535AbeHFKpq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 06:45:43 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:46148 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725951AbeHFKpm (ORCPT
+        Mon, 6 Aug 2018 06:45:46 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54012 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725951AbeHFKpp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 06:45:42 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 5F95A604BE; Mon,  6 Aug 2018 08:37:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533544663;
-        bh=0qKgZSUE2DjPo7VCqS67fpJL0G/P0pih+tcFb0Xkh9U=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=QBQYVdXpLSjE80pxI6pWhYRxqUVag/SGnXV98o6yRzXgAlqt2aCZkR7/MxyK4zZH7
-         BqCC6NnMYVna+nvBaytORc/FN/Pjqq4E05+121ClED29TLgrc8vvSwKpKMzeK1Ih+t
-         sSFeqY90BXj058ZxHJCijN5NaXU1SwFHLHfihiZc=
-Received: from codeaurora.org (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        Mon, 6 Aug 2018 06:45:45 -0400
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w768XVSg020277
+        for <linux-kernel@vger.kernel.org>; Mon, 6 Aug 2018 04:37:46 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2kpgd85y4s-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Aug 2018 04:37:46 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <andrew.donnellan@au1.ibm.com>;
+        Mon, 6 Aug 2018 09:37:43 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 6 Aug 2018 09:37:41 +0100
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w768beAO36962412
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 6 Aug 2018 08:37:40 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0B2AF4C04A;
+        Mon,  6 Aug 2018 11:37:50 +0100 (BST)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AC5234C040;
+        Mon,  6 Aug 2018 11:37:49 +0100 (BST)
+Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon,  6 Aug 2018 11:37:49 +0100 (BST)
+Received: from [10.61.2.125] (haven.au.ibm.com [9.192.254.114])
         (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
         (No client certificate requested)
-        (Authenticated sender: pkondeti@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id E7BF5604BE;
-        Mon,  6 Aug 2018 08:37:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533544662;
-        bh=0qKgZSUE2DjPo7VCqS67fpJL0G/P0pih+tcFb0Xkh9U=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=IoJ7TFfGOp/bzYffsAPSk4qZe5SD+JzCQfLuM7LXTlBDN6rMEEZEAVWUDcbxZjHbf
-         5hcbT+6gLoMXBkwZRrBzZhkmqrYTCR5k13FihIZ5W5iGHztamwR47wsCmGgsUHHmr8
-         q3vsbK+KuWqLlbMrdAQVuIwL1zYqjRHbmfY8x238=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E7BF5604BE
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=pkondeti@codeaurora.org
-Date:   Mon, 6 Aug 2018 14:07:36 +0530
-From:   Pavan Kondeti <pkondeti@codeaurora.org>
-To:     Sodagudi Prasad <psodagud@codeaurora.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        isaacm@codeaurora.org, matt@codeblueprint.co.uk, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH] stop_machine: Disable preemption after queueing stopper
- threads
-Message-ID: <20180806083736.GA2661@codeaurora.org>
-References: <1531856129-9871-1-git-send-email-isaacm@codeaurora.org>
- <a30d1e147d3181fc7b294262e380a10c@codeaurora.org>
- <20180724062350.nlem2suuy5wlxpts@linutronix.de>
- <alpine.DEB.2.21.1807301220280.2518@nanos.tec.linutronix.de>
- <20180730112140.GH2494@hirez.programming.kicks-ass.net>
- <alpine.DEB.2.21.1807301440340.2518@nanos.tec.linutronix.de>
- <109d0e70606ccd34861a80525d6d11aa@codeaurora.org>
- <20180730210728.GQ2494@hirez.programming.kicks-ass.net>
- <52a34ed365cd560457e9abf5877c5b37@codeaurora.org>
+        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 39BE5A01A5;
+        Mon,  6 Aug 2018 18:37:37 +1000 (AEST)
+Subject: Re: [RFC PATCH 1/2] checkpatch: Correctly detect git commit
+ references that span 3 lines
+To:     Joe Perches <joe@perches.com>, linux-kernel@vger.kernel.org,
+        apw@canonical.com
+Cc:     fbarrat@linux.vnet.ibm.com
+References: <20180806035809.24752-1-andrew.donnellan@au1.ibm.com>
+ <c99001394ca5cb13fefc56d5b854be1f4c7e0624.camel@perches.com>
+From:   Andrew Donnellan <andrew.donnellan@au1.ibm.com>
+Date:   Mon, 6 Aug 2018 18:37:37 +1000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <52a34ed365cd560457e9abf5877c5b37@codeaurora.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <c99001394ca5cb13fefc56d5b854be1f4c7e0624.camel@perches.com>
+Content-Language: en-AU
+X-TM-AS-GCONF: 00
+x-cbid: 18080608-0012-0000-0000-000002957F46
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18080608-0013-0000-0000-000020C78545
+Message-Id: <7a9ee916-bf83-1f84-1799-9e668d0b3712@au1.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-06_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=587 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808060095
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Prasad,
+On 06/08/18 15:07, Joe Perches wrote:
+> The multiple line block code can be difficult to read.
 
-On Wed, Aug 01, 2018 at 01:07:03AM -0700, Sodagudi Prasad wrote:
-> On 2018-07-30 14:07, Peter Zijlstra wrote:
-> >On Mon, Jul 30, 2018 at 10:12:43AM -0700, Sodagudi Prasad wrote:
-> >>How about including below change as well?  Currently, there is
-> >>no way to
-> >>identify thread migrations completed or not.  When we observe
-> >>this issue,
-> >>the symptom was work queue lock up. It is better to have some
-> >>timeout here
-> >>and induce the bug_on.
-> >
-> >You'd trigger the soft-lockup or hung-task detector I think. And
-> >if not,
-> >we ought to look at making it trigger at least one of those.
-> >
-> >>There is no way to identify the migration threads stuck or not.
-> >
-> >Should be pretty obvious from the splat generated by the above, no?
-> Hi Peter and Thomas,
-> 
-> Thanks for your support.
-> I have another question on this flow and retry mechanism used in
-> this cpu_stop_queue_two_works() function using the global variable
-> stop_cpus_in_progress.
-> 
-> This variable is getting used in various paths, such as task
-> migration, set task affinity, and CPU hotplug.
-> 
-> For example cpu hotplug path, stop_cpus_in_progress variable getting
-> set with true with out checking.
-> takedown_cpu()
-> --stop_machine_cpuslocked()
-> ---stop_cpus()
-> ---__stop_cpus()
-> ----queue_stop_cpus_work()
-> setting stop_cpus_in_progress to true directly.
-> 
-> But in the task migration path only, the stop_cpus_in_progress
-> variable is used for retry.
-> 
-> I am thinking that stop_cpus_in_progress variable lead race
-> conditions, where CPU hotplug and task migration happening
-> simultaneously. Please correct me If my understanding wrong.
-> 
+I 100% agree!
 
-The stop_cpus_in_progress variable is to guard against out of order queuing.
-The stopper locks does not protect this when cpu_stop_queue_two_works() and
-stop_cpus() are executing in parallel.
+> My suggestion is to instead write a subroutine to get the
+> commit description and compare that against the returned
+> git commit description.
 
-stop_one_cpu_{nowait} functions are called to handle affinity change and
-load balance. Since we are queuing the work only on 1 CPU,
-stop_cpus_in_progress variable protection is not needed.
+I'll try and do it up more neatly when I've got some spare time over the 
+next few days and send a v2.
 
 Thanks,
-Pavan
 -- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
+Andrew Donnellan              OzLabs, ADL Canberra
+andrew.donnellan@au1.ibm.com  IBM Australia Limited
 
