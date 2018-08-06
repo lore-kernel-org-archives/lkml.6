@@ -2,167 +2,81 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67EB4C46471
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 09:41:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 585EFC46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 09:42:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BA05219EB
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 09:41:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BA05219EB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 1D444219EB
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 09:42:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D444219EB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728060AbeHFLtd (ORCPT
+        id S1727490AbeHFLuY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 07:49:33 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:33269 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726699AbeHFLtd (ORCPT
+        Mon, 6 Aug 2018 07:50:24 -0400
+Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:54356 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726640AbeHFLuY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 07:49:33 -0400
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <sha@pengutronix.de>)
-        id 1fmc0m-0000RO-Qh; Mon, 06 Aug 2018 11:41:12 +0200
-Received: from sha by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <sha@pengutronix.de>)
-        id 1fmc0l-0001tc-GP; Mon, 06 Aug 2018 11:41:11 +0200
-Date:   Mon, 6 Aug 2018 11:41:11 +0200
-From:   Sascha Hauer <s.hauer@pengutronix.de>
-To:     Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc:     Mark Brown <broonie@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
-        alexandre.belloni@bootlin.com
-Subject: Re: [PATCH RESEND 2/5] spi: imx: Use dynamic bursts only when
- bits_per_word is 8, 16 or 32
-Message-ID: <20180806094111.uutolczqccm2e2ot@pengutronix.de>
-References: <20180717143154.28241-1-maxime.chevallier@bootlin.com>
- <20180717143154.28241-3-maxime.chevallier@bootlin.com>
+        Mon, 6 Aug 2018 07:50:24 -0400
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+        by mx0a-001ae601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w769d39l028038;
+        Mon, 6 Aug 2018 04:41:40 -0500
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
+Received: from mail1.cirrus.com (mail1.cirrus.com [141.131.3.20])
+        by mx0a-001ae601.pphosted.com with ESMTP id 2kn9j1j6rg-1;
+        Mon, 06 Aug 2018 04:41:40 -0500
+Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
+        by mail1.cirrus.com (Postfix) with ESMTP id 4CD8A611C8AD;
+        Mon,  6 Aug 2018 04:41:39 -0500 (CDT)
+Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
+ (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Mon, 6 Aug 2018
+ 10:41:38 +0100
+Received: from imbe.wolfsonmicro.main (imbe.wolfsonmicro.main [198.61.95.81])
+        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id w769faHN031995; Mon,
+ 6 Aug 2018 10:41:36 +0100
+Date:   Mon, 6 Aug 2018 10:41:36 +0100
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+CC:     <alsa-devel@alsa-project.org>, Takashi Iwai <tiwai@suse.com>,
+        "Jaroslav Kysela" <perex@perex.cz>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>
+Subject: Re: [PATCH 04/12] ASoC: wm8990: use true and false for boolean values
+Message-ID: <20180806094136.GH18740@imbe.wolfsonmicro.main>
+References: <cover.1533418275.git.gustavo@embeddedor.com>
+ <3d81e99b93dbe0d5b84083d3fdf6c86b44f210ef.1533418275.git.gustavo@embeddedor.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20180717143154.28241-3-maxime.chevallier@bootlin.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-IRC:  #ptxdist @freenode
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-Uptime: 11:40:30 up 54 days, 18:49, 57 users,  load average: 0.29, 0.15,
- 0.14
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <3d81e99b93dbe0d5b84083d3fdf6c86b44f210ef.1533418275.git.gustavo@embeddedor.com>
+User-Agent: Mutt/1.5.20 (2009-12-10)
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=991 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1807170000
+ definitions=main-1808060105
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 17, 2018 at 04:31:51PM +0200, Maxime Chevallier wrote:
-> The dynamic bursts mode allows to group together multiple words into a
-> single burst. To do so, it's necessary that words can be packed into the
-> 32-bits FIFO entries, so we can't allow using this mode with bit_per_words
-> different to 8, 16 or 32.
+On Sat, Aug 04, 2018 at 04:51:01PM -0500, Gustavo A. R. Silva wrote:
+> Return statements in functions returning bool should use true or false
+> instead of an integer value.
 > 
-> This prevents shitfing out extra clock ticks for transfers with
-
-s/shitfing/shifting/
-
-> bit_per_word values not aligned on 8 bits.
+> This code was detected with the help of Coccinelle.
 > 
-> With that , we are sure that only the correct number of bits is
-> shifted out at each transfer, so we don't need to mask out the remaining
-> parts of the words.
-> 
-> Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
-
-Reviewed-by: Sascha Hauer <s.hauer@pengutronix.de>
-
-Sascha
-
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 > ---
->  drivers/spi/spi-imx.c | 23 +++++++++--------------
->  1 file changed, 9 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/spi/spi-imx.c b/drivers/spi/spi-imx.c
-> index d75153c995af..ecafbda5ec94 100644
-> --- a/drivers/spi/spi-imx.c
-> +++ b/drivers/spi/spi-imx.c
-> @@ -95,7 +95,6 @@ struct spi_imx_data {
->  	const void *tx_buf;
->  	unsigned int txfifo; /* number of words pushed in tx FIFO */
->  	unsigned int dynamic_burst, read_u32;
-> -	unsigned int word_mask;
->  
->  	/* Slave mode */
->  	bool slave_mode;
-> @@ -291,7 +290,6 @@ static void spi_imx_buf_rx_swap_u32(struct spi_imx_data *spi_imx)
->  		else if (bytes_per_word == 2)
->  			val = (val << 16) | (val >> 16);
->  #endif
-> -		val &= spi_imx->word_mask;
->  		*(u32 *)spi_imx->rx_buf = val;
->  		spi_imx->rx_buf += sizeof(u32);
->  	}
-> @@ -322,7 +320,6 @@ static void spi_imx_buf_tx_swap_u32(struct spi_imx_data *spi_imx)
->  
->  	if (spi_imx->tx_buf) {
->  		val = *(u32 *)spi_imx->tx_buf;
-> -		val &= spi_imx->word_mask;
->  		spi_imx->tx_buf += sizeof(u32);
->  	}
->  
-> @@ -1102,25 +1099,23 @@ static int spi_imx_setupxfer(struct spi_device *spi,
->  	spi_imx->bits_per_word = t->bits_per_word;
->  	spi_imx->speed_hz  = t->speed_hz;
->  
-> -	/* Initialize the functions for transfer */
-> -	if (spi_imx->devtype_data->dynamic_burst && !spi_imx->slave_mode) {
-> -		u32 mask;
-> +	/*
-> +	 * Initialize the functions for transfer. To transfer non byte-aligned
-> +	 * words, we have to use multiple word-size bursts, we can't use
-> +	 * dynamic_burst in that case.
-> +	 */
-> +	if (spi_imx->devtype_data->dynamic_burst && !spi_imx->slave_mode &&
-> +	    (spi_imx->bits_per_word == 8 ||
-> +	    spi_imx->bits_per_word == 16 ||
-> +	    spi_imx->bits_per_word == 32)) {
->  
->  		spi_imx->read_u32  = 1;
->  
-> -		mask = (1 << spi_imx->bits_per_word) - 1;
->  		spi_imx->rx = spi_imx_buf_rx_swap;
->  		spi_imx->tx = spi_imx_buf_tx_swap;
->  		spi_imx->dynamic_burst = 1;
->  		spi_imx->remainder = t->len;
->  
-> -		if (spi_imx->bits_per_word <= 8)
-> -			spi_imx->word_mask = mask << 24 | mask << 16
-> -					     | mask << 8 | mask;
-> -		else if (spi_imx->bits_per_word <= 16)
-> -			spi_imx->word_mask = mask << 16 | mask;
-> -		else
-> -			spi_imx->word_mask = mask;
->  	} else {
->  		if (spi_imx->bits_per_word <= 8) {
->  			spi_imx->rx = spi_imx_buf_rx_u8;
-> -- 
-> 2.11.0
-> 
-> 
 
--- 
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+
+Thanks,
+Charles
