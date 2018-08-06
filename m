@@ -2,139 +2,114 @@ Return-Path: <SRS0=/Ixz=KV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17372C4646D
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 13:20:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72BEAC46471
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 13:23:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0C9921A34
-	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 13:20:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0C9921A34
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 2885C21A35
+	for <linux-kernel@archiver.kernel.org>; Mon,  6 Aug 2018 13:23:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2885C21A35
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729796AbeHFP3j (ORCPT
+        id S1729706AbeHFPdB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 11:29:39 -0400
-Received: from foss.arm.com ([217.140.101.70]:38554 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726901AbeHFP3j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 11:29:39 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 984D615A2;
-        Mon,  6 Aug 2018 06:20:34 -0700 (PDT)
-Received: from [0.0.0.0] (e107985-lin.Emea.Arm.com [10.4.12.239])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A40303F2EA;
-        Mon,  6 Aug 2018 06:20:29 -0700 (PDT)
-Subject: Re: [PATCH v5 09/14] sched: Add over-utilization/tipping point
- indicator
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     Quentin Perret <quentin.perret@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Chris Redpath <chris.redpath@arm.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Thara Gopinath <thara.gopinath@linaro.org>,
-        viresh kumar <viresh.kumar@linaro.org>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        "Cc: Steve Muckle" <smuckle@google.com>, adharmap@quicinc.com,
-        "Kannan, Saravana" <skannan@quicinc.com>, pkondeti@codeaurora.org,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        currojerez@riseup.net, Javi Merino <javi.merino@kernel.org>
-References: <20180802153035.vjtmqwdwujvt7ojs@queper01-lin>
- <CAKfTPtCGGqykN027kxK+chvKvCpNu4bYYdvfZJ+3_7YzT3Utfg@mail.gmail.com>
- <20180802160009.uhwwj3tqrqmv7q5a@queper01-lin>
- <CAKfTPtB_tWgOPCB3q2Q2rESKczTPGBDUojcXDY7uP8YTQddBMg@mail.gmail.com>
- <20180802161027.v2ctgscuc4uxbb7u@queper01-lin>
- <CAKfTPtDtaF9Qs4NWkKWUSr8Ryi-ScYNmPyacocPQUPxT00XAYg@mail.gmail.com>
- <20180802165924.7ywgoxj2jwftxycz@queper01-lin>
- <CAKfTPtDsG4FJy5xBO8+6pJzehEM668=SZ4yQ-szVTduofN3QZg@mail.gmail.com>
- <20180803081850.hj7bp5ognuywapmd@queper01-lin>
- <CAKfTPtDkJY=JYicZk8sM9_mJ-iq+Jwse0oVRbW=wpxXKKnEoeQ@mail.gmail.com>
- <20180803155547.sxlhxpmhwcoappit@queper01-lin>
- <CAKfTPtBT-p-Z0EneirfOTwUw=5jEeDGa+4_EE4ogi2Ht7GU9Bg@mail.gmail.com>
- <68689fcb-3cb8-4685-58ef-0bec84be2047@arm.com>
- <CAKfTPtADSDJJaPr17zD8ZNtS7CQGBwfU6JDGRwssLN20zyW7Nw@mail.gmail.com>
- <1cac0d16-9f50-ed30-2460-340b077faa57@arm.com>
- <CAKfTPtDZs2_4skbGFJkrtq1Z+G_MWue7xC3tcoLs5xcpsBkNUw@mail.gmail.com>
-From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
-Message-ID: <454ee0da-9c6c-6944-25e5-0fbbf89bc3b6@arm.com>
-Date:   Mon, 6 Aug 2018 15:20:27 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 6 Aug 2018 11:33:01 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45926 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728415AbeHFPdB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 11:33:01 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id AD43B87A87;
+        Mon,  6 Aug 2018 13:23:55 +0000 (UTC)
+Received: from krava (unknown [10.43.17.214])
+        by smtp.corp.redhat.com (Postfix) with SMTP id AD40D213ED6A;
+        Mon,  6 Aug 2018 13:23:53 +0000 (UTC)
+Date:   Mon, 6 Aug 2018 15:23:53 +0200
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Oleg Nesterov <oleg@redhat.com>
+Cc:     Jiri Olsa <jolsa@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Milind Chabbi <chabbi.milind@gmail.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        David Ahern <dsahern@gmail.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Frederic Weisbecker <frederic@kernel.org>
+Subject: Re: [PATCH 2/2] perf/hw_breakpoint: Modify breakpoint even if the
+ new attr has disabled set
+Message-ID: <20180806132353.GA7463@krava>
+References: <20180806101241.6444-1-jolsa@kernel.org>
+ <20180806101241.6444-3-jolsa@kernel.org>
+ <20180806124839.GC7840@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <CAKfTPtDZs2_4skbGFJkrtq1Z+G_MWue7xC3tcoLs5xcpsBkNUw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180806124839.GC7840@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 06 Aug 2018 13:23:55 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 06 Aug 2018 13:23:55 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/06/2018 02:37 PM, Vincent Guittot wrote:
-> On Mon, 6 Aug 2018 at 14:29, Dietmar Eggemann <dietmar.eggemann@arm.com> wrote:
->>
->> On 08/06/2018 12:33 PM, Vincent Guittot wrote:
->>> On Mon, 6 Aug 2018 at 12:08, Dietmar Eggemann <dietmar.eggemann@arm.com> wrote:
->>>>
->>>> On 08/06/2018 10:40 AM, Vincent Guittot wrote:
->>>>> On Fri, 3 Aug 2018 at 17:55, Quentin Perret <quentin.perret@arm.com> wrote:
->>>>>>
->>>>>> On Friday 03 Aug 2018 at 15:49:24 (+0200), Vincent Guittot wrote:
->>>>>>> On Fri, 3 Aug 2018 at 10:18, Quentin Perret <quentin.perret@arm.com> wrote:
->>>>>>>>
->>>>>>>> On Friday 03 Aug 2018 at 09:48:47 (+0200), Vincent Guittot wrote:
->>>>>>>>> On Thu, 2 Aug 2018 at 18:59, Quentin Perret <quentin.perret@arm.com> wrote:
->>>>
->>>> [...]
->>>>
->>>>>> I think we're discussing two different things right now:
->>>>>>        1. Should forkees go in find_energy_efficient_cpu() ?
->>>>>>        2. Should forkees have 0 of initial util_avg when EAS is enabled ?
->>>>>
->>>>> It's the same topic: How EAS should consider a newly created task ?
->>>>>
->>>>> For now, we let the "performance" mode selects a CPU. This CPU will
->>>>> most probably be worst CPU from a EAS pov because it's the idlest CPU
->>>>> in the idlest group which is the opposite of what EAS tries to do
->>>>>
->>>>> The current behavior is :
->>>>> For every new task, the cpu selection is done assuming it's a heavy
->>>>> task with the max possible load_avg,  and it looks for the idlest cpu.
->>>>> This means that if the system is lightly loaded, scheduler will select
->>>>> most probably a idle big core.
->>>>
->>>> AFAICS, task load doesn't seem to be used for find_idlest_cpu() (
->>>> find_idlest_group() and find_idlest_group_cpu()). So the forkee
->>>> (SD_BALANCE_FORK) is placed independently of his task load.
->>>
->>> hmm ... so what is used if load or runnable load are not used ?
->>> find_idlest_group() uses load and runnable load but skip spare
->>> capacity in case of fork
->>
->> Yes, runnable load and load are used, but from the cpus, not from the task.
+On Mon, Aug 06, 2018 at 02:48:40PM +0200, Oleg Nesterov wrote:
+> On 08/06, Jiri Olsa wrote:
+> >
+> > We need to change the breakpoint even if the attr with
+> > new fields has disabled set to true.
 > 
-> yes that's right, I have skipped the "task" word when reading.
-> So scheduler looks for the idlest CPU taking into account only CPU
-> loads. Then the task load starts to highest value until it get a
-> chance to reduce and stabilize to its final value
-
-This could potentially allow us to find a better init value for 
-sa->[runnable]_load_avg. At least we could use the information of the 
-initial task rq.
-
+> Agreed... The patch looks fine to me, but I have a question
 > 
->>
->> [...]
+> >  int modify_user_hw_breakpoint(struct perf_event *bp, struct perf_event_attr *attr)
+> >  {
+> > +	int err;
+> > +
+> >  	/*
+> >  	 * modify_user_hw_breakpoint can be invoked with IRQs disabled and hence it
+> >  	 * will not be possible to raise IPIs that invoke __perf_event_disable.
+> > @@ -520,11 +522,11 @@ int modify_user_hw_breakpoint(struct perf_event *bp, struct perf_event_attr *att
+> >  	else
+> >  		perf_event_disable(bp);
+> >  
+> > -	if (!attr->disabled) {
+> > -		int err = modify_user_hw_breakpoint_check(bp, attr, false);
+> > +	err = modify_user_hw_breakpoint_check(bp, attr, false);
+> > +	if (err)
+> > +		return err;
+> >  
+> > -		if (err)
+> > -			return err;
+> > +	if (!attr->disabled) {
+> >  		perf_event_enable(bp);
+> >  		bp->attr.disabled = 0;
+> 
+> Afaics you do not need to clear attr.disabled, modify_user_hw_breakpoint_check()
+> updates it if err = 0. So I think
+> 
+> 	if (!bp->attr.disabled)
+> 		perf_event_enable(bp);
+> 
+> will look a bit better.
+> 
+> 
+> But, with or without this fix, shouldn't we set .disabled = 1 if modify_() fails?
+> IIUC this doesn't matter, bp->attr.disabled is not really used anyway, but looks a
+> bit confusing.
+> 
 
+yea, I was looking on that, but as u said it makes no difference
+and I wanted to keep the patch as simple as possible ;-)
+
+I'll send something on top of this patch
+
+jirka
