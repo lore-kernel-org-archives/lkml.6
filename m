@@ -2,108 +2,158 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8A1FC46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 07:33:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8776C46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 07:37:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79EFE2177A
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 07:33:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79EFE2177A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id 7C3EB2177A
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 07:37:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C3EB2177A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388915AbeHGJq5 convert rfc822-to-8bit (ORCPT
+        id S2388893AbeHGJuU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 05:46:57 -0400
-Received: from mail-ua0-f193.google.com ([209.85.217.193]:35579 "EHLO
-        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732805AbeHGJq4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 05:46:56 -0400
-Received: by mail-ua0-f193.google.com with SMTP id q12-v6so15076879ual.2;
-        Tue, 07 Aug 2018 00:33:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=RIztZSW56qlEmpFi4Woqf2wd8+YujPd82HedacZbr7A=;
-        b=qJENOlC5YKCWvu8GcUkAWrqUe5f7wYgjQS5Bhx43ctYiPZmYeBlBOjd2c5/4uxPYwn
-         9F3ejxEWdb04k7/8MuZJzBhgLtMRql1YgqoH4R+jY7fEL9tDAtWUcTqKGGmfYvvTBJ/G
-         sp8z1lOlWs63J/mnIEkD5bPgwh6mo3k5sP0kWjfkp88Zs2iFUKVRlbhUcmlDeTejPHi7
-         +m7lvwQwU16bFI96XLvPbbZweQwUPZHQe/M4R54kLIAULC/0gxnJxjRWmUw/H4Io+o1t
-         7jslAxY9p0DvI33DoSWY7v06hlQYUl6j0UgECeI/3FpwzgtaKlUDq6zrH3bAv+bDfVV3
-         8xjg==
-X-Gm-Message-State: AOUpUlFkaiAkQ8KrMYPCdBINMd5e+BmQbPm+U66vqmwBEql510Pw4Q9u
-        bQhJh/SdpkUPoKT5FtAnnZ8zKjh5cVjxsSxnu5H6I4cy
-X-Google-Smtp-Source: AAOMgpcae72AYYRxaexs4Jin4o9qoUM+RYscsmBy6B4OH4ZhSWRt9dfo3cto9RiF0VOn1ui1qE8nD71QwzkgNw/1vnw=
-X-Received: by 2002:a9f:37c8:: with SMTP id q66-v6mr12521003uaq.180.1533627233144;
- Tue, 07 Aug 2018 00:33:53 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180803030237.3366-1-songjun.wu@linux.intel.com>
- <20180803030237.3366-15-songjun.wu@linux.intel.com> <20180803055640.GA32226@kroah.com>
- <763bba56-3701-7fe9-9b31-4710594b40d5@linux.intel.com> <20180803103023.GA6557@kroah.com>
- <3360edd2-f3d8-b860-13fa-ce680edbfd0a@hauke-m.de> <20180804124309.GB4920@kroah.com>
- <CAK8P3a3qs34LuhPeaef2wPHYEWbYO5N-4n7763BcaDyppiJ6DA@mail.gmail.com>
- <acd28f40-4342-7f67-8468-7d4578f614a1@linux.intel.com> <CAMuHMdWY9NuYOXq8sD9wmH48=vhMcSBomRY9ZbC+tGE3PGiTGg@mail.gmail.com>
- <0ab8e6e7-3cc2-8e50-b1f3-99616437f527@linux.intel.com> <CAMuHMdUJ8-bveoHWOetjrHtq2HNPnf00PidQwJ-kZD2o86KLMw@mail.gmail.com>
- <d6d0be20-aea9-cecf-1e39-3d65c0dbad5f@linux.intel.com>
-In-Reply-To: <d6d0be20-aea9-cecf-1e39-3d65c0dbad5f@linux.intel.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 7 Aug 2018 09:33:39 +0200
-Message-ID: <CAMuHMdXADda8fuc9_oTGQFPUnYs8gX-Bp6md5fJgu=wHvM-duw@mail.gmail.com>
-Subject: Re: [PATCH v2 14/18] serial: intel: Add CCF support
-To:     songjun.wu@linux.intel.com
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Hauke Mehrtens <hauke@hauke-m.de>, hua.ma@linux.intel.com,
-        yixin.zhu@linux.intel.com, chuanhua.lei@linux.intel.com,
-        qi-ming.wu@intel.com,
-        Linux MIPS Mailing List <linux-mips@linux-mips.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
+        Tue, 7 Aug 2018 05:50:20 -0400
+Received: from mga01.intel.com ([192.55.52.88]:3687 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732805AbeHGJuU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 05:50:20 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Aug 2018 00:37:16 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,454,1526367600"; 
+   d="scan'208";a="246785540"
+Received: from chenyu-desktop.sh.intel.com (HELO chenyu-desktop) ([10.239.160.116])
+  by orsmga005.jf.intel.com with ESMTP; 07 Aug 2018 00:36:57 -0700
+Date:   Tue, 7 Aug 2018 15:43:12 +0800
+From:   Yu Chen <yu.c.chen@intel.com>
+To:     joeyli <jlee@suse.com>
+Cc:     Pavel Machek <pavel@ucw.cz>, Ryan Chen <yu.chen.surf@gmail.com>,
+        oneukum@suse.com, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        ebiggers@google.com, Theodore Ts'o <tytso@mit.edu>,
+        smueller@chronox.de, denkenz@gmail.com,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        linux-crypto@vger.kernel.org,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jiri Slaby <jslaby@suse.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+        kookoo.gu@intel.com, Zhang Rui <rui.zhang@intel.com>
+Subject: Re: [PATCH 0/4][RFC v2] Introduce the in-kernel hibernation
+ encryption
+Message-ID: <20180807074312.GB17894@chenyu-desktop>
+References: <20180723162302.GA4503@sandybridge-desktop>
+ <1532590246.7411.3.camel@suse.com>
+ <20180726081404.GG4244@linux-l9pv.suse>
+ <20180730170415.GQ4244@linux-l9pv.suse>
+ <20180803033702.GB416@sandybridge-desktop>
+ <20180803053445.GC4244@linux-l9pv.suse>
+ <CADjb_WSURQz86+E8kakNf7UBDM+aho+uaz3QdDkuGsEgan=szw@mail.gmail.com>
+ <20180805100200.GB22948@amd>
+ <20180806084534.GB12124@chenyu-desktop>
+ <20180806103958.GI27062@linux-l9pv.suse>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180806103958.GI27062@linux-l9pv.suse>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Songjun,
-
-On Tue, Aug 7, 2018 at 9:18 AM Wu, Songjun <songjun.wu@linux.intel.com> wrote:
-> On 8/6/2018 5:29 PM, Geert Uytterhoeven wrote:
-> > On Mon, Aug 6, 2018 at 10:58 AM Wu, Songjun <songjun.wu@linux.intel.com> wrote:
-> >> The reason we add a new head file is also for two macros(LTQ_EARLY_ASC
-> >> and CPHYSADDR)
-> >> used by legacy product. We need to provide the no-op stub for these two
-> >> macro for new product.
-> > No you don't. The line number should not be obtained by comparing the
-> > resource address with a hardcoded base address.
-> This is the previous code. Now the line number is obtained from dts.
-
-Note that obtaining line numbers from DTS has its own share of problems, when
-considering DT overlays. I've replied to the patch adding the call to
-of_alias_get_id().
-
-> We keep this code for the compatibility.
+On Mon, Aug 06, 2018 at 06:39:58PM +0800, joeyli wrote:
+> On Mon, Aug 06, 2018 at 04:45:34PM +0800, Yu Chen wrote:
+> > Hi Pavel,
+> > On Sun, Aug 05, 2018 at 12:02:00PM +0200, Pavel Machek wrote:
+> > > Hi!
+> > > 
+> > > > > User space doesn't need to involve. The EFI root key is generated by
+> > > > > EFI boot stub and be transfer to kernel. It's stored in EFI boot service
+> > > > > variable that it can only be accessed by trusted EFI binary when
+> > > > > secure boot is enabled.
+> > > > >
+> > > > Okay, this apply to the 'suspend' phase, right?
+> > > > I'm still a little confused about the 'resume' phase.
+> > > > Taking encryption as example(not signature),
+> > > > the purpose of doing hibernation encryption is to prevent other users
+> > > > from stealing ram content. Say, user A uses a  passphrase to generate the
+> > > 
+> > > No, I don't think that's purpose here.
+> > > 
+> > > Purpose here is to prevent user from reading/modifying kernel memory
+> > > content on machine he owns.
+> > >
+> > Say, A puts his laptop into hibernation and walks away,
+> > and B walks by, and opens A's laptop and wakes up the system and he
+> > can do what he wants. Although EFI key/TPM trusted key is enabled,
+> > currently there's no certification during resume, which sounds
+> > unsafe to me. Afterall, the original requirement is to probe
+> > user for password during resume, which sounds more natural.
+> 
+> OK, I saw your case. This is a physical accessing.
+> 
+> I have a question: The suspend to memory also has the same behavior
+> and more people are using suspend. Should we think a common solution
+> to cover S3 and S4? 
 >
-> Referring to the conditional-compilation part in coding-style,
-> We add a header file to avoid using “#ifdef” in C file.
-> > Perhaps the override of port->line should just be removed, as IIRC, the serial
-> > core has already filled in that field with the (next available) line number?
+Since STD behaves more likely a boot up, STR does not have solid
+requirement for certification.
+> > > Strange as it may sound, that is what "secure" boot requires (and what
+> > > Disney wants).
+> > > 
+> > Ok, I understand this requirement, and I'm also concerning how to
+> > distinguish different users from seeing data of each other.
+> > 
+> > Joey,
+> > I'm thinking of a possible direction which could take advantage
+> > of the password.  It leverages either EFI key or TPM
+> > trusted key to get it done. Does it make sense?
+> > 
+> > 1. The user space generates a symetric key key_user using
+> >    the password, and passes the key_user to the kernel as the master
+> >    key.
+> > 2. The kernel uses the EFI key or TPM trusted key to encrypt
+> >    the key_user thus gets a encrypt_key.
+> > 3. Uses the encrypt_key to do snapshot encryption
+> > 4. During resume, the same encrypt_key is generated following
+> >    the same steps(I assume the same EFI key or TPM key could be fetched
+> >    during resumed, right?) and do the snapshot decryption.
+> >
+> 
+> Yes, we can use TPM key to protect the user key. But I suggest that we
+> should give user a function to disable the user key because not everyone
+> want to key-in a password for hibernate/resume and also snapshot image
+> encryption.
+> 
+> Two policies:
+> - When user key-in user key, the snapshot image must be encryption.
+> - Without key-in user key, I still want the snapshot image can be encryption.
+> 
+> No matter that the user key be key-in or not, the snapshot image must be
+> encrypted by a kernel key. So I suggest that we treat the user key as a salt
+> for snapshot image encryption and authentication. If the user key
+> be disabled, then kernel just generates a random number as a salt.
+> 
+> Actually, the kernel must compares the user key before snapshot decryption.
+> If the user key doesn't match but user space still triggers furture resume
+> process. Then kernel direct drops the snapshot image. 
+>  
+Anyway I'm ok with using TPM for major 'security', please feel free
+to send a second version out, and for certification implementation
+we can have further discussion on that later.
 
-Gr{oetje,eeting}s,
-
-                        Geert--
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Best,
+Yu
+> > And this is what fscrypt is doing:
+> > Documentation/filesystems/fscrypt.rst
+> >
+> The use case is different. We have two key for two purposes. And the two
+> functions can be separated.
+> 
+> Thanks
+> Joey Lee
