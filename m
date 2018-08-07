@@ -6,43 +6,39 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92EEEC46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:53:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C24CC46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:53:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 509A62170A
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:53:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 509A62170A
+	by mail.kernel.org (Postfix) with ESMTP id 2DE152172E
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:53:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DE152172E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403929AbeHGVIl (ORCPT
+        id S2389989AbeHGVIo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 17:08:41 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33130 "EHLO
+        Tue, 7 Aug 2018 17:08:44 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33138 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726419AbeHGVIl (ORCPT
+        with ESMTP id S1726419AbeHGVIo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 17:08:41 -0400
+        Tue, 7 Aug 2018 17:08:44 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1B8C0D07;
-        Tue,  7 Aug 2018 18:52:58 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 38882D0E;
+        Tue,  7 Aug 2018 18:53:01 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Stephane Eranian <eranian@google.com>,
+        stable@vger.kernel.org,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Vince Weaver <vincent.weaver@maine.edu>, msys.mizuma@gmail.com
-Subject: [PATCH 4.17 08/18] perf/x86/intel/uncore: Fix hardcoded index of Broadwell extra PCI devices
-Date:   Tue,  7 Aug 2018 20:51:11 +0200
-Message-Id: <20180807172313.273929021@linuxfoundation.org>
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        bigeasy@linutronix.de, peterz@infradead.org
+Subject: [PATCH 4.17 09/18] nohz: Fix local_timer_softirq_pending()
+Date:   Tue,  7 Aug 2018 20:51:12 +0200
+Message-Id: <20180807172313.313970630@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180807172312.964272530@linuxfoundation.org>
 References: <20180807172312.964272530@linuxfoundation.org>
@@ -59,110 +55,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kan Liang <kan.liang@linux.intel.com>
+From: Anna-Maria Gleixner <anna-maria@linutronix.de>
 
-commit 156c8b58ef5cfd97245928c95669fd4cb0f9c388 upstream.
+commit 80d20d35af1edd632a5e7a3b9c0ab7ceff92769e upstream.
 
-Masayoshi Mizuma reported that a warning message is shown while a CPU is
-hot-removed on Broadwell servers:
+local_timer_softirq_pending() checks whether the timer softirq is
+pending with: local_softirq_pending() & TIMER_SOFTIRQ.
 
-  WARNING: CPU: 126 PID: 6 at arch/x86/events/intel/uncore.c:988
-  uncore_pci_remove+0x10b/0x150
-  Call Trace:
-   pci_device_remove+0x42/0xd0
-   device_release_driver_internal+0x148/0x220
-   pci_stop_bus_device+0x76/0xa0
-   pci_stop_root_bus+0x44/0x60
-   acpi_pci_root_remove+0x1f/0x80
-   acpi_bus_trim+0x57/0x90
-   acpi_bus_trim+0x2e/0x90
-   acpi_device_hotplug+0x2bc/0x4b0
-   acpi_hotplug_work_fn+0x1a/0x30
-   process_one_work+0x174/0x3a0
-   worker_thread+0x4c/0x3d0
-   kthread+0xf8/0x130
+This is wrong because TIMER_SOFTIRQ is the softirq number and not a
+bitmask. So the test checks for the wrong bit.
 
-This bug was introduced by:
+Use BIT(TIMER_SOFTIRQ) instead.
 
-  commit 15a3e845b01c ("perf/x86/intel/uncore: Fix SBOX support for Broadwell CPUs")
-
-The index of "QPI Port 2 filter" was hardcode to 2, but this conflicts with the
-index of "PCU.3" which is "HSWEP_PCI_PCU_3", which equals to 2 as well.
-
-To fix the conflict, the hardcoded index needs to be cleaned up:
-
- - introduce a new enumerator "BDX_PCI_QPI_PORT2_FILTER" for "QPI Port 2
-   filter" on Broadwell,
- - increase UNCORE_EXTRA_PCI_DEV_MAX by one,
- - clean up the hardcoded index.
-
-Debugged-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
-Suggested-by: Ingo Molnar <mingo@kernel.org>
-Reported-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
-Tested-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vince Weaver <vincent.weaver@maine.edu>
-Cc: msys.mizuma@gmail.com
+Fixes: 5d62c183f9e9 ("nohz: Prevent a timer interrupt storm in tick_nohz_stop_sched_tick()")
+Signed-off-by: Anna-Maria Gleixner <anna-maria@linutronix.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Reviewed-by: Daniel Bristot de Oliveira <bristot@redhat.com>
+Acked-by: Frederic Weisbecker <frederic@kernel.org>
+Cc: bigeasy@linutronix.de
+Cc: peterz@infradead.org
 Cc: stable@vger.kernel.org
-Fixes: 15a3e845b01c ("perf/x86/intel/uncore: Fix SBOX support for Broadwell CPUs")
-Link: http://lkml.kernel.org/r/1532953688-15008-1-git-send-email-kan.liang@linux.intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Link: https://lkml.kernel.org/r/20180731161358.29472-1-anna-maria@linutronix.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/events/intel/uncore.h       |    2 +-
- arch/x86/events/intel/uncore_snbep.c |   10 +++++++---
- 2 files changed, 8 insertions(+), 4 deletions(-)
+ kernel/time/tick-sched.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/events/intel/uncore.h
-+++ b/arch/x86/events/intel/uncore.h
-@@ -23,7 +23,7 @@
- #define UNCORE_PCI_DEV_TYPE(data)	((data >> 8) & 0xff)
- #define UNCORE_PCI_DEV_IDX(data)	(data & 0xff)
- #define UNCORE_EXTRA_PCI_DEV		0xff
--#define UNCORE_EXTRA_PCI_DEV_MAX	3
-+#define UNCORE_EXTRA_PCI_DEV_MAX	4
+--- a/kernel/time/tick-sched.c
++++ b/kernel/time/tick-sched.c
+@@ -642,7 +642,7 @@ static void tick_nohz_restart(struct tic
  
- #define UNCORE_EVENT_CONSTRAINT(c, n) EVENT_CONSTRAINT(c, n, 0xff)
+ static inline bool local_timer_softirq_pending(void)
+ {
+-	return local_softirq_pending() & TIMER_SOFTIRQ;
++	return local_softirq_pending() & BIT(TIMER_SOFTIRQ);
+ }
  
---- a/arch/x86/events/intel/uncore_snbep.c
-+++ b/arch/x86/events/intel/uncore_snbep.c
-@@ -1029,6 +1029,7 @@ void snbep_uncore_cpu_init(void)
- enum {
- 	SNBEP_PCI_QPI_PORT0_FILTER,
- 	SNBEP_PCI_QPI_PORT1_FILTER,
-+	BDX_PCI_QPI_PORT2_FILTER,
- 	HSWEP_PCI_PCU_3,
- };
- 
-@@ -3286,15 +3287,18 @@ static const struct pci_device_id bdx_un
- 	},
- 	{ /* QPI Port 0 filter  */
- 		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x6f86),
--		.driver_data = UNCORE_PCI_DEV_DATA(UNCORE_EXTRA_PCI_DEV, 0),
-+		.driver_data = UNCORE_PCI_DEV_DATA(UNCORE_EXTRA_PCI_DEV,
-+						   SNBEP_PCI_QPI_PORT0_FILTER),
- 	},
- 	{ /* QPI Port 1 filter  */
- 		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x6f96),
--		.driver_data = UNCORE_PCI_DEV_DATA(UNCORE_EXTRA_PCI_DEV, 1),
-+		.driver_data = UNCORE_PCI_DEV_DATA(UNCORE_EXTRA_PCI_DEV,
-+						   SNBEP_PCI_QPI_PORT1_FILTER),
- 	},
- 	{ /* QPI Port 2 filter  */
- 		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x6f46),
--		.driver_data = UNCORE_PCI_DEV_DATA(UNCORE_EXTRA_PCI_DEV, 2),
-+		.driver_data = UNCORE_PCI_DEV_DATA(UNCORE_EXTRA_PCI_DEV,
-+						   BDX_PCI_QPI_PORT2_FILTER),
- 	},
- 	{ /* PCU.3 (for Capability registers) */
- 		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x6fc0),
+ static ktime_t tick_nohz_next_event(struct tick_sched *ts, int cpu)
 
 
