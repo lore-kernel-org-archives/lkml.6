@@ -5,30 +5,30 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56066C46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 08:05:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56007C46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 08:05:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A9D221888
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 08:05:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A9D221888
+	by mail.kernel.org (Postfix) with ESMTP id 1B61421888
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 08:05:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B61421888
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727301AbeHGKSw (ORCPT
+        id S1729302AbeHGKS5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 06:18:52 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56758 "EHLO mx1.redhat.com"
+        Tue, 7 Aug 2018 06:18:57 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34932 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726886AbeHGKSw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 06:18:52 -0400
+        id S1726886AbeHGKS5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 06:18:57 -0400
 Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 27A878780F;
-        Tue,  7 Aug 2018 08:05:43 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id B65287C809;
+        Tue,  7 Aug 2018 08:05:47 +0000 (UTC)
 Received: from shalem.localdomain.com (ovpn-117-103.ams2.redhat.com [10.36.117.103])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9AE582166BA2;
-        Tue,  7 Aug 2018 08:05:40 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D69592166BA2;
+        Tue,  7 Aug 2018 08:05:45 +0000 (UTC)
 From:   Hans de Goede <hdegoede@redhat.com>
 To:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
         Len Brown <lenb@kernel.org>,
@@ -42,51 +42,74 @@ Cc:     Hans de Goede <hdegoede@redhat.com>,
         linux-kernel@vger.kernel.org,
         Heikki Krogerus <heikki.krogerus@linux.intel.com>,
         John Garry <john.garry@huawei.com>, linux-i2c@vger.kernel.org
-Subject: [PATCH v3 0/4] ACPI bugfix + i2c-multi-instantiate pseudo driver
-Date:   Tue,  7 Aug 2018 10:05:35 +0200
-Message-Id: <20180807080539.17811-1-hdegoede@redhat.com>
+Subject: [PATCH v3 2/4] ACPI / scan: Create platform device for fwnodes with multiple i2c devices
+Date:   Tue,  7 Aug 2018 10:05:37 +0200
+Message-Id: <20180807080539.17811-3-hdegoede@redhat.com>
+In-Reply-To: <20180807080539.17811-1-hdegoede@redhat.com>
+References: <20180807080539.17811-1-hdegoede@redhat.com>
 X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Tue, 07 Aug 2018 08:05:43 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Tue, 07 Aug 2018 08:05:43 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'hdegoede@redhat.com' RCPT:''
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Tue, 07 Aug 2018 08:05:47 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Tue, 07 Aug 2018 08:05:47 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'hdegoede@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi All,
+Some devices have multiple I2cSerialBus resources and for things to work
+an i2c-client must be instantiated for each, each with its own
+i2c_device_id.
 
-So here is my third attempt at dealing with multiple i2c devices being
-described in a single ACPI fwnode.
+Normally we only instantiate an i2c-client for the first resource, using
+the ACPI HID as id.
 
-Like the second attemp This is still based on having a special driver for
-these corner cases which can be a module and only loaded when on hardware
-which needs this.
+This commit adds a list of HIDs of devices, which need multiple i2c-clients
+instantiated from a single fwnode, to acpi_device_enumeration_by_parent and
+makes acpi_device_enumeration_by_parent return false for these devices so
+that a platform device will be instantiated.
 
-New this time around is that this now is a platform driver, avoiding the
-need for the I2C_CLIENT_IGNORE_BUSY hack and having 2 i2c-clients at
-the address of the first i2c ACPI resource.
+This allows the drivers/platform/x86/i2c-multi-instantiate.c driver, which
+knows which i2c_device_id to use for each resource, to bind to the fwnode
+and initiate an i2c-client for each resource.
 
-While working on the ACPI changes for enumerating ACPI nodes which
-are handled by the new i2c-multi-instantiate driver as platform devices
-I found a bug caused by a combination of my:
-"ACPI / scan: Use acpi_bus_get_status() to initialize ACPI_TYPE_DEVICE devs"
-and the somewhat (but not much) later added:
-"ACPI / scan: Do not enumerate Indirect IO host children"
-commits, specifically the second one does not work because of the first
-one, I guess it was tested against a kernel without the first commit.
-My changes for enumerating relevant ACPI nodes as platform devices
-hit the same problem.
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+---
+ drivers/acpi/scan.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-Thus the first patch of this series is an ACPI bugfix for that problem.
-The second patch changes acpi/scan.c to enumerate relevant ACPI nodes as
-platform devices.
-The third patch is an ACPI cleanup patch made possible by the first patch.
-All 3 these patches are new in this version of this series.
-
-And finally the fourth patch is the actual i2c-multi-instantiate driver,
-now as platform driver living under drivers/platform/x86 .
-
-Regards,
-
-Hans
+diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
+index 6799d00dd790..44068066d269 100644
+--- a/drivers/acpi/scan.c
++++ b/drivers/acpi/scan.c
+@@ -1540,6 +1540,18 @@ static bool acpi_device_enumeration_by_parent(struct acpi_device *device)
+ {
+ 	struct list_head resource_list;
+ 	bool is_serial_bus_slave = false;
++	/*
++	 * These devices have multiple I2cSerialBus resources and an i2c-client
++	 * must be instantiated for each, each with its own i2c_device_id.
++	 * Normally we only instantiate an i2c-client for the first resource,
++	 * using the ACPI HID as id. These special cases are handled by the
++	 * drivers/platform/x86/i2c-multi-instantiate.c driver, which knows
++	 * which i2c_device_id to use for each resource.
++	 */
++	static const struct acpi_device_id i2c_multi_instantiate_ids[] = {
++		{"BSG1160", 0},
++		{"", 0},
++	};
+ 
+ 	if (acpi_is_indirect_io_slave(device))
+ 		return true;
+@@ -1551,6 +1563,10 @@ static bool acpi_device_enumeration_by_parent(struct acpi_device *device)
+ 	     fwnode_property_present(&device->fwnode, "baud")))
+ 		return true;
+ 
++	/* Instantiate a pdev for the i2c-multi-instantiate drv to bind to */
++	if (!acpi_match_device_ids(device, i2c_multi_instantiate_ids))
++		return false;
++
+ 	INIT_LIST_HEAD(&resource_list);
+ 	acpi_dev_get_resources(device, &resource_list,
+ 			       acpi_check_serial_bus_slave,
+-- 
+2.18.0
 
