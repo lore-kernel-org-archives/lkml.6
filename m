@@ -2,459 +2,773 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B8AEC46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:07:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75D49C46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:07:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0CE22170A
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:07:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 10B332170A
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:07:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T47lMGp6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0CE22170A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="SK5LluN2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10B332170A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390364AbeHGUWd (ORCPT
+        id S2390377AbeHGUWv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 16:22:33 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:44845 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390003AbeHGUW2 (ORCPT
+        Tue, 7 Aug 2018 16:22:51 -0400
+Received: from mail-io0-f173.google.com ([209.85.223.173]:37090 "EHLO
+        mail-io0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390003AbeHGUWv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 16:22:28 -0400
-Received: by mail-lj1-f193.google.com with SMTP id q127-v6so14139442ljq.11;
-        Tue, 07 Aug 2018 11:06:54 -0700 (PDT)
+        Tue, 7 Aug 2018 16:22:51 -0400
+Received: by mail-io0-f173.google.com with SMTP id z19-v6so14780592ioh.4
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 11:07:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=91DFDsz4DJ9B9W9k0P1uSk/Dt65g5sKlI3IeatOMHu0=;
-        b=T47lMGp6OFu7gFXdv/1kV6gm2KMJ/sv8o41iM2wP8iUa2Wz2MUCM5AhV12F0epzXfi
-         /Q7pzPOIZ1Qvet4w1Eb57Vuwp0TG2sO7jUQIXscfHorBdhzH3CZM3Ti8mrYH4E1O/J5N
-         IgLXJKJ+RIQ20vTBb6qRms5qm+znyepN/11XMyX5/ZnRYQFla3vBtVZYKyv7ugU/hZK3
-         KukF2MrFhpI7IAt2o7TG6lE+EVw4Hzylj0k3j07UhTDIcq495DsKYOZh+/tPw5RhgbOx
-         0lFeOzSo8wHo6okT5zXMdqSxi8ImdWZgIHOMbCfwiEmTUQt56vZcpJHOq4EHiL3Es1Mu
-         HJ1g==
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=A671t/zTXuHii/lgVF4+XN8+qUoSIf1lgStk/1AZvUs=;
+        b=SK5LluN2oFKoVaKfu9AKckzq0xvXtQkt63Pd+Hch16Ji+bN7Rdot3XIiS4uWW25fnB
+         FnOQjyKYNMx+9kJZnzV2nXc0kkMccmqMfa/p2w77vGA0ZXr3fo1fD2ONZ/r0hz5iOHwq
+         aZUyd+LUF8sUeG3R3FCXxd1QYGLUdAGV01lao=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=91DFDsz4DJ9B9W9k0P1uSk/Dt65g5sKlI3IeatOMHu0=;
-        b=UuWgjlv2FI4nZKlY1omgtdyGHpMFGeonXdrJa1USdeIb2VQkYXyKQpQZ1Ueb/y4WuT
-         bkb8zaqlZYagRFcvLozVFCT2a+DsHQYQ2hcSm62ILQXnH6Fm/g5lgcEQN8Q5NgM+wHCT
-         WqphYNof/GjLFvQzKnEVho1+OQPz0BAaHuY3VQaiM+cWGxrLOfCshBcFDu7+R04kUzp2
-         aFzUkGbeiX1X+qtLvCA3yO2XiZ8o80ummh0BK5ONtPp0b4B07A1bVgtcI3tddj4ghZRH
-         C2DWTeFw0iRrd8QgvJUbDJ/mC6qhPBh6RJBnhcVy+QtQM6eh02JxLiXIHnfd3fmbupxY
-         By/g==
-X-Gm-Message-State: AOUpUlGCLpU7fZ6/kOrNoVFitr1TMblJTnXa8xR1j5nPlRTzFKpg+9Rw
-        gCblN7fYK/GGDsZruGPorvI=
-X-Google-Smtp-Source: AAOMgpfq7RTnJEyCnsDZSn3UPMDvfsxOo+6OI73GZnyDYP82DgkfeN5rW6ejqVOCbgJJ5m6ONvN3YQ==
-X-Received: by 2002:a2e:1781:: with SMTP id 1-v6mr16153263ljx.76.1533665213336;
-        Tue, 07 Aug 2018 11:06:53 -0700 (PDT)
-Received: from localhost.localdomain ([109.252.90.13])
-        by smtp.gmail.com with ESMTPSA id h4-v6sm375922lfj.69.2018.08.07.11.06.52
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 07 Aug 2018 11:06:52 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
-        <ville.syrjala@linux.intel.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        dri-devel@lists.freedesktop.org,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Cc:     linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Sinclair Yeh <syeh@vmware.com>,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RFC PATCH v4 1/2] drm: Add generic colorkey properties for display planes
-Date:   Tue,  7 Aug 2018 20:22:01 +0300
-Message-Id: <20180807172202.1961-2-digetx@gmail.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180807172202.1961-1-digetx@gmail.com>
-References: <20180807172202.1961-1-digetx@gmail.com>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=A671t/zTXuHii/lgVF4+XN8+qUoSIf1lgStk/1AZvUs=;
+        b=RC/P6rA/YNwJhr5u4YqH63D2nBHDSTyEdxFPj2Y3MgYIr5SXEeldwQ1UW4ejku5JCi
+         EDzDfptu+6UiTX/kuZlXwbJSCrPGT/WWwkEwhV6+eTy8QAWvFz4ueJmORW7fN27gwGD6
+         D8Vcd1ZEXUkISnOnSGR7XKnFGDe3mS8K4KMpm5flEaQDThZKv5GozJZ9/vtCSkdQXhFv
+         UoqouGXEzGam071MQZfCcdwlCeaF1rWoeJ6cC0wz4m7kUCQM5v23Y844YAAr54Twa0VB
+         UCPj7gXbrpZiYU84Igmd92KA2eNJU6Ask+A7h1a+ZKoxJtCArSrfhcKFHj2JZA9CSGT/
+         7p2w==
+X-Gm-Message-State: AOUpUlFy1anWYR98I35DnR7dfIUOKNG3vsV8vOXY1VxASxrxiz479Kcc
+        AHjQT14U4Y5OzcjKqeD6e0v6wj2cdKTa2XsATPpzeA==
+X-Google-Smtp-Source: AA+uWPybS3/SAeHHes2l+h0vbFGMrulX11xbDfPJWDIA9gj9zhQewRLHlQ0HqGQmZ5Am0FlxWs5Mhu5AE1Q5YnqkL8g=
+X-Received: by 2002:a6b:5208:: with SMTP id g8-v6mr20459604iob.60.1533665238072;
+ Tue, 07 Aug 2018 11:07:18 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a6b:ac05:0:0:0:0:0 with HTTP; Tue, 7 Aug 2018 11:07:17 -0700 (PDT)
+In-Reply-To: <alpine.LRH.2.02.1808071331260.16565@file01.intranet.prod.int.rdu2.redhat.com>
+References: <alpine.LRH.2.02.1808021242320.31834@file01.intranet.prod.int.rdu2.redhat.com>
+ <CAKv+Gu-aNFh1fsr_05SEwDp99n3pLrguP7=tEcFQPNY53=K7Fw@mail.gmail.com>
+ <alpine.LRH.2.02.1808031424140.14030@file01.intranet.prod.int.rdu2.redhat.com>
+ <CAHCPf3s-+Qf=WBZz1KpisDMG3520jCUh8PLAO3PHa4jdt8kCTw@mail.gmail.com>
+ <CAKv+Gu9_h-WFi1j4+DWUN_dMj75SKKHxWoDH8WQ9P7S7MNpZQg@mail.gmail.com>
+ <alpine.LRH.2.02.1808060553130.30832@file01.intranet.prod.int.rdu2.redhat.com>
+ <99fff4fe-afa9-f12f-a518-472a9dd1c530@arm.com> <CAKv+Gu_C2g=C=gMpk4a5jpDORnxZY6t1v=HDoy59m5vwNBxBBg@mail.gmail.com>
+ <alpine.LRH.2.02.1808061306490.12989@file01.intranet.prod.int.rdu2.redhat.com>
+ <CAKv+Gu_8Rq6X24ZOYvG7+kQQGSGYAZuu_co4k1nJS8K7rkrWMA@mail.gmail.com>
+ <alpine.LRH.2.02.1808061552090.11930@file01.intranet.prod.int.rdu2.redhat.com>
+ <CAKv+Gu_iCgAeGmrajZ_euMcFLntWG1a51HF_HQ1TO=fV_v__AQ@mail.gmail.com>
+ <CAPv3WKdCMpy6KarducQEtSYP35zdELhparkmPPMKGMUhsdk1Qw@mail.gmail.com> <alpine.LRH.2.02.1808071331260.16565@file01.intranet.prod.int.rdu2.redhat.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Tue, 7 Aug 2018 20:07:17 +0200
+Message-ID: <CAKv+Gu_HasYTYLy3d_1vhBHA=M5i40DmU3EuVHhzT4pRiahcmA@mail.gmail.com>
+Subject: Re: framebuffer corruption due to overlapping stp instructions on arm64
+To:     Mikulas Patocka <mpatocka@redhat.com>
+Cc:     Marcin Wojtas <mw@semihalf.com>,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        Joao Pinto <Joao.Pinto@synopsys.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        linux-pci <linux-pci@vger.kernel.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Matt Sealey <neko@bakuhatsu.net>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+On 7 August 2018 at 19:39, Mikulas Patocka <mpatocka@redhat.com> wrote:
+>
+>
+> On Tue, 7 Aug 2018, Marcin Wojtas wrote:
+>
+>> Ard, Mikulas,
+>>
+>> After some self-caused setup issues I was able to run the test on my
+>> MacchiatoBin with the kernel v4.18-rc8. It's been running for 1h+ now,
+>> loading the CPU to 100% and no single error event...
+>>
+>> I built the binary file with:
+>> gcc-linaro-7.2.1-2017.11-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-=
+gcc -O2
+>>
+>> Maybe it's the older firmware issue?
+>
+> I have downloaded and built the firmware recently (it has timestamp Jul 3=
+0
+> 2018).
+>
+> Do you still have your firmware file "flash-image.bin" that you used, so
+> that I could try it?
+>
+>> Please send the full bootlog with
+>> the very first line after reset. My board rev is v1.3 and I use
+>> mainline UEFI (newest edk2 + edk2-platforms) + newest publicly
+>> available ARM-TF and earliest firmware for this board.
+>>
+>> Best regards,
+>> Marcin
+>
 
-Color keying is the action of replacing pixels matching a given color
-(or range of colors) with transparent pixels in an overlay when
-performing blitting. Depending on the hardware capabilities, the
-matching pixel can either become fully transparent or gain adjustment
-of the pixels component values.
+Mikulas,
 
-Color keying is found in a large number of devices whose capabilities
-often differ, but they still have enough common features in range to
-standardize color key properties. This commit adds new generic DRM plane
-properties related to the color keying, providing initial color keying
-support.
+Is the issue reproducible with an nvidia card + nouveau driver as well ?
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/gpu/drm/drm_atomic.c |  20 +++++
- drivers/gpu/drm/drm_blend.c  | 150 +++++++++++++++++++++++++++++++++++
- include/drm/drm_blend.h      |   3 +
- include/drm/drm_plane.h      |  91 +++++++++++++++++++++
- 4 files changed, 264 insertions(+)
+Given the screen corruption i see with radeon even on other arm
+systems, i'd like to ensure that this is a platform bug not a driver
+bug.
 
-diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c
-index 3eb061e11e2e..e97364966f6d 100644
---- a/drivers/gpu/drm/drm_atomic.c
-+++ b/drivers/gpu/drm/drm_atomic.c
-@@ -904,6 +904,16 @@ static int drm_atomic_plane_set_property(struct drm_plane *plane,
- 		state->rotation = val;
- 	} else if (property == plane->zpos_property) {
- 		state->zpos = val;
-+	} else if (property == plane->colorkey.plane_mask_property) {
-+		state->colorkey.plane_mask = val;
-+	} else if (property == plane->colorkey.mode_property) {
-+		state->colorkey.mode = val;
-+	} else if (property == plane->colorkey.mask_property) {
-+		state->colorkey.mask = val;
-+	} else if (property == plane->colorkey.min_property) {
-+		state->colorkey.min = val;
-+	} else if (property == plane->colorkey.max_property) {
-+		state->colorkey.max = val;
- 	} else if (property == plane->color_encoding_property) {
- 		state->color_encoding = val;
- 	} else if (property == plane->color_range_property) {
-@@ -972,6 +982,16 @@ drm_atomic_plane_get_property(struct drm_plane *plane,
- 		*val = state->rotation;
- 	} else if (property == plane->zpos_property) {
- 		*val = state->zpos;
-+	} else if (property == plane->colorkey.plane_mask_property) {
-+		*val = state->colorkey.plane_mask;
-+	} else if (property == plane->colorkey.mode_property) {
-+		*val = state->colorkey.mode;
-+	} else if (property == plane->colorkey.mask_property) {
-+		*val = state->colorkey.mask;
-+	} else if (property == plane->colorkey.min_property) {
-+		*val = state->colorkey.min;
-+	} else if (property == plane->colorkey.max_property) {
-+		*val = state->colorkey.max;
- 	} else if (property == plane->color_encoding_property) {
- 		*val = state->color_encoding;
- 	} else if (property == plane->color_range_property) {
-diff --git a/drivers/gpu/drm/drm_blend.c b/drivers/gpu/drm/drm_blend.c
-index a16a74d7e15e..13c61dd0d9b7 100644
---- a/drivers/gpu/drm/drm_blend.c
-+++ b/drivers/gpu/drm/drm_blend.c
-@@ -107,6 +107,11 @@
-  *	planes. Without this property the primary plane is always below the cursor
-  *	plane, and ordering between all other planes is undefined.
-  *
-+ * colorkey:
-+ *	Color keying is set up with drm_plane_create_colorkey_properties().
-+ *	It adds support for actions like replacing a range of colors with a
-+ *	transparent color in the plane. Color keying is disabled by default.
-+ *
-  * Note that all the property extensions described here apply either to the
-  * plane or the CRTC (e.g. for the background color, which currently is not
-  * exposed and assumed to be black).
-@@ -448,3 +453,148 @@ int drm_atomic_normalize_zpos(struct drm_device *dev,
- 	return 0;
- }
- EXPORT_SYMBOL(drm_atomic_normalize_zpos);
-+
-+static const char * const plane_colorkey_mode_name[] = {
-+	[DRM_PLANE_COLORKEY_MODE_DISABLED] = "disabled",
-+	[DRM_PLANE_COLORKEY_MODE_TRANSPARENT] = "transparent",
-+};
-+
-+/**
-+ * drm_plane_create_colorkey_properties - create colorkey properties
-+ * @plane: drm plane
-+ * @supported_modes: bitmask of supported color keying modes
-+ *
-+ * This function creates the generic color keying properties and attaches them
-+ * to the @plane to enable color keying control for blending operations.
-+ *
-+ * Glossary:
-+ *
-+ * Destination plane:
-+ *	Plane to which color keying properties are applied, this planes takes
-+ *	the effect of color keying operation. The effect is determined by a
-+ *	given color keying mode.
-+ *
-+ * Source plane:
-+ *	Pixels of this plane are the source for color key matching operation.
-+ *
-+ * Color keying is controlled by these properties:
-+ *
-+ * colorkey.plane_mask:
-+ *	The mask property specifies which planes participate in color key
-+ *	matching process, these planes are the color key sources.
-+ *
-+ *	Drivers return an error from their plane atomic check if plane can't be
-+ *	handled.
-+ *
-+ * colorkey.mode:
-+ *	The mode is an enumerated property that controls how color keying
-+ *	operates.
-+ *
-+ * colorkey.mask:
-+ *	This property specifies the pixel components mask. Unmasked pixel
-+ *	components are not participating in the matching. This mask value is
-+ *	applied to colorkey.min / max values. The mask value is given in a
-+ *	64-bit integer in ARGB16161616 format, where A is the alpha value and
-+ *	R, G and B correspond to the color components. Drivers shall convert
-+ *	ARGB16161616 value into appropriate format within planes atomic check.
-+ *
-+ *	Drivers return an error from their plane atomic check if mask can't be
-+ *	handled.
-+ *
-+ * colorkey.min, colorkey.max:
-+ *	These two properties specify the colors that are treated as the color
-+ *	key. Pixel whose value is in the [min, max] range is the color key
-+ *	matching pixel. The minimum and maximum values are expressed as a
-+ *	64-bit integer in ARGB16161616 format, where A is the alpha value and
-+ *	R, G and B correspond to the color components. Drivers shall convert
-+ *	ARGB16161616 value into appropriate format within planes atomic check.
-+ *	The converted value shall be *rounded up* to the nearest value.
-+ *
-+ *	When a single color key is desired instead of a range, userspace shall
-+ *	set the min and max properties to the same value.
-+ *
-+ *	Drivers return an error from their plane atomic check if range can't be
-+ *	handled.
-+ *
-+ * Returns:
-+ * Zero on success, negative errno on failure.
-+ */
-+int drm_plane_create_colorkey_properties(struct drm_plane *plane,
-+					 u32 supported_modes)
-+{
-+	struct drm_prop_enum_list modes_list[DRM_PLANE_COLORKEY_MODES_NUM];
-+	struct drm_device *dev = plane->dev;
-+	struct drm_property *plane_mask_prop;
-+	struct drm_property *mode_prop;
-+	struct drm_property *mask_prop;
-+	struct drm_property *min_prop;
-+	struct drm_property *max_prop;
-+	unsigned int modes_num = 0;
-+	unsigned int i;
-+
-+	/* modes are driver-specific, build the list of supported modes */
-+	for (i = 0; i < DRM_PLANE_COLORKEY_MODES_NUM; i++) {
-+		if (!(supported_modes & BIT(i)))
-+			continue;
-+
-+		modes_list[modes_num].name = plane_colorkey_mode_name[i];
-+		modes_list[modes_num].type = i;
-+		modes_num++;
-+	}
-+
-+	/* at least one mode should be supported */
-+	if (!modes_num)
-+		return -EINVAL;
-+
-+	plane_mask_prop = drm_property_create_range(dev, 0,
-+						    "colorkey.plane_mask",
-+						    0, U32_MAX);
-+	if (!plane_mask_prop)
-+		return -ENOMEM;
-+
-+	mode_prop = drm_property_create_enum(dev, 0, "colorkey.mode",
-+					     modes_list, modes_num);
-+	if (!mode_prop)
-+		goto err_destroy_plane_mask_prop;
-+
-+	mask_prop = drm_property_create_range(dev, 0, "colorkey.mask",
-+					      0, U64_MAX);
-+	if (!mask_prop)
-+		goto err_destroy_mode_prop;
-+
-+	min_prop = drm_property_create_range(dev, 0, "colorkey.min",
-+					     0, U64_MAX);
-+	if (!min_prop)
-+		goto err_destroy_mask_prop;
-+
-+	max_prop = drm_property_create_range(dev, 0, "colorkey.max",
-+					     0, U64_MAX);
-+	if (!max_prop)
-+		goto err_destroy_min_prop;
-+
-+	drm_object_attach_property(&plane->base, plane_mask_prop, 0);
-+	drm_object_attach_property(&plane->base, mode_prop, 0);
-+	drm_object_attach_property(&plane->base, mask_prop, 0);
-+	drm_object_attach_property(&plane->base, min_prop, 0);
-+	drm_object_attach_property(&plane->base, max_prop, 0);
-+
-+	plane->colorkey.plane_mask_property = plane_mask_prop;
-+	plane->colorkey.mode_property = mode_prop;
-+	plane->colorkey.mask_property = mask_prop;
-+	plane->colorkey.min_property = min_prop;
-+	plane->colorkey.max_property = max_prop;
-+
-+	return 0;
-+
-+err_destroy_min_prop:
-+	drm_property_destroy(dev, min_prop);
-+err_destroy_mask_prop:
-+	drm_property_destroy(dev, mask_prop);
-+err_destroy_mode_prop:
-+	drm_property_destroy(dev, mode_prop);
-+err_destroy_plane_mask_prop:
-+	drm_property_destroy(dev, plane_mask_prop);
-+
-+	return -ENOMEM;
-+}
-+EXPORT_SYMBOL(drm_plane_create_colorkey_properties);
-diff --git a/include/drm/drm_blend.h b/include/drm/drm_blend.h
-index 330c561c4c11..8e80d33b643e 100644
---- a/include/drm/drm_blend.h
-+++ b/include/drm/drm_blend.h
-@@ -52,4 +52,7 @@ int drm_plane_create_zpos_immutable_property(struct drm_plane *plane,
- 					     unsigned int zpos);
- int drm_atomic_normalize_zpos(struct drm_device *dev,
- 			      struct drm_atomic_state *state);
-+
-+int drm_plane_create_colorkey_properties(struct drm_plane *plane,
-+					 u32 supported_modes);
- #endif
-diff --git a/include/drm/drm_plane.h b/include/drm/drm_plane.h
-index 8a152dc16ea5..ab6a91e6b54e 100644
---- a/include/drm/drm_plane.h
-+++ b/include/drm/drm_plane.h
-@@ -25,6 +25,7 @@
- 
- #include <linux/list.h>
- #include <linux/ctype.h>
-+#include <linux/kernel.h>
- #include <drm/drm_mode_object.h>
- #include <drm/drm_color_mgmt.h>
- 
-@@ -32,6 +33,52 @@ struct drm_crtc;
- struct drm_printer;
- struct drm_modeset_acquire_ctx;
- 
-+/**
-+ * enum drm_plane_colorkey_mode - uapi plane colorkey mode enumeration
-+ */
-+enum drm_plane_colorkey_mode {
-+	/**
-+	 * @DRM_PLANE_COLORKEY_MODE_DISABLED:
-+	 *
-+	 * No color matching performed in this mode.
-+	 */
-+	DRM_PLANE_COLORKEY_MODE_DISABLED,
-+
-+	/**
-+	 * @DRM_PLANE_COLORKEY_MODE_TRANSPARENT:
-+	 *
-+	 * Destination plane pixels are completely transparent in areas
-+	 * where pixels of a source plane are matching a given color key
-+	 * range, in other cases pixels of a destination plane are unaffected.
-+	 * In areas where two or more source planes overlap, the topmost
-+	 * plane takes precedence.
-+	 */
-+	DRM_PLANE_COLORKEY_MODE_TRANSPARENT,
-+
-+	/**
-+	 * @DRM_PLANE_COLORKEY_MODES_NUM:
-+	 *
-+	 * Total number of color keying modes.
-+	 */
-+	DRM_PLANE_COLORKEY_MODES_NUM,
-+};
-+
-+/**
-+ * struct drm_plane_colorkey_state - plane color keying state
-+ * @mode: color keying mode
-+ * @plane_mask: source planes that participate in color key matching
-+ * @mask: color key mask (in ARGB16161616 format)
-+ * @min: color key range minimum (in ARGB16161616 format)
-+ * @max: color key range maximum (in ARGB16161616 format)
-+ */
-+struct drm_plane_colorkey_state {
-+	enum drm_plane_colorkey_mode mode;
-+	u64 plane_mask;
-+	u64 mask;
-+	u64 min;
-+	u64 max;
-+};
-+
- /**
-  * struct drm_plane_state - mutable plane state
-  *
-@@ -148,6 +195,13 @@ struct drm_plane_state {
- 	 */
- 	unsigned int normalized_zpos;
- 
-+	/**
-+	 * @colorkey:
-+	 * Color keying of the plane. See drm_plane_create_colorkey_properties()
-+	 * for more details.
-+	 */
-+	struct drm_plane_colorkey_state colorkey;
-+
- 	/**
- 	 * @color_encoding:
- 	 *
-@@ -660,6 +714,19 @@ struct drm_plane {
- 	 */
- 	struct drm_property *rotation_property;
- 
-+	/**
-+	 * @colorkey:
-+	 * Optional color keying properties for this plane. See
-+	 * drm_plane_create_colorkey_properties().
-+	 */
-+	struct {
-+		struct drm_property *plane_mask_property;
-+		struct drm_property *mode_property;
-+		struct drm_property *mask_property;
-+		struct drm_property *min_property;
-+		struct drm_property *max_property;
-+	} colorkey;
-+
- 	/**
- 	 * @color_encoding_property:
- 	 *
-@@ -779,5 +846,29 @@ static inline struct drm_plane *drm_plane_find(struct drm_device *dev,
- #define drm_for_each_plane(plane, dev) \
- 	list_for_each_entry(plane, &(dev)->mode_config.plane_list, head)
- 
-+/**
-+ * drm_colorkey_extract_component - get color key component value
-+ * @ckey64: 64bit color key value
-+ * @comp_name: name of 16bit color component to extract
-+ * @nbits: size in bits of extracted component value
-+ *
-+ * Extract 16bit color component of @ckey64 given by @comp_name (alpha, red,
-+ * green or blue) and convert it to an unsigned integer that has bit-width
-+ * of @nbits (result is rounded-up).
-+ */
-+#define drm_colorkey_extract_component(ckey64, comp_name, nbits) \
-+	__DRM_CKEY_CLAMP(__DRM_CKEY_CONV(ckey64, comp_name, nbits), nbits)
-+
-+#define __drm_ckey_alpha_shift	48
-+#define __drm_ckey_red_shift	32
-+#define __drm_ckey_green_shift	16
-+#define __drm_ckey_blue_shift	0
-+
-+#define __DRM_CKEY_CONV(ckey64, comp_name, nbits) \
-+	DIV_ROUND_UP((u16)((ckey64) >> __drm_ckey_ ## comp_name ## _shift), \
-+		     1 << (16 - (nbits)))
-+
-+#define __DRM_CKEY_CLAMP(value, nbits) \
-+	min_t(u16, (value), (1 << (nbits)) - 1)
- 
- #endif
--- 
-2.18.0
 
+> This is my bootlog:
+>
+> BootROM - 2.03
+> Starting CP-0 IOROM 1.07
+> Booting from SD 0 (0x29)
+> Found valid image at boot postion 0x002
+> lNOTICE:  Starting binary extension
+> NOTICE:  SVC: SW Revision 0x0. SVC is not supported
+> mv_ddr: mv_ddr-devel-18.05.0-g84dd1d9 (Jul 30 2018 - 04:58:51 PM)
+> mv_ddr: completed successfully
+> NOTICE:  Cold boot
+> NOTICE:  Booting Trusted Firmware
+> NOTICE:  BL1: v1.4(release):armada-18.05.2:80bbf686
+> NOTICE:  BL1: Built : 17:00:18, Jul 30 2018
+> NOTICE:  BL1: Booting BL2
+> lNOTICE:  BL2: v1.4(release):armada-18.05.2:80bbf686
+> NOTICE:  BL2: Built : 17:00:21, Jul 30 2018
+> BL2: Initiating SCP_BL2 transfer to SCP
+> NOTICE:  SCP_BL2 contains 2 concatenated images
+> NOTICE:  Load image to CP1 MSS AP0
+> NOTICE:  Loading MSS image from address 0x4023020 Size 0x135c to MSS at 0=
+xf4280000
+> NOTICE:  Done
+> NOTICE:  Load image to AP0 MSS
+> NOTICE:  Loading MSS image from address 0x402437c Size 0x1f6c to MSS at 0=
+xf0580000
+> N
+>
+> FreeRTOS 7.3.0 - Marvell cm3 - A8K release armada-18.05.1
+>
+> OTICE:  Done
+> NOTICE:  SCP Image doesn't contain PM firmware
+> NOTICE:  BL1: Booting BL31
+> lNOTICE:  MSS PM is not supported in this build
+> NOTICE:  BL31: v1.4(release):armada-18.05.2:80bbf686
+> NOTICE:  BL31: Built : 17:00:21, Jul 30 2018
+> lUEFI firmware (version MARVELL_EFI built at 16:50:27 on Jul 30 2018)
+>
+> Armada 8040 MachiatoBin Platform Init
+>
+> Comphy0-0: PCIE0         5 Gbps
+> Comphy0-1: PCIE0         5 Gbps
+> Comphy0-2: PCIE0         5 Gbps
+> Comphy0-3: PCIE0         5 Gbps
+> Comphy0-4: SFI           10.31 Gbps
+> Comphy0-5: SATA1         5 Gbps
+>
+> Comphy1-0: SGMII1        1.25 Gbps
+> Comphy1-1: SATA2         5 Gbps
+> Comphy1-2: USB3_HOST0    5 Gbps
+> Comphy1-3: SATA3         5 Gbps
+> Comphy1-4: SFI           10.31 Gbps
+> Comphy1-5: SGMII2        3.125 Gbps
+>
+> UTMI PHY 0 initialized to USB Host0
+> UTMI PHY 1 initialized to USB Host1
+> UTMI PHY 2 initialized to USB Host0
+> Succesfully installed protocol interfaces
+> Error: Image at 000BF6F8000 start failed: 00000001
+> remove-symbol-file /usr/src/git/macchiato/edk2/Build/Armada80x0McBin-AARC=
+H64/RELEASE_GCC5/AARCH64/MdeModulePkg/Universal/Acpi/AcpiPlatformDxe/AcpiPl=
+atformDxe/DEBUG/AcpiPlatform.dll 0xBF6F9000
+> Detected w25q32bv SPI flash with page size 256 B, erase size 4 KB, total =
+4 MB
+> ramdisk:blckio install. Status=3DSuccess
+> Connect: PcieRoot(0x0)/Pci(0x0,0x0): Not Found
+> 3h3h3hTianocore/EDK2 firmware version MARVELL_EFI
+> Press ESCAPE for boot options ...error: no suitable video mode found.
+> error: no video mode activated.
+> GNU GRUB  version 2.02~beta3-5
+>
+> /------------------------------------------------------------------------=
+----\||||||||||||||||||||||||||\-------------------------------------------=
+---------------------------------/     Use the ^ and v keys to select which=
+ entry is highlighted.
+>       Press enter to boot the selected OS, `e' to edit the commands
+>       before booting or `c' for a command-line.
+> *Debian GNU/Linux                                                        =
+    Advanced options for Debian GNU/Linux                                  =
+     System setup
+>    The highlighted entry will be executed automatically in 5s.           =
+         The highlighted entry will be executed automatically in 4s.       =
+                                                                           =
+                                                                           =
+                  Loading Linux 4.17.11 ...
+> EFI stub: Booting Linux Kernel...
+> EFI stub: Using DTB from configuration table
+> EFI stub: Exiting boot services and installing virtual address map...
+> [    0.000000] Booting Linux on physical CPU 0x0000000000 [0x410fd081]
+> [    0.000000] Linux version 4.17.11 (root@leontynka) (gcc version 8.2.0 =
+(Debian 8.2.0-2)) #10 SMP PREEMPT Fri Aug 3 18:29:35 CEST 2018
+> [    0.000000] Machine model: Marvell 8040 MACCHIATOBin
+> [    0.000000] efi: Getting EFI parameters from FDT:
+> [    0.000000] efi: EFI v2.70 by EDK II
+> [    0.000000] efi:  SMBIOS 3.0=3D0xbfed0000  ACPI 2.0=3D0xb6760000  MEMA=
+TTR=3D0xb8c63518  RNG=3D0xbffdcf98
+> [    0.000000] efi: seeding entropy pool
+> [    0.000000] psci: probing for conduit method from DT.
+> [    0.000000] psci: PSCIv1.0 detected in firmware.
+> [    0.000000] psci: Using standard PSCI v0.2 function IDs
+> [    0.000000] psci: MIGRATE_INFO_TYPE not supported.
+> [    0.000000] psci: SMC Calling Convention v1.1
+> [    0.000000] percpu: Embedded 26 pages/cpu @        (ptrval) s67096 r81=
+92 d31208 u106496
+> [    0.000000] Detected PIPT I-cache on CPU0
+> [    0.000000] Built 1 zonelists, mobility grouping on.  Total pages: 103=
+1688
+> [    0.000000] Kernel command line: BOOT_IMAGE=3D/boot/vmlinuz-4.17.11 ro=
+ot=3D/dev/mmcblk0p1 ro console=3DttyS0,115200
+> [    0.000000] Dentry cache hash table entries: 524288 (order: 10, 419430=
+4 bytes)
+> [    0.000000] Inode-cache hash table entries: 262144 (order: 9, 2097152 =
+bytes)
+> [    0.000000] software IO TLB [mem 0xbb810000-0xbf810000] (64MB) mapped =
+at [        (ptrval)-        (ptrval)]
+> [    0.000000] Memory: 4033692K/4192256K available (4860K kernel code, 37=
+6K rwdata, 2452K rodata, 384K init, 2178K bss, 158564K reserved, 0K cma-res=
+erved)
+> [    0.000000] SLUB: HWalign=3D64, Order=3D0-3, MinObjects=3D0, CPUs=3D4,=
+ Nodes=3D1
+> [    0.000000] Preemptible hierarchical RCU implementation.
+> [    0.000000]  Tasks RCU enabled.
+> [    0.000000] NR_IRQS: 64, nr_irqs: 64, preallocated irqs: 0
+> [    0.000000] GIC: Adjusting CPU interface base to 0x00000000f022f000
+> [    0.000000] GIC: Using split EOI/Deactivate mode
+> [    0.000000] GICv2m: DT overriding V2M MSI_TYPER (base:160, num:32)
+> [    0.000000] GICv2m: range[mem 0xf0280000-0xf0280fff], SPI[160:191]
+> [    0.000000] GICv2m: DT overriding V2M MSI_TYPER (base:192, num:32)
+> [    0.000000] GICv2m: range[mem 0xf0290000-0xf0290fff], SPI[192:223]
+> [    0.000000] GICv2m: DT overriding V2M MSI_TYPER (base:224, num:32)
+> [    0.000000] GICv2m: range[mem 0xf02a0000-0xf02a0fff], SPI[224:255]
+> [    0.000000] GICv2m: DT overriding V2M MSI_TYPER (base:256, num:32)
+> [    0.000000] GICv2m: range[mem 0xf02b0000-0xf02b0fff], SPI[256:287]
+> [    0.000000] arch_timer: cp15 timer(s) running at 25.00MHz (phys).
+> [    0.000000] clocksource: arch_sys_counter: mask: 0xffffffffffffff max_=
+cycles: 0x5c40939b5, max_idle_ns: 440795202646 ns
+> [    0.000002] sched_clock: 56 bits at 25MHz, resolution 40ns, wraps ever=
+y 4398046511100ns
+> [    0.000113] Console: colour dummy device 174x49
+> [    0.000124] Calibrating delay loop (skipped), value calculated using t=
+imer frequency.. 50.08 BogoMIPS (lpj=3D83333)
+> [    0.000129] pid_max: default: 32768 minimum: 301
+> [    0.000151] Security Framework initialized
+> [    0.000154] Yama: becoming mindful.
+> [    0.000183] Mount-cache hash table entries: 8192 (order: 4, 65536 byte=
+s)
+> [    0.000199] Mountpoint-cache hash table entries: 8192 (order: 4, 65536=
+ bytes)
+> [    0.016676] ASID allocator initialised with 65536 entries
+> [    0.020006] Hierarchical SRCU implementation.
+> [    0.023435] Remapping and enabling EFI services.
+> [    0.026680] smp: Bringing up secondary CPUs ...
+> [    0.043500] Detected PIPT I-cache on CPU1
+> [    0.043522] CPU1: Booted secondary processor 0x0000000001 [0x410fd081]
+> [    0.060176] Detected PIPT I-cache on CPU2
+> [    0.060195] CPU2: Booted secondary processor 0x0000000100 [0x410fd081]
+> [    0.076859] Detected PIPT I-cache on CPU3
+> [    0.076872] CPU3: Booted secondary processor 0x0000000101 [0x410fd081]
+> [    0.076901] smp: Brought up 1 node, 4 CPUs
+> [    0.076910] SMP: Total of 4 processors activated.
+> [    0.076913] CPU features: detected: 32-bit EL0 Support
+> [    0.077194] CPU: All CPU(s) started at EL2
+> [    0.077205] alternatives: patching kernel code
+> [    0.077230] random: get_random_u64 called from compute_layout+0x94/0xe=
+8 with crng_init=3D0
+> [    0.077599] devtmpfs: initialized
+> [    0.078967] clocksource: jiffies: mask: 0xffffffff max_cycles: 0xfffff=
+fff, max_idle_ns: 6370867519511994 ns
+> [    0.078975] futex hash table entries: 1024 (order: 5, 131072 bytes)
+> [    0.079032] pinctrl core: initialized pinctrl subsystem
+> [    0.079183] SMBIOS 3.0.0 present.
+> [    0.079191] DMI: Marvell Armada 8040 MacchiatoBin/Armada 8040 Macchiat=
+oBin, BIOS EDK II Jul 30 2018
+> [    0.079264] NET: Registered protocol family 16
+> [    0.079484] cpuidle: using governor ladder
+> [    0.079535] cpuidle: using governor menu
+> [    0.079559] vdso: 2 pages (1 code @         (ptrval), 1 data @        =
+ (ptrval))
+> [    0.079562] vdso: 2 pages (1 code @         (ptrval), 1 data @        =
+ (ptrval))
+> [    0.079569] hw-breakpoint: found 6 breakpoint and 4 watchpoint registe=
+rs.
+> [    0.079681] DMA: preallocated 256 KiB pool for atomic allocations
+> [    0.082434] HugeTLB registered 2.00 MiB page size, pre-allocated 0 pag=
+es
+> [    0.082669] ACPI: Interpreter disabled.
+> [    0.082822] reg-fixed-voltage regulator-usb3-vbus0: could not find pct=
+ldev for node /cp0/config-space@f2000000/system-controller@440000/pinctrl/x=
+hci0-vbus-pins, deferring probe
+> [    0.082929] SCSI subsystem initialized
+> [    0.083033] Registered efivars operations
+> [    0.083398] clocksource: Switched to clocksource arch_sys_counter
+> [    0.083517] pnp: PnP ACPI: disabled
+> [    0.085008] NET: Registered protocol family 2
+> [    0.085146] tcp_listen_portaddr_hash hash table entries: 2048 (order: =
+3, 32768 bytes)
+> [    0.085156] TCP established hash table entries: 32768 (order: 6, 26214=
+4 bytes)
+> [    0.085213] TCP bind hash table entries: 32768 (order: 7, 524288 bytes=
+)
+> [    0.085441] TCP: Hash tables configured (established 32768 bind 32768)
+> [    0.085492] UDP hash table entries: 2048 (order: 4, 65536 bytes)
+> [    0.085507] UDP-Lite hash table entries: 2048 (order: 4, 65536 bytes)
+> [    0.085713] hw perfevents: unable to count PMU IRQs
+> [    0.085718] hw perfevents: /ap806/config-space@f0000000/pmu: failed to=
+ register PMU devices!
+> [    0.085823] kvm [1]: 8-bit VMID
+> [    0.086279] kvm [1]: vgic interrupt IRQ1
+> [    0.086339] kvm [1]: Hyp mode initialized successfully
+> [    0.086649] workingset: timestamp_bits=3D62 max_order=3D20 bucket_orde=
+r=3D0
+> [    0.088566] io scheduler noop registered
+> [    0.088625] io scheduler cfq registered (default)
+> [    0.089467] armada-ap806-pinctrl f06f4000.system-controller:pinctrl: r=
+egistered pinctrl driver
+> [    0.089690] armada-cp110-pinctrl f2440000.system-controller:pinctrl: r=
+egistered pinctrl driver
+> [    0.089843] armada-cp110-pinctrl f4440000.system-controller:pinctrl: r=
+egistered pinctrl driver
+> [    0.091439] mv_xor_v2 f0400000.xor: Marvell Version 2 XOR driver
+> [    0.091583] mv_xor_v2 f0420000.xor: Marvell Version 2 XOR driver
+> [    0.091736] mv_xor_v2 f0440000.xor: Marvell Version 2 XOR driver
+> [    0.091897] mv_xor_v2 f0460000.xor: Marvell Version 2 XOR driver
+> [    0.092084] mv_xor_v2 f26a0000.xor: Marvell Version 2 XOR driver
+> [    0.092247] mv_xor_v2 f26c0000.xor: Marvell Version 2 XOR driver
+> [    0.092432] mv_xor_v2 f46a0000.xor: Marvell Version 2 XOR driver
+> [    0.092596] mv_xor_v2 f46c0000.xor: Marvell Version 2 XOR driver
+> [    0.092685] Serial: 8250/16550 driver, 4 ports, IRQ sharing disabled
+> [    0.092996] console [ttyS0] disabled
+> [    0.113364] f0512000.serial: ttyS0 at MMIO 0xf0512000 (irq =3D 7, base=
+_baud =3D 12500000) is a 16550A
+> [    0.777029] console [ttyS0] enabled
+> [    0.801032] f2702100.serial: ttyS1 at MMIO 0xf2702100 (irq =3D 26, bas=
+e_baud =3D 15625000) is a 16550A
+> [    0.830524] f4702000.serial: ttyS2 at MMIO 0xf4702000 (irq =3D 27, bas=
+e_baud =3D 15625000) is a 16550A
+> [    0.839705] cacheinfo: Unable to detect cache hierarchy for CPU 0
+> [    0.846129] libphy: Fixed MDIO Bus: probed
+> [    0.850384] libphy: orion_mdio_bus: probed
+> [    0.854879] libphy: orion_mdio_bus: probed
+> [    0.862575] mousedev: PS/2 mouse device common for all mice
+> [    0.868314] rtc-efi rtc-efi: rtc core: registered rtc-efi as rtc0
+> [    0.874446] i2c /dev entries driver
+> [    0.880187] sdhci: Secure Digital Host Controller Interface driver
+> [    0.886399] sdhci: Copyright(c) Pierre Ossman
+> [    0.890777] sdhci-pltfm: SDHCI platform and OF driver helper
+> [    0.896640] mmc0: Switching to 3.3V signalling voltage failed
+> [    0.927528] mmc0: SDHCI controller on f06e0000.sdhci [f06e0000.sdhci] =
+using ADMA 64-bit
+> [    0.966330] mmc1: SDHCI controller on f2780000.sdhci [f2780000.sdhci] =
+using ADMA 64-bit
+> [    0.976142] hw perfevents: enabled with armv8_cortex_a72 PMU driver, 7=
+ counters available
+> [    0.984470] PCI: OF: host bridge /cp0/pcie@f2600000 ranges:
+> [    0.990120] PCI: OF:    IO 0xeff00000..0xeff0ffff -> 0x00000000
+> [    0.996083] PCI: OF:   MEM 0xc0000000..0xdfffffff -> 0xc0000000
+> [    1.002050] PCI: OF:   MEM 0x800000000..0x8ffffffff -> 0x800000000
+> [    1.008301] mmc0: new high speed MMC card at address 0001
+> [    1.008337] armada8k-pcie f2600000.pcie: link up
+> [    1.013884] mmcblk0: mmc0:0001 8GME4R 7.28 GiB
+> [    1.018427] armada8k-pcie f2600000.pcie: PCI host bridge to bus 0000:0=
+0
+> [    1.023036] mmcblk0boot0: mmc0:0001 8GME4R partition 1 4.00 MiB
+> [    1.029619] pci_bus 0000:00: root bus resource [bus 00-ff]
+> [    1.035652] mmcblk0boot1: mmc0:0001 8GME4R partition 2 4.00 MiB
+> [    1.041101] pci_bus 0000:00: root bus resource [io  0x0000-0xffff]
+> [    1.047085] mmcblk0rpmb: mmc0:0001 8GME4R partition 3 512 KiB, chardev=
+ (250:0)
+> [    1.053256] pci_bus 0000:00: root bus resource [mem 0xc0000000-0xdffff=
+fff]
+> [    1.067452] pci_bus 0000:00: root bus resource [mem 0x800000000-0x8fff=
+fffff]
+> [    1.074559]  mmcblk0: p1 p2 p3
+> [    1.077642] pci 0000:00:00.0: disabling Extended Tags (this device can=
+'t handle them)
+> [    1.097253] pci 0000:00:00.0: BAR 9: assigned [mem 0x800000000-0x80fff=
+ffff 64bit pref]
+> [    1.105218] pci 0000:00:00.0: BAR 0: assigned [mem 0x810000000-0x8100f=
+ffff 64bit]
+> [    1.112749] pci 0000:00:00.0: BAR 8: assigned [mem 0xc0000000-0xc00fff=
+ff]
+> [    1.119578] pci 0000:00:00.0: BAR 7: assigned [io  0x1000-0x1fff]
+> [    1.125712] pci 0000:01:00.0: BAR 0: assigned [mem 0x800000000-0x80fff=
+ffff 64bit pref]
+> [    1.133705] pci 0000:01:00.0: BAR 2: assigned [mem 0xc0000000-0xc001ff=
+ff 64bit]
+> [    1.141088] pci 0000:01:00.0: BAR 6: assigned [mem 0xc0020000-0xc003ff=
+ff pref]
+> [    1.148353] pci 0000:01:00.1: BAR 0: assigned [mem 0xc0040000-0xc0043f=
+ff 64bit]
+> [    1.155738] pci 0000:01:00.0: BAR 4: assigned [io  0x1000-0x10ff]
+> [    1.161879] pci 0000:00:00.0: PCI bridge to [bus 01-ff]
+> [    1.167139] pci 0000:00:00.0:   bridge window [io  0x1000-0x1fff]
+> [    1.173274] pci 0000:00:00.0:   bridge window [mem 0xc0000000-0xc00fff=
+ff]
+> [    1.180106] pci 0000:00:00.0:   bridge window [mem 0x800000000-0x80fff=
+ffff 64bit pref]
+> [    1.188210] mmc1: new high speed SDHC card at address 1234
+> [    1.193873] mmcblk1: mmc1:1234 SA08G 7.41 GiB
+> [    1.198461] pcieport 0000:00:00.0: AER enabled with IRQ 32
+> [    1.204020] pci 0000:01:00.1: Linked as a consumer to 0000:01:00.0
+> [    1.210396] rtc-efi rtc-efi: setting system clock to 2018-08-06 20:01:=
+28 UTC (1533585688)
+> [    1.211676]  mmcblk1: p1 p2
+> [    1.220717] v_5v0_usb3_hst_vbus: disabling
+> [    1.231509] EXT4-fs (mmcblk0p1): mounted filesystem with ordered data =
+mode. Opts: (null)
+> [    1.239654] VFS: Mounted root (ext4 filesystem) readonly on device 179=
+:1.
+> [    1.248061] devtmpfs: mounted
+> [    1.251151] Freeing unused kernel memory: 384K
+> [    1.325623] random: fast init done
+> INIT: version 2.88 booting
+> [info] Using makefile-style concurrent boot in runlevel S.
+> [    1.488069] NET: Registered protocol family 1
+> ERROR: could not open /proc/stat: No such file or directory
+> [....] Starting the hotplug events dispatcher: systemd-udevdstarting vers=
+ion 239
+> [ ok .
+> [....] Synthesizing the initial hotplug events...[ ok done.
+> [    1.786418] EFI Variables Facility v0.08 2004-May-17
+> [....] Waiting for /dev to be fully populated...[    1.804433] mvpp2 f200=
+0000.ethernet eth0: Using random mac address fe:a5:21:f0:f8:7d
+> [    1.806861] usbcore: registered new interface driver usbfs
+> [    1.817792] usbcore: registered new interface driver hub
+> [    1.817835] mvpp2 f4000000.ethernet eth1: Using random mac address 86:=
+5f:16:0c:f9:16
+> [    1.823172] usbcore: registered new device driver usb
+> [    1.837065] mvpp2 f4000000.ethernet eth2: Using random mac address 8e:=
+6e:60:9f:57:60
+> [    1.849493] ahci f2540000.sata: AHCI 0001.0000 32 slots 2 ports 6 Gbps=
+ 0x3 impl platform mode
+> [    1.851030] mvpp2 f4000000.ethernet eth3: Using random mac address c6:=
+5e:07:9a:54:82
+> [    1.859250] ahci f2540000.sata: flags: 64bit ncq sntf led only pmp fbs=
+ pio slum part sxs
+> [    1.874656] scsi host0: ahci
+> [    1.877789] scsi host1: ahci
+> [    1.880777] ata1: SATA max UDMA/133 mmio [mem 0xf2540000-0xf256ffff] p=
+ort 0x100 irq 57
+> [    1.888777] ata2: SATA max UDMA/133 mmio [mem 0xf2540000-0xf256ffff] p=
+ort 0x180 irq 57
+> [    1.897008] ahci f4540000.sata: AHCI 0001.0000 32 slots 2 ports 6 Gbps=
+ 0x3 impl platform mode
+> [    1.905629] ahci f4540000.sata: flags: 64bit ncq sntf led only pmp fbs=
+ pio slum part sxs
+> [    1.914173] scsi host2: ahci
+> [    1.917252] scsi host3: ahci
+> [    1.920225] ata3: SATA max UDMA/133 mmio [mem 0xf4540000-0xf456ffff] p=
+ort 0x100 irq 58
+> [    1.928198] ata4: SATA max UDMA/133 mmio [mem 0xf4540000-0xf456ffff] p=
+ort 0x180 irq 58
+> [    1.928608] xhci-hcd f2500000.usb3: xHCI Host Controller
+> [    1.942154] xhci-hcd f2500000.usb3: new USB bus registered, assigned b=
+us number 1
+> [    1.951232] xhci-hcd f2500000.usb3: hcc params 0x0a000990 hci version =
+0x100 quirks 0x00010010
+> [    1.959840] xhci-hcd f2500000.usb3: irq 59, io mem 0xf2500000
+> [    1.966174] hub 1-0:1.0: USB hub found
+> [    1.970058] hub 1-0:1.0: 1 port detected
+> [    1.974150] xhci-hcd f2500000.usb3: xHCI Host Controller
+> [    1.979551] xhci-hcd f2500000.usb3: new USB bus registered, assigned b=
+us number 2
+> [    1.979558] xhci-hcd f2500000.usb3: Host supports USB 3.0  SuperSpeed
+> [    1.993840] usb usb2: We don't know the algorithms for LPM for this ho=
+st, disabling LPM.
+> [    2.000947] cryptd: max_cpu_qlen set to 1000
+> [    2.002463] hub 2-0:1.0: USB hub found
+> [    2.010089] hub 2-0:1.0: 1 port detected
+> [    2.014291] xhci-hcd f2510000.usb3: xHCI Host Controller
+> [    2.019647] xhci-hcd f2510000.usb3: new USB bus registered, assigned b=
+us number 3
+> [    2.027219] xhci-hcd f2510000.usb3: hcc params 0x0a000990 hci version =
+0x100 quirks 0x00010010
+> [    2.035823] xhci-hcd f2510000.usb3: irq 60, io mem 0xf2510000
+> [    2.042445] hub 3-0:1.0: USB hub found
+> [    2.046236] hub 3-0:1.0: 1 port detected
+> [    2.050278] xhci-hcd f2510000.usb3: xHCI Host Controller
+> [    2.055768] xhci-hcd f2510000.usb3: new USB bus registered, assigned b=
+us number 4
+> [    2.063314] xhci-hcd f2510000.usb3: Host supports USB 3.0  SuperSpeed
+> [    2.069818] usb usb4: We don't know the algorithms for LPM for this ho=
+st, disabling LPM.
+> [    2.078176] hub 4-0:1.0: USB hub found
+> [    2.081972] hub 4-0:1.0: 1 port detected
+> [    2.086215] xhci-hcd f4500000.usb3: xHCI Host Controller
+> [    2.091581] xhci-hcd f4500000.usb3: new USB bus registered, assigned b=
+us number 5
+> [    2.099158] xhci-hcd f4500000.usb3: hcc params 0x0a000990 hci version =
+0x100 quirks 0x00010010
+> [    2.107751] xhci-hcd f4500000.usb3: irq 61, io mem 0xf4500000
+> [    2.113788] hub 5-0:1.0: USB hub found
+> [    2.117586] hub 5-0:1.0: 1 port detected
+> [    2.121642] xhci-hcd f4500000.usb3: xHCI Host Controller
+> [    2.126988] xhci-hcd f4500000.usb3: new USB bus registered, assigned b=
+us number 6
+> [    2.134514] xhci-hcd f4500000.usb3: Host supports USB 3.0  SuperSpeed
+> [    2.141009] usb usb6: We don't know the algorithms for LPM for this ho=
+st, disabling LPM.
+> [    2.149354] hub 6-0:1.0: USB hub found
+> [    2.153156] hub 6-0:1.0: 1 port detected
+> [    2.162109] [drm] radeon kernel modesetting enabled.
+> [    2.167730] radeon 0000:01:00.0: enabling device (0000 -> 0003)
+> [    2.174555] [drm] initializing kernel modesetting (CEDAR 0x1002:0x68F9=
+ 0x1787:0x3000 0x00).
+> [    2.223834] ata1: SATA link down (SStatus 0 SControl 300)
+> [    2.250489] ata3: SATA link down (SStatus 0 SControl 300)
+> [    2.256599] ata4: SATA link down (SStatus 0 SControl 300)
+> [    2.303985] ATOM BIOS: CEDAR
+> [    2.306958] [drm] GPU not posted. posting now...
+> [    2.314564] radeon 0000:01:00.0: VRAM: 1024M 0x0000000000000000 - 0x00=
+0000003FFFFFFF (1024M used)
+> [    2.323482] radeon 0000:01:00.0: GTT: 1024M 0x0000000040000000 - 0x000=
+000007FFFFFFF
+> [    2.331229] [drm] Detected VRAM RAM=3D1024M, BAR=3D256M
+> [    2.336194] [drm] RAM width 64bits DDR
+> [    2.343406] [TTM] Zone  kernel: Available graphics memory: 2017038 kiB
+> [    2.349967] [TTM] Initializing pool allocator
+> [    2.354353] [TTM] Initializing DMA pool allocator
+> [    2.359105] [drm] radeon: 1024M of VRAM memory ready
+> [    2.364109] [drm] radeon: 1024M of GTT memory ready.
+> [    2.369260] [drm] Loading CEDAR Microcode
+> [    2.370083] ata2: SATA link up 6.0 Gbps (SStatus 133 SControl 300)
+> [    2.380025] ata2.00: ATA-8: ST4000DM000-1F2168, CC52, max UDMA/133
+> [    2.386240] ata2.00: 7814037168 sectors, multi 0: LBA48 NCQ (depth 31/=
+32)
+> [    2.393559] ata2.00: configured for UDMA/133
+> [    2.397952] scsi 1:0:0:0: Direct-Access     ATA      ST4000DM000-1F21 =
+CC52 PQ: 0 ANSI: 5
+> [    2.418024] sd 1:0:0:0: [sda] 7814037168 512-byte logical blocks: (4.0=
+0 TB/3.64 TiB)
+> [    2.420812] [drm] Internal thermal controller with fan control
+> [    2.425823] sd 1:0:0:0: [sda] 4096-byte physical blocks
+> [    2.436947] sd 1:0:0:0: [sda] Write Protect is off
+> [    2.441160] [drm] radeon: dpm initialized
+> [    2.445807] sd 1:0:0:0: [sda] Write cache: enabled, read cache: enable=
+d, doesn't support DPO or FUA
+> [    2.459901] [drm] GART: num cpu pages 262144, num gpu pages 262144
+> [    2.460082] usb 5-1: new high-speed USB device number 2 using xhci-hcd
+> [    2.466365] sd 1:0:0:0: [sda] Attached SCSI removable disk
+> [    2.467195] [drm] enabling PCIE gen 2 link speeds, disable with radeon=
+.pcie_gen2=3D0
+> [    2.511728] NET: Registered protocol family 10
+> [    2.516748] IPv6: ADDRCONF(NETDEV_UP): eth0: link is not ready
+> [    2.522778] IPv6: ADDRCONF(NETDEV_UP): eth2: link is not ready
+> [    2.528771] Segment Routing with IPv6
+> [    2.548836] [drm] PCIE GART of 1024M enabled (table at 0x000000000014C=
+000).
+> [    2.556059] radeon 0000:01:00.0: WB enabled
+> [    2.560272] radeon 0000:01:00.0: fence driver on ring 0 use gpu addr 0=
+x0000000040000c00 and cpu addr 0x        (ptrval)
+> [    2.571109] radeon 0000:01:00.0: fence driver on ring 3 use gpu addr 0=
+x0000000040000c0c and cpu addr 0x        (ptrval)
+> [    2.585425] radeon 0000:01:00.0: fence driver on ring 5 use gpu addr 0=
+x000000000005c418 and cpu addr 0x        (ptrval)
+> [    2.596259] [drm] Supports vblank timestamp caching Rev 2 (21.10.2013)=
+.
+> [    2.602916] [drm] Driver supports precise vblank timestamp query.
+> [    2.609046] radeon 0000:01:00.0: radeon: MSI limited to 32-bit
+> [    2.615006] radeon 0000:01:00.0: radeon: using MSI.
+> [    2.619944] [drm] radeon: irq initialized.
+> [    2.635912] hub 5-1:1.0: USB hub found
+> [    2.639847] hub 5-1:1.0: 4 ports detected
+> [    2.644731] [drm] ring test on 0 succeeded in 0 usecs
+> [    2.649815] [drm] ring test on 3 succeeded in 3 usecs
+> [    2.797941] usb 6-1: new SuperSpeed USB device number 2 using xhci-hcd
+> [    2.833616] [drm] ring test on 5 succeeded in 1 usecs
+> [    2.838697] [drm] UVD initialized successfully.
+> [    2.843495] [drm] ib test on ring 0 succeeded in 0 usecs
+> [    2.848884] [drm] ib test on ring 3 succeeded in 0 usecs
+> [    2.905618] hub 6-1:1.0: USB hub found
+> [    2.909579] hub 6-1:1.0: 4 ports detected
+> [    2.986738] usb 5-1.4: new high-speed USB device number 3 using xhci-h=
+cd
+> [    3.006863] [drm] ib test on ring 5 succeeded
+> [    3.011876] [drm] Radeon Display Connectors
+> [    3.016085] [drm] Connector 0:
+> [    3.019154] [drm]   DP-1
+> [    3.021698] [drm]   HPD2
+> [    3.024244] [drm]   DDC: 0x6460 0x6460 0x6464 0x6464 0x6468 0x6468 0x6=
+46c 0x646c
+> [    3.031672] [drm]   Encoders:
+> [    3.034653] [drm]     DFP1: INTERNAL_UNIPHY1
+> [    3.038941] [drm] Connector 1:
+> [    3.042008] [drm]   DVI-I-1
+> [    3.044814] [drm]   HPD4
+> [    3.047358] [drm]   DDC: 0x6440 0x6440 0x6444 0x6444 0x6448 0x6448 0x6=
+44c 0x644c
+> [    3.054786] [drm]   Encoders:
+> [    3.057767] [drm]     DFP2: INTERNAL_UNIPHY
+> [    3.061968] [drm]     CRT1: INTERNAL_KLDSCP_DAC1
+> [    3.066605] [drm] Connector 2:
+> [    3.069672] [drm]   DVI-I-2
+> [    3.072478] [drm]   HPD1
+> [    3.075023] [drm]   DDC: 0x6430 0x6430 0x6434 0x6434 0x6438 0x6438 0x6=
+43c 0x643c
+> [    3.082450] [drm]   Encoders:
+> [    3.085430] [drm]     DFP3: INTERNAL_UNIPHY1
+> [    3.089719] [drm]     CRT2: INTERNAL_KLDSCP_DAC2
+> [    3.095924] hub 5-1.4:1.0: USB hub found
+> [    3.100002] hub 5-1.4:1.0: 4 ports detected
+> [    3.110713] mvpp2 f2000000.ethernet eth0: Link is Up - 1Gbps/Full - fl=
+ow control rx/tx
+> [    3.118686] IPv6: ADDRCONF(NETDEV_CHANGE): eth0: link becomes ready
+> [    3.206262] [drm] fb mappable at 0x80034D000
+> [    3.210554] [drm] vram apper at 0x800000000
+> [    3.214756] [drm] size 8294400
+> [    3.217823] [drm] fb depth is 24
+> [    3.221064] [drm]    pitch is 7680
+> [    3.264754] Console: switching to colour frame buffer device 240x67
+> [    3.278056] radeon 0000:01:00.0: fb0: radeondrmfb frame buffer device
+> [    3.299311] [drm] Initialized radeon 2.50.0 20080528 for 0000:01:00.0 =
+on minor 0
+> [ ok done.
+> [....] Setting up keyboard layout...[    3.351975] usb 6-1.4: new SuperSp=
+eed USB device number 3 using xhci-hcd
+> [ ok done.
+> [    3.458706] hub 6-1.4:1.0: USB hub found
+> [    3.462996] hub 6-1.4:1.0: 4 ports detected
+> [    3.540089] usb 5-1.4.1: new full-speed USB device number 4 using xhci=
+-hcd
+> [    3.551721] EXT4-fs (mmcblk0p1): re-mounted. Opts: (null)
+> [....] Checking root file system...fsck from util-linux 2.32
+> /dev/mmcblk0p1: clean, 165507/475136 files, 4946295/7599104 blocks
+> [ ok done.
+> [    3.603163] EXT4-fs (mmcblk0p1): re-mounted. Opts: commit=3D60
+> [    3.723430] usb 5-1.4.1: new high-speed USB device number 5 using xhci=
+-hcd
+> [....] Activating lvm and md swap...[ ok done.
+> [....] Checking file systems...fsck from util-linux 2.32
+> checking super block...
+> filesystem is clean, no checking needed.
+> [ ok done.
+> [    3.892330] usbcore: registered new interface driver usbhid
+> [    3.898466] usbhid: USB HID core driver
+> [....] Cleaning up temporary files... /tmp[ ok .
+> [    3.971996] usbcore: registered new interface driver snd-usb-audio
+> [    3.981106] input: ASUS Xonar U7 MKII as /devices/platform/cp1/cp1:con=
+fig-space@f4000000/f4500000.usb3/usb5/5-1/5-1.4/5-1.4.1/5-1.4.1:1.4/0003:0B=
+05:183C.0001/input/input0
+> [    3.996748] usb 5-1.4.2: new low-speed USB device number 6 using xhci-=
+hcd
+> [info] Loading kernel module nf_conntrack_ftp.
+> [info] Loading kernel module snd-usb-audio.
+> [info] Loading kernel module fbcon.
+> modprobe: FATAL: Module fbcon not found in directory /lib/modules/4.17.11
+> [info] Loading kernel module udl.
+> modprobe: FATAL: Module udl not found in directory /lib/modules/4.17.11
+> [    4.050298] hid-generic 0003:0B05:183C.0001: input: USB HID v1.00 Devi=
+ce [ASUS Xonar U7 MKII] on usb-f4500000.usb3-1.4.1/input4
+> [    4.143548] random: alsactl: uninitialized urandom read (4 bytes read)
+> [    4.159127] input: Logitech USB-PS/2 Optical Mouse as /devices/platfor=
+m/cp1/cp1:config-space@f4000000/f4500000.usb3/usb5/5-1/5-1.4/5-1.4.2/5-1.4.=
+2:1.0/0003:046D:C01E.0002/input/input1
+> [    4.175703] hid-generic 0003:046D:C01E.0002: input: USB HID v1.10 Mous=
+e [Logitech USB-PS/2 Optical Mouse] on usb-f4500000.usb3-1.4.2/input0
+> [    4.252844] Adding 4194300k swap on /i/SWAP.  Priority:-2 extents:1 ac=
+ross:4194300k
+> [    4.270569] mvpp2 f4000000.ethernet eth2: Link is Up - 100Mbps/Full - =
+flow control rx/tx
+> [    4.278738] IPv6: ADDRCONF(NETDEV_CHANGE): eth2: link becomes ready
+> [    4.316754] usb 5-1.4.3: new low-speed USB device number 7 using xhci-=
+hcd
+> [....] Mounting local filesystems...[ ok done.
+> [....] Activating swapfile swap...[ ok done.
+> [....] Cleaning up temporary files...[ ok .
+> [    4.366696] random: dd: uninitialized urandom read (512 bytes read)
+> [....] Starting Setting kernel variables: sysctl[ ok .
+> [    4.468860] PPP generic driver version 2.4.2
+> [    4.474859] input: GASIA PS2toUSB Adapter as /devices/platform/cp1/cp1=
+:config-space@f4000000/f4500000.usb3/usb5/5-1/5-1.4/5-1.4.3/5-1.4.3:1.0/000=
+3:0E8F:0020.0003/input/input2
+> [    4.477505] NET: Registered protocol family 17
+> [    4.539749] NET: Registered protocol family 24
+> [    4.550179] hid-generic 0003:0E8F:0020.0003: input: USB HID v1.10 Keyb=
+oard [GASIA PS2toUSB Adapter] on usb-f4500000.usb3-1.4.3/input0
+> [    4.566423] input: GASIA PS2toUSB Adapter as /devices/platform/cp1/cp1=
+:config-space@f4000000/f4500000.usb3/usb5/5-1/5-1.4/5-1.4.3/5-1.4.3:1.1/000=
+3:0E8F:0020.0004/input/input3
+> [....] Configuring network interfaces...Plugin rp-pppoe.so loaded.
+> ifup: interface eth0 already configured
+> ifup: interface eth2 already configured
+> [ ok done.
+> [....] Cleaning up temporary files...[ ok .
+> [    4.636900] hid-generic 0003:0E8F:0020.0004: input: USB HID v1.10 Mous=
+e [GASIA PS2toUSB Adapter] on usb-f4500000.usb3-1.4.3/input1
+> [    4.660387] random: alsactl: uninitialized urandom read (4 bytes read)
+> [....] Setting up X socket directories... /tmp/.X11-unix /tmp/.ICE-unix[ =
+ok .
+> [....] Setting sensors limits...[ ok done.
+> [....] Setting up ALSA...[ ok done.
+> [....] Loading netfilter rules...run-parts: executing /usr/share/netfilte=
+r-persistent/plugins.d/15-ip4tables start
+> run-parts: executing /usr/share/netfilter-persistent/plugins.d/25-ip6tabl=
+es start
+> [    4.743426] usb 5-1.4.4: new high-speed USB device number 8 using xhci=
+-hcd
+> [ ok done.
+> INIT: Entering runlevel: 2
+> [info] Using makefile-style concurrent boot in runlevel 2.
+> [....] Enabling additional executable binary formats: binfmt-support[ ok =
+.
+> [....] Setting up console font and keymap...[ ok done.
+> [    4.878142] udlfb 5-1.4.4:1.0: vendor descriptor length: 34 data: 22 5=
+f 01 00 20 05 00 01 03 00 04
+> [    4.887190] udlfb 5-1.4.4:1.0: DL chip limited to 2360000 pixel modes
+> [....] Starting enhanced syslogd: rsyslogd[ ok .
+> [    5.046171] usb 5-1.4.4: Unable to get valid EDID from device/display
+> [    5.055288] usb 5-1.4.4: fb1 is DisplayLink USB device (800x600, 1880K=
+ framebuffer memory)
+> [    5.063655] usbcore: registered new interface driver udlfb
+> [....] Starting system message bus: dbus[ ok .
+> [....] Loading cpufreq kernel modules...[ ok done (none).
+> [....] Starting mouse interface server: gpm[ ok .
+> [....] Starting NTP server: ntpd[ ok .
+> [    5.167095] urandom_read: 3 callbacks suppressed
+> [    5.167098] random: automount: uninitialized urandom read (4 bytes rea=
+d)
+> [    5.195518] random: isc-worker0000: uninitialized urandom read (10 byt=
+es read)
+> [    5.202800] random: isc-worker0000: uninitialized urandom read (40 byt=
+es read)
+> [....] Starting automount...[ ok .
+> [....] Starting domain name service...: bind9[ ok .
+> [....] Starting virtual private network daemon:[ ok .
+> [....] CPUFreq Utilities: Setting ondemand CPUFreq governor...disabled, g=
+overnor not available...[ ok done.
+> Starting very small Busybox based DHCP server: Starting /usr/sbin/udhcpd.=
+..
+> udhcpd.
+> Starting radvd: radvd.
+> [....] Starting periodic command scheduler: cron[ ok .
+> [....] Starting OpenBSD Secure Shell server: sshd[ ok .
+> [....] Starting WIDE DHCPv6 client: dhcp6c[ ok .
+>
+> Debian GNU/Linux buster/sid leontynka ttyS0
+>
+> leontynka login: [   10.373259] random: crng init done
+> [   10.376676] random: 1 urandom warning(s) missed due to ratelimiting
+> [   23.931568] tun: Universal TUN/TAP device driver, 1.6
