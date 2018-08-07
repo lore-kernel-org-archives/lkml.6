@@ -2,124 +2,142 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.8 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLACK autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C5E4C46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 14:22:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 390F7C46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 14:23:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E7F8217B7
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 14:22:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E7F8217B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id E229520C0E
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 14:23:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RnClIL/V"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E229520C0E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lwfinger.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389346AbeHGQgp (ORCPT
+        id S2389485AbeHGQiG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 12:36:45 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38600 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2388569AbeHGQgo (ORCPT
+        Tue, 7 Aug 2018 12:38:06 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:37511 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732639AbeHGQiG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 12:36:44 -0400
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w77EJ7Id115469
-        for <linux-kernel@vger.kernel.org>; Tue, 7 Aug 2018 10:22:10 -0400
-Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2kqd2wr46u-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 10:22:10 -0400
-Received: from localhost
-        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <bryantly@linux.ibm.com>;
-        Tue, 7 Aug 2018 10:22:09 -0400
-Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
-        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 7 Aug 2018 10:22:06 -0400
-Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w77EM5Fs56819730
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 7 Aug 2018 14:22:05 GMT
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BCD72AC064;
-        Tue,  7 Aug 2018 10:22:38 -0400 (EDT)
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 870BBAC065;
-        Tue,  7 Aug 2018 10:22:38 -0400 (EDT)
-Received: from bryants-mbp-4.rchland.ibm.com (unknown [9.10.79.147])
-        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
-        Tue,  7 Aug 2018 10:22:38 -0400 (EDT)
-Subject: Re: [PATCH] misc: ibmvsm: Fix wrong assignment of return code
-To:     Michael Ellerman <michaele@au1.ibm.com>,
-        "Bryant G. Ly" <bryantly@linux.vnet.ibm.com>,
-        gregkh@linuxfoundation.org
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-References: <1533562260-11456-1-git-send-email-bryantly@linux.vnet.ibm.com>
- <87y3dibbt3.fsf@concordia.ellerman.id.au>
-From:   "Bryant G. Ly" <bryantly@linux.ibm.com>
-Date:   Tue, 7 Aug 2018 09:22:04 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
+        Tue, 7 Aug 2018 12:38:06 -0400
+Received: by mail-oi0-f65.google.com with SMTP id j205-v6so28758094oib.4;
+        Tue, 07 Aug 2018 07:23:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=7YqhuEk+P659GMgLrJyQUdbXaGwJv2m1E2YCu7BsK0g=;
+        b=RnClIL/VaC1U+bDkzB85pNrAva637xv7BCFYiwknm+4iVupId3RIi5DUfGFx4Oe1VF
+         HMIKZM+2aUrCqqW+8OXCCWk5uE7/LIDsVzECSGq9vV90T3NmZOy/Kwjk/Z7cdPOa81V6
+         b9iJV6B+Np27uQJuLFjJyMp4wSemVVf+89XrZhH+DtZNAH4+buQgiL0VKSbNFlDvweEP
+         dZS3J2QJZRYsWBL/ozGS9a9pZwfuQg3wnf8PAGW0nTuT72A9pQTpXihL+gWr8nn1yMPY
+         MySqac50OYH/OOm3JsLJo9EP52ODBI4lPX73+PXnwyPXUAdSM/sLZC+ng8EZzrc6R+W7
+         P+7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=7YqhuEk+P659GMgLrJyQUdbXaGwJv2m1E2YCu7BsK0g=;
+        b=V4zUfmYa78K78BEv56zLo/ukn+fNppOdQOIIiVaNFsQv1RTrg+vZIi74Zb0lousbpF
+         bpeerNJYksch6GES5IlEZfD5nSd7hA6Y+lcGszz7HAeje0FnR435aRvsTdoHgKECSdMF
+         TNSJk8GrfEd01CCvKwiMfabuPH38a0KB/NaIRD+lEsvqEtTZoUuvEghviR4XLrZljcEG
+         UBexKk42GdOhqY7qOZgwoIcCNeRguqixZFSaUES2Q1AIGMQZB0kPygU+3gXgBROY+tkQ
+         gQ0pFuvsfqTzAUIm3HZH6+SZkdnK3qCtUo1crpqh/+17gNNKeLJMvg2gl6dXeqnyr0ct
+         O7NA==
+X-Gm-Message-State: AOUpUlHfBW7nBaaWBnKZ5MSU7p0xh0YUy/C2oFy7Otw8hZoX+8yG7kYP
+        E5Xq8WtVRp0amsCk5h2ztmjcYOUL
+X-Google-Smtp-Source: AA+uWPw4jyrNIGQ31LI5OVOJnJntBT8zW8tlblYa+u55y+88nREQQ5lb+thqWC46DPDk3HVPc4UCUA==
+X-Received: by 2002:aca:c602:: with SMTP id w2-v6mr19173696oif.122.1533651811696;
+        Tue, 07 Aug 2018 07:23:31 -0700 (PDT)
+Received: from [192.168.1.107] (cpe-24-31-245-230.kc.res.rr.com. [24.31.245.230])
+        by smtp.gmail.com with ESMTPSA id w204-v6sm3044382oif.2.2018.08.07.07.23.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 07 Aug 2018 07:23:31 -0700 (PDT)
+Subject: Re: [PATCH] rtlwifi: btcoex: Fix if == else warnings in
+ halbtc8723b2ant.c
+To:     valdis.kletnieks@vt.edu, YueHaibing <yuehaibing@huawei.com>
+Cc:     pkshih@realtek.com, kvalo@codeaurora.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        davem@davemloft.net, colin.king@canonical.com,
+        linux-wireless@vger.kernel.org
+References: <20180806045440.11920-1-yuehaibing@huawei.com>
+ <63216.1533591775@turing-police.cc.vt.edu>
+From:   Larry Finger <Larry.Finger@lwfinger.net>
+Message-ID: <577a831f-45c3-a687-ca04-edc977ddb925@lwfinger.net>
+Date:   Tue, 7 Aug 2018 09:23:30 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <87y3dibbt3.fsf@concordia.ellerman.id.au>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <63216.1533591775@turing-police.cc.vt.edu>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18080714-0064-0000-0000-00000336B5B0
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009501; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01070655; UDB=6.00551084; IPR=6.00850027;
- MB=3.00022559; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-07 14:22:08
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18080714-0065-0000-0000-00003A383E5B
-Message-Id: <ff54860b-9e9a-84a2-9f72-cbb0c5b7118d@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-07_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808070146
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 8/7/18 7:28 AM, Michael Ellerman wrote:
-
-> "Bryant G. Ly" <bryantly@linux.vnet.ibm.com> writes:
->
->> From: "Bryant G. Ly" <bryantly@linux.ibm.com>
+On 08/06/2018 04:42 PM, valdis.kletnieks@vt.edu wrote:
+> On Mon, 06 Aug 2018 12:54:40 +0800, YueHaibing said:
+>> Fix following coccinelle warning:
 >>
->> Currently the assignment is flipped and rc is always 0.
-> If you'd left rc uninitialised at the start of the function the compiler
-> would have caught it for you.
->
-> And what is the consequence of the bug? Nothing, complete system crash,
-> subtle data corruption?
+>> ./drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8723b2ant.c:2952:2-4: WARNING: possible condition with no effect (if == else)
+> 
+>>   	/* sw mechanism */
+>>   	if (BTC_WIFI_BW_HT40 == wifi_bw) {
+>> -		if ((wifi_rssi_state == BTC_RSSI_STATE_HIGH) ||
+>> -		    (wifi_rssi_state == BTC_RSSI_STATE_STAY_HIGH)) {
+>> -			btc8723b2ant_sw_mechanism(btcoexist, true, true,
+>> -						  false, false);
+>> -		} else {
+>> -			btc8723b2ant_sw_mechanism(btcoexist, true, true,
+>> -						  false, false);
+>> -		}
+>> +		btc8723b2ant_sw_mechanism(btcoexist, true, true,
+>> +					  false, false);
+>>   	} else {
+> 
+> Rather than blindly fixing this, perhaps a bit of thought needs to be
+> applied to why this code looks like this in the first place.
+> 
+> See commit c6821613e653a  (which looks like the bletcherous "do too many
+> things at once" commit indeed), although the actual diff appears to be a
+> "no harm, no foul" against this commit, where the issue already existed.
+> 
+> commit aa45a673b291fd761275493bc15316d79555ed55
+> Author: Larry Finger <Larry.Finger@lwfinger.net>
+> Date:   Fri Feb 28 15:16:43 2014 -0600
+> 
+>      rtlwifi: btcoexist: Add new mini driver
+> 
+> Larry? Can you reach back to 2014 and remember why this code
+> looked like this in the first place?
 
-The consequence would be that if the CRQ Registration failed the first time
-due to not enough resources, it would never try to reset and try again. 
+The base code came from Realtek. My only part in getting it into the kernel was 
+to clean up the checkpatch and Sparse errors and warnings, and submit it. I was 
+a "script kiddy" just like the authors of the current patches. The only 
+difference is that I was getting drivers into the kernel so that users hardware 
+would work.
 
-If it fails due to any other error then it would just fail the sending of the
-crq init message, thus it would just wait for the client to init, which would
-never happen. 
+Any record of whether these duplicate branches are the result of incorrect copy 
+and paste, or just extraneous code, would be at Realtek in their version control 
+history. I have never had access to such archives, nor have I ever had an 
+non-disclosure agreement with Realtek.
 
-We would also have a memory leak since in the error case DMA would never get
-un-mapped and the message queue never gets freed. 
+Ping-Ke Shih, who is Cc'd on these messages, might be able to answer these 
+questions.
 
->
-> Also this should be tagged:
->
-> Fixes: 0eca353e7ae7 ("misc: IBM Virtual Management Channel Driver (VMC)")
->
-> cheers
->
-Yep, sorry I forgot to add the Fixes:..
+For the moment, these simplifications could be applied as long as they are 
+correctly done. After all, they are not changing what is already there and that 
+stops any other person that knows how to run coccinelle from submitting the same 
+patch in the future. Why "kick the can down the road"? If PK can find that there 
+was an error in the original code, he can submit a "Fixes" patch.
 
--Bryant
-
+Larry
 
