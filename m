@@ -2,117 +2,134 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 615AEC46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 20:28:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D62CCC46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 20:31:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 121BF216ED
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 20:28:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lRnrplIJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 121BF216ED
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 6919B216ED
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 20:31:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6919B216ED
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727541AbeHGWoz (ORCPT
+        id S1726630AbeHGWrR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 18:44:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40988 "EHLO mail.kernel.org"
+        Tue, 7 Aug 2018 18:47:17 -0400
+Received: from mout.gmx.net ([212.227.17.20]:59933 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726358AbeHGWoz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 18:44:55 -0400
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B536521731
-        for <linux-kernel@vger.kernel.org>; Tue,  7 Aug 2018 20:28:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1533673726;
-        bh=j/ohKG4q6gqn4sbAAw09R8Kom1LBCU9eO5goFLkDhnE=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=lRnrplIJfvdcnCRySoL7MOAI8xn43qRFitktNW97beT3crGst78ChXqmm7232iP4h
-         rJP/u8moZCVN3bvwqhtMekMZ2e+Oj2lITqrgJprxyzoV2HBpnt9UPJcYBtinwCuUW8
-         WLJMUB53a5iw8jwxdkeWC1wnXLult/V+TdQMVuE0=
-Received: by mail-wr1-f53.google.com with SMTP id r16-v6so16924681wrt.11
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 13:28:45 -0700 (PDT)
-X-Gm-Message-State: AOUpUlGn1OU/qVNiAyeZvhbN9VOfcQBL18Fy6ra2gMHcc58AvcwZnyda
-        Y0RA7z9NR35Qi9UexY8wrd+LIhwHINoV1pjl0TUGvg==
-X-Google-Smtp-Source: AAOMgpfTYaHD9dKZMajod5mRGE4QN/OjhOU8jlSEPaARVlrExYDpWa2qtcD4yVRuA2foT/3T7clEKvQvvn2DAUqb0A8=
-X-Received: by 2002:adf:8325:: with SMTP id 34-v6mr13388789wrd.67.1533673724192;
- Tue, 07 Aug 2018 13:28:44 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a1c:548:0:0:0:0:0 with HTTP; Tue, 7 Aug 2018 13:28:23 -0700 (PDT)
-In-Reply-To: <alpine.DEB.2.21.1808072218310.1672@nanos.tec.linutronix.de>
-References: <1533637471-30953-1-git-send-email-joro@8bytes.org>
- <1533637471-30953-3-git-send-email-joro@8bytes.org> <feea2aff-91ff-89a6-9d7c-5402a1d6a27f@intel.com>
- <CALCETrXj1-CC-rcnM5s2SvbSFKjZPMYj0O-9d1PY0MRdGEKs-g@mail.gmail.com> <alpine.DEB.2.21.1808072218310.1672@nanos.tec.linutronix.de>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Tue, 7 Aug 2018 13:28:23 -0700
-X-Gmail-Original-Message-ID: <CALCETrX4e=U21c+_9u_PrvJecDpjKiuQ-KGeW=Z3ME=a2=Kj9Q@mail.gmail.com>
-Message-ID: <CALCETrX4e=U21c+_9u_PrvJecDpjKiuQ-KGeW=Z3ME=a2=Kj9Q@mail.gmail.com>
-Subject: Re: [PATCH 2/3] x86/mm/pti: Don't clear permissions in pti_clone_pmd()
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Joerg Roedel <joro@8bytes.org>, Ingo Molnar <mingo@kernel.org>,
-        "H . Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Juergen Gross <jgross@suse.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Brian Gerst <brgerst@gmail.com>,
-        David Laight <David.Laight@aculab.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        Eduardo Valentin <eduval@amazon.com>,
+        id S1725740AbeHGWrQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 18:47:16 -0400
+Received: from [192.168.43.192] ([80.187.96.219]) by mail.gmx.com (mrgmx103
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 0MV6PJ-1fQRnJ10dJ-00YQir; Tue, 07
+ Aug 2018 22:30:56 +0200
+Subject: Re: [PATCH] parisc: prefer _THIS_IP_ and _RET_IP_ statement
+ expressions
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     dave.anglin@bell.net, jejb@parisc-linux.org,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Pravin Shedge <pravin.shedge4linux@gmail.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
         Greg KH <gregkh@linuxfoundation.org>,
-        Will Deacon <will.deacon@arm.com>,
-        "Liguori, Anthony" <aliguori@amazon.com>,
-        Daniel Gruss <daniel.gruss@iaik.tugraz.at>,
-        Hugh Dickins <hughd@google.com>,
-        Kees Cook <keescook@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        "David H . Gutteridge" <dhgutteridge@sympatico.ca>,
-        Joerg Roedel <jroedel@suse.de>
-Content-Type: text/plain; charset="UTF-8"
+        linux-parisc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Alistair Strachan <astrachan@google.com>
+References: <20180801182258.17834-1-ndesaulniers@google.com>
+ <78c667f9-5c8b-3835-83eb-4b59e27e4f7e@bell.net>
+ <CAKwvOdmdrA+UvAWyqe8sNJt5nxHXHsSwf5Yxih9HYgVL+kovxQ@mail.gmail.com>
+ <fe7b57d8-b586-a390-31d2-2274f69db3c0@bell.net>
+ <CAKwvOd=CLBFZRQ4HQb_+VCydDEvsbC2w2gD4hTwvp_jm1zqN9Q@mail.gmail.com>
+ <54b2139b-53d2-01c5-f240-93a692cdbc59@bell.net>
+ <CAKwvOdktvrZL8T_5K2VtQtgt_mscS7kzVXYVy0O7CSuGX53Y5A@mail.gmail.com>
+ <536ef1b1-cfa2-f66d-4261-fb8405964632@bell.net>
+ <CAKwvOdmwj76aESZNKhzfPmhfzGKvrfDut7oD5KAwA+VR-JukSg@mail.gmail.com>
+ <80743c1c-2a8c-7bce-2068-24c63790eba7@bell.net>
+ <CAKwvOdmDwO1U1sk=3-6zXFrVw6by1e_9VBx1WWMCx_rMqYSw-A@mail.gmail.com>
+ <81a7e33a-0403-b6d4-fcba-c2168a608ba6@bell.net>
+ <CAKwvOdmXi_EY5=sOO9tRqeoFrHjLsF9L988cGC2yjnFYBxac4w@mail.gmail.com>
+ <1d577675-c337-d433-f235-1e46e5d56d4c@gmx.de>
+ <CAKwvOdkABF9cxFxrtYo_mMWAunLL_ifM8+=H0On7WWcFmoN0Og@mail.gmail.com>
+From:   Helge Deller <deller@gmx.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=deller@gmx.de; prefer-encrypt=mutual; keydata=
+ xsBNBFDPIPYBCAC6PdtagIE06GASPWQJtfXiIzvpBaaNbAGgmd3Iv7x+3g039EV7/zJ1do/a
+ y9jNEDn29j0/jyd0A9zMzWEmNO4JRwkMd5Z0h6APvlm2D8XhI94r/8stwroXOQ8yBpBcP0yX
+ +sqRm2UXgoYWL0KEGbL4XwzpDCCapt+kmarND12oFj30M1xhTjuFe0hkhyNHkLe8g6MC0xNg
+ KW3x7B74Rk829TTAtj03KP7oA+dqsp5hPlt/hZO0Lr0kSAxf3kxtaNA7+Z0LLiBqZ1nUerBh
+ OdiCasCF82vQ4/y8rUaKotXqdhGwD76YZry9AQ9p6ccqKaYEzWis078Wsj7p0UtHoYDbABEB
+ AAHNHEhlbGdlIERlbGxlciA8ZGVsbGVyQGdteC5kZT7CwJIEEwECADwCGwMGCwkIBwMCBhUI
+ AgkKCwQWAgMBAh4BAheAFiEE9M/0wAvkPPtRU6Boh8nBUbUeOGQFAlrHzIICGQEACgkQh8nB
+ UbUeOGT1GAgAt+EeoHB4DbAx+pZoGbBYp6ZY8L6211n8fSi7wiwgM5VppucJ+C+wILoPkqiU
+ +ZHKlcWRbttER2oBUvKOt0+yDfAGcoZwHS0P+iO3HtxR81h3bosOCwek+TofDXl+TH/WSQJa
+ iaitof6iiPZLygzUmmW+aLSSeIAHBunpBetRpFiep1e5zujCglKagsW78Pq0DnzbWugGe26A
+ 288JcK2W939bT1lZc22D9NhXXRHfX2QdDdrCQY7UsI6g/dAm1d2ldeFlGleqPMdaaQMcv5+E
+ vDOur20qjTlenjnR/TFm9tA1zV+K7ePh+JfwKc6BSbELK4EHv8J8WQJjfTphakYLVM7ATQRQ
+ zyD2AQgA2SJJapaLvCKdz83MHiTMbyk8yj2AHsuuXdmB30LzEQXjT3JEqj1mpvcEjXrX1B3h
+ +0nLUHPI2Q4XWRazrzsseNMGYqfVIhLsK6zT3URPkEAp7R1JxoSiLoh4qOBdJH6AJHex4CWu
+ UaSXX5HLqxKl1sq1tO8rq2+hFxY63zbWINvgT0FUEME27Uik9A5t8l9/dmF0CdxKdmrOvGMw
+ T770cTt76xUryzM3fAyjtOEVEglkFtVQNM/BN/dnq4jDE5fikLLs8eaJwsWG9k9wQUMtmLpL
+ gRXeFPRRK+IT48xuG8rK0g2NOD8aW5ThTkF4apznZe74M7OWr/VbuZbYW443QQARAQABwsBf
+ BBgBAgAJBQJQzyD2AhsMAAoJEIfJwVG1HjhkNTgH/idWz2WjLE8DvTi7LvfybzvnXyx6rWUs
+ 91tXUdCzLuOtjqWVsqBtSaZynfhAjlbqRlrFZQ8i8jRyJY1IwqgvHP6PO9s+rIxKlfFQtqhl
+ kR1KUdhNGtiI90sTpi4aeXVsOyG3572KV3dKeFe47ALU6xE5ZL5U2LGhgQkbjr44I3EhPWc/
+ lJ/MgLOPkfIUgjRXt0ZcZEN6pAMPU95+u1N52hmqAOQZvyoyUOJFH1siBMAFRbhgWyv+YE2Y
+ ZkAyVDL2WxAedQgD/YCCJ+16yXlGYGNAKlvp07SimS6vBEIXk/3h5Vq4Hwgg0Z8+FRGtYZyD
+ KrhlU0uMP9QTB5WAUvxvGy8=
+Message-ID: <74f19f24-fc6a-748d-3778-26ee0bfb2d40@gmx.de>
+Date:   Tue, 7 Aug 2018 22:30:53 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
+MIME-Version: 1.0
+In-Reply-To: <CAKwvOdkABF9cxFxrtYo_mMWAunLL_ifM8+=H0On7WWcFmoN0Og@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:IDAD/mpQeWd2ZDgWu6mg3otvCVHlS0dpvJ1qsaK/Pjw3XV3pxTj
+ bysp9Tn7LMLFBx9BPHiTKTRzWhrrYATysf24o1f7pcUjUFh5cPflKbq/AoKApM4LHW9C/i5
+ XQkcSuJCaQfxpTj08hRwrrQpXdQUe8180p/Ii59fuhCQIq358OjIcKXFO5u9QuZs981DSPc
+ 4karmUGZ4e5qqiOfGJGXA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:LI9DoHClkUM=:aaTbW7BNUZU3IrdU9XeSGX
+ aPT06Y738kyYmBFlrObBwbRUct13jcDd8A6WU33yRg++tOAZqPbvl2Bm3kHmwSYMi3kejIqDf
+ 4CErCdP3KuTzhzSK2s6H/6K8gNMMkvnsEoFC7xgnpFp8Ov9sAn4SC2GjlLaRGfkPC7lY0anTr
+ +oFHlWUQCOtO9KG90KX6gGL0pa3NikPydplXQCvsVp6C9on9ajKmDHmw4U3dp+/RBmxnEIRiy
+ 05M5VSTpTfOCaEHbpx6IBgdzC5g0pzYIAib+eLr/ie/v3L/GlC/6mh+zKyZmCBnCwy1pZrNqG
+ oEp5koQg2U6RXJ7JLbtKDb2RfWjgMMPssA0wg71pMglyoK/p5Tuy1nZkJsELZOf7qMu1mIigs
+ gUVOuGmERDZi1yxioreLjXhhDGr6oJjVPeuxc25P9RM6QdRk3rCAFsb/qArqf0ntlnsZJ14aA
+ U9G58xsJboeBD14iToI4xEULRhYGGc6lhKgC8rDnp8ahIrr5LNYBygteFStbS+JrqLsHJXoQ5
+ U31DC8FvKo27k6BmlrRSol0i5M6hDWSg94odAynOtgSapc4DldpEzz0QbUn9MiCGX1Rrv3DBg
+ utALR0l9ZwCf05Vo7bNBGXniszuGXeTjQa6luBO6Fga2c6hqcrUb/appxO56tLb+6xUsBJxnK
+ NBAkExpDIMDpAEzOGX/anRcNla3ZKaCItqu1NWoqwEjqWcYQStw/chylc1MjQQk7LL963hFLN
+ t/1B67O8Ym8Cr91jCOkOHo4kw2EmwVoI+sfZGxLYBI09o6dVN+Usq0379uzAvtqC05rlsqZS3
+ gzbjPYE
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 7, 2018 at 1:21 PM, Thomas Gleixner <tglx@linutronix.de> wrote:
-> On Tue, 7 Aug 2018, Andy Lutomirski wrote:
->
->> On Tue, Aug 7, 2018 at 11:34 AM, Dave Hansen <dave.hansen@intel.com> wrote:
->> > On 08/07/2018 03:24 AM, Joerg Roedel wrote:
->> >> The function sets the global-bit on cloned PMD entries,
->> >> which only makes sense when the permissions are identical
->> >> between the user and the kernel page-table.
->> >>
->> >> Further, only write-permissions are cleared for entry-text
->> >> and kernel-text sections, which are not writeable anyway.
->> >
->> > I think this patch is correct, but I'd be curious if Andy remembers why
->> > we chose to clear _PAGE_RW on these things.  It might have been that we
->> > were trying to say that the *entry* code shouldn't write to this stuff,
->> > regardless of whether the normal kernel can.
->> >
->> > But, either way, I agree with the logic here that Global pages must
->> > share permissions between both mappings, so feel free to add my Ack.  I
->> > just want to make sure Andy doesn't remember some detail I'm forgetting.
->>
->> I suspect it's because we used to (and maybe still do) initialize the
->> user tables before mark_read_only().
->
-> We still do that because we need the entry stuff working for interrupts
-> early on. We now repeat the clone after mark_ro so the mask RW is not
-> longer required.
+On 07.08.2018 20:11, Nick Desaulniers wrote:
+> On Fri, Aug 3, 2018 at 3:34 PM Helge Deller <deller@gmx.de> wrote:
+>> So, your patch is basically OK and doesn't break anything.
+>> But I agree with Dave and Andrew, that THIS_IP is ugly.
+> 
+> I don't disagree, and other maintainers have remarked on _THIS_IP_
+> being ugly, but renaming it en masse is a tree wide change, which I'm
+> trying to avoid at the moment.
 
-Agreed.
+Understandable.
+
+> It sounds like we have a working patch? Are there 64b parisc machines
+> to test on, or can this get merged?
+
+Go ahead and merge it.
+
+In addition, somehow I'd prefer if there would be a way to add to include/linux/kernel.h:
++#if !defined(_THIS_IP_)
+#define _THIS_IP_  ({ __label__ __here; __here: (unsigned long)&&__here; })
++#endif
+
+That way it would somehow be possible to replace that label calulation by the
+preferable inline assembly of current_text_address()...
+
+Helge
