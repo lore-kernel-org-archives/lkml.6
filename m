@@ -2,97 +2,179 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A611EC46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 10:45:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3569EC46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 10:50:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C1432173F
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 10:45:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B7CmxZN0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C1432173F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id DE67C20891
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 10:50:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE67C20891
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387677AbeHGM7G (ORCPT
+        id S1733279AbeHGNEf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 08:59:06 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:36752 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726073AbeHGM7G (ORCPT
+        Tue, 7 Aug 2018 09:04:35 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:50974 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726555AbeHGNEf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 08:59:06 -0400
-Received: by mail-pl0-f68.google.com with SMTP id e11-v6so6969005plb.3
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 03:45:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=7XnpbU30l1Fe3R8WyVHQ4d4M5K53k9CjTKaucIp1NAk=;
-        b=B7CmxZN0LniYVGHe1kR/g2j1+8wiWK033Nv4qkrQ4We4rpHhDIsYE6p38NIbmbN4b6
-         iasu0FJHsfo8xUbL3Yy+6qg+4h7XAc4gHMuQMYuiMdBX0KF3lhp103mZeY3bHLD0iS+e
-         4uoV55RDL3jBkxQEnqqWp1T/DEJzynCnjM3B3Ma35N1VRLL4w8Vk/nOPv4l0J81C2mXM
-         fO0wQyUwb6tkp/MiucohOWflXwaN436M65hDVJPFuaMM0T+aduMaC0PkIbp6ceAsYfuv
-         pOZpwjE3aLI3lYzBHzrw6gRayXnc9FI7R4wmjedWnFG7qcC5zQMF10nfKsfOKYtJ09TJ
-         UzBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=7XnpbU30l1Fe3R8WyVHQ4d4M5K53k9CjTKaucIp1NAk=;
-        b=KlRaq5AlTRACKnHSRMEZSgIz5Q6XAG3753pw29z6fYnx+gd/F8TdFyz6AV0LjMg0Yg
-         aqfl5fy3x5skyhA4B+5QzJTjY+eSzdZiDKv9JfI6LsR1my4pZOlmUuDyoK+2abcY7yjP
-         CKr2x39M10w1W6A41ubsBmlbRRuZ3LCxL25vOnY6TX3nzfHNaLiJtbSTmlk+7lPfn+xF
-         j/OjZtFFWixR6ZQjNhxcMNaDADTQ6Y+CsXV5Uo/cfIZGO0/WXTyUDSXwSgi2MampyRc3
-         nOJYhMmmELDPpWZKRZCqWJmqz0u5oBnfYHMV40yYjSAslgHlavc05DXNPTG2UHEkO6xI
-         /3Dw==
-X-Gm-Message-State: AOUpUlHTaMwSPKgb44HEm2+YAYnzMqJoN3bg9zlwReiYPKtD/+y1RzYM
-        hzNWxHhimEy/GV47/1yArbY=
-X-Google-Smtp-Source: AAOMgpfBz7ThNyoB+OGHG0BKluuvipe4NCKUTbT+MGfhvwMjREGOIyW1QNBAYSFjEZFMxlA9WZ11sg==
-X-Received: by 2002:a17:902:2f84:: with SMTP id t4-v6mr17267714plb.87.1533638722818;
-        Tue, 07 Aug 2018 03:45:22 -0700 (PDT)
-Received: from blackpearl ([175.100.146.34])
-        by smtp.gmail.com with ESMTPSA id q26-v6sm1674487pff.9.2018.08.07.03.45.21
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 07 Aug 2018 03:45:22 -0700 (PDT)
-From:   Sumit Pundir <pundirsumit11@gmail.com>
-To:     rspringer@google.com
-Cc:     jnjoseph@google.com, benchan@chromium.org,
-        gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org,
-        Sumit Pundir <pundirsumit11@gmail.com>
-Subject: [PATCH] staging: gasket: fix code indent for conditional statement
-Date:   Tue,  7 Aug 2018 16:14:28 +0530
-Message-Id: <20180807104428.24486-1-pundirsumit11@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 7 Aug 2018 09:04:35 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: eballetbo)
+        with ESMTPSA id 7F23426ADC7
+Subject: Re: [PATCH 1/8] devfreq: rockchip-dfi: Move GRF definitions to a
+ common place.
+To:     Chanwoo Choi <cw00.choi@samsung.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sandy Huang <hjc@rock-chips.com>,
+        David Airlie <airlied@linux.ie>
+Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Derek Basehore <dbasehore@chromium.org>,
+        linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
+        dri-devel@lists.freedesktop.org, Lin Huang <hl@rock-chips.com>,
+        kernel@collabora.com, robin.murphy@arm.com,
+        Sean Paul <seanpaul@chromium.org>,
+        linux-arm-kernel@lists.infradead.org
+References: <20180730081124.30698-1-enric.balletbo@collabora.com>
+ <CGME20180730081245epcas3p2794d7d7c21f4059ab89ec59a0ef9fa22@epcas3p2.samsung.com>
+ <20180730081124.30698-2-enric.balletbo@collabora.com>
+ <5B6170F4.4070102@samsung.com>
+From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Message-ID: <94d01f35-7baa-aa6a-710e-c046fcf52286@collabora.com>
+Date:   Tue, 7 Aug 2018 12:50:46 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <5B6170F4.4070102@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixed a coding style issue related to indentation. Reported by
-checkpatch.pl
+Hi,
 
-Signed-off-by: Sumit Pundir <pundirsumit11@gmail.com>
----
- drivers/staging/gasket/gasket_page_table.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 01/08/18 10:36, Chanwoo Choi wrote:
+> Hi Enric,
+> 
+> On 2018년 07월 30일 17:11, Enric Balletbo i Serra wrote:
+>> Some rk3399 GRF (Generic Register Files) definitions can be used for
+>> different drivers. Move these definitions to a common include so we
+>> don't need to duplicate these definitions.
+>>
+>> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+>> ---
+>>
+>> Changes in v1:
+>> - [RFC 1/10] Add Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+> 
+> Even if you add the changes log, you are missing my Acked-by tag.
+> 
 
-diff --git a/drivers/staging/gasket/gasket_page_table.c b/drivers/staging/gasket/gasket_page_table.c
-index ed6ab3c5f038..d4c5f8aa7dd3 100644
---- a/drivers/staging/gasket/gasket_page_table.c
-+++ b/drivers/staging/gasket/gasket_page_table.c
-@@ -1311,7 +1311,7 @@ int gasket_alloc_coherent_memory(struct gasket_dev *gasket_dev, u64 size,
- 	gasket_dev->coherent_buffer.virt_base = mem;
- 
- 	*dma_address = driver_desc->coherent_buffer_description.base;
--		for (j = 0; j < num_pages; j++) {
-+	for (j = 0; j < num_pages; j++) {
- 		gasket_dev->page_table[index]->coherent_pages[j].paddr =
- 			handle + j * PAGE_SIZE;
- 		gasket_dev->page_table[index]->coherent_pages[j].kernel_virt =
--- 
-2.17.1
+Ops, right, sorry about that. I'll fix in next version.
 
+>> - [RFC 1/10] s/Generic/General/ (Robin Murphy)
+>> - [RFC 4/10] Removed from the series. I did not found a use case where not holding the mutex causes the issue.
+>> - [RFC 7/10] Removed from the series. I did not found a use case where this matters.
+>>
+>>  drivers/devfreq/event/rockchip-dfi.c | 23 +++++++----------------
+>>  include/soc/rockchip/rk3399_grf.h    | 21 +++++++++++++++++++++
+>>  2 files changed, 28 insertions(+), 16 deletions(-)
+>>  create mode 100644 include/soc/rockchip/rk3399_grf.h
+>>
+>> diff --git a/drivers/devfreq/event/rockchip-dfi.c b/drivers/devfreq/event/rockchip-dfi.c
+>> index 22b113363ffc..2fbbcbeb644f 100644
+>> --- a/drivers/devfreq/event/rockchip-dfi.c
+>> +++ b/drivers/devfreq/event/rockchip-dfi.c
+>> @@ -26,6 +26,8 @@
+>>  #include <linux/list.h>
+>>  #include <linux/of.h>
+>>  
+>> +#include <soc/rockchip/rk3399_grf.h>
+>> +
+>>  #define RK3399_DMC_NUM_CH	2
+>>  
+>>  /* DDRMON_CTRL */
+>> @@ -43,18 +45,6 @@
+>>  #define DDRMON_CH1_COUNT_NUM		0x3c
+>>  #define DDRMON_CH1_DFI_ACCESS_NUM	0x40
+>>  
+>> -/* pmu grf */
+>> -#define PMUGRF_OS_REG2	0x308
+>> -#define DDRTYPE_SHIFT	13
+>> -#define DDRTYPE_MASK	7
+>> -
+>> -enum {
+>> -	DDR3 = 3,
+>> -	LPDDR3 = 6,
+>> -	LPDDR4 = 7,
+>> -	UNUSED = 0xFF
+>> -};
+>> -
+>>  struct dmc_usage {
+>>  	u32 access;
+>>  	u32 total;
+>> @@ -83,16 +73,17 @@ static void rockchip_dfi_start_hardware_counter(struct devfreq_event_dev *edev)
+>>  	u32 ddr_type;
+>>  
+>>  	/* get ddr type */
+>> -	regmap_read(info->regmap_pmu, PMUGRF_OS_REG2, &val);
+>> -	ddr_type = (val >> DDRTYPE_SHIFT) & DDRTYPE_MASK;
+>> +	regmap_read(info->regmap_pmu, RK3399_PMUGRF_OS_REG2, &val);
+>> +	ddr_type = (val >> RK3399_PMUGRF_DDRTYPE_SHIFT) &
+>> +		    RK3399_PMUGRF_DDRTYPE_MASK;
+>>  
+>>  	/* clear DDRMON_CTRL setting */
+>>  	writel_relaxed(CLR_DDRMON_CTRL, dfi_regs + DDRMON_CTRL);
+>>  
+>>  	/* set ddr type to dfi */
+>> -	if (ddr_type == LPDDR3)
+>> +	if (ddr_type == RK3399_PMUGRF_DDRTYPE_LPDDR3)
+>>  		writel_relaxed(LPDDR3_EN, dfi_regs + DDRMON_CTRL);
+>> -	else if (ddr_type == LPDDR4)
+>> +	else if (ddr_type == RK3399_PMUGRF_DDRTYPE_LPDDR4)
+>>  		writel_relaxed(LPDDR4_EN, dfi_regs + DDRMON_CTRL);
+>>  
+>>  	/* enable count, use software mode */
+>> diff --git a/include/soc/rockchip/rk3399_grf.h b/include/soc/rockchip/rk3399_grf.h
+>> new file mode 100644
+>> index 000000000000..3eebabcb2812
+>> --- /dev/null
+>> +++ b/include/soc/rockchip/rk3399_grf.h
+>> @@ -0,0 +1,21 @@
+>> +/* SPDX-License-Identifier: GPL-2.0+ */
+>> +/*
+>> + * Rockchip General Register Files definitions
+>> + *
+>> + * Copyright (c) 2018, Collabora Ltd.
+>> + * Author: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+>> + */
+>> +
+>> +#ifndef __SOC_RK3399_GRF_H
+>> +#define __SOC_RK3399_GRF_H
+>> +
+>> +/* PMU GRF Registers */
+>> +#define RK3399_PMUGRF_OS_REG2		0x308
+>> +#define RK3399_PMUGRF_DDRTYPE_SHIFT	13
+>> +#define RK3399_PMUGRF_DDRTYPE_MASK	7
+>> +#define RK3399_PMUGRF_DDRTYPE_DDR3	3
+>> +#define RK3399_PMUGRF_DDRTYPE_LPDDR2	5
+>> +#define RK3399_PMUGRF_DDRTYPE_LPDDR3	6
+>> +#define RK3399_PMUGRF_DDRTYPE_LPDDR4	7
+>> +
+>> +#endif
+>>
+> 
+> 
