@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFC1EC46472
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:58:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB49BC46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:58:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8BB852147E
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:58:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BB852147E
+	by mail.kernel.org (Postfix) with ESMTP id 9F1B42172E
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:58:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F1B42172E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390955AbeHGVOU (ORCPT
+        id S2390965AbeHGVOY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 17:14:20 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34856 "EHLO
+        Tue, 7 Aug 2018 17:14:24 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34866 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389783AbeHGVOU (ORCPT
+        with ESMTP id S2389783AbeHGVOX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 17:14:20 -0400
+        Tue, 7 Aug 2018 17:14:23 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CDAE53EE;
-        Tue,  7 Aug 2018 18:58:35 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C8AFD3EE;
+        Tue,  7 Aug 2018 18:58:38 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org, Connor McAdams <conmanx360@gmail.com>,
+        Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+        Takashi Iwai <tiwai@suse.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 53/85] media: siano: get rid of __le32/__le16 cast warnings
-Date:   Tue,  7 Aug 2018 20:51:55 +0200
-Message-Id: <20180807172359.329225145@linuxfoundation.org>
+Subject: [PATCH 3.18 54/85] ALSA: hda/ca0132: fix build failure when a local macro is defined
+Date:   Tue,  7 Aug 2018 20:51:56 +0200
+Message-Id: <20180807172359.364911768@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180807172357.357252052@linuxfoundation.org>
 References: <20180807172357.357252052@linuxfoundation.org>
@@ -52,108 +52,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 
-[ Upstream commit e1b7f11b37def5f3021c06e8c2b4953e099357aa ]
+[ Upstream commit 8e142e9e628975b0dddd05cf1b095331dff6e2de ]
 
-Those are all false-positives that appear with smatch when building for
-arm:
+DECLARE_TLV_DB_SCALE (alias of SNDRV_CTL_TLVD_DECLARE_DB_SCALE) is used but
+tlv.h is not included. This causes build failure when local macro is
+defined by comment-out.
 
-  drivers/media/common/siano/smsendian.c:38:36: warning: cast to restricted __le32
-  drivers/media/common/siano/smsendian.c:38:36: warning: cast to restricted __le32
-  drivers/media/common/siano/smsendian.c:38:36: warning: cast to restricted __le32
-  drivers/media/common/siano/smsendian.c:38:36: warning: cast to restricted __le32
-  drivers/media/common/siano/smsendian.c:38:36: warning: cast to restricted __le32
-  drivers/media/common/siano/smsendian.c:38:36: warning: cast to restricted __le32
-  drivers/media/common/siano/smsendian.c:47:44: warning: cast to restricted __le32
-  drivers/media/common/siano/smsendian.c:47:44: warning: cast to restricted __le32
-  drivers/media/common/siano/smsendian.c:47:44: warning: cast to restricted __le32
-  drivers/media/common/siano/smsendian.c:47:44: warning: cast to restricted __le32
-  drivers/media/common/siano/smsendian.c:47:44: warning: cast to restricted __le32
-  drivers/media/common/siano/smsendian.c:47:44: warning: cast to restricted __le32
-  drivers/media/common/siano/smsendian.c:67:35: warning: cast to restricted __le16
-  drivers/media/common/siano/smsendian.c:67:35: warning: cast to restricted __le16
-  drivers/media/common/siano/smsendian.c:67:35: warning: cast to restricted __le16
-  drivers/media/common/siano/smsendian.c:67:35: warning: cast to restricted __le16
-  drivers/media/common/siano/smsendian.c:84:44: warning: cast to restricted __le32
-  drivers/media/common/siano/smsendian.c:84:44: warning: cast to restricted __le32
-  drivers/media/common/siano/smsendian.c:84:44: warning: cast to restricted __le32
-  drivers/media/common/siano/smsendian.c:84:44: warning: cast to restricted __le32
-  drivers/media/common/siano/smsendian.c:84:44: warning: cast to restricted __le32
-  drivers/media/common/siano/smsendian.c:84:44: warning: cast to restricted __le32
-  drivers/media/common/siano/smsendian.c:98:26: warning: cast to restricted __le16
-  drivers/media/common/siano/smsendian.c:98:26: warning: cast to restricted __le16
-  drivers/media/common/siano/smsendian.c:98:26: warning: cast to restricted __le16
-  drivers/media/common/siano/smsendian.c:98:26: warning: cast to restricted __le16
-  drivers/media/common/siano/smsendian.c:99:28: warning: cast to restricted __le16
-  drivers/media/common/siano/smsendian.c:99:28: warning: cast to restricted __le16
-  drivers/media/common/siano/smsendian.c:99:28: warning: cast to restricted __le16
-  drivers/media/common/siano/smsendian.c:99:28: warning: cast to restricted __le16
-  drivers/media/common/siano/smsendian.c:100:27: warning: cast to restricted __le16
-  drivers/media/common/siano/smsendian.c:100:27: warning: cast to restricted __le16
-  drivers/media/common/siano/smsendian.c:100:27: warning: cast to restricted __le16
-  drivers/media/common/siano/smsendian.c:100:27: warning: cast to restricted __le16
+This commit fixes the bug. At the same time, the alias macro is replaced
+with a destination macro added at a commit 46e860f76804 ("ALSA: rename
+TLV-related macros so that they're friendly to user applications")
 
-Get rid of them by adding explicit forced casts.
-
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Reported-by: Connor McAdams <conmanx360@gmail.com>
+Fixes: 44f0c9782cc6 ('ALSA: hda/ca0132: Add tuning controls')
+Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/common/siano/smsendian.c |   14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ sound/pci/hda/patch_ca0132.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/drivers/media/common/siano/smsendian.c
-+++ b/drivers/media/common/siano/smsendian.c
-@@ -35,7 +35,7 @@ void smsendian_handle_tx_message(void *b
- 	switch (msg->x_msg_header.msg_type) {
- 	case MSG_SMS_DATA_DOWNLOAD_REQ:
- 	{
--		msg->msg_data[0] = le32_to_cpu(msg->msg_data[0]);
-+		msg->msg_data[0] = le32_to_cpu((__force __le32)(msg->msg_data[0]));
- 		break;
- 	}
+--- a/sound/pci/hda/patch_ca0132.c
++++ b/sound/pci/hda/patch_ca0132.c
+@@ -38,6 +38,10 @@
+ /* Enable this to see controls for tuning purpose. */
+ /*#define ENABLE_TUNING_CONTROLS*/
  
-@@ -44,7 +44,7 @@ void smsendian_handle_tx_message(void *b
- 				sizeof(struct sms_msg_hdr))/4;
- 
- 		for (i = 0; i < msg_words; i++)
--			msg->msg_data[i] = le32_to_cpu(msg->msg_data[i]);
-+			msg->msg_data[i] = le32_to_cpu((__force __le32)msg->msg_data[i]);
- 
- 		break;
- 	}
-@@ -64,7 +64,7 @@ void smsendian_handle_rx_message(void *b
- 	{
- 		struct sms_version_res *ver =
- 			(struct sms_version_res *) msg;
--		ver->chip_model = le16_to_cpu(ver->chip_model);
-+		ver->chip_model = le16_to_cpu((__force __le16)ver->chip_model);
- 		break;
- 	}
- 
-@@ -81,7 +81,7 @@ void smsendian_handle_rx_message(void *b
- 				sizeof(struct sms_msg_hdr))/4;
- 
- 		for (i = 0; i < msg_words; i++)
--			msg->msg_data[i] = le32_to_cpu(msg->msg_data[i]);
-+			msg->msg_data[i] = le32_to_cpu((__force __le32)msg->msg_data[i]);
- 
- 		break;
- 	}
-@@ -95,9 +95,9 @@ void smsendian_handle_message_header(voi
- #ifdef __BIG_ENDIAN
- 	struct sms_msg_hdr *phdr = (struct sms_msg_hdr *)msg;
- 
--	phdr->msg_type = le16_to_cpu(phdr->msg_type);
--	phdr->msg_length = le16_to_cpu(phdr->msg_length);
--	phdr->msg_flags = le16_to_cpu(phdr->msg_flags);
-+	phdr->msg_type = le16_to_cpu((__force __le16)phdr->msg_type);
-+	phdr->msg_length = le16_to_cpu((__force __le16)phdr->msg_length);
-+	phdr->msg_flags = le16_to_cpu((__force __le16)phdr->msg_flags);
- #endif /* __BIG_ENDIAN */
++#ifdef ENABLE_TUNING_CONTROLS
++#include <sound/tlv.h>
++#endif
++
+ #define FLOAT_ZERO	0x00000000
+ #define FLOAT_ONE	0x3f800000
+ #define FLOAT_TWO	0x40000000
+@@ -3037,8 +3041,8 @@ static int equalizer_ctl_put(struct snd_
+ 	return 1;
  }
- EXPORT_SYMBOL_GPL(smsendian_handle_message_header);
+ 
+-static const DECLARE_TLV_DB_SCALE(voice_focus_db_scale, 2000, 100, 0);
+-static const DECLARE_TLV_DB_SCALE(eq_db_scale, -2400, 100, 0);
++static const SNDRV_CTL_TLVD_DECLARE_DB_SCALE(voice_focus_db_scale, 2000, 100, 0);
++static const SNDRV_CTL_TLVD_DECLARE_DB_SCALE(eq_db_scale, -2400, 100, 0);
+ 
+ static int add_tuning_control(struct hda_codec *codec,
+ 				hda_nid_t pnid, hda_nid_t nid,
 
 
