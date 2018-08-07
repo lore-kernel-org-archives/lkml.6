@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6301C46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:56:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1D99C46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:56:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CA932151D
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:56:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CA932151D
+	by mail.kernel.org (Postfix) with ESMTP id 8636B2172E
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:56:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8636B2172E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404471AbeHGVMI (ORCPT
+        id S2404486AbeHGVML (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 17:12:08 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33908 "EHLO
+        Tue, 7 Aug 2018 17:12:11 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33920 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732347AbeHGVMH (ORCPT
+        with ESMTP id S1732347AbeHGVMK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 17:12:07 -0400
+        Tue, 7 Aug 2018 17:12:10 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 31A44D14;
-        Tue,  7 Aug 2018 18:56:24 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 63F5CD01;
+        Tue,  7 Aug 2018 18:56:27 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stewart Smith <stewart@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Leon Romanovsky <leonro@mellanox.com>,
+        Doug Ledford <dledford@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 11/85] hvc_opal: dont set tb_ticks_per_usec in udbg_init_opal_common()
-Date:   Tue,  7 Aug 2018 20:51:13 +0200
-Message-Id: <20180807172357.778317977@linuxfoundation.org>
+Subject: [PATCH 3.18 12/85] RDMA/mad: Convert BUG_ONs to error flows
+Date:   Tue,  7 Aug 2018 20:51:14 +0200
+Message-Id: <20180807172357.812723076@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180807172357.357252052@linuxfoundation.org>
 References: <20180807172357.357252052@linuxfoundation.org>
@@ -51,46 +51,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stewart Smith <stewart@linux.ibm.com>
+From: Leon Romanovsky <leonro@mellanox.com>
 
-[ Upstream commit 447808bf500a7cc92173266a59f8a494e132b122 ]
+[ Upstream commit 2468b82d69e3a53d024f28d79ba0fdb8bf43dfbf ]
 
-time_init() will set up tb_ticks_per_usec based on reality.
-time_init() is called *after* udbg_init_opal_common() during boot.
+Let's perform checks in-place instead of BUG_ONs.
 
-from arch/powerpc/kernel/time.c:
-  unsigned long tb_ticks_per_usec = 100; /* sane default */
-
-Currently, all powernv systems have a timebase frequency of 512mhz
-(512000000/1000000 == 0x200) - although there's nothing written
-down anywhere that I can find saying that we couldn't make that
-different based on the requirements in the ISA.
-
-So, we've been (accidentally) thwacking the (currently) correct
-(for powernv at least) value for tb_ticks_per_usec earlier than
-we otherwise would have.
-
-The "sane default" seems to be adequate for our purposes between
-udbg_init_opal_common() and time_init() being called, and if it isn't,
-then we should probably be setting it somewhere that isn't hvc_opal.c!
-
-Signed-off-by: Stewart Smith <stewart@linux.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/tty/hvc/hvc_opal.c |    1 -
- 1 file changed, 1 deletion(-)
+ drivers/infiniband/core/mad.c |   11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
---- a/drivers/tty/hvc/hvc_opal.c
-+++ b/drivers/tty/hvc/hvc_opal.c
-@@ -337,7 +337,6 @@ static void udbg_init_opal_common(void)
- 	udbg_putc = udbg_opal_putc;
- 	udbg_getc = udbg_opal_getc;
- 	udbg_getc_poll = udbg_opal_getc_poll;
--	tb_ticks_per_usec = 0x200; /* Make udelay not suck */
- }
- 
- void __init hvc_opal_init_early(void)
+--- a/drivers/infiniband/core/mad.c
++++ b/drivers/infiniband/core/mad.c
+@@ -1466,7 +1466,8 @@ static int add_oui_reg_req(struct ib_mad
+ 			    mad_reg_req->oui, 3)) {
+ 			method = &(*vendor_table)->vendor_class[
+ 						vclass]->method_table[i];
+-			BUG_ON(!*method);
++			if (!*method)
++				goto error3;
+ 			goto check_in_use;
+ 		}
+ 	}
+@@ -1476,10 +1477,12 @@ static int add_oui_reg_req(struct ib_mad
+ 				vclass]->oui[i])) {
+ 			method = &(*vendor_table)->vendor_class[
+ 				vclass]->method_table[i];
+-			BUG_ON(*method);
+ 			/* Allocate method table for this OUI */
+-			if ((ret = allocate_method_table(method)))
+-				goto error3;
++			if (!*method) {
++				ret = allocate_method_table(method);
++				if (ret)
++					goto error3;
++			}
+ 			memcpy((*vendor_table)->vendor_class[vclass]->oui[i],
+ 			       mad_reg_req->oui, 3);
+ 			goto check_in_use;
 
 
