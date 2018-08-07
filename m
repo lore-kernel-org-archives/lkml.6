@@ -2,133 +2,101 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA49CC46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 20:59:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D199C46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 21:08:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7493E2156E
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 20:59:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D3A8E215F1
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 21:08:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FYKHBTH2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7493E2156E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="yOPfwluk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3A8E215F1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726902AbeHGXPw (ORCPT
+        id S1726895AbeHGXYR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 19:15:52 -0400
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:37541 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726027AbeHGXPw (ORCPT
+        Tue, 7 Aug 2018 19:24:17 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:55404 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726027AbeHGXYR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 19:15:52 -0400
-Received: by mail-yw1-f66.google.com with SMTP id w76-v6so20572ywg.4
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 13:59:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=LTPUUp/AGMk81cmpB2rQ5GGcpci70pDuPTY3tV2VyTI=;
-        b=FYKHBTH2RAXA+JyHV9XIaq4pJj+lJCUhKz8TQ3qj7dHBD+Nu/pTYZRdtQ0ah2CWhbp
-         xbE3KIW0TwFkm96yxcSZT2PWM8OZSzagjAWQ8eJ3JD5MV6okRZkIAPEUiTOXKoDdmoi8
-         L+1AEZjxWRA9TcErXYkVfrpov8g/nBf9U+sZQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=LTPUUp/AGMk81cmpB2rQ5GGcpci70pDuPTY3tV2VyTI=;
-        b=emsyk61+5oequE1uHJBXuePAWyA1cf7REc7i6nyenvglIYWZjFof/rzrAF2v0dy5RB
-         YGkmWqmfS0W9Vd640FBFDBVuc5tiwR9gMcddQ8jzs+6yAwECLa/ryKR7s/q96WcA83bo
-         VJaiQhaLLuI/kTGQCsGkQuK5tnKHN8tuEVB9ruqBn70C3txpb4MPF0d7cD6NO4hmz/s0
-         ydw3EOUHabwO5BCUpcR7VxO9RMlkMYrlUXemsRCUuc7rrex4qi5LdrV23SqO03WBEF5X
-         /yKSsRQ7yeSdynWzJT2PdixYBjW0IXKzHcHJQBB4y8pfrbaLQPeMVCEuUJ4kRzdc+i3h
-         CSJA==
-X-Gm-Message-State: AOUpUlFzaPNJWq6jNlrVBvK2Q0JKSilVl8Eyh0jHYZnS4lRhQN1PooLu
-        jeBnSY/w7TQakuHgbXwESltJMqIY1VE=
-X-Google-Smtp-Source: AA+uWPxyXOV245QC8w3DBEZyTLSJSy6Iu0pgkrXKBI21fh8cO+27KWdTemLlh7E01DR7kBE6SanYVg==
-X-Received: by 2002:a0d:d949:: with SMTP id b70-v6mr29332ywe.396.1533675576057;
-        Tue, 07 Aug 2018 13:59:36 -0700 (PDT)
-Received: from mail-yw1-f53.google.com (mail-yw1-f53.google.com. [209.85.161.53])
-        by smtp.gmail.com with ESMTPSA id b11-v6sm1324973ywa.46.2018.08.07.13.59.35
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 07 Aug 2018 13:59:35 -0700 (PDT)
-Received: by mail-yw1-f53.google.com with SMTP id z143-v6so13203ywa.7
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 13:59:35 -0700 (PDT)
-X-Received: by 2002:a81:39d7:: with SMTP id g206-v6mr15795ywa.416.1533675141708;
- Tue, 07 Aug 2018 13:52:21 -0700 (PDT)
+        Tue, 7 Aug 2018 19:24:17 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w77KwqYS019096;
+        Tue, 7 Aug 2018 21:07:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=dJyam29PDDE6QitvWGmyy6aSietkx742fIB5ZI2T0FA=;
+ b=yOPfwluk/19TwVY0p+g5plCW7CvBB3SV7w/oU3+/KEh8Qpx4yufGVAm2uXlNmKCC8loN
+ cBXuJ9rTuNJYCCiJAI9VaGlRHsily2ftseEmYnFngtpk9Ig0gPVeKFRE4+/0D/ObnEee
+ A9HiYYOqjZVPy6a6SBgAfluhXI6/Gx4zPvjWjlq9iflfnIjxGZ0++uyP6CDcfprNSSiI
+ vZSiZFI+lmpwAZROfGkEU0QcJkQrZpRNDJQycZwlL5cpYsSWg7tc6zaGfrDUJ/ENOVU+
+ zBOiit3dL8tdKplwzzvR7N++LjbifC/wrMx80JHCMI6G5SnP/5uXdYMbw33jWKfdps5e HQ== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by aserp2130.oracle.com with ESMTP id 2kn1nd3cuw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 07 Aug 2018 21:07:55 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w77L7rUe031852
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 7 Aug 2018 21:07:54 GMT
+Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w77L7riK006215;
+        Tue, 7 Aug 2018 21:07:53 GMT
+Received: from oracle.com (/10.154.176.65)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 07 Aug 2018 14:07:53 -0700
+Date:   Tue, 7 Aug 2018 17:07:54 -0400
+From:   Sowmini Varadhan <sowmini.varadhan@oracle.com>
+To:     syzbot <syzbot+52140d69ac6dc6b927a9@syzkaller.appspotmail.com>
+Cc:     davem@davemloft.net, linux-kernel@vger.kernel.org,
+        linux-rdma@vger.kernel.org, netdev@vger.kernel.org,
+        rds-devel@oss.oracle.com, santosh.shilimkar@oracle.com,
+        syzkaller-bugs@googlegroups.com
+Subject: Re: possible deadlock in rds_wake_sk_sleep
+Message-ID: <20180807210754.GE23593@oracle.com>
+References: <000000000000fb5cd90572de7ebd@google.com>
 MIME-Version: 1.0
-Received: by 2002:a25:7450:0:0:0:0:0 with HTTP; Tue, 7 Aug 2018 13:52:20 -0700 (PDT)
-In-Reply-To: <20180807094720.ljie32lewzlgymm4@gondor.apana.org.au>
-References: <20180802225152.19194-1-keescook@chromium.org> <20180802225152.19194-3-keescook@chromium.org>
- <20180807094720.ljie32lewzlgymm4@gondor.apana.org.au>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Tue, 7 Aug 2018 13:52:20 -0700
-X-Gmail-Original-Message-ID: <CAGXu5jKvP0BqYx7vG1DP=W_xG40M42NL9iXdm+dqdm9b_r3YMQ@mail.gmail.com>
-Message-ID: <CAGXu5jKvP0BqYx7vG1DP=W_xG40M42NL9iXdm+dqdm9b_r3YMQ@mail.gmail.com>
-Subject: Re: [PATCH v7 2/9] crypto: cbc: Remove VLA usage
-To:     Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-        Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        device-mapper development <dm-devel@redhat.com>,
-        Tudor-Dan Ambarus <tudor.ambarus@microchip.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-crypto <linux-crypto@vger.kernel.org>, qat-linux@intel.com,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <000000000000fb5cd90572de7ebd@google.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8978 signatures=668707
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=566
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1808070211
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 7, 2018 at 2:47 AM, Herbert Xu <herbert@gondor.apana.org.au> wrote:
-> On Thu, Aug 02, 2018 at 03:51:45PM -0700, Kees Cook wrote:
->> In the quest to remove all stack VLA usage from the kernel[1], this
->> uses the upper bounds on blocksize. Since this is always a cipher
->> blocksize, use the existing cipher max blocksize.
->>
->> [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
->>
->> Signed-off-by: Kees Cook <keescook@chromium.org>
->> ---
->>  include/crypto/cbc.h | 4 +++-
->>  1 file changed, 3 insertions(+), 1 deletion(-)
->>
->> diff --git a/include/crypto/cbc.h b/include/crypto/cbc.h
->> index f5b8bfc22e6d..47db0aac2ab9 100644
->> --- a/include/crypto/cbc.h
->> +++ b/include/crypto/cbc.h
->> @@ -113,7 +113,9 @@ static inline int crypto_cbc_decrypt_inplace(
->>       unsigned int bsize = crypto_skcipher_blocksize(tfm);
->>       unsigned int nbytes = walk->nbytes;
->>       u8 *src = walk->src.virt.addr;
->> -     u8 last_iv[bsize];
->> +     u8 last_iv[MAX_CIPHER_BLOCKSIZE];
->> +
->> +     BUG_ON(bsize > sizeof(last_iv));
->
-> Ugh, please don't add these BUG_ONs.  Add them to the places where
-> the algorithm is created (if they aren't checking that already).
+On (08/07/18 13:47), syzbot wrote:
+>  Possible unsafe locking scenario:
+> 
+>        CPU0                    CPU1
+>        ----                    ----
+>   lock(&(&rm->m_rs_lock)->rlock);
+>                                lock(&rs->rs_recv_lock);
+>                                lock(&(&rm->m_rs_lock)->rlock);
+>   lock(&rs->rs_recv_lock);
+> 
+>  *** DEADLOCK ***
 
-It's already being checked (cra_blocksize vs MAX_CIPHER_BLOCKSIZE) so
-I was just adding the BUG_ON to catch "impossible" behavior. I'll
-leave it out in the next revision.
+looks like a valid find, I think the deadlock should be avoided
+by having rds_clear_recv_queue do something like
 
--Kees
+ get rs_recv_lock
+ un-tether the rs_recv_queue into a temporary list 
+ releease rs_recv_lock
+ purge the rds_incoming  temporary list
 
--- 
-Kees Cook
-Pixel Security
+I can give this a shot later this week.
+
+--Sowmini
