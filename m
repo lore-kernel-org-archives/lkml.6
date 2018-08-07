@@ -3,34 +3,33 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B9BFC46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 13:10:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF5D4C46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 13:11:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E11921757
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 13:10:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E11921757
+	by mail.kernel.org (Postfix) with ESMTP id 80E1321770
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 13:11:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80E1321770
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388986AbeHGPZL (ORCPT
+        id S2388881AbeHGPZz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 11:25:11 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38696 "EHLO mx1.suse.de"
+        Tue, 7 Aug 2018 11:25:55 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38924 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388523AbeHGPZL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 11:25:11 -0400
+        id S1726419AbeHGPZz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 11:25:55 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 0A56FACD3;
-        Tue,  7 Aug 2018 13:10:53 +0000 (UTC)
-Subject: Re: [PATCH 0/4] xen: various cleanups
-To:     linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
-        x86@kernel.org
-Cc:     boris.ostrovsky@oracle.com, hpa@zytor.com, tglx@linutronix.de,
-        mingo@redhat.com
-References: <20180717120113.12756-1-jgross@suse.com>
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id F212CACD3;
+        Tue,  7 Aug 2018 13:11:37 +0000 (UTC)
+Subject: Re: [PATCH] xen: don't use privcmd_call() from xen_mc_flush()
+To:     linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org
+Cc:     boris.ostrovsky@oracle.com
+References: <20180613095806.2978-1-jgross@suse.com>
 From:   Juergen Gross <jgross@suse.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
@@ -64,12 +63,12 @@ Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
  pAd7a7BdsqWC4o+GTm5tnGrCyD+4gfDSpkOT53S/GNO07YkPkm/8J4OBoFfgSaCnQ1izwgJQ
  jIpcG2fPCI2/hxf2oqXPYbKr1v4Z1wthmoyUgGN0LPTIm+B5vdY82wI5qe9uN6UOGyTH2B3p
  hRQUWqCwu2sqkI3LLbTdrnyDZaixT2T0f4tyF5Lfs+Ha8xVMhIyzNb1byDI5FKCb
-Message-ID: <395f02c9-9893-e8fc-2b51-4229c66b796b@suse.com>
-Date:   Tue, 7 Aug 2018 15:10:51 +0200
+Message-ID: <2a9600b0-3b49-7835-a664-9deb30b100a4@suse.com>
+Date:   Tue, 7 Aug 2018 15:11:37 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180717120113.12756-1-jgross@suse.com>
+In-Reply-To: <20180613095806.2978-1-jgross@suse.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: de-DE
 Content-Transfer-Encoding: 7bit
@@ -78,36 +77,16 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17/07/18 14:01, Juergen Gross wrote:
-> Some Xen related cleanups:
-> - move some pv-only code from CONFIG_XEN to CONFIG_XEN_PV
-> - use CONFIG_XEN_PVHVM in Makefile instead of #ifdef around a complete source
-> - add SPDX identifier where missing
+On 13/06/18 11:58, Juergen Gross wrote:
+> Using privcmd_call() for a singleton multicall seems to be wrong, as
+> privcmd_call() is using stac()/clac() to enable hypervisor access to
+> Linux user space.
 > 
-> Juergen Gross (4):
->   xen: move pv irq related functions under CONFIG_XEN_PV umbrella
->   xen: move pv specific parts of arch/x86/xen/mmu.c to mmu_pv.c
->   xen: link platform-pci-unplug.o only if CONFIG_XEN_PVHVM
->   xen: add SPDX identifier in arch/x86/xen files
+> Add a new xen_single_call() function to be use for that purpose.
 > 
->  arch/x86/entry/entry_32.S          |   8 +-
->  arch/x86/entry/entry_64.S          |   8 +-
->  arch/x86/xen/Makefile              |  41 ++++++--
->  arch/x86/xen/efi.c                 |  14 +--
->  arch/x86/xen/enlighten.c           |   2 +
->  arch/x86/xen/enlighten_hvm.c       |   2 +
->  arch/x86/xen/grant-table.c         |  25 +----
->  arch/x86/xen/mmu.c                 | 188 +------------------------------------
->  arch/x86/xen/mmu_pv.c              | 140 +++++++++++++++++++++++++++
->  arch/x86/xen/p2m.c                 |   2 +
->  arch/x86/xen/pci-swiotlb-xen.c     |   2 +
->  arch/x86/xen/platform-pci-unplug.c |  18 +---
->  arch/x86/xen/vdso.h                |   2 +
->  arch/x86/xen/xen-pvh.S             |  15 +--
->  include/xen/interface/memory.h     |   6 --
->  include/xen/xen-ops.h              | 133 +++++++++++++++++---------
->  16 files changed, 287 insertions(+), 319 deletions(-)
-> 
+> Reported-by: Jan Beulich <jbeulich@suse.com>
+> Signed-off-by: Juergen Gross <jgross@suse.com>
+
 Boris, any objections?
 
 
