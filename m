@@ -2,67 +2,139 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 823B5C46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 12:45:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B89EC46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 12:46:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 267C9214ED
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 12:45:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="erd7WbJC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 267C9214ED
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 4FD7B214ED
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 12:46:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FD7B214ED
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389026AbeHGPAA (ORCPT
+        id S2389056AbeHGPAl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 11:00:00 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:57744 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387789AbeHGPAA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 11:00:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=P9mFXoaYDcAzlaeHkHU0tKPP2EFw3OeaAy42ssg7NOA=; b=erd7WbJCbJnw8oZ2eSuV1PMhO
-        et3NZqdFW/i3eT7ujeOa4V9UIHY0le57LbPXHqkB+iU/hq7c4Jb15mnbKuByKlFKooMMC3RVt+tfp
-        lqahAoNRAeolvpKg+WSCBpBOJsEFMjU4R6nRxHwD20NPlZYbb/Prj7nn5KxlGzvDumhBUaQ2d2Dhn
-        ieGHHPcPZFIhp8/CkzsLk8mtxWmI5HLq4EpcDKJHq03XhACQXhIsx79R9xiYFd8uI06SWqFSdq1ha
-        Gms/ju2vM+p48/6rgnZaA/I4MHbU3hXdxzZFBM6VvzS76k3GlYSCoUEjV66EYgx8poB6q792oB+RU
-        IHhypdH8Q==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fn1Mv-0005Gm-Cz; Tue, 07 Aug 2018 12:45:45 +0000
-Date:   Tue, 7 Aug 2018 05:45:45 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Palmer Dabbelt <palmer@sifive.com>
-Cc:     linux-riscv@lists.infradead.org,
-        Christoph Hellwig <hch@infradead.org>, aou@eecs.berkeley.edu,
-        Arnd Bergmann <arnd@arndb.de>, tklauser@distanz.ch,
-        linux-kernel@vger.kernel.org, Marcus Comstedt <marcus@mc.pp.se>
-Subject: Re: [PATCH v2] RISC-V: Don't use a global include guard for
- uapi/asm/syscalls.h
-Message-ID: <20180807124545.GA15202@infradead.org>
-References: <20180804085438.GA15840@infradead.org>
- <20180806204258.22280-1-palmer@sifive.com>
- <20180806204258.22280-2-palmer@sifive.com>
+        Tue, 7 Aug 2018 11:00:41 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:10675 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388534AbeHGPAk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 11:00:40 -0400
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 8B5E31E0D90CF;
+        Tue,  7 Aug 2018 20:46:26 +0800 (CST)
+Received: from [127.0.0.1] (10.202.226.41) by DGGEMS403-HUB.china.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server id 14.3.399.0; Tue, 7 Aug 2018
+ 20:46:25 +0800
+From:   John Garry <john.garry@huawei.com>
+Subject: Re: [PATCH v3 4/4] i2c: Add multi-instantiate pseudo driver
+To:     Hans de Goede <hdegoede@redhat.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Wolfram Sang <wsa@the-dreams.de>
+References: <20180807080539.17811-1-hdegoede@redhat.com>
+ <20180807080539.17811-5-hdegoede@redhat.com>
+CC:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        <linux-acpi@vger.kernel.org>,
+        <platform-driver-x86@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        <linux-i2c@vger.kernel.org>
+Message-ID: <7e68276c-2211-85d3-3e1f-2bc4b2d9f7d5@huawei.com>
+Date:   Tue, 7 Aug 2018 13:46:18 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180806204258.22280-2-palmer@sifive.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20180807080539.17811-5-hdegoede@redhat.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.41]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Looks fine (modulo any typos):
+On 07/08/2018 09:05, Hans de Goede wrote:
+> On systems with ACPI instantiated i2c-clients, normally there is 1 fw_node
+> per i2c-device and that fw-node contains 1 I2cSerialBus resource for that 1
+> i2c-device.
+>
+> But in some rare cases the manufacturer has decided to describe multiple
+> i2c-devices in a single ACPI fwnode with multiple I2cSerialBus resources.
+>
+> An earlier attempt to fix this in the i2c-core resulted in a lot of extra
+> code to support this corner-case.
+>
+> This commit introduces a new i2c-multi-instantiate driver which fixes this
+> in a different way. This new driver can be built as a module which will
+> only loaded on affected systems.
+>
+> This driver will instantiate a new i2c-client per I2cSerialBus resource,
+> using the driver_data from the acpi_device_id it is binding to to tell it
+> which chip-type (and optional irq-resource) to use when instantiating.
+>
+> Note this driver depends on a platform device being instantiated for the
+> ACPI fwnode, see the i2c_multi_instantiate_ids list of ACPI device-ids in
+> drivers/acpi/scan.c: acpi_device_enumeration_by_parent().
+>
+> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+> ---
+>  MAINTAINERS                                  |   6 +
+>  drivers/platform/x86/Kconfig                 |  11 ++
+>  drivers/platform/x86/Makefile                |   1 +
+>  drivers/platform/x86/i2c-multi-instantiate.c | 131 +++++++++++++++++++
+>  4 files changed, 149 insertions(+)
+>  create mode 100644 drivers/platform/x86/i2c-multi-instantiate.c
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 9b377508f24f..09e16d76cab7 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -6657,6 +6657,12 @@ F:	drivers/i2c/i2c-mux.c
+>  F:	drivers/i2c/muxes/
+>  F:	include/linux/i2c-mux.h
+>
+> +I2C MULTI INSTANTIATE DRIVER
+> +M:	Hans de Goede <hdegoede@redhat.com>
+> +L:	linux-i2c@vger.kernel.org
+> +S:	Maintained
+> +F:	drivers/drivers/platform/x86/i2c-multi-instantiate.c
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+This path looks incorrect
+
+> +
+>  I2C MV64XXX MARVELL AND ALLWINNER DRIVER
+>  M:	Gregory CLEMENT <gregory.clement@bootlin.com>
+>  L:	linux-i2c@vger.kernel.org
+> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+> index 85a93453237c..8256629f58f7 100644
+> --- a/drivers/platform/x86/Kconfig
+> +++ b/drivers/platform/x86/Kconfig
+> @@ -1219,6 +1219,17 @@ config INTEL_CHTDC_TI_PWRBTN
+>  	  To compile this driver as a module, choose M here: the module
+>  	  will be called intel_chtdc_ti_pwrbtn.
+>
+> +config I2C_MULTI_INSTANTIATE
+> +	tristate "I2C multi instantiate pseudo device driver"
+> +	depends on I2C && ACPI
+> +	help
+> +	  Some ACPI bases systems list multiple i2c-devices in a single ACPI
+
+I guess that this should be "Some ACPI-based systems"
+
+> +	  firmware-node. This driver will instantiate separate i2c-clients
+> +	  for each device in the firmware-node.
+> +
+> +	  To compile this driver as a module, choose M here: the module
+> +	  will be called i2c-multi-instantiate.
+> +
+
+Thanks,
+John
+
