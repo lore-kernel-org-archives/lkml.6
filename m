@@ -6,220 +6,124 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A70FEC46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 11:47:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03246C46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 11:49:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5888621770
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 11:47:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5888621770
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=dev.tdt.de
+	by mail.kernel.org (Postfix) with ESMTP id B4A282178F
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 11:49:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4A282178F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388623AbeHGOBW (ORCPT
+        id S2388787AbeHGODm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 10:01:22 -0400
-Received: from ms.tdt.de ([195.243.126.94]:56140 "EHLO mail.dev.tdt.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726902AbeHGOBW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 10:01:22 -0400
-Received: from mail.dev.tdt.de (localhost [IPv6:::1])
-        by mail.dev.tdt.de (Postfix) with ESMTP id 13CC7207F9;
-        Tue,  7 Aug 2018 11:47:23 +0000 (UTC)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Date:   Tue, 07 Aug 2018 13:47:22 +0200
-From:   Florian Eckert <fe@dev.tdt.de>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] gpio: Add driver for PC Engines APU2/APU3 GPIOs
-In-Reply-To: <CAHp75VdNf8BCYEq348CQe2OUUOLdYehsr5TmBDQXXEAm59+kDg@mail.gmail.com>
-References: <20180801111243.2848-1-fe@dev.tdt.de>
- <CAHp75VdNf8BCYEq348CQe2OUUOLdYehsr5TmBDQXXEAm59+kDg@mail.gmail.com>
-Message-ID: <f1a1af620625c7d9c46e6df3eebc574b@dev.tdt.de>
-X-Sender: fe@dev.tdt.de
-User-Agent: Roundcube Webmail/1.1.5
+        Tue, 7 Aug 2018 10:03:42 -0400
+Received: from mga14.intel.com ([192.55.52.115]:28753 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727048AbeHGODm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 10:03:42 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Aug 2018 04:49:43 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,455,1526367600"; 
+   d="scan'208";a="81354782"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
+  by orsmga002.jf.intel.com with ESMTP; 07 Aug 2018 04:49:31 -0700
+Message-ID: <43d45add4c8059d44a0b228e4beffb03c094a512.camel@linux.intel.com>
+Subject: Re: [PATCH v3 2/4] ACPI / scan: Create platform device for fwnodes
+ with multiple i2c devices
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Hans de Goede <hdegoede@redhat.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Wolfram Sang <wsa@the-dreams.de>
+Cc:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        linux-acpi@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        John Garry <john.garry@huawei.com>, linux-i2c@vger.kernel.org
+Date:   Tue, 07 Aug 2018 14:49:30 +0300
+In-Reply-To: <13770931-2322-96a3-1667-83c96b25bcfb@redhat.com>
+References: <20180807080539.17811-1-hdegoede@redhat.com>
+         <20180807080539.17811-3-hdegoede@redhat.com>
+         <00e16cb09c171b536449b61124473291f2b30d0b.camel@linux.intel.com>
+         <13770931-2322-96a3-1667-83c96b25bcfb@redhat.com>
+Organization: Intel Finland Oy
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-08-03 21:08, Andy Shevchenko wrote:
->> - APU2/APU3 -> front button reset support
->> - APU3 -> SIM switch support
+On Tue, 2018-08-07 at 13:29 +0200, Hans de Goede wrote:
+> Hi,
 > 
-> Good.
-> Can we see some specification for those platforms?
+> On 07-08-18 13:19, Andy Shevchenko wrote:
+> > On Tue, 2018-08-07 at 10:05 +0200, Hans de Goede wrote:
+
+> > > +	/*
+> > > +	 * These devices have multiple I2cSerialBus resources and an
+> > > i2c-client
+> > > +	 * must be instantiated for each, each with its own
+> > > i2c_device_id.
+> > > +	 * Normally we only instantiate an i2c-client for the first
+> > > resource,
+> > > +	 * using the ACPI HID as id. These special cases are handled by
+> > > the
+> > > +	 * drivers/platform/x86/i2c-multi-instantiate.c driver, which
+> > > knows
+> > > +	 * which i2c_device_id to use for each resource.
+> > > +	 */
+> > > +	static const struct acpi_device_id i2c_multi_instantiate_ids[] =
+> > > {
+> > > +		{"BSG1160", 0},
+> > > +		{"", 0},
+> > > +	};
+> > 
+> > Style nits:
+> > - can we move it outside of function?
 > 
+> Sure, but there are 2 existing users of an array of acpi_device_id-s
+> combined with an acpi_match_device_ids() call and both have the array
+> inside the function, so for consistency it seems better to keep it
+> where it is.
 
-I think the informations from Christian Lamparter are OK?
+Hmm... OK.
 
-<https://www.pcengines.ch/pdf/apu1.pdf>
-<https://www.pcengines.ch/schema/apu1c.pdf>
-<https://www.pcengines.ch/pdf/apu2.pdf>
-<http://pcengines.ch/schema/apu2c.pdf>
-
->> + * GNU General Public License for more details
->> + *
->> + * You should have received a copy of the GNU General Public License
->> + * along with this program; if not, see 
->> <http://www.gnu.org/licenses/>
+> > - is this existing style in the file and / or files in this folder
+> > for
+> > IDs? (I mean unnecessary 0:s and empty string?
 > 
-> SPDX, please!
+> It seems that all variants one can come up with are already used
+> inside
+> this single file.
 
-I have already updated my patch in my git to use this identifier.
-// SPDX-License-Identifier: GPL-2.0
-This was a hint from Linus Walleji
+Ah, that's sad.
 
+> I agree that less is more, so I will change this to:
 > 
->> + */
-> 
->> +#include <linux/gpio.h>
->> +#include <linux/gpio_keys.h>
-> 
-> These both looks very strange in here.
-> 
+>          static const struct acpi_device_id
+> i2c_multi_instantiate_ids[] = {
 
-On the front of the APU2/APU3 there is a SMD-push-button which is 
-connected to
-one of the GPIOs. This is used as a reset button for the system 
-(reboot/factory-reset).
-I am also not sure if this is the right place. But for the first review 
-i thought this
-will be ok.
+>                  {"BSG1160", },
+>                  {}
+>          };
 
-The geode, the old board from PC-Engines
-added the key gpios to this file
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/x86/platform/geode/alix.c#n47
-mybe this is the right place too x86/platfrom/apu/apu.c?
-
->> +#define APU_FCH_ACPI_MMIO_BASE 0xFED80000
->> +#define APU_FCH_GPIO_BASE      (APU_FCH_ACPI_MMIO_BASE + 0x1500)
-> 
-> Wow! Can we see ACPI tables for these boards? Care to share (via some
-> file share service) output of `acpidump -o tables.dat` ?
-> 
-
-I have copied this from the leds-apu.c driver which is already upstream.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/leds/leds-apu.c#n43
+In case if it mimics already existing style, looks quite good to me
+(otherwise perhaps comma inside {} can also be removed).
 
 > 
->> +#define APU_GPIO_BIT_WRITE     22
->> +#define APU_GPIO_BIT_READ      16
->> +#define APU_GPIO_BIT_DIR       23
-> 
-> WR and RD looks shorter,
-> And please keep them sorted by value.
+> For v4.
 
-Ok will fix this.
+Does it make sense to test v3 on your opinion? Or better to wait for v4?
 
-> 
->> +#define APU_IOSIZE             sizeof(u32)
-> 
-> This is usual for x86 stuff, no need to have a definition, I think.
-
-Ok will fix this.
-
->> +static unsigned long apu3_gpio_offset[APU3_NUM_GPIO] = {
->> +       APU_FCH_GPIO_BASE + 89 * APU_IOSIZE, //KEY
->> +       APU_FCH_GPIO_BASE + 90 * APU_IOSIZE, //SIM
->> +};
->> +static void __iomem *apu3_gpio_addr[APU3_NUM_GPIO] = {NULL, NULL};
->> +
-> 
->> +static int gpio_apu_get_dir (struct gpio_chip *chip, unsigned offset)
-> 
-> Style! We do not use space between func and its parameter list.
-> 
-
-OK
-
->> +{
->> +       u32 val;
->> +
->> +       spin_lock(&apu_gpio->lock);
->> +
-> 
->> +       val = ~ioread32(apu_gpio->addr[offset]);
-> 
-> This is unusual (I mean ~). Better to leave IO alone and do bits
-> manipulations latter on.
-
-OK
-
-> 
->> +       val = (val >> APU_GPIO_BIT_DIR) & 1;
-> 
-> Do you need this under spin lock?
-> 
-
-No i don´t.
-Will fix this.
-Thanks
-
->> +               apu_gpio->chip->ngpio = ARRAY_SIZE(apu2_gpio_offset);
->> +               for( i = 0; i < ARRAY_SIZE(apu2_gpio_offset); i++) {
->> +                       apu2_gpio_addr[i] = devm_ioremap(&pdev->dev,
->> +                                       apu_gpio->offset[i], 
->> apu_gpio->iosize);
->> +                       if (!apu2_gpio_addr[i]) {
->> +                               return -ENOMEM;
->> +                       }
->> +               }
->> +       }
-> 
-> The above should be part either as callback or driver_data of DMI 
-> entries.
-
-I have copied this from the leds-apu.c driver
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/leds/leds-apu.c#n226
-
-> 
->> +       ret = gpiochip_add(&gpio_apu_chip);
-> 
-> devm_
-> 
-
-What do you mean with "devm_"?
-
->> +       if (ret) {
-> 
->> +               pr_err("Adding gpiochip failed\n");
-> 
-> dev_err(), but I consider this message completely useless.
-
-Thanks will remove this too.
-
-> 
->> +       }
-> 
->> +
->> +       register_gpio_keys_polled(-1, 20, ARRAY_SIZE(apu_gpio_keys), 
->> apu_gpio_keys);
->> +
-> 
-> Not part of this driver. Remove.
-> 
-
-As described above should this go to a file "apu.c" in the directory 
-"apu" under
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/x86/platform
-?
-
->> +       return ret;
->> +}
-> 
->> +module_init(apu_gpio_init);
->> +module_exit(apu_gpio_exit);
-> 
-> Consider to use module_platform_driver() and accompanying data
-> structures and functions.
-
-Ok thanks will update this
-
-
-Will update my patch with your hints thanks
-
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
