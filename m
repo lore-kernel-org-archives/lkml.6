@@ -2,119 +2,157 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BDE8C46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 14:40:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAF9BC46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 14:41:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5E4E21757
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 14:40:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="EsMXxXPQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5E4E21757
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id AC6EF217B9
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 14:41:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC6EF217B9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403770AbeHGQzS (ORCPT
+        id S2389672AbeHGQ4P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 12:55:18 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:39362 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389073AbeHGQzS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 12:55:18 -0400
-Received: by mail-it0-f67.google.com with SMTP id g141-v6so23256684ita.4
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 07:40:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=UX8XBZRvhUz86zxdM656EB6rA/52yupBdC9TsQt3l8M=;
-        b=EsMXxXPQt8LhRjSnWsa4mEaZgnUCUnGP5Ryir1PGG8LCLAw9zkEPVXVQhVeSNmO8qV
-         UVcsn/7JtymH55tIV8prMDwEF96r1FK5rwS47jwGwt479hmXQcLvRhe+POQyZ32qaeG7
-         zzuvMTNMXcNXaprQzfCAbr4t7/2q7Y/uqlA/0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=UX8XBZRvhUz86zxdM656EB6rA/52yupBdC9TsQt3l8M=;
-        b=rhkNOG7kGi2mwsWgAaoTNFksMlthAHDjB1rHo8zz5P54t7Kcxzwqair5VfrZkvD5ja
-         XebI0XqtJ+CZ9Xll2XAllWHynI/ejqL2qk4YWK1+h8cB7zik6SI9WuBO34Is/b/xYCJU
-         Pa5bO+vD6xipxFszECaV7gUFYzWJCCcyHpZKhhHi3ZXfB2vbUNepTJt77sSiTvIl/weJ
-         6Q7pdEDESfFVNlkGdC6U6id7qOxzUotHC+lR3bRfekjCYGHYUhbi8lHlExcIhhCyHRV6
-         qgES6C0reRx62EQgmWA2V+tKSj/K8Np8hLEBMCjrJ8n1OZZpjl7r7hX6BYhrPcQdz6rm
-         q75Q==
-X-Gm-Message-State: AOUpUlF/EkapWG6sPODAWCs5yXdceu0KGja1809Px/FhwQQu7W0Hu+16
-        lnRmV9DDmqwfpCjRvdHBUybFBbPItEj0Lc6FTj8d7A==
-X-Google-Smtp-Source: AA+uWPwq3efqIcK2XtPpG8pPazatIJa6doltiCPddJrjN4QicAjuxG3KEmYBSP5OaTnrR8Ryqs0OW4Lv7S8j1pnYjlw=
-X-Received: by 2002:a24:148c:: with SMTP id 134-v6mr2150990itg.50.1533652840170;
- Tue, 07 Aug 2018 07:40:40 -0700 (PDT)
+        Tue, 7 Aug 2018 12:56:15 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49608 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2389406AbeHGQ4P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 12:56:15 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id EDB7D7DAC2;
+        Tue,  7 Aug 2018 14:41:35 +0000 (UTC)
+Received: from [10.36.116.32] (ovpn-116-32.ams2.redhat.com [10.36.116.32])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D71722026D66;
+        Tue,  7 Aug 2018 14:41:33 +0000 (UTC)
+Subject: Re: [RFC PATCH 0/3] Do not touch pages in remove_memory path
+To:     Oscar Salvador <osalvador@techadventures.net>
+Cc:     akpm@linux-foundation.org, mhocko@suse.com,
+        dan.j.williams@intel.com, pasha.tatashin@oracle.com,
+        jglisse@redhat.com, yasu.isimatu@gmail.com, logang@deltatee.com,
+        dave.jiang@intel.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Oscar Salvador <osalvador@suse.de>
+References: <20180807133757.18352-1-osalvador@techadventures.net>
+ <6407d022-87b7-f5e0-572a-c5c29aba1314@redhat.com>
+ <20180807141922.GA5244@techadventures.net>
+ <d0ea36f7-9329-f947-3862-011827aee20c@redhat.com>
+ <20180807142826.GB5309@techadventures.net>
+From:   David Hildenbrand <david@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <6d07f588-cc40-132e-2d89-26e00fff5a88@redhat.com>
+Date:   Tue, 7 Aug 2018 16:41:33 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Received: by 2002:a6b:ac05:0:0:0:0:0 with HTTP; Tue, 7 Aug 2018 07:40:39 -0700 (PDT)
-In-Reply-To: <alpine.LRH.2.02.1808071010240.11209@file01.intranet.prod.int.rdu2.redhat.com>
-References: <alpine.LRH.2.02.1808021242320.31834@file01.intranet.prod.int.rdu2.redhat.com>
- <alpine.LRH.2.02.1808032046540.24748@file01.intranet.prod.int.rdu2.redhat.com>
- <CA+=Sn1=6F-fGLmXE0VqQHTqTCUKUT=Fz29mMT7349SPFisbZ9A@mail.gmail.com>
- <alpine.LRH.2.02.1808040611070.23762@file01.intranet.prod.int.rdu2.redhat.com>
- <fd2cae87-b2df-d8ef-8836-e6cbf8c5f851@redhat.com> <alpine.LRH.2.02.1808060325110.3756@file01.intranet.prod.int.rdu2.redhat.com>
- <CAKv+Gu_y6La77sWOSROrwfRy65jrFVYVvRZt+ewNheYhdhHCkQ@mail.gmail.com>
- <alpine.LRH.2.02.1808060626060.2986@file01.intranet.prod.int.rdu2.redhat.com>
- <CAKv+Gu87YqLM=FFZ6V8rHhuhskDdsBUuXFpqNKVbXWqdnuNEyA@mail.gmail.com>
- <alpine.LRH.2.02.1808060639200.2986@file01.intranet.prod.int.rdu2.redhat.com>
- <CAKv+Gu8HyHX8qjg1qHV2M9Re+RGQJigjdAFVC_yR4niGkk2ikA@mail.gmail.com>
- <alpine.LRH.2.02.1808060700070.10220@file01.intranet.prod.int.rdu2.redhat.com>
- <CAKv+Gu8384LZwL898wJ8BKjmJNzvd+-cSFUp4X4OpfmRDCP4Ng@mail.gmail.com> <alpine.LRH.2.02.1808071010240.11209@file01.intranet.prod.int.rdu2.redhat.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Tue, 7 Aug 2018 16:40:39 +0200
-Message-ID: <CAKv+Gu_h6DDW4tvECrj3rGUaii4-2audYpYYiJQXfbEMch2pDg@mail.gmail.com>
-Subject: Re: framebuffer corruption due to overlapping stp instructions on arm64
-To:     Mikulas Patocka <mpatocka@redhat.com>
-Cc:     Florian Weimer <fweimer@redhat.com>,
-        Andrew Pinski <pinskia@gmail.com>,
-        Richard Earnshaw <Richard.Earnshaw@arm.com>,
-        Ramana Radhakrishnan <ramana.gcc@googlemail.com>,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        GNU C Library <libc-alpha@sourceware.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180807142826.GB5309@techadventures.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Tue, 07 Aug 2018 14:41:36 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Tue, 07 Aug 2018 14:41:36 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'david@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7 August 2018 at 16:14, Mikulas Patocka <mpatocka@redhat.com> wrote:
->
->
-> On Mon, 6 Aug 2018, Ard Biesheuvel wrote:
->
->> No that works fine for me. VDPAU acceleration works as well, but it
->> depends on your chromium build whether it can actually use it, I
->> think? In any case, mplayer can use vdpau to play 1080p h264 without
->> breaking a sweat on this system.
+On 07.08.2018 16:28, Oscar Salvador wrote:
+> On Tue, Aug 07, 2018 at 04:20:37PM +0200, David Hildenbrand wrote:
+>> On 07.08.2018 16:19, Oscar Salvador wrote:
+>>> On Tue, Aug 07, 2018 at 04:16:35PM +0200, David Hildenbrand wrote:
+>>>> On 07.08.2018 15:37, osalvador@techadventures.net wrote:
+>>>>> From: Oscar Salvador <osalvador@suse.de>
+>>>>>
+>>>>> This tries to fix [1], which was reported by David Hildenbrand, and also
+>>>>> does some cleanups/refactoring.
+>>>>>
+>>>>> I am sending this as RFC to see if the direction I am going is right before
+>>>>> spending more time into it.
+>>>>> And also to gather feedback about hmm/zone_device stuff.
+>>>>> The code compiles and I tested it successfully with normal memory-hotplug operations.
+>>>>>
+>>>>
+>>>> Please coordinate next time with people already working on this,
+>>>> otherwise you might end up wasting other people's time.
+>>>
+>>> Hi David,
+>>>
+>>> Sorry, if you are already working on this, I step back immediately.
+>>> I will wait for your work.
 >>
->> Note that the VDPAU driver also relies on memory semantics, i.e., it
->> may use DC ZVA (zero cacheline) instructions which are not permitted
->> on device mappings. This is probably just glibc's memset() being
->> invoked, but I remember hitting this on another PCIe-impaired arm64
->> system with Synopsys PCIe IP
->
-> DC ZVA can be disabled with the SCTRL_EL1.DZE bit, so that neither kernel
-> nor userspace will use it.
+>> No, please keep going, you are way ahead of me ;)
+>>
+>> (I was got stuck at ZONE_DEVICE so far)
+> 
+> It seems mine breaks ZONE_DEVICE for hmm at least, so.. not much better ^^.
+> So since you already got some work, let us not throw it away.
 
-Of course, but only the OS can do that, and only system wide unless
-we're eager to create infrastructure for managing this per process.
+I am not close to an RFC (spent most time looking into the details -
+still have plenty to learn in the MM area - and wondering on how to
+handle ZONE_DEVICE). It might take some time for me to get something
+clean up and running.
 
-But it is also beside the point: I mentioned it to illustrate that
-even use cases like libvdpau that don't operate on the 'framebuffer'
-abstraction make assumptions about VRAM having true memory semantics.
+So let's continue with your series, I'll happily review it.
 
-> If the mapping didn't support unaligned writes,
-> it would be worse.
->
-> Mikulas
+(I was just surprised by this series without a prior note as reply to
+the patch where we discussed the solution for the problem)
+
+> 
+> Thanks
+> 
+
+
+-- 
+
+Thanks,
+
+David / dhildenb
