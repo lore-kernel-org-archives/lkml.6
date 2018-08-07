@@ -2,174 +2,95 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75C9FC46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 14:18:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D9F6C46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 14:19:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A8582174C
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 14:18:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A8582174C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 5444E2174C
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 14:19:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5444E2174C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389352AbeHGQdX (ORCPT
+        id S2389468AbeHGQd6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 12:33:23 -0400
-Received: from mx2.suse.de ([195.135.220.15]:51012 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388865AbeHGQdW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 12:33:22 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id C6399AF7A;
-        Tue,  7 Aug 2018 14:18:48 +0000 (UTC)
-Date:   Tue, 7 Aug 2018 16:18:46 +0200
-From:   Petr Mladek <pmladek@suse.com>
-To:     Joe Perches <joe@perches.com>
-Cc:     Oleg Nesterov <oleg@redhat.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Tejun Heo <tj@kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        kernel-hardening@lists.openwall.com
-Subject: Re: [PATCH V2] riscv: Convert uses of REG_FMT to %p
-Message-ID: <20180807141846.bvcw3wnizjh2bg2u@pathway.suse.cz>
-References: <e14dedc721b7aed1cf3ff1bdbc09014c0131c276.1532795905.git.joe@perches.com>
+        Tue, 7 Aug 2018 12:33:58 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:40479 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389223AbeHGQd5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 12:33:57 -0400
+Received: by mail-wm0-f65.google.com with SMTP id y9-v6so18430260wma.5
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 07:19:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Uenez1CVaYZSLr5xv1gNkjDLfr8ggiz8OD25r5HLMWw=;
+        b=hVBcx0IQkWQJtf6j0ksJvm24EhEcPd8oLmX/bYRbMOnWi7ZbQKglkwoSbrHuJX452p
+         qlYycmCcsKm4DoRwJuh0GwnEs0A4ilZoc7YV+fYJmNjQ5XmeiEntCBtHs40nBh8/52fZ
+         ZH2a+dwgilOs6dxiMqn8VIPzNZVfTpiOAdX6f3ChWnsNsMIFJEADhG5i1P2ur2Tz+hUi
+         OSCTatnnE2b6Sx/+J5dFmkTPriRvGHUAyIAcFFXitBC9ndyHsPaYpA+g2nS4RYJ2Gowd
+         qzK81kaMBq25e7B4Ut3iujwOnCMm4UHoPArcur19Yg8/68mmrkrZBDaW7/RqOB8Q9uM/
+         NKiA==
+X-Gm-Message-State: AOUpUlE9fN+xIETUSiPug6JPGF9GtTlH7wqsuMOKwe3E4pqD+i6M945o
+        n3vfIAWR2IsYK4MlVAIoMbk=
+X-Google-Smtp-Source: AA+uWPxzQoE8kJTJGwYrD4DygFuaRA1bBsbMJcPeUvfYlCyKowv/6eS4RGH8fvjC7lYpu/3bkTFyog==
+X-Received: by 2002:a1c:1745:: with SMTP id 66-v6mr1782183wmx.38.1533651563844;
+        Tue, 07 Aug 2018 07:19:23 -0700 (PDT)
+Received: from techadventures.net (techadventures.net. [62.201.165.239])
+        by smtp.gmail.com with ESMTPSA id m2-v6sm2219931wrw.76.2018.08.07.07.19.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 07 Aug 2018 07:19:23 -0700 (PDT)
+Received: by techadventures.net (Postfix, from userid 1000)
+        id 752E3124707; Tue,  7 Aug 2018 16:19:22 +0200 (CEST)
+Date:   Tue, 7 Aug 2018 16:19:22 +0200
+From:   Oscar Salvador <osalvador@techadventures.net>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     akpm@linux-foundation.org, mhocko@suse.com,
+        dan.j.williams@intel.com, pasha.tatashin@oracle.com,
+        jglisse@redhat.com, yasu.isimatu@gmail.com, logang@deltatee.com,
+        dave.jiang@intel.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Oscar Salvador <osalvador@suse.de>
+Subject: Re: [RFC PATCH 0/3] Do not touch pages in remove_memory path
+Message-ID: <20180807141922.GA5244@techadventures.net>
+References: <20180807133757.18352-1-osalvador@techadventures.net>
+ <6407d022-87b7-f5e0-572a-c5c29aba1314@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e14dedc721b7aed1cf3ff1bdbc09014c0131c276.1532795905.git.joe@perches.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <6407d022-87b7-f5e0-572a-c5c29aba1314@redhat.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat 2018-07-28 09:39:57, Joe Perches wrote:
-> Use %p pointer output instead of REG_FMT and cast the unsigned longs to
-> (void *) to avoid exposing kernel addresses.
+On Tue, Aug 07, 2018 at 04:16:35PM +0200, David Hildenbrand wrote:
+> On 07.08.2018 15:37, osalvador@techadventures.net wrote:
+> > From: Oscar Salvador <osalvador@suse.de>
+> > 
+> > This tries to fix [1], which was reported by David Hildenbrand, and also
+> > does some cleanups/refactoring.
+> > 
+> > I am sending this as RFC to see if the direction I am going is right before
+> > spending more time into it.
+> > And also to gather feedback about hmm/zone_device stuff.
+> > The code compiles and I tested it successfully with normal memory-hotplug operations.
+> >
 > 
-> Miscellanea:
-> 
-> o Convert pr_cont to printk(KERN_DEFAULT as these uses are
->   new logging lines and not previous line continuations
-> o Remove the now unused REG_FMT defines
-> 
-> Signed-off-by: Joe Perches <joe@perches.com>
-> ---
-> 
-> v2: sigh: Add missing fault.c
-> 
->  arch/riscv/include/asm/ptrace.h |  6 -----
->  arch/riscv/kernel/process.c     | 52 +++++++++++++++++++++--------------------
->  arch/riscv/kernel/traps.c       |  4 ++--
->  arch/riscv/mm/fault.c           |  6 ++---
->  4 files changed, 32 insertions(+), 36 deletions(-)
-> 
-> diff --git a/arch/riscv/include/asm/ptrace.h b/arch/riscv/include/asm/ptrace.h
-> index 2c5df945d43c..b123e723f8fa 100644
-> --- a/arch/riscv/include/asm/ptrace.h
-> +++ b/arch/riscv/include/asm/ptrace.h
-> @@ -60,12 +60,6 @@ struct pt_regs {
->          unsigned long orig_a0;
->  };
->  
-> -#ifdef CONFIG_64BIT
-> -#define REG_FMT "%016lx"
-> -#else
-> -#define REG_FMT "%08lx"
-> -#endif
-> -
->  #define user_mode(regs) (((regs)->sstatus & SR_SPP) == 0)
->  
->  
-> diff --git a/arch/riscv/kernel/process.c b/arch/riscv/kernel/process.c
-> index d7c6ca7c95ae..7223f6715ff3 100644
-> --- a/arch/riscv/kernel/process.c
-> +++ b/arch/riscv/kernel/process.c
-> @@ -36,7 +36,7 @@
->  extern asmlinkage void ret_from_fork(void);
->  extern asmlinkage void ret_from_kernel_thread(void);
->  
-> -void arch_cpu_idle(void)
-> +void arch_yycpu_idle(void)
->  {
->  	wait_for_interrupt();
->  	local_irq_enable();
-> @@ -46,31 +46,33 @@ void show_regs(struct pt_regs *regs)
->  {
->  	show_regs_print_info(KERN_DEFAULT);
->  
-> -	pr_cont("sepc: " REG_FMT " ra : " REG_FMT " sp : " REG_FMT "\n",
-> -		regs->sepc, regs->ra, regs->sp);
-> -	pr_cont(" gp : " REG_FMT " tp : " REG_FMT " t0 : " REG_FMT "\n",
-> -		regs->gp, regs->tp, regs->t0);
-> -	pr_cont(" t1 : " REG_FMT " t2 : " REG_FMT " s0 : " REG_FMT "\n",
-> -		regs->t1, regs->t2, regs->s0);
-> -	pr_cont(" s1 : " REG_FMT " a0 : " REG_FMT " a1 : " REG_FMT "\n",
-> -		regs->s1, regs->a0, regs->a1);
-> -	pr_cont(" a2 : " REG_FMT " a3 : " REG_FMT " a4 : " REG_FMT "\n",
-> -		regs->a2, regs->a3, regs->a4);
-> -	pr_cont(" a5 : " REG_FMT " a6 : " REG_FMT " a7 : " REG_FMT "\n",
-> -		regs->a5, regs->a6, regs->a7);
-> -	pr_cont(" s2 : " REG_FMT " s3 : " REG_FMT " s4 : " REG_FMT "\n",
-> -		regs->s2, regs->s3, regs->s4);
-> -	pr_cont(" s5 : " REG_FMT " s6 : " REG_FMT " s7 : " REG_FMT "\n",
-> -		regs->s5, regs->s6, regs->s7);
-> -	pr_cont(" s8 : " REG_FMT " s9 : " REG_FMT " s10: " REG_FMT "\n",
-> -		regs->s8, regs->s9, regs->s10);
-> -	pr_cont(" s11: " REG_FMT " t3 : " REG_FMT " t4 : " REG_FMT "\n",
-> -		regs->s11, regs->t3, regs->t4);
-> -	pr_cont(" t5 : " REG_FMT " t6 : " REG_FMT "\n",
-> -		regs->t5, regs->t6);
-> +	printk(KERN_DEFAULT "sepc: %p ra : %p sp : %p\n",
-> +	       (void *)regs->sepc, (void *)regs->ra, (void *)regs->sp);
-> +	printk(KERN_DEFAULT " gp : %p tp : %p t0 : %p\n",
-> +	       (void *)regs->gp, (void *)regs->tp, (void *)regs->t0);
-> +	printk(KERN_DEFAULT " t1 : %p t2 : %p s0 : %p\n",
-> +	       (void *)regs->t1, (void *)regs->t2, (void *)regs->s0);
-> +	printk(KERN_DEFAULT " s1 : %p a0 : %p a1 : %p\n",
-> +	       (void *)regs->s1, (void *)regs->a0, (void *)regs->a1);
-> +	printk(KERN_DEFAULT " a2 : %p a3 : %p a4 : %p\n",
-> +	       (void *)regs->a2, (void *)regs->a3, (void *)regs->a4);
-> +	printk(KERN_DEFAULT " a5 : %p a6 : %p a7 : %p\n",
-> +	       (void *)regs->a5, (void *)regs->a6, (void *)regs->a7);
-> +	printk(KERN_DEFAULT " s2 : %p s3 : %p s4 : %p\n",
-> +	       (void *)regs->s2, (void *)regs->s3, (void *)regs->s4);
-> +	printk(KERN_DEFAULT " s5 : %p s6 : %p s7 : %p\n",
-> +	       (void *)regs->s5, (void *)regs->s6, (void *)regs->s7);
-> +	printk(KERN_DEFAULT " s8 : %p s9 : %p s10: %p\n",
-> +	       (void *)regs->s8, (void *)regs->s9, (void *)regs->s10);
-> +	printk(KERN_DEFAULT " s11: %p t3 : %p t4 : %p\n",
-> +	       (void *)regs->s11, (void *)regs->t3, (void *)regs->t4);
-> +	printk(KERN_DEFAULT " t5 : %p t6 : %p\n",
-> +	       (void *)regs->t5, (void *)regs->t6);
->  
-> -	pr_cont("sstatus: " REG_FMT " sbadaddr: " REG_FMT " scause: " REG_FMT "\n",
-> -		regs->sstatus, regs->sbadaddr, regs->scause);
-> +	printk(KERN_DEFAULT "sstatus: %p sbadaddr: %p scause: %p\n",
-> +	       (void *)regs->sstatus,
-> +	       (void *)regs->sbadaddr,
-> +	       (void *)regs->scause);
->  }
+> Please coordinate next time with people already working on this,
+> otherwise you might end up wasting other people's time.
 
-This change makes the dump almost unusable. Note that registers contain any
-kind of information, not only pointers.
+Hi David,
 
-My understanding is that %px was introduced because printing the
-pointer directly is sometimes worth the security risk. IMHO, this
-is one place where we want to risk printing the real value.
+Sorry, if you are already working on this, I step back immediately.
+I will wait for your work.
 
-Anyway, it needs to be decided by security gurus. Adding some more
-people into CC.
-
-
-Best Regards,
-Petr
+thanks
+-- 
+Oscar Salvador
+SUSE L3
