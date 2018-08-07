@@ -2,91 +2,117 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53AF8C46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 06:18:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86F80C46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 06:18:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0766221A12
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 06:18:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A90321A18
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 06:18:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lnHFra/+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0766221A12
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="Iyq18C3o"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A90321A18
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388554AbeHGIbF (ORCPT
+        id S2388582AbeHGIbO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 04:31:05 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:38450 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387588AbeHGIbF (ORCPT
+        Tue, 7 Aug 2018 04:31:14 -0400
+Received: from conuserg-08.nifty.com ([210.131.2.75]:39265 "EHLO
+        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733061AbeHGIa6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 04:31:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=JL9sovPWEf8yrTpdq2Lic9cCDW4790FNP2sPj3/GabA=; b=lnHFra/+rUwS8DqHhhjF7tAKm
-        JOtWOrWeL0UCodvEcbomlKlNOSZFan1tnMyXwY7LZ/BsPACnboETyYBOWMGx+AYuXLi5AIaiQc2Rl
-        3QJv6NhvuIiQdz8eaTzcIaMi9hyMMThha65U6O5fcPwkvelibQcaGJ3JtiRfyGfWE235mzbrvES5K
-        0whBpc3gjZ3E1FDs93yDPpcpOqvp6tMCg0rBFp8I/mDWtT9Mh8txhVUxW8ej6ozEn+9SO3FuiAxql
-        Ct2DzyOnpPUAYv42gZ1WAC7nVRx5vMnSTk3gWFVONnMm+kHbVu2k05/Lh3xILPNxtOBqZiawm00BU
-        P6qWl5e4A==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fmvJv-0003TB-48; Tue, 07 Aug 2018 06:18:15 +0000
-Date:   Mon, 6 Aug 2018 23:18:14 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        aik@ozlabs.ru, robh@kernel.org, joe@perches.com,
-        elfring@users.sourceforge.net, david@gibson.dropbear.id.au,
-        jasowang@redhat.com, mpe@ellerman.id.au, linuxram@us.ibm.com,
-        haren@linux.vnet.ibm.com, paulus@samba.org,
-        srikar@linux.vnet.ibm.com, robin.murphy@arm.com,
-        jean-philippe.brucker@arm.com, marc.zyngier@arm.com
-Subject: Re: [RFC 0/4] Virtio uses DMA API for all devices
-Message-ID: <20180807061814.GC32709@infradead.org>
-References: <eb1750e90e4bd45da297fa6f78f8ef93671b7c2f.camel@kernel.crashing.org>
- <20180803220443-mutt-send-email-mst@kernel.org>
- <051fd78e15595b414839fa8f9d445b9f4d7576c6.camel@kernel.crashing.org>
- <20180805031046-mutt-send-email-mst@kernel.org>
- <fd8fee94cf42e436878f179c7895de3a4dab3355.camel@kernel.crashing.org>
- <20180806164106-mutt-send-email-mst@kernel.org>
- <ef6d5d7c7b812bd797a1c3fd6bc7a26d0074020f.camel@kernel.crashing.org>
- <20180806233024-mutt-send-email-mst@kernel.org>
- <0967fc30001323e6e38ed12c8dba8ee3d1aa13f5.camel@kernel.crashing.org>
- <20180807002857-mutt-send-email-mst@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180807002857-mutt-send-email-mst@kernel.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+        Tue, 7 Aug 2018 04:30:58 -0400
+Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-08.nifty.com with ESMTP id w776HYgj009463;
+        Tue, 7 Aug 2018 15:17:40 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com w776HYgj009463
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1533622661;
+        bh=93n/hdv/fu8dAdRrLAHfmbU88lUWS0mHHs+i79buDAA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Iyq18C3o8zluJ9xaZYliAQo9dwvl8LJpz/YLeIT37PFoUCTXMDe0W2DkPz4HDqJ8f
+         pljeYYEypCSbrTh+fV4TpiyVclrtUJfeubpumuGlS2nsAWSETJICW7BrAncHvtc+uV
+         lmNC2zSUQoHUaC4ufAE3uhnudrzAHCg4oGwdmRL588mnPffC+50PXb1wgjtVorGR+F
+         2B0LEvhgBPiXDHiqcYh6CGCSRfAQZCGXX8I6l+R68n4wNkZt4mYomb3hvolIgvWIoP
+         TbiVpWul0QwLir9Dy7EjxJSDKYXlv1lFQ+9zkfS8e3ENcftVq4BctmiJegx85esiCm
+         H8/kUdtW43ZIA==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-mmc@vger.kernel.org
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org
+Subject: [v0.1 PATCH 7/7] mmc: tmio: refactor CLK_CTL bit calculation
+Date:   Tue,  7 Aug 2018 15:17:22 +0900
+Message-Id: <1533622642-13989-8-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1533622642-13989-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1533622642-13989-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 07, 2018 at 12:46:34AM +0300, Michael S. Tsirkin wrote:
-> Well we have the RFC for that - the switch to using DMA ops unconditionally isn't
-> problematic itself IMHO, for now that RFC is blocked
-> by its perfromance overhead for now but Christoph says
-> he's trying to remove that for direct mappings,
-> so we should hopefully be able to get there in X weeks.
+  for (clk = 0x80000080; new_clock >= (clock << 1); clk >>= 1)
+          clock <<= 1;
 
-The direct calls to dma_direct_ops aren't going to help you with legacy
-virtio, given that virtio is specified to deal with physical addresses,
-while dma-direct is not in many cases.
+... is too tricky, hence I replaced with
 
-It would however help with the case where qemu always sets the platform
-dma flag, as we'd avoid the indirect calls for that.
+  roundup_pow_of_two(divisor) >> 2
+
+'(clk >> 22) & 0x1' is the bit test for the 1/1 divisor, but
+it is not clear.  'divisor <= 1' is easier to understand.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+ drivers/mmc/host/tmio_mmc.c | 18 +++++++++++++-----
+ 1 file changed, 13 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/mmc/host/tmio_mmc.c b/drivers/mmc/host/tmio_mmc.c
+index b031a77..e04c322 100644
+--- a/drivers/mmc/host/tmio_mmc.c
++++ b/drivers/mmc/host/tmio_mmc.c
+@@ -48,19 +48,27 @@ static void tmio_mmc_clk_stop(struct tmio_mmc_host *host)
+ static void tmio_mmc_set_clock(struct tmio_mmc_host *host,
+ 			       unsigned int new_clock)
+ {
+-	u32 clk = 0, clock;
++	unsigned int clock, divisor;
++	u32 clk = 0;
++	int clk_sel;
+ 
+ 	if (new_clock == 0) {
+ 		tmio_mmc_clk_stop(host);
+ 		return;
+ 	}
+ 
+-	clock = host->mmc->f_min;
++	divisor = host->pdata->hclk / new_clock;
+ 
+-	for (clk = 0x80000080; new_clock >= (clock << 1); clk >>= 1)
+-		clock <<= 1;
++	if (divisor <= 1) {
++		clk_sel = 1;
++		clk = 0;
++	} else {
++		clk_sel = 0;
++		/* bit7 set: 1/512, ... bit0 set:1/4, all bits clear: 1/2 */
++		clk = roundup_pow_of_two(divisor) >> 2;
++	}
+ 
+-	host->pdata->set_clk_div(host->pdev, (clk >> 22) & 1);
++	host->pdata->set_clk_div(host->pdev, clk_sel);
+ 
+ 	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, ~CLK_CTL_SCLKEN &
+ 			sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
+-- 
+2.7.4
+
