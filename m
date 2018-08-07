@@ -2,120 +2,159 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 964C5C46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 17:42:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43359C46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 17:47:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5819D21547
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 17:42:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5819D21547
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id F148B215F9
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 17:47:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F148B215F9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390330AbeHGT5u (ORCPT
+        id S2403833AbeHGUDB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 15:57:50 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:40927 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727198AbeHGT5t (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 15:57:49 -0400
-Received: by mail-it0-f65.google.com with SMTP id h23-v6so24084231ita.5;
-        Tue, 07 Aug 2018 10:42:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=KeKJnzQOffQOfRtAMyjQsTpNA5n7hdyzcdzP6bVZfls=;
-        b=oOeRkdmnnyVYbVEa6A0h1fiYYKwQ3e9DimmTEzrQehdfiJ40XUdqmBeKSfeAE/XvTs
-         8wLYkIOO9v1lx+IeWuZF4nrtBwEHIDdhTvID1ny8u7xh+9d9VYplMAVOzDz1MYc/oLkR
-         UQO+VcmubYy6QeNHmP9h2FiBc4mdQHiyGTbyhjAjXHJyjOZD48ma0HYKpv1QqidzW5pi
-         I7+in/miA1vBzs9eM6u8jIl8jy6bEMYJk4EfIeAFRsLx02tvRZUCBFezoCMlkyoZu0ML
-         P8iTPGbyZQpfgEBM6Eb1vYFxA1OMdfn9qyy5XUPRBPThHbjuxAeDwpBkhsVwiHMm+1CA
-         8N5A==
-X-Gm-Message-State: AOUpUlHASD1H4ZsZRqUsU0vj0OC22T8T5N5kyb1gHJeakDIy5Q8Fpph9
-        67WugAWivWue2+9SZ6VorQ==
-X-Google-Smtp-Source: AA+uWPySPENDMX6MHA4PVFFsHcyOjIXrwPOgxWyDwSHWjEa1qLYLRzL6sFUjx8v7/2qBeJ7rAR7r8Q==
-X-Received: by 2002:a24:534c:: with SMTP id n73-v6mr2818748itb.25.1533663744257;
-        Tue, 07 Aug 2018 10:42:24 -0700 (PDT)
-Received: from localhost ([24.51.61.72])
-        by smtp.gmail.com with ESMTPSA id c71-v6sm727703ioe.69.2018.08.07.10.42.23
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 07 Aug 2018 10:42:23 -0700 (PDT)
-Date:   Tue, 7 Aug 2018 11:42:22 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     Wolfram Sang <wsa@the-dreams.de>,
-        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        James Hogan <jhogan@kernel.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mips@linux-mips.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Allan Nielsen <allan.nielsen@microsemi.com>
-Subject: Re: [PATCH v3 4/6] i2c: designware: add MSCC Ocelot support
-Message-ID: <20180807174222.GA5720@rob-hp-laptop>
-References: <20180806185412.7210-1-alexandre.belloni@bootlin.com>
- <20180806185412.7210-5-alexandre.belloni@bootlin.com>
+        Tue, 7 Aug 2018 16:03:01 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:38027 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2403794AbeHGUDA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 16:03:00 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 09405207AB; Tue,  7 Aug 2018 19:47:32 +0200 (CEST)
+Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 8ED7420737;
+        Tue,  7 Aug 2018 19:47:21 +0200 (CEST)
+Date:   Tue, 7 Aug 2018 19:47:22 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?B?TWlxdcOobA==?= Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Mark Vasut <marek.vasut@gmail.com>,
+        ext Tony Lindgren <tony@atomide.com>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux-OMAP <linux-omap@vger.kernel.org>,
+        linux-mtd@lists.infradead.org, linux-doc@vger.kernel.org,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH v2 12/12] gpiolib: Add fast processing path to
+ bitmap API functions
+Message-ID: <20180807194722.5aabb6da@bbrezillon>
+In-Reply-To: <11711552.OvaP4pOjBH@z50>
+References: <20180718235710.18242-1-jmkrzyszt@gmail.com>
+        <20180806222918.12644-13-jmkrzyszt@gmail.com>
+        <CACRpkdYHqFOFSv-erCzx8_u-mVUgGPdDH0ts-+DNAvjP3Qxb9w@mail.gmail.com>
+        <11711552.OvaP4pOjBH@z50>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180806185412.7210-5-alexandre.belloni@bootlin.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 06, 2018 at 08:54:10PM +0200, Alexandre Belloni wrote:
-> The Microsemi Ocelot I2C controller is a designware IP. It also has a
-> second set of registers to allow tweaking SDA hold time and spike
-> filtering.
+Hi Janusz,
+
+On Tue, 07 Aug 2018 19:29:53 +0200
+Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
+
+> On Tuesday, August 7, 2018 1:43:56 AM CEST Linus Walleij wrote:
+> > On Tue, Aug 7, 2018 at 12:29 AM Janusz Krzysztofik <jmkrzyszt@gmail.com>   
+> wrote:
+> > 
+> > Hi Janusz!
+> >   
+> > > Certain GPIO descriptor arrays returned by gpio_get_array() may contain
+> > > information on a single GPIO chip driving array member pins in hardware
+> > > order.  In such cases, bitmaps of values can be passed directly to the
+> > > chip callback functions without wasting time on iterations.
+> > >
+> > > Add respective code to gpiod_get/set_array_bitmap_complex() functions.
+> > >
+> > > Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>  
+> > 
+> > I think it would be disappointing to leave all the users of the old
+> > array API without the performance improvement. I think we need to
+> > deal with this in a way such that everyone can benefit from it.  
+
+I agree with Linus on that one. When I initially proposed the gpio
+bitbanging API I had something more advanced in mind where the GPIO
+framework would be responsible for toggling the GPIOs on its own when
+it's given an array of bytes to transmit (this way you avoid going
+back and forth between the GPIO user and the GPIO framework). But this
+approach would clearly be more invasive than what you propose
+here (turning the int array into a bitmap and optimizing). So, if we go
+for the "int array -> bitmap" approach I think all users should be
+converted so that we end up with a single API.
+
 > 
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> ---
->  .../bindings/i2c/i2c-designware.txt           |  9 ++++-
-
-Please split binding patches.
-
->  drivers/i2c/busses/i2c-designware-core.h      |  3 ++
->  drivers/i2c/busses/i2c-designware-platdrv.c   | 40 +++++++++++++++++++
->  3 files changed, 50 insertions(+), 2 deletions(-)
+> There are a few issues to be resolved:
 > 
-> diff --git a/Documentation/devicetree/bindings/i2c/i2c-designware.txt b/Documentation/devicetree/bindings/i2c/i2c-designware.txt
-> index fbb0a6d8b964..7886f2dc6675 100644
-> --- a/Documentation/devicetree/bindings/i2c/i2c-designware.txt
-> +++ b/Documentation/devicetree/bindings/i2c/i2c-designware.txt
-> @@ -2,7 +2,8 @@
->  
->  Required properties :
->  
-> - - compatible : should be "snps,designware-i2c"
-> + - compatible : should be "snps,designware-i2c" or "mscc,ocelot-i2c" followed by
-> +   "snps,designware-i2c" for fallback
+> 1) array size limited by bitmap size:
+>     - are we ready to limit array size to a single bitmap for all users?
+>     - if not, how can we pass a bitmap of an arbitrary size?
+>     - if as an array of bitmaps, is that still clear enough and easy to use?
+>     - other ideas?
 
-Please reformat to one valid combination per line.
+What we call a bitmap is an array of unsigned longs each entry
+containing NBITS_PER_LONG bits, so yes, it's an arbitrary size (see the
+bitmap API here [1]).
 
->   - reg : Offset and length of the register set for the device
->   - interrupts : <IRQ> where IRQ is the interrupt number.
->  
-> @@ -11,8 +12,12 @@ Recommended properties :
->   - clock-frequency : desired I2C bus clock frequency in Hz.
->  
->  Optional properties :
-> + - reg : for "mscc,ocelot-i2c", a second register set to configure the SDA hold
-> +   time, named ICPU_CFG:TWI_DELAY in the datasheet.
-> +
->   - i2c-sda-hold-time-ns : should contain the SDA hold time in nanoseconds.
-> -   This option is only supported in hardware blocks version 1.11a or newer.
-> +   This option is only supported in hardware blocks version 1.11a or newer and
-> +   on Microsemi SoCs ("mscc,ocelot-i2c" compatible).
->  
->   - i2c-scl-falling-time-ns : should contain the SCL falling time in nanoseconds.
->     This value which is by default 300ns is used to compute the tLOW period.
+> 
+> 2) arbitrary array support:
+>      - are we ready to drop that?
+>      - if not, do we agree to require all users to pack their arbitrary arrays 
+>         inside the gpio_descs structure?
+
+I could only find one user, and it's the core itself (for the ioctl),
+so that shouldn't be too hard to convert all users. Did you find more.
+
+> 
+> Maybe more.
+> 
+> > Also it is kludgy if users (consumers) would need to handle the case
+> > where all lines are on the same chip separately, through the bitmap
+> > API.  
+> 
+> Not true as long as array size fits (arbitrary arrays can be packed by users), 
+> but I see your point.
+
+I think the API should be the same and the framework should decide to
+take the fast path if all gpios belong to the same chip (which AFAICT
+is already the case, except it's putting the result in an int array
+instead of a bitmap)
+
+> 
+> > What we need is an API that:
+> > 
+> > - All drivers handling arrays can use (including current users).
+> > 
+> > - Enables speed-up if the lines are all on the same chip/register.
+> > 
+> > - Doesn't require consumers to know if they are all on the same
+> >   chip or not.
+> > 
+> > This means a deep API with a small surface.
+> > 
+> > How do we achieve this the best way?  
+> 
+> I think widely accepted solutions to those two issues I've mentioned above can 
+> give the answer.
+
+I'd still like to see how far we are from the initial perfs (the one
+poking the GPIO regs directly) with this approach, and what's the
+improvement compared to the int array solution we already have in place.
+
+Regards,
+
+Boris
+
+[1]https://elixir.bootlin.com/linux/v4.18-rc8/source/include/linux/bitmap.h
