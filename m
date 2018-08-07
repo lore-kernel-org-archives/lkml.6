@@ -2,80 +2,146 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 123A0C46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 19:18:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D484C46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 19:24:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C22B9216F6
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 19:18:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C22B9216F6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 126702172B
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 19:24:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="GCEhfzjj";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="m7hTmQrf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 126702172B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389671AbeHGVeN (ORCPT
+        id S2389394AbeHGVkI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 17:34:13 -0400
-Received: from mga04.intel.com ([192.55.52.120]:18934 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729922AbeHGVeM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 17:34:12 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Aug 2018 12:18:22 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,456,1526367600"; 
-   d="scan'208";a="252776249"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
-  by fmsmga006.fm.intel.com with ESMTP; 07 Aug 2018 12:18:20 -0700
-Message-ID: <58c02aeff4285498272b0a13b8de2dc1282fded9.camel@linux.intel.com>
-Subject: Re: [PATCH] gpio: Add driver for PC Engines APU2/APU3 GPIOs
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Florian Eckert <fe@dev.tdt.de>,
-        Christian Lamparter <chunkeey@gmail.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
-Date:   Tue, 07 Aug 2018 22:18:19 +0300
-In-Reply-To: <37e92da47c20e8c771afcdb14c5532d8@dev.tdt.de>
-References: <20180801111243.2848-1-fe@dev.tdt.de>
-         <CACRpkdbY3w-ptUOkv5TUZh+5oEGU+4BLO_6=12QecRveTSBKSQ@mail.gmail.com>
-         <1846152.TW98f23PIX@debian64> <37e92da47c20e8c771afcdb14c5532d8@dev.tdt.de>
-Organization: Intel Finland Oy
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
+        Tue, 7 Aug 2018 17:40:08 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:46720 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729922AbeHGVkI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 17:40:08 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 7781460B23; Tue,  7 Aug 2018 19:24:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1533669856;
+        bh=L+m1e8uBHYVAW2GEH4GOn34LmPMhjmgvwUjI47yc7a8=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=GCEhfzjje26AsDue+VWdk2ttQHgVspm/a//IrW4JljICOqAZ9GwIOSSDezh9dWvT4
+         wWqlUd4/U5HQXuIC6bb1uviqqwccneljl4Sw94wLJ2P1VKppvrkwZ6jtEn3DBJPUqm
+         zDNNjXJ+Iksuz/9SxodPehcW+TS4DAmN4VV/ZCug=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id F19FD606FC;
+        Tue,  7 Aug 2018 19:24:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1533669855;
+        bh=L+m1e8uBHYVAW2GEH4GOn34LmPMhjmgvwUjI47yc7a8=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=m7hTmQrfpBvfrS1IA33SixVxu2lU0I8ZKWk148jOuB+TeIN6/uaril1CbT4cvH9MQ
+         Jy9b7HvnNu+a9k4wSIOrU33uA3B8AyoTn9jrmR0J9Xt9UjAygHTcaaO5+HgInNIS99
+         SzzwWdLEkCV51oCDnmn7X3l/gGkuCXGjmf1Cp35g=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
+Date:   Tue, 07 Aug 2018 12:24:14 -0700
+From:   skannan@codeaurora.org
+To:     Sudeep Holla <sudeep.holla@arm.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Taniya Das <tdas@codeaurora.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Amit Nischal <anischal@codeaurora.org>,
+        devicetree@vger.kernel.org, robh@kernel.org,
+        amit.kucheria@linaro.org, evgreen@google.com
+Subject: Re: [PATCH v7 1/2] dt-bindings: cpufreq: Introduce QCOM CPUFREQ
+ Firmware bindings
+In-Reply-To: <20180807111237.GA1588@e107155-lin>
+References: <1532428970-18122-1-git-send-email-tdas@codeaurora.org>
+ <1532428970-18122-2-git-send-email-tdas@codeaurora.org>
+ <153334001055.10763.8002698033760154254@swboyd.mtv.corp.google.com>
+ <b362d9f769fde3ce1a2dcd89f20eb476@codeaurora.org>
+ <20180807111237.GA1588@e107155-lin>
+Message-ID: <74d27daca2bb03716fc84f9c57118af0@codeaurora.org>
+X-Sender: skannan@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-08-07 at 13:18 +0200, Florian Eckert wrote:
-> Hello Andy
+On 2018-08-07 04:12, Sudeep Holla wrote:
+> On Mon, Aug 06, 2018 at 01:54:24PM -0700, skannan@codeaurora.org wrote:
+>> On 2018-08-03 16:46, Stephen Boyd wrote:
+>> >Quoting Taniya Das (2018-07-24 03:42:49)
+>> >>diff --git
+>> >>a/Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-hw.txt
+>> >>b/Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-hw.txt
+>> >>new file mode 100644
+>> >>index 0000000..22d4355
+>> >>--- /dev/null
+>> >>+++ b/Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-hw.txt
+>> >>@@ -0,0 +1,172 @@
+>> >[...]
+>> >>+
+>> >>+               CPU7: cpu@700 {
+>> >>+                       device_type = "cpu";
+>> >>+                       compatible = "qcom,kryo385";
+>> >>+                       reg = <0x0 0x700>;
+>> >>+                       enable-method = "psci";
+>> >>+                       next-level-cache = <&L2_700>;
+>> >>+                       qcom,freq-domain = <&freq_domain_table1>;
+>> >>+                       L2_700: l2-cache {
+>> >>+                               compatible = "cache";
+>> >>+                               next-level-cache = <&L3_0>;
+>> >>+                       };
+>> >>+               };
+>> >>+       };
+>> >>+
+>> >>+       qcom,cpufreq-hw {
+>> >>+               compatible = "qcom,cpufreq-hw";
+>> >>+
+>> >>+               clocks = <&rpmhcc RPMH_CXO_CLK>;
+>> >>+               clock-names = "xo";
+>> >>+
+>> >>+               #address-cells = <2>;
+>> >>+               #size-cells = <2>;
+>> >>+               ranges;
+>> >>+               freq_domain_table0: freq_table0 {
+>> >>+                       reg = <0 0x17d43000 0 0x1400>;
+>> >>+               };
+>> >>+
+>> >>+               freq_domain_table1: freq_table1 {
+>> >>+                       reg = <0 0x17d45800 0 0x1400>;
+>> >>+               };
+>> >
+>> >Sorry, this is just not proper DT design. The whole node should have a
+>> >reg property, and it should contain two (or three if we're handling the
+>> >L3 clk domain?) different offsets for the different power clusters. The
+>> >problem seems to still be that we don't have a way to map the CPUs to
+>> >the clk domains they're in provided by this hardware block. Making
+>> >subnodes is not the solution.
+>> 
+>> The problem is mapping clock domains to logical CPUs that CPUfreq 
+>> uses. The
+>> physical CPU to logical CPU mapping can be changed by the kernel (even
+>> through DT if I'm not mistaken). So we need to have a way to tell in 
+>> DT
+>> which physical CPUs are connected to which CPU freq clock domain.
+>> 
 > 
-> I think this are the information you want to have.
-> 
+> How about passing CPU freq clock domain id as along with phandle in
+> qcom,freq-domain ?
 
-I was rather asking for something like TRM.
+Now sure what you mean here. There's no such this as CPUfreq clock 
+domain id. It has policies that are made up of logical CPU numbers. 
+Logical CPU is not something that you can fix in DT.
 
-By schematics, I meant a simplified GPIO buffers and pin control
-explained on hardware level.
-
-Below has nothing to do with either, unfortunately.
-
-> On 2018-08-04 20:22, Christian Lamparter wrote:
-> > As for the APUs. The vendor (PC Engines) happily provides
-> > PDFs and schematics for their boards:
-> > <https://www.pcengines.ch/pdf/apu1.pdf>
-> > <https://www.pcengines.ch/schema/apu1c.pdf>
-> > <https://www.pcengines.ch/pdf/apu2.pdf>
-> > <http://pcengines.ch/schema/apu2c.pdf>
-
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+-Saravana
