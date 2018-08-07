@@ -2,87 +2,160 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A78EAC46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:01:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4680AC46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:06:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 609922154F
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:01:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 609922154F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 00DF82170A
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:06:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00DF82170A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389951AbeHGUQb (ORCPT
+        id S2389997AbeHGUWF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 16:16:31 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:37002 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388577AbeHGUQa (ORCPT
+        Tue, 7 Aug 2018 16:22:05 -0400
+Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:49607 "EHLO
+        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732383AbeHGUWF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 16:16:30 -0400
-Received: by mail-io0-f195.google.com with SMTP id z19-v6so14762938ioh.4;
-        Tue, 07 Aug 2018 11:01:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=L8ZO4jSdzTHk+7VZQ0B6fBuITNcX4MWq1x1LT5rpgck=;
-        b=UlbPr6/33AAL8n1N8YiJdiP5Q1ed/iGKgkDF6KUa1BBcqob2EICGBg91w2V1t9TfhD
-         eNG3/1V8Muu0tVEmllu/pTZ0MzfhOm0q73ira7NKshv4cP1LO4TQRsE9y/zd5jIe4iKU
-         hQ2iURnGnXS40PeBuCVQdM4BYW2uZrnolnX8Q9+Z8YqDR5GoX47NinI2s/2F7T+2Zw7W
-         3YyYNcD4VmYHr++zPaIk45ier/dpx0ZMqhy7fyFJLu4j3VZOxY0klBKMSirogBr3pmiP
-         lEeAXB4ICXFKIcv5+R0kkC5LWx1ypPkyLokpn7ZZvrGqQ4WIAKFfXJ8mo3c7WUB9wnZ6
-         5/Dw==
-X-Gm-Message-State: AOUpUlG8lPUT8Pgvyv2cXmaZB0hXgCDgvCliZ2WIKqutdhITipSuu2Zy
-        1fkOXUpjgN1pac0NnuzwPQ==
-X-Google-Smtp-Source: AAOMgpfCtFMg+EVlbXRUvTzxx6OdrWyqgiJhRkl0ciAoe6K/K/GM+XJCYPHmYjpwy3VOLgnnCam7Jw==
-X-Received: by 2002:a6b:c8c8:: with SMTP id y191-v6mr19521103iof.295.1533664860672;
-        Tue, 07 Aug 2018 11:01:00 -0700 (PDT)
-Received: from localhost ([24.51.61.72])
-        by smtp.gmail.com with ESMTPSA id x14-v6sm1503881ita.18.2018.08.07.11.00.59
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 07 Aug 2018 11:00:59 -0700 (PDT)
-Date:   Tue, 7 Aug 2018 12:00:59 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     thor.thayer@linux.intel.com
-Cc:     joro@8bytes.org, mark.rutland@arm.com, dinguyen@kernel.org,
-        will.deacon@arm.com, robin.murphy@arm.com,
-        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/2] arm64: dts: stratix10: Add Stratix10 SMMU support
-Message-ID: <20180807180059.GA4415@rob-hp-laptop>
-References: <1532543077-8933-1-git-send-email-thor.thayer@linux.intel.com>
- <1532543077-8933-2-git-send-email-thor.thayer@linux.intel.com>
+        Tue, 7 Aug 2018 16:22:05 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R931e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04446;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0T6CQQEE_1533665165;
+Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0T6CQQEE_1533665165)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 08 Aug 2018 02:06:08 +0800
+Subject: Re: [RFC v6 PATCH 1/2] mm: refactor do_munmap() to extract the common
+ part
+To:     Vlastimil Babka <vbabka@suse.cz>, mhocko@kernel.org,
+        willy@infradead.org, ldufour@linux.vnet.ibm.com,
+        kirill@shutemov.name, akpm@linux-foundation.org
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <1532628614-111702-1-git-send-email-yang.shi@linux.alibaba.com>
+ <1532628614-111702-2-git-send-email-yang.shi@linux.alibaba.com>
+ <0289d239-80f1-23e1-331d-6d83f762aeb4@suse.cz>
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <3d9a9eba-97a4-f317-5ee9-369349c108df@linux.alibaba.com>
+Date:   Tue, 7 Aug 2018 11:06:01 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1532543077-8933-2-git-send-email-thor.thayer@linux.intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <0289d239-80f1-23e1-331d-6d83f762aeb4@suse.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 25, 2018 at 01:24:36PM -0500, thor.thayer@linux.intel.com wrote:
-> From: Thor Thayer <thor.thayer@linux.intel.com>
-> 
-> Add SMMU support to the Stratix10 Device Tree which
-> includes adding the SMMU node and adding IOMMU stream
-> ids to the SMMU peripherals. Update bindings.
-> 
-> Signed-off-by: Thor Thayer <thor.thayer@linux.intel.com>
-> ---
-> This patch is dependent on the patch series
-> "iommu/arm-smmu: Add runtime pm/sleep support"
-> (https://patchwork.ozlabs.org/cover/946160/)
 
-I don't think so.
 
-> ---
->  .../devicetree/bindings/iommu/arm,smmu.txt         | 25 ++++++++++++++++++
->  arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi  | 30 ++++++++++++++++++++++
->  2 files changed, 55 insertions(+)
+On 8/7/18 7:59 AM, Vlastimil Babka wrote:
+> On 07/26/2018 08:10 PM, Yang Shi wrote:
+>> Introduces three new helper functions:
+>>    * munmap_addr_sanity()
+>>    * munmap_lookup_vma()
+>>    * munmap_mlock_vma()
+>>
+>> They will be used by do_munmap() and the new do_munmap with zapping
+>> large mapping early in the later patch.
+>>
+>> There is no functional change, just code refactor.
+>>
+>> Reviewed-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+>> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+>> ---
+>>   mm/mmap.c | 120 ++++++++++++++++++++++++++++++++++++++++++--------------------
+>>   1 file changed, 82 insertions(+), 38 deletions(-)
+>>
+>> diff --git a/mm/mmap.c b/mm/mmap.c
+>> index d1eb87e..2504094 100644
+>> --- a/mm/mmap.c
+>> +++ b/mm/mmap.c
+>> @@ -2686,34 +2686,44 @@ int split_vma(struct mm_struct *mm, struct vm_area_struct *vma,
+>>   	return __split_vma(mm, vma, addr, new_below);
+>>   }
+>>   
+>> -/* Munmap is split into 2 main parts -- this part which finds
+>> - * what needs doing, and the areas themselves, which do the
+>> - * work.  This now handles partial unmappings.
+>> - * Jeremy Fitzhardinge <jeremy@goop.org>
+>> - */
+>> -int do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
+>> -	      struct list_head *uf)
+>> +static inline bool munmap_addr_sanity(unsigned long start, size_t len)
+> Since it's returning bool, the proper naming scheme would be something
+> like "munmap_addr_ok()". I don't know how I would replace the "munmap_"
+> prefix myself though.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+OK, thanks for the suggestion.
+
+>
+>>   {
+>> -	unsigned long end;
+>> -	struct vm_area_struct *vma, *prev, *last;
+>> -
+>>   	if ((offset_in_page(start)) || start > TASK_SIZE || len > TASK_SIZE-start)
+>> -		return -EINVAL;
+>> +		return false;
+>>   
+>> -	len = PAGE_ALIGN(len);
+>> -	if (len == 0)
+>> -		return -EINVAL;
+>> +	if (PAGE_ALIGN(len) == 0)
+>> +		return false;
+>> +
+>> +	return true;
+>> +}
+>> +
+>> +/*
+>> + * munmap_lookup_vma: find the first overlap vma and split overlap vmas.
+>> + * @mm: mm_struct
+>> + * @vma: the first overlapping vma
+>> + * @prev: vma's prev
+>> + * @start: start address
+>> + * @end: end address
+>> + *
+>> + * returns 1 if successful, 0 or errno otherwise
+>> + */
+>> +static int munmap_lookup_vma(struct mm_struct *mm, struct vm_area_struct **vma,
+>> +			     struct vm_area_struct **prev, unsigned long start,
+>> +			     unsigned long end)
+> Agree with Michal that you could simply return vma, NULL, or error.
+> Caller can easily find out prev from that, it's not like we have to
+> count each cpu cycle here. It will be a bit less tricky code as well,
+> which is a plus.
+>
+> ...
+>> +static inline void munmap_mlock_vma(struct vm_area_struct *vma,
+>> +				    unsigned long end)
+> This function does munlock, not mlock. You could call it e.g.
+> munlock_vmas().
+
+OK
+
+>
+>> +{
+>> +	struct vm_area_struct *tmp = vma;
+>> +
+>> +	while (tmp && tmp->vm_start < end) {
+>> +		if (tmp->vm_flags & VM_LOCKED) {
+>> +			vma->vm_mm->locked_vm -= vma_pages(tmp);
+> You keep 'vma' just for the vm_mm? Better extract mm pointer first and
+> then you don't need the 'tmp'.
+
+OK
+
+Thanks,
+Yang
+
+>
+>> +			munlock_vma_pages_all(tmp);
+>> +		}
+>> +		tmp = tmp->vm_next;
+>> +	}
+>> +}
+
