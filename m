@@ -2,102 +2,73 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E000C46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 13:15:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAD29C46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 13:16:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0031C21757
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 13:15:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0031C21757
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sntech.de
+	by mail.kernel.org (Postfix) with ESMTP id 9726D21757
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 13:16:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="je7NA7cc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9726D21757
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388921AbeHGPaI (ORCPT
+        id S2389020AbeHGPaR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 11:30:08 -0400
-Received: from gloria.sntech.de ([185.11.138.130]:51254 "EHLO gloria.sntech.de"
+        Tue, 7 Aug 2018 11:30:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60928 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728258AbeHGPaH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 11:30:07 -0400
-Received: from wd0970.dip.tu-dresden.de ([141.76.111.202] helo=phil.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1fn1pr-0006Mr-HW; Tue, 07 Aug 2018 15:15:39 +0200
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     Marc Zyngier <marc.zyngier@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        Joerg Roedel <joro@8bytes.org>,
-        Jeffy Chen <jeffy.chen@rock-chips.com>
-Subject: Re: [PATCH 1/2] iommu/rockchip: Handle errors returned from PM framework
-Date:   Tue, 07 Aug 2018 15:15:39 +0200
-Message-ID: <3265383.PcPThIO4HC@phil>
-In-Reply-To: <94b6aab1-e8d3-6929-a2e6-2f06c564bc70@arm.com>
-References: <20180807085406.3863-1-marc.zyngier@arm.com> <2940317.dDZy1L4CDY@phil> <94b6aab1-e8d3-6929-a2e6-2f06c564bc70@arm.com>
+        id S1728258AbeHGPaQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 11:30:16 -0400
+Received: from jouet.infradead.org (unknown [179.95.176.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 231E12150F;
+        Tue,  7 Aug 2018 13:15:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1533647759;
+        bh=sygzHL2WNPl3I5HIiYvoGKmqp6kuqjRiiajtwUCxIaU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=je7NA7cc33bAu+9FHU88AFPL4NN4dAhfnQohNNzWYnD+IdZG5JIl/N66T8YGBkgJq
+         ZR/6QZmGZLwqKrJxs0GXF5BA/fee6WC2LiSYdQgxzfG/M66CVgrhbOJE/vsEL/+IY3
+         2g+4DDJgdQpUD0sQs+sqk41JgdccaX7S6IyiMgdQ=
+Received: by jouet.infradead.org (Postfix, from userid 1000)
+        id 67DF7140A1C; Tue,  7 Aug 2018 10:15:57 -0300 (-03)
+Date:   Tue, 7 Aug 2018 10:15:57 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Cc:     Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>
+Subject: Re: [PATCH 2/2] perf map: optimize maps__fixup_overlappings()
+Message-ID: <20180807131557.GB4173@kernel.org>
+References: <153363294102.396323.6277944760215058174.stgit@buzz>
+ <153363294565.396323.4605638589903548668.stgit@buzz>
+ <20180807125528.GE7716@krava>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180807125528.GE7716@krava>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Dienstag, 7. August 2018, 14:31:49 CEST schrieb Marc Zyngier:
-> On 07/08/18 13:09, Heiko Stuebner wrote:
-> > Hi Marc,
+Em Tue, Aug 07, 2018 at 02:55:28PM +0200, Jiri Olsa escreveu:
+> On Tue, Aug 07, 2018 at 12:09:05PM +0300, Konstantin Khlebnikov wrote:
+> > This function splits and removes overlapping areas.
 > > 
-> > Am Dienstag, 7. August 2018, 10:54:05 CEST schrieb Marc Zyngier:
-> >> pm_runtime_get_if_in_use can fail: either PM has been disabled
-> >> altogether (-EINVAL), or the device hasn't been enabled yet (0).
-> >> Sadly, the Rockchip IOMMU driver tends to conflate the two things
-> >> by considering a non-zero return value as successful.
-> >>
-> >> This has the consequence of hiding other bugs, so let's handle this
-> >> case throughout the driver, with a WARN_ON_ONCE so that we can try
-> >> and work out what happened.
-> >>
-> >> Fixes: 0f181d3cf7d98 ("iommu/rockchip: Add runtime PM support")
-> >> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-> > 
-> > I'm still not sure about the !CONFIG_PM case, as it was probably silently
-> > working in that case before
-> 
-> Do we agree that this is an orthogonal problem though?
+> > Maps in tree are ordered by start address thus we could find
+> > first overlap and stop if next map does not overlap.
 
-Nope ;-) .... I.e. right now the code ignores the -EINVAL from disabled PM
-and continues, possibly even handling the irq correctly.
+please address Jiri's suggestions and send a v2 just for this one,
 
-If it actually worked is a different matter, as I guess nobody really tried
-with !PM in the past.
-
-Now with error-handling we always return IRQ_NONE for !PM.
-
-
-> > But on the other hand we're also already running over it in other places
-> > like in the iommu-shutdown and I guess if someone _really_ disabled
-> > CONFIG_PM, a lot of additional stuff would fail anyway.
-> > 
-> > So should we wrap that in some #ifdef magic, just ignore it or simply
-> > select PM similar to what Tegra, Renesas and Vexpress seem to do?
-> > 
-> > I guess I like the 3rd option best ;-)
-> 
-> It probably doesn't hurt. At what level do you want it? As a dependency
-> to the IOMMU? or to the platform?
-
-I guess it might be best to go the Tegra, etc way. Whoever in their right
-mind would want to drive a mobile platform without any form for power
-management ;-) .
-
-I can do these patches for arm32+arm64 myself ... I just wanted to put
-that thought out there - in case that was just a stupid idea of mine :-D .
-
-
-Heiko
-
-
+- Arnaldo
