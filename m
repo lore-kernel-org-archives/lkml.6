@@ -2,110 +2,101 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E3BEC46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 12:33:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8E0EC46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 12:35:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D92CD20989
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 12:33:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D92CD20989
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 6F27C20989
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 12:35:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F27C20989
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389189AbeHGOry (ORCPT
+        id S2389197AbeHGOuD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 10:47:54 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:50816 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727572AbeHGOry (ORCPT
+        Tue, 7 Aug 2018 10:50:03 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:42637 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732703AbeHGOuD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 10:47:54 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w77CWsjs145465
-        for <linux-kernel@vger.kernel.org>; Tue, 7 Aug 2018 08:33:46 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2kq9fun8f7-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 08:33:45 -0400
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
-        Tue, 7 Aug 2018 13:33:40 +0100
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 7 Aug 2018 13:33:34 +0100
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w77CXYZQ39256196
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 7 Aug 2018 12:33:34 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C9FD842042;
-        Tue,  7 Aug 2018 15:33:42 +0100 (BST)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2834F4204B;
-        Tue,  7 Aug 2018 15:33:32 +0100 (BST)
-Received: from [9.79.225.234] (unknown [9.79.225.234])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue,  7 Aug 2018 15:33:31 +0100 (BST)
-Subject: Re: [PATCH v7 3/6] Uprobes: Support SDT markers having reference
- count (semaphore)
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     srikar@linux.vnet.ibm.com, rostedt@goodmis.org,
-        mhiramat@kernel.org, liu.song.a23@gmail.com, peterz@infradead.org,
-        mingo@redhat.com, acme@kernel.org,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, linux-kernel@vger.kernel.org,
-        ananth@linux.vnet.ibm.com, alexis.berlemont@gmail.com,
-        naveen.n.rao@linux.vnet.ibm.com,
-        linux-arm-kernel@lists.infradead.org, linux-mips@linux-mips.org,
-        linux@armlinux.org.uk, ralf@linux-mips.org, paul.burton@mips.com,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-References: <20180731035143.11942-1-ravi.bangoria@linux.ibm.com>
- <20180731035143.11942-4-ravi.bangoria@linux.ibm.com>
- <20180803112455.GA13794@redhat.com>
- <bfb47985-8f58-e5e4-f8b4-695dfea7937f@linux.ibm.com>
- <20180807113622.GC19831@redhat.com>
-From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Date:   Tue, 7 Aug 2018 18:03:20 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 7 Aug 2018 10:50:03 -0400
+Received: by mail-wr1-f68.google.com with SMTP id e7-v6so15604911wrs.9
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 05:35:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=bw3qLRMbKJ6HZRAJ9WL0GBg9v0Vg4HYIc5ZCbt6hI0U=;
+        b=oZLtQMv6t4obgsASOPnxLkZmE9tMmAOI1h56FCtMG8msFAxrCii54MqSj0ZMzWs4Fp
+         qkAAV/o1gg6HfzUczn6PYmufoFDkmoMigfesuEYE83LJe6GG4/5KV8zV1c3gODf4IJsW
+         7Rk0neZw1kuhHZP1lKapHhWA2hB19VSk7DuMWAOJM7j2yY4IOBj3MiAReoTJ2bCjbJf1
+         CGeV9pu/z+QxlaXrRSp4/wU7bcWM8v2pdDU2odmCvusOTj/X7u8MhSE0ZxeTo99BO5su
+         e2LjbEedAAozdGwIVpBiLGvS6yp0123vLmyDxs8yj0NKEJpkRkXBNjQ9p9YWJ6rpsmrW
+         HGzg==
+X-Gm-Message-State: AOUpUlFag4K1UfCi0+Xs8lVTJ9zgQZMyXqKQIhPkc4CPsir6CkXph3JC
+        wHTxiXQPnpJuWNC5TfjShMCUhw==
+X-Google-Smtp-Source: AAOMgpe2NKtCYU3vaOZ8Y83UK+yPBVPEVjtZYF6FsvN+vcROZ3zQf6nvYH76m92VHME2MnobeCR0BA==
+X-Received: by 2002:adf:eb4c:: with SMTP id u12-v6mr13215609wrn.174.1533645354613;
+        Tue, 07 Aug 2018 05:35:54 -0700 (PDT)
+Received: from localhost.localdomain (p200300EF2BD31703FE367972448AED7A.dip0.t-ipconnect.de. [2003:ef:2bd3:1703:fe36:7972:448a:ed7a])
+        by smtp.gmail.com with ESMTPSA id b2-v6sm2001085wmh.3.2018.08.07.05.35.52
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 07 Aug 2018 05:35:53 -0700 (PDT)
+Date:   Tue, 7 Aug 2018 14:35:50 +0200
+From:   Juri Lelli <juri.lelli@redhat.com>
+To:     Patrick Bellasi <patrick.bellasi@arm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v3 01/14] sched/core: uclamp: extend sched_setattr to
+ support utilization clamping
+Message-ID: <20180807123550.GA3062@localhost.localdomain>
+References: <20180806163946.28380-1-patrick.bellasi@arm.com>
+ <20180806163946.28380-2-patrick.bellasi@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <20180807113622.GC19831@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18080712-0008-0000-0000-0000025E6478
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18080712-0009-0000-0000-000021C669DD
-Message-Id: <4d1e2a17-14ba-f277-8e57-4a4573630ab2@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-07_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=845 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808070127
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180806163946.28380-2-patrick.bellasi@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Oleg,
+On 06/08/18 17:39, Patrick Bellasi wrote:
 
->> I'm sorry. I didn't get this. How can uprobe go away without calling
->>     uprobe_unregister()
->>     -> rergister_for_each_vma()
->>        -> remove_breakpoint()
->> And remove_breakpoint() will get called
-> 
-> assuming that _unregister() will find the same vma with the probed insn. But
-> as I said, the application can munmap the probed page/vma.
+[...]
 
-Got it now :)
+> @@ -4218,6 +4245,13 @@ static int __sched_setscheduler(struct task_struct *p,
+>  			return retval;
+>  	}
+>  
+> +	/* Configure utilization clamps for the task */
+> +	if (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP) {
+> +		retval = __setscheduler_uclamp(p, attr);
+> +		if (retval)
+> +			return retval;
+> +	}
+> +
 
-Thanks.
+IIUC, this is available to root and non-root users. In the latter case,
+how do we cope with the fact that some user might occupy all the
+available clamping groups configured for the system?
 
+Best,
+
+- Juri
