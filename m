@@ -2,40 +2,43 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF8E4C46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:54:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D466FC46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:54:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95AE42151D
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:54:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95AE42151D
+	by mail.kernel.org (Postfix) with ESMTP id 98D7E2151D
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:54:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98D7E2151D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390144AbeHGVJ4 (ORCPT
+        id S2404228AbeHGVKA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 17:09:56 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33390 "EHLO
+        Tue, 7 Aug 2018 17:10:00 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33404 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389051AbeHGVJ4 (ORCPT
+        with ESMTP id S2390164AbeHGVJ7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 17:09:56 -0400
+        Tue, 7 Aug 2018 17:09:59 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 18F8ED01;
-        Tue,  7 Aug 2018 18:54:12 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B722B3EE;
+        Tue,  7 Aug 2018 18:54:16 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Shankara Pailoor <shankarapailoor@gmail.com>,
-        Dave Kleikamp <dave.kleikamp@oracle.com>,
-        Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 4.14 21/21] jfs: Fix inconsistency between memory allocation and ea_buf->max_size
-Date:   Tue,  7 Aug 2018 20:51:35 +0200
-Message-Id: <20180807172331.959435774@linuxfoundation.org>
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        bigeasy@linutronix.de, peterz@infradead.org
+Subject: [PATCH 4.14 06/21] nohz: Fix local_timer_softirq_pending()
+Date:   Tue,  7 Aug 2018 20:51:20 +0200
+Message-Id: <20180807172331.235464329@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180807172330.953888701@linuxfoundation.org>
 References: <20180807172330.953888701@linuxfoundation.org>
@@ -52,45 +55,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Shankara Pailoor <shankarapailoor@gmail.com>
+From: Anna-Maria Gleixner <anna-maria@linutronix.de>
 
-commit 92d34134193e5b129dc24f8d79cb9196626e8d7a upstream.
+commit 80d20d35af1edd632a5e7a3b9c0ab7ceff92769e upstream.
 
-The code is assuming the buffer is max_size length, but we weren't
-allocating enough space for it.
+local_timer_softirq_pending() checks whether the timer softirq is
+pending with: local_softirq_pending() & TIMER_SOFTIRQ.
 
-Signed-off-by: Shankara Pailoor <shankarapailoor@gmail.com>
-Signed-off-by: Dave Kleikamp <dave.kleikamp@oracle.com>
-Cc: Guenter Roeck <linux@roeck-us.net>
+This is wrong because TIMER_SOFTIRQ is the softirq number and not a
+bitmask. So the test checks for the wrong bit.
+
+Use BIT(TIMER_SOFTIRQ) instead.
+
+Fixes: 5d62c183f9e9 ("nohz: Prevent a timer interrupt storm in tick_nohz_stop_sched_tick()")
+Signed-off-by: Anna-Maria Gleixner <anna-maria@linutronix.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Reviewed-by: Daniel Bristot de Oliveira <bristot@redhat.com>
+Acked-by: Frederic Weisbecker <frederic@kernel.org>
+Cc: bigeasy@linutronix.de
+Cc: peterz@infradead.org
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/20180731161358.29472-1-anna-maria@linutronix.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/jfs/xattr.c |   10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ kernel/time/tick-sched.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/jfs/xattr.c
-+++ b/fs/jfs/xattr.c
-@@ -491,15 +491,17 @@ static int ea_get(struct inode *inode, s
- 	if (size > PSIZE) {
- 		/*
- 		 * To keep the rest of the code simple.  Allocate a
--		 * contiguous buffer to work with
-+		 * contiguous buffer to work with. Make the buffer large
-+		 * enough to make use of the whole extent.
- 		 */
--		ea_buf->xattr = kmalloc(size, GFP_KERNEL);
-+		ea_buf->max_size = (size + sb->s_blocksize - 1) &
-+		    ~(sb->s_blocksize - 1);
-+
-+		ea_buf->xattr = kmalloc(ea_buf->max_size, GFP_KERNEL);
- 		if (ea_buf->xattr == NULL)
- 			return -ENOMEM;
+--- a/kernel/time/tick-sched.c
++++ b/kernel/time/tick-sched.c
+@@ -676,7 +676,7 @@ static void tick_nohz_restart(struct tic
  
- 		ea_buf->flag = EA_MALLOC;
--		ea_buf->max_size = (size + sb->s_blocksize - 1) &
--		    ~(sb->s_blocksize - 1);
+ static inline bool local_timer_softirq_pending(void)
+ {
+-	return local_softirq_pending() & TIMER_SOFTIRQ;
++	return local_softirq_pending() & BIT(TIMER_SOFTIRQ);
+ }
  
- 		if (ea_size == 0)
- 			return 0;
+ static ktime_t tick_nohz_stop_sched_tick(struct tick_sched *ts,
 
 
