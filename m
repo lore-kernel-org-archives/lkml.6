@@ -2,40 +2,40 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D3B0C46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:55:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05288C46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:55:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB0262151D
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:55:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB0262151D
+	by mail.kernel.org (Postfix) with ESMTP id BF39B2151D
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:55:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF39B2151D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404307AbeHGVKv (ORCPT
+        id S2390331AbeHGVKy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 17:10:51 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33632 "EHLO
+        Tue, 7 Aug 2018 17:10:54 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33640 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733122AbeHGVKv (ORCPT
+        with ESMTP id S1733122AbeHGVKy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 17:10:51 -0400
+        Tue, 7 Aug 2018 17:10:54 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id ADE5FD0E;
-        Tue,  7 Aug 2018 18:55:07 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A69E2D07;
+        Tue,  7 Aug 2018 18:55:10 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Shankara Pailoor <shankarapailoor@gmail.com>,
-        Dave Kleikamp <dave.kleikamp@oracle.com>,
-        Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 4.9 17/17] jfs: Fix inconsistency between memory allocation and ea_buf->max_size
-Date:   Tue,  7 Aug 2018 20:51:53 +0200
-Message-Id: <20180807172342.986953295@linuxfoundation.org>
+        Anil Gurumurthy <anil.gurumurthy@cavium.com>,
+        Himanshu Madhani <himanshu.madhani@cavium.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.9 02/17] scsi: qla2xxx: Return error when TMF returns
+Date:   Tue,  7 Aug 2018 20:51:38 +0200
+Message-Id: <20180807172342.257482285@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180807172342.071526922@linuxfoundation.org>
 References: <20180807172342.071526922@linuxfoundation.org>
@@ -52,45 +52,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Shankara Pailoor <shankarapailoor@gmail.com>
+From: Anil Gurumurthy <anil.gurumurthy@cavium.com>
 
-commit 92d34134193e5b129dc24f8d79cb9196626e8d7a upstream.
+commit b4146c4929ef61d5afca011474d59d0918a0cd82 upstream.
 
-The code is assuming the buffer is max_size length, but we weren't
-allocating enough space for it.
+Propagate the task management completion status properly to avoid
+unnecessary waits for commands to complete.
 
-Signed-off-by: Shankara Pailoor <shankarapailoor@gmail.com>
-Signed-off-by: Dave Kleikamp <dave.kleikamp@oracle.com>
-Cc: Guenter Roeck <linux@roeck-us.net>
+Fixes: faef62d13463 ("[SCSI] qla2xxx: Fix Task Management command asynchronous handling")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Anil Gurumurthy <anil.gurumurthy@cavium.com>
+Signed-off-by: Himanshu Madhani <himanshu.madhani@cavium.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/jfs/xattr.c |   10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/scsi/qla2xxx/qla_init.c |    7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
---- a/fs/jfs/xattr.c
-+++ b/fs/jfs/xattr.c
-@@ -491,15 +491,17 @@ static int ea_get(struct inode *inode, s
- 	if (size > PSIZE) {
- 		/*
- 		 * To keep the rest of the code simple.  Allocate a
--		 * contiguous buffer to work with
-+		 * contiguous buffer to work with. Make the buffer large
-+		 * enough to make use of the whole extent.
- 		 */
--		ea_buf->xattr = kmalloc(size, GFP_KERNEL);
-+		ea_buf->max_size = (size + sb->s_blocksize - 1) &
-+		    ~(sb->s_blocksize - 1);
-+
-+		ea_buf->xattr = kmalloc(ea_buf->max_size, GFP_KERNEL);
- 		if (ea_buf->xattr == NULL)
- 			return -ENOMEM;
+--- a/drivers/scsi/qla2xxx/qla_init.c
++++ b/drivers/scsi/qla2xxx/qla_init.c
+@@ -329,11 +329,10 @@ qla2x00_async_tm_cmd(fc_port_t *fcport,
  
- 		ea_buf->flag = EA_MALLOC;
--		ea_buf->max_size = (size + sb->s_blocksize - 1) &
--		    ~(sb->s_blocksize - 1);
+ 	wait_for_completion(&tm_iocb->u.tmf.comp);
  
- 		if (ea_size == 0)
- 			return 0;
+-	rval = tm_iocb->u.tmf.comp_status == CS_COMPLETE ?
+-	    QLA_SUCCESS : QLA_FUNCTION_FAILED;
++	rval = tm_iocb->u.tmf.data;
+ 
+-	if ((rval != QLA_SUCCESS) || tm_iocb->u.tmf.data) {
+-		ql_dbg(ql_dbg_taskm, vha, 0x8030,
++	if (rval != QLA_SUCCESS) {
++		ql_log(ql_log_warn, vha, 0x8030,
+ 		    "TM IOCB failed (%x).\n", rval);
+ 	}
+ 
 
 
