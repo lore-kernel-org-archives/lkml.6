@@ -2,234 +2,107 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95B98C46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 05:06:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AFB9C46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 05:14:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5996521A52
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 05:06:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5996521A52
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 07AC321A13
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 05:14:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WpkbEmUs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07AC321A13
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732834AbeHGHS3 (ORCPT
+        id S1728233AbeHGH1M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 03:18:29 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:35953 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727545AbeHGHS3 (ORCPT
+        Tue, 7 Aug 2018 03:27:12 -0400
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:33950 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727123AbeHGH1M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 03:18:29 -0400
-Received: by mail-pg1-f193.google.com with SMTP id h12-v6so7243921pgs.3
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Aug 2018 22:05:58 -0700 (PDT)
+        Tue, 7 Aug 2018 03:27:12 -0400
+Received: by mail-qk0-f196.google.com with SMTP id b66-v6so10612611qkj.1;
+        Mon, 06 Aug 2018 22:14:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=ECg5tW3IEA5yaNPnCr5GWtcBdddZ85KRBwnE2L4stZY=;
+        b=WpkbEmUsmxF5wnzM7mKxsU2kPxWcuuURpFpjwHauj/4i5wuq35bk2G4fyJrezh9/md
+         7vFvcpZtFlFIGHtP5l8KFuUEPMEswRs09EGM3OdCt+xPorEdxzKDvGo4OuGpGEt/BNed
+         UBV0K5yfHU6on+dp7IT3kOa7fjJO+i5uhFuHcO2k0A6eKK2IIS7t+Aqs2nSoXdF0GnHC
+         FZcnmi36fU46EM9q9YJSu6WtEeeIqUGLhZQOLNiAK9TTbMyW9s+1Gzv3M2u3B9bL36YA
+         y7pmubPaKVh8fJSs340uLSmJhYlOEtM3X6Qoo/tctwMHsHnlgerpbzZKh5CltCLUtMIP
+         LzDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=+7Kj4msq/Re9YUxsSmVtWqMkl7DJFdvmKsixW9lADjQ=;
-        b=Yqs5jh0l7tF2XdlnM3QIrSmRDvcmeBXRTJTK1zJNS+6o0gZJHaZFJTLTU+5LxmuBhv
-         Sna27ne09gEv4q4oEM8uSlh7ZXkxMbl+MT7NywnWhvYnDskC6B5sJ6fWIJpc2hpMac23
-         pcHSU5i1qSSMPXtmzCjWBqR0mTtWS5b4q+M0hXwxO2wEK7vzC8+ZHPudyAg0TLKhg//Y
-         Q4iT+Vj6RBV627Pv4Wkz8reRfW39WgA1VuPjIhdScX5fMIZ0QqCCaR5y4JnaH22zCNzC
-         g0isBy+ik3T8tupPvZW56aq2GI/6okGOgJNNWUzMWkbxY9lGo6TqTvAKLTNuIHr6fGw9
-         JqUA==
-X-Gm-Message-State: AOUpUlGk4bnihfdpyrLozY5hRWK/2h0aiJh47uWAD4Sh+q5EPH0UGHcJ
-        VWmq2e1hrG/ytp9E6wfJQ5WeIg==
-X-Google-Smtp-Source: AAOMgpcp0C5eFB3jZHMcflI4nB0WhE7em1nDJp9H53vN9tbd3YGOc3dtCT8QQMfsPIw45A8OpY/RaA==
-X-Received: by 2002:a62:9f85:: with SMTP id v5-v6mr20113674pfk.27.1533618357667;
-        Mon, 06 Aug 2018 22:05:57 -0700 (PDT)
-Received: from localhost.localdomain ([2405:204:1389:d093:8331:9188:8ab0:fd0])
-        by smtp.gmail.com with ESMTPSA id j71-v6sm555911pgd.23.2018.08.06.22.05.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 06 Aug 2018 22:05:56 -0700 (PDT)
-Subject: Re: [PATCH v4 1/9] proc/kcore: don't grab lock for kclist_add()
-To:     Omar Sandoval <osandov@osandov.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        James Morse <james.morse@arm.com>, kernel-team@fb.com
-References: <cover.1532563124.git.osandov@fb.com>
- <12f4b3dc5254547d12cb6669c45c533e647511fb.1532563124.git.osandov@fb.com>
-From:   Bhupesh Sharma <bhsharma@redhat.com>
-Message-ID: <610a930d-5afa-68a9-72a9-4afed5b83e95@redhat.com>
-Date:   Tue, 7 Aug 2018 10:35:47 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
-MIME-Version: 1.0
-In-Reply-To: <12f4b3dc5254547d12cb6669c45c533e647511fb.1532563124.git.osandov@fb.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=ECg5tW3IEA5yaNPnCr5GWtcBdddZ85KRBwnE2L4stZY=;
+        b=ZvJzKptT9LU8KjaGHZ4WCpf0twAw3nlqCzVUpGGWMHbAMKuX9tprDxOTClcMdFwZqV
+         ICkkFuCVlLmVho+P8U4UB7A8/SHJkA6lV40o8N90Zw6PXdZ/6DkmBt0MD/2vFYjhJ6ys
+         Tddq2Y2f9Qjaf2u6YB22+yFWzml5w+2D7tkM4s5FLYubka0IWcB/sDi5+kLyvE3LA7dh
+         OQydxgefbBkMxjkN28r1L/GHDaU5uEeDe15EuJ1Lhm8WXX6eiZoIHprsd8Mf3FYhzQUg
+         3yC+4hcGalg6XUv1CC2HH1y8m8EQGGvF++/3aftHcWQ0IvsLrqyBtiYITVI1MS5yuB7g
+         dOWQ==
+X-Gm-Message-State: AOUpUlEngDXt7p2iTXg11i3tyb6M4FT8k8IPMIhcmgubelrBXT1l8e9Y
+        99fSAJO2FLfG/GPK45zNsoA=
+X-Google-Smtp-Source: AA+uWPxJU0gRkISG2DvujlgR0S7Ey1eNnVhNZWMmsWwEwvZfK9mSv2IK+hKtZum790q8Ab3PtX5THw==
+X-Received: by 2002:a37:2bc9:: with SMTP id r70-v6mr10644378qkr.141.1533618878565;
+        Mon, 06 Aug 2018 22:14:38 -0700 (PDT)
+Received: from localhost ([67.22.19.206])
+        by smtp.gmail.com with ESMTPSA id d2-v6sm239270qkj.76.2018.08.06.22.14.37
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 06 Aug 2018 22:14:37 -0700 (PDT)
+From:   Dongliang Mu <mudongliangabcd@gmail.com>
+To:     aacraid@microsemi.com, jejb@linux.vnet.ibm.com,
+        martin.petersen@oracle.com
+Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dzm77@ist.psu.edu, Dongliang Mu <mudongliangabcd@gmail.com>
+Subject: [PATCH] requesed -> requested
+Date:   Tue,  7 Aug 2018 01:14:29 -0400
+Message-Id: <20180807051429.19077-1-mudongliangabcd@gmail.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Omar,
+Signed-off-by: Dongliang Mu <mudongliangabcd@gmail.com>
+---
+ drivers/scsi/aacraid/commsup.c | 2 +-
+ drivers/scsi/aacraid/dpcsup.c  | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-On 07/26/2018 05:29 AM, Omar Sandoval wrote:
-> From: Omar Sandoval <osandov@fb.com>
-> 
-> kclist_add() is only called at init time, so there's no point in
-> grabbing any locks. We're also going to replace the rwlock with a rwsem,
-> which we don't want to try grabbing during early boot.
-> 
-> While we're here, mark kclist_add() with __init so that we'll get a
-> warning if it's called from non-init code.
-> 
-> Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-> Signed-off-by: Omar Sandoval <osandov@fb.com>
-> ---
->   fs/proc/kcore.c       | 7 +++----
->   include/linux/kcore.h | 2 +-
->   2 files changed, 4 insertions(+), 5 deletions(-)
-> 
-> diff --git a/fs/proc/kcore.c b/fs/proc/kcore.c
-> index 66c373230e60..b0b9a76f28d6 100644
-> --- a/fs/proc/kcore.c
-> +++ b/fs/proc/kcore.c
-> @@ -62,16 +62,15 @@ static LIST_HEAD(kclist_head);
->   static DEFINE_RWLOCK(kclist_lock);
->   static int kcore_need_update = 1;
->   
-> -void
-> -kclist_add(struct kcore_list *new, void *addr, size_t size, int type)
-> +/* This doesn't grab kclist_lock, so it should only be used at init time. */
-> +void __init kclist_add(struct kcore_list *new, void *addr, size_t size,
-> +		       int type)
->   {
->   	new->addr = (unsigned long)addr;
->   	new->size = size;
->   	new->type = type;
->   
-> -	write_lock(&kclist_lock);
->   	list_add_tail(&new->list, &kclist_head);
-> -	write_unlock(&kclist_lock);
->   }
->   
->   static size_t get_kcore_size(int *nphdr, size_t *elf_buflen)
-> diff --git a/include/linux/kcore.h b/include/linux/kcore.h
-> index 8de55e4b5ee9..c20f296438fb 100644
-> --- a/include/linux/kcore.h
-> +++ b/include/linux/kcore.h
-> @@ -35,7 +35,7 @@ struct vmcoredd_node {
->   };
->   
->   #ifdef CONFIG_PROC_KCORE
-> -extern void kclist_add(struct kcore_list *, void *, size_t, int type);
-> +void __init kclist_add(struct kcore_list *, void *, size_t, int type);
->   #else
->   static inline
->   void kclist_add(struct kcore_list *new, void *addr, size_t size, int type)
-> 
+diff --git a/drivers/scsi/aacraid/commsup.c b/drivers/scsi/aacraid/commsup.c
+index d62ddd63f4fe..6e1b022a823d 100644
+--- a/drivers/scsi/aacraid/commsup.c
++++ b/drivers/scsi/aacraid/commsup.c
+@@ -514,7 +514,7 @@ int aac_fib_send(u16 command, struct fib *fibptr, unsigned long size,
+ 	 *	The only invalid cases are if the caller requests to wait and
+ 	 *	does not request a response and if the caller does not want a
+ 	 *	response and the Fib is not allocated from pool. If a response
+-	 *	is not requesed the Fib will just be deallocaed by the DPC
++	 *	is not requested the Fib will just be deallocaed by the DPC
+ 	 *	routine when the response comes back from the adapter. No
+ 	 *	further processing will be done besides deleting the Fib. We
+ 	 *	will have a debug mode where the adapter can notify the host
+diff --git a/drivers/scsi/aacraid/dpcsup.c b/drivers/scsi/aacraid/dpcsup.c
+index 417ba349e10e..ddc69738375f 100644
+--- a/drivers/scsi/aacraid/dpcsup.c
++++ b/drivers/scsi/aacraid/dpcsup.c
+@@ -65,7 +65,7 @@ unsigned int aac_response_normal(struct aac_queue * q)
+ 	/*
+ 	 *	Keep pulling response QEs off the response queue and waking
+ 	 *	up the waiters until there are no more QEs. We then return
+-	 *	back to the system. If no response was requesed we just
++	 *	back to the system. If no response was requested we just
+ 	 *	deallocate the Fib here and continue.
+ 	 */
+ 	while(aac_consumer_get(dev, q, &entry))
+-- 
+2.18.0
 
-I have been looking at a problem on arm64 platforms where we are trying 
-to get access to PHYS_OFFSET symbol (which indicates the start of 
-physical RAM) in user-space for determining the start of physical RAM in 
-user-space utilities like 'kexec-tools' (please see [1] and [2] for 
-details).
-
-Now, I have a 'kexec-tools' implementation available which can read the 
-PHYS_OFFSET from the VMCOREINFO inside '/proc/kcore', which I plan to 
-publish soon on my github tree.
-
-I also see that 'readelf' and 'crash' can read the VMCOREINFO from the 
-'/proc/kcore' properly after this patch:
-
-# readelf -a --wide /proc/kcore
-
-Displaying notes found at file offset 0x00000778 with length 0x000019b4:
-   Owner                 Data size	Description
-   CORE                 0x00000188	NT_PRSTATUS (prstatus structure)	
-   CORE                 0x00000088	NT_PRPSINFO (prpsinfo structure)	
-   CORE                 0x00001040	NT_TASKSTRUCT (task structure)	
-   VMCOREINFO           0x00000710	Unknown note type: (0x00000000)	
-<..snip..>
-
-# crash /root/git/linux/vmlinux vmcore -d31
-
-Elf64_Nhdr:
-                n_namesz: 11 ("VMCOREINFO")
-                n_descsz: 1829
-                  n_type: 0 (unused)
-                          OSRELEASE=4.18.0-rc7+
-                          PAGESIZE=65536
-                          SYMBOL(init_uts_ns)=ffff5493078a5428
-                          SYMBOL(node_online_map)=ffff54930789d1c8
-                          SYMBOL(swapper_pg_dir)=ffff549308380000
-                          SYMBOL(_stext)=ffff549306681000
-                          SYMBOL(vmap_area_list)=ffff549307944ee0
-                          SYMBOL(mem_section)=ffff92047fffe400
-                          LENGTH(mem_section)=64
-                          SIZE(mem_section)=16
-                          OFFSET(mem_section.section_mem_map)=0
-                          SIZE(page)=64
-                          SIZE(pglist_data)=6656
-                          SIZE(zone)=1728
-                          SIZE(free_area)=88
-                          SIZE(list_head)=16
-                          SIZE(nodemask_t)=8
-                          OFFSET(page.flags)=0
-                          OFFSET(page._refcount)=52
-                          OFFSET(page.mapping)=24
-                          OFFSET(page.lru)=8
-                          OFFSET(page._mapcount)=48
-                          OFFSET(page.private)=40
-                          OFFSET(page.compound_dtor)=16
-                          OFFSET(page.compound_order)=17
-                          OFFSET(page.compound_head)=8
-                          OFFSET(pglist_data.node_zones)=0
-                          OFFSET(pglist_data.nr_zones)=5984
-                          OFFSET(pglist_data.node_start_pfn)=5992
-                          OFFSET(pglist_data.node_spanned_pages)=6008
-                          OFFSET(pglist_data.node_id)=6016
-                          OFFSET(zone.free_area)=192
-                          OFFSET(zone.vm_stat)=1536
-                          OFFSET(zone.spanned_pages)=96
-                          OFFSET(free_area.free_list)=0
-                          OFFSET(list_head.next)=0
-                          OFFSET(list_head.prev)=8
-                          OFFSET(vmap_area.va_start)=0
-                          OFFSET(vmap_area.list)=48
-                          LENGTH(zone.free_area)=14
-                          SYMBOL(log_buf)=ffff5493078ddc30
-                          SYMBOL(log_buf_len)=ffff5493078ddc28
-                          SYMBOL(log_first_idx)=ffff5493081054ac
-                          SYMBOL(clear_idx)=ffff5493081054b8
-                          SYMBOL(log_next_idx)=ffff5493081054a8
-                          SIZE(printk_log)=16
-                          OFFSET(printk_log.ts_nsec)=0
-                          OFFSET(printk_log.len)=8
-                          OFFSET(printk_log.text_len)=10
-                          OFFSET(printk_log.dict_len)=12
-                          LENGTH(free_area.free_list)=5
-                          NUMBER(NR_FREE_PAGES)=0
-                          NUMBER(PG_lru)=5
-                          NUMBER(PG_private)=12
-                          NUMBER(PG_swapcache)=9
-                          NUMBER(PG_swapbacked)=18
-                          NUMBER(PG_slab)=8
-                          NUMBER(PG_hwpoison)=21
-                          NUMBER(PG_head_mask)=32768
-                          NUMBER(PAGE_BUDDY_MAPCOUNT_VALUE)=-129
-                          NUMBER(HUGETLB_PAGE_DTOR)=2
-                          NUMBER(VA_BITS)=48
-                          NUMBER(kimage_voffset)=0xffff5492f5c00000
-                          NUMBER(PHYS_OFFSET)=0xffffee1380000000
-                          CRASHTIME=1532965574
-
-
-So, for what it is worth:
-
-Reviewed-by and Tested-by: Bhupesh Sharma <bhsharma@redhat.com>
-
-Thanks,
-Bhupesh
-
-[1] https://www.spinics.net/lists/kexec/msg20842.html
-[2] https://www.spinics.net/lists/kexec/msg20618.html
