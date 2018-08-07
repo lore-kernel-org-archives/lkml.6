@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B4A2C46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:55:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23AEEC46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:55:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 211192172E
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:55:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 211192172E
+	by mail.kernel.org (Postfix) with ESMTP id D265B2151D
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:55:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D265B2151D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404372AbeHGVLN (ORCPT
+        id S2390382AbeHGVLP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 17:11:13 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33702 "EHLO
+        Tue, 7 Aug 2018 17:11:15 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33714 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388913AbeHGVLM (ORCPT
+        with ESMTP id S2388913AbeHGVLP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 17:11:12 -0400
+        Tue, 7 Aug 2018 17:11:15 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 810DFD01;
-        Tue,  7 Aug 2018 18:55:28 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7CE80D01;
+        Tue,  7 Aug 2018 18:55:31 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
-        Benjamin Gilbert <bgilbert@redhat.com>
-Subject: [PATCH 4.9 08/17] ext4: fix false negatives *and* false positives in ext4_check_descriptors()
-Date:   Tue,  7 Aug 2018 20:51:44 +0200
-Message-Id: <20180807172342.599886285@linuxfoundation.org>
+        stable@vger.kernel.org, Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Sinan Kaya <okaya@kernel.org>
+Subject: [PATCH 4.9 09/17] ACPI / PCI: Bail early in acpi_pci_add_bus() if there is no ACPI handle
+Date:   Tue,  7 Aug 2018 20:51:45 +0200
+Message-Id: <20180807172342.641811274@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180807172342.071526922@linuxfoundation.org>
 References: <20180807172342.071526922@linuxfoundation.org>
@@ -50,55 +51,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Theodore Ts'o <tytso@mit.edu>
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
 
-commit 44de022c4382541cebdd6de4465d1f4f465ff1dd upstream.
+commit a0040c0145945d3bd203df8fa97f6dfa819f3f7d upstream.
 
-Ext4_check_descriptors() was getting called before s_gdb_count was
-initialized.  So for file systems w/o the meta_bg feature, allocation
-bitmaps could overlap the block group descriptors and ext4 wouldn't
-notice.
+Hyper-V instances support PCI pass-through which is implemented through PV
+pci-hyperv driver. When a device is passed through, a new root PCI bus is
+created in the guest. The bus sits on top of VMBus and has no associated
+information in ACPI. acpi_pci_add_bus() in this case proceeds all the way
+to acpi_evaluate_dsm(), which reports
 
-For file systems with the meta_bg feature enabled, there was a
-fencepost error which would cause the ext4_check_descriptors() to
-incorrectly believe that the block allocation bitmap overlaps with the
-block group descriptor blocks, and it would reject the mount.
+  ACPI: \: failed to evaluate _DSM (0x1001)
 
-Fix both of these problems.
+While acpi_pci_slot_enumerate() and acpiphp_enumerate_slots() are protected
+against ACPI_HANDLE() being NULL and do nothing, acpi_evaluate_dsm() is not
+and gives us the error. It seems the correct fix is to not do anything in
+acpi_pci_add_bus() in such cases.
 
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: stable@vger.kernel.org
-Signed-off-by: Benjamin Gilbert <bgilbert@redhat.com>
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Sinan Kaya <okaya@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- fs/ext4/super.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -2231,7 +2231,7 @@ static int ext4_check_descriptors(struct
- 	struct ext4_sb_info *sbi = EXT4_SB(sb);
- 	ext4_fsblk_t first_block = le32_to_cpu(sbi->s_es->s_first_data_block);
- 	ext4_fsblk_t last_block;
--	ext4_fsblk_t last_bg_block = sb_block + ext4_bg_num_gdb(sb, 0) + 1;
-+	ext4_fsblk_t last_bg_block = sb_block + ext4_bg_num_gdb(sb, 0);
- 	ext4_fsblk_t block_bitmap;
- 	ext4_fsblk_t inode_bitmap;
- 	ext4_fsblk_t inode_table;
-@@ -3941,13 +3941,13 @@ static int ext4_fill_super(struct super_
- 			goto failed_mount2;
- 		}
- 	}
-+	sbi->s_gdb_count = db_count;
- 	if (!ext4_check_descriptors(sb, logical_sb_block, &first_not_zeroed)) {
- 		ext4_msg(sb, KERN_ERR, "group descriptors corrupted!");
- 		ret = -EFSCORRUPTED;
- 		goto failed_mount2;
- 	}
+---
+ drivers/pci/pci-acpi.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/drivers/pci/pci-acpi.c
++++ b/drivers/pci/pci-acpi.c
+@@ -567,7 +567,7 @@ void acpi_pci_add_bus(struct pci_bus *bu
+ 	union acpi_object *obj;
+ 	struct pci_host_bridge *bridge;
  
--	sbi->s_gdb_count = db_count;
- 	get_random_bytes(&sbi->s_next_generation, sizeof(u32));
- 	spin_lock_init(&sbi->s_next_gen_lock);
+-	if (acpi_pci_disabled || !bus->bridge)
++	if (acpi_pci_disabled || !bus->bridge || !ACPI_HANDLE(bus->bridge))
+ 		return;
  
+ 	acpi_pci_slot_enumerate(bus);
 
 
