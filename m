@@ -6,43 +6,43 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F5F5C46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 23:18:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0858C46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 23:18:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1EDC321736
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 23:18:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EDC321736
+	by mail.kernel.org (Postfix) with ESMTP id 6F4412148C
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 23:18:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F4412148C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727240AbeHHBej (ORCPT
+        id S1727254AbeHHBfU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 21:34:39 -0400
-Received: from gateway21.websitewelcome.com ([192.185.45.228]:23348 "EHLO
-        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726733AbeHHBei (ORCPT
+        Tue, 7 Aug 2018 21:35:20 -0400
+Received: from gateway24.websitewelcome.com ([192.185.50.91]:35067 "EHLO
+        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726733AbeHHBfU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 21:34:38 -0400
+        Tue, 7 Aug 2018 21:35:20 -0400
 Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
-        by gateway21.websitewelcome.com (Postfix) with ESMTP id 6FBEB400D4AF8
-        for <linux-kernel@vger.kernel.org>; Tue,  7 Aug 2018 18:17:56 -0500 (CDT)
+        by gateway24.websitewelcome.com (Postfix) with ESMTP id D8A2B822B
+        for <linux-kernel@vger.kernel.org>; Tue,  7 Aug 2018 18:18:37 -0500 (CDT)
 Received: from gator4166.hostgator.com ([108.167.133.22])
         by cmsmtp with SMTP
-        id nBEdf7EU8bXuJnBEgfWG70; Tue, 07 Aug 2018 18:17:56 -0500
+        id nBFHf7GHTbXuJnBFLfWHvS; Tue, 07 Aug 2018 18:18:37 -0500
 X-Authority-Reason: nr=8
-Received: from [189.250.73.102] (port=48076 helo=embeddedor)
+Received: from [189.250.73.102] (port=48078 helo=embeddedor)
         by gator4166.hostgator.com with esmtpa (Exim 4.91)
         (envelope-from <gustavo@embeddedor.com>)
-        id 1fnBEc-001szb-QE; Tue, 07 Aug 2018 18:17:50 -0500
-Date:   Tue, 7 Aug 2018 18:17:50 -0500
+        id 1fnBFG-001tIr-PU; Tue, 07 Aug 2018 18:18:30 -0500
+Date:   Tue, 7 Aug 2018 18:18:30 -0500
 From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 To:     "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 Cc:     Yisen Zhuang <yisen.zhuang@huawei.com>,
         Salil Mehta <salil.mehta@huawei.com>
-Subject: [PATCH 13/33] net: hns: Mark expected switch fall-through
-Message-ID: <674c750536890e504eb80242ee65fc024419ba20.1533675546.git.gustavo@embeddedor.com>
+Subject: [PATCH 14/33] net: hns3: Mark expected switch fall-through
+Message-ID: <3456cb8bef8f4d36e1429c0cd72307f8c9ac4585.1533675546.git.gustavo@embeddedor.com>
 References: <cover.1533675546.git.gustavo@embeddedor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -57,13 +57,13 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 189.250.73.102
 X-Source-L: No
-X-Exim-ID: 1fnBEc-001szb-QE
+X-Exim-ID: 1fnBFG-001tIr-PU
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.73.102]:48076
+X-Source-Sender: (embeddedor) [189.250.73.102]:48078
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 102
+X-Email-Count: 107
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -74,24 +74,24 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 In preparation to enabling -Wimplicit-fallthrough, mark switch cases
 where we are expecting to fall through.
 
-Addresses-Coverity-ID: 114788 ("Missing break in switch")
+Addresses-Coverity-ID: 114789 ("Missing break in switch")
 Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- drivers/net/ethernet/hisilicon/hns/hns_ethtool.c | 1 +
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns/hns_ethtool.c b/drivers/net/ethernet/hisilicon/hns/hns_ethtool.c
-index 3957205..08f3c47 100644
---- a/drivers/net/ethernet/hisilicon/hns/hns_ethtool.c
-+++ b/drivers/net/ethernet/hisilicon/hns/hns_ethtool.c
-@@ -307,6 +307,7 @@ static int __lb_setup(struct net_device *ndev,
- 		break;
- 	case MAC_LOOP_PHY_NONE:
- 		ret = hns_nic_config_phy_loopback(phy_dev, 0x0);
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+index bd031af..a64d69c 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+@@ -2104,6 +2104,7 @@ static void hns3_rx_checksum(struct hns3_enet_ring *ring, struct sk_buff *skb,
+ 	case HNS3_OL4_TYPE_MAC_IN_UDP:
+ 	case HNS3_OL4_TYPE_NVGRE:
+ 		skb->csum_level = 1;
 +		/* fall through */
- 	case MAC_LOOP_NONE:
- 		if (!ret && h->dev->ops->set_loopback) {
- 			if (priv->ae_handle->phy_if != PHY_INTERFACE_MODE_XGMII)
+ 	case HNS3_OL4_TYPE_NO_TUN:
+ 		/* Can checksum ipv4 or ipv6 + UDP/TCP/SCTP packets */
+ 		if ((l3_type == HNS3_L3_TYPE_IPV4 ||
 -- 
 2.7.4
 
