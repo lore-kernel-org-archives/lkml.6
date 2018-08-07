@@ -2,43 +2,40 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F3C9C46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 19:00:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D86CBC46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 19:00:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0E2120895
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 19:00:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0E2120895
+	by mail.kernel.org (Postfix) with ESMTP id 812AD20895
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 19:00:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 812AD20895
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404694AbeHGVQD (ORCPT
+        id S2404706AbeHGVQG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 17:16:03 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35172 "EHLO
+        Tue, 7 Aug 2018 17:16:06 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35184 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733213AbeHGVQC (ORCPT
+        with ESMTP id S2404680AbeHGVQF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 17:16:02 -0400
+        Tue, 7 Aug 2018 17:16:05 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E41A33EE;
-        Tue,  7 Aug 2018 19:00:16 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 40EEB3EE;
+        Tue,  7 Aug 2018 19:00:20 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Hiraku Toyooka <hiraku.toyooka@cybertrust.co.jp>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Subject: [PATCH 3.18 84/85] ring_buffer: tracing: Inherit the tracing setting to next ring buffer
-Date:   Tue,  7 Aug 2018 20:52:26 +0200
-Message-Id: <20180807172400.473144686@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Shankara Pailoor <shankarapailoor@gmail.com>,
+        Dave Kleikamp <dave.kleikamp@oracle.com>,
+        Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH 3.18 85/85] jfs: Fix inconsistency between memory allocation and ea_buf->max_size
+Date:   Tue,  7 Aug 2018 20:52:27 +0200
+Message-Id: <20180807172400.507308259@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180807172357.357252052@linuxfoundation.org>
 References: <20180807172357.357252052@linuxfoundation.org>
@@ -55,103 +52,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+From: Shankara Pailoor <shankarapailoor@gmail.com>
 
-commit 73c8d8945505acdcbae137c2e00a1232e0be709f upstream.
+commit 92d34134193e5b129dc24f8d79cb9196626e8d7a upstream.
 
-Maintain the tracing on/off setting of the ring_buffer when switching
-to the trace buffer snapshot.
+The code is assuming the buffer is max_size length, but we weren't
+allocating enough space for it.
 
-Taking a snapshot is done by swapping the backup ring buffer
-(max_tr_buffer). But since the tracing on/off setting is defined
-by the ring buffer, when swapping it, the tracing on/off setting
-can also be changed. This causes a strange result like below:
-
-  /sys/kernel/debug/tracing # cat tracing_on
-  1
-  /sys/kernel/debug/tracing # echo 0 > tracing_on
-  /sys/kernel/debug/tracing # cat tracing_on
-  0
-  /sys/kernel/debug/tracing # echo 1 > snapshot
-  /sys/kernel/debug/tracing # cat tracing_on
-  1
-  /sys/kernel/debug/tracing # echo 1 > snapshot
-  /sys/kernel/debug/tracing # cat tracing_on
-  0
-
-We don't touch tracing_on, but snapshot changes tracing_on
-setting each time. This is an anomaly, because user doesn't know
-that each "ring_buffer" stores its own tracing-enable state and
-the snapshot is done by swapping ring buffers.
-
-Link: http://lkml.kernel.org/r/153149929558.11274.11730609978254724394.stgit@devbox
-
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Shuah Khan <shuah@kernel.org>
-Cc: Tom Zanussi <tom.zanussi@linux.intel.com>
-Cc: Hiraku Toyooka <hiraku.toyooka@cybertrust.co.jp>
-Cc: stable@vger.kernel.org
-Fixes: debdd57f5145 ("tracing: Make a snapshot feature available from userspace")
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-[ Updated commit log and comment in the code ]
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Signed-off-by: Shankara Pailoor <shankarapailoor@gmail.com>
+Signed-off-by: Dave Kleikamp <dave.kleikamp@oracle.com>
+Cc: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- include/linux/ring_buffer.h |    1 +
- kernel/trace/ring_buffer.c  |   16 ++++++++++++++++
- kernel/trace/trace.c        |    6 ++++++
- 3 files changed, 23 insertions(+)
 
---- a/include/linux/ring_buffer.h
-+++ b/include/linux/ring_buffer.h
-@@ -162,6 +162,7 @@ void ring_buffer_record_enable(struct ri
- void ring_buffer_record_off(struct ring_buffer *buffer);
- void ring_buffer_record_on(struct ring_buffer *buffer);
- int ring_buffer_record_is_on(struct ring_buffer *buffer);
-+int ring_buffer_record_is_set_on(struct ring_buffer *buffer);
- void ring_buffer_record_disable_cpu(struct ring_buffer *buffer, int cpu);
- void ring_buffer_record_enable_cpu(struct ring_buffer *buffer, int cpu);
- 
---- a/kernel/trace/ring_buffer.c
-+++ b/kernel/trace/ring_buffer.c
-@@ -3153,6 +3153,22 @@ int ring_buffer_record_is_on(struct ring
- }
- 
- /**
-+ * ring_buffer_record_is_set_on - return true if the ring buffer is set writable
-+ * @buffer: The ring buffer to see if write is set enabled
-+ *
-+ * Returns true if the ring buffer is set writable by ring_buffer_record_on().
-+ * Note that this does NOT mean it is in a writable state.
-+ *
-+ * It may return true when the ring buffer has been disabled by
-+ * ring_buffer_record_disable(), as that is a temporary disabling of
-+ * the ring buffer.
-+ */
-+int ring_buffer_record_is_set_on(struct ring_buffer *buffer)
-+{
-+	return !(atomic_read(&buffer->record_disabled) & RB_BUFFER_OFF);
-+}
+---
+ fs/jfs/xattr.c |   10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+--- a/fs/jfs/xattr.c
++++ b/fs/jfs/xattr.c
+@@ -493,15 +493,17 @@ static int ea_get(struct inode *inode, s
+ 	if (size > PSIZE) {
+ 		/*
+ 		 * To keep the rest of the code simple.  Allocate a
+-		 * contiguous buffer to work with
++		 * contiguous buffer to work with. Make the buffer large
++		 * enough to make use of the whole extent.
+ 		 */
+-		ea_buf->xattr = kmalloc(size, GFP_KERNEL);
++		ea_buf->max_size = (size + sb->s_blocksize - 1) &
++		    ~(sb->s_blocksize - 1);
 +
-+/**
-  * ring_buffer_record_disable_cpu - stop all writes into the cpu_buffer
-  * @buffer: The ring buffer to stop writes to.
-  * @cpu: The CPU buffer to stop
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -1023,6 +1023,12 @@ update_max_tr(struct trace_array *tr, st
++		ea_buf->xattr = kmalloc(ea_buf->max_size, GFP_KERNEL);
+ 		if (ea_buf->xattr == NULL)
+ 			return -ENOMEM;
  
- 	arch_spin_lock(&tr->max_lock);
+ 		ea_buf->flag = EA_MALLOC;
+-		ea_buf->max_size = (size + sb->s_blocksize - 1) &
+-		    ~(sb->s_blocksize - 1);
  
-+	/* Inherit the recordable setting from trace_buffer */
-+	if (ring_buffer_record_is_set_on(tr->trace_buffer.buffer))
-+		ring_buffer_record_on(tr->max_buffer.buffer);
-+	else
-+		ring_buffer_record_off(tr->max_buffer.buffer);
-+
- 	buf = tr->trace_buffer.buffer;
- 	tr->trace_buffer.buffer = tr->max_buffer.buffer;
- 	tr->max_buffer.buffer = buf;
+ 		if (ea_size == 0)
+ 			return 0;
 
 
