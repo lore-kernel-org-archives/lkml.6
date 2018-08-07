@@ -7,67 +7,67 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83B91C46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 04:05:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DFF0C46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 04:06:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3AF17219ED
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 04:05:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 54F8D219E2
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 04:06:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XorT0WNj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3AF17219ED
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lN9I+VXN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54F8D219E2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733266AbeHGGSO (ORCPT
+        id S2387397AbeHGGS5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 02:18:14 -0400
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:36821 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726868AbeHGGSO (ORCPT
+        Tue, 7 Aug 2018 02:18:57 -0400
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:38179 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726868AbeHGGS4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 02:18:14 -0400
-Received: by mail-qk0-f196.google.com with SMTP id x192-v6so10552707qkb.3
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Aug 2018 21:05:53 -0700 (PDT)
+        Tue, 7 Aug 2018 02:18:56 -0400
+Received: by mail-qk0-f193.google.com with SMTP id 126-v6so10545833qke.5
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Aug 2018 21:06:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to
          :user-agent;
-        bh=b+C4LaNoO3ZnYCywsLPEVGpt/u0fe9hu4JYt0CTWYkY=;
-        b=XorT0WNjqJvF8bzENsLc+OUdkSwawQb7q53MmUdtRgUEN+OSOznFyPG4Ql/Mi9bqzp
-         hB70OgsgDsltHyIwAGLCZc+JII3uI4htNnu5oxqFkmPDcDaGrWsUvivV6qcOS+IqqiDS
-         bAA762VJw0DwEIqYP5SjOKWttFsEPfpU6HdzOtCFtVgS6b6kMfu2W7Ah7DGcinVASank
-         xZLKbW4QKeGQowr/yYHNbT9hk+nwyTtxZuEdAuqsec1JvQHHx4Rmi8Uq1FBbrMsW15Id
-         cNGCy5pNpD8cfJTAmug0GtzHYM/4UQcEJEo2h8DvgXSiWckketgUFUs+SYRezXNWLFJZ
-         4k8Q==
+        bh=RfZ5UNqJ+BhKwYfoJI+HSW9NDxr/tp8jlpcQP0xOn+c=;
+        b=lN9I+VXNJHu+KuhKVe9HfHjUYJhxXN78fbUbtG5v5MWiE0+bvaOCMt37fFJGrN5mj5
+         JySb7D6IUa8S1bcrdn5sftv1KXT11T7ejlukGaHilcEpdDorg5GnyGtBFDKRcNfvAXtK
+         tZG+qyehR/PqxKyPXarCPl0WVuTw1U3E8fBzYzGbw7QBsZwIqbqPPAG3ftjAKii3T15I
+         ffSyd4SoG7YJQ4nOHh2uGqLSSaT0KaUtEnqv4UmeJnUpHTSxDnOdZDAVFgUy/7kmh+Dy
+         Rc2T+sAeUa0HAusiy7CbhpLIGZi/Hn+jwg+b2nr3i2JxZy2gtiS6lvF60agMHWtkCw5Z
+         hmrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to:user-agent;
-        bh=b+C4LaNoO3ZnYCywsLPEVGpt/u0fe9hu4JYt0CTWYkY=;
-        b=RSO+ThZPdK6r0x/YxzwTqPC0T/toLZv+Xs7eSzycsN3lVXs8v8tBNnf7HwPn+/9/IR
-         Cb6Xc9fAi/2RjUGI0k08TpeHIdyTd5/iLqRcPe8j510wFcLajld6ehajpFg70vy3FURy
-         Z4iVK74caUA+m+tDdKB5wZJtSpfKcsxyHyz4qmGfp6KhngWIr5tR9srh8AN/DN8vpOAF
-         aiVDd5FZ0JYQANWxhCYzJ8l6Y9E8KNiIBK8g9wBMvzxPlJsFREYA5Ac18+/7wb+XQkuy
-         iPZ36aLjIK6c2gMyzcA+it2dWSpxmCaLOne9Q8GGofDEFRo0t7XsiNLZColAVboH7PPX
-         6L7A==
-X-Gm-Message-State: AOUpUlGe7kqGDLi0IUsv9brYIKmzkuZO8zLp4rn6BE5cEhZGVny2reHc
-        G49W+JULpDrBh16yyYMFHuw=
-X-Google-Smtp-Source: AAOMgpcGTPxqpV2lC+qZIXFVB8IDp5LGctZmbr7GwV4CFm3AYDHcySJJvDqRylvZ5JpKcH8QhraASQ==
-X-Received: by 2002:a37:2c84:: with SMTP id s126-v6mr15415961qkh.311.1533614752986;
-        Mon, 06 Aug 2018 21:05:52 -0700 (PDT)
+        bh=RfZ5UNqJ+BhKwYfoJI+HSW9NDxr/tp8jlpcQP0xOn+c=;
+        b=H4FrlEsWNlhTdTOaW3K5cjPIogRt75ExFvo8tgTDVWFxgN3ClV8V8ihz5zSSqiXnRl
+         6bzZdu9mRJxpkBgoD2E7+Z9X2FwUb1q2H35tePY3ufFWMIBV9Wsi7vHiDE62lgybELgx
+         oMdVs/h4rfGtz59ggq1XzyxKWy2v1EPZdfqKj7IB5FRIjhSG8w5bVczVmn1Koj/vP7VT
+         L8+z50+C8cXuqB8u82kjFXpRZDlWIjEXBSQ1n+pxmj/dUeYzt9+cx4stAFwDRwukpFM1
+         eyA4iUKtjpQU1iy29YK3JhsT0+mFqNs5bUNNp9qY7zyGsMMba9Uvhf6lwv83KV+Kenul
+         WgKQ==
+X-Gm-Message-State: AOUpUlHtVPB3MWm75iN3+cIvVy0TgAiKC9H8Sl3sWRS3jJNkSLvLtRKL
+        hk4XXGSsWyTNmoL0BR/ImJM=
+X-Google-Smtp-Source: AAOMgpejS4qaB/GncyxJ7IraeKILVV3/zV+03Ogk4h/MAyN2U3jI0KKFfJpaznxOn7HQXYpA6aaang==
+X-Received: by 2002:a37:1a4c:: with SMTP id a73-v6mr15327682qka.77.1533614795700;
+        Mon, 06 Aug 2018 21:06:35 -0700 (PDT)
 Received: from WindFlash ([201.82.148.26])
-        by smtp.gmail.com with ESMTPSA id t27-v6sm215081qkl.11.2018.08.06.21.05.50
+        by smtp.gmail.com with ESMTPSA id w39-v6sm162339qtk.74.2018.08.06.21.06.33
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 06 Aug 2018 21:05:52 -0700 (PDT)
-Date:   Tue, 7 Aug 2018 01:05:47 -0300
+        Mon, 06 Aug 2018 21:06:35 -0700 (PDT)
+Date:   Tue, 7 Aug 2018 01:06:30 -0300
 From:   Leonardo =?utf-8?B?QnLDoXM=?= <leobras.c@gmail.com>
 To:     Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 04/11] staging: fbtft: Adjust some empty-line problems - Style
-Message-ID: <a59c8043ff8f03d8c6345e77e9abbd8647dd32d0.1533614243.git.leobras.c@gmail.com>
+Subject: [PATCH 06/11] staging: fbtft: Fixes some defines styles - Style
+Message-ID: <2769547f2ad78ea51812ae0bfc59c23946a5a0ec.1533614243.git.leobras.c@gmail.com>
 References: <cover.1533614243.git.leobras.c@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
@@ -82,68 +82,83 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Leonardo Brás <leobras.c@gmail.com>
 ---
- drivers/staging/fbtft/fb_s6d02a1.c   | 1 -
- drivers/staging/fbtft/fb_s6d1121.c   | 1 +
- drivers/staging/fbtft/fb_ssd1289.c   | 1 +
- drivers/staging/fbtft/fbtft_device.c | 2 --
- 4 files changed, 2 insertions(+), 3 deletions(-)
+ drivers/staging/fbtft/fbtft-bus.c  | 10 ++++++----
+ drivers/staging/fbtft/fbtft-core.c |  6 ++++--
+ drivers/staging/fbtft/fbtft.h      |  4 ++--
+ 3 files changed, 12 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/staging/fbtft/fb_s6d02a1.c b/drivers/staging/fbtft/fb_s6d02a1.c
-index 55513a395567..d3d6871d8c47 100644
---- a/drivers/staging/fbtft/fb_s6d02a1.c
-+++ b/drivers/staging/fbtft/fb_s6d02a1.c
-@@ -16,7 +16,6 @@
- #define DRVNAME "fb_s6d02a1"
+diff --git a/drivers/staging/fbtft/fbtft-bus.c b/drivers/staging/fbtft/fbtft-bus.c
+index 5c768c658258..5a68802abac7 100644
+--- a/drivers/staging/fbtft/fbtft-bus.c
++++ b/drivers/staging/fbtft/fbtft-bus.c
+@@ -60,11 +60,13 @@ void func(struct fbtft_par *par, int len, ...)                                \
+ out:									      \
+ 	va_end(args);                                                         \
+ }                                                                             \
+-EXPORT_SYMBOL(func);
++EXPORT_SYMBOL(func)
  
- static const s16 default_init_sequence[] = {
--
- 	-1, 0xf0, 0x5a, 0x5a,
- 
- 	-1, 0xfc, 0x5a, 0x5a,
-diff --git a/drivers/staging/fbtft/fb_s6d1121.c b/drivers/staging/fbtft/fb_s6d1121.c
-index c3e434d647b8..aa716f33420a 100644
---- a/drivers/staging/fbtft/fb_s6d1121.c
-+++ b/drivers/staging/fbtft/fb_s6d1121.c
-@@ -154,6 +154,7 @@ static int set_gamma(struct fbtft_par *par, u32 *curves)
- 
- 	return 0;
- }
+-define_fbtft_write_reg(fbtft_write_reg8_bus8, u8, u8, )
+-define_fbtft_write_reg(fbtft_write_reg16_bus8, __be16, u16, cpu_to_be16)
+-define_fbtft_write_reg(fbtft_write_reg16_bus16, u16, u16, )
++#define no_modf /*No modifier*/
 +
- #undef CURVE
++define_fbtft_write_reg(fbtft_write_reg8_bus8, u8, u8, no_modf);
++define_fbtft_write_reg(fbtft_write_reg16_bus8, __be16, u16, cpu_to_be16);
++define_fbtft_write_reg(fbtft_write_reg16_bus16, u16, u16, no_modf);
  
- static struct fbtft_display display = {
-diff --git a/drivers/staging/fbtft/fb_ssd1289.c b/drivers/staging/fbtft/fb_ssd1289.c
-index 67b3f8548241..c9b18b3ba4ab 100644
---- a/drivers/staging/fbtft/fb_ssd1289.c
-+++ b/drivers/staging/fbtft/fb_ssd1289.c
-@@ -153,6 +153,7 @@ static int set_gamma(struct fbtft_par *par, u32 *curves)
- 
- 	return 0;
+ void fbtft_write_reg8_bus9(struct fbtft_par *par, int len, ...)
+ {
+diff --git a/drivers/staging/fbtft/fbtft-core.c b/drivers/staging/fbtft/fbtft-core.c
+index 4660a9f9eace..a9ee586ee6ba 100644
+--- a/drivers/staging/fbtft/fbtft-core.c
++++ b/drivers/staging/fbtft/fbtft-core.c
+@@ -278,6 +278,7 @@ void fbtft_unregister_backlight(struct fbtft_par *par)
+ 		par->info->bl_dev = NULL;
+ 	}
  }
-+
- #undef CURVE
++EXPORT_SYMBOL(fbtft_unregister_backlight);
  
- static struct fbtft_display display = {
-diff --git a/drivers/staging/fbtft/fbtft_device.c b/drivers/staging/fbtft/fbtft_device.c
-index dc424f3a0ec5..fd483e8ecd7a 100644
---- a/drivers/staging/fbtft/fbtft_device.c
-+++ b/drivers/staging/fbtft/fbtft_device.c
-@@ -840,7 +840,6 @@ static struct fbtft_device_display displays[] = {
- 			}
- 		}
- 	}, {
--
- 		.name = "piscreen",
- 		.spi = &(struct spi_board_info) {
- 			.modalias = "fb_ili9486",
-@@ -1586,7 +1585,6 @@ static void __exit fbtft_device_exit(void)
- 
- 	if (p_device)
- 		platform_device_unregister(p_device);
--
+ static const struct backlight_ops fbtft_bl_ops = {
+ 	.get_brightness	= fbtft_backlight_get_brightness,
+@@ -315,12 +316,13 @@ void fbtft_register_backlight(struct fbtft_par *par)
+ 	if (!par->fbtftops.unregister_backlight)
+ 		par->fbtftops.unregister_backlight = fbtft_unregister_backlight;
  }
++EXPORT_SYMBOL(fbtft_register_backlight);
+ #else
+ void fbtft_register_backlight(struct fbtft_par *par) { };
+-void fbtft_unregister_backlight(struct fbtft_par *par) { };
+-#endif
+ EXPORT_SYMBOL(fbtft_register_backlight);
++void fbtft_unregister_backlight(struct fbtft_par *par) { };
+ EXPORT_SYMBOL(fbtft_unregister_backlight);
++#endif
  
- arch_initcall(fbtft_device_init);
+ static void fbtft_set_addr_win(struct fbtft_par *par, int xs, int ys, int xe,
+ 			       int ye)
+diff --git a/drivers/staging/fbtft/fbtft.h b/drivers/staging/fbtft/fbtft.h
+index a1411590732d..d8e7204a8d74 100644
+--- a/drivers/staging/fbtft/fbtft.h
++++ b/drivers/staging/fbtft/fbtft.h
+@@ -236,7 +236,7 @@ struct fbtft_par {
+ 	bool polarity;
+ };
+ 
+-#define NUMARGS(...)  (sizeof((int[]){__VA_ARGS__})/sizeof(int))
++#define NUMARGS(...)  (sizeof((int[]){__VA_ARGS__}) / sizeof(int))
+ 
+ #define write_reg(par, ...)                                            \
+ 	((par)->fbtftops.write_register(par, NUMARGS(__VA_ARGS__), __VA_ARGS__))
+@@ -346,7 +346,7 @@ static void __exit fbtft_driver_module_exit(void)                          \
+ }                                                                          \
+ 									   \
+ module_init(fbtft_driver_module_init);                                     \
+-module_exit(fbtft_driver_module_exit);
++module_exit(fbtft_driver_module_exit)
+ 
+ /* Debug macros */
+ 
 -- 
 2.18.0
 
