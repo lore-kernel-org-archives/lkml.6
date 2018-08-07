@@ -6,45 +6,42 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F291C46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 23:13:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BB5DC46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 23:13:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E7CA2174B
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 23:13:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E7CA2174B
+	by mail.kernel.org (Postfix) with ESMTP id D94FF21736
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 23:13:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D94FF21736
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727123AbeHHB36 (ORCPT
+        id S1727202AbeHHBad (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 21:29:58 -0400
-Received: from gateway32.websitewelcome.com ([192.185.145.107]:37451 "EHLO
-        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726579AbeHHB35 (ORCPT
+        Tue, 7 Aug 2018 21:30:33 -0400
+Received: from gateway30.websitewelcome.com ([192.185.148.2]:18868 "EHLO
+        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726625AbeHHBac (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 21:29:57 -0400
-Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
-        by gateway32.websitewelcome.com (Postfix) with ESMTP id BAEDA11465F
-        for <linux-kernel@vger.kernel.org>; Tue,  7 Aug 2018 18:13:15 -0500 (CDT)
+        Tue, 7 Aug 2018 21:30:32 -0400
+Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
+        by gateway30.websitewelcome.com (Postfix) with ESMTP id 5B15E2A021
+        for <linux-kernel@vger.kernel.org>; Tue,  7 Aug 2018 18:13:51 -0500 (CDT)
 Received: from gator4166.hostgator.com ([108.167.133.22])
         by cmsmtp with SMTP
-        id nBA3f6zQwbXuJnBA8fW174; Tue, 07 Aug 2018 18:13:15 -0500
+        id nBAffizgcBcCXnBAhfJ1hF; Tue, 07 Aug 2018 18:13:50 -0500
 X-Authority-Reason: nr=8
-Received: from [189.250.73.102] (port=48050 helo=embeddedor)
+Received: from [189.250.73.102] (port=48056 helo=embeddedor)
         by gator4166.hostgator.com with esmtpa (Exim 4.91)
         (envelope-from <gustavo@embeddedor.com>)
-        id 1fnBA2-001qZX-7q; Tue, 07 Aug 2018 18:13:06 -0500
-Date:   Tue, 7 Aug 2018 18:13:05 -0500
+        id 1fnBAe-001qsH-KB; Tue, 07 Aug 2018 18:13:44 -0500
+Date:   Tue, 7 Aug 2018 18:13:44 -0500
 From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 To:     "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Derek Chickles <derek.chickles@caviumnetworks.com>,
-        Satanand Burla <satananda.burla@caviumnetworks.com>,
-        Felix Manlunas <felix.manlunas@caviumnetworks.com>,
-        Raghu Vatsavayi <raghu.vatsavayi@caviumnetworks.com>
-Subject: [PATCH 05/33] liquidio: mark expected switch fall-through
-Message-ID: <7c765518009b08ecff62a9b4a8be9c2866f29686.1533675546.git.gustavo@embeddedor.com>
+Cc:     Ganesh Goudar <ganeshgr@chelsio.com>
+Subject: [PATCH 07/33] cxgb4/t4_hw: mark expected switch fall-throughs
+Message-ID: <6d4a64df6599edf8785e5acdeb21cd613d23ce0d.1533675546.git.gustavo@embeddedor.com>
 References: <cover.1533675546.git.gustavo@embeddedor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -59,13 +56,13 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 189.250.73.102
 X-Source-L: No
-X-Exim-ID: 1fnBA2-001qZX-7q
+X-Exim-ID: 1fnBAe-001qsH-KB
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.73.102]:48050
+X-Source-Sender: (embeddedor) [189.250.73.102]:48056
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 62
+X-Email-Count: 73
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -76,24 +73,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 In preparation to enabling -Wimplicit-fallthrough, mark switch cases
 where we are expecting to fall through.
 
-Addresses-Coverity-ID: 143135 ("Missing break in switch")
+Addresses-Coverity-ID: 114777 ("Missing break in switch")
+Addresses-Coverity-ID: 114778 ("Missing break in switch")
+Addresses-Coverity-ID: 114779 ("Missing break in switch")
 Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- drivers/net/ethernet/cavium/liquidio/lio_main.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ethernet/chelsio/cxgb4/t4_hw.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/net/ethernet/cavium/liquidio/lio_main.c b/drivers/net/ethernet/cavium/liquidio/lio_main.c
-index 8ef87a7..6fb13fa 100644
---- a/drivers/net/ethernet/cavium/liquidio/lio_main.c
-+++ b/drivers/net/ethernet/cavium/liquidio/lio_main.c
-@@ -2209,6 +2209,7 @@ static int liquidio_ioctl(struct net_device *netdev, struct ifreq *ifr, int cmd)
- 	case SIOCSHWTSTAMP:
- 		if (lio->oct_dev->ptp_enable)
- 			return hwtstamp_ioctl(netdev, ifr);
-+		/* fall through */
- 	default:
- 		return -EOPNOTSUPP;
- 	}
+diff --git a/drivers/net/ethernet/chelsio/cxgb4/t4_hw.c b/drivers/net/ethernet/chelsio/cxgb4/t4_hw.c
+index 2d9943f..5fe5d16 100644
+--- a/drivers/net/ethernet/chelsio/cxgb4/t4_hw.c
++++ b/drivers/net/ethernet/chelsio/cxgb4/t4_hw.c
+@@ -7504,10 +7504,13 @@ int t4_alloc_vi(struct adapter *adap, unsigned int mbox, unsigned int port,
+ 		switch (nmac) {
+ 		case 5:
+ 			memcpy(mac + 24, c.nmac3, sizeof(c.nmac3));
++			/* Fall through */
+ 		case 4:
+ 			memcpy(mac + 18, c.nmac2, sizeof(c.nmac2));
++			/* Fall through */
+ 		case 3:
+ 			memcpy(mac + 12, c.nmac1, sizeof(c.nmac1));
++			/* Fall through */
+ 		case 2:
+ 			memcpy(mac + 6,  c.nmac0, sizeof(c.nmac0));
+ 		}
 -- 
 2.7.4
 
