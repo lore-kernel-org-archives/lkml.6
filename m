@@ -2,143 +2,145 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E226AC46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 20:18:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B29B6C46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 20:18:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D1C12156E
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 20:18:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 577962172B
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 20:18:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="hoe+iitN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D1C12156E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dvfHdnd9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 577962172B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727232AbeHGWeL (ORCPT
+        id S1727364AbeHGWe2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 18:34:11 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:45404 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725881AbeHGWeL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 18:34:11 -0400
-Received: by mail-ed1-f67.google.com with SMTP id s16-v6so170070edq.12
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 13:18:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=wrLBrXmZd4GjfCdhgUNnOhUllhnHy2P+5JzJVe6pOlQ=;
-        b=hoe+iitNtyYgxn2apfBhH/g5qL4OjQsaRCCykhkVH5id4N74Zb3SaCyRyihi4/wkaI
-         XolvsCpCBQ9Mrr9Jk0ikjlK/VMM9BTjpHhZuDVSJxVb0kQV9z+ExyOYwZ+6+QFvMsX07
-         si0sG5/8JDXfReev+/wVf82B+ZwKbVs8U+ljo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=wrLBrXmZd4GjfCdhgUNnOhUllhnHy2P+5JzJVe6pOlQ=;
-        b=tlsxvzLVK6CZFWQTMzPCY6OR/gj7eieH0TtmPP6BWr+6aGY3Qz6LkgYg5vJsi7TE4G
-         +O+tv6i/xX4mw1LsdKVnAC5Xsb/hil6Xq+oycCPA2q0lSzv3oxa9Fs7zD/XmGQxsyaLM
-         C6u1DP6kLWRiw/bV6gBC9f4OI10fkWUfCzB+VafY5znw4HcorWdrW9HbWfNHKy9Rv1c7
-         rvZS60Pac2hoOY0w6SXf4Znc3ttqYgRTlEvzaKlMD9ag3zk8Wwai7hF0DmjHd6raNxLf
-         tpTypoH6WNnfSzSq/wyMzdeZdbAUz3WTATjCgeYa1Hje3/vOSUPT+VsmuY7f95raAt9O
-         QwUw==
-X-Gm-Message-State: AOUpUlHlQEDVxKbgT4qThfdns3iOIycaGk2SOGjsqV9v2Ixhr3PfqfJP
-        qqpjtxQaL1sbTnMsob86HytS5GiakSE=
-X-Google-Smtp-Source: AAOMgpcCi2lbEJH9pA7EUUmAuN+3ciL2nE6cIsyZB+SVLUcm0pNAQr/cXbz20NwqAjHPuGWgp6NHyA==
-X-Received: by 2002:a50:d51d:: with SMTP id u29-v6mr23497832edi.51.1533673084120;
-        Tue, 07 Aug 2018 13:18:04 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:56fc:0:d707:d7d8:b180:96e5])
-        by smtp.gmail.com with ESMTPSA id g14-v6sm979973edm.25.2018.08.07.13.18.02
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 07 Aug 2018 13:18:03 -0700 (PDT)
-Date:   Tue, 7 Aug 2018 22:18:01 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Paul Kocialkowski <contact@paulk.fr>
-Cc:     dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
-        linux-sunxi@googlegroups.com
-Subject: Re: [PATCH] drm/sun4i: Avoid failing to init fbdev without any
- connector
-Message-ID: <20180807201801.GF3008@phenom.ffwll.local>
-Mail-Followup-To: Paul Kocialkowski <contact@paulk.fr>,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
-        linux-sunxi@googlegroups.com
-References: <20180807193919.4800-1-contact@paulk.fr>
+        Tue, 7 Aug 2018 18:34:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38952 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725881AbeHGWe2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 18:34:28 -0400
+Received: from gmail.com (unknown [104.132.51.88])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1263A2156E;
+        Tue,  7 Aug 2018 20:18:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1533673101;
+        bh=PUcfP6er6tv2g9a3GzijcCdCdB+7pUg4afoa5VEhpGo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=dvfHdnd9CJJJgSkLL2nTvvauwm2ntBBmpAHYqzkFBqWCKZkqTLjinN/9HpB376ydj
+         kEWcVjhVvfRBucrAVp3gC+z7m4OrvvgYnWnI/yFX5NyMzjBHZ3HH3PiCXddP0HNVfd
+         kwI/xpEERYbQBIWAuspreBpwDxZBZj4vlSNuAS30=
+Date:   Tue, 7 Aug 2018 13:18:19 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Jeffrey Walton <noloader@gmail.com>
+Cc:     "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        linux-fscrypt@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Paul Crowley <paulcrowley@google.com>,
+        Greg Kaiser <gkaiser@google.com>,
+        Michael Halcrow <mhalcrow@google.com>,
+        Samuel Neves <samuel.c.p.neves@gmail.com>,
+        Tomer Ashur <tomer.ashur@esat.kuleuven.be>,
+        stable@vger.kernel.org
+Subject: Re: [PATCH] crypto: remove speck
+Message-ID: <20180807201819.GA25300@gmail.com>
+References: <20180806223300.113891-1-ebiggers@kernel.org>
+ <20180806230437.21431-1-Jason@zx2c4.com>
+ <CAH8yC8kKet=fx0rYF8QEWK+TzyBgwHrLabWE72znBY=QLZVWkA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180807193919.4800-1-contact@paulk.fr>
-X-Operating-System: Linux phenom 4.14.0-3-amd64 
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <CAH8yC8kKet=fx0rYF8QEWK+TzyBgwHrLabWE72znBY=QLZVWkA@mail.gmail.com>
+User-Agent: Mutt/1.10.1+60 (20b17ca5) (2018-08-02)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 07, 2018 at 09:39:19PM +0200, Paul Kocialkowski wrote:
-> Initializing and registering fbdev requires at least one DRM connector
-> and will fail otherwise. In order to support headless setups (for
-> instance for GPU rendering with the GBM backend, where a DRI card node
-> is required to provide GEM memory reservation), add a check on the
-> number of registered connectors before initializing fbdev.
+Hi Jeffrey,
 
-sun4i is a pure kms driver, why exactly do you need it for gbm backed
-rendering? What exactly is rendering here, and why does it insist on a
-display card node, even if that display card node is 100% defunct?
--Daniel
-
-> Signed-off-by: Paul Kocialkowski <contact@paulk.fr>
-> ---
->  drivers/gpu/drm/sun4i/sun4i_framebuffer.c | 10 +++++++++-
->  1 file changed, 9 insertions(+), 1 deletion(-)
+On Mon, Aug 06, 2018 at 09:03:27PM -0400, Jeffrey Walton wrote:
+> On Mon, Aug 6, 2018 at 7:04 PM, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
+> > These are unused, undesired, and have never actually been used by
+> > anybody. The original authors of this code have changed their mind about
+> > its inclusion. Therefore, this patch removes it.
 > 
-> diff --git a/drivers/gpu/drm/sun4i/sun4i_framebuffer.c b/drivers/gpu/drm/sun4i/sun4i_framebuffer.c
-> index 5f29850ef8ac..19a265e4a93a 100644
-> --- a/drivers/gpu/drm/sun4i/sun4i_framebuffer.c
-> +++ b/drivers/gpu/drm/sun4i/sun4i_framebuffer.c
-> @@ -49,6 +49,8 @@ static struct drm_mode_config_helper_funcs sun4i_de_mode_config_helpers = {
->  
->  int sun4i_framebuffer_init(struct drm_device *drm)
->  {
-> +	int ret;
-> +
->  	drm_mode_config_reset(drm);
->  
->  	drm->mode_config.max_width = 8192;
-> @@ -57,7 +59,13 @@ int sun4i_framebuffer_init(struct drm_device *drm)
->  	drm->mode_config.funcs = &sun4i_de_mode_config_funcs;
->  	drm->mode_config.helper_private = &sun4i_de_mode_config_helpers;
->  
-> -	return drm_fb_cma_fbdev_init(drm, 32, 0);
-> +	if (drm->mode_config.num_connector > 0) {
-> +		ret = drm_fb_cma_fbdev_init(drm, 32, 0);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	return 0;
->  }
->  
->  void sun4i_framebuffer_free(struct drm_device *drm)
-> -- 
-> 2.18.0
+> I think it may be unwise to completely discard Speck for several
+> reasons. The two biggest pain points for me are:
 > 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+>   - political concerns addressed by other ciphers
+>   - high quality lightweight block cipher implementation
+>   - some regulated industries will need it for their problem domains
+> 
+> It seems to me the political concerns were addressed by not using
+> Speck for Android. I don't believe HPolyC and Speck are orthogonal.
+> Instead they provide the user with a choice which is usually a good
+> thing.
+> 
+> I also think allowing politics a heavy hand endangers other ciphers
+> like SM3 and SM4. I would advise against removing them just because
+> they are Chinese ciphers. I suppose the same could be argued for North
+> Korea and Jipsam and Pilsung (if North Korea ever offers their
+> ciphers).
+> 
+> I think Eric, Ard and other contributions lead to a high quality
+> implementation of Speck. High quality implementations that "just
+> works" everywhere on multiple platforms are rather hard to come by.
+> The kernel's unified implementation ensures lots of folks don't go
+> making lots of mistakes when rolling their own.
+> 
+> There are verticals that will need a choice or alternative like Speck.
+> US Aerospace, US Automotive and US Hoteliers come to mind. US
+> Financial my use them too (they having some trading platforms with
+> absurd requirements that make Simon and Speck appear bloated and
+> overweight).  Some of the verticals are going to need an alternative
+> that meets technical and security goals and pass the audits.
+> 
+> Choice is a good thing. Users need choices for technical, regulatory
+> and legal reasons.
+> 
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+This is about the Linux kernel, though.  The purpose of the Linux kernel's
+crypto API is to allow kernel code to do crypto, and also sometimes to allow
+access to crypto accelerator hardware.  It's *not* to provide a comprehensive
+collection of algorithms for userspace programs to use, or to provide reference
+implementations for crypto algorithms.  Before our change in plans, we needed
+Speck-XTS in the kernel so that it could be used in dm-crypt and fscrypt, which
+are kernel features and therefore require in-kernel implementations.  And of
+course, our proposed new solution, HPolyC, will need to be supported in the
+kernel too for the same reason.  It's just the way transparent disk and file
+encryption works; the crypto needs to be done in the kernel.  But do your other
+mentioned use cases actually need Speck to be in the Linux kernel?
+
+I doubt it, in general.  Userspace applications of Speck seem likely to use
+their own implementation.  Remember, Speck is extraordinarily simple, and the
+original paper has example C code.  So if someone really wanted to use Speck in
+a userspace application, they're likely to just add an implementation directly
+to their application, rather than coding up a Linux-specific thing using AF_ALG.
+Or they'd use a Speck implementation from a library like Crypto++.
+
+And while I think it's clear that the reasons why a significant number of people
+don't want to *use* Speck (even in legitimate use cases) are heavily political,
+that doesn't necessarily mean that the reason for removing Speck from Linux
+needs to be as political.  If there's code in the kernel with no known users
+anymore, whether it's a crypto algorithm or something like an obsolete CPU
+architecture, then it's eligible to be removed so that it doesn't need to be
+maintained -- potentially even if it breaks the userspace ABI (since it's not
+really broken if no one cares)...  Note that Skein is another example of a
+crypto algorithm that was recently removed from the kernel because no one was
+using it, though to be fair it was in the staging directory too.  It's still a
+bit of a double standard as there are likely other ciphers in the kernel that
+actually no one is using either, but it's a valid argument...
+
+Thanks,
+
+- Eric
