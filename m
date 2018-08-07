@@ -2,199 +2,145 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A487C46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 14:47:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3520C46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 14:48:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC1E3218D7
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 14:47:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D3AF2176D
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 14:48:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uVPI0elS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC1E3218D7
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="IfrZbrAb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D3AF2176D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389704AbeHGRCe (ORCPT
+        id S2389716AbeHGRCu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 13:02:34 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:41957 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733061AbeHGRCe (ORCPT
+        Tue, 7 Aug 2018 13:02:50 -0400
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:33521 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733061AbeHGRCt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 13:02:34 -0400
-Received: by mail-pl0-f68.google.com with SMTP id w19-v6so5568802ply.8
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 07:47:54 -0700 (PDT)
+        Tue, 7 Aug 2018 13:02:49 -0400
+Received: by mail-qt0-f194.google.com with SMTP id c15-v6so18140348qtp.0
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 07:48:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=f2BiY+o8tYbE55lKMdN683bfBjOCXmBdIx5t9IMYKoY=;
-        b=uVPI0elSOtnRc4POaSrYhz8VeFbemoc5GR6tZBqfEW8g/48zfgmvTq4vUbVPw5u8bh
-         IUPPyy7ezlMojEdVHMlmpK0UE1zmYvwVN7hYRg5zFGb0WAy7wNuauUkx2FQTOI1i67m/
-         RgfRxBXuwKMGy3JPSExiGjRXsBWRHRSrCufVKCUFNtB1LeIBgUWNgL1Y6brVtKUb7RQU
-         7DhdwU52nY4l7nWs8RQokNR75fEvoMDDh1MpjXhmaOON5HORDNYmp8ywdN9L0W4/nbwK
-         t46jlmVmHv5PSEJLPlqDkk42z5wlDoIcsMcaT5CIAtdgJoSli7L6A+sSGmjyN7NmaWmz
-         acfg==
+        h=date:user-agent:in-reply-to:references:mime-version
+         :content-transfer-encoding:subject:to:cc:from:message-id;
+        bh=0pGeOlRzI/9Tc9XEirnVYMpmtykiLJ9/YbHVQr+nFuI=;
+        b=IfrZbrAbJx4lZDkI+3KPnuTtpXB+hVvx4uxqHfZSjj8hdUMhJHkb+qJBnV7DBhf4FJ
+         oyPkomuWWck3R2XKU5plP+QBoZkLyl8Dxekh/ea6R/ivKx6h1kD8skEPAPBOO9Q5vZQ8
+         J+qZpPwPCrf7EYCfOyhDQoqfG9X1IpUF855v64fUwpLZ3Omql4CMQUl10aCF9ayw4NGj
+         KG1gxhykL0XEorT8UakQEbXF0ekRjmy9h2aSpXIdHa/LCSCQrNrNRlXqCcL+l6wK+Shv
+         BvVBINz+5ze2BtUcDlf4lM4HyuxYYQ4TKYjbvdSkrpCkmSIvfHpk+yP8ttYkaB3av5f4
+         +DvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=f2BiY+o8tYbE55lKMdN683bfBjOCXmBdIx5t9IMYKoY=;
-        b=Zyqi/J/u9krU5mFfmk8U++BBH/yemQ1jQgvWKa5ZjCX8cGUOFTZLGBjPWu0Da8N4Tb
-         1dskGa1MryQe2diRzuSoRXW29QZoDHhlTfFrMTX9e75ViG83P7nCSJRplBo9+NGGLfX8
-         VmabAbTXp8D95yOhRQqtmB97KYkbDpG/L+QJVvZ+P0Wv25ZNNlOrrqW2krCNGWUyP/f6
-         u+yMN8xFqK5GsjnSGS0yBxeXAoVC8LWDxB7o6amWHGlwTpair71RY0XGyxTzAaZCFtAQ
-         JlhFSRI5HzZgVdL9QWb3LSsGuvu+buey2q6ZPIpX2NUAhhOUjxHJi8fPiCz6UiRtBe5c
-         Kc+g==
-X-Gm-Message-State: AOUpUlGFUvlMbX2tZOS3tWJgl5SuAWIy8HvzUSpFly/IYaGgN9mvjHA7
-        KdWVL6LZOCWSKV0eDJB2wEle969aqOCBXOCIS1p1Fw==
-X-Google-Smtp-Source: AAOMgpdEqjUStOGGilouW9j0Pd2k2LNapEUe4YJl7nqcEnXNHPE2QNN5YmbIThYbr9SSlnJGQtvjon1iKxGXxL+tsIQ=
-X-Received: by 2002:a17:902:d710:: with SMTP id w16-v6mr18237170ply.93.1533653273869;
- Tue, 07 Aug 2018 07:47:53 -0700 (PDT)
+        h=x-gm-message-state:date:user-agent:in-reply-to:references
+         :mime-version:content-transfer-encoding:subject:to:cc:from
+         :message-id;
+        bh=0pGeOlRzI/9Tc9XEirnVYMpmtykiLJ9/YbHVQr+nFuI=;
+        b=R8X+9WTihYb0/Gc7n9/KdxEazfVXKAR5Odd17Lr6F9ZChxhDvNbRt7Lcxb0gxBv4Dx
+         ZhQTxgbOjRDbc5gMFB645DcU95f1Bo5tO6v0kTDLR5ZdRL5aRD+sQbkPhKKoAbJLQkDa
+         gGT8PUdBOH/bF2rPpl9cbfFq1eZtJaXAGyRyqyQc6ViouOpTIY1ZVjr1FycdutjP5sPt
+         K5FxOzATWHgTNcHbMMVyDeYyRBF6BauywhY1hK1Eeq3ICzvUrhr3ckakwIXydV1gotIu
+         HK4ss5LubGwgkvonV4B3JXK4EDNhpie06JKqJdEUcVRRFlRLgKnuBY69c1k4qeURKA2W
+         dKcQ==
+X-Gm-Message-State: AOUpUlEeVrsrv8Z6C7+gc92BgKGhi+spNqqHhRYJ9FibGmKFxUCGjYUP
+        0DTLM6Cum0RrdWk2VN4OOO9laQ==
+X-Google-Smtp-Source: AAOMgpfQbmd7JnSgGWLtrhNpGCZzuTw/KOr+NYNjD3G7BMmKWIgKo3Lz66J14yI+RE7CUBbEyAgrng==
+X-Received: by 2002:a0c:fac4:: with SMTP id p4-v6mr17215802qvo.179.1533653288780;
+        Tue, 07 Aug 2018 07:48:08 -0700 (PDT)
+Received: from ?IPv6:2600:1003:b02d:a97a:b058:3527:6454:4e37? ([2600:1003:b02d:a97a:b058:3527:6454:4e37])
+        by smtp.gmail.com with ESMTPSA id y132-v6sm910067qkb.56.2018.08.07.07.48.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 07 Aug 2018 07:48:08 -0700 (PDT)
+Date:   Tue, 07 Aug 2018 10:48:05 -0400
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20180807103410.4fe203cb@gandalf.local.home>
+References: <20180730222423.196630-1-joel@joelfernandes.org> <20180730222423.196630-4-joel@joelfernandes.org> <20180806155058.5ee875f4@gandalf.local.home> <CAJWu+oqvpev_EZC38_mi+UNRCxS8GqNVagHyGM4dUjruzKgwgQ@mail.gmail.com> <20180806214300.13e63523@gandalf.local.home> <CAJWu+oqZi2W9OYAn2xu17fdrBitQs4Gti4LxWmtx5B-EYtNMmA@mail.gmail.com> <20180807094954.5137972d@gandalf.local.home> <446AE5F2-39E0-46B6-8E0B-207E003DBF20@google.com> <20180807103410.4fe203cb@gandalf.local.home>
 MIME-Version: 1.0
-Received: by 2002:a17:90a:ac14:0:0:0:0 with HTTP; Tue, 7 Aug 2018 07:47:33
- -0700 (PDT)
-In-Reply-To: <000000000000271b760572d934fe@google.com>
-References: <CACT4Y+a+c6skSwS8WfY9GUs9mnjmf_aa7C5crW-m2Jb54ZbyuA@mail.gmail.com>
- <000000000000271b760572d934fe@google.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Tue, 7 Aug 2018 16:47:33 +0200
-Message-ID: <CACT4Y+YAhkymQQAfdMUQnWpQVp6WN=gG1u5Fvgz79eWiw79ZHQ@mail.gmail.com>
-Subject: Re: Re: WARNING in input_alloc_absinfo
-To:     syzbot <syzbot+@syzkaller.appspotmail.com>,
-        syzbot <syzbot+c382812c78d98ecd9fb8@syzkaller.appspotmail.com>
-Cc:     "'Dmitry Vyukov' via syzkaller-bugs" 
-        <syzkaller-bugs@googlegroups.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-input@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Henrik Rydberg <rydberg@bitmath.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v12 3/3] tracing: Centralize preemptirq tracepoints and unify their usage
+To:     Steven Rostedt <rostedt@goodmis.org>
+CC:     Joel Fernandes <joel@joelfernandes.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Cc: Android Kernel" <kernel-team@android.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Byungchul Park <byungchul.park@lge.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Glexiner <tglx@linutronix.de>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>
+From:   Joel Fernandes <joelaf@google.com>
+Message-ID: <C1CB990F-8232-4168-89A8-E8C13B660B0B@google.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 7, 2018 at 4:28 PM, syzbot
-<syzbot+@syzkaller.appspotmail.com> wrote:
->> On Thu, Jul 26, 2018 at 11:40 AM, Dmitry Vyukov <dvyukov@google.com>
->> wrote:
->>>
->>> On Mon, Jul 2, 2018 at 11:30 AM, Dmitry Vyukov <dvyukov@google.com>
->>> wrote:
->>>>
->>>> On Fri, Jun 29, 2018 at 11:59 PM,  <dmitry.torokhov@gmail.com> wrote:
->>>>>
->>>>> On Monday, June 25, 2018 at 5:43:02 AM UTC-7, Dmitry Vyukov wrote:
->
->
->>>>>> On Tue, Jun 19, 2018 at 8:51 PM, Dmitry Torokhov
->>>>>> <dmitry....@gmail.com> wrote:
->>>>>> > On Thu, Jun 14, 2018 at 05:47:03AM -0700, syzbot wrote:
->>>>>> >> Hello,
->>>>>> >>
->>>>>> >> syzbot found the following crash on:
->>>>>> >>
->>>>>> >> HEAD commit:    d2d741e5d189 kmsan: add initialization for shmem
->>>>>> >> pages
->>>>>> >> git tree:       https://github.com/google/kmsan.git/master
->>>>>> >> console output:
->>>>>> >> https://syzkaller.appspot.com/x/log.txt?x=1775bae7800000
->>>>>> >> kernel config:
->>>>>> >> https://syzkaller.appspot.com/x/.config?x=48f9de3384bcd0f
->>>>>> >> dashboard link:
->>>>>> >> https://syzkaller.appspot.com/bug?extid=c382812c78d98ecd9fb8
->>>>>> >> compiler:       clang version 7.0.0 (trunk 329391)
->>>>>> >> syzkaller
->>>>>> >> repro:https://syzkaller.appspot.com/x/repro.syz?x=13b31ae7800000
->>>>>> >> C reproducer:
->>>>>> >> https://syzkaller.appspot.com/x/repro.c?x=1733255b800000
->>>>>> >>
->>>>>> >> IMPORTANT: if you fix the bug, please add the following tag to the
->>>>>> >> commit:
->>>>>> >> Reported-by: syzbot+c38281...@syzkaller.appspotmail.com
->>>>>> >>
->>>>>> >> RBP: 00000000006cb018 R08: 0000000000000001 R09: 00007ffe93080031
->>>>>> >> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000004
->>>>>> >> R13: ffffffffffffffff R14: 0000000000000000 R15: 0000000000000000
->>>>>> >> ------------[ cut here ]------------
->>>>>> >> input_alloc_absinfo(): kcalloc() failed?
->>>>>> >> WARNING: CPU: 1 PID: 4498 at drivers/input/input.c:487
->>>>>> >> input_alloc_absinfo+0x183/0x190 drivers/input/input.c:487
->>>>>> >> Kernel panic - not syncing: panic_on_warn set ...
->>>>>> >
->>>>>> > Hmm, so there is not really a problem as far as I am concerned. We
->>>>>> > do
->>>>>> > generate a warning if we can't allocate memory for absinfo,  as this
->>>>>> > is
->>>>>> > really unexpected, but the case is handled properly by the callers
->>>>>> > so
->>>>>> > there is no reason for us to go belly up here.
->
->
->>>>>> Note to myself: ping this bug when "include/asm-generic/bug.h: clarify
->>>>>> valid uses of WARN()" is fully merged.
->
->
->
->>>>> No, this warning will still be there even after the "clarifying" patch
->>>>> is
->>>>> merged. It does not check user inputs, it warns that the system is so
->>>>> low on
->>>>> memory that we could not allocate measly amount needed for absinfo.
->>>>> Treat it
->>>>> as you treat OOM warnings from kmalloc() itself.
->
->
->>>> Hi Dmitry,
->
->
->>>> kmalloc does not produce WARNING on OOM. The rule is not only about
->>>> invalid inputs, it's also about any transient conditions and "WARNING
->>>> only for kernel bugs".
->
->
->>>> To put this in larger context, being able to distinguish kernel bugs
->>>> from non-bugs is a very important and practically useful capability,
->>>> which in particular enables systematic testing, but also makes things
->>>> simpler for all kernel users. There must be a very significant reason
->>>> to abandon this capability. What is that reason in this case?
->
->
->>>> I also don't understand what is so special about this case. If we want
->>>> user message for kmalloc failures, kmalloc is the right place for such
->>>> warning, rather than a random call site out of thousands. Consider,
->>>> the allocation failure can happen on the very next or previous kmalloc
->>>> call, and user won't be warned. The rest of the kernel (including the
->>>> rest of input sybsystem) does not warn on allocation failures, so that
->>>> looks like what we need to do here as well. Or, if there is something
->>>> very special about this particular kmalloc call site, something that
->>>> makes it different from thousands of other call sites, why don't you
->>>> want to replace it with pr_err which would both give the diagnostics
->>>> but also not block systematic testing? Which looks like a win-win to
->>>> me.
->
->
->>>> Thanks
->
->
->
->>> So, Dmitry, do you mind fixing this in the name of unblocking kernel
->>> testing?
->
->
->
->> Let's tell syzbot about the pending fix:
->
->
->> #syz fix: Input: do not use WARN() in input_alloc_absinfo()
->
->
-> Can't find the corresponding bug.
 
-Now with syzbot email in CC:
 
-#syz fix: Input: do not use WARN() in input_alloc_absinfo()
+On August 7, 2018 10:34:10 AM EDT, Steven Rostedt <rostedt@goodmis=2Eorg> =
+wrote:
+>On Tue, 07 Aug 2018 10:10:59 -0400
+>Joel Fernandes <joelaf@google=2Ecom> wrote:
+>
+>> On August 7, 2018 9:49:54 AM EDT, Steven Rostedt
+><rostedt@goodmis=2Eorg> wrote:
+>> >On Tue, 7 Aug 2018 06:33:35 -0700
+>> >Joel Fernandes <joelaf@google=2Ecom> wrote:
+>> > =20
+>> >> Thanks, also one more thing I noticed in your patch,
+>> >> lockdep_hardirqs_off needs to be called before all other probes
+>but
+>> >> you're calling it after=2E This is why I registered it with INT_MAX:
+>> >>=20
+>> >> register_trace_prio_irq_disable(lockdep_hardirqs_off, NULL,
+>INT_MAX);
+>> >>=20
+>> >> Without it you may get annotation warnings=2E Thanks, =20
+>> >
+>> >Interesting=2E I was following the old way where we called the tracing
+>> >code before calling the lockdep code (all hard coded and not from
+>> >trace events)=2E Is this have something to do with calling the code
+>from
+>> >a tracepoint?
+>> >
+>> >Do you have an example that could trigger the warning?
+>> > =20
+>>=20
+>> I remember the warnings but can't remember now how I triggered them=2E
+>> I think I saw them with the irqsoff tracer or irq trace events
+>> running, with lockdep turned on=2E
+>
+>I'll see if I can trigger it=2E I'll run this all through my tests=2E
+
+Ok=2E
+
+>> Also an irq disable probe that does a lockdep assert that irqs are
+>> disabled could trigger it?
+>>=20
+>
+>You mean if someone add a tracepoint callback to the irq disable
+>tracepoint, and did a lockdep assert to make sure interrupts are
+>disabled?
+
+Yes that's what I meant=2E
+
+Thanks,
+
+- Joel
+
+--=20
+Sent from my Android device with K-9 Mail=2E Please excuse my brevity=2E
