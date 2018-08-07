@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86EB7C46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:52:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98E92C46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:52:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 454D52170A
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:52:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 454D52170A
+	by mail.kernel.org (Postfix) with ESMTP id 5C2322172E
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:52:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C2322172E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403889AbeHGVIg (ORCPT
+        id S2403910AbeHGVIi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 17:08:36 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33092 "EHLO
+        Tue, 7 Aug 2018 17:08:38 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33102 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726419AbeHGVIf (ORCPT
+        with ESMTP id S1726419AbeHGVIi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 17:08:35 -0400
+        Tue, 7 Aug 2018 17:08:38 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4E80CD01;
-        Tue,  7 Aug 2018 18:52:52 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4CFD03EE;
+        Tue,  7 Aug 2018 18:52:55 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bart Massey <bart.massey@gmail.com>,
-        Dave Kleikamp <shaggy@kernel.org>,
-        jfs-discussion@lists.sourceforge.net,
-        Kees Cook <keescook@chromium.org>
-Subject: [PATCH 4.17 06/18] jfs: Fix usercopy whitelist for inline inode data
-Date:   Tue,  7 Aug 2018 20:51:09 +0200
-Message-Id: <20180807172313.194184605@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Kurt Kanzenbach <kurt.kanzenbach@linutronix.de>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH 4.17 07/18] genirq: Make force irq threading setup more robust
+Date:   Tue,  7 Aug 2018 20:51:10 +0200
+Message-Id: <20180807172313.232022683@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180807172312.964272530@linuxfoundation.org>
 References: <20180807172312.964272530@linuxfoundation.org>
@@ -52,76 +51,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kees Cook <keescook@chromium.org>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-commit 961b33c244e5ba1543ae26270a1ba29f29c2db83 upstream.
+commit d1f0301b3333eef5efbfa1fe0f0edbea01863d5d upstream.
 
-Bart Massey reported what turned out to be a usercopy whitelist false
-positive in JFS when symlink contents exceeded 128 bytes. The inline
-inode data (i_inline) is actually designed to overflow into the "extended
-area" following it (i_inline_ea) when needed. So the whitelist needed to
-be expanded to include both i_inline and i_inline_ea (the whole size
-of which is calculated internally using IDATASIZE, 256, instead of
-sizeof(i_inline), 128).
+The support of force threading interrupts which are set up with both a
+primary and a threaded handler wreckaged the setup of regular requested
+threaded interrupts (primary handler == NULL).
 
-$ cd /mnt/jfs
-$ touch $(perl -e 'print "B" x 250')
-$ ln -s B* b
-$ ls -l >/dev/null
+The reason is that it does not check whether the primary handler is set to
+the default handler which wakes the handler thread. Instead it replaces the
+thread handler with the primary handler as it would do with force threaded
+interrupts which have been requested via request_irq(). So both the primary
+and the thread handler become the same which then triggers the warnon that
+the thread handler tries to wakeup a not configured secondary thread.
 
-[  249.436410] Bad or missing usercopy whitelist? Kernel memory exposure attempt detected from SLUB object 'jfs_ip' (offset 616, size 250)!
+Fortunately this only happens when the driver omits the IRQF_ONESHOT flag
+when requesting the threaded interrupt, which is normaly caught by the
+sanity checks when force irq threading is disabled.
 
-Reported-by: Bart Massey <bart.massey@gmail.com>
-Fixes: 8d2704d382a9 ("jfs: Define usercopy region in jfs_ip slab cache")
-Cc: Dave Kleikamp <shaggy@kernel.org>
-Cc: jfs-discussion@lists.sourceforge.net
+Fix it by skipping the force threading setup when a regular threaded
+interrupt is requested. As a consequence the interrupt request which lacks
+the IRQ_ONESHOT flag is rejected correctly instead of silently wreckaging
+it.
+
+Fixes: 2a1d3ab8986d ("genirq: Handle force threading of irqs with primary and thread handler")
+Reported-by: Kurt Kanzenbach <kurt.kanzenbach@linutronix.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Kurt Kanzenbach <kurt.kanzenbach@linutronix.de>
 Cc: stable@vger.kernel.org
-Signed-off-by: Kees Cook <keescook@chromium.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/jfs/jfs_dinode.h |    7 +++++++
- fs/jfs/jfs_incore.h |    1 +
- fs/jfs/super.c      |    3 +--
- 3 files changed, 9 insertions(+), 2 deletions(-)
+ kernel/irq/manage.c |    9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
---- a/fs/jfs/jfs_dinode.h
-+++ b/fs/jfs/jfs_dinode.h
-@@ -115,6 +115,13 @@ struct dinode {
- 					dxd_t _dxd;	/* 16: */
- 					union {
- 						__le32 _rdev;	/* 4: */
-+						/*
-+						 * The fast symlink area
-+						 * is expected to overflow
-+						 * into _inlineea when
-+						 * needed (which will clear
-+						 * INLINEEA).
-+						 */
- 						u8 _fastsymlink[128];
- 					} _u;
- 					u8 _inlineea[128];
---- a/fs/jfs/jfs_incore.h
-+++ b/fs/jfs/jfs_incore.h
-@@ -87,6 +87,7 @@ struct jfs_inode_info {
- 		struct {
- 			unchar _unused[16];	/* 16: */
- 			dxd_t _dxd;		/* 16: */
-+			/* _inline may overflow into _inline_ea when needed */
- 			unchar _inline[128];	/* 128: inline symlink */
- 			/* _inline_ea may overlay the last part of
- 			 * file._xtroot if maxentry = XTROOTINITSLOT
---- a/fs/jfs/super.c
-+++ b/fs/jfs/super.c
-@@ -967,8 +967,7 @@ static int __init init_jfs_fs(void)
- 	jfs_inode_cachep =
- 	    kmem_cache_create_usercopy("jfs_ip", sizeof(struct jfs_inode_info),
- 			0, SLAB_RECLAIM_ACCOUNT|SLAB_MEM_SPREAD|SLAB_ACCOUNT,
--			offsetof(struct jfs_inode_info, i_inline),
--			sizeof_field(struct jfs_inode_info, i_inline),
-+			offsetof(struct jfs_inode_info, i_inline), IDATASIZE,
- 			init_once);
- 	if (jfs_inode_cachep == NULL)
- 		return -ENOMEM;
+--- a/kernel/irq/manage.c
++++ b/kernel/irq/manage.c
+@@ -1067,6 +1067,13 @@ static int irq_setup_forced_threading(st
+ 	if (new->flags & (IRQF_NO_THREAD | IRQF_PERCPU | IRQF_ONESHOT))
+ 		return 0;
+ 
++	/*
++	 * No further action required for interrupts which are requested as
++	 * threaded interrupts already
++	 */
++	if (new->handler == irq_default_primary_handler)
++		return 0;
++
+ 	new->flags |= IRQF_ONESHOT;
+ 
+ 	/*
+@@ -1074,7 +1081,7 @@ static int irq_setup_forced_threading(st
+ 	 * thread handler. We force thread them as well by creating a
+ 	 * secondary action.
+ 	 */
+-	if (new->handler != irq_default_primary_handler && new->thread_fn) {
++	if (new->handler && new->thread_fn) {
+ 		/* Allocate the secondary action */
+ 		new->secondary = kzalloc(sizeof(struct irqaction), GFP_KERNEL);
+ 		if (!new->secondary)
 
 
