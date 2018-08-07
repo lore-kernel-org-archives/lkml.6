@@ -6,35 +6,39 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B2E5C46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:55:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03EE1C46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:55:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F15652151D
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:55:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F15652151D
+	by mail.kernel.org (Postfix) with ESMTP id BDC562151D
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:55:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BDC562151D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390348AbeHGVK5 (ORCPT
+        id S2404316AbeHGVLA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 17:10:57 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33650 "EHLO
+        Tue, 7 Aug 2018 17:11:00 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33658 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390333AbeHGVK5 (ORCPT
+        with ESMTP id S2390351AbeHGVK7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 17:10:57 -0400
+        Tue, 7 Aug 2018 17:10:59 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9EAAED01;
-        Tue,  7 Aug 2018 18:55:13 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 93503D07;
+        Tue,  7 Aug 2018 18:55:16 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Kurt Kanzenbach <kurt.kanzenbach@linutronix.de>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 4.9 03/17] genirq: Make force irq threading setup more robust
-Date:   Tue,  7 Aug 2018 20:51:39 +0200
-Message-Id: <20180807172342.388520204@linuxfoundation.org>
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        bigeasy@linutronix.de, peterz@infradead.org
+Subject: [PATCH 4.9 04/17] nohz: Fix local_timer_softirq_pending()
+Date:   Tue,  7 Aug 2018 20:51:40 +0200
+Message-Id: <20180807172342.420516148@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180807172342.071526922@linuxfoundation.org>
 References: <20180807172342.071526922@linuxfoundation.org>
@@ -51,65 +55,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thomas Gleixner <tglx@linutronix.de>
+From: Anna-Maria Gleixner <anna-maria@linutronix.de>
 
-commit d1f0301b3333eef5efbfa1fe0f0edbea01863d5d upstream.
+commit 80d20d35af1edd632a5e7a3b9c0ab7ceff92769e upstream.
 
-The support of force threading interrupts which are set up with both a
-primary and a threaded handler wreckaged the setup of regular requested
-threaded interrupts (primary handler == NULL).
+local_timer_softirq_pending() checks whether the timer softirq is
+pending with: local_softirq_pending() & TIMER_SOFTIRQ.
 
-The reason is that it does not check whether the primary handler is set to
-the default handler which wakes the handler thread. Instead it replaces the
-thread handler with the primary handler as it would do with force threaded
-interrupts which have been requested via request_irq(). So both the primary
-and the thread handler become the same which then triggers the warnon that
-the thread handler tries to wakeup a not configured secondary thread.
+This is wrong because TIMER_SOFTIRQ is the softirq number and not a
+bitmask. So the test checks for the wrong bit.
 
-Fortunately this only happens when the driver omits the IRQF_ONESHOT flag
-when requesting the threaded interrupt, which is normaly caught by the
-sanity checks when force irq threading is disabled.
+Use BIT(TIMER_SOFTIRQ) instead.
 
-Fix it by skipping the force threading setup when a regular threaded
-interrupt is requested. As a consequence the interrupt request which lacks
-the IRQ_ONESHOT flag is rejected correctly instead of silently wreckaging
-it.
-
-Fixes: 2a1d3ab8986d ("genirq: Handle force threading of irqs with primary and thread handler")
-Reported-by: Kurt Kanzenbach <kurt.kanzenbach@linutronix.de>
+Fixes: 5d62c183f9e9 ("nohz: Prevent a timer interrupt storm in tick_nohz_stop_sched_tick()")
+Signed-off-by: Anna-Maria Gleixner <anna-maria@linutronix.de>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Kurt Kanzenbach <kurt.kanzenbach@linutronix.de>
+Reviewed-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Reviewed-by: Daniel Bristot de Oliveira <bristot@redhat.com>
+Acked-by: Frederic Weisbecker <frederic@kernel.org>
+Cc: bigeasy@linutronix.de
+Cc: peterz@infradead.org
 Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/20180731161358.29472-1-anna-maria@linutronix.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/irq/manage.c |    9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ kernel/time/tick-sched.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/kernel/irq/manage.c
-+++ b/kernel/irq/manage.c
-@@ -1026,6 +1026,13 @@ static int irq_setup_forced_threading(st
- 	if (new->flags & (IRQF_NO_THREAD | IRQF_PERCPU | IRQF_ONESHOT))
- 		return 0;
+--- a/kernel/time/tick-sched.c
++++ b/kernel/time/tick-sched.c
+@@ -665,7 +665,7 @@ static void tick_nohz_restart(struct tic
  
-+	/*
-+	 * No further action required for interrupts which are requested as
-+	 * threaded interrupts already
-+	 */
-+	if (new->handler == irq_default_primary_handler)
-+		return 0;
-+
- 	new->flags |= IRQF_ONESHOT;
+ static inline bool local_timer_softirq_pending(void)
+ {
+-	return local_softirq_pending() & TIMER_SOFTIRQ;
++	return local_softirq_pending() & BIT(TIMER_SOFTIRQ);
+ }
  
- 	/*
-@@ -1033,7 +1040,7 @@ static int irq_setup_forced_threading(st
- 	 * thread handler. We force thread them as well by creating a
- 	 * secondary action.
- 	 */
--	if (new->handler != irq_default_primary_handler && new->thread_fn) {
-+	if (new->handler && new->thread_fn) {
- 		/* Allocate the secondary action */
- 		new->secondary = kzalloc(sizeof(struct irqaction), GFP_KERNEL);
- 		if (!new->secondary)
+ static ktime_t tick_nohz_stop_sched_tick(struct tick_sched *ts,
 
 
