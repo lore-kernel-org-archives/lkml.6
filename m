@@ -6,54 +6,49 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B1D3C46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 16:19:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 779FCC46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 16:19:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C63052175E
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 16:19:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 31DF521987
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 16:19:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="eHEeZmGl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C63052175E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DJ24YSyV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31DF521987
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390153AbeHGSeH (ORCPT
+        id S2390168AbeHGSes (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 14:34:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59418 "EHLO mail.kernel.org"
+        Tue, 7 Aug 2018 14:34:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60484 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387851AbeHGSeG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 14:34:06 -0400
+        id S2388948AbeHGSes (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 14:34:48 -0400
 Received: from localhost.localdomain (xdsl-188-155-58-14.adslplus.ch [188.155.58.14])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1A63E2174B;
-        Tue,  7 Aug 2018 16:19:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2B2832174B;
+        Tue,  7 Aug 2018 16:19:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1533658744;
-        bh=y2FeSwVT0yUQDIWAUOE+IJzkjX0hTfoy87PiA2E2Xqg=;
-        h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=eHEeZmGlu+Td7VIUA39JbEXNxEnPtt9PTm3uPa0XKI8th41O2fCASAeiSGXc4isKT
-         cbe/CVK7qqTIvo3Oax7XzMLLyHjy8I91gwvs2rEya8tiSBjU0QKTGX00XYOnpknYa+
-         gxRkCGooSJ0Y3+AN50nMrDMIW9vfSiHFMnhAmML0=
+        s=default; t=1533658785;
+        bh=rvx1UarfMkclw9Z8+ewIS6f747pXS+df6StLRUDuQ7Y=;
+        h=From:To:Subject:Date:From;
+        b=DJ24YSyVq5jcabfoZg30pTIL0WnG36NgEtGcR84756F/8Scv2L/MzoFILdEcwgIkH
+         CSSQAXDdQ+nueb8ZNSOgnGLhr4gugREyvx1j/ibSOtBPIwaaPnABHamTBdLzX1UgcX
+         83A83ZtAB7lGlRkdZLcKl7eMTrZHg+EY0cX1vQ44=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Chanwoo Choi <cw00.choi@samsung.com>,
         Krzysztof Kozlowski <krzk@kernel.org>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Javier Martinez Canillas <javier@dowhile0.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Sangbeom Kim <sbkim73@samsung.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: [PATCH 2/2] regulator: samsung: Add SPDX license identifiers
-Date:   Tue,  7 Aug 2018 18:18:26 +0200
-Message-Id: <20180807161826.2222-2-krzk@kernel.org>
+        linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: [PATCH 1/2] rtc: maxim: Add SPDX license identifiers
+Date:   Tue,  7 Aug 2018 18:19:18 +0200
+Message-Id: <20180807161919.7827-1-krzk@kernel.org>
 X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180807161826.2222-1-krzk@kernel.org>
-References: <20180807161826.2222-1-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -64,19 +59,22 @@ identifiers.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/regulator/s2mpa01.c | 14 ++++----------
- drivers/regulator/s2mps11.c | 21 ++++-----------------
- drivers/regulator/s5m8767.c | 16 ++++------------
- 3 files changed, 12 insertions(+), 39 deletions(-)
+ drivers/rtc/rtc-max77686.c | 20 +++++++-------------
+ drivers/rtc/rtc-max8997.c  | 20 +++++++-------------
+ drivers/rtc/rtc-max8998.c  | 20 +++++++-------------
+ 3 files changed, 21 insertions(+), 39 deletions(-)
 
-diff --git a/drivers/regulator/s2mpa01.c b/drivers/regulator/s2mpa01.c
-index 48f0ca90743c..095d25f3d2ea 100644
---- a/drivers/regulator/s2mpa01.c
-+++ b/drivers/regulator/s2mpa01.c
-@@ -1,13 +1,7 @@
+diff --git a/drivers/rtc/rtc-max77686.c b/drivers/rtc/rtc-max77686.c
+index cefde273fae6..8a60900d6b8b 100644
+--- a/drivers/rtc/rtc-max77686.c
++++ b/drivers/rtc/rtc-max77686.c
+@@ -1,16 +1,10 @@
 -/*
-- * Copyright (c) 2013 Samsung Electronics Co., Ltd
-- *		http://www.samsung.com
+- * RTC driver for Maxim MAX77686 and MAX77802
+- *
+- * Copyright (C) 2012 Samsung Electronics Co.Ltd
+- *
+- *  based on rtc-max8997.c
 - *
 - *  This program is free software; you can redistribute  it and/or modify it
 - *  under  the terms of  the GNU General  Public License as published by the
@@ -86,50 +84,25 @@ index 48f0ca90743c..095d25f3d2ea 100644
 - */
 +// SPDX-License-Identifier: GPL-2.0+
 +//
-+// Copyright (c) 2013 Samsung Electronics Co., Ltd
-+//		http://www.samsung.com
- 
- #include <linux/bug.h>
- #include <linux/err.h>
-diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
-index d1207ec683db..5bb6f4ca48db 100644
---- a/drivers/regulator/s2mps11.c
-+++ b/drivers/regulator/s2mps11.c
-@@ -1,20 +1,7 @@
--/*
-- * s2mps11.c
-- *
-- * Copyright (c) 2012-2014 Samsung Electronics Co., Ltd
-- *              http://www.samsung.com
-- *
-- * This program is free software; you can redistribute  it and/or modify it
-- * under  the terms of  the GNU General  Public License as published by the
-- * Free Software Foundation;  either version 2 of the  License, or (at your
-- * option) any later version.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- */
-+// SPDX-License-Identifier: GPL-2.0+
++// RTC driver for Maxim MAX77686 and MAX77802
 +//
-+// Copyright (c) 2012-2014 Samsung Electronics Co., Ltd
-+//              http://www.samsung.com
++// Copyright (C) 2012 Samsung Electronics Co.Ltd
++//
++//  based on rtc-max8997.c
  
- #include <linux/bug.h>
- #include <linux/err.h>
-diff --git a/drivers/regulator/s5m8767.c b/drivers/regulator/s5m8767.c
-index 0cbc980753c2..667d16dc83ce 100644
---- a/drivers/regulator/s5m8767.c
-+++ b/drivers/regulator/s5m8767.c
-@@ -1,15 +1,7 @@
+ #include <linux/i2c.h>
+ #include <linux/slab.h>
+diff --git a/drivers/rtc/rtc-max8997.c b/drivers/rtc/rtc-max8997.c
+index e8cee123e8aa..08c661a332ec 100644
+--- a/drivers/rtc/rtc-max8997.c
++++ b/drivers/rtc/rtc-max8997.c
+@@ -1,16 +1,10 @@
 -/*
-- * s5m8767.c
+- * RTC driver for Maxim MAX8997
 - *
-- * Copyright (c) 2011 Samsung Electronics Co., Ltd
-- *              http://www.samsung.com
+- * Copyright (C) 2013 Samsung Electronics Co.Ltd
+- *
+- *  based on rtc-max8998.c
 - *
 - *  This program is free software; you can redistribute  it and/or modify it
 - *  under  the terms of  the GNU General  Public License as published by the
@@ -139,11 +112,42 @@ index 0cbc980753c2..667d16dc83ce 100644
 - */
 +// SPDX-License-Identifier: GPL-2.0+
 +//
-+// Copyright (c) 2011 Samsung Electronics Co., Ltd
-+//              http://www.samsung.com
++// RTC driver for Maxim MAX8997
++//
++// Copyright (C) 2013 Samsung Electronics Co.Ltd
++//
++//  based on rtc-max8998.c
  
- #include <linux/err.h>
- #include <linux/of_gpio.h>
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+ 
+diff --git a/drivers/rtc/rtc-max8998.c b/drivers/rtc/rtc-max8998.c
+index d8c0f9b3f87d..c873b4509b3c 100644
+--- a/drivers/rtc/rtc-max8998.c
++++ b/drivers/rtc/rtc-max8998.c
+@@ -1,16 +1,10 @@
+-/*
+- * RTC driver for Maxim MAX8998
+- *
+- * Copyright (C) 2010 Samsung Electronics Co.Ltd
+- * Author: Minkyu Kang <mk7.kang@samsung.com>
+- * Author: Joonyoung Shim <jy0922.shim@samsung.com>
+- *
+- *  This program is free software; you can redistribute  it and/or modify it
+- *  under  the terms of  the GNU General  Public License as published by the
+- *  Free Software Foundation;  either version 2 of the  License, or (at your
+- *  option) any later version.
+- *
+- */
++// SPDX-License-Identifier: GPL-2.0+
++//
++// RTC driver for Maxim MAX8998
++//
++// Copyright (C) 2010 Samsung Electronics Co.Ltd
++// Author: Minkyu Kang <mk7.kang@samsung.com>
++// Author: Joonyoung Shim <jy0922.shim@samsung.com>
+ 
+ #include <linux/module.h>
+ #include <linux/i2c.h>
 -- 
 2.14.1
 
