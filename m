@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0E45C46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 23:28:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6E26C46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 23:29:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 813DE215F9
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 23:28:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 813DE215F9
+	by mail.kernel.org (Postfix) with ESMTP id 7ED0121757
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 23:29:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7ED0121757
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727410AbeHHBpI (ORCPT
+        id S1727394AbeHHBqB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 21:45:08 -0400
-Received: from gateway23.websitewelcome.com ([192.185.50.129]:23496 "EHLO
-        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726704AbeHHBpI (ORCPT
+        Tue, 7 Aug 2018 21:46:01 -0400
+Received: from gateway33.websitewelcome.com ([192.185.145.239]:37315 "EHLO
+        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726625AbeHHBqB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 21:45:08 -0400
-Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
-        by gateway23.websitewelcome.com (Postfix) with ESMTP id 2E4CCA4FB
-        for <linux-kernel@vger.kernel.org>; Tue,  7 Aug 2018 18:28:23 -0500 (CDT)
+        Tue, 7 Aug 2018 21:46:01 -0400
+Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
+        by gateway33.websitewelcome.com (Postfix) with ESMTP id 06B45964E7
+        for <linux-kernel@vger.kernel.org>; Tue,  7 Aug 2018 18:29:15 -0500 (CDT)
 Received: from gator4166.hostgator.com ([108.167.133.22])
         by cmsmtp with SMTP
-        id nBOnfjj4iBcCXnBOofJkx0; Tue, 07 Aug 2018 18:28:22 -0500
+        id nBPdf7jg7bXuJnBPefWlCi; Tue, 07 Aug 2018 18:29:14 -0500
 X-Authority-Reason: nr=8
-Received: from [189.250.73.102] (port=48130 helo=embeddedor)
+Received: from [189.250.73.102] (port=48138 helo=embeddedor)
         by gator4166.hostgator.com with esmtpa (Exim 4.91)
         (envelope-from <gustavo@embeddedor.com>)
-        id 1fnBOn-001y4y-6W; Tue, 07 Aug 2018 18:28:21 -0500
-Date:   Tue, 7 Aug 2018 18:28:20 -0500
+        id 1fnBPd-001yVJ-Cb; Tue, 07 Aug 2018 18:29:13 -0500
+Date:   Tue, 7 Aug 2018 18:29:12 -0500
 From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 To:     "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org,
@@ -42,8 +42,8 @@ To:     "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
 Cc:     Harish Patil <harish.patil@cavium.com>,
         Manish Chopra <manish.chopra@cavium.com>,
         Dept-GELinuxNICDev@cavium.com
-Subject: [PATCH 28/33] qlcnic: Mark expected switch fall-througs
-Message-ID: <43bf00764c0d67757207669b2482557695c1cc9b.1533675546.git.gustavo@embeddedor.com>
+Subject: [PATCH 29/33] qlge: mark expected switch fall-through
+Message-ID: <02b1e021460a5c355adf4342bd21ec9febaed4d0.1533675546.git.gustavo@embeddedor.com>
 References: <cover.1533675546.git.gustavo@embeddedor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -58,13 +58,13 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 189.250.73.102
 X-Source-L: No
-X-Exim-ID: 1fnBOn-001y4y-6W
+X-Exim-ID: 1fnBPd-001yVJ-Cb
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.73.102]:48130
+X-Source-Sender: (embeddedor) [189.250.73.102]:48138
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 178
+X-Email-Count: 184
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -75,36 +75,24 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 In preparation to enabling -Wimplicit-fallthrough, mark switch cases
 where we are expecting to fall through.
 
-Addresses-Coverity-ID: 1410181 ("Missing break in switch")
-Addresses-Coverity-ID: 1410184 ("Missing break in switch")
+Addresses-Coverity-ID: 114811 ("Missing break in switch")
 Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- drivers/net/ethernet/qlogic/qlcnic/qlcnic_ethtool.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/qlogic/qlge/qlge_mpi.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_ethtool.c b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_ethtool.c
-index 7f7deea..3b0adda 100644
---- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_ethtool.c
-+++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_ethtool.c
-@@ -351,9 +351,9 @@ static int qlcnic_82xx_get_link_ksettings(struct qlcnic_adapter *adapter,
- 	case QLCNIC_BRDTYPE_P3P_REF_QG:
- 	case QLCNIC_BRDTYPE_P3P_4_GB:
- 	case QLCNIC_BRDTYPE_P3P_4_GB_MM:
--
- 		supported |= SUPPORTED_Autoneg;
- 		advertising |= ADVERTISED_Autoneg;
-+		/* fall through */
- 	case QLCNIC_BRDTYPE_P3P_10G_CX4:
- 	case QLCNIC_BRDTYPE_P3P_10G_CX4_LP:
- 	case QLCNIC_BRDTYPE_P3P_10000_BASE_T:
-@@ -377,6 +377,7 @@ static int qlcnic_82xx_get_link_ksettings(struct qlcnic_adapter *adapter,
- 		supported |= SUPPORTED_TP;
- 		check_sfp_module = netif_running(adapter->netdev) &&
- 				   ahw->has_link_events;
-+		/* fall through */
- 	case QLCNIC_BRDTYPE_P3P_10G_XFP:
- 		supported |= SUPPORTED_FIBRE;
- 		advertising |= ADVERTISED_FIBRE;
+diff --git a/drivers/net/ethernet/qlogic/qlge/qlge_mpi.c b/drivers/net/ethernet/qlogic/qlge/qlge_mpi.c
+index 4be65d6..957c729 100644
+--- a/drivers/net/ethernet/qlogic/qlge/qlge_mpi.c
++++ b/drivers/net/ethernet/qlogic/qlge/qlge_mpi.c
+@@ -1176,6 +1176,7 @@ void ql_mpi_idc_work(struct work_struct *work)
+ 	case MB_CMD_PORT_RESET:
+ 	case MB_CMD_STOP_FW:
+ 		ql_link_off(qdev);
++		/* Fall through */
+ 	case MB_CMD_SET_PORT_CFG:
+ 		/* Signal the resulting link up AEN
+ 		 * that the frame routing and mac addr
 -- 
 2.7.4
 
