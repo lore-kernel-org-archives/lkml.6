@@ -6,39 +6,40 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89977C46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:53:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C105AC46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:53:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F9F6208E7
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:53:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F9F6208E7
+	by mail.kernel.org (Postfix) with ESMTP id 851322151D
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:53:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 851322151D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404117AbeHGVJU (ORCPT
+        id S2404132AbeHGVJY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 17:09:20 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33272 "EHLO
+        Tue, 7 Aug 2018 17:09:24 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33282 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404017AbeHGVJU (ORCPT
+        with ESMTP id S2404017AbeHGVJX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 17:09:20 -0400
+        Tue, 7 Aug 2018 17:09:23 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 88B63D07;
-        Tue,  7 Aug 2018 18:53:36 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B58C6D07;
+        Tue,  7 Aug 2018 18:53:39 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Quinn Tran <quinn.tran@cavium.com>,
         Himanshu Madhani <himanshu.madhani@cavium.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.14 01/21] scsi: qla2xxx: Fix unintialized List head crash
-Date:   Tue,  7 Aug 2018 20:51:15 +0200
-Message-Id: <20180807172331.014943210@linuxfoundation.org>
+Subject: [PATCH 4.14 02/21] scsi: qla2xxx: Fix NPIV deletion by calling wait_for_sess_deletion
+Date:   Tue,  7 Aug 2018 20:51:16 +0200
+Message-Id: <20180807172331.054007735@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180807172330.953888701@linuxfoundation.org>
 References: <20180807172330.953888701@linuxfoundation.org>
 User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
@@ -52,59 +53,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Quinn Tran <quinn.tran@cavium.com>
 
-commit e3dde080ebbdbb4bda8eee35d770714fee8c59ac upstream.
+commit efa93f48fa9d423fda166bc3b6c0cbb09682492e upstream.
 
-In case of IOCB Queue full or system where memory is low and driver
-receives large number of RSCN storm, the stale sp pointer can stay on
-gpnid_list resulting in page_fault.
+Add wait for session deletion to finish before freeing an NPIV scsi host.
 
-This patch fixes this issue by initializing the sp->elem list head and
-removing sp->elem before memory is freed.
-
-Following stack trace is seen
-
- 9 [ffff987b37d1bc60] page_fault at ffffffffad516768 [exception RIP: qla24xx_async_gpnid+496]
-10 [ffff987b37d1bd10] qla24xx_async_gpnid at ffffffffc039866d [qla2xxx]
-11 [ffff987b37d1bd80] qla2x00_do_work at ffffffffc036169c [qla2xxx]
-12 [ffff987b37d1be38] qla2x00_do_dpc_all_vps at ffffffffc03adfed [qla2xxx]
-13 [ffff987b37d1be78] qla2x00_do_dpc at ffffffffc036458a [qla2xxx]
-14 [ffff987b37d1bec8] kthread at ffffffffacebae31
-
-Fixes: 2d73ac6102d9 ("scsi: qla2xxx: Serialize GPNID for multiple RSCN")
-Cc: <stable@vger.kernel.org> # v4.17+
+Fixes: 726b85487067 ("qla2xxx: Add framework for async fabric discovery")
+Cc: <stable@vger.kernel.org>
 Signed-off-by: Quinn Tran <quinn.tran@cavium.com>
 Signed-off-by: Himanshu Madhani <himanshu.madhani@cavium.com>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/qla2xxx/qla_gs.c     |    4 ++++
- drivers/scsi/qla2xxx/qla_inline.h |    2 ++
- 2 files changed, 6 insertions(+)
+ drivers/scsi/qla2xxx/qla_attr.c |    1 +
+ drivers/scsi/qla2xxx/qla_gbl.h  |    1 +
+ drivers/scsi/qla2xxx/qla_mid.c  |    5 +++++
+ drivers/scsi/qla2xxx/qla_os.c   |    2 +-
+ 4 files changed, 8 insertions(+), 1 deletion(-)
 
---- a/drivers/scsi/qla2xxx/qla_gs.c
-+++ b/drivers/scsi/qla2xxx/qla_gs.c
-@@ -3368,6 +3368,10 @@ int qla24xx_async_gpnid(scsi_qla_host_t
- 	return rval;
+--- a/drivers/scsi/qla2xxx/qla_attr.c
++++ b/drivers/scsi/qla2xxx/qla_attr.c
+@@ -2142,6 +2142,7 @@ qla24xx_vport_delete(struct fc_vport *fc
+ 		msleep(1000);
  
- done_free_sp:
-+	spin_lock_irqsave(&vha->hw->vport_slock, flags);
-+	list_del(&sp->elem);
-+	spin_unlock_irqrestore(&vha->hw->vport_slock, flags);
+ 	qla24xx_disable_vp(vha);
++	qla2x00_wait_for_sess_deletion(vha);
+ 
+ 	vha->flags.delete_progress = 1;
+ 
+--- a/drivers/scsi/qla2xxx/qla_gbl.h
++++ b/drivers/scsi/qla2xxx/qla_gbl.h
+@@ -200,6 +200,7 @@ void qla2x00_handle_login_done_event(str
+ 	uint16_t *);
+ int qla24xx_post_gnl_work(struct scsi_qla_host *, fc_port_t *);
+ int qla24xx_async_abort_cmd(srb_t *);
++void qla2x00_wait_for_sess_deletion(scsi_qla_host_t *);
+ 
+ /*
+  * Global Functions in qla_mid.c source file.
+--- a/drivers/scsi/qla2xxx/qla_mid.c
++++ b/drivers/scsi/qla2xxx/qla_mid.c
+@@ -152,10 +152,15 @@ qla24xx_disable_vp(scsi_qla_host_t *vha)
+ {
+ 	unsigned long flags;
+ 	int ret;
++	fc_port_t *fcport;
+ 
+ 	ret = qla24xx_control_vp(vha, VCE_COMMAND_DISABLE_VPS_LOGO_ALL);
+ 	atomic_set(&vha->loop_state, LOOP_DOWN);
+ 	atomic_set(&vha->loop_down_timer, LOOP_DOWN_TIME);
++	list_for_each_entry(fcport, &vha->vp_fcports, list)
++		fcport->logout_on_delete = 0;
 +
- 	if (sp->u.iocb_cmd.u.ctarg.req) {
- 		dma_free_coherent(&vha->hw->pdev->dev,
- 			sizeof(struct ct_sns_pkt),
---- a/drivers/scsi/qla2xxx/qla_inline.h
-+++ b/drivers/scsi/qla2xxx/qla_inline.h
-@@ -221,6 +221,8 @@ qla2xxx_get_qpair_sp(struct qla_qpair *q
- 	sp->fcport = fcport;
- 	sp->iocbs = 1;
- 	sp->vha = qpair->vha;
-+	INIT_LIST_HEAD(&sp->elem);
-+
- done:
- 	if (!sp)
- 		QLA_QPAIR_MARK_NOT_BUSY(qpair);
++	qla2x00_mark_all_devices_lost(vha, 0);
+ 
+ 	/* Remove port id from vp target map */
+ 	spin_lock_irqsave(&vha->hw->vport_slock, flags);
+--- a/drivers/scsi/qla2xxx/qla_os.c
++++ b/drivers/scsi/qla2xxx/qla_os.c
+@@ -1136,7 +1136,7 @@ static inline int test_fcport_count(scsi
+  * qla2x00_wait_for_sess_deletion can only be called from remove_one.
+  * it has dependency on UNLOADING flag to stop device discovery
+  */
+-static void
++void
+ qla2x00_wait_for_sess_deletion(scsi_qla_host_t *vha)
+ {
+ 	qla2x00_mark_all_devices_lost(vha, 0);
 
 
