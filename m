@@ -2,164 +2,72 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F275C46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 19:31:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE13BC46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 19:32:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 432402172A
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 19:31:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="nrvY1lpT";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="gOUl3mc1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 432402172A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 72C4D2172A
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 19:32:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72C4D2172A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389902AbeHGVrl (ORCPT
+        id S2390232AbeHGVsT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 17:47:41 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:50238 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389589AbeHGVrl (ORCPT
+        Tue, 7 Aug 2018 17:48:19 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:49144 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388581AbeHGVsT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 17:47:41 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 0D3EF60B74; Tue,  7 Aug 2018 19:31:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533670308;
-        bh=H0FXJFGcH185yY8sxgr3OWF6fOlWR7Fy8HvkZSkTPMU=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=nrvY1lpT8x9p2sXkeS3RX1AqB4FIAouR1x7JTvUBOhVGOk0XN7LqOfVxT4pCAitvY
-         i/tI305la0oc/RS+cov7lw4YgKPx1kMh5tgsvF+JZOIztaLbr1YCHSrHDfxBlNtxaG
-         RFuvo0KKTloxpVriltZ6jAdsKWLT+WrcTOWD3/iI=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 2544560B13;
-        Tue,  7 Aug 2018 19:31:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533670307;
-        bh=H0FXJFGcH185yY8sxgr3OWF6fOlWR7Fy8HvkZSkTPMU=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=gOUl3mc13eHL4C+UBKw0+t6KJxNxMxgc0QEHf66ru7rdyiT9he6GkxtgTVxiOkW7m
-         kP6Yaa8JbQrYY32+/4EdZvZH6LYKFU05jwug5uAAHMLF4DeS5PsuVE43Xr/cEEjoW3
-         RlV24SdZzITl7H5Yclew750QoCmcGVxrnLySV/qo=
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+        Tue, 7 Aug 2018 17:48:19 -0400
+Received: from localhost (71-36-117-41.ptld.qwest.net [71.36.117.41])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 0BB9E13EABC15;
+        Tue,  7 Aug 2018 12:32:26 -0700 (PDT)
+Date:   Tue, 07 Aug 2018 12:32:25 -0700 (PDT)
+Message-Id: <20180807.123225.174635984138364812.davem@davemloft.net>
+To:     laoar.shao@gmail.com
+Cc:     edumazet@google.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v2] tcp: propagate gso_segs to the new skb
+ built in tcp collapse
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <1533464707-11777-1-git-send-email-laoar.shao@gmail.com>
+References: <1533464707-11777-1-git-send-email-laoar.shao@gmail.com>
+X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Date:   Tue, 07 Aug 2018 12:31:47 -0700
-From:   skannan@codeaurora.org
-To:     Rob Herring <robh@kernel.org>
-Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Mark Rutland <mark.rutland@arm.com>, georgi.djakov@linaro.org,
-        vincent.guittot@linaro.org, daidavid1@codeaurora.org,
-        bjorn.andersson@linaro.org, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] PM / devfreq: Add devfreq driver for interconnect
- bandwidth voting
-In-Reply-To: <20180807165103.GA23354@rob-hp-laptop>
-References: <1533171465-25508-2-git-send-email-skannan@codeaurora.org>
- <20180807165103.GA23354@rob-hp-laptop>
-Message-ID: <d674c9d0d71b3480186de665b2cea356@codeaurora.org>
-X-Sender: skannan@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 07 Aug 2018 12:32:26 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-08-07 09:51, Rob Herring wrote:
-> On Wed, Aug 01, 2018 at 05:57:42PM -0700, Saravana Kannan wrote:
->> This driver registers itself as a devfreq device that allows devfreq
->> governors to make bandwidth votes for an interconnect path. This 
->> allows
->> applying various policies for different interconnect paths using 
->> devfreq
->> governors.
->> 
->> Example uses:
->> * Use the devfreq performance governor to set the CPU to DDR 
->> interconnect
->>   path for maximum performance.
->> * Use the devfreq performance governor to set the GPU to DDR 
->> interconnect
->>   path for maximum performance.
->> * Use the CPU frequency to device frequency mapping governor to scale 
->> the
->>   DDR frequency based on the needs of the CPUs' current frequency.
->> 
->> Signed-off-by: Saravana Kannan <skannan@codeaurora.org>
->> ---
->>  Documentation/devicetree/bindings/devfreq/icbw.txt |  21 ++++
+From: Yafang Shao <laoar.shao@gmail.com>
+Date: Sun,  5 Aug 2018 18:25:07 +0800
+
+> The gso_segs of the new built SKB in tcp collapse is inited to 0,
+> that makes us hard to know the accurate segments number of this new SKB.
+> We'd better propagate the gso_segs of the collapsed SKB to the new built
+> one, so when this SKB is dropped (for example when doing tcp prune) the
+> sk_drops will be added to the correct value.
 > 
-> Please make bindings separate a patch.
-
-Yeah, I was aware of that. I just wanted to give some context in the v1 
-of this patch (I wasn't expecting this to merge as is).
-
->>  drivers/devfreq/Kconfig                            |  13 +++
->>  drivers/devfreq/Makefile                           |   1 +
->>  drivers/devfreq/devfreq_icbw.c                     | 116 
->> +++++++++++++++++++++
->>  4 files changed, 151 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/devfreq/icbw.txt
->>  create mode 100644 drivers/devfreq/devfreq_icbw.c
->> 
->> diff --git a/Documentation/devicetree/bindings/devfreq/icbw.txt 
->> b/Documentation/devicetree/bindings/devfreq/icbw.txt
->> new file mode 100644
->> index 0000000..36cf045
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/devfreq/icbw.txt
->> @@ -0,0 +1,21 @@
->> +Interconnect bandwidth device
->> +
->> +icbw is a device that represents an interconnect path that connects 
->> two
->> +devices. This device is typically used to vote for BW requirements 
->> between
->> +two devices. Eg: CPU to DDR, GPU to DDR, etc
+> If the collapsed SKB is fully copied to the new built one, we just add its
+> gso_segs to the new SKB.
+> While if the collapsed SKB is partially copied to the new built SKB,
+> we have to caculate how many segments are copied.
+> Furthemore, we have to reset the gso_segs of this SKB if is is partially
+> copied, so in the next round when the left segments are copied it could
+> propagate the correct value.
 > 
-> I'm pretty sure this doesn't represent a h/w device. This usage doesn't
-> encourage me to accept the interconnects binding either.
+> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
 
-Hasn't the DT rules moved past "only HW devices" in DT? Logical devices 
-are still allowed in Linux DT bindings?
+Eric, please review.
 
-Having said that, this is explicitly representing a real HW path and the 
-ability to control its performance.
-
->> +
->> +Required properties:
->> +- compatible:		Must be "devfreq-icbw"
->> +- interconnects:	Pairs of phandles and interconnect provider 
->> specifier
->> +			to denote the edge source and destination ports of
->> +			the interconnect path. See also:
->> +		Documentation/devicetree/bindings/interconnect/interconnect.txt
->> +- interconnect-names:	Must have one entry with the name "path".
-> 
-> That's pretty useless...
-
-True. But the current DT binding for interconnect consumer bindings 
-needs a interconnect name to use the of_* API. I'm open to switching to 
-an index based API if one is provided.
-
->> +
->> +Example:
->> +
->> +	qcom,cpubw {
-> 
-> Someone in QCom please broadcast to stop using qcom,foo for node names.
-> It is amazing how consistent you all are. If only folks were as
-> consistent in reading
-> Documentation/devicetree/bindings/submitting-patches.txt.
-
-Sorry :(
-
-Thanks,
-Saravana
+If partial copies are common, I wonder how much sense it makes to try to
+avoid the DIV_ROUND_UP() operations.
