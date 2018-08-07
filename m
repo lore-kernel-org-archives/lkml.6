@@ -2,170 +2,106 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FE56C46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 14:28:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4755C46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 14:28:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0341A2174B
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 14:28:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0341A2174B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 76A6E2174B
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 14:28:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76A6E2174B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389628AbeHGQmt (ORCPT
+        id S2389637AbeHGQnE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 12:42:49 -0400
-Received: from mail-io0-f199.google.com ([209.85.223.199]:47655 "EHLO
-        mail-io0-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389612AbeHGQms (ORCPT
+        Tue, 7 Aug 2018 12:43:04 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:53402 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732141AbeHGQnD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 12:42:48 -0400
-Received: by mail-io0-f199.google.com with SMTP id l25-v6so3494678iog.14
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 07:28:12 -0700 (PDT)
+        Tue, 7 Aug 2018 12:43:03 -0400
+Received: by mail-wm0-f67.google.com with SMTP id s9-v6so17659898wmh.3
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 07:28:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to:cc;
-        bh=N6ie7m31aXAsFcdkPmTIswi9xbjXSJmZgYg5b3kfano=;
-        b=mQeN4zxCnuZpCQ4nrFXbaH/Rbhw01tTnpTxW9CyRNoSnIRrXswpkvCPDW6Qz0cDWkN
-         1aW38O5Rle2tnxb5kVMPZKXkPdCeohKTD2kEi4f1ekqB9Z09nE9plTOG7+SOEvBOyv2Z
-         u4yNp6Z6IOBo9VV9pgoB6+uHLPH42s2YgL7I4ZsLVe9nRQwo5O25o1epYxDwIdeVno1E
-         ydbV98/53qu4+SN2z/sUMW8BRqFdmg2ToszguQ/6GJU2yKkMF2mGQZ2ZzdmfyHs7OYLp
-         nfL8yXnG0LQOiwILMH8HQW61WpkKukUhln/gWF/o66ieOv1AfTXcR3h2W5789t9j0xQr
-         tHvA==
-X-Gm-Message-State: AOUpUlGaLWEthNQiAb/XQMuCtiz267oWFiDe87kuQwfRguKDFx1ZGe45
-        NMcMp/Hn0oMdaE8l22Q8mFf3Dzwdkf1GoZkKaAC5GpikxFPI
-X-Google-Smtp-Source: AA+uWPxkCAy38zsltwocm1mAb4DBd4YnPx84jFo63euWHUrTVM5uP9z3WGn8FEVVtHSMHCt5AhtR0n3IQUJCnR8eCxB3w8MXqTH2
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=VlS1mzb325GmXvcLxK23PrTNTnJfcQuai4cRq/OGx7Y=;
+        b=JjsDAJnsV9Ggge7dG71H7Z2Asy7NgAHYJzuL8/UvGkjRx71m5z/6hJinC/6BztgSBz
+         59QCye3XOzbJFdegeYGBrbq+AIfLYgldTdK9FII4xaXUITUnpLgV9nIV9U9HGIy+DEH/
+         jhBlLYqkR9VqZyfZ5Cm3jpVRyV4YvSVajCWQf5Ff51D0djCw2tdc3UglkJhspVJIDRnF
+         quH3ACXjVFZx8c0RdcvoOnTmuOPv3eZ5OQ//uiEud8FA8IXl2LMR+uehKfA6bHHLeR9L
+         m93SxknvHkEeRBLPzSyaNYwvw2WZl02AILWtVd+CLJqLMgDiF02MFD7PpHPq7m9pYYX8
+         A/oQ==
+X-Gm-Message-State: AOUpUlGDFhXnBU6OIbzolS4X9b+pisUv4XIynA5spRwMIj8/AGAXO8Kc
+        EvMTR+PNy73onQP06PIZdKY=
+X-Google-Smtp-Source: AA+uWPxj8TTmr71GznnEB1UO+pgjNH1F7DJz79n7SCY20SXN3g+KcC/E4CndheIWIYaBBvqBrgvK6w==
+X-Received: by 2002:a1c:f516:: with SMTP id t22-v6mr1780114wmh.103.1533652107517;
+        Tue, 07 Aug 2018 07:28:27 -0700 (PDT)
+Received: from techadventures.net (techadventures.net. [62.201.165.239])
+        by smtp.gmail.com with ESMTPSA id i14-v6sm3501341wmd.13.2018.08.07.07.28.26
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 07 Aug 2018 07:28:26 -0700 (PDT)
+Received: by techadventures.net (Postfix, from userid 1000)
+        id 141FF12470C; Tue,  7 Aug 2018 16:28:26 +0200 (CEST)
+Date:   Tue, 7 Aug 2018 16:28:26 +0200
+From:   Oscar Salvador <osalvador@techadventures.net>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     akpm@linux-foundation.org, mhocko@suse.com,
+        dan.j.williams@intel.com, pasha.tatashin@oracle.com,
+        jglisse@redhat.com, yasu.isimatu@gmail.com, logang@deltatee.com,
+        dave.jiang@intel.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Oscar Salvador <osalvador@suse.de>
+Subject: Re: [RFC PATCH 0/3] Do not touch pages in remove_memory path
+Message-ID: <20180807142826.GB5309@techadventures.net>
+References: <20180807133757.18352-1-osalvador@techadventures.net>
+ <6407d022-87b7-f5e0-572a-c5c29aba1314@redhat.com>
+ <20180807141922.GA5244@techadventures.net>
+ <d0ea36f7-9329-f947-3862-011827aee20c@redhat.com>
 MIME-Version: 1.0
-X-Received: by 2002:a24:1c10:: with SMTP id c16-v6mr7064809itc.13.1533652091998;
- Tue, 07 Aug 2018 07:28:11 -0700 (PDT)
-Date:   Tue, 07 Aug 2018 07:28:11 -0700
-In-Reply-To: <CACT4Y+a+c6skSwS8WfY9GUs9mnjmf_aa7C5crW-m2Jb54ZbyuA@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000271b760572d934fe@google.com>
-Subject: Re: Re: WARNING in input_alloc_absinfo
-From:   syzbot <syzbot+@syzkaller.appspotmail.com>
-To:     "'Dmitry Vyukov' via syzkaller-bugs" 
-        <syzkaller-bugs@googlegroups.com>
-Cc:     dmitry.torokhov@gmail.com, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org, rydberg@bitmath.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d0ea36f7-9329-f947-3862-011827aee20c@redhat.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> On Thu, Jul 26, 2018 at 11:40 AM, Dmitry Vyukov <dvyukov@google.com>  
-> wrote:
->> On Mon, Jul 2, 2018 at 11:30 AM, Dmitry Vyukov <dvyukov@google.com>  
->> wrote:
->>> On Fri, Jun 29, 2018 at 11:59 PM,  <dmitry.torokhov@gmail.com> wrote:
->>>> On Monday, June 25, 2018 at 5:43:02 AM UTC-7, Dmitry Vyukov wrote:
+On Tue, Aug 07, 2018 at 04:20:37PM +0200, David Hildenbrand wrote:
+> On 07.08.2018 16:19, Oscar Salvador wrote:
+> > On Tue, Aug 07, 2018 at 04:16:35PM +0200, David Hildenbrand wrote:
+> >> On 07.08.2018 15:37, osalvador@techadventures.net wrote:
+> >>> From: Oscar Salvador <osalvador@suse.de>
+> >>>
+> >>> This tries to fix [1], which was reported by David Hildenbrand, and also
+> >>> does some cleanups/refactoring.
+> >>>
+> >>> I am sending this as RFC to see if the direction I am going is right before
+> >>> spending more time into it.
+> >>> And also to gather feedback about hmm/zone_device stuff.
+> >>> The code compiles and I tested it successfully with normal memory-hotplug operations.
+> >>>
+> >>
+> >> Please coordinate next time with people already working on this,
+> >> otherwise you might end up wasting other people's time.
+> > 
+> > Hi David,
+> > 
+> > Sorry, if you are already working on this, I step back immediately.
+> > I will wait for your work.
+> 
+> No, please keep going, you are way ahead of me ;)
+> 
+> (I was got stuck at ZONE_DEVICE so far)
 
->>>>> On Tue, Jun 19, 2018 at 8:51 PM, Dmitry Torokhov
->>>>> <dmitry....@gmail.com> wrote:
->>>>> > On Thu, Jun 14, 2018 at 05:47:03AM -0700, syzbot wrote:
->>>>> >> Hello,
->>>>> >>
->>>>> >> syzbot found the following crash on:
->>>>> >>
->>>>> >> HEAD commit:    d2d741e5d189 kmsan: add initialization for shmem  
->>>>> pages
->>>>> >> git tree:       https://github.com/google/kmsan.git/master
->>>>> >> console output:
->>>>> >> https://syzkaller.appspot.com/x/log.txt?x=1775bae7800000
->>>>> >> kernel config:
->>>>> >> https://syzkaller.appspot.com/x/.config?x=48f9de3384bcd0f
->>>>> >> dashboard link:
->>>>> >> https://syzkaller.appspot.com/bug?extid=c382812c78d98ecd9fb8
->>>>> >> compiler:       clang version 7.0.0 (trunk 329391)
->>>>> >> syzkaller
->>>>> >> repro:https://syzkaller.appspot.com/x/repro.syz?x=13b31ae7800000
->>>>> >> C reproducer:
->>>>> >> https://syzkaller.appspot.com/x/repro.c?x=1733255b800000
->>>>> >>
->>>>> >> IMPORTANT: if you fix the bug, please add the following tag to the
->>>>> >> commit:
->>>>> >> Reported-by: syzbot+c38281...@syzkaller.appspotmail.com
->>>>> >>
->>>>> >> RBP: 00000000006cb018 R08: 0000000000000001 R09: 00007ffe93080031
->>>>> >> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000004
->>>>> >> R13: ffffffffffffffff R14: 0000000000000000 R15: 0000000000000000
->>>>> >> ------------[ cut here ]------------
->>>>> >> input_alloc_absinfo(): kcalloc() failed?
->>>>> >> WARNING: CPU: 1 PID: 4498 at drivers/input/input.c:487
->>>>> >> input_alloc_absinfo+0x183/0x190 drivers/input/input.c:487
->>>>> >> Kernel panic - not syncing: panic_on_warn set ...
->>>>> >
->>>>> > Hmm, so there is not really a problem as far as I am concerned. We  
->>>>> do
->>>>> > generate a warning if we can't allocate memory for absinfo,  as  
->>>>> this is
->>>>> > really unexpected, but the case is handled properly by the callers  
->>>>> so
->>>>> > there is no reason for us to go belly up here.
+It seems mine breaks ZONE_DEVICE for hmm at least, so.. not much better ^^.
+So since you already got some work, let us not throw it away.
 
->>>>> Note to myself: ping this bug when "include/asm-generic/bug.h: clarify
->>>>> valid uses of WARN()" is fully merged.
-
-
->>>> No, this warning will still be there even after the "clarifying" patch  
->>>> is
->>>> merged. It does not check user inputs, it warns that the system is so  
->>>> low on
->>>> memory that we could not allocate measly amount needed for absinfo.  
->>>> Treat it
->>>> as you treat OOM warnings from kmalloc() itself.
-
->>> Hi Dmitry,
-
->>> kmalloc does not produce WARNING on OOM. The rule is not only about
->>> invalid inputs, it's also about any transient conditions and "WARNING
->>> only for kernel bugs".
-
->>> To put this in larger context, being able to distinguish kernel bugs
->>> from non-bugs is a very important and practically useful capability,
->>> which in particular enables systematic testing, but also makes things
->>> simpler for all kernel users. There must be a very significant reason
->>> to abandon this capability. What is that reason in this case?
-
->>> I also don't understand what is so special about this case. If we want
->>> user message for kmalloc failures, kmalloc is the right place for such
->>> warning, rather than a random call site out of thousands. Consider,
->>> the allocation failure can happen on the very next or previous kmalloc
->>> call, and user won't be warned. The rest of the kernel (including the
->>> rest of input sybsystem) does not warn on allocation failures, so that
->>> looks like what we need to do here as well. Or, if there is something
->>> very special about this particular kmalloc call site, something that
->>> makes it different from thousands of other call sites, why don't you
->>> want to replace it with pr_err which would both give the diagnostics
->>> but also not block systematic testing? Which looks like a win-win to
->>> me.
-
->>> Thanks
-
-
->> So, Dmitry, do you mind fixing this in the name of unblocking kernel  
->> testing?
-
-
-> Let's tell syzbot about the pending fix:
-
-> #syz fix: Input: do not use WARN() in input_alloc_absinfo()
-
-Can't find the corresponding bug.
-
-
-> --
-> You received this message because you are subscribed to the Google  
-> Groups "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an  
-> email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit  
-> https://groups.google.com/d/msgid/syzkaller-bugs/CACT4Y%2Ba%2Bc6skSwS8WfY9GUs9mnjmf_aa7C5crW-m2Jb54ZbyuA%40mail.gmail.com.
-> For more options, visit https://groups.google.com/d/optout.
+Thanks
+-- 
+Oscar Salvador
+SUSE L3
