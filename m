@@ -2,40 +2,40 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E777CC46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:53:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4314BC46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:53:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6FA8215F1
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:53:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6FA8215F1
+	by mail.kernel.org (Postfix) with ESMTP id DA67C20685
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:53:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA67C20685
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404087AbeHGVJO (ORCPT
+        id S2404102AbeHGVJR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 17:09:14 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33256 "EHLO
+        Tue, 7 Aug 2018 17:09:17 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33268 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404017AbeHGVJN (ORCPT
+        with ESMTP id S2404017AbeHGVJQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 17:09:13 -0400
+        Tue, 7 Aug 2018 17:09:16 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 865343EE;
-        Tue,  7 Aug 2018 18:53:30 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 84AE0D01;
+        Tue,  7 Aug 2018 18:53:33 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Shankara Pailoor <shankarapailoor@gmail.com>,
-        Dave Kleikamp <dave.kleikamp@oracle.com>,
-        Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 4.17 18/18] jfs: Fix inconsistency between memory allocation and ea_buf->max_size
-Date:   Tue,  7 Aug 2018 20:51:21 +0200
-Message-Id: <20180807172313.642267948@linuxfoundation.org>
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH 4.17 10/18] nohz: Fix missing tick reprogram when interrupting an inline softirq
+Date:   Tue,  7 Aug 2018 20:51:13 +0200
+Message-Id: <20180807172313.352444620@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180807172312.964272530@linuxfoundation.org>
 References: <20180807172312.964272530@linuxfoundation.org>
@@ -52,45 +52,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Shankara Pailoor <shankarapailoor@gmail.com>
+From: Frederic Weisbecker <frederic@kernel.org>
 
-commit 92d34134193e5b129dc24f8d79cb9196626e8d7a upstream.
+commit 0a0e0829f990120cef165bbb804237f400953ec2 upstream.
 
-The code is assuming the buffer is max_size length, but we weren't
-allocating enough space for it.
+The full nohz tick is reprogrammed in irq_exit() only if the exit is not in
+a nesting interrupt. This stands as an optimization: whether a hardirq or a
+softirq is interrupted, the tick is going to be reprogrammed when necessary
+at the end of the inner interrupt, with even potential new updates on the
+timer queue.
 
-Signed-off-by: Shankara Pailoor <shankarapailoor@gmail.com>
-Signed-off-by: Dave Kleikamp <dave.kleikamp@oracle.com>
-Cc: Guenter Roeck <linux@roeck-us.net>
+When soft interrupts are interrupted, it's assumed that they are executing
+on the tail of an interrupt return. In that case tick_nohz_irq_exit() is
+called after softirq processing to take care of the tick reprogramming.
+
+But the assumption is wrong: softirqs can be processed inline as well, ie:
+outside of an interrupt, like in a call to local_bh_enable() or from
+ksoftirqd.
+
+Inline softirqs don't reprogram the tick once they are done, as opposed to
+interrupt tail softirq processing. So if a tick interrupts an inline
+softirq processing, the next timer will neither be reprogrammed from the
+interrupting tick's irq_exit() nor after the interrupted softirq
+processing. This situation may leave the tick unprogrammed while timers are
+armed.
+
+To fix this, simply keep reprogramming the tick even if a softirq has been
+interrupted. That can be optimized further, but for now correctness is more
+important.
+
+Note that new timers enqueued in nohz_full mode after a softirq gets
+interrupted will still be handled just fine through self-IPIs triggered by
+the timer code.
+
+Reported-by: Anna-Maria Gleixner <anna-maria@linutronix.de>
+Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Anna-Maria Gleixner <anna-maria@linutronix.de>
+Cc: stable@vger.kernel.org # 4.14+
+Link: https://lkml.kernel.org/r/1533303094-15855-1-git-send-email-frederic@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/jfs/xattr.c |   10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ kernel/softirq.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/jfs/xattr.c
-+++ b/fs/jfs/xattr.c
-@@ -491,15 +491,17 @@ static int ea_get(struct inode *inode, s
- 	if (size > PSIZE) {
- 		/*
- 		 * To keep the rest of the code simple.  Allocate a
--		 * contiguous buffer to work with
-+		 * contiguous buffer to work with. Make the buffer large
-+		 * enough to make use of the whole extent.
- 		 */
--		ea_buf->xattr = kmalloc(size, GFP_KERNEL);
-+		ea_buf->max_size = (size + sb->s_blocksize - 1) &
-+		    ~(sb->s_blocksize - 1);
-+
-+		ea_buf->xattr = kmalloc(ea_buf->max_size, GFP_KERNEL);
- 		if (ea_buf->xattr == NULL)
- 			return -ENOMEM;
+--- a/kernel/softirq.c
++++ b/kernel/softirq.c
+@@ -387,7 +387,7 @@ static inline void tick_irq_exit(void)
  
- 		ea_buf->flag = EA_MALLOC;
--		ea_buf->max_size = (size + sb->s_blocksize - 1) &
--		    ~(sb->s_blocksize - 1);
- 
- 		if (ea_size == 0)
- 			return 0;
+ 	/* Make sure that timer wheel updates are propagated */
+ 	if ((idle_cpu(cpu) && !need_resched()) || tick_nohz_full_cpu(cpu)) {
+-		if (!in_interrupt())
++		if (!in_irq())
+ 			tick_nohz_irq_exit();
+ 	}
+ #endif
 
 
