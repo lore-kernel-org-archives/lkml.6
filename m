@@ -4,31 +4,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
 	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9EE6C46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 11:08:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6B7BC46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 11:08:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D84A2174D
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 11:08:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D84A2174D
+	by mail.kernel.org (Postfix) with ESMTP id 7CEB121779
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 11:08:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CEB121779
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388792AbeHGNWk (ORCPT
+        id S2388831AbeHGNWm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 09:22:40 -0400
-Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:52034 "EHLO
+        Tue, 7 Aug 2018 09:22:42 -0400
+Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:52037 "EHLO
         herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727388AbeHGNWj (ORCPT
+        with ESMTP id S1727388AbeHGNWm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 09:22:39 -0400
+        Tue, 7 Aug 2018 09:22:42 -0400
 Received: from taln60.nuvoton.co.il (ntil-fw [212.199.177.25])
-        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id w77AbQV4002677;
-        Tue, 7 Aug 2018 13:37:26 +0300
+        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id w77AbRe5002678;
+        Tue, 7 Aug 2018 13:37:27 +0300
 Received: by taln60.nuvoton.co.il (Postfix, from userid 20088)
-        id DB25062EDE; Tue,  7 Aug 2018 14:07:25 +0300 (IDT)
+        id D0817630C7; Tue,  7 Aug 2018 14:07:26 +0300 (IDT)
 From:   Tali Perry <tali.perry1@gmail.com>
 To:     tali.perry1@gmail.com, avifishman70@gmail.com, tmaimon77@gmail.com,
         venture@google.com, yuenn@google.com, brendanhiggins@google.com,
@@ -43,10 +43,12 @@ To:     tali.perry1@gmail.com, avifishman70@gmail.com, tmaimon77@gmail.com,
         heikki.krogerus@linux.intel.com, tglx@linutronix.de
 Cc:     linux-i2c@vger.kernel.org, openbmc@lists.ozlabs.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 0/2] i2c: npcm7xx: new driver for I2C controller
-Date:   Tue,  7 Aug 2018 14:07:07 +0300
-Message-Id: <20180807110709.31847-1-tali.perry1@gmail.com>
+Subject: [PATCH v2 1/2] dt-binding: i2c: npcm7xx: add binding for i2c controller
+Date:   Tue,  7 Aug 2018 14:07:08 +0300
+Message-Id: <20180807110709.31847-2-tali.perry1@gmail.com>
 X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180807110709.31847-1-tali.perry1@gmail.com>
+References: <20180807110709.31847-1-tali.perry1@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -70,19 +72,63 @@ v1: initial version
 Signed-off-by: Tali Perry <tali.perry1@gmail.com>
 
 ---
-Tali Perry (2):
-  dt-binding: i2c: npcm7xx: add binding for i2c controller
-  i2c: npcm7xx: add i2c controller master mode only
-
- .../devicetree/bindings/i2c/i2c-npcm7xx.txt        |   27 +
- MAINTAINERS                                        |    8 +
- drivers/i2c/busses/Kconfig                         |   11 +
- drivers/i2c/busses/Makefile                        |    1 +
- drivers/i2c/busses/i2c-npcm7xx.c                   | 2017 ++++++++++++++++++++
- 5 files changed, 2064 insertions(+)
+ .../devicetree/bindings/i2c/i2c-npcm7xx.txt        | 27 ++++++++++++++++++++++
+ MAINTAINERS                                        |  8 +++++++
+ 2 files changed, 35 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/i2c/i2c-npcm7xx.txt
- create mode 100644 drivers/i2c/busses/i2c-npcm7xx.c
 
+diff --git a/Documentation/devicetree/bindings/i2c/i2c-npcm7xx.txt b/Documentation/devicetree/bindings/i2c/i2c-npcm7xx.txt
+new file mode 100644
+index 000000000000..e2ee45d7a41e
+--- /dev/null
++++ b/Documentation/devicetree/bindings/i2c/i2c-npcm7xx.txt
+@@ -0,0 +1,27 @@
++Nuvoton NPCM7XX I2C bus
++
++The NPCM750x includes sixteen I2C busses
++
++Required properties:
++- compatible      : must be "nuvoton,npcm750-i2c-bus"
++- reg             : Offset and length of the register set for the device.
++- interrupts      : Contain the I2C interrupt with flags for falling edge.
++- clocks          : phandle of I2C reference clock.
++
++Optional:
++- bus-frequency   : Contain the I2C bus frequency,
++			the default I2C bus frequency is 100000.
++- pinctrl-0       : must be <&smbX_pins>, X is module number
++			(on NPCM7XX it's 0 to 15)
++- pinctrl-names   : should be set to "default"
++Example:
++
++	i2c0: i2c-bus@80000 {
++		compatible = "nuvoton,npcm750-i2c-bus";
++		reg = <0x80000 0x1000>;
++		clocks = <&clk NPCM7XX_CLK_APB2>;
++		bus-frequency = <100000>;
++		interrupts = <GIC_SPI 64 IRQ_TYPE_LEVEL_HIGH>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&smb0_pins>;
++	};
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 192d7f73fd01..13bac916d21d 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1244,6 +1244,14 @@ F:	drivers/i2c/busses/i2c-aspeed.c
+ F:	Documentation/devicetree/bindings/interrupt-controller/aspeed,ast2400-i2c-ic.txt
+ F:	Documentation/devicetree/bindings/i2c/i2c-aspeed.txt
+ 
++ARM/NUVOTON I2C DRIVER
++M:	Tali Perry <tali.perry1@gmail.com>
++L:	linux-i2c@vger.kernel.org
++L:	openbmc@lists.ozlabs.org (moderated for non-subscribers)
++S:	Maintained
++F:	drivers/i2c/busses/i2c-npcm7xx.c
++F:	Documentation/devicetree/bindings/i2c/i2c-npcm7xx.txt
++
+ ARM/ASPEED MACHINE SUPPORT
+ M:	Joel Stanley <joel@jms.id.au>
+ R:	Andrew Jeffery <andrew@aj.id.au>
 -- 
 2.14.1
 
