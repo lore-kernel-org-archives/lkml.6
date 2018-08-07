@@ -2,113 +2,124 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 472EDC46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 12:51:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1E0CC46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 12:55:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 097B72170A
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 12:51:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 097B72170A
+	by mail.kernel.org (Postfix) with ESMTP id 7589221571
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 12:55:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7589221571
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389097AbeHGPFt (ORCPT
+        id S2388580AbeHGPJn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 11:05:49 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59092 "EHLO mx1.redhat.com"
+        Tue, 7 Aug 2018 11:09:43 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38042 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727056AbeHGPFs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 11:05:48 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        id S1727605AbeHGPJn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 11:09:43 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1193540201A3;
-        Tue,  7 Aug 2018 12:51:37 +0000 (UTC)
-Received: from t460s.redhat.com (ovpn-116-32.ams2.redhat.com [10.36.116.32])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7A05D2156897;
-        Tue,  7 Aug 2018 12:51:35 +0000 (UTC)
-From:   David Hildenbrand <david@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-s390@vger.kernel.org,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        David Hildenbrand <david@redhat.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Pierre Morel <pmorel@linux.ibm.com>
-Subject: [PATCH RFC 2/2] KVM: s390: introduce and use KVM_REQ_VSIE_RESTART
-Date:   Tue,  7 Aug 2018 14:51:31 +0200
-Message-Id: <20180807125131.3606-3-david@redhat.com>
-In-Reply-To: <20180807125131.3606-1-david@redhat.com>
-References: <20180807125131.3606-1-david@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Tue, 07 Aug 2018 12:51:37 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Tue, 07 Aug 2018 12:51:37 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'david@redhat.com' RCPT:''
+        by mx1.redhat.com (Postfix) with ESMTPS id 9014F87A70;
+        Tue,  7 Aug 2018 12:55:30 +0000 (UTC)
+Received: from krava (unknown [10.43.17.214])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 5F7E310075E7;
+        Tue,  7 Aug 2018 12:55:29 +0000 (UTC)
+Date:   Tue, 7 Aug 2018 14:55:28 +0200
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Cc:     linux-kernel@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>
+Subject: Re: [PATCH 2/2] perf map: optimize maps__fixup_overlappings()
+Message-ID: <20180807125528.GE7716@krava>
+References: <153363294102.396323.6277944760215058174.stgit@buzz>
+ <153363294565.396323.4605638589903548668.stgit@buzz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <153363294565.396323.4605638589903548668.stgit@buzz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Tue, 07 Aug 2018 12:55:30 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Tue, 07 Aug 2018 12:55:30 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When we change the crycb (or execution controls), we also have to make sure
-that the vSIE shadow datastructures properly consider the changed
-values before rerunning the vSIE. We can achieve that by simply using a
-VCPU request now.
+On Tue, Aug 07, 2018 at 12:09:05PM +0300, Konstantin Khlebnikov wrote:
+> This function splits and removes overlapping areas.
+> 
+> Maps in tree are ordered by start address thus we could find
+> first overlap and stop if next map does not overlap.
+> 
+> Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+> ---
+>  tools/perf/util/map.c |   21 ++++++++++++++++++---
+>  1 file changed, 18 insertions(+), 3 deletions(-)
+> 
+> diff --git a/tools/perf/util/map.c b/tools/perf/util/map.c
+> index 89ac5b5dc218..9b3f4d244ad4 100644
+> --- a/tools/perf/util/map.c
+> +++ b/tools/perf/util/map.c
+> @@ -675,20 +675,35 @@ static void __map_groups__insert(struct map_groups *mg, struct map *map)
+>  static int maps__fixup_overlappings(struct maps *maps, struct map *map, FILE *fp)
+>  {
+>  	struct rb_root *root;
+> -	struct rb_node *next;
+> +	struct rb_node *next, *first;
+>  	int err = 0;
+>  
+>  	down_write(&maps->lock);
+>  
+>  	root = &maps->entries;
+> -	next = rb_first(root);
+>  
+> +	/* find first where end > map->start, same as find_vma() */
+> +	next = root->rb_node;
+> +	first = NULL;
+> +	while (next) {
+> +		struct map *pos = rb_entry(next, struct map, rb_node);
+> +
+> +		if (pos->end > map->start) {
+> +			first = next;
+> +			if (pos->start <= map->start)
+> +				break;
 
-This has to be a synchronous request (== handled before entering the
-(v)SIE again).
+please use in here the call to map__overlap as in the
+while loop below.. we could change map__overlap to above
+(yours) overlap check, seems more straight
 
-The request will make sure that the vSIE handler is left, and that the
-request will be processed (NOP), therefore forcing a reload of all
-vSIE data (including rebuilding the crycb) when re-entering the vSIE
-interception handler the next time.
+> +			next = next->rb_left;
+> +		} else
+> +			next = next->rb_right;
+> +	}
+> +
+> +	next = first;
+>  	while (next) {
+>  		struct map *pos = rb_entry(next, struct map, rb_node);
+>  		next = rb_next(&pos->rb_node);
+>  
+>  		if (!map__overlap(pos, map))
+> -			continue;
+> +			break;
 
-Signed-off-by: David Hildenbrand <david@redhat.com>
----
- arch/s390/include/asm/kvm_host.h | 1 +
- arch/s390/kvm/kvm-s390.c         | 7 ++++++-
- 2 files changed, 7 insertions(+), 1 deletion(-)
+please put in ehre the comment from changelog,
+that we could stop searching in here
 
-diff --git a/arch/s390/include/asm/kvm_host.h b/arch/s390/include/asm/kvm_host.h
-index 29c940bf8506..75d39628f21d 100644
---- a/arch/s390/include/asm/kvm_host.h
-+++ b/arch/s390/include/asm/kvm_host.h
-@@ -44,6 +44,7 @@
- #define KVM_REQ_ICPT_OPEREXC	KVM_ARCH_REQ(2)
- #define KVM_REQ_START_MIGRATION KVM_ARCH_REQ(3)
- #define KVM_REQ_STOP_MIGRATION  KVM_ARCH_REQ(4)
-+#define KVM_REQ_VSIE_RESTART	KVM_ARCH_REQ(5)
- 
- #define SIGP_CTRL_C		0x80
- #define SIGP_CTRL_SCN_MASK	0x3f
-diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
-index c87734a31fdb..2fdc017d91f0 100644
---- a/arch/s390/kvm/kvm-s390.c
-+++ b/arch/s390/kvm/kvm-s390.c
-@@ -842,8 +842,11 @@ void kvm_s390_vcpu_crypto_reset_all(struct kvm *kvm)
- 
- 	kvm_s390_vcpu_block_all(kvm);
- 
--	kvm_for_each_vcpu(i, vcpu, kvm)
-+	kvm_for_each_vcpu(i, vcpu, kvm) {
- 		kvm_s390_vcpu_crypto_setup(vcpu);
-+		/* recreate the shadow crycb by leaving the VSIE handler */
-+		kvm_s390_sync_request(KVM_REQ_VSIE_RESTART, vcpu);
-+	}
- 
- 	kvm_s390_vcpu_unblock_all(kvm);
- }
-@@ -3201,6 +3204,8 @@ static int kvm_s390_handle_requests(struct kvm_vcpu *vcpu)
- 
- 	/* nothing to do, just clear the request */
- 	kvm_clear_request(KVM_REQ_UNHALT, vcpu);
-+	/* we left the vsie handler, nothing to do, just clear the request */
-+	kvm_clear_request(KVM_REQ_VSIE_RESTART, vcpu);
- 
- 	return 0;
- }
--- 
-2.17.1
+thanks,
+jirka
 
+>  
+>  		if (verbose >= 2) {
+>  
+> 
