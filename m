@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12390C46472
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 11:42:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B67C5C46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 11:42:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BAAF2217B4
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 11:42:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4814D21779
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 11:42:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="MdX7T8h3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BAAF2217B4
+	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="Lixiz9SQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4814D21779
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=crapouillou.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389007AbeHGN4e (ORCPT
+        id S2389027AbeHGN4h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 09:56:34 -0400
-Received: from outils.crapouillou.net ([89.234.176.41]:53168 "EHLO
+        Tue, 7 Aug 2018 09:56:37 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:52542 "EHLO
         crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388974AbeHGN4d (ORCPT
+        with ESMTP id S2388986AbeHGN4f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 09:56:33 -0400
+        Tue, 7 Aug 2018 09:56:35 -0400
 From:   Paul Cercueil <paul@crapouillou.net>
 To:     Vinod Koul <vkoul@kernel.org>, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -35,97 +35,56 @@ To:     Vinod Koul <vkoul@kernel.org>, Rob Herring <robh+dt@kernel.org>,
 Cc:     Paul Cercueil <paul@crapouillou.net>, dmaengine@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mips@linux-mips.org
-Subject: [PATCH v4 09/18] dmaengine: dma-jz4780: Add support for the JZ4725B SoC
-Date:   Tue,  7 Aug 2018 13:42:09 +0200
-Message-Id: <20180807114218.20091-10-paul@crapouillou.net>
+Subject: [PATCH v4 10/18] dmaengine: dma-jz4780: Enable Fast DMA to the AIC
+Date:   Tue,  7 Aug 2018 13:42:10 +0200
+Message-Id: <20180807114218.20091-11-paul@crapouillou.net>
 In-Reply-To: <20180807114218.20091-1-paul@crapouillou.net>
 References: <20180807114218.20091-1-paul@crapouillou.net>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net; s=mail; t=1533642156; bh=pE4B1RYJ+UcIsBTZIecfuKr/fVkEc46S1/ClGqsbGeY=; h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=MdX7T8h3khLYY9S8k6IUupSjqnE21aP4ppF812rpDbgH7kTJVim5VBnRPtBBpHmP74dVS+atIuy3nnAJhwW9houAnplngFkoLIhD0RRn92RZFF91QwGvzTkVNdp1zh5+bDEC33kPzJGqr6V6Bk+6WLrxmIZMHVlsbI18S+o/x0E=
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net; s=mail; t=1533642157; bh=eiUOmW3tAutUTASBDPdhm67AII/Vgxt1HbD0ikyWV4M=; h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=Lixiz9SQcKIzwbZWeg3/WseFwtvwCaIFyY84Fu2FHM9q/LocISeOClDS6V13wiYL5jpYSJWx1K9OdpULBw2YkDvHxpOf/g3x5X2tg6K3BqeHepiw9J4wg3QFcwjxRt6uUuIom2TPE6sIe0x/P/8fPCzhAbXWk9xQvWSX02Q038Y=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The JZ4725B has one DMA core starring six DMA channels.
-As for the JZ4770, each DMA channel's clock can be enabled with
-a register write, the difference here being that once started, it
-is not possible to turn it off.
+With the fast DMA bit set, the DMA will transfer twice as much data
+per clock period to the AIC, so there is little point not to set it.
 
 Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 Tested-by: Mathieu Malaterre <malat@debian.org>
 Reviewed-by: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
 ---
- drivers/dma/dma-jz4780.c | 23 ++++++++++++++++++++---
- 1 file changed, 20 insertions(+), 3 deletions(-)
+ drivers/dma/dma-jz4780.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
- v2: - Add comments about channel enabling/disabling
-     - The documentation update is now in patch 01/17
+ v2: No change
 
  v3: No change
 
- v4: Drop the SoC version ID and use the 'flags' field of the
-     jz4780_dma_soc_data structure
+ v4: No change
 
 diff --git a/drivers/dma/dma-jz4780.c b/drivers/dma/dma-jz4780.c
-index 2d194dfa697e..565971c2a33c 100644
+index 565971c2a33c..3a4d0a4b550d 100644
 --- a/drivers/dma/dma-jz4780.c
 +++ b/drivers/dma/dma-jz4780.c
-@@ -94,6 +94,7 @@
- #define JZ_SOC_DATA_ALLOW_LEGACY_DT	BIT(0)
- #define JZ_SOC_DATA_PROGRAMMABLE_DMA	BIT(1)
- #define JZ_SOC_DATA_PER_CHAN_PM		BIT(2)
-+#define JZ_SOC_DATA_NO_DCKES_DCKEC	BIT(3)
+@@ -52,6 +52,7 @@
+ #define JZ_DMA_DMAC_DMAE	BIT(0)
+ #define JZ_DMA_DMAC_AR		BIT(2)
+ #define JZ_DMA_DMAC_HLT		BIT(3)
++#define JZ_DMA_DMAC_FAIC	BIT(27)
+ #define JZ_DMA_DMAC_FMSC	BIT(31)
  
- /**
-  * struct jz4780_dma_hwdesc - descriptor structure read by the DMA controller.
-@@ -208,14 +209,23 @@ static inline void jz4780_dma_ctrl_writel(struct jz4780_dma_dev *jzdma,
- static inline void jz4780_dma_chan_enable(struct jz4780_dma_dev *jzdma,
- 	unsigned int chn)
- {
--	if (jzdma->soc_data->flags & JZ_SOC_DATA_PER_CHAN_PM)
--		jz4780_dma_ctrl_writel(jzdma, JZ_DMA_REG_DCKES, BIT(chn));
-+	if (jzdma->soc_data->flags & JZ_SOC_DATA_PER_CHAN_PM) {
-+		unsigned int reg;
-+
-+		if (jzdma->soc_data->flags & JZ_SOC_DATA_NO_DCKES_DCKEC)
-+			reg = JZ_DMA_REG_DCKE;
-+		else
-+			reg = JZ_DMA_REG_DCKES;
-+
-+		jz4780_dma_ctrl_writel(jzdma, reg, BIT(chn));
-+	}
- }
+ #define JZ_DMA_DRT_AUTO		0x8
+@@ -923,8 +924,8 @@ static int jz4780_dma_probe(struct platform_device *pdev)
+ 	 * Also set the FMSC bit - it increases MSC performance, so it makes
+ 	 * little sense not to enable it.
+ 	 */
+-	jz4780_dma_ctrl_writel(jzdma, JZ_DMA_REG_DMAC,
+-			  JZ_DMA_DMAC_DMAE | JZ_DMA_DMAC_FMSC);
++	jz4780_dma_ctrl_writel(jzdma, JZ_DMA_REG_DMAC, JZ_DMA_DMAC_DMAE |
++			       JZ_DMA_DMAC_FAIC | JZ_DMA_DMAC_FMSC);
  
- static inline void jz4780_dma_chan_disable(struct jz4780_dma_dev *jzdma,
- 	unsigned int chn)
- {
--	if (jzdma->soc_data->flags & JZ_SOC_DATA_PER_CHAN_PM)
-+	if ((jzdma->soc_data->flags & JZ_SOC_DATA_PER_CHAN_PM) &&
-+			!(jzdma->soc_data->flags & JZ_SOC_DATA_NO_DCKES_DCKEC))
- 		jz4780_dma_ctrl_writel(jzdma, JZ_DMA_REG_DCKEC, BIT(chn));
- }
- 
-@@ -978,6 +988,12 @@ static const struct jz4780_dma_soc_data jz4740_dma_soc_data = {
- 	.transfer_ord_max = 5,
- };
- 
-+static const struct jz4780_dma_soc_data jz4725b_dma_soc_data = {
-+	.nb_channels = 6,
-+	.transfer_ord_max = 5,
-+	.flags = JZ_SOC_DATA_PER_CHAN_PM | JZ_SOC_DATA_NO_DCKES_DCKEC,
-+};
-+
- static const struct jz4780_dma_soc_data jz4770_dma_soc_data = {
- 	.nb_channels = 6,
- 	.transfer_ord_max = 6,
-@@ -992,6 +1008,7 @@ static const struct jz4780_dma_soc_data jz4780_dma_soc_data = {
- 
- static const struct of_device_id jz4780_dma_dt_match[] = {
- 	{ .compatible = "ingenic,jz4740-dma", .data = &jz4740_dma_soc_data },
-+	{ .compatible = "ingenic,jz4725b-dma", .data = &jz4725b_dma_soc_data },
- 	{ .compatible = "ingenic,jz4770-dma", .data = &jz4770_dma_soc_data },
- 	{ .compatible = "ingenic,jz4780-dma", .data = &jz4780_dma_soc_data },
- 	{},
+ 	if (soc_data->flags & JZ_SOC_DATA_PROGRAMMABLE_DMA)
+ 		jz4780_dma_ctrl_writel(jzdma, JZ_DMA_REG_DMACP, 0);
 -- 
 2.11.0
 
