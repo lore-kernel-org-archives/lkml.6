@@ -5,112 +5,124 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 736CAC46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 17:14:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8741C46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 17:15:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 387322083C
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 17:14:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 387322083C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 9AF172083C
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 17:15:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9AF172083C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390157AbeHGTaA (ORCPT
+        id S2390175AbeHGTa3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 15:30:00 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:37061 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390121AbeHGTaA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 15:30:00 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 080D5209D9; Tue,  7 Aug 2018 19:14:39 +0200 (CEST)
-Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
-        by mail.bootlin.com (Postfix) with ESMTPSA id C5A4E20799;
-        Tue,  7 Aug 2018 19:14:19 +0200 (CEST)
-Date:   Tue, 7 Aug 2018 19:14:20 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-doc@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v2 09/12] gpiolib: Identify GPIO descriptor arrays
- with direct mapping
-Message-ID: <20180807191420.04431e8e@bbrezillon>
-In-Reply-To: <20180806222918.12644-10-jmkrzyszt@gmail.com>
-References: <20180718235710.18242-1-jmkrzyszt@gmail.com>
-        <20180806222918.12644-1-jmkrzyszt@gmail.com>
-        <20180806222918.12644-10-jmkrzyszt@gmail.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Tue, 7 Aug 2018 15:30:29 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49930 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727354AbeHGTa3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 15:30:29 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w77H9l6N070998
+        for <linux-kernel@vger.kernel.org>; Tue, 7 Aug 2018 13:15:09 -0400
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2kqe30cep1-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 13:15:09 -0400
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
+        Tue, 7 Aug 2018 18:15:07 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 7 Aug 2018 18:15:05 +0100
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w77HF31V24183028
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 7 Aug 2018 17:15:03 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6BD5F4C050;
+        Tue,  7 Aug 2018 20:15:12 +0100 (BST)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 296824C046;
+        Tue,  7 Aug 2018 20:15:12 +0100 (BST)
+Received: from [9.152.224.92] (unknown [9.152.224.92])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue,  7 Aug 2018 20:15:12 +0100 (BST)
+Reply-To: pmorel@linux.ibm.com
+Subject: Re: [PATCH RFC 0/2] KVM: s390: vsie: support VCPU requests
+To:     David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org
+Cc:     linux-s390@vger.kernel.org,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>
+References: <20180807125131.3606-1-david@redhat.com>
+From:   Pierre Morel <pmorel@linux.ibm.com>
+Date:   Tue, 7 Aug 2018 19:15:02 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180807125131.3606-1-david@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18080717-0028-0000-0000-000002E7821A
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18080717-0029-0000-0000-000023A088A7
+Message-Id: <65aefa0e-275f-1a30-2237-904aa4c6d63b@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-07_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808070172
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue,  7 Aug 2018 00:29:15 +0200
-Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
+On 07/08/2018 14:51, David Hildenbrand wrote:
+> While discussing AP changes, we discovered that we will have to force
+> a CPU using the vSIE to regenerate/reload shadow data structures. For now,
+> we have no mechanism for that.
+>
+> E.g. when clearing AP masks later, we could still have a vSIE CPU making
+> use of AP adapters as the masks might not be considered yet in the vSIE
+> data structures. We need a way to block entering the vSIE and regenerate
+> all shadow data structures once done.
+>
+> Looks like we can achieve that by simply simulating an ordinary SIE
+> entry/exit in the VCPU sie control block (while entering the vSIE loop).
+>
+> This way, we can support blocking and also synchronous CPU requests.
+>
+> Only compile tested.
+>
+> David Hildenbrand (2):
+>    KVM: s390: vsie: simulate VCPU SIE entry/exit
+>    KVM: s390: introduce and use KVM_REQ_VSIE_RESTART
+>
+>   arch/s390/include/asm/kvm_host.h |  1 +
+>   arch/s390/kvm/kvm-s390.c         | 16 ++++++++++++++--
+>   arch/s390/kvm/kvm-s390.h         |  1 +
+>   arch/s390/kvm/vsie.c             | 20 ++++++++++++++++++--
+>   4 files changed, 34 insertions(+), 4 deletions(-)
+>
+Thanks David for your patches.
 
-> Certain GPIO array lookup results may map directly to GPIO pins of a
-> single GPIO chip in hardware order.  If that condition is recognized
-> and handled efficiently, significant performance gain of get/set array
-> functions may be possible.
-> 
-> While processing a request for an array of GPIO descriptors, verify if
-> the descriptors just collected represent consecutive pins of a single
-> GPIO chip.  Pass that information with the array to the caller so it
-> can benefit from enhanced performance as soon as bitmap based get/set
-> array functions which can make efficient use of that are available.
-> 
-> Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-> ---
->  Documentation/driver-api/gpio/consumer.rst |  4 +++-
->  drivers/gpio/gpiolib.c                     | 14 ++++++++++++++
->  include/linux/gpio/consumer.h              |  1 +
->  3 files changed, 18 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/driver-api/gpio/consumer.rst b/Documentation/driver-api/gpio/consumer.rst
-> index aa03f389d41d..38a990b5f3b6 100644
-> --- a/Documentation/driver-api/gpio/consumer.rst
-> +++ b/Documentation/driver-api/gpio/consumer.rst
-> @@ -109,11 +109,13 @@ For a function using multiple GPIOs all of those can be obtained with one call::
->  					   enum gpiod_flags flags)
->  
->  This function returns a struct gpio_descs which contains an array of
-> -descriptors::
-> +descriptors.  It may also contain a valid descriptor of a single GPIO chip in
-> +case the array strictly matches pin hardware layout of the chip::
->  
->  	struct gpio_descs {
->  		unsigned int ndescs;
->  		struct gpio_desc *desc[];
-> +		struct gpio_chip *chip;
+Following my tests, they work fine for our AP use case.
 
-chip is placed at the beginning of the struct in the real code, which
-is expected since putting it at the end won't work because of the
-desc[] declaration.
+Best regards,
 
-...
+Pierre
 
-> diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
-> index 21ddbe440030..862ee027a02f 100644
-> --- a/include/linux/gpio/consumer.h
-> +++ b/include/linux/gpio/consumer.h
-> @@ -22,6 +22,7 @@ struct gpio_desc;
->   * gpiod_get_array().
->   */
->  struct gpio_descs {
-> +	struct gpio_chip *chip;
->  	unsigned int ndescs;
->  	struct gpio_desc *desc[];
->  };
+
+-- 
+Pierre Morel
+Linux/KVM/QEMU in Böblingen - Germany
 
