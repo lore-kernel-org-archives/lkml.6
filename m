@@ -7,62 +7,62 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E88BEC46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 17:06:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0A57C46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 17:06:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9794E215E5
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 17:06:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 528C22175D
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 17:06:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RSpEHhXP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9794E215E5
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SHbpQnpk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 528C22175D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389914AbeHGTVg (ORCPT
+        id S2389968AbeHGTVl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 15:21:36 -0400
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:32999 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388577AbeHGTVf (ORCPT
+        Tue, 7 Aug 2018 15:21:41 -0400
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:35567 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732639AbeHGTVk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 15:21:35 -0400
-Received: by mail-qk0-f193.google.com with SMTP id 27-v6so11954878qkv.0;
-        Tue, 07 Aug 2018 10:06:19 -0700 (PDT)
+        Tue, 7 Aug 2018 15:21:40 -0400
+Received: by mail-qt0-f194.google.com with SMTP id r21-v6so6421851qtm.2;
+        Tue, 07 Aug 2018 10:06:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=R/or3wT6ZAvxYF2JifqOdTxxgu4XiY/Y6N3z51T7M8E=;
-        b=RSpEHhXPrKQqc46FevRMmows+QaSSXg8KhsZVYA9v66eTrFucWbQPpWr9zM0BQ4YB7
-         l6ZSq4IR9wtzVH0YF/uQkJSrGvL2aG7WZjwUbK34BYVEnHwb1lkYepAllX5jujjVjp3g
-         tDbVXZDnQ6/7RSyjQ6Ofqs6XatYEZS9kXcpy/alvmPEsVPHd8nILRV9LnhznMRwjz5Z5
-         9l4yUai4tDDy1puR0/pikpeIURmeo0Dnu7bIj8Yx8vBrfRaqKlSASY6pGBrn6SM2Q891
-         LaDdXGXP9Bw3MyEOxBJpKjA69jfqlK+NZsM+Ukwql7GFrw7vQu37624fdRAaGHms7Few
-         PZBA==
+        bh=VlV+SBE7IISZ8OuT47N8o7cCB+3uEWlT6x1531hP30s=;
+        b=SHbpQnpkziqWwcbZ0N+hIcKU4aWl7PvSISrroPPnchR2ixLZxtR4IznnbPGOQjOcim
+         bJJsQ/MombiflwxfihgKtUT7rj0QXH/eVEQWfor9+b+SALKWTyVYy3LpP4qbQzKjb/Vq
+         fNDoUDXVmaCVSSvwFkFC4wl5af0YHS7yIIXwoSAocUjaysM7mXuN+5MnUb5lLMBV1CmD
+         aGOeOokUZs+0gD3zmufGo3+lho8xhDuiIdOTu7zfMMuv+cV5hEYleeFejR3lMy/YIEvT
+         jGBXDDHuog1R9fr+8v3esMxrLrlMSWkXZdVwk9MRQgIcIj/Pc8nM2bwupKzBvL6uY+9s
+         EBOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=R/or3wT6ZAvxYF2JifqOdTxxgu4XiY/Y6N3z51T7M8E=;
-        b=fygRp6BPf65c0PoDSiO5JFCYIYKV9MOi9ecBp+5ZghI3b4c3/fHuscmbIkBaHbk7JV
-         lzWRilVKSf8973FUL6CS7eB/nyiCcdxdBaksQpTP0i149jycsNH+zweTMTLTdmay3iYs
-         SKE5B0RtNSI0VHFLuoDI3Jjm//5iIy6CBKfuo4luBv/nCaC1Kc+zcu2pab91553aDTU6
-         wAxh+wwdO3Hw6SkuH7Iq0CbyrU1s+Ccv7dqA/KsZSLmTCS20sg7m5hI82pkeYK8Ib+0n
-         AwBhM98DAwVdNJDQMO9/swP9t2uPejNrIR1Rjd77MSVAOkSFLhhJcqgyf6UG9FdFVzxv
-         D+FA==
-X-Gm-Message-State: AOUpUlGmfDKcf6FrRkxFEHvjKDw/QfJFdtKjlMkUfzd+n/Id/cvcpukg
-        CG52Ad6SIzTBTjV8gpaHphI=
-X-Google-Smtp-Source: AAOMgpdKh56R0XuBpHt25a5A7+1u26GFeNJnKMWW4o5e2btUM/Hirk6mHpBg34WVjywwLuC72jOyZQ==
-X-Received: by 2002:a37:5d3:: with SMTP id 202-v6mr18613880qkf.382.1533661579197;
-        Tue, 07 Aug 2018 10:06:19 -0700 (PDT)
+        bh=VlV+SBE7IISZ8OuT47N8o7cCB+3uEWlT6x1531hP30s=;
+        b=Ybw4us7jBArJJwCxvfsdwiBKRSTT/BB9Ob23JBmQJoPd1i0NIkYQ4pKTe3jzXzW5SD
+         wZqbfq5K6f7ZRyFodxDH/kg56Cffm2R5oHGyWcnL5hv/dl0gg9kJE7vN0PpwFXr9AI9x
+         1bXSHqHpZfIwLnIZUsW9Hl3QN81PfEE1HkObHTmRHfnLQC0Psdxc82yALEswNq1C61GB
+         SZra51+i3q4AcLj3TnAmE8VKMKSIWqJFxLMCZmk8nJOr1/fl05aIkTbEQGEpQiM00E+q
+         92TOSbXiX9Mpqhga9V8EfJdzSBUVMnUNxeRiUPe+5v9nMh0lIRTLDAIcZQJopPsYimsl
+         McQA==
+X-Gm-Message-State: AOUpUlFznuubA2gY9zzFyr2rgxGJHjiS8LmVXn5iGgEuG8TEWHlyrVT7
+        1vFdBoj5V76GIH0gw8ALCeA=
+X-Google-Smtp-Source: AAOMgpe0ZkFeaUl20vD8HLXC1OPedZSlcka+4qD21yiP/06xtZ/u+2asHRFAmpYxkkv+W24WW6l7RA==
+X-Received: by 2002:a0c:8622:: with SMTP id p31-v6mr17625014qva.116.1533661584138;
+        Tue, 07 Aug 2018 10:06:24 -0700 (PDT)
 Received: from [10.69.41.93] ([192.19.223.250])
-        by smtp.googlemail.com with ESMTPSA id d137-v6sm964461qkg.91.2018.08.07.10.06.14
+        by smtp.googlemail.com with ESMTPSA id 144-v6sm1144394qkh.37.2018.08.07.10.06.21
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 07 Aug 2018 10:06:17 -0700 (PDT)
-Subject: Re: [PATCH 1/3] dt-bindings: net: dsa: Add compatibility strings for
- Broadcom Omega
+        Tue, 07 Aug 2018 10:06:22 -0700 (PDT)
+Subject: Re: [PATCH 2/3] net: dsa: b53: Add support for Broadcom Omega SoC
+ internal switch
 To:     Arun Parameswaran <arun.parameswaran@broadcom.com>,
         "David S. Miller" <davem@davemloft.net>,
         Florian Fainelli <f.fainelli@gmail.com>,
@@ -73,7 +73,7 @@ To:     Arun Parameswaran <arun.parameswaran@broadcom.com>,
 Cc:     netdev@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com
 References: <1533661364-15381-1-git-send-email-arun.parameswaran@broadcom.com>
- <1533661364-15381-2-git-send-email-arun.parameswaran@broadcom.com>
+ <1533661364-15381-3-git-send-email-arun.parameswaran@broadcom.com>
 From:   Florian Fainelli <f.fainelli@gmail.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
@@ -109,12 +109,12 @@ Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
  y5arMQorqTFWlEOgRA8OP47L9knl9i4xuR0euV6DChDrguup2aJVU8JPBBgRAgAPAhsMBQJU
  X9LxBQkeXB3fAAoJEGFXmRW1Y3YOj4UAn3nrFLPZekMeqX5aD/aq/dsbXSfyAKC45Go0YyxV
  HGuUuzv+GKZ6nsysJw==
-Message-ID: <9831801e-b551-318b-aebf-8fa91450abd1@gmail.com>
-Date:   Tue, 7 Aug 2018 10:06:08 -0700
+Message-ID: <b82bb843-78a3-368b-7930-96e1c02bce75@gmail.com>
+Date:   Tue, 7 Aug 2018 10:06:20 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <1533661364-15381-2-git-send-email-arun.parameswaran@broadcom.com>
+In-Reply-To: <1533661364-15381-3-git-send-email-arun.parameswaran@broadcom.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -124,8 +124,8 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On 08/07/2018 10:02 AM, Arun Parameswaran wrote:
-> Add compatibility strings for the internal switch in the Broadcom
-> Omega SoC family (BCM5831X/BCM1140X) to B53.
+> Add support for the Broadcom Omega SoC internal ethernet switch
+> to the b53 srab driver in the DSA framework.
 > 
 > Signed-off-by: Arun Parameswaran <arun.parameswaran@broadcom.com>
 
