@@ -6,46 +6,47 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C50BC46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 13:38:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C2A4C46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 13:38:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1A0321770
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 13:38:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1A0321770
+	by mail.kernel.org (Postfix) with ESMTP id 330E221770
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 13:38:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 330E221770
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389253AbeHGPwp (ORCPT
+        id S2389275AbeHGPwr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 11:52:45 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:40278 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732639AbeHGPwp (ORCPT
+        Tue, 7 Aug 2018 11:52:47 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:55391 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389001AbeHGPwq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 11:52:45 -0400
-Received: by mail-wr1-f67.google.com with SMTP id h15-v6so15828966wrs.7
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 06:38:21 -0700 (PDT)
+        Tue, 7 Aug 2018 11:52:46 -0400
+Received: by mail-wm0-f67.google.com with SMTP id f21-v6so17470249wmc.5
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 06:38:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=ziiB6gTLMB/9gD7iUir7Jkrz77ZVyEAUugNoYTMtqI4=;
-        b=lIrMDQXstWLxIJneYuhq5qzWmo7GENJjou1mPfUtqxuj6aVU9u1Hyk6vhmKzVOUYRx
-         hz5jpXmV7eEjlUPjdbvpiyh0qyKN0JXgG7bPx8aG0CxV/r5E1/+8GBBQqWvE9hYhUXk2
-         xq7ELKYvqEOtAatrbgpe2vuwpar7IztifKSzATfl/9WmYhwSLisKXj+tALq75T9wRrYf
-         QAYKfiLjg0EZkjGEI+pJ+MzDgE8xrsLeE8MGcWbQCL1gRJN7CkoitKSVTXbG1reXspmW
-         /1DfmikW8hFriw4ZyLjnJlfMUwW0t3Z165f8+kms0VcsxNdyiNmw77T2dAcRm2U+haqc
-         MOpw==
-X-Gm-Message-State: AOUpUlHYOeS6uopWdquRPn7l404v5zZEguoq+TE/qNglYH9Oggh59k3Z
-        DXKCT/96b90fgOJ00aGz4yI=
-X-Google-Smtp-Source: AAOMgpf7fANP11lgrtFRUP6qFhGyNJ80bMVAfpO2UeBXljkJsx2B6Nn95d1BiwfehPXjAcyBCp1u1Q==
-X-Received: by 2002:adf:dd07:: with SMTP id a7-v6mr13300491wrm.2.1533649101248;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=CPRN2w6qtUBwxTo39JZZYnJbZhBo7PZFu0H11s8wxkA=;
+        b=M5Q5cjH0158rfS8Vwe/NT/Iyw5DPHcSaaH2NyAmA4EoYXr5K6aqsuC6GCzRmtrVwjP
+         PACliMDz8ssWDFIQ/4L2nBukH1Kgqs2f8/zyLxAJaEQ89xe3167Apb108qd00HqK2MER
+         QGu2VTX6QqceZUpmxZKpUZQSpjFWalhM5ncM5j3qk2doHw+U+L+xIEj9UDskBTgazk/Q
+         AXKxclco0il5+Y3t34JS/hh1/EHxW56JPNKrF8mintwCYqiO0AxMuJGb7rWx4hnrjvP3
+         u/mLkjNTK909buz/p/nhshH7pSZcYfGTHWV9AqL+F+/Qc/enwruskxcn8Jz68PAOKDlt
+         oGRw==
+X-Gm-Message-State: AOUpUlGZrt0hiKhpKgW/tnNIpn9TZyk88BCm9pkEJRVwCgJqlDUY2bMj
+        Vz2lWpx7jvuA/ae7BKIGarI=
+X-Google-Smtp-Source: AA+uWPzlbCizfcOneDjMSjyEEQQiUMYD0HdfiHaa4zEQOlkQlK9fAFpaWAdZxJLm2/6s/tUpZ6ms9w==
+X-Received: by 2002:a7b:c041:: with SMTP id u1-v6mr1766504wmc.53.1533649101731;
         Tue, 07 Aug 2018 06:38:21 -0700 (PDT)
 Received: from techadventures.net (techadventures.net. [62.201.165.239])
-        by smtp.gmail.com with ESMTPSA id f17-v6sm1015503wrs.1.2018.08.07.06.38.20
+        by smtp.gmail.com with ESMTPSA id w4-v6sm1999312wrl.46.2018.08.07.06.38.20
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
         Tue, 07 Aug 2018 06:38:20 -0700 (PDT)
 Received: from d104.suse.de (charybdis-ext.suse.de [195.135.221.2])
-        by techadventures.net (Postfix) with ESMTPA id A6174124545;
+        by techadventures.net (Postfix) with ESMTPA id E77FF1246FB;
         Tue,  7 Aug 2018 15:38:19 +0200 (CEST)
 From:   osalvador@techadventures.net
 To:     akpm@linux-foundation.org
@@ -54,10 +55,12 @@ Cc:     mhocko@suse.com, dan.j.williams@intel.com,
         yasu.isimatu@gmail.com, logang@deltatee.com, dave.jiang@intel.com,
         linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         Oscar Salvador <osalvador@suse.de>
-Subject: [RFC PATCH 0/3] Do not touch pages in remove_memory path
-Date:   Tue,  7 Aug 2018 15:37:54 +0200
-Message-Id: <20180807133757.18352-1-osalvador@techadventures.net>
+Subject: [RFC PATCH 1/3] mm/memory_hotplug: Add nid parameter to arch_remove_memory
+Date:   Tue,  7 Aug 2018 15:37:55 +0200
+Message-Id: <20180807133757.18352-2-osalvador@techadventures.net>
 X-Mailer: git-send-email 2.13.6
+In-Reply-To: <20180807133757.18352-1-osalvador@techadventures.net>
+References: <20180807133757.18352-1-osalvador@techadventures.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -65,99 +68,185 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Oscar Salvador <osalvador@suse.de>
 
-This tries to fix [1], which was reported by David Hildenbrand, and also
-does some cleanups/refactoring.
+This patch is only a preparation for the following-up patches.
+The idea is to remove the zone parameter and pass the nid instead.
+The zone parameter was needed because down the chain we call
+__remove_zone, which adjusts the spanned pages of a zone/node.
 
-I am sending this as RFC to see if the direction I am going is right before
-spending more time into it.
-And also to gather feedback about hmm/zone_device stuff.
-The code compiles and I tested it successfully with normal memory-hotplug operations.
+online_pages() increments the spanned pages of a zone/node, so
+for consistency it is better if we move __remove_zone to offline_pages().
+With that, remove_memory() will only take care of removing the sections
+and delete the mappings.
 
-Here we go:
+Signed-off-by: Oscar Salvador <osalvador@suse.de>
+---
+ arch/ia64/mm/init.c            | 2 +-
+ arch/powerpc/mm/mem.c          | 2 +-
+ arch/s390/mm/init.c            | 2 +-
+ arch/sh/mm/init.c              | 2 +-
+ arch/x86/mm/init_32.c          | 2 +-
+ arch/x86/mm/init_64.c          | 2 +-
+ include/linux/memory_hotplug.h | 2 +-
+ kernel/memremap.c              | 4 +++-
+ mm/hmm.c                       | 4 +++-
+ mm/memory_hotplug.c            | 2 +-
+ 10 files changed, 14 insertions(+), 10 deletions(-)
 
-With the following scenario:
-
-1) We add memory
-2) We do not online it
-3) We remove the memory
-
-an invalid access is being made to those pages.
-
-The reason is that the pages are initialized in online_pages() path:
-
-        /   online_pages
-        |    move_pfn_range
-ONLINE  |     move_pfn_range_to_zone
-PAGES   |      ...
-        |      memmap_init_zone
-
-But depending on our policy about onlining the pages by default, we might not
-online them right after having added the memory, and so, those pages might be
-left unitialized.
-
-This is a problem because we access those pages in arch_remove_memory:
-
-...
-if (altmap)
-        page += vmem_altmap_offset(altmap);
-        zone = page_zone(page);
-...
-
-So we are accessing unitialized data basically.
-
-
-Currently, we need to have the zone from arch_remove_memory to all the way down
-because
-
-1) we call __remove_zone zo shrink spanned pages from pgdat/zone
-2) we get the pgdat from the zone
-
-Number 1 can be fixed by moving __remove_zone back to offline_pages(), where it should be.
-This, besides fixing the bug, will make the code more consistent because all the reveserse
-operations from online_pages() will be made in offline_pages().
-
-Number 2 can be fixed by passing nid instead of zone.
-
-The tricky part of all this is the hmm code and the zone_device stuff.
-
-Fixing the calls to arch_remove_memory in the arch code is easy, but arch_remove_memory
-is being used in:
-
-kernel/memremap.c: devm_memremap_pages_release()
-mm/hmm.c:          hmm_devmem_release()
-
-I did my best to get my head around this, but my knowledge in that area is 0, so I am pretty sure
-I did not get it right.
-
-The thing is:
-
-devm_memremap_pages(), which is the counterpart of devm_memremap_pages_release(),
-calls arch_add_memory(), and then calls move_pfn_range_to_zone() (to ZONE_DEVICE).
-So it does not go through online_pages().
-So there I call shrink_pages() (it does pretty much as __remove_zone) before calling
-to arch_remove_memory.
-But as I said, I do now if that is right.
-
-[1] https://patchwork.kernel.org/patch/10547445/
-
-Oscar Salvador (3):
-  mm/memory_hotplug: Add nid parameter to arch_remove_memory
-  mm/memory_hotplug: Create __shrink_pages and move it to offline_pages
-  mm/memory_hotplug: Refactor shrink_zone/pgdat_span
-
- arch/ia64/mm/init.c            |   6 +-
- arch/powerpc/mm/mem.c          |  13 +--
- arch/s390/mm/init.c            |   2 +-
- arch/sh/mm/init.c              |   6 +-
- arch/x86/mm/init_32.c          |   6 +-
- arch/x86/mm/init_64.c          |  10 +--
- include/linux/memory_hotplug.h |   8 +-
- kernel/memremap.c              |   9 +-
- mm/hmm.c                       |   6 +-
- mm/memory_hotplug.c            | 190 +++++++++++++++++++++--------------------
- mm/sparse.c                    |   4 +-
- 11 files changed, 127 insertions(+), 133 deletions(-)
-
+diff --git a/arch/ia64/mm/init.c b/arch/ia64/mm/init.c
+index e6c6dfd98de2..bc5e15045cee 100644
+--- a/arch/ia64/mm/init.c
++++ b/arch/ia64/mm/init.c
+@@ -660,7 +660,7 @@ int arch_add_memory(int nid, u64 start, u64 size, struct vmem_altmap *altmap,
+ }
+ 
+ #ifdef CONFIG_MEMORY_HOTREMOVE
+-int arch_remove_memory(u64 start, u64 size, struct vmem_altmap *altmap)
++int arch_remove_memory(int nid, u64 start, u64 size, struct vmem_altmap *altmap)
+ {
+ 	unsigned long start_pfn = start >> PAGE_SHIFT;
+ 	unsigned long nr_pages = size >> PAGE_SHIFT;
+diff --git a/arch/powerpc/mm/mem.c b/arch/powerpc/mm/mem.c
+index 5c8530d0c611..9e17d57a9948 100644
+--- a/arch/powerpc/mm/mem.c
++++ b/arch/powerpc/mm/mem.c
+@@ -139,7 +139,7 @@ int __meminit arch_add_memory(int nid, u64 start, u64 size, struct vmem_altmap *
+ }
+ 
+ #ifdef CONFIG_MEMORY_HOTREMOVE
+-int __meminit arch_remove_memory(u64 start, u64 size, struct vmem_altmap *altmap)
++int __meminit arch_remove_memory(int nid, u64 start, u64 size, struct vmem_altmap *altmap)
+ {
+ 	unsigned long start_pfn = start >> PAGE_SHIFT;
+ 	unsigned long nr_pages = size >> PAGE_SHIFT;
+diff --git a/arch/s390/mm/init.c b/arch/s390/mm/init.c
+index 3fa3e5323612..bc49b560625e 100644
+--- a/arch/s390/mm/init.c
++++ b/arch/s390/mm/init.c
+@@ -240,7 +240,7 @@ int arch_add_memory(int nid, u64 start, u64 size, struct vmem_altmap *altmap,
+ }
+ 
+ #ifdef CONFIG_MEMORY_HOTREMOVE
+-int arch_remove_memory(u64 start, u64 size, struct vmem_altmap *altmap)
++int arch_remove_memory(int nid, u64 start, u64 size, struct vmem_altmap *altmap)
+ {
+ 	/*
+ 	 * There is no hardware or firmware interface which could trigger a
+diff --git a/arch/sh/mm/init.c b/arch/sh/mm/init.c
+index 4034035fbede..55c740ab861b 100644
+--- a/arch/sh/mm/init.c
++++ b/arch/sh/mm/init.c
+@@ -454,7 +454,7 @@ EXPORT_SYMBOL_GPL(memory_add_physaddr_to_nid);
+ #endif
+ 
+ #ifdef CONFIG_MEMORY_HOTREMOVE
+-int arch_remove_memory(u64 start, u64 size, struct vmem_altmap *altmap)
++int arch_remove_memory(int nid, u64 start, u64 size, struct vmem_altmap *altmap)
+ {
+ 	unsigned long start_pfn = PFN_DOWN(start);
+ 	unsigned long nr_pages = size >> PAGE_SHIFT;
+diff --git a/arch/x86/mm/init_32.c b/arch/x86/mm/init_32.c
+index 979e0a02cbe1..9fa503f2f56c 100644
+--- a/arch/x86/mm/init_32.c
++++ b/arch/x86/mm/init_32.c
+@@ -861,7 +861,7 @@ int arch_add_memory(int nid, u64 start, u64 size, struct vmem_altmap *altmap,
+ }
+ 
+ #ifdef CONFIG_MEMORY_HOTREMOVE
+-int arch_remove_memory(u64 start, u64 size, struct vmem_altmap *altmap)
++int arch_remove_memory(int nid, u64 start, u64 size, struct vmem_altmap *altmap)
+ {
+ 	unsigned long start_pfn = start >> PAGE_SHIFT;
+ 	unsigned long nr_pages = size >> PAGE_SHIFT;
+diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
+index 9b19f9a8948e..26728df07072 100644
+--- a/arch/x86/mm/init_64.c
++++ b/arch/x86/mm/init_64.c
+@@ -1148,7 +1148,7 @@ kernel_physical_mapping_remove(unsigned long start, unsigned long end)
+ 	remove_pagetable(start, end, true, NULL);
+ }
+ 
+-int __ref arch_remove_memory(u64 start, u64 size, struct vmem_altmap *altmap)
++int __ref arch_remove_memory(int nid, u64 start, u64 size, struct vmem_altmap *altmap)
+ {
+ 	unsigned long start_pfn = start >> PAGE_SHIFT;
+ 	unsigned long nr_pages = size >> PAGE_SHIFT;
+diff --git a/include/linux/memory_hotplug.h b/include/linux/memory_hotplug.h
+index 34a28227068d..c68b03fd87bd 100644
+--- a/include/linux/memory_hotplug.h
++++ b/include/linux/memory_hotplug.h
+@@ -107,7 +107,7 @@ static inline bool movable_node_is_enabled(void)
+ }
+ 
+ #ifdef CONFIG_MEMORY_HOTREMOVE
+-extern int arch_remove_memory(u64 start, u64 size,
++extern int arch_remove_memory(int nid, u64 start, u64 size,
+ 		struct vmem_altmap *altmap);
+ extern int __remove_pages(struct zone *zone, unsigned long start_pfn,
+ 	unsigned long nr_pages, struct vmem_altmap *altmap);
+diff --git a/kernel/memremap.c b/kernel/memremap.c
+index 5b8600d39931..7a832b844f24 100644
+--- a/kernel/memremap.c
++++ b/kernel/memremap.c
+@@ -121,6 +121,7 @@ static void devm_memremap_pages_release(void *data)
+ 	struct resource *res = &pgmap->res;
+ 	resource_size_t align_start, align_size;
+ 	unsigned long pfn;
++	int nid;
+ 
+ 	for_each_device_pfn(pfn, pgmap)
+ 		put_page(pfn_to_page(pfn));
+@@ -134,9 +135,10 @@ static void devm_memremap_pages_release(void *data)
+ 	align_start = res->start & ~(SECTION_SIZE - 1);
+ 	align_size = ALIGN(res->start + resource_size(res), SECTION_SIZE)
+ 		- align_start;
++	nid = dev_to_node(dev);
+ 
+ 	mem_hotplug_begin();
+-	arch_remove_memory(align_start, align_size, pgmap->altmap_valid ?
++	arch_remove_memory(nid, align_start, align_size, pgmap->altmap_valid ?
+ 			&pgmap->altmap : NULL);
+ 	kasan_remove_zero_shadow(__va(align_start), align_size);
+ 	mem_hotplug_done();
+diff --git a/mm/hmm.c b/mm/hmm.c
+index c968e49f7a0c..21787e480b4a 100644
+--- a/mm/hmm.c
++++ b/mm/hmm.c
+@@ -995,6 +995,7 @@ static void hmm_devmem_release(struct device *dev, void *data)
+ 	unsigned long start_pfn, npages;
+ 	struct zone *zone;
+ 	struct page *page;
++	int nid;
+ 
+ 	if (percpu_ref_tryget_live(&devmem->ref)) {
+ 		dev_WARN(dev, "%s: page mapping is still live!\n", __func__);
+@@ -1007,12 +1008,13 @@ static void hmm_devmem_release(struct device *dev, void *data)
+ 
+ 	page = pfn_to_page(start_pfn);
+ 	zone = page_zone(page);
++	nid = zone->zone_pgdat->node_id;
+ 
+ 	mem_hotplug_begin();
+ 	if (resource->desc == IORES_DESC_DEVICE_PRIVATE_MEMORY)
+ 		__remove_pages(zone, start_pfn, npages, NULL);
+ 	else
+-		arch_remove_memory(start_pfn << PAGE_SHIFT,
++		arch_remove_memory(nid, start_pfn << PAGE_SHIFT,
+ 				   npages << PAGE_SHIFT, NULL);
+ 	mem_hotplug_done();
+ 
+diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+index 9eea6e809a4e..9bd629944c91 100644
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@ -1895,7 +1895,7 @@ void __ref remove_memory(int nid, u64 start, u64 size)
+ 	memblock_free(start, size);
+ 	memblock_remove(start, size);
+ 
+-	arch_remove_memory(start, size, NULL);
++	arch_remove_memory(nid, start, size, NULL);
+ 
+ 	try_offline_node(nid);
+ 
 -- 
 2.13.6
 
