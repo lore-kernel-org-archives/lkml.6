@@ -6,37 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B381C46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:58:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF177C46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:58:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F56020895
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:58:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F56020895
+	by mail.kernel.org (Postfix) with ESMTP id 935D020895
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:58:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 935D020895
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403811AbeHGVOh (ORCPT
+        id S2403961AbeHGVOk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 17:14:37 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34912 "EHLO
+        Tue, 7 Aug 2018 17:14:40 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34920 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389783AbeHGVOg (ORCPT
+        with ESMTP id S2403835AbeHGVOj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 17:14:36 -0400
+        Tue, 7 Aug 2018 17:14:39 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3312CBAF;
-        Tue,  7 Aug 2018 18:58:51 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7D69E74;
+        Tue,  7 Aug 2018 18:58:54 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Siva Rebbagondla <siva.rebbagondla@redpinesignals.com>,
-        Amitkumar Karwar <amit.karwar@redpinesignals.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org, Michal Simek <michal.simek@xilinx.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 57/85] rsi: Fix invalid vdd warning in mmc
-Date:   Tue,  7 Aug 2018 20:51:59 +0200
-Message-Id: <20180807172359.475230173@linuxfoundation.org>
+Subject: [PATCH 3.18 58/85] microblaze: Fix simpleImage format generation
+Date:   Tue,  7 Aug 2018 20:52:00 +0200
+Message-Id: <20180807172359.510852075@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180807172357.357252052@linuxfoundation.org>
 References: <20180807172357.357252052@linuxfoundation.org>
@@ -53,76 +50,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Siva Rebbagondla <siva.rebbagondla@redpinesignals.com>
+From: Michal Simek <michal.simek@xilinx.com>
 
-[ Upstream commit 78e450719c702784e42af6da912d3692fd3da0cb ]
+[ Upstream commit ece97f3a5fb50cf5f98886fbc63c9665f2bb199d ]
 
-While performing cleanup, driver is messing with card->ocr
-value by not masking rocr against ocr_avail. Below panic
-is observed with some of the SDIO host controllers due to
-this. Issue is resolved by reverting incorrect modifications
-to vdd.
+simpleImage generation was broken for some time. This patch is fixing
+steps how simpleImage.*.ub file is generated. Steps are objdump of
+vmlinux and create .ub.
+Also make sure that there is striped elf version with .strip suffix.
 
-[  927.423821] mmc1: Invalid vdd 0x1f
-[  927.423925] Modules linked in: rsi_sdio(+) cmac bnep arc4 rsi_91x
-	       mac80211 cfg80211 btrsi rfcomm bluetooth ecdh_generic
-[  927.424073] CPU: 0 PID: 1624 Comm: insmod Tainted: G		W        4.15.0-1000-caracalla #1
-[  927.424075] Hardware name: Dell Inc. Edge Gateway	3003/      , BIOS 01.00.06 01/22/2018
-[  927.424082] RIP: 0010:sdhci_set_power_noreg+0xdd/0x190[sdhci]
-[  927.424085] RSP: 0018:ffffac3fc064b930 EFLAGS:  00010282
-[  927.424107] Call Trace:
-[  927.424118]  sdhci_set_power+0x5a/0x60 [sdhci]
-[  927.424125]  sdhci_set_ios+0x360/0x3b0 [sdhci]
-[  927.424133]  mmc_set_initial_state+0x92/0x120
-[  927.424137]  mmc_power_up.part.34+0x33/0x1d0
-[  927.424141]  mmc_power_up+0x17/0x20
-[  927.424147]  mmc_sdio_runtime_resume+0x2d/0x50
-[  927.424151]  mmc_runtime_resume+0x17/0x20
-[  927.424156]  __rpm_callback+0xc4/0x200
-[  927.424161]  ? idr_alloc_cyclic+0x57/0xd0
-[  927.424165]  ? mmc_runtime_suspend+0x20/0x20
-[  927.424169]  rpm_callback+0x24/0x80
-[  927.424172]  ? mmc_runtime_suspend+0x20/0x20
-[  927.424176]  rpm_resume+0x4b3/0x6c0
-[  927.424181]  __pm_runtime_resume+0x4e/0x80
-[  927.424188]  driver_probe_device+0x41/0x490
-[  927.424192]  __driver_attach+0xdf/0xf0
-[  927.424196]  ? driver_probe_device+0x490/0x490
-[  927.424201]  bus_for_each_dev+0x6c/0xc0
-[  927.424205]  driver_attach+0x1e/0x20
-[  927.424209]  bus_add_driver+0x1f4/0x270
-[  927.424217]  ? rsi_sdio_ack_intr+0x50/0x50 [rsi_sdio]
-[  927.424221]  driver_register+0x60/0xe0
-[  927.424227]  ? rsi_sdio_ack_intr+0x50/0x50 [rsi_sdio]
-[  927.424231]  sdio_register_driver+0x20/0x30
-[  927.424237]  rsi_module_init+0x16/0x40 [rsi_sdio]
-
-Signed-off-by: Siva Rebbagondla <siva.rebbagondla@redpinesignals.com>
-Signed-off-by: Amitkumar Karwar <amit.karwar@redpinesignals.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Michal Simek <michal.simek@xilinx.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/rsi/rsi_91x_sdio.c |    2 --
- 1 file changed, 2 deletions(-)
+ arch/microblaze/boot/Makefile |   10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
---- a/drivers/net/wireless/rsi/rsi_91x_sdio.c
-+++ b/drivers/net/wireless/rsi/rsi_91x_sdio.c
-@@ -155,7 +155,6 @@ static void rsi_reset_card(struct sdio_f
- 	int err;
- 	struct mmc_card *card = pfunction->card;
- 	struct mmc_host *host = card->host;
--	s32 bit = (fls(host->ocr_avail) - 1);
- 	u8 cmd52_resp;
- 	u32 clock, resp, i;
- 	u16 rca;
-@@ -175,7 +174,6 @@ static void rsi_reset_card(struct sdio_f
- 	msleep(20);
+--- a/arch/microblaze/boot/Makefile
++++ b/arch/microblaze/boot/Makefile
+@@ -21,18 +21,20 @@ $(obj)/linux.bin.gz: $(obj)/linux.bin FO
+ quiet_cmd_cp = CP      $< $@$2
+ 	cmd_cp = cat $< >$@$2 || (rm -f $@ && echo false)
  
- 	/* Initialize the SDIO card */
--	host->ios.vdd = bit;
- 	host->ios.chip_select = MMC_CS_DONTCARE;
- 	host->ios.bus_mode = MMC_BUSMODE_OPENDRAIN;
- 	host->ios.power_mode = MMC_POWER_UP;
+-quiet_cmd_strip = STRIP   $@
++quiet_cmd_strip = STRIP   $< $@$2
+ 	cmd_strip = $(STRIP) -K microblaze_start -K _end -K __log_buf \
+-				-K _fdt_start vmlinux -o $@
++				-K _fdt_start $< -o $@$2
+ 
+ UIMAGE_LOADADDR = $(CONFIG_KERNEL_BASE_ADDR)
++UIMAGE_IN = $@
++UIMAGE_OUT = $@.ub
+ 
+ $(obj)/simpleImage.%: vmlinux FORCE
+ 	$(call if_changed,cp,.unstrip)
+ 	$(call if_changed,objcopy)
+ 	$(call if_changed,uimage)
+-	$(call if_changed,strip)
+-	@echo 'Kernel: $@ is ready' ' (#'`cat .version`')'
++	$(call if_changed,strip,.strip)
++	@echo 'Kernel: $(UIMAGE_OUT) is ready' ' (#'`cat .version`')'
+ 
+ 
+ clean-files += simpleImage.*.unstrip linux.bin.ub
 
 
