@@ -3,33 +3,33 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2BDBC46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 09:25:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED3B4C46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 09:25:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64ABE21655
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 09:25:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64ABE21655
+	by mail.kernel.org (Postfix) with ESMTP id B10E721655
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 09:25:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B10E721655
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387683AbeHGLi5 (ORCPT
+        id S2388008AbeHGLjC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 07:38:57 -0400
+        Tue, 7 Aug 2018 07:39:02 -0400
 Received: from esa2.microchip.iphmx.com ([68.232.149.84]:50103 "EHLO
         esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726414AbeHGLi5 (ORCPT
+        with ESMTP id S1726414AbeHGLjB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 07:38:57 -0400
+        Tue, 7 Aug 2018 07:39:01 -0400
 X-IronPort-AV: E=Sophos;i="5.51,454,1526367600"; 
-   d="scan'208";a="17494818"
+   d="scan'208";a="17494830"
 Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 07 Aug 2018 02:25:32 -0700
+  by esa2.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 07 Aug 2018 02:25:36 -0700
 Received: from m18063-ThinkPad-T460p.mchp-main.com (10.10.76.4) by
  chn-sv-exch02.mchp-main.com (10.10.76.38) with Microsoft SMTP Server id
- 14.3.352.0; Tue, 7 Aug 2018 02:25:23 -0700
+ 14.3.352.0; Tue, 7 Aug 2018 02:25:27 -0700
 From:   Claudiu Beznea <claudiu.beznea@microchip.com>
 To:     <nicolas.ferre@microchip.com>, <davem@davemloft.net>
 CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
@@ -37,10 +37,12 @@ CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <nathan.sullivan@ni.com>, <rafalo@cadence.com>,
         <harinikatakamlinux@gmail.com>,
         Claudiu Beznea <claudiu.beznea@microchip.com>
-Subject: [PATCH 0/3] net: macb: add pad and fcs support
-Date:   Tue, 7 Aug 2018 12:25:11 +0300
-Message-ID: <1533633914-30264-1-git-send-email-claudiu.beznea@microchip.com>
+Subject: [PATCH 1/3] net: macb: use netdev_tx_t return type for ndo_start_xmit functions
+Date:   Tue, 7 Aug 2018 12:25:12 +0300
+Message-ID: <1533633914-30264-2-git-send-email-claudiu.beznea@microchip.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1533633914-30264-1-git-send-email-claudiu.beznea@microchip.com>
+References: <1533633914-30264-1-git-send-email-claudiu.beznea@microchip.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
@@ -48,62 +50,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Use netdev_tx_t return type for ndo_start_xmit function of macb driver.
 
-In [1] it was reported that UDP checksum is offloaded to hardware no mather
-it was previously computed in software or not. The proposal on [1] was to
-disable TX checksum offload.
+Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+---
+ drivers/net/ethernet/cadence/macb_main.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-This series (mostly patch 3/3) address the issue described at [1] by
-setting NOCRC bit to TX buffer descriptor for SKBs that arrived from
-networking stack with checksum computed. For these packets padding and FCS
-need to be added (hardware doesn't compute them if NOCRC bit is set). The
-minimum packet size that hardware expects is 64 bytes (including FCS).
-This feature could not be used in case of GSO, so, it was used only for
-no GSO SKBs.
-
-For SKBs wich requires padding and FCS computation macb_pad_and_fcs()
-checks if there is enough headroom and tailroom in SKB to avoid copying
-SKB structure. Since macb_pad_and_fcs() may change SKB the
-macb_pad_and_fcs() was places in macb_start_xmit() b/w macb_csum_clear()
-and skb_headlen() calls.
-
-This patch was tested with pktgen in kernel tool in a script like this:
-(pktgen_sample01_simple.sh is at [2]):
-
-minSize=1
-maxSize=1500
-
-for i in `seq $minSize $maxSize` ; do
-	copy="$(shuf -i 1-2000 -n 1)"
-	./pktgen_sample01_simple.sh -i eth0 \
-		-m <dst-mac-addr> -d <dst-ip-addr> -x -s $i -c $copy
-done
-
-minStep=1
-maxStep=200
-for i in `seq $minStep $maxStep` ; do
-	copy="$(shuf -i 1-2000 -n 1)"
-	size="$(shuf -i 1-1500 -n 1)"
-	./pktgen_sample01_simple.sh -i eth0 \
-		-m <dst-mac-addr> -d <dst-ip-addr> -x -s $size -c $copy
-done
-
-Changes since RFC:
-- in patch 3/3 order local variables by their lenght (reverse christmas tree
-  format)
-
-[1] https://www.spinics.net/lists/netdev/msg505065.html
-[2] https://github.com/netoptimizer/network-testing/blob/master/pktgen/pktgen_sample01_simple.sh
-
-Claudiu Beznea (3):
-  net: macb: use netdev_tx_t return type for ndo_start_xmit functions
-  net: macb: move checksum clearing outside of spinlock.
-  net: macb: add support for padding and fcs computation
-
- drivers/net/ethernet/cadence/macb_main.c | 88 +++++++++++++++++++++++++++++---
- 1 file changed, 80 insertions(+), 8 deletions(-)
-
+diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
+index 96cc03a6d942..860436474c3e 100644
+--- a/drivers/net/ethernet/cadence/macb_main.c
++++ b/drivers/net/ethernet/cadence/macb_main.c
+@@ -1651,7 +1651,7 @@ static inline int macb_clear_csum(struct sk_buff *skb)
+ 	return 0;
+ }
+ 
+-static int macb_start_xmit(struct sk_buff *skb, struct net_device *dev)
++static netdev_tx_t macb_start_xmit(struct sk_buff *skb, struct net_device *dev)
+ {
+ 	u16 queue_index = skb_get_queue_mapping(skb);
+ 	struct macb *bp = netdev_priv(dev);
+@@ -1660,6 +1660,7 @@ static int macb_start_xmit(struct sk_buff *skb, struct net_device *dev)
+ 	unsigned int desc_cnt, nr_frags, frag_size, f;
+ 	unsigned int hdrlen;
+ 	bool is_lso, is_udp = 0;
++	netdev_tx_t ret = NETDEV_TX_OK;
+ 
+ 	is_lso = (skb_shinfo(skb)->gso_size != 0);
+ 
+@@ -1739,7 +1740,7 @@ static int macb_start_xmit(struct sk_buff *skb, struct net_device *dev)
+ unlock:
+ 	spin_unlock_irqrestore(&bp->lock, flags);
+ 
+-	return NETDEV_TX_OK;
++	return ret;
+ }
+ 
+ static void macb_init_rx_buffer_size(struct macb *bp, size_t size)
+@@ -3547,7 +3548,8 @@ static int at91ether_close(struct net_device *dev)
+ }
+ 
+ /* Transmit packet */
+-static int at91ether_start_xmit(struct sk_buff *skb, struct net_device *dev)
++static netdev_tx_t at91ether_start_xmit(struct sk_buff *skb,
++					struct net_device *dev)
+ {
+ 	struct macb *lp = netdev_priv(dev);
+ 
 -- 
 2.7.4
 
