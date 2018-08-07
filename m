@@ -6,36 +6,38 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CA62C46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:59:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF57CC46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:59:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0159A208C3
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:59:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0159A208C3
+	by mail.kernel.org (Postfix) with ESMTP id 9684520895
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:59:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9684520895
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404328AbeHGVOs (ORCPT
+        id S2404524AbeHGVOw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 17:14:48 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34952 "EHLO
+        Tue, 7 Aug 2018 17:14:52 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34966 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403835AbeHGVOs (ORCPT
+        with ESMTP id S2403835AbeHGVOv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 17:14:48 -0400
+        Tue, 7 Aug 2018 17:14:51 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EA33ABAF;
-        Tue,  7 Aug 2018 18:59:03 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D81693EE;
+        Tue,  7 Aug 2018 18:59:06 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Tudor Ambarus <tudor.ambarus@microchip.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
+        stable@vger.kernel.org, Pavel Machek <pavel@ucw.cz>,
+        Suman Anna <s-anna@ti.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 61/85] crypto: authenc - dont leak pointers to authenc keys
-Date:   Tue,  7 Aug 2018 20:52:03 +0200
-Message-Id: <20180807172359.615752395@linuxfoundation.org>
+Subject: [PATCH 3.18 62/85] media: omap3isp: fix unbalanced dma_iommu_mapping
+Date:   Tue,  7 Aug 2018 20:52:04 +0200
+Message-Id: <20180807172359.654740789@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180807172357.357252052@linuxfoundation.org>
 References: <20180807172357.357252052@linuxfoundation.org>
@@ -52,32 +54,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tudor-Dan Ambarus <tudor.ambarus@microchip.com>
+From: Suman Anna <s-anna@ti.com>
 
-[ Upstream commit ad2fdcdf75d169e7a5aec6c7cb421c0bec8ec711 ]
+[ Upstream commit b7e1e6859fbf60519fd82d7120cee106a6019512 ]
 
-In crypto_authenc_setkey we save pointers to the authenc keys in
-a local variable of type struct crypto_authenc_keys and we don't
-zeroize it after use. Fix this and don't leak pointers to the
-authenc keys.
+The OMAP3 ISP driver manages its MMU mappings through the IOMMU-aware
+ARM DMA backend. The current code creates a dma_iommu_mapping and
+attaches this to the ISP device, but never detaches the mapping in
+either the probe failure paths or the driver remove path resulting
+in an unbalanced mapping refcount and a memory leak. Fix this properly.
 
-Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Reported-by: Pavel Machek <pavel@ucw.cz>
+Signed-off-by: Suman Anna <s-anna@ti.com>
+Tested-by: Pavel Machek <pavel@ucw.cz>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- crypto/authenc.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/media/platform/omap3isp/isp.c |    7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
---- a/crypto/authenc.c
-+++ b/crypto/authenc.c
-@@ -112,6 +112,7 @@ static int crypto_authenc_setkey(struct
- 				       CRYPTO_TFM_RES_MASK);
+--- a/drivers/media/platform/omap3isp/isp.c
++++ b/drivers/media/platform/omap3isp/isp.c
+@@ -2117,6 +2117,7 @@ error_csiphy:
  
- out:
-+	memzero_explicit(&keys, sizeof(keys));
- 	return err;
+ static void isp_detach_iommu(struct isp_device *isp)
+ {
++	arm_iommu_detach_device(isp->dev);
+ 	arm_iommu_release_mapping(isp->mapping);
+ 	isp->mapping = NULL;
+ 	iommu_group_remove_device(isp->dev);
+@@ -2150,8 +2151,7 @@ static int isp_attach_iommu(struct isp_d
+ 	mapping = arm_iommu_create_mapping(&platform_bus_type, SZ_1G, SZ_2G);
+ 	if (IS_ERR(mapping)) {
+ 		dev_err(isp->dev, "failed to create ARM IOMMU mapping\n");
+-		ret = PTR_ERR(mapping);
+-		goto error;
++		return PTR_ERR(mapping);
+ 	}
  
- badkey:
+ 	isp->mapping = mapping;
+@@ -2166,7 +2166,8 @@ static int isp_attach_iommu(struct isp_d
+ 	return 0;
+ 
+ error:
+-	isp_detach_iommu(isp);
++	arm_iommu_release_mapping(isp->mapping);
++	isp->mapping = NULL;
+ 	return ret;
+ }
+ 
 
 
