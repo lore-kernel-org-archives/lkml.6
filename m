@@ -2,185 +2,93 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91809C4646D
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 02:00:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D240C4646D
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 02:07:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3268121A6D
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 02:00:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3268121A6D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id BA41121A6D
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 02:07:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA41121A6D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727033AbeHGEMi (ORCPT
+        id S1727139AbeHGETR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 00:12:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51830 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726908AbeHGEMi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 00:12:38 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3E01A21A70;
-        Tue,  7 Aug 2018 02:00:42 +0000 (UTC)
-Date:   Mon, 6 Aug 2018 22:00:40 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH] tracing: Partial revert of "tracing: Centralize
- preemptirq tracepoints and unify their usage"
-Message-ID: <20180806220040.68ab0771@gandalf.local.home>
-In-Reply-To: <20180806215432.45ae5f9a@gandalf.local.home>
-References: <20180806215432.45ae5f9a@gandalf.local.home>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Tue, 7 Aug 2018 00:19:17 -0400
+Received: from mail-sh2.amlogic.com ([58.32.228.45]:35522 "EHLO
+        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725815AbeHGETR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 00:19:17 -0400
+Received: from ofmlt.linux-actions.org (10.18.20.235) by mail-sh2.amlogic.com
+ (10.18.11.6) with Microsoft SMTP Server id 15.0.1320.4; Tue, 7 Aug 2018
+ 10:07:27 +0800
+From:   Yixun Lan <yixun.lan@amlogic.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        <linux-gpio@vger.kernel.org>
+CC:     Yixun Lan <yixun.lan@amlogic.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Rob Herring <robh@kernel.org>,
+        Xingyu Chen <xingyu.chen@amlogic.com>,
+        <linux-amlogic@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: [PATCH v3 0/2] pinctrl: meson-g12a: add pinctrl driver support
+Date:   Tue, 7 Aug 2018 10:06:32 +0800
+Message-ID: <20180807020634.18182-1-yixun.lan@amlogic.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.18.20.235]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 6 Aug 2018 21:54:32 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+  This patch series try to add pinctrl driver support for
+the Meson-G12A SoC.
 
-> --- a/kernel/trace/trace_preemptirq.c
-> +++ b/kernel/trace/trace_preemptirq.c
-> @@ -20,40 +20,52 @@ static DEFINE_PER_CPU(int, tracing_irq_cpu);
->  void trace_hardirqs_on(void)
->  {
->  	if (!this_cpu_read(tracing_irq_cpu))
-> -		return;
-> +		goto out;
->  
->  	trace_irq_enable_rcuidle(CALLER_ADDR0, CALLER_ADDR1);
->  	this_cpu_write(tracing_irq_cpu, 0);
-> +
-> + out:
-> +	lockdep_hardirqs_on(CALLER_ADDR0);
->  }
->  EXPORT_SYMBOL(trace_hardirqs_on);
->  
->  void trace_hardirqs_off(void)
->  {
->  	if (this_cpu_read(tracing_irq_cpu))
-> -		return;
-> +		goto out;
->  
->  	this_cpu_write(tracing_irq_cpu, 1);
->  	trace_irq_disable_rcuidle(CALLER_ADDR0, CALLER_ADDR1);
-> +
-> + out:
-> +	lockdep_hardirqs_off(CALLER_ADDR0);
->  }
->  EXPORT_SYMBOL(trace_hardirqs_off);
->  
->  __visible void trace_hardirqs_on_caller(unsigned long caller_addr)
->  {
->  	if (!this_cpu_read(tracing_irq_cpu))
-> -		return;
-> +		goto out;
->  
->  	trace_irq_enable_rcuidle(CALLER_ADDR0, caller_addr);
->  	this_cpu_write(tracing_irq_cpu, 0);
-> +
-> + out:
-> +	lockdep_hardirqs_on(CALLER_ADDR0);
->  }
->  EXPORT_SYMBOL(trace_hardirqs_on_caller);
->  
->  __visible void trace_hardirqs_off_caller(unsigned long caller_addr)
->  {
->  	if (this_cpu_read(tracing_irq_cpu))
-> -		return;
-> +		goto out;
->  
->  	this_cpu_write(tracing_irq_cpu, 1);
->  	trace_irq_disable_rcuidle(CALLER_ADDR0, caller_addr);
-> +
-> + out:
-> +	lockdep_hardirqs_off(CALLER_ADDR0);
->  }
->  EXPORT_SYMBOL(trace_hardirqs_off_caller);
->  #endif /* CONFIG_TRACE_IRQFLAGS */
+  The pinctrl driver for Meson-G12A SoC share the similar IP as
+the previous Meson-AXG SoC, both use same pinmux ops (register layout).
+But, a new driver is needed here due to the differences in the pins.
 
-Hmm, the gotos above are rather ugly. This look better?
+Changes since v2 at [2]
+ - use ${FUNCTION}_${DOMAIN}_${PORT}_${PINFUNC}_${BANK}${PINNUM}
+   to rename some pins
+ - fix tdm groups
+ - explain the similarity of pinmux between AXG and G12A - thanks Martin 
+ - collect Rob's Reviewed-by
 
--- Steve
+Changes since v1 at [1]
+ - add Martin's Ack, Xingyu's Signed-off
+ - squash patch 1,2 (documentation & header file)
+ - explain pinctrl IP
+ - notice GPIOE located in AO bank
 
+[1] https://lkml.kernel.org/r/20180704224511.29350-1-yixun.lan@amlogic.com
+[2] https://lkml.kernel.org/r/20180714232754.5402-1-yixun.lan@amlogic.com
 
-diff --git a/kernel/trace/trace_preemptirq.c b/kernel/trace/trace_preemptirq.c
-index e76b78bf258e..fa656b25f427 100644
---- a/kernel/trace/trace_preemptirq.c
-+++ b/kernel/trace/trace_preemptirq.c
-@@ -19,41 +19,45 @@ static DEFINE_PER_CPU(int, tracing_irq_cpu);
- 
- void trace_hardirqs_on(void)
- {
--	if (!this_cpu_read(tracing_irq_cpu))
--		return;
-+	if (this_cpu_read(tracing_irq_cpu)) {
-+		trace_irq_enable_rcuidle(CALLER_ADDR0, CALLER_ADDR1);
-+		this_cpu_write(tracing_irq_cpu, 0);
-+	}
- 
--	trace_irq_enable_rcuidle(CALLER_ADDR0, CALLER_ADDR1);
--	this_cpu_write(tracing_irq_cpu, 0);
-+	lockdep_hardirqs_on(CALLER_ADDR0);
- }
- EXPORT_SYMBOL(trace_hardirqs_on);
- 
- void trace_hardirqs_off(void)
- {
--	if (this_cpu_read(tracing_irq_cpu))
--		return;
-+	if (!this_cpu_read(tracing_irq_cpu)) {
-+		this_cpu_write(tracing_irq_cpu, 1);
-+		trace_irq_disable_rcuidle(CALLER_ADDR0, CALLER_ADDR1);
-+	}
- 
--	this_cpu_write(tracing_irq_cpu, 1);
--	trace_irq_disable_rcuidle(CALLER_ADDR0, CALLER_ADDR1);
-+	lockdep_hardirqs_off(CALLER_ADDR0);
- }
- EXPORT_SYMBOL(trace_hardirqs_off);
- 
- __visible void trace_hardirqs_on_caller(unsigned long caller_addr)
- {
--	if (!this_cpu_read(tracing_irq_cpu))
--		return;
-+	if (this_cpu_read(tracing_irq_cpu)) {
-+		trace_irq_enable_rcuidle(CALLER_ADDR0, caller_addr);
-+		this_cpu_write(tracing_irq_cpu, 0);
-+	}
- 
--	trace_irq_enable_rcuidle(CALLER_ADDR0, caller_addr);
--	this_cpu_write(tracing_irq_cpu, 0);
-+	lockdep_hardirqs_on(CALLER_ADDR0);
- }
- EXPORT_SYMBOL(trace_hardirqs_on_caller);
- 
- __visible void trace_hardirqs_off_caller(unsigned long caller_addr)
- {
--	if (this_cpu_read(tracing_irq_cpu))
--		return;
-+	if (!this_cpu_read(tracing_irq_cpu)) {
-+		this_cpu_write(tracing_irq_cpu, 1);
-+		trace_irq_disable_rcuidle(CALLER_ADDR0, caller_addr);
-+	}
- 
--	this_cpu_write(tracing_irq_cpu, 1);
--	trace_irq_disable_rcuidle(CALLER_ADDR0, caller_addr);
-+	lockdep_hardirqs_off(CALLER_ADDR0);
- }
- EXPORT_SYMBOL(trace_hardirqs_off_caller);
- #endif /* CONFIG_TRACE_IRQFLAGS */
+Yixun Lan (2):
+  documentation: pinctrl: Add compatibles for Amlogic Meson G12A pin
+    controllers
+  pinctrl: meson-g12a: add pinctrl driver support
+
+ .../bindings/pinctrl/meson,pinctrl.txt        |    2 +
+ drivers/pinctrl/meson/Kconfig                 |    6 +
+ drivers/pinctrl/meson/Makefile                |    1 +
+ drivers/pinctrl/meson/pinctrl-meson-g12a.c    | 1404 +++++++++++++++++
+ include/dt-bindings/gpio/meson-g12a-gpio.h    |  114 ++
+ 5 files changed, 1527 insertions(+)
+ create mode 100644 drivers/pinctrl/meson/pinctrl-meson-g12a.c
+ create mode 100644 include/dt-bindings/gpio/meson-g12a-gpio.h
+
+-- 
+2.18.0
+
