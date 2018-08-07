@@ -1,182 +1,98 @@
 Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY autolearn=ham
+X-Spam-Level: 
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1250C46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 19:02:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CEABC46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 19:04:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9268420895
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 19:02:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9268420895
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 5157921524
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 19:04:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5157921524
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390836AbeHGVNu (ORCPT
+        id S2390463AbeHGVTt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 17:13:50 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:40334 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389581AbeHGVNs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 17:13:48 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 2ADF92084E; Tue,  7 Aug 2018 20:58:02 +0200 (CEST)
-Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
-        by mail.bootlin.com (Postfix) with ESMTPSA id B051D207E5;
-        Tue,  7 Aug 2018 20:57:51 +0200 (CEST)
-Date:   Tue, 7 Aug 2018 20:57:52 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        linux-omap@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Tony Lindgren <tony@atomide.com>,
-        Richard Weinberger <richard@nod.at>,
-        linux-gpio@vger.kernel.org, Aaro Koskinen <aaro.koskinen@iki.fi>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Marek Vasut <marek.vasut@gmail.com>,
-        linux-mtd@lists.infradead.org,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [RFC PATCH v2 07/12] mtd: rawnand: ams-delta: Set port
- direction once per transfer
-Message-ID: <20180807205752.32cd3e53@bbrezillon>
-In-Reply-To: <20180806222918.12644-8-jmkrzyszt@gmail.com>
-References: <20180718235710.18242-1-jmkrzyszt@gmail.com>
-        <20180806222918.12644-1-jmkrzyszt@gmail.com>
-        <20180806222918.12644-8-jmkrzyszt@gmail.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Tue, 7 Aug 2018 17:19:49 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34426 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389776AbeHGVMn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 17:12:43 -0400
+Received: from localhost (unknown [194.244.16.108])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B541BBAF;
+        Tue,  7 Aug 2018 18:56:57 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Sven Eckelmann <sven.eckelmann@openmesh.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 3.18 21/85] ath: Add regulatory mapping for ETSI8_WORLD
+Date:   Tue,  7 Aug 2018 20:51:23 +0200
+Message-Id: <20180807172358.128628757@linuxfoundation.org>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180807172357.357252052@linuxfoundation.org>
+References: <20180807172357.357252052@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue,  7 Aug 2018 00:29:13 +0200
-Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
+3.18-stable review patch.  If anyone has any objections, please let me know.
 
-> In its current shape, the driver sets data port direction before each
-> byte read/write operation, even during multi-byte transfers.  Since
-> performance of the driver is completely not acceptable on Amstrad Delta
-> after it has been converted to GPIO bitbang, try to improve things a
-> bit by setting the port direction only on first byte of each transfer.
-> 
-> Resulting performance on Amstrad Delta is still far from acceptable.
-> 
-> Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-> ---
->  drivers/mtd/nand/raw/ams-delta.c | 58 ++++++++++++++++++++++++++++++++--------
->  1 file changed, 47 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/mtd/nand/raw/ams-delta.c b/drivers/mtd/nand/raw/ams-delta.c
-> index 78996ddf82e0..d02c48c013e8 100644
-> --- a/drivers/mtd/nand/raw/ams-delta.c
-> +++ b/drivers/mtd/nand/raw/ams-delta.c
-> @@ -69,6 +69,30 @@ static const struct mtd_partition partition_info[] = {
->  	  .size		=  3 * SZ_256K },
->  };
->  
-> +static void ams_delta_write_commit(struct ams_delta_nand *priv)
-> +{
-> +	gpiod_set_value(priv->gpiod_nwe, 0);
-> +	ndelay(40);
-> +	gpiod_set_value(priv->gpiod_nwe, 1);
-> +}
-> +
-> +static void ams_delta_write_next_byte(struct mtd_info *mtd, u_char byte)
-> +{
-> +	struct nand_chip *this = mtd_to_nand(mtd);
-> +	struct ams_delta_nand *priv = nand_get_controller_data(this);
-> +	struct gpio_descs *data_gpiods = priv->data_gpiods;
-> +	unsigned long bits = byte;
-> +	int i, value_array[data_gpiods->ndescs];
-> +
-> +	for (i = 0; i < data_gpiods->ndescs; i++)
-> +		value_array[i] = test_bit(i, &bits);
-> +
-> +	gpiod_set_raw_array_value(data_gpiods->ndescs, data_gpiods->desc,
-> +				  value_array);
-> +
-> +	ams_delta_write_commit(priv);
-> +}
-> +
->  static void ams_delta_write_byte(struct mtd_info *mtd, u_char byte)
->  {
->  	struct nand_chip *this = mtd_to_nand(mtd);
-> @@ -81,12 +105,10 @@ static void ams_delta_write_byte(struct mtd_info *mtd, u_char byte)
->  		gpiod_direction_output_raw(data_gpiods->desc[i],
->  					   test_bit(i, &bits));
->  
-> -	gpiod_set_value(priv->gpiod_nwe, 0);
-> -	ndelay(40);
-> -	gpiod_set_value(priv->gpiod_nwe, 1);
-> +	ams_delta_write_commit(priv);
->  }
->  
-> -static u_char ams_delta_read_byte(struct mtd_info *mtd)
-> +static u_char ams_delta_read_next_byte(struct mtd_info *mtd)
->  {
->  	struct nand_chip *this = mtd_to_nand(mtd);
->  	struct ams_delta_nand *priv = nand_get_controller_data(this);
-> @@ -94,9 +116,6 @@ static u_char ams_delta_read_byte(struct mtd_info *mtd)
->  	unsigned long bits = 0;
->  	int i, value_array[data_gpiods->ndescs];
->  
-> -	for (i = 0; i < data_gpiods->ndescs; i++)
-> -		gpiod_direction_input(data_gpiods->desc[i]);
-> -
->  	gpiod_set_value(priv->gpiod_nre, 0);
->  	ndelay(40);
->  
-> @@ -112,21 +131,38 @@ static u_char ams_delta_read_byte(struct mtd_info *mtd)
->  	return bits;
->  }
->  
-> +static u_char ams_delta_read_byte(struct mtd_info *mtd)
-> +{
-> +	struct nand_chip *this = mtd_to_nand(mtd);
-> +	struct ams_delta_nand *priv = nand_get_controller_data(this);
-> +	struct gpio_descs *data_gpiods = priv->data_gpiods;
-> +	int i;
-> +
-> +	for (i = 0; i < data_gpiods->ndescs; i++)
-> +		gpiod_direction_input(data_gpiods->desc[i]);
-> +
-> +	return ams_delta_read_next_byte(mtd);
-> +}
-> +
->  static void ams_delta_write_buf(struct mtd_info *mtd, const u_char *buf,
->  				int len)
->  {
->  	int i;
->  
-> -	for (i=0; i<len; i++)
-> -		ams_delta_write_byte(mtd, buf[i]);
-> +	if (len > 0)
-> +		ams_delta_write_byte(mtd, buf[0]);
-> +	for (i = 1; i < len; i++)
-> +		ams_delta_write_next_byte(mtd, buf[i]);
->  }
->  
->  static void ams_delta_read_buf(struct mtd_info *mtd, u_char *buf, int len)
->  {
->  	int i;
->  
-> -	for (i=0; i<len; i++)
-> -		buf[i] = ams_delta_read_byte(mtd);
-> +	if (len > 0)
-> +		buf[0] = ams_delta_read_byte(mtd);
-> +	for (i = 1; i < len; i++)
-> +		buf[i] = ams_delta_read_next_byte(mtd);
->  }
+------------------
 
-I'd suggest a slightly different approach where the data pins
-direction state is stored in the the priv struct and only changed when
-required. This way you just have to add a test in
-ams_delta_read/write_byte().
+From: Sven Eckelmann <sven.eckelmann@openmesh.com>
+
+[ Upstream commit 45faf6e096da8bb80e1ddf8c08a26a9601d9469e ]
+
+The regdomain code is used to select the correct the correct conformance
+test limits (CTL) for a country. If the regdomain code isn't available and
+it is still programmed in the EEPROM then it will cause an error and stop
+the initialization with:
+
+  Invalid EEPROM contents
+
+The current CTL mappings for this regdomain code are:
+
+* 2.4GHz: ETSI
+* 5GHz: ETSI
+
+Signed-off-by: Sven Eckelmann <sven.eckelmann@openmesh.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/net/wireless/ath/regd_common.h |    2 ++
+ 1 file changed, 2 insertions(+)
+
+--- a/drivers/net/wireless/ath/regd_common.h
++++ b/drivers/net/wireless/ath/regd_common.h
+@@ -45,6 +45,7 @@ enum EnumRd {
+ 	ETSI4_ETSIC = 0x38,
+ 	ETSI5_WORLD = 0x39,
+ 	ETSI6_WORLD = 0x34,
++	ETSI8_WORLD = 0x3D,
+ 	ETSI_RESERVED = 0x33,
+ 
+ 	MKK1_MKKA = 0x40,
+@@ -181,6 +182,7 @@ static struct reg_dmn_pair_mapping regDo
+ 	{ETSI4_WORLD, CTL_ETSI, CTL_ETSI},
+ 	{ETSI5_WORLD, CTL_ETSI, CTL_ETSI},
+ 	{ETSI6_WORLD, CTL_ETSI, CTL_ETSI},
++	{ETSI8_WORLD, CTL_ETSI, CTL_ETSI},
+ 
+ 	/* XXX: For ETSI3_ETSIA, Was NO_CTL meant for the 2 GHz band ? */
+ 	{ETSI3_ETSIA, CTL_ETSI, CTL_ETSI},
+
+
