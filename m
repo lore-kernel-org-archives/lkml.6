@@ -2,151 +2,121 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8FB5C46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 17:28:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B60B7C46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 17:29:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5700921527
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 17:28:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7409621527
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 17:29:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LV6ZEvzH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5700921527
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="okL8GATC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7409621527
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390229AbeHGToR (ORCPT
+        id S2390257AbeHGTo6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 15:44:17 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:41066 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732619AbeHGToR (ORCPT
+        Tue, 7 Aug 2018 15:44:58 -0400
+Received: from mail-yb0-f196.google.com ([209.85.213.196]:42633 "EHLO
+        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388865AbeHGTo6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 15:44:17 -0400
-Received: by mail-lf1-f68.google.com with SMTP id v22-v6so12211000lfe.8;
-        Tue, 07 Aug 2018 10:28:54 -0700 (PDT)
+        Tue, 7 Aug 2018 15:44:58 -0400
+Received: by mail-yb0-f196.google.com with SMTP id c10-v6so6899192ybf.9
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 10:29:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=wQ+TL2Ch38Nf7XtlVYEKkAG6/IiKQiL1mHgYtceo7c4=;
-        b=LV6ZEvzH1YMU+h/VJBUFOxIjQwpDJ4WpjAyHioq0ZL7jk1Jpz6xXHRgbu1sN6BtI3L
-         Fm7Pk6Vq9MoNz+FWTMcqfh+ndPjlTNAIRlHvRTdELZtwtEZ6lvKCCfcQvOAwNgG2yC5E
-         rSeNVH+Jn7yb3V6LIBWXzpXAuedBr4SCErVOSEXxcp87aQl8Ev3hMlQ9KBiv1eD8850M
-         wFAcynmpZBD2BQwGP8/CS2gLnaZbbWpEGPZx3nZB279aN+Ma68GWALwzLlYkmmnsjKhj
-         P61cZCQRzXAxFR8ke8wUAXYLWgzP+RT3hc7/OJTaqyJK8x/jEUerSCwwBFuyl8PT1s6o
-         PbvA==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=IJJ53J14vfYOQrRWiWYJi7gbq3yu83/NHVkAvFG3pa4=;
+        b=okL8GATCTfAQLiRyWO0kTuhDflF4+QI1VNb6iX4XfAuy2Zn5+rrBi/yBF42InHLzdy
+         7Hw6HjK7dBuel/msZUXRkFngyjuAhYTz8x0HytsceqqH2Jhd47Z1xP8e0wIwRu1pOjYM
+         HW/Ls6C7ZxgPdCx6aMOTNjk/UcBECr0I4R0rwTW5CA2nvojnKfhCa3jhJ+FJfcFDNtfI
+         fEfl+7W47oCq/2md+YguADAi89jV/V3BubU+SHFfhpcvgLMHWiz7jcGAymdeB9ohaB4O
+         zIKeJdmBFGj2JMau2B2Z9dqqupq76kLZgNKq4dXiuX7XRYqqZB0y6gm9XIZZsb9YiqdX
+         ue3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=wQ+TL2Ch38Nf7XtlVYEKkAG6/IiKQiL1mHgYtceo7c4=;
-        b=BCP1i3D74nypzpoIaniMpys5D0OEslWO43j2ewXlSlU3io9SPVcCp41yngPNCe1nNH
-         Z7OwYBjw2Dcm+FGXvvL/uBeYm4GhWFAutvrORgXGdafnTrXbAtzJ5vWIegdVxOzq7cx7
-         FsEduMC8y9oV7n0m2Pe4Whby8/GH7me3cs9KOKSkSppJwnP6QIm3EFZVh4NBF9a15Db5
-         6phSdIy2fqqB7FqwqMM/k7IxReOD6n9btBh1LjJWrzXODIOe8vtpV/2l/Dhi1PU5JgHd
-         LyIZ8y1RMgAIq59Qx99XrPiBTtE7qfmR7g+L8ewZjRajlqDTvkE893pq5wDE/X0Kzjpn
-         hc8g==
-X-Gm-Message-State: AOUpUlHvW46KI5Pkks/Hk0gpy8cZfLCpy0y3ZHWrWwkfrHfFNHDUEmDW
-        u72kjpJ3s1FuOELu1vlp/NQ=
-X-Google-Smtp-Source: AAOMgpdlmY/b4tPeOh2/meNrkmmczHF6PJIv2XiV9/u0PRxWhWVwC9mu+cqvu/gFhNlOFDoq0uTe8w==
-X-Received: by 2002:a19:26d2:: with SMTP id m201-v6mr14305454lfm.43.1533662934002;
-        Tue, 07 Aug 2018 10:28:54 -0700 (PDT)
-Received: from z50.localnet (93-181-165-181.internetia.net.pl. [93.181.165.181])
-        by smtp.gmail.com with ESMTPSA id x23-v6sm326484ljj.86.2018.08.07.10.28.52
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 07 Aug 2018 10:28:53 -0700 (PDT)
-From:   Janusz Krzysztofik <jmkrzyszt@gmail.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?ISO-8859-1?Q?Miqu=E8l?= Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Mark Vasut <marek.vasut@gmail.com>,
-        ext Tony Lindgren <tony@atomide.com>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux-OMAP <linux-omap@vger.kernel.org>,
-        linux-mtd@lists.infradead.org, linux-doc@vger.kernel.org,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Subject: Re: [RFC PATCH v2 12/12] gpiolib: Add fast processing path to bitmap API functions
-Date:   Tue, 07 Aug 2018 19:29:53 +0200
-Message-ID: <11711552.OvaP4pOjBH@z50>
-In-Reply-To: <CACRpkdYHqFOFSv-erCzx8_u-mVUgGPdDH0ts-+DNAvjP3Qxb9w@mail.gmail.com>
-References: <20180718235710.18242-1-jmkrzyszt@gmail.com> <20180806222918.12644-13-jmkrzyszt@gmail.com> <CACRpkdYHqFOFSv-erCzx8_u-mVUgGPdDH0ts-+DNAvjP3Qxb9w@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=IJJ53J14vfYOQrRWiWYJi7gbq3yu83/NHVkAvFG3pa4=;
+        b=K5jld0AONc1Exe/khLUKVoxShOrlr5skgilvKO/nFncyaXimuIhrgYKTLaVzB7Y06T
+         vJFJBqTbJJn0zc/UvXxkG7WSkhtnMgb5ITA9YSqBn4F7HeyPcR/jt7f2rqITMxsrcb9K
+         MPeJ11qglOTDRpPbXwY6eQfOi96koXUroyxJEVo59UjYY0hQ+Df4KME4FsWtPr2gRXRF
+         bfmgWPE1Vb1vJMIXJIWVDtnTqnp6HFYC2YDqVM4l6CobJrcPzIJbx+p6qMRZ+m9Ts2XA
+         HN13zOYMuerYcZn0BI/5E2poQd7NmSjVcpT0NGoXGdOYleeZyGOTsnYYzwGvVm9s59bO
+         HNUQ==
+X-Gm-Message-State: AOUpUlEkStQ8oKkgouUchXMyjkW53oWrtXxFWwT7701rT8R+b0d8KwNv
+        nkS7C3n4SMr6pg67xZm6HzlqRCtdTOweR5S2KyKjkw==
+X-Google-Smtp-Source: AAOMgpfT6L6KKjYcTJiM7kjGKZSLs6mnsmcPG5xL/nGmXNkBVRLUSg9eLOOkD9YXYZV9HHftP0HhHUc3zq1dKYWnvBA=
+X-Received: by 2002:a25:bd91:: with SMTP id f17-v6mr10317912ybh.10.1533662976294;
+ Tue, 07 Aug 2018 10:29:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+References: <20180807171940.150507-1-mka@chromium.org>
+In-Reply-To: <20180807171940.150507-1-mka@chromium.org>
+From:   Guenter Roeck <groeck@google.com>
+Date:   Tue, 7 Aug 2018 10:29:25 -0700
+Message-ID: <CABXOdTdTqzsvDfXyrCBY98iP+icj_g=Rig5Lb1Rq0MMQPBGZ2Q@mail.gmail.com>
+Subject: Re: [PATCH v2] ASoC: rt5677: Fix initialization of rt5677_of_match.data
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     bardliao@realtek.com, oder_chiou@realtek.com,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        andriy.shevchenko@linux.intel.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tuesday, August 7, 2018 1:43:56 AM CEST Linus Walleij wrote:
-> On Tue, Aug 7, 2018 at 12:29 AM Janusz Krzysztofik <jmkrzyszt@gmail.com> 
-wrote:
-> 
-> Hi Janusz!
-> 
-> > Certain GPIO descriptor arrays returned by gpio_get_array() may contain
-> > information on a single GPIO chip driving array member pins in hardware
-> > order.  In such cases, bitmaps of values can be passed directly to the
-> > chip callback functions without wasting time on iterations.
-> >
-> > Add respective code to gpiod_get/set_array_bitmap_complex() functions.
-> >
-> > Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-> 
-> I think it would be disappointing to leave all the users of the old
-> array API without the performance improvement. I think we need to
-> deal with this in a way such that everyone can benefit from it.
+On Tue, Aug 7, 2018 at 10:19 AM Matthias Kaehlcke <mka@chromium.org> wrote:
+>
+> The driver expects to find the device id in rt5677_of_match.data, however
+> it is currently assigned to rt5677_of_match.type. Fix this.
+>
+> The problem was found with the help of clang:
+>   sound/soc/codecs/rt5677.c:5010:36: warning: expression which evaluates to
+>   zero treated as a null pointer constant of type 'const void *'
+>   [-Wnon-literal-null-conversion]
+>     { .compatible = "realtek,rt5677", RT5677 },
+>                                       ^~~~~~
+>
+> Fixes: ddc9e69b9dc2 ("ASoC: rt5677: Hide platform data in the module sources")
+> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
 
-There are a few issues to be resolved:
+Reviewed-by: Guenter Roeck <groeck@chromium.org>
 
-1) array size limited by bitmap size:
-    - are we ready to limit array size to a single bitmap for all users?
-    - if not, how can we pass a bitmap of an arbitrary size?
-    - if as an array of bitmaps, is that still clear enough and easy to use?
-    - other ideas?
-
-2) arbitrary array support:
-     - are we ready to drop that?
-     - if not, do we agree to require all users to pack their arbitrary arrays 
-        inside the gpio_descs structure?
-
-Maybe more.
-
-> Also it is kludgy if users (consumers) would need to handle the case
-> where all lines are on the same chip separately, through the bitmap
-> API.
-
-Not true as long as array size fits (arbitrary arrays can be packed by users), 
-but I see your point.
-
-> What we need is an API that:
-> 
-> - All drivers handling arrays can use (including current users).
-> 
-> - Enables speed-up if the lines are all on the same chip/register.
-> 
-> - Doesn't require consumers to know if they are all on the same
->   chip or not.
-> 
-> This means a deep API with a small surface.
-> 
-> How do we achieve this the best way?
-
-I think widely accepted solutions to those two issues I've mentioned above can 
-give the answer.
-
-Thanks,
-Janusz
-
-
+> --
+> Changes in v2:
+> - assign device id to data instead of 'type'
+> - updated subject and commit message
+> - added: 'Fixes' tag
+> ---
+>  sound/soc/codecs/rt5677.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/sound/soc/codecs/rt5677.c b/sound/soc/codecs/rt5677.c
+> index 8a0181a2db08..47feef30dadb 100644
+> --- a/sound/soc/codecs/rt5677.c
+> +++ b/sound/soc/codecs/rt5677.c
+> @@ -5007,7 +5007,7 @@ static const struct regmap_config rt5677_regmap = {
+>  };
+>
+>  static const struct of_device_id rt5677_of_match[] = {
+> -       { .compatible = "realtek,rt5677", RT5677 },
+> +       { .compatible = "realtek,rt5677", .data = (const void *)RT5677 },
+>         { }
+>  };
+>  MODULE_DEVICE_TABLE(of, rt5677_of_match);
+> --
+> 2.18.0.597.ga71716f1ad-goog
+>
