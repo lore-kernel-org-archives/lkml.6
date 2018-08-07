@@ -2,168 +2,122 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DC0EC46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 14:25:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 153FBC46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 14:25:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B34A2174B
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 14:25:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="sffNSu79"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B34A2174B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=yandex-team.ru
+	by mail.kernel.org (Postfix) with ESMTP id CD4872174B
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 14:25:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD4872174B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389530AbeHGQje (ORCPT
+        id S2389532AbeHGQka (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 12:39:34 -0400
-Received: from forwardcorp1o.cmail.yandex.net ([37.9.109.47]:32977 "EHLO
-        forwardcorp1o.cmail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1732510AbeHGQje (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 12:39:34 -0400
-Received: from smtpcorp1p.mail.yandex.net (smtpcorp1p.mail.yandex.net [IPv6:2a02:6b8:0:1472:2741:0:8b6:10])
-        by forwardcorp1o.cmail.yandex.net (Yandex) with ESMTP id 06AF021803;
-        Tue,  7 Aug 2018 17:24:57 +0300 (MSK)
-Received: from smtpcorp1p.mail.yandex.net (localhost.localdomain [127.0.0.1])
-        by smtpcorp1p.mail.yandex.net (Yandex) with ESMTP id F2E546E40E07;
-        Tue,  7 Aug 2018 17:24:56 +0300 (MSK)
-Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:854c:7dcd:9203:76a5])
-        by smtpcorp1p.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id QZExRYDYw8-Ouw4s3gw;
-        Tue, 07 Aug 2018 17:24:56 +0300
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (Client certificate not present)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
-        t=1533651896; bh=pVxGH8iWYTaFN1SRyYf9ahHyukhwZccMhb9aW/ED0tk=;
-        h=Subject:From:To:Cc:Date:Message-ID:In-Reply-To:References;
-        b=sffNSu79KzTDCK9cQEJpQaNTFyNvCrhOSxDSFmOpD8a2tVHtjCAj7meKReP4dj5ag
-         TMpFvSnQm7txgTOMHpc4ViVwlUdEA9FM6jYeyZV75HdjDPSKhnnj2FfKCJ3w6JiKJn
-         4plqAiKj2M+QLXyMPq7+WQVCoXhga2huxUIQ5IYU=
-Authentication-Results: smtpcorp1p.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
-Subject: [PATCH v2] perf map: optimize maps__fixup_overlappings()
-From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-To:     Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>
-Date:   Tue, 07 Aug 2018 17:24:54 +0300
-Message-ID: <153365189407.435244.7234821822450484712.stgit@buzz>
-In-Reply-To: <153363294565.396323.4605638589903548668.stgit@buzz>
-References: <153363294565.396323.4605638589903548668.stgit@buzz>
-User-Agent: StGit/0.17.1-dirty
+        Tue, 7 Aug 2018 12:40:30 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55088 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732639AbeHGQka (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 12:40:30 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 325FA7A9;
+        Tue,  7 Aug 2018 07:25:56 -0700 (PDT)
+Received: from [10.4.13.119] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id ECB783F5B3;
+        Tue,  7 Aug 2018 07:25:54 -0700 (PDT)
+Subject: Re: [PATCH 1/2] iommu/rockchip: Handle errors returned from PM
+ framework
+To:     Heiko Stuebner <heiko@sntech.de>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        Joerg Roedel <joro@8bytes.org>,
+        Jeffy Chen <jeffy.chen@rock-chips.com>
+References: <20180807085406.3863-1-marc.zyngier@arm.com>
+ <2940317.dDZy1L4CDY@phil> <94b6aab1-e8d3-6929-a2e6-2f06c564bc70@arm.com>
+ <3265383.PcPThIO4HC@phil>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <5aa8d184-0c58-3471-a661-8a66a93271c7@arm.com>
+Date:   Tue, 7 Aug 2018 15:25:53 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <3265383.PcPThIO4HC@phil>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This function splits and removes overlapping areas.
+On 07/08/18 14:15, Heiko Stuebner wrote:
+> Am Dienstag, 7. August 2018, 14:31:49 CEST schrieb Marc Zyngier:
+>> On 07/08/18 13:09, Heiko Stuebner wrote:
+>>> Hi Marc,
+>>>
+>>> Am Dienstag, 7. August 2018, 10:54:05 CEST schrieb Marc Zyngier:
+>>>> pm_runtime_get_if_in_use can fail: either PM has been disabled
+>>>> altogether (-EINVAL), or the device hasn't been enabled yet (0).
+>>>> Sadly, the Rockchip IOMMU driver tends to conflate the two things
+>>>> by considering a non-zero return value as successful.
+>>>>
+>>>> This has the consequence of hiding other bugs, so let's handle this
+>>>> case throughout the driver, with a WARN_ON_ONCE so that we can try
+>>>> and work out what happened.
+>>>>
+>>>> Fixes: 0f181d3cf7d98 ("iommu/rockchip: Add runtime PM support")
+>>>> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+>>>
+>>> I'm still not sure about the !CONFIG_PM case, as it was probably silently
+>>> working in that case before
+>>
+>> Do we agree that this is an orthogonal problem though?
+> 
+> Nope ;-) .... I.e. right now the code ignores the -EINVAL from disabled PM
+> and continues, possibly even handling the irq correctly.
 
-Maps in tree are ordered by start address thus we could find
-first overlap and stop if next map does not overlap.
+Ah, I now see what you mean. Yeah, this is a bit rubbish. It would have
+been better if the API returned something more sensible in that case,
+but that's a bit late...
 
-Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+> If it actually worked is a different matter, as I guess nobody really tried
+> with !PM in the past.
 
----
+I don't think anyone noticed. !CONFIG_PM on something like rk3399
+probably isn't very popular, and certainly comes for free on a
+multiplatform kernel.
 
-v2:
-* add comments
-* replace map__overlap with minimal check
-* remove remove map__overlap, that was the only user
----
- tools/perf/util/map.c |   44 ++++++++++++++++++++++++++------------------
- tools/perf/util/map.h |    1 -
- 2 files changed, 26 insertions(+), 19 deletions(-)
+> Now with error-handling we always return IRQ_NONE for !PM.
 
-diff --git a/tools/perf/util/map.c b/tools/perf/util/map.c
-index 89ac5b5dc218..36d0763311ef 100644
---- a/tools/perf/util/map.c
-+++ b/tools/perf/util/map.c
-@@ -381,20 +381,6 @@ struct map *map__clone(struct map *from)
- 	return map;
- }
- 
--int map__overlap(struct map *l, struct map *r)
--{
--	if (l->start > r->start) {
--		struct map *t = l;
--		l = r;
--		r = t;
--	}
--
--	if (l->end > r->start)
--		return 1;
--
--	return 0;
--}
--
- size_t map__fprintf(struct map *map, FILE *fp)
- {
- 	return fprintf(fp, " %" PRIx64 "-%" PRIx64 " %" PRIx64 " %s\n",
-@@ -675,20 +661,42 @@ static void __map_groups__insert(struct map_groups *mg, struct map *map)
- static int maps__fixup_overlappings(struct maps *maps, struct map *map, FILE *fp)
- {
- 	struct rb_root *root;
--	struct rb_node *next;
-+	struct rb_node *next, *first;
- 	int err = 0;
- 
- 	down_write(&maps->lock);
- 
- 	root = &maps->entries;
--	next = rb_first(root);
- 
-+	/*
-+	 * Find first map where end > map->start.
-+	 * Same as find_vma() in kernel.
-+	 */
-+	next = root->rb_node;
-+	first = NULL;
-+	while (next) {
-+		struct map *pos = rb_entry(next, struct map, rb_node);
-+
-+		if (pos->end > map->start) {
-+			first = next;
-+			if (pos->start <= map->start)
-+				break;
-+			next = next->rb_left;
-+		} else
-+			next = next->rb_right;
-+	}
-+
-+	next = first;
- 	while (next) {
- 		struct map *pos = rb_entry(next, struct map, rb_node);
- 		next = rb_next(&pos->rb_node);
- 
--		if (!map__overlap(pos, map))
--			continue;
-+		/*
-+		 * Stop if current map starts after map->end.
-+		 * Maps are ordered by start: next will not overlap for sure.
-+		 */
-+		if (pos->start >= map->end)
-+			break;
- 
- 		if (verbose >= 2) {
- 
-diff --git a/tools/perf/util/map.h b/tools/perf/util/map.h
-index 4cb90f242bed..e0f327b51e66 100644
---- a/tools/perf/util/map.h
-+++ b/tools/perf/util/map.h
-@@ -166,7 +166,6 @@ static inline void __map__zput(struct map **map)
- 
- #define map__zput(map) __map__zput(&map)
- 
--int map__overlap(struct map *l, struct map *r);
- size_t map__fprintf(struct map *map, FILE *fp);
- size_t map__fprintf_dsoname(struct map *map, FILE *fp);
- char *map__srcline(struct map *map, u64 addr, struct symbol *sym);
+Yup.
 
+>>> But on the other hand we're also already running over it in other places
+>>> like in the iommu-shutdown and I guess if someone _really_ disabled
+>>> CONFIG_PM, a lot of additional stuff would fail anyway.
+>>>
+>>> So should we wrap that in some #ifdef magic, just ignore it or simply
+>>> select PM similar to what Tegra, Renesas and Vexpress seem to do?
+>>>
+>>> I guess I like the 3rd option best ;-)
+>>
+>> It probably doesn't hurt. At what level do you want it? As a dependency
+>> to the IOMMU? or to the platform?
+> 
+> I guess it might be best to go the Tegra, etc way. Whoever in their right
+> mind would want to drive a mobile platform without any form for power
+> management ;-) .
+> 
+> I can do these patches for arm32+arm64 myself ... I just wanted to put
+> that thought out there - in case that was just a stupid idea of mine :-D .
+
+Not stupid at all. Regarding this very patch: where do you want me to
+take it?
+
+	M.
+-- 
+Jazz is not dead. It just smells funny...
