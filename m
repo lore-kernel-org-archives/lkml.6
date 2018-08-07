@@ -2,110 +2,164 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7474BC46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 20:23:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFC73C46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 20:23:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29E25208DB
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 20:23:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gIn0OGKh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29E25208DB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 7F7DE208FA
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 20:23:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F7DE208FA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727529AbeHGWjP (ORCPT
+        id S1727243AbeHGWjp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 18:39:15 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:39973 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725881AbeHGWjO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 18:39:14 -0400
-Received: by mail-pl0-f67.google.com with SMTP id s17-v6so7577114plp.7
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 13:23:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Kyb9bhMnPzFXUk8EMucKpoHNA5UclAq4bT2jpPG6ldg=;
-        b=gIn0OGKhyCLGAJtTGBnxbg82uTESRamX06WpOzhM0pxWYkwzxL1g9qqfJRg/OqMCAe
-         JMGku3TYKqvqS07sczv16LZpkq+/kEbg0xyNIpZM+ePcZmsJSuMB8/c3mKrIz90ZeHa1
-         13l4XJDm5GgyW35JoNdWq/1/9NB9LSA1NRnKc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Kyb9bhMnPzFXUk8EMucKpoHNA5UclAq4bT2jpPG6ldg=;
-        b=ACk5vi79W6PWtFSKnWqXiqlsUNJAAi1xEqQuoMmSTvZrM8kSpYK5ULDp/HPqT3qaxk
-         5NYooT8ZWQJNxZcuMazcmNJOmSmQT6d2QAimlq2jOdt+ixla1Wvn6d3U99YY3DPE/ywp
-         AFshNDhdpmJXrPQztdPAHbaKZciXk6tiA0Wu1ml6+kXq4RlX/tCrQq+ONyJq5FDuzzXq
-         p1SYXQpXabn8mY7ULkR6LsJLh+zAKEBosUYQk1CGSXw409SggeqqIL3zKmx9mZxcJfIb
-         VWq7mGW8cu9+S68p9vO6JlkeB7N2labQKltgebhct6L+4ur0on7gMRDRV4Bv4m08w6I0
-         9clQ==
-X-Gm-Message-State: AOUpUlHHhqjRFT/EDtkKCkOeZipB3dE5n6UaPo3PHOaXRSQJdiTFzHur
-        FdTz22ocpSmlnad2UjZCAkfW6w==
-X-Google-Smtp-Source: AAOMgpcGCJdQw+HsQDVwB3wHaOpYrjSWbCfM9oA1X23O1xMxI4qB9/CX0YZnihY4PVJemf9rAuKdog==
-X-Received: by 2002:a17:902:2ac3:: with SMTP id j61-v6mr18783148plb.172.1533673387401;
-        Tue, 07 Aug 2018 13:23:07 -0700 (PDT)
-Received: from localhost ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
-        by smtp.gmail.com with ESMTPSA id i25-v6sm7435446pfi.150.2018.08.07.13.23.06
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 07 Aug 2018 13:23:06 -0700 (PDT)
-Date:   Tue, 7 Aug 2018 13:23:06 -0700
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Bard Liao <bardliao@realtek.com>,
-        Oder Chiou <oder_chiou@realtek.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org, Guenter Roeck <groeck@chromium.org>,
-        Nicolas Boichat <drinkcat@chromium.org>
-Subject: Re: [PATCH v2] ASoC: rt5677: Fix initialization of
- rt5677_of_match.data
-Message-ID: <20180807202306.GE160295@google.com>
-References: <20180807171940.150507-1-mka@chromium.org>
- <87753f10135e5f0791a6bfecb37ddecf7fd5b977.camel@linux.intel.com>
+        Tue, 7 Aug 2018 18:39:45 -0400
+Received: from mx2.suse.de ([195.135.220.15]:44578 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725881AbeHGWjo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 18:39:44 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 2C33CAE70;
+        Tue,  7 Aug 2018 20:23:35 +0000 (UTC)
+Date:   Tue, 7 Aug 2018 22:23:32 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Johannes Weiner <hannes@cmpxchg.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>, linux-mm@kvack.org,
+        Greg Thelen <gthelen@google.com>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] memcg, oom: be careful about races when warning about no
+ reclaimable task
+Message-ID: <20180807202332.GK10003@dhcp22.suse.cz>
+References: <20180807072553.14941-1-mhocko@kernel.org>
+ <20180807200247.GA4251@cmpxchg.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87753f10135e5f0791a6bfecb37ddecf7fd5b977.camel@linux.intel.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180807200247.GA4251@cmpxchg.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 07, 2018 at 10:13:47PM +0300, Andy Shevchenko wrote:
-> On Tue, 2018-08-07 at 10:19 -0700, Matthias Kaehlcke wrote:
-> > The driver expects to find the device id in rt5677_of_match.data,
-> > however
-> > it is currently assigned to rt5677_of_match.type. Fix this.
+On Tue 07-08-18 16:02:47, Johannes Weiner wrote:
+> On Tue, Aug 07, 2018 at 09:25:53AM +0200, Michal Hocko wrote:
+> > From: Michal Hocko <mhocko@suse.com>
 > > 
-> > The problem was found with the help of clang:
-> >   sound/soc/codecs/rt5677.c:5010:36: warning: expression which
-> > evaluates to
-> >   zero treated as a null pointer constant of type 'const void *'
-> >   [-Wnon-literal-null-conversion]
-> >     { .compatible = "realtek,rt5677", RT5677 },
-> >                                       ^~~~~~
+> > "memcg, oom: move out_of_memory back to the charge path" has added a
+> > warning triggered when the oom killer cannot find any eligible task
+> > and so there is no way to reclaim the oom memcg under its hard limit.
+> > Further charges for such a memcg are forced and therefore the hard limit
+> > isolation is weakened.
 > > 
-> > Fixes: ddc9e69b9dc2 ("ASoC: rt5677: Hide platform data in the module
-> > sources")
-> > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> > The current warning is however too eager to trigger  even when we are not
+> > really hitting the above condition. Syzbot[1] and Greg Thelen have noticed
+> > that we can hit this condition even when there is still oom victim
+> > pending. E.g. the following race is possible:
+> > 
+> > memcg has two tasks taskA, taskB.
+> > 
+> > CPU1 (taskA)			CPU2			CPU3 (taskB)
+> > try_charge
+> >   mem_cgroup_out_of_memory				try_charge
+> >       select_bad_process(taskB)
+> >       oom_kill_process		oom_reap_task
+> > 				# No real memory reaped
+> >     				  			  mem_cgroup_out_of_memory
+> > 				# set taskB -> MMF_OOM_SKIP
+> >   # retry charge
+> >   mem_cgroup_out_of_memory
+> >     oom_lock						    oom_lock
+> >     select_bad_process(self)
+> >     oom_kill_process(self)
+> >     oom_unlock
+> > 							    # no eligible task
+> > 
+> > In fact syzbot test triggered this situation by placing multiple tasks
+> > into a memcg with hard limit set to 0. So no task really had any memory
+> > charged to the memcg
+> > 
+> > : Memory cgroup stats for /ile0: cache:0KB rss:0KB rss_huge:0KB shmem:0KB mapped_file:0KB dirty:0KB writeback:0KB swap:0KB inactive_anon:0KB active_anon:0KB inactive_file:0KB active_file:0KB unevictable:0KB
+> > : Tasks state (memory values in pages):
+> > : [  pid  ]   uid  tgid total_vm      rss pgtables_bytes swapents oom_score_adj name
+> > : [   6569]     0  6562     9427        1    53248        0             0 syz-executor0
+> > : [   6576]     0  6576     9426        0    61440        0             0 syz-executor6
+> > : [   6578]     0  6578     9426      534    61440        0             0 syz-executor4
+> > : [   6579]     0  6579     9426        0    57344        0             0 syz-executor5
+> > : [   6582]     0  6582     9426        0    61440        0             0 syz-executor7
+> > : [   6584]     0  6584     9426        0    57344        0             0 syz-executor1
+> > 
+> > so in principle there is indeed nothing reclaimable in this memcg and
+> > this looks like a misconfiguration. On the other hand we can clearly
+> > kill all those tasks so it is a bit early to warn and scare users. Do
+> > that by checking that the current is the oom victim and bypass the
+> > warning then. The victim is allowed to force charge and terminate to
+> > release its temporal charge along the way.
+> > 
+> > [1] http://lkml.kernel.org/r/0000000000005e979605729c1564@google.com
+> > Fixes: "memcg, oom: move out_of_memory back to the charge path"
+> > Noticed-by: Greg Thelen <gthelen@google.com>
+> > Reported-and-tested-by: syzbot+bab151e82a4e973fa325@syzkaller.appspotmail.com
+> > Signed-off-by: Michal Hocko <mhocko@suse.com>
+> > ---
+> >  mm/memcontrol.c | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> > index 4603ad75c9a9..1b6eed1bc404 100644
+> > --- a/mm/memcontrol.c
+> > +++ b/mm/memcontrol.c
+> > @@ -1703,7 +1703,8 @@ static enum oom_status mem_cgroup_oom(struct mem_cgroup *memcg, gfp_t mask, int
+> >  		return OOM_ASYNC;
+> >  	}
+> >  
+> > -	if (mem_cgroup_out_of_memory(memcg, mask, order))
+> > +	if (mem_cgroup_out_of_memory(memcg, mask, order) ||
+> > +			tsk_is_oom_victim(current))
+> >  		return OOM_SUCCESS;
+> >  
+> >  	WARN(1,"Memory cgroup charge failed because of no reclaimable memory! "
 > 
-> While this is correct fix, it seems it was never used.
+> This is really ugly. :(
+> 
+> If that check is only there to suppress the warning when the limit is
+> 0, this should really be a separate branch around the warning, with a
+> fat comment that this is a ridiculous cornercase, and not look like it
+> is an essential part of the memcg reclaim/oom process.
 
-Or it was used but no problem was noticed because .data was already
-0, which happens to be the value of RT5677.
+I do not mind having it in a separate branch. Btw. this is not just about
+hard limit set to 0. Similar can happen anytime we are getting out of
+oom victims. The likelihood goes up with the remote memcg charging
+merged recently.
 
-> Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Personally, I really don't get the point of this message. What is the
+> user to do with this information? What are we to do with it if people
+> report it? It conveys zero information on what the problem could be,
+> because it asserts a really vague high-level thing. Shouldn't such
+> debugging happen inside the OOM killer? What are the conceivable
+> scenarios in which this triggers other than obvious misconfigs?
+> 
+> What would we lose by just deleting it?
 
-Thanks
+We know that _something_ bad is going on because we have no way to
+reclaim down to the hard limit. And that is the primary tool for the
+workload isolation. I am all for a better information to tell us more. I
+do not know what that would be right now, though.
 
-Matthias
+My primary motivation for this warning was to catch potential issues
+after we have moved oom handling back to the charge path. If we just
+remove it then we have no information at all.
+
+I wouldn't mind removing it if it generated more false possitives but
+that hasn't happened so far.
+
+-- 
+Michal Hocko
+SUSE Labs
