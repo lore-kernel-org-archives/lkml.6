@@ -2,189 +2,169 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FORGED_MUA_MOZILLA,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE458C46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 10:59:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2327AC46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 11:01:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8ED4B2174D
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 10:59:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B9D7221757
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 11:01:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="XzRWkNsK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8ED4B2174D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cTILfX72"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9D7221757
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388435AbeHGNNj (ORCPT
+        id S1732511AbeHGNPk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 09:13:39 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:51486 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727155AbeHGNNj (ORCPT
+        Tue, 7 Aug 2018 09:15:40 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:52139 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726419AbeHGNPj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 09:13:39 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20180807105952euoutp018f209a5e6ae0c76de763de0c44fe6c18~IlRVmY9-B1216012160euoutp01K
-        for <linux-kernel@vger.kernel.org>; Tue,  7 Aug 2018 10:59:52 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20180807105952euoutp018f209a5e6ae0c76de763de0c44fe6c18~IlRVmY9-B1216012160euoutp01K
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1533639592;
-        bh=P8lvddq8nVsi87aQry2BzN+y0KwmZuHtwtwLmrGo/Lg=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=XzRWkNsKUCJJCDS9LfpjwesFNysfyt3ZQG7MuJ7WhXNw/sqVtmen2ND+GCiZKbFnx
-         5j99ZfWIEPtsKNH7qKXQP4tsygBleGxJR2Ilww+vQ10f2BwvWi0CYtJ8ZqX8tE/zPy
-         xvupBhae8IMGSUnhgs0Dve9uIrdTj8Ql8nsCz3wY=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20180807105951eucas1p25909fbdad3ac222e73f738a3eca6e825~IlRUts9ML1380813808eucas1p2l;
-        Tue,  7 Aug 2018 10:59:51 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id BC.C2.04294.6AB796B5; Tue,  7
-        Aug 2018 11:59:51 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20180807105950eucas1p1e48a3d064afb4d601fa33eeb67f0ba02~IlRTyxXuT0840608406eucas1p1t;
-        Tue,  7 Aug 2018 10:59:50 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20180807105950eusmtrp26465a3053d43cf7e6db21130cf14631c~IlRTiT_bZ1291012910eusmtrp2c;
-        Tue,  7 Aug 2018 10:59:50 +0000 (GMT)
-X-AuditID: cbfec7f4-835ff700000010c6-d5-5b697ba69ac6
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 5A.07.04128.5AB796B5; Tue,  7
-        Aug 2018 11:59:49 +0100 (BST)
-Received: from [106.116.147.30] (unknown [106.116.147.30]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20180807105949eusmtip12877b77d253d8db9ed5a0d58f89a1ffe~IlRSw3CtN2199521995eusmtip1a;
-        Tue,  7 Aug 2018 10:59:49 +0000 (GMT)
-Subject: Re: [RFT 4/4] ARM: dts: exynos: Add LDO28 regulator on Exynos5422
- Odroid boards
-To:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-Date:   Tue, 7 Aug 2018 12:59:48 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
-        Thunderbird/52.9.1
+        Tue, 7 Aug 2018 09:15:39 -0400
+Received: by mail-wm0-f68.google.com with SMTP id y2-v6so16980525wma.1
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 04:01:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=JfFDy50f8k+rF9zVUA29SlVOmGYP2ZMLDAJ5Z5F3E/A=;
+        b=cTILfX72N0JH+JxTDN3V3MWYa9mYF5ieWt+LtvQJeF0yLHRULWOVq1T8kjeTT8Q6oq
+         okJAJWBAySP+U+gTRHPKOnLg9HiFJVYeq1dVC0KnrGNBB72/3QXQ4Q3zuaNySd2THKtm
+         +xfLCs2dtQbhCo84qD3yzOxdoX5iTx1MqanIXb/T5Jap/PcAdHzR4yRQMoEr1uQbuYL/
+         phNqvckDwFlJZPg+hiBC9C+JV1SaQ4Xj6vzsm4Vglfk2Y5lzwHrJpN/KWfzD5Uo64QEG
+         Kp6pxYlGjJ0Gh20jq3VtXQ0Om3creKjViLfTgV9ogYLAmPGld+DDuPXtm+N1tEqubR0q
+         bYqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=JfFDy50f8k+rF9zVUA29SlVOmGYP2ZMLDAJ5Z5F3E/A=;
+        b=HIDC7BHQ6tT53VmAXme0uKL/HzPe98hlXe0tN4VZ2PU+eDENYa6uR7tM5/IEONAfLi
+         pkOAGtD++UJdsWuUNYDBF2cFdJYw3qIhuGe+p8Bmddklb8zPaWDmCw/k7ZS+aibO7XUh
+         UQPqpdcv6zLOT1zmZTJqHs0UqN1G5iT7q3yPtnpMhzb0QUQu9FS6Y/7ASB1C5En3QWhy
+         fxMA+xhVVLmEo6Y4NK4Ybm/041i3nfHksMTKuP3BrliPBfSBPI56RPgtNkQ2NUBX0B0g
+         3Yjg61zB4G1b74novoYMfbVseuPhVwGOp5Vx5RaKMzwFHsZEOnL/OYCNDsmNr0hReknW
+         R44A==
+X-Gm-Message-State: AOUpUlGqatJytqsonn2P6LUfRuBBkCbcSyMyPoTLMSg8hB5WS2Z57opO
+        0pvr8eoqJ9dX22JVO3eHXdemzacmyFfjM41wzBs=
+X-Google-Smtp-Source: AA+uWPx3qlW56S+tUPeUiSg8X5ks6ztg/UROKvbQXSEoviScNDx+7oOwqGBCVZoWFNG/DIg45+nbzg4QXfOBkDpCSQ0=
+X-Received: by 2002:a1c:e595:: with SMTP id c143-v6mr1396927wmh.85.1533639711543;
+ Tue, 07 Aug 2018 04:01:51 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180806160933.6578-4-krzk@kernel.org>
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrJKsWRmVeSWpSXmKPExsWy7djP87rLqzOjDT5NZbLYOGM9q8X1L89Z
-        LeYfOcdq0f/4NbPF+fMb2C02Pb7GanF51xw2ixnn9zFZLL1+kcmide8RdgcujzXz1jB6bFrV
-        yeaxeUm9R9+WVYwenzfJBbBGcdmkpOZklqUW6dslcGVs+/aJteCKQMXFhauZGhgX8XYxcnJI
-        CJhIfN70nbmLkYtDSGAFo8TFOw9ZIZwvjBJ7F7RAOZ8ZJf6e6WOGadmy/jhUy3JGidkrdkM5
-        7xkl1nZNZgKpEhaIkni9cDpYQkRgBpPEtX+LWUESzAIJEhN+XwUrYhMwlOh628UGYrMIqEgs
-        a5oA1MDBISoQI/F7lzVImFdAUOLkzCcsIDYn0OY3H26xQIyRl9j+dg4zhC0ucevJfCaI63ax
-        S5w/zgrRWybxYcVbqKtdJHofX2SFsIUlXh3fwg5hy0j83wnSywVkNzNKtM+YxQ7h9DBKbJ2z
-        gw2iylri8HGQbg6gbZoS63fpQ4QdJR5+2MgOEpYQ4JO48VYQ4h4+iUnbpjNDhHklOtqEIKrV
-        JGYdXwe39uCFS8wTGJVmIflyFpLPZiH5bBbC3gWMLKsYxVNLi3PTU4uN8lLL9YoTc4tL89L1
-        kvNzNzECE9Tpf8e/7GDc9SfpEKMAB6MSD2/GsoxoIdbEsuLK3EOMEhzMSiK8vJlAId6UxMqq
-        1KL8+KLSnNTiQ4zSHCxK4rx8WmnRQgLpiSWp2ampBalFMFkmDk6pBkYOcdbGXXfWNRvv/Hu0
-        OnoSl+2yRZ6/2e7q/thqICY0YXvW2i/ZHkFxJx7dmfBj3atOseJDIv7ivUFsommH8yd9fMvh
-        7dsYc2STsEDGw4jp7E63w2wvubwv8LrivW+9p9yvZ7K9QstuTzga6bDm6OIpu6oWHhd/qMjI
-        MHtp0ewPhqe9Xt+tOJ2rxFKckWioxVxUnAgA301Vj0wDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrFIsWRmVeSWpSXmKPExsVy+t/xu7pLqzOjDdo2aVtsnLGe1eL6l+es
-        FvOPnGO16H/8mtni/PkN7BabHl9jtbi8aw6bxYzz+5gsll6/yGTRuvcIuwOXx5p5axg9Nq3q
-        ZPPYvKTeo2/LKkaPz5vkAlij9GyK8ktLUhUy8otLbJWiDS2M9AwtLfSMTCz1DI3NY62MTJX0
-        7WxSUnMyy1KL9O0S9DK2ffvEWnBFoOLiwtVMDYyLeLsYOTkkBEwktqw/zgxiCwksZZT4eJUJ
-        Ii4jcXJaAyuELSzx51oXG0TNW0aJBbvTQGxhgSiJ1wunA/VycYgIzGCS+DDzD1gzs0CCxLf7
-        nxkhGjYySsy56AZiswkYSnS9hRjEK2AncWjiUzCbRUBFYlnTBLAjRAViJI5OboGqEZQ4OfMJ
-        C4jNCXTomw+3WCDmm0nM2/yQGcKWl9j+dg6ULS5x68l8pgmMQrOQtM9C0jILScssJC0LGFlW
-        MYqklhbnpucWG+kVJ+YWl+al6yXn525iBMbjtmM/t+xg7HoXfIhRgINRiYdXYElGtBBrYllx
-        Ze4hRgkOZiURXt5MoBBvSmJlVWpRfnxRaU5q8SFGU6DnJjJLiSbnA1NFXkm8oamhuYWlobmx
-        ubGZhZI473mDyighgfTEktTs1NSC1CKYPiYOTqkGRuFuh50MCRxdVW0KjF9di1o4a9MkYi09
-        l/u931JZfuOiw8LDO10O2CTdCtysXeA0wVTQM1jjq1umcbJx6HmblU+OyAeqpYmdC2i9sXTZ
-        rvbbu5d2/d+uxM/YHa3x+XtibmtasfWvmbEzz3jIv/5uzhfkJMJ56l2EwQMmgyb2jDK/pfv4
-        F/IqsRRnJBpqMRcVJwIAEYpDUt0CAAA=
-Message-Id: <20180807105950eucas1p1e48a3d064afb4d601fa33eeb67f0ba02~IlRTyxXuT0840608406eucas1p1t@eucas1p1.samsung.com>
-X-CMS-MailID: 20180807105950eucas1p1e48a3d064afb4d601fa33eeb67f0ba02
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20180806160955epcas4p14c924297f156db1dcb30ce543bc2d79a
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20180806160955epcas4p14c924297f156db1dcb30ce543bc2d79a
-References: <20180806160933.6578-1-krzk@kernel.org>
-        <CGME20180806160955epcas4p14c924297f156db1dcb30ce543bc2d79a@epcas4p1.samsung.com>
-        <20180806160933.6578-4-krzk@kernel.org>
+Received: by 2002:a1c:178a:0:0:0:0:0 with HTTP; Tue, 7 Aug 2018 04:01:50 -0700 (PDT)
+In-Reply-To: <20180803195025.GO20303@art_vandelay>
+References: <20180724082213.25677-1-robert.foss@collabora.com>
+ <f718f3ec-3726-3f51-6756-80b357fc23c9@flowbird.group> <CACvgo53h=8q-xuJBPP1T2JWkb7SffXas94=moS1x76=BejyVJA@mail.gmail.com>
+ <c05f1d94-bf9e-cf9b-e575-dc220b9ca163@flowbird.group> <CACvgo50u--YAxwG-cEhgj5AagOcz9oyaX2YC52Gp6324c8mNEQ@mail.gmail.com>
+ <20180803195025.GO20303@art_vandelay>
+From:   Emil Velikov <emil.l.velikov@gmail.com>
+Date:   Tue, 7 Aug 2018 12:01:50 +0100
+Message-ID: <CACvgo50Pk_FduWG5nev0W1pxqNfg3uMo0-7TuDPAckcBv=cHhA@mail.gmail.com>
+Subject: Re: [RFC] drm: Allow DRM_IOCTL_MODE_MAP_DUMB for render nodes
+To:     Sean Paul <seanpaul@chromium.org>
+Cc:     Martin Fuzzey <martin.fuzzey@flowbird.group>,
+        Robert Foss <robert.foss@collabora.com>,
+        David Airlie <airlied@linux.ie>,
+        Brian Paul <brianp@vmware.com>,
+        ML dri-devel <dri-devel@lists.freedesktop.org>,
+        Eric Engestrom <eric.engestrom@intel.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Nicolas Norvez <norvez@chromium.org>,
+        Rob Herring <robh@kernel.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Krzysztof,
-
-On 2018-08-06 18:09, Krzysztof Kozlowski wrote:
-> The LDO28 is used only on Odroid XU3 for Display Port.  Define it so DTS
-> will describe entire hardware.
+On 3 August 2018 at 20:50, Sean Paul <seanpaul@chromium.org> wrote:
+> On Fri, Aug 03, 2018 at 06:03:50PM +0100, Emil Velikov wrote:
+>> On 3 August 2018 at 16:06, Martin Fuzzey <martin.fuzzey@flowbird.group> wrote:
+>> > Hi Emil,
+>> >
+>> > On 03/08/18 14:35, Emil Velikov wrote:
+>> >>
+>> >> Hi Martin,
+>> >>
+>> >> On 1 August 2018 at 15:24, Martin Fuzzey <martin.fuzzey@flowbird.group>
+>> >> wrote:
+>> >>
+>> >> Let's start with the not-so obvious question:
+>> >> Why does one open the imx as render node?
+>> >>
+>> >> Of the top of my head:
+>> >> There is nothing in egl/android that should require an authenticated
+>> >> device.
+>> >> Hence, using a card node should be fine - the etnaviv code opens the
+>> >> render node it needs.
+>> >
+>> >
+>> > Yes, the problem is not in egl/android but in the scanout buffer allocation
+>> > code.
+>> >
+>> > etnaviv opens the render node on the *GPU* (for submitting GPU commands),
+>> > that part is fine.
+>> >
+>> > But scanout buffers need to be allocated from imx-drm not etnaviv.
+>> >
+>> > This done by renderonly_create_kms_dumb_buffer_for_resource()
+>> > [src/gallium/auxiliary/renderonly/renderonly.c]
+>> > Which uses DRM_IOCTL_MODE_CREATE_DUMB followed by
+>> > DRM_IOCTL_PRIME_FD_TO_HANDLE
+>> > on the "kms_fd" (probably poorly named because it's not actually used for
+>> > modesetting)
+>> > see imx_drm_screen_create()[ src/gallium/winsys/imx/drm/imx_drm_winsys.c]
+>> >
+>> >
+>> > If the card node is used DRM_IOCTL_MODE_CREATE_DUMB works but
+>> > DRM_IOCTL_PRIME_FD_TO_HANDLE fails, because the permissions are
+>> > DRM_AUTH|DRM_UNLOCKED|DRM_RENDER_ALLOW
+>> >
+>> Right I missed the DRM_AUTH, in the fd <> handle IOCTLs.
+>> So in order for things to work, we'd need to either:
+>>  - allow dumb buffers for render nodes, or
+>>  - drop the DRM_AUTH for fd <> handle imports
+>>
+>> Pointing an alternative solution, for kernel developers to analyse and
+>> make a decision.
+>>
+>> >
+>> > In android 8.1 the hardware composer runs in a seperate process and it has
+>> > to use the card node and be drm master (to use the KMS API),
+>> > therefore, when the surface flinger calls
+>> > renderonly_create_kms_dumb_buffer_for_resource() it is not authenticated.
+>> >
+>> > Making surface flinger use a render node fixes the problem for
+>> > DRM_IOCTL_PRIME_FD_TO_HANDLE (because that already has DRM_RENDER_ALLOW),
+>> > but DRM_IOCTL_MODE_CREATE_DUMB now fails without the patch.
+>> >
+>> >
+>> > This probably worked in previous versions of Android where surface flinger
+>> > and hwc were all in the same process.
+>> >
+>> There has been varying hacks for Android through the years. Bringing
+>> details into the discussion will result in a significant diversion.
+>> Something we could avoid, for the time being ;-)
 >
-> Depending on bootloader behavior this might affect the Display Port
-> because none of drivers are enabling it. By default it is off in S2MPS11
-> PMIC reset values.  However it could be enabled by bootloader so in such
-> case kernel will later disable it as unused regulator.
+> Did someone say diversion?!? The way this was handled prior to using
+> render/control nodes in drm_hwc/[drm/gbm]_gralloc is that all modesetting was
+> done via gralloc which was master. The hwc implementation was basically a proxy
+> backchanneling all of the work to gralloc.
 >
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-
-Odroid XU3 boots fine with this patch. Display Port is not yet enabled in
-mainline for OdroidXU3, so there is not much else to test for now.
-
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-
-> ---
+> Anyways, we probably don't want to go back there.
 >
-> Not tested on Odroid XU3 with Display Port.
-> ---
->   arch/arm/boot/dts/exynos5422-odroid-core.dtsi | 7 +++++++
->   arch/arm/boot/dts/exynos5422-odroidxu3.dts    | 6 ++++++
->   2 files changed, 13 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-> index b0dc9cc81b94..178e1064cfc7 100644
-> --- a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-> +++ b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-> @@ -331,6 +331,13 @@
->   				regulator-always-on;
->   			};
->   
-> +			ldo28_reg: LDO28 {
-> +				/* Used on XU3 */
-> +				regulator-name = "vdd_ldo26";
-> +				regulator-min-microvolt = <800000>;
-> +				regulator-max-microvolt = <3950000>;
-> +			};
-> +
->   			ldo29_reg: LDO29 {
->   				/* Unused */
->   				regulator-name = "vdd_ldo29";
-> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-> index 0322f281912c..db0bc17a667b 100644
-> --- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-> @@ -49,6 +49,12 @@
->   	};
->   };
->   
-> +&ldo28_reg {
-> +	regulator-name = "dp_p3v3";
-> +	regulator-min-microvolt = <3300000>;
-> +	regulator-max-microvolt = <3300000>;
-> +};
-> +
->   &pwm {
->   	/*
->   	 * PWM 0 -- fan
+Now that we got the diversion out of the way, any input on my proposal
+to drop the DRM_AUTH for fd <> imports.
+Am I missing something pretty obvious that makes the idea a no-go?
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
-
+Thanks
+Emil
