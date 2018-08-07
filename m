@@ -6,34 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98765C46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:56:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9B2DC46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:57:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 137832151D
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:56:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 137832151D
+	by mail.kernel.org (Postfix) with ESMTP id 788D12151D
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:57:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 788D12151D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390533AbeHGVMg (ORCPT
+        id S2390546AbeHGVMn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 17:12:36 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34018 "EHLO
+        Tue, 7 Aug 2018 17:12:43 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34410 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389145AbeHGVMg (ORCPT
+        with ESMTP id S2389145AbeHGVMn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 17:12:36 -0400
+        Tue, 7 Aug 2018 17:12:43 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C80ABD07;
-        Tue,  7 Aug 2018 18:56:51 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BA01474;
+        Tue,  7 Aug 2018 18:56:54 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 3.18 02/85] tracing: Fix possible double free in event_enable_trigger_func()
-Date:   Tue,  7 Aug 2018 20:51:04 +0200
-Message-Id: <20180807172357.449026518@linuxfoundation.org>
+        Sven Eckelmann <sven.eckelmann@openmesh.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 3.18 20/85] ath: Add regulatory mapping for FCC3_ETSIC
+Date:   Tue,  7 Aug 2018 20:51:22 +0200
+Message-Id: <20180807172358.094483248@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180807172357.357252052@linuxfoundation.org>
 References: <20180807172357.357252052@linuxfoundation.org>
@@ -50,60 +52,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Steven Rostedt (VMware) <rostedt@goodmis.org>
+From: Sven Eckelmann <sven.eckelmann@openmesh.com>
 
-commit 15cc78644d0075e76d59476a4467e7143860f660 upstream.
+[ Upstream commit 01fb2994a98dc72c8818c274f7b5983d5dd885c7 ]
 
-There was a case that triggered a double free in event_trigger_callback()
-due to the called reg() function freeing the trigger_data and then it
-getting freed again by the error return by the caller. The solution there
-was to up the trigger_data ref count.
+The regdomain code is used to select the correct the correct conformance
+test limits (CTL) for a country. If the regdomain code isn't available and
+it is still programmed in the EEPROM then it will cause an error and stop
+the initialization with:
 
-Code inspection found that event_enable_trigger_func() has the same issue,
-but is not as easy to trigger (requires harder to trigger failures). It
-needs to be solved slightly different as it needs more to clean up when the
-reg() function fails.
+  Invalid EEPROM contents
 
-Link: http://lkml.kernel.org/r/20180725124008.7008e586@gandalf.local.home
+The current CTL mappings for this regdomain code are:
 
-Cc: stable@vger.kernel.org
-Fixes: 7862ad1846e99 ("tracing: Add 'enable_event' and 'disable_event' event trigger commands")
-Reivewed-by: Masami Hiramatsu <mhiramat@kernel.org>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+* 2.4GHz: ETSI
+* 5GHz: FCC
+
+Signed-off-by: Sven Eckelmann <sven.eckelmann@openmesh.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- kernel/trace/trace_events_trigger.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/net/wireless/ath/regd_common.h |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/kernel/trace/trace_events_trigger.c
-+++ b/kernel/trace/trace_events_trigger.c
-@@ -1231,6 +1231,9 @@ event_enable_trigger_func(struct event_c
- 		goto out;
- 	}
+--- a/drivers/net/wireless/ath/regd_common.h
++++ b/drivers/net/wireless/ath/regd_common.h
+@@ -35,6 +35,7 @@ enum EnumRd {
+ 	FRANCE_RES = 0x31,
+ 	FCC3_FCCA = 0x3A,
+ 	FCC3_WORLD = 0x3B,
++	FCC3_ETSIC = 0x3F,
  
-+	/* Up the trigger_data count to make sure nothing frees it on failure */
-+	event_trigger_init(trigger_ops, trigger_data);
-+
- 	if (trigger) {
- 		number = strsep(&trigger, ":");
- 
-@@ -1281,6 +1284,7 @@ event_enable_trigger_func(struct event_c
- 		goto out_disable;
- 	/* Just return zero, not the number of enabled functions */
- 	ret = 0;
-+	event_trigger_free(trigger_ops, trigger_data);
-  out:
- 	return ret;
- 
-@@ -1291,7 +1295,7 @@ event_enable_trigger_func(struct event_c
-  out_free:
- 	if (cmd_ops->set_filter)
- 		cmd_ops->set_filter(NULL, trigger_data, NULL);
--	kfree(trigger_data);
-+	event_trigger_free(trigger_ops, trigger_data);
- 	kfree(enable_data);
- 	goto out;
- }
+ 	ETSI1_WORLD = 0x37,
+ 	ETSI3_ETSIA = 0x32,
+@@ -168,6 +169,7 @@ static struct reg_dmn_pair_mapping regDo
+ 	{FCC2_ETSIC, CTL_FCC, CTL_ETSI},
+ 	{FCC3_FCCA, CTL_FCC, CTL_FCC},
+ 	{FCC3_WORLD, CTL_FCC, CTL_ETSI},
++	{FCC3_ETSIC, CTL_FCC, CTL_ETSI},
+ 	{FCC4_FCCA, CTL_FCC, CTL_FCC},
+ 	{FCC5_FCCA, CTL_FCC, CTL_FCC},
+ 	{FCC6_FCCA, CTL_FCC, CTL_FCC},
 
 
