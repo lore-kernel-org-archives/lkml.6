@@ -2,686 +2,266 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2328C46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 16:40:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B15D0C46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 16:40:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88D2321770
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 16:40:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88D2321770
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tronnes.org
+	by mail.kernel.org (Postfix) with ESMTP id 3309D21770
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 16:40:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="c9aYAKc0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3309D21770
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390136AbeHGSzr (ORCPT
+        id S2390197AbeHGSzw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 14:55:47 -0400
-Received: from smtp.domeneshop.no ([194.63.252.55]:49139 "EHLO
-        smtp.domeneshop.no" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389292AbeHGSzr (ORCPT
+        Tue, 7 Aug 2018 14:55:52 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:35129 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389292AbeHGSzw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 14:55:47 -0400
-Received: from 211.81-166-168.customer.lyse.net ([81.166.168.211]:54004 helo=[192.168.10.173])
-        by smtp.domeneshop.no with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.84_2)
-        (envelope-from <noralf@tronnes.org>)
-        id 1fn529-00049G-W4; Tue, 07 Aug 2018 18:40:33 +0200
-Subject: Re: [PATCH v1 2/5] pardata: new bus for parallel data access
-To:     Sam Ravnborg <sam@ravnborg.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-References: <20180802193909.GA11443@ravnborg.org>
- <20180802194536.10820-2-sam@ravnborg.org>
-From:   =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>
-Message-ID: <634ea7d9-7cc1-f404-b072-0bafbc748fb7@tronnes.org>
-Date:   Tue, 7 Aug 2018 18:40:29 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 7 Aug 2018 14:55:52 -0400
+Received: by mail-ed1-f68.google.com with SMTP id e6-v6so7232479edr.2
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 09:40:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=xciXkd+1WZtNTFePPSNWwpKAyrXJ3K39DZZnyxAHywE=;
+        b=c9aYAKc0RbZn5WkCFDhxzepEJK14bm02dIDcnmd0jmMqVYeSJm4T0NvWwKtLLnz+8N
+         jg5Aeqc3nJnsi2G7iYJ/DihPJXieG9W+PXNnUSHIEZlcCHqslBSblctfu5uAbpFC7Rwv
+         hrzd6vHnjbBh8vredtayPI8RSJYlLkCIZbGxI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=xciXkd+1WZtNTFePPSNWwpKAyrXJ3K39DZZnyxAHywE=;
+        b=ruW5TnWwxgRkbHWRUoVVuDVZ+PO212fWac5ARpGDeO8kOV8i4ASYpk/B0Ckmxt5I+u
+         47D8TkGU75qdXVgDEObS8FWF70sk09z2y9wenbyqxNsPk51SV9kNo9X2VMmq0l9rYiBn
+         GulzmPuydbpR2IGUzzIlBPqLraAm7Cfzcy3tRs135t0W6vI52GJvu4Czout006dpUVmf
+         eNwK/ofyoUSSTVt8pbXJpvwjVn3JN9xXqZUIl9O6FetUQByo5MC2RWms3udx8eWhk1eo
+         F81MRJrRb5hOYgItRziw6Iy5kWTweiEZizvkayYtmSQGGSv0uT40CzYHULJ03xJv1TVc
+         //TA==
+X-Gm-Message-State: AOUpUlFa53/8ueZv7TXPcecdsmLYPlgL2In4gpYs7TknklSejoE19AoP
+        lo5yZVfrwFoLAVE6whXMoMOyPQ==
+X-Google-Smtp-Source: AAOMgpfRJ3z7tAYI1x3qhb81jjwrVm/h6vf03+DycS+U21c+mnr0b9t3WRVAKWj6hCT2v5sncueFGA==
+X-Received: by 2002:aa7:d5d6:: with SMTP id d22-v6mr22998762eds.161.1533660042483;
+        Tue, 07 Aug 2018 09:40:42 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:56fc:0:d707:d7d8:b180:96e5])
+        by smtp.gmail.com with ESMTPSA id y57-v6sm1062492edb.49.2018.08.07.09.40.40
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 07 Aug 2018 09:40:41 -0700 (PDT)
+Date:   Tue, 7 Aug 2018 18:40:39 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc:     David Airlie <airlied@linux.ie>, dnicoara@chromium.org,
+        =?iso-8859-1?Q?St=E9phane?= Marchesin <marcheu@google.com>,
+        Sean Paul <seanpaul@google.com>,
+        alexandros.frantzis@collabora.com, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, tomasz Figa <tfiga@chromium.org>,
+        Gustavo Padovan <gustavo.padovan@collabora.com>,
+        kernel@collabora.com
+Subject: Re: [PATCH] drm/atomic: add ATOMIC_AMEND flag to the Atomic IOCTL.
+Message-ID: <20180807164039.GB3008@phenom.ffwll.local>
+Mail-Followup-To: Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        David Airlie <airlied@linux.ie>, dnicoara@chromium.org,
+        =?iso-8859-1?Q?St=E9phane?= Marchesin <marcheu@google.com>,
+        Sean Paul <seanpaul@google.com>, alexandros.frantzis@collabora.com,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        tomasz Figa <tfiga@chromium.org>,
+        Gustavo Padovan <gustavo.padovan@collabora.com>,
+        kernel@collabora.com
+References: <20180806160102.11877-1-enric.balletbo@collabora.com>
 MIME-Version: 1.0
-In-Reply-To: <20180802194536.10820-2-sam@ravnborg.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180806160102.11877-1-enric.balletbo@collabora.com>
+X-Operating-System: Linux phenom 4.14.0-3-amd64 
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sam,
-
-Den 02.08.2018 21.45, skrev Sam Ravnborg:
-> The pardata supports implement a simple bus for devices
-> that are connected using a parallel bus driven by GPIOs.
-> The is often used in combination with simple displays
-> that is often seen in older embedded designs.
-> There is a demand for this support also in the linux
-> kernel for HW designs that uses these kind of displays.
->
-> The pardata bus uses a platfrom_driver that when probed
-> creates devices for all child nodes in the DT,
-> which are then supposed to be handled by pardata_drivers.
->
-> Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
+On Mon, Aug 06, 2018 at 06:01:02PM +0200, Enric Balletbo i Serra wrote:
+> From: Gustavo Padovan <gustavo.padovan@collabora.com>
+> 
+> This flag tells core to jump ahead the queued update if the conditions
+> in drm_atomic_async_check() are met. That means we are only able to do an
+> async update if no modeset is pending and update for the same plane is
+> not queued.
+> 
+> It uses the already in place infrastructure for async updates.
+> 
+> It is useful for cursor updates and async PageFlips over the atomic
+> ioctl, otherwise in some cases updates may be delayed to the point the
+> user will notice it. Note that for now it's only enabled for cursor
+> planes.
+> 
+> DRM_MODE_ATOMIC_AMEND should be passed to the Atomic IOCTL to use this
+> feature.
+> 
+> Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.com>
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 > ---
+> Hi,
+> 
+> This is an attempt to introduce the new ATOMIC_AMEND flag for atomic
+> operations, see the commit message for a more detailed description.
+> 
+> This was tested using a small program that exercises the uAPI for easy
+> sanity testing. The program created by Alexandros can be found here
+> [2]. To test, just build the program and use the --atomic flag to use the
+> cursor plane in normal (blocking mode), and --atomic-async to use the cursor
+> plane with the ATOMIC_AMEND flag. E.g.
+> 
+>   drm_cursor --atomic
+> 
+> or
+> 
+>   drm_cursor --atomic-async
 
- From a quick look at this I have these comments:
-1. There can only be one implementation of this bus, the gpio one.
-    There are SOC's with parallel bus hardware so you need to allow for
-    more implementations.
-2. The client shouldn't do the bus signaling. This should be hidden
-    behind read and write functions in pardata.
-3. I would also suggest you add an address bus instead of the RS pin
-4. I don't think reset belongs in the bus. It's a device thing.
-5. You can use gpiod_set_array_value() in the gpio implementation.
-    Some gpio drivers can set all gpios at once.
+Would be really lovely to bake these into igt-based regression tests. i915
+doesn't yet have async update support, but I hope we'll eventually gain
+that, and then our CI could make sure this keeps working.
 
-I made an attempt at implementing a bus like this a while back:
-https://github.com/notro/fbdbi/tree/master/i80
-
-Noralf.
-
->   Documentation/driver-api/index.rst   |   1 +
->   Documentation/driver-api/pardata.rst |  60 ++++++++
->   MAINTAINERS                          |   9 ++
->   drivers/Kconfig                      |   2 +
->   drivers/Makefile                     |   1 +
->   drivers/pardata/Kconfig              |  17 +++
->   drivers/pardata/Makefile             |   5 +
->   drivers/pardata/pardata.c            | 282 +++++++++++++++++++++++++++++++++++
->   include/linux/pardata.h              | 138 +++++++++++++++++
->   9 files changed, 515 insertions(+)
->   create mode 100644 Documentation/driver-api/pardata.rst
->   create mode 100644 drivers/pardata/Kconfig
->   create mode 100644 drivers/pardata/Makefile
->   create mode 100644 drivers/pardata/pardata.c
->   create mode 100644 include/linux/pardata.h
->
-> diff --git a/Documentation/driver-api/index.rst b/Documentation/driver-api/index.rst
-> index 6d9f2f9fe20e..1808fca406ae 100644
-> --- a/Documentation/driver-api/index.rst
-> +++ b/Documentation/driver-api/index.rst
-> @@ -41,6 +41,7 @@ available subsections can be seen below.
->      miscellaneous
->      w1
->      rapidio
-> +   pardata
->      s390-drivers
->      vme
->      80211/index
-> diff --git a/Documentation/driver-api/pardata.rst b/Documentation/driver-api/pardata.rst
-> new file mode 100644
-> index 000000000000..a811f024a0fe
-> --- /dev/null
-> +++ b/Documentation/driver-api/pardata.rst
-> @@ -0,0 +1,60 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +=========================
-> +Parallel Data Bus/Drivers
-> +=========================
-> +
-> +Displays may be connected using a simple parallel bus.
-> +This is often seen in embedded systems with a simple MCU, but is also
-> +used in Linux based systems to a small extent.
-> +
-> +The bus looks like this:
-> +
-> +.. code-block:: none
-> +
-> +       ----+
-> +           |  DB0-DB7 or DB4-DB7      +----
-> +           ===/========================
-> +           |  E - enable              |  D
-> +           ----------------------------  I
-> +        C  |  Reset                   |  S
-> +        P  ----------------------------  P
-> +        U  |  Read/Write (one or two) |  L
-> +           ----------------------------  A
-> +           |  RS - instruction/data   |  Y
-> +           ----------------------------
-> +           |                          +----
-> +       ----+
-> +
-> +There may be several devices connected to the bus with individual
-> +reset and read/write signals.
-> +Two types of interfaces are supported. 8800 with a single read/write signal,
-> +and 6800 with individual read/write signals.
-> +
-> +Display supported by the parallel data bus: `<https://www.sparkfun.com/products/710>`_
-> +
-> +The overall code structure is
-> +
-> +.. code-block:: none
-> +
-> +  platform_device [pardata bus]   <--- pardatabus [driver]
-> +       |
-> +       +-> device
-> +             |
-> +             +-> pardata_bus_data
-> +
-> +  pardata_device
-> +      |
-> +      +-> device
-> +            |
-> +            +->
-> +
-> +  pardatabus_bus
-> +
-> +
-> +API documentation
-> +=================
-> +.. kernel-doc:: include/linux/pardata.h
-> +   :internal:
-> +.. kernel-doc:: drivers/pardata/pardata.c
-> +   :internal:
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 96e98e206b0d..4ba7ff7c3e46 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -10727,6 +10727,15 @@ L:	platform-driver-x86@vger.kernel.org
->   S:	Maintained
->   F:	drivers/platform/x86/panasonic-laptop.c
->   
-> +PARALLEL DATA SUBSYSTEM
-> +M:	Sam Ravnborg <sam@ravnborg.org>
-> +S:	Maintained
-> +F:	drivers/pardata/
-> +F:	include/linux/pardata.h
-> +F:	drivers/gpu/drm/tinydrm/pardata-dbi.c
-> +F:	include/drm/pardata-dbi.h
-> +F:	Documentation/driver-api/pardata.rst
-> +
->   PARALLEL LCD/KEYPAD PANEL DRIVER
->   M:	Willy Tarreau <willy@haproxy.com>
->   M:	Ksenija Stanojevic <ksenija.stanojevic@gmail.com>
-> diff --git a/drivers/Kconfig b/drivers/Kconfig
-> index 95b9ccc08165..b51b25aae9a5 100644
-> --- a/drivers/Kconfig
-> +++ b/drivers/Kconfig
-> @@ -217,4 +217,6 @@ source "drivers/siox/Kconfig"
->   
->   source "drivers/slimbus/Kconfig"
->   
-> +source "drivers/pardata/Kconfig"
-> +
->   endmenu
-> diff --git a/drivers/Makefile b/drivers/Makefile
-> index 24cd47014657..cfe7945f2f6b 100644
-> --- a/drivers/Makefile
-> +++ b/drivers/Makefile
-> @@ -67,6 +67,7 @@ obj-$(CONFIG_CONNECTOR)		+= connector/
->   obj-$(CONFIG_FB_I810)           += video/fbdev/i810/
->   obj-$(CONFIG_FB_INTEL)          += video/fbdev/intelfb/
->   
-> +obj-$(CONFIG_PARDATA)		+= pardata/
->   obj-$(CONFIG_PARPORT)		+= parport/
->   obj-$(CONFIG_NVM)		+= lightnvm/
->   obj-y				+= base/ block/ misc/ mfd/ nfc/
-> diff --git a/drivers/pardata/Kconfig b/drivers/pardata/Kconfig
-> new file mode 100644
-> index 000000000000..5a4280a3f85a
-> --- /dev/null
-> +++ b/drivers/pardata/Kconfig
-> @@ -0,0 +1,17 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +#
-> +# Parallel Data Bus framework
-> +#
-> +menuconfig PARDATA
-> +	tristate "Parallel Data support"
-> +	help
-> +	  The parallel data framework is used for devices communicating
-> +	  with a simple parallel interface.
-> +	  The interface include 8 data pins, one register select,
-> +	  one enable pin, a chip select and a reset pin.
-> +	  The read/write may be 8080 style (one r/w pin) or 6800 style
-> +	  with separate read and write pins.
-> +	  The parallel data bus is often used for displays in embedded
-> +	  systems.
-> +
-> +	  If unsure, choose N.
-> diff --git a/drivers/pardata/Makefile b/drivers/pardata/Makefile
-> new file mode 100644
-> index 000000000000..0e48bd648879
-> --- /dev/null
-> +++ b/drivers/pardata/Makefile
-> @@ -0,0 +1,5 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +#
-> +# Makefile for kernel Parallel Data subsystem
-> +#
-> +obj-$(CONFIG_PARDATA) += pardata.o
-> diff --git a/drivers/pardata/pardata.c b/drivers/pardata/pardata.c
-> new file mode 100644
-> index 000000000000..985d692c116a
-> --- /dev/null
-> +++ b/drivers/pardata/pardata.c
-> @@ -0,0 +1,282 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2018, Sam Ravnborg
-> + *
-> + * Author: Sam Ravnborg <sam@ravnborg.org>
-> + */
-> +
-> +/**
-> + * DOC: Bus driver for parallel data bus
-> + *
-> + * The parallel data bus is often used for displays
-> + * in embedded designs and is sometimes also used
-> + * in designs supporting Linux.
-> + */
-> +
-> +#include <linux/platform_device.h>
-> +#include <linux/gpio/consumer.h>
-> +#include <linux/of_device.h>
-> +#include <linux/pardata.h>
-> +#include <linux/kernel.h>
-> +#include <linux/errno.h>
-> +#include <linux/slab.h>
-> +#include <linux/init.h>
-> +#include <linux/of.h>
-> +
-> +static struct pardata_device *
-> +pardata_device_create(struct pardatabus_data *pdbus)
-> +{
-> +	struct pardata_device *pddev;
-> +
-> +	/* We allocate the device, and initialize the default values */
-> +	pddev = kzalloc(sizeof(*pddev), GFP_KERNEL);
-> +	if (!pddev)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	pddev->dev.parent = pdbus->dev;
-> +	pddev->dev.bus = &pardata_bus;
-> +
-> +	dev_set_name(&pddev->dev, "pardata");
-> +
-> +	device_initialize(&pddev->dev);
-> +
-> +	return pddev;
-> +}
-> +
-> +static void pardata_device_release(struct pardata_device *ppdev)
-> +{
-> +	kfree(ppdev);
-> +}
-> +
-> +int pardata_device_register(struct pardata_device *pddev)
-> +{
-> +	return device_add(&pddev->dev);
-> +}
-> +
-> +static int of_pdbus_register_device(struct pardatabus_data *pdbus,
-> +				    struct device_node *np)
-> +{
-> +	struct pardata_device *pddev;
-> +	int ret;
-> +	u32 id;
-> +
-> +	pddev = pardata_device_create(pdbus);
-> +	if (IS_ERR(pddev))
-> +		return PTR_ERR(pddev);
-> +
-> +	/* The reg property is used as id */
-> +	ret = of_property_read_u32(np, "reg", &id);
-> +	if (ret) {
-> +		dev_err(pdbus->dev, "Failed to read the 'reg' property");
-> +		pardata_device_release(pddev);
-> +		return ret;
-> +	}
-> +	pddev->id = id;
-> +
-> +	/*
-> +	 *  Associate the OF node with the device structure so it
-> +	 * can be looked up later.
-> +	 */
-> +	of_node_get(np);
-> +	pddev->dev.of_node = np;
-> +
-> +	/* All data is now stored in the pardata_device struct; register it. */
-> +	ret = pardata_device_register(pddev);
-> +	if (ret) {
-> +		pardata_device_release(pddev);
-> +		of_node_put(np);
-> +		return ret;
-> +	}
-> +
-> +	dev_dbg(&pddev->dev, "registered pardata device %s with id %i\n",
-> +		np->name, id);
-> +	return 0;
-> +}
-> +
-> +static void pdbus_unregister(void)
-> +{
-> +	bus_unregister(&pardata_bus);
-> +}
-> +
-> +/**
-> + * of_pardata_register - Register pardatabus and create devices from DT
-> + *
-> + * @pdbus: pointer to pardatabus_data structure
-> + *
-> + * This function registers the pardatabus_data structure and registers
-> + * a pardata_device for each child node of @np.
-> + */
-> +int of_pardata_register(struct pardatabus_data *pdbus)
-> +{
-> +	struct device_node *child;
-> +	struct device_node *np;
-> +	int ret;
-> +
-> +	np = pdbus->dev->of_node;
-> +
-> +	/* Do not continue if the node is not available or disabled */
-> +	if (!np || !of_device_is_available(np))
-> +		return -ENODEV;
-> +
-> +	/* Register the parallel data bus */
-> +	ret = bus_register(&pardata_bus);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/*
-> +	 * Loop over the child nodes and register a
-> +	 * pardata_device for each node
-> +	 */
-> +	for_each_available_child_of_node(np, child) {
-> +		ret = of_pdbus_register_device(pdbus, child);
-> +
-> +		if (ret == -ENODEV)
-> +			dev_err(pdbus->dev, "pardata device missing.\n");
-> +		else if (ret)
-> +			goto unregister;
-> +	}
-> +	return 0;
-> +
-> +unregister:
-> +	pdbus_unregister();
-> +	return ret;
-> +}
-> +
-> +static int pardata_device_match(struct device *dev, struct device_driver *drv)
-> +{
-> +	/* OF style match */
-> +	if (of_match_device(drv->of_match_table, dev) != NULL)
-> +		return 1;
-> +
-> +	return 0;
-> +}
-> +
-> +static int pardata_device_probe(struct device *dev)
-> +{
-> +	struct pardata_device *pddev;
-> +	struct pardata_driver *pddrv;
-> +
-> +	pddev = to_pardata_device(dev);
-> +	pddrv = to_pardata_driver(dev->driver);
-> +
-> +	return pddrv->probe(pddev);
-> +}
-> +
-> +struct bus_type pardata_bus = {
-> +	.name		= "pardata",
-> +	.match		= pardata_device_match,
-> +	.probe		= pardata_device_probe,
-> +};
-> +EXPORT_SYMBOL_GPL(pardata_bus);
-> +
-> +/*
-> + * __pardata_driver_register() - Client driver registration
-> + *
-> + * @drv:Client driver to be associated with client-device.
-> + * @owner: owning module/driver
-> + *
-> + * Do not call this direct, use pardata_driver_register()
-> + */
-> +int __pardata_driver_register(struct pardata_driver *drv, struct module *owner)
-> +{
-> +	/* probe is mandatory */
-> +	if (!drv->probe)
+> The test worked on a Samsung Chromebook Plus on top of mainline plus
+> the patch to update cursors asynchronously through atomic for the
+> drm/rockchip driver.
+> 
+> Alexandros also did a proof-of-concept to use this flag and draw cursors
+> using atomic if possible on ozone [1].
+> 
+> Best regards,
+>  Enric
+> 
+> [1] https://chromium-review.googlesource.com/c/chromium/src/+/1092711
+> [2] https://gitlab.collabora.com/alf/drm-cursor
+> 
+> 
+> Changes in v1:
+> - Only enable it if userspace requests it.
+> - Only allow async update for cursor type planes.
+> - Rename ASYNC_UPDATE for ATOMIC_AMEND.
+> 
+>  drivers/gpu/drm/drm_atomic.c        |  5 +++++
+>  drivers/gpu/drm/drm_atomic_helper.c | 10 +++++++++-
+>  include/uapi/drm/drm_mode.h         |  4 +++-
+>  3 files changed, 17 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c
+> index 895741e9cd7d..7b3e4aa2874d 100644
+> --- a/drivers/gpu/drm/drm_atomic.c
+> +++ b/drivers/gpu/drm/drm_atomic.c
+> @@ -2338,6 +2338,10 @@ int drm_mode_atomic_ioctl(struct drm_device *dev,
+>  			(arg->flags & DRM_MODE_PAGE_FLIP_EVENT))
+>  		return -EINVAL;
+>  
+> +	if ((arg->flags & DRM_MODE_ATOMIC_ALLOW_MODESET) &&
+> +			(arg->flags & DRM_MODE_ATOMIC_AMEND))
 > +		return -EINVAL;
 > +
-> +	drv->driver.bus = &pardata_bus;
-> +	drv->driver.owner = owner;
-> +
-> +	return driver_register(&drv->driver);
-> +}
-> +EXPORT_SYMBOL_GPL(__pardata_driver_register);
-> +
-> +/*
-> + * Use a simple pardatabus driver to create the pardata
-> + * devices from child nodes in DT.
-> + *
-> + * The pardatabus driver parses the properties in the
-> + * device tree that will be used by the pardata drivers.
-> + */
-> +static int pardatabus_probe(struct platform_device *pdev)
-> +{
-> +	struct pardatabus_data *pdbus;
-> +	struct gpio_descs *pins;
-> +	struct gpio_desc *pin;
-> +	struct device *dev;
-> +
-> +	dev = &pdev->dev;
-> +
-> +	pdbus = devm_kzalloc(dev, sizeof(*pdbus), GFP_KERNEL);
-> +	if (!pdbus)
-> +		return -ENOMEM;
-> +
-> +	pdbus->dev = &pdev->dev;
-> +	dev_set_drvdata(dev, pdbus);
-> +
-> +	/* Get the mandatory bus details from DT */
-> +	pins = devm_gpiod_get_array(dev, "data-gpios", GPIOD_OUT_LOW);
-> +	if (IS_ERR(pins)) {
-> +		dev_err(dev, "Failed to get gpio 'data-gpios'");
-> +		return PTR_ERR(pins);
-> +	}
-> +	if (pins->ndescs != 4 && pins->ndescs != 8) {
-> +		dev_err(dev, "Invalid number of data-gpios %d - expected 4 or 8\n",
-> +			    pins->ndescs);
-> +		return -EINVAL;
-> +	}
-> +	pdbus->data_pins = pins;
-> +
-> +	pin = devm_gpiod_get(dev, "enable-gpios", GPIOD_OUT_LOW);
-> +	if (IS_ERR(pin)) {
-> +		dev_err(dev, "Failed to get gpio 'enable-gpios'\n");
-> +		return PTR_ERR(pin);
-> +	}
-> +	pdbus->pin_enable = pin;
-> +
-> +	pin = devm_gpiod_get(dev, "rs-gpios", GPIOD_OUT_HIGH);
-> +	if (IS_ERR(pin)) {
-> +		dev_err(dev, "Failed to get gpio 'rs-gpios'\n");
-> +		return PTR_ERR(pin);
-> +	}
-> +	pdbus->pin_rs = pin;
-> +
-> +	pin = devm_gpiod_get(dev, "rw-gpios", GPIOD_OUT_HIGH);
-> +	if (IS_ERR(pin)) {
-> +		dev_err(dev, "Failed to get gpio 'rw-gpios'\n");
-> +		return PTR_ERR(pin);
-> +	}
-> +	pdbus->pin_readwrite = pin;
-> +
-> +	pin = devm_gpiod_get(dev, "read-gpios", GPIOD_OUT_HIGH);
-> +	if (IS_ERR(pin)) {
-> +		dev_err(dev, "Failed to get gpio 'read-gpios'\n");
-> +		return PTR_ERR(pin);
-> +	}
-> +	pdbus->pin_read = pin;
-> +
-> +	pin = devm_gpiod_get(dev, "write-gpios", GPIOD_OUT_HIGH);
-> +	if (IS_ERR(pin)) {
-> +		dev_err(dev, "Failed to get gpio 'write-gpios'\n");
-> +		return PTR_ERR(pin);
-> +	}
-> +	pdbus->pin_write = pin;
-> +
-> +	return of_pardata_register(pdbus);
-> +}
-> +
-> +static const struct of_device_id pardata_bus_dt_ids[] = {
-> +	{ .compatible = "parallel-data-bus", },
-> +	{ /* sentinel */ }
-> +};
-> +
-> +static struct platform_driver pardatabus_driver = {
-> +	.driver	 = {
-> +		.name   = "pardatabus",
-> +		.of_match_table = pardata_bus_dt_ids,
-> +	},
-> +	.probe = pardatabus_probe,
-> +};
-> +module_platform_driver(pardatabus_driver);
-> +
-> +MODULE_LICENSE("GPL v2");
-> +MODULE_DESCRIPTION("Parallel Data Bus");
-> diff --git a/include/linux/pardata.h b/include/linux/pardata.h
-> new file mode 100644
-> index 000000000000..888a1c88176e
-> --- /dev/null
-> +++ b/include/linux/pardata.h
-> @@ -0,0 +1,138 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Copyright (c) 2018 Sam Ravnborg
-> + */
-> +
-> +#ifndef _LINUX_PARDATA_H
-> +#define _LINUX_PARDATA_H
-> +
-> +#include <linux/device.h>
-> +#include <linux/module.h>
-> +
-> +extern struct bus_type pardata_bus;
-> +
-> +/**
-> + * struct pardatabus_data - private data for the pardata bus
-> + *
-> + * Drivers uses these data when usung the pins that are part of
-> + * the bus.
-> + */
-> +struct pardatabus_data {
-> +	/**
-> +	 * @dev: device node that represent the DT node of the bus
-> +	 */
-> +	struct device *dev;
-> +
-> +	/**
-> +	 * @data_pins: The 8 or 4 GPIOs used for data
-> +	 */
-> +	struct gpio_descs *data_pins;
-> +
-> +	/**
-> +	 * @pin_enable: The enable pin (mandatory)
-> +	 */
-> +	struct gpio_desc *pin_enable;
-> +
-> +	/**
-> +	 * @pin_rs: register select (0: instruction 1: data)
-> +	 */
-> +	struct gpio_desc *pin_rs;
-> +
-> +	/**
-> +	 * @pin_readwrite: readwrite pin for 8080 style interface
-> +	 */
-> +	struct gpio_desc *pin_readwrite;
-> +
-> +	/**
-> +	 * @pin_read: read pin for 6800 style interface
-> +	 */
-> +	struct gpio_desc *pin_read;
-> +
-> +	/**
-> +	 * @pin_write: write pin for 6800 style interface
-> +	 */
-> +	struct gpio_desc *pin_write;
-> +};
-> +
-> +static inline struct pardatabus_data *to_pardatabus_data(struct device *d)
-> +{
-> +	return container_of(d, struct pardatabus_data, dev);
-> +}
-> +
-> +/**
-> + * struct pardata_device - pardata device handle.
-> + * @dev: Driver model representation of the device.
-> + *
-> + * This is the device handle returned when a pardata
-> + * device is registered.
-> + * The id comes from the DT
-> + *
-> + * @dev: The device
-> + * @id: Id of the device (from DT)
-> + */
-> +struct pardata_device {
-> +	struct device dev;
-> +	u32	   id;
-> +};
-> +
-> +static inline struct pardata_device *to_pardata_device(struct device *d)
-> +{
-> +	return container_of(d, struct pardata_device, dev);
-> +}
-> +
-> +static inline void *pardata_dev_get_drvdata(const struct pardata_device *pdd)
-> +{
-> +	return dev_get_drvdata(&pdd->dev);
-> +}
-> +
-> +static inline void pardata_dev_set_drvdata(struct pardata_device *pdd,
-> +					    void *data)
-> +{
-> +	dev_set_drvdata(&pdd->dev, data);
-> +}
-> +
-> +/**
-> + * struct pardata_driver - pardata 'generic device'
-> + *			(similar to 'spi_device' on SPI)
-> + *
-> + * @driver: generic device driver
-> + *	  pardata drivers must initialize name, owner and of_match_table
-> + *	  of this structure
-> + * @probe: Binds this driver to a pardata bus.
-> + * @shutdown: Standard shutdown callback used during powerdown/halt.
-> + */
-> +struct pardata_driver {
-> +	struct device_driver driver;
-> +	int   (*probe)(struct pardata_device *pdd);
-> +	void  (*shutdown)(struct pardata_device *pdd);
-> +};
-> +
-> +static inline struct pardata_driver *to_pardata_driver(struct device_driver *d)
-> +{
-> +	return container_of(d, struct pardata_driver, driver);
-> +}
-> +
-> +/* Use macro for driver registering to get simple access to THIS_MODULE */
-> +#define pardata_driver_register(drv) \
-> +	__pardata_driver_register(drv, THIS_MODULE)
-> +int __pardata_driver_register(struct pardata_driver *drv, struct module *owner);
-> +
-> +static inline void pardata_driver_unregister(struct pardata_driver *drv)
-> +{
-> +	return driver_unregister(&drv->driver);
-> +}
-> +
-> +/**
-> + * module_pardata_driver() - Helper macro for registering a parallel data driver
-> + * @__pardata_driver: pardatabus_driver struct
-> + *
-> + * Helper macro for parallel data drivers which do not do anything special in
-> + * module init/exit. This eliminates a lot of boilerplate. Each module may
-> + * only use this macro once, and calling it replaces module_init() and
-> + * module_exit()
-> + */
-> +#define module_pardata_driver(__pardata_driver) \
-> +	module_driver(__pardata_driver, pardata_driver_register, \
-> +			pardata_driver_unregister)
-> +
-> +#endif /* _LINUX_PARDATA_H */
+>  	drm_modeset_acquire_init(&ctx, DRM_MODESET_ACQUIRE_INTERRUPTIBLE);
+>  
+>  	state = drm_atomic_state_alloc(dev);
+> @@ -2346,6 +2350,7 @@ int drm_mode_atomic_ioctl(struct drm_device *dev,
+>  
+>  	state->acquire_ctx = &ctx;
+>  	state->allow_modeset = !!(arg->flags & DRM_MODE_ATOMIC_ALLOW_MODESET);
+> +	state->async_update = !!(arg->flags & DRM_MODE_ATOMIC_AMEND);
+>  
+>  retry:
+>  	plane_mask = 0;
+> diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
+> index 81e32199d3ef..59495f61c583 100644
+> --- a/drivers/gpu/drm/drm_atomic_helper.c
+> +++ b/drivers/gpu/drm/drm_atomic_helper.c
+> @@ -902,7 +902,7 @@ int drm_atomic_helper_check(struct drm_device *dev,
+>  	if (ret)
+>  		return ret;
+>  
+> -	if (state->legacy_cursor_update)
+> +	if (state->async_update || state->legacy_cursor_update)
 
+Hm, it would be really cool if we could rip out the legacy_cursor_update
+hack and also use async_update in the cursor compat helpers. At least if
+available.
+
+>  		state->async_update = !drm_atomic_helper_async_check(dev, state);
+>  
+>  	return ret;
+> @@ -1539,6 +1539,14 @@ int drm_atomic_helper_async_check(struct drm_device *dev,
+>  	if (new_plane_state->fence)
+>  		return -EINVAL;
+>  
+> +	/* Only allow async update for cursor type planes. */
+> +	if (plane->type != DRM_PLANE_TYPE_CURSOR)
+> +		return -EINVAL;
+
+Why limit to cursor planes? The async_update hooks are per-plane.
+
+> +
+> +	/* Don't do an async update if there isn't a pending commit. */
+> +	if (!old_plane_state->commit)
+> +		return -EINVAL;
+
+Hm, why this? Won't this break legacy cursor updates now for drivers which
+implement this using async_update?
+
+If userspace wants to avoid this, they can do so by properly tracking
+their non-AMEND updates and making sure they've waited until those all
+completed.
+
+Also, how is userspace supposed to figure out async_update exists/works?
+Usual approach is a getparam.
+
+Another semantics questions: Should this fail if we fall back to a
+non-async update? I think that would be best, since userspace can the
+decide on its own whether it wants to fall back to a normal commit or do
+something else. And the cursor compat code could do the same, i.e. try
+first with AMEND, then a normal commit?
+
+Cheers, Daniel
+
+> +
+>  	/*
+>  	 * Don't do an async update if there is an outstanding commit modifying
+>  	 * the plane.  This prevents our async update's changes from getting
+> diff --git a/include/uapi/drm/drm_mode.h b/include/uapi/drm/drm_mode.h
+> index 4b3a1bb58e68..6dae18428123 100644
+> --- a/include/uapi/drm/drm_mode.h
+> +++ b/include/uapi/drm/drm_mode.h
+> @@ -724,13 +724,15 @@ struct drm_mode_destroy_dumb {
+>  #define DRM_MODE_ATOMIC_TEST_ONLY 0x0100
+>  #define DRM_MODE_ATOMIC_NONBLOCK  0x0200
+>  #define DRM_MODE_ATOMIC_ALLOW_MODESET 0x0400
+> +#define DRM_MODE_ATOMIC_AMEND 0x0800
+>  
+>  #define DRM_MODE_ATOMIC_FLAGS (\
+>  		DRM_MODE_PAGE_FLIP_EVENT |\
+>  		DRM_MODE_PAGE_FLIP_ASYNC |\
+>  		DRM_MODE_ATOMIC_TEST_ONLY |\
+>  		DRM_MODE_ATOMIC_NONBLOCK |\
+> -		DRM_MODE_ATOMIC_ALLOW_MODESET)
+> +		DRM_MODE_ATOMIC_ALLOW_MODESET |\
+> +		DRM_MODE_ATOMIC_AMEND)
+>  
+>  struct drm_mode_atomic {
+>  	__u32 flags;
+> -- 
+> 2.18.0
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
