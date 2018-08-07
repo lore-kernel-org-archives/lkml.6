@@ -3,171 +3,113 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEC10C46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 20:31:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43D7BC46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 20:34:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80E64216E3
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 20:31:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80E64216E3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paulk.fr
+	by mail.kernel.org (Postfix) with ESMTP id ED64A2170D
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 20:34:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED64A2170D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726893AbeHGWsA (ORCPT
+        id S1726805AbeHGWue (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 18:48:00 -0400
-Received: from leonov.paulk.fr ([185.233.101.22]:40638 "EHLO leonov.paulk.fr"
+        Tue, 7 Aug 2018 18:50:34 -0400
+Received: from gate.crashing.org ([63.228.1.57]:43327 "EHLO gate.crashing.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726680AbeHGWr7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 18:47:59 -0400
-Received: from gagarine.paulk.fr (gagarine [192.168.1.127])
-        by leonov.paulk.fr (Postfix) with ESMTPS id 5B645C013D
-        for <linux-kernel@vger.kernel.org>; Tue,  7 Aug 2018 22:31:49 +0200 (CEST)
-Received: by gagarine.paulk.fr (Postfix, from userid 114)
-        id 15229C0F36; Tue,  7 Aug 2018 22:31:48 +0200 (CEST)
-Received: from collins (unknown [192.168.1.1])
-        by gagarine.paulk.fr (Postfix) with ESMTPSA id D05CDC0F18;
-        Tue,  7 Aug 2018 22:31:31 +0200 (CEST)
-Message-ID: <230112e8b2ad4b4e53b54fe1446e7f71aa09e514.camel@paulk.fr>
-Subject: Re: [PATCH] drm/sun4i: Avoid failing to init fbdev without any
- connector
-From:   Paul Kocialkowski <contact@paulk.fr>
-To:     Daniel Vetter <daniel@ffwll.ch>
-Cc:     dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
-        linux-sunxi@googlegroups.com
-Date:   Tue, 07 Aug 2018 22:31:30 +0200
-In-Reply-To: <20180807201801.GF3008@phenom.ffwll.local>
-References: <20180807193919.4800-1-contact@paulk.fr>
-         <20180807201801.GF3008@phenom.ffwll.local>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-+/fzeC/q/EtTWxQj+UFa"
-X-Mailer: Evolution 3.28.4 
+        id S1726428AbeHGWue (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 18:50:34 -0400
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w77KWkm5019849;
+        Tue, 7 Aug 2018 15:32:51 -0500
+Message-ID: <2103ecfe52d23cec03f185d08a87bfad9c9d82b5.camel@kernel.crashing.org>
+Subject: Re: [RFC 0/4] Virtio uses DMA API for all devices
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        aik@ozlabs.ru, robh@kernel.org, joe@perches.com,
+        elfring@users.sourceforge.net, david@gibson.dropbear.id.au,
+        jasowang@redhat.com, mpe@ellerman.id.au, linuxram@us.ibm.com,
+        haren@linux.vnet.ibm.com, paulus@samba.org,
+        srikar@linux.vnet.ibm.com, robin.murphy@arm.com,
+        jean-philippe.brucker@arm.com, marc.zyngier@arm.com
+Date:   Wed, 08 Aug 2018 06:32:45 +1000
+In-Reply-To: <20180807135505.GA29034@infradead.org>
+References: <20180803160246.GA13794@infradead.org>
+         <22310f58605169fe9de83abf78b59f593ff7fbb7.camel@kernel.crashing.org>
+         <20180804082120.GB4421@infradead.org>
+         <a3ec0a454928e880dabc3782ea906e318634abf9.camel@kernel.crashing.org>
+         <20180805072930.GB23288@infradead.org>
+         <b7e8294e3e70d24072883a7e8e5375719d5af870.camel@kernel.crashing.org>
+         <20180806094243.GA16032@infradead.org>
+         <6c707d6d33ac25a42265c2e9b521c2416d72c739.camel@kernel.crashing.org>
+         <20180807062117.GD32709@infradead.org>
+         <aa59c7f8556bd4b332394a1dcf2d4a8faf3dc4a2.camel@kernel.crashing.org>
+         <20180807135505.GA29034@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.4 (3.28.4-1.fc28) 
 Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, 2018-08-07 at 06:55 -0700, Christoph Hellwig wrote:
+> On Tue, Aug 07, 2018 at 04:42:44PM +1000, Benjamin Herrenschmidt wrote:
+> > Note that I can make it so that the same DMA ops (basically standard
+> > swiotlb ops without arch hacks) work for both "direct virtio" and
+> > "normal PCI" devices.
+> > 
+> > The trick is simply in the arch to setup the iommu to map the swiotlb
+> > bounce buffer pool 1:1 in the iommu, so the iommu essentially can be
+> > ignored without affecting the physical addresses.
+> > 
+> > If I do that, *all* I need is a way, from the guest itself (again, the
+> > other side dosn't know anything about it), to force virtio to use the
+> > DMA ops as if there was an iommu, that is, use whatever dma ops were
+> > setup by the platform for the pci device.
+> 
+> In that case just setting VIRTIO_F_IOMMU_PLATFORM in the flags should
+> do the work (even if that isn't strictly what the current definition
+> of the flag actually means).  On the qemu side you'll need to make
+> sure you have a way to set VIRTIO_F_IOMMU_PLATFORM without emulating
+> an iommu, but with code to take dma offsets into account if your
+> plaform has any (various power plaforms seem to have them, not sure
+> if it affects your config).
 
---=-+/fzeC/q/EtTWxQj+UFa
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Something like that yes. I prefer a slightly different way, see below,
+any but in both cases, it should alleviate your concerns since it means
+there would be no particular mucking around with DMA ops at all, virtio
+would just use whatever "normal" ops we establish for all PCI devices
+on that platform, which will be standard ones.
 
-Hi,
+(swiotlb ones today and the new "integrates" ones you're cooking
+tomorrow).
 
-Le mardi 07 ao=C3=BBt 2018 =C3=A0 22:18 +0200, Daniel Vetter a =C3=A9crit :
-> On Tue, Aug 07, 2018 at 09:39:19PM +0200, Paul Kocialkowski wrote:
-> > Initializing and registering fbdev requires at least one DRM connector
-> > and will fail otherwise. In order to support headless setups (for
-> > instance for GPU rendering with the GBM backend, where a DRI card node
-> > is required to provide GEM memory reservation), add a check on the
-> > number of registered connectors before initializing fbdev.
->=20
-> sun4i is a pure kms driver, why exactly do you need it for gbm backed
-> rendering? What exactly is rendering here, and why does it insist on a
-> display card node, even if that display card node is 100% defunct?
+As for the flag itself, while we could set it from qemu when we get
+notified that the guest is going secure, both Michael and I think it's
+rather gross, it requires qemu to go iterate all virtio devices and
+"poke" something into them.
 
-The non-free Mali blobs provide GPU support with a GBM interface that
-takes a DRM fd in order to reserve the memory it needs for its rendering
-targets. This uses the GEM interface available through the DRI card node
-(and there is no render node with the non-free Mali driver). Allwinner
-has a minimalistic out-of-tree driver pretty much only for this purpose.
+It also means qemu will need some other internal nasty flag that says
+"set that bit but don't do iommu".
 
-I crafted this patch when someone on IRC tried to get the out-of-tree
-Mali GPU driver going with the mainline kernel in order to do rendering
-in a GBM buffer, since it's apparently the only option for headless
-rendering with the blob.
+It's nicer if we have a way in the guest virtio driver to do something
+along the lines of
 
-In my opinion, supporting the pipeline of an out-of-tree GPU driver that
-only works with a non-free userspace blob is not a valid reason to do
-anything. Still, it felt like adding support for the headless use-case
-wouldn't hurt, whatever the underlying use case for it may be. I found
-that other drivers also implement the same mechanism (perhaps for
-different reasons).
+	if ((flags & VIRTIO_F_IOMMU_PLATFORM) || arch_virtio_wants_dma_ops())
+
+Which would have the same effect and means the issue is entirely
+contained in the guest.
 
 Cheers,
+Ben.
 
-Paul
-
-> -Daniel
->=20
-> > Signed-off-by: Paul Kocialkowski <contact@paulk.fr>
-> > ---
-> >  drivers/gpu/drm/sun4i/sun4i_framebuffer.c | 10 +++++++++-
-> >  1 file changed, 9 insertions(+), 1 deletion(-)
-> >=20
-> > diff --git a/drivers/gpu/drm/sun4i/sun4i_framebuffer.c b/drivers/gpu/dr=
-m/sun4i/sun4i_framebuffer.c
-> > index 5f29850ef8ac..19a265e4a93a 100644
-> > --- a/drivers/gpu/drm/sun4i/sun4i_framebuffer.c
-> > +++ b/drivers/gpu/drm/sun4i/sun4i_framebuffer.c
-> > @@ -49,6 +49,8 @@ static struct drm_mode_config_helper_funcs sun4i_de_m=
-ode_config_helpers =3D {
-> > =20
-> >  int sun4i_framebuffer_init(struct drm_device *drm)
-> >  {
-> > +	int ret;
-> > +
-> >  	drm_mode_config_reset(drm);
-> > =20
-> >  	drm->mode_config.max_width =3D 8192;
-> > @@ -57,7 +59,13 @@ int sun4i_framebuffer_init(struct drm_device *drm)
-> >  	drm->mode_config.funcs =3D &sun4i_de_mode_config_funcs;
-> >  	drm->mode_config.helper_private =3D &sun4i_de_mode_config_helpers;
-> > =20
-> > -	return drm_fb_cma_fbdev_init(drm, 32, 0);
-> > +	if (drm->mode_config.num_connector > 0) {
-> > +		ret =3D drm_fb_cma_fbdev_init(drm, 32, 0);
-> > +		if (ret)
-> > +			return ret;
-> > +	}
-> > +
-> > +	return 0;
-> >  }
-> > =20
-> >  void sun4i_framebuffer_free(struct drm_device *drm)
-> > --=20
-> > 2.18.0
-> >=20
-> > _______________________________________________
-> > dri-devel mailing list
-> > dri-devel@lists.freedesktop.org
-> > https://lists.freedesktop.org/mailman/listinfo/dri-devel
->=20
->=20
---=20
-Developer of free digital technology and hardware support.
-
-Website: https://www.paulk.fr/
-Coding blog: https://code.paulk.fr/
-Git repositories: https://git.paulk.fr/ https://git.code.paulk.fr/
-
---=-+/fzeC/q/EtTWxQj+UFa
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEAbcMXZQMtj1fphLChP3B6o/ulQwFAltqAaIACgkQhP3B6o/u
-lQw0fg//Z2sVRijSWYVQZ2XOWioiO8hs07/ggbznUjO6UyQ87mTDZEXTiEr/9PEk
-7ZerPTRjWUvynQILZZESY4E1ojwQis6e9d53yOZr24kvaIR4ysk3LUgfHO10EiFB
-YAbvjOWHnwcdnJ7dPQ3i9rIXrnMJVFpc1WyFGPqvv2fOktOk7bEEptI5JcOryVgm
-erC36pnTnqEXjSYw/ZGPde4FHfIsBv/lYQVl/S5DwSfW26qO2yPhCjzOen8O26gi
-wY6hVDQLZKM+I2tjUfv8QG5mr8kCMQMDPvwUE6lyaVQ85l93qjjG37pI4LrYzDHe
-lIvuqQCNnHhP+rPExEkmrdaj3W92pM/p+TZE4lINFuBRe0nFp2lFC7krdHOrvc8+
-k1uK8iVEy9k4wJPMqCq7WYjZLXwyt+B4IpbJBy9Vys1BQUfKSn5MZTCpFUuN/coQ
-aqtw4EIlQZAi1AuzL/Qz6iArxiDan1CqK8Lti+Ln3Qy2it3eYTn11kwJOkOuQ0qR
-J/6arYnCI5j3YbcVzj42TpsXKYrqI3HwuXx3RbIV2MYdLmTQRvIIchAiaHQD48Us
-WWL0f3DdrR4vxyLn0MECoq6jjt/gNNBhMugtuctyNc4rILcpR2PQNwMZQ54Xwp9D
-uz/PsBImSQBKXSfhU/fkd37h04gZsNpKLT3np1Tr3MFJWBtMoqA=
-=LSkm
------END PGP SIGNATURE-----
-
---=-+/fzeC/q/EtTWxQj+UFa--
 
