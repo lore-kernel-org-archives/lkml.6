@@ -6,41 +6,39 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4314BC46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:53:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89977C46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:53:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA67C20685
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:53:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA67C20685
+	by mail.kernel.org (Postfix) with ESMTP id 3F9F6208E7
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:53:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F9F6208E7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404102AbeHGVJR (ORCPT
+        id S2404117AbeHGVJU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 17:09:17 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33268 "EHLO
+        Tue, 7 Aug 2018 17:09:20 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33272 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404017AbeHGVJQ (ORCPT
+        with ESMTP id S2404017AbeHGVJU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 17:09:16 -0400
+        Tue, 7 Aug 2018 17:09:20 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 84AE0D01;
-        Tue,  7 Aug 2018 18:53:33 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 88B63D07;
+        Tue,  7 Aug 2018 18:53:36 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 4.17 10/18] nohz: Fix missing tick reprogram when interrupting an inline softirq
-Date:   Tue,  7 Aug 2018 20:51:13 +0200
-Message-Id: <20180807172313.352444620@linuxfoundation.org>
+        stable@vger.kernel.org, Quinn Tran <quinn.tran@cavium.com>,
+        Himanshu Madhani <himanshu.madhani@cavium.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.14 01/21] scsi: qla2xxx: Fix unintialized List head crash
+Date:   Tue,  7 Aug 2018 20:51:15 +0200
+Message-Id: <20180807172331.014943210@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180807172312.964272530@linuxfoundation.org>
-References: <20180807172312.964272530@linuxfoundation.org>
+In-Reply-To: <20180807172330.953888701@linuxfoundation.org>
+References: <20180807172330.953888701@linuxfoundation.org>
 User-Agent: quilt/0.65
-X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
@@ -48,65 +46,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.17-stable review patch.  If anyone has any objections, please let me know.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Frederic Weisbecker <frederic@kernel.org>
+From: Quinn Tran <quinn.tran@cavium.com>
 
-commit 0a0e0829f990120cef165bbb804237f400953ec2 upstream.
+commit e3dde080ebbdbb4bda8eee35d770714fee8c59ac upstream.
 
-The full nohz tick is reprogrammed in irq_exit() only if the exit is not in
-a nesting interrupt. This stands as an optimization: whether a hardirq or a
-softirq is interrupted, the tick is going to be reprogrammed when necessary
-at the end of the inner interrupt, with even potential new updates on the
-timer queue.
+In case of IOCB Queue full or system where memory is low and driver
+receives large number of RSCN storm, the stale sp pointer can stay on
+gpnid_list resulting in page_fault.
 
-When soft interrupts are interrupted, it's assumed that they are executing
-on the tail of an interrupt return. In that case tick_nohz_irq_exit() is
-called after softirq processing to take care of the tick reprogramming.
+This patch fixes this issue by initializing the sp->elem list head and
+removing sp->elem before memory is freed.
 
-But the assumption is wrong: softirqs can be processed inline as well, ie:
-outside of an interrupt, like in a call to local_bh_enable() or from
-ksoftirqd.
+Following stack trace is seen
 
-Inline softirqs don't reprogram the tick once they are done, as opposed to
-interrupt tail softirq processing. So if a tick interrupts an inline
-softirq processing, the next timer will neither be reprogrammed from the
-interrupting tick's irq_exit() nor after the interrupted softirq
-processing. This situation may leave the tick unprogrammed while timers are
-armed.
+ 9 [ffff987b37d1bc60] page_fault at ffffffffad516768 [exception RIP: qla24xx_async_gpnid+496]
+10 [ffff987b37d1bd10] qla24xx_async_gpnid at ffffffffc039866d [qla2xxx]
+11 [ffff987b37d1bd80] qla2x00_do_work at ffffffffc036169c [qla2xxx]
+12 [ffff987b37d1be38] qla2x00_do_dpc_all_vps at ffffffffc03adfed [qla2xxx]
+13 [ffff987b37d1be78] qla2x00_do_dpc at ffffffffc036458a [qla2xxx]
+14 [ffff987b37d1bec8] kthread at ffffffffacebae31
 
-To fix this, simply keep reprogramming the tick even if a softirq has been
-interrupted. That can be optimized further, but for now correctness is more
-important.
-
-Note that new timers enqueued in nohz_full mode after a softirq gets
-interrupted will still be handled just fine through self-IPIs triggered by
-the timer code.
-
-Reported-by: Anna-Maria Gleixner <anna-maria@linutronix.de>
-Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Anna-Maria Gleixner <anna-maria@linutronix.de>
-Cc: stable@vger.kernel.org # 4.14+
-Link: https://lkml.kernel.org/r/1533303094-15855-1-git-send-email-frederic@kernel.org
+Fixes: 2d73ac6102d9 ("scsi: qla2xxx: Serialize GPNID for multiple RSCN")
+Cc: <stable@vger.kernel.org> # v4.17+
+Signed-off-by: Quinn Tran <quinn.tran@cavium.com>
+Signed-off-by: Himanshu Madhani <himanshu.madhani@cavium.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/softirq.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/scsi/qla2xxx/qla_gs.c     |    4 ++++
+ drivers/scsi/qla2xxx/qla_inline.h |    2 ++
+ 2 files changed, 6 insertions(+)
 
---- a/kernel/softirq.c
-+++ b/kernel/softirq.c
-@@ -387,7 +387,7 @@ static inline void tick_irq_exit(void)
+--- a/drivers/scsi/qla2xxx/qla_gs.c
++++ b/drivers/scsi/qla2xxx/qla_gs.c
+@@ -3368,6 +3368,10 @@ int qla24xx_async_gpnid(scsi_qla_host_t
+ 	return rval;
  
- 	/* Make sure that timer wheel updates are propagated */
- 	if ((idle_cpu(cpu) && !need_resched()) || tick_nohz_full_cpu(cpu)) {
--		if (!in_interrupt())
-+		if (!in_irq())
- 			tick_nohz_irq_exit();
- 	}
- #endif
+ done_free_sp:
++	spin_lock_irqsave(&vha->hw->vport_slock, flags);
++	list_del(&sp->elem);
++	spin_unlock_irqrestore(&vha->hw->vport_slock, flags);
++
+ 	if (sp->u.iocb_cmd.u.ctarg.req) {
+ 		dma_free_coherent(&vha->hw->pdev->dev,
+ 			sizeof(struct ct_sns_pkt),
+--- a/drivers/scsi/qla2xxx/qla_inline.h
++++ b/drivers/scsi/qla2xxx/qla_inline.h
+@@ -221,6 +221,8 @@ qla2xxx_get_qpair_sp(struct qla_qpair *q
+ 	sp->fcport = fcport;
+ 	sp->iocbs = 1;
+ 	sp->vha = qpair->vha;
++	INIT_LIST_HEAD(&sp->elem);
++
+ done:
+ 	if (!sp)
+ 		QLA_QPAIR_MARK_NOT_BUSY(qpair);
 
 
