@@ -3,153 +3,105 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3BCEC46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 12:09:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28AAAC46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 12:12:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6581D217BD
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 12:09:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6581D217BD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sntech.de
+	by mail.kernel.org (Postfix) with ESMTP id D7234214DD
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 12:12:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7234214DD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389004AbeHGOXX (ORCPT
+        id S2389011AbeHGO0K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 10:23:23 -0400
-Received: from gloria.sntech.de ([185.11.138.130]:50752 "EHLO gloria.sntech.de"
+        Tue, 7 Aug 2018 10:26:10 -0400
+Received: from foss.arm.com ([217.140.101.70]:53536 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727201AbeHGOXX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 10:23:23 -0400
-Received: from wd0970.dip.tu-dresden.de ([141.76.111.202] helo=phil.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1fn0na-000658-SJ; Tue, 07 Aug 2018 14:09:14 +0200
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     Marc Zyngier <marc.zyngier@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        Joerg Roedel <joro@8bytes.org>,
-        Jeffy Chen <jeffy.chen@rock-chips.com>
-Subject: Re: [PATCH 1/2] iommu/rockchip: Handle errors returned from PM framework
-Date:   Tue, 07 Aug 2018 14:09:14 +0200
-Message-ID: <2940317.dDZy1L4CDY@phil>
-In-Reply-To: <20180807085406.3863-2-marc.zyngier@arm.com>
-References: <20180807085406.3863-1-marc.zyngier@arm.com> <20180807085406.3863-2-marc.zyngier@arm.com>
+        id S1726951AbeHGO0K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 10:26:10 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 59BE980D;
+        Tue,  7 Aug 2018 05:12:07 -0700 (PDT)
+Received: from [10.4.12.131] (e110467-lin.Emea.Arm.com [10.4.12.131])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5A6053F5D0;
+        Tue,  7 Aug 2018 05:12:05 -0700 (PDT)
+Subject: Re: [PATCH] arm64: Trap WFI executed in userspace
+To:     Dave Martin <Dave.Martin@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20180807093326.5090-1-marc.zyngier@arm.com>
+ <20180807100437.GA9097@e103592.cambridge.arm.com>
+ <9af8bb9a-7c6c-2560-5965-118dfadf8141@arm.com>
+ <20180807103054.GB9097@e103592.cambridge.arm.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <da5d1650-fcd8-83ec-bd4c-02f236163776@arm.com>
+Date:   Tue, 7 Aug 2018 13:12:03 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20180807103054.GB9097@e103592.cambridge.arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marc,
-
-Am Dienstag, 7. August 2018, 10:54:05 CEST schrieb Marc Zyngier:
-> pm_runtime_get_if_in_use can fail: either PM has been disabled
-> altogether (-EINVAL), or the device hasn't been enabled yet (0).
-> Sadly, the Rockchip IOMMU driver tends to conflate the two things
-> by considering a non-zero return value as successful.
+On 07/08/18 11:30, Dave Martin wrote:
+> On Tue, Aug 07, 2018 at 11:24:34AM +0100, Marc Zyngier wrote:
+>> On 07/08/18 11:05, Dave Martin wrote:
+>>> On Tue, Aug 07, 2018 at 10:33:26AM +0100, Marc Zyngier wrote:
+>>>> It recently came to light that userspace can execute WFI, and that
+>>>> the arm64 kernel doesn trap this event. This sounds rather benign,
+>>>> but the kernel should decide when it wants to wait for an interrupt,
+>>>> and not userspace.
+>>>>
+>>>> Let's trap WFI and treat it as a way to yield the CPU to another
+>>>> process.
+>>>
+>>> This doesn't amount to a justification.
+>>>
+>>> If the power controller is unexpectedly left in a bad state so that
+>>> WFI will do something nasty to a cpu that may enter userspace, then we
+>>> probably have bigger problems.
+>>>
+>>> So, maybe it really is pretty harmless to let userspace execute this.
+>>
+>> Or not. It is also a very good way for userspace to find out when an
+>> interrupt gets delivered and start doing all kind of probing on the
+>> kernel. The least the userspace knows about that, the better I feel.
 > 
-> This has the consequence of hiding other bugs, so let's handle this
-> case throughout the driver, with a WARN_ON_ONCE so that we can try
-> and work out what happened.
+> Possibly.  I suspect there are other ways to guess pretty accurately
+> when an interrupt occurs, but WFI allows greater precision.
+
+...unless you're running in a VM and it traps to KVM anyway ;)
+
+>>> I can't think of a legitimate reason for userspace to execute WFI
+>>> however.  Userspace doesn't have interrupts under Linux, so it makes
+>>> no sense to wait for one.
+>>>
+>>> Have we seen anybody using WFI in userspace?  It may be cleaner to
+>>> map this to SIGILL rather than be permissive and regret it later.
+>>
+>> I couldn't find any user, and I'm happy to just send userspace to hell
+>> in that case. But it could also been said that since it was never
+>> prevented, it is a de-facto ABI.
 > 
-> Fixes: 0f181d3cf7d98 ("iommu/rockchip: Add runtime PM support")
-> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+> Agreed.  I wonder whether it's sufficient to have this mapping to SIGILL
+> in -next for a while and see whether anybody complains.
 
-I'm still not sure about the !CONFIG_PM case, as it was probably silently
-working in that case before.
+I think we'd have to avoid that for compat, though, since v7 code would 
+have the expectation that WFI can't be trapped by the kernel at all. 
+Personally I'm in favour of this patch as-is, since the architectural 
+intent of the instruction is essentially "I've got nothing better to do 
+right now than wait for something to happen", so treating it as a poor 
+man's sched_vield() stays close to that while mitigating the potential 
+nefarious and/or minor DoS implications of letting it architecturally 
+execute.
 
-But on the other hand we're also already running over it in other places
-like in the iommu-shutdown and I guess if someone _really_ disabled
-CONFIG_PM, a lot of additional stuff would fail anyway.
-
-
-So should we wrap that in some #ifdef magic, just ignore it or simply
-select PM similar to what Tegra, Renesas and Vexpress seem to do?
-
-I guess I like the 3rd option best ;-)
-
-
-Heiko
-
-
-
->  drivers/iommu/rockchip-iommu.c | 21 +++++++++++++++------
->  1 file changed, 15 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/iommu/rockchip-iommu.c b/drivers/iommu/rockchip-iommu.c
-> index 054cd2c8e9c8..4e0f9b61cd7f 100644
-> --- a/drivers/iommu/rockchip-iommu.c
-> +++ b/drivers/iommu/rockchip-iommu.c
-> @@ -521,10 +521,11 @@ static irqreturn_t rk_iommu_irq(int irq, void *dev_id)
->  	u32 int_status;
->  	dma_addr_t iova;
->  	irqreturn_t ret = IRQ_NONE;
-> -	int i;
-> +	int i, err;
->  
-> -	if (WARN_ON(!pm_runtime_get_if_in_use(iommu->dev)))
-> -		return 0;
-> +	err = pm_runtime_get_if_in_use(iommu->dev);
-> +	if (WARN_ON_ONCE(err <= 0))
-> +		return ret;
->  
->  	if (WARN_ON(clk_bulk_enable(iommu->num_clocks, iommu->clocks)))
->  		goto out;
-> @@ -620,11 +621,15 @@ static void rk_iommu_zap_iova(struct rk_iommu_domain *rk_domain,
->  	spin_lock_irqsave(&rk_domain->iommus_lock, flags);
->  	list_for_each(pos, &rk_domain->iommus) {
->  		struct rk_iommu *iommu;
-> +		int ret;
->  
->  		iommu = list_entry(pos, struct rk_iommu, node);
->  
->  		/* Only zap TLBs of IOMMUs that are powered on. */
-> -		if (pm_runtime_get_if_in_use(iommu->dev)) {
-> +		ret = pm_runtime_get_if_in_use(iommu->dev);
-> +		if (WARN_ON_ONCE(ret < 0))
-> +			continue;
-> +		if (ret) {
->  			WARN_ON(clk_bulk_enable(iommu->num_clocks,
->  						iommu->clocks));
->  			rk_iommu_zap_lines(iommu, iova, size);
-> @@ -891,6 +896,7 @@ static void rk_iommu_detach_device(struct iommu_domain *domain,
->  	struct rk_iommu *iommu;
->  	struct rk_iommu_domain *rk_domain = to_rk_domain(domain);
->  	unsigned long flags;
-> +	int ret;
->  
->  	/* Allow 'virtual devices' (eg drm) to detach from domain */
->  	iommu = rk_iommu_from_dev(dev);
-> @@ -909,7 +915,9 @@ static void rk_iommu_detach_device(struct iommu_domain *domain,
->  	list_del_init(&iommu->node);
->  	spin_unlock_irqrestore(&rk_domain->iommus_lock, flags);
->  
-> -	if (pm_runtime_get_if_in_use(iommu->dev)) {
-> +	ret = pm_runtime_get_if_in_use(iommu->dev);
-> +	WARN_ON_ONCE(ret < 0);
-> +	if (ret > 0) {
->  		rk_iommu_disable(iommu);
->  		pm_runtime_put(iommu->dev);
->  	}
-> @@ -946,7 +954,8 @@ static int rk_iommu_attach_device(struct iommu_domain *domain,
->  	list_add_tail(&iommu->node, &rk_domain->iommus);
->  	spin_unlock_irqrestore(&rk_domain->iommus_lock, flags);
->  
-> -	if (!pm_runtime_get_if_in_use(iommu->dev))
-> +	ret = pm_runtime_get_if_in_use(iommu->dev);
-> +	if (!ret || WARN_ON_ONCE(ret < 0))
->  		return 0;
->  
-  	ret = rk_iommu_enable(iommu);
-> 
-
-
-
-
+Robin.
