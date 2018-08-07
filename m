@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05288C46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:55:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B2E5C46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:55:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF39B2151D
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:55:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF39B2151D
+	by mail.kernel.org (Postfix) with ESMTP id F15652151D
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:55:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F15652151D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390331AbeHGVKy (ORCPT
+        id S2390348AbeHGVK5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 17:10:54 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33640 "EHLO
+        Tue, 7 Aug 2018 17:10:57 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33650 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733122AbeHGVKy (ORCPT
+        with ESMTP id S2390333AbeHGVK5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 17:10:54 -0400
+        Tue, 7 Aug 2018 17:10:57 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A69E2D07;
-        Tue,  7 Aug 2018 18:55:10 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9EAAED01;
+        Tue,  7 Aug 2018 18:55:13 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Anil Gurumurthy <anil.gurumurthy@cavium.com>,
-        Himanshu Madhani <himanshu.madhani@cavium.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.9 02/17] scsi: qla2xxx: Return error when TMF returns
-Date:   Tue,  7 Aug 2018 20:51:38 +0200
-Message-Id: <20180807172342.257482285@linuxfoundation.org>
+        Kurt Kanzenbach <kurt.kanzenbach@linutronix.de>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH 4.9 03/17] genirq: Make force irq threading setup more robust
+Date:   Tue,  7 Aug 2018 20:51:39 +0200
+Message-Id: <20180807172342.388520204@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180807172342.071526922@linuxfoundation.org>
 References: <20180807172342.071526922@linuxfoundation.org>
@@ -52,40 +51,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Anil Gurumurthy <anil.gurumurthy@cavium.com>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-commit b4146c4929ef61d5afca011474d59d0918a0cd82 upstream.
+commit d1f0301b3333eef5efbfa1fe0f0edbea01863d5d upstream.
 
-Propagate the task management completion status properly to avoid
-unnecessary waits for commands to complete.
+The support of force threading interrupts which are set up with both a
+primary and a threaded handler wreckaged the setup of regular requested
+threaded interrupts (primary handler == NULL).
 
-Fixes: faef62d13463 ("[SCSI] qla2xxx: Fix Task Management command asynchronous handling")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Anil Gurumurthy <anil.gurumurthy@cavium.com>
-Signed-off-by: Himanshu Madhani <himanshu.madhani@cavium.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+The reason is that it does not check whether the primary handler is set to
+the default handler which wakes the handler thread. Instead it replaces the
+thread handler with the primary handler as it would do with force threaded
+interrupts which have been requested via request_irq(). So both the primary
+and the thread handler become the same which then triggers the warnon that
+the thread handler tries to wakeup a not configured secondary thread.
+
+Fortunately this only happens when the driver omits the IRQF_ONESHOT flag
+when requesting the threaded interrupt, which is normaly caught by the
+sanity checks when force irq threading is disabled.
+
+Fix it by skipping the force threading setup when a regular threaded
+interrupt is requested. As a consequence the interrupt request which lacks
+the IRQ_ONESHOT flag is rejected correctly instead of silently wreckaging
+it.
+
+Fixes: 2a1d3ab8986d ("genirq: Handle force threading of irqs with primary and thread handler")
+Reported-by: Kurt Kanzenbach <kurt.kanzenbach@linutronix.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Kurt Kanzenbach <kurt.kanzenbach@linutronix.de>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/qla2xxx/qla_init.c |    7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ kernel/irq/manage.c |    9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
---- a/drivers/scsi/qla2xxx/qla_init.c
-+++ b/drivers/scsi/qla2xxx/qla_init.c
-@@ -329,11 +329,10 @@ qla2x00_async_tm_cmd(fc_port_t *fcport,
+--- a/kernel/irq/manage.c
++++ b/kernel/irq/manage.c
+@@ -1026,6 +1026,13 @@ static int irq_setup_forced_threading(st
+ 	if (new->flags & (IRQF_NO_THREAD | IRQF_PERCPU | IRQF_ONESHOT))
+ 		return 0;
  
- 	wait_for_completion(&tm_iocb->u.tmf.comp);
++	/*
++	 * No further action required for interrupts which are requested as
++	 * threaded interrupts already
++	 */
++	if (new->handler == irq_default_primary_handler)
++		return 0;
++
+ 	new->flags |= IRQF_ONESHOT;
  
--	rval = tm_iocb->u.tmf.comp_status == CS_COMPLETE ?
--	    QLA_SUCCESS : QLA_FUNCTION_FAILED;
-+	rval = tm_iocb->u.tmf.data;
- 
--	if ((rval != QLA_SUCCESS) || tm_iocb->u.tmf.data) {
--		ql_dbg(ql_dbg_taskm, vha, 0x8030,
-+	if (rval != QLA_SUCCESS) {
-+		ql_log(ql_log_warn, vha, 0x8030,
- 		    "TM IOCB failed (%x).\n", rval);
- 	}
- 
+ 	/*
+@@ -1033,7 +1040,7 @@ static int irq_setup_forced_threading(st
+ 	 * thread handler. We force thread them as well by creating a
+ 	 * secondary action.
+ 	 */
+-	if (new->handler != irq_default_primary_handler && new->thread_fn) {
++	if (new->handler && new->thread_fn) {
+ 		/* Allocate the secondary action */
+ 		new->secondary = kzalloc(sizeof(struct irqaction), GFP_KERNEL);
+ 		if (!new->secondary)
 
 
