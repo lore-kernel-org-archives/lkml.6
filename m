@@ -3,192 +3,213 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDB8AC46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 21:41:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18CE7C46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 21:41:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D32E2168C
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 21:41:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B3ACE21945
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 21:41:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="RJE6+PGu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D32E2168C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="E29vM/L3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3ACE21945
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726834AbeHGX5b (ORCPT
+        id S1726990AbeHGX6H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 19:57:31 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:39790 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726494AbeHGX5a (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 19:57:30 -0400
-Received: by mail-pl0-f67.google.com with SMTP id w14-v6so53716plp.6
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 14:41:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=/wSB16VyS3VlLE3061ezrJo0BvGRjdsaHKrAqB2zrRA=;
-        b=RJE6+PGuB11s0MD5ztt8occHPwntgunby9WO1QA77WMm2ylSUqfgDdeiKP4J3iMkFi
-         9MEyhpi1t1hUr90wXnWsh/Z1qo34LncT/aFxXR8dHIRu+2BmUnOB3s8KW9OlBxrmU1h2
-         YAjz6R5j4j283iSth7syHZwXI04i1lLG7aKQw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=/wSB16VyS3VlLE3061ezrJo0BvGRjdsaHKrAqB2zrRA=;
-        b=OW2hGthLF7V4os5kPd3KXLT1Tm/jE1tqaAInAr5TCVZ/mo1yRi/Bi6BCinsQJzi1il
-         hd0yrlanP0sVA4c6s0rD6IFBXukvFcuduV2nSFHIjR5xriIKudqX0I14VZQT+TQL6H79
-         foIalJOG2tuwXSeu0llhM732SgsJ6de7YBeraCiuMGGU3hmpZ2Qj/R5BKPqKbg169Qxd
-         F0o+7+VXpggA/BEeEcM/1iXI5s7xuIF9+BY4c4YYFjUidx/C3Vuzy9j0GJ4NImy3p6Zi
-         VY/ksGk5h/lmhsuoGE+8vVCuSB3/8PMC7H7BVXRf77vstCheDp6D3Uyvlohnm7jJ+3LL
-         EK+Q==
-X-Gm-Message-State: AOUpUlF+xmDdoMxtakJtOuk1mWQURt8o6OiPxf9PCBKgBoihKlf9APan
-        Dalc4XFEOMI31MtvmYRTqD5VDg==
-X-Google-Smtp-Source: AA+uWPxjUQPcaVdCTgSoRKyJ++tAAOXnY/TaFkhe6jTnUg14EKDQY2QG229AMniHje/lyvvoumbo/g==
-X-Received: by 2002:a17:902:6b46:: with SMTP id g6-v6mr99847plt.251.1533678067323;
-        Tue, 07 Aug 2018 14:41:07 -0700 (PDT)
-Received: from ban.mtv.corp.google.com ([2620:15c:202:1:299d:6b87:5478:d28a])
-        by smtp.gmail.com with ESMTPSA id p11-v6sm3773518pfj.72.2018.08.07.14.41.05
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 07 Aug 2018 14:41:05 -0700 (PDT)
-Date:   Tue, 7 Aug 2018 14:41:04 -0700
-From:   Brian Norris <briannorris@chromium.org>
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org,
-        Wei-Ning Huang <wnhuang@chromium.org>,
-        Julius Werner <jwerner@chromium.org>,
-        Samuel Holland <samuel@sholland.org>,
-        Thierry Escande <thierry.escande@collabora.com>
-Subject: Re: [PATCH] firmware: coreboot: Let OF core populate platform device
-Message-ID: <20180807214102.GA218251@ban.mtv.corp.google.com>
-References: <20180806171047.227835-1-swboyd@chromium.org>
+        Tue, 7 Aug 2018 19:58:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53626 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726494AbeHGX6H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 19:58:07 -0400
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A00B92168C;
+        Tue,  7 Aug 2018 21:41:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1533678103;
+        bh=EnYpABeqf7uPYhwXAQV59kGNh4lDsdgKzcLRArnDB/8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=E29vM/L3GTQhCHiSoltIQTLNJm8szLi6txxpC+nr6Cu9HEUYuUuV76Fw918etixeL
+         Tu6CSRHi66/Yc56qZ4drgfeURoC5afIp9sfH04LvZrZpuaeVZFbnVqmjUlUAK9daYY
+         uR3ln9wPAiQgXtL5BtChHUGT5+D1eaZ1iOgrn+Kw=
+Date:   Tue, 7 Aug 2018 16:41:41 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Alexandru Gagniuc <mr.nuke.me@gmail.com>
+Cc:     linux-pci@vger.kernel.org, bhelgaas@google.com,
+        jakub.kicinski@netronome.com, keith.busch@intel.com,
+        alex_gagniuc@dellteam.com, austin_bolen@dell.com,
+        shyam_iyer@dell.com, Ariel Elior <ariel.elior@cavium.com>,
+        everest-linux-l2@cavium.com,
+        "David S. Miller" <davem@davemloft.net>,
+        Michael Chan <michael.chan@broadcom.com>,
+        Ganesh Goudar <ganeshgr@chelsio.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        Tariq Toukan <tariqt@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Dirk van der Merwe <dirk.vandermerwe@netronome.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        intel-wired-lan@lists.osuosl.org, linux-rdma@vger.kernel.org,
+        oss-drivers@netronome.com
+Subject: Re: [PATCH v6 1/9] PCI: Check for PCIe downtraining conditions
+Message-ID: <20180807214141.GA49411@bhelgaas-glaptop.roam.corp.google.com>
+References: <CAErSpo4PK+SQLNfdkLNt9eLc7bpbxbkZCsa8T-tQpid601n0SQ@mail.gmail.com>
+ <20180806232600.25694-1-mr.nuke.me@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180806171047.227835-1-swboyd@chromium.org>
-User-Agent: Mutt/1.10.1+48 (1f3a9df87d11) (2018-07-22)
+In-Reply-To: <20180806232600.25694-1-mr.nuke.me@gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stephen,
-
-Although I already 'Reviewed' this, I noticed another problem when I
-went to look again:
-
-On Mon, Aug 06, 2018 at 10:10:47AM -0700, Stephen Boyd wrote:
-> Now that the /firmware/coreboot node in DT is populated by the core DT
-> platform code with commit 3aa0582fdb82 ("of: platform: populate
-> /firmware/ node from of_platform_default_populate_init()") we should and
-> can remove the platform device creation here. Otherwise, the
-> of_platform_device_create() call will fail, the coreboot of driver won't
-> be registered, and this driver will never bind. At the same time, we can
-> move this driver to use platform device APIs instead of DT specific ones
-> and drop the of_node handling that was presumably placed there to hold a
-> reference to the DT node created during module init.
+On Mon, Aug 06, 2018 at 06:25:35PM -0500, Alexandru Gagniuc wrote:
+> PCIe downtraining happens when both the device and PCIe port are
+> capable of a larger bus width or higher speed than negotiated.
+> Downtraining might be indicative of other problems in the system, and
+> identifying this from userspace is neither intuitive, nor
+> straightforward.
 > 
-> Cc: Wei-Ning Huang <wnhuang@chromium.org>
-> Cc: Julius Werner <jwerner@chromium.org>
-> Cc: Brian Norris <briannorris@chromium.org>
-> Cc: Samuel Holland <samuel@sholland.org>
-> Cc: Thierry Escande <thierry.escande@collabora.com>
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+> The easiest way to detect this is with pcie_print_link_status(),
+> since the bottleneck is usually the link that is downtrained. It's not
+> a perfect solution, but it works extremely well in most cases.
+
+After this series, there are no callers of pcie_print_link_status(),
+which means we *only* print something if a device is capable of more
+bandwidth than the fabric can deliver.
+
+ISTR some desire to have this information for NICs even if the device
+isn't limited, so I'm just double-checking to make sure the driver
+guys are OK with this change.
+
+There are no callers of __pcie_print_link_status() outside the PCI
+core, so I would move the declaration from include/linux/pci.h to
+drivers/pci/pci.h.
+
+If we agree that we *never* need to print anything unless a device is
+constrained by the fabric, I would get rid of the "verbose" flag and
+keep everything in pcie_print_link_status().
+
+> Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
 > ---
->  drivers/firmware/google/coreboot_table-of.c | 39 +++++----------------
->  1 file changed, 9 insertions(+), 30 deletions(-)
+>  drivers/pci/pci.c   | 22 ++++++++++++++++++----
+>  drivers/pci/probe.c | 21 +++++++++++++++++++++
+>  include/linux/pci.h |  1 +
+>  3 files changed, 40 insertions(+), 4 deletions(-)
 > 
-> diff --git a/drivers/firmware/google/coreboot_table-of.c b/drivers/firmware/google/coreboot_table-of.c
-> index f15bf404c579..270f112bdc54 100644
-> --- a/drivers/firmware/google/coreboot_table-of.c
-> +++ b/drivers/firmware/google/coreboot_table-of.c
-> @@ -18,21 +18,20 @@
->  #include <linux/device.h>
->  #include <linux/io.h>
->  #include <linux/module.h>
-> -#include <linux/of_address.h>
-> -#include <linux/of_platform.h>
-> +#include <linux/mod_devicetable.h>
->  #include <linux/platform_device.h>
->  
->  #include "coreboot_table.h"
->  
->  static int coreboot_table_of_probe(struct platform_device *pdev)
->  {
-> -	struct device_node *fw_dn = pdev->dev.of_node;
->  	void __iomem *ptr;
-> +	struct resource *res;
->  
-> -	ptr = of_iomap(fw_dn, 0);
-> -	of_node_put(fw_dn);
-> -	if (!ptr)
-> -		return -ENOMEM;
-> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	ptr = devm_ioremap_resource(&pdev->dev, res);
-
-You're making this a devm_* ioremap, but coreboot_table_exit() will
-handle unmapping this for you already. So you're introducing a potential
-double-unmap.
-
-> +	if (IS_ERR(ptr))
-> +		return PTR_ERR(ptr);
->  
->  	return coreboot_table_init(&pdev->dev, ptr);
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index 316496e99da9..414ad7b3abdb 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -5302,14 +5302,15 @@ u32 pcie_bandwidth_capable(struct pci_dev *dev, enum pci_bus_speed *speed,
 >  }
-> @@ -44,8 +43,9 @@ static int coreboot_table_of_remove(struct platform_device *pdev)
 >  
->  static const struct of_device_id coreboot_of_match[] = {
->  	{ .compatible = "coreboot" },
-> -	{},
-> +	{}
-
-...and since I had a *real* comment, I'll mention this bit I noticed
-previously...this diff seems a bit superfluous. I understand we don't
-really want to extend this list beyond the NULL terminator, but
-normally, I'd expect we leave it alone.
-
-Brian
-
->  };
-> +MODULE_DEVICE_TABLE(of, coreboot_of_match);
+>  /**
+> - * pcie_print_link_status - Report the PCI device's link speed and width
+> + * __pcie_print_link_status - Report the PCI device's link speed and width
+>   * @dev: PCI device to query
+> + * @verbose: Be verbose -- print info even when enough bandwidth is available.
+>   *
+>   * Report the available bandwidth at the device.  If this is less than the
+>   * device is capable of, report the device's maximum possible bandwidth and
+>   * the upstream link that limits its performance to less than that.
+>   */
+> -void pcie_print_link_status(struct pci_dev *dev)
+> +void __pcie_print_link_status(struct pci_dev *dev, bool verbose)
+>  {
+>  	enum pcie_link_width width, width_cap;
+>  	enum pci_bus_speed speed, speed_cap;
+> @@ -5319,11 +5320,11 @@ void pcie_print_link_status(struct pci_dev *dev)
+>  	bw_cap = pcie_bandwidth_capable(dev, &speed_cap, &width_cap);
+>  	bw_avail = pcie_bandwidth_available(dev, &limiting_dev, &speed, &width);
 >  
->  static struct platform_driver coreboot_table_of_driver = {
->  	.probe = coreboot_table_of_probe,
-> @@ -55,28 +55,7 @@ static struct platform_driver coreboot_table_of_driver = {
->  		.of_match_table = coreboot_of_match,
->  	},
->  };
-> -
-> -static int __init platform_coreboot_table_of_init(void)
-> -{
-> -	struct platform_device *pdev;
-> -	struct device_node *of_node;
-> -
-> -	/* Limit device creation to the presence of /firmware/coreboot node */
-> -	of_node = of_find_node_by_path("/firmware/coreboot");
-> -	if (!of_node)
-> -		return -ENODEV;
-> -
-> -	if (!of_match_node(coreboot_of_match, of_node))
-> -		return -ENODEV;
-> -
-> -	pdev = of_platform_device_create(of_node, "coreboot_table_of", NULL);
-> -	if (!pdev)
-> -		return -ENODEV;
-> -
-> -	return platform_driver_register(&coreboot_table_of_driver);
-> -}
-> -
-> -module_init(platform_coreboot_table_of_init);
-> +module_platform_driver(coreboot_table_of_driver);
+> -	if (bw_avail >= bw_cap)
+> +	if (bw_avail >= bw_cap && verbose)
+>  		pci_info(dev, "%u.%03u Gb/s available PCIe bandwidth (%s x%d link)\n",
+>  			 bw_cap / 1000, bw_cap % 1000,
+>  			 PCIE_SPEED2STR(speed_cap), width_cap);
+> -	else
+> +	else if (bw_avail < bw_cap)
+>  		pci_info(dev, "%u.%03u Gb/s available PCIe bandwidth, limited by %s x%d link at %s (capable of %u.%03u Gb/s with %s x%d link)\n",
+>  			 bw_avail / 1000, bw_avail % 1000,
+>  			 PCIE_SPEED2STR(speed), width,
+> @@ -5331,6 +5332,19 @@ void pcie_print_link_status(struct pci_dev *dev)
+>  			 bw_cap / 1000, bw_cap % 1000,
+>  			 PCIE_SPEED2STR(speed_cap), width_cap);
+>  }
+> +
+> +/**
+> + * pcie_print_link_status - Report the PCI device's link speed and width
+> + * @dev: PCI device to query
+> + *
+> + * Report the available bandwidth at the device.  If this is less than the
+> + * device is capable of, report the device's maximum possible bandwidth and
+> + * the upstream link that limits its performance to less than that.
+> + */
+> +void pcie_print_link_status(struct pci_dev *dev)
+> +{
+> +	__pcie_print_link_status(dev, true);
+> +}
+>  EXPORT_SYMBOL(pcie_print_link_status);
 >  
->  MODULE_AUTHOR("Google, Inc.");
->  MODULE_LICENSE("GPL");
+>  /**
+> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+> index 611adcd9c169..1c8c26dd2cb2 100644
+> --- a/drivers/pci/probe.c
+> +++ b/drivers/pci/probe.c
+> @@ -2205,6 +2205,24 @@ static struct pci_dev *pci_scan_device(struct pci_bus *bus, int devfn)
+>  	return dev;
+>  }
+>  
+> +static void pcie_check_upstream_link(struct pci_dev *dev)
+> +{
+> +	if (!pci_is_pcie(dev))
+> +		return;
+> +
+> +	/* Look from the device up to avoid downstream ports with no devices. */
+> +	if ((pci_pcie_type(dev) != PCI_EXP_TYPE_ENDPOINT) &&
+> +	    (pci_pcie_type(dev) != PCI_EXP_TYPE_LEG_END) &&
+> +	    (pci_pcie_type(dev) != PCI_EXP_TYPE_UPSTREAM))
+> +		return;
+> +
+> +	/* Multi-function PCIe share the same link/status. */
+> +	if (PCI_FUNC(dev->devfn) != 0 || dev->is_virtfn)
+> +		return;
+> +
+> +	__pcie_print_link_status(dev, false);
+> +}
+> +
+>  static void pci_init_capabilities(struct pci_dev *dev)
+>  {
+>  	/* Enhanced Allocation */
+> @@ -2240,6 +2258,9 @@ static void pci_init_capabilities(struct pci_dev *dev)
+>  	/* Advanced Error Reporting */
+>  	pci_aer_init(dev);
+>  
+> +	/* Check link and detect downtrain errors */
+> +	pcie_check_upstream_link(dev);
+> +
+>  	if (pci_probe_reset_function(dev) == 0)
+>  		dev->reset_fn = 1;
+>  }
+> diff --git a/include/linux/pci.h b/include/linux/pci.h
+> index c133ccfa002e..d212de231259 100644
+> --- a/include/linux/pci.h
+> +++ b/include/linux/pci.h
+> @@ -1087,6 +1087,7 @@ int pcie_set_mps(struct pci_dev *dev, int mps);
+>  u32 pcie_bandwidth_available(struct pci_dev *dev, struct pci_dev **limiting_dev,
+>  			     enum pci_bus_speed *speed,
+>  			     enum pcie_link_width *width);
+> +void __pcie_print_link_status(struct pci_dev *dev, bool verbose);
+>  void pcie_print_link_status(struct pci_dev *dev);
+>  int pcie_flr(struct pci_dev *dev);
+>  int __pci_reset_function_locked(struct pci_dev *dev);
 > -- 
-> Sent by a computer through tubes
+> 2.17.1
 > 
