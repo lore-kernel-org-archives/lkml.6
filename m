@@ -3,64 +3,123 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64B82C46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 08:07:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2740C46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 08:12:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14A4221888
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 08:07:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14A4221888
+	by mail.kernel.org (Postfix) with ESMTP id 812122172E
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 08:12:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 812122172E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733014AbeHGKUs (ORCPT
+        id S1726579AbeHGKZh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 06:20:48 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34174 "EHLO
+        Tue, 7 Aug 2018 06:25:37 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34250 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725798AbeHGKUr (ORCPT
+        with ESMTP id S1725798AbeHGKZg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 06:20:47 -0400
+        Tue, 7 Aug 2018 06:25:36 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1614EC9A;
-        Tue,  7 Aug 2018 08:07:37 +0000 (UTC)
-Date:   Tue, 7 Aug 2018 10:07:34 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Arkadiusz Lis <areklis909@gmail.com>
-Cc:     jfrederich@gmail.com, dsd@laptop.org, jon.nettleton@gmail.com,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] Staging: One Laptop Per Child: fix
- SPDX-License-Identifier issue
-Message-ID: <20180807080734.GB20615@kroah.com>
-References: <1533575300-5001-1-git-send-email-areklis909@gmail.com>
- <1533584152-5792-1-git-send-email-areklis909@gmail.com>
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C3556C9D;
+        Tue,  7 Aug 2018 08:12:25 +0000 (UTC)
+Date:   Tue, 7 Aug 2018 10:12:22 +0200
+From:   "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+To:     "Zhang, Ning A" <ning.a.zhang@intel.com>
+Cc:     "pombredanne@nexb.com" <pombredanne@nexb.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Li, Ting" <ting.li@intel.com>,
+        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
+        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
+        "markus@trippelsdorf.de" <markus@trippelsdorf.de>
+Subject: Re: [PATCH] firmware: make sure builtin firmware is page alignment
+Message-ID: <20180807081222.GB20894@kroah.com>
+References: <20180803014521.21527-1-ning.a.zhang@intel.com>
+ <20180803053948.GB1852@kroah.com>
+ <1533285744.20683.67.camel@intel.com>
+ <20180803103121.GB6557@kroah.com>
+ <1533520123.20683.71.camel@intel.com>
+ <20180806140512.GA19844@kroah.com>
+ <1533608851.20683.78.camel@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1533584152-5792-1-git-send-email-areklis909@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1533608851.20683.78.camel@intel.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 06, 2018 at 09:35:52PM +0200, Arkadiusz Lis wrote:
-> Add SPDX-License-Identifier to the source files.
-> Remove redundant, old license.
+On Tue, Aug 07, 2018 at 02:27:31AM +0000, Zhang, Ning A wrote:
+> 在 2018-08-06一的 16:05 +0200，gregkh@linuxfoundation.org写道：
+> > On Mon, Aug 06, 2018 at 01:48:44AM +0000, Zhang, Ning A wrote:
+> > > 在 2018-08-03五的 12:31 +0200，gregkh@linuxfoundation.org写道：
+> > > > On Fri, Aug 03, 2018 at 08:42:25AM +0000, Zhang, Ning A wrote:
+> > > > > 在 2018-08-03五的 07:39 +0200，Greg KH写道：
+> > > > > > On Fri, Aug 03, 2018 at 09:45:21AM +0800, Zhang Ning wrote:
+> > > > > > > when firmware is in filesystem, request_firmware will load
+> > > > > > > it,
+> > > > > > > and copy it to vmalloc memory, that is page align memory.
+> > > > > > > 
+> > > > > > > but when firmware is builtin, it is 8 bytes or 4 bytes
+> > > > > > > alignment.
+> > > > > > > 
+> > > > > > > make sure builtin firmware is page algnment, that can
+> > > > > > > simplify
+> > > > > > > algorithm
+> > > > > > > to handle firmware.
+> > > > > > 
+> > > > > > How is it simplified?  I don't see any such change like that
+> > > > > > here
+> > > > > > :(
+> > > > > > 
+> > > > > 
+> > > > > Thank you for review this patch.
+> > > > > 
+> > > > > When driver handles its firmware based on  page, like below:
+> > > > > 
+> > > > > 	struct page *p;
+> > > > > 	p = vmalloc_to_page(fw->data);  // for filesystem
+> > > > > firmware
+> > > > > 	p = virt_to_page(fw->data); // for builtin firmware
+> > > > > 
+> > > > > but if builtin firmware is not page alignment, page pointer for
+> > > > > builtin
+> > > > > firmware is wrong, it contains memory not belong to firmware.
+> > > > > drivers
+> > > > > has to use additional code to handle this. 
+> > > > > 
+> > > > > if builtin firmware is also page alignment, no need additional
+> > > > > code
+> > > > > to
+> > > > > handle builtin firmware. simplified.
+> > > > 
+> > > > But you did not change anything like this in your code, so why
+> > > > would
+> > > > I
+> > > > know this?
+> > > 
+> > > I understand it is very difficult to review this patch without
+> > > context.
+> > > The driver is not opensource, I can't show the patch for driver.
+> > 
+> > Then I can not accept your patch.  Go talk to your corporate lawyers
+> > about changing core kernel code for a closed source driver and what
+> > that
+> > implies about that closed driver (hint, your driver can not be
+> > closed...) :)
 > 
-> Signed-off-by: Arkadiusz Lis <areklis909@gmail.com>
-> ---
->  drivers/staging/olpc_dcon/olpc_dcon.c        | 5 +----
->  drivers/staging/olpc_dcon/olpc_dcon_xo_1.c   | 5 +----
->  drivers/staging/olpc_dcon/olpc_dcon_xo_1_5.c | 5 +----
->  3 files changed, 3 insertions(+), 12 deletions(-)
+> It's very sad,
 
-WHat changed from v1?  Always put that below the --- line.
+"sad"?  Again, please go discuss this with your corporate lawyers before
+thinking that this is even something that is possible to do.  Hint, if
+I _were_ to accept this, they would be _VERY_ upset at both me, and you.
 
-Please redo with a v3 now.
-
-thanks,
+I am trying to _save_ you problems, please realize this.
 
 greg k-h
