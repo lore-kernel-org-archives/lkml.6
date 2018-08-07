@@ -2,350 +2,116 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68C47C46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 12:08:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A810FC46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 12:09:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E295217BF
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 12:08:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E295217BF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 60900217BD
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 12:09:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="b2PmTAHH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60900217BD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388978AbeHGOWF (ORCPT
+        id S2388989AbeHGOXJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 10:22:05 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:57056 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727201AbeHGOWF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 10:22:05 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 242D6206ED; Tue,  7 Aug 2018 14:07:59 +0200 (CEST)
-Received: from aptenodytes (AAubervilliers-681-1-99-143.w90-88.abo.wanadoo.fr [90.88.4.143])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 9F61F2069C;
-        Tue,  7 Aug 2018 14:07:48 +0200 (CEST)
-Message-ID: <3b093c7c5f8503869a94d4065e215439bc5c71ec.camel@bootlin.com>
-Subject: Re: [linux-sunxi] [PATCH v6 4/8] media: platform: Add Cedrus VPU
- decoder driver
-From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-To:     Jernej =?UTF-8?Q?=C5=A0krabec?= <jernej.skrabec@gmail.com>,
-        linux-sunxi@googlegroups.com
-Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devel@driverdev.osuosl.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Hugues Fruchet <hugues.fruchet@st.com>,
-        Randy Li <ayaka@soulik.info>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>
-Date:   Tue, 07 Aug 2018 14:07:49 +0200
-In-Reply-To: <1703875.6APCh3GEgq@jernej-laptop>
-References: <20180725100256.22833-1-paul.kocialkowski@bootlin.com>
-         <20180725100256.22833-5-paul.kocialkowski@bootlin.com>
-         <1703875.6APCh3GEgq@jernej-laptop>
-Organization: Bootlin
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-wYvpBtmUXvfZqdKDv/NV"
-X-Mailer: Evolution 3.28.4 
-Mime-Version: 1.0
+        Tue, 7 Aug 2018 10:23:09 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:37209 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727201AbeHGOXI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 10:23:08 -0400
+Received: by mail-it0-f68.google.com with SMTP id h20-v6so22615518itf.2
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 05:09:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=3YM5yxBcH2gTdV4OwCJxQXs9pMmR63KgjLeLzs4d3So=;
+        b=b2PmTAHHbywT7/bZXcFqsSiBpdTzV5RotckvdzUEfCeYy3zAzTU24K5oZGy7BUYOqs
+         YRlWdc5yxW+L1O2rXea+yd0LjXaNzq83QBdDNMGCvdpQYggZs0G7CMqsznG1Gx/WNEen
+         iujfszPNDeFE90hA3PPVixa8kUnMICQoEv8Y8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=3YM5yxBcH2gTdV4OwCJxQXs9pMmR63KgjLeLzs4d3So=;
+        b=jI7UmcOJC8Xg661XwN9x7ct4Yl6EZLMr0ZF8k1QmYorXPlXnowIe7h30eipR2NsX5Z
+         LiGlteQqt9mB0YFeV1SYcHXu+I6H7rnXoastVCPEZ4FuYaIVATYWWJ9L+zC3dJhRmusz
+         6z41aKXfEeyt3f9xJZx+2EzoLIWKWV5rD4O/4+N+c0QHLsYhBA7ef3m9jeQ7O4SuWAUK
+         gCbx0+j7XqN8zJEEFF7G9ODUSf+LcACZ6DtOm0wKJHeb5Qzlq0hMFGSYvNLGlKbBY2fL
+         mrEYE4mJ5FnOqEWbqNRFhmlkE5h3DLQBvBauzcEkOY7K+hdk8loZKedsXjKBBP+Yl+ud
+         xAuQ==
+X-Gm-Message-State: AOUpUlG+qQoULORM24lCM1oFLPohZkoTdOggpTcoBKFnQogNEHpg64EM
+        auQ5fvhZjavkg5+u6RNJ+gx/5LnjNyP9qhTxL2hFTA==
+X-Google-Smtp-Source: AA+uWPxqFAVaNgxK7bZkjoEgw/0ZqtHsRMcN0xOLmFKpF398bt5FYqOrb6pnLAusE4SLrVEARuPo8K8pvkgaAeCuMls=
+X-Received: by 2002:a24:610d:: with SMTP id s13-v6mr1671722itc.68.1533643745960;
+ Tue, 07 Aug 2018 05:09:05 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a6b:ac05:0:0:0:0:0 with HTTP; Tue, 7 Aug 2018 05:09:05 -0700 (PDT)
+In-Reply-To: <20180806223300.113891-9-ebiggers@kernel.org>
+References: <20180806223300.113891-1-ebiggers@kernel.org> <20180806223300.113891-9-ebiggers@kernel.org>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Tue, 7 Aug 2018 14:09:05 +0200
+Message-ID: <CAKv+Gu_T+f=isb_dBF7icfTHApG+E8Y5njSQ=NmtyTHEN2VMgg@mail.gmail.com>
+Subject: Re: [RFC PATCH 8/9] crypto: arm/poly1305 - add NEON accelerated
+ Poly1305 implementation
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>, linux-fscrypt@vger.kernel.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Paul Crowley <paulcrowley@google.com>,
+        Greg Kaiser <gkaiser@google.com>,
+        Michael Halcrow <mhalcrow@google.com>,
+        "Jason A . Donenfeld" <Jason@zx2c4.com>,
+        Samuel Neves <samuel.c.p.neves@gmail.com>,
+        Tomer Ashur <tomer.ashur@esat.kuleuven.be>,
+        Eric Biggers <ebiggers@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 7 August 2018 at 00:32, Eric Biggers <ebiggers@kernel.org> wrote:
+> From: Eric Biggers <ebiggers@google.com>
+>
+> Add the Poly1305 code from OpenSSL, which was written by Andy Polyakov.
+> I took the .S file from WireGuard, whose author has made the needed
+> tweaks for Linux kernel integration and verified that Andy had given
+> permission for GPLv2 distribution.  I didn't make any additional changes
+> to the .S file.
+>
+> Note, for HPolyC I'd eventually like a Poly1305 implementation that
+> allows precomputing powers of the key.  But for now this implementation
+> just provides the existing semantics where the key and nonce are treated
+> as a "one-time key" that must be provided for every message.
+>
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
 
---=-wYvpBtmUXvfZqdKDv/NV
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Hi Eric,
 
-Hi,
+In the past, I worked with Andy on several occasions to get my kernel
+changes incorporated into the upstream OpenSSL version of the
+'perlasm' .pl file.
 
-On Sun, 2018-07-29 at 09:58 +0200, Jernej =C5=A0krabec wrote:
-> Hi!
->=20
-> Dne sreda, 25. julij 2018 ob 12:02:52 CEST je Paul Kocialkowski napisal(a=
-):
-> > This introduces the Cedrus VPU driver that supports the VPU found in
-> > Allwinner SoCs, also known as Video Engine. It is implemented through
-> > a v4l2 m2m decoder device and a media device (used for media requests).
-> > So far, it only supports MPEG2 decoding.
-> >=20
-> > Since this VPU is stateless, synchronization with media requests is
-> > required in order to ensure consistency between frame headers that
-> > contain metadata about the frame to process and the raw slice data that
-> > is used to generate the frame.
-> >=20
-> > This driver was made possible thanks to the long-standing effort
-> > carried out by the linux-sunxi community in the interest of reverse
-> > engineering, documenting and implementing support for Allwinner VPU.
-> >=20
-> > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> > ---
->=20
-> <snip>
+This achieves a number of things:
+- we get a readable version of the code in the kernel tree,
+- our changes are reviewed upstream
+- upgrading involves grabbing the latest .pl file rather than merging
+generated code (which requires careful review)
+- GPLv2 permission is made explicit, rather than something someone
+claims to have reached agreement on,
+- no legal ambiguity whether the output of the perl script is covered
+by the license (which is what we incorporate here)
 
-[...]
-
-> > +static void cedrus_mpeg2_setup(struct cedrus_ctx *ctx, struct cedrus_r=
-un
-> > *run) +{
-> > +	const struct v4l2_ctrl_mpeg2_slice_params *slice_params;
-> > +	const struct v4l2_ctrl_mpeg2_quantization *quantization;
-> > +	dma_addr_t src_buf_addr, dst_luma_addr, dst_chroma_addr;
-> > +	dma_addr_t fwd_luma_addr, fwd_chroma_addr;
-> > +	dma_addr_t bwd_luma_addr, bwd_chroma_addr;
-> > +	struct cedrus_dev *dev =3D ctx->dev;
-> > +	u32 vld_end, vld_len;
-> > +	const u8 *matrix;
-> > +	unsigned int i;
-> > +	u32 reg;
-> > +
-> > +	slice_params =3D run->mpeg2.slice_params;
-> > +	quantization =3D run->mpeg2.quantization;
-> > +
-> > +	/* Activate MPEG engine. */
-> > +	cedrus_engine_enable(dev, CEDRUS_CODEC_MPEG2);
-> > +
-> > +	/* Set intra quantization matrix. */
-> > +
-> > +	if (quantization && quantization->load_intra_quantiser_matrix)
-> > +		matrix =3D quantization->intra_quantiser_matrix;
-> > +	else
-> > +		matrix =3D intra_quantization_matrix_default;
-> > +
-> > +	for (i =3D 0; i < 64; i++) {
-> > +		reg =3D VE_DEC_MPEG_IQMINPUT_WEIGHT(i, matrix[i]);
-> > +		reg |=3D VE_DEC_MPEG_IQMINPUT_FLAG_INTRA;
-> > +
-> > +		cedrus_write(dev, VE_DEC_MPEG_IQMINPUT, reg);
-> > +	}
-> > +
-> > +	/* Set non-intra quantization matrix. */
-> > +
-> > +	if (quantization && quantization->load_non_intra_quantiser_matrix)
-> > +		matrix =3D quantization->non_intra_quantiser_matrix;
-> > +	else
-> > +		matrix =3D non_intra_quantization_matrix_default;
-> > +
-> > +	for (i =3D 0; i < 64; i++) {
-> > +		reg =3D VE_DEC_MPEG_IQMINPUT_WEIGHT(i, matrix[i]);
-> > +		reg |=3D VE_DEC_MPEG_IQMINPUT_FLAG_NON_INTRA;
-> > +
-> > +		cedrus_write(dev, VE_DEC_MPEG_IQMINPUT, reg);
-> > +	}
-> > +
-> > +	/* Set MPEG picture header. */
-> > +
-> > +	reg =3D VE_DEC_MPEG_MP12HDR_SLICE_TYPE(slice_params->slice_type);
-> > +	reg |=3D VE_DEC_MPEG_MP12HDR_F_CODE(0, 0, slice_params->f_code[0][0])=
-;
-> > +	reg |=3D VE_DEC_MPEG_MP12HDR_F_CODE(0, 1, slice_params->f_code[0][1])=
-;
-> > +	reg |=3D VE_DEC_MPEG_MP12HDR_F_CODE(1, 0, slice_params->f_code[1][0])=
-;
-> > +	reg |=3D VE_DEC_MPEG_MP12HDR_F_CODE(1, 1, slice_params->f_code[1][1])=
-;
-> > +	reg |=3D
-> > VE_DEC_MPEG_MP12HDR_INTRA_DC_PRECISION(slice_params->intra_dc_precision=
-);
-> > +	reg |=3D
-> > VE_DEC_MPEG_MP12HDR_INTRA_PICTURE_STRUCTURE(slice_params->picture_struc=
-ture
-> > ); +	reg |=3D
-> > VE_DEC_MPEG_MP12HDR_TOP_FIELD_FIRST(slice_params->top_field_first); +	r=
-eg
-> > > =3D
-> >=20
-> > VE_DEC_MPEG_MP12HDR_FRAME_PRED_FRAME_DCT(slice_params->frame_pred_frame=
-_dct
-> > ); +	reg |=3D
-> > VE_DEC_MPEG_MP12HDR_CONCEALMENT_MOTION_VECTORS(slice_params->concealmen=
-t_mo
-> > tion_vectors); +	reg |=3D
-> > VE_DEC_MPEG_MP12HDR_Q_SCALE_TYPE(slice_params->q_scale_type); +	reg |=
-=3D
-> > VE_DEC_MPEG_MP12HDR_INTRA_VLC_FORMAT(slice_params->intra_vlc_format); +=
-=09
->=20
-> reg
-> > > =3D VE_DEC_MPEG_MP12HDR_ALTERNATE_SCAN(slice_params->alternate_scan);=
- +	reg
-> > > =3D VE_DEC_MPEG_MP12HDR_FULL_PEL_FORWARD_VECTOR(0);
-> >=20
-> > +	reg |=3D VE_DEC_MPEG_MP12HDR_FULL_PEL_BACKWARD_VECTOR(0);
-> > +
-> > +	cedrus_write(dev, VE_DEC_MPEG_MP12HDR, reg);
-> > +
-> > +	/* Set frame dimensions. */
-> > +
-> > +	reg =3D VE_DEC_MPEG_PICCODEDSIZE_WIDTH(slice_params->width);
-> > +	reg |=3D VE_DEC_MPEG_PICCODEDSIZE_HEIGHT(slice_params->height);
-> > +
-> > +	cedrus_write(dev, VE_DEC_MPEG_PICCODEDSIZE, reg);
-> > +
-> > +	reg =3D VE_DEC_MPEG_PICBOUNDSIZE_WIDTH(slice_params->width);
-> > +	reg |=3D VE_DEC_MPEG_PICBOUNDSIZE_HEIGHT(slice_params->height);
-> > +
-> > +	cedrus_write(dev, VE_DEC_MPEG_PICBOUNDSIZE, reg);
-> > +
-> > +	/* Forward and backward prediction reference buffers. */
-> > +
-> > +	fwd_luma_addr =3D cedrus_dst_buf_addr(ctx, slice_params->forward_ref_=
-index,
-> > 0); +	fwd_chroma_addr =3D cedrus_dst_buf_addr(ctx,
-> > slice_params->forward_ref_index, 1); +
-> > +	cedrus_write(dev, VE_DEC_MPEG_FWD_REF_LUMA_ADDR, fwd_luma_addr);
-> > +	cedrus_write(dev, VE_DEC_MPEG_FWD_REF_CHROMA_ADDR, fwd_chroma_addr);
-> > +
-> > +	bwd_luma_addr =3D cedrus_dst_buf_addr(ctx, slice_params->backward_ref=
-_index,
-> > 0); +	bwd_chroma_addr =3D cedrus_dst_buf_addr(ctx,
-> > slice_params->backward_ref_index, 1); +
-> > +	cedrus_write(dev, VE_DEC_MPEG_BWD_REF_LUMA_ADDR, bwd_luma_addr);
-> > +	cedrus_write(dev, VE_DEC_MPEG_BWD_REF_CHROMA_ADDR, bwd_chroma_addr);
-> > +
-> > +	/* Destination luma and chroma buffers. */
-> > +
-> > +	dst_luma_addr =3D cedrus_dst_buf_addr(ctx, run->dst->vb2_buf.index, 0=
-);
-> > +	dst_chroma_addr =3D cedrus_dst_buf_addr(ctx, run->dst->vb2_buf.index,=
- 1);
-> > +
-> > +	cedrus_write(dev, VE_DEC_MPEG_REC_LUMA, dst_luma_addr);
-> > +	cedrus_write(dev, VE_DEC_MPEG_REC_CHROMA, dst_chroma_addr);
-> > +
-> > +	cedrus_write(dev, VE_DEC_MPEG_ROT_LUMA, dst_luma_addr);
-> > +	cedrus_write(dev, VE_DEC_MPEG_ROT_CHROMA, dst_chroma_addr);
->=20
-> It seems that above ROT buffers are not required at all, if (please see n=
-ext=20
-> comment)
-
-Yes, you're totally right!
-
-> > +
-> > +	/* Source offset and length in bits. */
-> > +
-> > +	cedrus_write(dev, VE_DEC_MPEG_VLD_OFFSET, slice_params->slice_pos);
-> > +
-> > +	vld_len =3D slice_params->slice_len - slice_params->slice_pos;
-> > +	cedrus_write(dev, VE_DEC_MPEG_VLD_LEN, vld_len);
-> > +
-> > +	/* Source beginning and end addresses. */
-> > +
-> > +	src_buf_addr =3D vb2_dma_contig_plane_dma_addr(&run->src->vb2_buf, 0)=
-;
-> > +
-> > +	reg =3D VE_DEC_MPEG_VLD_ADDR_BASE(src_buf_addr);
-> > +	reg |=3D VE_DEC_MPEG_VLD_ADDR_VALID_PIC_DATA;
-> > +	reg |=3D VE_DEC_MPEG_VLD_ADDR_LAST_PIC_DATA;
-> > +	reg |=3D VE_DEC_MPEG_VLD_ADDR_FIRST_PIC_DATA;
-> > +
-> > +	cedrus_write(dev, VE_DEC_MPEG_VLD_ADDR, reg);
-> > +
-> > +	vld_end =3D src_buf_addr + DIV_ROUND_UP(slice_params->slice_len, 8);
-> > +	cedrus_write(dev, VE_DEC_MPEG_VLD_END, vld_end);
-> > +
-> > +	/* Macroblock address: start at the beginning. */
-> > +	reg =3D VE_DEC_MPEG_MBADDR_Y(0) | VE_DEC_MPEG_MBADDR_X(0);
-> > +	cedrus_write(dev, VE_DEC_MPEG_MBADDR, reg);
-> > +
-> > +	/* Clear previous errors. */
-> > +	cedrus_write(dev, VE_DEC_MPEG_ERROR, 0);
-> > +
-> > +	/* Clear correct macroblocks register. */
-> > +	cedrus_write(dev, VE_DEC_MPEG_CRTMBADDR, 0);
-> > +
-> > +	/* Enable appropriate interruptions and components. */
-> > +
-> > +	reg =3D VE_DEC_MPEG_CTRL_IRQ_MASK | VE_DEC_MPEG_CTRL_MC_NO_WRITEBACK =
-|
-> > +	      VE_DEC_MPEG_CTRL_ROTATE_SCALE_OUT_EN |
-> > +	      VE_DEC_MPEG_CTRL_MC_CACHE_EN;
->=20
-> ... if you remove VE_DEC_MPEG_CTRL_ROTATE_SCALE_OUT_EN. Everything gets s=
-till=20
-> correctly decoded. media-codec code for mpeg2 from AW doesn't use that at=
- all.=20
-> I think that VE_DEC_MPEG_CTRL_MC_NO_WRITEBACK flag actually disables rota=
-te/
-> scale operation.
-
-I agree with your conclusions here. The rotate and scale output (often
-called 2nd output) is not used in our pipeline so there is indeed no
-need to configure the dst addresses or set its enable bit.
-
-Things indeed work just as well without it, so I'll get rid of that in
-v7. Thanks!
-
-Cheers,
-
-Paul
-
-> Best regards,
-> Jernej
->=20
-> > +
-> > +	cedrus_write(dev, VE_DEC_MPEG_CTRL, reg);
-> > +}
-> > +
-> > +static void cedrus_mpeg2_trigger(struct cedrus_ctx *ctx)
-> > +{
-> > +	struct cedrus_dev *dev =3D ctx->dev;
-> > +	u32 reg;
-> > +
-> > +	/* Trigger MPEG engine. */
-> > +	reg =3D VE_DEC_MPEG_TRIGGER_HW_MPEG_VLD | VE_DEC_MPEG_TRIGGER_MPEG2 |
-> > +	      VE_DEC_MPEG_TRIGGER_MB_BOUNDARY;
-> > +
-> > +	cedrus_write(dev, VE_DEC_MPEG_TRIGGER, reg);
-> > +}
-> > +
-> > +struct cedrus_dec_ops cedrus_dec_ops_mpeg2 =3D {
-> > +	.irq_clear	=3D cedrus_mpeg2_irq_clear,
-> > +	.irq_disable	=3D cedrus_mpeg2_irq_disable,
-> > +	.irq_status	=3D cedrus_mpeg2_irq_status,
-> > +	.setup		=3D cedrus_mpeg2_setup,
-> > +	.trigger	=3D cedrus_mpeg2_trigger,
-> > +};
->=20
->=20
->=20
---=20
-Paul Kocialkowski, Bootlin (formerly Free Electrons)
-Embedded Linux and kernel engineering
-https://bootlin.com
-
---=-wYvpBtmUXvfZqdKDv/NV
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEJZpWjZeIetVBefti3cLmz3+fv9EFAltpi5UACgkQ3cLmz3+f
-v9ET4gf/TgawQys7yhf2NseBi01mGErLAqMGYz4+4bzjkeH5JBNhsJNMrdxPKGBh
-tDj5K5mQYDBLRTml+KOAC7XvhgY8nw/QBDgHujiOBcSWayspxz8XsV5a5+1cBi78
-HUHvHAoEGGwsQTVWkARqpmoIYuXQYnZNqVVE0+MIqSdh0ciQ4zzNxla/zOD8kMI0
-QqVXHMCIko62eSopueqVlJ/hp0/6IkCusR2mePAoaUqeHMgFjZ9CEmQtx9Tcik+A
-SD+A+YUInQeXwlun3poa0sNMREBV3lWsQyHppwZp5pr51JB+zcCbBds0KXLKfRq5
-ZVn2IsO2jSM1wutLt5y/Ea9Tn646fQ==
-=Hcxh
------END PGP SIGNATURE-----
-
---=-wYvpBtmUXvfZqdKDv/NV--
-
+Note that the 'available under GPL depending on where you obtained the
+code' in the CRYPTOGAMS license likely conflicts with the GPL itself,
+but I am not a lawyer so I'd much prefer having the upstream copy
+mention this explicitly.
