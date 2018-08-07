@@ -3,130 +3,164 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90B9CC46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 15:18:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6997C46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 15:18:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C804217BF
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 15:18:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C804217BF
+	by mail.kernel.org (Postfix) with ESMTP id 64C3A2089E
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 15:18:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64C3A2089E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389877AbeHGRdC (ORCPT
+        id S2389888AbeHGRd1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 13:33:02 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37388 "EHLO mx1.redhat.com"
+        Tue, 7 Aug 2018 13:33:27 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50600 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727429AbeHGRdB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 13:33:01 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        id S1727429AbeHGRd1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 13:33:27 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8E4F840201A3;
-        Tue,  7 Aug 2018 15:18:12 +0000 (UTC)
-Received: from redhat.com (unknown [10.20.6.215])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 07A732026D66;
-        Tue,  7 Aug 2018 15:18:12 +0000 (UTC)
-Date:   Tue, 7 Aug 2018 11:18:10 -0400
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     osalvador@techadventures.net, akpm@linux-foundation.org,
-        dan.j.williams@intel.com, pasha.tatashin@oracle.com,
-        david@redhat.com, yasu.isimatu@gmail.com, logang@deltatee.com,
-        dave.jiang@intel.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Oscar Salvador <osalvador@suse.de>
-Subject: Re: [RFC PATCH 2/3] mm/memory_hotplug: Create __shrink_pages and
- move it to offline_pages
-Message-ID: <20180807151810.GB3301@redhat.com>
-References: <20180807133757.18352-1-osalvador@techadventures.net>
- <20180807133757.18352-3-osalvador@techadventures.net>
- <20180807135221.GA3301@redhat.com>
- <20180807145900.GH10003@dhcp22.suse.cz>
+        by mx1.redhat.com (Postfix) with ESMTPS id CE1B640241C0;
+        Tue,  7 Aug 2018 15:18:37 +0000 (UTC)
+Received: from bfoster (dhcp-41-2.bos.redhat.com [10.18.41.2])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 96A142166BA2;
+        Tue,  7 Aug 2018 15:18:37 +0000 (UTC)
+Date:   Tue, 7 Aug 2018 11:18:36 -0400
+From:   Brian Foster <bfoster@redhat.com>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Colin Ian King <colin.king@canonical.com>,
+        linux-xfs@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: xfs: cancel dfops on xfs_defer_finish() error
+Message-ID: <20180807151836.GB55416@bfoster>
+References: <18f3296d-e5d4-4d76-51f8-a40d0ceaa20e@canonical.com>
+ <20180807143720.GA55416@bfoster>
+ <20180807151029.GA30972@magnolia>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180807145900.GH10003@dhcp22.suse.cz>
+In-Reply-To: <20180807151029.GA30972@magnolia>
 User-Agent: Mutt/1.10.0 (2018-05-17)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Tue, 07 Aug 2018 15:18:12 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Tue, 07 Aug 2018 15:18:12 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jglisse@redhat.com' RCPT:''
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 07 Aug 2018 15:18:37 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 07 Aug 2018 15:18:37 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bfoster@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 07, 2018 at 04:59:00PM +0200, Michal Hocko wrote:
-> On Tue 07-08-18 09:52:21, Jerome Glisse wrote:
-> > On Tue, Aug 07, 2018 at 03:37:56PM +0200, osalvador@techadventures.net wrote:
-> > > From: Oscar Salvador <osalvador@suse.de>
+On Tue, Aug 07, 2018 at 08:10:29AM -0700, Darrick J. Wong wrote:
+> On Tue, Aug 07, 2018 at 10:37:21AM -0400, Brian Foster wrote:
+> > On Tue, Aug 07, 2018 at 03:14:07PM +0100, Colin Ian King wrote:
+> > > Hi,
+> > > 
+> > > Recent commit 82ff27bc52a88cb5cc400bfa64e210d3ec8dfebd ("xfs: automatic
+> > > dfops buffer relogging") removed the assignment of variable error:
+> > > 
+> > > -       error = xfs_defer_bjoin(tp->t_dfops, bp);
+> > >         if (error) {
+> > >                 xfs_trans_bhold_release(tp, bp);
+> > >                 xfs_trans_brelse(tp, bp);
+> > > 
 > > 
-> > [...]
+> > Hmm, I _think_ we can just drop these error checks now that this
+> > pre-finish error state is non-existent, something like the appended diff
+> > (with additional cleanups). E.g., if the buffer is held in the
+> > transaction then the bjoin is implicit. If the finish fails, then the
+> > state is essentially unchanged by the relogging patch.
 > > 
-> > > diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-> > > index 9bd629944c91..e33555651e46 100644
-> > > --- a/mm/memory_hotplug.c
-> > > +++ b/mm/memory_hotplug.c
+> > That said, the error handling is a bit tricky here. Darrick, I think you
+> > reworked this recently.. thoughts?
 > > 
-> > [...]
+> > Brian
 > > 
-> > >  /**
-> > >   * __remove_pages() - remove sections of pages from a zone
-> > > - * @zone: zone from which pages need to be removed
-> > > + * @nid: node which pages belong to
-> > >   * @phys_start_pfn: starting pageframe (must be aligned to start of a section)
-> > >   * @nr_pages: number of pages to remove (must be multiple of section size)
-> > >   * @altmap: alternative device page map or %NULL if default memmap is used
-> > > @@ -548,7 +557,7 @@ static int __remove_section(struct zone *zone, struct mem_section *ms,
-> > >   * sure that pages are marked reserved and zones are adjust properly by
-> > >   * calling offline_pages().
-> > >   */
-> > > -int __remove_pages(struct zone *zone, unsigned long phys_start_pfn,
-> > > +int __remove_pages(int nid, unsigned long phys_start_pfn,
-> > >  		 unsigned long nr_pages, struct vmem_altmap *altmap)
-> > >  {
-> > >  	unsigned long i;
-> > > @@ -556,10 +565,9 @@ int __remove_pages(struct zone *zone, unsigned long phys_start_pfn,
-> > >  	int sections_to_remove, ret = 0;
-> > >  
-> > >  	/* In the ZONE_DEVICE case device driver owns the memory region */
-> > > -	if (is_dev_zone(zone)) {
-> > > -		if (altmap)
-> > > -			map_offset = vmem_altmap_offset(altmap);
-> > > -	} else {
-> > > +	if (altmap)
-> > > +		map_offset = vmem_altmap_offset(altmap);
-> > > +	else {
+> > --- 8< ---
 > > 
-> > This will break ZONE_DEVICE at least for HMM. While i think that
-> > altmap -> ZONE_DEVICE (ie altmap imply ZONE_DEVICE) the reverse
-> > is not true ie ZONE_DEVICE does not necessarily imply altmap. So
-> > with the above changes you change the expected behavior.
+> > diff --git a/fs/xfs/xfs_dquot.c b/fs/xfs/xfs_dquot.c
+> > index 70a76ac41f01..2106c4142ecd 100644
+> > --- a/fs/xfs/xfs_dquot.c
+> > +++ b/fs/xfs/xfs_dquot.c
+> > @@ -311,7 +311,7 @@ xfs_dquot_disk_alloc(
+> >  			XFS_DQUOT_CLUSTER_SIZE_FSB, XFS_BMAPI_METADATA,
+> >  			XFS_QM_DQALLOC_SPACE_RES(mp), &map, &nmaps);
+> >  	if (error)
+> > -		goto error0;
+> > +		return error;
+> >  	ASSERT(map.br_blockcount == XFS_DQUOT_CLUSTER_SIZE_FSB);
+> >  	ASSERT(nmaps == 1);
+> >  	ASSERT((map.br_startblock != DELAYSTARTBLOCK) &&
+> > @@ -326,8 +326,8 @@ xfs_dquot_disk_alloc(
+> >  	bp = xfs_trans_get_buf(tp, mp->m_ddev_targp, dqp->q_blkno,
+> >  			mp->m_quotainfo->qi_dqchunklen, 0);
+> >  	if (!bp) {
+> > -		error = -ENOMEM;
+> > -		goto error1;
+> > +		xfs_defer_cancel(tp);
+> > +		return -ENOMEM;
 > 
-> Could you be more specific what is the expected behavior here?
-> Is this about calling release_mem_region_adjustable? Why does is it not
-> suitable for zone device ranges?
+> The only caller of xfs_dquot_disk_alloc checks the return value and
+> xfs_trans_cancels the transaction, which should take care of calling
+> xfs_defer_cancel, right?
+> 
 
-Correct, you should not call release_mem_region_adjustable() the device
-region is not part of regular iomem resource as it might not necessarily
-be enumerated through known ways to the kernel (ie only the device driver
-can discover the region and core kernel do not know about it).
+Yeah. IIRC I originally left the defer_cancel() alone in this function
+just to be consistent, since it calls xfs_defer_finish() as well on the
+caller's transaction. Technically I don't think it matters either way,
+so I don't have much preference on if it stays or goes (assuming the
+other changes are correct)...
 
-One of the issue to adding this region to iomem resource is that they
-really need to be ignored by core kernel because you can not assume that
-CPU can actually access them. Moreover, if CPU can access them it is
-likely that CPU can not do atomic operation on them (ie what happens on
-a CPU atomic instruction is undefined). So they are _special_ and only
-make sense to be use in conjunction with a device driver.
+Brian
 
-
-Also in the case they do exist in iomem resource it is as PCIE BAR so
-as IORESOURCE_IO (iirc) and thus release_mem_region_adjustable() would
-return -EINVAL. Thought nothing bad happens because of that, only a
-warning message that might confuse the user.
-
-Cheers,
-Jérôme
+> --D
+> 
+> >  	}
+> >  	bp->b_ops = &xfs_dquot_buf_ops;
+> >  
+> > @@ -349,10 +349,8 @@ xfs_dquot_disk_alloc(
+> >  	 * the buffer locked across the _defer_finish call.  We can now do
+> >  	 * this correctly with xfs_defer_bjoin.
+> >  	 *
+> > -	 * Above, we allocated a disk block for the dquot information and
+> > -	 * used get_buf to initialize the dquot.  If the _defer_bjoin fails,
+> > -	 * the buffer is still locked to *tpp, so we must _bhold_release and
+> > -	 * then _trans_brelse the buffer.  If the _defer_finish fails, the old
+> > +	 * Above, we allocated a disk block for the dquot information and used
+> > +	 * get_buf to initialize the dquot. If the _defer_finish fails, the old
+> >  	 * transaction is gone but the new buffer is not joined or held to any
+> >  	 * transaction, so we must _buf_relse it.
+> >  	 *
+> > @@ -362,24 +360,14 @@ xfs_dquot_disk_alloc(
+> >  	 * manually or by committing the transaction.
+> >  	 */
+> >  	xfs_trans_bhold(tp, bp);
+> > -	if (error) {
+> > -		xfs_trans_bhold_release(tp, bp);
+> > -		xfs_trans_brelse(tp, bp);
+> > -		goto error1;
+> > -	}
+> >  	error = xfs_defer_finish(tpp);
+> >  	tp = *tpp;
+> >  	if (error) {
+> >  		xfs_buf_relse(bp);
+> > -		goto error0;
+> > +		return error;
+> >  	}
+> >  	*bpp = bp;
+> >  	return 0;
+> > -
+> > -error1:
+> > -	xfs_defer_cancel(tp);
+> > -error0:
+> > -	return error;
+> >  }
+> >  
+> >  /*
+> > --
+> > To unsubscribe from this list: send the line "unsubscribe linux-xfs" in
+> > the body of a message to majordomo@vger.kernel.org
+> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
