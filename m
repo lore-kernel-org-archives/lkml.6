@@ -2,154 +2,110 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 874C8C46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 16:05:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB0B1C46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 16:05:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40B2E21885
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 16:05:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="LATccLrP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40B2E21885
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id 7939D21885
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 16:05:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7939D21885
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kwaak.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389200AbeHGSTx (ORCPT
+        id S2390082AbeHGSUE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 14:19:53 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:57936 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726419AbeHGSTw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 14:19:52 -0400
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w77G4qxU035922;
-        Tue, 7 Aug 2018 11:04:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1533657892;
-        bh=ZwxdefT9hmBdDGuZvOa8UUJrMZ1KZEX8jND7UKNJnGs=;
-        h=From:To:CC:Subject:Date;
-        b=LATccLrPiAAMBnubFSY9vfMtrSrfT4+bjo0oeEagkA4yPy9s8PBURogaf/Hr6R5AA
-         W3T7BzPcpfKcvnL9+eczqhiLKO1AKUVOSug0A3kr+qiuKe4VEC0W69qxMqFNOATXmL
-         fObFeEpoPnBxn3O+bEFzC/eTJK3Sum2j8tNJTMuE=
-Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w77G4qOd032123;
-        Tue, 7 Aug 2018 11:04:52 -0500
-Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 7 Aug
- 2018 11:04:51 -0500
-Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Tue, 7 Aug 2018 11:04:51 -0500
-Received: from legion.dal.design.ti.com (legion.dal.design.ti.com [128.247.22.53])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w77G4pc2003532;
-        Tue, 7 Aug 2018 11:04:51 -0500
-Received: from localhost (a0272616local-lt.dhcp.ti.com [172.22.157.47])
-        by legion.dal.design.ti.com (8.11.7p1+Sun/8.11.7) with ESMTP id w77G4px02685;
-        Tue, 7 Aug 2018 11:04:51 -0500 (CDT)
-From:   Dan Murphy <dmurphy@ti.com>
-To:     <robh+dt@kernel.org>, <jacek.anaszewski@gmail.com>
-CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-leds@vger.kernel.org>, Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH v2 1/2] dt: bindings: lm3697: Add bindings for lm3697 driver
-Date:   Tue, 7 Aug 2018 11:04:41 -0500
-Message-ID: <20180807160442.8937-1-dmurphy@ti.com>
-X-Mailer: git-send-email 2.12.2
+        Tue, 7 Aug 2018 14:20:04 -0400
+Received: from gw-fsck-sorbs.kwaak.net ([84.245.27.153]:56204 "EHLO
+        mail.kwaak.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389340AbeHGSUE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 14:20:04 -0400
+Received: from [192.168.0.44] (port=39601 helo=shell3.kwaak.net)
+        by mail.kwaak.net with esmtp (Exim 4.50)
+        id 1fn4Te-000814-B7; Tue, 07 Aug 2018 18:04:55 +0200
+Received: from ard by shell3.kwaak.net with local (Exim 4.80)
+        (envelope-from <ard@kwaak.net>)
+        id 1fn4Tc-00080z-JL; Tue, 07 Aug 2018 18:04:52 +0200
+Date:   Tue, 7 Aug 2018 18:04:52 +0200
+From:   ard <ard@kwaak.net>
+To:     Johannes Thumshirn <jthumshirn@suse.de>
+Cc:     "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
+        Linux SCSI Mailinglist <linux-scsi@vger.kernel.org>
+Subject: Re: [PATCH 0/3] scsi: fcoe: memleak fixes
+Message-ID: <20180807160452.GE23827@kwaak.net>
+References: <20180731134603.20089-1-jthumshirn@suse.de>
+ <20180806092503.6ed56kukj2i236qt@linux-x5ow.site>
+ <20180806132234.GA23827@kwaak.net>
+ <20180806132725.ihbi5rxvkuuppajr@linux-x5ow.site>
+ <20180806142414.GB23827@kwaak.net>
+ <20180807065400.nxpndw4kf6jdd55i@linux-x5ow.site>
+ <20180807092619.GC23827@kwaak.net>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180807092619.GC23827@kwaak.net>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Host-Lookup-Failed: Reverse DNS lookup failed for 192.168.0.44 (failed)
+X-Kwaak-Spam-Score: -2.6
+X-kwaak-MailScanner: Found to be clean
+X-kwaak-MailScanner-SpamCheck: not spam, SpamAssassin (score=-2.304,
+        required 5, autolearn=not spam, BAYES_00 -2.60,
+        DNS_FROM_AHBL_RHSBL 0.29)
+X-MailScanner-From: ard@kwaak.net
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the device tree bindings for the lm3697
-led driver for backlighting and display.
+Hi,
 
-Signed-off-by: Dan Murphy <dmurphy@ti.com>
----
+On Tue, Aug 07, 2018 at 11:26:19AM +0200, ard wrote:
+> So a conclusion of my rambling:
+> 1) you either need 6 vn2vn hosts *or* you need more than one 4.14
+> kernel in a network to trigger. One of the two. I need to think
+> about this. The fact that the 4.14 systems can't see eachother is
+> an indicator.  I can turn off the FCoE on some other system to
+> see if the memleak stops.
 
-v2 - Fixed subject and patch commit message - https://lore.kernel.org/patchwork/patch/971326/
+I've gone all out:
 
- .../devicetree/bindings/leds/leds-lm3697.txt  | 64 +++++++++++++++++++
- 1 file changed, 64 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3697.txt
+Ok, deleted everything, long story short:
+(for now(!))
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-lm3697.txt b/Documentation/devicetree/bindings/leds/leds-lm3697.txt
-new file mode 100644
-index 000000000000..7b8e490f1ea1
---- /dev/null
-+++ b/Documentation/devicetree/bindings/leds/leds-lm3697.txt
-@@ -0,0 +1,64 @@
-+* Texas Instruments - LM3697 Highly Efficient White LED Driver
-+
-+The LM3697 11-bit LED driver provides high-
-+performance backlight dimming for 1, 2, or 3 series
-+LED strings while delivering up to 90% efficiency.
-+
-+This device is suitable for Display and Keypad Lighting
-+
-+Required properties:
-+	- compatible:
-+		"ti,lm3967"
-+	- reg :  I2C slave address
-+	- #address-cells : 1
-+	- #size-cells : 0
-+	- control-bank-cfg - : Indicates which sink is connected to which control bank
-+		0 - All HVLED outputs are controlled by bank A
-+		1 - HVLED1 is controlled bank B, HVLED2/3 are controlled by bank A
-+		2 - HVLED2 is controlled bank B, HVLED1/3 are controlled by bank A
-+		3 - HVLED1/2 are controlled by bank B, HVLED3 is controlled by bank A
-+		4 - HVLED3 is controlled by bank B, HVLED1/2 are controlled by bank A
-+		5 - HVLED1/3 is controlled by bank B, HVLED2 is controlled by bank A
-+		6 - (default) HVLED1 is controlled by bank A, HVLED2/3 are controlled by bank B
-+		7 - All HVLED outputs are controlled by bank B
-+
-+Optional properties:
-+	- enable-gpios : gpio pin to enable/disable the device.
-+	- vled-supply : LED supply
-+
-+Required child properties:
-+	- reg : 0 - LED is Controlled by bank A
-+		1 - LED is Controlled by bank B
-+
-+Optional child properties:
-+	- label : see Documentation/devicetree/bindings/leds/common.txt
-+	- linux,default-trigger :
-+	   see Documentation/devicetree/bindings/leds/common.txt
-+
-+Example:
-+
-+led-controller@36 {
-+	compatible = "ti,lm3967";
-+	reg = <0x36>;
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	enable-gpios = <&gpio1 28 GPIO_ACTIVE_HIGH>;
-+	vled-supply = <&vbatt>;
-+	control-bank-cfg = <0>;
-+
-+	led@0 {
-+		reg = <0>;
-+		label = "white:first_backlight_cluster";
-+		linux,default-trigger = "backlight";
-+	};
-+
-+	led@1 {
-+		reg = <1>;
-+		label = "white:second_backlight_cluster";
-+		linux,default-trigger = "frontlight";
-+	};
-+}
-+
-+For more product information please see the link below:
-+http://www.ti.com/lit/ds/symlink/lm3697.pdf
+PC+steam machine with 4.14 (patched) and 4.16 (upstream,
+nodebug): no kmemleaks
+Every device sees every device.
+
+Now if I add two odroids running 4.14 (not patched):
+The odroids will see *every* device running < 4.14 and vv
+The odroids will not see any device running >= 4.14 and vv
+The PC starts to kmemleak a lot.
+
+I've removed the two 4.14 odroids again from the FCoE lan, and
+upgraded them with a patched 4.14 .
+I rebooted the PC with steam (4.16 upstream unpatched) and all
+other systems in the lan I mentioned.
+To be clear: the steam machine has a dedicated nic for FCoE. All
+other systems use a vlan.
+I will let that talk with eachother for now.
+
+I fear there is a platform specific thing in the vn2vn chatter
+that has changed > 4.9 .
+4.14 can communicate with lower revisions, but they can't see
+eachother, and whatever they chat about, it induces memory leaks
+on the PC.
+Oh, another difference is that steam and the PC has targets
+assigned. I might try that for the 4.14 too.
+
+Anyway, I will do some cooking and let the current systems chat
+with eachother and see if we get a kmemleak making my statement
+bogus.
+
+Regards,
+Ard
+
 -- 
-2.17.0.582.gccdcbd54c
-
+.signature not found
