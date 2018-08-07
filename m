@@ -2,194 +2,95 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E89DC46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 06:31:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33552C46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 06:32:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9ACF219C9
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 06:31:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9ACF219C9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id D5D5A21A0D
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 06:32:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lyhqio/H"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5D5A21A0D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388502AbeHGIoY (ORCPT
+        id S2388620AbeHGIo4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 04:44:24 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55914 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727725AbeHGIoY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 04:44:24 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 45292ACFB;
-        Tue,  7 Aug 2018 06:31:34 +0000 (UTC)
-Subject: Re: [PATCH 2/4] xen/blkfront: cleanup stale persistent grants
-To:     =?UTF-8?Q?Roger_Pau_Monn=c3=a9?= <roger.pau@citrix.com>
-Cc:     linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
-        linux-block@vger.kernel.org, konrad.wilk@oracle.com,
-        axboe@kernel.dk, boris.ostrovsky@oracle.com
-References: <20180806113403.24728-1-jgross@suse.com>
- <20180806113403.24728-4-jgross@suse.com>
- <20180806161638.nmjamflckekeuyzb@mac>
-From:   Juergen Gross <jgross@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <e28d3e77-2c6b-fc30-37e6-646ee1cfbdab@suse.com>
-Date:   Tue, 7 Aug 2018 08:31:31 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 7 Aug 2018 04:44:56 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:50132 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727725AbeHGIo4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 04:44:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=OjdUrWSwu4kd4mbYjfRpPvSvS1GFlAjg9ccQhQRku2k=; b=lyhqio/Hl02oPna//bnrfFKBO
+        ORFUiapWzw/puce1McvK3e8gMycTEa1j2jc4yT+LillNjbn89Ta98kmK9rWVeVlwvxcQpM+TZ+YMn
+        4mZsYfnPs9U7RmSBTIidMGTl7qe6gEeTq5sKmAMVACGSJemBY/BtvXv/K1cFKT8HYs3vNWByyzz1A
+        9Sir+C/SkJr+BjNK6C2GHSIjMJtUtH7w+QsAlMBIPD4B9QbF04vcrc43PmjleKd0XUHDKyEjgGy4O
+        fqclGIf4e0GjFIpCnPPNSV+99Yreecoz7TU/tyMXgLgt1EmIMSDNx/Rm/oZzNS9l4EETeg5yBE92F
+        VXLS1lJvA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fmvXF-0001kC-SQ; Tue, 07 Aug 2018 06:32:01 +0000
+Date:   Mon, 6 Aug 2018 23:32:01 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        aik@ozlabs.ru, robh@kernel.org, joe@perches.com,
+        elfring@users.sourceforge.net, david@gibson.dropbear.id.au,
+        jasowang@redhat.com, mpe@ellerman.id.au, linuxram@us.ibm.com,
+        haren@linux.vnet.ibm.com, paulus@samba.org,
+        srikar@linux.vnet.ibm.com, robin.murphy@arm.com,
+        jean-philippe.brucker@arm.com, marc.zyngier@arm.com
+Subject: Re: [RFC 0/4] Virtio uses DMA API for all devices
+Message-ID: <20180807063201.GB23159@infradead.org>
+References: <051fd78e15595b414839fa8f9d445b9f4d7576c6.camel@kernel.crashing.org>
+ <20180805031046-mutt-send-email-mst@kernel.org>
+ <fd8fee94cf42e436878f179c7895de3a4dab3355.camel@kernel.crashing.org>
+ <20180806164106-mutt-send-email-mst@kernel.org>
+ <ef6d5d7c7b812bd797a1c3fd6bc7a26d0074020f.camel@kernel.crashing.org>
+ <20180806233024-mutt-send-email-mst@kernel.org>
+ <0967fc30001323e6e38ed12c8dba8ee3d1aa13f5.camel@kernel.crashing.org>
+ <20180807002857-mutt-send-email-mst@kernel.org>
+ <93518075238a07e9f011774d89bdc652c083f1ba.camel@kernel.crashing.org>
+ <20180807024503-mutt-send-email-mst@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20180806161638.nmjamflckekeuyzb@mac>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180807024503-mutt-send-email-mst@kernel.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/08/18 18:16, Roger Pau Monné wrote:
-> On Mon, Aug 06, 2018 at 01:34:01PM +0200, Juergen Gross wrote:
->> Add a periodic cleanup function to remove old persistent grants which
->> are no longer in use on the backend side. This avoids starvation in
->> case there are lots of persistent grants for a device which no longer
->> is involved in I/O business.
->>
->> Signed-off-by: Juergen Gross <jgross@suse.com>
->> ---
->>  drivers/block/xen-blkfront.c | 99 ++++++++++++++++++++++++++++++++++++++++++--
->>  1 file changed, 95 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/block/xen-blkfront.c b/drivers/block/xen-blkfront.c
->> index b5cedccb5d7d..19feb8835fc4 100644
->> --- a/drivers/block/xen-blkfront.c
->> +++ b/drivers/block/xen-blkfront.c
->> @@ -46,6 +46,7 @@
->>  #include <linux/scatterlist.h>
->>  #include <linux/bitmap.h>
->>  #include <linux/list.h>
->> +#include <linux/workqueue.h>
->>  
->>  #include <xen/xen.h>
->>  #include <xen/xenbus.h>
->> @@ -121,6 +122,9 @@ static inline struct blkif_req *blkif_req(struct request *rq)
->>  
->>  static DEFINE_MUTEX(blkfront_mutex);
->>  static const struct block_device_operations xlvbd_block_fops;
->> +static struct delayed_work blkfront_work;
->> +static LIST_HEAD(info_list);
->> +static bool blkfront_work_active;
->>  
->>  /*
->>   * Maximum number of segments in indirect requests, the actual value used by
->> @@ -216,6 +220,7 @@ struct blkfront_info
->>  	/* Save uncomplete reqs and bios for migration. */
->>  	struct list_head requests;
->>  	struct bio_list bio_list;
->> +	struct list_head info_list;
->>  };
->>  
->>  static unsigned int nr_minors;
->> @@ -1764,6 +1769,12 @@ static int write_per_ring_nodes(struct xenbus_transaction xbt,
->>  	return err;
->>  }
->>  
->> +static void free_info(struct blkfront_info *info)
->> +{
->> +	list_del(&info->info_list);
->> +	kfree(info);
->> +}
->> +
->>  /* Common code used when first setting up, and when resuming. */
->>  static int talk_to_blkback(struct xenbus_device *dev,
->>  			   struct blkfront_info *info)
->> @@ -1885,7 +1896,10 @@ static int talk_to_blkback(struct xenbus_device *dev,
->>   destroy_blkring:
->>  	blkif_free(info, 0);
->>  
->> -	kfree(info);
->> +	mutex_lock(&blkfront_mutex);
->> +	free_info(info);
->> +	mutex_unlock(&blkfront_mutex);
->> +
->>  	dev_set_drvdata(&dev->dev, NULL);
->>  
->>  	return err;
->> @@ -1996,6 +2010,10 @@ static int blkfront_probe(struct xenbus_device *dev,
->>  	info->handle = simple_strtoul(strrchr(dev->nodename, '/')+1, NULL, 0);
->>  	dev_set_drvdata(&dev->dev, info);
->>  
->> +	mutex_lock(&blkfront_mutex);
->> +	list_add(&info->info_list, &info_list);
->> +	mutex_unlock(&blkfront_mutex);
->> +
->>  	return 0;
->>  }
->>  
->> @@ -2306,6 +2324,15 @@ static void blkfront_gather_backend_features(struct blkfront_info *info)
->>  	if (indirect_segments <= BLKIF_MAX_SEGMENTS_PER_REQUEST)
->>  		indirect_segments = 0;
->>  	info->max_indirect_segments = indirect_segments;
->> +
->> +	if (info->feature_persistent) {
->> +		mutex_lock(&blkfront_mutex);
->> +		if (!blkfront_work_active) {
->> +			blkfront_work_active = true;
->> +			schedule_delayed_work(&blkfront_work, HZ * 10);
+On Tue, Aug 07, 2018 at 02:45:25AM +0300, Michael S. Tsirkin wrote:
+> > > I think that's where Christoph might have specific ideas about it.
+> > 
+> > OK well, assuming Christoph can solve the direct case in a way that
+> > also work for the virtio !iommu case, we still want some bit of logic
+> > somewhere that will "switch" to swiotlb based ops if the DMA mask is
+> > limited.
+> > 
+> > You mentioned an RFC for that ? Do you happen to have a link ?
 > 
-> Does it make sense to provide a module parameter to rune the schedule
-> of the cleanup routine?
+> No but Christoph did I think.
 
-I don't think this is something anyone would like to tune.
+Do you mean the direct map retpoline mitigation?  It is here:
 
-In case you think it should be tunable I can add a parameter, of course.
+https://www.spinics.net/lists/netdev/msg495413.html
 
-> 
->> +		}
->> +		mutex_unlock(&blkfront_mutex);
-> 
-> Is it really necessary to have the blkfront_work_active boolean? What
-> happens if you queue the same delayed work more than once?
-
-In case there is already work queued later calls of
-schedule_delayed_work() will be ignored.
-
-So yes, I can drop the global boolean (I still need a local flag in
-blkfront_delay_work() for controlling the need to call
-schedule_delayed_work() again).
-
-
-Juergen
+https://www.spinics.net/lists/netdev/msg495785.html
