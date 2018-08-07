@@ -2,121 +2,192 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2893EC46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 13:26:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E80EDC46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 13:26:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFBC22174C
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 13:26:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFBC22174C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 8BEE72174C
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 13:26:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qCV97SC8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BEE72174C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389185AbeHGPk6 (ORCPT
+        id S2389203AbeHGPlN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 11:40:58 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:56105 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388581AbeHGPk6 (ORCPT
+        Tue, 7 Aug 2018 11:41:13 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:33434 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388581AbeHGPlN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 11:40:58 -0400
-Received: by mail-wm0-f65.google.com with SMTP id f21-v6so17430541wmc.5
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 06:26:37 -0700 (PDT)
+        Tue, 7 Aug 2018 11:41:13 -0400
+Received: by mail-wr1-f68.google.com with SMTP id g6-v6so15811818wrp.0
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 06:26:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to;
+        bh=JrDCOTs4uQPy0GETQyB8ar1aWcDDdccYHjE8ojb7S7o=;
+        b=qCV97SC8YOsiszSTA4QUNjJsHETF07moBLPQp0KO29VF2Njyw5EIPWOwW51Hhz1pty
+         GntJg8hI6HcLJ2KXZtdGkVriiPAOJSn+LAnHVTtcCBce/bUs2xhZNB/T+8pLjZvS+qbj
+         NtqrP+OiZcSax+Ch1/KScehScYH10xfqVxx6QOwz2yunsQfYV/dNEq2Teo1q+A1Veaax
+         df/6gD/eT4DCSY2dJ5rTtCXGQLW0r0Rud7LDgzdvY9uYag0DNn4PpM+3AQgI8iEdSIU8
+         VCvjxLdLE8nyBY17C5OMwSRAWP+D1T3Sjpse9wrgiamzw2xV7oy36roC9f72KYPg7yE4
+         O98g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=uEPiQtdPS0U88+B+mGvXuHnVlXEbwn22EegVG1v9c48=;
-        b=o0E9PGfPG/DK2FgYLIkm5PYDEfdtjAiH01Kr5zCUBh2Ypk3nime/hOvIiXBP0wR7uf
-         uk06qEmt+BQDLR0uaOUdhIQBRQu0qZ04PIapHiG332g4UTZ+CEdi6Jok3m33zfUP4q5d
-         Auk/mPsm+MObj0+3GkU8C537dY2riNll0LHFZOCnheicx7vzABWmHIX5U2CBdt1sRllY
-         VjNaRaX/3qhg5VxN8Rc8jLmHmdwTRiaaYva+QOd47um1ZIGtiG8q3Yn6R7d52U4Ak0fR
-         SMzISo12NbOZ/5Je+RbI35fMvtj3PiafIErh+STEve8Mv3rqMB2Ki4TBNVOgfevx9z8T
-         xrHg==
-X-Gm-Message-State: AOUpUlHoRS5LT5qiChyVCyO9wGtQzNzBJLhN5UguglNplnunFGlgFoqt
-        WLX0pnmRNXguMx7ly8FjWXlUhg==
-X-Google-Smtp-Source: AA+uWPwzgGWxcCCJ28rJFf6RJhCVOjCPXgu64BN7imm7J17obMUe1OBLUbfy/inY2648LJcTHyPQjw==
-X-Received: by 2002:a1c:f306:: with SMTP id q6-v6mr1695061wmq.111.1533648396803;
-        Tue, 07 Aug 2018 06:26:36 -0700 (PDT)
-Received: from localhost.localdomain (p200300EF2BD31703FE367972448AED7A.dip0.t-ipconnect.de. [2003:ef:2bd3:1703:fe36:7972:448a:ed7a])
-        by smtp.gmail.com with ESMTPSA id e141-v6sm2719950wmd.32.2018.08.07.06.26.32
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 07 Aug 2018 06:26:33 -0700 (PDT)
-Date:   Tue, 7 Aug 2018 15:26:30 +0200
-From:   Juri Lelli <juri.lelli@redhat.com>
-To:     Patrick Bellasi <patrick.bellasi@arm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [PATCH v3 06/14] sched/cpufreq: uclamp: add utilization clamping
- for RT tasks
-Message-ID: <20180807132630.GB3062@localhost.localdomain>
-References: <20180806163946.28380-1-patrick.bellasi@arm.com>
- <20180806163946.28380-7-patrick.bellasi@arm.com>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to;
+        bh=JrDCOTs4uQPy0GETQyB8ar1aWcDDdccYHjE8ojb7S7o=;
+        b=CVDdg5rtYbg7hZdFUQPWUOaVOruryyIq4pwHdDlg+PD2x7RQKr+Gp6jM7knhni0KZJ
+         VevEV/kyhaTkn6Gna1IU6JpAsxpAovpohF1ZArEnpPUfkaXoJ5uqOr+1+EdA1pzyQhhb
+         MDQ0JT8ZGeOB07iAkXDqWza2zqcNB9NS6OvydtNDBshaF8AWbH4yMUcmY+gDFJe6ymlG
+         bw1gxj/WwYnmYBWaKuVH9IWsIstRRS0LCP20lTm52GjiwBedMMWgvdNItvUkjKtVXhQW
+         J21NHbFbhTGi7lnt8smEc1J8LokUhNqH+x0w/HfwGpcd5KqmL00tVnEIT9qW6nqhXPEf
+         ihTA==
+X-Gm-Message-State: AOUpUlEhX903zpB0iekJztQ96YioSZbvn5OCaeacHIZpLqtc+t5Cx92j
+        z4+WJnXOQ7QDdFydB6QmpJXw2aH1pqtIG1hnXic=
+X-Google-Smtp-Source: AAOMgpeB2I/M9pSDkhE3dFXxU82xjs/T5Mo0LDcZcxvxcTOz2/XWbX4rGa3uYncfoMOQiXklIQFrNrPqZrZUB6Oqrgg=
+X-Received: by 2002:a5d:540d:: with SMTP id g13-v6mr13429746wrv.4.1533648411277;
+ Tue, 07 Aug 2018 06:26:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180806163946.28380-7-patrick.bellasi@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: by 2002:a1c:178a:0:0:0:0:0 with HTTP; Tue, 7 Aug 2018 06:26:50 -0700 (PDT)
+In-Reply-To: <20180807122826.GU3008@phenom.ffwll.local>
+References: <20180724082213.25677-1-robert.foss@collabora.com>
+ <f718f3ec-3726-3f51-6756-80b357fc23c9@flowbird.group> <CACvgo53h=8q-xuJBPP1T2JWkb7SffXas94=moS1x76=BejyVJA@mail.gmail.com>
+ <c05f1d94-bf9e-cf9b-e575-dc220b9ca163@flowbird.group> <CACvgo50u--YAxwG-cEhgj5AagOcz9oyaX2YC52Gp6324c8mNEQ@mail.gmail.com>
+ <20180803195025.GO20303@art_vandelay> <CACvgo50Pk_FduWG5nev0W1pxqNfg3uMo0-7TuDPAckcBv=cHhA@mail.gmail.com>
+ <20180807122826.GU3008@phenom.ffwll.local>
+From:   Emil Velikov <emil.l.velikov@gmail.com>
+Date:   Tue, 7 Aug 2018 14:26:50 +0100
+Message-ID: <CACvgo50Lxv8xy==Ai=TRLtSPBsuAmogXXobDViZwFoRr+2AboA@mail.gmail.com>
+Subject: Re: [RFC] drm: Allow DRM_IOCTL_MODE_MAP_DUMB for render nodes
+To:     Emil Velikov <emil.l.velikov@gmail.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        Nicolas Norvez <norvez@chromium.org>,
+        Robert Foss <robert.foss@collabora.com>,
+        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
+        ML dri-devel <dri-devel@lists.freedesktop.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Eric Engestrom <eric.engestrom@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Brian Paul <brianp@vmware.com>,
+        Martin Fuzzey <martin.fuzzey@flowbird.group>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 7 August 2018 at 13:28, Daniel Vetter <daniel@ffwll.ch> wrote:
+> On Tue, Aug 07, 2018 at 12:01:50PM +0100, Emil Velikov wrote:
+>> On 3 August 2018 at 20:50, Sean Paul <seanpaul@chromium.org> wrote:
+>> > On Fri, Aug 03, 2018 at 06:03:50PM +0100, Emil Velikov wrote:
+>> >> On 3 August 2018 at 16:06, Martin Fuzzey <martin.fuzzey@flowbird.group> wrote:
+>> >> > Hi Emil,
+>> >> >
+>> >> > On 03/08/18 14:35, Emil Velikov wrote:
+>> >> >>
+>> >> >> Hi Martin,
+>> >> >>
+>> >> >> On 1 August 2018 at 15:24, Martin Fuzzey <martin.fuzzey@flowbird.group>
+>> >> >> wrote:
+>> >> >>
+>> >> >> Let's start with the not-so obvious question:
+>> >> >> Why does one open the imx as render node?
+>> >> >>
+>> >> >> Of the top of my head:
+>> >> >> There is nothing in egl/android that should require an authenticated
+>> >> >> device.
+>> >> >> Hence, using a card node should be fine - the etnaviv code opens the
+>> >> >> render node it needs.
+>> >> >
+>> >> >
+>> >> > Yes, the problem is not in egl/android but in the scanout buffer allocation
+>> >> > code.
+>> >> >
+>> >> > etnaviv opens the render node on the *GPU* (for submitting GPU commands),
+>> >> > that part is fine.
+>> >> >
+>> >> > But scanout buffers need to be allocated from imx-drm not etnaviv.
+>> >> >
+>> >> > This done by renderonly_create_kms_dumb_buffer_for_resource()
+>> >> > [src/gallium/auxiliary/renderonly/renderonly.c]
+>> >> > Which uses DRM_IOCTL_MODE_CREATE_DUMB followed by
+>> >> > DRM_IOCTL_PRIME_FD_TO_HANDLE
+>> >> > on the "kms_fd" (probably poorly named because it's not actually used for
+>> >> > modesetting)
+>> >> > see imx_drm_screen_create()[ src/gallium/winsys/imx/drm/imx_drm_winsys.c]
+>> >> >
+>> >> >
+>> >> > If the card node is used DRM_IOCTL_MODE_CREATE_DUMB works but
+>> >> > DRM_IOCTL_PRIME_FD_TO_HANDLE fails, because the permissions are
+>> >> > DRM_AUTH|DRM_UNLOCKED|DRM_RENDER_ALLOW
+>> >> >
+>> >> Right I missed the DRM_AUTH, in the fd <> handle IOCTLs.
+>> >> So in order for things to work, we'd need to either:
+>> >>  - allow dumb buffers for render nodes, or
+>> >>  - drop the DRM_AUTH for fd <> handle imports
+>> >>
+>> >> Pointing an alternative solution, for kernel developers to analyse and
+>> >> make a decision.
+>> >>
+>> >> >
+>> >> > In android 8.1 the hardware composer runs in a seperate process and it has
+>> >> > to use the card node and be drm master (to use the KMS API),
+>> >> > therefore, when the surface flinger calls
+>> >> > renderonly_create_kms_dumb_buffer_for_resource() it is not authenticated.
+>> >> >
+>> >> > Making surface flinger use a render node fixes the problem for
+>> >> > DRM_IOCTL_PRIME_FD_TO_HANDLE (because that already has DRM_RENDER_ALLOW),
+>> >> > but DRM_IOCTL_MODE_CREATE_DUMB now fails without the patch.
+>> >> >
+>> >> >
+>> >> > This probably worked in previous versions of Android where surface flinger
+>> >> > and hwc were all in the same process.
+>> >> >
+>> >> There has been varying hacks for Android through the years. Bringing
+>> >> details into the discussion will result in a significant diversion.
+>> >> Something we could avoid, for the time being ;-)
+>> >
+>> > Did someone say diversion?!? The way this was handled prior to using
+>> > render/control nodes in drm_hwc/[drm/gbm]_gralloc is that all modesetting was
+>> > done via gralloc which was master. The hwc implementation was basically a proxy
+>> > backchanneling all of the work to gralloc.
+>> >
+>> > Anyways, we probably don't want to go back there.
+>> >
+>> Now that we got the diversion out of the way, any input on my proposal
+>> to drop the DRM_AUTH for fd <> imports.
+>> Am I missing something pretty obvious that makes the idea a no-go?
+>
+> Dropping DRM_AUTH is only relevant for the card node. And a card node
+> might not be sufficiently isolated against concurrent other clients, which
+> is why we don't allow it.
+>
+Right. I did not spot anything that would make a distinction based on
+the card vs render node used.
 
-On 06/08/18 17:39, Patrick Bellasi wrote:
+> What we could do is essentially check whether your driver supports render
+> nodes (indicating sufficient amounts of separation), and then allow
+> anything for unauthenicated clients if DRM_RENDER_ALLOW is set on the
+> ioctl.
+>
+> But that's just reinventing render nodes on top of legacy card nodes, and
+> I'm not clear on what that exactly gains us.
+>
+As more of a userspace person, it makes sense to keep render nodes for
+GPU specifics and card ones - KMS/Display Controller.
 
-[...]
+> I think the proposal for dumb render nodes (for drivers which only do dumb
+> kms buffers and no rendering at all) that's been discusson on irc a bit
+> makes a lot more sense.
 
-> @@ -223,13 +224,25 @@ static unsigned long sugov_get_util(struct sugov_cpu *sg_cpu)
->  	 * utilization (PELT windows are synchronized) we can directly add them
->  	 * to obtain the CPU's actual utilization.
->  	 *
-> -	 * CFS utilization can be boosted or capped, depending on utilization
-> -	 * clamp constraints configured for currently RUNNABLE tasks.
-> +	 * CFS and RT utilizations can be boosted or capped, depending on
-> +	 * utilization constraints enforce by currently RUNNABLE tasks.
-> +	 * They are individually clamped to ensure fairness across classes,
-> +	 * meaning that CFS always gets (if possible) the (minimum) required
-> +	 * bandwidth on top of that required by higher priority classes.
+Ack. Thanks for shedding some light.
 
-Is this a stale comment written before UCLAMP_SCHED_CLASS was
-introduced? It seems to apply to the below if branch only.
-
->  	 */
-> -	util = cpu_util_cfs(rq);
-> -	if (util)
-> -		util = uclamp_util(cpu_of(rq), util);
-> -	util += cpu_util_rt(rq);
-> +	util_cfs = cpu_util_cfs(rq);
-> +	util_rt  = cpu_util_rt(rq);
-> +	if (sched_feat(UCLAMP_SCHED_CLASS)) {
-> +		util = 0;
-> +		if (util_cfs)
-> +			util += uclamp_util(cpu_of(rq), util_cfs);
-> +		if (util_rt)
-> +			util += uclamp_util(cpu_of(rq), util_rt);
-> +	} else {
-> +		util  = cpu_util_cfs(rq);
-> +		util += cpu_util_rt(rq);
-> +		util  = uclamp_util(cpu_of(rq), util);
-> +	}
-
-Best,
-
-- Juri
+-Emil
