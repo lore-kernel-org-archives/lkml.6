@@ -6,73 +6,94 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5C9EC46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 07:29:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F20EBC46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 07:31:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D852219E2
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 07:29:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D852219E2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id A9481219E2
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 07:31:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9481219E2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388845AbeHGJmg (ORCPT
+        id S2388877AbeHGJo2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 05:42:36 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:47828 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732805AbeHGJmg (ORCPT
+        Tue, 7 Aug 2018 05:44:28 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:39227 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732805AbeHGJo2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 05:42:36 -0400
-Received: from p4fea5a5a.dip0.t-ipconnect.de ([79.234.90.90] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fmwQp-0008Ml-Oe; Tue, 07 Aug 2018 09:29:27 +0200
-Date:   Tue, 7 Aug 2018 09:29:27 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Nick Desaulniers <ndesaulniers@google.com>
-cc:     hpa@zytor.com, david.laight@aculab.com,
-        LKML <linux-kernel@vger.kernel.org>, jdelvare@suse.de,
-        Ingo Molnar <mingo@kernel.org>,
-        linux-tip-commits@vger.kernel.org, sedat.dilek@gmail.com
-Subject: Re: [tip:x86/urgent] x86/irqflags: Provide a declaration for
- native_save_fl
-In-Reply-To: <CAKwvOdmxaE7p-fgaaeCE17bbTf0iYmHQgWT2D6FM7U5fwUoN1Q@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.1808070924170.1788@nanos.tec.linutronix.de>
-References: <20180803170550.164688-1-ndesaulniers@google.com> <tip-208cbb32558907f68b3b2a081ca2337ac3744794@git.kernel.org> <CAKwvOdmxaE7p-fgaaeCE17bbTf0iYmHQgWT2D6FM7U5fwUoN1Q@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Tue, 7 Aug 2018 05:44:28 -0400
+Received: by mail-ed1-f65.google.com with SMTP id h4-v6so6417080edi.6;
+        Tue, 07 Aug 2018 00:31:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=osn1YVMNtVUe1pxaMhIQYRLMexsulfNXhGYoSqTSN+4=;
+        b=lrcc+PtjzJm7wHGg2bACc7flmd4tcxtb8kqUBGB1TqggG8wi0K9nD7nJvW/sIFfzpM
+         o/RcEKx7dKvzTFC61GPKpn9gmXWCkC8hV0U2ecdUREGOisSnEkQHmK0itvhjZKZLwV3N
+         2IrwCh9UAfXqJbgfWzy0PrdCT9TCq2Sk1/J/X3xmIsBftmtYSgDjRGz4a9jDJwq3Wgad
+         AoR18XG6kc7SN+lug+gquhrC33ayPeBn+TeBHZa++tQlYJcmLJpU2tIkr1eg9Dq4QocA
+         t2dBcCFnWN9zPi+rTsM3zVhxtUexm7YumwbPvXVzXMCdVp+78WqAsRzOg6/6RQPIzRqG
+         wBLw==
+X-Gm-Message-State: AOUpUlHfpvQrS9rVdZvsm33L1pIzv4vXmtszGrZIuKLdPX5mct02PYHV
+        VS/K1vbPasVlPAnE9kIsEf8VuYhtBFY=
+X-Google-Smtp-Source: AAOMgpf8ejefAyAvd4LYsSXaN94LfRun5ltz09nzeQ2UXCNEhRmH4UA/OteNwXgqAxNVIfZezSdLwQ==
+X-Received: by 2002:a50:88a4:: with SMTP id d33-v6mr21753539edd.239.1533627085007;
+        Tue, 07 Aug 2018 00:31:25 -0700 (PDT)
+Received: from mail-wm0-f49.google.com (mail-wm0-f49.google.com. [74.125.82.49])
+        by smtp.gmail.com with ESMTPSA id s23-v6sm513639edm.74.2018.08.07.00.31.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 07 Aug 2018 00:31:24 -0700 (PDT)
+Received: by mail-wm0-f49.google.com with SMTP id t25-v6so16854968wmi.3;
+        Tue, 07 Aug 2018 00:31:24 -0700 (PDT)
+X-Received: by 2002:a1c:7c0c:: with SMTP id x12-v6mr862311wmc.58.1533627083898;
+ Tue, 07 Aug 2018 00:31:23 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Received: by 2002:adf:a101:0:0:0:0:0 with HTTP; Tue, 7 Aug 2018 00:31:03 -0700 (PDT)
+In-Reply-To: <20180731205614.GA25776@rob-hp-laptop>
+References: <20180722053955.25266-1-icenowy@aosc.io> <20180722053955.25266-2-icenowy@aosc.io>
+ <20180731205614.GA25776@rob-hp-laptop>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Tue, 7 Aug 2018 15:31:03 +0800
+X-Gmail-Original-Message-ID: <CAGb2v67rOsxKxxRB0Yc8NugzmBas5s1aXmVBgh1Ts9AGd_OgEA@mail.gmail.com>
+Message-ID: <CAGb2v67rOsxKxxRB0Yc8NugzmBas5s1aXmVBgh1Ts9AGd_OgEA@mail.gmail.com>
+Subject: Re: [PATCH 1/5] dt-binding: dwmac-sun8i: add H6 compatible string (w/
+ A64 fallback)
+To:     Icenowy Zheng <icenowy@aosc.io>
+Cc:     Rob Herring <robh@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Corentin Labbe <clabbe@baylibre.com>,
+        netdev <netdev@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 6 Aug 2018, Nick Desaulniers wrote:
-> On Sun, Aug 5, 2018 at 1:33 PM tip-bot for Nick Desaulniers
-> <tipbot@zytor.com> wrote:
-> > Cc: stable@vger.kernel.org
-> 
-> Not sure if this was going to be cleaned up in an automated way, but
-> looks like this commit message drops the comment to stable as to how
-> far back it should go:
-> 
-> # 4.17, 4.14, 4.9, 4.4
+On Wed, Aug 1, 2018 at 4:56 AM, Rob Herring <robh@kernel.org> wrote:
+> On Sun, Jul 22, 2018 at 01:39:51PM +0800, Icenowy Zheng wrote:
+>> The Allwinner H6 SoC features a Ethernet MAC that is similar to the one
+>> in A64.
+>>
+>> Add a compatible string for it with A64 fallback compatible string, in
+>> this case the A64 driver can be used.
+>>
+>> The "internal" PHY is not internal from the perspective of the H6 main
+>> die, instead it's on the co-packaged AC200 chip, and connected to the
+>> main die with RMII at the in-package Port A PIO bank. So from the SoC
+>> driver side it needs no special treatment.
+>>
+>> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+>> ---
+>>  Documentation/devicetree/bindings/net/dwmac-sun8i.txt | 1 +
+>>  1 file changed, 1 insertion(+)
+>
+> Acked-by: Rob Herring <robh@kernel.org>
 
-The Fixes tag is enough. If the upstream commit was backported, then the
-tools of the stable folks will find it and know exactly how far it needs to
-go back.
-
-> also, there were tested by's reported:
-> 
-> Tested-by: David Laight <david.laight@acuab.com>
-> Tested-by: Sedat Dilek <sedat.dilek@gmail.com>
-
-Which came in after I applied it....
-
-Thanks,
-
-	tglx
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
