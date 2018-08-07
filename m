@@ -2,177 +2,116 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C8CAC46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 07:37:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71D1DC46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 07:43:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 474392177A
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 07:37:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 474392177A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
+	by mail.kernel.org (Postfix) with ESMTP id 141B521A03
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 07:43:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vSgh2gFD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 141B521A03
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388920AbeHGJuk (ORCPT
+        id S2388904AbeHGJ4K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 05:50:40 -0400
-Received: from lb2-smtp-cloud9.xs4all.net ([194.109.24.26]:43916 "EHLO
-        lb2-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1732805AbeHGJuk (ORCPT
+        Tue, 7 Aug 2018 05:56:10 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:33718 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728125AbeHGJ4J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 05:50:40 -0400
-Received: from [192.168.2.10] ([212.251.195.8])
-        by smtp-cloud9.xs4all.net with ESMTPA
-        id mwYdfJhuJEJtcmwYgf4Udp; Tue, 07 Aug 2018 09:37:35 +0200
-Subject: Re: [PATCH 1/2] media: docs-rst: Document memory-to-memory video
- decoder interface
-To:     Tomasz Figa <tfiga@chromium.org>
-Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Pawel Osciak <posciak@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>, kamil@wypas.org,
-        a.hajda@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>,
-        jtp.park@samsung.com, Philipp Zabel <p.zabel@pengutronix.de>,
-        =?UTF-8?B?VGlmZmFueSBMaW4gKOael+aFp+ePiik=?= 
-        <tiffany.lin@mediatek.com>,
-        =?UTF-8?B?QW5kcmV3LUNUIENoZW4gKOmZs+aZuui/qik=?= 
-        <andrew-ct.chen@mediatek.com>, todor.tomov@linaro.org,
-        nicolas@ndufresne.ca,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        dave.stevenson@raspberrypi.org,
-        Ezequiel Garcia <ezequiel@collabora.com>
-References: <20180724140621.59624-1-tfiga@chromium.org>
- <20180724140621.59624-2-tfiga@chromium.org>
- <37a8faea-a226-2d52-36d4-f9df194623cc@xs4all.nl>
- <CAAFQd5BgGEBmd8gNGc-qqtUtLo=Mh8U+TVTWRsKYMv1LmeBQMA@mail.gmail.com>
- <a6af3dc9-1d09-a414-ce31-bc1b3e69894f@xs4all.nl>
- <CAAFQd5AnC+hWy4QUGE-s+qgRvvgGC7rMhH6x8koTfYJzTLw8Cg@mail.gmail.com>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <f0aa7c84-08e3-9b04-8d1b-95f741d6817b@xs4all.nl>
-Date:   Tue, 7 Aug 2018 09:37:31 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Tue, 7 Aug 2018 05:56:09 -0400
+Received: by mail-lf1-f68.google.com with SMTP id u14-v6so10956952lfu.0;
+        Tue, 07 Aug 2018 00:43:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=omdZqfutPZ16RnM0rLKihE/eIq/+PgGpIY13c/+Cwk0=;
+        b=vSgh2gFDPArWChSoSZFDPbnsGRgAxoMtmSRNX67AYgfEzX//BlY2jR3ka3jhD0pbc9
+         Ovr/A8Y5yZJQAmsLjFQYL9yAOygh/PQGcVyEKZSVxNzd9EPJ8bp2G8Wdp3uRhMGIdhqz
+         Xn2bWB+jCyP51l9BmiFxDC4dcP3kCsS0KesJlGD+AnKSAZ8taLENYXU8bbiAU4ObBumC
+         twbvoNoVXQGC3XjdFMhCl9/IlMVdsAF5AIGVyeKasxCitfN7WL/8HR4KgwdhsC9bcx0f
+         0BGBEo0vlDzSyYH0jBJbeebQehooqIAEgdmWfEd7QV2ZyIGyd/WocSbI0b6IQqywoMMe
+         TiTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=omdZqfutPZ16RnM0rLKihE/eIq/+PgGpIY13c/+Cwk0=;
+        b=rS3ouzFX6/Y/+gJoVNgT6XsCd9n35PhFbS6AWynhhPyo7I7ivVmHIzKHLqAJPJ2nhh
+         IsnVEnfvmRl27OL0ifg6Jg82ytseMLuxCYNTNXWw/irUAq5CSemGrueDIxCbBO6i+Ms2
+         gma2ypKSVT+2RPT5cWZb9cd2tmrEc2bJMfW3K6B5e6VnxTyryB/g0YgOOO1fvlk3BgLs
+         8V5X/FgEjnsLPKQHrnlCwBp1IYJ0I8uuL0SdpGej2hUF0vLCO00boWQLqP+r7uc81ZOq
+         t6wGJxMhsiGuDQwYrWmQdCvnPf43HgIqBFjrSVdPz2Z7Uwf+eM7XAFZ8xez2gr5ppIjJ
+         NalQ==
+X-Gm-Message-State: AOUpUlGALCoVHbvfSf87lSQLnEIB/CMIFnknFYKbrBfamafbCUSrFMsI
+        Zme4GpgXHh5AdZavTfGAnhzjVN86QORdWv2yggY=
+X-Google-Smtp-Source: AAOMgpeVP3u3IARnoNGQjZVwwI72/UKJW3CK2QFmiPEzm5xmr7tgLWVCKH+ojdcc1SS2TImhw0bKKnr6WNjPnXosqyM=
+X-Received: by 2002:a19:a685:: with SMTP id p127-v6mr14215255lfe.4.1533627783738;
+ Tue, 07 Aug 2018 00:43:03 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAAFQd5AnC+hWy4QUGE-s+qgRvvgGC7rMhH6x8koTfYJzTLw8Cg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfNFT0Y0lu3iPV22rXs3NvoXm19LLiQkXwOzaCyelBIcSltbrg/eGtsOPjgYHs28pPYEHhzDQnBDefh5djv05+cC5XHXIa4yB5ViDMYwUHEY5+VWTFbq/
- q788B4W69N832EjUP8qHk7Wf59Bsf1+DQ32UZ9aIwG1knHDfHGeL8zyvbAp28QvoJJEG388bsxgJznCa8yYJ/xDvJd4SJ5uUy9OCdjt498ngB/8b0PR1CH1Y
- y4XroZfqNX0CkBFT1+qkXtCz0XhaRn4QyfnUAPnxIY59hsCqs2MAm58wZVlbe0omgvb1eD5tm0ZPqoRJdjRRdeuwViLrnnFjv3C7IW3dySWYqETexw8sFNFC
- jZ4eJ3D7dGTiUTjzZUeIX1mvClLj9aDzzztj54unTq65pxfnK6qNn4uj7zDuf5l6zxOoKDBMBjihqu13XPuNFAV2nNXAfNvR+HDeLC7DlLHVPyiksQEsiMYl
- ecaSJV+vAnyxvYwPsO+GuivKzxYqTkDpRz1u04A8OPUj8qor3w6qaTGYIF51YytVZvZtFkuK47LGzw4u0jtuBNHMYheGH6X5jy61GdX/QG6l35IumRcTmEus
- BNynCgQUromVPVatK+mNRGm/RKB3p6GZv2Sk5tveFmK1oQ0QcDutTTEP4EZJuh5dMjudeL7JuhpJ8DUyakdCyeL5fXyjrsE/GHd4j4Q/Kk/Que5IEfUIdRpa
- rIHfpsT3N2c=
+References: <20180718202235.GA4132@amd> <20180718235851.GA22170@sandybridge-desktop>
+ <20180719110149.GA4679@amd> <20180719132003.GA30981@sandybridge-desktop>
+ <20180720102532.GA20284@amd> <1532346156.3057.11.camel@suse.com>
+ <20180723162302.GA4503@sandybridge-desktop> <1532590246.7411.3.camel@suse.com>
+ <20180806075754.GA12124@chenyu-desktop> <1533550820.15815.14.camel@suse.com> <20180807073840.GA17894@chenyu-desktop>
+In-Reply-To: <20180807073840.GA17894@chenyu-desktop>
+From:   Ryan Chen <yu.chen.surf@gmail.com>
+Date:   Tue, 7 Aug 2018 15:49:06 +0800
+Message-ID: <CADjb_WTrJ_yjsNk79XYJyA5VB3dwK5cUadCumYRkzogOzm_nPA@mail.gmail.com>
+Subject: Re: [PATCH 0/4][RFC v2] Introduce the in-kernel hibernation encryption
+To:     Chen Yu <yu.c.chen@intel.com>
+Cc:     oneukum@suse.com, Pavel Machek <pavel@ucw.cz>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Eric Biggers <ebiggers@google.com>, jlee@suse.com,
+        "Theodore Ts'o" <tytso@mit.edu>, smueller@chronox.de,
+        denkenz@gmail.com, Linux PM list <linux-pm@vger.kernel.org>,
+        linux-crypto@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kookoo.gu@intel.com, Zhang Rui <rui.zhang@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/07/2018 09:05 AM, Tomasz Figa wrote:
-> On Thu, Jul 26, 2018 at 7:57 PM Hans Verkuil <hverkuil@xs4all.nl> wrote:
->>>> What if you set the format to 0x0 but the stream does not have meta data with
->>>> the resolution? How does userspace know if 0x0 is allowed or not? If this is
->>>> specific to the chosen coded pixel format, should be add a new flag for those
->>>> formats indicating that the coded data contains resolution information?
->>>
->>> Yes, this would definitely be on a per-format basis. Not sure what you
->>> mean by a flag, though? E.g. if the format is set to H264, then it's
->>> bound to include resolution information. If the format doesn't include
->>> it, then userspace is already aware of this fact, because it needs to
->>> get this from some other source (e.g. container).
->>>
->>>>
->>>> That way userspace knows if 0x0 can be used, and the driver can reject 0x0
->>>> for formats that do not support it.
->>>
->>> As above, but I might be misunderstanding your suggestion.
->>
->> So my question is: is this tied to the pixel format, or should we make it
->> explicit with a flag like V4L2_FMT_FLAG_CAN_DECODE_WXH.
->>
->> The advantage of a flag is that you don't need a switch on the format to
->> know whether or not 0x0 is allowed. And the flag can just be set in
->> v4l2-ioctls.c.
-> 
-> As far as my understanding goes, what data is included in the stream
-> is definitely specified by format. For example, a H264 elementary
-> stream will always include those data as a part of SPS.
-> 
-> However, having such flag internally, not exposed to userspace, could
-> indeed be useful to avoid all drivers have such switch. That wouldn't
-> belong to this documentation, though, since it would be just kernel
-> API.
-
-Why would you keep this internally only?
-
->>>> I wonder if we should make these min buffer controls required. It might be easier
->>>> that way.
->>>
->>> Agreed. Although userspace is still free to ignore it, because REQBUFS
->>> would do the right thing anyway.
->>
->> It's never been entirely clear to me what the purpose of those min buffers controls
->> is. REQBUFS ensures that the number of buffers is at least the minimum needed to
->> make the HW work. So why would you need these controls? It only makes sense if they
->> return something different from REQBUFS.
->>
-> 
-> The purpose of those controls is to let the client allocate a number
-> of buffers bigger than minimum, without the need to allocate the
-> minimum number of buffers first (to just learn the number), free them
-> and then allocate a bigger number again.
-
-I don't feel this is particularly useful. One problem with the minimum number
-of buffers as used in the kernel is that it is often the minimum number of
-buffers required to make the hardware work, but it may not be optimal. E.g.
-quite a few capture drivers set the minimum to 2, which is enough for the
-hardware, but it will likely lead to dropped frames. You really need 3
-(one is being DMAed, one is queued and linked into the DMA engine and one is
-being processed by userspace).
-
-I would actually prefer this to be the recommended minimum number of buffers,
-which is >= the minimum REQBUFS uses.
-
-I.e., if you use this number and you have no special requirements, then you'll
-get good performance.
-
-> 
->>>
->>>>
->>>>> +7.  If all the following conditions are met, the client may resume the
->>>>> +    decoding instantly, by using :c:func:`VIDIOC_DECODER_CMD` with
->>>>> +    ``V4L2_DEC_CMD_START`` command, as in case of resuming after the drain
->>>>> +    sequence:
->>>>> +
->>>>> +    * ``sizeimage`` of new format is less than or equal to the size of
->>>>> +      currently allocated buffers,
->>>>> +
->>>>> +    * the number of buffers currently allocated is greater than or equal to
->>>>> +      the minimum number of buffers acquired in step 6.
->>>>
->>>> You might want to mention that if there are insufficient buffers, then
->>>> VIDIOC_CREATE_BUFS can be used to add more buffers.
->>>>
->>>
->>> This might be a bit tricky, since at least s5p-mfc and coda can only
->>> work on a fixed buffer set and one would need to fully reinitialize
->>> the decoding to add one more buffer, which would effectively be the
->>> full resolution change sequence, as below, just with REQBUFS(0),
->>> REQBUFS(N) replaced with CREATE_BUFS.
->>
->> What happens today in those drivers if you try to call CREATE_BUFS?
-> 
-> s5p-mfc doesn't set the .vidioc_create_bufs pointer in its
-> v4l2_ioctl_ops, so I suppose that would be -ENOTTY?
-
-Correct for s5p-mfc.
-
-Regards,
-
-	Hans
+On Tue, Aug 7, 2018 at 3:33 PM Yu Chen <yu.c.chen@intel.com> wrote:
+>
+> On Mon, Aug 06, 2018 at 12:20:20PM +0200, Oliver Neukum wrote:
+> > On Mo, 2018-08-06 at 15:57 +0800, Yu Chen wrote:
+> > > Hi Oliver,
+> > > On Thu, Jul 26, 2018 at 09:30:46AM +0200, Oliver Neukum wrote:
+> > > > On Di, 2018-07-24 at 00:23 +0800, Yu Chen wrote:
+> > > > >
+> > > > > Good point, we once tried to generate key in kernel, but people
+> > > > > suggest to generate key in userspace and provide it to the
+> > > > > kernel, which is what ecryptfs do currently, so it seems this
+> > > > > should also be safe for encryption in kernel.
+> > > > > https://www.spinics.net/lists/linux-crypto/msg33145.html
+> > > > > Thus Chun-Yi's signature can use EFI key and both the key from
+> > > > > user space.
+> > > >
+> > > > Hi,
+> > > >
+> > > > ecryptfs can trust user space. It is supposed to keep data
+> > > > safe while the system is inoperative.
+> > >
+> > > Humm, I did not quite get the point here, let's take fscrypt
+> >
+> > While the system is running and the fs is mounted, your data
+> > is as secure as root access to your machine, right? You encrypt
+> > a disk primarily so data cannot be recovered (and altered) while
+> > the system is not running.
+> >
+> > Secure Boot does not trust root fully. There is a cryptographic
+> > chain of trust and user space is not part of it.
+> >
+> Okay, I see. So if we want to use secure boot mechanism for
+> hibernation encryption, user space is trusted.
+s/ is trusted/is not trusted/
