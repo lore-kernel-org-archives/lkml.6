@@ -2,79 +2,114 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0795C46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 17:21:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6367CC46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 17:23:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FC8121524
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 17:21:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FC8121524
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 138C12152E
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 17:23:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XMxJqAhW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 138C12152E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390245AbeHGTgZ (ORCPT
+        id S2390213AbeHGTic (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 15:36:25 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:33330 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389148AbeHGTgY (ORCPT
+        Tue, 7 Aug 2018 15:38:32 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:36110 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389126AbeHGTic (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 15:36:24 -0400
-Received: by mail-io0-f194.google.com with SMTP id z20-v6so14677849iol.0;
-        Tue, 07 Aug 2018 10:21:05 -0700 (PDT)
+        Tue, 7 Aug 2018 15:38:32 -0400
+Received: by mail-lj1-f194.google.com with SMTP id u7-v6so14065242lji.3
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 10:23:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=fO74xGXO1BSceoKbqAal+slGwHwBexro2ORf4FKwOFw=;
+        b=XMxJqAhWYqJ8SnP7GgEjbgbJM8Duw/TcdTxCPJaLug4jSytGJ7RDj+yxSX9Ceye7l1
+         Y1tVEsJpRRAcc+Y+vgmfRwhozTzoHqCR32i6uaI8guVhSMLKQLPAPh5NfBQIzFr7IO4/
+         o1x4pvLe87V8xP+eXzFdezYFHqPz3bH169Cfk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=sFQqwzqZOuyvE4C9DS98xkFcdfezxA9gpaDgX0tFYeU=;
-        b=gFA9euGmc3/3iygy1ftxte49EmeKVL6yjGrupfSW+Kn3HhKrSpi4vYdGSdVoaX4PuS
-         YOQ9xy0ZgOkketQ0xDPfvPmI5DWIy93fpoB4BlesKe2ni6LoPFXOPWzwdeN3Xfk9qFdK
-         zdYrFSonE5V2M/1XR9EcsXbqu+kP4a3kyOdDr60utPdBWSl+NlCF2mFaKHx381qpEq9h
-         mrsQjQKtBhizpJi8oO0drlnRdrBMEFMoy7BvsXlSLN4RqYSTgVoqXsxJjPNLRwSDXA+X
-         gc9z7bKTRjVaVTh4KlIiGOPjcb8sCODCqzwWIy9c/EpOTEyLRvYvF03qis/KcYtDSp/1
-         gGyw==
-X-Gm-Message-State: AOUpUlFUGoqUX2Mcxe4mtyrnkhva58TZD72fW32rjD3iS8v4AKqah4YC
-        07Lc0TxhBddwSQi79+5o5w==
-X-Google-Smtp-Source: AAOMgpe6Qt4XTBQ085ZPjKqkekHrrDXPnAhnT487kxj2OZ4zVfqTIZlgL3CaC+hYpDbsHypkhE/P2g==
-X-Received: by 2002:a5e:890c:: with SMTP id k12-v6mr18546653ioj.182.1533662463188;
-        Tue, 07 Aug 2018 10:21:03 -0700 (PDT)
-Received: from localhost ([24.51.61.72])
-        by smtp.gmail.com with ESMTPSA id h71-v6sm983958ith.9.2018.08.07.10.21.02
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 07 Aug 2018 10:21:02 -0700 (PDT)
-Date:   Tue, 7 Aug 2018 11:21:01 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Brian Masney <masneyb@onstation.org>
-Cc:     jic23@kernel.org, mark.rutland@arm.com, andy.gross@linaro.org,
-        david.brown@linaro.org, linux-iio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        jonathan@marek.ca, jmaneyrol@invensense.com, knaack.h@gmx.de,
-        lars@metafoo.de, pmeerw@pmeerw.net, mkelly@xevo.com,
-        fischerdouglasc@gmail.com, bshah@kde.org, ctatlor97@gmail.com
-Subject: Re: [PATCH v3 8/9] dt-bindings: iio: tsl2772: add binding for
- avago,apds9930
-Message-ID: <20180807172101.GA12095@rob-hp-laptop>
-References: <20180803001900.25371-1-masneyb@onstation.org>
- <20180803001900.25371-9-masneyb@onstation.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=fO74xGXO1BSceoKbqAal+slGwHwBexro2ORf4FKwOFw=;
+        b=OGrlLgSY+1qaiKN6UFFgjqQTRWtSAVf3yvi90ub5yeQPboVUfXBTvUyoCNgF/abTX0
+         deyDhr0hNQ4aVV0hIrBTcc5Y67E33mAtCexz1L85JiH2i/Bf4em9xM0rl9nPDHMuORjW
+         GuQqkhb16qmmcCeQt356OCae6kO1g5CqAgFHbJA9b03EZ93B4DqLwxZyyxdVy3AuqRWW
+         GNSsI2ooH7Pve+pW0obFd/bUNGGUgb6i2OxsKCg8zVaSrVucdxmyUkWHS6qDZcl6XOOO
+         gOJp3cTOWTsUavqK7WG0pIQl5sAyvt9p3h2JnsbQan35O8oeuHVJHzkzlYF3iOFrknrx
+         KaJA==
+X-Gm-Message-State: AOUpUlGsTW2M0WKk5Y0z2JYeRNHb6f0ten7DGphDQvjAnSJmCmhtNtqF
+        M0XVMzKOt5kqEr91pPlwqCK6bzEGLEc=
+X-Google-Smtp-Source: AAOMgpflrPFFcAbHAcUj0maQF1zahMis9OCVvw421Ifi1n08sJKIBX8gJJD/D8fuKHz0xluNP83NcQ==
+X-Received: by 2002:a2e:9742:: with SMTP id f2-v6mr17261999ljj.5.1533662589993;
+        Tue, 07 Aug 2018 10:23:09 -0700 (PDT)
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com. [209.85.167.47])
+        by smtp.gmail.com with ESMTPSA id w27-v6sm393665lfk.5.2018.08.07.10.23.08
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 07 Aug 2018 10:23:08 -0700 (PDT)
+Received: by mail-lf1-f47.google.com with SMTP id n96-v6so12220921lfi.1
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 10:23:08 -0700 (PDT)
+X-Received: by 2002:a19:d484:: with SMTP id l126-v6mr14165268lfg.28.1533662588467;
+ Tue, 07 Aug 2018 10:23:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180803001900.25371-9-masneyb@onstation.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20180801233145.65049-1-mka@chromium.org>
+In-Reply-To: <20180801233145.65049-1-mka@chromium.org>
+From:   Evan Green <evgreen@chromium.org>
+Date:   Tue, 7 Aug 2018 10:22:32 -0700
+X-Gmail-Original-Message-ID: <CAE=gft4fdDxuf7NUXVeh6F+4k2cXpBVu3147KCbuG-k6iq836w@mail.gmail.com>
+Message-ID: <CAE=gft4fdDxuf7NUXVeh6F+4k2cXpBVu3147KCbuG-k6iq836w@mail.gmail.com>
+Subject: Re: [PATCH] scsi: ufs: Suspend clock scaling only once in ufshcd_hba_exit()
+To:     mka@chromium.org
+Cc:     Vinayak Holikatti <vinholikatti@gmail.com>,
+        jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
+        subhashj@codeaurora.org, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Doug Anderson <dianders@chromium.org>, sboyd@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 02, 2018 at 08:18:59PM -0400, Brian Masney wrote:
-> This patch adds avago,apds9930 to the tsl2772 bindings.
-> 
-> Signed-off-by: Brian Masney <masneyb@onstation.org>
+On Wed, Aug 1, 2018 at 4:31 PM Matthias Kaehlcke <mka@chromium.org> wrote:
+>
+> Commit 401f1e4490ee ("scsi: ufs: don't suspend clock scaling during
+> clock gating") introduced a check in ufshcd_hba_exit() to suspend
+> clock scaling only when the controller supports clock scaling.
+> However the unconditional call to ufshcd_suspend_clkscaling() was
+> also left in place, so that it is now called twice when clock
+> scaling is supported and still once when the controller doesn't
+> support it. Remove the unconditional call.
+>
+> Fixes: 401f1e4490ee ("scsi: ufs: don't suspend clock scaling during clock gating")
+> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
 > ---
->  Documentation/devicetree/bindings/iio/light/tsl2772.txt | 1 +
->  1 file changed, 1 insertion(+)
+>  drivers/scsi/ufs/ufshcd.c | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+> index 397081d320b1..dca7525af696 100644
+> --- a/drivers/scsi/ufs/ufshcd.c
+> +++ b/drivers/scsi/ufs/ufshcd.c
+> @@ -7186,7 +7186,6 @@ static void ufshcd_hba_exit(struct ufs_hba *hba)
+>         if (hba->is_powered) {
+>                 ufshcd_variant_hba_exit(hba);
+>                 ufshcd_setup_vreg(hba, false);
+> -               ufshcd_suspend_clkscaling(hba);
+>                 if (ufshcd_is_clkscaling_supported(hba)) {
+>                         if (hba->devfreq)
+>                                 ufshcd_suspend_clkscaling(hba);
+> --
+> 2.18.0.597.ga71716f1ad-goog
+>
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Evan Green <evgreen@chromium.org>
