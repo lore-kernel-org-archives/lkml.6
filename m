@@ -4,88 +4,110 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EB2CC46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 17:10:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C68BEC46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 17:10:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30DF421533
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 17:10:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 82F6421533
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 17:10:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="PPNUR5/5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30DF421533
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="dcE4FN6n"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82F6421533
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389974AbeHGTZR (ORCPT
+        id S2390025AbeHGTZg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 15:25:17 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:48038 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727354AbeHGTZR (ORCPT
+        Tue, 7 Aug 2018 15:25:36 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:43702 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389561AbeHGTZg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 15:25:17 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w77H4UQO012760;
-        Tue, 7 Aug 2018 17:09:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=9hsiQhkFiuv9WHw8UXh7YXQEk7pre1hBwCz5ybxxGNQ=;
- b=PPNUR5/5E6LMFrvvHVGJCWWU3js0QVphaV0UbTN075wahfO4tpLjXlIsHzs/ayELNq6E
- sQL0OSaGjyFliJlZr+T6PMLqmqiq9plNI2O184sMLkah/YPdT4ojUWWnJ/da7JbKptCB
- WZG06OgLf5ZjePjeAGw6adVzCSnwkqAiFHIdJ5PE/4eKGhDXM0rvOcr1RQXzFSruzmv4
- TDTz1lZnO0TWX5POmMYKNSKkMsBlfO5uajzCxAvQBA0QCovvPE3Q3hLDDoBs8AYv1N3j
- jzDSRTwtmMvOGbyHC9P/jR5mQDaYDSHEX4fRs8LmGt2VNBk1JvXXdIRlsuFEQbP8eGwp 4g== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2120.oracle.com with ESMTP id 2kn4sptbd9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 07 Aug 2018 17:09:53 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w77H9qLe028544
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 7 Aug 2018 17:09:52 GMT
-Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w77H9qnj027293;
-        Tue, 7 Aug 2018 17:09:52 GMT
-Received: from [10.209.243.127] (/10.209.243.127)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 07 Aug 2018 10:09:51 -0700
-Subject: Re: [PATCH net-next] RDS: IB: fix 'passing zero to ERR_PTR()' warning
-To:     YueHaibing <yuehaibing@huawei.com>, davem@davemloft.net
-Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org, rds-devel@oss.oracle.com
-References: <20180807113416.12680-1-yuehaibing@huawei.com>
-From:   Santosh Shilimkar <santosh.shilimkar@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <62d6f34a-3bdc-8c32-bcae-cd55cf27a911@oracle.com>
-Date:   Tue, 7 Aug 2018 10:09:49 -0700
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 7 Aug 2018 15:25:36 -0400
+Received: by mail-lf1-f66.google.com with SMTP id f135-v6so12148477lfg.10
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 10:10:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=nGNxF30N/BYPMZAHxtQhj9FLaP2whlIxyq623wp2kG8=;
+        b=dcE4FN6nsl4f8+X3ppFih3HRc8uCrEUvAmDy4fPRP18qvtNjeDiiN9lqv22l99N/Dy
+         eFvf/KHN5hhHWOVSfgpoHweawyw0UeZn+opo6GbKXbQ2V1maF64PT19YN7KnV68wUVxx
+         AOx1srnFsrf25koBYxOrqK4db3UYa+YySJT9s=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=nGNxF30N/BYPMZAHxtQhj9FLaP2whlIxyq623wp2kG8=;
+        b=LuYnfkJieacSXefFEcokbB4G5nBTuTwaRhDSRgQyGeRd03CDHEyf7fW6M0CUS0J33s
+         y6ZHaA/7JzeU0h9CAq08xseEn8dqeJe+zcylxNyh1CoQLAyqa1UYMhsmPM9Xuh25x/GA
+         MW7i+RfUJzn0PBiWxE5W4SfEdaSzucV/H6Mwb6IUQlkuXmXlS86SH3rylx+iw7FUutiB
+         jRwAYV/sZ2T9VcLT5w6BzqUmz2ZzNfplKwdDFF/qoV64gqhBuHaxq77KX3dLhgHYWd//
+         YA/08fFkf5Q2KURjMaEkPWIUU90/lvzjdXnp/idSiDXfnRA4CNzuMq2ZiLpuyw+vWqaE
+         8YNA==
+X-Gm-Message-State: AOUpUlHUpVoXejh2I2L1twbnRkjwoCjU8yKPuaNF4RLvWcDCT93iqi+5
+        kmVU64Z3r1Q0Z9KMR2kDpVXwMnKdUDQ=
+X-Google-Smtp-Source: AAOMgpdneLJc8KfCvXvczWLi4XnYKE/gvbK47i49sZGX3uo7Y6GK3/pgt2a7aW5DKZBYm5A4fRCUpA==
+X-Received: by 2002:a19:b598:: with SMTP id g24-v6mr15188886lfk.129.1533661818203;
+        Tue, 07 Aug 2018 10:10:18 -0700 (PDT)
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com. [209.85.167.45])
+        by smtp.gmail.com with ESMTPSA id u203-v6sm378409lff.40.2018.08.07.10.10.15
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 07 Aug 2018 10:10:17 -0700 (PDT)
+Received: by mail-lf1-f45.google.com with SMTP id u202-v6so12154615lff.9
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 10:10:15 -0700 (PDT)
+X-Received: by 2002:a19:db94:: with SMTP id t20-v6mr14272662lfi.126.1533661815462;
+ Tue, 07 Aug 2018 10:10:15 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180807113416.12680-1-yuehaibing@huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8978 signatures=668707
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=669
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1808070171
+References: <20180802001435.116963-1-mka@chromium.org>
+In-Reply-To: <20180802001435.116963-1-mka@chromium.org>
+From:   Evan Green <evgreen@chromium.org>
+Date:   Tue, 7 Aug 2018 10:09:39 -0700
+X-Gmail-Original-Message-ID: <CAE=gft5JaQZEvujP68mhe9ANzLThBLRtr+mCrNWFRxkSDZYLmA@mail.gmail.com>
+Message-ID: <CAE=gft5JaQZEvujP68mhe9ANzLThBLRtr+mCrNWFRxkSDZYLmA@mail.gmail.com>
+Subject: Re: [PATCH] scsi: ufs: Check workqueue exists before destroying it
+To:     mka@chromium.org
+Cc:     Vinayak Holikatti <vinholikatti@gmail.com>,
+        jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
+        subhashj@codeaurora.org, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Doug Anderson <dianders@chromium.org>, sboyd@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/7/2018 4:34 AM, YueHaibing wrote:
-> Fix a static code checker warning:
->   net/rds/ib_frmr.c:82 rds_ib_alloc_frmr() warn: passing zero to 'ERR_PTR'
-> 
-> The error path for ib_alloc_mr failure should set err to PTR_ERR.
-> 
-> Fixes: 1659185fb4d0 ("RDS: IB: Support Fastreg MR (FRMR) memory registration mode")
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+On Wed, Aug 1, 2018 at 5:14 PM Matthias Kaehlcke <mka@chromium.org> wrote:
+>
+> In ufshcd_hba_exit() the clock gating workqueue is always destroyed
+> when clock gating is supported. However the workqueue pointer is NULL
+> when ufshcd_init() fails before the workqueue is created. Only destroy
+> the workqueue if it exists.
+>
+> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
 > ---
-Looks good. Thanks !!
+>  drivers/scsi/ufs/ufshcd.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+> index 397081d320b1..401f7dbe2981 100644
+> --- a/drivers/scsi/ufs/ufshcd.c
+> +++ b/drivers/scsi/ufs/ufshcd.c
+> @@ -7190,7 +7190,8 @@ static void ufshcd_hba_exit(struct ufs_hba *hba)
+>                 if (ufshcd_is_clkscaling_supported(hba)) {
+>                         if (hba->devfreq)
+>                                 ufshcd_suspend_clkscaling(hba);
+> -                       destroy_workqueue(hba->clk_scaling.workq);
+> +                       if (hba->clk_scaling.workq)
+> +                               destroy_workqueue(hba->clk_scaling.workq);
+>                         ufshcd_devfreq_remove(hba);
+>                 }
+>                 ufshcd_setup_clocks(hba, false);
+> --
+> 2.18.0.597.ga71716f1ad-goog
+>
 
-Acked-by: Santosh Shilimkar <santosh.shilimkar@oracle.com>
+Reviewed-by: Evan Green <evgreen@chromium.org>
