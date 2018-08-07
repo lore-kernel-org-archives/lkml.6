@@ -3,39 +3,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27F92C46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:58:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE9E0C46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:58:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF32E2172E
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:58:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF32E2172E
+	by mail.kernel.org (Postfix) with ESMTP id 62B2B2151D
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:58:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62B2B2151D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390888AbeHGVOF (ORCPT
+        id S2390898AbeHGVOJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 17:14:05 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34808 "EHLO
+        Tue, 7 Aug 2018 17:14:09 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34812 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389756AbeHGVOE (ORCPT
+        with ESMTP id S2389756AbeHGVOI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 17:14:04 -0400
+        Tue, 7 Aug 2018 17:14:08 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7815474;
-        Tue,  7 Aug 2018 18:58:20 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7722374;
+        Tue,  7 Aug 2018 18:58:23 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Richter <tmricht@linux.ibm.com>,
-        Hendrik Brueckner <brueckner@linux.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        stable@vger.kernel.org, Wenwen Wang <wang6495@umn.edu>,
+        Adam Radford <aradford@gmail.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 48/85] perf: fix invalid bit in diagnostic entry
-Date:   Tue,  7 Aug 2018 20:51:50 +0200
-Message-Id: <20180807172359.124920235@linuxfoundation.org>
+Subject: [PATCH 3.18 49/85] scsi: 3w-9xxx: fix a missing-check bug
+Date:   Tue,  7 Aug 2018 20:51:51 +0200
+Message-Id: <20180807172359.161685318@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180807172357.357252052@linuxfoundation.org>
 References: <20180807172357.357252052@linuxfoundation.org>
@@ -52,39 +52,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thomas Richter <tmricht@linux.ibm.com>
+From: Wenwen Wang <wang6495@umn.edu>
 
-[ Upstream commit 3c0a83b14ea71fef5ccc93a3bd2de5f892be3194 ]
+[ Upstream commit c9318a3e0218bc9dacc25be46b9eec363259536f ]
 
-The s390 CPU measurement facility sampling mode supports basic entries
-and diagnostic entries. Each entry has a valid bit to indicate the
-status of the entry as valid or invalid.
+In twa_chrdev_ioctl(), the ioctl driver command is firstly copied from
+the userspace pointer 'argp' and saved to the kernel object
+'driver_command'.  Then a security check is performed on the data buffer
+size indicated by 'driver_command', which is
+'driver_command.buffer_length'. If the security check is passed, the
+entire ioctl command is copied again from the 'argp' pointer and saved
+to the kernel object 'tw_ioctl'. Then, various operations are performed
+on 'tw_ioctl' according to the 'cmd'. Given that the 'argp' pointer
+resides in userspace, a malicious userspace process can race to change
+the buffer size between the two copies. This way, the user can bypass
+the security check and inject invalid data buffer size. This can cause
+potential security issues in the following execution.
 
-This bit is bit 31 in the diagnostic entry, but the bit mask definition
-refers to bit 30.
+This patch checks for capable(CAP_SYS_ADMIN) in twa_chrdev_open()t o
+avoid the above issues.
 
-Fix this by making the reserved field one bit larger.
-
-Fixes: 7e75fc3ff4cf ("s390/cpum_sf: Add raw data sampling to support the diagnostic-sampling function")
-Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
-Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+Acked-by: Adam Radford <aradford@gmail.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/s390/include/asm/cpu_mf.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/scsi/3w-9xxx.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/arch/s390/include/asm/cpu_mf.h
-+++ b/arch/s390/include/asm/cpu_mf.h
-@@ -118,7 +118,7 @@ struct hws_basic_entry {
+--- a/drivers/scsi/3w-9xxx.c
++++ b/drivers/scsi/3w-9xxx.c
+@@ -901,6 +901,11 @@ static int twa_chrdev_open(struct inode
+ 	unsigned int minor_number;
+ 	int retval = TW_IOCTL_ERROR_OS_ENODEV;
  
- struct hws_diag_entry {
- 	unsigned int def:16;	    /* 0-15  Data Entry Format		 */
--	unsigned int R:14;	    /* 16-19 and 20-30 reserved		 */
-+	unsigned int R:15;	    /* 16-19 and 20-30 reserved		 */
- 	unsigned int I:1;	    /* 31 entry valid or invalid	 */
- 	u8	     data[];	    /* Machine-dependent sample data	 */
- } __packed;
++	if (!capable(CAP_SYS_ADMIN)) {
++		retval = -EACCES;
++		goto out;
++	}
++
+ 	minor_number = iminor(inode);
+ 	if (minor_number >= twa_device_extension_count)
+ 		goto out;
 
 
