@@ -2,117 +2,139 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3931DC46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 06:16:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DACADC46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 06:18:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E161321A12
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 06:16:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 90F5121A12
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 06:18:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RkQQ033D"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E161321A12
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="HUOjDLSq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90F5121A12
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388118AbeHGI3Z (ORCPT
+        id S1732726AbeHGIaz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 04:29:25 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:38176 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727725AbeHGI3Z (ORCPT
+        Tue, 7 Aug 2018 04:30:55 -0400
+Received: from conuserg-08.nifty.com ([210.131.2.75]:39155 "EHLO
+        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727360AbeHGIaz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 04:29:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=T8Wd1t5PU46+WfaSZwPqERmkEjDJ0QSeK+wQkFhfp0M=; b=RkQQ033DQ/hYOUhe2CEIVS8NI
-        5c9e1qRjn35ecGQvTz+GPzquWq8isS+ieVR0tqF8ys9c3kjvVuP95fTDxsI+nioc/f4JKJcwnOtG/
-        Dhs+HjmpAj/9FonF1dzYB8gKxncNLvGWgNSHEaBDciAtBPrkTfEfpNtBdKoyhm8LtIpqEtQ9UTNym
-        Cm90JUNq7QQq+ib4BD1BiU+Qg5f51lLO6qhAZo2LyiVbQDb9s1zFsE3gmdPPmSsFg4P4Jl/Tbip4H
-        7iZHlMZIpvZcntFDsgE/DZ2ddByRePL2t8P1rMXQ8wwfq84K5cB8Qp6xZNVSKpacC6KCE0j+AKyGA
-        VhWCy/4+g==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fmvIL-0003OD-O2; Tue, 07 Aug 2018 06:16:37 +0000
-Date:   Mon, 6 Aug 2018 23:16:37 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        aik@ozlabs.ru, robh@kernel.org, joe@perches.com,
-        elfring@users.sourceforge.net, david@gibson.dropbear.id.au,
-        jasowang@redhat.com, mpe@ellerman.id.au, linuxram@us.ibm.com,
-        haren@linux.vnet.ibm.com, paulus@samba.org,
-        srikar@linux.vnet.ibm.com, robin.murphy@arm.com,
-        jean-philippe.brucker@arm.com, marc.zyngier@arm.com
-Subject: Re: [RFC 0/4] Virtio uses DMA API for all devices
-Message-ID: <20180807061637.GB32709@infradead.org>
-References: <20180803070507.GA1344@infradead.org>
- <eb1750e90e4bd45da297fa6f78f8ef93671b7c2f.camel@kernel.crashing.org>
- <20180803220443-mutt-send-email-mst@kernel.org>
- <051fd78e15595b414839fa8f9d445b9f4d7576c6.camel@kernel.crashing.org>
- <20180805031046-mutt-send-email-mst@kernel.org>
- <fd8fee94cf42e436878f179c7895de3a4dab3355.camel@kernel.crashing.org>
- <20180806164106-mutt-send-email-mst@kernel.org>
- <ef6d5d7c7b812bd797a1c3fd6bc7a26d0074020f.camel@kernel.crashing.org>
- <20180806233024-mutt-send-email-mst@kernel.org>
- <0967fc30001323e6e38ed12c8dba8ee3d1aa13f5.camel@kernel.crashing.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0967fc30001323e6e38ed12c8dba8ee3d1aa13f5.camel@kernel.crashing.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+        Tue, 7 Aug 2018 04:30:55 -0400
+Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-08.nifty.com with ESMTP id w776HYgh009463;
+        Tue, 7 Aug 2018 15:17:39 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com w776HYgh009463
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1533622659;
+        bh=vQ1peXoL5EnrlsDxZywosCdynceuZFw0QzMxHmOSOmQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=HUOjDLSqEHUdMDXObfwPPxBmoWtqx1rC0Js8saVMxlz3y6LL5Yy32px66lbD5o9l+
+         ANX97qAaP/GQxdgXiW0kzCeq7E1PP+ihVXwJq+mEZJiJF/AgTcatiPr8+nLzhGFvyG
+         5vKA3/vLmo8YHgLJEVowIZWzEdguMEG3iJvyoseYSXFkeQxArsJmCSQv9fjryzc7+x
+         edMSk96D0GYyt4HE3K9FOBCWSb7r1Mo8U8BN2VAWyBXjIkhfA1L7hE79+bdEYwLQ3B
+         cSXihKRK5kiNujZ/xu/GJuPbDBURWsg5bCZcW4bbK39Oa5u+3aQzWJgi9HcKALuhSP
+         fOfwzBBDKZtWQ==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-mmc@vger.kernel.org
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org
+Subject: [v0.1 PATCH 5/7] mmc: renesas_sdhi: merge clk_{start,stop} functions to set_clock
+Date:   Tue,  7 Aug 2018 15:17:20 +0900
+Message-Id: <1533622642-13989-6-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1533622642-13989-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1533622642-13989-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 07, 2018 at 07:26:35AM +1000, Benjamin Herrenschmidt wrote:
-> > I think Christoph merely objects to the specific implementation.  If
-> > instead you do something like tweak dev->bus_dma_mask for the virtio
-> > device I think he won't object.
-> 
-> Well, we don't have "bus_dma_mask" yet ..or you mean dma_mask ?
+renesas_sdhi_clk_start() and renesas_sdhi_clk_stop() are now only
+called from renesas_sdhi_set_clock().  Merge them.
 
-It will be new in 4.19:
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-http://git.infradead.org/users/hch/dma-mapping.git/commitdiff/f07d141fe9430cdf9f8a65a87c41
+ drivers/mmc/host/renesas_sdhi_core.c | 39 +++++++++++-------------------------
+ 1 file changed, 12 insertions(+), 27 deletions(-)
 
-> So, something like that would be a possibility, but the problem is that
-> the current virtio (guest side) implementation doesn't honor this when
-> not using dma ops and will not use dma ops if not using iommu, so back
-> to square one.
-> 
-> Christoph seems to be wanting to use a flag in the interface to make
-> the guest use dma_ops which is what I don't understand.
+diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
+index 1f4c82e..a15fb2e 100644
+--- a/drivers/mmc/host/renesas_sdhi_core.c
++++ b/drivers/mmc/host/renesas_sdhi_core.c
+@@ -155,35 +155,16 @@ static unsigned int renesas_sdhi_clk_update(struct tmio_mmc_host *host,
+ 	return ret == 0 ? best_freq : clk_get_rate(priv->clk);
+ }
+ 
+-static void renesas_sdhi_clk_start(struct tmio_mmc_host *host)
+-{
+-	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, CLK_CTL_SCLKEN |
+-		sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
+-
+-	/* HW engineers overrode docs: no sleep needed on R-Car2+ */
+-	if (!(host->pdata->flags & TMIO_MMC_MIN_RCAR2))
+-		usleep_range(10000, 11000);
+-}
+-
+-static void renesas_sdhi_clk_stop(struct tmio_mmc_host *host)
+-{
+-	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, ~CLK_CTL_SCLKEN &
+-		sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
+-
+-	/* HW engineers overrode docs: no sleep needed on R-Car2+ */
+-	if (!(host->pdata->flags & TMIO_MMC_MIN_RCAR2))
+-		usleep_range(10000, 11000);
+-}
+-
+ static void renesas_sdhi_set_clock(struct tmio_mmc_host *host,
+ 				   unsigned int new_clock)
+ {
+ 	u32 clk = 0, clock;
+ 
+-	if (new_clock == 0) {
+-		renesas_sdhi_clk_stop(host);
+-		return;
+-	}
++	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, ~CLK_CTL_SCLKEN &
++		sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
++
++	if (new_clock == 0)
++		goto out;
+ 
+ 	clock = renesas_sdhi_clk_update(host, new_clock) / 512;
+ 
+@@ -194,13 +175,17 @@ static void renesas_sdhi_set_clock(struct tmio_mmc_host *host,
+ 	if ((host->pdata->flags & TMIO_MMC_CLK_ACTUAL) && ((clk >> 22) & 0x1))
+ 		clk |= 0xff;
+ 
+-	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, ~CLK_CTL_SCLKEN &
+-			sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
+ 	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, clk & CLK_CTL_DIV_MASK);
+ 	if (!(host->pdata->flags & TMIO_MMC_MIN_RCAR2))
+ 		usleep_range(10000, 11000);
+ 
+-	renesas_sdhi_clk_start(host);
++	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, CLK_CTL_SCLKEN |
++		sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
++
++out:
++	/* HW engineers overrode docs: no sleep needed on R-Car2+ */
++	if (!(host->pdata->flags & TMIO_MMC_MIN_RCAR2))
++		usleep_range(10000, 11000);
+ }
+ 
+ static void renesas_sdhi_clk_disable(struct tmio_mmc_host *host)
+-- 
+2.7.4
 
-As-is virtio devices are very clearly and explcitly defined to use
-physical addresses in the spec.  dma ops will often do platform
-based translations (iommu, offsets), so we can't just use the plaform
-default dma ops and will need to opt into them.
-
-> What would be needed then would be something along the lines of virtio
-> noticing that dma_mask isn't big enough to cover all of memory (which
-> isn't something generic code can easily do here for various reasons I
-> can elaborate if you want, but that specific test more/less has to be
-> arch specific), and in that case, force itself to use DMA ops routed to
-> swiotlb.
-> 
-> I'd rather have arch code do the bulk of that work, don't you think ?
-
-There is nothing architecture specific about that.  I've been working
-hard to remove all the bullshit architectures have done in their DMA
-ops and consolidating them into common code based on rules.  The last
-thing I want is another vector for weird underspecified arch
-interfaction with DMA ops, which is exactly what your patch below
-does.
