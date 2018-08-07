@@ -2,351 +2,136 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEC54C46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 17:18:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F957C46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 17:19:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45C3221533
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 17:18:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45C3221533
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 2643621524
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 17:19:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="teWOGNtp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2643621524
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390115AbeHGTdQ (ORCPT
+        id S2390192AbeHGTeT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 15:33:16 -0400
-Received: from mga07.intel.com ([134.134.136.100]:56647 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727354AbeHGTdQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 15:33:16 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Aug 2018 10:17:57 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,456,1526367600"; 
-   d="scan'208";a="63290537"
-Received: from otc-kbl-h-01.jf.intel.com ([10.54.55.131])
-  by orsmga008.jf.intel.com with ESMTP; 07 Aug 2018 10:17:57 -0700
-From:   kan.liang@linux.intel.com
-To:     peterz@infradead.org, tglx@linutronix.de, mingo@redhat.com,
-        dave.hansen@linux.intel.com, len.brown@intel.com,
-        ak@linux.intel.com, linux-kernel@vger.kernel.org, x86@kernel.org
-Cc:     Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH] x86/cpu: Rename Denverton and Gemini Lake
-Date:   Tue,  7 Aug 2018 10:17:27 -0700
-Message-Id: <1533662247-17575-1-git-send-email-kan.liang@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
+        Tue, 7 Aug 2018 15:34:19 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:38978 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389339AbeHGTeT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 15:34:19 -0400
+Received: by mail-lj1-f194.google.com with SMTP id l15-v6so14048931lji.6;
+        Tue, 07 Aug 2018 10:18:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=3NN/M74K2wMWhEVDu0QmgduoWTZ9a+7qt+XXkaOMAOw=;
+        b=teWOGNtpUK59vsyepb15vzkSJQXBqAGa6lICOlyEBQ9XO57axlvYf1J4N6LrX6J/CM
+         y79LYP6U/7NMSQC7U8G2TJtiZkOFG/8Lmg3ZlSqF+ahXo4g5hP3m7A6g5PdlP55uhCbo
+         doRGTh6rA30Sog+iYtOt9GDma2RbZiNUHaNT1zMF0x0HWdiJIRLUeo9s6Tb8GDO8WaUo
+         UqbgIn2eH8zxJ0dwneHHjLECxxgVF4ty0W8hqqlBhXMxOCLfpOmPitCD3DFq/oYVidbP
+         bflfrNcsKs9nvFpOEynB2GDmThws+EyZQgQ228uqotWtKC/vju8rlXXBhl7ckRo6RXgc
+         WOzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=3NN/M74K2wMWhEVDu0QmgduoWTZ9a+7qt+XXkaOMAOw=;
+        b=VxbcJVJT/H52xzm/THXr7Q2JzW9FD69qcFlEnafMGdg/T+y0swN9EgXWq70bUolIpA
+         edW79EYlXo/DuSMYoCloA37IvqA+UIvgPLv0LAo0glbDOq3IArFvTh7a8gthIt+qVwjT
+         By5VTAHjglhBIJRvpU+PZoG8g+gmcRnMKcQO/iHn8iB87R6qZ+9of5/eHB8F25KnjsI0
+         dfdLpgosD+GCsJLDJsltyBjhs6No9r87+gfGrxridu5C6tIkl0CvxQWGNB2GohiAlwo9
+         P5c/pX6gJKt5ReHmwoiUwQFOmkwy+160dUTl+h3rzCGEFLXjviIrVAAu3NLTr/HOfkmL
+         l6pQ==
+X-Gm-Message-State: AOUpUlHYGgsUQZ16gnfGQXhDHmpEYrxkZLWhO0wsMxBc63sQj3tH+OvN
+        mNnysjr2C1I1mEglJgp38C0=
+X-Google-Smtp-Source: AAOMgpebl4wAMucs8jeYgaiWn3nISH2zJmWRt9YifwvatagwMocnomiw7CfZAzc5DSABJoGqObT5hw==
+X-Received: by 2002:a2e:40ca:: with SMTP id r71-v6mr15839486lje.41.1533662337939;
+        Tue, 07 Aug 2018 10:18:57 -0700 (PDT)
+Received: from z50.localnet (93-181-165-181.internetia.net.pl. [93.181.165.181])
+        by smtp.gmail.com with ESMTPSA id r73-v6sm337213ljb.16.2018.08.07.10.18.56
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 07 Aug 2018 10:18:57 -0700 (PDT)
+From:   Janusz Krzysztofik <jmkrzyszt@gmail.com>
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-doc@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Subject: Re: [RFC PATCH v2 09/12] gpiolib: Identify GPIO descriptor arrays with direct mapping
+Date:   Tue, 07 Aug 2018 19:19:57 +0200
+Message-ID: <5726821.9hm6pNmUJb@z50>
+In-Reply-To: <20180807191420.04431e8e@bbrezillon>
+References: <20180718235710.18242-1-jmkrzyszt@gmail.com> <20180806222918.12644-10-jmkrzyszt@gmail.com> <20180807191420.04431e8e@bbrezillon>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kan Liang <kan.liang@linux.intel.com>
+On Tuesday, August 7, 2018 7:14:20 PM CEST Boris Brezillon wrote:
+> On Tue,  7 Aug 2018 00:29:15 +0200
+> Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
+> 
+> > Certain GPIO array lookup results may map directly to GPIO pins of a
+> > single GPIO chip in hardware order.  If that condition is recognized
+> > and handled efficiently, significant performance gain of get/set array
+> > functions may be possible.
+> > 
+> > While processing a request for an array of GPIO descriptors, verify if
+> > the descriptors just collected represent consecutive pins of a single
+> > GPIO chip.  Pass that information with the array to the caller so it
+> > can benefit from enhanced performance as soon as bitmap based get/set
+> > array functions which can make efficient use of that are available.
+> > 
+> > Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+> > ---
+> >  Documentation/driver-api/gpio/consumer.rst |  4 +++-
+> >  drivers/gpio/gpiolib.c                     | 14 ++++++++++++++
+> >  include/linux/gpio/consumer.h              |  1 +
+> >  3 files changed, 18 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/Documentation/driver-api/gpio/consumer.rst b/Documentation/driver-api/gpio/consumer.rst
+> > index aa03f389d41d..38a990b5f3b6 100644
+> > --- a/Documentation/driver-api/gpio/consumer.rst
+> > +++ b/Documentation/driver-api/gpio/consumer.rst
+> > @@ -109,11 +109,13 @@ For a function using multiple GPIOs all of those can be obtained with one call::
+> >  					   enum gpiod_flags flags)
+> >  
+> >  This function returns a struct gpio_descs which contains an array of
+> > -descriptors::
+> > +descriptors.  It may also contain a valid descriptor of a single GPIO chip in
+> > +case the array strictly matches pin hardware layout of the chip::
+> >  
+> >  	struct gpio_descs {
+> >  		unsigned int ndescs;
+> >  		struct gpio_desc *desc[];
+> > +		struct gpio_chip *chip;
+> 
+> chip is placed at the beginning of the struct in the real code, which
+> is expected since putting it at the end won't work because of the
+> desc[] declaration.
 
-Denverton and Gemini Lake are platform names and should not be used for
-Processor Family stuff. The microarchitecture codename should be used.
+Yes, I've already noticed that and will fix on next iteration, thanks.
 
-DENVERTON is Goldmont server SoC. Rename DENVERTON to GOLDMONT2, similar
-to SILVERMONT2 being the silvermont server SoCs.
+Janusz
 
-Rename GEMINI_LAKE to GOLDMONT_PLUS.
-
-Suggested-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
----
- arch/x86/events/intel/core.c                   |  4 ++--
- arch/x86/events/intel/cstate.c                 |  4 ++--
- arch/x86/events/intel/rapl.c                   |  4 ++--
- arch/x86/events/msr.c                          |  4 ++--
- arch/x86/include/asm/intel-family.h            |  4 ++--
- arch/x86/kernel/tsc.c                          |  2 +-
- drivers/cpufreq/intel_pstate.c                 |  2 +-
- drivers/edac/pnd2_edac.c                       |  2 +-
- drivers/idle/intel_idle.c                      |  6 +++---
- drivers/platform/x86/intel_telemetry_debugfs.c |  2 +-
- drivers/platform/x86/intel_telemetry_pltdrv.c  |  2 +-
- drivers/powercap/intel_rapl.c                  |  4 ++--
- tools/power/x86/turbostat/turbostat.c          | 22 +++++++++++-----------
- 13 files changed, 31 insertions(+), 31 deletions(-)
-
-diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-index 035c374..e2d36491 100644
---- a/arch/x86/events/intel/core.c
-+++ b/arch/x86/events/intel/core.c
-@@ -4042,7 +4042,7 @@ __init int intel_pmu_init(void)
- 		break;
- 
- 	case INTEL_FAM6_ATOM_GOLDMONT:
--	case INTEL_FAM6_ATOM_DENVERTON:
-+	case INTEL_FAM6_ATOM_GOLDMONT2:
- 		memcpy(hw_cache_event_ids, glm_hw_cache_event_ids,
- 		       sizeof(hw_cache_event_ids));
- 		memcpy(hw_cache_extra_regs, glm_hw_cache_extra_regs,
-@@ -4068,7 +4068,7 @@ __init int intel_pmu_init(void)
- 		name = "goldmont";
- 		break;
- 
--	case INTEL_FAM6_ATOM_GEMINI_LAKE:
-+	case INTEL_FAM6_ATOM_GOLDMONT_PLUS:
- 		memcpy(hw_cache_event_ids, glp_hw_cache_event_ids,
- 		       sizeof(hw_cache_event_ids));
- 		memcpy(hw_cache_extra_regs, glp_hw_cache_extra_regs,
-diff --git a/arch/x86/events/intel/cstate.c b/arch/x86/events/intel/cstate.c
-index 9f8084f..be98b29 100644
---- a/arch/x86/events/intel/cstate.c
-+++ b/arch/x86/events/intel/cstate.c
-@@ -581,9 +581,9 @@ static const struct x86_cpu_id intel_cstates_match[] __initconst = {
- 	X86_CSTATES_MODEL(INTEL_FAM6_XEON_PHI_KNM, knl_cstates),
- 
- 	X86_CSTATES_MODEL(INTEL_FAM6_ATOM_GOLDMONT, glm_cstates),
--	X86_CSTATES_MODEL(INTEL_FAM6_ATOM_DENVERTON, glm_cstates),
-+	X86_CSTATES_MODEL(INTEL_FAM6_ATOM_GOLDMONT2, glm_cstates),
- 
--	X86_CSTATES_MODEL(INTEL_FAM6_ATOM_GEMINI_LAKE, glm_cstates),
-+	X86_CSTATES_MODEL(INTEL_FAM6_ATOM_GOLDMONT_PLUS, glm_cstates),
- 	{ },
- };
- MODULE_DEVICE_TABLE(x86cpu, intel_cstates_match);
-diff --git a/arch/x86/events/intel/rapl.c b/arch/x86/events/intel/rapl.c
-index 32f3e94..cb191c0 100644
---- a/arch/x86/events/intel/rapl.c
-+++ b/arch/x86/events/intel/rapl.c
-@@ -777,9 +777,9 @@ static const struct x86_cpu_id rapl_cpu_match[] __initconst = {
- 	X86_RAPL_MODEL_MATCH(INTEL_FAM6_CANNONLAKE_MOBILE,  skl_rapl_init),
- 
- 	X86_RAPL_MODEL_MATCH(INTEL_FAM6_ATOM_GOLDMONT, hsw_rapl_init),
--	X86_RAPL_MODEL_MATCH(INTEL_FAM6_ATOM_DENVERTON, hsw_rapl_init),
-+	X86_RAPL_MODEL_MATCH(INTEL_FAM6_ATOM_GOLDMONT2, hsw_rapl_init),
- 
--	X86_RAPL_MODEL_MATCH(INTEL_FAM6_ATOM_GEMINI_LAKE, hsw_rapl_init),
-+	X86_RAPL_MODEL_MATCH(INTEL_FAM6_ATOM_GOLDMONT_PLUS, hsw_rapl_init),
- 	{},
- };
- 
-diff --git a/arch/x86/events/msr.c b/arch/x86/events/msr.c
-index b4771a6..db8ed47 100644
---- a/arch/x86/events/msr.c
-+++ b/arch/x86/events/msr.c
-@@ -74,9 +74,9 @@ static bool test_intel(int idx)
- 	case INTEL_FAM6_ATOM_AIRMONT:
- 
- 	case INTEL_FAM6_ATOM_GOLDMONT:
--	case INTEL_FAM6_ATOM_DENVERTON:
-+	case INTEL_FAM6_ATOM_GOLDMONT2:
- 
--	case INTEL_FAM6_ATOM_GEMINI_LAKE:
-+	case INTEL_FAM6_ATOM_GOLDMONT_PLUS:
- 
- 	case INTEL_FAM6_XEON_PHI_KNL:
- 	case INTEL_FAM6_XEON_PHI_KNM:
-diff --git a/arch/x86/include/asm/intel-family.h b/arch/x86/include/asm/intel-family.h
-index cf090e5..60bbb2d 100644
---- a/arch/x86/include/asm/intel-family.h
-+++ b/arch/x86/include/asm/intel-family.h
-@@ -68,8 +68,8 @@
- #define INTEL_FAM6_ATOM_MERRIFIELD	0x4A /* Tangier */
- #define INTEL_FAM6_ATOM_MOOREFIELD	0x5A /* Anniedale */
- #define INTEL_FAM6_ATOM_GOLDMONT	0x5C
--#define INTEL_FAM6_ATOM_DENVERTON	0x5F /* Goldmont Microserver */
--#define INTEL_FAM6_ATOM_GEMINI_LAKE	0x7A
-+#define INTEL_FAM6_ATOM_GOLDMONT2	0x5F /* Goldmont Microserver */
-+#define INTEL_FAM6_ATOM_GOLDMONT_PLUS	0x7A
- 
- /* Xeon Phi */
- 
-diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
-index 74392d9..3ba9469 100644
---- a/arch/x86/kernel/tsc.c
-+++ b/arch/x86/kernel/tsc.c
-@@ -620,7 +620,7 @@ unsigned long native_calibrate_tsc(void)
- 		case INTEL_FAM6_KABYLAKE_DESKTOP:
- 			crystal_khz = 24000;	/* 24.0 MHz */
- 			break;
--		case INTEL_FAM6_ATOM_DENVERTON:
-+		case INTEL_FAM6_ATOM_GOLDMONT2:
- 			crystal_khz = 25000;	/* 25.0 MHz */
- 			break;
- 		case INTEL_FAM6_ATOM_GOLDMONT:
-diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstate.c
-index 3c39712..e342c65 100644
---- a/drivers/cpufreq/intel_pstate.c
-+++ b/drivers/cpufreq/intel_pstate.c
-@@ -1785,7 +1785,7 @@ static const struct x86_cpu_id intel_pstate_cpu_ids[] = {
- 	ICPU(INTEL_FAM6_XEON_PHI_KNL,		knl_funcs),
- 	ICPU(INTEL_FAM6_XEON_PHI_KNM,		knl_funcs),
- 	ICPU(INTEL_FAM6_ATOM_GOLDMONT,		core_funcs),
--	ICPU(INTEL_FAM6_ATOM_GEMINI_LAKE,       core_funcs),
-+	ICPU(INTEL_FAM6_ATOM_GOLDMONT_PLUS,     core_funcs),
- 	ICPU(INTEL_FAM6_SKYLAKE_X,		core_funcs),
- 	{}
- };
-diff --git a/drivers/edac/pnd2_edac.c b/drivers/edac/pnd2_edac.c
-index df28b65..6a33c7e 100644
---- a/drivers/edac/pnd2_edac.c
-+++ b/drivers/edac/pnd2_edac.c
-@@ -1541,7 +1541,7 @@ static struct dunit_ops dnv_ops = {
- 
- static const struct x86_cpu_id pnd2_cpuids[] = {
- 	{ X86_VENDOR_INTEL, 6, INTEL_FAM6_ATOM_GOLDMONT, 0, (kernel_ulong_t)&apl_ops },
--	{ X86_VENDOR_INTEL, 6, INTEL_FAM6_ATOM_DENVERTON, 0, (kernel_ulong_t)&dnv_ops },
-+	{ X86_VENDOR_INTEL, 6, INTEL_FAM6_ATOM_GOLDMONT2, 0, (kernel_ulong_t)&dnv_ops },
- 	{ }
- };
- MODULE_DEVICE_TABLE(x86cpu, pnd2_cpuids);
-diff --git a/drivers/idle/intel_idle.c b/drivers/idle/intel_idle.c
-index b2ccce5..0203b76 100644
---- a/drivers/idle/intel_idle.c
-+++ b/drivers/idle/intel_idle.c
-@@ -1104,8 +1104,8 @@ static const struct x86_cpu_id intel_idle_ids[] __initconst = {
- 	ICPU(INTEL_FAM6_XEON_PHI_KNL,		idle_cpu_knl),
- 	ICPU(INTEL_FAM6_XEON_PHI_KNM,		idle_cpu_knl),
- 	ICPU(INTEL_FAM6_ATOM_GOLDMONT,		idle_cpu_bxt),
--	ICPU(INTEL_FAM6_ATOM_GEMINI_LAKE,	idle_cpu_bxt),
--	ICPU(INTEL_FAM6_ATOM_DENVERTON,		idle_cpu_dnv),
-+	ICPU(INTEL_FAM6_ATOM_GOLDMONT_PLUS,	idle_cpu_bxt),
-+	ICPU(INTEL_FAM6_ATOM_GOLDMONT2,	idle_cpu_dnv),
- 	{}
- };
- 
-@@ -1322,7 +1322,7 @@ static void intel_idle_state_table_update(void)
- 		ivt_idle_state_table_update();
- 		break;
- 	case INTEL_FAM6_ATOM_GOLDMONT:
--	case INTEL_FAM6_ATOM_GEMINI_LAKE:
-+	case INTEL_FAM6_ATOM_GOLDMONT_PLUS:
- 		bxt_idle_state_table_update();
- 		break;
- 	case INTEL_FAM6_SKYLAKE_DESKTOP:
-diff --git a/drivers/platform/x86/intel_telemetry_debugfs.c b/drivers/platform/x86/intel_telemetry_debugfs.c
-index ffd0474..cee08f2 100644
---- a/drivers/platform/x86/intel_telemetry_debugfs.c
-+++ b/drivers/platform/x86/intel_telemetry_debugfs.c
-@@ -320,7 +320,7 @@ static struct telemetry_debugfs_conf telem_apl_debugfs_conf = {
- 
- static const struct x86_cpu_id telemetry_debugfs_cpu_ids[] = {
- 	TELEM_DEBUGFS_CPU(INTEL_FAM6_ATOM_GOLDMONT, telem_apl_debugfs_conf),
--	TELEM_DEBUGFS_CPU(INTEL_FAM6_ATOM_GEMINI_LAKE, telem_apl_debugfs_conf),
-+	TELEM_DEBUGFS_CPU(INTEL_FAM6_ATOM_GOLDMONT_PLUS, telem_apl_debugfs_conf),
- 	{}
- };
- 
-diff --git a/drivers/platform/x86/intel_telemetry_pltdrv.c b/drivers/platform/x86/intel_telemetry_pltdrv.c
-index 2f889d6..fcc6bee 100644
---- a/drivers/platform/x86/intel_telemetry_pltdrv.c
-+++ b/drivers/platform/x86/intel_telemetry_pltdrv.c
-@@ -192,7 +192,7 @@ static struct telemetry_plt_config telem_glk_config = {
- 
- static const struct x86_cpu_id telemetry_cpu_ids[] = {
- 	TELEM_CPU(INTEL_FAM6_ATOM_GOLDMONT, telem_apl_config),
--	TELEM_CPU(INTEL_FAM6_ATOM_GEMINI_LAKE, telem_glk_config),
-+	TELEM_CPU(INTEL_FAM6_ATOM_GOLDMONT_PLUS, telem_glk_config),
- 	{}
- };
- 
-diff --git a/drivers/powercap/intel_rapl.c b/drivers/powercap/intel_rapl.c
-index 295d8dc..5effdac 100644
---- a/drivers/powercap/intel_rapl.c
-+++ b/drivers/powercap/intel_rapl.c
-@@ -1169,8 +1169,8 @@ static const struct x86_cpu_id rapl_ids[] __initconst = {
- 	RAPL_CPU(INTEL_FAM6_ATOM_MERRIFIELD,	rapl_defaults_tng),
- 	RAPL_CPU(INTEL_FAM6_ATOM_MOOREFIELD,	rapl_defaults_ann),
- 	RAPL_CPU(INTEL_FAM6_ATOM_GOLDMONT,	rapl_defaults_core),
--	RAPL_CPU(INTEL_FAM6_ATOM_GEMINI_LAKE,	rapl_defaults_core),
--	RAPL_CPU(INTEL_FAM6_ATOM_DENVERTON,	rapl_defaults_core),
-+	RAPL_CPU(INTEL_FAM6_ATOM_GOLDMONT_PLUS,	rapl_defaults_core),
-+	RAPL_CPU(INTEL_FAM6_ATOM_GOLDMONT2,	rapl_defaults_core),
- 
- 	RAPL_CPU(INTEL_FAM6_XEON_PHI_KNL,	rapl_defaults_hsw_server),
- 	RAPL_CPU(INTEL_FAM6_XEON_PHI_KNM,	rapl_defaults_hsw_server),
-diff --git a/tools/power/x86/turbostat/turbostat.c b/tools/power/x86/turbostat/turbostat.c
-index 4d14bbb..2949775 100644
---- a/tools/power/x86/turbostat/turbostat.c
-+++ b/tools/power/x86/turbostat/turbostat.c
-@@ -2084,7 +2084,7 @@ int has_turbo_ratio_group_limits(int family, int model)
- 	switch (model) {
- 	case INTEL_FAM6_ATOM_GOLDMONT:
- 	case INTEL_FAM6_SKYLAKE_X:
--	case INTEL_FAM6_ATOM_DENVERTON:
-+	case INTEL_FAM6_ATOM_GOLDMONT2:
- 		return 1;
- 	}
- 	return 0;
-@@ -3177,8 +3177,8 @@ int probe_nhm_msrs(unsigned int family, unsigned int model)
- 		pkg_cstate_limits = phi_pkg_cstate_limits;
- 		break;
- 	case INTEL_FAM6_ATOM_GOLDMONT:	/* BXT */
--	case INTEL_FAM6_ATOM_GEMINI_LAKE:
--	case INTEL_FAM6_ATOM_DENVERTON:	/* DNV */
-+	case INTEL_FAM6_ATOM_GOLDMONT_PLUS:
-+	case INTEL_FAM6_ATOM_GOLDMONT2:	/* DNV */
- 		pkg_cstate_limits = bxt_pkg_cstate_limits;
- 		break;
- 	default:
-@@ -3221,7 +3221,7 @@ int is_dnv(unsigned int family, unsigned int model)
- 		return 0;
- 
- 	switch (model) {
--	case INTEL_FAM6_ATOM_DENVERTON:
-+	case INTEL_FAM6_ATOM_GOLDMONT2:
- 		return 1;
- 	}
- 	return 0;
-@@ -3805,7 +3805,7 @@ void rapl_probe(unsigned int family, unsigned int model)
- 		}
- 		break;
- 	case INTEL_FAM6_ATOM_GOLDMONT:	/* BXT */
--	case INTEL_FAM6_ATOM_GEMINI_LAKE:
-+	case INTEL_FAM6_ATOM_GOLDMONT_PLUS:
- 		do_rapl = RAPL_PKG | RAPL_PKG_POWER_INFO;
- 		if (rapl_joules)
- 			BIC_PRESENT(BIC_Pkg_J);
-@@ -3875,7 +3875,7 @@ void rapl_probe(unsigned int family, unsigned int model)
- 			BIC_PRESENT(BIC_CorWatt);
- 		}
- 		break;
--	case INTEL_FAM6_ATOM_DENVERTON:	/* DNV */
-+	case INTEL_FAM6_ATOM_GOLDMONT2:	/* DNV */
- 		do_rapl = RAPL_PKG | RAPL_DRAM | RAPL_DRAM_POWER_INFO | RAPL_DRAM_PERF_STATUS | RAPL_PKG_PERF_STATUS | RAPL_PKG_POWER_INFO | RAPL_CORES_ENERGY_STATUS;
- 		BIC_PRESENT(BIC_PKG__);
- 		BIC_PRESENT(BIC_RAM__);
-@@ -4155,8 +4155,8 @@ int has_snb_msrs(unsigned int family, unsigned int model)
- 	case INTEL_FAM6_CANNONLAKE_MOBILE:	/* CNL */
- 	case INTEL_FAM6_SKYLAKE_X:	/* SKX */
- 	case INTEL_FAM6_ATOM_GOLDMONT:	/* BXT */
--	case INTEL_FAM6_ATOM_GEMINI_LAKE:
--	case INTEL_FAM6_ATOM_DENVERTON:	/* DNV */
-+	case INTEL_FAM6_ATOM_GOLDMONT_PLUS:
-+	case INTEL_FAM6_ATOM_GOLDMONT2:	/* DNV */
- 		return 1;
- 	}
- 	return 0;
-@@ -4188,7 +4188,7 @@ int has_hsw_msrs(unsigned int family, unsigned int model)
- 	case INTEL_FAM6_KABYLAKE_DESKTOP:	/* KBL */
- 	case INTEL_FAM6_CANNONLAKE_MOBILE:	/* CNL */
- 	case INTEL_FAM6_ATOM_GOLDMONT:	/* BXT */
--	case INTEL_FAM6_ATOM_GEMINI_LAKE:
-+	case INTEL_FAM6_ATOM_GOLDMONT_PLUS:
- 		return 1;
- 	}
- 	return 0;
-@@ -4593,11 +4593,11 @@ void process_cpuid()
- 				case INTEL_FAM6_KABYLAKE_DESKTOP:	/* KBL */
- 					crystal_hz = 24000000;	/* 24.0 MHz */
- 					break;
--				case INTEL_FAM6_ATOM_DENVERTON:	/* DNV */
-+				case INTEL_FAM6_ATOM_GOLDMONT2:	/* DNV */
- 					crystal_hz = 25000000;	/* 25.0 MHz */
- 					break;
- 				case INTEL_FAM6_ATOM_GOLDMONT:	/* BXT */
--				case INTEL_FAM6_ATOM_GEMINI_LAKE:
-+				case INTEL_FAM6_ATOM_GOLDMONT_PLUS:
- 					crystal_hz = 19200000;	/* 19.2 MHz */
- 					break;
- 				default:
--- 
-2.7.4
 
