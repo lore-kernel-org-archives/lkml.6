@@ -2,241 +2,176 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0E9AC46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 07:08:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E341C46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 07:09:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 714E62198F
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 07:08:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CEB1B2198F
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 07:09:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="Fqq1ENJR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 714E62198F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Ol8KcWE8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CEB1B2198F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388710AbeHGJVv (ORCPT
+        id S2388785AbeHGJV4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 05:21:51 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:42135 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388573AbeHGJVv (ORCPT
+        Tue, 7 Aug 2018 05:21:56 -0400
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:40673 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388573AbeHGJVz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 05:21:51 -0400
-Received: by mail-pf1-f196.google.com with SMTP id l9-v6so8098662pff.9
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 00:08:54 -0700 (PDT)
+        Tue, 7 Aug 2018 05:21:55 -0400
+Received: by mail-yw1-f66.google.com with SMTP id z143-v6so4563536ywa.7
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 00:08:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=BKOTPjfJZW4OCrb9bru7V1U96G3xnU+1nIGLlZK1D8o=;
-        b=Fqq1ENJRS0Vb5JKgDhXlWPkpCW0/E6DEfbu5obPtu9oogm2ZYzuuCMjKR/iZ6b8Jrd
-         Qg4EP6tVQ9x2lTSIf/smMYpXrb/PspdGKJKCd/RpREJXqIthv8JEzSBn4fkBiTXqMLVm
-         GiYL+2IjOyH+mA1cnt6XyXviWogEljkCUI0H8=
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=xThFOFDvJFyP137OHLpeAYZFjEyLRYt1/7TVRSekFlA=;
+        b=Ol8KcWE8uERCGvVULHeFSa14YbGucbTiMTFbE6S9Y9ASVgfuDuafFB771mfQBda1db
+         2z4/sHw/aP+FlPqDiZ0T82xByIHZ69NJVQ+tCiEgIoVxdRhXp6t/qV6SamgpsFzwvxP8
+         XbtPTEx2EhZecGWywFIMpAhBfctHA/Fb6ecH8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=BKOTPjfJZW4OCrb9bru7V1U96G3xnU+1nIGLlZK1D8o=;
-        b=biNOci7LQYjmsoaSRAmvImhWTxN4k+5sSAGKdUODVvUXUqOe9YaNt6dKutBEFRyQJN
-         x6wvWyG4y/UtEbBmGrnzF++axkPMFM1kVOPC8GF1TJ3p2z3+yfm8uRawr6BoZiMjutaU
-         NB8cyQahfbkIVbRuB/VxAl5YQiByMnMTNoOpGoais0KRqTyhCMUTndSg37RgyWaDDDks
-         dFM4gtEdqg/jpPYiXY6ocvqSys/y1BUcjl+rPu6x6TQH3f17LAZXGCznlvPnC+kBZEuv
-         uARaBY6NWA6uhysqlDVFz1U8KnxQGMwY+lmpKu5KztFJtpd3XZaGb39VQG5MB3WZA8Ra
-         aXDA==
-X-Gm-Message-State: AOUpUlEk2wGWQiPh/1+v/FZoDy4MrambegLsbPTunBMtkkJ+ricwifiS
-        MWpqimivU5IpY8KZL5hBhDhMlA==
-X-Google-Smtp-Source: AAOMgpcrD01nfbgKcCPNCvWn0uzV3hM8zoFcAlkUlZt4Fl42yY5U4tz2Kw4x5LZbDE4IF5qKQNlpKw==
-X-Received: by 2002:a62:2c95:: with SMTP id s143-v6mr14094932pfs.3.1533625734114;
-        Tue, 07 Aug 2018 00:08:54 -0700 (PDT)
-Received: from localhost.localdomain ([183.82.226.112])
-        by smtp.gmail.com with ESMTPSA id a15-v6sm1373195pfe.32.2018.08.07.00.08.50
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=xThFOFDvJFyP137OHLpeAYZFjEyLRYt1/7TVRSekFlA=;
+        b=gPGEP0ZheeSRJRJzWOarrCNgZr5GNSLDQerCyoPxUaghS1+Gpr07BWjzuyXLhxR+IX
+         VBTlz4L11SlOEmWmYbVFGtZmPKy2KIUDSpUyXFxjTSKFqoxzGLmPfvqJWe71G4H4589N
+         PvjYgtr3DBQ2gzeYKLFsoUh6RNRZjO27mOS8JgMTGGQ4jDs6lmZ7twm7ldXEABx5wyQT
+         Wvce7gBJ+7F7AhZ1xKVuzS67upu8gGBCCwsPeKZAl167j8j6U9ABuJkdDZVDEv8iJg/y
+         yqs+EZg9Z0/Nv7XPr5uRJR9J4/narL+1cptlse0h4BsSkM9j5WVvDnrUthTEQQXQJN8l
+         /W1A==
+X-Gm-Message-State: AOUpUlE8LtftEfygTgMDnnM0okis1vaLR4WK4iWMx+pH16+unIUVW7o5
+        zn0uWjxbSkCGm27Xn1P+KT9AD2VnMhs=
+X-Google-Smtp-Source: AAOMgpevLJw9c4/PbG9aKQx120kYaDVhH89JTOHeZO3QeqxQXYZhaReW2y1Rmvaq93XBlOVafQuxwA==
+X-Received: by 2002:a81:7404:: with SMTP id p4-v6mr9427546ywc.407.1533625737800;
+        Tue, 07 Aug 2018 00:08:57 -0700 (PDT)
+Received: from mail-yb0-f173.google.com (mail-yb0-f173.google.com. [209.85.213.173])
+        by smtp.gmail.com with ESMTPSA id d62-v6sm278621ywc.45.2018.08.07.00.08.56
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 07 Aug 2018 00:08:53 -0700 (PDT)
-From:   Jagan Teki <jagan@amarulasolutions.com>
-To:     Shawn Guo <shawnguo@kernel.org>
-Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Matteo Lisi <matteo.lisi@engicam.com>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH 2/3] ARM: dts: imx6ul-isiot: Move node definitions into dtsi
-Date:   Tue,  7 Aug 2018 12:38:37 +0530
-Message-Id: <20180807070838.24685-2-jagan@amarulasolutions.com>
-X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
-In-Reply-To: <20180807070838.24685-1-jagan@amarulasolutions.com>
-References: <20180807070838.24685-1-jagan@amarulasolutions.com>
+        Tue, 07 Aug 2018 00:08:56 -0700 (PDT)
+Received: by mail-yb0-f173.google.com with SMTP id c10-v6so6254692ybf.9
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 00:08:56 -0700 (PDT)
+X-Received: by 2002:a25:74cb:: with SMTP id p194-v6mr9060593ybc.500.1533625735970;
+ Tue, 07 Aug 2018 00:08:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20180724140621.59624-1-tfiga@chromium.org> <20180724140621.59624-2-tfiga@chromium.org>
+ <318f609c-7a28-ef65-e8be-08107981b623@xs4all.nl>
+In-Reply-To: <318f609c-7a28-ef65-e8be-08107981b623@xs4all.nl>
+From:   Tomasz Figa <tfiga@chromium.org>
+Date:   Tue, 7 Aug 2018 16:08:44 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5DoXgMGU2wekJMM39NGkwSQqbQVbQ=XmM_pxqGEYKK9gA@mail.gmail.com>
+Message-ID: <CAAFQd5DoXgMGU2wekJMM39NGkwSQqbQVbQ=XmM_pxqGEYKK9gA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] media: docs-rst: Document memory-to-memory video
+ decoder interface
+To:     Hans Verkuil <hverkuil@xs4all.nl>, nicolas@ndufresne.ca
+Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Pawel Osciak <posciak@chromium.org>,
+        Alexandre Courbot <acourbot@chromium.org>, kamil@wypas.org,
+        a.hajda@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>,
+        jtp.park@samsung.com, Philipp Zabel <p.zabel@pengutronix.de>,
+        =?UTF-8?B?VGlmZmFueSBMaW4gKOael+aFp+ePiik=?= 
+        <tiffany.lin@mediatek.com>,
+        =?UTF-8?B?QW5kcmV3LUNUIENoZW4gKOmZs+aZuui/qik=?= 
+        <andrew-ct.chen@mediatek.com>, todor.tomov@linaro.org,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        dave.stevenson@raspberrypi.org,
+        Ezequiel Garcia <ezequiel@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move usdhc2 and gpmi along with pinctrl nodes on
-imx6ul-isiot.dtsi from dts files and mark it as 'disabled'
-and the relevant dts will enable the status as 'okay'
+On Mon, Jul 30, 2018 at 9:52 PM Hans Verkuil <hverkuil@xs4all.nl> wrote:
+>
+> On 07/24/2018 04:06 PM, Tomasz Figa wrote:
+> > Due to complexity of the video decoding process, the V4L2 drivers of
+> > stateful decoder hardware require specific sequences of V4L2 API calls
+> > to be followed. These include capability enumeration, initialization,
+> > decoding, seek, pause, dynamic resolution change, drain and end of
+> > stream.
+> >
+> > Specifics of the above have been discussed during Media Workshops at
+> > LinuxCon Europe 2012 in Barcelona and then later Embedded Linux
+> > Conference Europe 2014 in D=C3=BCsseldorf. The de facto Codec API that
+> > originated at those events was later implemented by the drivers we alre=
+ady
+> > have merged in mainline, such as s5p-mfc or coda.
+> >
+> > The only thing missing was the real specification included as a part of
+> > Linux Media documentation. Fix it now and document the decoder part of
+> > the Codec API.
+> >
+> > Signed-off-by: Tomasz Figa <tfiga@chromium.org>
+> > ---
+> >  Documentation/media/uapi/v4l/dev-decoder.rst | 872 +++++++++++++++++++
+> >  Documentation/media/uapi/v4l/devices.rst     |   1 +
+> >  Documentation/media/uapi/v4l/v4l2.rst        |  10 +-
+> >  3 files changed, 882 insertions(+), 1 deletion(-)
+> >  create mode 100644 Documentation/media/uapi/v4l/dev-decoder.rst
+> >
+> > diff --git a/Documentation/media/uapi/v4l/dev-decoder.rst b/Documentati=
+on/media/uapi/v4l/dev-decoder.rst
+> > new file mode 100644
+> > index 000000000000..f55d34d2f860
+> > --- /dev/null
+> > +++ b/Documentation/media/uapi/v4l/dev-decoder.rst
+> > @@ -0,0 +1,872 @@
+>
+> <snip>
+>
+> > +6.  This step only applies to coded formats that contain resolution
+> > +    information in the stream. Continue queuing/dequeuing bitstream
+> > +    buffers to/from the ``OUTPUT`` queue via :c:func:`VIDIOC_QBUF` and
+> > +    :c:func:`VIDIOC_DQBUF`. The driver must keep processing and return=
+ing
+> > +    each buffer to the client until required metadata to configure the
+> > +    ``CAPTURE`` queue are found. This is indicated by the driver sendi=
+ng
+> > +    a ``V4L2_EVENT_SOURCE_CHANGE`` event with
+> > +    ``V4L2_EVENT_SRC_CH_RESOLUTION`` source change type. There is no
+> > +    requirement to pass enough data for this to occur in the first buf=
+fer
+> > +    and the driver must be able to process any number.
+> > +
+> > +    * If data in a buffer that triggers the event is required to decod=
+e
+> > +      the first frame, the driver must not return it to the client,
+> > +      but must retain it for further decoding.
+> > +
+> > +    * If the client set width and height of ``OUTPUT`` format to 0, ca=
+lling
+> > +      :c:func:`VIDIOC_G_FMT` on the ``CAPTURE`` queue will return -EPE=
+RM,
+> > +      until the driver configures ``CAPTURE`` format according to stre=
+am
+> > +      metadata.
+>
+> What about calling TRY/S_FMT on the capture queue: will this also return =
+-EPERM?
+> I assume so.
 
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
----
- arch/arm/boot/dts/imx6ul-isiot-emmc.dts | 23 -----------
- arch/arm/boot/dts/imx6ul-isiot-nand.dts | 25 ------------
- arch/arm/boot/dts/imx6ul-isiot.dtsi     | 52 +++++++++++++++++++++++++
- 3 files changed, 52 insertions(+), 48 deletions(-)
+We should make it so indeed, to make things consistent.
 
-diff --git a/arch/arm/boot/dts/imx6ul-isiot-emmc.dts b/arch/arm/boot/dts/imx6ul-isiot-emmc.dts
-index 464bd21930fd..1df3e376ae2c 100644
---- a/arch/arm/boot/dts/imx6ul-isiot-emmc.dts
-+++ b/arch/arm/boot/dts/imx6ul-isiot-emmc.dts
-@@ -14,28 +14,5 @@
- };
- 
- &usdhc2 {
--	pinctrl-names = "default";
--	pinctrl-0 = <&pinctrl_usdhc2>;
--	cd-gpios = <&gpio4 5 GPIO_ACTIVE_LOW>;
--	bus-width = <8>;
--	no-1-8-v;
- 	status = "okay";
- };
--
--&iomuxc {
--	pinctrl_usdhc2: usdhc2grp {
--		fsl,pins = <
--			MX6UL_PAD_NAND_RE_B__USDHC2_CLK      0x17070
--			MX6UL_PAD_NAND_WE_B__USDHC2_CMD      0x10070
--			MX6UL_PAD_NAND_DATA00__USDHC2_DATA0  0x17070
--			MX6UL_PAD_NAND_DATA01__USDHC2_DATA1  0x17070
--			MX6UL_PAD_NAND_DATA02__USDHC2_DATA2  0x17070
--			MX6UL_PAD_NAND_DATA03__USDHC2_DATA3  0x17070
--			MX6UL_PAD_NAND_DATA04__USDHC2_DATA4  0x17070
--			MX6UL_PAD_NAND_DATA05__USDHC2_DATA5  0x17070
--			MX6UL_PAD_NAND_DATA06__USDHC2_DATA6  0x17070
--			MX6UL_PAD_NAND_DATA07__USDHC2_DATA7  0x17070
--			MX6UL_PAD_NAND_ALE__USDHC2_RESET_B   0x17070
--		>;
--	};
--};
-diff --git a/arch/arm/boot/dts/imx6ul-isiot-nand.dts b/arch/arm/boot/dts/imx6ul-isiot-nand.dts
-index 84420ed47106..8c26d4d1a7bf 100644
---- a/arch/arm/boot/dts/imx6ul-isiot-nand.dts
-+++ b/arch/arm/boot/dts/imx6ul-isiot-nand.dts
-@@ -14,30 +14,5 @@
- };
- 
- &gpmi {
--	pinctrl-names = "default";
--	pinctrl-0 = <&pinctrl_gpmi_nand>;
--	nand-on-flash-bbt;
- 	status = "okay";
- };
--
--&iomuxc {
--	pinctrl_gpmi_nand: gpmi-nand {
--		fsl,pins = <
--			MX6UL_PAD_NAND_CLE__RAWNAND_CLE         0xb0b1
--			MX6UL_PAD_NAND_ALE__RAWNAND_ALE         0xb0b1
--			MX6UL_PAD_NAND_WP_B__RAWNAND_WP_B       0xb0b1
--			MX6UL_PAD_NAND_READY_B__RAWNAND_READY_B 0xb000
--			MX6UL_PAD_NAND_CE0_B__RAWNAND_CE0_B     0xb0b1
--			MX6UL_PAD_NAND_RE_B__RAWNAND_RE_B       0xb0b1
--			MX6UL_PAD_NAND_WE_B__RAWNAND_WE_B       0xb0b1
--			MX6UL_PAD_NAND_DATA00__RAWNAND_DATA00   0xb0b1
--			MX6UL_PAD_NAND_DATA01__RAWNAND_DATA01   0xb0b1
--			MX6UL_PAD_NAND_DATA02__RAWNAND_DATA02   0xb0b1
--			MX6UL_PAD_NAND_DATA03__RAWNAND_DATA03   0xb0b1
--			MX6UL_PAD_NAND_DATA04__RAWNAND_DATA04   0xb0b1
--			MX6UL_PAD_NAND_DATA05__RAWNAND_DATA05   0xb0b1
--			MX6UL_PAD_NAND_DATA06__RAWNAND_DATA06   0xb0b1
--			MX6UL_PAD_NAND_DATA07__RAWNAND_DATA07   0xb0b1
--		>;
--	};
--};
-diff --git a/arch/arm/boot/dts/imx6ul-isiot.dtsi b/arch/arm/boot/dts/imx6ul-isiot.dtsi
-index ba66225fe86e..fe435484e69d 100644
---- a/arch/arm/boot/dts/imx6ul-isiot.dtsi
-+++ b/arch/arm/boot/dts/imx6ul-isiot.dtsi
-@@ -97,6 +97,13 @@
- 	};
- };
- 
-+&gpmi {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_gpmi_nand>;
-+	nand-on-flash-bbt;
-+	status = "disabled";
-+};
-+
- &i2c1 {
- 	clock-frequency = <100000>;
- 	pinctrl-names = "default";
-@@ -207,6 +214,15 @@
- 	status = "okay";
- };
- 
-+&usdhc2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_usdhc2>;
-+	cd-gpios = <&gpio4 5 GPIO_ACTIVE_LOW>;
-+	bus-width = <8>;
-+	no-1-8-v;
-+	status = "disabled";
-+};
-+
- &iomuxc {
- 	pinctrl_enet1: enet1grp {
- 		fsl,pins = <
-@@ -223,6 +239,26 @@
- 		>;
- 	};
- 
-+	pinctrl_gpmi_nand: gpmi-nand {
-+		fsl,pins = <
-+			MX6UL_PAD_NAND_CLE__RAWNAND_CLE         0xb0b1
-+			MX6UL_PAD_NAND_ALE__RAWNAND_ALE         0xb0b1
-+			MX6UL_PAD_NAND_WP_B__RAWNAND_WP_B       0xb0b1
-+			MX6UL_PAD_NAND_READY_B__RAWNAND_READY_B 0xb000
-+			MX6UL_PAD_NAND_CE0_B__RAWNAND_CE0_B     0xb0b1
-+			MX6UL_PAD_NAND_RE_B__RAWNAND_RE_B       0xb0b1
-+			MX6UL_PAD_NAND_WE_B__RAWNAND_WE_B       0xb0b1
-+			MX6UL_PAD_NAND_DATA00__RAWNAND_DATA00   0xb0b1
-+			MX6UL_PAD_NAND_DATA01__RAWNAND_DATA01   0xb0b1
-+			MX6UL_PAD_NAND_DATA02__RAWNAND_DATA02   0xb0b1
-+			MX6UL_PAD_NAND_DATA03__RAWNAND_DATA03   0xb0b1
-+			MX6UL_PAD_NAND_DATA04__RAWNAND_DATA04   0xb0b1
-+			MX6UL_PAD_NAND_DATA05__RAWNAND_DATA05   0xb0b1
-+			MX6UL_PAD_NAND_DATA06__RAWNAND_DATA06   0xb0b1
-+			MX6UL_PAD_NAND_DATA07__RAWNAND_DATA07   0xb0b1
-+		>;
-+	};
-+
- 	pinctrl_i2c1: i2c1grp {
- 		fsl,pins = <
- 			MX6UL_PAD_UART4_TX_DATA__I2C1_SCL 0x4001b8b0
-@@ -330,4 +366,20 @@
- 			MX6UL_PAD_SD1_DATA3__USDHC1_DATA3 0x170f9
- 		>;
- 	};
-+
-+	pinctrl_usdhc2: usdhc2grp {
-+		fsl,pins = <
-+			MX6UL_PAD_NAND_RE_B__USDHC2_CLK      0x17070
-+			MX6UL_PAD_NAND_WE_B__USDHC2_CMD      0x10070
-+			MX6UL_PAD_NAND_DATA00__USDHC2_DATA0  0x17070
-+			MX6UL_PAD_NAND_DATA01__USDHC2_DATA1  0x17070
-+			MX6UL_PAD_NAND_DATA02__USDHC2_DATA2  0x17070
-+			MX6UL_PAD_NAND_DATA03__USDHC2_DATA3  0x17070
-+			MX6UL_PAD_NAND_DATA04__USDHC2_DATA4  0x17070
-+			MX6UL_PAD_NAND_DATA05__USDHC2_DATA5  0x17070
-+			MX6UL_PAD_NAND_DATA06__USDHC2_DATA6  0x17070
-+			MX6UL_PAD_NAND_DATA07__USDHC2_DATA7  0x17070
-+			MX6UL_PAD_NAND_ALE__USDHC2_RESET_B   0x17070
-+		>;
-+	};
- };
--- 
-2.18.0.321.gffc6fa0e3
+On another note, I don't really like this -EPERM here, as one could
+just see that the format is 0x0 and know that it's not valid. This is
+only needed for legacy userspace that doesn't handle the source change
+event in initial stream parsing and just checks whether G_FMT returns
+an error instead.
 
+Nicolas, for more insight here.
+
+Best regards,
+Tomasz
