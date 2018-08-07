@@ -6,38 +6,42 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8DD9C46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:55:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBDB3C46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:55:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6DC152172F
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:55:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DC152172F
+	by mail.kernel.org (Postfix) with ESMTP id 813322174D
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:55:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 813322174D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404273AbeHGVKn (ORCPT
+        id S2404285AbeHGVKq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 17:10:43 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33582 "EHLO
+        Tue, 7 Aug 2018 17:10:46 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33596 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733122AbeHGVKm (ORCPT
+        with ESMTP id S1733122AbeHGVKp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 17:10:42 -0400
+        Tue, 7 Aug 2018 17:10:45 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AE5743EE;
-        Tue,  7 Aug 2018 18:54:58 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 86C16D01;
+        Tue,  7 Aug 2018 18:55:01 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Catalin Marinas <catalin.marinas@arm.com>,
+        stable@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        Michal Hocko <mhocko@suse.com>,
         Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Laura Abbott <labbott@redhat.com>,
+        Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
+        Mel Gorman <mgorman@techsingularity.net>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>
-Subject: [PATCH 4.9 14/17] kmemleak: clear stale pointers from task stacks
-Date:   Tue,  7 Aug 2018 20:51:50 +0200
-Message-Id: <20180807172342.867453448@linuxfoundation.org>
+        "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>,
+        Srinidhi Rao <srinidhir@vmware.com>
+Subject: [PATCH 4.9 15/17] fork: unconditionally clear stack on fork
+Date:   Tue,  7 Aug 2018 20:51:51 +0200
+Message-Id: <20180807172342.911589278@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180807172342.071526922@linuxfoundation.org>
 References: <20180807172342.071526922@linuxfoundation.org>
@@ -54,47 +58,100 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+From: Kees Cook <keescook@chromium.org>
 
-commit ca182551857cc2c1e6a2b7f1e72090a137a15008 upstream.
+commit e01e80634ecdde1dd113ac43b3adad21b47f3957 upstream.
 
-Kmemleak considers any pointers on task stacks as references.  This
-patch clears newly allocated and reused vmap stacks.
+One of the classes of kernel stack content leaks[1] is exposing the
+contents of prior heap or stack contents when a new process stack is
+allocated.  Normally, those stacks are not zeroed, and the old contents
+remain in place.  In the face of stack content exposure flaws, those
+contents can leak to userspace.
 
-Link: http://lkml.kernel.org/r/150728990124.744199.8403409836394318684.stgit@buzz
-Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Acked-by: Catalin Marinas <catalin.marinas@arm.com>
+Fixing this will make the kernel no longer vulnerable to these flaws, as
+the stack will be wiped each time a stack is assigned to a new process.
+There's not a meaningful change in runtime performance; it almost looks
+like it provides a benefit.
+
+Performing back-to-back kernel builds before:
+	Run times: 157.86 157.09 158.90 160.94 160.80
+	Mean: 159.12
+	Std Dev: 1.54
+
+and after:
+	Run times: 159.31 157.34 156.71 158.15 160.81
+	Mean: 158.46
+	Std Dev: 1.46
+
+Instead of making this a build or runtime config, Andy Lutomirski
+recommended this just be enabled by default.
+
+[1] A noisy search for many kinds of stack content leaks can be seen here:
+https://cve.mitre.org/cgi-bin/cvekey.cgi?keyword=linux+kernel+stack+leak
+
+I did some more with perf and cycle counts on running 100,000 execs of
+/bin/true.
+
+before:
+Cycles: 218858861551 218853036130 214727610969 227656844122 224980542841
+Mean:  221015379122.60
+Std Dev: 4662486552.47
+
+after:
+Cycles: 213868945060 213119275204 211820169456 224426673259 225489986348
+Mean:  217745009865.40
+Std Dev: 5935559279.99
+
+It continues to look like it's faster, though the deviation is rather
+wide, but I'm not sure what I could do that would be less noisy.  I'm
+open to ideas!
+
+Link: http://lkml.kernel.org/r/20180221021659.GA37073@beast
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Laura Abbott <labbott@redhat.com>
+Cc: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
+Cc: Mel Gorman <mgorman@techsingularity.net>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 [ Srivatsa: Backported to 4.9.y ]
 Signed-off-by: Srivatsa S. Bhat <srivatsa@csail.mit.edu>
+Reviewed-by: Srinidhi Rao <srinidhir@vmware.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/linux/thread_info.h |    2 +-
- kernel/fork.c               |    4 ++++
- 2 files changed, 5 insertions(+), 1 deletion(-)
+ include/linux/thread_info.h |    7 +------
+ kernel/fork.c               |    3 +--
+ 2 files changed, 2 insertions(+), 8 deletions(-)
 
 --- a/include/linux/thread_info.h
 +++ b/include/linux/thread_info.h
-@@ -59,7 +59,7 @@ extern long do_no_restart_syscall(struct
+@@ -59,12 +59,7 @@ extern long do_no_restart_syscall(struct
  
  #ifdef __KERNEL__
  
--#ifdef CONFIG_DEBUG_STACK_USAGE
-+#if IS_ENABLED(CONFIG_DEBUG_STACK_USAGE) || IS_ENABLED(CONFIG_DEBUG_KMEMLEAK)
- # define THREADINFO_GFP		(GFP_KERNEL_ACCOUNT | __GFP_NOTRACK | \
- 				 __GFP_ZERO)
- #else
+-#if IS_ENABLED(CONFIG_DEBUG_STACK_USAGE) || IS_ENABLED(CONFIG_DEBUG_KMEMLEAK)
+-# define THREADINFO_GFP		(GFP_KERNEL_ACCOUNT | __GFP_NOTRACK | \
+-				 __GFP_ZERO)
+-#else
+-# define THREADINFO_GFP		(GFP_KERNEL_ACCOUNT | __GFP_NOTRACK)
+-#endif
++#define THREADINFO_GFP	(GFP_KERNEL_ACCOUNT | __GFP_NOTRACK | __GFP_ZERO)
+ 
+ /*
+  * flag set/clear/test wrappers
 --- a/kernel/fork.c
 +++ b/kernel/fork.c
-@@ -184,6 +184,10 @@ static unsigned long *alloc_thread_stack
+@@ -184,10 +184,9 @@ static unsigned long *alloc_thread_stack
  			continue;
  		this_cpu_write(cached_stacks[i], NULL);
  
-+#ifdef CONFIG_DEBUG_KMEMLEAK
-+		/* Clear stale pointers from reused stack. */
-+		memset(s->addr, 0, THREAD_SIZE);
-+#endif
+-#ifdef CONFIG_DEBUG_KMEMLEAK
+ 		/* Clear stale pointers from reused stack. */
+ 		memset(s->addr, 0, THREAD_SIZE);
+-#endif
++
  		tsk->stack_vm_area = s;
  		local_irq_enable();
  		return s->addr;
