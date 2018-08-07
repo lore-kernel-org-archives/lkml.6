@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB2BBC46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:57:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD657C46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:57:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C2EE21734
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:57:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C2EE21734
+	by mail.kernel.org (Postfix) with ESMTP id 82D692151D
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:57:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82D692151D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390737AbeHGVNY (ORCPT
+        id S2390750AbeHGVN1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 17:13:24 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34644 "EHLO
+        Tue, 7 Aug 2018 17:13:27 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34656 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388829AbeHGVNX (ORCPT
+        with ESMTP id S2388534AbeHGVN0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 17:13:23 -0400
+        Tue, 7 Aug 2018 17:13:26 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D126BD54;
-        Tue,  7 Aug 2018 18:57:39 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CD60F3EE;
+        Tue,  7 Aug 2018 18:57:42 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sven Eckelmann <sven.eckelmann@openmesh.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org, Anson Huang <Anson.Huang@nxp.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 28/85] ath: Add regulatory mapping for Bahamas
-Date:   Tue,  7 Aug 2018 20:51:30 +0200
-Message-Id: <20180807172358.386126193@linuxfoundation.org>
+Subject: [PATCH 3.18 37/85] regulator: pfuze100: add .is_enable() for pfuze100_swb_regulator_ops
+Date:   Tue,  7 Aug 2018 20:51:39 +0200
+Message-Id: <20180807172358.709451414@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180807172357.357252052@linuxfoundation.org>
 References: <20180807172357.357252052@linuxfoundation.org>
@@ -52,50 +51,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sven Eckelmann <sven.eckelmann@openmesh.com>
+From: Anson Huang <Anson.Huang@nxp.com>
 
-[ Upstream commit 699e2302c286a14afe7b7394151ce6c4e1790cc1 ]
+[ Upstream commit 0b01fd3d40fe6402e5fa3b491ef23109feb1aaa5 ]
 
-The country code is used by the ath to detect the ISO 3166-1 alpha-2 name
-and to select the correct conformance test limits (CTL) for a country. If
-the country isn't available and it is still programmed in the EEPROM then
-it will cause an error and stop the initialization with:
+If is_enabled() is not defined, regulator core will assume
+this regulator is already enabled, then it can NOT be really
+enabled after disabled.
 
-  Invalid EEPROM contents
+Based on Li Jun's patch from the NXP kernel tree.
 
-The current CTL mappings for this country are:
-
-* 2.4GHz: ETSI
-* 5GHz: FCC
-
-Signed-off-by: Sven Eckelmann <sven.eckelmann@openmesh.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/ath/regd.h        |    1 +
- drivers/net/wireless/ath/regd_common.h |    1 +
- 2 files changed, 2 insertions(+)
+ drivers/regulator/pfuze100-regulator.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/net/wireless/ath/regd.h
-+++ b/drivers/net/wireless/ath/regd.h
-@@ -68,6 +68,7 @@ enum CountryCode {
- 	CTRY_AUSTRALIA = 36,
- 	CTRY_AUSTRIA = 40,
- 	CTRY_AZERBAIJAN = 31,
-+	CTRY_BAHAMAS = 44,
- 	CTRY_BAHRAIN = 48,
- 	CTRY_BANGLADESH = 50,
- 	CTRY_BARBADOS = 52,
---- a/drivers/net/wireless/ath/regd_common.h
-+++ b/drivers/net/wireless/ath/regd_common.h
-@@ -306,6 +306,7 @@ static struct country_code_to_enum_rd al
- 	{CTRY_AUSTRALIA2, FCC6_WORLD, "AU"},
- 	{CTRY_AUSTRIA, ETSI1_WORLD, "AT"},
- 	{CTRY_AZERBAIJAN, ETSI4_WORLD, "AZ"},
-+	{CTRY_BAHAMAS, FCC3_WORLD, "BS"},
- 	{CTRY_BAHRAIN, APL6_WORLD, "BH"},
- 	{CTRY_BANGLADESH, NULL1_WORLD, "BD"},
- 	{CTRY_BARBADOS, FCC2_WORLD, "BB"},
+--- a/drivers/regulator/pfuze100-regulator.c
++++ b/drivers/regulator/pfuze100-regulator.c
+@@ -142,6 +142,7 @@ static struct regulator_ops pfuze100_sw_
+ static struct regulator_ops pfuze100_swb_regulator_ops = {
+ 	.enable = regulator_enable_regmap,
+ 	.disable = regulator_disable_regmap,
++	.is_enabled = regulator_is_enabled_regmap,
+ 	.list_voltage = regulator_list_voltage_table,
+ 	.map_voltage = regulator_map_voltage_ascend,
+ 	.set_voltage_sel = regulator_set_voltage_sel_regmap,
 
 
