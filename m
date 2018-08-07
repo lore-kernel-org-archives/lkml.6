@@ -2,176 +2,155 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E341C46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 07:09:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EABA9C46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 07:09:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CEB1B2198F
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 07:09:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A5BBD2198F
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 07:09:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Ol8KcWE8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CEB1B2198F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="n0RcAXmD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5BBD2198F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388785AbeHGJV4 (ORCPT
+        id S2388756AbeHGJVz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 05:21:56 -0400
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:40673 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388573AbeHGJVz (ORCPT
+        Tue, 7 Aug 2018 05:21:55 -0400
+Received: from mail-pl0-f47.google.com ([209.85.160.47]:46781 "EHLO
+        mail-pl0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388715AbeHGJVz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 7 Aug 2018 05:21:55 -0400
-Received: by mail-yw1-f66.google.com with SMTP id z143-v6so4563536ywa.7
+Received: by mail-pl0-f47.google.com with SMTP id t17-v6so6704483ply.13
         for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 00:08:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=xThFOFDvJFyP137OHLpeAYZFjEyLRYt1/7TVRSekFlA=;
-        b=Ol8KcWE8uERCGvVULHeFSa14YbGucbTiMTFbE6S9Y9ASVgfuDuafFB771mfQBda1db
-         2z4/sHw/aP+FlPqDiZ0T82xByIHZ69NJVQ+tCiEgIoVxdRhXp6t/qV6SamgpsFzwvxP8
-         XbtPTEx2EhZecGWywFIMpAhBfctHA/Fb6ecH8=
+        d=amarulasolutions.com; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=us0LJ31vN63I8uuxpJ8q105BUmNSBfomlTrvAd6Bj3Q=;
+        b=n0RcAXmDioTQ5nrEUHENi3LF65KDnMVSiQ8tV6xiczpxJAeNtJVVAV1fqWRDzFYS23
+         5pAb4kdEXt1jp4D5y6k0otA2qx+M+8FOzA80uOJWZ8R7NPNNEPpdp1tCiXWdfk8XuX2i
+         OW+PxR+UF+IhpHb35jL8j4m3Tuv/5zoMpf2HU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=xThFOFDvJFyP137OHLpeAYZFjEyLRYt1/7TVRSekFlA=;
-        b=gPGEP0ZheeSRJRJzWOarrCNgZr5GNSLDQerCyoPxUaghS1+Gpr07BWjzuyXLhxR+IX
-         VBTlz4L11SlOEmWmYbVFGtZmPKy2KIUDSpUyXFxjTSKFqoxzGLmPfvqJWe71G4H4589N
-         PvjYgtr3DBQ2gzeYKLFsoUh6RNRZjO27mOS8JgMTGGQ4jDs6lmZ7twm7ldXEABx5wyQT
-         Wvce7gBJ+7F7AhZ1xKVuzS67upu8gGBCCwsPeKZAl167j8j6U9ABuJkdDZVDEv8iJg/y
-         yqs+EZg9Z0/Nv7XPr5uRJR9J4/narL+1cptlse0h4BsSkM9j5WVvDnrUthTEQQXQJN8l
-         /W1A==
-X-Gm-Message-State: AOUpUlE8LtftEfygTgMDnnM0okis1vaLR4WK4iWMx+pH16+unIUVW7o5
-        zn0uWjxbSkCGm27Xn1P+KT9AD2VnMhs=
-X-Google-Smtp-Source: AAOMgpevLJw9c4/PbG9aKQx120kYaDVhH89JTOHeZO3QeqxQXYZhaReW2y1Rmvaq93XBlOVafQuxwA==
-X-Received: by 2002:a81:7404:: with SMTP id p4-v6mr9427546ywc.407.1533625737800;
-        Tue, 07 Aug 2018 00:08:57 -0700 (PDT)
-Received: from mail-yb0-f173.google.com (mail-yb0-f173.google.com. [209.85.213.173])
-        by smtp.gmail.com with ESMTPSA id d62-v6sm278621ywc.45.2018.08.07.00.08.56
-        for <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=us0LJ31vN63I8uuxpJ8q105BUmNSBfomlTrvAd6Bj3Q=;
+        b=brwfj8Az1xj+TW1XFatYuIN6F8JVd7YAzyde5ZPiIlVPHhnVewEAD3PGkU+e4OSu9Y
+         3k55oovW71exWwflcsOkpzPTAZ3waNey0t8L4ir2QEs6OdT/m+6pMk/sug7sJcE/ESTz
+         x+cIZetLWX83ekGKHSAET3iXpOFwhHpbxiO12J+Fs+Gvl5MgtjH6pW86ZHAW2iqS4CA7
+         rZetsK0ON0VFKOTFONvXVWpOHFP3aOmV9cSQfjvl8fVwmL6VAT7WRu7jxKBETs0abI6Q
+         olD8TSd2WHK4burZRO88x5C8onZi9y7X/dL7QnfVJgJJsc5RFKlZzquTNrpPLL8k6pU/
+         F1Uw==
+X-Gm-Message-State: AOUpUlEMPJOg/dWCdvELgV0quc1Dh147/jJLzsuzgVnr0amJNr7p3DCn
+        zue+wL045zaU3k3L1vbSYxjxtA==
+X-Google-Smtp-Source: AAOMgpdrQAiD31upKT45go5J4Ya/40KD2BnU0niHanlqSEaDE68i5xwI7tR/p1vMqVE57RwWNZCURw==
+X-Received: by 2002:a17:902:740a:: with SMTP id g10-v6mr16884282pll.204.1533625738456;
+        Tue, 07 Aug 2018 00:08:58 -0700 (PDT)
+Received: from localhost.localdomain ([183.82.226.112])
+        by smtp.gmail.com with ESMTPSA id a15-v6sm1373195pfe.32.2018.08.07.00.08.54
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 07 Aug 2018 00:08:56 -0700 (PDT)
-Received: by mail-yb0-f173.google.com with SMTP id c10-v6so6254692ybf.9
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 00:08:56 -0700 (PDT)
-X-Received: by 2002:a25:74cb:: with SMTP id p194-v6mr9060593ybc.500.1533625735970;
- Tue, 07 Aug 2018 00:08:55 -0700 (PDT)
+        Tue, 07 Aug 2018 00:08:57 -0700 (PDT)
+From:   Jagan Teki <jagan@amarulasolutions.com>
+To:     Shawn Guo <shawnguo@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Matteo Lisi <matteo.lisi@engicam.com>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH 3/3] ARM: dts: i.MX6: Use consistent node names for Engicam files
+Date:   Tue,  7 Aug 2018 12:38:38 +0530
+Message-Id: <20180807070838.24685-3-jagan@amarulasolutions.com>
+X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
+In-Reply-To: <20180807070838.24685-1-jagan@amarulasolutions.com>
+References: <20180807070838.24685-1-jagan@amarulasolutions.com>
 MIME-Version: 1.0
-References: <20180724140621.59624-1-tfiga@chromium.org> <20180724140621.59624-2-tfiga@chromium.org>
- <318f609c-7a28-ef65-e8be-08107981b623@xs4all.nl>
-In-Reply-To: <318f609c-7a28-ef65-e8be-08107981b623@xs4all.nl>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Tue, 7 Aug 2018 16:08:44 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5DoXgMGU2wekJMM39NGkwSQqbQVbQ=XmM_pxqGEYKK9gA@mail.gmail.com>
-Message-ID: <CAAFQd5DoXgMGU2wekJMM39NGkwSQqbQVbQ=XmM_pxqGEYKK9gA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] media: docs-rst: Document memory-to-memory video
- decoder interface
-To:     Hans Verkuil <hverkuil@xs4all.nl>, nicolas@ndufresne.ca
-Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Pawel Osciak <posciak@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>, kamil@wypas.org,
-        a.hajda@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>,
-        jtp.park@samsung.com, Philipp Zabel <p.zabel@pengutronix.de>,
-        =?UTF-8?B?VGlmZmFueSBMaW4gKOael+aFp+ePiik=?= 
-        <tiffany.lin@mediatek.com>,
-        =?UTF-8?B?QW5kcmV3LUNUIENoZW4gKOmZs+aZuui/qik=?= 
-        <andrew-ct.chen@mediatek.com>, todor.tomov@linaro.org,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        dave.stevenson@raspberrypi.org,
-        Ezequiel Garcia <ezequiel@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 30, 2018 at 9:52 PM Hans Verkuil <hverkuil@xs4all.nl> wrote:
->
-> On 07/24/2018 04:06 PM, Tomasz Figa wrote:
-> > Due to complexity of the video decoding process, the V4L2 drivers of
-> > stateful decoder hardware require specific sequences of V4L2 API calls
-> > to be followed. These include capability enumeration, initialization,
-> > decoding, seek, pause, dynamic resolution change, drain and end of
-> > stream.
-> >
-> > Specifics of the above have been discussed during Media Workshops at
-> > LinuxCon Europe 2012 in Barcelona and then later Embedded Linux
-> > Conference Europe 2014 in D=C3=BCsseldorf. The de facto Codec API that
-> > originated at those events was later implemented by the drivers we alre=
-ady
-> > have merged in mainline, such as s5p-mfc or coda.
-> >
-> > The only thing missing was the real specification included as a part of
-> > Linux Media documentation. Fix it now and document the decoder part of
-> > the Codec API.
-> >
-> > Signed-off-by: Tomasz Figa <tfiga@chromium.org>
-> > ---
-> >  Documentation/media/uapi/v4l/dev-decoder.rst | 872 +++++++++++++++++++
-> >  Documentation/media/uapi/v4l/devices.rst     |   1 +
-> >  Documentation/media/uapi/v4l/v4l2.rst        |  10 +-
-> >  3 files changed, 882 insertions(+), 1 deletion(-)
-> >  create mode 100644 Documentation/media/uapi/v4l/dev-decoder.rst
-> >
-> > diff --git a/Documentation/media/uapi/v4l/dev-decoder.rst b/Documentati=
-on/media/uapi/v4l/dev-decoder.rst
-> > new file mode 100644
-> > index 000000000000..f55d34d2f860
-> > --- /dev/null
-> > +++ b/Documentation/media/uapi/v4l/dev-decoder.rst
-> > @@ -0,0 +1,872 @@
->
-> <snip>
->
-> > +6.  This step only applies to coded formats that contain resolution
-> > +    information in the stream. Continue queuing/dequeuing bitstream
-> > +    buffers to/from the ``OUTPUT`` queue via :c:func:`VIDIOC_QBUF` and
-> > +    :c:func:`VIDIOC_DQBUF`. The driver must keep processing and return=
-ing
-> > +    each buffer to the client until required metadata to configure the
-> > +    ``CAPTURE`` queue are found. This is indicated by the driver sendi=
-ng
-> > +    a ``V4L2_EVENT_SOURCE_CHANGE`` event with
-> > +    ``V4L2_EVENT_SRC_CH_RESOLUTION`` source change type. There is no
-> > +    requirement to pass enough data for this to occur in the first buf=
-fer
-> > +    and the driver must be able to process any number.
-> > +
-> > +    * If data in a buffer that triggers the event is required to decod=
-e
-> > +      the first frame, the driver must not return it to the client,
-> > +      but must retain it for further decoding.
-> > +
-> > +    * If the client set width and height of ``OUTPUT`` format to 0, ca=
-lling
-> > +      :c:func:`VIDIOC_G_FMT` on the ``CAPTURE`` queue will return -EPE=
-RM,
-> > +      until the driver configures ``CAPTURE`` format according to stre=
-am
-> > +      metadata.
->
-> What about calling TRY/S_FMT on the capture queue: will this also return =
--EPERM?
-> I assume so.
+Use consistent pinctrl node names for Engicam dt files,
+sufix 'grp' look consistent than actual node name
 
-We should make it so indeed, to make things consistent.
+- pinctrl_gpmi_nand: gpmi-nand {
++ pinctrl_gpmi_nand: gpminandgrp {
 
-On another note, I don't really like this -EPERM here, as one could
-just see that the format is 0x0 and know that it's not valid. This is
-only needed for legacy userspace that doesn't handle the source change
-event in initial stream parsing and just checks whether G_FMT returns
-an error instead.
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+---
+ arch/arm/boot/dts/imx6qdl-icore-rqs.dtsi | 2 +-
+ arch/arm/boot/dts/imx6qdl-icore.dtsi     | 4 ++--
+ arch/arm/boot/dts/imx6ul-geam.dts        | 2 +-
+ arch/arm/boot/dts/imx6ul-isiot.dtsi      | 2 +-
+ 4 files changed, 5 insertions(+), 5 deletions(-)
 
-Nicolas, for more insight here.
+diff --git a/arch/arm/boot/dts/imx6qdl-icore-rqs.dtsi b/arch/arm/boot/dts/imx6qdl-icore-rqs.dtsi
+index 6feae392830e..ba93026ecee8 100644
+--- a/arch/arm/boot/dts/imx6qdl-icore-rqs.dtsi
++++ b/arch/arm/boot/dts/imx6qdl-icore-rqs.dtsi
+@@ -281,7 +281,7 @@
+ };
+ 
+ &iomuxc {
+-	pinctrl_audmux: audmux {
++	pinctrl_audmux: audmuxgrp {
+ 		fsl,pins = <
+ 			MX6QDL_PAD_DISP0_DAT20__AUD4_TXC  0x130b0
+ 			MX6QDL_PAD_DISP0_DAT21__AUD4_TXD  0x110b0
+diff --git a/arch/arm/boot/dts/imx6qdl-icore.dtsi b/arch/arm/boot/dts/imx6qdl-icore.dtsi
+index d39966e80415..84d03c65f4c8 100644
+--- a/arch/arm/boot/dts/imx6qdl-icore.dtsi
++++ b/arch/arm/boot/dts/imx6qdl-icore.dtsi
+@@ -274,7 +274,7 @@
+ };
+ 
+ &iomuxc {
+-	pinctrl_audmux: audmux {
++	pinctrl_audmux: audmuxgrp {
+ 		fsl,pins = <
+ 			MX6QDL_PAD_DISP0_DAT20__AUD4_TXC  0x130b0
+ 			MX6QDL_PAD_DISP0_DAT21__AUD4_TXD  0x110b0
+@@ -313,7 +313,7 @@
+ 		>;
+ 	};
+ 
+-	pinctrl_gpmi_nand: gpmi-nand {
++	pinctrl_gpmi_nand: gpminandgrp {
+ 		fsl,pins = <
+ 			MX6QDL_PAD_NANDF_CLE__NAND_CLE     0xb0b1
+ 			MX6QDL_PAD_NANDF_ALE__NAND_ALE     0xb0b1
+diff --git a/arch/arm/boot/dts/imx6ul-geam.dts b/arch/arm/boot/dts/imx6ul-geam.dts
+index bf86a5e33fc5..e22ec5be2b78 100644
+--- a/arch/arm/boot/dts/imx6ul-geam.dts
++++ b/arch/arm/boot/dts/imx6ul-geam.dts
+@@ -292,7 +292,7 @@
+ 		>;
+ 	};
+ 
+-	pinctrl_gpmi_nand: gpmi-nand {
++	pinctrl_gpmi_nand: gpminandgrp {
+ 		fsl,pins = <
+ 			MX6UL_PAD_NAND_CLE__RAWNAND_CLE         0xb0b1
+ 			MX6UL_PAD_NAND_ALE__RAWNAND_ALE         0xb0b1
+diff --git a/arch/arm/boot/dts/imx6ul-isiot.dtsi b/arch/arm/boot/dts/imx6ul-isiot.dtsi
+index fe435484e69d..b1fa3f0a684d 100644
+--- a/arch/arm/boot/dts/imx6ul-isiot.dtsi
++++ b/arch/arm/boot/dts/imx6ul-isiot.dtsi
+@@ -239,7 +239,7 @@
+ 		>;
+ 	};
+ 
+-	pinctrl_gpmi_nand: gpmi-nand {
++	pinctrl_gpmi_nand: gpminandgrp {
+ 		fsl,pins = <
+ 			MX6UL_PAD_NAND_CLE__RAWNAND_CLE         0xb0b1
+ 			MX6UL_PAD_NAND_ALE__RAWNAND_ALE         0xb0b1
+-- 
+2.18.0.321.gffc6fa0e3
 
-Best regards,
-Tomasz
