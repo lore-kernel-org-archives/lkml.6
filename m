@@ -2,181 +2,168 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 600C7C46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 14:24:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DC0EC46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 14:25:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18E72217D1
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 14:24:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B34A2174B
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 14:25:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="xkualwYN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18E72217D1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="sffNSu79"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B34A2174B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=yandex-team.ru
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389520AbeHGQiw (ORCPT
+        id S2389530AbeHGQje (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 12:38:52 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37290 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732639AbeHGQiv (ORCPT
+        Tue, 7 Aug 2018 12:39:34 -0400
+Received: from forwardcorp1o.cmail.yandex.net ([37.9.109.47]:32977 "EHLO
+        forwardcorp1o.cmail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732510AbeHGQje (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 12:38:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=faTLIWjlZn/WvDkrw6Po4M2ifxDB0Y4VHjGIHmgf29A=; b=xkualwYN8YTNIiRZDMWj2RrIj
-        C1J6LrEYMcb3vLoatUDFmX/q9F8eZP7QddWcPVE9vnRZwPwXwcOQ4opS568/xsU2mank2ARgNN21L
-        tW8N43Xer2wpEjIPrJ62jSksq5+xt6mQnqmC76pfnWiD5IMIE4mt9QrUyMKV/QQHJMK+Y=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fn2u8-0000mR-SF; Tue, 07 Aug 2018 14:24:08 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 85E4B112433B; Tue,  7 Aug 2018 15:24:08 +0100 (BST)
-Date:   Tue, 7 Aug 2018 15:24:08 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Baolin Wang <baolin.wang@linaro.org>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, orsonzhai@gmail.com,
-        zhang.lyra@gmail.com, lanqing.liu@spreadtrum.com,
-        linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] spi: sprd: Add SPI driver for Spreadtrum SC9860
-Message-ID: <20180807142408.GB7958@sirena.org.uk>
-References: <64681bf903104c8a02f118294e616e2a12a5ebe4.1533638405.git.baolin.wang@linaro.org>
- <99befd2badc4dffb59662fca1e11d79f18b64755.1533638405.git.baolin.wang@linaro.org>
+        Tue, 7 Aug 2018 12:39:34 -0400
+Received: from smtpcorp1p.mail.yandex.net (smtpcorp1p.mail.yandex.net [IPv6:2a02:6b8:0:1472:2741:0:8b6:10])
+        by forwardcorp1o.cmail.yandex.net (Yandex) with ESMTP id 06AF021803;
+        Tue,  7 Aug 2018 17:24:57 +0300 (MSK)
+Received: from smtpcorp1p.mail.yandex.net (localhost.localdomain [127.0.0.1])
+        by smtpcorp1p.mail.yandex.net (Yandex) with ESMTP id F2E546E40E07;
+        Tue,  7 Aug 2018 17:24:56 +0300 (MSK)
+Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:854c:7dcd:9203:76a5])
+        by smtpcorp1p.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id QZExRYDYw8-Ouw4s3gw;
+        Tue, 07 Aug 2018 17:24:56 +0300
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client certificate not present)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
+        t=1533651896; bh=pVxGH8iWYTaFN1SRyYf9ahHyukhwZccMhb9aW/ED0tk=;
+        h=Subject:From:To:Cc:Date:Message-ID:In-Reply-To:References;
+        b=sffNSu79KzTDCK9cQEJpQaNTFyNvCrhOSxDSFmOpD8a2tVHtjCAj7meKReP4dj5ag
+         TMpFvSnQm7txgTOMHpc4ViVwlUdEA9FM6jYeyZV75HdjDPSKhnnj2FfKCJ3w6JiKJn
+         4plqAiKj2M+QLXyMPq7+WQVCoXhga2huxUIQ5IYU=
+Authentication-Results: smtpcorp1p.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
+Subject: [PATCH v2] perf map: optimize maps__fixup_overlappings()
+From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+To:     Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>
+Date:   Tue, 07 Aug 2018 17:24:54 +0300
+Message-ID: <153365189407.435244.7234821822450484712.stgit@buzz>
+In-Reply-To: <153363294565.396323.4605638589903548668.stgit@buzz>
+References: <153363294565.396323.4605638589903548668.stgit@buzz>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="CUfgB8w4ZwR/yMy5"
-Content-Disposition: inline
-In-Reply-To: <99befd2badc4dffb59662fca1e11d79f18b64755.1533638405.git.baolin.wang@linaro.org>
-X-Cookie: Danger: do not shake.
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This function splits and removes overlapping areas.
 
---CUfgB8w4ZwR/yMy5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Maps in tree are ordered by start address thus we could find
+first overlap and stop if next map does not overlap.
 
-On Tue, Aug 07, 2018 at 06:43:38PM +0800, Baolin Wang wrote:
-> From: Lanqing Liu <lanqing.liu@spreadtrum.com>
->=20
-> This patch adds the SPI controller driver for Spreadtrum SC9860 platform.
+Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
 
-This all looks pretty clean, a few comments below but nothing too major:
+---
 
-> +static void sprd_spi_chipselect(struct spi_device *sdev, bool cs)
-> +{
-> +	struct spi_controller *sctlr =3D sdev->controller;
-> +	struct sprd_spi *ss =3D spi_controller_get_devdata(sctlr);
-> +	u32 val;
-> +	int ret;
-> +
-> +	ret =3D pm_runtime_get_sync(ss->dev);
-> +	if (ret < 0) {
-> +		dev_err(ss->dev, "failed to resume SPI controller\n");
-> +		return;
-> +	}
+v2:
+* add comments
+* replace map__overlap with minimal check
+* remove remove map__overlap, that was the only user
+---
+ tools/perf/util/map.c |   44 ++++++++++++++++++++++++++------------------
+ tools/perf/util/map.h |    1 -
+ 2 files changed, 26 insertions(+), 19 deletions(-)
 
-Something else further up the stack should probably have runtime PM
-enabled already - we should only be changing chip select as part of a
-bigger operation.  If you use the core auto_runtime_pm feature this will
-definitely happen.
+diff --git a/tools/perf/util/map.c b/tools/perf/util/map.c
+index 89ac5b5dc218..36d0763311ef 100644
+--- a/tools/perf/util/map.c
++++ b/tools/perf/util/map.c
+@@ -381,20 +381,6 @@ struct map *map__clone(struct map *from)
+ 	return map;
+ }
+ 
+-int map__overlap(struct map *l, struct map *r)
+-{
+-	if (l->start > r->start) {
+-		struct map *t = l;
+-		l = r;
+-		r = t;
+-	}
+-
+-	if (l->end > r->start)
+-		return 1;
+-
+-	return 0;
+-}
+-
+ size_t map__fprintf(struct map *map, FILE *fp)
+ {
+ 	return fprintf(fp, " %" PRIx64 "-%" PRIx64 " %" PRIx64 " %s\n",
+@@ -675,20 +661,42 @@ static void __map_groups__insert(struct map_groups *mg, struct map *map)
+ static int maps__fixup_overlappings(struct maps *maps, struct map *map, FILE *fp)
+ {
+ 	struct rb_root *root;
+-	struct rb_node *next;
++	struct rb_node *next, *first;
+ 	int err = 0;
+ 
+ 	down_write(&maps->lock);
+ 
+ 	root = &maps->entries;
+-	next = rb_first(root);
+ 
++	/*
++	 * Find first map where end > map->start.
++	 * Same as find_vma() in kernel.
++	 */
++	next = root->rb_node;
++	first = NULL;
++	while (next) {
++		struct map *pos = rb_entry(next, struct map, rb_node);
++
++		if (pos->end > map->start) {
++			first = next;
++			if (pos->start <= map->start)
++				break;
++			next = next->rb_left;
++		} else
++			next = next->rb_right;
++	}
++
++	next = first;
+ 	while (next) {
+ 		struct map *pos = rb_entry(next, struct map, rb_node);
+ 		next = rb_next(&pos->rb_node);
+ 
+-		if (!map__overlap(pos, map))
+-			continue;
++		/*
++		 * Stop if current map starts after map->end.
++		 * Maps are ordered by start: next will not overlap for sure.
++		 */
++		if (pos->start >= map->end)
++			break;
+ 
+ 		if (verbose >= 2) {
+ 
+diff --git a/tools/perf/util/map.h b/tools/perf/util/map.h
+index 4cb90f242bed..e0f327b51e66 100644
+--- a/tools/perf/util/map.h
++++ b/tools/perf/util/map.h
+@@ -166,7 +166,6 @@ static inline void __map__zput(struct map **map)
+ 
+ #define map__zput(map) __map__zput(&map)
+ 
+-int map__overlap(struct map *l, struct map *r);
+ size_t map__fprintf(struct map *map, FILE *fp);
+ size_t map__fprintf_dsoname(struct map *map, FILE *fp);
+ char *map__srcline(struct map *map, u64 addr, struct symbol *sym);
 
-> +	bits_per_word =3D bits_per_word > 16 ? round_up(bits_per_word, 16) :
-> +		round_up(bits_per_word, 8);
-
-Please
-
-> +	switch (bits_per_word) {
-> +	case 8:
-> +	case 16:
-> +	case 32:
-
-It'd be nice to have a default case, the core should check for you but
-it's nice to have defensive programming here.
-
-> +static int sprd_spi_transfer_one(struct spi_controller *sctlr,
-> +				 struct spi_device *sdev,
-> +				 struct spi_transfer *t)
-> +{
-> +	struct sprd_spi *ss =3D spi_controller_get_devdata(sctlr);
-> +	int ret;
-> +
-> +	ret =3D pm_runtime_get_sync(ss->dev);
-> +	if (ret < 0) {
-> +		dev_err(ss->dev, "failed to resume SPI controller\n");
-> +		goto rpm_err;
-> +	}
-
-Same thing with runtime PM here - the core can do this for you.
-
-> +static int sprd_spi_setup(struct spi_device *spi_dev)
-> +{
-> +	struct spi_controller *sctlr =3D spi_dev->controller;
-> +	struct sprd_spi *ss =3D spi_controller_get_devdata(sctlr);
-> +	int ret;
-> +
-> +	ret =3D pm_runtime_get_sync(ss->dev);
-> +	if (ret < 0) {
-> +		dev_err(ss->dev, "failed to resume SPI controller\n");
-> +		return ret;
-> +	}
-> +
-> +	ss->hw_mode =3D spi_dev->mode;
-> +	sprd_spi_init_hw(ss);
-
-This can be called for one chip select while another is in progress so
-it's not good to actually configure the hardware here unless the
-configuration is in a chip select specific set of registers.  Instead
-you should defer to when the transfer is being set up.
-
-> +static int sprd_spi_clk_init(struct platform_device *pdev, struct sprd_s=
-pi *ss)
-> +{
-> +	struct clk *clk_spi, *clk_parent;
-> +
-> +	clk_spi =3D devm_clk_get(&pdev->dev, "spi");
-> +	if (IS_ERR(clk_spi)) {
-> +		dev_warn(&pdev->dev, "can't get the spi clock\n");
-> +		clk_spi =3D NULL;
-> +	}
-
-I suspect some of these clocks are essential and you should probably
-return an error if you can't get them (especially if probe deferral
-becomes a factor).
-
-> +	if (!clk_set_parent(clk_spi, clk_parent))
-> +		ss->src_clk =3D clk_get_rate(clk_spi);
-> +	else
-> +		ss->src_clk =3D SPRD_SPI_DEFAULT_SOURCE;
-
-Are upstream DTs going to be missing the clock setup needed here?
-
---CUfgB8w4ZwR/yMy5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAltpq4cACgkQJNaLcl1U
-h9AVcgf+NxxRSsAAJNVZOh81hcSC5CB7sYJnt2eniKxe6PLdIM4NXBncN13jTSUf
-B9wU7JvRS02VGMZiFUi5RA50jN3a5gby3mb9UmjjVZzyQSPNpzeeDUEv67jreyXo
-zTSy758kPJxqKwCG7fsHSBIJoT5/zx9sLESNX+3IxgJ1cMco6tZET9qo/gQqxsdH
-Zw9SE4DDrAcIrYoc0Q1gBYIyeJ88ljJoytdHyCRPdjzaWColce5TKv6VvfOp8kZP
-6JBKb8FPF6XdAHA8qvHobNyub85E836EIaoNSO97QAFi4JLXR8Zekx6y5kxBT84J
-Pf2FbnHBP1XRQQX1deSuKEtxt8MYOA==
-=UadY
------END PGP SIGNATURE-----
-
---CUfgB8w4ZwR/yMy5--
