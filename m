@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6569DC46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 19:00:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EB2DC46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 19:00:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DFD620895
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 19:00:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DFD620895
+	by mail.kernel.org (Postfix) with ESMTP id 204EC20895
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 19:00:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 204EC20895
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404795AbeHGVQX (ORCPT
+        id S2404808AbeHGVQ0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 17:16:23 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35248 "EHLO
+        Tue, 7 Aug 2018 17:16:26 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35262 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404424AbeHGVQX (ORCPT
+        with ESMTP id S2404453AbeHGVQ0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 17:16:23 -0400
+        Tue, 7 Aug 2018 17:16:26 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E50353EE;
-        Tue,  7 Aug 2018 19:00:37 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D832A74;
+        Tue,  7 Aug 2018 19:00:40 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 3.18 75/85] net: dsa: Do not suspend/resume closed slave_dev
-Date:   Tue,  7 Aug 2018 20:52:17 +0200
-Message-Id: <20180807172400.142527956@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Anatoly Trosinenko <anatoly.trosinenko@gmail.com>,
+        Phillip Lougher <phillip.lougher@gmail.com>, stable@kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 3.18 76/85] squashfs: more metadata hardening
+Date:   Tue,  7 Aug 2018 20:52:18 +0200
+Message-Id: <20180807172400.180565044@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180807172357.357252052@linuxfoundation.org>
 References: <20180807172357.357252052@linuxfoundation.org>
@@ -51,43 +52,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Florian Fainelli <f.fainelli@gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 
-[ Upstream commit a94c689e6c9e72e722f28339e12dff191ee5a265 ]
+commit d512584780d3e6a7cacb2f482834849453d444a1 upstream.
 
-If a DSA slave network device was previously disabled, there is no need
-to suspend or resume it.
+Anatoly reports another squashfs fuzzing issue, where the decompression
+parameters themselves are in a compressed block.
 
-Fixes: 2446254915a7 ("net: dsa: allow switch drivers to implement suspend/resume hooks")
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+This causes squashfs_read_data() to be called in order to read the
+decompression options before the decompression stream having been set
+up, making squashfs go sideways.
+
+Reported-by: Anatoly Trosinenko <anatoly.trosinenko@gmail.com>
+Acked-by: Phillip Lougher <phillip.lougher@gmail.com>
+Cc: stable@kernel.org
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/dsa/slave.c |    6 ++++++
- 1 file changed, 6 insertions(+)
 
---- a/net/dsa/slave.c
-+++ b/net/dsa/slave.c
-@@ -503,6 +503,9 @@ int dsa_slave_suspend(struct net_device
- {
- 	struct dsa_slave_priv *p = netdev_priv(slave_dev);
+---
+ fs/squashfs/block.c |    2 ++
+ 1 file changed, 2 insertions(+)
+
+--- a/fs/squashfs/block.c
++++ b/fs/squashfs/block.c
+@@ -166,6 +166,8 @@ int squashfs_read_data(struct super_bloc
+ 	}
  
-+	if (!netif_running(slave_dev))
-+		return 0;
-+
- 	netif_device_detach(slave_dev);
- 
- 	if (p->phy) {
-@@ -520,6 +523,9 @@ int dsa_slave_resume(struct net_device *
- {
- 	struct dsa_slave_priv *p = netdev_priv(slave_dev);
- 
-+	if (!netif_running(slave_dev))
-+		return 0;
-+
- 	netif_device_attach(slave_dev);
- 
- 	if (p->phy) {
+ 	if (compressed) {
++		if (!msblk->stream)
++			goto read_failure;
+ 		length = squashfs_decompress(msblk, bh, b, offset, length,
+ 			output);
+ 		if (length < 0)
 
 
