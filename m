@@ -6,180 +6,118 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8ECEC46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 07:02:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27E5CC46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 07:02:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F3CA208E2
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 07:02:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D3362208E2
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 07:02:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="r7DQ6yWG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F3CA208E2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="D6df/HQQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3362208E2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388553AbeHGJPK (ORCPT
+        id S2388733AbeHGJP1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 05:15:10 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:47296 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387493AbeHGJPK (ORCPT
+        Tue, 7 Aug 2018 05:15:27 -0400
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:33462 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387493AbeHGJP1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 05:15:10 -0400
-Received: from dflxv15.itg.ti.com ([128.247.5.124])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id w7771gSn094804;
-        Tue, 7 Aug 2018 02:01:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1533625302;
-        bh=F/CxWgRru+2wOhdgeE/DXO/BsoXXzxFi9F0NdacViTg=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=r7DQ6yWGgnOluNcOGYFFcaxdoxeiAAb0UvL8AiCQG/8rO3Ghp07tHgQx4+bpUUDwT
-         7Mg00ZmvLsJc6jLfWBXUNzQx/p/4vkUEUcX66aThaO4VCK2EfhBOJ5BSSj8Qcs7TGE
-         xu+19crAKCNyXaX8UL/in72AiN3JqLjJtAeOH+Rg=
-Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
-        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7771gET007547;
-        Tue, 7 Aug 2018 02:01:42 -0500
-Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 7 Aug
- 2018 02:01:42 -0500
-Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Tue, 7 Aug 2018 02:01:42 -0500
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7771blq020429;
-        Tue, 7 Aug 2018 02:01:37 -0500
-Subject: Re: [PATCH 09/46] dmaengine: cppi41: use
- dmaenginem_async_device_register to simplify the code
-To:     Huang Shijie <sjhuang@iluvatar.ai>,
-        Alexandre Bailon <abailon@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>
-CC:     <vkoul@kernel.org>, <dmaengine@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <dave.jiang@intel.com>,
-        <radhey.shyam.pandey@xilinx.com>, <appana.durga.rao@xilinx.com>,
-        <jmkrzyszt@gmail.com>, <gomonovych@gmail.com>,
-        <keescook@chromium.org>, <horms+renesas@verge.net.au>,
-        <geert+renesas@glider.be>, <shawnguo@kernel.org>,
-        <baoyou.xie@linaro.org>, <michal.simek@xilinx.com>,
-        <baohua@kernel.org>, <ludovic.desroches@microchip.com>,
-        <linus.walleij@linaro.org>, <david.brown@linaro.org>
-References: <20180803072016.21544-1-sjhuang@iluvatar.ai>
- <20180803072016.21544-10-sjhuang@iluvatar.ai>
- <43458794-d124-13df-c944-e473dc8ee1c2@ti.com>
- <20180806032847.GA4452@hsj-Precision-5520>
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-Message-ID: <0f35be3f-24c0-f7e4-66c8-e9b7e5c01590@ti.com>
-Date:   Tue, 7 Aug 2018 10:01:47 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.0
+        Tue, 7 Aug 2018 05:15:27 -0400
+Received: by mail-yw1-f68.google.com with SMTP id c135-v6so4558756ywa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 00:02:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ulSTaWs1/rDROgk/VAFtRirranugEnB55n0Q+VOBir0=;
+        b=D6df/HQQahsuEh44+TVMcwkcyeME49noFFvgjzsTGzPTo7MavLgsncgkyK0+1l8fAG
+         YH2uaV09aB1RtY4qyrBX8VfoGjsMavfjNmeDUCtAgVplSCR1u8OmjgyAtiKFMRF7kc7C
+         hlmTs0ZAbLdR1ZPGsQx3yJdhM0PiW4+R/Sm8M=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ulSTaWs1/rDROgk/VAFtRirranugEnB55n0Q+VOBir0=;
+        b=J51xwE2mCyRHAk/7PwCi7T3ki3qjsbRbj0J4fAXrAqQJbui/M29GK7P2B1bjvCpn5y
+         28VrxCdyBT5MnbaH/tOpARXElqdXQL4FCKKtEy5N33yRkLM2M007AbA8tQJc7vGewkTI
+         z6uenXfmys9gm74iIFMsCanYFUghcEZeYBrxLXByy1a81AvtTXZhKdCTw+VSpufVPx1/
+         CPB6JU75PcIqEAkvIBroORndfocVeHjryGUzZc/gXRPBZ9b4RDa/IVjV7qmqz2pdds80
+         bO6/9WCQzuzmXZLR9ZJR1r0NMXUaiwy8Z+ASmB/rzm+K0cCuIM4cA7soo/AmLj56Re4G
+         Nt7Q==
+X-Gm-Message-State: AOUpUlF5AESVW1u4IFcUeEG16X5aF4YfqDDTgtMRAqLP4AIVleg5gxWC
+        B157fm34DbthmSHUCRFaAz9P7XQp7OQ=
+X-Google-Smtp-Source: AAOMgpf2zt3fOFIzo7TYS/GYUjDpMY2EG9tZAkXo3mC22rFX0elzl1BniG///a0QXe+OufWZ9y5/AA==
+X-Received: by 2002:a81:52d3:: with SMTP id g202-v6mr9814567ywb.380.1533625351536;
+        Tue, 07 Aug 2018 00:02:31 -0700 (PDT)
+Received: from mail-yw1-f50.google.com (mail-yw1-f50.google.com. [209.85.161.50])
+        by smtp.gmail.com with ESMTPSA id 64-v6sm242973ywg.106.2018.08.07.00.02.31
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 07 Aug 2018 00:02:31 -0700 (PDT)
+Received: by mail-yw1-f50.google.com with SMTP id 139-v6so4555506ywg.12
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 00:02:31 -0700 (PDT)
+X-Received: by 2002:a81:5194:: with SMTP id f142-v6mr9165532ywb.46.1533624919918;
+ Mon, 06 Aug 2018 23:55:19 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180806032847.GA4452@hsj-Precision-5520>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20180724140621.59624-1-tfiga@chromium.org> <20180724140621.59624-2-tfiga@chromium.org>
+ <37a8faea-a226-2d52-36d4-f9df194623cc@xs4all.nl> <CAAFQd5BgGEBmd8gNGc-qqtUtLo=Mh8U+TVTWRsKYMv1LmeBQMA@mail.gmail.com>
+ <1532601401.4879.10.camel@pengutronix.de>
+In-Reply-To: <1532601401.4879.10.camel@pengutronix.de>
+From:   Tomasz Figa <tfiga@chromium.org>
+Date:   Tue, 7 Aug 2018 15:55:08 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5BttOq_-DRyj0jr5-WF84JJdBwTFciSoQqY0bsonJbDPA@mail.gmail.com>
+Message-ID: <CAAFQd5BttOq_-DRyj0jr5-WF84JJdBwTFciSoQqY0bsonJbDPA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] media: docs-rst: Document memory-to-memory video
+ decoder interface
+To:     Philipp Zabel <p.zabel@pengutronix.de>
+Cc:     Hans Verkuil <hverkuil@xs4all.nl>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Pawel Osciak <posciak@chromium.org>,
+        Alexandre Courbot <acourbot@chromium.org>, kamil@wypas.org,
+        a.hajda@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>,
+        jtp.park@samsung.com,
+        =?UTF-8?B?VGlmZmFueSBMaW4gKOael+aFp+ePiik=?= 
+        <tiffany.lin@mediatek.com>,
+        =?UTF-8?B?QW5kcmV3LUNUIENoZW4gKOmZs+aZuui/qik=?= 
+        <andrew-ct.chen@mediatek.com>, todor.tomov@linaro.org,
+        nicolas@ndufresne.ca,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        dave.stevenson@raspberrypi.org,
+        Ezequiel Garcia <ezequiel@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Thu, Jul 26, 2018 at 7:36 PM Philipp Zabel <p.zabel@pengutronix.de> wrote:
+>
+> On Thu, 2018-07-26 at 19:20 +0900, Tomasz Figa wrote:
+> [...]
+> > > You might want to mention that if there are insufficient buffers, then
+> > > VIDIOC_CREATE_BUFS can be used to add more buffers.
+> > >
+> >
+> > This might be a bit tricky, since at least s5p-mfc and coda can only
+> > work on a fixed buffer set and one would need to fully reinitialize
+> > the decoding to add one more buffer, which would effectively be the
+> > full resolution change sequence, as below, just with REQBUFS(0),
+> > REQBUFS(N) replaced with CREATE_BUFS.
+>
+> The coda driver supports CREATE_BUFS on the decoder CAPTURE queue.
+>
+> The firmware indeed needs a fixed frame buffer set, but these buffers
+> are internal only and in a coda specific tiling format. The content of
+> finished internal buffers is copied / detiled into the external CAPTURE
+> buffers, so those can be added at will.
 
-On 2018-08-06 06:28, Huang Shijie wrote:
-> On Fri, Aug 03, 2018 at 10:55:25AM +0300, Peter Ujfalusi wrote:
->>
->>
->> On 2018-08-03 10:19, Huang Shijie wrote:
->>> Use dmaenginem_async_device_register to simplify the code:
->>>    remove dma_async_device_unregister
->>>
->>> Signed-off-by: Huang Shijie <sjhuang@iluvatar.ai>
->>> ---
->>>  drivers/dma/ti/cppi41.c | 7 ++-----
->>>  1 file changed, 2 insertions(+), 5 deletions(-)
->>>
->>> diff --git a/drivers/dma/ti/cppi41.c b/drivers/dma/ti/cppi41.c
->>> index 1497da367710..d2998a19ed2e 100644
->>> --- a/drivers/dma/ti/cppi41.c
->>> +++ b/drivers/dma/ti/cppi41.c
->>> @@ -1096,21 +1096,19 @@ static int cppi41_dma_probe(struct platform_device *pdev)
->>>  		goto err_chans;
->>>  	cdd->irq = irq;
->>>  
->>> -	ret = dma_async_device_register(&cdd->ddev);
->>> +	ret = dmaenginem_async_device_register(&cdd->ddev);
->>>  	if (ret)
->>>  		goto err_chans;
->>>  
->>>  	ret = of_dma_controller_register(dev->of_node,
->>>  			cppi41_dma_xlate, &cpp41_dma_info);
->>>  	if (ret)
->>> -		goto err_of;
->>> +		goto err_chans;
->>>  
->>>  	pm_runtime_mark_last_busy(dev);
->>>  	pm_runtime_put_autosuspend(dev);
->>>  
->>>  	return 0;
->>> -err_of:
->>> -	dma_async_device_unregister(&cdd->ddev);
->>>  err_chans:
->>>  	deinit_cppi41(dev, cdd);
->>>  err_init_cppi:
->>> @@ -1132,7 +1130,6 @@ static int cppi41_dma_remove(struct platform_device *pdev)
->>>  		dev_err(&pdev->dev, "%s could not pm_runtime_get: %i\n",
->>>  			__func__, error);
->>>  	of_dma_controller_free(pdev->dev.of_node);
->>> -	dma_async_device_unregister(&cdd->ddev);
->>
->> If I read the code right then this is not safe.
-> I read the code again, and find it is okay.
-> 
->> We would have deinitalized cppi41 driver which is not functional, but we
->> will still have the dma device registered and if a channel is requested
->> we will have kernel crash.
-> We cannot succeed to request a channel when the drv->remove() is called.
-> 
-> Please see __device_release_driver:
->   ---------------------------------------------------------------------
-> 		if (dev->bus && dev->bus->remove)
-> 			dev->bus->remove(dev);
-> 		else if (drv->remove)
-> 			drv->remove(dev);
-> 
-> 		device_links_driver_cleanup(dev);
-> 		dma_deconfigure(dev);
-> 
-> 		devres_release_all(dev);    ============> Devres release
->   ---------------------------------------------------------------------
-> 
-> For the DMA engine driver, there is only one case which will calls drv->remove():
->         Use the rmmod(or modprobe -r).
-> 
-> We do not use the device_link_add API for DMA engines.
-> And we not manually call the device_release_driver() for DMA engines.
-> 
-> But when we use the rmmod, the module state will be MODULE_STATE_GOING.
-> In the find_candidate(), dma_chan_get() will fail.
-> And we cannot get a channel.
-> 
-> Please correct me if I am wrong :)
+Thanks for clarifying. I forgot about that internal copy indeed.
 
-You are perfectly right.
-
-It might be only me, but I like to keep the resource teardown in a
-reverse order of their creation. If everything is devm then it is granted.
-
-In case of cppi4 it looks safe after reading in to the DMAengine core,
-module core and platform core code.
-
-But does the removed three lines worth over the clarity of how the
-module removal is proceeding?
-
-Alexandre and Tony put lots of effort to the cppi4 driver, I let them
-decide.
-
-- Péter
-
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Best regards,
+Tomasz
