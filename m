@@ -6,37 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97DEAC46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 19:00:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6569DC46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 19:00:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C47A20895
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 19:00:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C47A20895
+	by mail.kernel.org (Postfix) with ESMTP id 0DFD620895
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 19:00:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DFD620895
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404778AbeHGVQU (ORCPT
+        id S2404795AbeHGVQX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 17:16:20 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35234 "EHLO
+        Tue, 7 Aug 2018 17:16:23 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35248 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404424AbeHGVQU (ORCPT
+        with ESMTP id S2404424AbeHGVQX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 17:16:20 -0400
+        Tue, 7 Aug 2018 17:16:23 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 00BBF74;
-        Tue,  7 Aug 2018 19:00:34 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E50353EE;
+        Tue,  7 Aug 2018 19:00:37 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Jann Horn <jannh@google.com>, Florian Westphal <fw@strlen.de>,
-        Peter Oskolkov <posk@google.com>,
-        Paolo Abeni <pabeni@redhat.com>,
+        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 3.18 74/85] inet: frag: enforce memory limits earlier
-Date:   Tue,  7 Aug 2018 20:52:16 +0200
-Message-Id: <20180807172400.103557595@linuxfoundation.org>
+Subject: [PATCH 3.18 75/85] net: dsa: Do not suspend/resume closed slave_dev
+Date:   Tue,  7 Aug 2018 20:52:17 +0200
+Message-Id: <20180807172400.142527956@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180807172357.357252052@linuxfoundation.org>
 References: <20180807172357.357252052@linuxfoundation.org>
@@ -53,60 +51,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-[ Upstream commit 56e2c94f055d328f5f6b0a5c1721cca2f2d4e0a1 ]
+[ Upstream commit a94c689e6c9e72e722f28339e12dff191ee5a265 ]
 
-We currently check current frags memory usage only when
-a new frag queue is created. This allows attackers to first
-consume the memory budget (default : 4 MB) creating thousands
-of frag queues, then sending tiny skbs to exceed high_thresh
-limit by 2 to 3 order of magnitude.
+If a DSA slave network device was previously disabled, there is no need
+to suspend or resume it.
 
-Note that before commit 648700f76b03 ("inet: frags: use rhashtables
-for reassembly units"), work queue could be starved under DOS,
-getting no cpu cycles.
-After commit 648700f76b03, only the per frag queue timer can eventually
-remove an incomplete frag queue and its skbs.
-
-Fixes: b13d3cbfb8e8 ("inet: frag: move eviction of queues to work queue")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: Jann Horn <jannh@google.com>
-Cc: Florian Westphal <fw@strlen.de>
-Cc: Peter Oskolkov <posk@google.com>
-Cc: Paolo Abeni <pabeni@redhat.com>
-Acked-by: Florian Westphal <fw@strlen.de>
+Fixes: 2446254915a7 ("net: dsa: allow switch drivers to implement suspend/resume hooks")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/inet_fragment.c |   10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ net/dsa/slave.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/net/ipv4/inet_fragment.c
-+++ b/net/ipv4/inet_fragment.c
-@@ -379,11 +379,6 @@ static struct inet_frag_queue *inet_frag
+--- a/net/dsa/slave.c
++++ b/net/dsa/slave.c
+@@ -503,6 +503,9 @@ int dsa_slave_suspend(struct net_device
  {
- 	struct inet_frag_queue *q;
+ 	struct dsa_slave_priv *p = netdev_priv(slave_dev);
  
--	if (frag_mem_limit(nf) > nf->high_thresh) {
--		inet_frag_schedule_worker(f);
--		return NULL;
--	}
--
- 	q = kmem_cache_zalloc(f->frags_cachep, GFP_ATOMIC);
- 	if (q == NULL)
- 		return NULL;
-@@ -420,6 +415,11 @@ struct inet_frag_queue *inet_frag_find(s
- 	struct inet_frag_queue *q;
- 	int depth = 0;
- 
-+	if (!nf->high_thresh || frag_mem_limit(nf) > nf->high_thresh) {
-+		inet_frag_schedule_worker(f);
-+		return NULL;
-+	}
++	if (!netif_running(slave_dev))
++		return 0;
 +
- 	if (frag_mem_limit(nf) > nf->low_thresh)
- 		inet_frag_schedule_worker(f);
+ 	netif_device_detach(slave_dev);
  
+ 	if (p->phy) {
+@@ -520,6 +523,9 @@ int dsa_slave_resume(struct net_device *
+ {
+ 	struct dsa_slave_priv *p = netdev_priv(slave_dev);
+ 
++	if (!netif_running(slave_dev))
++		return 0;
++
+ 	netif_device_attach(slave_dev);
+ 
+ 	if (p->phy) {
 
 
