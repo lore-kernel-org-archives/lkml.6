@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE389C46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 19:00:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5859C46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 19:00:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC77120895
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 19:00:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC77120895
+	by mail.kernel.org (Postfix) with ESMTP id 9CABE20895
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 19:00:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CABE20895
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404750AbeHGVQP (ORCPT
+        id S2404765AbeHGVQS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 17:16:15 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35212 "EHLO
+        Tue, 7 Aug 2018 17:16:18 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35222 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404680AbeHGVQO (ORCPT
+        with ESMTP id S2404680AbeHGVQQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 17:16:14 -0400
+        Tue, 7 Aug 2018 17:16:16 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1A3A674;
-        Tue,  7 Aug 2018 19:00:28 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 10D0774;
+        Tue,  7 Aug 2018 19:00:31 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Neal Cardwell <ncardwell@google.com>,
-        Lawrence Brakmo <brakmo@fb.com>,
+        stable@vger.kernel.org,
+        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 3.18 72/85] tcp: add one more quick ack after after ECN events
-Date:   Tue,  7 Aug 2018 20:52:14 +0200
-Message-Id: <20180807172400.030361755@linuxfoundation.org>
+Subject: [PATCH 3.18 73/85] ipv4: remove BUG_ON() from fib_compute_spec_dst
+Date:   Tue,  7 Aug 2018 20:52:15 +0200
+Message-Id: <20180807172400.073372311@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180807172357.357252052@linuxfoundation.org>
 References: <20180807172357.357252052@linuxfoundation.org>
@@ -52,48 +51,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
 
-[ Upstream commit 15ecbe94a45ef88491ca459b26efdd02f91edb6d ]
+[ Upstream commit 9fc12023d6f51551d6ca9ed7e02ecc19d79caf17 ]
 
-Larry Brakmo proposal ( https://patchwork.ozlabs.org/patch/935233/
-tcp: force cwnd at least 2 in tcp_cwnd_reduction) made us rethink
-about our recent patch removing ~16 quick acks after ECN events.
+Remove BUG_ON() from fib_compute_spec_dst routine and check
+in_dev pointer during flowi4 data structure initialization.
+fib_compute_spec_dst routine can be run concurrently with device removal
+where ip_ptr net_device pointer is set to NULL. This can happen
+if userspace enables pkt info on UDP rx socket and the device
+is removed while traffic is flowing
 
-tcp_enter_quickack_mode(sk, 1) makes sure one immediate ack is sent,
-but in the case the sender cwnd was lowered to 1, we do not want
-to have a delayed ack for the next packet we will receive.
-
-Fixes: 522040ea5fdd ("tcp: do not aggressively quick ack after ECN events")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: Neal Cardwell <ncardwell@google.com>
-Cc: Lawrence Brakmo <brakmo@fb.com>
-Acked-by: Neal Cardwell <ncardwell@google.com>
+Fixes: 35ebf65e851c ("ipv4: Create and use fib_compute_spec_dst() helper")
+Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/tcp_input.c |    4 ++--
+ net/ipv4/fib_frontend.c |    4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/net/ipv4/tcp_input.c
-+++ b/net/ipv4/tcp_input.c
-@@ -232,7 +232,7 @@ static void __tcp_ecn_check_ce(struct so
- 		 * it is probably a retransmit.
- 		 */
- 		if (tp->ecn_flags & TCP_ECN_SEEN)
--			tcp_enter_quickack_mode(sk, 1);
-+			tcp_enter_quickack_mode(sk, 2);
- 		break;
- 	case INET_ECN_CE:
- 		if (tcp_ca_needs_ecn(sk))
-@@ -240,7 +240,7 @@ static void __tcp_ecn_check_ce(struct so
+--- a/net/ipv4/fib_frontend.c
++++ b/net/ipv4/fib_frontend.c
+@@ -209,19 +209,19 @@ __be32 fib_compute_spec_dst(struct sk_bu
+ 		return ip_hdr(skb)->daddr;
  
- 		if (!(tp->ecn_flags & TCP_ECN_DEMAND_CWR)) {
- 			/* Better not delay acks, sender can have a very low cwnd */
--			tcp_enter_quickack_mode(sk, 1);
-+			tcp_enter_quickack_mode(sk, 2);
- 			tp->ecn_flags |= TCP_ECN_DEMAND_CWR;
- 		}
- 		tp->ecn_flags |= TCP_ECN_SEEN;
+ 	in_dev = __in_dev_get_rcu(dev);
+-	BUG_ON(!in_dev);
+ 
+ 	net = dev_net(dev);
+ 
+ 	scope = RT_SCOPE_UNIVERSE;
+ 	if (!ipv4_is_zeronet(ip_hdr(skb)->saddr)) {
++		bool vmark = in_dev && IN_DEV_SRC_VMARK(in_dev);
+ 		fl4.flowi4_oif = 0;
+ 		fl4.flowi4_iif = LOOPBACK_IFINDEX;
+ 		fl4.daddr = ip_hdr(skb)->saddr;
+ 		fl4.saddr = 0;
+ 		fl4.flowi4_tos = RT_TOS(ip_hdr(skb)->tos);
+ 		fl4.flowi4_scope = scope;
+-		fl4.flowi4_mark = IN_DEV_SRC_VMARK(in_dev) ? skb->mark : 0;
++		fl4.flowi4_mark = vmark ? skb->mark : 0;
+ 		if (!fib_lookup(net, &fl4, &res))
+ 			return FIB_RES_PREFSRC(net, res);
+ 	} else {
 
 
