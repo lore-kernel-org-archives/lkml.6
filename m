@@ -6,72 +6,71 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7377C46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 16:21:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C323C46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 16:22:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51F7A2175E
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 16:21:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3AA852175E
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 16:22:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="S4qVMJYG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51F7A2175E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UclXYsPs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3AA852175E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390189AbeHGSge (ORCPT
+        id S2403767AbeHGShD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 14:36:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33990 "EHLO mail.kernel.org"
+        Tue, 7 Aug 2018 14:37:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34368 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730869AbeHGSge (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 14:36:34 -0400
+        id S1730869AbeHGShD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 14:37:03 -0400
 Received: from localhost.localdomain (xdsl-188-155-58-14.adslplus.ch [188.155.58.14])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C80F82174B;
-        Tue,  7 Aug 2018 16:21:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E50212174B;
+        Tue,  7 Aug 2018 16:21:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1533658890;
-        bh=NIdj51QGKvSnDQYKIRtKCzhhA81r9A62Cf+K2+Fs3/w=;
+        s=default; t=1533658920;
+        bh=rI2hdT68yn9mWVbQjq85sSHzfql9X3ekY3qdQ5kdCgQ=;
         h=From:To:Subject:Date:From;
-        b=S4qVMJYGbZP+DrbiTgvaqvDvUJZUyoig6uRWJ0eBhYB/Iy6ETGnyG3kQvtB60XCTg
-         Hk9JhxW2LFQj1R9uck/NZlWTUsA7SHuZHrS5NAQEAZUSe1bFT9ZwathNEDsRG4S9FS
-         pgLOuNOHSAZ1t4P1usXX1xIlH2qg+kw/5v379oFM=
+        b=UclXYsPsTIYtNBVFSIAXtDnNYJD372Ldoa89yVjyWL52lzOFRAw6FPFZ6muIW1R84
+         cRFaKoGv/fRgk7VJZdk+xGUCYP+vqkx9b/3OngY3XA1NDDtji+pq/FuxIwRIplakCS
+         hGahBCZINT7IZidTFAS8+O5MbaecV6r/eaXVxNDk=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Krzysztof Kozlowski <krzk@kernel.org>,
+To:     Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] power: supply: maxim: Add SPDX license identifiers
-Date:   Tue,  7 Aug 2018 18:21:06 +0200
-Message-Id: <20180807162106.18282-1-krzk@kernel.org>
+Subject: [PATCH] extcon: maxim: Add SPDX license identifiers
+Date:   Tue,  7 Aug 2018 18:21:22 +0200
+Message-Id: <20180807162122.19614-1-krzk@kernel.org>
 X-Mailer: git-send-email 2.14.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace GPL v2.0 and v2.0+ license statements with SPDX license
-identifiers.
+Replace GPL v2.0+ license statements with SPDX license identifiers.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/power/supply/max14577_charger.c | 22 ++++++----------------
- drivers/power/supply/max17040_battery.c | 18 +++++++-----------
- drivers/power/supply/max17042_battery.c | 32 +++++++++-----------------------
- drivers/power/supply/max77693_charger.c | 22 ++++++----------------
- drivers/power/supply/max8997_charger.c  | 26 ++++++--------------------
- drivers/power/supply/max8998_charger.c  | 26 ++++++--------------------
- 6 files changed, 40 insertions(+), 106 deletions(-)
+ drivers/extcon/extcon-max14577.c | 24 +++++++-----------------
+ drivers/extcon/extcon-max77693.c | 22 ++++++----------------
+ drivers/extcon/extcon-max77843.c | 19 +++++++------------
+ drivers/extcon/extcon-max8997.c  | 22 ++++++----------------
+ 4 files changed, 26 insertions(+), 61 deletions(-)
 
-diff --git a/drivers/power/supply/max14577_charger.c b/drivers/power/supply/max14577_charger.c
-index 449fc56f09eb..8a59feac6468 100644
---- a/drivers/power/supply/max14577_charger.c
-+++ b/drivers/power/supply/max14577_charger.c
-@@ -1,19 +1,9 @@
+diff --git a/drivers/extcon/extcon-max14577.c b/drivers/extcon/extcon-max14577.c
+index b871836da8a4..22d2feb1f8bc 100644
+--- a/drivers/extcon/extcon-max14577.c
++++ b/drivers/extcon/extcon-max14577.c
+@@ -1,20 +1,10 @@
 -/*
-- * max14577_charger.c - Battery charger driver for the Maxim 14577/77836
+- * extcon-max14577.c - MAX14577/77836 extcon driver to support MUIC
 - *
 - * Copyright (C) 2013,2014 Samsung Electronics
+- * Chanwoo Choi <cw00.choi@samsung.com>
 - * Krzysztof Kozlowski <krzk@kernel.org>
 - *
 - * This program is free software; you can redistribute it and/or modify
@@ -86,89 +85,24 @@ index 449fc56f09eb..8a59feac6468 100644
 - */
 +// SPDX-License-Identifier: GPL-2.0+
 +//
-+// max14577_charger.c - Battery charger driver for the Maxim 14577/77836
++// extcon-max14577.c - MAX14577/77836 extcon driver to support MUIC
 +//
 +// Copyright (C) 2013,2014 Samsung Electronics
++// Chanwoo Choi <cw00.choi@samsung.com>
 +// Krzysztof Kozlowski <krzk@kernel.org>
  
+ #include <linux/kernel.h>
  #include <linux/module.h>
- #include <linux/platform_device.h>
-diff --git a/drivers/power/supply/max17040_battery.c b/drivers/power/supply/max17040_battery.c
-index 33c40f79d23d..91cafc7bed30 100644
---- a/drivers/power/supply/max17040_battery.c
-+++ b/drivers/power/supply/max17040_battery.c
-@@ -1,14 +1,10 @@
--/*
-- *  max17040_battery.c
-- *  fuel-gauge systems for lithium-ion (Li+) batteries
-- *
-- *  Copyright (C) 2009 Samsung Electronics
-- *  Minkyu Kang <mk7.kang@samsung.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- */
-+// SPDX-License-Identifier: GPL-2.0
-+//
-+//  max17040_battery.c
-+//  fuel-gauge systems for lithium-ion (Li+) batteries
-+//
-+//  Copyright (C) 2009 Samsung Electronics
-+//  Minkyu Kang <mk7.kang@samsung.com>
- 
- #include <linux/module.h>
- #include <linux/init.h>
-diff --git a/drivers/power/supply/max17042_battery.c b/drivers/power/supply/max17042_battery.c
-index 1a568df383db..2a8d75e5e930 100644
---- a/drivers/power/supply/max17042_battery.c
-+++ b/drivers/power/supply/max17042_battery.c
-@@ -1,26 +1,12 @@
--/*
-- * Fuel gauge driver for Maxim 17042 / 8966 / 8997
-- *  Note that Maxim 8966 and 8997 are mfd and this is its subdevice.
-- *
-- * Copyright (C) 2011 Samsung Electronics
-- * MyungJoo Ham <myungjoo.ham@samsung.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, write to the Free Software
-- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-- *
-- * This driver is based on max17040_battery.c
-- */
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// Fuel gauge driver for Maxim 17042 / 8966 / 8997
-+//  Note that Maxim 8966 and 8997 are mfd and this is its subdevice.
-+//
-+// Copyright (C) 2011 Samsung Electronics
-+// MyungJoo Ham <myungjoo.ham@samsung.com>
-+//
-+// This driver is based on max17040_battery.c
- 
- #include <linux/acpi.h>
- #include <linux/init.h>
-diff --git a/drivers/power/supply/max77693_charger.c b/drivers/power/supply/max77693_charger.c
-index 6c78884bad5e..b4cc5b807d53 100644
---- a/drivers/power/supply/max77693_charger.c
-+++ b/drivers/power/supply/max77693_charger.c
+diff --git a/drivers/extcon/extcon-max77693.c b/drivers/extcon/extcon-max77693.c
+index 227651ff9666..a79537ebb671 100644
+--- a/drivers/extcon/extcon-max77693.c
++++ b/drivers/extcon/extcon-max77693.c
 @@ -1,19 +1,9 @@
 -/*
-- * max77693_charger.c - Battery charger driver for the Maxim 77693
+- * extcon-max77693.c - MAX77693 extcon driver to support MAX77693 MUIC
 - *
-- * Copyright (C) 2014 Samsung Electronics
-- * Krzysztof Kozlowski <krzk@kernel.org>
+- * Copyright (C) 2012 Samsung Electrnoics
+- * Chanwoo Choi <cw00.choi@samsung.com>
 - *
 - * This program is free software; you can redistribute it and/or modify
 - * it under the terms of the GNU General Public License as published by
@@ -182,23 +116,50 @@ index 6c78884bad5e..b4cc5b807d53 100644
 - */
 +// SPDX-License-Identifier: GPL-2.0+
 +//
-+// max77693_charger.c - Battery charger driver for the Maxim 77693
++// extcon-max77693.c - MAX77693 extcon driver to support MAX77693 MUIC
 +//
-+// Copyright (C) 2014 Samsung Electronics
-+// Krzysztof Kozlowski <krzk@kernel.org>
++// Copyright (C) 2012 Samsung Electrnoics
++// Chanwoo Choi <cw00.choi@samsung.com>
  
+ #include <linux/kernel.h>
  #include <linux/module.h>
- #include <linux/platform_device.h>
-diff --git a/drivers/power/supply/max8997_charger.c b/drivers/power/supply/max8997_charger.c
-index c73fb4221695..f5e84cd47924 100644
---- a/drivers/power/supply/max8997_charger.c
-+++ b/drivers/power/supply/max8997_charger.c
-@@ -1,23 +1,9 @@
+diff --git a/drivers/extcon/extcon-max77843.c b/drivers/extcon/extcon-max77843.c
+index c9fcd6cd41cb..b98cbd0362f5 100644
+--- a/drivers/extcon/extcon-max77843.c
++++ b/drivers/extcon/extcon-max77843.c
+@@ -1,15 +1,10 @@
 -/*
-- * max8997_charger.c - Power supply consumer driver for the Maxim 8997/8966
+- * extcon-max77843.c - Maxim MAX77843 extcon driver to support
+- *			MUIC(Micro USB Interface Controller)
 - *
-- *  Copyright (C) 2011 Samsung Electronics
-- *  MyungJoo Ham <myungjoo.ham@samsung.com>
+- * Copyright (C) 2015 Samsung Electronics
+- * Author: Jaewon Kim <jaewon02.kim@samsung.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- */
++// SPDX-License-Identifier: GPL-2.0+
++//
++// extcon-max77843.c - Maxim MAX77843 extcon driver to support
++//			MUIC(Micro USB Interface Controller)
++//
++// Copyright (C) 2015 Samsung Electronics
++// Author: Jaewon Kim <jaewon02.kim@samsung.com>
+ 
+ #include <linux/extcon-provider.h>
+ #include <linux/i2c.h>
+diff --git a/drivers/extcon/extcon-max8997.c b/drivers/extcon/extcon-max8997.c
+index 9f30f4929b72..bdabb2479e0d 100644
+--- a/drivers/extcon/extcon-max8997.c
++++ b/drivers/extcon/extcon-max8997.c
+@@ -1,19 +1,9 @@
+-/*
+- * extcon-max8997.c - MAX8997 extcon driver to support MAX8997 MUIC
+- *
+- *  Copyright (C) 2012 Samsung Electronics
+- *  Donggeun Kim <dg77.kim@samsung.com>
 - *
 - * This program is free software; you can redistribute it and/or modify
 - * it under the terms of the GNU General Public License as published by
@@ -209,53 +170,15 @@ index c73fb4221695..f5e84cd47924 100644
 - * but WITHOUT ANY WARRANTY; without even the implied warranty of
 - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 - * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, write to the Free Software
-- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 - */
 +// SPDX-License-Identifier: GPL-2.0+
 +//
-+// max8997_charger.c - Power supply consumer driver for the Maxim 8997/8966
++// extcon-max8997.c - MAX8997 extcon driver to support MAX8997 MUIC
 +//
-+//  Copyright (C) 2011 Samsung Electronics
-+//  MyungJoo Ham <myungjoo.ham@samsung.com>
++//  Copyright (C) 2012 Samsung Electronics
++//  Donggeun Kim <dg77.kim@samsung.com>
  
- #include <linux/err.h>
- #include <linux/module.h>
-diff --git a/drivers/power/supply/max8998_charger.c b/drivers/power/supply/max8998_charger.c
-index cad7d1a8feec..95292381c3de 100644
---- a/drivers/power/supply/max8998_charger.c
-+++ b/drivers/power/supply/max8998_charger.c
-@@ -1,23 +1,9 @@
--/*
-- * max8998_charger.c - Power supply consumer driver for the Maxim 8998/LP3974
-- *
-- *  Copyright (C) 2009-2010 Samsung Electronics
-- *  MyungJoo Ham <myungjoo.ham@samsung.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, write to the Free Software
-- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-- */
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// max8998_charger.c - Power supply consumer driver for the Maxim 8998/LP3974
-+//
-+//  Copyright (C) 2009-2010 Samsung Electronics
-+//  MyungJoo Ham <myungjoo.ham@samsung.com>
- 
- #include <linux/err.h>
+ #include <linux/kernel.h>
  #include <linux/module.h>
 -- 
 2.14.1
