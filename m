@@ -2,96 +2,63 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97136C46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 08:50:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D415C46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 08:54:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56442208D6
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 08:50:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56442208D6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 2BB72208CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 08:54:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BB72208CB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387482AbeHGLDa (ORCPT
+        id S2387659AbeHGLHg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 07:03:30 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36140 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727578AbeHGLDa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 07:03:30 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5DA987C809;
-        Tue,  7 Aug 2018 08:50:12 +0000 (UTC)
-Received: from krava (unknown [10.43.17.214])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 68C28215670D;
-        Tue,  7 Aug 2018 08:50:11 +0000 (UTC)
-Date:   Tue, 7 Aug 2018 10:50:10 +0200
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Stephane Eranian <eranian@google.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>, mingo@elte.hu
-Subject: Re: [PATCH] perf ordered_events: fix crash in free_dup_event()
-Message-ID: <20180807085010.GC7716@krava>
-References: <1533605015-19514-1-git-send-email-eranian@google.com>
- <20180807072029.GA7716@krava>
- <CABPqkBSyf0WMKmZAFGSyBvX=jn1zifbMPztt_053hvvDh6UsHw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CABPqkBSyf0WMKmZAFGSyBvX=jn1zifbMPztt_053hvvDh6UsHw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Tue, 07 Aug 2018 08:50:12 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Tue, 07 Aug 2018 08:50:12 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@redhat.com' RCPT:''
+        Tue, 7 Aug 2018 07:07:36 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:51154 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387547AbeHGLHg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 07:07:36 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EDEBB80D;
+        Tue,  7 Aug 2018 01:54:17 -0700 (PDT)
+Received: from approximate.Emea.Arm.com (approximate.Emea.Arm.com [10.4.13.119])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 85ACF3F5D4;
+        Tue,  7 Aug 2018 01:54:16 -0700 (PDT)
+From:   Marc Zyngier <marc.zyngier@arm.com>
+To:     linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Cc:     Joerg Roedel <joro@8bytes.org>, Heiko Stuebner <heiko@sntech.de>,
+        Jeffy Chen <jeffy.chen@rock-chips.com>
+Subject: [PATCH 0/2] iommu/rockchip: Runtime PM fixes
+Date:   Tue,  7 Aug 2018 09:54:04 +0100
+Message-Id: <20180807085406.3863-1-marc.zyngier@arm.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 07, 2018 at 01:16:22AM -0700, Stephane Eranian wrote:
-> On Tue, Aug 7, 2018 at 12:20 AM Jiri Olsa <jolsa@redhat.com> wrote:
-> >
-> > On Mon, Aug 06, 2018 at 06:23:35PM -0700, Stephane Eranian wrote:
-> > > Depending on memory allocations, it was possible to get a SEGFAULT in
-> > > free_dup_event() because the event pointer was bogus:
-> > >
-> > > perf[1354]: segfault at ffffffff00000006 ip 00000000004b7fc7
-> >
-> > is there any reproducer?
-> >
-> The cmdline is simple:
-> $ perf record -e cycles:pp -o - -a sleep 1 | perf inject -b -i - >/dev/null
-> I was using v4.13 for my tests and it may be sensitive to compiler.
-> Was using LLVM.
+This small series addresses a couple of runtime PM issues I've spotted
+while running 4.18 on a Chromebook Plus (kevin, rk3399) platform, and
+specifically doing kexec.
 
-I can't make it fail even when I compile with clang 'make CC=clang'
+Note that even with these two patches, kexec is still fairly broken on
+rk3399, as the VOP is never turned off (see [1] for a fix).
 
-  [jolsa@krava perf]$ clang --version
-  clang version 6.0.1 (tags/RELEASE_601/final)
+[1] https://www.spinics.net/lists/arm-kernel/msg670229.html
 
-I'm on v4.17, but I dont think kernel version is related to this issue
+Marc Zyngier (2):
+  iommu/rockchip: Handle errors returned from PM framework
+  iommu/rockchip: Move irq request past pm_runtime_enable
 
-> 
-> It may be a compiler related issue. You do not allocate the whole struct.
-> If the compiler was to do a memcpy() behind your back, you'd be in
-> troubles.
-> 
-> Adding extra padding before *event was also avoiding the problem.
-> struct ordered_event {
->         u64                     timestamp;
->         u64                     file_offset;
->         char                   pad[32];   <----- extra padding for debugging
->         union perf_event        *event;
->         struct list_head        list;
-> };
+ drivers/iommu/rockchip-iommu.c | 45 +++++++++++++++++++++-------------
+ 1 file changed, 28 insertions(+), 17 deletions(-)
 
-might be some issue in the struct ordered_event allocation,
-which is little convoluted 
+-- 
+2.18.0
 
-jirka
