@@ -2,121 +2,120 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F16F8C46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 17:40:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 964C5C46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 17:42:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC1EA21547
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 17:40:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nozPMFoQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC1EA21547
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 5819D21547
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 17:42:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5819D21547
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390325AbeHGT4U (ORCPT
+        id S2390330AbeHGT5u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 15:56:20 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:39484 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389369AbeHGT4T (ORCPT
+        Tue, 7 Aug 2018 15:57:50 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:40927 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727198AbeHGT5t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 15:56:19 -0400
-Received: by mail-it0-f66.google.com with SMTP id g141-v6so24085895ita.4
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 10:40:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=C5ix1M4mKBQ8VHaJNUvoJfCCiK/bVrmR0V3WRcCy/T8=;
-        b=nozPMFoQmq0030pYMXhdfu2wVDGtlnd3a9Vlel+VqVfave8JRy1vPGrd7ZDI9EfPCO
-         yVtgcFjhkr6rpVjDd3nNIPM5zbzOB2tt79ZuRvKMtE8AGFmQxpvtxpRbDinARPJtB3YS
-         XXZF9k6gKyx7luvqkJ4HuU/YIWp53KTd/pmOL5EYUANbvGb5aHysvJLFErgPQ7/Ibv7Q
-         kE3Xb1abhzdBDubyCFrP57OOKdEqWhUvFYSzXWt94vxCgeTrx17k5qByHxDixspIkRi9
-         muiJAXape6bc+Y2FydMZLOXgs29nqvpzxXXbWLSpwJk143vR/ROAcymCZZ2bXVVhavEJ
-         I5qQ==
+        Tue, 7 Aug 2018 15:57:49 -0400
+Received: by mail-it0-f65.google.com with SMTP id h23-v6so24084231ita.5;
+        Tue, 07 Aug 2018 10:42:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=C5ix1M4mKBQ8VHaJNUvoJfCCiK/bVrmR0V3WRcCy/T8=;
-        b=QWY71U+1VpArSgjlAU2ZW1dmn9f/vzmmdLp5AeDzzz2aEGL5xd9lymFzqPBJdCNfy1
-         pbaHykQu1z/qjKQKBwRs3daGe/gLHWsfUkZcGIBw2koypIVj1QYaCiOGZEJj8O2e6bve
-         K2Q8hKCOuHF5N27ZjM4RX0pMAM3OAExhIK8RhRR+dbMdL18cf4SN3qwojhMA3GJjkF6q
-         cSWru+ijv3uw/yeMxJEJFFUVwN6n9IP8QdW/LtWE8fbv6zXzSaZDw9LIGXG+PPynpygU
-         mnh61z1kXsUM4Fvtr41B+kbNpuqx/R+GTgwltuMcUDPqa7+JEl0Vwd2kgsNqeF7VzwGy
-         /3qQ==
-X-Gm-Message-State: AOUpUlEyN258MDL5aMPbQ1aGIwob8uLfP9V6DcgHylZGphWvsisshcQG
-        FqSYmjqvLwsi3BpjGA7oEJkQOr8nGL7pYFhta+1TLIiG
-X-Google-Smtp-Source: AA+uWPxpi8PnOlqFGecK0QLG1MCYBpHnebzRWxllRM+nimK49MLQrR+01Yrs1JtfJzYv8B15ggZhQNDOnXK8/ka4U/o=
-X-Received: by 2002:a24:6e0f:: with SMTP id w15-v6mr2776120itc.77.1533663654183;
- Tue, 07 Aug 2018 10:40:54 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=KeKJnzQOffQOfRtAMyjQsTpNA5n7hdyzcdzP6bVZfls=;
+        b=oOeRkdmnnyVYbVEa6A0h1fiYYKwQ3e9DimmTEzrQehdfiJ40XUdqmBeKSfeAE/XvTs
+         8wLYkIOO9v1lx+IeWuZF4nrtBwEHIDdhTvID1ny8u7xh+9d9VYplMAVOzDz1MYc/oLkR
+         UQO+VcmubYy6QeNHmP9h2FiBc4mdQHiyGTbyhjAjXHJyjOZD48ma0HYKpv1QqidzW5pi
+         I7+in/miA1vBzs9eM6u8jIl8jy6bEMYJk4EfIeAFRsLx02tvRZUCBFezoCMlkyoZu0ML
+         P8iTPGbyZQpfgEBM6Eb1vYFxA1OMdfn9qyy5XUPRBPThHbjuxAeDwpBkhsVwiHMm+1CA
+         8N5A==
+X-Gm-Message-State: AOUpUlHASD1H4ZsZRqUsU0vj0OC22T8T5N5kyb1gHJeakDIy5Q8Fpph9
+        67WugAWivWue2+9SZ6VorQ==
+X-Google-Smtp-Source: AA+uWPySPENDMX6MHA4PVFFsHcyOjIXrwPOgxWyDwSHWjEa1qLYLRzL6sFUjx8v7/2qBeJ7rAR7r8Q==
+X-Received: by 2002:a24:534c:: with SMTP id n73-v6mr2818748itb.25.1533663744257;
+        Tue, 07 Aug 2018 10:42:24 -0700 (PDT)
+Received: from localhost ([24.51.61.72])
+        by smtp.gmail.com with ESMTPSA id c71-v6sm727703ioe.69.2018.08.07.10.42.23
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 07 Aug 2018 10:42:23 -0700 (PDT)
+Date:   Tue, 7 Aug 2018 11:42:22 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc:     Wolfram Sang <wsa@the-dreams.de>,
+        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        James Hogan <jhogan@kernel.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mips@linux-mips.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Allan Nielsen <allan.nielsen@microsemi.com>
+Subject: Re: [PATCH v3 4/6] i2c: designware: add MSCC Ocelot support
+Message-ID: <20180807174222.GA5720@rob-hp-laptop>
+References: <20180806185412.7210-1-alexandre.belloni@bootlin.com>
+ <20180806185412.7210-5-alexandre.belloni@bootlin.com>
 MIME-Version: 1.0
-References: <CA+njcd3z7-jqLvhsBjNWUO9bDrMr_zd13CD2cPdCS0+_kXdc4g@mail.gmail.com>
- <CAHRSSEwd0Ma+wn3WYCvfWMwg3E8vzYx9CDOOiY63EzH42FZQvg@mail.gmail.com>
-In-Reply-To: <CAHRSSEwd0Ma+wn3WYCvfWMwg3E8vzYx9CDOOiY63EzH42FZQvg@mail.gmail.com>
-From:   Todd Kjos <tkjos@google.com>
-Date:   Tue, 7 Aug 2018 10:40:42 -0700
-Message-ID: <CAHRSSEwdWhUurOkviS0WdcGKj3374r-nCXH3BkQfwFiObyq+4w@mail.gmail.com>
-Subject: [RFC] vruntime updated incorrectly when rt_mutex boots prio?
-To:     LKML <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Paul Turner <pjt@google.com>
-Cc:     John Dias <joaodias@google.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Patrick Bellasi <Patrick.Bellasi@arm.com>,
-        Chris Redpath <Chris.Redpath@arm.com>,
-        Morten Rasmussen <Morten.Rasmussen@arm.com>,
-        Android Kernel Team <kernel-team@android.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180806185412.7210-5-alexandre.belloni@bootlin.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This issue was discovered on a 4.9-based android device, but the
-relevant mainline code appears to be the same. The symptom is that
-over time the some workloads become sluggish resulting in missed
-frames or sluggishness. It appears to be the same issue described in
-http://lists.infradead.org/pipermail/linux-arm-kernel/2018-March/567836.html.
+On Mon, Aug 06, 2018 at 08:54:10PM +0200, Alexandre Belloni wrote:
+> The Microsemi Ocelot I2C controller is a designware IP. It also has a
+> second set of registers to allow tweaking SDA hold time and spike
+> filtering.
+> 
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> ---
+>  .../bindings/i2c/i2c-designware.txt           |  9 ++++-
 
-Here is the scenario: A task is deactivated while still in the fair
-class. The task is then boosted to RT, so rt_mutex_setprio() is
-called. This changes the task to RT and calls check_class_changed(),
-which eventually calls detach_task_cfs_rq(), which is where
-vruntime_normalized() sees that the task's state is TASK_WAKING, which
-results in skipping the subtraction of the rq's min_vruntime from the
-task's vruntime. Later, when the prio is deboosted and the task is
-moved back to the fair class, the fair rq's min_vruntime is added to
-the task's vruntime, resulting in vruntime inflation.
+Please split binding patches.
 
-When investigating the problem, it was found that the change below
-fixes the problem by forcing vruntime_normalized() to return false if
-the sched_class is not CFS (though we're concerned that it might
-introduce other issues):
+>  drivers/i2c/busses/i2c-designware-core.h      |  3 ++
+>  drivers/i2c/busses/i2c-designware-platdrv.c   | 40 +++++++++++++++++++
+>  3 files changed, 50 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/i2c/i2c-designware.txt b/Documentation/devicetree/bindings/i2c/i2c-designware.txt
+> index fbb0a6d8b964..7886f2dc6675 100644
+> --- a/Documentation/devicetree/bindings/i2c/i2c-designware.txt
+> +++ b/Documentation/devicetree/bindings/i2c/i2c-designware.txt
+> @@ -2,7 +2,8 @@
+>  
+>  Required properties :
+>  
+> - - compatible : should be "snps,designware-i2c"
+> + - compatible : should be "snps,designware-i2c" or "mscc,ocelot-i2c" followed by
+> +   "snps,designware-i2c" for fallback
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 91f7b3322a15..267056f2e2ca 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -11125,7 +11125,7 @@ static inline bool vruntime_normalized(struct
-task_struct *p)
-         * - A task which has been woken up by try_to_wake_up() and
-         *   waiting for actually being woken up by sched_ttwu_pending().
-         */
--       if (!se->sum_exec_runtime || p->state == TASK_WAKING)
-+       if (!se->sum_exec_runtime || (p->state == TASK_WAKING &&
-p->sched_class == &fair_sched_class))
-                return true;
+Please reformat to one valid combination per line.
 
-        return false;
-
-Do folks agree that this is incorrect behavior? Does this fix look
-appropriate and safe? Other ideas?
-
--Todd
+>   - reg : Offset and length of the register set for the device
+>   - interrupts : <IRQ> where IRQ is the interrupt number.
+>  
+> @@ -11,8 +12,12 @@ Recommended properties :
+>   - clock-frequency : desired I2C bus clock frequency in Hz.
+>  
+>  Optional properties :
+> + - reg : for "mscc,ocelot-i2c", a second register set to configure the SDA hold
+> +   time, named ICPU_CFG:TWI_DELAY in the datasheet.
+> +
+>   - i2c-sda-hold-time-ns : should contain the SDA hold time in nanoseconds.
+> -   This option is only supported in hardware blocks version 1.11a or newer.
+> +   This option is only supported in hardware blocks version 1.11a or newer and
+> +   on Microsemi SoCs ("mscc,ocelot-i2c" compatible).
+>  
+>   - i2c-scl-falling-time-ns : should contain the SCL falling time in nanoseconds.
+>     This value which is by default 300ns is used to compute the tLOW period.
