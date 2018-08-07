@@ -6,97 +6,72 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8E0EC46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 12:35:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57CB6C46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 12:43:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F27C20989
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 12:35:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F27C20989
+	by mail.kernel.org (Postfix) with ESMTP id 04DA720847
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 12:43:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04DA720847
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389197AbeHGOuD (ORCPT
+        id S2388911AbeHGO5p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 10:50:03 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:42637 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732703AbeHGOuD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 10:50:03 -0400
-Received: by mail-wr1-f68.google.com with SMTP id e7-v6so15604911wrs.9
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 05:35:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=bw3qLRMbKJ6HZRAJ9WL0GBg9v0Vg4HYIc5ZCbt6hI0U=;
-        b=oZLtQMv6t4obgsASOPnxLkZmE9tMmAOI1h56FCtMG8msFAxrCii54MqSj0ZMzWs4Fp
-         qkAAV/o1gg6HfzUczn6PYmufoFDkmoMigfesuEYE83LJe6GG4/5KV8zV1c3gODf4IJsW
-         7Rk0neZw1kuhHZP1lKapHhWA2hB19VSk7DuMWAOJM7j2yY4IOBj3MiAReoTJ2bCjbJf1
-         CGeV9pu/z+QxlaXrRSp4/wU7bcWM8v2pdDU2odmCvusOTj/X7u8MhSE0ZxeTo99BO5su
-         e2LjbEedAAozdGwIVpBiLGvS6yp0123vLmyDxs8yj0NKEJpkRkXBNjQ9p9YWJ6rpsmrW
-         HGzg==
-X-Gm-Message-State: AOUpUlFag4K1UfCi0+Xs8lVTJ9zgQZMyXqKQIhPkc4CPsir6CkXph3JC
-        wHTxiXQPnpJuWNC5TfjShMCUhw==
-X-Google-Smtp-Source: AAOMgpe2NKtCYU3vaOZ8Y83UK+yPBVPEVjtZYF6FsvN+vcROZ3zQf6nvYH76m92VHME2MnobeCR0BA==
-X-Received: by 2002:adf:eb4c:: with SMTP id u12-v6mr13215609wrn.174.1533645354613;
-        Tue, 07 Aug 2018 05:35:54 -0700 (PDT)
-Received: from localhost.localdomain (p200300EF2BD31703FE367972448AED7A.dip0.t-ipconnect.de. [2003:ef:2bd3:1703:fe36:7972:448a:ed7a])
-        by smtp.gmail.com with ESMTPSA id b2-v6sm2001085wmh.3.2018.08.07.05.35.52
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 07 Aug 2018 05:35:53 -0700 (PDT)
-Date:   Tue, 7 Aug 2018 14:35:50 +0200
-From:   Juri Lelli <juri.lelli@redhat.com>
-To:     Patrick Bellasi <patrick.bellasi@arm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>,
+        Tue, 7 Aug 2018 10:57:45 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43820 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2387789AbeHGO5p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 10:57:45 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4ACE58197001;
+        Tue,  7 Aug 2018 12:43:36 +0000 (UTC)
+Received: from krava (unknown [10.43.17.214])
+        by smtp.corp.redhat.com (Postfix) with SMTP id F1A4F2166BA0;
+        Tue,  7 Aug 2018 12:43:34 +0000 (UTC)
+Date:   Tue, 7 Aug 2018 14:43:34 +0200
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Cc:     linux-kernel@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
-        Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [PATCH v3 01/14] sched/core: uclamp: extend sched_setattr to
- support utilization clamping
-Message-ID: <20180807123550.GA3062@localhost.localdomain>
-References: <20180806163946.28380-1-patrick.bellasi@arm.com>
- <20180806163946.28380-2-patrick.bellasi@arm.com>
+        Ingo Molnar <mingo@redhat.com>
+Subject: Re: [PATCH 1/2] perf map: synthesize maps only for thread group
+ leader
+Message-ID: <20180807124334.GD7716@krava>
+References: <153363294102.396323.6277944760215058174.stgit@buzz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180806163946.28380-2-patrick.bellasi@arm.com>
+In-Reply-To: <153363294102.396323.6277944760215058174.stgit@buzz>
 User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Tue, 07 Aug 2018 12:43:36 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Tue, 07 Aug 2018 12:43:36 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/08/18 17:39, Patrick Bellasi wrote:
+On Tue, Aug 07, 2018 at 12:09:01PM +0300, Konstantin Khlebnikov wrote:
+> Threads share map_groups, all map events are merged into it.
+> 
+> Thus we could send mmaps only for thread group leader.
+> Otherwise it took ages to attach and record something from
+> processes with many vmas and threads.
+> 
+> Thread group leader could be already dead,
+> but it seems perf cannot handle this case anyway.
 
-[...]
+nice, could mention in the changelog that we actualy
+synthesize the group leader (if we found one) for the
+thread even if it's not present in the thread_map,
+so the process maps are always in data
 
-> @@ -4218,6 +4245,13 @@ static int __sched_setscheduler(struct task_struct *p,
->  			return retval;
->  	}
->  
-> +	/* Configure utilization clamps for the task */
-> +	if (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP) {
-> +		retval = __setscheduler_uclamp(p, attr);
-> +		if (retval)
-> +			return retval;
-> +	}
-> +
+Acked-by: Jiri Olsa <jolsa@kernel.org>
 
-IIUC, this is available to root and non-root users. In the latter case,
-how do we cope with the fact that some user might occupy all the
-available clamping groups configured for the system?
-
-Best,
-
-- Juri
+thanks,
+jirka
