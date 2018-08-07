@@ -2,108 +2,140 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4904C46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 16:47:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6018C46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 16:49:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 808E6216ED
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 16:47:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 51B8E2152E
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 16:49:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mLpLeNmQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 808E6216ED
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oQjRxik/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51B8E2152E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388992AbeHGTCI (ORCPT
+        id S2389260AbeHGTEg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 15:02:08 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:37070 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732347AbeHGTCH (ORCPT
+        Tue, 7 Aug 2018 15:04:36 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:34236 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389136AbeHGTEg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 15:02:07 -0400
-Received: by mail-pf1-f196.google.com with SMTP id a26-v6so8860689pfo.4
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 09:46:58 -0700 (PDT)
+        Tue, 7 Aug 2018 15:04:36 -0400
+Received: by mail-lj1-f196.google.com with SMTP id f8-v6so13999482ljk.1;
+        Tue, 07 Aug 2018 09:49:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wvjdyjZFysYghJFwZIyIQ9LDMH4n0lBwqwbJTUJTCBY=;
-        b=mLpLeNmQ4EFaCigGlTjVRng1VJioQ1kyTzhHl6cEW9wrCBppl7KYfn6+fNDwD9MKid
-         bGZtlzKD0xZ0AtJj9TgYiMZU/pKrS2UUc+MftRbHdjkJzwqjhd5NzPVfZp7A6exMjRyc
-         wXxrQF8m/6j1p7zIRiIUfarycSR1FYIQqZ38K+iq6LRW1VmElyGkaeEt94K5cOA/k5NO
-         pgyO0yQLTV7bsE2P8bSTMxpAtOs4ts+e2klopry2Rn+7PXHRoY2rUXE6n2kXB/UPcYI6
-         uzdCFj1O6UhQiayXuOW1PGwoM5BK38vuEFygBNML1Ei4sxb2xhhX7Io0KvoQEwXJ0sF7
-         y8Lg==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=1+Db8TaKs+BhtQSpksdvvOhIqZRZ+v0flkYV64y5N9M=;
+        b=oQjRxik/wv9X/yRtQPw4gK4O9SQGQ/SyzwYJcekYnkzE4/oqfaE+hgV0GnadjPR96a
+         Jx1rfPO+tt/JZj/lHUsBOgjWCfPvx+7n/BeTfjyRsNy7T7UPXsW9LmmJUKYhBUnRL5RX
+         /tFX8DUIViG87BqOomgTTpvMljOVFe5sbW18gvTYcJcAPAIzr1gQQ/CFcVLHReCB4yaY
+         jlFstgK8rn3yj5gpzv2bT2prOUL+DAk9vYCeFXmNHO+AJziRX8g2MNF+Lkut5KDPjT0/
+         ZiRon6w+pDT1pq2kzmXbqcfuu00crh5PFCb2vjhl8WPCJIgs346UPha0cmXlvBIg+AVE
+         RyRA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wvjdyjZFysYghJFwZIyIQ9LDMH4n0lBwqwbJTUJTCBY=;
-        b=isaW7apTbb52J6doFPWrYYo7/2mgdVxezYrYRxWJkqKXou1lPmFxeXGAZoFDjar1ig
-         NUAMmJcRDKYqgsZmqHPyzOgRCCMLJCTKerMuzLnDx13bFtbj/gXySaoow3INWvROTYNe
-         7HlE1tYg0Dzipu0tQH0AKnV+BVrFxD0ftZTx+27fJLGcrfa5tEUsfYY4jHifCt32BOWk
-         Itr79FiSmk3nfPQV2+ZUrlN2NLAYPbyqNCX7oJkv6AeqDY/7drp+xhfFEoNub25qMplT
-         z9vMd+4Fi8TGXIVm8Lto58i3q0+1JxjvCtXL5gpgPD5p22QYentxh5ArLstmLQS7gb6y
-         X15g==
-X-Gm-Message-State: AOUpUlGaopWd7zjeBNVWCRa1x9PHaxjiFzZ3F3cVB7boGI+A9krGDs8o
-        81EJJunxJSp1M/H/Ey/i9QqZrQcIr2SDwW2QbNbFuw==
-X-Google-Smtp-Source: AAOMgpdjaobo9pzHe+NBUnpZn2K7gnzFQ46BikPHiFTgYIdh3frgVf1+mLvET+dC/3IGO5FOOBT2wawNiPYNELCVYuY=
-X-Received: by 2002:a63:e914:: with SMTP id i20-v6mr19500676pgh.10.1533660417971;
- Tue, 07 Aug 2018 09:46:57 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=1+Db8TaKs+BhtQSpksdvvOhIqZRZ+v0flkYV64y5N9M=;
+        b=Z0YeLNd6KcfwFC38DytVdaayOY7RuwbRa8djpxHigtZHHgJXhnZ2cbEAMfX4rq4eCB
+         47Wv5UPPoc71k+OTAi0glZ5KZQS9uujT+oDFf57/xwpfrGJHK7KQekDzw3fg85Vj4PgN
+         xoNWRtQlQXpBpF6+thK00HYvKj/45nyh0t+otEMeU6l0t/cUdNRLczWs4yA2s8xWLdrf
+         5WKmBoNNGKurNfrujR5srghnATi+EI9FLWbwogDJ/I1naLn+vij2fvyDBW7qwoMhd0PZ
+         aHIFaYkHIHUnqKk2tq9J+Swe7r3oSnEvc/lPvd/5z3Gy+26koA5ehmoQajH4lOiz5D6K
+         depQ==
+X-Gm-Message-State: AOUpUlEvIJ99K3vj5qTsT62bjkpJ2KFNDvjUfsJAu94r31j1Rg8rPegu
+        I03YC0A3q/nqB7jcVk8GJxc=
+X-Google-Smtp-Source: AAOMgpd9qPwyhBtnOeilr8p8wBWG07o9TVPftN4pkwSt7BOSvppKhSB5ATrC7PC9QG1CQQezontrFQ==
+X-Received: by 2002:a2e:2096:: with SMTP id g22-v6mr15858660lji.37.1533660563644;
+        Tue, 07 Aug 2018 09:49:23 -0700 (PDT)
+Received: from z50.localnet (93-181-165-181.internetia.net.pl. [93.181.165.181])
+        by smtp.gmail.com with ESMTPSA id q16-v6sm314115ljj.68.2018.08.07.09.49.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 07 Aug 2018 09:49:22 -0700 (PDT)
+From:   Janusz Krzysztofik <jmkrzyszt@gmail.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?ISO-8859-1?Q?Miqu=E8l?= Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Mark Vasut <marek.vasut@gmail.com>,
+        ext Tony Lindgren <tony@atomide.com>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux-OMAP <linux-omap@vger.kernel.org>,
+        linux-mtd@lists.infradead.org, linux-doc@vger.kernel.org,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Subject: Re: [RFC PATCH v2 09/12] gpiolib: Identify GPIO descriptor arrays with direct mapping
+Date:   Tue, 07 Aug 2018 18:50:22 +0200
+Message-ID: <1793769.2WP40jSPqy@z50>
+In-Reply-To: <CACRpkdZtuU6zXBz6UqprE7-31vW9-1ZabFjyzHBgWaTgmqkbbQ@mail.gmail.com>
+References: <20180718235710.18242-1-jmkrzyszt@gmail.com> <20180806222918.12644-10-jmkrzyszt@gmail.com> <CACRpkdZtuU6zXBz6UqprE7-31vW9-1ZabFjyzHBgWaTgmqkbbQ@mail.gmail.com>
 MIME-Version: 1.0
-References: <20180803170550.164688-1-ndesaulniers@google.com>
- <tip-208cbb32558907f68b3b2a081ca2337ac3744794@git.kernel.org>
- <CAKwvOdmxaE7p-fgaaeCE17bbTf0iYmHQgWT2D6FM7U5fwUoN1Q@mail.gmail.com> <alpine.DEB.2.21.1808070924170.1788@nanos.tec.linutronix.de>
-In-Reply-To: <alpine.DEB.2.21.1808070924170.1788@nanos.tec.linutronix.de>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Tue, 7 Aug 2018 09:46:46 -0700
-Message-ID: <CAKwvOdnXqw_ZXD2tnPYdVdRtdKqi4hK5mLZ7ELyXMhrbNzyWfw@mail.gmail.com>
-Subject: Re: [tip:x86/urgent] x86/irqflags: Provide a declaration for native_save_fl
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     hpa@zytor.com, david.laight@aculab.com,
-        LKML <linux-kernel@vger.kernel.org>, jdelvare@suse.de,
-        Ingo Molnar <mingo@kernel.org>,
-        linux-tip-commits@vger.kernel.org, sedat.dilek@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 7, 2018 at 12:29 AM Thomas Gleixner <tglx@linutronix.de> wrote:
->
-> On Mon, 6 Aug 2018, Nick Desaulniers wrote:
-> > On Sun, Aug 5, 2018 at 1:33 PM tip-bot for Nick Desaulniers
-> > <tipbot@zytor.com> wrote:
-> > > Cc: stable@vger.kernel.org
-> >
-> > Not sure if this was going to be cleaned up in an automated way, but
-> > looks like this commit message drops the comment to stable as to how
-> > far back it should go:
-> >
-> > # 4.17, 4.14, 4.9, 4.4
->
-> The Fixes tag is enough. If the upstream commit was backported, then the
-> tools of the stable folks will find it and know exactly how far it needs to
-> go back.
+Hi Linus,
 
-Oh, cool.
-
-> > also, there were tested by's reported:
+On Tuesday, August 7, 2018 1:29:43 AM CEST Linus Walleij wrote:
+> Hi Janusz!
+> 
+> On Tue, Aug 7, 2018 at 12:29 AM Janusz Krzysztofik <jmkrzyszt@gmail.com> 
+wrote:
+> 
+> > Certain GPIO array lookup results may map directly to GPIO pins of a
+> > single GPIO chip in hardware order.  If that condition is recognized
+> > and handled efficiently, significant performance gain of get/set array
+> > functions may be possible.
 > >
-> > Tested-by: David Laight <david.laight@acuab.com>
-> > Tested-by: Sedat Dilek <sedat.dilek@gmail.com>
->
-> Which came in after I applied it....
+> > While processing a request for an array of GPIO descriptors, verify if
+> > the descriptors just collected represent consecutive pins of a single
+> > GPIO chip.  Pass that information with the array to the caller so it
+> > can benefit from enhanced performance as soon as bitmap based get/set
+> > array functions which can make efficient use of that are available.
+> >
+> > Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+> (...)
+> >  This function returns a struct gpio_descs which contains an array of
+> > -descriptors::
+> > +descriptors.  It may also contain a valid descriptor of a single GPIO 
+chip in
+> > +case the array strictly matches pin hardware layout of the chip::
+> >
+> >         struct gpio_descs {
+> >                 unsigned int ndescs;
+> >                 struct gpio_desc *desc[];
+> > +               struct gpio_chip *chip;
+> 
+> This must be motivated: if the only purpose is to indicate to the consumer 
+that
+> all GPIOs are on the same chip, why not just have a
+> 
+> bool all_on_same_chip;
+> 
+> That you set to true if these are all on the same chip?
 
-I've seen other maintainers revise commit messages before sending pull
-requests along, but I guess that's problematic as anyone else who has
-pulled before the revision would then have a merge conflict.
--- 
+My approach would probably save one or two instructions per get/set call, but 
+I'm not stuck to it and will be happy to find a better solution.
+
+How about folding the chip descriptor inside an additional structure, private 
+to drivers, with internals not revealed to consumers?
+
 Thanks,
-~Nick Desaulniers
+Janusz
+
+
