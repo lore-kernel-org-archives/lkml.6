@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B5D6C46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:56:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7170FC46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:56:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 075282151D
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:56:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 075282151D
+	by mail.kernel.org (Postfix) with ESMTP id 3791E2172F
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:56:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3791E2172F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390504AbeHGVM1 (ORCPT
+        id S2390512AbeHGVMa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 17:12:27 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33984 "EHLO
+        Tue, 7 Aug 2018 17:12:30 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33994 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732347AbeHGVM0 (ORCPT
+        with ESMTP id S1732347AbeHGVM3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 17:12:26 -0400
+        Tue, 7 Aug 2018 17:12:29 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D821ED0E;
-        Tue,  7 Aug 2018 18:56:42 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D060ED0E;
+        Tue,  7 Aug 2018 18:56:45 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ganapathi Bhat <gbhat@marvell.com>,
+        stable@vger.kernel.org, Eyal Reizer <eyalr@ti.com>,
         Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 17/85] mwifiex: handle race during mwifiex_usb_disconnect
-Date:   Tue,  7 Aug 2018 20:51:19 +0200
-Message-Id: <20180807172357.989751204@linuxfoundation.org>
+Subject: [PATCH 3.18 18/85] wlcore: sdio: check for valid platform device data before suspend
+Date:   Tue,  7 Aug 2018 20:51:20 +0200
+Message-Id: <20180807172358.024340257@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180807172357.357252052@linuxfoundation.org>
 References: <20180807172357.357252052@linuxfoundation.org>
@@ -51,47 +51,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ganapathi Bhat <gbhat@marvell.com>
+From: Eyal Reizer <eyalreizer@gmail.com>
 
-[ Upstream commit b817047ae70c0bd67b677b65d0d69d72cd6e9728 ]
+[ Upstream commit 6e91d48371e79862ea2c05867aaebe4afe55a865 ]
 
-Race condition is observed during rmmod of mwifiex_usb:
+the wl pointer can be null In case only wlcore_sdio is probed while
+no WiLink module is successfully probed, as in the case of mounting a
+wl12xx module while using a device tree file configured with wl18xx
+related settings.
+In this case the system was crashing in wl1271_suspend() as platform
+device data is not set.
+Make sure wl the pointer is valid before using it.
 
-1. The rmmod thread will call mwifiex_usb_disconnect(), download
-   SHUTDOWN command and do wait_event_interruptible_timeout(),
-   waiting for response.
-
-2. The main thread will handle the response and will do a
-   wake_up_interruptible(), unblocking rmmod thread.
-
-3. On getting unblocked, rmmod thread  will make rx_cmd.urb = NULL in
-   mwifiex_usb_free().
-
-4. The main thread will try to resubmit rx_cmd.urb in
-   mwifiex_usb_submit_rx_urb(), which is NULL.
-
-To fix, wait for main thread to complete before calling
-mwifiex_usb_free().
-
-Signed-off-by: Ganapathi Bhat <gbhat@marvell.com>
+Signed-off-by: Eyal Reizer <eyalr@ti.com>
 Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/mwifiex/usb.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/net/wireless/ti/wlcore/sdio.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/drivers/net/wireless/mwifiex/usb.c
-+++ b/drivers/net/wireless/mwifiex/usb.c
-@@ -556,6 +556,9 @@ static void mwifiex_usb_disconnect(struc
- 					 MWIFIEX_FUNC_SHUTDOWN);
- 	}
+--- a/drivers/net/wireless/ti/wlcore/sdio.c
++++ b/drivers/net/wireless/ti/wlcore/sdio.c
+@@ -342,6 +342,11 @@ static int wl1271_suspend(struct device
+ 	mmc_pm_flag_t sdio_flags;
+ 	int ret = 0;
  
-+	if (adapter->workqueue)
-+		flush_workqueue(adapter->workqueue);
++	if (!wl) {
++		dev_err(dev, "no wilink module was probed\n");
++		goto out;
++	}
 +
- 	mwifiex_usb_free(card);
+ 	dev_dbg(dev, "wl1271 suspend. wow_enabled: %d\n",
+ 		wl->wow_enabled);
  
- 	dev_dbg(adapter->dev, "%s: removing card\n", __func__);
 
 
