@@ -2,115 +2,62 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C535C46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 19:38:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BA6AC46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 19:38:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1148B2172A
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 19:38:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1148B2172A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=anholt.net
+	by mail.kernel.org (Postfix) with ESMTP id 19F352083C
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 19:38:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19F352083C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390361AbeHGVxx (ORCPT
+        id S2390403AbeHGVy1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 17:53:53 -0400
-Received: from anholt.net ([50.246.234.109]:46578 "EHLO anholt.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389070AbeHGVxx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 17:53:53 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id 5919C10A18BC;
-        Tue,  7 Aug 2018 12:37:58 -0700 (PDT)
-X-Virus-Scanned: Debian amavisd-new at anholt.net
-Received: from anholt.net ([127.0.0.1])
-        by localhost (kingsolver.anholt.net [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id 7LmCL_nDFdw8; Tue,  7 Aug 2018 12:37:57 -0700 (PDT)
-Received: from eliezer.anholt.net (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id F2B0510A01B1;
-        Tue,  7 Aug 2018 12:37:56 -0700 (PDT)
-Received: by eliezer.anholt.net (Postfix, from userid 1000)
-        id 6EDC52FE4642; Tue,  7 Aug 2018 12:37:56 -0700 (PDT)
-From:   Eric Anholt <eric@anholt.net>
-To:     dri-devel@lists.freedesktop.org
-Cc:     linux-kernel@vger.kernel.org, Eric Anholt <eric@anholt.net>,
-        Boris Brezillon <boris.brezillon@bootlin.com>
-Subject: [PATCH] drm/vc4: Make sure to emit a tile coordinates between two MSAA loads.
-Date:   Tue,  7 Aug 2018 12:37:56 -0700
-Message-Id: <20180807193756.9646-1-eric@anholt.net>
-X-Mailer: git-send-email 2.18.0
+        Tue, 7 Aug 2018 17:54:27 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:49262 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731069AbeHGVy1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 17:54:27 -0400
+Received: from localhost (71-36-117-41.ptld.qwest.net [71.36.117.41])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 9961C13EABC31;
+        Tue,  7 Aug 2018 12:38:32 -0700 (PDT)
+Date:   Tue, 07 Aug 2018 12:38:32 -0700 (PDT)
+Message-Id: <20180807.123832.127388149108997730.davem@davemloft.net>
+To:     colin.king@canonical.com
+Cc:     sgoutham@cavium.com, rric@kernel.org,
+        linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: thunderx: check for failed allocation lmac->dmacs
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20180806165045.15707-1-colin.king@canonical.com>
+References: <20180806165045.15707-1-colin.king@canonical.com>
+X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 07 Aug 2018 12:38:32 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The HW only executes a load once the tile coordinates packet happens,
-and only tracks one at a time, so by emitting our two MSAA loads back
-to back we would end up with an undefined color or Z buffer.
+From: Colin King <colin.king@canonical.com>
+Date: Mon,  6 Aug 2018 17:50:45 +0100
 
-Fixes dEQP-EGL.functional.render.multi_context.gles2.rgb888_window
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The allocation of lmac->dmacs is not being checked for allocation
+> failure. Add the check.
+> 
+> Fixes: 3a34ecfd9d3f ("net: thunderx: add MAC address filter tracking for LMAC")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Eric Anholt <eric@anholt.net>
-Cc: Boris Brezillon <boris.brezillon@bootlin.com>
----
- drivers/gpu/drm/vc4/vc4_render_cl.c | 23 +++++++++++------------
- 1 file changed, 11 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/gpu/drm/vc4/vc4_render_cl.c b/drivers/gpu/drm/vc4/vc4_render_cl.c
-index 273984f71ae2..3c918eeaf56e 100644
---- a/drivers/gpu/drm/vc4/vc4_render_cl.c
-+++ b/drivers/gpu/drm/vc4/vc4_render_cl.c
-@@ -148,6 +148,12 @@ static void emit_tile(struct vc4_exec_info *exec,
- 	}
- 
- 	if (setup->zs_read) {
-+		if (setup->color_read) {
-+			/* Exec previous load. */
-+			vc4_tile_coordinates(setup, x, y);
-+			vc4_store_before_load(setup);
-+		}
-+
- 		if (args->zs_read.flags &
- 		    VC4_SUBMIT_RCL_SURFACE_READ_IS_FULL_RES) {
- 			rcl_u8(setup, VC4_PACKET_LOAD_FULL_RES_TILE_BUFFER);
-@@ -156,12 +162,6 @@ static void emit_tile(struct vc4_exec_info *exec,
- 						    &args->zs_read, x, y) |
- 				VC4_LOADSTORE_FULL_RES_DISABLE_COLOR);
- 		} else {
--			if (setup->color_read) {
--				/* Exec previous load. */
--				vc4_tile_coordinates(setup, x, y);
--				vc4_store_before_load(setup);
--			}
--
- 			rcl_u8(setup, VC4_PACKET_LOAD_TILE_BUFFER_GENERAL);
- 			rcl_u16(setup, args->zs_read.bits);
- 			rcl_u32(setup, setup->zs_read->paddr +
-@@ -291,16 +291,15 @@ static int vc4_create_rcl_bo(struct drm_device *dev, struct vc4_exec_info *exec,
- 		}
- 	}
- 	if (setup->zs_read) {
-+		if (setup->color_read) {
-+			loop_body_size += VC4_PACKET_TILE_COORDINATES_SIZE;
-+			loop_body_size += VC4_PACKET_STORE_TILE_BUFFER_GENERAL_SIZE;
-+		}
-+
- 		if (args->zs_read.flags &
- 		    VC4_SUBMIT_RCL_SURFACE_READ_IS_FULL_RES) {
- 			loop_body_size += VC4_PACKET_LOAD_FULL_RES_TILE_BUFFER_SIZE;
- 		} else {
--			if (setup->color_read &&
--			    !(args->color_read.flags &
--			      VC4_SUBMIT_RCL_SURFACE_READ_IS_FULL_RES)) {
--				loop_body_size += VC4_PACKET_TILE_COORDINATES_SIZE;
--				loop_body_size += VC4_PACKET_STORE_TILE_BUFFER_GENERAL_SIZE;
--			}
- 			loop_body_size += VC4_PACKET_LOAD_TILE_BUFFER_GENERAL_SIZE;
- 		}
- 	}
--- 
-2.18.0
-
+Applied.
