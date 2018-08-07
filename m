@@ -2,551 +2,199 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68092C46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 22:35:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC60EC46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 22:35:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC5A2219DB
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 22:35:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9CF37219DD
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 22:35:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="i3MuUlI4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC5A2219DB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="I26pjw5d"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CF37219DD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727069AbeHHAvc (ORCPT
+        id S1727131AbeHHAvg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 20:51:32 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:39155 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726823AbeHHAvc (ORCPT
+        Tue, 7 Aug 2018 20:51:36 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:44426 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726745AbeHHAvf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 20:51:32 -0400
-Received: by mail-pf1-f195.google.com with SMTP id j8-v6so116956pff.6
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 15:34:58 -0700 (PDT)
+        Tue, 7 Aug 2018 20:51:35 -0400
+Received: by mail-pg1-f196.google.com with SMTP id r1-v6so96708pgp.11
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 15:35:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=JnCyYl2qJIyKQtwqNrCBsdauwGkmtIA6gC8QrFghomQ=;
-        b=i3MuUlI48YHvoQzQBdWBBkWVpig4XNautGYco/ZRb9L6yeDBplgTVLy00O96FeqBvx
-         ZESnVJe6ibdifZDAjp9mwui4imAh8V15fh5IVC1BbncTFLW72x87MH5xz/FA2zLeFtUw
-         6DJKNfvPzwFDPf9MllyuVUtGESEYaCmqQRauo=
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=7uFWkrPEYepwRsZTpZ2ZfcbtcOmdzkneDblSQ8wSZE4=;
+        b=I26pjw5dSwUa/Hrn/Jt+KkYh47o8wVNs4FQw75rodF5Hmkeokx7NzFT8T68kxu71VS
+         wqlfWGJTN6YQNXrad7xwAUo2LGvJ56aaqYJ3dJgnbhJN7xL9w3ZNC+xEb55Vp+o6Vj1F
+         +N3yhW5hhdQv5DdEJpGbM0ObUV9PYv3WxgKfe8V4iQZO80dmPZstMLF0EH0XPGAH0V1d
+         boq5I0tvuJrYZbdKVUpEIjojFlD+cqnwSMQ5WvMfJFnNlPO4B25yMoi4QH5r+c7B0YvZ
+         BY4Doc5PMfJ/gFWJWigAMxr2m3a4qKviqXy3UrTqH75EVH3knjX2oVT2bWDzvt/89A9U
+         isJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=JnCyYl2qJIyKQtwqNrCBsdauwGkmtIA6gC8QrFghomQ=;
-        b=El3KZmQ5i/cLK9HLYFwC7n4YCZFZtcq/GXLLQYBFiND8WB5MX0OJ2PwJxfez2kGZfw
-         S5d1RMDJFtTqpaOclh0guwEK48q3h9owD5S5Veo89D/z82cbJ4U/lXIz+gT0FDjAQV4m
-         yGb5ZydkuDNHDqogVm9vZAN2XbkPj9zvCSRZPKzXGOHuNs/cnkZiB+PPjYWfQImSRNaC
-         poDSbQARHWwET+dmpIiXR2c4Ab9geRpvPRGabdsI+kSOkI9Y9SZ7CddC8eXdIJsUN+It
-         n+QVYr45ugT83VuB8zjA54acqTttGQVKZbuROsB37XiaOeahwG890WR9gT75ad4lxaOY
-         EJ8w==
-X-Gm-Message-State: AOUpUlEe3VoF+8CQdE0vNy+dut8c7iRI17bagh2klw2P4URgQ4Y7oRD+
-        pT/ClThIt035/oEaTiuzk4HQQw==
-X-Google-Smtp-Source: AA+uWPzVoIfz8AveDJ8JpEVes9MaeaZW5T4MdJKPhjUPR6yzEfMAidGg6vwVTigTHymINTpVvEZQzA==
-X-Received: by 2002:a62:cac5:: with SMTP id y66-v6mr235798pfk.187.1533681298245;
-        Tue, 07 Aug 2018 15:34:58 -0700 (PDT)
-Received: from localhost ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
-        by smtp.gmail.com with ESMTPSA id x87-v6sm4598317pfa.143.2018.08.07.15.34.57
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=7uFWkrPEYepwRsZTpZ2ZfcbtcOmdzkneDblSQ8wSZE4=;
+        b=gVrozLmDNwKCbE8POwBoWqFmIDkkzUyJaGSjbQLq0HQYtbQJSplKvWCsA3AjMf4QFg
+         nVEx945EIq4zF9zDIOCqO1bwO8l9Dws+H2RQdc8201nIRBAVR/DjIQopzZBXjega/Gk+
+         90wn0ueQFkbS12JjEqbVZBbw+4SHF2RSUN843/EhWOWxUEVCI9gMRd+cmqOM4BdJULdH
+         hnuAxGqFwORgn/vxL8vlhrC2QQRSrVsF0GVrRg/bET+D7yvnRkgly2DIJEqUANwmyEep
+         bZeiM8wscvaX7VtS6X1zJTejCdUuOqrLXbszXmNMThDHU1WNfYd7AyBY0gCgoOy3a/3F
+         5trA==
+X-Gm-Message-State: AOUpUlF0lHETeuyfs8SqRNLF7Fqo5eWG8EroFgzhfeY4XYJDbqYmQ5R7
+        dfd0xaD/3YrRRD32usQUlO/54A==
+X-Google-Smtp-Source: AA+uWPyT8k6F1KmFoTMffFhmMHPzrIi8bRAYv0eKP9CMA3zP/0qVyBDWAEGT4c6DAbGHq0o3OB+s9A==
+X-Received: by 2002:a65:5a49:: with SMTP id z9-v6mr217785pgs.244.1533681300088;
+        Tue, 07 Aug 2018 15:35:00 -0700 (PDT)
+Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
+        by smtp.gmail.com with ESMTPSA id c131-v6sm2607743pga.69.2018.08.07.15.34.59
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 07 Aug 2018 15:34:57 -0700 (PDT)
-Date:   Tue, 7 Aug 2018 15:34:56 -0700
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Chanwoo Choi <cw00.choi@samsung.com>
-Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Brian Norris <briannorris@chromium.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Benson Leung <bleung@chromium.org>,
-        Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH v5 05/12] PM / devfreq: Add support for policy notifiers
-Message-ID: <20180807223456.GF160295@google.com>
-References: <20180801170824.GJ68975@google.com>
- <5B626563.1090302@samsung.com>
- <20180802231343.GS68975@google.com>
- <CGME20180802234831epcas5p3951e8f64381a27d40865d339878751d1@epcas5p3.samsung.com>
- <20180802234820.GU68975@google.com>
- <5B639E76.6050901@samsung.com>
- <20180806192111.GB160295@google.com>
- <5B68CC34.8040102@samsung.com>
- <20180807002340.GC160295@google.com>
- <5B68F769.10302@samsung.com>
+        Tue, 07 Aug 2018 15:34:59 -0700 (PDT)
+Date:   Tue, 7 Aug 2018 15:34:58 -0700 (PDT)
+From:   David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To:     Roman Gushchin <guro@fb.com>
+cc:     linux-mm@kvack.org, Michal Hocko <mhocko@suse.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Tejun Heo <tj@kernel.org>, kernel-team@fb.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/3] introduce memory.oom.group
+In-Reply-To: <20180807003020.GA21483@castle.DHCP.thefacebook.com>
+Message-ID: <alpine.DEB.2.21.1808071519030.237317@chino.kir.corp.google.com>
+References: <20180730180100.25079-1-guro@fb.com> <alpine.DEB.2.21.1807301847000.198273@chino.kir.corp.google.com> <20180731235135.GA23436@castle.DHCP.thefacebook.com> <alpine.DEB.2.21.1808011437350.38896@chino.kir.corp.google.com>
+ <20180801224706.GA32269@castle.DHCP.thefacebook.com> <alpine.DEB.2.21.1808061405100.43071@chino.kir.corp.google.com> <20180807003020.GA21483@castle.DHCP.thefacebook.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5B68F769.10302@samsung.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Chanwoo,
+On Mon, 6 Aug 2018, Roman Gushchin wrote:
 
-On Tue, Aug 07, 2018 at 10:35:37AM +0900, Chanwoo Choi wrote:
-> Hi Matthias,
-> 
-> On 2018년 08월 07일 09:23, Matthias Kaehlcke wrote:
-> > Hi Chanwoo,
+> > In a cgroup-aware oom killer world, yes, we need the ability to specify 
+> > that the usage of the entire subtree should be compared as a single 
+> > entity with other cgroups.  That is necessary for user subtrees but may 
+> > not be necessary for top-level cgroups depending on how you structure your 
+> > unified cgroup hierarchy.  So it needs to be configurable, as you suggest, 
+> > and you are correct it can be different than oom.group.
 > > 
-> > On Tue, Aug 07, 2018 at 07:31:16AM +0900, Chanwoo Choi wrote:
-> >> Hi Matthias,
-> >>
-> >> On 2018년 08월 07일 04:21, Matthias Kaehlcke wrote:
-> >>> Hi Chanwoo,
-> >>>
-> >>> On Fri, Aug 03, 2018 at 09:14:46AM +0900, Chanwoo Choi wrote:
-> >>>> Hi Matthias,
-> >>>>
-> >>>> On 2018년 08월 03일 08:48, Matthias Kaehlcke wrote:
-> >>>>> On Thu, Aug 02, 2018 at 04:13:43PM -0700, Matthias Kaehlcke wrote:
-> >>>>>> Hi Chanwoo,
-> >>>>>>
-> >>>>>> On Thu, Aug 02, 2018 at 10:58:59AM +0900, Chanwoo Choi wrote:
-> >>>>>>> Hi Matthias,
-> >>>>>>>
-> >>>>>>> On 2018년 08월 02일 02:08, Matthias Kaehlcke wrote:
-> >>>>>>>> Hi Chanwoo,
-> >>>>>>>>
-> >>>>>>>> On Wed, Aug 01, 2018 at 10:22:16AM +0900, Chanwoo Choi wrote:
-> >>>>>>>>> On 2018년 08월 01일 04:39, Matthias Kaehlcke wrote:
-> >>>>>>>>>> On Mon, Jul 16, 2018 at 10:50:50AM -0700, Matthias Kaehlcke wrote:
-> >>>>>>>>>>> On Thu, Jul 12, 2018 at 05:44:33PM +0900, Chanwoo Choi wrote:
-> >>>>>>>>>>>> Hi Matthias,
-> >>>>>>>>>>>>
-> >>>>>>>>>>>> On 2018년 07월 07일 02:53, Matthias Kaehlcke wrote:
-> >>>>>>>>>>>>> Hi Chanwoo,
-> >>>>>>>>>>>>>
-> >>>>>>>>>>>>> On Wed, Jul 04, 2018 at 03:41:46PM +0900, Chanwoo Choi wrote:
-> >>>>>>>>>>>>>
-> >>>>>>>>>>>>>> Firstly,
-> >>>>>>>>>>>>>> I'm not sure why devfreq needs the devfreq_verify_within_limits() function.
-> >>>>>>>>>>>>>>
-> >>>>>>>>>>>>>> devfreq already used the OPP interface as default. It means that
-> >>>>>>>>>>>>>> the outside of 'drivers/devfreq' can disable/enable the frequency
-> >>>>>>>>>>>>>> such as drivers/thermal/devfreq_cooling.c. Also, when some device
-> >>>>>>>>>>>>>> drivers disable/enable the specific frequency, the devfreq core
-> >>>>>>>>>>>>>> consider them.
-> >>>>>>>>>>>>>>
-> >>>>>>>>>>>>>> So, devfreq doesn't need to devfreq_verify_within_limits() because
-> >>>>>>>>>>>>>> already support some interface to change the minimum/maximum frequency
-> >>>>>>>>>>>>>> of devfreq device. 
-> >>>>>>>>>>>>>>
-> >>>>>>>>>>>>>> In case of cpufreq subsystem, cpufreq only provides 'cpufreq_verify_with_limits()'
-> >>>>>>>>>>>>>> to change the minimum/maximum frequency of cpu. some device driver cannot
-> >>>>>>>>>>>>>> change the minimum/maximum frequency through OPP interface.
-> >>>>>>>>>>>>>>
-> >>>>>>>>>>>>>> But, in case of devfreq subsystem, as I explained already, devfreq support
-> >>>>>>>>>>>>>> the OPP interface as default way. devfreq subsystem doesn't need to add
-> >>>>>>>>>>>>>> other way to change the minimum/maximum frequency.
-> >>>>>>>>>>>>>
-> >>>>>>>>>>>>> Using the OPP interface exclusively works as long as a
-> >>>>>>>>>>>>> enabling/disabling of OPPs is limited to a single driver
-> >>>>>>>>>>>>> (drivers/thermal/devfreq_cooling.c). When multiple drivers are
-> >>>>>>>>>>>>> involved you need a way to resolve conflicts, that's the purpose of
-> >>>>>>>>>>>>> devfreq_verify_within_limits(). Please let me know if there are
-> >>>>>>>>>>>>> existing mechanisms for conflict resolution that I overlooked.
-> >>>>>>>>>>>>>
-> >>>>>>>>>>>>> Possibly drivers/thermal/devfreq_cooling.c could be migrated to use
-> >>>>>>>>>>>>> devfreq_verify_within_limits() instead of the OPP interface if
-> >>>>>>>>>>>>> desired, however this seems beyond the scope of this series.
-> >>>>>>>>>>>>
-> >>>>>>>>>>>> Actually, if we uses this approach, it doesn't support the multiple drivers too.
-> >>>>>>>>>>>> If non throttler drivers uses devfreq_verify_within_limits(), the conflict
-> >>>>>>>>>>>> happen.
-> >>>>>>>>>>>
-> >>>>>>>>>>> As long as drivers limit the max freq there is no conflict, the lowest
-> >>>>>>>>>>> max freq wins. I expect this to be the usual case, apparently it
-> >>>>>>>>>>> worked for cpufreq for 10+ years.
-> >>>>>>>>>>>
-> >>>>>>>>>>> However it is correct that there would be a conflict if a driver
-> >>>>>>>>>>> requests a min freq that is higher than the max freq requested by
-> >>>>>>>>>>> another. In this case devfreq_verify_within_limits() resolves the
-> >>>>>>>>>>> conflict by raising p->max to the min freq. Not sure if this is
-> >>>>>>>>>>> something that would ever occur in practice though.
-> >>>>>>>>>>>
-> >>>>>>>>>>> If we are really concerned about this case it would also be an option
-> >>>>>>>>>>> to limit the adjustment to the max frequency.
-> >>>>>>>>>>>
-> >>>>>>>>>>>> To resolve the conflict for multiple device driver, maybe OPP interface
-> >>>>>>>>>>>> have to support 'usage_count' such as clk_enable/disable().
-> >>>>>>>>>>>
-> >>>>>>>>>>> This would require supporting negative usage count values, since a OPP
-> >>>>>>>>>>> should not be enabled if e.g. thermal enables it but the throttler
-> >>>>>>>>>>> disabled it or viceversa.
-> >>>>>>>>>>>
-> >>>>>>>>>>> Theoretically there could also be conflicts, like one driver disabling
-> >>>>>>>>>>> the higher OPPs and another the lower ones, with the outcome of all
-> >>>>>>>>>>> OPPs being disabled, which would be a more drastic conflict resolution
-> >>>>>>>>>>> than that of devfreq_verify_within_limits().
-> >>>>>>>>>>>
-> >>>>>>>>>>> Viresh, what do you think about an OPP usage count?
-> >>>>>>>>>>
-> >>>>>>>>>> Ping, can we try to reach a conclusion on this or at least keep the
-> >>>>>>>>>> discussion going?
-> >>>>>>>>>>
-> >>>>>>>>>> Not that it matters, but my preferred solution continues to be
-> >>>>>>>>>> devfreq_verify_within_limits(). It solves conflicts in some way (which
-> >>>>>>>>>> could be adjusted if needed) and has proven to work in practice for
-> >>>>>>>>>> 10+ years in a very similar sub-system.
-> >>>>>>>>>
-> >>>>>>>>> It is not true. Current cpufreq subsystem doesn't support external OPP
-> >>>>>>>>> control to enable/disable the OPP entry. If some device driver
-> >>>>>>>>> controls the OPP entry of cpufreq driver with opp_disable/enable(),
-> >>>>>>>>> the operation is not working. Because cpufreq considers the limit
-> >>>>>>>>> through 'cpufreq_verify_with_limits()' only.
-> >>>>>>>>
-> >>>>>>>> Ok, we can probably agree that using cpufreq_verify_with_limits()
-> >>>>>>>> exclusively seems to have worked well for cpufreq, and that in their
-> >>>>>>>> overall purpose cpufreq and devfreq are similar subsystems.
-> >>>>>>>>
-> >>>>>>>> The current throttler series with devfreq_verify_within_limits() takes
-> >>>>>>>> the enabled OPPs into account, the lowest and highest OPP are used as
-> >>>>>>>> a starting point for the frequency adjustment and (in theory) the
-> >>>>>>>> frequency range should only be narrowed by
-> >>>>>>>> devfreq_verify_within_limits().
-> >>>>>>>>
-> >>>>>>>>> As I already commented[1], there is different between cpufreq and devfreq.
-> >>>>>>>>> [1] https://lkml.org/lkml/2018/7/4/80
-> >>>>>>>>>
-> >>>>>>>>> Already, subsystem already used OPP interface in order to control
-> >>>>>>>>> specific OPP entry. I don't want to provide two outside method
-> >>>>>>>>> to control the frequency of devfreq driver. It might make the confusion.
-> >>>>>>>>
-> >>>>>>>> I understand your point, it would indeed be preferable to have a
-> >>>>>>>> single method. However I'm not convinced that the OPP interface is
-> >>>>>>>> a suitable solution, as I exposed earlier in this thread (quoted
-> >>>>>>>> below).
-> >>>>>>>>
-> >>>>>>>> I would like you to at least consider the possibility of changing
-> >>>>>>>> drivers/thermal/devfreq_cooling.c to devfreq_verify_within_limits().
-> >>>>>>>> Besides that it's not what is currently used, do you see any technical
-> >>>>>>>> concerns that would make devfreq_verify_within_limits() an unsuitable
-> >>>>>>>> or inferior solution?
-> >>>>>>>
-> >>>>>>> As we already discussed, devfreq_verify_within_limits() doesn't support
-> >>>>>>> the multiple outside controllers (e.g., devfreq-cooling.c).
-> >>>>>>
-> >>>>>> That's incorrect, its purpose is precisely that.
-> >>>>>>
-> >>>>>> Are you suggesting that cpufreq with its use of
-> >>>>>> cpufreq_verify_within_limits() (the inspiration for
-> >>>>>> devfreq_verify_within_limits()) is broken? It is used by cpu_cooling.c
-> >>>>>> and other drivers when receiving a CPUFREQ_ADJUST event, essentially
-> >>>>>> what I am proposing with DEVFREQ_ADJUST.
-> >>>>>>
-> >>>>>> Could you elaborate why this model wouldn't work for devfreq? "OPP
-> >>>>>> interface is mandatory for devfreq" isn't really a technical argument,
-> >>>>>> is it mandatory for any other reason than that it is the interface
-> >>>>>> that is currently used?
-> >>>>>>
-> >>>>>>> After you are suggesting the throttler core, there are at least two
-> >>>>>>> outside controllers (e.g., devfreq-cooling.c and throttler driver).
-> >>>>>>> As I knew the problem about conflict, I cannot agree the temporary
-> >>>>>>> method. OPP interface is mandatory for devfreq in order to control
-> >>>>>>> the OPP (frequency/voltage). In this situation, we have to try to
-> >>>>>>> find the method through OPP interface.
-> >>>>>>
-> >>>>>> What do you mean with "temporary method"?
-> >>>>>>
-> >>>>>> We can try to find a method through the OPP interface, but at this
-> >>>>>> point I'm not convinced that it is technically necessary or even
-> >>>>>> preferable.
-> >>>>>>
-> >>>>>> Another inconvenient of the OPP approach for both devfreq-cooling.c
-> >>>>>> and the throttler is that they have to bother with disabling all OPPs
-> >>>>>> above/below the max/min (they don't/shouldn't have to care), instead
-> >>>>>> of just telling devfreq the max/min.
-> >>>>>
-> >>>>> And a more important one: both drivers now have to keep track which
-> >>>>> OPPs they enabled/disabled previously, done are the days of a simple
-> >>>>> dev_pm_opp_enable/disable() in devfreq_cooling. Certainly it is
-> >>>>> possible and not very complex to implement, but is it really the
-> >>>>> best/a good solution?
-> >>>>
-> >>>>
-> >>>> As I replied them right before, Each outside driver has their own throttling
-> >>>> policy to control OPP entries. They don't care the requirement of other
-> >>>> driver and cannot know the requirement of other driver. devfreq core can only
-> >>>> recognize them and then only consider enabled OPP entris without disabled OPP entries.
-> >>>>
-> >>>> For example1,
-> >>>>        | devfreq-cooling| throttler
-> >>>> ---------------------------------------
-> >>>> 500Mhz | disabled       | disabled
-> >>>> 400Mhz | disabled       | disabled
-> >>>> 300Mhz |                | disabled
-> >>>> 200Mhz |                |
-> >>>> 100Mhz |                |
-> >>>> => devfreq driver can use only 100/200Mhz
-> >>>>
-> >>>>
-> >>>> For example2,
-> >>>>        | devfreq-cooling| throttler
-> >>>> ---------------------------------------
-> >>>> 500Mhz | disabled       | disabled
-> >>>> 400Mhz | disabled       |
-> >>>> 300Mhz | disabled       |
-> >>>> 200Mhz |                |
-> >>>> 100Mhz |                |
-> >>>> => devfreq driver can use only 100/200Mhz
-> >>>>
-> >>>>
-> >>>> For example3,
-> >>>>        | devfreq-cooling| throttler
-> >>>> ---------------------------------------
-> >>>> 500Mhz | disabled       | disabled
-> >>>> 400Mhz |                |
-> >>>> 300Mhz |                |
-> >>>> 200Mhz |                | disabled
-> >>>> 100Mhz |                | disabled
-> >>>> => devfreq driver can use only 300/400Mhz
-> >>>
-> >>> These are all cases without conflicts, my concern is about this:
-> >>>
-> >>>>        | devfreq-cooling| throttler
-> >>>> ---------------------------------------
-> >>>> 500Mhz | disabled       |
-> >>>> 400Mhz | disabled       |
-> >>>> 300Mhz |                | disabled
-> >>>> 200Mhz |                | disabled
-> >>>> 100Mhz |                | disabled
-> >>>> => devfreq driver can't use any frequency?
-> >>
-> >> There are no any enabled frequency. Because device driver
-> >> (devfreq-cooling, throttler) disable all frequencies.
-> >>
-> >> Outside drivers(devfreq-cooling, throttler) can enable/disable
-> >> specific OPP entries. As I already commented, each outside driver
-> >> doesn't consider the policy of other device driver about OPP entries.
+> > That's not the only thing we need though, as I'm sure you were expecting 
+> > me to say :)
 > > 
-> > And wouldn't it be preferable to have an interface that tries to avoid
-> > this situation in the first place and has a clear policy for conflict
-> > resolution?
+> > We need the ability to preserve existing behavior, i.e. process based and 
+> > not cgroup aware, for subtrees so that our users who have clear 
+> > expectations and tune their oom_score_adj accordingly based on how the oom 
+> > killer has always chosen processes for oom kill do not suddenly regress.
+> 
+> Isn't the combination of oom.group=0 and oom.evaluate_together=1 describing
+> this case? This basically means that if memcg is selected as target,
+> the process inside will be selected using traditional per-process approach.
+> 
+
+No, that would overload the policy and mechanism.  We want the ability to 
+consider user-controlled subtrees as a single entity for comparison with 
+other user subtrees to select which subtree to target.  This does not 
+imply that users want their entire subtree oom killed.
+
+> > So we need to define the policy for a subtree that is oom, and I suggest 
+> > we do that as a characteristic of the cgroup that is oom ("process" vs 
+> > "cgroup", and process would be the default to preserve what currently 
+> > happens in a user subtree).
+> 
+> I'm not entirely convinced here.
+> I do agree, that some sub-tree may have a well tuned oom_score_adj,
+> and it's preferable to keep the current behavior.
+> 
+> At the same time I don't like the idea to look at the policy of the OOMing
+> cgroup. Why exceeding of one limit should be handled different to exceeding
+> of another? This seems to be a property of workload, not a limit.
+> 
+
+The limit is the property of the mem cgroup, so it's logical that the 
+policy when reaching that limit is a property of the same mem cgroup.
+Using the user-controlled subtree example, if we have /david and /roman, 
+we can define our own policies on oom, we are not restricted to cgroup 
+aware selection on the entire hierarchy.  /david/oom.policy can be 
+"process" so that I haven't regressed with earlier kernels, and 
+/roman/oom.policy can be "cgroup" to target the largest cgroup in your 
+subtree.
+
+Something needs to be oom killed when a mem cgroup at any level in the 
+hierarchy is reached and reclaim has failed.  What to do when that limit 
+is reached is a property of that cgroup.
+
+> > Now, as users who rely on process selection are well aware, we have 
+> > oom_score_adj to influence the decision of which process to oom kill.  If 
+> > our oom subtree is cgroup aware, we should have the ability to likewise 
+> > influence that decision.  For example, we have high priority applications 
+> > that run at the top-level that use a lot of memory and strictly oom 
+> > killing them in all scenarios because they use a lot of memory isn't 
+> > appropriate.  We need to be able to adjust the comparison of a cgroup (or 
+> > subtree) when compared to other cgroups.
 > > 
-> >> OPP interface is independent on devfreq and just control OPP entries.
-> >> After that, devfreq just consider the only enabled OPP entries.
-> >>
-> >>>
-> >>> Actually my above comment wasn't about this case, but about the
-> >>> added complexity in devfreq-cooling.c and the throttler:
-> >>>
-> >>> A bit simplified partition_enable_opps() currently does this:
-> >>>
-> >>> for_each_opp(opp) {
-> >>>   if (opp->freq <= max)
-> >>>      opp_enable(opp)
-> >>>   else
-> >>>      opp_disable(opp)
-> >>> }
-> >>>
-> >>> With the OPP usage/disable count this doesn't work any longer. Now we
-> >>> need to keep track of the enabled/disabled state of the OPP, something
-> >>> like:
-> >>>
-> >>> dev_pm_opp_enable(opp) {
-> >>>   if (opp->freq <= max) {
-> >>>     if (opp->freq > prev_max)
-> >>>       opp_enable(opp)
-> >>>   } else {
-> >>>     if (opp->freq < prev_max)
-> >>>       opp_disable(opp)
-> >>>   }
-> >>> }
-> >>>
-> >>> And duplicate the same in the throttler (and other possible
-> >>> drivers). Obviously it can be done, but is there really any gain
-> >>> from it?
-> >>>
-> >>> Instead they just could do:
-> >>>
-> >>> devfreq_verify_within_limits(policy/freq_pair, 0, max_freq)
-> 
-> I have a new question about using devfreq_verify_within_limits().
-> 
-> For example,
-> Driver A has following opp-table
-> - 500Mhz
-> - 400Mhz
-> - 300Mhz
-> - 200Mhz
-> - 100Mhz
-> 
-> Basically, driver A has following init value:
-> - policy->min is 100
-> - policy->max is 500
-> 
-> Driver B, devfreq_verify_within_limits(200, 300)
-> 	policy->min is 200
-> 	policy->max is 300
-> Driver C, devfreq_verify_within_limits(300, 400)
-> 	policy->min is 300
-> 	policy->max is 300
-> Driver D, devfreq_verify_within_limits(400, 500)
-> 	policy->min is 400
-> 	policy->max is 400
-> 
-> In result, it looks like the requirement of Driver B are disappeared.
-> is it the intention of devfreq_verify_within_limits()?
-
-The requirements are conflicting, neither
-devfreq_verify_within_limits() nor any other mechanism can completely
-resolve that. Any conflict resolution method will violate the
-requirements of at least one client. I don't claim the current method
-is necessarily the best, it's just one that takes a predictable
-action, I'm open to other suggestions.
-
-> >>> without being concerned about implementation details of devfreq.
-> >>>
-> >>
-> >> I don't think so.
+> > I've also suggested, but did not implement in my patchset because I was 
+> > trying to define the API and find common ground first, that we have a need 
+> > for priority based selection.  In other words, define the priority of a 
+> > subtree regardless of cgroup usage.
 > > 
-> > What are you referring to, the change that I claim that will be needed
-> > in partition_enable_opps() when OPPs have usage/disable counts? If so,
-> > how do you avoid that the function doesn't enable/disable an OPP that
-> > was already enabled/disabled in the previous iteration?
-> 
-> Just about changes of "dev_pm_opp_enable(opp)".
-> 
+> > So with these four things, we have
 > > 
-> >> dev_pm_opp_enable()/dev_pm_opp_disable() have to consider only one
-> >> OPP entry without any other OPP entry.
+> >  - an "oom.policy" tunable to define "cgroup" or "process" for that 
+> >    subtree (and plans for "priority" in the future),
 > > 
-> > I agree with this :)
+> >  - your "oom.evaluate_as_group" tunable to account the usage of the
+> >    subtree as the cgroup's own usage for comparison with others,
 > > 
-> >> dev_pm_opp_enable()/dev_pm_opp_disable() can never know the other
-> >> OPP entries. After some driver(devfreq-cooling.c and throttler) 
-> >> enable or disable specific OPP entries, the remaining OPP entry 
-> >> with enabled state will be considered on devfreq driver.
+> >  - an "oom.adj" to adjust the usage of the cgroup (local or subtree)
+> >    to protect important applications and bias against unimportant
+> >    applications.
 > > 
-> > Having multiple drivers (or even a single one) enable and disable
-> > OPPs independently and at the time of their choosing sounds like a
-> > recipe for race conditions.
-> > 
-> > What happens if e.g. the devfreq core calls
-> > dev_pm_opp_find_freq_ceil/floor() and right after returning another
-> > driver disables the OPP? devfreq uses the disabled OPP. Probably not a\
+> > This adds several tunables, which I didn't like, so I tried to overload 
+> > oom.policy and oom.evaluate_as_group.  When I referred to separating out 
+> > the subtree usage accounting into a separate tunable, that is what I have 
+> > referenced above.
 > 
-> devfreq doesn't use the disabled OPP.
+> IMO, merging multiple tunables into one doesn't make it saner.
+> The real question how to make a reasonable interface with fever tunables.
 > 
-> For example,
-> 1. devfreq-cooling.c disable/enable some OPP and OPP send notification about OPP changes.
-> 2. devfreq receives the notification (devfreq_notifier_call() is executed)
-> 3. devfreq_notifier_call() try to find scaling_min_freq/scaling_max_freq
-
-3.5 The throttler runs and disables scaling_max_freq
-
-> 4. devfreq_notifier_call() executes update_devfreq() in order to apply the OPP changes.
-> 5. devfreq can consider only enabled frequencies right after dev_pm_opp_disable/enable()
-
-Depending on the locking requirements within the throttler it *might*
-be possible to avoid this situation if the throttler held
-devfreq->lock while manipulating the OPPs. Not a great option though,
-since we'd be dealing with devfreq implementation details in the
-throttler.
-
-If I am not mistaken the same can happen nowadays with devfreq_cooling.c:
-
-<thermal governor>
-  mutex_lock(tz->lock)
-  thermal_cdev_update
-    mutex_lock(cdev->lock)
-      devfreq_cooling_set_cur_state
-        partition_enable_opps
-
-The governor function can run at the same time as
-devfreq_notifier_call() / update_devfreq() and unless I overlooked
-something there is nothing preventing partition_enable_opps() from
-disabling OPPs while the devfreq functions are executing.
-
-> > big deal if disabling the OPP is only a semantic question, but I
-> > imagine there can be worse scenarios. Currently the only user of
-> > dev_pm_opp_disable() besides devfreq_cooling.c is imx6q-cpufreq.c, and
-> > it is well behaved and only disables OPPs during probe().
+> The reason behind introducing all these knobs is to provide
+> a generic solution to define OOM handling rules, but then the
+> question raises if the kernel is the best place for it.
 > 
-> imx6q-cpufreq.c used the dev_pm_opp_disable() before calling
-> dev_pm_opp_init_cpufreq_table(). After registered
-> cpufreq_register_driver(), imx6q-cpufreq.c doesn't use the
-> dev_pm_opp_disable/enable(). It means that dev_pm_opp_disable() of
-> imx6q-cpufreq.c doesn't affect the frequency choice of cpufreq on
-> the runtime after registered cpufreq driver.
->
-> On the other hand, devfreq_cooling.c use dev_pm_opp_disable/enable()
-> on the runtime after registering devfreq driver. It affect the
-> frequency choice of devfreq on the runtime.
-
-Exactly, that was my point. devfreq_cooling.c is currently the only
-driver that uses the interface at runtime. And I have doubts that
-proper synchronization is in place.
-
-> > I keep missing a clear answer to the question in which sense
-> > manipulating the OPPs in devfreq_cooling.c is superior over narrowing
-> > down the frequency during DEVFREQ_ADJUST, which would avoid potential
-> > races and allow to resolve conflicts. Does it allow for some
+> I really doubt that an interface with so many knobs has any chances
+> to be merged.
 > 
-> You mentioned the race conditions eariler. Actually, I don't know
-> the potential races.
 
-Does my above analysis look correct to you, or did I miss some
-mechanism that provides synchronization?
+This is why I attempted to overload oom.policy and oom.evaluate_as_group: 
+I could not think of a reasonable usecase where a subtree would be used to 
+account for cgroup usage but not use a cgroup aware policy itself.  You've 
+objected to that, where memory.oom_policy == "tree" implied cgroup 
+awareness in my patchset, so I've separated that out.
 
-> > functionality that couldn't be achieved otherwise, does it make the
-> > code significantly less complex, is some integration with the OPP
-> > subsystem needed that I'm overlooking, is it more efficient, ...?
-> > 
-> > I'm not just insisting because I'm stubborn. I'd be happy to use any
-> > interface that fits the bill, or to adjust one to fit the bill, but as
-> > of now I mainly see drawbacks on the OPPs side and haven't seen
-> > convincing arguments that it is really needed in devreq_cooling.c or a
-> > better solution.
+> IMO, there should be a compromise between the simplicity (basically,
+> the number of tunables and possible values) and functionality
+> of the interface. You nacked my previous version, and unfortunately
+> I don't have anything better so far.
 > 
-> During we discussed, we knew that OPP doesn't provide all operation
-> perfectly. As of now, OPP is standard framework to control the pair
-> of frequency/voltage. devfreq need to use OPP to the pair of
-> frequency/voltage. Even if OPP doesn't provide all of our
-> requirements, I think that devfreq should use OPP interface after
-> updating OPP framework, instead of adding other functionality to
-> control frequency in outside driver(devfreq-cooling.c, throttler).
 
-I think it's great if devfreq uses the OPP interface internally, and
-disables OPPs *after* having received the requirements from all
-outside drivers and resolved potential conflicts.
+If you do not agree with the overloading and have a preference for single 
+value tunables, then all three tunables are needed.  This functionality 
+could be represented as two or one tunable if they are not single value, 
+but from the oom.group discussion you preferred single values.
 
-For narrowing down the frequency range from outside drivers - even
-with the extended OPP interface we are discussing - there are multiple
-caveats and so far not a single *technical* argument in it's favor
-(and I'm really in favor of using standard interfaces when suitable
-instead of implementing custom solutions, though in this case the
-'custom solution' is a simple function call).
-
-> I asked to Viresh (OPP maintainer). If dev_pm_opp_enable() and
-> dev_pm_opp_disable() don't support the usecase on multiple device
-> drivers, opp interface could not be used in order to support both
-> devfreq-cooling.c and throttler. So, We better to wait the opinion
-> from OPP maintainer.
-
-Yes, it would be interesting to know Viresh's opinion, maybe I'm
-completely wrong and there is an elegant solution using the
-OPPs. Hopefully this thread didn't get buried in his inbox, it might
-be worth to ping him separately.
-
-Thanks
-
-Matthias
+I assume you'd also object to adding and removing files based on 
+oom.policy since oom.evaluate_as_group and oom.adj is only needed for 
+oom.policy of "cgroup" or "priority", and they do not need to exist for 
+the default oom.policy of "process".
