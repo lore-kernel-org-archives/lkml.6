@@ -5,90 +5,107 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA3B5C46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 12:31:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E3BEC46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 12:33:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D08721899
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 12:31:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D08721899
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id D92CD20989
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 12:33:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D92CD20989
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389184AbeHGOp6 (ORCPT
+        id S2389189AbeHGOry (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 10:45:58 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:53742 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727048AbeHGOp6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 10:45:58 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B7A7380D;
-        Tue,  7 Aug 2018 05:31:51 -0700 (PDT)
-Received: from [10.4.13.119] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 83BB53F5D0;
-        Tue,  7 Aug 2018 05:31:50 -0700 (PDT)
-Subject: Re: [PATCH 1/2] iommu/rockchip: Handle errors returned from PM
- framework
-To:     Heiko Stuebner <heiko@sntech.de>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        Joerg Roedel <joro@8bytes.org>,
-        Jeffy Chen <jeffy.chen@rock-chips.com>
-References: <20180807085406.3863-1-marc.zyngier@arm.com>
- <20180807085406.3863-2-marc.zyngier@arm.com> <2940317.dDZy1L4CDY@phil>
-From:   Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <94b6aab1-e8d3-6929-a2e6-2f06c564bc70@arm.com>
-Date:   Tue, 7 Aug 2018 13:31:49 +0100
+        Tue, 7 Aug 2018 10:47:54 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:50816 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727572AbeHGOry (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 10:47:54 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w77CWsjs145465
+        for <linux-kernel@vger.kernel.org>; Tue, 7 Aug 2018 08:33:46 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2kq9fun8f7-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 08:33:45 -0400
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
+        Tue, 7 Aug 2018 13:33:40 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 7 Aug 2018 13:33:34 +0100
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w77CXYZQ39256196
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 7 Aug 2018 12:33:34 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C9FD842042;
+        Tue,  7 Aug 2018 15:33:42 +0100 (BST)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2834F4204B;
+        Tue,  7 Aug 2018 15:33:32 +0100 (BST)
+Received: from [9.79.225.234] (unknown [9.79.225.234])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue,  7 Aug 2018 15:33:31 +0100 (BST)
+Subject: Re: [PATCH v7 3/6] Uprobes: Support SDT markers having reference
+ count (semaphore)
+To:     Oleg Nesterov <oleg@redhat.com>
+Cc:     srikar@linux.vnet.ibm.com, rostedt@goodmis.org,
+        mhiramat@kernel.org, liu.song.a23@gmail.com, peterz@infradead.org,
+        mingo@redhat.com, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org, linux-kernel@vger.kernel.org,
+        ananth@linux.vnet.ibm.com, alexis.berlemont@gmail.com,
+        naveen.n.rao@linux.vnet.ibm.com,
+        linux-arm-kernel@lists.infradead.org, linux-mips@linux-mips.org,
+        linux@armlinux.org.uk, ralf@linux-mips.org, paul.burton@mips.com,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+References: <20180731035143.11942-1-ravi.bangoria@linux.ibm.com>
+ <20180731035143.11942-4-ravi.bangoria@linux.ibm.com>
+ <20180803112455.GA13794@redhat.com>
+ <bfb47985-8f58-e5e4-f8b4-695dfea7937f@linux.ibm.com>
+ <20180807113622.GC19831@redhat.com>
+From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Date:   Tue, 7 Aug 2018 18:03:20 +0530
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <2940317.dDZy1L4CDY@phil>
+In-Reply-To: <20180807113622.GC19831@redhat.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18080712-0008-0000-0000-0000025E6478
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18080712-0009-0000-0000-000021C669DD
+Message-Id: <4d1e2a17-14ba-f277-8e57-4a4573630ab2@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-07_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=845 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808070127
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/08/18 13:09, Heiko Stuebner wrote:
-> Hi Marc,
-> 
-> Am Dienstag, 7. August 2018, 10:54:05 CEST schrieb Marc Zyngier:
->> pm_runtime_get_if_in_use can fail: either PM has been disabled
->> altogether (-EINVAL), or the device hasn't been enabled yet (0).
->> Sadly, the Rockchip IOMMU driver tends to conflate the two things
->> by considering a non-zero return value as successful.
->>
->> This has the consequence of hiding other bugs, so let's handle this
->> case throughout the driver, with a WARN_ON_ONCE so that we can try
->> and work out what happened.
->>
->> Fixes: 0f181d3cf7d98 ("iommu/rockchip: Add runtime PM support")
->> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-> 
-> I'm still not sure about the !CONFIG_PM case, as it was probably silently
-> working in that case before
+Hi Oleg,
 
-Do we agree that this is an orthogonal problem though?
-
+>> I'm sorry. I didn't get this. How can uprobe go away without calling
+>>     uprobe_unregister()
+>>     -> rergister_for_each_vma()
+>>        -> remove_breakpoint()
+>> And remove_breakpoint() will get called
 > 
-> But on the other hand we're also already running over it in other places
-> like in the iommu-shutdown and I guess if someone _really_ disabled
-> CONFIG_PM, a lot of additional stuff would fail anyway.
-> 
-> So should we wrap that in some #ifdef magic, just ignore it or simply
-> select PM similar to what Tegra, Renesas and Vexpress seem to do?
-> 
-> I guess I like the 3rd option best ;-)
+> assuming that _unregister() will find the same vma with the probed insn. But
+> as I said, the application can munmap the probed page/vma.
 
-It probably doesn't hurt. At what level do you want it? As a dependency
-to the IOMMU? or to the platform?
+Got it now :)
 
-Thanks,
+Thanks.
 
-	M.
--- 
-Jazz is not dead. It just smells funny...
