@@ -2,57 +2,59 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UPPERCASE_50_75,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3489BC46470
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B920C46471
 	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 09:08:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFC3E20883
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 09:08:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFC3E20883
+	by mail.kernel.org (Postfix) with ESMTP id 1D1462089C
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 09:08:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D1462089C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732439AbeHGLVy (ORCPT
+        id S2388584AbeHGLVz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 07:21:54 -0400
-Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:49308 "EHLO
+        Tue, 7 Aug 2018 07:21:55 -0400
+Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:49309 "EHLO
         mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727155AbeHGLVy (ORCPT
+        by vger.kernel.org with ESMTP id S1726879AbeHGLVy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 7 Aug 2018 07:21:54 -0400
 Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-        by mx0b-001ae601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7793gTt005456;
+        by mx0b-001ae601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7793qoT005499;
         Tue, 7 Aug 2018 04:08:30 -0500
 Authentication-Results: ppops.net;
         spf=none smtp.mailfrom=rf@opensource.cirrus.com
 Received: from mail4.cirrus.com ([87.246.98.35])
-        by mx0b-001ae601.pphosted.com with ESMTP id 2kn8jkunsa-1;
+        by mx0b-001ae601.pphosted.com with ESMTP id 2kn8jkuns9-1;
         Tue, 07 Aug 2018 04:08:29 -0500
 Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
-        by mail4.cirrus.com (Postfix) with ESMTP id E1996611C8BB;
+        by mail4.cirrus.com (Postfix) with ESMTP id D7048611C8B5;
         Tue,  7 Aug 2018 04:10:10 -0500 (CDT)
 Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
  (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Tue, 7 Aug 2018
  10:08:29 +0100
 Received: from edi-sw-dsktp006.ad.cirrus.com (edi-sw-dsktp006.ad.cirrus.com
  [198.90.251.121])      by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id
- w7798SXs005072;        Tue, 7 Aug 2018 10:08:28 +0100
+ w7798SXt005072;        Tue, 7 Aug 2018 10:08:29 +0100
 From:   Richard Fitzgerald <rf@opensource.cirrus.com>
 To:     <lee.jones@linaro.org>
 CC:     <patches@opensource.cirrus.com>, <linux-kernel@vger.kernel.org>,
         "Richard Fitzgerald" <rf@opensource.cirrus.com>
-Subject: [PATCH 1/2] mfd: madera: Add register definitions for accessory detect
-Date:   Tue, 7 Aug 2018 10:08:12 +0100
-Message-ID: <20180807090813.15695-1-rf@opensource.cirrus.com>
+Subject: [PATCH 2/2] mfd: madera: Don't use regmap_read_poll_timeout to poll for BOOT_DONE
+Date:   Tue, 7 Aug 2018 10:08:13 +0100
+Message-ID: <20180807090813.15695-2-rf@opensource.cirrus.com>
 X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180807090813.15695-1-rf@opensource.cirrus.com>
+References: <20180807090813.15695-1-rf@opensource.cirrus.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
  suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=415 adultscore=0
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=897 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1807170000
  definitions=main-1808070093
 Sender: linux-kernel-owner@vger.kernel.org
@@ -60,93 +62,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add some register definitions for accessory detection, used
-by the extcon driver.
+While polling for BOOT_DONE the chip could NAK a read because it is
+still booting, which would terminate the regmap_read_poll_timeout()
+with an error.
+
+Instead implement a polling loop that ignores read errors so we
+always poll until the chip signals boot or the loop times out.
 
 Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
 ---
- include/linux/mfd/madera/registers.h | 51 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 51 insertions(+)
+ drivers/mfd/madera-core.c | 38 ++++++++++++++++++++++++--------------
+ 1 file changed, 24 insertions(+), 14 deletions(-)
 
-diff --git a/include/linux/mfd/madera/registers.h b/include/linux/mfd/madera/registers.h
-index a6b7c4222c5e..977e06101711 100644
---- a/include/linux/mfd/madera/registers.h
-+++ b/include/linux/mfd/madera/registers.h
-@@ -1219,9 +1219,11 @@
- #define MADERA_IRQ1_STATUS_33				0x1820
- #define MADERA_IRQ1_MASK_1				0x1840
- #define MADERA_IRQ1_MASK_2				0x1841
-+#define MADERA_IRQ1_MASK_6				0x1845
- #define MADERA_IRQ1_MASK_33				0x1860
- #define MADERA_IRQ1_RAW_STATUS_1			0x1880
- #define MADERA_IRQ1_RAW_STATUS_2			0x1881
-+#define MADERA_IRQ1_RAW_STATUS_7			0x1886
- #define MADERA_IRQ1_RAW_STATUS_15			0x188E
- #define MADERA_IRQ1_RAW_STATUS_33			0x18A0
- #define MADERA_INTERRUPT_DEBOUNCE_7			0x1A06
-@@ -1664,6 +1666,42 @@
- #define MADERA_MICB2A_ENA_SHIFT				     0
- #define MADERA_MICB2A_ENA_WIDTH				     1
+diff --git a/drivers/mfd/madera-core.c b/drivers/mfd/madera-core.c
+index 8cfea969b060..bc5545c53ee5 100644
+--- a/drivers/mfd/madera-core.c
++++ b/drivers/mfd/madera-core.c
+@@ -132,33 +132,43 @@ const char *madera_name_from_type(enum madera_type type)
+ }
+ EXPORT_SYMBOL_GPL(madera_name_from_type);
  
-+/* (0x0225) - HP Ctrl 1L */
-+#define MADERA_RMV_SHRT_HP1L				0x4000
-+#define MADERA_RMV_SHRT_HP1L_MASK			0x4000
-+#define MADERA_RMV_SHRT_HP1L_SHIFT			    14
-+#define MADERA_RMV_SHRT_HP1L_WIDTH			     1
-+#define MADERA_HP1L_FLWR				0x0004
-+#define MADERA_HP1L_FLWR_MASK				0x0004
-+#define MADERA_HP1L_FLWR_SHIFT				     2
-+#define MADERA_HP1L_FLWR_WIDTH				     1
-+#define MADERA_HP1L_SHRTI				0x0002
-+#define MADERA_HP1L_SHRTI_MASK				0x0002
-+#define MADERA_HP1L_SHRTI_SHIFT				     1
-+#define MADERA_HP1L_SHRTI_WIDTH				     1
-+#define MADERA_HP1L_SHRTO				0x0001
-+#define MADERA_HP1L_SHRTO_MASK				0x0001
-+#define MADERA_HP1L_SHRTO_SHIFT				     0
-+#define MADERA_HP1L_SHRTO_WIDTH				     1
-+
-+/* (0x0226) - HP Ctrl 1R */
-+#define MADERA_RMV_SHRT_HP1R				0x4000
-+#define MADERA_RMV_SHRT_HP1R_MASK			0x4000
-+#define MADERA_RMV_SHRT_HP1R_SHIFT			    14
-+#define MADERA_RMV_SHRT_HP1R_WIDTH			     1
-+#define MADERA_HP1R_FLWR				0x0004
-+#define MADERA_HP1R_FLWR_MASK				0x0004
-+#define MADERA_HP1R_FLWR_SHIFT				     2
-+#define MADERA_HP1R_FLWR_WIDTH				     1
-+#define MADERA_HP1R_SHRTI				0x0002
-+#define MADERA_HP1R_SHRTI_MASK				0x0002
-+#define MADERA_HP1R_SHRTI_SHIFT				     1
-+#define MADERA_HP1R_SHRTI_WIDTH				     1
-+#define MADERA_HP1R_SHRTO				0x0001
-+#define MADERA_HP1R_SHRTO_MASK				0x0001
-+#define MADERA_HP1R_SHRTO_SHIFT				     0
-+#define MADERA_HP1R_SHRTO_WIDTH				     1
-+
- /* (0x0293)  Accessory_Detect_Mode_1 */
- #define MADERA_ACCDET_SRC				0x2000
- #define MADERA_ACCDET_SRC_MASK				0x2000
-@@ -3766,6 +3804,19 @@
- #define MADERA_DSP1_BUS_ERR_EINT1_SHIFT			     0
- #define MADERA_DSP1_BUS_ERR_EINT1_WIDTH			     1
+-#define MADERA_BOOT_POLL_MAX_INTERVAL_US  5000
+-#define MADERA_BOOT_POLL_TIMEOUT_US	 25000
++#define MADERA_BOOT_POLL_INTERVAL_USEC		5000
++#define MADERA_BOOT_POLL_TIMEOUT_USEC		25000
  
-+/* (0x1845)  IRQ1_Mask_6 */
-+#define MADERA_IM_MICDET2_EINT1				0x0200
-+#define MADERA_IM_MICDET2_EINT1_MASK			0x0200
-+#define MADERA_IM_MICDET2_EINT1_SHIFT			     9
-+#define MADERA_IM_MICDET2_EINT1_WIDTH			     1
-+#define MADERA_IM_MICDET1_EINT1				0x0100
-+#define MADERA_IM_MICDET1_EINT1_MASK			0x0100
-+#define MADERA_IM_MICDET1_EINT1_SHIFT			     8
-+#define MADERA_IM_MICDET1_EINT1_WIDTH			     1
-+#define MADERA_IM_HPDET_EINT1				0x0001
-+#define MADERA_IM_HPDET_EINT1_MASK			0x0001
-+#define MADERA_IM_HPDET_EINT1_SHIFT			     0
-+#define MADERA_IM_HPDET_EINT1_WIDTH			     1
- /* (0x184E)  IRQ1_Mask_15 */
- #define MADERA_IM_SPK_OVERHEAT_WARN_EINT1		0x0004
- #define MADERA_IM_SPK_OVERHEAT_WARN_EINT1_MASK		0x0004
+ static int madera_wait_for_boot(struct madera *madera)
+ {
+-	unsigned int val;
+-	int ret;
++	ktime_t timeout;
++	unsigned int val = 0;
++	int ret = 0;
+ 
+ 	/*
+ 	 * We can't use an interrupt as we need to runtime resume to do so,
+ 	 * so we poll the status bit. This won't race with the interrupt
+ 	 * handler because it will be blocked on runtime resume.
++	 * The chip could NAK a read request while it is booting so ignore
++	 * errors from regmap_read.
+ 	 */
+-	ret = regmap_read_poll_timeout(madera->regmap,
+-				       MADERA_IRQ1_RAW_STATUS_1,
+-				       val,
+-				       (val & MADERA_BOOT_DONE_STS1),
+-				       MADERA_BOOT_POLL_MAX_INTERVAL_US,
+-				       MADERA_BOOT_POLL_TIMEOUT_US);
+-
+-	if (ret)
+-		dev_err(madera->dev, "Polling BOOT_DONE_STS failed: %d\n", ret);
++	regmap_read(madera->regmap, MADERA_IRQ1_RAW_STATUS_1, &val);
++	if (val & MADERA_BOOT_DONE_STS1)
++		goto done;
++
++	timeout = ktime_add_us(ktime_get(), MADERA_BOOT_POLL_TIMEOUT_USEC);
++	do {
++		usleep_range(MADERA_BOOT_POLL_INTERVAL_USEC / 2,
++			     MADERA_BOOT_POLL_INTERVAL_USEC);
++		regmap_read(madera->regmap, MADERA_IRQ1_RAW_STATUS_1, &val);
++		if (val & MADERA_BOOT_DONE_STS1)
++			goto done;
++	} while (ktime_compare(ktime_get(), timeout) <= 0);
++
++	dev_err(madera->dev, "Polling BOOT_DONE_STS timed out\n");
++	ret = -ETIMEDOUT;
+ 
+ 	/*
+ 	 * BOOT_DONE defaults to unmasked on boot so we must ack it.
+-	 * Do this unconditionally to avoid interrupt storms.
++	 * Do this even after a timeout to avoid interrupt storms.
+ 	 */
++done:
+ 	regmap_write(madera->regmap, MADERA_IRQ1_STATUS_1,
+ 		     MADERA_BOOT_DONE_EINT1);
+ 
 -- 
 2.11.0
 
