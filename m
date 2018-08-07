@@ -5,46 +5,46 @@ X-Spam-Level:
 X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC0C0C46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:49:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D191FC46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:50:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C71C21736
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:49:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C71C21736
+	by mail.kernel.org (Postfix) with ESMTP id 9494C2172E
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:50:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9494C2172E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389848AbeHGVFi (ORCPT
+        id S2389871AbeHGVGM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 17:05:38 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:36948 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726419AbeHGVFi (ORCPT
+        Tue, 7 Aug 2018 17:06:12 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:36311 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726419AbeHGVGM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 17:05:38 -0400
-Received: by mail-it0-f66.google.com with SMTP id h20-v6so249535itf.2;
-        Tue, 07 Aug 2018 11:49:56 -0700 (PDT)
+        Tue, 7 Aug 2018 17:06:12 -0400
+Received: by mail-it0-f68.google.com with SMTP id p81-v6so262568itp.1;
+        Tue, 07 Aug 2018 11:50:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=bfAkD3g/tY6Dx2/dAGDC+wQD8h9pCrUId15UpgNlGEQ=;
-        b=PGyKQZpeRJ+xlmDWkg7pm1QbE+y6X/O1KyKW/vTgJF02rwkqmCGOyR4TSC1iMqpRys
-         ompIvcA6/WlYAjZe6eZA8hCyS8sjO28guysL35FVBWUIFlma9BafYnGa2XdMOgC7edfB
-         w1iZSIJ8MUPcUbrmFfusNuuuX6Utn8kQ9YuCdNNMzY/k8jDd9IhiwMvSqn844x/6qyCc
-         B5iQlOR5X6ZJ0cgSvas8/Jzrf15TYrh33CIjDtXzlMIfD9WXMhVadP3USy0DB8cS3VFr
-         whiSaSigQyj+NCuvi9WS+sRdIh4JYMaTCNLj2FjavWE/9BREJdHkMxLnfY+lLDfJnfWk
-         f9aA==
-X-Gm-Message-State: AOUpUlHnoM06vVSwF1d8lpc7Ezn94gdGGYQ+PGUSWVICOScZwSNU+iMN
-        ApJS1ZK8P/7HSmhpAA0WJg==
-X-Google-Smtp-Source: AAOMgpdNuoQGPo+4lgr/D/N5VoTS1PfAl8w1hKkkZ62yfqMWTvEbYINfpI7XDQr0Xv7QEevoJukkDw==
-X-Received: by 2002:a02:9c54:: with SMTP id h20-v6mr18036787jal.49.1533667796064;
-        Tue, 07 Aug 2018 11:49:56 -0700 (PDT)
+        bh=/zJb1IrgXsN8QrEjKm/WGJx0Iom9UOup5d0/zIMFsTU=;
+        b=gFg2sLCUBYVJdF0WnJYkGsL7UA3m5IerKp3o1o1Qd3auzjD8/hHTXr0tEi0bBOkjsr
+         CpRkjuybfbmy+wm54aknE/NjZcnOYVDjL0czx12W3T914nwkSM9SMQGtV3U5pD0VglpL
+         d77fZkP8ENThG387kBULF8Mdz6WACXQbzuf7MFc1pRXcGc3sIHBe1Cqf2orWlKR54zC7
+         OstnyyRkkFNIgC9ttkxMiCX7CGGilrKFjNyv4F+oAr1vH7/ySLFrENZqzqRpy4WaXVbx
+         l51GfT2yimO9MozAeZ5MEEI6l+w109WAITzwqh9bK4/4VqmFaE5YvxP0Pp6fPmKdDJ73
+         6XEw==
+X-Gm-Message-State: AOUpUlEsQ0bBFGM6Ols6xJhgv05HqADBt5FQZLV7w6jLyFkUj8O34Mm0
+        nOnaIB7g4xDlMyGTFtVR/A==
+X-Google-Smtp-Source: AA+uWPyclgYui3zVeQhVs16YfuWBxs/wDRbTUSyWRNtVWyy+bHjLGX/LvqF2Tqa/o0DsFvc58I+xAA==
+X-Received: by 2002:a02:8cd6:: with SMTP id n22-v6mr5282838jal.106.1533667830121;
+        Tue, 07 Aug 2018 11:50:30 -0700 (PDT)
 Received: from localhost ([24.51.61.72])
-        by smtp.gmail.com with ESMTPSA id y15-v6sm1160748ioy.18.2018.08.07.11.49.55
+        by smtp.gmail.com with ESMTPSA id t187-v6sm1262890ita.28.2018.08.07.11.50.29
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 07 Aug 2018 11:49:55 -0700 (PDT)
-Date:   Tue, 7 Aug 2018 12:49:54 -0600
+        Tue, 07 Aug 2018 11:50:29 -0700 (PDT)
+Date:   Tue, 7 Aug 2018 12:50:28 -0600
 From:   Rob Herring <robh@kernel.org>
 To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 Cc:     p.zabel@pengutronix.de, mturquette@baylibre.com, sboyd@kernel.org,
@@ -57,31 +57,29 @@ Cc:     p.zabel@pengutronix.de, mturquette@baylibre.com, sboyd@kernel.org,
         manivannanece23@gmail.com, thomas.liau@actions-semi.com,
         jeff.chen@actions-semi.com, pn@denx.de, edgar.righi@lsitec.org.br,
         sravanhome@gmail.com
-Subject: Re: [PATCH 3/9] dt-bindings: reset: Add binding constants for
- Actions Semi S700 RMU
-Message-ID: <20180807184954.GA7945@rob-hp-laptop>
+Subject: Re: [PATCH 4/9] dt-bindings: reset: Add binding constants for
+ Actions Semi S900 RMU
+Message-ID: <20180807185028.GA9294@rob-hp-laptop>
 References: <20180727184527.13287-1-manivannan.sadhasivam@linaro.org>
- <20180727184527.13287-4-manivannan.sadhasivam@linaro.org>
+ <20180727184527.13287-5-manivannan.sadhasivam@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180727184527.13287-4-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <20180727184527.13287-5-manivannan.sadhasivam@linaro.org>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jul 28, 2018 at 12:15:21AM +0530, Manivannan Sadhasivam wrote:
-> Add device tree binding constants for Actions Semi S700 SoC Reset
+On Sat, Jul 28, 2018 at 12:15:22AM +0530, Manivannan Sadhasivam wrote:
+> Add device tree binding constants for Actions Semi S900 SoC Reset
 > Management Unit (RMU).
 > 
 > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 > ---
->  .../dt-bindings/reset/actions,s700-reset.h    | 34 +++++++++++++++++++
->  1 file changed, 34 insertions(+)
->  create mode 100644 include/dt-bindings/reset/actions,s700-reset.h
-
-This can go in the previous patch. Either way
+>  .../dt-bindings/reset/actions,s900-reset.h    | 65 +++++++++++++++++++
+>  1 file changed, 65 insertions(+)
+>  create mode 100644 include/dt-bindings/reset/actions,s900-reset.h
 
 Reviewed-by: Rob Herring <robh@kernel.org>
