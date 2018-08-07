@@ -6,35 +6,37 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6651AC46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:54:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E987C46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:55:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E5BE2172E
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:54:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E5BE2172E
+	by mail.kernel.org (Postfix) with ESMTP id 045822151D
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:55:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 045822151D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404027AbeHGVKg (ORCPT
+        id S2390315AbeHGVKl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 17:10:36 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33562 "EHLO
+        Tue, 7 Aug 2018 17:10:41 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33572 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733122AbeHGVKg (ORCPT
+        with ESMTP id S1733122AbeHGVKj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 17:10:36 -0400
+        Tue, 7 Aug 2018 17:10:39 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C0554D07;
-        Tue,  7 Aug 2018 18:54:52 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B65F1D07;
+        Tue,  7 Aug 2018 18:54:55 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
-        David Sterba <dsterba@suse.com>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Subject: [PATCH 4.9 12/17] Btrfs: fix file data corruption after cloning a range and fsync
-Date:   Tue,  7 Aug 2018 20:51:48 +0200
-Message-Id: <20180807172342.777118078@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        Soheil Hassas Yeganeh <soheil@google.com>,
+        Yuchung Cheng <ycheng@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        David Woodhouse <dwmw@amazon.co.uk>
+Subject: [PATCH 4.9 13/17] tcp: add tcp_ooo_try_coalesce() helper
+Date:   Tue,  7 Aug 2018 20:51:49 +0200
+Message-Id: <20180807172342.821097925@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180807172342.071526922@linuxfoundation.org>
 References: <20180807172342.071526922@linuxfoundation.org>
@@ -51,105 +53,73 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Filipe Manana <fdmanana@suse.com>
+From: Eric Dumazet <edumazet@google.com>
 
-commit bd3599a0e142cd73edd3b6801068ac3f48ac771a upstream.
+commit 58152ecbbcc6a0ce7fddd5bf5f6ee535834ece0c upstream.
 
-When we clone a range into a file we can end up dropping existing
-extent maps (or trimming them) and replacing them with new ones if the
-range to be cloned overlaps with a range in the destination inode.
-When that happens we add the new extent maps to the list of modified
-extents in the inode's extent map tree, so that a "fast" fsync (the flag
-BTRFS_INODE_NEEDS_FULL_SYNC not set in the inode) will see the extent maps
-and log corresponding extent items. However, at the end of range cloning
-operation we do truncate all the pages in the affected range (in order to
-ensure future reads will not get stale data). Sometimes this truncation
-will release the corresponding extent maps besides the pages from the page
-cache. If this happens, then a "fast" fsync operation will miss logging
-some extent items, because it relies exclusively on the extent maps being
-present in the inode's extent tree, leading to data loss/corruption if
-the fsync ends up using the same transaction used by the clone operation
-(that transaction was not committed in the meanwhile). An extent map is
-released through the callback btrfs_invalidatepage(), which gets called by
-truncate_inode_pages_range(), and it calls __btrfs_releasepage(). The
-later ends up calling try_release_extent_mapping() which will release the
-extent map if some conditions are met, like the file size being greater
-than 16Mb, gfp flags allow blocking and the range not being locked (which
-is the case during the clone operation) nor being the extent map flagged
-as pinned (also the case for cloning).
+In case skb in out_or_order_queue is the result of
+multiple skbs coalescing, we would like to get a proper gso_segs
+counter tracking, so that future tcp_drop() can report an accurate
+number.
 
-The following example, turned into a test for fstests, reproduces the
-issue:
+I chose to not implement this tracking for skbs in receive queue,
+since they are not dropped, unless socket is disconnected.
 
-  $ mkfs.btrfs -f /dev/sdb
-  $ mount /dev/sdb /mnt
-
-  $ xfs_io -f -c "pwrite -S 0x18 9000K 6908K" /mnt/foo
-  $ xfs_io -f -c "pwrite -S 0x20 2572K 156K" /mnt/bar
-
-  $ xfs_io -c "fsync" /mnt/bar
-  # reflink destination offset corresponds to the size of file bar,
-  # 2728Kb minus 4Kb.
-  $ xfs_io -c ""reflink ${SCRATCH_MNT}/foo 0 2724K 15908K" /mnt/bar
-  $ xfs_io -c "fsync" /mnt/bar
-
-  $ md5sum /mnt/bar
-  95a95813a8c2abc9aa75a6c2914a077e  /mnt/bar
-
-  <power fail>
-
-  $ mount /dev/sdb /mnt
-  $ md5sum /mnt/bar
-  207fd8d0b161be8a84b945f0df8d5f8d  /mnt/bar
-  # digest should be 95a95813a8c2abc9aa75a6c2914a077e like before the
-  # power failure
-
-In the above example, the destination offset of the clone operation
-corresponds to the size of the "bar" file minus 4Kb. So during the clone
-operation, the extent map covering the range from 2572Kb to 2728Kb gets
-trimmed so that it ends at offset 2724Kb, and a new extent map covering
-the range from 2724Kb to 11724Kb is created. So at the end of the clone
-operation when we ask to truncate the pages in the range from 2724Kb to
-2724Kb + 15908Kb, the page invalidation callback ends up removing the new
-extent map (through try_release_extent_mapping()) when the page at offset
-2724Kb is passed to that callback.
-
-Fix this by setting the bit BTRFS_INODE_NEEDS_FULL_SYNC whenever an extent
-map is removed at try_release_extent_mapping(), forcing the next fsync to
-search for modified extents in the fs/subvolume tree instead of relying on
-the presence of extent maps in memory. This way we can continue doing a
-"fast" fsync if the destination range of a clone operation does not
-overlap with an existing range or if any of the criteria necessary to
-remove an extent map at try_release_extent_mapping() is not met (file
-size not bigger then 16Mb or gfp flags do not allow blocking).
-
-CC: stable@vger.kernel.org # 3.16+
-Signed-off-by: Filipe Manana <fdmanana@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
-Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Acked-by: Soheil Hassas Yeganeh <soheil@google.com>
+Acked-by: Yuchung Cheng <ycheng@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/btrfs/extent_io.c |    3 +++
- 1 file changed, 3 insertions(+)
+ net/ipv4/tcp_input.c |   23 +++++++++++++++++++++--
+ 1 file changed, 21 insertions(+), 2 deletions(-)
 
---- a/fs/btrfs/extent_io.c
-+++ b/fs/btrfs/extent_io.c
-@@ -4298,6 +4298,7 @@ int try_release_extent_mapping(struct ex
- 	struct extent_map *em;
- 	u64 start = page_offset(page);
- 	u64 end = start + PAGE_SIZE - 1;
-+	struct btrfs_inode *btrfs_inode = BTRFS_I(page->mapping->host);
+--- a/net/ipv4/tcp_input.c
++++ b/net/ipv4/tcp_input.c
+@@ -4370,6 +4370,23 @@ static bool tcp_try_coalesce(struct sock
+ 	return true;
+ }
  
- 	if (gfpflags_allow_blocking(mask) &&
- 	    page->mapping->host->i_size > SZ_16M) {
-@@ -4320,6 +4321,8 @@ int try_release_extent_mapping(struct ex
- 					    extent_map_end(em) - 1,
- 					    EXTENT_LOCKED | EXTENT_WRITEBACK,
- 					    0, NULL)) {
-+				set_bit(BTRFS_INODE_NEEDS_FULL_SYNC,
-+					&btrfs_inode->runtime_flags);
- 				remove_extent_mapping(map, em);
- 				/* once for the rb tree */
- 				free_extent_map(em);
++static bool tcp_ooo_try_coalesce(struct sock *sk,
++			     struct sk_buff *to,
++			     struct sk_buff *from,
++			     bool *fragstolen)
++{
++	bool res = tcp_try_coalesce(sk, to, from, fragstolen);
++
++	/* In case tcp_drop() is called later, update to->gso_segs */
++	if (res) {
++		u32 gso_segs = max_t(u16, 1, skb_shinfo(to)->gso_segs) +
++			       max_t(u16, 1, skb_shinfo(from)->gso_segs);
++
++		skb_shinfo(to)->gso_segs = min_t(u32, gso_segs, 0xFFFF);
++	}
++	return res;
++}
++
+ static void tcp_drop(struct sock *sk, struct sk_buff *skb)
+ {
+ 	sk_drops_add(sk, skb);
+@@ -4493,7 +4510,8 @@ static void tcp_data_queue_ofo(struct so
+ 	/* In the typical case, we are adding an skb to the end of the list.
+ 	 * Use of ooo_last_skb avoids the O(Log(N)) rbtree lookup.
+ 	 */
+-	if (tcp_try_coalesce(sk, tp->ooo_last_skb, skb, &fragstolen)) {
++	if (tcp_ooo_try_coalesce(sk, tp->ooo_last_skb,
++				 skb, &fragstolen)) {
+ coalesce_done:
+ 		tcp_grow_window(sk, skb);
+ 		kfree_skb_partial(skb, fragstolen);
+@@ -4543,7 +4561,8 @@ coalesce_done:
+ 				tcp_drop(sk, skb1);
+ 				goto merge_right;
+ 			}
+-		} else if (tcp_try_coalesce(sk, skb1, skb, &fragstolen)) {
++		} else if (tcp_ooo_try_coalesce(sk, skb1,
++						skb, &fragstolen)) {
+ 			goto coalesce_done;
+ 		}
+ 		p = &parent->rb_right;
 
 
