@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E78F8C46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:56:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6301C46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:56:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABE7F2151D
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:56:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABE7F2151D
+	by mail.kernel.org (Postfix) with ESMTP id 8CA932151D
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:56:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CA932151D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404457AbeHGVMF (ORCPT
+        id S2404471AbeHGVMI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 17:12:05 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33894 "EHLO
+        Tue, 7 Aug 2018 17:12:08 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33908 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732347AbeHGVMF (ORCPT
+        with ESMTP id S1732347AbeHGVMH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 17:12:05 -0400
+        Tue, 7 Aug 2018 17:12:07 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3270FD0E;
-        Tue,  7 Aug 2018 18:56:21 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 31A44D14;
+        Tue,  7 Aug 2018 18:56:24 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Noam Rathaus <noamr@beyondsecurity.com>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org, Stewart Smith <stewart@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 10/85] infiniband: fix a possible use-after-free bug
-Date:   Tue,  7 Aug 2018 20:51:12 +0200
-Message-Id: <20180807172357.740822417@linuxfoundation.org>
+Subject: [PATCH 3.18 11/85] hvc_opal: dont set tb_ticks_per_usec in udbg_init_opal_common()
+Date:   Tue,  7 Aug 2018 20:51:13 +0200
+Message-Id: <20180807172357.778317977@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180807172357.357252052@linuxfoundation.org>
 References: <20180807172357.357252052@linuxfoundation.org>
@@ -52,55 +51,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Cong Wang <xiyou.wangcong@gmail.com>
+From: Stewart Smith <stewart@linux.ibm.com>
 
-[ Upstream commit cb2595c1393b4a5211534e6f0a0fbad369e21ad8 ]
+[ Upstream commit 447808bf500a7cc92173266a59f8a494e132b122 ]
 
-ucma_process_join() will free the new allocated "mc" struct,
-if there is any error after that, especially the copy_to_user().
+time_init() will set up tb_ticks_per_usec based on reality.
+time_init() is called *after* udbg_init_opal_common() during boot.
 
-But in parallel, ucma_leave_multicast() could find this "mc"
-through idr_find() before ucma_process_join() frees it, since it
-is already published.
+from arch/powerpc/kernel/time.c:
+  unsigned long tb_ticks_per_usec = 100; /* sane default */
 
-So "mc" could be used in ucma_leave_multicast() after it is been
-allocated and freed in ucma_process_join(), since we don't refcnt
-it.
+Currently, all powernv systems have a timebase frequency of 512mhz
+(512000000/1000000 == 0x200) - although there's nothing written
+down anywhere that I can find saying that we couldn't make that
+different based on the requirements in the ISA.
 
-Fix this by separating "publish" from ID allocation, so that we
-can get an ID first and publish it later after copy_to_user().
+So, we've been (accidentally) thwacking the (currently) correct
+(for powernv at least) value for tb_ticks_per_usec earlier than
+we otherwise would have.
 
-Fixes: c8f6a362bf3e ("RDMA/cma: Add multicast communication support")
-Reported-by: Noam Rathaus <noamr@beyondsecurity.com>
-Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+The "sane default" seems to be adequate for our purposes between
+udbg_init_opal_common() and time_init() being called, and if it isn't,
+then we should probably be setting it somewhere that isn't hvc_opal.c!
+
+Signed-off-by: Stewart Smith <stewart@linux.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/core/ucma.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/tty/hvc/hvc_opal.c |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/drivers/infiniband/core/ucma.c
-+++ b/drivers/infiniband/core/ucma.c
-@@ -180,7 +180,7 @@ static struct ucma_multicast* ucma_alloc
- 		return NULL;
+--- a/drivers/tty/hvc/hvc_opal.c
++++ b/drivers/tty/hvc/hvc_opal.c
+@@ -337,7 +337,6 @@ static void udbg_init_opal_common(void)
+ 	udbg_putc = udbg_opal_putc;
+ 	udbg_getc = udbg_opal_getc;
+ 	udbg_getc_poll = udbg_opal_getc_poll;
+-	tb_ticks_per_usec = 0x200; /* Make udelay not suck */
+ }
  
- 	mutex_lock(&mut);
--	mc->id = idr_alloc(&multicast_idr, mc, 0, 0, GFP_KERNEL);
-+	mc->id = idr_alloc(&multicast_idr, NULL, 0, 0, GFP_KERNEL);
- 	mutex_unlock(&mut);
- 	if (mc->id < 0)
- 		goto error;
-@@ -1262,6 +1262,10 @@ static ssize_t ucma_process_join(struct
- 		goto err3;
- 	}
- 
-+	mutex_lock(&mut);
-+	idr_replace(&multicast_idr, mc, mc->id);
-+	mutex_unlock(&mut);
-+
- 	mutex_unlock(&file->mut);
- 	ucma_put_ctx(ctx);
- 	return 0;
+ void __init hvc_opal_init_early(void)
 
 
