@@ -2,142 +2,95 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AD2AC46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 06:18:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7997EC46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 06:21:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B988221A18
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 06:18:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2678A21A12
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 06:21:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="OJ5x4AmH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B988221A18
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="r7qSOuJr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2678A21A12
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388689AbeHGIba (ORCPT
+        id S1733233AbeHGIeG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 04:31:30 -0400
-Received: from conuserg-08.nifty.com ([210.131.2.75]:39875 "EHLO
-        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728125AbeHGIbT (ORCPT
+        Tue, 7 Aug 2018 04:34:06 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:43698 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727233AbeHGIeG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 04:31:19 -0400
-Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-08.nifty.com with ESMTP id w776HYgf009463;
-        Tue, 7 Aug 2018 15:17:37 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com w776HYgf009463
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1533622658;
-        bh=CDsPjvZxJ6vyqPNJqrby0MCDRw1rWBu5Y5NaXcK1G3A=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OJ5x4AmHN6VIFmYNTxCtwlLy0Ot0EiENcE7MxUthfOaokJrPYNdRhR3b0K6zrksJS
-         TjuA2uKk5Yx4JJ5LXRD5F822Ar/4kfg4nqkZhO9J8THjWkNV8l5zePdY7m0asmQnEk
-         udBfk8ilzuka0J6HOontqOpx+R2DPVgR482+hupoEplVV+HrMLl3VcANwmGhrTNEcJ
-         6wSLlCc3i8Klln5WhV3ORlDZO7cjVS4OW7NAj7K7JPpXGDWwx4N9F8xWhf+WxjIyKG
-         anO9qtofaJw2QAN+QItI68eF6Pj/x1K6PAvbqTTNxkMnFw6JW1Mg2uzbLmhxjkVcoG
-         pJ78+Td23/1KA==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-mmc@vger.kernel.org
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [v0.1 PATCH 3/7] dt-bindings: mmc: add DT binding for UniPhier SD/eMMC controller
-Date:   Tue,  7 Aug 2018 15:17:18 +0900
-Message-Id: <1533622642-13989-4-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1533622642-13989-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1533622642-13989-1-git-send-email-yamada.masahiro@socionext.com>
+        Tue, 7 Aug 2018 04:34:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=CddoYNQEKiHxwmhVyX8MybXAOC7AoJ/b3h7yx3Pt3ps=; b=r7qSOuJrDzKDx4U+EKvfXUfHp
+        aLBXzVFILMAyssWllzY6vhR/9IZe2MBKD2p2mS2cjIZETbDhTDjEzo/FNwWC/Bu1lkdpGgfT3aeX3
+        PisF11m0JAeQtK541LorGsvIIkxitIUSJDb9hw4a0l3nGlodo6IrQky2szs62S1JYeBxTCdBWjlys
+        YagP7evl06fMO4bWPWe1esS1FL/FYPC3dnjPslLIf8+hGCLG+DE6Q+sS+ChAFmGX28YLJZAB3lBn6
+        vOfnDBTRp5WrofsLg/TSZmgE7aRXGPn6KXw1zp6MB8AarUCMCNDIqlwG3vJRUefSctAxKNupSxuRU
+        QT+ZhUqYQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fmvMs-000613-1M; Tue, 07 Aug 2018 06:21:18 +0000
+Date:   Mon, 6 Aug 2018 23:21:17 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        aik@ozlabs.ru, robh@kernel.org, joe@perches.com,
+        elfring@users.sourceforge.net, david@gibson.dropbear.id.au,
+        jasowang@redhat.com, mpe@ellerman.id.au, linuxram@us.ibm.com,
+        haren@linux.vnet.ibm.com, paulus@samba.org,
+        srikar@linux.vnet.ibm.com, robin.murphy@arm.com,
+        jean-philippe.brucker@arm.com, marc.zyngier@arm.com
+Subject: Re: [RFC 0/4] Virtio uses DMA API for all devices
+Message-ID: <20180807062117.GD32709@infradead.org>
+References: <20180803070507.GA1344@infradead.org>
+ <eb1750e90e4bd45da297fa6f78f8ef93671b7c2f.camel@kernel.crashing.org>
+ <20180803160246.GA13794@infradead.org>
+ <22310f58605169fe9de83abf78b59f593ff7fbb7.camel@kernel.crashing.org>
+ <20180804082120.GB4421@infradead.org>
+ <a3ec0a454928e880dabc3782ea906e318634abf9.camel@kernel.crashing.org>
+ <20180805072930.GB23288@infradead.org>
+ <b7e8294e3e70d24072883a7e8e5375719d5af870.camel@kernel.crashing.org>
+ <20180806094243.GA16032@infradead.org>
+ <6c707d6d33ac25a42265c2e9b521c2416d72c739.camel@kernel.crashing.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6c707d6d33ac25a42265c2e9b521c2416d72c739.camel@kernel.crashing.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This SD/eMMC controller is used for UniPhier SoC family.
+On Tue, Aug 07, 2018 at 05:52:12AM +1000, Benjamin Herrenschmidt wrote:
+> > It is your job to write a coherent interface specification that does
+> > not depend on the used components.  The hypervisor might be PAPR,
+> > Linux + qemu, VMware, Hyperv or something so secret that you'd have
+> > to shoot me if you had to tell me.  The guest might be Linux, FreeBSD,
+> > AIX, OS400 or a Hipster project of the day in Rust.  As long as we
+> > properly specify the interface it simplify does not matter.
+> 
+> That's the point Christoph. The interface is today's interface. It does
+> NOT change. That information is not part of the interface.
+> 
+> It's the VM itself that is stashing away its memory in a secret place,
+> and thus needs to do bounce buffering. There is no change to the virtio
+> interface per-se.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
-
- .../devicetree/bindings/mmc/uniphier-sd.txt        | 60 ++++++++++++++++++++++
- 1 file changed, 60 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mmc/uniphier-sd.txt
-
-diff --git a/Documentation/devicetree/bindings/mmc/uniphier-sd.txt b/Documentation/devicetree/bindings/mmc/uniphier-sd.txt
-new file mode 100644
-index 0000000..49dd0fc
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mmc/uniphier-sd.txt
-@@ -0,0 +1,60 @@
-+UniPhier SD/eMMC controller
-+
-+Required properties:
-+- compatible: should be one of the following:
-+    "socionext,uniphier-sd-v2.91" - IP version 2.91
-+    "socionext,uniphier-sd-v3.1"  - IP version 3.1
-+    "socionext,uniphier-sd-v3.1b" - IP version 3.1 (bug-fix ver.) [1]
-+- reg: offset and length of the register set for the device.
-+- interrupts: a single interrupt specifier.
-+- clocks: a single clock specifier of the controller clock.
-+- reset-names: should contain the following:
-+    "host"   - mandatory for all versions
-+    "bridge" - should exist only for "socionext,uniphier-sd-v2.91"
-+    "hw"     - should exist if eMMC hw reset line is available
-+- resets: a list of reset specifiers, corresponding to the reset-names
-+
-+[1] There are two different controller cores for version 3.1.  The early
-+    release had a bug in the DMA RX channel.  The issue was fixed later,
-+    but the version number was not incremented.  Hence, the latter has
-+    'b' at the end of its compatible string.
-+
-+Optional properties:
-+- pinctrl-names: if present, should contain the following:
-+    "default" - should exist for all instances
-+    "uhs"     - should exist for SD instance with UHS support
-+- pinctrl-0: pin control state for the default mode
-+- pinctrl-1: pin control state for the UHS mode
-+- dma-names: should be "rx-tx" if present.
-+  This property can exist only for "socionext,uniphier-sd-v2.91".
-+- dmas: a single DMA channel specifier
-+  This property can exist only for "socionext,uniphier-sd-v2.91".
-+- bus-width: see mmc.txt
-+- cap-sd-highspeed: see mmc.txt
-+- cap-mmc-highspeed: see mmc.txt
-+- sd-uhs-sdr12: see mmc.txt
-+- sd-uhs-sdr25: see mmc.txt
-+- sd-uhs-sdr50: see mmc.txt
-+- cap-mmc-hw-reset: should exist if reset-names contains "hw". see mmc.txt
-+- non-removable: see mmc.txt
-+
-+Example:
-+
-+	sd: sdhc@5a400000 {
-+		compatible = "socionext,uniphier-sd-v2.91";
-+		reg = <0x5a400000 0x200>;
-+		interrupts = <0 76 4>;
-+		pinctrl-names = "default", "uhs";
-+		pinctrl-0 = <&pinctrl_sd>;
-+		pinctrl-1 = <&pinctrl_sd_uhs>;
-+		clocks = <&mio_clk 0>;
-+		reset-names = "host", "bridge";
-+		resets = <&mio_rst 0>, <&mio_rst 3>;
-+		dma-names = "rx-tx";
-+		dmas = <&dmac 4>;
-+		bus-width = <4>;
-+		cap-sd-highspeed;
-+		sd-uhs-sdr12;
-+		sd-uhs-sdr25;
-+		sd-uhs-sdr50;
-+	};
--- 
-2.7.4
-
+Any guest that doesn't know about your magic limited adressing is simply
+not going to work, so we need to communicate that fact.
