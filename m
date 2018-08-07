@@ -2,91 +2,90 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EB4BC46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 06:26:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9125C46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 06:27:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A84C21A12
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 06:26:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A84C21A12
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+	by mail.kernel.org (Postfix) with ESMTP id 93BFA21A18
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 06:27:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="iv1gs+at"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93BFA21A18
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387697AbeHGIix (ORCPT
+        id S2387973AbeHGIjy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 04:38:53 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:45526 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727725AbeHGIix (ORCPT
+        Tue, 7 Aug 2018 04:39:54 -0400
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:38508 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727725AbeHGIjy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 04:38:53 -0400
-Received: by mail-ed1-f67.google.com with SMTP id s16-v6so6325354edq.12;
-        Mon, 06 Aug 2018 23:26:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=jNLNuJ2Ex0TsyD7idG77K7I9k/3mbsKRGvdvyIc/OPs=;
-        b=SagVx2XKKAHMHb2D9tWx/OfLZi0HoPb6PJGSLyDveoVB88/23uoPjOfQSiO8DhWqAA
-         EPl1FaYKqon/XsoBFeV1xkttsjAsff1vTsfbHx08qrEHRn2z3D+ypk9Rf5Cx589vYL03
-         OW2lbErSpjFJDtLpVa0laY1DIeDbmZTNG3ZkWNSbj2ohjd55CMhuyrTYL+Gjzita/eQY
-         1/G/YC6BNVYKpSZE0xqSmHeYkEoYZdzwFgMua+2x8ig/FEwOPwHA5mBW8/He9QugoK6B
-         RKIs3PQN9a0hhd1RheuRAaKeRtjryyOh6lb/WH9DjKz/Av8aYlzQra+eZk1qvGugvgn5
-         /Hjg==
-X-Gm-Message-State: AOUpUlGCqa3odf12Hhs5kSP582ASPJb+jZdrbVMfzMBY7CFTnwdnidKb
-        QSngIU9IFYRVLLbJJxsIrrJYEMn4jJQ=
-X-Google-Smtp-Source: AAOMgpcXIGsjkOOMBDbNL5hISgTEp7uf9RyK0pV8e3RHsOnIDH1CA4MbeC3lKJa2tlqQbv3qkazHDw==
-X-Received: by 2002:a50:f501:: with SMTP id t1-v6mr21715699edm.199.1533623165430;
-        Mon, 06 Aug 2018 23:26:05 -0700 (PDT)
-Received: from mail-wm0-f53.google.com (mail-wm0-f53.google.com. [74.125.82.53])
-        by smtp.gmail.com with ESMTPSA id i15-v6sm461549ede.66.2018.08.06.23.26.05
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 06 Aug 2018 23:26:05 -0700 (PDT)
-Received: by mail-wm0-f53.google.com with SMTP id w24-v6so16672165wmc.1;
-        Mon, 06 Aug 2018 23:26:05 -0700 (PDT)
-X-Received: by 2002:a1c:7c0c:: with SMTP id x12-v6mr719084wmc.58.1533623165008;
- Mon, 06 Aug 2018 23:26:05 -0700 (PDT)
+        Tue, 7 Aug 2018 04:39:54 -0400
+Received: from mail-ua0-f174.google.com (mail-ua0-f174.google.com [209.85.217.174]) (authenticated)
+        by conssluserg-02.nifty.com with ESMTP id w776QvBr021463;
+        Tue, 7 Aug 2018 15:26:57 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com w776QvBr021463
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1533623218;
+        bh=QZ1+JYig2et7/LHrhjfT/9OYFQ/HeBK9zQkE9uqdRro=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=iv1gs+atSVOrnGoNqHUu19LDT0C3AuFXDm3Bg2UaCXFJ/UM+dbTjdRS7LqLUS4D6H
+         tfFCAb6PbYYZVwJldnAYwOw73KefnP/XJXx6vEjfwgY3124A2Iy0AeT3CYiEwE0Zib
+         kb6rp9B2B8PjZsm+nSHZ0wIdVnG1CZ8e6onN/ts03a8xuCdAVD1lwxuzu7H/VwwqZq
+         TSKglz35+y2S1GdDm6Fc4bkWabGcoLbqi/zqSsroDsUgE4WgwrXTktxU7ukz2rGV2Y
+         F2TRz4QB3f7vDTOIbDChZmfQBHeRCp7c4U7OhiF1ix1e2lqRkkMshqv1RW+F+3Qo54
+         dVe2yzwSF56Iw==
+X-Nifty-SrcIP: [209.85.217.174]
+Received: by mail-ua0-f174.google.com with SMTP id k25-v6so14903576uao.11;
+        Mon, 06 Aug 2018 23:26:57 -0700 (PDT)
+X-Gm-Message-State: AOUpUlEK1K5QsyXvrir4AIWtf9X0RfTV4vdYbbrl7fF5CSsGuJgMRA6F
+        +EsnuBKt9o0OYoeFmKdJF+rwgIJhtr1XLXoQqj8=
+X-Google-Smtp-Source: AAOMgpfEyhvyIMMDsiaKogVVh1vCP2Pff4eZt2AiQgcWEDQKsjafus4ThCn+LLWwzCBzslQAOxrwhIIvbUPFmJYj2ss=
+X-Received: by 2002:a1f:4049:: with SMTP id n70-v6mr11700500vka.140.1533623216482;
+ Mon, 06 Aug 2018 23:26:56 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:adf:a101:0:0:0:0:0 with HTTP; Mon, 6 Aug 2018 23:25:44 -0700 (PDT)
-In-Reply-To: <20180801094801.26627-1-embed3d@gmail.com>
-References: <20180801094801.26627-1-embed3d@gmail.com>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Tue, 7 Aug 2018 14:25:44 +0800
-X-Gmail-Original-Message-ID: <CAGb2v66oe71CEtqkB2S-AYRzGnTQiJjVPUoRPkefd=9aqK+XbA@mail.gmail.com>
-Message-ID: <CAGb2v66oe71CEtqkB2S-AYRzGnTQiJjVPUoRPkefd=9aqK+XbA@mail.gmail.com>
-Subject: Re: [PATCH v7 0/4] IR support for A83T
-To:     Philipp Rossak <embed3d@gmail.com>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+Received: by 2002:ab0:2642:0:0:0:0:0 with HTTP; Mon, 6 Aug 2018 23:26:16 -0700 (PDT)
+In-Reply-To: <1533622642-13989-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1533622642-13989-1-git-send-email-yamada.masahiro@socionext.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Tue, 7 Aug 2018 15:26:16 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQ7fwWofFb-xVU7E4=hJh2x=NPOce9LBF3ncWqYtqt-hg@mail.gmail.com>
+Message-ID: <CAK7LNAQ7fwWofFb-xVU7E4=hJh2x=NPOce9LBF3ncWqYtqt-hg@mail.gmail.com>
+Subject: Re: [v0.1 PATCH 0/7] mmc: tmio: refactor TMIO core a bit and add
+ UniPhier SD/eMMC controller support
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-mmc <linux-mmc@vger.kernel.org>
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Russell King <linux@armlinux.org.uk>, sean@mess.org,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 1, 2018 at 5:47 PM, Philipp Rossak <embed3d@gmail.com> wrote:
-> This patch series adds support for the sunxi A83T ir module and enhances
-> the sunxi-ir driver. Right now the base clock frequency for the ir driver
-> is a hard coded define and is set to 8 MHz.
-> This works for the most common ir receivers. On the Sinovoip Bananapi M3
-> the ir receiver needs, a 3 MHz base clock frequency to work without
-> problems with this driver.
->
-> This patch series adds support for an optinal property that makes it able
-> to override the default base clock frequency and enables the ir interface
-> on the a83t and the Bananapi M3.
+2018-08-07 15:17 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
 
-Queued up for 4.20.
 
-Thanks!
+> [v0.1 PATCH 0/7] mmc: tmio: refactor TMIO core a bit and add UniPhier SD/eMMC controller support
+
+
+This series is v1.
+
+v0.1 was the internal numbering, which I forgot to change.
+
+
+-- 
+Best Regards
+Masahiro Yamada
