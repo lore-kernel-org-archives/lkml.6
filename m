@@ -3,39 +3,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77B42C46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:52:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86EB7C46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:52:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 391842172F
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:52:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 391842172F
+	by mail.kernel.org (Postfix) with ESMTP id 454D52170A
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:52:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 454D52170A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403858AbeHGVIc (ORCPT
+        id S2403889AbeHGVIg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 17:08:32 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33082 "EHLO
+        Tue, 7 Aug 2018 17:08:36 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33092 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726419AbeHGVIc (ORCPT
+        with ESMTP id S1726419AbeHGVIf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 17:08:32 -0400
+        Tue, 7 Aug 2018 17:08:35 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 59CFB3EE;
-        Tue,  7 Aug 2018 18:52:49 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4E80CD01;
+        Tue,  7 Aug 2018 18:52:52 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Anil Gurumurthy <anil.gurumurthy@cavium.com>,
-        Himanshu Madhani <himanshu.madhani@cavium.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.17 05/18] scsi: qla2xxx: Return error when TMF returns
-Date:   Tue,  7 Aug 2018 20:51:08 +0200
-Message-Id: <20180807172313.160120495@linuxfoundation.org>
+        stable@vger.kernel.org, Bart Massey <bart.massey@gmail.com>,
+        Dave Kleikamp <shaggy@kernel.org>,
+        jfs-discussion@lists.sourceforge.net,
+        Kees Cook <keescook@chromium.org>
+Subject: [PATCH 4.17 06/18] jfs: Fix usercopy whitelist for inline inode data
+Date:   Tue,  7 Aug 2018 20:51:09 +0200
+Message-Id: <20180807172313.194184605@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180807172312.964272530@linuxfoundation.org>
 References: <20180807172312.964272530@linuxfoundation.org>
@@ -52,40 +52,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Anil Gurumurthy <anil.gurumurthy@cavium.com>
+From: Kees Cook <keescook@chromium.org>
 
-commit b4146c4929ef61d5afca011474d59d0918a0cd82 upstream.
+commit 961b33c244e5ba1543ae26270a1ba29f29c2db83 upstream.
 
-Propagate the task management completion status properly to avoid
-unnecessary waits for commands to complete.
+Bart Massey reported what turned out to be a usercopy whitelist false
+positive in JFS when symlink contents exceeded 128 bytes. The inline
+inode data (i_inline) is actually designed to overflow into the "extended
+area" following it (i_inline_ea) when needed. So the whitelist needed to
+be expanded to include both i_inline and i_inline_ea (the whole size
+of which is calculated internally using IDATASIZE, 256, instead of
+sizeof(i_inline), 128).
 
-Fixes: faef62d13463 ("[SCSI] qla2xxx: Fix Task Management command asynchronous handling")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Anil Gurumurthy <anil.gurumurthy@cavium.com>
-Signed-off-by: Himanshu Madhani <himanshu.madhani@cavium.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+$ cd /mnt/jfs
+$ touch $(perl -e 'print "B" x 250')
+$ ln -s B* b
+$ ls -l >/dev/null
+
+[  249.436410] Bad or missing usercopy whitelist? Kernel memory exposure attempt detected from SLUB object 'jfs_ip' (offset 616, size 250)!
+
+Reported-by: Bart Massey <bart.massey@gmail.com>
+Fixes: 8d2704d382a9 ("jfs: Define usercopy region in jfs_ip slab cache")
+Cc: Dave Kleikamp <shaggy@kernel.org>
+Cc: jfs-discussion@lists.sourceforge.net
+Cc: stable@vger.kernel.org
+Signed-off-by: Kees Cook <keescook@chromium.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/qla2xxx/qla_init.c |    7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ fs/jfs/jfs_dinode.h |    7 +++++++
+ fs/jfs/jfs_incore.h |    1 +
+ fs/jfs/super.c      |    3 +--
+ 3 files changed, 9 insertions(+), 2 deletions(-)
 
---- a/drivers/scsi/qla2xxx/qla_init.c
-+++ b/drivers/scsi/qla2xxx/qla_init.c
-@@ -1518,11 +1518,10 @@ qla2x00_async_tm_cmd(fc_port_t *fcport,
- 
- 	wait_for_completion(&tm_iocb->u.tmf.comp);
- 
--	rval = tm_iocb->u.tmf.comp_status == CS_COMPLETE ?
--	    QLA_SUCCESS : QLA_FUNCTION_FAILED;
-+	rval = tm_iocb->u.tmf.data;
- 
--	if ((rval != QLA_SUCCESS) || tm_iocb->u.tmf.data) {
--		ql_dbg(ql_dbg_taskm, vha, 0x8030,
-+	if (rval != QLA_SUCCESS) {
-+		ql_log(ql_log_warn, vha, 0x8030,
- 		    "TM IOCB failed (%x).\n", rval);
- 	}
- 
+--- a/fs/jfs/jfs_dinode.h
++++ b/fs/jfs/jfs_dinode.h
+@@ -115,6 +115,13 @@ struct dinode {
+ 					dxd_t _dxd;	/* 16: */
+ 					union {
+ 						__le32 _rdev;	/* 4: */
++						/*
++						 * The fast symlink area
++						 * is expected to overflow
++						 * into _inlineea when
++						 * needed (which will clear
++						 * INLINEEA).
++						 */
+ 						u8 _fastsymlink[128];
+ 					} _u;
+ 					u8 _inlineea[128];
+--- a/fs/jfs/jfs_incore.h
++++ b/fs/jfs/jfs_incore.h
+@@ -87,6 +87,7 @@ struct jfs_inode_info {
+ 		struct {
+ 			unchar _unused[16];	/* 16: */
+ 			dxd_t _dxd;		/* 16: */
++			/* _inline may overflow into _inline_ea when needed */
+ 			unchar _inline[128];	/* 128: inline symlink */
+ 			/* _inline_ea may overlay the last part of
+ 			 * file._xtroot if maxentry = XTROOTINITSLOT
+--- a/fs/jfs/super.c
++++ b/fs/jfs/super.c
+@@ -967,8 +967,7 @@ static int __init init_jfs_fs(void)
+ 	jfs_inode_cachep =
+ 	    kmem_cache_create_usercopy("jfs_ip", sizeof(struct jfs_inode_info),
+ 			0, SLAB_RECLAIM_ACCOUNT|SLAB_MEM_SPREAD|SLAB_ACCOUNT,
+-			offsetof(struct jfs_inode_info, i_inline),
+-			sizeof_field(struct jfs_inode_info, i_inline),
++			offsetof(struct jfs_inode_info, i_inline), IDATASIZE,
+ 			init_once);
+ 	if (jfs_inode_cachep == NULL)
+ 		return -ENOMEM;
 
 
