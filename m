@@ -2,165 +2,118 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80A60C46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 22:49:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ED06C46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 22:50:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28229215F9
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 22:49:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 31F9D215F9
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 22:50:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="VBG+/p7h";
-	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="ojLYNCOP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28229215F9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wdc.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JJK6YIFS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31F9D215F9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727083AbeHHBG1 (ORCPT
+        id S1727146AbeHHBHU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 21:06:27 -0400
-Received: from esa3.hgst.iphmx.com ([216.71.153.141]:29660 "EHLO
-        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726625AbeHHBG0 (ORCPT
+        Tue, 7 Aug 2018 21:07:20 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:44207 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726625AbeHHBHT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 21:06:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1533682191; x=1565218191;
-  h=from:to:subject:date:message-id:references:in-reply-to:
-   content-transfer-encoding:mime-version;
-  bh=VkJrJYwmICHWtct/hwFZzgLw5k2hzHOo8OxApPi2Xik=;
-  b=VBG+/p7hKFBAIdpabwnJLrSuvGpmHC/yZ/ywfoRjc9CB/EVDLVnkLH32
-   EgmCc5Wz9fY52KLnPQP20k4Ot+WaVe6kRhSY1J1kXoWONKymElSniAozE
-   jE3P/Kr9o+h5cMSJdzfiK3DtkVu/AWz6U5L0Vcy/yfrL5WKNvUp+TmQio
-   9aY94dn8TAJvQVjfjjzRxi8mOY27QJ6Pw4Vy54yoHG8jf9vWkeHn+JEE9
-   rSZykj10VXd+9dEmJkgl3U5XIq9K7Nh0a0Udlx3pk+aBFgmcxBra7GiQ3
-   KkUTaqFuJ08US2ycQxBXhkm8rbQYe9uVjNRrXfVRNluFNOx5BPFki8wKy
-   w==;
-X-IronPort-AV: E=Sophos;i="5.51,456,1526313600"; 
-   d="scan'208";a="90676194"
-Received: from mail-dm3nam03lp0024.outbound.protection.outlook.com (HELO NAM03-DM3-obe.outbound.protection.outlook.com) ([207.46.163.24])
-  by ob1.hgst.iphmx.com with ESMTP; 08 Aug 2018 06:49:50 +0800
+        Tue, 7 Aug 2018 21:07:19 -0400
+Received: by mail-pg1-f196.google.com with SMTP id r1-v6so111105pgp.11
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 15:50:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector1-wdc-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=p0gyEj+ccVIBqch3XkvCXLQMho8AtCn35UUMVThYa0Y=;
- b=ojLYNCOPO6gf4pwDm+rZGQ8qKA33FJuNbxdIL2tSSzOUkn5ZIs42wBE68lSI9LKfBWH6ZdMi/Xc1j7CUZ0A8eb2UzyYDdqhXJzMRVU+gOhoq8046bDu9RwepOQ7XWgPwfloeqkE7Cgj88HafRLZLek/k97J96EUOqGhD9PeeWmU=
-Received: from BYAPR04MB4502.namprd04.prod.outlook.com (52.135.238.11) by
- BYAPR04MB3943.namprd04.prod.outlook.com (52.135.215.18) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1038.20; Tue, 7 Aug 2018 22:49:47 +0000
-Received: from BYAPR04MB4502.namprd04.prod.outlook.com
- ([fe80::9117:af72:e613:ca01]) by BYAPR04MB4502.namprd04.prod.outlook.com
- ([fe80::9117:af72:e613:ca01%2]) with mapi id 15.20.1017.019; Tue, 7 Aug 2018
- 22:49:47 +0000
-From:   Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>
-To:     Tal Shorer <tal.shorer@gmail.com>,
-        "keith.busch@intel.com" <keith.busch@intel.com>,
-        "axboe@fb.com" <axboe@fb.com>, "hch@lst.de" <hch@lst.de>,
-        "sagi@grimberg.me" <sagi@grimberg.me>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] nvme: fabrics: fix ctrl_loss_tmo < 0 to reconnect forever
-Thread-Topic: [PATCH] nvme: fabrics: fix ctrl_loss_tmo < 0 to reconnect
- forever
-Thread-Index: AQHULo9IbtFW8QpLZEefyasV3okIfaS04FTY
-Date:   Tue, 7 Aug 2018 22:49:47 +0000
-Message-ID: <BYAPR04MB4502CA560886C1025B15A62B86270@BYAPR04MB4502.namprd04.prod.outlook.com>
-References: <20180807204239.24907-1-tal.shorer@gmail.com>
-In-Reply-To: <20180807204239.24907-1-tal.shorer@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Chaitanya.Kulkarni@wdc.com; 
-x-originating-ip: [208.115.86.68]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BYAPR04MB3943;20:XANwIfQAWkXQBx37XSL1QkzjAZXyOGDCk5W4Mr/8BX5Zp/ILCWfkdlRoMaReuWiXE6PPOZZWyTi7XNHaH2/2OqXx0gzYw7bQ6rJKqcqG7nUqEX+ujJ0kWL5cz9phWmqEs4TbYsjgldAPTL2foskluUT/MxbGbjKJsaGJOSKoJSg=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: d605b595-0ad1-40e2-c94e-08d5fcb813a5
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:BYAPR04MB3943;
-x-ms-traffictypediagnostic: BYAPR04MB3943:
-wdcipoutbound: EOP-TRUE
-x-microsoft-antispam-prvs: <BYAPR04MB39430E8433CBECFC3A2E104286270@BYAPR04MB3943.namprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055)(85827821059158)(67672495146484)(258649278758335)(228905959029699);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(10201501046)(3231311)(944501410)(52105095)(93006095)(93001095)(3002001)(6055026)(149027)(150027)(6041310)(20161123558120)(20161123560045)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:BYAPR04MB3943;BCL:0;PCL:0;RULEID:;SRVR:BYAPR04MB3943;
-x-forefront-prvs: 0757EEBDCA
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(366004)(39860400002)(136003)(376002)(346002)(199004)(189003)(8936002)(25786009)(99286004)(6116002)(26005)(106356001)(105586002)(66066001)(3846002)(6436002)(186003)(476003)(6506007)(229853002)(102836004)(53546011)(86362001)(305945005)(74316002)(7736002)(6246003)(2906002)(76176011)(33656002)(7696005)(2201001)(81166006)(81156014)(39060400002)(8676002)(5250100002)(1720100001)(2501003)(14454004)(97736004)(486006)(2900100001)(256004)(14444005)(72206003)(966005)(478600001)(11346002)(446003)(5660300001)(6306002)(9686003)(110136005)(53936002)(55016002)(316002)(68736007);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR04MB3943;H:BYAPR04MB4502.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-microsoft-antispam-message-info: Raxcay11i2zcMp/YYS5imTUR+PeZ6oH1QYjxPvRzZpqXlmm/xZNpBkgpWSQRg3zQkbjJkAe5TNXAdjIkCryiGTFlaRTjnLhWoXE4dxGKDOqdTuZ9piM7UKtGFec7BDvudspgKBDRQUNsyikWu3y96XOzoU+I8QlMU+lXxNsw1oPT7QG+WTDFOclIr044X86uKXIC2YIAKQoJ3zdgp/VABGpJc7fLh0VdN9J5i2QvWq4VudB81ieKC8BZdzVhPUqpnqHPHZQL0nu/xRm6xy0NyIkOvvr0cQ5wgvkpo+xd7pgyYRzlYJLA+QUiM236TuCV6GeilLIeerkVMCCyArSoSSDq9iXmdgiFXCuHGAaNgp0=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=+cGKSWAfCBOTI6zwyjBdUsVLrQ5UA9JbG4VoiJAv538=;
+        b=JJK6YIFSD2/ec0MQMPqPtS6/V/R1voFTdvSEU2rrlusX8OBR2KT/C01sXovtRp1LNV
+         PR2DaNYWhTgG8qXSmzV0zmpmqtXzNue56gpCx+BQ6fNTVBXsCdONaHIMk+XRndvAP1HT
+         aE6/W6B+MDvt8IDdCkOIF9DJjZFexTmY6lWYw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=+cGKSWAfCBOTI6zwyjBdUsVLrQ5UA9JbG4VoiJAv538=;
+        b=qXkwHaELVCKK3O4j5sJSvtv3gc8PxetuEgqpSaXnUYb+TjDCsuvO/3yXcqodUJdt9Z
+         dHw5OkYSpLA9YLONOJ0L0DjizG0PX2WezNJLjrQbB3yy7opP8KvFWD3MNG48fnBPgy54
+         VLtFm90NDu4CWxmBtAY7JXT24n5SWeKLB7TbWVwyuOcl/FgMltGfWyxjLL2Y15x1hq7c
+         PYfFmTuV+fRp8ISP6/DPYvutY3b8kBdtq5f4cacvBClWLD6XM+stvhzDJquv9VL4pElO
+         Urld9Q1r5IYxvDnpbw0r1W1h5TiKhD6dSWLbHsGmh4lY+hO7WQ+ry/yHGbZZmjCnpErw
+         lzLg==
+X-Gm-Message-State: AOUpUlGnUyDiqs8xczNlE+bzx1J++ITDAVgwQB4Ztp4AVcjGJ9Yo4E0M
+        ojJL5GokX2wlGAWnzUlz3DFoEg==
+X-Google-Smtp-Source: AA+uWPy/4Luz7s++bC3Ql8r81IV6QQganoMRGBNNSzJnaSe+qiAuyPepfMUqW5brVZmHpmEqCV3j2w==
+X-Received: by 2002:a63:a502:: with SMTP id n2-v6mr228345pgf.263.1533682242311;
+        Tue, 07 Aug 2018 15:50:42 -0700 (PDT)
+Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
+        by smtp.gmail.com with ESMTPSA id l70-v6sm3471570pge.64.2018.08.07.15.50.40
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 07 Aug 2018 15:50:41 -0700 (PDT)
+Date:   Tue, 7 Aug 2018 15:50:40 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Kalle Valo <kvalo@codeaurora.org>
+Cc:     Stanislaw Gruszka <sgruszka@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH wireless-drivers] mt76x0: Remove VLA usage
+Message-ID: <20180807225040.GA2164@beast>
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d605b595-0ad1-40e2-c94e-08d5fcb813a5
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Aug 2018 22:49:47.4836
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR04MB3943
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Looks good to me.
+Even with "const" variables, the compiler will generate warnings about
+VLA usage. In the quest to remove all VLAs from the kernel[1], this uses
+a #define instead of a const to do the array sizing.
 
-Just 's/supplics/supplies/'.
+[1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
 
-Without looking into the entire code, If we can change the type of max_reco=
-nnect and nr_reconnects to unsigned int then we can just get away with the =
-one comparison (ctrl->nr_reconnects < ctrl->opts->max_reconnects).
-
-Reviewed-by: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
-
-
-From: Linux-nvme <linux-nvme-bounces@lists.infradead.org> on behalf of Tal =
-Shorer <tal.shorer@gmail.com>
-Sent: Tuesday, August 7, 2018 1:42 PM
-To: keith.busch@intel.com; axboe@fb.com; hch@lst.de; sagi@grimberg.me; linu=
-x-nvme@lists.infradead.org; linux-kernel@vger.kernel.org
-Cc: Tal Shorer
-Subject: [PATCH] nvme: fabrics: fix ctrl_loss_tmo < 0 to reconnect forever
-=A0=20
-=20
-When the user supplics ctrl_loss_tmo < 0, we warn them that this will
-cause the fabrics layer to attempt reconnection forever.
-However, in reality the fabrics layer never attempts to reconnect
-because the condition to test whether we should reconnect is backwards
-in this case.
-
-Signed-off-by: Tal Shorer <tal.shorer@gmail.com>
+Fixes: e87b5039511a ("mt76x0: eeprom files")
+Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
-=A0drivers/nvme/host/fabrics.c | 2 +-
-=A01 file changed, 1 insertion(+), 1 deletion(-)
+Please include this for the v4.19 merge window. The VLA was introduced
+with the new source file (which I also note is missing a SPDX line), so
+I'd like to avoid the kernel ever getting released with a VLA here.
+---
+ drivers/net/wireless/mediatek/mt76/mt76x0/eeprom.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/nvme/host/fabrics.c b/drivers/nvme/host/fabrics.c
-index f7efe5a58cc7..206d63cb1afc 100644
---- a/drivers/nvme/host/fabrics.c
-+++ b/drivers/nvme/host/fabrics.c
-@@ -474,7 +474,7 @@ EXPORT_SYMBOL_GPL(nvmf_connect_io_queue);
-=A0
-=A0bool nvmf_should_reconnect(struct nvme_ctrl *ctrl)
-=A0{
--=A0=A0=A0=A0=A0=A0 if (ctrl->opts->max_reconnects !=3D -1 &&
-+=A0=A0=A0=A0=A0=A0 if (ctrl->opts->max_reconnects =3D=3D -1 ||
-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 ctrl->nr_reconnects < ctrl->opts->max_=
-reconnects)
-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 return true;
-=A0
---=20
-2.14.1
+diff --git a/drivers/net/wireless/mediatek/mt76/mt76x0/eeprom.c b/drivers/net/wireless/mediatek/mt76/mt76x0/eeprom.c
+index 1ecd018f12b8..af2fd6a1bb44 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt76x0/eeprom.c
++++ b/drivers/net/wireless/mediatek/mt76/mt76x0/eeprom.c
+@@ -81,15 +81,15 @@ mt76x0_efuse_read(struct mt76x0_dev *dev, u16 addr, u8 *data,
+ 	return 0;
+ }
+ 
++#define MT_MAP_READS	DIV_ROUND_UP(MT_EFUSE_USAGE_MAP_SIZE, 16)
+ static int
+ mt76x0_efuse_physical_size_check(struct mt76x0_dev *dev)
+ {
+-	const int map_reads = DIV_ROUND_UP(MT_EFUSE_USAGE_MAP_SIZE, 16);
+-	u8 data[map_reads * 16];
++	u8 data[MT_MAP_READS * 16];
+ 	int ret, i;
+ 	u32 start = 0, end = 0, cnt_free;
+ 
+-	for (i = 0; i < map_reads; i++) {
++	for (i = 0; i < MT_MAP_READS; i++) {
+ 		ret = mt76x0_efuse_read(dev, MT_EE_USAGE_MAP_START + i * 16,
+ 					 data + i * 16, MT_EE_PHYSICAL_READ);
+ 		if (ret)
+-- 
+2.17.1
 
 
-_______________________________________________
-Linux-nvme mailing list
-Linux-nvme@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-nvme
-    =
+-- 
+Kees Cook
+Pixel Security
