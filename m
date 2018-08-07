@@ -2,122 +2,108 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AEF6C46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:41:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12E85C46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:47:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 380F32170A
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:41:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="KGaPKjXY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 380F32170A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
+	by mail.kernel.org (Postfix) with ESMTP id C5EA22170A
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:47:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5EA22170A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389688AbeHGU4o (ORCPT
+        id S2389732AbeHGVCx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 16:56:44 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:40586 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727198AbeHGU4o (ORCPT
+        Tue, 7 Aug 2018 17:02:53 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:46519 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732760AbeHGVCx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 16:56:44 -0400
-Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id A70375C0187;
-        Tue,  7 Aug 2018 20:41:02 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1533667262;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=ATgwHit8dvXpxrNpY0WH3WwDDUUt61gFxaeVzbN0cs4=;
-        b=KGaPKjXYGv01qN6U1ZUzIpytS7Z2OrxLgubyY6Lasru+HBEgtkvhYWNRKW7Egd++0Nq7oM
-        8DjyKY9QCv8kKYG2U/20Nd3mGgSM/JrENhdobNjnDHzmTlrpwt2ECJtKcw473b2xgPiypl
-        eez8MjaecxRhYBwuZCG2WZlffde8srk=
+        Tue, 7 Aug 2018 17:02:53 -0400
+Received: by mail-io0-f193.google.com with SMTP id i18-v6so14840629ioj.13;
+        Tue, 07 Aug 2018 11:47:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=xGXocIj6SJLtAvqEUGfk5C+tPt0jU6xzWWou+HpBmes=;
+        b=egPj/LiJ/6Z6Ty0UtM8etYsvicTPTtFUQNWFiX//Z4fhMlBfzLsvrpkcnXO3YYTDOV
+         NP1SG5HQoZ6m/VG4UzcRW9xSKZvH6Z02wIU+c50W77+VVAAuQkTHEXJj92NasQGWs7yT
+         3blfmNfVQ52VKDOgC4y9kqr+dVy9TBCgq6lMM8JAGkumJz7QaCqsk39YYJ0NJ91SJeq8
+         xzpeiYT1PiNO5uavr9M9XxdzB+QkfD1PSO1oDgMM/fDonPY7a/tWiLkE2hEBamL2+rKQ
+         +sw4qvV1Ts2jXntEX8woCxkQwzL3pXuIB2wMYbhkluhTjKqwFREWkOEGA3hrxa3dAgaa
+         d6XQ==
+X-Gm-Message-State: AOUpUlElaMHKRNRdVbOfUaXYF3lN8iVhsRTOVjhTu85riSNAgZR2Aswt
+        YHfSIMBcdny81ZIwS6rRlg==
+X-Google-Smtp-Source: AA+uWPwmxSpKtTssszNE4kcMQen5Kg93oJv7/xL3ELFtX2v2ShYEpnzzHuGOXVwE9NON/fc1+e5EAg==
+X-Received: by 2002:a6b:bd06:: with SMTP id n6-v6mr6038926iof.86.1533667631419;
+        Tue, 07 Aug 2018 11:47:11 -0700 (PDT)
+Received: from localhost ([24.51.61.72])
+        by smtp.gmail.com with ESMTPSA id 137-v6sm1254599itl.39.2018.08.07.11.47.10
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 07 Aug 2018 11:47:10 -0700 (PDT)
+Date:   Tue, 7 Aug 2018 12:47:10 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>
+Cc:     p.zabel@pengutronix.de, mturquette@baylibre.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, liuwei@actions-semi.com,
+        mp-cs@actions-semi.com, 96boards@ucrobotics.com,
+        devicetree@vger.kernel.org, daniel.thompson@linaro.org,
+        amit.kucheria@linaro.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, hzhang@ucrobotics.com,
+        bdong@ucrobotics.com, manivannanece23@gmail.com,
+        thomas.liau@actions-semi.com, jeff.chen@actions-semi.com,
+        pn@denx.de, edgar.righi@lsitec.org.br, sravanhome@gmail.com
+Subject: Re: [PATCH 0/9] Add Reset Controller support for Actions Semi Owl
+ SoCs
+Message-ID: <20180807184710.GA26423@rob-hp-laptop>
+References: <20180727184527.13287-1-manivannan.sadhasivam@linaro.org>
+ <c3ae668a-6bcc-a0eb-1e00-14ef9d607316@suse.de>
+ <20180730151131.GA28633@mani>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 07 Aug 2018 20:41:02 +0200
-From:   Stefan Agner <stefan@agner.ch>
-To:     Leonard Crestez <leonard.crestez@nxp.com>
-Cc:     Philipp Zabel <p.zabel@pengutronix.de>,
-        Marek Vasut <marex@denx.de>, Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Robert Chiras <robert.chiras@nxp.com>,
-        Mirela Rabulea <mirela.rabulea@nxp.com>,
-        Anson Huang <Anson.Huang@nxp.com>,
-        dri-devel@lists.freedesktop.org,
-        Dong Aisheng <aisheng.dong@nxp.com>, linux-imx@nxp.com,
-        kernel@pengutronix.de, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/4] drm/mxsfb: Add PM_SLEEP support
-In-Reply-To: <948022edecc7af494e8bb6f55bc4ddbc33c74e3c.1533583611.git.leonard.crestez@nxp.com>
-References: <cover.1533583611.git.leonard.crestez@nxp.com>
- <948022edecc7af494e8bb6f55bc4ddbc33c74e3c.1533583611.git.leonard.crestez@nxp.com>
-Message-ID: <9cb6d504595a642c2010bddc0d4f35ef@agner.ch>
-X-Sender: stefan@agner.ch
-User-Agent: Roundcube Webmail/1.3.4
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180730151131.GA28633@mani>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06.08.2018 21:31, Leonard Crestez wrote:
-> Since power to the lcdif block can be lost on suspend implement
-> PM_SLEEP_OPS using drm_mode_config_helper_suspend/resume to save/restore
-> the current mode.
+On Mon, Jul 30, 2018 at 08:41:31PM +0530, Manivannan Sadhasivam wrote:
+> Hi Andreas,
 > 
-> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+> On Mon, Jul 30, 2018 at 12:26:07PM +0200, Andreas Färber wrote:
+> > Hi Mani,
+> > 
+> > Am 27.07.2018 um 20:45 schrieb Manivannan Sadhasivam:
+> > > This patchset adds Reset Controller (RMU) support for Actions Semi
+> > > Owl SoCs, S900 and S700. For the Owl SoCs, RMU has been integrated into
+> > > the clock subsystem in hardware. Hence, in software we integrate RMU
+> > > support into common clock driver inorder to maintain compatibility.
+> > 
+> > Can this not be placed into drivers/reset/ by using mfd-simple with a
+> > sub-node in DT?
 
-Reviewed-by: Stefan Agner <stefan@agner.ch>
+That is exactly what I tell folks not to do. Design the DT based on h/w 
+blocks, not current desired driver split for some OS.
 
-> ---
->  drivers/gpu/drm/mxsfb/mxsfb_drv.c | 21 +++++++++++++++++++++
->  1 file changed, 21 insertions(+)
+> Actually I was not sure where to place this reset controller driver. When I
+> looked into other similar ones such as sunxi, they just integrated into the
+> clk subsystem. So I just chose that path. But yeah, this is hacky!
 > 
-> diff --git a/drivers/gpu/drm/mxsfb/mxsfb_drv.c
-> b/drivers/gpu/drm/mxsfb/mxsfb_drv.c
-> index 68d79f5dc0d3..d797dfd40d98 100644
-> --- a/drivers/gpu/drm/mxsfb/mxsfb_drv.c
-> +++ b/drivers/gpu/drm/mxsfb/mxsfb_drv.c
-> @@ -416,17 +416,38 @@ static int mxsfb_remove(struct platform_device *pdev)
->  	drm_dev_unref(drm);
->  
->  	return 0;
->  }
->  
-> +#ifdef CONFIG_PM_SLEEP
-> +static int mxsfb_suspend(struct device *dev)
-> +{
-> +       struct drm_device *drm = dev_get_drvdata(dev);
-> +
-> +       return drm_mode_config_helper_suspend(drm);
-> +}
-> +
-> +static int mxsfb_resume(struct device *dev)
-> +{
-> +       struct drm_device *drm = dev_get_drvdata(dev);
-> +
-> +       return drm_mode_config_helper_resume(drm);
-> +}
-> +#endif
-> +
-> +static const struct dev_pm_ops mxsfb_pm_ops = {
-> +       SET_SYSTEM_SLEEP_PM_OPS(mxsfb_suspend, mxsfb_resume)
-> +};
-> +
->  static struct platform_driver mxsfb_platform_driver = {
->  	.probe		= mxsfb_probe,
->  	.remove		= mxsfb_remove,
->  	.id_table	= mxsfb_devtype,
->  	.driver	= {
->  		.name		= "mxsfb",
->  		.of_match_table	= mxsfb_dt_ids,
-> +		.pm		= &mxsfb_pm_ops,
->  	},
->  };
->  
->  module_platform_driver(mxsfb_platform_driver);
+> But this RMU is not MFD by any means. Since the CMU (Clock) and RMU (Reset)
+> are two separate IPs inside SoC, we shouldn't describe it as a MFD driver. Since
+> RMU has only 2 registers, the HW designers decided to use up the CMU memory
+> map. So, maybe syscon would be best option I think. What is your opinion?
+
+If there's nothing shared then it is not a syscon. If you can create 
+separate address ranges, then 2 nodes is probably okay. If the registers 
+are all mixed up, then 1 node.
+
+Rob
