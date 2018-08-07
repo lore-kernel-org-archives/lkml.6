@@ -2,94 +2,111 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ABA9C46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:54:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71E33C46472
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:54:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2988E2151D
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:54:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="EMJRPpBo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2988E2151D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
+	by mail.kernel.org (Postfix) with ESMTP id 34B882151D
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:54:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34B882151D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390177AbeHGVJ7 (ORCPT
+        id S2390194AbeHGVKD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 17:09:59 -0400
-Received: from frisell.zx2c4.com ([192.95.5.64]:49161 "EHLO frisell.zx2c4.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388940AbeHGVJ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 17:09:58 -0400
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id e7308e30;
-        Tue, 7 Aug 2018 18:42:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
-        :references:in-reply-to:from:date:message-id:subject:to:cc
-        :content-type; s=mail; bh=cnVgRP4U+0C9t8ZXR6+0RMEJzZA=; b=EMJRPp
-        BoYWPPluvcOBjhPwO6oLEsdi/7KvTO9h63kZStmQcwijIY7Rt2MCfjEy6laPQuFW
-        wozmz+9jwApsFEYf7p41jzvhCNHmRurq9fKp0n/Jax+duyNgJT6ovMe4QPBCFYeB
-        j+4Nmrt6B9Zp3Fg6sEanI2DTJ4x+jPtRgJm1ktwFG0OOkQ1ZN/NGwOUvCAYshhs3
-        78rO0WcRl7XswbZaJn9/SBK2dYWVfnOH62H9q4S0+R/B7jTA6hYdEzKYZm7aLgve
-        pcEX9KIt50v/i4G9fi9huWv4YAgRhOJShD+gzqqNJOp2w1i81kvwMaG2+glk93to
-        Ga2KkdYDZsBTeCJQ==
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id a11d3345 (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128:NO);
-        Tue, 7 Aug 2018 18:41:59 +0000 (UTC)
-Received: by mail-oi0-f43.google.com with SMTP id w126-v6so30296025oie.7;
-        Tue, 07 Aug 2018 11:54:13 -0700 (PDT)
-X-Gm-Message-State: AOUpUlHYU+ovrCtRuYXs5tl4ohJNu1znlIyv8g8VhsKVGOPK1qdt6L0n
-        0UXjA9SeTVktaxPqGrntSjn6h9MLy7PBYJaYvxg=
-X-Google-Smtp-Source: AAOMgpdUWGmPlRCCEM/bHczHQrKayMv64M/e2ukBMjpW1+o3X2bo1roKM2RaGUKT5jZkQaFtnNvx1qf8bFJJTrr6Q5g=
-X-Received: by 2002:aca:f189:: with SMTP id p131-v6mr19306300oih.14.1533668052973;
- Tue, 07 Aug 2018 11:54:12 -0700 (PDT)
+        Tue, 7 Aug 2018 17:10:03 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33418 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404231AbeHGVKD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 17:10:03 -0400
+Received: from localhost (unknown [194.244.16.108])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A63F6D07;
+        Tue,  7 Aug 2018 18:54:19 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH 4.14 07/21] nohz: Fix missing tick reprogram when interrupting an inline softirq
+Date:   Tue,  7 Aug 2018 20:51:21 +0200
+Message-Id: <20180807172331.279605578@linuxfoundation.org>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180807172330.953888701@linuxfoundation.org>
+References: <20180807172330.953888701@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-References: <20180801072246.GA15677@sol.localdomain> <CALCETrXD_VyoyW5C1U34o-ySJ4nFcO6PQ+ZNBVYxCpJ-f65CHw@mail.gmail.com>
- <CAHmME9oThR-dE3gTW0UyqAGZO80qu19ktG4YTb4iL6CNpzNNaw@mail.gmail.com>
- <CALCETrVziUpAU4nTaZ=t5ct=1jsWswWOy7KDNxXGPD1L=tMTGQ@mail.gmail.com> <CAHmME9pt3PxKQmc8E-arA-W0p2tp9z_oJ-uXQwis3qD=Zvpnsg@mail.gmail.com>
-In-Reply-To: <CAHmME9pt3PxKQmc8E-arA-W0p2tp9z_oJ-uXQwis3qD=Zvpnsg@mail.gmail.com>
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date:   Tue, 7 Aug 2018 11:54:01 -0700
-X-Gmail-Original-Message-ID: <CAHmME9rA_nb9Le4VQhtcqCfNSuHpFjZVOV6=vE12FydJD9CmAQ@mail.gmail.com>
-Message-ID: <CAHmME9rA_nb9Le4VQhtcqCfNSuHpFjZVOV6=vE12FydJD9CmAQ@mail.gmail.com>
-Subject: Re: [PATCH v1 2/3] zinc: Introduce minimal cryptography library
-To:     Andy Lutomirski <luto@amacapital.net>,
-        Eric Biggers <ebiggers3@gmail.com>
-Cc:     Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Samuel Neves <sneves@dei.uc.pt>,
-        "Daniel J . Bernstein" <djb@cr.yp.to>,
-        Tanja Lange <tanja@hyperelliptic.org>,
-        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>,
-        Karthikeyan Bhargavan <karthik.bhargavan@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hey Andy, Eric, & all,
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-I've started the work of separating this out into 16 individual
-commits, have addressed numerous other things brought up like the
-ifdef maze, and have begun rewriting (parts of) the original commit
-message. It's still a work in progress, and I still have some work to
-do, but if you want to follow along, things are happening here:
+------------------
 
-https://git.zx2c4.com/linux-dev/log/?h=jd/wireguard
+From: Frederic Weisbecker <frederic@kernel.org>
 
-I'll be rebasing and reworking this continuously, but that's how it's
-shaping up.
+commit 0a0e0829f990120cef165bbb804237f400953ec2 upstream.
 
-As I'm still working on it, I won't be submitting v2 today, but if you
-have suggestions or concerns or want to poke me while I'm working on
-v2, don't hesitate to send me private email or ping me in IRC (I'm
-"zx2c4" there) to chat.
+The full nohz tick is reprogrammed in irq_exit() only if the exit is not in
+a nesting interrupt. This stands as an optimization: whether a hardirq or a
+softirq is interrupted, the tick is going to be reprogrammed when necessary
+at the end of the inner interrupt, with even potential new updates on the
+timer queue.
 
-Regards,
-Jason
+When soft interrupts are interrupted, it's assumed that they are executing
+on the tail of an interrupt return. In that case tick_nohz_irq_exit() is
+called after softirq processing to take care of the tick reprogramming.
+
+But the assumption is wrong: softirqs can be processed inline as well, ie:
+outside of an interrupt, like in a call to local_bh_enable() or from
+ksoftirqd.
+
+Inline softirqs don't reprogram the tick once they are done, as opposed to
+interrupt tail softirq processing. So if a tick interrupts an inline
+softirq processing, the next timer will neither be reprogrammed from the
+interrupting tick's irq_exit() nor after the interrupted softirq
+processing. This situation may leave the tick unprogrammed while timers are
+armed.
+
+To fix this, simply keep reprogramming the tick even if a softirq has been
+interrupted. That can be optimized further, but for now correctness is more
+important.
+
+Note that new timers enqueued in nohz_full mode after a softirq gets
+interrupted will still be handled just fine through self-IPIs triggered by
+the timer code.
+
+Reported-by: Anna-Maria Gleixner <anna-maria@linutronix.de>
+Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Anna-Maria Gleixner <anna-maria@linutronix.de>
+Cc: stable@vger.kernel.org # 4.14+
+Link: https://lkml.kernel.org/r/1533303094-15855-1-git-send-email-frederic@kernel.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ kernel/softirq.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/kernel/softirq.c
++++ b/kernel/softirq.c
+@@ -382,7 +382,7 @@ static inline void tick_irq_exit(void)
+ 
+ 	/* Make sure that timer wheel updates are propagated */
+ 	if ((idle_cpu(cpu) && !need_resched()) || tick_nohz_full_cpu(cpu)) {
+-		if (!in_interrupt())
++		if (!in_irq())
+ 			tick_nohz_irq_exit();
+ 	}
+ #endif
+
+
