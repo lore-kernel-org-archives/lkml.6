@@ -2,81 +2,109 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2621BC46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 17:49:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6904C46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 17:51:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9FE4208E6
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 17:49:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9FE4208E6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 9940521655
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 17:51:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9940521655
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403925AbeHGUFE (ORCPT
+        id S2403960AbeHGUHV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 16:05:04 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:53052 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388540AbeHGUFE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 16:05:04 -0400
-Received: by mail-it0-f68.google.com with SMTP id d9-v6so23220001itf.2;
-        Tue, 07 Aug 2018 10:49:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3s0OUp6tn9JaNSvRdWWKVaJmRJm59f/VqxOCJhGBF6g=;
-        b=SEXJjMpyEOTS+STs8TC42H0BcHF6f0haSRx8B1TWDnk0lgeM6Eo6qjVwaYO2DsY8zI
-         Zmse2EDRDqXxMn27Pn4f3IV3bmuWcpMvVqXvTbshQ8F5jDPQDQINdyF/aHF8k7cbkmAl
-         mkqiyLnFjwctsnUZL1P3ARmsDkhtBPDA472t/YaqhKrvMeqh86D0HznG1TR0bQDUYdck
-         kHOJDSvfCs/6KmVl4uwANYhfYxyjOcYDXOEQCsiTLUFjgWaR0FAp7j0eAnQHo+eFpLOb
-         ciEALTPiL3auqCVSV8b+41edj4wdRIvnFMoOSkkKl2Ua82ZB/i/Ow6/DuFxIZmx3BQj2
-         5IEw==
-X-Gm-Message-State: AOUpUlHSGDPKqfnLahTtulfwEcieFw4VS28BgOcmt62ZnLJAuQ2rhNow
-        3Kn0vhRRb0rQqnxrhTeHrg==
-X-Google-Smtp-Source: AA+uWPwTzNJDy9eT11tJ8QmmS4WbDlbwINHVuDwoZkfIWrVD6lfGAc003swA9nohaWBfLByhmMMnmg==
-X-Received: by 2002:a24:6b0d:: with SMTP id v13-v6mr2737452itc.16.1533664177023;
-        Tue, 07 Aug 2018 10:49:37 -0700 (PDT)
-Received: from localhost ([24.51.61.72])
-        by smtp.gmail.com with ESMTPSA id j78-v6sm1095552itj.44.2018.08.07.10.49.36
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 07 Aug 2018 10:49:36 -0700 (PDT)
-Date:   Tue, 7 Aug 2018 11:49:35 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     John Crispin <john@phrozen.org>
-Cc:     Alban Bedel <albeu@free.fr>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH V2 1/3] dt-bindings: phy-qcom-ipq4019-usb: add binding
- document
-Message-ID: <20180807174935.GA18858@rob-hp-laptop>
-References: <20180801104941.29432-1-john@phrozen.org>
- <20180801104941.29432-2-john@phrozen.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180801104941.29432-2-john@phrozen.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Tue, 7 Aug 2018 16:07:21 -0400
+Received: from mga14.intel.com ([192.55.52.115]:7837 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727155AbeHGUHV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 16:07:21 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Aug 2018 10:51:54 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,456,1526367600"; 
+   d="asc'?scan'208";a="252107540"
+Received: from jtkirshe-nuc.jf.intel.com ([134.134.177.59])
+  by fmsmga005.fm.intel.com with ESMTP; 07 Aug 2018 10:51:53 -0700
+Message-ID: <5c5e532859f4322cd6f8d15af1fad47231aaf95e.camel@intel.com>
+Subject: Re: [PATCH v6 6/9] ixgbe: Do not call pcie_print_link_status()
+From:   Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Reply-To: jeffrey.t.kirsher@intel.com
+To:     Alexandru Gagniuc <mr.nuke.me@gmail.com>,
+        linux-pci@vger.kernel.org, bhelgaas@google.com,
+        jakub.kicinski@netronome.com
+Cc:     keith.busch@intel.com, alex_gagniuc@dellteam.com,
+        austin_bolen@dell.com, shyam_iyer@dell.com,
+        Ariel Elior <ariel.elior@cavium.com>,
+        everest-linux-l2@cavium.com,
+        "David S. Miller" <davem@davemloft.net>,
+        Michael Chan <michael.chan@broadcom.com>,
+        Ganesh Goudar <ganeshgr@chelsio.com>,
+        Tariq Toukan <tariqt@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Dirk van der Merwe <dirk.vandermerwe@netronome.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        intel-wired-lan@lists.osuosl.org, linux-rdma@vger.kernel.org,
+        oss-drivers@netronome.com
+Date:   Tue, 07 Aug 2018 10:51:49 -0700
+In-Reply-To: <20180806232600.25694-6-mr.nuke.me@gmail.com>
+References: <CAErSpo4PK+SQLNfdkLNt9eLc7bpbxbkZCsa8T-tQpid601n0SQ@mail.gmail.com>
+         <20180806232600.25694-1-mr.nuke.me@gmail.com>
+         <20180806232600.25694-6-mr.nuke.me@gmail.com>
+Organization: Intel
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-pPzt0jonzh3gyG7n0GJr"
+X-Mailer: Evolution 3.28.4 (3.28.4-1.fc28) 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 01, 2018 at 12:49:39PM +0200, John Crispin wrote:
-> This patch adds the binding documentation for the HS/SS USB PHY found
-> inside Qualcomm Dakota SoCs.
-> 
-> Cc: Rob Herring <robh@kernel.org>
-> Cc: devicetree@vger.kernel.org
-> Signed-off-by: John Crispin <john@phrozen.org>
-> ---
->  .../bindings/phy/phy-qcom-ipq4019-usb.txt           | 21 +++++++++++++++++++++
->  1 file changed, 21 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/phy/phy-qcom-ipq4019-usb.txt
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+--=-pPzt0jonzh3gyG7n0GJr
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, 2018-08-06 at 18:25 -0500, Alexandru Gagniuc wrote:
+> This is now done by the PCI core to warn of sub-optimal bandwidth.
+>=20
+> Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+> ---
+>  drivers/net/ethernet/intel/ixgbe/ixgbe_main.c | 26 ---------------
+> ----
+>  1 file changed, 26 deletions(-)
+
+Acked-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+
+--=-pPzt0jonzh3gyG7n0GJr
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiTyZWz+nnTrOJ1LZ5W/vlVpL7c4FAltp3DUACgkQ5W/vlVpL
+7c5JQw/9Fo7T4k0FAjGAyShZDwDb7xKB9kdLlyat5WsUfbW1EYdHwfc0U0nd3KeB
+QGUyMPIwqDi6tSTCJmIyHozKALqwY4ukd7ei6Thkap3NN8AKlUbiAuZtbFbpvbp/
+3lOEph9Qqsu2ECAz8YYrpd3cEiyPdPmSaPOJCC6evWd9NKeWE5LQ/oqxR4I9+nVx
+zjnUfyiUuhdwQpPVyo61V4b/OeQZJK2vhWjFzSFU4AJpm1Ieb+e9dZnZE/rTbXN6
+pT4BonB7lB0LNLi5tuYTIODkYWoh/aOfjP1oPXApQRvUlw7KaUYVWCkIhta4R1Kh
+gPstjHJe2nn8vYsAeId9m5+t+g0G6RfpD9KtVDidsCCDAZe0gOW4SzA4aE3pBGb2
+DwArJ93VxqhGdNc+Ll1GyuMRBB4quwoaAAQDdDd18OwXivYZ1kHrZIOpjj9rANia
+wGRyimWjpEmLg9OZbvHypsUc5bC8Nd36WeZJeEMNtcLaCJRBoxeoaRgwVTGqNYiU
+/EGMNnKE5OuLlwfHt8t0rFwz+4BAVIm+SKwYN5SXN6EjC2y0HlXE8OmdPkXLf7oL
+S0FEm3v6TB0KeQJpxZ7WBjAKK9TBoXMvf7M169DtQKJ18M2OnOhUQ8pIC+/vnGh1
+ALsptbV/M0dQiHEL8fj2DtchOLS9p1D3ccQ6VWMPtE2hTAEwtmI=
+=iqdT
+-----END PGP SIGNATURE-----
+
+--=-pPzt0jonzh3gyG7n0GJr--
+
