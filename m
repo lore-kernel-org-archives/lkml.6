@@ -2,150 +2,111 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F687C46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 16:28:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE3F1C46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 16:39:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C106E21885
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 16:28:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C106E21885
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 6F33B2175E
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 16:39:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TX/eSVQJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F33B2175E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389493AbeHGSnQ (ORCPT
+        id S2389639AbeHGSy5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 14:43:16 -0400
-Received: from smtp.nue.novell.com ([195.135.221.5]:32786 "EHLO
-        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730869AbeHGSnP (ORCPT
-        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
-        Tue, 7 Aug 2018 14:43:15 -0400
-Received: from linux-l9pv.suse (124-11-22-254.static.tfn.net.tw [124.11.22.254])
-        by smtp.nue.novell.com with ESMTP (TLS encrypted); Tue, 07 Aug 2018 18:28:03 +0200
-Date:   Wed, 8 Aug 2018 00:27:46 +0800
-From:   joeyli <jlee@suse.com>
-To:     Yu Chen <yu.c.chen@intel.com>
-Cc:     Pavel Machek <pavel@ucw.cz>, Ryan Chen <yu.chen.surf@gmail.com>,
-        oneukum@suse.com, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        ebiggers@google.com, Theodore Ts'o <tytso@mit.edu>,
-        smueller@chronox.de, denkenz@gmail.com,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        linux-crypto@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kookoo.gu@intel.com, Zhang Rui <rui.zhang@intel.com>
-Subject: Re: [PATCH 0/4][RFC v2] Introduce the in-kernel hibernation
- encryption
-Message-ID: <20180807162746.GJ19234@linux-l9pv.suse>
-References: <1532590246.7411.3.camel@suse.com>
- <20180726081404.GG4244@linux-l9pv.suse>
- <20180730170415.GQ4244@linux-l9pv.suse>
- <20180803033702.GB416@sandybridge-desktop>
- <20180803053445.GC4244@linux-l9pv.suse>
- <CADjb_WSURQz86+E8kakNf7UBDM+aho+uaz3QdDkuGsEgan=szw@mail.gmail.com>
- <20180805100200.GB22948@amd>
- <20180806084534.GB12124@chenyu-desktop>
- <20180806103958.GI27062@linux-l9pv.suse>
- <20180807074312.GB17894@chenyu-desktop>
+        Tue, 7 Aug 2018 14:54:57 -0400
+Received: from mail-yb0-f194.google.com ([209.85.213.194]:45905 "EHLO
+        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730869AbeHGSy5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 14:54:57 -0400
+Received: by mail-yb0-f194.google.com with SMTP id h127-v6so6828566ybg.12
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 09:39:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=jqeryaE7yhathlSy2pE1qOu1bKxRPLnyVAvAxqC5MCY=;
+        b=TX/eSVQJVUcouFStdX4mjFjeo2rfjK++YrcsQV7kn2euJ5QJ0TSwjbQKPi+Bgh6bWi
+         oHF66oHwPr3XjbDkXfFxiW6HuU/5GBvAs7+clApeGc8MHXAjiAY0XOB3qD2r6YrrhNdO
+         z0n2oFpflogSuGJ7lSnrqy9VwTZo7EC7kYQi2+9XetV2kasbvYyCdmcluKg2KNOg1eJJ
+         lV12s6X8pnNmiGvXMz/j2YkfXIorEJKHqa+E5eGoirx2Ax+1dKPiUrWXjN4aysTI3VJB
+         kYKXT/izUKNc+sB26vSDQEG9PLIXS+rCGxz9jpup5iAOf6SJdv6GsC+klCOsXUSP6xUT
+         B8vw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jqeryaE7yhathlSy2pE1qOu1bKxRPLnyVAvAxqC5MCY=;
+        b=imRV0Ne/HjkIlZGuMz9M6kwA8whLxzHI0FBXm3pZ6lkVDwdRx6SHOnv3hvUWCaUYga
+         IUlHpKoauqq64tfvmryVu6tgthvKYTjAACaIG5YQME00j04aIeLdYtoOksUW3mIaLOxi
+         aO8Kn0dTX1uLfK6y4RXcEflmG7Mm2TJislGvnjjFBva3zPeOQCj0oW7qVUdqMYrQJCTP
+         bikq7OCWrHtMIebEx3kd+9m/evx3fw6RJUNc9Yk6EPUU04KyEr2A1LhEf8vOckE5NQfw
+         NU3qEGQjnh8x3NpIwjdxUhjikDr7d6cWdAIL8sh19WdzIgGUeCEsBGCCFu7ViLoelGZp
+         6f9A==
+X-Gm-Message-State: AOUpUlGP8plfaJ3RH4qVI5rvisR5i1BXmxbfZTkK4ecsLbqWwNAmdPW8
+        XinYVOLCaBb0UwkGD2jfayRixSe76vt/l5JM90c21g==
+X-Google-Smtp-Source: AAOMgpcOoJqlPy1P5cylPMSlejkD/TYI0zhVMAA0AOpsBqyo/ZnyeGfdB0e8PSscjNAH7hqn1rh39uCYikqH29fUwxw=
+X-Received: by 2002:a25:b191:: with SMTP id h17-v6mr10541616ybj.79.1533659989644;
+ Tue, 07 Aug 2018 09:39:49 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180807074312.GB17894@chenyu-desktop>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <20180807162234.205212-1-mka@chromium.org>
+In-Reply-To: <20180807162234.205212-1-mka@chromium.org>
+From:   Guenter Roeck <groeck@google.com>
+Date:   Tue, 7 Aug 2018 09:39:38 -0700
+Message-ID: <CABXOdTcpoGLc+STUZY-tVBqqn5BrBH1vEb6B+bt6MspLHUXeGQ@mail.gmail.com>
+Subject: Re: [PATCH] ASoC: rt5677: Remove bogus device id from rt5677_of_match
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     bardliao@realtek.com, oder_chiou@realtek.com,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Nicolas Boichat <drinkcat@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 07, 2018 at 03:43:12PM +0800, Yu Chen wrote:
-> On Mon, Aug 06, 2018 at 06:39:58PM +0800, joeyli wrote:
-> > On Mon, Aug 06, 2018 at 04:45:34PM +0800, Yu Chen wrote:
-> > > Hi Pavel,
-> > > On Sun, Aug 05, 2018 at 12:02:00PM +0200, Pavel Machek wrote:
-> > > > Hi!
-> > > > 
-> > > > > > User space doesn't need to involve. The EFI root key is generated by
-> > > > > > EFI boot stub and be transfer to kernel. It's stored in EFI boot service
-> > > > > > variable that it can only be accessed by trusted EFI binary when
-> > > > > > secure boot is enabled.
-> > > > > >
-> > > > > Okay, this apply to the 'suspend' phase, right?
-> > > > > I'm still a little confused about the 'resume' phase.
-> > > > > Taking encryption as example(not signature),
-> > > > > the purpose of doing hibernation encryption is to prevent other users
-> > > > > from stealing ram content. Say, user A uses a  passphrase to generate the
-> > > > 
-> > > > No, I don't think that's purpose here.
-> > > > 
-> > > > Purpose here is to prevent user from reading/modifying kernel memory
-> > > > content on machine he owns.
-> > > >
-> > > Say, A puts his laptop into hibernation and walks away,
-> > > and B walks by, and opens A's laptop and wakes up the system and he
-> > > can do what he wants. Although EFI key/TPM trusted key is enabled,
-> > > currently there's no certification during resume, which sounds
-> > > unsafe to me. Afterall, the original requirement is to probe
-> > > user for password during resume, which sounds more natural.
-> > 
-> > OK, I saw your case. This is a physical accessing.
-> > 
-> > I have a question: The suspend to memory also has the same behavior
-> > and more people are using suspend. Should we think a common solution
-> > to cover S3 and S4? 
-> >
-> Since STD behaves more likely a boot up, STR does not have solid
-> requirement for certification.
+On Tue, Aug 7, 2018 at 9:22 AM Matthias Kaehlcke <mka@chromium.org> wrote:
+>
+> The initializer of rt5677_of_match contains a bogus device id
+> (enum type) for the 'type' field (char []). Remove it.
+>
+> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> ---
+>  sound/soc/codecs/rt5677.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/sound/soc/codecs/rt5677.c b/sound/soc/codecs/rt5677.c
+> index 8a0181a2db08..7dab53b35cbf 100644
+> --- a/sound/soc/codecs/rt5677.c
+> +++ b/sound/soc/codecs/rt5677.c
+> @@ -5007,7 +5007,7 @@ static const struct regmap_config rt5677_regmap = {
+>  };
+>
+>  static const struct of_device_id rt5677_of_match[] = {
+> -       { .compatible = "realtek,rt5677", RT5677 },
+> +       { .compatible = "realtek,rt5677", },
 
-In your A/B user case, when STR, B user can still open A's laptop
-and wakes up the system and do what he wants because he can get
-the console like resume from STD. I didn't see difference.
+Is that indeed not used, or should it be the following ?
+                        ...  , .data = RT5677 },
 
-> > > > Strange as it may sound, that is what "secure" boot requires (and what
-> > > > Disney wants).
-> > > > 
-> > > Ok, I understand this requirement, and I'm also concerning how to
-> > > distinguish different users from seeing data of each other.
-> > > 
-> > > Joey,
-> > > I'm thinking of a possible direction which could take advantage
-> > > of the password.  It leverages either EFI key or TPM
-> > > trusted key to get it done. Does it make sense?
-> > > 
-> > > 1. The user space generates a symetric key key_user using
-> > >    the password, and passes the key_user to the kernel as the master
-> > >    key.
-> > > 2. The kernel uses the EFI key or TPM trusted key to encrypt
-> > >    the key_user thus gets a encrypt_key.
-> > > 3. Uses the encrypt_key to do snapshot encryption
-> > > 4. During resume, the same encrypt_key is generated following
-> > >    the same steps(I assume the same EFI key or TPM key could be fetched
-> > >    during resumed, right?) and do the snapshot decryption.
-> > >
-> > 
-> > Yes, we can use TPM key to protect the user key. But I suggest that we
-> > should give user a function to disable the user key because not everyone
-> > want to key-in a password for hibernate/resume and also snapshot image
-> > encryption.
-> > 
-> > Two policies:
-> > - When user key-in user key, the snapshot image must be encryption.
-> > - Without key-in user key, I still want the snapshot image can be encryption.
-> > 
-> > No matter that the user key be key-in or not, the snapshot image must be
-> > encrypted by a kernel key. So I suggest that we treat the user key as a salt
-> > for snapshot image encryption and authentication. If the user key
-> > be disabled, then kernel just generates a random number as a salt.
-> > 
-> > Actually, the kernel must compares the user key before snapshot decryption.
-> > If the user key doesn't match but user space still triggers furture resume
-> > process. Then kernel direct drops the snapshot image. 
-> >  
-> Anyway I'm ok with using TPM for major 'security', please feel free
-> to send a second version out, and for certification implementation
-> we can have further discussion on that later.
-> 
+Thanks,
+Guenter
 
-Regards
-Joey Lee 
+>         { }
+>  };
+>  MODULE_DEVICE_TABLE(of, rt5677_of_match);
+> --
+> 2.18.0.597.ga71716f1ad-goog
+>
