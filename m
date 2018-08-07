@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B5C1C46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:56:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B5D6C46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:56:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DF3721731
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:56:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DF3721731
+	by mail.kernel.org (Postfix) with ESMTP id 075282151D
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:56:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 075282151D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390498AbeHGVMY (ORCPT
+        id S2390504AbeHGVM1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 17:12:24 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33976 "EHLO
+        Tue, 7 Aug 2018 17:12:27 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33984 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732347AbeHGVMX (ORCPT
+        with ESMTP id S1732347AbeHGVM0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 17:12:23 -0400
+        Tue, 7 Aug 2018 17:12:26 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DCA1DD0E;
-        Tue,  7 Aug 2018 18:56:39 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D821ED0E;
+        Tue,  7 Aug 2018 18:56:42 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        KaiChieh Chuang <kaichieh.chuang@mediatek.com>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Ganapathi Bhat <gbhat@marvell.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 16/85] ASoC: dpcm: fix BE dai not hw_free and shutdown
-Date:   Tue,  7 Aug 2018 20:51:18 +0200
-Message-Id: <20180807172357.956746232@linuxfoundation.org>
+Subject: [PATCH 3.18 17/85] mwifiex: handle race during mwifiex_usb_disconnect
+Date:   Tue,  7 Aug 2018 20:51:19 +0200
+Message-Id: <20180807172357.989751204@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180807172357.357252052@linuxfoundation.org>
 References: <20180807172357.357252052@linuxfoundation.org>
@@ -52,47 +51,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kai Chieh Chuang <kaichieh.chuang@mediatek.com>
+From: Ganapathi Bhat <gbhat@marvell.com>
 
-[ Upstream commit 9c0ac70ad24d76b873c1551e27790c7f6a815d5c ]
+[ Upstream commit b817047ae70c0bd67b677b65d0d69d72cd6e9728 ]
 
-In case, one BE is used by two FE1/FE2
-FE1--->BE-->
-       |
-FE2----]
-when FE1/FE2 call dpcm_be_dai_hw_free() together
-the BE users will be 2 (> 1), hence cannot be hw_free
-the be state will leave at, ex. SND_SOC_DPCM_STATE_STOP
+Race condition is observed during rmmod of mwifiex_usb:
 
-later FE1/FE2 call dpcm_be_dai_shutdown(),
-will be skip due to wrong state.
-leaving the BE not being hw_free and shutdown.
+1. The rmmod thread will call mwifiex_usb_disconnect(), download
+   SHUTDOWN command and do wait_event_interruptible_timeout(),
+   waiting for response.
 
-The BE dai will be hw_free later when calling
-dpcm_be_dai_shutdown() if still in invalid state.
+2. The main thread will handle the response and will do a
+   wake_up_interruptible(), unblocking rmmod thread.
 
-Signed-off-by: KaiChieh Chuang <kaichieh.chuang@mediatek.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+3. On getting unblocked, rmmod thread  will make rx_cmd.urb = NULL in
+   mwifiex_usb_free().
+
+4. The main thread will try to resubmit rx_cmd.urb in
+   mwifiex_usb_submit_rx_urb(), which is NULL.
+
+To fix, wait for main thread to complete before calling
+mwifiex_usb_free().
+
+Signed-off-by: Ganapathi Bhat <gbhat@marvell.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- sound/soc/soc-pcm.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/net/wireless/mwifiex/usb.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/sound/soc/soc-pcm.c
-+++ b/sound/soc/soc-pcm.c
-@@ -1611,8 +1611,10 @@ int dpcm_be_dai_shutdown(struct snd_soc_
- 			continue;
+--- a/drivers/net/wireless/mwifiex/usb.c
++++ b/drivers/net/wireless/mwifiex/usb.c
+@@ -556,6 +556,9 @@ static void mwifiex_usb_disconnect(struc
+ 					 MWIFIEX_FUNC_SHUTDOWN);
+ 	}
  
- 		if ((be->dpcm[stream].state != SND_SOC_DPCM_STATE_HW_FREE) &&
--		    (be->dpcm[stream].state != SND_SOC_DPCM_STATE_OPEN))
--			continue;
-+		    (be->dpcm[stream].state != SND_SOC_DPCM_STATE_OPEN)) {
-+			soc_pcm_hw_free(be_substream);
-+			be->dpcm[stream].state = SND_SOC_DPCM_STATE_HW_FREE;
-+		}
++	if (adapter->workqueue)
++		flush_workqueue(adapter->workqueue);
++
+ 	mwifiex_usb_free(card);
  
- 		dev_dbg(be->dev, "ASoC: close BE %s\n",
- 			dpcm->fe->dai_link->name);
+ 	dev_dbg(adapter->dev, "%s: removing card\n", __func__);
 
 
