@@ -2,100 +2,105 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2642C46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 10:21:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 548CEC46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 10:24:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7078820839
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 10:21:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 08D1D2170A
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 10:24:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="p8SECEjr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7078820839
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="RrorpSx6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08D1D2170A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=8bytes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388713AbeHGMfX (ORCPT
+        id S2388760AbeHGMiN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 08:35:23 -0400
-Received: from mail-oi0-f41.google.com ([209.85.218.41]:36624 "EHLO
-        mail-oi0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727198AbeHGMfX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 08:35:23 -0400
-Received: by mail-oi0-f41.google.com with SMTP id n21-v6so27542240oig.3;
-        Tue, 07 Aug 2018 03:21:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=ZlBwScax8RMHM4ilDOiX/xv8fZ++0qOpCdvSJvlWW6s=;
-        b=p8SECEjrCmCmPttGFU+OX276n6+hB6IxpVSKKSytbdf6mxpzUL9zj3CcbJlZFhu+jy
-         rOYbrVEvjBxDY6Y5xobXelTvvXcbtLnO5EFYjRvD1Ege84KLfsnICkixsXNsiIJ/LQ7f
-         pH6DrISG2ecQiXHHifkDD8/oM1BovWRzFi+opC/Mzm/coyLlZJi8fsqEsFUo++8FOQmr
-         VeGKteodVm5dRfRmMZUgHDswh1cvGv9k28fVWqO3xzniT+w5bnhlp9/MAHLdw3SeKdDe
-         lg2tD5jbk4kHkO/lUC8W+kvFob+FCS4439uVH5hitOwofkn92rpO9k6YT8825bW8Hr2M
-         YpWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=ZlBwScax8RMHM4ilDOiX/xv8fZ++0qOpCdvSJvlWW6s=;
-        b=UaKLb+QVcYY1+otCbufV2AQ6lfeWpNKq2BV/aIbEbmWu0DOFsS3PVXy4ZrpjN4clF2
-         HwTCyidLNwCmqGpyc6rpdyRLuoYKMjCq5N7YVhc2xTfzx2gbwxES2+M4RQ0SBpf2rkrS
-         mt4g4VJ3TeOPO2ikp0Q8IN59wrcS/lIYpQmJISAjK+jR8eE8JsKT/UTxJo8mkA0BP5pk
-         vUVfOkDADI/Lwz1NU6AxHWcRqa850lrZaFFkwuvZ8JKzYsxu/HtL8FuZoXdSWKgxNRIX
-         fKVXWHpBo3j620V/ih8cy74LovDc8bA8eLCnBvE75kHY7WunCohylc/vdPIqDNraLCRE
-         Z4/A==
-X-Gm-Message-State: AOUpUlETtMewybXLJDVd3Vv9bf80iTr5trvYTgnqQO3n6JCZ0A7RA9Ra
-        yKBtGB/tExhF66jj6U3lkwGd13QzRGeiuYPmiX0=
-X-Google-Smtp-Source: AA+uWPwPn4TZLEXXQfB7IfYcdhfeQG3UcBngImCrVYbervryvoZJ3ofLiMl5zxA6Uepd8JeEwAwe8vJVVYcLZVM/9qc=
-X-Received: by 2002:a54:4618:: with SMTP id p24-v6mr1896057oip.172.1533637305105;
- Tue, 07 Aug 2018 03:21:45 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:aca:5352:0:0:0:0:0 with HTTP; Tue, 7 Aug 2018 03:21:04 -0700 (PDT)
-In-Reply-To: <CA+_SqcD+KpQ_X6iXUCpQh0N6pWzBorstBJDx7eBqcybY4Dvy8Q@mail.gmail.com>
-References: <20180806223300.113891-1-ebiggers@kernel.org> <20180806223300.113891-4-ebiggers@kernel.org>
- <CAHmME9rbe6eT6dkUqKnp-GxcqGrp-tvMfTMr8kZtsn=S3cmP8A@mail.gmail.com> <CA+_SqcD+KpQ_X6iXUCpQh0N6pWzBorstBJDx7eBqcybY4Dvy8Q@mail.gmail.com>
-From:   Samuel Neves <samuel.c.p.neves@gmail.com>
-Date:   Tue, 7 Aug 2018 11:21:04 +0100
-Message-ID: <CAEX_ruFp0KddnZyetZt997OvRzKDuN7U95MF_N9AgTh+mTcD7Q@mail.gmail.com>
-Subject: Re: [RFC PATCH 3/9] crypto: chacha20-generic - refactor to allow
- varying number of rounds
-To:     Paul Crowley <paulcrowley@google.com>
-Cc:     "Jason A. Donenfeld" <Jason@zx2c4.com>, ebiggers@kernel.org,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        linux-fscrypt@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Greg Kaiser <gkaiser@google.com>,
-        Michael Halcrow <mhalcrow@google.com>,
-        tomer.ashur@esat.kuleuven.be, Eric Biggers <ebiggers@google.com>,
-        "D. J. Bernstein" <djb@cr.yp.to>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 7 Aug 2018 08:38:13 -0400
+Received: from 8bytes.org ([81.169.241.247]:60788 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726968AbeHGMiN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 08:38:13 -0400
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id 27D75220; Tue,  7 Aug 2018 12:24:33 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=8bytes.org; s=mail-1;
+        t=1533637473; bh=E/cO6UwIuvwTfAr9UjHcfZD3F2tB/lHW3z78HEvDf70=;
+        h=From:To:Cc:Subject:Date:From;
+        b=RrorpSx6B1Zy9kXFlomHm94g1qgP6nZ8OOCGDVg9YUiwpX21qX9OnZJfpReQ1WIlO
+         tivzmZx5NuuOdOZ9qSqGbrjrpgnw7cOFqs1UfG/kQXZp6IZW9yFWKwtXRUoeWpxC8I
+         /9IdNq1wgojwxtZc/RDmoEhQjabZI4MvBUc4DCGLVe22fw5qvxInU0uxqntMkQGrhl
+         +tBtC2OvolYsDdW7lO2dHQ3zw/wsEY/kJgbaHIgVCZL9rey8WBj57aUrN9JRvFsh2X
+         0RFkgny58TukGXvS6bJb4ojgEdUXelunoRh9tPNIrqxiPDulnjfNPvC/XiWWE28SuO
+         rtXsvetG2ukIg==
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        "H . Peter Anvin" <hpa@zytor.com>
+Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Juergen Gross <jgross@suse.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Brian Gerst <brgerst@gmail.com>,
+        David Laight <David.Laight@aculab.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        Eduardo Valentin <eduval@amazon.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Will Deacon <will.deacon@arm.com>, aliguori@amazon.com,
+        daniel.gruss@iaik.tugraz.at, hughd@google.com, keescook@google.com,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        "David H . Gutteridge" <dhgutteridge@sympatico.ca>,
+        jroedel@suse.de, joro@8bytes.org
+Subject: [PATCH 0/3] PTI for x86-32 Fixes
+Date:   Tue,  7 Aug 2018 12:24:28 +0200
+Message-Id: <1533637471-30953-1-git-send-email-joro@8bytes.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> The best attack on ChaCha breaks 7 rounds, and that attack requires 2^248 operations.
+Hi,
 
-This number, as far as I can tell, comes from the "New features of
-Latin dances" paper. There have been some minor improvements in the
-intervening 10 years, e.g., [1, 2, 3, 4], which pull back the
-complexity of breaking ChaCha7 down to 2^235. In any case, every
-attack so far appears to hit a wall at 8 rounds, with 12 rounds---the
-recommended eSTREAM round number for Salsa20---seeming to offer a
-reasonable security margin, still somewhat better than that of the
-AES.
+here is a small patch-set to fix two small issues in the
+PTI implementation for 32 bit x86. The issues are:
 
-Best regards,
-Samuel Neves
+	1) Fix the 32 bit PCID check. I used the wrong
+	   operator there and this caused false-positive
+	   warnings.
 
-[1] https://eprint.iacr.org/2015/698
-[2] https://eprint.iacr.org/2015/217
-[3] https://eprint.iacr.org/2016/1034
-[4] https://doi.org/10.1016/j.dam.2017.04.034
+	2) The other two patches make sure the init-hole is
+	   not mapped into the user page-table. It is the
+	   32 bit counterpart to commit
+
+	   c40a56a7818c ('x86/mm/init: Remove freed kernel image areas from alias mapping')
+
+	   for the 64 bit PTI implementation.
+
+I tested that no-PAE, PAE and 64 bit kernel all boot and
+have correct user page-tables with identical global mappings
+between user and kernel.
+
+Regards,
+
+	Joerg
+
+Joerg Roedel (3):
+  x86/mm/pti: Fix 32 bit PCID check
+  x86/mm/pti: Don't clear permissions in pti_clone_pmd()
+  x86/mm/pti: Clone kernel-image on PTE level for 32 bit
+
+ arch/x86/mm/pti.c | 143 ++++++++++++++++++++++++++++++++++++++----------------
+ 1 file changed, 100 insertions(+), 43 deletions(-)
+
+-- 
+2.7.4
+
