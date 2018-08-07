@@ -2,77 +2,195 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0CC3C46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 15:30:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F18CC46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 15:34:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73A8721537
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 15:30:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73A8721537
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 1F26D216FB
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 15:34:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F26D216FB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403810AbeHGRpZ (ORCPT
+        id S2389911AbeHGRtJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 13:45:25 -0400
-Received: from mga03.intel.com ([134.134.136.65]:5381 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389066AbeHGRpZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 13:45:25 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Aug 2018 08:30:24 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,455,1526367600"; 
-   d="scan'208";a="81407161"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga002.jf.intel.com with ESMTP; 07 Aug 2018 08:30:24 -0700
-Received: from [10.254.74.167] (kliang2-mobl1.ccr.corp.intel.com [10.254.74.167])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        Tue, 7 Aug 2018 13:49:09 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51694 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1733213AbeHGRtJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 13:49:09 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by linux.intel.com (Postfix) with ESMTPS id 3A1525801BD;
-        Tue,  7 Aug 2018 08:30:23 -0700 (PDT)
-Subject: Re: [PATCH 3/3] perf/x86/intel: Add quirk for Goldmont Plus
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     tglx@linutronix.de, mingo@redhat.com, acme@kernel.org,
-        linux-kernel@vger.kernel.org, eranian@google.com,
-        ak@linux.intel.com, alexander.shishkin@linux.intel.com
-References: <1533576223-11588-1-git-send-email-kan.liang@linux.intel.com>
- <1533576223-11588-3-git-send-email-kan.liang@linux.intel.com>
- <20180806183907.GS2494@hirez.programming.kicks-ass.net>
-From:   "Liang, Kan" <kan.liang@linux.intel.com>
-Message-ID: <10dc04ef-63cb-2491-30e5-8f04f87a5403@linux.intel.com>
-Date:   Tue, 7 Aug 2018 11:30:22 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        by mx1.redhat.com (Postfix) with ESMTPS id 9AAAF7CBBA;
+        Tue,  7 Aug 2018 15:34:16 +0000 (UTC)
+Received: from bfoster (dhcp-41-2.bos.redhat.com [10.18.41.2])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 729192166BA2;
+        Tue,  7 Aug 2018 15:34:16 +0000 (UTC)
+Date:   Tue, 7 Aug 2018 11:34:15 -0400
+From:   Brian Foster <bfoster@redhat.com>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Colin Ian King <colin.king@canonical.com>,
+        linux-xfs@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: xfs: cancel dfops on xfs_defer_finish() error
+Message-ID: <20180807153414.GC55416@bfoster>
+References: <18f3296d-e5d4-4d76-51f8-a40d0ceaa20e@canonical.com>
+ <20180807143720.GA55416@bfoster>
+ <20180807151029.GA30972@magnolia>
+ <20180807151836.GB55416@bfoster>
+ <20180807152644.GC30972@magnolia>
 MIME-Version: 1.0
-In-Reply-To: <20180806183907.GS2494@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180807152644.GC30972@magnolia>
+User-Agent: Mutt/1.10.0 (2018-05-17)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Tue, 07 Aug 2018 15:34:16 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Tue, 07 Aug 2018 15:34:16 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bfoster@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 8/6/2018 2:39 PM, Peter Zijlstra wrote:
-> On Mon, Aug 06, 2018 at 10:23:43AM -0700, kan.liang@linux.intel.com wrote:
+On Tue, Aug 07, 2018 at 08:26:44AM -0700, Darrick J. Wong wrote:
+> On Tue, Aug 07, 2018 at 11:18:36AM -0400, Brian Foster wrote:
+> > On Tue, Aug 07, 2018 at 08:10:29AM -0700, Darrick J. Wong wrote:
+> > > On Tue, Aug 07, 2018 at 10:37:21AM -0400, Brian Foster wrote:
+> > > > On Tue, Aug 07, 2018 at 03:14:07PM +0100, Colin Ian King wrote:
+> > > > > Hi,
+> > > > > 
+> > > > > Recent commit 82ff27bc52a88cb5cc400bfa64e210d3ec8dfebd ("xfs: automatic
+> > > > > dfops buffer relogging") removed the assignment of variable error:
+> > > > > 
+> > > > > -       error = xfs_defer_bjoin(tp->t_dfops, bp);
+> > > > >         if (error) {
+> > > > >                 xfs_trans_bhold_release(tp, bp);
+> > > > >                 xfs_trans_brelse(tp, bp);
+> > > > > 
+> > > > 
+> > > > Hmm, I _think_ we can just drop these error checks now that this
+> > > > pre-finish error state is non-existent, something like the appended diff
+> > > > (with additional cleanups). E.g., if the buffer is held in the
+> > > > transaction then the bjoin is implicit. If the finish fails, then the
+> > > > state is essentially unchanged by the relogging patch.
+> > > > 
+> > > > That said, the error handling is a bit tricky here. Darrick, I think you
+> > > > reworked this recently.. thoughts?
+> > > > 
+> > > > Brian
+> > > > 
+> > > > --- 8< ---
+> > > > 
+> > > > diff --git a/fs/xfs/xfs_dquot.c b/fs/xfs/xfs_dquot.c
+> > > > index 70a76ac41f01..2106c4142ecd 100644
+> > > > --- a/fs/xfs/xfs_dquot.c
+> > > > +++ b/fs/xfs/xfs_dquot.c
+> > > > @@ -311,7 +311,7 @@ xfs_dquot_disk_alloc(
+> > > >  			XFS_DQUOT_CLUSTER_SIZE_FSB, XFS_BMAPI_METADATA,
+> > > >  			XFS_QM_DQALLOC_SPACE_RES(mp), &map, &nmaps);
+> > > >  	if (error)
+> > > > -		goto error0;
+> > > > +		return error;
+> > > >  	ASSERT(map.br_blockcount == XFS_DQUOT_CLUSTER_SIZE_FSB);
+> > > >  	ASSERT(nmaps == 1);
+> > > >  	ASSERT((map.br_startblock != DELAYSTARTBLOCK) &&
+> > > > @@ -326,8 +326,8 @@ xfs_dquot_disk_alloc(
+> > > >  	bp = xfs_trans_get_buf(tp, mp->m_ddev_targp, dqp->q_blkno,
+> > > >  			mp->m_quotainfo->qi_dqchunklen, 0);
+> > > >  	if (!bp) {
+> > > > -		error = -ENOMEM;
+> > > > -		goto error1;
+> > > > +		xfs_defer_cancel(tp);
+> > > > +		return -ENOMEM;
+> > > 
+> > > The only caller of xfs_dquot_disk_alloc checks the return value and
+> > > xfs_trans_cancels the transaction, which should take care of calling
+> > > xfs_defer_cancel, right?
+> > > 
+> > 
+> > Yeah. IIRC I originally left the defer_cancel() alone in this function
+> > just to be consistent, since it calls xfs_defer_finish() as well on the
+> > caller's transaction. Technically I don't think it matters either way,
+> > so I don't have much preference on if it stays or goes (assuming the
+> > other changes are correct)...
 > 
->> +static bool intel_glk_counter_freezing_broken(int cpu)
-> 
->>   	case INTEL_FAM6_ATOM_GEMINI_LAKE:
->> +		x86_add_quirk(intel_counter_freezing_quirk);
-> 
-> We really should fix that ATOM naming instead of making it worse :/
+> I can't think of a good reason for anything (except xfs_trans_cancel) to
+> call xfs_defer_cancel.  It's never correct to kill all the deferred ops
+> attached to a transaction and then continue logging things to the
+> transaction, which means that the only thing you can really do after
+> cancelling the dfops is to cancel the transaction.  I'd have to look
+> more carefully but I think all the remaining callers can all go away.
 > 
 
-OK. I will send a separate patch to fix it.
+Indeed, sounds good to me. I'll post a variant of the patch with the
+xfs_defer_cancel() call removed. I've also made a note to audit the
+remaining xfs_defer_cancel() callers to see if we can kill those off.
 
-Thanks,
-Kan
+Brian
+
+> xfs_defer_finish is a different story -- it can be used (by online
+> repair for example) to process the deferred operations so they don't sit
+> around pinning memory and log, even if there's a lot more work to be
+> done before _trans_commit.  But I don't think we need to _defer_cancel
+> if things go awry.
+> 
+> --D
+> 
+> > Brian
+> > 
+> > > --D
+> > > 
+> > > >  	}
+> > > >  	bp->b_ops = &xfs_dquot_buf_ops;
+> > > >  
+> > > > @@ -349,10 +349,8 @@ xfs_dquot_disk_alloc(
+> > > >  	 * the buffer locked across the _defer_finish call.  We can now do
+> > > >  	 * this correctly with xfs_defer_bjoin.
+> > > >  	 *
+> > > > -	 * Above, we allocated a disk block for the dquot information and
+> > > > -	 * used get_buf to initialize the dquot.  If the _defer_bjoin fails,
+> > > > -	 * the buffer is still locked to *tpp, so we must _bhold_release and
+> > > > -	 * then _trans_brelse the buffer.  If the _defer_finish fails, the old
+> > > > +	 * Above, we allocated a disk block for the dquot information and used
+> > > > +	 * get_buf to initialize the dquot. If the _defer_finish fails, the old
+> > > >  	 * transaction is gone but the new buffer is not joined or held to any
+> > > >  	 * transaction, so we must _buf_relse it.
+> > > >  	 *
+> > > > @@ -362,24 +360,14 @@ xfs_dquot_disk_alloc(
+> > > >  	 * manually or by committing the transaction.
+> > > >  	 */
+> > > >  	xfs_trans_bhold(tp, bp);
+> > > > -	if (error) {
+> > > > -		xfs_trans_bhold_release(tp, bp);
+> > > > -		xfs_trans_brelse(tp, bp);
+> > > > -		goto error1;
+> > > > -	}
+> > > >  	error = xfs_defer_finish(tpp);
+> > > >  	tp = *tpp;
+> > > >  	if (error) {
+> > > >  		xfs_buf_relse(bp);
+> > > > -		goto error0;
+> > > > +		return error;
+> > > >  	}
+> > > >  	*bpp = bp;
+> > > >  	return 0;
+> > > > -
+> > > > -error1:
+> > > > -	xfs_defer_cancel(tp);
+> > > > -error0:
+> > > > -	return error;
+> > > >  }
+> > > >  
+> > > >  /*
+> > > > --
+> > > > To unsubscribe from this list: send the line "unsubscribe linux-xfs" in
+> > > > the body of a message to majordomo@vger.kernel.org
+> > > > More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> > --
+> > To unsubscribe from this list: send the line "unsubscribe linux-xfs" in
+> > the body of a message to majordomo@vger.kernel.org
+> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
