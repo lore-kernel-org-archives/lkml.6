@@ -2,76 +2,76 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBEF6C46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 10:04:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55DDAC46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 10:05:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D29821774
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 10:04:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D29821774
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 1C16921775
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 10:05:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C16921775
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388650AbeHGMR4 (ORCPT
+        id S2388674AbeHGMSs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 08:17:56 -0400
-Received: from mx2.suse.de ([195.135.220.15]:35394 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727194AbeHGMR4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 08:17:56 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 70EAFADC8;
-        Tue,  7 Aug 2018 10:04:20 +0000 (UTC)
-Message-ID: <1533636259.7912.2.camel@suse.com>
-Subject: Re: [PATCH 0/4][RFC v2] Introduce the in-kernel hibernation
- encryption
-From:   Oliver Neukum <oneukum@suse.com>
-To:     Yu Chen <yu.c.chen@intel.com>
-Cc:     Pavel Machek <pavel@ucw.cz>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Eric Biggers <ebiggers@google.com>,
-        "Lee, Chun-Yi" <jlee@suse.com>, Theodore Ts o <tytso@mit.edu>,
-        Stephan Mueller <smueller@chronox.de>,
-        Denis Kenzior <denkenz@gmail.com>, linux-pm@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gu, Kookoo" <kookoo.gu@intel.com>,
-        "Zhang, Rui" <rui.zhang@intel.com>
-Date:   Tue, 07 Aug 2018 12:04:19 +0200
-In-Reply-To: <20180807073840.GA17894@chenyu-desktop>
-References: <20180718202235.GA4132@amd>
-         <20180718235851.GA22170@sandybridge-desktop> <20180719110149.GA4679@amd>
-         <20180719132003.GA30981@sandybridge-desktop> <20180720102532.GA20284@amd>
-         <1532346156.3057.11.camel@suse.com>
-         <20180723162302.GA4503@sandybridge-desktop>
-         <1532590246.7411.3.camel@suse.com> <20180806075754.GA12124@chenyu-desktop>
-         <1533550820.15815.14.camel@suse.com>
-         <20180807073840.GA17894@chenyu-desktop>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Tue, 7 Aug 2018 08:18:48 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:51882 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726968AbeHGMSs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 08:18:48 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D57FF80D;
+        Tue,  7 Aug 2018 03:05:13 -0700 (PDT)
+Received: from e103592.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C78513F2EA;
+        Tue,  7 Aug 2018 03:05:12 -0700 (PDT)
+Date:   Tue, 7 Aug 2018 11:05:02 +0100
+From:   Dave Martin <Dave.Martin@arm.com>
+To:     Marc Zyngier <marc.zyngier@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Subject: Re: [PATCH] arm64: Trap WFI executed in userspace
+Message-ID: <20180807100437.GA9097@e103592.cambridge.arm.com>
+References: <20180807093326.5090-1-marc.zyngier@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180807093326.5090-1-marc.zyngier@arm.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Di, 2018-08-07 at 15:38 +0800, Yu Chen wrote:
-> > As STD affects the whole machine it must require root rights.
-> > So I cannot see how you can talk about a session belonging
-> > to a user. Please explain.
-> > 
+On Tue, Aug 07, 2018 at 10:33:26AM +0100, Marc Zyngier wrote:
+> It recently came to light that userspace can execute WFI, and that
+> the arm64 kernel doesn trap this event. This sounds rather benign,
+> but the kernel should decide when it wants to wait for an interrupt,
+> and not userspace.
 > 
-> The case is for physical access, not the 'user' in OS.
+> Let's trap WFI and treat it as a way to yield the CPU to another
+> process.
 
-Well, yes, but Secure Boot does not guard against anybody
-booting or halting the machine. It limits what you can
-boot by a chain of trust.
+This doesn't amount to a justification.
 
-I think you are trying to add a feature to Secure Boot.
+If the power controller is unexpectedly left in a bad state so that
+WFI will do something nasty to a cpu that may enter userspace, then we
+probably have bigger problems.
 
-	Regards
-		Oliver
+So, maybe it really is pretty harmless to let userspace execute this.
 
+I can't think of a legitimate reason for userspace to execute WFI
+however.  Userspace doesn't have interrupts under Linux, so it makes
+no sense to wait for one.
+
+Have we seen anybody using WFI in userspace?  It may be cleaner to
+map this to SIGILL rather than be permissive and regret it later.
+
+[...]
+
+Cheers
+---Dave
