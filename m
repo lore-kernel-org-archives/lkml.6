@@ -3,40 +3,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52418C46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 22:46:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E095C46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 22:46:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 081D5215F9
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 22:46:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 081D5215F9
+	by mail.kernel.org (Postfix) with ESMTP id 210CE215F9
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 22:46:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 210CE215F9
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726954AbeHHBCp (ORCPT
+        id S1727025AbeHHBDT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 21:02:45 -0400
-Received: from mga17.intel.com ([192.55.52.151]:11434 "EHLO mga17.intel.com"
+        Tue, 7 Aug 2018 21:03:19 -0400
+Received: from mga11.intel.com ([192.55.52.93]:25108 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726579AbeHHBCp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 21:02:45 -0400
+        id S1726579AbeHHBDT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 21:03:19 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Aug 2018 15:46:09 -0700
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Aug 2018 15:46:43 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,456,1526367600"; 
-   d="scan'208";a="64331174"
+   d="scan'208";a="64331297"
 Received: from djiang5-desk3.ch.intel.com ([143.182.136.93])
-  by orsmga006.jf.intel.com with ESMTP; 07 Aug 2018 15:46:09 -0700
-Subject: Re: [PATCH] libnvdimm, bus: check id immediately following
- ida_simple_get
-To:     Ocean He <oceanhehy@gmail.com>, dan.j.williams@intel.com,
-        ross.zwisler@linux.intel.com, vishal.l.verma@intel.com
-Cc:     linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org,
-        Ocean He <hehy1@lenovo.com>
-References: <1533298113-17495-1-git-send-email-oceanhehy@gmail.com>
+  by orsmga006.jf.intel.com with ESMTP; 07 Aug 2018 15:46:43 -0700
+Subject: Re: [PATCH] ACPI: nfit: adjust annotation for why return 0 if fail to
+ find NFIT at startup
+To:     "Verma, Vishal L" <vishal.l.verma@intel.com>,
+        "Williams, Dan J" <dan.j.williams@intel.com>,
+        "ross.zwisler@linux.intel.com" <ross.zwisler@linux.intel.com>,
+        "oceanhehy@gmail.com" <oceanhehy@gmail.com>,
+        "lenb@kernel.org" <lenb@kernel.org>,
+        "rjw@rjwysocki.net" <rjw@rjwysocki.net>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+        "hehy1@lenovo.com" <hehy1@lenovo.com>
+References: <1533622531-3617-1-git-send-email-oceanhehy@gmail.com>
+ <1533669914.18175.28.camel@intel.com>
 From:   Dave Jiang <dave.jiang@intel.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=dave.jiang@intel.com; prefer-encrypt=mutual; keydata=
@@ -73,12 +81,12 @@ Autocrypt: addr=dave.jiang@intel.com; prefer-encrypt=mutual; keydata=
  lt0ZMb75Lh7zY3TnGLOx1AEzmqwZSMJhBBgRCAAJBQJOk28rAhsMAAoJEGQVxPFmo7k+qiUB
  AKH0QWC+BBBn3pa9tzOz5hTrup+GIzf5TcuCsiAjISEqAPkBTGk5iiGrrHkxsz8VulDVpNxk
  o6nmKbYpUAltQObU2w==
-Message-ID: <6c505c3e-1c2d-a74b-1018-f8abe5175f13@intel.com>
-Date:   Tue, 7 Aug 2018 15:46:09 -0700
+Message-ID: <45efa554-72af-9266-e841-e42e8741fed9@intel.com>
+Date:   Tue, 7 Aug 2018 15:46:42 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <1533298113-17495-1-git-send-email-oceanhehy@gmail.com>
+In-Reply-To: <1533669914.18175.28.camel@intel.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -89,37 +97,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 08/03/2018 05:08 AM, Ocean He wrote:
-> From: Ocean He <hehy1@lenovo.com>
+On 08/07/2018 12:25 PM, Verma, Vishal L wrote:
 > 
-> The id check was not executed immediately following ida_simple_get. Just
-> change the codes position, without function change.
+> On Tue, 2018-08-07 at 02:15 -0400, Ocean He wrote:
+>> From: Ocean He <hehy1@lenovo.com>
 > 
-> Signed-off-by: Ocean He <hehy1@lenovo.com>
+> Just some minor nits in commit message wording:
+> 
+>>
+>> Add detail explanation why it's ok to return 0 if fail to find NFIT at
+>       detailed          ^for                       ^we          ^an
+>> startup, refer to chapter 9.20.2 NVDIMM Root Device in ACPI 6.2 spec.
+>          . Refer
+> 
+> Perhaps Dave can fixup while applying..
 
-Applied.
+Applied and updated.
 
-> ---
->  drivers/nvdimm/bus.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> Signed-off-by: Ocean He <hehy1@lenovo.com>
+>> ---
+>> v1: https://lists.01.org/pipermail/linux-nvdimm/2018-August/017311.html 
+>> v2: Per Vishal's comments of v1, it turns out that it's right to keep 
+>> "return 0" if NFIT not found at boot time. This v2 adjust annotation
+>> to avoid misunderstanding of "return 0".
 > 
-> diff --git a/drivers/nvdimm/bus.c b/drivers/nvdimm/bus.c
-> index 27902a8..ab28e7c 100644
-> --- a/drivers/nvdimm/bus.c
-> +++ b/drivers/nvdimm/bus.c
-> @@ -350,12 +350,12 @@ struct nvdimm_bus *nvdimm_bus_register(struct device *parent,
->  	INIT_LIST_HEAD(&nvdimm_bus->mapping_list);
->  	init_waitqueue_head(&nvdimm_bus->probe_wait);
->  	nvdimm_bus->id = ida_simple_get(&nd_ida, 0, 0, GFP_KERNEL);
-> -	mutex_init(&nvdimm_bus->reconfig_mutex);
-> -	badrange_init(&nvdimm_bus->badrange);
->  	if (nvdimm_bus->id < 0) {
->  		kfree(nvdimm_bus);
->  		return NULL;
->  	}
-> +	mutex_init(&nvdimm_bus->reconfig_mutex);
-> +	badrange_init(&nvdimm_bus->badrange);
->  	nvdimm_bus->nd_desc = nd_desc;
->  	nvdimm_bus->dev.parent = parent;
->  	nvdimm_bus->dev.release = nvdimm_bus_release;
+> Looks good, thanks for the update. Feel free to add:
+> Reviewed-by: Vishal Verma <vishal.l.verma@intel.com>
 > 
+>>
+>>  drivers/acpi/nfit/core.c | 8 +++++++-
+>>  1 file changed, 7 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/acpi/nfit/core.c b/drivers/acpi/nfit/core.c
+>> index 7c47900..1b982fe 100644
+>> --- a/drivers/acpi/nfit/core.c
+>> +++ b/drivers/acpi/nfit/core.c
+>> @@ -3353,7 +3353,13 @@ static int acpi_nfit_add(struct acpi_device *adev)
+>>  
+>>  	status = acpi_get_table(ACPI_SIG_NFIT, 0, &tbl);
+>>  	if (ACPI_FAILURE(status)) {
+>> -		/* This is ok, we could have an nvdimm hotplugged later */
+>> +		/* The NVDIMM root device allows OS to trigger enumeration of
+>> +		 * NVDIMMs through NFIT at boot time and re-enumeration at
+>> +		 * root level via the _FIT method during runtime.
+>> +		 * This is ok to return 0 here, we could have an nvdimm
+>> +		 * hotplugged later and evaluate _FIT method which returns
+>> +		 * data in the format of a series of NFIT Structures.
+>> +		 */
+>>  		dev_dbg(dev, "failed to find NFIT at startup\n");
+>>  		return 0;
+>>  	}
