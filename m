@@ -2,151 +2,139 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FE91C46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 17:56:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24181C46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 17:57:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 492762152F
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 17:56:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="axlJUdmc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 492762152F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id DFA192152F
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 17:57:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFA192152F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389381AbeHGULu (ORCPT
+        id S2389778AbeHGUNN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 16:11:50 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:39287 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727605AbeHGULu (ORCPT
+        Tue, 7 Aug 2018 16:13:13 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:39037 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727605AbeHGUNM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 16:11:50 -0400
-Received: by mail-io0-f196.google.com with SMTP id o22-v6so14737498ioh.6;
-        Tue, 07 Aug 2018 10:56:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=/dDB7ahvUP/j0SzFLNqoNVYWMMJTlZlo7fsH5DdliHY=;
-        b=axlJUdmcgeQsPFI51bFgb8uGMSQogD40xa/JYGWoE+5/L6eY10tRNc6aiaZsKFa6bq
-         hg9aohrxo/1EBws7FQxpc3ZZz5hB/8EKFvI2XU0qrn94gsGDwUl5d7o+eNtjwVX84F/J
-         Wq4tAhCJxNXNB1EzBts4hKw7BPDoTipoRYOfX5AymwFP0hSCbuoUHhIfQEdk/4medVBf
-         WDYKXANDOIy6MRc5nEaPaGt2mh2mkj4edULM18ke94rmRcXD/Ebc6bXG7fnLuEYCm9oQ
-         KvsAEkwYaDJd6v+wxZrT+A5e/5xvHTCvK0k6neITyzBKm08Kq+O7r8jQJuyZhjw8S/OL
-         D5bw==
+        Tue, 7 Aug 2018 16:13:12 -0400
+Received: by mail-it0-f67.google.com with SMTP id g141-v6so24165326ita.4;
+        Tue, 07 Aug 2018 10:57:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=/dDB7ahvUP/j0SzFLNqoNVYWMMJTlZlo7fsH5DdliHY=;
-        b=KTPrVtxwiIKhptlNj/MZuJiYinPMOug6GcTlVxdmCGll5ey/hikAJH7MpEs9d8ZXYP
-         rQSr2mbglX7ROOTbsIcYJYVsXPNLUHvy92jN3IIiWU9V0akjYYvXcTbP4XA+h50QBwAt
-         wD900CT6sX1NSgSQu32a00vugBxKQIu4HErifi1g0xRCYejPz+iSwUrq6bQLT5uxw2B2
-         AVmQHsCLIATeRA5GpCEwgQ+Q3EkbtlmFq0Q+LKVV23dn+5UNFurke2gmx5qMSForOnje
-         8+JRQ82JSRR2SAPF3s286gfsHCL8sY+bXYfR+ls0dmU6xP36M2a6wFkXkETyJLv3i5/n
-         Tyrw==
-X-Gm-Message-State: AOUpUlECsJok0/EwxAYtX9N9Cgl+NyHlQM8nGbGCBjR6xqfqopsaqqBm
-        eWvmO1Aq8hLaPWK1FfpDxcoq5kivjUzdT00drE2UtQ==
-X-Google-Smtp-Source: AAOMgpfer+lLGlxoORofiPIemVkqL/+AaeYFZ+Rxf1hgxbltkZKRPt85eUM5nHShYh8rIYp9Cbt7A0UuBOxizj7pBR0=
-X-Received: by 2002:a6b:fc0c:: with SMTP id r12-v6mr20579931ioh.203.1533664581168;
- Tue, 07 Aug 2018 10:56:21 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=ozi5odd6kD6Do+yb6M5ZFRUVqI01vQGy0q2pI6bjMbQ=;
+        b=OfqnyDwY7+JIgILHbT8FEHliU2KP/5aqhWwkPpOyK2vJia04zhdvUuIs7pSAoQ7xkM
+         pHvq90sFGX8BmlEoPJkWUfVj2owTLqNo+jM4Jsna9HG42pUXDWRcFib1Xq1fGd+4DIQP
+         wN8agdA9ReqCDO3f2/vqk2NMfzngZprHd8z4E9aUcrMe+/Q9clIMqWrAD3LsIITGes3k
+         jDx7/3gz4h7WcA4pO2Aa0HUYJdLPpiZvWcnbjuVkc3KRTCtysX+hlEWtiON9gvby2G8T
+         WeswApOj6b/Suh2UtGnck3htQ6YPUW4qVwOCgVIeRRpLGuAwKs8J+Yr3wAL1aoYNRwaT
+         Jr3w==
+X-Gm-Message-State: AOUpUlFTRwEwe0HIZAOrqtw26UP8Cond1dDdAJPdZWz06MEeB2JPV7JS
+        HIRw2M85Ob/z9W+ZEh+tpQ==
+X-Google-Smtp-Source: AA+uWPxo/DVLO6ISqD/fJMfE2rd+h/3lB0KsK4PgoEq27wzzQCAGo8ajZjYIsghvsoofq+hytS0nDw==
+X-Received: by 2002:a24:598f:: with SMTP id p137-v6mr2930644itb.5.1533664663209;
+        Tue, 07 Aug 2018 10:57:43 -0700 (PDT)
+Received: from localhost ([24.51.61.72])
+        by smtp.gmail.com with ESMTPSA id e129-v6sm1330046ite.35.2018.08.07.10.57.42
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 07 Aug 2018 10:57:42 -0700 (PDT)
+Date:   Tue, 7 Aug 2018 11:57:42 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>
+Cc:     lgirdwood@gmail.com, broonie@kernel.org, sre@kernel.org,
+        lee.jones@linaro.org, mark.rutland@arm.com,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] dt-bindings: mfd: max8998: Add charger subnode
+ binding
+Message-ID: <20180807175741.GA30886@rob-hp-laptop>
+References: <1531843509-3533-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
+ <1531843509-3533-4-git-send-email-pawel.mikolaj.chmiel@gmail.com>
 MIME-Version: 1.0
-Received: by 2002:ac0:bc4a:0:0:0:0:0 with HTTP; Tue, 7 Aug 2018 10:56:00 -0700 (PDT)
-In-Reply-To: <CA+55aFx1vbQWnQUVoieFgKrNECLKJs-RQi8z8cpe29g0aAiq3A@mail.gmail.com>
-References: <20180805.004744.1043412275329854518.davem@davemloft.net> <CA+55aFx1vbQWnQUVoieFgKrNECLKJs-RQi8z8cpe29g0aAiq3A@mail.gmail.com>
-From:   Dmitry Safonov <0x7f454c46@gmail.com>
-Date:   Tue, 7 Aug 2018 18:56:00 +0100
-Message-ID: <CAJwJo6a7-p_WO4oUTC3bGMB_APZR2dEYV+TvgAcXeFjYgfLhqQ@mail.gmail.com>
-Subject: Re: [GIT] Networking
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     David Miller <davem@davemloft.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Network Development <netdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1531843509-3533-4-git-send-email-pawel.mikolaj.chmiel@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Tue, Jul 17, 2018 at 06:05:09PM +0200, Paweł Chmiel wrote:
+> This patch adds devicetree bindings documentation for
+> battery charging controller as the subnode of MAX8998 PMIC.
+> 
+> Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
+> ---
+> Changes from v2:
+>   - Make charge-restart-level-microvolt optional.
+>   - Make charge-timeout-hours optional.
+> 
+> Changes from v1:
+>   - Removed unneeded Fixes tag
+>   - Correct description of all charger values
+>   - Added missing property unit
+> ---
+>  Documentation/devicetree/bindings/mfd/max8998.txt | 25 +++++++++++++++++++++++
+>  1 file changed, 25 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/mfd/max8998.txt b/Documentation/devicetree/bindings/mfd/max8998.txt
+> index 23a3650ff2a2..264040f4ad15 100644
+> --- a/Documentation/devicetree/bindings/mfd/max8998.txt
+> +++ b/Documentation/devicetree/bindings/mfd/max8998.txt
+> @@ -50,6 +50,24 @@ Additional properties required if max8998,pmic-buck2-dvs-gpio is defined:
+>  - max8998,pmic-buck2-dvs-voltage: An array of 2 voltage values in microvolts
+>    for buck2 regulator that can be selected using dvs gpio.
+>  
+> +Charger: Configuration for battery charging controller should be added
+> +inside a child node named 'charger'.
+> +  Required properties:
+> +  - max8998,charge-eoc-percent: Setup End of Charge Level.
 
-2018-08-05 16:52 GMT+01:00 Linus Torvalds <torvalds@linux-foundation.org>:
-> On Sun, Aug 5, 2018 at 12:47 AM David Miller <davem@davemloft.net> wrote:
->>
->> 4) Fix regression in netlink bind handling of multicast
->>    gruops, from Dmitry Safonov.
->
-> This one is written kind of stupidly.
->
-> The code went from the original
->
->         groups &= (1UL << nlk->ngroups) - 1;
->
-> (which is incorrect for large values of nlk->ngroups) to the fixed
->
->         if (nlk->ngroups == 0)
->                 groups = 0;
->         else if (nlk->ngroups < 8*sizeof(groups))
->                 groups &= (1UL << nlk->ngroups) - 1;
->
-> which isn't technically incorrect...
->
-> But it is stupid.
->
-> Why stupid? Because the test for 0 is pointless.
+This should have a vendor prefix and max8998 is not a vendor. Don't 
+continue that pattern even if we already have some properties like that.
 
-Heh, I've been stupid enough at that moment to think that
-(1 << 0 == 1) and forgetting that I'm subtracting 1 for mask.
+These seem like perhaps they should be common charger properties.
 
-> Just doing
->
->         if (nlk->ngroups < 8*sizeof(groups))
->                 groups &= (1UL << nlk->ngroups) - 1;
->
-> would have been fine and more understandable, since the "mask by shift
-> count" already does the right thing for a ngroups value of 0. Now that
-> test for zero makes me go "what's special about zero?". It turns out
-> that the answer to that is "nothing".
->
-> I certainly didn't care enough to fix it up, and maybe the compiler is
-> even smart enough to remove the unnecessary test for zero, but it's
-> kind of sad to see this kind of "people didn't think the code through"
-> patch this late in the rc.
-
-Yes, sorry.
-
-> I'll be making an rc8 today anyway, but I did want to just point to it
-> and say "hey guys, the code is unnecessarily stupid and overly
-> complicated".
->
-> The type of "groups" is kind of silly too.
->
-> Yeah, "long unsigned int" isn't _technically_ wrong. But we normally
-> call that type "unsigned long".
->
-> And comparing against "8*sizeof(groups)" is misleading too, when the
-> actual masking expression works and is correct in "unsigned long"
-> because that's the type of the actual mask we're computing (due to the
-> "1UL").
->
-> So _regardless_ of the type of "groups" itself, the mask is actually
-> correct in unsigned long. I personally think it would have been more
-> legible as just
->
->         unsigned long groups;
->         ...
->         if (nlk->ngroups < BITS_PER_LONG)
->                 groups &= (1UL << nlk->ngroups) - 1;
->
-> but by now I'm just nitpicking.
-
-I'll prepare the cleanup for linux-next.
-
-Sorry about the stupid code,
-             Dmitry
+> +    If value equals 0, leave it unchanged.
+> +    Otherwise it should be value from 10 to 45 by 5 step.
+> +
+> +  Optional properties:
+> +  - max8998,charge-restart-level-microvolt: Setup Charge Restart Level.
+> +    If property is not present, this will be disabled.
+> +    If value equals 0, leave it unchanged.
+> +    Otherwise it should be one of following values: 100, 150, 200.
+> +
+> +  - max8998,charge-timeout-hours: Setup Charge Full Timeout.
+> +    If property is not present, this will be disabled.
+> +    If value equals 0, leave it unchanged.
+> +    Otherwise it should be one of following values: 5, 6, 7.
+> +
+>  Regulators: All the regulators of MAX8998 to be instantiated shall be
+>  listed in a child node named 'regulators'. Each regulator is represented
+>  by a child node of the 'regulators' node.
+> @@ -99,6 +117,13 @@ Example:
+>  		max8998,pmic-buck2-dvs-gpio = <&gpx0 0 3 0 0>; /* SET3 */
+>  		max8998,pmic-buck2-dvs-voltage = <1350000>, <1300000>;
+>  
+> +		/* Charger configuration */
+> +		charger {
+> +			max8998,charge-eoc-percent = <0>;
+> +			max8998,charge-restart-level-microvolt = <100>;
+> +			max8998,charge-timeout-hours = <7>;
+> +		};
+> +
+>  		/* Regulators to instantiate */
+>  		regulators {
+>  			ldo2_reg: LDO2 {
+> -- 
+> 2.7.4
+> 
