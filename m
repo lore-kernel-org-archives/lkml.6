@@ -2,113 +2,67 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24BD9C46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 11:19:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09958C46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 11:25:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D90D52156B
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 11:19:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D90D52156B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id B105821779
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 11:25:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B105821779
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388895AbeHGNdf (ORCPT
+        id S2388775AbeHGNjR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 09:33:35 -0400
-Received: from mga11.intel.com ([192.55.52.93]:8871 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727286AbeHGNdf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 09:33:35 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Aug 2018 04:19:44 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,455,1526367600"; 
-   d="scan'208";a="222611361"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
-  by orsmga004.jf.intel.com with ESMTP; 07 Aug 2018 04:19:40 -0700
-Message-ID: <00e16cb09c171b536449b61124473291f2b30d0b.camel@linux.intel.com>
-Subject: Re: [PATCH v3 2/4] ACPI / scan: Create platform device for fwnodes
- with multiple i2c devices
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Hans de Goede <hdegoede@redhat.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Wolfram Sang <wsa@the-dreams.de>
-Cc:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        linux-acpi@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        John Garry <john.garry@huawei.com>, linux-i2c@vger.kernel.org
-Date:   Tue, 07 Aug 2018 14:19:40 +0300
-In-Reply-To: <20180807080539.17811-3-hdegoede@redhat.com>
-References: <20180807080539.17811-1-hdegoede@redhat.com>
-         <20180807080539.17811-3-hdegoede@redhat.com>
-Organization: Intel Finland Oy
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Tue, 7 Aug 2018 09:39:17 -0400
+Received: from mx2.suse.de ([195.135.220.15]:58472 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727068AbeHGNjQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 09:39:16 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id B9DEBACE2;
+        Tue,  7 Aug 2018 11:25:23 +0000 (UTC)
+Date:   Tue, 7 Aug 2018 13:25:22 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     syzbot <syzbot+bab151e82a4e973fa325@syzkaller.appspotmail.com>,
+        cgroups@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>
+Subject: Re: WARNING in try_charge
+Message-ID: <20180807112522.GA10003@dhcp22.suse.cz>
+References: <20180806181339.GD10003@dhcp22.suse.cz>
+ <0000000000002ec4580572c85e46@google.com>
+ <20180806185554.GG10003@dhcp22.suse.cz>
+ <CACT4Y+Zg3DhAnKWBAyJ-Y-3XVL+jCQy1U2iWR8mdraX6w23X_Q@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACT4Y+Zg3DhAnKWBAyJ-Y-3XVL+jCQy1U2iWR8mdraX6w23X_Q@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-08-07 at 10:05 +0200, Hans de Goede wrote:
-> Some devices have multiple I2cSerialBus resources and for things to
-> work
-> an i2c-client must be instantiated for each, each with its own
-> i2c_device_id.
+On Tue 07-08-18 13:18:00, Dmitry Vyukov wrote:
+[...]
+> Great we are making progress here!
 > 
-> Normally we only instantiate an i2c-client for the first resource,
-> using
-> the ACPI HID as id.
-> 
-> This commit adds a list of HIDs of devices, which need multiple i2c-
-> clients
-> instantiated from a single fwnode, to
-> acpi_device_enumeration_by_parent and
-> makes acpi_device_enumeration_by_parent return false for these devices
-> so
-> that a platform device will be instantiated.
-> 
-> This allows the drivers/platform/x86/i2c-multi-instantiate.c driver,
-> which
-> knows which i2c_device_id to use for each resource, to bind to the
-> fwnode
-> and initiate an i2c-client for each resource.
-> 
+> So if it's something to fix in kernel we just leave WARN alone. It
+> served its intended purpose of notifying kernel developers about
+> something to fix in kernel.
 
-> +	/*
-> +	 * These devices have multiple I2cSerialBus resources and an
-> i2c-client
-> +	 * must be instantiated for each, each with its own
-> i2c_device_id.
-> +	 * Normally we only instantiate an i2c-client for the first
-> resource,
-> +	 * using the ACPI HID as id. These special cases are handled by
-> the
-> +	 * drivers/platform/x86/i2c-multi-instantiate.c driver, which
-> knows
-> +	 * which i2c_device_id to use for each resource.
-> +	 */
-> +	static const struct acpi_device_id i2c_multi_instantiate_ids[] =
-> {
-> +		{"BSG1160", 0},
-> +		{"", 0},
-> +	};
+Yes, agreed! And the way how your syzbot automation works made it so
+much easier so thanks a lot!
 
-Style nits:
-- can we move it outside of function?
-- terminator better without comma
-- is this existing style in the file and / or files in this folder for
-IDs? (I mean unnecessary 0:s and empty string?
-
+The patch has been posted http://lkml.kernel.org/r/20180807072553.14941-1-mhocko@kernel.org
 -- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+Michal Hocko
+SUSE Labs
