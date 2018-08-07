@@ -6,37 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B58DC46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:56:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98765C46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:56:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40D3A2172E
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:56:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40D3A2172E
+	by mail.kernel.org (Postfix) with ESMTP id 137832151D
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:56:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 137832151D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390523AbeHGVMd (ORCPT
+        id S2390533AbeHGVMg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 17:12:33 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34006 "EHLO
+        Tue, 7 Aug 2018 17:12:36 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34018 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732347AbeHGVMc (ORCPT
+        with ESMTP id S2389145AbeHGVMg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 17:12:32 -0400
+        Tue, 7 Aug 2018 17:12:36 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C9DB2D01;
-        Tue,  7 Aug 2018 18:56:48 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C80ABD07;
+        Tue,  7 Aug 2018 18:56:51 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Keith Busch <keith.busch@intel.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 19/85] PCI: Prevent sysfs disable of device while driver is attached
-Date:   Tue,  7 Aug 2018 20:51:21 +0200
-Message-Id: <20180807172358.058782602@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Subject: [PATCH 3.18 02/85] tracing: Fix possible double free in event_enable_trigger_func()
+Date:   Tue,  7 Aug 2018 20:51:04 +0200
+Message-Id: <20180807172357.449026518@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180807172357.357252052@linuxfoundation.org>
 References: <20180807172357.357252052@linuxfoundation.org>
@@ -53,47 +50,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Christoph Hellwig <hch@lst.de>
+From: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-[ Upstream commit 6f5cdfa802733dcb561bf664cc89d203f2fd958f ]
+commit 15cc78644d0075e76d59476a4467e7143860f660 upstream.
 
-Manipulating the enable_cnt behind the back of the driver will wreak
-complete havoc with the kernel state, so disallow it.
+There was a case that triggered a double free in event_trigger_callback()
+due to the called reg() function freeing the trigger_data and then it
+getting freed again by the error return by the caller. The solution there
+was to up the trigger_data ref count.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
-Acked-by: Keith Busch <keith.busch@intel.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Code inspection found that event_enable_trigger_func() has the same issue,
+but is not as easy to trigger (requires harder to trigger failures). It
+needs to be solved slightly different as it needs more to clean up when the
+reg() function fails.
+
+Link: http://lkml.kernel.org/r/20180725124008.7008e586@gandalf.local.home
+
+Cc: stable@vger.kernel.org
+Fixes: 7862ad1846e99 ("tracing: Add 'enable_event' and 'disable_event' event trigger commands")
+Reivewed-by: Masami Hiramatsu <mhiramat@kernel.org>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/pci/pci-sysfs.c |   15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
 
---- a/drivers/pci/pci-sysfs.c
-+++ b/drivers/pci/pci-sysfs.c
-@@ -199,13 +199,16 @@ static ssize_t enable_store(struct devic
- 	if (!capable(CAP_SYS_ADMIN))
- 		return -EPERM;
+---
+ kernel/trace/trace_events_trigger.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+--- a/kernel/trace/trace_events_trigger.c
++++ b/kernel/trace/trace_events_trigger.c
+@@ -1231,6 +1231,9 @@ event_enable_trigger_func(struct event_c
+ 		goto out;
+ 	}
  
--	if (!val) {
--		if (pci_is_enabled(pdev))
--			pci_disable_device(pdev);
--		else
--			result = -EIO;
--	} else
-+	device_lock(dev);
-+	if (dev->driver)
-+		result = -EBUSY;
-+	else if (val)
- 		result = pci_enable_device(pdev);
-+	else if (pci_is_enabled(pdev))
-+		pci_disable_device(pdev);
-+	else
-+		result = -EIO;
-+	device_unlock(dev);
++	/* Up the trigger_data count to make sure nothing frees it on failure */
++	event_trigger_init(trigger_ops, trigger_data);
++
+ 	if (trigger) {
+ 		number = strsep(&trigger, ":");
  
- 	return result < 0 ? result : count;
+@@ -1281,6 +1284,7 @@ event_enable_trigger_func(struct event_c
+ 		goto out_disable;
+ 	/* Just return zero, not the number of enabled functions */
+ 	ret = 0;
++	event_trigger_free(trigger_ops, trigger_data);
+  out:
+ 	return ret;
+ 
+@@ -1291,7 +1295,7 @@ event_enable_trigger_func(struct event_c
+  out_free:
+ 	if (cmd_ops->set_filter)
+ 		cmd_ops->set_filter(NULL, trigger_data, NULL);
+-	kfree(trigger_data);
++	event_trigger_free(trigger_ops, trigger_data);
+ 	kfree(enable_data);
+ 	goto out;
  }
 
 
