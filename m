@@ -2,266 +2,262 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B15D0C46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 16:40:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B62DBC46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 16:40:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3309D21770
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 16:40:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 636C921770
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 16:40:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="c9aYAKc0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3309D21770
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	dkim=pass (2048-bit key) header.d=semihalf-com.20150623.gappssmtp.com header.i=@semihalf-com.20150623.gappssmtp.com header.b="PIpEDQmR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 636C921770
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=semihalf.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390197AbeHGSzw (ORCPT
+        id S2390210AbeHGSz5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 14:55:52 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:35129 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389292AbeHGSzw (ORCPT
+        Tue, 7 Aug 2018 14:55:57 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:41886 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389756AbeHGSz5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 14:55:52 -0400
-Received: by mail-ed1-f68.google.com with SMTP id e6-v6so7232479edr.2
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 09:40:43 -0700 (PDT)
+        Tue, 7 Aug 2018 14:55:57 -0400
+Received: by mail-io0-f195.google.com with SMTP id q4-v6so1633400iob.8
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 09:40:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=xciXkd+1WZtNTFePPSNWwpKAyrXJ3K39DZZnyxAHywE=;
-        b=c9aYAKc0RbZn5WkCFDhxzepEJK14bm02dIDcnmd0jmMqVYeSJm4T0NvWwKtLLnz+8N
-         jg5Aeqc3nJnsi2G7iYJ/DihPJXieG9W+PXNnUSHIEZlcCHqslBSblctfu5uAbpFC7Rwv
-         hrzd6vHnjbBh8vredtayPI8RSJYlLkCIZbGxI=
+        d=semihalf-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=eKZOHbYgDIbHoNOX3tyBqBQamx+bpWaKoh+4+8/kq88=;
+        b=PIpEDQmRYEq8FL/CefR1NORbolvrBYosMGsXZY8Z2EX/JhCGOA0tltLXH493hf0ufP
+         uWeLp5TQadTbtKPjn5Yo686XIeWVCziH5RRN5LP9QzMCGKK+vBCbNX6WvhaFbe1suqVM
+         6nD0SXAWRNV2IbRWi2+mMVXvAlYIQHDwNsyPLpAR2bNgbdsGlOp8jwwrAv2GVL1MSUpi
+         3oCKnqxXMbs1VcK7vh+MrBvZ/OnHNPCAKBTyRr9NDTPcq52ZxuOzuxt+FScYxsiYRWTW
+         pMV1iCFXy3AlMzkdf3XFfeckEPOW78XGvaWqex+LwXLBk44tw9qkEhJZJOsdS2/9wyPy
+         hnwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=xciXkd+1WZtNTFePPSNWwpKAyrXJ3K39DZZnyxAHywE=;
-        b=ruW5TnWwxgRkbHWRUoVVuDVZ+PO212fWac5ARpGDeO8kOV8i4ASYpk/B0Ckmxt5I+u
-         47D8TkGU75qdXVgDEObS8FWF70sk09z2y9wenbyqxNsPk51SV9kNo9X2VMmq0l9rYiBn
-         GulzmPuydbpR2IGUzzIlBPqLraAm7Cfzcy3tRs135t0W6vI52GJvu4Czout006dpUVmf
-         eNwK/ofyoUSSTVt8pbXJpvwjVn3JN9xXqZUIl9O6FetUQByo5MC2RWms3udx8eWhk1eo
-         F81MRJrRb5hOYgItRziw6Iy5kWTweiEZizvkayYtmSQGGSv0uT40CzYHULJ03xJv1TVc
-         //TA==
-X-Gm-Message-State: AOUpUlFa53/8ueZv7TXPcecdsmLYPlgL2In4gpYs7TknklSejoE19AoP
-        lo5yZVfrwFoLAVE6whXMoMOyPQ==
-X-Google-Smtp-Source: AAOMgpfRJ3z7tAYI1x3qhb81jjwrVm/h6vf03+DycS+U21c+mnr0b9t3WRVAKWj6hCT2v5sncueFGA==
-X-Received: by 2002:aa7:d5d6:: with SMTP id d22-v6mr22998762eds.161.1533660042483;
-        Tue, 07 Aug 2018 09:40:42 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:56fc:0:d707:d7d8:b180:96e5])
-        by smtp.gmail.com with ESMTPSA id y57-v6sm1062492edb.49.2018.08.07.09.40.40
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 07 Aug 2018 09:40:41 -0700 (PDT)
-Date:   Tue, 7 Aug 2018 18:40:39 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc:     David Airlie <airlied@linux.ie>, dnicoara@chromium.org,
-        =?iso-8859-1?Q?St=E9phane?= Marchesin <marcheu@google.com>,
-        Sean Paul <seanpaul@google.com>,
-        alexandros.frantzis@collabora.com, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, tomasz Figa <tfiga@chromium.org>,
-        Gustavo Padovan <gustavo.padovan@collabora.com>,
-        kernel@collabora.com
-Subject: Re: [PATCH] drm/atomic: add ATOMIC_AMEND flag to the Atomic IOCTL.
-Message-ID: <20180807164039.GB3008@phenom.ffwll.local>
-Mail-Followup-To: Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        David Airlie <airlied@linux.ie>, dnicoara@chromium.org,
-        =?iso-8859-1?Q?St=E9phane?= Marchesin <marcheu@google.com>,
-        Sean Paul <seanpaul@google.com>, alexandros.frantzis@collabora.com,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        tomasz Figa <tfiga@chromium.org>,
-        Gustavo Padovan <gustavo.padovan@collabora.com>,
-        kernel@collabora.com
-References: <20180806160102.11877-1-enric.balletbo@collabora.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=eKZOHbYgDIbHoNOX3tyBqBQamx+bpWaKoh+4+8/kq88=;
+        b=tjx/h4n9MK3MpGvps0BRGcUURwp3KAKy3zIZuRqQX37wL3FzRf79c+7SI8uuMQZXab
+         4al8UOLg5Ctyv/9AIMiuzEmTRswBPH7JPx3R87FTNi/WkmlIhy1bAd3Giw1S9ItHcw+E
+         sZu7Ov6fk117cyz0wfIMRPWsJnCtprqdfpNTonvIv7J4ZBSGShbZfIYP5YLvH0W2i6sz
+         hKTps5EucoI4dyUczqfa4MgcP1s7NCylH9KZ9FVHCi/cyIfF8ESSXRSNjRjvNZI48CAd
+         QNtaFKY6O7Y1PrPO1f5cZigOjA1hebnweqTCXd9u6hloM9RNDDVE7ZrQvY/socYQZeTI
+         HOvA==
+X-Gm-Message-State: AOUpUlHt+Y29DwEHg60RwdBPTB1ssLeEN119AMr6fiApnb1EADYbVbXi
+        s3Kswxpk1wp46NzxonmJnW9PKOfD6cD3cHPKGp2U+A==
+X-Google-Smtp-Source: AAOMgpfGu8AkoVr/dfA9L5T6gTd0UhvPDx4w6zeL+/8PUNQynVhVFh+MVd33cFZ6Y/I4GYoSXSIf3MYHTE6EY6nDico=
+X-Received: by 2002:a5e:c60c:: with SMTP id f12-v6mr20297912iok.108.1533660049316;
+ Tue, 07 Aug 2018 09:40:49 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180806160102.11877-1-enric.balletbo@collabora.com>
-X-Operating-System: Linux phenom 4.14.0-3-amd64 
-User-Agent: Mutt/1.10.0 (2018-05-17)
+References: <alpine.LRH.2.02.1808021242320.31834@file01.intranet.prod.int.rdu2.redhat.com>
+ <alpine.LRH.2.02.1808030212340.17672@file01.intranet.prod.int.rdu2.redhat.com>
+ <CAKv+Gu8DeuksZhk1g3q_msSKV_hSY_2e1uzVten9-oGO3j9Sqg@mail.gmail.com>
+ <20180803094129.GB17798@arm.com> <alpine.LRH.2.02.1808031235410.31584@file01.intranet.prod.int.rdu2.redhat.com>
+ <CAKv+Gu-aNFh1fsr_05SEwDp99n3pLrguP7=tEcFQPNY53=K7Fw@mail.gmail.com>
+ <alpine.LRH.2.02.1808031424140.14030@file01.intranet.prod.int.rdu2.redhat.com>
+ <CAHCPf3s-+Qf=WBZz1KpisDMG3520jCUh8PLAO3PHa4jdt8kCTw@mail.gmail.com>
+ <CAKv+Gu9_h-WFi1j4+DWUN_dMj75SKKHxWoDH8WQ9P7S7MNpZQg@mail.gmail.com>
+ <alpine.LRH.2.02.1808060553130.30832@file01.intranet.prod.int.rdu2.redhat.com>
+ <99fff4fe-afa9-f12f-a518-472a9dd1c530@arm.com> <CAKv+Gu_C2g=C=gMpk4a5jpDORnxZY6t1v=HDoy59m5vwNBxBBg@mail.gmail.com>
+ <alpine.LRH.2.02.1808061306490.12989@file01.intranet.prod.int.rdu2.redhat.com>
+ <CAKv+Gu_8Rq6X24ZOYvG7+kQQGSGYAZuu_co4k1nJS8K7rkrWMA@mail.gmail.com>
+ <alpine.LRH.2.02.1808061552090.11930@file01.intranet.prod.int.rdu2.redhat.com>
+ <CAKv+Gu_iCgAeGmrajZ_euMcFLntWG1a51HF_HQ1TO=fV_v__AQ@mail.gmail.com>
+In-Reply-To: <CAKv+Gu_iCgAeGmrajZ_euMcFLntWG1a51HF_HQ1TO=fV_v__AQ@mail.gmail.com>
+From:   Marcin Wojtas <mw@semihalf.com>
+Date:   Tue, 7 Aug 2018 18:40:36 +0200
+Message-ID: <CAPv3WKdCMpy6KarducQEtSYP35zdELhparkmPPMKGMUhsdk1Qw@mail.gmail.com>
+Subject: Re: framebuffer corruption due to overlapping stp instructions on arm64
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>, mpatocka@redhat.com
+Cc:     Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        Joao Pinto <Joao.Pinto@synopsys.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        linux-pci@vger.kernel.org, Will Deacon <will.deacon@arm.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Matt Sealey <neko@bakuhatsu.net>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 06, 2018 at 06:01:02PM +0200, Enric Balletbo i Serra wrote:
-> From: Gustavo Padovan <gustavo.padovan@collabora.com>
-> 
-> This flag tells core to jump ahead the queued update if the conditions
-> in drm_atomic_async_check() are met. That means we are only able to do an
-> async update if no modeset is pending and update for the same plane is
-> not queued.
-> 
-> It uses the already in place infrastructure for async updates.
-> 
-> It is useful for cursor updates and async PageFlips over the atomic
-> ioctl, otherwise in some cases updates may be delayed to the point the
-> user will notice it. Note that for now it's only enabled for cursor
-> planes.
-> 
-> DRM_MODE_ATOMIC_AMEND should be passed to the Atomic IOCTL to use this
-> feature.
-> 
-> Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.com>
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> ---
-> Hi,
-> 
-> This is an attempt to introduce the new ATOMIC_AMEND flag for atomic
-> operations, see the commit message for a more detailed description.
-> 
-> This was tested using a small program that exercises the uAPI for easy
-> sanity testing. The program created by Alexandros can be found here
-> [2]. To test, just build the program and use the --atomic flag to use the
-> cursor plane in normal (blocking mode), and --atomic-async to use the cursor
-> plane with the ATOMIC_AMEND flag. E.g.
-> 
->   drm_cursor --atomic
-> 
-> or
-> 
->   drm_cursor --atomic-async
+Ard, Mikulas,
 
-Would be really lovely to bake these into igt-based regression tests. i915
-doesn't yet have async update support, but I hope we'll eventually gain
-that, and then our CI could make sure this keeps working.
+pon., 6 sie 2018 o 22:11 Ard Biesheuvel <ard.biesheuvel@linaro.org> napisa=
+=C5=82(a):
+>
+> On 6 August 2018 at 21:54, Mikulas Patocka <mpatocka@redhat.com> wrote:
+> >
+> >
+> > On Mon, 6 Aug 2018, Ard Biesheuvel wrote:
+> >
+> >> On 6 August 2018 at 19:09, Mikulas Patocka <mpatocka@redhat.com> wrote=
+:
+> >> >
+> >> >
+> >> > On Mon, 6 Aug 2018, Ard Biesheuvel wrote:
+> >> >
+> >> >> On 6 August 2018 at 14:42, Robin Murphy <robin.murphy@arm.com> wrot=
+e:
+> >> >> > On 06/08/18 11:25, Mikulas Patocka wrote:
+> >> >> > [...]
+> >> >> >>>
+> >> >> >>> None of this explains why some transactions fail to make it acr=
+oss
+> >> >> >>> entirely. The overlapping writes in question write the same dat=
+a to
+> >> >> >>> the memory locations that are covered by both, and so the order=
+ing in
+> >> >> >>> which the transactions are received should not affect the outco=
+me.
+> >> >> >>
+> >> >> >>
+> >> >> >> You're right that the corruption couldn't be explained just by r=
+eordering
+> >> >> >> writes. My hypothesis is that the PCIe controller tries to disam=
+biguate
+> >> >> >> the overlapping writes, but the disambiguation logic was not tes=
+ted and it
+> >> >> >> is buggy. If there's a barrier between the overlapping writes, t=
+he PCIe
+> >> >> >> controller won't see any overlapping writes, so it won't trigger=
+ the
+> >> >> >> faulty disambiguation logic and it works.
+> >> >> >>
+> >> >> >> Could the ARM engineers look if there's some chicken bit in Cort=
+ex-A72
+> >> >> >> that could insert barriers between non-cached writes automatical=
+ly?
+> >> >> >
+> >> >> >
+> >> >> > I don't think there is, and even if there was I imagine it would =
+have a
+> >> >> > pretty hideous effect on non-coherent DMA buffers and the various=
+ other
+> >> >> > places in which we have Normal-NC mappings of actual system RAM.
+> >> >> >
+> >> >>
+> >> >> Looking at the A72 manual, there is one chicken bit that looks like=
+ it
+> >> >> may be related:
+> >> >>
+> >> >> CPUACTLR_EL1 bit #50:
+> >> >>
+> >> >> 0 Enables store streaming on NC/GRE memory type. This is the reset =
+value.
+> >> >> 1 Disables store streaming on NC/GRE memory type.
+> >> >>
+> >> >> so putting something like
+> >> >>
+> >> >> mrs x0, S3_1_C15_C2_0
+> >> >> orr x0, x0, #(1 << 50)
+> >> >> msr S3_1_C15_C2_0, x0
+> >> >>
+> >> >> in __cpu_setup() would be worth a try.
+> >> >
+> >> > It won't boot.
+> >> >
+> >> > But if i write the same value that was read, it also won't boot.
+> >> >
+> >> > I created a simple kernel module that reads this register and it has=
+ bit
+> >> > 32 set, all other bits clear. But when I write the same value into i=
+t, the
+> >> > core that does the write is stuck in infinite loop.
+> >> >
+> >> > So, it seems that we are writing this register from a wrong place.
+> >> >
+> >>
+> >> Ah, my bad. I didn't look closely enough at the description:
+> >>
+> >> """
+> >> The accessibility to the CPUACTLR_EL1 by Exception level is:
+> >>
+> >> EL0              -
+> >> EL1(NS)          RW (a)
+> >> EL1(S)           RW (a)
+> >> EL2              RW (b)
+> >> EL3(SCR.NS =3D 1)  RW
+> >> EL3(SCR.NS =3D 0)  RW
+> >>
+> >> (a) Write access if ACTLR_EL3.CPUACTLR is 1 and ACTLR_EL2.CPUACTLR is
+> >> 1, or ACTLR_EL3.CPUACTLR is 1 and SCR.NS is 0.
+> >> """
+> >>
+> >> so you'll have to do this from ARM Trusted Firmware. If you're
+> >> comfortable rebuilding that:
+> >>
+> >> diff --git a/include/lib/cpus/aarch64/cortex_a72.h
+> >> b/include/lib/cpus/aarch64/cortex_a72.h
+> >> index bfd64918625b..a7b8cf4be0c6 100644
+> >> --- a/include/lib/cpus/aarch64/cortex_a72.h
+> >> +++ b/include/lib/cpus/aarch64/cortex_a72.h
+> >> @@ -31,6 +31,7 @@
+> >>  #define CORTEX_A72_ACTLR_EL1                   S3_1_C15_C2_0
+> >>
+> >>  #define CORTEX_A72_ACTLR_DISABLE_L1_DCACHE_HW_PFTCH    (1 << 56)
+> >> +#define CORTEX_A72_ACTLR_DIS_NC_GRE_STORE_STREAMING    (1 << 50)
+> >>  #define CORTEX_A72_ACTLR_NO_ALLOC_WBWA         (1 << 49)
+> >>  #define CORTEX_A72_ACTLR_DCC_AS_DCCI           (1 << 44)
+> >>  #define CORTEX_A72_ACTLR_EL1_DIS_INSTR_PREFETCH                (1 << =
+32)
+> >> diff --git a/lib/cpus/aarch64/cortex_a72.S b/lib/cpus/aarch64/cortex_a=
+72.S
+> >> index 55e508678284..5914d6ee3ba6 100644
+> >> --- a/lib/cpus/aarch64/cortex_a72.S
+> >> +++ b/lib/cpus/aarch64/cortex_a72.S
+> >> @@ -133,6 +133,15 @@ func cortex_a72_reset_func
+> >>         orr     x0, x0, #CORTEX_A72_ECTLR_SMP_BIT
+> >>         msr     CORTEX_A72_ECTLR_EL1, x0
+> >>         isb
+> >> +
+> >> +       /* ---------------------------------------------
+> >> +        * Disables store streaming on NC/GRE memory type.
+> >> +        * ---------------------------------------------
+> >> +        */
+> >> +       mrs     x0, CORTEX_A72_ACTLR_EL1
+> >> +       orr     x0, x0, #CORTEX_A72_ACTLR_DIS_NC_GRE_STORE_STREAMING
+> >> +       msr     CORTEX_A72_ACTLR_EL1, x0
+> >> +       isb
+> >>         ret x19
+> >>  endfunc cortex_a72_reset_func
+> >
+> > Unfortunatelly, it doesn't work. I verified that the bit is set after
+> > booting Linux, but the memcpy corruption was still present.
+> >
+> > I also tried the other chicken bits, it slowed down the system noticeab=
+ly,
+> > but had no effect on the memcpy corruption.
+> >
+>
+> OK, it was worth a shot
+>
+> Let's wait and see if Marcin has any results.
+>
 
-> The test worked on a Samsung Chromebook Plus on top of mainline plus
-> the patch to update cursors asynchronously through atomic for the
-> drm/rockchip driver.
-> 
-> Alexandros also did a proof-of-concept to use this flag and draw cursors
-> using atomic if possible on ozone [1].
-> 
-> Best regards,
->  Enric
-> 
-> [1] https://chromium-review.googlesource.com/c/chromium/src/+/1092711
-> [2] https://gitlab.collabora.com/alf/drm-cursor
-> 
-> 
-> Changes in v1:
-> - Only enable it if userspace requests it.
-> - Only allow async update for cursor type planes.
-> - Rename ASYNC_UPDATE for ATOMIC_AMEND.
-> 
->  drivers/gpu/drm/drm_atomic.c        |  5 +++++
->  drivers/gpu/drm/drm_atomic_helper.c | 10 +++++++++-
->  include/uapi/drm/drm_mode.h         |  4 +++-
->  3 files changed, 17 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c
-> index 895741e9cd7d..7b3e4aa2874d 100644
-> --- a/drivers/gpu/drm/drm_atomic.c
-> +++ b/drivers/gpu/drm/drm_atomic.c
-> @@ -2338,6 +2338,10 @@ int drm_mode_atomic_ioctl(struct drm_device *dev,
->  			(arg->flags & DRM_MODE_PAGE_FLIP_EVENT))
->  		return -EINVAL;
->  
-> +	if ((arg->flags & DRM_MODE_ATOMIC_ALLOW_MODESET) &&
-> +			(arg->flags & DRM_MODE_ATOMIC_AMEND))
-> +		return -EINVAL;
-> +
->  	drm_modeset_acquire_init(&ctx, DRM_MODESET_ACQUIRE_INTERRUPTIBLE);
->  
->  	state = drm_atomic_state_alloc(dev);
-> @@ -2346,6 +2350,7 @@ int drm_mode_atomic_ioctl(struct drm_device *dev,
->  
->  	state->acquire_ctx = &ctx;
->  	state->allow_modeset = !!(arg->flags & DRM_MODE_ATOMIC_ALLOW_MODESET);
-> +	state->async_update = !!(arg->flags & DRM_MODE_ATOMIC_AMEND);
->  
->  retry:
->  	plane_mask = 0;
-> diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
-> index 81e32199d3ef..59495f61c583 100644
-> --- a/drivers/gpu/drm/drm_atomic_helper.c
-> +++ b/drivers/gpu/drm/drm_atomic_helper.c
-> @@ -902,7 +902,7 @@ int drm_atomic_helper_check(struct drm_device *dev,
->  	if (ret)
->  		return ret;
->  
-> -	if (state->legacy_cursor_update)
-> +	if (state->async_update || state->legacy_cursor_update)
+After some self-caused setup issues I was able to run the test on my
+MacchiatoBin with the kernel v4.18-rc8. It's been running for 1h+ now,
+loading the CPU to 100% and no single error event...
 
-Hm, it would be really cool if we could rip out the legacy_cursor_update
-hack and also use async_update in the cursor compat helpers. At least if
-available.
+I built the binary file with:
+gcc-linaro-7.2.1-2017.11-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-gcc=
+ -O2
 
->  		state->async_update = !drm_atomic_helper_async_check(dev, state);
->  
->  	return ret;
-> @@ -1539,6 +1539,14 @@ int drm_atomic_helper_async_check(struct drm_device *dev,
->  	if (new_plane_state->fence)
->  		return -EINVAL;
->  
-> +	/* Only allow async update for cursor type planes. */
-> +	if (plane->type != DRM_PLANE_TYPE_CURSOR)
-> +		return -EINVAL;
+Maybe it's the older firmware issue? Please send the full bootlog with
+the very first line after reset. My board rev is v1.3 and I use
+mainline UEFI (newest edk2 + edk2-platforms) + newest publicly
+available ARM-TF and earliest firmware for this board.
 
-Why limit to cursor planes? The async_update hooks are per-plane.
-
-> +
-> +	/* Don't do an async update if there isn't a pending commit. */
-> +	if (!old_plane_state->commit)
-> +		return -EINVAL;
-
-Hm, why this? Won't this break legacy cursor updates now for drivers which
-implement this using async_update?
-
-If userspace wants to avoid this, they can do so by properly tracking
-their non-AMEND updates and making sure they've waited until those all
-completed.
-
-Also, how is userspace supposed to figure out async_update exists/works?
-Usual approach is a getparam.
-
-Another semantics questions: Should this fail if we fall back to a
-non-async update? I think that would be best, since userspace can the
-decide on its own whether it wants to fall back to a normal commit or do
-something else. And the cursor compat code could do the same, i.e. try
-first with AMEND, then a normal commit?
-
-Cheers, Daniel
-
-> +
->  	/*
->  	 * Don't do an async update if there is an outstanding commit modifying
->  	 * the plane.  This prevents our async update's changes from getting
-> diff --git a/include/uapi/drm/drm_mode.h b/include/uapi/drm/drm_mode.h
-> index 4b3a1bb58e68..6dae18428123 100644
-> --- a/include/uapi/drm/drm_mode.h
-> +++ b/include/uapi/drm/drm_mode.h
-> @@ -724,13 +724,15 @@ struct drm_mode_destroy_dumb {
->  #define DRM_MODE_ATOMIC_TEST_ONLY 0x0100
->  #define DRM_MODE_ATOMIC_NONBLOCK  0x0200
->  #define DRM_MODE_ATOMIC_ALLOW_MODESET 0x0400
-> +#define DRM_MODE_ATOMIC_AMEND 0x0800
->  
->  #define DRM_MODE_ATOMIC_FLAGS (\
->  		DRM_MODE_PAGE_FLIP_EVENT |\
->  		DRM_MODE_PAGE_FLIP_ASYNC |\
->  		DRM_MODE_ATOMIC_TEST_ONLY |\
->  		DRM_MODE_ATOMIC_NONBLOCK |\
-> -		DRM_MODE_ATOMIC_ALLOW_MODESET)
-> +		DRM_MODE_ATOMIC_ALLOW_MODESET |\
-> +		DRM_MODE_ATOMIC_AMEND)
->  
->  struct drm_mode_atomic {
->  	__u32 flags;
-> -- 
-> 2.18.0
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
-
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Best regards,
+Marcin
