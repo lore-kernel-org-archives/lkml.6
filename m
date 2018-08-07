@@ -2,77 +2,115 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ABE5C46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 15:55:02 +0000 (UTC)
-Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE61F21885
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D25E2C46470
 	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 15:55:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="C+YLgFKi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE61F21885
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
+	by mail.kernel.org (Postfix) with ESMTP id 916ED21976
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 15:55:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 916ED21976
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=holtmann.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403897AbeHGSJ4 (ORCPT
+        id S2403873AbeHGSJw convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 14:09:56 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:60426 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403877AbeHGSJz (ORCPT
+        Tue, 7 Aug 2018 14:09:52 -0400
+Received: from coyote.holtmann.net ([212.227.132.17]:59241 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389870AbeHGSJw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 14:09:55 -0400
-Received: from localhost.localdomain (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 50D5157;
-        Tue,  7 Aug 2018 17:54:57 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1533657297;
-        bh=DdHYYAkFJD8Ysd5DfPf5cnIxWO1vvkrkb0u7d2VGdyo=;
-        h=From:To:Cc:Subject:Date:From;
-        b=C+YLgFKilyKaTf2GB2RLnm0c/Rtl1ZOqk3WFBMtVhgwWUUccOACkkmENhAnLpHpVS
-         r5Ay8+AiWZUGM4ZHlDnet5n/3l8TFqL4SqAC/vo6dnOAF9ZZZTulDo4XsQTl3kk5Es
-         /J6SPdBAOW8f8Oi2Nwmokyq+JKvkCLyvkz/67gpg=
-From:   Kieran Bingham <kieran.bingham@ideasonboard.com>
-To:     mchehab@kernel.org, linux-media@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [PATCH] media: dt: adv7604: Fix slave map documentation
-Date:   Tue,  7 Aug 2018 16:54:52 +0100
-Message-Id: <20180807155452.797-1-kieran.bingham@ideasonboard.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 7 Aug 2018 14:09:52 -0400
+Received: from marcel-macpro.fritz.box (p4FEFCC41.dip0.t-ipconnect.de [79.239.204.65])
+        by mail.holtmann.org (Postfix) with ESMTPSA id F1F0DCF2AD;
+        Tue,  7 Aug 2018 18:01:54 +0200 (CEST)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 11.5 \(3445.9.1\))
+Subject: Re: [PATCH v7 2/3] Bluetooth: mediatek: Add protocol support for
+ MediaTek serial devices
+From:   Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <1533652445.3472.230.camel@mtkswgap22>
+Date:   Tue, 7 Aug 2018 17:54:53 +0200
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:BLUETOOTH DRIVERS" <linux-bluetooth@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-mediatek@lists.infradead.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Transfer-Encoding: 8BIT
+Message-Id: <8AF72CFC-4978-42AD-8ECC-752EB137DD2A@holtmann.org>
+References: <cover.1533056925.git.sean.wang@mediatek.com>
+ <c92ed10cf16f36d9a3b390e864af92e2dfe7b771.1533056925.git.sean.wang@mediatek.com>
+ <1707FFA1-A294-4A95-A3BF-0910CE455232@holtmann.org>
+ <1533192799.3472.122.camel@mtkswgap22>
+ <FF45A90A-F9F1-47CB-AB1F-1E92BF587FBE@holtmann.org>
+ <1533199720.3472.136.camel@mtkswgap22>
+ <9526E5D9-50BA-4D57-80F5-083DB7D28AFE@holtmann.org>
+ <1533205495.3472.144.camel@mtkswgap22>
+ <A6D48D49-52CE-405D-8C5D-C4D54CE67221@holtmann.org>
+ <1533303749.3472.160.camel@mtkswgap22>
+ <D2336CD2-B69B-4B5B-8125-F0CAD29E3243@holtmann.org>
+ <1533319214.3472.187.camel@mtkswgap22>
+ <7A3537C5-5940-45AD-AB80-77418CCFE130@holtmann.org>
+ <1533652445.3472.230.camel@mtkswgap22>
+To:     Sean Wang <sean.wang@mediatek.com>
+X-Mailer: Apple Mail (2.3445.9.1)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The reg-names property in the documentation is missing an '='. Add it.
+Hi Sean,
 
-Fixes: 9feb786876c7 ("media: dt-bindings: media: adv7604: Extend
-bindings to allow specifying slave map addresses")
+>>>> this is even more hackish since the __hci_cmd_sync_ev command is really meant to get a cmd status first before waiting for that event.
+>>>> 
+>>> 
+>>> Understood.
+>>> 
+>>> I've stopped the hack in v8. could we merge v8 first ? and then I will a fix up with __hci_raw_sync_ev that uses the hdev->raw_q instead of __hci_cmd_sync_ev in TODO.
+>> 
+>> so I looked into this a bit more. We actually added __hci_cmd_send for a Qualcomm firmware loader that was doing something similar. So instead of trying to add a yet another command to the core, I actually used that and implemented the wait for vendor event in the driver.
+>> 
+>> You will see my v9 on the mailing list. I also did a bunch of cosmetic minor cleanup and spelling correction. Please test this version. I also make __le16 dlen instead of dlen1 + dlen2 since I think that is what your hardware does.
+> 
+> Only one thing needs to be corrected in v9. that is __be16 is required instead of dlen1 + dlen2. I will fix it up in v10 and the other changes all look good to me.
+> 
+>> If this version of the driver works for you then I am happy to merge it. You can then add support for hdev->set_bdaddr and hdev->set_diag in later patches. I also like to clean up the STP receive handler since it can be done a lot simpler and smaller, but that has to wait.
+>> 
+> 
+> hopefully v10 also can be merged :)
 
-Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
----
- Documentation/devicetree/bindings/media/i2c/adv7604.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+send me a v10 and I can merge it.
 
-diff --git a/Documentation/devicetree/bindings/media/i2c/adv7604.txt b/Documentation/devicetree/bindings/media/i2c/adv7604.txt
-index dcf57e7c60eb..b3e688b77a38 100644
---- a/Documentation/devicetree/bindings/media/i2c/adv7604.txt
-+++ b/Documentation/devicetree/bindings/media/i2c/adv7604.txt
-@@ -66,7 +66,7 @@ Example:
- 		 * other maps will retain their default addresses.
- 		 */
- 		reg = <0x4c>, <0x66>;
--		reg-names "main", "edid";
-+		reg-names = "main", "edid";
- 
- 		reset-gpios = <&ioexp 0 GPIO_ACTIVE_LOW>;
- 		hpd-gpios = <&ioexp 2 GPIO_ACTIVE_HIGH>;
--- 
-2.17.1
+> I will investigate more about how to add ->set_bdaddr, ->set_diag and STP receive enhancement in later patches.
+> 
+> but so far I have not much idea about how to make STP multiplexer be a independent driver.
+> 
+> my thought is that it would be really better and cleaner a chain of serdev is be used as the base of mtkbtuart. something like
+> 
+> 8250 serial bus <----> STP multiplexer serdev <----> mtkbtuart serdev
+> 
+> however, STP multiplexer serdev is not a real device, that doesn't no request any resource. I think it should not be allowed to be added in a device tree and even in dt-binding document.
+
+Before we do that, lets get a cleaner parser for it. I just don’t have enough time to wrap my head around this one yet.
+
+>>>> Are all Mediatek vendor commands this way? Or just the ones for loading the firmware? So only the WMT ones?
+>>>> 
+>>> 
+>>> Only the WMT ones, WMT commands/events are usually used in system controlling, for example, global function on/off, firmware download, reset and so on. most only appear on device initialization
+>> 
+>> Since you never checked the result of the vendor event, I opted for just signaling that it arrived. If they can report success or failure, we need to add some extra code for that.
+>> 
+> 
+> I will consider more WMT event status when I add more Bluetooth devices such as MT7668U usb based Bluetooth which I plan to add the support in later patches in the next weeks 
+
+Are the USB ones also using STP or are they H:2 based like all the others. What are prominent MT7668U based ones that I could buy?
+
+Regards
+
+Marcel
 
