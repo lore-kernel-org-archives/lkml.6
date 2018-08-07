@@ -2,105 +2,87 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 548CEC46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 10:24:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68734C46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 10:24:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08D1D2170A
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 10:24:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="RrorpSx6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08D1D2170A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=8bytes.org
+	by mail.kernel.org (Postfix) with ESMTP id F251C2170A
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 10:24:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F251C2170A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388760AbeHGMiN (ORCPT
+        id S2388870AbeHGMiQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 08:38:13 -0400
-Received: from 8bytes.org ([81.169.241.247]:60788 "EHLO theia.8bytes.org"
+        Tue, 7 Aug 2018 08:38:16 -0400
+Received: from foss.arm.com ([217.140.101.70]:52058 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726968AbeHGMiN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 08:38:13 -0400
-Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 27D75220; Tue,  7 Aug 2018 12:24:33 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=8bytes.org; s=mail-1;
-        t=1533637473; bh=E/cO6UwIuvwTfAr9UjHcfZD3F2tB/lHW3z78HEvDf70=;
-        h=From:To:Cc:Subject:Date:From;
-        b=RrorpSx6B1Zy9kXFlomHm94g1qgP6nZ8OOCGDVg9YUiwpX21qX9OnZJfpReQ1WIlO
-         tivzmZx5NuuOdOZ9qSqGbrjrpgnw7cOFqs1UfG/kQXZp6IZW9yFWKwtXRUoeWpxC8I
-         /9IdNq1wgojwxtZc/RDmoEhQjabZI4MvBUc4DCGLVe22fw5qvxInU0uxqntMkQGrhl
-         +tBtC2OvolYsDdW7lO2dHQ3zw/wsEY/kJgbaHIgVCZL9rey8WBj57aUrN9JRvFsh2X
-         0RFkgny58TukGXvS6bJb4ojgEdUXelunoRh9tPNIrqxiPDulnjfNPvC/XiWWE28SuO
-         rtXsvetG2ukIg==
-From:   Joerg Roedel <joro@8bytes.org>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        "H . Peter Anvin" <hpa@zytor.com>
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Juergen Gross <jgross@suse.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Brian Gerst <brgerst@gmail.com>,
-        David Laight <David.Laight@aculab.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        Eduardo Valentin <eduval@amazon.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Will Deacon <will.deacon@arm.com>, aliguori@amazon.com,
-        daniel.gruss@iaik.tugraz.at, hughd@google.com, keescook@google.com,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        "David H . Gutteridge" <dhgutteridge@sympatico.ca>,
-        jroedel@suse.de, joro@8bytes.org
-Subject: [PATCH 0/3] PTI for x86-32 Fixes
-Date:   Tue,  7 Aug 2018 12:24:28 +0200
-Message-Id: <1533637471-30953-1-git-send-email-joro@8bytes.org>
-X-Mailer: git-send-email 2.7.4
+        id S2388770AbeHGMiP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 08:38:15 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EBE5D80D;
+        Tue,  7 Aug 2018 03:24:36 -0700 (PDT)
+Received: from [10.4.13.119] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 09F6A3F2EA;
+        Tue,  7 Aug 2018 03:24:35 -0700 (PDT)
+Subject: Re: [PATCH] arm64: Trap WFI executed in userspace
+To:     Dave Martin <Dave.Martin@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+References: <20180807093326.5090-1-marc.zyngier@arm.com>
+ <20180807100437.GA9097@e103592.cambridge.arm.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <9af8bb9a-7c6c-2560-5965-118dfadf8141@arm.com>
+Date:   Tue, 7 Aug 2018 11:24:34 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180807100437.GA9097@e103592.cambridge.arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 07/08/18 11:05, Dave Martin wrote:
+> On Tue, Aug 07, 2018 at 10:33:26AM +0100, Marc Zyngier wrote:
+>> It recently came to light that userspace can execute WFI, and that
+>> the arm64 kernel doesn trap this event. This sounds rather benign,
+>> but the kernel should decide when it wants to wait for an interrupt,
+>> and not userspace.
+>>
+>> Let's trap WFI and treat it as a way to yield the CPU to another
+>> process.
+> 
+> This doesn't amount to a justification.
+> 
+> If the power controller is unexpectedly left in a bad state so that
+> WFI will do something nasty to a cpu that may enter userspace, then we
+> probably have bigger problems.
+> 
+> So, maybe it really is pretty harmless to let userspace execute this.
 
-here is a small patch-set to fix two small issues in the
-PTI implementation for 32 bit x86. The issues are:
+Or not. It is also a very good way for userspace to find out when an
+interrupt gets delivered and start doing all kind of probing on the
+kernel. The least the userspace knows about that, the better I feel.
 
-	1) Fix the 32 bit PCID check. I used the wrong
-	   operator there and this caused false-positive
-	   warnings.
+> I can't think of a legitimate reason for userspace to execute WFI
+> however.  Userspace doesn't have interrupts under Linux, so it makes
+> no sense to wait for one.
+> 
+> Have we seen anybody using WFI in userspace?  It may be cleaner to
+> map this to SIGILL rather than be permissive and regret it later.
 
-	2) The other two patches make sure the init-hole is
-	   not mapped into the user page-table. It is the
-	   32 bit counterpart to commit
+I couldn't find any user, and I'm happy to just send userspace to hell
+in that case. But it could also been said that since it was never
+prevented, it is a de-facto ABI.
 
-	   c40a56a7818c ('x86/mm/init: Remove freed kernel image areas from alias mapping')
-
-	   for the 64 bit PTI implementation.
-
-I tested that no-PAE, PAE and 64 bit kernel all boot and
-have correct user page-tables with identical global mappings
-between user and kernel.
-
-Regards,
-
-	Joerg
-
-Joerg Roedel (3):
-  x86/mm/pti: Fix 32 bit PCID check
-  x86/mm/pti: Don't clear permissions in pti_clone_pmd()
-  x86/mm/pti: Clone kernel-image on PTE level for 32 bit
-
- arch/x86/mm/pti.c | 143 ++++++++++++++++++++++++++++++++++++++----------------
- 1 file changed, 100 insertions(+), 43 deletions(-)
-
+	M.
 -- 
-2.7.4
-
+Jazz is not dead. It just smells funny...
