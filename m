@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C56EBC46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:58:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7238C46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:58:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79C192172F
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:58:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79C192172F
+	by mail.kernel.org (Postfix) with ESMTP id 97F5F2151D
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:58:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97F5F2151D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390804AbeHGVNq (ORCPT
+        id S2390819AbeHGVNs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 17:13:46 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34738 "EHLO
+        Tue, 7 Aug 2018 17:13:48 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34748 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389403AbeHGVNp (ORCPT
+        with ESMTP id S2389403AbeHGVNs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 17:13:45 -0400
+        Tue, 7 Aug 2018 17:13:48 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B5C3A3EE;
-        Tue,  7 Aug 2018 18:58:00 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AEA5A74;
+        Tue,  7 Aug 2018 18:58:03 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dmitry Torokhov <dtor@chromium.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Jiri Kosina <jkosina@suse.cz>,
+        stable@vger.kernel.org, DaeRyong Jeong <threeearcat@gmail.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 43/85] HID: i2c-hid: check if device is there before really probing
-Date:   Tue,  7 Aug 2018 20:51:45 +0200
-Message-Id: <20180807172358.939365664@linuxfoundation.org>
+Subject: [PATCH 3.18 44/85] tty: Fix data race in tty_insert_flip_string_fixed_flag
+Date:   Tue,  7 Aug 2018 20:51:46 +0200
+Message-Id: <20180807172358.976661452@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180807172357.357252052@linuxfoundation.org>
 References: <20180807172357.357252052@linuxfoundation.org>
@@ -52,43 +50,96 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dmitry Torokhov <dtor@chromium.org>
+From: DaeRyong Jeong <threeearcat@gmail.com>
 
-[ Upstream commit b3a81b6c4fc6730ac49e20d789a93c0faabafc98 ]
+[ Upstream commit b6da31b2c07c46f2dcad1d86caa835227a16d9ff ]
 
-On many Chromebooks touch devices are multi-sourced; the components are
-electrically compatible and one can be freely swapped for another without
-changing the OS image or firmware.
+Unlike normal serials, in pty layer, there is no guarantee that multiple
+threads don't insert input characters at the same time. If it is happened,
+tty_insert_flip_string_fixed_flag can be executed concurrently. This can
+lead slab out-of-bounds write in tty_insert_flip_string_fixed_flag.
 
-To avoid bunch of scary messages when device is not actually present in the
-system let's try testing basic communication with it and if there is no
-response terminate probe early with -ENXIO.
+Call sequences are as follows.
+CPU0                                    CPU1
+n_tty_ioctl_helper                      n_tty_ioctl_helper
+__start_tty                             tty_send_xchar
+tty_wakeup                              pty_write
+n_hdlc_tty_wakeup                       tty_insert_flip_string
+n_hdlc_send_frames                      tty_insert_flip_string_fixed_flag
+pty_write
+tty_insert_flip_string
+tty_insert_flip_string_fixed_flag
 
-Signed-off-by: Dmitry Torokhov <dtor@chromium.org>
-Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+To fix the race, acquire port->lock in pty_write() before it inserts input
+characters to tty buffer. It prevents multiple threads from inserting
+input characters concurrently.
+
+The crash log is as follows:
+BUG: KASAN: slab-out-of-bounds in tty_insert_flip_string_fixed_flag+0xb5/
+0x130 drivers/tty/tty_buffer.c:316 at addr ffff880114fcc121
+Write of size 1792 by task syz-executor0/30017
+CPU: 1 PID: 30017 Comm: syz-executor0 Not tainted 4.8.0 #1
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
+BIOS rel-1.8.2-0-g33fbe13 by qemu-project.org 04/01/2014
+ 0000000000000000 ffff88011638f888 ffffffff81694cc3 ffff88007d802140
+ ffff880114fcb300 ffff880114fcc300 ffff880114fcb300 ffff88011638f8b0
+ ffffffff8130075c ffff88011638f940 ffff88007d802140 ffff880194fcc121
+Call Trace:
+ __dump_stack lib/dump_stack.c:15 [inline]
+ dump_stack+0xb3/0x110 lib/dump_stack.c:51
+ kasan_object_err+0x1c/0x70 mm/kasan/report.c:156
+ print_address_description mm/kasan/report.c:194 [inline]
+ kasan_report_error+0x1f7/0x4e0 mm/kasan/report.c:283
+ kasan_report+0x36/0x40 mm/kasan/report.c:303
+ check_memory_region_inline mm/kasan/kasan.c:292 [inline]
+ check_memory_region+0x13e/0x1a0 mm/kasan/kasan.c:299
+ memcpy+0x37/0x50 mm/kasan/kasan.c:335
+ tty_insert_flip_string_fixed_flag+0xb5/0x130 drivers/tty/tty_buffer.c:316
+ tty_insert_flip_string include/linux/tty_flip.h:35 [inline]
+ pty_write+0x7f/0xc0 drivers/tty/pty.c:115
+ n_hdlc_send_frames+0x1d4/0x3b0 drivers/tty/n_hdlc.c:419
+ n_hdlc_tty_wakeup+0x73/0xa0 drivers/tty/n_hdlc.c:496
+ tty_wakeup+0x92/0xb0 drivers/tty/tty_io.c:601
+ __start_tty.part.26+0x66/0x70 drivers/tty/tty_io.c:1018
+ __start_tty+0x34/0x40 drivers/tty/tty_io.c:1013
+ n_tty_ioctl_helper+0x146/0x1e0 drivers/tty/tty_ioctl.c:1138
+ n_hdlc_tty_ioctl+0xb3/0x2b0 drivers/tty/n_hdlc.c:794
+ tty_ioctl+0xa85/0x16d0 drivers/tty/tty_io.c:2992
+ vfs_ioctl fs/ioctl.c:43 [inline]
+ do_vfs_ioctl+0x13e/0xba0 fs/ioctl.c:679
+ SYSC_ioctl fs/ioctl.c:694 [inline]
+ SyS_ioctl+0x8f/0xc0 fs/ioctl.c:685
+ entry_SYSCALL_64_fastpath+0x1f/0xbd
+
+Signed-off-by: DaeRyong Jeong <threeearcat@gmail.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/hid/i2c-hid/i2c-hid.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/tty/pty.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/hid/i2c-hid/i2c-hid.c
-+++ b/drivers/hid/i2c-hid/i2c-hid.c
-@@ -981,6 +981,14 @@ static int i2c_hid_probe(struct i2c_clie
- 	pm_runtime_set_active(&client->dev);
- 	pm_runtime_enable(&client->dev);
+--- a/drivers/tty/pty.c
++++ b/drivers/tty/pty.c
+@@ -114,16 +114,19 @@ static int pty_space(struct tty_struct *
+ static int pty_write(struct tty_struct *tty, const unsigned char *buf, int c)
+ {
+ 	struct tty_struct *to = tty->link;
++	unsigned long flags;
  
-+	/* Make sure there is something at this address */
-+	ret = i2c_smbus_read_byte(client);
-+	if (ret < 0) {
-+		dev_dbg(&client->dev, "nothing at this address: %d\n", ret);
-+		ret = -ENXIO;
-+		goto err_pm;
-+	}
-+
- 	ret = i2c_hid_fetch_hid_descriptor(ihid);
- 	if (ret < 0)
- 		goto err_pm;
+ 	if (tty->stopped)
+ 		return 0;
+ 
+ 	if (c > 0) {
++		spin_lock_irqsave(&to->port->lock, flags);
+ 		/* Stuff the data into the input queue of the other end */
+ 		c = tty_insert_flip_string(to->port, buf, c);
+ 		/* And shovel */
+ 		if (c)
+ 			tty_flip_buffer_push(to->port);
++		spin_unlock_irqrestore(&to->port->lock, flags);
+ 	}
+ 	return c;
+ }
 
 
