@@ -1,151 +1,99 @@
 Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.2 required=3.0 tests=DKIM_SIGNED,FSL_HELO_FAKE,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85FE7C46472
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 09:49:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA5A9C46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 09:50:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46059215A4
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 09:49:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46059215A4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 85EC9215A4
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 09:50:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E8ABZ0r1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85EC9215A4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388437AbeHGMCs (ORCPT
+        id S2388612AbeHGMEG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 08:02:48 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:21264 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2387677AbeHGMCr (ORCPT
+        Tue, 7 Aug 2018 08:04:06 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:39259 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727160AbeHGMEF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 08:02:47 -0400
-X-UUID: 29fd712761714056957751dcac96eab0-20180807
-Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw02.mediatek.com
-        (envelope-from <stu.hsieh@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 512792169; Tue, 07 Aug 2018 17:49:05 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Tue, 7 Aug 2018 17:49:03 +0800
-Received: from [172.21.84.99] (172.21.84.99) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Tue, 7 Aug 2018 17:49:03 +0800
-Message-ID: <1533635342.11190.73.camel@mtksdccf07>
-Subject: Re: [PATCH v3 07/13] drm/mediatek: add YUYV/UYVY color format
- support for RDMA
-From:   Stu Hsieh <stu.hsieh@mediatek.com>
-To:     CK Hu <ck.hu@mediatek.com>
-CC:     Philipp Zabel <p.zabel@pengutronix.de>,
-        David Airlie <airlied@linux.ie>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <dri-devel@lists.freedesktop.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <srv_heupstream@mediatek.com>
-Date:   Tue, 7 Aug 2018 17:49:02 +0800
-In-Reply-To: <1533612817.22668.5.camel@mtksdaap41>
-References: <1533556700-26525-1-git-send-email-stu.hsieh@mediatek.com>
-         <1533556700-26525-8-git-send-email-stu.hsieh@mediatek.com>
-         <1533612817.22668.5.camel@mtksdaap41>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Tue, 7 Aug 2018 08:04:05 -0400
+Received: by mail-wm0-f66.google.com with SMTP id q8-v6so17465871wmq.4;
+        Tue, 07 Aug 2018 02:50:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=t9p4dSe0q0IuPiRy8z5xwkp4yh58XbAfB1p7MAgAdR0=;
+        b=E8ABZ0r1g+qRzyLVy9Xf/A6253K0ss6nhoAXxM+FO/tBzStW34fjl427zfoWBLyiXw
+         Xqr+1+KgGa49Q7dzjAkY0++mC+I/7b7NY0e50l62yd1m1s18eKi2MGWEBP471VuEjlfR
+         Ow9XTPR+iOz/Xj4JqP8GPT1QJ+/j8/tTeX7ki5EyncYjoqMqdqZJdyW7yhSp4O35prpD
+         P67NkUpHxcQ7Gk5pUcQbY5d3vEkI1BNCB5kPwdFcMbGXQ1Dc6s7XEKTNTE57PkJqkSk7
+         YhQeLuPsNiljNSMjN3EGgW4BqbhJu0Yu2kkWjC36FnofrywBQOvXv4nCijKm1AD9YD2G
+         PFbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=t9p4dSe0q0IuPiRy8z5xwkp4yh58XbAfB1p7MAgAdR0=;
+        b=ej2CXBntQ2IfwH+NNWxb/8ob7xsaJ5ITTuSYz6piqyJ1czCdKeKFZPpDdlORdFzHTK
+         XI+NI2+BwyKKriXw4N3ju993G4u3A78gVOA+ghocjk8C4Qx82oZhjrs1EpiQ0T2gYMU4
+         zZCOcypOTWTcV/1l3CBjTpbSyRe2ygBP8MwgsNsQeysOTXUihLWJFrQr/vt8ssiLCKQs
+         xY9FG4ewwDnhmZSrokwrM/XiLSz5va0bfxOk2nLoathgjwFsVSBaQgz/Dc2bugcBhzYC
+         9dXYWk4WK69VAyA2EwI4lz8OtN5X5vhKD/FN10ujkkxBMRjEuR2iTc/Hqp6mtYqEL5su
+         PnlA==
+X-Gm-Message-State: AOUpUlGSd/Uy61bxPHxZ9dBuibPH9o1jzTOO79HRJOcAjbRdm4eq1zrB
+        J9lVP20i4EPbtfOplrSVi+O4FEKQ
+X-Google-Smtp-Source: AA+uWPxB+RMlh+D3alEkZBtEwBJDlx7GI8Ttz3Mk6OQhNZaIQ6bOyBUm7/pE0grX0OdbIY8OZFerCw==
+X-Received: by 2002:a1c:96c8:: with SMTP id y191-v6mr1149732wmd.37.1533635432935;
+        Tue, 07 Aug 2018 02:50:32 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id f23-v6sm825487wmc.42.2018.08.07.02.50.31
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 07 Aug 2018 02:50:32 -0700 (PDT)
+Date:   Tue, 7 Aug 2018 11:50:29 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc:     Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "M. Vefa Bicakci" <m.v.b@runbox.com>, linux-kernel@vger.kernel.org,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Juergen Gross <jgross@suse.com>,
+        xen-devel@lists.xenproject.org, x86@kernel.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH v2] xen/pv: Call get_cpu_address_sizes to set
+ x86_virt/phys_bits
+Message-ID: <20180807095029.GA4921@gmail.com>
+References: <20180721194909.23903-2-m.v.b@runbox.com>
+ <20180724124547.32562-1-m.v.b@runbox.com>
+ <7c07bb2f-e825-66bf-f517-86f893cd9e8b@oracle.com>
 MIME-Version: 1.0
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7c07bb2f-e825-66bf-f517-86f893cd9e8b@oracle.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, CK:
 
-On Tue, 2018-08-07 at 11:33 +0800, CK Hu wrote:
-> Hi, Stu:
-> 
-> On Mon, 2018-08-06 at 19:58 +0800, Stu Hsieh wrote:
-> > This patch add YUYV/UYVY color format support for RDMA
-> > and transform matrix for YUYV/UYVY.
-> > 
-> > Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
-> > ---
-> >  drivers/gpu/drm/mediatek/mtk_disp_rdma.c | 15 +++++++++++++++
-> >  1 file changed, 15 insertions(+)
-> > 
-> > diff --git a/drivers/gpu/drm/mediatek/mtk_disp_rdma.c b/drivers/gpu/drm/mediatek/mtk_disp_rdma.c
-> > index ba72d392dc27..91a8b6e27d39 100644
-> > --- a/drivers/gpu/drm/mediatek/mtk_disp_rdma.c
-> > +++ b/drivers/gpu/drm/mediatek/mtk_disp_rdma.c
-> > @@ -33,6 +33,8 @@
-> >  #define RDMA_ENGINE_EN					BIT(0)
-> >  #define RDMA_MODE_MEMORY				BIT(1)
-> >  #define DISP_REG_RDMA_SIZE_CON_0		0x0014
-> > +#define RDMA_MATRIX_ENABLE				BIT(17)
-> > +#define RDMA_MATRIX_INT_MTX_SEL				(7UL << 20)
-> >  #define DISP_REG_RDMA_SIZE_CON_1		0x0018
-> >  #define DISP_REG_RDMA_TARGET_LINE		0x001c
-> >  #define DISP_RDMA_MEM_CON			0x0024
-> > @@ -46,12 +48,15 @@
-> >  #define RDMA_FIFO_SIZE(rdma)			((rdma)->data->fifo_size)
-> >  #define DISP_RDMA_MEM_START_ADDR		0x0f00
-> >  
-> > +#define MATRIX_INT_MTX_SEL_DEFAULT		0xb00000
-> >  #define RDMA_MEM_GMC				0x40402020
-> >  
-> >  #define MEM_MODE_INPUT_FORMAT_RGB565		0x0
-> >  #define MEM_MODE_INPUT_FORMAT_RGB888		(0x001 << 4)
-> >  #define MEM_MODE_INPUT_FORMAT_RGBA8888		(0x002 << 4)
-> >  #define MEM_MODE_INPUT_FORMAT_ARGB8888		(0x003 << 4)
-> > +#define MEM_MODE_INPUT_FORMAT_UYVY		(0x004 << 4)
-> > +#define MEM_MODE_INPUT_FORMAT_YUYV		(0x005 << 4)
-> >  
-> >  struct mtk_disp_rdma_data {
-> >  	unsigned int fifo_size;
-> > @@ -176,6 +181,10 @@ static unsigned int rdma_fmt_convert(struct mtk_disp_rdma *rdma,
-> >  	case DRM_FORMAT_XBGR8888:
-> >  	case DRM_FORMAT_ABGR8888:
-> >  		return MEM_MODE_INPUT_FORMAT_RGBA8888 | MEM_MODE_INPUT_SWAP;
-> > +	case DRM_FORMAT_UYVY:
-> > +		return MEM_MODE_INPUT_FORMAT_UYVY;
-> > +	case DRM_FORMAT_YUYV:
-> > +		return MEM_MODE_INPUT_FORMAT_YUYV;
-> >  	}
-> >  }
-> >  
-> > @@ -191,6 +200,12 @@ static void mtk_rdma_layer_config(struct mtk_ddp_comp *comp, unsigned int idx,
-> >  
-> >  	con = rdma_fmt_convert(rdma, fmt);
-> >  	writel_relaxed(con, comp->regs + DISP_RDMA_MEM_CON);
-> > +	if (fmt == DRM_FORMAT_UYVY || fmt == DRM_FORMAT_YUYV)
-> > +		rdma_update_bits(comp, DISP_REG_RDMA_SIZE_CON_0, 0xff0000,
-> 
-> Symbolize 0xff0000. Maybe you should define as
-> 
-> #define RDMA_MATRIX_INT_MTX_SEL GENMASK(23, 20)
-> #define RDMA_MATRIX_INT_MTX_YUV_TO_RGB   0x7
-> #define RDMA_MATRIX_INT_MTX_RGB_TO_RGB   0xb
-> 
-> Correct the naming to align data sheet.
-> 
-> Regards,
-> CK
-> 
-OK
+* Boris Ostrovsky <boris.ostrovsky@oracle.com> wrote:
 
-Regards,
-Stu
+> x86 maintainers, this needs your ack please.
 
-> > +				 RDMA_MATRIX_ENABLE | RDMA_MATRIX_INT_MTX_SEL);
-> > +	else
-> > +		rdma_update_bits(comp, DISP_REG_RDMA_SIZE_CON_0, 0xff0000,
-> > +				 MATRIX_INT_MTX_SEL_DEFAULT);
-> >  
-> >  	writel_relaxed(addr, comp->regs + DISP_RDMA_MEM_START_ADDR);
-> >  	writel_relaxed(pitch, comp->regs + DISP_RDMA_MEM_SRC_PITCH);
-> 
-> 
+LGTM:
 
+Acked-by: Ingo Molnar <mingo@kernel.org>
 
+Thanks,
+
+	Ingo
