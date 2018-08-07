@@ -2,157 +2,113 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13847C46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 03:01:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25062C4646D
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 03:12:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C2E1621A12
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 03:01:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2E1621A12
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id C1DAB21A6D
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 03:12:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uAZQ7VyU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1DAB21A6D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729920AbeHGFNr (ORCPT
+        id S1731050AbeHGFYv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 01:13:47 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:61081 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725936AbeHGFNr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 01:13:47 -0400
-X-UUID: d0bd3a53466742c8a17f1385090c29b8-20180807
-Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
-        (envelope-from <ck.hu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 2091634794; Tue, 07 Aug 2018 11:01:33 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Tue, 7 Aug 2018 11:01:31 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Tue, 7 Aug 2018 11:01:32 +0800
-Message-ID: <1533610892.10818.10.camel@mtksdaap41>
-Subject: Re: [PATCH v3 06/13] drm/mediatek: add RGB color format support for
- RDMA
-From:   CK Hu <ck.hu@mediatek.com>
-To:     Stu Hsieh <stu.hsieh@mediatek.com>
-CC:     Philipp Zabel <p.zabel@pengutronix.de>,
-        David Airlie <airlied@linux.ie>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <dri-devel@lists.freedesktop.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <srv_heupstream@mediatek.com>
-Date:   Tue, 7 Aug 2018 11:01:32 +0800
-In-Reply-To: <1533556700-26525-7-git-send-email-stu.hsieh@mediatek.com>
-References: <1533556700-26525-1-git-send-email-stu.hsieh@mediatek.com>
-         <1533556700-26525-7-git-send-email-stu.hsieh@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        Tue, 7 Aug 2018 01:24:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40500 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725936AbeHGFYv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 01:24:51 -0400
+Received: from sol.localdomain (c-67-185-97-198.hsd1.wa.comcast.net [67.185.97.198])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0444921A12;
+        Tue,  7 Aug 2018 03:12:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1533611560;
+        bh=2BdmmLKi3KfEeausvCatgJDvKatadRAb3+e4a+A2J+Y=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=uAZQ7VyUdohaGM6i9pCa/F5zmx/CMUho1FaSXmFE55tj7/GBuefy2hG35O9mYbnNf
+         uVZKTuFjp/8CIpKyHPW8cEr0+m6Vteo9Ov+UA8bIrKsEaaQGw/SEfHc9B2PWA2olho
+         vIl469bNpK9OkF63FxkC4+T3l/eA6pJOhf422m/k=
+Date:   Mon, 6 Aug 2018 20:12:38 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc:     linux-crypto@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Paul Crowley <paulcrowley@google.com>,
+        Greg Kaiser <gkaiser@google.com>,
+        Michael Halcrow <mhalcrow@google.com>,
+        Samuel Neves <samuel.c.p.neves@gmail.com>,
+        Tomer Ashur <tomer.ashur@esat.kuleuven.be>,
+        stable@vger.kernel.org
+Subject: Re: [PATCH] crypto: remove speck
+Message-ID: <20180807031237.GA779@sol.localdomain>
+References: <20180806223300.113891-1-ebiggers@kernel.org>
+ <20180806230437.21431-1-Jason@zx2c4.com>
+ <20180807011937.GA133621@gmail.com>
+ <CAHmME9oTApV-zHD60QPryaoQf45ODpG25Da5FgB8c+LO162gWQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHmME9oTApV-zHD60QPryaoQf45ODpG25Da5FgB8c+LO162gWQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Stu:
-
-On Mon, 2018-08-06 at 19:58 +0800, Stu Hsieh wrote:
-> This patch add RGB color format support for RDMA,
-> including RGB565, RGB888, RGBA8888 and ARGB8888.
+On Mon, Aug 06, 2018 at 10:38:23PM -0400, Jason A. Donenfeld wrote:
+> On 8/6/18, Eric Biggers <ebiggers@kernel.org> wrote:
+> >
+> > For context, in your commit message can you include a link to my email
+> > mentioning Android's Speck decision
+> > (https://marc.info/?l=linux-crypto-vger&m=153359499015659)?
 > 
-> Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
-> ---
->  drivers/gpu/drm/mediatek/mtk_disp_rdma.c | 41 ++++++++++++++++++++++++++++++++
->  1 file changed, 41 insertions(+)
+> Sure.
 > 
-> diff --git a/drivers/gpu/drm/mediatek/mtk_disp_rdma.c b/drivers/gpu/drm/mediatek/mtk_disp_rdma.c
-> index 08866550740f..ba72d392dc27 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_disp_rdma.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_disp_rdma.c
-> @@ -35,6 +35,8 @@
->  #define DISP_REG_RDMA_SIZE_CON_0		0x0014
->  #define DISP_REG_RDMA_SIZE_CON_1		0x0018
->  #define DISP_REG_RDMA_TARGET_LINE		0x001c
-> +#define DISP_RDMA_MEM_CON			0x0024
-> +#define MEM_MODE_INPUT_SWAP				BIT(8)
->  #define DISP_RDMA_MEM_SRC_PITCH			0x002c
->  #define DISP_RDMA_MEM_GMC_SETTING_0		0x0030
->  #define DISP_REG_RDMA_FIFO_CON			0x0040
-> @@ -46,6 +48,11 @@
->  
->  #define RDMA_MEM_GMC				0x40402020
->  
-> +#define MEM_MODE_INPUT_FORMAT_RGB565		0x0
-> +#define MEM_MODE_INPUT_FORMAT_RGB888		(0x001 << 4)
-> +#define MEM_MODE_INPUT_FORMAT_RGBA8888		(0x002 << 4)
-> +#define MEM_MODE_INPUT_FORMAT_ARGB8888		(0x003 << 4)
-> +
->  struct mtk_disp_rdma_data {
->  	unsigned int fifo_size;
->  };
-> @@ -144,12 +151,46 @@ static void mtk_rdma_config(struct mtk_ddp_comp *comp, unsigned int width,
->  	writel(reg, comp->regs + DISP_REG_RDMA_FIFO_CON);
->  }
->  
-> +static unsigned int rdma_fmt_convert(struct mtk_disp_rdma *rdma,
-> +				     unsigned int fmt)
-> +{
-> +	switch (fmt) {
-> +	default:
-> +	case DRM_FORMAT_RGB565:
-> +		return MEM_MODE_INPUT_FORMAT_RGB565;
-> +	case DRM_FORMAT_BGR565:
-> +		return MEM_MODE_INPUT_FORMAT_RGB565 | MEM_MODE_INPUT_SWAP;
-> +	case DRM_FORMAT_RGB888:
-> +		return MEM_MODE_INPUT_FORMAT_RGB888;
-> +	case DRM_FORMAT_BGR888:
-> +		return MEM_MODE_INPUT_FORMAT_RGB888 | MEM_MODE_INPUT_SWAP;
-> +	case DRM_FORMAT_RGBX8888:
-> +	case DRM_FORMAT_RGBA8888:
-> +		return MEM_MODE_INPUT_FORMAT_ARGB8888;
+> >
+> > Also: "speck" => "Speck".
+> 
+> Ack.
+> 
+> >
+> > Also I think the fscrypt code points should be reserved so they don't
+> > get reused for something else:
+> >
+> > #define FS_ENCRYPTION_MODE_SPECK128_256_XTS    7	/* removed */
+> > #define FS_ENCRYPTION_MODE_SPECK128_256_CTS    8	/* removed */
+> 
+> I thought about this too, but it occurred to me it's highly improbable
+> these were ever used, and I thought it shinier not to leave scars. But
+> if you feel strongly about it, no problem, I'll fix that up and send
+> in a v2 shortly.
+> 
+> >
+> > For the record, I think the statements Paul and I have made evaluating
+> > Speck from a technical perspective remain substantially accurate.
+> 
+> It wasn't my intention to relitigate this, hence the rather short
+> commit message. You said your thing, Tomer said his, and now I'm just
+> trying to clear out the leftover soda cans.
+> 
 
-I think the alphabet order of the naming reflect the dram order for each
-color. Of course, big-endian and little-endian would result in reversed
-naming order. I could not understand why RDMA use ARGB8888 naming for
-DRM RGBA8888. If the typo is from data sheet, I could just accept this
-typo and give an explain in driver because I want to align driver with
-data sheet.
+Sure, neither do I.  My intention is more to make it clear that we still don't
+know of any "backdoor" in Speck, or any weakness that would compromise its use
+in practice.
 
-Regards,
-CK
+I mention this because people are naturally going to be curious about that, e.g.
+speculating that Google found a "backdoor" -- remember that we do have some good
+cryptographers!  I'm just stating what we know, out of honesty and openness; I
+don't really intend to be arguing for Speck with this statement, and in any case
+we already made the decision to not use Speck.
 
-> +	case DRM_FORMAT_BGRX8888:
-> +	case DRM_FORMAT_BGRA8888:
-> +		return MEM_MODE_INPUT_FORMAT_ARGB8888 | MEM_MODE_INPUT_SWAP;
-> +	case DRM_FORMAT_XRGB8888:
-> +	case DRM_FORMAT_ARGB8888:
-> +		return MEM_MODE_INPUT_FORMAT_RGBA8888;
-> +	case DRM_FORMAT_XBGR8888:
-> +	case DRM_FORMAT_ABGR8888:
-> +		return MEM_MODE_INPUT_FORMAT_RGBA8888 | MEM_MODE_INPUT_SWAP;
-> +	}
-> +}
-> +
->  static void mtk_rdma_layer_config(struct mtk_ddp_comp *comp, unsigned int idx,
->  				  struct mtk_plane_state *state)
->  {
-> +	struct mtk_disp_rdma *rdma = comp_to_rdma(comp);
->  	struct mtk_plane_pending_state *pending = &state->pending;
->  	unsigned int addr = pending->addr;
->  	unsigned int pitch = pending->pitch & 0xffff;
-> +	unsigned int fmt = pending->format;
-> +	unsigned int con;
-> +
-> +	con = rdma_fmt_convert(rdma, fmt);
-> +	writel_relaxed(con, comp->regs + DISP_RDMA_MEM_CON);
->  
->  	writel_relaxed(addr, comp->regs + DISP_RDMA_MEM_START_ADDR);
->  	writel_relaxed(pitch, comp->regs + DISP_RDMA_MEM_SRC_PITCH);
+Thanks,
 
-
+- Eric
