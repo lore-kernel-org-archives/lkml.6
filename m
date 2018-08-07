@@ -6,39 +6,38 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E7F1C46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 14:53:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDDD2C46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 14:53:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14CAC2174C
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 14:53:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D91621524
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 14:53:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=analog.onmicrosoft.com header.i=@analog.onmicrosoft.com header.b="WXsIfJMJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14CAC2174C
+	dkim=pass (1024-bit key) header.d=analog.onmicrosoft.com header.i=@analog.onmicrosoft.com header.b="lra+2jED"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D91621524
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=analog.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389739AbeHGRIL (ORCPT
+        id S2389749AbeHGRIe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 13:08:11 -0400
-Received: from mail-by2nam03on0088.outbound.protection.outlook.com ([104.47.42.88]:2560
-        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
+        Tue, 7 Aug 2018 13:08:34 -0400
+Received: from mail-bn3nam01on0076.outbound.protection.outlook.com ([104.47.33.76]:60384
+        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388540AbeHGRIL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 13:08:11 -0400
+        id S2388540AbeHGRIe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 13:08:34 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=analog.onmicrosoft.com; s=selector1-analog-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=E4o/cTSrnix+hZq/D9IWJ50Dfacd09z1mQIbd86DHbc=;
- b=WXsIfJMJd765nZRS3I8AsBUywCxtr1qXrr2CMcCSbASD6r/vlE5x9aQUAk1ncpG/wjJN79eduFCt+2E+SfoFRO8W/vBYgWtbyhgKEVCzA88HbOGnZmT9YNCU6Ro6w1vvvSnmXf6j+uWTdW7ZNTAyiwUNBz9VYUg64JtJATmZBls=
-Received: from BN6PR03CA0065.namprd03.prod.outlook.com (2603:10b6:404:4c::27)
- by DM2PR03MB560.namprd03.prod.outlook.com (2a01:111:e400:241c::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1017.15; Tue, 7 Aug
- 2018 14:53:27 +0000
-Received: from BY2FFO11FD025.protection.gbl (2a01:111:f400:7c0c::160) by
- BN6PR03CA0065.outlook.office365.com (2603:10b6:404:4c::27) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.1017.15 via Frontend Transport; Tue, 7 Aug 2018 14:53:26 +0000
+ bh=IUB4TGGtyxGP2eHXvVlEJrEC6Bo+4rX5SCFFIEa1jGM=;
+ b=lra+2jEDwVhTsIXIQsxkZ5MwEEu1lyIdLiRDTfZJAv1CHQxed+Do3nwyxT5xMo7nzu+LkLqvqjf6iVUeYPB4CkGp0WAXxnriwiypHGPMalp/czNkvBA7k9Cq+f+nrIdO/c9QduY+wPmUnN7JDTqL6b12c3ThCKRQNsU89pkaqwk=
+Received: from DM5PR03CA0028.namprd03.prod.outlook.com (2603:10b6:4:3b::17) by
+ DM5PR03MB3130.namprd03.prod.outlook.com (2603:10b6:4:3c::27) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1017.15; Tue, 7 Aug 2018 14:53:48 +0000
+Received: from BL2FFO11FD007.protection.gbl (2a01:111:f400:7c09::121) by
+ DM5PR03CA0028.outlook.office365.com (2603:10b6:4:3b::17) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.1038.19 via Frontend Transport; Tue, 7 Aug 2018 14:53:47 +0000
 Authentication-Results: spf=pass (sender IP is 137.71.25.57)
  smtp.mailfrom=analog.com; gmx.de; dkim=none (message not signed)
  header.d=none;gmx.de; dmarc=bestguesspass action=none header.from=analog.com;
@@ -46,16 +45,16 @@ Received-SPF: Pass (protection.outlook.com: domain of analog.com designates
  137.71.25.57 as permitted sender) receiver=protection.outlook.com;
  client-ip=137.71.25.57; helo=nwd2mta4.analog.com;
 Received: from nwd2mta4.analog.com (137.71.25.57) by
- BY2FFO11FD025.mail.protection.outlook.com (10.1.15.214) with Microsoft SMTP
+ BL2FFO11FD007.mail.protection.outlook.com (10.173.161.3) with Microsoft SMTP
  Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1038.13
- via Frontend Transport; Tue, 7 Aug 2018 14:53:26 +0000
+ via Frontend Transport; Tue, 7 Aug 2018 14:53:47 +0000
 Received: from NWD2HUBCAS7.ad.analog.com (nwd2hubcas7.ad.analog.com [10.64.69.107])
-        by nwd2mta4.analog.com (8.13.8/8.13.8) with ESMTP id w77ErPrU017442
+        by nwd2mta4.analog.com (8.13.8/8.13.8) with ESMTP id w77Erlqo017527
         (version=TLSv1/SSLv3 cipher=AES128-SHA bits=128 verify=OK);
-        Tue, 7 Aug 2018 07:53:25 -0700
+        Tue, 7 Aug 2018 07:53:47 -0700
 Received: from linux.analog.com (10.50.1.110) by NWD2HUBCAS7.ad.analog.com
  (10.64.69.107) with Microsoft SMTP Server id 14.3.301.0; Tue, 7 Aug 2018
- 10:53:24 -0400
+ 10:53:46 -0400
 From:   Stefan Popa <stefan.popa@analog.com>
 To:     <jic23@kernel.org>, <broonie@kernel.org>
 CC:     Stefan Popa <stefan.popa@analog.com>, <lars@metafoo.de>,
@@ -64,10 +63,11 @@ CC:     Stefan Popa <stefan.popa@analog.com>, <lars@metafoo.de>,
         <mchehab+samsung@kernel.org>, <gregkh@linuxfoundation.org>,
         <akpm@linux-foundation.org>, <robh+dt@kernel.org>,
         <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v5 2/6] dt-bindings: iio: accel: Add docs for ADXL372
-Date:   Tue, 7 Aug 2018 17:52:16 +0300
-Message-ID: <1533653540-24796-3-git-send-email-stefan.popa@analog.com>
+        <linux-kernel@vger.kernel.org>,
+        "Crestez Dan Leonard" <leonard.crestez@intel.com>
+Subject: [PATCH v5 3/6] regmap: Add regmap_noinc_read API
+Date:   Tue, 7 Aug 2018 17:52:17 +0300
+Message-ID: <1533653540-24796-4-git-send-email-stefan.popa@analog.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1533653540-24796-1-git-send-email-stefan.popa@analog.com>
 References: <1533653540-24796-1-git-send-email-stefan.popa@analog.com>
@@ -76,107 +76,287 @@ Content-Type: text/plain
 X-ADIRoutedOnPrem: True
 X-EOPAttributedMessage: 0
 X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:137.71.25.57;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(136003)(39860400002)(376002)(396003)(346002)(2980300002)(438002)(189003)(199004)(26005)(426003)(77096007)(5660300001)(11346002)(2616005)(126002)(476003)(356003)(53416004)(6306002)(186003)(47776003)(446003)(6666003)(8936002)(50466002)(7416002)(486006)(336012)(2906002)(48376002)(106466001)(8676002)(1720100001)(50226002)(110136005)(16586007)(76176011)(7636002)(305945005)(316002)(4326008)(51416003)(7696005)(36756003)(72206003)(246002)(106002)(54906003)(44832011)(966005)(478600001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM2PR03MB560;H:nwd2mta4.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail11.analog.com;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: 1;BY2FFO11FD025;1:f2enRwRshevP5uUMvLycARKYdWQA0EekJnHyTgmpEBDsMzEOAyWB+MS3DXkd5y1zLulVfRGFBBr3AHO3NyS4EqplHKUBd4DyTOGwaBX7XDeeVmPuqImdhZGDjlM83jN8
+X-Forefront-Antispam-Report: CIP:137.71.25.57;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(39860400002)(376002)(136003)(346002)(396003)(2980300002)(438002)(199004)(189003)(7696005)(47776003)(76176011)(4326008)(51416003)(7416002)(305945005)(26005)(186003)(53416004)(106466001)(5660300001)(77096007)(6666003)(50226002)(2616005)(126002)(8676002)(356003)(336012)(72206003)(316002)(50466002)(476003)(44832011)(486006)(478600001)(246002)(7636002)(446003)(11346002)(426003)(36756003)(106002)(110136005)(54906003)(16586007)(14444005)(8936002)(2906002)(48376002);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR03MB3130;H:nwd2mta4.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail11.analog.com;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: 1;BL2FFO11FD007;1:G1lvF4filJUz79EHvUSJbE2RlfGt/0kKXFQ1K9/rt4wp0dbeVHaoUltE6LHV7v8pCKzmDdQ9zUWKub0DYLM4MSAd8wi1jKJU+Vik63VAifHWt3wSy/L7xwETgni8SVhP
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 3eb82ef2-5387-4bd4-425c-08d5fc758809
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600074)(711020)(4608076)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060);SRVR:DM2PR03MB560;
-X-Microsoft-Exchange-Diagnostics: 1;DM2PR03MB560;3:V8Ti/TLd5MpUsPr6SwsA23BsJtEjvFcCTckn2DlAvypjaVLhNNoUthnnjU6HaQNEPTblQm0nJLP/0Rq22ruB3xeUKUOfUE9mnXiDIoZw45IuJhqYRJLC3kHOX5/rE4NejEmrWcrUc98eY/fHXHwf6sBHw7x8mVp335AYEu+e93NhJP0lMszGIIarsAiKp6qZ5Q5BYCj7zeNcwzJnNnbwWJEjYauuroZc1JOmM2Ircn6nHt5SrolW3YyTj7Gn4yijTVg+62JY0IJVirGYB3bufFqHFIozXYaueg+2hUHAYkEEXYup0mW/BKBEaQuQE7AeKPaaZpNs4agP2sy/64MhBWhgnlcOvxUDjyE/YwPhI+8=;25:JjbM67lEPo0pYhlcA0f4HxsxI5OcGYoiymHt+N73zfhmM3tc5OImPqh+HT5w9pJRMkqfHvZghSsKk24yIC5Tec6BOYCccBSOTwszYT6RBh7KTiyxrI3FiPHwhszPJHasDoiOIeDyHDjkcEWapW7cSQL78WqXm7vST1KxOJBNMYCHPF8uoFEHZyrEr7QzpjyIBt8+BnQguXVI3+H2ruCUdGgZ95wE6RTYq0WVAiEzRPvobJ/W9jkzQ0opvqA2NXUKETQxWQgcBATrZR7gaDdKYzuv7US6EE2dzLHy+DBnBwzeNuCBb77VfXkgDhp1mrmSX+Zgtzw7miIrwfqxUlgLsw==
-X-MS-TrafficTypeDiagnostic: DM2PR03MB560:
-X-Microsoft-Exchange-Diagnostics: 1;DM2PR03MB560;31:Ea9hGBfzFu260X9fGLGY1CwzOLo7nLzBMwaV7V65a2MkXZlc78ihVIKcT0Z1yd+T7p0KqlN+SW//35wmCbdSvDgK+3PFmxFsO80fZ5h2Xc9el+Uty45eOX/d7wzzB5ziczZUBrBVSpLswjM2FEjTNa5ykHqddQMLvc33Y45ISfZNDnIalW1elPFEolmpbROS7OQI9a8Cip1VuYf8bE5yZNYNCptUbFYgVq5H6r4bNss=;20:FR01EHLye2ol8yDhrYIjOHGfCkXSWoOWk2wOmOQ16hpYVGuTC6JkGoLvdfDfbXCxBK5gLlTFtGXZjX68iM5IoseGLshKte31PXoR+hRYcuE1LisoJ4WsSLoJNLOdp2u3olEOFJIBA7Goqm6ltCOnBTsvhUJjFzY/lut86ZJtZjh90hJUt0ixIOp85d0PtcWrsL5wcB2QNrfV2VAHjOYnkOABB5moVGclaVwXkmycASsHmQPog4NPjsJSnLy9rlnngCHX4b4h2LaZyTGSBCG9AB+K1tlNiUikDwqU/fWOzNFD15UzZTo195Q54+MM6ON1uKilTQenoZO/VRF86r5bSKNHQKfQlvkMpXriGbbfaX1qx4D7YjtaUpkENpQnkKvkw0f1X2AoY9LY/zcYndG1jQ0r/tY2v+bRDx059WGJbjwACmMY9wt0bAaElio9FYWJP88jWTHfbNGzwQVNxhaYyBSPi4h5QaWmwXqsGENRBDpEiqZMfP3vEVFDrEzeoyxr
-X-Microsoft-Antispam-PRVS: <DM2PR03MB560B4C223666F90D41F2DE29D270@DM2PR03MB560.namprd03.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(270121546159015)(232431446821674)(170811661138872);
+X-MS-Office365-Filtering-Correlation-Id: a848ba35-7447-4d10-d85c-08d5fc75948c
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4608076)(2017052603328)(7153060);SRVR:DM5PR03MB3130;
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR03MB3130;3:dSwbxrQZz0lStcCirQIn1gwcaHtLw/eC0WBDw3W2/eiPzODht17zodZjmyt7wBD5g9pFhV5gFvh46vxx36ZcFXEz+S6tZaA29/PEdkcNLIs2q4xoUBU5ZC55be2KD2XMBlY1Xvlqlrm7R0zPsKxCv1mxWOo/70KZf02xDl10BQzKU9oBvPzF6+vDJSUOV0xnpQhj9r/3+32k55wOTyfc5lVdSIr+bGTqQ7dI1sYc4xzvT5Fpe4Db2sSkpRiBsoIfkzuDBi3TRLzoVvnHr+GYF4TEym6Vjc+vieHdTHTpYaodNYvQ48NCy2Alv2KCuNs9Sdkizv8EQDE9RqEevXJCBdt1gwjx/t6iP05lBxfh/lk=;25:4AHOvPAMREMnqgnfveliZEVWnLGf+5Uh721jJwRgaijZVUToZ5QpvWjRh2ooFx9MCnAaafh2DoeJB1I+dnvsolINSJLqI4lYi9Q6P/JS8aAo6nkZqYqtlTWotn9h7/HJXG/rY9QYe7DTvrgPBXJbcCUSP0qe+DkY6imc6P/8DkKoH8+imTWt+UJHR4MoXcvO7FVjuKrqleXf3NhoTgCbFvQXCbIlyEA4E5BDJB15TEHyEnMBJXHvJy7N5qVFU6/uBiSJpsVIfbWmxCg53MjWrA9azMaaIDwWzRgTOsy3DRec5A+tGD58K7MEBkXcXd094ECiaKmouMJr6w88l2i5rg==
+X-MS-TrafficTypeDiagnostic: DM5PR03MB3130:
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR03MB3130;31:svujvucsq9SyL4XqxHxp3AHS++HSNCksEdhNMBmZAPJQcXpi4nVDGy/25Hh0gGqizyYyyT+LymVrB3+dV/o9OKW4TwpPzpD1dZnSMpLIeUEYec4P2j7krcnWJa8esTF9XPHif1+ig6SQ49Zkb0y/d8IHkPVhUUosvAt6vdjRYZcdss4SCfKYagF9U5uNi77mMayCCYx9iR7rMnwFQDWJCYG/gWSDO4t2DovLjk8kAkU=;20:qQeHi6UZ9xT/gpUWUkF2xo1C4+/83xicBMl4/iQMSWqP2hdQUJcQQWb4zETwb1Ba26/H8qD8va5rXX3gX2fbOWE0SvjggNwrtpAhj6J2LXe0kZRFd1ikyC8V9sCPwnbW0nDY9ZtTTN2qppVYJYzGaOMloW02GbMR3xJ/zXSepy2rMJSMWn1YjNDHEiJo92DBV0GXQZhglAt24Q3nbsvDkVs0Gh9MIfdDY/ZMvoBA3KKffTU7CAeVSxBOIxv9iv1BTNuBrumWKXn18cN+D0LqSWut/GnwwJBLThCi0EWK1xOOC8Lm8Ri++NgpMnxmBMG0y7Y+8E/CyGUjcWnw794h7RSOmaRVB/tjgOoNg9Cs1qPPQ3RHy47bic/zUGrzkMHSdW5BiJ5tsZhrNy1okg8XkDLe6bavSVWvJg2k06k24NlbNga1B1okUivasR/Zy2IceS2kdhnkqhq35zR+GLC8T8eUo8+zR6xOc7dW0N4+KWlRzzMoqIfgcAomb2tQ3LkJ
+X-Microsoft-Antispam-PRVS: <DM5PR03MB31307FF0BA326A0FC798C5319D270@DM5PR03MB3130.namprd03.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(131327999870524)(232431446821674)(228905959029699);
 X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93004095)(3231311)(944501410)(52105095)(3002001)(10201501046)(6055026)(149027)(150027)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123558120)(20161123560045)(6072148)(201708071742011)(7699016);SRVR:DM2PR03MB560;BCL:0;PCL:0;RULEID:;SRVR:DM2PR03MB560;
-X-Microsoft-Exchange-Diagnostics: 1;DM2PR03MB560;4:Su5SYS5CQivbO02uVQ0c3310RBONd1w+BRzndmzgB+hpgdmlaDav9D3DyyuuSUCUL2dOYI/EfPbfZfs2YChsKcuNw3nUPKX8ek5cvKP1cJjF3nzw2TMdCucjn2oKgMnalMi6f4AXWhw+oKZP4ZiHlsG+rvbSLFrlMImK7peoAzh1Ne03KD1wvePRRPJxeWppjt4zW4B3r6uf97mFLERJI+ctbLpdeVsgw4AbQGzFOtcY+WZK9hsT21kPp9lTu9qcOnrbWGlNBPivJ/aEz5jmtBl7TNHlrShblktAjSwBauwLQdI2hm7jBatl4aR/TKjhe8WClBZbYZb3Pz0ofgdglgDt6VGiobIsvpwu2E05MmcZjMIGE2pd6xs7GtneLJO4
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3231311)(944501410)(52105095)(93006095)(93004095)(3002001)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(20161123562045)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:DM5PR03MB3130;BCL:0;PCL:0;RULEID:;SRVR:DM5PR03MB3130;
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR03MB3130;4:WDPwKQnr3WGA9c+TfoHqnDVvn5gio+xy9tDabLQ3H1wnIV1zlxbIGar14EEWN8YMouuH575kZrZ/OKxR3ZDsjPkCAG9MQ87a7L/mqNPaJTbwxZAeSHmwSBg6sx5IXiAVK0WGoxmE57gcZCplMXt8k8F3GMwNT50pyTinWUTdUXm5xqLJQrevtEtz04cSvw9vIeY6DfKfSaBaNQRRK4VILyndjHDLgPnF2dnY8w+N4uounSKR2yXSGZTaS/85AqXHlyAfnQjFN41p4qVjrx/Q/1wFJfCD9jKUAMBqNzMYLvWuGaAAaapu8owjLD1JcpAsyrO5yEMwI7pI568uztNC8i1n75X6/uStIg1ZAF7e6i25K6OUqRn8e0LsaXld64D9
 X-Forefront-PRVS: 0757EEBDCA
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DM2PR03MB560;23:VfAPqvzjACZQyn3QnHpa4oiiU+xTtnDRrooQvut66+?=
- =?us-ascii?Q?H+BiQoJcKl7+OI9WiEgjoiXNJt2/7IZRs85xIzjm2JPB5Q6rNf6kXewu7vKo?=
- =?us-ascii?Q?aldPOgoN77iCAdMspCWLfE7KtBKhRtyuR8Xu6cjmWwSSu6FZBnjYQUYXUtTM?=
- =?us-ascii?Q?p1vPresToxGDUIck4TUMH+FLmKi1k6iOeotkmp76jzGqp76kSYQ4jV7Fhl2r?=
- =?us-ascii?Q?yzdUkXNtoPCeyswu0U3I0T1ootRaBSaCj35gOMuilEuHMxwuprm76L4KlYjS?=
- =?us-ascii?Q?obCCIA2dvRALxbvagNWVNRnOmvGmZjScCUwZnrfdlrYMsd4ArgvqU1GYYxep?=
- =?us-ascii?Q?8I80GWaVfxALXa3IaGBVRIDg1T6aG5BTBO9DTsSgnPEBudHq0JEzGlI2wIJl?=
- =?us-ascii?Q?z+0fq+y+dX6ATC1Sx9tp+WnMAfpBnGUam2AOf68QvEiocFcfveJHnKnGOnti?=
- =?us-ascii?Q?onRFTFrnGP0MFtHrWs0eJsrmVb6xTUy3v3lTq2kUjWNVyQwkmI1GyWXcDy4C?=
- =?us-ascii?Q?AIoLZx3e0OXLwrMeGLBgn/HfbPO4xHu0Un+rFOJxCHwpMTORYJWs6+642dB9?=
- =?us-ascii?Q?E9bZpwiPWafbp9B3eke6QFNiwitczIJ8kfTAYiC86poyAPt7zzvS+CGLv/8w?=
- =?us-ascii?Q?qEGWOIDNpPHCX3kkJw/LyNS/MLGjtAz3UZTyxnGC+s3vgcffvbl+wg2GKlgG?=
- =?us-ascii?Q?J5tsc7AlX/SkxyvuawN1hVZXaOXQ8FAYrTgtGzQuH4M8JsMhSFvjjGYC5q18?=
- =?us-ascii?Q?jPd4eQIKNqDzBrCsJyyUORoglJQeWH4dvR5YGsLG9QGWiVujr3wyqwKaoMav?=
- =?us-ascii?Q?BCAQ0+myXj9g2PDZ7izRJwlJmzvVP6F50wWNjPGOdHp+9LMRMxyr7d4VYbBB?=
- =?us-ascii?Q?AMi2VL2pMLKNFYsWVdeJJ76R5i2P5l7RNSV2dDN75SL20ILWlWnlmtVVzj6T?=
- =?us-ascii?Q?C8hYEeeCPDRkHZAo4aGnhBQ5mSOYLbYwh/CVZ/Z1g83BlJH3i/kJHb8Tj1Rp?=
- =?us-ascii?Q?p+7F9BvS+NQaP3dI7OIBrr4xhdqU1R1cESSDEBZz7UvpPG/8xcsj/Eht8wo/?=
- =?us-ascii?Q?s/Wz3e5Uwg3sBlTxv+B0RnCWBrI4WB1H2B7qyYva+7bGfPIMjaKAwDgnLUip?=
- =?us-ascii?Q?zp5lZTOskJAUGb0pbN/mrx/nCDmz68?=
-X-Microsoft-Antispam-Message-Info: 0BkUFQlEh/8mEuqMDoJDKNHJSwXNAzMtG4y+0orPMy7KtRFllncCSjq6+cnh6rcdfnc2KSG+UGT612Ev20mEwzvtsbf5KdgvgEr7nIpSqkzpcdV7Ke5LZ7Lj3KVBAhPC/HOMTqqSjwMe78KQNGQwICLM2YcZmZ8xt25Kh8tkpt8ZIGZBaAK0ii7/Qb6TSbvpR5PV/cdHfIU6kgrck6eAZBiqgOC17/vs4NRrMin4Egq2elrpDZCR8mAyF29oK4aGLsozVi+Sfpr508ZiUybVUXjz2kZcf0qXUKa6AaP2AqtaSlgdd/A+/Q94ywNuSan+QxBRBKAMeuJYohhTIBNfDVOJFfSWa5R5yCofm5/tPdc=
-X-Microsoft-Exchange-Diagnostics: 1;DM2PR03MB560;6:5WMe3L90V8nCilYNmbhbtoE031J4+CuCuD164KBSb3Nb6M938urVXbub3nzjhbcBRrEIWtDkXF2gAYXDg9dascA1L30ZFyQpimB3h2Tc4jjG7bPb2Y3BN4JN+zP2Sc+y6iabrjmji0tKHFxnrT0ayZifDN8pxBzoAVAQXUkLKYyQ+bqhgt7auEQub1KPMpmS/k9SxTjsYXCjhBGLAB6+ZoUYj89xudnMO+j1xVssp8kykNsXUIeR2rfdR5DQfWyytzMLuJvlY+U88oIVX0deEirjnfARS1JQolhQ8qh8PcGS20IxIuWXpKErgtbB2hEr7GDOjJKDk9ozCteCo/hJxcGxsg2BTSl1Gw+YrT4z1jYd9qmbx3vvFZVENDXnIuGbgtYchUPO1PJeFQR5DkTvkUcCuzHM+67DuqNKoHV3hNaAAbIQ2/yIX7nIozrp/daQPLWGhhkm6fsq+P8MjL9X0Q==;5:L6C+MjOEr8X6wXLaXaWcuf9/OghBdigAczYosxc4XaG2VFVynBF3o2TQrWUDcIMqf5y6CwIrAP4jnBtikk4rv1t4e4G8QIYeygMPYc81fQPsx7BYl4mgi1SANRdEuvMgCGLJIb/tP9o0fuy9kcuoSYd4uaPi5UVEjad0rHWa29Y=;7:jUKXcYFMdlijXVMAKI/9AlJNh9cpSTsD5eD6kUg41o2UdKKp0D5mFNut8fBqI5FujwVzN6VKXlzDEZK7si+FYYnrkAmvPQfibW310Sg65xCdIeKwkfKCXmU/m/nchNm0RY8ScGC9KxJGsuGfOHrseqKTddHjsnKejWgmdn4cnMGYp55+UdJa86ZVc6egHt5CyilsulMPw+Bj48oNgGp54dAv9Lun2ms6R7gV1w175+WqbJ4mlUqpQZQebCcVOar8
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DM5PR03MB3130;23:6940pCEVPaJfz2MKUewADj4jqX7kRFb5YaQJpatfb?=
+ =?us-ascii?Q?9PzahCBW5s3HYhxtRCCftJP0sVNvN5t6UfoDxU9QE9vRBWo7JmhRVciIRs8/?=
+ =?us-ascii?Q?2USMVjd4kqL+fTuRn1hyTMflybIXRKosqnDYXBAqPb0ZkInlyTN/zHBTEdSq?=
+ =?us-ascii?Q?kotLi5QiYPklwQboSk5zaamj6LHnc9h0U4yxStatmziapY+OUx4a6npZ2kmx?=
+ =?us-ascii?Q?gWwck3ptrwurFccyxjRRHWkpVkQYFgDDspuARsusteDM4s98/lsM6uF0gOmW?=
+ =?us-ascii?Q?u1+JsxUx9xtR32/KxJvjMxmbO8qmyfT/zaw6jJQUabSYAuiWTk2v6QdEjfDj?=
+ =?us-ascii?Q?MwycdNlhH5p/6WhOT9TtOyyiZjSSGCB9NWroCqhNrBDrTIbhSOY5WG8KJsUo?=
+ =?us-ascii?Q?DKG0I3UofaTSjoAXylwUX5T4dlDTlZZJ34rnDYTZiVKZbnWSGIgCpWJF42Pg?=
+ =?us-ascii?Q?9H8fYB02QZSqpufEDbvRiLCPG7SKktlfAFN2geXDywdNVKXvzWML8kE9laLr?=
+ =?us-ascii?Q?oyciEei9apDt0NAqso9Vpx2sh+UhbKCKdlEwUwLjglaUriuRZbjYi/qVY8aC?=
+ =?us-ascii?Q?Zpz2ZQyVdpJAMDslQcg8NOX5KjLKIiRMCC/ySPOq6+DNht6IWwG0KGSDp60f?=
+ =?us-ascii?Q?6zLdM4nXZrnVaJyc7H9+jnuZMeSz+rAkHDl9hTADcZ2nJQ120JffKQDY9Bad?=
+ =?us-ascii?Q?UGfp+eSKyE8MTJMXBFyIM+I6ZMAyU6iBrh0j75lp5YQfHIx8+B4XB9C+tQgS?=
+ =?us-ascii?Q?QHbH8JtRzhT/xiVwSKgwrp1oHjxEff28jIZi/DuQiIqSv5BTProNwXgZwyIy?=
+ =?us-ascii?Q?P+CbNyD0C5evHN64WAc7ykR8TI4zCCbiF9qx3hke8zLTPNyGKO7IhvcYb9u4?=
+ =?us-ascii?Q?KS9LOqJiZaiciTFIJj8P0HtIUJ5X0MCI3RKIVNb7fN/wsYiasRu5cFuKerlK?=
+ =?us-ascii?Q?Y4OiJl5QiGTttziWE7luRNt/bqY1/DCf/DkJzztKuXsnu2ph3Py9Jeb3Ee6O?=
+ =?us-ascii?Q?hAoaVQQ5ofSKKQJgFJPDszRZp7g7ymFqRAQ4qGXY0Lx0TfgPKCqSmbxKVa6l?=
+ =?us-ascii?Q?vDzijYRz+9lfu49GNepZvV1u8LbcM7+X1h2uKxbSnG6rirkSw=3D=3D?=
+X-Microsoft-Antispam-Message-Info: sZ+Vg3eeutw6ZhsDidnoYdFWlmuieBAJsV7CCZ7trLBRPD79YnrFA54QGt/2+w09GaIS+lGhaNpiI3V5JEWuxPwgJYOaWigQUcIWB8yWimRsXZiyA6YkV4wlKqmNStp2W4EhDEk1PkYyhgPk49w4Optw2PukFSUI07x2eIdveapKvLJFXI61Z7rEvzbfz9VAhFDTbMMiTMz4MjfnAoYn2Nl9mR83pI5EnGHhsW4syK7Nxp8HZihpCDak5oOYC21PNMGFF7ZC/+qeDMfDkeGvfHHW7fpBR3pU1PFH5lq16mDwXQlD6HxoewAC7XlNdx7wXhnlvIv9v/GCJ6bmKkx6+vycprTkD7Uopwv43Liefj0=
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR03MB3130;6:e6RoN8TA129wIXMHMgmQVDipd4ZS0YFs8xqwYdPEBB8kT+DH401spBdyGYFZhMrWyP7sdRGaWzRA0U7KOMhf/e1C3fT080kT4Jc1xbY9mzeNhs8lfgBvSXJv/nVjMaEbehHcvMxVyC5Og8JUrmSxcrQsu/jTQk74/lUWHEdcFjBZYUiYX0uJVkPWAsrP0D1pllj1B0JTeeqOMuuJ8sJLakeItS1iXs0ojQrHDIcj9Km5J0HoEghvERQ2/tJctceQyBb8Eyc7jFtrV2tant8kxkyjswC6+bbHqfjlaZ3QqEYdkPATkONryWugGT6rnwQxC01AruBg/ZtyDEVKrwF2vf9jbwwu8eT2EjJuVpZdL2UMD/Fczgwd7f80suq4plaWuiBcTWWnNlMG6dapFTbzhny4zjfmNqnPx7UO5dywlmO6/Eezg3QYYoMBHRsfCeGwmo4nixOPHBOuSm/D3VgDaw==;5:Y7g0PXxgnDiF/a2gJgH+kZ72Jaz4qBRVQCILgVTmEjRj2v3q8LPZV6fJ3S5tWi/ms1S/dyNs4W5d/Zdu7Pocw5BVJRX134vWHK3p1kEQMV8DtIsrFEO8vO2XAzASJlYoZ+c1CzX5zA+jFMM50Mdghoi14dasXu8xV07DTX1aA+o=;7:cx0VoKT+N+nDErAqWF6fW0q3JztUUrKdXNbUiBwDUs1cogn4XIFt9me8xH1OmJuxc2TO/6f+SlEpus1x9d+Bz9QDaCPkS8QWxCQl34Z173yUn3ExshOF3w3M+lk++U9+wyDcre6zUAIs2oPu9rfTwra0Qpte7+iU7zpT5P3eqlnx4kDJ8To+x9fEe0fL8+j3XCgRpDV64cOfqWooMybsux4K483t0ApmEOA5YmfEU2QduoWMM3+0oVz+3E5IYPow
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
 X-OriginatorOrg: analog.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Aug 2018 14:53:26.2568
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Aug 2018 14:53:47.4705
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3eb82ef2-5387-4bd4-425c-08d5fc758809
+X-MS-Exchange-CrossTenant-Network-Message-Id: a848ba35-7447-4d10-d85c-08d5fc75948c
 X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.57];Helo=[nwd2mta4.analog.com]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM2PR03MB560
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR03MB3130
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the device tree binding documentation for the ADXL372 3-axis digital
-accelerometer.
+From: Crestez Dan Leonard <leonard.crestez@intel.com>
 
+The regmap API usually assumes that bulk read operations will read a
+range of registers but some I2C/SPI devices have certain registers for
+which a such a read operation will return data from an internal FIFO
+instead. Add an explicit API to support bulk read without range semantics.
+
+Some linux drivers use regmap_bulk_read or regmap_raw_read for such
+registers, for example mpu6050 or bmi150 from IIO. This only happens to
+work because when caching is disabled a single regmap read op will map
+to a single bus read op (as desired). This breaks if caching is enabled and
+reg+1 happens to be a cacheable register.
+
+Without regmap support refactoring a driver to enable regmap caching
+requires separate I2C and SPI paths. This is exactly what regmap is
+supposed to help avoid.
+
+Suggested-by: Jonathan Cameron <jic23@kernel.org>
+Signed-off-by: Crestez Dan Leonard <leonard.crestez@intel.com>
 Signed-off-by: Stefan Popa <stefan.popa@analog.com>
 ---
- .../devicetree/bindings/iio/accel/adxl372.txt      | 22 ++++++++++++++++++++++
- MAINTAINERS                                        |  1 +
- 2 files changed, 23 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/iio/accel/adxl372.txt
+ drivers/base/regmap/internal.h |  3 ++
+ drivers/base/regmap/regmap.c   | 79 +++++++++++++++++++++++++++++++++++++++++-
+ include/linux/regmap.h         | 19 ++++++++++
+ 3 files changed, 100 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/iio/accel/adxl372.txt b/Documentation/devicetree/bindings/iio/accel/adxl372.txt
-new file mode 100644
-index 0000000..9409984
---- /dev/null
-+++ b/Documentation/devicetree/bindings/iio/accel/adxl372.txt
-@@ -0,0 +1,22 @@
-+Analog Devices ADXL372 3-Axis, +/-(200g) Digital Accelerometer
-+
-+http://www.analog.com/media/en/technical-documentation/data-sheets/adxl372.pdf
-+
-+Required properties:
-+ - compatible : should be "adi,adxl372"
-+ - reg: SPI chip select number for the device
-+ - spi-max-frequency: Max SPI frequency to use
-+
-+Optional properties:
-+ - interrupts: interrupt mapping for IRQ as documented in
-+   Documentation/devicetree/bindings/interrupt-controller/interrupts.txt
-+
-+Example:
-+
-+	accelerometer@0 {
-+		compatible = "adi,adxl372";
-+		reg = <0>;
-+		spi-max-frequency = <1000000>;
-+		interrupt-parent = <&gpio>;
-+		interrupts = <25 IRQ_TYPE_EDGE_FALLING>;
-+	};
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 2ba47bb..c8dd09c 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -548,6 +548,7 @@ M:	Stefan Popa <stefan.popa@analog.com>
- W:	http://ez.analog.com/community/linux-device-drivers
- S:	Supported
- F:	drivers/iio/accel/adxl372.c
-+F:	Documentation/devicetree/bindings/iio/accel/adxl372.txt
+diff --git a/drivers/base/regmap/internal.h b/drivers/base/regmap/internal.h
+index 53785e0..a6bf34d63 100644
+--- a/drivers/base/regmap/internal.h
++++ b/drivers/base/regmap/internal.h
+@@ -94,10 +94,12 @@ struct regmap {
+ 	bool (*readable_reg)(struct device *dev, unsigned int reg);
+ 	bool (*volatile_reg)(struct device *dev, unsigned int reg);
+ 	bool (*precious_reg)(struct device *dev, unsigned int reg);
++	bool (*readable_noinc_reg)(struct device *dev, unsigned int reg);
+ 	const struct regmap_access_table *wr_table;
+ 	const struct regmap_access_table *rd_table;
+ 	const struct regmap_access_table *volatile_table;
+ 	const struct regmap_access_table *precious_table;
++	const struct regmap_access_table *rd_noinc_table;
  
- AF9013 MEDIA DRIVER
- M:	Antti Palosaari <crope@iki.fi>
+ 	int (*reg_read)(void *context, unsigned int reg, unsigned int *val);
+ 	int (*reg_write)(void *context, unsigned int reg, unsigned int val);
+@@ -181,6 +183,7 @@ bool regmap_writeable(struct regmap *map, unsigned int reg);
+ bool regmap_readable(struct regmap *map, unsigned int reg);
+ bool regmap_volatile(struct regmap *map, unsigned int reg);
+ bool regmap_precious(struct regmap *map, unsigned int reg);
++bool regmap_readable_noinc(struct regmap *map, unsigned int reg);
+ 
+ int _regmap_write(struct regmap *map, unsigned int reg,
+ 		  unsigned int val);
+diff --git a/drivers/base/regmap/regmap.c b/drivers/base/regmap/regmap.c
+index 3bc8488..0360a90 100644
+--- a/drivers/base/regmap/regmap.c
++++ b/drivers/base/regmap/regmap.c
+@@ -168,6 +168,17 @@ bool regmap_precious(struct regmap *map, unsigned int reg)
+ 	return false;
+ }
+ 
++bool regmap_readable_noinc(struct regmap *map, unsigned int reg)
++{
++	if (map->readable_noinc_reg)
++		return map->readable_noinc_reg(map->dev, reg);
++
++	if (map->rd_noinc_table)
++		return regmap_check_range_table(map, reg, map->rd_noinc_table);
++
++	return true;
++}
++
+ static bool regmap_volatile_range(struct regmap *map, unsigned int reg,
+ 	size_t num)
+ {
+@@ -766,10 +777,12 @@ struct regmap *__regmap_init(struct device *dev,
+ 	map->rd_table = config->rd_table;
+ 	map->volatile_table = config->volatile_table;
+ 	map->precious_table = config->precious_table;
++	map->rd_noinc_table = config->rd_noinc_table;
+ 	map->writeable_reg = config->writeable_reg;
+ 	map->readable_reg = config->readable_reg;
+ 	map->volatile_reg = config->volatile_reg;
+ 	map->precious_reg = config->precious_reg;
++	map->readable_noinc_reg = config->readable_noinc_reg;
+ 	map->cache_type = config->cache_type;
+ 
+ 	spin_lock_init(&map->async_lock);
+@@ -1285,6 +1298,7 @@ int regmap_reinit_cache(struct regmap *map, const struct regmap_config *config)
+ 	map->readable_reg = config->readable_reg;
+ 	map->volatile_reg = config->volatile_reg;
+ 	map->precious_reg = config->precious_reg;
++	map->readable_noinc_reg = config->readable_noinc_reg;
+ 	map->cache_type = config->cache_type;
+ 
+ 	regmap_debugfs_init(map, config->name);
+@@ -2564,7 +2578,70 @@ int regmap_raw_read(struct regmap *map, unsigned int reg, void *val,
+ EXPORT_SYMBOL_GPL(regmap_raw_read);
+ 
+ /**
+- * regmap_field_read() - Read a value to a single register field
++ * regmap_noinc_read(): Read data from a register without incrementing the
++ *			register number
++ *
++ * @map: Register map to read from
++ * @reg: Register to read from
++ * @val: Pointer to data buffer
++ * @val_len: Length of output buffer in bytes.
++ *
++ * The regmap API usually assumes that bulk bus read operations will read a
++ * range of registers. Some devices have certain registers for which a read
++ * operation read will read from an internal FIFO.
++ *
++ * The target register must be volatile but registers after it can be
++ * completely unrelated cacheable registers.
++ *
++ * This will attempt multiple reads as required to read val_len bytes.
++ *
++ * A value of zero will be returned on success, a negative errno will be
++ * returned in error cases.
++ */
++int regmap_noinc_read(struct regmap *map, unsigned int reg,
++		      void *val, size_t val_len)
++{
++	size_t read_len;
++	int ret;
++
++	if (!map->bus)
++		return -EINVAL;
++	if (!map->bus->read)
++		return -ENOTSUPP;
++	if (val_len % map->format.val_bytes)
++		return -EINVAL;
++	if (!IS_ALIGNED(reg, map->reg_stride))
++		return -EINVAL;
++	if (val_len == 0)
++		return -EINVAL;
++
++	map->lock(map->lock_arg);
++
++	if (!regmap_volatile(map, reg) || !regmap_readable_noinc(map, reg)) {
++		ret = -EINVAL;
++		goto out_unlock;
++	}
++
++	while (val_len) {
++		if (map->max_raw_read && map->max_raw_read < val_len)
++			read_len = map->max_raw_read;
++		else
++			read_len = val_len;
++		ret = _regmap_raw_read(map, reg, val, read_len);
++		if (ret)
++			goto out_unlock;
++		val = ((u8 *)val) + read_len;
++		val_len -= read_len;
++	}
++
++out_unlock:
++	map->unlock(map->lock_arg);
++	return ret;
++}
++EXPORT_SYMBOL_GPL(regmap_noinc_read);
++
++/**
++ * regmap_field_read(): Read a value to a single register field
+  *
+  * @field: Register field to read from
+  * @val: Pointer to store read value
+diff --git a/include/linux/regmap.h b/include/linux/regmap.h
+index 4f38068..19df946 100644
+--- a/include/linux/regmap.h
++++ b/include/linux/regmap.h
+@@ -268,6 +268,13 @@ typedef void (*regmap_unlock)(void *);
+  *                field is NULL but precious_table (see below) is not, the
+  *                check is performed on such table (a register is precious if
+  *                it belongs to one of the ranges specified by precious_table).
++ * @readable_noinc_reg: Optional callback returning true if the register
++ *			supports multiple read operations without incrementing
++ *			the register number. If this field is NULL but
++ *			rd_noinc_table (see below) is not, the check is
++ *			performed on such table (a register is no increment
++ *			readable if it belongs to one of the ranges specified
++ *			by rd_noinc_table).
+  * @disable_locking: This regmap is either protected by external means or
+  *                   is guaranteed not be be accessed from multiple threads.
+  *                   Don't use any locking mechanisms.
+@@ -295,6 +302,7 @@ typedef void (*regmap_unlock)(void *);
+  * @rd_table:     As above, for read access.
+  * @volatile_table: As above, for volatile registers.
+  * @precious_table: As above, for precious registers.
++ * @rd_noinc_table: As above, for no increment readable registers.
+  * @reg_defaults: Power on reset values for registers (for use with
+  *                register cache support).
+  * @num_reg_defaults: Number of elements in reg_defaults.
+@@ -344,6 +352,7 @@ struct regmap_config {
+ 	bool (*readable_reg)(struct device *dev, unsigned int reg);
+ 	bool (*volatile_reg)(struct device *dev, unsigned int reg);
+ 	bool (*precious_reg)(struct device *dev, unsigned int reg);
++	bool (*readable_noinc_reg)(struct device *dev, unsigned int reg);
+ 
+ 	bool disable_locking;
+ 	regmap_lock lock;
+@@ -360,6 +369,7 @@ struct regmap_config {
+ 	const struct regmap_access_table *rd_table;
+ 	const struct regmap_access_table *volatile_table;
+ 	const struct regmap_access_table *precious_table;
++	const struct regmap_access_table *rd_noinc_table;
+ 	const struct reg_default *reg_defaults;
+ 	unsigned int num_reg_defaults;
+ 	enum regcache_type cache_type;
+@@ -946,6 +956,8 @@ int regmap_raw_write_async(struct regmap *map, unsigned int reg,
+ int regmap_read(struct regmap *map, unsigned int reg, unsigned int *val);
+ int regmap_raw_read(struct regmap *map, unsigned int reg,
+ 		    void *val, size_t val_len);
++int regmap_noinc_read(struct regmap *map, unsigned int reg,
++		      void *val, size_t val_len);
+ int regmap_bulk_read(struct regmap *map, unsigned int reg, void *val,
+ 		     size_t val_count);
+ int regmap_update_bits_base(struct regmap *map, unsigned int reg,
+@@ -1196,6 +1208,13 @@ static inline int regmap_raw_read(struct regmap *map, unsigned int reg,
+ 	return -EINVAL;
+ }
+ 
++static inline int regmap_noinc_read(struct regmap *map, unsigned int reg,
++				    void *val, size_t val_len)
++{
++	WARN_ONCE(1, "regmap API is disabled");
++	return -EINVAL;
++}
++
+ static inline int regmap_bulk_read(struct regmap *map, unsigned int reg,
+ 				   void *val, size_t val_count)
+ {
 -- 
 2.7.4
 
