@@ -2,170 +2,192 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29B66C46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 13:09:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FB3BC46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 13:09:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D97FB2157F
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 13:09:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4EF4F2157F
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 13:09:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pyz3sLPk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D97FB2157F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RmZ9w4sj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EF4F2157F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389074AbeHGPX5 (ORCPT
+        id S2388835AbeHGPXr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 11:23:57 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:39896 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388540AbeHGPX5 (ORCPT
+        Tue, 7 Aug 2018 11:23:47 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:51365 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388481AbeHGPXq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 11:23:57 -0400
-Received: by mail-pf1-f194.google.com with SMTP id j8-v6so8580334pff.6;
-        Tue, 07 Aug 2018 06:09:41 -0700 (PDT)
+        Tue, 7 Aug 2018 11:23:46 -0400
+Received: by mail-wm0-f67.google.com with SMTP id y2-v6so17401704wma.1;
+        Tue, 07 Aug 2018 06:09:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=UsaSOYgImjdVqa2SYo+qH8Qx5i9t0zoeiVANgfUOr2c=;
-        b=pyz3sLPks9A6CPEU/abwG23Y7HN+Hk45EMMiVGpKNzshKB9sz2p76vzyVbKRHdq1tm
-         vhX791aj1zj8tl8HBFNyJAbBAodX+1NmeAGB5vmi+LhgSELdPtsB+ZvLWX7Jykj8D7Ht
-         lR7lCqoy/cfGh9IjYuKJwZc3KzAIXlf8QuG7p/r8eUUvyYyY/YFlENqe4LHl0xQxZzLS
-         PVTtU9NY4edcJX2Y3DrKiHZqF2Mabj6AGUr5VlEiMWnI6yOXtZXS1Hoo7lvpwUlQN+6e
-         mBQgNDL8VTjy4aH0SDHlsTQcnpBDCaV6pAgqvfepC9xIibh7KJUaf20JO7q8J3F93t/p
-         pq3Q==
+        h=sender:subject:to:cc:references:from:openpgp:autocrypt:message-id
+         :date:user-agent:mime-version:in-reply-to;
+        bh=V46jSAW3LK1RygBGOc4AtA+DWgUoK2VRppZwcGOHSwI=;
+        b=RmZ9w4sj+FrI00SqaY2FuccSkFdzU4v6YYOTsjG44+E2cq3B5p7bh/Mvg4kNMxTnAh
+         XA/2FSuuHiIg2hd4UqLdnMhtGV297Om2zrFscosvLpWxnmTBzC8tDdtKDPA+lxaCne5d
+         f9onHJ9rKb1mYkTz06LbaJna+lDbvDOoK7mEvQ6oSaoXjEIo5/OUr3sD2Dsxnn7qfmFP
+         IQ43K59gwu7GBz524UoFnFpqn0o/yGpuks2D9dxbvT0djIZRt3oK7KXSFqjr/aBex12f
+         qFLPba4pKCbpQ1dXBABEPXjAWcbcSwi/XVUmd5jglTp5VXhK1GVJxlXp7o1+FnEwZTth
+         CjxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=UsaSOYgImjdVqa2SYo+qH8Qx5i9t0zoeiVANgfUOr2c=;
-        b=EokphflLRyV/kH3LkGaZ3UlxxBJfVxV6ivmoY3g1Yai438PRAf4JVX/cHRDVJEY4CB
-         jgiF+9QVWm8VkDTu1hjN1PCfnJ4oaAO6mV9C0rU42guYB7A7mq5r4qyxkuGr38k8gfXO
-         4aj2U4o3d2Kr8I7neciDeVz4jhN+sSPTg7NSHCYkf7ipBpskps2mBkgo8i6CkMk9x6qs
-         7PxD1iCiKDrLgxQARwJ5QTsFLYTMyvW3ByfcNnZchADuT0h/i4J16BEInp6rHW2O9G86
-         goaXgZ4GxWkhZcme7cxeM4xW73oYu8NkxTOAKEz5byd1pcxD7HsPqc5oe2CgoNnvMPh4
-         Mr4A==
-X-Gm-Message-State: AOUpUlFguC64gOUKUBl0tTQMuPZVGyZZGwOdNog1L2GyPIvpf/dmbuh7
-        pvNccz42qn26k5VYH749le0=
-X-Google-Smtp-Source: AAOMgpemEG2a2AMdCFBiCkUennj6fM0+lQSKUG4o8f2m+gM0ccyvY/MTkmRCXV4Qoq62w53CNm5kDQ==
-X-Received: by 2002:a63:1126:: with SMTP id g38-v6mr18416792pgl.122.1533647381018;
-        Tue, 07 Aug 2018 06:09:41 -0700 (PDT)
-Received: from localhost.localdomain (109-252-90-13.nat.spd-mgts.ru. [109.252.90.13])
-        by smtp.gmail.com with ESMTPSA id 73-v6sm5339229pfu.20.2018.08.07.06.09.36
+        h=x-gm-message-state:sender:subject:to:cc:references:from:openpgp
+         :autocrypt:message-id:date:user-agent:mime-version:in-reply-to;
+        bh=V46jSAW3LK1RygBGOc4AtA+DWgUoK2VRppZwcGOHSwI=;
+        b=RaS/zSkPt4lgcnMNWP2XxVaTkIHkGC6TxHOQYWSW+ZAEwdPTfFqUCWPm3QK/B1lCYI
+         u3I3/3rzqut4Jy/01hQPnld9RfrpH+avQJFDtMv2B2RIDe1kFDo7fbRiE4V6eJypNkoV
+         qyOemE2mr9+awEp+cHMR61Dl9m/8D94vL+1jL30e/gd4T6R1403RgpUo0jInBsu1Wa0w
+         hASypAJlmrDY0LkoPlOk1uv1ZFlkD0BnJexm6RlTU4C/VtFROUXHxV/zhcOEhdQG72S+
+         Vm7aOIxWCn1HxWycgfxszvstlefgOJR+jfRwYTRQljvA8YqaCVWUrsNCTkd9w22xXjVR
+         iMJQ==
+X-Gm-Message-State: AOUpUlGvZA17XxsowFtDIcXYf7+/BzTtpkmytkSV4OnEVsb7XS1R/jVs
+        fs1LCuHR7iS+N8Ek+l/UgCDc7aoq
+X-Google-Smtp-Source: AA+uWPwaabJyS3d627ajVPOIQ05Ddlh9qLw+TyRNRmlNeuHecSx+h46lCTCpJ0QsCMptIeNcIqZz2g==
+X-Received: by 2002:a1c:8893:: with SMTP id k141-v6mr1721767wmd.36.1533647367848;
+        Tue, 07 Aug 2018 06:09:27 -0700 (PDT)
+Received: from [192.168.10.150] (dynamic-adsl-78-12-235-128.clienti.tiscali.it. [78.12.235.128])
+        by smtp.googlemail.com with ESMTPSA id 7-v6sm3156512wmr.16.2018.08.07.06.09.26
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 07 Aug 2018 06:09:40 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Mikko Perttunen <cyndis@kapsi.fi>
-Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/3] gpu: host1x: Continue CDMA execution starting with a next job
-Date:   Tue,  7 Aug 2018 16:07:13 +0300
-Message-Id: <20180807130713.1016-4-digetx@gmail.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180807130713.1016-1-digetx@gmail.com>
-References: <20180807130713.1016-1-digetx@gmail.com>
+        Tue, 07 Aug 2018 06:09:26 -0700 (PDT)
+Subject: semantic conflict between tip and kvm (was Re: linux-next:
+ Signed-off-by missing for commit in the kvm tree)
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        KVM <kvm@vger.kernel.org>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20180807073922.665e1d63@canb.auug.org.au>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; keydata=
+ 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
+Message-ID: <8939315c-f509-ad12-3484-4650c7f3b351@redhat.com>
+Date:   Tue, 7 Aug 2018 15:09:25 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180807073922.665e1d63@canb.auug.org.au>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="91gCpN5DVlRuaBBbJ1VsyYqfUmbAzZOaf"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently gathers of a hung job are getting NOP'ed and a restarted CDMA
-executes the NOP'ed gathers. There shouldn't be a reason to not restart
-CDMA execution starting with a next job, avoiding the unnecessary churning
-with gathers NOP'ing.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--91gCpN5DVlRuaBBbJ1VsyYqfUmbAzZOaf
+Content-Type: multipart/mixed; boundary="gH6TBERMb1gtR7mLPYF2VUfk3UqhaVoX5";
+ protected-headers="v1"
+From: Paolo Bonzini <pbonzini@redhat.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?=
+ <rkrcmar@redhat.com>, KVM <kvm@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Message-ID: <8939315c-f509-ad12-3484-4650c7f3b351@redhat.com>
+Subject: semantic conflict between tip and kvm (was Re: linux-next:
+ Signed-off-by missing for commit in the kvm tree)
+References: <20180807073922.665e1d63@canb.auug.org.au>
+In-Reply-To: <20180807073922.665e1d63@canb.auug.org.au>
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/gpu/host1x/cdma.c       | 23 +++++++++++------------
- drivers/gpu/host1x/hw/cdma_hw.c | 13 -------------
- 2 files changed, 11 insertions(+), 25 deletions(-)
+--gH6TBERMb1gtR7mLPYF2VUfk3UqhaVoX5
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/gpu/host1x/cdma.c b/drivers/gpu/host1x/cdma.c
-index 6aa6fa1498e8..9e4f01c7f663 100644
---- a/drivers/gpu/host1x/cdma.c
-+++ b/drivers/gpu/host1x/cdma.c
-@@ -323,7 +323,7 @@ void host1x_cdma_update_sync_queue(struct host1x_cdma *cdma,
- {
- 	struct host1x *host1x = cdma_to_host1x(cdma);
- 	u32 restart_addr, syncpt_incrs, syncpt_val;
--	struct host1x_job *job;
-+	struct host1x_job *job, *next_job = NULL;
- 
- 	syncpt_val = host1x_syncpt_load(cdma->timeout.syncpt);
- 
-@@ -341,8 +341,13 @@ void host1x_cdma_update_sync_queue(struct host1x_cdma *cdma,
- 		__func__);
- 
- 	list_for_each_entry(job, &cdma->sync_queue, list) {
--		if (syncpt_val < job->syncpt_end)
-+		if (syncpt_val < job->syncpt_end) {
-+
-+			if (!list_is_last(&job->list, &cdma->sync_queue))
-+				next_job = list_next_entry(job, list);
-+
- 			goto syncpt_incr;
-+		}
- 
- 		host1x_job_dump(dev, job);
- 	}
-@@ -355,17 +360,11 @@ void host1x_cdma_update_sync_queue(struct host1x_cdma *cdma,
- 	/*
- 	 * Increment with CPU the remaining syncpts of a partially executed job.
- 	 *
--	 * Syncpt increments must be done inline with the pushbuffer from a
--	 * GATHER buffer to maintain the order (slots are modified to be a
--	 * GATHER of syncpt incrs).
--	 *
--	 * Note: save in restart_addr the location where the timed out buffer
--	 * started in the PB, so we can start the refetch from there (with the
--	 * modified NOP-ed PB slots). This lets things appear to have completed
--	 * properly for this buffer and resources are freed.
-+	 * CDMA will continue execution starting with the next job or will get
-+	 * into idle state.
- 	 */
--	if (job)
--		restart_addr = job->first_get;
-+	if (next_job)
-+		restart_addr = next_job->first_get;
- 	else
- 		restart_addr = cdma->last_pos;
- 
-diff --git a/drivers/gpu/host1x/hw/cdma_hw.c b/drivers/gpu/host1x/hw/cdma_hw.c
-index ce320534cbed..bc203532ae6d 100644
---- a/drivers/gpu/host1x/hw/cdma_hw.c
-+++ b/drivers/gpu/host1x/hw/cdma_hw.c
-@@ -40,7 +40,6 @@ static void cdma_timeout_cpu_incr(struct host1x_cdma *cdma, u32 getptr,
- 				u32 syncpt_incrs, u32 syncval, u32 nr_slots)
- {
- 	struct host1x *host1x = cdma_to_host1x(cdma);
--	struct push_buffer *pb = &cdma->push_buffer;
- 	unsigned int i;
- 
- 	for (i = 0; i < syncpt_incrs; i++)
-@@ -48,18 +47,6 @@ static void cdma_timeout_cpu_incr(struct host1x_cdma *cdma, u32 getptr,
- 
- 	/* after CPU incr, ensure shadow is up to date */
- 	host1x_syncpt_load(cdma->timeout.syncpt);
--
--	/* NOP all the PB slots */
--	while (nr_slots--) {
--		u32 *p = (u32 *)(pb->mapped + getptr);
--		*(p++) = HOST1X_OPCODE_NOP;
--		*(p++) = HOST1X_OPCODE_NOP;
--		dev_dbg(host1x->dev, "%s: NOP at %pad+%#x\n", __func__,
--			&pb->dma, getptr);
--		getptr = (getptr + 8) & (pb->size - 1);
--	}
--
--	wmb();
- }
- 
- /*
--- 
-2.18.0
+On 06/08/2018 23:39, Stephen Rothwell wrote:
+> Hi all,
+>=20
+> Commit
+>=20
+>   81781b6884bd ("KVM/x86: Use CC_SET()/CC_OUT in arch/x86/kvm/vmx.c")
+>=20
+> is missing a Signed-off-by from its committer.
+>=20
 
+Stephen,
+
+there is a semantic conflict between tip and kvm:
+
+const __initconst struct hypervisor_x86 x86_hyper_kvm =3D {
+	.name			=3D "KVM",
+	.detect			=3D kvm_detect,
+	.type			=3D X86_HYPER_KVM,
+	.init.init_platform	=3D kvmclock_init,
+	.init.guest_late_init	=3D kvm_guest_init,
+	.init.x2apic_available	=3D kvm_para_available,
+	.init.init_platform	=3D kvm_init_platform,
+};
+
+Note that .init.init_platform is initialized twice.
+
+The right fix is to keep the kvm version, and add a kvmclock_init() call
+to kvm_init_platform.
+
+Thanks,
+
+Paolo
+
+
+--gH6TBERMb1gtR7mLPYF2VUfk3UqhaVoX5--
+
+--91gCpN5DVlRuaBBbJ1VsyYqfUmbAzZOaf
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEE8TM4V0tmI4mGbHaCv/vSX3jHroMFAltpmgUACgkQv/vSX3jH
+roPZkgf/WSDhT/epJdVQN7IDI2ERn4xIMqxdyqA1Y83Twpiz/WrsmFIa24SNTsJt
+DTxN1oWINvMi55CLv1BNRlj1uby0EMHwZm59yKvZfm3KhaIgmE+KNtytvaZTErYH
+n8qUcYMhwmDS4lIbrjXsgMUvU2+LjVd/AYC95uEavVdg5la5wk13Hc3Y2KUB1p5f
+Xrw+12h+4A2n4ciTHXx6YZgMNKWAKRS1fnnAMAJh7nAUXmC7NBO7gpRRT+oJRE75
+DrGin8zE7WWv35lIdwoc483WeQP4epztRs16+WLaKuEgQqgu1G3D+l56A4vKQA+1
+jptE2eigJgtZbkV7pK0CvgCeKbYo4Q==
+=XwHs
+-----END PGP SIGNATURE-----
+
+--91gCpN5DVlRuaBBbJ1VsyYqfUmbAzZOaf--
