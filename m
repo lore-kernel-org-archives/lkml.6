@@ -2,344 +2,93 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCF35C46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 06:56:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4C6EC46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 06:57:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D32721920
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 06:56:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D32721920
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 5851221920
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 06:57:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Yku9audv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5851221920
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388752AbeHGJJq (ORCPT
+        id S2388774AbeHGJKL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 05:09:46 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:35102 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728157AbeHGJJq (ORCPT
+        Tue, 7 Aug 2018 05:10:11 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:51601 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732910AbeHGJKL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 05:09:46 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w776nTqB054519
-        for <linux-kernel@vger.kernel.org>; Tue, 7 Aug 2018 02:56:51 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2kq5tp1pu3-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 02:56:51 -0400
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
-        Tue, 7 Aug 2018 07:56:49 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 7 Aug 2018 07:56:46 +0100
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w776uj6i35651836
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 7 Aug 2018 06:56:45 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7FD23A404D;
-        Tue,  7 Aug 2018 09:56:53 +0100 (BST)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B0EF4A4053;
-        Tue,  7 Aug 2018 09:56:52 +0100 (BST)
-Received: from rapoport-lnx (unknown [9.148.206.72])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Tue,  7 Aug 2018 09:56:52 +0100 (BST)
-Date:   Tue, 7 Aug 2018 09:56:42 +0300
-From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
-To:     Thiago Jung Bauermann <bauerman@linux.ibm.com>
-Cc:     linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Shuah Khan <shuah@kernel.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Prakash Sangappa <prakash.sangappa@oracle.com>
-Subject: Re: [PATCH v2 4/4] userfaultfd: selftest: Cope if shmem doesn't
- support zeropage
-References: <20180803220046.4019-1-bauerman@linux.ibm.com>
- <20180803220046.4019-5-bauerman@linux.ibm.com>
+        Tue, 7 Aug 2018 05:10:11 -0400
+Received: by mail-it0-f67.google.com with SMTP id e14-v6so20735206itf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Aug 2018 23:57:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=7iKm6bxFnwAm1/uare8Nwk42f5/UvNKaBhIcihefxis=;
+        b=Yku9audvuOfbi9NXJTuqf5F/AG6V8DAVwohKYX1BjJa6Q1m7mQgskCoVFq4Fnp89gz
+         z8ycES/VJzOKzLMRBlg486jZkkOrK4k9bo+FxuYBFp9bzIDBOvvze0PyuLLjN2fOKspJ
+         vr4V1vAy5L/9GSnQfnThWwql2Ye3VfUAICnbw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=7iKm6bxFnwAm1/uare8Nwk42f5/UvNKaBhIcihefxis=;
+        b=QVhhsuHQReJCoakreFsZ4dDl/yGWYJ2lfyUqmKA8up9+eVXOUuZNUIJdUd3q8PKpY9
+         GqiGvhjMW+JEGcOhFo9oH+9dc2tX9xLGZq/p29v5IMatuFel/QLHXyihhhVJT/ucZYFy
+         4Jb7YZ/UEJKp7PGwXUn3szBFACol24uVdLa99Y783IhxZ9v+eNYSzHv8XWqUtPu38fXG
+         elGt0/+Uj1wRVuS7YcPNP2vxhuS/GtTj2IHWG0eAnh8/RNvqtOTlKFAf47TyrecAN8pF
+         2JzuOQjIVzYoFbzVKEFREBVvhK50Fm6Jassg1IGxzpo789qaM1EhVuq/OvGHFuxDrOdC
+         Vu+w==
+X-Gm-Message-State: AOUpUlHSBOJ6v48GYjbF9wRjII49WRwlPkLlsNg5x57PUvd3W0rqTXQ8
+        z0NuWe8t2V9WNbziXcmktOsDmMV1qbvNW+llyFOI0g==
+X-Google-Smtp-Source: AA+uWPwhsJHODJlV67obO1aawUsq0b01nmQgGpTamvfygNsOFI6cCXd6FbJqX1OWnemA4btDn93YR+gJwPwu6eZF66s=
+X-Received: by 2002:a24:5242:: with SMTP id d63-v6mr921813itb.138.1533625037887;
+ Mon, 06 Aug 2018 23:57:17 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180803220046.4019-5-bauerman@linux.ibm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18080706-0020-0000-0000-000002B33BCB
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18080706-0021-0000-0000-000021003F59
-Message-Id: <20180807065642.GD20140@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-07_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808070071
+Received: by 2002:a6b:ac05:0:0:0:0:0 with HTTP; Mon, 6 Aug 2018 23:57:17 -0700 (PDT)
+In-Reply-To: <20180807062225.6331-1-Jason@zx2c4.com>
+References: <20180807011937.GA133621@gmail.com> <20180807062225.6331-1-Jason@zx2c4.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Tue, 7 Aug 2018 08:57:17 +0200
+Message-ID: <CAKv+Gu893jhyC9m++r719845-7axqj5qCPhk7hp-iStykj+HsQ@mail.gmail.com>
+Subject: Re: [PATCH v2] crypto: remove Speck
+To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc:     "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>, linux-fscrypt@vger.kernel.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Paul Crowley <paulcrowley@google.com>,
+        Greg Kaiser <gkaiser@google.com>,
+        Michael Halcrow <mhalcrow@google.com>,
+        Samuel Neves <samuel.c.p.neves@gmail.com>,
+        Tomer Ashur <tomer.ashur@esat.kuleuven.be>,
+        Eric Biggers <ebiggers@kernel.org>,
+        stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 7 August 2018 at 08:22, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
+> These are unused, undesired, and have never actually been used by
+> anybody. The original authors of this code have changed their mind about
+> its inclusion. While originally proposed for disk encryption on low-end
+> devices, the idea was discarded [1] in favor of something else before
+> that could really get going. Therefore, this patch removes Speck.
+>
+> [1] https://marc.info/?l=linux-crypto-vger&m=153359499015659
+>
+> Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
+> Acked-by: Eric Biggers <ebiggers@google.com>
+> Cc: stable@vger.kernel.org
 
-On Fri, Aug 03, 2018 at 07:00:46PM -0300, Thiago Jung Bauermann wrote:
-> If userfaultfd runs on a system that doesn't support UFFDIO_ZEROPAGE for
-> shared memory, it currently ends with error code 1 which indicates test
-> failure:
-> 
->   # ./userfaultfd shmem 10 10
->   nr_pages: 160, nr_pages_per_cpu: 80
->   bounces: 9, mode: rnd poll, unexpected missing ioctl for anon memory
->   # echo $?
->   1
-> 
-> Change userfaultfd_zeropage_test() to return KSFT_SKIP to indicate that
-> the test is being skipped.
-
-I took a deeper look at what userfaultfd_zeropage_test() does and,
-apparently, I've mislead you. The test checks if the range has
-UFFDIO_ZEROPAGE and verifies that it works if yes; otherwise the test
-verifies that EINVAL is returned.
-
-Can you please check if the patch below works in your environment?
-
-From 7a34c84c0461b5073742275638c44b6535d19166 Mon Sep 17 00:00:00 2001
-From: Mike Rapoport <rppt@linux.vnet.ibm.com>
-Date: Tue, 7 Aug 2018 09:44:19 +0300
-Subject: [PATCH] userfaultfd: selftest: make supported range ioctl
- verification more robust
-
-When userfaultfd tests runs on older kernel that does not support
-UFFDIO_ZEROPAGE for shared memory it fails at the ioctl verification.
-
-Split out the verification that supported ioctls are superset of the
-expected ioctls and relax the checks for UFFDIO_ZEROPAGE for shared memory
-areas.
-
-Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
----
- tools/testing/selftests/vm/userfaultfd.c | 63 +++++++++++++++++---------------
- 1 file changed, 34 insertions(+), 29 deletions(-)
-
-diff --git a/tools/testing/selftests/vm/userfaultfd.c b/tools/testing/selftests/vm/userfaultfd.c
-index 7b8171e3128a..a64bc38bc0e1 100644
---- a/tools/testing/selftests/vm/userfaultfd.c
-+++ b/tools/testing/selftests/vm/userfaultfd.c
-@@ -271,6 +271,32 @@ static int my_bcmp(char *str1, char *str2, size_t n)
- 	return 0;
- }
- 
-+static int verify_ioctls(unsigned long supported_ioctls)
-+{
-+	unsigned long expected_ioctls = uffd_test_ops->expected_ioctls;
-+
-+	if ((supported_ioctls & expected_ioctls) == expected_ioctls)
-+		return 0;
-+
-+	/*
-+	 * For older kernels shared memory may not have UFFDIO_ZEROPAGE.
-+	 * In this case we just mask it out from the
-+	 * expected_ioctls. The userfaultfd_zeropage_test will then
-+	 * verify that an attempt to use UFFDIO_ZEROPAGE returns
-+	 * EINVAL
-+	 */
-+	if (test_type == TEST_SHMEM) {
-+		expected_ioctls &= ~(1 << _UFFDIO_ZEROPAGE);
-+		if ((supported_ioctls & expected_ioctls) == expected_ioctls) {
-+			uffd_test_ops->expected_ioctls = expected_ioctls;
-+			return 0;
-+		}
-+	}
-+
-+	fprintf(stderr,	"unexpected missing ioctl\n");
-+	return 1;
-+}
-+
- static void *locking_thread(void *arg)
- {
- 	unsigned long cpu = (unsigned long) arg;
-@@ -851,7 +877,6 @@ static int uffdio_zeropage(int ufd, unsigned long offset)
- static int userfaultfd_zeropage_test(void)
- {
- 	struct uffdio_register uffdio_register;
--	unsigned long expected_ioctls;
- 
- 	printf("testing UFFDIO_ZEROPAGE: ");
- 	fflush(stdout);
-@@ -867,12 +892,8 @@ static int userfaultfd_zeropage_test(void)
- 	if (ioctl(uffd, UFFDIO_REGISTER, &uffdio_register))
- 		fprintf(stderr, "register failure\n"), exit(1);
- 
--	expected_ioctls = uffd_test_ops->expected_ioctls;
--	if ((uffdio_register.ioctls & expected_ioctls) !=
--	    expected_ioctls)
--		fprintf(stderr,
--			"unexpected missing ioctl for anon memory\n"),
--			exit(1);
-+	if (verify_ioctls(uffdio_register.ioctls))
-+		return 1;
- 
- 	if (uffdio_zeropage(uffd, 0)) {
- 		if (my_bcmp(area_dst, zeropage, page_size))
-@@ -887,7 +908,6 @@ static int userfaultfd_zeropage_test(void)
- static int userfaultfd_events_test(void)
- {
- 	struct uffdio_register uffdio_register;
--	unsigned long expected_ioctls;
- 	unsigned long userfaults;
- 	pthread_t uffd_mon;
- 	int err, features;
-@@ -912,12 +932,8 @@ static int userfaultfd_events_test(void)
- 	if (ioctl(uffd, UFFDIO_REGISTER, &uffdio_register))
- 		fprintf(stderr, "register failure\n"), exit(1);
- 
--	expected_ioctls = uffd_test_ops->expected_ioctls;
--	if ((uffdio_register.ioctls & expected_ioctls) !=
--	    expected_ioctls)
--		fprintf(stderr,
--			"unexpected missing ioctl for anon memory\n"),
--			exit(1);
-+	if (verify_ioctls(uffdio_register.ioctls))
-+		return 1;
- 
- 	if (pthread_create(&uffd_mon, &attr, uffd_poll_thread, NULL))
- 		perror("uffd_poll_thread create"), exit(1);
-@@ -947,7 +963,6 @@ static int userfaultfd_events_test(void)
- static int userfaultfd_sig_test(void)
- {
- 	struct uffdio_register uffdio_register;
--	unsigned long expected_ioctls;
- 	unsigned long userfaults;
- 	pthread_t uffd_mon;
- 	int err, features;
-@@ -971,12 +986,8 @@ static int userfaultfd_sig_test(void)
- 	if (ioctl(uffd, UFFDIO_REGISTER, &uffdio_register))
- 		fprintf(stderr, "register failure\n"), exit(1);
- 
--	expected_ioctls = uffd_test_ops->expected_ioctls;
--	if ((uffdio_register.ioctls & expected_ioctls) !=
--	    expected_ioctls)
--		fprintf(stderr,
--			"unexpected missing ioctl for anon memory\n"),
--			exit(1);
-+	if (verify_ioctls(uffdio_register.ioctls))
-+		return 1;
- 
- 	if (faulting_process(1))
- 		fprintf(stderr, "faulting process failed\n"), exit(1);
-@@ -1076,8 +1087,6 @@ static int userfaultfd_stress(void)
- 
- 	err = 0;
- 	while (bounces--) {
--		unsigned long expected_ioctls;
--
- 		printf("bounces: %d, mode:", bounces);
- 		if (bounces & BOUNCE_RANDOM)
- 			printf(" rnd");
-@@ -1103,13 +1112,9 @@ static int userfaultfd_stress(void)
- 			fprintf(stderr, "register failure\n");
- 			return 1;
- 		}
--		expected_ioctls = uffd_test_ops->expected_ioctls;
--		if ((uffdio_register.ioctls & expected_ioctls) !=
--		    expected_ioctls) {
--			fprintf(stderr,
--				"unexpected missing ioctl for anon memory\n");
-+
-+		if (verify_ioctls(uffdio_register.ioctls))
- 			return 1;
--		}
- 
- 		if (area_dst_alias) {
- 			uffdio_register.range.start = (unsigned long)
--- 
-2.7.4
-
- 
-> Also change userfaultfd_events_test() and userfaultfd_stress() to ignore
-> the missing UFFDIO_ZEROPAGE bit from the list of supported ioctls since
-> these tests don't require that feature.
-> 
-> Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
-> ---
->  tools/testing/selftests/vm/userfaultfd.c | 36 +++++++++++++++++++++++++++-----
->  1 file changed, 31 insertions(+), 5 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/vm/userfaultfd.c b/tools/testing/selftests/vm/userfaultfd.c
-> index c84e44ddf314..00f1ca663d67 100644
-> --- a/tools/testing/selftests/vm/userfaultfd.c
-> +++ b/tools/testing/selftests/vm/userfaultfd.c
-> @@ -852,6 +852,16 @@ static int uffdio_zeropage(int ufd, unsigned long offset)
->  	return __uffdio_zeropage(ufd, offset, false);
->  }
-> 
-> +/* Tells whether the kernel doesn't support ZEROPAGE on shared memory VMAs. */
-> +static bool shmem_without_zeropage_support(unsigned long expected_ioctls,
-> +					   unsigned long supported_ioctls)
-> +{
-> +	/* Turn off ZEROPAGE bit from expected_ioctls. */
-> +	expected_ioctls &= ~(1 << _UFFDIO_ZEROPAGE);
-> +
-> +	return test_type == TEST_SHMEM && supported_ioctls == expected_ioctls;
-> +}
-> +
->  /* exercise UFFDIO_ZEROPAGE */
->  static int userfaultfd_zeropage_test(void)
->  {
-> @@ -877,10 +887,20 @@ static int userfaultfd_zeropage_test(void)
-> 
->  	expected_ioctls = uffd_test_ops->expected_ioctls;
->  	if ((uffdio_register.ioctls & expected_ioctls) !=
-> -	    expected_ioctls)
-> +	    expected_ioctls) {
-> +		close(uffd);
-> +
-> +		if (shmem_without_zeropage_support(expected_ioctls,
-> +						   uffdio_register.ioctls)) {
-> +			fprintf(stderr,
-> +				"UFFDIO_ZEROPAGE unsupported in shmem VMAs\n");
-> +			return KSFT_SKIP;
-> +		}
-> +
->  		fprintf(stderr,
-> -			"unexpected missing ioctl for anon memory\n"),
-> -			exit(1);
-> +			"unexpected missing ioctl for anon memory\n");
-> +		return 1;
-> +	}
-> 
->  	if (uffdio_zeropage(uffd, 0)) {
->  		if (my_bcmp(area_dst, zeropage, page_size))
-> @@ -924,7 +944,10 @@ static int userfaultfd_events_test(void)
-> 
->  	expected_ioctls = uffd_test_ops->expected_ioctls;
->  	if ((uffdio_register.ioctls & expected_ioctls) !=
-> -	    expected_ioctls)
-> +	    expected_ioctls &&
-> +	    /* No need for zeropage support in this test, so ignore it. */
-> +	    !shmem_without_zeropage_support(expected_ioctls,
-> +					    uffdio_register.ioctls))
->  		fprintf(stderr,
->  			"unexpected missing ioctl for anon memory\n"),
->  			exit(1);
-> @@ -1117,7 +1140,10 @@ static int userfaultfd_stress(void)
->  		}
->  		expected_ioctls = uffd_test_ops->expected_ioctls;
->  		if ((uffdio_register.ioctls & expected_ioctls) !=
-> -		    expected_ioctls) {
-> +		    expected_ioctls &&
-> +		    /* No need for zeropage support in this test, so ignore it. */
-> +		    !shmem_without_zeropage_support(expected_ioctls,
-> +						    uffdio_register.ioctls)) {
->  			fprintf(stderr,
->  				"unexpected missing ioctl for anon memory\n");
->  			return 1;
-
--- 
-Sincerely yours,
-Mike.
-
+Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
