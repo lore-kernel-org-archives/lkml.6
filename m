@@ -6,43 +6,42 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C58FFC46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 23:24:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 836A7C46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 23:24:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 899CD215F9
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 23:24:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 899CD215F9
+	by mail.kernel.org (Postfix) with ESMTP id 4679D215F9
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 23:24:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4679D215F9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727487AbeHHBky (ORCPT
+        id S1727492AbeHHBl1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 21:40:54 -0400
-Received: from gateway24.websitewelcome.com ([192.185.50.91]:32106 "EHLO
-        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727000AbeHHBkx (ORCPT
+        Tue, 7 Aug 2018 21:41:27 -0400
+Received: from gateway22.websitewelcome.com ([192.185.46.233]:11025 "EHLO
+        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727000AbeHHBl0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 21:40:53 -0400
+        Tue, 7 Aug 2018 21:41:26 -0400
 Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
-        by gateway24.websitewelcome.com (Postfix) with ESMTP id 97DED30965
-        for <linux-kernel@vger.kernel.org>; Tue,  7 Aug 2018 18:24:09 -0500 (CDT)
+        by gateway22.websitewelcome.com (Postfix) with ESMTP id B66391AE25
+        for <linux-kernel@vger.kernel.org>; Tue,  7 Aug 2018 18:24:42 -0500 (CDT)
 Received: from gator4166.hostgator.com ([108.167.133.22])
         by cmsmtp with SMTP
-        id nBKgfjWGoBcCXnBKhfJYBl; Tue, 07 Aug 2018 18:24:09 -0500
+        id nBLDfjXtsBcCXnBLFfJZpn; Tue, 07 Aug 2018 18:24:42 -0500
 X-Authority-Reason: nr=8
-Received: from [189.250.73.102] (port=48114 helo=embeddedor)
+Received: from [189.250.73.102] (port=48116 helo=embeddedor)
         by gator4166.hostgator.com with esmtpa (Exim 4.91)
         (envelope-from <gustavo@embeddedor.com>)
-        id 1fnBKf-001w6K-IG; Tue, 07 Aug 2018 18:24:05 -0500
-Date:   Tue, 7 Aug 2018 18:24:04 -0500
+        id 1fnBLC-001wL8-QL; Tue, 07 Aug 2018 18:24:38 -0500
+Date:   Tue, 7 Aug 2018 18:24:38 -0500
 From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 To:     "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        intel-wired-lan@lists.osuosl.org
-Subject: [PATCH 22/33] igbvf: netdev: Mark expected switch fall-through
-Message-ID: <e583c6a9a431792ebb6f5fc28b21538854f6002c.1533675546.git.gustavo@embeddedor.com>
+Cc:     Jon Mason <jdmason@kudzu.us>
+Subject: [PATCH 23/33] vxge: Mark expected switch fall-throughs
+Message-ID: <35840312011d92c056108066810769751722ef9c.1533675546.git.gustavo@embeddedor.com>
 References: <cover.1533675546.git.gustavo@embeddedor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -57,13 +56,13 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 189.250.73.102
 X-Source-L: No
-X-Exim-ID: 1fnBKf-001w6K-IG
+X-Exim-ID: 1fnBLC-001wL8-QL
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.73.102]:48114
+X-Source-Sender: (embeddedor) [189.250.73.102]:48116
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 147
+X-Email-Count: 152
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -74,24 +73,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 In preparation to enabling -Wimplicit-fallthrough, mark switch cases
 where we are expecting to fall through.
 
-Addresses-Coverity-ID: 114801 ("Missing break in switch")
+Addresses-Coverity-ID: 114796 ("Missing break in switch")
+Addresses-Coverity-ID: 114804 ("Missing break in switch")
+Addresses-Coverity-ID: 114806 ("Missing break in switch")
 Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- drivers/net/ethernet/intel/igbvf/netdev.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ethernet/neterion/vxge/vxge-config.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/net/ethernet/intel/igbvf/netdev.c b/drivers/net/ethernet/intel/igbvf/netdev.c
-index f818f06..e0c989f 100644
---- a/drivers/net/ethernet/intel/igbvf/netdev.c
-+++ b/drivers/net/ethernet/intel/igbvf/netdev.c
-@@ -2102,6 +2102,7 @@ static bool igbvf_tx_csum(struct igbvf_ring *tx_ring, struct sk_buff *skb,
- 			type_tucmd = E1000_ADVTXD_TUCMD_L4T_SCTP;
- 			break;
- 		}
+diff --git a/drivers/net/ethernet/neterion/vxge/vxge-config.c b/drivers/net/ethernet/neterion/vxge/vxge-config.c
+index a2c0a93..ae81498 100644
+--- a/drivers/net/ethernet/neterion/vxge/vxge-config.c
++++ b/drivers/net/ethernet/neterion/vxge/vxge-config.c
+@@ -3783,17 +3783,20 @@ vxge_hw_rts_rth_data0_data1_get(u32 j, u64 *data0, u64 *data1,
+ 			VXGE_HW_RTS_ACCESS_STEER_DATA0_RTH_ITEM0_ENTRY_EN |
+ 			VXGE_HW_RTS_ACCESS_STEER_DATA0_RTH_ITEM0_BUCKET_DATA(
+ 			itable[j]);
 +		/* fall through */
- 	default:
- 		skb_checksum_help(skb);
- 		goto csum_failed;
+ 	case 2:
+ 		*data0 |=
+ 			VXGE_HW_RTS_ACCESS_STEER_DATA0_RTH_ITEM1_BUCKET_NUM(j)|
+ 			VXGE_HW_RTS_ACCESS_STEER_DATA0_RTH_ITEM1_ENTRY_EN |
+ 			VXGE_HW_RTS_ACCESS_STEER_DATA0_RTH_ITEM1_BUCKET_DATA(
+ 			itable[j]);
++		/* fall through */
+ 	case 3:
+ 		*data1 = VXGE_HW_RTS_ACCESS_STEER_DATA1_RTH_ITEM0_BUCKET_NUM(j)|
+ 			VXGE_HW_RTS_ACCESS_STEER_DATA1_RTH_ITEM0_ENTRY_EN |
+ 			VXGE_HW_RTS_ACCESS_STEER_DATA1_RTH_ITEM0_BUCKET_DATA(
+ 			itable[j]);
++		/* fall through */
+ 	case 4:
+ 		*data1 |=
+ 			VXGE_HW_RTS_ACCESS_STEER_DATA1_RTH_ITEM1_BUCKET_NUM(j)|
 -- 
 2.7.4
 
