@@ -6,54 +6,54 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CE07C46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 21:19:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0FE6C46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 21:19:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C640F21570
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 21:19:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 66CC7215F1
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 21:19:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MolSfpaK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C640F21570
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nArgZqlY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66CC7215F1
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727410AbeHGXf0 (ORCPT
+        id S1727445AbeHGXff (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 19:35:26 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:33690 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727243AbeHGXfN (ORCPT
+        Tue, 7 Aug 2018 19:35:35 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:46931 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726990AbeHGXfL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 19:35:13 -0400
-Received: by mail-pg1-f194.google.com with SMTP id r5-v6so49090pgv.0
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 14:18:55 -0700 (PDT)
+        Tue, 7 Aug 2018 19:35:11 -0400
+Received: by mail-pg1-f195.google.com with SMTP id f14-v6so19352pgv.13
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 14:18:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=xi1UiijgPtH3bEbgxLJTLT+H3zXPa7fDlbmxyBVC5QY=;
-        b=MolSfpaKz70ZU2b1072Jk1SbatLRIM91vChMXrA2xIqNwfxBezcEU2kqo4c2Wno5rh
-         6QwpE0T2sBrl+rxI8Nxqt0spLN6nEyODTgD28prp0sGMxIV2Mb49rWrW9A0Iz20U3/tm
-         I6ZgxWs75yLRyZGwq2XZx2PttDL0r6w0zlggU=
+        bh=om28ZBbqlVOdWVGgbNqly+1dcj2BlW29w8AmBA0lHYw=;
+        b=nArgZqlYDDgAq8YX/jvWimxGlDBI68qUF1jtzrItHrtzN3msuSa2epxNtb01j1mOa/
+         ca39AMvJj1q9mhidQmpE/bdZxNACdzIxjOLkMyuwCfO8eV7kfrw85ZO3lfZXU/Z1ZpWP
+         crX2EF+lPcXz/pZMXPOg/uW4XV4QfIoCAN1Rg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=xi1UiijgPtH3bEbgxLJTLT+H3zXPa7fDlbmxyBVC5QY=;
-        b=nMGQDEORavTGnLh+hqm4X0hC6atIxyxzpAaDBh4QhCq5Gp7Ds2Hlmh9BXEhOZSzQYS
-         wTanr6SIHuuYP5ST7WzcwUH3D4ySx+1CMNPy+HtrZpqIjy+OHqBZCnXS9QqXCpgZsJom
-         xVunkaAMZnVgjdCH/bHJpDRdxXmsym9xfh/6iKnf6x2ZFAmVjXFyTN+VGxagTIUj2RRi
-         ldnsf9B3leQ0TnDZgcHC6U7PI6VCkH/TH7YKEqIZVwvdxNKj1QlTN3n5XgWVgdpM6H74
-         bFd0sCeOjddISYIu9Pq5FQdxNmNLsveogjhj0+wiMrNGJbcB8YgLlwI4XXIOREkR7mww
-         WLgw==
-X-Gm-Message-State: AOUpUlFdjOAeGcKrWgdUS8Z7Zvb2P8ae+XEQiTvJu/5mZMhp/RC7Hi2D
-        b1bgjz/x3Ub9iQCDOpsFMsX9Iw==
-X-Google-Smtp-Source: AA+uWPyFXh2Ih2BWYqPM8DkJ+vqdAAp3AfsudSnI3WJ1RwOCXImn5IqCJVa14q7zc2+GF1suv4yY6g==
-X-Received: by 2002:a62:8559:: with SMTP id u86-v6mr105034pfd.32.1533676735035;
-        Tue, 07 Aug 2018 14:18:55 -0700 (PDT)
+        bh=om28ZBbqlVOdWVGgbNqly+1dcj2BlW29w8AmBA0lHYw=;
+        b=f1QU7t8dRsl79llv7yKfgAcFFMliGIHCDgF1bGYz8kNIROxSa9ZwvWK1GZ+l2Ep2Dg
+         KkE9iAOZqCZgSU2ttGej4CNQHDZ2PyvEXSHHofDUkU1mxGP9o599PCS1gJfvXcTkHVgN
+         Z7jxIiIkxqGm0b9FSzVp19+ewdG3eQZnZ6cik/mIwWUy/zXfvPtA/URg12RknI6/nrLw
+         gTq8BvYyGQHXJ90P3DuCUzioCzgaZt55Z4ajVQWvpw8ufg4Guz6KNWoxozWozyTysMpe
+         Ph13V8iHiQKyJneugfmKpELDBq88ZcVwLaArvs4alBtf49t3eQ/jffEZL57x4XaGJOjx
+         b0IQ==
+X-Gm-Message-State: AOUpUlEn5/v4/jwiOO7pZnPB/F6aRbdWNqSuyTsdLTfkJB7cGb/tNDlv
+        Gu65Wo1L1gBk8+np/W9Mh4DAKQ==
+X-Google-Smtp-Source: AA+uWPxCZWHFGrG9CATf1gLBhHbwJ5GzpSEYlL5Eskb5hpUBJH8fTI6RS9rnBo5vAeWQvw/CzTVYWA==
+X-Received: by 2002:a63:7a0a:: with SMTP id v10-v6mr71065pgc.444.1533676733215;
+        Tue, 07 Aug 2018 14:18:53 -0700 (PDT)
 Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id b68-v6sm422503pfd.74.2018.08.07.14.18.49
+        by smtp.gmail.com with ESMTPSA id b64-v6sm3357099pfg.66.2018.08.07.14.18.47
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 07 Aug 2018 14:18:51 -0700 (PDT)
+        Tue, 07 Aug 2018 14:18:50 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
 To:     Herbert Xu <herbert@gondor.apana.org.au>
 Cc:     Kees Cook <keescook@chromium.org>,
@@ -75,9 +75,9 @@ Cc:     Kees Cook <keescook@chromium.org>,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
         linux-crypto@vger.kernel.org, dm-devel@redhat.com,
         qat-linux@intel.com, linux-kernel@vger.kernel.org
-Subject: [PATCH v8 9/9] crypto: skcipher: Remove VLA usage for SKCIPHER_REQUEST_ON_STACK
-Date:   Tue,  7 Aug 2018 14:18:43 -0700
-Message-Id: <20180807211843.47586-10-keescook@chromium.org>
+Subject: [PATCH v8 6/9] crypto alg: Introduce generic max blocksize and alignmask
+Date:   Tue,  7 Aug 2018 14:18:40 -0700
+Message-Id: <20180807211843.47586-7-keescook@chromium.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180807211843.47586-1-keescook@chromium.org>
 References: <20180807211843.47586-1-keescook@chromium.org>
@@ -87,52 +87,58 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 In the quest to remove all stack VLA usage from the kernel[1], this
-caps the skcipher request size similar to other limits and adds a sanity
-check at registration. Looking at instrumented tcrypt output, the largest
-is for lrw:
+exposes a new general upper bound on crypto blocksize and alignmask
+(higher than for the existing cipher limits) for VLA removal,
+and introduces new checks.
 
-	crypt: testing lrw(aes)
-	crypto_skcipher_set_reqsize: 8
-	crypto_skcipher_set_reqsize: 88
-	crypto_skcipher_set_reqsize: 472
+At present, the highest cra_alignmask in the kernel is 63. The highest
+cra_blocksize is 144 (SHA3_224_BLOCK_SIZE, 18 8-byte words). For the
+new blocksize limit, I went with 160 (20 8-byte words).
 
 [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
 
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- include/crypto/internal/skcipher.h | 1 +
- include/crypto/skcipher.h          | 4 +++-
- 2 files changed, 4 insertions(+), 1 deletion(-)
+ crypto/algapi.c         | 7 ++++++-
+ include/crypto/algapi.h | 4 +++-
+ 2 files changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/include/crypto/internal/skcipher.h b/include/crypto/internal/skcipher.h
-index e42f7063f245..5035482cbe68 100644
---- a/include/crypto/internal/skcipher.h
-+++ b/include/crypto/internal/skcipher.h
-@@ -130,6 +130,7 @@ static inline struct crypto_skcipher *crypto_spawn_skcipher(
- static inline void crypto_skcipher_set_reqsize(
- 	struct crypto_skcipher *skcipher, unsigned int reqsize)
- {
-+	BUG_ON(reqsize > SKCIPHER_MAX_REQSIZE);
- 	skcipher->reqsize = reqsize;
- }
+diff --git a/crypto/algapi.c b/crypto/algapi.c
+index c0755cf4f53f..496fc51bf215 100644
+--- a/crypto/algapi.c
++++ b/crypto/algapi.c
+@@ -57,9 +57,14 @@ static int crypto_check_alg(struct crypto_alg *alg)
+ 	if (alg->cra_alignmask & (alg->cra_alignmask + 1))
+ 		return -EINVAL;
  
-diff --git a/include/crypto/skcipher.h b/include/crypto/skcipher.h
-index 2f327f090c3e..c48e194438cf 100644
---- a/include/crypto/skcipher.h
-+++ b/include/crypto/skcipher.h
-@@ -139,9 +139,11 @@ struct skcipher_alg {
- 	struct crypto_alg base;
- };
+-	if (alg->cra_blocksize > PAGE_SIZE / 8)
++	/* General maximums for all algs. */
++	if (alg->cra_alignmask > MAX_ALGAPI_ALIGNMASK)
+ 		return -EINVAL;
  
-+#define SKCIPHER_MAX_REQSIZE	472
++	if (alg->cra_blocksize > MAX_ALGAPI_BLOCKSIZE)
++		return -EINVAL;
 +
- #define SKCIPHER_REQUEST_ON_STACK(name, tfm) \
- 	char __##name##_desc[sizeof(struct skcipher_request) + \
--		crypto_skcipher_reqsize(tfm)] CRYPTO_MINALIGN_ATTR; \
-+		SKCIPHER_MAX_REQSIZE] CRYPTO_MINALIGN_ATTR; \
- 	struct skcipher_request *name = (void *)__##name##_desc
++	/* Lower maximums for specific alg types. */
+ 	if (!alg->cra_type && (alg->cra_flags & CRYPTO_ALG_TYPE_MASK) ==
+ 			       CRYPTO_ALG_TYPE_CIPHER) {
+ 		if (alg->cra_alignmask > MAX_CIPHER_ALIGNMASK)
+diff --git a/include/crypto/algapi.h b/include/crypto/algapi.h
+index bd5e8ccf1687..21371ac8f355 100644
+--- a/include/crypto/algapi.h
++++ b/include/crypto/algapi.h
+@@ -20,8 +20,10 @@
+ /*
+  * Maximum values for blocksize and alignmask, used to allocate
+  * static buffers that are big enough for any combination of
+- * ciphers and architectures.
++ * algs and architectures. Ciphers have a lower maximum size.
+  */
++#define MAX_ALGAPI_BLOCKSIZE		160
++#define MAX_ALGAPI_ALIGNMASK		63
+ #define MAX_CIPHER_BLOCKSIZE		16
+ #define MAX_CIPHER_ALIGNMASK		15
  
- /**
 -- 
 2.17.1
 
