@@ -2,384 +2,186 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4CE5C46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 13:59:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3BA3C46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 13:59:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89832217B9
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 13:59:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 70CB520C0E
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 13:59:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="T7Z+ctA+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89832217B9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ZQVlx/rj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70CB520C0E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389371AbeHGQOS (ORCPT
+        id S2389390AbeHGQOW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 12:14:18 -0400
-Received: from smtprelay2.synopsys.com ([198.182.60.111]:57533 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732141AbeHGQOR (ORCPT
+        Tue, 7 Aug 2018 12:14:22 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:41774 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389375AbeHGQOV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 12:14:17 -0400
-Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 376ED10C0FAC;
-        Tue,  7 Aug 2018 06:59:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1533650390; bh=4o19958GKQmmJBaUI34s+VPBXc4afI7y5fkP0F8/lrU=;
-        h=From:To:Cc:Subject:Date:From;
-        b=T7Z+ctA+lfSTGSel/Xyo+kAL9UgI12+HTNLrM4lNh1ZjJhtajjqsFeS5c3dH5I+Vr
-         IQVmuxmMX0oqqr1Co5/nFktSRCqRR7qjZEpYLaYF392zJOWz+CdiQbr6jHvp31QGiZ
-         JREgLkff/gr1sQaJCuPndHZ1BG+7fJiP8YjBi+UX6++uDu7YuNyUp7rFzRY9XUGtqE
-         v3zapr+HJSrMMqInMUoNvSNQr+uv42CdJbgMLVNCarNSL4mPSBQ4WP3ZsCYsiWliak
-         9hvYpvt5Lxx5tgMkQBINnTwhBSxDYtStHLbgRpRCSjmIj09PHkjL6ui4DLWmSjM8Ne
-         mhgkCBgfDANBQ==
-Received: from paltsev-e7480.internal.synopsys.com (unknown [10.121.8.86])
-        by mailhost.synopsys.com (Postfix) with ESMTP id C44EE3B69;
-        Tue,  7 Aug 2018 06:59:48 -0700 (PDT)
-From:   Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-To:     linux-snps-arc@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org,
-        Vineet Gupta <Vineet.Gupta1@synopsys.com>,
-        Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Subject: [PATCH v2] ARC: prevent showing irrelevant exception info in signal message
-Date:   Tue,  7 Aug 2018 16:59:45 +0300
-Message-Id: <20180807135945.2948-1-Eugeniy.Paltsev@synopsys.com>
-X-Mailer: git-send-email 2.14.4
+        Tue, 7 Aug 2018 12:14:21 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w77Ds5Eq090848;
+        Tue, 7 Aug 2018 13:59:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=ETRP6QTNgwTdRf6k5LCso71GbdFDWK4N3Yw3g8t40HI=;
+ b=ZQVlx/rjK06Y5zcze6a7MPbduKxwd56khTUJHFgYrGBVuqOtW7Htc/RrI8xEIycNm11u
+ KfJaXO7fix2OvZIhPOPIqjEtYqkza7QjCB1JdlTaxjr39HMPeq8saP2DmLfyH0jjZNCd
+ pM7vgqVpuaFuCtAxzP5uoGwLSRyVFPuj2wnoP9vytt3i+zzJsV+WdfIM/trO7QEIuKxx
+ zs/p4ls1eeNuO08xmodUPN6hAQZKQ7WiH1djc7kvHglRU7SeL9nLiZdpnbHpFnPiKiev
+ OBoyFJ6QWE0nFEJ5iZDwkUih4ffNRCagrtQx6xtyxxwHM5ChaZ3eg5uXPxa/GvnRwys+ tg== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by aserp2120.oracle.com with ESMTP id 2kn43nsgkr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 07 Aug 2018 13:59:37 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w77Dxa59012987
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 7 Aug 2018 13:59:36 GMT
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w77DxZNe003587;
+        Tue, 7 Aug 2018 13:59:35 GMT
+Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 07 Aug 2018 06:59:35 -0700
+Subject: Re: [PATCH 0/4] xen: various cleanups
+To:     Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
+        xen-devel@lists.xenproject.org, x86@kernel.org
+Cc:     hpa@zytor.com, tglx@linutronix.de, mingo@redhat.com
+References: <20180717120113.12756-1-jgross@suse.com>
+ <395f02c9-9893-e8fc-2b51-4229c66b796b@suse.com>
+From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
+ 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
+ Jg6OxFYd01z+a+oL
+Message-ID: <de59d247-7745-bdf2-948a-03170af3b526@oracle.com>
+Date:   Tue, 7 Aug 2018 10:00:37 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <395f02c9-9893-e8fc-2b51-4229c66b796b@suse.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8977 signatures=668707
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=847
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1808070142
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We process signals in the end of syscall/exception handler.
-It the signal is fatal we print register's content using
-show_regs function. show_regs() also prints information about
-last exception happened.
+On 08/07/2018 09:10 AM, Juergen Gross wrote:
+> On 17/07/18 14:01, Juergen Gross wrote:
+>> Some Xen related cleanups:
+>> - move some pv-only code from CONFIG_XEN to CONFIG_XEN_PV
+>> - use CONFIG_XEN_PVHVM in Makefile instead of #ifdef around a complete source
+>> - add SPDX identifier where missing
+>>
+>> Juergen Gross (4):
+>>   xen: move pv irq related functions under CONFIG_XEN_PV umbrella
+>>   xen: move pv specific parts of arch/x86/xen/mmu.c to mmu_pv.c
+>>   xen: link platform-pci-unplug.o only if CONFIG_XEN_PVHVM
+>>   xen: add SPDX identifier in arch/x86/xen files
+>>
+>>  arch/x86/entry/entry_32.S          |   8 +-
+>>  arch/x86/entry/entry_64.S          |   8 +-
+>>  arch/x86/xen/Makefile              |  41 ++++++--
+>>  arch/x86/xen/efi.c                 |  14 +--
+>>  arch/x86/xen/enlighten.c           |   2 +
+>>  arch/x86/xen/enlighten_hvm.c       |   2 +
+>>  arch/x86/xen/grant-table.c         |  25 +----
+>>  arch/x86/xen/mmu.c                 | 188 +------------------------------------
+>>  arch/x86/xen/mmu_pv.c              | 140 +++++++++++++++++++++++++++
+>>  arch/x86/xen/p2m.c                 |   2 +
+>>  arch/x86/xen/pci-swiotlb-xen.c     |   2 +
+>>  arch/x86/xen/platform-pci-unplug.c |  18 +---
+>>  arch/x86/xen/vdso.h                |   2 +
+>>  arch/x86/xen/xen-pvh.S             |  15 +--
+>>  include/xen/interface/memory.h     |   6 --
+>>  include/xen/xen-ops.h              | 133 +++++++++++++++++---------
+>>  16 files changed, 287 insertions(+), 319 deletions(-)
+>>
+> Boris, any objections?
 
-In case of multicore system we can catch the situation when we
-will print wrong information about exception. See the example:
-______________________________
-CPU-0: started to handle page fault
-CPU-1: sent signal to process, which is executed on CPU-0
-CPU-0: ended page fault handle. Started to process signal before
-       returnig to userspace. Process signal, which is send from
-       CPU-0. As th signal is fatal we call show_regs().
-       show_regs() will show information about last exception
-       which is *page fault* (instead of "trap" which is used for
-       signals and happened on CPU-0)
 
-So we will get message like this:
-   # ./waitpid02
-  potentially unexpected fatal signal 8.
-  Path: /home/waitpid02
-  CPU: 0 PID: 100 Comm: waitpid02 Not tainted 4.10.0-rc4 #2
-  task: 9f11c200 task.stack: 9f3ae000
+This series had my R-b, but I was waiting for x86 maintainers to ack the
+first patch.
 
-  [ECR   ]: 0x00050200 => Invalid Write @ 0x00000000 by insn @ 0x000123ec
-  [EFA   ]: 0x00000000
-  [BLINK ]: 0x123ea
-  [ERET  ]: 0x123ec
-    @off 0x123ec in [/home/waitpid02]
-    VMA: 0x00010000 to 0x00016000
-  [STAT32]: 0x80080882 : IE U
-  BTA: 0x000123ea  SP: 0x5ffd3db0  FP: 0x00000000
-  LPS: 0x20031684 LPE: 0x2003169a LPC: 0x00000006
-  [-----other-info-----]
+But now that I looked at this again, I wonder whether
 
-This message is confusing because it show information about page fault
-( [ECR   ]: 0x00050200 => Invalid Write ) which is absolutely irrelevant
-to signal.
++#ifdef CONFIG_XEN
+ BUILD_INTERRUPT3(xen_hvm_callback_vector, HYPERVISOR_CALLBACK_VECTOR,
+          xen_evtchn_do_upcall)
++#endif
 
-This situation was reproduced with waitpid02 LTP test.
-_____________________________
 
-So remove printing information about exceptions from show_regs()
-to avoid confusing messages. Print information about exceptions
-only in required places instead of show_regs()
+and
 
-Now we don't print information about exceptions if signal is simply
-send by another userspace app. So in case of waitpid02 we will print
-next message:
-_____________________________
-   # ./waitpid02
-  potentially unexpected fatal signal 8.
-  Path: /root/waitpid02
-  CPU: 2 PID: 105 Comm: waitpid02 Not tainted 4.18.0-rc8-00002-gde0f6d6aeb53-dirty #17
-  [ECR   ]: 0x00050100
-  [EFA   ]: 0x00000000
-  [BLINK ]: 0x20001486
-  [-----other-info-----]
-_____________________________
++#ifdef CONFIG_XEN
+ apicinterrupt3 HYPERVISOR_CALLBACK_VECTOR \
+     xen_hvm_callback_vector xen_evtchn_do_upcall
++#endif
 
-This patch fix
-STAR 9001146055: waitpid02: Invalid Write @ 0x00000000 by insn @ 0x000123ec
 
-NOTE:
-To be more clear I give examples of different faults (signal-based,
-userspace/kernelspace exception-based) with different values of
-"/proc/sys/kernel/print-fatal-signals" option.
+should be under XEN_PVHVM
 
-0) NULL pointer access from user space, print-fatal-signals == 1:
------------->8---------------
- # ./arc_hell
-Exception: arc_hell[103]: at 0x2003a35c [off 0x2e35c in /lib/libuClibc-1.0.18.so, VMA: 2000c000:20072000]
-  ECR: 0x00050100 => Invalid Read @ 0x00000000 by insn @ 0x2003a35c
-potentially unexpected fatal signal 11.
-Path: /root/arc_hell
-CPU: 1 PID: 103 Comm: arc_hell Not tainted 4.18.0-rc8-00002-gde0f6d6aeb53-dirty #17
-[ECR   ]: 0x00050100
-[EFA   ]: 0x00000000
-[BLINK ]: 0x20039ef8
-[ERET  ]: 0x2003a35c
-[STAT32]: 0x80080882 : IE U
-BTA: 0x2003a358  SP: 0x5fa27dc4  FP: 0x5fa27de8
-LPS: 0x2003a628 LPE: 0x2003a62c LPC: 0x00000000
-r00: 0x00000000 r01: 0x200740b0 r02: 0x00000001
-r03: 0x00000007 r04: 0x80808080 r05: 0x2f2f2f2f
-r06: 0x7c7a2f43 r07: 0x00000000 r08: 0x1a131100
-r09: 0x2008b1e0 r10: 0x20003a5c r11: 0x20004038
-r12: 0x20039ef8 r13: 0x200740b0 r14: 0x00000000
-r15: 0x200740b0 r16: 0x00000000 r17: 0x0007d468
-r18: 0x0009313a r19: 0x00000000 r20: 0x0009c22c
-r21: 0x0009c23c r22: 0x0009ab64 r23: 0x00000000
-r24: 0x0009dfc5 r25: 0x20004b70
 
-Segmentation fault
------------->8---------------
+-boris
 
-1) NULL pointer access from user space, print-fatal-signals == 0:
------------->8---------------
- # ./arc_hell
-Exception: arc_hell[107]: at 0x2003a35c [off 0x2e35c in /lib/libuClibc-1.0.18.so, VMA: 2000c000:20072000]
-  ECR: 0x00050100 => Invalid Read @ 0x00000000 by insn @ 0x2003a35c
-Segmentation fault
------------->8---------------
 
-2) Process killed by signal (waitpid02 test), print-fatal-signals == 1:
------------->8---------------
- # ./waitpid02
-potentially unexpected fatal signal 8.
-Path: /root/waitpid02
-CPU: 2 PID: 105 Comm: waitpid02 Not tainted 4.18.0-rc8-00002-gde0f6d6aeb53-dirty #17
-[ECR   ]: 0x00050100
-[EFA   ]: 0x00000000
-[BLINK ]: 0x20001486
-[ERET  ]: 0x2000146c
-[STAT32]: 0x80080082 : IE U
-BTA: 0x20000fc4  SP: 0x5fa21d64  FP: 0x00000000
-LPS: 0x200524a0 LPE: 0x200524b6 LPC: 0x00000006
-r00: 0x2000c0dc r01: 0x00000018 r02: 0x0001159a
-r03: 0x00000001 r04: 0x00000000 r05: 0x00000045
-r06: 0x0000004e r07: 0x01010101 r08: 0x000000dc
-r09: 0x200a31e0 r10: 0x20003a5c r11: 0x20004038
-r12: 0x20001486 r13: 0x20004174 r14: 0x07ca2bc0
-r15: 0x20004078 r16: 0x00000000 r17: 0x20004038
-r18: 0x00000001 r19: 0x00000000 r20: 0x0001159a
-r21: 0x00000001 r22: 0x00000000 r23: 0x00000004
-r24: 0x2000d1fc r25: 0x20004cd0
------------->8---------------
 
-3) Process killed by signal (waitpid02 test), print-fatal-signals == 0:
------------->8---------------
- # ./waitpid02
------------->8---------------
 
-4) NULL pointer access from kernel space, regardless print-fatal-signals
-value:
------------->8---------------
-Oops
-Exception: at stmmac_dvr_probe+0x40/0x7e0:
-  ECR: 0x00050200 => Invalid Write @ 0x00000000 by insn @ 0x90575254
-Path: (null)
-CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.18.0-rc8-00002-gde0f6d6aeb53-dirty #11
-[EFA   ]: 0x00000000
-[BLINK ]: stmmac_dvr_probe+0x2a/0x7e0
-[ERET  ]: stmmac_dvr_probe+0x40/0x7e0
-[STAT32]: 0x80080402 : IE K
-BTA: 0x9057523e  SP: 0xbf02be40  FP: 0x00000000
-LPS: 0x9073dbcc LPE: 0x9073dbe0 LPC: 0x00000000
-r00: 0xbf1f0000 r01: 0x00000000 r02: 0x00000008
-r03: 0x00000000 r04: 0x00000064 r05: 0x00000000
-r06: 0x00000003 r07: 0x00000004 r08: 0x01010101
-r09: 0x00000031 r10: 0xbf1f0006 r11: 0x00000000
-r12: 0x9057523e
 
-Stack Trace:
-  stmmac_dvr_probe+0x40/0x7e0
-  dwmac_generic_probe+0x50/0xbc
-  platform_drv_probe+0x26/0x5c
-  really_probe+0x3b0/0x464
-  __driver_attach+0xd4/0xd8
-  bus_for_each_dev+0x3a/0x70
-  bus_add_driver+0x12a/0x18c
-  driver_register+0x56/0xe8
-  do_one_initcall+0x2e/0x118
-  kernel_init_freeable+0x102/0x194
------------->8---------------
-
-Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
----
-
-NOTE:
-  This patch has prerequisites:
-  https://www.mail-archive.com/linux-snps-arc@lists.infradead.org/msg03938.html
-  https://www.mail-archive.com/linux-snps-arc@lists.infradead.org/msg03937.html
-
-Changes v1->v2:
- * Change format of message about exception.
-
- arch/arc/include/asm/bug.h     |  1 +
- arch/arc/kernel/traps.c        |  1 +
- arch/arc/kernel/troubleshoot.c | 51 +++++++++++++++++++++++++++++++++---------
- arch/arc/mm/fault.c            |  2 ++
- 4 files changed, 44 insertions(+), 11 deletions(-)
-
-diff --git a/arch/arc/include/asm/bug.h b/arch/arc/include/asm/bug.h
-index 21ec82466d62..b68f7f82f2d8 100644
---- a/arch/arc/include/asm/bug.h
-+++ b/arch/arc/include/asm/bug.h
-@@ -16,6 +16,7 @@
- struct task_struct;
- 
- void show_regs(struct pt_regs *regs);
-+void show_exception_mesg(struct pt_regs *regs);
- void show_stacktrace(struct task_struct *tsk, struct pt_regs *regs);
- void show_kernel_fault_diag(const char *str, struct pt_regs *regs,
- 			    unsigned long address);
-diff --git a/arch/arc/kernel/traps.c b/arch/arc/kernel/traps.c
-index b123558bf0bb..5d83b2fe5f12 100644
---- a/arch/arc/kernel/traps.c
-+++ b/arch/arc/kernel/traps.c
-@@ -50,6 +50,7 @@ unhandled_exception(const char *str, struct pt_regs *regs, siginfo_t *info)
- 		tsk->thread.fault_address = (__force unsigned int)info->si_addr;
- 
- 		force_sig_info(info->si_signo, info, tsk);
-+		show_exception_mesg(regs);
- 
- 	} else {
- 		/* If not due to copy_(to|from)_user, we are doomed */
-diff --git a/arch/arc/kernel/troubleshoot.c b/arch/arc/kernel/troubleshoot.c
-index e8d9fb452346..fdfba1942a06 100644
---- a/arch/arc/kernel/troubleshoot.c
-+++ b/arch/arc/kernel/troubleshoot.c
-@@ -101,13 +101,13 @@ static void show_faulting_vma(unsigned long address, char *buf)
- 			if (IS_ERR(nm))
- 				nm = "?";
- 		}
--		pr_info("    @off 0x%lx in [%s]\n"
--			"    VMA: 0x%08lx to 0x%08lx\n",
-+
-+		pr_cont("[off 0x%lx in %s, VMA: %08lx:%08lx] ",
- 			vma->vm_start < TASK_UNMAPPED_BASE ?
- 				address : address - vma->vm_start,
- 			nm, vma->vm_start, vma->vm_end);
- 	} else
--		pr_info("    @No matching VMA found\n");
-+		pr_cont("[No matching VMA found] ");
- 
- 	up_read(&active_mm->mmap_sem);
- }
-@@ -117,7 +117,7 @@ static void show_ecr_verbose(struct pt_regs *regs)
- 	unsigned int vec, cause_code;
- 	unsigned long address;
- 
--	pr_info("\n[ECR   ]: 0x%08lx => ", regs->event);
-+	pr_cont("\n  ECR: 0x%08lx => ", regs->event);
- 
- 	/* For Data fault, this is data address not instruction addr */
- 	address = current->thread.fault_address;
-@@ -165,10 +165,42 @@ static void show_ecr_verbose(struct pt_regs *regs)
- 	}
- }
- 
-+static inline void show_exception_mesg_u(struct pt_regs *regs)
-+{
-+	struct task_struct *tsk = current;
-+	char *buf;
-+
-+	pr_info("Exception: %s[%d]: at %pS ",
-+		tsk->comm, task_pid_nr(tsk), (void *)regs->ret);
-+
-+	buf = (char *)__get_free_page(GFP_NOWAIT);
-+	if (buf) {
-+		show_faulting_vma(regs->ret, buf);
-+		free_page((unsigned long)buf);
-+	}
-+
-+	show_ecr_verbose(regs);
-+}
-+
-+static inline void show_exception_mesg_k(struct pt_regs *regs)
-+{
-+	pr_info("Exception: at %pS:", (void *)regs->ret);
-+
-+	show_ecr_verbose(regs);
-+}
-+
- /************************************************************************
-  *  API called by rest of kernel
-  ***********************************************************************/
- 
-+void show_exception_mesg(struct pt_regs *regs)
-+{
-+	if (user_mode(regs))
-+		show_exception_mesg_u(regs);
-+	else
-+		show_exception_mesg_k(regs);
-+}
-+
- void show_regs(struct pt_regs *regs)
- {
- 	struct task_struct *tsk = current;
-@@ -182,15 +214,10 @@ void show_regs(struct pt_regs *regs)
- 	print_task_path_n_nm(tsk, buf);
- 	show_regs_print_info(KERN_INFO);
- 
--	show_ecr_verbose(regs);
--
--	pr_info("[EFA   ]: 0x%08lx\n[BLINK ]: %pS\n[ERET  ]: %pS\n",
--		current->thread.fault_address,
-+	pr_info("[ECR   ]: 0x%08lx\n[EFA   ]: 0x%08lx\n[BLINK ]: %pS\n[ERET  ]: %pS\n",
-+		regs->event, current->thread.fault_address,
- 		(void *)regs->blink, (void *)regs->ret);
- 
--	if (user_mode(regs))
--		show_faulting_vma(regs->ret, buf); /* faulting code, not data */
--
- 	pr_info("[STAT32]: 0x%08lx", regs->status32);
- 
- #define STS_BIT(r, bit)	r->status32 & STATUS_##bit##_MASK ? #bit" " : ""
-@@ -233,6 +260,8 @@ void show_kernel_fault_diag(const char *str, struct pt_regs *regs,
- 	/* Show fault description */
- 	pr_info("\n%s\n", str);
- 
-+	show_exception_mesg(regs);
-+
- 	/* Caller and Callee regs */
- 	show_regs(regs);
- 
-diff --git a/arch/arc/mm/fault.c b/arch/arc/mm/fault.c
-index b884bbd6f354..d9c6958a1702 100644
---- a/arch/arc/mm/fault.c
-+++ b/arch/arc/mm/fault.c
-@@ -202,6 +202,7 @@ void do_page_fault(unsigned long address, struct pt_regs *regs)
- 		/* info.si_code has been set above */
- 		info.si_addr = (void __user *)address;
- 		force_sig_info(SIGSEGV, &info, tsk);
-+		show_exception_mesg(regs);
- 		return;
- 	}
- 
-@@ -241,4 +242,5 @@ void do_page_fault(unsigned long address, struct pt_regs *regs)
- 	info.si_code = BUS_ADRERR;
- 	info.si_addr = (void __user *)address;
- 	force_sig_info(SIGBUS, &info, tsk);
-+	show_exception_mesg(regs);
- }
--- 
-2.14.4
-
+-boris
