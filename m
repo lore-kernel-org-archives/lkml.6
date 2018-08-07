@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C105AC46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:53:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42CE2C46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:53:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 851322151D
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:53:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 851322151D
+	by mail.kernel.org (Postfix) with ESMTP id 07C9A2172E
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:53:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07C9A2172E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404132AbeHGVJY (ORCPT
+        id S2404148AbeHGVJ0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 17:09:24 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33282 "EHLO
+        Tue, 7 Aug 2018 17:09:26 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33290 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404017AbeHGVJX (ORCPT
+        with ESMTP id S2404017AbeHGVJ0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 17:09:23 -0400
+        Tue, 7 Aug 2018 17:09:26 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B58C6D07;
-        Tue,  7 Aug 2018 18:53:39 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F36E2D01;
+        Tue,  7 Aug 2018 18:53:42 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Quinn Tran <quinn.tran@cavium.com>,
         Himanshu Madhani <himanshu.madhani@cavium.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.14 02/21] scsi: qla2xxx: Fix NPIV deletion by calling wait_for_sess_deletion
-Date:   Tue,  7 Aug 2018 20:51:16 +0200
-Message-Id: <20180807172331.054007735@linuxfoundation.org>
+Subject: [PATCH 4.14 03/21] scsi: qla2xxx: Fix ISP recovery on unload
+Date:   Tue,  7 Aug 2018 20:51:17 +0200
+Message-Id: <20180807172331.098014564@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180807172330.953888701@linuxfoundation.org>
 References: <20180807172330.953888701@linuxfoundation.org>
@@ -53,11 +53,13 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Quinn Tran <quinn.tran@cavium.com>
 
-commit efa93f48fa9d423fda166bc3b6c0cbb09682492e upstream.
+commit b08abbd9f5996309f021684f9ca74da30dcca36a upstream.
 
-Add wait for session deletion to finish before freeing an NPIV scsi host.
+During unload process, the chip can encounter problem where a FW dump would
+be captured. For this case, the full reset sequence will be skip to bring
+the chip back to full operational state.
 
-Fixes: 726b85487067 ("qla2xxx: Add framework for async fabric discovery")
+Fixes: e315cd28b9ef ("[SCSI] qla2xxx: Code changes for qla data structure refactoring")
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Quinn Tran <quinn.tran@cavium.com>
 Signed-off-by: Himanshu Madhani <himanshu.madhani@cavium.com>
@@ -65,60 +67,22 @@ Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/qla2xxx/qla_attr.c |    1 +
- drivers/scsi/qla2xxx/qla_gbl.h  |    1 +
- drivers/scsi/qla2xxx/qla_mid.c  |    5 +++++
- drivers/scsi/qla2xxx/qla_os.c   |    2 +-
- 4 files changed, 8 insertions(+), 1 deletion(-)
+ drivers/scsi/qla2xxx/qla_os.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/drivers/scsi/qla2xxx/qla_attr.c
-+++ b/drivers/scsi/qla2xxx/qla_attr.c
-@@ -2142,6 +2142,7 @@ qla24xx_vport_delete(struct fc_vport *fc
- 		msleep(1000);
- 
- 	qla24xx_disable_vp(vha);
-+	qla2x00_wait_for_sess_deletion(vha);
- 
- 	vha->flags.delete_progress = 1;
- 
---- a/drivers/scsi/qla2xxx/qla_gbl.h
-+++ b/drivers/scsi/qla2xxx/qla_gbl.h
-@@ -200,6 +200,7 @@ void qla2x00_handle_login_done_event(str
- 	uint16_t *);
- int qla24xx_post_gnl_work(struct scsi_qla_host *, fc_port_t *);
- int qla24xx_async_abort_cmd(srb_t *);
-+void qla2x00_wait_for_sess_deletion(scsi_qla_host_t *);
- 
- /*
-  * Global Functions in qla_mid.c source file.
---- a/drivers/scsi/qla2xxx/qla_mid.c
-+++ b/drivers/scsi/qla2xxx/qla_mid.c
-@@ -152,10 +152,15 @@ qla24xx_disable_vp(scsi_qla_host_t *vha)
- {
- 	unsigned long flags;
- 	int ret;
-+	fc_port_t *fcport;
- 
- 	ret = qla24xx_control_vp(vha, VCE_COMMAND_DISABLE_VPS_LOGO_ALL);
- 	atomic_set(&vha->loop_state, LOOP_DOWN);
- 	atomic_set(&vha->loop_down_timer, LOOP_DOWN_TIME);
-+	list_for_each_entry(fcport, &vha->vp_fcports, list)
-+		fcport->logout_on_delete = 0;
-+
-+	qla2x00_mark_all_devices_lost(vha, 0);
- 
- 	/* Remove port id from vp target map */
- 	spin_lock_irqsave(&vha->hw->vport_slock, flags);
 --- a/drivers/scsi/qla2xxx/qla_os.c
 +++ b/drivers/scsi/qla2xxx/qla_os.c
-@@ -1136,7 +1136,7 @@ static inline int test_fcport_count(scsi
-  * qla2x00_wait_for_sess_deletion can only be called from remove_one.
-  * it has dependency on UNLOADING flag to stop device discovery
-  */
--static void
-+void
- qla2x00_wait_for_sess_deletion(scsi_qla_host_t *vha)
- {
- 	qla2x00_mark_all_devices_lost(vha, 0);
+@@ -5794,8 +5794,9 @@ qla2x00_do_dpc(void *data)
+ 				set_bit(ISP_ABORT_NEEDED, &base_vha->dpc_flags);
+ 		}
+ 
+-		if (test_and_clear_bit(ISP_ABORT_NEEDED,
+-						&base_vha->dpc_flags)) {
++		if (test_and_clear_bit
++		    (ISP_ABORT_NEEDED, &base_vha->dpc_flags) &&
++		    !test_bit(UNLOADING, &base_vha->dpc_flags)) {
+ 
+ 			ql_dbg(ql_dbg_dpc, base_vha, 0x4007,
+ 			    "ISP abort scheduled.\n");
 
 
