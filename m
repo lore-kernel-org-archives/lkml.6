@@ -6,47 +6,45 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 592C2C46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 19:13:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 123A0C46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 19:18:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 049A9216F6
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 19:13:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 049A9216F6
+	by mail.kernel.org (Postfix) with ESMTP id C22B9216F6
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 19:18:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C22B9216F6
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389927AbeHGV3k (ORCPT
+        id S2389671AbeHGVeN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 17:29:40 -0400
-Received: from mga02.intel.com ([134.134.136.20]:57418 "EHLO mga02.intel.com"
+        Tue, 7 Aug 2018 17:34:13 -0400
+Received: from mga04.intel.com ([192.55.52.120]:18934 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388948AbeHGV3k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 17:29:40 -0400
+        id S1729922AbeHGVeM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 17:34:12 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Aug 2018 12:13:51 -0700
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Aug 2018 12:18:22 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,456,1526367600"; 
-   d="scan'208";a="60634214"
+   d="scan'208";a="252776249"
 Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
-  by fmsmga007.fm.intel.com with ESMTP; 07 Aug 2018 12:13:47 -0700
-Message-ID: <87753f10135e5f0791a6bfecb37ddecf7fd5b977.camel@linux.intel.com>
-Subject: Re: [PATCH v2] ASoC: rt5677: Fix initialization of
- rt5677_of_match.data
+  by fmsmga006.fm.intel.com with ESMTP; 07 Aug 2018 12:18:20 -0700
+Message-ID: <58c02aeff4285498272b0a13b8de2dc1282fded9.camel@linux.intel.com>
+Subject: Re: [PATCH] gpio: Add driver for PC Engines APU2/APU3 GPIOs
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Matthias Kaehlcke <mka@chromium.org>,
-        Bard Liao <bardliao@realtek.com>,
-        Oder Chiou <oder_chiou@realtek.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        Guenter Roeck <groeck@chromium.org>,
-        Nicolas Boichat <drinkcat@chromium.org>
-Date:   Tue, 07 Aug 2018 22:13:47 +0300
-In-Reply-To: <20180807171940.150507-1-mka@chromium.org>
-References: <20180807171940.150507-1-mka@chromium.org>
+To:     Florian Eckert <fe@dev.tdt.de>,
+        Christian Lamparter <chunkeey@gmail.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Date:   Tue, 07 Aug 2018 22:18:19 +0300
+In-Reply-To: <37e92da47c20e8c771afcdb14c5532d8@dev.tdt.de>
+References: <20180801111243.2848-1-fe@dev.tdt.de>
+         <CACRpkdbY3w-ptUOkv5TUZh+5oEGU+4BLO_6=12QecRveTSBKSQ@mail.gmail.com>
+         <1846152.TW98f23PIX@debian64> <37e92da47c20e8c771afcdb14c5532d8@dev.tdt.de>
 Organization: Intel Finland Oy
 Content-Type: text/plain; charset="UTF-8"
 X-Mailer: Evolution 3.28.1-2 
@@ -57,34 +55,26 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-08-07 at 10:19 -0700, Matthias Kaehlcke wrote:
-> The driver expects to find the device id in rt5677_of_match.data,
-> however
-> it is currently assigned to rt5677_of_match.type. Fix this.
+On Tue, 2018-08-07 at 13:18 +0200, Florian Eckert wrote:
+> Hello Andy
 > 
-> The problem was found with the help of clang:
->   sound/soc/codecs/rt5677.c:5010:36: warning: expression which
-> evaluates to
->   zero treated as a null pointer constant of type 'const void *'
->   [-Wnon-literal-null-conversion]
->     { .compatible = "realtek,rt5677", RT5677 },
->                                       ^~~~~~
+> I think this are the information you want to have.
 > 
-> Fixes: ddc9e69b9dc2 ("ASoC: rt5677: Hide platform data in the module
-> sources")
-> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
 
-While this is correct fix, it seems it was never used.
+I was rather asking for something like TRM.
 
-Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
- 
->  static const struct of_device_id rt5677_of_match[] = {
-> -	{ .compatible = "realtek,rt5677", RT5677 },
-> +	{ .compatible = "realtek,rt5677", .data = (const void *)RT5677
-> },
->  	{ }
->  };
->  MODULE_DEVICE_TABLE(of, rt5677_of_match);
+By schematics, I meant a simplified GPIO buffers and pin control
+explained on hardware level.
+
+Below has nothing to do with either, unfortunately.
+
+> On 2018-08-04 20:22, Christian Lamparter wrote:
+> > As for the APUs. The vendor (PC Engines) happily provides
+> > PDFs and schematics for their boards:
+> > <https://www.pcengines.ch/pdf/apu1.pdf>
+> > <https://www.pcengines.ch/schema/apu1c.pdf>
+> > <https://www.pcengines.ch/pdf/apu2.pdf>
+> > <http://pcengines.ch/schema/apu2c.pdf>
 
 -- 
 Andy Shevchenko <andriy.shevchenko@linux.intel.com>
