@@ -3,132 +3,89 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45112C46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 17:06:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EB2CC46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 17:10:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 015FE2175D
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 17:06:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 30DF421533
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 17:10:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XgAf5LUy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 015FE2175D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="PPNUR5/5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30DF421533
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390048AbeHGTWA (ORCPT
+        id S2389974AbeHGTZR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 15:22:00 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:45669 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389971AbeHGTV7 (ORCPT
+        Tue, 7 Aug 2018 15:25:17 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:48038 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727354AbeHGTZR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 15:21:59 -0400
-Received: by mail-qt0-f195.google.com with SMTP id y5-v6so18621935qti.12;
-        Tue, 07 Aug 2018 10:06:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=xBciRsMDjgxJ2VlcIn5i1Ht6Ep2+wMb6FL9+f2CNlXs=;
-        b=XgAf5LUylOW+bF6J3mUSqVMExrzjJk8AUyDyDg0D4XNbz/3o1FeajXYo+njG+T+a9G
-         o31StY8IU+lwkRdxUzbdC4SvtGQMs0/9LQzGnz5SKcyPayEn3GA/E0IWonT5qjloJEoh
-         iHiwlo55hz021MK4RJANn/uvn/v5rJxGGADO/uWbrUdNrpFEbkwU4J4SGrjC4zayBSwg
-         cdMMn1GMM9H/SsBTzXinCGl+c1mPEVWDPq8N1A6NIgxlBV5UrhhDkUjmqxf4Mml1WuiX
-         nF4X7bRXgqnK4WJWUW0CAwj0Is0VLBmlbY9t7tOYkCZ/RONJYRGBBAuiHZOGAUCcS/Iv
-         OlIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=xBciRsMDjgxJ2VlcIn5i1Ht6Ep2+wMb6FL9+f2CNlXs=;
-        b=rRGueL5vLTCdXCvXZS3zq/4Yi8Pzwkq8Dvbu7EQrYD4YV2I/Qhsge0Da+0bTfud/96
-         nvsganxH0qzz1hmkLyRXd4SxDcM5Si/4/yCIjJQgPHiEqoUjP/PjTSwE66Rz06xore8w
-         Nycw/Dmp8nFwbO6kpKFEPfSh968MMEulTvInoVdpo5Ta9S2DRt6JYNrTdTARPYevSzj3
-         bX9RX2qyRQ6aU30vx3RJylcmA2GkepQFz5vwbmbwZCOvBgMmK/Q3CRGgm6vvic2bUUGV
-         /i9IqHqRB0wiDfVB2s1iNcEf/Y3xUh6f0CGU5u0a74XUMfuV3O9g7lDu9omZj4r5t/P6
-         5+EA==
-X-Gm-Message-State: AOUpUlFjMjku85NcIeNAkFGt2PXUlG3ChKU08ayDpRNhy0t/jJK1WFBj
-        dbw5vBLBWIIQjE6Iye2P+/Y=
-X-Google-Smtp-Source: AAOMgpfjX9amJrNNAwwKFkucteJLnAgvVBPpz5GTYIo1cWdYZygeIUlbKvyxZ/YI7kVKLTB1Hie2mw==
-X-Received: by 2002:a0c:8261:: with SMTP id h88-v6mr17694032qva.117.1533661603589;
-        Tue, 07 Aug 2018 10:06:43 -0700 (PDT)
-Received: from [10.69.41.93] ([192.19.223.250])
-        by smtp.googlemail.com with ESMTPSA id j88-v6sm1169395qte.49.2018.08.07.10.06.39
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 07 Aug 2018 10:06:42 -0700 (PDT)
-Subject: Re: [PATCH 3/3] net: phy: Add support for Broadcom Omega internal
- Combo GPHY
-To:     Arun Parameswaran <arun.parameswaran@broadcom.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com
-References: <1533661364-15381-1-git-send-email-arun.parameswaran@broadcom.com>
- <1533661364-15381-4-git-send-email-arun.parameswaran@broadcom.com>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
- 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
- HGuUuzv+GKZ6nsysJw==
-Message-ID: <8a5c93b1-1f86-592c-3e5b-667c72ce03f2@gmail.com>
-Date:   Tue, 7 Aug 2018 10:06:38 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        Tue, 7 Aug 2018 15:25:17 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w77H4UQO012760;
+        Tue, 7 Aug 2018 17:09:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=9hsiQhkFiuv9WHw8UXh7YXQEk7pre1hBwCz5ybxxGNQ=;
+ b=PPNUR5/5E6LMFrvvHVGJCWWU3js0QVphaV0UbTN075wahfO4tpLjXlIsHzs/ayELNq6E
+ sQL0OSaGjyFliJlZr+T6PMLqmqiq9plNI2O184sMLkah/YPdT4ojUWWnJ/da7JbKptCB
+ WZG06OgLf5ZjePjeAGw6adVzCSnwkqAiFHIdJ5PE/4eKGhDXM0rvOcr1RQXzFSruzmv4
+ TDTz1lZnO0TWX5POmMYKNSKkMsBlfO5uajzCxAvQBA0QCovvPE3Q3hLDDoBs8AYv1N3j
+ jzDSRTwtmMvOGbyHC9P/jR5mQDaYDSHEX4fRs8LmGt2VNBk1JvXXdIRlsuFEQbP8eGwp 4g== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2120.oracle.com with ESMTP id 2kn4sptbd9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 07 Aug 2018 17:09:53 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w77H9qLe028544
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 7 Aug 2018 17:09:52 GMT
+Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w77H9qnj027293;
+        Tue, 7 Aug 2018 17:09:52 GMT
+Received: from [10.209.243.127] (/10.209.243.127)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 07 Aug 2018 10:09:51 -0700
+Subject: Re: [PATCH net-next] RDS: IB: fix 'passing zero to ERR_PTR()' warning
+To:     YueHaibing <yuehaibing@huawei.com>, davem@davemloft.net
+Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org, rds-devel@oss.oracle.com
+References: <20180807113416.12680-1-yuehaibing@huawei.com>
+From:   Santosh Shilimkar <santosh.shilimkar@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <62d6f34a-3bdc-8c32-bcae-cd55cf27a911@oracle.com>
+Date:   Tue, 7 Aug 2018 10:09:49 -0700
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <1533661364-15381-4-git-send-email-arun.parameswaran@broadcom.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180807113416.12680-1-yuehaibing@huawei.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8978 signatures=668707
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=669
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1808070171
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/07/2018 10:02 AM, Arun Parameswaran wrote:
-> Add support for the Broadcom Omega SoC internal Combo Ethernet
-> GPHY to the bcm7xxx phy driver.
+On 8/7/2018 4:34 AM, YueHaibing wrote:
+> Fix a static code checker warning:
+>   net/rds/ib_frmr.c:82 rds_ib_alloc_frmr() warn: passing zero to 'ERR_PTR'
 > 
-> Signed-off-by: Arun Parameswaran <arun.parameswaran@broadcom.com>
+> The error path for ib_alloc_mr failure should set err to PTR_ERR.
+> 
+> Fixes: 1659185fb4d0 ("RDS: IB: Support Fastreg MR (FRMR) memory registration mode")
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
+Looks good. Thanks !!
 
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
--- 
-Florian
+Acked-by: Santosh Shilimkar <santosh.shilimkar@oracle.com>
