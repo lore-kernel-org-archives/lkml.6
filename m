@@ -3,90 +3,87 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDC39C4646D
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 00:14:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB060C46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 00:14:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9430A21A13
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 00:14:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9430A21A13
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=buserror.net
+	by mail.kernel.org (Postfix) with ESMTP id 8CD5921A13
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 00:14:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CD5921A13
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732824AbeHGCZg (ORCPT
+        id S1733138AbeHGC0V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 6 Aug 2018 22:25:36 -0400
-Received: from baldur.buserror.net ([165.227.176.147]:48926 "EHLO
-        baldur.buserror.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730724AbeHGCZf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 6 Aug 2018 22:25:35 -0400
-X-Greylist: delayed 702 seconds by postgrey-1.27 at vger.kernel.org; Mon, 06 Aug 2018 22:25:35 EDT
-Received: from [2601:449:8400:7293:12bf:48ff:fe84:c9a0]
-        by baldur.buserror.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <oss@buserror.net>)
-        id 1fmpdG-00022M-O7; Mon, 06 Aug 2018 19:13:51 -0500
-Message-ID: <fe49ef59e93842c6f2beabd130918c9262cef9fe.camel@buserror.net>
-From:   Scott Wood <oss@buserror.net>
-To:     Rob Herring <robh@kernel.org>, Ran Wang <ran.wang_1@nxp.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
-        Zhao Chenhui <chenhui.zhao@freescale.com>,
-        Li Yang <leoyang.li@nxp.com>,
-        Paul Mackerras <paulus@samba.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Li Yang <leoli@freescale.com>, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org
-Date:   Mon, 06 Aug 2018 19:13:49 -0500
-In-Reply-To: <20180416151356.r7si6higfrovl53l@rob-hp-laptop>
-References: <20180411063551.30368-1-ran.wang_1@nxp.com>
-         <20180411063551.30368-6-ran.wang_1@nxp.com>
-         <20180416151356.r7si6higfrovl53l@rob-hp-laptop>
-Organization: Red Hat
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
+        Mon, 6 Aug 2018 22:26:21 -0400
+Received: from mga12.intel.com ([192.55.52.136]:64625 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730724AbeHGC0U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 6 Aug 2018 22:26:20 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Aug 2018 17:14:46 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,453,1526367600"; 
+   d="scan'208";a="81212863"
+Received: from tstruk-mobl1.jf.intel.com ([10.7.196.170])
+  by orsmga002.jf.intel.com with ESMTP; 06 Aug 2018 17:09:01 -0700
+Subject: Re: [PATCH v3 RESEND 2/2] tpm: add support for nonblocking operation
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
+        jarkko.sakkinen@linux.intel.com
+Cc:     flihp@twobit.us, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <153358975874.26901.16081444242758666628.stgit@tstruk-mobl1.jf.intel.com>
+ <153359005823.27531.1050952672299708433.stgit@tstruk-mobl1.jf.intel.com>
+ <1533596748.3159.19.camel@HansenPartnership.com>
+From:   Tadeusz Struk <tadeusz.struk@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=tadeusz.struk@intel.com; prefer-encrypt=mutual; keydata=
+ xsDiBEiLICMRBADteQacQxypsuFvAw6IwYzbD8pgQi+kLYBcqfGgVAUN/cO+sLl6u1lVdaDB
+ fhAArdbV9lpoqcWnmhQFTb4A+W569EpydBr6nuatWkEB+fmmx8YoUtuZfXt7v+1l1rc09kaW
+ LY+TkwQkvFCeuvdasgmBLnmRWymEGWi1E12hUgTw/wCgtK24geC7XkiuANMv0gpr+raOgQMD
+ /2yJZ0SeXQApWyTRaeIYN8GgYHZTWuBp/ofN+viEkhrDxahcaGPP5B/Nv6VS1+M0e5m8OzHj
+ qPUbgfyOeJcslC5aoZdqqqzVWVLaA/+Jy+O+6T3k3R/IryVVATldBlwnGFDhET0mKQsd15zt
+ cIdQBBbfSFR5VlugZuWV5q442IpPA/4g7nen9FFPxh45Te8D54hAsOCywjm6xUE0UJGYHeJ/
+ MXCPtuXfVCbYcOxZVH7kUS2Vtk5d3bF40IE2WnVq1ZScNANF4ZjikxYhYGfNWX3HXak1gSoj
+ UrY87rMSjPIAry4L0BoIx2qgL/k4iV/3QcXL4t5wosU0iw++suf1zGGcKM0gVGFkZXVzeiBT
+ dHJ1ayA8dHN0cnVrQGdtYWlsLmNvbT7CYwQTEQIAIwIbAwYLCQgHAwIEFQIIAwQWAgMBAh4B
+ AheABQJQTjJTAhkBAAoJEDFswfskq9xyqvcAoI2nsaUCX8ZGbu+Jhq+++qlBFJ2rAJ983RoO
+ R2ofHhn3g3Qi4K34tw0l087BTQRauzUlARAAqkWRL/InEPnoGMg/gw/CRaDBaIBgMsvIcghI
+ 7xevIzpleXt6jKHghSBooH+zaT7qi4u2gkgPn4odsER3Rm94XgrZJgoqls6EpKMWpJNGP4HT
+ eYgykhfsZOLX8ijUbjTM/Sm/dZVo6aYoBL2+ciJwyl+Zt3Mp6un3/GWu6cA9005V50pRqO7j
+ PTlVCHi2bedcEEf5DDsYJv/3Oz8/4LpSf6BL6BltjeZVa2y03dTMmD031JTH+OuyJm1yh72Z
+ HWxhlYNXOv6uFJJVr+paQjrAsBVIYKhK24bD+uGJxLm8AN9i7/Si+2YeSsXvKUhk9mIoFBnU
+ VFo63cziRTcpRu/kXgDAbujwN88qytEcvhEZHS6B9vdws+lhTpolEjkLCkz0Y59z4Fs9srKy
+ QkRN+wtdiLgrwyDW3ryAKxcDmOumGWebDxpaOI/pBhrlS93HmDlvj7JmgTUU4a/NhwI3dXh5
+ pn8FZzZyVXe3Kc3bu5T3UAC7uztinsAvCJQS6jGZWrXmXkqYkaLXQOw61eInWjr01zE/zDbE
+ mdJPM0+va/gtZx9TtGxr4PpjbqswqCiubLDZXZHh5uqArPv/i+E8aXIsNSTN6Rrqs1j9YgDN
+ ALksibv6+tXH3sOlCUgjuZgJH3+s/mnaAtiV2rZ/WlH15d6nd0uiDSZrKhlR+g4NHMh1ztEA
+ EQEAAcJPBBgRAgAPBQJauzUlAhsMBQkJZgGAAAoJEDFswfskq9xyfv8AoI8aPrJCoM0h5WOP
+ kKxMmPEPHzUNAJ9jBBYXhX1CWg+IhI7i/fLlI0vwCA==
+Message-ID: <1064594c-3a3f-4d2a-5d94-e8314b330292@intel.com>
+Date:   Mon, 6 Aug 2018 17:09:01 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <1533596748.3159.19.camel@HansenPartnership.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2601:449:8400:7293:12bf:48ff:fe84:c9a0
-X-SA-Exim-Rcpt-To: robh@kernel.org, ran.wang_1@nxp.com, mark.rutland@arm.com, devicetree@vger.kernel.org, chenhui.zhao@freescale.com, leoyang.li@nxp.com, paulus@samba.org, linux-arm-kernel@lists.infradead.org, leoli@freescale.com, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: oss@buserror.net
-Subject: Re: [PATCH v2 6/6] fsl_pmc: update device bindings
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on baldur.buserror.net)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-04-16 at 10:13 -0500, Rob Herring wrote:
-> On Wed, Apr 11, 2018 at 02:35:51PM +0800, Ran Wang wrote:
-> > From: Li Yang <leoli@freescale.com>
-> 
-> Needs a commit msg and the subject should give some indication of what 
-> the update is. And also start with "dt-bindings: ..."
+On 08/06/2018 04:05 PM, James Bottomley wrote:
+> For an async interface, shouldn't I be able to queue an
+> arbitrary number of commands without blocking?
 
-This patch should also come before the patches that use the new binding.
-
-> > -  fsl,mpc8536-pmc: Sleep specifiers consist of three cells, the third of
-> > -  which will be ORed into PMCDR upon suspend, and cleared from PMCDR
-> > -  upon resume.  The first two cells are as described for fsl,mpc8578-pmc.
-> > -  This sleep controller only supports disabling devices during system
-> > -  sleep, or permanently.
-> > -
-> > -  fsl,mpc8548-pmc: Sleep specifiers consist of one or two cells, the
-> > -  first of which will be ORed into DEVDISR (and the second into
-> > -  DEVDISR2, if present -- this cell should be zero or absent if the
-> > -  hardware does not have DEVDISR2) upon a request for permanent device
-> > -  disabling.  This sleep controller does not support configuring devices
-> > -  to disable during system sleep (unless supported by another compatible
-> > -  match), or dynamically.
-> 
-> You seem to be breaking backwards compatibility with this change. I 
-> doubt that is okay on these platforms.
-
-I don't think the sleep specifier stuff ever got used.
-
--Scott
-
+That was the approach in the v1 version of this patch, but
+Jason requested this to be changed so that only one command
+at a time can be processed.
+Thanks,
+-- 
+Tadeusz
