@@ -2,101 +2,150 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5FA0C46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 16:22:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F687C46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 16:28:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98E772192C
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 16:22:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="m4nFATo4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98E772192C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id C106E21885
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 16:28:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C106E21885
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403905AbeHGShv (ORCPT
+        id S2389493AbeHGSnQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 14:37:51 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:45361 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730869AbeHGShv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 14:37:51 -0400
-Received: by mail-pl0-f67.google.com with SMTP id j8-v6so7310815pll.12
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 09:22:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=3Ld+jKIMWSrU+bYVYA8Qq6rH31LQg01ROPMJMQLB33M=;
-        b=m4nFATo446urwNwA63YL5uv1YONRJac7OzdLDghVu5YQ2B1Xzsz2E9rrThXUv5z8W0
-         AQLohnP4E96LRRaTgYWuj1ImuPFTS63d6RbFBgLZM4yTEVi5U7uzqfhQOv4uFvrHVXrH
-         mAFvREsABbg0566+UiTdulPOAjcRIFoeuBdug=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=3Ld+jKIMWSrU+bYVYA8Qq6rH31LQg01ROPMJMQLB33M=;
-        b=ccTXZiX+kJPvqrVQ64nXIe997mukKbiD1IvMrTK4MQcD+Yo//bRaMh9Mv9vrn9YetR
-         UN2dyd/d0tzrfqkRyqIiEhkT1h7rPbnmXZAw2VuX11Iy1g7s/Xpe1Ufa09UhZq+OVj/9
-         saacBt1WAOr0MyzQTh4cX5teueuF4IzE0283FbFbO0TbphJkyYra0sRWFjfTOSK8MS8E
-         julAxFhpip/5QMeL3vWLO5TO8e1blZI9e2jxg8dvy/piIMz3Vd/z/idUUKd9yBgh0DlW
-         49GuIl/TJiTbOt7VgcFxX+fD5MGGkmueUPa4EChCXA7n8pf6UH3xUWFSJHo1zOJ9xIbE
-         LXCw==
-X-Gm-Message-State: AOUpUlFG5SB+6ptX8XMhNtDsZ6tNnpuK2IAfGzZXXhPhdiwnyStdvegr
-        HxKO0ktLSiz/PNhNo6sPxyspUg==
-X-Google-Smtp-Source: AAOMgpeHRlWG1XKRWUnQdv3jLWnuQWJHJG6um2FVJBy/xlBp1XhXyoPOD8BMrdIfhARvVW5DuP4AHA==
-X-Received: by 2002:a17:902:5a4c:: with SMTP id f12-v6mr18545548plm.253.1533658968030;
-        Tue, 07 Aug 2018 09:22:48 -0700 (PDT)
-Received: from mka.mtv.corp.google.com ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
-        by smtp.gmail.com with ESMTPSA id f75-v6sm8429006pfk.85.2018.08.07.09.22.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 07 Aug 2018 09:22:47 -0700 (PDT)
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Bard Liao <bardliao@realtek.com>,
-        Oder Chiou <oder_chiou@realtek.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        Guenter Roeck <groeck@chromium.org>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH] ASoC: rt5677: Remove bogus device id from rt5677_of_match
-Date:   Tue,  7 Aug 2018 09:22:34 -0700
-Message-Id: <20180807162234.205212-1-mka@chromium.org>
-X-Mailer: git-send-email 2.18.0.597.ga71716f1ad-goog
+        Tue, 7 Aug 2018 14:43:16 -0400
+Received: from smtp.nue.novell.com ([195.135.221.5]:32786 "EHLO
+        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730869AbeHGSnP (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
+        Tue, 7 Aug 2018 14:43:15 -0400
+Received: from linux-l9pv.suse (124-11-22-254.static.tfn.net.tw [124.11.22.254])
+        by smtp.nue.novell.com with ESMTP (TLS encrypted); Tue, 07 Aug 2018 18:28:03 +0200
+Date:   Wed, 8 Aug 2018 00:27:46 +0800
+From:   joeyli <jlee@suse.com>
+To:     Yu Chen <yu.c.chen@intel.com>
+Cc:     Pavel Machek <pavel@ucw.cz>, Ryan Chen <yu.chen.surf@gmail.com>,
+        oneukum@suse.com, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        ebiggers@google.com, Theodore Ts'o <tytso@mit.edu>,
+        smueller@chronox.de, denkenz@gmail.com,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        linux-crypto@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kookoo.gu@intel.com, Zhang Rui <rui.zhang@intel.com>
+Subject: Re: [PATCH 0/4][RFC v2] Introduce the in-kernel hibernation
+ encryption
+Message-ID: <20180807162746.GJ19234@linux-l9pv.suse>
+References: <1532590246.7411.3.camel@suse.com>
+ <20180726081404.GG4244@linux-l9pv.suse>
+ <20180730170415.GQ4244@linux-l9pv.suse>
+ <20180803033702.GB416@sandybridge-desktop>
+ <20180803053445.GC4244@linux-l9pv.suse>
+ <CADjb_WSURQz86+E8kakNf7UBDM+aho+uaz3QdDkuGsEgan=szw@mail.gmail.com>
+ <20180805100200.GB22948@amd>
+ <20180806084534.GB12124@chenyu-desktop>
+ <20180806103958.GI27062@linux-l9pv.suse>
+ <20180807074312.GB17894@chenyu-desktop>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180807074312.GB17894@chenyu-desktop>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The initializer of rt5677_of_match contains a bogus device id
-(enum type) for the 'type' field (char []). Remove it.
+On Tue, Aug 07, 2018 at 03:43:12PM +0800, Yu Chen wrote:
+> On Mon, Aug 06, 2018 at 06:39:58PM +0800, joeyli wrote:
+> > On Mon, Aug 06, 2018 at 04:45:34PM +0800, Yu Chen wrote:
+> > > Hi Pavel,
+> > > On Sun, Aug 05, 2018 at 12:02:00PM +0200, Pavel Machek wrote:
+> > > > Hi!
+> > > > 
+> > > > > > User space doesn't need to involve. The EFI root key is generated by
+> > > > > > EFI boot stub and be transfer to kernel. It's stored in EFI boot service
+> > > > > > variable that it can only be accessed by trusted EFI binary when
+> > > > > > secure boot is enabled.
+> > > > > >
+> > > > > Okay, this apply to the 'suspend' phase, right?
+> > > > > I'm still a little confused about the 'resume' phase.
+> > > > > Taking encryption as example(not signature),
+> > > > > the purpose of doing hibernation encryption is to prevent other users
+> > > > > from stealing ram content. Say, user A uses a  passphrase to generate the
+> > > > 
+> > > > No, I don't think that's purpose here.
+> > > > 
+> > > > Purpose here is to prevent user from reading/modifying kernel memory
+> > > > content on machine he owns.
+> > > >
+> > > Say, A puts his laptop into hibernation and walks away,
+> > > and B walks by, and opens A's laptop and wakes up the system and he
+> > > can do what he wants. Although EFI key/TPM trusted key is enabled,
+> > > currently there's no certification during resume, which sounds
+> > > unsafe to me. Afterall, the original requirement is to probe
+> > > user for password during resume, which sounds more natural.
+> > 
+> > OK, I saw your case. This is a physical accessing.
+> > 
+> > I have a question: The suspend to memory also has the same behavior
+> > and more people are using suspend. Should we think a common solution
+> > to cover S3 and S4? 
+> >
+> Since STD behaves more likely a boot up, STR does not have solid
+> requirement for certification.
 
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
----
- sound/soc/codecs/rt5677.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+In your A/B user case, when STR, B user can still open A's laptop
+and wakes up the system and do what he wants because he can get
+the console like resume from STD. I didn't see difference.
 
-diff --git a/sound/soc/codecs/rt5677.c b/sound/soc/codecs/rt5677.c
-index 8a0181a2db08..7dab53b35cbf 100644
---- a/sound/soc/codecs/rt5677.c
-+++ b/sound/soc/codecs/rt5677.c
-@@ -5007,7 +5007,7 @@ static const struct regmap_config rt5677_regmap = {
- };
- 
- static const struct of_device_id rt5677_of_match[] = {
--	{ .compatible = "realtek,rt5677", RT5677 },
-+	{ .compatible = "realtek,rt5677", },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, rt5677_of_match);
--- 
-2.18.0.597.ga71716f1ad-goog
+> > > > Strange as it may sound, that is what "secure" boot requires (and what
+> > > > Disney wants).
+> > > > 
+> > > Ok, I understand this requirement, and I'm also concerning how to
+> > > distinguish different users from seeing data of each other.
+> > > 
+> > > Joey,
+> > > I'm thinking of a possible direction which could take advantage
+> > > of the password.  It leverages either EFI key or TPM
+> > > trusted key to get it done. Does it make sense?
+> > > 
+> > > 1. The user space generates a symetric key key_user using
+> > >    the password, and passes the key_user to the kernel as the master
+> > >    key.
+> > > 2. The kernel uses the EFI key or TPM trusted key to encrypt
+> > >    the key_user thus gets a encrypt_key.
+> > > 3. Uses the encrypt_key to do snapshot encryption
+> > > 4. During resume, the same encrypt_key is generated following
+> > >    the same steps(I assume the same EFI key or TPM key could be fetched
+> > >    during resumed, right?) and do the snapshot decryption.
+> > >
+> > 
+> > Yes, we can use TPM key to protect the user key. But I suggest that we
+> > should give user a function to disable the user key because not everyone
+> > want to key-in a password for hibernate/resume and also snapshot image
+> > encryption.
+> > 
+> > Two policies:
+> > - When user key-in user key, the snapshot image must be encryption.
+> > - Without key-in user key, I still want the snapshot image can be encryption.
+> > 
+> > No matter that the user key be key-in or not, the snapshot image must be
+> > encrypted by a kernel key. So I suggest that we treat the user key as a salt
+> > for snapshot image encryption and authentication. If the user key
+> > be disabled, then kernel just generates a random number as a salt.
+> > 
+> > Actually, the kernel must compares the user key before snapshot decryption.
+> > If the user key doesn't match but user space still triggers furture resume
+> > process. Then kernel direct drops the snapshot image. 
+> >  
+> Anyway I'm ok with using TPM for major 'security', please feel free
+> to send a second version out, and for certification implementation
+> we can have further discussion on that later.
+> 
 
+Regards
+Joey Lee 
