@@ -2,169 +2,140 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43ACEC46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 14:19:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3368DC46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 14:20:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 072162174C
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 14:19:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 072162174C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=citrix.com
+	by mail.kernel.org (Postfix) with ESMTP id EA15F217B9
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 14:20:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA15F217B9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389488AbeHGQeJ (ORCPT
+        id S2389491AbeHGQfO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 12:34:09 -0400
-Received: from smtp.eu.citrix.com ([185.25.65.24]:47647 "EHLO
-        SMTP.EU.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732639AbeHGQeJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 12:34:09 -0400
-X-IronPort-AV: E=Sophos;i="5.51,455,1526342400"; 
-   d="scan'208";a="77291350"
-Date:   Tue, 7 Aug 2018 16:14:04 +0200
-From:   Roger Pau =?utf-8?B?TW9ubsOp?= <roger.pau@citrix.com>
-To:     Juergen Gross <jgross@suse.com>
-CC:     <linux-kernel@vger.kernel.org>, <xen-devel@lists.xenproject.org>,
-        <linux-block@vger.kernel.org>, <konrad.wilk@oracle.com>,
-        <axboe@kernel.dk>, <boris.ostrovsky@oracle.com>
-Subject: Re: [PATCH 2/4] xen/blkfront: cleanup stale persistent grants
-Message-ID: <20180807141404.lzsqtdd2seqgwtgx@mac>
-References: <20180806113403.24728-1-jgross@suse.com>
- <20180806113403.24728-4-jgross@suse.com>
- <20180806161638.nmjamflckekeuyzb@mac>
- <e28d3e77-2c6b-fc30-37e6-646ee1cfbdab@suse.com>
+        Tue, 7 Aug 2018 12:35:14 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42630 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388569AbeHGQfO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 12:35:14 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 326CA87A74;
+        Tue,  7 Aug 2018 14:20:40 +0000 (UTC)
+Received: from [10.36.116.32] (ovpn-116-32.ams2.redhat.com [10.36.116.32])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3562510CD890;
+        Tue,  7 Aug 2018 14:20:38 +0000 (UTC)
+Subject: Re: [RFC PATCH 0/3] Do not touch pages in remove_memory path
+To:     Oscar Salvador <osalvador@techadventures.net>
+Cc:     akpm@linux-foundation.org, mhocko@suse.com,
+        dan.j.williams@intel.com, pasha.tatashin@oracle.com,
+        jglisse@redhat.com, yasu.isimatu@gmail.com, logang@deltatee.com,
+        dave.jiang@intel.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Oscar Salvador <osalvador@suse.de>
+References: <20180807133757.18352-1-osalvador@techadventures.net>
+ <6407d022-87b7-f5e0-572a-c5c29aba1314@redhat.com>
+ <20180807141922.GA5244@techadventures.net>
+From:   David Hildenbrand <david@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <d0ea36f7-9329-f947-3862-011827aee20c@redhat.com>
+Date:   Tue, 7 Aug 2018 16:20:37 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e28d3e77-2c6b-fc30-37e6-646ee1cfbdab@suse.com>
-User-Agent: NeoMutt/20180716
-X-ClientProxiedBy: AMSPEX02CAS02.citrite.net (10.69.22.113) To
- AMSPEX02CL02.citrite.net (10.69.22.126)
+In-Reply-To: <20180807141922.GA5244@techadventures.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Tue, 07 Aug 2018 14:20:40 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Tue, 07 Aug 2018 14:20:40 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'david@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 07, 2018 at 08:31:31AM +0200, Juergen Gross wrote:
-> On 06/08/18 18:16, Roger Pau Monné wrote:
-> > On Mon, Aug 06, 2018 at 01:34:01PM +0200, Juergen Gross wrote:
-> >> Add a periodic cleanup function to remove old persistent grants which
-> >> are no longer in use on the backend side. This avoids starvation in
-> >> case there are lots of persistent grants for a device which no longer
-> >> is involved in I/O business.
-> >>
-> >> Signed-off-by: Juergen Gross <jgross@suse.com>
-> >> ---
-> >>  drivers/block/xen-blkfront.c | 99 ++++++++++++++++++++++++++++++++++++++++++--
-> >>  1 file changed, 95 insertions(+), 4 deletions(-)
-> >>
-> >> diff --git a/drivers/block/xen-blkfront.c b/drivers/block/xen-blkfront.c
-> >> index b5cedccb5d7d..19feb8835fc4 100644
-> >> --- a/drivers/block/xen-blkfront.c
-> >> +++ b/drivers/block/xen-blkfront.c
-> >> @@ -46,6 +46,7 @@
-> >>  #include <linux/scatterlist.h>
-> >>  #include <linux/bitmap.h>
-> >>  #include <linux/list.h>
-> >> +#include <linux/workqueue.h>
-> >>  
-> >>  #include <xen/xen.h>
-> >>  #include <xen/xenbus.h>
-> >> @@ -121,6 +122,9 @@ static inline struct blkif_req *blkif_req(struct request *rq)
-> >>  
-> >>  static DEFINE_MUTEX(blkfront_mutex);
-> >>  static const struct block_device_operations xlvbd_block_fops;
-> >> +static struct delayed_work blkfront_work;
-> >> +static LIST_HEAD(info_list);
-> >> +static bool blkfront_work_active;
-> >>  
-> >>  /*
-> >>   * Maximum number of segments in indirect requests, the actual value used by
-> >> @@ -216,6 +220,7 @@ struct blkfront_info
-> >>  	/* Save uncomplete reqs and bios for migration. */
-> >>  	struct list_head requests;
-> >>  	struct bio_list bio_list;
-> >> +	struct list_head info_list;
-> >>  };
-> >>  
-> >>  static unsigned int nr_minors;
-> >> @@ -1764,6 +1769,12 @@ static int write_per_ring_nodes(struct xenbus_transaction xbt,
-> >>  	return err;
-> >>  }
-> >>  
-> >> +static void free_info(struct blkfront_info *info)
-> >> +{
-> >> +	list_del(&info->info_list);
-> >> +	kfree(info);
-> >> +}
-> >> +
-> >>  /* Common code used when first setting up, and when resuming. */
-> >>  static int talk_to_blkback(struct xenbus_device *dev,
-> >>  			   struct blkfront_info *info)
-> >> @@ -1885,7 +1896,10 @@ static int talk_to_blkback(struct xenbus_device *dev,
-> >>   destroy_blkring:
-> >>  	blkif_free(info, 0);
-> >>  
-> >> -	kfree(info);
-> >> +	mutex_lock(&blkfront_mutex);
-> >> +	free_info(info);
-> >> +	mutex_unlock(&blkfront_mutex);
-> >> +
-> >>  	dev_set_drvdata(&dev->dev, NULL);
-> >>  
-> >>  	return err;
-> >> @@ -1996,6 +2010,10 @@ static int blkfront_probe(struct xenbus_device *dev,
-> >>  	info->handle = simple_strtoul(strrchr(dev->nodename, '/')+1, NULL, 0);
-> >>  	dev_set_drvdata(&dev->dev, info);
-> >>  
-> >> +	mutex_lock(&blkfront_mutex);
-> >> +	list_add(&info->info_list, &info_list);
-> >> +	mutex_unlock(&blkfront_mutex);
-> >> +
-> >>  	return 0;
-> >>  }
-> >>  
-> >> @@ -2306,6 +2324,15 @@ static void blkfront_gather_backend_features(struct blkfront_info *info)
-> >>  	if (indirect_segments <= BLKIF_MAX_SEGMENTS_PER_REQUEST)
-> >>  		indirect_segments = 0;
-> >>  	info->max_indirect_segments = indirect_segments;
-> >> +
-> >> +	if (info->feature_persistent) {
-> >> +		mutex_lock(&blkfront_mutex);
-> >> +		if (!blkfront_work_active) {
-> >> +			blkfront_work_active = true;
-> >> +			schedule_delayed_work(&blkfront_work, HZ * 10);
-> > 
-> > Does it make sense to provide a module parameter to rune the schedule
-> > of the cleanup routine?
+On 07.08.2018 16:19, Oscar Salvador wrote:
+> On Tue, Aug 07, 2018 at 04:16:35PM +0200, David Hildenbrand wrote:
+>> On 07.08.2018 15:37, osalvador@techadventures.net wrote:
+>>> From: Oscar Salvador <osalvador@suse.de>
+>>>
+>>> This tries to fix [1], which was reported by David Hildenbrand, and also
+>>> does some cleanups/refactoring.
+>>>
+>>> I am sending this as RFC to see if the direction I am going is right before
+>>> spending more time into it.
+>>> And also to gather feedback about hmm/zone_device stuff.
+>>> The code compiles and I tested it successfully with normal memory-hotplug operations.
+>>>
+>>
+>> Please coordinate next time with people already working on this,
+>> otherwise you might end up wasting other people's time.
 > 
-> I don't think this is something anyone would like to tune.
+> Hi David,
 > 
-> In case you think it should be tunable I can add a parameter, of course.
+> Sorry, if you are already working on this, I step back immediately.
+> I will wait for your work.
 
-We can always add it later if required. I'm fine as-is now.
+No, please keep going, you are way ahead of me ;)
 
-> > 
-> >> +		}
-> >> +		mutex_unlock(&blkfront_mutex);
-> > 
-> > Is it really necessary to have the blkfront_work_active boolean? What
-> > happens if you queue the same delayed work more than once?
+(I was got stuck at ZONE_DEVICE so far)
+
 > 
-> In case there is already work queued later calls of
-> schedule_delayed_work() will be ignored.
+> thanks
 > 
-> So yes, I can drop the global boolean (I still need a local flag in
-> blkfront_delay_work() for controlling the need to call
-> schedule_delayed_work() again).
 
-Can't you just call schedule_delayed_work if info->feature_persistent
-is set, even if that means calling it multiple times if multiple
-blkfront instances are using persistent grants?
 
-Thanks, Roger.
+-- 
+
+Thanks,
+
+David / dhildenb
