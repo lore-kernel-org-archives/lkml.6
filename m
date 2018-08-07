@@ -2,321 +2,464 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 739AEC46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 21:20:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BAC4C46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 21:22:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BAB9621570
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 21:20:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="tHQBY7vf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BAB9621570
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	by mail.kernel.org (Postfix) with ESMTP id 054ED21569
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 21:22:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 054ED21569
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727502AbeHGXgU (ORCPT
+        id S1726939AbeHGXip (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 19:36:20 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:40360 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726779AbeHGXgU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 19:36:20 -0400
-Received: by mail-io0-f193.google.com with SMTP id l14-v6so76876iob.7
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 14:20:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=/7ABaGX4/iB9sFjdwNKDYJ2JI0bBkk1BW67o6vtAL44=;
-        b=tHQBY7vfPgS0qZmBeh88ofQ+8R6K85mzMBQqHKnPrKLKgtJ6zQ83ERIxeqofjuIo4U
-         nXg+AG/rCMgSJ4o4rwqEv5VoDfRQTpb2SY/ULnvtUNB/QSfrLR3PYKHLq9V10XejRx/x
-         5jbchE2ta02Otv0Ow6zAOOl1EhJPldEE9+RumynGlnuLZLh+nWIcK8tpF4i57LP+dbvj
-         iopGm6j1nLDg1YIK576+8JHYm8ooXjmEnT/3wlREXZYDBFAuIVdFVl/81yzOGti6i2ma
-         pJkGnB3u7VD4wgCzd/1xuhbi5xvEy2V1spwcwOLFhsf9ZZKBFmKV1uPIJMKroiJH6iIM
-         Pouw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=/7ABaGX4/iB9sFjdwNKDYJ2JI0bBkk1BW67o6vtAL44=;
-        b=Mbr/f7AOoGahzx0IRK8F7fPzByrJ7vbDEzQP3PUdcTXoCGt11csUrakWLunt8+ocEd
-         ekVuVUcI4K2F0DdGzxG8Pgc4han4F9INEvQVYEEBsvHtiKA7Fz64HF6dRrwQCCW+AAzh
-         +pCol0fzs/VDp7k4IIr70d90/rC3TuDjeqW4U9iivmuioEeN6QGqT7r95EKAsCbvx7yD
-         82M/u8HOhLB2efGP0DJhG41qxH5opehOO8cwnddTdiKlZ/PDlAYMvRn1sf8IMFDPJEL8
-         ZL8ft2bF4V29uqmM/OrPm0bKCtizSKV7ajWZYf83RHveGRUFhQeRP99/kpJ3hI/XGpK8
-         136w==
-X-Gm-Message-State: AOUpUlGoVEC9ubDm+UKvLkn5YqYUqrjktdJM4hrcntwGzEzj2WO7DC1h
-        55du0CEdXDHYAgAqrbMaqpZTdQ==
-X-Google-Smtp-Source: AA+uWPzkJm+TIq6Lr3p0yDphT3pugfpSmA3vE7695OHpQMIQbGhde+Tuu2knWi72TLg6kI9yjPRgIw==
-X-Received: by 2002:a6b:a382:: with SMTP id m124-v6mr104667ioe.188.1533676800229;
-        Tue, 07 Aug 2018 14:20:00 -0700 (PDT)
-Received: from [192.168.1.212] (107.191.0.158.static.utbb.net. [107.191.0.158])
-        by smtp.gmail.com with ESMTPSA id e5-v6sm1783450itf.0.2018.08.07.14.19.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 07 Aug 2018 14:19:58 -0700 (PDT)
-Subject: Re: [PATCH] blk-wbt: Avoid lock contention and thundering herd issue
- in wbt_wait
-To:     Anchal Agarwal <anchalag@amazon.com>
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        fllinden@amazon.com, sblbir@amazon.com, msw@amazon.com
-References: <20180731213410.GA35291@kaos-source-ops-60001.pdx1.amazon.com>
- <df2a0476-d9d1-c6c9-6553-f459e890ce8b@kernel.dk>
- <20180801170603.GA32864@kaos-source-ops-60001.pdx1.amazon.com>
- <a9871e54-83bf-7557-2d2f-99e006ceadcf@kernel.dk>
- <9265896d-3f02-ff2f-8e02-3aca775f4087@kernel.dk>
- <20180807201247.GA21108@kaos-source-ops-60001.pdx1.amazon.com>
- <6f24ff4b-9373-2708-8342-96f190f17cbf@kernel.dk>
- <20180807211216.GA14371@kaos-source-ops-60001.pdx1.amazon.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <6bab69c9-b787-b12f-7738-72e05bf74444@kernel.dk>
-Date:   Tue, 7 Aug 2018 15:19:57 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
-MIME-Version: 1.0
-In-Reply-To: <20180807211216.GA14371@kaos-source-ops-60001.pdx1.amazon.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        Tue, 7 Aug 2018 19:38:45 -0400
+Received: from mga12.intel.com ([192.55.52.136]:27162 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726579AbeHGXip (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 19:38:45 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Aug 2018 14:22:24 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,456,1526367600"; 
+   d="scan'208";a="79766176"
+Received: from spandruv-desk.jf.intel.com ([10.54.75.31])
+  by orsmga001.jf.intel.com with ESMTP; 07 Aug 2018 14:22:24 -0700
+Message-ID: <69e81208a2d301ea36f82802d10a29cff8c1e28a.camel@linux.intel.com>
+Subject: Re: [PATCH] Revert "cpufreq: intel_pstate: Fix ->set_policy()
+ interface for no_turbo"
+From:   Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+To:     Gabriele Mazzotta <gabriele.mzt@gmail.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date:   Tue, 07 Aug 2018 14:22:24 -0700
+In-Reply-To: <deeb4c4a-cdf5-02d2-8e06-4f1c2c88fb65@gmail.com>
+References: <20180804152932.3861-1-gabriele.mzt@gmail.com>
+         <ccf46de4-d75e-306b-9554-9d33f68d2379@gmail.com>
+         <CAJZ5v0iwhVu6PwztsbN8cYmQtnjD2SyFkazkObc1o-1JX6GO5g@mail.gmail.com>
+         <cd2287153b369d88cc240068adc7d341ef675acf.camel@linux.intel.com>
+         <7195d55c-373d-23db-2744-ef3b1b719a5b@gmail.com>
+         <8b51b0b832ba43ba1b22ddfc7b3094770ba4fe72.camel@linux.intel.com>
+         <deeb4c4a-cdf5-02d2-8e06-4f1c2c88fb65@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.2 (3.28.2-1.fc28) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/7/18 3:12 PM, Anchal Agarwal wrote:
-> On Tue, Aug 07, 2018 at 02:39:48PM -0600, Jens Axboe wrote:
->> On 8/7/18 2:12 PM, Anchal Agarwal wrote:
->>> On Tue, Aug 07, 2018 at 08:29:44AM -0600, Jens Axboe wrote:
->>>> On 8/1/18 4:09 PM, Jens Axboe wrote:
->>>>> On 8/1/18 11:06 AM, Anchal Agarwal wrote:
->>>>>> On Wed, Aug 01, 2018 at 09:14:50AM -0600, Jens Axboe wrote:
->>>>>>> On 7/31/18 3:34 PM, Anchal Agarwal wrote:
->>>>>>>> Hi folks,
->>>>>>>>
->>>>>>>> This patch modifies commit e34cbd307477a
->>>>>>>> (blk-wbt: add general throttling mechanism)
->>>>>>>>
->>>>>>>> I am currently running a large bare metal instance (i3.metal)
->>>>>>>> on EC2 with 72 cores, 512GB of RAM and NVME drives, with a
->>>>>>>> 4.18 kernel. I have a workload that simulates a database
->>>>>>>> workload and I am running into lockup issues when writeback
->>>>>>>> throttling is enabled,with the hung task detector also
->>>>>>>> kicking in.
->>>>>>>>
->>>>>>>> Crash dumps show that most CPUs (up to 50 of them) are
->>>>>>>> all trying to get the wbt wait queue lock while trying to add
->>>>>>>> themselves to it in __wbt_wait (see stack traces below).
->>>>>>>>
->>>>>>>> [    0.948118] CPU: 45 PID: 0 Comm: swapper/45 Not tainted 4.14.51-62.38.amzn1.x86_64 #1
->>>>>>>> [    0.948119] Hardware name: Amazon EC2 i3.metal/Not Specified, BIOS 1.0 10/16/2017
->>>>>>>> [    0.948120] task: ffff883f7878c000 task.stack: ffffc9000c69c000
->>>>>>>> [    0.948124] RIP: 0010:native_queued_spin_lock_slowpath+0xf8/0x1a0
->>>>>>>> [    0.948125] RSP: 0018:ffff883f7fcc3dc8 EFLAGS: 00000046
->>>>>>>> [    0.948126] RAX: 0000000000000000 RBX: ffff887f7709ca68 RCX: ffff883f7fce2a00
->>>>>>>> [    0.948128] RDX: 000000000000001c RSI: 0000000000740001 RDI: ffff887f7709ca68
->>>>>>>> [    0.948129] RBP: 0000000000000002 R08: 0000000000b80000 R09: 0000000000000000
->>>>>>>> [    0.948130] R10: ffff883f7fcc3d78 R11: 000000000de27121 R12: 0000000000000002
->>>>>>>> [    0.948131] R13: 0000000000000003 R14: 0000000000000000 R15: 0000000000000000
->>>>>>>> [    0.948132] FS:  0000000000000000(0000) GS:ffff883f7fcc0000(0000) knlGS:0000000000000000
->>>>>>>> [    0.948134] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>>>>>>> [    0.948135] CR2: 000000c424c77000 CR3: 0000000002010005 CR4: 00000000003606e0
->>>>>>>> [    0.948136] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->>>>>>>> [    0.948137] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->>>>>>>> [    0.948138] Call Trace:
->>>>>>>> [    0.948139]  <IRQ>
->>>>>>>> [    0.948142]  do_raw_spin_lock+0xad/0xc0
->>>>>>>> [    0.948145]  _raw_spin_lock_irqsave+0x44/0x4b
->>>>>>>> [    0.948149]  ? __wake_up_common_lock+0x53/0x90
->>>>>>>> [    0.948150]  __wake_up_common_lock+0x53/0x90
->>>>>>>> [    0.948155]  wbt_done+0x7b/0xa0
->>>>>>>> [    0.948158]  blk_mq_free_request+0xb7/0x110
->>>>>>>> [    0.948161]  __blk_mq_complete_request+0xcb/0x140
->>>>>>>> [    0.948166]  nvme_process_cq+0xce/0x1a0 [nvme]
->>>>>>>> [    0.948169]  nvme_irq+0x23/0x50 [nvme]
->>>>>>>> [    0.948173]  __handle_irq_event_percpu+0x46/0x300
->>>>>>>> [    0.948176]  handle_irq_event_percpu+0x20/0x50
->>>>>>>> [    0.948179]  handle_irq_event+0x34/0x60
->>>>>>>> [    0.948181]  handle_edge_irq+0x77/0x190
->>>>>>>> [    0.948185]  handle_irq+0xaf/0x120
->>>>>>>> [    0.948188]  do_IRQ+0x53/0x110
->>>>>>>> [    0.948191]  common_interrupt+0x87/0x87
->>>>>>>> [    0.948192]  </IRQ>
->>>>>>>> ....
->>>>>>>> [    0.311136] CPU: 4 PID: 9737 Comm: run_linux_amd64 Not tainted 4.14.51-62.38.amzn1.x86_64 #1
->>>>>>>> [    0.311137] Hardware name: Amazon EC2 i3.metal/Not Specified, BIOS 1.0 10/16/2017
->>>>>>>> [    0.311138] task: ffff883f6e6a8000 task.stack: ffffc9000f1ec000
->>>>>>>> [    0.311141] RIP: 0010:native_queued_spin_lock_slowpath+0xf5/0x1a0
->>>>>>>> [    0.311142] RSP: 0018:ffffc9000f1efa28 EFLAGS: 00000046
->>>>>>>> [    0.311144] RAX: 0000000000000000 RBX: ffff887f7709ca68 RCX: ffff883f7f722a00
->>>>>>>> [    0.311145] RDX: 0000000000000035 RSI: 0000000000d80001 RDI: ffff887f7709ca68
->>>>>>>> [    0.311146] RBP: 0000000000000202 R08: 0000000000140000 R09: 0000000000000000
->>>>>>>> [    0.311147] R10: ffffc9000f1ef9d8 R11: 000000001a249fa0 R12: ffff887f7709ca68
->>>>>>>> [    0.311148] R13: ffffc9000f1efad0 R14: 0000000000000000 R15: ffff887f7709ca00
->>>>>>>> [    0.311149] FS:  000000c423f30090(0000) GS:ffff883f7f700000(0000) knlGS:0000000000000000
->>>>>>>> [    0.311150] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>>>>>>> [    0.311151] CR2: 00007feefcea4000 CR3: 0000007f7016e001 CR4: 00000000003606e0
->>>>>>>> [    0.311152] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->>>>>>>> [    0.311153] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->>>>>>>> [    0.311154] Call Trace:
->>>>>>>> [    0.311157]  do_raw_spin_lock+0xad/0xc0
->>>>>>>> [    0.311160]  _raw_spin_lock_irqsave+0x44/0x4b
->>>>>>>> [    0.311162]  ? prepare_to_wait_exclusive+0x28/0xb0
->>>>>>>> [    0.311164]  prepare_to_wait_exclusive+0x28/0xb0
->>>>>>>> [    0.311167]  wbt_wait+0x127/0x330
->>>>>>>> [    0.311169]  ? finish_wait+0x80/0x80
->>>>>>>> [    0.311172]  ? generic_make_request+0xda/0x3b0
->>>>>>>> [    0.311174]  blk_mq_make_request+0xd6/0x7b0
->>>>>>>> [    0.311176]  ? blk_queue_enter+0x24/0x260
->>>>>>>> [    0.311178]  ? generic_make_request+0xda/0x3b0
->>>>>>>> [    0.311181]  generic_make_request+0x10c/0x3b0
->>>>>>>> [    0.311183]  ? submit_bio+0x5c/0x110
->>>>>>>> [    0.311185]  submit_bio+0x5c/0x110
->>>>>>>> [    0.311197]  ? __ext4_journal_stop+0x36/0xa0 [ext4]
->>>>>>>> [    0.311210]  ext4_io_submit+0x48/0x60 [ext4]
->>>>>>>> [    0.311222]  ext4_writepages+0x810/0x11f0 [ext4]
->>>>>>>> [    0.311229]  ? do_writepages+0x3c/0xd0
->>>>>>>> [    0.311239]  ? ext4_mark_inode_dirty+0x260/0x260 [ext4]
->>>>>>>> [    0.311240]  do_writepages+0x3c/0xd0
->>>>>>>> [    0.311243]  ? _raw_spin_unlock+0x24/0x30
->>>>>>>> [    0.311245]  ? wbc_attach_and_unlock_inode+0x165/0x280
->>>>>>>> [    0.311248]  ? __filemap_fdatawrite_range+0xa3/0xe0
->>>>>>>> [    0.311250]  __filemap_fdatawrite_range+0xa3/0xe0
->>>>>>>> [    0.311253]  file_write_and_wait_range+0x34/0x90
->>>>>>>> [    0.311264]  ext4_sync_file+0x151/0x500 [ext4]
->>>>>>>> [    0.311267]  do_fsync+0x38/0x60
->>>>>>>> [    0.311270]  SyS_fsync+0xc/0x10
->>>>>>>> [    0.311272]  do_syscall_64+0x6f/0x170
->>>>>>>> [    0.311274]  entry_SYSCALL_64_after_hwframe+0x42/0xb7
->>>>>>>>
->>>>>>>> In the original patch, wbt_done is waking up all the exclusive
->>>>>>>> processes in the wait queue, which can cause a thundering herd
->>>>>>>> if there is a large number of writer threads in the queue. The
->>>>>>>> original intention of the code seems to be to wake up one thread
->>>>>>>> only however, it uses wake_up_all() in __wbt_done(), and then
->>>>>>>> uses the following check in __wbt_wait to have only one thread
->>>>>>>> actually get out of the wait loop:
->>>>>>>>
->>>>>>>> if (waitqueue_active(&rqw->wait) &&
->>>>>>>>             rqw->wait.head.next != &wait->entry)
->>>>>>>>                 return false;
->>>>>>>>
->>>>>>>> The problem with this is that the wait entry in wbt_wait is
->>>>>>>> define with DEFINE_WAIT, which uses the autoremove wakeup function.
->>>>>>>> That means that the above check is invalid - the wait entry will
->>>>>>>> have been removed from the queue already by the time we hit the
->>>>>>>> check in the loop.
->>>>>>>>
->>>>>>>> Secondly, auto-removing the wait entries also means that the wait
->>>>>>>> queue essentially gets reordered "randomly" (e.g. threads re-add
->>>>>>>> themselves in the order they got to run after being woken up).
->>>>>>>> Additionally, new requests entering wbt_wait might overtake requests
->>>>>>>> that were queued earlier, because the wait queue will be
->>>>>>>> (temporarily) empty after the wake_up_all, so the waitqueue_active
->>>>>>>> check will not stop them. This can cause certain threads to starve
->>>>>>>> under high load.
->>>>>>>>
->>>>>>>> The fix is to leave the woken up requests in the queue and remove
->>>>>>>> them in finish_wait() once the current thread breaks out of the
->>>>>>>> wait loop in __wbt_wait. This will ensure new requests always
->>>>>>>> end up at the back of the queue, and they won't overtake requests
->>>>>>>> that are already in the wait queue. With that change, the loop
->>>>>>>> in wbt_wait is also in line with many other wait loops in the kernel.
->>>>>>>> Waking up just one thread drastically reduces lock contention, as
->>>>>>>> does moving the wait queue add/remove out of the loop.
->>>>>>>>
->>>>>>>> A significant drop in lockdep's lock contention numbers is seen when
->>>>>>>> running the test application on the patched kernel.
->>>>>>>
->>>>>>> I like the patch, and a few weeks ago we independently discovered that
->>>>>>> the waitqueue list checking was bogus as well. My only worry is that
->>>>>>> changes like this can be delicate, meaning that it's easy to introduce
->>>>>>> stall conditions. What kind of testing did you push this through?
->>>>>>>
->>>>>>> -- 
->>>>>>> Jens Axboe
->>>>>>>
->>>>>> I ran the following tests on both real HW with NVME devices attached
->>>>>> and emulated NVME too:
->>>>>>
->>>>>> 1. The test case I used to reproduce the issue, spawns a bunch of threads 
->>>>>>    to concurrently read and write files with random size and content. 
->>>>>>    Files are randomly fsync'd. The implementation is a FIFO queue of files. 
->>>>>>    When the queue fills the test starts to verify and remove the files. This 
->>>>>>    test will fail if there's a read, write, or hash check failure. It tests
->>>>>>    for file corruption when lots of small files are being read and written 
->>>>>>    with high concurrency.
->>>>>>
->>>>>> 2. Fio for random writes with a root NVME device of 200GB
->>>>>>   
->>>>>>   fio --name=randwrite --ioengine=libaio --iodepth=1 --rw=randwrite --bs=4k 
->>>>>>   --direct=0 --size=10G --numjobs=2 --runtime=60 --group_reporting
->>>>>>   
->>>>>>   fio --name=randwrite --ioengine=libaio --iodepth=1 --rw=randwrite --bs=4k
->>>>>>   --direct=0 --size=5G --numjobs=2 --runtime=30 --fsync=64 --group_reporting
->>>>>>   
->>>>>>   I did see an improvement in the bandwidth numbers reported on the patched
->>>>>>   kernel. 
->>>>>>
->>>>>> Do you have any test case/suite in mind that you would suggest me to 
->>>>>> run to be sure that patch does not introduce any stall conditions?
->>>>>
->>>>> One thing that is always useful is to run xfstest, do a full run on
->>>>> the device. If that works, then do another full run, this time limiting
->>>>> the queue depth of the SCSI device to 1. If both of those pass, then
->>>>> I'd feel pretty good getting this applied for 4.19.
->>>>
->>>> Did you get a chance to run this full test?
->>>>
->>>> -- 
->>>> Jens Axboe
->>>>
->>>>
->>>
->>> Hi Jens,
->>> Yes I did run the tests and was in the process of compiling concrete results
->>> I tested following environments against xfs/auto group
->>> 1. Vanilla 4.18.rc kernel
->>> 2. 4.18 kernel with the blk-wbt patch
->>> 3. 4.18 kernel with the blk-wbt patch + io_queue_depth=2. I 
->>> understand you asked for queue depth for SCSI device=1 however, I have NVME 
->>> devices in my environment and 2 is the minimum value for io_queue_depth allowed 
->>> according to the NVME driver code. The results pretty much look same with no 
->>> stalls or exceptional failures. 
->>> xfs/auto ran 296 odd tests with 3 failures and 130 something "no runs". 
->>> Remaining tests passed. "Skipped tests"  were mostly due to missing features
->>> (eg: reflink support on scratch filesystem)
->>> The failures were consistent across runs on 3 different environments. 
->>> I am also running full test suite but it is taking long time as I am 
->>> hitting kernel BUG in xfs code in some generic tests. This BUG is not 
->>> related to the patch and  I see them in vanilla kernel too. I am in 
->>> the process of excluding these kind of tests as they come and 
->>> re-run the suite however, this proces is time taking. 
->>> Do you have any specific tests in mind that you would like me 
->>> to run apart from what I have already tested above?
->>
->> Thanks, I think that looks good. I'll get your patch applied for
->> 4.19.
->>
->> -- 
->> Jens Axboe
->>
->>
+On Tue, 2018-08-07 at 22:12 +0200, Gabriele Mazzotta wrote:
+> On 07/08/2018 00:11, Srinivas Pandruvada wrote:
+> > On Mon, 2018-08-06 at 23:50 +0200, Gabriele Mazzotta wrote:
+> > > On 06/08/2018 18:49, Srinivas Pandruvada wrote:
+> > > > On Mon, 2018-08-06 at 10:30 +0200, Rafael J. Wysocki wrote:
+> > > > > On Sat, Aug 4, 2018 at 7:31 PM, Gabriele Mazzotta
+> > > > > <gabriele.mzt@gmail.com> wrote:
+> > > > > > On 04/08/2018 17:29, Gabriele Mazzotta wrote:
+> > > > > > > This change does not take into account that some BIOSes
+> > > > > > > change
+> > > > > > > MSR_IA32is getting notified via PPC
+> > > > > > > change._MISC_ENABLE_TURBO_DISABLE depending on the power
+> > > > > > > source.
+> > > > > > > If the turbo is disabled when the system boots,
+> > > > > > > policy.max_freq
+> > > > > > > is set to pstate.max_pstate. However, if the BIOS later
+> > > > > > > enables
+> > > > > > > the turbo, the CPU will never be able to run at
+> > > > > > > pstate.turbo_pstate.
+> > > > > > > is getting notified via PPC change.
+> > > > > > > Since now intel_pstate_set_policy() does its calculations
+> > > > > > > using
+> > > > > > > pstate.max_freq and pstate.turbo_freq, we can always
+> > > > > > > calculate
+> > > > > > > cpuinfo.max_freq using pstate.turbo_pstate, thus allowing
+> > > > > > > system
+> > > > > > > with varying MSR_IA32_MISC_ENABLE_TURBO_DISABLE to run at
+> > > > > > > full
+> > > > > > > speed when the turbo is enabled.
+> > > > > 
+> > > > > Well, the problem with this approach is that always using
+> > > > > pstate.turbo_pstate as the max causes the governor to
+> > > > > overestimate
+> > > > > the
+> > > > > target frequency when the turbo range is not available (the
+> > > > > target
+> > > > > depends on the width of the entire available P-state range
+> > > > > including
+> > > > > turbo, so if the turbo range is not available, the number
+> > > > > take
+> > > > > into
+> > > > > that computation is too large).
+> > > > > 
+> > > > > Are we expected to get notified when the BIOS updates
+> > > > > MSR_IA32_MISC_ENABLE_TURBO_DISABLE?
+> > > > 
+> > > > Let's try this:
+> > > > - boot with kernel command line 
+> > > > 
+> > > > intel_pstate=support_acpi_ppc dyndbg="file processor_perflib.c
+> > > > +p"
+> > > > dyndbg="file intel_pstate.c +p"
+> > 
+Can you create a bugzilla? In this way easy to exchange attachments.
+For example in the above command line I was expecting boot up traces
+from intel_pstate (I need full dmesg). From the log with PPC=6 should
+correspond to 1.6GHz from acpi dump.
+Even after power is connected the PPC is still requesting to be 6.
+
+I will attach some test patch to bugzilla after checking the full
+dmesg.
+
+
+turbostat log shoes that turbo was disabled on unplug but it is getting
+notified via some PPC change.
+
+Thanks,
+Srinivas
+
+> > Interesting output.
+> > Can you run ?
+> > # turbostat --debug 
+> > in both plugged and unplugged state.
 > 
-> Hi Jens,
-> Thanks for accepting this. There is one small issue, I don't find any emails
-> send by me on the lkml mailing list. I am not sure why it didn't land there,
-> all I can see is your responses. Do you want one of us to resend the patch
-> or will you be able to do it?
-
-That's odd, are you getting rejections on your emails? For reference, the
-patch is here:
-
-http://git.kernel.dk/cgit/linux-block/commit/?h=for-4.19/block&id=2887e41b910bb14fd847cf01ab7a5993db989d88
-
--- 
-Jens Axboe
-
+> This is the output of turbostat while plugged in, with
+> intel_pstate=support_acpi_ppc in the cmdline:
+> 
+> turbostat version 18.06.20 - Len Brown <lenb@kernel.org>
+> CPUID(0): GenuineIntel 13 CPUID levels; family:model:stepping
+> 0x6:45:1 (6:69:1)
+> CPUID(1): SSE3 MONITOR - EIST TM2 TSC MSR ACPI-TM HT TM
+> CPUID(6): APERF, TURBO, DTS, PTM, No-HWP, No-HWPnotify, No-HWPwindow, 
+> No-HWPepp, No-HWPpkg, EPB
+> cpu0: MSR_IA32_MISC_ENABLE: 0x00850089 (TCC EIST MWAIT PREFETCH
+> TURBO)
+> CPUID(7): No-SGX
+> cpu0: MSR_MISC_PWR_MGMT: 0x00400000 (ENable-EIST_Coordination
+> DISable-EPB DISable-OOB)
+> RAPL: 17476 sec. Joule Counter Range, at 15 Watts
+> cpu0: MSR_PLATFORM_INFO: 0x8083df3011800
+> 8 * 100.0 = 800.0 MHz max efficiency frequency
+> 24 * 100.0 = 2400.0 MHz base frequency
+> cpu0: MSR_IA32_POWER_CTL: 0x0004005d (C1E auto-promotion: DISabled)
+> cpu0: MSR_TURBO_RATIO_LIMIT: 0x1b1b1b1e
+> 27 * 100.0 = 2700.0 MHz max turbo 4 active cores
+> 27 * 100.0 = 2700.0 MHz max turbo 3 active cores
+> 27 * 100.0 = 2700.0 MHz max turbo 2 active cores
+> 30 * 100.0 = 3000.0 MHz max turbo 1 active cores
+> cpu0: MSR_CONFIG_TDP_NOMINAL: 0x00000012 (base_ratio=18)
+> cpu0: MSR_CONFIG_TDP_LEVEL_1: 0x0008005c (PKG_MIN_PWR_LVL1=0
+> PKG_MAX_PWR_LVL1=0 LVL1_RATIO=8 PKG_TDP_LVL1=92)
+> cpu0: MSR_CONFIG_TDP_LEVEL_2: 0x001800c8 (PKG_MIN_PWR_LVL2=0
+> PKG_MAX_PWR_LVL2=0 LVL2_RATIO=24 PKG_TDP_LVL2=200)
+> cpu0: MSR_CONFIG_TDP_CONTROL: 0x00000000 ( lock=0)
+> cpu0: MSR_TURBO_ACTIVATION_RATIO: 0x00000011 (MAX_NON_TURBO_RATIO=17
+> lock=0)
+> cpu0: MSR_PKG_CST_CONFIG_CONTROL: 0x1e008407 (UNdemote-C3, UNdemote-
+> C1, demote-C3, demote-C1, locked, pkg-cstate-limit=7 (pc9))
+> cpu0: POLL: CPUIDLE CORE POLL IDLE
+> cpu0: C1: MWAIT 0x00
+> cpu0: C1E: MWAIT 0x01
+> cpu0: C3: MWAIT 0x10
+> cpu0: C6: MWAIT 0x20
+> cpu0: C7s: MWAIT 0x32
+> cpu0: C8: MWAIT 0x40
+> cpu0: C9: MWAIT 0x50
+> cpu0: C10: MWAIT 0x60
+> cpu0: cpufreq driver: intel_pstate
+> cpu0: cpufreq governor: powersave
+> cpufreq intel_pstate no_turbo: 0
+> cpu0: MSR_MISC_FEATURE_CONTROL: 0x00000000 (L2-Prefetch L2-Prefetch-
+> pair L1-Prefetch L1-IP-Prefetch)
+> cpu0: MSR_IA32_ENERGY_PERF_BIAS: 0x00000006 (balanced)
+> cpu0: MSR_CORE_PERF_LIMIT_REASONS, 0x1d210020 (Active: Auto-HWP, )
+> (Logged: MultiCoreTurbo, PkgPwrL2, PkgPwrL1, Amps, Auto-HWP, PROCHOT,
+> )
+> cpu0: MSR_GFX_PERF_LIMIT_REASONS, 0x1c010000 (Active: ) (Logged:
+> PROCHOT, PkgPwrL1, PkgPwrL2, )
+> cpu0: MSR_RING_PERF_LIMIT_REASONS, 0x0d010000 (Active: ) (Logged:
+> PROCHOT, Amps, PkgPwrL1, PkgPwrL2, )
+> cpu0: MSR_RAPL_POWER_UNIT: 0x000a0e03 (0.125000 Watts, 0.000061
+> Joules, 0.000977 sec.)
+> cpu0: MSR_PKG_POWER_INFO: 0x00000078 (15 W TDP, RAPL 0 - 0 W,
+> 0.000000 sec.)
+> cpu0: MSR_PKG_POWER_LIMIT: 0x420078001480c8 (UNlocked)
+> cpu0: PKG Limit #1: ENabled (25.000000 Watts, 1.000000 sec, clamp
+> DISabled)
+> cpu0: PKG Limit #2: DISabled (15.000000 Watts, 0.002441* sec, clamp
+> DISabled)
+> cpu0: MSR_PP0_POLICY: 0
+> cpu0: MSR_PP0_POWER_LIMIT: 0x00000000 (UNlocked)
+> cpu0: Cores Limit: DISabled (0.000000 Watts, 0.000977 sec, clamp
+> DISabled)
+> cpu0: MSR_PP1_POLICY: 0
+> cpu0: MSR_PP1_POWER_LIMIT: 0x00000000 (UNlocked)
+> cpu0: GFX Limit: DISabled (0.000000 Watts, 0.000977 sec, clamp
+> DISabled)
+> cpu0: MSR_IA32_TEMPERATURE_TARGET: 0x00640000 (100 C)
+> cpu0: MSR_IA32_PACKAGE_THERM_STATUS: 0x882d0808 (55 C)
+> cpu0: MSR_IA32_PACKAGE_THERM_INTERRUPT: 0x00000003 (100 C, 100 C)
+> cpu0: MSR_IA32_THERM_STATUS: 0x882d0808 (55 C +/- 1)
+> cpu0: MSR_IA32_THERM_INTERRUPT: 0x00000013 (100 C, 100 C)
+> cpu2: MSR_IA32_THERM_STATUS: 0x88300808 (52 C +/- 1)
+> cpu2: MSR_IA32_THERM_INTERRUPT: 0x00000013 (100 C, 100 C)
+> cpu0: MSR_PKGC3_IRTL: 0x00008842 (valid, 67584 ns)
+> cpu0: MSR_PKGC6_IRTL: 0x00008873 (valid, 117760 ns)
+> cpu0: MSR_PKGC7_IRTL: 0x00008891 (valid, 148480 ns)
+> cpu0: MSR_PKGC8_IRTL: 0x000088e4 (valid, 233472 ns)
+> cpu0: MSR_PKGC9_IRTL: 0x00008945 (valid, 332800 ns)
+> cpu0: MSR_PKGC10_IRTL: 0x00009003 (valid, 3 ns)
+> 
+> 
+> And this is what I get after I unplug the laptop:
+> 
+> turbostat version 18.06.20 - Len Brown <lenb@kernel.org>
+> CPUID(0): GenuineIntel 13 CPUID levels; family:model:stepping
+> 0x6:45:1 (6:69:1)
+> CPUID(1): SSE3 MONITOR - EIST TM2 TSC MSR ACPI-TM HT TM
+> CPUID(6): APERF, No-TURBO, DTS, PTM, No-HWP, No-HWPnotify, No-
+> HWPwindow, No-HWPepp, No-HWPpkg, EPB
+> cpu3: MSR_IA32_MISC_ENABLE: 0x4000850089 (TCC EIST MWAIT PREFETCH No-
+> TURBO)
+> CPUID(7): No-SGX
+> cpu3: MSR_MISC_PWR_MGMT: 0x00400000 (ENable-EIST_Coordination
+> DISable-EPB DISable-OOB)
+> RAPL: 17476 sec. Joule Counter Range, at 15 Watts
+> cpu3: MSR_PLATFORM_INFO: 0x8083df3011800
+> 8 * 100.0 = 800.0 MHz max efficiency frequency
+> 24 * 100.0 = 2400.0 MHz base frequency
+> cpu3: MSR_IA32_POWER_CTL: 0x0004005d (C1E auto-promotion: DISabled)
+> cpu3: MSR_TURBO_RATIO_LIMIT: 0x1b1b1b1e
+> 27 * 100.0 = 2700.0 MHz max turbo 4 active cores
+> 27 * 100.0 = 2700.0 MHz max turbo 3 active cores
+> 27 * 100.0 = 2700.0 MHz max turbo 2 active cores
+> 30 * 100.0 = 3000.0 MHz max turbo 1 active cores
+> cpu3: MSR_CONFIG_TDP_NOMINAL: 0x00000012 (base_ratio=18)
+> cpu3: MSR_CONFIG_TDP_LEVEL_1: 0x0008005c (PKG_MIN_PWR_LVL1=0
+> PKG_MAX_PWR_LVL1=0 LVL1_RATIO=8 PKG_TDP_LVL1=92)
+> cpu3: MSR_CONFIG_TDP_LEVEL_2: 0x001800c8 (PKG_MIN_PWR_LVL2=0
+> PKG_MAX_PWR_LVL2=0 LVL2_RATIO=24 PKG_TDP_LVL2=200)
+> cpu3: MSR_CONFIG_TDP_CONTROL: 0x00000000 ( lock=0)
+> cpu3: MSR_TURBO_ACTIVATION_RATIO: 0x00000011 (MAX_NON_TURBO_RATIO=17
+> lock=0)
+> cpu3: MSR_PKG_CST_CONFIG_CONTROL: 0x1e008407 (UNdemote-C3, UNdemote-
+> C1, demote-C3, demote-C1, locked, pkg-cstate-limit=7 (pc9))
+> cpu3: POLL: CPUIDLE CORE POLL IDLE
+> cpu3: C1: MWAIT 0x00
+> cpu3: C1E: MWAIT 0x01
+> cpu3: C3: MWAIT 0x10
+> cpu3: C6: MWAIT 0x20
+> cpu3: C7s: MWAIT 0x32
+> cpu3: C8: MWAIT 0x40
+> cpu3: C9: MWAIT 0x50
+> cpu3: C10: MWAIT 0x60
+> cpu3: cpufreq driver: intel_pstate
+> cpu3: cpufreq governor: powersave
+> cpufreq intel_pstate no_turbo: 1
+> cpu3: MSR_MISC_FEATURE_CONTROL: 0x00000000 (L2-Prefetch L2-Prefetch-
+> pair L1-Prefetch L1-IP-Prefetch)
+> cpu0: MSR_IA32_ENERGY_PERF_BIAS: 0x00000006 (balanced)
+> cpu0: MSR_CORE_PERF_LIMIT_REASONS, 0x1d210000 (Active: ) (Logged:
+> MultiCoreTurbo, PkgPwrL2, PkgPwrL1, Amps, Auto-HWP, PROCHOT, )
+> cpu0: MSR_GFX_PERF_LIMIT_REASONS, 0x1c010000 (Active: ) (Logged:
+> PROCHOT, PkgPwrL1, PkgPwrL2, )
+> cpu0: MSR_RING_PERF_LIMIT_REASONS, 0x0d010000 (Active: ) (Logged:
+> PROCHOT, Amps, PkgPwrL1, PkgPwrL2, )
+> cpu0: MSR_RAPL_POWER_UNIT: 0x000a0e03 (0.125000 Watts, 0.000061
+> Joules, 0.000977 sec.)
+> cpu0: MSR_PKG_POWER_INFO: 0x00000078 (15 W TDP, RAPL 0 - 0 W,
+> 0.000000 sec.)
+> cpu0: MSR_PKG_POWER_LIMIT: 0x420078001480c8 (UNlocked)
+> cpu0: PKG Limit #1: ENabled (25.000000 Watts, 1.000000 sec, clamp
+> DISabled)
+> cpu0: PKG Limit #2: DISabled (15.000000 Watts, 0.002441* sec, clamp
+> DISabled)
+> cpu0: MSR_PP0_POLICY: 0
+> cpu0: MSR_PP0_POWER_LIMIT: 0x00000000 (UNlocked)
+> cpu0: Cores Limit: DISabled (0.000000 Watts, 0.000977 sec, clamp
+> DISabled)
+> cpu0: MSR_PP1_POLICY: 0
+> cpu0: MSR_PP1_POWER_LIMIT: 0x00000000 (UNlocked)
+> cpu0: GFX Limit: DISabled (0.000000 Watts, 0.000977 sec, clamp
+> DISabled)
+> cpu0: MSR_IA32_TEMPERATURE_TARGET: 0x00640000 (100 C)
+> cpu0: MSR_IA32_PACKAGE_THERM_STATUS: 0x882f0808 (53 C)
+> cpu0: MSR_IA32_PACKAGE_THERM_INTERRUPT: 0x00000003 (100 C, 100 C)
+> cpu0: MSR_IA32_THERM_STATUS: 0x882f0808 (53 C +/- 1)
+> cpu0: MSR_IA32_THERM_INTERRUPT: 0x00000013 (100 C, 100 C)
+> cpu2: MSR_IA32_THERM_STATUS: 0x88300808 (52 C +/- 1)
+> cpu2: MSR_IA32_THERM_INTERRUPT: 0x00000013 (100 C, 100 C)
+> cpu3: MSR_PKGC3_IRTL: 0x00008842 (valid, 67584 ns)
+> cpu3: MSR_PKGC6_IRTL: 0x00008873 (valid, 117760 ns)
+> cpu3: MSR_PKGC7_IRTL: 0x00008891 (valid, 148480 ns)
+> cpu3: MSR_PKGC8_IRTL: 0x000088e4 (valid, 233472 ns)
+> cpu3: MSR_PKGC9_IRTL: 0x00008945 (valid, 332800 ns)
+> cpu3: MSR_PKGC10_IRTL: 0x00009003 (valid, 3 ns)
+> 
+> 
+> MSR_CORE_PERF_LIMIT_REASONS seems to have a different value
+> when plugged in depending on how the laptop booted. I don't
+> know if this is relevant, but this is what I noticed.
+> 
+> Right after a reboot while plugged in, I get:
+> cpu0: MSR_CORE_PERF_LIMIT_REASONS, 0x1d201000 (Active:
+> MultiCoreTurbo, ) (Logged: MultiCoreTurbo, PkgPwrL2, PkgPwrL1, Amps,
+> Auto-HWP, )
+> If unplug and replug, I get:
+> cpu0: MSR_CORE_PERF_LIMIT_REASONS, 0x1d210020 (Active: Auto-HWP, )
+> (Logged: MultiCoreTurbo, PkgPwrL2, PkgPwrL1, Amps, Auto-HWP, PROCHOT,
+> )
+> 
+> If the laptop booted while unplgged, I constantly get:
+> cpu0: MSR_CORE_PERF_LIMIT_REASONS, 0x14000000 (Active: ) (Logged:
+> MultiCoreTurbo, PkgPwrL1, )
+> 
+> 
+> > Also output of acpidump?
+> 
+> You can find it here:
+> https://bugzilla.kernel.org/attachment.cgi?id=178381
+> 
+> > 
+> > > Plugged -> Unplugged:
+> > > 
+> > > [   40.046116] CPU 0: _PPC is 6 - frequency  limited
+> > > [   40.046128] intel_pstate: policy->max > max non turbo
+> > > frequency
+> > > [   40.046131] intel_pstate: set_policy cpuinfo.max 3000000
+> > > policy-
+> > > > max 3000000
+> > > 
+> > > [   40.046134] intel_pstate: cpu:0 max_state 30 min_policy_perf:8
+> > > max_policy_perf:30
+> > > [   40.046137] intel_pstate: cpu:0 global_min:8 global_max:30
+> > > [   40.046140] intel_pstate: cpu:0 max_perf_ratio:30
+> > > min_perf_ratio:8
+> > > [   40.162173] CPU 0: _PPC is 6 - frequency  limited
+> > > [   40.162186] intel_pstate: policy->max > max non turbo
+> > > frequency
+> > > [   40.162190] intel_pstate: set_policy cpuinfo.max 3000000
+> > > policy-
+> > > > max 3000000
+> > > 
+> > > [   40.162194] intel_pstate: cpu:0 max_state 30 min_policy_perf:8
+> > > max_policy_perf:30
+> > > [   40.162197] intel_pstate: cpu:0 global_min:8 global_max:30
+> > > [   40.162200] intel_pstate: cpu:0 max_perf_ratio:30
+> > > min_perf_ratio:8
+> > > [   40.162215] CPU 0: _PPC is 6 - frequency  limited
+> > > [   40.162220] intel_pstate: policy->max > max non turbo
+> > > frequency
+> > > [   40.162223] intel_pstate: set_policy cpuinfo.max 3000000
+> > > policy-
+> > > > max 3000000
+> > > 
+> > > [   40.162226] intel_pstate: cpu:0 max_state 30 min_policy_perf:8
+> > > max_policy_perf:30
+> > > [   40.162228] intel_pstate: cpu:0 global_min:8 global_max:30
+> > > [   40.162230] intel_pstate: cpu:0 max_perf_ratio:30
+> > > min_perf_ratio:8
+> > > [   40.162237] CPU 0: _PPC is 6 - frequency  limited
+> > > [   40.162241] intel_pstate: policy->max > max non turbo
+> > > frequency
+> > > [   40.162243] intel_pstate: set_policy cpuinfo.max 3000000
+> > > policy-
+> > > > max 3000000
+> > > 
+> > > [   40.162245] intel_pstate: cpu:0 max_state 30 min_policy_perf:8
+> > > max_policy_perf:30
+> > > [   40.162247] intel_pstate: cpu:0 global_min:8 global_max:30
+> > > [   40.162249] intel_pstate: cpu:0 max_perf_ratio:30
+> > > min_perf_ratio:8
+> > > [   40.162257] CPU 0: _PPC is 6 - frequency  limited
+> > > [   40.162261] intel_pstate: policy->max > max non turbo
+> > > frequency
+> > > [   40.162263] intel_pstate: set_policy cpuinfo.max 3000000
+> > > policy-
+> > > > max 3000000
+> > > 
+> > > [   40.162265] intel_pstate: cpu:0 max_state 30 min_policy_perf:8
+> > > max_policy_perf:30
+> > > [   40.162267] intel_pstate: cpu:0 global_min:8 global_max:30
+> > > [   40.162269] intel_pstate: cpu:0 max_perf_ratio:30
+> > > min_perf_ratio:8
+> > > 
+> > > Unplugged -> Plugged:
+> > > 
+> > > [   52.648535] CPU 0: _PPC is 6 - frequency  limited
+> > > [   52.648553] intel_pstate: set_policy cpuinfo.max 3000000
+> > > policy-
+> > > > max 1700000
+> > > 
+> > > [   52.648558] intel_pstate: cpu:0 max_state 17 min_policy_perf:8
+> > > max_policy_perf:17
+> > > [   52.648562] intel_pstate: cpu:0 global_min:8 global_max:30
+> > > [   52.648566] intel_pstate: cpu:0 max_perf_ratio:17
+> > > min_perf_ratio:8
+> > > [   52.648583] CPU 0: _PPC is 6 - frequency  limited
+> > > [   52.648590] intel_pstate: set_policy cpuinfo.max 3000000
+> > > policy-
+> > > > max 1700000
+> > > 
+> > > [   52.648595] intel_pstate: cpu:0 max_state 17 min_policy_perf:8
+> > > max_policy_perf:17
+> > > [   52.648598] intel_pstate: cpu:0 global_min:8 global_max:30
+> > > [   52.648602] intel_pstate: cpu:0 max_perf_ratio:17
+> > > min_perf_ratio:8
+> > > [   52.656093] CPU 0: _PPC is 6 - frequency  limited
+> > > [   52.656111] intel_pstate: set_policy cpuinfo.max 3000000
+> > > policy-
+> > > > max 1700000
+> > > 
+> > > [   52.656116] intel_pstate: cpu:0 max_state 17 min_policy_perf:8
+> > > max_policy_perf:17
+> > > [   52.656120] intel_pstate: cpu:0 global_min:8 global_max:30
+> > > [   52.656123] intel_pstate: cpu:0 max_perf_ratio:17
+> > > min_perf_ratio:8
+> > > [   52.775577] CPU 0: _PPC is 6 - frequency  limited
+> > > [   52.775594] intel_pstate: set_policy cpuinfo.max 3000000
+> > > policy-
+> > > > max 1700000
+> > > 
+> > > [   52.775598] intel_pstate: cpu:0 max_state 17 min_policy_perf:8
+> > > max_policy_perf:17
+> > > [   52.775601] intel_pstate: cpu:0 global_min:8 global_max:30
+> > > [   52.775604] intel_pstate: cpu:0 max_perf_ratio:17
+> > > min_perf_ratio:8
+> > > [   53.028620] CPU 0: _PPC is 6 - frequency  limited
+> > > [   53.028637] intel_pstate: set_policy cpuinfo.max 3000000
+> > > policy-
+> > > > max 1700000
+> > > 
+> > > [   53.028643] intel_pstate: cpu:0 max_state 17 min_policy_perf:8
+> > > max_policy_perf:17
+> > > [   53.028647] intel_pstate: cpu:0 global_min:8 global_max:30
+> > > [   53.028651] intel_pstate: cpu:0 max_perf_ratio:17
+> > > min_perf_ratio:8
+> > > 
+> > > > and send dmesg after you change power sources.
+> > > > 
+> > > > - Also try with
+> > > > intel_pstate=disable dyndbg="file processor_perflib.c +p"
+> > > 
+> > > Nothing gets printed with this one.
+> > > 
+> > > Thanks,
+> > > Gabriele
+> > > 
+> > > > and send dmesg.
+> > > > 
+> > > > Thanks,
+> > > > Srinivas
+> > > > 
+> > > > 
