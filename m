@@ -2,94 +2,108 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AC0BC46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 16:43:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4904C46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 16:47:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2B8B21537
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 16:43:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 808E6216ED
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 16:47:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fDbPiPxO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2B8B21537
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mLpLeNmQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 808E6216ED
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389867AbeHGS7D (ORCPT
+        id S2388992AbeHGTCI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 14:59:03 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:50056 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727429AbeHGS7D (ORCPT
+        Tue, 7 Aug 2018 15:02:08 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:37070 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732347AbeHGTCH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 14:59:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=pczK/DLGLW3M05d/bCG2c9SVft/aE1G1w2ohDy0rCgc=; b=fDbPiPxOrrqJJaX0U/tIsR92lT
-        N5BDxOApQGEk5n5s0hr3HazXjTJtP10F5v889uvDt/B+qqWK6vsTT4/bPDlvyPiB9B+IQ6L1XZdKf
-        yepndo75pphsHACUdAQrPLqjJjZDDiSub3fC6COoByHTLC4SueQSgg8qatiIMPx84HMdkUGTgMgaV
-        2PIL6HxnwE620P0EC5f1eqKeD3U10zYaPBFBDFNJ63YXVS4WZg2OaWR/xRibBjeZIWkWr1CbaMyi3
-        qdYr3B2TZL1l1WZj6hojFusMs7VaU7wxRmvsLDTxYvtuWjuN6mDMMRXHaJpyYITIiPGacB8WThzYP
-        hbX9vpYQ==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fn55L-0001KA-Kt; Tue, 07 Aug 2018 16:43:51 +0000
-Subject: Re: [PATCH] mailbox: add MODULE_LICENSE() for mtk-cmdq-mailbox.c
-To:     LKML <linux-kernel@vger.kernel.org>,
-        linux-mediatek@lists.infradead.org
-Cc:     Jassi Brar <jassisinghbrar@gmail.com>, CK Hu <ck.hu@mediatek.com>,
-        Houlong Wei <houlong.wei@mediatek.com>
-References: <99f4666b-95fc-a1dd-04d3-3d1d803990fb@infradead.org>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <b15a42e2-566f-ee7b-8dee-dc56d979c258@infradead.org>
-Date:   Tue, 7 Aug 2018 09:43:50 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 7 Aug 2018 15:02:07 -0400
+Received: by mail-pf1-f196.google.com with SMTP id a26-v6so8860689pfo.4
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 09:46:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=wvjdyjZFysYghJFwZIyIQ9LDMH4n0lBwqwbJTUJTCBY=;
+        b=mLpLeNmQ4EFaCigGlTjVRng1VJioQ1kyTzhHl6cEW9wrCBppl7KYfn6+fNDwD9MKid
+         bGZtlzKD0xZ0AtJj9TgYiMZU/pKrS2UUc+MftRbHdjkJzwqjhd5NzPVfZp7A6exMjRyc
+         wXxrQF8m/6j1p7zIRiIUfarycSR1FYIQqZ38K+iq6LRW1VmElyGkaeEt94K5cOA/k5NO
+         pgyO0yQLTV7bsE2P8bSTMxpAtOs4ts+e2klopry2Rn+7PXHRoY2rUXE6n2kXB/UPcYI6
+         uzdCFj1O6UhQiayXuOW1PGwoM5BK38vuEFygBNML1Ei4sxb2xhhX7Io0KvoQEwXJ0sF7
+         y8Lg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wvjdyjZFysYghJFwZIyIQ9LDMH4n0lBwqwbJTUJTCBY=;
+        b=isaW7apTbb52J6doFPWrYYo7/2mgdVxezYrYRxWJkqKXou1lPmFxeXGAZoFDjar1ig
+         NUAMmJcRDKYqgsZmqHPyzOgRCCMLJCTKerMuzLnDx13bFtbj/gXySaoow3INWvROTYNe
+         7HlE1tYg0Dzipu0tQH0AKnV+BVrFxD0ftZTx+27fJLGcrfa5tEUsfYY4jHifCt32BOWk
+         Itr79FiSmk3nfPQV2+ZUrlN2NLAYPbyqNCX7oJkv6AeqDY/7drp+xhfFEoNub25qMplT
+         z9vMd+4Fi8TGXIVm8Lto58i3q0+1JxjvCtXL5gpgPD5p22QYentxh5ArLstmLQS7gb6y
+         X15g==
+X-Gm-Message-State: AOUpUlGaopWd7zjeBNVWCRa1x9PHaxjiFzZ3F3cVB7boGI+A9krGDs8o
+        81EJJunxJSp1M/H/Ey/i9QqZrQcIr2SDwW2QbNbFuw==
+X-Google-Smtp-Source: AAOMgpdjaobo9pzHe+NBUnpZn2K7gnzFQ46BikPHiFTgYIdh3frgVf1+mLvET+dC/3IGO5FOOBT2wawNiPYNELCVYuY=
+X-Received: by 2002:a63:e914:: with SMTP id i20-v6mr19500676pgh.10.1533660417971;
+ Tue, 07 Aug 2018 09:46:57 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <99f4666b-95fc-a1dd-04d3-3d1d803990fb@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20180803170550.164688-1-ndesaulniers@google.com>
+ <tip-208cbb32558907f68b3b2a081ca2337ac3744794@git.kernel.org>
+ <CAKwvOdmxaE7p-fgaaeCE17bbTf0iYmHQgWT2D6FM7U5fwUoN1Q@mail.gmail.com> <alpine.DEB.2.21.1808070924170.1788@nanos.tec.linutronix.de>
+In-Reply-To: <alpine.DEB.2.21.1808070924170.1788@nanos.tec.linutronix.de>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Tue, 7 Aug 2018 09:46:46 -0700
+Message-ID: <CAKwvOdnXqw_ZXD2tnPYdVdRtdKqi4hK5mLZ7ELyXMhrbNzyWfw@mail.gmail.com>
+Subject: Re: [tip:x86/urgent] x86/irqflags: Provide a declaration for native_save_fl
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     hpa@zytor.com, david.laight@aculab.com,
+        LKML <linux-kernel@vger.kernel.org>, jdelvare@suse.de,
+        Ingo Molnar <mingo@kernel.org>,
+        linux-tip-commits@vger.kernel.org, sedat.dilek@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This applies to linux-next...
+On Tue, Aug 7, 2018 at 12:29 AM Thomas Gleixner <tglx@linutronix.de> wrote:
+>
+> On Mon, 6 Aug 2018, Nick Desaulniers wrote:
+> > On Sun, Aug 5, 2018 at 1:33 PM tip-bot for Nick Desaulniers
+> > <tipbot@zytor.com> wrote:
+> > > Cc: stable@vger.kernel.org
+> >
+> > Not sure if this was going to be cleaned up in an automated way, but
+> > looks like this commit message drops the comment to stable as to how
+> > far back it should go:
+> >
+> > # 4.17, 4.14, 4.9, 4.4
+>
+> The Fixes tag is enough. If the upstream commit was backported, then the
+> tools of the stable folks will find it and know exactly how far it needs to
+> go back.
 
-On 08/07/2018 09:42 AM, Randy Dunlap wrote:
-> From: Randy Dunlap <rdunlap@infradead.org>
-> 
-> Fix missing MODULE_LICENSE() in mtk-cmdq-mailbox.c:
-> 
-> WARNING: modpost: missing MODULE_LICENSE() in drivers/mailbox/mtk-cmdq-mailbox.o
-> 
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> Cc: Jassi Brar <jassisinghbrar@gmail.com>
-> Cc: <linux-mediatek@lists.infradead.org>
-> Cc: CK Hu <ck.hu@mediatek.com>
-> Cc: Houlong Wei <houlong.wei@mediatek.com>
-> ---
->  drivers/mailbox/mtk-cmdq-mailbox.c |    2 ++
->  1 file changed, 2 insertions(+)
-> 
-> --- linux-next-20180807.orig/drivers/mailbox/mtk-cmdq-mailbox.c
-> +++ linux-next-20180807/drivers/mailbox/mtk-cmdq-mailbox.c
-> @@ -567,3 +567,5 @@ static void __exit cmdq_drv_exit(void)
->  
->  subsys_initcall(cmdq_drv_init);
->  module_exit(cmdq_drv_exit);
-> +
-> +MODULE_LICENSE("GPL v2");
-> 
-> 
+Oh, cool.
 
+> > also, there were tested by's reported:
+> >
+> > Tested-by: David Laight <david.laight@acuab.com>
+> > Tested-by: Sedat Dilek <sedat.dilek@gmail.com>
+>
+> Which came in after I applied it....
 
+I've seen other maintainers revise commit messages before sending pull
+requests along, but I guess that's problematic as anyone else who has
+pulled before the revision would then have a merge conflict.
 -- 
-~Randy
+Thanks,
+~Nick Desaulniers
