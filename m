@@ -3,80 +3,477 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4E07C46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 20:39:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D97AC46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 20:39:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9AC9021569
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 20:39:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9AC9021569
+	by mail.kernel.org (Postfix) with ESMTP id A92B421569
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 20:39:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A92B421569
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727233AbeHGWzo (ORCPT
+        id S1727347AbeHGWzq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 18:55:44 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47706 "EHLO mx1.redhat.com"
+        Tue, 7 Aug 2018 18:55:46 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56832 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726359AbeHGWzl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 18:55:41 -0400
+        id S1726359AbeHGWzq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 18:55:46 -0400
 Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id CE1EB4023337;
-        Tue,  7 Aug 2018 20:39:29 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id C5C1787A77;
+        Tue,  7 Aug 2018 20:39:33 +0000 (UTC)
 Received: from malachite.bss.redhat.com (dhcp-10-20-1-11.bss.redhat.com [10.20.1.11])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 842321C664;
-        Tue,  7 Aug 2018 20:39:29 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3E2C91C664;
+        Tue,  7 Aug 2018 20:39:33 +0000 (UTC)
 From:   Lyude Paul <lyude@redhat.com>
 To:     nouveau@lists.freedesktop.org
-Cc:     Lukas Wunner <lukas@wunner.de>,
+Cc:     stable@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
         Karol Herbst <karolherbst@gmail.com>,
         Ben Skeggs <bskeggs@redhat.com>,
         David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
+        <ville.syrjala@linux.intel.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Ilia Mirkin <imirkin@alum.mit.edu>,
         dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v5 05/13] drm/nouveau: Remove useless poll_enable() call in drm_load()
-Date:   Tue,  7 Aug 2018 16:39:02 -0400
-Message-Id: <20180807203914.2192-6-lyude@redhat.com>
+Subject: [PATCH v5 09/13] drm/nouveau: Fix deadlock with fb_helper by inhibiting it's HPD
+Date:   Tue,  7 Aug 2018 16:39:06 -0400
+Message-Id: <20180807203914.2192-10-lyude@redhat.com>
 In-Reply-To: <20180807203914.2192-1-lyude@redhat.com>
 References: <20180807203914.2192-1-lyude@redhat.com>
 X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Tue, 07 Aug 2018 20:39:29 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Tue, 07 Aug 2018 20:39:29 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'lyude@redhat.com' RCPT:''
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Tue, 07 Aug 2018 20:39:33 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Tue, 07 Aug 2018 20:39:33 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'lyude@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Again, this doesn't do anything. drm_kms_helper_poll_enable() will have
-already been called in nouveau_display_init()
+I'm sure I don't need to tell you that fb_helper's locking is a mess.
+That being said; fb_helper's locking mess can seriously complicate the
+runtime suspend/resume operations of drivers because it can invoke
+atomic commits and connector probing from anywhere that calls
+drm_fb_helper_hotplug_event(). Since most drivers use
+drm_fb_helper_output_poll_changed() as their output_poll_changed
+handler, this can happen in every single context that can fire off a
+hotplug event. An example:
+
+[  246.669625] INFO: task kworker/4:0:37 blocked for more than 120 seconds.
+[  246.673398]       Not tainted 4.18.0-rc5Lyude-Test+ #2
+[  246.675271] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+[  246.676527] kworker/4:0     D    0    37      2 0x80000000
+[  246.677580] Workqueue: events output_poll_execute [drm_kms_helper]
+[  246.678704] Call Trace:
+[  246.679753]  __schedule+0x322/0xaf0
+[  246.680916]  schedule+0x33/0x90
+[  246.681924]  schedule_preempt_disabled+0x15/0x20
+[  246.683023]  __mutex_lock+0x569/0x9a0
+[  246.684035]  ? kobject_uevent_env+0x117/0x7b0
+[  246.685132]  ? drm_fb_helper_hotplug_event.part.28+0x20/0xb0 [drm_kms_helper]
+[  246.686179]  mutex_lock_nested+0x1b/0x20
+[  246.687278]  ? mutex_lock_nested+0x1b/0x20
+[  246.688307]  drm_fb_helper_hotplug_event.part.28+0x20/0xb0 [drm_kms_helper]
+[  246.689420]  drm_fb_helper_output_poll_changed+0x23/0x30 [drm_kms_helper]
+[  246.690462]  drm_kms_helper_hotplug_event+0x2a/0x30 [drm_kms_helper]
+[  246.691570]  output_poll_execute+0x198/0x1c0 [drm_kms_helper]
+[  246.692611]  process_one_work+0x231/0x620
+[  246.693725]  worker_thread+0x214/0x3a0
+[  246.694756]  kthread+0x12b/0x150
+[  246.695856]  ? wq_pool_ids_show+0x140/0x140
+[  246.696888]  ? kthread_create_worker_on_cpu+0x70/0x70
+[  246.697998]  ret_from_fork+0x3a/0x50
+[  246.699034] INFO: task kworker/0:1:60 blocked for more than 120 seconds.
+[  246.700153]       Not tainted 4.18.0-rc5Lyude-Test+ #2
+[  246.701182] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+[  246.702278] kworker/0:1     D    0    60      2 0x80000000
+[  246.703293] Workqueue: pm pm_runtime_work
+[  246.704393] Call Trace:
+[  246.705403]  __schedule+0x322/0xaf0
+[  246.706439]  ? wait_for_completion+0x104/0x190
+[  246.707393]  schedule+0x33/0x90
+[  246.708375]  schedule_timeout+0x3a5/0x590
+[  246.709289]  ? mark_held_locks+0x58/0x80
+[  246.710208]  ? _raw_spin_unlock_irq+0x2c/0x40
+[  246.711222]  ? wait_for_completion+0x104/0x190
+[  246.712134]  ? trace_hardirqs_on_caller+0xf4/0x190
+[  246.713094]  ? wait_for_completion+0x104/0x190
+[  246.713964]  wait_for_completion+0x12c/0x190
+[  246.714895]  ? wake_up_q+0x80/0x80
+[  246.715727]  ? get_work_pool+0x90/0x90
+[  246.716649]  flush_work+0x1c9/0x280
+[  246.717483]  ? flush_workqueue_prep_pwqs+0x1b0/0x1b0
+[  246.718442]  __cancel_work_timer+0x146/0x1d0
+[  246.719247]  cancel_delayed_work_sync+0x13/0x20
+[  246.720043]  drm_kms_helper_poll_disable+0x1f/0x30 [drm_kms_helper]
+[  246.721123]  nouveau_pmops_runtime_suspend+0x3d/0xb0 [nouveau]
+[  246.721897]  pci_pm_runtime_suspend+0x6b/0x190
+[  246.722825]  ? pci_has_legacy_pm_support+0x70/0x70
+[  246.723737]  __rpm_callback+0x7a/0x1d0
+[  246.724721]  ? pci_has_legacy_pm_support+0x70/0x70
+[  246.725607]  rpm_callback+0x24/0x80
+[  246.726553]  ? pci_has_legacy_pm_support+0x70/0x70
+[  246.727376]  rpm_suspend+0x142/0x6b0
+[  246.728185]  pm_runtime_work+0x97/0xc0
+[  246.728938]  process_one_work+0x231/0x620
+[  246.729796]  worker_thread+0x44/0x3a0
+[  246.730614]  kthread+0x12b/0x150
+[  246.731395]  ? wq_pool_ids_show+0x140/0x140
+[  246.732202]  ? kthread_create_worker_on_cpu+0x70/0x70
+[  246.732878]  ret_from_fork+0x3a/0x50
+[  246.733768] INFO: task kworker/4:2:422 blocked for more than 120 seconds.
+[  246.734587]       Not tainted 4.18.0-rc5Lyude-Test+ #2
+[  246.735393] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+[  246.736113] kworker/4:2     D    0   422      2 0x80000080
+[  246.736789] Workqueue: events_long drm_dp_mst_link_probe_work [drm_kms_helper]
+[  246.737665] Call Trace:
+[  246.738490]  __schedule+0x322/0xaf0
+[  246.739250]  schedule+0x33/0x90
+[  246.739908]  rpm_resume+0x19c/0x850
+[  246.740750]  ? finish_wait+0x90/0x90
+[  246.741541]  __pm_runtime_resume+0x4e/0x90
+[  246.742370]  nv50_disp_atomic_commit+0x31/0x210 [nouveau]
+[  246.743124]  drm_atomic_commit+0x4a/0x50 [drm]
+[  246.743775]  restore_fbdev_mode_atomic+0x1c8/0x240 [drm_kms_helper]
+[  246.744603]  restore_fbdev_mode+0x31/0x140 [drm_kms_helper]
+[  246.745373]  drm_fb_helper_restore_fbdev_mode_unlocked+0x54/0xb0 [drm_kms_helper]
+[  246.746220]  drm_fb_helper_set_par+0x2d/0x50 [drm_kms_helper]
+[  246.746884]  drm_fb_helper_hotplug_event.part.28+0x96/0xb0 [drm_kms_helper]
+[  246.747675]  drm_fb_helper_output_poll_changed+0x23/0x30 [drm_kms_helper]
+[  246.748544]  drm_kms_helper_hotplug_event+0x2a/0x30 [drm_kms_helper]
+[  246.749439]  nv50_mstm_hotplug+0x15/0x20 [nouveau]
+[  246.750111]  drm_dp_send_link_address+0x177/0x1c0 [drm_kms_helper]
+[  246.750764]  drm_dp_check_and_send_link_address+0xa8/0xd0 [drm_kms_helper]
+[  246.751602]  drm_dp_mst_link_probe_work+0x51/0x90 [drm_kms_helper]
+[  246.752314]  process_one_work+0x231/0x620
+[  246.752979]  worker_thread+0x44/0x3a0
+[  246.753838]  kthread+0x12b/0x150
+[  246.754619]  ? wq_pool_ids_show+0x140/0x140
+[  246.755386]  ? kthread_create_worker_on_cpu+0x70/0x70
+[  246.756162]  ret_from_fork+0x3a/0x50
+[  246.756847]
+           Showing all locks held in the system:
+[  246.758261] 3 locks held by kworker/4:0/37:
+[  246.759016]  #0: 00000000f8df4d2d ((wq_completion)"events"){+.+.}, at: process_one_work+0x1b3/0x620
+[  246.759856]  #1: 00000000e6065461 ((work_completion)(&(&dev->mode_config.output_poll_work)->work)){+.+.}, at: process_one_work+0x1b3/0x620
+[  246.760670]  #2: 00000000cb66735f (&helper->lock){+.+.}, at: drm_fb_helper_hotplug_event.part.28+0x20/0xb0 [drm_kms_helper]
+[  246.761516] 2 locks held by kworker/0:1/60:
+[  246.762274]  #0: 00000000fff6be0f ((wq_completion)"pm"){+.+.}, at: process_one_work+0x1b3/0x620
+[  246.762982]  #1: 000000005ab44fb4 ((work_completion)(&dev->power.work)){+.+.}, at: process_one_work+0x1b3/0x620
+[  246.763890] 1 lock held by khungtaskd/64:
+[  246.764664]  #0: 000000008cb8b5c3 (rcu_read_lock){....}, at: debug_show_all_locks+0x23/0x185
+[  246.765588] 5 locks held by kworker/4:2/422:
+[  246.766440]  #0: 00000000232f0959 ((wq_completion)"events_long"){+.+.}, at: process_one_work+0x1b3/0x620
+[  246.767390]  #1: 00000000bb59b134 ((work_completion)(&mgr->work)){+.+.}, at: process_one_work+0x1b3/0x620
+[  246.768154]  #2: 00000000cb66735f (&helper->lock){+.+.}, at: drm_fb_helper_restore_fbdev_mode_unlocked+0x4c/0xb0 [drm_kms_helper]
+[  246.768966]  #3: 000000004c8f0b6b (crtc_ww_class_acquire){+.+.}, at: restore_fbdev_mode_atomic+0x4b/0x240 [drm_kms_helper]
+[  246.769921]  #4: 000000004c34a296 (crtc_ww_class_mutex){+.+.}, at: drm_modeset_backoff+0x8a/0x1b0 [drm]
+[  246.770839] 1 lock held by dmesg/1038:
+[  246.771739] 2 locks held by zsh/1172:
+[  246.772650]  #0: 00000000836d0438 (&tty->ldisc_sem){++++}, at: ldsem_down_read+0x37/0x40
+[  246.773680]  #1: 000000001f4f4d48 (&ldata->atomic_read_lock){+.+.}, at: n_tty_read+0xc1/0x870
+
+[  246.775522] =============================================
+
+I've tried a couple of solutions so far, but it seems that right now the
+simplest solution is to just prevent fb_helper from handling hotplugs
+when runtime suspending, as this allows us to eliminate any possibility
+that we might race with fb_helper. We can just "resume" hotplug handling
+for fbdev when we runtime resume, and fire off a hotplug event if
+anything happened while we were suspended. Additionally; we take care to
+abort the runtime resume process if can't lock the new fb_helper hotplug
+locks before fb_helper starts doing something.
+
+Changes since v4:
+ - Add nouveau_fbcon_hotplugged_in_suspend() to workaround deadlock
+   condition that Lukas described
+ - Just move all of this out of drm_fb_helper. It seems that other DRM
+   drivers have already figured out other workarounds for this. If other
+   drivers do end up needing this in the future, we can just move this
+   back into drm_fb_helper again.
+
+Changes since v3:
+- Actually check if fb_helper is NULL in both new helpers
+- Actually check drm_fbdev_emulation in both new helpers
+- Don't fire off a fb_helper hotplug unconditionally; only do it if
+  the following conditions are true (as otherwise, calling this in the
+  wrong spot will cause Bad Things to happen):
+  - fb_helper hotplug handling was actually inhibited previously
+  - fb_helper actually has a delayed hotplug pending
+  - fb_helper is actually bound
+  - fb_helper is actually initialized
+- Add __must_check to drm_fb_helper_suspend_hotplug(). There's no
+  situation where a driver would actually want to use this without
+  checking the return value, so enforce that
+- Rewrite and clarify the documentation for both helpers.
+- Make sure to return true in the drm_fb_helper_suspend_hotplug() stub
+  that's provided in drm_fb_helper.h when CONFIG_DRM_FBDEV_EMULATION
+  isn't enabled
+- Actually grab the toplevel fb_helper lock in
+  drm_fb_helper_resume_hotplug(), since it's possible other activity
+  (such as a hotplug) could be going on at the same time the driver
+  calls drm_fb_helper_resume_hotplug(). We need this to check whether or
+  not drm_fb_helper_hotplug_event() needs to be called anyway
 
 Signed-off-by: Lyude Paul <lyude@redhat.com>
+Cc: stable@vger.kernel.org
 Cc: Lukas Wunner <lukas@wunner.de>
 Cc: Karol Herbst <karolherbst@gmail.com>
-[omitting stable Cc, this probably doesn't fix any real bugs]
 ---
- drivers/gpu/drm/nouveau/nouveau_drm.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/gpu/drm/nouveau/dispnv50/disp.c   |  2 +-
+ drivers/gpu/drm/nouveau/nouveau_display.c | 48 +++++++++---
+ drivers/gpu/drm/nouveau/nouveau_drm.c     |  3 +
+ drivers/gpu/drm/nouveau/nouveau_fbcon.c   | 90 +++++++++++++++++++++++
+ drivers/gpu/drm/nouveau/nouveau_fbcon.h   |  9 +++
+ 5 files changed, 139 insertions(+), 13 deletions(-)
 
+diff --git a/drivers/gpu/drm/nouveau/dispnv50/disp.c b/drivers/gpu/drm/nouveau/dispnv50/disp.c
+index 8b522a9b12f6..a0772389ed90 100644
+--- a/drivers/gpu/drm/nouveau/dispnv50/disp.c
++++ b/drivers/gpu/drm/nouveau/dispnv50/disp.c
+@@ -2049,7 +2049,7 @@ nv50_disp_atomic_state_alloc(struct drm_device *dev)
+ static const struct drm_mode_config_funcs
+ nv50_disp_func = {
+ 	.fb_create = nouveau_user_framebuffer_create,
+-	.output_poll_changed = drm_fb_helper_output_poll_changed,
++	.output_poll_changed = nouveau_fbcon_output_poll_changed,
+ 	.atomic_check = nv50_disp_atomic_check,
+ 	.atomic_commit = nv50_disp_atomic_commit,
+ 	.atomic_state_alloc = nv50_disp_atomic_state_alloc,
+diff --git a/drivers/gpu/drm/nouveau/nouveau_display.c b/drivers/gpu/drm/nouveau/nouveau_display.c
+index 1d36ab5d4796..7229887f7cbf 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_display.c
++++ b/drivers/gpu/drm/nouveau/nouveau_display.c
+@@ -293,7 +293,7 @@ nouveau_user_framebuffer_create(struct drm_device *dev,
+ 
+ static const struct drm_mode_config_funcs nouveau_mode_config_funcs = {
+ 	.fb_create = nouveau_user_framebuffer_create,
+-	.output_poll_changed = drm_fb_helper_output_poll_changed,
++	.output_poll_changed = nouveau_fbcon_output_poll_changed,
+ };
+ 
+ 
+@@ -608,25 +608,49 @@ nouveau_display_destroy(struct drm_device *dev)
+ int
+ nouveau_display_suspend(struct drm_device *dev, bool runtime)
+ {
++	struct nouveau_drm *drm = nouveau_drm(dev);
+ 	struct nouveau_display *disp = nouveau_display(dev);
+ 	struct drm_crtc *crtc;
++	bool using_atomic = drm_drv_uses_atomic_modeset(dev);
++	int ret;
+ 
+-	if (drm_drv_uses_atomic_modeset(dev)) {
+-		if (!runtime) {
+-			disp->suspend = drm_atomic_helper_suspend(dev);
+-			if (IS_ERR(disp->suspend)) {
+-				int ret = PTR_ERR(disp->suspend);
+-				disp->suspend = NULL;
+-				return ret;
+-			}
++	if (!runtime && using_atomic) {
++		disp->suspend = drm_atomic_helper_suspend(dev);
++		if (IS_ERR(disp->suspend)) {
++			int ret = PTR_ERR(disp->suspend);
++			disp->suspend = NULL;
++			return ret;
+ 		}
+-
+-		nouveau_display_fini(dev, true);
+-		return 0;
+ 	}
+ 
+ 	nouveau_display_fini(dev, true);
+ 
++	if (runtime && nouveau_fbcon_hotplugged_in_suspend(drm->fbcon)) {
++		NV_DEBUG(drm, "interrupted by delayed fb_helper hotplug\n");
++
++		/* We don't need to run the whole nouveau_display_resume()
++		 * process here, just undo what we did in
++		 * nouveau_display_fini()
++		 */
++		NV_DEBUG(drm, "resuming display...\n");
++		ret = nouveau_display_init(dev);
++		if (WARN_ON(ret)) {
++			NV_ERROR(drm, "Failed to bring back display!\n");
++			return ret;
++		}
++
++		return -EBUSY;
++	}
++
++	/* Any hotplugs received after this point will be picked up by ACPI,
++	 * which will wake us up properly before actually trying to handle the
++	 * hotplug.
++	 */
++
++	if (using_atomic)
++		return 0;
++
++	/* The rest of this is for legacy modesetting only */
+ 	list_for_each_entry(crtc, &dev->mode_config.crtc_list, head) {
+ 		struct nouveau_framebuffer *nouveau_fb;
+ 
 diff --git a/drivers/gpu/drm/nouveau/nouveau_drm.c b/drivers/gpu/drm/nouveau/nouveau_drm.c
-index 5fdc1fbe2ee5..04f704b77a3c 100644
+index f79b435368ec..296b1d63f054 100644
 --- a/drivers/gpu/drm/nouveau/nouveau_drm.c
 +++ b/drivers/gpu/drm/nouveau/nouveau_drm.c
-@@ -592,10 +592,8 @@ nouveau_drm_load(struct drm_device *dev, unsigned long flags)
- 		pm_runtime_allow(dev->dev);
- 		pm_runtime_mark_last_busy(dev->dev);
- 		pm_runtime_put(dev->dev);
--	} else {
--		/* enable polling for external displays */
--		drm_kms_helper_poll_enable(dev);
+@@ -841,6 +841,9 @@ nouveau_pmops_runtime_suspend(struct device *dev)
+ 		return -EBUSY;
  	}
-+
- 	return 0;
  
- fail_dispinit:
++	if (!nouveau_fbcon_hotplug_suspend(nouveau_drm(drm_dev)->fbcon))
++		return -EBUSY;
++
+ 	ret = nouveau_do_suspend(drm_dev, true);
+ 	if (ret)
+ 		return ret;
+diff --git a/drivers/gpu/drm/nouveau/nouveau_fbcon.c b/drivers/gpu/drm/nouveau/nouveau_fbcon.c
+index 85c1f10bc2b6..67677d60f07e 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_fbcon.c
++++ b/drivers/gpu/drm/nouveau/nouveau_fbcon.c
+@@ -466,6 +466,7 @@ nouveau_fbcon_set_suspend_work(struct work_struct *work)
+ 	console_unlock();
+ 
+ 	if (state == FBINFO_STATE_RUNNING) {
++		nouveau_fbcon_hotplug_resume(drm->fbcon);
+ 		pm_runtime_mark_last_busy(drm->dev->dev);
+ 		pm_runtime_put_sync(drm->dev->dev);
+ 	}
+@@ -487,6 +488,94 @@ nouveau_fbcon_set_suspend(struct drm_device *dev, int state)
+ 	schedule_work(&drm->fbcon_work);
+ }
+ 
++void
++nouveau_fbcon_output_poll_changed(struct drm_device *dev)
++{
++	struct nouveau_drm *drm = nouveau_drm(dev);
++	struct nouveau_fbdev *fbcon = drm->fbcon;
++
++	if (!fbcon)
++		return;
++
++	mutex_lock(&fbcon->hotplug_lock);
++
++	if (fbcon->hotplug_suspended) {
++		fbcon->hotplug_waiting = true;
++	} else {
++		pm_runtime_get_sync(drm->dev->dev);
++
++		drm_fb_helper_hotplug_event(&fbcon->helper);
++
++		pm_runtime_mark_last_busy(drm->dev->dev);
++		pm_runtime_put_autosuspend(drm->dev->dev);
++	}
++
++	mutex_unlock(&fbcon->hotplug_lock);
++}
++
++bool __must_check
++nouveau_fbcon_hotplug_suspend(struct nouveau_fbdev *fbcon)
++{
++	int ret;
++
++	if (!fbcon)
++		return true;
++
++	/* We can't block on fbcon if it's performing connector probes, as
++	 * it will need to grab a runtime PM reference to the GPU and deadlock
++	 * us if we do. So, just abort if it's busy (that's what we want
++	 * anyway)
++	 */
++	ret = mutex_trylock(&fbcon->hotplug_lock);
++	if (!ret)
++		return false;
++	fbcon->hotplug_suspended = true;
++	mutex_unlock(&fbcon->hotplug_lock);
++
++	return true;
++}
++
++void
++nouveau_fbcon_hotplug_resume(struct nouveau_fbdev *fbcon)
++{
++	struct drm_device *dev;
++
++	if (!fbcon)
++		return;
++	dev = fbcon->helper.dev;
++
++	mutex_lock(&fbcon->hotplug_lock);
++
++	fbcon->hotplug_suspended = false;
++	if (fbcon->hotplug_waiting) {
++		fbcon->hotplug_waiting = false;
++
++		pm_runtime_get_sync(dev->dev);
++
++		drm_fb_helper_hotplug_event(&fbcon->helper);
++
++		pm_runtime_mark_last_busy(dev->dev);
++		pm_runtime_put_autosuspend(dev->dev);
++	}
++
++	mutex_unlock(&fbcon->hotplug_lock);
++}
++
++bool
++nouveau_fbcon_hotplugged_in_suspend(struct nouveau_fbdev *fbcon)
++{
++	bool hotplug;
++
++	if (!fbcon)
++		return false;
++
++	mutex_lock(&fbcon->hotplug_lock);
++	hotplug = fbcon->hotplug_suspended && fbcon->hotplug_waiting;
++	mutex_unlock(&fbcon->hotplug_lock);
++
++	return hotplug;
++}
++
+ int
+ nouveau_fbcon_init(struct drm_device *dev)
+ {
+@@ -505,6 +594,7 @@ nouveau_fbcon_init(struct drm_device *dev)
+ 
+ 	drm->fbcon = fbcon;
+ 	INIT_WORK(&drm->fbcon_work, nouveau_fbcon_set_suspend_work);
++	mutex_init(&fbcon->hotplug_lock);
+ 
+ 	drm_fb_helper_prepare(dev, &fbcon->helper, &nouveau_fbcon_helper_funcs);
+ 
+diff --git a/drivers/gpu/drm/nouveau/nouveau_fbcon.h b/drivers/gpu/drm/nouveau/nouveau_fbcon.h
+index a6f192ea3fa6..a939628bf7f7 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_fbcon.h
++++ b/drivers/gpu/drm/nouveau/nouveau_fbcon.h
+@@ -41,6 +41,10 @@ struct nouveau_fbdev {
+ 	struct nvif_object gdi;
+ 	struct nvif_object blit;
+ 	struct nvif_object twod;
++
++	struct mutex hotplug_lock;
++	bool hotplug_suspended;
++	bool hotplug_waiting;
+ };
+ 
+ void nouveau_fbcon_restore(void);
+@@ -68,6 +72,11 @@ void nouveau_fbcon_set_suspend(struct drm_device *dev, int state);
+ void nouveau_fbcon_accel_save_disable(struct drm_device *dev);
+ void nouveau_fbcon_accel_restore(struct drm_device *dev);
+ 
++void nouveau_fbcon_output_poll_changed(struct drm_device *dev);
++bool __must_check nouveau_fbcon_hotplug_suspend(struct nouveau_fbdev *fbcon);
++void nouveau_fbcon_hotplug_resume(struct nouveau_fbdev *fbcon);
++bool nouveau_fbcon_hotplugged_in_suspend(struct nouveau_fbdev *fbcon);
++
+ extern int nouveau_nofbaccel;
+ 
+ #endif /* __NV50_FBCON_H__ */
 -- 
 2.17.1
 
