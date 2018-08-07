@@ -2,111 +2,223 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE3F1C46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 16:39:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5784C46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 16:40:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F33B2175E
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 16:39:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TX/eSVQJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F33B2175E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 8C69821770
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 16:40:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C69821770
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389639AbeHGSy5 (ORCPT
+        id S2389844AbeHGSzk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 14:54:57 -0400
-Received: from mail-yb0-f194.google.com ([209.85.213.194]:45905 "EHLO
-        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730869AbeHGSy5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 14:54:57 -0400
-Received: by mail-yb0-f194.google.com with SMTP id h127-v6so6828566ybg.12
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 09:39:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=jqeryaE7yhathlSy2pE1qOu1bKxRPLnyVAvAxqC5MCY=;
-        b=TX/eSVQJVUcouFStdX4mjFjeo2rfjK++YrcsQV7kn2euJ5QJ0TSwjbQKPi+Bgh6bWi
-         oHF66oHwPr3XjbDkXfFxiW6HuU/5GBvAs7+clApeGc8MHXAjiAY0XOB3qD2r6YrrhNdO
-         z0n2oFpflogSuGJ7lSnrqy9VwTZo7EC7kYQi2+9XetV2kasbvYyCdmcluKg2KNOg1eJJ
-         lV12s6X8pnNmiGvXMz/j2YkfXIorEJKHqa+E5eGoirx2Ax+1dKPiUrWXjN4aysTI3VJB
-         kYKXT/izUKNc+sB26vSDQEG9PLIXS+rCGxz9jpup5iAOf6SJdv6GsC+klCOsXUSP6xUT
-         B8vw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jqeryaE7yhathlSy2pE1qOu1bKxRPLnyVAvAxqC5MCY=;
-        b=imRV0Ne/HjkIlZGuMz9M6kwA8whLxzHI0FBXm3pZ6lkVDwdRx6SHOnv3hvUWCaUYga
-         IUlHpKoauqq64tfvmryVu6tgthvKYTjAACaIG5YQME00j04aIeLdYtoOksUW3mIaLOxi
-         aO8Kn0dTX1uLfK6y4RXcEflmG7Mm2TJislGvnjjFBva3zPeOQCj0oW7qVUdqMYrQJCTP
-         bikq7OCWrHtMIebEx3kd+9m/evx3fw6RJUNc9Yk6EPUU04KyEr2A1LhEf8vOckE5NQfw
-         NU3qEGQjnh8x3NpIwjdxUhjikDr7d6cWdAIL8sh19WdzIgGUeCEsBGCCFu7ViLoelGZp
-         6f9A==
-X-Gm-Message-State: AOUpUlGP8plfaJ3RH4qVI5rvisR5i1BXmxbfZTkK4ecsLbqWwNAmdPW8
-        XinYVOLCaBb0UwkGD2jfayRixSe76vt/l5JM90c21g==
-X-Google-Smtp-Source: AAOMgpcOoJqlPy1P5cylPMSlejkD/TYI0zhVMAA0AOpsBqyo/ZnyeGfdB0e8PSscjNAH7hqn1rh39uCYikqH29fUwxw=
-X-Received: by 2002:a25:b191:: with SMTP id h17-v6mr10541616ybj.79.1533659989644;
- Tue, 07 Aug 2018 09:39:49 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180807162234.205212-1-mka@chromium.org>
-In-Reply-To: <20180807162234.205212-1-mka@chromium.org>
-From:   Guenter Roeck <groeck@google.com>
-Date:   Tue, 7 Aug 2018 09:39:38 -0700
-Message-ID: <CABXOdTcpoGLc+STUZY-tVBqqn5BrBH1vEb6B+bt6MspLHUXeGQ@mail.gmail.com>
-Subject: Re: [PATCH] ASoC: rt5677: Remove bogus device id from rt5677_of_match
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     bardliao@realtek.com, oder_chiou@realtek.com,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Nicolas Boichat <drinkcat@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 7 Aug 2018 14:55:40 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:35520 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389292AbeHGSzk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 14:55:40 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 238712072F; Tue,  7 Aug 2018 18:40:30 +0200 (CEST)
+Received: from aptenodytes (220.107.128.77.rev.sfr.net [77.128.107.220])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 87D6D2072C;
+        Tue,  7 Aug 2018 18:40:14 +0200 (CEST)
+Message-ID: <2f2f5721ab5b07e36ec920b9d9c7fa0839b99a95.camel@bootlin.com>
+Subject: Re: [PATCH v6 2/8] media: v4l: Add definition for Allwinner's
+ MB32-tiled NV12 format
+From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To:     Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-sunxi@googlegroups.com,
+        Hugues Fruchet <hugues.fruchet@st.com>,
+        Randy Li <ayaka@soulik.info>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>
+Date:   Tue, 07 Aug 2018 18:40:15 +0200
+In-Reply-To: <4628cfe1-e42f-67ad-20b3-078c6a96d6ed@xs4all.nl>
+References: <20180725100256.22833-1-paul.kocialkowski@bootlin.com>
+         <20180725100256.22833-3-paul.kocialkowski@bootlin.com>
+         <4628cfe1-e42f-67ad-20b3-078c6a96d6ed@xs4all.nl>
+Organization: Bootlin
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-P8kg2P4hui+LtIFpvQmg"
+X-Mailer: Evolution 3.28.4 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 7, 2018 at 9:22 AM Matthias Kaehlcke <mka@chromium.org> wrote:
->
-> The initializer of rt5677_of_match contains a bogus device id
-> (enum type) for the 'type' field (char []). Remove it.
->
-> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> ---
->  sound/soc/codecs/rt5677.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/sound/soc/codecs/rt5677.c b/sound/soc/codecs/rt5677.c
-> index 8a0181a2db08..7dab53b35cbf 100644
-> --- a/sound/soc/codecs/rt5677.c
-> +++ b/sound/soc/codecs/rt5677.c
-> @@ -5007,7 +5007,7 @@ static const struct regmap_config rt5677_regmap = {
->  };
->
->  static const struct of_device_id rt5677_of_match[] = {
-> -       { .compatible = "realtek,rt5677", RT5677 },
-> +       { .compatible = "realtek,rt5677", },
 
-Is that indeed not used, or should it be the following ?
-                        ...  , .data = RT5677 },
+--=-P8kg2P4hui+LtIFpvQmg
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Thanks,
-Guenter
+Hi,
 
->         { }
->  };
->  MODULE_DEVICE_TABLE(of, rt5677_of_match);
-> --
-> 2.18.0.597.ga71716f1ad-goog
->
+On Sat, 2018-08-04 at 13:42 +0200, Hans Verkuil wrote:
+> On 07/25/2018 12:02 PM, Paul Kocialkowski wrote:
+> > This introduces support for Allwinner's MB32-tiled NV12 format, where
+> > each plane is divided into macroblocks of 32x32 pixels. Hence, the size
+> > of each plane has to be aligned to 32 bytes. The pixels inside each
+> > macroblock are coded as they would be if the macroblock was a single
+> > plane, line after line.
+> >=20
+> > The MB32-tiled NV12 format is used by the video engine on Allwinner
+> > platforms: it is the default format for decoded frames (and the only on=
+e
+> > available in the oldest supported platforms).
+> >=20
+> > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> > ---
+> >  Documentation/media/uapi/v4l/pixfmt-reserved.rst | 15 ++++++++++++++-
+> >  drivers/media/v4l2-core/v4l2-ioctl.c             |  1 +
+> >  include/uapi/linux/videodev2.h                   |  1 +
+> >  3 files changed, 16 insertions(+), 1 deletion(-)
+> >=20
+> > diff --git a/Documentation/media/uapi/v4l/pixfmt-reserved.rst b/Documen=
+tation/media/uapi/v4l/pixfmt-reserved.rst
+> > index 38af1472a4b4..9a68b6a787bf 100644
+> > --- a/Documentation/media/uapi/v4l/pixfmt-reserved.rst
+> > +++ b/Documentation/media/uapi/v4l/pixfmt-reserved.rst
+> > @@ -243,7 +243,20 @@ please make a proposal on the linux-media mailing =
+list.
+> >  	It is an opaque intermediate format and the MDP hardware must be
+> >  	used to convert ``V4L2_PIX_FMT_MT21C`` to ``V4L2_PIX_FMT_NV12M``,
+> >  	``V4L2_PIX_FMT_YUV420M`` or ``V4L2_PIX_FMT_YVU420``.
+> > -
+> > +    * .. _V4L2-PIX-FMT-MB32-NV12:
+> > +
+> > +      - ``V4L2_PIX_FMT_MB32_NV12``
+> > +      - 'MN12'
+> > +      - Two-planar NV12-based format used by the Allwinner video engin=
+e
+> > +        hardware, with 32x32 tiles for the luminance plane and 32x64 t=
+iles
+> > +        for the chrominance plane. Each tile is a linear pixel data
+> > +        representation within its own bounds. Each tile follows the pr=
+evious
+> > +        one linearly (as in, from left to right, top to bottom).
+>=20
+> as in, -> as in:
+
+Thanks!
+
+> > +
+> > +        The frame dimensions are aligned to match an integer number of
+> > +        tiles, resulting in 32-aligned resolutions for the luminance p=
+lane
+> > +        and 16-aligned resolutions for the chrominance plane (with 2x2
+> > +        subsampling).
+> > =20
+> >  .. tabularcolumns:: |p{6.6cm}|p{2.2cm}|p{8.7cm}|
+> > =20
+> > diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-=
+core/v4l2-ioctl.c
+> > index 68e914b83a03..7e1c200de10d 100644
+> > --- a/drivers/media/v4l2-core/v4l2-ioctl.c
+> > +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
+> > @@ -1331,6 +1331,7 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc =
+*fmt)
+> >  		case V4L2_PIX_FMT_SE401:	descr =3D "GSPCA SE401"; break;
+> >  		case V4L2_PIX_FMT_S5C_UYVY_JPG:	descr =3D "S5C73MX interleaved UYVY/=
+JPEG"; break;
+> >  		case V4L2_PIX_FMT_MT21C:	descr =3D "Mediatek Compressed Format"; bre=
+ak;
+> > +		case V4L2_PIX_FMT_MB32_NV12:	descr =3D "Allwinner tiled NV12 format"=
+; break;
+>=20
+> "Allwinner Tiled NV12 Format"
+>=20
+> If it is Allwinner specific, then that should be in the PIX_FMT name as w=
+ell:
+> something like V4L2_PIX_FMT_ALLWINNER_MB32_NV12 or perhaps SUNXI_MB32_NV1=
+2.
+>=20
+> On the other hand, you could also see this as a variant of e.g. V4L2_PIX_=
+FMT_NV12MT
+> or V4L2_PIX_FMT_NV12MT_16X16. In that case it is not necessarily Allwinne=
+r specific
+> since other devices might choose this format. You can go either way, as l=
+ong
+> as it is consistent.
+
+I think it is fair to say that the format is Allwinner-specific and
+unlikely to be found elsewhere. It is not actually very well described
+by "MB32" since the chroma tiles have a different pixel size than the
+luma tiles (16x64).
+
+It would probably be clearer to just call the format:
+V4L2_PIX_FMT_SUNXI_TILED_NV12
+
+Cheers,
+
+Paul
+
+> >  		default:
+> >  			WARN(1, "Unknown pixelformat 0x%08x\n", fmt->pixelformat);
+> >  			if (fmt->description[0])
+> > diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videod=
+ev2.h
+> > index d171361ed9b3..453d27142e31 100644
+> > --- a/include/uapi/linux/videodev2.h
+> > +++ b/include/uapi/linux/videodev2.h
+> > @@ -670,6 +670,7 @@ struct v4l2_pix_format {
+> >  #define V4L2_PIX_FMT_Z16      v4l2_fourcc('Z', '1', '6', ' ') /* Depth=
+ data 16-bit */
+> >  #define V4L2_PIX_FMT_MT21C    v4l2_fourcc('M', 'T', '2', '1') /* Media=
+tek compressed block mode  */
+> >  #define V4L2_PIX_FMT_INZI     v4l2_fourcc('I', 'N', 'Z', 'I') /* Intel=
+ Planar Greyscale 10-bit and Depth 16-bit */
+> > +#define V4L2_PIX_FMT_MB32_NV12 v4l2_fourcc('M', 'N', '1', '2') /* Allw=
+inner tiled NV12 format */
+> > =20
+> >  /* 10bit raw bayer packed, 32 bytes for every 25 pixels, last LSB 6 bi=
+ts unused */
+> >  #define V4L2_PIX_FMT_IPU3_SBGGR10	v4l2_fourcc('i', 'p', '3', 'b') /* I=
+PU3 packed 10-bit BGGR bayer */
+> >=20
+>=20
+> Regards,
+>=20
+> 	Hans
+--=20
+Paul Kocialkowski, Bootlin (formerly Free Electrons)
+Embedded Linux and kernel engineering
+https://bootlin.com
+
+--=-P8kg2P4hui+LtIFpvQmg
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEJZpWjZeIetVBefti3cLmz3+fv9EFAltpy28ACgkQ3cLmz3+f
+v9HLmAf/RgksuYQ8lngC8+h3sb9hAx5sV8yZIFeYAMGkw0U+TjPf3cbaabQGe/iX
+VLGaBWwk+SCfKeN2e1jF1QxyfX2Qvkf4LITmIgayaNImrzsQLMcgQSsXmPN/2KJF
+t6jsZFxQnT492mZCRMK/Sa/Mrrfbun+pwD+LpqxcWMbVC9NiKB3LXVg3co5dSBPK
+Iz8douPTsNENKXH3CV0h+tGXmmX7aDDrJmNo0KhfCWGGCGPF8K9BtKt5DhjNNe7y
+k3YhSSJji3Tqef/fmr6biiDUFauad6pAF8CzUs+lf402PriQr6+t1wSrXgQsaJPD
+yDE+uI1ETDX6p0GKPCpoUlifNfP1pA==
+=VNOz
+-----END PGP SIGNATURE-----
+
+--=-P8kg2P4hui+LtIFpvQmg--
+
