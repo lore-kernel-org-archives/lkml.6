@@ -6,97 +6,84 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
 	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CE13C46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 22:00:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C993C46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 22:00:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16D1D2198F
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 22:00:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16D1D2198F
+	by mail.kernel.org (Postfix) with ESMTP id 2CFA72198F
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 22:00:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CFA72198F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wanadoo.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727069AbeHHARB (ORCPT
+        id S1727234AbeHHARF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 20:17:01 -0400
-Received: from smtp03.smtpout.orange.fr ([80.12.242.125]:49507 "EHLO
+        Tue, 7 Aug 2018 20:17:05 -0400
+Received: from smtp03.smtpout.orange.fr ([80.12.242.125]:49023 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726625AbeHHARB (ORCPT
+        with ESMTP id S1727087AbeHHARE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 20:17:01 -0400
+        Tue, 7 Aug 2018 20:17:04 -0400
 Received: from localhost.localdomain ([81.67.76.113])
         by mwinf5d58 with ME
-        id LN0T1y0022Sg6Vd03N0WWp; Wed, 08 Aug 2018 00:00:33 +0200
+        id LN0T1y0022Sg6Vd03N0cXN; Wed, 08 Aug 2018 00:00:36 +0200
 X-ME-Helo: localhost.localdomain
 X-ME-Auth: bWF4aS5qb3VyZGFuQHdhbmFkb28uZnI=
-X-ME-Date: Wed, 08 Aug 2018 00:00:33 +0200
+X-ME-Date: Wed, 08 Aug 2018 00:00:36 +0200
 X-ME-IP: 81.67.76.113
 From:   Maxime Jourdan <maxi.jourdan@wanadoo.fr>
-To:     linux-amlogic@lists.infradead.org
+To:     Kevin Hilman <khilman@baylibre.com>
 Cc:     Maxime Jourdan <maxi.jourdan@wanadoo.fr>,
-        Kevin Hilman <khilman@baylibre.com>,
         Neil Armstrong <narmstrong@baylibre.com>,
         Jerome Brunet <jbrunet@baylibre.com>,
+        linux-amlogic@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: [PATCH v2 0/4] soc: amlogic: add meson-canvas
-Date:   Wed,  8 Aug 2018 00:00:07 +0200
-Message-Id: <20180807220011.24436-1-maxi.jourdan@wanadoo.fr>
+        devicetree@vger.kernel.org
+Subject: [PATCH v2 3/4] ARM64: dts: meson-gx: add dmcbus and canvas nodes.
+Date:   Wed,  8 Aug 2018 00:00:10 +0200
+Message-Id: <20180807220011.24436-4-maxi.jourdan@wanadoo.fr>
 X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180807220011.24436-1-maxi.jourdan@wanadoo.fr>
+References: <20180807220011.24436-1-maxi.jourdan@wanadoo.fr>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Amlogic SoCs feature a set of 256 canvas that act as pixel buffer
-descriptors. Some IPs like the display and video decoders access those
-pixels by using canvas IDs rather than direct phy addresses.
+Wrap the canvas node in a syscon node.
 
-As such, allocating/manipulating canvases can be done concurrently and
-there is a need for a standalone, lock-aware canvas provider module.
+Signed-off-by: Maxime Jourdan <maxi.jourdan@wanadoo.fr>
+---
+ arch/arm64/boot/dts/amlogic/meson-gx.dtsi | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-Currently, canvas code lies in the drm/meson module as it is the sole
-user.
-
-This patchset adds such canvas provider module and converts drm/meson to
-using it, stripping/moving the current canvas code.
-
-Changes since v1: [0]
- - Convert ops struct to a public API
- - Added comments
- - Hid the of-node probe code behind meson_canvas_get
- - Changed device lock to a spinlock with irqsave
-
-[0]: https://lkml.org/lkml/2018/8/1/1512
-
-Maxime Jourdan (4):
-  soc: amlogic: add meson-canvas driver
-  dt-bindings: soc: amlogic: add meson-canvas documentation
-  ARM64: dts: meson-gx: add dmcbus and canvas nodes.
-  drm/meson: convert to the new canvas module
-
- .../bindings/display/amlogic,meson-vpu.txt    |   9 +-
- .../soc/amlogic/amlogic,meson-canvas.txt      |  36 ++++
- arch/arm64/boot/dts/amlogic/meson-gx.dtsi     |  24 ++-
- drivers/gpu/drm/meson/Kconfig                 |   1 +
- drivers/gpu/drm/meson/Makefile                |   2 +-
- drivers/gpu/drm/meson/meson_canvas.c          |  70 -------
- drivers/gpu/drm/meson/meson_canvas.h          |  42 ----
- drivers/gpu/drm/meson/meson_crtc.c            |   9 +-
- drivers/gpu/drm/meson/meson_drv.c             |  22 +--
- drivers/gpu/drm/meson/meson_drv.h             |   5 +-
- drivers/gpu/drm/meson/meson_plane.c           |   3 +-
- drivers/gpu/drm/meson/meson_viu.c             |   1 -
- drivers/soc/amlogic/Kconfig                   |   7 +
- drivers/soc/amlogic/Makefile                  |   1 +
- drivers/soc/amlogic/meson-canvas.c            | 185 ++++++++++++++++++
- include/linux/soc/amlogic/meson-canvas.h      |  65 ++++++
- 16 files changed, 337 insertions(+), 145 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/soc/amlogic/amlogic,meson-canvas.txt
- delete mode 100644 drivers/gpu/drm/meson/meson_canvas.c
- delete mode 100644 drivers/gpu/drm/meson/meson_canvas.h
- create mode 100644 drivers/soc/amlogic/meson-canvas.c
- create mode 100644 include/linux/soc/amlogic/meson-canvas.h
-
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
+index b8dc4dbb391b..c98198662ae2 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
+@@ -423,6 +423,23 @@
+ 			};
+ 		};
+ 
++		dmcbus: bus@c8838000 {
++			compatible = "simple-bus";
++			reg = <0x0 0xc8838000 0x0 0x1000>;
++			#address-cells = <2>;
++			#size-cells = <2>;
++			ranges = <0x0 0x0 0x0 0xc8838000 0x0 0x1000>;
++
++			sysctrl_DMC: system-controller@0 {
++				compatible = "amlogic,gx-dmc-sysctrl", "syscon", "simple-mfd";
++				reg = <0x0 0x0 0x0 0x1000>;
++
++				canvas: canvas-provider@0 {
++					compatible = "amlogic,canvas";
++				};
++			};
++		};
++
+ 		hiubus: bus@c883c000 {
+ 			compatible = "simple-bus";
+ 			reg = <0x0 0xc883c000 0x0 0x2000>;
 -- 
 2.18.0
 
