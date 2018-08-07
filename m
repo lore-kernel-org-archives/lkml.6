@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4DF3C46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:55:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B4A2C46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:55:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 816B72151D
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:55:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 816B72151D
+	by mail.kernel.org (Postfix) with ESMTP id 211192172E
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:55:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 211192172E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404356AbeHGVLJ (ORCPT
+        id S2404372AbeHGVLN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 17:11:09 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33692 "EHLO
+        Tue, 7 Aug 2018 17:11:13 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33702 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388913AbeHGVLJ (ORCPT
+        with ESMTP id S2388913AbeHGVLM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 17:11:09 -0400
+        Tue, 7 Aug 2018 17:11:12 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8DD16D01;
-        Tue,  7 Aug 2018 18:55:25 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 810DFD01;
+        Tue,  7 Aug 2018 18:55:28 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        netdev@vger.kernel.org, Dmitry Safonov <dima@arista.com>
-Subject: [PATCH 4.9 07/17] netlink: Dont shift on 64 for ngroups
-Date:   Tue,  7 Aug 2018 20:51:43 +0200
-Message-Id: <20180807172342.553347062@linuxfoundation.org>
+        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
+        Benjamin Gilbert <bgilbert@redhat.com>
+Subject: [PATCH 4.9 08/17] ext4: fix false negatives *and* false positives in ext4_check_descriptors()
+Date:   Tue,  7 Aug 2018 20:51:44 +0200
+Message-Id: <20180807172342.599886285@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180807172342.071526922@linuxfoundation.org>
 References: <20180807172342.071526922@linuxfoundation.org>
@@ -52,46 +50,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dmitry Safonov <dima@arista.com>
+From: Theodore Ts'o <tytso@mit.edu>
 
-commit 91874ecf32e41b5d86a4cb9d60e0bee50d828058 upstream.
+commit 44de022c4382541cebdd6de4465d1f4f465ff1dd upstream.
 
-It's legal to have 64 groups for netlink_sock.
+Ext4_check_descriptors() was getting called before s_gdb_count was
+initialized.  So for file systems w/o the meta_bg feature, allocation
+bitmaps could overlap the block group descriptors and ext4 wouldn't
+notice.
 
-As user-supplied nladdr->nl_groups is __u32, it's possible to subscribe
-only to first 32 groups.
+For file systems with the meta_bg feature enabled, there was a
+fencepost error which would cause the ext4_check_descriptors() to
+incorrectly believe that the block allocation bitmap overlaps with the
+block group descriptor blocks, and it would reject the mount.
 
-The check for correctness of .bind() userspace supplied parameter
-is done by applying mask made from ngroups shift. Which broke Android
-as they have 64 groups and the shift for mask resulted in an overflow.
+Fix both of these problems.
 
-Fixes: 61f4b23769f0 ("netlink: Don't shift with UB on nlk->ngroups")
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Steffen Klassert <steffen.klassert@secunet.com>
-Cc: netdev@vger.kernel.org
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Cc: stable@vger.kernel.org
-Reported-and-Tested-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Dmitry Safonov <dima@arista.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Benjamin Gilbert <bgilbert@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- net/netlink/af_netlink.c |    4 ++--
+ fs/ext4/super.c |    4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/net/netlink/af_netlink.c
-+++ b/net/netlink/af_netlink.c
-@@ -988,8 +988,8 @@ static int netlink_bind(struct socket *s
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -2231,7 +2231,7 @@ static int ext4_check_descriptors(struct
+ 	struct ext4_sb_info *sbi = EXT4_SB(sb);
+ 	ext4_fsblk_t first_block = le32_to_cpu(sbi->s_es->s_first_data_block);
+ 	ext4_fsblk_t last_block;
+-	ext4_fsblk_t last_bg_block = sb_block + ext4_bg_num_gdb(sb, 0) + 1;
++	ext4_fsblk_t last_bg_block = sb_block + ext4_bg_num_gdb(sb, 0);
+ 	ext4_fsblk_t block_bitmap;
+ 	ext4_fsblk_t inode_bitmap;
+ 	ext4_fsblk_t inode_table;
+@@ -3941,13 +3941,13 @@ static int ext4_fill_super(struct super_
+ 			goto failed_mount2;
+ 		}
+ 	}
++	sbi->s_gdb_count = db_count;
+ 	if (!ext4_check_descriptors(sb, logical_sb_block, &first_not_zeroed)) {
+ 		ext4_msg(sb, KERN_ERR, "group descriptors corrupted!");
+ 		ret = -EFSCORRUPTED;
+ 		goto failed_mount2;
+ 	}
  
- 	if (nlk->ngroups == 0)
- 		groups = 0;
--	else
--		groups &= (1ULL << nlk->ngroups) - 1;
-+	else if (nlk->ngroups < 8*sizeof(groups))
-+		groups &= (1UL << nlk->ngroups) - 1;
+-	sbi->s_gdb_count = db_count;
+ 	get_random_bytes(&sbi->s_next_generation, sizeof(u32));
+ 	spin_lock_init(&sbi->s_next_gen_lock);
  
- 	bound = nlk->bound;
- 	if (bound) {
 
 
