@@ -3,183 +3,100 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C323C46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 16:22:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5FA0C46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 16:22:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3AA852175E
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 16:22:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 98E772192C
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 16:22:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UclXYsPs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3AA852175E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="m4nFATo4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98E772192C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403767AbeHGShD (ORCPT
+        id S2403905AbeHGShv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 14:37:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34368 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730869AbeHGShD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 14:37:03 -0400
-Received: from localhost.localdomain (xdsl-188-155-58-14.adslplus.ch [188.155.58.14])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E50212174B;
-        Tue,  7 Aug 2018 16:21:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1533658920;
-        bh=rI2hdT68yn9mWVbQjq85sSHzfql9X3ekY3qdQ5kdCgQ=;
-        h=From:To:Subject:Date:From;
-        b=UclXYsPsTIYtNBVFSIAXtDnNYJD372Ldoa89yVjyWL52lzOFRAw6FPFZ6muIW1R84
-         cRFaKoGv/fRgk7VJZdk+xGUCYP+vqkx9b/3OngY3XA1NDDtji+pq/FuxIwRIplakCS
-         hGahBCZINT7IZidTFAS8+O5MbaecV6r/eaXVxNDk=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] extcon: maxim: Add SPDX license identifiers
-Date:   Tue,  7 Aug 2018 18:21:22 +0200
-Message-Id: <20180807162122.19614-1-krzk@kernel.org>
-X-Mailer: git-send-email 2.14.1
+        Tue, 7 Aug 2018 14:37:51 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:45361 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730869AbeHGShv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 14:37:51 -0400
+Received: by mail-pl0-f67.google.com with SMTP id j8-v6so7310815pll.12
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 09:22:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=3Ld+jKIMWSrU+bYVYA8Qq6rH31LQg01ROPMJMQLB33M=;
+        b=m4nFATo446urwNwA63YL5uv1YONRJac7OzdLDghVu5YQ2B1Xzsz2E9rrThXUv5z8W0
+         AQLohnP4E96LRRaTgYWuj1ImuPFTS63d6RbFBgLZM4yTEVi5U7uzqfhQOv4uFvrHVXrH
+         mAFvREsABbg0566+UiTdulPOAjcRIFoeuBdug=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=3Ld+jKIMWSrU+bYVYA8Qq6rH31LQg01ROPMJMQLB33M=;
+        b=ccTXZiX+kJPvqrVQ64nXIe997mukKbiD1IvMrTK4MQcD+Yo//bRaMh9Mv9vrn9YetR
+         UN2dyd/d0tzrfqkRyqIiEhkT1h7rPbnmXZAw2VuX11Iy1g7s/Xpe1Ufa09UhZq+OVj/9
+         saacBt1WAOr0MyzQTh4cX5teueuF4IzE0283FbFbO0TbphJkyYra0sRWFjfTOSK8MS8E
+         julAxFhpip/5QMeL3vWLO5TO8e1blZI9e2jxg8dvy/piIMz3Vd/z/idUUKd9yBgh0DlW
+         49GuIl/TJiTbOt7VgcFxX+fD5MGGkmueUPa4EChCXA7n8pf6UH3xUWFSJHo1zOJ9xIbE
+         LXCw==
+X-Gm-Message-State: AOUpUlFG5SB+6ptX8XMhNtDsZ6tNnpuK2IAfGzZXXhPhdiwnyStdvegr
+        HxKO0ktLSiz/PNhNo6sPxyspUg==
+X-Google-Smtp-Source: AAOMgpeHRlWG1XKRWUnQdv3jLWnuQWJHJG6um2FVJBy/xlBp1XhXyoPOD8BMrdIfhARvVW5DuP4AHA==
+X-Received: by 2002:a17:902:5a4c:: with SMTP id f12-v6mr18545548plm.253.1533658968030;
+        Tue, 07 Aug 2018 09:22:48 -0700 (PDT)
+Received: from mka.mtv.corp.google.com ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
+        by smtp.gmail.com with ESMTPSA id f75-v6sm8429006pfk.85.2018.08.07.09.22.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 07 Aug 2018 09:22:47 -0700 (PDT)
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Bard Liao <bardliao@realtek.com>,
+        Oder Chiou <oder_chiou@realtek.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        Guenter Roeck <groeck@chromium.org>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>
+Subject: [PATCH] ASoC: rt5677: Remove bogus device id from rt5677_of_match
+Date:   Tue,  7 Aug 2018 09:22:34 -0700
+Message-Id: <20180807162234.205212-1-mka@chromium.org>
+X-Mailer: git-send-email 2.18.0.597.ga71716f1ad-goog
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace GPL v2.0+ license statements with SPDX license identifiers.
+The initializer of rt5677_of_match contains a bogus device id
+(enum type) for the 'type' field (char []). Remove it.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
 ---
- drivers/extcon/extcon-max14577.c | 24 +++++++-----------------
- drivers/extcon/extcon-max77693.c | 22 ++++++----------------
- drivers/extcon/extcon-max77843.c | 19 +++++++------------
- drivers/extcon/extcon-max8997.c  | 22 ++++++----------------
- 4 files changed, 26 insertions(+), 61 deletions(-)
+ sound/soc/codecs/rt5677.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/extcon/extcon-max14577.c b/drivers/extcon/extcon-max14577.c
-index b871836da8a4..22d2feb1f8bc 100644
---- a/drivers/extcon/extcon-max14577.c
-+++ b/drivers/extcon/extcon-max14577.c
-@@ -1,20 +1,10 @@
--/*
-- * extcon-max14577.c - MAX14577/77836 extcon driver to support MUIC
-- *
-- * Copyright (C) 2013,2014 Samsung Electronics
-- * Chanwoo Choi <cw00.choi@samsung.com>
-- * Krzysztof Kozlowski <krzk@kernel.org>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- */
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// extcon-max14577.c - MAX14577/77836 extcon driver to support MUIC
-+//
-+// Copyright (C) 2013,2014 Samsung Electronics
-+// Chanwoo Choi <cw00.choi@samsung.com>
-+// Krzysztof Kozlowski <krzk@kernel.org>
+diff --git a/sound/soc/codecs/rt5677.c b/sound/soc/codecs/rt5677.c
+index 8a0181a2db08..7dab53b35cbf 100644
+--- a/sound/soc/codecs/rt5677.c
++++ b/sound/soc/codecs/rt5677.c
+@@ -5007,7 +5007,7 @@ static const struct regmap_config rt5677_regmap = {
+ };
  
- #include <linux/kernel.h>
- #include <linux/module.h>
-diff --git a/drivers/extcon/extcon-max77693.c b/drivers/extcon/extcon-max77693.c
-index 227651ff9666..a79537ebb671 100644
---- a/drivers/extcon/extcon-max77693.c
-+++ b/drivers/extcon/extcon-max77693.c
-@@ -1,19 +1,9 @@
--/*
-- * extcon-max77693.c - MAX77693 extcon driver to support MAX77693 MUIC
-- *
-- * Copyright (C) 2012 Samsung Electrnoics
-- * Chanwoo Choi <cw00.choi@samsung.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- */
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// extcon-max77693.c - MAX77693 extcon driver to support MAX77693 MUIC
-+//
-+// Copyright (C) 2012 Samsung Electrnoics
-+// Chanwoo Choi <cw00.choi@samsung.com>
- 
- #include <linux/kernel.h>
- #include <linux/module.h>
-diff --git a/drivers/extcon/extcon-max77843.c b/drivers/extcon/extcon-max77843.c
-index c9fcd6cd41cb..b98cbd0362f5 100644
---- a/drivers/extcon/extcon-max77843.c
-+++ b/drivers/extcon/extcon-max77843.c
-@@ -1,15 +1,10 @@
--/*
-- * extcon-max77843.c - Maxim MAX77843 extcon driver to support
-- *			MUIC(Micro USB Interface Controller)
-- *
-- * Copyright (C) 2015 Samsung Electronics
-- * Author: Jaewon Kim <jaewon02.kim@samsung.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- */
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// extcon-max77843.c - Maxim MAX77843 extcon driver to support
-+//			MUIC(Micro USB Interface Controller)
-+//
-+// Copyright (C) 2015 Samsung Electronics
-+// Author: Jaewon Kim <jaewon02.kim@samsung.com>
- 
- #include <linux/extcon-provider.h>
- #include <linux/i2c.h>
-diff --git a/drivers/extcon/extcon-max8997.c b/drivers/extcon/extcon-max8997.c
-index 9f30f4929b72..bdabb2479e0d 100644
---- a/drivers/extcon/extcon-max8997.c
-+++ b/drivers/extcon/extcon-max8997.c
-@@ -1,19 +1,9 @@
--/*
-- * extcon-max8997.c - MAX8997 extcon driver to support MAX8997 MUIC
-- *
-- *  Copyright (C) 2012 Samsung Electronics
-- *  Donggeun Kim <dg77.kim@samsung.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- */
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// extcon-max8997.c - MAX8997 extcon driver to support MAX8997 MUIC
-+//
-+//  Copyright (C) 2012 Samsung Electronics
-+//  Donggeun Kim <dg77.kim@samsung.com>
- 
- #include <linux/kernel.h>
- #include <linux/module.h>
+ static const struct of_device_id rt5677_of_match[] = {
+-	{ .compatible = "realtek,rt5677", RT5677 },
++	{ .compatible = "realtek,rt5677", },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, rt5677_of_match);
 -- 
-2.14.1
+2.18.0.597.ga71716f1ad-goog
 
