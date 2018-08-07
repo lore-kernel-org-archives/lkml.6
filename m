@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37373C46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:54:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22CE0C46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:54:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E40FA2151D
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:54:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E40FA2151D
+	by mail.kernel.org (Postfix) with ESMTP id CEFD72172E
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:54:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CEFD72172E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390061AbeHGVJo (ORCPT
+        id S2390092AbeHGVJr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 17:09:44 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33348 "EHLO
+        Tue, 7 Aug 2018 17:09:47 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33356 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388973AbeHGVJo (ORCPT
+        with ESMTP id S2388973AbeHGVJr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 17:09:44 -0400
+        Tue, 7 Aug 2018 17:09:47 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E60673EE;
-        Tue,  7 Aug 2018 18:54:00 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E57A03EE;
+        Tue,  7 Aug 2018 18:54:03 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Len Brown <len.brown@intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        stable@vger.kernel.org, Dave Chinner <dchinner@redhat.com>,
+        Carlos Maiolino <cmaiolino@redhat.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
         Eduardo Valentin <eduval@amazon.com>
-Subject: [PATCH 4.14 17/21] intel_idle: Graceful probe failure when MWAIT is disabled
-Date:   Tue,  7 Aug 2018 20:51:31 +0200
-Message-Id: <20180807172331.744857338@linuxfoundation.org>
+Subject: [PATCH 4.14 18/21] xfs: catch inode allocation state mismatch corruption
+Date:   Tue,  7 Aug 2018 20:51:32 +0200
+Message-Id: <20180807172331.794260863@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180807172330.953888701@linuxfoundation.org>
 References: <20180807172330.953888701@linuxfoundation.org>
@@ -51,51 +52,184 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Len Brown <len.brown@intel.com>
+From: Dave Chinner <dchinner@redhat.com>
 
-commit a4c447533a18ee86e07232d6344ba12b1f9c5077 upstream.
+commit ee457001ed6c6f31ddad69c24c1da8f377d8472d upstream.
 
-When MWAIT is disabled, intel_idle refuses to probe.
-But it may mis-lead the user by blaming this on the model number:
+We recently came across a V4 filesystem causing memory corruption
+due to a newly allocated inode being setup twice and being added to
+the superblock inode list twice. From code inspection, the only way
+this could happen is if a newly allocated inode was not marked as
+free on disk (i.e. di_mode wasn't zero).
 
-intel_idle: does not run on family 6 modesl 79
+Running the metadump on an upstream debug kernel fails during inode
+allocation like so:
 
-So defer the check for MWAIT until after the model# white-list check succeeds,
-and if the MWAIT check fails, tell the user how to fix it:
+XFS: Assertion failed: ip->i_d.di_nblocks == 0, file: fs/xfs/xfs_inod=
+e.c, line: 838
+ ------------[ cut here ]------------
+kernel BUG at fs/xfs/xfs_message.c:114!
+invalid opcode: 0000 [#1] PREEMPT SMP
+CPU: 11 PID: 3496 Comm: mkdir Not tainted 4.16.0-rc5-dgc #442
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/0=
+1/2014
+RIP: 0010:assfail+0x28/0x30
+RSP: 0018:ffffc9000236fc80 EFLAGS: 00010202
+RAX: 00000000ffffffea RBX: 0000000000004000 RCX: 0000000000000000
+RDX: 00000000ffffffc0 RSI: 000000000000000a RDI: ffffffff8227211b
+RBP: ffffc9000236fce8 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000bec R11: f000000000000000 R12: ffffc9000236fd30
+R13: ffff8805c76bab80 R14: ffff8805c77ac800 R15: ffff88083fb12e10
+FS:  00007fac8cbff040(0000) GS:ffff88083fd00000(0000) knlGS:0000000000000=
+000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fffa6783ff8 CR3: 00000005c6e2b003 CR4: 00000000000606e0
+Call Trace:
+ xfs_ialloc+0x383/0x570
+ xfs_dir_ialloc+0x6a/0x2a0
+ xfs_create+0x412/0x670
+ xfs_generic_create+0x1f7/0x2c0
+ ? capable_wrt_inode_uidgid+0x3f/0x50
+ vfs_mkdir+0xfb/0x1b0
+ SyS_mkdir+0xcf/0xf0
+ do_syscall_64+0x73/0x1a0
+ entry_SYSCALL_64_after_hwframe+0x42/0xb7
 
-intel_idle: Please enable MWAIT in BIOS SETUP
+Extracting the inode number we crashed on from an event trace and
+looking at it with xfs_db:
 
-Signed-off-by: Len Brown <len.brown@intel.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+xfs_db> inode 184452204
+xfs_db> p
+core.magic = 0x494e
+core.mode = 0100644
+core.version = 2
+core.format = 2 (extents)
+core.nlinkv2 = 1
+core.onlink = 0
+.....
+
+Confirms that it is not a free inode on disk. xfs_repair
+also trips over this inode:
+
+.....
+zero length extent (off = 0, fsbno = 0) in ino 184452204
+correcting nextents for inode 184452204
+bad attribute fork in inode 184452204, would clear attr fork
+bad nblocks 1 for inode 184452204, would reset to 0
+bad anextents 1 for inode 184452204, would reset to 0
+imap claims in-use inode 184452204 is free, would correct imap
+would have cleared inode 184452204
+.....
+disconnected inode 184452204, would move to lost+found
+
+And so we have a situation where the directory structure and the
+inobt thinks the inode is free, but the inode on disk thinks it is
+still in use. Where this corruption came from is not possible to
+diagnose, but we can detect it and prevent the kernel from oopsing
+on lookup. The reproducer now results in:
+
+$ sudo mkdir /mnt/scratch/{0,1,2,3,4,5}{0,1,2,3,4,5}
+mkdir: cannot create directory =E2=80=98/mnt/scratch/00=E2=80=99: File ex=
+ists
+mkdir: cannot create directory =E2=80=98/mnt/scratch/01=E2=80=99: File ex=
+ists
+mkdir: cannot create directory =E2=80=98/mnt/scratch/03=E2=80=99: Structu=
+re needs cleaning
+mkdir: cannot create directory =E2=80=98/mnt/scratch/04=E2=80=99: Input/o=
+utput error
+mkdir: cannot create directory =E2=80=98/mnt/scratch/05=E2=80=99: Input/o=
+utput error
+....
+
+And this corruption shutdown:
+
+[   54.843517] XFS (loop0): Corruption detected! Free inode 0xafe846c not=
+ marked free on disk
+[   54.845885] XFS (loop0): Internal error xfs_trans_cancel at line 1023 =
+of file fs/xfs/xfs_trans.c.  Caller xfs_create+0x425/0x670
+[   54.848994] CPU: 10 PID: 3541 Comm: mkdir Not tainted 4.16.0-rc5-dgc #=
+443
+[   54.850753] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIO=
+S 1.10.2-1 04/01/2014
+[   54.852859] Call Trace:
+[   54.853531]  dump_stack+0x85/0xc5
+[   54.854385]  xfs_trans_cancel+0x197/0x1c0
+[   54.855421]  xfs_create+0x425/0x670
+[   54.856314]  xfs_generic_create+0x1f7/0x2c0
+[   54.857390]  ? capable_wrt_inode_uidgid+0x3f/0x50
+[   54.858586]  vfs_mkdir+0xfb/0x1b0
+[   54.859458]  SyS_mkdir+0xcf/0xf0
+[   54.860254]  do_syscall_64+0x73/0x1a0
+[   54.861193]  entry_SYSCALL_64_after_hwframe+0x42/0xb7
+[   54.862492] RIP: 0033:0x7fb73bddf547
+[   54.863358] RSP: 002b:00007ffdaa553338 EFLAGS: 00000246 ORIG_RAX: 0000=
+000000000053
+[   54.865133] RAX: ffffffffffffffda RBX: 00007ffdaa55449a RCX: 00007fb73=
+bddf547
+[   54.866766] RDX: 0000000000000001 RSI: 00000000000001ff RDI: 00007ffda=
+a55449a
+[   54.868432] RBP: 00007ffdaa55449a R08: 00000000000001ff R09: 00005623a=
+8670dd0
+[   54.870110] R10: 00007fb73be72d5b R11: 0000000000000246 R12: 000000000=
+00001ff
+[   54.871752] R13: 00007ffdaa5534b0 R14: 0000000000000000 R15: 00007ffda=
+a553500
+[   54.873429] XFS (loop0): xfs_do_force_shutdown(0x8) called from line 1=
+024 of file fs/xfs/xfs_trans.c.  Return address = ffffffff814cd050
+[   54.882790] XFS (loop0): Corruption of in-memory data detected.  Shutt=
+ing down filesystem
+[   54.884597] XFS (loop0): Please umount the filesystem and rectify the =
+problem(s)
+
+Note that this crash is only possible on v4 filesystemsi or v5
+filesystems mounted with the ikeep mount option. For all other V5
+filesystems, this problem cannot occur because we don't read inodes
+we are allocating from disk - we simply overwrite them with the new
+inode information.
+
+Signed-Off-By: Dave Chinner <dchinner@redhat.com>
+Reviewed-by: Carlos Maiolino <cmaiolino@redhat.com>
+Tested-by: Carlos Maiolino <cmaiolino@redhat.com>
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
 Cc: Eduardo Valentin <eduval@amazon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/idle/intel_idle.c |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ fs/xfs/xfs_icache.c |   23 ++++++++++++++++++++++-
+ 1 file changed, 22 insertions(+), 1 deletion(-)
 
---- a/drivers/idle/intel_idle.c
-+++ b/drivers/idle/intel_idle.c
-@@ -1061,7 +1061,7 @@ static const struct idle_cpu idle_cpu_dn
- };
+--- a/fs/xfs/xfs_icache.c
++++ b/fs/xfs/xfs_icache.c
+@@ -475,7 +475,28 @@ xfs_iget_cache_miss(
  
- #define ICPU(model, cpu) \
--	{ X86_VENDOR_INTEL, 6, model, X86_FEATURE_MWAIT, (unsigned long)&cpu }
-+	{ X86_VENDOR_INTEL, 6, model, X86_FEATURE_ANY, (unsigned long)&cpu }
+ 	trace_xfs_iget_miss(ip);
  
- static const struct x86_cpu_id intel_idle_ids[] __initconst = {
- 	ICPU(INTEL_FAM6_NEHALEM_EP,		idle_cpu_nehalem),
-@@ -1125,6 +1125,11 @@ static int __init intel_idle_probe(void)
- 		return -ENODEV;
- 	}
- 
-+	if (!boot_cpu_has(X86_FEATURE_MWAIT)) {
-+		pr_debug("Please enable MWAIT in BIOS SETUP\n");
-+		return -ENODEV;
-+	}
+-	if ((VFS_I(ip)->i_mode == 0) && !(flags & XFS_IGET_CREATE)) {
 +
- 	if (boot_cpu_data.cpuid_level < CPUID_MWAIT_LEAF)
- 		return -ENODEV;
- 
++	/*
++	 * If we are allocating a new inode, then check what was returned is
++	 * actually a free, empty inode. If we are not allocating an inode,
++	 * the check we didn't find a free inode.
++	 */
++	if (flags & XFS_IGET_CREATE) {
++		if (VFS_I(ip)->i_mode != 0) {
++			xfs_warn(mp,
++"Corruption detected! Free inode 0x%llx not marked free on disk",
++				ino);
++			error = -EFSCORRUPTED;
++			goto out_destroy;
++		}
++		if (ip->i_d.di_nblocks != 0) {
++			xfs_warn(mp,
++"Corruption detected! Free inode 0x%llx has blocks allocated!",
++				ino);
++			error = -EFSCORRUPTED;
++			goto out_destroy;
++		}
++	} else if (VFS_I(ip)->i_mode == 0) {
+ 		error = -ENOENT;
+ 		goto out_destroy;
+ 	}
 
 
