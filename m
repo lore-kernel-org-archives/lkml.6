@@ -3,48 +3,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FE81C46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 23:17:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F5F5C46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 23:18:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F4E621736
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 23:17:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F4E621736
+	by mail.kernel.org (Postfix) with ESMTP id 1EDC321736
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 23:18:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EDC321736
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727160AbeHHBd5 (ORCPT
+        id S1727240AbeHHBej (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 21:33:57 -0400
-Received: from gateway24.websitewelcome.com ([192.185.50.91]:29186 "EHLO
-        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726680AbeHHBd5 (ORCPT
+        Tue, 7 Aug 2018 21:34:39 -0400
+Received: from gateway21.websitewelcome.com ([192.185.45.228]:23348 "EHLO
+        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726733AbeHHBei (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 21:33:57 -0400
+        Tue, 7 Aug 2018 21:34:38 -0400
 Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
-        by gateway24.websitewelcome.com (Postfix) with ESMTP id D0E2B6B42
-        for <linux-kernel@vger.kernel.org>; Tue,  7 Aug 2018 18:17:14 -0500 (CDT)
+        by gateway21.websitewelcome.com (Postfix) with ESMTP id 6FBEB400D4AF8
+        for <linux-kernel@vger.kernel.org>; Tue,  7 Aug 2018 18:17:56 -0500 (CDT)
 Received: from gator4166.hostgator.com ([108.167.133.22])
         by cmsmtp with SMTP
-        id nBDxf7CZZbXuJnBE1fWEEK; Tue, 07 Aug 2018 18:17:14 -0500
+        id nBEdf7EU8bXuJnBEgfWG70; Tue, 07 Aug 2018 18:17:56 -0500
 X-Authority-Reason: nr=8
-Received: from [189.250.73.102] (port=48070 helo=embeddedor)
+Received: from [189.250.73.102] (port=48076 helo=embeddedor)
         by gator4166.hostgator.com with esmtpa (Exim 4.91)
         (envelope-from <gustavo@embeddedor.com>)
-        id 1fnBDx-001sdq-0M; Tue, 07 Aug 2018 18:17:09 -0500
-Date:   Tue, 7 Aug 2018 18:17:08 -0500
+        id 1fnBEc-001szb-QE; Tue, 07 Aug 2018 18:17:50 -0500
+Date:   Tue, 7 Aug 2018 18:17:50 -0500
 From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 To:     "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Sathya Perla <sathya.perla@broadcom.com>,
-        Ajit Khaparde <ajit.khaparde@broadcom.com>,
-        Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>,
-        Somnath Kotur <somnath.kotur@broadcom.com>
-Subject: [PATCH 12/33] be2net: Mark expected switch fall-through
-Message-ID: <4c7f61c6d526a824ba37b2b1dca095fddd8c0a75.1533675546.git.gustavo@embeddedor.com>
+Cc:     Yisen Zhuang <yisen.zhuang@huawei.com>,
+        Salil Mehta <salil.mehta@huawei.com>
+Subject: [PATCH 13/33] net: hns: Mark expected switch fall-through
+Message-ID: <674c750536890e504eb80242ee65fc024419ba20.1533675546.git.gustavo@embeddedor.com>
 References: <cover.1533675546.git.gustavo@embeddedor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -59,13 +57,13 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 189.250.73.102
 X-Source-L: No
-X-Exim-ID: 1fnBDx-001sdq-0M
+X-Exim-ID: 1fnBEc-001szb-QE
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.73.102]:48070
+X-Source-Sender: (embeddedor) [189.250.73.102]:48076
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 95
+X-Email-Count: 102
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -76,24 +74,24 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 In preparation to enabling -Wimplicit-fallthrough, mark switch cases
 where we are expecting to fall through.
 
-Addresses-Coverity-ID: 114787 ("Missing break in switch")
+Addresses-Coverity-ID: 114788 ("Missing break in switch")
 Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- drivers/net/ethernet/emulex/benet/be_ethtool.c | 1 +
+ drivers/net/ethernet/hisilicon/hns/hns_ethtool.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/ethernet/emulex/benet/be_ethtool.c b/drivers/net/ethernet/emulex/benet/be_ethtool.c
-index 7f7e206..3f6749f 100644
---- a/drivers/net/ethernet/emulex/benet/be_ethtool.c
-+++ b/drivers/net/ethernet/emulex/benet/be_ethtool.c
-@@ -575,6 +575,7 @@ static u32 convert_to_et_setting(struct be_adapter *adapter, u32 if_speeds)
- 				break;
- 			}
- 		}
+diff --git a/drivers/net/ethernet/hisilicon/hns/hns_ethtool.c b/drivers/net/ethernet/hisilicon/hns/hns_ethtool.c
+index 3957205..08f3c47 100644
+--- a/drivers/net/ethernet/hisilicon/hns/hns_ethtool.c
++++ b/drivers/net/ethernet/hisilicon/hns/hns_ethtool.c
+@@ -307,6 +307,7 @@ static int __lb_setup(struct net_device *ndev,
+ 		break;
+ 	case MAC_LOOP_PHY_NONE:
+ 		ret = hns_nic_config_phy_loopback(phy_dev, 0x0);
 +		/* fall through */
- 	case PHY_TYPE_SFP_PLUS_10GB:
- 	case PHY_TYPE_XFP_10GB:
- 	case PHY_TYPE_SFP_1GB:
+ 	case MAC_LOOP_NONE:
+ 		if (!ret && h->dev->ops->set_loopback) {
+ 			if (priv->ae_handle->phy_if != PHY_INTERFACE_MODE_XGMII)
 -- 
 2.7.4
 
