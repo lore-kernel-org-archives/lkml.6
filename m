@@ -2,163 +2,121 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DB71C46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:17:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BB33C46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:17:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D394E2172E
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:17:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D394E2172E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id C70CE2172E
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:17:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C70CE2172E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389284AbeHGUcg (ORCPT
+        id S2389670AbeHGUdL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 16:32:36 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:33918 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727198AbeHGUcg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 16:32:36 -0400
-Received: by mail-it0-f67.google.com with SMTP id d70-v6so16077997ith.1;
-        Tue, 07 Aug 2018 11:17:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=UkQ5kghvGv+MJE8EGF4dFgEFoJTFxSA9efH2ybJqCPA=;
-        b=AMGqOyDyCHQ1xUBFDPgm5yEyDdCDqjBiQ+ZBKD91IUe4ZE9F3KV27bBNOYzvryB4gH
-         43jI7rOl7dbBTtYIqSpPyzztNMXimSWNKvf4fJ8F55sEvDHKaUwq/XE4RaEilB98+xxq
-         SgWNhy6UsgVULKuiqeMZRnkInJegD7F7f21Gz3LfCCkG2nPXDJRw5Hs/r3e1zeEVwL3L
-         hgrs8rsgvTbvCeyIBYPz/XG8Kfso163/JvDmJt1sTjcrPVSAn2Q/ADhRXu9qzRN8vSjZ
-         kEp1+pQjhDiS8BSXAK3nf6XRX0pFb9XeKwcB9IrqE5WlGXCGKqT4yF6A1MoYm38PEe+v
-         y8gg==
-X-Gm-Message-State: AOUpUlE/AK8/sibSRnO0LQjP/4/hQDbM3FTAYL92rMFm78nACF2AO5TU
-        BFL/GpJdW4lBkE1bjYBiK19IbfU=
-X-Google-Smtp-Source: AAOMgpc63j/9WaTpgTQdbG5/UCZ3tvzeIQewMQcebdH+MEJMZLYh8sqPffyj2hx4JKbRnWTOdNRJ+w==
-X-Received: by 2002:a02:910d:: with SMTP id a13-v6mr18004578jag.14.1533665821019;
-        Tue, 07 Aug 2018 11:17:01 -0700 (PDT)
-Received: from localhost ([24.51.61.72])
-        by smtp.gmail.com with ESMTPSA id u24-v6sm559512iol.49.2018.08.07.11.17.00
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 07 Aug 2018 11:17:00 -0700 (PDT)
-Date:   Tue, 7 Aug 2018 12:16:59 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Sibi S <sibis@codeaurora.org>
-Cc:     Philipp Zabel <p.zabel@pengutronix.de>, bjorn.andersson@linaro.org,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, ohad@wizery.com, mark.rutland@arm.com,
-        sricharan@codeaurora.org, akdwived@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org,
-        ilina@codeaurora.org
-Subject: Re: [PATCH 1/4] dt-bindings: reset: Add PDC reset binding for SDM845
- SoCs
-Message-ID: <20180807181659.GA20659@rob-hp-laptop>
-References: <20180727152811.15258-1-sibis@codeaurora.org>
- <1533026547.3444.4.camel@pengutronix.de>
- <28f34ddf-03b2-0baa-c04f-15e546ef3f75@codeaurora.org>
+        Tue, 7 Aug 2018 16:33:11 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57874 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727198AbeHGUdL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 16:33:11 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C18FA7D84D;
+        Tue,  7 Aug 2018 18:17:35 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 673BD7C56;
+        Tue,  7 Aug 2018 18:17:35 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id w77IHZVB025672;
+        Tue, 7 Aug 2018 14:17:35 -0400
+Received: from localhost (mpatocka@localhost)
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id w77IHYMN025668;
+        Tue, 7 Aug 2018 14:17:34 -0400
+X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
+Date:   Tue, 7 Aug 2018 14:17:34 -0400 (EDT)
+From:   Mikulas Patocka <mpatocka@redhat.com>
+X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+cc:     Marcin Wojtas <mw@semihalf.com>,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        Joao Pinto <Joao.Pinto@synopsys.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        linux-pci <linux-pci@vger.kernel.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Matt Sealey <neko@bakuhatsu.net>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Subject: Re: framebuffer corruption due to overlapping stp instructions on
+ arm64
+In-Reply-To: <CAKv+Gu_HasYTYLy3d_1vhBHA=M5i40DmU3EuVHhzT4pRiahcmA@mail.gmail.com>
+Message-ID: <alpine.LRH.2.02.1808071414340.25017@file01.intranet.prod.int.rdu2.redhat.com>
+References: <alpine.LRH.2.02.1808021242320.31834@file01.intranet.prod.int.rdu2.redhat.com> <CAHCPf3s-+Qf=WBZz1KpisDMG3520jCUh8PLAO3PHa4jdt8kCTw@mail.gmail.com> <CAKv+Gu9_h-WFi1j4+DWUN_dMj75SKKHxWoDH8WQ9P7S7MNpZQg@mail.gmail.com>
+ <alpine.LRH.2.02.1808060553130.30832@file01.intranet.prod.int.rdu2.redhat.com> <99fff4fe-afa9-f12f-a518-472a9dd1c530@arm.com> <CAKv+Gu_C2g=C=gMpk4a5jpDORnxZY6t1v=HDoy59m5vwNBxBBg@mail.gmail.com> <alpine.LRH.2.02.1808061306490.12989@file01.intranet.prod.int.rdu2.redhat.com>
+ <CAKv+Gu_8Rq6X24ZOYvG7+kQQGSGYAZuu_co4k1nJS8K7rkrWMA@mail.gmail.com> <alpine.LRH.2.02.1808061552090.11930@file01.intranet.prod.int.rdu2.redhat.com> <CAKv+Gu_iCgAeGmrajZ_euMcFLntWG1a51HF_HQ1TO=fV_v__AQ@mail.gmail.com> <CAPv3WKdCMpy6KarducQEtSYP35zdELhparkmPPMKGMUhsdk1Qw@mail.gmail.com>
+ <alpine.LRH.2.02.1808071331260.16565@file01.intranet.prod.int.rdu2.redhat.com> <CAKv+Gu_HasYTYLy3d_1vhBHA=M5i40DmU3EuVHhzT4pRiahcmA@mail.gmail.com>
+User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <28f34ddf-03b2-0baa-c04f-15e546ef3f75@codeaurora.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Tue, 07 Aug 2018 18:17:35 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Tue, 07 Aug 2018 18:17:35 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mpatocka@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 31, 2018 at 06:27:24PM +0530, Sibi S wrote:
-> Hi Philipp,
-> Thanks for the review!
-> 
-> On 07/31/2018 02:12 PM, Philipp Zabel wrote:
-> > Hi Sibi,
-> > 
-> > On Fri, 2018-07-27 at 20:58 +0530, Sibi Sankar wrote:
-> > > Add SDM845 PDC (Power Domain Controller) reset controller binding
-> > > 
-> > > Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
-> > > ---
-> > >   .../bindings/reset/qcom,pdc-reset.txt         | 52 +++++++++++++++++++
-> > >   include/dt-bindings/reset/qcom,sdm845-pdc.h   | 20 +++++++
-> > >   2 files changed, 72 insertions(+)
-> > >   create mode 100644 Documentation/devicetree/bindings/reset/qcom,pdc-reset.txt
-> > >   create mode 100644 include/dt-bindings/reset/qcom,sdm845-pdc.h
-> > > 
-> > > diff --git a/Documentation/devicetree/bindings/reset/qcom,pdc-reset.txt b/Documentation/devicetree/bindings/reset/qcom,pdc-reset.txt
-> > > new file mode 100644
-> > > index 000000000000..85e159962e08
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/reset/qcom,pdc-reset.txt
-> > > @@ -0,0 +1,52 @@
-> > > +PDC Reset Controller
-> > > +======================================
-> > > +
-> > > +This binding describes a reset-controller found on PDC-Global(Power Domain
-> > > +Controller) block for Qualcomm Technologies Inc SDM845 SoCs.
-> > > +
-> > > +Required properties:
-> > > +- compatible:
-> > > +	Usage: required
-> > > +	Value type: <string>
-> > > +	Definition: must be:
-> > > +		    "qcom,sdm845-pdc-global"
-> > > +
-> > > +- reg:
-> > > +	Usage: required
-> > > +	Value type: <prop-encoded-array>
-> > > +	Definition: must specify the base address and size of the register
-> > > +	            space.
-> > > +
-> > > +- #reset-cells:
-> > > +	Usage: required
-> > > +	Value type: <uint>
-> > > +	Definition: must be 1; cell entry represents the reset index.
-> > > +
-> > > +Example:
-> > > +
-> > > +pdc_reset: reset-controller@b2e0000 {
-> > 
-> > Is this really just a reset controller?
-> > 
-> > The name makes it sound like a driver binding to this should also
-> > provide pm_genpd and the binding should probably call this a power-
-> > controller: Documentation/devicetree/bindings/power/power_domain.txt.
-> > 
-> 
-> The PDC-global reg space which is a part of PDC-wrapper reg space seems
-> to be only used for the reset lines.
-> 
-> Couple of other drivers use other parts of the PDC-wrapper reg space:
-> https://patchwork.kernel.org/patch/10223701/ (PDC-Interrupt controller)
-> https://patchwork.kernel.org/patch/10255767/ (GMU-PDC incorrectly tries
-> to occupy the entire pdc-wrapper reg space)
-> 
-> since it couldn't be logically mapped into pdc-interrupt driver, it had
-> to be included as a separate reset driver.
 
-You can't have overlapping regions in DT (well, you can because we have 
-to work-around existing DTs that do, but you shouldn't).
 
-A single node can be multiple providers such as interrupt controller and 
-reset controller. It's an OS problem to split that into multiple 
-drivers.
- 
-> > > +	compatible = "qcom,sdm845-pdc-global";
-> > > +	reg = <0xb2e0000 0x20000>;
-> > 
-> > This looks like this is the register space of the complete PDC, not just
-> > the reset register?
-> > 
+On Tue, 7 Aug 2018, Ard Biesheuvel wrote:
+
+> On 7 August 2018 at 19:39, Mikulas Patocka <mpatocka@redhat.com> wrote:
+> >
+> >
+> > On Tue, 7 Aug 2018, Marcin Wojtas wrote:
+> >
+> >> Ard, Mikulas,
+> >>
+> >> After some self-caused setup issues I was able to run the test on my
+> >> MacchiatoBin with the kernel v4.18-rc8. It's been running for 1h+ now,
+> >> loading the CPU to 100% and no single error event...
+> >>
+> >> I built the binary file with:
+> >> gcc-linaro-7.2.1-2017.11-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-gcc -O2
+> >>
+> >> Maybe it's the older firmware issue?
+> >
+> > I have downloaded and built the firmware recently (it has timestamp Jul 30
+> > 2018).
+> >
+> > Do you still have your firmware file "flash-image.bin" that you used, so
+> > that I could try it?
+> >
+> >> Please send the full bootlog with
+> >> the very first line after reset. My board rev is v1.3 and I use
+> >> mainline UEFI (newest edk2 + edk2-platforms) + newest publicly
+> >> available ARM-TF and earliest firmware for this board.
+> >>
+> >> Best regards,
+> >> Marcin
+> >
 > 
-> The entire register space was chosen because it is only used for its
-> reset lines (had a good look at the downstream kernel and had a conversation
-> with Lina) and to ensure break backward compatibility for
-> the for the dt entry if the reg-space was used for other purposes in
-> the future.
+> Mikulas,
+> 
+> Is the issue reproducible with an nvidia card + nouveau driver as well ?
+> 
+> Given the screen corruption i see with radeon even on other arm
+> systems, i'd like to ensure that this is a platform bug not a driver
+> bug.
 
-Why do you want to ensure breaking backwards compatibility?
+I see the same memcpy-to-framebuffer corruption on Radeon HD 6450 and 
+nVidia Quadro NVS 285.
 
-Rob
+3D acceleration on nVidia is slow, but it doesn't have visible glitches.
+
+Mikulas
