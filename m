@@ -2,143 +2,121 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1185FC46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 15:21:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E844CC46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 15:21:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8EDC2151D
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 15:21:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8EDC2151D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id A1CEB2151D
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 15:21:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d5/bLWxg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1CEB2151D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389907AbeHGRfx (ORCPT
+        id S2389916AbeHGRgC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 13:35:53 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36286 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2389481AbeHGRfw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 13:35:52 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 68CC9AE29;
-        Tue,  7 Aug 2018 15:21:02 +0000 (UTC)
-Subject: Re: [PATCH 0/4] xen: various cleanups
-To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
-        x86@kernel.org
-Cc:     hpa@zytor.com, tglx@linutronix.de, mingo@redhat.com
-References: <20180717120113.12756-1-jgross@suse.com>
- <395f02c9-9893-e8fc-2b51-4229c66b796b@suse.com>
- <de59d247-7745-bdf2-948a-03170af3b526@oracle.com>
-From:   Juergen Gross <jgross@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <83652e26-812d-8b2a-91b1-eb87b589243e@suse.com>
-Date:   Tue, 7 Aug 2018 17:21:01 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 7 Aug 2018 13:36:02 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:42700 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387632AbeHGRgB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 13:36:01 -0400
+Received: by mail-pf1-f193.google.com with SMTP id l9-v6so8738197pff.9
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 08:21:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=AG4d9RCNRhFUim9zT37k9NhslmM06huXwGxSG9yK4Ko=;
+        b=d5/bLWxgN0JjlDv3OgUQezQOYHzi0CbmCWZV1USY3AzBusQ+IfkP5EI9YSGx1hKXxw
+         HZ8eD0W35UetUdmd2RlMcD3P+FppsbPuPiuvPcPt5eN9KzdMp1wHSPalfgyKgoXj/7ck
+         CDarUNFFzIkU3WmG33D+CkAMtG1DwQ+dv0X3oQnv1WDmPrxGqtj8Z8uU5jrM3ZV5cUPa
+         thn6ED2ga0+d5qTNpXBGD1lcyRVlKD7kFOEnlrNLbzqOdQEUzwb2Yj+Lf2iUeor7FE3a
+         n25ieGMV9ncXUh99EswGY+WHe2akOH5avR+mTuUCfvC9RgQ4w0frWEy66cw39qmpMo8+
+         qVuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=AG4d9RCNRhFUim9zT37k9NhslmM06huXwGxSG9yK4Ko=;
+        b=dPXZ+rfs2IacdJw9dcax3nilOuuk2/zdl4U5vyGnyvyayjTzVbcK7WZdwoLecHh43I
+         D8YGZiNjBznYwK81uxoMp8lRLh29uO5Kheqes610cHmAUFMCrPn3C/wYeoiVfQ6cxR1M
+         C8bs3urmR/dtDiHqHmGWVKGjasZfNCgS38Ulhk3mVbKtF4fsgAUkBYro1ku2/+ASg08n
+         a22BfeqogpJ0iIH1xBVXKMAPKDuvydVMPzvKWGfgrnmRWSxf8NSJzHhLmVNNo8QOzLQL
+         y9qfz2f6c7AK9uuRWU94n+xOQ8TKhmLnGJxSsesI1MH7RguHj6Pb+dSBvfiWAajedcPI
+         fHqA==
+X-Gm-Message-State: AOUpUlFmwwlpmZjxB2E6eGtx0FRXhaIn4tsESMin/rgK9s0drlC3JTa6
+        8N84d6zCxOLNPKoeBsBFz5k=
+X-Google-Smtp-Source: AAOMgpck38o0X1NLQpN2s28NFzByyItIaxeIhkOh/NHPmHC/7sel9mSdO4pXPqBqN8G0kIVtwnZSMQ==
+X-Received: by 2002:a63:e206:: with SMTP id q6-v6mr19113896pgh.223.1533655273080;
+        Tue, 07 Aug 2018 08:21:13 -0700 (PDT)
+Received: from dennisz-mbp.dhcp.thefacebook.com ([2620:10d:c090:180::1:e25])
+        by smtp.gmail.com with ESMTPSA id s14-v6sm5443688pfj.105.2018.08.07.08.21.11
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 07 Aug 2018 08:21:12 -0700 (PDT)
+Date:   Tue, 7 Aug 2018 08:21:09 -0700
+From:   Dennis Zhou <dennisszhou@gmail.com>
+To:     Christopher Lameter <cl@linux.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Tejun Heo <tj@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Roman Gushchin <guro@fb.com>, kernel-team@fb.com,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] proc: add percpu populated pages count to meminfo
+Message-ID: <20180807152107.GB59704@dennisz-mbp.dhcp.thefacebook.com>
+References: <20180807005607.53950-1-dennisszhou@gmail.com>
+ <0100016514bb069d-a6532c9a-b1ca-4eba-8644-c5b3935e3bd8-000000@email.amazonses.com>
 MIME-Version: 1.0
-In-Reply-To: <de59d247-7745-bdf2-948a-03170af3b526@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0100016514bb069d-a6532c9a-b1ca-4eba-8644-c5b3935e3bd8-000000@email.amazonses.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/08/18 16:00, Boris Ostrovsky wrote:
-> On 08/07/2018 09:10 AM, Juergen Gross wrote:
->> On 17/07/18 14:01, Juergen Gross wrote:
->>> Some Xen related cleanups:
->>> - move some pv-only code from CONFIG_XEN to CONFIG_XEN_PV
->>> - use CONFIG_XEN_PVHVM in Makefile instead of #ifdef around a complete source
->>> - add SPDX identifier where missing
->>>
->>> Juergen Gross (4):
->>>   xen: move pv irq related functions under CONFIG_XEN_PV umbrella
->>>   xen: move pv specific parts of arch/x86/xen/mmu.c to mmu_pv.c
->>>   xen: link platform-pci-unplug.o only if CONFIG_XEN_PVHVM
->>>   xen: add SPDX identifier in arch/x86/xen files
->>>
->>>  arch/x86/entry/entry_32.S          |   8 +-
->>>  arch/x86/entry/entry_64.S          |   8 +-
->>>  arch/x86/xen/Makefile              |  41 ++++++--
->>>  arch/x86/xen/efi.c                 |  14 +--
->>>  arch/x86/xen/enlighten.c           |   2 +
->>>  arch/x86/xen/enlighten_hvm.c       |   2 +
->>>  arch/x86/xen/grant-table.c         |  25 +----
->>>  arch/x86/xen/mmu.c                 | 188 +------------------------------------
->>>  arch/x86/xen/mmu_pv.c              | 140 +++++++++++++++++++++++++++
->>>  arch/x86/xen/p2m.c                 |   2 +
->>>  arch/x86/xen/pci-swiotlb-xen.c     |   2 +
->>>  arch/x86/xen/platform-pci-unplug.c |  18 +---
->>>  arch/x86/xen/vdso.h                |   2 +
->>>  arch/x86/xen/xen-pvh.S             |  15 +--
->>>  include/xen/interface/memory.h     |   6 --
->>>  include/xen/xen-ops.h              | 133 +++++++++++++++++---------
->>>  16 files changed, 287 insertions(+), 319 deletions(-)
->>>
->> Boris, any objections?
-> 
-> 
-> This series had my R-b, but I was waiting for x86 maintainers to ack the
-> first patch.
-> 
-> But now that I looked at this again, I wonder whether
-> 
-> +#ifdef CONFIG_XEN
->  BUILD_INTERRUPT3(xen_hvm_callback_vector, HYPERVISOR_CALLBACK_VECTOR,
->           xen_evtchn_do_upcall)
-> +#endif
-> 
-> 
-> and
-> 
-> +#ifdef CONFIG_XEN
->  apicinterrupt3 HYPERVISOR_CALLBACK_VECTOR \
->      xen_hvm_callback_vector xen_evtchn_do_upcall
-> +#endif
-> 
-> 
-> should be under XEN_PVHVM
+Hi Christopher,
 
-Hmm, right. Do you want to change that while committing or should I send
-V2?
+On Tue, Aug 07, 2018 at 02:12:06PM +0000, Christopher Lameter wrote:
+> On Mon, 6 Aug 2018, Dennis Zhou wrote:
+> >  	show_val_kb(m, "VmallocUsed:    ", 0ul);
+> >  	show_val_kb(m, "VmallocChunk:   ", 0ul);
+> > +	show_val_kb(m, "PercpuPopulated:", pcpu_nr_populated_pages());
+> 
+> Populated? Can we avoid this for simplicities sake: "Percpu"?
 
+Yeah, I've dropped populated.
 
-Juergen
+> 
+> We do not count pages that are not present elsewhere either and those
+> counters do not have "populated" in them.
 
+I see, that makes sense. I think I was trying to keep an external
+distinction between what we reserve and what we actually have populated
+that really isn't useful outside of playing with the allocator itself.
+
+> >  int pcpu_nr_empty_pop_pages;
+> >
+> > +/*
+> > + * The number of populated pages in use by the allocator, protected by
+> > + * pcpu_lock.  This number is kept per a unit per chunk (i.e. when a page gets
+> > + * allocated/deallocated, it is allocated/deallocated in all units of a chunk
+> > + * and increments/decrements this count by 1).
+> > + */
+> > +static int pcpu_nr_populated;
+> 
+> pcpu_nr_pages?
+> 
+
+I'd rather keep it as pcpu_nr_populated because internally in pcpu_chunk
+we maintain nr_pages and nr_populated. That way we keep the same meaning
+at the chunk and global level.
+
+Thanks,
+Dennis
