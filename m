@@ -2,139 +2,100 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B89EC46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 12:46:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D0D4C46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 12:51:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FD7B214ED
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 12:46:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FD7B214ED
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 074FC2170A
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 12:51:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="P3+YAGN1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 074FC2170A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389056AbeHGPAl (ORCPT
+        id S2388852AbeHGPFf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 11:00:41 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:10675 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388534AbeHGPAk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 11:00:40 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 8B5E31E0D90CF;
-        Tue,  7 Aug 2018 20:46:26 +0800 (CST)
-Received: from [127.0.0.1] (10.202.226.41) by DGGEMS403-HUB.china.huawei.com
- (10.3.19.203) with Microsoft SMTP Server id 14.3.399.0; Tue, 7 Aug 2018
- 20:46:25 +0800
-From:   John Garry <john.garry@huawei.com>
-Subject: Re: [PATCH v3 4/4] i2c: Add multi-instantiate pseudo driver
-To:     Hans de Goede <hdegoede@redhat.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Wolfram Sang <wsa@the-dreams.de>
-References: <20180807080539.17811-1-hdegoede@redhat.com>
- <20180807080539.17811-5-hdegoede@redhat.com>
-CC:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        <linux-acpi@vger.kernel.org>,
-        <platform-driver-x86@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        <linux-i2c@vger.kernel.org>
-Message-ID: <7e68276c-2211-85d3-3e1f-2bc4b2d9f7d5@huawei.com>
-Date:   Tue, 7 Aug 2018 13:46:18 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
+        Tue, 7 Aug 2018 11:05:35 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:34485 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387504AbeHGPFe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 11:05:34 -0400
+Received: by mail-it0-f66.google.com with SMTP id d70-v6so15274105ith.1
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 05:51:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to;
+        bh=XBmZmdYv6J+mPcsqBH35EmTgp7GdoFNFZbKDMJE+iS8=;
+        b=P3+YAGN1FNUzrtf/Yc+VCbQeF91usFj0jFerOakzKRC8pZb5EqpRj0EVZuC/K6SCPj
+         aJHKsxO5sBiJvuwqBtIW9h3bYlHnL9erGurcj+Ks+m9WTJU5MWCWq0QSErH496Fj5B5j
+         NrVyL3h+YLY1u3yiqpN8GhwPdbQ39x/Jpmzjs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to;
+        bh=XBmZmdYv6J+mPcsqBH35EmTgp7GdoFNFZbKDMJE+iS8=;
+        b=bwSTpMvta16MJ77KQaZ6bkb4ikO8qD6mnB4mIU8CHcXt7if/tzRxeJJ1nUvL33Fa+9
+         tLTr+/1Y8f5CaiaJGj86stYcl+sKyBhX4Yt4h18y9P8hZL+ymNSaFVVGT1x+gTttNBEb
+         CuhF3x6ObrHxGafgkX9FuTylmn5tMjeSAx2MRObU/PTOSxonFMVEhIZJVIu9J01mYu68
+         BKo2q3N/ZGCqn2WQXThAVZnO+VEB9SgSLuG0oMij4YiU5sxMPAwGPqlHOUMm6GCJULNN
+         S5JHZ530eyi22vi1yvJfyqQtLsGcMVFCgQO8ryBoSFfJMC4AXAW29525genTZRZhAWB6
+         keHQ==
+X-Gm-Message-State: AOUpUlHQI6ScQ/Oxru179juDxbJVstJzI5rx6a46+22gkYxxHQDn4f7G
+        B+jSdR8HN7TpR/tdid5BVHGHdPIm5dyy1Uh4RLfo0g==
+X-Google-Smtp-Source: AAOMgpfdUT2v/wefYztPX0zhdkpPAGUmd3zOljA1wTGWJIQB9FtJkLxNEnUafgplipK3XrI8f4afWmi4/DE8/8BhxPQ=
+X-Received: by 2002:a02:bb04:: with SMTP id y4-v6mr16701644jan.5.1533646283105;
+ Tue, 07 Aug 2018 05:51:23 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180807080539.17811-5-hdegoede@redhat.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.41]
-X-CFilter-Loop: Reflected
+Received: by 2002:a6b:ac05:0:0:0:0:0 with HTTP; Tue, 7 Aug 2018 05:51:22 -0700 (PDT)
+In-Reply-To: <20180807031526.GD5048@thunk.org>
+References: <20180806223300.113891-1-ebiggers@kernel.org> <20180806230437.21431-1-Jason@zx2c4.com>
+ <20180807011937.GA133621@gmail.com> <CAHmME9oTApV-zHD60QPryaoQf45ODpG25Da5FgB8c+LO162gWQ@mail.gmail.com>
+ <20180807031237.GA779@sol.localdomain> <20180807031526.GD5048@thunk.org>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Tue, 7 Aug 2018 14:51:22 +0200
+Message-ID: <CAKv+Gu_Dr1KvEOMdkhxZtq093MDgvcP_G-5=JMmqsx+zYV-=mw@mail.gmail.com>
+Subject: Re: [PATCH] crypto: remove speck
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Eric Biggers <ebiggers@kernel.org>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>, linux-fscrypt@vger.kernel.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Paul Crowley <paulcrowley@google.com>,
+        Greg Kaiser <gkaiser@google.com>,
+        Michael Halcrow <mhalcrow@google.com>,
+        Samuel Neves <samuel.c.p.neves@gmail.com>,
+        Tomer Ashur <tomer.ashur@esat.kuleuven.be>,
+        stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/08/2018 09:05, Hans de Goede wrote:
-> On systems with ACPI instantiated i2c-clients, normally there is 1 fw_node
-> per i2c-device and that fw-node contains 1 I2cSerialBus resource for that 1
-> i2c-device.
+On 7 August 2018 at 05:15, Theodore Y. Ts'o <tytso@mit.edu> wrote:
+> On Mon, Aug 06, 2018 at 08:12:38PM -0700, Eric Biggers wrote:
+>> I mention this because people are naturally going to be curious about that, e.g.
+>> speculating that Google found a "backdoor" -- remember that we do have some good
+>> cryptographers!  I'm just stating what we know, out of honesty and openness; I
+>> don't really intend to be arguing for Speck with this statement, and in any case
+>> we already made the decision to not use Speck.
 >
-> But in some rare cases the manufacturer has decided to describe multiple
-> i2c-devices in a single ACPI fwnode with multiple I2cSerialBus resources.
+> Let's be clear --- the arguments about whether or not to use Speck,
+> and whether or not to remove Speck from the kernel, are purely
+> political --- not techinical.
 >
-> An earlier attempt to fix this in the i2c-core resulted in a lot of extra
-> code to support this corner-case.
->
-> This commit introduces a new i2c-multi-instantiate driver which fixes this
-> in a different way. This new driver can be built as a module which will
-> only loaded on affected systems.
->
-> This driver will instantiate a new i2c-client per I2cSerialBus resource,
-> using the driver_data from the acpi_device_id it is binding to to tell it
-> which chip-type (and optional irq-resource) to use when instantiating.
->
-> Note this driver depends on a platform device being instantiated for the
-> ACPI fwnode, see the i2c_multi_instantiate_ids list of ACPI device-ids in
-> drivers/acpi/scan.c: acpi_device_enumeration_by_parent().
->
-> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-> ---
->  MAINTAINERS                                  |   6 +
->  drivers/platform/x86/Kconfig                 |  11 ++
->  drivers/platform/x86/Makefile                |   1 +
->  drivers/platform/x86/i2c-multi-instantiate.c | 131 +++++++++++++++++++
->  4 files changed, 149 insertions(+)
->  create mode 100644 drivers/platform/x86/i2c-multi-instantiate.c
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 9b377508f24f..09e16d76cab7 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -6657,6 +6657,12 @@ F:	drivers/i2c/i2c-mux.c
->  F:	drivers/i2c/muxes/
->  F:	include/linux/i2c-mux.h
->
-> +I2C MULTI INSTANTIATE DRIVER
-> +M:	Hans de Goede <hdegoede@redhat.com>
-> +L:	linux-i2c@vger.kernel.org
-> +S:	Maintained
-> +F:	drivers/drivers/platform/x86/i2c-multi-instantiate.c
 
-This path looks incorrect
-
-> +
->  I2C MV64XXX MARVELL AND ALLWINNER DRIVER
->  M:	Gregory CLEMENT <gregory.clement@bootlin.com>
->  L:	linux-i2c@vger.kernel.org
-> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-> index 85a93453237c..8256629f58f7 100644
-> --- a/drivers/platform/x86/Kconfig
-> +++ b/drivers/platform/x86/Kconfig
-> @@ -1219,6 +1219,17 @@ config INTEL_CHTDC_TI_PWRBTN
->  	  To compile this driver as a module, choose M here: the module
->  	  will be called intel_chtdc_ti_pwrbtn.
->
-> +config I2C_MULTI_INSTANTIATE
-> +	tristate "I2C multi instantiate pseudo device driver"
-> +	depends on I2C && ACPI
-> +	help
-> +	  Some ACPI bases systems list multiple i2c-devices in a single ACPI
-
-I guess that this should be "Some ACPI-based systems"
-
-> +	  firmware-node. This driver will instantiate separate i2c-clients
-> +	  for each device in the firmware-node.
-> +
-> +	  To compile this driver as a module, choose M here: the module
-> +	  will be called i2c-multi-instantiate.
-> +
-
-Thanks,
-John
-
+Whether or not to use it may be a political rather than a technical
+motivation. But the reason I acked this patch is not because removing
+it aligns with my political conviction regarding Speck, but simply
+because its contributor, primary intended user and therefore de facto
+maintainer stated publicly that it no longer had any intention to use
+it going forward.
