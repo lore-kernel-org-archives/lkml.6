@@ -3,114 +3,138 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBE34C46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 03:30:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E95AC46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 03:33:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 714DA21A5D
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 03:30:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 714DA21A5D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brauner.io
+	by mail.kernel.org (Postfix) with ESMTP id D098021A6D
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 03:33:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D098021A6D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732458AbeHGFnE (ORCPT
+        id S1732602AbeHGFp5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 01:43:04 -0400
-Received: from mx1.mailbox.org ([80.241.60.212]:57528 "EHLO mx1.mailbox.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727347AbeHGFnD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 01:43:03 -0400
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [80.241.60.240])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mx1.mailbox.org (Postfix) with ESMTPS id 9B7F747F6E;
-        Tue,  7 Aug 2018 05:30:47 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp1.mailbox.org ([80.241.60.240])
-        by spamfilter02.heinlein-hosting.de (spamfilter02.heinlein-hosting.de [80.241.56.116]) (amavisd-new, port 10030)
-        with ESMTP id U2EqRy6dp4ys; Tue,  7 Aug 2018 05:30:46 +0200 (CEST)
-Date:   Tue, 7 Aug 2018 05:30:43 +0200
-From:   Christian Brauner <christian@brauner.io>
-To:     Tycho Andersen <tycho@tycho.ws>
-Cc:     Kees Cook <keescook@chromium.org>,
-        "Tobin C . Harding" <me@tobin.cc>, linux-api@vger.kernel.org,
-        containers@lists.linux-foundation.org,
-        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
-        Oleg Nesterov <oleg@redhat.com>, linux-kernel@vger.kernel.org,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Andy Lutomirski <luto@amacapital.net>
-Subject: Re: [PATCH v4 0/4] seccomp trap to userspace
-Message-ID: <20180807033043.2esvm5qbhhqvatvy@mailbox.org>
-References: <20180621220416.5412-1-tycho@tycho.ws>
- <20180807024442.GA12274@cisco.lan>
+        Tue, 7 Aug 2018 01:45:57 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:34723 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726951AbeHGFp5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 01:45:57 -0400
+X-UUID: 1335ec8207544b1fbef869c1545d02b2-20180807
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
+        (envelope-from <ck.hu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1396005098; Tue, 07 Aug 2018 11:33:39 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs03n1.mediatek.inc (172.21.101.181) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Tue, 7 Aug 2018 11:33:37 +0800
+Received: from [172.21.77.4] (172.21.77.4) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Tue, 7 Aug 2018 11:33:37 +0800
+Message-ID: <1533612817.22668.5.camel@mtksdaap41>
+Subject: Re: [PATCH v3 07/13] drm/mediatek: add YUYV/UYVY color format
+ support for RDMA
+From:   CK Hu <ck.hu@mediatek.com>
+To:     Stu Hsieh <stu.hsieh@mediatek.com>
+CC:     Philipp Zabel <p.zabel@pengutronix.de>,
+        David Airlie <airlied@linux.ie>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <dri-devel@lists.freedesktop.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <srv_heupstream@mediatek.com>
+Date:   Tue, 7 Aug 2018 11:33:37 +0800
+In-Reply-To: <1533556700-26525-8-git-send-email-stu.hsieh@mediatek.com>
+References: <1533556700-26525-1-git-send-email-stu.hsieh@mediatek.com>
+         <1533556700-26525-8-git-send-email-stu.hsieh@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180807024442.GA12274@cisco.lan>
+Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 06, 2018 at 08:44:42PM -0600, Tycho Andersen wrote:
-> Hi all,
+Hi, Stu:
+
+On Mon, 2018-08-06 at 19:58 +0800, Stu Hsieh wrote:
+> This patch add YUYV/UYVY color format support for RDMA
+> and transform matrix for YUYV/UYVY.
 > 
-> Dinesh Subhraveti has claimed that some part of this series might be
-> patented. While he has not furnished me with anything to confirm this
-> claim, I'll put this series on hold.
-
-Hey man,
-
-Sorry to hear that your faced with such nonsense, Tycho. This is utter
-bullsh*t of course. If you have more details at some point and feel
-comfortable doing so it would probably be good to share them here.
-
-Christian
-
+> Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
+> ---
+>  drivers/gpu/drm/mediatek/mtk_disp_rdma.c | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
 > 
-> Tycho
-> 
-> On Thu, Jun 21, 2018 at 04:04:12PM -0600, Tycho Andersen wrote:
-> > Hi all,
-> > 
-> > Here's v4 of the seccomp trap to userspace series. v3 is here:
-> > https://lkml.org/lkml/2018/5/31/527
-> > 
-> > I believe we've addressed the two burning questions I had about v3: 1.
-> > it seems ok not to use netlink, since there's not a great way to re-use
-> > the API without a lot of unnecessary code and 2. only having return
-> > capability for fds seems fine with people. Or at least I haven't heard
-> > any strong objections.
-> > 
-> > I've re-worked a bunch of things in this version based on feedback from
-> > the last series. See patch notes for details. At this point I'm not
-> > aware of anything that needs to be addressed, but of course that is
-> > subject to change :)
-> > 
-> > Tycho
-> > 
-> > Tycho Andersen (4):
-> >   seccomp: add a return code to trap to userspace
-> >   seccomp: make get_nth_filter available outside of CHECKPOINT_RESTORE
-> >   seccomp: add a way to get a listener fd from ptrace
-> >   seccomp: add support for passing fds via USER_NOTIF
-> > 
-> >  .../userspace-api/seccomp_filter.rst          |  79 +++
-> >  arch/Kconfig                                  |   7 +
-> >  include/linux/seccomp.h                       |  18 +-
-> >  include/uapi/linux/ptrace.h                   |   2 +
-> >  include/uapi/linux/seccomp.h                  |  23 +-
-> >  kernel/ptrace.c                               |   4 +
-> >  kernel/seccomp.c                              | 491 ++++++++++++++-
-> >  tools/testing/selftests/seccomp/seccomp_bpf.c | 560 +++++++++++++++++-
-> >  8 files changed, 1172 insertions(+), 12 deletions(-)
-> > 
-> > -- 
-> > 2.17.1
-> > 
-> _______________________________________________
-> Containers mailing list
-> Containers@lists.linux-foundation.org
-> https://lists.linuxfoundation.org/mailman/listinfo/containers
+> diff --git a/drivers/gpu/drm/mediatek/mtk_disp_rdma.c b/drivers/gpu/drm/mediatek/mtk_disp_rdma.c
+> index ba72d392dc27..91a8b6e27d39 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_disp_rdma.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_disp_rdma.c
+> @@ -33,6 +33,8 @@
+>  #define RDMA_ENGINE_EN					BIT(0)
+>  #define RDMA_MODE_MEMORY				BIT(1)
+>  #define DISP_REG_RDMA_SIZE_CON_0		0x0014
+> +#define RDMA_MATRIX_ENABLE				BIT(17)
+> +#define RDMA_MATRIX_INT_MTX_SEL				(7UL << 20)
+>  #define DISP_REG_RDMA_SIZE_CON_1		0x0018
+>  #define DISP_REG_RDMA_TARGET_LINE		0x001c
+>  #define DISP_RDMA_MEM_CON			0x0024
+> @@ -46,12 +48,15 @@
+>  #define RDMA_FIFO_SIZE(rdma)			((rdma)->data->fifo_size)
+>  #define DISP_RDMA_MEM_START_ADDR		0x0f00
+>  
+> +#define MATRIX_INT_MTX_SEL_DEFAULT		0xb00000
+>  #define RDMA_MEM_GMC				0x40402020
+>  
+>  #define MEM_MODE_INPUT_FORMAT_RGB565		0x0
+>  #define MEM_MODE_INPUT_FORMAT_RGB888		(0x001 << 4)
+>  #define MEM_MODE_INPUT_FORMAT_RGBA8888		(0x002 << 4)
+>  #define MEM_MODE_INPUT_FORMAT_ARGB8888		(0x003 << 4)
+> +#define MEM_MODE_INPUT_FORMAT_UYVY		(0x004 << 4)
+> +#define MEM_MODE_INPUT_FORMAT_YUYV		(0x005 << 4)
+>  
+>  struct mtk_disp_rdma_data {
+>  	unsigned int fifo_size;
+> @@ -176,6 +181,10 @@ static unsigned int rdma_fmt_convert(struct mtk_disp_rdma *rdma,
+>  	case DRM_FORMAT_XBGR8888:
+>  	case DRM_FORMAT_ABGR8888:
+>  		return MEM_MODE_INPUT_FORMAT_RGBA8888 | MEM_MODE_INPUT_SWAP;
+> +	case DRM_FORMAT_UYVY:
+> +		return MEM_MODE_INPUT_FORMAT_UYVY;
+> +	case DRM_FORMAT_YUYV:
+> +		return MEM_MODE_INPUT_FORMAT_YUYV;
+>  	}
+>  }
+>  
+> @@ -191,6 +200,12 @@ static void mtk_rdma_layer_config(struct mtk_ddp_comp *comp, unsigned int idx,
+>  
+>  	con = rdma_fmt_convert(rdma, fmt);
+>  	writel_relaxed(con, comp->regs + DISP_RDMA_MEM_CON);
+> +	if (fmt == DRM_FORMAT_UYVY || fmt == DRM_FORMAT_YUYV)
+> +		rdma_update_bits(comp, DISP_REG_RDMA_SIZE_CON_0, 0xff0000,
+
+Symbolize 0xff0000. Maybe you should define as
+
+#define RDMA_MATRIX_INT_MTX_SEL GENMASK(23, 20)
+#define RDMA_MATRIX_INT_MTX_YUV_TO_RGB   0x7
+#define RDMA_MATRIX_INT_MTX_RGB_TO_RGB   0xb
+
+Correct the naming to align data sheet.
+
+Regards,
+CK
+
+> +				 RDMA_MATRIX_ENABLE | RDMA_MATRIX_INT_MTX_SEL);
+> +	else
+> +		rdma_update_bits(comp, DISP_REG_RDMA_SIZE_CON_0, 0xff0000,
+> +				 MATRIX_INT_MTX_SEL_DEFAULT);
+>  
+>  	writel_relaxed(addr, comp->regs + DISP_RDMA_MEM_START_ADDR);
+>  	writel_relaxed(pitch, comp->regs + DISP_RDMA_MEM_SRC_PITCH);
+
+
