@@ -2,198 +2,184 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B163C46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 06:59:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8ECEC46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 07:02:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D567C208E2
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 06:59:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D567C208E2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 6F3CA208E2
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 07:02:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="r7DQ6yWG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F3CA208E2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388656AbeHGJMv convert rfc822-to-8bit (ORCPT
+        id S2388553AbeHGJPK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 05:12:51 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:50256 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728223AbeHGJMu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 05:12:50 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id DB9E2207D4; Tue,  7 Aug 2018 08:59:53 +0200 (CEST)
-Received: from dell-desktop.home (AAubervilliers-681-1-99-143.w90-88.abo.wanadoo.fr [90.88.4.143])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 93AD92072C;
-        Tue,  7 Aug 2018 08:59:43 +0200 (CEST)
-Date:   Tue, 7 Aug 2018 08:59:44 +0200
-From:   =?UTF-8?B?TXlsw6huZQ==?= Josserand <mylene.josserand@bootlin.com>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
-        maxime.ripard@bootlin.com, wens@csie.org,
-        linux-input@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        thomas.petazzoni@bootlin.com
-Subject: Re: [PATCH v4 1/3] Input: edt-ft5x06 - Add support for regulator
-Message-ID: <20180807085944.337bf20b@dell-desktop.home>
-In-Reply-To: <20180726004732.GD80336@dtor-ws>
-References: <20180725073410.730-1-mylene.josserand@bootlin.com>
-        <20180725073410.730-2-mylene.josserand@bootlin.com>
-        <20180726004732.GD80336@dtor-ws>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Tue, 7 Aug 2018 05:15:10 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:47296 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387493AbeHGJPK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 05:15:10 -0400
+Received: from dflxv15.itg.ti.com ([128.247.5.124])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id w7771gSn094804;
+        Tue, 7 Aug 2018 02:01:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1533625302;
+        bh=F/CxWgRru+2wOhdgeE/DXO/BsoXXzxFi9F0NdacViTg=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=r7DQ6yWGgnOluNcOGYFFcaxdoxeiAAb0UvL8AiCQG/8rO3Ghp07tHgQx4+bpUUDwT
+         7Mg00ZmvLsJc6jLfWBXUNzQx/p/4vkUEUcX66aThaO4VCK2EfhBOJ5BSSj8Qcs7TGE
+         xu+19crAKCNyXaX8UL/in72AiN3JqLjJtAeOH+Rg=
+Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
+        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7771gET007547;
+        Tue, 7 Aug 2018 02:01:42 -0500
+Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 7 Aug
+ 2018 02:01:42 -0500
+Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Tue, 7 Aug 2018 02:01:42 -0500
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7771blq020429;
+        Tue, 7 Aug 2018 02:01:37 -0500
+Subject: Re: [PATCH 09/46] dmaengine: cppi41: use
+ dmaenginem_async_device_register to simplify the code
+To:     Huang Shijie <sjhuang@iluvatar.ai>,
+        Alexandre Bailon <abailon@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>
+CC:     <vkoul@kernel.org>, <dmaengine@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <dave.jiang@intel.com>,
+        <radhey.shyam.pandey@xilinx.com>, <appana.durga.rao@xilinx.com>,
+        <jmkrzyszt@gmail.com>, <gomonovych@gmail.com>,
+        <keescook@chromium.org>, <horms+renesas@verge.net.au>,
+        <geert+renesas@glider.be>, <shawnguo@kernel.org>,
+        <baoyou.xie@linaro.org>, <michal.simek@xilinx.com>,
+        <baohua@kernel.org>, <ludovic.desroches@microchip.com>,
+        <linus.walleij@linaro.org>, <david.brown@linaro.org>
+References: <20180803072016.21544-1-sjhuang@iluvatar.ai>
+ <20180803072016.21544-10-sjhuang@iluvatar.ai>
+ <43458794-d124-13df-c944-e473dc8ee1c2@ti.com>
+ <20180806032847.GA4452@hsj-Precision-5520>
+From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
+Message-ID: <0f35be3f-24c0-f7e4-66c8-e9b7e5c01590@ti.com>
+Date:   Tue, 7 Aug 2018 10:01:47 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20180806032847.GA4452@hsj-Precision-5520>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Dmitry,
+Hi,
 
-Thank you again for the review.
-
-On Wed, 25 Jul 2018 17:47:32 -0700
-Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
-
-> Hi Mylène,
+On 2018-08-06 06:28, Huang Shijie wrote:
+> On Fri, Aug 03, 2018 at 10:55:25AM +0300, Peter Ujfalusi wrote:
+>>
+>>
+>> On 2018-08-03 10:19, Huang Shijie wrote:
+>>> Use dmaenginem_async_device_register to simplify the code:
+>>>    remove dma_async_device_unregister
+>>>
+>>> Signed-off-by: Huang Shijie <sjhuang@iluvatar.ai>
+>>> ---
+>>>  drivers/dma/ti/cppi41.c | 7 ++-----
+>>>  1 file changed, 2 insertions(+), 5 deletions(-)
+>>>
+>>> diff --git a/drivers/dma/ti/cppi41.c b/drivers/dma/ti/cppi41.c
+>>> index 1497da367710..d2998a19ed2e 100644
+>>> --- a/drivers/dma/ti/cppi41.c
+>>> +++ b/drivers/dma/ti/cppi41.c
+>>> @@ -1096,21 +1096,19 @@ static int cppi41_dma_probe(struct platform_device *pdev)
+>>>  		goto err_chans;
+>>>  	cdd->irq = irq;
+>>>  
+>>> -	ret = dma_async_device_register(&cdd->ddev);
+>>> +	ret = dmaenginem_async_device_register(&cdd->ddev);
+>>>  	if (ret)
+>>>  		goto err_chans;
+>>>  
+>>>  	ret = of_dma_controller_register(dev->of_node,
+>>>  			cppi41_dma_xlate, &cpp41_dma_info);
+>>>  	if (ret)
+>>> -		goto err_of;
+>>> +		goto err_chans;
+>>>  
+>>>  	pm_runtime_mark_last_busy(dev);
+>>>  	pm_runtime_put_autosuspend(dev);
+>>>  
+>>>  	return 0;
+>>> -err_of:
+>>> -	dma_async_device_unregister(&cdd->ddev);
+>>>  err_chans:
+>>>  	deinit_cppi41(dev, cdd);
+>>>  err_init_cppi:
+>>> @@ -1132,7 +1130,6 @@ static int cppi41_dma_remove(struct platform_device *pdev)
+>>>  		dev_err(&pdev->dev, "%s could not pm_runtime_get: %i\n",
+>>>  			__func__, error);
+>>>  	of_dma_controller_free(pdev->dev.of_node);
+>>> -	dma_async_device_unregister(&cdd->ddev);
+>>
+>> If I read the code right then this is not safe.
+> I read the code again, and find it is okay.
 > 
-> On Wed, Jul 25, 2018 at 09:34:08AM +0200, Mylène Josserand wrote:
-> > Add the support of regulator to use it as VCC source.
-> > 
-> > Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
-> > Reviewed-by: Rob Herring <robh@kernel.org>
-> > ---
-> >  .../bindings/input/touchscreen/edt-ft5x06.txt      |  1 +
-> >  drivers/input/touchscreen/edt-ft5x06.c             | 43 ++++++++++++++++++++++
-> >  2 files changed, 44 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/input/touchscreen/edt-ft5x06.txt b/Documentation/devicetree/bindings/input/touchscreen/edt-ft5x06.txt
-> > index 025cf8c9324a..48e975b9c1aa 100644
-> > --- a/Documentation/devicetree/bindings/input/touchscreen/edt-ft5x06.txt
-> > +++ b/Documentation/devicetree/bindings/input/touchscreen/edt-ft5x06.txt
-> > @@ -30,6 +30,7 @@ Required properties:
-> >  Optional properties:
-> >   - reset-gpios: GPIO specification for the RESET input
-> >   - wake-gpios:  GPIO specification for the WAKE input
-> > + - vcc-supply:  Regulator that supplies the touchscreen
-> >  
-> >   - pinctrl-names: should be "default"
-> >   - pinctrl-0:   a phandle pointing to the pin settings for the
-> > diff --git a/drivers/input/touchscreen/edt-ft5x06.c b/drivers/input/touchscreen/edt-ft5x06.c
-> > index 1e18ca0d1b4e..dcde719094f7 100644
-> > --- a/drivers/input/touchscreen/edt-ft5x06.c
-> > +++ b/drivers/input/touchscreen/edt-ft5x06.c
-> > @@ -39,6 +39,7 @@
-> >  #include <linux/input/mt.h>
-> >  #include <linux/input/touchscreen.h>
-> >  #include <linux/of_device.h>
-> > +#include <linux/regulator/consumer.h>
-> >  
-> >  #define WORK_REGISTER_THRESHOLD		0x00
-> >  #define WORK_REGISTER_REPORT_RATE	0x08
-> > @@ -91,6 +92,7 @@ struct edt_ft5x06_ts_data {
-> >  	struct touchscreen_properties prop;
-> >  	u16 num_x;
-> >  	u16 num_y;
-> > +	struct regulator *vcc;
-> >  
-> >  	struct gpio_desc *reset_gpio;
-> >  	struct gpio_desc *wake_gpio;
-> > @@ -963,6 +965,13 @@ edt_ft5x06_ts_set_regs(struct edt_ft5x06_ts_data *tsdata)
-> >  	}
-> >  }
-> >  
-> > +static void edt_ft5x06_disable_regulator(void *arg)
-> > +{
-> > +	struct edt_ft5x06_ts_data *data = arg;
-> > +
-> > +	regulator_disable(data->vcc);
-> > +}
-> > +
-> >  static int edt_ft5x06_ts_probe(struct i2c_client *client,
-> >  					 const struct i2c_device_id *id)
-> >  {
-> > @@ -991,6 +1000,28 @@ static int edt_ft5x06_ts_probe(struct i2c_client *client,
-> >  
-> >  	tsdata->max_support_points = chip_data->max_support_points;
-> >  
-> > +	tsdata->vcc = devm_regulator_get(&client->dev, "vcc");
-> > +	if (IS_ERR(tsdata->vcc)) {
-> > +		error = PTR_ERR(tsdata->vcc);
-> > +		if (error != -EPROBE_DEFER)
-> > +			dev_err(&client->dev, "failed to request regulator: %d\n",
-> > +				error);
-> > +		return error;
-> > +	}
-> > +
-> > +	error = regulator_enable(tsdata->vcc);
-> > +	if (error < 0) {
-> > +		dev_err(&client->dev, "failed to enable vcc: %d\n",
-> > +			error);
-> > +		return error;
-> > +	}  
+>> We would have deinitalized cppi41 driver which is not functional, but we
+>> will still have the dma device registered and if a channel is requested
+>> we will have kernel crash.
+> We cannot succeed to request a channel when the drv->remove() is called.
 > 
-> It is better to put the chip into reset and then power up the regulatori
-> and take it out of the reset, rather than power up and then toggle reset
-> on and off.
-
-okay, thanks, I will update it.
-
+> Please see __device_release_driver:
+>   ---------------------------------------------------------------------
+> 		if (dev->bus && dev->bus->remove)
+> 			dev->bus->remove(dev);
+> 		else if (drv->remove)
+> 			drv->remove(dev);
 > 
-> > +
-> > +	error = devm_add_action_or_reset(&client->dev,
-> > +					 edt_ft5x06_disable_regulator,
-> > +					 tsdata);
-> > +	if (error)
-> > +		return error;
-> > +
-> >  	tsdata->reset_gpio = devm_gpiod_get_optional(&client->dev,
-> >  						     "reset", GPIOD_OUT_HIGH);
-> >  	if (IS_ERR(tsdata->reset_gpio)) {
-> > @@ -1120,9 +1151,12 @@ static int edt_ft5x06_ts_remove(struct i2c_client *client)
-> >  static int __maybe_unused edt_ft5x06_ts_suspend(struct device *dev)
-> >  {
-> >  	struct i2c_client *client = to_i2c_client(dev);
-> > +	struct edt_ft5x06_ts_data *tsdata = i2c_get_clientdata(client);
-> >  
-> >  	if (device_may_wakeup(dev))
-> >  		enable_irq_wake(client->irq);
-> > +	else
-> > +		regulator_disable(tsdata->vcc);
-> >  
-> >  	return 0;
-> >  }
-> > @@ -1130,9 +1164,18 @@ static int __maybe_unused edt_ft5x06_ts_suspend(struct device *dev)
-> >  static int __maybe_unused edt_ft5x06_ts_resume(struct device *dev)
-> >  {
-> >  	struct i2c_client *client = to_i2c_client(dev);
-> > +	struct edt_ft5x06_ts_data *tsdata = i2c_get_clientdata(client);
-> > +	int ret;
-> >  
-> >  	if (device_may_wakeup(dev))
-> >  		disable_irq_wake(client->irq);
-> > +	else {
-> > +		ret = regulator_enable(tsdata->vcc);
-> > +		if (ret < 0) {
-> > +			dev_err(dev, "failed to enable vcc: %d\n", ret);
-> > +			return ret;
-> > +		}
-> > +	}  
+> 		device_links_driver_cleanup(dev);
+> 		dma_deconfigure(dev);
 > 
-> I believe I mentioned in other review that once you powered up the
-> device, you need to restore its settings, include switching to factory
-> mode, if it was in factory mode, and restoring threshold/gain/offset
-> settings.
+> 		devres_release_all(dev);    ============> Devres release
+>   ---------------------------------------------------------------------
+> 
+> For the DMA engine driver, there is only one case which will calls drv->remove():
+>         Use the rmmod(or modprobe -r).
+> 
+> We do not use the device_link_add API for DMA engines.
+> And we not manually call the device_release_driver() for DMA engines.
+> 
+> But when we use the rmmod, the module state will be MODULE_STATE_GOING.
+> In the find_candidate(), dma_chan_get() will fail.
+> And we cannot get a channel.
+> 
+> Please correct me if I am wrong :)
 
-Yes, I will update the driver with that but as I told you in a previous
-mail, I can't test the suspend/resume :(
+You are perfectly right.
 
-Best regards,
+It might be only me, but I like to keep the resource teardown in a
+reverse order of their creation. If everything is devm then it is granted.
 
--- 
-Mylène Josserand, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+In case of cppi4 it looks safe after reading in to the DMAengine core,
+module core and platform core code.
+
+But does the removed three lines worth over the clarity of how the
+module removal is proceeding?
+
+Alexandre and Tony put lots of effort to the cppi4 driver, I let them
+decide.
+
+- Péter
+
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
