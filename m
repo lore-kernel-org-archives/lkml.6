@@ -2,123 +2,143 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34712C46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 20:16:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E226AC46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 20:18:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D89162156E
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 20:16:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D1C12156E
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 20:18:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20150623.gappssmtp.com header.i=@cmpxchg-org.20150623.gappssmtp.com header.b="HbAeG4FC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D89162156E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cmpxchg.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="hoe+iitN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D1C12156E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727109AbeHGWcn (ORCPT
+        id S1727232AbeHGWeL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 18:32:43 -0400
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:37243 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725881AbeHGWcm (ORCPT
+        Tue, 7 Aug 2018 18:34:11 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:45404 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725881AbeHGWeL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 18:32:42 -0400
-Received: by mail-yw1-f68.google.com with SMTP id w76-v6so5427733ywg.4
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 13:16:36 -0700 (PDT)
+        Tue, 7 Aug 2018 18:34:11 -0400
+Received: by mail-ed1-f67.google.com with SMTP id s16-v6so170070edq.12
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 13:18:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=vFrIkVSJRWrek9LCE6RVV2ocWVB+kQ17jI5T6SGl1mo=;
-        b=HbAeG4FC/4PbyOJk7fpENxYk/SlIh2GKngBma4F3ijzuKcJDYkK0v92Clm+BB9Hu0i
-         JM/KQ5n6j+Bgf+SeeiQcDCTTfqLinKoyYK5vu1RmXTHgZH8zZfWrFIaUjLcjYKFUyuId
-         coxjMYT1y3M7WwO6RN3DaRvDE74VfpuyiTVYR3XJg+HL7LYt28SfTpanAHqYl0QARgn4
-         G985zZ+GvTlRM9XlqJo5fKkphHiQV4jDRAyyyjLpJw5ucjak3NMkpspTxg/2f9nG33g8
-         5wLh/LvwSXEY0cmYfkZYUO4vJyPVFV7TIDVMlmJO5RKhGfind4y5hlK0MN6R7KVwI4bh
-         JvMw==
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=wrLBrXmZd4GjfCdhgUNnOhUllhnHy2P+5JzJVe6pOlQ=;
+        b=hoe+iitNtyYgxn2apfBhH/g5qL4OjQsaRCCykhkVH5id4N74Zb3SaCyRyihi4/wkaI
+         XolvsCpCBQ9Mrr9Jk0ikjlK/VMM9BTjpHhZuDVSJxVb0kQV9z+ExyOYwZ+6+QFvMsX07
+         si0sG5/8JDXfReev+/wVf82B+ZwKbVs8U+ljo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=vFrIkVSJRWrek9LCE6RVV2ocWVB+kQ17jI5T6SGl1mo=;
-        b=kouN6vwDtUHaRA4XGKqycqFUHJv52sEWEw4ghvbougJQ6QtsVqOr/wtg2Cl0RC9NbG
-         bgcn0gK0uwX2G6MYyKTwziH5+CrQ8Mx5nyTPwcxw6plWoV03OwPA/zqzn0NwdvSZWRZn
-         w2hiZyXIdKNvWu1d6fEzZSTiz61HDfTBpNwBshzgRmsDL703aN/dTTupKeWLuqkVUChj
-         BgVg5oIEzKUd6lHeCsPLOgJ/Tecm4ak3e63WoFHr2c8/lQ4FSucZqqsifVandv4S+HDe
-         yXb52rci5TNc5KUXkPm+Al+e/t7YvAkzlU7cC2G99n3ZKchNfO57BoeyqFF1LkIKaj6B
-         9kbg==
-X-Gm-Message-State: AOUpUlH8GXQC+oSaHbclIvF8E6SExCIz3T8307f5PxdOBhd+Fp0nMoat
-        punAApf8nuMHKGuAJsRwmkdXEA==
-X-Google-Smtp-Source: AAOMgpcbCkft9HM0yvVTRkcrQ1E3IJ5Iy11/anrHgHS1eHHerS5b3z/lpv09lCiERR9O8T2c8uM05g==
-X-Received: by 2002:a81:48d4:: with SMTP id v203-v6mr10715407ywa.375.1533672996183;
-        Tue, 07 Aug 2018 13:16:36 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:180::1:97c3])
-        by smtp.gmail.com with ESMTPSA id m82-v6sm2438583ywm.19.2018.08.07.13.16.34
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=wrLBrXmZd4GjfCdhgUNnOhUllhnHy2P+5JzJVe6pOlQ=;
+        b=tlsxvzLVK6CZFWQTMzPCY6OR/gj7eieH0TtmPP6BWr+6aGY3Qz6LkgYg5vJsi7TE4G
+         +O+tv6i/xX4mw1LsdKVnAC5Xsb/hil6Xq+oycCPA2q0lSzv3oxa9Fs7zD/XmGQxsyaLM
+         C6u1DP6kLWRiw/bV6gBC9f4OI10fkWUfCzB+VafY5znw4HcorWdrW9HbWfNHKy9Rv1c7
+         rvZS60Pac2hoOY0w6SXf4Znc3ttqYgRTlEvzaKlMD9ag3zk8Wwai7hF0DmjHd6raNxLf
+         tpTypoH6WNnfSzSq/wyMzdeZdbAUz3WTATjCgeYa1Hje3/vOSUPT+VsmuY7f95raAt9O
+         QwUw==
+X-Gm-Message-State: AOUpUlHlQEDVxKbgT4qThfdns3iOIycaGk2SOGjsqV9v2Ixhr3PfqfJP
+        qqpjtxQaL1sbTnMsob86HytS5GiakSE=
+X-Google-Smtp-Source: AAOMgpcCi2lbEJH9pA7EUUmAuN+3ciL2nE6cIsyZB+SVLUcm0pNAQr/cXbz20NwqAjHPuGWgp6NHyA==
+X-Received: by 2002:a50:d51d:: with SMTP id u29-v6mr23497832edi.51.1533673084120;
+        Tue, 07 Aug 2018 13:18:04 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:56fc:0:d707:d7d8:b180:96e5])
+        by smtp.gmail.com with ESMTPSA id g14-v6sm979973edm.25.2018.08.07.13.18.02
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 07 Aug 2018 13:16:35 -0700 (PDT)
-Date:   Tue, 7 Aug 2018 16:19:35 -0400
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     Michal Hocko <mhocko@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>, linux-mm@kvack.org,
-        Greg Thelen <gthelen@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Michal Hocko <mhocko@suse.com>,
-        David Rientjes <rientjes@google.com>
-Subject: Re: [PATCH] memcg, oom: be careful about races when warning about no
- reclaimable task
-Message-ID: <20180807201935.GB4251@cmpxchg.org>
-References: <20180807072553.14941-1-mhocko@kernel.org>
- <863d73ce-fae9-c117-e361-12c415c787de@i-love.sakura.ne.jp>
+        Tue, 07 Aug 2018 13:18:03 -0700 (PDT)
+Date:   Tue, 7 Aug 2018 22:18:01 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Paul Kocialkowski <contact@paulk.fr>
+Cc:     dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
+        linux-sunxi@googlegroups.com
+Subject: Re: [PATCH] drm/sun4i: Avoid failing to init fbdev without any
+ connector
+Message-ID: <20180807201801.GF3008@phenom.ffwll.local>
+Mail-Followup-To: Paul Kocialkowski <contact@paulk.fr>,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
+        linux-sunxi@googlegroups.com
+References: <20180807193919.4800-1-contact@paulk.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <863d73ce-fae9-c117-e361-12c415c787de@i-love.sakura.ne.jp>
+In-Reply-To: <20180807193919.4800-1-contact@paulk.fr>
+X-Operating-System: Linux phenom 4.14.0-3-amd64 
 User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 07, 2018 at 07:15:11PM +0900, Tetsuo Handa wrote:
-> On 2018/08/07 16:25, Michal Hocko wrote:
-> > @@ -1703,7 +1703,8 @@ static enum oom_status mem_cgroup_oom(struct mem_cgroup *memcg, gfp_t mask, int
-> >  		return OOM_ASYNC;
-> >  	}
-> >  
-> > -	if (mem_cgroup_out_of_memory(memcg, mask, order))
-> > +	if (mem_cgroup_out_of_memory(memcg, mask, order) ||
-> > +			tsk_is_oom_victim(current))
-> >  		return OOM_SUCCESS;
-> >  
-> >  	WARN(1,"Memory cgroup charge failed because of no reclaimable memory! "
-> > 
+On Tue, Aug 07, 2018 at 09:39:19PM +0200, Paul Kocialkowski wrote:
+> Initializing and registering fbdev requires at least one DRM connector
+> and will fail otherwise. In order to support headless setups (for
+> instance for GPU rendering with the GBM backend, where a DRI card node
+> is required to provide GEM memory reservation), add a check on the
+> number of registered connectors before initializing fbdev.
+
+sun4i is a pure kms driver, why exactly do you need it for gbm backed
+rendering? What exactly is rendering here, and why does it insist on a
+display card node, even if that display card node is 100% defunct?
+-Daniel
+
+> Signed-off-by: Paul Kocialkowski <contact@paulk.fr>
+> ---
+>  drivers/gpu/drm/sun4i/sun4i_framebuffer.c | 10 +++++++++-
+>  1 file changed, 9 insertions(+), 1 deletion(-)
 > 
-> I don't think this patch is appropriate. This patch only avoids hitting WARN(1).
-> This patch does not address the root cause:
+> diff --git a/drivers/gpu/drm/sun4i/sun4i_framebuffer.c b/drivers/gpu/drm/sun4i/sun4i_framebuffer.c
+> index 5f29850ef8ac..19a265e4a93a 100644
+> --- a/drivers/gpu/drm/sun4i/sun4i_framebuffer.c
+> +++ b/drivers/gpu/drm/sun4i/sun4i_framebuffer.c
+> @@ -49,6 +49,8 @@ static struct drm_mode_config_helper_funcs sun4i_de_mode_config_helpers = {
+>  
+>  int sun4i_framebuffer_init(struct drm_device *drm)
+>  {
+> +	int ret;
+> +
+>  	drm_mode_config_reset(drm);
+>  
+>  	drm->mode_config.max_width = 8192;
+> @@ -57,7 +59,13 @@ int sun4i_framebuffer_init(struct drm_device *drm)
+>  	drm->mode_config.funcs = &sun4i_de_mode_config_funcs;
+>  	drm->mode_config.helper_private = &sun4i_de_mode_config_helpers;
+>  
+> -	return drm_fb_cma_fbdev_init(drm, 32, 0);
+> +	if (drm->mode_config.num_connector > 0) {
+> +		ret = drm_fb_cma_fbdev_init(drm, 32, 0);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	return 0;
+>  }
+>  
+>  void sun4i_framebuffer_free(struct drm_device *drm)
+> -- 
+> 2.18.0
 > 
-> The task_will_free_mem(current) test in out_of_memory() is returning false
-> because test_bit(MMF_OOM_SKIP, &mm->flags) test in task_will_free_mem() is
-> returning false because MMF_OOM_SKIP was already set by the OOM reaper. The OOM
-> killer does not need to start selecting next OOM victim until "current thread
-> completes __mmput()" or "it fails to complete __mmput() within reasonable
-> period".
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 
-I don't see why it matters whether the OOM victim exits or not, unless
-you count the memory consumed by struct task_struct.
-
-> According to https://syzkaller.appspot.com/text?tag=CrashLog&x=15a1c770400000 ,
-> PID=23767 selected PID=23766 as an OOM victim and the OOM reaper set MMF_OOM_SKIP
-> before PID=23766 unnecessarily selects PID=23767 as next OOM victim.
-> At uptime = 366.550949, out_of_memory() should have returned true without selecting
-> next OOM victim because tsk_is_oom_victim(current) == true.
-
-The code works just fine. We have to kill tasks until we a) free
-enough memory or b) run out of tasks or c) kill current. When one of
-these outcomes is reached, we allow the charge and return.
-
-The only problem here is a warning in the wrong place.
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
