@@ -2,91 +2,102 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3832C46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 21:51:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3A8FC46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 21:54:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 923992198E
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 21:51:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6AEED21987
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 21:54:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lap3yGla"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 923992198E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lz2Z6qa/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AEED21987
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727028AbeHHAHs (ORCPT
+        id S1726971AbeHHAKn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 20:07:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55118 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726027AbeHHAHs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 20:07:48 -0400
-Received: from gmail.com (unknown [104.132.51.88])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8B27A21987;
-        Tue,  7 Aug 2018 21:51:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1533678682;
-        bh=BDlUKEAAsqXyggAtiDZrhpS6wBt80P70HqQeWQWipX4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=lap3yGlaw2+3Y0JklRQMGPU/A8bYsuF2oIainXYh1cgOZxf8mBkQnS1BmHsmmQlen
-         tCc2mMWR1t8AGa/x9dM/2k1BOEpCGORqMIz+trARcdMGtisdWx3Cj2QEEXKtYewJnm
-         qs9wd8BSSiyeK2WNkltXTxOmyjhUuChIi7RPawis=
-Date:   Tue, 7 Aug 2018 14:51:21 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Samuel Neves <samuel.c.p.neves@gmail.com>
-Cc:     Paul Crowley <paulcrowley@google.com>,
-        "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        linux-fscrypt@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Greg Kaiser <gkaiser@google.com>,
-        Michael Halcrow <mhalcrow@google.com>,
-        tomer.ashur@esat.kuleuven.be, Eric Biggers <ebiggers@google.com>,
-        "D. J. Bernstein" <djb@cr.yp.to>
-Subject: Re: [RFC PATCH 3/9] crypto: chacha20-generic - refactor to allow
- varying number of rounds
-Message-ID: <20180807215121.GB25300@gmail.com>
-References: <20180806223300.113891-1-ebiggers@kernel.org>
- <20180806223300.113891-4-ebiggers@kernel.org>
- <CAHmME9rbe6eT6dkUqKnp-GxcqGrp-tvMfTMr8kZtsn=S3cmP8A@mail.gmail.com>
- <CA+_SqcD+KpQ_X6iXUCpQh0N6pWzBorstBJDx7eBqcybY4Dvy8Q@mail.gmail.com>
- <CAEX_ruFp0KddnZyetZt997OvRzKDuN7U95MF_N9AgTh+mTcD7Q@mail.gmail.com>
+        Tue, 7 Aug 2018 20:10:43 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:35609 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726537AbeHHAKm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 20:10:42 -0400
+Received: by mail-lj1-f194.google.com with SMTP id p10-v6so142696ljg.2;
+        Tue, 07 Aug 2018 14:54:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=jUecAHI8bo2ypf+i9KmY87E06pX+AsuIO9Ljicjvewk=;
+        b=Lz2Z6qa/yJPwrsFIRwAtjuJ09TPfqVB7JtursJXIHylF5S9rEX5s1nfgzk8/hIT6bk
+         fbM1kG5oM1QWv5ngaMp4VAMYtpXzcM0uDTGSQTKeXsoEireq48YF0JxbJjgp86z+MqDl
+         EpTVnW2iuM/U4uXnGcd5ABF2OL8Gp34UbR2v9a7Hkd4KqOuJvZWxrmwa9ifW0fDR7xm2
+         ROSKNzP6Q2qYle37Uq5KOHBqMPdu7XxQm0RyPzstbwMME91YIlJLKsrhx9qnZuTDeh6s
+         1guTbZJIWn6ws2m6+ZKGupAZ8HwkG+Da/RTWFKEpH2nq09lMzKoqJCldnRhVZbAyC/ug
+         9AIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=jUecAHI8bo2ypf+i9KmY87E06pX+AsuIO9Ljicjvewk=;
+        b=iE/eIYMp+kVSnd1bJ2FYD8mk4T3AEyNIk5dhhLVUIM0i4qceP2OrriyFUNLUF/9Xok
+         hyz5XJ0K2ZUNB8eMk6ca5zWqVnXqvzjXqRKuf6iSPG3xonnn7z8pS3HwtJB2C96c2obh
+         PU5Cbum/361f9huUnvydQL6sk5WjvTmPdLPVebwxBBsq7RosR6hWXbauKcLlulnrgPBZ
+         jwXfpmGGKt5zjU3EBTgopxDKhW3IuDVrGctsAUBnDj/48NcLPKqAQZoJfaVyAYLQq6hG
+         rtT7ViJh3/5fETu209pQFz7dYZhaCRdhlKdmHBdfsnRqeH8XKY9J2aqj/KzFCamouz5S
+         yneQ==
+X-Gm-Message-State: AOUpUlG79ljVbnUK2/XiyP64uiT7zlOVJvCN0gNhTIZoHGF2XQ74GrVP
+        Q3ZU7zhib97u1PMuzrrywyQ=
+X-Google-Smtp-Source: AA+uWPx5G7cmTjf3v8NPjccgJMeOAaD6t96TrVB6ow8SY+qUb/s4zpNn0xVYagB4pH38wTX5ksnP9A==
+X-Received: by 2002:a2e:4103:: with SMTP id o3-v6mr106471lja.3.1533678855247;
+        Tue, 07 Aug 2018 14:54:15 -0700 (PDT)
+Received: from z50.localnet (93-181-165-181.internetia.net.pl. [93.181.165.181])
+        by smtp.gmail.com with ESMTPSA id t8-v6sm467863lfd.2.2018.08.07.14.54.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 07 Aug 2018 14:54:14 -0700 (PDT)
+From:   Janusz Krzysztofik <jmkrzyszt@gmail.com>
+To:     Marek Vasut <marek.vasut@gmail.com>
+Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-doc@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Subject: Re: [RFC PATCH v2 01/12] mtd: rawnand: ams-delta: Assign mtd->dev.parent, not mtd->owner
+Date:   Tue, 07 Aug 2018 23:55:14 +0200
+Message-ID: <5203112.3RHHgWL3HE@z50>
+In-Reply-To: <604ff0fb-07d5-9068-2f69-41198f3d9854@gmail.com>
+References: <20180718235710.18242-1-jmkrzyszt@gmail.com> <20180806222918.12644-2-jmkrzyszt@gmail.com> <604ff0fb-07d5-9068-2f69-41198f3d9854@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAEX_ruFp0KddnZyetZt997OvRzKDuN7U95MF_N9AgTh+mTcD7Q@mail.gmail.com>
-User-Agent: Mutt/1.10.1+60 (20b17ca5) (2018-08-02)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 07, 2018 at 11:21:04AM +0100, Samuel Neves wrote:
-> > The best attack on ChaCha breaks 7 rounds, and that attack requires 2^248 operations.
-> 
-> This number, as far as I can tell, comes from the "New features of
-> Latin dances" paper. There have been some minor improvements in the
-> intervening 10 years, e.g., [1, 2, 3, 4], which pull back the
-> complexity of breaking ChaCha7 down to 2^235. In any case, every
-> attack so far appears to hit a wall at 8 rounds, with 12 rounds---the
-> recommended eSTREAM round number for Salsa20---seeming to offer a
-> reasonable security margin, still somewhat better than that of the
-> AES.
-> 
-> Best regards,
-> Samuel Neves
-> 
-> [1] https://eprint.iacr.org/2015/698
-> [2] https://eprint.iacr.org/2015/217
-> [3] https://eprint.iacr.org/2016/1034
-> [4] https://doi.org/10.1016/j.dam.2017.04.034
+Hi Marek,
 
-Thanks Samuel, I'll fix that number in the next iteration of the patchset.
+On Tuesday, August 7, 2018 1:54:10 AM CEST Marek Vasut wrote:
+> On 08/07/2018 12:29 AM, Janusz Krzysztofik wrote:
+> > Fix missing mtd->dev.parent assignment and drop useless mtd->owner.
+> 
+> You fail to explain why this fix is required.
 
-- Eric
+OK, I'll have a look at similar patches from the past and add an explanation.
+
+Thanks,
+Janusz
+
+
