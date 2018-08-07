@@ -2,81 +2,108 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 091AEC46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 13:50:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D074CC46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 13:52:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3D15215FB
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 13:49:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3D15215FB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 866962150F
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 13:52:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 866962150F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389330AbeHGQEW (ORCPT
+        id S2389335AbeHGQGw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 12:04:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42144 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727605AbeHGQEW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 12:04:22 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Tue, 7 Aug 2018 12:06:52 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44820 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1732639AbeHGQGw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 12:06:52 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 24C432150F;
-        Tue,  7 Aug 2018 13:49:56 +0000 (UTC)
-Date:   Tue, 7 Aug 2018 09:49:54 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Joel Fernandes <joelaf@google.com>
-Cc:     Joel Fernandes <joel@joelfernandes.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Cc: Android Kernel" <kernel-team@android.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Byungchul Park <byungchul.park@lge.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Glexiner <tglx@linutronix.de>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>
-Subject: Re: [PATCH v12 3/3] tracing: Centralize preemptirq tracepoints and
- unify their usage
-Message-ID: <20180807094954.5137972d@gandalf.local.home>
-In-Reply-To: <CAJWu+oqZi2W9OYAn2xu17fdrBitQs4Gti4LxWmtx5B-EYtNMmA@mail.gmail.com>
-References: <20180730222423.196630-1-joel@joelfernandes.org>
-        <20180730222423.196630-4-joel@joelfernandes.org>
-        <20180806155058.5ee875f4@gandalf.local.home>
-        <CAJWu+oqvpev_EZC38_mi+UNRCxS8GqNVagHyGM4dUjruzKgwgQ@mail.gmail.com>
-        <20180806214300.13e63523@gandalf.local.home>
-        <CAJWu+oqZi2W9OYAn2xu17fdrBitQs4Gti4LxWmtx5B-EYtNMmA@mail.gmail.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4AFF840216E4;
+        Tue,  7 Aug 2018 13:52:26 +0000 (UTC)
+Received: from redhat.com (unknown [10.20.6.215])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id EBAAA1C66B;
+        Tue,  7 Aug 2018 13:52:22 +0000 (UTC)
+Date:   Tue, 7 Aug 2018 09:52:21 -0400
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     osalvador@techadventures.net
+Cc:     akpm@linux-foundation.org, mhocko@suse.com,
+        dan.j.williams@intel.com, pasha.tatashin@oracle.com,
+        david@redhat.com, yasu.isimatu@gmail.com, logang@deltatee.com,
+        dave.jiang@intel.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Oscar Salvador <osalvador@suse.de>
+Subject: Re: [RFC PATCH 2/3] mm/memory_hotplug: Create __shrink_pages and
+ move it to offline_pages
+Message-ID: <20180807135221.GA3301@redhat.com>
+References: <20180807133757.18352-1-osalvador@techadventures.net>
+ <20180807133757.18352-3-osalvador@techadventures.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180807133757.18352-3-osalvador@techadventures.net>
+User-Agent: Mutt/1.10.0 (2018-05-17)
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 07 Aug 2018 13:52:26 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 07 Aug 2018 13:52:26 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jglisse@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 7 Aug 2018 06:33:35 -0700
-Joel Fernandes <joelaf@google.com> wrote:
+On Tue, Aug 07, 2018 at 03:37:56PM +0200, osalvador@techadventures.net wrote:
+> From: Oscar Salvador <osalvador@suse.de>
 
-> Thanks, also one more thing I noticed in your patch,
-> lockdep_hardirqs_off needs to be called before all other probes but
-> you're calling it after. This is why I registered it with INT_MAX:
-> 
-> register_trace_prio_irq_disable(lockdep_hardirqs_off, NULL, INT_MAX);
-> 
-> Without it you may get annotation warnings. Thanks,
+[...]
 
-Interesting. I was following the old way where we called the tracing
-code before calling the lockdep code (all hard coded and not from
-trace events). Is this have something to do with calling the code from
-a tracepoint?
+> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+> index 9bd629944c91..e33555651e46 100644
+> --- a/mm/memory_hotplug.c
+> +++ b/mm/memory_hotplug.c
 
-Do you have an example that could trigger the warning?
+[...]
 
--- Steve
+>  /**
+>   * __remove_pages() - remove sections of pages from a zone
+> - * @zone: zone from which pages need to be removed
+> + * @nid: node which pages belong to
+>   * @phys_start_pfn: starting pageframe (must be aligned to start of a section)
+>   * @nr_pages: number of pages to remove (must be multiple of section size)
+>   * @altmap: alternative device page map or %NULL if default memmap is used
+> @@ -548,7 +557,7 @@ static int __remove_section(struct zone *zone, struct mem_section *ms,
+>   * sure that pages are marked reserved and zones are adjust properly by
+>   * calling offline_pages().
+>   */
+> -int __remove_pages(struct zone *zone, unsigned long phys_start_pfn,
+> +int __remove_pages(int nid, unsigned long phys_start_pfn,
+>  		 unsigned long nr_pages, struct vmem_altmap *altmap)
+>  {
+>  	unsigned long i;
+> @@ -556,10 +565,9 @@ int __remove_pages(struct zone *zone, unsigned long phys_start_pfn,
+>  	int sections_to_remove, ret = 0;
+>  
+>  	/* In the ZONE_DEVICE case device driver owns the memory region */
+> -	if (is_dev_zone(zone)) {
+> -		if (altmap)
+> -			map_offset = vmem_altmap_offset(altmap);
+> -	} else {
+> +	if (altmap)
+> +		map_offset = vmem_altmap_offset(altmap);
+> +	else {
+
+This will break ZONE_DEVICE at least for HMM. While i think that
+altmap -> ZONE_DEVICE (ie altmap imply ZONE_DEVICE) the reverse
+is not true ie ZONE_DEVICE does not necessarily imply altmap. So
+with the above changes you change the expected behavior. You do
+need the zone to know if it is a ZONE_DEVICE. You could also lookup
+one of the struct page but my understanding is that this is what
+you want to avoid in the first place.
+
+Cheers,
+Jérôme
