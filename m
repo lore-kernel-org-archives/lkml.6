@@ -2,158 +2,177 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8776C46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 07:37:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C8CAC46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 07:37:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C3EB2177A
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 07:37:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C3EB2177A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 474392177A
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 07:37:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 474392177A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388893AbeHGJuU (ORCPT
+        id S2388920AbeHGJuk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 05:50:20 -0400
-Received: from mga01.intel.com ([192.55.52.88]:3687 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732805AbeHGJuU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 05:50:20 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Aug 2018 00:37:16 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,454,1526367600"; 
-   d="scan'208";a="246785540"
-Received: from chenyu-desktop.sh.intel.com (HELO chenyu-desktop) ([10.239.160.116])
-  by orsmga005.jf.intel.com with ESMTP; 07 Aug 2018 00:36:57 -0700
-Date:   Tue, 7 Aug 2018 15:43:12 +0800
-From:   Yu Chen <yu.c.chen@intel.com>
-To:     joeyli <jlee@suse.com>
-Cc:     Pavel Machek <pavel@ucw.cz>, Ryan Chen <yu.chen.surf@gmail.com>,
-        oneukum@suse.com, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        ebiggers@google.com, Theodore Ts'o <tytso@mit.edu>,
-        smueller@chronox.de, denkenz@gmail.com,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        linux-crypto@vger.kernel.org,
+        Tue, 7 Aug 2018 05:50:40 -0400
+Received: from lb2-smtp-cloud9.xs4all.net ([194.109.24.26]:43916 "EHLO
+        lb2-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732805AbeHGJuk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 05:50:40 -0400
+Received: from [192.168.2.10] ([212.251.195.8])
+        by smtp-cloud9.xs4all.net with ESMTPA
+        id mwYdfJhuJEJtcmwYgf4Udp; Tue, 07 Aug 2018 09:37:35 +0200
+Subject: Re: [PATCH 1/2] media: docs-rst: Document memory-to-memory video
+ decoder interface
+To:     Tomasz Figa <tfiga@chromium.org>
+Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kookoo.gu@intel.com, Zhang Rui <rui.zhang@intel.com>
-Subject: Re: [PATCH 0/4][RFC v2] Introduce the in-kernel hibernation
- encryption
-Message-ID: <20180807074312.GB17894@chenyu-desktop>
-References: <20180723162302.GA4503@sandybridge-desktop>
- <1532590246.7411.3.camel@suse.com>
- <20180726081404.GG4244@linux-l9pv.suse>
- <20180730170415.GQ4244@linux-l9pv.suse>
- <20180803033702.GB416@sandybridge-desktop>
- <20180803053445.GC4244@linux-l9pv.suse>
- <CADjb_WSURQz86+E8kakNf7UBDM+aho+uaz3QdDkuGsEgan=szw@mail.gmail.com>
- <20180805100200.GB22948@amd>
- <20180806084534.GB12124@chenyu-desktop>
- <20180806103958.GI27062@linux-l9pv.suse>
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Pawel Osciak <posciak@chromium.org>,
+        Alexandre Courbot <acourbot@chromium.org>, kamil@wypas.org,
+        a.hajda@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>,
+        jtp.park@samsung.com, Philipp Zabel <p.zabel@pengutronix.de>,
+        =?UTF-8?B?VGlmZmFueSBMaW4gKOael+aFp+ePiik=?= 
+        <tiffany.lin@mediatek.com>,
+        =?UTF-8?B?QW5kcmV3LUNUIENoZW4gKOmZs+aZuui/qik=?= 
+        <andrew-ct.chen@mediatek.com>, todor.tomov@linaro.org,
+        nicolas@ndufresne.ca,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        dave.stevenson@raspberrypi.org,
+        Ezequiel Garcia <ezequiel@collabora.com>
+References: <20180724140621.59624-1-tfiga@chromium.org>
+ <20180724140621.59624-2-tfiga@chromium.org>
+ <37a8faea-a226-2d52-36d4-f9df194623cc@xs4all.nl>
+ <CAAFQd5BgGEBmd8gNGc-qqtUtLo=Mh8U+TVTWRsKYMv1LmeBQMA@mail.gmail.com>
+ <a6af3dc9-1d09-a414-ce31-bc1b3e69894f@xs4all.nl>
+ <CAAFQd5AnC+hWy4QUGE-s+qgRvvgGC7rMhH6x8koTfYJzTLw8Cg@mail.gmail.com>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <f0aa7c84-08e3-9b04-8d1b-95f741d6817b@xs4all.nl>
+Date:   Tue, 7 Aug 2018 09:37:31 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180806103958.GI27062@linux-l9pv.suse>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CAAFQd5AnC+hWy4QUGE-s+qgRvvgGC7rMhH6x8koTfYJzTLw8Cg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfNFT0Y0lu3iPV22rXs3NvoXm19LLiQkXwOzaCyelBIcSltbrg/eGtsOPjgYHs28pPYEHhzDQnBDefh5djv05+cC5XHXIa4yB5ViDMYwUHEY5+VWTFbq/
+ q788B4W69N832EjUP8qHk7Wf59Bsf1+DQ32UZ9aIwG1knHDfHGeL8zyvbAp28QvoJJEG388bsxgJznCa8yYJ/xDvJd4SJ5uUy9OCdjt498ngB/8b0PR1CH1Y
+ y4XroZfqNX0CkBFT1+qkXtCz0XhaRn4QyfnUAPnxIY59hsCqs2MAm58wZVlbe0omgvb1eD5tm0ZPqoRJdjRRdeuwViLrnnFjv3C7IW3dySWYqETexw8sFNFC
+ jZ4eJ3D7dGTiUTjzZUeIX1mvClLj9aDzzztj54unTq65pxfnK6qNn4uj7zDuf5l6zxOoKDBMBjihqu13XPuNFAV2nNXAfNvR+HDeLC7DlLHVPyiksQEsiMYl
+ ecaSJV+vAnyxvYwPsO+GuivKzxYqTkDpRz1u04A8OPUj8qor3w6qaTGYIF51YytVZvZtFkuK47LGzw4u0jtuBNHMYheGH6X5jy61GdX/QG6l35IumRcTmEus
+ BNynCgQUromVPVatK+mNRGm/RKB3p6GZv2Sk5tveFmK1oQ0QcDutTTEP4EZJuh5dMjudeL7JuhpJ8DUyakdCyeL5fXyjrsE/GHd4j4Q/Kk/Que5IEfUIdRpa
+ rIHfpsT3N2c=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 06, 2018 at 06:39:58PM +0800, joeyli wrote:
-> On Mon, Aug 06, 2018 at 04:45:34PM +0800, Yu Chen wrote:
-> > Hi Pavel,
-> > On Sun, Aug 05, 2018 at 12:02:00PM +0200, Pavel Machek wrote:
-> > > Hi!
-> > > 
-> > > > > User space doesn't need to involve. The EFI root key is generated by
-> > > > > EFI boot stub and be transfer to kernel. It's stored in EFI boot service
-> > > > > variable that it can only be accessed by trusted EFI binary when
-> > > > > secure boot is enabled.
-> > > > >
-> > > > Okay, this apply to the 'suspend' phase, right?
-> > > > I'm still a little confused about the 'resume' phase.
-> > > > Taking encryption as example(not signature),
-> > > > the purpose of doing hibernation encryption is to prevent other users
-> > > > from stealing ram content. Say, user A uses a  passphrase to generate the
-> > > 
-> > > No, I don't think that's purpose here.
-> > > 
-> > > Purpose here is to prevent user from reading/modifying kernel memory
-> > > content on machine he owns.
-> > >
-> > Say, A puts his laptop into hibernation and walks away,
-> > and B walks by, and opens A's laptop and wakes up the system and he
-> > can do what he wants. Although EFI key/TPM trusted key is enabled,
-> > currently there's no certification during resume, which sounds
-> > unsafe to me. Afterall, the original requirement is to probe
-> > user for password during resume, which sounds more natural.
+On 08/07/2018 09:05 AM, Tomasz Figa wrote:
+> On Thu, Jul 26, 2018 at 7:57 PM Hans Verkuil <hverkuil@xs4all.nl> wrote:
+>>>> What if you set the format to 0x0 but the stream does not have meta data with
+>>>> the resolution? How does userspace know if 0x0 is allowed or not? If this is
+>>>> specific to the chosen coded pixel format, should be add a new flag for those
+>>>> formats indicating that the coded data contains resolution information?
+>>>
+>>> Yes, this would definitely be on a per-format basis. Not sure what you
+>>> mean by a flag, though? E.g. if the format is set to H264, then it's
+>>> bound to include resolution information. If the format doesn't include
+>>> it, then userspace is already aware of this fact, because it needs to
+>>> get this from some other source (e.g. container).
+>>>
+>>>>
+>>>> That way userspace knows if 0x0 can be used, and the driver can reject 0x0
+>>>> for formats that do not support it.
+>>>
+>>> As above, but I might be misunderstanding your suggestion.
+>>
+>> So my question is: is this tied to the pixel format, or should we make it
+>> explicit with a flag like V4L2_FMT_FLAG_CAN_DECODE_WXH.
+>>
+>> The advantage of a flag is that you don't need a switch on the format to
+>> know whether or not 0x0 is allowed. And the flag can just be set in
+>> v4l2-ioctls.c.
 > 
-> OK, I saw your case. This is a physical accessing.
+> As far as my understanding goes, what data is included in the stream
+> is definitely specified by format. For example, a H264 elementary
+> stream will always include those data as a part of SPS.
 > 
-> I have a question: The suspend to memory also has the same behavior
-> and more people are using suspend. Should we think a common solution
-> to cover S3 and S4? 
->
-Since STD behaves more likely a boot up, STR does not have solid
-requirement for certification.
-> > > Strange as it may sound, that is what "secure" boot requires (and what
-> > > Disney wants).
-> > > 
-> > Ok, I understand this requirement, and I'm also concerning how to
-> > distinguish different users from seeing data of each other.
-> > 
-> > Joey,
-> > I'm thinking of a possible direction which could take advantage
-> > of the password.  It leverages either EFI key or TPM
-> > trusted key to get it done. Does it make sense?
-> > 
-> > 1. The user space generates a symetric key key_user using
-> >    the password, and passes the key_user to the kernel as the master
-> >    key.
-> > 2. The kernel uses the EFI key or TPM trusted key to encrypt
-> >    the key_user thus gets a encrypt_key.
-> > 3. Uses the encrypt_key to do snapshot encryption
-> > 4. During resume, the same encrypt_key is generated following
-> >    the same steps(I assume the same EFI key or TPM key could be fetched
-> >    during resumed, right?) and do the snapshot decryption.
-> >
-> 
-> Yes, we can use TPM key to protect the user key. But I suggest that we
-> should give user a function to disable the user key because not everyone
-> want to key-in a password for hibernate/resume and also snapshot image
-> encryption.
-> 
-> Two policies:
-> - When user key-in user key, the snapshot image must be encryption.
-> - Without key-in user key, I still want the snapshot image can be encryption.
-> 
-> No matter that the user key be key-in or not, the snapshot image must be
-> encrypted by a kernel key. So I suggest that we treat the user key as a salt
-> for snapshot image encryption and authentication. If the user key
-> be disabled, then kernel just generates a random number as a salt.
-> 
-> Actually, the kernel must compares the user key before snapshot decryption.
-> If the user key doesn't match but user space still triggers furture resume
-> process. Then kernel direct drops the snapshot image. 
->  
-Anyway I'm ok with using TPM for major 'security', please feel free
-to send a second version out, and for certification implementation
-we can have further discussion on that later.
+> However, having such flag internally, not exposed to userspace, could
+> indeed be useful to avoid all drivers have such switch. That wouldn't
+> belong to this documentation, though, since it would be just kernel
+> API.
 
-Best,
-Yu
-> > And this is what fscrypt is doing:
-> > Documentation/filesystems/fscrypt.rst
-> >
-> The use case is different. We have two key for two purposes. And the two
-> functions can be separated.
+Why would you keep this internally only?
+
+>>>> I wonder if we should make these min buffer controls required. It might be easier
+>>>> that way.
+>>>
+>>> Agreed. Although userspace is still free to ignore it, because REQBUFS
+>>> would do the right thing anyway.
+>>
+>> It's never been entirely clear to me what the purpose of those min buffers controls
+>> is. REQBUFS ensures that the number of buffers is at least the minimum needed to
+>> make the HW work. So why would you need these controls? It only makes sense if they
+>> return something different from REQBUFS.
+>>
 > 
-> Thanks
-> Joey Lee
+> The purpose of those controls is to let the client allocate a number
+> of buffers bigger than minimum, without the need to allocate the
+> minimum number of buffers first (to just learn the number), free them
+> and then allocate a bigger number again.
+
+I don't feel this is particularly useful. One problem with the minimum number
+of buffers as used in the kernel is that it is often the minimum number of
+buffers required to make the hardware work, but it may not be optimal. E.g.
+quite a few capture drivers set the minimum to 2, which is enough for the
+hardware, but it will likely lead to dropped frames. You really need 3
+(one is being DMAed, one is queued and linked into the DMA engine and one is
+being processed by userspace).
+
+I would actually prefer this to be the recommended minimum number of buffers,
+which is >= the minimum REQBUFS uses.
+
+I.e., if you use this number and you have no special requirements, then you'll
+get good performance.
+
+> 
+>>>
+>>>>
+>>>>> +7.  If all the following conditions are met, the client may resume the
+>>>>> +    decoding instantly, by using :c:func:`VIDIOC_DECODER_CMD` with
+>>>>> +    ``V4L2_DEC_CMD_START`` command, as in case of resuming after the drain
+>>>>> +    sequence:
+>>>>> +
+>>>>> +    * ``sizeimage`` of new format is less than or equal to the size of
+>>>>> +      currently allocated buffers,
+>>>>> +
+>>>>> +    * the number of buffers currently allocated is greater than or equal to
+>>>>> +      the minimum number of buffers acquired in step 6.
+>>>>
+>>>> You might want to mention that if there are insufficient buffers, then
+>>>> VIDIOC_CREATE_BUFS can be used to add more buffers.
+>>>>
+>>>
+>>> This might be a bit tricky, since at least s5p-mfc and coda can only
+>>> work on a fixed buffer set and one would need to fully reinitialize
+>>> the decoding to add one more buffer, which would effectively be the
+>>> full resolution change sequence, as below, just with REQBUFS(0),
+>>> REQBUFS(N) replaced with CREATE_BUFS.
+>>
+>> What happens today in those drivers if you try to call CREATE_BUFS?
+> 
+> s5p-mfc doesn't set the .vidioc_create_bufs pointer in its
+> v4l2_ioctl_ops, so I suppose that would be -ENOTTY?
+
+Correct for s5p-mfc.
+
+Regards,
+
+	Hans
