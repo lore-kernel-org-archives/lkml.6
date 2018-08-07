@@ -2,164 +2,120 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFC73C46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 20:23:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D819EC46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 20:27:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F7DE208FA
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 20:23:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F7DE208FA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 8812E2168C
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 20:27:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8812E2168C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727243AbeHGWjp (ORCPT
+        id S1727167AbeHGWnu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 18:39:45 -0400
-Received: from mx2.suse.de ([195.135.220.15]:44578 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725881AbeHGWjo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 18:39:44 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 2C33CAE70;
-        Tue,  7 Aug 2018 20:23:35 +0000 (UTC)
-Date:   Tue, 7 Aug 2018 22:23:32 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>, linux-mm@kvack.org,
-        Greg Thelen <gthelen@google.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] memcg, oom: be careful about races when warning about no
- reclaimable task
-Message-ID: <20180807202332.GK10003@dhcp22.suse.cz>
-References: <20180807072553.14941-1-mhocko@kernel.org>
- <20180807200247.GA4251@cmpxchg.org>
+        Tue, 7 Aug 2018 18:43:50 -0400
+Received: from mga02.intel.com ([134.134.136.20]:16235 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726358AbeHGWnt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 18:43:49 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Aug 2018 13:27:39 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,456,1526367600"; 
+   d="scan'208";a="79753633"
+Received: from tstruk-mobl1.jf.intel.com ([10.7.196.170])
+  by orsmga001.jf.intel.com with ESMTP; 07 Aug 2018 13:27:39 -0700
+Subject: [PATCH v4 0/2] tpm: add support for nonblocking operation
+From:   Tadeusz Struk <tadeusz.struk@intel.com>
+To:     jarkko.sakkinen@linux.intel.com
+Cc:     flihp@twobit.us, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, tadeusz.struk@intel.com
+Date:   Tue, 07 Aug 2018 13:27:39 -0700
+Message-ID: <153367365951.18015.11320230309813817454.stgit@tstruk-mobl1.jf.intel.com>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180807200247.GA4251@cmpxchg.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 07-08-18 16:02:47, Johannes Weiner wrote:
-> On Tue, Aug 07, 2018 at 09:25:53AM +0200, Michal Hocko wrote:
-> > From: Michal Hocko <mhocko@suse.com>
-> > 
-> > "memcg, oom: move out_of_memory back to the charge path" has added a
-> > warning triggered when the oom killer cannot find any eligible task
-> > and so there is no way to reclaim the oom memcg under its hard limit.
-> > Further charges for such a memcg are forced and therefore the hard limit
-> > isolation is weakened.
-> > 
-> > The current warning is however too eager to trigger  even when we are not
-> > really hitting the above condition. Syzbot[1] and Greg Thelen have noticed
-> > that we can hit this condition even when there is still oom victim
-> > pending. E.g. the following race is possible:
-> > 
-> > memcg has two tasks taskA, taskB.
-> > 
-> > CPU1 (taskA)			CPU2			CPU3 (taskB)
-> > try_charge
-> >   mem_cgroup_out_of_memory				try_charge
-> >       select_bad_process(taskB)
-> >       oom_kill_process		oom_reap_task
-> > 				# No real memory reaped
-> >     				  			  mem_cgroup_out_of_memory
-> > 				# set taskB -> MMF_OOM_SKIP
-> >   # retry charge
-> >   mem_cgroup_out_of_memory
-> >     oom_lock						    oom_lock
-> >     select_bad_process(self)
-> >     oom_kill_process(self)
-> >     oom_unlock
-> > 							    # no eligible task
-> > 
-> > In fact syzbot test triggered this situation by placing multiple tasks
-> > into a memcg with hard limit set to 0. So no task really had any memory
-> > charged to the memcg
-> > 
-> > : Memory cgroup stats for /ile0: cache:0KB rss:0KB rss_huge:0KB shmem:0KB mapped_file:0KB dirty:0KB writeback:0KB swap:0KB inactive_anon:0KB active_anon:0KB inactive_file:0KB active_file:0KB unevictable:0KB
-> > : Tasks state (memory values in pages):
-> > : [  pid  ]   uid  tgid total_vm      rss pgtables_bytes swapents oom_score_adj name
-> > : [   6569]     0  6562     9427        1    53248        0             0 syz-executor0
-> > : [   6576]     0  6576     9426        0    61440        0             0 syz-executor6
-> > : [   6578]     0  6578     9426      534    61440        0             0 syz-executor4
-> > : [   6579]     0  6579     9426        0    57344        0             0 syz-executor5
-> > : [   6582]     0  6582     9426        0    61440        0             0 syz-executor7
-> > : [   6584]     0  6584     9426        0    57344        0             0 syz-executor1
-> > 
-> > so in principle there is indeed nothing reclaimable in this memcg and
-> > this looks like a misconfiguration. On the other hand we can clearly
-> > kill all those tasks so it is a bit early to warn and scare users. Do
-> > that by checking that the current is the oom victim and bypass the
-> > warning then. The victim is allowed to force charge and terminate to
-> > release its temporal charge along the way.
-> > 
-> > [1] http://lkml.kernel.org/r/0000000000005e979605729c1564@google.com
-> > Fixes: "memcg, oom: move out_of_memory back to the charge path"
-> > Noticed-by: Greg Thelen <gthelen@google.com>
-> > Reported-and-tested-by: syzbot+bab151e82a4e973fa325@syzkaller.appspotmail.com
-> > Signed-off-by: Michal Hocko <mhocko@suse.com>
-> > ---
-> >  mm/memcontrol.c | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> > index 4603ad75c9a9..1b6eed1bc404 100644
-> > --- a/mm/memcontrol.c
-> > +++ b/mm/memcontrol.c
-> > @@ -1703,7 +1703,8 @@ static enum oom_status mem_cgroup_oom(struct mem_cgroup *memcg, gfp_t mask, int
-> >  		return OOM_ASYNC;
-> >  	}
-> >  
-> > -	if (mem_cgroup_out_of_memory(memcg, mask, order))
-> > +	if (mem_cgroup_out_of_memory(memcg, mask, order) ||
-> > +			tsk_is_oom_victim(current))
-> >  		return OOM_SUCCESS;
-> >  
-> >  	WARN(1,"Memory cgroup charge failed because of no reclaimable memory! "
-> 
-> This is really ugly. :(
-> 
-> If that check is only there to suppress the warning when the limit is
-> 0, this should really be a separate branch around the warning, with a
-> fat comment that this is a ridiculous cornercase, and not look like it
-> is an essential part of the memcg reclaim/oom process.
+The TCG SAPI specification [1] defines a set of functions, which allow
+applications to use the TPM device in either blocking or non-blocking fashion.
+Each command defined by the specification has a corresponding
+Tss2_Sys_<COMMAND>_Prepare() and Tss2_Sys_<COMMAND>_Complete() call, which
+together with Tss2_Sys_ExecuteAsync() is designed to allow asynchronous
+mode of operation. Currently the TPM driver supports only blocking calls,
+which doesn't allow asynchronous IO operations.
+This patch changes it and adds support for nonblocking write and a new poll
+function to enable applications, which want to take advantage of this feature.
+The new functionality can be tested using standard TPM tools implemented
+in [2], together with modified TCTI from [3], and an example application
+by Philip Tricca [4]. Here is a short description from Philip:
 
-I do not mind having it in a separate branch. Btw. this is not just about
-hard limit set to 0. Similar can happen anytime we are getting out of
-oom victims. The likelihood goes up with the remote memcg charging
-merged recently.
+"The example application `glib-tss2-event` uses a glib main event loop
+to create an RSA 2048 primary key in the TPM2 NULL hierarchy while
+using a glib timer event to time the operation. A GSource object is
+used to generate an event when the FD underlying the tss2 function
+call has data ready. While the application waits for an event indicating
+that the CreatePrimary operation is complete, it counts timer events
+that occur every 100ms. Once the CreatePrimary operation completes the
+number of timer events that occurred is used to make a rough calculation
+of the elapsed time. This value is then printed to the console.
+This takes ~300 lines of C code and requires no management or
+synchronization of threads. The glib GMainContext is "just a poll()
+loop" according to the glib documentation here:
 
-> Personally, I really don't get the point of this message. What is the
-> user to do with this information? What are we to do with it if people
-> report it? It conveys zero information on what the problem could be,
-> because it asserts a really vague high-level thing. Shouldn't such
-> debugging happen inside the OOM killer? What are the conceivable
-> scenarios in which this triggers other than obvious misconfigs?
-> 
-> What would we lose by just deleting it?
+https://developer.gnome.org/programming-guidelines/stable/main-contexts.html.en
 
-We know that _something_ bad is going on because we have no way to
-reclaim down to the hard limit. And that is the primary tool for the
-workload isolation. I am all for a better information to tell us more. I
-do not know what that would be right now, though.
+and so supporting 'poll' is the easiest way to integrate with glib /
+gtk+. This is true of any other event system that relies on 'poll'
+instead of worker threads."
 
-My primary motivation for this warning was to catch potential issues
-after we have moved oom handling back to the charge path. If we just
-remove it then we have no information at all.
+[1] https://trustedcomputinggroup.org/wp-content/uploads/TSS_SAPI_Version-1.1_Revision-22_review_030918.pdf
+[2] https://github.com/tpm2-software/tpm2-tools
+[3] https://github.com/tstruk/tpm2-tss/tree/async
+[4] https://github.com/flihp/glib-tss2-async-example
 
-I wouldn't mind removing it if it generated more false possitives but
-that hasn't happened so far.
+---
+Changes in v4:
+- Changed the way buffer_mutex is handled in nonblocking mode so that
+  it is not held when write() returns to user space.
 
--- 
-Michal Hocko
-SUSE Labs
+Changes in v3:
+- Fixed problem reported by 0-dey kbuild test robot around __exitcall.
+  It complained because there is a module_exit() in another file already.
+- Added info on example application from Philip
+
+Changes in v2:
+- Split the change into two separate patches. First patch adds a pointer
+  to the space to the struct file_priv to have access to it from the async job.
+  This is to avoid memory allocations on every write call. Now everything
+  what's needed is in the file_priv struct.
+- Renamed the 'work' member of the timer to avoid confusion.
+  Now there are 'timeout_work' and 'async_work'.
+- Removed the global wait queue and moved it to file_priv.
+- Only creating the work queue when the first file is opened.
+
+Tadeusz Struk (2):
+      tpm: add ptr to the tpm_space struct to file_priv
+      tpm: add support for nonblocking operation
+
+ drivers/char/tpm/tpm-dev-common.c |  150 +++++++++++++++++++++++++++----------
+ drivers/char/tpm/tpm-dev.c        |   22 +++--
+ drivers/char/tpm/tpm-dev.h        |   19 +++--
+ drivers/char/tpm/tpm-interface.c  |    1 
+ drivers/char/tpm/tpm.h            |    1 
+ drivers/char/tpm/tpmrm-dev.c      |   31 ++++----
+ 6 files changed, 152 insertions(+), 72 deletions(-)
+
+--
+TS
