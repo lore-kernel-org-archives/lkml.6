@@ -2,104 +2,119 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9B38C46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 19:41:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5B8CC46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 19:44:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8BA10214E0
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 19:41:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5FECB2172B
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 19:44:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="AHpGt3Ah"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BA10214E0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="U9zL7Dre"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FECB2172B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390497AbeHGV53 (ORCPT
+        id S2390534AbeHGV7x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 17:57:29 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:42745 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389192AbeHGV52 (ORCPT
+        Tue, 7 Aug 2018 17:59:53 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:36319 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389807AbeHGV7x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 17:57:28 -0400
-Received: by mail-pg1-f194.google.com with SMTP id y4-v6so8301143pgp.9
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 12:41:33 -0700 (PDT)
+        Tue, 7 Aug 2018 17:59:53 -0400
+Received: by mail-wm0-f67.google.com with SMTP id w24-v6so311972wmc.1
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 12:43:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=subject:date:message-id:in-reply-to:references:cc:from:to;
-        bh=cJYdTOP/lqwDsHAxF8UDrfGAeqPoLuDCk7YQyzrU52s=;
-        b=AHpGt3AhilFWVhJNdg18KKB3HXOqkXc1wFe1lY42UeCFUuovGCSsDMzDMulovCt79g
-         C/BPFKXTRey/1anJnuAzM5Q6OsSLgnrJXJM77WYDv7ZQLBhZXShaM8FJ6KAQi1qjVmER
-         FWMdwG2NDcLAIEOjxf/uD51SmxoIjxCIFPbnNa62Ruk/2oPrJ2kcSP2+vxUvnBqOSTc8
-         pcIETcvOeXLlHTqBNgAcDU4AqBf9gDIdmAKfuBS2tIxBfzj2NX1z2cK0COIsOmJrbs2P
-         c2iB2p4lZO7uvz7T90udRvBFxeQceFWkklgGc1Rklb5nOySXs+k42KmM3oefLXsm1BaB
-         LXBA==
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=Lg9FpWgISElVEVEjmbUgJg42tPDw+EZxIHXjiMl/Ueg=;
+        b=U9zL7Dre1ApDcbbhgWV/c1BwkZ7lcVCqSzQm1rJd/8XYzfTEN8zViKCuwCEksmF/zc
+         YFk9bKyw3TF71hxsRKnQZ4cOGwpPTCyImchwnsdo717gBbITk3MnNmPJoaygokontFjF
+         fQCBMpCJq5gB+dmf9hYcfd5IvGUMtASBBe7sDchH4fIRrFwzkYNkbWjCpI5Tk8RWqGSH
+         zs/Nq9otKcSaHt+D6vjLPITyKjlTbsJ3R0BG6L9ZKBsJ/bcvOf6W+BZW1QLJzVUBapSn
+         GQZljZfCepxXTb1GCrGt3W8MsXmYNgw1d56Wd/u2mXC/+WYe1UE49eDGK8D4RLYB3hdV
+         650w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:date:message-id:in-reply-to:references
-         :cc:from:to;
-        bh=cJYdTOP/lqwDsHAxF8UDrfGAeqPoLuDCk7YQyzrU52s=;
-        b=WZ2XEEP6g5+yA/yqmZTOMdAG8cV8LPTNsrq6d1r6p/+lXeN2BIUgfjt3N3H87uhhk9
-         WHls1uJ+XZQupHpzsRtskW8cHusGKdchVczs8K39V7Ea0CYTlIqp+vnYmhriunQ+MGXy
-         Oc6kqLK3li1736TSN5Nq7wvPjNeCcHU/5uW13Pp7jhAplJRGtkB3fRHZxrLetnDbIxwA
-         iAEmHUHYlkbdiRplWcqFHMH2M93SOacRMwWb5aO457vJWOuCwPqVwz4+mLyzo24Lsmwc
-         x6b6uhL5UYhAXWSNS5X/B2dUZsZFQyR0qoILDA43LDstLyGzLCEUolu2wJpKu+FpadYE
-         +TdQ==
-X-Gm-Message-State: AOUpUlGeJAVdrfbv+u82mFmIGm+E5o8gZ4To+HvKPVFvk+cVvZKXFews
-        WqtVi2IQld8HYEFQ1AD6Gy/+sw==
-X-Google-Smtp-Source: AAOMgpeZPLkVdWoHsLaB9Dqnq+CCdP2fNVpefWeZL2hcLF6Q2Ya/0gGckuRQtP088ltM5qEC+Hx7tg==
-X-Received: by 2002:a62:2646:: with SMTP id m67-v6mr23301211pfm.254.1533670893342;
-        Tue, 07 Aug 2018 12:41:33 -0700 (PDT)
-Received: from localhost ([12.206.222.5])
-        by smtp.gmail.com with ESMTPSA id s184-v6sm3451747pfb.56.2018.08.07.12.41.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 07 Aug 2018 12:41:32 -0700 (PDT)
-Subject: [PATCH v2 2/2] spi-nor: add support for is25wp256
-Date:   Tue,  7 Aug 2018 12:40:59 -0700
-Message-Id: <20180807194059.26348-3-palmer@sifive.com>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20180807194059.26348-1-palmer@sifive.com>
-References: <20180807194059.26348-1-palmer@sifive.com>
-Cc:     dwmw2@infradead.org, computersforpeace@gmail.com,
-        boris.brezillon@bootlin.com, richard@nod.at,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        "Wesley W. Terpstra" <wesley@sifive.com>,
-        Palmer Dabbelt <palmer@sifive.com>
-From:   Palmer Dabbelt <palmer@sifive.com>
-To:     marek.vasut@gmail.com
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=Lg9FpWgISElVEVEjmbUgJg42tPDw+EZxIHXjiMl/Ueg=;
+        b=SiAU9ugi1Bn4O60ZJFoTqSjqwX8USlcaatRX5nERe/rTzVtguMme5KTF48mFawtMFL
+         G2m4dJTTxaWScMGRTN+YdDdhHErVCmNPI/a4RDM8wJxLBvkR0OnDDgVtUxx1XXIF5yxA
+         DoImTL27UCbbFeL0gTtNfxGupUlJZTCHkBc/EZgy5LhYgIcCDHRL6GsUUdLTS3CHC6Bl
+         nk3ZgJoMnDXomxRCj2SzXQqAoNZVyvlO5MOExxvOaSBXBjNUzkMOkKyyilV+htWtU+IF
+         cKPrCwlUFUy3zxKH/0q+l54jYZM8X0MkunkdUphY0oUaa9pTkugq+ki9wKjy5bW5AKdq
+         OnEw==
+X-Gm-Message-State: AOUpUlFU6gK98zg9bcBx3qLvDYHVmjkvrLZFD9ZYFtv2GCCtluGDlh1Y
+        ihiFsDVh8MSOjjjYWPqYsPJBYLmFHot4XkFsRW9uxw==
+X-Google-Smtp-Source: AA+uWPzT7UuaREnJ89SMAaWn1SBlVk1b1SjNr8ufQ5d063kNQHV5Sr3zHftjW62vRiWpw4sf6V92aXbuEUC/cdrPyLQ=
+X-Received: by 2002:a1c:3413:: with SMTP id b19-v6mr2659287wma.21.1533671036206;
+ Tue, 07 Aug 2018 12:43:56 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a1c:548:0:0:0:0:0 with HTTP; Tue, 7 Aug 2018 12:43:35 -0700 (PDT)
+In-Reply-To: <CAHmME9rA_nb9Le4VQhtcqCfNSuHpFjZVOV6=vE12FydJD9CmAQ@mail.gmail.com>
+References: <20180801072246.GA15677@sol.localdomain> <CALCETrXD_VyoyW5C1U34o-ySJ4nFcO6PQ+ZNBVYxCpJ-f65CHw@mail.gmail.com>
+ <CAHmME9oThR-dE3gTW0UyqAGZO80qu19ktG4YTb4iL6CNpzNNaw@mail.gmail.com>
+ <CALCETrVziUpAU4nTaZ=t5ct=1jsWswWOy7KDNxXGPD1L=tMTGQ@mail.gmail.com>
+ <CAHmME9pt3PxKQmc8E-arA-W0p2tp9z_oJ-uXQwis3qD=Zvpnsg@mail.gmail.com> <CAHmME9rA_nb9Le4VQhtcqCfNSuHpFjZVOV6=vE12FydJD9CmAQ@mail.gmail.com>
+From:   Andy Lutomirski <luto@amacapital.net>
+Date:   Tue, 7 Aug 2018 12:43:35 -0700
+Message-ID: <CALCETrWo-vCt_bHMBPAEHEr3P4=AJq-95Bf=00aAEAcE839wLw@mail.gmail.com>
+Subject: Re: [PATCH v1 2/3] zinc: Introduce minimal cryptography library
+To:     "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-arch <linux-arch@vger.kernel.org>
+Cc:     Eric Biggers <ebiggers3@gmail.com>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Samuel Neves <sneves@dei.uc.pt>,
+        "Daniel J . Bernstein" <djb@cr.yp.to>,
+        Tanja Lange <tanja@hyperelliptic.org>,
+        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>,
+        Karthikeyan Bhargavan <karthik.bhargavan@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Wesley W. Terpstra" <wesley@sifive.com>
+On Tue, Aug 7, 2018 at 11:54 AM, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
+> Hey Andy, Eric, & all,
+>
+> I've started the work of separating this out into 16 individual
+> commits, have addressed numerous other things brought up like the
+> ifdef maze, and have begun rewriting (parts of) the original commit
+> message. It's still a work in progress, and I still have some work to
+> do, but if you want to follow along, things are happening here:
+>
+> https://git.zx2c4.com/linux-dev/log/?h=jd/wireguard
+>
+> I'll be rebasing and reworking this continuously, but that's how it's
+> shaping up.
+>
+> As I'm still working on it, I won't be submitting v2 today, but if you
+> have suggestions or concerns or want to poke me while I'm working on
+> v2, don't hesitate to send me private email or ping me in IRC (I'm
+> "zx2c4" there) to chat.
+>
+> Regards,
+> Jason
 
-This is used of the HiFive Unleashed development board, and follows the
-pattern of similar ISSI devices already listed.
+For "zinc: add simd helper", I think it should be in include/linux,
+and include/linux/simd.h should (immediately or maybe in the future)
+include <asm/simd.h> to pick up arch-specific stuff.  And the patch
+should get sent to linux-arch@vger.kernel.org.
 
-Signed-off-by: Wesley W. Terpstra <wesley@sifive.com>
-Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
----
- drivers/mtd/spi-nor/spi-nor.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
-index aab93463a5e7..f10017b4543d 100644
---- a/drivers/mtd/spi-nor/spi-nor.c
-+++ b/drivers/mtd/spi-nor/spi-nor.c
-@@ -1072,6 +1072,8 @@ static const struct flash_info spi_nor_ids[] = {
- 			SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ) },
- 	{ "is25wp128",  INFO(0x9d7018, 0, 64 * 1024, 256,
- 			SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ) },
-+	{ "is25wp256",  INFO(0x9d7019, 0, 64 * 1024, 512,
-+	                SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ) },
- 
- 	/* Macronix */
- 	{ "mx25l512e",   INFO(0xc22010, 0, 64 * 1024,   1, SECT_4K) },
--- 
-2.16.4
-
+In your blake2s_arch() implementation, you're not passing in a
+simd_context_t.  Is that still a work in progress?  I thought the plan
+was to pass it in rather than doing the check in the _arch()
+functions.
