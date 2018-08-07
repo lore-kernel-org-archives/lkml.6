@@ -3,124 +3,65 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6922C46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 07:20:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 548D2C46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 07:20:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99EB6219DB
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 07:20:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99EB6219DB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 13E87219CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 07:20:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13E87219CB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388850AbeHGJdb (ORCPT
+        id S2388867AbeHGJdh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 05:33:31 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33488 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727360AbeHGJdb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 05:33:31 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 827377C6CA;
-        Tue,  7 Aug 2018 07:20:31 +0000 (UTC)
-Received: from krava (unknown [10.43.17.214])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 47CD1112D19D;
-        Tue,  7 Aug 2018 07:20:30 +0000 (UTC)
-Date:   Tue, 7 Aug 2018 09:20:29 +0200
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Stephane Eranian <eranian@google.com>
-Cc:     linux-kernel@vger.kernel.org, acme@redhat.com,
-        peterz@infradead.org, mingo@elte.hu
-Subject: Re: [PATCH] perf ordered_events: fix crash in free_dup_event()
-Message-ID: <20180807072029.GA7716@krava>
-References: <1533605015-19514-1-git-send-email-eranian@google.com>
+        Tue, 7 Aug 2018 05:33:37 -0400
+Received: from verein.lst.de ([213.95.11.211]:59646 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727360AbeHGJdg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 05:33:36 -0400
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id F0C6B68D62; Tue,  7 Aug 2018 09:25:55 +0200 (CEST)
+Date:   Tue, 7 Aug 2018 09:25:55 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Christoph Hellwig <hch@lst.de>, viro@zeniv.linux.org.uk,
+        Avi Kivity <avi@scylladb.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-aio@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/4] aio: allow direct aio poll comletions for keyed
+        wakeups
+Message-ID: <20180807072555.GA678@lst.de>
+References: <20180806083058.14724-1-hch@lst.de> <20180806083058.14724-5-hch@lst.de> <20180806152705.37809e16c02543cc24626607@linux-foundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1533605015-19514-1-git-send-email-eranian@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Tue, 07 Aug 2018 07:20:31 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Tue, 07 Aug 2018 07:20:31 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@redhat.com' RCPT:''
+In-Reply-To: <20180806152705.37809e16c02543cc24626607@linux-foundation.org>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 06, 2018 at 06:23:35PM -0700, Stephane Eranian wrote:
-> Depending on memory allocations, it was possible to get a SEGFAULT in
-> free_dup_event() because the event pointer was bogus:
+On Mon, Aug 06, 2018 at 03:27:05PM -0700, Andrew Morton wrote:
+> On Mon,  6 Aug 2018 10:30:58 +0200 Christoph Hellwig <hch@lst.de> wrote:
 > 
-> perf[1354]: segfault at ffffffff00000006 ip 00000000004b7fc7
+> > If we get a keyed wakeup for a aio poll waitqueue and wake can acquire the
+> > ctx_lock without spinning we can just complete the iocb straight from the
+> > wakeup callback to avoid a context switch.
+> 
+> Why do we try to avoid spinning on the lock?
 
-is there any reproducer?
+Because we are called with the lock on the waitqueue called, which
+nests inside it.
 
+> > +		/* try to complete the iocb inline if we can: */
 > 
-> Initially, I thought it was some double free. But it turns out
-> it looked more like a buffer overrun. Adding padding before
-> the union perf_event field in struct ordered_event avoided the
-> problem. But it was not obvious where this could be coming from
-> given the accesses to the struct, i.e.,  no internal array.
+> ie, this comment explains 'what" but not "why".
 > 
-> Then, it struck me that the following was bogus in __dup_event():
-> 
->  __dup_event(struct ordered_events *oe, union perf_event *event)
-> {
->    ...
->    union perf_event *new_event;
->    new_event = memdup(event, event->header.size);
->    ...
-> }
-> 
-> The problem here is that header.size <= sizeof(*new_event). The code
-> was trying to copy only what was necessary, but then, the allocation
+> (There's a typo in Subject:, btw)
 
-hum, and I think we should continue to do so.. we can't allocate ~4000
-bytes space for 30 bytes sample
-
-> was also only partial. In other words if the event was not the largest
-> possible for the union, it would not be fully backed by memory, likely
-> causing troubles.
-
-how? using that event allocated space for another type of event?
-
-> 
-> This patch fixes the problem by passing the size of the union and not
-> that of the actual event.
-
-I think that's just bypassing the real issue, please share more details
-on how to reproduce this
-
-thanks,
-jirka
-
-> 
-> Signed-off-by: Stephane Eranian <eranian@google.com>
-> 
-> ---
->  tools/perf/util/ordered-events.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/tools/perf/util/ordered-events.c b/tools/perf/util/ordered-events.c
-> index bad9e0296e9a..a90dbe5df019 100644
-> --- a/tools/perf/util/ordered-events.c
-> +++ b/tools/perf/util/ordered-events.c
-> @@ -66,9 +66,9 @@ static union perf_event *__dup_event(struct ordered_events *oe,
->  	union perf_event *new_event = NULL;
->  
->  	if (oe->cur_alloc_size < oe->max_alloc_size) {
-> -		new_event = memdup(event, event->header.size);
-> +		new_event = memdup(event, sizeof(*event));
->  		if (new_event)
-> -			oe->cur_alloc_size += event->header.size;
-> +			oe->cur_alloc_size += sizeof(*event);
->  	}
->  
->  	return new_event;
-> -- 
-> 2.18.0.597.ga71716f1ad-goog
-> 
+Because it is faster obviously.  I can update the comment.
