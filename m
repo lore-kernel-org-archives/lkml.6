@@ -2,95 +2,123 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF3DAC46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 11:44:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09EDEC46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 11:45:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 718E0214FA
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 11:44:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 718E0214FA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id C127321779
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 11:45:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C127321779
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ispras.ru
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389081AbeHGN6w (ORCPT
+        id S2389132AbeHGN7B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 09:58:52 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35780 "EHLO mx1.redhat.com"
+        Tue, 7 Aug 2018 09:59:01 -0400
+Received: from bran.ispras.ru ([83.149.199.196]:28308 "EHLO smtp.ispras.ru"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726902AbeHGN6v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 09:58:51 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 77F9F87A70;
-        Tue,  7 Aug 2018 11:44:54 +0000 (UTC)
-Received: from [10.43.2.69] (unknown [10.43.2.69])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 415E710CD88B;
-        Tue,  7 Aug 2018 11:44:53 +0000 (UTC)
-Subject: Re: [PATCH] Use Kconfig flag to remove support of deprecated BE2/BE3
- adapters
-To:     David Miller <davem@davemloft.net>, poros@redhat.com
-Cc:     netdev@vger.kernel.org, sathya.perla@broadcom.com,
-        ajit.khaparde@broadcom.com, sriharsha.basavapatna@broadcom.com,
-        somnath.kotur@broadcom.com, linux-kernel@vger.kernel.org
-References: <20180806121230.23690-1-poros@redhat.com>
- <20180806.134620.124956510948789350.davem@davemloft.net>
-From:   Ivan Vecera <ivecera@redhat.com>
-Message-ID: <322717b5-6d98-6f65-9357-190af5b50418@redhat.com>
-Date:   Tue, 7 Aug 2018 13:44:52 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.0
-MIME-Version: 1.0
-In-Reply-To: <20180806.134620.124956510948789350.davem@davemloft.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Tue, 07 Aug 2018 11:44:54 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Tue, 07 Aug 2018 11:44:54 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'ivecera@redhat.com' RCPT:''
+        id S1726902AbeHGN7B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 09:59:01 -0400
+Received: from myklebust.intra.ispras.ru (unknown [10.10.2.207])
+        by smtp.ispras.ru (Postfix) with ESMTP id 9558E203C9;
+        Tue,  7 Aug 2018 14:45:01 +0300 (MSK)
+From:   Anton Vasilyev <vasilyev@ispras.ru>
+To:     Felipe Balbi <balbi@kernel.org>
+Cc:     Anton Vasilyev <vasilyev@ispras.ru>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Li Yang <leoyang.li@nxp.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ldv-project@linuxtesting.org
+Subject: [PATCH] usb: gadget: fotg210-udc: Fix memory leak of fotg210->ep[i]
+Date:   Tue,  7 Aug 2018 14:44:48 +0300
+Message-Id: <20180807114448.28065-1-vasilyev@ispras.ru>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6.8.2018 22:46, David Miller wrote:
-> From: Petr Oros <poros@redhat.com>
-> Date: Mon,  6 Aug 2018 14:12:28 +0200
-> 
->>   Add flags to remove support of deprecated BE2/BE3 adapters.
->>   BE2 disable will reduce .ko size by 2kb and BE3 by 3kb.
->>   Disable both will reduce .ko size by 9kb.
->>
->>   With dissabled support is also removed coresponding PCI IDs
->>   and codepath with [BE2|BE3|BEx]_chip checks.
->>
->>   New help style in Kconfig
->>
->> Signed-off-by: Petr Oros <poros@redhat.com>
-> 
-> Sorry, I'm not too hot about this.
+There is no deallocation of fotg210->ep[i] elements, allocated at
+fotg210_udc_probe.
 
-Why? This patch does not remove support for older chips, it just gives an
-ability to disable support for certain chip families. In other words an user is
-able to customize the driver for his/her needs - it could be fine to add this
-ability also for the rest of chip families.
+The patch adds deallocation of fotg210->ep array elements and simplifies
+error path of fotg210_udc_probe().
 
-> Imagine being one of the people who has one of these cards.
+Found by Linux Driver Verification project (linuxtesting.org).
 
-Such people leave this configs as they are (enabled by default).
+Signed-off-by: Anton Vasilyev <vasilyev@ispras.ru>
+---
+ drivers/usb/gadget/udc/fotg210-udc.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
-> Pulling out detection and working'ness of devices from a driver
-> is a big step backwards, and I'm sorry I will don't want to be
-> part of something that facilitates this.
-> 
-> The S390 folks tried something similar in the past and I reject
-> those changes too.
+diff --git a/drivers/usb/gadget/udc/fotg210-udc.c b/drivers/usb/gadget/udc/fotg210-udc.c
+index 53a48f561458..587c5037ff07 100644
+--- a/drivers/usb/gadget/udc/fotg210-udc.c
++++ b/drivers/usb/gadget/udc/fotg210-udc.c
+@@ -1063,12 +1063,15 @@ static const struct usb_gadget_ops fotg210_gadget_ops = {
+ static int fotg210_udc_remove(struct platform_device *pdev)
+ {
+ 	struct fotg210_udc *fotg210 = platform_get_drvdata(pdev);
++	int i;
+ 
+ 	usb_del_gadget_udc(&fotg210->gadget);
+ 	iounmap(fotg210->reg);
+ 	free_irq(platform_get_irq(pdev, 0), fotg210);
+ 
+ 	fotg210_ep_free_request(&fotg210->ep[0]->ep, fotg210->ep0_req);
++	for (i = 0; i < FOTG210_MAX_NUM_EP; i++)
++		kfree(fotg210->ep[i]);
+ 	kfree(fotg210);
+ 
+ 	return 0;
+@@ -1099,7 +1102,7 @@ static int fotg210_udc_probe(struct platform_device *pdev)
+ 	/* initialize udc */
+ 	fotg210 = kzalloc(sizeof(struct fotg210_udc), GFP_KERNEL);
+ 	if (fotg210 == NULL)
+-		goto err_alloc;
++		goto err;
+ 
+ 	for (i = 0; i < FOTG210_MAX_NUM_EP; i++) {
+ 		_ep[i] = kzalloc(sizeof(struct fotg210_ep), GFP_KERNEL);
+@@ -1111,7 +1114,7 @@ static int fotg210_udc_probe(struct platform_device *pdev)
+ 	fotg210->reg = ioremap(res->start, resource_size(res));
+ 	if (fotg210->reg == NULL) {
+ 		pr_err("ioremap error.\n");
+-		goto err_map;
++		goto err_alloc;
+ 	}
+ 
+ 	spin_lock_init(&fotg210->lock);
+@@ -1159,7 +1162,7 @@ static int fotg210_udc_probe(struct platform_device *pdev)
+ 	fotg210->ep0_req = fotg210_ep_alloc_request(&fotg210->ep[0]->ep,
+ 				GFP_KERNEL);
+ 	if (fotg210->ep0_req == NULL)
+-		goto err_req;
++		goto err_map;
+ 
+ 	fotg210_init(fotg210);
+ 
+@@ -1187,12 +1190,14 @@ static int fotg210_udc_probe(struct platform_device *pdev)
+ 	fotg210_ep_free_request(&fotg210->ep[0]->ep, fotg210->ep0_req);
+ 
+ err_map:
+-	if (fotg210->reg)
+-		iounmap(fotg210->reg);
++	iounmap(fotg210->reg);
+ 
+ err_alloc:
++	for (i = 0; i < FOTG210_MAX_NUM_EP; i++)
++		kfree(fotg210->ep[i]);
+ 	kfree(fotg210);
+ 
++err:
+ 	return ret;
+ }
+ 
+-- 
+2.18.0
 
-This patch is practically the same as "a1b8714593b6 ("net/mlx4: Use Kconfig flag
-to remove support of old gen2 Mellanox devices")" for mlx4 and that was accepted
-without any objections.
-
-Thanks,
-Ivan
