@@ -4,61 +4,60 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E468C46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:06:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E18C0C46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:06:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F0492170A
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:06:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 878A02170A
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:06:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GqZWmCMU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F0492170A
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KKoBl+AO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 878A02170A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390186AbeHGUWZ (ORCPT
+        id S2390352AbeHGUW2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 16:22:25 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:40193 "EHLO
+        Tue, 7 Aug 2018 16:22:28 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:46337 "EHLO
         mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732383AbeHGUWZ (ORCPT
+        with ESMTP id S1732383AbeHGUW1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 16:22:25 -0400
-Received: by mail-lj1-f193.google.com with SMTP id j19-v6so14155615ljc.7;
-        Tue, 07 Aug 2018 11:06:52 -0700 (PDT)
+        Tue, 7 Aug 2018 16:22:27 -0400
+Received: by mail-lj1-f193.google.com with SMTP id 203-v6so14113438ljj.13;
+        Tue, 07 Aug 2018 11:06:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=caz4zpbrhsxCxjAXbBjsvCQXOktRb8UQQ+3be1uVpjc=;
-        b=GqZWmCMUHhd0ldQ6twFzQNRp+2RYHVdgA5qBe2dmAU4Gt7cTBrcmiEnx32wP/7mVz1
-         fDp80ncUW/3KTHwx8X3IaJ42pekX4HOnLJq9rrl4xWwTFiUQmlHBgjl9bJMYqUZYW6WN
-         PUvsygnVhbn+cnb6k32K4jMrdyITL+jljlD2e6aRQGXMiM7ZQpVBcM6sQZzSE9lWnisP
-         0DXa6sXbYMY944n39dd3kxwW2FpUBgsLJHPlYpV4UUfNUNDfzfiokS4eC/FvKrAz3HE7
-         1yR31P1qCAtBsmmymBHkWcYe8F2hyXJsxXAQZcmVPg+da/RMWTesLgkBoR0P5xzdPCHg
-         133A==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=sIRlRufL/VSGE8r843JrqApeYqdo8Gj0619RAu/rj6g=;
+        b=KKoBl+AOsVValIw1H/+f5jvFnP3UZ99sdtjalG4szZf5fUdSizIBfoA7CHrlvAGd6T
+         S5z92/byAXVOT8eSrBv3UQ8aNOoa+CQK9RmCPrMSVMrBO7H+u8c1U24QM5ltnfaVoCI/
+         NO/1yUSBdH4B2iu15XbmG6oEvttHqZ5k6zTYOvGGBnb153mqBOO5Sc7qQZM6aiJPyYJy
+         envbbJylg3OSpAoALJz2wPlrE+Ifql6wbrCuJD3VWUG88XLcuIsWdv5tjlXsLQr316dz
+         o++j0xKbWkcZfmG+OR5X6+XlPFd2E5slra9PyXPZppSTwZD7UWWX7zUQiqxNEaDBWEPB
+         6iiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=caz4zpbrhsxCxjAXbBjsvCQXOktRb8UQQ+3be1uVpjc=;
-        b=lB5nLHjyHuranblX6OTbDOIVcq/05+ReAiVq65mCL52NqfjiRqe9FGTO0ZWJFtOB2Y
-         j9uAfgfbAk+6Utxc/rJoy28IMuRuIfzpYQscTOpMOdb3kN04ThMSaDtvM9PwhAynMv/U
-         DMyhTiVhHxJYOQc4GhvgC3NH1UI/GOnNt9P3m/qtjFfLEt4Lluei8Sj6g0PD27ASY5R5
-         SL5EycYqU0ua269Ds8Rl6ahiEQsdEDsiLlYNRr0u1PJqYaidyr2EZpZOY3wYInGwaEyD
-         Wz75FCNXbsiJI+L0yJDiaCC5U6Loo2TB17o2G4r3iDsn8XCpjHj05lAc07+kOZZU4QIh
-         q3aQ==
-X-Gm-Message-State: AOUpUlHSY+2xaA5sR4GNaZD2j4BgJL9dm65P2vk+f+gzx7hHfnRQmwIj
-        0vC4xQQrhdCTsTu1+NEneUk=
-X-Google-Smtp-Source: AAOMgpfEA0mUAxOFcB38VEMnQJbZI1mAQelo+md7vkx5c8jbAGMprbDb9jWEpUatTGmpahjqSZgzNQ==
-X-Received: by 2002:a2e:458b:: with SMTP id s133-v6mr15947986lja.151.1533665212116;
-        Tue, 07 Aug 2018 11:06:52 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=sIRlRufL/VSGE8r843JrqApeYqdo8Gj0619RAu/rj6g=;
+        b=NMJzRWBU8GfLJWroXLR/uEGUptWUAmAYCluPds1Ma1Ox1wkP0LKRCJjQYdc2z/2irD
+         EAy+dFSKEcuC75c2XEfJq3PSRltsi9aDWvHheVi+uIopgkgNd5XBRVWwiwYSDLHskhA6
+         5/3fcCna5nBTi71sGU6zq5xfmvpMFp2Xo+5m+9qVFnamNOW04+43zPoJE6qVrAaFMUAE
+         sUC4CoeUVZPTqZWP4bZwURTJXxm64ZEDY+3VCSmW03U53rQ3cryEFclmrSMM1YBeGl7/
+         eRKEtHCQH4ToOHBv/L0rqwaUcjlt2cm3S9+LIoea78nK3ZjY+as6eyHGMCMGm+V97AIv
+         eL1A==
+X-Gm-Message-State: AOUpUlHvu1O/BP9HgolZjwem5lfeOSfevQIdLpVkVZNrIQuh3oz7P4rm
+        Mov0wc9qy2bRHkiQgaY6Pto=
+X-Google-Smtp-Source: AAOMgpdxLWlJiX2KzPtP+JR99js9+RbbOTgoBtV4TsT7UOCf+D6hGKQzE9po+eR//qECClv0Cy6DMA==
+X-Received: by 2002:a2e:4357:: with SMTP id q84-v6mr16088068lja.13.1533665214551;
+        Tue, 07 Aug 2018 11:06:54 -0700 (PDT)
 Received: from localhost.localdomain ([109.252.90.13])
-        by smtp.gmail.com with ESMTPSA id h4-v6sm375922lfj.69.2018.08.07.11.06.50
+        by smtp.gmail.com with ESMTPSA id h4-v6sm375922lfj.69.2018.08.07.11.06.53
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 07 Aug 2018 11:06:51 -0700 (PDT)
+        Tue, 07 Aug 2018 11:06:53 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
         =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
@@ -78,70 +77,300 @@ Cc:     linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
         Rodrigo Vivi <rodrigo.vivi@intel.com>,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RFC PATCH v4 0/2] drm: Add generic colorkey plane properties
-Date:   Tue,  7 Aug 2018 20:22:00 +0300
-Message-Id: <20180807172202.1961-1-digetx@gmail.com>
+Subject: [RFC PATCH v4 2/2] drm/tegra: plane: Add generic colorkey properties for older Tegra's
+Date:   Tue,  7 Aug 2018 20:22:02 +0300
+Message-Id: <20180807172202.1961-3-digetx@gmail.com>
 X-Mailer: git-send-email 2.18.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180807172202.1961-1-digetx@gmail.com>
+References: <20180807172202.1961-1-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Changes in v4:
+For the starter a minimal color keying support is implemented, which is
+enough to provide userspace like Opentegra Xorg driver with ability to
+support color keying by the XVideo extension. Blending controls interface
+changed on newer Tegra's, this patch provides color keying support for
+Tegra20/30/114 only.
 
-1) In response to Ville's Syrjälä review comments:
-
-	- Added new "colorkey.plane_mask" property that specifies which
-	  planes shall participate in color key matching operation.
-
-	- Added short glossary-comment to drm_plane_create_colorkey_properties()
-	  that clarifies 'destination' / 'source' plane terms.
-
-	- Returned "colorkey.mask" property that was dropped from v3, looks
-	  like masking is quite common among different HW and hence makes more
-	  sense to have that property by default instead of having additional
-	  color keying modes.
-
-	- Changed the color keying mode name to "transparent".
-
-2) In response to Maarten's Lankhorst review comments:
-
-	- Added a drm_colorkey_extract_component() helper which is supposed to
-	  commonize color key component value extraction code among DRM drivers.
-
-3) In response to Russell's King review comments:
-
-	- The doc-comment to drm_plane_create_colorkey_properties() now
-	  explicitly states that "The converted value shall be *rounded up* to
-	  the nearest value". Hence userspace now knows what to expect when
-	  plane has a 1bpp format.
-
-Please review, thanks.
-
-
-v3: https://lists.freedesktop.org/archives/dri-devel/2018-June/179057.html
-v2: https://lists.freedesktop.org/archives/dri-devel/2018-May/178408.html
-v1: https://lists.freedesktop.org/archives/dri-devel/2017-December/160510.html
-
-
-Dmitry Osipenko (1):
-  drm/tegra: plane: Add generic colorkey properties for older Tegra's
-
-Laurent Pinchart (1):
-  drm: Add generic colorkey properties for display planes
-
- drivers/gpu/drm/drm_atomic.c  |  20 +++++
- drivers/gpu/drm/drm_blend.c   | 150 ++++++++++++++++++++++++++++++++
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
  drivers/gpu/drm/tegra/dc.c    |  25 ++++++
  drivers/gpu/drm/tegra/dc.h    |   7 ++
  drivers/gpu/drm/tegra/plane.c | 156 ++++++++++++++++++++++++++++++++++
- include/drm/drm_blend.h       |   3 +
- include/drm/drm_plane.h       |  91 ++++++++++++++++++++
- 7 files changed, 452 insertions(+)
+ 3 files changed, 188 insertions(+)
 
+diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+index 965088afcfad..7e90df036c48 100644
+--- a/drivers/gpu/drm/tegra/dc.c
++++ b/drivers/gpu/drm/tegra/dc.c
+@@ -162,6 +162,7 @@ static void tegra_plane_setup_blending_legacy(struct tegra_plane *plane)
+ 	u32 foreground = BLEND_WEIGHT1(255) | BLEND_WEIGHT0(255) |
+ 			 BLEND_COLOR_KEY_NONE;
+ 	u32 blendnokey = BLEND_WEIGHT1(255) | BLEND_WEIGHT0(255);
++	enum drm_plane_colorkey_mode mode;
+ 	struct tegra_plane_state *state;
+ 	u32 blending[2];
+ 	unsigned int i;
+@@ -171,7 +172,15 @@ static void tegra_plane_setup_blending_legacy(struct tegra_plane *plane)
+ 	tegra_plane_writel(plane, foreground, DC_WIN_BLEND_1WIN);
+ 
+ 	state = to_tegra_plane_state(plane->base.state);
++	mode = plane->base.state->colorkey.mode;
+ 
++	/* setup color keying */
++	if (mode == DRM_PLANE_COLORKEY_MODE_TRANSPARENT) {
++		/* color key matched areas are transparent */
++		foreground = background[0] | BLEND_COLOR_KEY_0;
++	}
++
++	/* setup alpha blending */
+ 	if (state->opaque) {
+ 		/*
+ 		 * Since custom fix-weight blending isn't utilized and weight
+@@ -792,6 +801,11 @@ static struct drm_plane *tegra_primary_plane_create(struct drm_device *drm,
+ 		dev_err(dc->dev, "failed to create rotation property: %d\n",
+ 			err);
+ 
++	if (dc->soc->has_legacy_blending)
++		drm_plane_create_colorkey_properties(&plane->base,
++				BIT(DRM_PLANE_COLORKEY_MODE_DISABLED) |
++				BIT(DRM_PLANE_COLORKEY_MODE_TRANSPARENT));
++
+ 	return &plane->base;
+ }
+ 
+@@ -1077,6 +1091,11 @@ static struct drm_plane *tegra_dc_overlay_plane_create(struct drm_device *drm,
+ 		dev_err(dc->dev, "failed to create rotation property: %d\n",
+ 			err);
+ 
++	if (dc->soc->has_legacy_blending)
++		drm_plane_create_colorkey_properties(&plane->base,
++				BIT(DRM_PLANE_COLORKEY_MODE_DISABLED) |
++				BIT(DRM_PLANE_COLORKEY_MODE_TRANSPARENT));
++
+ 	return &plane->base;
+ }
+ 
+@@ -1187,6 +1206,7 @@ tegra_crtc_atomic_duplicate_state(struct drm_crtc *crtc)
+ 	copy->pclk = state->pclk;
+ 	copy->div = state->div;
+ 	copy->planes = state->planes;
++	copy->ckey = state->ckey;
+ 
+ 	return &copy->base;
+ }
+@@ -1917,6 +1937,11 @@ static void tegra_crtc_atomic_flush(struct drm_crtc *crtc,
+ 	struct tegra_dc *dc = to_tegra_dc(crtc);
+ 	u32 value;
+ 
++	if (dc->soc->has_legacy_blending) {
++		tegra_dc_writel(dc, state->ckey.min, DC_DISP_COLOR_KEY0_LOWER);
++		tegra_dc_writel(dc, state->ckey.max, DC_DISP_COLOR_KEY0_UPPER);
++	}
++
+ 	value = state->planes << 8 | GENERAL_UPDATE;
+ 	tegra_dc_writel(dc, value, DC_CMD_STATE_CONTROL);
+ 	value = tegra_dc_readl(dc, DC_CMD_STATE_CONTROL);
+diff --git a/drivers/gpu/drm/tegra/dc.h b/drivers/gpu/drm/tegra/dc.h
+index e96f582ca692..14ed31f0ff37 100644
+--- a/drivers/gpu/drm/tegra/dc.h
++++ b/drivers/gpu/drm/tegra/dc.h
+@@ -18,6 +18,11 @@
+ 
+ struct tegra_output;
+ 
++struct tegra_dc_color_key_state {
++	u32 min;
++	u32 max;
++};
++
+ struct tegra_dc_state {
+ 	struct drm_crtc_state base;
+ 
+@@ -26,6 +31,8 @@ struct tegra_dc_state {
+ 	unsigned int div;
+ 
+ 	u32 planes;
++
++	struct tegra_dc_color_key_state ckey;
+ };
+ 
+ static inline struct tegra_dc_state *to_dc_state(struct drm_crtc_state *state)
+diff --git a/drivers/gpu/drm/tegra/plane.c b/drivers/gpu/drm/tegra/plane.c
+index d068e8aa3553..0823deef8d03 100644
+--- a/drivers/gpu/drm/tegra/plane.c
++++ b/drivers/gpu/drm/tegra/plane.c
+@@ -465,6 +465,158 @@ static int tegra_plane_setup_transparency(struct tegra_plane *tegra,
+ 	return 0;
+ }
+ 
++static u32 tegra_plane_colorkey_to_hw_format(u64 drm_ckey64)
++{
++	/* convert ARGB16161616 to ARGB8888 */
++	u8 a = drm_colorkey_extract_component(drm_ckey64, alpha, 8);
++	u8 r = drm_colorkey_extract_component(drm_ckey64, red, 8);
++	u8 g = drm_colorkey_extract_component(drm_ckey64, green, 8);
++	u8 b = drm_colorkey_extract_component(drm_ckey64, blue, 8);
++
++	return (a << 24) | (r << 16) | (g << 8) | b;
++}
++
++static bool tegra_plane_format_valid_for_colorkey(struct drm_plane_state *state)
++{
++	struct tegra_plane_state *tegra_state = to_tegra_plane_state(state);
++
++	/*
++	 * Tegra20 does not support alpha channel matching. Newer Tegra's
++	 * support the alpha matching, but it is not implemented yet.
++	 *
++	 * Formats other than XRGB8888 haven't been tested much, hence they
++	 * are not supported for now.
++	 */
++	switch (tegra_state->format) {
++	case WIN_COLOR_DEPTH_R8G8B8X8:
++	case WIN_COLOR_DEPTH_B8G8R8X8:
++		break;
++
++	default:
++		return false;
++	};
++
++	return true;
++}
++
++static int tegra_plane_setup_colorkey(struct tegra_plane *tegra,
++				      struct tegra_plane_state *tegra_state)
++{
++	enum drm_plane_colorkey_mode mode;
++	struct drm_crtc_state *crtc_state;
++	struct tegra_dc_state *dc_state;
++	struct drm_plane_state *state;
++	struct drm_plane_state *old;
++	struct drm_plane_state *new;
++	struct drm_plane *plane;
++	unsigned int normalized_zpos;
++	u32 min_hw, max_hw, mask_hw;
++	u32 plane_mask;
++	u64 min, max;
++	u64 mask;
++
++	normalized_zpos = tegra_state->base.normalized_zpos;
++	plane_mask = tegra_state->base.colorkey.plane_mask;
++	mode = tegra_state->base.colorkey.mode;
++	mask = tegra_state->base.colorkey.mask;
++	min = tegra_state->base.colorkey.min;
++	max = tegra_state->base.colorkey.max;
++
++	/* convert color key values to HW format */
++	mask_hw = tegra_plane_colorkey_to_hw_format(mask);
++	min_hw = tegra_plane_colorkey_to_hw_format(min);
++	max_hw = tegra_plane_colorkey_to_hw_format(max);
++
++	state = &tegra_state->base;
++	old = drm_atomic_get_old_plane_state(state->state, &tegra->base);
++
++	/* no need to proceed if color keying state is unchanged */
++	if (old->colorkey.plane_mask == plane_mask &&
++	    old->colorkey.mask == mask &&
++	    old->colorkey.mode == mode &&
++	    old->colorkey.min == min &&
++	    old->colorkey.max == max &&
++	    old->crtc)
++	{
++		if (mode == DRM_PLANE_COLORKEY_MODE_DISABLED)
++			return 0;
++
++		crtc_state = drm_atomic_get_crtc_state(state->state,
++						       state->crtc);
++		if (IS_ERR(crtc_state))
++			return PTR_ERR(crtc_state);
++
++		if (!crtc_state->zpos_changed) {
++			dc_state = to_dc_state(crtc_state);
++
++			if (dc_state->ckey.min == min_hw &&
++			    dc_state->ckey.max == max_hw)
++				return 0;
++		}
++	}
++
++	/*
++	 * Currently color keying is implemented for the middle plane
++	 * only (source and destination) to simplify things, validate planes
++	 * position and mask.
++	 */
++	if (state->fb && mode != DRM_PLANE_COLORKEY_MODE_DISABLED) {
++		/*
++		 * Tegra does not support color key masking, note that alpha
++		 * channel mask is ignored because only opaque formats are
++		 * currently supported.
++		 */
++		if ((mask_hw & 0xffffff) != 0xffffff)
++			return -EINVAL;
++
++		drm_for_each_plane_mask(plane, tegra->base.dev, plane_mask) {
++			struct tegra_plane *p = to_tegra_plane(plane);
++
++			/* HW can't access planes on a different CRTC */
++			if (p->dc != tegra->dc)
++				return -EINVAL;
++
++			new = drm_atomic_get_plane_state(state->state, plane);
++			if (IS_ERR(new))
++				return PTR_ERR(new);
++
++			/* don't care about disabled plane */
++			if (!new->fb)
++				continue;
++
++			if (!tegra_plane_format_valid_for_colorkey(new))
++				return -EINVAL;
++
++			/* middle plane sourcing itself */
++			if (new->normalized_zpos == 1 &&
++			    normalized_zpos == 1)
++				continue;
++
++			return -EINVAL;
++		}
++	}
++
++	/* only middle plane affects the color key state, see comment above */
++	if (normalized_zpos != 1)
++		return 0;
++
++	/*
++	 * Tegra's HW has color key values stored within CRTC, hence adjust
++	 * planes CRTC atomic state.
++	 */
++	crtc_state = drm_atomic_get_crtc_state(state->state, state->crtc);
++	if (IS_ERR(crtc_state))
++		return PTR_ERR(crtc_state);
++
++	dc_state = to_dc_state(crtc_state);
++
++	/* update CRTC's color key state */
++	dc_state->ckey.min = min_hw;
++	dc_state->ckey.max = max_hw;
++
++	return 0;
++}
++
+ int tegra_plane_setup_legacy_state(struct tegra_plane *tegra,
+ 				   struct tegra_plane_state *state)
+ {
+@@ -478,5 +630,9 @@ int tegra_plane_setup_legacy_state(struct tegra_plane *tegra,
+ 	if (err < 0)
+ 		return err;
+ 
++	err = tegra_plane_setup_colorkey(tegra, state);
++	if (err < 0)
++		return err;
++
+ 	return 0;
+ }
 -- 
 2.18.0
 
