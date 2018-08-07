@@ -2,123 +2,97 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A48CC46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 04:07:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1071CC46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 04:19:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 301C6219E2
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 04:07:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A280C21920
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 04:19:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X8oKDhz3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 301C6219E2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="TsByXDkq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A280C21920
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387695AbeHGGUI (ORCPT
+        id S1728329AbeHGGbu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 02:20:08 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:44371 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726868AbeHGGUH (ORCPT
+        Tue, 7 Aug 2018 02:31:50 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:54599 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726968AbeHGGbu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 02:20:07 -0400
-Received: by mail-qt0-f195.google.com with SMTP id b15-v6so16392570qtp.11
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Aug 2018 21:07:46 -0700 (PDT)
+        Tue, 7 Aug 2018 02:31:50 -0400
+Received: by mail-wm0-f66.google.com with SMTP id c14-v6so15846858wmb.4
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Aug 2018 21:19:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=jqV9ZYshPEnmGEkhjm4wmPtcfDutx+I5nWinyIJ4m8Q=;
-        b=X8oKDhz3ejdQqj0omyOGMj2m1DbI15EoACIRZvQ7DRFySq1d9EboLAQPocXxPcRg2n
-         CSsqIfouDNCFnN+U9Ry03ZaOuM2VgdSUjge0Q6MlfJSRHKV4yDd/U0HOWyv6Obde9Tts
-         MRncMyOU/+G/b3KvMtG9zAgQBYP7HDNHQddyMi/wo5x64GBNNAD+ngCsYtKZ6Gov8x3l
-         iycyUwlZzPaOPxqBKs5XLHr+I2ZiCrLDkw7jxcgLaTxn0cwmlAgHaV/aqmuJw8Lnljdk
-         c486Ew0jrFES3vF0PIsXm7IQ9HM+ajkORKmqBHKIo9HEF6NhBbGmENkPC1k2sh0Lql8+
-         WinA==
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=43CNGiPZtu99U1ecdNIeWNs0LuGM6YdsZalTPRLmOnU=;
+        b=TsByXDkqOAqHmO+pmGLBOe3GcQCOmbkDERgn02p3kkgEz7Uz8vLl05TnJDu0LjT/HT
+         +crRXjng2Or4NSTkjOPEFIOgih5mVsOzkKqELM3h9AiMguVhUjnggRUmfqNKcGTsytuk
+         6yXA/seWhFSOVF3judVWGJ+0gPIP6K508RmWpq5Md3BAHh4se2kH+w1Vz/q7y5tgKCZF
+         dOO9qPFyG/JvAOKpzEKgYmY6I25a2TDDE/8qW5gDuyy63Uy1rOfoLwNAwODveSBRK3eK
+         WWACQ6xqo3AN/f0MIvbPpjA/CCY2ZK2jPFK6ry1fdznjTKJBWmf9Ah72RDCEuRlS8LSI
+         PAzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=jqV9ZYshPEnmGEkhjm4wmPtcfDutx+I5nWinyIJ4m8Q=;
-        b=X3ofHQTXATRg/G/1KF6LrsAFb0xGhfyPhjWpg2cu6kecaK6rryILblQtp4BfZiuhFc
-         ABxLCzoRxeUL8DWWq46RCd8+KGFZzJZQk6jqCuzp09VeRPZWo7FrzuYjze/OoWP3rc6r
-         QxhBkAFQPVl8RgTOhWovakJqM1P22WRE+z9lNHlWOutU1GRJSsNDbanZohWk5S9UG/aI
-         /Luvomm8No3FaGWz5pyhKQs274BKkj14J/HDO+RpPFVyiZGCr1VH2vQuxokwNOuLn3C8
-         D+aPXNb1E9tjd8X24+TGqELbkq/gNl8SujAHMbfTNlLDQ1ZqVzgh3S1zFf18tvAJ1OlI
-         UjqA==
-X-Gm-Message-State: AOUpUlHFiTYb/7treU6TW/gdL9MvsuNNvRQXnKqXl94DoR1OLlWpjG6r
-        mWPIuFz+iSTW9Cmzm6K2aEozJpgR
-X-Google-Smtp-Source: AAOMgpeS2aeftffh+OYCSIOZqvb25zUEPDXMEfchQz7gqmZBI1U4N/cAZhDiNe4T2fhIeCyf+m8k/Q==
-X-Received: by 2002:a0c:d0e3:: with SMTP id b32-v6mr15073987qvh.236.1533614865891;
-        Mon, 06 Aug 2018 21:07:45 -0700 (PDT)
-Received: from WindFlash ([201.82.148.26])
-        by smtp.gmail.com with ESMTPSA id u25-v6sm149783qkk.7.2018.08.06.21.07.43
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 06 Aug 2018 21:07:45 -0700 (PDT)
-Date:   Tue, 7 Aug 2018 01:07:41 -0300
-From:   Leonardo =?utf-8?B?QnLDoXM=?= <leobras.c@gmail.com>
-To:     Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 11/11] staging: fbtft: Includes parenthesis around macro
- parameters and avoids multiple usage of macro parameter - Style
-Message-ID: <3cac26238f63cac9123ad767341daead9aec7717.1533614243.git.leobras.c@gmail.com>
-References: <cover.1533614243.git.leobras.c@gmail.com>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=43CNGiPZtu99U1ecdNIeWNs0LuGM6YdsZalTPRLmOnU=;
+        b=O9fUEiuRodWySYLkRJEm9efFFKGZ0lE+3/bq99+UXyLfo0UOQxupEZf9Mz44ekBtB5
+         PeCOvNMynCy3s0FVwIN75g5euIcqLDTwg+T0HCJ/1jt40pHE+bKM6iJBL7XZkepXRr9W
+         ui1fBSzQ6feXyK6tu6tKY6s7oDgVLXwbsZ+0Wo8gcrFMdK6c7ZPDAK3lwHgz0gFPU/CP
+         oVweu/0kIiH0vKMTfBEescaJf4qyRU9g8OpdKXmkZilpZXx8DXfDsekdk32n8ibX7rvd
+         De1LY0nxQJqIXa/zMdLhtQU35ePjdq9409PNTPYfYszTcW6sgqyu53gZF3FFJyVMspS+
+         19BA==
+X-Gm-Message-State: AOUpUlGr6gzLbLTv4QkErwtn2lp2GlxGaMKsqdkAWz7BpdXBdN1ftt0R
+        ZoRbNbW/QZZTKnCSzh5gU3DwV03R/GpfrZP65tyK1w==
+X-Google-Smtp-Source: AA+uWPzjqggtAirTaYiedTtJWY8PPx/f/h5tjlYzeb9d6r4r3PTf4HqkPDrGblryBMFel9s5LCTQWGs+OSj3P0SiuXI=
+X-Received: by 2002:a1c:8b0d:: with SMTP id n13-v6mr446389wmd.46.1533615565156;
+ Mon, 06 Aug 2018 21:19:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <cover.1533614243.git.leobras.c@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: by 2002:a1c:548:0:0:0:0:0 with HTTP; Mon, 6 Aug 2018 21:19:04 -0700 (PDT)
+In-Reply-To: <20180807033043.2esvm5qbhhqvatvy@mailbox.org>
+References: <20180621220416.5412-1-tycho@tycho.ws> <20180807024442.GA12274@cisco.lan>
+ <20180807033043.2esvm5qbhhqvatvy@mailbox.org>
+From:   Andy Lutomirski <luto@amacapital.net>
+Date:   Mon, 6 Aug 2018 21:19:04 -0700
+Message-ID: <CALCETrVR9r4QsKtwK_+tO7V33G+4r4rkB652rq1A1K2XJvTNrQ@mail.gmail.com>
+Subject: Re: [PATCH v4 0/4] seccomp trap to userspace
+To:     Christian Brauner <christian@brauner.io>
+Cc:     Tycho Andersen <tycho@tycho.ws>, Kees Cook <keescook@chromium.org>,
+        "Tobin C . Harding" <me@tobin.cc>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
+        Oleg Nesterov <oleg@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Eric W . Biederman" <ebiederm@xmission.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Leonardo Brás <leobras.c@gmail.com>
----
- drivers/staging/fbtft/fbtft.h | 18 +++++++++++-------
- 1 file changed, 11 insertions(+), 7 deletions(-)
+On Mon, Aug 6, 2018 at 8:30 PM, Christian Brauner <christian@brauner.io> wrote:
+> On Mon, Aug 06, 2018 at 08:44:42PM -0600, Tycho Andersen wrote:
+>> Hi all,
+>>
+>> Dinesh Subhraveti has claimed that some part of this series might be
+>> patented. While he has not furnished me with anything to confirm this
+>> claim, I'll put this series on hold.
+>
+> Hey man,
+>
+> Sorry to hear that your faced with such nonsense, Tycho. This is utter
+> bullsh*t of course. If you have more details at some point and feel
+> comfortable doing so it would probably be good to share them here.
 
-diff --git a/drivers/staging/fbtft/fbtft.h b/drivers/staging/fbtft/fbtft.h
-index 41ac00239aa3..eb2bdc4870be 100644
---- a/drivers/staging/fbtft/fbtft.h
-+++ b/drivers/staging/fbtft/fbtft.h
-@@ -411,17 +411,21 @@ module_exit(fbtft_driver_module_exit)
- #define DEBUG_REQUEST_GPIOS_MATCH	BIT(30)
- #define DEBUG_VERIFY_GPIOS		BIT(31)
- 
--#define fbtft_init_dbg(dev, format, arg...)                  \
--do {                                                         \
--	if (unlikely((dev)->platform_data &&                 \
--	    (((struct fbtft_platform_data *)(dev)->platform_data)->display.debug & DEBUG_DRIVER_INIT_FUNCTIONS))) \
--		dev_info(dev, format, ##arg);                \
-+#define fbtft_init_dbg(dev, format, arg...)				\
-+do {									\
-+	typeof(dev) _dev = (dev);					\
-+	struct fbtft_platform_data *pddev = (void *)_dev->platform_data;\
-+	if (unlikely(pddev &&				\
-+	    (pddev->display.debug &					\
-+	     DEBUG_DRIVER_INIT_FUNCTIONS)))				\
-+		dev_info(_dev, (format), ##arg);			\
- } while (0)
- 
- #define fbtft_par_dbg(level, par, format, arg...)            \
- do {                                                         \
--	if (unlikely(par->debug & level))                    \
--		dev_info(par->info->device, format, ##arg);  \
-+	typeof(par) _par = (par);				     \
-+	if (unlikely(_par->debug & (level)))                    \
-+		dev_info(_par->info->device, format, ##arg);  \
- } while (0)
- 
- #define fbtft_par_dbg_hex(level, par, dev, type, buf, num, format, arg...) \
--- 
-2.18.0
+IANAL, but I think it would probably *not* be good to share them here.
+Patent law is seriously fucked up like that.
 
+--Andy
