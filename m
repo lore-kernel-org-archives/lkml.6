@@ -2,124 +2,174 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 922C9C46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 14:16:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75C9FC46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 14:18:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D69021757
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 14:16:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D69021757
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 1A8582174C
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 14:18:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A8582174C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389472AbeHGQbL (ORCPT
+        id S2389352AbeHGQdX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 12:31:11 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42408 "EHLO mx1.redhat.com"
+        Tue, 7 Aug 2018 12:33:23 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51012 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387617AbeHGQbL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 12:31:11 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 019B187A74;
-        Tue,  7 Aug 2018 14:16:39 +0000 (UTC)
-Received: from [10.36.116.32] (ovpn-116-32.ams2.redhat.com [10.36.116.32])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 1DD411C66D;
-        Tue,  7 Aug 2018 14:16:35 +0000 (UTC)
-Subject: Re: [RFC PATCH 0/3] Do not touch pages in remove_memory path
-To:     osalvador@techadventures.net, akpm@linux-foundation.org
-Cc:     mhocko@suse.com, dan.j.williams@intel.com,
-        pasha.tatashin@oracle.com, jglisse@redhat.com,
-        yasu.isimatu@gmail.com, logang@deltatee.com, dave.jiang@intel.com,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Oscar Salvador <osalvador@suse.de>
-References: <20180807133757.18352-1-osalvador@techadventures.net>
-From:   David Hildenbrand <david@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- SE+xAvmumFBY
-Organization: Red Hat GmbH
-Message-ID: <6407d022-87b7-f5e0-572a-c5c29aba1314@redhat.com>
-Date:   Tue, 7 Aug 2018 16:16:35 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S2388865AbeHGQdW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 12:33:22 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id C6399AF7A;
+        Tue,  7 Aug 2018 14:18:48 +0000 (UTC)
+Date:   Tue, 7 Aug 2018 16:18:46 +0200
+From:   Petr Mladek <pmladek@suse.com>
+To:     Joe Perches <joe@perches.com>
+Cc:     Oleg Nesterov <oleg@redhat.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Tejun Heo <tj@kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        kernel-hardening@lists.openwall.com
+Subject: Re: [PATCH V2] riscv: Convert uses of REG_FMT to %p
+Message-ID: <20180807141846.bvcw3wnizjh2bg2u@pathway.suse.cz>
+References: <e14dedc721b7aed1cf3ff1bdbc09014c0131c276.1532795905.git.joe@perches.com>
 MIME-Version: 1.0
-In-Reply-To: <20180807133757.18352-1-osalvador@techadventures.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Tue, 07 Aug 2018 14:16:39 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Tue, 07 Aug 2018 14:16:39 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'david@redhat.com' RCPT:''
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e14dedc721b7aed1cf3ff1bdbc09014c0131c276.1532795905.git.joe@perches.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07.08.2018 15:37, osalvador@techadventures.net wrote:
-> From: Oscar Salvador <osalvador@suse.de>
+On Sat 2018-07-28 09:39:57, Joe Perches wrote:
+> Use %p pointer output instead of REG_FMT and cast the unsigned longs to
+> (void *) to avoid exposing kernel addresses.
 > 
-> This tries to fix [1], which was reported by David Hildenbrand, and also
-> does some cleanups/refactoring.
+> Miscellanea:
 > 
-> I am sending this as RFC to see if the direction I am going is right before
-> spending more time into it.
-> And also to gather feedback about hmm/zone_device stuff.
-> The code compiles and I tested it successfully with normal memory-hotplug operations.
->
+> o Convert pr_cont to printk(KERN_DEFAULT as these uses are
+>   new logging lines and not previous line continuations
+> o Remove the now unused REG_FMT defines
+> 
+> Signed-off-by: Joe Perches <joe@perches.com>
+> ---
+> 
+> v2: sigh: Add missing fault.c
+> 
+>  arch/riscv/include/asm/ptrace.h |  6 -----
+>  arch/riscv/kernel/process.c     | 52 +++++++++++++++++++++--------------------
+>  arch/riscv/kernel/traps.c       |  4 ++--
+>  arch/riscv/mm/fault.c           |  6 ++---
+>  4 files changed, 32 insertions(+), 36 deletions(-)
+> 
+> diff --git a/arch/riscv/include/asm/ptrace.h b/arch/riscv/include/asm/ptrace.h
+> index 2c5df945d43c..b123e723f8fa 100644
+> --- a/arch/riscv/include/asm/ptrace.h
+> +++ b/arch/riscv/include/asm/ptrace.h
+> @@ -60,12 +60,6 @@ struct pt_regs {
+>          unsigned long orig_a0;
+>  };
+>  
+> -#ifdef CONFIG_64BIT
+> -#define REG_FMT "%016lx"
+> -#else
+> -#define REG_FMT "%08lx"
+> -#endif
+> -
+>  #define user_mode(regs) (((regs)->sstatus & SR_SPP) == 0)
+>  
+>  
+> diff --git a/arch/riscv/kernel/process.c b/arch/riscv/kernel/process.c
+> index d7c6ca7c95ae..7223f6715ff3 100644
+> --- a/arch/riscv/kernel/process.c
+> +++ b/arch/riscv/kernel/process.c
+> @@ -36,7 +36,7 @@
+>  extern asmlinkage void ret_from_fork(void);
+>  extern asmlinkage void ret_from_kernel_thread(void);
+>  
+> -void arch_cpu_idle(void)
+> +void arch_yycpu_idle(void)
+>  {
+>  	wait_for_interrupt();
+>  	local_irq_enable();
+> @@ -46,31 +46,33 @@ void show_regs(struct pt_regs *regs)
+>  {
+>  	show_regs_print_info(KERN_DEFAULT);
+>  
+> -	pr_cont("sepc: " REG_FMT " ra : " REG_FMT " sp : " REG_FMT "\n",
+> -		regs->sepc, regs->ra, regs->sp);
+> -	pr_cont(" gp : " REG_FMT " tp : " REG_FMT " t0 : " REG_FMT "\n",
+> -		regs->gp, regs->tp, regs->t0);
+> -	pr_cont(" t1 : " REG_FMT " t2 : " REG_FMT " s0 : " REG_FMT "\n",
+> -		regs->t1, regs->t2, regs->s0);
+> -	pr_cont(" s1 : " REG_FMT " a0 : " REG_FMT " a1 : " REG_FMT "\n",
+> -		regs->s1, regs->a0, regs->a1);
+> -	pr_cont(" a2 : " REG_FMT " a3 : " REG_FMT " a4 : " REG_FMT "\n",
+> -		regs->a2, regs->a3, regs->a4);
+> -	pr_cont(" a5 : " REG_FMT " a6 : " REG_FMT " a7 : " REG_FMT "\n",
+> -		regs->a5, regs->a6, regs->a7);
+> -	pr_cont(" s2 : " REG_FMT " s3 : " REG_FMT " s4 : " REG_FMT "\n",
+> -		regs->s2, regs->s3, regs->s4);
+> -	pr_cont(" s5 : " REG_FMT " s6 : " REG_FMT " s7 : " REG_FMT "\n",
+> -		regs->s5, regs->s6, regs->s7);
+> -	pr_cont(" s8 : " REG_FMT " s9 : " REG_FMT " s10: " REG_FMT "\n",
+> -		regs->s8, regs->s9, regs->s10);
+> -	pr_cont(" s11: " REG_FMT " t3 : " REG_FMT " t4 : " REG_FMT "\n",
+> -		regs->s11, regs->t3, regs->t4);
+> -	pr_cont(" t5 : " REG_FMT " t6 : " REG_FMT "\n",
+> -		regs->t5, regs->t6);
+> +	printk(KERN_DEFAULT "sepc: %p ra : %p sp : %p\n",
+> +	       (void *)regs->sepc, (void *)regs->ra, (void *)regs->sp);
+> +	printk(KERN_DEFAULT " gp : %p tp : %p t0 : %p\n",
+> +	       (void *)regs->gp, (void *)regs->tp, (void *)regs->t0);
+> +	printk(KERN_DEFAULT " t1 : %p t2 : %p s0 : %p\n",
+> +	       (void *)regs->t1, (void *)regs->t2, (void *)regs->s0);
+> +	printk(KERN_DEFAULT " s1 : %p a0 : %p a1 : %p\n",
+> +	       (void *)regs->s1, (void *)regs->a0, (void *)regs->a1);
+> +	printk(KERN_DEFAULT " a2 : %p a3 : %p a4 : %p\n",
+> +	       (void *)regs->a2, (void *)regs->a3, (void *)regs->a4);
+> +	printk(KERN_DEFAULT " a5 : %p a6 : %p a7 : %p\n",
+> +	       (void *)regs->a5, (void *)regs->a6, (void *)regs->a7);
+> +	printk(KERN_DEFAULT " s2 : %p s3 : %p s4 : %p\n",
+> +	       (void *)regs->s2, (void *)regs->s3, (void *)regs->s4);
+> +	printk(KERN_DEFAULT " s5 : %p s6 : %p s7 : %p\n",
+> +	       (void *)regs->s5, (void *)regs->s6, (void *)regs->s7);
+> +	printk(KERN_DEFAULT " s8 : %p s9 : %p s10: %p\n",
+> +	       (void *)regs->s8, (void *)regs->s9, (void *)regs->s10);
+> +	printk(KERN_DEFAULT " s11: %p t3 : %p t4 : %p\n",
+> +	       (void *)regs->s11, (void *)regs->t3, (void *)regs->t4);
+> +	printk(KERN_DEFAULT " t5 : %p t6 : %p\n",
+> +	       (void *)regs->t5, (void *)regs->t6);
+>  
+> -	pr_cont("sstatus: " REG_FMT " sbadaddr: " REG_FMT " scause: " REG_FMT "\n",
+> -		regs->sstatus, regs->sbadaddr, regs->scause);
+> +	printk(KERN_DEFAULT "sstatus: %p sbadaddr: %p scause: %p\n",
+> +	       (void *)regs->sstatus,
+> +	       (void *)regs->sbadaddr,
+> +	       (void *)regs->scause);
+>  }
 
-Please coordinate next time with people already working on this,
-otherwise you might end up wasting other people's time.
+This change makes the dump almost unusable. Note that registers contain any
+kind of information, not only pointers.
 
-Anyhow, thanks for looking into this.
+My understanding is that %px was introduced because printing the
+pointer directly is sometimes worth the security risk. IMHO, this
+is one place where we want to risk printing the real value.
 
--- 
+Anyway, it needs to be decided by security gurus. Adding some more
+people into CC.
 
-Thanks,
 
-David / dhildenb
+Best Regards,
+Petr
