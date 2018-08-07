@@ -2,102 +2,126 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60FA3C46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 15:02:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AB7CC46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 15:03:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 12E7421502
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 15:02:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C031E21884
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 15:03:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rx/6UJbY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12E7421502
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ecq8f/sn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C031E21884
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403801AbeHGRRA (ORCPT
+        id S2403813AbeHGRSR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 13:17:00 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:44763 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732639AbeHGRQ7 (ORCPT
+        Tue, 7 Aug 2018 13:18:17 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:39114 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732619AbeHGRSQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 13:16:59 -0400
-Received: by mail-io0-f193.google.com with SMTP id q19-v6so14234202ioh.11;
-        Tue, 07 Aug 2018 08:02:15 -0700 (PDT)
+        Tue, 7 Aug 2018 13:18:16 -0400
+Received: by mail-pf1-f195.google.com with SMTP id j8-v6so8728393pff.6;
+        Tue, 07 Aug 2018 08:03:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Hes/jFk//nm3wRlygrhCtUFlxzBs1T1pCzOgZfP/2cE=;
-        b=rx/6UJbYBChXuLxqt3BVus60E3LlEaAgnHCMH0AL6HBzuCo55sKiTfc8FXOeVCtnJt
-         nz+jWyfTsScYdnpkQm1bhD7uLAUP5HCWfk0krFMFMot9/dIKHppx3MrTko6jJdPEkkHM
-         CPgiDhB7RFdmlSzAgJrAXS4kyio+yo63XWWBBmS7DTjUwUbtFl02R5Q448J4zmIpvlGN
-         CQVdRJhQXjsWvU/OgpH9xnpDBMAtUD1vuoGO43c1XLqMrVfRsLGYEx2qamky4hhp0InC
-         X9lxXbHd5W5el1XBazYmWPtHWkUFrgnc8OPGCVh3RSP81QLijxMoKzmmr16eqW6aiHdQ
-         S0cw==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=IspYKn8aA7Wwm3ENxk/LZ3X9RRVT+aS3yIBl8lxrmmA=;
+        b=Ecq8f/snc8PvPyCVOTOrlfCPrkPq/RToknbTx5CP9tLN6IvdZB6wUR3oisgAoFYX4D
+         XewHul8pmSqIoQWO2Wl0BNunW37iePkFPEAJWOBwVR9jtSmI9g4xAErUs42xzUt46t2j
+         WgUGgesWReLL4i4eeFyVZA7hWOP2iUqQIr4qHRGgF3TxrNNZzry3HqzwCdHqHaAbVlz0
+         rn4w3bw13CVdpkEyJrGFZtXDa5J3cu/Ssb+mv6o6sLdmT9K5vXsScSrVvHozuRg2ELJo
+         2ZfBorX8xBoIMaBSXRafdSvQT7abvCkOieoK/bpverX4D8QU7Z851XaN3jeBGj30VgYF
+         A0fw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Hes/jFk//nm3wRlygrhCtUFlxzBs1T1pCzOgZfP/2cE=;
-        b=V28anvk01Ya9bB203ruEBXZ1CxUcqDkBVUc25Wm3X39cll3W21Q8EpyPDe2bDeE6TD
-         YltYwW9A7O/V0+Qst6O0J6+1TDZm5D2xagRspTIesgNzUBfVXDiUOaO/5il2hxlqs/j2
-         FqmzvFsx+q9DEOsrKHXKdWcdGVKdH/XyNsutbKjY3aliUP0Qq2j8X6718tpCnSCe/ufF
-         Z2837jZ1LOeXiUJuM7fA3CGeisx74shjCILUNVGdtqvUPQ3FdDVvMMomyzb/RCeFvWS/
-         AxZC3vUqqrvPatWVEGMhQzL2euKlfVYcQjiAB97QDoI8qbfjVKuQOqc2lf5QzACHa0Sc
-         MDuQ==
-X-Gm-Message-State: AOUpUlGkNRuEZEu4QJ/K7ZMTWVFy4tI7hlNpSTBO/zeTJLwmP06pq1h2
-        6JnNF6F3zAznrKR+qRkrcWlrNCXOnIgfFJwbEv7cO7O+
-X-Google-Smtp-Source: AA+uWPzoLawqLi4BHw7StHmlVtJvbFiPdcyYQDvw1cTkOh6y/hIKjHFfdCLAapLnSqmHyW7D2o6suVQWToZBR1YRTm8=
-X-Received: by 2002:a5e:8404:: with SMTP id h4-v6mr18462591ioj.171.1533654135642;
- Tue, 07 Aug 2018 08:02:15 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=IspYKn8aA7Wwm3ENxk/LZ3X9RRVT+aS3yIBl8lxrmmA=;
+        b=Pu/4YWEPexc9bYGhHwzf6Zy1Pc9wSGyL2sxZxC2/U7BxgN7AHr8pJKHFkmwDmW/322
+         VQxXSCe802K7cCUQrDkKlWO/M1xsLJTM0XvE9a7WZP44ip+i1biHV8t012MKbiOwJfkt
+         /BCvat2AHiF4J8FhePiFghm1ljSVr7qVniuRagYvkubVkMRZ1LvRA+CqIl0GRDISaECp
+         C3+DUXiLohluHVLrkXXkoQK5xsLOLnsliBdtjOZtUBG0AhUkTyAAqVNY2kIQKIcR8Wn9
+         +EJFjIlCq9OX8G+5T+FOsY4c7nLste5K4JiOnK09uwSbaucRIoyDzaB43P/PT4vg66Vd
+         8Srw==
+X-Gm-Message-State: AOUpUlG0imNGg3ZXuA3Uc/HX+euiTm7pYpejYSXiD/TtxYizFrLLToYe
+        Ka0SK6ZX63O7+AddBZBOGHA=
+X-Google-Smtp-Source: AAOMgpel2Vn8fsTGhqYDMIeY+NlFUz3QA1pQY4iy7SHKo9I5wHLYypjL1nz4SUFqfcyIybo9KmerBw==
+X-Received: by 2002:a65:5cc5:: with SMTP id b5-v6mr18752706pgt.425.1533654212143;
+        Tue, 07 Aug 2018 08:03:32 -0700 (PDT)
+Received: from dennisz-mbp.dhcp.thefacebook.com ([2620:10d:c090:180::1:e25])
+        by smtp.gmail.com with ESMTPSA id d81-v6sm3891035pfj.122.2018.08.07.08.03.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 07 Aug 2018 08:03:31 -0700 (PDT)
+Date:   Tue, 7 Aug 2018 08:03:16 -0700
+From:   Dennis Zhou <dennisszhou@gmail.com>
+To:     Vlastimil Babka <vbabka@suse.cz>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Tejun Heo <tj@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Christoph Lameter <cl@linux.com>, Roman Gushchin <guro@fb.com>,
+        kernel-team@fb.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Linux API <linux-api@vger.kernel.org>
+Subject: Re: [PATCH] proc: add percpu populated pages count to meminfo
+Message-ID: <20180807150315.GA59704@dennisz-mbp.dhcp.thefacebook.com>
+References: <20180807005607.53950-1-dennisszhou@gmail.com>
+ <3b792413-184b-20b1-9d90-9e69f0df8cc4@suse.cz>
 MIME-Version: 1.0
-References: <20180807130234.5380-1-yuehaibing@huawei.com>
-In-Reply-To: <20180807130234.5380-1-yuehaibing@huawei.com>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Tue, 7 Aug 2018 17:02:04 +0200
-Message-ID: <CAOi1vP9Gbv-P=HLAKfr=MwPzTDHMpVmexPmf5TJLZhLfSvVttA@mail.gmail.com>
-Subject: Re: [PATCH net-next] ceph: remove unnecessary non NULL check for request_key
-To:     yuehaibing@huawei.com
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        "Yan, Zheng" <zyan@redhat.com>, Sage Weil <sage@redhat.com>,
-        linux-kernel@vger.kernel.org, netdev <netdev@vger.kernel.org>,
-        Ceph Development <ceph-devel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3b792413-184b-20b1-9d90-9e69f0df8cc4@suse.cz>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 7, 2018 at 3:03 PM YueHaibing <yuehaibing@huawei.com> wrote:
->
-> request_key never return NULL,so no need do non-NULL check.
->
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  net/ceph/ceph_common.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/net/ceph/ceph_common.c b/net/ceph/ceph_common.c
-> index 584fdbe..9834edc 100644
-> --- a/net/ceph/ceph_common.c
-> +++ b/net/ceph/ceph_common.c
-> @@ -304,7 +304,7 @@ static int get_secret(struct ceph_crypto_key *dst, const char *name) {
->         struct ceph_crypto_key *ckey;
->
->         ukey = request_key(&key_type_ceph, name, NULL);
-> -       if (!ukey || IS_ERR(ukey)) {
-> +       if (IS_ERR(ukey)) {
->                 /* request_key errors don't map nicely to mount(2)
->                    errors; don't even try, but still printk */
->                 key_err = PTR_ERR(ukey);
+Hi Vlastimil,
 
-Applied.
+On Tue, Aug 07, 2018 at 03:18:31PM +0200, Vlastimil Babka wrote:
+> 
+> Documentation/filesystems/proc.txt should be updated as well
+> 
+
+Will do.
+
+> >  
+> > +/*
+> > + * The number of populated pages in use by the allocator, protected by
+> > + * pcpu_lock.  This number is kept per a unit per chunk (i.e. when a page gets
+> > + * allocated/deallocated, it is allocated/deallocated in all units of a chunk
+> > + * and increments/decrements this count by 1).
+> > + */
+> > +static int pcpu_nr_populated;
+> 
+> It better be unsigned long, to match others.
+> 
+
+Yeah that makes sense. I've changed this for v2.
+
+> > +/*
+> > + * pcpu_nr_populated_pages - calculate total number of populated backing pages
+> > + *
+> > + * This reflects the number of pages populated to back the chunks.
+> > + * Metadata is excluded in the number exposed in meminfo as the number of
+> > + * backing pages scales with the number of cpus and can quickly outweigh the
+> > + * memory used for metadata.  It also keeps this calculation nice and simple.
+> > + *
+> > + * RETURNS:
+> > + * Total number of populated backing pages in use by the allocator.
+> > + */
+> > +int pcpu_nr_populated_pages(void)
+> 
+> Also unsigned long please.
+> 
+
+Changed for v2.
 
 Thanks,
-
-                Ilya
+Dennis
