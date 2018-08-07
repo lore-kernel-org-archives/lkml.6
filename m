@@ -2,102 +2,186 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C843DC46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 14:59:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 131EDC46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 14:59:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8EF132174C
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 14:59:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EF132174C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id BB4A321502
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 14:59:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB4A321502
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389803AbeHGRNt (ORCPT
+        id S2389849AbeHGROc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 13:13:49 -0400
-Received: from mx2.suse.de ([195.135.220.15]:60066 "EHLO mx1.suse.de"
+        Tue, 7 Aug 2018 13:14:32 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60208 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2389481AbeHGRNs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 13:13:48 -0400
+        id S2389544AbeHGROc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 13:14:32 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 9AEEBAE04;
-        Tue,  7 Aug 2018 14:59:03 +0000 (UTC)
-Date:   Tue, 7 Aug 2018 16:59:00 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Jerome Glisse <jglisse@redhat.com>
-Cc:     osalvador@techadventures.net, akpm@linux-foundation.org,
-        dan.j.williams@intel.com, pasha.tatashin@oracle.com,
-        david@redhat.com, yasu.isimatu@gmail.com, logang@deltatee.com,
-        dave.jiang@intel.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Oscar Salvador <osalvador@suse.de>
-Subject: Re: [RFC PATCH 2/3] mm/memory_hotplug: Create __shrink_pages and
- move it to offline_pages
-Message-ID: <20180807145900.GH10003@dhcp22.suse.cz>
-References: <20180807133757.18352-1-osalvador@techadventures.net>
- <20180807133757.18352-3-osalvador@techadventures.net>
- <20180807135221.GA3301@redhat.com>
+        by mx1.suse.de (Postfix) with ESMTP id 258C5AE04;
+        Tue,  7 Aug 2018 14:59:47 +0000 (UTC)
+Subject: Re: [RFC v6 PATCH 1/2] mm: refactor do_munmap() to extract the common
+ part
+To:     Yang Shi <yang.shi@linux.alibaba.com>, mhocko@kernel.org,
+        willy@infradead.org, ldufour@linux.vnet.ibm.com,
+        kirill@shutemov.name, akpm@linux-foundation.org
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <1532628614-111702-1-git-send-email-yang.shi@linux.alibaba.com>
+ <1532628614-111702-2-git-send-email-yang.shi@linux.alibaba.com>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Openpgp: preference=signencrypt
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+ cqmP8roqufIAj+Ohhzs=
+Message-ID: <0289d239-80f1-23e1-331d-6d83f762aeb4@suse.cz>
+Date:   Tue, 7 Aug 2018 16:59:46 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180807135221.GA3301@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1532628614-111702-2-git-send-email-yang.shi@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 07-08-18 09:52:21, Jerome Glisse wrote:
-> On Tue, Aug 07, 2018 at 03:37:56PM +0200, osalvador@techadventures.net wrote:
-> > From: Oscar Salvador <osalvador@suse.de>
+On 07/26/2018 08:10 PM, Yang Shi wrote:
+> Introduces three new helper functions:
+>   * munmap_addr_sanity()
+>   * munmap_lookup_vma()
+>   * munmap_mlock_vma()
 > 
-> [...]
+> They will be used by do_munmap() and the new do_munmap with zapping
+> large mapping early in the later patch.
 > 
-> > diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-> > index 9bd629944c91..e33555651e46 100644
-> > --- a/mm/memory_hotplug.c
-> > +++ b/mm/memory_hotplug.c
+> There is no functional change, just code refactor.
 > 
-> [...]
+> Reviewed-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+> ---
+>  mm/mmap.c | 120 ++++++++++++++++++++++++++++++++++++++++++--------------------
+>  1 file changed, 82 insertions(+), 38 deletions(-)
 > 
-> >  /**
-> >   * __remove_pages() - remove sections of pages from a zone
-> > - * @zone: zone from which pages need to be removed
-> > + * @nid: node which pages belong to
-> >   * @phys_start_pfn: starting pageframe (must be aligned to start of a section)
-> >   * @nr_pages: number of pages to remove (must be multiple of section size)
-> >   * @altmap: alternative device page map or %NULL if default memmap is used
-> > @@ -548,7 +557,7 @@ static int __remove_section(struct zone *zone, struct mem_section *ms,
-> >   * sure that pages are marked reserved and zones are adjust properly by
-> >   * calling offline_pages().
-> >   */
-> > -int __remove_pages(struct zone *zone, unsigned long phys_start_pfn,
-> > +int __remove_pages(int nid, unsigned long phys_start_pfn,
-> >  		 unsigned long nr_pages, struct vmem_altmap *altmap)
-> >  {
-> >  	unsigned long i;
-> > @@ -556,10 +565,9 @@ int __remove_pages(struct zone *zone, unsigned long phys_start_pfn,
-> >  	int sections_to_remove, ret = 0;
-> >  
-> >  	/* In the ZONE_DEVICE case device driver owns the memory region */
-> > -	if (is_dev_zone(zone)) {
-> > -		if (altmap)
-> > -			map_offset = vmem_altmap_offset(altmap);
-> > -	} else {
-> > +	if (altmap)
-> > +		map_offset = vmem_altmap_offset(altmap);
-> > +	else {
-> 
-> This will break ZONE_DEVICE at least for HMM. While i think that
-> altmap -> ZONE_DEVICE (ie altmap imply ZONE_DEVICE) the reverse
-> is not true ie ZONE_DEVICE does not necessarily imply altmap. So
-> with the above changes you change the expected behavior.
+> diff --git a/mm/mmap.c b/mm/mmap.c
+> index d1eb87e..2504094 100644
+> --- a/mm/mmap.c
+> +++ b/mm/mmap.c
+> @@ -2686,34 +2686,44 @@ int split_vma(struct mm_struct *mm, struct vm_area_struct *vma,
+>  	return __split_vma(mm, vma, addr, new_below);
+>  }
+>  
+> -/* Munmap is split into 2 main parts -- this part which finds
+> - * what needs doing, and the areas themselves, which do the
+> - * work.  This now handles partial unmappings.
+> - * Jeremy Fitzhardinge <jeremy@goop.org>
+> - */
+> -int do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
+> -	      struct list_head *uf)
+> +static inline bool munmap_addr_sanity(unsigned long start, size_t len)
 
-Could you be more specific what is the expected behavior here?
-Is this about calling release_mem_region_adjustable? Why does is it not
-suitable for zone device ranges?
--- 
-Michal Hocko
-SUSE Labs
+Since it's returning bool, the proper naming scheme would be something
+like "munmap_addr_ok()". I don't know how I would replace the "munmap_"
+prefix myself though.
+
+>  {
+> -	unsigned long end;
+> -	struct vm_area_struct *vma, *prev, *last;
+> -
+>  	if ((offset_in_page(start)) || start > TASK_SIZE || len > TASK_SIZE-start)
+> -		return -EINVAL;
+> +		return false;
+>  
+> -	len = PAGE_ALIGN(len);
+> -	if (len == 0)
+> -		return -EINVAL;
+> +	if (PAGE_ALIGN(len) == 0)
+> +		return false;
+> +
+> +	return true;
+> +}
+> +
+> +/*
+> + * munmap_lookup_vma: find the first overlap vma and split overlap vmas.
+> + * @mm: mm_struct
+> + * @vma: the first overlapping vma
+> + * @prev: vma's prev
+> + * @start: start address
+> + * @end: end address
+> + *
+> + * returns 1 if successful, 0 or errno otherwise
+> + */
+> +static int munmap_lookup_vma(struct mm_struct *mm, struct vm_area_struct **vma,
+> +			     struct vm_area_struct **prev, unsigned long start,
+> +			     unsigned long end)
+
+Agree with Michal that you could simply return vma, NULL, or error.
+Caller can easily find out prev from that, it's not like we have to
+count each cpu cycle here. It will be a bit less tricky code as well,
+which is a plus.
+
+...
+> +static inline void munmap_mlock_vma(struct vm_area_struct *vma,
+> +				    unsigned long end)
+
+This function does munlock, not mlock. You could call it e.g.
+munlock_vmas().
+
+> +{
+> +	struct vm_area_struct *tmp = vma;
+> +
+> +	while (tmp && tmp->vm_start < end) {
+> +		if (tmp->vm_flags & VM_LOCKED) {
+> +			vma->vm_mm->locked_vm -= vma_pages(tmp);
+
+You keep 'vma' just for the vm_mm? Better extract mm pointer first and
+then you don't need the 'tmp'.
+
+> +			munlock_vma_pages_all(tmp);
+> +		}
+> +		tmp = tmp->vm_next;
+> +	}
+> +}
