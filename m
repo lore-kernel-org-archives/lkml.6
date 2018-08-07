@@ -3,103 +3,152 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67791C46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 07:20:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA5AEC46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 07:20:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26E8921946
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 07:20:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26E8921946
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
+	by mail.kernel.org (Postfix) with ESMTP id AC89C21946
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 07:20:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC89C21946
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388824AbeHGJc5 convert rfc822-to-8bit (ORCPT
+        id S2388844AbeHGJdG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 05:32:57 -0400
-Received: from hermes.aosc.io ([199.195.250.187]:55204 "EHLO hermes.aosc.io"
+        Tue, 7 Aug 2018 05:33:06 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:50900 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727360AbeHGJc4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 05:32:56 -0400
-Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
-        by hermes.aosc.io (Postfix) with ESMTPSA id A298A59FC4;
-        Tue,  7 Aug 2018 07:19:47 +0000 (UTC)
-Date:   Tue, 07 Aug 2018 15:19:33 +0800
-In-Reply-To: <20180807071839.25305-1-jagan@amarulasolutions.com>
-References: <20180807071839.25305-1-jagan@amarulasolutions.com>
-MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Subject: Re: [PATCH] arm64: allwinner: h6: orangepi-one-plus: Add Ethernet support
-To:     Jagan Teki <jagan@amarulasolutions.com>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>
-CC:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-From:   Icenowy Zheng <icenowy@aosc.io>
-Message-ID: <2D1B8773-0019-458A-8C7E-20077AA27AD4@aosc.io>
+        id S1727360AbeHGJdG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 05:33:06 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 0752320908; Tue,  7 Aug 2018 09:20:04 +0200 (CEST)
+Received: from aptenodytes (AAubervilliers-681-1-99-143.w90-88.abo.wanadoo.fr [90.88.4.143])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 368572069C;
+        Tue,  7 Aug 2018 09:19:53 +0200 (CEST)
+Message-ID: <94e3eaf26ed7d6859d74abad0a0dbc94a3308a2e.camel@bootlin.com>
+Subject: Re: [PATCH v6 4/8] media: platform: Add Cedrus VPU decoder driver
+From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To:     Tomasz Figa <tfiga@chromium.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Alexandre Courbot <acourbot@chromium.org>
+Cc:     Hans Verkuil <hverkuil@xs4all.nl>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg "
+         "Roedel <joro@8bytes.org>," <linux-arm-kernel@lists.infradead.org>,
+        devel@driverdev.osuosl.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        thomas.petazzoni@bootlin.com, linux-sunxi@googlegroups.com,
+        Hugues FRUCHET <hugues.fruchet@st.com>,
+        ayaka <ayaka@soulik.info>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>
+Date:   Tue, 07 Aug 2018 09:19:54 +0200
+In-Reply-To: <CAAFQd5DgFDFupACthsz1iLpAeYRtUtEfzQC1E5XZQ6gPZAYi1Q@mail.gmail.com>
+References: <20180725100256.22833-1-paul.kocialkowski@bootlin.com>
+         <20180725100256.22833-5-paul.kocialkowski@bootlin.com>
+         <b45a8a89-1313-7a08-206d-b93017724754@xs4all.nl>
+         <dba0f9496b393c76f355398018b14ae06b2b18c9.camel@bootlin.com>
+         <CAAFQd5DgFDFupACthsz1iLpAeYRtUtEfzQC1E5XZQ6gPZAYi1Q@mail.gmail.com>
+Organization: Bootlin
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-ZkudRXiEFCPQyFqeie9D"
+X-Mailer: Evolution 3.28.4 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--=-ZkudRXiEFCPQyFqeie9D
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-于 2018年8月7日 GMT+08:00 下午3:18:39, Jagan Teki <jagan@amarulasolutions.com> 写到:
->Add Ethernet support for orangepi-one-plus board,
->- Ethernet port connected via RTL8211E PHY
->- GMAC_EN is connected via PD6
->- GMAC-3V supplied from ALDO2 regulator
+Hi,
 
-Is the prequisite patchset merged?
+On Mon, 2018-08-06 at 23:10 +0900, Tomasz Figa wrote:
+> Hi Paul,
+>=20
+> On Mon, Aug 6, 2018 at 10:50 PM Paul Kocialkowski
+> <paul.kocialkowski@bootlin.com> wrote:
+> >=20
+> > Hi Hans and thanks for the review!
+> >=20
+> > On Sat, 2018-08-04 at 14:18 +0200, Hans Verkuil wrote:
+> > > Hi Paul,
+> > >=20
+> > > See below for my review comments. Mostly small fry, the main issue I =
+found is
+> > > that there is no support for VIDIOC_DECODER_CMD. That's the proper wa=
+y of
+> > > stopping a decoder. Don't rely on the deprecated allow_zero_bytesused=
+ field.
+> >=20
+> > Mhh, it looks like this was kept around by negligence, but we do expect
+> > that streamoff stops the decoder, not a zero bytesused field.
+> >=20
+> > Is it still required to implement the V4L2_DEC_CMD_STOP
+> > VIDIOC_DECODER_CMD in that case? I read in the doc that this ioctl
+> > should be optional.
+>=20
+> If I understand correctly that this decoder is stateless, there should
+> be no need for any special flush sequence, since a 1:1 relation
+> between OUTPUT and CAPTURE buffers is expected, which means that
+> userspace can just stop queuing new OUTPUT buffers and keep dequeuing
+> CAPTURE buffers until it matches all OUTPUT buffers queued before.
 
->
->Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
->---
-> .../allwinner/sun50i-h6-orangepi-one-plus.dts | 29 +++++++++++++++++++
-> 1 file changed, 29 insertions(+)
->
->diff --git
->a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-one-plus.dts
->b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-one-plus.dts
->index 0612c19cd994..eca5b7ea0d6d 100644
->--- a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-one-plus.dts
->+++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-one-plus.dts
->@@ -21,6 +21,35 @@
-> 	chosen {
-> 		stdout-path = "serial0:115200n8";
-> 	};
->+
->+	reg_gmac_3v3: gmac-3v3 {
->+		compatible = "regulator-fixed";
->+		regulator-name = "vcc-gmac-3v3";
->+		regulator-min-microvolt = <3300000>;
->+		regulator-max-microvolt = <3300000>;
->+		startup-delay-us = <100000>;
->+		enable-active-high;
->+		gpio = <&pio 3 6 GPIO_ACTIVE_HIGH>; /* PD6 */
->+		vin-supply = <&reg_aldo2>;
->+	};
->+};
->+
->+&emac {
->+	pinctrl-names = "default";
->+	pinctrl-0 = <&ext_rgmii_pins>;
->+	phy-mode = "rgmii";
->+	phy-handle = <&ext_rgmii_phy>;
->+	phy-supply = <&reg_gmac_3v3>;
->+	allwinner,rx-delay-ps = <200>;
->+	allwinner,tx-delay-ps = <200>;
->+	status = "okay";
->+};
->+
->+&mdio {
->+	ext_rgmii_phy: ethernet-phy@1 {
->+		compatible = "ethernet-phy-ieee802.3-c22";
->+		reg = <1>;
->+	};
-> };
-> 
-> &mmc0 {
+This is indeed a stateless decoder and I don't have any particular need
+for a particular stop command indeed, since flushing remaining buffers
+when stopping is already implemented at streamoff time.
+
+> By the way, I guess we will also need some documentation for the
+> stateless codec interface. Do you or Maxime (who sent the H264 part)
+> have any plans to work on it? We have some internal documents, which
+> should be convertible to rst using pandoc, but we might need some help
+> with updating to latest request API and further editing. Alexandre
+> (moved from Cc to To) is going to be looking into this.
+
+As far as I'm concerned, I am interested in contributing to this
+documentation although our priorities for the Allwinner VPU effort are
+currently focused on H265 support. This might mean that my contributions
+to this documentation will be made on a best-effort basis (as opposed to
+during the workday). Either way, if someone was to come up with an
+initial draft, I'd be happy to review it!
+
+Cheers,
+
+Paul
+
+--=20
+Paul Kocialkowski, Bootlin (formerly Free Electrons)
+Embedded Linux and kernel engineering
+https://bootlin.com
+
+--=-ZkudRXiEFCPQyFqeie9D
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEJZpWjZeIetVBefti3cLmz3+fv9EFAltpSBoACgkQ3cLmz3+f
+v9FlHQgAif+K3qb4JnoZLXyOrb1AKLTQ2nfVxhYw2FmEAQ7QVRf0syn4vF/2nJpa
++b5Qe70Mhw8oz7ZmoRaHrFSu3h4y43+rrsE4h0BfBE9in407DM0w95S+0khDSXKl
+Sxyo2uKVxAMoNqkT+/JW02KzkLJECajsigHzHuTPLQSNBY1GnngXLFMez70b4dKU
+fpSn51oGBW8UY0/t5lU7oagLUajMCP0kRlw3Cm7X+dShk4gD/jOMbQj4Iv/Ol7PY
+mBzX54Gq4v4OqM1K8gdT2oyO7U9gxXv/jk+QAvDt3hSClBxVag/glhNjLqmjWGfi
+/idCyK30fT7MO9GqdlvyQ9fiv56N2Q==
+=nmMH
+-----END PGP SIGNATURE-----
+
+--=-ZkudRXiEFCPQyFqeie9D--
+
