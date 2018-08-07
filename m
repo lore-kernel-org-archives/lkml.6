@@ -6,42 +6,44 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B86DC46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 23:27:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0E45C46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 23:28:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4688D21736
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 23:27:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4688D21736
+	by mail.kernel.org (Postfix) with ESMTP id 813DE215F9
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 23:28:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 813DE215F9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727363AbeHHBoZ (ORCPT
+        id S1727410AbeHHBpI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 21:44:25 -0400
-Received: from gateway23.websitewelcome.com ([192.185.50.129]:36693 "EHLO
+        Tue, 7 Aug 2018 21:45:08 -0400
+Received: from gateway23.websitewelcome.com ([192.185.50.129]:23496 "EHLO
         gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726704AbeHHBoY (ORCPT
+        by vger.kernel.org with ESMTP id S1726704AbeHHBpI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 21:44:24 -0400
+        Tue, 7 Aug 2018 21:45:08 -0400
 Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
-        by gateway23.websitewelcome.com (Postfix) with ESMTP id 236C01809F
-        for <linux-kernel@vger.kernel.org>; Tue,  7 Aug 2018 18:27:38 -0500 (CDT)
+        by gateway23.websitewelcome.com (Postfix) with ESMTP id 2E4CCA4FB
+        for <linux-kernel@vger.kernel.org>; Tue,  7 Aug 2018 18:28:23 -0500 (CDT)
 Received: from gator4166.hostgator.com ([108.167.133.22])
         by cmsmtp with SMTP
-        id nBO5fjgXIBcCXnBO6fJiPh; Tue, 07 Aug 2018 18:27:38 -0500
+        id nBOnfjj4iBcCXnBOofJkx0; Tue, 07 Aug 2018 18:28:22 -0500
 X-Authority-Reason: nr=8
-Received: from [189.250.73.102] (port=48128 helo=embeddedor)
+Received: from [189.250.73.102] (port=48130 helo=embeddedor)
         by gator4166.hostgator.com with esmtpa (Exim 4.91)
         (envelope-from <gustavo@embeddedor.com>)
-        id 1fnBO5-001xdh-5f; Tue, 07 Aug 2018 18:27:37 -0500
-Date:   Tue, 7 Aug 2018 18:27:36 -0500
+        id 1fnBOn-001y4y-6W; Tue, 07 Aug 2018 18:28:21 -0500
+Date:   Tue, 7 Aug 2018 18:28:20 -0500
 From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 To:     "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Ariel Elior <Ariel.Elior@cavium.com>, everest-linux-l2@cavium.com
-Subject: [PATCH 27/33] qede: qede_fp: Mark expected switch fall-through
-Message-ID: <12936b5b7b6b9bc7a029ae761137018cc89bedc4.1533675546.git.gustavo@embeddedor.com>
+Cc:     Harish Patil <harish.patil@cavium.com>,
+        Manish Chopra <manish.chopra@cavium.com>,
+        Dept-GELinuxNICDev@cavium.com
+Subject: [PATCH 28/33] qlcnic: Mark expected switch fall-througs
+Message-ID: <43bf00764c0d67757207669b2482557695c1cc9b.1533675546.git.gustavo@embeddedor.com>
 References: <cover.1533675546.git.gustavo@embeddedor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -56,13 +58,13 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 189.250.73.102
 X-Source-L: No
-X-Exim-ID: 1fnBO5-001xdh-5f
+X-Exim-ID: 1fnBOn-001y4y-6W
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.73.102]:48128
+X-Source-Sender: (embeddedor) [189.250.73.102]:48130
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 173
+X-Email-Count: 178
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -73,28 +75,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 In preparation to enabling -Wimplicit-fallthrough, mark switch cases
 where we are expecting to fall through.
 
-Addresses-Coverity-ID: 1384501 ("Missing break in switch")
-Addresses-Coverity-ID: 1398869 ("Missing break in switch")
+Addresses-Coverity-ID: 1410181 ("Missing break in switch")
+Addresses-Coverity-ID: 1410184 ("Missing break in switch")
 Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- drivers/net/ethernet/qlogic/qede/qede_fp.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/ethernet/qlogic/qlcnic/qlcnic_ethtool.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/qlogic/qede/qede_fp.c b/drivers/net/ethernet/qlogic/qede/qede_fp.c
-index 6c70239..8c9e95b 100644
---- a/drivers/net/ethernet/qlogic/qede/qede_fp.c
-+++ b/drivers/net/ethernet/qlogic/qede/qede_fp.c
-@@ -1119,8 +1119,10 @@ static bool qede_rx_xdp(struct qede_dev *edev,
- 
- 	default:
- 		bpf_warn_invalid_xdp_action(act);
-+		/* Fall through */
- 	case XDP_ABORTED:
- 		trace_xdp_exception(edev->ndev, prog, act);
-+		/* Fall through */
- 	case XDP_DROP:
- 		qede_recycle_rx_bd_ring(rxq, cqe->bd_num);
- 	}
+diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_ethtool.c b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_ethtool.c
+index 7f7deea..3b0adda 100644
+--- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_ethtool.c
++++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_ethtool.c
+@@ -351,9 +351,9 @@ static int qlcnic_82xx_get_link_ksettings(struct qlcnic_adapter *adapter,
+ 	case QLCNIC_BRDTYPE_P3P_REF_QG:
+ 	case QLCNIC_BRDTYPE_P3P_4_GB:
+ 	case QLCNIC_BRDTYPE_P3P_4_GB_MM:
+-
+ 		supported |= SUPPORTED_Autoneg;
+ 		advertising |= ADVERTISED_Autoneg;
++		/* fall through */
+ 	case QLCNIC_BRDTYPE_P3P_10G_CX4:
+ 	case QLCNIC_BRDTYPE_P3P_10G_CX4_LP:
+ 	case QLCNIC_BRDTYPE_P3P_10000_BASE_T:
+@@ -377,6 +377,7 @@ static int qlcnic_82xx_get_link_ksettings(struct qlcnic_adapter *adapter,
+ 		supported |= SUPPORTED_TP;
+ 		check_sfp_module = netif_running(adapter->netdev) &&
+ 				   ahw->has_link_events;
++		/* fall through */
+ 	case QLCNIC_BRDTYPE_P3P_10G_XFP:
+ 		supported |= SUPPORTED_FIBRE;
+ 		advertising |= ADVERTISED_FIBRE;
 -- 
 2.7.4
 
