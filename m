@@ -2,75 +2,170 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BAFEC46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 23:03:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7C06C46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 23:05:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D14D21723
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 23:03:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D14D21723
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 946D3208E6
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 23:05:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="uqSRmNTG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 946D3208E6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726930AbeHHBTn (ORCPT
+        id S1726991AbeHHBWE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 21:19:43 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33376 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726697AbeHHBTn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 21:19:43 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9FA897721C;
-        Tue,  7 Aug 2018 23:03:04 +0000 (UTC)
-Received: from krava (ovpn-204-19.brq.redhat.com [10.40.204.19])
-        by smtp.corp.redhat.com (Postfix) with SMTP id AA04A10CD853;
-        Tue,  7 Aug 2018 23:03:02 +0000 (UTC)
-Date:   Wed, 8 Aug 2018 01:03:01 +0200
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        linux-kernel@vger.kernel.org,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>
-Subject: Re: [PATCH v2] perf map: optimize maps__fixup_overlappings()
-Message-ID: <20180807230301.GA20320@krava>
-References: <153363294565.396323.4605638589903548668.stgit@buzz>
- <153365189407.435244.7234821822450484712.stgit@buzz>
- <20180807200237.GA5395@kernel.org>
+        Tue, 7 Aug 2018 21:22:04 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:39782 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726579AbeHHBWE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 21:22:04 -0400
+Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 6FC5857;
+        Wed,  8 Aug 2018 01:05:21 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1533683122;
+        bh=aSmI6Thq7ef7i8qWoN90v4CuJkqRiSQHac1JWKPQG60=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=uqSRmNTGqKG/KpP8SBlvDglGW4PEB/Djnnv07TrFtVdoaADzoKq6k1zoeqV6g2pNH
+         pQzD2e7WgHts4yi0MKqQXQuBq+V8VXlvSXfCbXdvUUyrZVffNUegDAnZ3NZdjEMAIx
+         OqheDlJig+bhs31hImVYk2LPxHcFiCLaCChEicxg=
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Tomasz Figa <tfiga@google.com>
+Cc:     Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        g.liakhovetski@gmx.de, olivier.braun@stereolabs.com,
+        troy.kisky@boundarydevices.com,
+        Randy Dunlap <rdunlap@infradead.org>, philipp.zabel@gmail.com,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 6/6] media: uvcvideo: Move decode processing to process context
+Date:   Wed, 08 Aug 2018 02:06:05 +0300
+Message-ID: <7279894.ANCCylJ6YF@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <CAAFQd5CQEhmuLbs0dmGfu66x1Xq1V_kOT0bV_DoPitkkOX5Q4A@mail.gmail.com>
+References: <cover.3cb9065dabdf5d455da508fb4109201e626d5ee7.1522168131.git-series.kieran.bingham@ideasonboard.com> <cae511f90085701e7093ce39dc8dabf8fc16b844.1522168131.git-series.kieran.bingham@ideasonboard.com> <CAAFQd5CQEhmuLbs0dmGfu66x1Xq1V_kOT0bV_DoPitkkOX5Q4A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180807200237.GA5395@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Tue, 07 Aug 2018 23:03:04 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Tue, 07 Aug 2018 23:03:04 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@redhat.com' RCPT:''
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 07, 2018 at 05:02:37PM -0300, Arnaldo Carvalho de Melo wrote:
-> Em Tue, Aug 07, 2018 at 05:24:54PM +0300, Konstantin Khlebnikov escreveu:
-> > This function splits and removes overlapping areas.
-> > 
-> > Maps in tree are ordered by start address thus we could find
-> > first overlap and stop if next map does not overlap.
-> > 
-> > Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Hi Tomasz,
+
+On Tuesday, 7 August 2018 12:54:02 EEST Tomasz Figa wrote:
+> On Wed, Mar 28, 2018 at 1:47 AM Kieran Bingham wrote:
+> [snip]
 > 
-> Jiri, I'm applying this one with your Acked-by, ok?
+> > @@ -1544,25 +1594,29 @@ static int uvc_alloc_urb_buffers(struct
+> > uvc_streaming *stream,
+> >   */
+> >  
+> >  static void uvc_uninit_video(struct uvc_streaming *stream, int
+> >  free_buffers)
+> >  {
+> > -       struct urb *urb;
+> > -       unsigned int i;
+> > +       struct uvc_urb *uvc_urb;
+> > 
+> >         uvc_video_stats_stop(stream);
+> > 
+> > -       for (i = 0; i < UVC_URBS; ++i) {
+> > -               struct uvc_urb *uvc_urb = &stream->uvc_urb[i];
+> > +       /*
+> > +        * We must poison the URBs rather than kill them to ensure that
+> > even
+> > +        * after the completion handler returns, any asynchronous
+> > workqueues
+> > +        * will be prevented from resubmitting the URBs
+> > +        */
+> > +       for_each_uvc_urb(uvc_urb, stream)
+> > +               usb_poison_urb(uvc_urb->urb);
+> > 
+> > -               urb = uvc_urb->urb;
+> > -               if (urb == NULL)
+> > -                       continue;
+> > +       flush_workqueue(stream->async_wq);
+> > 
+> > -               usb_kill_urb(urb);
+> > -               usb_free_urb(urb);
+> > +       for_each_uvc_urb(uvc_urb, stream) {
+> > +               usb_free_urb(uvc_urb->urb);
+> >                 uvc_urb->urb = NULL;
+> >         }
+> >         
+> >         if (free_buffers)
+> >                 uvc_free_urb_buffers(stream);
+> > +
+> > +       destroy_workqueue(stream->async_wq);
+> 
+> In our testing, this function ends up being called twice, if before
+> suspend the camera is streaming and if the camera disconnects between
+> suspend and resume. This is because uvc_video_suspend() calls this
+> function (with free_buffers = 0), but uvc_video_resume() wouldn't call
+> uvc_init_video() due to an earlier failure and uvc_v4l2_release()
+> would end up calling this function again, while the workqueue is
+> already destroyed.
 
-yep, sry.. overlooked this
+This makes me wonder, as stated in my review, whether we shouldn't keep the 
+work queue alive for the whole lifetime of the device instead of creating and 
+destroying it at stream start and stop.
 
-Acked-by: Jiri Olsa <jolsa@kernel.org>
+> The following diff seems to take care of it:
+> 
+> 8<~~~
+> diff --git a/drivers/media/usb/uvc/uvc_video.c
+> b/drivers/media/usb/uvc/uvc_video.c
+> index c5e0ab564b1a..6fb890c8ba67 100644
+> --- a/drivers/media/usb/uvc/uvc_video.c
+> +++ b/drivers/media/usb/uvc/uvc_video.c
+> @@ -1493,10 +1493,11 @@ static void uvc_uninit_video(struct
+> uvc_streaming *stream, int free_buffers)
+>                uvc_urb->urb = NULL;
+>        }
+> 
+> -       if (free_buffers)
+> +       if (free_buffers) {
+>                uvc_free_urb_buffers(stream);
+> -
+> -       destroy_workqueue(stream->async_wq);
+> +               destroy_workqueue(stream->async_wq);
+> +               stream->async_wq = NULL;
+> +       }
+> }
+> 
+> /*
+> @@ -1648,10 +1649,12 @@ static int uvc_init_video(struct uvc_streaming
+> *stream, gfp_t gfp_flags)
+> 
+>        uvc_video_stats_start(stream);
+> 
+> -       stream->async_wq = alloc_workqueue("uvcvideo", WQ_UNBOUND |
+> WQ_HIGHPRI, -                       0);
+> -       if (!stream->async_wq)
+> -               return -ENOMEM;
+> +       if (!stream->async_wq) {
+> +               stream->async_wq = alloc_workqueue("uvcvideo",
+> +                                                  WQ_UNBOUND | WQ_HIGHPRI,
+> 0); +               if (!stream->async_wq)
+> +                       return -ENOMEM;
+> +       }
+> 
+>        if (intf->num_altsetting > 1) {
+>                struct usb_host_endpoint *best_ep = NULL;
+> ~~~>8
 
-thanks,
-jirka
+-- 
+Regards,
+
+Laurent Pinchart
+
+
+
