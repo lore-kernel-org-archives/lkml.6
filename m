@@ -3,38 +3,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F287C46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:52:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77B42C46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:52:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 408352172F
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:52:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 408352172F
+	by mail.kernel.org (Postfix) with ESMTP id 391842172F
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:52:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 391842172F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403821AbeHGVI3 (ORCPT
+        id S2403858AbeHGVIc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 17:08:29 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33076 "EHLO
+        Tue, 7 Aug 2018 17:08:32 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33082 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726419AbeHGVI2 (ORCPT
+        with ESMTP id S1726419AbeHGVIc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 17:08:28 -0400
+        Tue, 7 Aug 2018 17:08:32 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5CC0C3EE;
-        Tue,  7 Aug 2018 18:52:46 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 59CFB3EE;
+        Tue,  7 Aug 2018 18:52:49 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Quinn Tran <quinn.tran@cavium.com>,
+        stable@vger.kernel.org,
+        Anil Gurumurthy <anil.gurumurthy@cavium.com>,
         Himanshu Madhani <himanshu.madhani@cavium.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.17 04/18] scsi: qla2xxx: Fix ISP recovery on unload
-Date:   Tue,  7 Aug 2018 20:51:07 +0200
-Message-Id: <20180807172313.124356830@linuxfoundation.org>
+Subject: [PATCH 4.17 05/18] scsi: qla2xxx: Return error when TMF returns
+Date:   Tue,  7 Aug 2018 20:51:08 +0200
+Message-Id: <20180807172313.160120495@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180807172312.964272530@linuxfoundation.org>
 References: <20180807172312.964272530@linuxfoundation.org>
@@ -51,38 +52,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Quinn Tran <quinn.tran@cavium.com>
+From: Anil Gurumurthy <anil.gurumurthy@cavium.com>
 
-commit b08abbd9f5996309f021684f9ca74da30dcca36a upstream.
+commit b4146c4929ef61d5afca011474d59d0918a0cd82 upstream.
 
-During unload process, the chip can encounter problem where a FW dump would
-be captured. For this case, the full reset sequence will be skip to bring
-the chip back to full operational state.
+Propagate the task management completion status properly to avoid
+unnecessary waits for commands to complete.
 
-Fixes: e315cd28b9ef ("[SCSI] qla2xxx: Code changes for qla data structure refactoring")
+Fixes: faef62d13463 ("[SCSI] qla2xxx: Fix Task Management command asynchronous handling")
 Cc: <stable@vger.kernel.org>
-Signed-off-by: Quinn Tran <quinn.tran@cavium.com>
+Signed-off-by: Anil Gurumurthy <anil.gurumurthy@cavium.com>
 Signed-off-by: Himanshu Madhani <himanshu.madhani@cavium.com>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/qla2xxx/qla_os.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/scsi/qla2xxx/qla_init.c |    7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
---- a/drivers/scsi/qla2xxx/qla_os.c
-+++ b/drivers/scsi/qla2xxx/qla_os.c
-@@ -6014,8 +6014,9 @@ qla2x00_do_dpc(void *data)
- 				set_bit(ISP_ABORT_NEEDED, &base_vha->dpc_flags);
- 		}
+--- a/drivers/scsi/qla2xxx/qla_init.c
++++ b/drivers/scsi/qla2xxx/qla_init.c
+@@ -1518,11 +1518,10 @@ qla2x00_async_tm_cmd(fc_port_t *fcport,
  
--		if (test_and_clear_bit(ISP_ABORT_NEEDED,
--						&base_vha->dpc_flags)) {
-+		if (test_and_clear_bit
-+		    (ISP_ABORT_NEEDED, &base_vha->dpc_flags) &&
-+		    !test_bit(UNLOADING, &base_vha->dpc_flags)) {
+ 	wait_for_completion(&tm_iocb->u.tmf.comp);
  
- 			ql_dbg(ql_dbg_dpc, base_vha, 0x4007,
- 			    "ISP abort scheduled.\n");
+-	rval = tm_iocb->u.tmf.comp_status == CS_COMPLETE ?
+-	    QLA_SUCCESS : QLA_FUNCTION_FAILED;
++	rval = tm_iocb->u.tmf.data;
+ 
+-	if ((rval != QLA_SUCCESS) || tm_iocb->u.tmf.data) {
+-		ql_dbg(ql_dbg_taskm, vha, 0x8030,
++	if (rval != QLA_SUCCESS) {
++		ql_log(ql_log_warn, vha, 0x8030,
+ 		    "TM IOCB failed (%x).\n", rval);
+ 	}
+ 
 
 
