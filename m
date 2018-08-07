@@ -2,90 +2,169 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D94DDC46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 20:00:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C440CC46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 20:02:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87C2D2172B
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 20:00:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 692B62172B
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 20:02:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="F29OfaCf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87C2D2172B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="d34xyeK3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 692B62172B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727700AbeHGWP6 (ORCPT
+        id S1727740AbeHGWSl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 18:15:58 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:53612 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726027AbeHGWP6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 18:15:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=hbVhEbmD45C064qO5uvO92lHaztlKbY3+8ZwBOHlnrM=; b=F29OfaCfVJrAzm2a8LZL2mZQY
-        3K4dtHKUeXuaSx72H5bIXvugT27zsRu7zgJQRlqf0FZqbfbMbyuUEzGEfDstBC8wCjp344+UoRZFO
-        Ewt4vcUJFHpIwHedf0G2KUclA/A93LbfKErELyyafKEMbKyxeR96klLOapP74fEldAhDR2tX3PPqZ
-        BVUdO7pd1cK0qJU3j9sMuDH5YB4outhCs0P+97lOlfL0pH6ZqeodebpOOJg04AD2234kvBUSkVbvj
-        05KPhFM+hQp99Ydt6yFjK8bqOdF9PyPIt20E1vRrvrrq6+dvvGlLnNbIRrSHhbadpVZH3iyOLxpGx
-        YOh1VcUXw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fn890-0002uC-2e; Tue, 07 Aug 2018 19:59:50 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id AFB3820163EC2; Tue,  7 Aug 2018 21:59:45 +0200 (CEST)
-Date:   Tue, 7 Aug 2018 21:59:45 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Andi Kleen <ak@linux.intel.com>
-Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
-        kan.liang@linux.intel.com, tglx@linutronix.de, mingo@redhat.com,
-        len.brown@intel.com, linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH] x86/cpu: Rename Denverton and Gemini Lake
-Message-ID: <20180807195945.GK2494@hirez.programming.kicks-ass.net>
-References: <1533662247-17575-1-git-send-email-kan.liang@linux.intel.com>
- <1b7cb461-5321-86cf-3031-5ff545c3dc42@linux.intel.com>
- <20180807174851.GJ2494@hirez.programming.kicks-ass.net>
- <20180807183736.GR4238@tassilo.jf.intel.com>
+        Tue, 7 Aug 2018 18:18:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37848 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726027AbeHGWSl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 18:18:41 -0400
+Received: from jouet.infradead.org (unknown [190.15.121.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EB2BA215E5;
+        Tue,  7 Aug 2018 20:02:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1533672160;
+        bh=e60F61QG78APnjLP60XWmT2bs3UhiNyrMf6dbxRa9/M=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=d34xyeK3BvL8Mgp4y7eARnbVDxv5dkQ5vCT0czep9provts40By0/R5uyssP+x9bT
+         viX4mcVu6MJvLOyqJWC5NXKR7LGRYnAjdctNS5R8bVp2znmyXCSoiEa9ytpZXlsdjw
+         ZKm8pkgNl0JDqMV1YbpIqqy0GLcZhGJe/k+YVMb0=
+Received: by jouet.infradead.org (Postfix, from userid 1000)
+        id 652E3140A1C; Tue,  7 Aug 2018 17:02:37 -0300 (-03)
+Date:   Tue, 7 Aug 2018 17:02:37 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Cc:     Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>
+Subject: Re: [PATCH v2] perf map: optimize maps__fixup_overlappings()
+Message-ID: <20180807200237.GA5395@kernel.org>
+References: <153363294565.396323.4605638589903548668.stgit@buzz>
+ <153365189407.435244.7234821822450484712.stgit@buzz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180807183736.GR4238@tassilo.jf.intel.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <153365189407.435244.7234821822450484712.stgit@buzz>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 07, 2018 at 11:37:36AM -0700, Andi Kleen wrote:
-> On Tue, Aug 07, 2018 at 07:48:51PM +0200, Peter Zijlstra wrote:
-> > On Tue, Aug 07, 2018 at 10:35:42AM -0700, Dave Hansen wrote:
-> > > On 08/07/2018 10:17 AM, kan.liang@linux.intel.com wrote:
-> > > > Denverton and Gemini Lake are platform names and should not be used for
-> > > > Processor Family stuff. The microarchitecture codename should be used.
-> > > 
-> > > Why?
-> > > 
-> > > Denverton is the platform.  "Goldmont" is literally the
-> > > microarchitecture, and you are suggesting moving *to* the
-> > > microarchitecture name, which contradicts the description.
-> > 
-> > All the other (big core) are uarch names. Atom is weird in that it mixes
-> > uarch with platform names.
+Em Tue, Aug 07, 2018 at 05:24:54PM +0300, Konstantin Khlebnikov escreveu:
+> This function splits and removes overlapping areas.
 > 
-> On most big core the platform/SOC just happens to have the same name as the 
-> uarch. But the identifiers really have to be per SOC because that 
-> is how Intel model numbers work.
+> Maps in tree are ordered by start address thus we could find
+> first overlap and stop if next map does not overlap.
+> 
+> Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
 
-I'm sure that is how we ended up with two SKX parts with identical model
-numbers but different crystal frequencies :-(
+Jiri, I'm applying this one with your Acked-by, ok?
 
-Let's just keep consistency and use MICROARCH_TYPE things for
-everything.
+- Arnaldo
+ 
+> ---
+> 
+> v2:
+> * add comments
+> * replace map__overlap with minimal check
+> * remove remove map__overlap, that was the only user
+> ---
+>  tools/perf/util/map.c |   44 ++++++++++++++++++++++++++------------------
+>  tools/perf/util/map.h |    1 -
+>  2 files changed, 26 insertions(+), 19 deletions(-)
+> 
+> diff --git a/tools/perf/util/map.c b/tools/perf/util/map.c
+> index 89ac5b5dc218..36d0763311ef 100644
+> --- a/tools/perf/util/map.c
+> +++ b/tools/perf/util/map.c
+> @@ -381,20 +381,6 @@ struct map *map__clone(struct map *from)
+>  	return map;
+>  }
+>  
+> -int map__overlap(struct map *l, struct map *r)
+> -{
+> -	if (l->start > r->start) {
+> -		struct map *t = l;
+> -		l = r;
+> -		r = t;
+> -	}
+> -
+> -	if (l->end > r->start)
+> -		return 1;
+> -
+> -	return 0;
+> -}
+> -
+>  size_t map__fprintf(struct map *map, FILE *fp)
+>  {
+>  	return fprintf(fp, " %" PRIx64 "-%" PRIx64 " %" PRIx64 " %s\n",
+> @@ -675,20 +661,42 @@ static void __map_groups__insert(struct map_groups *mg, struct map *map)
+>  static int maps__fixup_overlappings(struct maps *maps, struct map *map, FILE *fp)
+>  {
+>  	struct rb_root *root;
+> -	struct rb_node *next;
+> +	struct rb_node *next, *first;
+>  	int err = 0;
+>  
+>  	down_write(&maps->lock);
+>  
+>  	root = &maps->entries;
+> -	next = rb_first(root);
+>  
+> +	/*
+> +	 * Find first map where end > map->start.
+> +	 * Same as find_vma() in kernel.
+> +	 */
+> +	next = root->rb_node;
+> +	first = NULL;
+> +	while (next) {
+> +		struct map *pos = rb_entry(next, struct map, rb_node);
+> +
+> +		if (pos->end > map->start) {
+> +			first = next;
+> +			if (pos->start <= map->start)
+> +				break;
+> +			next = next->rb_left;
+> +		} else
+> +			next = next->rb_right;
+> +	}
+> +
+> +	next = first;
+>  	while (next) {
+>  		struct map *pos = rb_entry(next, struct map, rb_node);
+>  		next = rb_next(&pos->rb_node);
+>  
+> -		if (!map__overlap(pos, map))
+> -			continue;
+> +		/*
+> +		 * Stop if current map starts after map->end.
+> +		 * Maps are ordered by start: next will not overlap for sure.
+> +		 */
+> +		if (pos->start >= map->end)
+> +			break;
+>  
+>  		if (verbose >= 2) {
+>  
+> diff --git a/tools/perf/util/map.h b/tools/perf/util/map.h
+> index 4cb90f242bed..e0f327b51e66 100644
+> --- a/tools/perf/util/map.h
+> +++ b/tools/perf/util/map.h
+> @@ -166,7 +166,6 @@ static inline void __map__zput(struct map **map)
+>  
+>  #define map__zput(map) __map__zput(&map)
+>  
+> -int map__overlap(struct map *l, struct map *r);
+>  size_t map__fprintf(struct map *map, FILE *fp);
+>  size_t map__fprintf_dsoname(struct map *map, FILE *fp);
+>  char *map__srcline(struct map *map, u64 addr, struct symbol *sym);
