@@ -6,36 +6,39 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20A35C46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:53:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1F91C46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:53:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB82A2172F
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:53:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB82A2172F
+	by mail.kernel.org (Postfix) with ESMTP id 5BA692170A
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:53:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BA692170A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403948AbeHGVIv (ORCPT
+        id S2403979AbeHGVIz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 17:08:51 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33162 "EHLO
+        Tue, 7 Aug 2018 17:08:55 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33178 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726419AbeHGVIv (ORCPT
+        with ESMTP id S2403951AbeHGVIz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 17:08:51 -0400
+        Tue, 7 Aug 2018 17:08:55 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 233813EE;
-        Tue,  7 Aug 2018 18:53:07 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 81092D01;
+        Tue,  7 Aug 2018 18:53:11 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        netdev@vger.kernel.org, Dmitry Safonov <dima@arista.com>
-Subject: [PATCH 4.17 11/18] netlink: Dont shift on 64 for ngroups
-Date:   Tue,  7 Aug 2018 20:51:14 +0200
-Message-Id: <20180807172313.386597166@linuxfoundation.org>
+        stable@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Hiraku Toyooka <hiraku.toyooka@cybertrust.co.jp>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Subject: [PATCH 4.17 12/18] ring_buffer: tracing: Inherit the tracing setting to next ring buffer
+Date:   Tue,  7 Aug 2018 20:51:15 +0200
+Message-Id: <20180807172313.423915690@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180807172312.964272530@linuxfoundation.org>
 References: <20180807172312.964272530@linuxfoundation.org>
@@ -52,46 +55,103 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dmitry Safonov <dima@arista.com>
+From: Masami Hiramatsu <mhiramat@kernel.org>
 
-commit 91874ecf32e41b5d86a4cb9d60e0bee50d828058 upstream.
+commit 73c8d8945505acdcbae137c2e00a1232e0be709f upstream.
 
-It's legal to have 64 groups for netlink_sock.
+Maintain the tracing on/off setting of the ring_buffer when switching
+to the trace buffer snapshot.
 
-As user-supplied nladdr->nl_groups is __u32, it's possible to subscribe
-only to first 32 groups.
+Taking a snapshot is done by swapping the backup ring buffer
+(max_tr_buffer). But since the tracing on/off setting is defined
+by the ring buffer, when swapping it, the tracing on/off setting
+can also be changed. This causes a strange result like below:
 
-The check for correctness of .bind() userspace supplied parameter
-is done by applying mask made from ngroups shift. Which broke Android
-as they have 64 groups and the shift for mask resulted in an overflow.
+  /sys/kernel/debug/tracing # cat tracing_on
+  1
+  /sys/kernel/debug/tracing # echo 0 > tracing_on
+  /sys/kernel/debug/tracing # cat tracing_on
+  0
+  /sys/kernel/debug/tracing # echo 1 > snapshot
+  /sys/kernel/debug/tracing # cat tracing_on
+  1
+  /sys/kernel/debug/tracing # echo 1 > snapshot
+  /sys/kernel/debug/tracing # cat tracing_on
+  0
 
-Fixes: 61f4b23769f0 ("netlink: Don't shift with UB on nlk->ngroups")
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Steffen Klassert <steffen.klassert@secunet.com>
-Cc: netdev@vger.kernel.org
+We don't touch tracing_on, but snapshot changes tracing_on
+setting each time. This is an anomaly, because user doesn't know
+that each "ring_buffer" stores its own tracing-enable state and
+the snapshot is done by swapping ring buffers.
+
+Link: http://lkml.kernel.org/r/153149929558.11274.11730609978254724394.stgit@devbox
+
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Shuah Khan <shuah@kernel.org>
+Cc: Tom Zanussi <tom.zanussi@linux.intel.com>
+Cc: Hiraku Toyooka <hiraku.toyooka@cybertrust.co.jp>
 Cc: stable@vger.kernel.org
-Reported-and-Tested-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Dmitry Safonov <dima@arista.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: debdd57f5145 ("tracing: Make a snapshot feature available from userspace")
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+[ Updated commit log and comment in the code ]
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- net/netlink/af_netlink.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ include/linux/ring_buffer.h |    1 +
+ kernel/trace/ring_buffer.c  |   16 ++++++++++++++++
+ kernel/trace/trace.c        |    6 ++++++
+ 3 files changed, 23 insertions(+)
 
---- a/net/netlink/af_netlink.c
-+++ b/net/netlink/af_netlink.c
-@@ -1013,8 +1013,8 @@ static int netlink_bind(struct socket *s
+--- a/include/linux/ring_buffer.h
++++ b/include/linux/ring_buffer.h
+@@ -165,6 +165,7 @@ void ring_buffer_record_enable(struct ri
+ void ring_buffer_record_off(struct ring_buffer *buffer);
+ void ring_buffer_record_on(struct ring_buffer *buffer);
+ int ring_buffer_record_is_on(struct ring_buffer *buffer);
++int ring_buffer_record_is_set_on(struct ring_buffer *buffer);
+ void ring_buffer_record_disable_cpu(struct ring_buffer *buffer, int cpu);
+ void ring_buffer_record_enable_cpu(struct ring_buffer *buffer, int cpu);
  
- 	if (nlk->ngroups == 0)
- 		groups = 0;
--	else
--		groups &= (1ULL << nlk->ngroups) - 1;
-+	else if (nlk->ngroups < 8*sizeof(groups))
-+		groups &= (1UL << nlk->ngroups) - 1;
+--- a/kernel/trace/ring_buffer.c
++++ b/kernel/trace/ring_buffer.c
+@@ -3227,6 +3227,22 @@ int ring_buffer_record_is_on(struct ring
+ }
  
- 	bound = nlk->bound;
- 	if (bound) {
+ /**
++ * ring_buffer_record_is_set_on - return true if the ring buffer is set writable
++ * @buffer: The ring buffer to see if write is set enabled
++ *
++ * Returns true if the ring buffer is set writable by ring_buffer_record_on().
++ * Note that this does NOT mean it is in a writable state.
++ *
++ * It may return true when the ring buffer has been disabled by
++ * ring_buffer_record_disable(), as that is a temporary disabling of
++ * the ring buffer.
++ */
++int ring_buffer_record_is_set_on(struct ring_buffer *buffer)
++{
++	return !(atomic_read(&buffer->record_disabled) & RB_BUFFER_OFF);
++}
++
++/**
+  * ring_buffer_record_disable_cpu - stop all writes into the cpu_buffer
+  * @buffer: The ring buffer to stop writes to.
+  * @cpu: The CPU buffer to stop
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -1375,6 +1375,12 @@ update_max_tr(struct trace_array *tr, st
+ 
+ 	arch_spin_lock(&tr->max_lock);
+ 
++	/* Inherit the recordable setting from trace_buffer */
++	if (ring_buffer_record_is_set_on(tr->trace_buffer.buffer))
++		ring_buffer_record_on(tr->max_buffer.buffer);
++	else
++		ring_buffer_record_off(tr->max_buffer.buffer);
++
+ 	buf = tr->trace_buffer.buffer;
+ 	tr->trace_buffer.buffer = tr->max_buffer.buffer;
+ 	tr->max_buffer.buffer = buf;
 
 
