@@ -2,90 +2,796 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5665BC46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 06:54:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87046C46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 06:54:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1568221920
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 06:54:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1568221920
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 2141E21945
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 06:54:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ZoFP/Gvw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2141E21945
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388807AbeHGJGz (ORCPT
+        id S2388712AbeHGJHI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 05:06:55 -0400
-Received: from mx2.suse.de ([195.135.220.15]:58724 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727224AbeHGJGz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 05:06:55 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 669F5ADEF;
-        Tue,  7 Aug 2018 06:54:01 +0000 (UTC)
-Date:   Tue, 7 Aug 2018 08:54:00 +0200
-From:   Johannes Thumshirn <jthumshirn@suse.de>
-To:     ard <ard@kwaak.net>
-Cc:     "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
-        Linux SCSI Mailinglist <linux-scsi@vger.kernel.org>
-Subject: Re: [PATCH 0/3] scsi: fcoe: memleak fixes
-Message-ID: <20180807065400.nxpndw4kf6jdd55i@linux-x5ow.site>
-References: <20180731134603.20089-1-jthumshirn@suse.de>
- <20180806092503.6ed56kukj2i236qt@linux-x5ow.site>
- <20180806132234.GA23827@kwaak.net>
- <20180806132725.ihbi5rxvkuuppajr@linux-x5ow.site>
- <20180806142414.GB23827@kwaak.net>
+        Tue, 7 Aug 2018 05:07:08 -0400
+Received: from mail-yb0-f195.google.com ([209.85.213.195]:38312 "EHLO
+        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727224AbeHGJHI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 05:07:08 -0400
+Received: by mail-yb0-f195.google.com with SMTP id d18-v6so2323825ybq.5
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Aug 2018 23:54:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=anE+fzTgDiZuD+wu2kaEcPpyGKxLT2pKgI/QfdJZ+hQ=;
+        b=ZoFP/GvwvuZUDnhfwtjt+tUZjNSRu2XBbQKV8RmEIx4TEdrIHK+7Kilav6wDGZUjTV
+         GO4QMg4QldV7v8CY0f3/ulPqjqowuBVCQWbrK1l+KF7UMEVh63GGCdxKxkgfAPuiqCJA
+         xQCxLvFNSMRoPmKz2Vq4/mNeC2s+vEYpA2Ng8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=anE+fzTgDiZuD+wu2kaEcPpyGKxLT2pKgI/QfdJZ+hQ=;
+        b=ZqH8q60BAvbuaSjHorYysQCDXodnLGjYNquaR94hfratv4pShgVuKWlYcx9qu/w8no
+         1EcwSuSU6by9VXHifLoyruM1536r9X1s7ZdAsGWMUG6RvWpr7om1t4AtvAIFBjhXAc4s
+         4oHfDLBScvoBQl47V1MO4Hw7N6eJaoOGhJM6CcHIUrw6xBwk6aveynU7qXR+ru/CRqIL
+         ObvGAU/8hNC1Hpq2LcvUWb56BoATSc56xblL5cbRK8YRPu0MdcrqxR5VD3UaKv6t/n4y
+         L/pYlrU2TRwXsOfcCclR24gvzWkP54EMo8YpkmkZppR/Aiay4/LxE9UvpQrKY5rWNaBB
+         z7zg==
+X-Gm-Message-State: AOUpUlEHQ9LDhu3/BbrAZPS1/S7ZAZhlHcMREsQkW80WEXCPrPvOlBvs
+        l1ShRtXwTk5IZPXUXpZw9eG1eqa2z1s=
+X-Google-Smtp-Source: AA+uWPz8bdeFh3yby3xIHJxKAG6+kOJakjbnDsKeBRrLZ17SXsHOpXyWfj9WTC/K2c6M9K5j+4tqrw==
+X-Received: by 2002:a5b:d03:: with SMTP id y3-v6mr392504ybp.148.1533624854127;
+        Mon, 06 Aug 2018 23:54:14 -0700 (PDT)
+Received: from mail-yb0-f171.google.com (mail-yb0-f171.google.com. [209.85.213.171])
+        by smtp.gmail.com with ESMTPSA id d62-v6sm268575ywc.45.2018.08.06.23.54.12
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 06 Aug 2018 23:54:13 -0700 (PDT)
+Received: by mail-yb0-f171.google.com with SMTP id e9-v6so6264763ybq.1
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Aug 2018 23:54:12 -0700 (PDT)
+X-Received: by 2002:a25:5c41:: with SMTP id q62-v6mr9184324ybb.332.1533624851796;
+ Mon, 06 Aug 2018 23:54:11 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180806142414.GB23827@kwaak.net>
-User-Agent: NeoMutt/20170912 (1.9.0)
+References: <20180724140621.59624-1-tfiga@chromium.org> <20180724140621.59624-3-tfiga@chromium.org>
+ <4168da98-fa01-ea2f-8162-385501e666be@xs4all.nl>
+In-Reply-To: <4168da98-fa01-ea2f-8162-385501e666be@xs4all.nl>
+From:   Tomasz Figa <tfiga@chromium.org>
+Date:   Tue, 7 Aug 2018 15:54:00 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5BqtKFeJniNaqahi9h_zKR+rPrWUiyx004Z=MWDj7q++w@mail.gmail.com>
+Message-ID: <CAAFQd5BqtKFeJniNaqahi9h_zKR+rPrWUiyx004Z=MWDj7q++w@mail.gmail.com>
+Subject: Re: [PATCH 2/2] media: docs-rst: Document memory-to-memory video
+ encoder interface
+To:     Hans Verkuil <hverkuil@xs4all.nl>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Pawel Osciak <posciak@chromium.org>,
+        Alexandre Courbot <acourbot@chromium.org>, kamil@wypas.org,
+        a.hajda@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>,
+        jtp.park@samsung.com,
+        =?UTF-8?B?VGlmZmFueSBMaW4gKOael+aFp+ePiik=?= 
+        <tiffany.lin@mediatek.com>,
+        =?UTF-8?B?QW5kcmV3LUNUIENoZW4gKOmZs+aZuui/qik=?= 
+        <andrew-ct.chen@mediatek.com>, todor.tomov@linaro.org,
+        nicolas@ndufresne.ca,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        dave.stevenson@raspberrypi.org,
+        Ezequiel Garcia <ezequiel@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 06, 2018 at 04:24:14PM +0200, ard wrote:
-> I've updated the ticket:
-> https://github.com/hardkernel/linux/issues/360#issuecomment-410721997
-> dmesg (with full debugging):
-> https://github.com/hardkernel/linux/files/2262858/dmesg-2018-08-06.txt
-> and kmemleak:
-> https://github.com/hardkernel/linux/files/2262861/kmemleak-2018-08-06.txt
-> 
-> I'll have to take a good look at the what and why.
-> I'm gonna git clean -x -d and rebuild the kernel, because this is
-> weird.
-> 
-> This is the tree I build:
-> https://github.com/ardje/linux/tree/gb-4.14-fcoe-patch
-> So vanilla linux-4.14 with the patch set:
-> https://github.com/ardje/linux/commit/747bf04057a99be5b01f768654cfd61bc9f4fc6c
-> Meh, I should try to use git for patching.
-> 
-> I will spam some printk's later on, just to check which flows are
-> followed (if the git clean doesn't reveal some problem, although
-> I can't imagine).
+Hi Hans,
 
-OK, now this is wired. Are you seeing this on the initiator or on the
-target side? Also on x86_64 or just the odroid? I could reproduce your
-reports in my Virtualized Environment [1][2] by issuing deletes from the
-initiator side..
+On Wed, Jul 25, 2018 at 10:57 PM Hans Verkuil <hverkuil@xs4all.nl> wrote:
+>
+> On 24/07/18 16:06, Tomasz Figa wrote:
+> > Due to complexity of the video encoding process, the V4L2 drivers of
+> > stateful encoder hardware require specific sequences of V4L2 API calls
+> > to be followed. These include capability enumeration, initialization,
+> > encoding, encode parameters change, drain and reset.
+> >
+> > Specifics of the above have been discussed during Media Workshops at
+> > LinuxCon Europe 2012 in Barcelona and then later Embedded Linux
+> > Conference Europe 2014 in D=C3=BCsseldorf. The de facto Codec API that
+> > originated at those events was later implemented by the drivers we alre=
+ady
+> > have merged in mainline, such as s5p-mfc or coda.
+> >
+> > The only thing missing was the real specification included as a part of
+> > Linux Media documentation. Fix it now and document the encoder part of
+> > the Codec API.
+> >
+> > Signed-off-by: Tomasz Figa <tfiga@chromium.org>
+> > ---
+> >  Documentation/media/uapi/v4l/dev-encoder.rst | 550 +++++++++++++++++++
+> >  Documentation/media/uapi/v4l/devices.rst     |   1 +
+> >  Documentation/media/uapi/v4l/v4l2.rst        |   2 +
+> >  3 files changed, 553 insertions(+)
+> >  create mode 100644 Documentation/media/uapi/v4l/dev-encoder.rst
+> >
+> > diff --git a/Documentation/media/uapi/v4l/dev-encoder.rst b/Documentati=
+on/media/uapi/v4l/dev-encoder.rst
+> > new file mode 100644
+> > index 000000000000..28be1698e99c
+> > --- /dev/null
+> > +++ b/Documentation/media/uapi/v4l/dev-encoder.rst
+> > @@ -0,0 +1,550 @@
+> > +.. -*- coding: utf-8; mode: rst -*-
+> > +
+> > +.. _encoder:
+> > +
+> > +****************************************
+> > +Memory-to-memory Video Encoder Interface
+> > +****************************************
+> > +
+> > +Input data to a video encoder are raw video frames in display order
+> > +to be encoded into the output bitstream. Output data are complete chun=
+ks of
+> > +valid bitstream, including all metadata, headers, etc. The resulting s=
+tream
+> > +must not need any further post-processing by the client.
+>
+> Due to the confusing use capture and output I wonder if it would be bette=
+r to
+> rephrase this as follows:
+>
+> "A video encoder takes raw video frames in display order and encodes them=
+ into
+> a bitstream. It generates complete chunks of the bitstream, including
+> all metadata, headers, etc. The resulting bitstream does not require any =
+further
+> post-processing by the client."
+>
+> Something similar should be done for the decoder documentation.
+>
 
-[1] https://github.com/rapido-linux/rapido
-[2] https://github.com/rapido-linux/rapido/blob/master/fcoe_local_autorun.sh
+First, thanks a lot for review!
 
-Byte,
-	Johannes
--- 
-Johannes Thumshirn                                          Storage
-jthumshirn@suse.de                                +49 911 74053 689
-SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
-Key fingerprint = EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
+Sounds good to me, it indeed feels much easier to read, thanks.
+
+[snip]
+> > +
+> > +IDR
+> > +   a type of a keyframe in H.264-encoded stream, which clears the list=
+ of
+> > +   earlier reference frames (DPBs)
+>
+> Same problem as with the previous patch: it doesn't say what IDR stands f=
+or.
+> It also refers to DPBs, but DPB is not part of this glossary.
+
+Ack.
+
+>
+> Perhaps the glossary of the encoder/decoder should be combined.
+>
+
+There are some terms that have slightly different nuance between
+encoder and decoder, so while it would be possible to just include
+both meanings (as it was in RFC), I wonder if it wouldn't make it more
+difficult to read, also given that it would move it to a separate
+page. No strong opinion, though.
+
+[snip]
+> > +
+> > +Initialization
+> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > +
+> > +1. *[optional]* Enumerate supported formats and resolutions. See
+> > +   capability enumeration.
+>
+> capability enumeration. -> 'Querying capabilities' above.
+>
+
+Ack.
+
+[snip]
+> > +4. The client may set the raw source format on the ``OUTPUT`` queue vi=
+a
+> > +   :c:func:`VIDIOC_S_FMT`.
+> > +
+> > +   * **Required fields:**
+> > +
+> > +     ``type``
+> > +         a ``V4L2_BUF_TYPE_*`` enum appropriate for ``OUTPUT``
+> > +
+> > +     ``pixelformat``
+> > +         raw format of the source
+> > +
+> > +     ``width``, ``height``
+> > +         source resolution
+> > +
+> > +     ``num_planes`` (for _MPLANE)
+> > +         set to number of planes for pixelformat
+> > +
+> > +     ``sizeimage``, ``bytesperline``
+> > +         follow standard semantics
+> > +
+> > +   * **Return fields:**
+> > +
+> > +     ``width``, ``height``
+> > +         may be adjusted by driver to match alignment requirements, as
+> > +         required by the currently selected formats
+> > +
+> > +     ``sizeimage``, ``bytesperline``
+> > +         follow standard semantics
+> > +
+> > +   * Setting the source resolution will reset visible resolution to th=
+e
+> > +     adjusted source resolution rounded up to the closest visible
+> > +     resolution supported by the driver. Similarly, coded resolution w=
+ill
+>
+> coded -> the coded
+
+Ack.
+
+>
+> > +     be reset to source resolution rounded up to the closest coded
+>
+> reset -> set
+> source -> the source
+
+Ack.
+
+>
+> > +     resolution supported by the driver (typically a multiple of
+> > +     macroblock size).
+>
+> The first sentence of this paragraph is very confusing. It needs a bit mo=
+re work,
+> I think.
+
+Actually, this applies to all crop rectangles, not just visible
+resolution. How about the following?
+
+    Setting the source resolution will reset the crop rectangles to
+default values
+    corresponding to the new resolution, as described further in this docum=
+ent.
+    Similarly, the coded resolution will be reset to match source
+resolution rounded up
+    to the closest coded resolution supported by the driver (typically
+a multiple of
+    macroblock size).
+
+>
+> > +
+> > +   .. note::
+> > +
+> > +      This step is not strictly required, since ``OUTPUT`` is expected=
+ to
+> > +      have a valid default format. However, the client needs to ensure=
+ that
+> > +      ``OUTPUT`` format matches its expectations via either
+> > +      :c:func:`VIDIOC_S_FMT` or :c:func:`VIDIOC_G_FMT`, with the forme=
+r
+> > +      being the typical scenario, since the default format is unlikely=
+ to
+> > +      be what the client needs.
+>
+> Hmm. I'm not sure if this note should be included. It's good practice to =
+always
+> set the output format. I think the note confuses more than that it helps.=
+ IMHO.
+>
+
+I agree with you on that. In RFC, Philipp noticed that technically
+S_FMT is not mandatory and that there might be some use case where the
+already set format matches client's expectation. I've added this note
+to cover that. Philipp, do you still think we need it?
+
+> > +
+> > +5. *[optional]* Set visible resolution for the stream metadata via
+>
+> Set -> Set the
+>
+
+Ack.
+
+> > +   :c:func:`VIDIOC_S_SELECTION` on the ``OUTPUT`` queue.
+> > +
+> > +   * **Required fields:**
+> > +
+> > +     ``type``
+> > +         a ``V4L2_BUF_TYPE_*`` enum appropriate for ``OUTPUT``
+> > +
+> > +     ``target``
+> > +         set to ``V4L2_SEL_TGT_CROP``
+> > +
+> > +     ``r.left``, ``r.top``, ``r.width``, ``r.height``
+> > +         visible rectangle; this must fit within the framebuffer resol=
+ution
+>
+> Should that be "source resolution"? Or the resolution returned by "CROP_B=
+OUNDS"?
+>
+
+Referring to V4L2_SEL_TGT_CROP_BOUNDS rather than some arbitrary
+resolution is better indeed, will change.
+
+> > +         and might be subject to adjustment to match codec and hardwar=
+e
+> > +         constraints
+> > +
+> > +   * **Return fields:**
+> > +
+> > +     ``r.left``, ``r.top``, ``r.width``, ``r.height``
+> > +         visible rectangle adjusted by the driver
+> > +
+> > +   * The driver must expose following selection targets on ``OUTPUT``:
+> > +
+> > +     ``V4L2_SEL_TGT_CROP_BOUNDS``
+> > +         maximum crop bounds within the source buffer supported by the
+> > +         encoder
+> > +
+> > +     ``V4L2_SEL_TGT_CROP_DEFAULT``
+> > +         suggested cropping rectangle that covers the whole source pic=
+ture
+> > +
+> > +     ``V4L2_SEL_TGT_CROP``
+> > +         rectangle within the source buffer to be encoded into the
+> > +         ``CAPTURE`` stream; defaults to ``V4L2_SEL_TGT_CROP_DEFAULT``
+> > +
+> > +     ``V4L2_SEL_TGT_COMPOSE_BOUNDS``
+> > +         maximum rectangle within the coded resolution, which the crop=
+ped
+> > +         source frame can be output into; always equal to (0, 0)x(widt=
+h of
+> > +         ``V4L2_SEL_TGT_CROP``, height of ``V4L2_SEL_TGT_CROP``), if t=
+he
+> > +         hardware does not support compose/scaling
+> > +
+> > +     ``V4L2_SEL_TGT_COMPOSE_DEFAULT``
+> > +         equal to ``V4L2_SEL_TGT_CROP``
+> > +
+> > +     ``V4L2_SEL_TGT_COMPOSE``
+> > +         rectangle within the coded frame, which the cropped source fr=
+ame
+> > +         is to be output into; defaults to
+> > +         ``V4L2_SEL_TGT_COMPOSE_DEFAULT``; read-only on hardware witho=
+ut
+> > +         additional compose/scaling capabilities; resulting stream wil=
+l
+> > +         have this rectangle encoded as the visible rectangle in its
+> > +         metadata
+> > +
+> > +     ``V4L2_SEL_TGT_COMPOSE_PADDED``
+> > +         always equal to coded resolution of the stream, as selected b=
+y the
+> > +         encoder based on source resolution and crop/compose rectangle=
+s
+>
+> Are there codec drivers that support composition? I can't remember seeing=
+ any.
+>
+
+Hmm, I was convinced that MFC could scale and we just lacked support
+in the driver, but I checked the documentation and it doesn't seem to
+be able to do so. I guess we could drop the COMPOSE rectangles for
+now, until we find any hardware that can do scaling or composing on
+the fly.
+
+> > +
+> > +   .. note::
+> > +
+> > +      The driver may adjust the crop/compose rectangles to the nearest
+> > +      supported ones to meet codec and hardware requirements.
+> > +
+> > +6. Allocate buffers for both ``OUTPUT`` and ``CAPTURE`` via
+> > +   :c:func:`VIDIOC_REQBUFS`. This may be performed in any order.
+> > +
+> > +   * **Required fields:**
+> > +
+> > +     ``count``
+> > +         requested number of buffers to allocate; greater than zero
+> > +
+> > +     ``type``
+> > +         a ``V4L2_BUF_TYPE_*`` enum appropriate for ``OUTPUT`` or
+> > +         ``CAPTURE``
+> > +
+> > +     ``memory``
+> > +         follows standard semantics
+> > +
+> > +   * **Return fields:**
+> > +
+> > +     ``count``
+> > +         adjusted to allocated number of buffers
+> > +
+> > +   * The driver must adjust count to minimum of required number of
+> > +     buffers for given format and count passed.
+>
+> I'd rephrase this:
+>
+>         The driver must adjust ``count`` to the maximum of ``count`` and
+>         the required number of buffers for the given format.
+>
+> Note that this is set to the maximum, not minimum.
+>
+
+Good catch. Will fix it.
+
+> > The client must
+> > +     check this value after the ioctl returns to get the number of
+> > +     buffers actually allocated.
+> > +
+> > +   .. note::
+> > +
+> > +      To allocate more than minimum number of buffers (for pipeline
+>
+> than -> than the
+>
+
+Ack.
+
+> > +      depth), use G_CTRL(``V4L2_CID_MIN_BUFFERS_FOR_OUTPUT``) or
+> > +      G_CTRL(``V4L2_CID_MIN_BUFFERS_FOR_CAPTURE``), respectively,
+> > +      to get the minimum number of buffers required by the
+> > +      driver/format, and pass the obtained value plus the number of
+> > +      additional buffers needed in count field to :c:func:`VIDIOC_REQB=
+UFS`.
+>
+> count -> the ``count``
+>
+
+Ack.
+
+> > +
+> > +7. Begin streaming on both ``OUTPUT`` and ``CAPTURE`` queues via
+> > +   :c:func:`VIDIOC_STREAMON`. This may be performed in any order. Actu=
+al
+>
+> Actual -> The actual
+>
+
+Ack.
+
+> > +   encoding process starts when both queues start streaming.
+> > +
+> > +.. note::
+> > +
+> > +   If the client stops ``CAPTURE`` during the encode process and then
+> > +   restarts it again, the encoder will be expected to generate a strea=
+m
+> > +   independent from the stream generated before the stop. Depending on=
+ the
+> > +   coded format, that may imply that:
+> > +
+> > +   * encoded frames produced after the restart must not reference any
+> > +     frames produced before the stop, e.g. no long term references for
+> > +     H264,
+> > +
+> > +   * any headers that must be included in a standalone stream must be
+> > +     produced again, e.g. SPS and PPS for H264.
+> > +
+> > +Encoding
+> > +=3D=3D=3D=3D=3D=3D=3D=3D
+> > +
+> > +This state is reached after a successful initialization sequence. In
+> > +this state, client queues and dequeues buffers to both queues via
+> > +:c:func:`VIDIOC_QBUF` and :c:func:`VIDIOC_DQBUF`, following standard
+> > +semantics.
+> > +
+> > +Both queues operate independently, following standard behavior of V4L2
+> > +buffer queues and memory-to-memory devices. In addition, the order of
+> > +encoded frames dequeued from ``CAPTURE`` queue may differ from the ord=
+er of
+> > +queuing raw frames to ``OUTPUT`` queue, due to properties of selected =
+coded
+> > +format, e.g. frame reordering. The client must not assume any direct
+> > +relationship between ``CAPTURE`` and ``OUTPUT`` buffers, other than
+> > +reported by :c:type:`v4l2_buffer` ``timestamp``.
+>
+> Same question as for the decoder: are you sure about that?
+>
+
+I think it's the same answer here. That's why we have the timestamp
+copy mechanism, right?
+
+> > +
+> > +Encoding parameter changes
+> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D
+> > +
+> > +The client is allowed to use :c:func:`VIDIOC_S_CTRL` to change encoder
+> > +parameters at any time. The availability of parameters is driver-speci=
+fic
+> > +and the client must query the driver to find the set of available cont=
+rols.
+> > +
+> > +The ability to change each parameter during encoding of is driver-spec=
+ific,
+>
+> Remove spurious 'of'
+>
+> > +as per standard semantics of the V4L2 control interface. The client ma=
+y
+>
+> per -> per the
+>
+> > +attempt setting a control of its interest during encoding and if it th=
+e
+>
+> Remove spurious 'it'
+>
+> > +operation fails with the -EBUSY error code, ``CAPTURE`` queue needs to=
+ be
+>
+> ``CAPTURE`` -> the ``CAPTURE``
+>
+> > +stopped for the configuration change to be allowed (following the drai=
+n
+> > +sequence will be  needed to avoid losing already queued/encoded frames=
+).
+>
+> losing -> losing the
+>
+> > +
+> > +The timing of parameter update is driver-specific, as per standard
+>
+> update -> updates
+> per -> per the
+>
+> > +semantics of the V4L2 control interface. If the client needs to apply =
+the
+> > +parameters exactly at specific frame and the encoder supports it, usin=
+g
+>
+> using -> using the
+
+Ack +6
+
+>
+> > +Request API should be considered.
+>
+> This makes the assumption that the Request API will be merged at about th=
+e
+> same time as this document. Which is at the moment a reasonable assumptio=
+n,
+> to be fair.
+>
+
+We can easily remove this, if it doesn't happen, but I'd prefer not to
+need to. ;)
+
+> > +
+> > +Drain
+> > +=3D=3D=3D=3D=3D
+> > +
+> > +To ensure that all queued ``OUTPUT`` buffers have been processed and
+> > +related ``CAPTURE`` buffers output to the client, the following drain
+>
+> related -> the related
+>
+
+Ack.
+
+> > +sequence may be followed. After the drain sequence is complete, the cl=
+ient
+> > +has received all encoded frames for all ``OUTPUT`` buffers queued befo=
+re
+> > +the sequence was started.
+> > +
+> > +1. Begin drain by issuing :c:func:`VIDIOC_ENCODER_CMD`.
+> > +
+> > +   * **Required fields:**
+> > +
+> > +     ``cmd``
+> > +         set to ``V4L2_ENC_CMD_STOP``
+> > +
+> > +     ``flags``
+> > +         set to 0
+> > +
+> > +     ``pts``
+> > +         set to 0
+> > +
+> > +2. The driver must process and encode as normal all ``OUTPUT`` buffers
+> > +   queued by the client before the :c:func:`VIDIOC_ENCODER_CMD` was is=
+sued.
+> > +
+> > +3. Once all ``OUTPUT`` buffers queued before ``V4L2_ENC_CMD_STOP`` are
+> > +   processed:
+> > +
+> > +   * Once all decoded frames (if any) are ready to be dequeued on the
+> > +     ``CAPTURE`` queue the driver must send a ``V4L2_EVENT_EOS``. The
+> > +     driver must also set ``V4L2_BUF_FLAG_LAST`` in :c:type:`v4l2_buff=
+er`
+> > +     ``flags`` field on the buffer on the ``CAPTURE`` queue containing=
+ the
+> > +     last frame (if any) produced as a result of processing the ``OUTP=
+UT``
+> > +     buffers queued before
+> > +     ``V4L2_ENC_CMD_STOP``.
+>
+> Hmm, this is somewhat awkward phrasing. Can you take another look at this=
+?
+>
+
+How about this?
+
+3. Once all ``OUTPUT`` buffers queued before ``V4L2_ENC_CMD_STOP`` are
+   processed:
+
+   * The driver returns all ``CAPTURE`` buffers corresponding to processed
+     ``OUTPUT`` buffers, if any. The last buffer must have
+``V4L2_BUF_FLAG_LAST``
+     set in its :c:type:`v4l2_buffer` ``flags`` field.
+
+   * The driver sends a ``V4L2_EVENT_EOS`` event.
+
+> > +
+> > +   * If no more frames are left to be returned at the point of handlin=
+g
+> > +     ``V4L2_ENC_CMD_STOP``, the driver must return an empty buffer (wi=
+th
+> > +     :c:type:`v4l2_buffer` ``bytesused`` =3D 0) as the last buffer wit=
+h
+> > +     ``V4L2_BUF_FLAG_LAST`` set.
+> > +
+> > +   * Any attempts to dequeue more buffers beyond the buffer marked wit=
+h
+> > +     ``V4L2_BUF_FLAG_LAST`` will result in a -EPIPE error code returne=
+d by
+> > +     :c:func:`VIDIOC_DQBUF`.
+> > +
+> > +4. At this point, encoding is paused and the driver will accept, but n=
+ot
+> > +   process any newly queued ``OUTPUT`` buffers until the client issues
+>
+> issues -> issues a
+>
+
+Ack.
+
+[snip]
+> > +Commit points
+> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > +
+> > +Setting formats and allocating buffers triggers changes in the behavio=
+r
+> > +of the driver.
+> > +
+> > +1. Setting format on ``CAPTURE`` queue may change the set of formats
+>
+> format -> the format
+>
+> > +   supported/advertised on the ``OUTPUT`` queue. In particular, it als=
+o
+> > +   means that ``OUTPUT`` format may be reset and the client must not
+>
+> that -> that the
+>
+> > +   rely on the previously set format being preserved.
+> > +
+> > +2. Enumerating formats on ``OUTPUT`` queue must only return formats
+>
+> on -> on the
+>
+> > +   supported for the ``CAPTURE`` format currently set.
+>
+> 'for the current ``CAPTURE`` format.'
+>
+> > +
+> > +3. Setting/changing format on ``OUTPUT`` queue does not change formats
+>
+> format -> the format
+> on -> on the
+>
+> > +   available on ``CAPTURE`` queue. An attempt to set ``OUTPUT`` format=
+ that
+>
+> on -> on the
+> set -> set the
+>
+> > +   is not supported for the currently selected ``CAPTURE`` format must
+> > +   result in the driver adjusting the requested format to an acceptabl=
+e
+> > +   one.
+> > +
+> > +4. Enumerating formats on ``CAPTURE`` queue always returns the full se=
+t of
+>
+> on -> on the
+>
+> > +   supported coded formats, irrespective of the current ``OUTPUT``
+> > +   format.
+> > +
+> > +5. After allocating buffers on the ``CAPTURE`` queue, it is not possib=
+le to
+> > +   change format on it.
+>
+> format -> the format
+>
+
+Ack +7
+
+> > +
+> > +To summarize, setting formats and allocation must always start with th=
+e
+> > +``CAPTURE`` queue and the ``CAPTURE`` queue is the master that governs=
+ the
+> > +set of supported formats for the ``OUTPUT`` queue.
+> > diff --git a/Documentation/media/uapi/v4l/devices.rst b/Documentation/m=
+edia/uapi/v4l/devices.rst
+> > index 12d43fe711cf..1822c66c2154 100644
+> > --- a/Documentation/media/uapi/v4l/devices.rst
+> > +++ b/Documentation/media/uapi/v4l/devices.rst
+> > @@ -16,6 +16,7 @@ Interfaces
+> >      dev-osd
+> >      dev-codec
+> >      dev-decoder
+> > +    dev-encoder
+> >      dev-effect
+> >      dev-raw-vbi
+> >      dev-sliced-vbi
+> > diff --git a/Documentation/media/uapi/v4l/v4l2.rst b/Documentation/medi=
+a/uapi/v4l/v4l2.rst
+> > index 65dc096199ad..2ef6693b9499 100644
+> > --- a/Documentation/media/uapi/v4l/v4l2.rst
+> > +++ b/Documentation/media/uapi/v4l/v4l2.rst
+> > @@ -56,6 +56,7 @@ Authors, in alphabetical order:
+> >  - Figa, Tomasz <tfiga@chromium.org>
+> >
+> >    - Documented the memory-to-memory decoder interface.
+> > +  - Documented the memory-to-memory encoder interface.
+> >
+> >  - H Schimek, Michael <mschimek@gmx.at>
+> >
+> > @@ -68,6 +69,7 @@ Authors, in alphabetical order:
+> >  - Osciak, Pawel <posciak@chromium.org>
+> >
+> >    - Documented the memory-to-memory decoder interface.
+> > +  - Documented the memory-to-memory encoder interface.
+> >
+> >  - Osciak, Pawel <pawel@osciak.com>
+> >
+> >
+>
+> One general comment:
+>
+> you often talk about 'the driver must', e.g.:
+>
+> "The driver must process and encode as normal all ``OUTPUT`` buffers
+> queued by the client before the :c:func:`VIDIOC_ENCODER_CMD` was issued."
+>
+> But this is not a driver specification, it is an API specification.
+>
+> I think it would be better to phrase it like this:
+>
+> "All ``OUTPUT`` buffers queued by the client before the :c:func:`VIDIOC_E=
+NCODER_CMD`
+> was issued will be processed and encoded as normal."
+>
+> (or perhaps even 'shall' if you want to be really formal)
+>
+> End-users do not really care what drivers do, they want to know what the =
+API does,
+> and that implies rules for drivers.
+
+While I see the point, I'm not fully convinced that it makes the
+documentation easier to read. We defined "client" for the purpose of
+not using the passive form too much, so possibly we could also define
+"driver" in the glossary. Maybe it's just me, but I find that
+referring directly to both sides of the API and using the active form
+is much easier to read.
+
+Possibly just replacing "driver" with "encoder" would ease your concern?
+
+Best regards,
+Tomasz
