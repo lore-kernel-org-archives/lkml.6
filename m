@@ -2,92 +2,107 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B84E8C46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 21:10:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77C8FC46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 21:13:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C6A5215F1
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 21:10:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C6A5215F1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 175F82170D
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 21:13:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZtTZfBDt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 175F82170D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726846AbeHGX0z (ORCPT
+        id S1726865AbeHGX3S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 19:26:55 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:49602 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726027AbeHGX0z (ORCPT
+        Tue, 7 Aug 2018 19:29:18 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:37302 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726027AbeHGX3S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 19:26:55 -0400
-Received: from p4fea5a5a.dip0.t-ipconnect.de ([79.234.90.90] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fn9FI-0007Li-No; Tue, 07 Aug 2018 23:10:24 +0200
-Date:   Tue, 7 Aug 2018 23:10:24 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Andi Kleen <ak@linux.intel.com>
-cc:     Peter Zijlstra <peterz@infradead.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        kan.liang@linux.intel.com, mingo@redhat.com, len.brown@intel.com,
-        linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH] x86/cpu: Rename Denverton and Gemini Lake
-In-Reply-To: <20180807183736.GR4238@tassilo.jf.intel.com>
-Message-ID: <alpine.DEB.2.21.1808072257080.1672@nanos.tec.linutronix.de>
-References: <1533662247-17575-1-git-send-email-kan.liang@linux.intel.com> <1b7cb461-5321-86cf-3031-5ff545c3dc42@linux.intel.com> <20180807174851.GJ2494@hirez.programming.kicks-ass.net> <20180807183736.GR4238@tassilo.jf.intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+        Tue, 7 Aug 2018 19:29:18 -0400
+Received: by mail-wr1-f68.google.com with SMTP id u12-v6so74211wrr.4
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 14:13:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=j1ruvQbVhdJFi9lV+SVmsPf1G9L+ASQaS/p3Ir0CgpA=;
+        b=ZtTZfBDt3doTo+B47sQV9A7X8kIUrbKoOoMizl/IdNryXmw02p3Jur1gwZZqeEx9gj
+         a0xFBWCjdJWTlTpwAbL3SuRqMuYdsYxYf0tqOekRqI9xsfZxdnHUBVrfSvnjeeAJMTWw
+         0OgCEeJEoF3bzEWU7PdTP969nuyzTuxoMWLyp8+T4S8kkgd+KZZFDe/lg36EemzjVqii
+         fHl4iK7/aIa42IZdKj6TeHoThjUsvtllxGLi9RCUMzxAP29D49CUfdvvTvSWygn6jurV
+         uARlPSrrrsHfPe47NyXtlg9vUS4sIzF6itHsKyRsUTiYA54n0jc39kJL3BjNhhtQPJ0E
+         EqpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=j1ruvQbVhdJFi9lV+SVmsPf1G9L+ASQaS/p3Ir0CgpA=;
+        b=BPToaO89kNWURk3s7a9Px64OI3xgMTLuUZyj8XVB78VmuifxoARP9y274aFyRBku5Z
+         pIr1W7peoppMEiBhVB7zTGI46stNLOTFHHv9HkTBwPIphk1lrGXnV2HFKj7c1PxbuA31
+         l1YihViEEW0KhVdb8tfJVA0EvmABPGfAt+x9alQyZdflkYy2wdYKva6J78525uzZHCqO
+         Y7GZ3r0jnJiKAdJPwB7Bo32Kh/bnn2gaFtjwcEmbyy64KO5RRoflt/zLy+6fLryLut4H
+         tWuBJcls/WFt/Z/EPFdy86i1cnAexiOMgWiQfZlgPAn5HxYYLDbDcK6vQrs7VnU+uI8a
+         ZyAg==
+X-Gm-Message-State: AOUpUlGAUktXaVXowHtgoDu8kp91NTnNVqojrPUtbh5t/vf8muptdxg4
+        oNl2CMhbXWUUcNSdO+bn7rGVMF9b
+X-Google-Smtp-Source: AA+uWPxxWx0GPEgHeYgwDYm1lOq9vs+WyNXKmhu3vD45qplUeSKMkpSuCl+3Hurf6YJPf2X0RwW5Xw==
+X-Received: by 2002:adf:b642:: with SMTP id i2-v6mr63496wre.54.1533676380055;
+        Tue, 07 Aug 2018 14:13:00 -0700 (PDT)
+Received: from localhost.localdomain (host86-148-21-150.range86-148.btcentralplus.com. [86.148.21.150])
+        by smtp.gmail.com with ESMTPSA id o3-v6sm3375985wrj.31.2018.08.07.14.12.58
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 07 Aug 2018 14:12:58 -0700 (PDT)
+From:   John Whitmore <johnfwhitmore@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
+        John Whitmore <johnfwhitmore@gmail.com>
+Subject: [PATCH 00/17] staging:rtl8192u: Coding style changes
+Date:   Tue,  7 Aug 2018 22:12:38 +0100
+Message-Id: <20180807211255.29343-1-johnfwhitmore@gmail.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 7 Aug 2018, Andi Kleen wrote:
-> On Tue, Aug 07, 2018 at 07:48:51PM +0200, Peter Zijlstra wrote:
-> > On Tue, Aug 07, 2018 at 10:35:42AM -0700, Dave Hansen wrote:
-> > > On 08/07/2018 10:17 AM, kan.liang@linux.intel.com wrote:
-> > > > Denverton and Gemini Lake are platform names and should not be used for
-> > > > Processor Family stuff. The microarchitecture codename should be used.
-> > > 
-> > > Why?
-> > > 
-> > > Denverton is the platform.  "Goldmont" is literally the
-> > > microarchitecture, and you are suggesting moving *to* the
-> > > microarchitecture name, which contradicts the description.
-> > 
-> > All the other (big core) are uarch names. Atom is weird in that it mixes
-> > uarch with platform names.
-> 
-> On most big core the platform/SOC just happens to have the same name as the 
-> uarch. But the identifiers really have to be per SOC because that 
-> is how Intel model numbers work.
-> 
-> It should be always the SOC.
+This series includes a number of simple coding style changes.
 
-Which simply does not work. Look at Goldmont Fam 6 Model 5C. The SoCs
-with that Fam/Model combination are:
+There are a number of patches which rename symbols which are
+exported with EXPORT_SYMBOL. This may be a problem, as code
+using those symbols will have to be changed accordingly.
 
- - Apollo Lake
- - Broxton (has two platforms: Morganfield and Willowtrail)
+John Whitmore (17):
+  staging:rtl8192u: Remove stale comment - Style
+  staging:rtl8192u: Add spaces around '+' operator - Style
+  staging:rtl8192u: Remove unused macro definitions - Style
+  staging:rtl8192u: Rename eqMacAddr macro - Style
+  staging:rtl8192u: Rename cpMacAddr Macro - Style
+  staging:rtl8192u: Rename macro parameter __pIeeeDev - Style
+  staging:rtl8192u: Rename __pTa - Style
+  staging:rtl8192u: Lines should not end with a '(' - Style
+  staging:rtl8192u: Rename Dot11d_Init - Style
+  staging:rtl8192u: Rename Dot11d_Reset - Style
+  staging:rtl8192u: Rename Dot11d_UpdateCountryIe - Style
+  staging:rtl8192u: Rename dot11d_update_country_ie() parameters - Style
+  staging:rtl8192u: Rename DOT11D_GetMaxTxPwrInDbm -  Style
+  staging:rtl8192u: Rename Channel - Style
+  staging:rtl8192u: Rename DOT11D_ScanComplete - Style
+  staging:rtl8192u: Rename IsLegalChannel - Style
+  staging:rtl8192u: Rename ToLegalChannel - Style
 
-It's even worse with Silvermont.
+ drivers/staging/rtl8192u/ieee80211/dot11d.c   | 42 +++++-----
+ drivers/staging/rtl8192u/ieee80211/dot11d.h   | 81 +++++--------------
+ .../staging/rtl8192u/ieee80211/ieee80211_rx.c | 10 +--
+ .../rtl8192u/ieee80211/ieee80211_softmac.c    |  6 +-
+ drivers/staging/rtl8192u/r8192U_core.c        | 10 +--
+ drivers/staging/rtl8192u/r819xU_phy.c         |  2 +-
+ 6 files changed, 57 insertions(+), 94 deletions(-)
 
-So no, the interesting information is the UARCH and the variant of that,
-e.g. UARCH_CLIENT, UARCH_SERVER, UARCH_WHATEVER. All the magic Code Names
-and their platform variants are not interesting at all for the Fam/Model
-information.
-
-Thanks,
-
-	tglx
-
-
-
+-- 
+2.18.0
 
