@@ -3,292 +3,148 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D5FFC46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 21:54:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3D28C46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 21:59:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D247321987
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 21:54:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B07F2198F
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 21:59:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gp7usu6b"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D247321987
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nv4RnAzC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B07F2198F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727050AbeHHAKy (ORCPT
+        id S1726986AbeHHAQU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 20:10:54 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:39479 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726537AbeHHAKx (ORCPT
+        Tue, 7 Aug 2018 20:16:20 -0400
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:33604 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726697AbeHHAQT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 20:10:53 -0400
-Received: by mail-wm0-f66.google.com with SMTP id q8-v6so608522wmq.4;
-        Tue, 07 Aug 2018 14:54:27 -0700 (PDT)
+        Tue, 7 Aug 2018 20:16:19 -0400
+Received: by mail-qt0-f194.google.com with SMTP id c15-v6so279859qtp.0
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 14:59:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=pSG++remMvljIwSISZYI11HuF+WihlfgL1tV1X2jfco=;
-        b=Gp7usu6bfai31NlF853L2DPGC2J1C1w6h0gWK+5nNzkprTauAH2/5AxjS44HC52KjA
-         7XYcO14Eh2JsSVV1+2wFeFNQQjP65RkhQ+TnxGGo84A2P3HpVghz87G93zHrhbEPGQRa
-         xJL0s12fiUzId6NqxiSyfAvXOnXMFYWvSiliHcpptmwKdz3AwEhlXJPayBIy/CiVHBNv
-         d6agOqeFzx5w8bfiEw3XoTkE+Z0+DZ0D6RDf9oSfV1VJv2oNHHDUrQYzdvvVy8UV6eB3
-         aKkaeR+lyEf7PgRdEFcvsQDG2NMw7zu3Db/S8j4zbuaboGhY3oEY0eR10SFt+0aPWXGu
-         LsQw==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=OoTCdKEdWrU7XIVyJzUIBgd2zZ0XICuak2p4l59WHqw=;
+        b=nv4RnAzCjxlHbAxmyiJLOms+dYry+eMIXFLFDOSgsEmNu4Dr3t7T32E+pVVWpZGp15
+         51+pcXd5V/fTWxtBVSWyVxiPFYvYNcLB6gdEi2yOvPiMexyudAdXq8uVZSseR9vtcz1I
+         ptS1nrxZs9+cMvrRJ3qhunes6mhYpBQd5pkpw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=pSG++remMvljIwSISZYI11HuF+WihlfgL1tV1X2jfco=;
-        b=iSnRx5J32SKLlJHXHszvlKo28GYi9S3DeDOvHAKw6/T0RVyr+R+/KHLvg1dXIeSVHp
-         mF27EuR7zwKeGy5rX80SauIQUiNbfyOyrzSNY1RVYm1lM/UONToxPvn7PEK33sgnuwzj
-         mChhsAUn2RfVPdf1tbX0KmytrGxQF8EVohkTBoymOFvAUUqolrLreQDueJXQS+ERNcXk
-         5b9dSNY5m+/s81m85hBBNB4SZgfNDGKD8tnazhUHzSIsK+lwJJZCLDB6VBdTItgeCZPW
-         aXFD+cTkwrMRW3UuXVclb2XOramlDHx8FAM5dxuLbGtlRApT8HnBg6BFIRPs2Ln7SjSz
-         ic9g==
-X-Gm-Message-State: AOUpUlFYj9/mNvqhxHm9KeCuNjaKNtmeRmy3ZkIPQPGKgHWRcYU/hyRu
-        5ZKT/ZAqR6KAnvJ16gPyIU8=
-X-Google-Smtp-Source: AA+uWPwwQEDtRw1wl78Y2K41t6FTDQd/cixi75/E1w9Xp9bERcE4tVkmNX3NRVfvZf9sgO+LZ+0J/Q==
-X-Received: by 2002:a1c:f46:: with SMTP id 67-v6mr107596wmp.122.1533678866361;
-        Tue, 07 Aug 2018 14:54:26 -0700 (PDT)
-Received: from [192.168.1.18] (dkh221.neoplus.adsl.tpnet.pl. [83.24.11.221])
-        by smtp.gmail.com with ESMTPSA id j8-v6sm2873314wrp.11.2018.08.07.14.54.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 07 Aug 2018 14:54:25 -0700 (PDT)
-Subject: Re: [PATCH v5 1/2] leds: core: Introduce LED pattern trigger
-To:     Baolin Wang <baolin.wang@linaro.org>, pavel@ucw.cz
-Cc:     rteysseyre@gmail.com, bjorn.andersson@linaro.org,
-        broonie@kernel.org, linux-leds@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-References: <1dc5d394324b2bf1ffe229b8e42691fab6d749e0.1533556992.git.baolin.wang@linaro.org>
-From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Message-ID: <c18fd41f-831c-ab74-57e5-d4151f4b47cc@gmail.com>
-Date:   Tue, 7 Aug 2018 23:54:21 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=OoTCdKEdWrU7XIVyJzUIBgd2zZ0XICuak2p4l59WHqw=;
+        b=LmI7CRPrFpJog13mRdXEYFUM/OHXma9f+01w4tX8EIhg/WQmtAp2Z6QaCr3tZPq2yd
+         t14GoqsAxl56AvSPqr3+Cxwode9xqU9MWhS2+ngpbpSAC4/l3meIarwpOZxuSFIZCNC2
+         dUvNICQsB9btx3X5YHeCGFCCm4XyD3UQ68gvoQMnyL+0K+6tJkmnHcAezYXv6pwLnmtA
+         yp0rWP+UthwFcSc87ZnOAKKgS1uOpMVo02ZNt7KtOk3lzEv4tKMF4O7AP2B8W/Uqhr5/
+         w4fiMsAVXYWkIL0yFraK8JWrV3pdHGp0WRkpZjZ7GhDuMLa23ozj+AdetMR+c6S7OLFk
+         8k1g==
+X-Gm-Message-State: AOUpUlEDlSeu/yZ9oqCD6/eRzFVXSwoQbn4N2bDia3VnR+lMqakavnse
+        rSJpOqYMYurJjfNrFGxmsn/I8yVtTtH6OI3mY7588A==
+X-Google-Smtp-Source: AA+uWPzujTshWHGbVI5syTZGG79+vaceGd7Dop0FxuTZzrhMTaoM/+C0a8RKP0tzzmc6EKVystKPTCXHqSU0ffS8thk=
+X-Received: by 2002:a0c:b792:: with SMTP id l18-v6mr219270qve.110.1533679192366;
+ Tue, 07 Aug 2018 14:59:52 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1dc5d394324b2bf1ffe229b8e42691fab6d749e0.1533556992.git.baolin.wang@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <CGME20180803072628eucas1p26abe0cb121b974401759502f8807bb96@eucas1p2.samsung.com>
+ <20180605224458.62692-1-ravisadineni@chromium.org> <20180803072628eucas1p26abe0cb121b974401759502f8807bb96~HTx4BGQjl1119311193eucas1p2U@eucas1p2.samsung.com>
+ <CAEZbON7qLheHFuU6zwArCz=CG03JvnFjcehBGjE4RqROYrMLhQ@mail.gmail.com>
+ <CAKdAkRQG08d_duPiKFi_=xUNO93c0Rcw9kpaYFFJahjJM-NdGw@mail.gmail.com>
+ <CAEZbON4O0X8Fo6eAbmPOSiB1_Tw7x+Ox3ROoGfZQn72uQGQLkg@mail.gmail.com>
+ <20180806052949eucas1p2483800c02730febd03d4a661a25fa405~INH40XvCx2719627196eucas1p2X@eucas1p2.samsung.com>
+ <CAKdAkRSvLq-L3FrODUqxXqDs2FymM9k5dZRxnOpc44rFiHaWAQ@mail.gmail.com>
+ <20180806071543eucas1p233ac5016e1a586594cf8ecd1fe3214b0~IOkV1Zt7j2129321293eucas1p20@eucas1p2.samsung.com>
+ <CAEZbON72eVUCNT3ePEZKrB5B6+6YYgO7=X0TY0eBqUb3ws0sLA@mail.gmail.com>
+In-Reply-To: <CAEZbON72eVUCNT3ePEZKrB5B6+6YYgO7=X0TY0eBqUb3ws0sLA@mail.gmail.com>
+From:   Ravi Chandra Sadineni <ravisadineni@chromium.org>
+Date:   Tue, 7 Aug 2018 14:59:41 -0700
+Message-ID: <CAEZbON5vMOiYRsnN1MyuSov3URByeAp-z3EEsEH6tqY23U32wQ@mail.gmail.com>
+Subject: Re: [PATCH] Input: cros_ec_keyb: Remove check before calling pm_wakeup_event.
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Ravi Chandra Sadineni <ravisadineni@google.com>,
+        Todd Broch <tbroch@google.com>, linux-kernel@vger.kernel.org,
+        linux-input@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Baolin,
+hi Merek,
 
-Thank you for addressing the review remarks.
-Since the patch set is targeted for 4.19, then we have three weeks
-before it will be merged to the for-next anyway. That said, I propose
-one more modification, please take a look below.
+I tried booting a snow device and could not get it to boot it to the
+console. I assume i don't have right kernel config. Can you share your
+config if possible.
 
-On 08/06/2018 02:05 PM, Baolin Wang wrote:
-> Some LED controllers have support for autonomously controlling
-> brightness over time, according to some preprogrammed pattern or
-> function.
-> 
-> This patch adds pattern trigger that LED device can configure the
-> pattern and trigger it.
-> 
-> Signed-off-by: Raphael Teysseyre <rteysseyre@gmail.com>
-> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
-> ---
-> Changes from v4:
->  - Change the repeat file to return the originally written number.
->  - Improve comments.
->  - Fix some build warnings.
-> 
-> Changes from v3:
->  - Reset pattern number to 0 if user provides incorrect pattern string.
->  - Support one pattern.
-> 
-> Changes from v2:
->  - Remove hardware_pattern boolen.
->  - Chnage the pattern string format.
-> 
-> Changes from v1:
->  - Use ATTRIBUTE_GROUPS() to define attributes.
->  - Introduce hardware_pattern flag to determine if software pattern
->  or hardware pattern.
->  - Re-implement pattern_trig_store_pattern() function.
->  - Remove pattern_get() interface.
->  - Improve comments.
->  - Other small optimization.
-> ---
->  .../ABI/testing/sysfs-class-led-trigger-pattern    |   24 ++
->  drivers/leds/trigger/Kconfig                       |    7 +
->  drivers/leds/trigger/Makefile                      |    1 +
->  drivers/leds/trigger/ledtrig-pattern.c             |  266 ++++++++++++++++++++
->  include/linux/leds.h                               |   16 ++
->  5 files changed, 314 insertions(+)
->  create mode 100644 Documentation/ABI/testing/sysfs-class-led-trigger-pattern
->  create mode 100644 drivers/leds/trigger/ledtrig-pattern.c
-> 
-> diff --git a/Documentation/ABI/testing/sysfs-class-led-trigger-pattern b/Documentation/ABI/testing/sysfs-class-led-trigger-pattern
-> new file mode 100644
-> index 0000000..bc7475f
-> --- /dev/null
-> +++ b/Documentation/ABI/testing/sysfs-class-led-trigger-pattern
-> @@ -0,0 +1,24 @@
-> +What:		/sys/class/leds/<led>/pattern
-> +Date:		August 2018
-> +KernelVersion:	4.19
-> +Description:
-> +		Specify a pattern for the LED, for LED hardware that support
-> +		altering the brightness as a function of time.
-> +
-> +		The pattern is given by a series of tuples, of brightness and
-> +		duration (ms). The LED is expected to traverse the series and
-> +		each brightness value for the specified duration. Duration of
-> +		0 means brightness should immediately change to new value.
-> +
-> +		The format of the pattern values should be:
-> +		"brightness_1 duration_1 brightness_2 duration_2 brightness_3
-> +		duration_3 ...".
-> +
-> +What:		/sys/class/leds/<led>/repeat
-> +Date:		August 2018
-> +KernelVersion:	4.19
-> +Description:
-> +		Specify a pattern repeat number. 0 means repeat indefinitely.
-> +
-> +		This file will always return the originally written repeat
-> +		number.
-> diff --git a/drivers/leds/trigger/Kconfig b/drivers/leds/trigger/Kconfig
-> index 4018af7..b76fc3c 100644
-> --- a/drivers/leds/trigger/Kconfig
-> +++ b/drivers/leds/trigger/Kconfig
-> @@ -129,4 +129,11 @@ config LEDS_TRIGGER_NETDEV
->  	  This allows LEDs to be controlled by network device activity.
->  	  If unsure, say Y.
->  
-> +config LEDS_TRIGGER_PATTERN
-> +	tristate "LED Pattern Trigger"
-> +	help
-> +	  This allows LEDs to be controlled by a software or hardware pattern
-> +	  which is a series of tuples, of brightness and duration (ms).
-> +	  If unsure, say N
-> +
->  endif # LEDS_TRIGGERS
-> diff --git a/drivers/leds/trigger/Makefile b/drivers/leds/trigger/Makefile
-> index f3cfe19..9bcb64e 100644
-> --- a/drivers/leds/trigger/Makefile
-> +++ b/drivers/leds/trigger/Makefile
-> @@ -13,3 +13,4 @@ obj-$(CONFIG_LEDS_TRIGGER_TRANSIENT)	+= ledtrig-transient.o
->  obj-$(CONFIG_LEDS_TRIGGER_CAMERA)	+= ledtrig-camera.o
->  obj-$(CONFIG_LEDS_TRIGGER_PANIC)	+= ledtrig-panic.o
->  obj-$(CONFIG_LEDS_TRIGGER_NETDEV)	+= ledtrig-netdev.o
-> +obj-$(CONFIG_LEDS_TRIGGER_PATTERN)	+= ledtrig-pattern.o
-> diff --git a/drivers/leds/trigger/ledtrig-pattern.c b/drivers/leds/trigger/ledtrig-pattern.c
-> new file mode 100644
-> index 0000000..63b94a2
-> --- /dev/null
-> +++ b/drivers/leds/trigger/ledtrig-pattern.c
-> @@ -0,0 +1,266 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +/*
-> + * LED pattern trigger
-> + *
-> + * Idea discussed with Pavel Machek. Raphael Teysseyre implemented
-> + * the first version, Baolin Wang simplified and improved the approach.
-> + */
-> +
-> +#include <linux/kernel.h>
-> +#include <linux/leds.h>
-> +#include <linux/module.h>
-> +#include <linux/mutex.h>
-> +#include <linux/slab.h>
-> +#include <linux/timer.h>
-> +
-> +#define MAX_PATTERNS		1024
-> +
-> +struct pattern_trig_data {
-> +	struct led_classdev *led_cdev;
-> +	struct led_pattern patterns[MAX_PATTERNS];
-> +	struct led_pattern *curr;
-> +	struct led_pattern *next;
-> +	struct mutex lock;
-> +	u32 npatterns;
-> +	u32 repeat;
-> +	u32 last_repeat;
-> +	bool is_indefinite;
-> +	struct timer_list timer;
-> +};
-> +
-> +static void pattern_trig_update_patterns(struct pattern_trig_data *data)
-> +{
-> +	data->curr = data->next;
-> +	if (!data->is_indefinite && data->curr == data->patterns)
-> +		data->repeat--;
-> +
-> +	if (data->next == data->patterns + data->npatterns - 1)
-> +		data->next = data->patterns;
-> +	else
-> +		data->next++;
-> +}
-> +
-> +static void pattern_trig_timer_function(struct timer_list *t)
-> +{
-> +	struct pattern_trig_data *data = from_timer(data, t, timer);
-> +
-> +	mutex_lock(&data->lock);
-> +
-> +	if (!data->is_indefinite && !data->repeat) {
-> +		mutex_unlock(&data->lock);
-> +		return;
-> +	}
-> +
-> +	led_set_brightness(data->led_cdev, data->curr->brightness);
-> +	mod_timer(&data->timer, jiffies + msecs_to_jiffies(data->curr->delta_t));
-> +	pattern_trig_update_patterns(data);
-> +
-> +	mutex_unlock(&data->lock);
-> +}
-> +
-> +static int pattern_trig_start_pattern(struct pattern_trig_data *data,
-> +				      struct led_classdev *led_cdev)
-> +{
-> +	if (!data->npatterns)
-> +		return 0;
-> +
-> +	if (led_cdev->pattern_set) {
-> +		return led_cdev->pattern_set(led_cdev, data->patterns,
-> +					     data->npatterns, data->repeat);
-
-I think that it would be more flexible if software pattern fallback
-was applied in case of pattern_set failure. Otherwise, it would
-lead to the situation where LED class devices that support hardware
-blinking couldn't be applied the same set of patterns as LED class
-devices that don't implement pattern_set. The latter will always have to
-resort to using software pattern engine which will accept far greater
-amount of pattern combinations.
-
-In this case we need to discuss on what basis the decision will be
-made on whether hardware or software engine will be used.
-
-Possible options coming to mind:
-- an interface will be provided to determine max difference between
-  the settings supported by the hardware and the settings requested by
-  the user, that will result in aligning user's setting to the hardware
-  capabilities
-- the above alignment rate will be predefined instead
-- hardware engine will be used only if user requests supported settings
-  on the whole span of the requested pattern
-- in each of the above cases it would be worth to think of the
-  interface to show the scope of the settings supported by hardware
-
-The same issue applies to the already available timer trigger.
-So far the policy implemented by the drivers implementing blink_set
-op varies.
-
--- 
-Best regards,
-Jacek Anaszewski
+Thanks,
+RaviOn Mon, Aug 6, 2018 at 4:05 PM Ravi Chandra Sadineni
+<ravisadineni@chromium.org> wrote:
+>
+> Hi Merek,
+>
+> Thanks for the info. Lemme understand what's going on. Will update the
+> thread once I have more info.
+>
+> Thanks,
+> Ravi
+> On Mon, Aug 6, 2018 at 12:15 AM Marek Szyprowski
+> <m.szyprowski@samsung.com> wrote:
+> >
+> > Hi Dmitry
+> >
+> > On 2018-08-06 08:16, Dmitry Torokhov wrote:
+> > > On Sun, Aug 5, 2018 at 10:29 PM Marek Szyprowski
+> > > <m.szyprowski@samsung.com> wrote:
+> > >> Hi Ravi,
+> > >>
+> > >> On 2018-08-03 18:53, Ravi Chandra Sadineni wrote:
+> > >>> Understood. I am trying to reproduce this issue locally. Wanted to
+> > >>> know the version of the kernel so I can give a try. Marek, can you
+> > >>> please confirm the kernel version.
+> > >>>
+> > >> Yes, sorry for the missing context, I was in hurry writing the report and
+> > >> I wanted to send it before leaving the office. I'm testing mainline on Snow
+> > >> with exynos_defconfig.
+> > >>
+> > >> Suspend/resume is partially broken already with mainline, but if you disable
+> > >> CPUfreq support, it works fine on Linux v4.17.
+> > >>
+> > >> I've posted CPUfreq related fixes here if you are interested:
+> > >> https://patchwork.kernel.org/patch/10554607/
+> > >> https://patchwork.kernel.org/patch/10554603/
+> > >>
+> > >> The issue with cros_ec_keyb patch appears first on Linux v4.18-rc1, which is
+> > >> the first release with that patch.
+> > > Marek, this patch should only be in -next, I do not believe I sent it
+> > > to Linus just yet. If mainline is broken for you it can't be caused by
+> > > this patch.
+> >
+> > Aaahh. My fault then. The suspend/resume issue is cause by commit
+> > 38ba34a43dbc ("Input: cros_ec_keyb - mark cros_ec_keyb driver as wake
+> > enabled device."), which has been merged to v4.18-rc1.
+> >
+> > It looks that I've downloaded wrong patch from the patchwork to reply it
+> > with a a bug report. :( I'm really sorry for the noise in the wrong thread.
+> >
+> > Ravi: please let me know how can I help you to debug this issue.
+> >
+> > >
+> > >> Linux -next from 20180803, which has a few
+> > >> more patches for cros_ec_keyb suffers from the same issue.
+> > > Just to confirm, if you revert only this patch from -next you get
+> > > suspend/resume back?
+> > >
+> > > Thanks.
+> >
+> > Best regards
+> > --
+> > Marek Szyprowski, PhD
+> > Samsung R&D Institute Poland
+> >
