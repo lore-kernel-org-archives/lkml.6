@@ -3,123 +3,108 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2740C46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 08:12:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBBB3C46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 08:16:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 812122172E
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 08:12:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 812122172E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 8BFD0215F9
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 08:16:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BFD0215F9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726579AbeHGKZh (ORCPT
+        id S1727123AbeHGK3b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 06:25:37 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34250 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725798AbeHGKZg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 06:25:36 -0400
-Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C3556C9D;
-        Tue,  7 Aug 2018 08:12:25 +0000 (UTC)
-Date:   Tue, 7 Aug 2018 10:12:22 +0200
-From:   "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-To:     "Zhang, Ning A" <ning.a.zhang@intel.com>
-Cc:     "pombredanne@nexb.com" <pombredanne@nexb.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Li, Ting" <ting.li@intel.com>,
-        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
-        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
-        "markus@trippelsdorf.de" <markus@trippelsdorf.de>
-Subject: Re: [PATCH] firmware: make sure builtin firmware is page alignment
-Message-ID: <20180807081222.GB20894@kroah.com>
-References: <20180803014521.21527-1-ning.a.zhang@intel.com>
- <20180803053948.GB1852@kroah.com>
- <1533285744.20683.67.camel@intel.com>
- <20180803103121.GB6557@kroah.com>
- <1533520123.20683.71.camel@intel.com>
- <20180806140512.GA19844@kroah.com>
- <1533608851.20683.78.camel@intel.com>
+        Tue, 7 Aug 2018 06:29:31 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57036 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726286AbeHGK3b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 06:29:31 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9041487A70;
+        Tue,  7 Aug 2018 08:16:19 +0000 (UTC)
+Received: from krava (unknown [10.43.17.214])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 78EC621568A1;
+        Tue,  7 Aug 2018 08:16:17 +0000 (UTC)
+Date:   Tue, 7 Aug 2018 10:16:16 +0200
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Oleg Nesterov <oleg@redhat.com>
+Cc:     Jiri Olsa <jolsa@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Milind Chabbi <chabbi.milind@gmail.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        David Ahern <dsahern@gmail.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Frederic Weisbecker <frederic@kernel.org>
+Subject: Re: [PATCH 3/2] perf/hw_breakpoint: Remove superfluous
+ bp->attr.disabled = 0 new attr has disabled set
+Message-ID: <20180807081616.GB7716@krava>
+References: <20180806101241.6444-1-jolsa@kernel.org>
+ <20180806101241.6444-3-jolsa@kernel.org>
+ <20180806124839.GC7840@redhat.com>
+ <20180806132353.GA7463@krava>
+ <20180806150836.GD16446@krava>
+ <20180806163436.GH7840@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1533608851.20683.78.camel@intel.com>
+In-Reply-To: <20180806163436.GH7840@redhat.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Tue, 07 Aug 2018 08:16:19 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Tue, 07 Aug 2018 08:16:19 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 07, 2018 at 02:27:31AM +0000, Zhang, Ning A wrote:
-> 在 2018-08-06一的 16:05 +0200，gregkh@linuxfoundation.org写道：
-> > On Mon, Aug 06, 2018 at 01:48:44AM +0000, Zhang, Ning A wrote:
-> > > 在 2018-08-03五的 12:31 +0200，gregkh@linuxfoundation.org写道：
-> > > > On Fri, Aug 03, 2018 at 08:42:25AM +0000, Zhang, Ning A wrote:
-> > > > > 在 2018-08-03五的 07:39 +0200，Greg KH写道：
-> > > > > > On Fri, Aug 03, 2018 at 09:45:21AM +0800, Zhang Ning wrote:
-> > > > > > > when firmware is in filesystem, request_firmware will load
-> > > > > > > it,
-> > > > > > > and copy it to vmalloc memory, that is page align memory.
-> > > > > > > 
-> > > > > > > but when firmware is builtin, it is 8 bytes or 4 bytes
-> > > > > > > alignment.
-> > > > > > > 
-> > > > > > > make sure builtin firmware is page algnment, that can
-> > > > > > > simplify
-> > > > > > > algorithm
-> > > > > > > to handle firmware.
-> > > > > > 
-> > > > > > How is it simplified?  I don't see any such change like that
-> > > > > > here
-> > > > > > :(
-> > > > > > 
-> > > > > 
-> > > > > Thank you for review this patch.
-> > > > > 
-> > > > > When driver handles its firmware based on  page, like below:
-> > > > > 
-> > > > > 	struct page *p;
-> > > > > 	p = vmalloc_to_page(fw->data);  // for filesystem
-> > > > > firmware
-> > > > > 	p = virt_to_page(fw->data); // for builtin firmware
-> > > > > 
-> > > > > but if builtin firmware is not page alignment, page pointer for
-> > > > > builtin
-> > > > > firmware is wrong, it contains memory not belong to firmware.
-> > > > > drivers
-> > > > > has to use additional code to handle this. 
-> > > > > 
-> > > > > if builtin firmware is also page alignment, no need additional
-> > > > > code
-> > > > > to
-> > > > > handle builtin firmware. simplified.
-> > > > 
-> > > > But you did not change anything like this in your code, so why
-> > > > would
-> > > > I
-> > > > know this?
-> > > 
-> > > I understand it is very difficult to review this patch without
-> > > context.
-> > > The driver is not opensource, I can't show the patch for driver.
+On Mon, Aug 06, 2018 at 06:34:36PM +0200, Oleg Nesterov wrote:
+> On 08/06, Jiri Olsa wrote:
+> >
+> > Once the breakpoint was succesfully modified, the attr->disabled
+> > value is in bp->attr.disabled. So there's no reason to set it
+> > again, removing that.
 > > 
-> > Then I can not accept your patch.  Go talk to your corporate lawyers
-> > about changing core kernel code for a closed source driver and what
-> > that
-> > implies about that closed driver (hint, your driver can not be
-> > closed...) :)
+> > Link: http://lkml.kernel.org/n/tip-v5oaellzsmyszv3rfucuxkp0@git.kernel.org
+> > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> > ---
+> >  kernel/events/hw_breakpoint.c | 5 ++---
+> >  1 file changed, 2 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/kernel/events/hw_breakpoint.c b/kernel/events/hw_breakpoint.c
+> > index fb229d9c7f3c..3e560d7609fd 100644
+> > --- a/kernel/events/hw_breakpoint.c
+> > +++ b/kernel/events/hw_breakpoint.c
+> > @@ -526,10 +526,9 @@ int modify_user_hw_breakpoint(struct perf_event *bp, struct perf_event_attr *att
+> >  	if (err)
+> >  		return err;
+> >  
+> > -	if (!attr->disabled) {
+> > +	if (!attr->disabled)
+> >  		perf_event_enable(bp);
+> > -		bp->attr.disabled = 0;
+> > -	}
+> > +
 > 
-> It's very sad,
+> Yes, but again, this still looks confusing.
+> 
+> IMO, we should either remove "bp->attr.disabled = attr->disabled" in
+> modify_user_hw_breakpoint_check() because bp->attr.disabled  is not really
+> used, or we should set bp->attr.disabled = 1 on failure just for consistency.
+> 
+> 
+> Hmm... actually ptrace_get_dr7() checks ->attr.disabled, so we can hit
+> WARN_ON(second_pass) in ptrace_write_dr7() in case when attr.disabled is
+> falsely 0 because modify_user_hw_breakpoint_check() failed before?
 
-"sad"?  Again, please go discuss this with your corporate lawyers before
-thinking that this is even something that is possible to do.  Hint, if
-I _were_ to accept this, they would be _VERY_ upset at both me, and you.
+hum, I can't see how modify_user_hw_breakpoint_check could falsely set disabled
+new attr stuff is copied once all checks passed
 
-I am trying to _save_ you problems, please realize this.
-
-greg k-h
+jirka
