@@ -6,39 +6,39 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23CB4C46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 06:18:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AD2AC46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 06:18:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2B2A208AF
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 06:18:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B988221A18
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 06:18:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="CUtYJf74"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2B2A208AF
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="OJ5x4AmH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B988221A18
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388670AbeHGIbX (ORCPT
+        id S2388689AbeHGIba (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 04:31:23 -0400
-Received: from conuserg-08.nifty.com ([210.131.2.75]:39859 "EHLO
+        Tue, 7 Aug 2018 04:31:30 -0400
+Received: from conuserg-08.nifty.com ([210.131.2.75]:39875 "EHLO
         conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727725AbeHGIbX (ORCPT
+        with ESMTP id S1728125AbeHGIbT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 04:31:23 -0400
+        Tue, 7 Aug 2018 04:31:19 -0400
 Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-08.nifty.com with ESMTP id w776HYgg009463;
-        Tue, 7 Aug 2018 15:17:38 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com w776HYgg009463
+        by conuserg-08.nifty.com with ESMTP id w776HYgf009463;
+        Tue, 7 Aug 2018 15:17:37 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com w776HYgf009463
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
         s=dec2015msa; t=1533622658;
-        bh=5d0uJwK06kHLbrnPV7/bo87yW4MsMwX2/V6c5l/n9Xo=;
+        bh=CDsPjvZxJ6vyqPNJqrby0MCDRw1rWBu5Y5NaXcK1G3A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CUtYJf74BmGI89WTxxq7InlToRe0CX1vmNE8m5bV/QEgam2WHFL5JidFBlq1HdI+A
-         7TXYiy3mpSmodeWFkyQ4Lne+vPVnq+ccJOSBB5qTRhso22tlbE/HIrvoRQjJIaoazy
-         k4eqIkp/WPHEla8Uv2WeJ3rvZ8FJZ7femfk++GZim9XGfiAn1zG58VqEIBDmYDqiXo
-         LaDx11Rv3xZFbRfvM8GI3E5hK0uwPTIHRk3Aydw3tKnO0Hu5QNIcrlsHzC21ZUizVg
-         H4zj8Me/B7uN/K0+1SKovaxwWCq7azRQpPg8rRWayEyyzizK/jC/r9VMrM6iwpTEOq
-         Dngk8lujawXOw==
+        b=OJ5x4AmHN6VIFmYNTxCtwlLy0Ot0EiENcE7MxUthfOaokJrPYNdRhR3b0K6zrksJS
+         TjuA2uKk5Yx4JJ5LXRD5F822Ar/4kfg4nqkZhO9J8THjWkNV8l5zePdY7m0asmQnEk
+         udBfk8ilzuka0J6HOontqOpx+R2DPVgR482+hupoEplVV+HrMLl3VcANwmGhrTNEcJ
+         6wSLlCc3i8Klln5WhV3ORlDZO7cjVS4OW7NAj7K7JPpXGDWwx4N9F8xWhf+WxjIyKG
+         anO9qtofaJw2QAN+QItI68eF6Pj/x1K6PAvbqTTNxkMnFw6JW1Mg2uzbLmhxjkVcoG
+         pJ78+Td23/1KA==
 X-Nifty-SrcIP: [153.142.97.92]
 From:   Masahiro Yamada <yamada.masahiro@socionext.com>
 To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
@@ -48,10 +48,13 @@ Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
         Masami Hiramatsu <mhiramat@kernel.org>,
         Jassi Brar <jaswinder.singh@linaro.org>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [v0.1 PATCH 4/7] mmc: uniphier-sd: add UniPhier SD/eMMC controller driver
-Date:   Tue,  7 Aug 2018 15:17:19 +0900
-Message-Id: <1533622642-13989-5-git-send-email-yamada.masahiro@socionext.com>
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: [v0.1 PATCH 3/7] dt-bindings: mmc: add DT binding for UniPhier SD/eMMC controller
+Date:   Tue,  7 Aug 2018 15:17:18 +0900
+Message-Id: <1533622642-13989-4-git-send-email-yamada.masahiro@socionext.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1533622642-13989-1-git-send-email-yamada.masahiro@socionext.com>
 References: <1533622642-13989-1-git-send-email-yamada.masahiro@socionext.com>
@@ -60,804 +63,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Here is another TMIO MMC variant found in Socionext UniPhier SoCs.
-
-As commit b6147490e6aa ("mmc: tmio: split core functionality, DMA and
-MFD glue") said, these MMC controllers use the IP from Panasonic.
-
-However, the MMC controller in the TMIO (Toshiba Mobile IO) MFD chip
-was the first upstreamed user of this IP.  The common driver code
-for this IP is now called 'tmio-mmc-core' in Linux although it is a
-historical misnomer.
-
-Anyway, this driver select's MMC_TMIO_CORE to borrow the common code
-from tmio-mmc-core.c
-
-Older UniPhier SoCs (LD4, Pro4, sLD8) support the external DMA engine
-like renesas_sdhi_sys_dmac.c.  The difference is UniPhier SoCs use a
-single DMA channel whereas Renesas chips request separate channels for
-RX and TX.
-
-Newer UniPhier SoCs (Pro5 and later) support the internal DMA engine
-like renesas_sdhi_internal_dmac.c  The register map is almost the same,
-so I guess Renesas and Socionext use the same internal DMA hardware.
-The main difference is, the register offsets are doubled for Renesas.
-
-                        Renesas      Socionext
-                        SDHI         UniPhier
-  DM_CM_DTRAN_MODE      0x820        0x410
-  DM_CM_DTRAN_CTRL      0x828        0x414
-  DM_CM_RST             0x830        0x418
-  DM_CM_INFO1           0x840        0x420
-  DM_CM_INFO1_MASK      0x848        0x424
-  DM_CM_INFO2           0x850        0x428
-  DM_CM_INFO2_MASK      0x858        0x42c
-  DM_DTRAN_ADDR         0x880        0x440
-  DM_DTRAN_ADDREX        ---         0x444
-
-This comes from the difference of host->bus_shift; 2 for Renesas SoCs,
-and 1 for UniPhier SoCs.  Also, the datasheet for UniPhier SoCs defines
-DM_DTRAN_ADDR and DM_DTRAN_ADDREX as two separate registers.
-
-It could be possible to factor out the DMA common code by introducing
-some hooks to cope with platform quirks, but this patch does not touch
-that for now.
+This SD/eMMC controller is used for UniPhier SoC family.
 
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
 
- MAINTAINERS                    |   1 +
- drivers/mmc/host/Kconfig       |  10 +
- drivers/mmc/host/Makefile      |   1 +
- drivers/mmc/host/uniphier-sd.c | 694 +++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 706 insertions(+)
- create mode 100644 drivers/mmc/host/uniphier-sd.c
+ .../devicetree/bindings/mmc/uniphier-sd.txt        | 60 ++++++++++++++++++++++
+ 1 file changed, 60 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mmc/uniphier-sd.txt
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 7cebd5b..a92dcd1 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2141,6 +2141,7 @@ F:	drivers/clk/uniphier/
- F:	drivers/gpio/gpio-uniphier.c
- F:	drivers/i2c/busses/i2c-uniphier*
- F:	drivers/irqchip/irq-uniphier-aidet.c
-+F:	drivers/mmc/host/uniphier-sd.c
- F:	drivers/pinctrl/uniphier/
- F:	drivers/reset/reset-uniphier.c
- F:	drivers/tty/serial/8250/8250_uniphier.c
-diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-index 4a692e8..9df2de6 100644
---- a/drivers/mmc/host/Kconfig
-+++ b/drivers/mmc/host/Kconfig
-@@ -619,6 +619,16 @@ config MMC_SDHI_INTERNAL_DMAC
- 	  using on-chip bus mastering. This supports the controllers
- 	  found in arm64 based SoCs.
- 
-+config MMC_UNIPHIER
-+	tristate "UniPhier SD/eMMC Host Controller support"
-+	depends on ARCH_UNIPHIER || COMPILE_TEST
-+	depends on OF
-+	select MMC_TMIO_CORE
-+	help
-+	  This provides support for the SD/eMMC controller found in
-+	  UniPhier SoCs. The eMMC variant of this controller is used
-+	  only for 32-bit SoCs.
-+
- config MMC_CB710
- 	tristate "ENE CB710 MMC/SD Interface support"
- 	depends on PCI
-diff --git a/drivers/mmc/host/Makefile b/drivers/mmc/host/Makefile
-index 85dc132..363d7df 100644
---- a/drivers/mmc/host/Makefile
-+++ b/drivers/mmc/host/Makefile
-@@ -41,6 +41,7 @@ obj-$(CONFIG_MMC_TMIO_CORE)	+= tmio_mmc_core.o
- obj-$(CONFIG_MMC_SDHI)		+= renesas_sdhi_core.o
- obj-$(CONFIG_MMC_SDHI_SYS_DMAC)		+= renesas_sdhi_sys_dmac.o
- obj-$(CONFIG_MMC_SDHI_INTERNAL_DMAC)	+= renesas_sdhi_internal_dmac.o
-+obj-$(CONFIG_MMC_UNIPHIER)	+= uniphier-sd.o
- obj-$(CONFIG_MMC_CB710)		+= cb710-mmc.o
- obj-$(CONFIG_MMC_VIA_SDMMC)	+= via-sdmmc.o
- octeon-mmc-objs := cavium.o cavium-octeon.o
-diff --git a/drivers/mmc/host/uniphier-sd.c b/drivers/mmc/host/uniphier-sd.c
+diff --git a/Documentation/devicetree/bindings/mmc/uniphier-sd.txt b/Documentation/devicetree/bindings/mmc/uniphier-sd.txt
 new file mode 100644
-index 0000000..faed1d7
+index 0000000..49dd0fc
 --- /dev/null
-+++ b/drivers/mmc/host/uniphier-sd.c
-@@ -0,0 +1,694 @@
-+// SPDX-License-Identifier: GPL-2.0
-+//
-+// Copyright (C) 2017-2018 Socionext Inc.
-+//   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
-+
-+#include <linux/bitfield.h>
-+#include <linux/bitops.h>
-+#include <linux/clk.h>
-+#include <linux/delay.h>
-+#include <linux/dma-mapping.h>
-+#include <linux/mfd/tmio.h>
-+#include <linux/mmc/host.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/of_device.h>
-+#include <linux/pinctrl/consumer.h>
-+#include <linux/platform_device.h>
-+#include <linux/reset.h>
-+
-+#include "tmio_mmc.h"
-+
-+#define   UNIPHIER_SD_CLK_CTL_DIV1024		BIT(16)
-+#define   UNIPHIER_SD_CLK_CTL_DIV1		BIT(10)
-+#define   UNIPHIER_SD_CLKCTL_OFFEN		BIT(9)  // auto SDCLK stop
-+
-+#define UNIPHIER_SD_CC_EXT_MODE		0x1b0
-+#define   UNIPHIER_SD_CC_EXT_MODE_DMA		BIT(1)
-+
-+#define UNIPHIER_SD_HOST_MODE		0x1c8
-+
-+#define UNIPHIER_SD_VOLT		0x1e4
-+#define   UNIPHIER_SD_VOLT_MASK			GENMASK(1, 0)
-+#define   UNIPHIER_SD_VOLT_OFF			0
-+#define   UNIPHIER_SD_VOLT_330			1	// 3.3V signal
-+#define   UNIPHIER_SD_VOLT_180			2	// 1.8V signal
-+
-+#define UNIPHIER_SD_DMA_MODE		0x410
-+#define   UNIPHIER_SD_DMA_MODE_DIR_MASK		GENMASK(17, 16)
-+#define   UNIPHIER_SD_DMA_MODE_DIR_TO_DEV	0
-+#define   UNIPHIER_SD_DMA_MODE_DIR_FROM_DEV	1
-+#define   UNIPHIER_SD_DMA_MODE_WIDTH_MASK	GENMASK(5, 4)
-+#define   UNIPHIER_SD_DMA_MODE_WIDTH_8		0
-+#define   UNIPHIER_SD_DMA_MODE_WIDTH_16		1
-+#define   UNIPHIER_SD_DMA_MODE_WIDTH_32		2
-+#define   UNIPHIER_SD_DMA_MODE_WIDTH_64		3
-+#define   UNIPHIER_SD_DMA_MODE_ADDR_INC		BIT(0)	// 1: inc, 0: fixed
-+#define UNIPHIER_SD_DMA_CTL		0x414
-+#define   UNIPHIER_SD_DMA_CTL_START	BIT(0)	// start DMA (auto cleared)
-+#define UNIPHIER_SD_DMA_RST		0x418
-+#define   UNIPHIER_SD_DMA_RST_CH1	BIT(9)
-+#define   UNIPHIER_SD_DMA_RST_CH0	BIT(8)
-+#define UNIPHIER_SD_DMA_ADDR_L		0x440
-+#define UNIPHIER_SD_DMA_ADDR_H		0x444
-+
-+/*
-+ * IP is extended to support various features: built-in DMA engine,
-+ * 1/1024 divisor, etc.
-+ */
-+#define UNIPHIER_SD_CAP_EXTENDED_IP		BIT(0)
-+/* RX channel of the built-in DMA controller is broken (Pro5) */
-+#define UNIPHIER_SD_CAP_BROKEN_DMA_RX		BIT(1)
-+
-+struct uniphier_sd_priv {
-+	struct tmio_mmc_data tmio_data;
-+	struct pinctrl *pinctrl;
-+	struct pinctrl_state *pinstate_default;
-+	struct pinctrl_state *pinstate_uhs;
-+	struct clk *clk;
-+	struct reset_control *rst;
-+	struct reset_control *rst_br;
-+	struct reset_control *rst_hw;
-+	struct dma_chan *chan;
-+	enum dma_data_direction dma_dir;
-+	unsigned long clk_rate;
-+	unsigned long caps;
-+};
-+
-+static void *uniphier_sd_priv(struct tmio_mmc_host *host)
-+{
-+	return container_of(host->pdata, struct uniphier_sd_priv, tmio_data);
-+}
-+
-+static void uniphier_sd_dma_endisable(struct tmio_mmc_host *host, int enable)
-+{
-+	sd_ctrl_write16(host, CTL_DMA_ENABLE, DMA_ENABLE_DMASDRW);
-+}
-+
-+/* external DMA engine */
-+static void uniphier_sd_external_dma_issue(unsigned long arg)
-+{
-+	struct tmio_mmc_host *host = (void *)arg;
-+	struct uniphier_sd_priv *priv = uniphier_sd_priv(host);
-+
-+	uniphier_sd_dma_endisable(host, 1);
-+	dma_async_issue_pending(priv->chan);
-+}
-+
-+static void uniphier_sd_external_dma_callback(void *param)
-+{
-+	struct tmio_mmc_host *host = param;
-+	struct uniphier_sd_priv *priv = uniphier_sd_priv(host);
-+	unsigned long flags;
-+
-+	dma_unmap_sg(mmc_dev(host->mmc), host->sg_ptr, host->sg_len,
-+		     priv->dma_dir);
-+
-+	spin_lock_irqsave(&host->lock, flags);
-+
-+	/*
-+	 * When the external DMA engine is enabled, strangely enough, the
-+	 * DATAEND flag can be asserted even if the DMA engine has not been
-+	 * kicked yet.  Enable the TMIO_STAT_DATAEND interrupt only after we
-+	 * make sure the DMA engine finish the transfer, i.e. in its callback.
-+	 */
-+	tmio_mmc_enable_mmc_irqs(host, TMIO_STAT_DATAEND);
-+	spin_unlock_irqrestore(&host->lock, flags);
-+}
-+
-+static void uniphier_sd_external_dma_start(struct tmio_mmc_host *host,
-+					   struct mmc_data *data)
-+{
-+	struct uniphier_sd_priv *priv = uniphier_sd_priv(host);
-+	enum dma_transfer_direction dma_tx_dir;
-+	struct dma_async_tx_descriptor *desc;
-+	dma_cookie_t cookie;
-+	int sg_len;
-+
-+	if (!priv->chan)
-+		goto force_pio;
-+
-+	if (data->flags & MMC_DATA_READ) {
-+		priv->dma_dir = DMA_FROM_DEVICE;
-+		dma_tx_dir = DMA_DEV_TO_MEM;
-+	} else {
-+		priv->dma_dir = DMA_TO_DEVICE;
-+		dma_tx_dir = DMA_MEM_TO_DEV;
-+	}
-+
-+	sg_len = dma_map_sg(mmc_dev(host->mmc), host->sg_ptr, host->sg_len,
-+			    priv->dma_dir);
-+	if (sg_len == 0)
-+		goto force_pio;
-+
-+	desc = dmaengine_prep_slave_sg(priv->chan, host->sg_ptr, sg_len,
-+				       dma_tx_dir, DMA_CTRL_ACK);
-+	if (!desc)
-+		goto unmap_sg;
-+
-+	desc->callback = uniphier_sd_external_dma_callback;
-+	desc->callback_param = host;
-+
-+	cookie = dmaengine_submit(desc);
-+	if (cookie < 0)
-+		goto unmap_sg;
-+
-+	return;
-+
-+unmap_sg:
-+	dma_unmap_sg(mmc_dev(host->mmc), host->sg_ptr, host->sg_len,
-+		     priv->dma_dir);
-+force_pio:
-+	host->force_pio = true;
-+	uniphier_sd_dma_endisable(host, 0);
-+}
-+
-+static void uniphier_sd_external_dma_enable(struct tmio_mmc_host *host,
-+					    bool enable)
-+{
-+}
-+
-+static void uniphier_sd_external_dma_request(struct tmio_mmc_host *host,
-+					     struct tmio_mmc_data *pdata)
-+{
-+	struct uniphier_sd_priv *priv = uniphier_sd_priv(host);
-+	struct dma_chan *chan;
-+
-+	chan = dma_request_chan(mmc_dev(host->mmc), "rx-tx");
-+	if (IS_ERR(chan)) {
-+		dev_warn(mmc_dev(host->mmc),
-+			 "failed to request DMA channel. falling back to PIO\n");
-+		return;	/* just use PIO even for -EPROBE_DEFER */
-+	}
-+
-+	/* this driver uses a single channel for both RX an TX */
-+	priv->chan = chan;
-+	host->chan_rx = chan;
-+	host->chan_tx = chan;
-+
-+	tasklet_init(&host->dma_issue, uniphier_sd_external_dma_issue,
-+		     (unsigned long)host);
-+}
-+
-+static void uniphier_sd_external_dma_release(struct tmio_mmc_host *host)
-+{
-+	struct uniphier_sd_priv *priv = uniphier_sd_priv(host);
-+
-+	if (priv->chan)
-+		dma_release_channel(priv->chan);
-+}
-+
-+static void uniphier_sd_external_dma_abort(struct tmio_mmc_host *host)
-+{
-+	struct uniphier_sd_priv *priv = uniphier_sd_priv(host);
-+
-+	uniphier_sd_dma_endisable(host, 0);
-+
-+	if (priv->chan)
-+		dmaengine_terminate_sync(priv->chan);
-+}
-+
-+static void uniphier_sd_external_dma_dataend(struct tmio_mmc_host *host)
-+{
-+	struct uniphier_sd_priv *priv = uniphier_sd_priv(host);
-+
-+	dma_unmap_sg(mmc_dev(host->mmc), host->sg_ptr, host->sg_len,
-+		     priv->dma_dir);
-+
-+	uniphier_sd_dma_endisable(host, 0);
-+
-+	tmio_mmc_do_data_irq(host);
-+}
-+
-+static const struct tmio_mmc_dma_ops uniphier_sd_external_dma_ops = {
-+	.start = uniphier_sd_external_dma_start,
-+	.enable = uniphier_sd_external_dma_enable,
-+	.request = uniphier_sd_external_dma_request,
-+	.release = uniphier_sd_external_dma_release,
-+	.abort = uniphier_sd_external_dma_abort,
-+	.dataend = uniphier_sd_external_dma_dataend,
-+};
-+
-+static void uniphier_sd_internal_dma_issue(unsigned long arg)
-+{
-+	struct tmio_mmc_host *host = (void *)arg;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&host->lock, flags);
-+	tmio_mmc_enable_mmc_irqs(host, TMIO_STAT_DATAEND);
-+	spin_unlock_irqrestore(&host->lock, flags);
-+
-+	uniphier_sd_dma_endisable(host, 1);
-+	writel(UNIPHIER_SD_DMA_CTL_START, host->ctl + UNIPHIER_SD_DMA_CTL);
-+}
-+
-+static void uniphier_sd_internal_dma_start(struct tmio_mmc_host *host,
-+					   struct mmc_data *data)
-+{
-+	struct uniphier_sd_priv *priv = uniphier_sd_priv(host);
-+	struct scatterlist *sg = host->sg_ptr;
-+	dma_addr_t dma_addr;
-+	unsigned int dma_mode_dir;
-+	u32 dma_mode;
-+	int sg_len;
-+
-+	if (WARN_ON(host->sg_len != 1))
-+		goto force_pio;
-+
-+	if (!IS_ALIGNED(sg->offset, 8))
-+		goto force_pio;
-+
-+	if (data->flags & MMC_DATA_READ) {
-+		priv->dma_dir = DMA_FROM_DEVICE;
-+		dma_mode_dir = UNIPHIER_SD_DMA_MODE_DIR_FROM_DEV;
-+	} else {
-+		priv->dma_dir = DMA_TO_DEVICE;
-+		dma_mode_dir = UNIPHIER_SD_DMA_MODE_DIR_TO_DEV;
-+	}
-+
-+	sg_len = dma_map_sg(mmc_dev(host->mmc), sg, 1, priv->dma_dir);
-+	if (sg_len == 0)
-+		goto force_pio;
-+
-+	dma_mode = FIELD_PREP(UNIPHIER_SD_DMA_MODE_DIR_MASK, dma_mode_dir);
-+	dma_mode |= FIELD_PREP(UNIPHIER_SD_DMA_MODE_WIDTH_MASK,
-+			       UNIPHIER_SD_DMA_MODE_WIDTH_64);
-+	dma_mode |= UNIPHIER_SD_DMA_MODE_ADDR_INC;
-+
-+	writel(dma_mode, host->ctl + UNIPHIER_SD_DMA_MODE);
-+
-+	dma_addr = sg_dma_address(data->sg);
-+	writel(lower_32_bits(dma_addr), host->ctl + UNIPHIER_SD_DMA_ADDR_L);
-+	writel(upper_32_bits(dma_addr), host->ctl + UNIPHIER_SD_DMA_ADDR_H);
-+
-+	return;
-+force_pio:
-+	host->force_pio = true;
-+	uniphier_sd_dma_endisable(host, 0);
-+}
-+
-+static void uniphier_sd_internal_dma_enable(struct tmio_mmc_host *host,
-+					    bool enable)
-+{
-+}
-+
-+static void uniphier_sd_internal_dma_request(struct tmio_mmc_host *host,
-+					     struct tmio_mmc_data *pdata)
-+{
-+	struct uniphier_sd_priv *priv = uniphier_sd_priv(host);
-+
-+	/*
-+	 * Due to a hardware bug, Pro5 cannot use DMA for RX.
-+	 * We can still use DMA for TX, but PIO for RX.
-+	 */
-+	if (!(priv->caps & UNIPHIER_SD_CAP_BROKEN_DMA_RX))
-+		host->chan_rx = (void *)0xdeadbeaf;
-+
-+	host->chan_tx = (void *)0xdeadbeaf;
-+
-+	tasklet_init(&host->dma_issue, uniphier_sd_internal_dma_issue,
-+		     (unsigned long)host);
-+}
-+
-+static void uniphier_sd_internal_dma_release(struct tmio_mmc_host *host)
-+{
-+	/* Each value is set to zero to assume "disabling" each DMA */
-+	host->chan_rx = NULL;
-+	host->chan_tx = NULL;
-+}
-+
-+static void uniphier_sd_internal_dma_abort(struct tmio_mmc_host *host)
-+{
-+	u32 tmp;
-+
-+	uniphier_sd_dma_endisable(host, 0);
-+
-+	tmp = readl(host->ctl + UNIPHIER_SD_DMA_RST);
-+	tmp &= ~(UNIPHIER_SD_DMA_RST_CH1 | UNIPHIER_SD_DMA_RST_CH0);
-+	writel(tmp, host->ctl + UNIPHIER_SD_DMA_RST);
-+
-+	tmp |= UNIPHIER_SD_DMA_RST_CH1 | UNIPHIER_SD_DMA_RST_CH0;
-+	writel(tmp, host->ctl + UNIPHIER_SD_DMA_RST);
-+}
-+
-+static void uniphier_sd_internal_dma_dataend(struct tmio_mmc_host *host)
-+{
-+	struct uniphier_sd_priv *priv = uniphier_sd_priv(host);
-+
-+	uniphier_sd_dma_endisable(host, 0);
-+	dma_unmap_sg(mmc_dev(host->mmc), host->sg_ptr, 1, priv->dma_dir);
-+
-+	tmio_mmc_do_data_irq(host);
-+}
-+
-+static const struct tmio_mmc_dma_ops uniphier_sd_internal_dma_ops = {
-+	.start = uniphier_sd_internal_dma_start,
-+	.enable = uniphier_sd_internal_dma_enable,
-+	.request = uniphier_sd_internal_dma_request,
-+	.release = uniphier_sd_internal_dma_release,
-+	.abort = uniphier_sd_internal_dma_abort,
-+	.dataend = uniphier_sd_internal_dma_dataend,
-+};
-+
-+static int uniphier_sd_clk_enable(struct tmio_mmc_host *host)
-+{
-+	struct uniphier_sd_priv *priv = uniphier_sd_priv(host);
-+	struct mmc_host *mmc = host->mmc;
-+	int ret;
-+
-+	ret = clk_prepare_enable(priv->clk);
-+	if (ret)
-+		return ret;
-+
-+	ret = clk_set_rate(priv->clk, ULONG_MAX);
-+	if (ret)
-+		goto disable_clk;
-+
-+	priv->clk_rate = clk_get_rate(priv->clk);
-+
-+	/* If max-frequency property is set, use it. */
-+	if (!mmc->f_max)
-+		mmc->f_max = priv->clk_rate;
-+
-+	/*
-+	 * 1/512 is the finest divisor in the original IP.  Newer versions
-+	 * also supports 1/1024 divisor. (UniPhier-specific extension)
-+	 */
-+	if (priv->caps & UNIPHIER_SD_CAP_EXTENDED_IP)
-+		mmc->f_min = priv->clk_rate / 1024;
-+	else
-+		mmc->f_min = priv->clk_rate / 512;
-+
-+	ret = reset_control_deassert(priv->rst);
-+	if (ret)
-+		goto disable_clk;
-+
-+	ret = reset_control_deassert(priv->rst_br);
-+	if (ret)
-+		goto assert_rst;
-+
-+	return 0;
-+
-+assert_rst:
-+	reset_control_assert(priv->rst);
-+disable_clk:
-+	clk_disable_unprepare(priv->clk);
-+
-+	return ret;
-+}
-+
-+static void uniphier_sd_clk_disable(struct tmio_mmc_host *host)
-+{
-+	struct uniphier_sd_priv *priv = uniphier_sd_priv(host);
-+
-+	reset_control_assert(priv->rst_br);
-+	reset_control_assert(priv->rst);
-+	clk_disable_unprepare(priv->clk);
-+}
-+
-+static void uniphier_sd_hw_reset(struct tmio_mmc_host *host)
-+{
-+	struct uniphier_sd_priv *priv = uniphier_sd_priv(host);
-+
-+	reset_control_assert(priv->rst_hw);
-+	/* For eMMC, minimum is 1us but give it 9us for good measure */
-+	udelay(9);
-+	reset_control_deassert(priv->rst_hw);
-+	/* For eMMC, minimum is 200us but give it 300us for good measure */
-+	usleep_range(300, 1000);
-+}
-+
-+static void uniphier_sd_set_clock(struct tmio_mmc_host *host,
-+				  unsigned int clock)
-+{
-+	struct uniphier_sd_priv *priv = uniphier_sd_priv(host);
-+	unsigned long divisor;
-+	u32 tmp;
-+
-+	tmp = readl(host->ctl + (CTL_SD_CARD_CLK_CTL << 1));
-+
-+	/* stop the clock before changing its rate to avoid a glitch signal */
-+	tmp &= ~CLK_CTL_SCLKEN;
-+	writel(tmp, host->ctl + (CTL_SD_CARD_CLK_CTL << 1));
-+
-+	if (clock == 0)
-+		return;
-+
-+	tmp &= ~UNIPHIER_SD_CLK_CTL_DIV1024;
-+	tmp &= ~UNIPHIER_SD_CLK_CTL_DIV1;
-+	tmp &= ~CLK_CTL_DIV_MASK;
-+
-+	divisor = priv->clk_rate / clock;
-+
-+	/*
-+	 * In the original IP, bit[7:0] represents the divisor.
-+	 * bit7 set: 1/512, ... bit0 set:1/4, all bits clear: 1/2
-+	 *
-+	 * The IP does not define a way to achieve 1/1.  For UniPhier variants,
-+	 * bit10 is used for 1/1.  Newer versions of UniPhier variants use
-+	 * bit16 for 1/1024.
-+	 */
-+	if (divisor <= 1)
-+		tmp |= UNIPHIER_SD_CLK_CTL_DIV1;
-+	else if (priv->caps & UNIPHIER_SD_CAP_EXTENDED_IP && divisor > 512)
-+		tmp |= UNIPHIER_SD_CLK_CTL_DIV1024;
-+	else
-+		tmp |= roundup_pow_of_two(divisor) >> 2;
-+
-+	writel(tmp, host->ctl + (CTL_SD_CARD_CLK_CTL << 1));
-+
-+	tmp |= CLK_CTL_SCLKEN;
-+	writel(tmp, host->ctl + (CTL_SD_CARD_CLK_CTL << 1));
-+}
-+
-+static void uniphier_sd_host_init(struct tmio_mmc_host *host)
-+{
-+	struct uniphier_sd_priv *priv = uniphier_sd_priv(host);
-+	u32 val;
-+
-+	/*
-+	 * Connected to 32bit AXI.
-+	 * This register holds settings for SoC-specific internal bus
-+	 * connection.  What is worse, the register spec was changed,
-+	 * breaking the backward compatibility.  Write an appropriate
-+	 * value depending on a flag associated with a compatible string.
-+	 */
-+	if (priv->caps & UNIPHIER_SD_CAP_EXTENDED_IP)
-+		val = 0x00000101;
-+	else
-+		val = 0x00000000;
-+
-+	writel(val, host->ctl + UNIPHIER_SD_HOST_MODE);
-+
-+	val = 0;
-+	/*
-+	 * If supported, the controller can automatically
-+	 * enable/disable the clock line to the card.
-+	 */
-+	if (priv->caps & UNIPHIER_SD_CAP_EXTENDED_IP)
-+		val |= UNIPHIER_SD_CLKCTL_OFFEN;
-+
-+	writel(val, host->ctl + (CTL_SD_CARD_CLK_CTL << 1));
-+}
-+
-+static int uniphier_sd_start_signal_voltage_switch(struct mmc_host *mmc,
-+						   struct mmc_ios *ios)
-+{
-+	struct tmio_mmc_host *host = mmc_priv(mmc);
-+	struct uniphier_sd_priv *priv = uniphier_sd_priv(host);
-+	struct pinctrl_state *pinstate;
-+	u32 val, tmp;
-+
-+	switch (ios->signal_voltage) {
-+	case MMC_SIGNAL_VOLTAGE_330:
-+		val = UNIPHIER_SD_VOLT_330;
-+		pinstate = priv->pinstate_default;
-+		break;
-+	case MMC_SIGNAL_VOLTAGE_180:
-+		val = UNIPHIER_SD_VOLT_180;
-+		pinstate = priv->pinstate_uhs;
-+		break;
-+	default:
-+		return -ENOTSUPP;
-+	}
-+
-+	tmp = readl(host->ctl + UNIPHIER_SD_VOLT);
-+	tmp &= ~UNIPHIER_SD_VOLT_MASK;
-+	tmp |= FIELD_PREP(UNIPHIER_SD_VOLT_MASK, val);
-+	writel(tmp, host->ctl + UNIPHIER_SD_VOLT);
-+
-+	pinctrl_select_state(priv->pinctrl, pinstate);
-+
-+	return 0;
-+}
-+
-+static int uniphier_sd_uhs_init(struct tmio_mmc_host *host,
-+				struct uniphier_sd_priv *priv)
-+{
-+	priv->pinctrl = devm_pinctrl_get(mmc_dev(host->mmc));
-+	if (IS_ERR(priv->pinctrl))
-+		return PTR_ERR(priv->pinctrl);
-+
-+	priv->pinstate_default = pinctrl_lookup_state(priv->pinctrl,
-+						      PINCTRL_STATE_DEFAULT);
-+	if (IS_ERR(priv->pinstate_default))
-+		return PTR_ERR(priv->pinstate_default);
-+
-+	priv->pinstate_uhs = pinctrl_lookup_state(priv->pinctrl, "uhs");
-+	if (IS_ERR(priv->pinstate_uhs))
-+		return PTR_ERR(priv->pinstate_uhs);
-+
-+	host->ops.start_signal_voltage_switch =
-+					uniphier_sd_start_signal_voltage_switch;
-+
-+	return 0;
-+}
-+
-+static int uniphier_sd_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct uniphier_sd_priv *priv;
-+	struct tmio_mmc_data *tmio_data;
-+	struct tmio_mmc_host *host;
-+	int irq, ret;
-+
-+	irq = platform_get_irq(pdev, 0);
-+	if (irq < 0) {
-+		dev_err(dev, "failed to get IRQ number");
-+		return irq;
-+	}
-+
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	priv->caps = (unsigned long)of_device_get_match_data(dev);
-+
-+	priv->clk = devm_clk_get(dev, NULL);
-+	if (IS_ERR(priv->clk)) {
-+		dev_err(dev, "failed to get clock\n");
-+		return PTR_ERR(priv->clk);
-+	}
-+
-+	priv->rst = devm_reset_control_get_shared(dev, "host");
-+	if (IS_ERR(priv->rst)) {
-+		dev_err(dev, "failed to get host reset\n");
-+		return PTR_ERR(priv->rst);
-+	}
-+
-+	/* old version has one more reset */
-+	if (!(priv->caps & UNIPHIER_SD_CAP_EXTENDED_IP)) {
-+		priv->rst_br = devm_reset_control_get_shared(dev, "bridge");
-+		if (IS_ERR(priv->rst_br)) {
-+			dev_err(dev, "failed to get bridge reset\n");
-+			return PTR_ERR(priv->rst_br);
-+		}
-+	}
-+
-+	tmio_data = &priv->tmio_data;
-+	tmio_data->flags |= TMIO_MMC_32BIT_DATA_PORT;
-+
-+	host = tmio_mmc_host_alloc(pdev, tmio_data);
-+	if (IS_ERR(host))
-+		return PTR_ERR(host);
-+
-+	if (host->mmc->caps & MMC_CAP_HW_RESET) {
-+		priv->rst_hw = devm_reset_control_get_exclusive(dev, "hw");
-+		if (IS_ERR(priv->rst_hw)) {
-+			dev_err(dev, "failed to get hw reset\n");
-+			ret = PTR_ERR(priv->rst_hw);
-+			goto free_host;
-+		}
-+		host->hw_reset = uniphier_sd_hw_reset;
-+	}
-+
-+	if (host->mmc->caps & MMC_CAP_UHS) {
-+		ret = uniphier_sd_uhs_init(host, priv);
-+		if (ret) {
-+			dev_warn(dev,
-+				 "failed to setup UHS (error %d).  Disabling UHS.",
-+				 ret);
-+			host->mmc->caps &= ~MMC_CAP_UHS;
-+		}
-+	}
-+
-+	ret = devm_request_irq(dev, irq, tmio_mmc_irq, IRQF_SHARED,
-+			       dev_name(dev), host);
-+	if (ret)
-+		goto free_host;
-+
-+	if (priv->caps & UNIPHIER_SD_CAP_EXTENDED_IP)
-+		host->dma_ops = &uniphier_sd_internal_dma_ops;
-+	else
-+		host->dma_ops = &uniphier_sd_external_dma_ops;
-+
-+	host->bus_shift = 1;
-+	host->clk_enable = uniphier_sd_clk_enable;
-+	host->clk_disable = uniphier_sd_clk_disable;
-+	host->set_clock = uniphier_sd_set_clock;
-+
-+	ret = uniphier_sd_clk_enable(host);
-+	if (ret)
-+		goto free_host;
-+
-+	uniphier_sd_host_init(host);
-+
-+	tmio_data->ocr_mask = MMC_VDD_32_33 | MMC_VDD_33_34;
-+	if (host->mmc->caps & MMC_CAP_UHS)
-+		tmio_data->ocr_mask |= MMC_VDD_165_195;
-+
-+	tmio_data->max_segs = 1;
-+	tmio_data->max_blk_count = U16_MAX;
-+
-+	ret = tmio_mmc_host_probe(host);
-+	if (ret)
-+		goto free_host;
-+
-+	return 0;
-+
-+free_host:
-+	tmio_mmc_host_free(host);
-+
-+	return ret;
-+}
-+
-+static int uniphier_sd_remove(struct platform_device *pdev)
-+{
-+	struct tmio_mmc_host *host = platform_get_drvdata(pdev);
-+
-+	tmio_mmc_host_remove(host);
-+	uniphier_sd_clk_disable(host);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id uniphier_sd_match[] = {
-+	{
-+		.compatible = "socionext,uniphier-sd-v2.91",
-+	},
-+	{
-+		.compatible = "socionext,uniphier-sd-v3.1",
-+		.data = (void *)(UNIPHIER_SD_CAP_EXTENDED_IP |
-+				 UNIPHIER_SD_CAP_BROKEN_DMA_RX),
-+	},
-+	{
-+		.compatible = "socionext,uniphier-sd-v3.1b",
-+		.data = (void *)UNIPHIER_SD_CAP_EXTENDED_IP,
-+	},
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, uniphier_sd_match);
-+
-+static struct platform_driver uniphier_sd_driver = {
-+	.probe = uniphier_sd_probe,
-+	.remove = uniphier_sd_remove,
-+	.driver = {
-+		.name = "uniphier-sd",
-+		.of_match_table = uniphier_sd_match,
-+	},
-+};
-+module_platform_driver(uniphier_sd_driver);
-+
-+MODULE_AUTHOR("Masahiro Yamada <yamada.masahiro@socionext.com>");
-+MODULE_DESCRIPTION("UniPhier SD/eMMC host controller driver");
-+MODULE_LICENSE("GPL v2");
++++ b/Documentation/devicetree/bindings/mmc/uniphier-sd.txt
+@@ -0,0 +1,60 @@
++UniPhier SD/eMMC controller
++
++Required properties:
++- compatible: should be one of the following:
++    "socionext,uniphier-sd-v2.91" - IP version 2.91
++    "socionext,uniphier-sd-v3.1"  - IP version 3.1
++    "socionext,uniphier-sd-v3.1b" - IP version 3.1 (bug-fix ver.) [1]
++- reg: offset and length of the register set for the device.
++- interrupts: a single interrupt specifier.
++- clocks: a single clock specifier of the controller clock.
++- reset-names: should contain the following:
++    "host"   - mandatory for all versions
++    "bridge" - should exist only for "socionext,uniphier-sd-v2.91"
++    "hw"     - should exist if eMMC hw reset line is available
++- resets: a list of reset specifiers, corresponding to the reset-names
++
++[1] There are two different controller cores for version 3.1.  The early
++    release had a bug in the DMA RX channel.  The issue was fixed later,
++    but the version number was not incremented.  Hence, the latter has
++    'b' at the end of its compatible string.
++
++Optional properties:
++- pinctrl-names: if present, should contain the following:
++    "default" - should exist for all instances
++    "uhs"     - should exist for SD instance with UHS support
++- pinctrl-0: pin control state for the default mode
++- pinctrl-1: pin control state for the UHS mode
++- dma-names: should be "rx-tx" if present.
++  This property can exist only for "socionext,uniphier-sd-v2.91".
++- dmas: a single DMA channel specifier
++  This property can exist only for "socionext,uniphier-sd-v2.91".
++- bus-width: see mmc.txt
++- cap-sd-highspeed: see mmc.txt
++- cap-mmc-highspeed: see mmc.txt
++- sd-uhs-sdr12: see mmc.txt
++- sd-uhs-sdr25: see mmc.txt
++- sd-uhs-sdr50: see mmc.txt
++- cap-mmc-hw-reset: should exist if reset-names contains "hw". see mmc.txt
++- non-removable: see mmc.txt
++
++Example:
++
++	sd: sdhc@5a400000 {
++		compatible = "socionext,uniphier-sd-v2.91";
++		reg = <0x5a400000 0x200>;
++		interrupts = <0 76 4>;
++		pinctrl-names = "default", "uhs";
++		pinctrl-0 = <&pinctrl_sd>;
++		pinctrl-1 = <&pinctrl_sd_uhs>;
++		clocks = <&mio_clk 0>;
++		reset-names = "host", "bridge";
++		resets = <&mio_rst 0>, <&mio_rst 3>;
++		dma-names = "rx-tx";
++		dmas = <&dmac 4>;
++		bus-width = <4>;
++		cap-sd-highspeed;
++		sd-uhs-sdr12;
++		sd-uhs-sdr25;
++		sd-uhs-sdr50;
++	};
 -- 
 2.7.4
 
