@@ -6,45 +6,40 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 143C7C46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:57:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93648C46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:57:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE5FA2151D
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:57:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE5FA2151D
+	by mail.kernel.org (Postfix) with ESMTP id 586A12172F
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:57:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 586A12172F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390680AbeHGVNN (ORCPT
+        id S2390694AbeHGVNQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 17:13:13 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34580 "EHLO
+        Tue, 7 Aug 2018 17:13:16 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34590 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389340AbeHGVNN (ORCPT
+        with ESMTP id S2389340AbeHGVNO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 17:13:13 -0400
+        Tue, 7 Aug 2018 17:13:14 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AEE773EE;
-        Tue,  7 Aug 2018 18:57:27 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A73EA74;
+        Tue,  7 Aug 2018 18:57:30 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chintan Pandya <cpandya@codeaurora.org>,
+        stable@vger.kernel.org, Mathieu Malaterre <malat@debian.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Byungchul Park <byungchul.park@lge.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Laura Abbott <labbott@redhat.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Wei Yang <richard.weiyang@gmail.com>,
-        Yisheng Xie <xieyisheng1@huawei.com>,
+        Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 07/85] mm: vmalloc: avoid racy handling of debugobjects in vunmap
-Date:   Tue,  7 Aug 2018 20:51:09 +0200
-Message-Id: <20180807172357.631845675@linuxfoundation.org>
+Subject: [PATCH 3.18 08/85] mm/slub.c: add __printf verification to slab_err()
+Date:   Tue,  7 Aug 2018 20:51:10 +0200
+Message-Id: <20180807172357.671852068@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180807172357.357252052@linuxfoundation.org>
 References: <20180807172357.357252052@linuxfoundation.org>
@@ -61,64 +56,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chintan Pandya <cpandya@codeaurora.org>
+From: Mathieu Malaterre <malat@debian.org>
 
-[ Upstream commit f3c01d2f3ade6790db67f80fef60df84424f8964 ]
+[ Upstream commit a38965bf941b7c2af50de09c96bc5f03e136caef ]
 
-Currently, __vunmap flow is,
- 1) Release the VM area
- 2) Free the debug objects corresponding to that vm area.
+__printf is useful to verify format and arguments.  Remove the following
+warning (with W=1):
 
-This leave some race window open.
- 1) Release the VM area
- 1.5) Some other client gets the same vm area
- 1.6) This client allocates new debug objects on the same
-      vm area
- 2) Free the debug objects corresponding to this vm area.
+  mm/slub.c:721:2: warning: function might be possible candidate for `gnu_printf' format attribute [-Wsuggest-attribute=format]
 
-Here, we actually free 'other' client's debug objects.
-
-Fix this by freeing the debug objects first and then releasing the VM
-area.
-
-Link: http://lkml.kernel.org/r/1523961828-9485-2-git-send-email-cpandya@codeaurora.org
-Signed-off-by: Chintan Pandya <cpandya@codeaurora.org>
+Link: http://lkml.kernel.org/r/20180505200706.19986-1-malat@debian.org
+Signed-off-by: Mathieu Malaterre <malat@debian.org>
 Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Byungchul Park <byungchul.park@lge.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Florian Fainelli <f.fainelli@gmail.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Laura Abbott <labbott@redhat.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: Wei Yang <richard.weiyang@gmail.com>
-Cc: Yisheng Xie <xieyisheng1@huawei.com>
+Cc: Christoph Lameter <cl@linux.com>
+Cc: Pekka Enberg <penberg@kernel.org>
+Cc: David Rientjes <rientjes@google.com>
+Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- mm/vmalloc.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ mm/slub.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/mm/vmalloc.c
-+++ b/mm/vmalloc.c
-@@ -1440,7 +1440,7 @@ static void __vunmap(const void *addr, i
- 			addr))
- 		return;
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@ -636,7 +636,7 @@ static void object_err(struct kmem_cache
+ 	print_trailer(s, page, object);
+ }
  
--	area = remove_vm_area(addr);
-+	area = find_vmap_area((unsigned long)addr)->vm;
- 	if (unlikely(!area)) {
- 		WARN(1, KERN_ERR "Trying to vfree() nonexistent vm area (%p)\n",
- 				addr);
-@@ -1450,6 +1450,7 @@ static void __vunmap(const void *addr, i
- 	debug_check_no_locks_freed(addr, area->size);
- 	debug_check_no_obj_freed(addr, area->size);
- 
-+	remove_vm_area(addr);
- 	if (deallocate_pages) {
- 		int i;
- 
+-static void slab_err(struct kmem_cache *s, struct page *page,
++static __printf(3, 4) void slab_err(struct kmem_cache *s, struct page *page,
+ 			const char *fmt, ...)
+ {
+ 	va_list args;
 
 
