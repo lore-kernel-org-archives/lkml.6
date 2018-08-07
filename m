@@ -2,88 +2,107 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFF0CC46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 15:13:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F26ECC46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 15:17:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 978F1217B7
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 15:13:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Nim+dOlR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 978F1217B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id ABC1C217B7
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 15:17:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABC1C217B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403876AbeHGR2g (ORCPT
+        id S2389799AbeHGRbx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 13:28:36 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:49364 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389181AbeHGR2g (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 13:28:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        MIME-Version:Date:Message-ID:Subject:From:Cc:To:Sender:Reply-To:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=GUWIlZ8RUG/i34piD/c1KndbP93iicdVbVLs+hrfJr0=; b=Nim+dOlRKTRVyXsLjLK+MD17pV
-        Om+UgI7+xkv70OnhUnXDhEiy5XJmC0ORq2tW8rhlJ7im0Q4fUVxBP2g/uU62r5amWFMvV9P0d+Pws
-        LLFp1C1YUco+otnjpxgihuSHHRiXvf4sskxsUQ784rDmFIBFc1dqrlChX01vk3cqo+2RY9+9T/JC9
-        YhSJ7JUH7O9lw5uHm+3p4w4D7AbOeUqQGrKILVVCweEmcb2Xv61FdeH9t/xvc7Pmozrbm41erJh+f
-        tK9oYFxEnWwwtd6quohGOp6ds6t3Vb/rH+oO0TQ9voGvVSUyj2Cj5nmrXhlDqMd+0/2PLtfsTb3LT
-        /uHAyPrw==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fn3gA-0000nT-Pe; Tue, 07 Aug 2018 15:13:47 +0000
-To:     linux-media <linux-media@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc:     Jacopo Mondi <jacopo@jmondi.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH -next] media/i2c: fix mt9v111.c build error
-Message-ID: <61037652-d37e-387a-7f32-7730c03e1e45@infradead.org>
-Date:   Tue, 7 Aug 2018 08:13:41 -0700
+        Tue, 7 Aug 2018 13:31:53 -0400
+Received: from mx2.suse.de ([195.135.220.15]:35576 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388872AbeHGRbw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 13:31:52 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 40F9FAE29;
+        Tue,  7 Aug 2018 15:17:03 +0000 (UTC)
+Subject: Re: [PATCH] xen: don't use privcmd_call() from xen_mc_flush()
+To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org
+References: <20180613095806.2978-1-jgross@suse.com>
+ <2a9600b0-3b49-7835-a664-9deb30b100a4@suse.com>
+ <a4f76a2a-128f-3e2a-44ee-04d57ab5be12@oracle.com>
+From:   Juergen Gross <jgross@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <ff2b390c-3b4f-67c4-5a1c-35be121fe281@suse.com>
+Date:   Tue, 7 Aug 2018 17:17:02 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
+In-Reply-To: <a4f76a2a-128f-3e2a-44ee-04d57ab5be12@oracle.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Language: de-DE
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+On 07/08/18 16:02, Boris Ostrovsky wrote:
+> On 08/07/2018 09:11 AM, Juergen Gross wrote:
+>> On 13/06/18 11:58, Juergen Gross wrote:
+>>> Using privcmd_call() for a singleton multicall seems to be wrong, as
+>>> privcmd_call() is using stac()/clac() to enable hypervisor access to
+>>> Linux user space.
+>>>
+>>> Add a new xen_single_call() function to be use for that purpose.
+>>>
+>>> Reported-by: Jan Beulich <jbeulich@suse.com>
+>>> Signed-off-by: Juergen Gross <jgross@suse.com>
+>> Boris, any objections?
+> 
+> 
+> I think Jan wanted a change in commit message. I can commit with this:
+> 
+> "Using privcmd_call() for a singleton multicall seems to be wrong, as
+>  privcmd_call() is using stac()/clac() to enable hypervisor access to
+>  Linux user space.
+> 
+>  Even if currently not a problem (pv domains can't use SMAP while HVM
+>  and PVH domains can't use multicalls) things might change when
+>  PVH dom0 support is added to the kernel."
 
-Fix build error in mt9v111.c when
-# CONFIG_VIDEO_V4L2_SUBDEV_API is not set
-
-../drivers/media/i2c/mt9v111.c: In function ‘__mt9v111_get_pad_format’:
-../drivers/media/i2c/mt9v111.c:801:3: error: implicit declaration of function ‘v4l2_subdev_get_try_format’ [-Werror=implicit-function-declaration]
-   return v4l2_subdev_get_try_format(&mt9v111->sd, cfg, pad);
-
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Jacopo Mondi <jacopo@jmondi.org>
----
- drivers/media/i2c/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- linux-next-20180807.orig/drivers/media/i2c/Kconfig
-+++ linux-next-20180807/drivers/media/i2c/Kconfig
-@@ -875,7 +875,7 @@ config VIDEO_MT9V032
- 
- config VIDEO_MT9V111
- 	tristate "Aptina MT9V111 sensor support"
--	depends on I2C && VIDEO_V4L2
-+	depends on I2C && VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API
- 	depends on MEDIA_CAMERA_SUPPORT
- 	help
- 	  This is a Video4Linux2 sensor driver for the Aptina/Micron
+This would be fine, thanks.
 
 
+Juergen
