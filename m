@@ -2,234 +2,141 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A744CC46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 13:18:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19AA2C46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 13:19:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5EB3E20897
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 13:18:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5EB3E20897
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id BAD9321770
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 13:19:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="cA1/duZ9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BAD9321770
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389087AbeHGPcx (ORCPT
+        id S2389121AbeHGPeK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 11:32:53 -0400
-Received: from mx2.suse.de ([195.135.220.15]:40604 "EHLO mx1.suse.de"
+        Tue, 7 Aug 2018 11:34:10 -0400
+Received: from mail-bn3nam01on0063.outbound.protection.outlook.com ([104.47.33.63]:19646
+        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727605AbeHGPcx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 11:32:53 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 5E163ACD3;
-        Tue,  7 Aug 2018 13:18:32 +0000 (UTC)
-Subject: Re: [PATCH] proc: add percpu populated pages count to meminfo
-To:     Dennis Zhou <dennisszhou@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Tejun Heo <tj@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Christoph Lameter <cl@linux.com>, Roman Gushchin <guro@fb.com>
-Cc:     kernel-team@fb.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Linux API <linux-api@vger.kernel.org>
-References: <20180807005607.53950-1-dennisszhou@gmail.com>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
- 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
- cqmP8roqufIAj+Ohhzs=
-Message-ID: <3b792413-184b-20b1-9d90-9e69f0df8cc4@suse.cz>
-Date:   Tue, 7 Aug 2018 15:18:31 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180807005607.53950-1-dennisszhou@gmail.com>
-Content-Type: text/plain; charset=utf-8
+        id S1727605AbeHGPeJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 11:34:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=sHcr5nDyR4XBjKjDFSf8noB8BkQy0j32Q0yCMykocdo=;
+ b=cA1/duZ9zQU8/XJdYDKD9PVVR0tuYPkltlny1MMap9kA1ap9xs8Yqpv0brdlNSuHTuFObfahUHdjrYZPFwEy84yB6R1GKAtcWVtqhm0s41sHBgpGg56AuPTqN6Pp3nPPTYYOA/SqqPnqOfnwT66Nb7LvblJ8RWoWrEleOpARQlo=
+Received: from SN6PR02MB4862.namprd02.prod.outlook.com (52.135.116.24) by
+ SN6PR02MB4015.namprd02.prod.outlook.com (52.135.69.144) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1017.19; Tue, 7 Aug 2018 13:19:48 +0000
+Received: from SN6PR02MB4862.namprd02.prod.outlook.com
+ ([fe80::29ee:2dd6:e6e1:32b]) by SN6PR02MB4862.namprd02.prod.outlook.com
+ ([fe80::29ee:2dd6:e6e1:32b%5]) with mapi id 15.20.1017.019; Tue, 7 Aug 2018
+ 13:19:46 +0000
+From:   Bharat Kumar Gogada <bharatku@xilinx.com>
+To:     Bjorn Helgaas <helgaas@kernel.org>, Sinan Kaya <okaya@kernel.org>
+CC:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        Ravikiran Gummaluri <rgummal@xilinx.com>
+Subject: RE: [PATCH 3/3] PCI/portdrv: Add support for sharing xilinx
+ controller irq with AER
+Thread-Topic: [PATCH 3/3] PCI/portdrv: Add support for sharing xilinx
+ controller irq with AER
+Thread-Index: AQHUKbewi3/JYjdOjEeN1+ktKQ2ulKSrMO6AgAgLdQCAARHjoA==
+Date:   Tue, 7 Aug 2018 13:19:44 +0000
+Message-ID: <SN6PR02MB4862625E305AE74F3E4F11F3A5270@SN6PR02MB4862.namprd02.prod.outlook.com>
+References: <1533141889-19962-1-git-send-email-bharat.kumar.gogada@xilinx.com>
+ <1533141889-19962-4-git-send-email-bharat.kumar.gogada@xilinx.com>
+ <7d5ae8ed-5623-3cd2-7769-77702448b2d6@kernel.org>
+ <20180806205614.GC30691@bhelgaas-glaptop.roam.corp.google.com>
+In-Reply-To: <20180806205614.GC30691@bhelgaas-glaptop.roam.corp.google.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=bharatku@xilinx.com; 
+x-originating-ip: [149.199.50.133]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;SN6PR02MB4015;6:LgWz33LrQXX7HH1rooF3jvm58h9kdPfAO8YVJ8EULcvU/DfzWz3SJ+zgdn3ILa+RPvocTlZ8HmZpNtme/SKzbMWuzbkjT/7bgnuv8ILlixCMtpD71DcYn8U8WhsiYnAKvKlfVZj6d2bYsXfJebfq8AU0Q7Nq1WpNw2YqPE40t/1wVaiYFCqSu60FP6JMIz7aPaAmIJ8VgLs9JMVN9AxPYQ9oCyHovMcJCtVGI/MFyL7a0dBLMLT1YJVPg6UJ1VQlvgiFge7e05EqeY72bRmPyVLym5V6TrBziwyyWgRe05BchH/8+ZnTR9rpI56Xsp5RJ8Z+VgvtNbWwTSguQfP4dsJXODrrlRscNSHotlF81Rhf5Jk1vVMpUjKZ+WwsgEXuW4n/TK3HhOylXZVyeUJPzO9ekii0EtFrSkarKCB+0+LFw56ccWrXzsyu4K0XDaAM9fi8ikvXPGR+nGEYH9V6dA==;5:VZO6QzFvT0+Oomxz83zqRCeCHd0oFZMpE/PbjrT7IIIlzk1Fl1nTSN5cJKGVJaCggcgBQ9kbR1YEIltoxVqYXJoiQI0VuCwnBJXNLAz9avr8ghE+26weoLjEYIJFTvjTaZiBcx9xTd/A6bib4RvGZGdMWDPDEmHkvQlKniGT5z4=;7:Lf+Aczy/YpC6H4itakOoXFvMSaQSwqPVDxKzXjcMKCVai1W4WMOeNF8B4xBEemFPowPCJZ0g/y9rxMnLIQeLt19Hx0BbRneq2qf5xQDX4Z4UIqvyAOImtOhZbElksabPArnkw4Q3DBxXDcWuWPcSAbadtyDr31dNqP/ah7E5n5Qhxq9TrGbe3f3oSR/IWk7BeSixtI0s+gl7Hy3cxnRWZreRykpIMJ3Nzv+vcA9nYmrVPddKmOgrx+nov1wD+M/B
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(136003)(346002)(376002)(39860400002)(366004)(396003)(189003)(199004)(107886003)(81156014)(66066001)(8676002)(7696005)(76176011)(68736007)(99286004)(5250100002)(3846002)(6116002)(6246003)(33656002)(97736004)(25786009)(316002)(81166006)(110136005)(54906003)(4326008)(93886005)(5660300001)(186003)(26005)(6436002)(6506007)(2906002)(102836004)(53546011)(2900100001)(9686003)(53936002)(105586002)(55016002)(14454004)(106356001)(8936002)(256004)(229853002)(11346002)(7736002)(446003)(305945005)(486006)(476003)(478600001)(74316002)(86362001);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR02MB4015;H:SN6PR02MB4862.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-ms-office365-filtering-correlation-id: 8b42a884-0a14-46d0-1608-08d5fc687217
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:SN6PR02MB4015;
+x-ms-traffictypediagnostic: SN6PR02MB4015:
+x-microsoft-antispam-prvs: <SN6PR02MB4015DA92C560E47045951566A5270@SN6PR02MB4015.namprd02.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(192813158149592)(211171220733660);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3231311)(944501410)(52105095)(3002001)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123558120)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(6072148)(201708071742011)(7699016);SRVR:SN6PR02MB4015;BCL:0;PCL:0;RULEID:;SRVR:SN6PR02MB4015;
+x-forefront-prvs: 0757EEBDCA
+received-spf: None (protection.outlook.com: xilinx.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: dazDI0JXXB1ncojWmt9vfnVeN+le5gPWaku0IhGXqcO2OguwhS9fRFj77llBz7B6MuwEdZYAMJBuDAvnKjZ4PYTX91nUSYakHN1toUOvGblXOgbGOAzzQzGltxo07XclOi9YzcJBKCXjAjSOu3Wht/zaJ9q8dTVHgWQ9AHPmf3rTLjQKuYkIawqNy4J3aBJeTGDM5GMjlU91sSalZBz70y57RDM2Sp7N+oUxbrPsG++A/zIVJl05YEdteTik97wo3wi0SzdDfIdvHkmjbiTvCW5o7bUJSON8X/EfF94g8KYY4FAf+MaFyeNoUtbjHIlC+WdcXvXDb2lQjLhD3GCUGvpINb5Sga4iFlwH3B8obUc=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8b42a884-0a14-46d0-1608-08d5fc687217
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Aug 2018 13:19:45.4730
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR02MB4015
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+CC linux-api
+> Subject: Re: [PATCH 3/3] PCI/portdrv: Add support for sharing xilinx
+> controller irq with AER
+>=20
+> On Wed, Aug 01, 2018 at 11:05:09AM -0700, Sinan Kaya wrote:
+> > On 8/1/2018 9:44 AM, Bharat Kumar Gogada wrote:
+> > > Xilinx ZynqMP PS PCIe does not report AER interrupts using Advanced
+> > > Error Interrupt Message Number. The controller has dedicated
+> > > interrupt line for reporting PCIe errors along with AER.
+> > >
+> > > Using dedicated controller irq number for AER which is shared with
+> > > misc interrupt handler in pcie-xilinx-nwl. This irq number is set
+> > > using PCI quirk.
+> > >
+> > > Signed-off-by: Bharat Kumar Gogada<bharat.kumar.gogada@xilinx.com>
+> > > ---
+> > >   drivers/pci/pcie/portdrv_core.c |    4 ++++
+> > >   1 files changed, 4 insertions(+), 0 deletions(-)
+> > >
+> > > diff --git a/drivers/pci/pcie/portdrv_core.c
+> > > b/drivers/pci/pcie/portdrv_core.c index e0261ad..fa9150e 100644
+> > > --- a/drivers/pci/pcie/portdrv_core.c
+> > > +++ b/drivers/pci/pcie/portdrv_core.c
+> > > @@ -264,6 +264,10 @@ static int pcie_device_init(struct pci_dev *pdev=
+,
+> int service, int irq)
+> > >   	int retval;
+> > >   	struct pcie_device *pcie;
+> > >   	struct device *device;
+> > > +#if defined(CONFIG_ARCH_ZYNQMP) &&
+> defined(CONFIG_PCIE_XILINX_NWL)
+> > > +	if (service =3D=3D PCIE_PORT_SERVICE_AER && pdev->sysdata)
+> > > +		irq =3D *(int *)pdev->sysdata;
+> > > +#endif
+> >
+> > I remember seeing a similar patch before.
+>=20
+> Are you thinking of [1]?
+Thanks for reviewing. Yes this case is also similar to [1].=20
+I'm not aware of this [1]. I will withdraw this current patches.
+Will work on a different model based on your suggestions.
 
-On 08/07/2018 02:56 AM, Dennis Zhou wrote:
-> From: "Dennis Zhou (Facebook)" <dennisszhou@gmail.com>
-> 
-> Currently, percpu memory only exposes allocation and utilization
-> information via debugfs. This more or less is only really useful for
-> understanding the fragmentation and allocation information at a
-> per-chunk level with a few global counters. This is also gated behind a
-> config. BPF and cgroup, for example, have seen an increase use causing
-> increased use of percpu memory. Let's make it easier for someone to
-> identify how much memory is being used.
-> 
-> This patch adds the PercpuPopulated stat to meminfo to more easily
-> look up how much percpu memory is in use. This new number includes the
-> cost for all backing pages and not just insight at the a unit, per
-> chunk level. This stat includes only pages used to back the chunks
-> themselves excluding metadata. I think excluding metadata is fair
-> because the backing memory scales with the number of cpus and can
-> quickly outweigh the metadata. It also makes this calculation light.
-> 
-> Signed-off-by: Dennis Zhou <dennisszhou@gmail.com>
-
-Sounds useful and cheap, so why not, I guess.
-
-> ---
->  fs/proc/meminfo.c      |  2 ++
->  include/linux/percpu.h |  2 ++
->  mm/percpu.c            | 29 +++++++++++++++++++++++++++++
-
-Documentation/filesystems/proc.txt should be updated as well
-
->  3 files changed, 33 insertions(+)
-> 
-> diff --git a/fs/proc/meminfo.c b/fs/proc/meminfo.c
-> index 2fb04846ed11..ddd5249692e9 100644
-> --- a/fs/proc/meminfo.c
-> +++ b/fs/proc/meminfo.c
-> @@ -7,6 +7,7 @@
->  #include <linux/mman.h>
->  #include <linux/mmzone.h>
->  #include <linux/proc_fs.h>
-> +#include <linux/percpu.h>
->  #include <linux/quicklist.h>
->  #include <linux/seq_file.h>
->  #include <linux/swap.h>
-> @@ -121,6 +122,7 @@ static int meminfo_proc_show(struct seq_file *m, void *v)
->  		   (unsigned long)VMALLOC_TOTAL >> 10);
->  	show_val_kb(m, "VmallocUsed:    ", 0ul);
->  	show_val_kb(m, "VmallocChunk:   ", 0ul);
-> +	show_val_kb(m, "PercpuPopulated:", pcpu_nr_populated_pages());
->  
->  #ifdef CONFIG_MEMORY_FAILURE
->  	seq_printf(m, "HardwareCorrupted: %5lu kB\n",
-> diff --git a/include/linux/percpu.h b/include/linux/percpu.h
-> index 296bbe49d5d1..1c80be42822c 100644
-> --- a/include/linux/percpu.h
-> +++ b/include/linux/percpu.h
-> @@ -149,4 +149,6 @@ extern phys_addr_t per_cpu_ptr_to_phys(void *addr);
->  	(typeof(type) __percpu *)__alloc_percpu(sizeof(type),		\
->  						__alignof__(type))
->  
-> +extern int pcpu_nr_populated_pages(void);
-> +
->  #endif /* __LINUX_PERCPU_H */
-> diff --git a/mm/percpu.c b/mm/percpu.c
-> index 0b6480979ac7..08a4341f30c5 100644
-> --- a/mm/percpu.c
-> +++ b/mm/percpu.c
-> @@ -169,6 +169,14 @@ static LIST_HEAD(pcpu_map_extend_chunks);
->   */
->  int pcpu_nr_empty_pop_pages;
->  
-> +/*
-> + * The number of populated pages in use by the allocator, protected by
-> + * pcpu_lock.  This number is kept per a unit per chunk (i.e. when a page gets
-> + * allocated/deallocated, it is allocated/deallocated in all units of a chunk
-> + * and increments/decrements this count by 1).
-> + */
-> +static int pcpu_nr_populated;
-
-It better be unsigned long, to match others.
-
-> +
->  /*
->   * Balance work is used to populate or destroy chunks asynchronously.  We
->   * try to keep the number of populated free pages between
-> @@ -1232,6 +1240,7 @@ static void pcpu_chunk_populated(struct pcpu_chunk *chunk, int page_start,
->  
->  	bitmap_set(chunk->populated, page_start, nr);
->  	chunk->nr_populated += nr;
-> +	pcpu_nr_populated += nr;
->  
->  	if (!for_alloc) {
->  		chunk->nr_empty_pop_pages += nr;
-> @@ -1260,6 +1269,7 @@ static void pcpu_chunk_depopulated(struct pcpu_chunk *chunk,
->  	chunk->nr_populated -= nr;
->  	chunk->nr_empty_pop_pages -= nr;
->  	pcpu_nr_empty_pop_pages -= nr;
-> +	pcpu_nr_populated -= nr;
->  }
->  
->  /*
-> @@ -2176,6 +2186,9 @@ int __init pcpu_setup_first_chunk(const struct pcpu_alloc_info *ai,
->  	pcpu_nr_empty_pop_pages = pcpu_first_chunk->nr_empty_pop_pages;
->  	pcpu_chunk_relocate(pcpu_first_chunk, -1);
->  
-> +	/* include all regions of the first chunk */
-> +	pcpu_nr_populated += PFN_DOWN(size_sum);
-> +
->  	pcpu_stats_chunk_alloc();
->  	trace_percpu_create_chunk(base_addr);
->  
-> @@ -2745,6 +2758,22 @@ void __init setup_per_cpu_areas(void)
->  
->  #endif	/* CONFIG_SMP */
->  
-> +/*
-> + * pcpu_nr_populated_pages - calculate total number of populated backing pages
-> + *
-> + * This reflects the number of pages populated to back the chunks.
-> + * Metadata is excluded in the number exposed in meminfo as the number of
-> + * backing pages scales with the number of cpus and can quickly outweigh the
-> + * memory used for metadata.  It also keeps this calculation nice and simple.
-> + *
-> + * RETURNS:
-> + * Total number of populated backing pages in use by the allocator.
-> + */
-> +int pcpu_nr_populated_pages(void)
-
-Also unsigned long please.
-
-Thanks,
-Vlastimil
-
-> +{
-> +	return pcpu_nr_populated * pcpu_nr_units;
-> +}
-> +
->  /*
->   * Percpu allocator is initialized early during boot when neither slab or
->   * workqueue is available.  Plug async management until everything is up
-> 
-
+Regards,
+Bharat=20
