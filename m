@@ -2,79 +2,123 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65941C46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 11:35:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A7A5C46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 11:36:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25B75214DA
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 11:35:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25B75214DA
+	by mail.kernel.org (Postfix) with ESMTP id 3B105214DA
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 11:36:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B105214DA
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388892AbeHGNtP (ORCPT
+        id S2387942AbeHGNuX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 09:49:15 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39074 "EHLO mx1.redhat.com"
+        Tue, 7 Aug 2018 09:50:23 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41946 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726555AbeHGNtO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 09:49:14 -0400
+        id S1726555AbeHGNuX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 09:50:23 -0400
 Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 64FF240216E4;
-        Tue,  7 Aug 2018 11:35:20 +0000 (UTC)
-Received: from [10.43.2.69] (unknown [10.43.2.69])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E88E41C5B7;
-        Tue,  7 Aug 2018 11:35:18 +0000 (UTC)
-Subject: Re: [PATCH] Use Kconfig flag to remove support of deprecated BE2/BE3
- adapters
-To:     Christoph Hellwig <hch@infradead.org>, Petr Oros <poros@redhat.com>
-Cc:     netdev@vger.kernel.org, Sathya Perla <sathya.perla@broadcom.com>,
-        Ajit Khaparde <ajit.khaparde@broadcom.com>,
-        Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>,
-        Somnath Kotur <somnath.kotur@broadcom.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-kernel@vger.kernel.org
-References: <20180806121230.23690-1-poros@redhat.com>
- <20180806162153.GA22040@infradead.org>
-From:   Ivan Vecera <ivecera@redhat.com>
-Message-ID: <e70d9925-0836-cefc-0cfe-747067c6c948@redhat.com>
-Date:   Tue, 7 Aug 2018 13:35:18 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.0
+        by mx1.redhat.com (Postfix) with ESMTPS id B59F540241C4;
+        Tue,  7 Aug 2018 11:36:27 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.34.27.30])
+        by smtp.corp.redhat.com (Postfix) with SMTP id B15801C663;
+        Tue,  7 Aug 2018 11:36:23 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Tue,  7 Aug 2018 13:36:27 +0200 (CEST)
+Date:   Tue, 7 Aug 2018 13:36:23 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Cc:     srikar@linux.vnet.ibm.com, rostedt@goodmis.org,
+        mhiramat@kernel.org, liu.song.a23@gmail.com, peterz@infradead.org,
+        mingo@redhat.com, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org, linux-kernel@vger.kernel.org,
+        ananth@linux.vnet.ibm.com, alexis.berlemont@gmail.com,
+        naveen.n.rao@linux.vnet.ibm.com,
+        linux-arm-kernel@lists.infradead.org, linux-mips@linux-mips.org,
+        linux@armlinux.org.uk, ralf@linux-mips.org, paul.burton@mips.com
+Subject: Re: [PATCH v7 3/6] Uprobes: Support SDT markers having reference
+ count (semaphore)
+Message-ID: <20180807113622.GC19831@redhat.com>
+References: <20180731035143.11942-1-ravi.bangoria@linux.ibm.com>
+ <20180731035143.11942-4-ravi.bangoria@linux.ibm.com>
+ <20180803112455.GA13794@redhat.com>
+ <bfb47985-8f58-e5e4-f8b4-695dfea7937f@linux.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <20180806162153.GA22040@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bfb47985-8f58-e5e4-f8b4-695dfea7937f@linux.ibm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 07 Aug 2018 11:35:20 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 07 Aug 2018 11:35:20 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'ivecera@redhat.com' RCPT:''
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 07 Aug 2018 11:36:27 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 07 Aug 2018 11:36:27 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'oleg@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6.8.2018 18:21, Christoph Hellwig wrote:
-> On Mon, Aug 06, 2018 at 02:12:28PM +0200, Petr Oros wrote:
->>   Add flags to remove support of deprecated BE2/BE3 adapters.
->>   BE2 disable will reduce .ko size by 2kb and BE3 by 3kb.
->>   Disable both will reduce .ko size by 9kb.
->>
->>   With dissabled support is also removed coresponding PCI IDs
->>   and codepath with [BE2|BE3|BEx]_chip checks.
-> 
-> deprecated seems like a really odd world for hardware.
-> 
-> Are they just old?  Did they never ship in large numbers?
-> 
-> If you just make some cards optional why not also add options
-> for families of newer cards for those who only have the older ones
-> in their systems?
-> 
-This also makes sense.
+Hi Ravi,
 
-I.
+On 08/06, Ravi Bangoria wrote:
+>
+> >> +static int delayed_uprobe_add(struct uprobe *uprobe, struct mm_struct *mm)
+> >> +{
+> >> +	struct delayed_uprobe *du;
+> >> +
+> >> +	if (delayed_uprobe_check(uprobe, mm))
+> >> +		return 0;
+> >> +
+> >> +	du  = kzalloc(sizeof(*du), GFP_KERNEL);
+> >> +	if (!du)
+> >> +		return -ENOMEM;
+> >> +
+> >> +	du->uprobe = uprobe;
+> >> +	du->mm = mm;
+> >
+> > I am surprised I didn't notice this before...
+> >
+> > So
+> > 	du->mm = mm;
+> >
+> > is fine, mm can't go away, uprobe_clear_state() does delayed_uprobe_remove(NULL,mm).
+> >
+> > But
+> > 	du->uprobe = uprobe;
+> >
+> > doesn't look right, uprobe can go away and it can be freed, its memory can be reused.
+> > We can't rely on remove_breakpoint(),
+>
+>
+> I'm sorry. I didn't get this. How can uprobe go away without calling
+>     uprobe_unregister()
+>     -> rergister_for_each_vma()
+>        -> remove_breakpoint()
+> And remove_breakpoint() will get called
+
+assuming that _unregister() will find the same vma with the probed insn. But
+as I said, the application can munmap the probed page/vma.
+
+No?
+
+> > Also. delayed_uprobe_add() should check the list and avoid duplicates. Otherwise the
+> > trivial
+> >
+> > 	for (;;)
+> > 		munmap(mmap(uprobed_file));
+> >
+> > will eat the memory until uprobe is unregistered.
+>
+>
+> I'm already calling delayed_uprobe_check(uprobe, mm) from delayed_uprobe_add().
+
+Oops ;)
+
+Oleg.
+
