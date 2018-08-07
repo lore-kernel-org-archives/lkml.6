@@ -2,140 +2,174 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA70FC46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 19:11:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6B65C46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 19:11:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF2E021731
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 19:11:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF2E021731
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wanadoo.fr
+	by mail.kernel.org (Postfix) with ESMTP id 6984021731
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 19:11:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WNHmLB4M"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6984021731
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389869AbeHGV06 (ORCPT
+        id S2390020AbeHGV1H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 17:26:58 -0400
-Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:37556 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388802AbeHGV06 (ORCPT
+        Tue, 7 Aug 2018 17:27:07 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:33556 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389073AbeHGV1G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 17:26:58 -0400
-Received: from mail-qt0-f173.google.com ([209.85.216.173])
-        by mwinf5d50 with ME
-        id LKB51y00N3l2wht03KB5DQ; Tue, 07 Aug 2018 21:11:06 +0200
-X-ME-Helo: mail-qt0-f173.google.com
-X-ME-Auth: bWF4aS5qb3VyZGFuQHdhbmFkb28uZnI=
-X-ME-Date: Tue, 07 Aug 2018 21:11:06 +0200
-X-ME-IP: 209.85.216.173
-Received: by mail-qt0-f173.google.com with SMTP id m13-v6so19209962qth.1;
-        Tue, 07 Aug 2018 12:11:05 -0700 (PDT)
-X-Gm-Message-State: AOUpUlEmD+5vtjP4oWDLdMAjD+XV5hsnsH/03QQ5XeH586ogKT2Nmfoa
-        IFuPqkq60NQGwIW39lvFHei2wPcvjgftBpk2Egc=
-X-Google-Smtp-Source: AAOMgpfZGop1T5mCRYPl3Lf9PTxEdJDOxnjwpG6jtzuLXYcDeXZNurA2RcLIq+53rziJaAq8AhksmK3rWgLAF7CI5j8=
-X-Received: by 2002:a0c:881c:: with SMTP id 28-v6mr18309068qvl.109.1533669065197;
- Tue, 07 Aug 2018 12:11:05 -0700 (PDT)
+        Tue, 7 Aug 2018 17:27:06 -0400
+Received: by mail-wm0-f65.google.com with SMTP id r24-v6so15138823wmh.0
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 12:11:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rsvBhI8WfMhdEP61XONYzmkwOka+jmTuWQfVXM0QqAo=;
+        b=WNHmLB4Mjdd2YFAVcTzD2IdueOCM4bk+FtNCtQD5UdYQ2oqKS+2O7nZKtUNYEoBxBn
+         dRhX5jlf+7ZyvCAM4vuEk/GqJcUCZrlnZjL9wXhveIrRQG+akjEXuA7rP+Xvm8WzIx2n
+         OGX6es+9kTOEflGRDJgEzd78jkOesf1S0cJXUkGJjowep0swB/3R1s1TAcWwrq1tTmWR
+         Joe8u5LyAg6QPRcmuiuVBDFh1RWJLRM2q3jYUwzr9rhsOowaAdPv7SjIXum6fdm3uKd4
+         g8egIh1hOzwW1J649Ft4eiw8czmefZrQJDMLRmWcH7h5z30+sG1YZIBQGkw5QZv1FE67
+         daEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rsvBhI8WfMhdEP61XONYzmkwOka+jmTuWQfVXM0QqAo=;
+        b=qFDkoM5LC6OYipSlzIcYhNYZcvU+9tRlyuFbN2IVGCHfjO0o7zbm8YcJvR4ojppKrH
+         aMxSUO3PLIMStvZdHLBvt0CNcbk8LbLRkpcn6yqYTiFI9GGQhE+VrZCU0eEc31hJHzJ+
+         /+kMHY09455Scj3Lrq/FF6ALbaKU4z4GvI9n8tQf6QvByf0ywLwk/CERKDPf77ZifXm6
+         YLGrzJKO+WQkN0bbzgOYXynZaIrJW1H49kZP6ntz++ZiKqEkzwaeGC0QUGp/eT3X55ej
+         7DbLETXQ6k/5/ND7O0NfY0gwHWAoIi3njPU5o7yUFEqRq3s/h9XkQ+i5W4CapToucPmu
+         fErQ==
+X-Gm-Message-State: AOUpUlFNj/N1N+ENFhAuWgPdPnisI8JYxKdQBXo3f0oeDsPp8vZRbmj6
+        fsiTiXbfsRSj5zFI1vvU85Xdln//08GkOHUHpoMfZg==
+X-Google-Smtp-Source: AA+uWPxS0UZlq/5a52Ll7pVVZZfxEjAhOc9m+YdhhhJHNej54AJhuRzcn04D2Q/dPIXL1/3TRWm+QRtpe9OIrH1AcVY=
+X-Received: by 2002:a1c:9d02:: with SMTP id g2-v6mr2333950wme.122.1533669077271;
+ Tue, 07 Aug 2018 12:11:17 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:aed:278a:0:0:0:0:0 with HTTP; Tue, 7 Aug 2018 12:11:04 -0700 (PDT)
-In-Reply-To: <e0da6268-c7f6-1048-83b9-a7e67cfe000e@xs4all.nl>
-References: <20180724140621.59624-1-tfiga@chromium.org> <20180724140621.59624-2-tfiga@chromium.org>
- <37a8faea-a226-2d52-36d4-f9df194623cc@xs4all.nl> <CAAFQd5BgGEBmd8gNGc-qqtUtLo=Mh8U+TVTWRsKYMv1LmeBQMA@mail.gmail.com>
- <e0da6268-c7f6-1048-83b9-a7e67cfe000e@xs4all.nl>
-From:   Maxime Jourdan <maxi.jourdan@wanadoo.fr>
-Date:   Tue, 7 Aug 2018 21:11:04 +0200
-X-Gmail-Original-Message-ID: <CAHStOZ7H88GRSZ_U9GeBnd34JrcCL9crJF279zcpGYtJCV-uEQ@mail.gmail.com>
-Message-ID: <CAHStOZ7H88GRSZ_U9GeBnd34JrcCL9crJF279zcpGYtJCV-uEQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] media: docs-rst: Document memory-to-memory video
- decoder interface
-To:     Hans Verkuil <hverkuil@xs4all.nl>
-Cc:     Tomasz Figa <tfiga@chromium.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Pawel Osciak <posciak@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>, kamil@wypas.org,
-        a.hajda@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>,
-        jtp.park@samsung.com, Philipp Zabel <p.zabel@pengutronix.de>,
-        =?UTF-8?B?VGlmZmFueSBMaW4gKOael+aFp+ePiik=?= 
-        <tiffany.lin@mediatek.com>,
-        =?UTF-8?B?QW5kcmV3LUNUIENoZW4gKOmZs+aZuui/qik=?= 
-        <andrew-ct.chen@mediatek.com>, todor.tomov@linaro.org,
-        nicolas@ndufresne.ca,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        dave.stevenson@raspberrypi.org,
-        Ezequiel Garcia <ezequiel@collabora.com>
+References: <1533605015-19514-1-git-send-email-eranian@google.com>
+ <20180807072029.GA7716@krava> <CABPqkBSyf0WMKmZAFGSyBvX=jn1zifbMPztt_053hvvDh6UsHw@mail.gmail.com>
+ <20180807085010.GC7716@krava>
+In-Reply-To: <20180807085010.GC7716@krava>
+From:   Stephane Eranian <eranian@google.com>
+Date:   Tue, 7 Aug 2018 12:11:05 -0700
+Message-ID: <CABPqkBTvXSgJNPW=4MxFqDR_oeYHteuDoeavdFHKuXe+8Y=2DQ@mail.gmail.com>
+Subject: Re: [PATCH] perf ordered_events: fix crash in free_dup_event()
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>, mingo@elte.hu
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-08-07 9:13 GMT+02:00 Hans Verkuil <hverkuil@xs4all.nl>:
-> On 07/26/2018 12:20 PM, Tomasz Figa wrote:
->> Hi Hans,
->>
->> On Wed, Jul 25, 2018 at 8:59 PM Hans Verkuil <hverkuil@xs4all.nl> wrote:
->>>> +
->>>> +14. Call :c:func:`VIDIOC_STREAMON` to initiate decoding frames.
->>>> +
->>>> +Decoding
->>>> +========
->>>> +
->>>> +This state is reached after a successful initialization sequence. In this
->>>> +state, client queues and dequeues buffers to both queues via
->>>> +:c:func:`VIDIOC_QBUF` and :c:func:`VIDIOC_DQBUF`, following standard
->>>> +semantics.
->>>> +
->>>> +Both queues operate independently, following standard behavior of V4L2
->>>> +buffer queues and memory-to-memory devices. In addition, the order of
->>>> +decoded frames dequeued from ``CAPTURE`` queue may differ from the order of
->>>> +queuing coded frames to ``OUTPUT`` queue, due to properties of selected
->>>> +coded format, e.g. frame reordering. The client must not assume any direct
->>>> +relationship between ``CAPTURE`` and ``OUTPUT`` buffers, other than
->>>> +reported by :c:type:`v4l2_buffer` ``timestamp`` field.
->>>
->>> Is there a relationship between capture and output buffers w.r.t. the timestamp
->>> field? I am not aware that there is one.
->>
->> I believe the decoder was expected to copy the timestamp of matching
->> OUTPUT buffer to respective CAPTURE buffer. Both s5p-mfc and coda seem
->> to be implementing it this way. I guess it might be a good idea to
->> specify this more explicitly.
+Jiri,
+On Tue, Aug 7, 2018 at 1:50 AM Jiri Olsa <jolsa@redhat.com> wrote:
 >
-> What about an output buffer producing multiple capture buffers? Or the case
-> where the encoded bitstream of a frame starts at one output buffer and ends
-> at another? What happens if you have B frames and the order of the capture
-> buffers is different from the output buffers?
+> On Tue, Aug 07, 2018 at 01:16:22AM -0700, Stephane Eranian wrote:
+> > On Tue, Aug 7, 2018 at 12:20 AM Jiri Olsa <jolsa@redhat.com> wrote:
+> > >
+> > > On Mon, Aug 06, 2018 at 06:23:35PM -0700, Stephane Eranian wrote:
+> > > > Depending on memory allocations, it was possible to get a SEGFAULT in
+> > > > free_dup_event() because the event pointer was bogus:
+> > > >
+> > > > perf[1354]: segfault at ffffffff00000006 ip 00000000004b7fc7
+> > >
+> > > is there any reproducer?
+> > >
+> > The cmdline is simple:
+> > $ perf record -e cycles:pp -o - -a sleep 1 | perf inject -b -i - >/dev/null
+> > I was using v4.13 for my tests and it may be sensitive to compiler.
+> > Was using LLVM.
 >
-> In other words, for codecs there is no clear 1-to-1 relationship between an
-> output buffer and a capture buffer. And we never defined what the 'copy timestamp'
-> behavior should be in that case or if it even makes sense.
+> I can't make it fail even when I compile with clang 'make CC=clang'
 >
-> Regards,
+I checked, my actual reproducer is:
+$ perf record -o - -e cycles date |  perf inject -b -i - >/dev/null
+Tue Aug  7 12:03:48 PDT 2018
+[ perf record: Woken up 1 times to write data ]
+[ perf record: Captured and wrote 0.000 MB - ]
+Segmentation fault (core dumped)
+
+the crash is in perf inject.
+So if I do:
+$ perf record -o - -e cycles date >tt
+$ gdb perf
+(gdb) r inject -b -i - < tt  >/dev/null
+Program received signal SIGSEGV, Segmentation fault.
+free_dup_event (oe=0x26a39a0, event=0xffffffff00000000) at
+util/ordered-events.c:85
+85 in util/ordered-events.c
+(gdb) bt
+#0  free_dup_event (oe=0x26a39a0, event=0xffffffff00000000) at
+util/ordered-events.c:85
+#1  ordered_events__free (oe=0x26a39a0) at util/ordered-events.c:310
+#2  0x00000000004b5a56 in __perf_session__process_pipe_events
+(session=<optimized out>) at util/session.c:1753
+#3  perf_session__process_events (session=<optimized out>) at
+util/session.c:1932
+#4  0x000000000043a2eb in __cmd_inject (inject=<optimized out>) at
+builtin-inject.c:750
+#5  cmd_inject (argc=<optimized out>, argv=<optimized out>) at
+builtin-inject.c:924
+#6  0x000000000046b175 in run_builtin (p=0xabc640 <commands+576>,
+argc=4, argv=0x7fffffffe560) at perf.c:297
+#7  0x000000000046b062 in handle_internal_command (argc=4,
+argv=0x7fffffffe560) at perf.c:349
+#8  0x000000000046a5e8 in run_argv (argcp=<optimized out>,
+argv=<optimized out>) at perf.c:393
+#9  main (argc=4, argv=0x7fffffffe560) at perf.c:531
+
+Again, this is with an older version of perf compiled with LLVM.
+Notice the value of event passed to free_dup_event(): 0xffffffff00000000
+And yes, I checked sizeof(union_perf_event) = 4168 which is the size of
+the mmap2_event which is the largest.
+
+I also checked that you are freeing what you have actually allocated.
+No double free.
+If I add the padding or modifies the call to memdup() as in the patch,
+then the problem
+goes away.
+
+If you don't want to copy 4Kb each time, then you could also make the
+event field
+by a void *event and case whenever needed.
+
+I suspect the problem may come from a compiler optimization or assumption which
+clashes with what you are optimizing here.
+
+
+>   [jolsa@krava perf]$ clang --version
+>   clang version 6.0.1 (tags/RELEASE_601/final)
 >
->         Hans
-
-As it is done right now in userspace (FFmpeg, GStreamer) and most (if
-not all?) drivers, it's a 1:1 between OUTPUT and CAPTURE. The only
-thing that changes is the ordering since OUTPUT buffers are in
-decoding order while CAPTURE buffers are in presentation order.
-
-This almost always implies some timestamping kung-fu to match the
-OUTPUT timestamps with the corresponding CAPTURE timestamps. It's
-often done indirectly by the firmware on some platforms (rpi comes to
-mind iirc).
-
-The current constructions also imply one video packet per OUTPUT
-buffer. If a video packet is too big to fit in a buffer, FFmpeg will
-crop that packet to the maximum buffer size and will discard the
-remaining packet data. GStreamer will abort the decoding. This is
-unfortunately one of the shortcomings of having fixed-size buffers.
-And if they were to split the packet in multiple buffers, then some
-drivers in their current state wouldn't be able to handle the
-timestamping issues and/or x:1 OUTPUT:CAPTURE buffer numbers.
-
-Maxime
+> I'm on v4.17, but I dont think kernel version is related to this issue
+>
+> >
+> > It may be a compiler related issue. You do not allocate the whole struct.
+> > If the compiler was to do a memcpy() behind your back, you'd be in
+> > troubles.
+> >
+> > Adding extra padding before *event was also avoiding the problem.
+> > struct ordered_event {
+> >         u64                     timestamp;
+> >         u64                     file_offset;
+> >         char                   pad[32];   <----- extra padding for debugging
+> >         union perf_event        *event;
+> >         struct list_head        list;
+> > };
+>
+> might be some issue in the struct ordered_event allocation,
+> which is little convoluted
+>
+> jirka
