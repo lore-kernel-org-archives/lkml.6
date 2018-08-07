@@ -1,225 +1,93 @@
 Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0943CC46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 14:50:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71260C46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 14:52:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5BB42174C
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 14:50:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5BB42174C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=asem.it
+	by mail.kernel.org (Postfix) with ESMTP id 23FC2217B7
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 14:52:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23FC2217B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389719AbeHGRFU convert rfc822-to-8bit (ORCPT
+        id S2389061AbeHGRHW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 13:05:20 -0400
-Received: from smtp.asem.it ([151.1.184.197]:52938 "EHLO smtp.asem.it"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389070AbeHGRFU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 13:05:20 -0400
-Received: from webmail.asem.it
-        by asem.it (smtp.asem.it)
-        (SecurityGateway 4.0.1)
-        with ESMTP id SG003402552.MSG 
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 16:50:33 +0200S
-Received: from ASAS044.asem.intra (172.16.16.44) by ASAS044.asem.intra
- (172.16.16.44) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1261.35; Tue, 7
- Aug 2018 16:50:34 +0200
-Received: from ASAS044.asem.intra ([::1]) by ASAS044.asem.intra ([::1]) with
- mapi id 15.01.1261.035; Tue, 7 Aug 2018 16:50:34 +0200
-From:   Flavio Suligoi <f.suligoi@asem.it>
-To:     Marc Kleine-Budde <mkl@pengutronix.de>,
-        Wolfgang Grandegger <wg@grandegger.com>
-CC:     "David S . Miller" <davem@davemloft.net>,
-        "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4] can: sja1000: plx_pci: add support for ASEM CAN raw
- device
-Thread-Topic: [PATCH v4] can: sja1000: plx_pci: add support for ASEM CAN raw
- device
-Thread-Index: AQHULh6yQFQM3QxnwE20VaCkmHfx3qS0MzsAgAAqsFc=
-Date:   Tue, 7 Aug 2018 14:50:34 +0000
-Message-ID: <10b11fc8317e41888204fa6378580908@asem.it>
-References: <53dae6d6-c25b-71d5-b43f-1d444d9c352b@pengutronix.de>
- <1533626239-4065-1-git-send-email-f.suligoi@asem.it>,<e5e06710-0304-0cf9-67fb-1e29f0678c86@pengutronix.de>
-In-Reply-To: <e5e06710-0304-0cf9-67fb-1e29f0678c86@pengutronix.de>
-Accept-Language: it-IT, en-US
-Content-Language: it-IT
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.16.17.160]
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: 8BIT
+        Tue, 7 Aug 2018 13:07:22 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:53355 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728167AbeHGRHW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 13:07:22 -0400
+Received: by mail-wm0-f66.google.com with SMTP id s9-v6so17744189wmh.3
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 07:52:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=08infau77i+pItKq5f5h3+RL7j1tPo8L19jst4GO8lo=;
+        b=aoHbQI1NA0a0NhooncZt6mmVVCP0Q0BGL8hqnHYRHiB6zKbM4GefrSQ9qQIjitoGda
+         bc7MDe4jRYWkyfhfj0jovDjnkhH5gxMohL1z510EeSiFvPca0dniyZPQpxm4Y7k+aazK
+         8cex0/kQ2BZf/QVzxoRGFIHDEoRNWsxEKaVrfkgWPyCEpxX4EPxGncdjMTPHzfTtx6xZ
+         noPo9H/66VmDMdSIZ+HHyWutd7aI1OnB8nhIVt7Jd5SCCG13kayTKRGgsGxUOyqeMyZS
+         +7NYpVGkEiGbopQ4DSLqHTbtCdwmu7T3FV7/vkUXRRWMmGuUwZ4vKARIlgITsNVf/I5D
+         Vo6A==
+X-Gm-Message-State: AOUpUlEVKgwlgtcTlh6OBoJ+IUMboxSHm1MBWK8b8jYu7M55EY6EeSGO
+        p68p1V7IQEFr1YjG9rf2S18=
+X-Google-Smtp-Source: AA+uWPyH28G9+nCj0cCsMIqkVrbhYYKQsQi4Iw8LO46npQNLqgvM29Jgh+Hf5qgfTqexWvtLehc/cw==
+X-Received: by 2002:a1c:7c13:: with SMTP id x19-v6mr2018736wmc.27.1533653560604;
+        Tue, 07 Aug 2018 07:52:40 -0700 (PDT)
+Received: from techadventures.net (techadventures.net. [62.201.165.239])
+        by smtp.gmail.com with ESMTPSA id d8-v6sm2081598wrv.68.2018.08.07.07.52.39
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 07 Aug 2018 07:52:39 -0700 (PDT)
+Received: by techadventures.net (Postfix, from userid 1000)
+        id BAEC9124711; Tue,  7 Aug 2018 16:52:38 +0200 (CEST)
+Date:   Tue, 7 Aug 2018 16:52:38 +0200
+From:   Oscar Salvador <osalvador@techadventures.net>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     akpm@linux-foundation.org, mhocko@suse.com,
+        dan.j.williams@intel.com, pasha.tatashin@oracle.com,
+        jglisse@redhat.com, yasu.isimatu@gmail.com, logang@deltatee.com,
+        dave.jiang@intel.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Oscar Salvador <osalvador@suse.de>
+Subject: Re: [RFC PATCH 0/3] Do not touch pages in remove_memory path
+Message-ID: <20180807145238.GA5512@techadventures.net>
+References: <20180807133757.18352-1-osalvador@techadventures.net>
+ <6407d022-87b7-f5e0-572a-c5c29aba1314@redhat.com>
+ <20180807141922.GA5244@techadventures.net>
+ <d0ea36f7-9329-f947-3862-011827aee20c@redhat.com>
+ <20180807142826.GB5309@techadventures.net>
+ <6d07f588-cc40-132e-2d89-26e00fff5a88@redhat.com>
 MIME-Version: 1.0
-X-SGHeloLookup-Result: pass smtp.helo=webmail.asem.it (ip=172.16.16.44)
-X-SGSPF-Result: none (smtp.asem.it)
-X-SGOP-RefID: str=0001.0A0B0206.5B69B1BA.0098,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0 (_st=1 _vt=0 _iwf=0)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6d07f588-cc40-132e-2d89-26e00fff5a88@redhat.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/07/2018 04:11 PM, Marc Kleine-Budde wrote:
+On Tue, Aug 07, 2018 at 04:41:33PM +0200, David Hildenbrand wrote:
+> I am not close to an RFC (spent most time looking into the details -
+> still have plenty to learn in the MM area - and wondering on how to
+> handle ZONE_DEVICE). It might take some time for me to get something
+> clean up and running.
 
->On 08/07/2018 09:17 AM, Flavio Suligoi wrote:
->> This patch adds support for ASEM opto-isolated dual channels
->> CAN raw device (http://www.asem.it)
->>
->> Signed-off-by: Flavio Suligoi <f.suligoi@asem.it>
->> ---
->>
->> v2: - rename ASEM_... constants to reduce space size;
->>     - remove "else" in "plx_pci_reset_asem_dual_can_raw" function to avoid
->>       strings breaking
->> v3: - fix wrong comment for PLX_LINT2_POL
->>     - put string into just one line in "plx_pci_reset_asem_dual_can_raw"
->>       function
->> v4: - remove unnecessary variable "reset_bar" in
->>       "plx_pci_reset_asem_dual_can_raw" function
->>
->>  drivers/net/can/sja1000/Kconfig   |  1 +
->>  drivers/net/can/sja1000/plx_pci.c | 66 ++++++++++++++++++++++++++++++++++++++-
->>  2 files changed, 66 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/net/can/sja1000/Kconfig b/drivers/net/can/sja1000/Kconfig
->> index 1e65cb6..f6dc899 100644
->> --- a/drivers/net/can/sja1000/Kconfig
->> +++ b/drivers/net/can/sja1000/Kconfig
->> @@ -88,6 +88,7 @@ config CAN_PLX_PCI
->>          - TEWS TECHNOLOGIES TPMC810 card (http://www.tews.com/)
->>          - IXXAT Automation PC-I 04/PCI card (http://www.ixxat.com/)
->>          - Connect Tech Inc. CANpro/104-Plus Opto (CRG001) card (http://www.connecttech.com)
->> +        - ASEM CAN raw - 2 isolated CAN channels (www.asem.it)
->>
->>  config CAN_TSCAN1
->>       tristate "TS-CAN1 PC104 boards"
->> diff --git a/drivers/net/can/sja1000/plx_pci.c b/drivers/net/can/sja1000/plx_pci.c
->> index f8ff25c..79fc327 100644
->> --- a/drivers/net/can/sja1000/plx_pci.c
->> +++ b/drivers/net/can/sja1000/plx_pci.c
->> @@ -46,7 +46,8 @@ MODULE_SUPPORTED_DEVICE("Adlink PCI-7841/cPCI-7841, "
->>                       "esd CAN-PCIe/2000, "
->>                       "Connect Tech Inc. CANpro/104-Plus Opto (CRG001), "
->>                       "IXXAT PC-I 04/PCI, "
->> -                     "ELCUS CAN-200-PCI")
->> +                     "ELCUS CAN-200-PCI, "
->> +                     "ASEM DUAL CAN-RAW")
->>  MODULE_LICENSE("GPL v2");
->>
->>  #define PLX_PCI_MAX_CHAN 2
->> @@ -70,7 +71,9 @@ struct plx_pci_card {
->>                                        */
->>
->>  #define PLX_LINT1_EN 0x1             /* Local interrupt 1 enable */
->> +#define PLX_LINT1_POL        (1 << 1)        /* Local interrupt 1 polarity */
->>  #define PLX_LINT2_EN (1 << 3)        /* Local interrupt 2 enable */
->> +#define PLX_LINT2_POL        (1 << 4)        /* Local interrupt 2 polarity */
->>  #define PLX_PCI_INT_EN       (1 << 6)        /* PCI Interrupt Enable */
->>  #define PLX_PCI_RESET        (1 << 30)       /* PCI Adapter Software Reset */
->>
->> @@ -92,6 +95,9 @@ struct plx_pci_card {
->>   */
->>  #define PLX_PCI_OCR  (OCR_TX0_PUSHPULL | OCR_TX1_PUSHPULL)
->>
->> +/* OCR setting for ASEM Dual CAN raw */
->> +#define ASEM_PCI_OCR 0xfe
->> +
->>  /*
->>   * In the CDR register, you should set CBP to 1.
->>   * You will probably also want to set the clock divider value to 7
->> @@ -145,10 +151,20 @@ struct plx_pci_card {
->>  #define MOXA_PCI_VENDOR_ID           0x1393
->>  #define MOXA_PCI_DEVICE_ID           0x0100
->>
->> +#define ASEM_RAW_CAN_VENDOR_ID               0x10b5
->> +#define ASEM_RAW_CAN_DEVICE_ID               0x9030
->> +#define ASEM_RAW_CAN_SUB_VENDOR_ID   0x3000
->> +#define ASEM_RAW_CAN_SUB_DEVICE_ID   0x1001
->> +#define ASEM_RAW_CAN_SUB_DEVICE_ID_BIS       0x1002
->> +#define ASEM_RAW_CAN_RST_REGISTER    0x54
->> +#define ASEM_RAW_CAN_RST_MASK_CAN1   0x20
->> +#define ASEM_RAW_CAN_RST_MASK_CAN2   0x04
->> +
->>  static void plx_pci_reset_common(struct pci_dev *pdev);
->>  static void plx9056_pci_reset_common(struct pci_dev *pdev);
->>  static void plx_pci_reset_marathon_pci(struct pci_dev *pdev);
->>  static void plx_pci_reset_marathon_pcie(struct pci_dev *pdev);
->> +static void plx_pci_reset_asem_dual_can_raw(struct pci_dev *pdev);
->>
->>  struct plx_pci_channel_map {
->>       u32 bar;
->> @@ -269,6 +285,14 @@ static struct plx_pci_card_info plx_pci_card_info_moxa = {
->>        /* based on PLX9052 */
->>  };
->>
->> +static struct plx_pci_card_info plx_pci_card_info_asem_dual_can = {
->> +     "ASEM Dual CAN raw PCI", 2,
->> +     PLX_PCI_CAN_CLOCK, ASEM_PCI_OCR, PLX_PCI_CDR,
->> +     {0, 0x00, 0x00}, { {2, 0x00, 0x00}, {4, 0x00, 0x00} },
->> +     &plx_pci_reset_asem_dual_can_raw
->> +     /* based on PLX9030 */
->> +};
->> +
->>  static const struct pci_device_id plx_pci_tbl[] = {
->>       {
->>               /* Adlink PCI-7841/cPCI-7841 */
->> @@ -375,6 +399,20 @@ static const struct pci_device_id plx_pci_tbl[] = {
->>               0, 0,
->>               (kernel_ulong_t)&plx_pci_card_info_moxa
->>       },
->> +     {
->> +             /* ASEM Dual CAN raw */
->> +             ASEM_RAW_CAN_VENDOR_ID, ASEM_RAW_CAN_DEVICE_ID,
->> +             ASEM_RAW_CAN_SUB_VENDOR_ID, ASEM_RAW_CAN_SUB_DEVICE_ID,
->> +             0, 0,
->> +             (kernel_ulong_t)&plx_pci_card_info_asem_dual_can
->> +     },
->> +     {
->> +             /* ASEM Dual CAN raw -new model */
->> +             ASEM_RAW_CAN_VENDOR_ID, ASEM_RAW_CAN_DEVICE_ID,
->> +             ASEM_RAW_CAN_SUB_VENDOR_ID, ASEM_RAW_CAN_SUB_DEVICE_ID_BIS,
->> +             0, 0,
->> +             (kernel_ulong_t)&plx_pci_card_info_asem_dual_can
->> +     },
->>       { 0,}
->>  };
->>  MODULE_DEVICE_TABLE(pci, plx_pci_tbl);
->> @@ -524,6 +562,32 @@ static void plx_pci_reset_marathon_pcie(struct pci_dev *pdev)
->>       }
->>  }
->>
->> +/* Special reset function for ASEM Dual CAN raw card */
->> +static void plx_pci_reset_asem_dual_can_raw(struct pci_dev *pdev)
->> +{
->> +     void __iomem *bar0_addr;
->> +     u8 tmpval;
->> +
->> +     plx_pci_reset_common(pdev);
->> +
->> +     bar0_addr = pci_iomap(pdev, 0, 0);
->> +     if (!bar0_addr) {
->> +             dev_err(&pdev->dev, "Failed to remap reset space %d (BAR%d)\n",
->> +                     0, 0);
->
->I've put both 0 directly into the string while applying the patch.
->
->Tnx,
->Marc
+That is probably the way to go, details like ZONE_DEVICE what I thought
+it was about to be easier.
+This has been broken for a while, so a few more weeks(or more) will not hurt.
+Also, I need to catch up with ZONE_DEVICE myself and I will be on vacation
+for a few weeks, so that is it.
 
-Thanks,
-Flavio
+Feel free to re-use anything you find useful in these series(in case you find something).
 
->
->--
->Pengutronix e.K.                  | Marc Kleine-Budde           |
->Industrial Linux Solutions        | Phone: +49-231-2826-924     |
->Vertretung West/Dortmund          | Fax:   +49-5121-206917-5555 |
->Amtsgericht Hildesheim, HRA 2686  | http://www.pengutronix.de   |
-
+Thanks
+-- 
+Oscar Salvador
+SUSE L3
