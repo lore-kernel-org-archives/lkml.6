@@ -6,162 +6,92 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB266C46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:53:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20A35C46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:53:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91B3D2170A
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:53:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91B3D2170A
+	by mail.kernel.org (Postfix) with ESMTP id DB82A2172F
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:53:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB82A2172F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390031AbeHGVIs (ORCPT
+        id S2403948AbeHGVIv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 17:08:48 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33150 "EHLO
+        Tue, 7 Aug 2018 17:08:51 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33162 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726419AbeHGVIs (ORCPT
+        with ESMTP id S1726419AbeHGVIv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 17:08:48 -0400
+        Tue, 7 Aug 2018 17:08:51 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A5C46D14;
-        Tue,  7 Aug 2018 18:53:04 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 233813EE;
+        Tue,  7 Aug 2018 18:53:07 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: [PATCH 4.17 00/18] 4.17.14-stable review
-Date:   Tue,  7 Aug 2018 20:51:03 +0200
-Message-Id: <20180807172312.964272530@linuxfoundation.org>
+        stable@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        netdev@vger.kernel.org, Dmitry Safonov <dima@arista.com>
+Subject: [PATCH 4.17 11/18] netlink: Dont shift on 64 for ngroups
+Date:   Tue,  7 Aug 2018 20:51:14 +0200
+Message-Id: <20180807172313.386597166@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180807172312.964272530@linuxfoundation.org>
+References: <20180807172312.964272530@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.17.14-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-4.17.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 4.17.14-rc1
-X-KernelTest-Deadline: 2018-08-09T17:23+00:00
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is the start of the stable review cycle for the 4.17.14 release.
-There are 18 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
+4.17-stable review patch.  If anyone has any objections, please let me know.
 
-Responses should be made by Thu Aug  9 17:23:05 UTC 2018.
-Anything received after that time might be too late.
+------------------
 
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.17.14-rc1.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.17.y
-and the diffstat can be found below.
+From: Dmitry Safonov <dima@arista.com>
 
-thanks,
+commit 91874ecf32e41b5d86a4cb9d60e0bee50d828058 upstream.
 
-greg k-h
+It's legal to have 64 groups for netlink_sock.
 
--------------
-Pseudo-Shortlog of commits:
+As user-supplied nladdr->nl_groups is __u32, it's possible to subscribe
+only to first 32 groups.
 
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 4.17.14-rc1
+The check for correctness of .bind() userspace supplied parameter
+is done by applying mask made from ngroups shift. Which broke Android
+as they have 64 groups and the shift for mask resulted in an overflow.
 
-Shankara Pailoor <shankarapailoor@gmail.com>
-    jfs: Fix inconsistency between memory allocation and ea_buf->max_size
+Fixes: 61f4b23769f0 ("netlink: Don't shift with UB on nlk->ngroups")
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Steffen Klassert <steffen.klassert@secunet.com>
+Cc: netdev@vger.kernel.org
+Cc: stable@vger.kernel.org
+Reported-and-Tested-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Dmitry Safonov <dima@arista.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Dave Chinner <dchinner@redhat.com>
-    xfs: validate cached inodes are free when allocated
+---
+ net/netlink/af_netlink.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Eric Sandeen <sandeen@sandeen.net>
-    xfs: don't call xfs_da_shrink_inode with NULL bp
-
-Linus Torvalds <torvalds@linux-foundation.org>
-    Partially revert "block: fail op_is_write() requests to read-only partitions"
-
-Filipe Manana <fdmanana@suse.com>
-    Btrfs: fix file data corruption after cloning a range and fsync
-
-Esben Haabendal <eha@deif.com>
-    i2c: imx: Fix reinit_completion() use
-
-Masami Hiramatsu <mhiramat@kernel.org>
-    ring_buffer: tracing: Inherit the tracing setting to next ring buffer
-
-Dmitry Safonov <dima@arista.com>
-    netlink: Don't shift on 64 for ngroups
-
-Frederic Weisbecker <frederic@kernel.org>
-    nohz: Fix missing tick reprogram when interrupting an inline softirq
-
-Anna-Maria Gleixner <anna-maria@linutronix.de>
-    nohz: Fix local_timer_softirq_pending()
-
-Kan Liang <kan.liang@linux.intel.com>
-    perf/x86/intel/uncore: Fix hardcoded index of Broadwell extra PCI devices
-
-Thomas Gleixner <tglx@linutronix.de>
-    genirq: Make force irq threading setup more robust
-
-Kees Cook <keescook@chromium.org>
-    jfs: Fix usercopy whitelist for inline inode data
-
-Anil Gurumurthy <anil.gurumurthy@cavium.com>
-    scsi: qla2xxx: Return error when TMF returns
-
-Quinn Tran <quinn.tran@cavium.com>
-    scsi: qla2xxx: Fix ISP recovery on unload
-
-Quinn Tran <quinn.tran@cavium.com>
-    scsi: qla2xxx: Fix driver unload by shutting down chip
-
-Quinn Tran <quinn.tran@cavium.com>
-    scsi: qla2xxx: Fix NPIV deletion by calling wait_for_sess_deletion
-
-Quinn Tran <quinn.tran@cavium.com>
-    scsi: qla2xxx: Fix unintialized List head crash
-
-
--------------
-
-Diffstat:
-
- Makefile                             |  4 +-
- arch/x86/events/intel/uncore.h       |  2 +-
- arch/x86/events/intel/uncore_snbep.c | 10 +++--
- block/blk-core.c                     |  5 ++-
- drivers/i2c/busses/i2c-imx.c         |  3 +-
- drivers/scsi/qla2xxx/qla_attr.c      |  1 +
- drivers/scsi/qla2xxx/qla_gbl.h       |  1 +
- drivers/scsi/qla2xxx/qla_gs.c        |  4 ++
- drivers/scsi/qla2xxx/qla_init.c      |  7 ++--
- drivers/scsi/qla2xxx/qla_inline.h    |  2 +
- drivers/scsi/qla2xxx/qla_isr.c       |  3 ++
- drivers/scsi/qla2xxx/qla_mbx.c       |  6 +++
- drivers/scsi/qla2xxx/qla_mid.c       | 11 +++++-
- drivers/scsi/qla2xxx/qla_os.c        | 51 +++++++++++--------------
- drivers/scsi/qla2xxx/qla_sup.c       |  3 ++
- fs/btrfs/extent_io.c                 |  3 ++
- fs/jfs/jfs_dinode.h                  |  7 ++++
- fs/jfs/jfs_incore.h                  |  1 +
- fs/jfs/super.c                       |  3 +-
- fs/jfs/xattr.c                       | 10 +++--
- fs/xfs/libxfs/xfs_attr_leaf.c        |  5 +--
- fs/xfs/xfs_icache.c                  | 73 ++++++++++++++++++++++++------------
- include/linux/ring_buffer.h          |  1 +
- kernel/irq/manage.c                  |  9 ++++-
- kernel/softirq.c                     |  2 +-
- kernel/time/tick-sched.c             |  2 +-
- kernel/trace/ring_buffer.c           | 16 ++++++++
- kernel/trace/trace.c                 |  6 +++
- net/netlink/af_netlink.c             |  4 +-
- 29 files changed, 171 insertions(+), 84 deletions(-)
+--- a/net/netlink/af_netlink.c
++++ b/net/netlink/af_netlink.c
+@@ -1013,8 +1013,8 @@ static int netlink_bind(struct socket *s
+ 
+ 	if (nlk->ngroups == 0)
+ 		groups = 0;
+-	else
+-		groups &= (1ULL << nlk->ngroups) - 1;
++	else if (nlk->ngroups < 8*sizeof(groups))
++		groups &= (1UL << nlk->ngroups) - 1;
+ 
+ 	bound = nlk->bound;
+ 	if (bound) {
 
 
