@@ -2,111 +2,109 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28516C46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:51:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95FB9C46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:52:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D31222172F
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:51:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UKVd6GFz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D31222172F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 5B5F62172F
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 18:52:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B5F62172F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389925AbeHGVH2 (ORCPT
+        id S2389949AbeHGVIU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 17:07:28 -0400
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:34692 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726419AbeHGVH2 (ORCPT
+        Tue, 7 Aug 2018 17:08:20 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33050 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388481AbeHGVIU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 17:07:28 -0400
-Received: by mail-yw1-f67.google.com with SMTP id j68-v6so5328678ywg.1;
-        Tue, 07 Aug 2018 11:51:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=QfKl/bgHlm83BZJ1sAv0SmilVlGdx7xbIP86Rv59nVk=;
-        b=UKVd6GFze1oAOHs1o/WfXHGTCVqqgd2iM07lXiwtVFRtVvQ0hXvzzn+kSgK604YaGa
-         fG1wAMSYslHyFLp1k8KvIvI6H8ul6Wzaxusn1m4lWSq6byd428HfyGdBvB4Br/Y3YU18
-         8FPubj+6rxIv5phrddLnhS8dGnyFcOVBOq62e+DzEQhD+6Q9JHGYEh/Fggt/qPp565Nv
-         u16dcuHUabBboY/Q0fbYjvRLXYzs3rvf4Y7vZi0VeIE54yf1wR5WtEpyrgNsV223i26Y
-         K/CAxzQCp0q5mQlP0ReVEl3Nhkup1PkgTgCJrBaIlWdksUu8cIIupqXnl0DxjFQyvqG9
-         ROMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=QfKl/bgHlm83BZJ1sAv0SmilVlGdx7xbIP86Rv59nVk=;
-        b=ZvExprzsVIgU2wq9NeeuAYBtWikTFFuYCS8+aGHh/rXHB105TC0Di3LYh0XyZ1WbDI
-         IuNs0IfzhgxgGy6VG/2cihPJuz5tykwLgvE/V2mfkwFB3TLdhcKcxH7ts47cRox8o+uG
-         LW0GGf70YRjhQvGAFy8v7lmBC9gl/KhOBiTjqE1UzIokoRvb65Uy53hxeUZ4TYnVIZtJ
-         xpVSGsU5Xbr8nIfcpAEYB/y1Xg6X9l3UuVV1o1t6RhpzljczHfClHn6XK2kC4iLPmkxY
-         gO+/sqGZDgxO/VYQ20waGKdXqtfkbo7A32n1UHsl4JQgyWTtQZ16eoBN3eWIMRTTGRwd
-         Mv9w==
-X-Gm-Message-State: AOUpUlFofhwMQL1OX+MNn4Pe7IH0wbqnT10wN674ojbwkSFJnp5kdiyz
-        mqb8Cw6bljyudQ/9uBqeGQY=
-X-Google-Smtp-Source: AAOMgpcyxzHx4uxLoT10eY14488gDLM8fHXe7wQ859hVyAjaj7Fjr5g4XZkgnk4E0GJ5SIpOG944Mg==
-X-Received: by 2002:a81:25d6:: with SMTP id l205-v6mr10687118ywl.242.1533667905111;
-        Tue, 07 Aug 2018 11:51:45 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:200::2:2c4b])
-        by smtp.gmail.com with ESMTPSA id g16-v6sm1240401ywe.11.2018.08.07.11.51.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 07 Aug 2018 11:51:44 -0700 (PDT)
-Date:   Tue, 7 Aug 2018 11:51:41 -0700
-From:   Tejun Heo <tj@kernel.org>
-To:     Dennis Zhou <dennisszhou@gmail.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Christoph Lameter <cl@linux.com>, Roman Gushchin <guro@fb.com>,
-        Vlastimil Babka <vbabka@suse.cz>, kernel-team@fb.com,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Linux API <linux-api@vger.kernel.org>
-Subject: Re: [PATCH v2] proc: add percpu populated pages count to meminfo
-Message-ID: <20180807185141.GC3978217@devbig004.ftw2.facebook.com>
-References: <20180807184723.74919-1-dennisszhou@gmail.com>
+        Tue, 7 Aug 2018 17:08:20 -0400
+Received: from localhost (unknown [194.244.16.108])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 336DD3EE;
+        Tue,  7 Aug 2018 18:52:37 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Quinn Tran <quinn.tran@cavium.com>,
+        Himanshu Madhani <himanshu.madhani@cavium.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.17 01/18] scsi: qla2xxx: Fix unintialized List head crash
+Date:   Tue,  7 Aug 2018 20:51:04 +0200
+Message-Id: <20180807172313.016441284@linuxfoundation.org>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180807172312.964272530@linuxfoundation.org>
+References: <20180807172312.964272530@linuxfoundation.org>
+User-Agent: quilt/0.65
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180807184723.74919-1-dennisszhou@gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello, Dennis.
+4.17-stable review patch.  If anyone has any objections, please let me know.
 
-On Tue, Aug 07, 2018 at 11:47:23AM -0700, Dennis Zhou wrote:
-> From: "Dennis Zhou (Facebook)" <dennisszhou@gmail.com>
-> 
-> Currently, percpu memory only exposes allocation and utilization
-> information via debugfs. This more or less is only really useful for
-> understanding the fragmentation and allocation information at a
-> per-chunk level with a few global counters. This is also gated behind a
-> config. BPF and cgroup, for example, have seen an increase use causing
-> increased use of percpu memory. Let's make it easier for someone to
-> identify how much memory is being used.
-> 
-> This patch adds the "Percpu" stat to meminfo to more easily look up how
-> much percpu memory is in use. This number includes the cost for all
-> allocated backing pages and not just isnight at the a unit, per chunk
-> level. Metadata is excluded. I think excluding metadata is fair because
-> the backing memory scales with the numbere of cpus and can quickly
-> outweigh the metadata. It also makes this calculation light.
-> 
-> Signed-off-by: Dennis Zhou <dennisszhou@gmail.com>
+------------------
 
-Acked-by: Tejun Heo <tj@kernel.org>
+From: Quinn Tran <quinn.tran@cavium.com>
 
-Andrew, if this looks good, can you please route this?
+commit e3dde080ebbdbb4bda8eee35d770714fee8c59ac upstream.
 
-Thanks.
+In case of IOCB Queue full or system where memory is low and driver
+receives large number of RSCN storm, the stale sp pointer can stay on
+gpnid_list resulting in page_fault.
 
--- 
-tejun
+This patch fixes this issue by initializing the sp->elem list head and
+removing sp->elem before memory is freed.
+
+Following stack trace is seen
+
+ 9 [ffff987b37d1bc60] page_fault at ffffffffad516768 [exception RIP: qla24xx_async_gpnid+496]
+10 [ffff987b37d1bd10] qla24xx_async_gpnid at ffffffffc039866d [qla2xxx]
+11 [ffff987b37d1bd80] qla2x00_do_work at ffffffffc036169c [qla2xxx]
+12 [ffff987b37d1be38] qla2x00_do_dpc_all_vps at ffffffffc03adfed [qla2xxx]
+13 [ffff987b37d1be78] qla2x00_do_dpc at ffffffffc036458a [qla2xxx]
+14 [ffff987b37d1bec8] kthread at ffffffffacebae31
+
+Fixes: 2d73ac6102d9 ("scsi: qla2xxx: Serialize GPNID for multiple RSCN")
+Cc: <stable@vger.kernel.org> # v4.17+
+Signed-off-by: Quinn Tran <quinn.tran@cavium.com>
+Signed-off-by: Himanshu Madhani <himanshu.madhani@cavium.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ drivers/scsi/qla2xxx/qla_gs.c     |    4 ++++
+ drivers/scsi/qla2xxx/qla_inline.h |    2 ++
+ 2 files changed, 6 insertions(+)
+
+--- a/drivers/scsi/qla2xxx/qla_gs.c
++++ b/drivers/scsi/qla2xxx/qla_gs.c
+@@ -3712,6 +3712,10 @@ int qla24xx_async_gpnid(scsi_qla_host_t
+ 	return rval;
+ 
+ done_free_sp:
++	spin_lock_irqsave(&vha->hw->vport_slock, flags);
++	list_del(&sp->elem);
++	spin_unlock_irqrestore(&vha->hw->vport_slock, flags);
++
+ 	if (sp->u.iocb_cmd.u.ctarg.req) {
+ 		dma_free_coherent(&vha->hw->pdev->dev,
+ 			sizeof(struct ct_sns_pkt),
+--- a/drivers/scsi/qla2xxx/qla_inline.h
++++ b/drivers/scsi/qla2xxx/qla_inline.h
+@@ -222,6 +222,8 @@ qla2xxx_get_qpair_sp(struct qla_qpair *q
+ 	sp->fcport = fcport;
+ 	sp->iocbs = 1;
+ 	sp->vha = qpair->vha;
++	INIT_LIST_HEAD(&sp->elem);
++
+ done:
+ 	if (!sp)
+ 		QLA_QPAIR_MARK_NOT_BUSY(qpair);
+
+
