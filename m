@@ -2,101 +2,183 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF350C46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 17:02:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08EFFC46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 17:03:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A35D21884
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 17:02:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="P2zu3nMf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A35D21884
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
+	by mail.kernel.org (Postfix) with ESMTP id B59B2215E5
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 17:03:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B59B2215E5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389929AbeHGTRx (ORCPT
+        id S2389937AbeHGTS6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 15:17:53 -0400
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:40443 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389182AbeHGTRm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 15:17:42 -0400
-Received: by mail-qk0-f196.google.com with SMTP id c126-v6so11909201qkd.7
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 10:02:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=nyzubDi3jL/TObKoMWlexN4OMzGWcc7moMA6xbh5aB4=;
-        b=P2zu3nMfw2r0p/ctflwLKq9EK5MeA4aZqK9reZGkUvhBL1pCcT2QFHvKdA6AVktlsy
-         PPHbgSbZm/rMXzj26id5LsYSkb3iO+OGz+cn4g6vtz5vFYLwY8y5wuHEvjaRdbXj9W/6
-         l5A5FZUNdI8TWChPnVlXK/erKMcZD/9ZMIGj4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=nyzubDi3jL/TObKoMWlexN4OMzGWcc7moMA6xbh5aB4=;
-        b=blfFiMFPFW+TKfn9TBjOiAzACS4Sk5Da6vv1haGJcl7ZngzI+7NWDBquTY4n0U53oi
-         BiAg33rTUDpnLBOyAREG5OVg+oQIf15ljv1x4cphiGGbw7TpqYVF06fLc5hS8sIfXnzs
-         Mb049fozjjqy/Gc48nBC+ljXrl1xCWCzLhCuVXNnLPL2/BxQSeaT2qMTUlQUgeJ1Bz4w
-         sH3X/2QphByJ9QMPuAeVDB7x4zBmnjzf4oTIy+SD2jTC3Zzfds6XzNDgnuCNLXYcRQ1H
-         4hl869ZQdG90K8Kq6ZigCoekhrRbF09fPFKLg7wS7JBmlaG3EZHHkgdPcM4PHEAszflj
-         qGPg==
-X-Gm-Message-State: AOUpUlFNjlYaJ+LAyI0icqbAqfLlLL0eZMrUWSCrW6XAt2JD238p+ncG
-        IiETmrRO0+9gHfcG/mKbggf0jg==
-X-Google-Smtp-Source: AAOMgpelJnP+iLMoyncmr1xAE+feFOXEf/SrCOX6stXCHiIw+Ci01/rZ41eNFCbPr+/NdlaZQ0b54w==
-X-Received: by 2002:a37:ad07:: with SMTP id f7-v6mr17013801qkm.114.1533661347834;
-        Tue, 07 Aug 2018 10:02:27 -0700 (PDT)
-Received: from lbrmn-lnxub86.ric.broadcom.com ([192.19.228.250])
-        by smtp.gmail.com with ESMTPSA id d12-v6sm867483qth.35.2018.08.07.10.02.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 07 Aug 2018 10:02:27 -0700 (PDT)
-From:   Arun Parameswaran <arun.parameswaran@broadcom.com>
-To:     "David S. Miller" <davem@davemloft.net>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        Arun Parameswaran <arun.parameswaran@broadcom.com>
-Subject: [PATCH 2/3] net: dsa: b53: Add support for Broadcom Omega SoC internal switch
-Date:   Tue,  7 Aug 2018 10:02:43 -0700
-Message-Id: <1533661364-15381-3-git-send-email-arun.parameswaran@broadcom.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1533661364-15381-1-git-send-email-arun.parameswaran@broadcom.com>
-References: <1533661364-15381-1-git-send-email-arun.parameswaran@broadcom.com>
+        Tue, 7 Aug 2018 15:18:58 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:36452 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388577AbeHGTS6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 15:18:58 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 96BA32072C; Tue,  7 Aug 2018 19:03:40 +0200 (CEST)
+Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 8AF0D20908;
+        Tue,  7 Aug 2018 19:02:55 +0200 (CEST)
+Date:   Tue, 7 Aug 2018 19:02:56 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-doc@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v2 08/12] mtd: rawnand: ams-delta: Simplify pointer
+ resolution on read/write
+Message-ID: <20180807190256.092b2364@bbrezillon>
+In-Reply-To: <20180806222918.12644-9-jmkrzyszt@gmail.com>
+References: <20180718235710.18242-1-jmkrzyszt@gmail.com>
+        <20180806222918.12644-1-jmkrzyszt@gmail.com>
+        <20180806222918.12644-9-jmkrzyszt@gmail.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for the Broadcom Omega SoC internal ethernet switch
-to the b53 srab driver in the DSA framework.
+On Tue,  7 Aug 2018 00:29:14 +0200
+Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
 
-Signed-off-by: Arun Parameswaran <arun.parameswaran@broadcom.com>
----
- drivers/net/dsa/b53/b53_srab.c | 1 +
- 1 file changed, 1 insertion(+)
+> Simplify data read/write sub-functions by changing their APIs so they
+> accept driver private structure pointer instead of mtd_info.
+> 
+> Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
 
-diff --git a/drivers/net/dsa/b53/b53_srab.c b/drivers/net/dsa/b53/b53_srab.c
-index 8247481..91de2ba 100644
---- a/drivers/net/dsa/b53/b53_srab.c
-+++ b/drivers/net/dsa/b53/b53_srab.c
-@@ -374,6 +374,7 @@ static int b53_srab_write64(struct b53_device *dev, u8 page, u8 reg,
- 	{ .compatible = "brcm,bcm88312-srab", .data = (void *)BCM58XX_DEVICE_ID },
- 	{ .compatible = "brcm,cygnus-srab", .data = (void *)BCM583XX_DEVICE_ID },
- 	{ .compatible = "brcm,nsp-srab", .data = (void *)BCM58XX_DEVICE_ID },
-+	{ .compatible = "brcm,omega-srab", .data = (void *)BCM583XX_DEVICE_ID },
- 	{ /* sentinel */ },
- };
- MODULE_DEVICE_TABLE(of, b53_srab_of_match);
--- 
-1.9.1
+Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
+
+Can you move that one earlier in the series so that it can be applied
+even if we're still discussing the GPIO bitmap changes?
+
+> ---
+>  drivers/mtd/nand/raw/ams-delta.c | 40 ++++++++++++++++++++++------------------
+>  1 file changed, 22 insertions(+), 18 deletions(-)
+> 
+> diff --git a/drivers/mtd/nand/raw/ams-delta.c b/drivers/mtd/nand/raw/ams-delta.c
+> index d02c48c013e8..30c461138195 100644
+> --- a/drivers/mtd/nand/raw/ams-delta.c
+> +++ b/drivers/mtd/nand/raw/ams-delta.c
+> @@ -76,10 +76,8 @@ static void ams_delta_write_commit(struct ams_delta_nand *priv)
+>  	gpiod_set_value(priv->gpiod_nwe, 1);
+>  }
+>  
+> -static void ams_delta_write_next_byte(struct mtd_info *mtd, u_char byte)
+> +static void ams_delta_write_next_byte(struct ams_delta_nand *priv, u_char byte)
+>  {
+> -	struct nand_chip *this = mtd_to_nand(mtd);
+> -	struct ams_delta_nand *priv = nand_get_controller_data(this);
+>  	struct gpio_descs *data_gpiods = priv->data_gpiods;
+>  	unsigned long bits = byte;
+>  	int i, value_array[data_gpiods->ndescs];
+> @@ -93,10 +91,8 @@ static void ams_delta_write_next_byte(struct mtd_info *mtd, u_char byte)
+>  	ams_delta_write_commit(priv);
+>  }
+>  
+> -static void ams_delta_write_byte(struct mtd_info *mtd, u_char byte)
+> +static void ams_delta_write_first_byte(struct ams_delta_nand *priv, u_char byte)
+>  {
+> -	struct nand_chip *this = mtd_to_nand(mtd);
+> -	struct ams_delta_nand *priv = nand_get_controller_data(this);
+>  	struct gpio_descs *data_gpiods = priv->data_gpiods;
+>  	unsigned long bits = byte;
+>  	int i;
+> @@ -108,10 +104,8 @@ static void ams_delta_write_byte(struct mtd_info *mtd, u_char byte)
+>  	ams_delta_write_commit(priv);
+>  }
+>  
+> -static u_char ams_delta_read_next_byte(struct mtd_info *mtd)
+> +static u_char ams_delta_read_next_byte(struct ams_delta_nand *priv)
+>  {
+> -	struct nand_chip *this = mtd_to_nand(mtd);
+> -	struct ams_delta_nand *priv = nand_get_controller_data(this);
+>  	struct gpio_descs *data_gpiods = priv->data_gpiods;
+>  	unsigned long bits = 0;
+>  	int i, value_array[data_gpiods->ndescs];
+> @@ -131,38 +125,48 @@ static u_char ams_delta_read_next_byte(struct mtd_info *mtd)
+>  	return bits;
+>  }
+>  
+> -static u_char ams_delta_read_byte(struct mtd_info *mtd)
+> +static u_char ams_delta_read_first_byte(struct ams_delta_nand *priv)
+>  {
+> -	struct nand_chip *this = mtd_to_nand(mtd);
+> -	struct ams_delta_nand *priv = nand_get_controller_data(this);
+>  	struct gpio_descs *data_gpiods = priv->data_gpiods;
+>  	int i;
+>  
+>  	for (i = 0; i < data_gpiods->ndescs; i++)
+>  		gpiod_direction_input(data_gpiods->desc[i]);
+>  
+> -	return ams_delta_read_next_byte(mtd);
+> +	return ams_delta_read_next_byte(priv);
+> +}
+> +
+> +static u_char ams_delta_read_byte(struct mtd_info *mtd)
+> +{
+> +	struct nand_chip *this = mtd_to_nand(mtd);
+> +	struct ams_delta_nand *priv = nand_get_controller_data(this);
+> +
+> +	return ams_delta_read_first_byte(priv);
+>  }
+>  
+>  static void ams_delta_write_buf(struct mtd_info *mtd, const u_char *buf,
+>  				int len)
+>  {
+> +	struct nand_chip *this = mtd_to_nand(mtd);
+> +	struct ams_delta_nand *priv = nand_get_controller_data(this);
+>  	int i;
+>  
+>  	if (len > 0)
+> -		ams_delta_write_byte(mtd, buf[0]);
+> +		ams_delta_write_first_byte(priv, buf[0]);
+>  	for (i = 1; i < len; i++)
+> -		ams_delta_write_next_byte(mtd, buf[i]);
+> +		ams_delta_write_next_byte(priv, buf[i]);
+>  }
+>  
+>  static void ams_delta_read_buf(struct mtd_info *mtd, u_char *buf, int len)
+>  {
+> +	struct nand_chip *this = mtd_to_nand(mtd);
+> +	struct ams_delta_nand *priv = nand_get_controller_data(this);
+>  	int i;
+>  
+>  	if (len > 0)
+> -		buf[0] = ams_delta_read_byte(mtd);
+> +		buf[0] = ams_delta_read_first_byte(priv);
+>  	for (i = 1; i < len; i++)
+> -		buf[i] = ams_delta_read_next_byte(mtd);
+> +		buf[i] = ams_delta_read_next_byte(priv);
+>  }
+>  
+>  /*
+> @@ -186,7 +190,7 @@ static void ams_delta_hwcontrol(struct mtd_info *mtd, int cmd,
+>  	}
+>  
+>  	if (cmd != NAND_CMD_NONE)
+> -		ams_delta_write_byte(mtd, cmd);
+> +		ams_delta_write_first_byte(priv, cmd);
+>  }
+>  
+>  static int ams_delta_nand_ready(struct mtd_info *mtd)
 
