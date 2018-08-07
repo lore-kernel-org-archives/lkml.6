@@ -2,339 +2,91 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 275EBC46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 21:47:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3832C46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 21:51:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D43ED21526
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 21:47:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D43ED21526
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 923992198E
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 21:51:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lap3yGla"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 923992198E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726999AbeHHAEG (ORCPT
+        id S1727028AbeHHAHs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 20:04:06 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:39309 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726027AbeHHAEG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 20:04:06 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w77LkQFk1401668
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 7 Aug 2018 14:46:26 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w77LkQtU1401662;
-        Tue, 7 Aug 2018 14:46:26 -0700
-Date:   Tue, 7 Aug 2018 14:46:26 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Joerg Roedel <tipbot@zytor.com>
-Message-ID: <tip-16a3fe634f6a568c6234b8747e5d50487fed3526@git.kernel.org>
-Cc:     will.deacon@arm.com, torvalds@linux-foundation.org,
-        brgerst@gmail.com, bp@alien8.de, dhgutteridge@sympatico.ca,
-        aarcange@redhat.com, luto@kernel.org, linux-kernel@vger.kernel.org,
-        David.Laight@aculab.com, peterz@infradead.org, llong@redhat.com,
-        hpa@zytor.com, tglx@linutronix.de, mingo@kernel.org, pavel@ucw.cz,
-        jroedel@suse.de, dvlasenk@redhat.com, jgross@suse.com,
-        jkosina@suse.cz, dave.hansen@intel.com, gregkh@linuxfoundation.org,
-        jpoimboe@redhat.com, eduval@amazon.com, boris.ostrovsky@oracle.com
-Reply-To: jpoimboe@redhat.com, eduval@amazon.com,
-          boris.ostrovsky@oracle.com, jgross@suse.com, jkosina@suse.cz,
-          gregkh@linuxfoundation.org, dave.hansen@intel.com,
-          aarcange@redhat.com, linux-kernel@vger.kernel.org,
-          luto@kernel.org, peterz@infradead.org, David.Laight@aculab.com,
-          tglx@linutronix.de, hpa@zytor.com, llong@redhat.com,
-          mingo@kernel.org, pavel@ucw.cz, dvlasenk@redhat.com,
-          jroedel@suse.de, will.deacon@arm.com,
-          torvalds@linux-foundation.org, brgerst@gmail.com, bp@alien8.de,
-          dhgutteridge@sympatico.ca
-In-Reply-To: <1533637471-30953-4-git-send-email-joro@8bytes.org>
-References: <1533637471-30953-4-git-send-email-joro@8bytes.org>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] x86/mm/pti: Clone kernel-image on PTE level for 32
- bit
-Git-Commit-ID: 16a3fe634f6a568c6234b8747e5d50487fed3526
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 7 Aug 2018 20:07:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55118 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726027AbeHHAHs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 20:07:48 -0400
+Received: from gmail.com (unknown [104.132.51.88])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8B27A21987;
+        Tue,  7 Aug 2018 21:51:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1533678682;
+        bh=BDlUKEAAsqXyggAtiDZrhpS6wBt80P70HqQeWQWipX4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=lap3yGlaw2+3Y0JklRQMGPU/A8bYsuF2oIainXYh1cgOZxf8mBkQnS1BmHsmmQlen
+         tCc2mMWR1t8AGa/x9dM/2k1BOEpCGORqMIz+trARcdMGtisdWx3Cj2QEEXKtYewJnm
+         qs9wd8BSSiyeK2WNkltXTxOmyjhUuChIi7RPawis=
+Date:   Tue, 7 Aug 2018 14:51:21 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Samuel Neves <samuel.c.p.neves@gmail.com>
+Cc:     Paul Crowley <paulcrowley@google.com>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        linux-fscrypt@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Greg Kaiser <gkaiser@google.com>,
+        Michael Halcrow <mhalcrow@google.com>,
+        tomer.ashur@esat.kuleuven.be, Eric Biggers <ebiggers@google.com>,
+        "D. J. Bernstein" <djb@cr.yp.to>
+Subject: Re: [RFC PATCH 3/9] crypto: chacha20-generic - refactor to allow
+ varying number of rounds
+Message-ID: <20180807215121.GB25300@gmail.com>
+References: <20180806223300.113891-1-ebiggers@kernel.org>
+ <20180806223300.113891-4-ebiggers@kernel.org>
+ <CAHmME9rbe6eT6dkUqKnp-GxcqGrp-tvMfTMr8kZtsn=S3cmP8A@mail.gmail.com>
+ <CA+_SqcD+KpQ_X6iXUCpQh0N6pWzBorstBJDx7eBqcybY4Dvy8Q@mail.gmail.com>
+ <CAEX_ruFp0KddnZyetZt997OvRzKDuN7U95MF_N9AgTh+mTcD7Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <CAEX_ruFp0KddnZyetZt997OvRzKDuN7U95MF_N9AgTh+mTcD7Q@mail.gmail.com>
+User-Agent: Mutt/1.10.1+60 (20b17ca5) (2018-08-02)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  16a3fe634f6a568c6234b8747e5d50487fed3526
-Gitweb:     https://git.kernel.org/tip/16a3fe634f6a568c6234b8747e5d50487fed3526
-Author:     Joerg Roedel <jroedel@suse.de>
-AuthorDate: Tue, 7 Aug 2018 12:24:31 +0200
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Tue, 7 Aug 2018 23:36:02 +0200
+On Tue, Aug 07, 2018 at 11:21:04AM +0100, Samuel Neves wrote:
+> > The best attack on ChaCha breaks 7 rounds, and that attack requires 2^248 operations.
+> 
+> This number, as far as I can tell, comes from the "New features of
+> Latin dances" paper. There have been some minor improvements in the
+> intervening 10 years, e.g., [1, 2, 3, 4], which pull back the
+> complexity of breaking ChaCha7 down to 2^235. In any case, every
+> attack so far appears to hit a wall at 8 rounds, with 12 rounds---the
+> recommended eSTREAM round number for Salsa20---seeming to offer a
+> reasonable security margin, still somewhat better than that of the
+> AES.
+> 
+> Best regards,
+> Samuel Neves
+> 
+> [1] https://eprint.iacr.org/2015/698
+> [2] https://eprint.iacr.org/2015/217
+> [3] https://eprint.iacr.org/2016/1034
+> [4] https://doi.org/10.1016/j.dam.2017.04.034
 
-x86/mm/pti: Clone kernel-image on PTE level for 32 bit
+Thanks Samuel, I'll fix that number in the next iteration of the patchset.
 
-On 32 bit the kernel sections are not huge-page aligned.  When we clone
-them on PMD-level we unevitably map some areas that are normal kernel
-memory and may contain secrets to user-space. To prevent that we need to
-clone the kernel-image on PTE-level for 32 bit.
-
-Also make the page-table cloning code more general so that it can handle
-PMD and PTE level cloning. This can be generalized further in the future to
-also handle clones on the P4D-level.
-
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: "H . Peter Anvin" <hpa@zytor.com>
-Cc: linux-mm@kvack.org
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Juergen Gross <jgross@suse.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Jiri Kosina <jkosina@suse.cz>
-Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: David Laight <David.Laight@aculab.com>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: Eduardo Valentin <eduval@amazon.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: aliguori@amazon.com
-Cc: daniel.gruss@iaik.tugraz.at
-Cc: hughd@google.com
-Cc: keescook@google.com
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Waiman Long <llong@redhat.com>
-Cc: Pavel Machek <pavel@ucw.cz>
-Cc: "David H . Gutteridge" <dhgutteridge@sympatico.ca>
-Cc: joro@8bytes.org
-Link: https://lkml.kernel.org/r/1533637471-30953-4-git-send-email-joro@8bytes.org
-
----
- arch/x86/mm/pti.c | 140 ++++++++++++++++++++++++++++++++++++++----------------
- 1 file changed, 99 insertions(+), 41 deletions(-)
-
-diff --git a/arch/x86/mm/pti.c b/arch/x86/mm/pti.c
-index 5164c987b1f1..1dc5c683e7a5 100644
---- a/arch/x86/mm/pti.c
-+++ b/arch/x86/mm/pti.c
-@@ -54,6 +54,16 @@
- #define __GFP_NOTRACK	0
- #endif
- 
-+/*
-+ * Define the page-table levels we clone for user-space on 32
-+ * and 64 bit.
-+ */
-+#ifdef CONFIG_X86_64
-+#define	PTI_LEVEL_KERNEL_IMAGE	PTI_CLONE_PMD
-+#else
-+#define	PTI_LEVEL_KERNEL_IMAGE	PTI_CLONE_PTE
-+#endif
-+
- static void __init pti_print_if_insecure(const char *reason)
- {
- 	if (boot_cpu_has_bug(X86_BUG_CPU_MELTDOWN))
-@@ -228,7 +238,6 @@ static pmd_t *pti_user_pagetable_walk_pmd(unsigned long address)
- 	return pmd_offset(pud, address);
- }
- 
--#ifdef CONFIG_X86_VSYSCALL_EMULATION
- /*
-  * Walk the shadow copy of the page tables (optionally) trying to allocate
-  * page table pages on the way down.  Does not support large pages.
-@@ -270,6 +279,7 @@ static __init pte_t *pti_user_pagetable_walk_pte(unsigned long address)
- 	return pte;
- }
- 
-+#ifdef CONFIG_X86_VSYSCALL_EMULATION
- static void __init pti_setup_vsyscall(void)
- {
- 	pte_t *pte, *target_pte;
-@@ -290,8 +300,14 @@ static void __init pti_setup_vsyscall(void)
- static void __init pti_setup_vsyscall(void) { }
- #endif
- 
-+enum pti_clone_level {
-+	PTI_CLONE_PMD,
-+	PTI_CLONE_PTE,
-+};
-+
- static void
--pti_clone_pmds(unsigned long start, unsigned long end)
-+pti_clone_pgtable(unsigned long start, unsigned long end,
-+		  enum pti_clone_level level)
- {
- 	unsigned long addr;
- 
-@@ -299,7 +315,8 @@ pti_clone_pmds(unsigned long start, unsigned long end)
- 	 * Clone the populated PMDs which cover start to end. These PMD areas
- 	 * can have holes.
- 	 */
--	for (addr = start; addr < end; addr += PMD_SIZE) {
-+	for (addr = start; addr < end;) {
-+		pte_t *pte, *target_pte;
- 		pmd_t *pmd, *target_pmd;
- 		pgd_t *pgd;
- 		p4d_t *p4d;
-@@ -315,44 +332,84 @@ pti_clone_pmds(unsigned long start, unsigned long end)
- 		p4d = p4d_offset(pgd, addr);
- 		if (WARN_ON(p4d_none(*p4d)))
- 			return;
-+
- 		pud = pud_offset(p4d, addr);
--		if (pud_none(*pud))
-+		if (pud_none(*pud)) {
-+			addr += PUD_SIZE;
- 			continue;
-+		}
-+
- 		pmd = pmd_offset(pud, addr);
--		if (pmd_none(*pmd))
-+		if (pmd_none(*pmd)) {
-+			addr += PMD_SIZE;
- 			continue;
-+		}
- 
--		target_pmd = pti_user_pagetable_walk_pmd(addr);
--		if (WARN_ON(!target_pmd))
--			return;
--
--		/*
--		 * Only clone present PMDs.  This ensures only setting
--		 * _PAGE_GLOBAL on present PMDs.  This should only be
--		 * called on well-known addresses anyway, so a non-
--		 * present PMD would be a surprise.
--		 */
--		if (WARN_ON(!(pmd_flags(*pmd) & _PAGE_PRESENT)))
--			return;
--
--		/*
--		 * Setting 'target_pmd' below creates a mapping in both
--		 * the user and kernel page tables.  It is effectively
--		 * global, so set it as global in both copies.  Note:
--		 * the X86_FEATURE_PGE check is not _required_ because
--		 * the CPU ignores _PAGE_GLOBAL when PGE is not
--		 * supported.  The check keeps consistentency with
--		 * code that only set this bit when supported.
--		 */
--		if (boot_cpu_has(X86_FEATURE_PGE))
--			*pmd = pmd_set_flags(*pmd, _PAGE_GLOBAL);
--
--		/*
--		 * Copy the PMD.  That is, the kernelmode and usermode
--		 * tables will share the last-level page tables of this
--		 * address range
--		 */
--		*target_pmd = *pmd;
-+		if (pmd_large(*pmd) || level == PTI_CLONE_PMD) {
-+			target_pmd = pti_user_pagetable_walk_pmd(addr);
-+			if (WARN_ON(!target_pmd))
-+				return;
-+
-+			/*
-+			 * Only clone present PMDs.  This ensures only setting
-+			 * _PAGE_GLOBAL on present PMDs.  This should only be
-+			 * called on well-known addresses anyway, so a non-
-+			 * present PMD would be a surprise.
-+			 */
-+			if (WARN_ON(!(pmd_flags(*pmd) & _PAGE_PRESENT)))
-+				return;
-+
-+			/*
-+			 * Setting 'target_pmd' below creates a mapping in both
-+			 * the user and kernel page tables.  It is effectively
-+			 * global, so set it as global in both copies.  Note:
-+			 * the X86_FEATURE_PGE check is not _required_ because
-+			 * the CPU ignores _PAGE_GLOBAL when PGE is not
-+			 * supported.  The check keeps consistentency with
-+			 * code that only set this bit when supported.
-+			 */
-+			if (boot_cpu_has(X86_FEATURE_PGE))
-+				*pmd = pmd_set_flags(*pmd, _PAGE_GLOBAL);
-+
-+			/*
-+			 * Copy the PMD.  That is, the kernelmode and usermode
-+			 * tables will share the last-level page tables of this
-+			 * address range
-+			 */
-+			*target_pmd = *pmd;
-+
-+			addr += PMD_SIZE;
-+
-+		} else if (level == PTI_CLONE_PTE) {
-+
-+			/* Walk the page-table down to the pte level */
-+			pte = pte_offset_kernel(pmd, addr);
-+			if (pte_none(*pte)) {
-+				addr += PAGE_SIZE;
-+				continue;
-+			}
-+
-+			/* Only clone present PTEs */
-+			if (WARN_ON(!(pte_flags(*pte) & _PAGE_PRESENT)))
-+				return;
-+
-+			/* Allocate PTE in the user page-table */
-+			target_pte = pti_user_pagetable_walk_pte(addr);
-+			if (WARN_ON(!target_pte))
-+				return;
-+
-+			/* Set GLOBAL bit in both PTEs */
-+			if (boot_cpu_has(X86_FEATURE_PGE))
-+				*pte = pte_set_flags(*pte, _PAGE_GLOBAL);
-+
-+			/* Clone the PTE */
-+			*target_pte = *pte;
-+
-+			addr += PAGE_SIZE;
-+
-+		} else {
-+			BUG();
-+		}
- 	}
- }
- 
-@@ -398,7 +455,7 @@ static void __init pti_clone_user_shared(void)
- 	start = CPU_ENTRY_AREA_BASE;
- 	end   = start + (PAGE_SIZE * CPU_ENTRY_AREA_PAGES);
- 
--	pti_clone_pmds(start, end);
-+	pti_clone_pgtable(start, end, PTI_CLONE_PMD);
- }
- #endif /* CONFIG_X86_64 */
- 
-@@ -417,8 +474,9 @@ static void __init pti_setup_espfix64(void)
-  */
- static void pti_clone_entry_text(void)
- {
--	pti_clone_pmds((unsigned long) __entry_text_start,
--		       (unsigned long) __irqentry_text_end);
-+	pti_clone_pgtable((unsigned long) __entry_text_start,
-+			  (unsigned long) __irqentry_text_end,
-+			  PTI_CLONE_PMD);
- }
- 
- /*
-@@ -500,10 +558,10 @@ static void pti_clone_kernel_text(void)
- 	 * pti_set_kernel_image_nonglobal() did to clear the
- 	 * global bit.
- 	 */
--	pti_clone_pmds(start, end_clone);
-+	pti_clone_pgtable(start, end_clone, PTI_LEVEL_KERNEL_IMAGE);
- 
- 	/*
--	 * pti_clone_pmds() will set the global bit in any PMDs
-+	 * pti_clone_pgtable() will set the global bit in any PMDs
- 	 * that it clones, but we also need to get any PTEs in
- 	 * the last level for areas that are not huge-page-aligned.
- 	 */
+- Eric
