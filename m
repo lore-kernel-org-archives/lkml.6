@@ -2,85 +2,102 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 062F3C46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 15:01:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60FA3C46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 15:02:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BAC3B21502
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 15:01:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BAC3B21502
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 12E7421502
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 15:02:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rx/6UJbY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12E7421502
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389864AbeHGRQO (ORCPT
+        id S2403801AbeHGRRA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 13:16:14 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:32979 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733213AbeHGRQO (ORCPT
+        Tue, 7 Aug 2018 13:17:00 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:44763 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732639AbeHGRQ7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 13:16:14 -0400
-Received: by mail-io0-f195.google.com with SMTP id z20-v6so14275698iol.0;
-        Tue, 07 Aug 2018 08:01:30 -0700 (PDT)
+        Tue, 7 Aug 2018 13:16:59 -0400
+Received: by mail-io0-f193.google.com with SMTP id q19-v6so14234202ioh.11;
+        Tue, 07 Aug 2018 08:02:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Hes/jFk//nm3wRlygrhCtUFlxzBs1T1pCzOgZfP/2cE=;
+        b=rx/6UJbYBChXuLxqt3BVus60E3LlEaAgnHCMH0AL6HBzuCo55sKiTfc8FXOeVCtnJt
+         nz+jWyfTsScYdnpkQm1bhD7uLAUP5HCWfk0krFMFMot9/dIKHppx3MrTko6jJdPEkkHM
+         CPgiDhB7RFdmlSzAgJrAXS4kyio+yo63XWWBBmS7DTjUwUbtFl02R5Q448J4zmIpvlGN
+         CQVdRJhQXjsWvU/OgpH9xnpDBMAtUD1vuoGO43c1XLqMrVfRsLGYEx2qamky4hhp0InC
+         X9lxXbHd5W5el1XBazYmWPtHWkUFrgnc8OPGCVh3RSP81QLijxMoKzmmr16eqW6aiHdQ
+         S0cw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=2bfpvkev53o9yaQQ9M/RxMH9P5Wk+KrNDI7wCnruyCI=;
-        b=qFZj/m1HirzR3rLg2iZZffSGjkQbSNjWaKBplRsbg3j3uSzBOBNOvBNg4S3DIaGMG+
-         yQHvbRxqWx9fL/9JWgJ7Vf1AoQFNnULouvI1fzIYeIzlRJNHknNITprsXwv8sQpRlPWW
-         IkACK9kgz1uth5I21Y4J/ccjgOe670zhrns6aFAbhPA6c8XI4Fsltc9JRLmKq5/YHE/9
-         X+QuYxKueHsK3sU88oIMKotq2/1fX/VLMqarvcYyL4w9AeQ2MoWemtJsV+t7ZK7va+1m
-         WvIpfcdIZtkRhGWPYKSsyQVJCEvd5iMJCxdaYxUtcHRhR2X3g73JxrZehInrkGZF66kU
-         3xQg==
-X-Gm-Message-State: AOUpUlG2oVVXo/M7iKtAxNMEhtm9zs3xmWSzCT0dXh6BUivdkJ+qbpbK
-        AYe9Vd/dbFK2dn6VbuutYw==
-X-Google-Smtp-Source: AA+uWPykaNvmyvc3jHpflAD0xYgGa7mWtrnlTVTYN0KZIC+effdXwuPbUjP7f4YXuLxmxFbtvMfobw==
-X-Received: by 2002:a6b:9bd1:: with SMTP id d200-v6mr20540129ioe.147.1533654090218;
-        Tue, 07 Aug 2018 08:01:30 -0700 (PDT)
-Received: from localhost ([24.51.61.72])
-        by smtp.gmail.com with ESMTPSA id l10-v6sm913816itb.27.2018.08.07.08.01.29
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 07 Aug 2018 08:01:29 -0700 (PDT)
-Date:   Tue, 7 Aug 2018 09:01:29 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     Vinod Koul <vkoul@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Zubair Lutfullah Kakakhel <Zubair.Kakakhel@imgtec.com>,
-        dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mips@linux-mips.org
-Subject: Re: [PATCH v4 01/18] doc: dt-bindings: jz4780-dma: Update bindings
- to reflect driver changes
-Message-ID: <20180807150129.GA9404@rob-hp-laptop>
-References: <20180807114218.20091-1-paul@crapouillou.net>
- <20180807114218.20091-2-paul@crapouillou.net>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Hes/jFk//nm3wRlygrhCtUFlxzBs1T1pCzOgZfP/2cE=;
+        b=V28anvk01Ya9bB203ruEBXZ1CxUcqDkBVUc25Wm3X39cll3W21Q8EpyPDe2bDeE6TD
+         YltYwW9A7O/V0+Qst6O0J6+1TDZm5D2xagRspTIesgNzUBfVXDiUOaO/5il2hxlqs/j2
+         FqmzvFsx+q9DEOsrKHXKdWcdGVKdH/XyNsutbKjY3aliUP0Qq2j8X6718tpCnSCe/ufF
+         Z2837jZ1LOeXiUJuM7fA3CGeisx74shjCILUNVGdtqvUPQ3FdDVvMMomyzb/RCeFvWS/
+         AxZC3vUqqrvPatWVEGMhQzL2euKlfVYcQjiAB97QDoI8qbfjVKuQOqc2lf5QzACHa0Sc
+         MDuQ==
+X-Gm-Message-State: AOUpUlGkNRuEZEu4QJ/K7ZMTWVFy4tI7hlNpSTBO/zeTJLwmP06pq1h2
+        6JnNF6F3zAznrKR+qRkrcWlrNCXOnIgfFJwbEv7cO7O+
+X-Google-Smtp-Source: AA+uWPzoLawqLi4BHw7StHmlVtJvbFiPdcyYQDvw1cTkOh6y/hIKjHFfdCLAapLnSqmHyW7D2o6suVQWToZBR1YRTm8=
+X-Received: by 2002:a5e:8404:: with SMTP id h4-v6mr18462591ioj.171.1533654135642;
+ Tue, 07 Aug 2018 08:02:15 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180807114218.20091-2-paul@crapouillou.net>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20180807130234.5380-1-yuehaibing@huawei.com>
+In-Reply-To: <20180807130234.5380-1-yuehaibing@huawei.com>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Tue, 7 Aug 2018 17:02:04 +0200
+Message-ID: <CAOi1vP9Gbv-P=HLAKfr=MwPzTDHMpVmexPmf5TJLZhLfSvVttA@mail.gmail.com>
+Subject: Re: [PATCH net-next] ceph: remove unnecessary non NULL check for request_key
+To:     yuehaibing@huawei.com
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        "Yan, Zheng" <zyan@redhat.com>, Sage Weil <sage@redhat.com>,
+        linux-kernel@vger.kernel.org, netdev <netdev@vger.kernel.org>,
+        Ceph Development <ceph-devel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 07, 2018 at 01:42:01PM +0200, Paul Cercueil wrote:
-> The driver now expects the devicetree to supply a second memory
-> resource. This resource is mandatory on the newly supported SoCs.
-> For the JZ4780, new devicetree code must also provide it, although the
-> driver is still compatible with older devicetree binaries.
-> 
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> Tested-by: Mathieu Malaterre <malat@debian.org>
+On Tue, Aug 7, 2018 at 3:03 PM YueHaibing <yuehaibing@huawei.com> wrote:
+>
+> request_key never return NULL,so no need do non-NULL check.
+>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 > ---
->  Documentation/devicetree/bindings/dma/jz4780-dma.txt | 14 ++++++++++----
->  1 file changed, 10 insertions(+), 4 deletions(-)
+>  net/ceph/ceph_common.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/net/ceph/ceph_common.c b/net/ceph/ceph_common.c
+> index 584fdbe..9834edc 100644
+> --- a/net/ceph/ceph_common.c
+> +++ b/net/ceph/ceph_common.c
+> @@ -304,7 +304,7 @@ static int get_secret(struct ceph_crypto_key *dst, const char *name) {
+>         struct ceph_crypto_key *ckey;
+>
+>         ukey = request_key(&key_type_ceph, name, NULL);
+> -       if (!ukey || IS_ERR(ukey)) {
+> +       if (IS_ERR(ukey)) {
+>                 /* request_key errors don't map nicely to mount(2)
+>                    errors; don't even try, but still printk */
+>                 key_err = PTR_ERR(ukey);
 
-Drop the 'doc: ' from the subject if you respin. Otherwise,
+Applied.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Thanks,
+
+                Ilya
