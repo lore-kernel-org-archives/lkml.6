@@ -2,181 +2,198 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0817C46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 06:59:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B163C46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 06:59:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BA9C2173F
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 06:59:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BA9C2173F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id D567C208E2
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 06:59:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D567C208E2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388292AbeHGJMc (ORCPT
+        id S2388656AbeHGJMv convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 05:12:32 -0400
-Received: from mga03.intel.com ([134.134.136.65]:15907 "EHLO mga03.intel.com"
+        Tue, 7 Aug 2018 05:12:51 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:50256 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728223AbeHGJMb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 05:12:31 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Aug 2018 23:59:37 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,454,1526367600"; 
-   d="scan'208";a="63145595"
-Received: from unknown (HELO [10.239.13.97]) ([10.239.13.97])
-  by orsmga008.jf.intel.com with ESMTP; 06 Aug 2018 23:59:32 -0700
-Message-ID: <5B69445D.1000107@intel.com>
-Date:   Tue, 07 Aug 2018 15:03:57 +0800
-From:   Wei Wang <wei.w.wang@intel.com>
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Thunderbird/31.7.0
+        id S1728223AbeHGJMu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 05:12:50 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id DB9E2207D4; Tue,  7 Aug 2018 08:59:53 +0200 (CEST)
+Received: from dell-desktop.home (AAubervilliers-681-1-99-143.w90-88.abo.wanadoo.fr [90.88.4.143])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 93AD92072C;
+        Tue,  7 Aug 2018 08:59:43 +0200 (CEST)
+Date:   Tue, 7 Aug 2018 08:59:44 +0200
+From:   =?UTF-8?B?TXlsw6huZQ==?= Josserand <mylene.josserand@bootlin.com>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
+        maxime.ripard@bootlin.com, wens@csie.org,
+        linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        thomas.petazzoni@bootlin.com
+Subject: Re: [PATCH v4 1/3] Input: edt-ft5x06 - Add support for regulator
+Message-ID: <20180807085944.337bf20b@dell-desktop.home>
+In-Reply-To: <20180726004732.GD80336@dtor-ws>
+References: <20180725073410.730-1-mylene.josserand@bootlin.com>
+        <20180725073410.730-2-mylene.josserand@bootlin.com>
+        <20180726004732.GD80336@dtor-ws>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Yury Norov <ynorov@caviumnetworks.com>
-CC:     linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-        corbet@lwn.net, dgilbert@redhat.com,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH] linux/bitmap.h: fix BITMAP_LAST_WORD_MASK
-References: <1532592471-21177-1-git-send-email-wei.w.wang@intel.com> <20180726093728.GA9069@yury-thinkpad> <5B599F5F.2070705@intel.com> <08410774-8b10-d620-064c-fdf4399d7336@rasmusvillemoes.dk>
-In-Reply-To: <08410774-8b10-d620-064c-fdf4399d7336@rasmusvillemoes.dk>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/07/2018 07:30 AM, Rasmus Villemoes wrote:
-> On 2018-07-26 12:15, Wei Wang wrote:
->> On 07/26/2018 05:37 PM, Yury Norov wrote:
->>> On Thu, Jul 26, 2018 at 04:07:51PM +0800, Wei Wang wrote:
->>>> The existing BITMAP_LAST_WORD_MASK macro returns 0xffffffff if nbits is
->>>> 0. This patch changes the macro to return 0 when there is no bit
->>>> needs to
->>>> be masked.
->>> I think this is intentional behavour. Previous version did return ~0UL
->>> explicitly in this case. See patch 89c1e79eb3023 (linux/bitmap.h: improve
->>> BITMAP_{LAST,FIRST}_WORD_MASK) from Rasmus.
->> Yes, I saw that. But it seems confusing for the corner case that nbits=0
->> (no bits to mask), the macro returns with all the bits set.
->>
->>
->>> Introducing conditional branch would affect performance. All existing
->>> code checks nbits for 0 before handling last word where needed
->>> explicitly. So I think we'd better change nothing here.
->> I think that didn't save the conditional branch essentially, because
->> it's just moved from inside this macro to the caller as you mentioned.
->> If callers missed the check for some reason and passed 0 to the macro,
->> they will get something unexpected.
->>
->> Current callers like __bitmap_weight, __bitmap_equal, and others, they have
->>
->> if (bits % BITS_PER_LONG)
->>      w += hweight_long(bitmap[k] & BITMAP_LAST_WORD_MASK(bits));
->>
->> we could remove the "if" check by "w += hweight_long(bitmap[k] &
->> BITMAP_LAST_WORD_MASK(bits % BITS_PER_LONG));" the branch is the same.
-> Absolutely not! That would access bitmap[lim] (the final value of the k
-> variable) despite that word not being part of the bitmap.
+Hello Dmitry,
 
-Probably it's more clear to post the entire function here for a discussion:
+Thank you again for the review.
 
-int __bitmap_weight(const unsigned long *bitmap, unsigned int bits)
-{
-         unsigned int k, lim = bits/BITS_PER_LONG;
-         int w = 0;
+On Wed, 25 Jul 2018 17:47:32 -0700
+Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
 
-         for (k = 0; k < lim; k++)
-                 w += hweight_long(bitmap[k]);
+> Hi Mylène,
+> 
+> On Wed, Jul 25, 2018 at 09:34:08AM +0200, Mylène Josserand wrote:
+> > Add the support of regulator to use it as VCC source.
+> > 
+> > Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
+> > Reviewed-by: Rob Herring <robh@kernel.org>
+> > ---
+> >  .../bindings/input/touchscreen/edt-ft5x06.txt      |  1 +
+> >  drivers/input/touchscreen/edt-ft5x06.c             | 43 ++++++++++++++++++++++
+> >  2 files changed, 44 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/input/touchscreen/edt-ft5x06.txt b/Documentation/devicetree/bindings/input/touchscreen/edt-ft5x06.txt
+> > index 025cf8c9324a..48e975b9c1aa 100644
+> > --- a/Documentation/devicetree/bindings/input/touchscreen/edt-ft5x06.txt
+> > +++ b/Documentation/devicetree/bindings/input/touchscreen/edt-ft5x06.txt
+> > @@ -30,6 +30,7 @@ Required properties:
+> >  Optional properties:
+> >   - reset-gpios: GPIO specification for the RESET input
+> >   - wake-gpios:  GPIO specification for the WAKE input
+> > + - vcc-supply:  Regulator that supplies the touchscreen
+> >  
+> >   - pinctrl-names: should be "default"
+> >   - pinctrl-0:   a phandle pointing to the pin settings for the
+> > diff --git a/drivers/input/touchscreen/edt-ft5x06.c b/drivers/input/touchscreen/edt-ft5x06.c
+> > index 1e18ca0d1b4e..dcde719094f7 100644
+> > --- a/drivers/input/touchscreen/edt-ft5x06.c
+> > +++ b/drivers/input/touchscreen/edt-ft5x06.c
+> > @@ -39,6 +39,7 @@
+> >  #include <linux/input/mt.h>
+> >  #include <linux/input/touchscreen.h>
+> >  #include <linux/of_device.h>
+> > +#include <linux/regulator/consumer.h>
+> >  
+> >  #define WORK_REGISTER_THRESHOLD		0x00
+> >  #define WORK_REGISTER_REPORT_RATE	0x08
+> > @@ -91,6 +92,7 @@ struct edt_ft5x06_ts_data {
+> >  	struct touchscreen_properties prop;
+> >  	u16 num_x;
+> >  	u16 num_y;
+> > +	struct regulator *vcc;
+> >  
+> >  	struct gpio_desc *reset_gpio;
+> >  	struct gpio_desc *wake_gpio;
+> > @@ -963,6 +965,13 @@ edt_ft5x06_ts_set_regs(struct edt_ft5x06_ts_data *tsdata)
+> >  	}
+> >  }
+> >  
+> > +static void edt_ft5x06_disable_regulator(void *arg)
+> > +{
+> > +	struct edt_ft5x06_ts_data *data = arg;
+> > +
+> > +	regulator_disable(data->vcc);
+> > +}
+> > +
+> >  static int edt_ft5x06_ts_probe(struct i2c_client *client,
+> >  					 const struct i2c_device_id *id)
+> >  {
+> > @@ -991,6 +1000,28 @@ static int edt_ft5x06_ts_probe(struct i2c_client *client,
+> >  
+> >  	tsdata->max_support_points = chip_data->max_support_points;
+> >  
+> > +	tsdata->vcc = devm_regulator_get(&client->dev, "vcc");
+> > +	if (IS_ERR(tsdata->vcc)) {
+> > +		error = PTR_ERR(tsdata->vcc);
+> > +		if (error != -EPROBE_DEFER)
+> > +			dev_err(&client->dev, "failed to request regulator: %d\n",
+> > +				error);
+> > +		return error;
+> > +	}
+> > +
+> > +	error = regulator_enable(tsdata->vcc);
+> > +	if (error < 0) {
+> > +		dev_err(&client->dev, "failed to enable vcc: %d\n",
+> > +			error);
+> > +		return error;
+> > +	}  
+> 
+> It is better to put the chip into reset and then power up the regulatori
+> and take it out of the reset, rather than power up and then toggle reset
+> on and off.
 
-         if (bits % BITS_PER_LONG)
-==>            w += hweight_long(bitmap[k] & BITMAP_LAST_WORD_MASK(bits));
+okay, thanks, I will update it.
 
-         return w;
-}
+> 
+> > +
+> > +	error = devm_add_action_or_reset(&client->dev,
+> > +					 edt_ft5x06_disable_regulator,
+> > +					 tsdata);
+> > +	if (error)
+> > +		return error;
+> > +
+> >  	tsdata->reset_gpio = devm_gpiod_get_optional(&client->dev,
+> >  						     "reset", GPIOD_OUT_HIGH);
+> >  	if (IS_ERR(tsdata->reset_gpio)) {
+> > @@ -1120,9 +1151,12 @@ static int edt_ft5x06_ts_remove(struct i2c_client *client)
+> >  static int __maybe_unused edt_ft5x06_ts_suspend(struct device *dev)
+> >  {
+> >  	struct i2c_client *client = to_i2c_client(dev);
+> > +	struct edt_ft5x06_ts_data *tsdata = i2c_get_clientdata(client);
+> >  
+> >  	if (device_may_wakeup(dev))
+> >  		enable_irq_wake(client->irq);
+> > +	else
+> > +		regulator_disable(tsdata->vcc);
+> >  
+> >  	return 0;
+> >  }
+> > @@ -1130,9 +1164,18 @@ static int __maybe_unused edt_ft5x06_ts_suspend(struct device *dev)
+> >  static int __maybe_unused edt_ft5x06_ts_resume(struct device *dev)
+> >  {
+> >  	struct i2c_client *client = to_i2c_client(dev);
+> > +	struct edt_ft5x06_ts_data *tsdata = i2c_get_clientdata(client);
+> > +	int ret;
+> >  
+> >  	if (device_may_wakeup(dev))
+> >  		disable_irq_wake(client->irq);
+> > +	else {
+> > +		ret = regulator_enable(tsdata->vcc);
+> > +		if (ret < 0) {
+> > +			dev_err(dev, "failed to enable vcc: %d\n", ret);
+> > +			return ret;
+> > +		}
+> > +	}  
+> 
+> I believe I mentioned in other review that once you powered up the
+> device, you need to restore its settings, include switching to factory
+> mode, if it was in factory mode, and restoring threshold/gain/offset
+> settings.
 
-When the execution reaches "==>", isn't "k=lim"?
+Yes, I will update the driver with that but as I told you in a previous
+mail, I can't test the suspend/resume :(
 
-For example, assume bits = 70, then the point of that line is to check 
-the remaining 6 bits (i.e. 70 % 64).
+Best regards,
 
-* BITMAP_LAST_WORD_MASK(70) is effectively the same as 
-BITMAP_LAST_WORD_MASK(6).
-
-If having doubts about the * statement above, please check below the old 
-implementation (replaced by 89c1e79eb3), which has a more 
-straightforward logic to understand
-
-#define BITMAP_LAST_WORD_MASK(nbits)                                   \
-( \
-        ((nbits) % BITS_PER_LONG) ?                                     \
-                (1UL<<((nbits) % BITS_PER_LONG))-1 : ~0UL               \
-)
-
-I think having the branch in the macro would be much easier than having 
-it in each caller.
-
->
-> More generally, look at the name of the macro: last_word_mask. It's a
-> mask to apply to the last word of a bitmap. If the bitmap happens to
-> consist of a multiple of BITS_PER_LONG bits, than that mask is and must
-> be ~0UL. So for nbits=64, 128, etc., that is what we want.
-
-For nbits=64, it is correct to return ~0UL, since it just asks to check 
-all the remaining 64 bits, thus keeping the entire 64 bits set.
-
-> OTOH, for nbits=0, there _is_ no last word (since there are no words at
-> all), so by the time you want to apply the result of
-> BITMAP_LAST_WORD_MASK(0) to anything, you already have a bug, probably
-> either having read or being about to write into bitmap[0], which you
-> cannot do. Please check that user-space port and see if there are bugs
-> of that kind.
-
-Yes, some callers there don't check for nbits=0, that's why I think it 
-is better to offload that check to the macro. The macro itself can be 
-robust to handle all the cases.
-
-
->
-> So no, the existing users of BITMAP_LAST_WORD_MASK do not check for
-> nbits being zero, they check for whether there is a partial last word,
-> which is something different.
-
-Yes, but "partial" could be "0". If the macro doesn't handle that case, 
-I think that wouldn't be a robust macro.
-
-We shouldn't assume how the callers will use this macro. Please check 
-bitmap_shift_right, I think the bug is already there:
-
-         if (small_const_nbits(nbits))
-                 *dst = (*src & BITMAP_LAST_WORD_MASK(nbits)) >> shift;
-
-  *dst should be 0 if nbits=0, but nbits=0 will pass the 
-small_const_nbits(nbits) check above, and BITMAP_LAST_WORD_MASK(0) 
-returning 0xffffffff will take *src value to *dst.
-
-
-> And they mostly (those in lib/bitmap.c) do
-> that because they've already handled _all_ the full words. Then there
-> are some users in include/linux/bitmap.h, that check for
-> small_const_nbits(nbits), and in those cases, we really want ~0UL when
-> nbits is BITS_PER_LONG, because small_const_nbits implies there is
-> exactly one word. Yeah, there's an implicit assumption that the bitmap
-> routines are never called with a compile-time constant nbits==0 (see the
-> unconditional accesses to *src and *dst), but changing the semantics of
-> BITMAP_LAST_WORD_MASK and making it return different values for nbits=0
-> vs nbits=64 wouldn't fix that latent bug.
-
-nbits=0, means there is no bit needs to mask
-nbits=64, means all the 64 bits need to mask
-
-The two are different cases, I'm not sure why we let the macro to return 
-the same value.
-
-
-Best,
-Wei
+-- 
+Mylène Josserand, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
