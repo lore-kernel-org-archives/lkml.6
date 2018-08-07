@@ -2,97 +2,76 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8FF9C46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 14:34:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E16E9C46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 14:35:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 713E3217B9
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 14:34:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="ndcBXqL+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 713E3217B9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=HansenPartnership.com
+	by mail.kernel.org (Postfix) with ESMTP id A523C217B7
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 14:35:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A523C217B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389638AbeHGQs5 (ORCPT
+        id S2389641AbeHGQuT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 12:48:57 -0400
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:48428 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2389581AbeHGQsv (ORCPT
+        Tue, 7 Aug 2018 12:50:19 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:48746 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389085AbeHGQuT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 12:48:51 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 73E9A8EE251;
-        Tue,  7 Aug 2018 07:34:14 -0700 (PDT)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id a7f9xv3JsFuh; Tue,  7 Aug 2018 07:34:14 -0700 (PDT)
-Received: from [153.66.254.194] (unknown [50.35.68.20])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id B80088EE0BA;
-        Tue,  7 Aug 2018 07:34:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1533652454;
-        bh=YN5yhb/E6YbV4gvmuIxV97ozu6bT4OeqVb0EqEcSBD8=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=ndcBXqL+oArYHIbPc+2vflBYV0G0BQtR6rJ6yomPKFzaeE3gEn5UV3NNiNp7d4ps1
-         zlOAwKyMSZ4/xambwpjDkc+uMMIGfgGGzsHE2k+yCSCWvYZa1CC8ncFMjX7ogyeMVI
-         pV7S/LTyT9S7r9dLs1WVxnOpI1XTsaxiMuxc8lo0=
-Message-ID: <1533652452.5764.2.camel@HansenPartnership.com>
-Subject: Re: [PATCH v4 0/4] seccomp trap to userspace
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Tycho Andersen <tycho@tycho.ws>, Kees Cook <keescook@chromium.org>
-Cc:     "Tobin C . Harding" <me@tobin.cc>, linux-api@vger.kernel.org,
-        containers@lists.linux-foundation.org,
-        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
-        Oleg Nesterov <oleg@redhat.com>, linux-kernel@vger.kernel.org,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Andy Lutomirski <luto@amacapital.net>
-Date:   Tue, 07 Aug 2018 07:34:12 -0700
-In-Reply-To: <20180807024442.GA12274@cisco.lan>
-References: <20180621220416.5412-1-tycho@tycho.ws>
-         <20180807024442.GA12274@cisco.lan>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Tue, 7 Aug 2018 12:50:19 -0400
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1fn35I-0000aP-PT; Tue, 07 Aug 2018 16:35:40 +0200
+Date:   Tue, 7 Aug 2018 16:35:40 +0200
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        linux-rt-users <linux-rt-users@vger.kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>
+Subject: [ANNOUNCE] v4.18-rc8-rt1
+Message-ID: <20180807143540.g26ex7ibnp2iw5gh@linutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-08-06 at 20:44 -0600, Tycho Andersen wrote:
-> Hi all,
-> 
-> Dinesh Subhraveti has claimed that some part of this series might be
-> patented. While he has not furnished me with anything to confirm this
-> claim, I'll put this series on hold.
+Dear RT folks!
 
-Just on a general policy for handling things like this.
+I'm pleased to announce the v4.18-rc8-rt1 patch set. 
+It has been in testing the last few weeks on x86-64 and arm64. Please
+give it a try and please report and problems you might find while doing
+so.
+I will be absent until the end of August so I my answer might take same
+time :)
 
-Firstly, never discuss specifics on a mailing list.  Patents are a
-really tricky area where advice in confidence is needed and lack of
-confidentiality usually only benefits the patent holder.
+Changes since v4.16.18-rt12:
 
-Secondly, vague threats (like this) can be safely ignored.  Thanks to
-the terms of the GPL and the specific actions of OIN, we legitimately
-have licences to a vast pool of patents, so we should assume for every
-vague threat of the existence of a patent that we do legitimately
-possess a licence until the threat is made specific.
+  - rebase to v4.18-rc8
 
-Finally, if the vague threat becomes specific (which means citation of
-patent by number and claim) you need to engage the resources we have at
-our disposal to investigate.  Likely it will be OIN resources that do
-this investigation, but the way to begin is to start with your
-corporate counsel for contributions on behalf of a company.  If they're
-on behalf of you as an individual, you can begin with Counsel which the
-Linux Foundation will provide.
+Known issues
+     - A warning triggered in "rcu_note_context_switch" originated from
+       SyS_timer_gettime(). The issue was always there, it is now
+       visible. Reported by Grygorii Strashko and Daniel Wagner.
 
-James
+You can get this release via the git tree at:
 
+    git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-rt-devel.git v4.18-rc8-rt1
+
+The RT patch against v4.18-rc8 can be found here:
+
+    https://cdn.kernel.org/pub/linux/kernel/projects/rt/4.18/older/patch-4.18-rc8-rt1.patch.xz
+
+The split quilt queue is available at:
+
+    https://cdn.kernel.org/pub/linux/kernel/projects/rt/4.18/older/patches-4.18-rc8-rt1.tar.xz
+
+Sebastian
