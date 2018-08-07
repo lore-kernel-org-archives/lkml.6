@@ -6,102 +6,86 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42902C46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 22:13:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E487C46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 22:17:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED901215A3
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 22:13:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED901215A3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id C4111215A3
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 22:17:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4111215A3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726846AbeHHAaR (ORCPT
+        id S1726895AbeHHAd7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 20:30:17 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50232 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726502AbeHHAaR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 20:30:17 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 624F1402345E;
-        Tue,  7 Aug 2018 22:13:47 +0000 (UTC)
-Received: from redhat.com (unknown [10.20.6.215])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id A52AD2023415;
-        Tue,  7 Aug 2018 22:13:46 +0000 (UTC)
-Date:   Tue, 7 Aug 2018 18:13:45 -0400
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Oscar Salvador <osalvador@techadventures.net>
-Cc:     David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org,
-        mhocko@suse.com, dan.j.williams@intel.com,
-        pasha.tatashin@oracle.com, yasu.isimatu@gmail.com,
-        logang@deltatee.com, dave.jiang@intel.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Oscar Salvador <osalvador@suse.de>
-Subject: Re: [RFC PATCH 2/3] mm/memory_hotplug: Create __shrink_pages and
- move it to offline_pages
-Message-ID: <20180807221345.GD3301@redhat.com>
-References: <20180807133757.18352-1-osalvador@techadventures.net>
- <20180807133757.18352-3-osalvador@techadventures.net>
- <20180807135221.GA3301@redhat.com>
- <a6e4e654-fc95-497f-16f3-8c1550cf03d6@redhat.com>
- <20180807204834.GA6844@techadventures.net>
+        Tue, 7 Aug 2018 20:33:59 -0400
+Received: from mga04.intel.com ([192.55.52.120]:39478 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726537AbeHHAd7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 20:33:59 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Aug 2018 15:17:29 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,456,1526367600"; 
+   d="scan'208";a="73564441"
+Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.126])
+  by orsmga003.jf.intel.com with ESMTP; 07 Aug 2018 15:17:25 -0700
+Received: by tassilo.localdomain (Postfix, from userid 1000)
+        id 4D79D3013C5; Tue,  7 Aug 2018 15:17:25 -0700 (PDT)
+Date:   Tue, 7 Aug 2018 15:17:25 -0700
+From:   Andi Kleen <ak@linux.intel.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        kan.liang@linux.intel.com, mingo@redhat.com, len.brown@intel.com,
+        linux-kernel@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH] x86/cpu: Rename Denverton and Gemini Lake
+Message-ID: <20180807221725.GU4238@tassilo.jf.intel.com>
+References: <1533662247-17575-1-git-send-email-kan.liang@linux.intel.com>
+ <1b7cb461-5321-86cf-3031-5ff545c3dc42@linux.intel.com>
+ <20180807174851.GJ2494@hirez.programming.kicks-ass.net>
+ <20180807183736.GR4238@tassilo.jf.intel.com>
+ <alpine.DEB.2.21.1808072257080.1672@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180807204834.GA6844@techadventures.net>
-User-Agent: Mutt/1.10.0 (2018-05-17)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Tue, 07 Aug 2018 22:13:47 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Tue, 07 Aug 2018 22:13:47 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jglisse@redhat.com' RCPT:''
+In-Reply-To: <alpine.DEB.2.21.1808072257080.1672@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 07, 2018 at 10:48:34PM +0200, Oscar Salvador wrote:
-> On Tue, Aug 07, 2018 at 04:54:57PM +0200, David Hildenbrand wrote:
-> > I wonder if we could instead forward from the callers whether we are
-> > dealing with ZONE_DEVICE memory (is_device ...), at least that seems
-> > feasible in hmm code. Not having looked at details yet.
+> Which simply does not work. Look at Goldmont Fam 6 Model 5C. The SoCs
+> with that Fam/Model combination are:
 > 
-> Yes, this looks like the most straightforward way right now.
-> We would have to pass it from arch_remove_memory to __remove_pages though.
-> 
-> It is not the most elegant way, but looking at the code of devm_memremap_pages_release
-> and hmm_devmem_release I cannot really think of anything better.
-> 
-> In hmm_devmem_release is should be easy because AFAIK (unless I am missing something), hmm always works
-> with ZONE_DEVICE.
-> At least hmm_devmem_pages_create() moves the range to ZONE_DEVICE.
-> 
-> After looking at devm_memremap_pages(), I think it does the same:
-> 
-> ...
-> move_pfn_range_to_zone(&NODE_DATA(nid)->node_zones[ZONE_DEVICE],
-> 					align_start >> PAGE_SHIFT,
-> 					align_size >> PAGE_SHIFT, altmap);
-> ...
-> 
-> So I guess it is safe to assume that arch_remove_memory/__remove_pages are called
-> from those functions while zone being ZONE_DEVICE.
-> 
-> Is that right, Jerome?
+>  - Apollo Lake
+>  - Broxton (has two platforms: Morganfield and Willowtrail)
 
-Correct, both HMM and devm always deal with ZONE_DEVICE page. So
-any call to arch_remove_memory/__remove_pages in those context
-can assume ZONE_DEVICE.
+Right pick one. The others are the same for software purposes
+and can be handled in the same way.
 
 > 
-> And since we know for sure that memhotplug-code cannot call it with ZONE_DEVICE,
-> I think this can be done easily.
+> It's even worse with Silvermont.
+> 
+> So no, the interesting information is the UARCH and the variant of that,
 
-This might change down road but for now this is correct. They are
-talks to enumerate device memory through standard platform mechanisms
-and thus the kernel might see new types of resources down the road and
-maybe we will want to hotplug them directly from regular hotplug path
-as ZONE_DEVICE (lot of hypothetical at this point ;)).
+With Uarch you mean the core uarch?  That doesn't really work for
+something like Silvermont or Goldmont.
 
-Cheers,
-Jérôme
+> e.g. UARCH_CLIENT, UARCH_SERVER, UARCH_WHATEVER. All the magic Code Names
+
+Right your scheme totally doesn't work on Silvermont because there
+are multiple client variants.
+
+> and their platform variants are not interesting at all for the Fam/Model
+> information.
+
+You're right platform is misleading. I think the right level 
+are SOCs, because that matches the how the model numbers are allocated.
+
+On Big Core *Lakes are all unique SOCs.
+
+-Andi
