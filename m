@@ -2,146 +2,106 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DBD2C46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 22:28:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64668C46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 22:32:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 039462159F
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 22:28:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 16A9F21992
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 22:32:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="QAQ+GwHo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 039462159F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VG4d3SMX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16A9F21992
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726934AbeHHAox (ORCPT
+        id S1726971AbeHHAtR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 20:44:53 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:37120 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726521AbeHHAox (ORCPT
+        Tue, 7 Aug 2018 20:49:17 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:36056 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726521AbeHHAtR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 20:44:53 -0400
-Received: by mail-pg1-f195.google.com with SMTP id n7-v6so107293pgq.4
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 15:28:21 -0700 (PDT)
+        Tue, 7 Aug 2018 20:49:17 -0400
+Received: by mail-wm0-f65.google.com with SMTP id w24-v6so707542wmc.1;
+        Tue, 07 Aug 2018 15:32:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=3AYaBXyIGCsJXUfcXqERbFYbtttGmx+ac68jEKqIERQ=;
-        b=QAQ+GwHoDm8hXE3s+gMvyk9i1itjTF5IN5XgmImHtvmjF/dm1G63Y6PDZON5MrPdRA
-         tgP27FKVD4ktbwAXNxKaQ4MuEK7X+dKBgBafMKB9/A59vlkRC/9cNnIywqpgH+ggfe6i
-         Jc7nC/CfgdytN9bArueYGhnyHXU/tcY4Le/HAAsMtJKEIVChw7RHJS2/pye8L4q33Cen
-         OQaHzZWCKPFW0Y9zgwDhOhbMG/QKd22erMYLK+qqv0ca5/mxXJsH4tcOcnwsiKCDJ7Rz
-         437juLNP/Er4QdiXA59iiDL6yEFC/dokhg+XAVYxtc8UQiLVEZMt3+c6OMudfjaZp3GK
-         KtAA==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Ugon5rp7ghxLY5UpjAL8+DfvBhd+ayxEpUX1SdBS69g=;
+        b=VG4d3SMXdhW8s2tfthcJEq7z4MkSsyGg5pZJkuUI9oSLNW/kDvuzn1yGcEzTJWhHwy
+         +XWmVKs8aAb39Nk4uo9Amew1v41jNmWimpIh/8F53kvskgi72iVKKpg8Ma86XZ/KyF6K
+         KtHAoUjwKasdikiK87z7Q5FZMSNMdUZIw2ujrJzCTDJ1h4vfdN6fD4s90xXHkTONDeqy
+         /tZBIZLsSDJhO61x7T2eTAuGypA3dc7REoVzErxps5qKSILvLxJI4EphEc2utochWL7o
+         ZYO7XmhqdbgD9DEa6TUHxORCbrCTsHnN3QqLNYLbDKe+wh+v7r7mdwOVfA4/65BMVgcV
+         xXUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=3AYaBXyIGCsJXUfcXqERbFYbtttGmx+ac68jEKqIERQ=;
-        b=fZn+b+zThjQS9axhCDntfRKIQbo6P3ZfzmauoPghdqC7Gra5rAU5TPVbTw4NvCmd2q
-         AR8WPhQrSm0RARfevDiznNhezCRNgIbFnnVj4YwXvitNJMNnrU7lZwz3t06x4C8XTJiS
-         E9WIUJmSbLXpXuo919DNt1Vxn/InoHAs6ndbBG3Wx1Sdi1EAPu1L8zeiYcL5DYXP8JYJ
-         QJZbvWmPPxC9CtBsW5VXaf2GR6xNppLdvK/ZtnecNfSVaWEbdvndehL/VT5NSuTwnQ2s
-         Ai7RvNnRVSL0i9K3KS//NsskWXSVtbuAmNMiYFH5rDK2Ssi3PjaH+0599VpJXL6orFro
-         y4MA==
-X-Gm-Message-State: AOUpUlFctp5xjj9OhORcH+mfr7iGH9HvcH5vZy8YelB0xwJBg/Gltl8N
-        tJyXck/6pQ0Ra+pZWF6x621whO8CGvQ=
-X-Google-Smtp-Source: AA+uWPyYeZ7/+qjJ1uY3SmumMrNJwiflV6JaW/UwMa7krKr+qPiEaCPF4dGutYa4TGIrVd2jkzrppQ==
-X-Received: by 2002:a62:b0c:: with SMTP id t12-v6mr259907pfi.36.1533680900448;
-        Tue, 07 Aug 2018 15:28:20 -0700 (PDT)
-Received: from ?IPv6:2600:1010:b016:7102:f59d:5c2c:ab3c:d9ca? ([2600:1010:b016:7102:f59d:5c2c:ab3c:d9ca])
-        by smtp.gmail.com with ESMTPSA id 1-v6sm6655301pfk.134.2018.08.07.15.28.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 07 Aug 2018 15:28:19 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: [RFC PATCH 1/2] x86: WARN() when uaccess helpers fault on kernel addresses
-From:   Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (15G77)
-In-Reply-To: <CAG48ez3nEszuPN9SZ9vV2=ubzv348bMpJjT9b5Q_wx6uxV2zXg@mail.gmail.com>
-Date:   Tue, 7 Aug 2018 15:28:17 -0700
-Cc:     Kees Cook <keescook@chromium.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dmitry Vyukov <dvyukov@google.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <126BF909-1BB3-45EF-944E-C0AAD239F752@amacapital.net>
-References: <20180807012257.20157-1-jannh@google.com> <C6369CAA-CBB8-420F-97DB-7A242D9650A8@amacapital.net> <CAG48ez3nEszuPN9SZ9vV2=ubzv348bMpJjT9b5Q_wx6uxV2zXg@mail.gmail.com>
-To:     Jann Horn <jannh@google.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Ugon5rp7ghxLY5UpjAL8+DfvBhd+ayxEpUX1SdBS69g=;
+        b=ubHs9h1V4xlBWC7Em/LcwXdhhchTWhk0592SKFRkW1hEerekXhVipCKu1fsGJIdBpy
+         LgPua3WbGkEn8UY+oLgJK5BjYrf1vhD9cei5GYkiJdExFRsIj0eadNFfmJ+Qg2HaDjnM
+         Pka0WroJ+dolGHzUZpqyaxuwAnq9+b9wBxJr88auQDDNuJedvFX1MpNF4cWHr78ehf/l
+         PvLt2S0WJz9tr2rINVIoqFcLCzwwDuF1CFylumPD7KB737G5FvlWFtzQc7dTjNhT4jGK
+         LEdgjHx56NnHoearC1uOQFKBn7RNDI+9Lt9fIGHbaC3FJwL2ZNaH2lNmPyWdoKy3rmcK
+         bMQQ==
+X-Gm-Message-State: AOUpUlH/tnQLfRi/8/hr60N4qg6D2ggLY2eHyh3JU5RVxkeM1aXpZWCu
+        FYltNdp7RRDjV3lAsaIjVFthU8l2Bjg=
+X-Google-Smtp-Source: AA+uWPxWyiEqwUdtoMJrrJIwfvUng+z8vhm1MnGmbUdqDZlPV6l3YNmtcR5uFeD5KVSqMR4cmZMnTg==
+X-Received: by 2002:a1c:3351:: with SMTP id z78-v6mr166152wmz.23.1533681162695;
+        Tue, 07 Aug 2018 15:32:42 -0700 (PDT)
+Received: from flashbox ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id m2-v6sm3252043wrw.76.2018.08.07.15.32.41
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 07 Aug 2018 15:32:41 -0700 (PDT)
+Date:   Tue, 7 Aug 2018 15:32:40 -0700
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org
+Subject: Re: [PATCH 4.9 00/17] 4.9.119-stable review
+Message-ID: <20180807223240.GA20628@flashbox>
+References: <20180807172342.071526922@linuxfoundation.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180807172342.071526922@linuxfoundation.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Aug 07, 2018 at 08:51:36PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.9.119 release.
+> There are 17 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu Aug  9 17:23:30 UTC 2018.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.119-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
+Merged, compiled with -Werror, and installed onto my OnePlus 6.
 
+No initial issues noticed in dmesg or general usage.
 
-> On Aug 7, 2018, at 2:17 PM, Jann Horn <jannh@google.com> wrote:
->=20
-> On Tue, Aug 7, 2018 at 4:55 AM Andy Lutomirski <luto@amacapital.net> wrote=
-:
->>> On Aug 6, 2018, at 6:22 PM, Jann Horn <jannh@google.com> wrote:
->>>=20
->>> There have been multiple kernel vulnerabilities that permitted userspace=
- to
->>> pass completely unchecked pointers through to userspace accessors:
->>>=20
->>> - the waitid() bug - commit 96ca579a1ecc ("waitid(): Add missing
->>> access_ok() checks")
->>> - the sg/bsg read/write APIs
->>> - the infiniband read/write APIs
->>>=20
->>> These don't happen all that often, but when they do happen, it is hard t=
-o
->>> test for them properly; and it is probably also hard to discover them wi=
-th
->>> fuzzing. Even when an unmapped kernel address is supplied to such buggy
->>> code, it just returns -EFAULT instead of doing a proper BUG() or at leas=
-t
->>> WARN().
->>>=20
->>> This patch attempts to make such misbehaving code a bit more visible by
->>> WARN()ing in the pagefault handler code when a userspace accessor causes=
-
->>> #PF on a kernel address and the current context isn't whitelisted.
->>=20
->> I like this a lot, and, in fact, I once wrote a patch to do something sim=
-ilar. It was before the fancy extable code, though, so it was a mess.  Here a=
-re some thoughts:
->>=20
->> - It should be three patches. One patch to add the _UA annotations, one t=
-o improve the info passes to the handlers, and one to change behavior.
->>=20
->> - You should pass the vector, the error code, and the address to the hand=
-ler.
->>=20
->> - The uaccess handler should IMO WARN if the vector is anything other tha=
-n #PF (which mainly means warning if it=E2=80=99s #GP). I think it should pr=
-_emerg() and return false if the vector is #PF and the address is too high.
->=20
-> What about #MC? do_machine_check() sometimes invokes fixup handlers.
-> It looks like fixup_exception() is basically reached for anything that
-> can't be restarted (either MCG_STATUS_RIPV isn't set or the worst
-> severity is MCE_AR_SEVERITY), but doesn't reach MCE_PANIC_SEVERITY? In
-> particular for "Action required: data load in error recoverable area
-> of kernel", if I'm reading the code correctly. It seems like the code
-> is intentionally preventing memory errors during user access from
-> being treated as kernel memory errors? So perhaps #MC in user access
-> should not WARN()?
-
-Agreed.=20
-
->=20
->> - Arguably most non-uaccess fixups should at least warn for anything othe=
-r than #GP and #UD.
+Thanks!
+Nathan
