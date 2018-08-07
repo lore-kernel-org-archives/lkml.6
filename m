@@ -6,35 +6,37 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A327C46470
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 15:37:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7FFDC46470
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 15:38:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A91932173F
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 15:37:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 876A0217BF
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 15:38:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=virtuozzo.com header.i=@virtuozzo.com header.b="VL9qFctI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A91932173F
+	dkim=pass (1024-bit key) header.d=virtuozzo.com header.i=@virtuozzo.com header.b="FXqBnciJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 876A0217BF
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=virtuozzo.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390014AbeHGRwk (ORCPT
+        id S2390024AbeHGRww (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 13:52:40 -0400
-Received: from mail-eopbgr00103.outbound.protection.outlook.com ([40.107.0.103]:23228
-        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        Tue, 7 Aug 2018 13:52:52 -0400
+Received: from mail-ve1eur01on0103.outbound.protection.outlook.com ([104.47.1.103]:21464
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388677AbeHGRwi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 13:52:38 -0400
+        id S2388677AbeHGRww (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 13:52:52 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=virtuozzo.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HHFDjKdL6Buzx5I7OUG4LnsCYKjp0S409y16pw5PmLQ=;
- b=VL9qFctIsGB312rFR76hG8lkdfQsaFe30R/A2YNXom+arhp/VfLtioRslmLk6Z6TVmauGxVOjRm95pwkcamPXR/arRraUQYBxYlZjy4Fs7FaZE4jlgo/itf1OBXcAF/2NqBeSIOCN3i5TWM4RedIaaLB//2PQD0VbLvpP44iBnA=
+ bh=IOgHna0IjgNaMkcfTG3lH2LiLelmPRrnFUp70X32rg8=;
+ b=FXqBnciJoI192137vBDlbX128rGMK68+IF9JW+o8GdPomPVZmQiUbXOkEvJAyoJrF2CfUMxrcdGiHA5r0u+R8WCNiOzr8rOwfNwDbjEYbXwa4h0G4HljOIBO5iNdMUzOctjgnGpQj+PedxzeR2xcuPwMb/rvrE+NhEqer9iTAKc=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=ktkhai@virtuozzo.com; 
 Received: from localhost.localdomain (185.231.240.5) by
- HE1PR0801MB2025.eurprd08.prod.outlook.com (2603:10a6:3:50::14) with Microsoft
+ HE1PR0801MB2026.eurprd08.prod.outlook.com (2603:10a6:3:50::15) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1017.17; Tue, 7 Aug 2018 15:37:39 +0000
-Subject: [PATCH RFC 01/10] rcu: Make CONFIG_SRCU unconditionally enabled
+ 15.20.1017.15; Tue, 7 Aug 2018 15:37:50 +0000
+Subject: [PATCH RFC 02/10] mm: Make shrink_slab() lockless
 From:   Kirill Tkhai <ktkhai@virtuozzo.com>
 To:     akpm@linux-foundation.org, gregkh@linuxfoundation.org,
         rafael@kernel.org, viro@zeniv.linux.org.uk,
@@ -51,8 +53,8 @@ To:     akpm@linux-foundation.org, gregkh@linuxfoundation.org,
         shakeelb@google.com, jbacik@fb.com, mingo@kernel.org,
         mhiramat@kernel.org, linux-kernel@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Date:   Tue, 07 Aug 2018 18:37:36 +0300
-Message-ID: <153365625652.19074.8434946780002619802.stgit@localhost.localdomain>
+Date:   Tue, 07 Aug 2018 18:37:46 +0300
+Message-ID: <153365626605.19074.16202958374930777592.stgit@localhost.localdomain>
 In-Reply-To: <153365347929.19074.12509495712735843805.stgit@localhost.localdomain>
 References: <153365347929.19074.12509495712735843805.stgit@localhost.localdomain>
 User-Agent: StGit/0.18
@@ -60,316 +62,210 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [185.231.240.5]
-X-ClientProxiedBy: HE1PR0701CA0062.eurprd07.prod.outlook.com
- (2603:10a6:3:9e::30) To HE1PR0801MB2025.eurprd08.prod.outlook.com
- (2603:10a6:3:50::14)
+X-ClientProxiedBy: LO2P265CA0164.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:9::32) To HE1PR0801MB2026.eurprd08.prod.outlook.com
+ (2603:10a6:3:50::15)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 4c85a468-862a-4fa9-3baf-08d5fc7bb60d
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:HE1PR0801MB2025;
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR0801MB2025;3:N3+QQcOPo3UoJ2bz+ZpDWjELIk8tEgZ//wGaiEaK0sIOTSoP/cXKg6PLfrKux7Yy8lkEXTRhyvNeg+Bv5O8CTS4VSgKk6T+A2JMpuBqejHXV/CCjCZ+CLIfglP6S5W529h82A35BQByMTuXGztB3iPSiZYdybQpJIKwR6UGDcJtCOPejfcG4AkW8fdATXlVOFYhKLbpBEqc0AOffTTFXTE0lyNS99DyLg0DXirp1VszrNKl8JcRUZFmho0omALXC;25:BdPCUy4ijZzlT4gSDP0ICAgh+LdG80zwla2Mr5ENjEBcdH6uBt4bSAJrkREReEbpVTYAN1UmShcgUiUfkUh5IefWZWacuoC2R8ikc6HZXuhW9cZLsN8ilBCQt/O/VqiCFqDigsJy5FMeNRHE0SYjqwFWN0pCPlkaO/TH9LmrM+aESRHwBstpeyee0e64z53dTcK5H1Ha4xRumjLo+FKKSefpitpHZGvT246/5HlVX5F5/McEwJQ0AETn0ctPhyuDq7zEPk9ulYzbVvosgG3rr2PhJfsiPw5G/PDblrwF8gGCiXIKeB/YRyzgt6FLAi1urhB6Kre8HMqzyl689VQtdg==;31:l30VJS8EUu3XdUiLfKgROzNru5i1uVtJiMJB5wIEpu9I9B3R2m+V2uujy5EwcJh4DXkM7D8xhvpo75W26NkWTvs7GQi8uQ0b9XV1PRcm7X9FQMTfs4JenxmKE0zUXcmZfTvYGR77OeaEh5Qff5t1gS9RIpiToGYsDpo2GIgX52FesB8Z4VqSYjHp0RsWIIEjX3ZRgc4/hm0l5TX6ab1B4E9IF6PQBcxsWEYy6JSwNQo=
-X-MS-TrafficTypeDiagnostic: HE1PR0801MB2025:
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=ktkhai@virtuozzo.com; 
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR0801MB2025;20:07Vc/jlEVWSE9q0oY1cqhoMpBZX45iU/BA82Yf43NcDuuN6m9rHGy/AMuMAZLf5W9YnK11J8uAkNp+DfUlvkpYqg1mRGzRlGaKYeouBpG7zNkuzCRgEbR0do2MZrkPn26lN4qfYDHL4dlmJ+hVWRZIFV8PcUUXttOe+rkau8fuJQ8K5TJA+MFK4+RHjwh8FwixO06nscI+5WV2PfzJo7JJseDeZH15p+suTNmLxTnVE0MrDcxYmZble6ydqRSO0JzJalx/41nBPu5ISAabd3QC4mKn102e8+oDrCVXRjZLDONal0kMR9sES0WDI4t23hcoewE/NBFtEKPEM5y28D9u5xhhxpWPfOlCocwRCUSpFuwzAF3wBOr30D5emrXeigbRQMRWKwiVfE0cO+xSZj+PPw9izJvhSbalWIOQE8R/dkx43oTjFiNFtw1HHhKUfoZRdym7PTlsDckyWo9Vk95LldZf15sZ3RYf1JoOl8Gl+u6H/Ac+DANq0oeNGb18CS;4:1g73q+z4zUdX9AH5/BFGuStBpRELK0DhgAoEOuvwUJg3zJLsj+gkwPiknMTFYnziYz42Om09S3cSJ9RVjcvRNSVn3mKZBxE3oO2ojprLgx98JqETOC7nB3nLiFMSWI3LUi1B/0jEIA/I0XMBXKSU0iPqN7IgY+uhzXT4WvPvpMl8PaI7g2QPd05i/Mhhpr6i9w6/3t9O3MdIrF2a2JRpRoWwZfj0U7wYRMY5S+yFDjexxD5+Kv+ZWmjaycAYeSxAZFo3lqpGyp8qXIZ0VK9Zow==
-X-Microsoft-Antispam-PRVS: <HE1PR0801MB20259F09DD77F823ED58DD6CCD270@HE1PR0801MB2025.eurprd08.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: 679832a7-3215-43b5-fe22-08d5fc7bbeaa
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:HE1PR0801MB2026;
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR0801MB2026;3:SGApD3x/zPMVBpLYc2HjeYF1T9qt1J58SZ83TLV2FOa8bED4wE9QuUuwL6ZY3g5bH8hq0eOt+t0p/lGIndvxYiYXs+0pSbYrcQIem18kuqpVgo6TKrz8ai6LS5GNAGLGIDsJcv9o6E78c2BgxM5szuestHVE3vXV0sHyfpLzq206Ft8LG+Sk4kQpxQlmQX4EvdyxcMs/wq3NUT7P/yYqcHOL1iNr75eGuyug0wgp5rrIvpsrCdpFQa7DDVvoZXLx;25:DTMTrlSl/4trqRgA6h0vG75bXkH5Nt4Gga5sB1mGeH/slK5A/aEIuOH31eMhaLQTjBzcrOu5HYo4tkKHE7uQV20xz6sAnPVAZnoM3PPASYn0ez04keffS0y5VQaW5ca9+E5lFhkGTiulZh5Mjqv2PFDO2plLjKUjc+0c53M+gnl9/glhGNNzt7cl0g29+zywp1+9HDVSkeJcBolQM8xuGPjf8YU45+79wkWzsnwhWK0dwpLmTR0AyFoPcOtO2UlW3CgfcJqilhmMCi6yI3zcyCnszs7YMPFxvnoGioH+jIyd90p2A/OkO/JqRjdYaNyr695bVg6YuYdq9yciDsQtuw==;31:6dGbsOQbxf7P2y9yJ1ZpRWVs7Ehy2GJEOUCVn5tPlIyExISRz6sL5rn/gJkDhwAZWmAEXqVH98bfpqBVCPWOyJ6K54jVKknP8O8ad1wzKah8gJLG8h0iWcubL3vsYKS92i8f8E0rKBm/aplTubkRpFJfau3GR2xr07SnF4vCFM9c6bhcUJVIEaEMoJgjwWLYh7BFov2O4GU38nooqKVBYYiHV+PZeCvtsXvbiIJQUNo=
+X-MS-TrafficTypeDiagnostic: HE1PR0801MB2026:
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR0801MB2026;20:Sztlz14lFFUdc0cIE9eINNcqJp0eKEsbCXmDbbdDXc72V3IVDJ/rlPZsArYUhdmnXqQtZSoZwt3I1ZPBQIpEVfVtbOXNstdjJZZ2+lvRiQpyUQxBp0YNpg7OqJIqX+L2PYTKTC2CaBPPR5pIcDXrUnZA5MfhM/M5l+pmQVVVXz4X2Ov4GDkUrXg2ut3GbfRnkN94fo8Dqtrum6Pp34duzsuCYT0A8PVOucaupJdAwt2SFYu/I3M0kIVi7nhj2X/00ONZCaxF72xvRFcr1T2w/zaox3wOjuMyOOoVbVLgMkUkucZHCesy2uC6bzCyAksPIZOBqU88OXBN2ni2XcAMaAtz4mos62DxWfU/Tdp85ld88axaj/SCvUnEscc99HT5KjzcXUeOoCH62QQL9nNKqkBJ6/mCpAYp2qOasbOmRI9Ftkp+KKLhF+TdpC1pm2HSKeJ21ogKZ9o1QfEZ/kWPEgw2N/IhlNOzl9SoaoM5JtVZ/NLK5OKipCphc8a/+b9u;4:m8yV8XhbFiyl9ZCqI66IDfQriCkHTYRJjx5roZ6L53Wg/EG3TxnTgZYH5pljYlD+7c6SIRhleBdo6ckMAdJbW8shaKkxMS/wf+i3hvKOIxuGNwsQFD7s7ltK8JbDrzRxsmLDLiIT8v0x6sBf3uzHRTtx+/VyuOFZXo9tBQDJLitSZRpi6BCOlWrmFXhzL4caX0L+xHhsxzIJsMez/A8jAmX2i0FbmVNmfGZnQ3qtOupbGAelAAz3bYRzsDiTNGiefcO7B/wiMZQadEWKuSdaJA==
+X-Microsoft-Antispam-PRVS: <HE1PR0801MB2026B108394B5A91E099E139CD270@HE1PR0801MB2026.eurprd08.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:;
 X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(3231311)(944501410)(52105095)(93006095)(93001095)(149027)(150027)(6041310)(20161123564045)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:HE1PR0801MB2025;BCL:0;PCL:0;RULEID:;SRVR:HE1PR0801MB2025;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3002001)(93006095)(93001095)(10201501046)(3231311)(944501410)(52105095)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(20161123562045)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:HE1PR0801MB2026;BCL:0;PCL:0;RULEID:;SRVR:HE1PR0801MB2026;
 X-Forefront-PRVS: 0757EEBDCA
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6069001)(136003)(39850400004)(396003)(366004)(346002)(376002)(199004)(189003)(8936002)(305945005)(81166006)(316002)(97736004)(8676002)(81156014)(66066001)(7406005)(7416002)(11346002)(446003)(7736002)(47776003)(61506002)(2906002)(217873002)(14444005)(478600001)(486006)(956004)(476003)(58126008)(6666003)(68736007)(575784001)(50466002)(86362001)(16526019)(7696005)(23676004)(2486003)(106356001)(39060400002)(6116002)(3846002)(76176011)(186003)(26005)(9686003)(103116003)(33896004)(25786009)(386003)(105586002)(52116002)(55016002)(6506007)(53936002)(5660300001)(230700001)(921003)(1121003);DIR:OUT;SFP:1102;SCL:1;SRVR:HE1PR0801MB2025;H:localhost.localdomain;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6069001)(39850400004)(396003)(376002)(346002)(366004)(136003)(199004)(189003)(55016002)(105586002)(7696005)(97736004)(3846002)(6116002)(23676004)(2486003)(230700001)(25786009)(106356001)(47776003)(14444005)(66066001)(52116002)(81156014)(9686003)(8936002)(103116003)(8676002)(217873002)(81166006)(76176011)(6666003)(61506002)(316002)(53936002)(305945005)(5660300001)(68736007)(476003)(2906002)(386003)(6506007)(39060400002)(478600001)(26005)(58126008)(50466002)(33896004)(11346002)(486006)(86362001)(446003)(956004)(186003)(7736002)(7416002)(16526019)(7406005)(921003)(1121003);DIR:OUT;SFP:1102;SCL:1;SRVR:HE1PR0801MB2026;H:localhost.localdomain;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 Received-SPF: None (protection.outlook.com: virtuozzo.com does not designate
  permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtIRTFQUjA4MDFNQjIwMjU7MjM6SXlpRG8zbEk3RFVheWRGZG43cG5tME1N?=
- =?utf-8?B?SWJ5cTE3U2duVUF5b0pwMkVXMUNHM1hHNkhzSEROcmkxUFB2dGw3eWVSQTV6?=
- =?utf-8?B?RFFJRzVEMEY3bG5nRnpIdm1JdEtmZTZjWGF6RG5BQnRyaUpTeU85c2UvaWxz?=
- =?utf-8?B?MVhUK09RTWYybzNMbm9YM1ZPVjNFOWNxWWZKUjdjcDlKNkpZTmdOUEx6aFN5?=
- =?utf-8?B?VTREMmpzQklsWkJ4MU5ueGhZZjJvQnZycWRrbTY2eEpqMEZtV1ZYQytFLytx?=
- =?utf-8?B?VzNCZFNWcDhlenpValhmdXl3NnBIOGJrSTVya3h3OVM0SG42TmxBMXJxZTlx?=
- =?utf-8?B?dTlEMkFOUGxYbm41dlZVSXk2TUJVUGlmNnpGL054SkluMkkvVHMrWi9zZWxC?=
- =?utf-8?B?bUVGSlRXeHk5bXBXWUd1L3NzaXBNTk1DWHpBcjRnWVdWazMvVEhTOHdKNWNz?=
- =?utf-8?B?VSs2ZnpZbkJjN3l3U1NmMm13c0lwK2p5enhVekxzQlU3dENiZTlTL2tkOVEv?=
- =?utf-8?B?ZGdVT0JPTnNPb1QwWmM0UUZGS0N4djJCQ3NOQlNiWWNJcVJ3N0lkZFY2My9p?=
- =?utf-8?B?dkJGQlNqeGR2SnNxK3R2dk95RmsvQlhqclJtb3lvWjJScHFQTk9aZjN3NVVG?=
- =?utf-8?B?N3NFd1BoREZqRGZsaFhDTW1ZTVRtQm1NN28xTFVSYS84UzdhV0hGYzJaZW9o?=
- =?utf-8?B?VGpjdHZBa0NBYjdUdkh4ZmZ6OWZpS2JnRnFkMHh4ZmNhK0JyckVsWmN0ODZR?=
- =?utf-8?B?Ukh1NDVZN1VoUFY5R3pRV0pJZ21USHpTMnd2QTNXM0NBREVGSUtVdGFyOWNW?=
- =?utf-8?B?QWhlME1ZZlh5dXcxNlRHSjdHZkg1RHVmZzRobm1pdFRFb1NoVFhzUHdDWTVm?=
- =?utf-8?B?OFZQaUVLa2NlUnpYdzlQVFdTNlowcnRFYjNRYVFNM2Jubm1SdkRiSi9hd3Yy?=
- =?utf-8?B?RG5mL2ViVEpFdzFsSDBaejMydUlCZ05TWmpkOXhRQVZFZWxVT3J2YzB5cVNL?=
- =?utf-8?B?Y2l0U2JCakRBa2J6WVlESXNYcDhNNFkvUDBTVks0emZGa1BONHloOEluM3VX?=
- =?utf-8?B?eWx3TEUvL1VYRCtHUkx4Mnk4ZDFncVJhNzl4NGlLTHdlWnVhMkRvM1pUb21Z?=
- =?utf-8?B?Zmw1OVExSExMVzhSdHdEeGIwL2J1QzJ6OUcyR0pLaDlHRU51WUtrbG5ncFRT?=
- =?utf-8?B?MldnRXlNZjBET1BWeGhmMllhcHp3VnpObU9vQkxzRkVXdzZNaEZmbzRnN3pq?=
- =?utf-8?B?UG11MktMalZTTXBKSG9nbDNZd252azhhUkhVTWhHNW5teHdLNW9xenpBM1Iw?=
- =?utf-8?B?VXZickhUckZUbVM2cERVTUtTbE9tUFN3S29QWDcvcWF4bHhTSGR1dlc3RTlE?=
- =?utf-8?B?Q0V5U2FVTjFSUHpXUGVWTzZPUUpGdURkYStBYjQwM1p3YlErSHVydWRpeWRQ?=
- =?utf-8?B?RFkvRW9nYy8xQjI0Z2RuYm5NazJOUmVvR1psRVloZkFoZWVnOXlqQ3A5bmRP?=
- =?utf-8?B?RXkrU3BzbmFXMnltdlQ2OERmcjFmQ2V5UnpSM0d1c0RlVVlWQ2xWbEVJeXhj?=
- =?utf-8?B?dVFLSWMvdXY3QUNLRGUxaTZFWnVWN0hON0NsMVVLck1mK0EwV1U4ai84LzRZ?=
- =?utf-8?B?R2M4KzlrZHQwdzRzRTE0V2pSa0pCekFIeks3TWdSTThpdFdEYWVtRUl2amRO?=
- =?utf-8?B?YklsOTZxYnhyVkcxQmpsdVRVakRkWGcySURidENvc2dkNW1VYjZqYWNjNnVs?=
- =?utf-8?B?WFRSRFFHNlJMRU9DTmFQL1lmMlBWUW1GTGR6aTJHT1p4Z3A2b0xkUWI4TUV6?=
- =?utf-8?B?c3VzSXQ2S1JGbUE5V1p5b2llejhLWm1BNGVSQnpuS2MzSks0QT09?=
-X-Microsoft-Antispam-Message-Info: 5V3vihL9KNDw8z4WVWCVOs5WZN26Kx08dszku8iTyXgG/OBsElDPxbjPq6oL3VbRYA/cbM3X7PHRKAslnlfqVZNVB6v3/XKQkKCLsvlpYIP3LLdv/QOvp+217ENvrWMEVYCDvnp6LMKglKC9VrJuA2kEctDOer3wuzMiNBa1fI52F9anAO7kAnniR8njVwb64rFiIV8+nIU9uZtuPyxBmCCttPoEI4Rn8ti092vpDONDbIWn1EGuMgb/hLfHYitrjIyuWaZAoXFhl+6pyjUQJ7PmEfgeRNERH/ydwrt3O0Xr6cJmpxrO0+AJ23NND5RwKrPYo1S8ZOgBLENOQlWyVm7gaPII3EHNNsBhPXTR4pM=
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR0801MB2025;6:/YeQQbCPP3/M+uqAkVbi4rarISb7yqmY5DXV9v6ijtgLe+s2+Jfn2MaE2ri/TvgtCHBpc/0mhqsG3z01CgPCWm2vStT/X3XysAwvnCJlJ+r40E928mbpXcNPdIYyMgp8wez10Gr0LtewqmkUmo0LiqaqG5JD6de0t0n+khsAayjOfDNmjAzvVkcES9V/sKCnY5lgNdU+/Bu/y98kZXeLeGKIhYdRz9afOZ6CbpGReceaudQxD/WlQ8Yt2S2GKR0wIWuE/JeQ8+7XTgGSE3GWBdNw6BaMCZQADMQEzs15nronU09/1nZWtBQoLZgPzFD4NEFA/sG9v8VJi1T4CPFa3CARK5NPwL0WuDO8/lCGd1feMhRLdgqAaKNt9XfT7l1b0jzEvTPPJzukU9uteYfRlg70I6iwj8v3nVxblGkJcSvImqXSJ9ea7acaqsNpa4iEHzG1SECGDBS61mdP+STZSw==;5:xJ5U6di23IC9bg+jQyWnjuIXrzu4LsFzcx7Aw9/wOz9kQqhA2ooGgX5AEaBGacB4erODuG8DSUPQL85bj77dX6ggRCQ/WzdmGC06l7KVc88+RKX97dibUKCIMWGNn1Jt4lAy4McbsysY6Pzdwe2uwus/9n2MwF4q3bU86MAPZT4=;7:+oID8+rvhdLp1IaKPKWzPptwKF8mO79GwAE9E1gkZBDZ61ottGm3GiQSsXfnfca/d7eubMHw0IJoPQ4/oI9RXiGR3Aij1tWUec84e+YpYKJ0DldePoEfaKAP3IPwL+xrfxq/30x1HIxTUimNVDot42bn0XSjDrj40ewsQRKn8BRPKLAXFAvoN4o6Bcj0uYQhA0plVdR5y1hKuLx2z1b0epb+6ibjaTmzkcq9MccOOQlDf2FDc6dx+/Pze/Az3TEk
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtIRTFQUjA4MDFNQjIwMjY7MjM6TnQyT1ZndmZvVWV0UEQ0ZjhPTE1veFc1?=
+ =?utf-8?B?TloxYm50VjY5VDNlbGFRcTJXbXE5ZW9CUWFhQkw3YzZ2dWltZU45K1E2dDN3?=
+ =?utf-8?B?VmUyNFVaQk1OSysvNkthNWJhc2lJWmd4bERkUmluZTk5T0w0TGoreVpBZnZy?=
+ =?utf-8?B?eFZRSUJaYWxRUWRTOVd6dWwxbHo0MHE3K1lkc2IzWHVqclNOaitZVGJBNEJ0?=
+ =?utf-8?B?VndyVFY1U0dhSVBBN0xNeWhCcVFmQk1OWHhXbGMxYjBtc0txKy9uamhlZGd3?=
+ =?utf-8?B?TWZwaEsxSmszNDZYYlNwamZJREFMcUg5U1ljcGU1dHU5UUc4N2JTcDg0cDZw?=
+ =?utf-8?B?YW9FZVZHTHZRUmRENXlsUFJUeFcrZlRLd0tudVJIc01pTlhQNXdzalBxMFNS?=
+ =?utf-8?B?WU03WW42Vnl3TUU4NUt0TytVSGlOTjIyUVVjRUxIai9jUjViTWFweGNiTGs5?=
+ =?utf-8?B?ZUFIdnNJWm42Unh5bml2WHRKRE4weXRRMWt3MkZ3cy9IckR1a3MxeTg5KzFq?=
+ =?utf-8?B?N0tUWXR5bUgrZHNKWmdkeE9RT3J6ZHpaaTUzaFltYUpTb1l4elJjcXU2dEVP?=
+ =?utf-8?B?SFhUbmdDSWdZTW1vLzg4UVVFMHIyRk9IWnF5aFF3QVkyUEVTTUVzMWxNZHRR?=
+ =?utf-8?B?WVJNMHFRdWlUZ0J3T0NpRWo5cWptTGw3MjBEc3U4MW84TmtiUVk4TjlEb0g1?=
+ =?utf-8?B?eHcxR29BSkVSL3U3Rk9BQnRuUFVMcVpBcEdDZzVBU3gyWENieUlqTmZmZXp6?=
+ =?utf-8?B?KzFJNlhndGltS2gyQnB4Vjg5Q0xzSkRQTWdRZkR6NTBHQWJ1TlBQWDVITEhv?=
+ =?utf-8?B?N0RCWS9vZmFYS09qcWM3Yit6UmZUQkN2TjNxbE5BT2NLdFdDd3J5T2d1WFJy?=
+ =?utf-8?B?Z0Q3MmZVdHRzdTdhMW82REozOGU3VmNweXoydjgvNFdzS3B4ejE1dHRoVkpt?=
+ =?utf-8?B?dnB6aFZHMi8va2Rod0t0Ti9zcHhJbEJRdHZmanljRzk3b095TDBJSE9ZcWRx?=
+ =?utf-8?B?cklIU01vK1A0bndFRUgrVlllMmxxdEtuYnhDS1JzN21OTk1xb1RYZUpmOUJE?=
+ =?utf-8?B?b0hlSE1aMEE3b21aS3R6djRJUjBBbUdpRVI1b1REbDhXdjNDWW1HZnQ2RUVD?=
+ =?utf-8?B?Z1dtZmZ3ZzlMZFpIdUZkdW1SaXNYaE52Q0VhWUVoWFF1TVIxckdUQU1PZHJW?=
+ =?utf-8?B?bnFkUHp3VEdwRzVHbk9kaEdsOTd0anNGZnhUM3ZSZ05KbFUrcVdHZVd6eU1a?=
+ =?utf-8?B?VXZBNlZMd2RObndPRkE5RmlYYXB4aFJKM3NaV2xLb3NuQWlzNXdzb29YSEZ2?=
+ =?utf-8?B?QlFPKzZMbnBad24xTmt2aDdKL1hkQmV3TDZ1LzgxZ2YxTEtrSS9aMmpGaE8z?=
+ =?utf-8?B?UXlzZ29lRHlBdDdSMFhYSUNvb1pINGQxckR1U3duVThxazZoejNrOTFPTmlo?=
+ =?utf-8?B?WkhaN3FHSm8wN0VQWWhwVHJwbjNrTStVS2hZVDI2anBZM012RjEwdTVIVVhz?=
+ =?utf-8?B?dVhuNzFRYVJ2RExVa09IRmFWcldpNW84ZTJsTVp4ek00SGw2Qko3ZXd1YVlv?=
+ =?utf-8?B?YlAwWVg2eks5OVpaMTc3K2xhWU9ZaStEVTFNL0xIRzZLVVh2eXRTc0lOeGRO?=
+ =?utf-8?B?aCtkdmlYc3RSQXRzcURsYUtqalNyV0VpaGJqU2pCT3NLSm1UTDNzT1p3QTd6?=
+ =?utf-8?B?dWFMM0k2ZkluVjN6VGxQSCtmV05yY1NtYWM4bFpzNXovUWtJRXJtRzhwT2p0?=
+ =?utf-8?B?Tkh6RmZlSG5JdXBvWDB2RFdiaXcyMC94T1U1c2wveWdRYTI2bm1qUjJzYXEy?=
+ =?utf-8?Q?mdPekXZSApERC6A?=
+X-Microsoft-Antispam-Message-Info: t6SsDwYzSB/qZcDLge5Me5omNiYNVnZxg5fHVL2LJlPOACO/qDA21wYBZJGeZXDiwV542UYYbZDOko/VkCXoESRG0KKAoMZDpzoEkeIHqvDRucWwMjvNLN1ZuDr0JotGxbr2nqH0ctrs2wGubWR00xi6ElHNpNmIHwlcYrvDMmPZcKtTdL1qYrPd2IXhmo+HrA4smhc02ReabFN5FTk4oDUajNzz8Q7dXYgtZOF2Md7Is014AA3sV1LQt7q+o1OYJ5cuK+CEfd37w8DLQe6srVBVvLpda0lmsatf/ZKvzCoTk6kQB3fgn6QZPgeKh4wH6dbUaqbtLIwGr2bbk8aZr3POzEAY2TgOmtgHzz8GWd8=
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR0801MB2026;6:TmH2zm3pj+UI4+hY2/qSzlGCSpAzDwzDwtVGuIhxv8ErXl1/v8A1nvDy94nQdZsEfKs3GPBWAdRx5FRABcSWxPOHj9YW0qito1BAZsPt6v6kEUC6nk7zLDsO56H0vWngau30EQIkRfLOfyTNRiXzIMWD3sVuRSOfHBr4EcI7i3QvXegaK9x75NOph/mzHOtkCBKRjGBEo0DIuixhGm2sX1OwR5uCeHtGP53xMshc1QCXeCWU4j0FEdMvaeIgEccBmKUlHV/4465FCsI3WGp0QwtqLiLAFjl31RytIxz7baDRHFJm6+/wRUoMm9pToFVwWbZbftwsENu/75SAvjNxedM7slQjlGNS4yWOMKdeQuaLaHWi+et4HjTkiTwzxKyi1wXYQWJea0RZzQyfPa5Qur9tOINI/CJlcORpTKoik+DIh/zD4I515WPeGXDJ5Yf3wMAUqgrKWDJ/ezmHeIpDXg==;5:3/5oEI5mYlVishHMDob4xCj4k2lzh9n3VQLztb7xjjsIe7WBMwslFq4zMwfPgR+tCXQkaIfi4TAW0woYyVgaWQdntEZaM51+7JLUuCFyn83YpI26viVKCM/q1OMzRzCJTkbMTUYRJpDmr2LN1wHeDNQHxRw3dhX7QvuRloxc+tU=;7:C8tZiZRNhi/DyMz2yN4GOcupIPloblHlpZaH8oLIEmohrq/tFOHWqWn2iUnuRbuArz/ngWg0q51AgrUcx6xOeUwhttIxNCsEVB/v6mgPKfNy17NZDAKyTon7REi02HDu9V2OR2TLN4HF+y1J/GVMiVfUO7trpbiRSpCs10rz2q9ZZjF7JOSz6ylZ6c3ugeTRoEn6aGxhwlAwzrWJnsJrDqgazsPis1YuK9SnO3lu5/zLGtw7DbUfM8D8M03QoHM4
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR0801MB2025;20:hI7OJJ+sqyjQUP2vyRFowQAb3Ku5bPqVOwqRNfEB6VeztthF2XwDBg2hIDQiqvhclKvA0J67wOlphpXILb4mtQyQSMOG2Lx5vrc038amE1YCV/ERAwcYQersNvyNwQ6abkJtqDp2ZzGBcOEg3pVVHlQOljfoHM+EJvwD5obK3vc=
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR0801MB2026;20:LrQHlzuO4ScRNp+WX0KrOLhI3m17GrFfUcUmpJgpeH2Umo2/L1+eSWmRGeDp3BcbId7L32gt3I7inGyOavULUXGFiihsz6xzGcx5H91AE1fsk1zPqNreXeAlll6Q0hncBrYQeCiQ5tSXtIZid8nAqapkk0X9wmiNl7O2YV3F/iI=
 X-OriginatorOrg: virtuozzo.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Aug 2018 15:37:39.0065 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4c85a468-862a-4fa9-3baf-08d5fc7bb60d
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Aug 2018 15:37:50.5971 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 679832a7-3215-43b5-fe22-08d5fc7bbeaa
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0801MB2025
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0801MB2026
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch kills all CONFIG_SRCU defines and
-the code under !CONFIG_SRCU.
+The patch makes shrinker list and shrinker_idr SRCU-safe
+for readers. This requires synchronize_srcu() on finalize
+stage unregistering stage, which waits till all parallel
+shrink_slab() are finished
+
+Note, that patch removes rwsem_is_contended() checks from
+the code, and this does not result in delays during
+registration, since there is no waiting at all. Unregistration
+case may be optimized by splitting unregister_shrinker()
+in tho stages, and this is made in next patches.
+
+Also, keep in mind, that in case of SRCU is not allowed
+to make unconditional (which is done in previous patch),
+it is possible to use percpu_rw_semaphore instead of it.
+percpu_down_read() will be used in shrink_slab_memcg()
+and in shrink_slab(), and consecutive calls
+
+	percpu_down_write(percpu_rwsem);
+	percpu_up_write(percpu_rwsem);
+
+will be used instead of synchronize_srcu().
 
 Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
 ---
- drivers/base/core.c                                |   42 --------------------
- include/linux/device.h                             |    2 -
- include/linux/rcutiny.h                            |    4 --
- include/linux/srcu.h                               |    5 --
- kernel/notifier.c                                  |    3 -
- kernel/rcu/Kconfig                                 |   12 +-----
- kernel/rcu/tree.h                                  |    5 --
- kernel/rcu/update.c                                |    4 --
- .../selftests/rcutorture/doc/TREE_RCU-kconfig.txt  |    5 --
- 9 files changed, 3 insertions(+), 79 deletions(-)
+ mm/vmscan.c |   42 +++++++++++++-----------------------------
+ 1 file changed, 13 insertions(+), 29 deletions(-)
 
-diff --git a/drivers/base/core.c b/drivers/base/core.c
-index 04bbcd779e11..8483da53c88f 100644
---- a/drivers/base/core.c
-+++ b/drivers/base/core.c
-@@ -44,7 +44,6 @@ early_param("sysfs.deprecated", sysfs_deprecated_setup);
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index da135e1acd94..9dda903a1406 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -168,6 +168,7 @@ unsigned long vm_total_pages;
  
- /* Device links support. */
+ static LIST_HEAD(shrinker_list);
+ static DECLARE_RWSEM(shrinker_rwsem);
++DEFINE_STATIC_SRCU(srcu);
  
--#ifdef CONFIG_SRCU
- static DEFINE_MUTEX(device_links_lock);
- DEFINE_STATIC_SRCU(device_links_srcu);
+ #ifdef CONFIG_MEMCG_KMEM
  
-@@ -67,30 +66,6 @@ void device_links_read_unlock(int idx)
+@@ -192,7 +193,6 @@ static int prealloc_memcg_shrinker(struct shrinker *shrinker)
+ 	int id, ret = -ENOMEM;
+ 
+ 	down_write(&shrinker_rwsem);
+-	/* This may call shrinker, so it must use down_read_trylock() */
+ 	id = idr_alloc(&shrinker_idr, SHRINKER_REGISTERING, 0, 0, GFP_KERNEL);
+ 	if (id < 0)
+ 		goto unlock;
+@@ -406,7 +406,7 @@ void free_prealloced_shrinker(struct shrinker *shrinker)
+ void register_shrinker_prepared(struct shrinker *shrinker)
  {
- 	srcu_read_unlock(&device_links_srcu, idx);
+ 	down_write(&shrinker_rwsem);
+-	list_add_tail(&shrinker->list, &shrinker_list);
++	list_add_tail_rcu(&shrinker->list, &shrinker_list);
+ 	idr_replace(&shrinker_idr, shrinker, shrinker->id);
+ 	up_write(&shrinker_rwsem);
  }
--#else /* !CONFIG_SRCU */
--static DECLARE_RWSEM(device_links_lock);
--
--static inline void device_links_write_lock(void)
--{
--	down_write(&device_links_lock);
--}
--
--static inline void device_links_write_unlock(void)
--{
--	up_write(&device_links_lock);
--}
--
--int device_links_read_lock(void)
--{
--	down_read(&device_links_lock);
--	return 0;
--}
--
--void device_links_read_unlock(int not_used)
--{
--	up_read(&device_links_lock);
--}
--#endif /* !CONFIG_SRCU */
- 
- /**
-  * device_is_dependent - Check if one device depends on another one
-@@ -317,7 +292,6 @@ static void device_link_free(struct device_link *link)
- 	kfree(link);
+@@ -432,8 +432,11 @@ void unregister_shrinker(struct shrinker *shrinker)
+ 	if (shrinker->flags & SHRINKER_MEMCG_AWARE)
+ 		unregister_memcg_shrinker(shrinker);
+ 	down_write(&shrinker_rwsem);
+-	list_del(&shrinker->list);
++	list_del_rcu(&shrinker->list);
+ 	up_write(&shrinker_rwsem);
++
++	synchronize_srcu(&srcu);
++
+ 	kfree(shrinker->nr_deferred);
+ 	shrinker->nr_deferred = NULL;
  }
- 
--#ifdef CONFIG_SRCU
- static void __device_link_free_srcu(struct rcu_head *rhead)
+@@ -567,14 +570,12 @@ static unsigned long shrink_slab_memcg(gfp_t gfp_mask, int nid,
  {
- 	device_link_free(container_of(rhead, struct device_link, rcu_head));
-@@ -337,22 +311,6 @@ static void __device_link_del(struct kref *kref)
- 	list_del_rcu(&link->c_node);
- 	call_srcu(&device_links_srcu, &link->rcu_head, __device_link_free_srcu);
+ 	struct memcg_shrinker_map *map;
+ 	unsigned long freed = 0;
+-	int ret, i;
++	int ret, i, srcu_id;
+ 
+ 	if (!memcg_kmem_enabled() || !mem_cgroup_online(memcg))
+ 		return 0;
+ 
+-	if (!down_read_trylock(&shrinker_rwsem))
+-		return 0;
+-
++	srcu_id = srcu_read_lock(&srcu);
+ 	map = rcu_dereference_protected(memcg->nodeinfo[nid]->shrinker_map,
+ 					true);
+ 	if (unlikely(!map))
+@@ -621,14 +622,9 @@ static unsigned long shrink_slab_memcg(gfp_t gfp_mask, int nid,
+ 				memcg_set_shrinker_bit(memcg, nid, i);
+ 		}
+ 		freed += ret;
+-
+-		if (rwsem_is_contended(&shrinker_rwsem)) {
+-			freed = freed ? : 1;
+-			break;
+-		}
+ 	}
+ unlock:
+-	up_read(&shrinker_rwsem);
++	srcu_read_unlock(&srcu, srcu_id);
+ 	return freed;
  }
--#else /* !CONFIG_SRCU */
--static void __device_link_del(struct kref *kref)
--{
--	struct device_link *link = container_of(kref, struct device_link, kref);
+ #else /* CONFIG_MEMCG_KMEM */
+@@ -665,15 +661,13 @@ static unsigned long shrink_slab(gfp_t gfp_mask, int nid,
+ {
+ 	struct shrinker *shrinker;
+ 	unsigned long freed = 0;
+-	int ret;
++	int srcu_id, ret;
+ 
+ 	if (!mem_cgroup_is_root(memcg))
+ 		return shrink_slab_memcg(gfp_mask, nid, memcg, priority);
+ 
+-	if (!down_read_trylock(&shrinker_rwsem))
+-		goto out;
 -
--	dev_info(link->consumer, "Dropping the link to %s\n",
--		 dev_name(link->supplier));
--
--	if (link->flags & DL_FLAG_PM_RUNTIME)
--		pm_runtime_drop_link(link->consumer);
--
--	list_del(&link->s_node);
--	list_del(&link->c_node);
--	device_link_free(link);
--}
--#endif /* !CONFIG_SRCU */
+-	list_for_each_entry(shrinker, &shrinker_list, list) {
++	srcu_id = srcu_read_lock(&srcu);
++	list_for_each_entry_rcu(shrinker, &shrinker_list, list) {
+ 		struct shrink_control sc = {
+ 			.gfp_mask = gfp_mask,
+ 			.nid = nid,
+@@ -684,19 +678,9 @@ static unsigned long shrink_slab(gfp_t gfp_mask, int nid,
+ 		if (ret == SHRINK_EMPTY)
+ 			ret = 0;
+ 		freed += ret;
+-		/*
+-		 * Bail out if someone want to register a new shrinker to
+-		 * prevent the regsitration from being stalled for long periods
+-		 * by parallel ongoing shrinking.
+-		 */
+-		if (rwsem_is_contended(&shrinker_rwsem)) {
+-			freed = freed ? : 1;
+-			break;
+-		}
+ 	}
++	srcu_read_unlock(&srcu, srcu_id);
  
- /**
-  * device_link_del - Delete a link between two devices.
-diff --git a/include/linux/device.h b/include/linux/device.h
-index 8f882549edee..524dc17d67be 100644
---- a/include/linux/device.h
-+++ b/include/linux/device.h
-@@ -827,9 +827,7 @@ struct device_link {
- 	u32 flags;
- 	bool rpm_active;
- 	struct kref kref;
--#ifdef CONFIG_SRCU
- 	struct rcu_head rcu_head;
--#endif
- };
- 
- /**
-diff --git a/include/linux/rcutiny.h b/include/linux/rcutiny.h
-index 8d9a0ea8f0b5..63e2b6f2e94a 100644
---- a/include/linux/rcutiny.h
-+++ b/include/linux/rcutiny.h
-@@ -115,11 +115,7 @@ static inline void rcu_irq_exit_irqson(void) { }
- static inline void rcu_irq_enter_irqson(void) { }
- static inline void rcu_irq_exit(void) { }
- static inline void exit_rcu(void) { }
--#ifdef CONFIG_SRCU
- void rcu_scheduler_starting(void);
--#else /* #ifndef CONFIG_SRCU */
--static inline void rcu_scheduler_starting(void) { }
--#endif /* #else #ifndef CONFIG_SRCU */
- static inline void rcu_end_inkernel_boot(void) { }
- static inline bool rcu_is_watching(void) { return true; }
- 
-diff --git a/include/linux/srcu.h b/include/linux/srcu.h
-index 3e72a291c401..27238223a78e 100644
---- a/include/linux/srcu.h
-+++ b/include/linux/srcu.h
-@@ -60,11 +60,8 @@ int init_srcu_struct(struct srcu_struct *sp);
- #include <linux/srcutiny.h>
- #elif defined(CONFIG_TREE_SRCU)
- #include <linux/srcutree.h>
--#elif defined(CONFIG_SRCU)
--#error "Unknown SRCU implementation specified to kernel configuration"
- #else
--/* Dummy definition for things like notifiers.  Actual use gets link error. */
--struct srcu_struct { };
-+#error "Unknown SRCU implementation specified to kernel configuration"
- #endif
- 
- void call_srcu(struct srcu_struct *sp, struct rcu_head *head,
-diff --git a/kernel/notifier.c b/kernel/notifier.c
-index 6196af8a8223..6e4b55e74736 100644
---- a/kernel/notifier.c
-+++ b/kernel/notifier.c
-@@ -402,7 +402,6 @@ int raw_notifier_call_chain(struct raw_notifier_head *nh,
+-	up_read(&shrinker_rwsem);
+-out:
+ 	cond_resched();
+ 	return freed;
  }
- EXPORT_SYMBOL_GPL(raw_notifier_call_chain);
- 
--#ifdef CONFIG_SRCU
- /*
-  *	SRCU notifier chain routines.    Registration and unregistration
-  *	use a mutex, and call_chain is synchronized by SRCU (no locks).
-@@ -529,8 +528,6 @@ void srcu_init_notifier_head(struct srcu_notifier_head *nh)
- }
- EXPORT_SYMBOL_GPL(srcu_init_notifier_head);
- 
--#endif /* CONFIG_SRCU */
--
- static ATOMIC_NOTIFIER_HEAD(die_chain);
- 
- int notrace notify_die(enum die_val val, const char *str,
-diff --git a/kernel/rcu/Kconfig b/kernel/rcu/Kconfig
-index 9210379c0353..f52e55e33f0a 100644
---- a/kernel/rcu/Kconfig
-+++ b/kernel/rcu/Kconfig
-@@ -49,28 +49,20 @@ config RCU_EXPERT
- 
- 	  Say N if you are unsure.
- 
--config SRCU
--	bool
--	help
--	  This option selects the sleepable version of RCU. This version
--	  permits arbitrary sleeping or blocking within RCU read-side critical
--	  sections.
--
- config TINY_SRCU
- 	bool
--	default y if SRCU && TINY_RCU
-+	default y if TINY_RCU
- 	help
- 	  This option selects the single-CPU non-preemptible version of SRCU.
- 
- config TREE_SRCU
- 	bool
--	default y if SRCU && !TINY_RCU
-+	default y if !TINY_RCU
- 	help
- 	  This option selects the full-fledged version of SRCU.
- 
- config TASKS_RCU
- 	def_bool PREEMPT
--	select SRCU
- 	help
- 	  This option enables a task-based RCU implementation that uses
- 	  only voluntary context switch (not preemption!), idle, and
-diff --git a/kernel/rcu/tree.h b/kernel/rcu/tree.h
-index 4e74df768c57..b7f76400a45e 100644
---- a/kernel/rcu/tree.h
-+++ b/kernel/rcu/tree.h
-@@ -489,12 +489,7 @@ static bool rcu_nohz_full_cpu(struct rcu_state *rsp);
- static void rcu_dynticks_task_enter(void);
- static void rcu_dynticks_task_exit(void);
- 
--#ifdef CONFIG_SRCU
- void srcu_online_cpu(unsigned int cpu);
- void srcu_offline_cpu(unsigned int cpu);
--#else /* #ifdef CONFIG_SRCU */
--void srcu_online_cpu(unsigned int cpu) { }
--void srcu_offline_cpu(unsigned int cpu) { }
--#endif /* #else #ifdef CONFIG_SRCU */
- 
- #endif /* #ifndef RCU_TREE_NONCORE */
-diff --git a/kernel/rcu/update.c b/kernel/rcu/update.c
-index 39cb23d22109..90de81c98524 100644
---- a/kernel/rcu/update.c
-+++ b/kernel/rcu/update.c
-@@ -210,8 +210,6 @@ void rcu_test_sync_prims(void)
- 	synchronize_sched_expedited();
- }
- 
--#if !defined(CONFIG_TINY_RCU) || defined(CONFIG_SRCU)
--
- /*
-  * Switch to run-time mode once RCU has fully initialized.
-  */
-@@ -224,8 +222,6 @@ static int __init rcu_set_runtime_mode(void)
- }
- core_initcall(rcu_set_runtime_mode);
- 
--#endif /* #if !defined(CONFIG_TINY_RCU) || defined(CONFIG_SRCU) */
--
- #ifdef CONFIG_DEBUG_LOCK_ALLOC
- static struct lock_class_key rcu_lock_key;
- struct lockdep_map rcu_lock_map =
-diff --git a/tools/testing/selftests/rcutorture/doc/TREE_RCU-kconfig.txt b/tools/testing/selftests/rcutorture/doc/TREE_RCU-kconfig.txt
-index af6fca03602f..b4f015c3244a 100644
---- a/tools/testing/selftests/rcutorture/doc/TREE_RCU-kconfig.txt
-+++ b/tools/testing/selftests/rcutorture/doc/TREE_RCU-kconfig.txt
-@@ -73,9 +73,4 @@ CONFIG_TASKS_RCU
- 
- 	These are controlled by CONFIG_PREEMPT and/or CONFIG_SMP.
- 
--CONFIG_SRCU
--
--	Selected by CONFIG_RCU_TORTURE_TEST, so cannot disable.
--
--
- boot parameters ignored: TBD
 
