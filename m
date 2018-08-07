@@ -2,78 +2,158 @@ Return-Path: <SRS0=n5k7=KW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F289CC46471
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 17:34:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 747F5C46471
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 17:35:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4534216EE
-	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 17:34:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DvhdA5Ix"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4534216EE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 32035216EE
+	for <linux-kernel@archiver.kernel.org>; Tue,  7 Aug 2018 17:35:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32035216EE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tronnes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389406AbeHGTt4 (ORCPT
+        id S2389785AbeHGTu7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 15:49:56 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:51274 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387513AbeHGTt4 (ORCPT
+        Tue, 7 Aug 2018 15:50:59 -0400
+Received: from smtp.domeneshop.no ([194.63.252.55]:45902 "EHLO
+        smtp.domeneshop.no" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387513AbeHGTu7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 15:49:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=1+livEpu000xNh/S+ZwF2RKwU3FaSOHghrFP/yUsZFM=; b=DvhdA5IxLcstZ9sWa3WJ8dgAA
-        +dbJoq7Qa0F53kJ1m/gao6Lr8nNBIJGb8CbPBAGvoXcf9Op/p7dX9tDLmZhuFRPQu1DQTK3sexB56
-        BD0ec6kiDgOqtnUj8eMS9kfOq1dN/f3Z5N5sA7Do2WE7L3IhmAz/zZMuWDxNqVCEJjlc8JZLiFKG1
-        sDXlBI2ugLz+pL28fpiPOQPEKP23+xW1EKCZ3kTJ3BMtZ+RV1vUod9xFbvw2T8pRAYt5uvzjoQXiC
-        /WNuCVsyn2cHWujEomo7TQdrqqr6k5Xrf6wqaGdmpgV/p5KuVZbjokPY/oJ/Wdleb6hFRkY9xbPyY
-        ouJGiuxDw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fn5sI-0001ng-5s; Tue, 07 Aug 2018 17:34:26 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id D2A782058813C; Tue,  7 Aug 2018 19:34:24 +0200 (CEST)
-Date:   Tue, 7 Aug 2018 19:34:24 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     kan.liang@linux.intel.com
-Cc:     tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
-        len.brown@intel.com, ak@linux.intel.com,
-        linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH] x86/cpu: Rename Denverton and Gemini Lake
-Message-ID: <20180807173424.GH2494@hirez.programming.kicks-ass.net>
-References: <1533662247-17575-1-git-send-email-kan.liang@linux.intel.com>
+        Tue, 7 Aug 2018 15:50:59 -0400
+Received: from 211.81-166-168.customer.lyse.net ([81.166.168.211]:54646 helo=[192.168.10.173])
+        by smtp.domeneshop.no with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.84_2)
+        (envelope-from <noralf@tronnes.org>)
+        id 1fn5tN-000767-Ui; Tue, 07 Aug 2018 19:35:33 +0200
+Subject: Re: [PATCH v1 5/5] tinydrm: add winstar wg160160 driver
+To:     Sam Ravnborg <sam@ravnborg.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+References: <20180802193909.GA11443@ravnborg.org>
+ <20180802194536.10820-5-sam@ravnborg.org>
+From:   =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>
+Message-ID: <16dfa544-e454-f59b-91ef-9bac7bf1b490@tronnes.org>
+Date:   Tue, 7 Aug 2018 19:35:30 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1533662247-17575-1-git-send-email-kan.liang@linux.intel.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180802194536.10820-5-sam@ravnborg.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 07, 2018 at 10:17:27AM -0700, kan.liang@linux.intel.com wrote:
-> From: Kan Liang <kan.liang@linux.intel.com>
-> 
-> Denverton and Gemini Lake are platform names and should not be used for
-> Processor Family stuff. The microarchitecture codename should be used.
-> 
-> DENVERTON is Goldmont server SoC. Rename DENVERTON to GOLDMONT2, similar
-> to SILVERMONT2 being the silvermont server SoCs.
-> 
-> Rename GEMINI_LAKE to GOLDMONT_PLUS.
-> 
-> Suggested-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
 
-Thanks! the alternative to 2 is _X like we have with the big cores to
-denote server chips, but this is already a nice improvement.
+Den 02.08.2018 21.45, skrev Sam Ravnborg:
+> Add driver for the winstar wg160160 display.
+> The driver utilises pardata-dbi that
+> again utilise the pardata subsystem.
+>
+> Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
+> ---
+>   MAINTAINERS                        |   5 +
+>   drivers/gpu/drm/tinydrm/Kconfig    |  10 ++
+>   drivers/gpu/drm/tinydrm/Makefile   |   1 +
+>   drivers/gpu/drm/tinydrm/wg160160.c | 298 +++++++++++++++++++++++++++++++++++++
+>   4 files changed, 314 insertions(+)
+>   create mode 100644 drivers/gpu/drm/tinydrm/wg160160.c
+>
+
+[...]
+
+> +
+> +/**
+> + * write_reg - Write instruction on parallel bus to controller
+> + *
+> + * Check BUSY flag and write instruction
+> + *
+> + * @pdd: pardata data
+> + * @reg: The register to write
+> + * @value: The value of the register
+> + *
+> + * Returns:
+> + * Zero on success, negative error code on failure
+> + */
+> +int write_reg(struct pardata_data *pdd, unsigned int reg, unsigned int value)
+> +{
+> +	int ins[PIN_NUM];
+> +	int val[PIN_NUM];
+> +	int i;
+> +
+> +	for (i = 0; i < PIN_NUM; i++)
+> +		ins[PIN_DB0 + i] = !!BIT(reg);
+> +
+> +	for (i = 0; i < PIN_NUM; i++)
+> +		val[PIN_DB0 + i] = !!(value & BIT(i));
+> +
+> +	gpiod_set_value_cansleep(pdd->bus->pin_rs, 1);
+> +	gpiod_set_array_value_cansleep(PIN_NUM, pdd->bus->data_pins->desc, ins);
+> +	wait_busy(pdd);
+> +	pardata_strobe_write(pdd);
+> +
+> +	gpiod_set_value_cansleep(pdd->bus->pin_rs, 0);
+> +	gpiod_set_array_value_cansleep(PIN_NUM, pdd->bus->data_pins->desc, val);
+> +	wait_busy(pdd);
+> +	pardata_strobe_write(pdd);
+> +
+> +	return 0;
+> +}
+
+If this controller has normal registers, you could do a regmap
+implementation for pardata: drivers/base/regmap.
+
+Noralf.
+
+> +
+> +/**
+> + * write_buf - write buffer on parallel bus to controller
+> + *
+> + * @pdd: pardata data
+> + * @offset: offset into display RAM
+> + * @data: pointer to data to write
+> + * @len: number of bytes to write
+> + *
+> + * Returns:
+> + * Zero on success, negative error code on failure
+> + */
+> +int write_buf(struct pardata_data *pdd, u8 offset, u8 *data, size_t len)
+> +{
+> +	int ins[PIN_NUM];
+> +	int val[PIN_NUM];
+> +	int bit;
+> +	int i;
+> +
+> +	/* Setup address */
+> +	write_reg(pdd, WG160160_ADDRSL_REG, offset & 0xff);
+> +	write_reg(pdd, WG160160_ADDRSL_REG, (offset >> 8) & 0xff);
+> +
+> +	/* prepare to write data */
+> +	for (i = 0; i < PIN_NUM; i++)
+> +		ins[PIN_DB0 + i] = !!(WG160160_WRITE_REG & BIT(i));
+> +
+> +	gpiod_set_value_cansleep(pdd->bus->pin_rs, 1);
+> +	gpiod_set_array_value_cansleep(PIN_NUM, pdd->bus->data_pins->desc, ins);
+> +	wait_busy(pdd);
+> +	pardata_strobe_write(pdd);
+> +
+> +	/* Write data byte - by byte */
+> +	gpiod_set_value_cansleep(pdd->bus->pin_rs, 0);
+> +
+> +	for (i = offset; i < (offset + len); i++) {
+> +		for (bit = 0; bit < PIN_NUM; bit++)
+> +			val[PIN_DB0 + bit] = !!(data[i] & BIT(bit));
+> +
+> +		gpiod_set_array_value_cansleep(PIN_NUM,
+> +					       pdd->bus->data_pins->desc,
+> +					       val);
+> +		wait_busy(pdd);
+> +		pardata_strobe_write(pdd);
+> +	}
+> +
+> +	return 0;
+> +}
+
