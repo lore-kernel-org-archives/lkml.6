@@ -3,130 +3,86 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17B78C46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:26:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 506B8C46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:26:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE0D8219C9
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:26:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE0D8219C9
+	by mail.kernel.org (Postfix) with ESMTP id 02426219C9
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:26:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02426219C9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727631AbeHHQqB (ORCPT
+        id S1727496AbeHHQpl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 12:46:01 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55202 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727361AbeHHQpl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 8 Aug 2018 12:45:41 -0400
+Received: from mx2.suse.de ([195.135.220.15]:55176 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727177AbeHHQpk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 12:45:40 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 1AC50AECD;
-        Wed,  8 Aug 2018 14:25:46 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id D18B5AE15;
+        Wed,  8 Aug 2018 14:25:45 +0000 (UTC)
 From:   Juergen Gross <jgross@suse.com>
 To:     linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
         linux-block@vger.kernel.org
 Cc:     konrad.wilk@oracle.com, roger.pau@citrix.com, axboe@kernel.dk,
         boris.ostrovsky@oracle.com, Juergen Gross <jgross@suse.com>
-Subject: [PATCH v2 4/5] xen/blkback: move persistent grants flags to bool
-Date:   Wed,  8 Aug 2018 16:25:27 +0200
-Message-Id: <20180808142528.31029-5-jgross@suse.com>
+Subject: [PATCH v2 0/5] xen/blk: persistent grant rework
+Date:   Wed,  8 Aug 2018 16:25:23 +0200
+Message-Id: <20180808142528.31029-1-jgross@suse.com>
 X-Mailer: git-send-email 2.13.7
-In-Reply-To: <20180808142528.31029-1-jgross@suse.com>
-References: <20180808142528.31029-1-jgross@suse.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The struct persistent_gnt flags member is meant to be a bitfield of
-different flags. There is only PERSISTENT_GNT_ACTIVE flag left, so
-convert it to a bool named "active".
+Persistent grants are used in the Xen's blkfront/blkback drivers to
+avoid mapping/unmapping of I/O buffers in the backend for each I/O.
 
-Signed-off-by: Juergen Gross <jgross@suse.com>
----
- drivers/block/xen-blkback/blkback.c | 13 ++++++-------
- drivers/block/xen-blkback/common.h  |  7 +------
- 2 files changed, 7 insertions(+), 13 deletions(-)
+While this speeds up processing quite a bit there are problems related
+to persistent grants in some configurations: domains with multiple
+block devices making use of persistent grants might suffer from a lack
+of grants if each of the block devices experienced a high I/O load at
+some time. This is due to the number of persistent grants per device
+only to be limited by a rather high maximum value, but never being
+released even in case of longer times without any I/O.
 
-diff --git a/drivers/block/xen-blkback/blkback.c b/drivers/block/xen-blkback/blkback.c
-index f341ac84b853..2483931a3e01 100644
---- a/drivers/block/xen-blkback/blkback.c
-+++ b/drivers/block/xen-blkback/blkback.c
-@@ -255,8 +255,7 @@ static int add_persistent_gnt(struct xen_blkif_ring *ring,
- 		}
- 	}
- 
--	bitmap_zero(persistent_gnt->flags, PERSISTENT_GNT_FLAGS_SIZE);
--	set_bit(PERSISTENT_GNT_ACTIVE, persistent_gnt->flags);
-+	persistent_gnt->active = true;
- 	/* Add new node and rebalance tree. */
- 	rb_link_node(&(persistent_gnt->node), parent, new);
- 	rb_insert_color(&(persistent_gnt->node), &ring->persistent_gnts);
-@@ -280,11 +279,11 @@ static struct persistent_gnt *get_persistent_gnt(struct xen_blkif_ring *ring,
- 		else if (gref > data->gnt)
- 			node = node->rb_right;
- 		else {
--			if(test_bit(PERSISTENT_GNT_ACTIVE, data->flags)) {
-+			if (data->active) {
- 				pr_alert_ratelimited("requesting a grant already in use\n");
- 				return NULL;
- 			}
--			set_bit(PERSISTENT_GNT_ACTIVE, data->flags);
-+			data->active = true;
- 			atomic_inc(&ring->persistent_gnt_in_use);
- 			return data;
- 		}
-@@ -295,10 +294,10 @@ static struct persistent_gnt *get_persistent_gnt(struct xen_blkif_ring *ring,
- static void put_persistent_gnt(struct xen_blkif_ring *ring,
-                                struct persistent_gnt *persistent_gnt)
- {
--	if(!test_bit(PERSISTENT_GNT_ACTIVE, persistent_gnt->flags))
-+	if (!persistent_gnt->active)
- 		pr_alert_ratelimited("freeing a grant already unused\n");
- 	persistent_gnt->last_used = jiffies;
--	clear_bit(PERSISTENT_GNT_ACTIVE, persistent_gnt->flags);
-+	persistent_gnt->active = false;
- 	atomic_dec(&ring->persistent_gnt_in_use);
- }
- 
-@@ -429,7 +428,7 @@ static void purge_persistent_gnt(struct xen_blkif_ring *ring)
- 		BUG_ON(persistent_gnt->handle ==
- 			BLKBACK_INVALID_HANDLE);
- 
--		if (test_bit(PERSISTENT_GNT_ACTIVE, persistent_gnt->flags))
-+		if (persistent_gnt->active)
- 			continue;
- 		if (!scan_used && !persistent_gnt_timeout(persistent_gnt))
- 			continue;
-diff --git a/drivers/block/xen-blkback/common.h b/drivers/block/xen-blkback/common.h
-index 7bff72db3b7e..2339b8d39c5e 100644
---- a/drivers/block/xen-blkback/common.h
-+++ b/drivers/block/xen-blkback/common.h
-@@ -233,11 +233,6 @@ struct xen_vbd {
- 
- struct backend_info;
- 
--/* Number of available flags */
--#define PERSISTENT_GNT_FLAGS_SIZE	1
--/* This persistent grant is currently in use */
--#define PERSISTENT_GNT_ACTIVE		0
--
- /* Number of requests that we can fit in a ring */
- #define XEN_BLKIF_REQS_PER_PAGE		32
- 
-@@ -246,7 +241,7 @@ struct persistent_gnt {
- 	grant_ref_t gnt;
- 	grant_handle_t handle;
- 	unsigned long last_used;
--	DECLARE_BITMAP(flags, PERSISTENT_GNT_FLAGS_SIZE);
-+	bool active;
- 	struct rb_node node;
- 	struct list_head remove_node;
- };
+This series modifies xen-blkback to unmap any domU page mapped via a
+persistent grant after a timeout (default: 60 seconds). The timeout
+is set to its default value again when a persistent grant has been
+used for an I/O.
+
+xen-blkfront is modified to scan every 10 seconds for persistent grants
+not in use by blkback any more and to remove such grants.
+
+The last 3 patches are small cleanups of blkfront and blkback drivers.
+
+V2:
+- patch 1: added new module parameter doc
+- patch 1: removed PERSISTENT_GNT_WAS_ACTIVE flag
+- patch 2: removed global worker active flag
+- added new patch 4
+
+Juergen Gross (5):
+  xen/blkback: don't keep persistent grants too long
+  xen/blkfront: cleanup stale persistent grants
+  xen/blkfront: reorder tests in xlblk_init()
+  xen/blkback: move persistent grants flags to bool
+  xen/blkback: remove unused pers_gnts_lock from struct xen_blkif_ring
+
+ Documentation/ABI/testing/sysfs-driver-xen-blkback |  10 ++
+ drivers/block/xen-blkback/blkback.c                |  99 ++++++++++---------
+ drivers/block/xen-blkback/common.h                 |  14 +--
+ drivers/block/xen-blkfront.c                       | 110 ++++++++++++++++++---
+ 4 files changed, 163 insertions(+), 70 deletions(-)
+
 -- 
 2.13.7
 
