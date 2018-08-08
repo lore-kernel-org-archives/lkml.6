@@ -3,53 +3,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45EDBC4646D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 16:41:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3114C46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 16:41:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7EE521A37
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 16:41:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5277821A27
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 16:41:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="b/Z+hRu0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7EE521A37
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="iAJ05CTe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5277821A27
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728404AbeHHTCS (ORCPT
+        id S1728719AbeHHTC0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 15:02:18 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:58514 "EHLO
+        Wed, 8 Aug 2018 15:02:26 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:58718 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727062AbeHHTCS (ORCPT
+        with ESMTP id S1727062AbeHHTC0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 15:02:18 -0400
+        Wed, 8 Aug 2018 15:02:26 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=gyeWXQDonVYARYkY+Y+TlHg4ugCB6AxiCfKYp/+CXSo=; b=b/Z+hRu0sU7g
-        xdMG3qS7Qsto005WTpHJNNmWEU5bA6Q2S9ZHrLwKjpPjtRU5eEhpplWVfniv8q1u3RkoCyNqip6+6
-        YMjhcmdUc7PgUsnYdInjTmBsXAtjnMgLF4t+x2its3DhuAd0dzUBj7oD+7Hnc+a0Z/fmuwVnLI07m
-        mS/iE=;
+        List-Archive; bh=lT+yC+uIySOSbGKCwRuP2NDlLttQc2K5/do8YewvOKU=; b=iAJ05CTeOq0D
+        vUZeDfpPV3bCZt/PSxJCrYvmA4q0Z3FXVLK0DlAB4JIKR+yfS8osg3bpcYQDv/50BILevI+o40sfK
+        YnmANofiYsImi+1NCNeMTec6Swl70Fb0LmsnN750diI3GrkE9XUH7UlXwpr141YYurS4vmyepcUa8
+        UcnXM=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1fnRWr-00024j-CX; Wed, 08 Aug 2018 16:41:45 +0000
+        id 1fnRWz-00024q-Tq; Wed, 08 Aug 2018 16:41:53 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id BF4151124340; Wed,  8 Aug 2018 17:41:44 +0100 (BST)
+        id AA4341124340; Wed,  8 Aug 2018 17:41:53 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
 To:     Richard Fitzgerald <rf@opensource.cirrus.com>
 Cc:     Mark Brown <broonie@kernel.org>, broonie@kernel.org,
         patches@opensource.cirrus.com, alsa-devel@alsa-project.org,
         linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: wm_adsp: Make DSP name configurable by codec driver" to the asoc tree
-In-Reply-To:  <20180808161339.17402-2-rf@opensource.cirrus.com>
-Message-Id: <20180808164144.BF4151124340@debutante.sirena.org.uk>
-Date:   Wed,  8 Aug 2018 17:41:44 +0100 (BST)
+Subject: Applied "ASoC: wm_adsp: Declare firmware controls from codec driver" to the asoc tree
+In-Reply-To:  <20180808161339.17402-1-rf@opensource.cirrus.com>
+Message-Id: <20180808164153.AA4341124340@debutante.sirena.org.uk>
+Date:   Wed,  8 Aug 2018 17:41:53 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -57,7 +57,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: wm_adsp: Make DSP name configurable by codec driver
+   ASoC: wm_adsp: Declare firmware controls from codec driver
 
 has been applied to the asoc tree at
 
@@ -82,198 +82,204 @@ to this mail.
 Thanks,
 Mark
 
-From 605391d0f4bfdff2f2c6c5477ce0ccf776d8d5c0 Mon Sep 17 00:00:00 2001
+From 0a047f07525fecfa8f6fccc5d30afff7e816de8d Mon Sep 17 00:00:00 2001
 From: Richard Fitzgerald <rf@opensource.cirrus.com>
-Date: Wed, 8 Aug 2018 17:13:39 +0100
-Subject: [PATCH] ASoC: wm_adsp: Make DSP name configurable by codec driver
+Date: Wed, 8 Aug 2018 17:13:38 +0100
+Subject: [PATCH] ASoC: wm_adsp: Declare firmware controls from codec driver
 
-Instead of harcoding that a core must always be called "DSPn"
-add a name member to struct wm_adsp so that the owning codec
-driver can provide a custom name. This allows for re-use of
-the wm_adsp driver with parts where the processing cores are
-named differently.
-
-If no name is provided the default DSPn name is used.
+To allow for more flexibility in naming of DSP-type cores
+move the creation of the firmware controls to the codec
+drivers instead of having a hardcoded list in wm_adsp.
 
 Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/wm_adsp.c | 69 ++++++++++++++++++++++++++------------
- sound/soc/codecs/wm_adsp.h |  2 ++
- 2 files changed, 50 insertions(+), 21 deletions(-)
+ sound/soc/codecs/cs47l24.c |  3 +++
+ sound/soc/codecs/wm2200.c  | 10 ++++------
+ sound/soc/codecs/wm5102.c  |  2 ++
+ sound/soc/codecs/wm5110.c  |  5 +++++
+ sound/soc/codecs/wm_adsp.c | 35 +++++++++--------------------------
+ sound/soc/codecs/wm_adsp.h | 10 +++++++++-
+ 6 files changed, 32 insertions(+), 33 deletions(-)
 
-diff --git a/sound/soc/codecs/wm_adsp.c b/sound/soc/codecs/wm_adsp.c
-index 1c12c78dbcce..f61656070225 100644
---- a/sound/soc/codecs/wm_adsp.c
-+++ b/sound/soc/codecs/wm_adsp.c
-@@ -10,6 +10,7 @@
-  * published by the Free Software Foundation.
-  */
+diff --git a/sound/soc/codecs/cs47l24.c b/sound/soc/codecs/cs47l24.c
+index 0da52ead91e0..45e50fe3bf25 100644
+--- a/sound/soc/codecs/cs47l24.c
++++ b/sound/soc/codecs/cs47l24.c
+@@ -235,6 +235,9 @@ ARIZONA_MIXER_CONTROLS("AIF2TX6", ARIZONA_AIF2TX6MIX_INPUT_1_SOURCE),
  
-+#include <linux/ctype.h>
- #include <linux/module.h>
- #include <linux/moduleparam.h>
- #include <linux/init.h>
-@@ -35,15 +36,15 @@
- #include "wm_adsp.h"
+ ARIZONA_MIXER_CONTROLS("AIF3TX1", ARIZONA_AIF3TX1MIX_INPUT_1_SOURCE),
+ ARIZONA_MIXER_CONTROLS("AIF3TX2", ARIZONA_AIF3TX2MIX_INPUT_1_SOURCE),
++
++WM_ADSP_FW_CONTROL("DSP2", 1),
++WM_ADSP_FW_CONTROL("DSP3", 2),
+ };
  
- #define adsp_crit(_dsp, fmt, ...) \
--	dev_crit(_dsp->dev, "DSP%d: " fmt, _dsp->num, ##__VA_ARGS__)
-+	dev_crit(_dsp->dev, "%s: " fmt, _dsp->name, ##__VA_ARGS__)
- #define adsp_err(_dsp, fmt, ...) \
--	dev_err(_dsp->dev, "DSP%d: " fmt, _dsp->num, ##__VA_ARGS__)
-+	dev_err(_dsp->dev, "%s: " fmt, _dsp->name, ##__VA_ARGS__)
- #define adsp_warn(_dsp, fmt, ...) \
--	dev_warn(_dsp->dev, "DSP%d: " fmt, _dsp->num, ##__VA_ARGS__)
-+	dev_warn(_dsp->dev, "%s: " fmt, _dsp->name, ##__VA_ARGS__)
- #define adsp_info(_dsp, fmt, ...) \
--	dev_info(_dsp->dev, "DSP%d: " fmt, _dsp->num, ##__VA_ARGS__)
-+	dev_info(_dsp->dev, "%s: " fmt, _dsp->name, ##__VA_ARGS__)
- #define adsp_dbg(_dsp, fmt, ...) \
--	dev_dbg(_dsp->dev, "DSP%d: " fmt, _dsp->num, ##__VA_ARGS__)
-+	dev_dbg(_dsp->dev, "%s: " fmt, _dsp->name, ##__VA_ARGS__)
+ ARIZONA_MIXER_ENUMS(EQ1, ARIZONA_EQ1MIX_INPUT_1_SOURCE);
+diff --git a/sound/soc/codecs/wm2200.c b/sound/soc/codecs/wm2200.c
+index 3663b9fd4d65..deff65161504 100644
+--- a/sound/soc/codecs/wm2200.c
++++ b/sound/soc/codecs/wm2200.c
+@@ -1180,6 +1180,9 @@ SOC_DOUBLE_R_TLV("OUT2 Digital Volume", WM2200_DAC_DIGITAL_VOLUME_2L,
+ SOC_DOUBLE("OUT2 Switch", WM2200_PDM_1, WM2200_SPK1L_MUTE_SHIFT,
+ 	   WM2200_SPK1R_MUTE_SHIFT, 1, 1),
+ SOC_ENUM("RxANC Src", wm2200_rxanc_input_sel),
++
++WM_ADSP_FW_CONTROL("DSP1", 0),
++WM_ADSP_FW_CONTROL("DSP2", 1),
+ };
  
- #define ADSP1_CONTROL_1                   0x00
- #define ADSP1_CONTROL_2                   0x02
-@@ -608,7 +609,6 @@ static void wm_adsp2_init_debugfs(struct wm_adsp *dsp,
- 				  struct snd_soc_component *component)
+ WM2200_MIXER_ENUMS(OUT1L, WM2200_OUT1LMIX_INPUT_1_SOURCE);
+@@ -1553,15 +1556,10 @@ static const struct snd_soc_dapm_route wm2200_dapm_routes[] = {
+ static int wm2200_probe(struct snd_soc_component *component)
  {
- 	struct dentry *root = NULL;
--	char *root_name;
- 	int i;
+ 	struct wm2200_priv *wm2200 = snd_soc_component_get_drvdata(component);
+-	int ret;
  
- 	if (!component->debugfs_root) {
-@@ -616,13 +616,7 @@ static void wm_adsp2_init_debugfs(struct wm_adsp *dsp,
- 		goto err;
- 	}
+ 	wm2200->component = component;
  
--	root_name = kmalloc(PAGE_SIZE, GFP_KERNEL);
--	if (!root_name)
--		goto err;
+-	ret = snd_soc_add_component_controls(component, wm_adsp_fw_controls, 2);
+-	if (ret != 0)
+-		return ret;
 -
--	snprintf(root_name, PAGE_SIZE, "dsp%d", dsp->num);
--	root = debugfs_create_dir(root_name, component->debugfs_root);
--	kfree(root_name);
-+	root = debugfs_create_dir(dsp->name, component->debugfs_root);
- 
- 	if (!root)
- 		goto err;
-@@ -1315,12 +1309,12 @@ static int wm_adsp_create_control(struct wm_adsp *dsp,
- 	switch (dsp->fw_ver) {
- 	case 0:
- 	case 1:
--		snprintf(name, SNDRV_CTL_ELEM_ID_NAME_MAXLEN, "DSP%d %s %x",
--			 dsp->num, region_name, alg_region->alg);
-+		snprintf(name, SNDRV_CTL_ELEM_ID_NAME_MAXLEN, "%s %s %x",
-+			 dsp->name, region_name, alg_region->alg);
- 		break;
- 	default:
- 		ret = snprintf(name, SNDRV_CTL_ELEM_ID_NAME_MAXLEN,
--				"DSP%d%c %.12s %x", dsp->num, *region_name,
-+				"%s%c %.12s %x", dsp->name, *region_name,
- 				wm_adsp_fw_text[dsp->fw], alg_region->alg);
- 
- 		/* Truncate the subname from the start if it is too long */
-@@ -1648,7 +1642,7 @@ static int wm_adsp_load(struct wm_adsp *dsp)
- 	if (file == NULL)
- 		return -ENOMEM;
- 
--	snprintf(file, PAGE_SIZE, "%s-dsp%d-%s.wmfw", dsp->part, dsp->num,
-+	snprintf(file, PAGE_SIZE, "%s-%s-%s.wmfw", dsp->part, dsp->fwf_name,
- 		 wm_adsp_fw[dsp->fw].file);
- 	file[PAGE_SIZE - 1] = '\0';
- 
-@@ -2226,7 +2220,7 @@ static int wm_adsp_load_coeff(struct wm_adsp *dsp)
- 	if (file == NULL)
- 		return -ENOMEM;
- 
--	snprintf(file, PAGE_SIZE, "%s-dsp%d-%s.bin", dsp->part, dsp->num,
-+	snprintf(file, PAGE_SIZE, "%s-%s-%s.bin", dsp->part, dsp->fwf_name,
- 		 wm_adsp_fw[dsp->fw].file);
- 	file[PAGE_SIZE - 1] = '\0';
- 
-@@ -2398,8 +2392,38 @@ static int wm_adsp_load_coeff(struct wm_adsp *dsp)
- 	return ret;
+-	return ret;
++	return 0;
  }
  
-+static int wm_adsp_create_name(struct wm_adsp *dsp)
-+{
-+	char *p;
+ static int wm2200_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
+diff --git a/sound/soc/codecs/wm5102.c b/sound/soc/codecs/wm5102.c
+index a01a0c0e01eb..7e817e1877c2 100644
+--- a/sound/soc/codecs/wm5102.c
++++ b/sound/soc/codecs/wm5102.c
+@@ -985,6 +985,8 @@ ARIZONA_MIXER_CONTROLS("SLIMTX5", ARIZONA_SLIMTX5MIX_INPUT_1_SOURCE),
+ ARIZONA_MIXER_CONTROLS("SLIMTX6", ARIZONA_SLIMTX6MIX_INPUT_1_SOURCE),
+ ARIZONA_MIXER_CONTROLS("SLIMTX7", ARIZONA_SLIMTX7MIX_INPUT_1_SOURCE),
+ ARIZONA_MIXER_CONTROLS("SLIMTX8", ARIZONA_SLIMTX8MIX_INPUT_1_SOURCE),
 +
-+	if (!dsp->name) {
-+		dsp->name = devm_kasprintf(dsp->dev, GFP_KERNEL, "DSP%d",
-+					   dsp->num);
-+		if (!dsp->name)
-+			return -ENOMEM;
-+	}
++WM_ADSP_FW_CONTROL("DSP1", 0),
+ };
+ 
+ ARIZONA_MIXER_ENUMS(EQ1, ARIZONA_EQ1MIX_INPUT_1_SOURCE);
+diff --git a/sound/soc/codecs/wm5110.c b/sound/soc/codecs/wm5110.c
+index 00c735c585d9..b0789a03d699 100644
+--- a/sound/soc/codecs/wm5110.c
++++ b/sound/soc/codecs/wm5110.c
+@@ -927,6 +927,11 @@ ARIZONA_MIXER_CONTROLS("SLIMTX5", ARIZONA_SLIMTX5MIX_INPUT_1_SOURCE),
+ ARIZONA_MIXER_CONTROLS("SLIMTX6", ARIZONA_SLIMTX6MIX_INPUT_1_SOURCE),
+ ARIZONA_MIXER_CONTROLS("SLIMTX7", ARIZONA_SLIMTX7MIX_INPUT_1_SOURCE),
+ ARIZONA_MIXER_CONTROLS("SLIMTX8", ARIZONA_SLIMTX8MIX_INPUT_1_SOURCE),
 +
-+	if (!dsp->fwf_name) {
-+		p = devm_kstrdup(dsp->dev, dsp->name, GFP_KERNEL);
-+		if (!p)
-+			return -ENOMEM;
-+
-+		dsp->fwf_name = p;
-+		for (; *p != 0; ++p)
-+			*p = tolower(*p);
-+	}
-+
-+	return 0;
-+}
-+
- int wm_adsp1_init(struct wm_adsp *dsp)
++WM_ADSP_FW_CONTROL("DSP1", 0),
++WM_ADSP_FW_CONTROL("DSP2", 1),
++WM_ADSP_FW_CONTROL("DSP3", 2),
++WM_ADSP_FW_CONTROL("DSP4", 3),
+ };
+ 
+ ARIZONA_MIXER_ENUMS(EQ1, ARIZONA_EQ1MIX_INPUT_1_SOURCE);
+diff --git a/sound/soc/codecs/wm_adsp.c b/sound/soc/codecs/wm_adsp.c
+index e39b0e0b04df..fbd0515c49d7 100644
+--- a/sound/soc/codecs/wm_adsp.c
++++ b/sound/soc/codecs/wm_adsp.c
+@@ -684,8 +684,8 @@ static inline void wm_adsp_debugfs_clear(struct wm_adsp *dsp)
+ }
+ #endif
+ 
+-static int wm_adsp_fw_get(struct snd_kcontrol *kcontrol,
+-			  struct snd_ctl_elem_value *ucontrol)
++int wm_adsp_fw_get(struct snd_kcontrol *kcontrol,
++		   struct snd_ctl_elem_value *ucontrol)
  {
-+	int ret;
-+
-+	ret = wm_adsp_create_name(dsp);
-+	if (ret)
-+		return ret;
-+
- 	INIT_LIST_HEAD(&dsp->alg_regions);
+ 	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
+ 	struct soc_enum *e = (struct soc_enum *)kcontrol->private_value;
+@@ -695,9 +695,10 @@ static int wm_adsp_fw_get(struct snd_kcontrol *kcontrol,
  
- 	mutex_init(&dsp->pwr_lock);
-@@ -2672,7 +2696,7 @@ int wm_adsp2_preloader_put(struct snd_kcontrol *kcontrol,
- 	struct wm_adsp *dsp = &dsps[mc->shift - 1];
- 	char preload[32];
+ 	return 0;
+ }
++EXPORT_SYMBOL_GPL(wm_adsp_fw_get);
  
--	snprintf(preload, ARRAY_SIZE(preload), "DSP%u Preload", mc->shift);
-+	snprintf(preload, ARRAY_SIZE(preload), "%s Preload", dsp->name);
- 
- 	dsp->preloaded = ucontrol->value.integer.value[0];
- 
-@@ -2867,8 +2891,7 @@ int wm_adsp2_component_probe(struct wm_adsp *dsp, struct snd_soc_component *comp
+-static int wm_adsp_fw_put(struct snd_kcontrol *kcontrol,
+-			  struct snd_ctl_elem_value *ucontrol)
++int wm_adsp_fw_put(struct snd_kcontrol *kcontrol,
++		   struct snd_ctl_elem_value *ucontrol)
  {
- 	char preload[32];
+ 	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
+ 	struct soc_enum *e = (struct soc_enum *)kcontrol->private_value;
+@@ -721,8 +722,9 @@ static int wm_adsp_fw_put(struct snd_kcontrol *kcontrol,
  
--	snprintf(preload, ARRAY_SIZE(preload), "DSP%d Preload", dsp->num);
+ 	return ret;
+ }
++EXPORT_SYMBOL_GPL(wm_adsp_fw_put);
+ 
+-static const struct soc_enum wm_adsp_fw_enum[] = {
++const struct soc_enum wm_adsp_fw_enum[] = {
+ 	SOC_ENUM_SINGLE(0, 0, ARRAY_SIZE(wm_adsp_fw_text), wm_adsp_fw_text),
+ 	SOC_ENUM_SINGLE(0, 1, ARRAY_SIZE(wm_adsp_fw_text), wm_adsp_fw_text),
+ 	SOC_ENUM_SINGLE(0, 2, ARRAY_SIZE(wm_adsp_fw_text), wm_adsp_fw_text),
+@@ -731,24 +733,7 @@ static const struct soc_enum wm_adsp_fw_enum[] = {
+ 	SOC_ENUM_SINGLE(0, 5, ARRAY_SIZE(wm_adsp_fw_text), wm_adsp_fw_text),
+ 	SOC_ENUM_SINGLE(0, 6, ARRAY_SIZE(wm_adsp_fw_text), wm_adsp_fw_text),
+ };
 -
-+	snprintf(preload, ARRAY_SIZE(preload), "%s Preload", dsp->name);
- 	snd_soc_component_disable_pin(component, preload);
+-const struct snd_kcontrol_new wm_adsp_fw_controls[] = {
+-	SOC_ENUM_EXT("DSP1 Firmware", wm_adsp_fw_enum[0],
+-		     wm_adsp_fw_get, wm_adsp_fw_put),
+-	SOC_ENUM_EXT("DSP2 Firmware", wm_adsp_fw_enum[1],
+-		     wm_adsp_fw_get, wm_adsp_fw_put),
+-	SOC_ENUM_EXT("DSP3 Firmware", wm_adsp_fw_enum[2],
+-		     wm_adsp_fw_get, wm_adsp_fw_put),
+-	SOC_ENUM_EXT("DSP4 Firmware", wm_adsp_fw_enum[3],
+-		     wm_adsp_fw_get, wm_adsp_fw_put),
+-	SOC_ENUM_EXT("DSP5 Firmware", wm_adsp_fw_enum[4],
+-		     wm_adsp_fw_get, wm_adsp_fw_put),
+-	SOC_ENUM_EXT("DSP6 Firmware", wm_adsp_fw_enum[5],
+-		     wm_adsp_fw_get, wm_adsp_fw_put),
+-	SOC_ENUM_EXT("DSP7 Firmware", wm_adsp_fw_enum[6],
+-		     wm_adsp_fw_get, wm_adsp_fw_put),
+-};
+-EXPORT_SYMBOL_GPL(wm_adsp_fw_controls);
++EXPORT_SYMBOL_GPL(wm_adsp_fw_enum);
  
- 	wm_adsp2_init_debugfs(dsp, component);
-@@ -2891,6 +2914,10 @@ int wm_adsp2_init(struct wm_adsp *dsp)
- {
- 	int ret;
+ static struct wm_adsp_region const *wm_adsp_find_region(struct wm_adsp *dsp,
+ 							int type)
+@@ -2884,9 +2869,7 @@ int wm_adsp2_component_probe(struct wm_adsp *dsp, struct snd_soc_component *comp
  
-+	ret = wm_adsp_create_name(dsp);
-+	if (ret)
-+		return ret;
-+
- 	switch (dsp->rev) {
- 	case 0:
- 		/*
+ 	dsp->component = component;
+ 
+-	return snd_soc_add_component_controls(component,
+-					  &wm_adsp_fw_controls[dsp->num - 1],
+-					  1);
++	return 0;
+ }
+ EXPORT_SYMBOL_GPL(wm_adsp2_component_probe);
+ 
 diff --git a/sound/soc/codecs/wm_adsp.h b/sound/soc/codecs/wm_adsp.h
-index 8d58cb9d9bb9..4b8778b0b06c 100644
+index bc6d359f0533..8d58cb9d9bb9 100644
 --- a/sound/soc/codecs/wm_adsp.h
 +++ b/sound/soc/codecs/wm_adsp.h
-@@ -57,6 +57,8 @@ struct wm_adsp_compr_buf;
+@@ -121,7 +121,11 @@ struct wm_adsp {
+ 	.reg = SND_SOC_NOPM, .shift = num, .event = wm_adsp2_event, \
+ 	.event_flags = SND_SOC_DAPM_POST_PMU | SND_SOC_DAPM_PRE_PMD }
  
- struct wm_adsp {
- 	const char *part;
-+	const char *name;
-+	const char *fwf_name;
- 	int rev;
- 	int num;
- 	int type;
+-extern const struct snd_kcontrol_new wm_adsp_fw_controls[];
++#define WM_ADSP_FW_CONTROL(dspname, num) \
++	SOC_ENUM_EXT(dspname " Firmware", wm_adsp_fw_enum[num], \
++		     wm_adsp_fw_get, wm_adsp_fw_put)
++
++extern const struct soc_enum wm_adsp_fw_enum[];
+ 
+ int wm_adsp1_init(struct wm_adsp *dsp);
+ int wm_adsp2_init(struct wm_adsp *dsp);
+@@ -144,6 +148,10 @@ int wm_adsp2_preloader_get(struct snd_kcontrol *kcontrol,
+ 			   struct snd_ctl_elem_value *ucontrol);
+ int wm_adsp2_preloader_put(struct snd_kcontrol *kcontrol,
+ 			   struct snd_ctl_elem_value *ucontrol);
++int wm_adsp_fw_get(struct snd_kcontrol *kcontrol,
++		   struct snd_ctl_elem_value *ucontrol);
++int wm_adsp_fw_put(struct snd_kcontrol *kcontrol,
++		   struct snd_ctl_elem_value *ucontrol);
+ 
+ int wm_adsp_compr_open(struct wm_adsp *dsp, struct snd_compr_stream *stream);
+ int wm_adsp_compr_free(struct snd_compr_stream *stream);
 -- 
 2.18.0
 
