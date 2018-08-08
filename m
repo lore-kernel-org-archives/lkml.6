@@ -2,194 +2,218 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE81FC46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 21:52:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8607EC46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 21:56:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AFD3021AA9
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 21:52:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFD3021AA9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 1BF3F21AA9
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 21:56:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="I70n5Ix0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BF3F21AA9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731088AbeHIANr (ORCPT
+        id S1729938AbeHIARx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 20:13:47 -0400
-Received: from mail-qt0-f171.google.com ([209.85.216.171]:39805 "EHLO
-        mail-qt0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727337AbeHIANr (ORCPT
+        Wed, 8 Aug 2018 20:17:53 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:33767 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727337AbeHIARx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 20:13:47 -0400
-Received: by mail-qt0-f171.google.com with SMTP id q12-v6so4316719qtp.6;
-        Wed, 08 Aug 2018 14:52:11 -0700 (PDT)
+        Wed, 8 Aug 2018 20:17:53 -0400
+Received: by mail-lj1-f194.google.com with SMTP id s12-v6so2919613ljj.0
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 14:56:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Iek6DkXVV1eIr5wvCeVjtQoXGUpY9Eqyd2u7FjrTaz0=;
+        b=I70n5Ix0ZMZdaWn8N4cHmaitciOXWrwXERvZd3GjPCRGG9rrRjRAwAA3t5CQP1Ib05
+         giOeJWreAgFupmVW5EWFAlBvGFQdF1oCeVaM5HHC197MKDisiByCEYk65frhxBt8uhvq
+         SFFKWGWuOZ9fFLi4sBK84bL1eug+goBwrXUKQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=PYKftUCIRQAy6E42xbS6fbgU43o8syOEzEEx1Z5fSfQ=;
-        b=jtDDWyHcO54R2xN53OtI1BTx9FtqQIfmOt7igUVpOrPHNW8MWR9Fe3cFUjFnAYERGS
-         cEV1PBGnhGlHMgl68HXUaaEKcVq7CpZFku5Xvt+BgMYoPqNxhQwJoD281nonkoRHtFuV
-         m3PXdAf5B6GhkPfEiXu21qk8wA/FKRScLtLILx21H3O70y4YNMVsNjZo0cTyc0610KKN
-         3f2RHjyjTjAJNPlMUCGXPUjKH7jzcM0U+I8C30jiU4KCcuJf5pdc+AufIEQJQhoXQOyj
-         ffWtPrcaW5KbLZw04HQRWxxoa0jb4KJ9y4QPM26gi4ZLIr4JFIwpcVuRhCUEJFU7AjKN
-         My8Q==
-X-Gm-Message-State: AOUpUlGF3y6t40IqioE98jbgymg4F5VusjdZTpZXzwF2TlDgHLLa8GlR
-        0mMiRROC1Nwbf9KpKqUOJpdmZovOBjbUcWPSJZY=
-X-Google-Smtp-Source: AA+uWPxeIFXsEMKZqgcySy9lP5rklQDyORAm0mZn/InFYbS7jaw0Po2oOfpKmspBMhXH18C9CrFPWwHMcO9bGlM4JMo=
-X-Received: by 2002:a0c:93b3:: with SMTP id f48-v6mr4195966qvf.151.1533765130789;
- Wed, 08 Aug 2018 14:52:10 -0700 (PDT)
+        bh=Iek6DkXVV1eIr5wvCeVjtQoXGUpY9Eqyd2u7FjrTaz0=;
+        b=j0bik8xDipxOvIeAH91yrJu9qarZf79GO5aJ9oLBD9ibino/0pF+uTIbn7UqlEaK3T
+         EvNfv/2LB0sugTcxvYw6juqUqF/1t/am0UNuX9RU5l5Lp868aVj9ueZ06F94tZbLWMET
+         Emz46FcK2rW5riUV7j1ty5xPUaeLl85mexqmV1KaG+sWsC1ymzybUEBnv7iu3ExsF8X8
+         NSK4vd/0Rn7fPI7V2f5pyGg1Q2Wbah7sNVYGqeY0QD3nnalBPtAH8sn3+GKTg0N3TjgM
+         /b0fvz3rTzWSxcPCWMKWn437rczjzkEBja0ENGwgniMlHDbVQWHuMnarQrPAUFtFapul
+         Q/xw==
+X-Gm-Message-State: AOUpUlF/4lwVy9uzgeQOtRe72+SObuObOzRR6HZzgA5S+x66h/Q+A6RE
+        dN9vZHC3C0G3SxxhhE/lt4gyR8oJSfk=
+X-Google-Smtp-Source: AA+uWPyRJSXCbKKUReB65+514c7L5aSsdL9pWmgknefu+3oZhCushMX3UoOJFdtZGUnNXMCfMTypew==
+X-Received: by 2002:a2e:21d5:: with SMTP id h82-v6mr3133181lji.46.1533765374725;
+        Wed, 08 Aug 2018 14:56:14 -0700 (PDT)
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com. [209.85.167.46])
+        by smtp.gmail.com with ESMTPSA id d23-v6sm846572ljg.17.2018.08.08.14.56.12
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 08 Aug 2018 14:56:12 -0700 (PDT)
+Received: by mail-lf1-f46.google.com with SMTP id n96-v6so2674893lfi.1
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 14:56:12 -0700 (PDT)
+X-Received: by 2002:a19:cb44:: with SMTP id b65-v6mr3122894lfg.12.1533765372028;
+ Wed, 08 Aug 2018 14:56:12 -0700 (PDT)
 MIME-Version: 1.0
-References: <alpine.LRH.2.02.1808021242320.31834@file01.intranet.prod.int.rdu2.redhat.com>
- <CAHCPf3tFGqkYEcWNN4LaWThw_rVqT316pzLv6T7RfxwO-eZ0EA@mail.gmail.com>
- <alpine.LRH.2.02.1808030212340.17672@file01.intranet.prod.int.rdu2.redhat.com>
- <CAKv+Gu8DeuksZhk1g3q_msSKV_hSY_2e1uzVten9-oGO3j9Sqg@mail.gmail.com>
- <20180803094129.GB17798@arm.com> <alpine.LRH.2.02.1808031235410.31584@file01.intranet.prod.int.rdu2.redhat.com>
- <20180808113927.GA24736@iMac.local> <alpine.LRH.2.02.1808081011110.9997@file01.intranet.prod.int.rdu2.redhat.com>
- <b1a0dac5-3cf2-1a7f-ac7f-649126eb7873@arm.com> <20180808151444.GF24736@iMac.local>
- <CAK8P3a2=rVvvW8bBcrPm3nXNNP56Ygxchu4ThD2ZgZ_cVcd8wQ@mail.gmail.com> <alpine.LRH.2.02.1808081347180.18198@file01.intranet.prod.int.rdu2.redhat.com>
-In-Reply-To: <alpine.LRH.2.02.1808081347180.18198@file01.intranet.prod.int.rdu2.redhat.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 8 Aug 2018 23:51:53 +0200
-Message-ID: <CAK8P3a1CdL5ZVvWPMriOknTCgkfbR4F-a6dRZ7ap9+NiD8H5cg@mail.gmail.com>
-Subject: Re: framebuffer corruption due to overlapping stp instructions on arm64
-To:     Mikulas Patocka <mpatocka@redhat.com>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Richard.Earnshaw@arm.com,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        Joao Pinto <Joao.Pinto@synopsys.com>,
-        GNU C Library <libc-alpha@sourceware.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        neko@bakuhatsu.net, linux-pci <linux-pci@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
+References: <20180731100914.19856-1-cang@codeaurora.org> <20180731100914.19856-4-cang@codeaurora.org>
+In-Reply-To: <20180731100914.19856-4-cang@codeaurora.org>
+From:   Evan Green <evgreen@chromium.org>
+Date:   Wed, 8 Aug 2018 14:55:35 -0700
+X-Gmail-Original-Message-ID: <CAE=gft6cdE+oMYf779VGrQHfYQ5Xb1v+Qr6cAznTtAovehCOxw@mail.gmail.com>
+Message-ID: <CAE=gft6cdE+oMYf779VGrQHfYQ5Xb1v+Qr6cAznTtAovehCOxw@mail.gmail.com>
+Subject: Re: [PATCH v8 3/5] phy: Add QMP phy based UFS phy support for sdm845
+To:     cang@codeaurora.org
+Cc:     subhashj@codeaurora.org, asutoshd@codeaurora.org,
+        vivek.gautam@codeaurora.org, Manu Gautam <mgautam@codeaurora.org>,
+        kishon@ti.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 8, 2018 at 8:25 PM Mikulas Patocka <mpatocka@redhat.com> wrote:
-> On Wed, 8 Aug 2018, Arnd Bergmann wrote:
+On Tue, Jul 31, 2018 at 3:09 AM Can Guo <cang@codeaurora.org> wrote:
 >
-> > On Wed, Aug 8, 2018 at 5:15 PM Catalin Marinas <catalin.marinas@arm.com> wrote:
-> > >
-> > > On Wed, Aug 08, 2018 at 04:01:12PM +0100, Richard Earnshaw wrote:
-> > > > On 08/08/18 15:12, Mikulas Patocka wrote:
-> > > > > On Wed, 8 Aug 2018, Catalin Marinas wrote:
-> > > > >> On Fri, Aug 03, 2018 at 01:09:02PM -0400, Mikulas Patocka wrote:
-> > > - failing to write a few bytes
-> > > - writing a few bytes that were written 16 bytes before
-> > > - writing a few bytes that were written 16 bytes after
-> > >
-> > > > The overlapping writes in memcpy never write different values to the
-> > > > same location, so I still feel this must be some sort of HW issue, not a
-> > > > SW one.
-> > >
-> > > So do I (my interpretation is that it combines or rather skips some of
-> > > the writes to the same 16-byte address as it ignores the data strobes).
-> >
-> > Maybe it just always writes to the wrong location, 16 bytes apart for one of
-> > the stp instructions. Since we are usually dealing with a pair of overlapping
-> > 'stp', both unaligned, that could explain both the missing bytes (we write
-> > data to the wrong place, but overwrite it with the correct data right away)
-> > and the extra copy (we write it to the wrong place, but then write the correct
-> > data to the correct place as well).
-> >
-> > This sounds a bit like what the original ARM CPUs did on unaligned
-> > memory access, where a single aligned 4-byte location was accessed,
-> > but the bytes swapped around.
-> >
-> > There may be a few more things worth trying out or analysing from
-> > the recorded past failures to understand more about how it goes
-> > wrong:
-> >
-> > - For which data lengths does it fail? Having two overlapping
-> >   unaligned stp is something that only happens for 16..96 byte
-> >   memcpy.
+> Add UFS PHY support to make SDM845 UFS work with common PHY framework.
 >
-> If you want to research the corruptions in detail, I uploaded a file
-> containing 7k corruptions here:
-> http://people.redhat.com/~mpatocka/testcases/arm-pcie-corruption/
+> Signed-off-by: Can Guo <cang@codeaurora.org>
+> ---
+>  drivers/phy/qualcomm/phy-qcom-qmp.c | 172 +++++++++++++++++++++++++++++++++++-
+>  drivers/phy/qualcomm/phy-qcom-qmp.h |  15 ++++
+>  2 files changed, 186 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp.c b/drivers/phy/qualcomm/phy-qcom-qmp.c
+> index 9be9754..de7ff18 100644
+> --- a/drivers/phy/qualcomm/phy-qcom-qmp.c
+> +++ b/drivers/phy/qualcomm/phy-qcom-qmp.c
+...
+>  static void qcom_qmp_phy_configure(void __iomem *base,
+>                                    const unsigned int *regs,
+>                                    const struct qmp_phy_init_tbl tbl[],
+> @@ -1131,6 +1249,14 @@ static int qcom_qmp_phy_init(struct phy *phy)
+>         qcom_qmp_phy_configure(pcs, cfg->regs, cfg->pcs_tbl, cfg->pcs_tbl_num);
+>
+>         /*
+> +        * UFS PHY requires the deassert of software reset before serdes start.
+> +        * For UFS PHYs that do not have software reset control bits, defer
+> +        * starting serdes until the power on callback.
+> +        */
 
-Nice!
+I'm relatively thick when it comes to PHYs, but I'm a little confused.
+The sequence of code right below this (not shown) looks like it is
+deasserting reset before starting serdes, seemingly doing what the
+comment wants. I guess the problem is the lack of SW reset? So then
+you defer serdes start until UFS does... something. Can you explain
+how deferring to after UFS HC init actually helps? Is it the UFS HC
+that releases reset on the PHY?
 
-I already found a couple of things:
+I was hoping the next patch would help, but I'm still confused. It
+looks like you've added a call to phy_power_on in
+ufs_qcom_setup_clocks, but there's also one still in
+ufs_qcom_power_up_sequence. What does the original phy_power_on in
+ufs_qcom_power_up_sequence do now? It seems like that one would do the
+power on too early, and then your new added call in
+ufs_qcom_setup_clocks would do nothing.
 
-- Failure to copy always happens at the *end* of a 16 byte aligned
-  physical address, it misses between 1 and 6 bytes, never 7 or more,
-  and it's more likely to be fewer bytes that are affected.
-   279 7
-   389 6
-   484 5
-   683 4
-   741 3
-   836 2
-   946 1
 
-- The first byte that fails to get copied is always 16 bytes after the
-  memcpy target. Since we only observe it at the end of the 16 byte
-  range, it means this happens specifically for addresses ending in
-  0x9 (7 bytes missed) to 0xf (1 byte missed).
+> +       if ((cfg->type == PHY_TYPE_UFS) && cfg->no_pcs_sw_reset)
+> +               goto out;
+> +
+> +       /*
+>          * Pull out PHY from POWER DOWN state.
+>          * This is active low enable signal to power-down PHY.
+>          */
+> @@ -1159,6 +1285,7 @@ static int qcom_qmp_phy_init(struct phy *phy)
+>         }
+>         qmp->phy_initialized = true;
+>
+> +out:
+>         return ret;
+>
+>  err_pcs_ready:
+> @@ -1181,7 +1308,8 @@ static int qcom_qmp_phy_exit(struct phy *phy)
+>         clk_disable_unprepare(qphy->pipe_clk);
+>
+>         /* PHY reset */
+> -       qphy_setbits(qphy->pcs, cfg->regs[QPHY_SW_RESET], SW_RESET);
+> +       if (!cfg->no_pcs_sw_reset)
+> +               qphy_setbits(qphy->pcs, cfg->regs[QPHY_SW_RESET], SW_RESET);
+>
+>         /* stop SerDes and Phy-Coding-Sublayer */
+>         qphy_clrbits(qphy->pcs, cfg->regs[QPHY_START_CTRL], cfg->start_ctrl);
+> @@ -1199,6 +1327,44 @@ static int qcom_qmp_phy_exit(struct phy *phy)
+>         return 0;
+>  }
+>
+> +static int qcom_qmp_phy_poweron(struct phy *phy)
+> +{
+> +       struct qmp_phy *qphy = phy_get_drvdata(phy);
+> +       struct qcom_qmp *qmp = qphy->qmp;
+> +       const struct qmp_phy_cfg *cfg = qmp->cfg;
+> +       void __iomem *pcs = qphy->pcs;
+> +       void __iomem *status;
+> +       unsigned int mask, val;
+> +       int ret = 0;
+> +
+> +       if (cfg->type != PHY_TYPE_UFS)
+> +               return 0;
+> +
+> +       /*
+> +        * For UFS PHY that has not software reset control, serdes start
+> +        * should only happen when UFS driver explicitly calls phy_power_on
+> +        * after it deasserts software reset.
+> +        */
+> +       if (cfg->no_pcs_sw_reset && !qmp->phy_initialized &&
+> +           (qmp->init_count != 0)) {
+> +               /* start SerDes and Phy-Coding-Sublayer */
+> +               qphy_setbits(pcs, cfg->regs[QPHY_START_CTRL], cfg->start_ctrl);
+> +
+> +               status = pcs + cfg->regs[QPHY_PCS_READY_STATUS];
+> +               mask = cfg->mask_pcs_ready;
+> +
+> +               ret = readl_poll_timeout(status, val, !(val & mask), 1,
+> +                                        PHY_INIT_COMPLETE_TIMEOUT);
+> +               if (ret) {
+> +                       dev_err(qmp->dev, "phy initialization timed-out\n");
+> +                       return ret;
+> +               }
+> +               qmp->phy_initialized = true;
+> +       }
+> +
+> +       return ret;
+> +}
+> +
+>  static int qcom_qmp_phy_set_mode(struct phy *phy, enum phy_mode mode)
+>  {
+>         struct qmp_phy *qphy = phy_get_drvdata(phy);
+> @@ -1428,6 +1594,7 @@ static int phy_pipe_clk_register(struct qcom_qmp *qmp, struct device_node *np)
+>  static const struct phy_ops qcom_qmp_phy_gen_ops = {
+>         .init           = qcom_qmp_phy_init,
+>         .exit           = qcom_qmp_phy_exit,
+> +       .power_on       = qcom_qmp_phy_poweron,
 
-- Out of 7445 corruptions, 4358 were of the kind that misses a copy at the
-  end of a 16-byte area, they were for copies between 41 and 64 bytes,
-  more to the larger end of the scale  (note that with your test program,
-  smaller memcpys happen more frequenly than larger ones).
-     47 0x29
-     36 0x2a
-     47 0x2b
-     23 0x2c
-     29 0x2d
-     31 0x2e
-     36 0x2f
-     46 0x30
-     45 0x31
-     51 0x32
-     62 0x33
-     64 0x34
-     77 0x35
-     91 0x36
-     90 0x37
-    100 0x38
-    100 0x39
-    209 0x3a
-    279 0x3b
-    366 0x3c
-    498 0x3d
-    602 0x3e
-    682 0x3f
-    747 0x40
+The power_on function without corresponding power_off still makes me
+nervous. But with phy_initialized and init_count members, I guess this
+works.
 
-- All corruption with data copied to the wrong place happened for copies
-  between 33 and 47 bytes, mostly to the smaller end of the scale:
-    391 0x21
-    360 0x22
-    319 0x23
-    273 0x24
-    273 0x25
-    241 0x26
-    224 0x27
-    221 0x28
-    231 0x29
-    208 0x2a
-    163 0x2b
-     86 0x2c
-     63 0x2d
-     33 0x2e
-      1 0x2f
-
-- One common (but not the only, still investigating) case for data getting
-  written to the wrong place is:
-   * corruption starts 16 bytes after the memcpy start
-   * corrupt bytes are the same as the bytes written to the start
-   * start address ends in 0x1 through 0x7
-   * length of corruption is at most memcpy length- 32, always
-     between 1 and 7.
-
-       Arnd
+>         .set_mode       = qcom_qmp_phy_set_mode,
+>         .owner          = THIS_MODULE,
+>  };
+> @@ -1533,6 +1700,9 @@ int qcom_qmp_phy_create(struct device *dev, struct device_node *np, int id)
+>         }, {
+>                 .compatible = "qcom,sdm845-qmp-usb3-uni-phy",
+>                 .data = &qmp_v3_usb3_uniphy_cfg,
+> +       }, {
+> +               .compatible = "qcom,sdm845-qmp-ufs-phy",
+> +               .data = &sdm845_ufsphy_cfg,
+>         },
+>         { },
+>  };
