@@ -3,118 +3,122 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADDF7C46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 11:10:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F782C4646D
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 11:13:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6561621708
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 11:10:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6561621708
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 139A221708
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 11:13:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 139A221708
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726961AbeHHN3f (ORCPT
+        id S1726976AbeHHNcf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 09:29:35 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:48916 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726744AbeHHN3e (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 09:29:34 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w78B9nNH117866
-        for <linux-kernel@vger.kernel.org>; Wed, 8 Aug 2018 07:10:21 -0400
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2kqv0hgf3w-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 07:10:21 -0400
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <gor@linux.ibm.com>;
-        Wed, 8 Aug 2018 12:10:18 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 8 Aug 2018 12:10:15 +0100
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w78BAEOJ31326214
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 8 Aug 2018 11:10:14 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 28D3142049;
-        Wed,  8 Aug 2018 14:10:23 +0100 (BST)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CBF124203F;
-        Wed,  8 Aug 2018 14:10:22 +0100 (BST)
-Received: from localhost (unknown [9.152.212.90])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Wed,  8 Aug 2018 14:10:22 +0100 (BST)
-Date:   Wed, 8 Aug 2018 13:10:13 +0200
-From:   Vasily Gorbik <gor@linux.ibm.com>
-To:     Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>, linux-kbuild@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        Andi Kleen <ak@linux.intel.com>
-Subject: Re: [PATCH 4/4] s390/ftrace: add -mfentry and -mnop-mcount support
-References: <cover.thread-aa7b8d.your-ad-here.call-01533557518-ext-9465@work.hours>
- <patch-4.thread-aa7b8d.git-aa7b8dbf236f.your-ad-here.call-01533557518-ext-9465@work.hours>
- <20180807053017.GA6613@osiris>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180807053017.GA6613@osiris>
-X-TM-AS-GCONF: 00
-x-cbid: 18080811-0012-0000-0000-00000296E225
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18080811-0013-0000-0000-000020C9EC7D
-Message-Id: <your-ad-here.call-01533726612-ext-7365@work.hours>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-08_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808080115
+        Wed, 8 Aug 2018 09:32:35 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51816 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726772AbeHHNcf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 09:32:35 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1E89640216E6;
+        Wed,  8 Aug 2018 11:13:21 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-116-132.ams2.redhat.com [10.36.116.132])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E78101007090;
+        Wed,  8 Aug 2018 11:13:18 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id 3A11016E2B; Wed,  8 Aug 2018 13:13:18 +0200 (CEST)
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     Gerd Hoffmann <kraxel@redhat.com>,
+        Dave Airlie <airlied@redhat.com>,
+        David Airlie <airlied@linux.ie>,
+        virtualization@lists.linux-foundation.org (open list:DRM DRIVER FOR
+        QEMU'S CIRRUS DEVICE), linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v3] drm/cirrus: flip default from 24bpp to 16bpp
+Date:   Wed,  8 Aug 2018 13:13:11 +0200
+Message-Id: <20180808111311.30311-1-kraxel@redhat.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 08 Aug 2018 11:13:21 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 08 Aug 2018 11:13:21 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'kraxel@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 07, 2018 at 07:30:17AM +0200, Heiko Carstens wrote:
-> On Mon, Aug 06, 2018 at 03:17:47PM +0200, Vasily Gorbik wrote:
-> > Utilize -mfentry and -mnop-mcount gcc options together with
-> > -mrecord-mcount to get compiler generated calls to the profiling functions
-> > as nops which are compatible with current -mhotpatch=0,3 approach.  At the
-> > same time -mrecord-mcount enables __mcount_loc section generation by
-> > the compiler which allows to avoid using scripts/recordmcount.pl script.
-> > 
-> > Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
-> > ---
-> >  arch/s390/Kconfig              |  2 ++
-> >  arch/s390/Makefile             | 16 +++++++++-------
-> >  arch/s390/include/asm/ftrace.h |  6 +++---
-> >  arch/s390/kernel/ftrace.c      |  2 +-
-> >  arch/s390/kernel/mcount.S      |  2 +-
-> >  5 files changed, 16 insertions(+), 12 deletions(-)
-> 
-> Do you have numbers which tell how much this reduces the compile time of
-> the kernel on s390? I assume this change makes quite some difference.
-> 
+The problem with 24bpp is that it is a rather unusual depth these days,
+cirrus is pretty much the only relevant device still using that, and it
+is a endless source of issues.  Wayland doesn't support it at all.  Bugs
+in Xorg keep showing up.
 
-Very roughly, best time across several runs. With -j24 on 24 core lpar
-with -mfentry -mrecord-mcount etc
-real    0m54.748s
-user    12m32.041s
-sys     1m17.778s
+Typically either 32bpp or 16bpp are used.  Using 32bpp would limit the
+resolution to 800x600 due to hardware constrains.  So lets go with 16bpp.
 
-vs -mhotpatch=0,3 + scripts/recordmcount.pl:
-real    0m56.752s
-user    12m52.386s
-sys     1m35.873s
+Also use the default depth for the framebuffer console and
+mode_info->preferred_depth.
+
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+---
+ drivers/gpu/drm/cirrus/cirrus_drv.c   | 4 ++--
+ drivers/gpu/drm/cirrus/cirrus_fbdev.c | 3 +--
+ drivers/gpu/drm/cirrus/cirrus_mode.c  | 2 +-
+ 3 files changed, 4 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/gpu/drm/cirrus/cirrus_drv.c b/drivers/gpu/drm/cirrus/cirrus_drv.c
+index 69c4e352dd..b4f7be056c 100644
+--- a/drivers/gpu/drm/cirrus/cirrus_drv.c
++++ b/drivers/gpu/drm/cirrus/cirrus_drv.c
+@@ -16,11 +16,11 @@
+ #include "cirrus_drv.h"
+ 
+ int cirrus_modeset = -1;
+-int cirrus_bpp = 24;
++int cirrus_bpp = 16;
+ 
+ MODULE_PARM_DESC(modeset, "Disable/Enable modesetting");
+ module_param_named(modeset, cirrus_modeset, int, 0400);
+-MODULE_PARM_DESC(bpp, "Max bits-per-pixel (default:24)");
++MODULE_PARM_DESC(bpp, "Max bits-per-pixel (default:16)");
+ module_param_named(bpp, cirrus_bpp, int, 0400);
+ 
+ /*
+diff --git a/drivers/gpu/drm/cirrus/cirrus_fbdev.c b/drivers/gpu/drm/cirrus/cirrus_fbdev.c
+index 32fbfba2c6..b329a54290 100644
+--- a/drivers/gpu/drm/cirrus/cirrus_fbdev.c
++++ b/drivers/gpu/drm/cirrus/cirrus_fbdev.c
+@@ -271,7 +271,6 @@ int cirrus_fbdev_init(struct cirrus_device *cdev)
+ {
+ 	struct cirrus_fbdev *gfbdev;
+ 	int ret;
+-	int bpp_sel = 24;
+ 
+ 	/*bpp_sel = 8;*/
+ 	gfbdev = kzalloc(sizeof(struct cirrus_fbdev), GFP_KERNEL);
+@@ -296,7 +295,7 @@ int cirrus_fbdev_init(struct cirrus_device *cdev)
+ 	/* disable all the possible outputs/crtcs before entering KMS mode */
+ 	drm_helper_disable_unused_functions(cdev->dev);
+ 
+-	return drm_fb_helper_initial_config(&gfbdev->helper, bpp_sel);
++	return drm_fb_helper_initial_config(&gfbdev->helper, cirrus_bpp);
+ }
+ 
+ void cirrus_fbdev_fini(struct cirrus_device *cdev)
+diff --git a/drivers/gpu/drm/cirrus/cirrus_mode.c b/drivers/gpu/drm/cirrus/cirrus_mode.c
+index c91b9b054e..91128b1d8d 100644
+--- a/drivers/gpu/drm/cirrus/cirrus_mode.c
++++ b/drivers/gpu/drm/cirrus/cirrus_mode.c
+@@ -518,7 +518,7 @@ int cirrus_modeset_init(struct cirrus_device *cdev)
+ 	cdev->dev->mode_config.max_height = CIRRUS_MAX_FB_HEIGHT;
+ 
+ 	cdev->dev->mode_config.fb_base = cdev->mc.vram_base;
+-	cdev->dev->mode_config.preferred_depth = 24;
++	cdev->dev->mode_config.preferred_depth = cirrus_bpp;
+ 	/* don't prefer a shadow on virt GPU */
+ 	cdev->dev->mode_config.prefer_shadow = 0;
+ 
+-- 
+2.9.3
 
