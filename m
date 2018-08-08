@@ -2,133 +2,148 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B3D8C46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 15:41:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABE11C4646D
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 15:41:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4215E21765
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 15:41:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 66A8A21A37
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 15:41:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XBZmxL1p"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4215E21765
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FhDrfNx9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66A8A21A37
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727619AbeHHSBp (ORCPT
+        id S1727851AbeHHSB6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 14:01:45 -0400
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:43370 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727314AbeHHSBo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 14:01:44 -0400
-Received: by mail-yw1-f66.google.com with SMTP id l189-v6so1851435ywb.10
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 08:41:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=w5DZR1Hj5OKUI3bISCQwYDPdEe4C/ei/hIs8E76wxu0=;
-        b=XBZmxL1puwaMlmron0Mg6EQr8Kb80OoJ17eTi9ws8Aqu08R46gZi+Gl0ZjdvVumkvJ
-         BILYXGZW6sG9KKIdpyqBiOx48QgZt+0ILci69/W4e1bBZCiIXX283Fjdj69cOl0o2P8T
-         QWmoLQH4BtjH9R9vqMbgDbY2LpuJPS3FeAmgk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=w5DZR1Hj5OKUI3bISCQwYDPdEe4C/ei/hIs8E76wxu0=;
-        b=SY5+06dtv4MbOedWUQiQC5ow9luumTuEGaXpO/PPgpH6Cs9Q+/SZps3tlR2lH1XF1V
-         31bbIHNfLy4M427mcAPX8CcQeRy0NO6cmqXOQ82h5zuf5R1qM/lDq13zOampfR6EBwc0
-         IVoCbhRXLaCwSVS/s4h7Ad/2hIXmuza+fz+hcgi5/Bu2xTyh46xN32KpBxA7KXLUAXi5
-         XzlTNyZGoMf50NcPZhE/NFsPvh14D1xG3DKQcXDQgHuZF4oGDJmNgTyJLAFS5Uz4417z
-         gURZedfLPbumwoci/xdMqYAn0F4Jx5ffStbduNq+ifH4ema3WCwpoFBqsMo7hQ4ISyiJ
-         VNHQ==
-X-Gm-Message-State: AOUpUlGwv4jN77X+BRIaOhT1mVi9MHfeFT6Xb2nr9Gp3QU7NJ3UBCraD
-        FWXPW/6BOEwfkRd8i1kW/hH2V+AOj6o=
-X-Google-Smtp-Source: AA+uWPxitvvVhsGKY4UUDrU4RYeeMa7Mfygovxo+eJR+xOax3rYmwRx2xboCkL7MFJiMRg7kXki2Hg==
-X-Received: by 2002:a25:7c44:: with SMTP id x65-v6mr1723662ybc.437.1533742891271;
-        Wed, 08 Aug 2018 08:41:31 -0700 (PDT)
-Received: from mail-yw1-f48.google.com (mail-yw1-f48.google.com. [209.85.161.48])
-        by smtp.gmail.com with ESMTPSA id u64-v6sm3735465ywu.107.2018.08.08.08.41.29
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 08 Aug 2018 08:41:29 -0700 (PDT)
-Received: by mail-yw1-f48.google.com with SMTP id z143-v6so1856688ywa.7
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 08:41:29 -0700 (PDT)
-X-Received: by 2002:a25:add4:: with SMTP id d20-v6mr1735945ybe.463.1533742888843;
- Wed, 08 Aug 2018 08:41:28 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a25:7450:0:0:0:0:0 with HTTP; Wed, 8 Aug 2018 08:41:28 -0700 (PDT)
-In-Reply-To: <871sb942cx.fsf@kamboji.qca.qualcomm.com>
-References: <20180807225040.GA2164@beast> <20180808092450.GA25772@redhat.com> <871sb942cx.fsf@kamboji.qca.qualcomm.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Wed, 8 Aug 2018 08:41:28 -0700
-X-Gmail-Original-Message-ID: <CAGXu5jKqeAHDWdNg++QJko5AM4g160kEQ54jLAojpRq6FszqgA@mail.gmail.com>
-Message-ID: <CAGXu5jKqeAHDWdNg++QJko5AM4g160kEQ54jLAojpRq6FszqgA@mail.gmail.com>
-Subject: Re: [PATCH wireless-drivers] mt76x0: Remove VLA usage
-To:     Kalle Valo <kvalo@codeaurora.org>
-Cc:     Stanislaw Gruszka <sgruszka@redhat.com>,
+        Wed, 8 Aug 2018 14:01:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33428 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727202AbeHHSB5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 14:01:57 -0400
+Received: from localhost (unknown [213.57.183.250])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5981B21765;
+        Wed,  8 Aug 2018 15:41:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1533742904;
+        bh=xc6jUcLjvOd5tfG/pkYktVc8BPgWMWadei/XnkXR1T8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=FhDrfNx93d0ystHQ9RE7W5ymffPwnmnnsJ6gw7xaTXPklCSKfLpcbeOnjhqJX2jE0
+         xjbgQM0EFOqmcWOmxMTKkBHlwTWq9h6bCDlR3COJA+/OmYiPHwi9CqW4mkxaZriQT5
+         Lgggt8LUiWilXOJ9hH3MPSjGi4NdY4ZPwR2k16qs=
+Date:   Wed, 8 Aug 2018 18:41:42 +0300
+From:   Leon Romanovsky <leon@kernel.org>
+To:     Tal Gilboa <talgi@mellanox.com>
+Cc:     Alexandru Gagniuc <mr.nuke.me@gmail.com>,
+        linux-pci@vger.kernel.org, bhelgaas@google.com,
+        jakub.kicinski@netronome.com, keith.busch@intel.com,
+        alex_gagniuc@dellteam.com, austin_bolen@dell.com,
+        shyam_iyer@dell.com, Ariel Elior <ariel.elior@cavium.com>,
+        everest-linux-l2@cavium.com,
         "David S. Miller" <davem@davemloft.net>,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Michael Chan <michael.chan@broadcom.com>,
+        Ganesh Goudar <ganeshgr@chelsio.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        Tariq Toukan <tariqt@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>,
+        Dirk van der Merwe <dirk.vandermerwe@netronome.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        intel-wired-lan@lists.osuosl.org, linux-rdma@vger.kernel.org,
+        oss-drivers@netronome.com
+Subject: Re: [PATCH v6 8/9] net/mlx5: Do not call pcie_print_link_status()
+Message-ID: <20180808154142.GZ13378@mtr-leonro.mtl.com>
+References: <CAErSpo4PK+SQLNfdkLNt9eLc7bpbxbkZCsa8T-tQpid601n0SQ@mail.gmail.com>
+ <20180806232600.25694-1-mr.nuke.me@gmail.com>
+ <20180806232600.25694-8-mr.nuke.me@gmail.com>
+ <20180808060848.GQ13378@mtr-leonro.mtl.com>
+ <05056a70-ee78-ea3c-0b9b-6d64a8663b11@mellanox.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="cfJ13FhsvNR/yOpm"
+Content-Disposition: inline
+In-Reply-To: <05056a70-ee78-ea3c-0b9b-6d64a8663b11@mellanox.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 8, 2018 at 2:46 AM, Kalle Valo <kvalo@codeaurora.org> wrote:
-> Stanislaw Gruszka <sgruszka@redhat.com> writes:
+
+--cfJ13FhsvNR/yOpm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Wed, Aug 08, 2018 at 05:23:12PM +0300, Tal Gilboa wrote:
+> On 8/8/2018 9:08 AM, Leon Romanovsky wrote:
+> > On Mon, Aug 06, 2018 at 06:25:42PM -0500, Alexandru Gagniuc wrote:
+> > > This is now done by the PCI core to warn of sub-optimal bandwidth.
+> > >
+> > > Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+> > > ---
+> > >   drivers/net/ethernet/mellanox/mlx5/core/main.c | 4 ----
+> > >   1 file changed, 4 deletions(-)
+> > >
+> >
+> > Thanks,
+> > Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
+> >
 >
->> On Tue, Aug 07, 2018 at 03:50:40PM -0700, Kees Cook wrote:
->>> Even with "const" variables, the compiler will generate warnings about
->>> VLA usage. In the quest to remove all VLAs from the kernel[1], this uses
->>> a #define instead of a const to do the array sizing.
->>>
->>> [1]
->>> https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
->>>
->>> Fixes: e87b5039511a ("mt76x0: eeprom files")
->>> Signed-off-by: Kees Cook <keescook@chromium.org>
->>> ---
->>> Please include this for the v4.19 merge window. The VLA was introduced
->>> with the new source file (which I also note is missing a SPDX line), so
->>
->> I thought SPDX line is needed only if file has no license and eeprom.c
->> file and other mt76x0 files have specified the license. Is SPDX still
->> needed in that case ?
+> Alex,
+> I loaded mlx5 driver with and without these series. The report in dmesg is
+> now missing. From what I understood, the status should be reported at least
+> once, even if everything is in order.
 
-I thought all source files needed SPDX: https://lwn.net/Articles/739183/
+It is not what this series is doing and it removes prints completely if
+fabric can deliver more than card is capable.
 
->>
->>> +#define MT_MAP_READS        DIV_ROUND_UP(MT_EFUSE_USAGE_MAP_SIZE, 16)
->>>  static int
->>>  mt76x0_efuse_physical_size_check(struct mt76x0_dev *dev)
->>>  {
->>> -    const int map_reads = DIV_ROUND_UP(MT_EFUSE_USAGE_MAP_SIZE, 16);
->>> -    u8 data[map_reads * 16];
->>
->> Why this is variable length array? DIV_ROUND_UP can not be calculated
->> at compile time? But if so, macro do not change the situation either.
+> We need this functionality to stay.
+
+I'm not sure that you need this information in driver's dmesg output,
+but most probably something globally visible and accessible per-pci
+device.
+
 >
-> The commit log mentioned:
+> net-next (dmesg output for 07:00.0):
+> [270498.625351] mlx5_core 0000:07:00.0: firmware version: 14.22.4020
+> [270498.632130] mlx5_core 0000:07:00.0: 63.008 Gb/s available PCIe bandwidth
+> (8 GT/s x8 link)
+> [270499.169533] (0000:07:00.0): E-Switch: Total vports 9, per vport: max
+> uc(1024) max mc(16384)
+> [270499.182358] mlx5_core 0000:07:00.0: Port module event: module 0, Cable
+> plugged
 >
->   "Even with "const" variables, the compiler will generate warnings about
->    VLA usage."
+> net-next + patches (dmesg output for 07:00.0):
+> [  331.608472] mlx5_core 0000:07:00.0: firmware version: 14.22.4020
+> [  332.564938] (0000:07:00.0): E-Switch: Total vports 9, per vport: max
+> uc(1024) max mc(16384)
+> [  332.616271] mlx5_core 0000:07:00.0: Port module event: module 0, Cable
+> plugged
 >
-> So I guess the compiler (gcc?) is just not smart enough in this case?
+>
 
-Correct. This is technically a false positive, but with the goal of
-adding -Wvla to the build globally, we have to get rid of these as
-well. It's a little frustrating, I agree, but with all others fixed
-now, these stand out. :)
+--cfJ13FhsvNR/yOpm
+Content-Type: application/pgp-signature; name="signature.asc"
 
--Kees
+-----BEGIN PGP SIGNATURE-----
 
--- 
-Kees Cook
-Pixel Security
+iQIcBAEBAgAGBQJbaw82AAoJEORje4g2clinSrcQAIG8XlaVMnqmX9ZIn10cfkoz
+lngbzsg4KBPfVjhswO/NwYTa6S9Q0E8rMqGZJ1oWW9lPkiNJHxf6eK82lRerJmER
+Le5Bx6uUWDXPUg5UV1cpSlC6VwOW3oBrlo0EnHJRYK7mmLNnQJ7yLAGleWTNySpk
+S6ZkX3nO4x1a2CjUIxg4d1Jl9m9iP8enQyPsBPTIdgYlH39xFh8NwaQ3fjytErEV
+kW/C1K2mKryiSs9ss+xLfS4c7v2BT552DrnwMsOpdVF6zUWt8a2yA0vrQP4G+b+s
+q1s1i1SCHVGiDXT62T8lAL3p/sTf1k8ERwJHhxNuVlPc+cuC1rUt8MJ8my+DACbk
+JqPhwo+HSKDGphsUTbrJ0Hc9f7PW9fv+nRDrciE/9Q/0tBj5zVR+kh+53EJzJcEW
+q1wXpbh26dYdeo93Ki48a9kmJJ/mjlRn6ma1TfAgaab6Ct//rIBhpkDt1eOUn773
+xoiXVNdwRWzQTFgeeWiA8pebyUU+e08gZSvhHyQjT0d1WWpZQMmVpUJ2MKCdaHF9
+8kNsjww4h/F9PozSYlvQwduxp+3F+D/K656TC0rtAUvCRKsfynZWfRIb3KlBIWnE
+7uTCDmvmLLf6W+8tVWY0u9obmtVHkcyvkUEPElyhfVazdw1dLue2UigdNN2SN7Y+
+YY+vEw9UQ/ez/RY9zQD6
+=/LzE
+-----END PGP SIGNATURE-----
+
+--cfJ13FhsvNR/yOpm--
