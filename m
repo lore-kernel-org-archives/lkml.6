@@ -2,104 +2,162 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 532CBC4646D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 05:19:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9CDCC46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 05:20:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A3D121708
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 05:19:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A3D121708
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 734B22171F
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 05:20:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="AqHPsqmv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 734B22171F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726923AbeHHHc7 (ORCPT
+        id S1726931AbeHHHiO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 03:32:59 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:50410 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726538AbeHHHc7 (ORCPT
+        Wed, 8 Aug 2018 03:38:14 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:46809 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726538AbeHHHiN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 03:32:59 -0400
-Received: from p4fea5a5a.dip0.t-ipconnect.de ([79.234.90.90] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fnGo9-0003RO-1W; Wed, 08 Aug 2018 07:14:53 +0200
-Date:   Wed, 8 Aug 2018 07:14:52 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Andi Kleen <ak@linux.intel.com>
-cc:     Peter Zijlstra <peterz@infradead.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        kan.liang@linux.intel.com, mingo@redhat.com, len.brown@intel.com,
-        linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH] x86/cpu: Rename Denverton and Gemini Lake
-In-Reply-To: <20180807221725.GU4238@tassilo.jf.intel.com>
-Message-ID: <alpine.DEB.2.21.1808080653120.1672@nanos.tec.linutronix.de>
-References: <1533662247-17575-1-git-send-email-kan.liang@linux.intel.com> <1b7cb461-5321-86cf-3031-5ff545c3dc42@linux.intel.com> <20180807174851.GJ2494@hirez.programming.kicks-ass.net> <20180807183736.GR4238@tassilo.jf.intel.com>
- <alpine.DEB.2.21.1808072257080.1672@nanos.tec.linutronix.de> <20180807221725.GU4238@tassilo.jf.intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 8 Aug 2018 03:38:13 -0400
+Received: by mail-lf1-f68.google.com with SMTP id l16-v6so629061lfc.13
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 22:20:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=0xttizLKs0wtWmEnfTGUR3uY1+NCy3x43RVDppWKndU=;
+        b=AqHPsqmvdnLF3NVNnPZuOEifVEt50dnoWRLPVkm2mRuwq9+VEig81HwGji3ORK3HcE
+         1mghMyAj4SHvLHoPrrTDRtqy2BZux40U/BEc5fq64ekN1hJWJ5/Tou8KpY4/FJqAoito
+         n3diCo1Q58ZWDEPI0zsfyuu03dqiLuyGak7Vc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=0xttizLKs0wtWmEnfTGUR3uY1+NCy3x43RVDppWKndU=;
+        b=Najd3FQ/V9TFAxdqnfPIWjE5q9aDt75heinOc7BV5yNyY7ITUoX9B+LDxjHLf7Mosc
+         VcLRk7b0VqoZAk6xYmXrSTyqK3p4/XOdehzLRKes+F3Qb+y0omEtnQb+Et7Pwfcea8W1
+         c3EP5RH4HWU7ssETp8JLN+BDdAtNaitA7z0PzJgeMyuekFvtxIwLQRqzzSHJuglRmetf
+         7PX6fPYRn2mU3Cc+UXzVUEW2wPj7OYQYO9EThnBHFZ2sxFGW+PVurArcMrB/xsJJrPXM
+         W7dmPEhd4Y1XbTwTCBM862UkY1L+HexCHIvuNf0+l2OKwxMzVMbyLqJz6f1auqDM69kj
+         Y4xw==
+X-Gm-Message-State: AOUpUlGruBPtygn2tHWU6Iic4CTJFtXdRTiJoalE/6lojC2Lq/Yuu0Zr
+        iwuMzh5WPLgqdfFOLQVvIaEyX+d7+WL//9Dw3F6aog==
+X-Google-Smtp-Source: AA+uWPxnXf4vc5mcJEsi8fhSS8+D3uE/TgHAYdqDAuzMfbr/QSbltoXl631mGrhGGS+PTopluKouA4HwYMVOHX6caOw=
+X-Received: by 2002:a19:10c4:: with SMTP id 65-v6mr791271lfq.113.1533705621355;
+ Tue, 07 Aug 2018 22:20:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Received: by 2002:a19:169b:0:0:0:0:0 with HTTP; Tue, 7 Aug 2018 22:20:20 -0700 (PDT)
+In-Reply-To: <20180807172312.964272530@linuxfoundation.org>
+References: <20180807172312.964272530@linuxfoundation.org>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Wed, 8 Aug 2018 10:50:20 +0530
+Message-ID: <CA+G9fYs9xDrM-V5=TqU7dYKTtNDwORjr50L5K5cAmJjf8YpHCQ@mail.gmail.com>
+Subject: Re: [PATCH 4.17 00/18] 4.17.14-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 7 Aug 2018, Andi Kleen wrote:
-
-> > Which simply does not work. Look at Goldmont Fam 6 Model 5C. The SoCs
-> > with that Fam/Model combination are:
-> > 
-> >  - Apollo Lake
-> >  - Broxton (has two platforms: Morganfield and Willowtrail)
-> 
-> Right pick one. The others are the same for software purposes
-> and can be handled in the same way.
-
-Pick one is really not a good choice. 
-
-> > It's even worse with Silvermont.
-> > 
-> > So no, the interesting information is the UARCH and the variant of that,
-> 
-> With Uarch you mean the core uarch?  That doesn't really work for
-> something like Silvermont or Goldmont.
-> 
-> > e.g. UARCH_CLIENT, UARCH_SERVER, UARCH_WHATEVER. All the magic Code Names
-> 
-> Right your scheme totally doesn't work on Silvermont because there
-> are multiple client variants.
-
-We have that for the big cores as well:
-
-#define INTEL_FAM6_HASWELL_CORE         0x3C
-#define INTEL_FAM6_HASWELL_X            0x3F
-#define INTEL_FAM6_HASWELL_ULT          0x45
-#define INTEL_FAM6_HASWELL_GT3E         0x46
-
-Why would we treat ATOM differently? It's all the same scheme:
-
-SILVERMONT_CLIENT  	0x37	     Baytrail, Valleyview
-SILVERMONT_SERVER	0x40	     Avaton, Rangely
-
-and on goldmont it's not any different.
-
-We really want one scheme for both Core and ATOM and not randomly picked
-different ones. For the kernel (aside of some peripheral stuff) the most
-interesting information is the UARCH plus the extra features which are
-enabled on a particular SoC.
-
-The current naming scheme e.g. for SILVERMONT is utter crap because the 1/2
-variants are in fact CLIENT/SERVER and the comment in the header file, that
-there is no better name, is just silly.
-
-Thanks,
-
-	tglx
+On 8 August 2018 at 00:21, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+> This is the start of the stable review cycle for the 4.17.14 release.
+> There are 18 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu Aug  9 17:23:05 UTC 2018.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
+4.17.14-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-4.17.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
 
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm and x86_64.
+
+
+Summary
+------------------------------------------------------------------------
+
+kernel: 4.17.14-rc1
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git
+git branch: linux-4.17.y
+git commit: 53b91e019709af31eaf31b16123585f05c00a411
+git describe: v4.17.13-19-g53b91e019709
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.17-oe/bu=
+ild/v4.17.13-19-g53b91e019709
+
+No regressions (compared to build v4.17.13)
+
+
+Ran 13918 total tests in the following environments and test suites.
+
+Environments
+--------------
+- dragonboard-410c - arm64
+- hi6220-hikey - arm64
+- juno-r2 - arm64
+- qemu_arm
+- qemu_arm64
+- qemu_x86_64
+- x15 - arm
+- x86_64
+
+Test Suites
+-----------
+* boot
+* kselftest
+* libhugetlbfs
+* ltp-cap_bounds-tests
+* ltp-containers-tests
+* ltp-cve-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-hugetlb-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-nptl-tests
+* ltp-pty-tests
+* ltp-sched-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+* ltp-timers-tests
+* ltp-open-posix-tests
+* kselftest-vsyscall-mode-native
+* kselftest-vsyscall-mode-none
+
+--=20
+Linaro LKFT
+https://lkft.linaro.org
