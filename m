@@ -2,222 +2,191 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87BAAC4646D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 21:18:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B60BC4646D
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 21:22:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2493921A8F
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 21:18:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Hdv5Zvxf";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="cmOMShzJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2493921A8F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id E0E8A21A8F
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 21:22:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0E8A21A8F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730987AbeHHXjt (ORCPT
+        id S1730816AbeHHXnr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 19:39:49 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:60384 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729938AbeHHXjt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 19:39:49 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 07E1060B7B; Wed,  8 Aug 2018 21:18:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533763100;
-        bh=5i0cXE2A0udk25S4uu+6bcey/1t+zUXv2OaemoQJHmw=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Hdv5Zvxfy0d4+7/O/YuVe/EHOOZ0+i7054bxiCKoAo6h1JZOmLkno3zprtyPZ6u3e
-         EYInnUNPCJGiEB0cLV4McPi3WKOnRhIGHlMUSKXOlVmL19rNMPFIKN2TakRTTjASq9
-         cc/k/7Ug4Xq5+ETA1nSYpiAg64Gz/By3IzApBseM=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id D265A601B4;
-        Wed,  8 Aug 2018 21:18:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533763098;
-        bh=5i0cXE2A0udk25S4uu+6bcey/1t+zUXv2OaemoQJHmw=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=cmOMShzJJklNGutVsXpi6vCiRjtVjaBMNq1q8RdVPxsSdpOlJZdRaoCn/dP8eH9nz
-         HG+JxniKsdcYBiox5cY3RixQ9rD43K25PuG47LkCk1J3pSvechMJ+G4lx2oQ0nWM5m
-         K28Rfv2M14+W4gMWfe+UU1mtJARhWHHZEPrC7dUw=
+        Wed, 8 Aug 2018 19:43:47 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45302 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730151AbeHHXnr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 19:43:47 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 501A08198B00;
+        Wed,  8 Aug 2018 21:22:17 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 231882027047;
+        Wed,  8 Aug 2018 21:22:17 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id w78LMHff025295;
+        Wed, 8 Aug 2018 17:22:17 -0400
+Received: from localhost (mpatocka@localhost)
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id w78LMGZh025291;
+        Wed, 8 Aug 2018 17:22:16 -0400
+X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
+Date:   Wed, 8 Aug 2018 17:22:16 -0400 (EDT)
+From:   Mikulas Patocka <mpatocka@redhat.com>
+X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
+To:     Ingo Molnar <mingo@kernel.org>
+cc:     Mike Snitzer <snitzer@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Dan Williams <dan.j.williams@intel.com>,
+        device-mapper development <dm-devel@redhat.com>,
+        X86 ML <x86@kernel.org>, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 RESEND] x86: optimize memcpy_flushcache
+In-Reply-To: <20180622013049.GA12505@gmail.com>
+Message-ID: <alpine.LRH.2.02.1808081720460.24747@file01.intranet.prod.int.rdu2.redhat.com>
+References: <20180519052503.325953342@debian.vm> <20180519052631.730455475@debian.vm> <CAPcyv4jpY0x7kZtT+afAKnHKy8Uy1AC_N_QM7RrELSj_0iNrRw@mail.gmail.com> <20180524182013.GA59755@redhat.com> <20180618132306.GA25431@redhat.com> <20180621143140.GA14095@gmail.com>
+ <alpine.LRH.2.02.1806211224470.19940@file01.intranet.prod.int.rdu2.redhat.com> <20180622013049.GA12505@gmail.com>
+User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Wed, 08 Aug 2018 14:18:18 -0700
-From:   skannan@codeaurora.org
-To:     Sudeep Holla <sudeep.holla@arm.com>
-Cc:     Rob Herring <robh@kernel.org>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Mark Rutland <mark.rutland@arm.com>, georgi.djakov@linaro.org,
-        vincent.guittot@linaro.org, daidavid1@codeaurora.org,
-        bjorn.andersson@linaro.org, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] PM / devfreq: Generic CPU frequency to device
- frequency mapping governor
-In-Reply-To: <20180808084754.GB25416@e107155-lin>
-References: <1533171465-25508-1-git-send-email-skannan@codeaurora.org>
- <20180807164114.GA12587@rob-hp-laptop>
- <496ac47a3c78f37655b60841fba7494c@codeaurora.org>
- <20180808084754.GB25416@e107155-lin>
-Message-ID: <8c7ab63d4c646733b89962a1d2a0a4ae@codeaurora.org>
-X-Sender: skannan@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 08 Aug 2018 21:22:17 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 08 Aug 2018 21:22:17 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mpatocka@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-08-08 01:47, Sudeep Holla wrote:
-> On Tue, Aug 07, 2018 at 12:37:07PM -0700, skannan@codeaurora.org wrote:
->> On 2018-08-07 09:41, Rob Herring wrote:
->> >On Wed, Aug 01, 2018 at 05:57:41PM -0700, Saravana Kannan wrote:
->> >>Many CPU architectures have caches that can scale independent of the
->> >>CPUs.
->> >>Frequency scaling of the caches is necessary to make sure the cache is
->> >>not
->> >>a performance bottleneck that leads to poor performance and power. The
->> >>same
->> >>idea applies for RAM/DDR.
->> >>
->> >>To achieve this, this patch adds a generic devfreq governor that takes
->> >>the
->> >>current frequency of each CPU frequency domain and then adjusts the
->> >>frequency of the cache (or any devfreq device) based on the frequency of
->> >>the CPUs. It listens to CPU frequency transition notifiers to keep
->> >>itself
->> >>up to date on the current CPU frequency.
->> >>
->> >>To decide the frequency of the device, the governor does one of the
->> >>following:
->> >>
->> >>* Uses a CPU frequency to device frequency mapping table
->> >>  - Either one mapping table used for all CPU freq policies (typically
->> >>used
->> >>    for system with homogeneous cores/clusters that have the same OPPs).
->> >>  - One mapping table per CPU freq policy (typically used for ASMP
->> >>systems
->> >>    with heterogeneous CPUs with different OPPs)
->> >>
->> >>OR
->> >>
->> >>* Scales the device frequency in proportion to the CPU frequency. So, if
->> >>  the CPUs are running at their max frequency, the device runs at its
->> >>max
->> >>  frequency.  If the CPUs are running at their min frequency, the device
->> >>  runs at its min frequency. And interpolated for frequencies in
->> >>between.
->> >>
->> >>Signed-off-by: Saravana Kannan <skannan@codeaurora.org>
->> >>---
->> >> .../bindings/devfreq/devfreq-cpufreq-map.txt       |  53 ++
->> >
->> >Bindings should be a separate patch.
->> >
->> >> drivers/devfreq/Kconfig                            |   8 +
->> >> drivers/devfreq/Makefile                           |   1 +
->> >> drivers/devfreq/governor_cpufreq_map.c             | 583
->> >>+++++++++++++++++++++
->> >> 4 files changed, 645 insertions(+)
->> >> create mode 100644
->> >>Documentation/devicetree/bindings/devfreq/devfreq-cpufreq-map.txt
->> >> create mode 100644 drivers/devfreq/governor_cpufreq_map.c
->> >>
->> >>diff --git
->> >>a/Documentation/devicetree/bindings/devfreq/devfreq-cpufreq-map.txt
->> >>b/Documentation/devicetree/bindings/devfreq/devfreq-cpufreq-map.txt
->> >>new file mode 100644
->> >>index 0000000..982a30b
->> >>--- /dev/null
->> >>+++ b/Documentation/devicetree/bindings/devfreq/devfreq-cpufreq-map.txt
->> >>@@ -0,0 +1,53 @@
->> >>+Devfreq CPUfreq governor
->> >>+
->> >>+devfreq-cpufreq-map is a parent device that contains one or more child
->> >>devices.
->> >>+Each child device provides CPU frequency to device frequency mapping
->> >>for a
->> >>+specific device. Examples of devices that could use this are: DDR,
->> >>cache and
->> >>+CCI.
->> >>+
->> >>+Parent device name shall be "devfreq-cpufreq-map".
->> >>+
->> >>+Required child device properties:
->> >>+- cpu-to-dev-map, or cpu-to-dev-map-<X>:
->> >>+			A list of tuples where each tuple consists of a
->> >>+			CPU frequency (KHz) and the corresponding device
->> >>+			frequency. CPU frequencies not listed in the table
->> >>+			will use the device frequency that corresponds to the
->> >>+			next rounded up CPU frequency.
->> >>+			Use "cpu-to-dev-map" if all CPUs in the system should
->> >>+			share same mapping.
->> >>+			Use cpu-to-dev-map-<cpuid> to describe different
->> >>+			mappings for different CPUs. The property should be
->> >>+			listed only for the first CPU if multiple CPUs are
->> >>+			synchronous.
->> >>+- target-dev:		Phandle to device that this mapping applies to.
->> >>+
->> >>+Example:
->> >>+	devfreq-cpufreq-map {
->> >>+		cpubw-cpufreq {
->> >>+			target-dev = <&cpubw>;
->> >>+			cpu-to-dev-map =
->> >>+				<  300000  1144000 >,
->> >>+				<  422400  2288000 >,
->> >>+				<  652800  3051000 >,
->> >>+				<  883200  5996000 >,
->> >>+				< 1190400  8056000 >,
->> >>+				< 1497600 10101000 >,
->> >>+				< 1728000 12145000 >,
->> >>+				< 2649600 16250000 >;
->> >
->> >Now we have frequencies listed in multiple places, the OPP tables and
->> >here? Perhaps it is grouping OPPs that should be done.
->> 
->> This doesn't list all OPPs (it can if necessary). This is listing the
->> minimum frequency needed to give good performance/power for a
->> device/product.
->> 
+
+
+On Fri, 22 Jun 2018, Ingo Molnar wrote:
+
 > 
-> Shouldn't the "status" property be used to disable OPPs you don't need
-> on a particular platform ?
-
-But that's not the point here? We aren't trying to disable any OPPs 
-here? Not sure what you mean.
-
-> Duplicating values is highly prone to errors and should be avoided.
+> * Mikulas Patocka <mpatocka@redhat.com> wrote:
 > 
->> AFAIK, OPP grouping isn't something that's supported in OPP framework 
->> or in
->> DT. Is there something specific you had in mind? Also, I'd like for 
->> this to
->> work even with devices that don't have OPPs listed in DT.
->> 
-> Also what's the solution you have for platforms with new *QCom FW 
-> Cpufreq* ?
-> IIUC the frequency is obtained from the firmware. TBH this should 
-> ideally
-> be handled in firmware if cpufreq is also handled by the firmware. I 
-> guess
-> this platform doesn't have that ?
+> > On Thu, 21 Jun 2018, Ingo Molnar wrote:
+> > 
+> > > 
+> > > * Mike Snitzer <snitzer@redhat.com> wrote:
+> > > 
+> > > > From: Mikulas Patocka <mpatocka@redhat.com>
+> > > > Subject: [PATCH v2] x86: optimize memcpy_flushcache
+> > > > 
+> > > > In the context of constant short length stores to persistent memory,
+> > > > memcpy_flushcache suffers from a 2% performance degradation compared to
+> > > > explicitly using the "movnti" instruction.
+> > > > 
+> > > > Optimize 4, 8, and 16 byte memcpy_flushcache calls to explicitly use the
+> > > > movnti instruction with inline assembler.
+> > > 
+> > > Linus requested asm optimizations to include actual benchmarks, so it would be 
+> > > nice to describe how this was tested, on what hardware, and what the before/after 
+> > > numbers are.
+> > > 
+> > > Thanks,
+> > > 
+> > > 	Ingo
+> > 
+> > It was tested on 4-core skylake machine with persistent memory being 
+> > emulated using the memmap kernel option. The dm-writecache target used the 
+> > emulated persistent memory as a cache and sata SSD as a backing device. 
+> > The patch results in 2% improved throughput when writing data using dd.
+> > 
+> > I don't have access to the machine anymore.
+> 
+> I think this information is enough, but do we know how well memmap emulation 
+> represents true persistent memory speed and cache management characteristics?
+> It might be representative - but I don't know for sure, nor probably most
+> readers of the changelog.
+> 
+> So could you please put all this into an updated changelog, and also add a short 
+> description that outlines exactly which codepaths end up using this method in a 
+> typical persistent memory setup? All filesystem ops - or only reads, etc?
+> 
+> Thanks,
+> 
+> 	Ingo
 
-All QC platforms would use this.
+Here I resend it:
 
-As a personal (non-Qcom) opinion, I'd rather the kernel control this 
-than have some black magic FW manage this. I've a really bitter taste in 
-my mouth for FW hiding this because of a broken ACPI implementation in 
-one of my x86 motherboards prevented CPUfreq from working (this was well 
-before I worked on CPUfreq). Pushing stuff to FW seems to beat the ideal 
-behind an opensource OS. In a few cases it's elegant or more robust, so 
-maybe in those cases its okay to use a FW. But I'd rather not for 
-simpler stuff like this.
 
--Saravana
+From: Mikulas Patocka <mpatocka@redhat.com>
+Subject: [PATCH] x86: optimize memcpy_flushcache
+
+I use memcpy_flushcache in my persistent memory driver for metadata
+updates, there are many 8-byte and 16-byte updates and it turns out that
+the overhead of memcpy_flushcache causes 2% performance degradation
+compared to "movnti" instruction explicitly coded using inline assembler.
+
+The tests were done on a Skylake processor with persistent memory emulated
+using the "memmap" kernel parameter. dd was used to copy data to the
+dm-writecache target.
+
+This patch recognizes memcpy_flushcache calls with constant short length
+and turns them into inline assembler - so that I don't have to use inline
+assembler in the driver.
+
+Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+
+---
+ arch/x86/include/asm/string_64.h |   20 +++++++++++++++++++-
+ arch/x86/lib/usercopy_64.c       |    4 ++--
+ 2 files changed, 21 insertions(+), 3 deletions(-)
+
+Index: linux-2.6/arch/x86/include/asm/string_64.h
+===================================================================
+--- linux-2.6.orig/arch/x86/include/asm/string_64.h
++++ linux-2.6/arch/x86/include/asm/string_64.h
+@@ -149,7 +149,25 @@ memcpy_mcsafe(void *dst, const void *src
+ 
+ #ifdef CONFIG_ARCH_HAS_UACCESS_FLUSHCACHE
+ #define __HAVE_ARCH_MEMCPY_FLUSHCACHE 1
+-void memcpy_flushcache(void *dst, const void *src, size_t cnt);
++void __memcpy_flushcache(void *dst, const void *src, size_t cnt);
++static __always_inline void memcpy_flushcache(void *dst, const void *src, size_t cnt)
++{
++	if (__builtin_constant_p(cnt)) {
++		switch (cnt) {
++			case 4:
++				asm ("movntil %1, %0" : "=m"(*(u32 *)dst) : "r"(*(u32 *)src));
++				return;
++			case 8:
++				asm ("movntiq %1, %0" : "=m"(*(u64 *)dst) : "r"(*(u64 *)src));
++				return;
++			case 16:
++				asm ("movntiq %1, %0" : "=m"(*(u64 *)dst) : "r"(*(u64 *)src));
++				asm ("movntiq %1, %0" : "=m"(*(u64 *)(dst + 8)) : "r"(*(u64 *)(src + 8)));
++				return;
++		}
++	}
++	__memcpy_flushcache(dst, src, cnt);
++}
+ #endif
+ 
+ #endif /* __KERNEL__ */
+Index: linux-2.6/arch/x86/lib/usercopy_64.c
+===================================================================
+--- linux-2.6.orig/arch/x86/lib/usercopy_64.c
++++ linux-2.6/arch/x86/lib/usercopy_64.c
+@@ -153,7 +153,7 @@ long __copy_user_flushcache(void *dst, c
+ 	return rc;
+ }
+ 
+-void memcpy_flushcache(void *_dst, const void *_src, size_t size)
++void __memcpy_flushcache(void *_dst, const void *_src, size_t size)
+ {
+ 	unsigned long dest = (unsigned long) _dst;
+ 	unsigned long source = (unsigned long) _src;
+@@ -216,7 +216,7 @@ void memcpy_flushcache(void *_dst, const
+ 		clean_cache_range((void *) dest, size);
+ 	}
+ }
+-EXPORT_SYMBOL_GPL(memcpy_flushcache);
++EXPORT_SYMBOL_GPL(__memcpy_flushcache);
+ 
+ void memcpy_page_flushcache(char *to, struct page *page, size_t offset,
+ 		size_t len)
