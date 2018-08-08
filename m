@@ -2,80 +2,109 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45DA4C4646D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 13:17:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5767EC46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 13:18:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1204219E8
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 13:17:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1204219E8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 0DD4C20844
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 13:18:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DD4C20844
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727312AbeHHPgi (ORCPT
+        id S1727182AbeHHPiP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 11:36:38 -0400
-Received: from mx2.suse.de ([195.135.220.15]:41622 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726971AbeHHPgi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 11:36:38 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id AEEB1AF31;
-        Wed,  8 Aug 2018 13:16:58 +0000 (UTC)
-Date:   Wed, 8 Aug 2018 15:16:58 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>, linux-mm@kvack.org,
-        Greg Thelen <gthelen@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        David Rientjes <rientjes@google.com>
-Subject: Re: [PATCH] memcg, oom: be careful about races when warning about no
- reclaimable task
-Message-ID: <20180808131658.GP27972@dhcp22.suse.cz>
-References: <20180807072553.14941-1-mhocko@kernel.org>
- <863d73ce-fae9-c117-e361-12c415c787de@i-love.sakura.ne.jp>
- <20180807201935.GB4251@cmpxchg.org>
- <1308e0bd-e194-7b35-484c-fc18f493f8da@i-love.sakura.ne.jp>
- <9cea37c8-ab90-2fdf-395c-efe52ff07072@i-love.sakura.ne.jp>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9cea37c8-ab90-2fdf-395c-efe52ff07072@i-love.sakura.ne.jp>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 8 Aug 2018 11:38:15 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:55170 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726772AbeHHPiO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 11:38:14 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 41lsQf18K5z9ttkf;
+        Wed,  8 Aug 2018 15:18:34 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id kIGTCvM7H1o8; Wed,  8 Aug 2018 15:18:34 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 41lsQf0B5Hz9ttkc;
+        Wed,  8 Aug 2018 15:18:34 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id F32BB8B833;
+        Wed,  8 Aug 2018 15:18:34 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id qEMNbz7fezFs; Wed,  8 Aug 2018 15:18:34 +0200 (CEST)
+Received: from pc16082vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.4])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id D80A48B830;
+        Wed,  8 Aug 2018 15:18:34 +0200 (CEST)
+Received: by pc16082vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id B4C9171226; Wed,  8 Aug 2018 13:18:34 +0000 (UTC)
+Message-Id: <7dabf1cbde67a346a187881d4f0bd17347e0334a.1533732583.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH] powerpc/mm: Fix address space layout randomization (ASLR)
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date:   Wed,  8 Aug 2018 13:18:34 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 08-08-18 21:57:13, Tetsuo Handa wrote:
-[...]
-> Also, before the OOM reaper was introduced, we waited until TIF_MEMDIE is
-> cleared from the OOM victim thread. Compared to pre OOM reaper era, giving up
-> so early is certainly a regression.
+Today, when stack size is set to unlimited (ulimit -s unlimited),
+mmap() doesn't randomise the stack address returned by mmap()
 
-We did clear TIF_MEMDIE flag after mmput() in do_exit so this was not a silver
-bullet either. Any reference on the mm_struct would lead to a similar
-problem. So could you please stop making strong stamements and start
-being reasonable?
+This patch fixes it by applying the random factor on
+TASK_UNMAPPED_BASE when setting mm->mmap_base
 
-Yeah, this is racy. Nobody is claiming otherwise. All we are trying to
-say is that this area is full of dragons and before we start making it
-more complicating by covering weird cornercases we really need to see
-that those corner cases happen in real workloads. Otherwise we end up
-with a unmaintainable and fragile mess.
+Link: https://github.com/linuxppc/linux/issues/59
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ arch/powerpc/mm/mmap.c  | 4 ++--
+ arch/powerpc/mm/slice.c | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-And more importantly this is _not_ what this patch is trying to address
-so please do not go tangent again.
-
-I really do not know how to send this simply message to you. I have
-tried so many times before.
-
+diff --git a/arch/powerpc/mm/mmap.c b/arch/powerpc/mm/mmap.c
+index b24ce40acd47..07de04c4fb56 100644
+--- a/arch/powerpc/mm/mmap.c
++++ b/arch/powerpc/mm/mmap.c
+@@ -201,7 +201,7 @@ static void radix__arch_pick_mmap_layout(struct mm_struct *mm,
+ 					struct rlimit *rlim_stack)
+ {
+ 	if (mmap_is_legacy(rlim_stack)) {
+-		mm->mmap_base = TASK_UNMAPPED_BASE;
++		mm->mmap_base = TASK_UNMAPPED_BASE + random_factor;
+ 		mm->get_unmapped_area = radix__arch_get_unmapped_area;
+ 	} else {
+ 		mm->mmap_base = mmap_base(random_factor, rlim_stack);
+@@ -233,7 +233,7 @@ void arch_pick_mmap_layout(struct mm_struct *mm, struct rlimit *rlim_stack)
+ 	 * bit is set, or if the expected stack growth is unlimited:
+ 	 */
+ 	if (mmap_is_legacy(rlim_stack)) {
+-		mm->mmap_base = TASK_UNMAPPED_BASE;
++		mm->mmap_base = TASK_UNMAPPED_BASE + random_factor;
+ 		mm->get_unmapped_area = arch_get_unmapped_area;
+ 	} else {
+ 		mm->mmap_base = mmap_base(random_factor, rlim_stack);
+diff --git a/arch/powerpc/mm/slice.c b/arch/powerpc/mm/slice.c
+index 205fe557ca10..cc1af565b813 100644
+--- a/arch/powerpc/mm/slice.c
++++ b/arch/powerpc/mm/slice.c
+@@ -329,7 +329,7 @@ static unsigned long slice_find_area_bottomup(struct mm_struct *mm,
+ 	info.align_mask = PAGE_MASK & ((1ul << pshift) - 1);
+ 	info.align_offset = 0;
+ 
+-	addr = TASK_UNMAPPED_BASE;
++	addr = mm->mmap_base;
+ 	/*
+ 	 * Check till the allow max value for this mmap request
+ 	 */
 -- 
-Michal Hocko
-SUSE Labs
+2.13.3
+
