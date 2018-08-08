@@ -2,114 +2,123 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55BF3C4646D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 22:33:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1595FC4646D
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 22:33:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 074D321AA8
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 22:33:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B682221ADE
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 22:33:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="cwNb5dOZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 074D321AA8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="r9p5Q/hK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B682221ADE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731666AbeHIAym (ORCPT
+        id S1731747AbeHIAzO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 20:54:42 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:38702 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729732AbeHIAym (ORCPT
+        Wed, 8 Aug 2018 20:55:14 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:45198 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731123AbeHIAzO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 20:54:42 -0400
-Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 7D1D0CD;
-        Thu,  9 Aug 2018 00:32:56 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1533767577;
-        bh=OGV+QoYUNbMdZ4OvRzrkPaa/vYJOdi4cr76XsPNEZIY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cwNb5dOZvOChyyw4hFH6eBbk2koWGdPOjEULZDbH/pLEIkWxaerxuVWW9D55UL9ek
-         trUOKZMwuZmMIp0cGbiwSwWp4uBxmNSmkVA0dnsoTTnfYfxzysRCvXjLd9z3XB24Jx
-         PtCaDAEgfdzQ8ZTw/mMZvetr0IKUQUj75Z4MMb70=
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Tomasz Figa <tfiga@chromium.org>
-Cc:     Alan Stern <stern@rowland.harvard.edu>, keiichiw@chromium.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        "Matwey V. Kornilov" <matwey@sai.msu.ru>
-Subject: Re: [RFC PATCH v1] media: uvcvideo: Cache URB header data before processing
-Date:   Thu, 09 Aug 2018 01:33:40 +0300
-Message-ID: <2414943.eZ5QIXTjLV@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <CAAFQd5AFSFKeMhdpW5PusrtcvD1f9DSu7_MQQyy6fB=HbHvVLw@mail.gmail.com>
-References: <Pine.LNX.4.44L0.1808081015110.1466-100000@iolanthe.rowland.org> <1959555.Z0pJAWgXVZ@avalon> <CAAFQd5AFSFKeMhdpW5PusrtcvD1f9DSu7_MQQyy6fB=HbHvVLw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Wed, 8 Aug 2018 20:55:14 -0400
+Received: by mail-pg1-f196.google.com with SMTP id f1-v6so1731738pgq.12
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 15:33:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=FaqBxE9vdVdgvDb/KJqUSVRZ6PmE81yE4JWG9JL0RMk=;
+        b=r9p5Q/hK/MgKq9Bv776i9oXsHg61ho12yaq1QOM7I6RVGu7sZhosuCASsIkKOwSgl7
+         +BDEQFY/y4NL3xmO+qiEnZU3sKMdd3cgWMRSeJPhYHJac4njptqMVfdKr/Jljvsn+Tuv
+         iuV+m5VWzMoa5AR+GKMPllQC558DnhIR24HfBkJoRBUAodk/JwquJUIvXMa2rLqGNX5G
+         EPPcAODfluIaL4eaGARZaWTNGS3m2uv2ncZeNmDIJQFOUWvidtRqnsmkYqijbRq4BrO3
+         TUXuBhWQs3/vsix4DDIS+o/SRAqmEM9y9NinLwQGpcWA3v2BgCl9oOsq2ZJZANUhlngw
+         VBSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=FaqBxE9vdVdgvDb/KJqUSVRZ6PmE81yE4JWG9JL0RMk=;
+        b=Zrp1kjeX+Ynk2kOYBLfcKhvXRmgVmz8OoShZuk03z+SHh7wDY/f1IZVzDFaaNgZ+sY
+         fLU0LPGgBxi70AhWdesRHy51OAcrHi1EcU9w9jp7IO4nkF+m+4Ys955ZPj3KG0qVU6qF
+         RAQzxybR2nb8RrUHnN9SMn/KlKlqKJKg3Dg9SbRjmzYWROuPL1m2SFZFi0172JhdLDPC
+         gMsoxlg4ABSFlX4mNR1NsSe56WT7QkHS9W/Zx4uGni5Ia4sA6AodfhONHl9PQGxJCfnI
+         jUI48CVpXt9KOp/GG5ZEmL0ZvFB6YZrEJL+lpm/O9VozaxaX5ql8sa/v43l3qTenWxtb
+         BkYg==
+X-Gm-Message-State: AOUpUlHHVyGtQZyT7IEk5wcWBDYTAt8meGT336IXu7IeqcNEcwATFEkv
+        Bb9XFNTdvaUOjlTHX9lfOtEk5ikRM3Q=
+X-Google-Smtp-Source: AA+uWPzqUxO0TtuK46AxrF9dho78W8PSEv4IiiAnBZ2oql5xt10F+MFvYxbYMhhCRS4iyqnxX+XHJQ==
+X-Received: by 2002:a62:45d2:: with SMTP id n79-v6mr4820002pfi.137.1533767609199;
+        Wed, 08 Aug 2018 15:33:29 -0700 (PDT)
+Received: from localhost (c-67-169-55-77.hsd1.ca.comcast.net. [67.169.55.77])
+        by smtp.gmail.com with ESMTPSA id d132-v6sm6430733pgc.93.2018.08.08.15.33.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 08 Aug 2018 15:33:28 -0700 (PDT)
+From:   Stephane Eranian <eranian@google.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     acme@redhat.com, peterz@infradead.org, mingo@elte.hu,
+        jolsa@redhat.com
+Subject: [PATCH v2] perf ordered_events: fix crash in free_dup_event()
+Date:   Wed,  8 Aug 2018 15:33:20 -0700
+Message-Id: <1533767600-7794-1-git-send-email-eranian@google.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tomasz,
+This patch fixes a bug in ordered_event.c:alloc_event().
+An ordered_event struct was not initialized properly potentially
+causing crashes later on in free_dup_event() depending on the
+content of the memory. If it was NULL, then it would work fine,
+otherwise, it could cause crashes such as:
 
-On Wednesday, 8 August 2018 19:27:42 EEST Tomasz Figa wrote:
-> On Thu, Aug 9, 2018 at 1:21 AM Laurent Pinchart wrote:
-> > On Wednesday, 8 August 2018 17:20:21 EEST Alan Stern wrote:
-> >> On Wed, 8 Aug 2018, Keiichi Watanabe wrote:
-> >>> Hi Laurent, Kieran, Tomasz,
-> >>> 
-> >>> Thank you for reviews and suggestions.
-> >>> I want to do additional measurements for improving the performance.
-> >>> 
-> >>> Let me clarify my understanding:
-> >>> Currently, if the platform doesn't support coherent-DMA (e.g. ARM),
-> >>> urb_buffer is allocated by usb_alloc_coherent with
-> >>> URB_NO_TRANSFER_DMA_MAP flag instead of using kmalloc.
-> >> 
-> >> Not exactly.  You are mixing up allocation with mapping.  The speed of
-> >> the allocation doesn't matter; all that matters is whether the memory
-> >> is cached and when it gets mapped/unmapped.
-> >> 
-> >>> This is because we want to avoid frequent DMA mappings, which are
-> >>> generally expensive. However, memories allocated in this way are not
-> >>> cached.
-> >>> 
-> >>> So, we wonder if using usb_alloc_coherent is really fast.
-> >>> In other words, we want to know which is better:
-> >>> "No DMA mapping/Uncached memory" v.s. "Frequent DMA mapping/Cached
-> >>> memory".
-> > 
-> > The second option should also be split in two:
-> > 
-> > - cached memory with DMA mapping/unmapping around each transfer
-> > - cached memory with DMA mapping/unmapping at allocation/free time, and
-> > DMA sync around each transfer
-> > 
-> > The second option should in theory lead to at least slightly better
-> > performances, but tests with the pwc driver have reported contradictory
-> > results. I'd like to know whether that's also the case with the uvcvideo
-> > driver, and if so, why.
-> 
-> I thought that the results from retesting on pwc, after making sure
-> that cpu frequency stays the same all the time, actually clarified
-> this and indeed map once, sync repeatedly was the fastest?
+$ perf record -o - -e cycles date |  perf inject -b -i - >/dev/null
+Tue Aug  7 12:03:48 PDT 2018
+[ perf record: Woken up 1 times to write data ]
+[ perf record: Captured and wrote 0.000 MB - ]
+Segmentation fault (core dumped):
 
-I had missed that, thank you for the information. I've now caught up with the 
-pwc thread.
+(gdb) r inject -b -i - < tt  >/dev/null
+Program received signal SIGSEGV, Segmentation fault.
+free_dup_event (oe=0x26a39a0, event=0xffffffff00000000) at util/ordered-events.c:85
+(gdb) bt
+#0  free_dup_event (oe=0x26a39a0, event=0xffffffff00000000) at util/ordered-events.c:85
+#1  ordered_events__free (oe=0x26a39a0) at util/ordered-events.c:310
+#2  0x00000000004b5a56 in __perf_session__process_pipe_events (session=<optimized out>) at util/session.c:1753
+#3  perf_session__process_events (session=<optimized out>) at util/session.c:1932
+#4  0x000000000043a2eb in __cmd_inject (inject=<optimized out>) at builtin-inject.c:750
+#5  cmd_inject (argc=<optimized out>, argv=<optimized out>) at builtin-inject.c:924
+#6  0x000000000046b175 in run_builtin (p=0xabc640 <commands+576>, argc=4, argv=0x7fffffffe560) at perf.c:297
+#7  0x000000000046b062 in handle_internal_command (argc=4, argv=0x7fffffffe560) at perf.c:349
+#8  0x000000000046a5e8 in run_argv (argcp=<optimized out>, argv=<optimized out>) at perf.c:393
+#9  main (argc=4, argv=0x7fffffffe560) at perf.c:531
 
+Signed-off-by: Stephane Eranian <eranian@google.com>
+
+---
+ tools/perf/util/ordered-events.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/tools/perf/util/ordered-events.c b/tools/perf/util/ordered-events.c
+index a90dbe5df019..95c91e5a3754 100644
+--- a/tools/perf/util/ordered-events.c
++++ b/tools/perf/util/ordered-events.c
+@@ -118,6 +118,12 @@ static struct ordered_event *alloc_event(struct ordered_events *oe,
+ 
+ 		pr("alloc size %" PRIu64 "B (+%zu), max %" PRIu64 "B\n",
+ 		   oe->cur_alloc_size, size, oe->max_alloc_size);
++		/*
++		 * must initialize event pointer of commandeered first
++		 * entry to avoid crash in free_dup_event() due to random
++		 * value for this field.
++		 */
++		oe->buffer->event = NULL;
+ 
+ 		oe->cur_alloc_size += size;
+ 		list_add(&oe->buffer->list, &oe->to_free);
 -- 
-Regards,
-
-Laurent Pinchart
-
-
-
+2.18.0.597.ga71716f1ad-goog
