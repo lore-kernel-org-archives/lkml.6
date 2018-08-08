@@ -5,30 +5,30 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44A85C4646D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 08:30:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F04C6C46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 08:30:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE993216F6
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 08:30:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE993216F6
+	by mail.kernel.org (Postfix) with ESMTP id AB0C0216F6
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 08:30:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB0C0216F6
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727191AbeHHKsu (ORCPT
+        id S1727301AbeHHKsy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 06:48:50 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50072 "EHLO mx1.redhat.com"
+        Wed, 8 Aug 2018 06:48:54 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50926 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726979AbeHHKst (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 06:48:49 -0400
+        id S1726979AbeHHKsv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 06:48:51 -0400
 Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5442A40241E7;
-        Wed,  8 Aug 2018 08:30:11 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5FD528197039;
+        Wed,  8 Aug 2018 08:30:13 +0000 (UTC)
 Received: from shalem.localdomain.com (ovpn-117-222.ams2.redhat.com [10.36.117.222])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C53642027047;
-        Wed,  8 Aug 2018 08:30:08 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8716E2027047;
+        Wed,  8 Aug 2018 08:30:11 +0000 (UTC)
 From:   Hans de Goede <hdegoede@redhat.com>
 To:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
         Len Brown <lenb@kernel.org>,
@@ -42,56 +42,78 @@ Cc:     Hans de Goede <hdegoede@redhat.com>,
         linux-kernel@vger.kernel.org,
         Heikki Krogerus <heikki.krogerus@linux.intel.com>,
         John Garry <john.garry@huawei.com>, linux-i2c@vger.kernel.org
-Subject: [PATCH v4 0/4] i2c-multi-instantiate pseudo driver
-Date:   Wed,  8 Aug 2018 10:30:02 +0200
-Message-Id: <20180808083006.31919-1-hdegoede@redhat.com>
+Subject: [PATCH v4 1/4] ACPI / scan: Initialize status to ACPI_STA_DEFAULT
+Date:   Wed,  8 Aug 2018 10:30:03 +0200
+Message-Id: <20180808083006.31919-2-hdegoede@redhat.com>
+In-Reply-To: <20180808083006.31919-1-hdegoede@redhat.com>
+References: <20180808083006.31919-1-hdegoede@redhat.com>
 X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 08 Aug 2018 08:30:11 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 08 Aug 2018 08:30:11 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'hdegoede@redhat.com' RCPT:''
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 08 Aug 2018 08:30:13 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 08 Aug 2018 08:30:13 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'hdegoede@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi All,
+Since commit 63347db0affa ("ACPI / scan: Use acpi_bus_get_status() to
+initialize ACPI_TYPE_DEVICE devs") the status field of normal acpi_devices
+gets set to 0 by acpi_bus_type_and_status() and filled with its actual
+value later when acpi_add_single_object() calls acpi_bus_get_status().
 
-Here is v4 of my patch-series for dealing with multiple independent i2c
-devices being described in a single ACPI fwnode.
+This means that any acpi_match_device_ids() calls in between will always
+fail with -ENOENT.
+
+We already have a workaround for this, which temporary forces status to
+ACPI_STA_DEFAULT in drivers/acpi/x86/utils.c: acpi_device_always_present()
+and the next commit in this series adds another acpi_match_device_ids()
+call between status being initialized as 0 and the acpi_bus_get_status()
+call.
+
+Rather then adding another workaround, this commit makes
+acpi_bus_type_and_status() initialize status to ACPI_STA_DEFAULT, this is
+safe to do as the only code looking at status between the initialization
+and the acpi_bus_get_status() call is those acpi_match_device_ids() calls.
+
+Note this does mean that we need to (re)set status to 0 in case the
+acpi_bus_get_status() call fails.
+
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+---
+Changes in v3:
+-New patch in v3 of this patch-set
 
 Changes in v4:
--Rewrite commit message of first patch as this is NOT a bug fix for
- acpi_is_indirect_io_slave() as I thought at first, it is still necessary
- as a preperation patch for the rest of the series
--MAINTAINER and Kconfig entry fixes
--Some minor coding style fixes
+-This is not a fix for acpi_is_indirect_io_slave() as I thought at first,
+ acpi_is_indirect_io_slave() calls acpi_match_device_ids() on its parent
+ device, where status is already set properly. Rewrite the commit message
+ accordingly.
+---
+ drivers/acpi/scan.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Changes in v3:
--Drop the patch adding the I2C_CLIENT_IGNORE_BUSY flag/hack
--Add patches to make ACPI fwnode-s with affected acpi_ids get enumerated as
- platform device instead of i2c-client
--Change the i2c-multi-instantiate driver to a platform driver
-
-Changes in v2:
--Rebase on 4.18-rc2
-
-Changes in v1:
--Second attempt at dealing with this using a new design where a separate
- driver (which can be build as a module) is used to instantiate the
- i2c-clients instead of modifying the i2c core
--Add an I2C_CLIENT_IGNORE_BUSY flag to make it possible for this driver to bind
- to the client instantiated for the first i2c resource and still create a new
- client using the i2c_client_id for the actual driver for the first resource,
- resulting in 2 clients at the same address (of which one is inactive)
-
-About merging this series, the platform-driver and ACPI patches can be
-merged independently of each other, they platform driver relies on the ACPI
-changes to gets its platform device instantiated, but if those changes are
-not in place yet, nothing bad happens.
-
-So if everyone is happy with this series I suggest that each part gets
-merged separately through the relevant trees.
-
-Regards,
-
-Hans
+diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
+index 970dd87d347c..6799d00dd790 100644
+--- a/drivers/acpi/scan.c
++++ b/drivers/acpi/scan.c
+@@ -1612,7 +1612,8 @@ static int acpi_add_single_object(struct acpi_device **child,
+ 	 * Note this must be done before the get power-/wakeup_dev-flags calls.
+ 	 */
+ 	if (type == ACPI_BUS_TYPE_DEVICE)
+-		acpi_bus_get_status(device);
++		if (acpi_bus_get_status(device) < 0)
++			acpi_set_device_status(device, 0);
+ 
+ 	acpi_bus_get_power_flags(device);
+ 	acpi_bus_get_wakeup_device_flags(device);
+@@ -1690,7 +1691,7 @@ static int acpi_bus_type_and_status(acpi_handle handle, int *type,
+ 		 * acpi_add_single_object updates this once we've an acpi_device
+ 		 * so that acpi_bus_get_status' quirk handling can be used.
+ 		 */
+-		*sta = 0;
++		*sta = ACPI_STA_DEFAULT;
+ 		break;
+ 	case ACPI_TYPE_PROCESSOR:
+ 		*type = ACPI_BUS_TYPE_PROCESSOR;
+-- 
+2.18.0
 
