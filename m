@@ -2,232 +2,148 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.9 required=3.0 tests=DATE_IN_PAST_06_12,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59576C46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:33:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2964C46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:33:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDFC3219C9
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:33:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDFC3219C9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 64D6B219E6
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:33:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64D6B219E6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727351AbeHHQxE (ORCPT
+        id S1727441AbeHHQxN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 12:53:04 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:10682 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726875AbeHHQxE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 12:53:04 -0400
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id ACFC53C25651D;
-        Wed,  8 Aug 2018 22:33:02 +0800 (CST)
-Received: from localhost.localdomain (10.175.34.53) by
- DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
- 14.3.399.0; Wed, 8 Aug 2018 22:32:57 +0800
-From:   Zhao Chen <zhaochen6@huawei.com>
-To:     <davem@davemloft.net>
-CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <zhaochen6@huawei.com>, <tony.qu@huawei.com>,
-        <yin.yinshi@huawei.com>, <luoshaokai@huawei.com>,
-        <fy.wang@huawei.com>, <luoxianjun@huawei.com>,
-        <wangzhou1@hisilicon.com>
-Subject: [PATCH 1/1] net-next: hinic: fix a problem in free_tx_poll()
-Date:   Wed, 8 Aug 2018 06:37:30 +0000
-Message-ID: <20180808063730.12198-1-zhaochen6@huawei.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 8 Aug 2018 12:53:13 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:35452 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726875AbeHHQxN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 12:53:13 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w78ESouk104146
+        for <linux-kernel@vger.kernel.org>; Wed, 8 Aug 2018 10:33:16 -0400
+Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2kr26r0j9j-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 10:33:15 -0400
+Received: from localhost
+        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Wed, 8 Aug 2018 10:33:15 -0400
+Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
+        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 8 Aug 2018 10:33:10 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w78EX9Y012517798
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 8 Aug 2018 14:33:09 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4F683B2064;
+        Wed,  8 Aug 2018 10:32:33 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2F53DB205F;
+        Wed,  8 Aug 2018 10:32:33 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed,  8 Aug 2018 10:32:33 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 287B516C0727; Wed,  8 Aug 2018 07:33:10 -0700 (PDT)
+Date:   Wed, 8 Aug 2018 07:33:10 -0700
+From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Joel Fernandes <joelaf@google.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Cc: Android Kernel" <kernel-team@android.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Byungchul Park <byungchul.park@lge.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Glexiner <tglx@linutronix.de>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>
+Subject: Re: [PATCH v12 3/3] tracing: Centralize preemptirq tracepoints and
+ unify their usage
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20180807204820.50b83c6d@vmware.local.home>
+ <CAJWu+oqBOEJicepLaUG=JpmtDTgxjRdMyJAgOEUkdk4NzX0esw@mail.gmail.com>
+ <20180807215522.04114097@vmware.local.home>
+ <CAJWu+opjqKgZj30PYpyvip=EtP8CuqaEy65++nuvj37QMT6GCw@mail.gmail.com>
+ <20180807222856.3ede96e7@vmware.local.home>
+ <CAJWu+oqcM_-rtuUe7hhMHyZ2UKZ5J4rBZO7UoHxxd2DAs=aHdA@mail.gmail.com>
+ <CAJWu+oqPUuF4rFOQ8=G3+ZxXJxiiNRBYE8C=zZ93A8qA+muHEg@mail.gmail.com>
+ <20180808084629.3290d1d6@gandalf.local.home>
+ <20180808130302.GJ24813@linux.vnet.ibm.com>
+ <20180808090724.41677176@gandalf.local.home>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.34.53]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180808090724.41677176@gandalf.local.home>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18080814-0072-0000-0000-0000038D73C8
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009507; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01070981; UDB=6.00551364; IPR=6.00850510;
+ MB=3.00022589; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-08 14:33:13
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18080814-0073-0000-0000-00004902630E
+Message-Id: <20180808143310.GL24813@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-08_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=482 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808080150
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch fixes the problem below. The problem can be reproduced by the
-following steps:
-1) Connecting all HiNIC interfaces
-2) On server side
-    # sudo ifconfig eth0 192.168.100.1 up #Using MLX CX4 card
-    # iperf -s
-3) On client side
-    # sudo ifconfig eth0 192.168.100.2 up #Using our HiNIC card
-    # iperf -c 192.168.101.1 -P 10 -t 100000
+On Wed, Aug 08, 2018 at 09:07:24AM -0400, Steven Rostedt wrote:
+> On Wed, 8 Aug 2018 06:03:02 -0700
+> "Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
+> 
+> >  What's wrong with a this_cpu_inc()? It's atomic for the CPU. Although
+> > > it wont be atomic for the capture of the idx. But I also don't see
+> > > interrupts being disabled, thus an NMI is no different than any
+> > > interrupt doing the same thing, right?  
+> > 
+> > On architectures without increment-memory instructions, if you take an NMI
+> > between the load from sp->sda->srcu_lock_count and the later store, you
+> > lose a count.  Note that both __srcu_read_lock() and __srcu_read_unlock()
+> > do increments of different locations, so you cannot rely on the usual
+> > "NMI fixes up before exit" semantics you get when incrementing and
+> > decrementing the same location.
+> 
+> And how is this handled in the interrupt case? Interrupts are not
+> disabled here.
 
-after hours of testing, we will see errors:
+Actually, on most architectures interrupts are in fact disabled:
 
-    hinic 0000:05:00.0: No MGMT msg handler, mod = 0
-    hinic 0000:05:00.0: No MGMT msg handler, mod = 0
-    hinic 0000:05:00.0: No MGMT msg handler, mod = 0
-    hinic 0000:05:00.0: No MGMT msg handler, mod = 0
+#define this_cpu_generic_to_op(pcp, val, op)				\
+do {									\
+	unsigned long __flags;						\
+	raw_local_irq_save(__flags);					\
+	raw_cpu_generic_to_op(pcp, val, op);				\
+	raw_local_irq_restore(__flags);					\
+} while (0)
 
-The errors are caused by the following problem.
-1) The hinic_get_wqe() checks the "wq->delta" to allocate new WQEs:
+NMIs, not so much.
 
-	if (atomic_sub_return(num_wqebbs, &wq->delta) <= 0) {
-		atomic_add(num_wqebbs, &wq->delta);
-		return ERR_PTR(-EBUSY);
-	}
+> I would also argue that architectures without increment-memory
+> instructions shouldn't have NMIs ;-)
 
-If the WQE occupies multiple pages, the shadow WQE will be used. Then the
-hinic_xmit_frame() fills the WQE.
+I would also argue a lot of things, but objective reality does not take my
+opinions into account all that often.  Which might be a good thing.  ;-)
 
-2) While in parallel with 1), the free_tx_poll() checks the "wq->delta"
-to free old WQEs:
-
-	if ((atomic_read(&wq->delta) + num_wqebbs) > wq->q_depth)
-		return ERR_PTR(-EBUSY);
-
-There is a probability that the shadow WQE which hinic_xmit_frame() is
-using will be damaged by copy_wqe_to_shadow():
-
-	if (curr_pg != end_pg) {
-		void *shadow_addr = &wq->shadow_wqe[curr_pg * wq->max_wqe_size];
-
-		copy_wqe_to_shadow(wq, shadow_addr, num_wqebbs, *cons_idx);
-		return shadow_addr;
-	}
-
-This can cause WQE data error and you will see the above error messages.
-This patch fixes the problem.
-
-Signed-off-by: Zhao Chen <zhaochen6@huawei.com>
----
- .../net/ethernet/huawei/hinic/hinic_hw_qp.c   | 36 ++++++++++++++-----
- .../net/ethernet/huawei/hinic/hinic_hw_qp.h   |  6 +++-
- drivers/net/ethernet/huawei/hinic/hinic_tx.c  | 18 ++++++++--
- 3 files changed, 49 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/net/ethernet/huawei/hinic/hinic_hw_qp.c b/drivers/net/ethernet/huawei/hinic/hinic_hw_qp.c
-index b9db6d649743..cb239627770f 100644
---- a/drivers/net/ethernet/huawei/hinic/hinic_hw_qp.c
-+++ b/drivers/net/ethernet/huawei/hinic/hinic_hw_qp.c
-@@ -635,17 +635,18 @@ void hinic_sq_write_wqe(struct hinic_sq *sq, u16 prod_idx,
- }
- 
- /**
-- * hinic_sq_read_wqe - read wqe ptr in the current ci and update the ci
-+ * hinic_sq_read_wqebb - read wqe ptr in the current ci and update the ci, the
-+ * wqe only have one wqebb
-  * @sq: send queue
-  * @skb: return skb that was saved
-- * @wqe_size: the size of the wqe
-+ * @wqe_size: the wqe size ptr
-  * @cons_idx: consumer index of the wqe
-  *
-  * Return wqe in ci position
-  **/
--struct hinic_sq_wqe *hinic_sq_read_wqe(struct hinic_sq *sq,
--				       struct sk_buff **skb,
--				       unsigned int *wqe_size, u16 *cons_idx)
-+struct hinic_sq_wqe *hinic_sq_read_wqebb(struct hinic_sq *sq,
-+					 struct sk_buff **skb,
-+					 unsigned int *wqe_size, u16 *cons_idx)
- {
- 	struct hinic_hw_wqe *hw_wqe;
- 	struct hinic_sq_wqe *sq_wqe;
-@@ -658,6 +659,8 @@ struct hinic_sq_wqe *hinic_sq_read_wqe(struct hinic_sq *sq,
- 	if (IS_ERR(hw_wqe))
- 		return NULL;
- 
-+	*skb = sq->saved_skb[*cons_idx];
-+
- 	sq_wqe = &hw_wqe->sq_wqe;
- 	ctrl = &sq_wqe->ctrl;
- 	ctrl_info = be32_to_cpu(ctrl->ctrl_info);
-@@ -665,11 +668,28 @@ struct hinic_sq_wqe *hinic_sq_read_wqe(struct hinic_sq *sq,
- 
- 	*wqe_size = sizeof(*ctrl) + sizeof(sq_wqe->task);
- 	*wqe_size += SECT_SIZE_FROM_8BYTES(buf_sect_len);
-+	*wqe_size = ALIGN(*wqe_size, sq->wq->wqebb_size);
- 
--	*skb = sq->saved_skb[*cons_idx];
-+	return &hw_wqe->sq_wqe;
-+}
-+
-+/**
-+ * hinic_sq_read_wqe - read wqe ptr in the current ci and update the ci
-+ * @sq: send queue
-+ * @skb: return skb that was saved
-+ * @wqe_size: the size of the wqe
-+ * @cons_idx: consumer index of the wqe
-+ *
-+ * Return wqe in ci position
-+ **/
-+struct hinic_sq_wqe *hinic_sq_read_wqe(struct hinic_sq *sq,
-+				       struct sk_buff **skb,
-+				       unsigned int wqe_size, u16 *cons_idx)
-+{
-+	struct hinic_hw_wqe *hw_wqe;
- 
--	/* using the real wqe size to read wqe again */
--	hw_wqe = hinic_read_wqe(sq->wq, *wqe_size, cons_idx);
-+	hw_wqe = hinic_read_wqe(sq->wq, wqe_size, cons_idx);
-+	*skb = sq->saved_skb[*cons_idx];
- 
- 	return &hw_wqe->sq_wqe;
- }
-diff --git a/drivers/net/ethernet/huawei/hinic/hinic_hw_qp.h b/drivers/net/ethernet/huawei/hinic/hinic_hw_qp.h
-index df729a1587e9..6c84f83ec283 100644
---- a/drivers/net/ethernet/huawei/hinic/hinic_hw_qp.h
-+++ b/drivers/net/ethernet/huawei/hinic/hinic_hw_qp.h
-@@ -165,7 +165,11 @@ void hinic_sq_write_wqe(struct hinic_sq *sq, u16 prod_idx,
- 
- struct hinic_sq_wqe *hinic_sq_read_wqe(struct hinic_sq *sq,
- 				       struct sk_buff **skb,
--				       unsigned int *wqe_size, u16 *cons_idx);
-+				       unsigned int wqe_size, u16 *cons_idx);
-+
-+struct hinic_sq_wqe *hinic_sq_read_wqebb(struct hinic_sq *sq,
-+					 struct sk_buff **skb,
-+					 unsigned int *wqe_size, u16 *cons_idx);
- 
- void hinic_sq_put_wqe(struct hinic_sq *sq, unsigned int wqe_size);
- 
-diff --git a/drivers/net/ethernet/huawei/hinic/hinic_tx.c b/drivers/net/ethernet/huawei/hinic/hinic_tx.c
-index 2353ec829c04..c5fca0356c9c 100644
---- a/drivers/net/ethernet/huawei/hinic/hinic_tx.c
-+++ b/drivers/net/ethernet/huawei/hinic/hinic_tx.c
-@@ -283,7 +283,11 @@ static void free_all_tx_skbs(struct hinic_txq *txq)
- 	int nr_sges;
- 	u16 ci;
- 
--	while ((sq_wqe = hinic_sq_read_wqe(sq, &skb, &wqe_size, &ci))) {
-+	while ((sq_wqe = hinic_sq_read_wqebb(sq, &skb, &wqe_size, &ci))) {
-+		sq_wqe = hinic_sq_read_wqe(sq, &skb, wqe_size, &ci);
-+		if (!sq_wqe)
-+			break;
-+
- 		nr_sges = skb_shinfo(skb)->nr_frags + 1;
- 
- 		hinic_sq_get_sges(sq_wqe, txq->free_sges, nr_sges);
-@@ -319,11 +323,21 @@ static int free_tx_poll(struct napi_struct *napi, int budget)
- 	do {
- 		hw_ci = HW_CONS_IDX(sq) & wq->mask;
- 
--		sq_wqe = hinic_sq_read_wqe(sq, &skb, &wqe_size, &sw_ci);
-+		/* Reading a WQEBB to get real WQE size and consumer index. */
-+		sq_wqe = hinic_sq_read_wqebb(sq, &skb, &wqe_size, &sw_ci);
- 		if ((!sq_wqe) ||
- 		    (((hw_ci - sw_ci) & wq->mask) * wq->wqebb_size < wqe_size))
- 			break;
- 
-+		/* If this WQE have multiple WQEBBs, we will read again to get
-+		 * full size WQE.
-+		 */
-+		if (wqe_size > wq->wqebb_size) {
-+			sq_wqe = hinic_sq_read_wqe(sq, &skb, wqe_size, &sw_ci);
-+			if (unlikely(!sq_wqe))
-+				break;
-+		}
-+
- 		tx_bytes += skb->len;
- 		pkts++;
- 
--- 
-2.17.1
+							Thanx, Paul
 
