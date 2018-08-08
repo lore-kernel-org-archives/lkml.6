@@ -2,108 +2,107 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E93EC46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 09:07:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB2C4C46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 09:08:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DA8F216FB
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 09:07:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DA8F216FB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 66D3F21700
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 09:08:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="EPWwtzTw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66D3F21700
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727386AbeHHLZ5 (ORCPT
+        id S1727461AbeHHL0w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 07:25:57 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52310 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726979AbeHHLZ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 07:25:57 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6FC0B81663D5;
-        Wed,  8 Aug 2018 09:07:10 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-116-132.ams2.redhat.com [10.36.116.132])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2593C20180F4;
-        Wed,  8 Aug 2018 09:07:10 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 717CE16E2C; Wed,  8 Aug 2018 11:07:09 +0200 (CEST)
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     Gerd Hoffmann <kraxel@redhat.com>,
-        Dave Airlie <airlied@redhat.com>,
-        David Airlie <airlied@linux.ie>,
-        virtualization@lists.linux-foundation.org (open list:DRM DRIVER FOR
-        QEMU'S CIRRUS DEVICE), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2] drm/cirrus: flip default from 24bpp to 16bpp
-Date:   Wed,  8 Aug 2018 11:06:58 +0200
-Message-Id: <20180808090658.30224-1-kraxel@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 08 Aug 2018 09:07:10 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 08 Aug 2018 09:07:10 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'kraxel@redhat.com' RCPT:''
+        Wed, 8 Aug 2018 07:26:52 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:33580 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726979AbeHHL0w (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 07:26:52 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w78983ih001980;
+        Wed, 8 Aug 2018 04:08:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1533719283;
+        bh=UF/gtf0xh/GcSZ2JQJumLOViBPJRjRN4UULWmvxxpwo=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=EPWwtzTwWH7igcrlb5GpNuwOAx5BBs3l6HjAHitraXvYO+msdIY6+XhlEx3mWYUrd
+         XEiUi9tcAVgsa10QY/NK+LrlncBhUbXmrFZN/L2rWGIluHZNdieeZJ/goHYCLcQDwv
+         9QAdn/niVIuDmyJNPsg0kbXsS4EUG3qmD6U9+y3Q=
+Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w78982dQ022269;
+        Wed, 8 Aug 2018 04:08:03 -0500
+Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Wed, 8 Aug
+ 2018 04:08:02 -0500
+Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Wed, 8 Aug 2018 04:08:02 -0500
+Received: from [172.24.191.45] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w78980Ih003647;
+        Wed, 8 Aug 2018 04:08:01 -0500
+Subject: Re: [PATCH] arm: dts: am4372: setup rtc as system-power-controller
+To:     Tony Lindgren <tony@atomide.com>
+CC:     <t-kristo@ti.com>, <linux-omap@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+References: <1532498135-9031-1-git-send-email-j-keerthy@ti.com>
+ <20180808090607.GR99251@atomide.com>
+From:   Keerthy <j-keerthy@ti.com>
+Message-ID: <bc07ac40-accc-64aa-a277-063833645545@ti.com>
+Date:   Wed, 8 Aug 2018 14:38:00 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
+MIME-Version: 1.0
+In-Reply-To: <20180808090607.GR99251@atomide.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The problem with 24bpp is that it is a rather unusual depth these days,
-cirrus is pretty much the only relevant device still using that, and it
-is a endless source of issues.  Wayland doesn't support it at all.  Bugs
-in Xorg keep showing up.
 
-Typically either 32bpp or 16bpp are used.  Using 32bpp would limit the
-resolution to 800x600 due to hardware constrains.  So lets go with 16bpp.
 
-Also use the default depth for the framebuffer console.
+On Wednesday 08 August 2018 02:36 PM, Tony Lindgren wrote:
+> * Keerthy <j-keerthy@ti.com> [180725 05:59]:
+>> RTC alarm2 is connected to pmic_en line and hence can be used to control
+>> the pmic enabling/disabling. Hence add the system-power-controller for rtc
+>> node.
+>>
+>> Signed-off-by: Keerthy <j-keerthy@ti.com>
+>> ---
+>>  arch/arm/boot/dts/am4372.dtsi | 1 +
+>>  1 file changed, 1 insertion(+)
+>>
+>> diff --git a/arch/arm/boot/dts/am4372.dtsi b/arch/arm/boot/dts/am4372.dtsi
+>> index f0cbd86..d4b7c59 100644
+>> --- a/arch/arm/boot/dts/am4372.dtsi
+>> +++ b/arch/arm/boot/dts/am4372.dtsi
+>> @@ -469,6 +469,7 @@
+>>  			ti,hwmods = "rtc";
+>>  			clocks = <&clk_32768_ck>;
+>>  			clock-names = "int-clk";
+>> +			system-power-controller;
+>>  			status = "disabled";
+>>  		};
+>>  
+> 
+> Should this be queued as a fix for v4.19-rc series?
 
-Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
----
- drivers/gpu/drm/cirrus/cirrus_drv.c   | 4 ++--
- drivers/gpu/drm/cirrus/cirrus_fbdev.c | 3 +--
- 2 files changed, 3 insertions(+), 4 deletions(-)
+Yes this makes pmic to shutdown during power off.
 
-diff --git a/drivers/gpu/drm/cirrus/cirrus_drv.c b/drivers/gpu/drm/cirrus/cirrus_drv.c
-index 69c4e352dd..b4f7be056c 100644
---- a/drivers/gpu/drm/cirrus/cirrus_drv.c
-+++ b/drivers/gpu/drm/cirrus/cirrus_drv.c
-@@ -16,11 +16,11 @@
- #include "cirrus_drv.h"
- 
- int cirrus_modeset = -1;
--int cirrus_bpp = 24;
-+int cirrus_bpp = 16;
- 
- MODULE_PARM_DESC(modeset, "Disable/Enable modesetting");
- module_param_named(modeset, cirrus_modeset, int, 0400);
--MODULE_PARM_DESC(bpp, "Max bits-per-pixel (default:24)");
-+MODULE_PARM_DESC(bpp, "Max bits-per-pixel (default:16)");
- module_param_named(bpp, cirrus_bpp, int, 0400);
- 
- /*
-diff --git a/drivers/gpu/drm/cirrus/cirrus_fbdev.c b/drivers/gpu/drm/cirrus/cirrus_fbdev.c
-index 32fbfba2c6..b329a54290 100644
---- a/drivers/gpu/drm/cirrus/cirrus_fbdev.c
-+++ b/drivers/gpu/drm/cirrus/cirrus_fbdev.c
-@@ -271,7 +271,6 @@ int cirrus_fbdev_init(struct cirrus_device *cdev)
- {
- 	struct cirrus_fbdev *gfbdev;
- 	int ret;
--	int bpp_sel = 24;
- 
- 	/*bpp_sel = 8;*/
- 	gfbdev = kzalloc(sizeof(struct cirrus_fbdev), GFP_KERNEL);
-@@ -296,7 +295,7 @@ int cirrus_fbdev_init(struct cirrus_device *cdev)
- 	/* disable all the possible outputs/crtcs before entering KMS mode */
- 	drm_helper_disable_unused_functions(cdev->dev);
- 
--	return drm_fb_helper_initial_config(&gfbdev->helper, bpp_sel);
-+	return drm_fb_helper_initial_config(&gfbdev->helper, cirrus_bpp);
- }
- 
- void cirrus_fbdev_fini(struct cirrus_device *cdev)
--- 
-2.9.3
-
+> 
+> Regards,
+> 
+> Tony
+> 
