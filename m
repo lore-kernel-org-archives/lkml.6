@@ -3,33 +3,32 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5671EC46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 08:30:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2375C4646D
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 08:30:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FB62216F6
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 08:30:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FB62216F6
+	by mail.kernel.org (Postfix) with ESMTP id 681C7216F6
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 08:30:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 681C7216F6
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727367AbeHHKs7 (ORCPT
+        id S1727245AbeHHKsy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 06:48:59 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37872 "EHLO mx1.redhat.com"
+        Wed, 8 Aug 2018 06:48:54 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50940 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726979AbeHHKs6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 06:48:58 -0400
+        id S1727177AbeHHKsx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 06:48:53 -0400
 Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8F680402315B;
-        Wed,  8 Aug 2018 08:30:19 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6C2EC8197037;
+        Wed,  8 Aug 2018 08:30:15 +0000 (UTC)
 Received: from shalem.localdomain.com (ovpn-117-222.ams2.redhat.com [10.36.117.222])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id AECD82027047;
-        Wed,  8 Aug 2018 08:30:17 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 93C7A2027047;
+        Wed,  8 Aug 2018 08:30:13 +0000 (UTC)
 From:   Hans de Goede <hdegoede@redhat.com>
 To:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
         Len Brown <lenb@kernel.org>,
@@ -43,245 +42,80 @@ Cc:     Hans de Goede <hdegoede@redhat.com>,
         linux-kernel@vger.kernel.org,
         Heikki Krogerus <heikki.krogerus@linux.intel.com>,
         John Garry <john.garry@huawei.com>, linux-i2c@vger.kernel.org
-Subject: [PATCH v4 4/4] i2c: Add multi-instantiate pseudo driver
-Date:   Wed,  8 Aug 2018 10:30:06 +0200
-Message-Id: <20180808083006.31919-5-hdegoede@redhat.com>
+Subject: [PATCH v4 2/4] ACPI / scan: Create platform device for fwnodes with multiple i2c devices
+Date:   Wed,  8 Aug 2018 10:30:04 +0200
+Message-Id: <20180808083006.31919-3-hdegoede@redhat.com>
 In-Reply-To: <20180808083006.31919-1-hdegoede@redhat.com>
 References: <20180808083006.31919-1-hdegoede@redhat.com>
 X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Wed, 08 Aug 2018 08:30:19 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Wed, 08 Aug 2018 08:30:19 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'hdegoede@redhat.com' RCPT:''
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 08 Aug 2018 08:30:15 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 08 Aug 2018 08:30:15 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'hdegoede@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On systems with ACPI instantiated i2c-clients, normally there is 1 fw_node
-per i2c-device and that fw-node contains 1 I2cSerialBus resource for that 1
-i2c-device.
+Some devices have multiple I2cSerialBus resources and for things to work
+an i2c-client must be instantiated for each, each with its own
+i2c_device_id.
 
-But in some rare cases the manufacturer has decided to describe multiple
-i2c-devices in a single ACPI fwnode with multiple I2cSerialBus resources.
+Normally we only instantiate an i2c-client for the first resource, using
+the ACPI HID as id.
 
-An earlier attempt to fix this in the i2c-core resulted in a lot of extra
-code to support this corner-case.
+This commit adds a list of HIDs of devices, which need multiple i2c-clients
+instantiated from a single fwnode, to acpi_device_enumeration_by_parent and
+makes acpi_device_enumeration_by_parent return false for these devices so
+that a platform device will be instantiated.
 
-This commit introduces a new i2c-multi-instantiate driver which fixes this
-in a different way. This new driver can be built as a module which will
-only loaded on affected systems.
-
-This driver will instantiate a new i2c-client per I2cSerialBus resource,
-using the driver_data from the acpi_device_id it is binding to to tell it
-which chip-type (and optional irq-resource) to use when instantiating.
-
-Note this driver depends on a platform device being instantiated for the
-ACPI fwnode, see the i2c_multi_instantiate_ids list of ACPI device-ids in
-drivers/acpi/scan.c: acpi_device_enumeration_by_parent().
+This allows the drivers/platform/x86/i2c-multi-instantiate.c driver, which
+knows which i2c_device_id to use for each resource, to bind to the fwnode
+and initiate an i2c-client for each resource.
 
 Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 ---
-Changes in v2:
--Rebase on top of 4.18-rc2
-
 Changes in v3:
--Change from an i2c-driver using a hack to allow having multiple i2c clients
- at the same address to a platform-driver
+-New patch in v3 of this patch-set
 
 Changes in v4:
--Tweak MAINTAINERS entry a bit
+-Some small code-style fixes
 ---
- MAINTAINERS                                  |   6 +
- drivers/platform/x86/Kconfig                 |  11 ++
- drivers/platform/x86/Makefile                |   1 +
- drivers/platform/x86/i2c-multi-instantiate.c | 131 +++++++++++++++++++
- 4 files changed, 149 insertions(+)
- create mode 100644 drivers/platform/x86/i2c-multi-instantiate.c
+ drivers/acpi/scan.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 9b377508f24f..dbe7836e4f6b 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -367,6 +367,12 @@ L:	linux-acpi@vger.kernel.org
- S:	Maintained
- F:	drivers/acpi/arm64
+diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
+index 6799d00dd790..b51913372e21 100644
+--- a/drivers/acpi/scan.c
++++ b/drivers/acpi/scan.c
+@@ -1540,6 +1540,18 @@ static bool acpi_device_enumeration_by_parent(struct acpi_device *device)
+ {
+ 	struct list_head resource_list;
+ 	bool is_serial_bus_slave = false;
++	/*
++	 * These devices have multiple I2cSerialBus resources and an i2c-client
++	 * must be instantiated for each, each with its own i2c_device_id.
++	 * Normally we only instantiate an i2c-client for the first resource,
++	 * using the ACPI HID as id. These special cases are handled by the
++	 * drivers/platform/x86/i2c-multi-instantiate.c driver, which knows
++	 * which i2c_device_id to use for each resource.
++	 */
++	static const struct acpi_device_id i2c_multi_instantiate_ids[] = {
++		{"BSG1160", },
++		{}
++	};
  
-+ACPI I2C MULTI INSTANTIATE DRIVER
-+M:	Hans de Goede <hdegoede@redhat.com>
-+L:	platform-driver-x86@vger.kernel.org
-+S:	Maintained
-+F:	drivers/platform/x86/i2c-multi-instantiate.c
-+
- ACPI PMIC DRIVERS
- M:	"Rafael J. Wysocki" <rjw@rjwysocki.net>
- M:	Len Brown <lenb@kernel.org>
-diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-index 85a93453237c..64c82592d4b6 100644
---- a/drivers/platform/x86/Kconfig
-+++ b/drivers/platform/x86/Kconfig
-@@ -1219,6 +1219,17 @@ config INTEL_CHTDC_TI_PWRBTN
- 	  To compile this driver as a module, choose M here: the module
- 	  will be called intel_chtdc_ti_pwrbtn.
+ 	if (acpi_is_indirect_io_slave(device))
+ 		return true;
+@@ -1551,6 +1563,10 @@ static bool acpi_device_enumeration_by_parent(struct acpi_device *device)
+ 	     fwnode_property_present(&device->fwnode, "baud")))
+ 		return true;
  
-+config I2C_MULTI_INSTANTIATE
-+	tristate "I2C multi instantiate pseudo device driver"
-+	depends on I2C && ACPI
-+	help
-+	  Some ACPI-based systems list multiple i2c-devices in a single ACPI
-+	  firmware-node. This driver will instantiate separate i2c-clients
-+	  for each device in the firmware-node.
++	/* Instantiate a pdev for the i2c-multi-instantiate drv to bind to */
++	if (!acpi_match_device_ids(device, i2c_multi_instantiate_ids))
++		return false;
 +
-+	  To compile this driver as a module, choose M here: the module
-+	  will be called i2c-multi-instantiate.
-+
- endif # X86_PLATFORM_DEVICES
- 
- config PMC_ATOM
-diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Makefile
-index 8d9477114fb5..e6d1becf81ce 100644
---- a/drivers/platform/x86/Makefile
-+++ b/drivers/platform/x86/Makefile
-@@ -91,3 +91,4 @@ obj-$(CONFIG_PMC_ATOM)		+= pmc_atom.o
- obj-$(CONFIG_MLX_PLATFORM)	+= mlx-platform.o
- obj-$(CONFIG_INTEL_TURBO_MAX_3) += intel_turbo_max_3.o
- obj-$(CONFIG_INTEL_CHTDC_TI_PWRBTN)	+= intel_chtdc_ti_pwrbtn.o
-+obj-$(CONFIG_I2C_MULTI_INSTANTIATE)	+= i2c-multi-instantiate.o
-diff --git a/drivers/platform/x86/i2c-multi-instantiate.c b/drivers/platform/x86/i2c-multi-instantiate.c
-new file mode 100644
-index 000000000000..4db4b8cabfc9
---- /dev/null
-+++ b/drivers/platform/x86/i2c-multi-instantiate.c
-@@ -0,0 +1,131 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * I2C multi-instantiate driver, pseudo driver to instantiate multiple
-+ * i2c-clients from a single fwnode.
-+ *
-+ * Copyright 2018 Hans de Goede <hdegoede@redhat.com>
-+ */
-+
-+#include <linux/acpi.h>
-+#include <linux/i2c.h>
-+#include <linux/interrupt.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+
-+struct i2c_inst_data {
-+	const char *type;
-+	int irq_idx;
-+};
-+
-+struct i2c_multi_inst_data {
-+	int no_clients;
-+	struct i2c_client *clients[0];
-+};
-+
-+static int i2c_multi_inst_probe(struct platform_device *pdev)
-+{
-+	struct i2c_multi_inst_data *multi;
-+	const struct acpi_device_id *match;
-+	const struct i2c_inst_data *inst_data;
-+	struct i2c_board_info board_info = {};
-+	struct device *dev = &pdev->dev;
-+	struct acpi_device *adev;
-+	char name[32];
-+	int i, ret;
-+
-+	match = acpi_match_device(dev->driver->acpi_match_table, dev);
-+	if (!match) {
-+		dev_err(dev, "Error ACPI match data is missing\n");
-+		return -ENODEV;
-+	}
-+	inst_data = (const struct i2c_inst_data *)match->driver_data;
-+
-+	adev = ACPI_COMPANION(dev);
-+
-+	/* Count number of clients to instantiate */
-+	for (i = 0; inst_data[i].type; i++) {}
-+
-+	multi = devm_kmalloc(dev,
-+			offsetof(struct i2c_multi_inst_data, clients[i]),
-+			GFP_KERNEL);
-+	if (!multi)
-+		return -ENOMEM;
-+
-+	multi->no_clients = i;
-+
-+	for (i = 0; i < multi->no_clients; i++) {
-+		memset(&board_info, 0, sizeof(board_info));
-+		strlcpy(board_info.type, inst_data[i].type, I2C_NAME_SIZE);
-+		snprintf(name, sizeof(name), "%s-%s", match->id,
-+			 inst_data[i].type);
-+		board_info.dev_name = name;
-+		board_info.irq = 0;
-+		if (inst_data[i].irq_idx != -1) {
-+			ret = acpi_dev_gpio_irq_get(adev, inst_data[i].irq_idx);
-+			if (ret < 0) {
-+				dev_err(dev, "Error requesting irq at index %d: %d\n",
-+					inst_data[i].irq_idx, ret);
-+				goto error;
-+			}
-+			board_info.irq = ret;
-+		}
-+		multi->clients[i] = i2c_acpi_new_device(dev, i, &board_info);
-+		if (!multi->clients[i]) {
-+			dev_err(dev, "Error creating i2c-client, idx %d\n", i);
-+			ret = -ENODEV;
-+			goto error;
-+		}
-+	}
-+
-+	platform_set_drvdata(pdev, multi);
-+	return 0;
-+
-+error:
-+	while (--i >= 0)
-+		i2c_unregister_device(multi->clients[i]);
-+
-+	return ret;
-+}
-+
-+static int i2c_multi_inst_remove(struct platform_device *pdev)
-+{
-+	struct i2c_multi_inst_data *multi = platform_get_drvdata(pdev);
-+	int i;
-+
-+	for (i = 0; i < multi->no_clients; i++)
-+		i2c_unregister_device(multi->clients[i]);
-+
-+	return 0;
-+}
-+
-+static const struct i2c_inst_data bsg1160_data[]  = {
-+	{ "bmc150_accel", 0 },
-+	{ "bmc150_magn", -1 },
-+	{ "bmg160", -1 },
-+	{}
-+};
-+
-+/*
-+ * Note new device-ids must also be added to i2c_multi_instantiate_ids in
-+ * drivers/acpi/scan.c: acpi_device_enumeration_by_parent().
-+ */
-+static const struct acpi_device_id i2c_multi_inst_acpi_ids[] = {
-+	{ "BSG1160", (unsigned long)bsg1160_data },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(acpi, i2c_multi_inst_acpi_ids);
-+
-+static struct platform_driver i2c_multi_inst_driver = {
-+	.driver	= {
-+		.name = "I2C multi instantiate pseudo device driver",
-+		.acpi_match_table = ACPI_PTR(i2c_multi_inst_acpi_ids),
-+	},
-+	.probe = i2c_multi_inst_probe,
-+	.remove = i2c_multi_inst_remove,
-+};
-+module_platform_driver(i2c_multi_inst_driver);
-+
-+MODULE_DESCRIPTION("I2C multi instantiate pseudo device driver");
-+MODULE_AUTHOR("Hans de Goede <hdegoede@redhat.com>");
-+MODULE_LICENSE("GPL");
+ 	INIT_LIST_HEAD(&resource_list);
+ 	acpi_dev_get_resources(device, &resource_list,
+ 			       acpi_check_serial_bus_slave,
 -- 
 2.18.0
 
