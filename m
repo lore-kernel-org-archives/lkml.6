@@ -1,37 +1,38 @@
 Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BE15C4646D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 16:13:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 547AFC46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 16:13:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB5E921723
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 16:13:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB5E921723
+	by mail.kernel.org (Postfix) with ESMTP id E377721723
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 16:13:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E377721723
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729138AbeHHSdd (ORCPT
+        id S1729748AbeHHSeI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 14:33:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42044 "EHLO mail.kernel.org"
+        Wed, 8 Aug 2018 14:34:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42238 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728400AbeHHSdc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 14:33:32 -0400
+        id S1727693AbeHHSdd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 14:33:33 -0400
 Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3CFA221A35;
-        Wed,  8 Aug 2018 16:13:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 33C9D21A86;
+        Wed,  8 Aug 2018 16:13:11 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.91)
         (envelope-from <rostedt@goodmis.org>)
-        id 1fnR5B-0002YR-93; Wed, 08 Aug 2018 12:13:09 -0400
-Message-Id: <20180808161309.182490125@goodmis.org>
+        id 1fnR5C-0002bh-7L; Wed, 08 Aug 2018 12:13:10 -0400
+Message-Id: <20180808161310.112294176@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Wed, 08 Aug 2018 11:56:03 -0400
+Date:   Wed, 08 Aug 2018 11:56:09 -0400
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org, linux-trace-devel@vger.kernel.org
 Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
@@ -44,7 +45,7 @@ Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Yordan Karadzhov <y.karadz@gmail.com>,
         Tzvetomir Stoyanov <tz.stoyanov@gmail.com>
-Subject: [RFC][PATCH 15/24] tools/lib/traceevent, tools/perf: Rename traceevent_plugin_* APIs
+Subject: [RFC][PATCH 21/24] tools/lib/traceevent: Rename various pevent get/set/is APIs
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
 Sender: linux-kernel-owner@vger.kernel.org
@@ -56,156 +57,116 @@ From: "Tzvetomir Stoyanov (VMware)" <tz.stoyanov@gmail.com>
 
 In order to make libtraceevent into a proper library, variables, data
 structures and functions require a unique prefix to prevent name space
-conflicts. That prefix will be "tep_" and not "traceevent_". This changes
-APIs: traceevent_plugin_list_options, traceevent_plugin_free_options_list,
-traceevent_plugin_add_options, traceevent_plugin_remove_options,
-traceevent_print_plugins
+conflicts. That prefix will be "tep_" and not "pevent_". This changes
+APIs: pevent_pid_is_registered, pevent_get_cpus, pevent_set_cpus,
+pevent_is_file_bigendian, pevent_is_host_bigendian, pevent_is_latency_format,
+pevent_set_latency_format
 
 Signed-off-by: Tzvetomir Stoyanov (VMware) <tz.stoyanov@gmail.com>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- tools/lib/traceevent/event-parse.h     | 16 +++++++--------
- tools/lib/traceevent/event-plugin.c    | 28 +++++++++++++-------------
- tools/lib/traceevent/plugin_function.c |  4 ++--
- 3 files changed, 24 insertions(+), 24 deletions(-)
+ tools/lib/traceevent/event-parse.c |  4 ++--
+ tools/lib/traceevent/event-parse.h | 14 +++++++-------
+ tools/lib/traceevent/plugin_kvm.c  |  4 ++--
+ 3 files changed, 11 insertions(+), 11 deletions(-)
 
+diff --git a/tools/lib/traceevent/event-parse.c b/tools/lib/traceevent/event-parse.c
+index 53d866434478..d367f7f2f2fc 100644
+--- a/tools/lib/traceevent/event-parse.c
++++ b/tools/lib/traceevent/event-parse.c
+@@ -211,14 +211,14 @@ static const char *find_cmdline(struct tep_handle *pevent, int pid)
+ }
+ 
+ /**
+- * pevent_pid_is_registered - return if a pid has a cmdline registered
++ * tep_pid_is_registered - return if a pid has a cmdline registered
+  * @pevent: handle for the pevent
+  * @pid: The pid to check if it has a cmdline registered with.
+  *
+  * Returns 1 if the pid has a cmdline mapped to it
+  * 0 otherwise.
+  */
+-int pevent_pid_is_registered(struct tep_handle *pevent, int pid)
++int tep_pid_is_registered(struct tep_handle *pevent, int pid)
+ {
+ 	const struct cmdline *comm;
+ 	struct cmdline key;
 diff --git a/tools/lib/traceevent/event-parse.h b/tools/lib/traceevent/event-parse.h
-index 81f34132fc47..ec327849a7dc 100644
+index 63ec6d419219..7f8921431cf1 100644
 --- a/tools/lib/traceevent/event-parse.h
 +++ b/tools/lib/traceevent/event-parse.h
-@@ -438,14 +438,14 @@ struct plugin_list;
- struct plugin_list *tep_load_plugins(struct tep_handle *pevent);
- void tep_unload_plugins(struct plugin_list *plugin_list,
- 			struct tep_handle *pevent);
--char **traceevent_plugin_list_options(void);
--void traceevent_plugin_free_options_list(char **list);
--int traceevent_plugin_add_options(const char *name,
--				  struct tep_plugin_option *options);
--void traceevent_plugin_remove_options(struct tep_plugin_option *options);
--void traceevent_print_plugins(struct trace_seq *s,
--			      const char *prefix, const char *suffix,
--			      const struct plugin_list *list);
-+char **tep_plugin_list_options(void);
-+void tep_plugin_free_options_list(char **list);
-+int tep_plugin_add_options(const char *name,
-+			   struct tep_plugin_option *options);
-+void tep_plugin_remove_options(struct tep_plugin_option *options);
-+void tep_print_plugins(struct trace_seq *s,
-+			const char *prefix, const char *suffix,
-+			const struct plugin_list *list);
+@@ -624,7 +624,7 @@ int tep_register_function(struct tep_handle *pevent, char *name,
+ 			  unsigned long long addr, char *mod);
+ int tep_register_print_string(struct tep_handle *pevent, const char *fmt,
+ 			      unsigned long long addr);
+-int pevent_pid_is_registered(struct tep_handle *pevent, int pid);
++int tep_pid_is_registered(struct tep_handle *pevent, int pid);
  
- struct cmdline;
- struct cmdline_list;
-diff --git a/tools/lib/traceevent/event-plugin.c b/tools/lib/traceevent/event-plugin.c
-index c837a73c03e6..8e324ed46547 100644
---- a/tools/lib/traceevent/event-plugin.c
-+++ b/tools/lib/traceevent/event-plugin.c
-@@ -97,7 +97,7 @@ static int update_option_value(struct tep_plugin_option *op, const char *val)
- }
+ void tep_print_event_task(struct tep_handle *pevent, struct trace_seq *s,
+ 			  struct event_format *event,
+@@ -731,12 +731,12 @@ struct event_format **pevent_list_events(struct tep_handle *pevent, enum event_s
+ struct format_field **pevent_event_common_fields(struct event_format *event);
+ struct format_field **pevent_event_fields(struct event_format *event);
  
- /**
-- * traceevent_plugin_list_options - get list of plugin options
-+ * tep_plugin_list_options - get list of plugin options
-  *
-  * Returns an array of char strings that list the currently registered
-  * plugin options in the format of <plugin>:<option>. This list can be
-@@ -106,9 +106,9 @@ static int update_option_value(struct tep_plugin_option *op, const char *val)
-  * Returns NULL if there's no options registered. On error it returns
-  * INVALID_PLUGIN_LIST_OPTION
-  *
-- * Must be freed with traceevent_plugin_free_options_list().
-+ * Must be freed with tep_plugin_free_options_list().
-  */
--char **traceevent_plugin_list_options(void)
-+char **tep_plugin_list_options(void)
+-static inline int pevent_get_cpus(struct tep_handle *pevent)
++static inline int tep_get_cpus(struct tep_handle *pevent)
  {
- 	struct registered_plugin_options *reg;
- 	struct tep_plugin_option *op;
-@@ -146,7 +146,7 @@ char **traceevent_plugin_list_options(void)
- 	return INVALID_PLUGIN_LIST_OPTION;
+ 	return pevent->cpus;
  }
  
--void traceevent_plugin_free_options_list(char **list)
-+void tep_plugin_free_options_list(char **list)
+-static inline void pevent_set_cpus(struct tep_handle *pevent, int cpus)
++static inline void tep_set_cpus(struct tep_handle *pevent, int cpus)
  {
- 	int i;
- 
-@@ -215,14 +215,14 @@ update_option(const char *file, struct tep_plugin_option *option)
+ 	pevent->cpus = cpus;
+ }
+@@ -761,7 +761,7 @@ static inline void tep_set_page_size(struct tep_handle *pevent, int _page_size)
+ 	pevent->page_size = _page_size;
  }
  
- /**
-- * traceevent_plugin_add_options - Add a set of options by a plugin
-+ * tep_plugin_add_options - Add a set of options by a plugin
-  * @name: The name of the plugin adding the options
-  * @options: The set of options being loaded
-  *
-  * Sets the options with the values that have been added by user.
-  */
--int traceevent_plugin_add_options(const char *name,
--				  struct tep_plugin_option *options)
-+int tep_plugin_add_options(const char *name,
-+			   struct tep_plugin_option *options)
+-static inline int pevent_is_file_bigendian(struct tep_handle *pevent)
++static inline int tep_is_file_bigendian(struct tep_handle *pevent)
  {
- 	struct registered_plugin_options *reg;
- 
-@@ -241,10 +241,10 @@ int traceevent_plugin_add_options(const char *name,
+ 	return pevent->file_bigendian;
+ }
+@@ -771,7 +771,7 @@ static inline void tep_set_file_bigendian(struct tep_handle *pevent, int endian)
+ 	pevent->file_bigendian = endian;
  }
  
- /**
-- * traceevent_plugin_remove_options - remove plugin options that were registered
-- * @options: Options to removed that were registered with traceevent_plugin_add_options
-+ * tep_plugin_remove_options - remove plugin options that were registered
-+ * @options: Options to removed that were registered with tep_plugin_add_options
-  */
--void traceevent_plugin_remove_options(struct tep_plugin_option *options)
-+void tep_plugin_remove_options(struct tep_plugin_option *options)
+-static inline int pevent_is_host_bigendian(struct tep_handle *pevent)
++static inline int tep_is_host_bigendian(struct tep_handle *pevent)
  {
- 	struct registered_plugin_options **last;
- 	struct registered_plugin_options *reg;
-@@ -260,7 +260,7 @@ void traceevent_plugin_remove_options(struct tep_plugin_option *options)
+ 	return pevent->host_bigendian;
+ }
+@@ -781,12 +781,12 @@ static inline void tep_set_host_bigendian(struct tep_handle *pevent, int endian)
+ 	pevent->host_bigendian = endian;
  }
  
- /**
-- * traceevent_print_plugins - print out the list of plugins loaded
-+ * tep_print_plugins - print out the list of plugins loaded
-  * @s: the trace_seq descripter to write to
-  * @prefix: The prefix string to add before listing the option name
-  * @suffix: The suffix string ot append after the option name
-@@ -270,9 +270,9 @@ void traceevent_plugin_remove_options(struct tep_plugin_option *options)
-  * returned by tep_load_plugins(). Use @prefix and @suffix for formating:
-  * @prefix = "  ", @suffix = "\n".
-  */
--void traceevent_print_plugins(struct trace_seq *s,
--			      const char *prefix, const char *suffix,
--			      const struct plugin_list *list)
-+void tep_print_plugins(struct trace_seq *s,
-+		       const char *prefix, const char *suffix,
-+		       const struct plugin_list *list)
+-static inline int pevent_is_latency_format(struct tep_handle *pevent)
++static inline int tep_is_latency_format(struct tep_handle *pevent)
  {
- 	while (list) {
- 		trace_seq_printf(s, "%s%s%s", prefix, list->name, suffix);
-diff --git a/tools/lib/traceevent/plugin_function.c b/tools/lib/traceevent/plugin_function.c
-index 342be570ee8c..57165da1bd51 100644
---- a/tools/lib/traceevent/plugin_function.c
-+++ b/tools/lib/traceevent/plugin_function.c
-@@ -168,7 +168,7 @@ int TEP_PLUGIN_LOADER(struct tep_handle *pevent)
- 	pevent_register_event_handler(pevent, -1, "ftrace", "function",
- 				      function_handler, NULL);
- 
--	traceevent_plugin_add_options("ftrace", plugin_options);
-+	tep_plugin_add_options("ftrace", plugin_options);
- 
- 	return 0;
+ 	return pevent->latency_format;
  }
-@@ -186,7 +186,7 @@ void TEP_PLUGIN_UNLOADER(struct tep_handle *pevent)
- 		free(fstack[i].stack);
- 	}
  
--	traceevent_plugin_remove_options(plugin_options);
-+	tep_plugin_remove_options(plugin_options);
+-static inline void pevent_set_latency_format(struct tep_handle *pevent, int lat)
++static inline void tep_set_latency_format(struct tep_handle *pevent, int lat)
+ {
+ 	pevent->latency_format = lat;
+ }
+diff --git a/tools/lib/traceevent/plugin_kvm.c b/tools/lib/traceevent/plugin_kvm.c
+index 7ebe82bf19ce..1d0d15906225 100644
+--- a/tools/lib/traceevent/plugin_kvm.c
++++ b/tools/lib/traceevent/plugin_kvm.c
+@@ -388,8 +388,8 @@ static int kvm_mmu_print_role(struct trace_seq *s, struct tep_record *record,
+ 	 * We can only use the structure if file is of the same
+ 	 * endianess.
+ 	 */
+-	if (pevent_is_file_bigendian(event->pevent) ==
+-	    pevent_is_host_bigendian(event->pevent)) {
++	if (tep_is_file_bigendian(event->pevent) ==
++	    tep_is_host_bigendian(event->pevent)) {
  
- 	free(fstack);
- 	fstack = NULL;
+ 		trace_seq_printf(s, "%u q%u%s %s%s %spae %snxe %swp%s%s%s",
+ 				 role.level,
 -- 
 2.18.0
 
