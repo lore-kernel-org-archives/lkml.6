@@ -2,128 +2,128 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3799C46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 17:50:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2CE1C46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 17:51:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86DA1216F2
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 17:50:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86DA1216F2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 81152216F2
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 17:51:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CHQcLzTf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81152216F2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728711AbeHHULY (ORCPT
+        id S1729689AbeHHULp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 16:11:24 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:35314 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727062AbeHHULX (ORCPT
+        Wed, 8 Aug 2018 16:11:45 -0400
+Received: from mail-ua0-f193.google.com ([209.85.217.193]:33099 "EHLO
+        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727062AbeHHULp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 16:11:23 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 9CF6D8063D; Wed,  8 Aug 2018 19:50:36 +0200 (CEST)
-Date:   Wed, 8 Aug 2018 19:50:36 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Yu Chen <yu.c.chen@intel.com>
-Cc:     Ryan Chen <yu.chen.surf@gmail.com>, jlee@suse.com,
-        oneukum@suse.com, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        ebiggers@google.com, Theodore Ts'o <tytso@mit.edu>,
-        smueller@chronox.de, denkenz@gmail.com,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        linux-crypto@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kookoo.gu@intel.com, Zhang Rui <rui.zhang@intel.com>
-Subject: Re: [PATCH 0/4][RFC v2] Introduce the in-kernel hibernation
- encryption
-Message-ID: <20180808175036.GA16217@amd>
-References: <1532346156.3057.11.camel@suse.com>
- <20180723162302.GA4503@sandybridge-desktop>
- <1532590246.7411.3.camel@suse.com>
- <20180726081404.GG4244@linux-l9pv.suse>
- <20180730170415.GQ4244@linux-l9pv.suse>
- <20180803033702.GB416@sandybridge-desktop>
- <20180803053445.GC4244@linux-l9pv.suse>
- <CADjb_WSURQz86+E8kakNf7UBDM+aho+uaz3QdDkuGsEgan=szw@mail.gmail.com>
- <20180805100200.GB22948@amd>
- <20180806084534.GB12124@chenyu-desktop>
+        Wed, 8 Aug 2018 16:11:45 -0400
+Received: by mail-ua0-f193.google.com with SMTP id i4-v6so3355401uak.0;
+        Wed, 08 Aug 2018 10:50:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=ngxSF88L3UPmGJiFCLGrUmz76gNbLrC+CIojozODNoU=;
+        b=CHQcLzTfBE62taG8EKKEpED36TtIvBYBKcU7MxitLbwbaTTtOQ8iiyO1xc26oMHjMX
+         wlyxa3heJx44p6scDp1kglvY+Fkq/zM+NGMmH6JcRu1j5P7TwpaR1knNIiR3xKIfc+u2
+         4kUFY4jd82OGKNy+c1SKwTqdW5nou9bVpfQzLb816O79lPEQH8PRZO87jiCMSifJAJ/x
+         0uFWHnJ/NO7Zd2wPIzSRWe1iTGoCnhDfRAgW2GmkvuAiU0mjsHqDDJ7TZendYOZ3J61z
+         Irwzg7y6A+SlMQaHHVav74qL8jpeBayKTP3DToqVwiRwHtGXWLZ8mPyN8tQDSPF28eob
+         nUKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=ngxSF88L3UPmGJiFCLGrUmz76gNbLrC+CIojozODNoU=;
+        b=bDzHMKEKrSU9lMTlLGwdCFySHQpV1L8gNVWpJNSrL2hnblUl5/vFt3S6mf7e0WEFiE
+         ofDpOjdCM5H6IjoawhKjUAQr6aCM8C3uPk6lufKrS2n6pF7B4AhVL86d69s7r+8hgQO4
+         zEadgWSNauGp7aF1sgcyCKgKdB2XBBmSeEJ9y+1bLYextjYm67QbGTwlJ6BdujHS5yeB
+         AfhCym7H1xnGQlpJoyosQq4eMVAlcGyo5j3G68FP3DULcGv6VpP23b/+aCe0MiQu3oRK
+         bMGlEcnw2njor/xrY5hoJFT2OPL6nFlhRA/ExQj25gX5+IqArm+Hb5UkwfgZjiC8UsE4
+         L2DQ==
+X-Gm-Message-State: AOUpUlFUxlru50cdOzzuaKm03SHs99l8niMny00xGTLwmL161qX9b+5y
+        huP193ZVnEWtURb7tQcH+OFtrfgJn0S+y35jv1E=
+X-Google-Smtp-Source: AA+uWPxVjZdd5z1dGYPEUDpn4NgSIsb6z7r/ftShyIM5joIWKbyezPSR30K/8geKZg5FORE026R9+tFMiVTwmkJEDfw=
+X-Received: by 2002:a1f:4c7:: with SMTP id 190-v6mr2488178vke.63.1533750659079;
+ Wed, 08 Aug 2018 10:50:59 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="EVF5PPMfhYS0aIcm"
-Content-Disposition: inline
-In-Reply-To: <20180806084534.GB12124@chenyu-desktop>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Received: by 2002:a67:2149:0:0:0:0:0 with HTTP; Wed, 8 Aug 2018 10:50:58 -0700 (PDT)
+In-Reply-To: <20180808153150.23444-15-brgl@bgdev.pl>
+References: <20180808153150.23444-1-brgl@bgdev.pl> <20180808153150.23444-15-brgl@bgdev.pl>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Wed, 8 Aug 2018 20:50:58 +0300
+Message-ID: <CAHp75VfxVOPzAtBgTe4RSax1Ki+323WDBTSmh=j7LV_c+vsXDA@mail.gmail.com>
+Subject: Re: [PATCH 14/28] net: split eth_platform_get_mac_address() into subroutines
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Jonathan Corbet <corbet@lwn.net>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Naren <naren.kernel@gmail.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Lukas Wunner <lukas@wunner.de>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
+        Sven Van Asbroeck <svendev@arcx.com>,
+        Paolo Abeni <pabeni@redhat.com>, Alban Bedel <albeu@free.fr>,
+        Rob Herring <robh@kernel.org>,
+        David Lechner <david@lechnology.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Linux Documentation List <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        "open list:MEMORY TECHNOLOGY..." <linux-mtd@lists.infradead.org>,
+        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Aug 8, 2018 at 6:31 PM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>
+> We want do add more sources from which to read the MAC address. In
+> order to avoid bloating this function too much, start by splitting it
+> into subroutines, each of which takes care of reading the MAC from
+> one source.
 
---EVF5PPMfhYS0aIcm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> +static int mac_address_from_of(struct device *dev, u8 *mac_addr)
+>  {
+>         const unsigned char *addr;
+> +       struct device_node *np;
+>
 
-Hi!
+> +       np = dev_is_pci(dev) ? pci_device_to_OF_node(to_pci_dev(dev))
+> +                            : dev->of_node;
 
-> > > > User space doesn't need to involve. The EFI root key is generated by
-> > > > EFI boot stub and be transfer to kernel. It's stored in EFI boot se=
-rvice
-> > > > variable that it can only be accessed by trusted EFI binary when
-> > > > secure boot is enabled.
-> > > >
-> > > Okay, this apply to the 'suspend' phase, right?
-> > > I'm still a little confused about the 'resume' phase.
-> > > Taking encryption as example(not signature),
-> > > the purpose of doing hibernation encryption is to prevent other users
-> > > from stealing ram content. Say, user A uses a  passphrase to generate=
- the
-> >=20
-> > No, I don't think that's purpose here.
-> >=20
-> > Purpose here is to prevent user from reading/modifying kernel memory
-> > content on machine he owns.
-> >
-> Say, A puts his laptop into hibernation and walks away,
-> and B walks by, and opens A's laptop and wakes up the system and he
-> can do what he wants. Although EFI key/TPM trusted key is enabled,
-> currently there's no certification during resume, which sounds
-> unsafe to me. Afterall, the original requirement is to probe
+I didn't get these manipulations.
 
-Define unsafe.
+What the scenario when pci_dev->dev.of_node != dev->of_node?
 
-If you want security against bad people resuming your machines, please
-take a look at existing uswsusp solutions. It defends against that.
-
-If you want security against bad people tampering with your machines
-physically, sorry, there's no way to defend against that.
-
-But I thought you were trying to do something for secure boot, and "bad
-person resumes your machine" is out of scope there.
-
-So please always explain security against _what kind of attack_ you
-are trying to improve; intelligent communication is not possible
-without that.
-
-								Pavel
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---EVF5PPMfhYS0aIcm
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAltrLWwACgkQMOfwapXb+vJriwCeMEH0FxLppyjbtaP2vkRpY8NQ
-jOwAnjWz691CHnHSi4qRKDxI5a2mGXq+
-=Rbr4
------END PGP SIGNATURE-----
-
---EVF5PPMfhYS0aIcm--
+-- 
+With Best Regards,
+Andy Shevchenko
