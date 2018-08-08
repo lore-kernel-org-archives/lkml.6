@@ -6,41 +6,41 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB383C46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 01:06:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35899C46471
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 01:08:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 680AA216FF
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 01:06:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D82B721706
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 01:08:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Vf/vDPjc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 680AA216FF
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="u+MLSEI/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D82B721706
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726805AbeHHDXI (ORCPT
+        id S1726931AbeHHDZe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 23:23:08 -0400
-Received: from ozlabs.org ([203.11.71.1]:45119 "EHLO ozlabs.org"
+        Tue, 7 Aug 2018 23:25:34 -0400
+Received: from ozlabs.org ([203.11.71.1]:39809 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726258AbeHHDXI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 23:23:08 -0400
+        id S1726258AbeHHDZe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 23:25:34 -0400
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41lY9H1PS0z9s5H;
-        Wed,  8 Aug 2018 11:05:54 +1000 (AEST)
+        by ozlabs.org (Postfix) with ESMTPSA id 41lYDD06Gfz9s7c;
+        Wed,  8 Aug 2018 11:08:28 +1000 (AEST)
 Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1533690360;
-        bh=rkDm7wxrpt08ntI+rc2e+SlSu14sxFz764dCC+FAa3k=;
+        s=201702; t=1533690508;
+        bh=mkyEbUMdNLpRxlcL9jwEfnIGxZ7UEmGRVe+s/vO3D/M=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Vf/vDPjcFRQzgD4Mf1RyxmH3wHvkcE8qZXhK3/MPMueeeyW5KgGVOZEzLwCfpNM9c
-         r0TcVBq+/upHqKLyF8bNFMLJZ5+vy1Q4AYkYndsgMrfRrUTSwK9lMKIQelMxoaEHul
-         TOrgy+yl/Nog68FPCEJ/u2qsVoonEZfFMIXrBC6wwrUgnr+w4go1b4jyS/4+pAlPPa
-         FbioeEBJ9/BynDkfF63Rw0w/Aw5qY6GTWtiWr/z0+HPeYz8q1PsFuWzeHfCxq68kQ/
-         kHYKBc5TbVY7bMiTpKdDe0l9uDQnuyIJOs+mqv5A5sGe2XwNAuTrDsTNUdiM+nzJoF
-         6PrA+lCDa+6tQ==
-Date:   Wed, 8 Aug 2018 11:05:42 +1000
+        b=u+MLSEI/mrL4nHJs7oMVfVS1JvufsWVYrCaqhUwvhqB226hs5h6Ys1NVM7Qq3o8Sc
+         Sr3+4p/0TidbIcNPsEhIVEKnZMi8G8IbIPtYHuFr4ghLELfujdE/HA0Xn8chNte/FL
+         7U5amLr9wTK+6RHnPwy2F9ONaa5gZFHhUMBUkneu/scOSrdlXrgexO4egAj1ngp0us
+         l2hoBCbNMiV+JV4U+1CJy1SqPL8n1cnKfOf01YIsunZTeQDYBlVtHRTgchrjfLKYat
+         IplxrwSmyhyHmu4PtWoDzvmgB2XRWUfXNQ+n3fk+3LR9ma4+Xyf9LJ6WzNwGESYnX1
+         sPR+sy0M5fxaA==
+Date:   Wed, 8 Aug 2018 11:08:27 +1000
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
 To:     Kirill Tkhai <ktkhai@virtuozzo.com>
 Cc:     akpm@linux-foundation.org, gregkh@linuxfoundation.org,
@@ -59,19 +59,19 @@ Cc:     akpm@linux-foundation.org, gregkh@linuxfoundation.org,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org
 Subject: Re: [PATCH RFC 01/10] rcu: Make CONFIG_SRCU unconditionally enabled
-Message-ID: <20180808110542.6df3f48f@canb.auug.org.au>
+Message-ID: <20180808110827.65631461@canb.auug.org.au>
 In-Reply-To: <153365625652.19074.8434946780002619802.stgit@localhost.localdomain>
 References: <153365347929.19074.12509495712735843805.stgit@localhost.localdomain>
         <153365625652.19074.8434946780002619802.stgit@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/IP8rFemfHJulIaL8/xLQERN"; protocol="application/pgp-signature"
+ boundary="Sig_//wODAd0V11DVLAu0Qy+Ta_s"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/IP8rFemfHJulIaL8/xLQERN
+--Sig_//wODAd0V11DVLAu0Qy+Ta_s
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
@@ -84,66 +84,28 @@ e:
 > the code under !CONFIG_SRCU.
 >=20
 > Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
-> ---
->  drivers/base/core.c                                |   42 --------------=
-------
->  include/linux/device.h                             |    2 -
->  include/linux/rcutiny.h                            |    4 --
->  include/linux/srcu.h                               |    5 --
->  kernel/notifier.c                                  |    3 -
->  kernel/rcu/Kconfig                                 |   12 +-----
->  kernel/rcu/tree.h                                  |    5 --
->  kernel/rcu/update.c                                |    4 --
->  .../selftests/rcutorture/doc/TREE_RCU-kconfig.txt  |    5 --
->  9 files changed, 3 insertions(+), 79 deletions(-)
 
-You left quite a few "select SRCU" statements scattered across Kconfig
-files:
-
-$ git grep -l 'select SRCU' '*Kconfig*'
-arch/arm/kvm/Kconfig
-arch/arm64/kvm/Kconfig
-arch/mips/kvm/Kconfig
-arch/powerpc/kvm/Kconfig
-arch/s390/kvm/Kconfig
-arch/x86/Kconfig
-arch/x86/kvm/Kconfig
-block/Kconfig
-drivers/clk/Kconfig
-drivers/cpufreq/Kconfig
-drivers/dax/Kconfig
-drivers/devfreq/Kconfig
-drivers/hwtracing/stm/Kconfig
-drivers/md/Kconfig
-drivers/net/Kconfig
-drivers/opp/Kconfig
-fs/btrfs/Kconfig
-fs/notify/Kconfig
-fs/quota/Kconfig
-init/Kconfig
-kernel/rcu/Kconfig
-kernel/rcu/Kconfig.debug
-mm/Kconfig
-security/tomoyo/Kconfig
+So what sort of overheads (in terms of code size and performance) are
+we adding by having SRCU enabled where it used not to be?
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/IP8rFemfHJulIaL8/xLQERN
+--Sig_//wODAd0V11DVLAu0Qy+Ta_s
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltqQeYACgkQAVBC80lX
-0GzCAggAjky/YInwyHf0hhdtGhlsTa7vvLGJcP+elKvroDO5mdb3+Fpb6n+Qa7GN
-YCDuTYv5Y8ZMGvn9FDcjy/KK9gpWyp/mvWXQ8+a7ZVCd4SqFMjk7FMNOiI2jotw8
-bL3d0blzZoJGI6HCWSvGhLIVkXGZUizd+dGfDABj7AyuMZTbcs65PyeqwbrBGeHj
-STNVtyYKb7zHpNwt2JEOqHOKnenOdvpKLzZK6S39IYxXvIzmlIFr/QdZRTY4j3jZ
-xZKIKLhOixM6giSj0A8pP0m/KAUEcRaSCGuQh8DbBWQOUIix/4oeuwIwZ0yyS5Wr
-unjIxdFN3gUGCchbuvecCCVE/y1p5A==
-=hXsZ
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltqQosACgkQAVBC80lX
+0GxHGwgAjVnIoT20e4JSYycGiEqHHa55yGjv5LKngiTucYPHmJ31bMFrkK3RVd7s
+r6M6RVXSQVA21k/Vy8hPV0q+sHChA38xfCx0ZebSrsGfpzy3x/5lgGBUNLZmEoW1
+bsYT5/XV6AUM1bWbmO+llnIC4LSL4dN+RMYngElcto8++M6E5YG+5YGCNs+wcrKu
+Xg5jSShO/G2U0nRMENEeXexcMeRfShGpAeejrZScad23wkkx+TJ+O1lw1ln6afdv
+c2PRz3pEYmWINiCjZNEwOz1NGsjmHh8IgWnfP3rNID4iq1Gw+3cxO5L+cfX9vCzv
+jhofBYIo7A5Yf3dmGUvsKTqx7SsuLA==
+=4lXj
 -----END PGP SIGNATURE-----
 
---Sig_/IP8rFemfHJulIaL8/xLQERN--
+--Sig_//wODAd0V11DVLAu0Qy+Ta_s--
