@@ -2,122 +2,222 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB86CC46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 21:09:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87BAAC4646D
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 21:18:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A414E21A95
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 21:09:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2493921A8F
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 21:18:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uAGm8S++"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A414E21A95
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Hdv5Zvxf";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="cmOMShzJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2493921A8F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731654AbeHHXbU (ORCPT
+        id S1730987AbeHHXjt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 19:31:20 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:40268 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731180AbeHHXbU (ORCPT
+        Wed, 8 Aug 2018 19:39:49 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:60384 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729938AbeHHXjt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 19:31:20 -0400
-Received: by mail-wr1-f66.google.com with SMTP id h15-v6so3213754wrs.7;
-        Wed, 08 Aug 2018 14:09:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=4M0pIp7E92ruaZ1FPWIfPA/FaSMFGNaouifdcVzT0zc=;
-        b=uAGm8S++HlhZ6oCb1gJJya5s3ro9ainrKzv5o03anmw88dcFfuhPs66UxEfYh81meG
-         XI54NLeSx3lPReEMK7QGdnMlySZtqsVy8wSVVM0fXBRFDNiODkcsMr1YNDF3ql08RZht
-         8LBBk6PWIZPsY2y/KfujrfawX7o0GN3VRw9+N6wVv6Xh8KxvlMwhchNI9ODi7ksEZ8lV
-         Y6mM3k59wEgEZ+sv/FYK65xD7BMmYuLClphvHTdvYe0fVim485b2I6GizeqLy1gg8WKJ
-         NW9tS3bo/yNqfZRkmnfHxyvUdIm7hUKkUrbnoiu3IUB+LdvCJdWpBcUXh8Z0zg/UBY0+
-         w8NQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=4M0pIp7E92ruaZ1FPWIfPA/FaSMFGNaouifdcVzT0zc=;
-        b=XzcfWbHqPEBy+QDdEk3BpZAv4BrBhFBql+q/e9KqRvZgeiPMPiMSSVCgzcpZksY9ey
-         oyKfsKL1vDLJaJmm+E1vpITTkheQ2T4PqLdmHcaqRZYi+6IPWqWFDgRAU3ZrZiXUlveE
-         +NomIp8rgg+SDZjAfzSLz25p/5GFb8btjlGzQH0ZNh05VLHvEPU3Znq04eV2H/TYBqSI
-         UQljNwIGITU8SUCDjc91ixMi4Ytz4PGflcm0xILDrLCwbQEroDpzCGMfP0b07IwRwxa3
-         nHkZ8gxXs09cyFnwQNYXy9orL1vqAoUrmJK/dEjok8Ym8VcxcPXlMr2FHWhQieecMd4f
-         cdHw==
-X-Gm-Message-State: AOUpUlFs0z17s1reVd83khZoW50gCmucudkRRi5FvHBFMMePdJi1g1ez
-        MHoDz2RoflXfAOd1KHbGf7AjkPPI
-X-Google-Smtp-Source: AA+uWPwTv38WzNufkHNueZ3TWahVZKTLAumVGRx68+Q+Pd7D7TxGWl+z8+MtZkkr69/ovrCnWZfthA==
-X-Received: by 2002:adf:d1cf:: with SMTP id m15-v6mr3144173wri.138.1533762591932;
-        Wed, 08 Aug 2018 14:09:51 -0700 (PDT)
-Received: from [192.168.1.18] (chs174.neoplus.adsl.tpnet.pl. [83.31.16.174])
-        by smtp.gmail.com with ESMTPSA id w4-v6sm3746938wrt.40.2018.08.08.14.09.50
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 08 Aug 2018 14:09:51 -0700 (PDT)
-Subject: Re: [PATCH v2 1/2] dt: bindings: lm3697: Add bindings for lm3697
- driver
-To:     Dan Murphy <dmurphy@ti.com>, Pavel Machek <pavel@ucw.cz>
-Cc:     robh+dt@kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
-References: <20180807160442.8937-1-dmurphy@ti.com>
- <20180808195903.GB20912@amd> <f6b3534b-2ee9-782e-35e5-e103c34528bc@ti.com>
- <20180808210215.GA15831@amd> <f18a5616-bb25-da0d-aec8-585e042b4919@ti.com>
-From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Message-ID: <53691469-4554-42a8-c182-762c1a3939b7@gmail.com>
-Date:   Wed, 8 Aug 2018 23:09:49 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 8 Aug 2018 19:39:49 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 07E1060B7B; Wed,  8 Aug 2018 21:18:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1533763100;
+        bh=5i0cXE2A0udk25S4uu+6bcey/1t+zUXv2OaemoQJHmw=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=Hdv5Zvxfy0d4+7/O/YuVe/EHOOZ0+i7054bxiCKoAo6h1JZOmLkno3zprtyPZ6u3e
+         EYInnUNPCJGiEB0cLV4McPi3WKOnRhIGHlMUSKXOlVmL19rNMPFIKN2TakRTTjASq9
+         cc/k/7Ug4Xq5+ETA1nSYpiAg64Gz/By3IzApBseM=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id D265A601B4;
+        Wed,  8 Aug 2018 21:18:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1533763098;
+        bh=5i0cXE2A0udk25S4uu+6bcey/1t+zUXv2OaemoQJHmw=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=cmOMShzJJklNGutVsXpi6vCiRjtVjaBMNq1q8RdVPxsSdpOlJZdRaoCn/dP8eH9nz
+         HG+JxniKsdcYBiox5cY3RixQ9rD43K25PuG47LkCk1J3pSvechMJ+G4lx2oQ0nWM5m
+         K28Rfv2M14+W4gMWfe+UU1mtJARhWHHZEPrC7dUw=
 MIME-Version: 1.0
-In-Reply-To: <f18a5616-bb25-da0d-aec8-585e042b4919@ti.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
+Date:   Wed, 08 Aug 2018 14:18:18 -0700
+From:   skannan@codeaurora.org
+To:     Sudeep Holla <sudeep.holla@arm.com>
+Cc:     Rob Herring <robh@kernel.org>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Mark Rutland <mark.rutland@arm.com>, georgi.djakov@linaro.org,
+        vincent.guittot@linaro.org, daidavid1@codeaurora.org,
+        bjorn.andersson@linaro.org, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] PM / devfreq: Generic CPU frequency to device
+ frequency mapping governor
+In-Reply-To: <20180808084754.GB25416@e107155-lin>
+References: <1533171465-25508-1-git-send-email-skannan@codeaurora.org>
+ <20180807164114.GA12587@rob-hp-laptop>
+ <496ac47a3c78f37655b60841fba7494c@codeaurora.org>
+ <20180808084754.GB25416@e107155-lin>
+Message-ID: <8c7ab63d4c646733b89962a1d2a0a4ae@codeaurora.org>
+X-Sender: skannan@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dan,
-
-On 08/08/2018 11:04 PM, Dan Murphy wrote:
-> On 08/08/2018 04:02 PM, Pavel Machek wrote:
->> Hi!
->>
->>>>> +	- #size-cells : 0
->>>>> +	- control-bank-cfg - : Indicates which sink is connected to which control bank
->>>>> +		0 - All HVLED outputs are controlled by bank A
->>>>> +		1 - HVLED1 is controlled bank B, HVLED2/3 are controlled by bank A
->>>>> +		2 - HVLED2 is controlled bank B, HVLED1/3 are controlled by bank A
->>>>> +		3 - HVLED1/2 are controlled by bank B, HVLED3 is controlled by bank A
->>>>> +		4 - HVLED3 is controlled by bank B, HVLED1/2 are controlled by bank A
->>>>> +		5 - HVLED1/3 is controlled by bank B, HVLED2 is controlled by bank A
->>>>> +		6 - (default) HVLED1 is controlled by bank A, HVLED2/3 are controlled by bank B
->>>>> +		7 - All HVLED outputs are controlled by bank B
->>>>
->>>> This is quite long way to describe a bitmask, no? Could we make
->>>> it so that control-bank-cfg is not needed?
->>>
->>> The problem we have here is there is a potential to control
->>> 3 different LED string but only 2 sinks.  So control bank A can control 2 LED strings and control
->>> bank b can control 1 LED string.  
->>>
->>
->> Can we forget about the LED strings, and just expose the sinks as
->> Linux LED devices?
+On 2018-08-08 01:47, Sudeep Holla wrote:
+> On Tue, Aug 07, 2018 at 12:37:07PM -0700, skannan@codeaurora.org wrote:
+>> On 2018-08-07 09:41, Rob Herring wrote:
+>> >On Wed, Aug 01, 2018 at 05:57:41PM -0700, Saravana Kannan wrote:
+>> >>Many CPU architectures have caches that can scale independent of the
+>> >>CPUs.
+>> >>Frequency scaling of the caches is necessary to make sure the cache is
+>> >>not
+>> >>a performance bottleneck that leads to poor performance and power. The
+>> >>same
+>> >>idea applies for RAM/DDR.
+>> >>
+>> >>To achieve this, this patch adds a generic devfreq governor that takes
+>> >>the
+>> >>current frequency of each CPU frequency domain and then adjusts the
+>> >>frequency of the cache (or any devfreq device) based on the frequency of
+>> >>the CPUs. It listens to CPU frequency transition notifiers to keep
+>> >>itself
+>> >>up to date on the current CPU frequency.
+>> >>
+>> >>To decide the frequency of the device, the governor does one of the
+>> >>following:
+>> >>
+>> >>* Uses a CPU frequency to device frequency mapping table
+>> >>  - Either one mapping table used for all CPU freq policies (typically
+>> >>used
+>> >>    for system with homogeneous cores/clusters that have the same OPPs).
+>> >>  - One mapping table per CPU freq policy (typically used for ASMP
+>> >>systems
+>> >>    with heterogeneous CPUs with different OPPs)
+>> >>
+>> >>OR
+>> >>
+>> >>* Scales the device frequency in proportion to the CPU frequency. So, if
+>> >>  the CPUs are running at their max frequency, the device runs at its
+>> >>max
+>> >>  frequency.  If the CPUs are running at their min frequency, the device
+>> >>  runs at its min frequency. And interpolated for frequencies in
+>> >>between.
+>> >>
+>> >>Signed-off-by: Saravana Kannan <skannan@codeaurora.org>
+>> >>---
+>> >> .../bindings/devfreq/devfreq-cpufreq-map.txt       |  53 ++
+>> >
+>> >Bindings should be a separate patch.
+>> >
+>> >> drivers/devfreq/Kconfig                            |   8 +
+>> >> drivers/devfreq/Makefile                           |   1 +
+>> >> drivers/devfreq/governor_cpufreq_map.c             | 583
+>> >>+++++++++++++++++++++
+>> >> 4 files changed, 645 insertions(+)
+>> >> create mode 100644
+>> >>Documentation/devicetree/bindings/devfreq/devfreq-cpufreq-map.txt
+>> >> create mode 100644 drivers/devfreq/governor_cpufreq_map.c
+>> >>
+>> >>diff --git
+>> >>a/Documentation/devicetree/bindings/devfreq/devfreq-cpufreq-map.txt
+>> >>b/Documentation/devicetree/bindings/devfreq/devfreq-cpufreq-map.txt
+>> >>new file mode 100644
+>> >>index 0000000..982a30b
+>> >>--- /dev/null
+>> >>+++ b/Documentation/devicetree/bindings/devfreq/devfreq-cpufreq-map.txt
+>> >>@@ -0,0 +1,53 @@
+>> >>+Devfreq CPUfreq governor
+>> >>+
+>> >>+devfreq-cpufreq-map is a parent device that contains one or more child
+>> >>devices.
+>> >>+Each child device provides CPU frequency to device frequency mapping
+>> >>for a
+>> >>+specific device. Examples of devices that could use this are: DDR,
+>> >>cache and
+>> >>+CCI.
+>> >>+
+>> >>+Parent device name shall be "devfreq-cpufreq-map".
+>> >>+
+>> >>+Required child device properties:
+>> >>+- cpu-to-dev-map, or cpu-to-dev-map-<X>:
+>> >>+			A list of tuples where each tuple consists of a
+>> >>+			CPU frequency (KHz) and the corresponding device
+>> >>+			frequency. CPU frequencies not listed in the table
+>> >>+			will use the device frequency that corresponds to the
+>> >>+			next rounded up CPU frequency.
+>> >>+			Use "cpu-to-dev-map" if all CPUs in the system should
+>> >>+			share same mapping.
+>> >>+			Use cpu-to-dev-map-<cpuid> to describe different
+>> >>+			mappings for different CPUs. The property should be
+>> >>+			listed only for the first CPU if multiple CPUs are
+>> >>+			synchronous.
+>> >>+- target-dev:		Phandle to device that this mapping applies to.
+>> >>+
+>> >>+Example:
+>> >>+	devfreq-cpufreq-map {
+>> >>+		cpubw-cpufreq {
+>> >>+			target-dev = <&cpubw>;
+>> >>+			cpu-to-dev-map =
+>> >>+				<  300000  1144000 >,
+>> >>+				<  422400  2288000 >,
+>> >>+				<  652800  3051000 >,
+>> >>+				<  883200  5996000 >,
+>> >>+				< 1190400  8056000 >,
+>> >>+				< 1497600 10101000 >,
+>> >>+				< 1728000 12145000 >,
+>> >>+				< 2649600 16250000 >;
+>> >
+>> >Now we have frequencies listed in multiple places, the OPP tables and
+>> >here? Perhaps it is grouping OPPs that should be done.
+>> 
+>> This doesn't list all OPPs (it can if necessary). This is listing the
+>> minimum frequency needed to give good performance/power for a
+>> device/product.
+>> 
 > 
-> 2 sinks 3 LED strings.  How do you know which LED string is which and what bank it belongs
-> to when setting the brightness.  Each Bank has a separate register for brightness control.
+> Shouldn't the "status" property be used to disable OPPs you don't need
+> on a particular platform ?
 
-Just a blind shot, without going into details - could you please check
-if led-sources property documented in the common LED bindings couldn't
-help here?
+But that's not the point here? We aren't trying to disable any OPPs 
+here? Not sure what you mean.
 
--- 
-Best regards,
-Jacek Anaszewski
+> Duplicating values is highly prone to errors and should be avoided.
+> 
+>> AFAIK, OPP grouping isn't something that's supported in OPP framework 
+>> or in
+>> DT. Is there something specific you had in mind? Also, I'd like for 
+>> this to
+>> work even with devices that don't have OPPs listed in DT.
+>> 
+> Also what's the solution you have for platforms with new *QCom FW 
+> Cpufreq* ?
+> IIUC the frequency is obtained from the firmware. TBH this should 
+> ideally
+> be handled in firmware if cpufreq is also handled by the firmware. I 
+> guess
+> this platform doesn't have that ?
+
+All QC platforms would use this.
+
+As a personal (non-Qcom) opinion, I'd rather the kernel control this 
+than have some black magic FW manage this. I've a really bitter taste in 
+my mouth for FW hiding this because of a broken ACPI implementation in 
+one of my x86 motherboards prevented CPUfreq from working (this was well 
+before I worked on CPUfreq). Pushing stuff to FW seems to beat the ideal 
+behind an opensource OS. In a few cases it's elegant or more robust, so 
+maybe in those cases its okay to use a FW. But I'd rather not for 
+simpler stuff like this.
+
+-Saravana
