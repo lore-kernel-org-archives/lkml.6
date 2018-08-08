@@ -2,1538 +2,187 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10CF7C4646D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 15:56:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B746CC46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 15:56:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B1AD21473
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 15:56:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B1AD21473
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 5CFB221473
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 15:56:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="xnMVwLFj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CFB221473
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=mellanox.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729744AbeHHSQq (ORCPT
+        id S1729775AbeHHSRH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 14:16:46 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36940 "EHLO mx1.redhat.com"
+        Wed, 8 Aug 2018 14:17:07 -0400
+Received: from mail-eopbgr50088.outbound.protection.outlook.com ([40.107.5.88]:24286
+        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727723AbeHHSQq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 14:16:46 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 004BA8197010;
-        Wed,  8 Aug 2018 15:56:26 +0000 (UTC)
-Received: from vitty.brq.redhat.com (unknown [10.43.2.155])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9AAFF2156897;
-        Wed,  8 Aug 2018 15:56:23 +0000 (UTC)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     kvm@vger.kernel.org
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Roman Kagan <rkagan@virtuozzo.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
-        Mohammed Gamal <mmorsy@redhat.com>,
-        Cathy Avery <cavery@redhat.com>, linux-kernel@vger.kernel.org,
-        Jim Mattson <jmattson@google.com>,
-        Liran Alon <liran.alon@oracle.com>
-Subject: [PATCH v4 12/12] KVM: selftests: add Enlightened VMCS test
-Date:   Wed,  8 Aug 2018 17:55:52 +0200
-Message-Id: <20180808155552.4836-13-vkuznets@redhat.com>
-In-Reply-To: <20180808155552.4836-1-vkuznets@redhat.com>
-References: <20180808155552.4836-1-vkuznets@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 08 Aug 2018 15:56:26 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 08 Aug 2018 15:56:26 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'vkuznets@redhat.com' RCPT:''
+        id S1727533AbeHHSRG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 14:17:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/0difTN5gbIak+btOeaTQ/9shhQJaWPCg/68QHvl7d8=;
+ b=xnMVwLFjzpmfSok4bb6V7PWW8L4dAggvdJVG1+ZMd6IMDuJAlPOlJEO9rMFIUjB9N9mWDQgZG/j2II3DUHST7MAh3WAxtJOnHN2unftwRkVZI0Ydz/xlU0bkxBkCqTR9gRYHEVO+yKUM6j/vuuqXbE1hbTCV20yftJ2XAlmCFXo=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=talgi@mellanox.com; 
+Received: from [10.207.0.55] (193.47.165.251) by
+ AM0PR05MB4644.eurprd05.prod.outlook.com (2603:10a6:208:ae::33) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1017.15; Wed, 8 Aug 2018 15:56:40 +0000
+Subject: Re: [PATCH v6 8/9] net/mlx5: Do not call pcie_print_link_status()
+To:     Leon Romanovsky <leon@kernel.org>
+Cc:     Alexandru Gagniuc <mr.nuke.me@gmail.com>,
+        linux-pci@vger.kernel.org, bhelgaas@google.com,
+        jakub.kicinski@netronome.com, keith.busch@intel.com,
+        alex_gagniuc@dellteam.com, austin_bolen@dell.com,
+        shyam_iyer@dell.com, Ariel Elior <ariel.elior@cavium.com>,
+        everest-linux-l2@cavium.com,
+        "David S. Miller" <davem@davemloft.net>,
+        Michael Chan <michael.chan@broadcom.com>,
+        Ganesh Goudar <ganeshgr@chelsio.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        Tariq Toukan <tariqt@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>,
+        Dirk van der Merwe <dirk.vandermerwe@netronome.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        intel-wired-lan@lists.osuosl.org, linux-rdma@vger.kernel.org,
+        oss-drivers@netronome.com
+References: <CAErSpo4PK+SQLNfdkLNt9eLc7bpbxbkZCsa8T-tQpid601n0SQ@mail.gmail.com>
+ <20180806232600.25694-1-mr.nuke.me@gmail.com>
+ <20180806232600.25694-8-mr.nuke.me@gmail.com>
+ <20180808060848.GQ13378@mtr-leonro.mtl.com>
+ <05056a70-ee78-ea3c-0b9b-6d64a8663b11@mellanox.com>
+ <20180808154142.GZ13378@mtr-leonro.mtl.com>
+From:   Tal Gilboa <talgi@mellanox.com>
+Message-ID: <5578cd9a-e4f0-85ab-4a86-bfa23eec136c@mellanox.com>
+Date:   Wed, 8 Aug 2018 18:56:29 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180808154142.GZ13378@mtr-leonro.mtl.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [193.47.165.251]
+X-ClientProxiedBy: VI1P189CA0003.EURP189.PROD.OUTLOOK.COM
+ (2603:10a6:802:2a::16) To AM0PR05MB4644.eurprd05.prod.outlook.com
+ (2603:10a6:208:ae::33)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 15f285ed-7838-4fb5-0fa7-08d5fd47896c
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR05MB4644;
+X-Microsoft-Exchange-Diagnostics: 1;AM0PR05MB4644;3:lRQSjRf5+T5lOrv4CE9Ua7WQSgD5217k/CUZc7LcxzxXRtDjgXR59L6tTaE0CQsEYsJOAQc1rB34vLULK695F6hJaK+BqKIBGdZuouFFKaiPjuUWISe3eB44VjIHlA2h0YzIKMWsmTXVCreDg6t/EvobsnNzoxkbZyGQtF1EEHIFOe0bk7DsFmflgfttqaVvsffEWgnDFF2F1DV/NF9MzHj9q8s91BOn+eF/8uAwb6ytNS2IcKE65IOTF3sVaVOG;25:HTRzuGa3mjYlW9RPjcscg6UaT73lIZN821qwK+mJ4wUCtL7dSKKk7g+iCk/gFNR5g1Yzwd7vrVWqRrILGhbde0e9kVolaxODOQ6s4QitXvgvDE6ZW6US5qshGHei2L3bRWsgeplnFNOOt5cZ6Xk8E+GnUhLyGnYBIhN2dCXj2jbBE5GViiM4yh/20lQujHxofFKKQVwSzwNekoApFITbUF/iykdJGAktvgdeByV6XSvAiE7PdVPsEUxhabqbgigZ/2Yr1jsZO63Rr4/Ia1QMKUWJqERIkoDmpm2ZdVdSEUU4BZoLAJszJEXZ9SJy2z598d900cTPlDNQ0Msc2oWY0g==;31:wzf+TbLdpXFzHpwMEIJSC1bwWyd7eyPQB8RwF6GI2zEfmbc1pBX2s6L58PCD6XM+HS8McFCMGCgmRA99jcHYpciV6420hRBw+ipe+/cxNfaHy+7C1crSKm+NzGrwdjg96gP/c2+zXWMh4+6bnMgY41k4DX20hLwdgONbs35zsvNwALxu6HXGtTPkO58rm7gaUDujDn1qkvWNTux6CHNfydTrRBTP8Tzy86AROMJ3Sjs=
+X-MS-TrafficTypeDiagnostic: AM0PR05MB4644:
+X-Microsoft-Exchange-Diagnostics: 1;AM0PR05MB4644;20:fiURmP9bwaqHh2ehenuc/YB/pJACnS3vdBmB9FHxUtsOT5lEUi+zlefudTxYrajDizwU95sYKeqbEe2ZSUnjmJ5VYQea8f7E+/tkzVuYZ53KGHin6MfjcXyvrzCV8kOPdp3QCHnBAx9Q0pRJY67OzcswnsL+Qn6czg5kOZrqLtZgKzpTPegKMv0/33BNJ5dLIctBnCZEbyvIbQb42/kuKpoEVseuiqLT+UAad4MY6UcQu7WZFT9CPQbbenzpvv6hXS/A3lC02DMy9AEksTs0kEyrQ6TNQ6DRe/4FaV5+faZxWBGr3/vlaEoo1aI4pdDtB+fSAc0RPS8GxY/nrDn3NpB6AETnxaYTOcgOB3skefBLTQo16Je2EJyx5GJF62Od7g9mXXGE5r0mieVCXskyONpwxcWxX8+yrneI0vOlvE3Y7NGbSd4Te+ijXmkqmE4LOOaxKv4aqIOdLHiYwyivGc7eJ7k/DwqAshDCG1gMhBdaWjnI4OMvsge+bTCQlT3N;4:UGai7HWVS1E69vLBAl5dNVFkdWC9z3wTpPgSxh6B4VJEkbVx5BuCrD/8HYHhI2j4/XJCgJe1RA4aKBHT6lRMCI3dGYGFq0mAZuXsxy46Q2UeyfLLA5OMc1Ez1/GvTaiikkFvbQc3daAfDaLhd54HEZo8Se7viPaZUXLJSune5aEcLVmcTBQiu21DmaF9hIAlc+5OpWT56E+VCIOBo6mtptTXajyCI71dYPbo95qIoBVWIOCqLNep+DYvYCMGAC3/MhDdtfs8xjHsrDJ41cS6CW2EL+n1HzLua45AomGZnOxwQZgri1nh6qZhDAeyFrGi
+X-Microsoft-Antispam-PRVS: <AM0PR05MB4644D4FB79476BB1066A44EBD2260@AM0PR05MB4644.eurprd05.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(85827821059158);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3002001)(10201501046)(3231311)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:AM0PR05MB4644;BCL:0;PCL:0;RULEID:;SRVR:AM0PR05MB4644;
+X-Forefront-PRVS: 07584EDBCD
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6049001)(376002)(39860400002)(136003)(396003)(346002)(366004)(189003)(199004)(446003)(6916009)(54906003)(25786009)(476003)(16576012)(97736004)(486006)(26005)(14444005)(7736002)(39060400002)(956004)(11346002)(6666003)(2616005)(305945005)(6486002)(53936002)(7416002)(6116002)(36756003)(230700001)(3846002)(6246003)(58126008)(52116002)(3260700006)(93886005)(316002)(47776003)(68736007)(31686004)(8936002)(67846002)(53546011)(81166006)(64126003)(386003)(81156014)(23746002)(50466002)(186003)(77096007)(31696002)(65826007)(5660300001)(86362001)(105586002)(106356001)(8676002)(16526019)(229853002)(76176011)(2906002)(66066001)(4326008)(478600001)(65806001)(65956001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR05MB4644;H:[10.207.0.55];FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: mellanox.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?Windows-1252?Q?1;AM0PR05MB4644;23:5k2KlYeFbGPGyYAUmubWFbUdU14imAEHkgJSz?=
+ =?Windows-1252?Q?5NdQB+T9C093qC/OsWqfZJ6uOWlmWMvBI9mPGKPFmtXh9FxUltpc6Ns8?=
+ =?Windows-1252?Q?6kRGEuSZtqGFsJ4D70igaIRjFwat+X7oW+Lzqzut+bTkNQPq1303j6Wu?=
+ =?Windows-1252?Q?BxMbHK96oSV7dGtBJDbBA8e/nriaZ5/hZt4AATtlzQiibx1eOU78Db/m?=
+ =?Windows-1252?Q?MGvydy63C70IMGuip/fHn6wkC3cv4sGirNIQgdtYdUGBtV51vbAHOr5H?=
+ =?Windows-1252?Q?P/HZkI/m3VyN1b26UNruxmDDnqRBKzj2z0JY+6ymrbMqGYsQAo0tsCDB?=
+ =?Windows-1252?Q?beWUDf0+zVaDscO8eAouIkHhsOzeZv6TlhhcmzDuH4ChKwSq/JKryGFK?=
+ =?Windows-1252?Q?dWLZMttu7xoe1V94euLSOe9szCC2vcojyNWhlYCiPNju4xth6n5mAJtk?=
+ =?Windows-1252?Q?tPogz1uh4yyLh3To4+aXZEWEOFrNq7E5mH+wizd3CWostOeoQOulQbtx?=
+ =?Windows-1252?Q?2mK8J7OBSZihBww+qAaZNwQZ/tWoT1QwDZeVKnSRSrbbDTT2iS514kzV?=
+ =?Windows-1252?Q?jW6aV3QDKcW8lASW7O/3SYK5yXbHyr3t9kfsrPsdSN1sfH+WMX+OetAz?=
+ =?Windows-1252?Q?O1CehlWUcK7YZVNnUSWDODYnAiZGE/+qmijVCq/T8pKlaNOzHBaGo1QD?=
+ =?Windows-1252?Q?hdwTuoB8x0ukKOBMxNRoOEtPWpLkErDBM3Mk/J4F0V+olI9DM4OHUDCD?=
+ =?Windows-1252?Q?Eif+1eqOiR90nYgNSNyYk0fCfW8xSe1yWcFpQEoyyDlYM9T+I+ycaTBh?=
+ =?Windows-1252?Q?4D0gBFC0C4EumVIzSO1mkhschgib4ObINz4oGPd2GeeGfFUEDUI7EdhT?=
+ =?Windows-1252?Q?ACVrjmnCk/WV+xEVnEt9IurjV1Kl/cC3CuSR07cljftxc+NJo+5/SgDy?=
+ =?Windows-1252?Q?nE+Bj68/NrGDsJ7YaXW4M6c73oLVyDwoEbbGBvur1ALu4anBsrsEh8Bp?=
+ =?Windows-1252?Q?jCwQenR2zpM92PjCln4OWW5c5i4RzB9ZvAh2X+zvkUKSXnNBjth1spPe?=
+ =?Windows-1252?Q?AVoboDgrFOGAsgT62tMd9mt6UmyILFZfsbwCR/t2ksZ9xrXwzyG97aEf?=
+ =?Windows-1252?Q?G8gz312TZ4C4a8vngu7NC+pFUxKg/NVj5v2inpQOUB9Ad1Gs9aOD46mw?=
+ =?Windows-1252?Q?8QtC/o3hmK0P5vm1nDy+kLybHU103FFkCB+4QyNDRVn5iVRAqmCMmoUC?=
+ =?Windows-1252?Q?Lbktuj4cF04bajzOPE8yU7EdUEQMljthUqLmFJSp7Qa+mGDf6hjbGPJS?=
+ =?Windows-1252?Q?U8iDS4ABh7czZry0cTBYat8hzJ43EOPSdhk7EeIuQ5Wm9uBUhpHSS1aB?=
+ =?Windows-1252?Q?Own2iTO8wESTXwDKcOGSvpfVK873tThu8vPu3Hbc0ol/BRiz/Yyc/kBd?=
+ =?Windows-1252?Q?9jPT5hXIecmBwdoHcaXMsAgzNuPd2V4QS5Z+9cmtg4R3ITxpVc8fNIQB?=
+ =?Windows-1252?Q?e8jVVfmcItmdquEGrpHOW/Vv9HFtCXS9bWXwJwj1vW4yAQGdMM9wB75p?=
+ =?Windows-1252?Q?kvlqntNsnMLo32lCsmFtiXkEVYx8C5aDKUiFe2YrPQ7rsMHBl5OUzu/6?=
+ =?Windows-1252?Q?XgeTWJtBUM4qr18IC54wi0=3D?=
+X-Microsoft-Antispam-Message-Info: dZS1gIRG8XOlNC2hztOddM756ic0kV3thgDB3nj13oXCsxXqMc1cHHCr3J22minsJekNt3/UaBPwKJrYHjH5DHUh2Ce1GhlLEkTlbLdedy08HRmjdzQfITErAqK1MjA5tsPJ+nE9ehVHHhbfeqEf9kKOuBiOE+9ZKkP4ddAGIolTFSbZLF59NRu5kwm3cbvGxJ1rBl70u7z4+Z5RLfBdUfdu1d8g5IYaEq3O7xPNdChohFklf9etPLgvFxm2b6TczrkM4/DsrLsIT1Jof1LKxd8z1ziWkPYas2oQk+cwXL0qOivJ06P5mzY8UG7LNboXxLhBKwBiZkGI0D+lpwr81u1HHLozjWuaKrxjkCqHoqw=
+X-Microsoft-Exchange-Diagnostics: 1;AM0PR05MB4644;6:fP7i6PO9T4xfZujlnbxNMGgeLIBz7f45oruAnWAnJ/U5pYcoC+C/EFpmb3+ATHNZQhidWAtzS9SrO3ItAKSl9+oMMJIAc5aftbA1IHyJZA8gY/WZfsQ6BnVNSHe4ZZynFeDnJcOrqePfNLAm32LOsDynGXfXJRWCoiEHNf+nlNylOr63ndSUE2Avzh7pMh1Z2+qNHSXFicJhpi94HnvFkMrjsIh7uSLq9NERTdJDLqPKO4aAVnCryGrMUWENTyHVeZnKoazXing6kr9Kgdxv3ql+WvLhvFcoaWH6pSyaapL1xB+g7ImL6HyywYWPaiGJ4MLy2uU0Vy10MenPgiEgselwATK0d6RWzLRmIDVnNJ/gjRux+s8SG8k7nx58sWhqBvCaQ2YTcRlJL9VwliwtiuToKqXql/WAWi9qTT8IeQT1s5LM7ynIl5ucBEvQ8y3AN3zJLqALUeI3ugi5Xgbaew==;5:gs2yRNr+Xch6udXdV8R/jj4C71Gp+skRGh1LuoMcyZma6Q01jpVn3vGihJr+T0ReiNZUUEb/RIEsgwKJJXJSZmI7qFf2idD+lo84CvCKq8B177cXhRK565zcEhn2IAL2PDaoP7HZDNlD9ymeG1/vYfpkxWhUTaFGjbMM8uIo1SY=;7:LSElWUdr/T1y4CHinKk3ZcrI4tn1PUtzPki4WoI/N4Zppxsw4gkqxe4vl508yhQ8rGBV9fnCY/3UMMS79iXOTk8dUNQz3uU3Q98TOP4wleK72r2IMGufBsZHi7apCyARS6l7cdStQI2ZE2AUUfd6geQwhe2zmAiM43RPS24ZtG6ZoMqahtnPqOJa7Ph2Gd6Di7a2laC8fNKOfFmqfxywyU7kmWe60tS8Z/GMHMOTMUeygblMMDFPOWi8N0Faf7Ku
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Aug 2018 15:56:40.6170
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 15f285ed-7838-4fb5-0fa7-08d5fd47896c
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR05MB4644
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Modify test library and add eVMCS test. This includes mVMX save/restore
-testing.
+On 8/8/2018 6:41 PM, Leon Romanovsky wrote:
+> On Wed, Aug 08, 2018 at 05:23:12PM +0300, Tal Gilboa wrote:
+>> On 8/8/2018 9:08 AM, Leon Romanovsky wrote:
+>>> On Mon, Aug 06, 2018 at 06:25:42PM -0500, Alexandru Gagniuc wrote:
+>>>> This is now done by the PCI core to warn of sub-optimal bandwidth.
+>>>>
+>>>> Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+>>>> ---
+>>>>    drivers/net/ethernet/mellanox/mlx5/core/main.c | 4 ----
+>>>>    1 file changed, 4 deletions(-)
+>>>>
+>>>
+>>> Thanks,
+>>> Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
+>>>
+>>
+>> Alex,
+>> I loaded mlx5 driver with and without these series. The report in dmesg is
+>> now missing. From what I understood, the status should be reported at least
+>> once, even if everything is in order.
+> 
+> It is not what this series is doing and it removes prints completely if
+> fabric can deliver more than card is capable.
+> 
+>> We need this functionality to stay.
+> 
+> I'm not sure that you need this information in driver's dmesg output,
+> but most probably something globally visible and accessible per-pci
+> device.
 
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
----
- tools/testing/selftests/kvm/Makefile        |    1 +
- tools/testing/selftests/kvm/evmcs_test.c    |  181 +++++
- tools/testing/selftests/kvm/include/evmcs.h | 1099 +++++++++++++++++++++++++++
- tools/testing/selftests/kvm/include/vmx.h   |   28 +
- tools/testing/selftests/kvm/lib/vmx.c       |   48 +-
- 5 files changed, 1345 insertions(+), 12 deletions(-)
- create mode 100644 tools/testing/selftests/kvm/evmcs_test.c
- create mode 100644 tools/testing/selftests/kvm/include/evmcs.h
+Currently we have users that look for it. If we remove the dmesg print 
+we need this to be reported elsewhere. Adding it to sysfs for example 
+should be a valid solution for our case.
 
-diff --git a/tools/testing/selftests/kvm/Makefile b/tools/testing/selftests/kvm/Makefile
-index 1ab27944520e..ac2a9207008b 100644
---- a/tools/testing/selftests/kvm/Makefile
-+++ b/tools/testing/selftests/kvm/Makefile
-@@ -11,6 +11,7 @@ TEST_GEN_PROGS_x86_64 += sync_regs_test
- TEST_GEN_PROGS_x86_64 += vmx_tsc_adjust_test
- TEST_GEN_PROGS_x86_64 += cr4_cpuid_sync_test
- TEST_GEN_PROGS_x86_64 += state_test
-+TEST_GEN_PROGS_x86_64 += evmcs_test
- 
- TEST_GEN_PROGS += $(TEST_GEN_PROGS_$(UNAME_M))
- LIBKVM += $(LIBKVM_$(UNAME_M))
-diff --git a/tools/testing/selftests/kvm/evmcs_test.c b/tools/testing/selftests/kvm/evmcs_test.c
-new file mode 100644
-index 000000000000..4d2c5989468c
---- /dev/null
-+++ b/tools/testing/selftests/kvm/evmcs_test.c
-@@ -0,0 +1,181 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2018, Red Hat, Inc.
-+ *
-+ * Tests for Enlightened VMCS, including nested guest state.
-+ */
-+#define _GNU_SOURCE /* for program_invocation_short_name */
-+#include <fcntl.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <sys/ioctl.h>
-+
-+#include "test_util.h"
-+
-+#include "kvm_util.h"
-+#include "x86.h"
-+
-+#include "vmx.h"
-+
-+#define VCPU_ID		5
-+#define PORT_SYNC	0x1000
-+#define PORT_ABORT	0x1001
-+#define PORT_DONE	0x1002
-+
-+static inline void __exit_to_l0(uint16_t port, uint64_t arg0, uint64_t arg1)
-+{
-+	__asm__ __volatile__("in %[port], %%al"
-+			     :
-+			     : [port]"d"(port), "D"(arg0), "S"(arg1)
-+			     : "rax");
-+}
-+
-+#define exit_to_l0(_port, _arg0, _arg1) \
-+	__exit_to_l0(_port, (uint64_t) (_arg0), (uint64_t) (_arg1))
-+
-+#define GUEST_ASSERT(_condition) do { \
-+	if (!(_condition)) \
-+		exit_to_l0(PORT_ABORT, "Failed guest assert: " #_condition,\
-+			   __LINE__);\
-+} while (0)
-+
-+#define GUEST_SYNC(stage) \
-+	exit_to_l0(PORT_SYNC, "hello", stage)
-+
-+static bool have_nested_state;
-+
-+void l2_guest_code(void)
-+{
-+	GUEST_SYNC(5);
-+
-+	/* Done, exit to L1 and never come back.  */
-+	vmcall();
-+}
-+
-+void l1_guest_code(struct vmx_pages *vmx_pages)
-+{
-+#define L2_GUEST_STACK_SIZE 64
-+	unsigned long l2_guest_stack[L2_GUEST_STACK_SIZE];
-+
-+	enable_vp_assist(vmx_pages->vp_assist_gpa, vmx_pages->vp_assist);
-+
-+	GUEST_ASSERT(vmx_pages->vmcs_gpa);
-+	GUEST_ASSERT(prepare_for_vmx_operation(vmx_pages));
-+	GUEST_ASSERT(vmptrstz() == vmx_pages->enlightened_vmcs_gpa);
-+
-+	GUEST_SYNC(3);
-+	GUEST_ASSERT(vmptrstz() == vmx_pages->enlightened_vmcs_gpa);
-+
-+	prepare_vmcs(vmx_pages, l2_guest_code,
-+		     &l2_guest_stack[L2_GUEST_STACK_SIZE]);
-+
-+	GUEST_SYNC(4);
-+	GUEST_ASSERT(vmptrstz() == vmx_pages->enlightened_vmcs_gpa);
-+	GUEST_ASSERT(!vmlaunch());
-+	GUEST_ASSERT(vmptrstz() == vmx_pages->enlightened_vmcs_gpa);
-+	GUEST_SYNC(6);
-+	GUEST_ASSERT(!vmresume());
-+	GUEST_ASSERT(vmreadz(VM_EXIT_REASON) == EXIT_REASON_VMCALL);
-+	GUEST_SYNC(7);
-+}
-+
-+void guest_code(struct vmx_pages *vmx_pages)
-+{
-+	GUEST_SYNC(1);
-+	GUEST_SYNC(2);
-+
-+	if (vmx_pages)
-+		l1_guest_code(vmx_pages);
-+
-+	exit_to_l0(PORT_DONE, 0, 0);
-+}
-+
-+int main(int argc, char *argv[])
-+{
-+	struct vmx_pages *vmx_pages = NULL;
-+	vm_vaddr_t vmx_pages_gva = 0;
-+
-+	struct kvm_regs regs1, regs2;
-+	struct kvm_vm *vm;
-+	struct kvm_run *run;
-+	struct kvm_x86_state *state;
-+	int stage;
-+	uint16_t evmcs_ver;
-+	struct kvm_enable_cap enable_evmcs_cap = {
-+		.cap = KVM_CAP_HYPERV_ENLIGHTENED_VMCS,
-+		 .args[0] = (unsigned long)&evmcs_ver
-+	};
-+
-+	struct kvm_cpuid_entry2 *entry = kvm_get_supported_cpuid_entry(1);
-+
-+	/* Create VM */
-+	vm = vm_create_default(VCPU_ID, guest_code);
-+
-+	vcpu_set_cpuid(vm, VCPU_ID, kvm_get_supported_cpuid());
-+
-+	vcpu_ioctl(vm, VCPU_ID, KVM_ENABLE_CAP, &enable_evmcs_cap);
-+
-+	run = vcpu_state(vm, VCPU_ID);
-+
-+	vcpu_regs_get(vm, VCPU_ID, &regs1);
-+
-+	if (kvm_check_cap(KVM_CAP_NESTED_STATE)) {
-+		vmx_pages = vcpu_alloc_vmx(vm, &vmx_pages_gva);
-+		vcpu_args_set(vm, VCPU_ID, 1, vmx_pages_gva);
-+	} else {
-+		printf("will skip nested state checks\n");
-+		vcpu_args_set(vm, VCPU_ID, 1, 0);
-+	}
-+
-+	for (stage = 1;; stage++) {
-+		_vcpu_run(vm, VCPU_ID);
-+		TEST_ASSERT(run->exit_reason == KVM_EXIT_IO,
-+			    "Unexpected exit reason: %u (%s),\n",
-+			    run->exit_reason,
-+			    exit_reason_str(run->exit_reason));
-+
-+		memset(&regs1, 0, sizeof(regs1));
-+		vcpu_regs_get(vm, VCPU_ID, &regs1);
-+		switch (run->io.port) {
-+		case PORT_ABORT:
-+			TEST_ASSERT(false, "%s at %s:%d",
-+				    (const char *)regs1.rdi,
-+				    __FILE__, regs1.rsi);
-+			/* NOT REACHED */
-+		case PORT_SYNC:
-+			break;
-+		case PORT_DONE:
-+			goto done;
-+		default:
-+			TEST_ASSERT(false, "Unknown port 0x%x.", run->io.port);
-+		}
-+
-+		/* PORT_SYNC is handled here.  */
-+		TEST_ASSERT(!strcmp((const char *)regs1.rdi, "hello") &&
-+			    regs1.rsi == stage,
-+			    "Unexpected register values vmexit #%lx, got %lx",
-+			    stage, (ulong) regs1.rsi);
-+
-+		state = vcpu_save_state(vm, VCPU_ID);
-+		kvm_vm_release(vm);
-+
-+		/* Restore state in a new VM.  */
-+		kvm_vm_restart(vm, O_RDWR);
-+		vm_vcpu_add(vm, VCPU_ID, 0, 0);
-+		vcpu_set_cpuid(vm, VCPU_ID, kvm_get_supported_cpuid());
-+		vcpu_load_state(vm, VCPU_ID, state);
-+		run = vcpu_state(vm, VCPU_ID);
-+		free(state);
-+
-+		memset(&regs2, 0, sizeof(regs2));
-+		vcpu_regs_get(vm, VCPU_ID, &regs2);
-+		TEST_ASSERT(!memcmp(&regs1, &regs2, sizeof(regs2)),
-+			    "Unexpected register values after vcpu_load_state"
-+			    " rdi: %lx rsi: %lx", (ulong) regs2.rdi,
-+			    (ulong) regs2.rsi);
-+	}
-+
-+done:
-+	kvm_vm_free(vm);
-+}
-diff --git a/tools/testing/selftests/kvm/include/evmcs.h b/tools/testing/selftests/kvm/include/evmcs.h
-new file mode 100644
-index 000000000000..8392fbb33a43
---- /dev/null
-+++ b/tools/testing/selftests/kvm/include/evmcs.h
-@@ -0,0 +1,1099 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * tools/testing/selftests/kvm/include/vmx.h
-+ *
-+ * Copyright (C) 2018, Red Hat, Inc.
-+ *
-+ */
-+
-+#ifndef SELFTEST_KVM_EVMCS_H
-+#define SELFTEST_KVM_EVMCS_H
-+
-+#include <stdint.h>
-+#include "x86.h"
-+#include "vmx.h"
-+
-+#define u16 uint16_t
-+#define u32 uint32_t
-+#define u64 uint64_t
-+
-+extern bool enable_evmcs;
-+
-+struct hv_vp_assist_page {
-+	__u32 apic_assist;
-+	__u32 reserved;
-+	__u64 vtl_control[2];
-+	__u64 nested_enlightenments_control[2];
-+	__u32 enlighten_vmentry;
-+	__u64 current_nested_vmcs;
-+};
-+
-+struct hv_enlightened_vmcs {
-+	u32 revision_id;
-+	u32 abort;
-+
-+	u16 host_es_selector;
-+	u16 host_cs_selector;
-+	u16 host_ss_selector;
-+	u16 host_ds_selector;
-+	u16 host_fs_selector;
-+	u16 host_gs_selector;
-+	u16 host_tr_selector;
-+
-+	u64 host_ia32_pat;
-+	u64 host_ia32_efer;
-+
-+	u64 host_cr0;
-+	u64 host_cr3;
-+	u64 host_cr4;
-+
-+	u64 host_ia32_sysenter_esp;
-+	u64 host_ia32_sysenter_eip;
-+	u64 host_rip;
-+	u32 host_ia32_sysenter_cs;
-+
-+	u32 pin_based_vm_exec_control;
-+	u32 vm_exit_controls;
-+	u32 secondary_vm_exec_control;
-+
-+	u64 io_bitmap_a;
-+	u64 io_bitmap_b;
-+	u64 msr_bitmap;
-+
-+	u16 guest_es_selector;
-+	u16 guest_cs_selector;
-+	u16 guest_ss_selector;
-+	u16 guest_ds_selector;
-+	u16 guest_fs_selector;
-+	u16 guest_gs_selector;
-+	u16 guest_ldtr_selector;
-+	u16 guest_tr_selector;
-+
-+	u32 guest_es_limit;
-+	u32 guest_cs_limit;
-+	u32 guest_ss_limit;
-+	u32 guest_ds_limit;
-+	u32 guest_fs_limit;
-+	u32 guest_gs_limit;
-+	u32 guest_ldtr_limit;
-+	u32 guest_tr_limit;
-+	u32 guest_gdtr_limit;
-+	u32 guest_idtr_limit;
-+
-+	u32 guest_es_ar_bytes;
-+	u32 guest_cs_ar_bytes;
-+	u32 guest_ss_ar_bytes;
-+	u32 guest_ds_ar_bytes;
-+	u32 guest_fs_ar_bytes;
-+	u32 guest_gs_ar_bytes;
-+	u32 guest_ldtr_ar_bytes;
-+	u32 guest_tr_ar_bytes;
-+
-+	u64 guest_es_base;
-+	u64 guest_cs_base;
-+	u64 guest_ss_base;
-+	u64 guest_ds_base;
-+	u64 guest_fs_base;
-+	u64 guest_gs_base;
-+	u64 guest_ldtr_base;
-+	u64 guest_tr_base;
-+	u64 guest_gdtr_base;
-+	u64 guest_idtr_base;
-+
-+	u64 padding64_1[3];
-+
-+	u64 vm_exit_msr_store_addr;
-+	u64 vm_exit_msr_load_addr;
-+	u64 vm_entry_msr_load_addr;
-+
-+	u64 cr3_target_value0;
-+	u64 cr3_target_value1;
-+	u64 cr3_target_value2;
-+	u64 cr3_target_value3;
-+
-+	u32 page_fault_error_code_mask;
-+	u32 page_fault_error_code_match;
-+
-+	u32 cr3_target_count;
-+	u32 vm_exit_msr_store_count;
-+	u32 vm_exit_msr_load_count;
-+	u32 vm_entry_msr_load_count;
-+
-+	u64 tsc_offset;
-+	u64 virtual_apic_page_addr;
-+	u64 vmcs_link_pointer;
-+
-+	u64 guest_ia32_debugctl;
-+	u64 guest_ia32_pat;
-+	u64 guest_ia32_efer;
-+
-+	u64 guest_pdptr0;
-+	u64 guest_pdptr1;
-+	u64 guest_pdptr2;
-+	u64 guest_pdptr3;
-+
-+	u64 guest_pending_dbg_exceptions;
-+	u64 guest_sysenter_esp;
-+	u64 guest_sysenter_eip;
-+
-+	u32 guest_activity_state;
-+	u32 guest_sysenter_cs;
-+
-+	u64 cr0_guest_host_mask;
-+	u64 cr4_guest_host_mask;
-+	u64 cr0_read_shadow;
-+	u64 cr4_read_shadow;
-+	u64 guest_cr0;
-+	u64 guest_cr3;
-+	u64 guest_cr4;
-+	u64 guest_dr7;
-+
-+	u64 host_fs_base;
-+	u64 host_gs_base;
-+	u64 host_tr_base;
-+	u64 host_gdtr_base;
-+	u64 host_idtr_base;
-+	u64 host_rsp;
-+
-+	u64 ept_pointer;
-+
-+	u16 virtual_processor_id;
-+	u16 padding16[3];
-+
-+	u64 padding64_2[5];
-+	u64 guest_physical_address;
-+
-+	u32 vm_instruction_error;
-+	u32 vm_exit_reason;
-+	u32 vm_exit_intr_info;
-+	u32 vm_exit_intr_error_code;
-+	u32 idt_vectoring_info_field;
-+	u32 idt_vectoring_error_code;
-+	u32 vm_exit_instruction_len;
-+	u32 vmx_instruction_info;
-+
-+	u64 exit_qualification;
-+	u64 exit_io_instruction_ecx;
-+	u64 exit_io_instruction_esi;
-+	u64 exit_io_instruction_edi;
-+	u64 exit_io_instruction_eip;
-+
-+	u64 guest_linear_address;
-+	u64 guest_rsp;
-+	u64 guest_rflags;
-+
-+	u32 guest_interruptibility_info;
-+	u32 cpu_based_vm_exec_control;
-+	u32 exception_bitmap;
-+	u32 vm_entry_controls;
-+	u32 vm_entry_intr_info_field;
-+	u32 vm_entry_exception_error_code;
-+	u32 vm_entry_instruction_len;
-+	u32 tpr_threshold;
-+
-+	u64 guest_rip;
-+
-+	u32 hv_clean_fields;
-+	u32 hv_padding_32;
-+	u32 hv_synthetic_controls;
-+	struct {
-+		u32 nested_flush_hypercall:1;
-+		u32 msr_bitmap:1;
-+		u32 reserved:30;
-+	} hv_enlightenments_control;
-+	u32 hv_vp_id;
-+
-+	u64 hv_vm_id;
-+	u64 partition_assist_page;
-+	u64 padding64_4[4];
-+	u64 guest_bndcfgs;
-+	u64 padding64_5[7];
-+	u64 xss_exit_bitmap;
-+	u64 padding64_6[7];
-+};
-+
-+#define HV_X64_MSR_VP_ASSIST_PAGE		0x40000073
-+#define HV_X64_MSR_VP_ASSIST_PAGE_ENABLE	0x00000001
-+#define HV_X64_MSR_VP_ASSIST_PAGE_ADDRESS_SHIFT	12
-+#define HV_X64_MSR_VP_ASSIST_PAGE_ADDRESS_MASK	\
-+		(~((1ull << HV_X64_MSR_VP_ASSIST_PAGE_ADDRESS_SHIFT) - 1))
-+
-+struct hv_enlightened_vmcs *current_evmcs;
-+struct hv_vp_assist_page *current_vp_assist;
-+
-+static inline int enable_vp_assist(uint64_t vp_assist_pa, void *vp_assist)
-+{
-+	u64 val = (vp_assist_pa & HV_X64_MSR_VP_ASSIST_PAGE_ADDRESS_MASK) |
-+		HV_X64_MSR_VP_ASSIST_PAGE_ENABLE;
-+
-+	wrmsr(HV_X64_MSR_VP_ASSIST_PAGE, val);
-+
-+	current_vp_assist = vp_assist;
-+
-+	enable_evmcs = true;
-+
-+	return 0;
-+}
-+
-+static inline int evmcs_vmptrld(uint64_t vmcs_pa, void *vmcs)
-+{
-+	current_vp_assist->current_nested_vmcs = vmcs_pa;
-+	current_vp_assist->enlighten_vmentry = 1;
-+
-+	current_evmcs = vmcs;
-+
-+	return 0;
-+}
-+
-+static inline int evmcs_vmptrst(uint64_t *value)
-+{
-+	*value = current_vp_assist->current_nested_vmcs &
-+		~HV_X64_MSR_VP_ASSIST_PAGE_ENABLE;
-+
-+	return 0;
-+}
-+
-+static inline int evmcs_vmread(uint64_t encoding, uint64_t *value)
-+{
-+	switch (encoding) {
-+	case GUEST_RIP:
-+		*value = current_evmcs->guest_rip;
-+		break;
-+	case GUEST_RSP:
-+		*value = current_evmcs->guest_rsp;
-+		break;
-+	case GUEST_RFLAGS:
-+		*value = current_evmcs->guest_rflags;
-+		break;
-+	case HOST_IA32_PAT:
-+		*value = current_evmcs->host_ia32_pat;
-+		break;
-+	case HOST_IA32_EFER:
-+		*value = current_evmcs->host_ia32_efer;
-+		break;
-+	case HOST_CR0:
-+		*value = current_evmcs->host_cr0;
-+		break;
-+	case HOST_CR3:
-+		*value = current_evmcs->host_cr3;
-+		break;
-+	case HOST_CR4:
-+		*value = current_evmcs->host_cr4;
-+		break;
-+	case HOST_IA32_SYSENTER_ESP:
-+		*value = current_evmcs->host_ia32_sysenter_esp;
-+		break;
-+	case HOST_IA32_SYSENTER_EIP:
-+		*value = current_evmcs->host_ia32_sysenter_eip;
-+		break;
-+	case HOST_RIP:
-+		*value = current_evmcs->host_rip;
-+		break;
-+	case IO_BITMAP_A:
-+		*value = current_evmcs->io_bitmap_a;
-+		break;
-+	case IO_BITMAP_B:
-+		*value = current_evmcs->io_bitmap_b;
-+		break;
-+	case MSR_BITMAP:
-+		*value = current_evmcs->msr_bitmap;
-+		break;
-+	case GUEST_ES_BASE:
-+		*value = current_evmcs->guest_es_base;
-+		break;
-+	case GUEST_CS_BASE:
-+		*value = current_evmcs->guest_cs_base;
-+		break;
-+	case GUEST_SS_BASE:
-+		*value = current_evmcs->guest_ss_base;
-+		break;
-+	case GUEST_DS_BASE:
-+		*value = current_evmcs->guest_ds_base;
-+		break;
-+	case GUEST_FS_BASE:
-+		*value = current_evmcs->guest_fs_base;
-+		break;
-+	case GUEST_GS_BASE:
-+		*value = current_evmcs->guest_gs_base;
-+		break;
-+	case GUEST_LDTR_BASE:
-+		*value = current_evmcs->guest_ldtr_base;
-+		break;
-+	case GUEST_TR_BASE:
-+		*value = current_evmcs->guest_tr_base;
-+		break;
-+	case GUEST_GDTR_BASE:
-+		*value = current_evmcs->guest_gdtr_base;
-+		break;
-+	case GUEST_IDTR_BASE:
-+		*value = current_evmcs->guest_idtr_base;
-+		break;
-+	case TSC_OFFSET:
-+		*value = current_evmcs->tsc_offset;
-+		break;
-+	case VIRTUAL_APIC_PAGE_ADDR:
-+		*value = current_evmcs->virtual_apic_page_addr;
-+		break;
-+	case VMCS_LINK_POINTER:
-+		*value = current_evmcs->vmcs_link_pointer;
-+		break;
-+	case GUEST_IA32_DEBUGCTL:
-+		*value = current_evmcs->guest_ia32_debugctl;
-+		break;
-+	case GUEST_IA32_PAT:
-+		*value = current_evmcs->guest_ia32_pat;
-+		break;
-+	case GUEST_IA32_EFER:
-+		*value = current_evmcs->guest_ia32_efer;
-+		break;
-+	case GUEST_PDPTR0:
-+		*value = current_evmcs->guest_pdptr0;
-+		break;
-+	case GUEST_PDPTR1:
-+		*value = current_evmcs->guest_pdptr1;
-+		break;
-+	case GUEST_PDPTR2:
-+		*value = current_evmcs->guest_pdptr2;
-+		break;
-+	case GUEST_PDPTR3:
-+		*value = current_evmcs->guest_pdptr3;
-+		break;
-+	case GUEST_PENDING_DBG_EXCEPTIONS:
-+		*value = current_evmcs->guest_pending_dbg_exceptions;
-+		break;
-+	case GUEST_SYSENTER_ESP:
-+		*value = current_evmcs->guest_sysenter_esp;
-+		break;
-+	case GUEST_SYSENTER_EIP:
-+		*value = current_evmcs->guest_sysenter_eip;
-+		break;
-+	case CR0_GUEST_HOST_MASK:
-+		*value = current_evmcs->cr0_guest_host_mask;
-+		break;
-+	case CR4_GUEST_HOST_MASK:
-+		*value = current_evmcs->cr4_guest_host_mask;
-+		break;
-+	case CR0_READ_SHADOW:
-+		*value = current_evmcs->cr0_read_shadow;
-+		break;
-+	case CR4_READ_SHADOW:
-+		*value = current_evmcs->cr4_read_shadow;
-+		break;
-+	case GUEST_CR0:
-+		*value = current_evmcs->guest_cr0;
-+		break;
-+	case GUEST_CR3:
-+		*value = current_evmcs->guest_cr3;
-+		break;
-+	case GUEST_CR4:
-+		*value = current_evmcs->guest_cr4;
-+		break;
-+	case GUEST_DR7:
-+		*value = current_evmcs->guest_dr7;
-+		break;
-+	case HOST_FS_BASE:
-+		*value = current_evmcs->host_fs_base;
-+		break;
-+	case HOST_GS_BASE:
-+		*value = current_evmcs->host_gs_base;
-+		break;
-+	case HOST_TR_BASE:
-+		*value = current_evmcs->host_tr_base;
-+		break;
-+	case HOST_GDTR_BASE:
-+		*value = current_evmcs->host_gdtr_base;
-+		break;
-+	case HOST_IDTR_BASE:
-+		*value = current_evmcs->host_idtr_base;
-+		break;
-+	case HOST_RSP:
-+		*value = current_evmcs->host_rsp;
-+		break;
-+	case EPT_POINTER:
-+		*value = current_evmcs->ept_pointer;
-+		break;
-+	case GUEST_BNDCFGS:
-+		*value = current_evmcs->guest_bndcfgs;
-+		break;
-+	case XSS_EXIT_BITMAP:
-+		*value = current_evmcs->xss_exit_bitmap;
-+		break;
-+	case GUEST_PHYSICAL_ADDRESS:
-+		*value = current_evmcs->guest_physical_address;
-+		break;
-+	case EXIT_QUALIFICATION:
-+		*value = current_evmcs->exit_qualification;
-+		break;
-+	case GUEST_LINEAR_ADDRESS:
-+		*value = current_evmcs->guest_linear_address;
-+		break;
-+	case VM_EXIT_MSR_STORE_ADDR:
-+		*value = current_evmcs->vm_exit_msr_store_addr;
-+		break;
-+	case VM_EXIT_MSR_LOAD_ADDR:
-+		*value = current_evmcs->vm_exit_msr_load_addr;
-+		break;
-+	case VM_ENTRY_MSR_LOAD_ADDR:
-+		*value = current_evmcs->vm_entry_msr_load_addr;
-+		break;
-+	case CR3_TARGET_VALUE0:
-+		*value = current_evmcs->cr3_target_value0;
-+		break;
-+	case CR3_TARGET_VALUE1:
-+		*value = current_evmcs->cr3_target_value1;
-+		break;
-+	case CR3_TARGET_VALUE2:
-+		*value = current_evmcs->cr3_target_value2;
-+		break;
-+	case CR3_TARGET_VALUE3:
-+		*value = current_evmcs->cr3_target_value3;
-+		break;
-+	case TPR_THRESHOLD:
-+		*value = current_evmcs->tpr_threshold;
-+		break;
-+	case GUEST_INTERRUPTIBILITY_INFO:
-+		*value = current_evmcs->guest_interruptibility_info;
-+		break;
-+	case CPU_BASED_VM_EXEC_CONTROL:
-+		*value = current_evmcs->cpu_based_vm_exec_control;
-+		break;
-+	case EXCEPTION_BITMAP:
-+		*value = current_evmcs->exception_bitmap;
-+		break;
-+	case VM_ENTRY_CONTROLS:
-+		*value = current_evmcs->vm_entry_controls;
-+		break;
-+	case VM_ENTRY_INTR_INFO_FIELD:
-+		*value = current_evmcs->vm_entry_intr_info_field;
-+		break;
-+	case VM_ENTRY_EXCEPTION_ERROR_CODE:
-+		*value = current_evmcs->vm_entry_exception_error_code;
-+		break;
-+	case VM_ENTRY_INSTRUCTION_LEN:
-+		*value = current_evmcs->vm_entry_instruction_len;
-+		break;
-+	case HOST_IA32_SYSENTER_CS:
-+		*value = current_evmcs->host_ia32_sysenter_cs;
-+		break;
-+	case PIN_BASED_VM_EXEC_CONTROL:
-+		*value = current_evmcs->pin_based_vm_exec_control;
-+		break;
-+	case VM_EXIT_CONTROLS:
-+		*value = current_evmcs->vm_exit_controls;
-+		break;
-+	case SECONDARY_VM_EXEC_CONTROL:
-+		*value = current_evmcs->secondary_vm_exec_control;
-+		break;
-+	case GUEST_ES_LIMIT:
-+		*value = current_evmcs->guest_es_limit;
-+		break;
-+	case GUEST_CS_LIMIT:
-+		*value = current_evmcs->guest_cs_limit;
-+		break;
-+	case GUEST_SS_LIMIT:
-+		*value = current_evmcs->guest_ss_limit;
-+		break;
-+	case GUEST_DS_LIMIT:
-+		*value = current_evmcs->guest_ds_limit;
-+		break;
-+	case GUEST_FS_LIMIT:
-+		*value = current_evmcs->guest_fs_limit;
-+		break;
-+	case GUEST_GS_LIMIT:
-+		*value = current_evmcs->guest_gs_limit;
-+		break;
-+	case GUEST_LDTR_LIMIT:
-+		*value = current_evmcs->guest_ldtr_limit;
-+		break;
-+	case GUEST_TR_LIMIT:
-+		*value = current_evmcs->guest_tr_limit;
-+		break;
-+	case GUEST_GDTR_LIMIT:
-+		*value = current_evmcs->guest_gdtr_limit;
-+		break;
-+	case GUEST_IDTR_LIMIT:
-+		*value = current_evmcs->guest_idtr_limit;
-+		break;
-+	case GUEST_ES_AR_BYTES:
-+		*value = current_evmcs->guest_es_ar_bytes;
-+		break;
-+	case GUEST_CS_AR_BYTES:
-+		*value = current_evmcs->guest_cs_ar_bytes;
-+		break;
-+	case GUEST_SS_AR_BYTES:
-+		*value = current_evmcs->guest_ss_ar_bytes;
-+		break;
-+	case GUEST_DS_AR_BYTES:
-+		*value = current_evmcs->guest_ds_ar_bytes;
-+		break;
-+	case GUEST_FS_AR_BYTES:
-+		*value = current_evmcs->guest_fs_ar_bytes;
-+		break;
-+	case GUEST_GS_AR_BYTES:
-+		*value = current_evmcs->guest_gs_ar_bytes;
-+		break;
-+	case GUEST_LDTR_AR_BYTES:
-+		*value = current_evmcs->guest_ldtr_ar_bytes;
-+		break;
-+	case GUEST_TR_AR_BYTES:
-+		*value = current_evmcs->guest_tr_ar_bytes;
-+		break;
-+	case GUEST_ACTIVITY_STATE:
-+		*value = current_evmcs->guest_activity_state;
-+		break;
-+	case GUEST_SYSENTER_CS:
-+		*value = current_evmcs->guest_sysenter_cs;
-+		break;
-+	case VM_INSTRUCTION_ERROR:
-+		*value = current_evmcs->vm_instruction_error;
-+		break;
-+	case VM_EXIT_REASON:
-+		*value = current_evmcs->vm_exit_reason;
-+		break;
-+	case VM_EXIT_INTR_INFO:
-+		*value = current_evmcs->vm_exit_intr_info;
-+		break;
-+	case VM_EXIT_INTR_ERROR_CODE:
-+		*value = current_evmcs->vm_exit_intr_error_code;
-+		break;
-+	case IDT_VECTORING_INFO_FIELD:
-+		*value = current_evmcs->idt_vectoring_info_field;
-+		break;
-+	case IDT_VECTORING_ERROR_CODE:
-+		*value = current_evmcs->idt_vectoring_error_code;
-+		break;
-+	case VM_EXIT_INSTRUCTION_LEN:
-+		*value = current_evmcs->vm_exit_instruction_len;
-+		break;
-+	case VMX_INSTRUCTION_INFO:
-+		*value = current_evmcs->vmx_instruction_info;
-+		break;
-+	case PAGE_FAULT_ERROR_CODE_MASK:
-+		*value = current_evmcs->page_fault_error_code_mask;
-+		break;
-+	case PAGE_FAULT_ERROR_CODE_MATCH:
-+		*value = current_evmcs->page_fault_error_code_match;
-+		break;
-+	case CR3_TARGET_COUNT:
-+		*value = current_evmcs->cr3_target_count;
-+		break;
-+	case VM_EXIT_MSR_STORE_COUNT:
-+		*value = current_evmcs->vm_exit_msr_store_count;
-+		break;
-+	case VM_EXIT_MSR_LOAD_COUNT:
-+		*value = current_evmcs->vm_exit_msr_load_count;
-+		break;
-+	case VM_ENTRY_MSR_LOAD_COUNT:
-+		*value = current_evmcs->vm_entry_msr_load_count;
-+		break;
-+	case HOST_ES_SELECTOR:
-+		*value = current_evmcs->host_es_selector;
-+		break;
-+	case HOST_CS_SELECTOR:
-+		*value = current_evmcs->host_cs_selector;
-+		break;
-+	case HOST_SS_SELECTOR:
-+		*value = current_evmcs->host_ss_selector;
-+		break;
-+	case HOST_DS_SELECTOR:
-+		*value = current_evmcs->host_ds_selector;
-+		break;
-+	case HOST_FS_SELECTOR:
-+		*value = current_evmcs->host_fs_selector;
-+		break;
-+	case HOST_GS_SELECTOR:
-+		*value = current_evmcs->host_gs_selector;
-+		break;
-+	case HOST_TR_SELECTOR:
-+		*value = current_evmcs->host_tr_selector;
-+		break;
-+	case GUEST_ES_SELECTOR:
-+		*value = current_evmcs->guest_es_selector;
-+		break;
-+	case GUEST_CS_SELECTOR:
-+		*value = current_evmcs->guest_cs_selector;
-+		break;
-+	case GUEST_SS_SELECTOR:
-+		*value = current_evmcs->guest_ss_selector;
-+		break;
-+	case GUEST_DS_SELECTOR:
-+		*value = current_evmcs->guest_ds_selector;
-+		break;
-+	case GUEST_FS_SELECTOR:
-+		*value = current_evmcs->guest_fs_selector;
-+		break;
-+	case GUEST_GS_SELECTOR:
-+		*value = current_evmcs->guest_gs_selector;
-+		break;
-+	case GUEST_LDTR_SELECTOR:
-+		*value = current_evmcs->guest_ldtr_selector;
-+		break;
-+	case GUEST_TR_SELECTOR:
-+		*value = current_evmcs->guest_tr_selector;
-+		break;
-+	case VIRTUAL_PROCESSOR_ID:
-+		*value = current_evmcs->virtual_processor_id;
-+		break;
-+	default: return 1;
-+	}
-+
-+	return 0;
-+}
-+
-+static inline int evmcs_vmwrite(uint64_t encoding, uint64_t value)
-+{
-+	switch (encoding) {
-+	case GUEST_RIP:
-+		current_evmcs->guest_rip = value;
-+		break;
-+	case GUEST_RSP:
-+		current_evmcs->guest_rsp = value;
-+		break;
-+	case GUEST_RFLAGS:
-+		current_evmcs->guest_rflags = value;
-+		break;
-+	case HOST_IA32_PAT:
-+		current_evmcs->host_ia32_pat = value;
-+		break;
-+	case HOST_IA32_EFER:
-+		current_evmcs->host_ia32_efer = value;
-+		break;
-+	case HOST_CR0:
-+		current_evmcs->host_cr0 = value;
-+		break;
-+	case HOST_CR3:
-+		current_evmcs->host_cr3 = value;
-+		break;
-+	case HOST_CR4:
-+		current_evmcs->host_cr4 = value;
-+		break;
-+	case HOST_IA32_SYSENTER_ESP:
-+		current_evmcs->host_ia32_sysenter_esp = value;
-+		break;
-+	case HOST_IA32_SYSENTER_EIP:
-+		current_evmcs->host_ia32_sysenter_eip = value;
-+		break;
-+	case HOST_RIP:
-+		current_evmcs->host_rip = value;
-+		break;
-+	case IO_BITMAP_A:
-+		current_evmcs->io_bitmap_a = value;
-+		break;
-+	case IO_BITMAP_B:
-+		current_evmcs->io_bitmap_b = value;
-+		break;
-+	case MSR_BITMAP:
-+		current_evmcs->msr_bitmap = value;
-+		break;
-+	case GUEST_ES_BASE:
-+		current_evmcs->guest_es_base = value;
-+		break;
-+	case GUEST_CS_BASE:
-+		current_evmcs->guest_cs_base = value;
-+		break;
-+	case GUEST_SS_BASE:
-+		current_evmcs->guest_ss_base = value;
-+		break;
-+	case GUEST_DS_BASE:
-+		current_evmcs->guest_ds_base = value;
-+		break;
-+	case GUEST_FS_BASE:
-+		current_evmcs->guest_fs_base = value;
-+		break;
-+	case GUEST_GS_BASE:
-+		current_evmcs->guest_gs_base = value;
-+		break;
-+	case GUEST_LDTR_BASE:
-+		current_evmcs->guest_ldtr_base = value;
-+		break;
-+	case GUEST_TR_BASE:
-+		current_evmcs->guest_tr_base = value;
-+		break;
-+	case GUEST_GDTR_BASE:
-+		current_evmcs->guest_gdtr_base = value;
-+		break;
-+	case GUEST_IDTR_BASE:
-+		current_evmcs->guest_idtr_base = value;
-+		break;
-+	case TSC_OFFSET:
-+		current_evmcs->tsc_offset = value;
-+		break;
-+	case VIRTUAL_APIC_PAGE_ADDR:
-+		current_evmcs->virtual_apic_page_addr = value;
-+		break;
-+	case VMCS_LINK_POINTER:
-+		current_evmcs->vmcs_link_pointer = value;
-+		break;
-+	case GUEST_IA32_DEBUGCTL:
-+		current_evmcs->guest_ia32_debugctl = value;
-+		break;
-+	case GUEST_IA32_PAT:
-+		current_evmcs->guest_ia32_pat = value;
-+		break;
-+	case GUEST_IA32_EFER:
-+		current_evmcs->guest_ia32_efer = value;
-+		break;
-+	case GUEST_PDPTR0:
-+		current_evmcs->guest_pdptr0 = value;
-+		break;
-+	case GUEST_PDPTR1:
-+		current_evmcs->guest_pdptr1 = value;
-+		break;
-+	case GUEST_PDPTR2:
-+		current_evmcs->guest_pdptr2 = value;
-+		break;
-+	case GUEST_PDPTR3:
-+		current_evmcs->guest_pdptr3 = value;
-+		break;
-+	case GUEST_PENDING_DBG_EXCEPTIONS:
-+		current_evmcs->guest_pending_dbg_exceptions = value;
-+		break;
-+	case GUEST_SYSENTER_ESP:
-+		current_evmcs->guest_sysenter_esp = value;
-+		break;
-+	case GUEST_SYSENTER_EIP:
-+		current_evmcs->guest_sysenter_eip = value;
-+		break;
-+	case CR0_GUEST_HOST_MASK:
-+		current_evmcs->cr0_guest_host_mask = value;
-+		break;
-+	case CR4_GUEST_HOST_MASK:
-+		current_evmcs->cr4_guest_host_mask = value;
-+		break;
-+	case CR0_READ_SHADOW:
-+		current_evmcs->cr0_read_shadow = value;
-+		break;
-+	case CR4_READ_SHADOW:
-+		current_evmcs->cr4_read_shadow = value;
-+		break;
-+	case GUEST_CR0:
-+		current_evmcs->guest_cr0 = value;
-+		break;
-+	case GUEST_CR3:
-+		current_evmcs->guest_cr3 = value;
-+		break;
-+	case GUEST_CR4:
-+		current_evmcs->guest_cr4 = value;
-+		break;
-+	case GUEST_DR7:
-+		current_evmcs->guest_dr7 = value;
-+		break;
-+	case HOST_FS_BASE:
-+		current_evmcs->host_fs_base = value;
-+		break;
-+	case HOST_GS_BASE:
-+		current_evmcs->host_gs_base = value;
-+		break;
-+	case HOST_TR_BASE:
-+		current_evmcs->host_tr_base = value;
-+		break;
-+	case HOST_GDTR_BASE:
-+		current_evmcs->host_gdtr_base = value;
-+		break;
-+	case HOST_IDTR_BASE:
-+		current_evmcs->host_idtr_base = value;
-+		break;
-+	case HOST_RSP:
-+		current_evmcs->host_rsp = value;
-+		break;
-+	case EPT_POINTER:
-+		current_evmcs->ept_pointer = value;
-+		break;
-+	case GUEST_BNDCFGS:
-+		current_evmcs->guest_bndcfgs = value;
-+		break;
-+	case XSS_EXIT_BITMAP:
-+		current_evmcs->xss_exit_bitmap = value;
-+		break;
-+	case GUEST_PHYSICAL_ADDRESS:
-+		current_evmcs->guest_physical_address = value;
-+		break;
-+	case EXIT_QUALIFICATION:
-+		current_evmcs->exit_qualification = value;
-+		break;
-+	case GUEST_LINEAR_ADDRESS:
-+		current_evmcs->guest_linear_address = value;
-+		break;
-+	case VM_EXIT_MSR_STORE_ADDR:
-+		current_evmcs->vm_exit_msr_store_addr = value;
-+		break;
-+	case VM_EXIT_MSR_LOAD_ADDR:
-+		current_evmcs->vm_exit_msr_load_addr = value;
-+		break;
-+	case VM_ENTRY_MSR_LOAD_ADDR:
-+		current_evmcs->vm_entry_msr_load_addr = value;
-+		break;
-+	case CR3_TARGET_VALUE0:
-+		current_evmcs->cr3_target_value0 = value;
-+		break;
-+	case CR3_TARGET_VALUE1:
-+		current_evmcs->cr3_target_value1 = value;
-+		break;
-+	case CR3_TARGET_VALUE2:
-+		current_evmcs->cr3_target_value2 = value;
-+		break;
-+	case CR3_TARGET_VALUE3:
-+		current_evmcs->cr3_target_value3 = value;
-+		break;
-+	case TPR_THRESHOLD:
-+		current_evmcs->tpr_threshold = value;
-+		break;
-+	case GUEST_INTERRUPTIBILITY_INFO:
-+		current_evmcs->guest_interruptibility_info = value;
-+		break;
-+	case CPU_BASED_VM_EXEC_CONTROL:
-+		current_evmcs->cpu_based_vm_exec_control = value;
-+		break;
-+	case EXCEPTION_BITMAP:
-+		current_evmcs->exception_bitmap = value;
-+		break;
-+	case VM_ENTRY_CONTROLS:
-+		current_evmcs->vm_entry_controls = value;
-+		break;
-+	case VM_ENTRY_INTR_INFO_FIELD:
-+		current_evmcs->vm_entry_intr_info_field = value;
-+		break;
-+	case VM_ENTRY_EXCEPTION_ERROR_CODE:
-+		current_evmcs->vm_entry_exception_error_code = value;
-+		break;
-+	case VM_ENTRY_INSTRUCTION_LEN:
-+		current_evmcs->vm_entry_instruction_len = value;
-+		break;
-+	case HOST_IA32_SYSENTER_CS:
-+		current_evmcs->host_ia32_sysenter_cs = value;
-+		break;
-+	case PIN_BASED_VM_EXEC_CONTROL:
-+		current_evmcs->pin_based_vm_exec_control = value;
-+		break;
-+	case VM_EXIT_CONTROLS:
-+		current_evmcs->vm_exit_controls = value;
-+		break;
-+	case SECONDARY_VM_EXEC_CONTROL:
-+		current_evmcs->secondary_vm_exec_control = value;
-+		break;
-+	case GUEST_ES_LIMIT:
-+		current_evmcs->guest_es_limit = value;
-+		break;
-+	case GUEST_CS_LIMIT:
-+		current_evmcs->guest_cs_limit = value;
-+		break;
-+	case GUEST_SS_LIMIT:
-+		current_evmcs->guest_ss_limit = value;
-+		break;
-+	case GUEST_DS_LIMIT:
-+		current_evmcs->guest_ds_limit = value;
-+		break;
-+	case GUEST_FS_LIMIT:
-+		current_evmcs->guest_fs_limit = value;
-+		break;
-+	case GUEST_GS_LIMIT:
-+		current_evmcs->guest_gs_limit = value;
-+		break;
-+	case GUEST_LDTR_LIMIT:
-+		current_evmcs->guest_ldtr_limit = value;
-+		break;
-+	case GUEST_TR_LIMIT:
-+		current_evmcs->guest_tr_limit = value;
-+		break;
-+	case GUEST_GDTR_LIMIT:
-+		current_evmcs->guest_gdtr_limit = value;
-+		break;
-+	case GUEST_IDTR_LIMIT:
-+		current_evmcs->guest_idtr_limit = value;
-+		break;
-+	case GUEST_ES_AR_BYTES:
-+		current_evmcs->guest_es_ar_bytes = value;
-+		break;
-+	case GUEST_CS_AR_BYTES:
-+		current_evmcs->guest_cs_ar_bytes = value;
-+		break;
-+	case GUEST_SS_AR_BYTES:
-+		current_evmcs->guest_ss_ar_bytes = value;
-+		break;
-+	case GUEST_DS_AR_BYTES:
-+		current_evmcs->guest_ds_ar_bytes = value;
-+		break;
-+	case GUEST_FS_AR_BYTES:
-+		current_evmcs->guest_fs_ar_bytes = value;
-+		break;
-+	case GUEST_GS_AR_BYTES:
-+		current_evmcs->guest_gs_ar_bytes = value;
-+		break;
-+	case GUEST_LDTR_AR_BYTES:
-+		current_evmcs->guest_ldtr_ar_bytes = value;
-+		break;
-+	case GUEST_TR_AR_BYTES:
-+		current_evmcs->guest_tr_ar_bytes = value;
-+		break;
-+	case GUEST_ACTIVITY_STATE:
-+		current_evmcs->guest_activity_state = value;
-+		break;
-+	case GUEST_SYSENTER_CS:
-+		current_evmcs->guest_sysenter_cs = value;
-+		break;
-+	case VM_INSTRUCTION_ERROR:
-+		current_evmcs->vm_instruction_error = value;
-+		break;
-+	case VM_EXIT_REASON:
-+		current_evmcs->vm_exit_reason = value;
-+		break;
-+	case VM_EXIT_INTR_INFO:
-+		current_evmcs->vm_exit_intr_info = value;
-+		break;
-+	case VM_EXIT_INTR_ERROR_CODE:
-+		current_evmcs->vm_exit_intr_error_code = value;
-+		break;
-+	case IDT_VECTORING_INFO_FIELD:
-+		current_evmcs->idt_vectoring_info_field = value;
-+		break;
-+	case IDT_VECTORING_ERROR_CODE:
-+		current_evmcs->idt_vectoring_error_code = value;
-+		break;
-+	case VM_EXIT_INSTRUCTION_LEN:
-+		current_evmcs->vm_exit_instruction_len = value;
-+		break;
-+	case VMX_INSTRUCTION_INFO:
-+		current_evmcs->vmx_instruction_info = value;
-+		break;
-+	case PAGE_FAULT_ERROR_CODE_MASK:
-+		current_evmcs->page_fault_error_code_mask = value;
-+		break;
-+	case PAGE_FAULT_ERROR_CODE_MATCH:
-+		current_evmcs->page_fault_error_code_match = value;
-+		break;
-+	case CR3_TARGET_COUNT:
-+		current_evmcs->cr3_target_count = value;
-+		break;
-+	case VM_EXIT_MSR_STORE_COUNT:
-+		current_evmcs->vm_exit_msr_store_count = value;
-+		break;
-+	case VM_EXIT_MSR_LOAD_COUNT:
-+		current_evmcs->vm_exit_msr_load_count = value;
-+		break;
-+	case VM_ENTRY_MSR_LOAD_COUNT:
-+		current_evmcs->vm_entry_msr_load_count = value;
-+		break;
-+	case HOST_ES_SELECTOR:
-+		current_evmcs->host_es_selector = value;
-+		break;
-+	case HOST_CS_SELECTOR:
-+		current_evmcs->host_cs_selector = value;
-+		break;
-+	case HOST_SS_SELECTOR:
-+		current_evmcs->host_ss_selector = value;
-+		break;
-+	case HOST_DS_SELECTOR:
-+		current_evmcs->host_ds_selector = value;
-+		break;
-+	case HOST_FS_SELECTOR:
-+		current_evmcs->host_fs_selector = value;
-+		break;
-+	case HOST_GS_SELECTOR:
-+		current_evmcs->host_gs_selector = value;
-+		break;
-+	case HOST_TR_SELECTOR:
-+		current_evmcs->host_tr_selector = value;
-+		break;
-+	case GUEST_ES_SELECTOR:
-+		current_evmcs->guest_es_selector = value;
-+		break;
-+	case GUEST_CS_SELECTOR:
-+		current_evmcs->guest_cs_selector = value;
-+		break;
-+	case GUEST_SS_SELECTOR:
-+		current_evmcs->guest_ss_selector = value;
-+		break;
-+	case GUEST_DS_SELECTOR:
-+		current_evmcs->guest_ds_selector = value;
-+		break;
-+	case GUEST_FS_SELECTOR:
-+		current_evmcs->guest_fs_selector = value;
-+		break;
-+	case GUEST_GS_SELECTOR:
-+		current_evmcs->guest_gs_selector = value;
-+		break;
-+	case GUEST_LDTR_SELECTOR:
-+		current_evmcs->guest_ldtr_selector = value;
-+		break;
-+	case GUEST_TR_SELECTOR:
-+		current_evmcs->guest_tr_selector = value;
-+		break;
-+	case VIRTUAL_PROCESSOR_ID:
-+		current_evmcs->virtual_processor_id = value;
-+		break;
-+	default: return 1;
-+	}
-+
-+	return 0;
-+}
-+
-+static inline int evmcs_vmlaunch(void)
-+{
-+	int ret;
-+
-+	current_evmcs->hv_clean_fields = 0;
-+
-+	__asm__ __volatile__("push %%rbp;"
-+			     "push %%rcx;"
-+			     "push %%rdx;"
-+			     "push %%rsi;"
-+			     "push %%rdi;"
-+			     "push $0;"
-+			     "mov %%rsp, (%[host_rsp]);"
-+			     "lea 1f(%%rip), %%rax;"
-+			     "mov %%rax, (%[host_rip]);"
-+			     "vmlaunch;"
-+			     "incq (%%rsp);"
-+			     "1: pop %%rax;"
-+			     "pop %%rdi;"
-+			     "pop %%rsi;"
-+			     "pop %%rdx;"
-+			     "pop %%rcx;"
-+			     "pop %%rbp;"
-+			     : [ret]"=&a"(ret)
-+			     : [host_rsp]"r"
-+			       ((uint64_t)&current_evmcs->host_rsp),
-+			       [host_rip]"r"
-+			       ((uint64_t)&current_evmcs->host_rip)
-+			     : "memory", "cc", "rbx", "r8", "r9", "r10",
-+			       "r11", "r12", "r13", "r14", "r15");
-+	return ret;
-+}
-+
-+/*
-+ * No guest state (e.g. GPRs) is established by this vmresume.
-+ */
-+static inline int evmcs_vmresume(void)
-+{
-+	int ret;
-+
-+	current_evmcs->hv_clean_fields = 0;
-+
-+	__asm__ __volatile__("push %%rbp;"
-+			     "push %%rcx;"
-+			     "push %%rdx;"
-+			     "push %%rsi;"
-+			     "push %%rdi;"
-+			     "push $0;"
-+			     "mov %%rsp, (%[host_rsp]);"
-+			     "lea 1f(%%rip), %%rax;"
-+			     "mov %%rax, (%[host_rip]);"
-+			     "vmresume;"
-+			     "incq (%%rsp);"
-+			     "1: pop %%rax;"
-+			     "pop %%rdi;"
-+			     "pop %%rsi;"
-+			     "pop %%rdx;"
-+			     "pop %%rcx;"
-+			     "pop %%rbp;"
-+			     : [ret]"=&a"(ret)
-+			     : [host_rsp]"r"
-+			       ((uint64_t)&current_evmcs->host_rsp),
-+			       [host_rip]"r"
-+			       ((uint64_t)&current_evmcs->host_rip)
-+			     : "memory", "cc", "rbx", "r8", "r9", "r10",
-+			       "r11", "r12", "r13", "r14", "r15");
-+	return ret;
-+}
-+
-+#endif /* !SELFTEST_KVM_EVMCS_H */
-diff --git a/tools/testing/selftests/kvm/include/vmx.h b/tools/testing/selftests/kvm/include/vmx.h
-index b9ffe1024d3a..2a7ec2ca5c77 100644
---- a/tools/testing/selftests/kvm/include/vmx.h
-+++ b/tools/testing/selftests/kvm/include/vmx.h
-@@ -339,6 +339,8 @@ struct vmx_msr_entry {
- 	uint64_t value;
- } __attribute__ ((aligned(16)));
- 
-+#include "evmcs.h"
-+
- static inline int vmxon(uint64_t phys)
- {
- 	uint8_t ret;
-@@ -372,6 +374,9 @@ static inline int vmptrld(uint64_t vmcs_pa)
- {
- 	uint8_t ret;
- 
-+	if (enable_evmcs)
-+		return -1;
-+
- 	__asm__ __volatile__ ("vmptrld %[pa]; setna %[ret]"
- 		: [ret]"=rm"(ret)
- 		: [pa]"m"(vmcs_pa)
-@@ -385,6 +390,9 @@ static inline int vmptrst(uint64_t *value)
- 	uint64_t tmp;
- 	uint8_t ret;
- 
-+	if (enable_evmcs)
-+		return evmcs_vmptrst(value);
-+
- 	__asm__ __volatile__("vmptrst %[value]; setna %[ret]"
- 		: [value]"=m"(tmp), [ret]"=rm"(ret)
- 		: : "cc", "memory");
-@@ -411,6 +419,9 @@ static inline int vmlaunch(void)
- {
- 	int ret;
- 
-+	if (enable_evmcs)
-+		return evmcs_vmlaunch();
-+
- 	__asm__ __volatile__("push %%rbp;"
- 			     "push %%rcx;"
- 			     "push %%rdx;"
-@@ -443,6 +454,9 @@ static inline int vmresume(void)
- {
- 	int ret;
- 
-+	if (enable_evmcs)
-+		return evmcs_vmresume();
-+
- 	__asm__ __volatile__("push %%rbp;"
- 			     "push %%rcx;"
- 			     "push %%rdx;"
-@@ -482,6 +496,9 @@ static inline int vmread(uint64_t encoding, uint64_t *value)
- 	uint64_t tmp;
- 	uint8_t ret;
- 
-+	if (enable_evmcs)
-+		return evmcs_vmread(encoding, value);
-+
- 	__asm__ __volatile__("vmread %[encoding], %[value]; setna %[ret]"
- 		: [value]"=rm"(tmp), [ret]"=rm"(ret)
- 		: [encoding]"r"(encoding)
-@@ -506,6 +523,9 @@ static inline int vmwrite(uint64_t encoding, uint64_t value)
- {
- 	uint8_t ret;
- 
-+	if (enable_evmcs)
-+		return evmcs_vmwrite(encoding, value);
-+
- 	__asm__ __volatile__ ("vmwrite %[value], %[encoding]; setna %[ret]"
- 		: [ret]"=rm"(ret)
- 		: [value]"rm"(value), [encoding]"r"(encoding)
-@@ -543,6 +563,14 @@ struct vmx_pages {
- 	void *vmwrite_hva;
- 	uint64_t vmwrite_gpa;
- 	void *vmwrite;
-+
-+	void *vp_assist_hva;
-+	uint64_t vp_assist_gpa;
-+	void *vp_assist;
-+
-+	void *enlightened_vmcs_hva;
-+	uint64_t enlightened_vmcs_gpa;
-+	void *enlightened_vmcs;
- };
- 
- struct vmx_pages *vcpu_alloc_vmx(struct kvm_vm *vm, vm_vaddr_t *p_vmx_gva);
-diff --git a/tools/testing/selftests/kvm/lib/vmx.c b/tools/testing/selftests/kvm/lib/vmx.c
-index b987c3c970eb..bc4986a70e1e 100644
---- a/tools/testing/selftests/kvm/lib/vmx.c
-+++ b/tools/testing/selftests/kvm/lib/vmx.c
-@@ -13,6 +13,8 @@
- #include "x86.h"
- #include "vmx.h"
- 
-+bool enable_evmcs;
-+
- /* Allocate memory regions for nested VMX tests.
-  *
-  * Input Args:
-@@ -62,6 +64,20 @@ vcpu_alloc_vmx(struct kvm_vm *vm, vm_vaddr_t *p_vmx_gva)
- 	vmx->vmwrite_gpa = addr_gva2gpa(vm, (uintptr_t)vmx->vmwrite);
- 	memset(vmx->vmwrite_hva, 0, getpagesize());
- 
-+	/* Setup of a region of guest memory for the VP Assist page. */
-+	vmx->vp_assist = (void *)vm_vaddr_alloc(vm, getpagesize(),
-+						0x10000, 0, 0);
-+	vmx->vp_assist_hva = addr_gva2hva(vm, (uintptr_t)vmx->vp_assist);
-+	vmx->vp_assist_gpa = addr_gva2gpa(vm, (uintptr_t)vmx->vp_assist);
-+
-+	/* Setup of a region of guest memory for the enlightened VMCS. */
-+	vmx->enlightened_vmcs = (void *)vm_vaddr_alloc(vm, getpagesize(),
-+						       0x10000, 0, 0);
-+	vmx->enlightened_vmcs_hva =
-+		addr_gva2hva(vm, (uintptr_t)vmx->enlightened_vmcs);
-+	vmx->enlightened_vmcs_gpa =
-+		addr_gva2gpa(vm, (uintptr_t)vmx->enlightened_vmcs);
-+
- 	*p_vmx_gva = vmx_gva;
- 	return vmx;
- }
-@@ -107,18 +123,26 @@ bool prepare_for_vmx_operation(struct vmx_pages *vmx)
- 	if (vmxon(vmx->vmxon_gpa))
- 		return false;
- 
--	/* Load a VMCS. */
--	*(uint32_t *)(vmx->vmcs) = vmcs_revision();
--	if (vmclear(vmx->vmcs_gpa))
--		return false;
--
--	if (vmptrld(vmx->vmcs_gpa))
--		return false;
--
--	/* Setup shadow VMCS, do not load it yet. */
--	*(uint32_t *)(vmx->shadow_vmcs) = vmcs_revision() | 0x80000000ul;
--	if (vmclear(vmx->shadow_vmcs_gpa))
--		return false;
-+	if (!enable_evmcs) {
-+		/* Load a VMCS. */
-+		*(uint32_t *)(vmx->vmcs) = vmcs_revision();
-+		if (vmclear(vmx->vmcs_gpa))
-+			return false;
-+
-+		if (vmptrld(vmx->vmcs_gpa))
-+			return false;
-+
-+		/* Setup shadow VMCS, do not load it yet. */
-+		*(uint32_t *)(vmx->shadow_vmcs) =
-+			vmcs_revision() | 0x80000000ul;
-+		if (vmclear(vmx->shadow_vmcs_gpa))
-+			return false;
-+	} else {
-+		if (evmcs_vmptrld(vmx->enlightened_vmcs_gpa,
-+				  vmx->enlightened_vmcs))
-+			return false;
-+		current_evmcs->revision_id = vmcs_revision();
-+	}
- 
- 	return true;
- }
--- 
-2.14.4
-
+> 
+>>
+>> net-next (dmesg output for 07:00.0):
+>> [270498.625351] mlx5_core 0000:07:00.0: firmware version: 14.22.4020
+>> [270498.632130] mlx5_core 0000:07:00.0: 63.008 Gb/s available PCIe bandwidth
+>> (8 GT/s x8 link)
+>> [270499.169533] (0000:07:00.0): E-Switch: Total vports 9, per vport: max
+>> uc(1024) max mc(16384)
+>> [270499.182358] mlx5_core 0000:07:00.0: Port module event: module 0, Cable
+>> plugged
+>>
+>> net-next + patches (dmesg output for 07:00.0):
+>> [  331.608472] mlx5_core 0000:07:00.0: firmware version: 14.22.4020
+>> [  332.564938] (0000:07:00.0): E-Switch: Total vports 9, per vport: max
+>> uc(1024) max mc(16384)
+>> [  332.616271] mlx5_core 0000:07:00.0: Port module event: module 0, Cable
+>> plugged
+>>
+>>
