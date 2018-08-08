@@ -2,151 +2,128 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7A9CC46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 08:41:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C990C4646D
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 08:42:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65E85216FB
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 08:41:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B7A70216FB
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 08:42:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="CR+3G8ic"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65E85216FB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="IkETxSjU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7A70216FB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727271AbeHHLA2 (ORCPT
+        id S1727321AbeHHLAn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 07:00:28 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:40061 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727098AbeHHLA2 (ORCPT
+        Wed, 8 Aug 2018 07:00:43 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:52360 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727098AbeHHLAn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 07:00:28 -0400
-Received: by mail-wr1-f66.google.com with SMTP id h15-v6so1248835wrs.7
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 01:41:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=4HPaJrDBKJC62V9rM3h386axEs/ADjPFxHCFqh4cwxI=;
-        b=CR+3G8ic5Ze8KFB5imLEjLshiorA9xiy1Lsjh55J9XsiZ1rripnDRqrh4vPBJoqciC
-         AwvA/skS3sMGOCDcNoj+PyUwKKRUvF/gHpGFhnFPxwTUzpjZ2VQijotVSWf5RBSPIiD2
-         KVUnjM5z5lBB7Dlutr1Dwtibg1j0ZQ+pZdnhKNEcXOCOWkoCW9MS5sao2UIkTEKnJS3v
-         APCR6tVGrZEtWGx3L8WRQ7h8OT3Rh0ZT2fi7ycJ12Z0somf1uDtr/T9crp++N9OmpfyB
-         9pEWutiacp+qRbvk5dj1P8U/yPJAN82+1gVN35AS15TtEtl3FsnwzZe6oNmkVb82ag3l
-         XAQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=4HPaJrDBKJC62V9rM3h386axEs/ADjPFxHCFqh4cwxI=;
-        b=m0c4e4YrJ4G/TqkSFM67P8wnKt/bQzVyvGnqrGMMtW8acpYwMwEEeZQNeR6IAdNDw7
-         Pdb6uZFJL3PhxgwpSanuAtzkgAVRWFSKTyjSKU6ISmphAlGLXlQ0FY4vRny+Hp5ybsfT
-         si3n4q9R5CmWIZQ02ddctNnzhyDkwx7ya0AUzj5K95TlOAPSbwR7ruW9cUj1oW84I2qU
-         r3+FpZoJSe1xGMiYLTgEJC692uz4hORo33MdL0vQZl3SfAEp0/tXp8ogy2LQJUbkrS2w
-         j3ItXanMyIt/Nmxccubp4qYscJKvXp6aVszWRZJ+ar3D6O+XvzgAojM7ic/sDPATxUSu
-         Wc2g==
-X-Gm-Message-State: AOUpUlGQAbGGjbNR6PU8ceq1rlB/CjZh4P2S0x3Tw/8p22dQLAXffVb5
-        +m2uKAntsaklgdARN3/Wu6G1aA==
-X-Google-Smtp-Source: AA+uWPzNHZOGCkloKUelV2w3o6jK4fVKOqZyXqXZCI/9/SnuZTkFtWk+8ev7C7kx2EM8/M18zmcEmw==
-X-Received: by 2002:adf:e3c5:: with SMTP id k5-v6mr1295698wrm.94.1533717706218;
-        Wed, 08 Aug 2018 01:41:46 -0700 (PDT)
-Received: from boomer ([90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id i125-v6sm6838586wmd.23.2018.08.08.01.41.45
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 08 Aug 2018 01:41:45 -0700 (PDT)
-Message-ID: <3221c65f87f8fd3541e0188186cb0259327cb671.camel@baylibre.com>
-Subject: Re: [PATCH v2 3/4] ARM64: dts: meson-gx: add dmcbus and canvas
- nodes.
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Maxime Jourdan <maxi.jourdan@wanadoo.fr>,
-        Kevin Hilman <khilman@baylibre.com>
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Date:   Wed, 08 Aug 2018 10:41:44 +0200
-In-Reply-To: <20180807220011.24436-4-maxi.jourdan@wanadoo.fr>
-References: <20180807220011.24436-1-maxi.jourdan@wanadoo.fr>
-         <20180807220011.24436-4-maxi.jourdan@wanadoo.fr>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Wed, 8 Aug 2018 07:00:43 -0400
+Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id D587757;
+        Wed,  8 Aug 2018 10:41:59 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1533717720;
+        bh=WrLRA5JxyKG/8KaMjpao3MpPFykClLAjVtbnT+/gQ+I=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=IkETxSjUynzrZol6ufrCNhKCO4S4ZE7jVn/3B50njuMEcClByZE01kEHgr3+1GpS+
+         P1rsKtGAfNODKs/h6czi05DJMqy8+l2ZJ1cCK8Dmph5Chg9ot29TzgnvhW/0nYJdzi
+         Usu4ptP4gLMMO84fACbPvEX2iWEQ2VZi5eZi8olM=
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Tomasz Figa <tfiga@chromium.org>
+Cc:     keiichiw@chromium.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        "Matwey V. Kornilov" <matwey@sai.msu.ru>
+Subject: Re: [RFC PATCH v1] media: uvcvideo: Cache URB header data before processing
+Date:   Wed, 08 Aug 2018 11:42:44 +0300
+Message-ID: <3411643.50e8mdYzJX@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <CAAFQd5CM63BQ1oxmrhZuxTVj7pc=6XUJKa-cJ3gFBHxiF3HPfQ@mail.gmail.com>
+References: <20180627103408.33003-1-keiichiw@chromium.org> <11886963.8nkeRH3xvi@avalon> <CAAFQd5CM63BQ1oxmrhZuxTVj7pc=6XUJKa-cJ3gFBHxiF3HPfQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-08-08 at 00:00 +0200, Maxime Jourdan wrote:
-> Wrap the canvas node in a syscon node.
+Hi Tomasz,
+
+On Wednesday, 8 August 2018 07:08:59 EEST Tomasz Figa wrote:
+> On Tue, Jul 31, 2018 at 1:00 AM Laurent Pinchart wrote:
+> > On Wednesday, 27 June 2018 13:34:08 EEST Keiichi Watanabe wrote:
+> >> On some platforms with non-coherent DMA (e.g. ARM), USB drivers use
+> >> uncached memory allocation methods. In such situations, it sometimes
+> >> takes a long time to access URB buffers.  This can be a cause of video
+> >> flickering problems if a resolution is high and a USB controller has
+> >> a very tight time limit. (e.g. dwc2) To avoid this problem, we copy
+> >> header data from (uncached) URB buffer into (cached) local buffer.
+> >> 
+> >> This change should make the elapsed time of the interrupt handler
+> >> shorter on platforms with non-coherent DMA. We measured the elapsed
+> >> time of each callback of uvc_video_complete without/with this patch
+> >> while capturing Full HD video in
+> >> https://webrtc.github.io/samples/src/content/getusermedia/resolution/.
+> >> I tested it on the top of Kieran Bingham's Asynchronous UVC series
+> >> https://www.mail-archive.com/linux-media@vger.kernel.org/msg128359.html.
+> >> The test device was Jerry Chromebook (RK3288) with Logitech Brio 4K.
+> >> I collected data for 5 seconds. (There were around 480 callbacks in
+> >> this case.) The following result shows that this patch makes
+> >> uvc_video_complete about 2x faster.
+> >> 
+> >>            | average | median  | min     | max     | standard deviation
+> >> w/o caching| 45319ns | 40250ns | 33834ns | 142625ns| 16611ns
+> >> w/  caching| 20620ns | 19250ns | 12250ns | 56583ns | 6285ns
+> >> 
+> >> In addition, we confirmed that this patch doesn't make it worse on
+> >> coherent DMA architecture by performing the same measurements on a
+> >> Broadwell Chromebox with the same camera.
+> >> 
+> >>            | average | median  | min     | max     | standard deviation
+> >> w/o caching| 21026ns | 21424ns | 12263ns | 23956ns | 1932ns
+> >> w/  caching| 20728ns | 20398ns |  8922ns | 45120ns | 3368ns
+> > 
+> > This is very interesting, and it seems related to https://
+> > patchwork.kernel.org/patch/10468937/. You might have seen that discussion
+> > as you got CC'ed at some point.
+> > 
+> > I wonder whether performances couldn't be further improved by allocating
+> > the URB buffers cached, as that would speed up the memcpy() as well. Have
+> > you tested that by any chance ?
 > 
-> Signed-off-by: Maxime Jourdan <maxi.jourdan@wanadoo.fr>
-> ---
->  arch/arm64/boot/dts/amlogic/meson-gx.dtsi | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
+> We haven't measure it, but the issue being solved here was indeed
+> significantly reduced by using cached URB buffers, even without
+> Kieran's async series. After we discovered the latter, we just
+> backported it and decided to further tweak the last remaining bit, to
+> avoid playing too much with the DMA API in code used in production on
+> several different platforms (including both ARM and x86).
 > 
-> diff --git a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
-> index b8dc4dbb391b..c98198662ae2 100644
-> --- a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
-> +++ b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
-> @@ -423,6 +423,23 @@
->  			};
->  		};
->  
-> +		dmcbus: bus@c8838000 {
-> +			compatible = "simple-bus";
-> +			reg = <0x0 0xc8838000 0x0 0x1000>;
-> +			#address-cells = <2>;
-> +			#size-cells = <2>;
-> +			ranges = <0x0 0x0 0x0 0xc8838000 0x0 0x1000>;
-> +
-> +			sysctrl_DMC: system-controller@0 {
-> +				compatible = "amlogic,gx-dmc-sysctrl", "syscon", "simple-mfd";
-> +				reg = <0x0 0x0 0x0 0x1000>;
-> +
-> +				canvas: canvas-provider@0 {
-> +					compatible = "amlogic,canvas";
+> If you think we could change the driver to use cached buffers instead
+> (as the pwc driver mentioned in another thread), I wouldn't have
+> anything against it obviously.
 
-If there is only one canvas provider under "sysctrl_DMC" and it has no reg
-property , you should not put a unit-address (@0) here. (same for the
-documentation patch)
+I think there's a chance that performances could be further improved. 
+Furthermore, it would lean to simpler code as we wouldn't need to deal with 
+caching headers manually. I would however like to see numbers before making a 
+decision.
 
-You may have seen unit-address without a reg property used elsewhere (ASoC
-simple-card, my recent axg-sound-card), when there is multiple node with the
-same node-name (ex: dai-link).
+-- 
+Regards,
 
-As Martin pointed out, the DT spec says we should not use unit-address unless
-there is a reg property. We did not get Rob's view on this and we might have to
-update this later on. In your case, unless I missed something, you should
-definitely not have it
+Laurent Pinchart
 
-nitpick regarding the node-name (canvas-provider). If appropriate, we should try
-to stick to one of the generic names proposed in the spec. I wonder if the
-canvas provider could be viewed as a "memory" or "memory-controller"
-
-So, what about this ? Just a proposition, feel free to comment ;)
-
-	sysctrl_DMC: system-controller@0 {							compatib
-le = "amlogic,gx-dmc-sysctrl", "syscon", "simple-mfd";> 		reg =
-<0x0 0x0 0x0 0x1000>;
-	
-		canvas: memory-controller {
-			compatible = "amlogic,canvas";
-		}
-
-[...]
-
-
-> +				};
-> +			};
-> +		};
-> +
->  		hiubus: bus@c883c000 {
->  			compatible = "simple-bus";
->  			reg = <0x0 0xc883c000 0x0 0x2000>;
 
 
