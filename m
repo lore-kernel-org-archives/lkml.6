@@ -2,93 +2,125 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C440C4646D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 08:25:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 115F5C46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 08:27:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A7A8216F6
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 08:25:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A7A8216F6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id B1C64216F6
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 08:27:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="X8xhIM9L"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1C64216F6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727266AbeHHKnv (ORCPT
+        id S1727229AbeHHKpi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 06:43:51 -0400
-Received: from mx2.suse.de ([195.135.220.15]:32806 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726979AbeHHKnu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 06:43:50 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 5E8FDAD49;
-        Wed,  8 Aug 2018 08:25:12 +0000 (UTC)
-Date:   Wed, 8 Aug 2018 10:25:11 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     Florian Westphal <fw@strlen.de>,
-        Georgi Nikolov <gnikolov@icdsoft.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH] netfilter/x_tables: do not fail xt_alloc_table_info too
- easilly
-Message-ID: <20180808082511.GF27972@dhcp22.suse.cz>
-References: <20180807195400.23687-1-mhocko@kernel.org>
- <a060e57c-dbcd-d3bc-c975-ac8a66468666@suse.cz>
+        Wed, 8 Aug 2018 06:45:38 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:42286 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726979AbeHHKph (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 06:45:37 -0400
+Received: by mail-ed1-f66.google.com with SMTP id r4-v6so827219edp.9
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 01:27:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ZJyiqdZic1VHnOsGJ+Itv6QwE/ryZ0YCv8sR4lPrkIs=;
+        b=X8xhIM9LoF7zt7gNZ8OpLQpVrfbKejfYtjXbLisgjCqTdTp9kaXuoFLYbDb2o0+omu
+         2kbp94eHIt5CeAkBl4FrM6ZnLaDXMX5mUhB9cw9AfO0sXsLQ3lhDNQ/9PABMevNT+Xko
+         4+N4T37ULCu7/vrdQD03zpG5iBcxHrTvWExx4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=ZJyiqdZic1VHnOsGJ+Itv6QwE/ryZ0YCv8sR4lPrkIs=;
+        b=rbrhOOG216FCWxrqRiPOHURBhj4yt6fKatbof77upJQXmkjqxnQ3eAfMwxmfvwz6gu
+         duP0Wpot9sNcnjnssvluC22v9Bp3i8B2zK17m0Bhj5eJ0SRCHGsYIdq/MvHz6EIeVlLH
+         WNcCAJBqV8ls4zU5+cJp6l456O8dTRyei7LNY16o+tun1VtR/VgVExik170MwrC6VKse
+         xLX96jrr5sSYzVy3lk+wAPGnltBAnoHu10Rwe94ZcsD64CkQsrrVCMUok5+H250tHcrJ
+         2wPUWq3rnJiPVImT5mT9Bk82xn8MrTzF1tUDnydyXrgGSEoonRg0xWJY4f5eMGqhJ/Z8
+         DdRQ==
+X-Gm-Message-State: AOUpUlEvD1PflU6i5jnFYwVHfEh6EeIHxFhQsCzEkaWHUHYBU3r77NmU
+        IdvDEsgZ51v8VL2R6BwedSPjyzDz3eg=
+X-Google-Smtp-Source: AA+uWPwACfaav4dSjwONSZjU7vrLRPkvGxZo+DUEfibZOoL1JuSoF3VbLECFKf8OW7TdQ9tsqVb/AQ==
+X-Received: by 2002:a50:d307:: with SMTP id g7-v6mr2156053edh.221.1533716819642;
+        Wed, 08 Aug 2018 01:26:59 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:56fc:0:d707:d7d8:b180:96e5])
+        by smtp.gmail.com with ESMTPSA id w3-v6sm3721523edb.16.2018.08.08.01.26.58
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 08 Aug 2018 01:26:59 -0700 (PDT)
+Date:   Wed, 8 Aug 2018 10:26:57 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Gerd Hoffmann <kraxel@redhat.com>
+Cc:     dri-devel@lists.freedesktop.org,
+        open list <linux-kernel@vger.kernel.org>,
+        "moderated list:DMA BUFFER SHARING FRAMEWORK" 
+        <linaro-mm-sig@lists.linaro.org>,
+        "open list:DMA BUFFER SHARING FRAMEWORK" 
+        <linux-media@vger.kernel.org>
+Subject: Re: [PATCH] dma-buf: fix sanity check in dma_buf_export
+Message-ID: <20180808082657.GJ3008@phenom.ffwll.local>
+Mail-Followup-To: Gerd Hoffmann <kraxel@redhat.com>,
+        dri-devel@lists.freedesktop.org,
+        open list <linux-kernel@vger.kernel.org>,
+        "moderated list:DMA BUFFER SHARING FRAMEWORK" <linaro-mm-sig@lists.linaro.org>,
+        "open list:DMA BUFFER SHARING FRAMEWORK" <linux-media@vger.kernel.org>
+References: <20180808062540.13545-1-kraxel@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a060e57c-dbcd-d3bc-c975-ac8a66468666@suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180808062540.13545-1-kraxel@redhat.com>
+X-Operating-System: Linux phenom 4.14.0-3-amd64 
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 08-08-18 10:16:01, Vlastimil Babka wrote:
-> On 08/07/2018 09:54 PM, Michal Hocko wrote:
-> > From: Michal Hocko <mhocko@suse.com>
-> > 
-> > eacd86ca3b03 ("net/netfilter/x_tables.c: use kvmalloc()
-> > in xt_alloc_table_info()") has unintentionally fortified
-> > xt_alloc_table_info allocation when __GFP_RETRY has been dropped from
-> > the vmalloc fallback. Later on there was a syzbot report that this
-> > can lead to OOM killer invocations when tables are too large and
-> > 0537250fdc6c ("netfilter: x_tables: make allocation less aggressive")
-> > has been merged to restore the original behavior. Georgi Nikolov however
-> > noticed that he is not able to install his iptables anymore so this can
-> > be seen as a regression.
-> > 
-> > The primary argument for 0537250fdc6c was that this allocation path
-> > shouldn't really trigger the OOM killer and kill innocent tasks. On the
-> > other hand the interface requires root and as such should allow what the
-> > admin asks for. Root inside a namespaces makes this more complicated
-> > because those might be not trusted in general. If they are not then such
-> > namespaces should be restricted anyway. Therefore drop the __GFP_NORETRY
-> > and replace it by __GFP_ACCOUNT to enfore memcg constrains on it.
-> > 
-> > Fixes: 0537250fdc6c ("netfilter: x_tables: make allocation less aggressive")
-> > Reported-by: Georgi Nikolov <gnikolov@icdsoft.com>
-> > Suggested-by: Vlastimil Babka <vbabka@suse.cz>
-> > Acked-by: Florian Westphal <fw@strlen.de>
-> > Signed-off-by: Michal Hocko <mhocko@suse.com>
+On Wed, Aug 08, 2018 at 08:25:40AM +0200, Gerd Hoffmann wrote:
+> Commit 09ea0dfbf972 made map_atomic and map function pointers optional,
+> but didn't adapt the sanity check in dma_buf_export.  Fix that.
 > 
-> Acked-by: Vlastimil Babka <vbabka@suse.cz>
+> Note that the atomic map interface has been removed altogether meanwhile
+> (commit f664a52695), therefore we have to remove the map check only.
+> 
+> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
 
-Thanks!
+Chris Wilson just submitted the exact same patch ...
+-Daniel
 
-> IIRC According to Florian there are more places like this in the
-> netfilter code?
-
-Well, this is more for netfilter guys. I can only give a general
-guidance that generally untrusted allocations triggered from userspace
-should be a subject of kmem accounting.
+> ---
+>  drivers/dma-buf/dma-buf.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
+> index 13884474d1..02f7f9a899 100644
+> --- a/drivers/dma-buf/dma-buf.c
+> +++ b/drivers/dma-buf/dma-buf.c
+> @@ -405,7 +405,6 @@ struct dma_buf *dma_buf_export(const struct dma_buf_export_info *exp_info)
+>  			  || !exp_info->ops->map_dma_buf
+>  			  || !exp_info->ops->unmap_dma_buf
+>  			  || !exp_info->ops->release
+> -			  || !exp_info->ops->map
+>  			  || !exp_info->ops->mmap)) {
+>  		return ERR_PTR(-EINVAL);
+>  	}
+> -- 
+> 2.9.3
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 
 -- 
-Michal Hocko
-SUSE Labs
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
