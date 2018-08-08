@@ -2,96 +2,115 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D15FFC4646D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:12:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 020C4C4646D
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:14:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 922CE21990
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:12:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 922CE21990
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id A9BBA219C9
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:14:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9BBA219C9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727518AbeHHQcS (ORCPT
+        id S1727415AbeHHQeb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 12:32:18 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33140 "EHLO mx1.redhat.com"
+        Wed, 8 Aug 2018 12:34:31 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:10681 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727109AbeHHQcS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 12:32:18 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B212E819701A;
-        Wed,  8 Aug 2018 14:12:27 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id A503B1C723;
-        Wed,  8 Aug 2018 14:12:27 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id w78ECRiC010619;
-        Wed, 8 Aug 2018 10:12:27 -0400
-Received: from localhost (mpatocka@localhost)
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id w78ECREE010616;
-        Wed, 8 Aug 2018 10:12:27 -0400
-X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
-Date:   Wed, 8 Aug 2018 10:12:27 -0400 (EDT)
-From:   Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To:     Catalin Marinas <catalin.marinas@arm.com>
-cc:     Will Deacon <will.deacon@arm.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Joao Pinto <Joao.Pinto@synopsys.com>,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        libc-alpha@sourceware.org,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Matt Sealey <neko@bakuhatsu.net>, linux-pci@vger.kernel.org,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Subject: Re: framebuffer corruption due to overlapping stp instructions on
- arm64
-In-Reply-To: <20180808113927.GA24736@iMac.local>
-Message-ID: <alpine.LRH.2.02.1808081011110.9997@file01.intranet.prod.int.rdu2.redhat.com>
-References: <alpine.LRH.2.02.1808021242320.31834@file01.intranet.prod.int.rdu2.redhat.com> <CAHCPf3tFGqkYEcWNN4LaWThw_rVqT316pzLv6T7RfxwO-eZ0EA@mail.gmail.com> <alpine.LRH.2.02.1808030212340.17672@file01.intranet.prod.int.rdu2.redhat.com>
- <CAKv+Gu8DeuksZhk1g3q_msSKV_hSY_2e1uzVten9-oGO3j9Sqg@mail.gmail.com> <20180803094129.GB17798@arm.com> <alpine.LRH.2.02.1808031235410.31584@file01.intranet.prod.int.rdu2.redhat.com> <20180808113927.GA24736@iMac.local>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+        id S1727109AbeHHQeb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 12:34:31 -0400
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id F05B79A3434A6;
+        Wed,  8 Aug 2018 22:14:34 +0800 (CST)
+Received: from linux-ibm.site (10.175.102.37) by
+ DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
+ 14.3.399.0; Wed, 8 Aug 2018 22:14:30 +0800
+From:   zhong jiang <zhongjiang@huawei.com>
+To:     <ericvh@gmail.com>, <rminnich@sandia.gov>, <lucho@ionkov.net>,
+        <davem@davemloft.net>
+CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] net:9p: change the p9_error_init and p9_trans_fd_init to be void function
+Date:   Wed, 8 Aug 2018 22:02:48 +0800
+Message-ID: <1533736968-9365-1-git-send-email-zhongjiang@huawei.com>
+X-Mailer: git-send-email 1.7.12.4
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 08 Aug 2018 14:12:27 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 08 Aug 2018 14:12:27 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mpatocka@redhat.com' RCPT:''
+Content-Type: text/plain
+X-Originating-IP: [10.175.102.37]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The two functions has return value, but any of the callees do not handle the
+return value. So we get out of the return value and make the function to be
+void function. 
 
+Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+---
+ include/net/9p/9p.h | 4 ++--
+ net/9p/error.c      | 4 +---
+ net/9p/trans_fd.c   | 4 +---
+ 3 files changed, 4 insertions(+), 8 deletions(-)
 
-On Wed, 8 Aug 2018, Catalin Marinas wrote:
+diff --git a/include/net/9p/9p.h b/include/net/9p/9p.h
+index b8eb51a..0a9577d 100644
+--- a/include/net/9p/9p.h
++++ b/include/net/9p/9p.h
+@@ -571,7 +571,7 @@ struct p9_fcall {
+ void p9_idpool_put(int id, struct p9_idpool *p);
+ int p9_idpool_check(int id, struct p9_idpool *p);
+ 
+-int p9_error_init(void);
+-int p9_trans_fd_init(void);
++void p9_error_init(void);
++void p9_trans_fd_init(void);
+ void p9_trans_fd_exit(void);
+ #endif /* NET_9P_H */
+diff --git a/net/9p/error.c b/net/9p/error.c
+index 126fd0d..458e038 100644
+--- a/net/9p/error.c
++++ b/net/9p/error.c
+@@ -190,7 +190,7 @@ struct errormap {
+  *
+  */
+ 
+-int p9_error_init(void)
++void p9_error_init(void)
+ {
+ 	struct errormap *c;
+ 	int bucket;
+@@ -206,8 +206,6 @@ int p9_error_init(void)
+ 		INIT_HLIST_NODE(&c->list);
+ 		hlist_add_head(&c->list, &hash_errmap[bucket]);
+ 	}
+-
+-	return 1;
+ }
+ EXPORT_SYMBOL(p9_error_init);
+ 
+diff --git a/net/9p/trans_fd.c b/net/9p/trans_fd.c
+index e2ef3c7..e0f36c9 100644
+--- a/net/9p/trans_fd.c
++++ b/net/9p/trans_fd.c
+@@ -1121,13 +1121,11 @@ static void p9_poll_workfn(struct work_struct *work)
+ 	p9_debug(P9_DEBUG_TRANS, "finish\n");
+ }
+ 
+-int p9_trans_fd_init(void)
++void p9_trans_fd_init(void)
+ {
+ 	v9fs_register_trans(&p9_tcp_trans);
+ 	v9fs_register_trans(&p9_unix_trans);
+ 	v9fs_register_trans(&p9_fd_trans);
+-
+-	return 0;
+ }
+ 
+ void p9_trans_fd_exit(void)
+-- 
+1.7.12.4
 
-> On Fri, Aug 03, 2018 at 01:09:02PM -0400, Mikulas Patocka wrote:
-> > 	while (1) {
-> > 		start = (unsigned)random() % (LEN + 1);
-> > 		end = (unsigned)random() % (LEN + 1);
-> > 		if (start > end)
-> > 			continue;
-> > 		for (i = start; i < end; i++)
-> > 			data[i] = val++;
-> > 		memcpy(map + start, data + start, end - start);
-> > 		if (memcmp(map, data, LEN)) {
-> 
-> It may be worth trying to do a memcmp(map+start, data+start, end-start)
-> here to see whether the hazard logic fails when the writes are unaligned
-> but the reads are not.
-> 
-> This problem may as well appear if you do byte writes and read longs
-> back (and I consider this a hardware problem on this specific board).
-
-I triad to insert usleep(10000) between the memcpy and memcmp, but the 
-same corruption occurs. So, it can't be read-after-write hazard. It is 
-caused by the improper handling of hazard between the overlapping writes 
-inside memcpy.
-
-Mikulas
