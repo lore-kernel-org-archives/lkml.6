@@ -4,59 +4,59 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 475A2C46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 15:34:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9766DC4646D
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 15:34:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03BC92088E
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 15:34:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4EC46208DA
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 15:34:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="x9M5T0Vo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03BC92088E
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="XWVIG9DA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EC46208DA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729830AbeHHRyR (ORCPT
+        id S1729934AbeHHRyX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 13:54:17 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:40483 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729750AbeHHRyQ (ORCPT
+        Wed, 8 Aug 2018 13:54:23 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:38283 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729855AbeHHRyW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 13:54:16 -0400
-Received: by mail-wr1-f65.google.com with SMTP id h15-v6so2399696wrs.7
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 08:34:05 -0700 (PDT)
+        Wed, 8 Aug 2018 13:54:22 -0400
+Received: by mail-wm0-f65.google.com with SMTP id t25-v6so3201449wmi.3
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 08:34:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=ThSFa5TY9AN8ejL/oFTQ9UvkNub5vaaRPx6NCkwo95U=;
-        b=x9M5T0VoamSKJspU6RNUsUy6KIRSSDioe4ly7gBcHx+d13+QZGPnxFBNnsExUNjdXd
-         c60SpxM2BsVd6eO7EQ8/Zr8sj4WBEeeQaSTufUH9eI4BUlNqPm3tqMDWN0PpqIfAcGg7
-         HHRLA8dJWdN43Ot1HNbbrnLMi9h6XsVkANFrEnCHcIh9KZWfAza5WbjWAfz14IRp+5tm
-         +d2jb37Eycq2jzQ4Lmufs0/QGSElis7cX6K24P0XJKOx2tAjfiX0aBG9uGkiGDASTshj
-         Dp1HrD5LrY/WWxEF6GrqRPc61krRfGVbb9KNwEj0fA4zhz74LOs4UcYPsW6oNichH4Ks
-         19iA==
+        bh=a/BOUiTdvWAmDk1aQD6bOGL0a+rPVeL/eLOK+TRSYBw=;
+        b=XWVIG9DAg21hfeGcQ001YukvUzI3hLmFhFbJL9E9LKfvMDBDtdj6O/WL+KF1zX98c+
+         6lrWefYHk3PPIT9ix5DmwQe/RenzPWO73DW5zXaLPGKS0n/76eNwJ6x8dRUFP4AvIYpX
+         w4wJmiXoH41F2X8U9nU6XA4Wf6hvlcXcFrRSuqZOdC42a784zl5qqS27ymeZh/1kM4Wl
+         LTEl+wCatoeybcGry3jjKw84JgJwCUKPh3iE03TFLoA+e8L6U4MubHtJZX020Z6TVVhI
+         oO/VjYnDzT8ipDY+uJgIs9K/biY5I/7AHR1dbsTIzWmad+yXM2+gpMUZqy8I2uiaVEY9
+         VP5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=ThSFa5TY9AN8ejL/oFTQ9UvkNub5vaaRPx6NCkwo95U=;
-        b=kiy4xYXhvZPz8/YQBvgy/3Mjtgx2VLH+/eZFPiOGKF75hSTO9F2WxKk6gZeTGgStUS
-         nxJ6I58c0Jp2OOZg7xCQ1wOHPpbiyHxjkyOEoYcpGtuDEU43Ldd5juhhvtFvGnzpekjp
-         7PMytANRDfgF1jszgSzxqFQt0LxYs/lsOuS1eVnStvtdz7O5SueLqYhrnJzI27QixZ4t
-         3HOP6dbLhJ/+8bleMsuUHYeRoaquVw46URlzgFRtkrWDIYWAvwB3+FWaFNFPXOh6HJXi
-         0nf+1+/yUQ9qiyyCiZHtn7Q3dihE63pDJxnjT5tRNlOaJKXvpqN4QT3/LrR3IXpxwBjO
-         a2vw==
-X-Gm-Message-State: AOUpUlFGGgSIBNv2M8E0QJ1TlVtS+BBiNP18ZSwRlsIcA/wfDc1k8WUZ
-        n+BMLANaG75h28HQG1sV9NQfzA==
-X-Google-Smtp-Source: AA+uWPz9Q62GrVDM1cbswEJ4atfiPSujjt5s4US58San4nh5F+aJUXoWLEK5/qW6BvjlnIC5n3N6vQ==
-X-Received: by 2002:adf:f091:: with SMTP id n17-v6mr2356346wro.49.1533742444479;
-        Wed, 08 Aug 2018 08:34:04 -0700 (PDT)
+        bh=a/BOUiTdvWAmDk1aQD6bOGL0a+rPVeL/eLOK+TRSYBw=;
+        b=o2hcVVivwhACjeT5Wp4iwkmmiv5gOZFduZGvCYAvqsEZluuifTEHRqw5CpK6FkIwhJ
+         IVDhQn08904ciFYyI338/rnhOeLQF5hb/BvQK5qUjb6OysoscGcmtStpXNXV+Jz6Z78Z
+         FSiRn7hIeNEa5fTG4Tw6FBD+VgfZv7iBUuQc+7Rjkc4lpUHZcoZoha3fKUCATsHdfKtT
+         gP6oimeRHxDsQckaqe0IPOKzXO06KZ00wpE8XmeHGrYIMBqDhW9SyjOC1I+m3ouK00pm
+         93xe6z++m26N4FmlE8dODedAZHn4oSmsHL5J+k3iYwQs97u0kGKF69f5vDMonlQANiV8
+         +8hQ==
+X-Gm-Message-State: AOUpUlFNTehvwonNkdj5/GydXlDudnXLVP33oTGw+gCJ+DVWzTrVs+Vp
+        ueduFPs3ixwO/YVXA3dvg03BHA==
+X-Google-Smtp-Source: AA+uWPzyExx7j3C2AK1GuIIoR03Rq84RTVVyrNda+80Xn0gntUo0tViWEpucOr8nY5YDlRZCtl+I0Q==
+X-Received: by 2002:a1c:f46:: with SMTP id 67-v6mr2072530wmp.122.1533742450496;
+        Wed, 08 Aug 2018 08:34:10 -0700 (PDT)
 Received: from brgl-bgdev.lan (LFbn-MAR-1-609-89.w90-118.abo.wanadoo.fr. [90.118.185.89])
-        by smtp.gmail.com with ESMTPSA id s2-v6sm5240915wrw.52.2018.08.08.08.34.02
+        by smtp.gmail.com with ESMTPSA id s2-v6sm5240915wrw.52.2018.08.08.08.34.08
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 08 Aug 2018 08:34:03 -0700 (PDT)
+        Wed, 08 Aug 2018 08:34:09 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Jonathan Corbet <corbet@lwn.net>, Sekhar Nori <nsekhar@ti.com>,
         Kevin Hilman <khilman@kernel.org>,
@@ -88,9 +88,9 @@ Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mtd@lists.infradead.org, linux-omap@vger.kernel.org,
         netdev@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 19/28] ARM: davinci: dm365-evm: use device properties for at24 eeprom
-Date:   Wed,  8 Aug 2018 17:31:41 +0200
-Message-Id: <20180808153150.23444-20-brgl@bgdev.pl>
+Subject: [PATCH 21/28] ARM: davinci: dm644x-evm: use device properties for at24 eeprom
+Date:   Wed,  8 Aug 2018 17:31:43 +0200
+Message-Id: <20180808153150.23444-22-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180808153150.23444-1-brgl@bgdev.pl>
 References: <20180808153150.23444-1-brgl@bgdev.pl>
@@ -112,45 +112,47 @@ already implies the EEPROM's size.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- arch/arm/mach-davinci/board-dm365-evm.c | 13 +++++--------
- 1 file changed, 5 insertions(+), 8 deletions(-)
+ arch/arm/mach-davinci/board-dm644x-evm.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
-diff --git a/arch/arm/mach-davinci/board-dm365-evm.c b/arch/arm/mach-davinci/board-dm365-evm.c
-index cb0ac92a278e..b360d26e6caa 100644
---- a/arch/arm/mach-davinci/board-dm365-evm.c
-+++ b/arch/arm/mach-davinci/board-dm365-evm.c
-@@ -18,7 +18,7 @@
+diff --git a/arch/arm/mach-davinci/board-dm644x-evm.c b/arch/arm/mach-davinci/board-dm644x-evm.c
+index 6d35c6e1b0bd..abfcf42da6fb 100644
+--- a/arch/arm/mach-davinci/board-dm644x-evm.c
++++ b/arch/arm/mach-davinci/board-dm644x-evm.c
+@@ -16,8 +16,8 @@
+ #include <linux/gpio/machine.h>
  #include <linux/i2c.h>
- #include <linux/io.h>
- #include <linux/clk.h>
+ #include <linux/platform_data/pcf857x.h>
 -#include <linux/platform_data/at24.h>
+ #include <linux/platform_data/gpio-davinci.h>
 +#include <linux/property.h>
- #include <linux/leds.h>
  #include <linux/mtd/mtd.h>
+ #include <linux/mtd/rawnand.h>
  #include <linux/mtd/partitions.h>
-@@ -179,18 +179,15 @@ static struct nvmem_cell_lookup dm365evm_mac_address_cell = {
+@@ -486,12 +486,8 @@ static struct nvmem_cell_lookup dm6446evm_mac_address_cell = {
  	.nvmem_name = "1-00500",
  };
  
 -static struct at24_platform_data eeprom_info = {
--	.byte_len       = (256*1024) / 8,
--	.page_size      = 64,
--	.flags          = AT24_FLAG_ADDR16,
+-	.byte_len	= (256*1024) / 8,
+-	.page_size	= 64,
+-	.flags		= AT24_FLAG_ADDR16,
 -	.setup          = davinci_get_mac_addr,
 -	.context	= (void *)0x7f00,
 +static const struct property_entry eeprom_properties[] = {
 +	PROPERTY_ENTRY_U32("pagesize", 64),
-+	{ }
  };
  
- static struct i2c_board_info i2c_info[] = {
+ /*
+@@ -601,7 +597,7 @@ static struct i2c_board_info __initdata i2c_info[] =  {
+ 	},
  	{
  		I2C_BOARD_INFO("24c256", 0x50),
 -		.platform_data	= &eeprom_info,
 +		.properties = eeprom_properties,
  	},
  	{
- 		I2C_BOARD_INFO("tlv320aic3x", 0x18),
+ 		I2C_BOARD_INFO("tlv320aic33", 0x1b),
 -- 
 2.18.0
 
