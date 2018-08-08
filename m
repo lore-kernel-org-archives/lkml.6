@@ -2,187 +2,148 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F181AC46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 03:07:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AE12C46464
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 03:08:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93D3C216FB
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 03:07:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IKxF9IA8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93D3C216FB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id EFFEB216FA
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 03:08:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFFEB216FA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726957AbeHHFZU (ORCPT
+        id S1726999AbeHHF0U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 01:25:20 -0400
-Received: from mail-yw1-f41.google.com ([209.85.161.41]:41991 "EHLO
-        mail-yw1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726579AbeHHFZU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 01:25:20 -0400
-Received: by mail-yw1-f41.google.com with SMTP id y203-v6so534764ywd.9
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 20:07:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=4eKTNsXmlyRVhYcZT0orNOxHkL5AlBcDabEJ6uwLNVg=;
-        b=IKxF9IA8wJGk8sRWiYooVuPLZJG8XV4iQavDV8YManCO5sQYnnyJga1E59gZRhacoi
-         xe7zgCtw/X+hRtGQcc4ZjzUpbSq93RNiU27CAhQKsV5exZaqEWlqV8Mm0ZF0NZiB5H9M
-         MPZdMwbBvnXOdcYo2SV1bBFRIdVL+F/cEuASg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4eKTNsXmlyRVhYcZT0orNOxHkL5AlBcDabEJ6uwLNVg=;
-        b=I8m9VS+wjsP6a2H6Oh2aKtUt+ynX38zH1UQN4ld3EOLzu3NZkP5EMSlXDPpgGyloU7
-         z19B7IlfeT/FuxAS68plSplsgyvMkzL45Tttey3LyHnx/dLbycEQ6dRHZUzBa5OxaAPj
-         l6/q9Jb6MvVGFHk8/+lhON2vXhPvuvKNTBIqjTDfM+4a1ls/2lzsOMqb/ZSo+/FtaZLN
-         dTxwbe0hSUOGiVJum3m8Tnytp+VlTFun2x+E/Elfvh8RofuZwDDFIaAAfaf4fx7708m3
-         R3BHOhkC7V/BIFD7mhGF8RvxLXe+tdXBOK6jlfNO00cG5XWui5c+4aXsCOJjmFOByh0M
-         IN8Q==
-X-Gm-Message-State: AOUpUlHWNRrxgnk4muM9jloy275HsV+k/9mmNd5nFIYG6XCHkuYqbLHb
-        Kf+5XhROD2QTE3wC1Gl7DxYAgJ4Clx0=
-X-Google-Smtp-Source: AA+uWPwfg0ZtpLK9n9Koy7s81mCA/8ri9HaykmsaPV4LR7F7u58/jV2dnU9H/qt8TOZaI8z7OfeCxg==
-X-Received: by 2002:a25:80c8:: with SMTP id c8-v6mr477225ybm.203.1533697672097;
-        Tue, 07 Aug 2018 20:07:52 -0700 (PDT)
-Received: from mail-yw1-f48.google.com (mail-yw1-f48.google.com. [209.85.161.48])
-        by smtp.gmail.com with ESMTPSA id a124-v6sm1220681ywc.96.2018.08.07.20.07.49
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 07 Aug 2018 20:07:50 -0700 (PDT)
-Received: by mail-yw1-f48.google.com with SMTP id r184-v6so540179ywg.6
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 20:07:49 -0700 (PDT)
-X-Received: by 2002:a25:5709:: with SMTP id l9-v6mr542289ybb.226.1533697669282;
- Tue, 07 Aug 2018 20:07:49 -0700 (PDT)
+        Wed, 8 Aug 2018 01:26:20 -0400
+Received: from mga03.intel.com ([134.134.136.65]:17443 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726409AbeHHF0U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 01:26:20 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Aug 2018 20:08:52 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,456,1526367600"; 
+   d="scan'208";a="79457375"
+Received: from zhuyixin-mobl1.gar.corp.intel.com (HELO [10.226.38.39]) ([10.226.38.39])
+  by fmsmga001.fm.intel.com with ESMTP; 07 Aug 2018 20:08:49 -0700
+Subject: Re: [PATCH v2 03/18] dt-bindings: clk: Add documentation of grx500
+ clock controller
+To:     Rob Herring <robh+dt@kernel.org>,
+        Songjun Wu <songjun.wu@linux.intel.com>
+Cc:     hua.ma@linux.intel.com, chuanhua.lei@linux.intel.com,
+        qi-ming.wu@intel.com, Linux-MIPS <linux-mips@linux-mips.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+References: <20180803030237.3366-1-songjun.wu@linux.intel.com>
+ <20180803030237.3366-4-songjun.wu@linux.intel.com>
+ <CAL_JsqKLa1e3X+ddAoVdEwBQFd6tsL=RjOLcTLdfoc6mpKuefQ@mail.gmail.com>
+From:   yixin zhu <yixin.zhu@linux.intel.com>
+Message-ID: <9c0cbdfa-8109-be0d-8e14-7d303c764f5c@linux.intel.com>
+Date:   Wed, 8 Aug 2018 11:08:48 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-References: <20180724140621.59624-1-tfiga@chromium.org> <20180724140621.59624-2-tfiga@chromium.org>
- <37a8faea-a226-2d52-36d4-f9df194623cc@xs4all.nl> <CAAFQd5BgGEBmd8gNGc-qqtUtLo=Mh8U+TVTWRsKYMv1LmeBQMA@mail.gmail.com>
- <e0da6268-c7f6-1048-83b9-a7e67cfe000e@xs4all.nl> <CAHStOZ7H88GRSZ_U9GeBnd34JrcCL9crJF279zcpGYtJCV-uEQ@mail.gmail.com>
-In-Reply-To: <CAHStOZ7H88GRSZ_U9GeBnd34JrcCL9crJF279zcpGYtJCV-uEQ@mail.gmail.com>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Wed, 8 Aug 2018 12:07:37 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5Ce=GhmrD-iuu54r1gGNsooHgRDAAXySHkWDP8PO5_pug@mail.gmail.com>
-Message-ID: <CAAFQd5Ce=GhmrD-iuu54r1gGNsooHgRDAAXySHkWDP8PO5_pug@mail.gmail.com>
-Subject: Re: [PATCH 1/2] media: docs-rst: Document memory-to-memory video
- decoder interface
-To:     Maxime Jourdan <maxi.jourdan@wanadoo.fr>
-Cc:     Hans Verkuil <hverkuil@xs4all.nl>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Pawel Osciak <posciak@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>, kamil@wypas.org,
-        a.hajda@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>,
-        jtp.park@samsung.com, Philipp Zabel <p.zabel@pengutronix.de>,
-        =?UTF-8?B?VGlmZmFueSBMaW4gKOael+aFp+ePiik=?= 
-        <tiffany.lin@mediatek.com>,
-        =?UTF-8?B?QW5kcmV3LUNUIENoZW4gKOmZs+aZuui/qik=?= 
-        <andrew-ct.chen@mediatek.com>, todor.tomov@linaro.org,
-        nicolas@ndufresne.ca,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        dave.stevenson@raspberrypi.org,
-        Ezequiel Garcia <ezequiel@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAL_JsqKLa1e3X+ddAoVdEwBQFd6tsL=RjOLcTLdfoc6mpKuefQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 8, 2018 at 4:11 AM Maxime Jourdan <maxi.jourdan@wanadoo.fr> wrote:
->
-> 2018-08-07 9:13 GMT+02:00 Hans Verkuil <hverkuil@xs4all.nl>:
-> > On 07/26/2018 12:20 PM, Tomasz Figa wrote:
-> >> Hi Hans,
-> >>
-> >> On Wed, Jul 25, 2018 at 8:59 PM Hans Verkuil <hverkuil@xs4all.nl> wrote:
-> >>>> +
-> >>>> +14. Call :c:func:`VIDIOC_STREAMON` to initiate decoding frames.
-> >>>> +
-> >>>> +Decoding
-> >>>> +========
-> >>>> +
-> >>>> +This state is reached after a successful initialization sequence. In this
-> >>>> +state, client queues and dequeues buffers to both queues via
-> >>>> +:c:func:`VIDIOC_QBUF` and :c:func:`VIDIOC_DQBUF`, following standard
-> >>>> +semantics.
-> >>>> +
-> >>>> +Both queues operate independently, following standard behavior of V4L2
-> >>>> +buffer queues and memory-to-memory devices. In addition, the order of
-> >>>> +decoded frames dequeued from ``CAPTURE`` queue may differ from the order of
-> >>>> +queuing coded frames to ``OUTPUT`` queue, due to properties of selected
-> >>>> +coded format, e.g. frame reordering. The client must not assume any direct
-> >>>> +relationship between ``CAPTURE`` and ``OUTPUT`` buffers, other than
-> >>>> +reported by :c:type:`v4l2_buffer` ``timestamp`` field.
-> >>>
-> >>> Is there a relationship between capture and output buffers w.r.t. the timestamp
-> >>> field? I am not aware that there is one.
-> >>
-> >> I believe the decoder was expected to copy the timestamp of matching
-> >> OUTPUT buffer to respective CAPTURE buffer. Both s5p-mfc and coda seem
-> >> to be implementing it this way. I guess it might be a good idea to
-> >> specify this more explicitly.
-> >
-> > What about an output buffer producing multiple capture buffers? Or the case
-> > where the encoded bitstream of a frame starts at one output buffer and ends
-> > at another? What happens if you have B frames and the order of the capture
-> > buffers is different from the output buffers?
-> >
-> > In other words, for codecs there is no clear 1-to-1 relationship between an
-> > output buffer and a capture buffer. And we never defined what the 'copy timestamp'
-> > behavior should be in that case or if it even makes sense.
-> >
-> > Regards,
-> >
-> >         Hans
->
-> As it is done right now in userspace (FFmpeg, GStreamer) and most (if
-> not all?) drivers, it's a 1:1 between OUTPUT and CAPTURE. The only
-> thing that changes is the ordering since OUTPUT buffers are in
-> decoding order while CAPTURE buffers are in presentation order.
 
-If I understood it correctly, there is a feature in VP9 that lets one
-frame repeat several times, which would make one OUTPUT buffer produce
-multiple CAPTURE buffers.
 
-Moreover, V4L2_PIX_FMT_H264 is actually defined to be a byte stream,
-without any need for framing, and yes, there are drivers that follow
-this definition correctly (s5p-mfc and, AFAIR, coda). In that case,
-one OUTPUT buffer can have arbitrary amount of bitstream and lead to
-multiple CAPTURE frames being produced.
+On 8/6/2018 11:18 PM, Rob Herring wrote:
+> On Thu, Aug 2, 2018 at 9:03 PM Songjun Wu <songjun.wu@linux.intel.com> wrote:
+>> From: Yixin Zhu <yixin.zhu@linux.intel.com>
+>>
+>> This patch adds binding documentation for grx500 clock controller.
+>>
+>> Signed-off-by: YiXin Zhu <yixin.zhu@linux.intel.com>
+>> Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
+>> ---
+>>
+>> Changes in v2:
+>> - Rewrite clock driver's dt-binding document according to Rob Herring's
+>>    comments.
+>> - Simplify device tree docoment, remove some clock description.
+>>
+>>   .../devicetree/bindings/clock/intel,grx500-clk.txt | 39 ++++++++++++++++++++++
+> Please match the compatible string: intel,grx500-cgu.txt
+Will update to use same name.
 
 >
-> This almost always implies some timestamping kung-fu to match the
-> OUTPUT timestamps with the corresponding CAPTURE timestamps. It's
-> often done indirectly by the firmware on some platforms (rpi comes to
-> mind iirc).
+>>   1 file changed, 39 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/clock/intel,grx500-clk.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/intel,grx500-clk.txt b/Documentation/devicetree/bindings/clock/intel,grx500-clk.txt
+>> new file mode 100644
+>> index 000000000000..e54e1dad9196
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/intel,grx500-clk.txt
+>> @@ -0,0 +1,39 @@
+>> +Device Tree Clock bindings for grx500 PLL controller.
+>> +
+>> +This binding uses the common clock binding:
+>> +       Documentation/devicetree/bindings/clock/clock-bindings.txt
+>> +
+>> +The grx500 clock controller supplies clock to various controllers within the
+>> +SoC.
+>> +
+>> +Required properties for clock node
+>> +- compatible: Should be "intel,grx500-cgu".
+>> +- reg: physical base address of the controller and length of memory range.
+>> +- #clock-cells: should be 1.
+>> +
+>> +Optional Propteries:
+>> +- intel,osc-frequency: frequency of the osc clock.
+>> +if missing, driver will use clock rate defined in the driver.
+> This should use a fixed-clock node instead.
+Yes, This is a fixed clock node registered in driver code.
+The frequency of the fixed clock is designed to be overwritten by device 
+tree in case some one verify
+clock driver in the emulation platform or in some cases frequency other 
+than driver defined one is preferred.
+These kinds of cases are very rare. But I feel it would be better to 
+have a way to use customized frequency.
+The frequency defined in device tree will overwritten driver defined 
+frequency before registering fixed-clock node.
 
-I don't think there is an upstream driver for it, is there? (If not,
-are you aware of any work towards it?)
+>> +
+>> +Example: Clock controller node:
+>> +
+>> +       cgu: cgu@16200000 {
+>> +                compatible = "intel,grx500-cgu", "syscon";
+>> +               reg = <0x16200000 0x200>;
+>> +               #clock-cells = <1>;
+>> +       };
+>> +
+>> +
+>> +Example: UART controller node that consumes the clock generated by clock
+>> +       controller.
+>> +
+>> +       asc0: serial@16600000 {
+>> +               compatible = "lantiq,asc";
+>> +               reg = <0x16600000 0x100000>;
+>> +               interrupt-parent = <&gic>;
+>> +               interrupts = <GIC_SHARED 103 IRQ_TYPE_LEVEL_HIGH>,
+>> +                       <GIC_SHARED 105 IRQ_TYPE_LEVEL_HIGH>,
+>> +                       <GIC_SHARED 106 IRQ_TYPE_LEVEL_HIGH>;
+>> +               clocks = <&cgu CLK_SSX4>, <&cgu GCLK_UART>;
+>> +               clock-names = "freq", "asc";
+>> +       };
+>> --
+>> 2.11.0
+>>
 
->
-> The current constructions also imply one video packet per OUTPUT
-> buffer. If a video packet is too big to fit in a buffer, FFmpeg will
-> crop that packet to the maximum buffer size and will discard the
-> remaining packet data. GStreamer will abort the decoding. This is
-> unfortunately one of the shortcomings of having fixed-size buffers.
-> And if they were to split the packet in multiple buffers, then some
-> drivers in their current state wouldn't be able to handle the
-> timestamping issues and/or x:1 OUTPUT:CAPTURE buffer numbers.
-
-In Chromium, we just allocate OUTPUT buffers big enough to be really
-unlikely for a single frame not to fit inside [1]. Obviously it's a
-waste of memory, for formats which normally have just single frames
-inside buffers, but it seems to work in practice.
-
-[1] https://cs.chromium.org/chromium/src/media/gpu/v4l2/v4l2_video_decode_accelerator.h?rcl=3468d5a59e00bcb2c2e946a30694e6057fd9ab21&l=118
-
-Best regards,
-Tomasz
