@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DD0DC46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 21:01:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87CFCC46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 21:01:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8FE821A9A
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 21:01:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 38CE521AA7
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 21:01:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LIaCqx/i"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8FE821A9A
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TYQNybGx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38CE521AA7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732281AbeHHXXJ (ORCPT
+        id S1732068AbeHHXWe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 19:23:09 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:33893 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731300AbeHHXWe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 8 Aug 2018 19:22:34 -0400
-Received: by mail-ed1-f65.google.com with SMTP id h1-v6so1902031eds.1
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 14:01:09 -0700 (PDT)
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:40866 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731995AbeHHXWd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 19:22:33 -0400
+Received: by mail-ed1-f68.google.com with SMTP id e19-v6so1890528edq.7
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 14:01:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=H+qsOUo+t/jQ3iT3ApXk9GP0gzEyYahSqxPEtl3EYW4=;
-        b=LIaCqx/i2lQmN3ksTp+Y3tgy9/upIiuhY6G5oacGgUUaQCaYo7ouQxjqKm2P/RuVwC
-         ah/XefegKNoxXYnNbDkJm2JRUonEwOhpTbAW6fhqykd9s6t3jyEMlj0MWCYNcL5dgFJh
-         OKUootiZhaXAr3eOnqJIZZCDvHnlvTLIyZFrcA9VhW08Cmby2VhPOjxZmAMtETeshH0/
-         GXxqOwUXHg5LR4/XdaiTNoaC0lMQgdl43DXo84ZBe7lwfuXtSEPEhQsybXtMI3dKKr1c
-         23tSgS3KE0ysiIP1Cv+QQOFMUVZ9QDgrkfvxSEsT26QS4w8/C6qSIGk3Mb/Kdeu+cFJl
-         Bz3g==
+        bh=y23NJb71pEMtUiUbIT6xBfJ7i9YzkGdQKvUf7Qqa1ys=;
+        b=TYQNybGxuHRXFZAV3hM1CUoWIkHNQfkvedHEmNgDWjNOh4CmaOejqZn9tILzXS4csj
+         v8u1JWMtqr6WD/c7Av6do+UNotfetLSuWe+hKkfHeJ7dysOpva1PTF2e2umWXQaM6sQH
+         xurDonnyOaTFJZazFHkk4aITDRKl1xs6SJ5IxtFBpVBFILjejgEh7B/s71WuH7b5I05q
+         TNJdW87KlkqoQyL7LBiwTPBUB/789o1D6Wa5KmtlWJeluuYGJjJ0pZuZE8fGharyFuVj
+         jpKgU9o0gr7AqO9E6gY+R9iyzISFlc2vX597IUZk7cjj0zptqrhvP9NfXsdZXh674ohA
+         DEKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=H+qsOUo+t/jQ3iT3ApXk9GP0gzEyYahSqxPEtl3EYW4=;
-        b=rX/tynpGp0RP6hBo8H4FCrCVxP/MDwt/lnvrES7CCaUm3q9H7mPFRI10tOj5Bp8SAJ
-         xR+UibI6WJpKWuUrra6cu60Jr6NM8b0xkmJR25Y9UElvEwDqpmmm0z76XlBi6gi1jNCC
-         uCDD+1xC6ZpM31+dKYs+Xvh+pwa0RJr4QyOotXl0HC3C2qaZL555VPR+ecmncYj015bN
-         dJ7/TmweT0wD1S36iGan3YP33WAlFBQAWLDt1T1ARJ7G/PnzTOqc7dBFmTvSBMX7fJ9y
-         KebEWvK1RhEckZvgcQ38J+1qcwUn3PbxEax/TmfWhoKpZn8t/0/DRfwE+pjxwoYPQTRp
-         jDFA==
-X-Gm-Message-State: AOUpUlG4T5DlMnF4Qwba3JuUOvr/lOgJPHJNEkyI45BH1l5jEvlrhLgz
-        lShVfUinmfFiQaNqPvYO/AdMtytlQRI=
-X-Google-Smtp-Source: AA+uWPwJGxX9fz9rkm0kP1haXNDsv16CmXotGIOZxMMiuA7c+glvdme66vRCNIZZgW4zWjvvCF+5iw==
-X-Received: by 2002:a50:b8a6:: with SMTP id l35-v6mr5133999ede.273.1533762068450;
-        Wed, 08 Aug 2018 14:01:08 -0700 (PDT)
-Received: from localhost.localdomain ([109.76.213.36])
-        by smtp.gmail.com with ESMTPSA id g6-v6sm1883847edn.28.2018.08.08.14.01.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        bh=y23NJb71pEMtUiUbIT6xBfJ7i9YzkGdQKvUf7Qqa1ys=;
+        b=F83h+FtQRcBRuIWebu/9upHCBZyoNOUJfVF0G80VlK2P4KwDDGDjKIdNCHAUHbu51o
+         Uq+JDRYGysBFEaH31dVAUfHBqk9MiWJzVqkueSOpiqunttLKiPpmkxR33dxzGtwYpubw
+         OO2K9CwKRCWVFeE8cf9svJ1KS70zqzORkb54q6kLEkimQEJt5ZHAiQdavi8vwLUblsQG
+         I8MQQWJvSY+KZrz3wqNetmq7qq7u6MaNNGSi53l7tEvKdB9mtEh//AS8nUcbN8oZNRv0
+         zId+VxF9KQoFTrYA7HpxhfhLTwWIpctxqSu4LmNPuVX4zh88yPp+xWQ2Kas0f0upz0yP
+         q2EA==
+X-Gm-Message-State: AOUpUlGZu6EqLcAQRIQZC3end19+snSspXts3hJlvQ58L9xHpREofuCI
+        nP6nYf9dplBhcRIkHjBd5yLmNLvoYjE=
+X-Google-Smtp-Source: AA+uWPymiOpI8aRkenCcmrXIJfeuDQMwhUUGJMHrKpJGmD0sBT9XJQusrBQHHB45XlCScJPD3NTxgg==
+X-Received: by 2002:a50:84e9:: with SMTP id 96-v6mr4908495edq.118.1533762067066;
         Wed, 08 Aug 2018 14:01:07 -0700 (PDT)
+Received: from localhost.localdomain ([109.76.213.36])
+        by smtp.gmail.com with ESMTPSA id g6-v6sm1883847edn.28.2018.08.08.14.01.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 08 Aug 2018 14:01:06 -0700 (PDT)
 From:   John Whitmore <johnfwhitmore@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
         John Whitmore <johnfwhitmore@gmail.com>
-Subject: [PATCH v2 09/15] staging:rtl8192u: Rename Dot11d_UpdateCountryIe - Style
-Date:   Wed,  8 Aug 2018 22:00:30 +0100
-Message-Id: <20180808210036.22580-10-johnfwhitmore@gmail.com>
+Subject: [PATCH v2 08/15] staging:rtl8192u: Rename Dot11d_Reset - Style
+Date:   Wed,  8 Aug 2018 22:00:29 +0100
+Message-Id: <20180808210036.22580-9-johnfwhitmore@gmail.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180808210036.22580-1-johnfwhitmore@gmail.com>
 References: <20180808210036.22580-1-johnfwhitmore@gmail.com>
@@ -73,90 +73,89 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The function Dot11d_UpdateCountryIe causes a checkpatch issue due to
-its use of CamelCase naming, the function has been renamed to
-dot11d_update_country_ie.
+The function Dot11d_Reset causes a checkpatch issue due to its use of
+CamelCase naming, so has been renamed to dot11d_reset.
 
 This is a coding style change which should have no impact on runtime
 code execution.
 
 Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
 ---
- drivers/staging/rtl8192u/ieee80211/dot11d.c       | 8 ++++----
- drivers/staging/rtl8192u/ieee80211/dot11d.h       | 8 ++++----
- drivers/staging/rtl8192u/ieee80211/ieee80211_rx.c | 2 +-
- 3 files changed, 9 insertions(+), 9 deletions(-)
+ drivers/staging/rtl8192u/ieee80211/dot11d.c            | 6 +++---
+ drivers/staging/rtl8192u/ieee80211/dot11d.h            | 2 +-
+ drivers/staging/rtl8192u/ieee80211/ieee80211_softmac.c | 2 +-
+ drivers/staging/rtl8192u/r8192U_core.c                 | 2 +-
+ 4 files changed, 6 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/staging/rtl8192u/ieee80211/dot11d.c b/drivers/staging/rtl8192u/ieee80211/dot11d.c
-index d6baeec91669..6855b096d0fc 100644
+index aef16794af76..d6baeec91669 100644
 --- a/drivers/staging/rtl8192u/ieee80211/dot11d.c
 +++ b/drivers/staging/rtl8192u/ieee80211/dot11d.c
-@@ -49,7 +49,7 @@ EXPORT_SYMBOL(dot11d_reset);
-  * 1. IS_DOT11D_ENABLE() is TRUE.
-  * 2. Input IE is an valid one.
-  */
--void Dot11d_UpdateCountryIe(struct ieee80211_device *dev, u8 *pTaddr,
-+void dot11d_update_country_ie(struct ieee80211_device *dev, u8 *pTaddr,
- 			    u16 CoutryIeLen, u8 *pCoutryIe)
- {
- 	struct rt_dot11d_info *pDot11dInfo = GET_DOT11D_INFO(dev);
-@@ -66,14 +66,14 @@ void Dot11d_UpdateCountryIe(struct ieee80211_device *dev, u8 *pTaddr,
- 			/* It is not in a monotonically increasing order, so
- 			 * stop processing.
- 			 */
--			netdev_err(dev->dev, "Dot11d_UpdateCountryIe(): Invalid country IE, skip it........1\n");
-+			netdev_err(dev->dev, "dot11d_update_country_ie(): Invalid country IE, skip it........1\n");
- 			return;
- 		}
- 		if (MAX_CHANNEL_NUMBER < (pTriple->first_channel + pTriple->num_channels)) {
- 			/* It is not a valid set of channel id, so stop
- 			 * processing.
- 			 */
--			netdev_err(dev->dev, "Dot11d_UpdateCountryIe(): Invalid country IE, skip it........2\n");
-+			netdev_err(dev->dev, "dot11d_update_country_ie(): Invalid country IE, skip it........2\n");
- 			return;
- 		}
+@@ -20,7 +20,7 @@ void dot11d_init(struct ieee80211_device *ieee)
+ EXPORT_SYMBOL(dot11d_init);
  
-@@ -97,7 +97,7 @@ void Dot11d_UpdateCountryIe(struct ieee80211_device *dev, u8 *pTaddr,
- 	memcpy(pDot11dInfo->country_ie_buf, pCoutryIe, CoutryIeLen);
- 	pDot11dInfo->state = DOT11D_STATE_LEARNED;
+ /* Reset to the state as we are just entering a regulatory domain. */
+-void Dot11d_Reset(struct ieee80211_device *ieee)
++void dot11d_reset(struct ieee80211_device *ieee)
+ {
+ 	u32 i;
+ 	struct rt_dot11d_info *pDot11dInfo = GET_DOT11D_INFO(ieee);
+@@ -38,7 +38,7 @@ void Dot11d_Reset(struct ieee80211_device *ieee)
+ 	pDot11dInfo->country_ie_len = 0;
+ 	RESET_CIE_WATCHDOG(ieee);
  }
--EXPORT_SYMBOL(Dot11d_UpdateCountryIe);
-+EXPORT_SYMBOL(dot11d_update_country_ie);
+-EXPORT_SYMBOL(Dot11d_Reset);
++EXPORT_SYMBOL(dot11d_reset);
  
- u8 DOT11D_GetMaxTxPwrInDbm(struct ieee80211_device *dev, u8 Channel)
- {
+ /*
+  * Update country IE from Beacon or Probe Resopnse and configure PHY for
+@@ -127,7 +127,7 @@ void DOT11D_ScanComplete(struct ieee80211_device *dev)
+ 	case DOT11D_STATE_DONE:
+ 		if (GET_CIE_WATCHDOG(dev) == 0) {
+ 			/* Reset country IE if previous one is gone. */
+-			Dot11d_Reset(dev);
++			dot11d_reset(dev);
+ 		}
+ 		break;
+ 	case DOT11D_STATE_NONE:
 diff --git a/drivers/staging/rtl8192u/ieee80211/dot11d.h b/drivers/staging/rtl8192u/ieee80211/dot11d.h
-index 73cf2e6aeb06..a45223171a55 100644
+index 8e65e54a372c..73cf2e6aeb06 100644
 --- a/drivers/staging/rtl8192u/ieee80211/dot11d.h
 +++ b/drivers/staging/rtl8192u/ieee80211/dot11d.h
-@@ -45,10 +45,10 @@ struct rt_dot11d_info {
+@@ -44,7 +44,7 @@ struct rt_dot11d_info {
+ #define UPDATE_CIE_WATCHDOG(ieee_dev) (++GET_CIE_WATCHDOG(ieee_dev))
  
  void dot11d_init(struct ieee80211_device *dev);
- void dot11d_reset(struct ieee80211_device *dev);
--void Dot11d_UpdateCountryIe(struct ieee80211_device *dev,
--			    u8 *pTaddr,
--			    u16 CoutryIeLen,
--			    u8 *pCoutryIe);
-+void dot11d_update_country_ie(struct ieee80211_device *dev,
-+			      u8 *pTaddr,
-+			      u16 CoutryIeLen,
-+			      u8 *pCoutryIe);
- u8 DOT11D_GetMaxTxPwrInDbm(struct ieee80211_device *dev, u8 Channel);
- void DOT11D_ScanComplete(struct ieee80211_device *dev);
- int IsLegalChannel(struct ieee80211_device *dev, u8 channel);
-diff --git a/drivers/staging/rtl8192u/ieee80211/ieee80211_rx.c b/drivers/staging/rtl8192u/ieee80211/ieee80211_rx.c
-index 2c11d3ef63d7..787aefa4656e 100644
---- a/drivers/staging/rtl8192u/ieee80211/ieee80211_rx.c
-+++ b/drivers/staging/rtl8192u/ieee80211/ieee80211_rx.c
-@@ -1582,7 +1582,7 @@ static inline void ieee80211_extract_country_ie(
- 
- 			if (!IS_COUNTRY_IE_VALID(ieee))
- 			{
--				Dot11d_UpdateCountryIe(ieee, addr2, info_element->len, info_element->data);
-+				dot11d_update_country_ie(ieee, addr2, info_element->len, info_element->data);
- 			}
- 		}
+-void Dot11d_Reset(struct ieee80211_device *dev);
++void dot11d_reset(struct ieee80211_device *dev);
+ void Dot11d_UpdateCountryIe(struct ieee80211_device *dev,
+ 			    u8 *pTaddr,
+ 			    u16 CoutryIeLen,
+diff --git a/drivers/staging/rtl8192u/ieee80211/ieee80211_softmac.c b/drivers/staging/rtl8192u/ieee80211/ieee80211_softmac.c
+index 212cc9ccbb96..39ed743a1a56 100644
+--- a/drivers/staging/rtl8192u/ieee80211/ieee80211_softmac.c
++++ b/drivers/staging/rtl8192u/ieee80211/ieee80211_softmac.c
+@@ -2357,7 +2357,7 @@ void ieee80211_disassociate(struct ieee80211_device *ieee)
+ 	if (ieee->data_hard_stop)
+ 		ieee->data_hard_stop(ieee->dev);
+ 	if (IS_DOT11D_ENABLE(ieee))
+-		Dot11d_Reset(ieee);
++		dot11d_reset(ieee);
+ 	ieee->state = IEEE80211_NOLINK;
+ 	ieee->is_set_key = false;
+ 	ieee->link_change(ieee->dev);
+diff --git a/drivers/staging/rtl8192u/r8192U_core.c b/drivers/staging/rtl8192u/r8192U_core.c
+index c77f35102fd4..da4b376d6122 100644
+--- a/drivers/staging/rtl8192u/r8192U_core.c
++++ b/drivers/staging/rtl8192u/r8192U_core.c
+@@ -212,7 +212,7 @@ static void rtl819x_set_channel_map(u8 channel_plan, struct r8192_priv *priv)
+ 		 * otherwise, it shall follow global domain settings.
+ 		 */
+ 		GET_DOT11D_INFO(ieee)->enabled = 0;
+-		Dot11d_Reset(ieee);
++		dot11d_reset(ieee);
+ 		ieee->bGlobalDomain = true;
+ 		break;
  
 -- 
 2.18.0
