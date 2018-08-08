@@ -2,213 +2,216 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19B4EC4646D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 06:15:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64831C46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 06:19:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B613E21708
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 06:15:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uGG0pOcv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B613E21708
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 1959021708
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 06:19:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1959021708
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727178AbeHHIdN (ORCPT
+        id S1727078AbeHHIhe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 04:33:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38542 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726893AbeHHIdM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 04:33:12 -0400
-Received: from localhost (unknown [104.132.0.94])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0679D21708;
-        Wed,  8 Aug 2018 06:15:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1533708903;
-        bh=UzacX+8z50w+Zs5knR2gyYQzkQ38DlPT9/dEbKpUhrM=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=uGG0pOcvXh4k//ejrLkxx5NO89Hcx4WdwJu2P1sSUjqZWJOK5Jn9sQDdOpotVCDuf
-         Cau143Y4sQaw8LyevAl8oN1z7sbhaPexqbH3/zyaNiMLiyT1Mt83qNPQqoMljHzZFG
-         kcj+W0WIg9udjom8AbOVCzCooA3Fdp2q7sZlLz9U=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Sudeep Holla <sudeep.holla@arm.com>,
-        Taniya Das <tdas@codeaurora.org>, skannan@codeaurora.org
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1aa8b42d-721f-1f5b-b1be-a6b4f220d023@codeaurora.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Amit Nischal <anischal@codeaurora.org>,
-        devicetree@vger.kernel.org, robh@kernel.org,
-        amit.kucheria@linaro.org, evgreen@google.com
-References: <1532428970-18122-1-git-send-email-tdas@codeaurora.org>
- <1532428970-18122-2-git-send-email-tdas@codeaurora.org>
- <153334001055.10763.8002698033760154254@swboyd.mtv.corp.google.com>
- <b362d9f769fde3ce1a2dcd89f20eb476@codeaurora.org>
- <20180807111237.GA1588@e107155-lin>
- <74d27daca2bb03716fc84f9c57118af0@codeaurora.org>
- <1aa8b42d-721f-1f5b-b1be-a6b4f220d023@codeaurora.org>
-Message-ID: <153370890232.220756.13782706852981763402@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v7 1/2] dt-bindings: cpufreq: Introduce QCOM CPUFREQ Firmware
- bindings
-Date:   Tue, 07 Aug 2018 23:15:02 -0700
+        Wed, 8 Aug 2018 04:37:34 -0400
+Received: from mx2.suse.de ([195.135.220.15]:42098 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726793AbeHHIhe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 04:37:34 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id DB7FFAD33;
+        Wed,  8 Aug 2018 06:19:22 +0000 (UTC)
+From:   Juergen Gross <jgross@suse.com>
+To:     linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
+        x86@kernel.org
+Cc:     boris.ostrovsky@oracle.com, hpa@zytor.com, tglx@linutronix.de,
+        mingo@redhat.com, Juergen Gross <jgross@suse.com>
+Subject: [PATCH v2] xen: move pv irq related functions under CONFIG_XEN_PV umbrella
+Date:   Wed,  8 Aug 2018 08:19:18 +0200
+Message-Id: <20180808061918.5033-1-jgross@suse.com>
+X-Mailer: git-send-email 2.13.7
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Taniya Das (2018-08-07 19:46:01)
-> =
+All functions in arch/x86/xen/irq.c and arch/x86/xen/xen-asm*.S are
+specific to PV guests. Include them in the kernel with
+CONFIG_XEN_PV only.
 
-> =
+Make the PV specific code in arch/x86/entry/entry_*.S dependent on
+CONFIG_XEN_PV instead of CONFIG_XEN.
 
-> On 8/8/2018 12:54 AM, skannan@codeaurora.org wrote:
-> > On 2018-08-07 04:12, Sudeep Holla wrote:
-> >> On Mon, Aug 06, 2018 at 01:54:24PM -0700, skannan@codeaurora.org wrote:
-> >>> On 2018-08-03 16:46, Stephen Boyd wrote:
-> >>> >Quoting Taniya Das (2018-07-24 03:42:49)
-> >>> >>diff --git
-> >>> >>a/Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-hw.txt
-> >>> >>b/Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-hw.txt
-> >>> >>new file mode 100644
-> >>> >>index 0000000..22d4355
-> >>> >>--- /dev/null
-> >>> >>+++ b/Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-hw.txt
-> >>> >>@@ -0,0 +1,172 @@
-> >>> >[...]
-> >>> >>+
-> >>> >>+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 CPU7: cpu@700 {
-> >>> >>+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 device_t=
-ype =3D "cpu";
-> >>> >>+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 compatib=
-le =3D "qcom,kryo385";
-> >>> >>+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 reg =3D =
-<0x0 0x700>;
-> >>> >>+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 enable-m=
-ethod =3D "psci";
-> >>> >>+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 next-lev=
-el-cache =3D <&L2_700>;
-> >>> >>+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 qcom,fre=
-q-domain =3D <&freq_domain_table1>;
-> >>> >>+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 L2_700: =
-l2-cache {
-> >>> >>+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 compatible =3D "cache";
-> >>> >>+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 next-level-cache =3D <&L3_0>;
-> >>> >>+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 };
-> >>> >>+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 };
-> >>> >>+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 };
-> >>> >>+
-> >>> >>+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 qcom,cpufreq-hw {
-> >>> >>+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 compatible =3D "qcom,cpufreq-hw";
-> >>> >>+
-> >>> >>+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 clocks =3D <&rpmhcc RPMH_CXO_CLK>;
-> >>> >>+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 clock-names =3D "xo";
-> >>> >>+
-> >>> >>+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 #address-cells =3D <2>;
-> >>> >>+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 #size-cells =3D <2>;
-> >>> >>+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 ranges;
-> >>> >>+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 freq_domain_table0: freq_table0 {
-> >>> >>+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 reg =3D =
-<0 0x17d43000 0 0x1400>;
-> >>> >>+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 };
-> >>> >>+
-> >>> >>+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 freq_domain_table1: freq_table1 {
-> >>> >>+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 reg =3D =
-<0 0x17d45800 0 0x1400>;
-> >>> >>+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 };
-> >>> >
-> >>> >Sorry, this is just not proper DT design. The whole node should have=
- a
-> >>> >reg property, and it should contain two (or three if we're handling =
-the
-> >>> >L3 clk domain?) different offsets for the different power clusters. =
-The
-> >>> >problem seems to still be that we don't have a way to map the CPUs to
-> >>> >the clk domains they're in provided by this hardware block. Making
-> >>> >subnodes is not the solution.
-> >>>
-> >>> The problem is mapping clock domains to logical CPUs that CPUfreq =
+The HVM specific code should depend on CONFIG_XEN_PVHVM.
 
-> >>> uses. The
-> >>> physical CPU to logical CPU mapping can be changed by the kernel (even
-> >>> through DT if I'm not mistaken). So we need to have a way to tell in =
-DT
-> >>> which physical CPUs are connected to which CPU freq clock domain.
-> >>>
-> >>
-> >> How about passing CPU freq clock domain id as along with phandle in
-> >> qcom,freq-domain ?
-> > =
+While at it reformat the Makefile to make it more readable.
 
-> > Now sure what you mean here. There's no such this as CPUfreq clock =
+Signed-off-by: Juergen Gross <jgross@suse.com>
+---
+ arch/x86/entry/entry_32.S |  8 +++++---
+ arch/x86/entry/entry_64.S |  8 +++++---
+ arch/x86/xen/Makefile     | 41 +++++++++++++++++++++++++++++++----------
+ include/xen/events.h      |  2 ++
+ 4 files changed, 43 insertions(+), 16 deletions(-)
 
-> > domain id. It has policies that are made up of logical CPU numbers. =
-
-> > Logical CPU is not something that you can fix in DT.
-> > =
-
-> > -Saravana
-> =
-
-> Sudeep,
-> =
-
-> Earlier the design was the freq_domain would take the CPU phandles
-> =
-
-> freq_domain:
->    cpus =3D <&cpu0 &cpu1....>;
-> =
-
-
-I believe Sudeep is recommending something I recommended earlier. It
-would look like:
-
-   cpu7 {
-	   qcom,freq-domain =3D <&cpufreq_hw 1>;
-   }
-
-to indicate that cpu7 is in cpufreq_hw's frequency domain #1. That
-should probably be called clk domain BTW.
-
-If that was done with a phandle and a single cell, then we should have
-something similar on the cpufreq_hw node side indicating how to parse
-the cells in qcom,freq-domain. A property like #qcom,freq-domain-cells =3D
-<1> to indicate that one u32 follows the phandle.
+diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
+index c371bfee137a..cc4ec4fd58d2 100644
+--- a/arch/x86/entry/entry_32.S
++++ b/arch/x86/entry/entry_32.S
+@@ -369,7 +369,7 @@ GLOBAL(__begin_SYSENTER_singlestep_region)
+  * will ignore all of the single-step traps generated in this range.
+  */
+ 
+-#ifdef CONFIG_XEN
++#ifdef CONFIG_XEN_PV
+ /*
+  * Xen doesn't set %esp to be precisely what the normal SYSENTER
+  * entry point expects, so fix it up before using the normal path.
+@@ -807,7 +807,7 @@ ENTRY(spurious_interrupt_bug)
+ 	jmp	common_exception
+ END(spurious_interrupt_bug)
+ 
+-#ifdef CONFIG_XEN
++#ifdef CONFIG_XEN_PV
+ ENTRY(xen_hypervisor_callback)
+ 	pushl	$-1				/* orig_ax = -1 => not a system call */
+ 	SAVE_ALL
+@@ -888,11 +888,13 @@ ENTRY(xen_failsafe_callback)
+ 	_ASM_EXTABLE(3b, 8b)
+ 	_ASM_EXTABLE(4b, 9b)
+ ENDPROC(xen_failsafe_callback)
++#endif /* CONFIG_XEN_PV */
+ 
++#ifdef CONFIG_XEN_PVHVM
+ BUILD_INTERRUPT3(xen_hvm_callback_vector, HYPERVISOR_CALLBACK_VECTOR,
+ 		 xen_evtchn_do_upcall)
++#endif
+ 
+-#endif /* CONFIG_XEN */
+ 
+ #if IS_ENABLED(CONFIG_HYPERV)
+ 
+diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
+index 8ae7ffda8f98..3c2526e24dd8 100644
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -1049,7 +1049,7 @@ ENTRY(do_softirq_own_stack)
+ 	ret
+ ENDPROC(do_softirq_own_stack)
+ 
+-#ifdef CONFIG_XEN
++#ifdef CONFIG_XEN_PV
+ idtentry hypervisor_callback xen_do_hypervisor_callback has_error_code=0
+ 
+ /*
+@@ -1129,11 +1129,13 @@ ENTRY(xen_failsafe_callback)
+ 	ENCODE_FRAME_POINTER
+ 	jmp	error_exit
+ END(xen_failsafe_callback)
++#endif /* CONFIG_XEN_PV */
+ 
++#ifdef CONFIG_XEN_PVHVM
+ apicinterrupt3 HYPERVISOR_CALLBACK_VECTOR \
+ 	xen_hvm_callback_vector xen_evtchn_do_upcall
++#endif
+ 
+-#endif /* CONFIG_XEN */
+ 
+ #if IS_ENABLED(CONFIG_HYPERV)
+ apicinterrupt3 HYPERVISOR_CALLBACK_VECTOR \
+@@ -1150,7 +1152,7 @@ idtentry debug			do_debug		has_error_code=0	paranoid=1 shift_ist=DEBUG_STACK
+ idtentry int3			do_int3			has_error_code=0
+ idtentry stack_segment		do_stack_segment	has_error_code=1
+ 
+-#ifdef CONFIG_XEN
++#ifdef CONFIG_XEN_PV
+ idtentry xennmi			do_nmi			has_error_code=0
+ idtentry xendebug		do_debug		has_error_code=0
+ idtentry xenint3		do_int3			has_error_code=0
+diff --git a/arch/x86/xen/Makefile b/arch/x86/xen/Makefile
+index d83cb5478f54..f723b5aa8f74 100644
+--- a/arch/x86/xen/Makefile
++++ b/arch/x86/xen/Makefile
+@@ -12,25 +12,46 @@ endif
+ # Make sure early boot has no stackprotector
+ nostackp := $(call cc-option, -fno-stack-protector)
+ CFLAGS_enlighten_pv.o		:= $(nostackp)
+-CFLAGS_mmu_pv.o		:= $(nostackp)
++CFLAGS_mmu_pv.o			:= $(nostackp)
+ 
+-obj-y		:= enlighten.o multicalls.o mmu.o irq.o \
+-			time.o xen-asm.o xen-asm_$(BITS).o \
+-			grant-table.o suspend.o platform-pci-unplug.o
++obj-y				+= enlighten.o
++obj-y				+= multicalls.o
++obj-y				+= mmu.o
++obj-y				+= time.o
++obj-y				+= grant-table.o
++obj-y				+= suspend.o
++obj-y				+= platform-pci-unplug.o
+ 
+-obj-$(CONFIG_XEN_PVHVM)		+= enlighten_hvm.o mmu_hvm.o suspend_hvm.o
+-obj-$(CONFIG_XEN_PV)			+= setup.o apic.o pmu.o suspend_pv.o \
+-						p2m.o enlighten_pv.o mmu_pv.o
+-obj-$(CONFIG_XEN_PVH)			+= enlighten_pvh.o
++obj-$(CONFIG_XEN_PVHVM)		+= enlighten_hvm.o
++obj-$(CONFIG_XEN_PVHVM)		+= mmu_hvm.o
++obj-$(CONFIG_XEN_PVHVM)		+= suspend_hvm.o
+ 
+-obj-$(CONFIG_EVENT_TRACING) += trace.o
++obj-$(CONFIG_XEN_PV)		+= setup.o
++obj-$(CONFIG_XEN_PV)		+= apic.o
++obj-$(CONFIG_XEN_PV)		+= pmu.o
++obj-$(CONFIG_XEN_PV)		+= suspend_pv.o
++obj-$(CONFIG_XEN_PV)		+= p2m.o
++obj-$(CONFIG_XEN_PV)		+= enlighten_pv.o
++obj-$(CONFIG_XEN_PV)		+= mmu_pv.o
++obj-$(CONFIG_XEN_PV)		+= irq.o
++obj-$(CONFIG_XEN_PV)		+= xen-asm.o
++obj-$(CONFIG_XEN_PV)		+= xen-asm_$(BITS).o
++
++obj-$(CONFIG_XEN_PVH)		+= enlighten_pvh.o
++obj-$(CONFIG_XEN_PVH)	 	+= xen-pvh.o
++
++obj-$(CONFIG_EVENT_TRACING)	+= trace.o
+ 
+ obj-$(CONFIG_SMP)		+= smp.o
+ obj-$(CONFIG_XEN_PV_SMP)  	+= smp_pv.o
+ obj-$(CONFIG_XEN_PVHVM_SMP)  	+= smp_hvm.o
++
+ obj-$(CONFIG_PARAVIRT_SPINLOCKS)+= spinlock.o
++
+ obj-$(CONFIG_XEN_DEBUG_FS)	+= debugfs.o
++
+ obj-$(CONFIG_XEN_DOM0)		+= vga.o
++
+ obj-$(CONFIG_SWIOTLB_XEN)	+= pci-swiotlb-xen.o
++
+ obj-$(CONFIG_XEN_EFI)		+= efi.o
+-obj-$(CONFIG_XEN_PVH)	 	+= xen-pvh.o
+diff --git a/include/xen/events.h b/include/xen/events.h
+index c3e6bc643a7b..a48897199975 100644
+--- a/include/xen/events.h
++++ b/include/xen/events.h
+@@ -89,11 +89,13 @@ unsigned irq_from_evtchn(unsigned int evtchn);
+ int irq_from_virq(unsigned int cpu, unsigned int virq);
+ unsigned int evtchn_from_irq(unsigned irq);
+ 
++#ifdef CONFIG_XEN_PVHVM
+ /* Xen HVM evtchn vector callback */
+ void xen_hvm_callback_vector(void);
+ #ifdef CONFIG_TRACING
+ #define trace_xen_hvm_callback_vector xen_hvm_callback_vector
+ #endif
++#endif
+ int xen_set_callback_via(uint64_t via);
+ void xen_evtchn_do_upcall(struct pt_regs *regs);
+ void xen_hvm_evtchn_do_upcall(void);
+-- 
+2.13.7
 
