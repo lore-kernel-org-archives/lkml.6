@@ -2,102 +2,128 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECFCEC46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 17:47:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3799C46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 17:50:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE98E21771
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 17:47:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE98E21771
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 86DA1216F2
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 17:50:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86DA1216F2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729333AbeHHUIW (ORCPT
+        id S1728711AbeHHULY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 16:08:22 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:40622 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727706AbeHHUIW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 16:08:22 -0400
-Received: from smtp.corp.redhat.com (int-mx11.intmail.prod.int.phx2.redhat.com [10.5.11.26])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7BBCD307D860;
-        Wed,  8 Aug 2018 17:47:38 +0000 (UTC)
-Received: from prarit.bos.redhat.com (prarit-guest.khw.lab.eng.bos.redhat.com [10.16.186.145])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3F23D308332C;
-        Wed,  8 Aug 2018 17:47:37 +0000 (UTC)
-From:   Prarit Bhargava <prarit@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Prarit Bhargava <prarit@redhat.com>, Len Brown <lenb@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-pm@vger.kernel.org
-Subject: [PATCH] x86/ACPI/cstate: Output AMD on APCI C1 FFH MWAIT AMD systems
-Date:   Wed,  8 Aug 2018 13:47:35 -0400
-Message-Id: <20180808174735.3114-1-prarit@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.26
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Wed, 08 Aug 2018 17:47:38 +0000 (UTC)
+        Wed, 8 Aug 2018 16:11:24 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:35314 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727062AbeHHULX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 16:11:23 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 9CF6D8063D; Wed,  8 Aug 2018 19:50:36 +0200 (CEST)
+Date:   Wed, 8 Aug 2018 19:50:36 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Yu Chen <yu.c.chen@intel.com>
+Cc:     Ryan Chen <yu.chen.surf@gmail.com>, jlee@suse.com,
+        oneukum@suse.com, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        ebiggers@google.com, Theodore Ts'o <tytso@mit.edu>,
+        smueller@chronox.de, denkenz@gmail.com,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        linux-crypto@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kookoo.gu@intel.com, Zhang Rui <rui.zhang@intel.com>
+Subject: Re: [PATCH 0/4][RFC v2] Introduce the in-kernel hibernation
+ encryption
+Message-ID: <20180808175036.GA16217@amd>
+References: <1532346156.3057.11.camel@suse.com>
+ <20180723162302.GA4503@sandybridge-desktop>
+ <1532590246.7411.3.camel@suse.com>
+ <20180726081404.GG4244@linux-l9pv.suse>
+ <20180730170415.GQ4244@linux-l9pv.suse>
+ <20180803033702.GB416@sandybridge-desktop>
+ <20180803053445.GC4244@linux-l9pv.suse>
+ <CADjb_WSURQz86+E8kakNf7UBDM+aho+uaz3QdDkuGsEgan=szw@mail.gmail.com>
+ <20180805100200.GB22948@amd>
+ <20180806084534.GB12124@chenyu-desktop>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="EVF5PPMfhYS0aIcm"
+Content-Disposition: inline
+In-Reply-To: <20180806084534.GB12124@chenyu-desktop>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-commit 5209654a46ee ("x86/ACPI/cstate: Allow ACPI C1 FFH MWAIT use on AMD
-systems") allows use of FFH for ACPI C1 but tools like cpupower and turbostat
-display INTEL for the cstate description.
 
-Output "AMD" for AMD systems with FFH for ACPI C1.
+--EVF5PPMfhYS0aIcm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Prarit Bhargava <prarit@redhat.com>
-Cc: Len Brown <lenb@kernel.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Pavel Machek <pavel@ucw.cz>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: x86@kernel.org
-Cc: linux-pm@vger.kernel.org
----
- arch/x86/kernel/acpi/cstate.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+Hi!
 
-diff --git a/arch/x86/kernel/acpi/cstate.c b/arch/x86/kernel/acpi/cstate.c
-index dde437f5d14f..f10d3c673519 100644
---- a/arch/x86/kernel/acpi/cstate.c
-+++ b/arch/x86/kernel/acpi/cstate.c
-@@ -76,6 +76,7 @@ static long acpi_processor_ffh_cstate_probe_cpu(void *_cx)
- 	unsigned int edx_part;
- 	unsigned int cstate_type; /* C-state type and not ACPI C-state type */
- 	unsigned int num_cstate_subtype;
-+	struct cpuinfo_x86 *c = &boot_cpu_data;
- 
- 	cpuid(CPUID_MWAIT_LEAF, &eax, &ebx, &ecx, &edx);
- 
-@@ -107,9 +108,14 @@ static long acpi_processor_ffh_cstate_probe_cpu(void *_cx)
- 			"Monitor-Mwait will be used to enter C-%d state\n",
- 			cx->type);
- 	}
--	snprintf(cx->desc,
--			ACPI_CX_DESC_LEN, "ACPI FFH INTEL MWAIT 0x%x",
--			cx->address);
-+	if (c->x86_vendor == X86_VENDOR_INTEL)
-+		snprintf(cx->desc,
-+			 ACPI_CX_DESC_LEN, "ACPI FFH INTEL MWAIT 0x%x",
-+			 cx->address);
-+	else
-+		snprintf(cx->desc,
-+			 ACPI_CX_DESC_LEN, "ACPI FFH AMD MWAIT 0x%x",
-+			 cx->address);
- out:
- 	return retval;
- }
--- 
-2.14.4
+> > > > User space doesn't need to involve. The EFI root key is generated by
+> > > > EFI boot stub and be transfer to kernel. It's stored in EFI boot se=
+rvice
+> > > > variable that it can only be accessed by trusted EFI binary when
+> > > > secure boot is enabled.
+> > > >
+> > > Okay, this apply to the 'suspend' phase, right?
+> > > I'm still a little confused about the 'resume' phase.
+> > > Taking encryption as example(not signature),
+> > > the purpose of doing hibernation encryption is to prevent other users
+> > > from stealing ram content. Say, user A uses a  passphrase to generate=
+ the
+> >=20
+> > No, I don't think that's purpose here.
+> >=20
+> > Purpose here is to prevent user from reading/modifying kernel memory
+> > content on machine he owns.
+> >
+> Say, A puts his laptop into hibernation and walks away,
+> and B walks by, and opens A's laptop and wakes up the system and he
+> can do what he wants. Although EFI key/TPM trusted key is enabled,
+> currently there's no certification during resume, which sounds
+> unsafe to me. Afterall, the original requirement is to probe
 
+Define unsafe.
+
+If you want security against bad people resuming your machines, please
+take a look at existing uswsusp solutions. It defends against that.
+
+If you want security against bad people tampering with your machines
+physically, sorry, there's no way to defend against that.
+
+But I thought you were trying to do something for secure boot, and "bad
+person resumes your machine" is out of scope there.
+
+So please always explain security against _what kind of attack_ you
+are trying to improve; intelligent communication is not possible
+without that.
+
+								Pavel
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--EVF5PPMfhYS0aIcm
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAltrLWwACgkQMOfwapXb+vJriwCeMEH0FxLppyjbtaP2vkRpY8NQ
+jOwAnjWz691CHnHSi4qRKDxI5a2mGXq+
+=Rbr4
+-----END PGP SIGNATURE-----
+
+--EVF5PPMfhYS0aIcm--
