@@ -6,74 +6,120 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E517C4646D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 08:14:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 789B3C46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 08:16:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C885216FA
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 08:14:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C885216FA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 1D9C1216FA
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 08:16:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D9C1216FA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727195AbeHHKd1 (ORCPT
+        id S1727236AbeHHKej (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 06:33:27 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:10643 "EHLO huawei.com"
+        Wed, 8 Aug 2018 06:34:39 -0400
+Received: from mx2.suse.de ([195.135.220.15]:59496 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726979AbeHHKd1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 06:33:27 -0400
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id D48472BD272E0;
-        Wed,  8 Aug 2018 16:14:49 +0800 (CST)
-Received: from [10.177.253.249] (10.177.253.249) by smtp.huawei.com
- (10.3.19.207) with Microsoft SMTP Server id 14.3.399.0; Wed, 8 Aug 2018
- 16:14:47 +0800
-To:     Dominique Martinet <asmadeus@codewreck.org>
-CC:     "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "Eric Van Hensbergen" <ericvh@gmail.com>,
-        Ron Minnich <rminnich@sandia.gov>,
-        "Latchesar Ionkov" <lucho@ionkov.net>, Greg Kurz <groug@kaod.org>,
-        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
-        <v9fs-developer@lists.sourceforge.net>
-From:   piaojun <piaojun@huawei.com>
-Subject: [PATCH] net/9p/trans_virtio.c: decrease the refcount of 9p virtio
- device when removing it
-Message-ID: <5B6AA65E.3030907@huawei.com>
-Date:   Wed, 8 Aug 2018 16:14:22 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.2.0
+        id S1726979AbeHHKej (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 06:34:39 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 0A4A1ACC3;
+        Wed,  8 Aug 2018 08:16:03 +0000 (UTC)
+Subject: Re: [PATCH] netfilter/x_tables: do not fail xt_alloc_table_info too
+ easilly
+To:     Michal Hocko <mhocko@kernel.org>, Florian Westphal <fw@strlen.de>
+Cc:     Georgi Nikolov <gnikolov@icdsoft.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Michal Hocko <mhocko@suse.com>
+References: <20180807195400.23687-1-mhocko@kernel.org>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Openpgp: preference=signencrypt
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+ cqmP8roqufIAj+Ohhzs=
+Message-ID: <a060e57c-dbcd-d3bc-c975-ac8a66468666@suse.cz>
+Date:   Wed, 8 Aug 2018 10:16:01 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20180807195400.23687-1-mhocko@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.253.249]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I found that 9pnet_virtio.ko could not be removed by rmmod command, and I
-could still found it by lsmod. The reason is that we forgot decrease the
-refcount of 9p virtio device by kobject_put. So we should put refcount in
-p9_virtio_remove.
+On 08/07/2018 09:54 PM, Michal Hocko wrote:
+> From: Michal Hocko <mhocko@suse.com>
+> 
+> eacd86ca3b03 ("net/netfilter/x_tables.c: use kvmalloc()
+> in xt_alloc_table_info()") has unintentionally fortified
+> xt_alloc_table_info allocation when __GFP_RETRY has been dropped from
+> the vmalloc fallback. Later on there was a syzbot report that this
+> can lead to OOM killer invocations when tables are too large and
+> 0537250fdc6c ("netfilter: x_tables: make allocation less aggressive")
+> has been merged to restore the original behavior. Georgi Nikolov however
+> noticed that he is not able to install his iptables anymore so this can
+> be seen as a regression.
+> 
+> The primary argument for 0537250fdc6c was that this allocation path
+> shouldn't really trigger the OOM killer and kill innocent tasks. On the
+> other hand the interface requires root and as such should allow what the
+> admin asks for. Root inside a namespaces makes this more complicated
+> because those might be not trusted in general. If they are not then such
+> namespaces should be restricted anyway. Therefore drop the __GFP_NORETRY
+> and replace it by __GFP_ACCOUNT to enfore memcg constrains on it.
+> 
+> Fixes: 0537250fdc6c ("netfilter: x_tables: make allocation less aggressive")
+> Reported-by: Georgi Nikolov <gnikolov@icdsoft.com>
+> Suggested-by: Vlastimil Babka <vbabka@suse.cz>
+> Acked-by: Florian Westphal <fw@strlen.de>
+> Signed-off-by: Michal Hocko <mhocko@suse.com>
 
-Signed-off-by: Jun Piao <piaojun@huawei.com>
----
- net/9p/trans_virtio.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
 
-diff --git a/net/9p/trans_virtio.c b/net/9p/trans_virtio.c
-index 46a5ab2..a00e992 100644
---- a/net/9p/trans_virtio.c
-+++ b/net/9p/trans_virtio.c
-@@ -710,7 +710,8 @@ static void p9_virtio_remove(struct virtio_device *vdev)
- 	vdev->config->del_vqs(vdev);
+IIRC According to Florian there are more places like this in the
+netfilter code?
 
- 	sysfs_remove_file(&(vdev->dev.kobj), &dev_attr_mount_tag.attr);
--	kobject_uevent(&(vdev->dev.kobj), KOBJ_CHANGE);
-+	kobject_uevent(&(vdev->dev.kobj), KOBJ_REMOVE);
-+	kobject_put(&(vdev->dev.kobj));
- 	kfree(chan->tag);
- 	kfree(chan->vc_wq);
- 	kfree(chan);
--- 
