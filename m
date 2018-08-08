@@ -2,113 +2,215 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F919C46471
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 00:19:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2C90C46472
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 00:28:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4CF3C208B2
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 00:19:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AEB4D214C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 00:28:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ZFipu7ZQ";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Q9/b5O9C"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CF3C208B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lgavxtkw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEB4D214C4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727061AbeHHCgZ (ORCPT
+        id S1726975AbeHHCpC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 22:36:25 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:39660 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726159AbeHHCgZ (ORCPT
+        Tue, 7 Aug 2018 22:45:02 -0400
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:42744 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726078AbeHHCpC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 22:36:25 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 4914760B15; Wed,  8 Aug 2018 00:19:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533687570;
-        bh=F1B+uqwTK57+pAEjaaErwGGtUQvzb8P2PoBQko3xaes=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ZFipu7ZQ7K0b75YfZj6FN/llNZ5Q4aTPx2y3FMsx/2irxdRRopWqw0s9sR+E//hhy
-         wHxeD4ZIgVWlTKirnnbRJx6VMxlgwSnJf7/sAXvjilp0V8v+n7QJsyNBszJzNQn0Bk
-         T79dO9jirx6lRWDLwJxW0ok+muokwBmv3oYQPN+w=
-Received: from codeaurora.org (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: rkuo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 38AEA601D3;
-        Wed,  8 Aug 2018 00:19:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533687569;
-        bh=F1B+uqwTK57+pAEjaaErwGGtUQvzb8P2PoBQko3xaes=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Q9/b5O9Ch449pdgSIDMpSB35ivBNhk2f4RBYOiERxxPOHWwSgzdyZFR7//uU63vo4
-         4n3TNnsb9qzaYyw4Ach45cBISsISzYu8BrbFg2z7ynIkJRxeYfQttDgAyBdZMXx4H+
-         GVuc6R2Iq8YsPFUeIVjvIfYsz/JneOkrwJLwy/CE=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 38AEA601D3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rkuo@codeaurora.org
-Date:   Tue, 7 Aug 2018 19:19:27 -0500
-From:   Richard Kuo <rkuo@codeaurora.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     linux-hexagon@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] hexagon: remove the sync_single_for_cpu DMA operation
-Message-ID: <20180808001927.GA20752@codeaurora.org>
-References: <20180719125635.824-1-hch@lst.de>
- <20180719125635.824-2-hch@lst.de>
- <20180725032948.GG12771@codeaurora.org>
- <20180725043927.GA10827@lst.de>
- <20180731152229.GA956@lst.de>
- <20180807070136.GA32634@lst.de>
+        Tue, 7 Aug 2018 22:45:02 -0400
+Received: by mail-qt0-f193.google.com with SMTP id z8-v6so547852qto.9
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 17:28:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=voXXD3+ZDI0NvRbQK0wgHzW84iDkMkJCzowouQFBW64=;
+        b=Lgavxtkw6kbQJGq6Dmnreq913kNImAd5L3RymJMg/b/4XKGn5ZOQ+Kw/54fy0n1iaq
+         gxEd1S1jZb15uAr+YQ8XVxGtCVKLErieai2dBUHAiiJt/uFJUG4tZN/3L5UANd75ZR6u
+         QmgMEjgkQUFKpom2qUMuGRZNBAOhzOObHEKHmbp7cEX2W0TlN3Up5AOPTQosARAdP9Hx
+         JC4O/hoVDPj5wTbwjTX0Svlyyw7A62ilNZAlb/5td2h6Vb+6i2j/5Gm+PHKCYMdvZrcY
+         2my04QyK96XaOleeVfqBNgixBXTy2670tj5Vr1nVTuscJIUEIji81RQ0dS5bIgYTO8XK
+         GrDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=voXXD3+ZDI0NvRbQK0wgHzW84iDkMkJCzowouQFBW64=;
+        b=PcYgkB30hcQzPWiAp09Bx6Rq1CrEZiS+AKmWEbFrgHmo7AO+vrczqsw/LBm+HxgC3u
+         rS4ikAQtbLGI/3M8DHGnRu1xHen88CzHvjaFndIOcjocULAwebiaAKCM/UFYZXbdUKaN
+         mnJIxra9kpyAHeFF+82OoC7rxAmPjgKh7J2nkC8Qkftxw96He4TFNnal1rH+UsBvu+gQ
+         D+vOJEex+hW3S3mW9zKLEsXktjNwA4+hPvtoP3hY9/IYBIY/dvQQC6NNM2IdEXIHmiWw
+         /Xssksj0+zMc/JSAJIxPAIuWz9sEBbGyuA91vZq6Jyu8PMGCKu5uaWTJQUwYnHjGWMbp
+         aFmA==
+X-Gm-Message-State: AOUpUlE0t3Ord7tXrLFsFSzJw2IQ7vn1sBo1TFvNI0DYU80m0bprd9yC
+        SwoAmy1RoGmx1Q4cF3/lcP4=
+X-Google-Smtp-Source: AA+uWPw+1StidB7oJVaX0JgKo3JlWbtoRFJ59RTw1WiUoOCaAkNyFqa+YsZKT6YG9/yjz5B3mr2YJQ==
+X-Received: by 2002:ac8:fdc:: with SMTP id f28-v6mr653967qtk.63.1533688085143;
+        Tue, 07 Aug 2018 17:28:05 -0700 (PDT)
+Received: from WindFlash ([201.82.148.26])
+        by smtp.gmail.com with ESMTPSA id s53-v6sm2072521qts.5.2018.08.07.17.28.03
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 07 Aug 2018 17:28:04 -0700 (PDT)
+Date:   Tue, 7 Aug 2018 21:28:00 -0300
+From:   Leonardo =?utf-8?B?QnLDoXM=?= <leobras.c@gmail.com>
+To:     Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 01/15] staging: fbtft: Changes udelay(n) to
+ usleep_range(n, n + x). - Style
+Message-ID: <355a96aa9bf3c29bbafc433a1b6e1662588250d8.1533686201.git.leobras.c@gmail.com>
+References: <cover.1533686201.git.leobras.c@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180807070136.GA32634@lst.de>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <cover.1533686201.git.leobras.c@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 07, 2018 at 09:01:36AM +0200, Christoph Hellwig wrote:
-> On Tue, Jul 31, 2018 at 05:22:29PM +0200, Christoph Hellwig wrote:
-> > On Wed, Jul 25, 2018 at 06:39:27AM +0200, Christoph Hellwig wrote:
-> > > On Tue, Jul 24, 2018 at 10:29:48PM -0500, Richard Kuo wrote:
-> > > > Patch series looks good.  Definitely appreciate the cleanup.
-> > > > 
-> > > > I can take it through my tree, or if not:
-> > > > 
-> > > > Acked-by: Richard Kuo <rkuo@codeaurora.org>
-> > > 
-> > > Please take it through your tree, thanks!
-> > 
-> > I haven't seen it in linux-next yet, do you still plan to take it?
-> > 
-> > Otherwise I'll merge it in the dma-mapping tree.
-> 
-> Given that I haven't seen this in linux-next nor haven't heard back
-> from you I assume you are on your well deserved summer vacation.
-> 
-> If I don't hear back until tomorrow night I'll merge it through the
-> dma-mapping tree, so that I have it in linux-next before heading out
-> to my summer vacation.
+Changes some udelay(n) for n >= 10 to usleep_range(n, n+x) as recommended by checkpatch.pl.
 
-I am here, and I have the patch queued up but it's waiting for approval
-before I get to push it out through my tree.
+Signed-off-by: Leonardo Brás <leobras.c@gmail.com>
+---
+ drivers/staging/fbtft/fb_agm1264k-fl.c |  2 +-
+ drivers/staging/fbtft/fb_ra8875.c      |  4 ++--
+ drivers/staging/fbtft/fb_tinylcd.c     |  2 +-
+ drivers/staging/fbtft/fb_upd161704.c   | 19 +++++++++----------
+ drivers/staging/fbtft/fb_watterott.c   |  4 ++--
+ 5 files changed, 15 insertions(+), 16 deletions(-)
 
-That said, I am perfectly fine with this going through a different tree
-if expedience is needed.
-
-
-Thanks,
-Richard Kuo
-
-
+diff --git a/drivers/staging/fbtft/fb_agm1264k-fl.c b/drivers/staging/fbtft/fb_agm1264k-fl.c
+index f6f30f5bf15a..7a24bde7ca8d 100644
+--- a/drivers/staging/fbtft/fb_agm1264k-fl.c
++++ b/drivers/staging/fbtft/fb_agm1264k-fl.c
+@@ -85,7 +85,7 @@ static void reset(struct fbtft_par *par)
+ 	dev_dbg(par->info->device, "%s()\n", __func__);
+ 
+ 	gpio_set_value(par->gpio.reset, 0);
+-	udelay(20);
++	usleep_range(20, 25);
+ 	gpio_set_value(par->gpio.reset, 1);
+ 	mdelay(120);
+ }
+diff --git a/drivers/staging/fbtft/fb_ra8875.c b/drivers/staging/fbtft/fb_ra8875.c
+index 5d3b76ca74d8..e2a62677b65b 100644
+--- a/drivers/staging/fbtft/fb_ra8875.c
++++ b/drivers/staging/fbtft/fb_ra8875.c
+@@ -217,7 +217,7 @@ static void write_reg8_bus8(struct fbtft_par *par, int len, ...)
+ 	}
+ 	len--;
+ 
+-	udelay(100);
++	usleep_range(100, 101);
+ 
+ 	if (len) {
+ 		buf = (u8 *)par->buf;
+@@ -238,7 +238,7 @@ static void write_reg8_bus8(struct fbtft_par *par, int len, ...)
+ 
+ 	/* restore user spi-speed */
+ 	par->fbtftops.write = fbtft_write_spi;
+-	udelay(100);
++	usleep_range(100, 101);
+ }
+ 
+ static int write_vmem16_bus8(struct fbtft_par *par, size_t offset, size_t len)
+diff --git a/drivers/staging/fbtft/fb_tinylcd.c b/drivers/staging/fbtft/fb_tinylcd.c
+index e463b0ddf16d..3b2af1becca8 100644
+--- a/drivers/staging/fbtft/fb_tinylcd.c
++++ b/drivers/staging/fbtft/fb_tinylcd.c
+@@ -41,7 +41,7 @@ static int init_display(struct fbtft_par *par)
+ 			     0x00, 0x35, 0x33, 0x00, 0x00, 0x00);
+ 	write_reg(par, MIPI_DCS_SET_PIXEL_FORMAT, 0x55);
+ 	write_reg(par, MIPI_DCS_EXIT_SLEEP_MODE);
+-	udelay(250);
++	usleep_range(250, 251);
+ 	write_reg(par, MIPI_DCS_SET_DISPLAY_ON);
+ 
+ 	return 0;
+diff --git a/drivers/staging/fbtft/fb_upd161704.c b/drivers/staging/fbtft/fb_upd161704.c
+index acc425fdf34e..10794f81b66e 100644
+--- a/drivers/staging/fbtft/fb_upd161704.c
++++ b/drivers/staging/fbtft/fb_upd161704.c
+@@ -36,27 +36,26 @@ static int init_display(struct fbtft_par *par)
+ 
+ 	/* oscillator start */
+ 	write_reg(par, 0x003A, 0x0001);	/*Oscillator 0: stop, 1: operation */
+-	udelay(100);
+-
++	usleep_range(100, 101);
+ 	/* y-setting */
+ 	write_reg(par, 0x0024, 0x007B);	/* amplitude setting */
+-	udelay(10);
++	usleep_range(10, 11);
+ 	write_reg(par, 0x0025, 0x003B);	/* amplitude setting */
+ 	write_reg(par, 0x0026, 0x0034);	/* amplitude setting */
+-	udelay(10);
++	usleep_range(10, 11);
+ 	write_reg(par, 0x0027, 0x0004);	/* amplitude setting */
+ 	write_reg(par, 0x0052, 0x0025);	/* circuit setting 1 */
+-	udelay(10);
++	usleep_range(10, 11);
+ 	write_reg(par, 0x0053, 0x0033);	/* circuit setting 2 */
+ 	write_reg(par, 0x0061, 0x001C);	/* adjustment V10 positive polarity */
+-	udelay(10);
++	usleep_range(10, 11);
+ 	write_reg(par, 0x0062, 0x002C);	/* adjustment V9 negative polarity */
+ 	write_reg(par, 0x0063, 0x0022);	/* adjustment V34 positive polarity */
+-	udelay(10);
++	usleep_range(10, 11);
+ 	write_reg(par, 0x0064, 0x0027);	/* adjustment V31 negative polarity */
+-	udelay(10);
++	usleep_range(10, 11);
+ 	write_reg(par, 0x0065, 0x0014);	/* adjustment V61 negative polarity */
+-	udelay(10);
++	usleep_range(10, 11);
+ 	write_reg(par, 0x0066, 0x0010);	/* adjustment V61 negative polarity */
+ 
+ 	/* Basical clock for 1 line (BASECOUNT[7:0]) number specified */
+@@ -64,7 +63,7 @@ static int init_display(struct fbtft_par *par)
+ 
+ 	/* Power supply setting */
+ 	write_reg(par, 0x0019, 0x0000);	/* DC/DC output setting */
+-	udelay(200);
++	usleep_range(200, 201);
+ 	write_reg(par, 0x001A, 0x1000);	/* DC/DC frequency setting */
+ 	write_reg(par, 0x001B, 0x0023);	/* DC/DC rising setting */
+ 	write_reg(par, 0x001C, 0x0C01);	/* Regulator voltage setting */
+diff --git a/drivers/staging/fbtft/fb_watterott.c b/drivers/staging/fbtft/fb_watterott.c
+index bfd1527f20f7..9ad4307a50c8 100644
+--- a/drivers/staging/fbtft/fb_watterott.c
++++ b/drivers/staging/fbtft/fb_watterott.c
+@@ -83,7 +83,7 @@ static int write_vmem(struct fbtft_par *par, size_t offset, size_t len)
+ 			par->txbuf.buf, 10 + par->info->fix.line_length);
+ 		if (ret < 0)
+ 			return ret;
+-		udelay(300);
++		usleep_range(300, 301);
+ 	}
+ 
+ 	return 0;
+@@ -122,7 +122,7 @@ static int write_vmem_8bit(struct fbtft_par *par, size_t offset, size_t len)
+ 			par->txbuf.buf, 10 + par->info->var.xres);
+ 		if (ret < 0)
+ 			return ret;
+-		udelay(700);
++		usleep_range(700, 701);
+ 	}
+ 
+ 	return 0;
 -- 
-Employee of Qualcomm Innovation Center, Inc.
-Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum, 
-a Linux Foundation Collaborative Project
+2.18.0
+
