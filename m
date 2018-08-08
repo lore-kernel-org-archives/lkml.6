@@ -5,163 +5,70 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0E77C46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 08:08:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E89EAC46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 08:13:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 503B3216FB
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 08:08:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 503B3216FB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 8E8F9216FA
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 08:13:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E8F9216FA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727314AbeHHK1S (ORCPT
+        id S1727131AbeHHKbb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 06:27:18 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37318 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727028AbeHHK1S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 06:27:18 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5C6F8402315B;
-        Wed,  8 Aug 2018 08:08:44 +0000 (UTC)
-Received: from [10.36.117.71] (ovpn-117-71.ams2.redhat.com [10.36.117.71])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2CAF21C70A;
-        Wed,  8 Aug 2018 08:08:42 +0000 (UTC)
-Subject: Re: [RFC PATCH 2/3] mm/memory_hotplug: Create __shrink_pages and move
- it to offline_pages
-To:     Oscar Salvador <osalvador@techadventures.net>
-Cc:     Jerome Glisse <jglisse@redhat.com>, akpm@linux-foundation.org,
-        mhocko@suse.com, dan.j.williams@intel.com, yasu.isimatu@gmail.com,
-        logang@deltatee.com, dave.jiang@intel.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Oscar Salvador <osalvador@suse.de>
-References: <20180807133757.18352-1-osalvador@techadventures.net>
- <20180807133757.18352-3-osalvador@techadventures.net>
- <20180807135221.GA3301@redhat.com>
- <a6e4e654-fc95-497f-16f3-8c1550cf03d6@redhat.com>
- <20180807204834.GA6844@techadventures.net> <20180807221345.GD3301@redhat.com>
- <20180808073835.GA9568@techadventures.net>
- <44f74b58-aae0-a44c-3b98-7b1aac186f8e@redhat.com>
- <20180808075614.GB9568@techadventures.net>
-From:   David Hildenbrand <david@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
- dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
- QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
- XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
- Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
- PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
- WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
- UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
- jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
- B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
- ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwX4EEwECACgFAljj9eoCGwMFCQlmAYAGCwkI
- BwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEE3eEPcA/4Na5IIP/3T/FIQMxIfNzZshIq687qgG
- 8UbspuE/YSUDdv7r5szYTK6KPTlqN8NAcSfheywbuYD9A4ZeSBWD3/NAVUdrCaRP2IvFyELj
- xoMvfJccbq45BxzgEspg/bVahNbyuBpLBVjVWwRtFCUEXkyazksSv8pdTMAs9IucChvFmmq3
- jJ2vlaz9lYt/lxN246fIVceckPMiUveimngvXZw21VOAhfQ+/sofXF8JCFv2mFcBDoa7eYob
- s0FLpmqFaeNRHAlzMWgSsP80qx5nWWEvRLdKWi533N2vC/EyunN3HcBwVrXH4hxRBMco3jvM
- m8VKLKao9wKj82qSivUnkPIwsAGNPdFoPbgghCQiBjBe6A75Z2xHFrzo7t1jg7nQfIyNC7ez
- MZBJ59sqA9EDMEJPlLNIeJmqslXPjmMFnE7Mby/+335WJYDulsRybN+W5rLT5aMvhC6x6POK
- z55fMNKrMASCzBJum2Fwjf/VnuGRYkhKCqqZ8gJ3OvmR50tInDV2jZ1DQgc3i550T5JDpToh
- dPBxZocIhzg+MBSRDXcJmHOx/7nQm3iQ6iLuwmXsRC6f5FbFefk9EjuTKcLMvBsEx+2DEx0E
- UnmJ4hVg7u1PQ+2Oy+Lh/opK/BDiqlQ8Pz2jiXv5xkECvr/3Sv59hlOCZMOaiLTTjtOIU7Tq
- 7ut6OL64oAq+zsFNBFXLn5EBEADn1959INH2cwYJv0tsxf5MUCghCj/CA/lc/LMthqQ773ga
- uB9mN+F1rE9cyyXb6jyOGn+GUjMbnq1o121Vm0+neKHUCBtHyseBfDXHA6m4B3mUTWo13nid
- 0e4AM71r0DS8+KYh6zvweLX/LL5kQS9GQeT+QNroXcC1NzWbitts6TZ+IrPOwT1hfB4WNC+X
- 2n4AzDqp3+ILiVST2DT4VBc11Gz6jijpC/KI5Al8ZDhRwG47LUiuQmt3yqrmN63V9wzaPhC+
- xbwIsNZlLUvuRnmBPkTJwwrFRZvwu5GPHNndBjVpAfaSTOfppyKBTccu2AXJXWAE1Xjh6GOC
- 8mlFjZwLxWFqdPHR1n2aPVgoiTLk34LR/bXO+e0GpzFXT7enwyvFFFyAS0Nk1q/7EChPcbRb
- hJqEBpRNZemxmg55zC3GLvgLKd5A09MOM2BrMea+l0FUR+PuTenh2YmnmLRTro6eZ/qYwWkC
- u8FFIw4pT0OUDMyLgi+GI1aMpVogTZJ70FgV0pUAlpmrzk/bLbRkF3TwgucpyPtcpmQtTkWS
- gDS50QG9DR/1As3LLLcNkwJBZzBG6PWbvcOyrwMQUF1nl4SSPV0LLH63+BrrHasfJzxKXzqg
- rW28CTAE2x8qi7e/6M/+XXhrsMYG+uaViM7n2je3qKe7ofum3s4vq7oFCPsOgwARAQABwsFl
- BBgBAgAPBQJVy5+RAhsMBQkJZgGAAAoJEE3eEPcA/4NagOsP/jPoIBb/iXVbM+fmSHOjEshl
- KMwEl/m5iLj3iHnHPVLBUWrXPdS7iQijJA/VLxjnFknhaS60hkUNWexDMxVVP/6lbOrs4bDZ
- NEWDMktAeqJaFtxackPszlcpRVkAs6Msn9tu8hlvB517pyUgvuD7ZS9gGOMmYwFQDyytpepo
- YApVV00P0u3AaE0Cj/o71STqGJKZxcVhPaZ+LR+UCBZOyKfEyq+ZN311VpOJZ1IvTExf+S/5
- lqnciDtbO3I4Wq0ArLX1gs1q1XlXLaVaA3yVqeC8E7kOchDNinD3hJS4OX0e1gdsx/e6COvy
- qNg5aL5n0Kl4fcVqM0LdIhsubVs4eiNCa5XMSYpXmVi3HAuFyg9dN+x8thSwI836FoMASwOl
- C7tHsTjnSGufB+D7F7ZBT61BffNBBIm1KdMxcxqLUVXpBQHHlGkbwI+3Ye+nE6HmZH7IwLwV
- W+Ajl7oYF+jeKaH4DZFtgLYGLtZ1LDwKPjX7VAsa4Yx7S5+EBAaZGxK510MjIx6SGrZWBrrV
- TEvdV00F2MnQoeXKzD7O4WFbL55hhyGgfWTHwZ457iN9SgYi1JLPqWkZB0JRXIEtjd4JEQcx
- +8Umfre0Xt4713VxMygW0PnQt5aSQdMD58jHFxTk092mU+yIHj5LeYgvwSgZN4airXk5yRXl
- SE+xAvmumFBY
-Organization: Red Hat GmbH
-Message-ID: <7a64e67d-1df9-04ab-cc49-99a39aa90798@redhat.com>
-Date:   Wed, 8 Aug 2018 10:08:41 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180808075614.GB9568@techadventures.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        Wed, 8 Aug 2018 06:31:31 -0400
+Received: from smtprelay0250.hostedemail.com ([216.40.44.250]:43493 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726939AbeHHKbb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 06:31:31 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay05.hostedemail.com (Postfix) with ESMTP id 0EAC718034F63;
+        Wed,  8 Aug 2018 08:12:57 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: chess47_8df9607785229
+X-Filterd-Recvd-Size: 1670
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf13.hostedemail.com (Postfix) with ESMTPA;
+        Wed,  8 Aug 2018 08:12:55 +0000 (UTC)
+Message-ID: <f06112b569731e2c5de3958d1b9de5a039b7ed0d.camel@perches.com>
+Subject: Re: [PATCH 04/17] staging:rtl8192u: Rename eqMacAddr macro - Style
+From:   Joe Perches <joe@perches.com>
+To:     John Whitmore <johnfwhitmore@gmail.com>,
+        linux-kernel@vger.kernel.org
+Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org
+Date:   Wed, 08 Aug 2018 01:12:53 -0700
+In-Reply-To: <20180807211255.29343-5-johnfwhitmore@gmail.com>
+References: <20180807211255.29343-1-johnfwhitmore@gmail.com>
+         <20180807211255.29343-5-johnfwhitmore@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Wed, 08 Aug 2018 08:08:44 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Wed, 08 Aug 2018 08:08:44 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'david@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08.08.2018 09:56, Oscar Salvador wrote:
-> On Wed, Aug 08, 2018 at 09:45:37AM +0200, David Hildenbrand wrote:
->> On 08.08.2018 09:38, Oscar Salvador wrote:
->>> On Tue, Aug 07, 2018 at 06:13:45PM -0400, Jerome Glisse wrote:
->>>>> And since we know for sure that memhotplug-code cannot call it with ZONE_DEVICE,
->>>>> I think this can be done easily.
->>>>
->>>> This might change down road but for now this is correct. They are
->>>> talks to enumerate device memory through standard platform mechanisms
->>>> and thus the kernel might see new types of resources down the road and
->>>> maybe we will want to hotplug them directly from regular hotplug path
->>>> as ZONE_DEVICE (lot of hypothetical at this point ;)).
->>>
->>> Well, I think that if that happens this whole thing will become
->>> much easier, since we will not have several paths for doing the same thing.
->>>
->>> Another thing that I realized is that while we want to move all operation-pages
->>> from remove_memory() path to offline_pages(), this can get tricky.
->>>
->>> Unless I am missing something, the devices from HMM and devm are not being registered
->>> against "memory_subsys" struct, and so, they never get to call memory_subsys_offline()
->>> and so offline_pages().
->>>
->>> Which means that we would have to call __remove_zone() from those paths.
->>> But this alone will not work.
->>
->> I mean, they move it to the zone ("replacing online/offlining code"), so
->> they should take of removing it again.
+On Tue, 2018-08-07 at 22:12 +0100, John Whitmore wrote:
+> The eqMacAddr(a, b) macro causes a checkpatch issue, due to CamelCase
+> naming, so has been renamed to eq_mac_addr(a, b).
 > 
-> Yeah, I guess so.
-> 
-> I mean, of course we can make this work by placing __remove_zone in devm_memremap_pages_release
-> and hmm_devmem_release functions and make sure to call offline_mem_sections first.
-> But sounds a bit "hacky"..
-> 
-> Thanks
-> 
+> This is a coding style change which should not impact on runtime code
+> execution.
+[]
+> diff --git a/drivers/staging/rtl8192u/ieee80211/dot11d.h b/drivers/staging/rtl8192u/ieee80211/dot11d.h
+[]
+> @@ -30,7 +30,7 @@ struct rt_dot11d_info {
+>  	enum dot11d_state state;
+>  };
+>  
+> -#define eqMacAddr(a, b)		(((a)[0] == (b)[0] &&		    \
+> +#define eq_mac_addr(a, b)		(((a)[0] == (b)[0] &&		    \
+>  	(a)[1] == (b)[1] && (a)[2] == (b)[2] && (a)[3] == (b)[3] && \
+>  	(a)[4] == (b)[4] && (a)[5] == (b)[5]) ? 1 : 0)
 
-Then it is maybe time to cleary distinguish both types of memory, as
-they are fundamentally different when it comes to online/offline behavior.
+I'd check to see if the etherdevice.h ether_addr_equal
+would be used instead of this macro.
 
-Ordinary ram:
- add_memory ...
- online_pages ...
- offline_pages
- remove_memory
-
-Device memory
- add_device_memory ...
- remove_device_memory
-
-So adding/removing from the zone and stuff can be handled there.
-
--- 
-
-Thanks,
-
-David / dhildenb
