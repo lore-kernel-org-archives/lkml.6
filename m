@@ -2,512 +2,209 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CCECC4646D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 10:26:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09726C4646D
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 10:27:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D98F208C3
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 10:26:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D98F208C3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id A453D208C3
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 10:27:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=axentia.se header.i=@axentia.se header.b="jJBoOei+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A453D208C3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=axentia.se
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726990AbeHHMpm (ORCPT
+        id S1727041AbeHHMqJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 08:45:42 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41422 "EHLO mx1.redhat.com"
+        Wed, 8 Aug 2018 08:46:09 -0400
+Received: from mail-ve1eur01on0091.outbound.protection.outlook.com ([104.47.1.91]:54752
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726643AbeHHMpm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 08:45:42 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2FB35402315B;
-        Wed,  8 Aug 2018 10:26:36 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-78.rdu2.redhat.com [10.10.120.78])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5109510075DA;
-        Wed,  8 Aug 2018 10:26:35 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH net] rxrpc: Fix the keepalive generator
-From:   David Howells <dhowells@redhat.com>
-To:     netdev@vger.kernel.org
-Cc:     dhowells@redhat.com, linux-afs@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Date:   Wed, 08 Aug 2018 11:26:34 +0100
-Message-ID: <153372399484.18036.6826078666491635563.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
+        id S1726643AbeHHMqI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 08:46:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axentia.se;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nGJAhgf/vViYGtGYTUj3vdgVFihjZtA8nfS9XO+GpT8=;
+ b=jJBoOei+yjF1da5eujkUZAFG1xt3sfyZsyfoHtEM1b+FHK36siveg5aOJndF0ZLEbqUt5LdfFtoIPHs/d3C17v/cQIohC2rPjn+8uGCRpn7XTiJ3gNrzT5kngiBjYkCNZYeFDL8mZIFLBOGDzczQdevpEyN1d3iZY2QtKQYuoak=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=peda@axentia.se; 
+Received: from [192.168.13.3] (85.226.244.23) by
+ HE1PR0201MB2459.eurprd02.prod.outlook.com (2603:10a6:3:82::7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1017.15; Wed, 8 Aug 2018 10:26:58 +0000
+Subject: Re: [PATCH v4 4/4] i2c: Add multi-instantiate pseudo driver
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Hans de Goede <hdegoede@redhat.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        John Garry <john.garry@huawei.com>,
+        linux-i2c <linux-i2c@vger.kernel.org>
+References: <20180808083006.31919-1-hdegoede@redhat.com>
+ <20180808083006.31919-5-hdegoede@redhat.com>
+ <CAHp75Vchow81kAaJ-b5Fr2ZjG7huasvM7HOfaKQzso7jaG2xXg@mail.gmail.com>
+ <69e355c2-89ea-16bc-3d52-4ef9d0eb953b@axentia.se>
+ <CAHp75VdyEannOhudrqMvFqEMR3hZkJ+RG_cGojkte2EfXVmZ8w@mail.gmail.com>
+From:   Peter Rosin <peda@axentia.se>
+Organization: Axentia Technologies AB
+Message-ID: <9f24c437-b7ca-0844-82b2-4899bd9c21be@axentia.se>
+Date:   Wed, 8 Aug 2018 12:26:54 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <CAHp75VdyEannOhudrqMvFqEMR3hZkJ+RG_cGojkte2EfXVmZ8w@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Wed, 08 Aug 2018 10:26:36 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Wed, 08 Aug 2018 10:26:36 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
+X-Originating-IP: [85.226.244.23]
+X-ClientProxiedBy: HE1P190CA0022.EURP190.PROD.OUTLOOK.COM (2603:10a6:3:bc::32)
+ To HE1PR0201MB2459.eurprd02.prod.outlook.com (2603:10a6:3:82::7)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 53f13830-8b6f-498b-390d-08d5fd197943
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(7021125)(8989117)(5600074)(711020)(4534165)(7022125)(4603075)(4627221)(201702281549075)(8990107)(7048125)(7024125)(7027125)(7028125)(7023125)(2017052603328)(7153060)(7193020);SRVR:HE1PR0201MB2459;
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR0201MB2459;3:pETM6QvduiQgGO0/vUxbGimGYZzKGPdO/vQr4OAn159el0Q7pjoSSUWl8l/V0QUscJUFE/XoRPEf/utxWQOIK2UvNSPZI0oI8hmIuTYfogdfNaMaaqfEQOU+adqNspAEjiPSXxuiDYmY4ra72OTZvEhkHNrObL1En+WajwrqJgOjnfdqjWaZ92emFoWkxVWRzbUbWoo2TcPugU0djyG9iCtnmQVBNPhrOx7k6rDnfRKHEHEPW0hSiyRj0fHZF/8+;25:lgLNAGcj5SOD2ttRzKD5SyKa9X69M+xo9tXsDVDMbXCCUnzjKIWynj2kxXmOkmHOpEp4kHcpShY0eXVoIJbo2fGGDOUw1NVMSMYbwLn9iGOQdyi2F1rgu1uKfC3/E7T26Dd5BIVEuPZStvNVwSqPeIuAkac7wqDkGvUzzJueJIkrVRnjfiT5DhnNw6IRsfNaDO9VZUoy3sjEKfiIm6mUwzI2FETj+3ZbrbbUcdvXflBgsPpDEzFkYlWWde6GoVzmtBlrPvIvUA0wVXBGVnGhk2BEQnY0ZGDi/bSp3Q7FpMf9nTqAQJb3SRiX3zHs/3tz0Ic7zNcpsbw8GAM6rjEdZw==;31:XMmztpoDg9tr9DlGpAOaXPQmyKzfNNcyGDJH5cLU2yDG4hHlupKFbNC3h20J6hxeELPGPgynMYZ1jaYBqESleP4WTQj+HqbkzHmpjBq3BHpYK6QSH8Xi0mabz77MPmSV0HMy1EWmDGlaA6NcBxxazTbi2o6nZUude6majd9MksKo60127TGE8zqjd+CYBDwwtVWcMklPKLhgI3RMipjO3TR/42JCWxWbYijyTw9MYSM=
+X-MS-TrafficTypeDiagnostic: HE1PR0201MB2459:
+X-Microsoft-Antispam-PRVS: <HE1PR0201MB24599D7D7A51ADE85AE57C9BBC260@HE1PR0201MB2459.eurprd02.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3231311)(944501410)(52105095)(3002001)(10201501046)(93006095)(93001095)(149027)(150027)(6041310)(20161123562045)(2016111802025)(20161123558120)(20161123564045)(20161123560045)(6043046)(6072148)(201708071742011)(7699016);SRVR:HE1PR0201MB2459;BCL:0;PCL:0;RULEID:;SRVR:HE1PR0201MB2459;
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR0201MB2459;4:D+HdB0+MVOIYEh86nC4CoAqkAK9sNmk0aXDjjXddfd3G+W06eo2Kxq2XGmdXO+/66V4+snArpWec8oYoVt8AFSugMZsmWAKPOch7Dos3M1fMr0AQzxek1AhpMNNntSfMjXsHMf9FQVHy2gjIiG4BH16GtP+gSCzd+qSF80P+8KXjHeEJLRsE1yPzrlyXwJfKgHQWJVlvfB2JZGYpjfsdJyWlBLNzDvgz9+PaEOlxSSnhveFu4BXNm5uSFso65AWjcmLjt90JEXikcuTOU0hE6Q==
+X-Forefront-PRVS: 07584EDBCD
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6049001)(396003)(136003)(366004)(39830400003)(376002)(346002)(189003)(199004)(2906002)(478600001)(229853002)(52146003)(4326008)(52116002)(74482002)(77096007)(3260700006)(6486002)(86362001)(2486003)(23676004)(117156002)(47776003)(316002)(3846002)(25786009)(16576012)(58126008)(230700001)(186003)(54906003)(26005)(76176011)(16526019)(66066001)(65806001)(39060400002)(6246003)(65956001)(36916002)(31696002)(6116002)(53546011)(6916009)(68736007)(50466002)(2616005)(81166006)(7736002)(305945005)(7416002)(36756003)(31686004)(8936002)(8676002)(5660300001)(486006)(476003)(65826007)(53936002)(14444005)(105586002)(106356001)(64126003)(386003)(93886005)(6666003)(446003)(97736004)(11346002)(956004)(81156014)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:HE1PR0201MB2459;H:[192.168.13.3];FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: axentia.se does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtIRTFQUjAyMDFNQjI0NTk7MjM6MGJZQlBwOXo0QnkyRU9zUVNjTDFBRkk0?=
+ =?utf-8?B?ZE1PMHcvQTlLUGtpNy93TzFGMDloeGpuUHk2azdjcXdQbkdSdlhodmNFNmht?=
+ =?utf-8?B?QWVlMk5ETTlubU5VaDRXSTlxdXg1cng4VG1ZOTFZV25TTUlKY0EyMXFIamND?=
+ =?utf-8?B?Zk5jMWxWMi8xYW9OWHYyK0FDekxwVlR0TDN6VEpzSTkzUHlRQmpTWi95dzV3?=
+ =?utf-8?B?Y1NHSElGVmRjUzRqVnE1dWNqRzZUN2lFLzcvRnVmaFA5U3RJeDV0TEJSN1hv?=
+ =?utf-8?B?eDlMUENXZVBrNHBVc2Z1elEySkZiTmpMWlUwQW5EbElNczFJT2tTUnlna1pp?=
+ =?utf-8?B?RXJMREdBOTBIK0RGQTQ2T3RyWmJFUmUybGtYOEJQUFdSNFl4MEx3VzRSS3hp?=
+ =?utf-8?B?RFZmbnJPZHA1dGZ3Mjg1blUydEdtek54RmxNbUorclUwcnRXN0ZFY0tSTnNH?=
+ =?utf-8?B?dlg3SVdNME95RDNtampWYjNFMVZNY3BQVlZXQWczY2xVd0gyWHBpbWxwL3li?=
+ =?utf-8?B?eHZHUkEzcXRZU0R1cGJXVWp5Ym1jY3FXYzFiMXVuZWdMczA2UkxZUG9JTFBD?=
+ =?utf-8?B?enduYUJpTGJnTHI5dWFNcWdzSEk2YlRrWXBCbHJLRjdncjAwZnkrcm9hTmNM?=
+ =?utf-8?B?NDRzeElEQlNLYThrMXc3VGRpdE1SZXBsL1lLOGt2dzFaMXB1Z051SW1tUU43?=
+ =?utf-8?B?b09LeXRHMDE2cEp4MGdvTUg0ZUhLYjk2d1VPWWRlRzAvMGh5cjR6dGdlK0pS?=
+ =?utf-8?B?Rzd2WGM3VXBUeC8wcTZoTWlkMmVNQXlsQ0RVMEFmY0k1VG4rY1pNUEhpWktV?=
+ =?utf-8?B?YkliNDV5eVRvMnZJR2N0K0ZlM3FaUWRDVDN3TlprYTV0TGFBOTNtWTQwRWdH?=
+ =?utf-8?B?Q0VvOVZKU3p3TWJTYldXN3o3c0IrVllMOEJVSFpubmV6MkJxRnlhSjQrMnBl?=
+ =?utf-8?B?OGVZQ1VuaUgzdGc4cWUzQTloZjQ5V2x1T05zQ2ZDWHRnZEo2ZnllZFJzRDdT?=
+ =?utf-8?B?YW5ZNkg3UXJaMEtXeWFjYVI5dUlQUjlzQVlPYVYvbkxKU2Q0Q3gzK3pzZ3p4?=
+ =?utf-8?B?UkRUQWlpUWd2VzJ2Nnl6aEJ3bUxaRU9tYVRYV3lPcXNnRmNiVDZpZmVYdUU4?=
+ =?utf-8?B?Rk40WmhJaWFkL0NGRGR5UDdleDVtckJvdTZHMjJRRmZOaEJsdCtHenlOakFt?=
+ =?utf-8?B?TkdKQkk3N0Y2ZDQzeXJBaEpCMGtyZlcxbWhIbm9ITnhXanFqRVlKQ1V6Q2sr?=
+ =?utf-8?B?Y1NSRkhtNVRPWngwbGUydEVUQ2dZV3Z4d3Z6RXNlWUh2Y2xUTHJFVnU3aGUy?=
+ =?utf-8?B?c3ZPb2Y0cnJycE1aSFF1aDB4TERTdHlWRGJCVUUreXJSYWNUeU9ONWtzdzRY?=
+ =?utf-8?B?VS9ZemN2cVU3WmJNWTcxM3N3ekxKS05wampESmR4WWY0bnc2TG95OFJFMUcv?=
+ =?utf-8?B?dXJ5ZDd1KzMxVmI0cnVkVi9rYlZDY0JXN2UvZnVSdkx1RmxnT3htT050Mk9i?=
+ =?utf-8?B?a08zSWpUKys1M1hBYXZRbk0wQit5UDh2aTFYSUMyS01Sc1k0ZGlLbDh2SEFu?=
+ =?utf-8?B?MWlWTWZQS1ErNnViRjVDb3EvTmFKdWNxQUdGNThLd1JMWnpwdjVHK2ViOG53?=
+ =?utf-8?B?Z1ZjUlFTSEtHVTdhZmNXS25wNDN2Wjh2QXJuUGM2OUhQUTFGa1QrTFdlUkpv?=
+ =?utf-8?B?TWVjbXZiNVFHSFBEekFFTGFNL283YTJMSFcvVG1KS1lNYWtpdUtZK3hGbktF?=
+ =?utf-8?B?QUg2Y1dwQVlZN0xwSTBqRHV5UGtJTm1MbDlhRUZFL1pQN0dQQjQyZ2svWjgw?=
+ =?utf-8?B?YVBNblpnbmxGTis0Q3hUTllEUUl1VSt4d1BIWGhVZWh2SU9qWnhVdFZ2cGNG?=
+ =?utf-8?B?WEY1TGNYcXNjL1hETG9TV3dTcWhNQnltTERSdzkrUHlodkJVMVpVN3ZsajY4?=
+ =?utf-8?B?YzV6UGY1bzFIZmFZcjJYdEoxZ3pBOGN5RTdmS0p5dkFVUW9sb2JSQUVTeTda?=
+ =?utf-8?B?WS95YThZdHVRelVYdzMzQ0JRYUgwLzRKcGFHVXRMVmFXVHIxSFBYZThBcUJo?=
+ =?utf-8?B?MFU1V2NaRlRXQmxmdHMzK2VtcWlucHZTYlZlc0Jsa2RDN1hnQllESjJmYlZ3?=
+ =?utf-8?B?ZnE3UzJoT2V3dmFuenRtckZmM0lHRVNnc3JlalRiN0lGYXBTbW11dndIOWE4?=
+ =?utf-8?B?SjBmMGVJc1RMWjhpMG1EaHgvQjdBOXc9PQ==?=
+X-Microsoft-Antispam-Message-Info: iPmIlSHHEkqf2z95R9RBIXGb0y/hkDZG0B7myqjpgVKXQJHA97EW3xl++UZ5g1BVintl0xvwMotpnx5mrWezaPCY2PK4NeHloK8TnvegHmjEQg1HfmWctKZ2qpxXBmuBiFzUNQaPlpdH46N1nGJfkEMV2NSrrUIYJ1q7slD4aUNut3DSmrmpxM2LfsSHn7EeZEvsAkNW3EHz1F3TkbOEypwfRGiKeCVO+OwANQporUNv76k2w96i8InAChRDOj8kstI+Hj3XKFnbqEKMyL5V427p3+GwulGDJckHTVWmMfxTOBMAEoo7YfCGxYlVSsGlui8mJ1UVUOTcv2qVVuqLHF9PWr+1uL9mSpLFn3QjR/g=
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR0201MB2459;6:5gaf9wmHvdxEX+aIcpYiIrRed6WIcyGqe5R0sAJEscsVyFmEM1jUX2NemssJBEWC7LTKkmNA09suo7WkO1zezq1SWFQJ4tfzVsn1Iif9CR1C9f2iLqL4z4kydFoEEG2S3N+msECb7SKepljL1Pp+M505ZUBL9Cvm/Nup+A6WMqoJUCLlwWfnuSCHyodWRF1nMuH7SDbl8SVmcKzxzGbK8H4D566r567RVmrwBrjnXtzZ4njcbZfIRuH0fuONaEH9RPOVdICDUD/ViRbGqoZqKFC3/ok0tCzH6BYALa/zEGHTaGyBSiYOe2K7sKgw9UJbDqq8Sc/N4Kk22MbEIYPU+gwJjCIrNCHfIlOM2PhEdpL06j6B+Q3Rga1LO7B8IlGrIT9v6spJREmSeukUyUF23GtTZ+o6OH5lTzEQsfRtePziLAcikMVo5AnJemvo8pTj8Nf806aW2xGvcNUPaqP5iQ==;5:gefFFu9i+k9lu/tDOLx37KR6PGm4U38me3rU8rOVux7Be1FELBt8HW5I3esN2EiFNc5jqv+FlPwwhAEg/dZMTMgcLhiNUQN4TJ8jgGL+Xkg7AZBbdq71yb3NMvA6pl0cqjLmGNttlqdVZFTcv0iOXNMfLvZblI5lSPQk2mtI9tE=;7:dQomdqRIjwFGdrykMKvpbMQBZXh90ExTuaR/WbL8SK56YI/+v3owiFr44rIp79ZmcmNlpx2INyNvWMQKrjfj0TmUc3YjCdpC9OzCQqELwLtA4ZWAd3MyALzg1zmDOtb5hn0Donk5R8X9bqRZboG5iks2uxYUi6KJvK0OtWxCdvgtiq2YL7R5JXdl351DdNsLOcG2PSKnbN7/ajNAr8VV393qQxM3tJ3scMtl7jkpVgzJWQjg5IgStXqlMx4OBsk1
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: axentia.se
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Aug 2018 10:26:58.9501 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 53f13830-8b6f-498b-390d-08d5fd197943
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4ee68585-03e1-4785-942a-df9c1871a234
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0201MB2459
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-AF_RXRPC has a keepalive message generator that generates a message for a
-peer ~20s after the last transmission to that peer to keep firewall ports
-open.  The implementation is incorrect in the following ways:
+On 2018-08-08 12:01, Andy Shevchenko wrote:
+> On Wed, Aug 8, 2018 at 12:47 PM, Peter Rosin <peda@axentia.se> wrote:
+>> On 2018-08-08 11:08, Andy Shevchenko wrote:
+>>> On Wed, Aug 8, 2018 at 11:30 AM, Hans de Goede <hdegoede@redhat.com> wrote:
+> 
+>>>> +       /* Count number of clients to instantiate */
+>>>> +       for (i = 0; inst_data[i].type; i++) {}
+>>>> +
+>>>> +       multi = devm_kmalloc(dev,
+>>>> +                       offsetof(struct i2c_multi_inst_data, clients[i]),
+>>>> +                       GFP_KERNEL);
+>>>> +       if (!multi)
+>>>> +               return -ENOMEM;
+>>>
+>>> Here I see the following:
+>>>  - it's kinda unusual use of offsetof(), perhaps i*sizeof() + sizeof()
+>>> would be more understandable
+>>>  - there is no guard against i == 0
+>>
+>> I don't see why a guard is needed?
+> 
+> Because there is no point to have a module loaded when there is none
+> client to serve.
+> 
+>> *Your* code below needs it, but that
+>> issue is not a concern for the original code.
+> 
+> I can admit that's not a big deal, just making logic slightly more robust.
+> 
+>> It might however be a
+>> good idea to fail the probe if there are no clients to instantiate, but
+>> that's a different issue...
+> 
+> That's what I have in mind.
 
- (1) It mixes up ktime_t and time64_t types.
+Ah, but there is no reason what-so-ever for i being zero. The whole point
+of the driver is for cases where i > 1. Or to put it bluntly, anyone
+defining a struct i2c_inst_data with zero entries deserves to be punished...
 
- (2) It uses ktime_get_real(), the output of which may jump forward or
-     backward due to adjustments to the time of day.
+>>> multi = devm_kmalloc(sizeof(*multi), GFP_KERNEL);
+>>> if (!multi)
+>>>  return -ENOMEM;
+>>>
+>>> multi->clients = devm_kcalloc(i, sizeof(*multi->clients), GFP_KERNEL);
+>>> if (ZERO_PTR_OR_NULL(multi->clients))
+>>>  return -ENOMEM;
+>>>
+>>> But I would like to hear your (other's) opinion(s).
+>>
+>> I think using two allocations is a waste in this case.
+> 
+> On the other hand it makes code more readable. With offsetof() it is a
+> bit hard to get it on the first glance.
 
- (3) If the current time jumps forward too much or jumps backwards, the
-     generator function will crank the base of the time ring round one slot
-     at a time (ie. a 1s period) until it catches up, spewing out VERSION
-     packets as it goes.
+The driver is tiny, I think it's good if there is at least one thing that
+can be a little bit interesting :-)
 
-Fix the problem by:
+>>>> +               if (inst_data[i].irq_idx != -1) {
+>>>
+>>>> = 0 sounds more robust
+>>
+>> But not as flexible/future-proof. Why should 0 be the only valid IRQ index?
+> 
+> Ah, because > is used usually is a quoting character in email you
+> missed the point.
+> It was written as >= 0.
 
- (1) Only using time64_t.  There's no need for sub-second resolution.
+Ahh, good catch, that explains it.
 
- (2) Use ktime_get_seconds() rather than ktime_get_real() so that time
-     isn't perceived to go backwards.
-
- (3) Simplifying rxrpc_peer_keepalive_worker() by splitting it into two
-     parts:
-
-     (a) The "worker" function that manages the buckets and the timer.
-
-     (b) The "dispatch" function that takes the pending peers and
-     	 potentially transmits a keepalive packet before putting them back
-     	 in the ring into the slot appropriate to the revised last-Tx time.
-
- (4) Taking everything that's pending out of the ring and splicing it into
-     a temporary collector list for processing.
-
-     In the case that there's been a significant jump forward, the ring
-     gets entirely emptied and then the time base can be warped forward
-     before the peers are processed.
-
-     The warping can't happen if the ring isn't empty because the slot a
-     peer is in is keepalive-time dependent, relative to the base time.
-
- (5) Limit the number of iterations of the bucket array when scanning it.
-
- (6) Set the timer to skip any empty slots as there's no point waking up if
-     there's nothing to do yet.
-
-This can be triggered by an incoming call from a server after a reboot with
-AF_RXRPC and AFS built into the kernel causing a peer record to be set up
-before userspace is started.  The system clock is then adjusted by
-userspace, thereby potentially causing the keepalive generator to have a
-meltdown - which leads to a message like:
-
-	watchdog: BUG: soft lockup - CPU#0 stuck for 23s! [kworker/0:1:23]
-	...
-	Workqueue: krxrpcd rxrpc_peer_keepalive_worker
-	EIP: lock_acquire+0x69/0x80
-	...
-	Call Trace:
-	 ? rxrpc_peer_keepalive_worker+0x5e/0x350
-	 ? _raw_spin_lock_bh+0x29/0x60
-	 ? rxrpc_peer_keepalive_worker+0x5e/0x350
-	 ? rxrpc_peer_keepalive_worker+0x5e/0x350
-	 ? __lock_acquire+0x3d3/0x870
-	 ? process_one_work+0x110/0x340
-	 ? process_one_work+0x166/0x340
-	 ? process_one_work+0x110/0x340
-	 ? worker_thread+0x39/0x3c0
-	 ? kthread+0xdb/0x110
-	 ? cancel_delayed_work+0x90/0x90
-	 ? kthread_stop+0x70/0x70
-	 ? ret_from_fork+0x19/0x24
-
-Fixes: ace45bec6d77 ("rxrpc: Fix firewall route keepalive")
-Reported-by: kernel test robot <lkp@intel.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
----
-
- net/rxrpc/ar-internal.h |    8 +-
- net/rxrpc/conn_event.c  |    4 +
- net/rxrpc/net_ns.c      |    6 +-
- net/rxrpc/output.c      |   12 ++--
- net/rxrpc/peer_event.c  |  158 +++++++++++++++++++++++++++--------------------
- net/rxrpc/peer_object.c |    8 +-
- net/rxrpc/rxkad.c       |    4 +
- 7 files changed, 111 insertions(+), 89 deletions(-)
-
-diff --git a/net/rxrpc/ar-internal.h b/net/rxrpc/ar-internal.h
-index 5fb7d3254d9e..707630ab4713 100644
---- a/net/rxrpc/ar-internal.h
-+++ b/net/rxrpc/ar-internal.h
-@@ -104,9 +104,9 @@ struct rxrpc_net {
- 
- #define RXRPC_KEEPALIVE_TIME 20 /* NAT keepalive time in seconds */
- 	u8			peer_keepalive_cursor;
--	ktime_t			peer_keepalive_base;
--	struct hlist_head	peer_keepalive[RXRPC_KEEPALIVE_TIME + 1];
--	struct hlist_head	peer_keepalive_new;
-+	time64_t		peer_keepalive_base;
-+	struct list_head	peer_keepalive[32];
-+	struct list_head	peer_keepalive_new;
- 	struct timer_list	peer_keepalive_timer;
- 	struct work_struct	peer_keepalive_work;
- };
-@@ -295,7 +295,7 @@ struct rxrpc_peer {
- 	struct hlist_head	error_targets;	/* targets for net error distribution */
- 	struct work_struct	error_distributor;
- 	struct rb_root		service_conns;	/* Service connections */
--	struct hlist_node	keepalive_link;	/* Link in net->peer_keepalive[] */
-+	struct list_head	keepalive_link;	/* Link in net->peer_keepalive[] */
- 	time64_t		last_tx_at;	/* Last time packet sent here */
- 	seqlock_t		service_conn_lock;
- 	spinlock_t		lock;		/* access lock */
-diff --git a/net/rxrpc/conn_event.c b/net/rxrpc/conn_event.c
-index 8229a52c2acd..3fde001fcc39 100644
---- a/net/rxrpc/conn_event.c
-+++ b/net/rxrpc/conn_event.c
-@@ -136,7 +136,7 @@ static void rxrpc_conn_retransmit_call(struct rxrpc_connection *conn,
- 	}
- 
- 	ret = kernel_sendmsg(conn->params.local->socket, &msg, iov, ioc, len);
--	conn->params.peer->last_tx_at = ktime_get_real();
-+	conn->params.peer->last_tx_at = ktime_get_seconds();
- 	if (ret < 0)
- 		trace_rxrpc_tx_fail(conn->debug_id, serial, ret,
- 				    rxrpc_tx_fail_call_final_resend);
-@@ -245,7 +245,7 @@ static int rxrpc_abort_connection(struct rxrpc_connection *conn,
- 		return -EAGAIN;
- 	}
- 
--	conn->params.peer->last_tx_at = ktime_get_real();
-+	conn->params.peer->last_tx_at = ktime_get_seconds();
- 
- 	_leave(" = 0");
- 	return 0;
-diff --git a/net/rxrpc/net_ns.c b/net/rxrpc/net_ns.c
-index 5d6a773db973..417d80867c4f 100644
---- a/net/rxrpc/net_ns.c
-+++ b/net/rxrpc/net_ns.c
-@@ -85,12 +85,12 @@ static __net_init int rxrpc_init_net(struct net *net)
- 	hash_init(rxnet->peer_hash);
- 	spin_lock_init(&rxnet->peer_hash_lock);
- 	for (i = 0; i < ARRAY_SIZE(rxnet->peer_keepalive); i++)
--		INIT_HLIST_HEAD(&rxnet->peer_keepalive[i]);
--	INIT_HLIST_HEAD(&rxnet->peer_keepalive_new);
-+		INIT_LIST_HEAD(&rxnet->peer_keepalive[i]);
-+	INIT_LIST_HEAD(&rxnet->peer_keepalive_new);
- 	timer_setup(&rxnet->peer_keepalive_timer,
- 		    rxrpc_peer_keepalive_timeout, 0);
- 	INIT_WORK(&rxnet->peer_keepalive_work, rxrpc_peer_keepalive_worker);
--	rxnet->peer_keepalive_base = ktime_add(ktime_get_real(), NSEC_PER_SEC);
-+	rxnet->peer_keepalive_base = ktime_get_seconds();
- 
- 	ret = -ENOMEM;
- 	rxnet->proc_net = proc_net_mkdir(net, "rxrpc", net->proc_net);
-diff --git a/net/rxrpc/output.c b/net/rxrpc/output.c
-index f03de1c59ba3..4774c8f5634d 100644
---- a/net/rxrpc/output.c
-+++ b/net/rxrpc/output.c
-@@ -209,7 +209,7 @@ int rxrpc_send_ack_packet(struct rxrpc_call *call, bool ping,
- 	now = ktime_get_real();
- 	if (ping)
- 		call->ping_time = now;
--	conn->params.peer->last_tx_at = ktime_get_real();
-+	conn->params.peer->last_tx_at = ktime_get_seconds();
- 	if (ret < 0)
- 		trace_rxrpc_tx_fail(call->debug_id, serial, ret,
- 				    rxrpc_tx_fail_call_ack);
-@@ -296,7 +296,7 @@ int rxrpc_send_abort_packet(struct rxrpc_call *call)
- 
- 	ret = kernel_sendmsg(conn->params.local->socket,
- 			     &msg, iov, 1, sizeof(pkt));
--	conn->params.peer->last_tx_at = ktime_get_real();
-+	conn->params.peer->last_tx_at = ktime_get_seconds();
- 	if (ret < 0)
- 		trace_rxrpc_tx_fail(call->debug_id, serial, ret,
- 				    rxrpc_tx_fail_call_abort);
-@@ -391,7 +391,7 @@ int rxrpc_send_data_packet(struct rxrpc_call *call, struct sk_buff *skb,
- 	 *     message and update the peer record
- 	 */
- 	ret = kernel_sendmsg(conn->params.local->socket, &msg, iov, 2, len);
--	conn->params.peer->last_tx_at = ktime_get_real();
-+	conn->params.peer->last_tx_at = ktime_get_seconds();
- 
- 	up_read(&conn->params.local->defrag_sem);
- 	if (ret < 0)
-@@ -457,7 +457,7 @@ int rxrpc_send_data_packet(struct rxrpc_call *call, struct sk_buff *skb,
- 		if (ret == 0) {
- 			ret = kernel_sendmsg(conn->params.local->socket, &msg,
- 					     iov, 2, len);
--			conn->params.peer->last_tx_at = ktime_get_real();
-+			conn->params.peer->last_tx_at = ktime_get_seconds();
- 
- 			opt = IP_PMTUDISC_DO;
- 			kernel_setsockopt(conn->params.local->socket, SOL_IP,
-@@ -475,7 +475,7 @@ int rxrpc_send_data_packet(struct rxrpc_call *call, struct sk_buff *skb,
- 		if (ret == 0) {
- 			ret = kernel_sendmsg(conn->params.local->socket, &msg,
- 					     iov, 2, len);
--			conn->params.peer->last_tx_at = ktime_get_real();
-+			conn->params.peer->last_tx_at = ktime_get_seconds();
- 
- 			opt = IPV6_PMTUDISC_DO;
- 			kernel_setsockopt(conn->params.local->socket,
-@@ -599,6 +599,6 @@ void rxrpc_send_keepalive(struct rxrpc_peer *peer)
- 		trace_rxrpc_tx_fail(peer->debug_id, 0, ret,
- 				    rxrpc_tx_fail_version_keepalive);
- 
--	peer->last_tx_at = ktime_get_real();
-+	peer->last_tx_at = ktime_get_seconds();
- 	_leave("");
- }
-diff --git a/net/rxrpc/peer_event.c b/net/rxrpc/peer_event.c
-index 0ed8b651cec2..091b9f48ebdd 100644
---- a/net/rxrpc/peer_event.c
-+++ b/net/rxrpc/peer_event.c
-@@ -350,97 +350,119 @@ void rxrpc_peer_add_rtt(struct rxrpc_call *call, enum rxrpc_rtt_rx_trace why,
- }
- 
- /*
-- * Perform keep-alive pings with VERSION packets to keep any NAT alive.
-+ * Perform keep-alive pings.
-  */
--void rxrpc_peer_keepalive_worker(struct work_struct *work)
-+static void rxrpc_peer_keepalive_dispatch(struct rxrpc_net *rxnet,
-+					  struct list_head *collector,
-+					  time64_t base,
-+					  u8 cursor)
- {
--	struct rxrpc_net *rxnet =
--		container_of(work, struct rxrpc_net, peer_keepalive_work);
- 	struct rxrpc_peer *peer;
--	unsigned long delay;
--	ktime_t base, now = ktime_get_real();
--	s64 diff;
--	u8 cursor, slot;
-+	const u8 mask = ARRAY_SIZE(rxnet->peer_keepalive) - 1;
-+	time64_t keepalive_at;
-+	int slot;
- 
--	base = rxnet->peer_keepalive_base;
--	cursor = rxnet->peer_keepalive_cursor;
-+	spin_lock_bh(&rxnet->peer_hash_lock);
- 
--	_enter("%u,%lld", cursor, ktime_sub(now, base));
-+	while (!list_empty(collector)) {
-+		/* Everything in the bucket at the cursor is processed this
-+		 * second; the bucket at cursor + 1 goes at now + 1s and so
-+		 * on...
-+		 */
-+		peer = list_entry(collector->next,
-+				  struct rxrpc_peer, keepalive_link);
- 
--next_bucket:
--	diff = ktime_to_ns(ktime_sub(now, base));
--	if (diff < 0)
--		goto resched;
-+		list_del_init(&peer->keepalive_link);
-+		if (!rxrpc_get_peer_maybe(peer))
-+			continue;
- 
--	_debug("at %u", cursor);
--	spin_lock_bh(&rxnet->peer_hash_lock);
--next_peer:
--	if (!rxnet->live) {
- 		spin_unlock_bh(&rxnet->peer_hash_lock);
--		goto out;
--	}
- 
--	/* Everything in the bucket at the cursor is processed this second; the
--	 * bucket at cursor + 1 goes now + 1s and so on...
--	 */
--	if (hlist_empty(&rxnet->peer_keepalive[cursor])) {
--		if (hlist_empty(&rxnet->peer_keepalive_new)) {
--			spin_unlock_bh(&rxnet->peer_hash_lock);
--			goto emptied_bucket;
-+		keepalive_at = peer->last_tx_at + RXRPC_KEEPALIVE_TIME;
-+		slot = keepalive_at - base;
-+		kdebug("%02x peer %u t=%d {%pISp}",
-+		       cursor, peer->debug_id, slot, &peer->srx.transport);
-+
-+		if (keepalive_at <= base ||
-+		    keepalive_at > base + RXRPC_KEEPALIVE_TIME) {
-+			rxrpc_send_keepalive(peer);
-+			slot = RXRPC_KEEPALIVE_TIME;
- 		}
- 
--		hlist_move_list(&rxnet->peer_keepalive_new,
--				&rxnet->peer_keepalive[cursor]);
-+		/* A transmission to this peer occurred since last we examined
-+		 * it so put it into the appropriate future bucket.
-+		 */
-+		slot += cursor;
-+		slot &= mask;
-+		ASSERTCMP(slot, >=, 0);
-+		ASSERTCMP(slot, <=, mask);
-+		spin_lock_bh(&rxnet->peer_hash_lock);
-+		list_add_tail(&peer->keepalive_link,
-+			      &rxnet->peer_keepalive[slot & mask]);
-+		rxrpc_put_peer(peer);
- 	}
- 
--	peer = hlist_entry(rxnet->peer_keepalive[cursor].first,
--			   struct rxrpc_peer, keepalive_link);
--	hlist_del_init(&peer->keepalive_link);
--	if (!rxrpc_get_peer_maybe(peer))
--		goto next_peer;
--
- 	spin_unlock_bh(&rxnet->peer_hash_lock);
-+}
- 
--	_debug("peer %u {%pISp}", peer->debug_id, &peer->srx.transport);
-+/*
-+ * Perform keep-alive pings with VERSION packets to keep any NAT alive.
-+ */
-+void rxrpc_peer_keepalive_worker(struct work_struct *work)
-+{
-+	struct rxrpc_net *rxnet =
-+		container_of(work, struct rxrpc_net, peer_keepalive_work);
-+	const u8 mask = ARRAY_SIZE(rxnet->peer_keepalive) - 1;
-+	time64_t base, now, delay;
-+	u8 cursor, stop;
-+	LIST_HEAD(collector);
- 
--recalc:
--	diff = ktime_divns(ktime_sub(peer->last_tx_at, base), NSEC_PER_SEC);
--	if (diff < -30 || diff > 30)
--		goto send; /* LSW of 64-bit time probably wrapped on 32-bit */
--	diff += RXRPC_KEEPALIVE_TIME - 1;
--	if (diff < 0)
--		goto send;
-+	now = ktime_get_seconds();
-+	base = rxnet->peer_keepalive_base;
-+	cursor = rxnet->peer_keepalive_cursor;
-+	_enter("%lld,%u", base - now, cursor);
- 
--	slot = (diff > RXRPC_KEEPALIVE_TIME - 1) ? RXRPC_KEEPALIVE_TIME - 1 : diff;
--	if (slot == 0)
--		goto send;
-+	if (!rxnet->live)
-+		return;
- 
--	/* A transmission to this peer occurred since last we examined it so
--	 * put it into the appropriate future bucket.
-+	/* Remove to a temporary list all the peers that are currently lodged
-+	 * in expired buckets plus all new peers.
- 	 */
--	slot = (slot + cursor) % ARRAY_SIZE(rxnet->peer_keepalive);
- 	spin_lock_bh(&rxnet->peer_hash_lock);
--	hlist_add_head(&peer->keepalive_link, &rxnet->peer_keepalive[slot]);
--	rxrpc_put_peer(peer);
--	goto next_peer;
--
--send:
--	rxrpc_send_keepalive(peer);
--	now = ktime_get_real();
--	goto recalc;
-+	list_splice_init(&rxnet->peer_keepalive_new, &collector);
-+
-+	stop = cursor + ARRAY_SIZE(rxnet->peer_keepalive);
-+	while (base <= now && (s8)(cursor - stop) < 0) {
-+		list_splice_tail_init(&rxnet->peer_keepalive[cursor & mask],
-+				      &collector);
-+		base++;
-+		cursor++;
-+	}
- 
--emptied_bucket:
--	cursor++;
--	if (cursor >= ARRAY_SIZE(rxnet->peer_keepalive))
--		cursor = 0;
--	base = ktime_add_ns(base, NSEC_PER_SEC);
--	goto next_bucket;
-+	base = now;
-+	spin_unlock_bh(&rxnet->peer_hash_lock);
- 
--resched:
- 	rxnet->peer_keepalive_base = base;
- 	rxnet->peer_keepalive_cursor = cursor;
--	delay = nsecs_to_jiffies(-diff) + 1;
--	timer_reduce(&rxnet->peer_keepalive_timer, jiffies + delay);
--out:
-+	rxrpc_peer_keepalive_dispatch(rxnet, &collector, base, cursor);
-+	ASSERT(list_empty(&collector));
-+
-+	/* Schedule the timer for the next occupied timeslot. */
-+	cursor = rxnet->peer_keepalive_cursor;
-+	stop = cursor + RXRPC_KEEPALIVE_TIME - 1;
-+	for (; (s8)(cursor - stop) < 0; cursor++) {
-+		if (!list_empty(&rxnet->peer_keepalive[cursor & mask]))
-+			break;
-+		base++;
-+	}
-+
-+	now = ktime_get_seconds();
-+	delay = base - now;
-+	if (delay < 1)
-+		delay = 1;
-+	delay *= HZ;
-+	if (rxnet->live)
-+		timer_reduce(&rxnet->peer_keepalive_timer, jiffies + delay);
-+
- 	_leave("");
- }
-diff --git a/net/rxrpc/peer_object.c b/net/rxrpc/peer_object.c
-index 1b7e8107b3ae..24ec7cdcf332 100644
---- a/net/rxrpc/peer_object.c
-+++ b/net/rxrpc/peer_object.c
-@@ -322,7 +322,7 @@ struct rxrpc_peer *rxrpc_lookup_incoming_peer(struct rxrpc_local *local,
- 	if (!peer) {
- 		peer = prealloc;
- 		hash_add_rcu(rxnet->peer_hash, &peer->hash_link, hash_key);
--		hlist_add_head(&peer->keepalive_link, &rxnet->peer_keepalive_new);
-+		list_add_tail(&peer->keepalive_link, &rxnet->peer_keepalive_new);
- 	}
- 
- 	spin_unlock(&rxnet->peer_hash_lock);
-@@ -367,8 +367,8 @@ struct rxrpc_peer *rxrpc_lookup_peer(struct rxrpc_local *local,
- 		if (!peer) {
- 			hash_add_rcu(rxnet->peer_hash,
- 				     &candidate->hash_link, hash_key);
--			hlist_add_head(&candidate->keepalive_link,
--				       &rxnet->peer_keepalive_new);
-+			list_add_tail(&candidate->keepalive_link,
-+				      &rxnet->peer_keepalive_new);
- 		}
- 
- 		spin_unlock_bh(&rxnet->peer_hash_lock);
-@@ -441,7 +441,7 @@ static void __rxrpc_put_peer(struct rxrpc_peer *peer)
- 
- 	spin_lock_bh(&rxnet->peer_hash_lock);
- 	hash_del_rcu(&peer->hash_link);
--	hlist_del_init(&peer->keepalive_link);
-+	list_del_init(&peer->keepalive_link);
- 	spin_unlock_bh(&rxnet->peer_hash_lock);
- 
- 	kfree_rcu(peer, rcu);
-diff --git a/net/rxrpc/rxkad.c b/net/rxrpc/rxkad.c
-index 278ac0807a60..47cb019c521a 100644
---- a/net/rxrpc/rxkad.c
-+++ b/net/rxrpc/rxkad.c
-@@ -669,7 +669,7 @@ static int rxkad_issue_challenge(struct rxrpc_connection *conn)
- 		return -EAGAIN;
- 	}
- 
--	conn->params.peer->last_tx_at = ktime_get_real();
-+	conn->params.peer->last_tx_at = ktime_get_seconds();
- 	_leave(" = 0");
- 	return 0;
- }
-@@ -725,7 +725,7 @@ static int rxkad_send_response(struct rxrpc_connection *conn,
- 		return -EAGAIN;
- 	}
- 
--	conn->params.peer->last_tx_at = ktime_get_real();
-+	conn->params.peer->last_tx_at = ktime_get_seconds();
- 	_leave(" = 0");
- 	return 0;
- }
-
+Cheers,
+Peter
