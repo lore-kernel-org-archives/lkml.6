@@ -3,142 +3,223 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 525C3C4646D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 03:44:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06C82C46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 03:46:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03865216F3
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 03:44:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4F08216F3
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 03:46:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="KxAawKR7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03865216F3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="izAVgHyu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4F08216F3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727033AbeHHGCW (ORCPT
+        id S1727009AbeHHGD4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 02:02:22 -0400
-Received: from mail-eopbgr30051.outbound.protection.outlook.com ([40.107.3.51]:23158
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726503AbeHHGCW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 02:02:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RoNOvQrla27XtWjEd3xJd295ZEDsKWTZeV0qZzGw+Is=;
- b=KxAawKR71HRTuTaeGGJtlQiOwlkJ5k2oGR6vhPC8npzLVzmkE7PbIghzethaNazXxpKnpEznzmNrs0ARlkLh3GN2MhgpqFnsM5NZiI3TWn//1EBf8zWLbmJrPjdpQA9Jh2RgJT5b0AjGHkASZKdxiMdvf2yWrEmoEvpcUDwtgkk=
-Received: from AM5PR0401MB2545.eurprd04.prod.outlook.com (10.169.245.8) by
- AM5PR0401MB2545.eurprd04.prod.outlook.com (10.169.245.8) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1038.21; Wed, 8 Aug 2018 03:44:45 +0000
-Received: from AM5PR0401MB2545.eurprd04.prod.outlook.com
- ([fe80::a2:591f:fe8f:7c93]) by AM5PR0401MB2545.eurprd04.prod.outlook.com
- ([fe80::a2:591f:fe8f:7c93%3]) with mapi id 15.20.1038.019; Wed, 8 Aug 2018
- 03:44:45 +0000
-From:   Bharat Bhushan <bharat.bhushan@nxp.com>
-To:     Scott Wood <oss@buserror.net>,
-        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
-        "paulus@samba.org" <paulus@samba.org>,
-        "mpe@ellerman.id.au" <mpe@ellerman.id.au>,
-        "galak@kernel.crashing.org" <galak@kernel.crashing.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     "robh@kernel.org" <robh@kernel.org>,
-        "keescook@chromium.org" <keescook@chromium.org>,
-        "tyreld@linux.vnet.ibm.com" <tyreld@linux.vnet.ibm.com>,
-        "joe@perches.com" <joe@perches.com>
-Subject: RE: [RFC 5/5] powerpc/fsl: Add supported-irq-ranges for P2020
-Thread-Topic: [RFC 5/5] powerpc/fsl: Add supported-irq-ranges for P2020
-Thread-Index: AQHUJY+OEK4rmRCzmU6sElTr8iVLCqS02/0AgABrfQA=
-Date:   Wed, 8 Aug 2018 03:44:44 +0000
-Message-ID: <AM5PR0401MB254592DC0E917FD292B323BA9A260@AM5PR0401MB2545.eurprd04.prod.outlook.com>
-References: <1532684881-19310-1-git-send-email-Bharat.Bhushan@nxp.com>
-         <1532684881-19310-6-git-send-email-Bharat.Bhushan@nxp.com>
- <ab2a113620123cb71364b6ae89328ae2fca49821.camel@buserror.net>
-In-Reply-To: <ab2a113620123cb71364b6ae89328ae2fca49821.camel@buserror.net>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=bharat.bhushan@nxp.com; 
-x-originating-ip: [14.142.187.166]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM5PR0401MB2545;6:RoSYBVeHRFfOL5uY+2bBI4TGfrxD8WRkBnJI8y1Ufr/lFR8kz7sxwPe/vdqlSFW+UmQdk/4mochEv5M0cCcQG7VvKIghlMKeTKIL0/hWkjsIrlGjYMrPmhhQdUrcom/ICdHlHFwPvzrdaAKEbtFG4gHVY7ZT22eB0XggcDyhFZ3AUQzWdCxEpUrgMwZ3cvvADMW0832xjZBBNn79lD3eLP+xtHvIJALjNXtSCtc2RtQt5WOSn/BWQV+QpzyH1oVuidTj4+wS4Is4oPZJqJMAznL8RqoPEVyYa/DlRcLtKnuCXGo5RwzGkOxxl15GJQlYQdUQglKpm7sI1ODOPMuUEeip3CKadNSJBvDUq4mclp+sAdcnK4Lm58ej35IxfYfKzOXhEZB2G4D9bkLoFnrC5Me68cNA6H9mvvuDt8FyJ07hpFD6FzP/DLG1MKwbqA29n7ggm60yBeTDDY8mvLxlhg==;5:8RCz3oom0LdMwhrkjGca7ctdZtWTc93sB81iZC0NP58c9mEekwg4dLQ5oHJKIrxYWL8XAUIPUKa0gPna8jRM9YxBuEwOC+HA8662j9lw2ILIivqwEm2zxhqSQuaHt+gCIZGQ4HIGAy9uLooZlHuo6ZshJuDnCygjH96WA91UEW8=;7:J8ubtl6QVvu6pzjGc6v3/Q60NFdshT6KCftepnuvXBcXRXGy8ujw43suW1gMqYwNn7ur5vl1yaSt/CwyDlmy8gl0wPqXB+RHTJWEeOWNLPC8ozw7yjluUXTI2HfemdPpnjW1wZLnp+0T2ZAWb6cqRcMRD8epEhFRiCkO7BuANvvxV2+DtT3yLnzOnbAA+GGDnurB0WVLFl6tN4nvcv4nB/TRYiVbfTZMi3RnBTOSoATA3tfG21FD+Op2eigF37fn
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 9f282c37-1d98-46db-b90b-08d5fce1481a
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM5PR0401MB2545;
-x-ms-traffictypediagnostic: AM5PR0401MB2545:
-x-microsoft-antispam-prvs: <AM5PR0401MB25453835AC4A054D24B049FB9A260@AM5PR0401MB2545.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(180628864354917)(9452136761055)(65623756079841)(185117386973197)(104084551191319);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(93006095)(93001095)(3231311)(944501410)(52105095)(10201501046)(6055026)(149027)(150027)(6041310)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123564045)(20161123560045)(6072148)(201708071742011)(7699016);SRVR:AM5PR0401MB2545;BCL:0;PCL:0;RULEID:;SRVR:AM5PR0401MB2545;
-x-forefront-prvs: 07584EDBCD
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(39860400002)(366004)(396003)(346002)(136003)(189003)(199004)(13464003)(105586002)(9686003)(6436002)(102836004)(26005)(66066001)(2201001)(53546011)(6506007)(53936002)(55016002)(44832011)(106356001)(6116002)(256004)(3846002)(81156014)(8676002)(81166006)(7416002)(5660300001)(86362001)(2906002)(2900100001)(305945005)(74316002)(5250100002)(2501003)(76176011)(8936002)(33656002)(478600001)(186003)(99286004)(7696005)(68736007)(476003)(7736002)(97736004)(11346002)(25786009)(4326008)(6246003)(14454004)(446003)(486006)(229853002)(54906003)(110136005)(316002)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM5PR0401MB2545;H:AM5PR0401MB2545.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: Nq7oj7v5ZCRtSFvJXk7JupAhUzRMp/haA0hPG9dIOwtC4pjdojiF92Csewly1IljsVdGywZJZYZ9Z2Ov/LSdM9Hu3ahZA/NsFfkB4W+G2magJ3/SMi+8gmVxEBeLn661rgDOWYtVeVWu1HvGgpLh3csNIpH3Jq1cOqBBkAt2HgyjOFGcZNPyb72fWAjLgT7DEzaDdijx7LAisNa0QKLfTDQZgKfcyuvMj0zKVBya+BkGivUBDg4R6GzyDIf+OqU7eupoRIubKrdtf1enkPeM7EY5PC9prMc9INzgITv/ID/kG+d/fnvALL96XiIAuND6aVhMIKveyMKatC1FOb/wx3Qrm5tMc8k1jTZJieFG0RA=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Wed, 8 Aug 2018 02:03:56 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:36186 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726625AbeHHGDz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 02:03:55 -0400
+Received: by mail-oi0-f67.google.com with SMTP id n21-v6so1437470oig.3;
+        Tue, 07 Aug 2018 20:46:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=hHiPegLw5NXSxdODhlFZz5yBUol/u2qGPf/XjIht54g=;
+        b=izAVgHyupDFGMn1dgHIbZ6AAsz8n6d88Xp1ZT06uz1BzKnr4gpJ9VtdVcORudZmZ1C
+         S2mE0Q7XYlSyldAeWnUO4vktCHam/ERQE6+5sbdBXKIThPqEo6Zb839fiSAE7VPVHABP
+         a+bC2di0NW0XKD8phEOQDKQgFombwovV++nRP60LYKRo2tem8FFRaIh6hY/WLhdfku07
+         +nWD7vS6WBEvNaE9l1dP+T4THIH/xxiPSNZtUg1vUPAohuPyFJ31eBDoFU4ljZlREDbQ
+         oNnZqbN2hjWSB0n5NEDl/ytNNFcXtZun0+ijyBiGoB6xDXOWRNn5V9eLEKq29DxI2n4v
+         oFiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=hHiPegLw5NXSxdODhlFZz5yBUol/u2qGPf/XjIht54g=;
+        b=b5+bZxuDmJPdV6/mfiyJlLkDpRAMiS67VRH4gQPkk/jFq0rBZmzrR1nzJkGUF59FYa
+         dbW2/QtXcz7JxR9uM+XZkFrLG5vU6Y2xsj1OMlyJtVQ+1Mn+PnNdt4kinJ68gf7IVwLQ
+         7FQf0Do2NPqZuIsLq7G9XFdBy0wKdqtGOqxSBNK0J3H7F8dlHzHO8X3wpEgUATlSu7x/
+         H6UwnSKmPuuzonbq/N8bmirTXBkt69AHaQLTsNmwyDT+syvLjQYNDnvAY6+vd9IRluu4
+         5FQh4VaK1ycy+HmPGWYfXfyWTZ7pqBHYNGAVpVXPviFY/8P7W3d59FhLF1+RuLEjzXKw
+         VKow==
+X-Gm-Message-State: AOUpUlFd22c/rAnUgMP9ieeAI1ZEAGm/lywjKthbvpXdj+VwlP24eu7q
+        zKbcrigN+jYYnkt+imtYWKBSgEp54jg=
+X-Google-Smtp-Source: AA+uWPyZlmd2y8Ip69kd7N3E575T0IKtMfl05h4aVAQ6psZF6L2dqsCBU6wOGri3pf1o9qSP5sb9FA==
+X-Received: by 2002:aca:ab0c:: with SMTP id u12-v6mr1100133oie.143.1533699980686;
+        Tue, 07 Aug 2018 20:46:20 -0700 (PDT)
+Received: from nukespec.gtech (c-98-195-139-126.hsd1.tx.comcast.net. [98.195.139.126])
+        by smtp.gmail.com with ESMTPSA id e204-v6sm6925240oif.21.2018.08.07.20.46.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 07 Aug 2018 20:46:20 -0700 (PDT)
+Subject: Re: [PATCH v3] PCI/AER: Do not clear AER bits if we don't own AER
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     linux-pci@vger.kernel.org, bhelgaas@google.com,
+        keith.busch@intel.com, alex_gagniuc@dellteam.com,
+        austin_bolen@dell.com, shyam_iyer@dell.com,
+        Frederick Lawler <fred@fredlawl.com>,
+        Oza Pawandeep <poza@codeaurora.org>,
+        linux-kernel@vger.kernel.org
+References: <3d05f662-2c29-90cd-9c74-6456939a0e6b@gmail.com>
+ <20180730233547.1238-1-mr.nuke.me@gmail.com>
+ <20180808011429.GB49411@bhelgaas-glaptop.roam.corp.google.com>
+From:   "Alex G." <mr.nuke.me@gmail.com>
+Message-ID: <56a5722e-d102-554d-cbea-44af3383f7e3@gmail.com>
+Date:   Tue, 7 Aug 2018 22:46:19 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9f282c37-1d98-46db-b90b-08d5fce1481a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Aug 2018 03:44:44.8964
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM5PR0401MB2545
+In-Reply-To: <20180808011429.GB49411@bhelgaas-glaptop.roam.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogU2NvdHQgV29vZCBbbWFp
-bHRvOm9zc0BidXNlcnJvci5uZXRdDQo+IFNlbnQ6IFdlZG5lc2RheSwgQXVndXN0IDgsIDIwMTgg
-Mjo0NCBBTQ0KPiBUbzogQmhhcmF0IEJodXNoYW4gPGJoYXJhdC5iaHVzaGFuQG54cC5jb20+Ow0K
-PiBiZW5oQGtlcm5lbC5jcmFzaGluZy5vcmc7IHBhdWx1c0BzYW1iYS5vcmc7IG1wZUBlbGxlcm1h
-bi5pZC5hdTsNCj4gZ2FsYWtAa2VybmVsLmNyYXNoaW5nLm9yZzsgbWFyay5ydXRsYW5kQGFybS5j
-b207DQo+IGtzdGV3YXJ0QGxpbnV4Zm91bmRhdGlvbi5vcmc7IGdyZWdraEBsaW51eGZvdW5kYXRp
-b24ub3JnOw0KPiBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZzsgbGludXhwcGMtZGV2QGxpc3Rz
-Lm96bGFicy5vcmc7IGxpbnV4LQ0KPiBrZXJuZWxAdmdlci5rZXJuZWwub3JnDQo+IENjOiByb2Jo
-QGtlcm5lbC5vcmc7IGtlZXNjb29rQGNocm9taXVtLm9yZzsgdHlyZWxkQGxpbnV4LnZuZXQuaWJt
-LmNvbTsNCj4gam9lQHBlcmNoZXMuY29tDQo+IFN1YmplY3Q6IFJlOiBbUkZDIDUvNV0gcG93ZXJw
-Yy9mc2w6IEFkZCBzdXBwb3J0ZWQtaXJxLXJhbmdlcyBmb3IgUDIwMjANCj4gDQo+IE9uIEZyaSwg
-MjAxOC0wNy0yNyBhdCAxNToxOCArMDUzMCwgQmhhcmF0IEJodXNoYW4gd3JvdGU6DQo+ID4gTVBJ
-QyBvbiBOWFAgKEZyZWVzY2FsZSkgUDIwMjAgc3VwcG9ydHMgZm9sbG93aW5nIGlycQ0KPiA+IHJh
-bmdlczoNCj4gPiAgID4gMCAtIDExICAgICAgKEV4dGVybmFsIGludGVycnVwdCkNCj4gPiAgID4g
-MTYgLSA3OSAgICAgKEludGVybmFsIGludGVycnVwdCkNCj4gPiAgID4gMTc2IC0gMTgzICAgKE1l
-c3NhZ2luZyBpbnRlcnJ1cHQpDQo+ID4gICA+IDIyNCAtIDIzMSAgIChTaGFyZWQgbWVzc2FnZSBz
-aWduYWxlZCBpbnRlcnJ1cHQpDQo+IA0KPiBXaHkgZG9uJ3QgeW91IGNvbnZlcnQgdG8gdGhlIDQt
-Y2VsbCBpbnRlcnJ1cHQgc3BlY2lmaWVycyB0aGF0IG1ha2UgZGVhbGluZw0KPiB3aXRoIHRoZXNl
-IHJhbmdlcyBsZXNzIGVycm9yLXByb25lPw0KDQpPayAsIHdpbGwgZG8gaWYgd2UgYWdyZWUgdG8g
-aGF2ZSB0aGlzIHNlcmllcyBhcyBwZXIgY29tbWVudCBvbiBvdGhlciBwYXRjaC4NCg0KPiANCj4g
-PiBkaWZmIC0tZ2l0IGEvYXJjaC9wb3dlcnBjL3BsYXRmb3Jtcy84NXh4L21wYzg1eHhfcmRiLmMN
-Cj4gPiBiL2FyY2gvcG93ZXJwYy9wbGF0Zm9ybXMvODV4eC9tcGM4NXh4X3JkYi5jDQo+ID4gaW5k
-ZXggMTAwNjk1MC4uNDlmZjM0OCAxMDA2NDQNCj4gPiAtLS0gYS9hcmNoL3Bvd2VycGMvcGxhdGZv
-cm1zLzg1eHgvbXBjODV4eF9yZGIuYw0KPiA+ICsrKyBiL2FyY2gvcG93ZXJwYy9wbGF0Zm9ybXMv
-ODV4eC9tcGM4NXh4X3JkYi5jDQo+ID4gQEAgLTU3LDYgKzU3LDExIEBAIHZvaWQgX19pbml0IG1w
-Yzg1eHhfcmRiX3BpY19pbml0KHZvaWQpDQo+ID4gIAkJCU1QSUNfQklHX0VORElBTiB8DQo+ID4g
-IAkJCU1QSUNfU0lOR0xFX0RFU1RfQ1BVLA0KPiA+ICAJCQkwLCAyNTYsICIgT3BlblBJQyAgIik7
-DQo+ID4gKwl9IGVsc2UgaWYgKG9mX21hY2hpbmVfaXNfY29tcGF0aWJsZSgiZnNsLFAyMDIwUkRC
-LVBDIikpIHsNCj4gPiArCQltcGljID0gbXBpY19hbGxvYyhOVUxMLCAwLA0KPiA+ICsJCSAgTVBJ
-Q19CSUdfRU5ESUFOIHwNCj4gPiArCQkgIE1QSUNfU0lOR0xFX0RFU1RfQ1BVLA0KPiA+ICsJCSAg
-MCwgMCwgIiBPcGVuUElDICAiKTsNCj4gPiAgCX0gZWxzZSB7DQo+ID4gIAkJbXBpYyA9IG1waWNf
-YWxsb2MoTlVMTCwgMCwNCj4gPiAgCQkgIE1QSUNfQklHX0VORElBTiB8DQo+IA0KPiBJIGRvbid0
-IHRoaW5rIHdlIHdhbnQgdG8gZ3JvdyBhIGxpc3Qgb2YgZXZlcnkgc2luZ2xlIHJldmlzaW9uIG9m
-IGV2ZXJ5IGJvYXJkIGluDQo+IHRoZXNlIHBsYXRmb3JtIGZpbGVzLg0KDQpPbmUgb3RoZXIgY29u
-ZnVzaW5nIG9ic2VydmF0aW9uIEkgaGF2ZSBpcyB0aGF0ICJpcnFfY291bnQiIGZyb20gcGxhdGZv
-cm0gY29kZSBpcyBnaXZlbiBwcmVjZWRlbmNlIG92ZXIgImxhc3QtaW50ZXJydXB0LXNvdXJjZSIg
-aW4gZGV2aWNlLXRyZWUuDQpTaG91bGQgbm90IGRldmljZS10cmVlIHNob3VsZCBoYXZlIHByZWNl
-ZGVuY2Ugb3RoZXJ3aXNlIHRoZXJlIGlzIG5vIHBvaW50IHVzaW5nICIgbGFzdC1pbnRlcnJ1cHQt
-c291cmNlIiBpZiBwbGF0Zm9ybSBjb2RlIHBhc3NlcyAiaXJxX2NvdW50IiBpbiBtcGljX2FsbG9j
-KCkuDQoNClRoYW5rcw0KLUJoYXJhdA0KDQo+IA0KPiAtU2NvdHQNCg0K
+
+
+On 08/07/2018 08:14 PM, Bjorn Helgaas wrote:
+> On Mon, Jul 30, 2018 at 06:35:31PM -0500, Alexandru Gagniuc wrote:
+>> When we don't own AER, we shouldn't touch the AER error bits. Clearing
+>> error bits willy-nilly might cause firmware to miss some errors. In
+>> theory, these bits get cleared by FFS, or via ACPI _HPX method. These
+>> mechanisms are not subject to the problem.
+> 
+> What's FFS?
+
+Firmware-first. Nobody likes spelling it out, and all other proposed 
+acronyms are insanely tong-twisting. So, FFS.
+
+> I guess you mean FFS and _HPX are not subject to the problem because
+> they're supplied by firmware, so firmware would be responsible for
+> looking at the bits before clearing them?
+
+Exactly.
+
+>> This race is mostly of theoretical significance, since I can't
+>> reasonably demonstrate this race in the lab.
+>>
+>> On a side-note, pcie_aer_is_kernel_first() is created to alleviate the
+>> need for two checks: aer_cap and get_firmware_first().
+>>
+>> Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+>> ---
+>>
+>> Changes since v2:
+>>    - Added missing negation in pci_cleanup_aer_error_status_regs()
+>>
+>>   drivers/pci/pcie/aer.c | 17 ++++++++++-------
+>>   1 file changed, 10 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
+>> index a2e88386af28..40e5c86271d1 100644
+>> --- a/drivers/pci/pcie/aer.c
+>> +++ b/drivers/pci/pcie/aer.c
+>> @@ -307,6 +307,12 @@ int pcie_aer_get_firmware_first(struct pci_dev *dev)
+>>   		aer_set_firmware_first(dev);
+>>   	return dev->__aer_firmware_first;
+>>   }
+>> +
+>> +static bool pcie_aer_is_kernel_first(struct pci_dev *dev)
+>> +{
+>> +	return !!dev->aer_cap && !pcie_aer_get_firmware_first(dev);
+>> +}
+> 
+> I think it complicates things to have both "firmware_first" and
+> "kernel_first" interfaces, so I would prefer to stick with the
+> existing "firmware_first" style.
+> 
+>>   #define	PCI_EXP_AER_FLAGS	(PCI_EXP_DEVCTL_CERE | PCI_EXP_DEVCTL_NFERE | \
+>>   				 PCI_EXP_DEVCTL_FERE | PCI_EXP_DEVCTL_URRE)
+>>   
+>> @@ -337,10 +343,7 @@ bool aer_acpi_firmware_first(void)
+>>   
+>>   int pci_enable_pcie_error_reporting(struct pci_dev *dev)
+>>   {
+>> -	if (pcie_aer_get_firmware_first(dev))
+>> -		return -EIO;
+>> -
+>> -	if (!dev->aer_cap)
+>> +	if (!pcie_aer_is_kernel_first(dev))
+>>   		return -EIO;
+>>   
+>>   	return pcie_capability_set_word(dev, PCI_EXP_DEVCTL, PCI_EXP_AER_FLAGS);
+> 
+> This change doesn't actually fix anything, does it?  It looks like a
+> cleanup that doesn't change the behavior.
+
+Initially (v1), this was a one-liner, but someone had a complaint about 
+having pcie_aer_get_firmware_first() boilerplate all over the place. 
+That's why I added the "kernel_first" function (previous comment), and 
+then updated this here for completeness. I'm also fine with v1.
+
+>> @@ -349,7 +352,7 @@ EXPORT_SYMBOL_GPL(pci_enable_pcie_error_reporting);
+>>   
+>>   int pci_disable_pcie_error_reporting(struct pci_dev *dev)
+>>   {
+>> -	if (pcie_aer_get_firmware_first(dev))
+>> +	if (!pcie_aer_is_kernel_first(dev))
+>>   		return -EIO;
+> 
+> This change does effectively add a test for dev->aer_cap.  That makes
+> sense in terms of symmetry with pci_enable_pcie_error_reporting(),
+> but I think it should be a separate patch because it's conceptually
+> separate from the change below.
+> 
+> We should keep the existing behavior (but add the symmetry) here for
+> now, but it's not clear to me that these paths should care about AER
+> or firmware-first at all.  PCI_EXP_DEVCTL is not an AER register and
+> we have the _HPX mechanism for firmware to influence it (which these
+> paths currently ignore).  I suspect we should program these reporting
+> enable bits in the core enumeration path instead of having drivers
+> call these interfaces.
+
+The headache is that FFS needs the reporting bit to stay enabled in 
+order to get AER notifications. Disabling things here could really break 
+firmware. Of course, that's a cyclical argument, since FW is broken by 
+definition.
+
+> If/when we make changes along these lines, the history will be easier
+> to follow if *this* change is not connected with the change below to
+> pci_cleanup_aer_error_status_regs().
+
+I agree. I think it might be preferred then to go with v1, and leave the 
+refactoring to a later time, since the extra changes are cosmetical and 
+social.
+
+>>   	return pcie_capability_clear_word(dev, PCI_EXP_DEVCTL,
+>> @@ -383,10 +386,10 @@ int pci_cleanup_aer_error_status_regs(struct pci_dev *dev)
+>>   	if (!pci_is_pcie(dev))
+>>   		return -ENODEV;
+>>   
+>> -	pos = dev->aer_cap;
+>> -	if (!pos)
+>> +	if (!pcie_aer_is_kernel_first(dev))
+>>   		return -EIO;
+> 
+> This part makes sense to me, but I think I would rather have it match
+> the existing style in pci_enable_pcie_error_reporting(), i.e., keep
+> the test for dev->aer_cap and add a test for
+> pcie_aer_get_firmware_first().
+
+Had it that way in v1.
+
+Alex
+
+>> +	pos = dev->aer_cap;
+>>   	port_type = pci_pcie_type(dev);
+>>   	if (port_type == PCI_EXP_TYPE_ROOT_PORT) {
+>>   		pci_read_config_dword(dev, pos + PCI_ERR_ROOT_STATUS, &status);
+>> -- 
+>> 2.17.1
+>>
