@@ -2,86 +2,127 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ABE7C4646D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 16:26:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2EB7C4646D
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 16:27:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1624F208D4
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 16:26:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1624F208D4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=darmarit.de
+	by mail.kernel.org (Postfix) with ESMTP id 7CD0D208D4
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 16:27:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="rK7eTX7p"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CD0D208D4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728701AbeHHSrW (ORCPT
+        id S1729032AbeHHSrw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 14:47:22 -0400
-Received: from smtp3-1.goneo.de ([85.220.129.38]:59392 "EHLO smtp3-1.goneo.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727081AbeHHSrU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 14:47:20 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by smtp3.goneo.de (Postfix) with ESMTP id 3243023F3E3;
-        Wed,  8 Aug 2018 18:26:52 +0200 (CEST)
-X-Virus-Scanned: by goneo
-Received: from smtp3.goneo.de ([127.0.0.1])
-        by localhost (smtp3.goneo.de [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id SWa2M92dRkof; Wed,  8 Aug 2018 18:26:51 +0200 (CEST)
-Received: from ryzen (host-091-097-244-086.ewe-ip-backbone.de [91.97.244.86])
-        by smtp3.goneo.de (Postfix) with ESMTPSA id B18A023F2AB;
-        Wed,  8 Aug 2018 18:26:50 +0200 (CEST)
-Message-ID: <1cfb4fb3406621c1ffd98e8072f2cc38812107d8.camel@darmarit.de>
-Subject: Re: [PATCH bpf-next 12/13] docs: net: Fix various minor typos
-From:   Markus Heiser <markus.heiser@darmarit.de>
-To:     Daniel Borkmann <daniel@iogearbox.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "Tobin C. Harding" <me@tobin.cc>
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>, linux-doc@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 08 Aug 2018 18:26:50 +0200
-In-Reply-To: <99c50323-601e-91ea-cac3-98c1f381f9ac@iogearbox.net>
-References: <20180801050908.29970-1-me@tobin.cc>
-         <20180801050908.29970-13-me@tobin.cc>
-         <76cf11bc-61b3-8068-5546-79d3ff3a58e9@iogearbox.net>
-         <20180808014248.GF11191@eros> <20180808072310.4695cea4@lwn.net>
-         <99c50323-601e-91ea-cac3-98c1f381f9ac@iogearbox.net>
+        Wed, 8 Aug 2018 14:47:52 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:42640 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727062AbeHHSrw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 14:47:52 -0400
+Received: by mail-oi0-f67.google.com with SMTP id b16-v6so4735070oic.9
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 09:27:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=YhaKZIqjDESWe1+0KnHRsmtXQnZ2TdYFXQzMb7Qioag=;
+        b=rK7eTX7pZwFt2PI8Siw2vJ8Uy2Zrs/Dci6By62CMdd6RHvtof7k9w30Ir+66AAmFKB
+         EpVN16JjoFu9e8NfFvHbg498V+8QSLKZBCnhfw/tlsLPDcUYns4OR3kl5jWFYgi0OWMV
+         dTFlWAwMI4pJ5RCB7WucI5VLLNdgRMyImqplRo4qac4py8sWqcCvfHtjYHnz8PoJIj4v
+         OHpO/nbTcyUZhKGL26yPHSSjCj4DBKK99ThT5UN3/OEAq3OiBQgY0PNkoEmzPKrXtsJz
+         FhdO4CorjnkChpH4m7r+Ykg/nopZPtmXHqObpnOLFsaTcN7l9NKmEe64vuZmgJ8/bUTZ
+         WxmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=YhaKZIqjDESWe1+0KnHRsmtXQnZ2TdYFXQzMb7Qioag=;
+        b=UXGsb0afOGONLRSwNxGRaoBt+Y80PQUNFdPavTi9MbZSww4n2797aPTff2u4PzOSuw
+         7jerKMHSUrNn+qojO/cTGP/QS+4ctk7BLgaIkT3s0F8U3uopHOreaDIGlri3Tr85ifFy
+         eBkw/eSm7nQ6VRVDTQ+GUQKaEdJ3cmpePANm2jCH37EWFulDjL6LSrYr2MG+RMzE9ADW
+         7wDyP5t13ley1gJcymsn1EZ4eoaAwsiQug93GW9upK/MejmDta8U7lqJuQAcoGYqlbvV
+         dI3Tc2dYS2tI6MQJwqr5MYadqJPSahO0YJj1P+RpXWoSbTeWgw0ZuTYn+XhCKW4FW9b2
+         rcZw==
+X-Gm-Message-State: AOUpUlGkTr1MwusTNjE4wJ3MyzMOfU47J0QAmKCs36ygCjzABmpIDcbo
+        lHkEDtBarGrBwxhTunJDYrJ+qNDczieOsvnRRq1nvg==
+X-Google-Smtp-Source: AA+uWPx6GI3obp4nlQVlqCr2olTkJ8HBgcT2mgpv1CNv4tfahVf1M2EoPRKC1BnPNCg5gloBVSG4Z9tYjQT5x6XnEfg=
+X-Received: by 2002:aca:5e42:: with SMTP id s63-v6mr3421427oib.134.1533745645996;
+ Wed, 08 Aug 2018 09:27:25 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:ac9:2c03:0:0:0:0:0 with HTTP; Wed, 8 Aug 2018 09:27:25 -0700 (PDT)
+In-Reply-To: <20180808155548.s7p4xqsjywz3psrj@ninjato>
+References: <20180808153150.23444-1-brgl@bgdev.pl> <20180808155548.s7p4xqsjywz3psrj@ninjato>
+From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date:   Wed, 8 Aug 2018 18:27:25 +0200
+Message-ID: <CAMpxmJXVNiyqF4qaYtNhPUG3mSZVdvBSGUqDYK-nh59BKeh=Gw@mail.gmail.com>
+Subject: Re: [PATCH 00/28] at24: remove at24_platform_data
+To:     Wolfram Sang <wsa@the-dreams.de>
+Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Jonathan Corbet <corbet@lwn.net>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Naren <naren.kernel@gmail.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Lukas Wunner <lukas@wunner.de>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
+        Sven Van Asbroeck <svendev@arcx.com>,
+        Paolo Abeni <pabeni@redhat.com>, Alban Bedel <albeu@free.fr>,
+        Rob Herring <robh@kernel.org>,
+        David Lechner <david@lechnology.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        linux-doc <linux-doc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        arm-soc <linux-arm-kernel@lists.infradead.org>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        linux-mtd@lists.infradead.org,
+        Linux-OMAP <linux-omap@vger.kernel.org>, netdev@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+2018-08-08 17:55 GMT+02:00 Wolfram Sang <wsa@the-dreams.de>:
+> On Wed, Aug 08, 2018 at 05:31:22PM +0200, Bartosz Golaszewski wrote:
+>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>
+>> This is a follow-up to the previously rejected series[1] which partially
+>> removed the at24_platform_data structure. After further development and
+>> taking reviews into account, this series finally removes that struct
+>> completely but not without touching many different parts of the code
+>> base.
+>>
+>> Since I took over maintainership of the at24 driver I've been working
+>> towards removing at24_platform_data in favor for device properties.
+>
+> Wooha, nice work. I can't really comment on it but wondered how you want
+> to upstream it (after reviews)? Pull request of an immutable branch for
+> nvmem-tree sounds best to me. Then I could also pull it in if i2c needs
+> it. Probably same situation for arm-soc...
+>
 
+I initially wanted to merge small parts of it starting with v4.18, but
+there were some voices against merging APIs without users. I'm not
+sure how it should go in. There'll be a need for multiple immutable
+branches most probably...
 
-Am Mittwoch, den 08.08.2018, 15:45 +0200 schrieb Daniel Borkmann:
-> On 08/08/2018 03:23 PM, Jonathan Corbet wrote:
-> > On Wed, 8 Aug 2018 11:42:48 +1000
-> > "Tobin C. Harding" <me@tobin.cc> wrote:
-> > 
-> > > Thanks for doing such a careful review that you noticed this.  I'm
-> > > working on this more ATM and I've moved the document to use double
-> > > spaces between _all_ full stops.  Currently the document uses mostly
-> > > single spaces but there are some sections with double space.  The
-> > > internet tells me this is a 'style' issue not a rule.  And I've seen
-> > > single and double spacing in tree and do not know if one is favoured.
-> > > 
-> > > Do you care? 
-> > 
-> > I'm not Daniel, but let me just say that, for docs in general, I'm
-> > absolutely uninterested in patches adjusting the number of spaces after
-> > periods.  It really doesn't matter one way or the other, and I don't think
-> > we benefit from that kind of churn.
-> 
-> Yep, agree.
-
-FWIW: even if it is not a patch worth, 'fill-paragraph' within emacs benefit
-from.
-
-
--- Markus --
-
+Bart
