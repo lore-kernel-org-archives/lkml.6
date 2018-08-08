@@ -2,233 +2,129 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+X-Spam-Status: No, score=-1.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88467C46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:02:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0252EC4646D
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:03:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26FF921509
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:02:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="awq9QxIt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26FF921509
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 75F292168C
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:03:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75F292168C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727321AbeHHQWZ (ORCPT
+        id S1727342AbeHHQXp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 12:22:25 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:37116 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727078AbeHHQWY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 12:22:24 -0400
-Received: by mail-lj1-f196.google.com with SMTP id v9-v6so1816863ljk.4
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 07:02:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=xf1st28FLE/3twXChIO8tRq/2R47rUMO++fJtTaKIL0=;
-        b=awq9QxItSoy7NoEYobIvJyMtMbmrzxyOtu9wFAsZfYNU2C8wx/DkY3B5ZZsJuSB60L
-         PGRT5G8N2jAaZyQeMcDf6JA4F3Cjw6cVawirDxldKD2c6YI9jVuyPb4FPZsFD73F3WCE
-         0Njh6/3IpcQALyDcKPFi5WGI74y4JaVyWiFLA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xf1st28FLE/3twXChIO8tRq/2R47rUMO++fJtTaKIL0=;
-        b=pDBexkh5r0yph5dFnPkGGIa5XwVu8t0+T6P3M2KMgC4pv6bLsdplHx0wVyYdBz3cTE
-         NKp87WyGE3ChR0kGBfROK4c0vy5Sl2fIFJh+bB1C876YAAfikv3J6xeFJfHK3eQp1g/k
-         I+2HhNzNwBYZHzJ8Ga6AkRlKV6t0irnN6JFEmtwa86OqYJiizAF4Il0keLH72dirS4Og
-         HBFPM/TGlLgbEnlPYujcoxOzPb+C058uD/irEYhpVzhTX86MLFHmEcYlf6v63hoEnnBp
-         Iea5q4W08lEvjtuLxfeQ+mdglMLEEmTtoHBZBUFimsI9DvKSlHBNBrnR/6hN7AgiRGYU
-         JSfA==
-X-Gm-Message-State: AOUpUlGQ8E3AacJiVNS4c1/Rg7Sa7ufy7mJx/9Sv5iy+0vAySInqXO41
-        d6yP7qsiXCrc6StsddT11+f/cIPFfZbBub18hTARF868
-X-Google-Smtp-Source: AA+uWPyeJzDLm36YuEWzHvuCKYDspzxgdPGiSYfxgaLXv1k5JMu2H8a2AbhY8OCdr1EK4Cf1bB9FeyFIFBkiePsTI3k=
-X-Received: by 2002:a2e:5243:: with SMTP id g64-v6mr2140456ljb.144.1533736953111;
- Wed, 08 Aug 2018 07:02:33 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180627103408.33003-1-keiichiw@chromium.org> <11886963.8nkeRH3xvi@avalon>
- <CAAFQd5CM63BQ1oxmrhZuxTVj7pc=6XUJKa-cJ3gFBHxiF3HPfQ@mail.gmail.com>
- <3411643.50e8mdYzJX@avalon> <CAD90VcbpeVatm33h2QwGnq_him5KkL1b6n8j0D_RyUyRi3osaQ@mail.gmail.com>
- <febb65c6-e4f0-5c78-952f-ae8bbb74d3c0@ideasonboard.com>
-In-Reply-To: <febb65c6-e4f0-5c78-952f-ae8bbb74d3c0@ideasonboard.com>
-From:   Keiichi Watanabe <keiichiw@chromium.org>
-Date:   Wed, 8 Aug 2018 23:02:21 +0900
-Message-ID: <CAD90VcbrLd1ShRwfEmr-3KLa4rFd3TE_SpS02FdtR4YG1J_u_A@mail.gmail.com>
-Subject: Re: [RFC PATCH v1] media: uvcvideo: Cache URB header data before processing
-To:     kieran.bingham@ideasonboard.com
-Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Alan Stern <stern@rowland.harvard.edu>, ezequiel@collabora.com,
-        matwey@sai.msu.ru
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 8 Aug 2018 12:23:45 -0400
+Received: from mout.gmx.net ([212.227.15.19]:41505 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727050AbeHHQXo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 12:23:44 -0400
+Received: from homer.simpson.net ([185.191.219.117]) by mail.gmx.com (mrgmx002
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 0MQR3s-1fLnVV46Um-00ToOo; Wed, 08
+ Aug 2018 16:03:46 +0200
+Message-ID: <1533737025.4936.3.camel@gmx.de>
+Subject: [PATCH] x86, kdump: Fix efi=noruntime NULL pointer dereference
+From:   Mike Galbraith <efault@gmx.de>
+To:     Dave Young <dyoung@redhat.com>
+Cc:     Baoquan He <bhe@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        lkml <linux-kernel@vger.kernel.org>
+Date:   Wed, 08 Aug 2018 16:03:45 +0200
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:4OaRbMUNKdS5N6WT2mWHkplEklvl+JbA1gUyE+r0CkYNxXCtz8m
+ qLlp3WAWBO4p9IyZnB3pYdHIJjQ+dFlw1CxXwREwpMIhsq9vaWYTSlw4LtO2o+QPy0pZq4l
+ e/xHJh6k2+BTTcMSebyPkcU9/3Y0jOVPPTZtiwbW9aCb7KM9cScNtucbBYjKle0ZwchS6+J
+ yQNFaNmccM/yveQBXS9CQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:qQAFQZwn6q0=:x0AAeCcvBMhY7kcrlFszs9
+ kKvAbZHzreL5ERUVDQhiscQFPPLPAcWKCCISGzmi2rAh+j3xvq/e3m8QmVn967PwFgKTNWaV5
+ ThvS3VOHuHr3npygQr1NDPgEH26zjsmkj8ucSiHbJbHtcbueBsK43LdaG+R1+cDbyKGl38A37
+ W6XwWbX/aTRaF+5xK+ufMIim0vHyhIv89GNPAkgY7VkA4HaYrKlfNOIMplFiCpP6KAEVKG6q5
+ l0aNXnNhs2n6xuK8Z601ADp/OyLyvnJNsNtpZYUUN9nIPA3QD50LRDUoj7p1wQ9VZKAjDNQ+Y
+ cgFu91Si7i9zo23Etq3kPn98py3MgDcN/Ef9gJOQ1KcH1dezOo2K2nIos6M3v69qT2UYerHgr
+ TBao0BZ/EwbtwNU55jTseIZhUQWaHTyqIHo+tlJtLYO4actNEq29l9YkiB4/19lH/6Z5n72Yw
+ I5Kcn7+TPHJyaeA0jEq3RR3IY5lFSdB5rQRmOKoOcrvMuVgfK1rgBubYzW0cCeU8peN27ViWl
+ At2sMdNolbL0nxCyZApzwhO+Ugkz8kvEN8xK5tQNtzhLHCXHLvA0Mdh+FwGf2PJfsxIY1ypxn
+ wsjXoVKxUwTXJxx7tXfE7XkiPlGpfWOGCUg8/oI1NnGgS2xm+fzZv1xVc/5NiiHzQv9f/h62W
+ IfOuK1MhZDeHoljD8ocKcxAMwSeR/zdaxSvvfQq7QNLQkpK8zIyoBgpp4wL8d2wpszDk07ARh
+ W+2oqnOzjyQh7nVIRBcS8tPL1ZaX2bCDssk5Z2R6ZI4IZA3/l8Lbn2qK/P/TwjPgJ8o1wYg1y
+ wICxOTg
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kieran,
-On Wed, Aug 8, 2018 at 10:07 PM Kieran Bingham
-<kieran.bingham@ideasonboard.com> wrote:
->
-> Hi All,
->
-> On 08/08/18 13:45, Keiichi Watanabe wrote:
-> > Hi Laurent, Kieran, Tomasz,
-> >
-> > Thank you for reviews and suggestions.
-> > I want to do additional measurements for improving the performance.
-> >
-> > Let me clarify my understanding:
-> > Currently, if the platform doesn't support coherent-DMA (e.g. ARM),
-> > urb_buffer is allocated by usb_alloc_coherent with
-> > URB_NO_TRANSFER_DMA_MAP flag instead of using kmalloc.
-> > This is because we want to avoid frequent DMA mappings, which are
-> > generally expensive.
-> > However, memories allocated in this way are not cached.
-> >
-> > So, we wonder if using usb_alloc_coherent is really fast.
-> > In other words, we want to know which is better:
-> > "No DMA mapping/Uncached memory" v.s. "Frequent DMA mapping/Cached memory".
-> >
-> > For this purpose, I'm planning to measure performance on ARM
-> > Chromebooks in the following conditions:
-> > 1. Current implementation with Kieran's patches
-> > 2. 1. + my patch
-> > 3. Use kmalloc instead
-> >
-> > 1 and 2 are the same conditions I reported in the first mail on this thread.
-> > For condition 3, I only have to add "#define CONFIG_DMA_NONCOHERENT"
-> > at the beginning of uvc_video.c.
->
-> I'd be interested in numbers/performances both with and without my async
-> if possible too.
->
-> The async path can be easily disabled temporarily with the following
-> change: (perhaps this should be a module option?)
->
-> diff --git a/drivers/media/usb/uvc/uvc_video.c
-> b/drivers/media/usb/uvc/uvc_video.c
-> index 8bb6e90f3483..f9fbdc9bfa4b 100644
-> --- a/drivers/media/usb/uvc/uvc_video.c
-> +++ b/drivers/media/usb/uvc/uvc_video.c
-> @@ -1505,7 +1505,8 @@ static void uvc_video_complete(struct urb *urb)
->         }
->
->         INIT_WORK(&uvc_urb->work, uvc_video_copy_data_work);
-> -       queue_work(stream->async_wq, &uvc_urb->work);
-> +//     queue_work(stream->async_wq, &uvc_urb->work);
-> +       uvc_video_copy_data_work(&uvc_urb->work);
->  }
->
->  /*
->
->
-> I do suspect that even with cached buffers, it's probably likely we
-> should still consider the async patches to move the memcopy out of
-> interrupt context.
->
-It sounds better to check.
-I'll do tests with/without your async patches in both cached/uncached
-memory allocation conditions.
+When booting with efi=noruntime, we call efi_runtime_map_copy() while
+loading the kdump kernel, and trip over a NULL efi.memmap.map.  Avoid
+that and a useless allocation when the only mapping we can use (1:1)
+is not available.
 
-Best regards,
-Keiichi
+Signed-off-by: Mike Galbraith <efault@gmx.de>
+---
+ arch/x86/kernel/kexec-bzimage64.c |   22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
-> --
-> Regards
->
-> Kieran
->
->
->
->
-> >
-> > Does this plan sound reasonable?
-> >
-> > Best regards,
-> > Keiichi
-> > On Wed, Aug 8, 2018 at 5:42 PM Laurent Pinchart
-> > <laurent.pinchart@ideasonboard.com> wrote:
-> >>
-> >> Hi Tomasz,
-> >>
-> >> On Wednesday, 8 August 2018 07:08:59 EEST Tomasz Figa wrote:
-> >>> On Tue, Jul 31, 2018 at 1:00 AM Laurent Pinchart wrote:
-> >>>> On Wednesday, 27 June 2018 13:34:08 EEST Keiichi Watanabe wrote:
-> >>>>> On some platforms with non-coherent DMA (e.g. ARM), USB drivers use
-> >>>>> uncached memory allocation methods. In such situations, it sometimes
-> >>>>> takes a long time to access URB buffers.  This can be a cause of video
-> >>>>> flickering problems if a resolution is high and a USB controller has
-> >>>>> a very tight time limit. (e.g. dwc2) To avoid this problem, we copy
-> >>>>> header data from (uncached) URB buffer into (cached) local buffer.
-> >>>>>
-> >>>>> This change should make the elapsed time of the interrupt handler
-> >>>>> shorter on platforms with non-coherent DMA. We measured the elapsed
-> >>>>> time of each callback of uvc_video_complete without/with this patch
-> >>>>> while capturing Full HD video in
-> >>>>> https://webrtc.github.io/samples/src/content/getusermedia/resolution/.
-> >>>>> I tested it on the top of Kieran Bingham's Asynchronous UVC series
-> >>>>> https://www.mail-archive.com/linux-media@vger.kernel.org/msg128359.html.
-> >>>>> The test device was Jerry Chromebook (RK3288) with Logitech Brio 4K.
-> >>>>> I collected data for 5 seconds. (There were around 480 callbacks in
-> >>>>> this case.) The following result shows that this patch makes
-> >>>>> uvc_video_complete about 2x faster.
-> >>>>>
-> >>>>>            | average | median  | min     | max     | standard deviation
-> >>>>> w/o caching| 45319ns | 40250ns | 33834ns | 142625ns| 16611ns
-> >>>>> w/  caching| 20620ns | 19250ns | 12250ns | 56583ns | 6285ns
-> >>>>>
-> >>>>> In addition, we confirmed that this patch doesn't make it worse on
-> >>>>> coherent DMA architecture by performing the same measurements on a
-> >>>>> Broadwell Chromebox with the same camera.
-> >>>>>
-> >>>>>            | average | median  | min     | max     | standard deviation
-> >>>>> w/o caching| 21026ns | 21424ns | 12263ns | 23956ns | 1932ns
-> >>>>> w/  caching| 20728ns | 20398ns |  8922ns | 45120ns | 3368ns
-> >>>>
-> >>>> This is very interesting, and it seems related to https://
-> >>>> patchwork.kernel.org/patch/10468937/. You might have seen that discussion
-> >>>> as you got CC'ed at some point.
-> >>>>
-> >>>> I wonder whether performances couldn't be further improved by allocating
-> >>>> the URB buffers cached, as that would speed up the memcpy() as well. Have
-> >>>> you tested that by any chance ?
-> >>>
-> >>> We haven't measure it, but the issue being solved here was indeed
-> >>> significantly reduced by using cached URB buffers, even without
-> >>> Kieran's async series. After we discovered the latter, we just
-> >>> backported it and decided to further tweak the last remaining bit, to
-> >>> avoid playing too much with the DMA API in code used in production on
-> >>> several different platforms (including both ARM and x86).
-> >>>
-> >>> If you think we could change the driver to use cached buffers instead
-> >>> (as the pwc driver mentioned in another thread), I wouldn't have
-> >>> anything against it obviously.
-> >>
-> >> I think there's a chance that performances could be further improved.
-> >> Furthermore, it would lean to simpler code as we wouldn't need to deal with
-> >> caching headers manually. I would however like to see numbers before making a
-> >> decision.
-> >>
-> >> --
-> >> Regards,
-> >>
-> >> Laurent Pinchart
-> >>
-> >>
-> >>
->
-> --
-> Regards
-> --
-> Kieran
+--- a/arch/x86/kernel/kexec-bzimage64.c
++++ b/arch/x86/kernel/kexec-bzimage64.c
+@@ -122,9 +122,6 @@ static int setup_efi_info_memmap(struct
+ 	unsigned long efi_map_phys_addr = params_load_addr + efi_map_offset;
+ 	struct efi_info *ei = &params->efi_info;
+ 
+-	if (!efi_map_sz)
+-		return 0;
+-
+ 	efi_runtime_map_copy(efi_map, efi_map_sz);
+ 
+ 	ei->efi_memmap = efi_map_phys_addr & 0xffffffff;
+@@ -176,7 +173,7 @@ setup_efi_state(struct boot_params *para
+ 	 * acpi_rsdp=<addr> on kernel command line to make second kernel boot
+ 	 * without efi.
+ 	 */
+-	if (efi_enabled(EFI_OLD_MEMMAP))
++	if (efi_enabled(EFI_OLD_MEMMAP) || !efi_enabled(EFI_MEMMAP))
+ 		return 0;
+ 
+ 	ei->efi_loader_signature = current_ei->efi_loader_signature;
+@@ -338,7 +335,7 @@ static void *bzImage64_load(struct kimag
+ 	struct kexec_entry64_regs regs64;
+ 	void *stack;
+ 	unsigned int setup_hdr_offset = offsetof(struct boot_params, hdr);
+-	unsigned int efi_map_offset, efi_map_sz, efi_setup_data_offset;
++	unsigned int efi_map_offset = 0, efi_map_sz = 0, efi_setup_data_offset = 0;
+ 	struct kexec_buf kbuf = { .image = image, .buf_max = ULONG_MAX,
+ 				  .top_down = true };
+ 	struct kexec_buf pbuf = { .image = image, .buf_min = MIN_PURGATORY_ADDR,
+@@ -397,19 +394,22 @@ static void *bzImage64_load(struct kimag
+ 	 * have to create separate segment for each. Keeps things
+ 	 * little bit simple
+ 	 */
+-	efi_map_sz = efi_get_runtime_map_size();
+ 	params_cmdline_sz = sizeof(struct boot_params) + cmdline_len +
+ 				MAX_ELFCOREHDR_STR_LEN;
+ 	params_cmdline_sz = ALIGN(params_cmdline_sz, 16);
+-	kbuf.bufsz = params_cmdline_sz + ALIGN(efi_map_sz, 16) +
+-				sizeof(struct setup_data) +
+-				sizeof(struct efi_setup_data);
++	kbuf.bufsz = params_cmdline_sz + sizeof(struct setup_data);
++
++	/* Now add space for the efi stuff if we have a useable 1:1 mapping. */
++	if (!efi_enabled(EFI_OLD_MEMMAP) && efi_enabled(EFI_MEMMAP)) {
++		efi_map_sz = efi_get_runtime_map_size();
++		kbuf.bufsz += ALIGN(efi_map_sz, 16) + sizeof(struct efi_setup_data);
++		efi_map_offset = params_cmdline_sz;
++		efi_setup_data_offset = efi_map_offset + ALIGN(efi_map_sz, 16);
++	}
+ 
+ 	params = kzalloc(kbuf.bufsz, GFP_KERNEL);
+ 	if (!params)
+ 		return ERR_PTR(-ENOMEM);
+-	efi_map_offset = params_cmdline_sz;
+-	efi_setup_data_offset = efi_map_offset + ALIGN(efi_map_sz, 16);
+ 
+ 	/* Copy setup header onto bootparams. Documentation/x86/boot.txt */
+ 	setup_header_size = 0x0202 + kernel[0x0201] - setup_hdr_offset;
