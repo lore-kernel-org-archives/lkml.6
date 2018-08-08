@@ -2,237 +2,185 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=BIGNUM_EMAILS,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DEC0C46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 02:15:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FE54C46464
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 02:17:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 286B12152A
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 02:15:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 286B12152A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 384762152A
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 02:17:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=dabbelt-com.20150623.gappssmtp.com header.i=@dabbelt-com.20150623.gappssmtp.com header.b="M1rbox3Y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 384762152A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727078AbeHHEcc (ORCPT
+        id S1726971AbeHHEfA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 00:32:32 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:10642 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726158AbeHHEcb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 00:32:31 -0400
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id EABAF55AA2B62;
-        Wed,  8 Aug 2018 10:15:11 +0800 (CST)
-Received: from szvp000201624.huawei.com (10.120.216.130) by
- DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
- 14.3.399.0; Wed, 8 Aug 2018 10:15:07 +0800
-From:   Chao Yu <yuchao0@huawei.com>
-To:     <jaegeuk@kernel.org>
-CC:     <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH] f2fs: fix use-after-free of dicard command entry
-Date:   Wed, 8 Aug 2018 10:14:55 +0800
-Message-ID: <20180808021455.109291-1-yuchao0@huawei.com>
-X-Mailer: git-send-email 2.18.0.rc1
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.120.216.130]
-X-CFilter-Loop: Reflected
+        Wed, 8 Aug 2018 00:35:00 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:36080 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726158AbeHHEfA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 00:35:00 -0400
+Received: by mail-pl0-f68.google.com with SMTP id e11-v6so313930plb.3
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 19:17:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dabbelt-com.20150623.gappssmtp.com; s=20150623;
+        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2SmQluMEIEhsv+ZLBH+CPifmOHdRc/ctLn1bhtB5sNY=;
+        b=M1rbox3YqQtnLu3RssZtFovo4WcaWsLIdO3RxRKKe0E8gIYbPmBZ+VacOiOLvEYUlb
+         dwbQIhoirErsxmbvgpzH0OTpQWmbmQIpoRgMPCwsl7b2UsAfBdpaaGHC9lmv6lEHd6Fo
+         WXG0xw3Utb5187hFD2H61f2fIUuM1iakMx81XSEbHOCJlbr9Qz7+taOL35hD/n8AIzjh
+         GLXHJHpFm6585zw4TAlqicCTd/xMYxDHPmpF1ULpSzMZLxWW+GOXQaNFq8kFDWDqNQpH
+         m7l2zADLLxXBpLQoRasZ6EubBV9ISeywPOw2VgHTUAAymGuBiLlb+nRzkdRMBv1bDXWG
+         PLBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
+         :mime-version:content-transfer-encoding;
+        bh=2SmQluMEIEhsv+ZLBH+CPifmOHdRc/ctLn1bhtB5sNY=;
+        b=fnJDict2x3SNAVD8NgJEmkNaGuLKQ1IVEDsoDy8oZvddKti9v4BSsal3TK1bzCBbpp
+         ej2n9b7hGMLCXgdOMvOQhc+d2udLSN1hvJoDwpjWtRxGusr/YjFLiBMzShuuAuCXZK1G
+         e/x/f1WH456csT6xlPOonx4GvYlIg4hQ7jptKhmRg9Dprn3J+M/58AcNIGznxIquUgBc
+         keZlxOClsseb+0R3l8Mafa0/OctW+4JgD1qpn5P3s6f00xmA5VFizt4zQ5/3+iAYUwau
+         BQ3501FJHmqzAYyqGqOc8k5euwX05rDrvFmWoio0ayOP8zEz3KgeRwz6ixqpaIWG/hyP
+         q3bQ==
+X-Gm-Message-State: AOUpUlGtjvd0LkD8kCzxOTYg9zx5GyuzpoNpWV0UQKbWk2zQJfFIb6BD
+        rOMY0C1aWyWUTmP+mvz8d1abVQ==
+X-Google-Smtp-Source: AA+uWPz5jQMvMJTmLe/dR4J0MRFGRaSEv1BchltsfbBpqJ+JWPi69zyzyDatN3n0Jr28eScnQS4v9w==
+X-Received: by 2002:a17:902:2d24:: with SMTP id o33-v6mr751086plb.38.1533694661697;
+        Tue, 07 Aug 2018 19:17:41 -0700 (PDT)
+Received: from localhost ([12.206.222.5])
+        by smtp.gmail.com with ESMTPSA id r23-v6sm9209773pfd.144.2018.08.07.19.17.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 07 Aug 2018 19:17:40 -0700 (PDT)
+Date:   Tue, 07 Aug 2018 19:17:40 -0700 (PDT)
+X-Google-Original-Date: Tue, 07 Aug 2018 18:45:51 PDT (-0700)
+Subject:     Re: [PATCH 03/11] dt-bindings: interrupt-controller: RISC-V PLIC documentation
+In-Reply-To: <CAL_Jsq+pVzqKUbhErRr15JX2mPUOSTp_ddGvu9KAuf=TtXfduQ@mail.gmail.com>
+CC:     atish.patra@wdc.com, Christoph Hellwig <hch@lst.de>,
+        tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
+        mark.rutland@arm.com, devicetree@vger.kernel.org,
+        aou@eecs.berkeley.edu, anup@brainfault.org,
+        linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+        shorne@gmail.com
+From:   Palmer Dabbelt <palmer@dabbelt.com>
+To:     robh+dt@kernel.org
+Message-ID: <mhng-4bc89d00-bc90-440f-996f-861dde382aaa@palmer-si-x1c4>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As Dan Carpenter reported:
+On Mon, 06 Aug 2018 13:59:48 PDT (-0700), robh+dt@kernel.org wrote:
+> On Thu, Aug 2, 2018 at 4:08 PM Atish Patra <atish.patra@wdc.com> wrote:
+>>
+>> On 8/2/18 4:50 AM, Christoph Hellwig wrote:
+>> > From: Palmer Dabbelt <palmer@dabbelt.com>
+>> >
+>> > This patch adds documentation for the platform-level interrupt
+>> > controller (PLIC) found in all RISC-V systems.  This interrupt
+>> > controller routes interrupts from all the devices in the system to each
+>> > hart-local interrupt controller.
+>> >
+>> > Note: the DTS bindings for the PLIC aren't set in stone yet, as we might
+>> > want to change how we're specifying holes in the hart list.
+>> >
+>> > Signed-off-by: Palmer Dabbelt <palmer@dabbelt.com>
+>> > [hch: various fixes and updates]
+>> > Signed-off-by: Christoph Hellwig <hch@lst.de>
+>> > ---
+>> >   .../interrupt-controller/sifive,plic0.txt     | 57 +++++++++++++++++++
+>> >   1 file changed, 57 insertions(+)
+>> >   create mode 100644 Documentation/devicetree/bindings/interrupt-controller/sifive,plic0.txt
+>> >
+>> > diff --git a/Documentation/devicetree/bindings/interrupt-controller/sifive,plic0.txt b/Documentation/devicetree/bindings/interrupt-controller/sifive,plic0.txt
+>> > new file mode 100644
+>> > index 000000000000..c756cd208a93
+>> > --- /dev/null
+>> > +++ b/Documentation/devicetree/bindings/interrupt-controller/sifive,plic0.txt
+>> > @@ -0,0 +1,57 @@
+>> > +SiFive Platform-Level Interrupt Controller (PLIC)
+>> > +-------------------------------------------------
+>> > +
+>> > +SiFive SOCs include an implementation of the Platform-Level Interrupt Controller
+>> > +(PLIC) high-level specification in the RISC-V Privileged Architecture
+>> > +specification.  The PLIC connects all external interrupts in the system to all
+>> > +hart contexts in the system, via the external interrupt source in each hart.
+>> > +
+>> > +A hart context is a privilege mode in a hardware execution thread.  For example,
+>> > +in an 4 core system with 2-way SMT, you have 8 harts and probably at least two
+>> > +privilege modes per hart; machine mode and supervisor mode.
+>> > +
+>> > +Each interrupt can be enabled on per-context basis. Any context can claim
+>> > +a pending enabled interrupt and then release it once it has been handled.
+>> > +
+>> > +Each interrupt has a configurable priority. Higher priority interrupts are
+>> > +serviced first. Each context can specify a priority threshold. Interrupts
+>> > +with priority below this threshold will not cause the PLIC to raise its
+>> > +interrupt line leading to the context.
+>> > +
+>> > +While the PLIC supports both edge-triggered and level-triggered interrupts,
+>> > +interrupt handlers are oblivious to this distinction and therefore it is not
+>> > +specified in the PLIC device-tree binding.
+>> > +
+>> > +While the RISC-V ISA doesn't specify a memory layout for the PLIC, the
+>> > +"sifive,plic0" device is a concrete implementation of the PLIC that contains a
+>> > +specific memory layout, which is documented in chapter 8 of the SiFive U5
+>> > +Coreplex Series Manual <https://static.dev.sifive.com/U54-MC-RVCoreIP.pdf>.
+>> > +
+>> > +Required properties:
+>> > +- compatible : "sifive,plic0"
 
-The patch 20ee4382322c: "f2fs: issue small discard by LBA order" from
-Jul 8, 2018, leads to the following Smatch warning:
+I think there was a thread bouncing around somewhere where decided to pick the 
+official name of the compatible string to be "sifive,plic-1.0".  The idea here 
+is that the PLIC is compatible across all of SiFive's current implementations, 
+but there's some limitations in the memory map that will probably cause us to 
+spin a version 2 at some point so we want major version number.  The minor 
+number is just in case we find some errata in the PLIC.
 
-	fs/f2fs/segment.c:1277 __issue_discard_cmd_orderly()
-	warn: 'dc' was already freed.
+>> > +- #address-cells : should be <0>
+>> > +- #interrupt-cells : should be <1>
+>> > +- interrupt-controller : Identifies the node as an interrupt controller
+>> > +- reg : Should contain 1 register range (address and length)
+>>
+>> The one in the real device tree has two entries.
+>> reg = <0x00000000 0x0c000000 0x00000000 0x04000000>;
+>>
+>> Is it intentional or just incorrect entry left over from earlier days?
+>
+>> > +             reg = <0xc000000 0x4000000>;
+>
+> Looks to me like one has #size-cells and #address-cells set to 2 and
+> the example is using 1.
 
-See also:
-fs/f2fs/segment.c:2550 __issue_discard_cmd_range() warn: 'dc' was already freed.
+Yes.  For some background on how this works: we have a hardware generator that 
+has a tree-of-busses abstraction, and each device is attached to some point on 
+that tree.  When a device gets attached to the bus, we also generate a device 
+tree entry.  For whatever system I generated the example PLIC device tree entry 
+from, it must have been attached to a bus with addresses of 32 bits or less, 
+which resulted in #address-cells and #size-cells being 1.
 
-In order to fix this issue, let's get error from __submit_discard_cmd(),
-and release current discard command after we referenced next one.
+Christoph has a HiFive Unleashed, which has a fu540-c000 on it, which is 
+probably not what I generated as an example -- the fu540-c000 is a complicated 
+configuration, when I mess around with the hardware I tend to use simple ones 
+as I'm not really a hardware guy.  I suppose the bus that the PLIC is hanging 
+off on the fu540-c000 has addresses wider than 32 bits.  This makes sense, as 
+the machine has 8GiB of memory and the PLIC is on a bus that's closer to the 
+core than the DRAM is, so it'd need at least enough address bits to fit 8GiB.
 
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/segment.c | 79 +++++++++++++++++++++++++++--------------------
- 1 file changed, 45 insertions(+), 34 deletions(-)
-
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index be1bf38400ca..8826ea683804 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -998,7 +998,7 @@ static void __update_discard_tree_range(struct f2fs_sb_info *sbi,
- 				struct block_device *bdev, block_t lstart,
- 				block_t start, block_t len);
- /* this function is copied from blkdev_issue_discard from block/blk-lib.c */
--static void __submit_discard_cmd(struct f2fs_sb_info *sbi,
-+static int __submit_discard_cmd(struct f2fs_sb_info *sbi,
- 						struct discard_policy *dpolicy,
- 						struct discard_cmd *dc,
- 						unsigned int *issued)
-@@ -1015,10 +1015,10 @@ static void __submit_discard_cmd(struct f2fs_sb_info *sbi,
- 	int err = 0;
- 
- 	if (dc->state != D_PREP)
--		return;
-+		return 0;
- 
- 	if (is_sbi_flag_set(sbi, SBI_NEED_FSCK))
--		return;
-+		return 0;
- 
- 	trace_f2fs_issue_discard(bdev, dc->start, dc->len);
- 
-@@ -1057,43 +1057,44 @@ static void __submit_discard_cmd(struct f2fs_sb_info *sbi,
- 					SECTOR_FROM_BLOCK(len),
- 					GFP_NOFS, 0, &bio);
- submit:
--		if (!err && bio) {
--			/*
--			 * should keep before submission to avoid D_DONE
--			 * right away
--			 */
-+		if (err) {
- 			spin_lock_irqsave(&dc->lock, flags);
--			if (last)
-+			if (dc->state == D_PARTIAL)
- 				dc->state = D_SUBMIT;
--			else
--				dc->state = D_PARTIAL;
--			dc->bio_ref++;
- 			spin_unlock_irqrestore(&dc->lock, flags);
- 
--			atomic_inc(&dcc->issing_discard);
--			dc->issuing++;
--			list_move_tail(&dc->list, wait_list);
-+			break;
-+		}
- 
--			/* sanity check on discard range */
--			__check_sit_bitmap(sbi, start, start + len);
-+		f2fs_bug_on(sbi, !bio);
- 
--			bio->bi_private = dc;
--			bio->bi_end_io = f2fs_submit_discard_endio;
--			bio->bi_opf |= flag;
--			submit_bio(bio);
-+		/*
-+		 * should keep before submission to avoid D_DONE
-+		 * right away
-+		 */
-+		spin_lock_irqsave(&dc->lock, flags);
-+		if (last)
-+			dc->state = D_SUBMIT;
-+		else
-+			dc->state = D_PARTIAL;
-+		dc->bio_ref++;
-+		spin_unlock_irqrestore(&dc->lock, flags);
- 
--			atomic_inc(&dcc->issued_discard);
-+		atomic_inc(&dcc->issing_discard);
-+		dc->issuing++;
-+		list_move_tail(&dc->list, wait_list);
- 
--			f2fs_update_iostat(sbi, FS_DISCARD, 1);
--		} else {
--			spin_lock_irqsave(&dc->lock, flags);
--			if (dc->state == D_PARTIAL)
--				dc->state = D_SUBMIT;
--			spin_unlock_irqrestore(&dc->lock, flags);
-+		/* sanity check on discard range */
-+		__check_sit_bitmap(sbi, start, start + len);
- 
--			__remove_discard_cmd(sbi, dc);
--			err = -EIO;
--		}
-+		bio->bi_private = dc;
-+		bio->bi_end_io = f2fs_submit_discard_endio;
-+		bio->bi_opf |= flag;
-+		submit_bio(bio);
-+
-+		atomic_inc(&dcc->issued_discard);
-+
-+		f2fs_update_iostat(sbi, FS_DISCARD, 1);
- 
- 		lstart += len;
- 		start += len;
-@@ -1101,8 +1102,9 @@ static void __submit_discard_cmd(struct f2fs_sb_info *sbi,
- 		len = total_len;
- 	}
- 
--	if (len)
-+	if (!err && len)
- 		__update_discard_tree_range(sbi, bdev, lstart, start, len);
-+	return err;
- }
- 
- static struct discard_cmd *__insert_discard_tree(struct f2fs_sb_info *sbi,
-@@ -1308,6 +1310,7 @@ static unsigned int __issue_discard_cmd_orderly(struct f2fs_sb_info *sbi,
- 
- 	while (dc) {
- 		struct rb_node *node;
-+		int err = 0;
- 
- 		if (dc->state != D_PREP)
- 			goto next;
-@@ -1318,12 +1321,14 @@ static unsigned int __issue_discard_cmd_orderly(struct f2fs_sb_info *sbi,
- 		}
- 
- 		dcc->next_pos = dc->lstart + dc->len;
--		__submit_discard_cmd(sbi, dpolicy, dc, &issued);
-+		err = __submit_discard_cmd(sbi, dpolicy, dc, &issued);
- 
- 		if (issued >= dpolicy->max_requests)
- 			break;
- next:
- 		node = rb_next(&dc->rb_node);
-+		if (err)
-+			__remove_discard_cmd(sbi, dc);
- 		dc = rb_entry_safe(node, struct discard_cmd, rb_node);
- 	}
- 
-@@ -2577,6 +2582,7 @@ static unsigned int __issue_discard_cmd_range(struct f2fs_sb_info *sbi,
- 
- 	while (dc && dc->lstart <= end) {
- 		struct rb_node *node;
-+		int err = 0;
- 
- 		if (dc->len < dpolicy->granularity)
- 			goto skip;
-@@ -2586,11 +2592,14 @@ static unsigned int __issue_discard_cmd_range(struct f2fs_sb_info *sbi,
- 			goto skip;
- 		}
- 
--		__submit_discard_cmd(sbi, dpolicy, dc, &issued);
-+		err = __submit_discard_cmd(sbi, dpolicy, dc, &issued);
- 
- 		if (issued >= dpolicy->max_requests) {
- 			start = dc->lstart + dc->len;
- 
-+			if (err)
-+				__remove_discard_cmd(sbi, dc);
-+
- 			blk_finish_plug(&plug);
- 			mutex_unlock(&dcc->cmd_lock);
- 			trimmed += __wait_all_discard_cmd(sbi, NULL);
-@@ -2599,6 +2608,8 @@ static unsigned int __issue_discard_cmd_range(struct f2fs_sb_info *sbi,
- 		}
- skip:
- 		node = rb_next(&dc->rb_node);
-+		if (err)
-+			__remove_discard_cmd(sbi, dc);
- 		dc = rb_entry_safe(node, struct discard_cmd, rb_node);
- 
- 		if (fatal_signal_pending(current))
--- 
-2.18.0.rc1
-
+Is the inconsistency a problem?  I generally write device tree handling code to 
+just respect whatever #*-fields says and don't consider that part of the 
+specification of the binding.  I don't mind changing the example to have 
+#size-fields and #address-fields to be 2, but since it's not wrong I also don't 
+see any reason to change it.  We do have 32-bit devices with PLICs, and while 
+they're not Linux-capable devices we're trying to adopt the Linux device tree 
+bindings through the rest of the RISC-V software ecosystem as they tend to be 
+pretty well thought out.
