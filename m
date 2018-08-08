@@ -2,138 +2,188 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA755C4646D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 17:58:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94EE7C46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 17:59:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7351D2178B
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 17:58:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7351D2178B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 4529A2178B
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 17:59:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aE9VzCTT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4529A2178B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729863AbeHHUTg (ORCPT
+        id S1730015AbeHHUUO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 16:19:36 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:35487 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727748AbeHHUTg (ORCPT
+        Wed, 8 Aug 2018 16:20:14 -0400
+Received: from mail-ua0-f196.google.com ([209.85.217.196]:45874 "EHLO
+        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727748AbeHHUUN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 16:19:36 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id BF4878063D; Wed,  8 Aug 2018 19:58:45 +0200 (CEST)
-Date:   Wed, 8 Aug 2018 19:58:45 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     joeyli <jlee@suse.com>
-Cc:     Yu Chen <yu.c.chen@intel.com>, Ryan Chen <yu.chen.surf@gmail.com>,
-        oneukum@suse.com, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        ebiggers@google.com, Theodore Ts'o <tytso@mit.edu>,
-        smueller@chronox.de, denkenz@gmail.com,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        linux-crypto@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kookoo.gu@intel.com, Zhang Rui <rui.zhang@intel.com>
-Subject: Re: [PATCH 0/4][RFC v2] Introduce the in-kernel hibernation
- encryption
-Message-ID: <20180808175845.GB16217@amd>
-References: <20180723162302.GA4503@sandybridge-desktop>
- <1532590246.7411.3.camel@suse.com>
- <20180726081404.GG4244@linux-l9pv.suse>
- <20180730170415.GQ4244@linux-l9pv.suse>
- <20180803033702.GB416@sandybridge-desktop>
- <20180803053445.GC4244@linux-l9pv.suse>
- <CADjb_WSURQz86+E8kakNf7UBDM+aho+uaz3QdDkuGsEgan=szw@mail.gmail.com>
- <20180805100200.GB22948@amd>
- <20180806084534.GB12124@chenyu-desktop>
- <20180806103958.GI27062@linux-l9pv.suse>
+        Wed, 8 Aug 2018 16:20:13 -0400
+Received: by mail-ua0-f196.google.com with SMTP id k8-v6so3313342uaq.12;
+        Wed, 08 Aug 2018 10:59:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=F5Jn5ThbdGMN/ntBl9eM8Z1tLeSTGI/KD270MYviaFk=;
+        b=aE9VzCTT9EiZSsDzfT4P0A9eEEYgeV8t7gv/ETwz82iMTz3Ud9uljeXOtZW2Pv7FJw
+         Qw3toECwSIi9e7O963W2RxgyZlG/12fbhKI1msqBzV14msLWYRttGw8588CjzVLyXvqN
+         zSiWtvWLxXh9qDo2+m5mY6xe52tflui1KcblIiFP5w6zQ90k0ay7FTRnKIYzobYUMgS3
+         wsBM7RRzIr2Dga8vP7cGYz1p/tvyI0em/fbVtbgpbFDHcqjraP9UniO26Vd7uPRKi869
+         lKaXC4Hk4E1SVxFqskLnfUKaCrx7ANUVC2aJonfq9w40uZN4UoDQWeyGg7oSeM5yObXp
+         O64w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=F5Jn5ThbdGMN/ntBl9eM8Z1tLeSTGI/KD270MYviaFk=;
+        b=lJLjkxAXG2enlKOk5WFgcKyfuf822cu/akjudLip7mKWWlPvNVM/wPbs+2oyFGJgnL
+         q6rmdxzJo3tsF/vJESXxtM6aK4q08PA9LegxjbeLYqe4BKGXNdlj1s54Ei/O+ub21ujY
+         ok502nc091oM/oO8b+Gfvp58wmj1yE4lDKC6sqpqZbi6DttK8knxuUTybWzBXjs2SimG
+         Ittvp98T/ETKav3dQ8xY/frPC3Kh4JPMFreyJQ0rpx++a5eGcv2dJo0KezmlBccWpihh
+         3INJxRIg9516/3UDAXQwsRFW2X81sNi8EwZaCNmsBeCssKDzo6QmW5wqPm80Q31nwzq6
+         SjTg==
+X-Gm-Message-State: AOUpUlELobFDClRFtEpalqbaUedWH2VY/Jenc7jULiaUnj5NGFCB0JCG
+        U4lhZflxmwiqt/QXwlOOjPnFLv9H+ovtA1OQlkg=
+X-Google-Smtp-Source: AA+uWPxKYshhjBug0zprFFmuDV9srTClctPPxDQDGxOcsBmpSm6sbUxP6di9C7dZoGB+qzmsb3XkpMs66p3lWGsuk3s=
+X-Received: by 2002:ab0:13c7:: with SMTP id n7-v6mr2710329uae.47.1533751165264;
+ Wed, 08 Aug 2018 10:59:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="61jdw2sOBCFtR2d/"
-Content-Disposition: inline
-In-Reply-To: <20180806103958.GI27062@linux-l9pv.suse>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Received: by 2002:a67:2149:0:0:0:0:0 with HTTP; Wed, 8 Aug 2018 10:59:24 -0700 (PDT)
+In-Reply-To: <CAHp75VewdvD2D2BpyKAptFecr+hrW5O5YUcSzu9X4wGgV-oJ3A@mail.gmail.com>
+References: <20180808153150.23444-1-brgl@bgdev.pl> <20180808153150.23444-22-brgl@bgdev.pl>
+ <CAHp75VewdvD2D2BpyKAptFecr+hrW5O5YUcSzu9X4wGgV-oJ3A@mail.gmail.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Wed, 8 Aug 2018 20:59:24 +0300
+Message-ID: <CAHp75Vdh0qfyutF6stPe1=eREg5iEHeUfE6MZO-nwsuhcNFTrg@mail.gmail.com>
+Subject: Re: [PATCH 21/28] ARM: davinci: dm644x-evm: use device properties for
+ at24 eeprom
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Jonathan Corbet <corbet@lwn.net>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Naren <naren.kernel@gmail.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Lukas Wunner <lukas@wunner.de>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
+        Sven Van Asbroeck <svendev@arcx.com>,
+        Paolo Abeni <pabeni@redhat.com>, Alban Bedel <albeu@free.fr>,
+        Rob Herring <robh@kernel.org>,
+        David Lechner <david@lechnology.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Linux Documentation List <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        "open list:MEMORY TECHNOLOGY..." <linux-mtd@lists.infradead.org>,
+        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Aug 8, 2018 at 8:55 PM, Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
+> On Wed, Aug 8, 2018 at 6:31 PM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>
+>> We want to work towards phasing out the at24_platform_data structure.
+>> There are few users and its contents can be represented using generic
+>> device properties. Using device properties only will allow us to
+>> significantly simplify the at24 configuration code.
+>>
+>> Remove the at24_platform_data structure and replace it with an array
+>> of property entries. Drop the byte_len/size property, as the model name
+>> already implies the EEPROM's size.
+>>
+>
+> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+>
+>> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>> ---
+>>  arch/arm/mach-davinci/board-dm644x-evm.c | 12 ++++--------
+>>  1 file changed, 4 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/arch/arm/mach-davinci/board-dm644x-evm.c b/arch/arm/mach-davinci/board-dm644x-evm.c
+>> index 6d35c6e1b0bd..abfcf42da6fb 100644
+>> --- a/arch/arm/mach-davinci/board-dm644x-evm.c
+>> +++ b/arch/arm/mach-davinci/board-dm644x-evm.c
+>> @@ -16,8 +16,8 @@
+>>  #include <linux/gpio/machine.h>
+>>  #include <linux/i2c.h>
+>>  #include <linux/platform_data/pcf857x.h>
+>> -#include <linux/platform_data/at24.h>
+>>  #include <linux/platform_data/gpio-davinci.h>
+>> +#include <linux/property.h>
+>>  #include <linux/mtd/mtd.h>
+>>  #include <linux/mtd/rawnand.h>
+>>  #include <linux/mtd/partitions.h>
+>> @@ -486,12 +486,8 @@ static struct nvmem_cell_lookup dm6446evm_mac_address_cell = {
+>>         .nvmem_name = "1-00500",
+>>  };
+>>
+>> -static struct at24_platform_data eeprom_info = {
+>> -       .byte_len       = (256*1024) / 8,
+>> -       .page_size      = 64,
+>> -       .flags          = AT24_FLAG_ADDR16,
+>> -       .setup          = davinci_get_mac_addr,
+>> -       .context        = (void *)0x7f00,
+>> +static const struct property_entry eeprom_properties[] = {
+>> +       PROPERTY_ENTRY_U32("pagesize", 64),
 
---61jdw2sOBCFtR2d/
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Missed terminator, though
 
-On Mon 2018-08-06 18:39:58, joeyli wrote:
-> On Mon, Aug 06, 2018 at 04:45:34PM +0800, Yu Chen wrote:
-> > Hi Pavel,
-> > On Sun, Aug 05, 2018 at 12:02:00PM +0200, Pavel Machek wrote:
-> > > Hi!
-> > >=20
-> > > > > User space doesn't need to involve. The EFI root key is generated=
- by
-> > > > > EFI boot stub and be transfer to kernel. It's stored in EFI boot =
-service
-> > > > > variable that it can only be accessed by trusted EFI binary when
-> > > > > secure boot is enabled.
-> > > > >
-> > > > Okay, this apply to the 'suspend' phase, right?
-> > > > I'm still a little confused about the 'resume' phase.
-> > > > Taking encryption as example(not signature),
-> > > > the purpose of doing hibernation encryption is to prevent other use=
-rs
-> > > > from stealing ram content. Say, user A uses a  passphrase to genera=
-te the
-> > >=20
-> > > No, I don't think that's purpose here.
-> > >=20
-> > > Purpose here is to prevent user from reading/modifying kernel memory
-> > > content on machine he owns.
-> > >
-> > Say, A puts his laptop into hibernation and walks away,
-> > and B walks by, and opens A's laptop and wakes up the system and he
-> > can do what he wants. Although EFI key/TPM trusted key is enabled,
-> > currently there's no certification during resume, which sounds
-> > unsafe to me. Afterall, the original requirement is to probe
-> > user for password during resume, which sounds more natural.
->=20
-> OK, I saw your case. This is a physical accessing.
->=20
-> I have a question: The suspend to memory also has the same behavior
-> and more people are using suspend. Should we think a common solution
-> to cover S3 and S4?=20
+>>  };
+>>
+>>  /*
+>> @@ -601,7 +597,7 @@ static struct i2c_board_info __initdata i2c_info[] =  {
+>>         },
+>>         {
+>>                 I2C_BOARD_INFO("24c256", 0x50),
+>> -               .platform_data  = &eeprom_info,
+>> +               .properties = eeprom_properties,
+>>         },
+>>         {
+>>                 I2C_BOARD_INFO("tlv320aic33", 0x1b),
+>> --
+>> 2.18.0
+>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-omap" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+>
+>
+> --
+> With Best Regards,
+> Andy Shevchenko
 
-Well, we have similar problem during runtime, too ;-).
 
-Anyway, I don't think we should encrypt memory during S3 in kernel.
 
-If you wanted to do that, you could use uswsusp to take snapshot,
-store it in ram, encrypt, erase originals (new API might be
-needed... hmm. does not exactly sound easy... kexec?), trigger S3, decrypt,
-resume from snapshot...
-
-Sounds like a bit of work...
-
-Best regards,
-
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---61jdw2sOBCFtR2d/
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAltrL1UACgkQMOfwapXb+vKFDwCff3blvM3rAHLkiEXPpIldRgRl
-b2YAnjV9fbZsH9FDXiTJOYJ/YcxhL69c
-=kQRP
------END PGP SIGNATURE-----
-
---61jdw2sOBCFtR2d/--
+-- 
+With Best Regards,
+Andy Shevchenko
