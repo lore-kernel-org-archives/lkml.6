@@ -2,184 +2,232 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.9 required=3.0 tests=DATE_IN_PAST_06_12,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F022C4646D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:30:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59576C46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:33:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3839219F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:30:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="am/VICEb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3839219F5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id EDFC3219C9
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:33:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDFC3219C9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727487AbeHHQur (ORCPT
+        id S1727351AbeHHQxE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 12:50:47 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:47037 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726875AbeHHQur (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 12:50:47 -0400
-Received: by mail-lf1-f68.google.com with SMTP id l16-v6so1710345lfc.13;
-        Wed, 08 Aug 2018 07:30:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Q9cGw5VhLltx71dinLb+dB0SLiZTfZ0ccbTfNZjHgp0=;
-        b=am/VICEbmJZIC7Zvq/a0k3GwC1PqyFA3F2Yknfew5bDGfsXp2Up7cPVSwBYB0pZp6U
-         bXszKoBopqbDNdUe/49dM6/A5W68QaTOMht4FHspO1SVWiyvXAMPwnUYhIMHHHWMvEkl
-         +AvbjDw+VXk/yccGTSZE1SlBWR9I7z2ErbToKK9fV1++WS5JGmyUqgED0Edk9XiibUb6
-         Sl5BS+7FKaXY1ELrp2H7c1j3ClZXjZg3lAd4Mmqyvjaj1a6ul6vs5eXRX+dMYvRwmtEL
-         Q1UuETmJC6LSYdbrW3ugEAo3A8uTWGxIGR4iorj51kDGAsrkaISeIg4RagDv/yJZlXNx
-         7BVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Q9cGw5VhLltx71dinLb+dB0SLiZTfZ0ccbTfNZjHgp0=;
-        b=GPXAsCX//2iJLiFxoHK/Ua36Z2TGuhjFm7yVmzNgNfO6B/040t8lJL1iZXD8ILnKpY
-         TcIEJe+5JXzp+OqjGWAKJu8PNxr/t7V1RtUh0qMG5hAoL0kIPsqdvFUiybJF1uPFh9or
-         Zi7LN+hJu66xkqymRPB1eS2an6MGnGOnkSJx7+/jGSczJKfo/DEK/M2N/5XGSYHPcn9v
-         2Hapn7GIDKGXDx9+KVrDdZiu2frbyJ0i5Qz5W7n8j/jz03dOI0WaB+2Qq/HeZb5Nxhwm
-         2/JdT9JR767vZa0O5xtBbzXMlT18JY8Lk4IL1er3/rnDyDFXLFD4hwWBPJSJYJdabUH/
-         hLiA==
-X-Gm-Message-State: AOUpUlGAaqvq1pQz8d2GUiLa8sylPrAgmbEL1Qx9WNGx48Yd2TyZKCfu
-        1/a3oikJOhhS5XMGXgP2uQQ=
-X-Google-Smtp-Source: AA+uWPz8zxjQDsD328yO4wJJgsQoHAHhaB3nTW8RBKa5mvVxDhYPoUkXFfRCxqdB+VqKaLK/goUlBw==
-X-Received: by 2002:a19:7403:: with SMTP id v3-v6mr616432lfe.97.1533738648696;
-        Wed, 08 Aug 2018 07:30:48 -0700 (PDT)
-Received: from dimapc.localnet (109-252-90-13.nat.spd-mgts.ru. [109.252.90.13])
-        by smtp.gmail.com with ESMTPSA id k68-v6sm849929lfg.22.2018.08.08.07.30.46
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 08 Aug 2018 07:30:47 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Ville =?ISO-8859-1?Q?Syrj=E4l=E4?= 
-        <ville.syrjala@linux.intel.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, Ben Skeggs <bskeggs@redhat.com>,
-        Sinclair Yeh <syeh@vmware.com>,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v4 1/2] drm: Add generic colorkey properties for display planes
-Date:   Wed, 08 Aug 2018 17:30:45 +0300
-Message-ID: <2089566.PDTrKWWE8Q@dimapc>
-In-Reply-To: <20180808081608.GK30658@n2100.armlinux.org.uk>
-References: <20180807172202.1961-1-digetx@gmail.com> <20180807172202.1961-2-digetx@gmail.com> <20180808081608.GK30658@n2100.armlinux.org.uk>
+        Wed, 8 Aug 2018 12:53:04 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:10682 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726875AbeHHQxE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 12:53:04 -0400
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id ACFC53C25651D;
+        Wed,  8 Aug 2018 22:33:02 +0800 (CST)
+Received: from localhost.localdomain (10.175.34.53) by
+ DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
+ 14.3.399.0; Wed, 8 Aug 2018 22:32:57 +0800
+From:   Zhao Chen <zhaochen6@huawei.com>
+To:     <davem@davemloft.net>
+CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <zhaochen6@huawei.com>, <tony.qu@huawei.com>,
+        <yin.yinshi@huawei.com>, <luoshaokai@huawei.com>,
+        <fy.wang@huawei.com>, <luoxianjun@huawei.com>,
+        <wangzhou1@hisilicon.com>
+Subject: [PATCH 1/1] net-next: hinic: fix a problem in free_tx_poll()
+Date:   Wed, 8 Aug 2018 06:37:30 +0000
+Message-ID: <20180808063730.12198-1-zhaochen6@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
+X-Originating-IP: [10.175.34.53]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wednesday, 8 August 2018 11:16:09 MSK Russell King - ARM Linux wrote:
-> On Tue, Aug 07, 2018 at 08:22:01PM +0300, Dmitry Osipenko wrote:
-> > + * Glossary:
-> > + *
-> > + * Destination plane:
-> > + *	Plane to which color keying properties are applied, this planes takes
-> > + *	the effect of color keying operation. The effect is determined by a
-> > + *	given color keying mode.
-> > + *
-> > + * Source plane:
-> > + *	Pixels of this plane are the source for color key matching operation.
-> 
-> ...
-> 
-> > +	/**
-> > +	 * @DRM_PLANE_COLORKEY_MODE_TRANSPARENT:
-> > +	 *
-> > +	 * Destination plane pixels are completely transparent in areas
-> > +	 * where pixels of a source plane are matching a given color key
-> > +	 * range, in other cases pixels of a destination plane are 
-unaffected.
-> > +	 * In areas where two or more source planes overlap, the topmost
-> > +	 * plane takes precedence.
-> > +	 */
-> 
-> This seems confusing to me.
-> 
-> What you seem to be saying is that the "destination" plane would be the
-> one which is (eg0 the graphic plane, and the "source" plane would be the
-> the plane containing (eg) the video.  You seem to be saying that the
-> colorkey matches the video and determines whether the pixels in the
-> graphic plane are opaque or transparent.
+This patch fixes the problem below. The problem can be reproduced by the
+following steps:
+1) Connecting all HiNIC interfaces
+2) On server side
+    # sudo ifconfig eth0 192.168.100.1 up #Using MLX CX4 card
+    # iperf -s
+3) On client side
+    # sudo ifconfig eth0 192.168.100.2 up #Using our HiNIC card
+    # iperf -c 192.168.101.1 -P 10 -t 100000
 
-Your example is correct.
+after hours of testing, we will see errors:
 
-With the "plane_mask" property we can specify any plane as the "source" for 
-color key, so it can been either a video plane or graphic plane and even both 
-at the same time.
+    hinic 0000:05:00.0: No MGMT msg handler, mod = 0
+    hinic 0000:05:00.0: No MGMT msg handler, mod = 0
+    hinic 0000:05:00.0: No MGMT msg handler, mod = 0
+    hinic 0000:05:00.0: No MGMT msg handler, mod = 0
 
-> Surely that is the wrong way round - in video overlay, you want to
-> colorkey match the contents of the graphic plane to determine which
-> pixels from the video plane to overlay.
+The errors are caused by the following problem.
+1) The hinic_get_wqe() checks the "wq->delta" to allocate new WQEs:
 
-The "transparent" mode makes the color-matched pixels to become transparent, 
-you want the inversion effect and hence that should be called something like a 
-"transparent-inverted" mode. Maarten Lankhorst was asking for that mode in his 
-comment to v3, I'm leaving for somebody else to add that mode later since 
-there is no real use for it on Tegra right now.
+	if (atomic_sub_return(num_wqebbs, &wq->delta) <= 0) {
+		atomic_add(num_wqebbs, &wq->delta);
+		return ERR_PTR(-EBUSY);
+	}
 
-So in your case the graphic plane will be the "source" plane (specified via 
-the colorkey.plane_mask property), video plane will be the "destination" plane 
-(plane to which the colorkey properties are applied) and the colorkey.mode 
-will be "transparent-inverted". Pixels of the "source" plane are being matched 
-and "destination" plane takes the effect of color keying operation, i.e. the 
-color-matched pixels of graphic plane leave the video plane pixels unaffected 
-and the unmatched pixels make the video plane pixels transparent.
+If the WQE occupies multiple pages, the shadow WQE will be used. Then the
+hinic_xmit_frame() fills the WQE.
 
-> If it's the other way around (source is the graphic, destination is the
-> video) it makes less sense to use the "source" and "destination" terms,
-> I can't see how you could describe a plane that is being overlaid on
-> top of another plane as a "destination".
+2) While in parallel with 1), the free_tx_poll() checks the "wq->delta"
+to free old WQEs:
 
-Tegra has a bit annoying limitations in regard to a reduced plane blending 
-functionality when color keying is enabled. I found that the best variant to 
-work around the limitations is to move the graphic plane on top of the video 
-plane and to make the graphic plane to match itself. I.e. the matched pixels 
-of graphic plane become transparent and hence poked by video plane.
+	if ((atomic_read(&wq->delta) + num_wqebbs) > wq->q_depth)
+		return ERR_PTR(-EBUSY);
 
-> I guess the terminology has come from a thought about using a GPU to
-> physically do the colorkeying when combining two planes - if the GPU
-> were to write to the "destination" plane, then this would be the wrong
-> way around.  For starters, taking the above example, the video plane
-> may well be smaller than the graphic plane.  If it's the other way
-> around, that has other problems, like destroying the colorkey in the
-> graphic plane when writing the video plane's contents to it.
+There is a probability that the shadow WQE which hinic_xmit_frame() is
+using will be damaged by copy_wqe_to_shadow():
 
-It all depends on a use-case scenario. It won't be easy for userspace to 
-generalize the usage of color keying, at best the color keying interface could 
-be generalized and then userspace may choose the best fitting variant based on 
-available HW capabilities.
+	if (curr_pg != end_pg) {
+		void *shadow_addr = &wq->shadow_wqe[curr_pg * wq->max_wqe_size];
 
-> So, in summary, I don't think "destination" and "source" are
-> particularly good terms to describe the operation, and I think you have
-> them swapped in your description of
-> "DRM_PLANE_COLORKEY_MODE_TRANSPARENT".
+		copy_wqe_to_shadow(wq, shadow_addr, num_wqebbs, *cons_idx);
+		return shadow_addr;
+	}
 
-Maybe the DRM_PLANE_COLORKEY_MODE_TRANSPARENT should become 
-DRM_PLANE_COLORKEY_MODE_TRANSPARENT_INVERTED? 
+This can cause WQE data error and you will see the above error messages.
+This patch fixes the problem.
 
-Any more opinions?
+Signed-off-by: Zhao Chen <zhaochen6@huawei.com>
+---
+ .../net/ethernet/huawei/hinic/hinic_hw_qp.c   | 36 ++++++++++++++-----
+ .../net/ethernet/huawei/hinic/hinic_hw_qp.h   |  6 +++-
+ drivers/net/ethernet/huawei/hinic/hinic_tx.c  | 18 ++++++++--
+ 3 files changed, 49 insertions(+), 11 deletions(-)
 
-
+diff --git a/drivers/net/ethernet/huawei/hinic/hinic_hw_qp.c b/drivers/net/ethernet/huawei/hinic/hinic_hw_qp.c
+index b9db6d649743..cb239627770f 100644
+--- a/drivers/net/ethernet/huawei/hinic/hinic_hw_qp.c
++++ b/drivers/net/ethernet/huawei/hinic/hinic_hw_qp.c
+@@ -635,17 +635,18 @@ void hinic_sq_write_wqe(struct hinic_sq *sq, u16 prod_idx,
+ }
+ 
+ /**
+- * hinic_sq_read_wqe - read wqe ptr in the current ci and update the ci
++ * hinic_sq_read_wqebb - read wqe ptr in the current ci and update the ci, the
++ * wqe only have one wqebb
+  * @sq: send queue
+  * @skb: return skb that was saved
+- * @wqe_size: the size of the wqe
++ * @wqe_size: the wqe size ptr
+  * @cons_idx: consumer index of the wqe
+  *
+  * Return wqe in ci position
+  **/
+-struct hinic_sq_wqe *hinic_sq_read_wqe(struct hinic_sq *sq,
+-				       struct sk_buff **skb,
+-				       unsigned int *wqe_size, u16 *cons_idx)
++struct hinic_sq_wqe *hinic_sq_read_wqebb(struct hinic_sq *sq,
++					 struct sk_buff **skb,
++					 unsigned int *wqe_size, u16 *cons_idx)
+ {
+ 	struct hinic_hw_wqe *hw_wqe;
+ 	struct hinic_sq_wqe *sq_wqe;
+@@ -658,6 +659,8 @@ struct hinic_sq_wqe *hinic_sq_read_wqe(struct hinic_sq *sq,
+ 	if (IS_ERR(hw_wqe))
+ 		return NULL;
+ 
++	*skb = sq->saved_skb[*cons_idx];
++
+ 	sq_wqe = &hw_wqe->sq_wqe;
+ 	ctrl = &sq_wqe->ctrl;
+ 	ctrl_info = be32_to_cpu(ctrl->ctrl_info);
+@@ -665,11 +668,28 @@ struct hinic_sq_wqe *hinic_sq_read_wqe(struct hinic_sq *sq,
+ 
+ 	*wqe_size = sizeof(*ctrl) + sizeof(sq_wqe->task);
+ 	*wqe_size += SECT_SIZE_FROM_8BYTES(buf_sect_len);
++	*wqe_size = ALIGN(*wqe_size, sq->wq->wqebb_size);
+ 
+-	*skb = sq->saved_skb[*cons_idx];
++	return &hw_wqe->sq_wqe;
++}
++
++/**
++ * hinic_sq_read_wqe - read wqe ptr in the current ci and update the ci
++ * @sq: send queue
++ * @skb: return skb that was saved
++ * @wqe_size: the size of the wqe
++ * @cons_idx: consumer index of the wqe
++ *
++ * Return wqe in ci position
++ **/
++struct hinic_sq_wqe *hinic_sq_read_wqe(struct hinic_sq *sq,
++				       struct sk_buff **skb,
++				       unsigned int wqe_size, u16 *cons_idx)
++{
++	struct hinic_hw_wqe *hw_wqe;
+ 
+-	/* using the real wqe size to read wqe again */
+-	hw_wqe = hinic_read_wqe(sq->wq, *wqe_size, cons_idx);
++	hw_wqe = hinic_read_wqe(sq->wq, wqe_size, cons_idx);
++	*skb = sq->saved_skb[*cons_idx];
+ 
+ 	return &hw_wqe->sq_wqe;
+ }
+diff --git a/drivers/net/ethernet/huawei/hinic/hinic_hw_qp.h b/drivers/net/ethernet/huawei/hinic/hinic_hw_qp.h
+index df729a1587e9..6c84f83ec283 100644
+--- a/drivers/net/ethernet/huawei/hinic/hinic_hw_qp.h
++++ b/drivers/net/ethernet/huawei/hinic/hinic_hw_qp.h
+@@ -165,7 +165,11 @@ void hinic_sq_write_wqe(struct hinic_sq *sq, u16 prod_idx,
+ 
+ struct hinic_sq_wqe *hinic_sq_read_wqe(struct hinic_sq *sq,
+ 				       struct sk_buff **skb,
+-				       unsigned int *wqe_size, u16 *cons_idx);
++				       unsigned int wqe_size, u16 *cons_idx);
++
++struct hinic_sq_wqe *hinic_sq_read_wqebb(struct hinic_sq *sq,
++					 struct sk_buff **skb,
++					 unsigned int *wqe_size, u16 *cons_idx);
+ 
+ void hinic_sq_put_wqe(struct hinic_sq *sq, unsigned int wqe_size);
+ 
+diff --git a/drivers/net/ethernet/huawei/hinic/hinic_tx.c b/drivers/net/ethernet/huawei/hinic/hinic_tx.c
+index 2353ec829c04..c5fca0356c9c 100644
+--- a/drivers/net/ethernet/huawei/hinic/hinic_tx.c
++++ b/drivers/net/ethernet/huawei/hinic/hinic_tx.c
+@@ -283,7 +283,11 @@ static void free_all_tx_skbs(struct hinic_txq *txq)
+ 	int nr_sges;
+ 	u16 ci;
+ 
+-	while ((sq_wqe = hinic_sq_read_wqe(sq, &skb, &wqe_size, &ci))) {
++	while ((sq_wqe = hinic_sq_read_wqebb(sq, &skb, &wqe_size, &ci))) {
++		sq_wqe = hinic_sq_read_wqe(sq, &skb, wqe_size, &ci);
++		if (!sq_wqe)
++			break;
++
+ 		nr_sges = skb_shinfo(skb)->nr_frags + 1;
+ 
+ 		hinic_sq_get_sges(sq_wqe, txq->free_sges, nr_sges);
+@@ -319,11 +323,21 @@ static int free_tx_poll(struct napi_struct *napi, int budget)
+ 	do {
+ 		hw_ci = HW_CONS_IDX(sq) & wq->mask;
+ 
+-		sq_wqe = hinic_sq_read_wqe(sq, &skb, &wqe_size, &sw_ci);
++		/* Reading a WQEBB to get real WQE size and consumer index. */
++		sq_wqe = hinic_sq_read_wqebb(sq, &skb, &wqe_size, &sw_ci);
+ 		if ((!sq_wqe) ||
+ 		    (((hw_ci - sw_ci) & wq->mask) * wq->wqebb_size < wqe_size))
+ 			break;
+ 
++		/* If this WQE have multiple WQEBBs, we will read again to get
++		 * full size WQE.
++		 */
++		if (wqe_size > wq->wqebb_size) {
++			sq_wqe = hinic_sq_read_wqe(sq, &skb, wqe_size, &sw_ci);
++			if (unlikely(!sq_wqe))
++				break;
++		}
++
+ 		tx_bytes += skb->len;
+ 		pkts++;
+ 
+-- 
+2.17.1
 
