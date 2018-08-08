@@ -2,100 +2,109 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 827B8C46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 06:05:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BA1BC46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 06:08:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3084A2170A
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 06:05:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A7CBF21708
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 06:08:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WE/QI4he"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3084A2170A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="l4Y6v74F"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7CBF21708
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727028AbeHHIXO (ORCPT
+        id S1727098AbeHHI06 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 04:23:14 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:44126 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726542AbeHHIXO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 04:23:14 -0400
-Received: by mail-pf1-f194.google.com with SMTP id k21-v6so581189pff.11
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 23:05:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:content-transfer-encoding:to:from:in-reply-to:cc
-         :references:message-id:user-agent:subject:date;
-        bh=YtqRZ/ptjprLpK04S3SK+7xIoOtkUoPSzOMdbbwWcNM=;
-        b=WE/QI4he8zmLXn7mPjU8TOtY8FjKA1hEFnUYbsOG5BADo5fr9NkyN/0n7YBwt7Dr0Y
-         BS5u+14mFMV2sa8ycr0KN9aUx6ZkfLcojybE5EWEMxHhU/oZASbUwh3ROWMO4PumuGTU
-         Ux/HHQefMSPJdZEdrh0/J1l7OFSl62Z+MS59c=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:content-transfer-encoding:to:from
-         :in-reply-to:cc:references:message-id:user-agent:subject:date;
-        bh=YtqRZ/ptjprLpK04S3SK+7xIoOtkUoPSzOMdbbwWcNM=;
-        b=toc/SfE/9MVzkLryxRZd8Wpaslx5C3dAbRi/ohzeRU13g3B4jBV6XwttJdAlMmJZpb
-         iN4Cc+iN68AAI+AYESPQRsJlmL84ldlIdN1QQYe+mulCxgsCCWA0pOIUC8pPWLHnLVdZ
-         cQy7/X4FZgbWzM0x+qW/nMEURPTQqsiJfEdxxeYeQVO4xTxHFDxgFkyTcimeVRPDsMur
-         /3C1mVLHpN5rKJIaJMLPdp9zuUwnwhZhBPd1CpmV6+AIk2ViukUiy7VVxvdATLnHBGd2
-         fnhEfRhD2ayswZ6/ZscObn1Q/pNbY3haHhH+9L7EFh3uzSXrXCgFnxNjxkxAbgo05/Sg
-         ByAA==
-X-Gm-Message-State: AOUpUlHnJSy9JYbbNvvA15EL2PooVAu0DAfm2HvbuZF3V+YGvCrxK2rL
-        NYAO7/N9smqTgsKLPYoJmEUtBw==
-X-Google-Smtp-Source: AA+uWPxUX1G3LFTQK8Qwav86XdFOWpIGZlS5cbN83Ve5T7IyEtADYjdrCNKm2JdivwPDNjP/vG3tsw==
-X-Received: by 2002:a63:cc04:: with SMTP id x4-v6mr1174963pgf.33.1533708308534;
-        Tue, 07 Aug 2018 23:05:08 -0700 (PDT)
-Received: from localhost ([2620:15c:202:201:7e28:b9f3:6afc:5326])
-        by smtp.gmail.com with ESMTPSA id m20-v6sm5411058pfg.61.2018.08.07.23.05.07
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 07 Aug 2018 23:05:07 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        Wed, 8 Aug 2018 04:26:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37846 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726542AbeHHI05 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 04:26:57 -0400
+Received: from localhost (unknown [213.57.183.250])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6008221708;
+        Wed,  8 Aug 2018 06:08:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1533708530;
+        bh=1FcfT7MnSaqKgStE+Xf9qQ8DnOFqxYkW5hhEfLhHDs4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=l4Y6v74FiNKgE0sw4W6L+UivYokdeZ4p5pdGP2kYI+g+429eFpLSGFx3SVCcZsDdx
+         WOva1izU7vhldyk3twzNgGN/fnfRACmCDUKInTyu5mb9KR3J1t4Cc7dsm2wAJ3Du3e
+         BYwHaEsI/YAn6HkndJy6bUhA2MQdWwFi3/Rp4xrI=
+Date:   Wed, 8 Aug 2018 09:08:48 +0300
+From:   Leon Romanovsky <leon@kernel.org>
+To:     Alexandru Gagniuc <mr.nuke.me@gmail.com>
+Cc:     linux-pci@vger.kernel.org, bhelgaas@google.com,
+        jakub.kicinski@netronome.com, keith.busch@intel.com,
+        alex_gagniuc@dellteam.com, austin_bolen@dell.com,
+        shyam_iyer@dell.com, Ariel Elior <ariel.elior@cavium.com>,
+        everest-linux-l2@cavium.com,
+        "David S. Miller" <davem@davemloft.net>,
+        Michael Chan <michael.chan@broadcom.com>,
+        Ganesh Goudar <ganeshgr@chelsio.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        Tariq Toukan <tariqt@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>,
+        Dirk van der Merwe <dirk.vandermerwe@netronome.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        intel-wired-lan@lists.osuosl.org, linux-rdma@vger.kernel.org,
+        oss-drivers@netronome.com
+Subject: Re: [PATCH v6 8/9] net/mlx5: Do not call pcie_print_link_status()
+Message-ID: <20180808060848.GQ13378@mtr-leonro.mtl.com>
+References: <CAErSpo4PK+SQLNfdkLNt9eLc7bpbxbkZCsa8T-tQpid601n0SQ@mail.gmail.com>
+ <20180806232600.25694-1-mr.nuke.me@gmail.com>
+ <20180806232600.25694-8-mr.nuke.me@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Lina Iyer <ilina@codeaurora.org>,
-        Marc Zyngier <marc.zyngier@arm.com>
-From:   Stephen Boyd <swboyd@chromium.org>
-In-Reply-To: <20180802125827.GB27850@codeaurora.org>
-Cc:     evgreen@chromium.org, linus.walleij@linaro.org,
-        bjorn.andersson@linaro.org, rplsssn@codeaurora.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        rnayak@codeaurora.org, devicetree@vger.kernel.org
-References: <20180801020021.9782-1-ilina@codeaurora.org>
- <20180801020021.9782-2-ilina@codeaurora.org>
- <86600uy4vh.wl-marc.zyngier@arm.com> <20180801194538.GA6422@codeaurora.org>
- <86wot9wb9u.wl-marc.zyngier@arm.com> <20180802065104.GA27850@codeaurora.org>
- <86sh3xw7m9.wl-marc.zyngier@arm.com> <20180802125827.GB27850@codeaurora.org>
-Message-ID: <153370830708.220756.4595316550560511917@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH RESEND RFC 1/4] drivers: pinctrl: qcom: add wakeup capability to
- GPIO
-Date:   Tue, 07 Aug 2018 23:05:07 -0700
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="2hMgfIw2X+zgXrFs"
+Content-Disposition: inline
+In-Reply-To: <20180806232600.25694-8-mr.nuke.me@gmail.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Lina Iyer (2018-08-02 05:58:27)
-> On Thu, Aug 02 2018 at 01:27 -0600, Marc Zyngier wrote:
-> >
-> >Sure. But once woken up (GIC *and* TLMM), the gpio line (which I
-> >assume is level) is still high at the TLMM input. So why isn't it
-> >registering that state once it has been woken up?
-> >
-> >I can understand that it would be missing an edge. But that doesn't
-> >hold for level signalling.
-> >
-> Sure, yes. Sorry for not registering your point in my response.
-> Once woken up we should see the level interrupt in TLMM.
 
-And the level type gpio interrupt will trigger the TLMM summary
-interrupt line after the wakeup? So then the only thing that needs to be
-replayed is edge interrupts? How are edge interrupts going to be
-replayed?
+--2hMgfIw2X+zgXrFs
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+On Mon, Aug 06, 2018 at 06:25:42PM -0500, Alexandru Gagniuc wrote:
+> This is now done by the PCI core to warn of sub-optimal bandwidth.
+>
+> Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+> ---
+>  drivers/net/ethernet/mellanox/mlx5/core/main.c | 4 ----
+>  1 file changed, 4 deletions(-)
+>
+
+Thanks,
+Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
+
+--2hMgfIw2X+zgXrFs
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBAgAGBQJbaojwAAoJEORje4g2clin/HIP/2W8reNA2ST0qw9ktcqoAtM5
+XQKIgyD8DVxLkj0MjeQ+bzCpWwHzhNzXWMp+roOdvwhZSFav1uW+KyFidPn+r/0Q
+6OR57qkoWv0Z/+35kFu5XWcSXg0g+3AzdukC42x6icE9zJKHzFIOYP5Q4AxUwNG0
+ucAaouLXgioVQEyl64H7LgTzQNaUXPNb4zX8SaEtPBBeE1q0bo1LqBLLfUxRlGb8
+LcgkPpKcDoLM5MKZVWmPGPR2S0imdDgt7K/1d8QvW7obq02dkwCLUG6DRw2qjLdC
+K9heg0zilZlS2/fpzxIgrBTmdrSVxTU3ThEYF6h5PHcJTAZ3QNo8BYOmpG0Htic3
+/QT317O6cM/gEZbySsBxGMJHa/li/5+Btv7e1B1lsoARsIuZsuEYy0giK5c1rqx0
+pgD2miV4TnJdOmqvImtsrLQQF43PE9oemIYvhRIuItEDPWBEU6eElnQoGiH23RXE
+l4X1NVruTJzEpEkirzpkdQ1GdsL82AXeil1QO0iD/f4+4j04mDbzRoVeYFLO/OM1
+qRTZhfvydrbQIzP4zw9yWVqxbqHiRoEMjyY0vfD0lvnhq+8shcWFeFQLzBGOXDSn
+sqFSL7sFxAG3VcnWYwEiBvacuuEr4vSMCgbm9rvhBwXzNFp5XT3v02eYvgQ9P6Lr
+ph6iCl9z86ww3oO/AGmo
+=I8Ry
+-----END PGP SIGNATURE-----
+
+--2hMgfIw2X+zgXrFs--
