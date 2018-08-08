@@ -2,119 +2,99 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0991CC46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 19:14:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C57CC46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 19:16:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE3EB216E3
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 19:14:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="GQCnw6Bk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE3EB216E3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id F0B97216E3
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 19:16:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0B97216E3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731105AbeHHVfa (ORCPT
+        id S1730736AbeHHVhG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 17:35:30 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:32884 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727337AbeHHVfR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 17:35:17 -0400
-Received: by mail-pf1-f193.google.com with SMTP id d4-v6so1616082pfn.0
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 12:14:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Ah5CVFph/rLL+ZJ1gEnQ88ZVR9bFIAJr3uYoDi+MZ2Y=;
-        b=GQCnw6BksSGfcvZhRg2x23sBZQ5Xl00k6ibEMWAZWdF3JjgM8YhJTMVFltg9cDGcmh
-         8hCIithgzQWTdy+/ifQcZ+xashj5wYmSylFQ20aCmIFJ/a6/OmG2hbP/Uy/fAxqfnk29
-         B0ahspmtI5hEnuXRwq3o09sWXF7/2fBW9Nm1c=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Ah5CVFph/rLL+ZJ1gEnQ88ZVR9bFIAJr3uYoDi+MZ2Y=;
-        b=PX1DN3LvTFqjT432NB2DTiiFP1Oey9IalJD1HVWg6dEAoqLNFg0a9KInTtX609ZUmL
-         XTIAwCWD27ZJxxM+s9Dud0D1NzkgVRZWETgAjB72r0d8opCFfFiH983Mc+n8Tncul9iA
-         hfMdAGF5DnvOXDhi3Ca/W2hLnCoQpHstm4mfZN8MLvLn8oHVeHuMt0lJ+kM5W2WtE4vF
-         ss8wZrDZvD3bZSm7jPs+7wqJOKfMfZqpdGQd3Hw/Q2Ku1vWDqxqOTmhbTDZejpjLdIkz
-         MQP/ANTioVt8VyBXjH9ajBthlgCsoG5kx7GMAqN+G46QGB59baXWXglYKfH6Ed8NL8Cs
-         He9A==
-X-Gm-Message-State: AOUpUlGQg3lw8naZiZ8RIeZrlviebqvjlwQO6wDkLb2gfJ+x2ZrhPxrp
-        XzsqczVsw26vohgCbeQU2Wa0sg==
-X-Google-Smtp-Source: AA+uWPzQlndd3Z7t9c5d455gzVPkeo+9+M/uIKlLLLblo4HzBJITEl5mGr99n9B25SmQ0YuFfI/VKA==
-X-Received: by 2002:a63:5350:: with SMTP id t16-v6mr3644366pgl.196.1533755653025;
-        Wed, 08 Aug 2018 12:14:13 -0700 (PDT)
-Received: from mka.mtv.corp.google.com ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
-        by smtp.gmail.com with ESMTPSA id f5-v6sm5431136pga.58.2018.08.08.12.14.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 08 Aug 2018 12:14:12 -0700 (PDT)
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
+        Wed, 8 Aug 2018 17:37:06 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42602 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728330AbeHHVhG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 17:37:06 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 646F640241C7;
+        Wed,  8 Aug 2018 19:16:00 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 24DD21C739;
+        Wed,  8 Aug 2018 19:16:00 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id w78JG0lM002585;
+        Wed, 8 Aug 2018 15:16:00 -0400
+Received: from localhost (mpatocka@localhost)
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id w78JFxII002581;
+        Wed, 8 Aug 2018 15:15:59 -0400
+X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
+Date:   Wed, 8 Aug 2018 15:15:59 -0400 (EDT)
+From:   Mikulas Patocka <mpatocka@redhat.com>
+X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+cc:     Florian Weimer <fweimer@redhat.com>,
+        Andrew Pinski <pinskia@gmail.com>,
+        Richard Earnshaw <Richard.Earnshaw@arm.com>,
+        Ramana Radhakrishnan <ramana.gcc@googlemail.com>,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        GNU C Library <libc-alpha@sourceware.org>,
         Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc:     linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Siddartha Mohanadoss <smohanad@codeaurora.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH 1/3] dt-bindings: iio: vadc: Fix documentation of 'reg'
-Date:   Wed,  8 Aug 2018 12:13:37 -0700
-Message-Id: <20180808191339.16875-2-mka@chromium.org>
-X-Mailer: git-send-email 2.18.0.597.ga71716f1ad-goog
-In-Reply-To: <20180808191339.16875-1-mka@chromium.org>
-References: <20180808191339.16875-1-mka@chromium.org>
+        Will Deacon <will.deacon@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Subject: Re: framebuffer corruption due to overlapping stp instructions on
+ arm64
+In-Reply-To: <CAKv+Gu8384LZwL898wJ8BKjmJNzvd+-cSFUp4X4OpfmRDCP4Ng@mail.gmail.com>
+Message-ID: <alpine.LRH.2.02.1808081514140.2447@file01.intranet.prod.int.rdu2.redhat.com>
+References: <alpine.LRH.2.02.1808021242320.31834@file01.intranet.prod.int.rdu2.redhat.com> <alpine.LRH.2.02.1808032046540.24748@file01.intranet.prod.int.rdu2.redhat.com> <CA+=Sn1=6F-fGLmXE0VqQHTqTCUKUT=Fz29mMT7349SPFisbZ9A@mail.gmail.com>
+ <alpine.LRH.2.02.1808040611070.23762@file01.intranet.prod.int.rdu2.redhat.com> <fd2cae87-b2df-d8ef-8836-e6cbf8c5f851@redhat.com> <alpine.LRH.2.02.1808060325110.3756@file01.intranet.prod.int.rdu2.redhat.com> <CAKv+Gu_y6La77sWOSROrwfRy65jrFVYVvRZt+ewNheYhdhHCkQ@mail.gmail.com>
+ <alpine.LRH.2.02.1808060626060.2986@file01.intranet.prod.int.rdu2.redhat.com> <CAKv+Gu87YqLM=FFZ6V8rHhuhskDdsBUuXFpqNKVbXWqdnuNEyA@mail.gmail.com> <alpine.LRH.2.02.1808060639200.2986@file01.intranet.prod.int.rdu2.redhat.com>
+ <CAKv+Gu8HyHX8qjg1qHV2M9Re+RGQJigjdAFVC_yR4niGkk2ikA@mail.gmail.com> <alpine.LRH.2.02.1808060700070.10220@file01.intranet.prod.int.rdu2.redhat.com> <CAKv+Gu8384LZwL898wJ8BKjmJNzvd+-cSFUp4X4OpfmRDCP4Ng@mail.gmail.com>
+User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 08 Aug 2018 19:16:00 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 08 Aug 2018 19:16:00 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mpatocka@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The documentation of Qualcomm's SPMI PMIC voltage ADC claims that the
-'reg' property consists of two values, the SPMI address and the length
-of the controller's registers. However the SPMI bus to which it is added
-specifies "#size-cells = <0>;". Remove the controller register length
-from the documentation of the field and the example.
 
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
----
- Documentation/devicetree/bindings/iio/adc/qcom,spmi-vadc.txt | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/iio/adc/qcom,spmi-vadc.txt b/Documentation/devicetree/bindings/iio/adc/qcom,spmi-vadc.txt
-index 0fb46137f936..d0c188e5c922 100644
---- a/Documentation/devicetree/bindings/iio/adc/qcom,spmi-vadc.txt
-+++ b/Documentation/devicetree/bindings/iio/adc/qcom,spmi-vadc.txt
-@@ -13,7 +13,7 @@ VADC node:
- - reg:
-     Usage: required
-     Value type: <prop-encoded-array>
--    Definition: VADC base address and length in the SPMI PMIC register map.
-+    Definition: VADC base address in the SPMI PMIC register map.
- 
- - #address-cells:
-     Usage: required
-@@ -104,7 +104,7 @@ Example:
- 	/* VADC node */
- 	pmic_vadc: vadc@3100 {
- 		compatible = "qcom,spmi-vadc";
--		reg = <0x3100 0x100>;
-+		reg = <0x3100>;
- 		interrupts = <0x0 0x31 0x0 IRQ_TYPE_EDGE_RISING>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
--- 
-2.18.0.597.ga71716f1ad-goog
+On Mon, 6 Aug 2018, Ard Biesheuvel wrote:
 
+> No that works fine for me. VDPAU acceleration works as well, but it
+> depends on your chromium build whether it can actually use it, I
+> think? In any case, mplayer can use vdpau to play 1080p h264 without
+> breaking a sweat on this system.
+
+I didn't install the vdpau libraries and firmware. mplayer plays through 
+xv and works (it can't play through vdpau). Chromium uses 
+I-don't-know-what and locks up.
+
+> Note that the VDPAU driver also relies on memory semantics, i.e., it
+> may use DC ZVA (zero cacheline) instructions which are not permitted
+> on device mappings. This is probably just glibc's memset() being
+> invoked, but I remember hitting this on another PCIe-impaired arm64
+> system with Synopsys PCIe IP
+
+> Are you setting the pstate to auto? That helps a lot in my experience.
+>
+> I.e.,
+>
+> echo auto > /sys/kernel/debug/dri/0/pstate
+
+I tried that, but it didn't help.
+
+Mikulas
