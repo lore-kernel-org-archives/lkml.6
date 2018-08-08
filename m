@@ -2,137 +2,89 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EF9FC46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 15:57:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6677BC4646D
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 15:57:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 049DB21473
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 15:57:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jimiDign"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 049DB21473
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 2A37F21473
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 15:57:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A37F21473
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729903AbeHHSRT (ORCPT
+        id S1729218AbeHHSQb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 14:17:19 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:38168 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729796AbeHHSRT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 14:17:19 -0400
-Received: by mail-pg1-f196.google.com with SMTP id k3-v6so1292641pgq.5
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 08:57:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=D4k5d6W8Xw0GrL+UWrfLJZPlaaPQOpGEgYYYKrDbb6A=;
-        b=jimiDignnuzkWomWqzpI89WAxjanomST1c8DKr1Rxxp+Rlmx6gIKjqdmECH/GIEN5A
-         YWRiXJdyyvM0OeLosSb8Ws0iWLzwu3HxrFVma08fUkNn6TBiZuKoPST3ANUfvXWpWSZW
-         ORernSIYaEFaFSG7l7GljDx9OdLjRBMcxJ9A2AuPna3tu1R/PveRYY8wG85s83ogIH5P
-         jHo7rwgxbJHUiOlJq0Qp/whKiUrUzfioEhNwZHEU/6vSB4spIh9ZwXKB+rNdRrxYcWBy
-         YTyws3kbz8s7MrMFWYAn8hulF+GALikMQBQgBV6AW1qI4Z3n11LNVcTA32rBDDpBJeOl
-         FY3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=D4k5d6W8Xw0GrL+UWrfLJZPlaaPQOpGEgYYYKrDbb6A=;
-        b=ZF8dtnQUKox6uLmSYfi7IihNw5A6OcS0B0hRM8Gj66HJGjoO1wIRxGVrHU3t+q+S/w
-         NEWj6SYASasqblvzKOxDCwagz7MmEKkYQZo9xkrH5c671vUSHSpD3AtfFQ5cV80Enwvl
-         3onjfexz/6WWxmi6yMsJIiy0tTSMtZH8iuSMP7STypXXdyjG562Mctn/zCmjXYH5qCRf
-         Ahb+LoZSmOhxVOqAXavoAHo7TWY1PBcMWwp/ErGJKMOJIVf7RcUDY1PohbarNx82VK8W
-         708umfr5qCcDtbHKANpZAl4k5fEBxZwY+7CpH3+ft1qw20Q8vdjnLl9ybUKU94nCPYFB
-         C1TA==
-X-Gm-Message-State: AOUpUlHTi9SVjL46stct2Dx5A5ucUYbuFHlmfNhKxUjQYcX20eMbbz2U
-        b3F1XWraoMn5gmEx0NiWkFUK+mep+jHLzRVFBFBqjQ==
-X-Google-Smtp-Source: AA+uWPwq1toOxttvE55JmPZxLA+ydwTcJlsHVj98N34zSG6nRx0oSz2fpG4Z42+/9lXMP3G1/IDK9+p9EE5Hl9rLbhY=
-X-Received: by 2002:a65:40cd:: with SMTP id u13-v6mr3199108pgp.334.1533743821748;
- Wed, 08 Aug 2018 08:57:01 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a17:90a:ac14:0:0:0:0 with HTTP; Wed, 8 Aug 2018 08:56:41
- -0700 (PDT)
-In-Reply-To: <bcbcb69b-5d46-4e3d-852a-73e1345586e8@googlegroups.com>
-References: <000000000000c242e90570aa0062@google.com> <CA+55aFyEZR=v2GySzWWF3uh9ZB53CFFv460Wzg4n8DGze8GFfw@mail.gmail.com>
- <CACT4Y+bOJx+SnkMqzDDUTU1iztQ7DpMBG7Z-oV5wArRaSEzh+Q@mail.gmail.com>
- <CA+55aFz1GVHUGiX1SE_5C-e9LdXdx3pBB10zwga1LOy6axk5Ww@mail.gmail.com>
- <CACT4Y+bvGNmjP+3z3uzm=SvnngkbtEx-JeT6iVWg4gwYvoKyLQ@mail.gmail.com> <bcbcb69b-5d46-4e3d-852a-73e1345586e8@googlegroups.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Wed, 8 Aug 2018 17:56:41 +0200
-Message-ID: <CACT4Y+aHEqv+-4YbNWAHX53U+54T+fzMyVxjWB_iF1EDZBZXjQ@mail.gmail.com>
-Subject: Re: general protection fault in in_aton
-To:     randy.dunlap@gmail.com
-Cc:     syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        Ron Minnich <rminnich@sandia.gov>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        v9fs-developer@lists.sourceforge.net,
-        LKML <linux-kernel@vger.kernel.org>,
-        tomas <tomasbortoli@gmail.com>,
-        Dominique Martinet <asmadeus@codewreck.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 8 Aug 2018 14:16:31 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:32828 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727760AbeHHSQb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 14:16:31 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E0DA340216E7;
+        Wed,  8 Aug 2018 15:56:13 +0000 (UTC)
+Received: from vitty.brq.redhat.com (unknown [10.43.2.155])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id BFEBC21568A3;
+        Wed,  8 Aug 2018 15:56:11 +0000 (UTC)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     kvm@vger.kernel.org
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Roman Kagan <rkagan@virtuozzo.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
+        Mohammed Gamal <mmorsy@redhat.com>,
+        Cathy Avery <cavery@redhat.com>, linux-kernel@vger.kernel.org,
+        Jim Mattson <jmattson@google.com>,
+        Liran Alon <liran.alon@oracle.com>
+Subject: [PATCH v4 07/12] x86/kvm/hyperv: don't clear VP assist pages on init
+Date:   Wed,  8 Aug 2018 17:55:47 +0200
+Message-Id: <20180808155552.4836-8-vkuznets@redhat.com>
+In-Reply-To: <20180808155552.4836-1-vkuznets@redhat.com>
+References: <20180808155552.4836-1-vkuznets@redhat.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 08 Aug 2018 15:56:13 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 08 Aug 2018 15:56:13 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'vkuznets@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 8, 2018 at 12:43 AM,  <randy.dunlap@gmail.com> wrote:
->
->
-> On Wednesday, July 11, 2018 at 9:48:02 AM UTC-7, Dmitry Vyukov wrote:
->>
->> On Tue, Jul 10, 2018 at 10:15 PM, Linus Torvalds
->> <torv...@linux-foundation.org> wrote:
->> > On Tue, Jul 10, 2018 at 12:57 PM Dmitry Vyukov <dvy...@google.com>
->> > wrote:
->> >>
->> >> Is it really hard to get fault address? I know that userspace
->> >> generally receives fault address in siginfo.
->> >
->> > For an actual page fault it's trivial.
->> >
->> > However, for invalid addresses (aka "non-canonical"), you don't even
->> > get a page fault, you get a GP like in this case. And then the actual
->> > address is not available.
->>
->>
->> I see. Then I don't have any great ideas. Running without KASAN would
->> result in more, much more cryptic crashes.
->>
->> FWIW for these "GPF could be caused by NULL-ptr deref" I first just
->> assume that it's in fact a NULL deref. And in this case it all pretty
->> quickly forms a consistent picture that it's indeed just a missing a
->> NULL pointer check. That dffffc0000000000 in a register also a good
->> hint.
->
->
-> The second mount syscall in loop() has a pointer parameter of 0 (null):
->       syscall(__NR_mount, 0, 0x200000c0, 0x20000340, 0, 0x20000180);
-> and that NULL is passed from do_mount() to do_new_mount() to
-> vfs_kern_mount()
-> on to mount_fs() to v9fs_mount() to v9fs_session_init() to
-> p9_client_create() to
-> rdma_create_trans() and then to in_aton().  Are all of those valid up until
-> the
-> call to in_aton()?
+VP assist pages may hold valuable data which needs to be preserved across
+migration. Clean PV EOI portion of the data on init, the guest is
+responsible for making sure there's no garbage in the rest.
 
-Hi Randy,
+This will be used for nVMX migration, eVMCS address needs to be preserved.
 
-+kernel mailing lists again
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+---
+ arch/x86/kvm/hyperv.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-Please keep kernel lists and developers and CC, there are no kernel
-developers on syzkaller-bugs@ list.
+diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
+index b1655d01c368..ae3e2e0de680 100644
+--- a/arch/x86/kvm/hyperv.c
++++ b/arch/x86/kvm/hyperv.c
+@@ -1080,7 +1080,13 @@ static int kvm_hv_set_msr(struct kvm_vcpu *vcpu, u32 msr, u64 data, bool host)
+ 		addr = kvm_vcpu_gfn_to_hva(vcpu, gfn);
+ 		if (kvm_is_error_hva(addr))
+ 			return 1;
+-		if (__clear_user((void __user *)addr, PAGE_SIZE))
++
++		/*
++		 * Clear apic_assist portion of f(struct hv_vp_assist_page
++		 * only, there can be valuable data in the rest which needs
++		 * to be preserved e.g. on migration.
++		 */
++		if (__clear_user((void __user *)addr, sizeof(u32)))
+ 			return 1;
+ 		hv->hv_vapic = data;
+ 		kvm_vcpu_mark_page_dirty(vcpu, gfn);
+-- 
+2.14.4
 
-This is almost the same as "general protection fault in
-p9_fd_create_unix" just for rdma:
-https://syzkaller.appspot.com/bug?extid=1a262da37d3bead15c39
-Yes, this function needs to check for NULL.
-
-Tomas, I think it makes sense to include rdma into your "9p: fix NULL
-pointer dereferences" patch.
