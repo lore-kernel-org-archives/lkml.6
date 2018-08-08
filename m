@@ -2,114 +2,129 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5528C4646D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 06:47:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6C46C4646D
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 06:48:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 595A02170A
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 06:47:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="XTpWUxGe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 595A02170A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wdc.com
+	by mail.kernel.org (Postfix) with ESMTP id 7878E2170A
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 06:48:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7878E2170A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727191AbeHHJFb (ORCPT
+        id S1727228AbeHHJGR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 05:05:31 -0400
-Received: from esa2.hgst.iphmx.com ([68.232.143.124]:60559 "EHLO
-        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726954AbeHHJFb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 05:05:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1533710846; x=1565246846;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=FpxQH/OYAaUlpNJTt4nGXW12eE4Jmmh7sk8flcywfPk=;
-  b=XTpWUxGeTCFe1LGQsGjJCqxKx94ISX9D+JjFWBrXFhHCxAdfblZMGutI
-   OZAZ/+THkPbfqgsROg0IjVTZLb0xkrpb4SJT7jjewgmqRQH4QqdJwa6ZV
-   MK6zGo+InjNYmd9LUz6id8PJJ1ukEYF2xuuXjg1jp4QipE8f1zU/RKJMq
-   p684aolC1ckZ3XP2mZe6D3wemmewJxOcJ1K1cXHcxlMgmY7VLSCACudsd
-   TvVoTOWIRX6V55YcRhZ+8wPYACj+LNLQcEHrrfH7burzROsk6dijVeY28
-   LNY86gCy1xEWJPHqFApA2OTPisaKjzMQKfpj8x7gzgJT64iTmdQrxS7st
-   A==;
-X-IronPort-AV: E=Sophos;i="5.51,456,1526313600"; 
-   d="scan'208";a="184347156"
-Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 08 Aug 2018 14:47:25 +0800
-Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep02.wdc.com with ESMTP; 07 Aug 2018 23:34:54 -0700
-Received: from ch8yk72.ad.shared (HELO [10.86.56.196]) ([10.86.56.196])
-  by uls-op-cesaip01.wdc.com with ESMTP; 07 Aug 2018 23:47:16 -0700
-Subject: Re: [PATCH 09/11] RISC-V: Support per-hart timebase-frequency
-To:     Palmer Dabbelt <palmer@dabbelt.com>, Christoph Hellwig <hch@lst.de>
-Cc:     "tglx@linutronix.de" <tglx@linutronix.de>,
-        "jason@lakedaemon.net" <jason@lakedaemon.net>,
-        "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
-        "anup@brainfault.org" <anup@brainfault.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "shorne@gmail.com" <shorne@gmail.com>
-References: <mhng-d315d8a6-c4db-4ec8-927b-fc9f1d8e7872@palmer-si-x1c4>
-From:   Atish Patra <atish.patra@wdc.com>
-Message-ID: <b4ddcb20-6109-22ac-4691-c2c012ea112a@wdc.com>
-Date:   Tue, 7 Aug 2018 23:47:13 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
+        Wed, 8 Aug 2018 05:06:17 -0400
+Received: from mx2.suse.de ([195.135.220.15]:45542 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726954AbeHHJGR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 05:06:17 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 4A7AEADDD;
+        Wed,  8 Aug 2018 06:47:59 +0000 (UTC)
+Date:   Wed, 8 Aug 2018 08:47:58 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Jerome Glisse <jglisse@redhat.com>
+Cc:     osalvador@techadventures.net, akpm@linux-foundation.org,
+        dan.j.williams@intel.com, pasha.tatashin@oracle.com,
+        david@redhat.com, yasu.isimatu@gmail.com, logang@deltatee.com,
+        dave.jiang@intel.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Oscar Salvador <osalvador@suse.de>
+Subject: Re: [RFC PATCH 2/3] mm/memory_hotplug: Create __shrink_pages and
+ move it to offline_pages
+Message-ID: <20180808064758.GB27972@dhcp22.suse.cz>
+References: <20180807133757.18352-1-osalvador@techadventures.net>
+ <20180807133757.18352-3-osalvador@techadventures.net>
+ <20180807135221.GA3301@redhat.com>
+ <20180807145900.GH10003@dhcp22.suse.cz>
+ <20180807151810.GB3301@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <mhng-d315d8a6-c4db-4ec8-927b-fc9f1d8e7872@palmer-si-x1c4>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180807151810.GB3301@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/6/18 1:34 PM, Palmer Dabbelt wrote:
-> On Fri, 03 Aug 2018 05:33:57 PDT (-0700), Christoph Hellwig wrote:
->> On Thu, Aug 02, 2018 at 03:19:49PM -0700, Atish Patra wrote:
->>> On 8/2/18 4:50 AM, Christoph Hellwig wrote:
->>>> From: Palmer Dabbelt <palmer@sifive.com>
->>>>
->>>> Follow the updated DT specs and read the timebase-frequency from the
->>>> CPU 0 node.
->>>>
->>>
->>> However, the DT in the HighFive Unleashed has the entry at the wrong place.
->>>
->>> Even the example in github also at wrong place.
->>> https://github.com/riscv/riscv-device-tree-doc/pull/8/commits/2461d481329c55005fcbe684f0d6bdb3b7f0a432
->>>
->>> DT should be consistent between Documentation and the one in the hardware.
->>> I can fix them in bbl & submit a bbl patch. But I am not sure if that's an
->>> acceptable way to do it.
->>
->> I'll need to have comments from Palmer and/or someone else at SiFive
->> here.  Personally I really don't care where we document the timebase,
->> as this patch supports both locations anywhere.  For now I'll just update
->> the commit log to state that more explicitly.
+On Tue 07-08-18 11:18:10, Jerome Glisse wrote:
+> On Tue, Aug 07, 2018 at 04:59:00PM +0200, Michal Hocko wrote:
+> > On Tue 07-08-18 09:52:21, Jerome Glisse wrote:
+> > > On Tue, Aug 07, 2018 at 03:37:56PM +0200, osalvador@techadventures.net wrote:
+> > > > From: Oscar Salvador <osalvador@suse.de>
+> > > 
+> > > [...]
+> > > 
+> > > > diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+> > > > index 9bd629944c91..e33555651e46 100644
+> > > > --- a/mm/memory_hotplug.c
+> > > > +++ b/mm/memory_hotplug.c
+> > > 
+> > > [...]
+> > > 
+> > > >  /**
+> > > >   * __remove_pages() - remove sections of pages from a zone
+> > > > - * @zone: zone from which pages need to be removed
+> > > > + * @nid: node which pages belong to
+> > > >   * @phys_start_pfn: starting pageframe (must be aligned to start of a section)
+> > > >   * @nr_pages: number of pages to remove (must be multiple of section size)
+> > > >   * @altmap: alternative device page map or %NULL if default memmap is used
+> > > > @@ -548,7 +557,7 @@ static int __remove_section(struct zone *zone, struct mem_section *ms,
+> > > >   * sure that pages are marked reserved and zones are adjust properly by
+> > > >   * calling offline_pages().
+> > > >   */
+> > > > -int __remove_pages(struct zone *zone, unsigned long phys_start_pfn,
+> > > > +int __remove_pages(int nid, unsigned long phys_start_pfn,
+> > > >  		 unsigned long nr_pages, struct vmem_altmap *altmap)
+> > > >  {
+> > > >  	unsigned long i;
+> > > > @@ -556,10 +565,9 @@ int __remove_pages(struct zone *zone, unsigned long phys_start_pfn,
+> > > >  	int sections_to_remove, ret = 0;
+> > > >  
+> > > >  	/* In the ZONE_DEVICE case device driver owns the memory region */
+> > > > -	if (is_dev_zone(zone)) {
+> > > > -		if (altmap)
+> > > > -			map_offset = vmem_altmap_offset(altmap);
+> > > > -	} else {
+> > > > +	if (altmap)
+> > > > +		map_offset = vmem_altmap_offset(altmap);
+> > > > +	else {
+> > > 
+> > > This will break ZONE_DEVICE at least for HMM. While i think that
+> > > altmap -> ZONE_DEVICE (ie altmap imply ZONE_DEVICE) the reverse
+> > > is not true ie ZONE_DEVICE does not necessarily imply altmap. So
+> > > with the above changes you change the expected behavior.
+> > 
+> > Could you be more specific what is the expected behavior here?
+> > Is this about calling release_mem_region_adjustable? Why does is it not
+> > suitable for zone device ranges?
 > 
-> You're welcome to submit a BBL patch to make this all match, but from my
-> understanding of the device tree spec putting timebase-frequency in either
-> place should be legal so it's not a critical fix.  That said, it's better to
-> have them match than not match.
-> 
+> Correct, you should not call release_mem_region_adjustable() the device
+> region is not part of regular iomem resource as it might not necessarily
+> be enumerated through known ways to the kernel (ie only the device driver
+> can discover the region and core kernel do not know about it).
 
-ok. I will add it my TODO list as a low priority task. Following DT 
-entries can be fixed for now.
+If there is no region registered with the range then the call should be
+mere nop, no? So why do we have to special case?
 
-1. timebase-frequency
-2. next-level-cache
+[...]
 
-Regards,
-Atish
+> Also in the case they do exist in iomem resource it is as PCIE BAR so
+> as IORESOURCE_IO (iirc) and thus release_mem_region_adjustable() would
+> return -EINVAL. Thought nothing bad happens because of that, only a
+> warning message that might confuse the user.
+
+I am not sure I have understood this correctly. Are you referring to the
+current state when we would call release_mem_region_adjustable
+unconditionally or the case that the resource would be added also for
+zone device ranges?
+
+If the former then I do not see any reason why we couldn't simply
+refactor the code to expect a failure and drop the warning in that path.
+-- 
+Michal Hocko
+SUSE Labs
