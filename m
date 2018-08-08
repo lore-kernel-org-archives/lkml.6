@@ -2,156 +2,127 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34BBAC46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 18:21:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D0AFC4646D
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 18:22:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DEA6D21776
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 18:21:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BF12C21776
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 18:22:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gH466pnb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEA6D21776
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DU5crpuU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF12C21776
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729669AbeHHUmc (ORCPT
+        id S1729740AbeHHUnL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 16:42:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54268 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727609AbeHHUmc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 16:42:32 -0400
-Received: from mail-qt0-f180.google.com (mail-qt0-f180.google.com [209.85.216.180])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2174C21A5A;
-        Wed,  8 Aug 2018 18:21:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1533752498;
-        bh=aei8Nka1ay1OaYRa7UAYJh0kf8jpSRahxiHUCihTkHk=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=gH466pnbbmz610Y1eNRQlWldhHm2sEVDii7iZbYR9BfDuysh4iMP82SvPn8sCggeD
-         NVOYDvlUuBrGm7XxmEoaPVHduS71CjvGXj3ohgg0CoZebwMxs932bZvF4g2JTY46sk
-         lPUPwixrLXLYABjtw5g2ee62ZZloTXbt/UUfEugI=
-Received: by mail-qt0-f180.google.com with SMTP id h4-v6so3544395qtj.7;
-        Wed, 08 Aug 2018 11:21:38 -0700 (PDT)
-X-Gm-Message-State: AOUpUlF9VnJ+WbI4cEGBGb0tbCe+0Ew3C/FzC4LutkJea+BjvBqlb8Dc
-        F1X/LkwfAnKrKXSZEA43H4qnAOGKguusjYvfUw==
-X-Google-Smtp-Source: AA+uWPxn1KxgBtkl8r3YS2Rratn0mAldPuHFlTHRJC09JDukbtnRQMjiXCQfseD3QDQe5zJI2aA4d3xumWdfOPnlYAk=
-X-Received: by 2002:ac8:96b:: with SMTP id z40-v6mr3857966qth.362.1533752497212;
- Wed, 08 Aug 2018 11:21:37 -0700 (PDT)
+        Wed, 8 Aug 2018 16:43:11 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:46105 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727609AbeHHUnL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 16:43:11 -0400
+Received: by mail-pg1-f195.google.com with SMTP id f14-v6so1451639pgv.13;
+        Wed, 08 Aug 2018 11:22:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=xwR6MJmwNMkoixqsD/kVnbrU1GniYmPyakTAnDvfAVs=;
+        b=DU5crpuUQhWrH2veC0AyzODYyCB55Gg05292koPJ4Rdj5bjx6T6vjhAGDeLmJV1Ecu
+         tYqWm7aoLu7blE1IO5rxfrO3xkr/cKT8WowQC+bcWtrkNjZCyB0sklVP66SB8KwpIPR9
+         oF3GsLx7CJuiKoJplOaic9OopnjcrAqb1fnRYYp/n8OJ9gm99xWnqYGRp6L3022QOxOa
+         epbtVgsQj7uak8UwOp5xh3Pj/SEK5PCHLLZSqW/Dv7AIhpmXMKlNILTWitWYEHGHWCIw
+         qfbhYeea7BER9bb5eGkcIj+7aUY9EQckWUlrFsfrJWY8Vukb+ZzJx0ahEcwh+kswyiBr
+         i6RA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=xwR6MJmwNMkoixqsD/kVnbrU1GniYmPyakTAnDvfAVs=;
+        b=D6NX4PRGH8qrWCBLsvazASVjrRm1nsGFp4fDmD0/dBUT7loXInRknfRFkAFHbQG7Fw
+         38B78q4GsABSukYO38HS08lDYGargIGL527YGPOslncWJy9X8oej8HfSWTg4Q792p3ZC
+         bDl9+KvgqHWlve30ADbGxqTieLYDb7oAZP2d5s6ncC5mMZSNx5zTbcJL64+6UO/ffS/Q
+         QRrsh2q9U4NZoK0lL9uGV9ZT+R8Z6SXRWD6yR097PYtZEG/ALGKAN2XgHEG+w/sRkN4P
+         9n+rs4D76oa2tEnUY3PwJVUfHrKk4et/oN9y1y7k3AiVKnqCZBC3eU8Uot2SqB8Br4M4
+         /Fug==
+X-Gm-Message-State: AOUpUlGdImgo5cOBWX2iy3UpIpAwdpe7j21/VZ+P8dl5Dpd8gglhS/ix
+        p+Hke/60kdpEvblMzc7Ogx8=
+X-Google-Smtp-Source: AA+uWPy4wrHrY7Pt6mpmYFim5BKY4GrsUkFrk464kziWmM/vSvZJTtK8d4aRLBOY6xifSkj87S5/Tw==
+X-Received: by 2002:a62:49cf:: with SMTP id r76-v6mr3993314pfi.235.1533752537555;
+        Wed, 08 Aug 2018 11:22:17 -0700 (PDT)
+Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
+        by smtp.gmail.com with ESMTPSA id i192-v6sm6229795pfe.188.2018.08.08.11.22.16
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 08 Aug 2018 11:22:16 -0700 (PDT)
+Date:   Wed, 8 Aug 2018 11:22:14 -0700
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Marcus Folkesson <marcus.folkesson@gmail.com>
+Cc:     "David S . Miller" <davem@davemloft.net>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
+Subject: Re: [RESEND PATCH v2] MAINTAINERS: add PhoenixRC Flight Controller
+ Adapter
+Message-ID: <20180808182214.GB28444@dtor-ws>
+References: <20180622170605.8411-1-marcus.folkesson@gmail.com>
 MIME-Version: 1.0
-References: <20180727184527.13287-1-manivannan.sadhasivam@linaro.org>
- <c3ae668a-6bcc-a0eb-1e00-14ef9d607316@suse.de> <20180730151131.GA28633@mani>
- <20180807184710.GA26423@rob-hp-laptop> <20180808172946.GA4188@Mani-XPS-13-9360>
-In-Reply-To: <20180808172946.GA4188@Mani-XPS-13-9360>
-From:   Rob Herring <robh@kernel.org>
-Date:   Wed, 8 Aug 2018 12:21:25 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqL7rFt8OKQoyD4JuZ+i9Fqc6RLsTxN4cJmur28ptwyNWQ@mail.gmail.com>
-Message-ID: <CAL_JsqL7rFt8OKQoyD4JuZ+i9Fqc6RLsTxN4cJmur28ptwyNWQ@mail.gmail.com>
-Subject: Re: [PATCH 0/9] Add Reset Controller support for Actions Semi Owl SoCs
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc:     =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        =?UTF-8?B?5YiY54Kc?= <liuwei@actions-semi.com>,
-        mp-cs@actions-semi.com, 96boards@ucrobotics.com,
-        devicetree@vger.kernel.org,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Amit Kucheria <amit.kucheria@linaro.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        hzhang@ucrobotics.com, bdong@ucrobotics.com,
-        Manivannan Sadhasivam <manivannanece23@gmail.com>,
-        Thomas Liau <thomas.liau@actions-semi.com>,
-        Jeff Chen <jeff.chen@actions-semi.com>,
-        Parthiban Nallathambi <pn@denx.de>, edgar.righi@lsitec.org.br,
-        Saravanan Sekar <sravanhome@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180622170605.8411-1-marcus.folkesson@gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 8, 2018 at 11:30 AM Manivannan Sadhasivam
-<manivannan.sadhasivam@linaro.org> wrote:
->
-> Hi Rob,
->
-> On Tue, Aug 07, 2018 at 12:47:10PM -0600, Rob Herring wrote:
-> > On Mon, Jul 30, 2018 at 08:41:31PM +0530, Manivannan Sadhasivam wrote:
-> > > Hi Andreas,
-> > >
-> > > On Mon, Jul 30, 2018 at 12:26:07PM +0200, Andreas F=C3=A4rber wrote:
-> > > > Hi Mani,
-> > > >
-> > > > Am 27.07.2018 um 20:45 schrieb Manivannan Sadhasivam:
-> > > > > This patchset adds Reset Controller (RMU) support for Actions Sem=
-i
-> > > > > Owl SoCs, S900 and S700. For the Owl SoCs, RMU has been integrate=
-d into
-> > > > > the clock subsystem in hardware. Hence, in software we integrate =
-RMU
-> > > > > support into common clock driver inorder to maintain compatibilit=
-y.
-> > > >
-> > > > Can this not be placed into drivers/reset/ by using mfd-simple with=
- a
-> > > > sub-node in DT?
-> >
-> > That is exactly what I tell folks not to do. Design the DT based on h/w
-> > blocks, not current desired driver split for some OS.
-> >
-> > > Actually I was not sure where to place this reset controller driver. =
-When I
-> > > looked into other similar ones such as sunxi, they just integrated in=
-to the
-> > > clk subsystem. So I just chose that path. But yeah, this is hacky!
-> > >
-> > > But this RMU is not MFD by any means. Since the CMU (Clock) and RMU (=
-Reset)
-> > > are two separate IPs inside SoC, we shouldn't describe it as a MFD dr=
-iver. Since
-> > > RMU has only 2 registers, the HW designers decided to use up the CMU =
-memory
-> > > map. So, maybe syscon would be best option I think. What is your opin=
-ion?
-> >
-> > If there's nothing shared then it is not a syscon. If you can create
-> > separate address ranges, then 2 nodes is probably okay. If the register=
-s
-> > are all mixed up, then 1 node.
-> >
->
-> I don't quite understand the reason for not being syscon. The definition
-> of syscon says that, "System controller node represents a register region
-> containing a set of miscellaneous registers. The registers are not cohesi=
-ve
-> enough to represent as any specific type of device." which exactly fits
-> this case. Only the registers of CMU & RMU are shared and not the HW bloc=
-k!
->
-> Can you please clarify?
+On Fri, Jun 22, 2018 at 07:06:05PM +0200, Marcus Folkesson wrote:
+> Add MAINTAINERS entry for PhoenixRC Flight Controller Adapter
+> 
+> Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
 
-IIRC, the original intent of 'syscon' was really for things that had
-no subsystem. Random bits all just dumped together. A block with clock
-and reset doesn't sounds pretty well defined functions. Plus that
-criteria doesn't work well because what does and doesn't have a
-subsystem (and DT binding) evolves. IMO, we should probably get rid of
-'syscon'.
+Applied, thank you.
 
-Let me turn it around. Why do you want it do be a syscon? Simply to
-create a regmap I suppose because that is all that 'syscon' compatible
-is. A flag to create a regmap. Why do you need a regmap then? Do you
-need to protect concurrent accesses (a single register has both clock
-and reset bits). If so, you can't really call CMU and RMU 2 blocks. If
-not, you don't really need regmap.
+> ---
+> 
+> Notes:
+>     v2:
+>     	Add proper mailing list
+> 
+>  MAINTAINERS | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 9ce5062dc028..d8b5d9f810e4 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -11103,6 +11103,13 @@ S:	Maintained
+>  F:	include/linux/personality.h
+>  F:	include/uapi/linux/personality.h
+>  
+> +PHOENIX RC FLIGHT CONTROLLER ADAPTER
+> +M:	Marcus Folkesson <marcus.folkesson@gmail.com>
+> +L:	linux-input@vger.kernel.org
+> +S:	Maintained
+> +F:	Documentation/input/devices/pxrc.rst
+> +F:	drivers/input/joystick/pxrc.c
+> +
+>  PHONET PROTOCOL
+>  M:	Remi Denis-Courmont <courmisch@gmail.com>
+>  S:	Supported
+> -- 
+> 2.16.2
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-input" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-Rob
+-- 
+Dmitry
