@@ -7,63 +7,63 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94EE7C46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 17:59:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1404AC4646D
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 18:00:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4529A2178B
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 17:59:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C71022178B
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 18:00:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aE9VzCTT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4529A2178B
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mSjTQbnc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C71022178B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730015AbeHHUUO (ORCPT
+        id S1730054AbeHHUUz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 16:20:14 -0400
-Received: from mail-ua0-f196.google.com ([209.85.217.196]:45874 "EHLO
-        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727748AbeHHUUN (ORCPT
+        Wed, 8 Aug 2018 16:20:55 -0400
+Received: from mail-ua0-f195.google.com ([209.85.217.195]:36792 "EHLO
+        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727748AbeHHUUz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 16:20:13 -0400
-Received: by mail-ua0-f196.google.com with SMTP id k8-v6so3313342uaq.12;
-        Wed, 08 Aug 2018 10:59:25 -0700 (PDT)
+        Wed, 8 Aug 2018 16:20:55 -0400
+Received: by mail-ua0-f195.google.com with SMTP id c12-v6so3375171uan.3;
+        Wed, 08 Aug 2018 11:00:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=F5Jn5ThbdGMN/ntBl9eM8Z1tLeSTGI/KD270MYviaFk=;
-        b=aE9VzCTT9EiZSsDzfT4P0A9eEEYgeV8t7gv/ETwz82iMTz3Ud9uljeXOtZW2Pv7FJw
-         Qw3toECwSIi9e7O963W2RxgyZlG/12fbhKI1msqBzV14msLWYRttGw8588CjzVLyXvqN
-         zSiWtvWLxXh9qDo2+m5mY6xe52tflui1KcblIiFP5w6zQ90k0ay7FTRnKIYzobYUMgS3
-         wsBM7RRzIr2Dga8vP7cGYz1p/tvyI0em/fbVtbgpbFDHcqjraP9UniO26Vd7uPRKi869
-         lKaXC4Hk4E1SVxFqskLnfUKaCrx7ANUVC2aJonfq9w40uZN4UoDQWeyGg7oSeM5yObXp
-         O64w==
+        bh=QlrxmH2OfZkWCPu/JDILLtLL8fGPu0Km/c9e1TkaC+4=;
+        b=mSjTQbncu/eNETdbyE/bWAPiCGlbRCQXtKcT9D9jZ0u4GhKEXrn/JxJMTt/1AfYkw5
+         lyWVTV6jV9pLbThsSUuaxQTYICeVsOy/8SCzdKL9vfK9RDC2i74l2YgrxBLRf+YCDddD
+         h+Gc3vfQp21GAyNqivKT2tSCkfzpNq9gq4XrV3GKAzFgr+0bdAPyMiInRB00Tr6KQKlo
+         lCApS6SJEAjyPQGhw+3f0qPVa5Ax7rl0pqWLJw6z4HdSPaVJLlutcgS9Y25kz8yjEtkT
+         rzQ0YxJ1thQ3Yd2gRbpBegT8r+0Cxx3VofNWWRAPMlUux8BRop269RrMnyG9okoh6Z9d
+         cByA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=F5Jn5ThbdGMN/ntBl9eM8Z1tLeSTGI/KD270MYviaFk=;
-        b=lJLjkxAXG2enlKOk5WFgcKyfuf822cu/akjudLip7mKWWlPvNVM/wPbs+2oyFGJgnL
-         q6rmdxzJo3tsF/vJESXxtM6aK4q08PA9LegxjbeLYqe4BKGXNdlj1s54Ei/O+ub21ujY
-         ok502nc091oM/oO8b+Gfvp58wmj1yE4lDKC6sqpqZbi6DttK8knxuUTybWzBXjs2SimG
-         Ittvp98T/ETKav3dQ8xY/frPC3Kh4JPMFreyJQ0rpx++a5eGcv2dJo0KezmlBccWpihh
-         3INJxRIg9516/3UDAXQwsRFW2X81sNi8EwZaCNmsBeCssKDzo6QmW5wqPm80Q31nwzq6
-         SjTg==
-X-Gm-Message-State: AOUpUlELobFDClRFtEpalqbaUedWH2VY/Jenc7jULiaUnj5NGFCB0JCG
-        U4lhZflxmwiqt/QXwlOOjPnFLv9H+ovtA1OQlkg=
-X-Google-Smtp-Source: AA+uWPxKYshhjBug0zprFFmuDV9srTClctPPxDQDGxOcsBmpSm6sbUxP6di9C7dZoGB+qzmsb3XkpMs66p3lWGsuk3s=
-X-Received: by 2002:ab0:13c7:: with SMTP id n7-v6mr2710329uae.47.1533751165264;
- Wed, 08 Aug 2018 10:59:25 -0700 (PDT)
+        bh=QlrxmH2OfZkWCPu/JDILLtLL8fGPu0Km/c9e1TkaC+4=;
+        b=udRov11fRRLLzTgogVtVhVYC8xDG/gsqqG6dbtpn0A+pFyuNQGrfkeCPeFs1Qe4wPW
+         BQe8QwY4OJxQDg63nl1RXpTegEiOiB6t3eUYzQGjNtGd7NgJLyLcAQY5WTczQCRWFWR5
+         rKxGbB9aDC+v+I7Er4sAVCL++9R5QCFN18Q++TyS5vw9abFgPRPoTD4RjsG1rAq4G5Cn
+         FuaPvbb9xEwtn/74lUVnIa5Q68M0QC/kqCJm523Xdb4rRUEyd7SK0otRKohKptMkvMwV
+         rltzmbZqdS1PLR9H8RefX8txrlm3p964J4BPMgy82OJneGN4I+1WJ2tu9TX+dCNDLfcr
+         x7YQ==
+X-Gm-Message-State: AOUpUlGGiFT/EGOzr0Rwe23BdQN3QGhr4aQ6ZO9Atq4a0WnAsmzKKRcO
+        2QHN9PScXBLTqJ6dXNXN1xG7FTGMbbk3x8FbvPU=
+X-Google-Smtp-Source: AA+uWPxW1xNytMWfti7sWjfwzmzPxOldCUgo56PK8ksryjmNNVJdyVEfUxc7L2SuuDJaY+hd9KDKdt73YieHzIoHf1Q=
+X-Received: by 2002:a1f:844e:: with SMTP id g75-v6mr2645386vkd.16.1533751206641;
+ Wed, 08 Aug 2018 11:00:06 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a67:2149:0:0:0:0:0 with HTTP; Wed, 8 Aug 2018 10:59:24 -0700 (PDT)
-In-Reply-To: <CAHp75VewdvD2D2BpyKAptFecr+hrW5O5YUcSzu9X4wGgV-oJ3A@mail.gmail.com>
-References: <20180808153150.23444-1-brgl@bgdev.pl> <20180808153150.23444-22-brgl@bgdev.pl>
- <CAHp75VewdvD2D2BpyKAptFecr+hrW5O5YUcSzu9X4wGgV-oJ3A@mail.gmail.com>
+Received: by 2002:a67:2149:0:0:0:0:0 with HTTP; Wed, 8 Aug 2018 11:00:05 -0700 (PDT)
+In-Reply-To: <CAHp75VfU6Dsge0XX5h18zjY9kJ73kFPevLT9j7vZBO__tNronw@mail.gmail.com>
+References: <20180808153150.23444-1-brgl@bgdev.pl> <20180808153150.23444-25-brgl@bgdev.pl>
+ <CAHp75VfU6Dsge0XX5h18zjY9kJ73kFPevLT9j7vZBO__tNronw@mail.gmail.com>
 From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Wed, 8 Aug 2018 20:59:24 +0300
-Message-ID: <CAHp75Vdh0qfyutF6stPe1=eREg5iEHeUfE6MZO-nwsuhcNFTrg@mail.gmail.com>
-Subject: Re: [PATCH 21/28] ARM: davinci: dm644x-evm: use device properties for
+Date:   Wed, 8 Aug 2018 21:00:05 +0300
+Message-ID: <CAHp75VfVVn5jMp9E5-d7K+x=_ZtWO9kV3nxn=NDqTpQyjp3sdQ@mail.gmail.com>
+Subject: Re: [PATCH 24/28] ARM: davinci: sffsdr: use device properties for
  at24 eeprom
 To:     Bartosz Golaszewski <brgl@bgdev.pl>
 Cc:     Jonathan Corbet <corbet@lwn.net>, Sekhar Nori <nsekhar@ti.com>,
@@ -105,7 +105,7 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 8, 2018 at 8:55 PM, Andy Shevchenko
+On Wed, Aug 8, 2018 at 8:57 PM, Andy Shevchenko
 <andy.shevchenko@gmail.com> wrote:
 > On Wed, Aug 8, 2018 at 6:31 PM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
 >> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
@@ -124,57 +124,49 @@ On Wed, Aug 8, 2018 at 8:55 PM, Andy Shevchenko
 >
 >> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 >> ---
->>  arch/arm/mach-davinci/board-dm644x-evm.c | 12 ++++--------
->>  1 file changed, 4 insertions(+), 8 deletions(-)
+>>  arch/arm/mach-davinci/board-sffsdr.c | 11 +++++------
+>>  1 file changed, 5 insertions(+), 6 deletions(-)
 >>
->> diff --git a/arch/arm/mach-davinci/board-dm644x-evm.c b/arch/arm/mach-davinci/board-dm644x-evm.c
->> index 6d35c6e1b0bd..abfcf42da6fb 100644
->> --- a/arch/arm/mach-davinci/board-dm644x-evm.c
->> +++ b/arch/arm/mach-davinci/board-dm644x-evm.c
->> @@ -16,8 +16,8 @@
->>  #include <linux/gpio/machine.h>
+>> diff --git a/arch/arm/mach-davinci/board-sffsdr.c b/arch/arm/mach-davinci/board-sffsdr.c
+>> index f6a4d094cbc3..680e5d7628a8 100644
+>> --- a/arch/arm/mach-davinci/board-sffsdr.c
+>> +++ b/arch/arm/mach-davinci/board-sffsdr.c
+>> @@ -26,7 +26,7 @@
+>>  #include <linux/init.h>
+>>  #include <linux/platform_device.h>
 >>  #include <linux/i2c.h>
->>  #include <linux/platform_data/pcf857x.h>
 >> -#include <linux/platform_data/at24.h>
->>  #include <linux/platform_data/gpio-davinci.h>
 >> +#include <linux/property.h>
 >>  #include <linux/mtd/mtd.h>
 >>  #include <linux/mtd/rawnand.h>
 >>  #include <linux/mtd/partitions.h>
->> @@ -486,12 +486,8 @@ static struct nvmem_cell_lookup dm6446evm_mac_address_cell = {
->>         .nvmem_name = "1-00500",
+>> @@ -92,16 +92,15 @@ static struct platform_device davinci_sffsdr_nandflash_device = {
+>>         .resource       = davinci_sffsdr_nandflash_resource,
 >>  };
 >>
 >> -static struct at24_platform_data eeprom_info = {
->> -       .byte_len       = (256*1024) / 8,
->> -       .page_size      = 64,
+>> -       .byte_len       = (64*1024) / 8,
+>> -       .page_size      = 32,
 >> -       .flags          = AT24_FLAG_ADDR16,
->> -       .setup          = davinci_get_mac_addr,
->> -       .context        = (void *)0x7f00,
 >> +static const struct property_entry eeprom_properties[] = {
->> +       PROPERTY_ENTRY_U32("pagesize", 64),
+>> +       PROPERTY_ENTRY_U32("pagesize", 32),
+>> +       { },
 
-Missed terminator, though
+No comma needed
 
 >>  };
 >>
->>  /*
->> @@ -601,7 +597,7 @@ static struct i2c_board_info __initdata i2c_info[] =  {
->>         },
+>>  static struct i2c_board_info __initdata i2c_info[] =  {
 >>         {
->>                 I2C_BOARD_INFO("24c256", 0x50),
+>>                 I2C_BOARD_INFO("24c64", 0x50),
 >> -               .platform_data  = &eeprom_info,
 >> +               .properties = eeprom_properties,
 >>         },
->>         {
->>                 I2C_BOARD_INFO("tlv320aic33", 0x1b),
+>>         /* Other I2C devices:
+>>          * MSP430,  addr 0x23 (not used)
 >> --
 >> 2.18.0
 >>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-omap" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 >
 >
 >
