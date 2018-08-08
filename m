@@ -2,94 +2,233 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88E81C46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:00:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88467C46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:02:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FFC821529
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:00:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FFC821529
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 26FF921509
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:02:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="awq9QxIt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26FF921509
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727467AbeHHQTt (ORCPT
+        id S1727321AbeHHQWZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 12:19:49 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:10679 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726971AbeHHQTe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 12:19:34 -0400
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id CA9E5525B111C;
-        Wed,  8 Aug 2018 21:59:39 +0800 (CST)
-Received: from linux-ibm.site (10.175.102.37) by
- DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
- 14.3.399.0; Wed, 8 Aug 2018 21:59:38 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-To:     <clm@fb.com>, <jbacik@fb.com>, <dsterba@suse.com>
-CC:     <linux-btrfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCHv3 3/3] fs/btrfs/tree-log: change btrfs_pin_log_trans to be void function
-Date:   Wed, 8 Aug 2018 21:47:55 +0800
-Message-ID: <1533736075-8691-4-git-send-email-zhongjiang@huawei.com>
-X-Mailer: git-send-email 1.7.12.4
-In-Reply-To: <1533736075-8691-1-git-send-email-zhongjiang@huawei.com>
-References: <1533736075-8691-1-git-send-email-zhongjiang@huawei.com>
+        Wed, 8 Aug 2018 12:22:25 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:37116 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727078AbeHHQWY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 12:22:24 -0400
+Received: by mail-lj1-f196.google.com with SMTP id v9-v6so1816863ljk.4
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 07:02:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xf1st28FLE/3twXChIO8tRq/2R47rUMO++fJtTaKIL0=;
+        b=awq9QxItSoy7NoEYobIvJyMtMbmrzxyOtu9wFAsZfYNU2C8wx/DkY3B5ZZsJuSB60L
+         PGRT5G8N2jAaZyQeMcDf6JA4F3Cjw6cVawirDxldKD2c6YI9jVuyPb4FPZsFD73F3WCE
+         0Njh6/3IpcQALyDcKPFi5WGI74y4JaVyWiFLA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xf1st28FLE/3twXChIO8tRq/2R47rUMO++fJtTaKIL0=;
+        b=pDBexkh5r0yph5dFnPkGGIa5XwVu8t0+T6P3M2KMgC4pv6bLsdplHx0wVyYdBz3cTE
+         NKp87WyGE3ChR0kGBfROK4c0vy5Sl2fIFJh+bB1C876YAAfikv3J6xeFJfHK3eQp1g/k
+         I+2HhNzNwBYZHzJ8Ga6AkRlKV6t0irnN6JFEmtwa86OqYJiizAF4Il0keLH72dirS4Og
+         HBFPM/TGlLgbEnlPYujcoxOzPb+C058uD/irEYhpVzhTX86MLFHmEcYlf6v63hoEnnBp
+         Iea5q4W08lEvjtuLxfeQ+mdglMLEEmTtoHBZBUFimsI9DvKSlHBNBrnR/6hN7AgiRGYU
+         JSfA==
+X-Gm-Message-State: AOUpUlGQ8E3AacJiVNS4c1/Rg7Sa7ufy7mJx/9Sv5iy+0vAySInqXO41
+        d6yP7qsiXCrc6StsddT11+f/cIPFfZbBub18hTARF868
+X-Google-Smtp-Source: AA+uWPyeJzDLm36YuEWzHvuCKYDspzxgdPGiSYfxgaLXv1k5JMu2H8a2AbhY8OCdr1EK4Cf1bB9FeyFIFBkiePsTI3k=
+X-Received: by 2002:a2e:5243:: with SMTP id g64-v6mr2140456ljb.144.1533736953111;
+ Wed, 08 Aug 2018 07:02:33 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.102.37]
-X-CFilter-Loop: Reflected
+References: <20180627103408.33003-1-keiichiw@chromium.org> <11886963.8nkeRH3xvi@avalon>
+ <CAAFQd5CM63BQ1oxmrhZuxTVj7pc=6XUJKa-cJ3gFBHxiF3HPfQ@mail.gmail.com>
+ <3411643.50e8mdYzJX@avalon> <CAD90VcbpeVatm33h2QwGnq_him5KkL1b6n8j0D_RyUyRi3osaQ@mail.gmail.com>
+ <febb65c6-e4f0-5c78-952f-ae8bbb74d3c0@ideasonboard.com>
+In-Reply-To: <febb65c6-e4f0-5c78-952f-ae8bbb74d3c0@ideasonboard.com>
+From:   Keiichi Watanabe <keiichiw@chromium.org>
+Date:   Wed, 8 Aug 2018 23:02:21 +0900
+Message-ID: <CAD90VcbrLd1ShRwfEmr-3KLa4rFd3TE_SpS02FdtR4YG1J_u_A@mail.gmail.com>
+Subject: Re: [RFC PATCH v1] media: uvcvideo: Cache URB header data before processing
+To:     kieran.bingham@ideasonboard.com
+Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Alan Stern <stern@rowland.harvard.edu>, ezequiel@collabora.com,
+        matwey@sai.msu.ru
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-btrfs_pin_log_trans defines the variable "ret" for return valule,
-but it is not modified after initialization. Further, I find that
-any of the callees do not handle the return value, so it is safe
-to drop the unneeded value "ret".
+Hi Kieran,
+On Wed, Aug 8, 2018 at 10:07 PM Kieran Bingham
+<kieran.bingham@ideasonboard.com> wrote:
+>
+> Hi All,
+>
+> On 08/08/18 13:45, Keiichi Watanabe wrote:
+> > Hi Laurent, Kieran, Tomasz,
+> >
+> > Thank you for reviews and suggestions.
+> > I want to do additional measurements for improving the performance.
+> >
+> > Let me clarify my understanding:
+> > Currently, if the platform doesn't support coherent-DMA (e.g. ARM),
+> > urb_buffer is allocated by usb_alloc_coherent with
+> > URB_NO_TRANSFER_DMA_MAP flag instead of using kmalloc.
+> > This is because we want to avoid frequent DMA mappings, which are
+> > generally expensive.
+> > However, memories allocated in this way are not cached.
+> >
+> > So, we wonder if using usb_alloc_coherent is really fast.
+> > In other words, we want to know which is better:
+> > "No DMA mapping/Uncached memory" v.s. "Frequent DMA mapping/Cached memory".
+> >
+> > For this purpose, I'm planning to measure performance on ARM
+> > Chromebooks in the following conditions:
+> > 1. Current implementation with Kieran's patches
+> > 2. 1. + my patch
+> > 3. Use kmalloc instead
+> >
+> > 1 and 2 are the same conditions I reported in the first mail on this thread.
+> > For condition 3, I only have to add "#define CONFIG_DMA_NONCOHERENT"
+> > at the beginning of uvc_video.c.
+>
+> I'd be interested in numbers/performances both with and without my async
+> if possible too.
+>
+> The async path can be easily disabled temporarily with the following
+> change: (perhaps this should be a module option?)
+>
+> diff --git a/drivers/media/usb/uvc/uvc_video.c
+> b/drivers/media/usb/uvc/uvc_video.c
+> index 8bb6e90f3483..f9fbdc9bfa4b 100644
+> --- a/drivers/media/usb/uvc/uvc_video.c
+> +++ b/drivers/media/usb/uvc/uvc_video.c
+> @@ -1505,7 +1505,8 @@ static void uvc_video_complete(struct urb *urb)
+>         }
+>
+>         INIT_WORK(&uvc_urb->work, uvc_video_copy_data_work);
+> -       queue_work(stream->async_wq, &uvc_urb->work);
+> +//     queue_work(stream->async_wq, &uvc_urb->work);
+> +       uvc_video_copy_data_work(&uvc_urb->work);
+>  }
+>
+>  /*
+>
+>
+> I do suspect that even with cached buffers, it's probably likely we
+> should still consider the async patches to move the memcopy out of
+> interrupt context.
+>
+It sounds better to check.
+I'll do tests with/without your async patches in both cached/uncached
+memory allocation conditions.
 
-Signed-off-by: zhong jiang <zhongjiang@huawei.com>
----
- fs/btrfs/tree-log.c | 5 +----
- fs/btrfs/tree-log.h | 2 +-
- 2 files changed, 2 insertions(+), 5 deletions(-)
+Best regards,
+Keiichi
 
-diff --git a/fs/btrfs/tree-log.c b/fs/btrfs/tree-log.c
-index 1650dc4..4ed7379 100644
---- a/fs/btrfs/tree-log.c
-+++ b/fs/btrfs/tree-log.c
-@@ -205,14 +205,11 @@ static int join_running_log_trans(struct btrfs_root *root)
-  * until you call btrfs_end_log_trans() or it makes any future
-  * log transactions wait until you call btrfs_end_log_trans()
-  */
--int btrfs_pin_log_trans(struct btrfs_root *root)
-+void btrfs_pin_log_trans(struct btrfs_root *root)
- {
--	int ret = -ENOENT;
--
- 	mutex_lock(&root->log_mutex);
- 	atomic_inc(&root->log_writers);
- 	mutex_unlock(&root->log_mutex);
--	return ret;
- }
- 
- /*
-diff --git a/fs/btrfs/tree-log.h b/fs/btrfs/tree-log.h
-index 122e68b..8977678 100644
---- a/fs/btrfs/tree-log.h
-+++ b/fs/btrfs/tree-log.h
-@@ -65,7 +65,7 @@ int btrfs_del_inode_ref_in_log(struct btrfs_trans_handle *trans,
- 			       const char *name, int name_len,
- 			       struct btrfs_inode *inode, u64 dirid);
- void btrfs_end_log_trans(struct btrfs_root *root);
--int btrfs_pin_log_trans(struct btrfs_root *root);
-+void btrfs_pin_log_trans(struct btrfs_root *root);
- void btrfs_record_unlink_dir(struct btrfs_trans_handle *trans,
- 			     struct btrfs_inode *dir, struct btrfs_inode *inode,
- 			     int for_rename);
--- 
-1.7.12.4
-
+> --
+> Regards
+>
+> Kieran
+>
+>
+>
+>
+> >
+> > Does this plan sound reasonable?
+> >
+> > Best regards,
+> > Keiichi
+> > On Wed, Aug 8, 2018 at 5:42 PM Laurent Pinchart
+> > <laurent.pinchart@ideasonboard.com> wrote:
+> >>
+> >> Hi Tomasz,
+> >>
+> >> On Wednesday, 8 August 2018 07:08:59 EEST Tomasz Figa wrote:
+> >>> On Tue, Jul 31, 2018 at 1:00 AM Laurent Pinchart wrote:
+> >>>> On Wednesday, 27 June 2018 13:34:08 EEST Keiichi Watanabe wrote:
+> >>>>> On some platforms with non-coherent DMA (e.g. ARM), USB drivers use
+> >>>>> uncached memory allocation methods. In such situations, it sometimes
+> >>>>> takes a long time to access URB buffers.  This can be a cause of video
+> >>>>> flickering problems if a resolution is high and a USB controller has
+> >>>>> a very tight time limit. (e.g. dwc2) To avoid this problem, we copy
+> >>>>> header data from (uncached) URB buffer into (cached) local buffer.
+> >>>>>
+> >>>>> This change should make the elapsed time of the interrupt handler
+> >>>>> shorter on platforms with non-coherent DMA. We measured the elapsed
+> >>>>> time of each callback of uvc_video_complete without/with this patch
+> >>>>> while capturing Full HD video in
+> >>>>> https://webrtc.github.io/samples/src/content/getusermedia/resolution/.
+> >>>>> I tested it on the top of Kieran Bingham's Asynchronous UVC series
+> >>>>> https://www.mail-archive.com/linux-media@vger.kernel.org/msg128359.html.
+> >>>>> The test device was Jerry Chromebook (RK3288) with Logitech Brio 4K.
+> >>>>> I collected data for 5 seconds. (There were around 480 callbacks in
+> >>>>> this case.) The following result shows that this patch makes
+> >>>>> uvc_video_complete about 2x faster.
+> >>>>>
+> >>>>>            | average | median  | min     | max     | standard deviation
+> >>>>> w/o caching| 45319ns | 40250ns | 33834ns | 142625ns| 16611ns
+> >>>>> w/  caching| 20620ns | 19250ns | 12250ns | 56583ns | 6285ns
+> >>>>>
+> >>>>> In addition, we confirmed that this patch doesn't make it worse on
+> >>>>> coherent DMA architecture by performing the same measurements on a
+> >>>>> Broadwell Chromebox with the same camera.
+> >>>>>
+> >>>>>            | average | median  | min     | max     | standard deviation
+> >>>>> w/o caching| 21026ns | 21424ns | 12263ns | 23956ns | 1932ns
+> >>>>> w/  caching| 20728ns | 20398ns |  8922ns | 45120ns | 3368ns
+> >>>>
+> >>>> This is very interesting, and it seems related to https://
+> >>>> patchwork.kernel.org/patch/10468937/. You might have seen that discussion
+> >>>> as you got CC'ed at some point.
+> >>>>
+> >>>> I wonder whether performances couldn't be further improved by allocating
+> >>>> the URB buffers cached, as that would speed up the memcpy() as well. Have
+> >>>> you tested that by any chance ?
+> >>>
+> >>> We haven't measure it, but the issue being solved here was indeed
+> >>> significantly reduced by using cached URB buffers, even without
+> >>> Kieran's async series. After we discovered the latter, we just
+> >>> backported it and decided to further tweak the last remaining bit, to
+> >>> avoid playing too much with the DMA API in code used in production on
+> >>> several different platforms (including both ARM and x86).
+> >>>
+> >>> If you think we could change the driver to use cached buffers instead
+> >>> (as the pwc driver mentioned in another thread), I wouldn't have
+> >>> anything against it obviously.
+> >>
+> >> I think there's a chance that performances could be further improved.
+> >> Furthermore, it would lean to simpler code as we wouldn't need to deal with
+> >> caching headers manually. I would however like to see numbers before making a
+> >> decision.
+> >>
+> >> --
+> >> Regards,
+> >>
+> >> Laurent Pinchart
+> >>
+> >>
+> >>
+>
+> --
+> Regards
+> --
+> Kieran
