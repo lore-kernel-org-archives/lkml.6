@@ -2,97 +2,78 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23E8AC46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 22:13:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FF55C46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 22:14:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CCF1021AA8
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 22:13:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCF1021AA8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id BBAA721AA8
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 22:14:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBAA721AA8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729746AbeHIAdo (ORCPT
+        id S1730943AbeHIAgD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 20:33:44 -0400
-Received: from gateway34.websitewelcome.com ([192.185.148.214]:46607 "EHLO
-        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727337AbeHIAdn (ORCPT
+        Wed, 8 Aug 2018 20:36:03 -0400
+Received: from smtprelay0146.hostedemail.com ([216.40.44.146]:32814 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727337AbeHIAgD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 20:33:43 -0400
-Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
-        by gateway34.websitewelcome.com (Postfix) with ESMTP id 479F828CE2
-        for <linux-kernel@vger.kernel.org>; Wed,  8 Aug 2018 17:12:04 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id nWgHfMu9CbXuJnWgPflmj0; Wed, 08 Aug 2018 17:12:04 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.54.46] (port=35756 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1fnWgG-001Kqn-Qn; Wed, 08 Aug 2018 17:11:48 -0500
-Date:   Wed, 8 Aug 2018 17:11:48 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] ALSA: mixart_core: Mark expected switch fall-through
-Message-ID: <20180808221148.GA1864@embeddedor.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.54.46
-X-Source-L: No
-X-Exim-ID: 1fnWgG-001Kqn-Qn
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.54.46]:35756
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 4
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+        Wed, 8 Aug 2018 20:36:03 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay01.hostedemail.com (Postfix) with ESMTP id 9988C100E86C3;
+        Wed,  8 Aug 2018 22:14:22 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: soap60_4329dbe4b9a58
+X-Filterd-Recvd-Size: 2166
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf10.hostedemail.com (Postfix) with ESMTPA;
+        Wed,  8 Aug 2018 22:14:21 +0000 (UTC)
+Message-ID: <cb7de144fb0b6796dc5fc6013120fc95c8e564a9.camel@perches.com>
+Subject: Re: [PATCH v2 01/15] staging:rtl8192u: Remove macro eqMacAddr -
+ Style
+From:   Joe Perches <joe@perches.com>
+To:     John Whitmore <johnfwhitmore@gmail.com>,
+        linux-kernel@vger.kernel.org
+Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org
+Date:   Wed, 08 Aug 2018 15:14:19 -0700
+In-Reply-To: <20180808210036.22580-2-johnfwhitmore@gmail.com>
+References: <20180808210036.22580-1-johnfwhitmore@gmail.com>
+         <20180808210036.22580-2-johnfwhitmore@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-where we are expecting to fall through.
+On Wed, 2018-08-08 at 22:00 +0100, John Whitmore wrote:
+> The macro eqMacAddr implements the same functionality as the
+> ether_addr_equal function defined in etherdevice.h, as a result the
+> macro has been removed from the code, and its use replaced with the
+> function call.
+[]
+> diff --git a/drivers/staging/rtl8192u/r8192U_core.c b/drivers/staging/rtl8192u/r8192U_core.c
+[]
+> @@ -4460,15 +4460,15 @@ static void TranslateRxSignalStuff819xUsb(struct sk_buff *skb,
+>  
+>  	/* Check if the received packet is acceptable. */
+>  	bpacket_match_bssid = (type != IEEE80211_FTYPE_CTL) &&
+> -			       (eqMacAddr(priv->ieee80211->current_network.bssid,  (fc & IEEE80211_FCTL_TODS) ? hdr->addr1 : (fc & IEEE80211_FCTL_FROMDS) ? hdr->addr2 : hdr->addr3))
+> +			       (ether_addr_equal(priv->ieee80211->current_network.bssid,  (fc & IEEE80211_FCTL_TODS) ? hdr->addr1 : (fc & IEEE80211_FCTL_FROMDS) ? hdr->addr2 : hdr->addr3))
+>  			       && (!pstats->bHwError) && (!pstats->bCRC) && (!pstats->bICV);
+>  	bpacket_toself =  bpacket_match_bssid &
+> -			  (eqMacAddr(praddr, priv->ieee80211->dev->dev_addr));
+> +			  (ether_addr_equal(praddr, priv->ieee80211->dev->dev_addr));
 
-Notice that in this particular case, I replaced the code comment with
-a proper "fall through" annotation, which is what GCC is expecting
-to find.
+Likely this should be
 
-Addresses-Coverity-ID: 114889 ("Missing break in switch")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- sound/pci/mixart/mixart_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+	bpacket_match_bssid = bpacket_match_bss &&
 
-diff --git a/sound/pci/mixart/mixart_core.c b/sound/pci/mixart/mixart_core.c
-index 46c292b..71776bf 100644
---- a/sound/pci/mixart/mixart_core.c
-+++ b/sound/pci/mixart/mixart_core.c
-@@ -540,7 +540,7 @@ irqreturn_t snd_mixart_threaded_irq(int irq, void *dev_id)
- 				dev_err(&mgr->pci->dev,
- 					"canceled notification %x !\n", msg);
- 			}
--			/* no break, continue ! */
-+			/* fall through */
- 		case MSG_TYPE_ANSWER:
- 			/* answer or notification to a message we are waiting for*/
- 			mutex_lock(&mgr->msg_lock);
--- 
-2.7.4
+as boolean use with a bitwise & is odd.
 
