@@ -2,114 +2,82 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 759D3C46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 09:52:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88E56C46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 09:52:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F2B821729
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 09:52:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4277B21725
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 09:52:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="axWqKc8h"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F2B821729
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="MFcN4X5c"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4277B21725
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=8bytes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727054AbeHHMLN (ORCPT
+        id S1727108AbeHHMLZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 08:11:13 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:38433 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726643AbeHHMLN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 08:11:13 -0400
-Received: by mail-wr1-f68.google.com with SMTP id v14-v6so1450380wro.5;
-        Wed, 08 Aug 2018 02:52:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=A8yLcxaCPaT069JC4qDdsZR2uX9fNkFRWfb6akJmdtc=;
-        b=axWqKc8hK0Ks/h2fUu3fM1+3xkq3ApIhpfn6pxDpaKQ1fPDwTNRSEX0FQMlztWxyzc
-         hRUW4soPwiwQjsZg2J6nO04dnVNIn1ljYon4cTpqinOqNbm37ju0OfHtkzbVYF30aNwf
-         FoKrPLvX6cQUofiOrevFSFem2ylEYb/0NuaZ51/hftpd1rq+nlbKw7e7ZGO9J7RausY2
-         4QZUqo4YCgi34OnpihvU/DRQSu3TNe0EVV2aur3G4alehnFO5xwKMgE7ZZC0YH8u7P5W
-         PQgumE9ZNsKIcZCkGEW0uepRYWuzlI2hk+LzpvlFhtwvk0ltLz/XRUcB5MOJvR0bkNmN
-         k8Tw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=A8yLcxaCPaT069JC4qDdsZR2uX9fNkFRWfb6akJmdtc=;
-        b=BL18b/PjVFHwdOpmOLnDBF/PsoUFvoyLGf3gjUpjX5ctuxvSSf1y8FhZBhGdGjJBKD
-         KtWD8U7622uJ9Z+g2gebbArZOrqgoQq589tDj4hqTROkhAOzg+Ya5KXqfhlxICGVVXbH
-         FjUAzyRsnTrLB2GSqx+YO7VzRBW7ud3cGjDK+wRzK+60uXMDjA05szFVQtXT7xEjejLe
-         gJGZAGohWnicVPFEP1i/k+eO+9NRxog855wrBuXT5ASZDcxATNXJD5kr3klcpTCsGFBp
-         KXE758vKqCMWq1Lg4hqygILE4AgLau0zTqJ6dvpB6x6sHn1fPvF31wpCgGahBFD7q6Ry
-         a7iw==
-X-Gm-Message-State: AOUpUlFZUXSzeueXhRCh0nXktuEzfQ8QgWPWy5f72Uk9BHhAmLD3uR3b
-        znAOJdd4kPVsPWGpgmh3PRbTIYs+
-X-Google-Smtp-Source: AA+uWPzfh0XjbJyxrJm1YVgkDWc8v9AwFMV1aYbE+8KQUD74PQita/+/1FDrcg7KfmiE72rXAaKKQw==
-X-Received: by 2002:adf:c98d:: with SMTP id f13-v6mr1406780wrh.148.1533721935437;
-        Wed, 08 Aug 2018 02:52:15 -0700 (PDT)
-Received: from [192.168.1.18] (chs174.neoplus.adsl.tpnet.pl. [83.31.16.174])
-        by smtp.gmail.com with ESMTPSA id o14-v6sm7028757wmd.35.2018.08.08.02.52.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 08 Aug 2018 02:52:14 -0700 (PDT)
-Subject: Re: [PATCH v2 1/2] dt: bindings: lm3697: Add bindings for lm3697
- driver
-To:     =?UTF-8?B?TWljaGFsIFZva8OhxI0=?= <michal.vokac@ysoft.com>,
-        Dan Murphy <dmurphy@ti.com>, robh+dt@kernel.org
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-leds@vger.kernel.org
-References: <20180807160442.8937-1-dmurphy@ti.com>
- <5b8f8622-a5a5-4c54-c1ab-334db75dce83@ysoft.com>
-From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Message-ID: <9908f71b-0881-8aca-9e59-009eecdb598c@gmail.com>
-Date:   Wed, 8 Aug 2018 11:52:12 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Wed, 8 Aug 2018 08:11:25 -0400
+Received: from 8bytes.org ([81.169.241.247]:33040 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727058AbeHHMLZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 08:11:25 -0400
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id 2EFF42EA; Wed,  8 Aug 2018 11:52:28 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=8bytes.org; s=mail-1;
+        t=1533721948; bh=hX1ZEh0C5EEcQZfr1NQZhjEEY9mKSGEJeFhfzduasy0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=MFcN4X5cZ4KlRG1X7f+75Fe3JAhFcFwjy1van3PKoC/Tv+HoPAtURx+o3PzWjpCbu
+         QshiyMWCSRhGBjBlLo2L0ZbNVNog3cNvAcaGmwqANdFm/Veu9Cl0GAwKS8Hfx/0FGJ
+         7X6niHLd4kdw9+ddnPk8/gN2TBbmBxBtoYyJ3PsmBBB3lJb5UJKBvplYzUUG+EHqZO
+         6RlDEELFZzh0kR+CjKvgbVH1dozuG9pUDcLmKoJpK4VCriHsONjU6R2saifpa1AjOe
+         NxXweQSV1cVRdev5CQLe8zIhISX1WHJmsoHMIq/+j3PiTDfbIrbsTDhdYPHGb8VTTE
+         IE0DJFUu4/hOg==
+Date:   Wed, 8 Aug 2018 11:52:27 +0200
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>
+Cc:     Robin Murphy <robin.murphy@arm.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        iommu@lists.linux-foundation.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/8] Tegra GART driver clean up and optimization
+Message-ID: <20180808095227.ll723ibwtyclih32@8bytes.org>
+References: <20180804143003.15817-1-digetx@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <5b8f8622-a5a5-4c54-c1ab-334db75dce83@ysoft.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180804143003.15817-1-digetx@gmail.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Michal.
+Hey Thierry,
 
-Thanks for the heads-up.
-"dt-" prefix is indeed more preferred than "dt: ".
+On Sat, Aug 04, 2018 at 05:29:55PM +0300, Dmitry Osipenko wrote:
+> Dmitry Osipenko (8):
+>   memory: tegra: Provide facility for integration with the GART driver
+>   iommu/tegra: gart: Provide access to Memory Controller driver
+>   iommu/tegra: gart: Clean up drivers module code
+>   iommu/tegra: gart: Remove pr_fmt and clean up includes
+>   iommu/tegra: gart: Clean up driver probe errors handling
+>   iommu/tegra: gart: Ignore devices without IOMMU phandle in DT
+>   iommu: Introduce iotlb_sync_map callback
+>   iommu/tegra: gart: Optimize mapping / unmapping performance
+> 
+>  drivers/iommu/iommu.c      |  8 ++-
+>  drivers/iommu/tegra-gart.c | 99 +++++++++++++++++++++++---------------
+>  drivers/memory/tegra/mc.c  | 26 ++++++++--
+>  include/linux/iommu.h      |  1 +
+>  include/soc/tegra/mc.h     | 13 +++++
+>  5 files changed, 103 insertions(+), 44 deletions(-)
 
-Dan - I will fix it by myself, no need to resend.
+Can you have a look please whether this is safe to go upstream?
 
-Best regards,
-Jacek Anaszewski
+Thanks,
 
-On 08/08/2018 09:56 AM, Michal Vokáč wrote:
-> On 7.8.2018 18:04, Dan Murphy wrote:
->> Add the device tree bindings for the lm3697
->> led driver for backlighting and display.
-> 
-> Hi Dan,
-> it seems like you missed to fix part of the subject as Jacek suggested.
-> 
-> I think it should be: "dt-bindings: leds: Add bindings for lm3697 driver"
-> 
-> Best regards,
-> Michal
->>
->> Signed-off-by: Dan Murphy <dmurphy@ti.com>
->> ---
->>
->> v2 - Fixed subject and patch commit message -
->> https://lore.kernel.org/patchwork/patch/971326/
-> 
-> 
+	Joerg
