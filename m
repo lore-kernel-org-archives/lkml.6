@@ -2,63 +2,62 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
 	DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32CF8C4646D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 17:35:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49B62C46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 17:35:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2C92216F3
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 17:35:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 051E4216F3
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 17:35:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kZyoGrNz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2C92216F3
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sOAQseuM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 051E4216F3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730130AbeHHT4G (ORCPT
+        id S1730215AbeHHT4I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 15:56:06 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:45458 "EHLO
+        Wed, 8 Aug 2018 15:56:08 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:43977 "EHLO
         mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727062AbeHHT4F (ORCPT
+        with ESMTP id S1730116AbeHHT4H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 15:56:05 -0400
-Received: by mail-io0-f196.google.com with SMTP id k16-v6so2452992iom.12
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 10:35:23 -0700 (PDT)
+        Wed, 8 Aug 2018 15:56:07 -0400
+Received: by mail-io0-f196.google.com with SMTP id y10-v6so2475043ioa.10
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 10:35:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=AWih7wUaLItSxunUAGBPh7BFuHKe3P2hg/fJSjXu3qo=;
-        b=kZyoGrNz8qWgXmNPGtQ93Rf9ndULxQ4PltK/6II65mSAN2MfR6giAUL9yle5AOscZG
-         ueZSQ+SMxlIUBDrqAbhrM/5F9iNu6KjLsMeRQfo3QQ6r+YfjRXEjeNDqs90UX657eK74
-         Ts6jMhasvovq8aSnbpL8v/+v1tTzmA1H9Bh6tMf1PcF3zMEb0ezt4hZ8bsx96NGiE7w0
-         we+K8RRxFi3KIeudj62RYX5btfOM88GEtDkaLXJPBiHgRqjM+zN51qpkwSHs16d6JWLk
-         narC5DkwrDe7sda6NtDbeprC6/fcr9Oo/1GcUKbjX6rE1H1QIYEz5SahOE2qQoWMw+Hk
-         +o0g==
+        bh=2MDxi8G5QCQGcY68C2MmKrPRk4/p+/VvPDub72AlCxg=;
+        b=sOAQseuMc/Q3zCxtmdkZGNuCCocmpzguidqf7RgNmmZvDrASFYbq+gYBQ0QQz1XMUB
+         j6XIcU1PfXIgHO5cA1CrIOvE+I8oEjucXsbokjkl6k9fBaTWOGkVM4J7zHFTGT1C574L
+         yZV6BKBAg5UbgeBPRwBvj9p1FE5MakkliELTtXpn27fj9lKtbtWIojGG7Bnqg1eRes0o
+         5B7Z4nrOTvOgnKTbxvV9qkKfVBM4bQ65/ijurE4EXG/l6l9T4PiquZ8n6JqCQGQYSMHE
+         JAUbr4P2WpHaL8NHUGVyCTkfyB2YNMv6881jqx7aNmzAEXPtQNeWP4cnLmmJ8Ii0WusM
+         dSNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=AWih7wUaLItSxunUAGBPh7BFuHKe3P2hg/fJSjXu3qo=;
-        b=IGIAtBlfL738gt1u2Jc6nfuw+hdKU30RBcL20lYqg+dZTiyYWHkaEM0s1am48lDcNx
-         crBwPuOVkAD6aVxGPLFswgDX1C6dhVCvYRN02xZyv+BwPLSPdxND4QIWo+ZqrzAB7mBa
-         oK01Q94f8BWWZdQnBJDoXObZHRSJYfyJlF5AQLqE8RgIsjGOCSCt0WqW9kGYqjeutdt1
-         EkPyzXUTDaAQmRANxZRdvgicaZyO5s4gtd3ROE9qrhqxL2QXqmndw5K9BFOhLIK1UjZr
-         nVtRH4M8qrG6y3QEcZJ2zRTjS4x83+spJBXeufliQdAYtsavVg9CXxg3BlbVc+rgppRR
-         4Rdw==
-X-Gm-Message-State: AOUpUlHjPn/nENOxukr4sWr2LxSxhtvr6eWEqF2n+qEQjb9Gi8S5fjpw
-        uyYlRE0p327aoR3+MDkB6Io=
-X-Google-Smtp-Source: AA+uWPxsev2KDL4ceuaNu5C3d0zM1ZgggcTAQ0/a1zo63Ejm0oTExsRc3bDbQTsj8AK5+qdFUv0vqg==
-X-Received: by 2002:a5e:8f0a:: with SMTP id c10-v6mr406363iok.92.1533749723268;
-        Wed, 08 Aug 2018 10:35:23 -0700 (PDT)
+        bh=2MDxi8G5QCQGcY68C2MmKrPRk4/p+/VvPDub72AlCxg=;
+        b=TBL5xZ/Yep/4FZAp/QxOLC5WrW5Dz/k9ExX6Yv15I6tANekqonHdSiwA0qFrCmt6Tb
+         GAXyq/S5HXl2/qV2lFHvtP/t3vFlFrBKH6NEX3thZmdm7DTBwZd+wIOUAkPFGPkheMSl
+         BPORhrz3QF6MhMKVZH5i45F6kfVs1ZG1Q4x69qzOXNTva8okz5VXlHbmGbKY/dOgv3zA
+         uCtrc4Iw3vg7JkT9q4wt+VxESzgPtSaJvjlkHDOo78Uwsogtlz928qcf5r5T9v72m6Hj
+         3q9UPKnw3cO6C75CdQ8U5TK1mWDrqy7Wci3ord/MwjYhnELaqXp4Ucs7Yl1Q1F4j362v
+         kDxQ==
+X-Gm-Message-State: AOUpUlH4U/y56kXyWDWsoVDM+K9N0gSYWCR2o0jTfqLt4eVajAj3H0RM
+        luBOywUAQNGrGxBgVUOLkkU=
+X-Google-Smtp-Source: AA+uWPwYZ0XsU7SlydsLzZWJCirUGvzsKdx8FSE1QnqJC8JX9Kg1uSlWpmc7ZW2Z+Ehbknvmdj39SA==
+X-Received: by 2002:a6b:410f:: with SMTP id n15-v6mr3065419ioa.3.1533749725286;
+        Wed, 08 Aug 2018 10:35:25 -0700 (PDT)
 Received: from localhost.localdomain ([2605:a000:1316:45c1:6d6b:de32:e032:aa21])
-        by smtp.googlemail.com with ESMTPSA id d8-v6sm1977480itj.10.2018.08.08.10.35.22
+        by smtp.googlemail.com with ESMTPSA id d8-v6sm1977480itj.10.2018.08.08.10.35.24
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 08 Aug 2018 10:35:22 -0700 (PDT)
+        Wed, 08 Aug 2018 10:35:24 -0700 (PDT)
 From:   Connor McAdams <conmanx360@gmail.com>
 Cc:     Connor McAdams <conmanx360@gmail.com>,
         Jaroslav Kysela <perex@perex.cz>,
@@ -66,9 +65,9 @@ Cc:     Connor McAdams <conmanx360@gmail.com>,
         Takashi Sakamoto <o-takashi@sakamocchi.jp>,
         Alastair Bridgewater <alastair.bridgewater@gmail.com>,
         alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 09/11] ALSA: hda/ca0132 - Add Recon3D input and output select commands
-Date:   Wed,  8 Aug 2018 13:34:20 -0400
-Message-Id: <1533749663-8200-10-git-send-email-conmanx360@gmail.com>
+Subject: [PATCH 10/11] ALSA: hda/ca0132 - Change mixer controls for Recon3D
+Date:   Wed,  8 Aug 2018 13:34:21 -0400
+Message-Id: <1533749663-8200-11-git-send-email-conmanx360@gmail.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1533749663-8200-1-git-send-email-conmanx360@gmail.com>
 References: <1533749663-8200-1-git-send-email-conmanx360@gmail.com>
@@ -78,75 +77,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds commands to the alternative input and output select
-commands to support the Recon3D.
+This patch adds changes to setup the Recon3D's mixer controls.
 
 Signed-off-by: Connor McAdams <conmanx360@gmail.com>
 ---
- sound/pci/hda/patch_ca0132.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ sound/pci/hda/patch_ca0132.c | 18 +++++++++++-------
+ 1 file changed, 11 insertions(+), 7 deletions(-)
 
 diff --git a/sound/pci/hda/patch_ca0132.c b/sound/pci/hda/patch_ca0132.c
-index 0257fb9..18b97df 100644
+index 18b97df..6f288d7 100644
 --- a/sound/pci/hda/patch_ca0132.c
 +++ b/sound/pci/hda/patch_ca0132.c
-@@ -3993,6 +3993,10 @@ static int ca0132_alt_select_out(struct hda_codec *codec)
- 			chipio_set_control_param(codec, 0x0D, 0x24);
- 			r3di_gpio_out_set(codec, R3DI_LINE_OUT);
- 			break;
-+		case QUIRK_R3D:
-+			chipio_set_control_param(codec, 0x0D, 0x24);
-+			ca0132_mmio_gpio_set(codec, 1, true);
-+			break;
- 		}
+@@ -5781,11 +5781,11 @@ static const struct snd_kcontrol_new ca0132_mixer[] = {
+ };
  
- 		/* disable headphone node */
-@@ -4029,6 +4033,10 @@ static int ca0132_alt_select_out(struct hda_codec *codec)
- 			chipio_set_control_param(codec, 0x0D, 0x21);
- 			r3di_gpio_out_set(codec, R3DI_HEADPHONE_OUT);
- 			break;
-+		case QUIRK_R3D:
-+			chipio_set_control_param(codec, 0x0D, 0x21);
-+			ca0132_mmio_gpio_set(codec, 0x1, false);
-+			break;
- 		}
- 
- 		snd_hda_codec_write(codec, spec->out_pins[0], 0,
-@@ -4071,6 +4079,10 @@ static int ca0132_alt_select_out(struct hda_codec *codec)
- 			chipio_set_control_param(codec, 0x0D, 0x24);
- 			r3di_gpio_out_set(codec, R3DI_LINE_OUT);
- 			break;
-+		case QUIRK_R3D:
-+			ca0132_mmio_gpio_set(codec, 1, true);
-+			chipio_set_control_param(codec, 0x0D, 0x24);
-+			break;
- 		}
- 		/* enable line out node */
- 		pin_ctl = snd_hda_codec_read(codec, spec->out_pins[0], 0,
-@@ -4328,6 +4340,7 @@ static int ca0132_alt_select_in(struct hda_codec *codec)
- 	case REAR_MIC:
- 		switch (spec->quirk) {
- 		case QUIRK_SBZ:
-+		case QUIRK_R3D:
- 			ca0132_mmio_gpio_set(codec, 0, false);
- 			tmp = FLOAT_THREE;
- 			break;
-@@ -4360,6 +4373,7 @@ static int ca0132_alt_select_in(struct hda_codec *codec)
- 		ca0132_mic_boost_set(codec, 0);
- 		switch (spec->quirk) {
- 		case QUIRK_SBZ:
-+		case QUIRK_R3D:
- 			ca0132_mmio_gpio_set(codec, 0, false);
- 			break;
- 		case QUIRK_R3DI:
-@@ -4386,6 +4400,7 @@ static int ca0132_alt_select_in(struct hda_codec *codec)
- 	case FRONT_MIC:
- 		switch (spec->quirk) {
- 		case QUIRK_SBZ:
-+		case QUIRK_R3D:
- 			ca0132_mmio_gpio_set(codec, 0, true);
- 			ca0132_mmio_gpio_set(codec, 5, false);
- 			tmp = FLOAT_THREE;
+ /*
+- * SBZ specific control mixer. Removes auto-detect for mic, and adds surround
+- * controls. Also sets both the Front Playback and Capture Volume controls to
+- * alt so they set the DSP's decibel level.
++ * Desktop specific control mixer. Removes auto-detect for mic, and adds
++ * surround controls. Also sets both the Front Playback and Capture Volume
++ * controls to alt so they set the DSP's decibel level.
+  */
+-static const struct snd_kcontrol_new sbz_mixer[] = {
++static const struct snd_kcontrol_new desktop_mixer[] = {
+ 	CA0132_ALT_CODEC_VOL("Front Playback Volume", 0x02, HDA_OUTPUT),
+ 	CA0132_CODEC_MUTE("Front Playback Switch", VNID_SPK, HDA_OUTPUT),
+ 	HDA_CODEC_VOLUME("Surround Playback Volume", 0x04, 0, HDA_OUTPUT),
+@@ -5856,8 +5856,8 @@ static int ca0132_build_controls(struct hda_codec *codec)
+ 	 */
+ 	num_fx = OUT_EFFECTS_COUNT + IN_EFFECTS_COUNT;
+ 	for (i = 0; i < num_fx; i++) {
+-		/* SBZ breaks if Echo Cancellation is used */
+-		if (spec->quirk == QUIRK_SBZ) {
++		/* SBZ and R3D break if Echo Cancellation is used. */
++		if (spec->quirk == QUIRK_SBZ || spec->quirk == QUIRK_R3D) {
+ 			if (i == (ECHO_CANCELLATION - IN_EFFECT_START_NID +
+ 						OUT_EFFECTS_COUNT))
+ 				continue;
+@@ -7609,9 +7609,13 @@ static int patch_ca0132(struct hda_codec *codec)
+ 	/* Set which mixers each quirk uses. */
+ 	switch (spec->quirk) {
+ 	case QUIRK_SBZ:
+-		spec->mixers[0] = sbz_mixer;
++		spec->mixers[0] = desktop_mixer;
+ 		snd_hda_codec_set_name(codec, "Sound Blaster Z");
+ 		break;
++	case QUIRK_R3D:
++		spec->mixers[0] = desktop_mixer;
++		snd_hda_codec_set_name(codec, "Recon3D");
++		break;
+ 	case QUIRK_R3DI:
+ 		spec->mixers[0] = r3di_mixer;
+ 		snd_hda_codec_set_name(codec, "Recon3Di");
 -- 
 2.7.4
 
