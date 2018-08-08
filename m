@@ -2,175 +2,90 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F8FCC4646D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 10:23:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E3E1C46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 10:24:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5C28208D9
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 10:23:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="EHSlgXa6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5C28208D9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+	by mail.kernel.org (Postfix) with ESMTP id 37DD5208C3
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 10:24:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37DD5208C3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727025AbeHHMmm (ORCPT
+        id S1727058AbeHHMnA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 08:42:42 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:52754 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726921AbeHHMml (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 08:42:41 -0400
-Received: from [192.168.0.67] (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id E2B8E57;
-        Wed,  8 Aug 2018 12:23:35 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1533723816;
-        bh=zkp3pt9sOGWRSUsNlhMVlo2pS3oMioGL7tH0A+5rJkE=;
-        h=Reply-To:Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=EHSlgXa6j8FAZq2Dq+6yj35jid2oe1kcx5xhKjiayuREe9XZTKsDhZHiachRgc9ie
-         2FJr8plh13dJGEn2M7b7/EtQ6NsoRTPnaqPwKkNde/EPwYi6JSJRx7vtZpgIUNaKrz
-         qogNHcKGsmqeqOm4KxfJ9MvE3g29QgEeyQhQ+ZJs=
-Reply-To: kieran.bingham@ideasonboard.com
-Subject: Re: [PATCH] media: dt: adv7604: Fix slave map documentation
-To:     =?UTF-8?B?TWljaGFsIFZva8OhxI0=?= <michal.vokac@ysoft.com>,
-        mchehab@kernel.org, linux-media@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-References: <20180807155452.797-1-kieran.bingham@ideasonboard.com>
- <505904fb-7bfc-c455-740e-b72a14731eb9@ysoft.com>
-From:   Kieran Bingham <kieran.bingham@ideasonboard.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=kieran.bingham@ideasonboard.com; keydata=
- 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
- sbsRB8KNNvVXBOVNwko86rQqF9drZuw=
-Organization: Ideas on Board
-Message-ID: <b5b25641-f898-577b-7762-d72dd64272cf@ideasonboard.com>
-Date:   Wed, 8 Aug 2018 11:23:32 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 8 Aug 2018 08:43:00 -0400
+Received: from foss.arm.com ([217.140.101.70]:36802 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726921AbeHHMnA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 08:43:00 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A51EF18A;
+        Wed,  8 Aug 2018 03:23:57 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 75E383F2EA;
+        Wed,  8 Aug 2018 03:23:57 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id CEA991AE180A; Wed,  8 Aug 2018 11:24:01 +0100 (BST)
+Date:   Wed, 8 Aug 2018 11:24:01 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     Waiman Long <longman@redhat.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        Joe Mario <jmario@redhat.com>,
+        Davidlohr Bueso <dave@stgolabs.net>
+Subject: Re: [PATCH v3] locking/rwsem: Exit read lock slowpath if queue empty
+ & no writer
+Message-ID: <20180808102401.GC28557@arm.com>
+References: <1532459425-19204-1-git-send-email-longman@redhat.com>
+ <55866c24-ff40-22cb-1390-6c9055bd2cb7@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <505904fb-7bfc-c455-740e-b72a14731eb9@ysoft.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <55866c24-ff40-22cb-1390-6c9055bd2cb7@redhat.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Michal,
+Hi Waiman,
 
-Thank you for your review.
-
-+Rob, +Mark, +Laurent asking for opinions if anyone has any on prefixes
-through media tree.
-
-On 08/08/18 08:48, Michal Vokáč wrote:
-> On 7.8.2018 17:54, Kieran Bingham wrote:
-> Hi Kieran,
->> The reg-names property in the documentation is missing an '='. Add it.
->>
->> Fixes: 9feb786876c7 ("media: dt-bindings: media: adv7604: Extend
->> bindings to allow specifying slave map addresses")
->>
+On Tue, Aug 07, 2018 at 07:29:49PM -0400, Waiman Long wrote:
+> On 07/24/2018 03:10 PM, Waiman Long wrote:
+> > diff --git a/kernel/locking/rwsem-xadd.c b/kernel/locking/rwsem-xadd.c
+> > index 3064c50..01fcb80 100644
+> > --- a/kernel/locking/rwsem-xadd.c
+> > +++ b/kernel/locking/rwsem-xadd.c
+> > @@ -233,8 +233,19 @@ static void __rwsem_mark_wake(struct rw_semaphore *sem,
+> >  	waiter.type = RWSEM_WAITING_FOR_READ;
+> >  
+> >  	raw_spin_lock_irq(&sem->wait_lock);
+> > -	if (list_empty(&sem->wait_list))
+> > +	if (list_empty(&sem->wait_list)) {
+> > +		/*
+> > +		 * In case the wait queue is empty and the lock isn't owned
+> > +		 * by a writer, this reader can exit the slowpath and return
+> > +		 * immediately as its RWSEM_ACTIVE_READ_BIAS has already
+> > +		 * been set in the count.
+> > +		 */
+> > +		if (atomic_long_read(&sem->count) >= 0) {
+> > +			raw_spin_unlock_irq(&sem->wait_lock);
+> > +			return sem;
+> > +		}
+> >  		adjustment += RWSEM_WAITING_BIAS;
+> > +	}
+> >  	list_add_tail(&waiter.list, &sem->wait_list);
+> >  
+> >  	/* we're now waiting on the lock, but no longer actively locking */
 > 
-> "dt-bindings: media: " is preferred for the subject.
+> Will this patch be eligible to go into 4.19 or 4.20?
 
-This patch will go through the media-tree as far as I am aware, and
-Mauro prefixes all commits through the media tree with "media:" if they
-are not already prefixed.
+It's probably worth reposting with the Acks you've received, so that Ingo
+can easily pick it up into -tip (but it might be a bit close for 4.19 at
+this point).
 
-Thus this would then become "media: dt-bindings: media: adv7604: ...."
-as per my commit: 9feb786876c7 which seems a bit redundant.
-
-Is it still desired ? If so I'll send a V2. (perhaps needed anyway, as I
-seem to have erroneously shortened dt-bindings: to just dt: which wasn't
-intentional.
-
-> I think you should also add device tree maintainers to the recipients.
-
-Added to this mail to ask opinions on patch prefixes above.
-
-Originally, I believed the list was sufficient as this is a trivial
-patch, and it goes through the media tree.
-
-But, it turned out to be more controversial :)
-
-Rob, Mark, should I add you to all patches affecting DT? Or is the list
-sufficient?
---
-Regards
-
-Kieran
-
-
-> Best regards,
-> Michal
-> 
->> Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
->> ---
->>   Documentation/devicetree/bindings/media/i2c/adv7604.txt | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/Documentation/devicetree/bindings/media/i2c/adv7604.txt
->> b/Documentation/devicetree/bindings/media/i2c/adv7604.txt
->> index dcf57e7c60eb..b3e688b77a38 100644
->> --- a/Documentation/devicetree/bindings/media/i2c/adv7604.txt
->> +++ b/Documentation/devicetree/bindings/media/i2c/adv7604.txt
->> @@ -66,7 +66,7 @@ Example:
->>            * other maps will retain their default addresses.
->>            */
->>           reg = <0x4c>, <0x66>;
->> -        reg-names "main", "edid";
->> +        reg-names = "main", "edid";
->>             reset-gpios = <&ioexp 0 GPIO_ACTIVE_LOW>;
->>           hpd-gpios = <&ioexp 2 GPIO_ACTIVE_HIGH>;
+Will
