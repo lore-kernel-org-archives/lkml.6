@@ -2,116 +2,184 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BCB5C4646D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 18:02:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDB9AC46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 18:02:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C83ED219EF
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 18:02:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C83ED219EF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joshtriplett.org
+	by mail.kernel.org (Postfix) with ESMTP id 92A3A219EF
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 18:02:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="eEio7hjm";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="I5J3On0M"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92A3A219EF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729759AbeHHUXR (ORCPT
+        id S1729989AbeHHUXj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 16:23:17 -0400
-Received: from relay2-d.mail.gandi.net ([217.70.183.194]:55885 "EHLO
-        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727748AbeHHUXR (ORCPT
+        Wed, 8 Aug 2018 16:23:39 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:53008 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727748AbeHHUXj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 16:23:17 -0400
-X-Originating-IP: 134.134.139.76
-Received: from localhost (unknown [134.134.139.76])
-        (Authenticated sender: josh@joshtriplett.org)
-        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id D46264000D;
-        Wed,  8 Aug 2018 18:02:10 +0000 (UTC)
-Date:   Wed, 8 Aug 2018 11:01:55 -0700
-From:   Josh Triplett <josh@joshtriplett.org>
-To:     Kirill Tkhai <ktkhai@virtuozzo.com>
-Cc:     Michal Hocko <mhocko@kernel.org>, akpm@linux-foundation.org,
-        gregkh@linuxfoundation.org, rafael@kernel.org,
-        viro@zeniv.linux.org.uk, darrick.wong@oracle.com,
-        paulmck@linux.vnet.ibm.com, rostedt@goodmis.org,
-        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
-        hughd@google.com, shuah@kernel.org, robh@kernel.org,
-        ulf.hansson@linaro.org, aspriel@gmail.com,
-        vivek.gautam@codeaurora.org, robin.murphy@arm.com, joe@perches.com,
-        heikki.krogerus@linux.intel.com, sfr@canb.auug.org.au,
-        vdavydov.dev@gmail.com, chris@chris-wilson.co.uk,
-        penguin-kernel@I-love.SAKURA.ne.jp, aryabinin@virtuozzo.com,
-        willy@infradead.org, ying.huang@intel.com, shakeelb@google.com,
-        jbacik@fb.com, mingo@kernel.org, mhiramat@kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH RFC 01/10] rcu: Make CONFIG_SRCU unconditionally enabled
-Message-ID: <20180808180152.GA2480@localhost>
-References: <153365347929.19074.12509495712735843805.stgit@localhost.localdomain>
- <153365625652.19074.8434946780002619802.stgit@localhost.localdomain>
- <20180808072040.GC27972@dhcp22.suse.cz>
- <d17e65bb-c114-55de-fb4e-e2f538779b92@virtuozzo.com>
- <20180808161330.GA22863@localhost>
- <f32ab99a-de28-b140-a7d0-027073055728@virtuozzo.com>
- <b4b58edd-b317-6319-1306-7345aa0062b8@virtuozzo.com>
+        Wed, 8 Aug 2018 16:23:39 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 3135360AFF; Wed,  8 Aug 2018 18:02:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1533751370;
+        bh=NGDvh0D7LD0ANRLIdVpj19Z5JygIB17sY61oj5NblPA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=eEio7hjmslZR8MzUo1qqT7U8XCIildEEz0Vlg6b6ugZMYiGS1iRM4gflkVlL5l5Si
+         5icjg6+b/PxGeT5vNdl5o1hdBKJ6ZuzIFd2H3q+6U5nbcSLmnAo2sC9XhjOUFRQWUZ
+         GaHIlmob+oeRLqCUziIslQzgVplBC6O4JGyVOeko=
+Received: from localhost (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: ilina@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id D370C60AFF;
+        Wed,  8 Aug 2018 18:02:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1533751369;
+        bh=NGDvh0D7LD0ANRLIdVpj19Z5JygIB17sY61oj5NblPA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=I5J3On0MzfnyWeOhfl9+TsLZ41yqZucaAJ6zQ0fEHeSp/WnDk/rx5UmE/zVAjo4Qi
+         Yzvh6+nKQJ5yLgyHcmREDKPA9JuMpl55cv3K+n2HXKbr4BOE830bnhnht5NziGjYce
+         NAPTE389Kz9aGwRJyiIiDU106A1GO1jwYbLRhK7g=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D370C60AFF
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
+Date:   Wed, 8 Aug 2018 12:02:48 -0600
+From:   Lina Iyer <ilina@codeaurora.org>
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        Lina Iyer <lina.iyer@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Juri Lelli <juri.lelli@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v8 09/26] kernel/cpu_pm: Manage runtime PM in the idle
+ path for CPUs
+Message-ID: <20180808180248.GC27850@codeaurora.org>
+References: <20180620172226.15012-1-ulf.hansson@linaro.org>
+ <2056372.NMt4aPaF4h@aspire.rjw.lan>
+ <2205807.cU2puvubpP@aspire.rjw.lan>
+ <1726374.375PCQfjLZ@aspire.rjw.lan>
+ <CAPDyKFrmP15+_hyRp44Jw-wsTmsNFKORdCeGJEgW8o0OoKiHhA@mail.gmail.com>
+ <CAJZ5v0hk1wfm10fyycmddKF6wR4D51r30fD_-J5UDMbtB3+V-Q@mail.gmail.com>
+ <20180808105619.GB25150@e107981-ln.cambridge.arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <b4b58edd-b317-6319-1306-7345aa0062b8@virtuozzo.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180808105619.GB25150@e107981-ln.cambridge.arm.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 08, 2018 at 07:30:13PM +0300, Kirill Tkhai wrote:
-> On 08.08.2018 19:23, Kirill Tkhai wrote:
-> > On 08.08.2018 19:13, Josh Triplett wrote:
-> >> On Wed, Aug 08, 2018 at 01:17:44PM +0300, Kirill Tkhai wrote:
-> >>> On 08.08.2018 10:20, Michal Hocko wrote:
-> >>>> On Tue 07-08-18 18:37:36, Kirill Tkhai wrote:
-> >>>>> This patch kills all CONFIG_SRCU defines and
-> >>>>> the code under !CONFIG_SRCU.
-> >>>>
-> >>>> The last time somebody tried to do this there was a pushback due to
-> >>>> kernel tinyfication. So this should really give some numbers about the
-> >>>> code size increase. Also why can't we make this depend on MMU. Is
-> >>>> anybody else than the reclaim asking for unconditional SRCU usage?
-> >>>
-> >>> I don't know one. The size numbers (sparc64) are:
-> >>>
-> >>> $ size image.srcu.disabled 
-> >>>    text	   data	    bss	    dec	    hex	filename
-> >>> 5117546	8030506	1968104	15116156	 e6a77c	image.srcu.disabled
-> >>> $ size image.srcu.enabled
-> >>>    text	   data	    bss	    dec	    hex	filename
-> >>> 5126175	8064346	1968104	15158625	 e74d61	image.srcu.enabled
-> >>> The difference is: 15158625-15116156 = 42469 ~41Kb
-> >>
-> >> 41k is a *substantial* size increase. However, can you compare
-> >> tinyconfig with and without this patch? That may have a smaller change.
-> > 
-> > $ size image.srcu.disabled
-> >    text	   data	    bss	    dec	    hex	filename
-> > 1105900	 195456	  63232	1364588	 14d26c	image.srcu.disabled
-> > 
-> > $ size image.srcu.enabled
-> >    text	   data	    bss	    dec	    hex	filename
-> > 1106960	 195528	  63232	1365720	 14d6d8	image.srcu.enabled
-> > 
-> > 1365720-1364588 = 1132 ~ 1Kb
->  
-> 1Kb is not huge size. It looks as not a big price for writing generic code
-> for only case (now some places have CONFIG_SRCU and !CONFIG_SRCU variants,
-> e.g. drivers/base/core.c). What do you think?
+On Wed, Aug 08 2018 at 04:56 -0600, Lorenzo Pieralisi wrote:
+>On Mon, Aug 06, 2018 at 11:37:55AM +0200, Rafael J. Wysocki wrote:
+>> On Fri, Aug 3, 2018 at 1:42 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>> > [...]
+>> >
+>> >>>
+>> >>> Assuming that I have got that right, there are concerns, mostly regarding
+>> >>> patch [07/26], but I will reply to that directly.
+>> >>
+>> >> Well, I haven't got that right, so never mind.
+>> >>
+>> >> There are a few minor things to address, but apart from that the general
+>> >> genpd patches look ready.
+>> >
+>> > Alright, thanks!
+>> >
+>> > I will re-spin the series and post a new version once 4.19 rc1 is out.
+>> > Hopefully we can queue it up early in next cycle to get it tested in
+>> > next for a while.
+>> >
+>> >>
+>> >>> The $subject patch is fine by me by itself, but it obviously depends on the
+>> >>> previous ones.  Patches [01-02/26] are fine too, but they don't seem to be
+>> >>> particularly useful without the rest of the series.
+>> >>>
+>> >>> As far as patches [10-26/26] go, I'd like to see some review comments and/or
+>> >>> tags from the people with vested interest in there, in particular from Daniel
+>> >>> on patch [12/26] and from Sudeep on the PSCI ones.
+>> >>
+>> >> But this still holds.
+>> >
+>> > Actually, patch 10 and patch11 is ready to go as well. I ping Daniel
+>> > on patch 12.
+>> >
+>> > In regards to the rest of the series, some of the PSCI/ARM changes
+>> > have been reviewed by Mark Rutland, however several changes have not
+>> > been acked.
+>> >
+>> > On the other hand, one can also interpret the long silence in regards
+>> > to PSCI/ARM changes as they are good to go. :-)
+>>
+>> Well, in that case giving an ACK to them should not be an issue for
+>> the people with a vested interest I suppose.
+>
+>Apologies to everyone for the delay in replying.
+>
+>Side note: cpu_pm_enter()/exit() are also called through syscore ops in
+>s2RAM/IDLE, you know that but I just wanted to mention it to compound
+>the discussion.
+>
+>As for PSCI patches I do not personally think PSCI OSI enablement is
+>beneficial (and my position has always been the same since PSCI OSI was
+>added to the specification, I am not even talking about this patchset)
+>and Arm Trusted Firmware does not currently support it for the same
+>reason.
+>
+>We (if Mark and Sudeep agree) will enable PSCI OSI if and when we have a
+>definitive and constructive answer to *why* we have to do that that is
+>not a dogmatic "the kernel knows better" but rather a comprehensive
+>power benchmark evaluation - I thought that was the agreement reached
+>at OSPM but apparently I was mistaken.
+>
+I will not speak to any comparison of benchmarks between OSI and PC.
+AFAIK, there are no platforms supporting both.
 
-That's a little more reasonable than 41k, likely because of
-CONFIG_TINY_SRCU. That's still not ideal, though. And as far as I can
-tell, the *only* two pieces of core code that use SRCU are
-drivers/base/core.c and kernel/notifier.c, and the latter is exclusively
-code to use notifiers with SRCU, not notifiers wanting to use SRCU
-themselves. So, as far as I can tell, this would really just save a
-couple of small #ifdef sections in drivers/base/core.c, and I think
-those #ifdef sections could be simplified even further. That doesn't
-seem worth it at all.
+But, the OSI feature is critical for QCOM mobile platforms. The
+last man activities during cpuidle save quite a lot of power. Powering
+off the clocks, busses, regulators and even the oscillator is very
+important to have a reasonable battery life when using the phone.
+Platform coordinated approach falls quite short of the needs of a
+powerful processor with a desired battery efficiency.
+
+-- Lina
+
+>As a reminder - PSCI firmware implementation has to have state machines
+>and locking to guarantee safe power down operations (and to flush caches
+>only if necessary - which requires cpu masks for power domains) and
+>that's true whether we enable PSCI OSI or not, the coordination logic
+>must be in firmware/hardware _already_ - the cpumasks, the power domain
+>topology, etc.
+>
+>I agree with the power-domains representation of idle-states (since
+>that's the correct HW description) and I thought and hoped that runtime
+>PM could help _remove_ the CPU PM notifiers (by making the notifiers
+>callbacks a runtime PM one) even though I have to say that's quite
+>complex, given that only few (ie one instance :)) CPU PM notifiers
+>callbacks are backed by a struct device (eg an ARM PMU is a device but
+>for instance the GIC is not a device so its save/restore code I am not
+>sure it can be implemented with runtime PM callbacks).
+>
+>Lorenzo
