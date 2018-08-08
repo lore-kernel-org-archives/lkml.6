@@ -2,128 +2,187 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACFE4C46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 03:07:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F181AC46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 03:07:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F4C9216E6
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 03:07:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 93D3C216FB
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 03:07:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=maximintegrated.onmicrosoft.com header.i=@maximintegrated.onmicrosoft.com header.b="rD4c3ObD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F4C9216E6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=maximintegrated.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IKxF9IA8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93D3C216FB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726875AbeHHFYi (ORCPT
+        id S1726957AbeHHFZU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 01:24:38 -0400
-Received: from mail-sn1nam02on0091.outbound.protection.outlook.com ([104.47.36.91]:37676
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726542AbeHHFYi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 01:24:38 -0400
+        Wed, 8 Aug 2018 01:25:20 -0400
+Received: from mail-yw1-f41.google.com ([209.85.161.41]:41991 "EHLO
+        mail-yw1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726579AbeHHFZU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 01:25:20 -0400
+Received: by mail-yw1-f41.google.com with SMTP id y203-v6so534764ywd.9
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 20:07:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=maximintegrated.onmicrosoft.com; s=selector1-maximintegrated-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vhm00G9HlCZ/d5eQIjHIEiS1lE5HmG/cSc5rp+1M02M=;
- b=rD4c3ObDWlahJtoDbeiQ+PvPYSmJbg4yYtWcS6faPmuM3GOoSgFWKmLrdVaWI96CBLeBLv3dSr7kOuw+mMdUVMPvi0rXnHfOqBd2mNxYxTN3aktEJoup+DRSgjkAH7bTOemXhXzY7/8ag9I9YvWtZcvmDh0j2/j5Q8O+VLfe3zk=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=RyanS.Lee@maximintegrated.com; 
-Received: from ubuntu.localdomain (211.178.16.139) by
- DM3PR1101MB1135.namprd11.prod.outlook.com (2a01:111:e400:5aae::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1017.15; Wed, 8 Aug
- 2018 03:07:04 +0000
-From:   Ryan Lee <ryans.lee@maximintegrated.com>
-To:     lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz,
-        tiwai@suse.com, ryans.lee@maximintegrated.com,
-        kuninori.morimoto.gx@renesas.com, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org
-Cc:     ryan.lee.maxim@gmail.com
-Subject: [PATCH] ASoC: max98373: Added software reset register to readable registers
-Date:   Tue,  7 Aug 2018 20:06:38 -0700
-Message-Id: <20180808030638.8085-1-ryans.lee@maximintegrated.com>
-X-Mailer: git-send-email 2.17.1
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4eKTNsXmlyRVhYcZT0orNOxHkL5AlBcDabEJ6uwLNVg=;
+        b=IKxF9IA8wJGk8sRWiYooVuPLZJG8XV4iQavDV8YManCO5sQYnnyJga1E59gZRhacoi
+         xe7zgCtw/X+hRtGQcc4ZjzUpbSq93RNiU27CAhQKsV5exZaqEWlqV8Mm0ZF0NZiB5H9M
+         MPZdMwbBvnXOdcYo2SV1bBFRIdVL+F/cEuASg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4eKTNsXmlyRVhYcZT0orNOxHkL5AlBcDabEJ6uwLNVg=;
+        b=I8m9VS+wjsP6a2H6Oh2aKtUt+ynX38zH1UQN4ld3EOLzu3NZkP5EMSlXDPpgGyloU7
+         z19B7IlfeT/FuxAS68plSplsgyvMkzL45Tttey3LyHnx/dLbycEQ6dRHZUzBa5OxaAPj
+         l6/q9Jb6MvVGFHk8/+lhON2vXhPvuvKNTBIqjTDfM+4a1ls/2lzsOMqb/ZSo+/FtaZLN
+         dTxwbe0hSUOGiVJum3m8Tnytp+VlTFun2x+E/Elfvh8RofuZwDDFIaAAfaf4fx7708m3
+         R3BHOhkC7V/BIFD7mhGF8RvxLXe+tdXBOK6jlfNO00cG5XWui5c+4aXsCOJjmFOByh0M
+         IN8Q==
+X-Gm-Message-State: AOUpUlHWNRrxgnk4muM9jloy275HsV+k/9mmNd5nFIYG6XCHkuYqbLHb
+        Kf+5XhROD2QTE3wC1Gl7DxYAgJ4Clx0=
+X-Google-Smtp-Source: AA+uWPwfg0ZtpLK9n9Koy7s81mCA/8ri9HaykmsaPV4LR7F7u58/jV2dnU9H/qt8TOZaI8z7OfeCxg==
+X-Received: by 2002:a25:80c8:: with SMTP id c8-v6mr477225ybm.203.1533697672097;
+        Tue, 07 Aug 2018 20:07:52 -0700 (PDT)
+Received: from mail-yw1-f48.google.com (mail-yw1-f48.google.com. [209.85.161.48])
+        by smtp.gmail.com with ESMTPSA id a124-v6sm1220681ywc.96.2018.08.07.20.07.49
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 07 Aug 2018 20:07:50 -0700 (PDT)
+Received: by mail-yw1-f48.google.com with SMTP id r184-v6so540179ywg.6
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 20:07:49 -0700 (PDT)
+X-Received: by 2002:a25:5709:: with SMTP id l9-v6mr542289ybb.226.1533697669282;
+ Tue, 07 Aug 2018 20:07:49 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [211.178.16.139]
-X-ClientProxiedBy: HK0PR03CA0085.apcprd03.prod.outlook.com
- (2603:1096:203:72::25) To DM3PR1101MB1135.namprd11.prod.outlook.com
- (2a01:111:e400:5aae::9)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 00389e1c-b3db-41d0-2153-08d5fcdc05f1
-X-MS-Office365-Filtering-HT: Tenant
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DM3PR1101MB1135;
-X-Microsoft-Exchange-Diagnostics: 1;DM3PR1101MB1135;3:Z7tCfvAfZZbHkgGdRzsyP1Nl/N3sDQlop1sFvdq4ivdZ5GLhfFIb5xvyhORVClArNahJgEHgd8Gg1j84w45gewR4baeYCuofr8SUzH+45O2uEjl7h9eCcwbOOf1Y38NeK9MtMQyz3rf2tbqZh/5oYamlok+JqFcMtRRc30oJh14T/98WsI/UNqNaj3b/E/AzOACrda46zllqEcFS1uPYq8IRglufL4PqN5kTpDjJr/hr94OTsCUnbcsxHZjilK0P;25:gbfU8VtZq6cIbDfcUPOZkRiD6oRfPLITaUiRxTRkOeZZ/ecuRgYVJLAgxYappfnRHRKpoJan8kGKMYq2lSH9b+93JGwGERqvAxOoXUSNoUREB3+dxMaaglBixLJ4s9d1zlbfyBP8a1qAF7xO/83q8rNbZHKxTd+e+n23+9cPlQKEaOZrYaVnyRbdph+K67mz1Mntfk1RFFHWl1TlM8wKdsUSsZy7BT6iGYbo2/igyPG4U+4MTyYfREVezcuh+SbcVwJR+wMuCUiNl3cc4FsLFVthM2/XkewKmJdSgHRB5qv9OiJJzIiP4wogQzy7YNgBbpi1npYfwytp5eSOR5yqJg==;31:fyI0xr+8cJYK4TApjY740KXqLhG3ek0AOsv6eyEcAQTtZBDeID0b4npa62APgnATBaufr33GsRrLFKxG0I3XqoaCl10b+W3MFVxSomDYc3oMbEgqpmgD2V8r12yU8+EEYKQ0L2Co44xEY2Fawx1hyQu9y1VnA35Qz7BrVHFEM6pCIrWCdidUoQkjlWJFY50xyCcuHU0JwlpEGPHZQn44rloi+SE2L2N4ymDCxOj9Do8=
-X-MS-TrafficTypeDiagnostic: DM3PR1101MB1135:
-X-Microsoft-Exchange-Diagnostics: 1;DM3PR1101MB1135;20:ZPNqrjyC/r97vvzn1eL2iLRdIt3vpqYI/Aah36r5M80M+cBA5X5iD19uwX2TY5Mo+Prcpr+dyxjOzoFzZIHpZT4E7dpq6klAH5stMT8UwvRG5Yb5zOfcGwm3XD5iejU/L7fNhqyeGRxuxyAMJYy02u2hYAhnpjJ+R0X1ws6jsewK+kMc093wgjiz7WdQqPc3ZNpVth6vrxljQiLrnL+i20AbJAR2GaUesOXtDPo2bAWGhwrozequ5T7lZo7KtLdXVuI7SFBHMvPKEkZkoRFumGDn7M+rCMUTLsqo8MGScZcTz2fS0cj03snvcEV/U3fdEwfo8urHiLrqOvoW84PdU+6XIT1rUkiPAN7witkENKmuJhiiPEsEoz4Is8eUNrofj29ENTNbnk1KryzdT750fd+alGAnlgZK+3iprA3b/2PYWfINmFMhFGVyGDhzXar11INUZrdCibPbfOze0caCuAaDO7xHk5UIA9VoKqC1kCS3LWrjqgBUbRQSAWU5k9h1;4:6tKBkgOJ71yIBaG5Kj8dBFbdCj8eswMNzN1dy1+U3SrUTZEpHonfC+iz1wpQajqVTcHTfpkz0msXfdg7wV+9ekuIVt0XPxCjbyMU9FkillDDre31jf6D1gkpnNaaCr83Y7rdshebX0qLhrCzixutGHY6kgTD0t/6ixb7tLuC9IazoG3Y/CFF2jRkgXnT79ICRX+9vNLKMtD0zJGqvRO3YM92zwOUwUJ1qxUqx7niTjwYkOkRUruiwnjVu9Mqbf/A5X8uZxKJDeJhhRCc+dOitf/jZaQqJOZlczkwCguUiLdu8s45KAEeNCCCjtt55l07
-X-Microsoft-Antispam-PRVS: <DM3PR1101MB11353531D9BB72365F306F92E7260@DM3PR1101MB1135.namprd11.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(108721460000369);
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231311)(944501410)(52105095)(93006095)(93001095)(10201501046)(3002001)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(20161123560045)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:DM3PR1101MB1135;BCL:0;PCL:0;RULEID:;SRVR:DM3PR1101MB1135;
-X-Forefront-PRVS: 07584EDBCD
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(136003)(396003)(376002)(39860400002)(346002)(366004)(189003)(199004)(6486002)(47776003)(86362001)(66066001)(25786009)(486006)(53936002)(476003)(4326008)(16586007)(2616005)(956004)(14444005)(39060400002)(316002)(2906002)(6512007)(50226002)(1857600001)(36756003)(6506007)(5660300001)(478600001)(6666003)(386003)(1076002)(50466002)(48376002)(97736004)(7736002)(3846002)(6116002)(52116002)(26005)(51416003)(305945005)(68736007)(16526019)(106356001)(105586002)(81166006)(186003)(8936002)(81156014)(8676002)(72206003);DIR:OUT;SFP:1102;SCL:1;SRVR:DM3PR1101MB1135;H:ubuntu.localdomain;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-Received-SPF: None (protection.outlook.com: maximintegrated.com does not
- designate permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DM3PR1101MB1135;23:vDzIhjqKHznymKzeKX/l/C21Vg2ZrjD5rz3OKid?=
- =?us-ascii?Q?Ky7Hkp/SnqSr+xtoHEMJhHF8HDVQ/HuCaCxp0kXSuA+o5S6mhxksRgwUpaqx?=
- =?us-ascii?Q?wfsgIdpm+VispDGxQepLZ4USxZHmvkuUsColYXpBhQGlJM9bV4LtgRvaplrc?=
- =?us-ascii?Q?twG5SqJKVO19Uo+Ec/LIOCulH1FB0Yvvs8GAq2DRo2WyrX4bJCh9MK3eyP6d?=
- =?us-ascii?Q?jtMCMn3jTpH1CX6iNn7lYk0jIAC13zwFhWy3Ez6FcvgkS127+slhHxAcA4K8?=
- =?us-ascii?Q?/qhb9Rh5ZSiEEM6WUjvFm2WqRzM3usYJ8W8AWjpAFNoA44RU7/0Bt9U5YGbr?=
- =?us-ascii?Q?C3YnURp4UtSy2hD82kFpLqkCxqAryV7WR2x65En8H2bCFbbPfVPdqEAc2m6Y?=
- =?us-ascii?Q?bP0MjUz9xmYy09ukrSBUY9jM/vrn4N/6WWhrRKEIH8OzOhFpss5up5c282z7?=
- =?us-ascii?Q?U1hCcBy6jyhjNgFW22lvzsE6gTv06FR+ACaRgFFoRdhJRlFOdkCJW8Hb4O6p?=
- =?us-ascii?Q?aaD5vy5NBX09i7e5mUdVvaQDYlIi4oAbVIIPCei+YfTqrAjxmUqZZH2Y2HjO?=
- =?us-ascii?Q?NWv/FijewUtJ6SneXUjb5o+mN/WLwdIpxZhoF89lsU7bHShhS3MyayG7jZRZ?=
- =?us-ascii?Q?VSW+JjgfN32EqYr1iRe10P84363DPWpPFiPSmXhYUV//U6U9BQvJLqR2Llh8?=
- =?us-ascii?Q?p0Ve8tDRQq2KxIV1Vf3XrJsYDBD/KyYolyPeEEgpYcoITTaYLkjoUwOSn9ZX?=
- =?us-ascii?Q?cbUkimjXhzSFFWvoUtyGs01C7Oz+6YsJKUGVGhe6QkQXPXJ4R4zP+VFbtuYL?=
- =?us-ascii?Q?05fcQf+9eO5YdnD7i4D/A0Nfp9g09JkGubZU01/d7EN7D+OelSe1o3yt9YzF?=
- =?us-ascii?Q?v7xCB8TuqAfEZCaB17JpOq+So08D/xI7Hykvi8VpDCWO6WItnJ6icP5C7NC0?=
- =?us-ascii?Q?h4u3SSkvERusPfP+zfBYwsTOu52NGsofFDAVTi3l3v7/byLL/IwO58goxPAj?=
- =?us-ascii?Q?odGGfRfo+wtBliXvZOrM18NEoKJm46wwUn1GwsX008t52RqEHL/XGMOL8UJk?=
- =?us-ascii?Q?9jcCIyW12JuztN5O5WKgNcEh5hFK1wjmKXh9bu1fgksIDDyPljsbmJrqs0n8?=
- =?us-ascii?Q?Beoyq7Rs3Ms3ylhRkMhj8zqoLPYQ6WHNXh63ISfUBRe5TKKdO7exmRx3dl2w?=
- =?us-ascii?Q?Wdi/5xhoMH8hOwW4+mmGoxmdW7+HoOkl53xUX?=
-X-Microsoft-Antispam-Message-Info: oXSTXS/ysdgGEV92JU2akex61a9S1XShHEiF4ynOUlFoTZnLGDZJdae/Cvpfi8UTeqF6qPNaQnG/UoKGflH1WOvKyhw/R/owE0u66mTSKCTjIO0scDY5wnbjflihYzL01bVXW45HlB6xCL6O8BLzbL/h/3DT39EgUBcuYmD61JvCFMPJuFqwjOldKffP58cObVEsBoFgl8VH21bZEOPFKMJLbZiBY7pSmXvkCTcC7MEAmw50aZIfLv+n5r/jGcVx/EONB/9aTphZfUZO4PdGqsOXpEy7KJfBC7b546HkqPhtMHwx+H+e4vnAl5rMRyNzHZpAc4hOJyMwIjM4vrAYNCQWnj6Hqi1i8wLLSR+ea/A=
-X-Microsoft-Exchange-Diagnostics: 1;DM3PR1101MB1135;6:zXCid0Fego/WUmXXXfR7LW+eY3U5NlQ3Qc/GEhO7RvuoY5aeWfZRYpOQTvzHwGhPVNYMEq9JJhQR2mlgXMBNhmrJJ5jwSMwj8LtVlV0a882rJsuVCUEf5ydC+JM4DVPB08nkI4vDjbhRyZ6zFWIrr7sSrlczTc6zUSZHp6m4QjgGZT+OQ1PxUb5+1Npo1wSSCPdSRGTY3roc5zXOhrG4w6zz3ELeg+0i+gcoF6po90QFVgBZvGq4+JAE0Mpkm6NIe7PwuNUArOJ5kXjqVzRce/LU8w06kHJ1qLkdwtGE6Cw3Cy94K1vPMvpZxK/IeSXCHO/peXdUIBC1HFCA7DRnh+7WqKW1cg51P2Rv4HSpJ617cF7U9H5VPrf+ObOcKwHBPP7A8R9+3nDIIKTQ0+d+eL1kQi3qxSpwi+Cikms9ob2tGfhrzQNPFy88tOT9u2g7etbcZzZbncPXhaQdtX5Hpg==;5:1TZ2dCBuOfBC6WNwulsZjbrCyMzloCij5fZYxQDoP1xaMnPmSv0YcdDpd6dx8QHWOUfQnWRKT2cxO10/4sqdgNFWOoY+Z3VVo8xpz8F7/D/Ec5orzhx2EtxvF3ALFqAGlw+DN2q6Jrzn8R6suq5YGse6MWhG/5E1EldmjJ/f9hs=;7:ianmZe71sLWnj81nqGHrPLBfdbqeZi+kGzxCv1NGRril/39TyrH2Swwm7dT8h7uQBOosi9KT0mrBuu90Dno84/Hznq9Ka5MD2SsIGc87uPoNkyVOvkG0Q6MoMO5CajtczQpdcsyskd7FPCFOAHUQwyKkjQMI9WgYWvlEApzgv95wp4fakzAi9sbGQ7JfFlukwCYxmJHfK0FYoshp9j/6fpre7PnxE2iFowzd8auBunBfTkIHDnU4M93cyQmKPklF
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-OriginatorOrg: maximintegrated.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Aug 2018 03:07:04.0814
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 00389e1c-b3db-41d0-2153-08d5fcdc05f1
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: fbd909df-ea69-4788-a554-f24b7854ad03
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PR1101MB1135
+References: <20180724140621.59624-1-tfiga@chromium.org> <20180724140621.59624-2-tfiga@chromium.org>
+ <37a8faea-a226-2d52-36d4-f9df194623cc@xs4all.nl> <CAAFQd5BgGEBmd8gNGc-qqtUtLo=Mh8U+TVTWRsKYMv1LmeBQMA@mail.gmail.com>
+ <e0da6268-c7f6-1048-83b9-a7e67cfe000e@xs4all.nl> <CAHStOZ7H88GRSZ_U9GeBnd34JrcCL9crJF279zcpGYtJCV-uEQ@mail.gmail.com>
+In-Reply-To: <CAHStOZ7H88GRSZ_U9GeBnd34JrcCL9crJF279zcpGYtJCV-uEQ@mail.gmail.com>
+From:   Tomasz Figa <tfiga@chromium.org>
+Date:   Wed, 8 Aug 2018 12:07:37 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5Ce=GhmrD-iuu54r1gGNsooHgRDAAXySHkWDP8PO5_pug@mail.gmail.com>
+Message-ID: <CAAFQd5Ce=GhmrD-iuu54r1gGNsooHgRDAAXySHkWDP8PO5_pug@mail.gmail.com>
+Subject: Re: [PATCH 1/2] media: docs-rst: Document memory-to-memory video
+ decoder interface
+To:     Maxime Jourdan <maxi.jourdan@wanadoo.fr>
+Cc:     Hans Verkuil <hverkuil@xs4all.nl>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Pawel Osciak <posciak@chromium.org>,
+        Alexandre Courbot <acourbot@chromium.org>, kamil@wypas.org,
+        a.hajda@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>,
+        jtp.park@samsung.com, Philipp Zabel <p.zabel@pengutronix.de>,
+        =?UTF-8?B?VGlmZmFueSBMaW4gKOael+aFp+ePiik=?= 
+        <tiffany.lin@mediatek.com>,
+        =?UTF-8?B?QW5kcmV3LUNUIENoZW4gKOmZs+aZuui/qik=?= 
+        <andrew-ct.chen@mediatek.com>, todor.tomov@linaro.org,
+        nicolas@ndufresne.ca,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        dave.stevenson@raspberrypi.org,
+        Ezequiel Garcia <ezequiel@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Ryan Lee <ryans.lee@maximintegrated.com>
----
- Changes : Added 'MAX98373_R2000_SW_RESET' register to 'max98373_readable_register'
-           Software reset didn't work properly after suspend/resume.
- sound/soc/codecs/max98373.c | 1 +
- 1 file changed, 1 insertion(+)
+On Wed, Aug 8, 2018 at 4:11 AM Maxime Jourdan <maxi.jourdan@wanadoo.fr> wrote:
+>
+> 2018-08-07 9:13 GMT+02:00 Hans Verkuil <hverkuil@xs4all.nl>:
+> > On 07/26/2018 12:20 PM, Tomasz Figa wrote:
+> >> Hi Hans,
+> >>
+> >> On Wed, Jul 25, 2018 at 8:59 PM Hans Verkuil <hverkuil@xs4all.nl> wrote:
+> >>>> +
+> >>>> +14. Call :c:func:`VIDIOC_STREAMON` to initiate decoding frames.
+> >>>> +
+> >>>> +Decoding
+> >>>> +========
+> >>>> +
+> >>>> +This state is reached after a successful initialization sequence. In this
+> >>>> +state, client queues and dequeues buffers to both queues via
+> >>>> +:c:func:`VIDIOC_QBUF` and :c:func:`VIDIOC_DQBUF`, following standard
+> >>>> +semantics.
+> >>>> +
+> >>>> +Both queues operate independently, following standard behavior of V4L2
+> >>>> +buffer queues and memory-to-memory devices. In addition, the order of
+> >>>> +decoded frames dequeued from ``CAPTURE`` queue may differ from the order of
+> >>>> +queuing coded frames to ``OUTPUT`` queue, due to properties of selected
+> >>>> +coded format, e.g. frame reordering. The client must not assume any direct
+> >>>> +relationship between ``CAPTURE`` and ``OUTPUT`` buffers, other than
+> >>>> +reported by :c:type:`v4l2_buffer` ``timestamp`` field.
+> >>>
+> >>> Is there a relationship between capture and output buffers w.r.t. the timestamp
+> >>> field? I am not aware that there is one.
+> >>
+> >> I believe the decoder was expected to copy the timestamp of matching
+> >> OUTPUT buffer to respective CAPTURE buffer. Both s5p-mfc and coda seem
+> >> to be implementing it this way. I guess it might be a good idea to
+> >> specify this more explicitly.
+> >
+> > What about an output buffer producing multiple capture buffers? Or the case
+> > where the encoded bitstream of a frame starts at one output buffer and ends
+> > at another? What happens if you have B frames and the order of the capture
+> > buffers is different from the output buffers?
+> >
+> > In other words, for codecs there is no clear 1-to-1 relationship between an
+> > output buffer and a capture buffer. And we never defined what the 'copy timestamp'
+> > behavior should be in that case or if it even makes sense.
+> >
+> > Regards,
+> >
+> >         Hans
+>
+> As it is done right now in userspace (FFmpeg, GStreamer) and most (if
+> not all?) drivers, it's a 1:1 between OUTPUT and CAPTURE. The only
+> thing that changes is the ordering since OUTPUT buffers are in
+> decoding order while CAPTURE buffers are in presentation order.
 
-diff --git a/sound/soc/codecs/max98373.c b/sound/soc/codecs/max98373.c
-index a925861..92b7125 100644
---- a/sound/soc/codecs/max98373.c
-+++ b/sound/soc/codecs/max98373.c
-@@ -488,6 +488,7 @@ static const DECLARE_TLV_DB_RANGE(max98373_bde_gain_tlv,
- static bool max98373_readable_register(struct device *dev, unsigned int reg)
- {
- 	switch (reg) {
-+	case MAX98373_R2000_SW_RESET:
- 	case MAX98373_R2001_INT_RAW1 ... MAX98373_R200C_INT_EN3:
- 	case MAX98373_R2010_IRQ_CTRL:
- 	case MAX98373_R2014_THERM_WARN_THRESH
--- 
-2.7.4
+If I understood it correctly, there is a feature in VP9 that lets one
+frame repeat several times, which would make one OUTPUT buffer produce
+multiple CAPTURE buffers.
 
+Moreover, V4L2_PIX_FMT_H264 is actually defined to be a byte stream,
+without any need for framing, and yes, there are drivers that follow
+this definition correctly (s5p-mfc and, AFAIR, coda). In that case,
+one OUTPUT buffer can have arbitrary amount of bitstream and lead to
+multiple CAPTURE frames being produced.
+
+>
+> This almost always implies some timestamping kung-fu to match the
+> OUTPUT timestamps with the corresponding CAPTURE timestamps. It's
+> often done indirectly by the firmware on some platforms (rpi comes to
+> mind iirc).
+
+I don't think there is an upstream driver for it, is there? (If not,
+are you aware of any work towards it?)
+
+>
+> The current constructions also imply one video packet per OUTPUT
+> buffer. If a video packet is too big to fit in a buffer, FFmpeg will
+> crop that packet to the maximum buffer size and will discard the
+> remaining packet data. GStreamer will abort the decoding. This is
+> unfortunately one of the shortcomings of having fixed-size buffers.
+> And if they were to split the packet in multiple buffers, then some
+> drivers in their current state wouldn't be able to handle the
+> timestamping issues and/or x:1 OUTPUT:CAPTURE buffer numbers.
+
+In Chromium, we just allocate OUTPUT buffers big enough to be really
+unlikely for a single frame not to fit inside [1]. Obviously it's a
+waste of memory, for formats which normally have just single frames
+inside buffers, but it seems to work in practice.
+
+[1] https://cs.chromium.org/chromium/src/media/gpu/v4l2/v4l2_video_decode_accelerator.h?rcl=3468d5a59e00bcb2c2e946a30694e6057fd9ab21&l=118
+
+Best regards,
+Tomasz
