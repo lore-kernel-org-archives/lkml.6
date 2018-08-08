@@ -2,192 +2,137 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43BA4C46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:44:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D871C46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:44:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0896E21718
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:44:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0896E21718
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id E3E4621718
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:44:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3E4621718
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727513AbeHHREF (ORCPT
+        id S1727528AbeHHREr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 13:04:05 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39960 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726954AbeHHREE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 13:04:04 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D9C1718A;
-        Wed,  8 Aug 2018 07:44:05 -0700 (PDT)
-Received: from localhost (e105922-lin.Emea.Arm.com [10.4.13.28])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5AD5B3F5D4;
-        Wed,  8 Aug 2018 07:44:05 -0700 (PDT)
-From:   Punit Agrawal <punit.agrawal@arm.com>
-To:     Bjorn Helgaas <bhelgaas@google.com>
-Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Jeremy Linton <jeremy.linton@arm.com>,
-        linux-arm <linux-arm-kernel@lists.infradead.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Jiang Liu <jiang.liu@linux.intel.com>,
-        linux-pci@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-acpi@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH] arm64: PCI: Remove node-local allocations when initialising host controller
-References: <20180801173132.19739-1-punit.agrawal@arm.com>
-        <38ad03ba-2658-98c8-1888-0aa3bfb59bd4@arm.com>
-        <20180802143319.GA13512@red-moon>
-        <CAErSpo5i7AAXq4vmfsH2WjheXpzzM1iaehdeM24eQZjzYY39Rg@mail.gmail.com>
-Date:   Wed, 08 Aug 2018 15:44:03 +0100
-In-Reply-To: <CAErSpo5i7AAXq4vmfsH2WjheXpzzM1iaehdeM24eQZjzYY39Rg@mail.gmail.com>
-        (Bjorn Helgaas's message of "Wed, 8 Aug 2018 08:54:28 -0500")
-Message-ID: <87eff85364.fsf@e105922-lin.cambridge.arm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
+        Wed, 8 Aug 2018 13:04:47 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:41676 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726954AbeHHREq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 13:04:46 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w78EiAp3092776
+        for <linux-kernel@vger.kernel.org>; Wed, 8 Aug 2018 10:44:47 -0400
+Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2kr0mjdqu6-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 10:44:46 -0400
+Received: from localhost
+        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.vnet.ibm.com>;
+        Wed, 8 Aug 2018 10:44:46 -0400
+Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
+        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 8 Aug 2018 10:44:42 -0400
+Received: from b01ledav001.gho.pok.ibm.com (b01ledav001.gho.pok.ibm.com [9.57.199.106])
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w78Eie2V42795036
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 8 Aug 2018 14:44:40 GMT
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1D7C928058;
+        Wed,  8 Aug 2018 10:43:29 -0400 (EDT)
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0F8EA28059;
+        Wed,  8 Aug 2018 10:43:28 -0400 (EDT)
+Received: from localhost.localdomain (unknown [9.85.187.56])
+        by b01ledav001.gho.pok.ibm.com (Postfix) with ESMTPS;
+        Wed,  8 Aug 2018 10:43:27 -0400 (EDT)
+From:   Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+To:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
+        pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        akrowiak@linux.vnet.ibm.com, frankja@linux.ibm.com
+Subject: [PATCH v8 01/22] s390/zcrypt: Add ZAPQ inline function.
+Date:   Wed,  8 Aug 2018 10:44:11 -0400
+X-Mailer: git-send-email 1.7.1
+In-Reply-To: <1533739472-7172-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+References: <1533739472-7172-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 18080814-2213-0000-0000-000002D773EB
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009507; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01070983; UDB=6.00551365; IPR=6.00850514;
+ MB=3.00022589; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-08 14:44:45
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18080814-2214-0000-0000-00005B216DEB
+Message-Id: <1533739472-7172-2-git-send-email-akrowiak@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-08_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=875 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808080153
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[+cc linux-acpi, linux-mm]
+From: Harald Freudenberger <freude@de.ibm.com>
 
-Bjorn Helgaas <bhelgaas@google.com> writes:
+Added new inline function ap_pqap_zapq()
+which is a C inline function wrapper for
+the AP PQAP(ZAPQ) instruction.
 
-> [+cc linux-pci, linux-kernel]
->
-> On Thu, Aug 2, 2018 at 9:33 AM Lorenzo Pieralisi
-> <lorenzo.pieralisi@arm.com> wrote:
->>
->> On Wed, Aug 01, 2018 at 02:38:51PM -0500, Jeremy Linton wrote:
->> > Hi,
->> >
->> > +CC Jiang Lui
->>
->> Jiang Liu does not work on the kernel anymore so we won't know
->> anytime soon the reasoning behind commit 965cd0e4a5e5
->>
->> > On 08/01/2018 12:31 PM, Punit Agrawal wrote:
->> > >Memory for host controller data structures is allocated local to the
->> > >node to which the controller is associated with. This has been the
->> > >behaviour since support for ACPI was added in
->> > >commit 0cb0786bac15 ("ARM64: PCI: Support ACPI-based PCI host controller").
->> >
->> > Which was apparently influenced by:
->> >
->> > 965cd0e4a5e5 x86, PCI, ACPI: Use kmalloc_node() to optimize for performance
->> >
->> > Was there an actual use-case behind that change?
->> >
->> > I think this fixes the immediate boot problem, but if there is any
->> > perf advantage it seems wise to keep it... Particularly since x86
->> > seems to be doing the node sanitation in pci_acpi_root_get_node().
->>
->> I am struggling to see the perf advantage of allocating a struct
->> that the PCI controller will never read/write from a NUMA node that
->> is local to the PCI controller, happy to be corrected if there is
->> a sound rationale behind that.
->
-> If there is no reason to use kzalloc_node() here, we shouldn't use it.
->
-> But we should use it (or not use it) consistently across arches.  I do
-> not believe there is an arch-specific reason to be different.
-> Currently, pci_acpi_scan_root() uses kzalloc_node() on x86 and arm64,
-> but kzalloc() on ia64.  They all ought to be the same.
+Signed-off-by: Harald Freudenberger <freude@de.ibm.com>
+Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+Reviewed-by: Tony Krowiak <akrowiak@linux.ibm.com>
+---
+ drivers/s390/crypto/ap_asm.h |   19 +++++++++++++++++++
+ 1 files changed, 19 insertions(+), 0 deletions(-)
 
-From my understanding, arm64 use of kzalloc_node() was derived from the
-x86 version. Maybe somebody familiar with behaviour on x86 can provide
-input here.
+diff --git a/drivers/s390/crypto/ap_asm.h b/drivers/s390/crypto/ap_asm.h
+index 16b59ce..b22d30a 100644
+--- a/drivers/s390/crypto/ap_asm.h
++++ b/drivers/s390/crypto/ap_asm.h
+@@ -70,6 +70,25 @@ static inline struct ap_queue_status ap_rapq(ap_qid_t qid)
+ }
+ 
+ /**
++ * ap_pqap_zapq(): Reset and zeroize adjunct processor queue.
++ * @qid: The AP queue number
++ *
++ * Returns AP queue status structure.
++ */
++static inline struct ap_queue_status ap_zapq(ap_qid_t qid)
++{
++	register unsigned long reg0 asm ("0") = qid | (2UL << 24);
++	register struct ap_queue_status reg1 asm ("1");
++
++	asm volatile(
++		".long 0xb2af0000"		/* PQAP(ZAPQ) */
++		: "=d" (reg1)
++		: "d" (reg0)
++		: "cc");
++	return reg1;
++}
++
++/**
+  * ap_aqic(): Control interruption for a specific AP.
+  * @qid: The AP queue number
+  * @qirqctrl: struct ap_qirq_ctrl (64 bit value)
+-- 
+1.7.1
 
->
->> > >Drop the node local allocation as there is no benefit from doing so -
->> > >the usage of these structures is independent from where the controller
->> > >is located. It also causes problem during probe if the associated numa
->> > >node hasn't been initialised due to booting with restricted cpus via
->> > >kernel command line or where the node doesn't have cpus or memory
->> > >associated with it.
->
-> I do not support the avoidance of kzalloc_node() as a means of working
-> around the problem of a NUMA node not being initialized correctly.
-
-Agreed.
-
-The patch is not meant as a work around for uninitialised NUMA nodes. I
-mention it in the commit log as the context where this was
-discovered. It seems to cause conflation of the issue addressed by the
-patch - I'll drop it in future postings.
-
-> We got that node number from acpi_get_node().  I think we should be
-> able to pass it to kzalloc_node() and expect something reasonable,
-> i.e., either a successful allocation from the desired node (or from a
-> node that is present) or an error return.  I don't think the caller is
-> in a position to figure out whether it's safe to use kzalloc_node() or
-> not.
-
-The problem is that acpi_get_node() just maps the proximity domain to a
-node id, without initialising the node pglist_data or setting up the
-zonelists. This happens in the case when the proximity domain is not
-present in the SRAT (proximity domain has no attached cpus or memory)
-but first encountered as part of _PXM() method for a device.
-
-One approach to solve this problem would be to create
-acpi_get_online_node() which attempts to online a NUMA node if it isn't
-already or at the least return NUMA_NO_NODE.
-
-Another would be to have kzalloc_node() perform the checks for online
-node and return error if not.
-
-It's not clear what the preferred approach is.
-
->
->> > >Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
->> > >Cc: Catalin Marinas <catalin.marinas@arm.com>
->> > >Cc: Will Deacon <will.deacon@arm.com>
->> > >Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
->> > >---
->> > >Hi,
->> > >
->> > >This came up in the context of investigating the boot issues reported
->> > >due to restricted cpus or buggy firmware. Part of the problem is fixed
->> > >by Lorenzo's rework of NUMA initialisation[0].
->> > >
->> > >But there also doesn't seem to be any justification for using
->> > >node-local allocation to begin with.
->> > >
->> > >Thanks,
->> > >Punit
->> > >
->> > >[0] https://patchwork.kernel.org/patch/10486001/
->> > >
->> > >  arch/arm64/kernel/pci.c | 5 ++---
->> > >  1 file changed, 2 insertions(+), 3 deletions(-)
->> > >
->> > >diff --git a/arch/arm64/kernel/pci.c b/arch/arm64/kernel/pci.c
->> > >index 0e2ea1c78542..bb85e2f4603f 100644
->> > >--- a/arch/arm64/kernel/pci.c
->> > >+++ b/arch/arm64/kernel/pci.c
->> > >@@ -165,16 +165,15 @@ static void pci_acpi_generic_release_info(struct acpi_pci_root_info *ci)
->> > >  /* Interface called from ACPI code to setup PCI host controller */
->> > >  struct pci_bus *pci_acpi_scan_root(struct acpi_pci_root *root)
->> > >  {
->> > >-    int node = acpi_get_node(root->device->handle);
->> > >     struct acpi_pci_generic_root_info *ri;
->> > >     struct pci_bus *bus, *child;
->> > >     struct acpi_pci_root_ops *root_ops;
->> > >-    ri = kzalloc_node(sizeof(*ri), GFP_KERNEL, node);
->> > >+    ri = kzalloc(sizeof(*ri), GFP_KERNEL);
->> > >     if (!ri)
->> > >             return NULL;
->> > >-    root_ops = kzalloc_node(sizeof(*root_ops), GFP_KERNEL, node);
->> > >+    root_ops = kzalloc(sizeof(*root_ops), GFP_KERNEL);
->> > >     if (!root_ops) {
->> > >             kfree(ri);
->> > >             return NULL;
->> > >
->> >
