@@ -2,125 +2,179 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 115F5C46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 08:27:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 602E2C4646D
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 08:27:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1C64216F6
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 08:27:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="X8xhIM9L"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1C64216F6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	by mail.kernel.org (Postfix) with ESMTP id 207B8216FB
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 08:27:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 207B8216FB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=citrix.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727229AbeHHKpi (ORCPT
+        id S1727285AbeHHKqD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 06:45:38 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:42286 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726979AbeHHKph (ORCPT
+        Wed, 8 Aug 2018 06:46:03 -0400
+Received: from smtp.ctxuk.citrix.com ([185.25.65.24]:6841 "EHLO
+        SMTP.EU.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727026AbeHHKqD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 06:45:37 -0400
-Received: by mail-ed1-f66.google.com with SMTP id r4-v6so827219edp.9
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 01:27:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ZJyiqdZic1VHnOsGJ+Itv6QwE/ryZ0YCv8sR4lPrkIs=;
-        b=X8xhIM9LoF7zt7gNZ8OpLQpVrfbKejfYtjXbLisgjCqTdTp9kaXuoFLYbDb2o0+omu
-         2kbp94eHIt5CeAkBl4FrM6ZnLaDXMX5mUhB9cw9AfO0sXsLQ3lhDNQ/9PABMevNT+Xko
-         4+N4T37ULCu7/vrdQD03zpG5iBcxHrTvWExx4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=ZJyiqdZic1VHnOsGJ+Itv6QwE/ryZ0YCv8sR4lPrkIs=;
-        b=rbrhOOG216FCWxrqRiPOHURBhj4yt6fKatbof77upJQXmkjqxnQ3eAfMwxmfvwz6gu
-         duP0Wpot9sNcnjnssvluC22v9Bp3i8B2zK17m0Bhj5eJ0SRCHGsYIdq/MvHz6EIeVlLH
-         WNcCAJBqV8ls4zU5+cJp6l456O8dTRyei7LNY16o+tun1VtR/VgVExik170MwrC6VKse
-         xLX96jrr5sSYzVy3lk+wAPGnltBAnoHu10Rwe94ZcsD64CkQsrrVCMUok5+H250tHcrJ
-         2wPUWq3rnJiPVImT5mT9Bk82xn8MrTzF1tUDnydyXrgGSEoonRg0xWJY4f5eMGqhJ/Z8
-         DdRQ==
-X-Gm-Message-State: AOUpUlEvD1PflU6i5jnFYwVHfEh6EeIHxFhQsCzEkaWHUHYBU3r77NmU
-        IdvDEsgZ51v8VL2R6BwedSPjyzDz3eg=
-X-Google-Smtp-Source: AA+uWPwACfaav4dSjwONSZjU7vrLRPkvGxZo+DUEfibZOoL1JuSoF3VbLECFKf8OW7TdQ9tsqVb/AQ==
-X-Received: by 2002:a50:d307:: with SMTP id g7-v6mr2156053edh.221.1533716819642;
-        Wed, 08 Aug 2018 01:26:59 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:56fc:0:d707:d7d8:b180:96e5])
-        by smtp.gmail.com with ESMTPSA id w3-v6sm3721523edb.16.2018.08.08.01.26.58
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 08 Aug 2018 01:26:59 -0700 (PDT)
-Date:   Wed, 8 Aug 2018 10:26:57 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Gerd Hoffmann <kraxel@redhat.com>
-Cc:     dri-devel@lists.freedesktop.org,
-        open list <linux-kernel@vger.kernel.org>,
-        "moderated list:DMA BUFFER SHARING FRAMEWORK" 
-        <linaro-mm-sig@lists.linaro.org>,
-        "open list:DMA BUFFER SHARING FRAMEWORK" 
-        <linux-media@vger.kernel.org>
-Subject: Re: [PATCH] dma-buf: fix sanity check in dma_buf_export
-Message-ID: <20180808082657.GJ3008@phenom.ffwll.local>
-Mail-Followup-To: Gerd Hoffmann <kraxel@redhat.com>,
-        dri-devel@lists.freedesktop.org,
-        open list <linux-kernel@vger.kernel.org>,
-        "moderated list:DMA BUFFER SHARING FRAMEWORK" <linaro-mm-sig@lists.linaro.org>,
-        "open list:DMA BUFFER SHARING FRAMEWORK" <linux-media@vger.kernel.org>
-References: <20180808062540.13545-1-kraxel@redhat.com>
+        Wed, 8 Aug 2018 06:46:03 -0400
+X-IronPort-AV: E=Sophos;i="5.51,456,1526342400"; 
+   d="scan'208";a="77334652"
+Date:   Wed, 8 Aug 2018 10:27:16 +0200
+From:   Roger Pau =?utf-8?B?TW9ubsOp?= <roger.pau@citrix.com>
+To:     Juergen Gross <jgross@suse.com>
+CC:     <linux-kernel@vger.kernel.org>, <xen-devel@lists.xenproject.org>,
+        <linux-block@vger.kernel.org>, <konrad.wilk@oracle.com>,
+        <axboe@kernel.dk>, <boris.ostrovsky@oracle.com>
+Subject: Re: [PATCH 2/4] xen/blkfront: cleanup stale persistent grants
+Message-ID: <20180808082716.y4nwqz4y2gzp3yok@mac>
+References: <20180806113403.24728-1-jgross@suse.com>
+ <20180806113403.24728-4-jgross@suse.com>
+ <20180806161638.nmjamflckekeuyzb@mac>
+ <e28d3e77-2c6b-fc30-37e6-646ee1cfbdab@suse.com>
+ <20180807141404.lzsqtdd2seqgwtgx@mac>
+ <bba40203-ff97-aba6-cbb6-d3e57387778a@suse.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Disposition: inline
-In-Reply-To: <20180808062540.13545-1-kraxel@redhat.com>
-X-Operating-System: Linux phenom 4.14.0-3-amd64 
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <bba40203-ff97-aba6-cbb6-d3e57387778a@suse.com>
+User-Agent: NeoMutt/20180716
+X-ClientProxiedBy: AMSPEX02CAS01.citrite.net (10.69.22.112) To
+ AMSPEX02CL02.citrite.net (10.69.22.126)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 08, 2018 at 08:25:40AM +0200, Gerd Hoffmann wrote:
-> Commit 09ea0dfbf972 made map_atomic and map function pointers optional,
-> but didn't adapt the sanity check in dma_buf_export.  Fix that.
+On Tue, Aug 07, 2018 at 05:56:38PM +0200, Juergen Gross wrote:
+> On 07/08/18 16:14, Roger Pau Monné wrote:
+> > On Tue, Aug 07, 2018 at 08:31:31AM +0200, Juergen Gross wrote:
+> >> On 06/08/18 18:16, Roger Pau Monné wrote:
+> >>> On Mon, Aug 06, 2018 at 01:34:01PM +0200, Juergen Gross wrote:
+> >>>> Add a periodic cleanup function to remove old persistent grants which
+> >>>> are no longer in use on the backend side. This avoids starvation in
+> >>>> case there are lots of persistent grants for a device which no longer
+> >>>> is involved in I/O business.
+> >>>>
+> >>>> Signed-off-by: Juergen Gross <jgross@suse.com>
+> >>>> ---
+> >>>>  drivers/block/xen-blkfront.c | 99 ++++++++++++++++++++++++++++++++++++++++++--
+> >>>>  1 file changed, 95 insertions(+), 4 deletions(-)
+> >>>>
+> >>>> diff --git a/drivers/block/xen-blkfront.c b/drivers/block/xen-blkfront.c
+> >>>> index b5cedccb5d7d..19feb8835fc4 100644
+> >>>> --- a/drivers/block/xen-blkfront.c
+> >>>> +++ b/drivers/block/xen-blkfront.c
+> >>>> @@ -46,6 +46,7 @@
+> >>>>  #include <linux/scatterlist.h>
+> >>>>  #include <linux/bitmap.h>
+> >>>>  #include <linux/list.h>
+> >>>> +#include <linux/workqueue.h>
+> >>>>  
+> >>>>  #include <xen/xen.h>
+> >>>>  #include <xen/xenbus.h>
+> >>>> @@ -121,6 +122,9 @@ static inline struct blkif_req *blkif_req(struct request *rq)
+> >>>>  
+> >>>>  static DEFINE_MUTEX(blkfront_mutex);
+> >>>>  static const struct block_device_operations xlvbd_block_fops;
+> >>>> +static struct delayed_work blkfront_work;
+> >>>> +static LIST_HEAD(info_list);
+> >>>> +static bool blkfront_work_active;
+> >>>>  
+> >>>>  /*
+> >>>>   * Maximum number of segments in indirect requests, the actual value used by
+> >>>> @@ -216,6 +220,7 @@ struct blkfront_info
+> >>>>  	/* Save uncomplete reqs and bios for migration. */
+> >>>>  	struct list_head requests;
+> >>>>  	struct bio_list bio_list;
+> >>>> +	struct list_head info_list;
+> >>>>  };
+> >>>>  
+> >>>>  static unsigned int nr_minors;
+> >>>> @@ -1764,6 +1769,12 @@ static int write_per_ring_nodes(struct xenbus_transaction xbt,
+> >>>>  	return err;
+> >>>>  }
+> >>>>  
+> >>>> +static void free_info(struct blkfront_info *info)
+> >>>> +{
+> >>>> +	list_del(&info->info_list);
+> >>>> +	kfree(info);
+> >>>> +}
+> >>>> +
+> >>>>  /* Common code used when first setting up, and when resuming. */
+> >>>>  static int talk_to_blkback(struct xenbus_device *dev,
+> >>>>  			   struct blkfront_info *info)
+> >>>> @@ -1885,7 +1896,10 @@ static int talk_to_blkback(struct xenbus_device *dev,
+> >>>>   destroy_blkring:
+> >>>>  	blkif_free(info, 0);
+> >>>>  
+> >>>> -	kfree(info);
+> >>>> +	mutex_lock(&blkfront_mutex);
+> >>>> +	free_info(info);
+> >>>> +	mutex_unlock(&blkfront_mutex);
+> >>>> +
+> >>>>  	dev_set_drvdata(&dev->dev, NULL);
+> >>>>  
+> >>>>  	return err;
+> >>>> @@ -1996,6 +2010,10 @@ static int blkfront_probe(struct xenbus_device *dev,
+> >>>>  	info->handle = simple_strtoul(strrchr(dev->nodename, '/')+1, NULL, 0);
+> >>>>  	dev_set_drvdata(&dev->dev, info);
+> >>>>  
+> >>>> +	mutex_lock(&blkfront_mutex);
+> >>>> +	list_add(&info->info_list, &info_list);
+> >>>> +	mutex_unlock(&blkfront_mutex);
+> >>>> +
+> >>>>  	return 0;
+> >>>>  }
+> >>>>  
+> >>>> @@ -2306,6 +2324,15 @@ static void blkfront_gather_backend_features(struct blkfront_info *info)
+> >>>>  	if (indirect_segments <= BLKIF_MAX_SEGMENTS_PER_REQUEST)
+> >>>>  		indirect_segments = 0;
+> >>>>  	info->max_indirect_segments = indirect_segments;
+> >>>> +
+> >>>> +	if (info->feature_persistent) {
+> >>>> +		mutex_lock(&blkfront_mutex);
+> >>>> +		if (!blkfront_work_active) {
+> >>>> +			blkfront_work_active = true;
+> >>>> +			schedule_delayed_work(&blkfront_work, HZ * 10);
+> >>>
+> >>> Does it make sense to provide a module parameter to rune the schedule
+> >>> of the cleanup routine?
+> >>
+> >> I don't think this is something anyone would like to tune.
+> >>
+> >> In case you think it should be tunable I can add a parameter, of course.
+> > 
+> > We can always add it later if required. I'm fine as-is now.
+> > 
+> >>>
+> >>>> +		}
+> >>>> +		mutex_unlock(&blkfront_mutex);
+> >>>
+> >>> Is it really necessary to have the blkfront_work_active boolean? What
+> >>> happens if you queue the same delayed work more than once?
+> >>
+> >> In case there is already work queued later calls of
+> >> schedule_delayed_work() will be ignored.
+> >>
+> >> So yes, I can drop the global boolean (I still need a local flag in
+> >> blkfront_delay_work() for controlling the need to call
+> >> schedule_delayed_work() again).
+> > 
+> > Can't you just call schedule_delayed_work if info->feature_persistent
+> > is set, even if that means calling it multiple times if multiple
+> > blkfront instances are using persistent grants?
 > 
-> Note that the atomic map interface has been removed altogether meanwhile
-> (commit f664a52695), therefore we have to remove the map check only.
-> 
-> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+> I don't like that. With mq we have a high chance for multiple instances
+> to use persistent grants and a local bool is much cheaper than unneeded
+> calls of schedule_delayed_work().
 
-Chris Wilson just submitted the exact same patch ...
--Daniel
+OK, I'm convinced with the local bool.
 
-> ---
->  drivers/dma-buf/dma-buf.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
-> index 13884474d1..02f7f9a899 100644
-> --- a/drivers/dma-buf/dma-buf.c
-> +++ b/drivers/dma-buf/dma-buf.c
-> @@ -405,7 +405,6 @@ struct dma_buf *dma_buf_export(const struct dma_buf_export_info *exp_info)
->  			  || !exp_info->ops->map_dma_buf
->  			  || !exp_info->ops->unmap_dma_buf
->  			  || !exp_info->ops->release
-> -			  || !exp_info->ops->map
->  			  || !exp_info->ops->mmap)) {
->  		return ERR_PTR(-EINVAL);
->  	}
-> -- 
-> 2.9.3
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
-
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Thanks, Roger.
