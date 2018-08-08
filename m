@@ -2,129 +2,152 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0252EC4646D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:03:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B783BC4646D
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:07:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75F292168C
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:03:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75F292168C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.de
+	by mail.kernel.org (Postfix) with ESMTP id 389382168C
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:07:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 389382168C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=holtmann.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727342AbeHHQXp (ORCPT
+        id S1727327AbeHHQ1C convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 12:23:45 -0400
-Received: from mout.gmx.net ([212.227.15.19]:41505 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727050AbeHHQXo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 12:23:44 -0400
-Received: from homer.simpson.net ([185.191.219.117]) by mail.gmx.com (mrgmx002
- [212.227.17.190]) with ESMTPSA (Nemesis) id 0MQR3s-1fLnVV46Um-00ToOo; Wed, 08
- Aug 2018 16:03:46 +0200
-Message-ID: <1533737025.4936.3.camel@gmx.de>
-Subject: [PATCH] x86, kdump: Fix efi=noruntime NULL pointer dereference
-From:   Mike Galbraith <efault@gmx.de>
-To:     Dave Young <dyoung@redhat.com>
-Cc:     Baoquan He <bhe@redhat.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        lkml <linux-kernel@vger.kernel.org>
-Date:   Wed, 08 Aug 2018 16:03:45 +0200
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:4OaRbMUNKdS5N6WT2mWHkplEklvl+JbA1gUyE+r0CkYNxXCtz8m
- qLlp3WAWBO4p9IyZnB3pYdHIJjQ+dFlw1CxXwREwpMIhsq9vaWYTSlw4LtO2o+QPy0pZq4l
- e/xHJh6k2+BTTcMSebyPkcU9/3Y0jOVPPTZtiwbW9aCb7KM9cScNtucbBYjKle0ZwchS6+J
- yQNFaNmccM/yveQBXS9CQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:qQAFQZwn6q0=:x0AAeCcvBMhY7kcrlFszs9
- kKvAbZHzreL5ERUVDQhiscQFPPLPAcWKCCISGzmi2rAh+j3xvq/e3m8QmVn967PwFgKTNWaV5
- ThvS3VOHuHr3npygQr1NDPgEH26zjsmkj8ucSiHbJbHtcbueBsK43LdaG+R1+cDbyKGl38A37
- W6XwWbX/aTRaF+5xK+ufMIim0vHyhIv89GNPAkgY7VkA4HaYrKlfNOIMplFiCpP6KAEVKG6q5
- l0aNXnNhs2n6xuK8Z601ADp/OyLyvnJNsNtpZYUUN9nIPA3QD50LRDUoj7p1wQ9VZKAjDNQ+Y
- cgFu91Si7i9zo23Etq3kPn98py3MgDcN/Ef9gJOQ1KcH1dezOo2K2nIos6M3v69qT2UYerHgr
- TBao0BZ/EwbtwNU55jTseIZhUQWaHTyqIHo+tlJtLYO4actNEq29l9YkiB4/19lH/6Z5n72Yw
- I5Kcn7+TPHJyaeA0jEq3RR3IY5lFSdB5rQRmOKoOcrvMuVgfK1rgBubYzW0cCeU8peN27ViWl
- At2sMdNolbL0nxCyZApzwhO+Ugkz8kvEN8xK5tQNtzhLHCXHLvA0Mdh+FwGf2PJfsxIY1ypxn
- wsjXoVKxUwTXJxx7tXfE7XkiPlGpfWOGCUg8/oI1NnGgS2xm+fzZv1xVc/5NiiHzQv9f/h62W
- IfOuK1MhZDeHoljD8ocKcxAMwSeR/zdaxSvvfQq7QNLQkpK8zIyoBgpp4wL8d2wpszDk07ARh
- W+2oqnOzjyQh7nVIRBcS8tPL1ZaX2bCDssk5Z2R6ZI4IZA3/l8Lbn2qK/P/TwjPgJ8o1wYg1y
- wICxOTg
+        Wed, 8 Aug 2018 12:27:02 -0400
+Received: from coyote.holtmann.net ([212.227.132.17]:48799 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726971AbeHHQ1C (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 12:27:02 -0400
+Received: from marcel-macpro.fritz.box (p4FEFCC41.dip0.t-ipconnect.de [79.239.204.65])
+        by mail.holtmann.org (Postfix) with ESMTPSA id E1EC1CF2B8;
+        Wed,  8 Aug 2018 16:14:10 +0200 (CEST)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 11.5 \(3445.9.1\))
+Subject: Re: [PATCH v7 2/3] Bluetooth: mediatek: Add protocol support for
+ MediaTek serial devices
+From:   Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <1533715447.3472.251.camel@mtkswgap22>
+Date:   Wed, 8 Aug 2018 16:07:08 +0200
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:BLUETOOTH DRIVERS" <linux-bluetooth@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-mediatek@lists.infradead.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Transfer-Encoding: 8BIT
+Message-Id: <78F5F65C-F155-473A-BC94-809683FB9BDA@holtmann.org>
+References: <cover.1533056925.git.sean.wang@mediatek.com>
+ <c92ed10cf16f36d9a3b390e864af92e2dfe7b771.1533056925.git.sean.wang@mediatek.com>
+ <1707FFA1-A294-4A95-A3BF-0910CE455232@holtmann.org>
+ <1533192799.3472.122.camel@mtkswgap22>
+ <FF45A90A-F9F1-47CB-AB1F-1E92BF587FBE@holtmann.org>
+ <1533199720.3472.136.camel@mtkswgap22>
+ <9526E5D9-50BA-4D57-80F5-083DB7D28AFE@holtmann.org>
+ <1533205495.3472.144.camel@mtkswgap22>
+ <A6D48D49-52CE-405D-8C5D-C4D54CE67221@holtmann.org>
+ <1533303749.3472.160.camel@mtkswgap22>
+ <D2336CD2-B69B-4B5B-8125-F0CAD29E3243@holtmann.org>
+ <1533319214.3472.187.camel@mtkswgap22>
+ <7A3537C5-5940-45AD-AB80-77418CCFE130@holtmann.org>
+ <1533652445.3472.230.camel@mtkswgap22>
+ <8AF72CFC-4978-42AD-8ECC-752EB137DD2A@holtmann.org>
+ <1533715447.3472.251.camel@mtkswgap22>
+To:     Sean Wang <sean.wang@mediatek.com>
+X-Mailer: Apple Mail (2.3445.9.1)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When booting with efi=noruntime, we call efi_runtime_map_copy() while
-loading the kdump kernel, and trip over a NULL efi.memmap.map.  Avoid
-that and a useless allocation when the only mapping we can use (1:1)
-is not available.
+Hi Sean,
 
-Signed-off-by: Mike Galbraith <efault@gmx.de>
----
- arch/x86/kernel/kexec-bzimage64.c |   22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+>>>>>> this is even more hackish since the __hci_cmd_sync_ev command is really meant to get a cmd status first before waiting for that event.
+>>>>>> 
+>>>>> 
+>>>>> Understood.
+>>>>> 
+>>>>> I've stopped the hack in v8. could we merge v8 first ? and then I will a fix up with __hci_raw_sync_ev that uses the hdev->raw_q instead of __hci_cmd_sync_ev in TODO.
+>>>> 
+>>>> so I looked into this a bit more. We actually added __hci_cmd_send for a Qualcomm firmware loader that was doing something similar. So instead of trying to add a yet another command to the core, I actually used that and implemented the wait for vendor event in the driver.
+>>>> 
+>>>> You will see my v9 on the mailing list. I also did a bunch of cosmetic minor cleanup and spelling correction. Please test this version. I also make __le16 dlen instead of dlen1 + dlen2 since I think that is what your hardware does.
+>>> 
+>>> Only one thing needs to be corrected in v9. that is __be16 is required instead of dlen1 + dlen2. I will fix it up in v10 and the other changes all look good to me.
+>>> 
+>>>> If this version of the driver works for you then I am happy to merge it. You can then add support for hdev->set_bdaddr and hdev->set_diag in later patches. I also like to clean up the STP receive handler since it can be done a lot simpler and smaller, but that has to wait.
+>>>> 
+>>> 
+>>> hopefully v10 also can be merged :)
+>> 
+>> send me a v10 and I can merge it.
+>> 
+>>> I will investigate more about how to add ->set_bdaddr, ->set_diag and STP receive enhancement in later patches.
+>>> 
+>>> but so far I have not much idea about how to make STP multiplexer be a independent driver.
+>>> 
+>>> my thought is that it would be really better and cleaner a chain of serdev is be used as the base of mtkbtuart. something like
+>>> 
+>>> 8250 serial bus <----> STP multiplexer serdev <----> mtkbtuart serdev
+>>> 
+>>> however, STP multiplexer serdev is not a real device, that doesn't no request any resource. I think it should not be allowed to be added in a device tree and even in dt-binding document.
+>> 
+>> Before we do that, lets get a cleaner parser for it. I just don’t have enough time to wrap my head around this one yet.
+>> 
+>>>>>> Are all Mediatek vendor commands this way? Or just the ones for loading the firmware? So only the WMT ones?
+>>>>>> 
+>>>>> 
+>>>>> Only the WMT ones, WMT commands/events are usually used in system controlling, for example, global function on/off, firmware download, reset and so on. most only appear on device initialization
+>>>> 
+>>>> Since you never checked the result of the vendor event, I opted for just signaling that it arrived. If they can report success or failure, we need to add some extra code for that.
+>>>> 
+>>> 
+>>> I will consider more WMT event status when I add more Bluetooth devices such as MT7668U usb based Bluetooth which I plan to add the support in later patches in the next weeks 
+>> 
+>> Are the USB ones also using STP or are they H:2 based like all the others. What are prominent MT7668U based ones that I could buy?
+>> 
+> 1.
+> USB ones don't use any STP framing, which is totally dedicated to the
+> serial based device.
+> 
+> I don't exactly know what the term H:2 means you mentioned here. I only
+> know the btusb driver can be reused for M7668U and just only one weird
+> thing to solve in btusb driver. That is HCI WMT event coming through
+> control in pipe, not through interrupt pipe :(
+> 
+> And as for the others generic hci/acl/sco data, they all work well as
+> btusb usually work. I will show you the code to let you exactly know
+> what I'm meaning instead of just talking :)
 
---- a/arch/x86/kernel/kexec-bzimage64.c
-+++ b/arch/x86/kernel/kexec-bzimage64.c
-@@ -122,9 +122,6 @@ static int setup_efi_info_memmap(struct
- 	unsigned long efi_map_phys_addr = params_load_addr + efi_map_offset;
- 	struct efi_info *ei = &params->efi_info;
- 
--	if (!efi_map_sz)
--		return 0;
--
- 	efi_runtime_map_copy(efi_map, efi_map_sz);
- 
- 	ei->efi_memmap = efi_map_phys_addr & 0xffffffff;
-@@ -176,7 +173,7 @@ setup_efi_state(struct boot_params *para
- 	 * acpi_rsdp=<addr> on kernel command line to make second kernel boot
- 	 * without efi.
- 	 */
--	if (efi_enabled(EFI_OLD_MEMMAP))
-+	if (efi_enabled(EFI_OLD_MEMMAP) || !efi_enabled(EFI_MEMMAP))
- 		return 0;
- 
- 	ei->efi_loader_signature = current_ei->efi_loader_signature;
-@@ -338,7 +335,7 @@ static void *bzImage64_load(struct kimag
- 	struct kexec_entry64_regs regs64;
- 	void *stack;
- 	unsigned int setup_hdr_offset = offsetof(struct boot_params, hdr);
--	unsigned int efi_map_offset, efi_map_sz, efi_setup_data_offset;
-+	unsigned int efi_map_offset = 0, efi_map_sz = 0, efi_setup_data_offset = 0;
- 	struct kexec_buf kbuf = { .image = image, .buf_max = ULONG_MAX,
- 				  .top_down = true };
- 	struct kexec_buf pbuf = { .image = image, .buf_min = MIN_PURGATORY_ADDR,
-@@ -397,19 +394,22 @@ static void *bzImage64_load(struct kimag
- 	 * have to create separate segment for each. Keeps things
- 	 * little bit simple
- 	 */
--	efi_map_sz = efi_get_runtime_map_size();
- 	params_cmdline_sz = sizeof(struct boot_params) + cmdline_len +
- 				MAX_ELFCOREHDR_STR_LEN;
- 	params_cmdline_sz = ALIGN(params_cmdline_sz, 16);
--	kbuf.bufsz = params_cmdline_sz + ALIGN(efi_map_sz, 16) +
--				sizeof(struct setup_data) +
--				sizeof(struct efi_setup_data);
-+	kbuf.bufsz = params_cmdline_sz + sizeof(struct setup_data);
-+
-+	/* Now add space for the efi stuff if we have a useable 1:1 mapping. */
-+	if (!efi_enabled(EFI_OLD_MEMMAP) && efi_enabled(EFI_MEMMAP)) {
-+		efi_map_sz = efi_get_runtime_map_size();
-+		kbuf.bufsz += ALIGN(efi_map_sz, 16) + sizeof(struct efi_setup_data);
-+		efi_map_offset = params_cmdline_sz;
-+		efi_setup_data_offset = efi_map_offset + ALIGN(efi_map_sz, 16);
-+	}
- 
- 	params = kzalloc(kbuf.bufsz, GFP_KERNEL);
- 	if (!params)
- 		return ERR_PTR(-ENOMEM);
--	efi_map_offset = params_cmdline_sz;
--	efi_setup_data_offset = efi_map_offset + ALIGN(efi_map_sz, 16);
- 
- 	/* Copy setup header onto bootparams. Documentation/x86/boot.txt */
- 	setup_header_size = 0x0202 + kernel[0x0201] - setup_hdr_offset;
+Bluetooth USB transport was originally section H:2 in the specification (and UART was section H:4) that is where this naming comes wrong. The btusb.c driver is implementing H:2 transport.
+
+How does /sys/kernel/debug/usb/devices look for these devices? And I don’t recall that there is a control in pipe. That concept doesn’t really exist in USB.
+
+> 2.
+> Another thing is I think it's better if the core layer can support
+> __hci_raw_sync_ev-like APIs to allow each transport driver not to care
+> the details about cmd/event synchronization. If it can be done in this
+> way, that helps to help WMT cmd/event handling can be put into a
+> commonplace to allow btmtkuart and btusb for mtk port to have the same
+> codeshare.
+
+Such a core API will not help you. The btusb.c driver has already bunch of examples where it has to fix up things. Qualcomm/Atheros have done there fun way of firmware download and Intel also has done fun stuff with event over bulk endpoints.
+
+> 3. 
+> MT7668U should always be bundled with CE product, I am not really sure
+> whether it is easy to get from the retailer. Or you really like to want
+> a sample, maybe I can try to contact with internal people to make it
+> happen.
+
+If it is some NGFF mPCI card that I can plug into an adapter card and attach it to USB, or if you have some dev board, that would be interesting.
+
+Regards
+
+Marcel
+
