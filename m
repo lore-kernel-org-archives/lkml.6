@@ -2,277 +2,338 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C4F3C4646D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 22:43:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45A02C46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 22:45:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0961421B31
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 22:43:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0961421B31
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id C9FE621B31
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 22:45:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gXaduwv+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9FE621B31
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731456AbeHIBEx (ORCPT
+        id S1731566AbeHIBGw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 21:04:53 -0400
-Received: from mx2.suse.de ([195.135.220.15]:33210 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729884AbeHIBEx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 21:04:53 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 21701ACE5;
-        Wed,  8 Aug 2018 22:43:03 +0000 (UTC)
-Subject: Re: [RFC net-next 00/15] net: A socket API for LoRa
-To:     Alan Cox <gnomes@lxorguk.ukuu.org.uk>
-Cc:     Jian-Hong Pan <starnight@g.ncu.edu.tw>, netdev@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Jiri Pirko <jiri@resnulli.us>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Matthias Brugger <mbrugger@suse.com>,
-        Janus Piwek <jpiwek@arroweurope.com>,
-        =?UTF-8?Q?Michael_R=c3=b6der?= <michael.roeder@avnet.eu>,
-        Dollar Chen <dollar.chen@wtmec.com>,
-        Ken Yu <ken.yu@rakwireless.com>,
-        =?UTF-8?Q?Konstantin_B=c3=b6hm?= <konstantin.boehm@ancud.de>,
-        Jan Jongboom <jan.jongboom@arm.com>,
-        Jon Ortego <Jon.Ortego@imst.de>, contact@snootlab.com,
-        Ben Whitten <ben.whitten@lairdtech.com>,
-        Brian Ray <brian.ray@link-labs.com>, lora@globalsat.com.tw,
-        Alexander Graf <agraf@suse.de>,
-        =?UTF-8?Q?Michal_Kube=c4=8dek?= <mkubecek@suse.cz>,
-        Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
-        Steve deRosier <derosier@gmail.com>,
-        Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
-        Pieter Robyns <pieter.robyns@uhasselt.be>,
-        Hasnain Virk <Hasnain.Virk@arm.com>,
-        linux-wpan <linux-wpan@vger.kernel.org>,
-        Stefan Schmidt <stefan@datenfreihafen.org>,
-        Daniele Comel <dcomel@mipot.com>,
-        =?UTF-8?Q?Sebastian_He=c3=9f?= <shess@hessware.de>,
-        Xue Liu <liuxuenetmail@gmail.com>
-References: <20180701110804.32415-1-afaerber@suse.de>
- <CAC=mGzgUCopz2xTOA0R-WD8a1DOaOOUn=YpfdMiJ33y3hnh6kg@mail.gmail.com>
- <92ee4016-1da9-826b-3674-b2d604a64848@suse.de>
- <20180808213640.10a1d76f@alans-desktop>
-From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=afaerber@suse.de; prefer-encrypt=mutual; keydata=
- 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
-Organization: SUSE Linux GmbH
-Message-ID: <a70e9715-beac-d9a8-145e-de00175e56fa@suse.de>
-Date:   Thu, 9 Aug 2018 00:42:58 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180808213640.10a1d76f@alans-desktop>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Wed, 8 Aug 2018 21:06:52 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:46719 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730235AbeHIBGw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 21:06:52 -0400
+Received: by mail-pf1-f194.google.com with SMTP id u24-v6so1822021pfn.13
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 15:45:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=ri9AR3UhsQQkG3T78oFwLnoX8szKKhLI0dySflegQe4=;
+        b=gXaduwv+Q5OXIFokw2ZqmR1o2kq+2I92hncHbhhR9zFAUka+noxQHsDV6DMh2mi/GD
+         Jsrb9JZbXwCdI14EhFSGOIedrV9eXClrQWs0sLktEEaAZ4McgLjFjHQ46UKfAxSGODb3
+         bzcMFiYJVLNLV/eZhH8/BjpdTLDekRh28BsJ0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=ri9AR3UhsQQkG3T78oFwLnoX8szKKhLI0dySflegQe4=;
+        b=MfOFGGl2P/izqiUqjPSZkA+TINSIhbRSD3AVFrOYs2cTxQt7Zgn2ux0mLaeVpAWo0S
+         tyhAbWdIYuJdNrZ8+udadr54LEWydudE2pe5kvwuQg3oQhdrBIv4R/M9JB6uJmOLWw2+
+         Ip5Ls6JB3zVROQJpTjIE6sFgAupDxNm8yH8zhZtTa3iqSNU+aBp2mnwe30/Rs/67W9zs
+         1MSME9fUo7ePbj1u9nNpUsT9gZrsC6oaR1TtfOXnpw5hb5ik5KxJa+4w6cMj60xznR7U
+         zDL8vlr05lnZVqKc9BqaqrnPHCCroKo0d6su1/WwbO5LEoExL9bX2IS9cslHQgEY4Vh7
+         39OA==
+X-Gm-Message-State: AOUpUlGdzaKbWr2f9a1EV2jyeywpl/icZ0IE2Ljc9zjhgKtoP7Zaq+7n
+        jwEupTkA5t/BSUZtI4CPmxi5fwDEyiM=
+X-Google-Smtp-Source: AA+uWPw/EVfoNiOQHOFcdUVo5iDbb43N117MRa6fMG1LmYiOFGWZ4sRpxoiloHFKYPoaGDizndRu0g==
+X-Received: by 2002:a63:6949:: with SMTP id e70-v6mr4347784pgc.119.1533768304896;
+        Wed, 08 Aug 2018 15:45:04 -0700 (PDT)
+Received: from evgreen2.mtv.corp.google.com ([2620:15c:202:201:e418:c825:76cf:5f64])
+        by smtp.gmail.com with ESMTPSA id b195-v6sm11374948pfb.2.2018.08.08.15.45.03
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 08 Aug 2018 15:45:03 -0700 (PDT)
+From:   Evan Green <evgreen@chromium.org>
+To:     Vinayak Holikatti <vinholikatti@gmail.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Stanislav Nijnikov <stanislav.nijnikov@wdc.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bart.VanAssche@wdc.com
+Cc:     Evan Green <evgreen@chromium.org>
+Subject: [PATCH v4] scsi: ufs: Make sysfs attributes writable
+Date:   Wed,  8 Aug 2018 15:44:54 -0700
+Message-Id: <20180808224454.243790-1-evgreen@chromium.org>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 08.08.2018 um 22:36 schrieb Alan Cox:
-> On Sun, 5 Aug 2018 02:11:25 +0200
-> Andreas Färber <afaerber@suse.de> wrote:
->> Am 03.07.2018 um 17:11 schrieb Jian-Hong Pan:
->>> 2018-07-01 19:07 GMT+08:00 Andreas Färber <afaerber@suse.de>:  
->> LoRa radio channels being half-duplex, we'd need to stop receiving in
->> ndo_start_xmit and re-start receiving in the TX interrupt handler AFAIU.
->> Yes, it's ugly - one reason I haven't implemented RX in sx1276 yet.
-> 
-> Why - the signal is still floating around in the air, you can't unhear it
-> at the antenna.
+This change makes the UFS controller's sysfs attributes writable, which
+will enable users to provision unprovisioned UFS devices, or
+re-provision unlocked UFS devices.
 
-Why what? :)
+Signed-off-by: Evan Green <evgreen@chromium.org>
+---
+Changes since v3:
+	- Added static to UFS_ATTRIBUTE_RO [Stanislav]
+	- Fixed read-only exception_event_status [Stanislav]
+	- Added warnings in documentation for write-once
+	  attributes [Stanislav]
 
-> If a given piece of hardware needs to flip between RX
-> and TX mode then it should be handled by that driver.
+Configfs was determined to be the preferred mechanism for writing the
+config descriptor, but attributes also need to be written during setup,
+and are already present in sysfs. Making these attributes writable is
+also helpful for debugging and experimentation.
 
-Yes, and we are talking about that concrete sx1276 driver here, whose
-chipset has a state machine that only allows either rx or tx and also
-has standby and sleep modes with differing levels of data retention.
+Changes since v2:
+	- Removed the configuration descriptor changes from the series,
+since configfs was the preferred way to write to that, leaving only
+this change.
 
-The sx1301 is a different beast (and driver) and may allow both.
+Changes since v1:
+	- Reworked the interface to show each unit of the config
+descriptor as a separate directory, rather than the previous method I
+had of a file for selecting the unit, and then a common set of files
+that interacted with whichever unit was selected. I did some kobject
+magic to accomplish this. I noticed from Greg KH's reply to Sayali's
+patches [1] that configfs might be the preferred method. Let me know
+if I should abandon this series in favor of Sayali's, with the
+possible exception of "Make sysfs attributes writable".
+	- Squashed documentation changes into their respective code
+changes.
+	- I decided to keep the config descriptor attributes as their
+own files, rather than hiding writes behind device descriptor and unit
+descriptor, as I think that's more future proof and true to the UFS spec.
 
-In any case, the ndo_start_xmit hook is in each device driver. But the
-recvmsg hook I mentioned is at protocol layer, which exactly is the
-layering problem I see.
+[1] https://lkml.org/lkml/2018/6/8/210
 
-> (Some ancient ethernet cards do this btw.. they can't listen and transmit
-> at the same time)
+ Documentation/ABI/testing/sysfs-driver-ufs | 29 +++++++---------
+ drivers/scsi/ufs/ufs-sysfs.c               | 56 ++++++++++++++++++++----------
+ 2 files changed, 51 insertions(+), 34 deletions(-)
 
-So when do they start receiving?
-
-The issue here was that my original description, which you appear to
-have cut, suggested a continuous listen mode, interrupted by transmit.
-Jian-Hong didn't like that, with reference to the LoRaWAN spec that
-supposedly asks for only being in receive mode when expecting a message,
-likely to save on battery. So the question is, could we cleanly
-implement receiving only when the user asks us to, or is that a no-go?
-
->>> - We can have a pre-defined table according to LoRaWAN Regional Parameters.
->>> - Device driver declares the hardware's capability, for example
->>> frequency, TX power.  And then registers as a LoRaWAN compatible
->>> device.  
->>
->> That sounds like a layering violation. We rather need to expose all
->> these tunable parameters individually at the LoRa layer, allowing the
->> LoRaWAN layer to configure them as it pleases. Not the other direction.
->> That still leaves my above question 4) open of how to implement each.
-> 
-> Wifi already has the general policy database for the various existing
-> protocols. Please take a look at the CRDA agent and how it hooks into
-> wireless.It might need to some tweaking but it would be odd to have
-> different configuration schemes for different wifi protocols.
-
-CRDA/wireless-regdb had been brought up and I've been pointed to nl80211
-and nl802154, which I've tried to make sense of for my initial nllora.
-Admittedly with limited success, as that code is slightly complex.
-
-We also seemed to have consensus here that we _should_ be reusing
-wireless-regdb but would need to extend it 1.) with sub-GHz frequency
-bands and 2.) duty-cycle limits for some of those bands. No maintainer
-commented on that so far. Thus I am working in tiny steps on providing
-netlink-layer commands in nllora that can dispatch the individual radio
-settings to drivers, which then upper layers can instrument as needed.
-
-And making my very first steps with netlink here, it appeared as if each
-technology has its own enums of commands and attributes, so I don't see
-how to reuse anything from Wifi here apart from some design inspiration.
-
->> The use case I have in mind is this: User A opens a LoRaWAN socket and
->> using maclorawan sends a packet P1. Here the LoRaWAN Regional Parameters
->> and LoRaWAN Sync Word need to be applied.
->> User B then opens a pure LoRa socket and transmits a packet P1' with
->> different Sync Word, SF, BW, CR, etc.
->> Afterwards user A wants to send another packet P2 via LoRaWAN - this
->> needs to use the same LoRaWAN settings as before, not those used for
->> LoRa in between. Therefore I was thinking about socket-level options, as
->> netlink operations would be device-wide, with undesired side-effects.
-> 
-> Agreed
-> 
->> Obviously in that scenario not both users can receive at the same time.
-> 
-> That's a hardware question. Imagine a software defined radio. If your
-> limitation wouldn't exist in a pure software defined radio then it's
-> almost certainly a device level detal.
-
-An SDR would not be using this sx1276 device driver, I imagine.
-
-In fact I would expect an SDR device not to be in drivers/net/lora/ at
-all but to live in drivers/net/sdr/ and to consume ETH_P_LORA etc. skbs
-and just do the right thing for them depending on their type...
-
->> interface but cleanly distinguished as ETH_P_GFSK or something.
->> For example, the Chistera Pi HAT has both an RFM95W and an RFM22 module.
-> 
-> Agreed if you can flip per packet.
-
-The SX127x can - it might involve delays of course.
-
-The SX130x doesn't even need to flip for sending AFAICT, it's just
-metadata after the payload in the FIFO.
-
->> The next question arising is how the user would create such an skb. Just
->> like I was hesitant about PF_LORAWAN originally, I'd like to avoid
->> polluting the PF_ number space for each of these. Maybe have one PF_FSK
->> as equivalent to PF_LORA and then have either a socket option or
->> sockaddr field to select the modulation variants? Not sure how exactly
->> those others differ from each other, that's why I tried to postpone the
->> FSK topic and to focus on LoRa first - b) below.
->>
->> At this point we could also argue whether we need a PF_LORA at all or
->> rather just some generic PF_RADIO with lots of options stored in its
->> sockaddr.
-> 
-> What matters most is mux/demux.
-> 
-> If you've got something listening to data but without the structure
-> needed to identify multiple listeners and split out the data meaningfully
-> to those listeners according to parts of the packet then you've got no
-> reason to make it a protocol just use SOCK_PACKET and if need be BPF.
-
-Sorry, that doesn't parse for me. SOCK_PACKET must be a protocol on some
-PF_ protocol family, no? Are you suggesting I use SOCK_PACKET instead of
-SOCK_DGRAM in what is now net/lora/dgram.c? Or are you saying there's
-some generic implementation that we can reuse and scratch mine?
-
-> The reason we have a socket layer not /dev/ethernet0 is that it's
-> meaningful to divide messages up into flows, and to partition those flows
-> securely amongst multiple consumers/generators.
-
-For me the distinction is that a /dev/whatever0 would seem more suited
-for a stream of data to read/write, whereas sockets give us a bounded
-skb for packets at device driver level.
-
-These PHYs all broadcast something over the antenna when sending, with
-any addressing of listeners or senders being optional and MAC-specific,
-apart from the LoRa/FSK SyncWord as well as the various frequency etc.
-settings that determine what the receiver listens for.
-
-None of these PHYs define any mechanism like EtherType through which to
-identify upper-layer protocols.
-
-So in a way, listening is always in a promiscuous mode, and I guess we
-would need to try to parse each incoming packet as e.g. a LoRaWAN packet
-and just give up if it's too short or checksums don't match. Only at the
-layer of LoRaWAN and competing proprietary or custom protocols can we
-split received packets out to individual listeners.
-
-Does that give us any further clues for the design discussion here?
-
-Regards,
-Andreas
-
+diff --git a/Documentation/ABI/testing/sysfs-driver-ufs b/Documentation/ABI/testing/sysfs-driver-ufs
+index 016724ec26d5..3ed8aaac2faf 100644
+--- a/Documentation/ABI/testing/sysfs-driver-ufs
++++ b/Documentation/ABI/testing/sysfs-driver-ufs
+@@ -685,7 +685,6 @@ Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
+ Description:	This file provides the boot lun enabled UFS device attribute.
+ 		The full information about the attribute could be found at
+ 		UFS specifications 2.1.
+-		The file is read only.
+ 
+ What:		/sys/bus/platform/drivers/ufshcd/*/attributes/current_power_mode
+ Date:		February 2018
+@@ -693,7 +692,6 @@ Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
+ Description:	This file provides the current power mode UFS device attribute.
+ 		The full information about the attribute could be found at
+ 		UFS specifications 2.1.
+-		The file is read only.
+ 
+ What:		/sys/bus/platform/drivers/ufshcd/*/attributes/active_icc_level
+ Date:		February 2018
+@@ -701,7 +699,6 @@ Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
+ Description:	This file provides the active icc level UFS device attribute.
+ 		The full information about the attribute could be found at
+ 		UFS specifications 2.1.
+-		The file is read only.
+ 
+ What:		/sys/bus/platform/drivers/ufshcd/*/attributes/ooo_data_enabled
+ Date:		February 2018
+@@ -709,7 +706,9 @@ Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
+ Description:	This file provides the out of order data transfer enabled UFS
+ 		device attribute. The full information about the attribute
+ 		could be found at UFS specifications 2.1.
+-		The file is read only.
++		Warning: This attribute can only be written one time
++		within the lifetime of the device. Once written, it cannot be
++		changed.
+ 
+ What:		/sys/bus/platform/drivers/ufshcd/*/attributes/bkops_status
+ Date:		February 2018
+@@ -717,7 +716,6 @@ Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
+ Description:	This file provides the background operations status UFS device
+ 		attribute. The full information about the attribute could
+ 		be found at UFS specifications 2.1.
+-		The file is read only.
+ 
+ What:		/sys/bus/platform/drivers/ufshcd/*/attributes/purge_status
+ Date:		February 2018
+@@ -725,7 +723,9 @@ Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
+ Description:	This file provides the purge operation status UFS device
+ 		attribute. The full information about the attribute could
+ 		be found at UFS specifications 2.1.
+-		The file is read only.
++		Warning: This attribute can only be written one time
++		within the lifetime of the device. Once written, it cannot be
++		changed.
+ 
+ What:		/sys/bus/platform/drivers/ufshcd/*/attributes/max_data_in_size
+ Date:		February 2018
+@@ -733,7 +733,6 @@ Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
+ Description:	This file shows the maximum data size in a DATA IN
+ 		UPIU. The full information about the attribute could
+ 		be found at UFS specifications 2.1.
+-		The file is read only.
+ 
+ What:		/sys/bus/platform/drivers/ufshcd/*/attributes/max_data_out_size
+ Date:		February 2018
+@@ -741,7 +740,6 @@ Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
+ Description:	This file shows the maximum number of bytes that can be
+ 		requested with a READY TO TRANSFER UPIU. The full information
+ 		about the attribute could be found at UFS specifications 2.1.
+-		The file is read only.
+ 
+ What:		/sys/bus/platform/drivers/ufshcd/*/attributes/reference_clock_frequency
+ Date:		February 2018
+@@ -749,14 +747,19 @@ Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
+ Description:	This file provides the reference clock frequency UFS device
+ 		attribute. The full information about the attribute could
+ 		be found at UFS specifications 2.1.
+-		The file is read only.
++		Warning: This attribute can only be written one time
++		within the lifetime of the device. Once written, it cannot be
++		changed.
+ 
+ What:		/sys/bus/platform/drivers/ufshcd/*/attributes/configuration_descriptor_lock
+ Date:		February 2018
+ Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
+ Description:	This file shows whether the configuration descriptor is locked.
+ 		The full information about the attribute could be found at
+-		UFS specifications 2.1. The file is read only.
++		UFS specifications 2.1.
++		Warning: This attribute can only be written one time
++		within the lifetime of the device. Once written, it cannot be
++		changed.
+ 
+ What:		/sys/bus/platform/drivers/ufshcd/*/attributes/max_number_of_rtt
+ Date:		February 2018
+@@ -765,7 +768,6 @@ Description:	This file provides the maximum current number of
+ 		outstanding RTTs in device that is allowed. The full
+ 		information about the attribute could be found at
+ 		UFS specifications 2.1.
+-		The file is read only.
+ 
+ What:		/sys/bus/platform/drivers/ufshcd/*/attributes/exception_event_control
+ Date:		February 2018
+@@ -773,7 +775,6 @@ Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
+ Description:	This file provides the exception event control UFS device
+ 		attribute. The full information about the attribute could
+ 		be found at UFS specifications 2.1.
+-		The file is read only.
+ 
+ What:		/sys/bus/platform/drivers/ufshcd/*/attributes/exception_event_status
+ Date:		February 2018
+@@ -781,7 +782,6 @@ Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
+ Description:	This file provides the exception event status UFS device
+ 		attribute. The full information about the attribute could
+ 		be found at UFS specifications 2.1.
+-		The file is read only.
+ 
+ What:		/sys/bus/platform/drivers/ufshcd/*/attributes/ffu_status
+ Date:		February 2018
+@@ -789,14 +789,12 @@ Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
+ Description:	This file provides the ffu status UFS device attribute.
+ 		The full information about the attribute could be found at
+ 		UFS specifications 2.1.
+-		The file is read only.
+ 
+ What:		/sys/bus/platform/drivers/ufshcd/*/attributes/psa_state
+ Date:		February 2018
+ Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
+ Description:	This file show the PSA feature status. The full information
+ 		about the attribute could be found at UFS specifications 2.1.
+-		The file is read only.
+ 
+ What:		/sys/bus/platform/drivers/ufshcd/*/attributes/psa_data_size
+ Date:		February 2018
+@@ -805,7 +803,6 @@ Description:	This file shows the amount of data that the host plans to
+ 		load to all logical units in pre-soldering state.
+ 		The full information about the attribute could be found at
+ 		UFS specifications 2.1.
+-		The file is read only.
+ 
+ 
+ What:		/sys/class/scsi_device/*/device/dyn_cap_needed
+diff --git a/drivers/scsi/ufs/ufs-sysfs.c b/drivers/scsi/ufs/ufs-sysfs.c
+index 8d9332bb7d0c..344f5025bc36 100644
+--- a/drivers/scsi/ufs/ufs-sysfs.c
++++ b/drivers/scsi/ufs/ufs-sysfs.c
+@@ -655,7 +655,7 @@ static const struct attribute_group ufs_sysfs_flags_group = {
+ 	.attrs = ufs_sysfs_device_flags,
+ };
+ 
+-#define UFS_ATTRIBUTE(_name, _uname)					\
++#define UFS_ATTRIBUTE_SHOW(_name, _uname)				\
+ static ssize_t _name##_show(struct device *dev,				\
+ 	struct device_attribute *attr, char *buf)			\
+ {									\
+@@ -665,25 +665,45 @@ static ssize_t _name##_show(struct device *dev,				\
+ 		QUERY_ATTR_IDN##_uname, 0, 0, &value))			\
+ 		return -EINVAL;						\
+ 	return sprintf(buf, "0x%08X\n", value);				\
+-}									\
++}
++
++#define UFS_ATTRIBUTE_RO(_name, _uname)					\
++UFS_ATTRIBUTE_SHOW(_name, _uname)					\
+ static DEVICE_ATTR_RO(_name)
+ 
+-UFS_ATTRIBUTE(boot_lun_enabled, _BOOT_LU_EN);
+-UFS_ATTRIBUTE(current_power_mode, _POWER_MODE);
+-UFS_ATTRIBUTE(active_icc_level, _ACTIVE_ICC_LVL);
+-UFS_ATTRIBUTE(ooo_data_enabled, _OOO_DATA_EN);
+-UFS_ATTRIBUTE(bkops_status, _BKOPS_STATUS);
+-UFS_ATTRIBUTE(purge_status, _PURGE_STATUS);
+-UFS_ATTRIBUTE(max_data_in_size, _MAX_DATA_IN);
+-UFS_ATTRIBUTE(max_data_out_size, _MAX_DATA_OUT);
+-UFS_ATTRIBUTE(reference_clock_frequency, _REF_CLK_FREQ);
+-UFS_ATTRIBUTE(configuration_descriptor_lock, _CONF_DESC_LOCK);
+-UFS_ATTRIBUTE(max_number_of_rtt, _MAX_NUM_OF_RTT);
+-UFS_ATTRIBUTE(exception_event_control, _EE_CONTROL);
+-UFS_ATTRIBUTE(exception_event_status, _EE_STATUS);
+-UFS_ATTRIBUTE(ffu_status, _FFU_STATUS);
+-UFS_ATTRIBUTE(psa_state, _PSA_STATE);
+-UFS_ATTRIBUTE(psa_data_size, _PSA_DATA_SIZE);
++#define UFS_ATTRIBUTE_RW(_name, _uname)					\
++UFS_ATTRIBUTE_SHOW(_name, _uname)					\
++static ssize_t _name##_store(struct device *dev,			\
++		struct device_attribute *attr, const char *buf,		\
++		size_t count)						\
++{									\
++	struct ufs_hba *hba = dev_get_drvdata(dev);			\
++	u32 value;							\
++	if (kstrtou32(buf, 0, &value))					\
++		return -EINVAL;						\
++	if (ufshcd_query_attr(hba, UPIU_QUERY_OPCODE_WRITE_ATTR,	\
++		QUERY_ATTR_IDN##_uname, 0, 0, &value))			\
++		return -EINVAL;						\
++	return count;							\
++}									\
++static DEVICE_ATTR_RW(_name)
++
++UFS_ATTRIBUTE_RW(boot_lun_enabled, _BOOT_LU_EN);
++UFS_ATTRIBUTE_RO(current_power_mode, _POWER_MODE);
++UFS_ATTRIBUTE_RW(active_icc_level, _ACTIVE_ICC_LVL);
++UFS_ATTRIBUTE_RW(ooo_data_enabled, _OOO_DATA_EN);
++UFS_ATTRIBUTE_RO(bkops_status, _BKOPS_STATUS);
++UFS_ATTRIBUTE_RO(purge_status, _PURGE_STATUS);
++UFS_ATTRIBUTE_RW(max_data_in_size, _MAX_DATA_IN);
++UFS_ATTRIBUTE_RW(max_data_out_size, _MAX_DATA_OUT);
++UFS_ATTRIBUTE_RW(reference_clock_frequency, _REF_CLK_FREQ);
++UFS_ATTRIBUTE_RW(configuration_descriptor_lock, _CONF_DESC_LOCK);
++UFS_ATTRIBUTE_RW(max_number_of_rtt, _MAX_NUM_OF_RTT);
++UFS_ATTRIBUTE_RW(exception_event_control, _EE_CONTROL);
++UFS_ATTRIBUTE_RO(exception_event_status, _EE_STATUS);
++UFS_ATTRIBUTE_RO(ffu_status, _FFU_STATUS);
++UFS_ATTRIBUTE_RO(psa_state, _PSA_STATE);
++UFS_ATTRIBUTE_RO(psa_data_size, _PSA_DATA_SIZE);
+ 
+ static struct attribute *ufs_sysfs_attributes[] = {
+ 	&dev_attr_boot_lun_enabled.attr,
 -- 
-SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
+2.16.4
+
