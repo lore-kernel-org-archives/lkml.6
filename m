@@ -2,218 +2,126 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA1B3C4646D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 17:38:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B159C46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 17:42:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5782821785
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 17:38:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5782821785
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id D59542178B
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 17:42:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RZ1qlbPd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D59542178B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729243AbeHHT6w (ORCPT
+        id S1729129AbeHHUD1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 15:58:52 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:43398 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727748AbeHHT6v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 15:58:51 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 44DF018A;
-        Wed,  8 Aug 2018 10:38:09 -0700 (PDT)
-Received: from [10.4.12.131] (e110467-lin.emea.arm.com [10.4.12.131])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 912473F2EA;
-        Wed,  8 Aug 2018 10:38:07 -0700 (PDT)
-Subject: Re: [PATCH 1/2] arm64: dts: stratix10: Add Stratix10 SMMU support
-To:     thor.thayer@linux.intel.com, joro@8bytes.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, dinguyen@kernel.org, will.deacon@arm.com
-Cc:     iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <1532543077-8933-1-git-send-email-thor.thayer@linux.intel.com>
- <1532543077-8933-2-git-send-email-thor.thayer@linux.intel.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <db4d8290-c015-aa8b-6058-11fd3d25464b@arm.com>
-Date:   Wed, 8 Aug 2018 18:38:05 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 8 Aug 2018 16:03:27 -0400
+Received: from mail-ua0-f194.google.com ([209.85.217.194]:34401 "EHLO
+        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727480AbeHHUD1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 16:03:27 -0400
+Received: by mail-ua0-f194.google.com with SMTP id r15-v6so3332525uao.1;
+        Wed, 08 Aug 2018 10:42:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=uzUvgscPNw8M3trWj2cQxWMQo/CdhT1fRSE/rXdxwrQ=;
+        b=RZ1qlbPdGsoC5/3jTpYFz0SwEO1MWyHMHsZyqkAdvnfC3IOl7K4bcJcobr/Q2tqZyp
+         jy0/gwZU1xJnNZbvtm+8BdL+770fVvR1VoW5VakehVN1Xq3ePk2nl1htVevRS3tEx4A3
+         gGr5cN1GoQ0SXUfNe8P1vxMyiV4aJStUZmEz5NeZEdUDqvtKaQaaQUnFs11KXI05EfXq
+         FjAQOu1r6JX+2uUHkg9Z1xPfxrssKEKguZ9DK+7aAaWu12Qrke1hrvsemuS7wZOKsN6s
+         qLvaEbdAQdq/1z2mqx/gIxeGRWejgW83yUeOBDE2LF+ZcdO0VD06RjOf4cnu4b79zNN9
+         6/vw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=uzUvgscPNw8M3trWj2cQxWMQo/CdhT1fRSE/rXdxwrQ=;
+        b=GW1gBt/TAScOs/xu4a+plk593cZ/ywCLv0Z4U2OdJErqyleWW1SL3kTrddnhhX4WyA
+         SUmLkE2qucY3XWQsSQUkPxhO6esH2fve8Y8WD7UTEsrrle4LqVnagYEaroTI2Du204cQ
+         rPOO8Enkj6hHDm9FP7lr26mMqAI+KvqvxGsrz6EcTx0ilf5ua+hXUKBjmFLD0rSrkEjG
+         dOhFrN/od9Bgx+8bB463xm2T0BwBVhOSahgRouBiYGDhvRSx+o3fCLu5zG28JAdMn1uR
+         +rKV+2yGmZLzsx4I3Ijy7PD+rFv4y+3gcqdJwf9JEo+Lv3IFmcUit0QsITxCdPjBnej4
+         KGNQ==
+X-Gm-Message-State: AOUpUlEIiX6FXrZkvpD8JSRl4KspDJRCpHab7n6rPJBnk4j79fdSX2UZ
+        YbSkbFSbg0WxatL1nYWXYMzAVfN2rj89/YsZ29g=
+X-Google-Smtp-Source: AA+uWPyeReVilhhxxKVMrMb07Day2cm7mMeS1fgh3CwJvvUzkokKc5kNs5LG8MGK3naGr5Rqk87oPPWwy4jDrlvEYFQ=
+X-Received: by 2002:ab0:4025:: with SMTP id h34-v6mr2688667uad.12.1533750162575;
+ Wed, 08 Aug 2018 10:42:42 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1532543077-8933-2-git-send-email-thor.thayer@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a67:2149:0:0:0:0:0 with HTTP; Wed, 8 Aug 2018 10:42:42 -0700 (PDT)
+In-Reply-To: <20180808153150.23444-5-brgl@bgdev.pl>
+References: <20180808153150.23444-1-brgl@bgdev.pl> <20180808153150.23444-5-brgl@bgdev.pl>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Wed, 8 Aug 2018 20:42:42 +0300
+Message-ID: <CAHp75Ve6ugVGJ9JqCYri0_k93DgkPMua7g8dC5CMhT4uFHMgoA@mail.gmail.com>
+Subject: Re: [PATCH 04/28] nvmem: provide nvmem_device_name()
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Jonathan Corbet <corbet@lwn.net>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Naren <naren.kernel@gmail.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Lukas Wunner <lukas@wunner.de>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
+        Sven Van Asbroeck <svendev@arcx.com>,
+        Paolo Abeni <pabeni@redhat.com>, Alban Bedel <albeu@free.fr>,
+        Rob Herring <robh@kernel.org>,
+        David Lechner <david@lechnology.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Linux Documentation List <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        "open list:MEMORY TECHNOLOGY..." <linux-mtd@lists.infradead.org>,
+        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25/07/18 19:24, thor.thayer@linux.intel.com wrote:
-> From: Thor Thayer <thor.thayer@linux.intel.com>
-> 
-> Add SMMU support to the Stratix10 Device Tree which
-> includes adding the SMMU node and adding IOMMU stream
-> ids to the SMMU peripherals. Update bindings.
-> 
-> Signed-off-by: Thor Thayer <thor.thayer@linux.intel.com>
-> ---
-> This patch is dependent on the patch series
-> "iommu/arm-smmu: Add runtime pm/sleep support"
-> (https://patchwork.ozlabs.org/cover/946160/)
-> ---
->   .../devicetree/bindings/iommu/arm,smmu.txt         | 25 ++++++++++++++++++
->   arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi  | 30 ++++++++++++++++++++++
->   2 files changed, 55 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu.txt b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
-> index 7c71a6ed465a..8e3fe0594e3e 100644
-> --- a/Documentation/devicetree/bindings/iommu/arm,smmu.txt
-> +++ b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
-> @@ -18,6 +18,7 @@ conditions.
->                           "arm,mmu-500"
->                           "cavium,smmu-v2"
->                           "qcom,<soc>-smmu-v2", "qcom,smmu-v2"
-> +                        "altr,smmu-v2"
+On Wed, Aug 8, 2018 at 6:31 PM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>
+> Kernel users don't have any means of checking the names of nvmem
+> devices. Add a routine that returns the name of the nvmem provider.
+>
+> This will be useful for nvmem notifier subscribers - otherwise they
+> can't check what device is being added/removed.
 
-Can we guarantee that no Altera SoC will ever exist with a different 
-SMMU implementation, configuration, or clock tree? If we must have 
-compatibles for SoC-specific integrations, I'd be a lot happier if they 
-were actually SoC-specific, i.e. at least "altr,stratix10-smmu", or even 
-something like "altr,gx5500-smmu" if there's a chance of new 
-incompatible designs being added to the Stratix 10 family in future.
+> +const char *nvmem_device_name(struct nvmem_device *nvmem)
+> +{
+> +       return dev_name(&nvmem->dev);
+> +}
+> +EXPORT_SYMBOL_GPL(nvmem_device_name);
 
-I'm still dubious that we actually need this for MMU-500, though, since 
-we will always need the TCU clock enabled to do anything, and given the 
-difficulty in associating particular TBU clocks with whichever domains 
-might cause allocations into which TBU's TLBs, it seems highly unlikely 
-that it'll ever be feasible to work at a granularity finer than "all of 
-the clocks". And at that point the names don't really matter, and we 
-merely need something like the proposed of_clk_bulk_get()[1], which 
-works fine regardless of how many TBUs and distinct clocks exist for a 
-particular MMU-500 configuration and integration.
+Just wondering if *_dev_name() is more common pattern in the kernel
+(at least pci_dev_name() comes immediately to mind).
 
->   
->                     depending on the particular implementation and/or the
->                     version of the architecture implemented.
-> @@ -179,3 +180,27 @@ conditions.
->   			 <&mmcc SMMU_MDP_AHB_CLK>;
->   		clock-names = "bus", "iface";
->   	};
-> +
-> +	/* Stratix10 arm,smmu-v2 implementation */
-> +	smmu5: iommu@fa000000 {
-> +		compatible = "altr,smmu-v2", "arm,mmu-500",
-> +			     "arm,smmu-v2";
-> +		reg = <0xfa000000 0x40000>;
-> +		#global-interrupts = <2>;
-> +		#iommu-cells = <1>;
-> +		clocks = <&clkmgr STRATIX10_L4_MAIN_CLK>;
-> +		clock-names = "masters";
 
-This isn't documented as an actual property, and if it also clocks the 
-TCU then I'm not sure it's really the most accurate name.
-
-Robin.
-
-[1] https://patchwork.kernel.org/patch/10427095/
-
-> +		interrupt-parent = <&intc>;
-> +		interrupts = <0 128 4>,	/* Global Secure Fault */
-> +			<0 129 4>, /* Global Non-secure Fault */
-> +			/* Non-secure Context Interrupts (32) */
-> +			<0 138 4>, <0 139 4>, <0 140 4>, <0 141 4>,
-> +			<0 142 4>, <0 143 4>, <0 144 4>, <0 145 4>,
-> +			<0 146 4>, <0 147 4>, <0 148 4>, <0 149 4>,
-> +			<0 150 4>, <0 151 4>, <0 152 4>, <0 153 4>,
-> +			<0 154 4>, <0 155 4>, <0 156 4>, <0 157 4>,
-> +			<0 158 4>, <0 159 4>, <0 160 4>, <0 161 4>,
-> +			<0 162 4>, <0 163 4>, <0 164 4>, <0 165 4>,
-> +			<0 166 4>, <0 167 4>, <0 168 4>, <0 169 4>;
-> +		stream-match-mask = <0x7ff0>;
-> +	};
-> diff --git a/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi b/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
-> index d033da401c26..e38ca86d48f6 100644
-> --- a/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
-> +++ b/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
-> @@ -137,6 +137,7 @@
->   			reset-names = "stmmaceth", "stmmaceth-ocp";
->   			clocks = <&clkmgr STRATIX10_EMAC0_CLK>;
->   			clock-names = "stmmaceth";
-> +			iommus = <&smmu 1>;
->   			status = "disabled";
->   		};
->   
-> @@ -150,6 +151,7 @@
->   			reset-names = "stmmaceth", "stmmaceth-ocp";
->   			clocks = <&clkmgr STRATIX10_EMAC1_CLK>;
->   			clock-names = "stmmaceth";
-> +			iommus = <&smmu 2>;
->   			status = "disabled";
->   		};
->   
-> @@ -163,6 +165,7 @@
->   			reset-names = "stmmaceth", "stmmaceth-ocp";
->   			clocks = <&clkmgr STRATIX10_EMAC2_CLK>;
->   			clock-names = "stmmaceth";
-> +			iommus = <&smmu 3>;
->   			status = "disabled";
->   		};
->   
-> @@ -273,6 +276,7 @@
->   			clocks = <&clkmgr STRATIX10_L4_MP_CLK>,
->   				 <&clkmgr STRATIX10_SDMMC_CLK>;
->   			clock-names = "biu", "ciu";
-> +			iommus = <&smmu 5>;
->   			status = "disabled";
->   		};
->   
-> @@ -307,6 +311,30 @@
->   			altr,modrst-offset = <0x20>;
->   		};
->   
-> +		smmu: iommu@fa000000 {
-> +			compatible = "altr,smmu-v2", "arm,mmu-500",
-> +				     "arm,smmu-v2";
-> +			reg = <0xfa000000 0x40000>;
-> +			#global-interrupts = <2>;
-> +			#iommu-cells = <1>;
-> +			clocks = <&clkmgr STRATIX10_L4_MAIN_CLK>;
-> +			clock-names = "masters";
-> +			interrupt-parent = <&intc>;
-> +			interrupts = <0 128 4>,	/* Global Secure Fault */
-> +				<0 129 4>, /* Global Non-secure Fault */
-> +				/* Non-secure Context Interrupts (32) */
-> +				<0 138 4>, <0 139 4>, <0 140 4>, <0 141 4>,
-> +				<0 142 4>, <0 143 4>, <0 144 4>, <0 145 4>,
-> +				<0 146 4>, <0 147 4>, <0 148 4>, <0 149 4>,
-> +				<0 150 4>, <0 151 4>, <0 152 4>, <0 153 4>,
-> +				<0 154 4>, <0 155 4>, <0 156 4>, <0 157 4>,
-> +				<0 158 4>, <0 159 4>, <0 160 4>, <0 161 4>,
-> +				<0 162 4>, <0 163 4>, <0 164 4>, <0 165 4>,
-> +				<0 166 4>, <0 167 4>, <0 168 4>, <0 169 4>;
-> +			stream-match-mask = <0x7ff0>;
-> +			status = "disabled";
-> +		};
-> +
->   		spi0: spi@ffda4000 {
->   			compatible = "snps,dw-apb-ssi";
->   			#address-cells = <1>;
-> @@ -416,6 +444,7 @@
->   			resets = <&rst USB0_RESET>, <&rst USB0_OCP_RESET>;
->   			reset-names = "dwc2", "dwc2-ecc";
->   			clocks = <&clkmgr STRATIX10_USB_CLK>;
-> +			iommus = <&smmu 6>;
->   			status = "disabled";
->   		};
->   
-> @@ -428,6 +457,7 @@
->   			resets = <&rst USB1_RESET>, <&rst USB1_OCP_RESET>;
->   			reset-names = "dwc2", "dwc2-ecc";
->   			clocks = <&clkmgr STRATIX10_USB_CLK>;
-> +			iommus = <&smmu 7>;
->   			status = "disabled";
->   		};
->   
-> 
+-- 
+With Best Regards,
+Andy Shevchenko
