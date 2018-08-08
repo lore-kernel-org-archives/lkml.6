@@ -4,70 +4,71 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0095CC46471
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 00:29:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 240A0C46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 00:29:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2CCD21533
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 00:29:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5D5821533
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 00:29:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="blbAcaoa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2CCD21533
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nhYw8loS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5D5821533
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727533AbeHHCq1 (ORCPT
+        id S1727555AbeHHCqd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 22:46:27 -0400
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:38658 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726371AbeHHCq1 (ORCPT
+        Tue, 7 Aug 2018 22:46:33 -0400
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:42912 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726159AbeHHCqd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 22:46:27 -0400
-Received: by mail-qk0-f196.google.com with SMTP id 126-v6so355486qke.5
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 17:29:29 -0700 (PDT)
+        Tue, 7 Aug 2018 22:46:33 -0400
+Received: by mail-qt0-f193.google.com with SMTP id z8-v6so550694qto.9
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 17:29:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to
          :user-agent;
-        bh=Dan5GbZ9b6G+XsnByVOu8L+Xvw99bp8n/KoMkYEKYG8=;
-        b=blbAcaoaku3ttMXTmOK+0BXzCgcdLmBMPxrdiTCytmfA03owshDGEle/3Tr59b1ecl
-         i1GIvfCqNhOYPE/zUV4JmQ4oWIQzbRJrWVROu9Y5YkZeuIpO7PoYcsULVvT8t/VxAYVV
-         olVe+hTvm4lp4vBUmO2YvMrwQCd+ZfqJ7+3zczLRUl/zZVyl9PWb9Dj1NSA0QN/k1a9C
-         kfPIfCEooH58VHpabm05so5s4xR9xkUjGTszEnxKjrthe8yBV7Cfh3VQR36WpCYjH1RO
-         jDQW4quZiT+Qr+qVinuUhqCmfQag/PNQT4XXBtG6sJ72uCSnLkwvYrCXQoi9WAGLfnjz
-         HVmQ==
+        bh=70ZXmBo7ym10J1AIpapJ+scdCcwSKJ3Bnu6UP7Fuj/A=;
+        b=nhYw8loSsdSMXozwgHvIxMxSQ8Bl852FQX+AdwmdoYvK/O/dLeOq/X4jjteB5Jg1zw
+         3p4VE+7J9UIEzzsbAp09C8xrl5WPI8/yQ8dY3qczDMs+gIqBTATxyfy/Ii8zIVX8Jq36
+         h7k6J0DQLMd5wykriwHCN/sehUNzLEmzjTPe/lDVtgfbBsm0BV7JdvAWKOguVW4Vw62O
+         5ucojP2JLx/gsWNNq9lTa+RnjIcmdrSjR44qPJPbxeCbsoSVrHi7cM+g3Jec6RT8tgmi
+         rYJcYkevtyAuj5gnAgSpRIflnWoGNfs9wWUDXjcZajwOSu5ELHRz/Au6+pmHGEFMq2mD
+         PoJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to:user-agent;
-        bh=Dan5GbZ9b6G+XsnByVOu8L+Xvw99bp8n/KoMkYEKYG8=;
-        b=XDGxhwZR/41xp5iXLvBJYgguxaUs2AkDVEtS5Zrx9Dn6jXD/f5jIX+n+DcQEUlYJUR
-         QT0ou92EU7dnd+Yymai96R+ajRb6Vo2nVV13xWNrfp53oX9VIlEBvQbvGy251/XzLJqT
-         nKMwkmWzp8URmSXnZUSUF91nZxNswswqqRlEPP5eleZnbOABEIC/WNII6M8di5mdc24+
-         8mPbz3Rj5vlPPEmrJmARO5bh+ps9r/ruWoN5xhJVVbCbw0+2EDLPWI5NV6nAYS0UAgIa
-         Lkj4QRGuu/VLGP+MHD/4o5f1piTUsrgwuucopapeNbZaRJTBfgf00zg9szRLzaAqcVlR
-         sZrg==
-X-Gm-Message-State: AOUpUlFmzytgO+RQhQ/IKJvgJAAATHZVKWb4h3obamuAST52UlHZKwVN
-        qR01wRbM7NoHRYXuxNSvs2Q=
-X-Google-Smtp-Source: AA+uWPxaTR1pNCwZYXFrcWY9hisOadM1gg9KeGEhcWBwW14bue3YggNmDzoU7fWW2UxpJwop58dFKw==
-X-Received: by 2002:a37:9242:: with SMTP id u63-v6mr544629qkd.189.1533688169329;
-        Tue, 07 Aug 2018 17:29:29 -0700 (PDT)
+        bh=70ZXmBo7ym10J1AIpapJ+scdCcwSKJ3Bnu6UP7Fuj/A=;
+        b=E9dABi6811ik9+qzP3tC34+/zySZaP661B3mWpwDIJIco+qU+aCAjPEuk+bgnvWVCy
+         gsvcVtL+Mdqz6Pl1pvKtYWiMnuwicaDl2jGJXC0+kztL32GxmKCkzyAdwTinSJBAltrP
+         PMKX0X3XUx6QjJ+uce8CUyY0tVLlT92zSg6GE1cp07sKUWpMRZ3uhjuG44owDwPjhDtv
+         61fD1l8Ichlxy1Uvvvnk8fp2OSeunkmcaKFcP/amDkJVhtProQAelCHqYa4s9l6ADX8W
+         8hVbDea6kyYKhE5FGpRCMWA2VncX0QAA4lP+O9PmXHvrLWOokmudGHa/WZAqnfQzDkp/
+         DLcA==
+X-Gm-Message-State: AOUpUlFiy/agox0IP5HTYlCGpvooU2Bi2GML6zMQ2WAQSDI3U4luKtiQ
+        nN/ushcA3wB62cICIW8rpnk=
+X-Google-Smtp-Source: AA+uWPyKmX8voUxcsEHnwiPlO4zoKhXx+k0VDuLUwF+j/J06MC1zhPS5+zuUkXIKWFkRLwXHpLKkog==
+X-Received: by 2002:a0c:f842:: with SMTP id g2-v6mr593418qvo.212.1533688175379;
+        Tue, 07 Aug 2018 17:29:35 -0700 (PDT)
 Received: from WindFlash ([201.82.148.26])
-        by smtp.gmail.com with ESMTPSA id a66-v6sm1633636qkf.96.2018.08.07.17.29.27
+        by smtp.gmail.com with ESMTPSA id j45-v6sm1824231qta.46.2018.08.07.17.29.33
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 07 Aug 2018 17:29:28 -0700 (PDT)
-Date:   Tue, 7 Aug 2018 21:29:25 -0300
+        Tue, 07 Aug 2018 17:29:34 -0700 (PDT)
+Date:   Tue, 7 Aug 2018 21:29:31 -0300
 From:   Leonardo =?utf-8?B?QnLDoXM=?= <leobras.c@gmail.com>
 To:     Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 10/15] staging: fbtft: Fixes some defines styles - Style
-Message-ID: <cb5b3900e97e3b295dda63b5d8b29d6fed669893.1533686201.git.leobras.c@gmail.com>
+Subject: [PATCH v2 11/15] staging: fbtft: Includes description to mutex and
+ spinlock - Style
+Message-ID: <b7a7e9b7da96d73eddad4553ba1297d9823a61b1.1533686201.git.leobras.c@gmail.com>
 References: <cover.1533686201.git.leobras.c@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
@@ -80,87 +81,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixing some styles as recommended by checkpatch.pl.
+ Includes description to mutex and spinlocks, as recommended by checkpatch.pl.
 
 Signed-off-by: Leonardo Brás <leobras.c@gmail.com>
 ---
- drivers/staging/fbtft/fbtft-bus.c  | 10 ++++++----
- drivers/staging/fbtft/fbtft-core.c |  6 ++++--
- drivers/staging/fbtft/fbtft.h      |  4 ++--
- 3 files changed, 12 insertions(+), 8 deletions(-)
+ drivers/staging/fbtft/fbtft.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/fbtft/fbtft-bus.c b/drivers/staging/fbtft/fbtft-bus.c
-index 8ce1ff9b6c2a..20d94712cc84 100644
---- a/drivers/staging/fbtft/fbtft-bus.c
-+++ b/drivers/staging/fbtft/fbtft-bus.c
-@@ -60,11 +60,13 @@ void func(struct fbtft_par *par, int len, ...)                                \
- out:									      \
- 	va_end(args);                                                         \
- }                                                                             \
--EXPORT_SYMBOL(func);
-+EXPORT_SYMBOL(func)
- 
--define_fbtft_write_reg(fbtft_write_reg8_bus8, u8, u8, )
--define_fbtft_write_reg(fbtft_write_reg16_bus8, __be16, u16, cpu_to_be16)
--define_fbtft_write_reg(fbtft_write_reg16_bus16, u16, u16, )
-+#define no_modf /*No modifier*/
-+
-+define_fbtft_write_reg(fbtft_write_reg8_bus8, u8, u8, no_modf);
-+define_fbtft_write_reg(fbtft_write_reg16_bus8, __be16, u16, cpu_to_be16);
-+define_fbtft_write_reg(fbtft_write_reg16_bus16, u16, u16, no_modf);
- 
- void fbtft_write_reg8_bus9(struct fbtft_par *par, int len, ...)
- {
-diff --git a/drivers/staging/fbtft/fbtft-core.c b/drivers/staging/fbtft/fbtft-core.c
-index 64f69d1a3029..8b79353c722a 100644
---- a/drivers/staging/fbtft/fbtft-core.c
-+++ b/drivers/staging/fbtft/fbtft-core.c
-@@ -275,6 +275,7 @@ void fbtft_unregister_backlight(struct fbtft_par *par)
- 		par->info->bl_dev = NULL;
- 	}
- }
-+EXPORT_SYMBOL(fbtft_unregister_backlight);
- 
- static const struct backlight_ops fbtft_bl_ops = {
- 	.get_brightness	= fbtft_backlight_get_brightness,
-@@ -312,12 +313,13 @@ void fbtft_register_backlight(struct fbtft_par *par)
- 	if (!par->fbtftops.unregister_backlight)
- 		par->fbtftops.unregister_backlight = fbtft_unregister_backlight;
- }
-+EXPORT_SYMBOL(fbtft_register_backlight);
- #else
- void fbtft_register_backlight(struct fbtft_par *par) { };
--void fbtft_unregister_backlight(struct fbtft_par *par) { };
--#endif
- EXPORT_SYMBOL(fbtft_register_backlight);
-+void fbtft_unregister_backlight(struct fbtft_par *par) { };
- EXPORT_SYMBOL(fbtft_unregister_backlight);
-+#endif
- 
- static void fbtft_set_addr_win(struct fbtft_par *par, int xs, int ys, int xe,
- 			       int ye)
 diff --git a/drivers/staging/fbtft/fbtft.h b/drivers/staging/fbtft/fbtft.h
-index 87114502e836..6ee9ff320567 100644
+index 6ee9ff320567..f771271d497a 100644
 --- a/drivers/staging/fbtft/fbtft.h
 +++ b/drivers/staging/fbtft/fbtft.h
-@@ -232,7 +232,7 @@ struct fbtft_par {
- 	bool polarity;
- };
- 
--#define NUMARGS(...)  (sizeof((int[]){__VA_ARGS__})/sizeof(int))
-+#define NUMARGS(...)  (sizeof((int[]){__VA_ARGS__}) / sizeof(int))
- 
- #define write_reg(par, ...)                                            \
- 	((par)->fbtftops.write_register(par, NUMARGS(__VA_ARGS__), __VA_ARGS__))
-@@ -342,7 +342,7 @@ static void __exit fbtft_driver_module_exit(void)                          \
- }                                                                          \
- 									   \
- module_init(fbtft_driver_module_init);                                     \
--module_exit(fbtft_driver_module_exit);
-+module_exit(fbtft_driver_module_exit)
- 
- /* Debug macros */
- 
+@@ -203,7 +203,7 @@ struct fbtft_par {
+ 	u8 *buf;
+ 	u8 startbyte;
+ 	struct fbtft_ops fbtftops;
+-	spinlock_t dirty_lock;
++	spinlock_t dirty_lock; /*Protects dirty_lines_{start,end}*/
+ 	unsigned int dirty_lines_start;
+ 	unsigned int dirty_lines_end;
+ 	struct {
+@@ -219,7 +219,7 @@ struct fbtft_par {
+ 	} gpio;
+ 	const s16 *init_sequence;
+ 	struct {
+-		struct mutex lock;
++		struct mutex lock; /*Mutex for Gamma curve locking*/
+ 		u32 *curves;
+ 		int num_values;
+ 		int num_curves;
 -- 
 2.18.0
 
