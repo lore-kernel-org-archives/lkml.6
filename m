@@ -2,119 +2,140 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64E6FC46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 07:41:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83207C46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 07:44:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 189B7216FB
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 07:41:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rugzuwPP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 189B7216FB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 39B48216FB
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 07:44:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39B48216FB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727055AbeHHJ7o (ORCPT
+        id S1727062AbeHHKC6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 05:59:44 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:34550 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726721AbeHHJ7n (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 05:59:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=np/8aWXAd73bWdcLxs5j43KSI44vz6tqP9Cu98hgRao=; b=rugzuwPPDFDcLN1G06CPkITvz
-        NnFCy8vAqBnEWmQLEWhYNz6rzi6cRUksz7zisTbXGlNyu2g0pT2djVrd4APduXnvjWo/0VMM/pNM2
-        6WxhcJy+cFjUlr9ywQ6WiSkbnWbvNkQ6N1fICu/Y5IObu+y/SBposmjl2Ie2Q5GGhTLf7cREMo5z5
-        kTJEXDxF+765HROXImUee2LYfBXQZjAG3evD0/ZPWkfeE1pmd3yKydiwgctqZV3tsZDk7ZI/VYKgA
-        Sic4ltdsf6QN2V5TBWeOXcY9nEID43StLvbTxbetpjyV5ITqyC+EhGFtdXFsTuPdWLEdYzFN2u2h6
-        no0KbOcdw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fnJ5m-0004Zn-Jq; Wed, 08 Aug 2018 07:41:14 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 2FE8620163EC0; Wed,  8 Aug 2018 09:41:11 +0200 (CEST)
-Date:   Wed, 8 Aug 2018 09:41:11 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Reinette Chatre <reinette.chatre@intel.com>
-Cc:     "Luck, Tony" <tony.luck@intel.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "Yu, Fenghua" <fenghua.yu@intel.com>,
-        "vikas.shivappa@linux.intel.com" <vikas.shivappa@linux.intel.com>,
-        "Hindman, Gavin" <gavin.hindman@intel.com>,
-        "Joseph, Jithu" <jithu.joseph@intel.com>,
-        "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/2] x86/intel_rdt and perf/x86: Fix lack of coordination
- with perf
-Message-ID: <20180808074111.GM2494@hirez.programming.kicks-ass.net>
-References: <1eece033-fbae-c904-13ad-1904be91c049@intel.com>
- <20180803152523.GY2476@hirez.programming.kicks-ass.net>
- <d6df8a8a-f0f2-48f7-1c1d-c8893e1583c9@intel.com>
- <57c011e1-113d-c38f-c318-defbad085843@intel.com>
- <20180806221225.GO2458@hirez.programming.kicks-ass.net>
- <08d51131-7802-5bfe-2cae-d116807183d1@intel.com>
- <20180807093615.GY2494@hirez.programming.kicks-ass.net>
- <ace0bebb-91ab-5d40-e7d7-d72d48302fa8@intel.com>
- <3908561D78D1C84285E8C5FCA982C28F7D3A10EF@ORSMSX110.amr.corp.intel.com>
- <413c3b6f-770d-9549-4249-c2407267b63c@intel.com>
+        Wed, 8 Aug 2018 06:02:58 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:24431 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726939AbeHHKC6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 06:02:58 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 41lk180Yfxz9ttkl;
+        Wed,  8 Aug 2018 09:44:28 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id l5mw1hmyJXPx; Wed,  8 Aug 2018 09:44:28 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 41lk1802tpz9ttkf;
+        Wed,  8 Aug 2018 09:44:28 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 911F38B7AC;
+        Wed,  8 Aug 2018 09:44:28 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id v053WW6SXfc0; Wed,  8 Aug 2018 09:44:28 +0200 (CEST)
+Received: from PO15451 (po15451.idsi0.si.c-s.fr [172.25.231.4])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 4C5AC8B752;
+        Wed,  8 Aug 2018 09:44:28 +0200 (CEST)
+Subject: Re: [PATCH] lib/test_hexdump: fix failure on big endian cpu
+To:     Michael Ellerman <mpe@ellerman.id.au>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+References: <f3112437f62c2f48300535510918e8be1dceacfb.1533610877.git.christophe.leroy@c-s.fr>
+ <87mutxb9qy.fsf@concordia.ellerman.id.au>
+From:   Christophe LEROY <christophe.leroy@c-s.fr>
+Message-ID: <1690d8af-3e67-e82b-ef2a-8adee6eaa497@c-s.fr>
+Date:   Wed, 8 Aug 2018 09:44:28 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <413c3b6f-770d-9549-4249-c2407267b63c@intel.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <87mutxb9qy.fsf@concordia.ellerman.id.au>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 07, 2018 at 10:44:44PM -0700, Reinette Chatre wrote:
-> Hi Tony,
+
+
+Le 08/08/2018 à 09:25, Michael Ellerman a écrit :
+> Christophe Leroy <christophe.leroy@c-s.fr> writes:
+>> diff --git a/lib/test_hexdump.c b/lib/test_hexdump.c
+>> index 3f415d8101f3..626f580b4ff7 100644
+>> --- a/lib/test_hexdump.c
+>> +++ b/lib/test_hexdump.c
+>> @@ -32,16 +32,33 @@ static const char * const test_data_2_le[] __initconst = {
+>>   	"d14c", "9919", "b143", "0caf",
+>>   };
+>>   
+>> +static const char * const test_data_2_be[] __initconst = {
+>> +	"be32", "db7b", "0a18", "93b2",
+>> +	"70ba", "c424", "7d83", "349b",
+>> +	"a69c", "31ad", "9c0f", "ace9",
+>> +	"4cd1", "1999", "43b1", "af0c",
+>> +};
+>> +
+>>   static const char * const test_data_4_le[] __initconst = {
+>>   	"7bdb32be", "b293180a", "24c4ba70", "9b34837d",
+>>   	"ad319ca6", "e9ac0f9c", "9919d14c", "0cafb143",
+>>   };
+>>   
+>> +static const char * const test_data_4_be[] __initconst = {
+>> +	"be32db7b", "0a1893b2", "70bac424", "7d83349b",
+>> +	"a69c31ad", "9c0face9", "4cd11999", "43b1af0c",
+>> +};
+>> +
 > 
-> On 8/7/2018 6:28 PM, Luck, Tony wrote:
-> > Would it help to call routines to read the "before" values of the counter
-> > twice. The first time to preload the cache with anything needed to execute
-> > the perf code path.
+> Is there a reason we can't do it all at compile time?
 
-Indeed, that is the 'common' pattern for this.
+Codyingstyle suggests to use IS_ENABLED() as much as possible.
+I checked symbols inside resulting vmlinux, only the BE ones are there 
+so it has
+the same effect as an #ifdef
 
+Extract from Documentation/process/codying-style.rst:
 
-> First, reading data using perf_event_read_local() called twice.
-> When testing as follows:
-> /* create perf events */
-> /* disable irq */
-> /* disable hw prefetchers */
-> /* init local vars */
-> /* read before data twice as follows: */
-> perf_event_read_local(l2_hit_event, &l2_hits_before, NULL, NULL);
-> perf_event_read_local(l2_miss_event, &l2_miss_before, NULL, NULL);
-> perf_event_read_local(l2_hit_event, &l2_hits_before, NULL, NULL);
-> perf_event_read_local(l2_miss_event, &l2_miss_before, NULL, NULL);
-> /* read through pseudo-locked memory */
-> perf_event_read_local(l2_hit_event, &l2_hits_after, NULL, NULL);
-> perf_event_read_local(l2_miss_event, &l2_miss_after, NULL, NULL);
-> /* re enable hw prefetchers */
-> /* enable irq */
-> /* write data to tracepoint */
+Within code, where possible, use the IS_ENABLED macro to convert a Kconfig
+symbol into a C boolean expression, and use it in a normal C conditional:
+
+.. code-block:: c
+
+	if (IS_ENABLED(CONFIG_SOMETHING)) {
+		...
+	}
+
+The compiler will constant-fold the conditional away, and include or exclude
+the block of code just as with an #ifdef, so this will not add any runtime
+overhead.  However, this approach still allows the C compiler to see the 
+code
+inside the block, and check it for correctness (syntax, types, symbol
+references, etc).  Thus, you still have to use an #ifdef if the code 
+inside the
+block references symbols that will not exist if the condition is not met.
+
+Christophe
+
 > 
-> With the above I am not able to obtain accurate data:
-> pseudo_lock_mea-354   [002] ....    63.045734: pseudo_lock_l2: hits=4103
-> miss=6
-
-So _why_ doesn't this work? As said by Tony, that first call should
-prime the caches, so the second and third calls should not generate any
-misses.
-
-They might cause extra hits though, but that should be a constant
-amount is is also measureable with a no-op loop and can easily be
-subtracted.
+> eg:
+> 
+> static const char * const test_data_4[] __initconst = {
+> #ifdef CONFIG_CPU_LITTLE_ENDIAN
+> 	"7bdb32be", "b293180a", "24c4ba70", "9b34837d",
+> 	"ad319ca6", "e9ac0f9c", "9919d14c", "0cafb143",
+> #else
+> 	"be32db7b", "0a1893b2", "70bac424", "7d83349b",
+> 	"a69c31ad", "9c0face9", "4cd11999", "43b1af0c",
+> #endif
+> };
+> 
+> 
+> cheers
+> 
