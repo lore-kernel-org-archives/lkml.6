@@ -2,112 +2,119 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DED90C46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 17:04:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B82CC4646D
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 17:09:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 964782177C
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 17:04:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 964782177C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rowland.harvard.edu
+	by mail.kernel.org (Postfix) with ESMTP id 197BE208B1
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 17:09:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 197BE208B1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728167AbeHHTZV (ORCPT
+        id S1728133AbeHHTaS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 15:25:21 -0400
-Received: from iolanthe.rowland.org ([192.131.102.54]:55368 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1727337AbeHHTZV (ORCPT
+        Wed, 8 Aug 2018 15:30:18 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:33583 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727062AbeHHTaS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 15:25:21 -0400
-Received: (qmail 6582 invoked by uid 2102); 8 Aug 2018 13:04:45 -0400
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 8 Aug 2018 13:04:45 -0400
-Date:   Wed, 8 Aug 2018 13:04:45 -0400 (EDT)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-cc:     Keiichi Watanabe <keiichiw@chromium.org>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        <kieran.bingham@ideasonboard.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        <ezequiel@collabora.com>, <matwey@sai.msu.ru>
-Subject: Re: [RFC PATCH v1] media: uvcvideo: Cache URB header data before
- processing
-In-Reply-To: <1959555.Z0pJAWgXVZ@avalon>
-Message-ID: <Pine.LNX.4.44L0.1808081250430.6325-100000@iolanthe.rowland.org>
+        Wed, 8 Aug 2018 15:30:18 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 5A34F805C8; Wed,  8 Aug 2018 19:09:39 +0200 (CEST)
+Date:   Wed, 8 Aug 2018 19:09:33 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Sebastian Reichel <sre@kernel.org>
+Cc:     Tony Lindgren <tony@atomide.com>, j-keerthy@ti.com,
+        narmstrong@baylibre.com, claudiu.beznea@microchip.com,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-omap@vger.kernel.org, nekit1000@gmail.com, mpartap@gmx.net,
+        merlijn@wizzup.org
+Subject: Re: Vibrations on Droid 4?
+Message-ID: <20180808170933.GC7306@amd>
+References: <20180709220211.GA7760@amd>
+ <20180710101147.lyu65ro4czvrs2da@earth.universe>
+ <20180710133040.GA4391@amd>
+ <20180710161123.azym6sbboriuj4yc@earth.universe>
+ <20180711080218.GA21225@amd>
+ <20180711132739.GL99251@atomide.com>
+ <20180715201729.GB19675@amd>
+ <20180716075926.GU99251@atomide.com>
+ <20180801185823.GC26087@amd>
+ <20180802110701.3b4voigegy67h4p5@earth.universe>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="GPJrCs/72TxItFYR"
+Content-Disposition: inline
+In-Reply-To: <20180802110701.3b4voigegy67h4p5@earth.universe>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 8 Aug 2018, Laurent Pinchart wrote:
 
-> Hello,
-> 
-> On Wednesday, 8 August 2018 17:20:21 EEST Alan Stern wrote:
-> > On Wed, 8 Aug 2018, Keiichi Watanabe wrote:
-> > > Hi Laurent, Kieran, Tomasz,
-> > > 
-> > > Thank you for reviews and suggestions.
-> > > I want to do additional measurements for improving the performance.
-> > > 
-> > > Let me clarify my understanding:
-> > > Currently, if the platform doesn't support coherent-DMA (e.g. ARM),
-> > > urb_buffer is allocated by usb_alloc_coherent with
-> > > URB_NO_TRANSFER_DMA_MAP flag instead of using kmalloc.
-> > 
-> > Not exactly.  You are mixing up allocation with mapping.  The speed of
-> > the allocation doesn't matter; all that matters is whether the memory
-> > is cached and when it gets mapped/unmapped.
-> > 
-> > > This is because we want to avoid frequent DMA mappings, which are
-> > > generally expensive. However, memories allocated in this way are not
-> > > cached.
-> > > 
-> > > So, we wonder if using usb_alloc_coherent is really fast.
-> > > In other words, we want to know which is better:
-> > > "No DMA mapping/Uncached memory" v.s. "Frequent DMA mapping/Cached
-> > > memory".
-> 
-> The second option should also be split in two:
-> 
-> - cached memory with DMA mapping/unmapping around each transfer
-> - cached memory with DMA mapping/unmapping at allocation/free time, and DMA 
-> sync around each transfer
-> 
-> The second option should in theory lead to at least slightly better 
-> performances, but tests with the pwc driver have reported contradictory 
-> results. I'd like to know whether that's also the case with the uvcvideo 
-> driver, and if so, why.
-> 
-> > There is no need to wonder.  "Frequent DMA mapping/Cached memory" is
-> > always faster than "No DMA mapping/Uncached memory".
-> 
-> Is it really, doesn't it depend on the CPU access pattern ?
+--GPJrCs/72TxItFYR
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Well, if your access pattern involves transferring data in from the
-device and then throwing it away without reading it, you might get a
-different result.  :-)  But assuming you plan to read the data after
-transferring it, using uncached memory slows things down so much that
-the overhead of DMA mapping/unmapping is negligible by comparison.
+Hi!
 
-The only exception might be if you were talking about very small
-amounts of data.  I don't know exactly where the crossover occurs, but
-bear in mind that Matwey's tests required ~50 us for mapping/unmapping
-and 3000 us for accessing uncached memory.  He didn't say how large the
-transfers were, but that's still a pretty big difference.
+> On Wed, Aug 01, 2018 at 08:58:24PM +0200, Pavel Machek wrote:
+> > > > Yep, so I have two patches that make the device appear, but vibrati=
+ons
+> > > > still do not work for me.
+> > > >=20
+> > > > a) any ideas how to debug that / get them to work?
+> > >=20
+> > > Hmm no new ideas except I wonder if there is also some other
+> > > regression with the timer pdata not being passed properly now.
+> >=20
+> > I checked vibrations work in original Motorola Android; my hardware is
+> > not broken.
+>=20
+> You got it working, but this information might still be interesting
+> in case of future problems:
+>=20
+> The Android "driver" is very different from the one I wrote from
+> scratch and upstreamed. The mainline driver is less lines of code
+> (iirc 25%), less complicated (Android vibration support is spread
+> over multiple drivers/arch code), more efficient (Android drivers
+> does GPIO bitbanging instead of PWM) and provides more features
+> (Android driver does not allow all strength settings). Also it uses
+> normal input device API instead of a custom one.
 
-Alan Stern
+Thanks for doing it right.
 
-> > The only issue is that on some platform (such as x86) but not others,
-> > there is a third option: "No DMA mapping/Cached memory".  On platforms
-> > which support it, this is the fastest option.
+> P.S.: Sorry, I don't have much time to work on D4 at the moment :(
 
+Thanks for doing the work, d4 seems to be the most usable phone at the
+moment. Yes, there's more work to do, but there's always more work to
+do.
+
+Best regards,
+
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--GPJrCs/72TxItFYR
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAltrI80ACgkQMOfwapXb+vLgkQCggzpi9K5+lYalLpefgKEEBvYI
+JaQAn3jjgKOiQ5LPwnbzA0ucR8NGi9t0
+=oSb0
+-----END PGP SIGNATURE-----
+
+--GPJrCs/72TxItFYR--
