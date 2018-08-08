@@ -2,169 +2,106 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5EEFC46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 20:38:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C233C46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 20:39:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F58E21A13
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 20:38:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F58E21A13
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lxorguk.ukuu.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id B8D1A21A13
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 20:39:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="F5vVVwdd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8D1A21A13
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731219AbeHHW7k convert rfc822-to-8bit (ORCPT
+        id S1731296AbeHHXBH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 18:59:40 -0400
-Received: from www.llwyncelyn.cymru ([82.70.14.225]:50034 "EHLO fuzix.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727530AbeHHW7k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 18:59:40 -0400
-Received: from alans-desktop (82-70-14-226.dsl.in-addr.zen.co.uk [82.70.14.226])
-        by fuzix.org (8.15.2/8.15.2) with ESMTP id w78KafpD011609;
-        Wed, 8 Aug 2018 21:36:41 +0100
-Date:   Wed, 8 Aug 2018 21:36:40 +0100
-From:   Alan Cox <gnomes@lxorguk.ukuu.org.uk>
-To:     Andreas =?UTF-8?B?RsOkcmJlcg==?= <afaerber@suse.de>
-Cc:     Jian-Hong Pan <starnight@g.ncu.edu.tw>, netdev@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Jiri Pirko <jiri@resnulli.us>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Matthias Brugger <mbrugger@suse.com>,
-        Janus Piwek <jpiwek@arroweurope.com>,
-        Michael =?UTF-8?B?UsO2ZGVy?= <michael.roeder@avnet.eu>,
-        Dollar Chen <dollar.chen@wtmec.com>,
-        Ken Yu <ken.yu@rakwireless.com>,
-        Konstantin =?UTF-8?B?QsO2aG0=?= <konstantin.boehm@ancud.de>,
-        Jan Jongboom <jan.jongboom@arm.com>,
-        Jon Ortego <Jon.Ortego@imst.de>, contact@snootlab.com,
-        Ben Whitten <ben.whitten@lairdtech.com>,
-        Brian Ray <brian.ray@link-labs.com>, lora@globalsat.com.tw,
-        Alexander Graf <agraf@suse.de>,
-        Michal =?UTF-8?B?S3ViZcSNZWs=?= <mkubecek@suse.cz>,
-        Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
-        Steve deRosier <derosier@gmail.com>,
-        Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
-        Pieter Robyns <pieter.robyns@uhasselt.be>,
-        Hasnain Virk <Hasnain.Virk@arm.com>,
-        linux-wpan <linux-wpan@vger.kernel.org>,
-        Stefan Schmidt <stefan@datenfreihafen.org>,
-        Daniele Comel <dcomel@mipot.com>
-Subject: Re: [RFC net-next 00/15] net: A socket API for LoRa
-Message-ID: <20180808213640.10a1d76f@alans-desktop>
-In-Reply-To: <92ee4016-1da9-826b-3674-b2d604a64848@suse.de>
-References: <20180701110804.32415-1-afaerber@suse.de>
-        <CAC=mGzgUCopz2xTOA0R-WD8a1DOaOOUn=YpfdMiJ33y3hnh6kg@mail.gmail.com>
-        <92ee4016-1da9-826b-3674-b2d604a64848@suse.de>
-Organization: Intel Corporation
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Wed, 8 Aug 2018 19:01:07 -0400
+Received: from mail-ua0-f194.google.com ([209.85.217.194]:36338 "EHLO
+        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727530AbeHHXBG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 19:01:06 -0400
+Received: by mail-ua0-f194.google.com with SMTP id c12-v6so3910137uan.3
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 13:39:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=quAE55nWvV7E8UXCtpxGbr7sG79MYJa6fnLPq1PkBbM=;
+        b=F5vVVwddbv3GmnvfoxoqbBe58bfHaTI8W60sO/8p3nYixyn5DwNP3bd24SiWnq3460
+         v3pCrWzWFJ9htqUngBmCKq8n+lHCN135tYle3EMNzViCZ+SdAgJImCel2VWrs4MIsIqx
+         UX+dz+ggMCKdTSroQQC3aJRPHmdfRFHANCKO0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=quAE55nWvV7E8UXCtpxGbr7sG79MYJa6fnLPq1PkBbM=;
+        b=fMr8RN3DjuGEPLAgH9AkWJgN9Z8pfHl+aXMRxVRaRqs51vcUE39EJsfGkDxuzEcdti
+         oEYycyCzxyKRqVx7rUu/ybJer7exQcx5jb/Ccez69Cd9GoVJjggjPqAoAMC1Ds5kVAss
+         5IVUFa619uzNogU0tnNVwfRfUVwi+u44CoA1GWhr0FreRPu90ISlk07aCzw+4WZ3KhZL
+         Omij4HjUMLL7/57zr4+8KN4hm2iFbrudeB4Jn0DUMeLCkOvp97cHtOoXrfO5zfi9l6FM
+         iTuqztWCgOybSwzjOUJ6fOEp7HBxkM2Ovxsnj7ToDJq/8NFUe+J1gBYH++FOsicLgWNK
+         6Spw==
+X-Gm-Message-State: AOUpUlG5fkATB0AirTKmpS4CStOoGl90Sxnelkm8Rx5kBc5FnYkL7imm
+        qRTxjY0Oy0DyZdi207Agff1mpmHXtvE=
+X-Google-Smtp-Source: AA+uWPwCQuI16Vowb2nZ12XQl5GOwD613MQZThjFVvcvEWwZ0wZsKa3Hpw6Mgdoqybvh3GfP4IF9YA==
+X-Received: by 2002:ab0:5068:: with SMTP id z37-v6mr3140416uaz.149.1533760785509;
+        Wed, 08 Aug 2018 13:39:45 -0700 (PDT)
+Received: from mail-ua0-f178.google.com (mail-ua0-f178.google.com. [209.85.217.178])
+        by smtp.gmail.com with ESMTPSA id c68-v6sm1452133vke.19.2018.08.08.13.39.44
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 08 Aug 2018 13:39:44 -0700 (PDT)
+Received: by mail-ua0-f178.google.com with SMTP id k25-v6so3859051uao.11
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 13:39:44 -0700 (PDT)
+X-Received: by 2002:ab0:1163:: with SMTP id g35-v6mr3068024uac.135.1533760784008;
+ Wed, 08 Aug 2018 13:39:44 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Received: by 2002:a1f:cd5:0:0:0:0:0 with HTTP; Wed, 8 Aug 2018 13:39:43 -0700 (PDT)
+In-Reply-To: <20180803222059.146666-1-mka@chromium.org>
+References: <20180803222059.146666-1-mka@chromium.org>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Wed, 8 Aug 2018 13:39:43 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=VwRp4ip_icn5bUWBbE0XatZrmu5m3pyfifm-s8cS0ShA@mail.gmail.com>
+Message-ID: <CAD=FV=VwRp4ip_icn5bUWBbE0XatZrmu5m3pyfifm-s8cS0ShA@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: sdm845: Add dispcc node
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Stephen Boyd <swboyd@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 5 Aug 2018 02:11:25 +0200
-Andreas Färber <afaerber@suse.de> wrote:
+Hi,
 
-> Hi Jian-Hong,
-> 
-> Am 03.07.2018 um 17:11 schrieb Jian-Hong Pan:
-> > 2018-07-01 19:07 GMT+08:00 Andreas Färber <afaerber@suse.de>:  
-> >> 2) PF_LORA is used with SOCK_DGRAM here. The assumption is that RAW mode
-> >>    would be DGRAM plus preamble plus optional checksum.  
-> > 
-> > Is the preamble added by the hardware itself here or software here?  
-> 
-> That depends on the driver. For SX127x and any SX127x based modules it
-> is added by hardware and a SOCK_RAW seems impossible. If you were to use
-> some SDR hardware, it would need to be done by software and might either
-> be done in the device driver for SOCK_DGRAM or by user with a SOCK_RAW.
-> Right now I don't see a practical use case for the latter. (CC Pieter)
+On Fri, Aug 3, 2018 at 3:20 PM, Matthias Kaehlcke <mka@chromium.org> wrote:
+> This adds the display clock controller node to sdm845 based on the
+> examples in the bindings.
+>
+> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> ---
+> The dispcc driver and DT bindings landed in the clk-qcom-dispcc-845
+> branch of the clk tree.
+>
+>  arch/arm64/boot/dts/qcom/sdm845.dtsi | 9 +++++++++
+>  1 file changed, 9 insertions(+)
 
-For TCP/IP a SOCK_RAW is a socket with raw IP level access. It doesn't
-deal in IP headers and unless you ask it also does chunks of IP header
-stuff for you.
+Peachy keen.
 
-SOCK_PACKET is the truely raw interface and even then it's rawness is
-bounded. You can't for example talk truely raw wifi bit streams, and for
-ethernet you get to generate MAC headers but not preambles etc.
-
-> LoRa radio channels being half-duplex, we'd need to stop receiving in
-> ndo_start_xmit and re-start receiving in the TX interrupt handler AFAIU.
-> Yes, it's ugly - one reason I haven't implemented RX in sx1276 yet.
-
-Why - the signal is still floating around in the air, you can't unhear it
-at the antenna. If a given piece of hardware needs to flip between RX
-and TX mode then it should be handled by that driver.
-
-(Some ancient ethernet cards do this btw.. they can't listen and transmit
-at the same time)
-
-> > - We can have a pre-defined table according to LoRaWAN Regional Parameters.
-> > - Device driver declares the hardware's capability, for example
-> > frequency, TX power.  And then registers as a LoRaWAN compatible
-> > device.  
-> 
-> That sounds like a layering violation. We rather need to expose all
-> these tunable parameters individually at the LoRa layer, allowing the
-> LoRaWAN layer to configure them as it pleases. Not the other direction.
-> That still leaves my above question 4) open of how to implement each.
-
-Wifi already has the general policy database for the various existing
-protocols. Please take a look at the CRDA agent and how it hooks into
-wireless.It might need to some tweaking but it would be odd to have
-different configuration schemes for different wifi protocols.
-
-> The use case I have in mind is this: User A opens a LoRaWAN socket and
-> using maclorawan sends a packet P1. Here the LoRaWAN Regional Parameters
-> and LoRaWAN Sync Word need to be applied.
-> User B then opens a pure LoRa socket and transmits a packet P1' with
-> different Sync Word, SF, BW, CR, etc.
-> Afterwards user A wants to send another packet P2 via LoRaWAN - this
-> needs to use the same LoRaWAN settings as before, not those used for
-> LoRa in between. Therefore I was thinking about socket-level options, as
-> netlink operations would be device-wide, with undesired side-effects.
-
-Agreed
-
-> Obviously in that scenario not both users can receive at the same time.
-
-That's a hardware question. Imagine a software defined radio. If your
-limitation wouldn't exist in a pure software defined radio then it's
-almost certainly a device level detal.
-
-> interface but cleanly distinguished as ETH_P_GFSK or something.
-> For example, the Chistera Pi HAT has both an RFM95W and an RFM22 module.
-
-Agreed if you can flip per packet.
-
-> The next question arising is how the user would create such an skb. Just
-> like I was hesitant about PF_LORAWAN originally, I'd like to avoid
-> polluting the PF_ number space for each of these. Maybe have one PF_FSK
-> as equivalent to PF_LORA and then have either a socket option or
-> sockaddr field to select the modulation variants? Not sure how exactly
-> those others differ from each other, that's why I tried to postpone the
-> FSK topic and to focus on LoRa first - b) below.
-> 
-> At this point we could also argue whether we need a PF_LORA at all or
-> rather just some generic PF_RADIO with lots of options stored in its
-> sockaddr.
-
-What matters most is mux/demux.
-
-If you've got something listening to data but without the structure
-needed to identify multiple listeners and split out the data meaningfully
-to those listeners according to parts of the packet then you've got no
-reason to make it a protocol just use SOCK_PACKET and if need be BPF.
-
-The reason we have a socket layer not /dev/ethernet0 is that it's
-meaningful to divide messages up into flows, and to partition those flows
-securely amongst multiple consumers/generators.
-
-Alan
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
