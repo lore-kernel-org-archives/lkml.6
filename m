@@ -2,91 +2,80 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B172C46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 08:43:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF542C4646D
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 08:46:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DAFD216FB
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 08:43:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RCrv9bQ7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DAFD216FB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 87D202089F
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 08:46:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87D202089F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727330AbeHHLBy (ORCPT
+        id S1727290AbeHHLEt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 07:01:54 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:33708 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727074AbeHHLBy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 07:01:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=bSjMVNarQjEUpBMngpczBpqlWPM1MqUvow+2CQ4p+sg=; b=RCrv9bQ7LOwO0HhUEZenjb5u4
-        NO54klfWiRMi5azB3LaOlwppO8OBHchgGcWnfggAAc8JyZ66h0uzWLQumbxcBDOu6VEBywYKKk4wk
-        oCKT+CIrhbu5UMgXZBAEsxkSuSRjhF8QCetllcFrCcyAlFMlaHpS5qzZ+LYwqrkGwR3KAHRYTRxtY
-        RuI7+J5HXkCwZeS1qxmDUXD9Pz0GDUbkZhs/+0ZEhRh8dLAQspV6L6MRe6tlTiEgL6/55fhXi2Dtm
-        W3wQqKdp3TddD4d4ngUGytL+B4c25cDZnHr2ReBlE/kTGBef2LoJyOAdU0+OFW+SP+N39Ao0mu6af
-        KELYoKpjQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fnK3c-0005eY-Do; Wed, 08 Aug 2018 08:43:04 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 2D2EB20163EB8; Wed,  8 Aug 2018 10:43:02 +0200 (CEST)
-Date:   Wed, 8 Aug 2018 10:43:02 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Rik van Riel <riel@surriel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
-        Andre Wild <wild@linux.vnet.ibm.com>
-Subject: Re: [PATCH] sched/topology: Use Identity node only if required
-Message-ID: <20180808084302.GQ2494@hirez.programming.kicks-ass.net>
-References: <1533712172-11428-1-git-send-email-srikar@linux.vnet.ibm.com>
- <20180808075840.GO2494@hirez.programming.kicks-ass.net>
- <20180808081942.GA37418@linux.vnet.ibm.com>
+        Wed, 8 Aug 2018 07:04:49 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38432 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726979AbeHHLEt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 07:04:49 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 864634023461;
+        Wed,  8 Aug 2018 08:46:07 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-116-132.ams2.redhat.com [10.36.116.132])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 097ED215670D;
+        Wed,  8 Aug 2018 08:46:06 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id DDA4A16E2B; Wed,  8 Aug 2018 10:46:05 +0200 (CEST)
+Date:   Wed, 8 Aug 2018 10:46:05 +0200
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     Adam Jackson <ajax@redhat.com>, dri-devel@lists.freedesktop.org,
+        David Airlie <airlied@linux.ie>,
+        Dave Airlie <airlied@redhat.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:DRM DRIVER FOR QEMU'S CIRRUS DEVICE" 
+        <virtualization@lists.linux-foundation.org>
+Subject: Re: [PATCH] drm/cirrus: flip default to 32bpp
+Message-ID: <20180808084605.bnunbipv3uqxkmst@sirius.home.kraxel.org>
+References: <20180706091249.25086-1-kraxel@redhat.com>
+ <e127596f255261d78fdfe6f534a1000f60c3c605.camel@redhat.com>
+ <20180709073924.GB3008@phenom.ffwll.local>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180808081942.GA37418@linux.vnet.ibm.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180709073924.GB3008@phenom.ffwll.local>
+User-Agent: NeoMutt/20180622
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Wed, 08 Aug 2018 08:46:07 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Wed, 08 Aug 2018 08:46:07 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'kraxel@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 08, 2018 at 01:19:42AM -0700, Srikar Dronamraju wrote:
+On Mon, Jul 09, 2018 at 09:39:24AM +0200, Daniel Vetter wrote:
+> On Fri, Jul 06, 2018 at 02:35:07PM -0400, Adam Jackson wrote:
+> > On Fri, 2018-07-06 at 11:12 +0200, Gerd Hoffmann wrote:
+> > > cirrus can handle 1024x768 (and slightly higher) with 24bpp depth.
+> > > cirrus can handle up to 800x600 with 32bpp.
+> > 
+> > 16bpp is maybe a better choice? Nobody's using cirrus because they care
+> > about color fidelity and it'll use less CPU to update. There's
+> > precedent here, mgag200 defaults to 16bpp on sufficiently memory-
+> > impaired devices.
+> 
+> Yeah nouveau does the same fallback to 16bpp if there's not enough vram.
+> So do a bunch of other drivers.
 
-> However, I still think if majority of the cases the identity node is
-> going to be redundant, then we should use hint.
+Makes sense.  But appearently 16bpp support bitrotted over time, when
+just flipping the default the driver Oopses at init time.  I'll look
+into it.
 
-No, same way we always generate SMT domains when we have
-CONFIG_SCHED_SMT irrespective of the hardware having SMT.
+cheers,
+  Gerd
 
-Also, an arch hook like you did is just fugly. If anything you add the
-single node thing to the regular topology setup of x86_numa_in_package.
-
-But the thing is, even for x86_numa_in_package the single node domain is
-mostly redundant because the MC domain will match the NODE domain most
-times.
-
-> We could fix the numa topology to be NUMA_DIRECT for 2 node machines, by
-> checking if sched_domains_numa_levels == 2, but then I dont know what it
-> means for a system that has only NODE but not NUMA level.
-
-You have a point there; I think we should not have added the NODE thing
-to sched_domains_numa_level, let me see if we can fix that sanely.
