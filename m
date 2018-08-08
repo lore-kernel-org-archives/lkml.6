@@ -2,284 +2,108 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3114C46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 16:41:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C50EC4646D
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 16:42:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5277821A27
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 16:41:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="iAJ05CTe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5277821A27
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id C48DF21A27
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 16:42:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C48DF21A27
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728719AbeHHTC0 (ORCPT
+        id S1729208AbeHHTCk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 15:02:26 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:58718 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727062AbeHHTC0 (ORCPT
+        Wed, 8 Aug 2018 15:02:40 -0400
+Received: from eu-smtp-delivery-211.mimecast.com ([207.82.80.211]:53494 "EHLO
+        eu-smtp-delivery-211.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728159AbeHHTCj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 15:02:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=lT+yC+uIySOSbGKCwRuP2NDlLttQc2K5/do8YewvOKU=; b=iAJ05CTeOq0D
-        vUZeDfpPV3bCZt/PSxJCrYvmA4q0Z3FXVLK0DlAB4JIKR+yfS8osg3bpcYQDv/50BILevI+o40sfK
-        YnmANofiYsImi+1NCNeMTec6Swl70Fb0LmsnN750diI3GrkE9XUH7UlXwpr141YYurS4vmyepcUa8
-        UcnXM=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fnRWz-00024q-Tq; Wed, 08 Aug 2018 16:41:53 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id AA4341124340; Wed,  8 Aug 2018 17:41:53 +0100 (BST)
-From:   Mark Brown <broonie@kernel.org>
-To:     Richard Fitzgerald <rf@opensource.cirrus.com>
-Cc:     Mark Brown <broonie@kernel.org>, broonie@kernel.org,
-        patches@opensource.cirrus.com, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: wm_adsp: Declare firmware controls from codec driver" to the asoc tree
-In-Reply-To:  <20180808161339.17402-1-rf@opensource.cirrus.com>
-Message-Id: <20180808164153.AA4341124340@debutante.sirena.org.uk>
-Date:   Wed,  8 Aug 2018 17:41:53 +0100 (BST)
+        Wed, 8 Aug 2018 15:02:39 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by eu-smtp-1.mimecast.com with ESMTP id
+ uk-mta-70-hVx3zmF7MYSdjDil8YEeXQ-1; Wed, 08 Aug 2018 17:42:07 +0100
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b::d117) by AcuMS.aculab.com
+ (fd9f:af1c:a25b::d117) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed,
+ 8 Aug 2018 17:43:46 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Wed, 8 Aug 2018 17:43:46 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Arnd Bergmann' <arnd@arndb.de>,
+        Mikulas Patocka <mpatocka@redhat.com>
+CC:     Catalin Marinas <catalin.marinas@arm.com>,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        Joao Pinto <Joao.Pinto@synopsys.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        linux-pci <linux-pci@vger.kernel.org>,
+        Will Deacon <will.deacon@arm.com>,
+        "Russell King - ARM Linux" <linux@armlinux.org.uk>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "neko@bakuhatsu.net" <neko@bakuhatsu.net>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Subject: RE: framebuffer corruption due to overlapping stp instructions on
+ arm64
+Thread-Topic: framebuffer corruption due to overlapping stp instructions on
+ arm64
+Thread-Index: AQHULxGqyzS7gP0u+Em6lFS72D3AkaS10FEA///9OACAABjskIAAJmTwgAAB3mA=
+Date:   Wed, 8 Aug 2018 16:43:46 +0000
+Message-ID: <a804913d98ae4598a725cb40a6d19b4e@AcuMS.aculab.com>
+References: <CAKv+Gu8DeuksZhk1g3q_msSKV_hSY_2e1uzVten9-oGO3j9Sqg@mail.gmail.com>
+ <20180803094129.GB17798@arm.com>
+ <alpine.LRH.2.02.1808031235410.31584@file01.intranet.prod.int.rdu2.redhat.com>
+ <CAKv+Gu-aNFh1fsr_05SEwDp99n3pLrguP7=tEcFQPNY53=K7Fw@mail.gmail.com>
+ <alpine.LRH.2.02.1808031424140.14030@file01.intranet.prod.int.rdu2.redhat.com>
+ <CAHCPf3s-+Qf=WBZz1KpisDMG3520jCUh8PLAO3PHa4jdt8kCTw@mail.gmail.com>
+ <20180808121641.GB24736@iMac.local>
+ <b1de49af14d941979977af07dc81e1c2@AcuMS.aculab.com>
+ <alpine.LRH.2.02.1808080939180.3325@file01.intranet.prod.int.rdu2.redhat.com>
+ <19c70d2a0b224db78f72dd316ad006b8@AcuMS.aculab.com>
+ <20180808145017.GE24736@iMac.local>
+ <alpine.LRH.2.02.1808081215120.31259@file01.intranet.prod.int.rdu2.redhat.com>
+ <CAK8P3a3iURkU8LThO3xLtaNjkYArdpw+6_WqJQog4EgrcQy23g@mail.gmail.com>
+In-Reply-To: <CAK8P3a3iURkU8LThO3xLtaNjkYArdpw+6_WqJQog4EgrcQy23g@mail.gmail.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.33]
+MIME-Version: 1.0
+X-MC-Unique: hVx3zmF7MYSdjDil8YEeXQ-1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
-
-   ASoC: wm_adsp: Declare firmware controls from codec driver
-
-has been applied to the asoc tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 0a047f07525fecfa8f6fccc5d30afff7e816de8d Mon Sep 17 00:00:00 2001
-From: Richard Fitzgerald <rf@opensource.cirrus.com>
-Date: Wed, 8 Aug 2018 17:13:38 +0100
-Subject: [PATCH] ASoC: wm_adsp: Declare firmware controls from codec driver
-
-To allow for more flexibility in naming of DSP-type cores
-move the creation of the firmware controls to the codec
-drivers instead of having a hardcoded list in wm_adsp.
-
-Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/codecs/cs47l24.c |  3 +++
- sound/soc/codecs/wm2200.c  | 10 ++++------
- sound/soc/codecs/wm5102.c  |  2 ++
- sound/soc/codecs/wm5110.c  |  5 +++++
- sound/soc/codecs/wm_adsp.c | 35 +++++++++--------------------------
- sound/soc/codecs/wm_adsp.h | 10 +++++++++-
- 6 files changed, 32 insertions(+), 33 deletions(-)
-
-diff --git a/sound/soc/codecs/cs47l24.c b/sound/soc/codecs/cs47l24.c
-index 0da52ead91e0..45e50fe3bf25 100644
---- a/sound/soc/codecs/cs47l24.c
-+++ b/sound/soc/codecs/cs47l24.c
-@@ -235,6 +235,9 @@ ARIZONA_MIXER_CONTROLS("AIF2TX6", ARIZONA_AIF2TX6MIX_INPUT_1_SOURCE),
- 
- ARIZONA_MIXER_CONTROLS("AIF3TX1", ARIZONA_AIF3TX1MIX_INPUT_1_SOURCE),
- ARIZONA_MIXER_CONTROLS("AIF3TX2", ARIZONA_AIF3TX2MIX_INPUT_1_SOURCE),
-+
-+WM_ADSP_FW_CONTROL("DSP2", 1),
-+WM_ADSP_FW_CONTROL("DSP3", 2),
- };
- 
- ARIZONA_MIXER_ENUMS(EQ1, ARIZONA_EQ1MIX_INPUT_1_SOURCE);
-diff --git a/sound/soc/codecs/wm2200.c b/sound/soc/codecs/wm2200.c
-index 3663b9fd4d65..deff65161504 100644
---- a/sound/soc/codecs/wm2200.c
-+++ b/sound/soc/codecs/wm2200.c
-@@ -1180,6 +1180,9 @@ SOC_DOUBLE_R_TLV("OUT2 Digital Volume", WM2200_DAC_DIGITAL_VOLUME_2L,
- SOC_DOUBLE("OUT2 Switch", WM2200_PDM_1, WM2200_SPK1L_MUTE_SHIFT,
- 	   WM2200_SPK1R_MUTE_SHIFT, 1, 1),
- SOC_ENUM("RxANC Src", wm2200_rxanc_input_sel),
-+
-+WM_ADSP_FW_CONTROL("DSP1", 0),
-+WM_ADSP_FW_CONTROL("DSP2", 1),
- };
- 
- WM2200_MIXER_ENUMS(OUT1L, WM2200_OUT1LMIX_INPUT_1_SOURCE);
-@@ -1553,15 +1556,10 @@ static const struct snd_soc_dapm_route wm2200_dapm_routes[] = {
- static int wm2200_probe(struct snd_soc_component *component)
- {
- 	struct wm2200_priv *wm2200 = snd_soc_component_get_drvdata(component);
--	int ret;
- 
- 	wm2200->component = component;
- 
--	ret = snd_soc_add_component_controls(component, wm_adsp_fw_controls, 2);
--	if (ret != 0)
--		return ret;
--
--	return ret;
-+	return 0;
- }
- 
- static int wm2200_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
-diff --git a/sound/soc/codecs/wm5102.c b/sound/soc/codecs/wm5102.c
-index a01a0c0e01eb..7e817e1877c2 100644
---- a/sound/soc/codecs/wm5102.c
-+++ b/sound/soc/codecs/wm5102.c
-@@ -985,6 +985,8 @@ ARIZONA_MIXER_CONTROLS("SLIMTX5", ARIZONA_SLIMTX5MIX_INPUT_1_SOURCE),
- ARIZONA_MIXER_CONTROLS("SLIMTX6", ARIZONA_SLIMTX6MIX_INPUT_1_SOURCE),
- ARIZONA_MIXER_CONTROLS("SLIMTX7", ARIZONA_SLIMTX7MIX_INPUT_1_SOURCE),
- ARIZONA_MIXER_CONTROLS("SLIMTX8", ARIZONA_SLIMTX8MIX_INPUT_1_SOURCE),
-+
-+WM_ADSP_FW_CONTROL("DSP1", 0),
- };
- 
- ARIZONA_MIXER_ENUMS(EQ1, ARIZONA_EQ1MIX_INPUT_1_SOURCE);
-diff --git a/sound/soc/codecs/wm5110.c b/sound/soc/codecs/wm5110.c
-index 00c735c585d9..b0789a03d699 100644
---- a/sound/soc/codecs/wm5110.c
-+++ b/sound/soc/codecs/wm5110.c
-@@ -927,6 +927,11 @@ ARIZONA_MIXER_CONTROLS("SLIMTX5", ARIZONA_SLIMTX5MIX_INPUT_1_SOURCE),
- ARIZONA_MIXER_CONTROLS("SLIMTX6", ARIZONA_SLIMTX6MIX_INPUT_1_SOURCE),
- ARIZONA_MIXER_CONTROLS("SLIMTX7", ARIZONA_SLIMTX7MIX_INPUT_1_SOURCE),
- ARIZONA_MIXER_CONTROLS("SLIMTX8", ARIZONA_SLIMTX8MIX_INPUT_1_SOURCE),
-+
-+WM_ADSP_FW_CONTROL("DSP1", 0),
-+WM_ADSP_FW_CONTROL("DSP2", 1),
-+WM_ADSP_FW_CONTROL("DSP3", 2),
-+WM_ADSP_FW_CONTROL("DSP4", 3),
- };
- 
- ARIZONA_MIXER_ENUMS(EQ1, ARIZONA_EQ1MIX_INPUT_1_SOURCE);
-diff --git a/sound/soc/codecs/wm_adsp.c b/sound/soc/codecs/wm_adsp.c
-index e39b0e0b04df..fbd0515c49d7 100644
---- a/sound/soc/codecs/wm_adsp.c
-+++ b/sound/soc/codecs/wm_adsp.c
-@@ -684,8 +684,8 @@ static inline void wm_adsp_debugfs_clear(struct wm_adsp *dsp)
- }
- #endif
- 
--static int wm_adsp_fw_get(struct snd_kcontrol *kcontrol,
--			  struct snd_ctl_elem_value *ucontrol)
-+int wm_adsp_fw_get(struct snd_kcontrol *kcontrol,
-+		   struct snd_ctl_elem_value *ucontrol)
- {
- 	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
- 	struct soc_enum *e = (struct soc_enum *)kcontrol->private_value;
-@@ -695,9 +695,10 @@ static int wm_adsp_fw_get(struct snd_kcontrol *kcontrol,
- 
- 	return 0;
- }
-+EXPORT_SYMBOL_GPL(wm_adsp_fw_get);
- 
--static int wm_adsp_fw_put(struct snd_kcontrol *kcontrol,
--			  struct snd_ctl_elem_value *ucontrol)
-+int wm_adsp_fw_put(struct snd_kcontrol *kcontrol,
-+		   struct snd_ctl_elem_value *ucontrol)
- {
- 	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
- 	struct soc_enum *e = (struct soc_enum *)kcontrol->private_value;
-@@ -721,8 +722,9 @@ static int wm_adsp_fw_put(struct snd_kcontrol *kcontrol,
- 
- 	return ret;
- }
-+EXPORT_SYMBOL_GPL(wm_adsp_fw_put);
- 
--static const struct soc_enum wm_adsp_fw_enum[] = {
-+const struct soc_enum wm_adsp_fw_enum[] = {
- 	SOC_ENUM_SINGLE(0, 0, ARRAY_SIZE(wm_adsp_fw_text), wm_adsp_fw_text),
- 	SOC_ENUM_SINGLE(0, 1, ARRAY_SIZE(wm_adsp_fw_text), wm_adsp_fw_text),
- 	SOC_ENUM_SINGLE(0, 2, ARRAY_SIZE(wm_adsp_fw_text), wm_adsp_fw_text),
-@@ -731,24 +733,7 @@ static const struct soc_enum wm_adsp_fw_enum[] = {
- 	SOC_ENUM_SINGLE(0, 5, ARRAY_SIZE(wm_adsp_fw_text), wm_adsp_fw_text),
- 	SOC_ENUM_SINGLE(0, 6, ARRAY_SIZE(wm_adsp_fw_text), wm_adsp_fw_text),
- };
--
--const struct snd_kcontrol_new wm_adsp_fw_controls[] = {
--	SOC_ENUM_EXT("DSP1 Firmware", wm_adsp_fw_enum[0],
--		     wm_adsp_fw_get, wm_adsp_fw_put),
--	SOC_ENUM_EXT("DSP2 Firmware", wm_adsp_fw_enum[1],
--		     wm_adsp_fw_get, wm_adsp_fw_put),
--	SOC_ENUM_EXT("DSP3 Firmware", wm_adsp_fw_enum[2],
--		     wm_adsp_fw_get, wm_adsp_fw_put),
--	SOC_ENUM_EXT("DSP4 Firmware", wm_adsp_fw_enum[3],
--		     wm_adsp_fw_get, wm_adsp_fw_put),
--	SOC_ENUM_EXT("DSP5 Firmware", wm_adsp_fw_enum[4],
--		     wm_adsp_fw_get, wm_adsp_fw_put),
--	SOC_ENUM_EXT("DSP6 Firmware", wm_adsp_fw_enum[5],
--		     wm_adsp_fw_get, wm_adsp_fw_put),
--	SOC_ENUM_EXT("DSP7 Firmware", wm_adsp_fw_enum[6],
--		     wm_adsp_fw_get, wm_adsp_fw_put),
--};
--EXPORT_SYMBOL_GPL(wm_adsp_fw_controls);
-+EXPORT_SYMBOL_GPL(wm_adsp_fw_enum);
- 
- static struct wm_adsp_region const *wm_adsp_find_region(struct wm_adsp *dsp,
- 							int type)
-@@ -2884,9 +2869,7 @@ int wm_adsp2_component_probe(struct wm_adsp *dsp, struct snd_soc_component *comp
- 
- 	dsp->component = component;
- 
--	return snd_soc_add_component_controls(component,
--					  &wm_adsp_fw_controls[dsp->num - 1],
--					  1);
-+	return 0;
- }
- EXPORT_SYMBOL_GPL(wm_adsp2_component_probe);
- 
-diff --git a/sound/soc/codecs/wm_adsp.h b/sound/soc/codecs/wm_adsp.h
-index bc6d359f0533..8d58cb9d9bb9 100644
---- a/sound/soc/codecs/wm_adsp.h
-+++ b/sound/soc/codecs/wm_adsp.h
-@@ -121,7 +121,11 @@ struct wm_adsp {
- 	.reg = SND_SOC_NOPM, .shift = num, .event = wm_adsp2_event, \
- 	.event_flags = SND_SOC_DAPM_POST_PMU | SND_SOC_DAPM_PRE_PMD }
- 
--extern const struct snd_kcontrol_new wm_adsp_fw_controls[];
-+#define WM_ADSP_FW_CONTROL(dspname, num) \
-+	SOC_ENUM_EXT(dspname " Firmware", wm_adsp_fw_enum[num], \
-+		     wm_adsp_fw_get, wm_adsp_fw_put)
-+
-+extern const struct soc_enum wm_adsp_fw_enum[];
- 
- int wm_adsp1_init(struct wm_adsp *dsp);
- int wm_adsp2_init(struct wm_adsp *dsp);
-@@ -144,6 +148,10 @@ int wm_adsp2_preloader_get(struct snd_kcontrol *kcontrol,
- 			   struct snd_ctl_elem_value *ucontrol);
- int wm_adsp2_preloader_put(struct snd_kcontrol *kcontrol,
- 			   struct snd_ctl_elem_value *ucontrol);
-+int wm_adsp_fw_get(struct snd_kcontrol *kcontrol,
-+		   struct snd_ctl_elem_value *ucontrol);
-+int wm_adsp_fw_put(struct snd_kcontrol *kcontrol,
-+		   struct snd_ctl_elem_value *ucontrol);
- 
- int wm_adsp_compr_open(struct wm_adsp *dsp, struct snd_compr_stream *stream);
- int wm_adsp_compr_free(struct snd_compr_stream *stream);
--- 
-2.18.0
+RnJvbTogQXJuZCBCZXJnbWFubg0KPiBTZW50OiAwOCBBdWd1c3QgMjAxOCAxNzozMQ0KLi4NCj4g
+PiBUaGV5IGRvIG1vZGlmeSB0aGUgc2FtZSBieXRlLCBidXQgd2l0aCB0aGUgc2FtZSB2YWx1ZS4g
+U3VwcG9zZSB0aGF0IHlvdQ0KPiA+IHdhbnQgdG8gY29weSBhIHBpZWNlIG9mIGRhdGEgdGhhdCBp
+cyBiZXR3ZWVuIDggYW5kIDE2IGJ5dGVzIGxvbmcuIFlvdSBjYW4NCj4gPiBkbyB0aGlzOg0KPiA+
+DQo+ID4gYWRkIHNyY19lbmQsIHNyYywgbGVuDQo+ID4gYWRkIGRzdF9lbmQsIGRzdCwgbGVuDQo+
+ID4gbGRyIHgwLCBbc3JjXQ0KPiA+IGxkciB4MSwgW3NyY19lbmQgLSA4XQ0KPiA+IHN0ciB4MCwg
+W2RzdF0NCj4gPiBzdHIgeDEsIFtkc3RfZW5kIC0gOF0NCg0KSSd2ZSBkb25lIHRoYXQgbXlzZWxm
+IChvbiB4ODYpIGNvcGllZCB0aGUgbGFzdCAnd29yZCcgZmlyc3QgdGhlbg0KZXZlcnl0aGluZyBl
+bHNlIGluIGluY3JlYXNpbmcgYWRkcmVzcyBvcmRlci4NCg0KPiA+IFRoZSBBUk02NCBtZW1jcHkg
+dXNlcyB0aGlzIHRyaWNrIGhlYXZpbHkgaW4gb3JkZXIgdG8gcmVkdWNlIGJyYW5jaGluZywgYW5k
+DQo+ID4gdGhpcyBpcyB3aGF0IG1ha2VzIHRoZSBQQ0llIGNvbnRyb2xsZXIgY2hva2UuDQoNCk1v
+cmUgbGlrZWx5IHRoZSB3cml0ZSBjb21iaW5pbmcgYnVmZmVyPw0KDQo+IFNvIHdoZW4gYSBzaW5n
+bGUgdW5hbGlnbmVkICdzdHAnIGdldHMgdHJhbnNsYXRlZCBpbnRvIGEgUENJZSB3aXRoIFRMUA0K
+PiB3aXRoIGxlbmd0aD01ICgyMCBieXRlcykgYW5kIExhc3RCRSA9IH4xc3RCRSwgd3JpdGUgY29t
+YmluaW5nIHRoZQ0KPiBvdmVybGFwcGluZyBzdG9yZXMgZ2l2ZXMgdXMgYSBUTFAgd2l0aCBhIGxv
+bmdlciBsZW5ndGggKDUuLjggZm9yIHR3bw0KPiBzdG9yZXMpLCBhbmQgYnl0ZS1lbmFibGUgYml0
+cyB0aGF0IGFyZSBub3QgZXhhY3RseSBhIGNvbXBsZW1lbnQuDQoNCldyaXRlIGNvbWJpbmluZyBz
+aG91bGQgZ2VuZXJhdGUgYSBtdWNoIGxvbmdlciBUTFAuDQpEZXBlbmRpbmcgb24gdGhlIHNpemUg
+b2YgdGhlIHdyaXRlIGNvbWJpbmluZyBidWZmZXIuDQoNCkJ1dCBpbiB0aGUgYWJvdmUgY2FzZSBJ
+J2QgaGF2ZSB0aG91Z2h0IHRoYXQgdGhlIHNlY29uZCB3cml0ZQ0Kd291bGQgZmFpbCB0byAnY29t
+YmluZScgLSBiZWNhdXNlIGl0IGlzbid0IGNvbnRpZ3VvdXMgd2l0aCB0aGUNCnN0b3JlZCBkYXRh
+Lg0KDQpTbyBzb21ldGhpbmcgbW9yZSBjb21wbGV4IHdpbGwgYmUgZ29pbmcgb24uDQoNCglEYXZp
+ZA0KDQotDQpSZWdpc3RlcmVkIEFkZHJlc3MgTGFrZXNpZGUsIEJyYW1sZXkgUm9hZCwgTW91bnQg
+RmFybSwgTWlsdG9uIEtleW5lcywgTUsxIDFQVCwgVUsNClJlZ2lzdHJhdGlvbiBObzogMTM5NzM4
+NiAoV2FsZXMpDQo=
 
