@@ -3,36 +3,35 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45E09C46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 16:15:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A1D5C4646D
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 16:15:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E034D21A12
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 16:15:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E034D21A12
+	by mail.kernel.org (Postfix) with ESMTP id 2CABD21723
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 16:15:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CABD21723
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730403AbeHHSfo (ORCPT
+        id S1730436AbeHHSfu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 14:35:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42046 "EHLO mail.kernel.org"
+        Wed, 8 Aug 2018 14:35:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42190 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728124AbeHHSdb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728172AbeHHSdb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 8 Aug 2018 14:33:31 -0400
 Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BF89D21A3B;
-        Wed,  8 Aug 2018 16:13:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3592221A53;
+        Wed,  8 Aug 2018 16:13:09 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.91)
         (envelope-from <rostedt@goodmis.org>)
-        id 1fnR59-0002Tb-P9; Wed, 08 Aug 2018 12:13:07 -0400
-Message-Id: <20180808161307.675294173@goodmis.org>
+        id 1fnR5A-0002VF-7Z; Wed, 08 Aug 2018 12:13:08 -0400
+Message-Id: <20180808161308.131842170@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Wed, 08 Aug 2018 11:55:54 -0400
+Date:   Wed, 08 Aug 2018 11:55:57 -0400
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org, linux-trace-devel@vger.kernel.org
 Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
@@ -45,7 +44,7 @@ Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Yordan Karadzhov <y.karadz@gmail.com>,
         Tzvetomir Stoyanov <tz.stoyanov@gmail.com>
-Subject: [RFC][PATCH 06/24] tools/lib/traceevent, tools/perf: Rename pevent parse APIs
+Subject: [RFC][PATCH 09/24] tools/lib/traceevent, tools/perf: Rename pevent_register_* APIs
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
 Sender: linux-kernel-owner@vger.kernel.org
@@ -58,161 +57,114 @@ From: "Tzvetomir Stoyanov (VMware)" <tz.stoyanov@gmail.com>
 In order to make libtraceevent into a proper library, variables, data
 structures and functions require a unique prefix to prevent name space
 conflicts. That prefix will be "tep_" and not "pevent_". This changes
-APIs: pevent_parse_event, pevent_parse_format, pevent_parse_header_page
+APIs: pevent_register_comm, pevent_register_print_string
 
 Signed-off-by: Tzvetomir Stoyanov (VMware) <tz.stoyanov@gmail.com>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- tools/lib/traceevent/event-parse.c  | 22 +++++++++++-----------
- tools/lib/traceevent/event-parse.h  | 18 +++++++++---------
- tools/perf/util/trace-event-parse.c |  4 ++--
- tools/perf/util/trace-event-read.c  |  4 ++--
- tools/perf/util/trace-event.c       |  2 +-
- 5 files changed, 25 insertions(+), 25 deletions(-)
+ tools/lib/traceevent/event-parse.c         | 10 +++++-----
+ tools/lib/traceevent/event-parse.h         |  6 +++---
+ tools/lib/traceevent/plugin_sched_switch.c |  2 +-
+ tools/perf/util/trace-event-parse.c        |  4 ++--
+ 4 files changed, 11 insertions(+), 11 deletions(-)
 
 diff --git a/tools/lib/traceevent/event-parse.c b/tools/lib/traceevent/event-parse.c
-index 29f22e432084..419e57f5bbf3 100644
+index 4220b15781c8..cab411b99087 100644
 --- a/tools/lib/traceevent/event-parse.c
 +++ b/tools/lib/traceevent/event-parse.c
-@@ -5930,7 +5930,7 @@ static void parse_header_field(const char *field,
+@@ -288,7 +288,7 @@ static int add_new_comm(struct tep_handle *pevent, const char *comm, int pid)
  }
  
  /**
-- * pevent_parse_header_page - parse the data stored in the header page
-+ * tep_parse_header_page - parse the data stored in the header page
-  * @pevent: the handle to the pevent
-  * @buf: the buffer storing the header page format string
-  * @size: the size of @buf
-@@ -5941,8 +5941,8 @@ static void parse_header_field(const char *field,
-  *
-  * /sys/kernel/debug/tracing/events/header_page
+- * pevent_register_comm - register a pid / comm mapping
++ * tep_register_comm - register a pid / comm mapping
+  * @pevent: handle for the pevent
+  * @comm: the command line to register
+  * @pid: the pid to map the command line to
+@@ -296,7 +296,7 @@ static int add_new_comm(struct tep_handle *pevent, const char *comm, int pid)
+  * This adds a mapping to search for command line names with
+  * a given pid. The comm is duplicated.
   */
--int pevent_parse_header_page(struct tep_handle *pevent, char *buf, unsigned long size,
--			     int long_size)
-+int tep_parse_header_page(struct tep_handle *pevent, char *buf, unsigned long size,
-+			  int long_size)
+-int pevent_register_comm(struct tep_handle *pevent, const char *comm, int pid)
++int tep_register_comm(struct tep_handle *pevent, const char *comm, int pid)
  {
- 	int ignore;
+ 	struct cmdline_list *item;
  
-@@ -6171,7 +6171,7 @@ __pevent_parse_event(struct tep_handle *pevent,
+@@ -685,7 +685,7 @@ find_printk(struct tep_handle *pevent, unsigned long long addr)
  }
  
  /**
-- * pevent_parse_format - parse the event format
-+ * tep_parse_format - parse the event format
-  * @pevent: the handle to the pevent
-  * @eventp: returned format
-  * @buf: the buffer storing the event format string
-@@ -6185,16 +6185,16 @@ __pevent_parse_event(struct tep_handle *pevent,
-  *
-  * /sys/kernel/debug/tracing/events/.../.../format
+- * pevent_register_print_string - register a string by its address
++ * tep_register_print_string - register a string by its address
+  * @pevent: handle for the pevent
+  * @fmt: the string format to register
+  * @addr: the address the string was located at
+@@ -693,8 +693,8 @@ find_printk(struct tep_handle *pevent, unsigned long long addr)
+  * This registers a string by the address it was stored in the kernel.
+  * The @fmt passed in is duplicated.
   */
--enum pevent_errno pevent_parse_format(struct tep_handle *pevent,
--				      struct event_format **eventp,
--				      const char *buf,
--				      unsigned long size, const char *sys)
-+enum pevent_errno tep_parse_format(struct tep_handle *pevent,
-+				   struct event_format **eventp,
-+				   const char *buf,
-+				   unsigned long size, const char *sys)
+-int pevent_register_print_string(struct tep_handle *pevent, const char *fmt,
+-				 unsigned long long addr)
++int tep_register_print_string(struct tep_handle *pevent, const char *fmt,
++			      unsigned long long addr)
  {
- 	return __pevent_parse_event(pevent, eventp, buf, size, sys);
- }
- 
- /**
-- * pevent_parse_event - parse the event format
-+ * tep_parse_event - parse the event format
-  * @pevent: the handle to the pevent
-  * @buf: the buffer storing the event format string
-  * @size: the size of @buf
-@@ -6207,8 +6207,8 @@ enum pevent_errno pevent_parse_format(struct tep_handle *pevent,
-  *
-  * /sys/kernel/debug/tracing/events/.../.../format
-  */
--enum pevent_errno pevent_parse_event(struct tep_handle *pevent, const char *buf,
--				     unsigned long size, const char *sys)
-+enum pevent_errno tep_parse_event(struct tep_handle *pevent, const char *buf,
-+				  unsigned long size, const char *sys)
- {
- 	struct event_format *event = NULL;
- 	return __pevent_parse_event(pevent, &event, buf, size, sys);
+ 	struct printk_list *item = malloc(sizeof(*item));
+ 	char *p;
 diff --git a/tools/lib/traceevent/event-parse.h b/tools/lib/traceevent/event-parse.h
-index 83c78290061e..eae429a98f7a 100644
+index 58d9f0dedf05..399dea66b80e 100644
 --- a/tools/lib/traceevent/event-parse.h
 +++ b/tools/lib/traceevent/event-parse.h
-@@ -639,15 +639,15 @@ void pevent_print_event_data(struct tep_handle *pevent, struct trace_seq *s,
- void pevent_print_event(struct tep_handle *pevent, struct trace_seq *s,
- 			struct tep_record *record, bool use_trace_clock);
+@@ -618,12 +618,12 @@ enum trace_flag_type {
+ int pevent_set_function_resolver(struct tep_handle *pevent,
+ 				 tep_func_resolver_t *func, void *priv);
+ void pevent_reset_function_resolver(struct tep_handle *pevent);
+-int pevent_register_comm(struct tep_handle *pevent, const char *comm, int pid);
++int tep_register_comm(struct tep_handle *pevent, const char *comm, int pid);
+ int pevent_register_trace_clock(struct tep_handle *pevent, const char *trace_clock);
+ int pevent_register_function(struct tep_handle *pevent, char *name,
+ 			     unsigned long long addr, char *mod);
+-int pevent_register_print_string(struct tep_handle *pevent, const char *fmt,
+-				 unsigned long long addr);
++int tep_register_print_string(struct tep_handle *pevent, const char *fmt,
++			      unsigned long long addr);
+ int pevent_pid_is_registered(struct tep_handle *pevent, int pid);
  
--int pevent_parse_header_page(struct tep_handle *pevent, char *buf, unsigned long size,
--			     int long_size);
--
--enum pevent_errno pevent_parse_event(struct tep_handle *pevent, const char *buf,
--				     unsigned long size, const char *sys);
--enum pevent_errno pevent_parse_format(struct tep_handle *pevent,
--				      struct event_format **eventp,
--				      const char *buf,
--				      unsigned long size, const char *sys);
-+int tep_parse_header_page(struct tep_handle *pevent, char *buf, unsigned long size,
-+			  int long_size);
-+
-+enum pevent_errno tep_parse_event(struct tep_handle *pevent, const char *buf,
-+				  unsigned long size, const char *sys);
-+enum pevent_errno tep_parse_format(struct tep_handle *pevent,
-+				   struct event_format **eventp,
-+				   const char *buf,
-+				   unsigned long size, const char *sys);
- void pevent_free_format(struct event_format *event);
- void pevent_free_format_field(struct format_field *field);
+ void tep_print_event_task(struct tep_handle *pevent, struct trace_seq *s,
+diff --git a/tools/lib/traceevent/plugin_sched_switch.c b/tools/lib/traceevent/plugin_sched_switch.c
+index 90d2ef293cf9..4d8eaab6ac15 100644
+--- a/tools/lib/traceevent/plugin_sched_switch.c
++++ b/tools/lib/traceevent/plugin_sched_switch.c
+@@ -61,7 +61,7 @@ static void write_and_save_comm(struct format_field *field,
+ 	comm = &s->buffer[len];
  
+ 	/* Help out the comm to ids. This will handle dups */
+-	pevent_register_comm(field->event->pevent, comm, pid);
++	tep_register_comm(field->event->pevent, comm, pid);
+ }
+ 
+ static int sched_wakeup_handler(struct trace_seq *s,
 diff --git a/tools/perf/util/trace-event-parse.c b/tools/perf/util/trace-event-parse.c
-index 0a769a340fc9..f8b91f3813ca 100644
+index a0e2b2c54567..920b1d58a068 100644
 --- a/tools/perf/util/trace-event-parse.c
 +++ b/tools/perf/util/trace-event-parse.c
-@@ -180,13 +180,13 @@ void parse_saved_cmdline(struct tep_handle *pevent,
- 
- int parse_ftrace_file(struct tep_handle *pevent, char *buf, unsigned long size)
- {
--	return pevent_parse_event(pevent, buf, size, "ftrace");
-+	return tep_parse_event(pevent, buf, size, "ftrace");
- }
- 
- int parse_event_file(struct tep_handle *pevent,
- 		     char *buf, unsigned long size, char *sys)
- {
--	return pevent_parse_event(pevent, buf, size, sys);
-+	return tep_parse_event(pevent, buf, size, sys);
- }
- 
- struct event_format *trace_find_next_event(struct tep_handle *pevent,
-diff --git a/tools/perf/util/trace-event-read.c b/tools/perf/util/trace-event-read.c
-index cbd4970415ef..a89a50dee8e7 100644
---- a/tools/perf/util/trace-event-read.c
-+++ b/tools/perf/util/trace-event-read.c
-@@ -235,8 +235,8 @@ static int read_header_files(struct tep_handle *pevent)
- 		return -1;
+@@ -157,7 +157,7 @@ void parse_ftrace_printk(struct tep_handle *pevent,
+ 		/* fmt still has a space, skip it */
+ 		printk = strdup(fmt+1);
+ 		line = strtok_r(NULL, "\n", &next);
+-		pevent_register_print_string(pevent, printk, addr);
++		tep_register_print_string(pevent, printk, addr);
  	}
+ }
  
--	if (!pevent_parse_header_page(pevent, header_page, size,
--				      pevent_get_long_size(pevent))) {
-+	if (!tep_parse_header_page(pevent, header_page, size,
-+				   pevent_get_long_size(pevent))) {
- 		/*
- 		 * The commit field in the page is of type long,
- 		 * use that instead, since it represents the kernel.
-diff --git a/tools/perf/util/trace-event.c b/tools/perf/util/trace-event.c
-index 116fffa788b9..eed1c11c1915 100644
---- a/tools/perf/util/trace-event.c
-+++ b/tools/perf/util/trace-event.c
-@@ -93,7 +93,7 @@ tp_format(const char *sys, const char *name)
- 	if (err)
- 		return ERR_PTR(err);
- 
--	pevent_parse_format(pevent, &event, data, size, sys);
-+	tep_parse_format(pevent, &event, data, size, sys);
- 
- 	free(data);
- 	return event;
+@@ -172,7 +172,7 @@ void parse_saved_cmdline(struct tep_handle *pevent,
+ 	line = strtok_r(file, "\n", &next);
+ 	while (line) {
+ 		sscanf(line, "%d %ms", &pid, &comm);
+-		pevent_register_comm(pevent, comm, pid);
++		tep_register_comm(pevent, comm, pid);
+ 		free(comm);
+ 		line = strtok_r(NULL, "\n", &next);
+ 	}
 -- 
 2.18.0
 
