@@ -2,104 +2,147 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD418C4646D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 10:55:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFD30C46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 10:56:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 860E621729
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 10:55:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="J0LntI1z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 860E621729
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 9339121729
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 10:56:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9339121729
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727028AbeHHNOK (ORCPT
+        id S1727038AbeHHNPg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 09:14:10 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:41250 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726733AbeHHNOK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 09:14:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=zTpZOen06YxZ2fupwAXpMJ57ON9S1UNmdYCev2PtnEs=; b=J0LntI1z/Q+uo7/6//oSqF6iX
-        /0PIhAzwLQaxbBNWHsl5HhgY3dO3rDqjCuX3e0X0oN2+k1Olml4fLQCoA3NznbxSiToo5K8uRA3WU
-        5udE1PBLjv/JKw+F6/kiyw/oojdcIkYVc4+ECKbjPwfn0gJb6lDCq4OUXdLe81iWqFMVA=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fnM7A-0001lj-3Z; Wed, 08 Aug 2018 10:54:52 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id ACEF81124340; Wed,  8 Aug 2018 11:54:51 +0100 (BST)
-Date:   Wed, 8 Aug 2018 11:54:51 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Baolin Wang <baolin.wang@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
+        Wed, 8 Aug 2018 09:15:36 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:37106 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726697AbeHHNPg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 09:15:36 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D883318A;
+        Wed,  8 Aug 2018 03:56:25 -0700 (PDT)
+Received: from e107981-ln.cambridge.arm.com (e107981-ln.emea.arm.com [10.4.13.117])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C2AC03F2EA;
+        Wed,  8 Aug 2018 03:56:22 -0700 (PDT)
+Date:   Wed, 8 Aug 2018 11:56:19 +0100
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Sudeep Holla <sudeep.holla@arm.com>,
         Mark Rutland <mark.rutland@arm.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        lanqing.liu@spreadtrum.com, linux-spi@vger.kernel.org,
-        DTML <devicetree@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] dt-bindings: spi: Add Spreadtrum SPI controller
- documentation
-Message-ID: <20180808105451.GE9346@sirena.org.uk>
-References: <64681bf903104c8a02f118294e616e2a12a5ebe4.1533638405.git.baolin.wang@linaro.org>
- <20180807134121.GA7958@sirena.org.uk>
- <CAMz4kuJsyKv_fvrqRR3pdfKsLVy53Uj0KX+m_9jLxpcVcMvs9g@mail.gmail.com>
- <20180808095025.GB9346@sirena.org.uk>
- <CAMz4kuKZHxYiJaMHnqdAGth8XkfGnq3-Tsfc59cGjsHQHZaY7A@mail.gmail.com>
+        Linux PM <linux-pm@vger.kernel.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        Lina Iyer <ilina@codeaurora.org>,
+        Lina Iyer <lina.iyer@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Juri Lelli <juri.lelli@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v8 09/26] kernel/cpu_pm: Manage runtime PM in the idle
+ path for CPUs
+Message-ID: <20180808105619.GB25150@e107981-ln.cambridge.arm.com>
+References: <20180620172226.15012-1-ulf.hansson@linaro.org>
+ <2056372.NMt4aPaF4h@aspire.rjw.lan>
+ <2205807.cU2puvubpP@aspire.rjw.lan>
+ <1726374.375PCQfjLZ@aspire.rjw.lan>
+ <CAPDyKFrmP15+_hyRp44Jw-wsTmsNFKORdCeGJEgW8o0OoKiHhA@mail.gmail.com>
+ <CAJZ5v0hk1wfm10fyycmddKF6wR4D51r30fD_-J5UDMbtB3+V-Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="wTWi5aaYRw9ix9vO"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMz4kuKZHxYiJaMHnqdAGth8XkfGnq3-Tsfc59cGjsHQHZaY7A@mail.gmail.com>
-X-Cookie: Should I do my BOBBIE VINTON medley?
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <CAJZ5v0hk1wfm10fyycmddKF6wR4D51r30fD_-J5UDMbtB3+V-Q@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Aug 06, 2018 at 11:37:55AM +0200, Rafael J. Wysocki wrote:
+> On Fri, Aug 3, 2018 at 1:42 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> > [...]
+> >
+> >>>
+> >>> Assuming that I have got that right, there are concerns, mostly regarding
+> >>> patch [07/26], but I will reply to that directly.
+> >>
+> >> Well, I haven't got that right, so never mind.
+> >>
+> >> There are a few minor things to address, but apart from that the general
+> >> genpd patches look ready.
+> >
+> > Alright, thanks!
+> >
+> > I will re-spin the series and post a new version once 4.19 rc1 is out.
+> > Hopefully we can queue it up early in next cycle to get it tested in
+> > next for a while.
+> >
+> >>
+> >>> The $subject patch is fine by me by itself, but it obviously depends on the
+> >>> previous ones.  Patches [01-02/26] are fine too, but they don't seem to be
+> >>> particularly useful without the rest of the series.
+> >>>
+> >>> As far as patches [10-26/26] go, I'd like to see some review comments and/or
+> >>> tags from the people with vested interest in there, in particular from Daniel
+> >>> on patch [12/26] and from Sudeep on the PSCI ones.
+> >>
+> >> But this still holds.
+> >
+> > Actually, patch 10 and patch11 is ready to go as well. I ping Daniel
+> > on patch 12.
+> >
+> > In regards to the rest of the series, some of the PSCI/ARM changes
+> > have been reviewed by Mark Rutland, however several changes have not
+> > been acked.
+> >
+> > On the other hand, one can also interpret the long silence in regards
+> > to PSCI/ARM changes as they are good to go. :-)
+> 
+> Well, in that case giving an ACK to them should not be an issue for
+> the people with a vested interest I suppose.
 
---wTWi5aaYRw9ix9vO
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Apologies to everyone for the delay in replying.
 
-On Wed, Aug 08, 2018 at 06:35:28PM +0800, Baolin Wang wrote:
-> On 8 August 2018 at 17:50, Mark Brown <broonie@kernel.org> wrote:
+Side note: cpu_pm_enter()/exit() are also called through syscore ops in
+s2RAM/IDLE, you know that but I just wanted to mention it to compound
+the discussion.
 
-> > Right, I don't think we added this yet (if we did I can't see it).  I'd
-> > add a new field to spi_transfer for this, then other controllers with
-> > the same support can implement it as well and drivers can start using
-> > it too.
+As for PSCI patches I do not personally think PSCI OSI enablement is
+beneficial (and my position has always been the same since PSCI OSI was
+added to the specification, I am not even talking about this patchset)
+and Arm Trusted Firmware does not currently support it for the same
+reason.
 
-> OK. So I will name the new filed as 'word_delay', is it OK for you?
+We (if Mark and Sudeep agree) will enable PSCI OSI if and when we have a
+definitive and constructive answer to *why* we have to do that that is
+not a dogmatic "the kernel knows better" but rather a comprehensive
+power benchmark evaluation - I thought that was the agreement reached
+at OSPM but apparently I was mistaken.
 
-Sounds good, yes.
+As a reminder - PSCI firmware implementation has to have state machines
+and locking to guarantee safe power down operations (and to flush caches
+only if necessary - which requires cpu masks for power domains) and
+that's true whether we enable PSCI OSI or not, the coordination logic
+must be in firmware/hardware _already_ - the cpumasks, the power domain
+topology, etc.
 
---wTWi5aaYRw9ix9vO
-Content-Type: application/pgp-signature; name="signature.asc"
+I agree with the power-domains representation of idle-states (since
+that's the correct HW description) and I thought and hoped that runtime
+PM could help _remove_ the CPU PM notifiers (by making the notifiers
+callbacks a runtime PM one) even though I have to say that's quite
+complex, given that only few (ie one instance :)) CPU PM notifiers
+callbacks are backed by a struct device (eg an ARM PMU is a device but
+for instance the GIC is not a device so its save/restore code I am not
+sure it can be implemented with runtime PM callbacks).
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAltqy/oACgkQJNaLcl1U
-h9BSngf+O6aFSOfDpXwr5AddxQgIlIyX7YbAzjK2EdVa4i8i9tK4gZS7S1sBeDpI
-HA4xqVsac/HiSLr1ZdJbggoTV0Cq0IHFGH6vZ7/u+MPYi6XVIBy6Xmj3QlRRmX3b
-zjYCuobVsSrGAK+/nUjJyhtfYb+eSfucKWhn4cWrX6D8d/cB4EBMRKwXMWaL8P8v
-IMCmvLJpAWU8PADkZ0LIaUaUo7irzrIHOQRT/dfTa+4+SJ7MD/K6DPD5qfRMKmdW
-y389qijvn3iKyi0Vqz6PbQ7/MkKE9/Yf4NsCILkdax+9DVCqEDxSSkchgt7d3KwE
-adBUmgVEmc2i9yP8JjSI5SdBBnfU2w==
-=9Hur
------END PGP SIGNATURE-----
-
---wTWi5aaYRw9ix9vO--
+Lorenzo
