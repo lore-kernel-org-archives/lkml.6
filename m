@@ -2,199 +2,102 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF96DC46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 05:44:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C15FC4646D
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 05:48:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78FA421721
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 05:44:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78FA421721
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id A2FF52152D
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 05:48:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CE8I6/5k"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2FF52152D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726982AbeHHICn (ORCPT
+        id S1726945AbeHHIGk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 04:02:43 -0400
-Received: from mga12.intel.com ([192.55.52.136]:9750 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726542AbeHHICn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 04:02:43 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Aug 2018 22:44:46 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,456,1526367600"; 
-   d="scan'208";a="64412502"
-Received: from rchatre-mobl.amr.corp.intel.com (HELO [10.254.79.133]) ([10.254.79.133])
-  by orsmga006.jf.intel.com with ESMTP; 07 Aug 2018 22:44:46 -0700
-Subject: Re: [PATCH 0/2] x86/intel_rdt and perf/x86: Fix lack of coordination
- with perf
-To:     "Luck, Tony" <tony.luck@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     "Hansen, Dave" <dave.hansen@intel.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "Yu, Fenghua" <fenghua.yu@intel.com>,
-        "vikas.shivappa@linux.intel.com" <vikas.shivappa@linux.intel.com>,
-        "Hindman, Gavin" <gavin.hindman@intel.com>,
-        "Joseph, Jithu" <jithu.joseph@intel.com>,
-        "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <d64f85e8-98ca-a81d-bf2d-13dd72fc411e@intel.com>
- <20180802201312.GS2494@hirez.programming.kicks-ass.net>
- <086b93f5-da5b-b5e5-148a-cef25117b963@intel.com>
- <20180803104956.GU2494@hirez.programming.kicks-ass.net>
- <1eece033-fbae-c904-13ad-1904be91c049@intel.com>
- <20180803152523.GY2476@hirez.programming.kicks-ass.net>
- <d6df8a8a-f0f2-48f7-1c1d-c8893e1583c9@intel.com>
- <57c011e1-113d-c38f-c318-defbad085843@intel.com>
- <20180806221225.GO2458@hirez.programming.kicks-ass.net>
- <08d51131-7802-5bfe-2cae-d116807183d1@intel.com>
- <20180807093615.GY2494@hirez.programming.kicks-ass.net>
- <ace0bebb-91ab-5d40-e7d7-d72d48302fa8@intel.com>
- <3908561D78D1C84285E8C5FCA982C28F7D3A10EF@ORSMSX110.amr.corp.intel.com>
-From:   Reinette Chatre <reinette.chatre@intel.com>
-Message-ID: <413c3b6f-770d-9549-4249-c2407267b63c@intel.com>
-Date:   Tue, 7 Aug 2018 22:44:44 -0700
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <3908561D78D1C84285E8C5FCA982C28F7D3A10EF@ORSMSX110.amr.corp.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Wed, 8 Aug 2018 04:06:40 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:38995 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726680AbeHHIGj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 04:06:39 -0400
+Received: by mail-pf1-f196.google.com with SMTP id j8-v6so573992pff.6;
+        Tue, 07 Aug 2018 22:48:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:subject:date:message-id;
+        bh=mqmsKdmpmH18HuQQqA8F7CXlaVTzN1hPGjeY3SioQmM=;
+        b=CE8I6/5keVToP3ihAdX1qTJhtYT8BXwGJUxZpSQ7JwuREm3uNL4+f4A+qqUhRQEtvq
+         MGiIByWqX/ujwOeNBZGO9QJtmFXyLToZ6/eepm9NBRwob4uv7E07XmsMjuezxYSti7p9
+         uGLiPX7HE4o3AciEmmV5rPu/GB93gMagvjLh4waQwODf8eP/k0khFQAscKuWOlJycpXY
+         Ahe/xw0pGuQE+hXrHvWdsYAPPtwpv1ufHhI78iKc4xac9Z7ro2DCCkoNG/OSaJ5eDmUL
+         cJeUuKp5iQGHQmBcRZ0WXxxEXF9fjnjfNCW5VNIfyCxleZaz6rga+ZJNVo3FLMi5zLiM
+         mpJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:subject:date:message-id;
+        bh=mqmsKdmpmH18HuQQqA8F7CXlaVTzN1hPGjeY3SioQmM=;
+        b=OyW5nlZXeCm1cY9wgg02hfiLVAW6DypDXwVYWLbD7FOngROHSeVRzjCYZrFyez7YXZ
+         m3/TwGQuRdT4iy4LK1H226U/3Lc4u5mIlapQ3SzG2ybcCAs1yrO6neumVIuPeTS8RSpc
+         ruk+DZPQRuXEH7r9EMS6qgXcN2o4RzdO0MGuVNWTm/2lCIJeG0VaI6sekGVKKJC5p14s
+         a0UTuOr9cdDIK5HKWIe0tfjhls4LIVRRu1vSZzLgDIayXYgNlQkQWlRBcRHBqDgJ64Ag
+         h69SyCUfKB8c5WrGDUbHTLGpvaf8KrMRyfhjHeghG6kV22dVcF38Ribqqs5M2UEAdnIp
+         zf2Q==
+X-Gm-Message-State: AOUpUlFCSy/T9KzxKMCsI3GgAGseX9msouSWjysE/pdDLAy/AnfD/QAs
+        0uQlF1YWwajs8A+E6JT++GM=
+X-Google-Smtp-Source: AA+uWPzdUfxIxjvr359k7ZMeMhJ7F4ouhkfuKr8NFPglU+P+xL113awcwflDJXSbvQ5zS0UR5N8i6g==
+X-Received: by 2002:a63:f919:: with SMTP id h25-v6mr1102333pgi.401.1533707320892;
+        Tue, 07 Aug 2018 22:48:40 -0700 (PDT)
+Received: from localhost (61-220-137-37.HINET-IP.hinet.net. [61.220.137.37])
+        by smtp.gmail.com with ESMTPSA id k125-v6sm3587600pgk.41.2018.08.07.22.48.39
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 07 Aug 2018 22:48:39 -0700 (PDT)
+From:   AceLan Kao <acelan.kao@canonical.com>
+To:     Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] PCI: Fix calculation of bridge window's size
+Date:   Wed,  8 Aug 2018 13:48:37 +0800
+Message-Id: <20180808054837.19717-1-acelan.kao@canonical.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tony,
+There are some 0 resource size pci devices, and it leads to the
+accumulator fails to maintain the correct value.
+It results in a strange issue on my machine that xhci_hcd failed to init.
+   [    2.437278] xhci_hcd 0000:05:00.0: init 0000:05:00.0 fail, -16
+   [    2.437300] xhci_hcd: probe of 0000:05:00.0 failed with error -16
 
-On 8/7/2018 6:28 PM, Luck, Tony wrote:
-> Would it help to call routines to read the "before" values of the counter
-> twice. The first time to preload the cache with anything needed to execute
-> the perf code path.
+To fix this, check if the resource size equals to 0, doesn't increase size.
 
->>> In an attempt to improve the accuracy of the above I modified it to the
->>> following:
->>>
->>> /* create the two events as before in "enabled" state */
->>> l2_hit_pmcnum = l2_hit_event->hw.event_base_rdpmc;
->>> l2_miss_pmcnum = l2_miss_event->hw.event_base_rdpmc;
->>> local_irq_disable();
->>> /* disable hw prefetchers */
->>> /* init local vars to loop through pseudo-locked mem
->       * may take some misses in the perf code
->       */
->      l2_hits_before = native_read_pmc(l2_hit_pmcnum);
->      l2_miss_before = native_read_pmc(l2_miss_pmcnum);
->      /* Read counters again, hope no new misses here */
->>> l2_hits_before = native_read_pmc(l2_hit_pmcnum);
->>> l2_miss_before = native_read_pmc(l2_miss_pmcnum);
->>> /* loop through pseudo-locked mem */
->>> l2_hits_after = native_read_pmc(l2_hit_pmcnum);
->>> l2_miss_after = native_read_pmc(l2_miss_pmcnum);
->>> /* enable hw prefetchers */
->>> local_irq_enable();
->
+Fixes: c9c75143a596 ("PCI: Fix calculation of bridge window's size and alignment")
+CC: stable@vger.kernel.org # 4.14+
 
-The end of my previous email to Peter contains a solution that does
-address all the feedback received up to this point while also able to
-obtain (what I thought to be ... more below) accurate results. The code
-you comment on below is not this latest version but your suggestion is
-valuable and I do try it out on two different ways from what you quote
-below to read the perf data.
+Signed-off-by: AceLan Kao <acelan.kao@canonical.com>
+---
+ drivers/pci/setup-bus.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-So, instead of reading data with native_read_pmc() as in the code you
-quoted I first test when reading data twice using the original
-recommendation of "perf_event_read_local()" and second when reading data
-twice using "rdpmcl()" chosen instead of native_read_pmc().
+diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
+index 79b1824e83b4..ae05dde8c6e3 100644
+--- a/drivers/pci/setup-bus.c
++++ b/drivers/pci/setup-bus.c
+@@ -1061,7 +1061,8 @@ static int pbus_size_mem(struct pci_bus *bus, unsigned long mask,
+ 				r->flags = 0;
+ 				continue;
+ 			}
+-			size += max(r_size, align);
++			if (r_size != 0)
++				size += max(r_size, align);
+ 			/* Exclude ranges with size > align from
+ 			   calculation of the alignment. */
+ 			if (r_size <= align)
+-- 
+2.17.1
 
-First, reading data using perf_event_read_local() called twice.
-When testing as follows:
-/* create perf events */
-/* disable irq */
-/* disable hw prefetchers */
-/* init local vars */
-/* read before data twice as follows: */
-perf_event_read_local(l2_hit_event, &l2_hits_before, NULL, NULL);
-perf_event_read_local(l2_miss_event, &l2_miss_before, NULL, NULL);
-perf_event_read_local(l2_hit_event, &l2_hits_before, NULL, NULL);
-perf_event_read_local(l2_miss_event, &l2_miss_before, NULL, NULL);
-/* read through pseudo-locked memory */
-perf_event_read_local(l2_hit_event, &l2_hits_after, NULL, NULL);
-perf_event_read_local(l2_miss_event, &l2_miss_after, NULL, NULL);
-/* re enable hw prefetchers */
-/* enable irq */
-/* write data to tracepoint */
-
-With the above I am not able to obtain accurate data:
-pseudo_lock_mea-351   [002] ....    61.859147: pseudo_lock_l2: hits=4109
-miss=0
-pseudo_lock_mea-354   [002] ....    63.045734: pseudo_lock_l2: hits=4103
-miss=6
-pseudo_lock_mea-357   [002] ....    64.104673: pseudo_lock_l2: hits=4106
-miss=3
-pseudo_lock_mea-360   [002] ....    65.174775: pseudo_lock_l2: hits=4105
-miss=5
-pseudo_lock_mea-367   [002] ....    66.232308: pseudo_lock_l2: hits=4104
-miss=5
-pseudo_lock_mea-370   [002] ....    67.291844: pseudo_lock_l2: hits=4103
-miss=6
-pseudo_lock_mea-373   [002] ....    68.348725: pseudo_lock_l2: hits=4105
-miss=5
-pseudo_lock_mea-376   [002] ....    69.409738: pseudo_lock_l2: hits=4105
-miss=5
-pseudo_lock_mea-379   [002] ....    70.466763: pseudo_lock_l2: hits=4105
-miss=5
-
-
-Second, reading data using rdpmcl() called twice.
-This is the same solution as documented in my previous email, with the
-two extra rdpmcl() calls added. An overview of the flow:
-
-/* create perf events */
-/* disable irq */
-/* check perf event error state */
-/* disable hw prefetchers */
-/* init local vars */
-/* read before data twice as follows: */
-rdpmcl(l2_hit_pmcnum, l2_hits_before);
-rdpmcl(l2_miss_pmcnum, l2_miss_before);
-rdpmcl(l2_hit_pmcnum, l2_hits_before);
-rdpmcl(l2_miss_pmcnum, l2_miss_before);
-/* read through pseudo-locked memory */
-rdpmcl(l2_hit_pmcnum, l2_hits_after);
-rdpmcl(l2_miss_pmcnum, l2_miss_after);
-/* re enable hw prefetchers */
-/* enable irq */
-/* write data to tracepoint */
-
-Here as expected a simple test showed that the data was accurate
-(hits=4096 miss=0) so I repeated the creation and measurement of
-pseudo-locked region at different sizes under different loads. Each
-possible pseudo-lock region size is created and measured 100 times on an
-idle system and 100 times on a system with a noisy neighbor - this
-resulted in a total of 2800 pseudo-lock region creations each followed
-by a measurement of that region.
-
-The results of these tests are the best I have yet seen. In this total
-of 2800 measurements the number of cache hits were miscounted only in
-eight measurements - each miscount was under(?) counted with one.
-Specifically, a memory region consisting of 8192 cache lines was
-measured as "hits=8191 miss=0", three memory regions with 12288 cache
-lines were measured as "hits=12287 miss=0", two memory regions with
-10240 cache lines were measured as "hits=10239 miss=0", and two memory
-regions with 14336 cache lines were measured as "hits=14335 miss=0".
-I do not think that having the number of cache hits reported as one less
-than the number of read attempts would be of big concern.
-The miss data remained consistent and reported as zero misses - this is
-the exact data we were trying to capture!
-
-Thank you so much for your valuable suggestion. I do hope that we could
-proceed with this way of measurement.
-
-Reinette
