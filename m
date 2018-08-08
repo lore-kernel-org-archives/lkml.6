@@ -2,124 +2,133 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 789B3C46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 08:16:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2DC9C46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 08:16:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D9C1216FA
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 08:16:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D9C1216FA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 9AB6A216FA
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 08:16:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="AC7DJvXd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9AB6A216FA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727236AbeHHKej (ORCPT
+        id S1727273AbeHHKfK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 06:34:39 -0400
-Received: from mx2.suse.de ([195.135.220.15]:59496 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726979AbeHHKej (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 06:34:39 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 0A4A1ACC3;
-        Wed,  8 Aug 2018 08:16:03 +0000 (UTC)
-Subject: Re: [PATCH] netfilter/x_tables: do not fail xt_alloc_table_info too
- easilly
-To:     Michal Hocko <mhocko@kernel.org>, Florian Westphal <fw@strlen.de>
-Cc:     Georgi Nikolov <gnikolov@icdsoft.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Michal Hocko <mhocko@suse.com>
-References: <20180807195400.23687-1-mhocko@kernel.org>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
- 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
- cqmP8roqufIAj+Ohhzs=
-Message-ID: <a060e57c-dbcd-d3bc-c975-ac8a66468666@suse.cz>
-Date:   Wed, 8 Aug 2018 10:16:01 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 8 Aug 2018 06:35:10 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:33954 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726979AbeHHKfK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 06:35:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=RdCHlGPZL4kSLu/ZOMZI2g6RaVKVoGfzQSTNBag2rl0=; b=AC7DJvXdQSO9SVFAhfLyuvgKa
+        Da0jQIWH5U6jYyblkKL+gE01F+mHpzI70h08Ir9MMCtOS+0ELkoIT7mz4o/hYlYeWNLfR5Uj/BbLX
+        9nPs8o0aWjWYSAWYXYUPBO4LqaiyzrULgP4yBX4wRl74DVBFnCq/Wz9/8Bqd57ZsMhWp0=;
+Received: from n2100.armlinux.org.uk ([2001:4d48:ad52:3201:214:fdff:fe10:4f86]:58466)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1fnJdh-0003B8-S8; Wed, 08 Aug 2018 09:16:18 +0100
+Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
+        (envelope-from <linux@n2100.armlinux.org.uk>)
+        id 1fnJdc-00080k-Cj; Wed, 08 Aug 2018 09:16:13 +0100
+Date:   Wed, 8 Aug 2018 09:16:09 +0100
+From:   Russell King - ARM Linux <linux@armlinux.org.uk>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Ville =?iso-8859-1?Q?Syrj=E4l=E4?= 
+        <ville.syrjala@linux.intel.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        dri-devel@lists.freedesktop.org,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Ben Skeggs <bskeggs@redhat.com>,
+        Sinclair Yeh <syeh@vmware.com>,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v4 1/2] drm: Add generic colorkey properties for
+ display planes
+Message-ID: <20180808081608.GK30658@n2100.armlinux.org.uk>
+References: <20180807172202.1961-1-digetx@gmail.com>
+ <20180807172202.1961-2-digetx@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180807195400.23687-1-mhocko@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180807172202.1961-2-digetx@gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/07/2018 09:54 PM, Michal Hocko wrote:
-> From: Michal Hocko <mhocko@suse.com>
-> 
-> eacd86ca3b03 ("net/netfilter/x_tables.c: use kvmalloc()
-> in xt_alloc_table_info()") has unintentionally fortified
-> xt_alloc_table_info allocation when __GFP_RETRY has been dropped from
-> the vmalloc fallback. Later on there was a syzbot report that this
-> can lead to OOM killer invocations when tables are too large and
-> 0537250fdc6c ("netfilter: x_tables: make allocation less aggressive")
-> has been merged to restore the original behavior. Georgi Nikolov however
-> noticed that he is not able to install his iptables anymore so this can
-> be seen as a regression.
-> 
-> The primary argument for 0537250fdc6c was that this allocation path
-> shouldn't really trigger the OOM killer and kill innocent tasks. On the
-> other hand the interface requires root and as such should allow what the
-> admin asks for. Root inside a namespaces makes this more complicated
-> because those might be not trusted in general. If they are not then such
-> namespaces should be restricted anyway. Therefore drop the __GFP_NORETRY
-> and replace it by __GFP_ACCOUNT to enfore memcg constrains on it.
-> 
-> Fixes: 0537250fdc6c ("netfilter: x_tables: make allocation less aggressive")
-> Reported-by: Georgi Nikolov <gnikolov@icdsoft.com>
-> Suggested-by: Vlastimil Babka <vbabka@suse.cz>
-> Acked-by: Florian Westphal <fw@strlen.de>
-> Signed-off-by: Michal Hocko <mhocko@suse.com>
+On Tue, Aug 07, 2018 at 08:22:01PM +0300, Dmitry Osipenko wrote:
+> + * Glossary:
+> + *
+> + * Destination plane:
+> + *	Plane to which color keying properties are applied, this planes takes
+> + *	the effect of color keying operation. The effect is determined by a
+> + *	given color keying mode.
+> + *
+> + * Source plane:
+> + *	Pixels of this plane are the source for color key matching operation.
+...
+> +	/**
+> +	 * @DRM_PLANE_COLORKEY_MODE_TRANSPARENT:
+> +	 *
+> +	 * Destination plane pixels are completely transparent in areas
+> +	 * where pixels of a source plane are matching a given color key
+> +	 * range, in other cases pixels of a destination plane are unaffected.
+> +	 * In areas where two or more source planes overlap, the topmost
+> +	 * plane takes precedence.
+> +	 */
 
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
+This seems confusing to me.
 
-IIRC According to Florian there are more places like this in the
-netfilter code?
+What you seem to be saying is that the "destination" plane would be the
+one which is (eg0 the graphic plane, and the "source" plane would be the
+the plane containing (eg) the video.  You seem to be saying that the
+colorkey matches the video and determines whether the pixels in the
+graphic plane are opaque or transparent.
 
+Surely that is the wrong way round - in video overlay, you want to
+colorkey match the contents of the graphic plane to determine which
+pixels from the video plane to overlay.
+
+If it's the other way around (source is the graphic, destination is the
+video) it makes less sense to use the "source" and "destination" terms,
+I can't see how you could describe a plane that is being overlaid on
+top of another plane as a "destination".
+
+I guess the terminology has come from a thought about using a GPU to
+physically do the colorkeying when combining two planes - if the GPU
+were to write to the "destination" plane, then this would be the wrong
+way around.  For starters, taking the above example, the video plane
+may well be smaller than the graphic plane.  If it's the other way
+around, that has other problems, like destroying the colorkey in the
+graphic plane when writing the video plane's contents to it.
+
+So, in summary, I don't think "destination" and "source" are
+particularly good terms to describe the operation, and I think you have
+them swapped in your description of
+"DRM_PLANE_COLORKEY_MODE_TRANSPARENT".
+
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 13.8Mbps down 630kbps up
+According to speedtest.net: 13Mbps down 490kbps up
