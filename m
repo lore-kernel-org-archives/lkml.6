@@ -2,96 +2,125 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C45AEC4646D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 22:03:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A31A0C46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 22:07:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 706BB217A6
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 22:03:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3FC0821AA9
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 22:07:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Z1o2qJvC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 706BB217A6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Bpiy6bTn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FC0821AA9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731110AbeHIAZa (ORCPT
+        id S1730480AbeHIA2u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 20:25:30 -0400
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:36283 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727337AbeHIAZa (ORCPT
+        Wed, 8 Aug 2018 20:28:50 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:42496 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727337AbeHIA2u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 20:25:30 -0400
-Received: by mail-yw1-f68.google.com with SMTP id v197-v6so2766402ywg.3
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 15:03:52 -0700 (PDT)
+        Wed, 8 Aug 2018 20:28:50 -0400
+Received: by mail-pf1-f195.google.com with SMTP id l9-v6so1790090pff.9
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 15:07:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=9ghDYz7hN0gMlDHVCs6oCGc8cZsLkZ80P5mwohmpjyY=;
-        b=Z1o2qJvCqyZSBfP6Z2QduxXPXkFYefGdgErvQjJKjNlXpIHxgUzXtsme4QKFBsPS0I
-         Zb9Knid0uT6iGlHMloytKXHB1Bn7MD0T91tz8sy8pIp+eP9dvrRsFqDNqQKpERFaT8WK
-         NFQ6LY2TIq7/ASBDkogjn/3CGF8WbpvCjPV2c=
+        bh=8vcXyIP3sMNFO7jsKanYQJy1IVvnw38ITsh/GO0K6M0=;
+        b=Bpiy6bTnocohdIHNKRVhi8EIj+wK6j4mPP4BKf37K1THNDIXYoqF0Hg/S9A8LwBMVb
+         nLK7gISbJ2FOcN5qd+e6fYfT1wr55A8dSJ0HsWtvcDxzX/iizHemslGK5oj8Q5AgQn2P
+         +qyv5z0//4AkK/sCFCGqYVPzuBmUiMLAFfJYBrV7HZjwex3fPuOlxv992HtwP89uYOo0
+         pUeiDDMBMME4aw1GcZl7mtrDt7L+ONbTLrvNZ+1XvzldIsPHfw7bXx/3MWDeU1TA/du9
+         rWkGhx9g5OVRty3ltT3+zHi+rScnBVU8G7wDrkeqA/KIuMZAUo1HT2Iievs5OMsjvwH+
+         Y9AQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=9ghDYz7hN0gMlDHVCs6oCGc8cZsLkZ80P5mwohmpjyY=;
-        b=o/3A9i3Jfd5+k3uEOIk/qfAOVDgqUJnr3DD8K0m0VhJ3jfXvuG/lNqqQ8loSg2qZzr
-         aJl9s7j3qUkTR07KoQnrhiHz5ExHKjOoa40P2OQCdcSDNDtke2kcibV0xpgMOFzBvVav
-         zSRSjDI0T5TcQlI8gE6P5l5KroP/FLBHJwIfClvnAz2kfUSFOolO02bSOi1deMP0RolY
-         WbFQHVPLPfHvYcTgrKOU5MU9F73ZbMS2/rVzh45xKrv2tuK4vktAJmXVcrWsAWOrVbdS
-         LCapmTBcy2Z37k/09EAnJdS4UKc8CsJeS/7lHS2n266P0w6FDxjBxzern5gqFJotSKCP
-         nBaQ==
-X-Gm-Message-State: AOUpUlGewcK9ifbmXYfHlh+ojS1KcegdUiId+o5eK8IlKRa2Y9ft6ptr
-        OXjO2kUqdUeqsq76nAQ78plTF3B3RP4=
-X-Google-Smtp-Source: AA+uWPwOpEyKETcCorPCLOI+33Na726MGgRvXF/ZdzBmn7CS2ZMx1qHDyX+nbemcIMPXpbzhBX0ibg==
-X-Received: by 2002:a25:744f:: with SMTP id p76-v6mr2484497ybc.23.1533765831798;
-        Wed, 08 Aug 2018 15:03:51 -0700 (PDT)
-Received: from mail-yw1-f43.google.com (mail-yw1-f43.google.com. [209.85.161.43])
-        by smtp.gmail.com with ESMTPSA id x19-v6sm2198968ywg.72.2018.08.08.15.03.50
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 08 Aug 2018 15:03:50 -0700 (PDT)
-Received: by mail-yw1-f43.google.com with SMTP id s68-v6so2768424ywg.2
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 15:03:50 -0700 (PDT)
-X-Received: by 2002:a0d:fa42:: with SMTP id k63-v6mr2532664ywf.53.1533765829685;
- Wed, 08 Aug 2018 15:03:49 -0700 (PDT)
+        bh=8vcXyIP3sMNFO7jsKanYQJy1IVvnw38ITsh/GO0K6M0=;
+        b=PlWLFMMkIk6fqzQKmv5SzdsjXQsTj0jEnhqbqlUSKB+k9S/UZ+kTiwg+shF/giikXO
+         n5Q4RzcLqPjDfkfA/v+PHmXdTYGTagpFSfT9gRCvVqrmhYb+kl5g8HxFCXOPbmv7QE5Q
+         KsKxMA4/1DucFTIh7GI4/fagU/IAV5vEUQTGTI9uXM8XhQycNMrd9NwYL2o4rwK4okQf
+         3zH7fCwCTsw4jbKPT8nMqM6jtHxtjsK5xBF1ZEvgSfp4+vXY8Q5ZtzFHi4z1sn6jWWHD
+         jodNJnWjDUHIWvm14N9vI++gQA/8NNCoP16RYOftmkDMjciSaDubBNRvJzaaMZn76kkd
+         UHTA==
+X-Gm-Message-State: AOUpUlEmGbF4p+HpW51URK+TsC2oH7igb08vwAE7eoaPu/Ux8PaAIE/C
+        xpncVjqf9vDua6ibj4IEQulKOEVGgog3P3XRCFiKwQ==
+X-Google-Smtp-Source: AA+uWPwmdtavpPLeoJ5XriuQUb8AOpy51ONG3fvYnGShxEqstO3lxRsXCXM5qj/rHcTNG0L+l0U94f9f2dC5/H02Tpc=
+X-Received: by 2002:a63:d916:: with SMTP id r22-v6mr4046470pgg.381.1533766030896;
+ Wed, 08 Aug 2018 15:07:10 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a25:7450:0:0:0:0:0 with HTTP; Wed, 8 Aug 2018 15:03:49 -0700 (PDT)
-In-Reply-To: <20180808115932.12944-1-yuehaibing@huawei.com>
-References: <20180808115932.12944-1-yuehaibing@huawei.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Wed, 8 Aug 2018 15:03:49 -0700
-X-Gmail-Original-Message-ID: <CAGXu5j+QEM-_dbj6+urqH2s+GUoaBSA4bPvRS+qOETw63dUxAA@mail.gmail.com>
-Message-ID: <CAGXu5j+QEM-_dbj6+urqH2s+GUoaBSA4bPvRS+qOETw63dUxAA@mail.gmail.com>
-Subject: Re: [PATCH net-next] decnet: fix using plain integer as NULL warning
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        Eric Dumazet <edumazet@google.com>,
-        linux-decnet-user@lists.sourceforge.net
+References: <20180615223749.149073-1-ndesaulniers@google.com>
+In-Reply-To: <20180615223749.149073-1-ndesaulniers@google.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Wed, 8 Aug 2018 15:06:59 -0700
+Message-ID: <CAKwvOd=aemtfORow2KCyNfSJuhEQGWtGPL7H+Pb0grj2PDXzDA@mail.gmail.com>
+Subject: Re: [PATCH] drm/panel: simple: fix -Wliteral-conversion warning
+To:     Thierry Reding <thierry.reding@gmail.com>, airlied@linux.ie
+Cc:     Jagan Teki <jagannadh.teki@gmail.com>,
+        Rob Herring <robh@kernel.org>,
+        Thierry Reding <treding@nvidia.com>,
+        dri-devel@lists.freedesktop.org,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 8, 2018 at 4:59 AM, YueHaibing <yuehaibing@huawei.com> wrote:
-> Fixes the following sparse warning:
-> net/decnet/dn_route.c:407:30: warning: Using plain integer as NULL pointer
-> net/decnet/dn_route.c:1923:22: warning: Using plain integer as NULL pointer
+bumping for review.
+On Fri, Jun 15, 2018 at 3:38 PM Nick Desaulniers
+<ndesaulniers@google.com> wrote:
 >
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> Fixes commit 8cfe83419cdb ("drm/panel: simple: Add
+> support for KEO TX31D200VM0BAA")
+>
+> drivers/gpu/drm/panel/panel-simple.c:1250:27: warning: implicit conversion from
+>       'double' to 'u32' (aka 'unsigned int') changes value from 33.5 to 33
+>       [-Wliteral-conversion]
+>         .vfront_porch = { 6, 21, 33.5 },
+>                         ~        ^~~~
+> drivers/gpu/drm/panel/panel-simple.c:1251:26: warning: implicit conversion from
+>       'double' to 'u32' (aka 'unsigned int') changes value from 33.5 to 33
+>       [-Wliteral-conversion]
+>         .vback_porch = { 6, 21, 33.5 },
+>                        ~        ^~~~
+>
+> Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+> ---
+> Alternatively, should these be rounded up to 34?  I'm guessing the
+> current behaviour (truncation) is correct since that's how the patch was
+> operating.
+>
+>  drivers/gpu/drm/panel/panel-simple.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
+> index cbf1ab404ee7..12bcbd1dd77b 100644
+> --- a/drivers/gpu/drm/panel/panel-simple.c
+> +++ b/drivers/gpu/drm/panel/panel-simple.c
+> @@ -1247,8 +1247,8 @@ static const struct display_timing koe_tx31d200vm0baa_timing = {
+>         .hback_porch = { 16, 36, 56 },
+>         .hsync_len = { 8, 8, 8 },
+>         .vactive = { 480, 480, 480 },
+> -       .vfront_porch = { 6, 21, 33.5 },
+> -       .vback_porch = { 6, 21, 33.5 },
+> +       .vfront_porch = { 6, 21, 33 },
+> +       .vback_porch = { 6, 21, 33 },
+>         .vsync_len = { 8, 8, 8 },
+>         .flags = DISPLAY_FLAGS_DE_HIGH,
+>  };
+> --
+> 2.18.0.rc1.244.gcf134e6275-goog
+>
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
-
--Kees
 
 -- 
-Kees Cook
-Pixel Security
+Thanks,
+~Nick Desaulniers
