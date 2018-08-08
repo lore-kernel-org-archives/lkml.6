@@ -2,91 +2,146 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E6DBC46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 11:14:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEA51C46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 11:21:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 059C62156B
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 11:14:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 059C62156B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 94979216E5
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 11:21:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="q5BHcFZG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94979216E5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=8bytes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726999AbeHHNdt (ORCPT
+        id S1726971AbeHHNlH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 09:33:49 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:37260 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726733AbeHHNdt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 09:33:49 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8280318A;
-        Wed,  8 Aug 2018 04:14:35 -0700 (PDT)
-Received: from e107981-ln.cambridge.arm.com (e107981-ln.emea.arm.com [10.4.13.117])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B3F083F2EA;
-        Wed,  8 Aug 2018 04:14:32 -0700 (PDT)
-Date:   Wed, 8 Aug 2018 12:14:29 +0100
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Leonard Crestez <leonard.crestez@nxp.com>
-Cc:     "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>,
-        "A.s. Dong" <aisheng.dong@nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>,
-        "andrew.smirnov@gmail.com" <andrew.smirnov@gmail.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v3 0/2] PCI: imx: Initial imx7d pm support
-Message-ID: <20180808111429.GC25150@e107981-ln.cambridge.arm.com>
-References: <cover.1532448745.git.leonard.crestez@nxp.com>
- <bac2cb70b16d81f589915fc0900126b516414243.camel@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bac2cb70b16d81f589915fc0900126b516414243.camel@nxp.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Wed, 8 Aug 2018 09:41:07 -0400
+Received: from 8bytes.org ([81.169.241.247]:35768 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726890AbeHHNlH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 09:41:07 -0400
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id D1E642EA; Wed,  8 Aug 2018 13:21:50 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=8bytes.org; s=mail-1;
+        t=1533727310; bh=5bv0qSO6zUgvBLoIEiLfGAXfUu5gCSUL3booLj+Fs20=;
+        h=From:To:Cc:Subject:Date:From;
+        b=q5BHcFZGK/IQ5TP31Sl8jWfWuH1q8tutPt+RA5JVQIyviJfq6+JEIDlADJvyzovvd
+         jbJRtPcGcVjyed7t3qFq1QXVedRsTXF9w05zRQ4IIbUtNpPskiBQad1JzAd8EYKNId
+         wAXTib2kYvHx+VhrVIOnh3U52BfOCS1KWMz464hdPpkVJvgoytJN2hVc+RgmRQZTAo
+         bMzyE6FhNOajXiGxe+NpWTVdTl9leY1ZTvb2ZIL93z360j4n/uoGdS+QgeqYhipTkr
+         BidwSo6yPZdkbuqBgSi/LFZy8O3wLYUws1/9p2L/j3smvBJtvsJ2eMnua3vlCvrxWB
+         CgB90afcGlc9A==
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        "H . Peter Anvin" <hpa@zytor.com>
+Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Juergen Gross <jgross@suse.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Brian Gerst <brgerst@gmail.com>,
+        David Laight <David.Laight@aculab.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        Eduardo Valentin <eduval@amazon.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Will Deacon <will.deacon@arm.com>, aliguori@amazon.com,
+        daniel.gruss@iaik.tugraz.at, hughd@google.com, keescook@google.com,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        "David H . Gutteridge" <dhgutteridge@sympatico.ca>,
+        jroedel@suse.de, joro@8bytes.org
+Subject: [PATCH] x86/mm/pti: Move user W+X check into pti_finalize()
+Date:   Wed,  8 Aug 2018 13:16:40 +0200
+Message-Id: <1533727000-9172-1-git-send-email-joro@8bytes.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 08, 2018 at 10:53:52AM +0000, Leonard Crestez wrote:
-> On Tue, 2018-07-24 at 19:14 +0300, Leonard Crestez wrote:
-> > Changes since v2:
-> >  * Print with dev_info if link fails on resume (Lucas)
-> >  * Add a comment on imx7d pci irq mappings (Andrey)
-> >  * Make imx6_pcie_ltssm_disable print an error on IMX6Q (Lucas)
-> > 
-> > The ltssm_disable does not return an error because it can't be usefully
-> > handled, reversing partial suspend is a nightmare and unlikely to work.
-> > 
-> >  * Drop "reset: imx7: Fix always writing bits as 0 (accepted by Philipp)
-> > 
-> > Series is against linux-next tag next-20180724 where the reset patch was
-> > already accepted. The imx7d.dtsi patch is also useful standalone.
-> > 
-> > Link to v2: https://lkml.org/lkml/2018/7/20/472
-> 
-> This is a gentle reminder that this series was reviewed by Lucas two
-> weeks ago but not yet included.
+From: Joerg Roedel <jroedel@suse.de>
 
-Does this series have a functional dependency on the reset fix ? If yes
-we can have a bisection proplem depending on which tree gets merged
-first.
+The user page-table gets the updated kernel mappings in
+pti_finalize(), which runs after the RO+X permissions got
+applied to the kernel page-table in mark_readonly().
 
-Please let me know.
+But with CONFIG_DEBUG_WX enabled, the user page-table is
+already checked in mark_readonly() for insecure mappings.
+This causes false-positive warnings, because the user
+page-table did not get the updated mappings yet.
 
-Thanks,
-Lorenzo
+Move the W+X check for the user page-table into
+pti_finalize() after it updated all required mappings.
+
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
+---
+ arch/x86/include/asm/pgtable.h | 7 +++++--
+ arch/x86/mm/dump_pagetables.c  | 3 +--
+ arch/x86/mm/pti.c              | 2 ++
+ 3 files changed, 8 insertions(+), 4 deletions(-)
+
+diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
+index e39088cb..a1cb333 100644
+--- a/arch/x86/include/asm/pgtable.h
++++ b/arch/x86/include/asm/pgtable.h
+@@ -30,11 +30,14 @@ int __init __early_make_pgtable(unsigned long address, pmdval_t pmd);
+ void ptdump_walk_pgd_level(struct seq_file *m, pgd_t *pgd);
+ void ptdump_walk_pgd_level_debugfs(struct seq_file *m, pgd_t *pgd, bool user);
+ void ptdump_walk_pgd_level_checkwx(void);
++void ptdump_walk_user_pgd_level_checkwx(void);
+ 
+ #ifdef CONFIG_DEBUG_WX
+-#define debug_checkwx() ptdump_walk_pgd_level_checkwx()
++#define debug_checkwx()		ptdump_walk_pgd_level_checkwx()
++#define debug_checkwx_user()	ptdump_walk_user_pgd_level_checkwx()
+ #else
+-#define debug_checkwx() do { } while (0)
++#define debug_checkwx()		do { } while (0)
++#define debug_checkwx_user()	do { } while (0)
+ #endif
+ 
+ /*
+diff --git a/arch/x86/mm/dump_pagetables.c b/arch/x86/mm/dump_pagetables.c
+index ccd92c4..b8ab901 100644
+--- a/arch/x86/mm/dump_pagetables.c
++++ b/arch/x86/mm/dump_pagetables.c
+@@ -569,7 +569,7 @@ void ptdump_walk_pgd_level_debugfs(struct seq_file *m, pgd_t *pgd, bool user)
+ }
+ EXPORT_SYMBOL_GPL(ptdump_walk_pgd_level_debugfs);
+ 
+-static void ptdump_walk_user_pgd_level_checkwx(void)
++void ptdump_walk_user_pgd_level_checkwx(void)
+ {
+ #ifdef CONFIG_PAGE_TABLE_ISOLATION
+ 	pgd_t *pgd = INIT_PGD;
+@@ -586,7 +586,6 @@ static void ptdump_walk_user_pgd_level_checkwx(void)
+ void ptdump_walk_pgd_level_checkwx(void)
+ {
+ 	ptdump_walk_pgd_level_core(NULL, NULL, true, false);
+-	ptdump_walk_user_pgd_level_checkwx();
+ }
+ 
+ static int __init pt_dump_init(void)
+diff --git a/arch/x86/mm/pti.c b/arch/x86/mm/pti.c
+index 69a9d60..026a89a 100644
+--- a/arch/x86/mm/pti.c
++++ b/arch/x86/mm/pti.c
+@@ -628,4 +628,6 @@ void pti_finalize(void)
+ 	 */
+ 	pti_clone_entry_text();
+ 	pti_clone_kernel_text();
++
++	debug_checkwx_user();
+ }
+-- 
+2.7.4
+
