@@ -3,189 +3,174 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 023A9C4646D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 10:18:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F8FCC4646D
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 10:23:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 915D8208AD
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 10:18:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5C28208D9
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 10:23:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=virtuozzo.com header.i=@virtuozzo.com header.b="aq1so40j"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 915D8208AD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=virtuozzo.com
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="EHSlgXa6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5C28208D9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727133AbeHHMhj (ORCPT
+        id S1727025AbeHHMmm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 08:37:39 -0400
-Received: from mail-eopbgr70125.outbound.protection.outlook.com ([40.107.7.125]:45675
-        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726921AbeHHMhj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 08:37:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=virtuozzo.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tWWNPOmEZgY9BHcI/FlIyc/8s1eVDo5X+HNTD5kUa00=;
- b=aq1so40jtunCqEGBl9+BIC9pD54gIWVYdeIQnHoUZBR9E3iZAyv0IfcLV4XAXYJs0T7V7L//713sCtR5/uHbFIk1Apj/OfpNM0LfYM2ESBFdHBhUDdsDu63WeelOOrS1OF7zEQbUaScUeaaVlPwW1cse6P1G1TyGWkyP84iAC3c=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=ktkhai@virtuozzo.com; 
-Received: from [172.16.25.169] (185.231.240.5) by
- HE1PR0801MB2027.eurprd08.prod.outlook.com (2603:10a6:3:50::16) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1017.15; Wed, 8 Aug 2018 10:18:27 +0000
-Subject: Re: [PATCH RFC 00/10] Introduce lockless shrink_slab()
-To:     Shakeel Butt <shakeelb@google.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        gregkh@linuxfoundation.org, rafael@kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        josh@joshtriplett.org, Steven Rostedt <rostedt@goodmis.org>,
-        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
-        Hugh Dickins <hughd@google.com>, shuah@kernel.org,
-        robh@kernel.org, ulf.hansson@linaro.org, aspriel@gmail.com,
-        vivek.gautam@codeaurora.org, robin.murphy@arm.com, joe@perches.com,
-        heikki.krogerus@linux.intel.com,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Huang Ying <ying.huang@intel.com>, jbacik@fb.com,
-        Ingo Molnar <mingo@kernel.org>, mhiramat@kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>
-References: <153365347929.19074.12509495712735843805.stgit@localhost.localdomain>
- <20180808111224.52a451d9@canb.auug.org.au>
- <CALvZod4CAA50sPB1V9bZVOZ__rOT=Ys8tLv+m-S-kP3NLubSqQ@mail.gmail.com>
-From:   Kirill Tkhai <ktkhai@virtuozzo.com>
-Message-ID: <493967b5-cb56-4a88-c2fb-44238e2823ed@virtuozzo.com>
-Date:   Wed, 8 Aug 2018 13:18:24 +0300
+        Wed, 8 Aug 2018 08:42:42 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:52754 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726921AbeHHMml (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 08:42:41 -0400
+Received: from [192.168.0.67] (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id E2B8E57;
+        Wed,  8 Aug 2018 12:23:35 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1533723816;
+        bh=zkp3pt9sOGWRSUsNlhMVlo2pS3oMioGL7tH0A+5rJkE=;
+        h=Reply-To:Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=EHSlgXa6j8FAZq2Dq+6yj35jid2oe1kcx5xhKjiayuREe9XZTKsDhZHiachRgc9ie
+         2FJr8plh13dJGEn2M7b7/EtQ6NsoRTPnaqPwKkNde/EPwYi6JSJRx7vtZpgIUNaKrz
+         qogNHcKGsmqeqOm4KxfJ9MvE3g29QgEeyQhQ+ZJs=
+Reply-To: kieran.bingham@ideasonboard.com
+Subject: Re: [PATCH] media: dt: adv7604: Fix slave map documentation
+To:     =?UTF-8?B?TWljaGFsIFZva8OhxI0=?= <michal.vokac@ysoft.com>,
+        mchehab@kernel.org, linux-media@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+References: <20180807155452.797-1-kieran.bingham@ideasonboard.com>
+ <505904fb-7bfc-c455-740e-b72a14731eb9@ysoft.com>
+From:   Kieran Bingham <kieran.bingham@ideasonboard.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=kieran.bingham@ideasonboard.com; keydata=
+ xsFNBFYE/WYBEACs1PwjMD9rgCu1hlIiUA1AXR4rv2v+BCLUq//vrX5S5bjzxKAryRf0uHat
+ V/zwz6hiDrZuHUACDB7X8OaQcwhLaVlq6byfoBr25+hbZG7G3+5EUl9cQ7dQEdvNj6V6y/SC
+ rRanWfelwQThCHckbobWiQJfK9n7rYNcPMq9B8e9F020LFH7Kj6YmO95ewJGgLm+idg1Kb3C
+ potzWkXc1xmPzcQ1fvQMOfMwdS+4SNw4rY9f07Xb2K99rjMwZVDgESKIzhsDB5GY465sCsiQ
+ cSAZRxqE49RTBq2+EQsbrQpIc8XiffAB8qexh5/QPzCmR4kJgCGeHIXBtgRj+nIkCJPZvZtf
+ Kr2EAbc6tgg6DkAEHJb+1okosV09+0+TXywYvtEop/WUOWQ+zo+Y/OBd+8Ptgt1pDRyOBzL8
+ RXa8ZqRf0Mwg75D+dKntZeJHzPRJyrlfQokngAAs4PaFt6UfS+ypMAF37T6CeDArQC41V3ko
+ lPn1yMsVD0p+6i3DPvA/GPIksDC4owjnzVX9kM8Zc5Cx+XoAN0w5Eqo4t6qEVbuettxx55gq
+ 8K8FieAjgjMSxngo/HST8TpFeqI5nVeq0/lqtBRQKumuIqDg+Bkr4L1V/PSB6XgQcOdhtd36
+ Oe9X9dXB8YSNt7VjOcO7BTmFn/Z8r92mSAfHXpb07YJWJosQOQARAQABzTBLaWVyYW4gQmlu
+ Z2hhbSA8a2llcmFuLmJpbmdoYW1AaWRlYXNvbmJvYXJkLmNvbT7CwYAEEwEKACoCGwMFCwkI
+ BwIGFQgJCgsCBBYCAwECHgECF4ACGQEFAlnDk/gFCQeA/YsACgkQoR5GchCkYf3X5w/9EaZ7
+ cnUcT6dxjxrcmmMnfFPoQA1iQXr/MXQJBjFWfxRUWYzjvUJb2D/FpA8FY7y+vksoJP7pWDL7
+ QTbksdwzagUEk7CU45iLWL/CZ/knYhj1I/+5LSLFmvZ/5Gf5xn2ZCsmg7C0MdW/GbJ8IjWA8
+ /LKJSEYH8tefoiG6+9xSNp1p0Gesu3vhje/GdGX4wDsfAxx1rIYDYVoX4bDM+uBUQh7sQox/
+ R1bS0AaVJzPNcjeC14MS226mQRUaUPc9250aj44WmDfcg44/kMsoLFEmQo2II9aOlxUDJ+x1
+ xohGbh9mgBoVawMO3RMBihcEjo/8ytW6v7xSF+xP4Oc+HOn7qebAkxhSWcRxQVaQYw3S9iZz
+ 2iA09AXAkbvPKuMSXi4uau5daXStfBnmOfalG0j+9Y6hOFjz5j0XzaoF6Pln0jisDtWltYhP
+ X9LjFVhhLkTzPZB/xOeWGmsG4gv2V2ExbU3uAmb7t1VSD9+IO3Km4FtnYOKBWlxwEd8qOFpS
+ jEqMXURKOiJvnw3OXe9MqG19XdeENA1KyhK5rqjpwdvPGfSn2V+SlsdJA0DFsobUScD9qXQw
+ OvhapHe3XboK2+Rd7L+g/9Ud7ZKLQHAsMBXOVJbufA1AT+IaOt0ugMcFkAR5UbBg5+dZUYJj
+ 1QbPQcGmM3wfvuaWV5+SlJ+WeKIb8tbOwU0EVgT9ZgEQAM4o5G/kmruIQJ3K9SYzmPishRHV
+ DcUcvoakyXSX2mIoccmo9BHtD9MxIt+QmxOpYFNFM7YofX4lG0ld8H7FqoNVLd/+a0yru5Cx
+ adeZBe3qr1eLns10Q90LuMo7/6zJhCW2w+HE7xgmCHejAwuNe3+7yt4QmwlSGUqdxl8cgtS1
+ PlEK93xXDsgsJj/bw1EfSVdAUqhx8UQ3aVFxNug5OpoX9FdWJLKROUrfNeBE16RLrNrq2ROc
+ iSFETpVjyC/oZtzRFnwD9Or7EFMi76/xrWzk+/b15RJ9WrpXGMrttHUUcYZEOoiC2lEXMSAF
+ SSSj4vHbKDJ0vKQdEFtdgB1roqzxdIOg4rlHz5qwOTynueiBpaZI3PHDudZSMR5Fk6QjFooE
+ XTw3sSl/km/lvUFiv9CYyHOLdygWohvDuMkV/Jpdkfq8XwFSjOle+vT/4VqERnYFDIGBxaRx
+ koBLfNDiiuR3lD8tnJ4A1F88K6ojOUs+jndKsOaQpDZV6iNFv8IaNIklTPvPkZsmNDhJMRHH
+ Iu60S7BpzNeQeT4yyY4dX9lC2JL/LOEpw8DGf5BNOP1KgjCvyp1/KcFxDAo89IeqljaRsCdP
+ 7WCIECWYem6pLwaw6IAL7oX+tEqIMPph/G/jwZcdS6Hkyt/esHPuHNwX4guqTbVEuRqbDzDI
+ 2DJO5FbxABEBAAHCwWUEGAEKAA8CGwwFAlnDlGsFCQeA/gIACgkQoR5GchCkYf1yYRAAq+Yo
+ nbf9DGdK1kTAm2RTFg+w9oOp2Xjqfhds2PAhFFvrHQg1XfQR/UF/SjeUmaOmLSczM0s6XMeO
+ VcE77UFtJ/+hLo4PRFKm5X1Pcar6g5m4xGqa+Xfzi9tRkwC29KMCoQOag1BhHChgqYaUH3yo
+ UzaPwT/fY75iVI+yD0ih/e6j8qYvP8pvGwMQfrmN9YB0zB39YzCSdaUaNrWGD3iCBxg6lwSO
+ LKeRhxxfiXCIYEf3vwOsP3YMx2JkD5doseXmWBGW1U0T/oJF+DVfKB6mv5UfsTzpVhJRgee7
+ 4jkjqFq4qsUGxcvF2xtRkfHFpZDbRgRlVmiWkqDkT4qMA+4q1y/dWwshSKi/uwVZNycuLsz+
+ +OD8xPNCsMTqeUkAKfbD8xW4LCay3r/dD2ckoxRxtMD9eOAyu5wYzo/ydIPTh1QEj9SYyvp8
+ O0g6CpxEwyHUQtF5oh15O018z3ZLztFJKR3RD42VKVsrnNDKnoY0f4U0z7eJv2NeF8xHMuiU
+ RCIzqxX1GVYaNkKTnb/Qja8hnYnkUzY1Lc+OtwiGmXTwYsPZjjAaDX35J/RSKAoy5wGo/YFA
+ JxB1gWThL4kOTbsqqXj9GLcyOImkW0lJGGR3o/fV91Zh63S5TKnf2YGGGzxki+ADdxVQAm+Q
+ sbsRB8KNNvVXBOVNwko86rQqF9drZuw=
+Organization: Ideas on Board
+Message-ID: <b5b25641-f898-577b-7762-d72dd64272cf@ideasonboard.com>
+Date:   Wed, 8 Aug 2018 11:23:32 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <CALvZod4CAA50sPB1V9bZVOZ__rOT=Ys8tLv+m-S-kP3NLubSqQ@mail.gmail.com>
+In-Reply-To: <505904fb-7bfc-c455-740e-b72a14731eb9@ysoft.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [185.231.240.5]
-X-ClientProxiedBy: AM5PR0102CA0011.eurprd01.prod.exchangelabs.com
- (2603:10a6:206::24) To HE1PR0801MB2027.eurprd08.prod.outlook.com
- (2603:10a6:3:50::16)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: df11cc9f-8082-4136-e141-08d5fd1849c3
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:HE1PR0801MB2027;
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR0801MB2027;3:GU897xaxolWAoR8CpqYFlmBUe2SR0EuRtTJbbfb8buv1ggO5CS7iG6+zuRJpy2g0pc2qLNF0Fz1P1dBa0ri5iJS0M92ILy3F3q6ouoKv3jnhCsgyWVw8zbXLoqQ7QCbx1xr7rODZp2JVM4SK4biIkP802gdnCRt1+QGLVbRuW1eAObqIQxQUecSIh5H9lJu9KVbAmvr9NjsCR5qS8dmDi0xtkHOfLvgy/kE/kzbIxxTp2i9Y+4zfc0h3KTsC8AKY;25:zQ+D30/yR3rZayvabSBseEPKj4GK5xUxf87ATXJSX8j7cIZkhNCxnLzRD7O84T3ARRuSV0VZlPdq0WXd4bOteyd6Hhpr0cENQU6k4i6+CbRjN9UMIpFsh/cuR2GHwjVSkF3y3CeLnU+mJLkk364fBE/w0LcvOn1iWZMwJ/Skl3M+9FGY8tG8iGXn3B3rUWNjAk4f9CTfDcoxWrku/9lK1Tc8jZ8ZWJSuVdrrfSzZFlA34LqRTiwFn+HkYBQJBfIw9zf4bIi+eewZeoVq9XHaOrJ70x7v9/abvTGTR+D8jxQFpzVJSjOwettjYe0AEbs4F0eAgG3xp/3EkwZCPMVXGw==;31:Esg8PV/Elt3rRz44EyuUI7Y2y8Qez9kENU2zXAwhVnlpYiGba3EWKGE4SriQCb8QeLGuvMLPO4xxFWXAZJvmlLAPvu3KQy+RGNdsWYGw29OFyEqWSufBmbJDLMGWMPhdFNqMaixGnETA3RvY86vjHiRLKFASKzJNNz7ks7ElgM++uTZHZURt6F4aJrBlr9qUQOeJ6B4+ywPd7AQ6OufzxAbpivbdyguIOfanNZX8lEQ=
-X-MS-TrafficTypeDiagnostic: HE1PR0801MB2027:
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR0801MB2027;20:ZTzN2gA8aF5jvrdAn5gE7APtk5NhmJWy4EaMtUM6c6bDjdR1c9LVkKeP0uv9ie5w3Atnb0Dj07sb2U2tq5qvsoXhqSs8PznStEOdgN0CTEWGjmgjHJHszqHrsFTeI3XBU8WHXyDNQXDHlPkacZr0RDZ1gSvevvIXlKYJAIXHguwofXSPcAITUFD6tx4s6qMSH2JmzLXtrZjie9s7t4OGEtWXDxz5aAKw2nmepNCkwP9ipaa5cqX1W79se1zLmkHZoc6as9+H/CzvdWKEzQiIYF0j6CWuGtRZHflguHs+UPQgzQvdPZrhRShaZxGFxrU+AiuMCo/Ma3hf/7CXW0JeDx26EU9mfNvrVfaapKPyiNgOtjgaQILj22g/jOBL7BC86bzuKBDQ+ZWyKGoyGXtaoAE4LjX+kj1M04rPd3kHMUeEC5z7c4iKRiRIwdEs20c/oHOEpK1ERHacSqCtJAPZe8WuayTimk+DSSpiXXrVVe3l+o5cRytHVyf/Tpex9fn4;4:GeThIpOqiFkXWlAb4DXWN9915Ax8flTM3u22JF5OLhGzKFbsSxTrLovgqQgOn0ghXmr9v+S/80EYrjaxqy/FNsNkjMk4QYT/9cNpdzzb39EI1q2W/EGBCRtc4btsATeInwF9JVFHuh9oVYjwV1cvYnDs8kNVaZexZgI2rwpUAwRj7frSMXnjyqQoLvxgfa/WiuE8gahF8VvYGBbf2oZBHSYT+02XnNdO5O8kyUVD3b7MEdyIwVVKVEl4cBoSLiFUv06ZijrJZsm8VnPzWMaDCw==
-X-Microsoft-Antispam-PRVS: <HE1PR0801MB202798778C51305F3D4B2891CD260@HE1PR0801MB2027.eurprd08.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(3231311)(944501410)(52105095)(93006095)(93001095)(149027)(150027)(6041310)(20161123558120)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(6072148)(201708071742011)(7699016);SRVR:HE1PR0801MB2027;BCL:0;PCL:0;RULEID:;SRVR:HE1PR0801MB2027;
-X-Forefront-PRVS: 07584EDBCD
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6049001)(136003)(366004)(376002)(39850400004)(396003)(346002)(189003)(199004)(68736007)(217873002)(81166006)(81156014)(8676002)(230700001)(446003)(8936002)(6116002)(14444005)(3846002)(11346002)(316002)(50466002)(478600001)(7736002)(2906002)(305945005)(6486002)(65956001)(47776003)(65806001)(86362001)(25786009)(486006)(5660300001)(956004)(53936002)(4326008)(65826007)(6666003)(66066001)(53546011)(31696002)(476003)(386003)(7406005)(64126003)(6246003)(31686004)(52116002)(23676004)(106356001)(7416002)(105586002)(16526019)(97736004)(2486003)(186003)(77096007)(58126008)(2616005)(52146003)(36756003)(54906003)(76176011)(229853002)(26005)(110136005)(39060400002)(16576012);DIR:OUT;SFP:1102;SCL:1;SRVR:HE1PR0801MB2027;H:[172.16.25.169];FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-Received-SPF: None (protection.outlook.com: virtuozzo.com does not designate
- permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtIRTFQUjA4MDFNQjIwMjc7MjM6YTZKOGxncGRUaXZaN082ZXl0Sk51KzRq?=
- =?utf-8?B?N3did2dtT2V3U2xZRENCWVlCamtGWVlvZlArS2NlYmxIUEZ0SGZ4cCtmZnhO?=
- =?utf-8?B?cUx3UDBwUG5icm1uZ0g3VURxVlpaQjFUMjZMRUlFT3NyQlBCMzFwTUdpbVlz?=
- =?utf-8?B?MU14Sjd5Q3ZkL3VJUHo5YWFPd1pjRG8wYjY3c0NPY29jWXNQQytuaURxNUhq?=
- =?utf-8?B?ZmlKQ3hodUhkY25BREIydlphcTN5MmdvVVFaOTJ0ckMyYjZ4Y0RxdU5BWENJ?=
- =?utf-8?B?YjdwZklCWWRzR3NoQUo1WFhERnIzWTVtd0RBeXFENERZS3hTZmxsZWhoYXVQ?=
- =?utf-8?B?c1pQT0lXSGZDaE1VRmp0eThWTU9DYlU0dm4wQU9FQURGQWxTaitPL2JPOERB?=
- =?utf-8?B?cjZPMndVYW1rcDM2dmdubk9uY2E5dVJPbXBrV3RxbGNVTnNnTVM2YUZudkVk?=
- =?utf-8?B?T0M0SVlBMEpCS2h2ak0xZHY0U050Y1M4ZEMxekZFKzlRajhza2xJK0NCQ3Fs?=
- =?utf-8?B?MFRMLzhmSHlSZHN3THhsSmwwRm0wYnpjWEFKNkpjYUN4QjlHNWRpWDk0NFMw?=
- =?utf-8?B?amttV21ZQ0pSd3VYSzdDVTMzNmFKZDBnN2pEQnljOWJSV3Buc1Ixc2lIVkh5?=
- =?utf-8?B?eGw1dm5ORUpLNmhEbzI3Y3Y2SkFySTZVRHlTaGFpcW0ycVdiWk9yL1NJRHkz?=
- =?utf-8?B?cUpISEVrNnNkRlVyejZNQTZPaVFNRDBLd0xBOXNCZVhGQXVHbzZaTWxnUUlX?=
- =?utf-8?B?b0pOWnNnRHhub3VaaTdscGVLOThvVDBlOWRnemNiM29TYmdZamgvTTBTY1JM?=
- =?utf-8?B?SVpBeTd5ZFJFenp3Z1N3UGhSWXIyYm52akVaSDA1ZlpmSk1qZzcrckVXQXpz?=
- =?utf-8?B?aXNHLzZXYVlCNnFIb3E4bDlTR083Y1FxdURaV3ovLzBTNFg5UWpGTmx6QUQw?=
- =?utf-8?B?aDJqVVBYV0F5Y2FKK1FvU2MxSm5nWEF2NWZqU1Nrc2I2eTNvcVlySDcycHM5?=
- =?utf-8?B?V0YyNExQWHFDQWJXTndiSjhFVVFJOUhWTGE4dnFxcm9ycnBuUnRlNGVsREl4?=
- =?utf-8?B?RU5abnBYNkxVQjVrVVRwWDZLaitCY1dlV0lvUEp4TnhXTzVuanNHV0IxdkJ2?=
- =?utf-8?B?VmRybnE0bUNtUjE4TDJUWG1RNDIvNVlYeVRxaDhmM0hLcUowZUNhZzBpRzho?=
- =?utf-8?B?QmFYK0x4YXZubHZwNmFKYVJoWlZFVk5PY2hYSktCd2prdE1KV1NxQWN2OERC?=
- =?utf-8?B?ZnVUWEVQY0pxVTVsOG9od2hrdE93ZmIvUlgvRjBSY2tMMm4wZzZzNEwvMTVn?=
- =?utf-8?B?aG5QWWFaWWhxdVVRMWR4a2VOd2NndUNlbVNKZnZtakx4TkRJTWFTQTJPOTgx?=
- =?utf-8?B?ek5vWnMrdUVQTDBLejhOY05iY1RkWkxHVWk0Mk42VGJHT2lxdmEvZ0VrRWhx?=
- =?utf-8?B?bGlaMkZZb2J6UXd1R3NLa00wRkxFUmtsbDZuWlVlM01nZS80enB3TnFBa01x?=
- =?utf-8?B?dWtLQXZBS2c5STJGUzJ2M0xYY0VtQUxMK0p1NC9aTkJKdWJQQUVpVlpiOStT?=
- =?utf-8?B?V3hENG92TmVDMCtPcVh5bGJXZld4NEUreXRORGNjdGZLbWhmcHpaaWIzdDRJ?=
- =?utf-8?B?QlcrS21oV0d2NFo5V0xWM0FTZHY0NHpBc2g3SHhHdUwzVlB4Z2dxRlBDdkxZ?=
- =?utf-8?B?QnZ5NlZWTzNURWxiajdlb0NyWmFOWWVlamt4MjNLVUtUTTFJZjdZenNxbTRH?=
- =?utf-8?B?YmdBVFN5em5JRU8zSG9vbHlTMkpBTnhNcVNpQ1JTaVdsUW1jMFdhRHJpbjF2?=
- =?utf-8?B?V3diRFo4MFFhSDFkVGRzRjZlcEhpanJDck1iSG9rRmI3VkNHR0dKMkxmVDlO?=
- =?utf-8?B?MFRxZGp3WG4waWx3QngyUjJFTk5WSGFleVZoeHhmTWRBc1JTV3UvaVk5Tlpm?=
- =?utf-8?B?bkd4a2VGc3ZzaGJzaEhEbGxvNlhneGlieVhqSytKZDVWcUkrY2s4bWwrYWpz?=
- =?utf-8?B?Z3daMjZFb0x0R3hMZ0k2UUIxZ0Nna0d6TGRBZGlJeE5meFQ3bVdIbUNZdGNV?=
- =?utf-8?Q?0kJ8eO7UMU9gw70cUGRDcV67xa1?=
-X-Microsoft-Antispam-Message-Info: aqYvF46aRkk7ocB5L7XfC5TLC21EGDfjAXK7ND+f4Pay0Kw7CPb7H19KpmpViatf991pq277LxnHyT5Xc/6/60/Z2I7VA78dJEFIXjUseyNqph3N3KGWtKZd8PeZbJPcKfO8FpVi3biKRBN8BD98T0kshMJunYg43UBAOOnL4qtREEgZrk1fx3Z7h33boVnNMsqITxPH7FYXXYIa9nAsNNPCPEuDXpvQ6CK/sMpEnGU9/dJ3DYkbSfry5Chd9aR4M1hNlP5UMlcUg8R1qzqBw5ihHmlUZBjg1OBi6M3HTZixoJsodYcpu6BMcucKAmULhmsOoerDHHR5OTQI60qt5oRQkJljYXS6utG1Ju5+rP4=
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR0801MB2027;6:6RYpPkA7rN3G0Svfy/1DphIbFToyj5VGVJ3uXZ85Uwaru3QaCRL008BAUmWk79E2UeJ++/0Je7gLRm7wVTitSeqc/NpqCUZL4X+OGFr/60moacUQtF68HlXBqLGVQa1OppZFa7bmTsroldS5s7kPD/WLNrGaKPRxzW0c3V28Dqp0npKyigGThFERR3Wfhgqr65WYZexWTyneSPqg6d3mI0Yfsva7ZYxxcMLNp4YVicUO5IPGVSnPHUAX7kMC0ye/AP8x8XKSBroQKaOptiAUJ+U8Y8ulg/7TZHyQfk5qNoaxEkwEv6842g9uElqSHgkmx/VC9jtTO35K7KugUvRukkNAKvly1zEjTDPghhM41OfaT5eS1xWhGV1LvXCEqpSRTFGy3CBjMIfnqBAtACAGdGFzNoEuRDgtAhiZDiAD9SC58+QTcoqfqURLnkji8+nF1fHi8ypoK4p7C+zPsRnG4g==;5:H+87L3JzwgQve/ss38LcMzoJjtSHZg9G2AYyOeyS9lfx0AmXxlVh4Vcl7kFPh1+NAxyOtqCsl/mfgKveU3TlUZy//Xsh7xAuiMFv/mkOqjhfji7KCRSDrppyhmEdmeu0D47n0xTtj7Bz5UMiWoaL6VyuzVvCG2HSKIIJtSKSU70=;7:feKxdictewuxVOk8rkRK3CfMvb4lKzIFkPI7qQhDTuuGNDVq6qxx17EKxmPNipvOXx27T/qQiqKXKNIsCgRcONyGq8mxne/CrbpHMwWJ/rNo9/FPWTotorZR53v22XCPXOWhT2YTFZW8lW/oNYXDR4RwnJzAZ909AZQU64g4hmogQJFKv/8QNKIWL2jzCk3XgazDKgSIzUb+UKhmlbCsbLioVQWNrbh4LravU9nuAf/9O/GCkbvA+RXvR89XInGd
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR0801MB2027;20:0CWeka4hrLaj4UiZxLHx7qQJ8KkLWc3CxoE9VB6nva38g/dv9et6FczXC7ATjigbPcby/KK5dLSPnOrLZnE3NpsGQJqFPb995s0koKCniKow75bY6zrF/pwGyP2GN2QRTNI9tHHNzjagNkNWxun4KnK1bZpaEOP3t+vGjSTvVJA=
-X-OriginatorOrg: virtuozzo.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Aug 2018 10:18:27.4140 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: df11cc9f-8082-4136-e141-08d5fd1849c3
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0801MB2027
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08.08.2018 08:39, Shakeel Butt wrote:
-> On Tue, Aug 7, 2018 at 6:12 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>
->> Hi Kirill,
->>
->> On Tue, 07 Aug 2018 18:37:19 +0300 Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
->>>
->>> After bitmaps of not-empty memcg shrinkers were implemented
->>> (see "[PATCH v9 00/17] Improve shrink_slab() scalability..."
->>> series, which is already in mm tree), all the evil in perf
->>> trace has moved from shrink_slab() to down_read_trylock().
->>> As reported by Shakeel Butt:
->>>
->>>      > I created 255 memcgs, 255 ext4 mounts and made each memcg create a
->>>      > file containing few KiBs on corresponding mount. Then in a separate
->>>      > memcg of 200 MiB limit ran a fork-bomb.
->>>      >
->>>      > I ran the "perf record -ag -- sleep 60" and below are the results:
->>>      > +  47.49%            fb.sh  [kernel.kallsyms]    [k] down_read_trylock
->>>      > +  30.72%            fb.sh  [kernel.kallsyms]    [k] up_read
->>>      > +   9.51%            fb.sh  [kernel.kallsyms]    [k] mem_cgroup_iter
->>>      > +   1.69%            fb.sh  [kernel.kallsyms]    [k] shrink_node_memcg
->>>      > +   1.35%            fb.sh  [kernel.kallsyms]    [k] mem_cgroup_protected
->>>      > +   1.05%            fb.sh  [kernel.kallsyms]    [k] queued_spin_lock_slowpath
->>>      > +   0.85%            fb.sh  [kernel.kallsyms]    [k] _raw_spin_lock
->>>      > +   0.78%            fb.sh  [kernel.kallsyms]    [k] lruvec_lru_size
->>>      > +   0.57%            fb.sh  [kernel.kallsyms]    [k] shrink_node
->>>      > +   0.54%            fb.sh  [kernel.kallsyms]    [k] queue_work_on
->>>      > +   0.46%            fb.sh  [kernel.kallsyms]    [k] shrink_slab_memcg
->>>
->>> The patchset continues to improve shrink_slab() scalability and makes
->>> it lockless completely. Here are several steps for that:
->>
->> So do you have any numbers for after theses changes?
->>
-> 
-> I will do the same experiment as before with these patches sometime
-> this or next week.
+Hi Michal,
 
-Thanks, Shakeel!
+Thank you for your review.
 
-> BTW Kirill, thanks for pushing this.
++Rob, +Mark, +Laurent asking for opinions if anyone has any on prefixes
+through media tree.
+
+On 08/08/18 08:48, Michal Vokáč wrote:
+> On 7.8.2018 17:54, Kieran Bingham wrote:
+> Hi Kieran,
+>> The reg-names property in the documentation is missing an '='. Add it.
+>>
+>> Fixes: 9feb786876c7 ("media: dt-bindings: media: adv7604: Extend
+>> bindings to allow specifying slave map addresses")
+>>
 > 
-> regards,
-> Shakeel
+> "dt-bindings: media: " is preferred for the subject.
+
+This patch will go through the media-tree as far as I am aware, and
+Mauro prefixes all commits through the media tree with "media:" if they
+are not already prefixed.
+
+Thus this would then become "media: dt-bindings: media: adv7604: ...."
+as per my commit: 9feb786876c7 which seems a bit redundant.
+
+Is it still desired ? If so I'll send a V2. (perhaps needed anyway, as I
+seem to have erroneously shortened dt-bindings: to just dt: which wasn't
+intentional.
+
+> I think you should also add device tree maintainers to the recipients.
+
+Added to this mail to ask opinions on patch prefixes above.
+
+Originally, I believed the list was sufficient as this is a trivial
+patch, and it goes through the media tree.
+
+But, it turned out to be more controversial :)
+
+Rob, Mark, should I add you to all patches affecting DT? Or is the list
+sufficient?
+--
+Regards
+
+Kieran
+
+
+> Best regards,
+> Michal
 > 
+>> Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+>> ---
+>>   Documentation/devicetree/bindings/media/i2c/adv7604.txt | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/media/i2c/adv7604.txt
+>> b/Documentation/devicetree/bindings/media/i2c/adv7604.txt
+>> index dcf57e7c60eb..b3e688b77a38 100644
+>> --- a/Documentation/devicetree/bindings/media/i2c/adv7604.txt
+>> +++ b/Documentation/devicetree/bindings/media/i2c/adv7604.txt
+>> @@ -66,7 +66,7 @@ Example:
+>>            * other maps will retain their default addresses.
+>>            */
+>>           reg = <0x4c>, <0x66>;
+>> -        reg-names "main", "edid";
+>> +        reg-names = "main", "edid";
+>>             reset-gpios = <&ioexp 0 GPIO_ACTIVE_LOW>;
+>>           hpd-gpios = <&ioexp 2 GPIO_ACTIVE_HIGH>;
