@@ -6,97 +6,105 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39A42C46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 19:54:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1586C46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 19:59:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DBC972178B
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 19:54:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBC972178B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fieldses.org
+	by mail.kernel.org (Postfix) with ESMTP id A392021A13
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 19:59:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A392021A13
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731008AbeHHWP5 (ORCPT
+        id S1730246AbeHHWUM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 18:15:57 -0400
-Received: from fieldses.org ([173.255.197.46]:47032 "EHLO fieldses.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728359AbeHHWP5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 18:15:57 -0400
-Received: by fieldses.org (Postfix, from userid 2815)
-        id 33CE43F4; Wed,  8 Aug 2018 15:54:45 -0400 (EDT)
-Date:   Wed, 8 Aug 2018 15:54:45 -0400
-From:   "J. Bruce Fields" <bfields@fieldses.org>
-To:     NeilBrown <neilb@suse.com>
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Martin Wilck <mwilck@suse.de>
-Subject: Re: [PATCH 0/4] locks: avoid thundering-herd wake-ups
-Message-ID: <20180808195445.GD23873@fieldses.org>
-References: <153369219467.12605.13472423449508444601.stgit@noble>
+        Wed, 8 Aug 2018 18:20:12 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:38312 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729703AbeHHWUM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 18:20:12 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 7E22C80649; Wed,  8 Aug 2018 21:58:57 +0200 (CEST)
+Date:   Wed, 8 Aug 2018 21:58:56 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Prarit Bhargava <prarit@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, Len Brown <lenb@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH] x86/ACPI/cstate: Output AMD on APCI C1 FFH MWAIT AMD
+ systems
+Message-ID: <20180808195856.GA20912@amd>
+References: <20180808174735.3114-1-prarit@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="DocE+STaALJfprDB"
 Content-Disposition: inline
-In-Reply-To: <153369219467.12605.13472423449508444601.stgit@noble>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180808174735.3114-1-prarit@redhat.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 08, 2018 at 11:51:07AM +1000, NeilBrown wrote:
-> If you have a many-core machine, and have many threads all wanting to
-> briefly lock a give file (udev is known to do this), you can get quite
-> poor performance.
-> 
-> When one thread releases a lock, it wakes up all other threads that
-> are waiting (classic thundering-herd) - one will get the lock and the
-> others go to sleep.
-> When you have few cores, this is not very noticeable: by the time the
-> 4th or 5th thread gets enough CPU time to try to claim the lock, the
-> earlier threads have claimed it, done what was needed, and released.
-> With 50+ cores, the contention can easily be measured.
-> 
-> This patchset creates a tree of pending lock request in which siblings
-> don't conflict and each lock request does conflict with its parent.
-> When a lock is released, only requests which don't conflict with each
-> other a woken.
 
-Are you sure you aren't depending on the (incorrect) assumption that "X
-blocks Y" is a transitive relation?
+--DocE+STaALJfprDB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-OK I should be able to answer that question myself, my patience for
-code-reading is at a real low this afternoon....
+On Wed 2018-08-08 13:47:35, Prarit Bhargava wrote:
+> commit 5209654a46ee ("x86/ACPI/cstate: Allow ACPI C1 FFH MWAIT use on AMD
+> systems") allows use of FFH for ACPI C1 but tools like cpupower and turbo=
+stat
+> display INTEL for the cstate description.
+>=20
+> Output "AMD" for AMD systems with FFH for ACPI C1.
 
---b.
+Um, is it good idea?
 
-> 
-> Testing shows that lock-acquisitions-per-second is now fairly stable even
-> as number of contending process goes to 1000.  Without this patch,
-> locks-per-second drops off steeply after a few 10s of processes.
-> 
-> There is a small cost to this extra complexity.
-> At 20 processes running a particular test on 72 cores, the lock
-> acquisitions per second drops from 1.8 million to 1.4 million with
-> this patch.  For 100 processes, this patch still provides 1.4 million
-> while without this patch there are about 700,000.
-> 
-> NeilBrown
-> 
-> ---
-> 
-> NeilBrown (4):
->       fs/locks: rename some lists and pointers.
->       fs/locks: allow a lock request to block other requests.
->       fs/locks: change all *_conflict() functions to return bool.
->       fs/locks: create a tree of dependent requests.
-> 
-> 
->  fs/cifs/file.c                  |    2 -
->  fs/locks.c                      |  142 +++++++++++++++++++++++++--------------
->  include/linux/fs.h              |    5 +
->  include/trace/events/filelock.h |   16 ++--
->  4 files changed, 103 insertions(+), 62 deletions(-)
-> 
-> --
-> Signature
+First, you are changing kernel API.
+
+> @@ -107,9 +108,14 @@ static long acpi_processor_ffh_cstate_probe_cpu(void=
+ *_cx)
+>  			"Monitor-Mwait will be used to enter C-%d state\n",
+>  			cx->type);
+>  	}
+> -	snprintf(cx->desc,
+> -			ACPI_CX_DESC_LEN, "ACPI FFH INTEL MWAIT 0x%x",
+> -			cx->address);
+> +	if (c->x86_vendor =3D=3D X86_VENDOR_INTEL)
+> +		snprintf(cx->desc,
+> +			 ACPI_CX_DESC_LEN, "ACPI FFH INTEL MWAIT 0x%x",
+> +			 cx->address);
+> +	else
+> +		snprintf(cx->desc,
+> +			 ACPI_CX_DESC_LEN, "ACPI FFH AMD MWAIT 0x%x",
+> +			 cx->address);
+
+Second, I read it as "Intel MWAIT" instruction is used. Yes, AMD cpu can
+use Intel MWAIT, too...
+
+Third, there are more CPU vendors out there.
+
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--DocE+STaALJfprDB
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAltrS4AACgkQMOfwapXb+vLDrwCeJYO1w+nU9m4bD6TP14FGFpoD
+aLoAnRLbyQZlEHBLyv645/5dv7JJNqM/
+=S8gu
+-----END PGP SIGNATURE-----
+
+--DocE+STaALJfprDB--
