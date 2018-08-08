@@ -3,151 +3,273 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53E84C4646D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 12:51:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE2DFC4646D
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 12:51:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C35FC219EF
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 12:51:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 731E0219EF
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 12:51:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=virtuozzo.com header.i=@virtuozzo.com header.b="USjH6eNd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C35FC219EF
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=virtuozzo.com
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="aTSOOqRq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 731E0219EF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727118AbeHHPLJ (ORCPT
+        id S1727233AbeHHPLY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 11:11:09 -0400
-Received: from mail-eopbgr30105.outbound.protection.outlook.com ([40.107.3.105]:15180
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726971AbeHHPLJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 11:11:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=virtuozzo.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SaCo9MC6lne0n8PfH0evLVK7bfF4iBw9H1R/2C/c4oE=;
- b=USjH6eNdnjSosgt6XSSM/Prse/yZhVkb1eGdfcoDDP8XshVlbB8vIZ3M9HkHf2U3vTirQxImlK5XQKI+wQ3eLNaPYArR0na2tbe0tDhazoAGLKWA478vxk5RC23ACqmjX4VT0eDlk2+15h/F0h1H1MHVfQ4iDcGPaG+iqKFk/o8=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=ktkhai@virtuozzo.com; 
-Received: from [172.16.25.169] (185.231.240.5) by
- DB6PR0801MB2023.eurprd08.prod.outlook.com (2603:10a6:4:76::16) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1017.15; Wed, 8 Aug 2018 12:51:15 +0000
-Subject: Re: [PATCH RFC 02/10] mm: Make shrink_slab() lockless
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     mhocko@suse.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        vdavydov.dev@gmail.com
-References: <153365347929.19074.12509495712735843805.stgit@localhost.localdomain>
- <153365626605.19074.16202958374930777592.stgit@localhost.localdomain>
- <591d2063-0511-103d-bef6-dd35f55afe32@virtuozzo.com>
- <e6489e38-6f73-2f5d-61b6-ffd1f6462aab@i-love.sakura.ne.jp>
-From:   Kirill Tkhai <ktkhai@virtuozzo.com>
-Message-ID: <411e77ce-90a6-8af6-dd57-bd3b6804beff@virtuozzo.com>
-Date:   Wed, 8 Aug 2018 15:51:11 +0300
+        Wed, 8 Aug 2018 11:11:24 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:58950 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726971AbeHHPLY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 11:11:24 -0400
+Received: from [192.168.0.67] (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 98AFC57;
+        Wed,  8 Aug 2018 14:51:47 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1533732708;
+        bh=y//qQYoIbU08EZuBytCqAM616fsUErEcG7lbzoui5uM=;
+        h=Reply-To:Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=aTSOOqRqQ9XhUVCOGBjJJkZUlWNUFeCayLymJvJi5hB2yL5ilfXR0idJ+cUgtkZSx
+         41ugbqFSSRumFCrGexcFemkPCIygWzNvsp8cxvC0DhU85VeZXEIJuofT6UiDb89nnx
+         YHQPKw7iZZDpZK1jUZiWonLQEegd0KIv/LSb0tbo=
+Reply-To: kieran.bingham@ideasonboard.com
+Subject: Re: [PATCH] media: dt: adv7604: Fix slave map documentation
+To:     =?UTF-8?B?TWljaGFsIFZva8OhxI0=?= <michal.vokac@ysoft.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     mchehab@kernel.org, linux-media@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180807155452.797-1-kieran.bingham@ideasonboard.com>
+ <505904fb-7bfc-c455-740e-b72a14731eb9@ysoft.com>
+ <b5b25641-f898-577b-7762-d72dd64272cf@ideasonboard.com>
+ <5273911.bCJl0SVgzf@avalon> <bc69dca9-89c7-2df7-3dea-d6ee6651677e@ysoft.com>
+From:   Kieran Bingham <kieran.bingham@ideasonboard.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=kieran.bingham@ideasonboard.com; keydata=
+ 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
+ sbsRB8KNNvVXBOVNwko86rQqF9drZuw=
+Organization: Ideas on Board
+Message-ID: <4e8e3546-21f0-33c2-42b2-db0bbe9ed11d@ideasonboard.com>
+Date:   Wed, 8 Aug 2018 13:51:44 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <e6489e38-6f73-2f5d-61b6-ffd1f6462aab@i-love.sakura.ne.jp>
+In-Reply-To: <bc69dca9-89c7-2df7-3dea-d6ee6651677e@ysoft.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [185.231.240.5]
-X-ClientProxiedBy: VI1PR0501CA0030.eurprd05.prod.outlook.com
- (2603:10a6:800:60::16) To DB6PR0801MB2023.eurprd08.prod.outlook.com
- (2603:10a6:4:76::16)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: b8e17781-2d02-4382-8201-08d5fd2da10e
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:DB6PR0801MB2023;
-X-Microsoft-Exchange-Diagnostics: 1;DB6PR0801MB2023;3:dBgU9XDzmbPc1u137ItZdqxFj2Eq3xiwR0WQVmaNjyQxaLNMJUCV5RgTrEkjRZCrLxmmEuavV68vh4ilUHoGJRQKBBXLFbyQzE42wf/ZIeVCSIYLkN7tZav/KNxEBaBwOnHsVT1tng/O6+0Yb2AGaDVBLVYxNMwVE6UNrre7rXVLmJzpAiQaW9rEHvBA4476Ts5Chb3ao8C6ndxxfiHFr8N+pinGGIYXzFWigLAD3bnpW5OHODTIU9Q3EBBhLt0x;25:bQen5/5J95aaguuu0Y3/Ik6YL6QC+5V8f0PHbxHO+WSG+/QK8j9s8v3/2+LyvfiM5Fu4rWYjIggQZDbRUPBuqEaPDAS8h/IUBwNMx8kZ/pqXE3JFIfbo7mGuBJf3MHKCqq2bwZKWyeXbKqQ9uTtFVJuYW8fxKv2/yscs2Hf40d4Y0CeIZKso3lKWcXx1EEeTcC1BLHuXFHR+pZCQF5Oi9zphypsofaOhPTqCwWi8d8h4AT9FLG0sPA6kuDtoBiZ6BQ+bERXBzpzosBk6HkNMcC+UQd/U+yNqtXe/A6RKZKaiS/lHii6Df0KS2t3extxay4znOFsto9pvDHjwNv4r5w==;31:pM7pzM7Mi/huc4TSYTkgutxXJ1EDHlKzjM1TO3gXqT+Plx5crju+X/dGCDug5fYY3ljKrRUHb2zmI4D8OWC0g32ILmQbBWH2sAtGVMTkgAtzlcgXwMNDXpvolxpCvFD88b5SGINVcXpVx33x9bSZnWybs6+AvNA05iNnFBkhm5MB/57UgM/kRk/1Ew6xjW1SiYDNbV29Vmz/kpXES64YmTQ3HilT8NUEFUg6BBAkKqs=
-X-MS-TrafficTypeDiagnostic: DB6PR0801MB2023:
-X-Microsoft-Exchange-Diagnostics: 1;DB6PR0801MB2023;20:XDqPwYaW8aeZONdDl99wWXTEqA1UDXr4s/We1yby8gjKboCmN4GA/ydSDPC+g1AqhkUYAugaV7iLeGjWbLTJqRPHPc4ZPFbDeT7d7ncBiY/cfy54nL3GjDorBFoAU3mszSiqdznf5iJ3aSfI3A8faNICzH/dT2GR8YylpLO+Uqf/kqlbFwu0D3kTaFT40zlqoxOkEj7XukU7H9BmpB2B+jj/OvotWu6q3xXG0Ruah6EJ34VZddBCRpvZICErsh5By/jhpeS3YQYxK778Y3Hd0jxKym91ltIKgrSIoh8dZDNuIim2p5C0Q7+H6tA3lgdCfvNzt8hMdzkfATY16SoFECsNOrK06e8olJMB8lIKEmG4ba+4TtkM0TWaQxSFUj+TPMXhCKzgwBTIhYigxXH40fhFa2WuyL2dWqyLPJ7DZ7+Y5q72dtLPFp+5pyILMnYYMrIbT96Q2F8nsSRWVSgOQ0s0rekiJjdTWXoDqzKPtblsYh9vaBRdIHIYmfPDrh53;4:O0L3xlZgPA8/i2V3h1QaWFdcA5rEvy3TEDRcWhGEWkgyFWWna0AWznGVdjxKfvUJm0RsDsQ/YcuyFqfsYtGiuVNN6PkACuqEz9ULBxWd21MFDxBkOwLOwRMna39ScVcS0ZgY9IvLD8QBBbR+8E8vG7Ancp2MBF610R3gP6He3xeXTBM2VbdMNVj/er4RwQdHpqk0iCf4P1GZZlFWaPf/YOwg2nnBILcx57OdcPjzczjA0860dQnC+1Keq885WfVF8xinIAmHIgCz6Ege6gmMln/1ly24pMMffVGSFRBi2iDQi3/22/c/XKZnzUrmeT6G
-X-Microsoft-Antispam-PRVS: <DB6PR0801MB20238D644E98C546EBA30B0BCD260@DB6PR0801MB2023.eurprd08.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(20558992708506);
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3002001)(10201501046)(3231311)(944501410)(52105095)(93006095)(93001095)(149027)(150027)(6041310)(20161123560045)(20161123558120)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:DB6PR0801MB2023;BCL:0;PCL:0;RULEID:;SRVR:DB6PR0801MB2023;
-X-Forefront-PRVS: 07584EDBCD
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6049001)(376002)(366004)(346002)(396003)(39840400004)(136003)(189003)(199004)(81166006)(81156014)(478600001)(6246003)(39060400002)(316002)(16576012)(58126008)(47776003)(64126003)(68736007)(66066001)(25786009)(65956001)(486006)(97736004)(65806001)(4326008)(86362001)(36756003)(446003)(11346002)(31696002)(53936002)(956004)(2616005)(476003)(93886005)(50466002)(217873002)(3846002)(76176011)(52116002)(386003)(229853002)(53546011)(5660300001)(16526019)(186003)(305945005)(6486002)(77096007)(26005)(7736002)(8676002)(2906002)(2486003)(23676004)(52146003)(106356001)(6666003)(105586002)(6116002)(230700001)(6916009)(65826007)(8936002)(31686004);DIR:OUT;SFP:1102;SCL:1;SRVR:DB6PR0801MB2023;H:[172.16.25.169];FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-Received-SPF: None (protection.outlook.com: virtuozzo.com does not designate
- permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtEQjZQUjA4MDFNQjIwMjM7MjM6UC8wZjFMSmlBOVNCem1lbU03ZzRMbE5Z?=
- =?utf-8?B?YVhPY2hlNk5FVEp2WEJhS1g3V25pT29CWW5uZEJYQzlWem15VHNqK3VDVU83?=
- =?utf-8?B?RHdxYitaVDhKRUJtT3YwcEtwbGdlNHJCdFFlaWZlc0tuOXA4VkY2ejRlVlVB?=
- =?utf-8?B?dzFpeTFHakdoZlp1OUV0N2UxRXFQWmxGTTB1bXJKaktWS3pTaXZodGYyMFk2?=
- =?utf-8?B?dk9YL010L0VvaE4yTy9nT0hKUHA1R0RLRU9wTzhYYVRsSlNEOVlxcUFpMDNo?=
- =?utf-8?B?WmhPNmcvSzFVNlV0RzAzWHpDWXd5eFBHSGVmNlVCYWNxN2tyQ1ZwNHUyN2o1?=
- =?utf-8?B?NnJpR1BQeURQMGNRVG81MnczSmg1Qy9jZHNNRUJYS1h3MFl4UjBRMEFrQkpL?=
- =?utf-8?B?ME83YldWNHdHaVVieEo0THlTQjc3YmxpWDFCbEwzVWFtQ280Zk50djJHUENh?=
- =?utf-8?B?WDVId1NQRVJSTjhhL1ZWZnRLWHAzcHpSbDZwaUJxQlY4dkdFS3ZWVXQ0UWhl?=
- =?utf-8?B?eXdva01xN2ZVbWZ4TklNL0R6REZNNUl0R2h2cGhMbHd3NU9KZGVYK2k1dVNO?=
- =?utf-8?B?SGtzYmE2VUhhbFRYZW1vRjE0NnIxQU9vWWhDTm1SMENzVkJ3QjNTdWdFN3Vx?=
- =?utf-8?B?U2lVdjdndVFnQjBwNnZ3Vk9FT1BaNUZHYi8xNFhWRjJ6NnpDQnBvSDhGdTVv?=
- =?utf-8?B?Q3R2NTRZSHJjVUFtR2JBOVovdDBWMFYvbnhBdFNvdURlVGdmVms4QXZyOVRP?=
- =?utf-8?B?UnFod1Q3aDQ1ajZRVEx6WE5QemVGVkZGRmFXV1V5K3p2dFNyN0FKUGx4Rlhy?=
- =?utf-8?B?TndrMEhyNk9sYy8vdFJvMDNSeVhRYXUyM1VPNFQyK0JKTmJOWC9wam5oVERs?=
- =?utf-8?B?L3k0WWpiejVzWFRtcXkrRFh6VG5aWUtocEFMM2J3OWZRNGVybjNOWFhNTjVU?=
- =?utf-8?B?WXRib0h4Z2xaeTdaRDFMQWpwdU9SckUxUkZCaGxDK1hQOWFROTR4OXZRRkNO?=
- =?utf-8?B?TC8xT0NpQVAwNzFrVXd3ekxyUHNQSDdyZEpPNElVSk1qTGJxenp1MURXdVFN?=
- =?utf-8?B?MUx0eFVjeFJFNkVobHRLVVNHMzBFRDRqNmlmaEZpSHhNNnlBV2ZoMmg3MmZy?=
- =?utf-8?B?QitWT0EramJGRUVJK3pSc1pJaDljOHF2UXJ1cWdraTk5a1FWSjBKRFY3WmZ0?=
- =?utf-8?B?dzdqaDFFSXVDcFpLQTZYK1h5T0xTNmJkWFhvdElpeWhZTGd1SzlZQXh2TWlr?=
- =?utf-8?B?RWdySk93UVNBNFh1aFFyZ09ZT041VUtQSWsxcEF5QmRNM3BDOVFiQ2VZOXV2?=
- =?utf-8?B?Zk9weTBkU1ZKUFFTNWpMUjdtbW44Tm0rRGRwdXdUMWk4a3dWRWx0a3BqNm8w?=
- =?utf-8?B?SFZoUEVlbnVGb2kwdWk2dHo2Snh0UDQzblhrc1lGYkJBVlRTTFlLcTUxS3ZG?=
- =?utf-8?B?aktvTk90S0IxUVF4N0RzeFJ1aGx0SHRKR2w2emhBdk1zSVcrekVwTUhTYVRJ?=
- =?utf-8?B?b0NNS21lSXZOb0kyK0FWM0ZSMjdYKzl2VDdyS3k4aFM4UEZla01YaEVPV1Zt?=
- =?utf-8?B?WmRnUklnOXBJMGsyY29DRGJQOFZRYnVTSnQwMlJQMW5xQWtjaXRBdWVLcHUw?=
- =?utf-8?B?OWd1QzFySVQrU3IxUVJmT1gyUnNyYTEzS2E1SnVDMHFRdFJKM3Nsei9sVzVM?=
- =?utf-8?B?WGhzeEhvcW5tUnljTFJnbE15NE1QYmdKd08zSU1LK3NzTWFQM1hjSEU5L2pU?=
- =?utf-8?B?a2JlckZadmtaaG1Pd0cvMkJ0OTRoZlpLZjNGWHRBVmlPZFcyN0ZoRFNGWXZI?=
- =?utf-8?B?dmZqRkRwU1Nkc212MHR1NitIYy9ndU9uN2lMQ3VmRVF5TE9mSnZMVWFZeDhD?=
- =?utf-8?B?eENjRlpESmVFUHhDNGdxclNROVZGdjVNeGhtUlArNFpGZHVLbkJhVy9VS1pk?=
- =?utf-8?B?QnY0cDhIRGFZdXh0UHYvZlZnb25heE9oVFl2c3BYYnU1MDhFVG1GTVBjNlhJ?=
- =?utf-8?Q?ko/iS3vx?=
-X-Microsoft-Antispam-Message-Info: osGPk14SGfslx4KDsUh5/ZvkEQcph2cmsT3D+UkLZqHF7+a6ZX8N29RjUuE8OLznTPn/H4aZR9K9yT6Ai5PsM++PAk0Y22vihfl180swrW1Js7JLO0+2ciaAAcPMoz1p0Q8Xk2ysx4D0kE13VKoAEtDQH2OsGGp5RekJ0fkzW8nWJ4kA0ydWLGQzY76vofhtCyn+YBwwcoZ0hg/JGMY90fBXLX/VmKO4+0ZGod8p6UO3MWIPT1Di3lp9zAYtSaPr7oosCzEl59jy9kmeiRU+Q57KLHSikkvGx9dDf6IZhQ8tYt3HrkCdszqxuaa7PWwXZ4WMZ0cXOPWkOOaya9dLBkuy4QKtefMnGqFVsiz1N0c=
-X-Microsoft-Exchange-Diagnostics: 1;DB6PR0801MB2023;6:NVdSG57yZUkrL2PhfbVLhnteDuPZslcMLO7D35JEwRbZTSXTNvnlb/6VSGsd0LXRANr4hCvSr/2DMwma97beiV1zFopMJQ7Pb67EXXU/HRjpbxJKKt872kgVvJlr8UONQXEHHlPonjxeQTDtsBqixSLrY4NuefFcysxnbdFhq+Gfi5F+iYPkkzZxe+UoYgKPLLfqS29Gg+HMqaEWvHm4DRJmTuBEduMRQYvXKoypuFyR5QSGHnFTUzAfxwJsKq0hc+ZAHNjxWyJAiDPMSE/1Q5XLUORjWSzOLEMh7pwwcQE9g4lVbEoxaUe+XBccdfZUyawCAJMmpXXg4M1LPrsuO8PZrUiQldyyz5+OHTeCNh9sXwo6vTic6aI0BFhMva5TqBsRi/diaJ5cMiJZy+kjNndMuTUDcbXiTpCcOtJZ7gqu4LzqWCrg52lPC1XRDt3uz9lEeldEWHsdAVlF0zZqBQ==;5:kgbEgBup4sesfOdOU/L233CffRKkj9tvFpv7znru+SGH/QP+wddiMMXW+6ocoMQpXiaCgNCOoRzqP64eyGu+0+ZDfpI5V2+0lc96Z7BlPZ4RqmbstdjvfLcqNt4XbaIg5jwK4VnqzTIU1BpKXFzISEhCNHnKFGM+Tr0Dc6H76x4=;7:UsXIvJt1oBCkkberdFiYvSlQY6ae18BGL1PaIYjGLiYrBd4ZPoLorJcRB/JvJj8CAtKAx0WwlfpYNWupm+MJo4KyZPBlHjjYZSyI+XuHnvP2+DudGrz4ObgY9Sr/Mbu5n7mh43atbEBmyjiMb2eXJ9IP1nynNqIQYeB+PA8BQx8Mt5i4VnqRvqikkWnwsXyKjNrKoISkfH6UDfY8kRTNFzdw7w15NzBQUXJf3P8P8jZdgBkuU8iYsxjqkAKwezAQ
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;DB6PR0801MB2023;20:J8CW13K0h03RiM+WYgJI6JzLZLLtMapC32ZvPq3f9sIY+8tb3zH5oHM3ufKmLua9uynDJjYKlimM89lyzn2XCWQTu6hOgHOtIKUpSOHo6UXMiG3XNZJUcgsipgf2Yt3m1Ip9nS4Fb3UWH82xpZARF9W5/2/AakM90yVEv7nXlyg=
-X-OriginatorOrg: virtuozzo.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Aug 2018 12:51:15.3796 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b8e17781-2d02-4382-8201-08d5fd2da10e
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0801MB2023
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08.08.2018 15:36, Tetsuo Handa wrote:
-> On 2018/08/08 20:51, Kirill Tkhai wrote:
->> @@ -192,7 +193,6 @@ static int prealloc_memcg_shrinker(struct shrinker *shrinker)
->>  	int id, ret = -ENOMEM;
->>  
->>  	down_write(&shrinker_rwsem);
->> -	/* This may call shrinker, so it must use down_read_trylock() */
->>  	id = idr_alloc(&shrinker_idr, SHRINKER_REGISTERING, 0, 0, GFP_KERNEL);
->>  	if (id < 0)
->>  		goto unlock;
+Hi Michal,
+
+On 08/08/18 13:33, Michal Vokáč wrote:
+> On 8.8.2018 12:25, Laurent Pinchart wrote:
+>> Hi Kieran,
+>>
+>> On Wednesday, 8 August 2018 13:23:32 EEST Kieran Bingham wrote:
+>>> Hi Michal,
+>>>
+>>> Thank you for your review.
+>>>
+>>> +Rob, +Mark, +Laurent asking for opinions if anyone has any on prefixes
+>>> through media tree.
+>>>
+>>> On 08/08/18 08:48, Michal Vokáč wrote:
+>>>> On 7.8.2018 17:54, Kieran Bingham wrote:
+>>>> Hi Kieran,
+>>>>
+>>>>> The reg-names property in the documentation is missing an '='. Add it.
+>>>>>
+>>>>> Fixes: 9feb786876c7 ("media: dt-bindings: media: adv7604: Extend
+>>>>> bindings to allow specifying slave map addresses")
+>>>>
+>>>> "dt-bindings: media: " is preferred for the subject.
+>>>
+>>> This patch will go through the media-tree as far as I am aware, and
+>>> Mauro prefixes all commits through the media tree with "media:" if they
+>>> are not already prefixed.
 > 
-> I don't know why perf reports down_read_trylock(&shrinker_rwsem).
+> OK, I did not know about that practice with the prefix.
 
-This happens in the case of many cgroups and mounts on node. This
-is often happen on the big machines with containers.
+It's media specific. It used to be [media], but now changed to "media:"
 
-> But above code is already bad. GFP_KERNEL allocation involves shrinkers and
-> the OOM killer would be invoked because shrinkers are defunctional due to
-> this down_write(&shrinker_rwsem). Please avoid blocking memory allocation
-> with shrinker_rwsem held.
 
-There was non-blocking allocation in first versions of the patchset,
-but it's gone away in the process of the review (CC Vladimir).
+> Anyway, why should this patch go through media-tree when it is a single
+> patch affecting device tree binding only? I would expect it to be picked
+> by Rob or Mark.
 
-There are still pages lists shrinkers in case of shrink_slab() is
-not available, while additional locks makes the code more difficult
-and not worth this difficulties.
 
-Kirill
+My change 9feb786876c7 went through the media tree, because it directly
+affected a media driver. This change affects the same thing, so I
+assumed it's a media-tree patch, but I could be wrong. I'll await to be
+told :)
+
+
+
+>>> Thus this would then become "media: dt-bindings: media: adv7604: ...."
+>>> as per my commit: 9feb786876c7 which seems a bit redundant.
+> 
+> Agree that this seems redundant. Absolutely no offense, just a curious
+> newbee question - why is the "media:" prefix added later on to *all* the
+> patches at all?
+
+Mauro's tree style choice as far as I know.
+
+
+> I understand that each subsystem has it own convenience what subject
+> prefix to use. Given that all patches are propperly formated after
+> the review process is finished I do not see a reason why the subject
+> should be changed.
+> 
+> So patches to "drivers/media/xxx" should land as "media: xxx: ..." and
+> patches to "Documentation/devicetree/bindings/xxx" should land as
+> "dt-bindings: media: xxx".
+> 
+> This allows easier git log browsing.
+>>>
+>>> Is it still desired ? If so I'll send a V2. (perhaps needed anyway, as I
+>>> seem to have erroneously shortened dt-bindings: to just dt: which wasn't
+>>> intentional.
+> 
+> I do not know. Some time ago I tripped over a patch from Rob explaining
+> how to properly format dt-binding related patches. I also read a bunch
+> of his replies to emails that were kind of "out of bounds" in this regard.
+> So I got an impression that he is starting to be upset that people still
+> make the same mistakes and do not read
+> devicetree/bindings/submitting-patches.txt
+
+Well - I didn't know that existed :) So I've learnt something new.
+
+Seems we now have three "submitting-patches" files to read:
+
+find | grep submitting-patches
+./Documentation/process/submitting-patches.rst
+./Documentation/hwmon/submitting-patches
+./Documentation/devicetree/bindings/submitting-patches.txt
+
+
+Perhaps adding some rules into checkpatch.pl is the way forward to
+enforce prefixes where necessary ?
+
+> I deeply memorized that "rules" and once a while I go through the DT list
+> and reply to some emails that does not fit. Just because I am sure
+> that all maintainers are overloaded and surely have something more useful
+> to do than commenting on trivial mistakes.
+Absolutely! I believe that is a worthwhile thing to do :) and certainly
+eases the strain on maintainers.
+
+
+> Next time I will choose more wisely what emails I reply to :)
+>>>
+>>>> I think you should also add device tree maintainers to the recipients.
+>>>
+>>> Added to this mail to ask opinions on patch prefixes above.
+>>>
+>>> Originally, I believed the list was sufficient as this is a trivial
+>>> patch, and it goes through the media tree.
+>>>
+>>> But, it turned out to be more controversial :)
+>>>
+>>> Rob, Mark, should I add you to all patches affecting DT? Or is the list
+>>> sufficient?
+>>
+>> Given the insane amount of patches received by DT maintainers, I
+>> personally
+>> try to use common sense and only disturb them when needed. Such a typo
+>> fix
+>> doesn't qualify for a full CC list in my opinion.
+> 
+> OK, sorry you spent your time discussing such a trivial thing folks.
+> I am still learning how to efficiently contribute and I still very much
+> depend on get_maintainers.pl output and other great tools others created ;)
+
+Yes, the difficulty is having so many lists, and subsystems with
+different preferences. I've been told off for blindly including all
+recipients from get_maintainers. Otherwise I'd just always use
+ "git send-email --cc-cmd ./scripts/get_maintainers.pl ..."
+
+
+> Thank you for your time,
+
+And yours :)
+
+> Michal
+
+Kieran
+
+
+> 
+>>>>> Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+>>>>> ---
+>>>>>    Documentation/devicetree/bindings/media/i2c/adv7604.txt | 2 +-
+>>>>>    1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>>
+>>>>> diff --git a/Documentation/devicetree/bindings/media/i2c/adv7604.txt
+>>>>> b/Documentation/devicetree/bindings/media/i2c/adv7604.txt
+>>>>> index dcf57e7c60eb..b3e688b77a38 100644
+>>>>> --- a/Documentation/devicetree/bindings/media/i2c/adv7604.txt
+>>>>> +++ b/Documentation/devicetree/bindings/media/i2c/adv7604.txt
+>>>>> @@ -66,7 +66,7 @@ Example:
+>>>>>             * other maps will retain their default addresses.
+>>>>>             */
+>>>>>            reg = <0x4c>, <0x66>;
+>>>>> -        reg-names "main", "edid";
+>>>>> +        reg-names = "main", "edid";
+>>>>>              reset-gpios = <&ioexp 0 GPIO_ACTIVE_LOW>;
+>>>>>            hpd-gpios = <&ioexp 2 GPIO_ACTIVE_HIGH>;
+>>
+> 
+
+-- 
+Regards
+--
+Kieran
