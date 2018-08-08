@@ -2,127 +2,153 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D0AFC4646D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 18:22:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B61A7C4646D
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 18:25:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF12C21776
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 18:22:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DU5crpuU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF12C21776
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 7439E20834
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 18:25:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7439E20834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729740AbeHHUnL (ORCPT
+        id S1729756AbeHHUqp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 16:43:11 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:46105 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727609AbeHHUnL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 16:43:11 -0400
-Received: by mail-pg1-f195.google.com with SMTP id f14-v6so1451639pgv.13;
-        Wed, 08 Aug 2018 11:22:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=xwR6MJmwNMkoixqsD/kVnbrU1GniYmPyakTAnDvfAVs=;
-        b=DU5crpuUQhWrH2veC0AyzODYyCB55Gg05292koPJ4Rdj5bjx6T6vjhAGDeLmJV1Ecu
-         tYqWm7aoLu7blE1IO5rxfrO3xkr/cKT8WowQC+bcWtrkNjZCyB0sklVP66SB8KwpIPR9
-         oF3GsLx7CJuiKoJplOaic9OopnjcrAqb1fnRYYp/n8OJ9gm99xWnqYGRp6L3022QOxOa
-         epbtVgsQj7uak8UwOp5xh3Pj/SEK5PCHLLZSqW/Dv7AIhpmXMKlNILTWitWYEHGHWCIw
-         qfbhYeea7BER9bb5eGkcIj+7aUY9EQckWUlrFsfrJWY8Vukb+ZzJx0ahEcwh+kswyiBr
-         i6RA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=xwR6MJmwNMkoixqsD/kVnbrU1GniYmPyakTAnDvfAVs=;
-        b=D6NX4PRGH8qrWCBLsvazASVjrRm1nsGFp4fDmD0/dBUT7loXInRknfRFkAFHbQG7Fw
-         38B78q4GsABSukYO38HS08lDYGargIGL527YGPOslncWJy9X8oej8HfSWTg4Q792p3ZC
-         bDl9+KvgqHWlve30ADbGxqTieLYDb7oAZP2d5s6ncC5mMZSNx5zTbcJL64+6UO/ffS/Q
-         QRrsh2q9U4NZoK0lL9uGV9ZT+R8Z6SXRWD6yR097PYtZEG/ALGKAN2XgHEG+w/sRkN4P
-         9n+rs4D76oa2tEnUY3PwJVUfHrKk4et/oN9y1y7k3AiVKnqCZBC3eU8Uot2SqB8Br4M4
-         /Fug==
-X-Gm-Message-State: AOUpUlGdImgo5cOBWX2iy3UpIpAwdpe7j21/VZ+P8dl5Dpd8gglhS/ix
-        p+Hke/60kdpEvblMzc7Ogx8=
-X-Google-Smtp-Source: AA+uWPy4wrHrY7Pt6mpmYFim5BKY4GrsUkFrk464kziWmM/vSvZJTtK8d4aRLBOY6xifSkj87S5/Tw==
-X-Received: by 2002:a62:49cf:: with SMTP id r76-v6mr3993314pfi.235.1533752537555;
-        Wed, 08 Aug 2018 11:22:17 -0700 (PDT)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id i192-v6sm6229795pfe.188.2018.08.08.11.22.16
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 08 Aug 2018 11:22:16 -0700 (PDT)
-Date:   Wed, 8 Aug 2018 11:22:14 -0700
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Marcus Folkesson <marcus.folkesson@gmail.com>
-Cc:     "David S . Miller" <davem@davemloft.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
-Subject: Re: [RESEND PATCH v2] MAINTAINERS: add PhoenixRC Flight Controller
- Adapter
-Message-ID: <20180808182214.GB28444@dtor-ws>
-References: <20180622170605.8411-1-marcus.folkesson@gmail.com>
+        Wed, 8 Aug 2018 16:46:45 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41240 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727295AbeHHUqp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 16:46:45 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 41DB440241C3;
+        Wed,  8 Aug 2018 18:25:50 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id C5B8E20290AB;
+        Wed,  8 Aug 2018 18:25:49 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id w78IPnqj025449;
+        Wed, 8 Aug 2018 14:25:49 -0400
+Received: from localhost (mpatocka@localhost)
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id w78IPms5025445;
+        Wed, 8 Aug 2018 14:25:48 -0400
+X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
+Date:   Wed, 8 Aug 2018 14:25:48 -0400 (EDT)
+From:   Mikulas Patocka <mpatocka@redhat.com>
+X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
+To:     Arnd Bergmann <arnd@arndb.de>
+cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Richard.Earnshaw@arm.com,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        Joao Pinto <Joao.Pinto@synopsys.com>,
+        GNU C Library <libc-alpha@sourceware.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        neko@bakuhatsu.net, linux-pci <linux-pci@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Subject: Re: framebuffer corruption due to overlapping stp instructions on
+ arm64
+In-Reply-To: <CAK8P3a2=rVvvW8bBcrPm3nXNNP56Ygxchu4ThD2ZgZ_cVcd8wQ@mail.gmail.com>
+Message-ID: <alpine.LRH.2.02.1808081347180.18198@file01.intranet.prod.int.rdu2.redhat.com>
+References: <alpine.LRH.2.02.1808021242320.31834@file01.intranet.prod.int.rdu2.redhat.com> <CAHCPf3tFGqkYEcWNN4LaWThw_rVqT316pzLv6T7RfxwO-eZ0EA@mail.gmail.com> <alpine.LRH.2.02.1808030212340.17672@file01.intranet.prod.int.rdu2.redhat.com>
+ <CAKv+Gu8DeuksZhk1g3q_msSKV_hSY_2e1uzVten9-oGO3j9Sqg@mail.gmail.com> <20180803094129.GB17798@arm.com> <alpine.LRH.2.02.1808031235410.31584@file01.intranet.prod.int.rdu2.redhat.com> <20180808113927.GA24736@iMac.local>
+ <alpine.LRH.2.02.1808081011110.9997@file01.intranet.prod.int.rdu2.redhat.com> <b1a0dac5-3cf2-1a7f-ac7f-649126eb7873@arm.com> <20180808151444.GF24736@iMac.local> <CAK8P3a2=rVvvW8bBcrPm3nXNNP56Ygxchu4ThD2ZgZ_cVcd8wQ@mail.gmail.com>
+User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180622170605.8411-1-marcus.folkesson@gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 08 Aug 2018 18:25:50 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 08 Aug 2018 18:25:50 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mpatocka@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 22, 2018 at 07:06:05PM +0200, Marcus Folkesson wrote:
-> Add MAINTAINERS entry for PhoenixRC Flight Controller Adapter
-> 
-> Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
 
-Applied, thank you.
 
-> ---
-> 
-> Notes:
->     v2:
->     	Add proper mailing list
-> 
->  MAINTAINERS | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 9ce5062dc028..d8b5d9f810e4 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -11103,6 +11103,13 @@ S:	Maintained
->  F:	include/linux/personality.h
->  F:	include/uapi/linux/personality.h
->  
-> +PHOENIX RC FLIGHT CONTROLLER ADAPTER
-> +M:	Marcus Folkesson <marcus.folkesson@gmail.com>
-> +L:	linux-input@vger.kernel.org
-> +S:	Maintained
-> +F:	Documentation/input/devices/pxrc.rst
-> +F:	drivers/input/joystick/pxrc.c
-> +
->  PHONET PROTOCOL
->  M:	Remi Denis-Courmont <courmisch@gmail.com>
->  S:	Supported
-> -- 
-> 2.16.2
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-input" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+On Wed, 8 Aug 2018, Arnd Bergmann wrote:
 
--- 
-Dmitry
+> On Wed, Aug 8, 2018 at 5:15 PM Catalin Marinas <catalin.marinas@arm.com> wrote:
+> >
+> > On Wed, Aug 08, 2018 at 04:01:12PM +0100, Richard Earnshaw wrote:
+> > > On 08/08/18 15:12, Mikulas Patocka wrote:
+> > > > On Wed, 8 Aug 2018, Catalin Marinas wrote:
+> > > >> On Fri, Aug 03, 2018 at 01:09:02PM -0400, Mikulas Patocka wrote:
+> > - failing to write a few bytes
+> > - writing a few bytes that were written 16 bytes before
+> > - writing a few bytes that were written 16 bytes after
+> >
+> > > The overlapping writes in memcpy never write different values to the
+> > > same location, so I still feel this must be some sort of HW issue, not a
+> > > SW one.
+> >
+> > So do I (my interpretation is that it combines or rather skips some of
+> > the writes to the same 16-byte address as it ignores the data strobes).
+> 
+> Maybe it just always writes to the wrong location, 16 bytes apart for one of
+> the stp instructions. Since we are usually dealing with a pair of overlapping
+> 'stp', both unaligned, that could explain both the missing bytes (we write
+> data to the wrong place, but overwrite it with the correct data right away)
+> and the extra copy (we write it to the wrong place, but then write the correct
+> data to the correct place as well).
+> 
+> This sounds a bit like what the original ARM CPUs did on unaligned
+> memory access, where a single aligned 4-byte location was accessed,
+> but the bytes swapped around.
+> 
+> There may be a few more things worth trying out or analysing from
+> the recorded past failures to understand more about how it goes
+> wrong:
+> 
+> - For which data lengths does it fail? Having two overlapping
+>   unaligned stp is something that only happens for 16..96 byte
+>   memcpy.
+
+If you want to research the corruptions in detail, I uploaded a file 
+containing 7k corruptions here: 
+http://people.redhat.com/~mpatocka/testcases/arm-pcie-corruption/
+
+> - What if we use a pair of str instructions instead of an stp in
+>   a modified memcpy? Does it now write to still write to the
+>   wrong place 16 bytes away, just 8 bytes away, or correctly?
+
+I replaced all stp instructions with str and it didn't have effect on 
+corruptions. Either a few bytes is omitted, or a value that belongs 16 
+bytes before or after is written.
+
+> - Does it change in any way if we do the overlapping writes
+>   in the reverse order? E.g. for the 16..64 byte case:
+> 
+> diff --git a/sysdeps/aarch64/memcpy.S b/sysdeps/aarch64/memcpy.S
+> index 7e1163e6a0..09d0160bdf 100644
+> --- a/sysdeps/aarch64/memcpy.S
+> +++ b/sysdeps/aarch64/memcpy.S
+> @@ -102,11 +102,11 @@ ENTRY (MEMCPY)
+>         tbz     tmp1, 5, 1f
+>         ldp     B_l, B_h, [src, 16]
+>         ldp     C_l, C_h, [srcend, -32]
+> -       stp     B_l, B_h, [dstin, 16]
+>         stp     C_l, C_h, [dstend, -32]
+> +       stp     B_l, B_h, [dstin, 16]
+>  1:
+> -       stp     A_l, A_h, [dstin]
+>         stp     D_l, D_h, [dstend, -16]
+> +       stp     A_l, A_h, [dstin]
+>         ret
+> 
+>         .p2align 4
+> 
+>         Arnd
+
+After reordering them, I observe only omitted writes, there are no longer 
+misdirected writes:
+
+http://people.redhat.com/~mpatocka/testcases/arm-pcie-corruption/reorder-test/
+
+Mikulas
