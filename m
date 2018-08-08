@@ -2,137 +2,105 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5094C46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:10:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB6B1C4646D
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:10:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6698B21767
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:10:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="jvObRW+K";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="UDBjyx0V"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6698B21767
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id B17DD21767
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:10:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B17DD21767
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727434AbeHHQaH (ORCPT
+        id S1727445AbeHHQal (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 12:30:07 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:58290 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727050AbeHHQaG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 12:30:06 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id F04E460B23; Wed,  8 Aug 2018 14:10:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533737416;
-        bh=sd4ewQVvkPb2jmbCJMQ+WXBof3Rzo/P2On74JO0IUTE=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=jvObRW+KGJLlBCkhIGfD6YW9yBL5+DsbtFYquKnFCr0zBYrQAwGemPdAPiB9Ft7FT
-         OEmHQBXLBxhIwe//bJ/PBCtA+wQQEqP64NDo4PgLolJgW/YkgDOusKPxErk/65AAX2
-         /1zEFNupBJkXNm7jYTv5LYVVFbvzD/D2Inw+fr7M=
-Received: from [10.79.40.96] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        Wed, 8 Aug 2018 12:30:41 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47852 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727050AbeHHQal (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 12:30:41 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: sibis@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id BC394601D3;
-        Wed,  8 Aug 2018 14:10:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533737415;
-        bh=sd4ewQVvkPb2jmbCJMQ+WXBof3Rzo/P2On74JO0IUTE=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=UDBjyx0VvHklFqjlnrMvN2MDtmLHtUHQR+x+4hFpjJr7SGQ/T25YO1KuUPMTAPlx1
-         Km1RRVhQrLMIXV5TtXuLSwnZONNBtzHDdu9HZjdkw+9Gz1yssnEslj4ttVkJyV0BGX
-         do3yNITqHzI8/k3r40FJX74naoQ8xFn78Ioa2cCE=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BC394601D3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sibis@codeaurora.org
-Subject: Re: [PATCH v3 1/6] remoteproc: Introduce custom dump function for
- each remoteproc segment
-To:     Vinod <vkoul@kernel.org>
-Cc:     bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ohad@wizery.com, kyan@codeaurora.org,
-        sricharan@codeaurora.org, akdwived@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org
-References: <20180727152003.11663-1-sibis@codeaurora.org>
- <20180727152003.11663-2-sibis@codeaurora.org>
- <20180807061539.GG2395@vkoul-mobl>
-From:   Sibi Sankar <sibis@codeaurora.org>
-Message-ID: <362fcf75-6fb6-5423-7b9f-915324df6317@codeaurora.org>
-Date:   Wed, 8 Aug 2018 19:40:02 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        by mx1.redhat.com (Postfix) with ESMTPS id 853BA402315B;
+        Wed,  8 Aug 2018 14:10:49 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 344E21C735;
+        Wed,  8 Aug 2018 14:10:49 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id w78EAnls010030;
+        Wed, 8 Aug 2018 10:10:49 -0400
+Received: from localhost (mpatocka@localhost)
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id w78EAmFn010025;
+        Wed, 8 Aug 2018 10:10:48 -0400
+X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
+Date:   Wed, 8 Aug 2018 10:10:48 -0400 (EDT)
+From:   Mikulas Patocka <mpatocka@redhat.com>
+X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
+To:     Marcin Wojtas <mw@semihalf.com>
+cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        Joao Pinto <Joao.Pinto@synopsys.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        linux-pci@vger.kernel.org, Will Deacon <will.deacon@arm.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Matt Sealey <neko@bakuhatsu.net>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: framebuffer corruption due to overlapping stp instructions on
+ arm64
+In-Reply-To: <CAPv3WKcKoEe=Qysp6Oac2C=G9bUhUQf1twSRCY+_qJ6XEC-iag@mail.gmail.com>
+Message-ID: <alpine.LRH.2.02.1808081010130.9997@file01.intranet.prod.int.rdu2.redhat.com>
+References: <alpine.LRH.2.02.1808021242320.31834@file01.intranet.prod.int.rdu2.redhat.com> <CAHCPf3s-+Qf=WBZz1KpisDMG3520jCUh8PLAO3PHa4jdt8kCTw@mail.gmail.com> <CAKv+Gu9_h-WFi1j4+DWUN_dMj75SKKHxWoDH8WQ9P7S7MNpZQg@mail.gmail.com>
+ <alpine.LRH.2.02.1808060553130.30832@file01.intranet.prod.int.rdu2.redhat.com> <99fff4fe-afa9-f12f-a518-472a9dd1c530@arm.com> <CAKv+Gu_C2g=C=gMpk4a5jpDORnxZY6t1v=HDoy59m5vwNBxBBg@mail.gmail.com> <alpine.LRH.2.02.1808061306490.12989@file01.intranet.prod.int.rdu2.redhat.com>
+ <CAKv+Gu_8Rq6X24ZOYvG7+kQQGSGYAZuu_co4k1nJS8K7rkrWMA@mail.gmail.com> <alpine.LRH.2.02.1808061552090.11930@file01.intranet.prod.int.rdu2.redhat.com> <CAKv+Gu_iCgAeGmrajZ_euMcFLntWG1a51HF_HQ1TO=fV_v__AQ@mail.gmail.com> <CAPv3WKdCMpy6KarducQEtSYP35zdELhparkmPPMKGMUhsdk1Qw@mail.gmail.com>
+ <alpine.LRH.2.02.1808071331260.16565@file01.intranet.prod.int.rdu2.redhat.com> <CAPv3WKcKoEe=Qysp6Oac2C=G9bUhUQf1twSRCY+_qJ6XEC-iag@mail.gmail.com>
+User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
 MIME-Version: 1.0
-In-Reply-To: <20180807061539.GG2395@vkoul-mobl>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Wed, 08 Aug 2018 14:10:49 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Wed, 08 Aug 2018 14:10:49 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mpatocka@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vinod,
-Thanks for the review,
 
-On 08/07/2018 11:45 AM, Vinod wrote:
-> Hi Sibi,
-> 
-> On 27-07-18, 20:49, Sibi Sankar wrote:
->> Introduce custom dump function per remoteproc segment. It is responsible
->> for filling the device memory segment associated with coredump
->>
->> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
->> ---
->>   drivers/remoteproc/remoteproc_core.c | 15 ++++++++++-----
->>   include/linux/remoteproc.h           |  3 +++
->>   2 files changed, 13 insertions(+), 5 deletions(-)
->>
->> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
->> index 283b258f5e0f..ec56cd822b26 100644
->> --- a/drivers/remoteproc/remoteproc_core.c
->> +++ b/drivers/remoteproc/remoteproc_core.c
->> @@ -1183,13 +1183,18 @@ static void rproc_coredump(struct rproc *rproc)
->>   		phdr->p_align = 0;
->>   
->>   		ptr = rproc_da_to_va(rproc, segment->da, segment->size);
->> -		if (!ptr) {
->> -			dev_err(&rproc->dev,
->> +
->> +		if (segment->dump) {
->> +			segment->dump(rproc, ptr, segment->size, data + offset);
-> 
-> Am not sure I follow, you are calling this w/o checking if ptr is valid,
-> so you maybe passing null to segment->dump() ?
-> 
 
-the rationale behind passing ptr directly to dump_fn is that it will
-help in tracking the segments being core dumped (q6v5_pil in particular
-requires to unlock mba before dumping and cleanup after all the segments
-are dumped which is currently decided based on a mask that is
-maintained). It also allows the remoteproc driver to fill the memory as
-needed (instead of the default 0xff). This is applicable to drivers that
-implement dump_fn, for others the default behavior is maintained.
+On Wed, 8 Aug 2018, Marcin Wojtas wrote:
 
->> +		} else {
->> +			if (!ptr) {
->> +				dev_err(&rproc->dev,
->>   				"invalid coredump segment (%pad, %zu)\n",
->>   				&segment->da, segment->size);
->> -			memset(data + offset, 0xff, segment->size);
->> -		} else {
->> -			memcpy(data + offset, ptr, segment->size);
->> +				memset(data + offset, 0xff, segment->size);
->> +			} else {
->> +				memcpy(data + offset, ptr, segment->size);
->> +			}
+> Hi Mikulas,
 > 
+> wt., 7 sie 2018 o 19:39 Mikulas Patocka <mpatocka@redhat.com> napisa?(a):
+> >
+> >
+> >
+> > On Tue, 7 Aug 2018, Marcin Wojtas wrote:
+> >
+> > > Ard, Mikulas,
+> > >
+> > > After some self-caused setup issues I was able to run the test on my
+> > > MacchiatoBin with the kernel v4.18-rc8. It's been running for 1h+ now,
+> > > loading the CPU to 100% and no single error event...
+> > >
+> > > I built the binary file with:
+> > > gcc-linaro-7.2.1-2017.11-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-gcc -O2
+> > >
+> > > Maybe it's the older firmware issue?
+> >
+> > I have downloaded and built the firmware recently (it has timestamp Jul 30
+> > 2018).
+> >
+> > Do you still have your firmware file "flash-image.bin" that you used, so
+> > that I could try it?
+> 
+> Attached. Please let know if you see any difference.
 
--- 
-Qualcomm Innovation Center, Inc.
-Qualcomm Innovation Center, Inc, is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+I booted this image, but the same corruption happens.
+
+Mikulas
