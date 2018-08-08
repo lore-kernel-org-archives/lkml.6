@@ -2,133 +2,135 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2DC9C46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 08:16:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9510C4646D
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 08:20:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9AB6A216FA
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 08:16:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="AC7DJvXd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9AB6A216FA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id 8EFA5216FB
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 08:20:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EFA5216FB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727273AbeHHKfK (ORCPT
+        id S1727141AbeHHKjZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 06:35:10 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:33954 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726979AbeHHKfK (ORCPT
+        Wed, 8 Aug 2018 06:39:25 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:47786 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726979AbeHHKjY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 06:35:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=RdCHlGPZL4kSLu/ZOMZI2g6RaVKVoGfzQSTNBag2rl0=; b=AC7DJvXdQSO9SVFAhfLyuvgKa
-        Da0jQIWH5U6jYyblkKL+gE01F+mHpzI70h08Ir9MMCtOS+0ELkoIT7mz4o/hYlYeWNLfR5Uj/BbLX
-        9nPs8o0aWjWYSAWYXYUPBO4LqaiyzrULgP4yBX4wRl74DVBFnCq/Wz9/8Bqd57ZsMhWp0=;
-Received: from n2100.armlinux.org.uk ([2001:4d48:ad52:3201:214:fdff:fe10:4f86]:58466)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1fnJdh-0003B8-S8; Wed, 08 Aug 2018 09:16:18 +0100
-Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
-        (envelope-from <linux@n2100.armlinux.org.uk>)
-        id 1fnJdc-00080k-Cj; Wed, 08 Aug 2018 09:16:13 +0100
-Date:   Wed, 8 Aug 2018 09:16:09 +0100
-From:   Russell King - ARM Linux <linux@armlinux.org.uk>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Ville =?iso-8859-1?Q?Syrj=E4l=E4?= 
-        <ville.syrjala@linux.intel.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        dri-devel@lists.freedesktop.org,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Sinclair Yeh <syeh@vmware.com>,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v4 1/2] drm: Add generic colorkey properties for
- display planes
-Message-ID: <20180808081608.GK30658@n2100.armlinux.org.uk>
-References: <20180807172202.1961-1-digetx@gmail.com>
- <20180807172202.1961-2-digetx@gmail.com>
+        Wed, 8 Aug 2018 06:39:24 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w788KadP032117
+        for <linux-kernel@vger.kernel.org>; Wed, 8 Aug 2018 04:20:48 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2kqrkyh2ds-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 04:20:47 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <srikar@linux.vnet.ibm.com>;
+        Wed, 8 Aug 2018 09:19:48 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 8 Aug 2018 09:19:45 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w788JiH939124992
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 8 Aug 2018 08:19:44 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0003CA405B;
+        Wed,  8 Aug 2018 11:19:51 +0100 (BST)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 68E4DA4040;
+        Wed,  8 Aug 2018 11:19:50 +0100 (BST)
+Received: from linux.vnet.ibm.com (unknown [9.40.192.68])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with SMTP;
+        Wed,  8 Aug 2018 11:19:50 +0100 (BST)
+Date:   Wed, 8 Aug 2018 01:19:42 -0700
+From:   Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Rik van Riel <riel@surriel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+        Andre Wild <wild@linux.vnet.ibm.com>
+Subject: Re: [PATCH] sched/topology: Use Identity node only if required
+Reply-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+References: <1533712172-11428-1-git-send-email-srikar@linux.vnet.ibm.com>
+ <20180808075840.GO2494@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20180807172202.1961-2-digetx@gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180808075840.GO2494@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18080808-0012-0000-0000-00000296D128
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18080808-0013-0000-0000-000020C9DAB3
+Message-Id: <20180808081942.GA37418@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-08_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808080087
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 07, 2018 at 08:22:01PM +0300, Dmitry Osipenko wrote:
-> + * Glossary:
-> + *
-> + * Destination plane:
-> + *	Plane to which color keying properties are applied, this planes takes
-> + *	the effect of color keying operation. The effect is determined by a
-> + *	given color keying mode.
-> + *
-> + * Source plane:
-> + *	Pixels of this plane are the source for color key matching operation.
-...
-> +	/**
-> +	 * @DRM_PLANE_COLORKEY_MODE_TRANSPARENT:
-> +	 *
-> +	 * Destination plane pixels are completely transparent in areas
-> +	 * where pixels of a source plane are matching a given color key
-> +	 * range, in other cases pixels of a destination plane are unaffected.
-> +	 * In areas where two or more source planes overlap, the topmost
-> +	 * plane takes precedence.
-> +	 */
+* Peter Zijlstra <peterz@infradead.org> [2018-08-08 09:58:41]:
 
-This seems confusing to me.
+> On Wed, Aug 08, 2018 at 12:39:31PM +0530, Srikar Dronamraju wrote:
+> >  - numa topology on 2 node systems no more marked as NUMA_DIRECT.  After
+> >    this commit, it gets reported as NUMA_BACKPLANE. This is because
+> >    sched_domains_numa_level now equals 2 on 2 node systems.
+> > 
+> >  - Extra numa sched domain that gets added and degenerated on most
+> >    machines.  The Identity node is only needed on very few systems.
+> >    Also all non-numa systems will end up populating
+> >    sched_domains_numa_distance and sched_domains_numa_masks tables.
+> > 
+> >  - On shared lpars like powerpc, this extra sched domain creation can
+> >    lead to repeated rcu stalls, sometimes even causing unresponsive
+> >    systems on boot. On such stalls, it was noticed that
+> >    init_sched_groups_capacity() (sg != sd->groups is always true).
+> 
+> The idea was that if the topology level is redundant (as it often is);
+> then the degenerate code would take it out.
+> 
+> Why is that not working (right) and can we fix that instead?
+> 
 
-What you seem to be saying is that the "destination" plane would be the
-one which is (eg0 the graphic plane, and the "source" plane would be the
-the plane containing (eg) the video.  You seem to be saying that the
-colorkey matches the video and determines whether the pixels in the
-graphic plane are opaque or transparent.
+All I have found is regular NUMA sched_domains use OVERLAP flag, which
+inturn results in build_overlap_sched_groups(). The Identity node uses
+build_sched_groups. Somehow build_sched_groups is unable to create the
+group list. I still getting to see why that makes a difference.
 
-Surely that is the wrong way round - in video overlay, you want to
-colorkey match the contents of the graphic plane to determine which
-pixels from the video plane to overlay.
+I have tried with passing .flags = SDTL_OVERLAP to the identity node and
+that works well. 
 
-If it's the other way around (source is the graphic, destination is the
-video) it makes less sense to use the "source" and "destination" terms,
-I can't see how you could describe a plane that is being overlaid on
-top of another plane as a "destination".
+However, I still think if majority of the cases the identity node is
+going to be redundant, then we should use hint.
 
-I guess the terminology has come from a thought about using a GPU to
-physically do the colorkeying when combining two planes - if the GPU
-were to write to the "destination" plane, then this would be the wrong
-way around.  For starters, taking the above example, the video plane
-may well be smaller than the graphic plane.  If it's the other way
-around, that has other problems, like destroying the colorkey in the
-graphic plane when writing the video plane's contents to it.
+We could fix the numa topology to be NUMA_DIRECT for 2 node machines, by
+checking if sched_domains_numa_levels == 2, but then I dont know what it
+means for a system that has only NODE but not NUMA level.
 
-So, in summary, I don't think "destination" and "source" are
-particularly good terms to describe the operation, and I think you have
-them swapped in your description of
-"DRM_PLANE_COLORKEY_MODE_TRANSPARENT".
+i.e what should we say the numa topology type of a machine that has only
+NODE but not NUMA sched_domain?
 
 -- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 13.8Mbps down 630kbps up
-According to speedtest.net: 13Mbps down 490kbps up
+Thanks and Regards
+Srikar
+
