@@ -2,122 +2,116 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DCACC46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 18:56:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC04FC4646D
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 18:57:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0278021797
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 18:56:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0278021797
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 9F71A21797
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 18:57:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=impinj.com header.i=@impinj.com header.b="GNH8n9F2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F71A21797
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=impinj.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730019AbeHHVRE (ORCPT
+        id S1730131AbeHHVSG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 17:17:04 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42178 "EHLO mx1.redhat.com"
+        Wed, 8 Aug 2018 17:18:06 -0400
+Received: from mail-eopbgr690108.outbound.protection.outlook.com ([40.107.69.108]:20448
+        "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727609AbeHHVRE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 17:17:04 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 604DC40241C7;
-        Wed,  8 Aug 2018 18:56:03 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 020C02166BA0;
-        Wed,  8 Aug 2018 18:56:03 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id w78Iu2mj031439;
-        Wed, 8 Aug 2018 14:56:02 -0400
-Received: from localhost (mpatocka@localhost)
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id w78Iu2XG031435;
-        Wed, 8 Aug 2018 14:56:02 -0400
-X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
-Date:   Wed, 8 Aug 2018 14:56:02 -0400 (EDT)
-From:   Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To:     David Laight <David.Laight@ACULAB.COM>
-cc:     "'Arnd Bergmann'" <arnd@arndb.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        Joao Pinto <Joao.Pinto@synopsys.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        linux-pci <linux-pci@vger.kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "neko@bakuhatsu.net" <neko@bakuhatsu.net>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Subject: RE: framebuffer corruption due to overlapping stp instructions on
- arm64
-In-Reply-To: <a804913d98ae4598a725cb40a6d19b4e@AcuMS.aculab.com>
-Message-ID: <alpine.LRH.2.02.1808081453540.18198@file01.intranet.prod.int.rdu2.redhat.com>
-References: <CAKv+Gu8DeuksZhk1g3q_msSKV_hSY_2e1uzVten9-oGO3j9Sqg@mail.gmail.com> <20180803094129.GB17798@arm.com> <alpine.LRH.2.02.1808031235410.31584@file01.intranet.prod.int.rdu2.redhat.com> <CAKv+Gu-aNFh1fsr_05SEwDp99n3pLrguP7=tEcFQPNY53=K7Fw@mail.gmail.com>
- <alpine.LRH.2.02.1808031424140.14030@file01.intranet.prod.int.rdu2.redhat.com> <CAHCPf3s-+Qf=WBZz1KpisDMG3520jCUh8PLAO3PHa4jdt8kCTw@mail.gmail.com> <20180808121641.GB24736@iMac.local> <b1de49af14d941979977af07dc81e1c2@AcuMS.aculab.com>
- <alpine.LRH.2.02.1808080939180.3325@file01.intranet.prod.int.rdu2.redhat.com> <19c70d2a0b224db78f72dd316ad006b8@AcuMS.aculab.com> <20180808145017.GE24736@iMac.local> <alpine.LRH.2.02.1808081215120.31259@file01.intranet.prod.int.rdu2.redhat.com>
- <CAK8P3a3iURkU8LThO3xLtaNjkYArdpw+6_WqJQog4EgrcQy23g@mail.gmail.com> <a804913d98ae4598a725cb40a6d19b4e@AcuMS.aculab.com>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+        id S1728134AbeHHVSF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 17:18:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=impinj.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ejk2Dd7TFR+/pb9UD3IG7KK0ZLJg0GFSBfL6Dyilueg=;
+ b=GNH8n9F2XvwBbKEPDJVAVUS1+nF/06inxdHJw/JJotqCdOa2wsQFyeBfLBO0UJSg2npX7TFfEPOtGUp+S/VkiDedcsfzIdUItrWRjVOP7wm7rx8QCZxfI6WA4yXyGseL6uWA0iJ4VzuP1f/yGoLwagjWD7kr+VLYNWoOvBcYTv8=
+Received: from MWHPR0601MB3708.namprd06.prod.outlook.com (10.167.236.38) by
+ MWHPR0601MB3611.namprd06.prod.outlook.com (10.167.236.13) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1038.20; Wed, 8 Aug 2018 18:57:01 +0000
+Received: from MWHPR0601MB3708.namprd06.prod.outlook.com
+ ([fe80::7826:5dcc:1625:5e96]) by MWHPR0601MB3708.namprd06.prod.outlook.com
+ ([fe80::7826:5dcc:1625:5e96%5]) with mapi id 15.20.1017.019; Wed, 8 Aug 2018
+ 18:57:01 +0000
+From:   Trent Piepho <tpiepho@impinj.com>
+To:     "broonie@kernel.org" <broonie@kernel.org>,
+        "baolin.wang@linaro.org" <baolin.wang@linaro.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "orsonzhai@gmail.com" <orsonzhai@gmail.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "zhang.lyra@gmail.com" <zhang.lyra@gmail.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "lanqing.liu@spreadtrum.com" <lanqing.liu@spreadtrum.com>
+Subject: Re: [PATCH 1/2] dt-bindings: spi: Add Spreadtrum SPI controller
+ documentation
+Thread-Topic: [PATCH 1/2] dt-bindings: spi: Add Spreadtrum SPI controller
+ documentation
+Thread-Index: AQHULjuNi8xilneMl06LqiCzbEap/qS0TC+AgADV1gCAAHv5gIAADJYAgAAFa4CAAIa3gA==
+Date:   Wed, 8 Aug 2018 18:57:01 +0000
+Message-ID: <1533754621.2283.270.camel@impinj.com>
+References: <64681bf903104c8a02f118294e616e2a12a5ebe4.1533638405.git.baolin.wang@linaro.org>
+         <20180807134121.GA7958@sirena.org.uk>
+         <CAMz4kuJsyKv_fvrqRR3pdfKsLVy53Uj0KX+m_9jLxpcVcMvs9g@mail.gmail.com>
+         <20180808095025.GB9346@sirena.org.uk>
+         <CAMz4kuKZHxYiJaMHnqdAGth8XkfGnq3-Tsfc59cGjsHQHZaY7A@mail.gmail.com>
+         <20180808105451.GE9346@sirena.org.uk>
+In-Reply-To: <20180808105451.GE9346@sirena.org.uk>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=tpiepho@impinj.com; 
+x-originating-ip: [216.207.205.253]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR0601MB3611;6:zcyGcoSj4o9x8RO1tqn+HPkfc9LhG5sw2iDCVGi53Wl1zjSIhT1UOMRxyiY1ntk4vFl9Fl0RepJqn10EfcmXDXeOOR+GA2VBPkP6bNpJtj49W415XPuALyhyTYy2NWPg5j0ywYZ17rgfL+V/puKsTgVt9g+1m2MjcZQ+kN2msexkhz6gXXQzSapsLb4GiOZlZVIUeQ9KF16kSNz8nLD8BxxjMHpWMGnt6GBO8XdhGcq/bHUrt99C9hdTFuFY1jwsH3Ic0UkWMmOVbF2+5NYs+Pp01FGLkq6bmlX6LB4mByCUd8KZJUQ06k4rctlNk68Y8dn1BM0rUGcKHoNhGz58RYwO5a6H8+ccXge/0cylk+0vAgadNybcBS3sd4SCJslI4DmKy5QgahoBxPPM7kPLbAhfm7L/2qpFdp8CWXlVAnZ2w27J9nN0XpU6fXdleaC6Sq96XQADkZuAfAO/THQvmg==;5:pwL2jAvIPYoQGG9b6x5yytsOYfem5z63DwpUu4n+oo8LcHdNwoxC7uGop59tP6V/8e+8hx8Cq96jkV0nzogNwigx/gB3IgYduxodJcLuUKo775aXHmXyruOESbzGSUpZcAhUtDyetxxlZ8OUOzFtVYAZTOzXom7zWmRYeUw8jXI=;7:tP5zLa+4aXS9pdob2bVOBO3LcrJriZ75Gt8VYdqJvoeFOClxd68TYgwB8stTorX4B+7TtdeWFTQ61fupYVGiLjRPTjMpi7q1ZAiqnobLuHRcfcy4eS3JD5LTBw9OlWh5fIRgP+qpQHhO35x3rLaXir/igppnuVAOf6sJkVRiYK7/77N3xKZfwL2KwjzdQ7x5+4C9iyC81oXfzgsWUK8ddB9DJSJbHQuxhSuy/wHDSD/Gbg1otnhe9ehMqB+hij7q
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: d9635778-b94d-455a-ea1e-08d5fd60b9b6
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:MWHPR0601MB3611;
+x-ms-traffictypediagnostic: MWHPR0601MB3611:
+x-microsoft-antispam-prvs: <MWHPR0601MB36110FDEBAE644322FA0BD03D3260@MWHPR0601MB3611.namprd06.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(93006095)(93001095)(10201501046)(3231311)(944501410)(52105095)(149027)(150027)(6041310)(20161123562045)(20161123558120)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:MWHPR0601MB3611;BCL:0;PCL:0;RULEID:;SRVR:MWHPR0601MB3611;
+x-forefront-prvs: 07584EDBCD
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(979002)(366004)(346002)(39850400004)(396003)(136003)(376002)(199004)(189003)(6246003)(2906002)(86362001)(76176011)(99286004)(14454004)(105586002)(25786009)(106356001)(2900100001)(316002)(110136005)(39060400002)(4326008)(54906003)(478600001)(5250100002)(93886005)(53936002)(6436002)(103116003)(6512007)(486006)(476003)(2616005)(11346002)(81156014)(305945005)(7736002)(68736007)(7416002)(2501003)(6486002)(3846002)(36756003)(446003)(6116002)(229853002)(8676002)(81166006)(186003)(26005)(97736004)(53546011)(8936002)(6506007)(256004)(5660300001)(66066001)(102836004)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR0601MB3611;H:MWHPR0601MB3708.namprd06.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: impinj.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: taYmlcLLv2trqHm1fQNuuPzVonhurSBrHUU5IUShgnDu0nge8f/tkTEOaYIjS7orzlgjZr+lRVgAPULOF3pQjs4Jt404ICRfnwQM59MdqSRK1BePU08D1YKqcCA0xfk5eQo5Z0IUsaOvGM+juMRaBIS3mUKLqlHrKLdacQfr5iNVHFvdkznA+qHpn9lE4XDHXL5/97si0s5DyhcR0PYP/Z8KAEDM7aZ4ZTin/w700ny8Sg6etzezfyNuAY4tYhi0qqX9WPMLI5pZ4JXDmfORYDIIpXK6DPQfVsf/xhSCGkjznafU0uXisbKqt8Fqskg3jKW9cNhm7Rr/PXkIqyfr+6s69nSC8a85LJdybJb4Vk4=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <D39B6F4479A8E649BD321CD3C0B740B1@namprd06.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 08 Aug 2018 18:56:03 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 08 Aug 2018 18:56:03 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mpatocka@redhat.com' RCPT:''
+X-OriginatorOrg: impinj.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d9635778-b94d-455a-ea1e-08d5fd60b9b6
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Aug 2018 18:57:01.6142
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 6de70f0f-7357-4529-a415-d8cbb7e93e5e
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR0601MB3611
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On Wed, 8 Aug 2018, David Laight wrote:
-
-> From: Arnd Bergmann
-> > Sent: 08 August 2018 17:31
-> ..
-> > > They do modify the same byte, but with the same value. Suppose that you
-> > > want to copy a piece of data that is between 8 and 16 bytes long. You can
-> > > do this:
-> > >
-> > > add src_end, src, len
-> > > add dst_end, dst, len
-> > > ldr x0, [src]
-> > > ldr x1, [src_end - 8]
-> > > str x0, [dst]
-> > > str x1, [dst_end - 8]
-> 
-> I've done that myself (on x86) copied the last 'word' first then
-> everything else in increasing address order.
-> 
-> > > The ARM64 memcpy uses this trick heavily in order to reduce branching, and
-> > > this is what makes the PCIe controller choke.
-> 
-> More likely the write combining buffer?
-
-When I write to memory (using the NC mapping - that is also used in the 
-PCI BAR), I get no corruption. So the corruption must be in the PCIe 
-controller, not the core or memory subsystem.
-
-I also tried to disable write streaming on NC mapping with a chicken bit, 
-but it didn't help.
-
-> > So when a single unaligned 'stp' gets translated into a PCIe with TLP
-> > with length=5 (20 bytes) and LastBE = ~1stBE, write combining the
-> > overlapping stores gives us a TLP with a longer length (5..8 for two
-> > stores), and byte-enable bits that are not exactly a complement.
-> 
-> Write combining should generate a much longer TLP.
-> Depending on the size of the write combining buffer.
-> 
-> But in the above case I'd have thought that the second write
-> would fail to 'combine' - because it isn't contiguous with the
-> stored data.
-> 
-> So something more complex will be going on.
-> 
-> 	David
-
-Mikulas
+T24gV2VkLCAyMDE4LTA4LTA4IGF0IDExOjU0ICswMTAwLCBNYXJrIEJyb3duIHdyb3RlOg0KPiBP
+biBXZWQsIEF1ZyAwOCwgMjAxOCBhdCAwNjozNToyOFBNICswODAwLCBCYW9saW4gV2FuZyB3cm90
+ZToNCj4gPiBPbiA4IEF1Z3VzdCAyMDE4IGF0IDE3OjUwLCBNYXJrIEJyb3duIDxicm9vbmllQGtl
+cm5lbC5vcmc+IHdyb3RlOg0KPiA+ID4gUmlnaHQsIEkgZG9uJ3QgdGhpbmsgd2UgYWRkZWQgdGhp
+cyB5ZXQgKGlmIHdlIGRpZCBJIGNhbid0IHNlZQ0KPiA+ID4gaXQpLiAgSSdkDQo+ID4gPiBhZGQg
+YSBuZXcgZmllbGQgdG8gc3BpX3RyYW5zZmVyIGZvciB0aGlzLCB0aGVuIG90aGVyIGNvbnRyb2xs
+ZXJzDQo+ID4gPiB3aXRoDQo+ID4gPiB0aGUgc2FtZSBzdXBwb3J0IGNhbiBpbXBsZW1lbnQgaXQg
+YXMgd2VsbCBhbmQgZHJpdmVycyBjYW4gc3RhcnQNCj4gPiA+IHVzaW5nDQo+ID4gPiBpdCB0b28u
+DQo+ID4gT0suIFNvIEkgd2lsbCBuYW1lIHRoZSBuZXcgZmlsZWQgYXMgJ3dvcmRfZGVsYXknLCBp
+cyBpdCBPSyBmb3IgeW91Pw0KPiANCj4gU291bmRzIGdvb2QsIHllcy4NCg0KU2hvdWxkIGl0IGJl
+IGluIMK1cyBsaWtlIHRoZSBleGlzdGluZyBpdGVyLXRyYW5zZmVyIGRlbGF5PyAgSSB0aGluaw0K
+cGVyaGFwcyB1bml0cyBvZiBjeWNsZXMgb2YgdGhlIFNQSSBjbG9jayBtYWtlIG1vcmUgc2Vuc2U/
