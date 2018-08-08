@@ -2,75 +2,75 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FE54C46464
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 02:17:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47F72C46464
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 02:23:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 384762152A
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 02:17:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF94D2154F
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 02:23:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=dabbelt-com.20150623.gappssmtp.com header.i=@dabbelt-com.20150623.gappssmtp.com header.b="M1rbox3Y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 384762152A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="Vo4enTSx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF94D2154F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726971AbeHHEfA (ORCPT
+        id S1726538AbeHHEkk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 00:35:00 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:36080 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726158AbeHHEfA (ORCPT
+        Wed, 8 Aug 2018 00:40:40 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:43319 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725774AbeHHEkj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 00:35:00 -0400
-Received: by mail-pl0-f68.google.com with SMTP id e11-v6so313930plb.3
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 19:17:42 -0700 (PDT)
+        Wed, 8 Aug 2018 00:40:39 -0400
+Received: by mail-pg1-f196.google.com with SMTP id a14-v6so317281pgv.10
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 19:23:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dabbelt-com.20150623.gappssmtp.com; s=20150623;
+        d=sifive.com; s=google;
         h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
          :content-transfer-encoding;
-        bh=2SmQluMEIEhsv+ZLBH+CPifmOHdRc/ctLn1bhtB5sNY=;
-        b=M1rbox3YqQtnLu3RssZtFovo4WcaWsLIdO3RxRKKe0E8gIYbPmBZ+VacOiOLvEYUlb
-         dwbQIhoirErsxmbvgpzH0OTpQWmbmQIpoRgMPCwsl7b2UsAfBdpaaGHC9lmv6lEHd6Fo
-         WXG0xw3Utb5187hFD2H61f2fIUuM1iakMx81XSEbHOCJlbr9Qz7+taOL35hD/n8AIzjh
-         GLXHJHpFm6585zw4TAlqicCTd/xMYxDHPmpF1ULpSzMZLxWW+GOXQaNFq8kFDWDqNQpH
-         m7l2zADLLxXBpLQoRasZ6EubBV9ISeywPOw2VgHTUAAymGuBiLlb+nRzkdRMBv1bDXWG
-         PLBQ==
+        bh=AzBh7Jad21nDkmjrRWl/tegNlyrjJzLzLgKojgLRWd4=;
+        b=Vo4enTSxAw8YLYSIe/EyrRYkoXr56Ft3KGoWB9XcWDUYWddUVVXL76XEqf8NTomMHe
+         yHSJmVlajg2qgEj6J12BOSlNL5BHVhGrpY8XgE0SE/ZZUOqPNLJnsAII5SA8LDp7sNd1
+         sxbRWTrCOvOUs+kQtiYlsepwHG8EKnFkt7tfGYSbGWDKG1lU7NmNxaphPm6q0rJz9+an
+         DNWHfrwsJMeRLbhT5z5gtt3qs1tzjlm5Z85Hy569/l7G6Ki7AT0GHuBtDeLendMPkELJ
+         UanxSz8Kp/kXisHw56Ekl1pmp7CWeURH9wbuVD9/CFDST2CSRiCkvxz/uZ9gtcK5AL6W
+         vUiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
          :mime-version:content-transfer-encoding;
-        bh=2SmQluMEIEhsv+ZLBH+CPifmOHdRc/ctLn1bhtB5sNY=;
-        b=fnJDict2x3SNAVD8NgJEmkNaGuLKQ1IVEDsoDy8oZvddKti9v4BSsal3TK1bzCBbpp
-         ej2n9b7hGMLCXgdOMvOQhc+d2udLSN1hvJoDwpjWtRxGusr/YjFLiBMzShuuAuCXZK1G
-         e/x/f1WH456csT6xlPOonx4GvYlIg4hQ7jptKhmRg9Dprn3J+M/58AcNIGznxIquUgBc
-         keZlxOClsseb+0R3l8Mafa0/OctW+4JgD1qpn5P3s6f00xmA5VFizt4zQ5/3+iAYUwau
-         BQ3501FJHmqzAYyqGqOc8k5euwX05rDrvFmWoio0ayOP8zEz3KgeRwz6ixqpaIWG/hyP
-         q3bQ==
-X-Gm-Message-State: AOUpUlGtjvd0LkD8kCzxOTYg9zx5GyuzpoNpWV0UQKbWk2zQJfFIb6BD
-        rOMY0C1aWyWUTmP+mvz8d1abVQ==
-X-Google-Smtp-Source: AA+uWPz5jQMvMJTmLe/dR4J0MRFGRaSEv1BchltsfbBpqJ+JWPi69zyzyDatN3n0Jr28eScnQS4v9w==
-X-Received: by 2002:a17:902:2d24:: with SMTP id o33-v6mr751086plb.38.1533694661697;
-        Tue, 07 Aug 2018 19:17:41 -0700 (PDT)
+        bh=AzBh7Jad21nDkmjrRWl/tegNlyrjJzLzLgKojgLRWd4=;
+        b=Rr2Wx4j6jLxkPaDBP6x3vql2YWJJrcC8x+eoBbbR2hBFxQe05FiacjqDzN9y58LJaD
+         qQ2+V3owZGszBAkcYx4mz9B1uazT68i2RqiispA5IAb2nt4bWKjfBJ9VTZ5ZhIpUKvNN
+         yQvvAORKTdus38iLs8+NSKm0ufLjnobgpXgpHPP+iT5csEYrvwMMBQDlyolOn+XTkQcr
+         EaCBmk6tIl+GdjW6nmVHTD3uJTjiXcYltmNoqVte2kDLlV1Vy1nBwsE2V/sZ5mSMi4xM
+         aooipjTj9SZ1s9v84A4ZdSm6rgS4Lf9aT+Ub0HfXBB5srejoary0aiSRiffIb3lqKXo7
+         8Vdg==
+X-Gm-Message-State: AOUpUlHzPKof8r0P6jLnAWdiLNbQbD1YFRzR3Xpno26To0WXQvQ1V2Lv
+        ggWAHqlwkjNJmmjZQt2qcHxCTw==
+X-Google-Smtp-Source: AA+uWPzA7+oCGu5mRYL8CmMNsgHZa5RpGCh+DeffQitW8s+igKtKUztcpAHyNBpcyVkfSjf5DQa55A==
+X-Received: by 2002:a62:2bc8:: with SMTP id r191-v6mr846988pfr.164.1533695000734;
+        Tue, 07 Aug 2018 19:23:20 -0700 (PDT)
 Received: from localhost ([12.206.222.5])
-        by smtp.gmail.com with ESMTPSA id r23-v6sm9209773pfd.144.2018.08.07.19.17.40
+        by smtp.gmail.com with ESMTPSA id o27-v6sm5181227pfj.35.2018.08.07.19.23.19
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 07 Aug 2018 19:17:40 -0700 (PDT)
-Date:   Tue, 07 Aug 2018 19:17:40 -0700 (PDT)
-X-Google-Original-Date: Tue, 07 Aug 2018 18:45:51 PDT (-0700)
-Subject:     Re: [PATCH 03/11] dt-bindings: interrupt-controller: RISC-V PLIC documentation
-In-Reply-To: <CAL_Jsq+pVzqKUbhErRr15JX2mPUOSTp_ddGvu9KAuf=TtXfduQ@mail.gmail.com>
-CC:     atish.patra@wdc.com, Christoph Hellwig <hch@lst.de>,
-        tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
-        mark.rutland@arm.com, devicetree@vger.kernel.org,
-        aou@eecs.berkeley.edu, anup@brainfault.org,
+        Tue, 07 Aug 2018 19:23:19 -0700 (PDT)
+Date:   Tue, 07 Aug 2018 19:23:19 -0700 (PDT)
+X-Google-Original-Date: Tue, 07 Aug 2018 19:23:16 PDT (-0700)
+Subject:     Re: simplified RISC-V interrupt and clocksource handling v3
+In-Reply-To: <20180804082319.5711-1-hch@lst.de>
+CC:     Paul Walmsley <paul.walmsley@sifive.com>, tglx@linutronix.de,
+        jason@lakedaemon.net, marc.zyngier@arm.com, mark.rutland@arm.com,
+        anup@brainfault.org, atish.patra@wdc.com,
+        devicetree@vger.kernel.org, aou@eecs.berkeley.edu,
         linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
         shorne@gmail.com
-From:   Palmer Dabbelt <palmer@dabbelt.com>
-To:     robh+dt@kernel.org
-Message-ID: <mhng-4bc89d00-bc90-440f-996f-861dde382aaa@palmer-si-x1c4>
+From:   Palmer Dabbelt <palmer@sifive.com>
+To:     Christoph Hellwig <hch@lst.de>, robh+dt@kernel.org
+Message-ID: <mhng-d7c67842-dff7-4200-bc2e-c3eed1a0a7bf@palmer-si-x1c4>
 Mime-Version: 1.0 (MHng)
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
@@ -79,108 +79,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 06 Aug 2018 13:59:48 PDT (-0700), robh+dt@kernel.org wrote:
-> On Thu, Aug 2, 2018 at 4:08 PM Atish Patra <atish.patra@wdc.com> wrote:
->>
->> On 8/2/18 4:50 AM, Christoph Hellwig wrote:
->> > From: Palmer Dabbelt <palmer@dabbelt.com>
->> >
->> > This patch adds documentation for the platform-level interrupt
->> > controller (PLIC) found in all RISC-V systems.  This interrupt
->> > controller routes interrupts from all the devices in the system to each
->> > hart-local interrupt controller.
->> >
->> > Note: the DTS bindings for the PLIC aren't set in stone yet, as we might
->> > want to change how we're specifying holes in the hart list.
->> >
->> > Signed-off-by: Palmer Dabbelt <palmer@dabbelt.com>
->> > [hch: various fixes and updates]
->> > Signed-off-by: Christoph Hellwig <hch@lst.de>
->> > ---
->> >   .../interrupt-controller/sifive,plic0.txt     | 57 +++++++++++++++++++
->> >   1 file changed, 57 insertions(+)
->> >   create mode 100644 Documentation/devicetree/bindings/interrupt-controller/sifive,plic0.txt
->> >
->> > diff --git a/Documentation/devicetree/bindings/interrupt-controller/sifive,plic0.txt b/Documentation/devicetree/bindings/interrupt-controller/sifive,plic0.txt
->> > new file mode 100644
->> > index 000000000000..c756cd208a93
->> > --- /dev/null
->> > +++ b/Documentation/devicetree/bindings/interrupt-controller/sifive,plic0.txt
->> > @@ -0,0 +1,57 @@
->> > +SiFive Platform-Level Interrupt Controller (PLIC)
->> > +-------------------------------------------------
->> > +
->> > +SiFive SOCs include an implementation of the Platform-Level Interrupt Controller
->> > +(PLIC) high-level specification in the RISC-V Privileged Architecture
->> > +specification.  The PLIC connects all external interrupts in the system to all
->> > +hart contexts in the system, via the external interrupt source in each hart.
->> > +
->> > +A hart context is a privilege mode in a hardware execution thread.  For example,
->> > +in an 4 core system with 2-way SMT, you have 8 harts and probably at least two
->> > +privilege modes per hart; machine mode and supervisor mode.
->> > +
->> > +Each interrupt can be enabled on per-context basis. Any context can claim
->> > +a pending enabled interrupt and then release it once it has been handled.
->> > +
->> > +Each interrupt has a configurable priority. Higher priority interrupts are
->> > +serviced first. Each context can specify a priority threshold. Interrupts
->> > +with priority below this threshold will not cause the PLIC to raise its
->> > +interrupt line leading to the context.
->> > +
->> > +While the PLIC supports both edge-triggered and level-triggered interrupts,
->> > +interrupt handlers are oblivious to this distinction and therefore it is not
->> > +specified in the PLIC device-tree binding.
->> > +
->> > +While the RISC-V ISA doesn't specify a memory layout for the PLIC, the
->> > +"sifive,plic0" device is a concrete implementation of the PLIC that contains a
->> > +specific memory layout, which is documented in chapter 8 of the SiFive U5
->> > +Coreplex Series Manual <https://static.dev.sifive.com/U54-MC-RVCoreIP.pdf>.
->> > +
->> > +Required properties:
->> > +- compatible : "sifive,plic0"
-
-I think there was a thread bouncing around somewhere where decided to pick the 
-official name of the compatible string to be "sifive,plic-1.0".  The idea here 
-is that the PLIC is compatible across all of SiFive's current implementations, 
-but there's some limitations in the memory map that will probably cause us to 
-spin a version 2 at some point so we want major version number.  The minor 
-number is just in case we find some errata in the PLIC.
-
->> > +- #address-cells : should be <0>
->> > +- #interrupt-cells : should be <1>
->> > +- interrupt-controller : Identifies the node as an interrupt controller
->> > +- reg : Should contain 1 register range (address and length)
->>
->> The one in the real device tree has two entries.
->> reg = <0x00000000 0x0c000000 0x00000000 0x04000000>;
->>
->> Is it intentional or just incorrect entry left over from earlier days?
+On Sat, 04 Aug 2018 01:23:11 PDT (-0700), Christoph Hellwig wrote:
+> This series tries adds support for interrupt handling and timers
+> for the RISC-V architecture.
 >
->> > +             reg = <0xc000000 0x4000000>;
+> The basic per-hart interrupt handling implemented by the scause
+> and sie CSRs is extremely simple and implemented directly in
+> arch/riscv/kernel/irq.c.  In addition there is a irqchip driver
+> for the PLIC external interrupt controller, which is called through
+> the set_handle_irq API, and a clocksource driver that gets its
+> timer interrupt directly from the low-level interrupt handling.
 >
-> Looks to me like one has #size-cells and #address-cells set to 2 and
-> the example is using 1.
+> Compared to previous iterations this version does not try to use an
+> irqchip driver for the low-level interrupt handling.  This saves
+> a couple indirect calls and an additional read of the scause CSR
+> in the hot path, makes the code much simpler and last but not least
+> avoid the dependency on a device tree for a mandatory architectural
+> feature.
+>
+> A git tree is available here (contains a few more patches before
+> the ones in this series)
+>
+>     git://git.infradead.org/users/hch/riscv.git riscv-irq-simple.3
+>
+> Gitweb:
+>
+>     http://git.infradead.org/users/hch/riscv.git/shortlog/refs/heads/riscv-irq-simple.3
+>
+> Changes since v2:
+>  - actually use SEIE instead of STIE in the plic driver
+>  - rename the default compat string for the plic to sifive,u5-plic
+>  - various spelling fixes
+>  - drop a superflous derefence in the plic driver that is taken care of
+>    by the following loop
+>  - drop the patch to document the enable method - not relevant for the
+>    rest of the series
+>  - drop the patches for the per-hart timebase frequency - not relevant
+>    for the rest of the series.
+>  - use riscv_of_processor_hart in the timer driver
+>
+> Changes since v1:
+>  - rename the plic driver to irq-sifive-plic
+>  - switch to a default compatible of sifive,plic0 (still supporting the
+>    riscv,plic0 name for compatibility)
+>  - add a reference for the SiFive PLIC register layout
+>  - fix plic_toggle addressing for large numbers of hwirqs
+>  - remove the call to ack_bad_irq
+>  - use a raw spinlock for plic_toggle_lock
+>  - use the irq_desc cpumask in the plic enable/disable methods
+>  - add back OF contexid parsing in the plic driver
+>  - don't allow COMPILE_TEST builds of the clocksource driver, as it
+>    depends on <asm/sbi.h>
+>  - default the clocksource driver to y
+>  - clean up naming in the clocksource driver
+>  - remove the MINDELTA and MAXDELTA #defines
+>  - various DT binding fixes
 
-Yes.  For some background on how this works: we have a hardware generator that 
-has a tree-of-busses abstraction, and each device is attached to some point on 
-that tree.  When a device gets attached to the bus, we also generate a device 
-tree entry.  For whatever system I generated the example PLIC device tree entry 
-from, it must have been attached to a bus with addresses of 32 bits or less, 
-which resulted in #address-cells and #size-cells being 1.
+Thanks!  Modulo the one device tree issue I replied to in patch 3 this looks 
+great!  We've already gotten the ACKs to take this through the RISC-V tree, so 
+I'm going to put this along with the queued RISC-V patches on our for-next 
+branch, including my proposed change for "sifive,plic-1.0" but leaving the 
+device tree bindings with #{address,size}-cells=1.
 
-Christoph has a HiFive Unleashed, which has a fu540-c000 on it, which is 
-probably not what I generated as an example -- the fu540-c000 is a complicated 
-configuration, when I mess around with the hardware I tend to use simple ones 
-as I'm not really a hardware guy.  I suppose the bus that the PLIC is hanging 
-off on the fu540-c000 has addresses wider than 32 bits.  This makes sense, as 
-the machine has 8GiB of memory and the PLIC is on a bus that's closer to the 
-core than the DRAM is, so it'd need at least enough address bits to fit 8GiB.
+We can always change this, but I'd like to get this out so people can start 
+playing with it earlier rather than later.
 
-Is the inconsistency a problem?  I generally write device tree handling code to 
-just respect whatever #*-fields says and don't consider that part of the 
-specification of the binding.  I don't mind changing the example to have 
-#size-fields and #address-fields to be 2, but since it's not wrong I also don't 
-see any reason to change it.  We do have 32-bit devices with PLICs, and while 
-they're not Linux-capable devices we're trying to adopt the Linux device tree 
-bindings through the rest of the RISC-V software ecosystem as they tend to be 
-pretty well thought out.
+Thanks to everyone for all the help!
