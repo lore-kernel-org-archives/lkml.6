@@ -2,146 +2,110 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEA51C46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 11:21:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E203C46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 11:32:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94979216E5
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 11:21:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="q5BHcFZG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94979216E5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=8bytes.org
+	by mail.kernel.org (Postfix) with ESMTP id D090E216EE
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 11:32:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D090E216EE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=denx.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726971AbeHHNlH (ORCPT
+        id S1726976AbeHHNv0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 09:41:07 -0400
-Received: from 8bytes.org ([81.169.241.247]:35768 "EHLO theia.8bytes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726890AbeHHNlH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 09:41:07 -0400
-Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id D1E642EA; Wed,  8 Aug 2018 13:21:50 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=8bytes.org; s=mail-1;
-        t=1533727310; bh=5bv0qSO6zUgvBLoIEiLfGAXfUu5gCSUL3booLj+Fs20=;
-        h=From:To:Cc:Subject:Date:From;
-        b=q5BHcFZGK/IQ5TP31Sl8jWfWuH1q8tutPt+RA5JVQIyviJfq6+JEIDlADJvyzovvd
-         jbJRtPcGcVjyed7t3qFq1QXVedRsTXF9w05zRQ4IIbUtNpPskiBQad1JzAd8EYKNId
-         wAXTib2kYvHx+VhrVIOnh3U52BfOCS1KWMz464hdPpkVJvgoytJN2hVc+RgmRQZTAo
-         bMzyE6FhNOajXiGxe+NpWTVdTl9leY1ZTvb2ZIL93z360j4n/uoGdS+QgeqYhipTkr
-         BidwSo6yPZdkbuqBgSi/LFZy8O3wLYUws1/9p2L/j3smvBJtvsJ2eMnua3vlCvrxWB
-         CgB90afcGlc9A==
-From:   Joerg Roedel <joro@8bytes.org>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        "H . Peter Anvin" <hpa@zytor.com>
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Juergen Gross <jgross@suse.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Brian Gerst <brgerst@gmail.com>,
-        David Laight <David.Laight@aculab.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        Eduardo Valentin <eduval@amazon.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Will Deacon <will.deacon@arm.com>, aliguori@amazon.com,
-        daniel.gruss@iaik.tugraz.at, hughd@google.com, keescook@google.com,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        "David H . Gutteridge" <dhgutteridge@sympatico.ca>,
-        jroedel@suse.de, joro@8bytes.org
-Subject: [PATCH] x86/mm/pti: Move user W+X check into pti_finalize()
-Date:   Wed,  8 Aug 2018 13:16:40 +0200
-Message-Id: <1533727000-9172-1-git-send-email-joro@8bytes.org>
-X-Mailer: git-send-email 2.7.4
+        Wed, 8 Aug 2018 09:51:26 -0400
+Received: from mail-out.m-online.net ([212.18.0.9]:60424 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726744AbeHHNv0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 09:51:26 -0400
+Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
+        by mail-out.m-online.net (Postfix) with ESMTP id 41lq3p4Xtvz1qwCD;
+        Wed,  8 Aug 2018 13:32:06 +0200 (CEST)
+Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
+        by mail.m-online.net (Postfix) with ESMTP id 41lq3p3q62z1qrVg;
+        Wed,  8 Aug 2018 13:32:06 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at mnet-online.de
+Received: from mail.mnet-online.de ([192.168.8.182])
+        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
+        with ESMTP id gnQIRd5rTfdv; Wed,  8 Aug 2018 13:32:05 +0200 (CEST)
+X-Auth-Info: wI8MH6nR0wOK5IZwaFNkgd/f2yueOeH0+8ttNPIes9E=
+Received: from [IPv6:::1] (unknown [195.140.253.167])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.mnet-online.de (Postfix) with ESMTPSA;
+        Wed,  8 Aug 2018 13:32:05 +0200 (CEST)
+Subject: Re: [PATCH] ARM: dts: socfpga: use stdout-path for chosen node
+To:     Simon Goldschmidt <simon.k.r.goldschmidt@gmail.com>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180808090944.861-1-simon.k.r.goldschmidt@gmail.com>
+From:   Marek Vasut <marex@denx.de>
+Message-ID: <f27a5e90-9783-761e-a87b-9b8a2d46d2a4@denx.de>
+Date:   Wed, 8 Aug 2018 12:00:50 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180808090944.861-1-simon.k.r.goldschmidt@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Joerg Roedel <jroedel@suse.de>
+On 08/08/2018 11:09 AM, Simon Goldschmidt wrote:
+> Use stdout-path dts property for kernel console.
+> 
+> There were two socfpga boards left not using stdout-path:
+> socrates and vining. Make sure they match the other boards.
+> 
+> Signed-off-by: Simon Goldschmidt <simon.k.r.goldschmidt@gmail.com>
+> ---
+>  arch/arm/boot/dts/socfpga_cyclone5_socrates.dts    | 3 ++-
+>  arch/arm/boot/dts/socfpga_cyclone5_vining_fpga.dts | 3 ++-
+>  2 files changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/socfpga_cyclone5_socrates.dts b/arch/arm/boot/dts/socfpga_cyclone5_socrates.dts
+> index 53bf99eef66d..6f5255a7d192 100644
+> --- a/arch/arm/boot/dts/socfpga_cyclone5_socrates.dts
+> +++ b/arch/arm/boot/dts/socfpga_cyclone5_socrates.dts
+> @@ -22,7 +22,8 @@
+>  	compatible = "ebv,socrates", "altr,socfpga-cyclone5", "altr,socfpga";
+>  
+>  	chosen {
+> -		bootargs = "console=ttyS0,115200";
+> +		bootargs = "earlyprintk";
+> +		stdout-path = "serial0:115200n8";
+>  	};
+>  
+>  	memory@0 {
+> diff --git a/arch/arm/boot/dts/socfpga_cyclone5_vining_fpga.dts b/arch/arm/boot/dts/socfpga_cyclone5_vining_fpga.dts
+> index f50b19447de6..e61efe16e79c 100644
+> --- a/arch/arm/boot/dts/socfpga_cyclone5_vining_fpga.dts
+> +++ b/arch/arm/boot/dts/socfpga_cyclone5_vining_fpga.dts
+> @@ -54,7 +54,8 @@
+>  	compatible = "samtec,vining", "altr,socfpga-cyclone5", "altr,socfpga";
+>  
+>  	chosen {
+> -		bootargs = "console=ttyS0,115200";
+> +		bootargs = "earlyprintk";
 
-The user page-table gets the updated kernel mappings in
-pti_finalize(), which runs after the RO+X permissions got
-applied to the kernel page-table in mark_readonly().
+Why this earlyprintk ?
 
-But with CONFIG_DEBUG_WX enabled, the user page-table is
-already checked in mark_readonly() for insecure mappings.
-This causes false-positive warnings, because the user
-page-table did not get the updated mappings yet.
+> +		stdout-path = "serial0:115200n8";
+>  	};
+>  
+>  	memory@0 {
+> 
 
-Move the W+X check for the user page-table into
-pti_finalize() after it updated all required mappings.
 
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
----
- arch/x86/include/asm/pgtable.h | 7 +++++--
- arch/x86/mm/dump_pagetables.c  | 3 +--
- arch/x86/mm/pti.c              | 2 ++
- 3 files changed, 8 insertions(+), 4 deletions(-)
-
-diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
-index e39088cb..a1cb333 100644
---- a/arch/x86/include/asm/pgtable.h
-+++ b/arch/x86/include/asm/pgtable.h
-@@ -30,11 +30,14 @@ int __init __early_make_pgtable(unsigned long address, pmdval_t pmd);
- void ptdump_walk_pgd_level(struct seq_file *m, pgd_t *pgd);
- void ptdump_walk_pgd_level_debugfs(struct seq_file *m, pgd_t *pgd, bool user);
- void ptdump_walk_pgd_level_checkwx(void);
-+void ptdump_walk_user_pgd_level_checkwx(void);
- 
- #ifdef CONFIG_DEBUG_WX
--#define debug_checkwx() ptdump_walk_pgd_level_checkwx()
-+#define debug_checkwx()		ptdump_walk_pgd_level_checkwx()
-+#define debug_checkwx_user()	ptdump_walk_user_pgd_level_checkwx()
- #else
--#define debug_checkwx() do { } while (0)
-+#define debug_checkwx()		do { } while (0)
-+#define debug_checkwx_user()	do { } while (0)
- #endif
- 
- /*
-diff --git a/arch/x86/mm/dump_pagetables.c b/arch/x86/mm/dump_pagetables.c
-index ccd92c4..b8ab901 100644
---- a/arch/x86/mm/dump_pagetables.c
-+++ b/arch/x86/mm/dump_pagetables.c
-@@ -569,7 +569,7 @@ void ptdump_walk_pgd_level_debugfs(struct seq_file *m, pgd_t *pgd, bool user)
- }
- EXPORT_SYMBOL_GPL(ptdump_walk_pgd_level_debugfs);
- 
--static void ptdump_walk_user_pgd_level_checkwx(void)
-+void ptdump_walk_user_pgd_level_checkwx(void)
- {
- #ifdef CONFIG_PAGE_TABLE_ISOLATION
- 	pgd_t *pgd = INIT_PGD;
-@@ -586,7 +586,6 @@ static void ptdump_walk_user_pgd_level_checkwx(void)
- void ptdump_walk_pgd_level_checkwx(void)
- {
- 	ptdump_walk_pgd_level_core(NULL, NULL, true, false);
--	ptdump_walk_user_pgd_level_checkwx();
- }
- 
- static int __init pt_dump_init(void)
-diff --git a/arch/x86/mm/pti.c b/arch/x86/mm/pti.c
-index 69a9d60..026a89a 100644
---- a/arch/x86/mm/pti.c
-+++ b/arch/x86/mm/pti.c
-@@ -628,4 +628,6 @@ void pti_finalize(void)
- 	 */
- 	pti_clone_entry_text();
- 	pti_clone_kernel_text();
-+
-+	debug_checkwx_user();
- }
 -- 
-2.7.4
-
+Best regards,
+Marek Vasut
