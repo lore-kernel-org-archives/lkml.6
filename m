@@ -2,91 +2,92 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5EB9C46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 01:51:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1C89C46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 01:52:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 556CB216FE
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 01:51:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="yS25NlU6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 556CB216FE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
+	by mail.kernel.org (Postfix) with ESMTP id 95D6F21723
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 01:52:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95D6F21723
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727028AbeHHEJH (ORCPT
+        id S1727068AbeHHEJT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 00:09:07 -0400
-Received: from frisell.zx2c4.com ([192.95.5.64]:58105 "EHLO frisell.zx2c4.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725774AbeHHEJG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 00:09:06 -0400
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 0fc011b3;
-        Wed, 8 Aug 2018 01:39:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
-        :references:in-reply-to:from:date:message-id:subject:to:cc
-        :content-type:content-transfer-encoding; s=mail; bh=2cJ40CHJ6Gve
-        Xzdt2xoz0HuCdtI=; b=yS25NlU60x9/o4xbPCLVaNkv/3kClomsJE2o24MTOrNh
-        ghMadQPvO2SVK6mSQGctWgcsB1bd/3D1pWH4MLNY1Y3Mru98OztK1NGxhaShRG8J
-        M21DWgOpzZqZq27CZ+xtV0oQaYYenJvN1BItcB7+P9quep1vjEtdr6uHqpxSFyda
-        ubFXKWTfRpJVlzxpXR55KCRm5ra2Q0k/iSADgXUyYKhMAJqev8FMezfETURwd25k
-        +PYpPDNYaeLtSalcaYbSf5R90yG6daPwqkvW8wq8FQpjlovMktamUH3e3AKW+52m
-        xNyyBRsy/S/BDMTXQenzEXEe0XvFKr+xCsuiktPTLQ==
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id c976745b (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128:NO);
-        Wed, 8 Aug 2018 01:39:35 +0000 (UTC)
-Received: by mail-oi0-f50.google.com with SMTP id s198-v6so1025301oih.11;
-        Tue, 07 Aug 2018 18:51:51 -0700 (PDT)
-X-Gm-Message-State: AOUpUlHurYDayuTyELjtmoezKWZy9jOAJ3SBCDDqa8KpC42yxi05z12b
-        YKM8BKw3+hjXfPmcYLmJKa7Fm3N815MGvjFQ92s=
-X-Google-Smtp-Source: AA+uWPwJvl4pfbiR8GKZJZHEodXfgqaSi0+CSIaA6cCm1Sv5rYg5cRE06NNme2rJd+uHnW1yUuTc0bO62fx2fL/ynM0=
-X-Received: by 2002:aca:ceca:: with SMTP id e193-v6mr845795oig.37.1533693110940;
- Tue, 07 Aug 2018 18:51:50 -0700 (PDT)
+        Wed, 8 Aug 2018 00:09:19 -0400
+Received: from mx2.suse.de ([195.135.220.15]:59090 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725774AbeHHEJT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 00:09:19 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+X-Amavis-Alert: BAD HEADER SECTION, Duplicate header field: "Cc"
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 31719AE92;
+        Wed,  8 Aug 2018 01:52:05 +0000 (UTC)
+From:   NeilBrown <neilb@suse.com>
+To:     Jeff Layton <jlayton@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Date:   Wed, 08 Aug 2018 11:51:07 +1000
+Subject: [PATCH 0/4] locks: avoid thundering-herd wake-ups
+Cc:     "J. Bruce Fields" <bfields@fieldses.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Martin Wilck <mwilck@suse.de>
+Message-ID: <153369219467.12605.13472423449508444601.stgit@noble>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-References: <20180801072246.GA15677@sol.localdomain> <CALCETrXD_VyoyW5C1U34o-ySJ4nFcO6PQ+ZNBVYxCpJ-f65CHw@mail.gmail.com>
- <CAHmME9oThR-dE3gTW0UyqAGZO80qu19ktG4YTb4iL6CNpzNNaw@mail.gmail.com>
- <CALCETrVziUpAU4nTaZ=t5ct=1jsWswWOy7KDNxXGPD1L=tMTGQ@mail.gmail.com>
- <CAHmME9pt3PxKQmc8E-arA-W0p2tp9z_oJ-uXQwis3qD=Zvpnsg@mail.gmail.com>
- <CAHmME9rA_nb9Le4VQhtcqCfNSuHpFjZVOV6=vE12FydJD9CmAQ@mail.gmail.com>
- <CALCETrWo-vCt_bHMBPAEHEr3P4=AJq-95Bf=00aAEAcE839wLw@mail.gmail.com>
- <CAHmME9qPay3O7Yh-R66EDhon4dJz1cuy69dWUxf3Xkt8seqLZA@mail.gmail.com> <A44CAA94-415C-476C-9523-2D19F28EDC6D@amacapital.net>
-In-Reply-To: <A44CAA94-415C-476C-9523-2D19F28EDC6D@amacapital.net>
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date:   Tue, 7 Aug 2018 18:51:39 -0700
-X-Gmail-Original-Message-ID: <CAHmME9rG8VFfuuCy=rCVmxb1CdneYGv1d4xmsyqSPooBozoOJw@mail.gmail.com>
-Message-ID: <CAHmME9rG8VFfuuCy=rCVmxb1CdneYGv1d4xmsyqSPooBozoOJw@mail.gmail.com>
-Subject: Re: [PATCH v1 2/3] zinc: Introduce minimal cryptography library
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-arch@vger.kernel.org, Eric Biggers <ebiggers3@gmail.com>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Samuel Neves <sneves@dei.uc.pt>,
-        "Daniel J . Bernstein" <djb@cr.yp.to>,
-        Tanja Lange <tanja@hyperelliptic.org>,
-        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>,
-        Karthikeyan Bhargavan <karthik.bhargavan@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 7, 2018 at 6:49 PM Andy Lutomirski <luto@amacapital.net> wrote:
-> I really wish we had a way to see that we use asm-generic=E2=80=99s copy =
-of a header in all cases except where an arch opts out.
+If you have a many-core machine, and have many threads all wanting to
+briefly lock a give file (udev is known to do this), you can get quite
+poor performance.
 
-It's really not that hard to do -- symlink asm-generic to a target
-called "asm" inside an otherwise empty directory, and add that
-otherwise empty directory to the -I paths just after arch/include.
-Since it's searched second, it's only used if the first fails. Maybe
-I'm missing something though, as this seems a bit too obvious. Perhaps
-a project for another day.
+When one thread releases a lock, it wakes up all other threads that
+are waiting (classic thundering-herd) - one will get the lock and the
+others go to sleep.
+When you have few cores, this is not very noticeable: by the time the
+4th or 5th thread gets enough CPU time to try to claim the lock, the
+earlier threads have claimed it, done what was needed, and released.
+With 50+ cores, the contention can easily be measured.
+
+This patchset creates a tree of pending lock request in which siblings
+don't conflict and each lock request does conflict with its parent.
+When a lock is released, only requests which don't conflict with each
+other a woken.
+
+Testing shows that lock-acquisitions-per-second is now fairly stable even
+as number of contending process goes to 1000.  Without this patch,
+locks-per-second drops off steeply after a few 10s of processes.
+
+There is a small cost to this extra complexity.
+At 20 processes running a particular test on 72 cores, the lock
+acquisitions per second drops from 1.8 million to 1.4 million with
+this patch.  For 100 processes, this patch still provides 1.4 million
+while without this patch there are about 700,000.
+
+NeilBrown
+
+---
+
+NeilBrown (4):
+      fs/locks: rename some lists and pointers.
+      fs/locks: allow a lock request to block other requests.
+      fs/locks: change all *_conflict() functions to return bool.
+      fs/locks: create a tree of dependent requests.
+
+
+ fs/cifs/file.c                  |    2 -
+ fs/locks.c                      |  142 +++++++++++++++++++++++++--------------
+ include/linux/fs.h              |    5 +
+ include/trace/events/filelock.h |   16 ++--
+ 4 files changed, 103 insertions(+), 62 deletions(-)
+
+--
+Signature
+
