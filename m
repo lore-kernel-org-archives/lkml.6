@@ -2,109 +2,129 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D668C4646D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 10:27:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D6C7C4646D
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 10:27:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2EF3A21509
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 10:27:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EF3A21509
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id E62DD21509
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 10:27:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="jO3VfQ1g";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="k1GXTc4q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E62DD21509
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727068AbeHHMqn (ORCPT
+        id S1727115AbeHHMqy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 08:46:43 -0400
-Received: from mx2.suse.de ([195.135.220.15]:56422 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726643AbeHHMqn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 08:46:43 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 5D562AD09;
-        Wed,  8 Aug 2018 10:27:37 +0000 (UTC)
-Date:   Wed, 8 Aug 2018 12:27:34 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Kirill Tkhai <ktkhai@virtuozzo.com>
-Cc:     akpm@linux-foundation.org, gregkh@linuxfoundation.org,
-        rafael@kernel.org, viro@zeniv.linux.org.uk,
-        darrick.wong@oracle.com, paulmck@linux.vnet.ibm.com,
-        josh@joshtriplett.org, rostedt@goodmis.org,
-        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
-        hughd@google.com, shuah@kernel.org, robh@kernel.org,
-        ulf.hansson@linaro.org, aspriel@gmail.com,
-        vivek.gautam@codeaurora.org, robin.murphy@arm.com, joe@perches.com,
-        heikki.krogerus@linux.intel.com, sfr@canb.auug.org.au,
-        vdavydov.dev@gmail.com, chris@chris-wilson.co.uk,
-        penguin-kernel@I-love.SAKURA.ne.jp, aryabinin@virtuozzo.com,
-        willy@infradead.org, ying.huang@intel.com, shakeelb@google.com,
-        jbacik@fb.com, mingo@kernel.org, mhiramat@kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH RFC 01/10] rcu: Make CONFIG_SRCU unconditionally enabled
-Message-ID: <20180808102734.GH27972@dhcp22.suse.cz>
-References: <153365347929.19074.12509495712735843805.stgit@localhost.localdomain>
- <153365625652.19074.8434946780002619802.stgit@localhost.localdomain>
- <20180808072040.GC27972@dhcp22.suse.cz>
- <d17e65bb-c114-55de-fb4e-e2f538779b92@virtuozzo.com>
+        Wed, 8 Aug 2018 08:46:54 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:56050 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726643AbeHHMqy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 08:46:54 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 487EE607C6; Wed,  8 Aug 2018 10:27:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1533724069;
+        bh=iiSnH65U8nlyRKPdgOPtolpgApYXn3iK2up+3LRZqDg=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=jO3VfQ1gbLessdHsYL7AQs5oboEANgGJKtB1oeV8C9o+zFSGnLBDH91o5badVB6q7
+         /HLA+LaPbEfE+6qY4SYCmYvzIC3IlFm0K1ycTSUr/vEpP10o9ddkr49Ptt3Qby1pzW
+         iavRYQAoF0TV7d7f437Z1Eouc0APgr6AXoo1EefM=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 9DA15607C6;
+        Wed,  8 Aug 2018 10:27:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1533724068;
+        bh=iiSnH65U8nlyRKPdgOPtolpgApYXn3iK2up+3LRZqDg=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=k1GXTc4qwbAhDn/Q6o58A6hNDG0eVXgvIwQowzY52zPtST6BBsdhPW3+OXuMuIR/e
+         g63cUAV2ahULcsKxLLOaaApAmU0/Ef5g3YmcQ4GpQeDkzikzb5+baddE+rRWW7QRcO
+         ydIr1mwLDFp9NzVj9Ig7ST4w8Lpy8WTQE12iX6qk=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d17e65bb-c114-55de-fb4e-e2f538779b92@virtuozzo.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Wed, 08 Aug 2018 15:57:48 +0530
+From:   Amit Nischal <anischal@codeaurora.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Odelu Kukatla <okukatla@codeaurora.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk-owner@vger.kernel.org
+Subject: Re: [PATCH v2] clk: qcom: Add camera clock controller driver for
+ SDM845
+In-Reply-To: <153322925025.10763.7919558124009549240@swboyd.mtv.corp.google.com>
+References: <1532942540-2814-1-git-send-email-anischal@codeaurora.org>
+ <1532942540-2814-2-git-send-email-anischal@codeaurora.org>
+ <153322925025.10763.7919558124009549240@swboyd.mtv.corp.google.com>
+Message-ID: <bdc2e5b95a403f9b28b87c53d5478520@codeaurora.org>
+X-Sender: anischal@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[CC Josh - the whole series is
-http://lkml.kernel.org/r/153365347929.19074.12509495712735843805.stgit@localhost.localdomain]
-
-On Wed 08-08-18 13:17:44, Kirill Tkhai wrote:
-> On 08.08.2018 10:20, Michal Hocko wrote:
-> > On Tue 07-08-18 18:37:36, Kirill Tkhai wrote:
-> >> This patch kills all CONFIG_SRCU defines and
-> >> the code under !CONFIG_SRCU.
-> > 
-> > The last time somebody tried to do this there was a pushback due to
-> > kernel tinyfication. So this should really give some numbers about the
-> > code size increase. Also why can't we make this depend on MMU. Is
-> > anybody else than the reclaim asking for unconditional SRCU usage?
+On 2018-08-02 22:30, Stephen Boyd wrote:
+> Quoting Amit Nischal (2018-07-30 02:22:20)
+>> diff --git a/drivers/clk/qcom/camcc-sdm845.c 
+>> b/drivers/clk/qcom/camcc-sdm845.c
+>> new file mode 100644
+>> index 0000000..702ca66
+>> --- /dev/null
+>> +++ b/drivers/clk/qcom/camcc-sdm845.c
+>> @@ -0,0 +1,1744 @@
+>> +       },
+>> +};
+>> +
+>> +static const struct freq_tbl ftbl_cam_cc_bps_clk_src[] = {
+>> +       F(19200000, P_BI_TCXO, 1, 0, 0),
+>> +       F(100000000, P_CAM_CC_PLL0_OUT_EVEN, 6, 0, 0),
+>> +       F(200000000, P_CAM_CC_PLL0_OUT_EVEN, 3, 0, 0),
+>> +       F(404000000, P_CAM_CC_PLL1_OUT_EVEN, 2, 0, 0),
+>> +       F(480000000, P_CAM_CC_PLL2_OUT_EVEN, 1, 0, 0),
+>> +       F(600000000, P_CAM_CC_PLL0_OUT_EVEN, 1, 0, 0),
+>> +       { }
+>> +};
+>> +
+>> +/*
+>> + * As per HW design, some of the CAMCC RCGs needs to
+>> + * move to XO clock during their clock disable so using
 > 
-> I don't know one. The size numbers (sparc64) are:
+> Per hw design sure, but what about hw design is causing this?
+
+The RCGs which sources to the CBCRs further connected to the
+camera memory blocks needs to be moved to XO clock during
+clock disable. This is required to power down the camera memories
+gracefully as these memories cannot be powered down instantly.
+And after memory power down, HW will gate the clock.
+
 > 
-> $ size image.srcu.disabled 
->    text	   data	    bss	    dec	    hex	filename
-> 5117546	8030506	1968104	15116156	 e6a77c	image.srcu.disabled
-> $ size image.srcu.enabled
->    text	   data	    bss	    dec	    hex	filename
-> 5126175	8064346	1968104	15158625	 e74d61	image.srcu.enabled
-> The difference is: 15158625-15116156 = 42469 ~41Kb
+>> + * clk_rcg2_shared_ops for such RCGs.
+>> + * Also, use CLK_SET_RATE_PARENT flag for the RCGs which
+>> + * have non-fixed PLL as parent source and requires
 > 
-> Please, see the measurement details to my answer to Stephen.
+> Mention the PLL that isn't fixed?
 > 
-> > Btw. I totaly agree with Steven. This is a very poor changelog. It is
-> > trivial to see what the patch does but it is far from clear why it is
-> > doing that and why we cannot go other ways.
-> We possibly can go another way, and there is comment to [2/10] about this.
-> Percpu rwsem may be used instead, the only thing, it is worse, is it will
-> make shrink_slab() wait unregistering shrinkers, while srcu-based
-> implementation does not require this.
 
-Well, if unregisterring doesn't do anything subtle - e.g. an allocation
-or take locks which depend on allocation - and we can guarantee that
-then blocking shrink_slab shouldn't be a big deal. It is subtle though.
-Maybe subtle enough to make unconditional SRCU worth it. This all should
-be in the changelog though.
+Yes sure. I will mention the PLL's name in the next patch.
 
-> This may be not a big problem.
-> But, if SRCU is real problem for embedded people, I really don't want they
-> hate me in the future because of this, so please CC someone if you know :)
-
-I guess Josh was trying to pursue kernel tinification.
-
--- 
-Michal Hocko
-SUSE Labs
+>> + * reconfiguration of the PLL frequency.
+>> + */
+>> +static struct clk_rcg2 cam_cc_bps_clk_src = {
+>> +       .cmd_rcgr = 0x600c,
+>> +       .mnd_width = 0,
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
