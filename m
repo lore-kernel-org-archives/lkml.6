@@ -3,99 +3,102 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4524EC46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 00:41:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 482D2C46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 00:48:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE07A21653
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 00:41:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE07A21653
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id CF634216F7
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 00:48:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF634216F7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726846AbeHHC6k (ORCPT
+        id S1726927AbeHHDFY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 22:58:40 -0400
-Received: from mx.socionext.com ([202.248.49.38]:57991 "EHLO mx.socionext.com"
+        Tue, 7 Aug 2018 23:05:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55038 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726159AbeHHC6k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 22:58:40 -0400
-Received: from unknown (HELO kinkan-ex.css.socionext.com) ([172.31.9.52])
-  by mx.socionext.com with ESMTP; 08 Aug 2018 09:41:39 +0900
-Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
-        by kinkan-ex.css.socionext.com (Postfix) with ESMTP id 006B318015C;
-        Wed,  8 Aug 2018 09:41:39 +0900 (JST)
-Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Wed, 8 Aug 2018 09:41:38 +0900
-Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
-        by iyokan.css.socionext.com (Postfix) with ESMTP id 3355B40377;
-        Wed,  8 Aug 2018 09:41:38 +0900 (JST)
-Received: from [127.0.0.1] (unknown [10.213.132.48])
-        by yuzu.css.socionext.com (Postfix) with ESMTP id F211612014A;
-        Wed,  8 Aug 2018 09:41:37 +0900 (JST)
-Date:   Wed, 08 Aug 2018 09:41:37 +0900
-From:   Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-To:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: Re: [PATCH v2 2/4] phy: socionext: add USB3 PHY driver for UniPhier SoC
-Cc:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>
-In-Reply-To: <1533290045-18969-3-git-send-email-hayashi.kunihiko@socionext.com>
-References: <1533290045-18969-1-git-send-email-hayashi.kunihiko@socionext.com> <1533290045-18969-3-git-send-email-hayashi.kunihiko@socionext.com>
-Message-Id: <20180808094136.5509.4A936039@socionext.com>
+        id S1726503AbeHHDFX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 23:05:23 -0400
+Received: from vmware.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3D950216F5;
+        Wed,  8 Aug 2018 00:48:22 +0000 (UTC)
+Date:   Tue, 7 Aug 2018 20:48:20 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Joel Fernandes <joelaf@google.com>
+Cc:     Joel Fernandes <joel@joelfernandes.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Cc: Android Kernel" <kernel-team@android.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Byungchul Park <byungchul.park@lge.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Glexiner <tglx@linutronix.de>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>
+Subject: Re: [PATCH v12 3/3] tracing: Centralize preemptirq tracepoints and
+ unify their usage
+Message-ID: <20180807204820.50b83c6d@vmware.local.home>
+In-Reply-To: <6D0A3FD6-2190-4CC0-A3C0-7B3759E73243@google.com>
+References: <20180730222423.196630-1-joel@joelfernandes.org>
+        <20180730222423.196630-4-joel@joelfernandes.org>
+        <20180806155058.5ee875f4@gandalf.local.home>
+        <CAJWu+oqvpev_EZC38_mi+UNRCxS8GqNVagHyGM4dUjruzKgwgQ@mail.gmail.com>
+        <20180806214300.13e63523@gandalf.local.home>
+        <CAJWu+oqZi2W9OYAn2xu17fdrBitQs4Gti4LxWmtx5B-EYtNMmA@mail.gmail.com>
+        <20180807094954.5137972d@gandalf.local.home>
+        <446AE5F2-39E0-46B6-8E0B-207E003DBF20@google.com>
+        <20180807103410.4fe203cb@gandalf.local.home>
+        <C1CB990F-8232-4168-89A8-E8C13B660B0B@google.com>
+        <20180807110906.3a1b0ac4@gandalf.local.home>
+        <6B9E5DC9-0859-41B4-9B72-A7D85E9EA2AD@google.com>
+        <20180807194515.4e549c1a@gandalf.local.home>
+        <6D0A3FD6-2190-4CC0-A3C0-7B3759E73243@google.com>
+X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Mailer: Becky! ver. 2.70 [ja]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 3 Aug 2018 18:54:03 +0900 <hayashi.kunihiko@socionext.com> wrote:
+On Tue, 07 Aug 2018 19:54:13 -0400
+Joel Fernandes <joelaf@google.com> wrote:
 
-> Add a driver for PHY interface built into USB3 controller
-> implemented in UniPhier SoCs.
-> This driver supports High-Speed PHY and Super-Speed PHY.
+
+> >OK, I hit this bug, but it's not because of the partial revert. This
+> >bug seems it needs to be another partial revert. I like you movement of
+> >the code, but I'm starting to doubt that we can use a trace event as a
+> >hook for critical areas yet. Well, not until we can use srcu in NMI.
+> >  
 > 
-> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-> Signed-off-by: Motoya Tanigawa <tanigawa.motoya@socionext.com>
-> Signed-off-by: Masami Hiramatsu <masami.hiramatsu@linaro.org>
-> ---
->  drivers/phy/Kconfig                         |   1 +
->  drivers/phy/Makefile                        |   1 +
->  drivers/phy/socionext/Kconfig               |  12 +
->  drivers/phy/socionext/Makefile              |   6 +
->  drivers/phy/socionext/phy-uniphier-usb3hs.c | 423 ++++++++++++++++++++++++++++
->  drivers/phy/socionext/phy-uniphier-usb3ss.c | 350 +++++++++++++++++++++++
->  6 files changed, 793 insertions(+)
->  create mode 100644 drivers/phy/socionext/Kconfig
->  create mode 100644 drivers/phy/socionext/Makefile
->  create mode 100644 drivers/phy/socionext/phy-uniphier-usb3hs.c
->  create mode 100644 drivers/phy/socionext/phy-uniphier-usb3ss.c
+> I sent a patch to use srcu for all tracepoints including nmi. That
+> patch also removes this warning and fixes the one other issue masami
+> reported (hot plug causing a warning).
 
-[snip]
+Is it one I can take, or does Paul have it? I'll need it to continue
+with this as is, because I can't pass my tests without triggering that
+warning (and that fails the test).
 
-> +static void uniphier_u3ssphy_testio_write(struct uniphier_u3ssphy_priv *priv,
-> +					  u32 data)
-> +{
-> +	/* need to read TESTO twice after accessing TESTI */
-> +	writel(data, priv->base + SSPHY_TESTI);
-> +	readl(priv->base + SSPHY_TESTI);
-> +	readl(priv->base + SSPHY_TESTI);
+> 
+> If Paul and Mathieu can confirm SRCU works on offline CPUs that would
+> be great.
 
-I made a mistake here. The comment and the code are inconsistent.
-I'll fix it next.
+Yes please.
 
-Thanks,
+> 
+> It's just this one warning or anything else that makes you feel
+> tracepoints for critical paths isn't feasible?
 
----
-Best Regards,
-Kunihiko Hayashi
+Currently I'm down to this, but I can't get past my first test in my
+ktest suite, because it fails here.
 
+-- Steve
 
