@@ -2,103 +2,128 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 111C9C4646D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 09:54:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F972C46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 09:55:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1EEB21708
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 09:54:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1EEB21708
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 58F8021708
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 09:55:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="IKmDemuZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58F8021708
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726945AbeHHMNq convert rfc822-to-8bit (ORCPT
+        id S1727009AbeHHMO0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 08:13:46 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:54711 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726542AbeHHMNq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 08:13:46 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 531E820739; Wed,  8 Aug 2018 11:54:46 +0200 (CEST)
-Received: from xps13 (AAubervilliers-681-1-99-143.w90-88.abo.wanadoo.fr [90.88.4.143])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 162E4206A6;
-        Wed,  8 Aug 2018 11:54:36 +0200 (CEST)
-Date:   Wed, 8 Aug 2018 11:54:37 +0200
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Stefan Agner <stefan@agner.ch>
-Cc:     boris.brezillon@bootlin.com, computersforpeace@gmail.com,
-        dwmw2@infradead.org, marek.vasut@gmail.com, richard@nod.at,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] mtd: rawnand: vf610_nfc: explicitly disable
- interrupts first
-Message-ID: <20180808115437.34365451@xps13>
-In-Reply-To: <20180806092909.28980-2-stefan@agner.ch>
-References: <20180806092909.28980-1-stefan@agner.ch>
-        <20180806092909.28980-2-stefan@agner.ch>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+        Wed, 8 Aug 2018 08:14:26 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:46906 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726542AbeHHMO0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 08:14:26 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w789raoM119490;
+        Wed, 8 Aug 2018 09:55:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2018-07-02;
+ bh=aq6laXVyJOvqQ7y3+nnHuM9B0K/O0GRCDQg9jaFPd/c=;
+ b=IKmDemuZ1APZmV1brx72dRS1gQTSb06m3arXEaIbx6zeXf32dfwl+mA+jpVEeMIiksNy
+ DNSDkmLEgs4gB8UNtrGWPpLMbsh45ZkO2ApFgtGa29aXnHLupW9fjEvvbHG87lwkVYuy
+ AsP9thsBTEPGJ9i7/qWSP+RqIfoMXqCUo3Nddu4QV6ho3v3JP+FVWtZcbpZdNyCXZIrh
+ zaNKQG2CzKvOECxM30VFk9hnSizjy/+ygCKnbcd3eEws44ZXxLSwWDacF+hLxliimh0x
+ we+JLcBUdMEBX5+bcd6ABIA8w3FQIw01/RhAENke7fGzfuhXdJWnnurlRoysGpGA3IJy tw== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2120.oracle.com with ESMTP id 2kn4spw1pn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 08 Aug 2018 09:55:26 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w789tPaJ023846
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 8 Aug 2018 09:55:25 GMT
+Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w789tMHS010656;
+        Wed, 8 Aug 2018 09:55:25 GMT
+Received: from will-ThinkCentre-M910s.cn.oracle.com (/10.182.70.254)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 08 Aug 2018 02:55:21 -0700
+From:   Jianchao Wang <jianchao.w.wang@oracle.com>
+To:     axboe@kernel.dk
+Cc:     tom.leiming@gmail.com, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH V2] blk-mq: count the hctx as active before allocate tag
+Date:   Wed,  8 Aug 2018 17:56:52 +0800
+Message-Id: <1533722212-20327-1-git-send-email-jianchao.w.wang@oracle.com>
+X-Mailer: git-send-email 2.7.4
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8978 signatures=668707
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=978
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1808080101
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stefan,
+Currently, we count the hctx as active after allocate driver tag
+successfully. The other shared-tags users could exhaust the driver
+tags and starve a non-active and waiting-tag hctx. Count the hctx as
+active before try to allocate driver tag to fix this.
 
-Stefan Agner <stefan@agner.ch> wrote on Mon,  6 Aug 2018 11:29:08 +0200:
+Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
+---
+V2:
+   only invoke blk_mq_tag_busy w/o io scheduler in blk_mq_get_request
 
-> Explicitly disable all interrupts on probe. This should be the
-> default state, but the bootloader could leave the device in any
-> state. No issues have been observed so far, but it is still worth
-> fixing it.
-> 
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
-> ---
->  drivers/mtd/nand/raw/vf610_nfc.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/drivers/mtd/nand/raw/vf610_nfc.c b/drivers/mtd/nand/raw/vf610_nfc.c
-> index 740a91c5c86e..52e7811c0bde 100644
-> --- a/drivers/mtd/nand/raw/vf610_nfc.c
-> +++ b/drivers/mtd/nand/raw/vf610_nfc.c
-> @@ -130,8 +130,13 @@
->  #define CONFIG_PAGE_CNT_SHIFT			0
->  
->  /* NFC_IRQ_STATUS Field */
-> +#define WERR_IRQ_BIT				BIT(31)
-> +#define DONE_IRQ_BIT				BIT(30)
->  #define IDLE_IRQ_BIT				BIT(29)
-> +#define WERR_EN_BIT				BIT(22)
-> +#define DONE_EN_BIT				BIT(21)
->  #define IDLE_EN_BIT				BIT(20)
-> +#define WERR_CLEAR_BIT				BIT(19)
->  #define DONE_CLEAR_BIT				BIT(18)
->  #define IDLE_CLEAR_BIT				BIT(17)
->  
-> @@ -819,6 +824,10 @@ static int vf610_nfc_probe(struct platform_device *pdev)
->  
->  	init_completion(&nfc->cmd_done);
->  
-> +	vf610_nfc_clear(nfc, NFC_IRQ_STATUS, WERR_EN_BIT);
-> +	vf610_nfc_clear(nfc, NFC_IRQ_STATUS, DONE_EN_BIT);
-> +	vf610_nfc_clear(nfc, NFC_IRQ_STATUS, IDLE_EN_BIT);
-> +
+ block/blk-mq.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-Why not just one call with:
+diff --git a/block/blk-mq.c b/block/blk-mq.c
+index ae44e85..75ac3fbd 100644
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -285,7 +285,7 @@ static struct request *blk_mq_rq_ctx_init(struct blk_mq_alloc_data *data,
+ 		rq->tag = -1;
+ 		rq->internal_tag = tag;
+ 	} else {
+-		if (blk_mq_tag_busy(data->hctx)) {
++		if (data->hctx->flags & BLK_MQ_F_TAG_SHARED) {
+ 			rq_flags = RQF_MQ_INFLIGHT;
+ 			atomic_inc(&data->hctx->nr_active);
+ 		}
+@@ -367,6 +367,8 @@ static struct request *blk_mq_get_request(struct request_queue *q,
+ 		if (!op_is_flush(op) && e->type->ops.mq.limit_depth &&
+ 		    !(data->flags & BLK_MQ_REQ_RESERVED))
+ 			e->type->ops.mq.limit_depth(op, data);
++	} else {
++		blk_mq_tag_busy(data->hctx);
+ 	}
+ 
+ 	tag = blk_mq_get_tag(data);
+@@ -972,6 +974,7 @@ bool blk_mq_get_driver_tag(struct request *rq, struct blk_mq_hw_ctx **hctx,
+ 		.hctx = blk_mq_map_queue(rq->q, rq->mq_ctx->cpu),
+ 		.flags = wait ? 0 : BLK_MQ_REQ_NOWAIT,
+ 	};
++	bool shared;
+ 
+ 	might_sleep_if(wait);
+ 
+@@ -981,9 +984,10 @@ bool blk_mq_get_driver_tag(struct request *rq, struct blk_mq_hw_ctx **hctx,
+ 	if (blk_mq_tag_is_reserved(data.hctx->sched_tags, rq->internal_tag))
+ 		data.flags |= BLK_MQ_REQ_RESERVED;
+ 
++	shared = blk_mq_tag_busy(data.hctx);
+ 	rq->tag = blk_mq_get_tag(&data);
+ 	if (rq->tag >= 0) {
+-		if (blk_mq_tag_busy(data.hctx)) {
++		if (shared) {
+ 			rq->rq_flags |= RQF_MQ_INFLIGHT;
+ 			atomic_inc(&data.hctx->nr_active);
+ 		}
+-- 
+2.7.4
 
-	vf610_nfc_clear(nfc, NFC_IRQ_STATUS, WERR_EN_BIT | DONE_EN_BIT | IDLE_EN_BIT);
-
-The comment applies for the next patch as well.
-
->  	err = devm_request_irq(nfc->dev, irq, vf610_nfc_irq, 0, DRV_NAME, mtd);
->  	if (err) {
->  		dev_err(nfc->dev, "Error requesting IRQ!\n");
-
-Thanks,
-Miquèl
