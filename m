@@ -2,141 +2,107 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23621C46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 10:32:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E387CC46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 10:35:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBD14215FA
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 10:32:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBD14215FA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kobol.io
+	by mail.kernel.org (Postfix) with ESMTP id 9032F216ED
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 10:35:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="DauyOM/I"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9032F216ED
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726975AbeHHMvq (ORCPT
+        id S1726953AbeHHMyf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 08:51:46 -0400
-Received: from mslow2.mail.gandi.net ([217.70.178.242]:60008 "EHLO
-        slow1-d.mail.gandi.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726745AbeHHMvq (ORCPT
+        Wed, 8 Aug 2018 08:54:35 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:45356 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726733AbeHHMyf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 08:51:46 -0400
-Received: from relay9-d.mail.gandi.net (unknown [217.70.183.199])
-        by slow1-d.mail.gandi.net (Postfix) with ESMTP id 701DD3A6FBA;
-        Wed,  8 Aug 2018 12:27:28 +0200 (CEST)
-X-Originating-IP: 209.85.216.171
-Received: from mail-qt0-f171.google.com (mail-qt0-f171.google.com [209.85.216.171])
-        (Authenticated sender: aditya@kobol.io)
-        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id 53104FF80A;
-        Wed,  8 Aug 2018 10:27:26 +0000 (UTC)
-Received: by mail-qt0-f171.google.com with SMTP id n6-v6so1769443qtl.4;
-        Wed, 08 Aug 2018 03:27:26 -0700 (PDT)
-X-Gm-Message-State: AOUpUlGbX0yXbh0MIQhojSj/9rOrqaGlfeVuD/QGHO7gyZHQqmv29dR1
-        C+uPiLwvutE8mXDirrK4QqJ4f6bp5qfvKBOu814=
-X-Google-Smtp-Source: AA+uWPyVaCBkR30/X70vhfJkiOJZbP99cHoHbO78gvxYIixzCL1EwdTubMW3JwKxQlbGaMCM54XGAMbOqGifv4wwfJc=
-X-Received: by 2002:a0c:9692:: with SMTP id a18-v6mr1873869qvd.16.1533724045196;
- Wed, 08 Aug 2018 03:27:25 -0700 (PDT)
+        Wed, 8 Aug 2018 08:54:35 -0400
+Received: by mail-oi0-f68.google.com with SMTP id q11-v6so2804699oic.12
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 03:35:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=7Z+Lptx9SBkh42+Z33/t8t7AGgSYtEUgzGmLQuEW0UQ=;
+        b=DauyOM/IfnNA25a7rOwEAC5RwIyQjCK6J5vt/90Y0ByTjtIkFn583JO0eghEuyRMlB
+         7Skhg5A3AWNz5/wc0fQFCD1TddjPmIJ4GYbvHsbnryvIM/ddViF/SjKdxxZgqUHt4Xwa
+         gWLZgLCNsxn+Ltsh+PvUoTz7ODX8i7ckgM0hc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=7Z+Lptx9SBkh42+Z33/t8t7AGgSYtEUgzGmLQuEW0UQ=;
+        b=h1ESqmvL+o4zjHFT5oF9weucCVbPvitAIqcgYKSVtDt966ppr4OfAp7z7OYXq8ghEr
+         PYeYZ9UtZESL96LLBwLy6fY7xBy1P1DHeYq4uuCICWTopNaqVjQ6gBHKPd3Z6dm5qknX
+         MZcnklYjogLuR47zDH48JVDGY6QEhMayoKYQc3/0azdiNvP4jzyYfZcWwbip/3Tf1JYV
+         /hXivNjO18ekZaXdlHOTVzUCh1mlzmiIoLLHn0RMA2f8cE9FUlXwDfVrEj43FNSp8wda
+         8hNlfdMbm1ZIC5LNHmZbuoYrDKAVLUtiUV4c7Lm6jqYcc6b0w4KxT7C4yfbJT1EugjK+
+         Z6Ew==
+X-Gm-Message-State: AOUpUlFl2n4KPZh/jV3uWmbt5tlLfKJUN+08MU/iRwsi+OmBaCXUQmtq
+        XkNBadteRs10NF8MyTaJwoJjDba+az6vQypqXqT9lg==
+X-Google-Smtp-Source: AA+uWPyNaOwXqsZgWzNwkWYA438cEjFUcpTTT2IMP/QLn2uVANy+OvkAkYyiDZSMzNsnl19jNZuT9V9/J6wuUZKCsw4=
+X-Received: by 2002:aca:5dc5:: with SMTP id r188-v6mr2386516oib.320.1533724529090;
+ Wed, 08 Aug 2018 03:35:29 -0700 (PDT)
 MIME-Version: 1.0
-References: <1533522556-55055-1-git-send-email-aditya@kobol.io>
- <1533522556-55055-2-git-send-email-aditya@kobol.io> <20180806033802.GA32450@lunn.ch>
-In-Reply-To: <20180806033802.GA32450@lunn.ch>
-From:   Aditya Prayoga <aditya@kobol.io>
-Date:   Wed, 8 Aug 2018 17:27:16 +0700
-X-Gmail-Original-Message-ID: <CAFTRUBcQ1Kj8sPVFv=mSc1hdcUOTj9GT8ZfZckNmvVwgJWPczA@mail.gmail.com>
-Message-ID: <CAFTRUBcQ1Kj8sPVFv=mSc1hdcUOTj9GT8ZfZckNmvVwgJWPczA@mail.gmail.com>
-Subject: Re: [PATCH RESEND 1/2] gpio: mvebu: Add support for multiple PWM
- lines per GPIO chip
-To:     andrew@lunn.ch
-Cc:     linux-gpio@vger.kernel.org, richard.genoud@gmail.com,
-        gregory.clement@bootlin.com, Gauthier Provost <gauthier@kobol.io>,
-        alban.browaeys@gmail.com, thierry.reding@gmail.com,
-        linus.walleij@linaro.org, linux-pwm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Dennis Gilmore <dennis@ausil.us>,
-        ralph.sennhauser@gmail.com
+Received: by 2002:a9d:237a:0:0:0:0:0 with HTTP; Wed, 8 Aug 2018 03:35:28 -0700 (PDT)
+In-Reply-To: <20180808095025.GB9346@sirena.org.uk>
+References: <64681bf903104c8a02f118294e616e2a12a5ebe4.1533638405.git.baolin.wang@linaro.org>
+ <20180807134121.GA7958@sirena.org.uk> <CAMz4kuJsyKv_fvrqRR3pdfKsLVy53Uj0KX+m_9jLxpcVcMvs9g@mail.gmail.com>
+ <20180808095025.GB9346@sirena.org.uk>
+From:   Baolin Wang <baolin.wang@linaro.org>
+Date:   Wed, 8 Aug 2018 18:35:28 +0800
+Message-ID: <CAMz4kuKZHxYiJaMHnqdAGth8XkfGnq3-Tsfc59cGjsHQHZaY7A@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: spi: Add Spreadtrum SPI controller documentation
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        lanqing.liu@spreadtrum.com, linux-spi@vger.kernel.org,
+        DTML <devicetree@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 6, 2018 at 10:38 AM Andrew Lunn <andrew@lunn.ch> wrote:
+On 8 August 2018 at 17:50, Mark Brown <broonie@kernel.org> wrote:
+> On Wed, Aug 08, 2018 at 10:26:42AM +0800, Baolin Wang wrote:
 >
-> On Mon, Aug 06, 2018 at 10:29:15AM +0800, Aditya Prayoga wrote:
+>> Sorry for confusing. Let me try to explain it explicitly.
+>> We can set the word size (bits_per_word) for each transmission, for
+>> our SPI controller,  after every word size transmission, we need one
+>> interval time (hardware automatically) to make sure the slave has
+>> enough time to receive the whole data.
 >
-> Hi Aditya
+> OK, so it's an inter word delay.  Some other controllers definitely have
+> the same feature.
 >
-> > +     item = kzalloc(sizeof(*item), GFP_KERNEL);
-> > +     if (!item)
-> > +             return -ENODEV;
+>> Yes, I agree we should configure it at runtime by the device, but we
+>> did not find one member to use in 'struct spi_transfer', we just find
+>> one similar 'delay_usecs' member in 'struct spi_transfer' but not
+>> same. We can use  'delay_usecs' to set our hardware interval value,
+>> but we should clean it when transfer is done, since we do not need to
+>> delay after the transfer in spi_transfer_one _message(). Or can we add
+>> one new member maybe named 'word_interval' to indicate the interval
+>> time between word size transmission?
 >
-> ENOMEM would be better, since it is a memory allocation which is
-> failing.
->
-> >
-> > -             ret = gpiod_direction_output(desc, 0);
-> > -             if (ret) {
-> > -                     gpiochip_free_own_desc(desc);
-> > -                     goto out;
-> > -             }
-> > +     spin_lock_irqsave(&mvpwm->lock, flags);
-> > +     desc = gpiochip_request_own_desc(&mvchip->chip,
-> > +                                      pwm->hwpwm, "mvebu-pwm");
-> > +     if (IS_ERR(desc)) {
-> > +             ret = PTR_ERR(desc);
-> > +             goto out;
-> > +     }
-> >
-> > -             mvpwm->gpiod = desc;
-> > +     ret = gpiod_direction_output(desc, 0);
-> > +     if (ret) {
-> > +             gpiochip_free_own_desc(desc);
-> > +             goto out;
-> >       }
-> > +     item->gpiod = desc;
-> > +     item->device = pwm;
-> > +     INIT_LIST_HEAD(&item->node);
-> > +     list_add_tail(&item->node, &mvpwm->pwms);
-> >  out:
-> >       spin_unlock_irqrestore(&mvpwm->lock, flags);
-> >       return ret;
->
-> You don't cleanup item on the error path.
->
-> > @@ -630,12 +639,20 @@ static int mvebu_pwm_request(struct pwm_chip *chip, struct pwm_device *pwm)
-> >  static void mvebu_pwm_free(struct pwm_chip *chip, struct pwm_device *pwm)
-> >  {
-> >       struct mvebu_pwm *mvpwm = to_mvebu_pwm(chip);
-> > +     struct mvebu_pwm_item *item, *tmp;
-> >       unsigned long flags;
-> >
-> > -     spin_lock_irqsave(&mvpwm->lock, flags);
-> > -     gpiochip_free_own_desc(mvpwm->gpiod);
-> > -     mvpwm->gpiod = NULL;
-> > -     spin_unlock_irqrestore(&mvpwm->lock, flags);
-> > +     list_for_each_entry_safe(item, tmp, &mvpwm->pwms, node) {
-> > +             if (item->device == pwm) {
-> > +                     spin_lock_irqsave(&mvpwm->lock, flags);
-> > +                     gpiochip_free_own_desc(item->gpiod);
-> > +                     item->gpiod = NULL;
-> > +                     item->device = NULL;
->
-> Since you are about to free item, these two lines are pointless.
->
-> > +                     list_del(&item->node);
-> > +                     spin_unlock_irqrestore(&mvpwm->lock, flags);
-> > +                     kfree(item);
-> > +             }
-> > +     }
-> >  }
->
->    Andrew
+> Right, I don't think we added this yet (if we did I can't see it).  I'd
+> add a new field to spi_transfer for this, then other controllers with
+> the same support can implement it as well and drivers can start using
+> it too.
 
-Hi Andrew,
+OK. So I will name the new filed as 'word_delay', is it OK for you?
 
-Thanks, I will fix it on next version.
-
-Regards,
-
-Aditya
+-- 
+Baolin Wang
+Best Regards
