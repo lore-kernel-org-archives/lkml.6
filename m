@@ -2,129 +2,137 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72C23C4646D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:10:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5094C46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:10:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23D3F217B4
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:10:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6698B21767
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:10:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eNdOrtOv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23D3F217B4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="jvObRW+K";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="UDBjyx0V"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6698B21767
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727404AbeHHQaE (ORCPT
+        id S1727434AbeHHQaH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 12:30:04 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:44790 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727050AbeHHQaD (ORCPT
+        Wed, 8 Aug 2018 12:30:07 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:58290 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727050AbeHHQaG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 12:30:03 -0400
-Received: by mail-ed1-f68.google.com with SMTP id f23-v6so1311354edr.11;
-        Wed, 08 Aug 2018 07:10:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=3K57tYUk11S7OC3pkkE7sadcHDy40WLoqhGzTiZe7Ps=;
-        b=eNdOrtOvpXLVVDySagre4DfK80L1aKe0PxgnZW3dPaJ0p6mJPCRzh/p40/JJ01MLJp
-         jTF90DvDFkZ/TdSD+BUrNPMIOy20T3OR2NyFe4adOPuwlCgOrQEaTd7b2UYnZ+s1K4K7
-         VppEAWV1ikZSibepRFo51czw9qsXLHgUiEd3e0wdIf373G7RfYUFcoFwBnO2x+fA3bd3
-         Wa9MJ8TvrLQjx3FRl1ZKg/eHlogSZ8s/enAeauVuLxiBWi7l46H9HkBdbNdQjAC3nyfR
-         Br/Ys6x3C/rLIc4J+BDn59ox5/zOb44cxNpQMXfSYK/KwW/Fii6w1Z8etKqwxF9B4RHf
-         gPig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=3K57tYUk11S7OC3pkkE7sadcHDy40WLoqhGzTiZe7Ps=;
-        b=j6OdRn7douUv0/KaRXfrkndOItU8APAbXKWjLBSxJNFmDjZ2sZ2N0XkMGA4Sybdgqh
-         5NvAAp8TRctuA8rRj+RMz/ddWksJB29pjm/ck0CWQRSzqcmJEG+83qitEMf3RVes74mY
-         qv9OceOAuGb7EIDQ4fLGWluV6cnT7HkZdVVEX7KTzJZSV9kR9ijTK3FQQnvxZGFhEx4j
-         x9rQKj/e46c/2xJVc+PJkvchNQxfjqJf2bWgZ9HKHGKjUrD512WSyQR3osQY/bHFI5jJ
-         oTKw1OcFHkrrTDE+Ax5ewpFeq9cBfwfnB2BtVc3lNluwggKa9v+CnwwTQCbjV5q+r4kG
-         5lSg==
-X-Gm-Message-State: AOUpUlECxGFLvowwtAEYql7LaIxQaav/Njt9UKq8KZrxeacNp5DYNmse
-        6Or8iwxwIImvvNfz1UcXVWYJqNi04usunTL0X7M=
-X-Google-Smtp-Source: AA+uWPypbOpTTb0+ONsddMWgRrdpW7RSAZwv5bj4MV9N58LUWl1plIqSBj+mBKYEbqcF0Srp7WZRqT7wrJ1TftsO0HI=
-X-Received: by 2002:a50:8921:: with SMTP id e30-v6mr3474321ede.213.1533737411941;
- Wed, 08 Aug 2018 07:10:11 -0700 (PDT)
+        Wed, 8 Aug 2018 12:30:06 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id F04E460B23; Wed,  8 Aug 2018 14:10:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1533737416;
+        bh=sd4ewQVvkPb2jmbCJMQ+WXBof3Rzo/P2On74JO0IUTE=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=jvObRW+KGJLlBCkhIGfD6YW9yBL5+DsbtFYquKnFCr0zBYrQAwGemPdAPiB9Ft7FT
+         OEmHQBXLBxhIwe//bJ/PBCtA+wQQEqP64NDo4PgLolJgW/YkgDOusKPxErk/65AAX2
+         /1zEFNupBJkXNm7jYTv5LYVVFbvzD/D2Inw+fr7M=
+Received: from [10.79.40.96] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: sibis@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id BC394601D3;
+        Wed,  8 Aug 2018 14:10:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1533737415;
+        bh=sd4ewQVvkPb2jmbCJMQ+WXBof3Rzo/P2On74JO0IUTE=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=UDBjyx0VvHklFqjlnrMvN2MDtmLHtUHQR+x+4hFpjJr7SGQ/T25YO1KuUPMTAPlx1
+         Km1RRVhQrLMIXV5TtXuLSwnZONNBtzHDdu9HZjdkw+9Gz1yssnEslj4ttVkJyV0BGX
+         do3yNITqHzI8/k3r40FJX74naoQ8xFn78Ioa2cCE=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BC394601D3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sibis@codeaurora.org
+Subject: Re: [PATCH v3 1/6] remoteproc: Introduce custom dump function for
+ each remoteproc segment
+To:     Vinod <vkoul@kernel.org>
+Cc:     bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ohad@wizery.com, kyan@codeaurora.org,
+        sricharan@codeaurora.org, akdwived@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org
+References: <20180727152003.11663-1-sibis@codeaurora.org>
+ <20180727152003.11663-2-sibis@codeaurora.org>
+ <20180807061539.GG2395@vkoul-mobl>
+From:   Sibi Sankar <sibis@codeaurora.org>
+Message-ID: <362fcf75-6fb6-5423-7b9f-915324df6317@codeaurora.org>
+Date:   Wed, 8 Aug 2018 19:40:02 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Received: by 2002:a50:f68b:0:0:0:0:0 with HTTP; Wed, 8 Aug 2018 07:10:11 -0700 (PDT)
-In-Reply-To: <afc8a305-79ea-2194-0af0-919bbb8f675e@kapsi.fi>
-References: <20180702114033.15654-1-mperttunen@nvidia.com> <20180702114033.15654-4-mperttunen@nvidia.com>
- <CABb+yY0_dKC_cYFwwb-aeRgrx=sjv=8VLP=C6DJEecFf=v+mkQ@mail.gmail.com>
- <907bac36-0c54-8f38-0f5e-f59196d414c6@kapsi.fi> <afc8a305-79ea-2194-0af0-919bbb8f675e@kapsi.fi>
-From:   Jassi Brar <jassisinghbrar@gmail.com>
-Date:   Wed, 8 Aug 2018 19:40:11 +0530
-Message-ID: <CABb+yY2mpNV186=M2anmZANgMOra4JM7ybyUT4yCxhqAG6-AZg@mail.gmail.com>
-Subject: Re: [PATCH v3 3/8] mailbox: Add transmit done by blocking option
-To:     Mikko Perttunen <cyndis@kapsi.fi>
-Cc:     Mikko Perttunen <mperttunen@nvidia.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Devicetree List <devicetree@vger.kernel.org>,
-        linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org,
-        <", linux-arm-kernel"@lists.infradead.org>,
-        ", linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, srv_heupstream" 
-        <linux-mediatek@lists.infradead.org>,
-        srv_heupstream <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180807061539.GG2395@vkoul-mobl>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 8, 2018 at 5:08 PM, Mikko Perttunen <cyndis@kapsi.fi> wrote:
->
->
-> On 04.08.2018 13:45, Mikko Perttunen wrote:
->>
->> On 08/03/2018 03:54 PM, Jassi Brar wrote:
->>>
->>> On Mon, Jul 2, 2018 at 5:10 PM, Mikko Perttunen <mperttunen@nvidia.com>
->>> wrote:
->>>>
->>>> Add a new TXDONE option, TXDONE_BY_BLOCK. With this option, the
->>>> send_data function of the mailbox driver is expected to block until
->>>> the message has been sent. The new option is used with the Tegra
->>>> Combined UART driver to minimize unnecessary overhead when transmitting
->>>> data.
->>>>
->>> 1) TXDONE_BY_BLOCK flag :-
->>>          Have you tried setting the flag mbox_chan->mbox_client->tx_block
->>> ?
->>
->>
->> No - I suppose I should have done that. I'm a bit concerned about overhead
->> as send_data may be called thousands of times per second, so I tried to make
->> it as close as possible to the downstream driver that just pokes the mailbox
->> register directly.
->
->
-> I tried using polling in the mailbox framework. Some printing is done from
-> atomic context so it seems tx_block cannot be used -
-> wait_for_completion_timeout understandably does not work in atomic context.
-> I also tried without tx_block, in which case I got some horribly garbled
-> output, but "Try increasing MBOX_TX_QUEUE_LEN" was readable there.
->
-> Any opinions?
->
-The problems arise because your hardware (SM) supports TXDONE_BY_POLL,
-but your client drives it by TXDONE_BY_ACK because the older DB
-channels are so.
+Hi Vinod,
+Thanks for the review,
 
-Please populate SM channels as a separate controller than DB.
-The DB controller, as is, run by ACK method.
-The SM controller should be run by polling, i.e, set txdone_poll =
-true and the poll period small enough. The virtual tty client driver
-should be able to safely set tx_block from appropriate context.
+On 08/07/2018 11:45 AM, Vinod wrote:
+> Hi Sibi,
+> 
+> On 27-07-18, 20:49, Sibi Sankar wrote:
+>> Introduce custom dump function per remoteproc segment. It is responsible
+>> for filling the device memory segment associated with coredump
+>>
+>> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+>> ---
+>>   drivers/remoteproc/remoteproc_core.c | 15 ++++++++++-----
+>>   include/linux/remoteproc.h           |  3 +++
+>>   2 files changed, 13 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+>> index 283b258f5e0f..ec56cd822b26 100644
+>> --- a/drivers/remoteproc/remoteproc_core.c
+>> +++ b/drivers/remoteproc/remoteproc_core.c
+>> @@ -1183,13 +1183,18 @@ static void rproc_coredump(struct rproc *rproc)
+>>   		phdr->p_align = 0;
+>>   
+>>   		ptr = rproc_da_to_va(rproc, segment->da, segment->size);
+>> -		if (!ptr) {
+>> -			dev_err(&rproc->dev,
+>> +
+>> +		if (segment->dump) {
+>> +			segment->dump(rproc, ptr, segment->size, data + offset);
+> 
+> Am not sure I follow, you are calling this w/o checking if ptr is valid,
+> so you maybe passing null to segment->dump() ?
+> 
+
+the rationale behind passing ptr directly to dump_fn is that it will
+help in tracking the segments being core dumped (q6v5_pil in particular
+requires to unlock mba before dumping and cleanup after all the segments
+are dumped which is currently decided based on a mask that is
+maintained). It also allows the remoteproc driver to fill the memory as
+needed (instead of the default 0xff). This is applicable to drivers that
+implement dump_fn, for others the default behavior is maintained.
+
+>> +		} else {
+>> +			if (!ptr) {
+>> +				dev_err(&rproc->dev,
+>>   				"invalid coredump segment (%pad, %zu)\n",
+>>   				&segment->da, segment->size);
+>> -			memset(data + offset, 0xff, segment->size);
+>> -		} else {
+>> -			memcpy(data + offset, ptr, segment->size);
+>> +				memset(data + offset, 0xff, segment->size);
+>> +			} else {
+>> +				memcpy(data + offset, ptr, segment->size);
+>> +			}
+> 
+
+-- 
+Qualcomm Innovation Center, Inc.
+Qualcomm Innovation Center, Inc, is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
