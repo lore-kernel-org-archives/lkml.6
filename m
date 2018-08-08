@@ -2,95 +2,99 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E19CDC46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 19:19:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 186C9C46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 19:21:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A26F8217A6
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 19:19:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A26F8217A6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id BAE372178B
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 19:21:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BAE372178B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hpe.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729840AbeHHVkk (ORCPT
+        id S1729974AbeHHVm5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 17:40:40 -0400
-Received: from gateway24.websitewelcome.com ([192.185.51.253]:15168 "EHLO
-        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727295AbeHHVkk (ORCPT
+        Wed, 8 Aug 2018 17:42:57 -0400
+Received: from g4t3426.houston.hpe.com ([15.241.140.75]:29765 "EHLO
+        g4t3426.houston.hpe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727295AbeHHVm4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 17:40:40 -0400
-Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
-        by gateway24.websitewelcome.com (Postfix) with ESMTP id E8CD580D8D
-        for <linux-kernel@vger.kernel.org>; Wed,  8 Aug 2018 14:19:34 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id nTzafdKoGRPojnTzaf7IGF; Wed, 08 Aug 2018 14:19:34 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.54.46] (port=58612 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1fnTza-004Edj-68; Wed, 08 Aug 2018 14:19:34 -0500
-Date:   Wed, 8 Aug 2018 14:19:33 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Lars-Peter Clausen <lars@metafoo.de>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] ASoC: adav80x: mark expected switch fall-through
-Message-ID: <20180808191933.GA27767@embeddedor.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.54.46
-X-Source-L: No
-X-Exim-ID: 1fnTza-004Edj-68
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.54.46]:58612
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 15
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+        Wed, 8 Aug 2018 17:42:56 -0400
+X-Greylist: delayed 159153 seconds by postgrey-1.27 at vger.kernel.org; Wed, 08 Aug 2018 17:42:56 EDT
+Received: from g9t2301.houston.hpecorp.net (g9t2301.houston.hpecorp.net [16.220.97.129])
+        by g4t3426.houston.hpe.com (Postfix) with ESMTP id 14A3E54;
+        Wed,  8 Aug 2018 19:21:51 +0000 (UTC)
+Received: from lxbuild.ftc.rdlabs.hpecorp.net (lxbuild.ftc.rdlabs.hpecorp.net [16.78.34.175])
+        by g9t2301.houston.hpecorp.net (Postfix) with ESMTP id B1FF848;
+        Wed,  8 Aug 2018 19:21:50 +0000 (UTC)
+From:   Jerry Hoemann <jerry.hoemann@hpe.com>
+To:     wim@linux-watchdog.org, linux@roeck-us.net
+Cc:     linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jerry Hoemann <jerry.hoemann@hpe.com>
+Subject: [PATCH v2 0/5] watchdog: hpwdt: Bug Fixes/Enhancement
+Date:   Wed,  8 Aug 2018 13:13:22 -0600
+Message-Id: <1533755607-71418-1-git-send-email-jerry.hoemann@hpe.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-where we are expecting to fall through.
+Changes for v2
 
-Addresses-Coverity-ID: 1056531 ("Missing break in switch")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- sound/soc/codecs/adav80x.c | 1 +
- 1 file changed, 1 insertion(+)
+1) Patch 0001: Simplify initialization of pretimeout removing #ifdef.
+2) Patch 0002: Loosen check on mynmi to accommodate potential FW issue.
+3) Patch 0003: Split dev_info into mulitple calls as output was getting long.
+4) Patch 0004: New: Add alias to module parameter soft_margin.
 
-diff --git a/sound/soc/codecs/adav80x.c b/sound/soc/codecs/adav80x.c
-index db21ecb..8b9ca7e 100644
---- a/sound/soc/codecs/adav80x.c
-+++ b/sound/soc/codecs/adav80x.c
-@@ -648,6 +648,7 @@ static int adav80x_set_pll(struct snd_soc_component *component, int pll_id,
- 			pll_ctrl1 |= ADAV80X_PLL_CTRL1_PLLDIV;
- 			break;
- 		}
-+		/* fall through */
- 	default:
- 		return -EINVAL;
- 	}
+
+-----------------------------
+
+Two defect fixes and one enhancement.  
+
+0001: Initialize pretimeout from module parameter.
+
+Bug Fix.
+
+Pretimeout was getting programmed correctly in the hardware,
+but this issue caused it to not be displayed correctly
+in sysfs.
+
+
+
+0002: Claim NMI from iLO
+
+Bug Fix.
+
+Default configuration worked, but if user were to disable the
+pretimeout for the watchdog, then an explicit request to NMI
+the system from the iLO virutal button would fail.
+
+
+0003: Display module parameters
+
+Enhancement.
+
+Display all the module parameters when loading the driver.
+Makes it easier to diagnose problems.
+
+
+Jerry
+
+
+Jerry Hoemann (5):
+  watchdog: hpwdt: Initialize pretimeout from module parameter.
+  watchdog: hpwdt: Claim NMI from iLO
+  watchdog: hpwdt: Display module parameters.
+  watchdog: hpwdt: Module paramerter alias.
+  watchdog: hpwdt: Update version number.
+
+ drivers/watchdog/hpwdt.c | 20 +++++++++++++-------
+ 1 file changed, 13 insertions(+), 7 deletions(-)
+
 -- 
-2.7.4
+1.8.3.1
 
