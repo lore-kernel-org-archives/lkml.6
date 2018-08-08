@@ -2,173 +2,114 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D642C4646D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 07:52:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C787C46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 07:53:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC04A21719
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 07:52:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dx44y9b4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC04A21719
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 0C33720841
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 07:53:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C33720841
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727102AbeHHKK2 (ORCPT
+        id S1727117AbeHHKME (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 06:10:28 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:39902 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726902AbeHHKK2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 06:10:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=/q2/4T+CGaQK9BqUsgCCY2Twi01mcXQ6Qjq7DyFqy9M=; b=dx44y9b45Hz73ZJjRfMSfwrqH
-        VExQfvj/SmRkx3ybp41RA163Lu9uOhw1vWiUhuQ/0cHryRMAYDgzeJpf06vRhuSeEaUTOFxq7aoti
-        2d9nD5DWBqK9DfUxo1Un7JSw2s37TA/SRJtSXIeZDEvmKUrRLkWfs5ARYWGMpLTBlQzfBUBFbnFIS
-        udZppYurv990ChLw8vZCfByWqmA2joIcq1Do6dfS9VSi9EmP9hLxSRpFnMcffl13JFlRABKNmdiXa
-        i2lH1FGMCADuPXzVb1So7LrM6fd2KkRje4ijijOF6N62yGaICD1WsDS/FhWLSIqBWwE+4EnXac5mt
-        YP7HjelVw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fnJG8-0000ZV-Fu; Wed, 08 Aug 2018 07:51:56 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id ED9F320163EBC; Wed,  8 Aug 2018 09:51:54 +0200 (CEST)
-Date:   Wed, 8 Aug 2018 09:51:54 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Reinette Chatre <reinette.chatre@intel.com>
-Cc:     Dave Hansen <dave.hansen@intel.com>, tglx@linutronix.de,
-        mingo@redhat.com, fenghua.yu@intel.com, tony.luck@intel.com,
-        vikas.shivappa@linux.intel.com, gavin.hindman@intel.com,
-        jithu.joseph@intel.com, hpa@zytor.com, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] x86/intel_rdt and perf/x86: Fix lack of coordination
- with perf
-Message-ID: <20180808075154.GN2494@hirez.programming.kicks-ass.net>
-References: <086b93f5-da5b-b5e5-148a-cef25117b963@intel.com>
- <20180803104956.GU2494@hirez.programming.kicks-ass.net>
- <1eece033-fbae-c904-13ad-1904be91c049@intel.com>
- <20180803152523.GY2476@hirez.programming.kicks-ass.net>
- <d6df8a8a-f0f2-48f7-1c1d-c8893e1583c9@intel.com>
- <57c011e1-113d-c38f-c318-defbad085843@intel.com>
- <20180806221225.GO2458@hirez.programming.kicks-ass.net>
- <08d51131-7802-5bfe-2cae-d116807183d1@intel.com>
- <20180807093615.GY2494@hirez.programming.kicks-ass.net>
- <ace0bebb-91ab-5d40-e7d7-d72d48302fa8@intel.com>
+        Wed, 8 Aug 2018 06:12:04 -0400
+Received: from mx2.suse.de ([195.135.220.15]:55414 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726939AbeHHKME (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 06:12:04 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id DFB24ACEF;
+        Wed,  8 Aug 2018 07:53:33 +0000 (UTC)
+Subject: Re: [PATCH v2] proc: add percpu populated pages count to meminfo
+To:     Dennis Zhou <dennisszhou@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Tejun Heo <tj@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Christoph Lameter <cl@linux.com>, Roman Gushchin <guro@fb.com>
+Cc:     kernel-team@fb.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Linux API <linux-api@vger.kernel.org>
+References: <20180807184723.74919-1-dennisszhou@gmail.com>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Openpgp: preference=signencrypt
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+ cqmP8roqufIAj+Ohhzs=
+Message-ID: <4eb4a0cc-2304-b6e2-06dd-ce0ade5d537e@suse.cz>
+Date:   Wed, 8 Aug 2018 09:53:32 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ace0bebb-91ab-5d40-e7d7-d72d48302fa8@intel.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180807184723.74919-1-dennisszhou@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 07, 2018 at 03:47:15PM -0700, Reinette Chatre wrote:
-> > FWIW, how long is that IRQ disabled section? It looks like something
-> > that could be taking a bit of time. We have these people that care about
-> > IRQ latency.
+On 08/07/2018 08:47 PM, Dennis Zhou wrote:
+> From: "Dennis Zhou (Facebook)" <dennisszhou@gmail.com>
 > 
-> We work closely with customers needing low latency as well as customers
-> needing deterministic behavior.
+> Currently, percpu memory only exposes allocation and utilization
+> information via debugfs. This more or less is only really useful for
+> understanding the fragmentation and allocation information at a
+> per-chunk level with a few global counters. This is also gated behind a
+> config. BPF and cgroup, for example, have seen an increase use causing
+> increased use of percpu memory. Let's make it easier for someone to
+> identify how much memory is being used.
 > 
-> This measurement is triggered by the user as a validation mechanism of
-> the pseudo-locked memory region after it has been created as part of
-> system setup as well as during runtime if there are any concerns with
-> the performance of an application that uses it.
+> This patch adds the "Percpu" stat to meminfo to more easily look up how
+> much percpu memory is in use. This number includes the cost for all
+> allocated backing pages and not just isnight at the a unit, per chunk
+> level. Metadata is excluded. I think excluding metadata is fair because
+> the backing memory scales with the numbere of cpus and can quickly
+> outweigh the metadata. It also makes this calculation light.
 > 
-> This measurement would thus be triggered before the sensitive workloads
-> start - during system setup, or if an issue is already present. In
-> either case the measurement is triggered by the administrator via debugfs.
+> Signed-off-by: Dennis Zhou <dennisszhou@gmail.com>
 
-That does not in fact include the answer to the question. Also, it
-assumes a competent operator (something I've found is not always true).
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
 
-> >  - I don't much fancy people accessing the guts of events like that;
-> >    would not an inline function like:
-> > 
-> >    static inline u64 x86_perf_rdpmc(struct perf_event *event)
-> >    {
-> > 	u64 val;
-> > 
-> > 	lockdep_assert_irqs_disabled();
-> > 
-> > 	rdpmcl(event->hw.event_base_rdpmc, val);
-> > 	return val;
-> >    }
-> > 
-> >    Work for you?
-> 
-> No. This does not provide accurate results. Implementing the above produces:
-> pseudo_lock_mea-366   [002] ....    34.950740: pseudo_lock_l2: hits=4096
-> miss=4
-
-But it being an inline function should allow the compiler to optimize
-and lift the event->hw.event_base_rdpmc load like you now do manually.
-Also, like Tony already suggested, you can prime that load just fine by
-doing an extra invocation.
-
-(and note that the above function is _much_ simpler than
-perf_event_read_local())
-
-> >  - native_read_pmc(); are you 100% sure this code only ever runs on
-> >    native and not in some dodgy virt environment?
-> 
-> My understanding is that a virtual environment would be a customer of a
-> RDT allocation (cache or memory bandwidth). I do not see if/where this
-> is restricted though - I'll move to rdpmcl() but the usage of a cache
-> allocation feature like this from a virtual machine needs more
-> investigation.
-
-I can imagine that hypervisors that allow physical partitioning could
-allow delegating the rdt crud to their guests when they 'own' a full
-socket or whatever the domain is for this.
-
-> Will do. I created the following helper function that can be used after
-> interrupts are disabled:
-> 
-> static inline int perf_event_error_state(struct perf_event *event)
-> {
->         int ret = 0;
->         u64 tmp;
-> 
->         ret = perf_event_read_local(event, &tmp, NULL, NULL);
->         if (ret < 0)
->                 return ret;
-> 
->         if (event->attr.pinned && event->oncpu != smp_processor_id())
->                 return -EBUSY;
-> 
->         return ret;
-> }
-
-Nah, stick the test in perf_event_read_local(), that actually needs it.
-
-> > Also, while you disable IRQs, your fancy pants loop is still subject to
-> > NMIs that can/will perturb your measurements, how do you deal with
-> > those?
-
-> Customers interested in this feature are familiar with dealing with them
-> (and also SMIs). The user space counterpart is able to detect such an
-> occurrence.
-
-You're very optimistic about your customers capabilities. And this might
-be true for the current people you're talking to, but once this is
-available and public, joe monkey will have access and he _will_ screw it
-up.
-
-> Please note that if an NMI arrives it would be handled with the
-> currently active cache capacity bitmask so none of the pseudo-locked
-> memory will be evicted since no capacity bitmask overlaps with the
-> pseudo-locked region.
-
-So exceptions change / have their own bitmask?
+Thanks.
