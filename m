@@ -7,68 +7,67 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 240A0C46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 00:29:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 421D2C46471
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 00:29:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5D5821533
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 00:29:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1D9E215EB
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 00:29:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nhYw8loS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5D5821533
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ehAl7gfA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1D9E215EB
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727555AbeHHCqd (ORCPT
+        id S1727595AbeHHCqu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 22:46:33 -0400
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:42912 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726159AbeHHCqd (ORCPT
+        Tue, 7 Aug 2018 22:46:50 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:42955 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726159AbeHHCqu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 22:46:33 -0400
-Received: by mail-qt0-f193.google.com with SMTP id z8-v6so550694qto.9
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 17:29:35 -0700 (PDT)
+        Tue, 7 Aug 2018 22:46:50 -0400
+Received: by mail-qt0-f195.google.com with SMTP id z8-v6so551278qto.9
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 17:29:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to
          :user-agent;
-        bh=70ZXmBo7ym10J1AIpapJ+scdCcwSKJ3Bnu6UP7Fuj/A=;
-        b=nhYw8loSsdSMXozwgHvIxMxSQ8Bl852FQX+AdwmdoYvK/O/dLeOq/X4jjteB5Jg1zw
-         3p4VE+7J9UIEzzsbAp09C8xrl5WPI8/yQ8dY3qczDMs+gIqBTATxyfy/Ii8zIVX8Jq36
-         h7k6J0DQLMd5wykriwHCN/sehUNzLEmzjTPe/lDVtgfbBsm0BV7JdvAWKOguVW4Vw62O
-         5ucojP2JLx/gsWNNq9lTa+RnjIcmdrSjR44qPJPbxeCbsoSVrHi7cM+g3Jec6RT8tgmi
-         rYJcYkevtyAuj5gnAgSpRIflnWoGNfs9wWUDXjcZajwOSu5ELHRz/Au6+pmHGEFMq2mD
-         PoJw==
+        bh=VHoTV73Kzpcp/phg71sv8KmN4pw7Nfdq7y1bQUzrJvs=;
+        b=ehAl7gfAyVxWJKCXQKvPC3BS1TAomkFqcCQDW/fQd3lTkv/Gl0CJAb/dF0pqFSPqen
+         otDE0P37jqvEZzFT0KUVHXx1Pk4HlpUG3DQsIyunNGCZz0W5D12WX7KHgBkaS0P84jlF
+         Ga+tvmb0OSKRcUX4rkNqIfi89PoBQFXqVB3zVUbdPLsoYPc7yCMEiKiFfB3WVJ9Oootl
+         s0B/uyM5+yKU7D6A+/qIWgja9/3ey6SFd0+RBze+8QPoPpSTLgV+9YACzMe9hd9PRmLA
+         tSOgUVXEZGop+NMiiuT7NU6swxUjma7RPkNCFNZ69nTcS/kKvf2YTtqueyiQsRffTc5r
+         FAXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to:user-agent;
-        bh=70ZXmBo7ym10J1AIpapJ+scdCcwSKJ3Bnu6UP7Fuj/A=;
-        b=E9dABi6811ik9+qzP3tC34+/zySZaP661B3mWpwDIJIco+qU+aCAjPEuk+bgnvWVCy
-         gsvcVtL+Mdqz6Pl1pvKtYWiMnuwicaDl2jGJXC0+kztL32GxmKCkzyAdwTinSJBAltrP
-         PMKX0X3XUx6QjJ+uce8CUyY0tVLlT92zSg6GE1cp07sKUWpMRZ3uhjuG44owDwPjhDtv
-         61fD1l8Ichlxy1Uvvvnk8fp2OSeunkmcaKFcP/amDkJVhtProQAelCHqYa4s9l6ADX8W
-         8hVbDea6kyYKhE5FGpRCMWA2VncX0QAA4lP+O9PmXHvrLWOokmudGHa/WZAqnfQzDkp/
-         DLcA==
-X-Gm-Message-State: AOUpUlFiy/agox0IP5HTYlCGpvooU2Bi2GML6zMQ2WAQSDI3U4luKtiQ
-        nN/ushcA3wB62cICIW8rpnk=
-X-Google-Smtp-Source: AA+uWPyKmX8voUxcsEHnwiPlO4zoKhXx+k0VDuLUwF+j/J06MC1zhPS5+zuUkXIKWFkRLwXHpLKkog==
-X-Received: by 2002:a0c:f842:: with SMTP id g2-v6mr593418qvo.212.1533688175379;
-        Tue, 07 Aug 2018 17:29:35 -0700 (PDT)
+        bh=VHoTV73Kzpcp/phg71sv8KmN4pw7Nfdq7y1bQUzrJvs=;
+        b=MTOTtEjQUWPvp/k7lDpDwR0FDC+7Gjub5FAKPlaQEIjwtoSwrDYRdMTtqv9lWOLGFO
+         YTJOsbyXJRwVRfNcxFqBpMvfG4iII8EJoaWVjO0DI17VyUv1On1wzsoDZ0Nxfd8lTr43
+         7cFGtPNFhLaTr8JzU7mMqNVLjSHlLwh6ZEDM2FzWHxwT5XnMMtGv1pKG7aweqls2vqhs
+         G+EC5pXx2tmlM1z2KsAgx8vrzhkwbuxDwy9Q9vgNXi61xsYMnIm+ErCgarLwKjxuAiru
+         zMJy8jr4bzAMFSlyT8JrSR/cVzWKXGOuLnYVZ8bcO3VDz4ScilHVjyt4+7PrNjx6Bk6W
+         P4Dw==
+X-Gm-Message-State: AOUpUlFOZw2lz7yCGpGQNLee48U/TCMTQZKztmJ7gE77nruaBeVPcefH
+        +/ijfo0V4NwlHvubUzRejsQ=
+X-Google-Smtp-Source: AA+uWPzZeX+cPhQcdrrxTavkwbXnAk58DejNx7XLz2u1Q4zO62gclCxPJFM7P7nvqyUg/JNL7OUtxw==
+X-Received: by 2002:a0c:9281:: with SMTP id b1-v6mr581326qvb.115.1533688193299;
+        Tue, 07 Aug 2018 17:29:53 -0700 (PDT)
 Received: from WindFlash ([201.82.148.26])
-        by smtp.gmail.com with ESMTPSA id j45-v6sm1824231qta.46.2018.08.07.17.29.33
+        by smtp.gmail.com with ESMTPSA id s64-v6sm1727411qkc.70.2018.08.07.17.29.51
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 07 Aug 2018 17:29:34 -0700 (PDT)
-Date:   Tue, 7 Aug 2018 21:29:31 -0300
+        Tue, 07 Aug 2018 17:29:52 -0700 (PDT)
+Date:   Tue, 7 Aug 2018 21:29:49 -0300
 From:   Leonardo =?utf-8?B?QnLDoXM=?= <leobras.c@gmail.com>
 To:     Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 11/15] staging: fbtft: Includes description to mutex and
- spinlock - Style
-Message-ID: <b7a7e9b7da96d73eddad4553ba1297d9823a61b1.1533686201.git.leobras.c@gmail.com>
+Subject: [PATCH v2 12/15] staging: fbtft: Add spaces around /  - Style
+Message-ID: <ca456f11ee982a5750544e73264b59645e7ce182.1533686201.git.leobras.c@gmail.com>
 References: <cover.1533686201.git.leobras.c@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
@@ -81,35 +80,26 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
- Includes description to mutex and spinlocks, as recommended by checkpatch.pl.
+Puts spaces around the /.
 
 Signed-off-by: Leonardo Brás <leobras.c@gmail.com>
 ---
- drivers/staging/fbtft/fbtft.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/staging/fbtft/fbtft-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/fbtft/fbtft.h b/drivers/staging/fbtft/fbtft.h
-index 6ee9ff320567..f771271d497a 100644
---- a/drivers/staging/fbtft/fbtft.h
-+++ b/drivers/staging/fbtft/fbtft.h
-@@ -203,7 +203,7 @@ struct fbtft_par {
- 	u8 *buf;
- 	u8 startbyte;
- 	struct fbtft_ops fbtftops;
--	spinlock_t dirty_lock;
-+	spinlock_t dirty_lock; /*Protects dirty_lines_{start,end}*/
- 	unsigned int dirty_lines_start;
- 	unsigned int dirty_lines_end;
- 	struct {
-@@ -219,7 +219,7 @@ struct fbtft_par {
- 	} gpio;
- 	const s16 *init_sequence;
- 	struct {
--		struct mutex lock;
-+		struct mutex lock; /*Mutex for Gamma curve locking*/
- 		u32 *curves;
- 		int num_values;
- 		int num_curves;
+diff --git a/drivers/staging/fbtft/fbtft-core.c b/drivers/staging/fbtft/fbtft-core.c
+index 8b79353c722a..83076eca9760 100644
+--- a/drivers/staging/fbtft/fbtft-core.c
++++ b/drivers/staging/fbtft/fbtft-core.c
+@@ -769,7 +769,7 @@ struct fb_info *fbtft_framebuffer_alloc(struct fbtft_display *display,
+ 	fbops->fb_setcolreg =      fbtft_fb_setcolreg;
+ 	fbops->fb_blank     =      fbtft_fb_blank;
+ 
+-	fbdefio->delay =           HZ/fps;
++	fbdefio->delay =           HZ / fps;
+ 	fbdefio->deferred_io =     fbtft_deferred_io;
+ 	fb_deferred_io_init(info);
+ 
 -- 
 2.18.0
 
