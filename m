@@ -6,57 +6,51 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A1B5C4646D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 22:31:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55BF3C4646D
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 22:33:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D65AD21AA8
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 22:31:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 074D321AA8
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 22:33:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="WTh0nN2y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D65AD21AA8
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="cwNb5dOZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 074D321AA8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731483AbeHIAxk (ORCPT
+        id S1731666AbeHIAym (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 20:53:40 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:38672 "EHLO
+        Wed, 8 Aug 2018 20:54:42 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:38702 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727706AbeHIAxk (ORCPT
+        with ESMTP id S1729732AbeHIAym (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 20:53:40 -0400
+        Wed, 8 Aug 2018 20:54:42 -0400
 Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 220A7CD;
-        Thu,  9 Aug 2018 00:31:53 +0200 (CEST)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 7D1D0CD;
+        Thu,  9 Aug 2018 00:32:56 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1533767514;
-        bh=EKV/a/6kILS90SjjRgxeE2AFDLzE+mQW6Vj4vodty9Q=;
+        s=mail; t=1533767577;
+        bh=OGV+QoYUNbMdZ4OvRzrkPaa/vYJOdi4cr76XsPNEZIY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WTh0nN2yYl6BiOJfwsKM01s4gNcx9xoFCuIRou8w093CzE+OcBsjeNIvmj60kIkV0
-         KnYlh5pUECyqW9cTS7lvv8q/yOSuZeLWGRiU/REVyuFagAYO82nKUpXCopuDZ9B/TE
-         qN/JV74uOEE8voZTvvWDDty+vGa5XahdLhMWDB/s=
+        b=cwNb5dOZvOChyyw4hFH6eBbk2koWGdPOjEULZDbH/pLEIkWxaerxuVWW9D55UL9ek
+         trUOKZMwuZmMIp0cGbiwSwWp4uBxmNSmkVA0dnsoTTnfYfxzysRCvXjLd9z3XB24Jx
+         PtCaDAEgfdzQ8ZTw/mMZvetr0IKUQUj75Z4MMb70=
 From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     "Matwey V. Kornilov" <matwey@sai.msu.ru>
-Cc:     Alan Stern <stern@rowland.harvard.edu>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>, mingo@redhat.com,
-        Mike Isely <isely@pobox.com>,
-        Bhumika Goyal <bhumirks@gmail.com>,
-        Colin King <colin.king@canonical.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
+To:     Tomasz Figa <tfiga@chromium.org>
+Cc:     Alan Stern <stern@rowland.harvard.edu>, keiichiw@chromium.org,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
         Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        keiichiw@chromium.org
-Subject: Re: [PATCH 2/2] media: usb: pwc: Don't use coherent DMA buffers for ISO transfer
-Date:   Thu, 09 Aug 2018 01:32:37 +0300
-Message-ID: <1913405.2MshdJEm1G@avalon>
+        Douglas Anderson <dianders@chromium.org>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        "Matwey V. Kornilov" <matwey@sai.msu.ru>
+Subject: Re: [RFC PATCH v1] media: uvcvideo: Cache URB header data before processing
+Date:   Thu, 09 Aug 2018 01:33:40 +0300
+Message-ID: <2414943.eZ5QIXTjLV@avalon>
 Organization: Ideas on Board Oy
-In-Reply-To: <CAJs94EZA=o5=4frPhXs3vnr4x-__gSZ2ximvTyugLoaD6KLcUg@mail.gmail.com>
-References: <CAJs94EZEqWEscECp7bsJ3DvqoU83_Y2WQ55jPaG4MyoG-hvLFQ@mail.gmail.com> <1556658.LS2rrRvGR3@avalon> <CAJs94EZA=o5=4frPhXs3vnr4x-__gSZ2ximvTyugLoaD6KLcUg@mail.gmail.com>
+In-Reply-To: <CAAFQd5AFSFKeMhdpW5PusrtcvD1f9DSu7_MQQyy6fB=HbHvVLw@mail.gmail.com>
+References: <Pine.LNX.4.44L0.1808081015110.1466-100000@iolanthe.rowland.org> <1959555.Z0pJAWgXVZ@avalon> <CAAFQd5AFSFKeMhdpW5PusrtcvD1f9DSu7_MQQyy6fB=HbHvVLw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
@@ -65,123 +59,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Matwey,
+Hi Tomasz,
 
-On Saturday, 4 August 2018 11:00:05 EEST Matwey V. Kornilov wrote:
-> 2018-07-30 18:35 GMT+03:00 Laurent Pinchart:
-> > On Tuesday, 24 July 2018 21:56:09 EEST Matwey V. Kornilov wrote:
-> >> 2018-07-23 21:57 GMT+03:00 Alan Stern:
-> >>> On Mon, 23 Jul 2018, Matwey V. Kornilov wrote:
-> >>>> I've tried to strategies:
-> >>>> 
-> >>>> 1) Use dma_unmap and dma_map inside the handler (I suppose this is
-> >>>> similar to how USB core does when there is no URB_NO_TRANSFER_DMA_MAP)
+On Wednesday, 8 August 2018 19:27:42 EEST Tomasz Figa wrote:
+> On Thu, Aug 9, 2018 at 1:21 AM Laurent Pinchart wrote:
+> > On Wednesday, 8 August 2018 17:20:21 EEST Alan Stern wrote:
+> >> On Wed, 8 Aug 2018, Keiichi Watanabe wrote:
+> >>> Hi Laurent, Kieran, Tomasz,
 > >>> 
-> >>> Yes.
+> >>> Thank you for reviews and suggestions.
+> >>> I want to do additional measurements for improving the performance.
 > >>> 
-> >>>> 2) Use sync_cpu and sync_device inside the handler (and dma_map only
-> >>>> once at memory allocation)
-> >>>> 
-> >>>> It is interesting that dma_unmap/dma_map pair leads to the lower
-> >>>> overhead (+1us) than sync_cpu/sync_device (+2us) at x86_64 platform.
-> >>>> At armv7l platform using dma_unmap/dma_map  leads to ~50 usec in the
-> >>>> handler, and sync_cpu/sync_device - ~65 usec.
-> >>>> 
-> >>>> However, I am not sure is it mandatory to call
-> >>>> dma_sync_single_for_device for FROM_DEVICE direction?
+> >>> Let me clarify my understanding:
+> >>> Currently, if the platform doesn't support coherent-DMA (e.g. ARM),
+> >>> urb_buffer is allocated by usb_alloc_coherent with
+> >>> URB_NO_TRANSFER_DMA_MAP flag instead of using kmalloc.
+> >> 
+> >> Not exactly.  You are mixing up allocation with mapping.  The speed of
+> >> the allocation doesn't matter; all that matters is whether the memory
+> >> is cached and when it gets mapped/unmapped.
+> >> 
+> >>> This is because we want to avoid frequent DMA mappings, which are
+> >>> generally expensive. However, memories allocated in this way are not
+> >>> cached.
 > >>> 
-> >>> According to Documentation/DMA-API-HOWTO.txt, the CPU should not write
-> >>> to a DMA_FROM_DEVICE-mapped area, so dma_sync_single_for_device() is
-> >>> not needed.
-> >> 
-> >> Well, I measured the following at armv7l. The handler execution time
-> >> (URB_NO_TRANSFER_DMA_MAP is used for all cases):
-> >> 
-> >> 1) coherent DMA: ~3000 usec (pwc is not functional)
-> >> 2) explicit dma_unmap and dma_map in the handler: ~52 usec
-> >> 3) explicit dma_sync_single_for_cpu (no dma_sync_single_for_device): ~56
-> >> usec
+> >>> So, we wonder if using usb_alloc_coherent is really fast.
+> >>> In other words, we want to know which is better:
+> >>> "No DMA mapping/Uncached memory" v.s. "Frequent DMA mapping/Cached
+> >>> memory".
 > > 
-> > I really don't understand why the sync option is slower. Could you please
-> > investigate ? Before doing anything we need to make sure we have a full
-> > understanding of the problem.
-> 
-> Hi,
-> 
-> I've found one drawback in my measurements. I forgot to fix CPU
-> frequency at lowest state 300MHz. Now, I remeasured
-> 
-> 2) dma_unmap and dma_map in the handler:
-> 2A) dma_unmap_single call: 28.8 +- 1.5 usec
-> 2B) memcpy and the rest: 58 +- 6 usec
-> 2C) dma_map_single call: 22 +- 2 usec
-> Total: 110 +- 7 usec
-> 
-> 3) dma_sync_single_for_cpu
-> 3A) dma_sync_single_for_cpu call: 29.4 +- 1.7 usec
-> 3B) memcpy and the rest: 59 +- 6 usec
-> 3C) noop (trace events overhead): 5 +- 2 usec
-> Total: 93 +- 7 usec
-> 
-> So, now we see that 2A and 3A (as well as 2B and 3B) agree good within
-> error ranges.
-
-Thank you for the time you've spent on these measurements, the information is 
-useful and your work very appreciated.
-
-> >> So, I suppose that unfortunately Tomasz suggestion doesn't work. There
-> >> is no performance improvement when dma_sync_single is used.
-> >> 
-> >> At x86_64 the following happens:
-> >> 
-> >> 1) coherent DMA: ~2 usec
+> > The second option should also be split in two:
 > > 
-> > What do you mean by coherent DMA for x86_64 ? Is that usb_alloc_coherent()
-> > ? Could you trace it to see how memory is allocated exactly, and how it's
-> > mapped to the CPU ? I suspect that it will end up in dma_direct_alloc()
-> > but I'd like a confirmation.
-> 
-> usb_alloc_coherents() ends up inside hcd_buffer_alloc() where
-> dma_alloc_coherent() is called. Keep in mind, that requested size is
-> 9560 in our case and pool is not used.
-> 
-> >> 2) explicit dma_unmap and dma_map in the handler: ~3.5 usec
-> >> 3) explicit dma_sync_single_for_cpu (no dma_sync_single_for_device): ~4
-> >> usec
-> >> 
-> >> So, whats to do next? Personally, I think that DMA streaming API
-> >> introduces not so great overhead.
+> > - cached memory with DMA mapping/unmapping around each transfer
+> > - cached memory with DMA mapping/unmapping at allocation/free time, and
+> > DMA sync around each transfer
 > > 
-> > It might not be very large, but with USB3 cameras at high resolutions and
-> > framerates, it might still become noticeable. I wouldn't degrade
-> > performances on x86, especially if we can decide which option to use
-> > based on the platform (or perhaps even better based on Kconfig options
-> > such as DMA_NONCOHERENT).
+> > The second option should in theory lead to at least slightly better
+> > performances, but tests with the pwc driver have reported contradictory
+> > results. I'd like to know whether that's also the case with the uvcvideo
+> > driver, and if so, why.
 > 
-> PWC is discontinued chip, so there will not be any new USB3 cameras.
+> I thought that the results from retesting on pwc, after making sure
+> that cpu frequency stays the same all the time, actually clarified
+> this and indeed map once, sync repeatedly was the fastest?
 
-You're right. I had in mind other USB cameras that would benefit from the same 
-change, and in particular the uvcvideo driver, which is used by USB3 cameras.
-
-> Kconfig won't work here, as I said before, DMA config is stored inside
-> device tree blob on ARM architecture.
-
-But couldn't we skip it at least on x86 ?
-
-> >> Does anybody happy with turning to streaming DMA or I'll introduce
-> >> module-level switch as Ezequiel suggested?
-> > 
-> > A module-level switch isn't a good idea, it will just confuse users. We
-> > need to establish a strategy and come up with a good heuristic that can
-> > be applied at compile and/or runtime to automatically decide how to
-> > allocate buffers.
-> 
-> I am agree in general, but I cannot understand why webcam driver
-> should think about memory allocation heuristics.
-
-I fully agree with you, this should be handled by either the USB core or the 
-media core (possibly with a few static hints from the driver, such as buffer 
-sizes, to help with heuristics, if needed at all).
+I had missed that, thank you for the information. I've now caught up with the 
+pwc thread.
 
 -- 
 Regards,
