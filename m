@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E95D1C46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 05:25:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72A9AC46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 05:25:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1E6B21727
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 05:25:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1E6B21727
+	by mail.kernel.org (Postfix) with ESMTP id 1AD6921990
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 05:25:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AD6921990
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727156AbeHHHn3 (ORCPT
+        id S1727191AbeHHHnb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 03:43:29 -0400
-Received: from mx.socionext.com ([202.248.49.38]:4068 "EHLO mx.socionext.com"
+        Wed, 8 Aug 2018 03:43:31 -0400
+Received: from mx.socionext.com ([202.248.49.38]:4078 "EHLO mx.socionext.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727039AbeHHHn2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 03:43:28 -0400
+        id S1726905AbeHHHna (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 03:43:30 -0400
 Received: from unknown (HELO kinkan-ex.css.socionext.com) ([172.31.9.52])
   by mx.socionext.com with ESMTP; 08 Aug 2018 14:25:34 +0900
-Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
-        by kinkan-ex.css.socionext.com (Postfix) with ESMTP id 4E8ED18015C;
+Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
+        by kinkan-ex.css.socionext.com (Postfix) with ESMTP id 9DAAB180B37;
         Wed,  8 Aug 2018 14:25:34 +0900 (JST)
 Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Wed, 8 Aug 2018 14:25:34 +0900
 Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
-        by iyokan.css.socionext.com (Postfix) with ESMTP id A07FE40372;
-        Wed,  8 Aug 2018 14:25:33 +0900 (JST)
+        by iyokan.css.socionext.com (Postfix) with ESMTP id 2DA8A40372;
+        Wed,  8 Aug 2018 14:25:34 +0900 (JST)
 Received: from aegis.e01.socionext.com (unknown [10.213.134.210])
-        by yuzu.css.socionext.com (Postfix) with ESMTP id 7B415120415;
-        Wed,  8 Aug 2018 14:25:33 +0900 (JST)
+        by yuzu.css.socionext.com (Postfix) with ESMTP id 093FC120415;
+        Wed,  8 Aug 2018 14:25:34 +0900 (JST)
 From:   Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
 To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         linux-media@vger.kernel.org
@@ -41,9 +41,9 @@ Cc:     Masami Hiramatsu <masami.hiramatsu@linaro.org>,
         Jassi Brar <jaswinder.singh@linaro.org>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-Subject: [PATCH v2 4/7] media: uniphier: add TS common file of HSC
-Date:   Wed,  8 Aug 2018 14:25:16 +0900
-Message-Id: <20180808052519.14528-5-suzuki.katsuhiro@socionext.com>
+Subject: [PATCH v2 7/7] media: uniphier: add LD11/LD20 HSC support
+Date:   Wed,  8 Aug 2018 14:25:19 +0900
+Message-Id: <20180808052519.14528-8-suzuki.katsuhiro@socionext.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180808052519.14528-1-suzuki.katsuhiro@socionext.com>
 References: <20180808052519.14528-1-suzuki.katsuhiro@socionext.com>
@@ -52,234 +52,322 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add TS input/output code to start/stop configure the MPEG2-TS ports
-of HSC for Socionext UniPhier SoCs.
+This patch adds definition of registers specs to support of HSC
+MPEG2-TS I/O driver for UniPhier LD11/LD20 SoCs.
 
 Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-
 ---
+ drivers/media/platform/uniphier/Kconfig    |   8 +
+ drivers/media/platform/uniphier/Makefile   |   1 +
+ drivers/media/platform/uniphier/hsc-ld11.c | 273 +++++++++++++++++++++
+ 3 files changed, 282 insertions(+)
+ create mode 100644 drivers/media/platform/uniphier/hsc-ld11.c
 
-Changes from v1:
-  - Split from large patches
-  - Fix include lines
----
- drivers/media/platform/uniphier/Makefile  |   2 +-
- drivers/media/platform/uniphier/hsc-reg.h |  41 +++++++
- drivers/media/platform/uniphier/hsc-ts.c  | 127 ++++++++++++++++++++++
- drivers/media/platform/uniphier/hsc.h     |   6 +
- 4 files changed, 175 insertions(+), 1 deletion(-)
- create mode 100644 drivers/media/platform/uniphier/hsc-ts.c
-
+diff --git a/drivers/media/platform/uniphier/Kconfig b/drivers/media/platform/uniphier/Kconfig
+index b96b98d98400..5a08d09b76ff 100644
+--- a/drivers/media/platform/uniphier/Kconfig
++++ b/drivers/media/platform/uniphier/Kconfig
+@@ -9,3 +9,11 @@ config DVB_UNIPHIER
+ 	  Driver for UniPhier frontend for MPEG2-TS input/output,
+ 	  demux and descramble.
+ 	  Say Y when you want to support this frontend.
++
++config DVB_UNIPHIER_LD11
++	bool "Support UniPhier LD11/LD20 HSC Device Driver"
++	depends on DVB_UNIPHIER
++	help
++	  Driver for the HSC (High speed Stream Controller) for
++	  UniPhier LD11/LD20.
++	  Say Y when you want to support this hardware.
 diff --git a/drivers/media/platform/uniphier/Makefile b/drivers/media/platform/uniphier/Makefile
-index 59be2edf0c53..2ba03067644d 100644
+index d17e001a7195..165a44b649c9 100644
 --- a/drivers/media/platform/uniphier/Makefile
 +++ b/drivers/media/platform/uniphier/Makefile
-@@ -1,4 +1,4 @@
+@@ -1,4 +1,5 @@
  # SPDX-License-Identifier: GPL-2.0
--uniphier-dvb-y += hsc-dma.o hsc-css.o
-+uniphier-dvb-y += hsc-dma.o hsc-css.o hsc-ts.o
+ uniphier-dvb-y += hsc-dma.o hsc-css.o hsc-ts.o hsc-ucode.o hsc-core.o
++uniphier-dvb-$(CONFIG_DVB_UNIPHIER_LD11) += hsc-ld11.o
  
  obj-$(CONFIG_DVB_UNIPHIER) += uniphier-dvb.o
-diff --git a/drivers/media/platform/uniphier/hsc-reg.h b/drivers/media/platform/uniphier/hsc-reg.h
-index e5bc87658361..26f04b79178b 100644
---- a/drivers/media/platform/uniphier/hsc-reg.h
-+++ b/drivers/media/platform/uniphier/hsc-reg.h
-@@ -144,4 +144,45 @@
- #define   CSS_DPCTRL_DPSEL_TSI1            BIT(1)
- #define   CSS_DPCTRL_DPSEL_TSI0            BIT(0)
- 
-+/* TSI */
-+#define TSI_SYNCCNTROL(i)                (0x7100 + (i) * 0x70)
-+#define   TSI_SYNCCNTROL_FRAME_MASK        GENMASK(18, 16)
-+#define   TSI_SYNCCNTROL_FRAME_EXTSYNC1    (0x0 << 16)
-+#define   TSI_SYNCCNTROL_FRAME_EXTSYNC2    (0x1 << 16)
-+#define TSI_CONFIG(i)                    (0x7104 + (i) * 0x70)
-+#define   TSI_CONFIG_ATSMD_MASK            GENMASK(22, 21)
-+#define   TSI_CONFIG_ATSMD_PCRPLL0         (0x0 << 21)
-+#define   TSI_CONFIG_ATSMD_PCRPLL1         (0x1 << 21)
-+#define   TSI_CONFIG_ATSMD_DPLL            (0x3 << 21)
-+#define   TSI_CONFIG_ATSADD_ON             BIT(20)
-+#define   TSI_CONFIG_STCMD_MASK            GENMASK(7, 6)
-+#define   TSI_CONFIG_STCMD_PCRPLL0         (0x0 << 6)
-+#define   TSI_CONFIG_STCMD_PCRPLL1         (0x1 << 6)
-+#define   TSI_CONFIG_STCMD_DPLL            (0x3 << 6)
-+#define   TSI_CONFIG_CHEN_START            BIT(0)
-+#define TSI_RATEUPLMT(i)                 (0x7108 + (i) * 0x70)
-+#define TSI_RATELOWLMT(i)                (0x710c + (i) * 0x70)
-+#define TSI_CNTINTR(i)                   (0x7110 + (i) * 0x70)
-+#define TSI_INTREN(i)                    (0x7114 + (i) * 0x70)
-+#define   TSI_INTR_NTP                     BIT(13)
-+#define   TSI_INTR_NTPCNT                  BIT(12)
-+#define   TSI_INTR_PKTEND                  BIT(11)
-+#define   TSI_INTR_PCR                     BIT(9)
-+#define   TSI_INTR_LOAD                    BIT(8)
-+#define   TSI_INTR_SERR                    BIT(7)
-+#define   TSI_INTR_SOF                     BIT(6)
-+#define   TSI_INTR_TOF                     BIT(5)
-+#define   TSI_INTR_UL                      BIT(4)
-+#define   TSI_INTR_LL                      BIT(3)
-+#define   TSI_INTR_CNT                     BIT(2)
-+#define   TSI_INTR_LOST                    BIT(1)
-+#define   TSI_INTR_LOCK                    BIT(0)
-+#define TSI_SYNCSTATUS(i)                (0x7118 + (i) * 0x70)
-+#define   TSI_STAT_PKTST_ERR               BIT(21)
-+#define   TSI_STAT_LARGE_ERR               BIT(20)
-+#define   TSI_STAT_SMALL_ERR               BIT(19)
-+#define   TSI_STAT_LOCK                    BIT(18)
-+#define   TSI_STAT_SYNC                    BIT(17)
-+#define   TSI_STAT_SEARCH                  BIT(16)
-+
- #endif /* DVB_UNIPHIER_HSC_REG_H__ */
-diff --git a/drivers/media/platform/uniphier/hsc-ts.c b/drivers/media/platform/uniphier/hsc-ts.c
+diff --git a/drivers/media/platform/uniphier/hsc-ld11.c b/drivers/media/platform/uniphier/hsc-ld11.c
 new file mode 100644
-index 000000000000..bb70429301ad
+index 000000000000..3d33bf12b8d7
 --- /dev/null
-+++ b/drivers/media/platform/uniphier/hsc-ts.c
-@@ -0,0 +1,127 @@
++++ b/drivers/media/platform/uniphier/hsc-ld11.c
+@@ -0,0 +1,273 @@
 +// SPDX-License-Identifier: GPL-2.0
 +//
 +// Socionext UniPhier DVB driver for High-speed Stream Controller (HSC).
-+// MPEG2-TS input/output port setting.
++// For UniPhier LD11/LD20.
 +//
 +// Copyright (c) 2018 Socionext Inc.
-+
-+#include <linux/bitfield.h>
-+#include <linux/kernel.h>
-+#include <linux/regmap.h>
 +
 +#include "hsc.h"
 +#include "hsc-reg.h"
 +
-+/* SBC1, 2 */
-+#define SBC_ACE_DMA_EN                0x6000
-+#define SBC_DMAPARAM21                0x6004
-+#define SBC_ACE_INTREN                0x6008
-+#define SBC_ACE_INTRST                0x600c
-+#define SBC_DMA_STATUS0               0x6010
-+#define SBC_DMA_STATUS1               0x6014
-+#define SBC_DMAPARAMA(i)              (0x6018 + (i) * 0x04)
-+#define   SBC_DMAPARAMA_OFFSET_MASK     GENMASK(31, 29)
-+#define   SBC_DMAPARAMA_LOOPADDR_MASK   GENMASK(28, 23)
-+#define   SBC_DMAPARAMA_COUNT_MASK      GENMASK(7, 0)
-+#define SBC_DMAPARAMB(i)              (0x6038 + (i) * 0x04)
++static const struct hsc_spec_init_ram uniphier_hsc_ld11_init_rams[] = {
++	{ FLT_PATN_RAM_TOP_ADDR, FLT_PATN_RAM_SIZE, ~0, },
++	{ FLT_MASK_RAM_TOP_ADDR, FLT_MASK_RAM_SIZE, 0, },
++	/* FLT_PID Pattern */
++	{ SHARE_MEMORY_0_NORMAL, FLT_PIDPATTERN_SIZE, ~0, },
++	/* FLT_PID Table */
++	{ SHARE_MEMORY_0_NORMAL + FLT_PIDPATTERN_SIZE,
++	  SHARE_MEMORY_0_SIZE - FLT_PIDPATTERN_SIZE, 0, },
++	{ SHARE_MEMORY_1_NORMAL, SHARE_MEMORY_1_SIZE, 0, },
++	{ SHARE_MEMORY_2_NORMAL, SHARE_MEMORY_2_SIZE, 0, },
++	{ SHARE_MEMORY_3_NORMAL, SHARE_MEMORY_3_SIZE, 0, },
++	{ SHARE_MEMORY_4_NORMAL, SHARE_MEMORY_4_SIZE, 0, },
++	{ SHARE_MEMORY_5_NORMAL, SHARE_MEMORY_5_SIZE, 0, },
++};
 +
-+#define PARAMA_OFFSET_TS      0x02
-+#define PARAMA_LOOPADDR_TS    0x31
-+#define PARAMA_COUNT_TS       0xc4
++static const struct hsc_spec_init_ram uniphier_hsc_ld20_init_rams[] = {
++	{ FLT_PATN_RAM_TOP_ADDR, FLT_PATN_RAM_SIZE, ~0, },
++	{ FLT_MASK_RAM_TOP_ADDR, FLT_MASK_RAM_SIZE, 0, },
++	/* FLT_PID Pattern */
++	{ SHARE_MEMORY_0_NORMAL, FLT_PIDPATTERN_SIZE, ~0, },
++	/* FLT_PID Table */
++	{ SHARE_MEMORY_0_NORMAL + FLT_PIDPATTERN_SIZE,
++	  SHARE_MEMORY_0_SIZE - FLT_PIDPATTERN_SIZE, 0, },
++	{ SHARE_MEMORY_1_NORMAL, SHARE_MEMORY_1_SIZE, 0, },
++	{ SHARE_MEMORY_2_NORMAL, SHARE_MEMORY_2_SIZE, 0, },
++	{ SHARE_MEMORY_3_NORMAL, SHARE_MEMORY_3_SIZE, 0, },
++	{ SHARE_MEMORY_4_NORMAL, SHARE_MEMORY_4_SIZE, 0, },
++	{ SHARE_MEMORY_5_NORMAL, SHARE_MEMORY_5_SIZE, 0, },
++	{ SHARE_MEMORY_6_NORMAL, SHARE_MEMORY_6_SIZE, 0, },
++	{ SHARE_MEMORY_7_NORMAL, SHARE_MEMORY_7_SIZE, 0, },
++};
 +
-+static bool ts_in_is_valid(struct hsc_chip *chip, int tsi)
-+{
-+	return tsi < chip->spec->num_ts_in && chip->spec->ts_in[tsi].intr.valid;
-+}
++static const struct hsc_spec_css uniphier_hsc_ld11_css_in[] = {
++	[HSC_CSS_IN_SRLTS0] = {
++		.pol = { true, CSS_SIGNALPOLCH(0), -1,  3,  0, },
++	},
++	[HSC_CSS_IN_SRLTS1] = {
++		.pol = { true, CSS_SIGNALPOLCH(0), -1, 11,  8, },
++	},
++	[HSC_CSS_IN_SRLTS2] = {
++		.pol = { true, CSS_SIGNALPOLCH(0), -1, 19, 16, },
++	},
++	[HSC_CSS_IN_SRLTS3] = {
++		.pol = { true, CSS_SIGNALPOLCH(0), -1, 27, 24, },
++	},
++	[HSC_CSS_IN_SRLTS4] = {
++		.pol = { true, CSS_SIGNALPOLCH(1), -1,  3,  0, },
++	},
++	[HSC_CSS_IN_PARTS0] = {
++		.pol = { true, CSS_PTSISIGNALPOL,  -1, -1,  0, },
++	},
++	[HSC_CSS_IN_PARTS1] = {
++		.pol = { true, CSS_PTSISIGNALPOL,  -1, -1,  8, },
++	},
++	[HSC_CSS_IN_DMD0]   = {
++		.pol = { true, CSS_DMDSIGNALPOL,   -1, -1, 16, },
++	},
++};
 +
-+static const struct hsc_spec_ts *ts_in_get_spec(struct hsc_chip *chip, int tsi)
-+{
-+	const struct hsc_spec_ts *spec = chip->spec->ts_in;
++static const struct hsc_spec_css uniphier_hsc_ld11_css_out[] = {
++	[HSC_CSS_OUT_SRLTS0] = {
++		.pol = { true, CSS_STSOSIGNALPOL,   6, -1,  0, },
++		.sel = { true, CSS_OUTPUTCTRL(0), GENMASK(4,  0), 0, },
++	},
++	[HSC_CSS_OUT_SRLTS1] = {
++		.pol = { true, CSS_STSOSIGNALPOL,  14, -1,  8, },
++		.sel = { true, CSS_OUTPUTCTRL(0), GENMASK(12, 8), 8, },
++	},
++	[HSC_CSS_OUT_TSI0] = {
++		.sel = { true, CSS_OUTPUTCTRL(1), GENMASK(4,  0), 0, },
++	},
++	[HSC_CSS_OUT_TSI1] = {
++		.sel = { true, CSS_OUTPUTCTRL(1), GENMASK(12, 8), 8, },
++	},
++	[HSC_CSS_OUT_TSI2] = {
++		.sel = { true, CSS_OUTPUTCTRL(1), GENMASK(20, 16), 16, },
++	},
++	[HSC_CSS_OUT_TSI3] = {
++		.sel = { true, CSS_OUTPUTCTRL(1), GENMASK(28, 24), 24, },
++	},
++	[HSC_CSS_OUT_TSI4] = {
++		.sel = { true, CSS_OUTPUTCTRL(2), GENMASK(4,  0), 0, },
++	},
++	[HSC_CSS_OUT_PARTS0] = {
++		.pol = { true, CSS_PTSOSIGNALPOL,  -1, -1,  0, },
++		.sel = { true, CSS_OUTPUTCTRL(4), GENMASK(4,  0), 0, },
++	},
++	[HSC_CSS_OUT_PKTFF0] = {
++		.sel = { true, CSS_OUTPUTCTRL(5), GENMASK(4,  0), 0, },
++	},
++};
 +
-+	if (!ts_in_is_valid(chip, tsi))
-+		return NULL;
++static const struct hsc_spec_ts uniphier_hsc_ld11_ts_in[] = {
++	[HSC_TS_IN0] = {
++		.intr = { true, IOB_INTREN0, 13 },
++	},
++	[HSC_TS_IN1] = {
++		.intr = { true, IOB_INTREN0, 14 },
++	},
++	[HSC_TS_IN2] = {
++		.intr = { true, IOB_INTREN0, 15 },
++	},
++	[HSC_TS_IN3] = {
++		.intr = { true, IOB_INTREN0, 16 },
++	},
++	[HSC_TS_IN4] = {
++		.intr = { true, IOB_INTREN0, 17 },
++	},
++};
 +
-+	return &spec[tsi];
-+}
++static const struct hsc_spec_dma uniphier_hsc_ld11_dma_in[] = {
++	[HSC_DMA_IN0] = {
++		.dma_ch = 5,
++		.rb_ch  = 4,
++		.it_ch  = 0,
++		.en     = { true, CDMBC_TDSTRT, 5 },
++		.intr   = { true, IOB_INTREN1, 1 },
++	},
++	[HSC_DMA_IN1] = {
++		.dma_ch = 6,
++		.rb_ch  = 5,
++		.it_ch  = 1,
++		.en     = { true, CDMBC_TDSTRT, 6 },
++		.intr   = { true, IOB_INTREN1, 2 },
++	},
++	[HSC_DMA_IN2] = {
++		.dma_ch = 7,
++		.rb_ch  = 6,
++		.it_ch  = 2,
++		.en     = { true, CDMBC_TDSTRT, 7 },
++		.intr   = { true, IOB_INTREN1, 3 },
++	},
++	[HSC_DMA_IN3] = {
++		.dma_ch = 22,
++		.rb_ch  = 20,
++		.it_ch  = 13,
++		.en     = { true, CDMBC_TDSTRT, 13 },
++		.intr   = { true, IOB_INTREN1, 4 },
++	},
++	[HSC_DMA_IN4] = {
++		.dma_ch = 23,
++		.rb_ch  = 21,
++		.it_ch  = 14,
++		.en     = { true, CDMBC_TDSTRT, 14 },
++		.intr   = { true, IOB_INTREN1, 5 },
++	},
++	[HSC_DMA_IN5] = {
++		.dma_ch = 24,
++		.rb_ch  = 22,
++		.it_ch  = 15,
++		.en     = { true, CDMBC_TDSTRT, 15 },
++		.intr   = { true, IOB_INTREN1, 6 },
++	},
++	[HSC_DMA_CIP_IN0] = {
++		.dma_ch = 8,
++		.rb_ch  = 7,
++		.cip_ch = 0,
++		.it_ch  = 3,
++		.en     = { true, CDMBC_STRT(1), 0 },
++		.intr   = { true, IOB_INTREN2, 4 },
++	},
++	[HSC_DMA_CIP_IN1] = {
++		.dma_ch = 10,
++		.rb_ch  = 9,
++		.cip_ch = 1,
++		.it_ch  = 5,
++		.en     = { true, CDMBC_STRT(1), 2 },
++		.intr   = { true, IOB_INTREN2, 5 },
++	},
++};
 +
-+int hsc_ts_in_set_enable(struct hsc_chip *chip, int tsi, bool en)
-+{
-+	struct regmap *r = chip->regmap;
-+	const struct hsc_spec_ts *speci = ts_in_get_spec(chip, tsi);
-+	u32 m, v;
++static const struct hsc_spec_dma uniphier_hsc_ld11_dma_out[] = {
++	[HSC_DMA_OUT0] = {
++		.dma_ch = 1,
++		.rb_ch  = 1,
++		.td_ch  = 0,
++		.en     = { true, CDMBC_TDSTRT, 1 },
++		.intr   = { true, IOB_INTREN1, 13 },
++	},
++	[HSC_DMA_OUT1] = {
++		.dma_ch = 2,
++		.rb_ch  = 2,
++		.td_ch  = 2,
++		.en     = { true, CDMBC_TDSTRT, 2 },
++		.intr   = { true, IOB_INTREN1, 14 },
++	},
++	[HSC_DMA_OUT2] = {
++		.dma_ch = 3,
++		.rb_ch  = 3,
++		.td_ch  = 4,
++		.en     = { true, CDMBC_TDSTRT, 3 },
++		.intr   = { true, IOB_INTREN1, 15 },
++	},
++	[HSC_DMA_OUT3] = {
++		.dma_ch = 19,
++		.rb_ch  = 17,
++		.td_ch  = 1,
++		.en     = { true, CDMBC_TDSTRT, 9 },
++		.intr   = { true, IOB_INTREN1, 16 },
++	},
++	[HSC_DMA_OUT4] = {
++		.dma_ch = 20,
++		.rb_ch  = 18,
++		.td_ch  = 3,
++		.en     = { true, CDMBC_TDSTRT, 10 },
++		.intr   = { true, IOB_INTREN1, 17 },
++	},
++	[HSC_DMA_OUT5] = {
++		.dma_ch = 21,
++		.rb_ch  = 19,
++		.td_ch  = 5,
++		.en     = { true, CDMBC_TDSTRT, 11 },
++		.intr   = { true, IOB_INTREN1, 18 },
++	},
++	[HSC_DMA_CIP_OUT0] = {
++		.dma_ch = 9,
++		.rb_ch  = 8,
++		.cip_ch = 0,
++		.en     = { true, CDMBC_STRT(1), 1 },
++		.intr   = { true, IOB_INTREN2, 9 },
++	},
++	[HSC_DMA_CIP_OUT1] = {
++		.dma_ch = 11,
++		.rb_ch  = 10,
++		.cip_ch = 1,
++		.en     = { true, CDMBC_STRT(1), 3 },
++		.intr   = { true, IOB_INTREN2, 10 },
++	},
++};
 +
-+	if (!speci)
-+		return -EINVAL;
++const struct hsc_spec uniphier_hsc_ld11_spec = {
++	.ucode_spu     = { "hsc_spu_code_ld11.bin", "hsc_spu_data_ld11.bin" },
++	.ucode_ace     = { "hsc_ace_code_ld11.bin", "hsc_ace_data_ld11.bin" },
++	.init_rams     = uniphier_hsc_ld11_init_rams,
++	.num_init_rams = ARRAY_SIZE(uniphier_hsc_ld11_init_rams),
++	.css_in        = uniphier_hsc_ld11_css_in,
++	.num_css_in    = ARRAY_SIZE(uniphier_hsc_ld11_css_in),
++	.css_out       = uniphier_hsc_ld11_css_out,
++	.num_css_out   = ARRAY_SIZE(uniphier_hsc_ld11_css_out),
++	.ts_in         = uniphier_hsc_ld11_ts_in,
++	.num_ts_in     = ARRAY_SIZE(uniphier_hsc_ld11_ts_in),
++	.dma_in        = uniphier_hsc_ld11_dma_in,
++	.num_dma_in    = ARRAY_SIZE(uniphier_hsc_ld11_dma_in),
++	.dma_out       = uniphier_hsc_ld11_dma_out,
++	.num_dma_out   = ARRAY_SIZE(uniphier_hsc_ld11_dma_out),
++};
 +
-+	m = TSI_SYNCCNTROL_FRAME_MASK;
-+	v = TSI_SYNCCNTROL_FRAME_EXTSYNC2;
-+	regmap_update_bits(r, TSI_SYNCCNTROL(tsi), m, v);
-+
-+	m = TSI_CONFIG_ATSMD_MASK | TSI_CONFIG_STCMD_MASK |
-+		TSI_CONFIG_CHEN_START;
-+	v = TSI_CONFIG_ATSMD_DPLL | TSI_CONFIG_STCMD_DPLL;
-+	if (en)
-+		v |= TSI_CONFIG_CHEN_START;
-+	regmap_update_bits(r, TSI_CONFIG(tsi), m, v);
-+
-+	v = (en) ? ~0 : 0;
-+	regmap_update_bits(r, TSI_INTREN(tsi),
-+			   TSI_INTR_SERR | TSI_INTR_LOST, v);
-+	regmap_update_bits(r, speci->intr.reg, BIT(speci->intr.sft), v);
-+
-+	return 0;
-+}
-+
-+int hsc_ts_in_set_dmaparam(struct hsc_chip *chip, int tsi, int ifmt)
-+{
-+	struct regmap *r = chip->regmap;
-+	u32 v, ats, offset, loop, cnt;
-+
-+	if (!ts_in_is_valid(chip, tsi))
-+		return -EINVAL;
-+
-+	switch (ifmt) {
-+	case HSC_TSIF_MPEG2_TS:
-+		ats = 0;
-+		offset = PARAMA_OFFSET_TS;
-+		loop = PARAMA_LOOPADDR_TS;
-+		cnt = PARAMA_COUNT_TS;
-+		break;
-+	case HSC_TSIF_MPEG2_TS_ATS:
-+		ats = TSI_CONFIG_ATSADD_ON;
-+		offset = PARAMA_OFFSET_TS;
-+		loop = PARAMA_LOOPADDR_TS;
-+		cnt = PARAMA_COUNT_TS;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	regmap_update_bits(r, TSI_CONFIG(tsi), TSI_CONFIG_ATSADD_ON, ats);
-+
-+	v = FIELD_PREP(SBC_DMAPARAMA_OFFSET_MASK, offset) |
-+		FIELD_PREP(SBC_DMAPARAMA_LOOPADDR_MASK, loop) |
-+		FIELD_PREP(SBC_DMAPARAMA_COUNT_MASK, cnt);
-+	regmap_write(r, SBC_DMAPARAMA(tsi), v);
-+
-+	return 0;
-+}
-+
-+int hsc_ts_in_get_intr(struct hsc_chip *chip, int tsi, u32 *stat)
-+{
-+	struct regmap *r = chip->regmap;
-+
-+	if (!stat)
-+		return -EINVAL;
-+
-+	regmap_read(r, TSI_SYNCSTATUS(tsi), stat);
-+
-+	return 0;
-+}
-+
-+void hsc_ts_in_clear_intr(struct hsc_chip *chip, int tsi, u32 clear)
-+{
-+	struct regmap *r = chip->regmap;
-+
-+	regmap_write(r, TSI_SYNCSTATUS(tsi), clear);
-+}
-diff --git a/drivers/media/platform/uniphier/hsc.h b/drivers/media/platform/uniphier/hsc.h
-index 1cbd17b475bf..a10b7a480193 100644
---- a/drivers/media/platform/uniphier/hsc.h
-+++ b/drivers/media/platform/uniphier/hsc.h
-@@ -346,6 +346,12 @@ int hsc_css_out_set_polarity(struct hsc_chip *chip, int out,
- int hsc_css_out_get_src(struct hsc_chip *chip, int *in, int out, bool *en);
- int hsc_css_out_set_src(struct hsc_chip *chip, int in, int out, bool en);
- 
-+/* TS */
-+int hsc_ts_in_set_enable(struct hsc_chip *chip, int tsi, bool en);
-+int hsc_ts_in_set_dmaparam(struct hsc_chip *chip, int tsi, int ifmt);
-+int hsc_ts_in_get_intr(struct hsc_chip *chip, int tsi, u32 *st);
-+void hsc_ts_in_clear_intr(struct hsc_chip *chip, int tsi, u32 clear);
-+
- /* DMA */
- u64 hsc_rb_cnt(struct hsc_dma_buf *buf);
- u64 hsc_rb_cnt_to_end(struct hsc_dma_buf *buf);
++const struct hsc_spec uniphier_hsc_ld20_spec = {
++	.ucode_spu     = { "hsc_spu_code_ld11.bin", "hsc_spu_data_ld11.bin" },
++	.ucode_ace     = { "hsc_ace_code_ld11.bin", "hsc_ace_data_ld11.bin" },
++	.init_rams     = uniphier_hsc_ld20_init_rams,
++	.num_init_rams = ARRAY_SIZE(uniphier_hsc_ld20_init_rams),
++	.css_in        = uniphier_hsc_ld11_css_in,
++	.num_css_in    = ARRAY_SIZE(uniphier_hsc_ld11_css_in),
++	.css_out       = uniphier_hsc_ld11_css_out,
++	.num_css_out   = ARRAY_SIZE(uniphier_hsc_ld11_css_out),
++	.ts_in         = uniphier_hsc_ld11_ts_in,
++	.num_ts_in     = ARRAY_SIZE(uniphier_hsc_ld11_ts_in),
++	.dma_in        = uniphier_hsc_ld11_dma_in,
++	.num_dma_in    = ARRAY_SIZE(uniphier_hsc_ld11_dma_in),
++	.dma_out       = uniphier_hsc_ld11_dma_out,
++	.num_dma_out   = ARRAY_SIZE(uniphier_hsc_ld11_dma_out),
++};
 -- 
 2.18.0
 
