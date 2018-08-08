@@ -5,93 +5,89 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 448AAC4646D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 16:47:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CA70C46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 16:51:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 025E821A35
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 16:47:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 025E821A35
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 2588221A32
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 16:51:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2588221A32
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729626AbeHHTIQ (ORCPT
+        id S1728030AbeHHTM0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 15:08:16 -0400
-Received: from foss.arm.com ([217.140.101.70]:42828 "EHLO foss.arm.com"
+        Wed, 8 Aug 2018 15:12:26 -0400
+Received: from mga17.intel.com ([192.55.52.151]:5547 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727165AbeHHTIP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 15:08:15 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D389218A;
-        Wed,  8 Aug 2018 09:47:44 -0700 (PDT)
-Received: from [10.4.13.119] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 30FCA3F5D4;
-        Wed,  8 Aug 2018 09:47:42 -0700 (PDT)
-Subject: Re: [PATCH 03/11] dt-bindings: interrupt-controller: RISC-V PLIC
- documentation
-To:     Christoph Hellwig <hch@lst.de>, Rob Herring <robh+dt@kernel.org>
-Cc:     Palmer Dabbelt <palmer@dabbelt.com>, atish.patra@wdc.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, Albert Ou <aou@eecs.berkeley.edu>,
-        Anup Patel <anup@brainfault.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-riscv@lists.infradead.org, Stafford Horne <shorne@gmail.com>
-References: <CAL_Jsq+pVzqKUbhErRr15JX2mPUOSTp_ddGvu9KAuf=TtXfduQ@mail.gmail.com>
- <mhng-4bc89d00-bc90-440f-996f-861dde382aaa@palmer-si-x1c4>
- <CAL_JsqKPFSQYH3p6a0VoCr-VAzf_98H7N3fNJ+4+DquS8WcjUQ@mail.gmail.com>
- <20180808150938.GA32274@lst.de>
-From:   Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <bb671fe1-6c43-3218-0096-7c5280ffb6b5@arm.com>
-Date:   Wed, 8 Aug 2018 17:47:40 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1727347AbeHHTM0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 15:12:26 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Aug 2018 09:51:54 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,458,1531810800"; 
+   d="scan'208";a="60884020"
+Received: from rchatre-mobl.amr.corp.intel.com (HELO [10.24.14.134]) ([10.24.14.134])
+  by fmsmga007.fm.intel.com with ESMTP; 08 Aug 2018 09:51:47 -0700
+Subject: Re: [PATCH 0/2] x86/intel_rdt and perf/x86: Fix lack of coordination
+ with perf
+To:     Peter Zijlstra <peterz@infradead.org>,
+        "Luck, Tony" <tony.luck@intel.com>
+Cc:     "Hansen, Dave" <dave.hansen@intel.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "Yu, Fenghua" <fenghua.yu@intel.com>,
+        "vikas.shivappa@linux.intel.com" <vikas.shivappa@linux.intel.com>,
+        "Hindman, Gavin" <gavin.hindman@intel.com>,
+        "Joseph, Jithu" <jithu.joseph@intel.com>,
+        "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <d6df8a8a-f0f2-48f7-1c1d-c8893e1583c9@intel.com>
+ <57c011e1-113d-c38f-c318-defbad085843@intel.com>
+ <20180806221225.GO2458@hirez.programming.kicks-ass.net>
+ <08d51131-7802-5bfe-2cae-d116807183d1@intel.com>
+ <20180807093615.GY2494@hirez.programming.kicks-ass.net>
+ <ace0bebb-91ab-5d40-e7d7-d72d48302fa8@intel.com>
+ <3908561D78D1C84285E8C5FCA982C28F7D3A10EF@ORSMSX110.amr.corp.intel.com>
+ <413c3b6f-770d-9549-4249-c2407267b63c@intel.com>
+ <20180808074111.GM2494@hirez.programming.kicks-ass.net>
+ <3908561D78D1C84285E8C5FCA982C28F7D3A1B83@ORSMSX110.amr.corp.intel.com>
+ <20180808164722.GR2494@hirez.programming.kicks-ass.net>
+From:   Reinette Chatre <reinette.chatre@intel.com>
+Message-ID: <8592e828-5a71-7331-ad2f-cc59abc8ba94@intel.com>
+Date:   Wed, 8 Aug 2018 09:51:47 -0700
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180808150938.GA32274@lst.de>
+In-Reply-To: <20180808164722.GR2494@hirez.programming.kicks-ass.net>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/08/18 16:09, Christoph Hellwig wrote:
-> On Wed, Aug 08, 2018 at 08:16:14AM -0600, Rob Herring wrote:
->> Is 1.0 an actual version number corresponding to an exact, revision
->> controlled version of the IP or just something you made up? Looks like
->> the latter to me and I'm not a fan of s/w folks making up version
->> numbers for h/w. Standard naming convention is <vendor>,<soc>-<block>
->> unless you have good reason to deviate (IP for FPGAs where version
->> numbers are exposed to customers is one example).
+On 8/8/2018 9:47 AM, Peter Zijlstra wrote:
+> On Wed, Aug 08, 2018 at 03:55:54PM +0000, Luck, Tony wrote:
+>>> So _why_ doesn't this work? As said by Tony, that first call should
+>>> prime the caches, so the second and third calls should not generate any
+>>> misses.
 >>
->> And defining a version 2 when you find a quirk doesn't work. You've
->> already shipped the DT. You need to be able to fix issues with just an
->> OS update. This is why you are supposed to define a compatible string
->> for each and every SoC (and use a fallback when they are "the
->> same"TM).
+>> How much code/data is involved? If there is a lot, then you may be unlucky
+>> with cache coloring and the later parts of the "prime the caches" code path
+>> may evict some lines loaded in the early parts.
 > 
-> Can you point to some existing examples of the multiple offered
-> compatible strings and what is actually matched for something that
-> largely hasn't changed?
+> Well, Reinette used perf_event_read_local() which is unfortunately quite
+> a bit. But the inline I proposed is a single load and depending on
+> rdpmcl() or native_read_pmc() a call to or just a single inline asm
+> rdpmc instruction.
 > 
-> For example the documentation for the arm GICv3 binding seems to just
-> match for arm,gic-v3.  On the other hand the GIC driver seems to match
-> for a lot of different strings.
+> That should certainly work I think.
 
-The original GIC driver deals with 2.5 revisions of the architecture
-(yes, there was something pre-GICv1...), and implementers have been
-creative to the extreme. Still, we could have done without most of these
-compat strings. Hindsight and all that jazz.
+I am in the process of testing this variation.
 
-GICv3 is a much more controlled architecture, and although people have
-come up with a number of turds masquerading as implementations, it has
-never been bad enough to mandate a different set of compat strings.
-Also, you cannot describe that kind of stuff in ACPI, and we need to
-support both, so we've come up with different ways of handling this.
+Reinette
 
-	M.
--- 
-Jazz is not dead. It just smells funny...
+
