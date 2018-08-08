@@ -6,48 +6,59 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD40DC4646D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 11:08:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7701BC46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 11:08:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 525A2216B7
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 11:08:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E2772176D
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 11:08:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="EV+9BtZS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 525A2216B7
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="lNVEf+2U"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E2772176D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727124AbeHHN11 (ORCPT
+        id S1727156AbeHHN12 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 09:27:27 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:35242 "EHLO
+        Wed, 8 Aug 2018 09:27:28 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:35304 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726697AbeHHN10 (ORCPT
+        with ESMTP id S1727081AbeHHN11 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 09:27:26 -0400
+        Wed, 8 Aug 2018 09:27:27 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=FPIyGR+WCl6cN1sR3pIgQPVtFYejwqir+MtRmQfI9lk=; b=EV+9BtZSSSTe
-        5R1v5tL6rMouIYZfapTSyJKN3JGk/1uyaS2cnCVosOWm7sM3187K7wwzXSOSGqBfouQvf2FhA9Y15
-        oErTmAVEk5QkdOQJBe3Z4KV2mRFrDjZo009S31uu2EOu8qImz56hxmxrF5X2VlqXe3Y1Jzhw4/Hti
-        H1A48=;
+        List-Archive; bh=k4rWto0uhQkeKlIdPkU5QI1E3/ekVI2f76hdqaO2M5w=; b=lNVEf+2UnQyp
+        xQqyKPGYLmP9ZdqAbxvApRgXsOOx+9g07aky25VDFGWEtzFvFa86+qdBhnT0SjPCZLC8k4i44c+Xi
+        JG7Ju/ScHj2cruhS113oMIukNcMLJ/QmZoM4gbklGJ+xZO/gm5GjxvI8j+qTBsL4/1IJQ+Av1X9pN
+        kt+Ws=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1fnMK4-0001tR-F3; Wed, 08 Aug 2018 11:08:12 +0000
+        id 1fnMJv-0001t5-CO; Wed, 08 Aug 2018 11:08:03 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 31D431124340; Wed,  8 Aug 2018 12:08:12 +0100 (BST)
+        id 1F0861124340; Wed,  8 Aug 2018 12:08:03 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Applied "regulator: maxim: Add SPDX license identifiers" to the regulator tree
-In-Reply-To: 
-Message-Id: <20180808110812.31D431124340@debutante.sirena.org.uk>
-Date:   Wed,  8 Aug 2018 12:08:12 +0100 (BST)
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>,
+        Bard Liao <bardliao@realtek.com>,
+        Oder Chiou <oder_chiou@realtek.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        linux-kernel@vger.kernel.org, Guenter Roeck <groeck@chromium.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        alsa-devel@alsa-project.org
+Subject: Applied "ASoC: rt5677: Fix initialization of rt5677_of_match.data" to the asoc tree
+In-Reply-To:  <20180807171940.150507-1-mka@chromium.org>
+Message-Id: <20180808110803.1F0861124340@debutante.sirena.org.uk>
+Date:   Wed,  8 Aug 2018 12:08:03 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -55,11 +66,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: maxim: Add SPDX license identifiers
+   ASoC: rt5677: Fix initialization of rt5677_of_match.data
 
-has been applied to the regulator tree at
+has been applied to the asoc tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -80,268 +91,43 @@ to this mail.
 Thanks,
 Mark
 
-From 5e9384c705fcfa6bf6d3937967df3ab1f5e414cb Mon Sep 17 00:00:00 2001
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Tue, 7 Aug 2018 18:18:25 +0200
-Subject: [PATCH] regulator: maxim: Add SPDX license identifiers
+From f861e3e28a3016a2064d9f600eaa92a530b732b4 Mon Sep 17 00:00:00 2001
+From: Matthias Kaehlcke <mka@chromium.org>
+Date: Tue, 7 Aug 2018 10:19:40 -0700
+Subject: [PATCH] ASoC: rt5677: Fix initialization of rt5677_of_match.data
 
-Replace GPL v2.0 and v2.0+ license statements with SPDX license
-identifiers.
+The driver expects to find the device id in rt5677_of_match.data, however
+it is currently assigned to rt5677_of_match.type. Fix this.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+The problem was found with the help of clang:
+  sound/soc/codecs/rt5677.c:5010:36: warning: expression which evaluates to
+  zero treated as a null pointer constant of type 'const void *'
+  [-Wnon-literal-null-conversion]
+    { .compatible = "realtek,rt5677", RT5677 },
+                                      ^~~~~~
+
+Fixes: ddc9e69b9dc2 ("ASoC: rt5677: Hide platform data in the module sources")
+Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+Reviewed-by: Guenter Roeck <groeck@chromium.org>
+Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/max14577-regulator.c        | 22 ++++--------
- drivers/regulator/max77686-regulator.c        | 32 +++++------------
- drivers/regulator/max77693-regulator.c        | 32 +++++------------
- drivers/regulator/max77802-regulator.c        | 34 +++++++------------
- drivers/regulator/max8997-regulator.c         | 30 +++++-----------
- drivers/regulator/max8998.c                   | 28 ++++-----------
- .../dt-bindings/regulator/maxim,max77802.h    |  5 +--
- 7 files changed, 52 insertions(+), 131 deletions(-)
+ sound/soc/codecs/rt5677.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/regulator/max14577-regulator.c b/drivers/regulator/max14577-regulator.c
-index 0db288ce319c..bc7f4751bf9c 100644
---- a/drivers/regulator/max14577-regulator.c
-+++ b/drivers/regulator/max14577-regulator.c
-@@ -1,19 +1,9 @@
--/*
-- * max14577.c - Regulator driver for the Maxim 14577/77836
-- *
-- * Copyright (C) 2013,2014 Samsung Electronics
-- * Krzysztof Kozlowski <krzk@kernel.org>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- */
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// max14577.c - Regulator driver for the Maxim 14577/77836
-+//
-+// Copyright (C) 2013,2014 Samsung Electronics
-+// Krzysztof Kozlowski <krzk@kernel.org>
+diff --git a/sound/soc/codecs/rt5677.c b/sound/soc/codecs/rt5677.c
+index 922becfee59b..9b7a1833d331 100644
+--- a/sound/soc/codecs/rt5677.c
++++ b/sound/soc/codecs/rt5677.c
+@@ -5008,7 +5008,7 @@ static const struct regmap_config rt5677_regmap = {
+ };
  
- #include <linux/module.h>
- #include <linux/platform_device.h>
-diff --git a/drivers/regulator/max77686-regulator.c b/drivers/regulator/max77686-regulator.c
-index c301f3733475..bee060937f56 100644
---- a/drivers/regulator/max77686-regulator.c
-+++ b/drivers/regulator/max77686-regulator.c
-@@ -1,26 +1,12 @@
--/*
-- * max77686.c - Regulator driver for the Maxim 77686
-- *
-- * Copyright (C) 2012 Samsung Electronics
-- * Chiwoong Byun <woong.byun@samsung.com>
-- * Jonghwa Lee <jonghwa3.lee@samsung.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, write to the Free Software
-- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-- *
-- * This driver is based on max8997.c
-- */
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// max77686.c - Regulator driver for the Maxim 77686
-+//
-+// Copyright (C) 2012 Samsung Electronics
-+// Chiwoong Byun <woong.byun@samsung.com>
-+// Jonghwa Lee <jonghwa3.lee@samsung.com>
-+//
-+// This driver is based on max8997.c
- 
- #include <linux/kernel.h>
- #include <linux/bug.h>
-diff --git a/drivers/regulator/max77693-regulator.c b/drivers/regulator/max77693-regulator.c
-index e7000e777292..077ecbbfdf76 100644
---- a/drivers/regulator/max77693-regulator.c
-+++ b/drivers/regulator/max77693-regulator.c
-@@ -1,26 +1,12 @@
--/*
-- * max77693.c - Regulator driver for the Maxim 77693 and 77843
-- *
-- * Copyright (C) 2013-2015 Samsung Electronics
-- * Jonghwa Lee <jonghwa3.lee@samsung.com>
-- * Krzysztof Kozlowski <krzk@kernel.org>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, write to the Free Software
-- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-- *
-- * This driver is based on max77686.c
-- */
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// max77693.c - Regulator driver for the Maxim 77693 and 77843
-+//
-+// Copyright (C) 2013-2015 Samsung Electronics
-+// Jonghwa Lee <jonghwa3.lee@samsung.com>
-+// Krzysztof Kozlowski <krzk@kernel.org>
-+//
-+// This driver is based on max77686.c
- 
- #include <linux/err.h>
- #include <linux/slab.h>
-diff --git a/drivers/regulator/max77802-regulator.c b/drivers/regulator/max77802-regulator.c
-index b6261903818c..c30cf5c9f2de 100644
---- a/drivers/regulator/max77802-regulator.c
-+++ b/drivers/regulator/max77802-regulator.c
-@@ -1,25 +1,15 @@
--/*
-- * max77802.c - Regulator driver for the Maxim 77802
-- *
-- * Copyright (C) 2013-2014 Google, Inc
-- * Simon Glass <sjg@chromium.org>
-- *
-- * Copyright (C) 2012 Samsung Electronics
-- * Chiwoong Byun <woong.byun@samsung.com>
-- * Jonghwa Lee <jonghwa3.lee@samsung.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * This driver is based on max8997.c
-- */
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// max77802.c - Regulator driver for the Maxim 77802
-+//
-+// Copyright (C) 2013-2014 Google, Inc
-+// Simon Glass <sjg@chromium.org>
-+//
-+// Copyright (C) 2012 Samsung Electronics
-+// Chiwoong Byun <woong.byun@samsung.com>
-+// Jonghwa Lee <jonghwa3.lee@samsung.com>
-+//
-+// This driver is based on max8997.c
- 
- #include <linux/kernel.h>
- #include <linux/bug.h>
-diff --git a/drivers/regulator/max8997-regulator.c b/drivers/regulator/max8997-regulator.c
-index 029a6ee426ab..ad0c806b0737 100644
---- a/drivers/regulator/max8997-regulator.c
-+++ b/drivers/regulator/max8997-regulator.c
-@@ -1,25 +1,11 @@
--/*
-- * max8997.c - Regulator driver for the Maxim 8997/8966
-- *
-- * Copyright (C) 2011 Samsung Electronics
-- * MyungJoo Ham <myungjoo.ham@samsung.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, write to the Free Software
-- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-- *
-- * This driver is based on max8998.c
-- */
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// max8997.c - Regulator driver for the Maxim 8997/8966
-+//
-+// Copyright (C) 2011 Samsung Electronics
-+// MyungJoo Ham <myungjoo.ham@samsung.com>
-+//
-+// This driver is based on max8998.c
- 
- #include <linux/bug.h>
- #include <linux/err.h>
-diff --git a/drivers/regulator/max8998.c b/drivers/regulator/max8998.c
-index 6b9f262ebbb0..271bb736f3f5 100644
---- a/drivers/regulator/max8998.c
-+++ b/drivers/regulator/max8998.c
-@@ -1,24 +1,10 @@
--/*
-- * max8998.c - Voltage regulator driver for the Maxim 8998
-- *
-- *  Copyright (C) 2009-2010 Samsung Electronics
-- *  Kyungmin Park <kyungmin.park@samsung.com>
-- *  Marek Szyprowski <m.szyprowski@samsung.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, write to the Free Software
-- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-- */
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// max8998.c - Voltage regulator driver for the Maxim 8998
-+//
-+//  Copyright (C) 2009-2010 Samsung Electronics
-+//  Kyungmin Park <kyungmin.park@samsung.com>
-+//  Marek Szyprowski <m.szyprowski@samsung.com>
- 
- #include <linux/module.h>
- #include <linux/init.h>
-diff --git a/include/dt-bindings/regulator/maxim,max77802.h b/include/dt-bindings/regulator/maxim,max77802.h
-index cf28631d7109..d0baba1973d4 100644
---- a/include/dt-bindings/regulator/maxim,max77802.h
-+++ b/include/dt-bindings/regulator/maxim,max77802.h
-@@ -1,10 +1,7 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * Copyright (C) 2014 Google, Inc
-  *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- *
-  * Device Tree binding constants for the Maxim 77802 PMIC regulators
-  */
- 
+ static const struct of_device_id rt5677_of_match[] = {
+-	{ .compatible = "realtek,rt5677", RT5677 },
++	{ .compatible = "realtek,rt5677", .data = (const void *)RT5677 },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, rt5677_of_match);
 -- 
 2.18.0
 
