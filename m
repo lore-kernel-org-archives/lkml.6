@@ -6,72 +6,77 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12190C4646D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 06:35:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D49AC46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 06:35:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3B18216F7
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 06:35:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3B18216F7
+	by mail.kernel.org (Postfix) with ESMTP id 00BF9216F7
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 06:35:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00BF9216F7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727266AbeHHIxR (ORCPT
+        id S1727268AbeHHIyH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 04:53:17 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45518 "EHLO
+        Wed, 8 Aug 2018 04:54:07 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45600 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726894AbeHHIxR (ORCPT
+        with ESMTP id S1726894AbeHHIyH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 04:53:17 -0400
+        Wed, 8 Aug 2018 04:54:07 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B9A149F0;
-        Wed,  8 Aug 2018 06:35:03 +0000 (UTC)
-Date:   Wed, 8 Aug 2018 08:35:00 +0200
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0ACDD9F0;
+        Wed,  8 Aug 2018 06:35:53 +0000 (UTC)
+Date:   Wed, 8 Aug 2018 08:35:50 +0200
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org
-Subject: Re: [PATCH 3.18 00/85] 3.18.118-stable review
-Message-ID: <20180808063500.GA21903@kroah.com>
-References: <20180807172357.357252052@linuxfoundation.org>
- <20180807223329.GC20628@flashbox>
+To:     Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>
+Subject: Re: [PATCH 4.17 00/18] 4.17.14-stable review
+Message-ID: <20180808063550.GC21903@kroah.com>
+References: <20180807172312.964272530@linuxfoundation.org>
+ <CA+G9fYs9xDrM-V5=TqU7dYKTtNDwORjr50L5K5cAmJjf8YpHCQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180807223329.GC20628@flashbox>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CA+G9fYs9xDrM-V5=TqU7dYKTtNDwORjr50L5K5cAmJjf8YpHCQ@mail.gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 07, 2018 at 03:33:29PM -0700, Nathan Chancellor wrote:
-> On Tue, Aug 07, 2018 at 08:51:02PM +0200, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 3.18.118 release.
-> > There are 85 patches in this series, all will be posted as a response
+On Wed, Aug 08, 2018 at 10:50:20AM +0530, Naresh Kamboju wrote:
+> On 8 August 2018 at 00:21, Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> > This is the start of the stable review cycle for the 4.17.14 release.
+> > There are 18 patches in this series, all will be posted as a response
 > > to this one.  If anyone has any issues with these being applied, please
 > > let me know.
-> > 
-> > Responses should be made by Thu Aug  9 17:23:43 UTC 2018.
+> >
+> > Responses should be made by Thu Aug  9 17:23:05 UTC 2018.
 > > Anything received after that time might be too late.
-> > 
+> >
 > > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v3.x/stable-review/patch-3.18.118-rc1.gz
+> >         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.17.14-rc1.gz
 > > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-3.18.y
+> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.17.y
 > > and the diffstat can be found below.
-> > 
+> >
 > > thanks,
-> > 
+> >
 > > greg k-h
-> > 
 > 
-> Merged, compiled with -Werror, and installed onto my Pixel XL.
 > 
-> No initial issues noticed in dmesg or general usage.
+> Results from Linaro’s test farm.
+> No regressions on arm64, arm and x86_64.
 
-Thanks for testing three of these and letting me know.
+Great!  Thanks for testing these and letting me know.
 
 greg k-h
