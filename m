@@ -2,148 +2,136 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E67ECC4646D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 22:34:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4A9EC4646D
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 22:34:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1E1A21ADE
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 22:34:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1E1A21ADE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 8C7FC21AE0
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 22:34:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ZGyOhnqp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C7FC21AE0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731911AbeHIAz7 (ORCPT
+        id S1731956AbeHIA4Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 20:55:59 -0400
-Received: from mx2.suse.de ([195.135.220.15]:60088 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731364AbeHIAz7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 20:55:59 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 300FEACE5;
-        Wed,  8 Aug 2018 22:34:13 +0000 (UTC)
-From:   NeilBrown <neilb@suse.com>
-To:     Frank Filz <ffilzlnx@mindspring.com>,
-        "'J. Bruce Fields'" <bfields@fieldses.org>
-Date:   Thu, 09 Aug 2018 08:34:02 +1000
-Cc:     'Jeff Layton' <jlayton@kernel.org>,
-        'Alexander Viro' <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        'Martin Wilck' <mwilck@suse.de>
-Subject: RE: [PATCH 0/4] locks: avoid thundering-herd wake-ups
-In-Reply-To: <01b001d42f5c$ed082e20$c7188a60$@mindspring.com>
-References: <153369219467.12605.13472423449508444601.stgit@noble> <20180808195445.GD23873@fieldses.org> <20180808200912.GE23873@fieldses.org> <01b001d42f5c$ed082e20$c7188a60$@mindspring.com>
-Message-ID: <87eff8trmt.fsf@notabene.neil.brown.name>
+        Wed, 8 Aug 2018 20:56:16 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:38744 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731015AbeHIA4Q (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 20:56:16 -0400
+Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 04156CD;
+        Thu,  9 Aug 2018 00:34:28 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1533767669;
+        bh=yEx6SGQXUyn9MtkHrbQ3o3uCSfc8SmY1TF1gDAeME1o=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ZGyOhnqpMODasvyi2yucSrHvMcG3QTypdRCwEnZd91C8pAxSIgCZdmXcLvjScGc5I
+         bd/Mld0P09iG2ybDf/tnPQyomnqWClJZLRZxC/GsOvLcHQFItzXZnXnjvzDDNoiR8u
+         c3McqYtisqe8ZoSrp53j9DOI9juvdWEpdC4TsZ0Y=
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
+Cc:     Alan Stern <stern@rowland.harvard.edu>,
+        Keiichi Watanabe <keiichiw@chromium.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        kieran.bingham@ideasonboard.com,
+        Douglas Anderson <dianders@chromium.org>,
+        Ezequiel Garcia <ezequiel@collabora.com>, matwey@sai.msu.ru
+Subject: Re: [RFC PATCH v1] media: uvcvideo: Cache URB header data before processing
+Date:   Thu, 09 Aug 2018 01:35:13 +0300
+Message-ID: <2864865.ZqDiYThxxv@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <CAAEAJfASOfP5tMuiBtufVbH91MNHgeTqpbmyc42igSnEKMxO1Q@mail.gmail.com>
+References: <Pine.LNX.4.44L0.1808081015110.1466-100000@iolanthe.rowland.org> <1959555.Z0pJAWgXVZ@avalon> <CAAEAJfASOfP5tMuiBtufVbH91MNHgeTqpbmyc42igSnEKMxO1Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Hi Ezequiel,
 
-On Wed, Aug 08 2018, Frank Filz wrote:
+On Wednesday, 8 August 2018 19:29:56 EEST Ezequiel Garcia wrote:
+> On 8 August 2018 at 13:22, Laurent Pinchart wrote:
+> > On Wednesday, 8 August 2018 17:20:21 EEST Alan Stern wrote:
+> >> On Wed, 8 Aug 2018, Keiichi Watanabe wrote:
+> >>> Hi Laurent, Kieran, Tomasz,
+> >>> 
+> >>> Thank you for reviews and suggestions.
+> >>> I want to do additional measurements for improving the performance.
+> >>> 
+> >>> Let me clarify my understanding:
+> >>> Currently, if the platform doesn't support coherent-DMA (e.g. ARM),
+> >>> urb_buffer is allocated by usb_alloc_coherent with
+> >>> URB_NO_TRANSFER_DMA_MAP flag instead of using kmalloc.
+> >> 
+> >> Not exactly.  You are mixing up allocation with mapping.  The speed of
+> >> the allocation doesn't matter; all that matters is whether the memory
+> >> is cached and when it gets mapped/unmapped.
+> >> 
+> >>> This is because we want to avoid frequent DMA mappings, which are
+> >>> generally expensive. However, memories allocated in this way are not
+> >>> cached.
+> >>> 
+> >>> So, we wonder if using usb_alloc_coherent is really fast.
+> >>> In other words, we want to know which is better:
+> >>> "No DMA mapping/Uncached memory" v.s. "Frequent DMA mapping/Cached
+> >>> memory".
+> > 
+> > The second option should also be split in two:
+> > 
+> > - cached memory with DMA mapping/unmapping around each transfer
+> > - cached memory with DMA mapping/unmapping at allocation/free time, and
+> > DMA sync around each transfer
+> 
+> I agree with this, the second one should be better.
+> 
+> I still wonder if there is anyway we can create a helper for this,
+> as I am under the impression most USB video4linux drivers
+> will want to implement the same.
 
->> On Wed, Aug 08, 2018 at 03:54:45PM -0400, J. Bruce Fields wrote:
->> > On Wed, Aug 08, 2018 at 11:51:07AM +1000, NeilBrown wrote:
->> > > If you have a many-core machine, and have many threads all wanting
->> > > to briefly lock a give file (udev is known to do this), you can get
->> > > quite poor performance.
->> > >
->> > > When one thread releases a lock, it wakes up all other threads that
->> > > are waiting (classic thundering-herd) - one will get the lock and
->> > > the others go to sleep.
->> > > When you have few cores, this is not very noticeable: by the time
->> > > the 4th or 5th thread gets enough CPU time to try to claim the lock,
->> > > the earlier threads have claimed it, done what was needed, and
-> released.
->> > > With 50+ cores, the contention can easily be measured.
->> > >
->> > > This patchset creates a tree of pending lock request in which
->> > > siblings don't conflict and each lock request does conflict with its
-> parent.
->> > > When a lock is released, only requests which don't conflict with
->> > > each other a woken.
->> >
->> > Are you sure you aren't depending on the (incorrect) assumption that
->> > "X blocks Y" is a transitive relation?
->> >
->> > OK I should be able to answer that question myself, my patience for
->> > code-reading is at a real low this afternoon....
->>=20
->> In other words, is there the possibility of a tree of, say, exclusive
-> locks with
->> (offset, length) like:
->>=20
->> 	(0, 2) waiting on (1, 2) waiting on (2, 2) waiting on (0, 4)
->>=20
->> and when waking (0, 4) you could wake up (2, 2) but not (0, 2), leaving a
-> process
->> waiting without there being an actual conflict.
->
-> That implies that the order the locks were received in was:
->
-> (0,4)
-> (2,2)
-> (1,2)
-> (0,2)
->
-> But couldn't (0,2) have been made only dependent on (0,4)?
+I agree with you, drivers shouldn't care.
 
-Correct.  (0,2) would be a child if (0,4), but a sibling of (2,2).
+> > The second option should in theory lead to at least slightly better
+> > performances, but tests with the pwc driver have reported contradictory
+> > results. I'd like to know whether that's also the case with the uvcvideo
+> > driver, and if so, why.
+> 
+> I believe that is no longer the case. Matwey measured again and the results
+> are what we expected: a single mapping, and sync in the interrupt handler
+> is a little bit faster. See https://lkml.org/lkml/2018/8/4/44
+> 
+> 2) dma_unmap and dma_map in the handler:
+> 2A) dma_unmap_single call: 28.8 +- 1.5 usec
+> 2B) memcpy and the rest: 58 +- 6 usec
+> 2C) dma_map_single call: 22 +- 2 usec
+> Total: 110 +- 7 usec
+> 
+> 3) dma_sync_single_for_cpu
+> 3A) dma_sync_single_for_cpu call: 29.4 +- 1.7 usec
+> 3B) memcpy and the rest: 59 +- 6 usec
+> 3C) noop (trace events overhead): 5 +- 2 usec
+> Total: 93 +- 7 usec
 
->    Of course then
-> (1,2) is dependent on BOTH (2,2) and (0,2). Does this tree logic handle t=
-hat
-> case?
+I hadn't caught up with the pwc e-mail thread, I now have, and I'm happy to 
+see that everything is now properly understood. Thanks again Matwey for your 
+work.
 
-No, there is no support for double dependencies.  It is still possible
-for a lock request to be woken up which, which still cannot be
-satisfied.
-When one block lock is unlocked, a pending request might then be queued
-against a different blocking lock.
+-- 
+Regards,
 
->
-> On the other hand, there might be a fairness reason to make (0,2) wait for
-> (1,2) even though it could have been granted concurrently with (2,2) since
-> this dependency tree also preserves some of the order of lock requests.
-
-The locking API doesn't promise fairness, and I don't think we should
-try too hard to achieve it.  Certainly we shouldn't actively fight it
-(so no LIFO queuing) but if we try harder than that I suspect it would
-just be needless complexity.
-
-Thanks,
-NeilBrown
+Laurent Pinchart
 
 
->
-> Frank
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAltrb9sACgkQOeye3VZi
-gbkhuhAAwEMxEQ7gJ1RYLno+0/RVGyxQx33KedyYRyGF7Z8JbUua+/lgEXp1U++2
-AaF31BapQm6R/HseXXSBc6csEZU3Sg8hupkQnyg2vEU7FZ++r5t/w9NDwJLyDKiW
-ok3hAz18njcR/PclK3wyp2s1rJmN5gZAO4FiJ+CRSFbfC4fhVUkA8Q/A1GliWXoe
-VQuZDQHIIEW5lH93vpeddv5wVKkon9GQ7PcfZmlWvGZnD/JnruiD3NxCB7NsJUI/
-/62rUayosykSP1BQA8ohnB9IaYyiOt0nsVKG6NWPxUBaetH12bqQE+AYHU362drF
-AEUmFvF7S6Qrik4NAPXg+xmBA2AO9xBrr9qLg9a29l/LGiUNBX2BsY14aijbE8be
-BDFI/BVTPRhBb1KZW+xf76W33uQBaf5BOvv87sfIpLx/+wwyooiNztfTA+CR53YM
-+s9JWyhlmNo06wqw5fsSrGnuY0kfqKkO5HcgwgyJNj8uWWxery/DN5LU9lzBU2kN
-TVarh5s/KDW85kWizRSrPil009qrlPO1zoklPp8wGYHpFNESOUEYUE4eqCKHBugv
-dMVNdrKkbxh67cOze2w5CEY6LZzEms9tdHqe987qRAkkIScpKYUoQKsLV+M36t0f
-Lw2YgUdXXNnfitYYSb4Grra5VQWgeEW6abygxWXvIJNq549YJpM=
-=L7GN
------END PGP SIGNATURE-----
---=-=-=--
