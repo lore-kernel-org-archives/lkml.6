@@ -2,61 +2,62 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDFB9C4646D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 15:33:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DAC3C4646D
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 15:33:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9EA3421A27
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 15:33:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 236E421A52
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 15:33:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="cggQzO/9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EA3421A27
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="PR+7YOqi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 236E421A52
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729209AbeHHRyC (ORCPT
+        id S1729508AbeHHRyF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 13:54:02 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:53272 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728747AbeHHRyC (ORCPT
+        Wed, 8 Aug 2018 13:54:05 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:40462 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729220AbeHHRyE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 13:54:02 -0400
-Received: by mail-wm0-f66.google.com with SMTP id s9-v6so3185327wmh.3
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 08:33:51 -0700 (PDT)
+        Wed, 8 Aug 2018 13:54:04 -0400
+Received: by mail-wr1-f66.google.com with SMTP id h15-v6so2399081wrs.7
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 08:33:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=sGOzUdYoefHsqeEVpETOZKTrsiIrdDWkhYzQ4MVNoLM=;
-        b=cggQzO/93LG4Ij5L8Kjw5OtZD4R+Xn3/ud7uGfm7stR4t8PLMuetQby1uNWl5BKucN
-         QMOLDiJ4WpC+U2Oc3FdrskC6mzJf1HtRqbVHEj5/5PVTWEXYXj3Yvk7NNnePH2DEtMuE
-         +2wpkQL3LNoeXXs4tJD7yhDN2tow7d8UMWQpexy4kW4It+dSr7gKyHDkdNOcRhGoLw4W
-         IDdkLta2tMmDtN3uV+mB8/W7LTT8kaQxqvPlD7p3WIQQFOTAs3pbF+mbSOmF/wXmexrL
-         ZdTgaH9cgz182EEdjbpP+Pg95mtV1DZ6B0SXyt1fTm9cTCgR6o4Ezihybw0cR9NSkEf/
-         143w==
+        bh=Vbd/0hAQ6eCPDyxiTiuvrAkBoIff8s2ba/U1T9sJXTg=;
+        b=PR+7YOqiZOzBTyjKf7M66m3klRA/U9weUzmP9+aCiWzkdO6ze1RDxPr1P76HiHU8ZL
+         ttgPjdwmRvyHiyB21jsC+Zno32y3TWwxLRC5PXA/48g9E1tQqE3m+l/Gm4fei1FYrcia
+         rwv6tI0ol6Z9lxrG22K89NNJiWUErGlR/roY7vDNmq1Iolz6D7Gz9tT4qLkKnVA8SNd8
+         9UdR+1wrSH3nYQolNcqRxmYQN5JhOUnhwnymWxXy0OHwMyBBWRU13Pgyc75YP4shcQsy
+         HGucNRnRwzuodzwGzXmBnYV3HeDKuOIhS/aeF3JXm5r+VkRSYxTGKzQMtktI87wL/9/n
+         +uVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=sGOzUdYoefHsqeEVpETOZKTrsiIrdDWkhYzQ4MVNoLM=;
-        b=IALYEphaZ48MX2mqtvgXzEi1vttTJ1LC1gFyEkdMFLEIQMYk28CYFFKTm8Qi3V7sYd
-         pTLrGnAiKBzowyCWlEU0ZKhpc6RgK0mY8tSa7WtAssvJTfnfQM1IFzVA4r96/MxX/usX
-         Mu3RMEP1hT4eMePUd/qVN+lKGXnhBdNjPGGccJ/y+uSAVXB1zasCOh6Ir+TVaKifoWxV
-         zaw4+pYX13qHisnDlZ2ar6I2v1xUQJcMxIuzPkEeX8KkdG2psrq8U/qV+nqesNOUVLsy
-         XRAFK7dWZx4iVfjTVPkYqHNTIL4L18k+NfvmjJtkZYUOYk1Qjfc2O95CFL66i+BTmhba
-         H76Q==
-X-Gm-Message-State: AOUpUlEHpBqiHddKFoYr2XHTww/tXTngW9kU+MyoYSsRiStp1JaMwArN
-        YT4rUKlVhTD/eCbOeD1GXIJn6w==
-X-Google-Smtp-Source: AA+uWPyc0yqSUqvSbIZ9GQ0fQtkypRMmK/5NeEG1AMKT0dqCxEcMcDEiygbjIbPm14RgK076rWQoNg==
-X-Received: by 2002:a1c:ed1a:: with SMTP id l26-v6mr2298030wmh.61.1533742430519;
-        Wed, 08 Aug 2018 08:33:50 -0700 (PDT)
+        bh=Vbd/0hAQ6eCPDyxiTiuvrAkBoIff8s2ba/U1T9sJXTg=;
+        b=S/pGPod9Twqgan4mqcf/cvW0uhvLseueZWgShjsZLuf3K0qls6qoouxfdFWWbgnEBn
+         dnsRpRVBm0O4zzIjCjGjtY1ei+JIwyw8z2ZVy2c49TmsW6tYJHhW23npHoqtF4F4TnmT
+         6LZrgOKQgtkMa4/80sJSCVQhIja0x6/dzJHQUx78Z8LkIDOXLAvUU3ej3YYNqwxLkado
+         87PmklyKKwklPuXFD3NUTG34L6bcn1BItuFot3tUvlVinYSuMhAbK6i9XD31CsPpTZW7
+         x8M2J1Hm4DY8dtL/GgxX1hDJopZgEDGrCZkKV4UwP8gC+blqlkUAES61T6GfOxmemGWq
+         6Y1w==
+X-Gm-Message-State: AOUpUlH+fJWm2zebWr77Ka/ybQQlNOqRIcsUS9/PI3u7aRoQztMqk49K
+        vmSQxvvNqeO65JMiBI33qM+yWg==
+X-Google-Smtp-Source: AA+uWPxNagFpRt5CCQmRfILD0QzSb04bio2p6FouUI1jwHT1NysHnR44GeKKDUdI2d0f5xqDIab+lg==
+X-Received: by 2002:a5d:4147:: with SMTP id c7-v6mr2335638wrq.61.1533742432406;
+        Wed, 08 Aug 2018 08:33:52 -0700 (PDT)
 Received: from brgl-bgdev.lan (LFbn-MAR-1-609-89.w90-118.abo.wanadoo.fr. [90.118.185.89])
-        by smtp.gmail.com with ESMTPSA id s2-v6sm5240915wrw.52.2018.08.08.08.33.48
+        by smtp.gmail.com with ESMTPSA id s2-v6sm5240915wrw.52.2018.08.08.08.33.50
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 08 Aug 2018 08:33:49 -0700 (PDT)
+        Wed, 08 Aug 2018 08:33:51 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Jonathan Corbet <corbet@lwn.net>, Sekhar Nori <nsekhar@ti.com>,
         Kevin Hilman <khilman@kernel.org>,
@@ -88,9 +89,9 @@ Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mtd@lists.infradead.org, linux-omap@vger.kernel.org,
         netdev@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 12/28] ARM: davinci: da850-evm: use nvmem lookup for mac address
-Date:   Wed,  8 Aug 2018 17:31:34 +0200
-Message-Id: <20180808153150.23444-13-brgl@bgdev.pl>
+Subject: [PATCH 13/28] ARM: davinci: da850-evm: remove unnecessary include
+Date:   Wed,  8 Aug 2018 17:31:35 +0200
+Message-Id: <20180808153150.23444-14-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180808153150.23444-1-brgl@bgdev.pl>
 References: <20180808153150.23444-1-brgl@bgdev.pl>
@@ -101,55 +102,25 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-We now support nvmem lookups for machine code. Add a lookup for
-mac-address.
+The include file for at24_platform_data is not needed in this file.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- arch/arm/mach-davinci/board-da850-evm.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ arch/arm/mach-davinci/board-da850-evm.c | 1 -
+ 1 file changed, 1 deletion(-)
 
 diff --git a/arch/arm/mach-davinci/board-da850-evm.c b/arch/arm/mach-davinci/board-da850-evm.c
-index 6d5beb11bd96..5a634a04ec69 100644
+index 5a634a04ec69..521a26b5c20d 100644
 --- a/arch/arm/mach-davinci/board-da850-evm.c
 +++ b/arch/arm/mach-davinci/board-da850-evm.c
-@@ -29,6 +29,7 @@
- #include <linux/mtd/rawnand.h>
- #include <linux/mtd/partitions.h>
- #include <linux/mtd/physmap.h>
-+#include <linux/nvmem-provider.h>
- #include <linux/platform_device.h>
- #include <linux/platform_data/gpio-davinci.h>
- #include <linux/platform_data/mtd-davinci.h>
-@@ -99,6 +100,19 @@ static struct mtd_partition da850evm_spiflash_part[] = {
- 	},
- };
- 
-+static struct nvmem_cell_lookup da850evm_mac_address_cell = {
-+	.info = {
-+		.name = "mac-address",
-+		.offset = 0x0,
-+		.bytes = ETH_ALEN,
-+	},
-+	/*
-+	 * The nvmem name differs from the partition name because of the
-+	 * internal works of the nvmem framework.
-+	 */
-+	.nvmem_name = "MAC-Address0",
-+};
-+
- static struct flash_platform_data da850evm_spiflash_data = {
- 	.name		= "m25p80",
- 	.parts		= da850evm_spiflash_part,
-@@ -1447,6 +1461,8 @@ static __init void da850_evm_init(void)
- 		pr_warn("%s: spi info registration failed: %d\n", __func__,
- 			ret);
- 
-+	nvmem_add_lookup_table(&da850evm_mac_address_cell, 1);
-+
- 	ret = da8xx_register_spi_bus(1, ARRAY_SIZE(da850evm_spi_info));
- 	if (ret)
- 		pr_warn("%s: SPI 1 registration failed: %d\n", __func__, ret);
+@@ -20,7 +20,6 @@
+ #include <linux/kernel.h>
+ #include <linux/leds.h>
+ #include <linux/i2c.h>
+-#include <linux/platform_data/at24.h>
+ #include <linux/platform_data/pca953x.h>
+ #include <linux/input.h>
+ #include <linux/input/tps6507x-ts.h>
 -- 
 2.18.0
 
