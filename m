@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9B39C46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 16:13:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AC2AC46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 16:13:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6024621A8D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 16:13:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6024621A8D
+	by mail.kernel.org (Postfix) with ESMTP id C099521771
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 16:13:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C099521771
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729305AbeHHSde (ORCPT
+        id S1728440AbeHHSdy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 14:33:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42196 "EHLO mail.kernel.org"
+        Wed, 8 Aug 2018 14:33:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42530 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728742AbeHHSdd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 14:33:33 -0400
+        id S1727867AbeHHSde (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 14:33:34 -0400
 Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0045721A5E;
+        by mail.kernel.org (Postfix) with ESMTPSA id 8036221A88;
         Wed,  8 Aug 2018 16:13:11 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.91)
         (envelope-from <rostedt@goodmis.org>)
-        id 1fnR5C-0002bA-1k; Wed, 08 Aug 2018 12:13:10 -0400
-Message-Id: <20180808161309.954102356@goodmis.org>
+        id 1fnR5C-0002cl-H7; Wed, 08 Aug 2018 12:13:10 -0400
+Message-Id: <20180808161310.430036627@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Wed, 08 Aug 2018 11:56:08 -0400
+Date:   Wed, 08 Aug 2018 11:56:11 -0400
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org, linux-trace-devel@vger.kernel.org
 Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
@@ -45,7 +45,7 @@ Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Yordan Karadzhov <y.karadz@gmail.com>,
         Tzvetomir Stoyanov <tz.stoyanov@gmail.com>
-Subject: [RFC][PATCH 20/24] tools/lib/traceevent: Rename pevent_find_* APIs
+Subject: [RFC][PATCH 23/24] tools/lib/traceevent: Rename various pevent APIs
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
 Sender: linux-kernel-owner@vger.kernel.org
@@ -58,218 +58,179 @@ From: "Tzvetomir Stoyanov (VMware)" <tz.stoyanov@gmail.com>
 In order to make libtraceevent into a proper library, variables, data
 structures and functions require a unique prefix to prevent name space
 conflicts. That prefix will be "tep_" and not "pevent_". This changes
-APIs: pevent_find_function, pevent_find_function_address,
-pevent_find_event_by_name, pevent_find_event_by_record
+APIs: pevent_reset_function_resolver, pevent_strerror, pevent_list_events,
+pevent_event_common_fields, pevent_event_fields, pevent_ref, pevent_unref
 
 Signed-off-by: Tzvetomir Stoyanov (VMware) <tz.stoyanov@gmail.com>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- tools/lib/traceevent/event-parse.c     | 24 ++++++++++++------------
- tools/lib/traceevent/event-parse.h     |  8 ++++----
- tools/lib/traceevent/parse-filter.c    | 10 +++++-----
- tools/lib/traceevent/plugin_function.c |  4 ++--
- tools/lib/traceevent/plugin_kmem.c     |  4 ++--
- 5 files changed, 25 insertions(+), 25 deletions(-)
+ tools/lib/traceevent/event-parse.c  | 22 +++++++++++-----------
+ tools/lib/traceevent/event-parse.h  | 14 +++++++-------
+ tools/lib/traceevent/parse-filter.c |  6 +++---
+ 3 files changed, 21 insertions(+), 21 deletions(-)
 
 diff --git a/tools/lib/traceevent/event-parse.c b/tools/lib/traceevent/event-parse.c
-index 652b8ef6f4c7..53d866434478 100644
+index 8215e6ff36eb..f723c088acca 100644
 --- a/tools/lib/traceevent/event-parse.c
 +++ b/tools/lib/traceevent/event-parse.c
-@@ -503,7 +503,7 @@ find_func(struct tep_handle *pevent, unsigned long long addr)
+@@ -471,13 +471,13 @@ int tep_set_function_resolver(struct tep_handle *pevent,
  }
  
  /**
-- * pevent_find_function - find a function by a given address
-+ * tep_find_function - find a function by a given address
+- * pevent_reset_function_resolver - reset alternative function resolver
++ * tep_reset_function_resolver - reset alternative function resolver
   * @pevent: handle for the pevent
-  * @addr: the address to find the function with
   *
-@@ -511,7 +511,7 @@ find_func(struct tep_handle *pevent, unsigned long long addr)
-  * address. Note, the address does not have to be exact, it
-  * will select the function that would contain the address.
+  * Stop using whatever alternative resolver was set, use the default
+  * one instead.
   */
--const char *pevent_find_function(struct tep_handle *pevent, unsigned long long addr)
-+const char *tep_find_function(struct tep_handle *pevent, unsigned long long addr)
+-void pevent_reset_function_resolver(struct tep_handle *pevent)
++void tep_reset_function_resolver(struct tep_handle *pevent)
  {
- 	struct func_map *map;
+ 	free(pevent->func_resolver);
+ 	pevent->func_resolver = NULL;
+@@ -5630,7 +5630,7 @@ static int events_system_cmp(const void *a, const void *b)
+ 	return events_id_cmp(a, b);
+ }
  
-@@ -523,16 +523,16 @@ const char *pevent_find_function(struct tep_handle *pevent, unsigned long long a
+-struct event_format **pevent_list_events(struct tep_handle *pevent, enum event_sort_type sort_type)
++struct event_format **tep_list_events(struct tep_handle *pevent, enum event_sort_type sort_type)
+ {
+ 	struct event_format **events;
+ 	int (*sort)(const void *a, const void *b);
+@@ -5709,13 +5709,13 @@ get_event_fields(const char *type, const char *name,
  }
  
  /**
-- * pevent_find_function_address - find a function address by a given address
-+ * tep_find_function_address - find a function address by a given address
-  * @pevent: handle for the pevent
-  * @addr: the address to find the function with
+- * pevent_event_common_fields - return a list of common fields for an event
++ * tep_event_common_fields - return a list of common fields for an event
+  * @event: the event to return the common fields of.
   *
-  * Returns the address the function starts at. This can be used in
-- * conjunction with pevent_find_function to print both the function
-+ * conjunction with tep_find_function to print both the function
-  * name and the function offset.
+  * Returns an allocated array of fields. The last item in the array is NULL.
+  * The array must be freed with free().
   */
- unsigned long long
--pevent_find_function_address(struct tep_handle *pevent, unsigned long long addr)
-+tep_find_function_address(struct tep_handle *pevent, unsigned long long addr)
+-struct format_field **pevent_event_common_fields(struct event_format *event)
++struct format_field **tep_event_common_fields(struct event_format *event)
  {
- 	struct func_map *map;
- 
-@@ -3498,7 +3498,7 @@ struct event_format *tep_find_event(struct tep_handle *pevent, int id)
+ 	return get_event_fields("common", event->name,
+ 				event->format.nr_common,
+@@ -5723,13 +5723,13 @@ struct format_field **pevent_event_common_fields(struct event_format *event)
  }
  
  /**
-- * pevent_find_event_by_name - find an event by given name
-+ * tep_find_event_by_name - find an event by given name
-  * @pevent: a handle to the pevent
-  * @sys: the system name to search for
-  * @name: the name of the event to search for
-@@ -3507,8 +3507,8 @@ struct event_format *tep_find_event(struct tep_handle *pevent, int id)
-  * @sys. If @sys is NULL the first event with @name is returned.
+- * pevent_event_fields - return a list of event specific fields for an event
++ * tep_event_fields - return a list of event specific fields for an event
+  * @event: the event to return the fields of.
+  *
+  * Returns an allocated array of fields. The last item in the array is NULL.
+  * The array must be freed with free().
   */
- struct event_format *
--pevent_find_event_by_name(struct tep_handle *pevent,
--			  const char *sys, const char *name)
-+tep_find_event_by_name(struct tep_handle *pevent,
-+		       const char *sys, const char *name)
+-struct format_field **pevent_event_fields(struct event_format *event)
++struct format_field **tep_event_fields(struct event_format *event)
  {
- 	struct event_format *event;
- 	int i;
-@@ -5433,7 +5433,7 @@ static bool is_timestamp_in_us(char *trace_clock, bool use_trace_clock)
+ 	return get_event_fields("event", event->name,
+ 				event->format.nr_fields,
+@@ -6221,8 +6221,8 @@ static const char * const pevent_error_str[] = {
+ };
+ #undef _PE
+ 
+-int pevent_strerror(struct tep_handle *pevent __maybe_unused,
+-		    enum tep_errno errnum, char *buf, size_t buflen)
++int tep_strerror(struct tep_handle *pevent __maybe_unused,
++		 enum tep_errno errnum, char *buf, size_t buflen)
+ {
+ 	int idx;
+ 	const char *msg;
+@@ -6766,7 +6766,7 @@ struct tep_handle *tep_alloc(void)
+ 	return pevent;
  }
  
- /**
-- * pevent_find_event_by_record - return the event from a given record
-+ * tep_find_event_by_record - return the event from a given record
-  * @pevent: a handle to the pevent
-  * @record: The record to get the event from
-  *
-@@ -5441,7 +5441,7 @@ static bool is_timestamp_in_us(char *trace_clock, bool use_trace_clock)
-  * is found.
-  */
- struct event_format *
--pevent_find_event_by_record(struct tep_handle *pevent, struct tep_record *record)
-+tep_find_event_by_record(struct tep_handle *pevent, struct tep_record *record)
+-void pevent_ref(struct tep_handle *pevent)
++void tep_ref(struct tep_handle *pevent)
  {
- 	int type;
+ 	pevent->ref_count++;
+ }
+@@ -6899,7 +6899,7 @@ void tep_free(struct tep_handle *pevent)
+ 	free(pevent);
+ }
  
-@@ -5564,7 +5564,7 @@ void tep_print_event(struct tep_handle *pevent, struct trace_seq *s,
+-void pevent_unref(struct tep_handle *pevent)
++void tep_unref(struct tep_handle *pevent)
  {
- 	struct event_format *event;
- 
--	event = pevent_find_event_by_record(pevent, record);
-+	event = tep_find_event_by_record(pevent, record);
- 	if (!event) {
- 		int i;
- 		int type = trace_parse_common_type(pevent, record->data);
-@@ -6607,7 +6607,7 @@ static struct event_format *pevent_search_event(struct tep_handle *pevent, int i
- 		if (sys_name && (strcmp(sys_name, event->system) != 0))
- 			return NULL;
- 	} else {
--		event = pevent_find_event_by_name(pevent, sys_name, event_name);
-+		event = tep_find_event_by_name(pevent, sys_name, event_name);
- 		if (!event)
- 			return NULL;
- 	}
+ 	tep_free(pevent);
+ }
 diff --git a/tools/lib/traceevent/event-parse.h b/tools/lib/traceevent/event-parse.h
-index 04ffc6e508cf..63ec6d419219 100644
+index c41547353b4c..44b7c2d41f9f 100644
 --- a/tools/lib/traceevent/event-parse.h
 +++ b/tools/lib/traceevent/event-parse.h
-@@ -690,9 +690,9 @@ struct format_field *tep_find_common_field(struct event_format *event, const cha
- struct format_field *tep_find_field(struct event_format *event, const char *name);
- struct format_field *tep_find_any_field(struct event_format *event, const char *name);
+@@ -617,7 +617,7 @@ enum trace_flag_type {
  
--const char *pevent_find_function(struct tep_handle *pevent, unsigned long long addr);
-+const char *tep_find_function(struct tep_handle *pevent, unsigned long long addr);
- unsigned long long
--pevent_find_function_address(struct tep_handle *pevent, unsigned long long addr);
-+tep_find_function_address(struct tep_handle *pevent, unsigned long long addr);
- unsigned long long tep_read_number(struct tep_handle *pevent, const void *ptr, int size);
- int tep_read_number_field(struct format_field *field, const void *data,
- 			  unsigned long long *value);
-@@ -700,10 +700,10 @@ int tep_read_number_field(struct format_field *field, const void *data,
- struct event_format *tep_find_event(struct tep_handle *pevent, int id);
+ int tep_set_function_resolver(struct tep_handle *pevent,
+ 			      tep_func_resolver_t *func, void *priv);
+-void pevent_reset_function_resolver(struct tep_handle *pevent);
++void tep_reset_function_resolver(struct tep_handle *pevent);
+ int tep_register_comm(struct tep_handle *pevent, const char *comm, int pid);
+ int tep_register_trace_clock(struct tep_handle *pevent, const char *trace_clock);
+ int tep_register_function(struct tep_handle *pevent, char *name,
+@@ -724,12 +724,12 @@ void tep_print_fields(struct trace_seq *s, void *data,
+ 		      int size __maybe_unused, struct event_format *event);
+ void tep_event_info(struct trace_seq *s, struct event_format *event,
+ 		       struct tep_record *record);
+-int pevent_strerror(struct tep_handle *pevent, enum tep_errno errnum,
++int tep_strerror(struct tep_handle *pevent, enum tep_errno errnum,
+ 		    char *buf, size_t buflen);
  
- struct event_format *
--pevent_find_event_by_name(struct tep_handle *pevent, const char *sys, const char *name);
-+tep_find_event_by_name(struct tep_handle *pevent, const char *sys, const char *name);
+-struct event_format **pevent_list_events(struct tep_handle *pevent, enum event_sort_type);
+-struct format_field **pevent_event_common_fields(struct event_format *event);
+-struct format_field **pevent_event_fields(struct event_format *event);
++struct event_format **tep_list_events(struct tep_handle *pevent, enum event_sort_type);
++struct format_field **tep_event_common_fields(struct event_format *event);
++struct format_field **tep_event_fields(struct event_format *event);
  
- struct event_format *
--pevent_find_event_by_record(struct tep_handle *pevent, struct tep_record *record);
-+tep_find_event_by_record(struct tep_handle *pevent, struct tep_record *record);
+ static inline int tep_get_cpus(struct tep_handle *pevent)
+ {
+@@ -793,8 +793,8 @@ static inline void tep_set_latency_format(struct tep_handle *pevent, int lat)
  
- void tep_data_lat_fmt(struct tep_handle *pevent,
- 		      struct trace_seq *s, struct tep_record *record);
+ struct tep_handle *tep_alloc(void);
+ void tep_free(struct tep_handle *pevent);
+-void pevent_ref(struct tep_handle *pevent);
+-void pevent_unref(struct tep_handle *pevent);
++void tep_ref(struct tep_handle *pevent);
++void tep_unref(struct tep_handle *pevent);
+ 
+ /* access to the internal parser */
+ void tep_buffer_init(const char *buf, unsigned long long size);
 diff --git a/tools/lib/traceevent/parse-filter.c b/tools/lib/traceevent/parse-filter.c
-index 474d820e97e1..3efab9b4298f 100644
+index 5e3f29736a25..682a50e8b5f7 100644
 --- a/tools/lib/traceevent/parse-filter.c
 +++ b/tools/lib/traceevent/parse-filter.c
-@@ -1478,7 +1478,7 @@ static int copy_filter_type(struct event_filter *filter,
- 	/* Can't assume that the pevent's are the same */
- 	sys = filter_type->event->system;
- 	name = filter_type->event->name;
--	event = pevent_find_event_by_name(filter->pevent, sys, name);
-+	event = tep_find_event_by_name(filter->pevent, sys, name);
- 	if (!event)
- 		return -1;
+@@ -189,7 +189,7 @@ struct event_filter *tep_filter_alloc(struct tep_handle *pevent)
  
-@@ -1578,9 +1578,9 @@ int tep_update_trivial(struct event_filter *dest, struct event_filter *source,
+ 	memset(filter, 0, sizeof(*filter));
+ 	filter->pevent = pevent;
+-	pevent_ref(pevent);
++	tep_ref(pevent);
  
- 		if (src_pevent != dest_pevent) {
- 			/* do a look up */
--			event = pevent_find_event_by_name(src_pevent,
--							  event->system,
--							  event->name);
-+			event = tep_find_event_by_name(src_pevent,
-+						       event->system,
-+						       event->name);
- 			if (!event)
- 				return -1;
- 		}
-@@ -1909,7 +1909,7 @@ static const char *get_field_str(struct filter_arg *arg, struct tep_record *reco
+ 	return filter;
+ }
+@@ -1393,7 +1393,7 @@ int tep_filter_strerror(struct event_filter *filter, enum tep_errno err,
+ 		return 0;
+ 	}
  
- 		if (arg->str.field->flags & (FIELD_IS_POINTER | FIELD_IS_LONG))
- 			/* convert to a kernel symbol */
--			val = pevent_find_function(pevent, addr);
-+			val = tep_find_function(pevent, addr);
+-	return pevent_strerror(filter->pevent, err, buf, buflen);
++	return tep_strerror(filter->pevent, err, buf, buflen);
+ }
  
- 		if (val == NULL) {
- 			/* just use the hex of the string name */
-diff --git a/tools/lib/traceevent/plugin_function.c b/tools/lib/traceevent/plugin_function.c
-index 0962120960eb..424747475d37 100644
---- a/tools/lib/traceevent/plugin_function.c
-+++ b/tools/lib/traceevent/plugin_function.c
-@@ -135,12 +135,12 @@ static int function_handler(struct trace_seq *s, struct tep_record *record,
- 	if (tep_get_field_val(s, event, "ip", record, &function, 1))
- 		return trace_seq_putc(s, '!');
+ /**
+@@ -1456,7 +1456,7 @@ void tep_filter_reset(struct event_filter *filter)
  
--	func = pevent_find_function(pevent, function);
-+	func = tep_find_function(pevent, function);
+ void tep_filter_free(struct event_filter *filter)
+ {
+-	pevent_unref(filter->pevent);
++	tep_unref(filter->pevent);
  
- 	if (tep_get_field_val(s, event, "parent_ip", record, &pfunction, 1))
- 		return trace_seq_putc(s, '!');
+ 	tep_filter_reset(filter);
  
--	parent = pevent_find_function(pevent, pfunction);
-+	parent = tep_find_function(pevent, pfunction);
- 
- 	if (parent && ftrace_indent->set)
- 		index = add_and_get_index(parent, func, record->cpu);
-diff --git a/tools/lib/traceevent/plugin_kmem.c b/tools/lib/traceevent/plugin_kmem.c
-index 6d5938d82c66..73966b05abce 100644
---- a/tools/lib/traceevent/plugin_kmem.c
-+++ b/tools/lib/traceevent/plugin_kmem.c
-@@ -38,11 +38,11 @@ static int call_site_handler(struct trace_seq *s, struct tep_record *record,
- 	if (tep_read_number_field(field, data, &val))
- 		return 1;
- 
--	func = pevent_find_function(event->pevent, val);
-+	func = tep_find_function(event->pevent, val);
- 	if (!func)
- 		return 1;
- 
--	addr = pevent_find_function_address(event->pevent, val);
-+	addr = tep_find_function_address(event->pevent, val);
- 
- 	trace_seq_printf(s, "(%s+0x%x) ", func, (int)(val - addr));
- 	return 1;
 -- 
 2.18.0
 
