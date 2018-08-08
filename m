@@ -2,123 +2,97 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+X-Spam-Status: No, score=-1.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79FBDC4646D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 15:45:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2394C4646D
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 15:47:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F7C2219C9
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 15:45:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4AD3321A18
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 15:47:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="fSXzEwM8";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="D3STrCnO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F7C2219C9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VJL+tn29"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AD3321A18
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727756AbeHHSF3 (ORCPT
+        id S1727539AbeHHSH0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 14:05:29 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:56336 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726954AbeHHSF3 (ORCPT
+        Wed, 8 Aug 2018 14:07:26 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:39312 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727108AbeHHSH0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 14:05:29 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 999EC601D3; Wed,  8 Aug 2018 15:45:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533743114;
-        bh=wAfQ/0FpCNpWINUC8PS6XZzF+M5Bg3Xd20HtHp4LU/0=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=fSXzEwM8sLlEwLOs/fhoaRyElkyBD/sH4rtyp+8dnRlSo5dgMXf7Zmuttyz0PIde7
-         JmKgUn9CQLzVz2TKgTKQ06QLAFj2yRmeZxdY4GA2tNb2GCzPVdJIw1G6ibCZDzL4m3
-         dh8sHJlDqambtAf4OYVGZzAE27G3LR5vFbCd9s7U=
-Received: from [10.79.40.96] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: sibis@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id ECB0960B77;
-        Wed,  8 Aug 2018 15:45:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533743108;
-        bh=wAfQ/0FpCNpWINUC8PS6XZzF+M5Bg3Xd20HtHp4LU/0=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=D3STrCnOBC5Hw5Jh1EF71H6ExIclKxGJShx6rFNHR+D2wNaypEcznRcj/eXQegzbV
-         B62PGKOgZNUh8rG2jXbOrut52NRhEtJidKj0Ox8dW+BIQjjHvc+Crwf4YO5zB3eqtT
-         XjfNYYhpKae5UogOx9ASdz7+0B4gQdgJ0ufATrNU=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org ECB0960B77
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sibis@codeaurora.org
-Subject: Re: [PATCH 4/4] remoteproc: qcom: q6v5-pil: Add PDC restart for modem
- on SDM845 SoCs
-To:     Rob Herring <robh@kernel.org>
-Cc:     bjorn.andersson@linaro.org, p.zabel@pengutronix.de,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, ohad@wizery.com, mark.rutland@arm.com,
-        sricharan@codeaurora.org, akdwived@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org
-References: <20180727152811.15258-1-sibis@codeaurora.org>
- <20180727152811.15258-4-sibis@codeaurora.org>
- <20180807181835.GA28960@rob-hp-laptop>
-From:   Sibi Sankar <sibis@codeaurora.org>
-Message-ID: <a76d80f2-ac97-1c84-06a3-f86dbe2f35dd@codeaurora.org>
-Date:   Wed, 8 Aug 2018 21:15:03 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Wed, 8 Aug 2018 14:07:26 -0400
+Received: by mail-pl0-f67.google.com with SMTP id w14-v6so1210391plp.6;
+        Wed, 08 Aug 2018 08:47:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=R/3O2ern+XS+WdHdGKTAOr1XZF8mVwryHU3fU4hwxn8=;
+        b=VJL+tn29FuMwAO4XMuhJFPmhyzYVI3XX1crsxXbsHV0LHrlYMdGvCTpxyIWs/1mQgs
+         ylUW29QR6tFI9oi7cHGzoMPZY7QKZdLqgnfyWTtneUtv/504NwwUDHODD2xG7TredM2c
+         BqZCydUKV2vBeDW4WHx1jJh/1aVRaIPeQoMDK3K7Wy+nrn0+odh/qAdgExUawPrt+qxn
+         ty4krx3ksDnhoVy4K21HHJngxQZs+le7kDJG7PiCaonqjbLjQGwHTU0GVtqoI+FkpfT+
+         zGEEaAMyyRGilfImYs6MVmupVky5DwPS0u4VDj/I3AjM/vN7oCgMIQUSimICUcIoPzLN
+         105g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=R/3O2ern+XS+WdHdGKTAOr1XZF8mVwryHU3fU4hwxn8=;
+        b=a///eSNIzHvhSzJ/Tfucze0Xr3tSTDPOoZoFkhlkxgFeAhlTrZaIFWnVQ9M/wUM350
+         kJ/YBeWYCp7ZmnwdktrifemFFDL/zQJ9fdPH29kkLpRQs50/2LzaK9QXgKd+G/u8qRS1
+         OYcFkvBmzANU0Ot9lmsbpexVY5lqkAwSJfOxIJnU4LeRhIYZzbsLE/IRxsQzV3y+zrYt
+         4ZouyQ5tgaAQP8DngDaZ+HBhAyE1LAd1zAaNGHz/Q0p8KYjXPTIIpUvF6odPGepcHSL1
+         4qLopswhezvyRadmF0PYFf3CvXrjMU6+1qYhwMNusaVipkWNuPhsaFV5LENJqq/xydyi
+         8i/A==
+X-Gm-Message-State: AOUpUlGUbKDsIPX7mxAbujjASmJ3Xc8QwR1/S047HkKN7xBHP66FECJX
+        OIUPqTZipaA65ek/BwUaZT0=
+X-Google-Smtp-Source: AA+uWPzah8dBwqF+q2/hcFZXyIRG4TTOrAZVTLL2xqJRhg0qWRHxLJoEbC9cOrXszT50oAgCEX2D5w==
+X-Received: by 2002:a17:902:bd07:: with SMTP id p7-v6mr3163732pls.32.1533743231470;
+        Wed, 08 Aug 2018 08:47:11 -0700 (PDT)
+Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id x15-v6sm4723414pgc.46.2018.08.08.08.47.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 08 Aug 2018 08:47:10 -0700 (PDT)
+Date:   Wed, 8 Aug 2018 08:47:08 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 4.4 00/12] 4.4.147-stable review
+Message-ID: <20180808154708.GA5368@roeck-us.net>
+References: <20180807172343.326201671@linuxfoundation.org>
 MIME-Version: 1.0
-In-Reply-To: <20180807181835.GA28960@rob-hp-laptop>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180807172343.326201671@linuxfoundation.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 08/07/2018 11:48 PM, Rob Herring wrote:
-> On Fri, Jul 27, 2018 at 08:58:11PM +0530, Sibi Sankar wrote:
->> In the presence of a PDC block working with subsystem RSC,
->> assert/deassert PDC restart in modem start/stop path.
->>
->> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
->> ---
->>   .../bindings/remoteproc/qcom,q6v5.txt         |  4 +++
+On Tue, Aug 07, 2018 at 08:52:04PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.4.147 release.
+> There are 12 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Please split bindings to separate patch.
->
+> Responses should be made by Thu Aug  9 17:23:34 UTC 2018.
+> Anything received after that time might be too late.
+> 
+Build results:
+	total: 148 pass: 148 fail: 0
+Qemu test results:
+	total: 249 pass: 249 fail: 0
 
-Okay will split them.
+Details are available at http://kerneltests.org/builders/.
 
->>   drivers/remoteproc/qcom_q6v5_pil.c            | 27 ++++++++++++++++---
->>   2 files changed, 27 insertions(+), 4 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
->> index 601dd9f389aa..124fb1dc6fb8 100644
->> --- a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
->> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
->> @@ -51,6 +51,8 @@ on the Qualcomm Hexagon core.
->>   	Usage: required
->>   	Value type: <phandle>
->>   	Definition: reference to the reset-controller for the modem sub-system
->> +		    reference to the list of 2 reset-controllers for the modem
->> +		    sub-system on SDM845 SoCs
->>   		    reference to the list of 3 reset-controllers for the
->>   		    wcss sub-system
->>   
->> @@ -58,6 +60,8 @@ on the Qualcomm Hexagon core.
->>   	Usage: required
->>   	Value type: <stringlist>
->>   	Definition: must be "mss_restart" for the modem sub-system
->> +	Definition: must be "mss_restart", "pdc_restart" for the modem
->> +		    sub-system on SDM845 SoCs
->>   	Definition: must be "wcss_aon_reset", "wcss_reset", "wcss_q6_reset"
->>   		    for the wcss syb-system
->>   
-
--- 
-Qualcomm Innovation Center, Inc.
-Qualcomm Innovation Center, Inc, is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Guenter
