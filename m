@@ -2,128 +2,91 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C990C4646D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 08:42:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B172C46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 08:43:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7A70216FB
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 08:42:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1DAFD216FB
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 08:43:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="IkETxSjU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7A70216FB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RCrv9bQ7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DAFD216FB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727321AbeHHLAn (ORCPT
+        id S1727330AbeHHLBy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 07:00:43 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:52360 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727098AbeHHLAn (ORCPT
+        Wed, 8 Aug 2018 07:01:54 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:33708 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727074AbeHHLBy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 07:00:43 -0400
-Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id D587757;
-        Wed,  8 Aug 2018 10:41:59 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1533717720;
-        bh=WrLRA5JxyKG/8KaMjpao3MpPFykClLAjVtbnT+/gQ+I=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IkETxSjUynzrZol6ufrCNhKCO4S4ZE7jVn/3B50njuMEcClByZE01kEHgr3+1GpS+
-         P1rsKtGAfNODKs/h6czi05DJMqy8+l2ZJ1cCK8Dmph5Chg9ot29TzgnvhW/0nYJdzi
-         Usu4ptP4gLMMO84fACbPvEX2iWEQ2VZi5eZi8olM=
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Tomasz Figa <tfiga@chromium.org>
-Cc:     keiichiw@chromium.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        "Matwey V. Kornilov" <matwey@sai.msu.ru>
-Subject: Re: [RFC PATCH v1] media: uvcvideo: Cache URB header data before processing
-Date:   Wed, 08 Aug 2018 11:42:44 +0300
-Message-ID: <3411643.50e8mdYzJX@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <CAAFQd5CM63BQ1oxmrhZuxTVj7pc=6XUJKa-cJ3gFBHxiF3HPfQ@mail.gmail.com>
-References: <20180627103408.33003-1-keiichiw@chromium.org> <11886963.8nkeRH3xvi@avalon> <CAAFQd5CM63BQ1oxmrhZuxTVj7pc=6XUJKa-cJ3gFBHxiF3HPfQ@mail.gmail.com>
+        Wed, 8 Aug 2018 07:01:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=bSjMVNarQjEUpBMngpczBpqlWPM1MqUvow+2CQ4p+sg=; b=RCrv9bQ7LOwO0HhUEZenjb5u4
+        NO54klfWiRMi5azB3LaOlwppO8OBHchgGcWnfggAAc8JyZ66h0uzWLQumbxcBDOu6VEBywYKKk4wk
+        oCKT+CIrhbu5UMgXZBAEsxkSuSRjhF8QCetllcFrCcyAlFMlaHpS5qzZ+LYwqrkGwR3KAHRYTRxtY
+        RuI7+J5HXkCwZeS1qxmDUXD9Pz0GDUbkZhs/+0ZEhRh8dLAQspV6L6MRe6tlTiEgL6/55fhXi2Dtm
+        W3wQqKdp3TddD4d4ngUGytL+B4c25cDZnHr2ReBlE/kTGBef2LoJyOAdU0+OFW+SP+N39Ao0mu6af
+        KELYoKpjQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fnK3c-0005eY-Do; Wed, 08 Aug 2018 08:43:04 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 2D2EB20163EB8; Wed,  8 Aug 2018 10:43:02 +0200 (CEST)
+Date:   Wed, 8 Aug 2018 10:43:02 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Rik van Riel <riel@surriel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+        Andre Wild <wild@linux.vnet.ibm.com>
+Subject: Re: [PATCH] sched/topology: Use Identity node only if required
+Message-ID: <20180808084302.GQ2494@hirez.programming.kicks-ass.net>
+References: <1533712172-11428-1-git-send-email-srikar@linux.vnet.ibm.com>
+ <20180808075840.GO2494@hirez.programming.kicks-ass.net>
+ <20180808081942.GA37418@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180808081942.GA37418@linux.vnet.ibm.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tomasz,
+On Wed, Aug 08, 2018 at 01:19:42AM -0700, Srikar Dronamraju wrote:
 
-On Wednesday, 8 August 2018 07:08:59 EEST Tomasz Figa wrote:
-> On Tue, Jul 31, 2018 at 1:00 AM Laurent Pinchart wrote:
-> > On Wednesday, 27 June 2018 13:34:08 EEST Keiichi Watanabe wrote:
-> >> On some platforms with non-coherent DMA (e.g. ARM), USB drivers use
-> >> uncached memory allocation methods. In such situations, it sometimes
-> >> takes a long time to access URB buffers.  This can be a cause of video
-> >> flickering problems if a resolution is high and a USB controller has
-> >> a very tight time limit. (e.g. dwc2) To avoid this problem, we copy
-> >> header data from (uncached) URB buffer into (cached) local buffer.
-> >> 
-> >> This change should make the elapsed time of the interrupt handler
-> >> shorter on platforms with non-coherent DMA. We measured the elapsed
-> >> time of each callback of uvc_video_complete without/with this patch
-> >> while capturing Full HD video in
-> >> https://webrtc.github.io/samples/src/content/getusermedia/resolution/.
-> >> I tested it on the top of Kieran Bingham's Asynchronous UVC series
-> >> https://www.mail-archive.com/linux-media@vger.kernel.org/msg128359.html.
-> >> The test device was Jerry Chromebook (RK3288) with Logitech Brio 4K.
-> >> I collected data for 5 seconds. (There were around 480 callbacks in
-> >> this case.) The following result shows that this patch makes
-> >> uvc_video_complete about 2x faster.
-> >> 
-> >>            | average | median  | min     | max     | standard deviation
-> >> w/o caching| 45319ns | 40250ns | 33834ns | 142625ns| 16611ns
-> >> w/  caching| 20620ns | 19250ns | 12250ns | 56583ns | 6285ns
-> >> 
-> >> In addition, we confirmed that this patch doesn't make it worse on
-> >> coherent DMA architecture by performing the same measurements on a
-> >> Broadwell Chromebox with the same camera.
-> >> 
-> >>            | average | median  | min     | max     | standard deviation
-> >> w/o caching| 21026ns | 21424ns | 12263ns | 23956ns | 1932ns
-> >> w/  caching| 20728ns | 20398ns |  8922ns | 45120ns | 3368ns
-> > 
-> > This is very interesting, and it seems related to https://
-> > patchwork.kernel.org/patch/10468937/. You might have seen that discussion
-> > as you got CC'ed at some point.
-> > 
-> > I wonder whether performances couldn't be further improved by allocating
-> > the URB buffers cached, as that would speed up the memcpy() as well. Have
-> > you tested that by any chance ?
-> 
-> We haven't measure it, but the issue being solved here was indeed
-> significantly reduced by using cached URB buffers, even without
-> Kieran's async series. After we discovered the latter, we just
-> backported it and decided to further tweak the last remaining bit, to
-> avoid playing too much with the DMA API in code used in production on
-> several different platforms (including both ARM and x86).
-> 
-> If you think we could change the driver to use cached buffers instead
-> (as the pwc driver mentioned in another thread), I wouldn't have
-> anything against it obviously.
+> However, I still think if majority of the cases the identity node is
+> going to be redundant, then we should use hint.
 
-I think there's a chance that performances could be further improved. 
-Furthermore, it would lean to simpler code as we wouldn't need to deal with 
-caching headers manually. I would however like to see numbers before making a 
-decision.
+No, same way we always generate SMT domains when we have
+CONFIG_SCHED_SMT irrespective of the hardware having SMT.
 
--- 
-Regards,
+Also, an arch hook like you did is just fugly. If anything you add the
+single node thing to the regular topology setup of x86_numa_in_package.
 
-Laurent Pinchart
+But the thing is, even for x86_numa_in_package the single node domain is
+mostly redundant because the MC domain will match the NODE domain most
+times.
 
+> We could fix the numa topology to be NUMA_DIRECT for 2 node machines, by
+> checking if sched_domains_numa_levels == 2, but then I dont know what it
+> means for a system that has only NODE but not NUMA level.
 
-
+You have a point there; I think we should not have added the NODE thing
+to sched_domains_numa_level, let me see if we can fix that sanely.
