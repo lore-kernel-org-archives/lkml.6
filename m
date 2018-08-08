@@ -2,194 +2,147 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21FDEC46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 06:42:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 554AFC4646D
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 06:43:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6C872170A
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 06:42:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="P9unB44V"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6C872170A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wdc.com
+	by mail.kernel.org (Postfix) with ESMTP id 048CE2170A
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 06:43:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 048CE2170A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727106AbeHHJAW (ORCPT
+        id S1727141AbeHHJCK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 05:00:22 -0400
-Received: from esa1.hgst.iphmx.com ([68.232.141.245]:65369 "EHLO
-        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726869AbeHHJAW (ORCPT
+        Wed, 8 Aug 2018 05:02:10 -0400
+Received: from lb1-smtp-cloud9.xs4all.net ([194.109.24.22]:38143 "EHLO
+        lb1-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726957AbeHHJCJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 05:00:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1533710528; x=1565246528;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=MCdDi/hDQMkRCwzec2oTbxJEAEtXU0+hcY2+p3/T8F8=;
-  b=P9unB44VpRlAn9uldmHamjFQt2g5dWYDqS+t1h3DOfbKnEpcxgogCIG2
-   rrxH3cO/V+BAfAOoFNJckItZYXYwuhKCKn932yBstjeINiYRY0NamiMwc
-   gXGNQkFV0mZqWKl3RwWp3ixTIbin3jluBVe22pWJVCJxT+qr6joT0GSPY
-   qdti+GlthfWFKaV26y2Id1KYc3TfNBj0RS+dHI7pGsljTwiFFvBMnN9dC
-   1/+2Mzdfochaa/kf0qnuJyYOhpb0XZMshHVPVP94EzI6uinVXclpxt/d5
-   +F3RouGWozQMANieTm6winleGFpuET26+oToiUh06CPAIUrymPNcZhuqN
-   Q==;
-X-IronPort-AV: E=Sophos;i="5.51,456,1526313600"; 
-   d="scan'208";a="190907019"
-Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 08 Aug 2018 14:42:07 +0800
-Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep02.wdc.com with ESMTP; 07 Aug 2018 23:29:46 -0700
-Received: from ch8yk72.ad.shared (HELO [10.86.56.196]) ([10.86.56.196])
-  by uls-op-cesaip01.wdc.com with ESMTP; 07 Aug 2018 23:42:07 -0700
-Subject: Re: [PATCH 03/11] dt-bindings: interrupt-controller: RISC-V PLIC
- documentation
-To:     Palmer Dabbelt <palmer@dabbelt.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "jason@lakedaemon.net" <jason@lakedaemon.net>,
-        "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
-        "anup@brainfault.org" <anup@brainfault.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "shorne@gmail.com" <shorne@gmail.com>
-References: <mhng-4bc89d00-bc90-440f-996f-861dde382aaa@palmer-si-x1c4>
-From:   Atish Patra <atish.patra@wdc.com>
-Message-ID: <4ceba1c7-f385-a995-2037-12883cd963ff@wdc.com>
-Date:   Tue, 7 Aug 2018 23:42:04 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
+        Wed, 8 Aug 2018 05:02:09 -0400
+Received: from [192.168.2.10] ([212.251.195.8])
+        by smtp-cloud9.xs4all.net with ESMTPA
+        id nICDfU6wWEJtcnICHf86BH; Wed, 08 Aug 2018 08:43:53 +0200
+Subject: Re: [PATCH 1/2] media: docs-rst: Document memory-to-memory video
+ decoder interface
+To:     Tomasz Figa <tfiga@chromium.org>
+Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Pawel Osciak <posciak@chromium.org>,
+        Alexandre Courbot <acourbot@chromium.org>, kamil@wypas.org,
+        a.hajda@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>,
+        jtp.park@samsung.com, Philipp Zabel <p.zabel@pengutronix.de>,
+        =?UTF-8?B?VGlmZmFueSBMaW4gKOael+aFp+ePiik=?= 
+        <tiffany.lin@mediatek.com>,
+        =?UTF-8?B?QW5kcmV3LUNUIENoZW4gKOmZs+aZuui/qik=?= 
+        <andrew-ct.chen@mediatek.com>, todor.tomov@linaro.org,
+        nicolas@ndufresne.ca,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        dave.stevenson@raspberrypi.org,
+        Ezequiel Garcia <ezequiel@collabora.com>
+References: <20180724140621.59624-1-tfiga@chromium.org>
+ <20180724140621.59624-2-tfiga@chromium.org>
+ <37a8faea-a226-2d52-36d4-f9df194623cc@xs4all.nl>
+ <CAAFQd5BgGEBmd8gNGc-qqtUtLo=Mh8U+TVTWRsKYMv1LmeBQMA@mail.gmail.com>
+ <e0da6268-c7f6-1048-83b9-a7e67cfe000e@xs4all.nl>
+ <CAAFQd5CK6NSy6cmDFmaMNjFwoS1w7jx1zX8WD_80x2LB0LeZLA@mail.gmail.com>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <fa0b9a5d-a2c6-85af-694c-0bd7bedb4bb3@xs4all.nl>
+Date:   Wed, 8 Aug 2018 08:43:49 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-In-Reply-To: <mhng-4bc89d00-bc90-440f-996f-861dde382aaa@palmer-si-x1c4>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <CAAFQd5CK6NSy6cmDFmaMNjFwoS1w7jx1zX8WD_80x2LB0LeZLA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfFOiV5Q3vlCgzOLEJ5GWzdWLEVqxmwFtBQpN2CLdyvYEkz4J6n58tdVgBrECyinrLdJ9JXGKfhaOylwMf4pNfR3sZiFep4MivHh7Az5OSJHs2+ipbt90
+ Yhdxs3nRCAJnkc8vvm69HOTfK8+rcft8512sV3fECX6XlYnYk7h291FGsWXrhdvzYNM6vdvugoq+x++x6hPC/xxZ+kmaCHvFRIj1tfZGv9lBrY7MOFhR+Aoc
+ uTwbnkRJMLfwRCqMs7m3frluVaqD6qLQenOAVhzuGlHf5qQj1rLzZBmuF1+ZOvzxOepwp5YIa53UJPq1aqLvNLmUMssVNR/I6IkN7VptYocb1u3NagRuxcRf
+ r1zzY9qAi6wc/W4BJICt7d7pUZQ7qENHSy6dGH6oMp7wBIivB4N55C74GcBT/5O9FzsUWwvJCx5xOrzWBQowPlqPrJGWL/+Yo6CDSg0cMalg6YNawSzMpEDV
+ q+enqiW/qyxXxoE0tDUI38PPxswgllAGc2sqWtdthai6e8PDiV+ztXoEQ9+dsdpFfN7uliYHxd8g/Ic0PTleIIPrp/fI+p/V3kXehPJ05ahJwKwtceoVUhrI
+ rC65EFUBDi+WdHoa5bbl5NOhW9Of9mZpLzCIeMFWXVBT05LUv/FgXgxCIBik8POltLpN4djo6HJOA7Fjr9+M9IhyrU/+e18TunhXABAbgAvwXUXelnxYIE44
+ 5Yo2wFRPVmk=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/7/18 7:17 PM, Palmer Dabbelt wrote:
-> On Mon, 06 Aug 2018 13:59:48 PDT (-0700), robh+dt@kernel.org wrote:
->> On Thu, Aug 2, 2018 at 4:08 PM Atish Patra <atish.patra@wdc.com> wrote:
->>>
->>> On 8/2/18 4:50 AM, Christoph Hellwig wrote:
->>>> From: Palmer Dabbelt <palmer@dabbelt.com>
->>>>
->>>> This patch adds documentation for the platform-level interrupt
->>>> controller (PLIC) found in all RISC-V systems.  This interrupt
->>>> controller routes interrupts from all the devices in the system to each
->>>> hart-local interrupt controller.
->>>>
->>>> Note: the DTS bindings for the PLIC aren't set in stone yet, as we might
->>>> want to change how we're specifying holes in the hart list.
->>>>
->>>> Signed-off-by: Palmer Dabbelt <palmer@dabbelt.com>
->>>> [hch: various fixes and updates]
->>>> Signed-off-by: Christoph Hellwig <hch@lst.de>
->>>> ---
->>>>    .../interrupt-controller/sifive,plic0.txt     | 57 +++++++++++++++++++
->>>>    1 file changed, 57 insertions(+)
->>>>    create mode 100644 Documentation/devicetree/bindings/interrupt-controller/sifive,plic0.txt
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/interrupt-controller/sifive,plic0.txt b/Documentation/devicetree/bindings/interrupt-controller/sifive,plic0.txt
->>>> new file mode 100644
->>>> index 000000000000..c756cd208a93
->>>> --- /dev/null
->>>> +++ b/Documentation/devicetree/bindings/interrupt-controller/sifive,plic0.txt
->>>> @@ -0,0 +1,57 @@
->>>> +SiFive Platform-Level Interrupt Controller (PLIC)
->>>> +-------------------------------------------------
->>>> +
->>>> +SiFive SOCs include an implementation of the Platform-Level Interrupt Controller
->>>> +(PLIC) high-level specification in the RISC-V Privileged Architecture
->>>> +specification.  The PLIC connects all external interrupts in the system to all
->>>> +hart contexts in the system, via the external interrupt source in each hart.
->>>> +
->>>> +A hart context is a privilege mode in a hardware execution thread.  For example,
->>>> +in an 4 core system with 2-way SMT, you have 8 harts and probably at least two
->>>> +privilege modes per hart; machine mode and supervisor mode.
->>>> +
->>>> +Each interrupt can be enabled on per-context basis. Any context can claim
->>>> +a pending enabled interrupt and then release it once it has been handled.
->>>> +
->>>> +Each interrupt has a configurable priority. Higher priority interrupts are
->>>> +serviced first. Each context can specify a priority threshold. Interrupts
->>>> +with priority below this threshold will not cause the PLIC to raise its
->>>> +interrupt line leading to the context.
->>>> +
->>>> +While the PLIC supports both edge-triggered and level-triggered interrupts,
->>>> +interrupt handlers are oblivious to this distinction and therefore it is not
->>>> +specified in the PLIC device-tree binding.
->>>> +
->>>> +While the RISC-V ISA doesn't specify a memory layout for the PLIC, the
->>>> +"sifive,plic0" device is a concrete implementation of the PLIC that contains a
->>>> +specific memory layout, which is documented in chapter 8 of the SiFive U5
->>>> +Coreplex Series Manual <https://static.dev.sifive.com/U54-MC-RVCoreIP.pdf>.
->>>> +
->>>> +Required properties:
->>>> +- compatible : "sifive,plic0"
-> 
-> I think there was a thread bouncing around somewhere where decided to pick the
-> official name of the compatible string to be "sifive,plic-1.0".  The idea here
-> is that the PLIC is compatible across all of SiFive's current implementations,
-> but there's some limitations in the memory map that will probably cause us to
-> spin a version 2 at some point so we want major version number.  The minor
-> number is just in case we find some errata in the PLIC.
-> 
->>>> +- #address-cells : should be <0>
->>>> +- #interrupt-cells : should be <1>
->>>> +- interrupt-controller : Identifies the node as an interrupt controller
->>>> +- reg : Should contain 1 register range (address and length)
->>>
->>> The one in the real device tree has two entries.
->>> reg = <0x00000000 0x0c000000 0x00000000 0x04000000>;
->>>
->>> Is it intentional or just incorrect entry left over from earlier days?
+On 08/08/2018 05:11 AM, Tomasz Figa wrote:
+> On Tue, Aug 7, 2018 at 4:13 PM Hans Verkuil <hverkuil@xs4all.nl> wrote:
 >>
->>>> +             reg = <0xc000000 0x4000000>;
+>> On 07/26/2018 12:20 PM, Tomasz Figa wrote:
+>>> Hi Hans,
+>>>
+>>> On Wed, Jul 25, 2018 at 8:59 PM Hans Verkuil <hverkuil@xs4all.nl> wrote:
+>>>>> +
+>>>>> +14. Call :c:func:`VIDIOC_STREAMON` to initiate decoding frames.
+>>>>> +
+>>>>> +Decoding
+>>>>> +========
+>>>>> +
+>>>>> +This state is reached after a successful initialization sequence. In this
+>>>>> +state, client queues and dequeues buffers to both queues via
+>>>>> +:c:func:`VIDIOC_QBUF` and :c:func:`VIDIOC_DQBUF`, following standard
+>>>>> +semantics.
+>>>>> +
+>>>>> +Both queues operate independently, following standard behavior of V4L2
+>>>>> +buffer queues and memory-to-memory devices. In addition, the order of
+>>>>> +decoded frames dequeued from ``CAPTURE`` queue may differ from the order of
+>>>>> +queuing coded frames to ``OUTPUT`` queue, due to properties of selected
+>>>>> +coded format, e.g. frame reordering. The client must not assume any direct
+>>>>> +relationship between ``CAPTURE`` and ``OUTPUT`` buffers, other than
+>>>>> +reported by :c:type:`v4l2_buffer` ``timestamp`` field.
+>>>>
+>>>> Is there a relationship between capture and output buffers w.r.t. the timestamp
+>>>> field? I am not aware that there is one.
+>>>
+>>> I believe the decoder was expected to copy the timestamp of matching
+>>> OUTPUT buffer to respective CAPTURE buffer. Both s5p-mfc and coda seem
+>>> to be implementing it this way. I guess it might be a good idea to
+>>> specify this more explicitly.
 >>
->> Looks to me like one has #size-cells and #address-cells set to 2 and
->> the example is using 1.
+>> What about an output buffer producing multiple capture buffers? Or the case
+>> where the encoded bitstream of a frame starts at one output buffer and ends
+>> at another? What happens if you have B frames and the order of the capture
+>> buffers is different from the output buffers?
+>>
+>> In other words, for codecs there is no clear 1-to-1 relationship between an
+>> output buffer and a capture buffer. And we never defined what the 'copy timestamp'
+>> behavior should be in that case or if it even makes sense.
 > 
-> Yes.  For some background on how this works: we have a hardware generator that
-> has a tree-of-busses abstraction, and each device is attached to some point on
-> that tree.  When a device gets attached to the bus, we also generate a device
-> tree entry.  For whatever system I generated the example PLIC device tree entry
-> from, it must have been attached to a bus with addresses of 32 bits or less,
-> which resulted in #address-cells and #size-cells being 1.
-> 
+> You're perfectly right. There is no 1:1 relationship, but it doesn't
+> prevent copying timestamps. It just makes it possible for multiple
+> CAPTURE buffers to have the same timestamp or some OUTPUT timestamps
+> not to be found in any CAPTURE buffer.
 
-Thanks Palmer for the detailed explanation.
+We need to document the behavior. Basically there are three different
+corner cases that need documenting:
 
-> Christoph has a HiFive Unleashed, which has a fu540-c000 on it, which is
-> probably not what I generated as an example -- the fu540-c000 is a complicated
-> configuration, when I mess around with the hardware I tend to use simple ones
-> as I'm not really a hardware guy.  I suppose the bus that the PLIC is hanging
-> off on the fu540-c000 has addresses wider than 32 bits.  This makes sense, as
-> the machine has 8GiB of memory and the PLIC is on a bus that's closer to the
-> core than the DRAM is, so it'd need at least enough address bits to fit 8GiB.
-> 
-> Is the inconsistency a problem?  I generally write device tree handling code to
-> just respect whatever #*-fields says and don't consider that part of the
-> specification of the binding.  I don't mind changing the example to have
-> #size-fields and #address-fields to be 2, but since it's not wrong I also don't
-> see any reason to change it.  We do have 32-bit devices with PLICs, and while
-> they're not Linux-capable devices we're trying to adopt the Linux device tree
-> bindings through the rest of the RISC-V software ecosystem as they tend to be
-> pretty well thought out.
-> 
+1) one OUTPUT buffer generates multiple CAPTURE buffers
+2) multiple OUTPUT buffers generate one CAPTURE buffer
+3) the decoding order differs from the presentation order (i.e. the
+   CAPTURE buffers are out-of-order compared to the OUTPUT buffers).
 
-Sounds good to me. IMHO, the inconsistencies and its reasoning are well 
-documented which is good enough for now.
+For 1) I assume that we just copy the same OUTPUT timestamp to multiple
+CAPTURE buffers.
+
+For 2) we need to specify if the CAPTURE timestamp is copied from the first
+or last OUTPUT buffer used in creating the capture buffer. Using the last
+OUTPUT buffer makes more sense to me.
+
+And 3) implies that timestamps can be out-of-order. This needs to be
+very carefully documented since it is very unexpected.
+
+This should probably be a separate patch, adding text to the v4l2_buffer
+documentation (esp. the V4L2_BUF_FLAG_TIMESTAMP_COPY documentation).
 
 Regards,
-Atish
+
+	Hans
