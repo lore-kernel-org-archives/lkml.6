@@ -2,164 +2,142 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1BF1C4646D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 12:30:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00697C46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 12:30:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A78B0219DB
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 12:30:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A78B0219DB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
+	by mail.kernel.org (Postfix) with ESMTP id A4326219DB
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 12:30:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Iyk1NAkG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4326219DB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727155AbeHHOth (ORCPT
+        id S1727178AbeHHOuM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 10:49:37 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:17679 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726733AbeHHOth (ORCPT
+        Wed, 8 Aug 2018 10:50:12 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:51336 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726733AbeHHOuM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 10:49:37 -0400
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w78COKT4027774;
-        Wed, 8 Aug 2018 14:29:34 +0200
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2kq7gv6xpt-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Wed, 08 Aug 2018 14:29:34 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id A969931;
-        Wed,  8 Aug 2018 12:29:30 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag6node1.st.com [10.75.127.16])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 5C1812B32;
-        Wed,  8 Aug 2018 12:29:30 +0000 (GMT)
-Received: from [10.48.0.237] (10.75.127.44) by SFHDAG6NODE1.st.com
- (10.75.127.16) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed, 8 Aug
- 2018 14:29:29 +0200
-Subject: Re: [PATCH] irqchip/stm32: fix init error handling
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-CC:     Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <kernel-janitors@vger.kernel.org>
-References: <20180808120319.akmstg3ads325xcy@kili.mountain>
-From:   Ludovic BARRE <ludovic.barre@st.com>
-Message-ID: <71535398-d59d-4263-e9dd-4874d56cf8fa@st.com>
-Date:   Wed, 8 Aug 2018 14:29:29 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 8 Aug 2018 10:50:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
+        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=ckk+O19Jk46Fk3kku45iko32uRtDTntEYPDrMRcdAQg=; b=Iyk1NAkGAg5EfqCy3Et3V71EVu
+        7FBXgJLbZV8Mg5SSHOpRsOxlTAIUMI5wn1INK11vWPElH611saZO5g0uQEL82PcZTr/DQ/IZJUMbt
+        UuYQjzzc1hca6kUU8echI6Yzq5qpYcwo6kmtDWRkmGD6MPUGh+Bq7Nhn7vGFx6kH2aYX/euxWkNvI
+        Fdmdji2ZgEyAlpBXGUveqVfMSUM6kmDgtFlxMnyyNguiH2OVQ14OUf8V0iBFCBikaTc2EhQoaE+xf
+        YFtOfSdxQY8plLTg/FoXX7I+zR5HA0Px3Kw4q/BK6HB7rI7NfTNep4U5eTzTABqjOG6B/mtUOx3vu
+        W7H4EFXA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fnNbo-0002kv-R9; Wed, 08 Aug 2018 12:30:36 +0000
+Date:   Wed, 8 Aug 2018 05:30:36 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        aik@ozlabs.ru, robh@kernel.org, joe@perches.com,
+        elfring@users.sourceforge.net, david@gibson.dropbear.id.au,
+        jasowang@redhat.com, mpe@ellerman.id.au, linuxram@us.ibm.com,
+        haren@linux.vnet.ibm.com, paulus@samba.org,
+        srikar@linux.vnet.ibm.com, robin.murphy@arm.com,
+        jean-philippe.brucker@arm.com, marc.zyngier@arm.com
+Subject: Re: [RFC 0/4] Virtio uses DMA API for all devices
+Message-ID: <20180808123036.GA2525@infradead.org>
+References: <20180805072930.GB23288@infradead.org>
+ <b7e8294e3e70d24072883a7e8e5375719d5af870.camel@kernel.crashing.org>
+ <20180806094243.GA16032@infradead.org>
+ <6c707d6d33ac25a42265c2e9b521c2416d72c739.camel@kernel.crashing.org>
+ <20180807062117.GD32709@infradead.org>
+ <aa59c7f8556bd4b332394a1dcf2d4a8faf3dc4a2.camel@kernel.crashing.org>
+ <20180807135505.GA29034@infradead.org>
+ <2103ecfe52d23cec03f185d08a87bfad9c9d82b5.camel@kernel.crashing.org>
+ <20180808063158.GA2474@infradead.org>
+ <4b596883892b5cb5560bef26fcd249e7107173ac.camel@kernel.crashing.org>
 MIME-Version: 1.0
-In-Reply-To: <20180808120319.akmstg3ads325xcy@kili.mountain>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.44]
-X-ClientProxiedBy: SFHDAG4NODE2.st.com (10.75.127.11) To SFHDAG6NODE1.st.com
- (10.75.127.16)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-08_04:,,
- signatures=0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <4b596883892b5cb5560bef26fcd249e7107173ac.camel@kernel.crashing.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-oh yes, host_data is dereferenced (for kfree into out_free_mem) if 
-stm32_exti_host_init fail
+On Wed, Aug 08, 2018 at 08:07:49PM +1000, Benjamin Herrenschmidt wrote:
+> Qemu virtio bypasses that iommu when the VIRTIO_F_IOMMU_PLATFORM flag
+> is not set (default) but there's nothing in the device-tree to tell the
+> guest about this since it's a violation of our pseries architecture, so
+> we just rely on Linux virtio "knowing" that it happens. It's a bit
+> yucky but that's now history...
 
-thanks Dan
+That is ugly as hell, but it is how virtio works everywhere, so nothing
+special so far.
 
-BR
-Ludo
-
-On 08/08/2018 02:03 PM, Dan Carpenter wrote:
-> If there are any errors in stm32_exti_host_init() then it leads to a
-> NULL dereference in the callers.  The function should clean up after
-> itself.
+> Essentially pseries "architecturally" does not have the concept of not
+> having an iommu in the way and qemu violates that architecture today.
 > 
-> Fixes: f9fc1745501e ("irqchip/stm32: Add host and driver data structures")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> (Remember it comes from pHyp, our priorietary HV, which we are somewhat
+> mimmicing here).
 
-Reviewed-by: Ludovic Barre <ludovic.barre@st.com>
+It shouldnt be too hard to have a dt property that communicates this,
+should it?
 
+> So if we always set VIRTIO_F_IOMMU_PLATFORM, it *will* force all virtio
+> through that iommu and performance will suffer (esp vhost I suspect),
+> especially since adding/removing translations in the iommu is a
+> hypercall.
+
+Well, we'd nee to make sure that for this particular bus we skip the
+actualy iommu.
+
+> > It would not be the same effect.  The problem with that is that you must
+> > now assumes that your qemu knows that for example you might be passing
+> > a dma offset if the bus otherwise requires it. 
 > 
-> diff --git a/drivers/irqchip/irq-stm32-exti.c b/drivers/irqchip/irq-stm32-exti.c
-> index 3df527fcf4e1..0a2088e12d96 100644
-> --- a/drivers/irqchip/irq-stm32-exti.c
-> +++ b/drivers/irqchip/irq-stm32-exti.c
-> @@ -603,17 +603,24 @@ stm32_exti_host_data *stm32_exti_host_init(const struct stm32_exti_drv_data *dd,
->   					sizeof(struct stm32_exti_chip_data),
->   					GFP_KERNEL);
->   	if (!host_data->chips_data)
-> -		return NULL;
-> +		goto free_host_data;
->   
->   	host_data->base = of_iomap(node, 0);
->   	if (!host_data->base) {
->   		pr_err("%pOF: Unable to map registers\n", node);
-> -		return NULL;
-> +		goto free_chips_data;
->   	}
->   
->   	stm32_host_data = host_data;
->   
->   	return host_data;
-> +
-> +free_chips_data:
-> +	kfree(host_data->chips_data);
-> +free_host_data:
-> +	kfree(host_data);
-> +
-> +	return NULL;
->   }
->   
->   static struct
-> @@ -665,10 +672,8 @@ static int __init stm32_exti_init(const struct stm32_exti_drv_data *drv_data,
->   	struct irq_domain *domain;
->   
->   	host_data = stm32_exti_host_init(drv_data, node);
-> -	if (!host_data) {
-> -		ret = -ENOMEM;
-> -		goto out_free_mem;
-> -	}
-> +	if (!host_data)
-> +		return -ENOMEM;
->   
->   	domain = irq_domain_add_linear(node, drv_data->bank_nr * IRQS_PER_BANK,
->   				       &irq_exti_domain_ops, NULL);
-> @@ -725,7 +730,6 @@ static int __init stm32_exti_init(const struct stm32_exti_drv_data *drv_data,
->   	irq_domain_remove(domain);
->   out_unmap:
->   	iounmap(host_data->base);
-> -out_free_mem:
->   	kfree(host_data->chips_data);
->   	kfree(host_data);
->   	return ret;
-> @@ -752,10 +756,8 @@ __init stm32_exti_hierarchy_init(const struct stm32_exti_drv_data *drv_data,
->   	}
->   
->   	host_data = stm32_exti_host_init(drv_data, node);
-> -	if (!host_data) {
-> -		ret = -ENOMEM;
-> -		goto out_free_mem;
-> -	}
-> +	if (!host_data)
-> +		return -ENOMEM;
->   
->   	for (i = 0; i < drv_data->bank_nr; i++)
->   		stm32_exti_chip_init(host_data, i, node);
-> @@ -777,7 +779,6 @@ __init stm32_exti_hierarchy_init(const struct stm32_exti_drv_data *drv_data,
->   
->   out_unmap:
->   	iounmap(host_data->base);
-> -out_free_mem:
->   	kfree(host_data->chips_data);
->   	kfree(host_data);
->   	return ret;
+> I would assume that arch_virtio_wants_dma_ops() only returns true when
+> no such offsets are involved, at least in our case that would be what
+> happens.
+
+That would work, but we're really piling hacĸs ontop of hacks here.
+
+> >  Or in other words:
+> > you potentially break the contract between qemu and the guest of always
+> > passing down physical addresses.  If we explicitly change that contract
+> > through using a flag that says you pass bus address everything is fine.
 > 
+> For us a "bus address" is behind the iommu so that's what
+> VIRTIO_F_IOMMU_PLATFORM does already. We don't have the concept of a
+> bus address that is different. I suppose it's an ARMism to have DMA
+> offsets that are separate from iommus ? 
+
+No, a lot of platforms support a bus address that has an offset from
+the physical address. including a lot of power platforms:
+
+arch/powerpc/kernel/pci-common.c:       set_dma_offset(&dev->dev, PCI_DRAM_OFFSET);
+arch/powerpc/platforms/cell/iommu.c:            set_dma_offset(dev, cell_dma_nommu_offset);
+arch/powerpc/platforms/cell/iommu.c:            set_dma_offset(dev, addr);
+arch/powerpc/platforms/powernv/pci-ioda.c:      set_dma_offset(&pdev->dev, pe->tce_bypass_base);
+arch/powerpc/platforms/powernv/pci-ioda.c:                      set_dma_offset(&pdev->dev, (1ULL << 32));
+arch/powerpc/platforms/powernv/pci-ioda.c:              set_dma_offset(&dev->dev, pe->tce_bypass_base);
+arch/powerpc/platforms/pseries/iommu.c:                         set_dma_offset(dev, dma_offset);
+arch/powerpc/sysdev/dart_iommu.c:               set_dma_offset(&dev->dev, DART_U4_BYPASS_BASE);
+arch/powerpc/sysdev/fsl_pci.c:          set_dma_offset(dev, pci64_dma_offset);
+
+to make things worse some platforms (at least on arm/arm64/mips/x86) can
+also require additional banking where it isn't even a single linear map
+but multiples windows.
