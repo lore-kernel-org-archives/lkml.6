@@ -2,124 +2,244 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58EFBC46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 13:19:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98F0BC46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 13:19:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E46621729
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 13:19:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="SlJgbUVp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E46621729
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 4633D21729
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 13:19:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4633D21729
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727248AbeHHPiv (ORCPT
+        id S1727290AbeHHPjN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 11:38:51 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:38010 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727130AbeHHPiv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 11:38:51 -0400
-Received: by mail-it0-f65.google.com with SMTP id v71-v6so3493781itb.3
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 06:19:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rzM4TrpRj2WFQprRLUbO9Sq5ONQW8yf96gmBhYgVTwA=;
-        b=SlJgbUVp5J/L/trhm1E4X4HPgYTfJs1KwnDkH3DBJLaDJK/4bgFHVT/9ZmAsYNCh7/
-         3Ftcmsf7/wliBC4geaXkfZ5P8EbE52rdAa6ziR2rFRn1OSYelcJACrN1ojlNWPp2y8up
-         1Xsu4DZlMbNaM91PPsF7ZDnpWmVkwohpGX9w8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rzM4TrpRj2WFQprRLUbO9Sq5ONQW8yf96gmBhYgVTwA=;
-        b=Y2It6xmmM8KHrP4H4StQSTEXKVMRsC4SJgmsFoICVRIwQMrLGDI5ahaugtOoUbxtxv
-         OudtweGEyAo8Ml7HpHB2H7HdCrii9U5hpS0dSd1XTOA8DLUf9y1NIq5HvVadyllznBXB
-         xydjg/l/yU1++RvwXCK8odAFFrRK5z/htCKmyAUkHDFifyHbTK4vM/kP6s1kr9/SS1HE
-         7PRZ8Da8x9DFIimbZC03H0hOZTB9muDkQy46+aYqW57d6VL6hLYxiwKvRAu5JJYZ1o+p
-         mvC9kTdmSvo0eEe6budcK0grE57venCdgvBOM4H4HgTZH+aP7dDVv1GDOBeqDpva643M
-         AUOw==
-X-Gm-Message-State: AOUpUlGIHmfkgq+/yKgYf32e+T64G9Z38WcZllDVZPw4JM5Q29glYRES
-        PJvX4xLv2gqDudw/EoPjFxjZYl9pDJ92nuv8H4Jmrw==
-X-Google-Smtp-Source: AA+uWPzaElsyud8a4WmlkiaDne1YwEVsCV/fMmOU1gHNoKPUPnoWZOVnb7yaqPy8d9t+EQ1oTBk9zaW3zDdtrizDDS0=
-X-Received: by 2002:a02:4c16:: with SMTP id a22-v6mr2299375jab.48.1533734351105;
- Wed, 08 Aug 2018 06:19:11 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180806163946.28380-1-patrick.bellasi@arm.com> <20180806163946.28380-6-patrick.bellasi@arm.com>
-In-Reply-To: <20180806163946.28380-6-patrick.bellasi@arm.com>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Wed, 8 Aug 2018 15:18:59 +0200
-Message-ID: <CAKfTPtC2adLupg7wy1JU9zxKx1466Sza6fSCcr92wcawm1OYkg@mail.gmail.com>
-Subject: Re: [PATCH v3 05/14] sched/cpufreq: uclamp: add utilization clamping
- for FAIR tasks
-To:     Patrick Bellasi <patrick.bellasi@arm.com>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Tejun Heo <tj@kernel.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        viresh kumar <viresh.kumar@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        "Cc: Steve Muckle" <smuckle@google.com>, surenb@google.com
+        Wed, 8 Aug 2018 11:39:13 -0400
+Received: from gate.crashing.org ([63.228.1.57]:42490 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726772AbeHHPjM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 11:39:12 -0400
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w78DIDkg003834;
+        Wed, 8 Aug 2018 08:18:15 -0500
+Message-ID: <b8b9150a747453c070ad3b0e4c92d2b1b052ad06.camel@kernel.crashing.org>
+Subject: Re: [RFC 0/4] Virtio uses DMA API for all devices
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        aik@ozlabs.ru, robh@kernel.org, joe@perches.com,
+        elfring@users.sourceforge.net, david@gibson.dropbear.id.au,
+        jasowang@redhat.com, mpe@ellerman.id.au, linuxram@us.ibm.com,
+        haren@linux.vnet.ibm.com, paulus@samba.org,
+        srikar@linux.vnet.ibm.com, robin.murphy@arm.com,
+        jean-philippe.brucker@arm.com, marc.zyngier@arm.com
+Date:   Wed, 08 Aug 2018 23:18:13 +1000
+In-Reply-To: <20180808123036.GA2525@infradead.org>
+References: <20180805072930.GB23288@infradead.org>
+         <b7e8294e3e70d24072883a7e8e5375719d5af870.camel@kernel.crashing.org>
+         <20180806094243.GA16032@infradead.org>
+         <6c707d6d33ac25a42265c2e9b521c2416d72c739.camel@kernel.crashing.org>
+         <20180807062117.GD32709@infradead.org>
+         <aa59c7f8556bd4b332394a1dcf2d4a8faf3dc4a2.camel@kernel.crashing.org>
+         <20180807135505.GA29034@infradead.org>
+         <2103ecfe52d23cec03f185d08a87bfad9c9d82b5.camel@kernel.crashing.org>
+         <20180808063158.GA2474@infradead.org>
+         <4b596883892b5cb5560bef26fcd249e7107173ac.camel@kernel.crashing.org>
+         <20180808123036.GA2525@infradead.org>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.4 (3.28.4-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Patrick,
+On Wed, 2018-08-08 at 05:30 -0700, Christoph Hellwig wrote:
+> On Wed, Aug 08, 2018 at 08:07:49PM +1000, Benjamin Herrenschmidt wrote:
+> > Qemu virtio bypasses that iommu when the VIRTIO_F_IOMMU_PLATFORM flag
+> > is not set (default) but there's nothing in the device-tree to tell the
+> > guest about this since it's a violation of our pseries architecture, so
+> > we just rely on Linux virtio "knowing" that it happens. It's a bit
+> > yucky but that's now history...
+> 
+> That is ugly as hell, but it is how virtio works everywhere, so nothing
+> special so far.
 
-On Mon, 6 Aug 2018 at 18:40, Patrick Bellasi <patrick.bellasi@arm.com> wrote:
->
+Yup.
 
-> @@ -222,8 +222,13 @@ static unsigned long sugov_get_util(struct sugov_cpu *sg_cpu)
+> > Essentially pseries "architecturally" does not have the concept of not
+> > having an iommu in the way and qemu violates that architecture today.
+> > 
+> > (Remember it comes from pHyp, our priorietary HV, which we are somewhat
+> > mimmicing here).
+> 
+> It shouldnt be too hard to have a dt property that communicates this,
+> should it?
 
->         util = cpu_util_cfs(rq);
-> +       if (util)
-> +               util = uclamp_util(cpu_of(rq), util);
->         util += cpu_util_rt(rq);
->
->         /*
+We could invent something I suppose. The additional problem then (yeah
+I know ... what a mess) is that qemu doesn't create the DT for PCI
+devices, the firmware (SLOF) inside the guest does using normal PCI
+probing.
 
-> @@ -322,11 +328,24 @@ static void sugov_iowait_boost(struct sugov_cpu *sg_cpu, u64 time,
+That said, that FW could know about all the virtio vendor/device IDs,
+check the VIRTIO_F_IOMMU_PLATFORM and set that property accordingly...
+messy but doable. It's not a bus property (see my other reply below as
+this could complicate things with your bus mask).
 
-> +       max_boost = sg_cpu->iowait_boost_max;
-> +       if (!cpu_util_rt(cpu_rq(sg_cpu->cpu)))
-> +               max_boost = uclamp_util(sg_cpu->cpu, max_boost);
-> +
+But we are drifting from the problem at hand :-) You propose we do set
+VIRTIO_F_IOMMU_PLATFORM so we aren't in the above case, and the bypass
+stuff works, so no need to touch it.
 
-> +static inline unsigned int uclamp_value(unsigned int cpu, int clamp_id)
-> +{
-> +       struct uclamp_cpu *uc_cpu = &cpu_rq(cpu)->uclamp;
-> +
-> +       if (uc_cpu->value[clamp_id] == UCLAMP_NOT_VALID)
-> +               return uclamp_none(clamp_id);
-> +
-> +       return uc_cpu->value[clamp_id];
-> +}
-> +
+See my recap at the end of the email to make sure I understand fully
+what you suggest.
 
-> +static inline unsigned int uclamp_util(unsigned int cpu, unsigned int util)
+> > So if we always set VIRTIO_F_IOMMU_PLATFORM, it *will* force all virtio
+> > through that iommu and performance will suffer (esp vhost I suspect),
+> > especially since adding/removing translations in the iommu is a
+> > hypercall.
 
-using struct *rq rq instead of cpu as parameter would align
-uclamp_util() interface with other cpu_util_*() interface and remove
-some cpu_of(rq) and  cpu_rq(cpu)
-> +{
-> +       unsigned int min_util = uclamp_value(cpu, UCLAMP_MIN);
-> +       unsigned int max_util = uclamp_value(cpu, UCLAMP_MAX);
-> +
-> +       return clamp(util, min_util, max_util);
-> +}
+> Well, we'd nee to make sure that for this particular bus we skip the
+> actualy iommu.
+
+It's not a bus property. Qemu will happily mix up everything on the
+same bus, that includes emulated devices that go through the emulated
+iommu, real VFIO devices that go through an actual HW iommu and virtio
+that bypasses everything.
+
+This makes things tricky in general (not just in my powerpc secure VM
+case) since, at least on powerpc but I suppose elsewhere too, iommu
+related properties tend to be per "bus" while here, qemu will mix and
+match.
+
+But again, I think we are drifting away from the topic, see below
+
+> > > It would not be the same effect.  The problem with that is that you must
+> > > now assumes that your qemu knows that for example you might be passing
+> > > a dma offset if the bus otherwise requires it. 
+> > 
+> > I would assume that arch_virtio_wants_dma_ops() only returns true when
+> > no such offsets are involved, at least in our case that would be what
+> > happens.
+> 
+> That would work, but we're really piling hacĸs ontop of hacks here.
+
+Sort-of :-) At least none of what we are discussing now involves
+touching the dma_ops themselves so we are not in the way of your big
+cleanup operation here. But yeah, let's continue discussing your other
+solution below.
+
+> > >  Or in other words:
+> > > you potentially break the contract between qemu and the guest of always
+> > > passing down physical addresses.  If we explicitly change that contract
+> > > through using a flag that says you pass bus address everything is fine.
+> > 
+> > For us a "bus address" is behind the iommu so that's what
+> > VIRTIO_F_IOMMU_PLATFORM does already. We don't have the concept of a
+> > bus address that is different. I suppose it's an ARMism to have DMA
+> > offsets that are separate from iommus ? 
+> 
+> No, a lot of platforms support a bus address that has an offset from
+> the physical address. including a lot of power platforms:
+
+Ok, just talking past each other :-) For all the powerpc ones, these
+*do* go through the iommu, which is what I meant. It's just a window of
+the iommu that provides some kind of direct mapping of memory.
+
+For pseries, there is no such thing however. What we do to avoid
+constant map/unmap of iommu PTEs in pseries guests is that we use
+hypercalls to create a 64-bit window and populate all its PTEs with an
+identity mapping. But that's not as efficient as a real bypass.
+
+There are good historical reasons for that, since pseries is a guest
+platform, its memory is never really where the guest thinks it is, so
+you always need an iommu to remap. Even for virtual devices, since for
+most of them, in the "IBM" pHyp model, the "peer" is actually another
+partition, so the virtual iommu handles translating accross the two
+partitions.
+
+Same goes with cell in HW, no real bypass, just the iommu being
+confiured with very large pages and a fixed mapping.
+
+powernv has a separate physical window that can be configured as a real
+bypass though, so does the U4 DART. Not sure about the FSL one.
+
+But yeah, your point stands, this is just implementation details.
+
+> arch/powerpc/kernel/pci-common.c:       set_dma_offset(&dev->dev, PCI_DRAM_OFFSET);
+> arch/powerpc/platforms/cell/iommu.c:            set_dma_offset(dev, cell_dma_nommu_offset);
+> arch/powerpc/platforms/cell/iommu.c:            set_dma_offset(dev, addr);
+> arch/powerpc/platforms/powernv/pci-ioda.c:      set_dma_offset(&pdev->dev, pe->tce_bypass_base);
+> arch/powerpc/platforms/powernv/pci-ioda.c:                      set_dma_offset(&pdev->dev, (1ULL << 32));
+> arch/powerpc/platforms/powernv/pci-ioda.c:              set_dma_offset(&dev->dev, pe->tce_bypass_base);
+> arch/powerpc/platforms/pseries/iommu.c:                         set_dma_offset(dev, dma_offset);
+> arch/powerpc/sysdev/dart_iommu.c:               set_dma_offset(&dev->dev, DART_U4_BYPASS_BASE);
+> arch/powerpc/sysdev/fsl_pci.c:          set_dma_offset(dev, pci64_dma_offset);
+> 
+> to make things worse some platforms (at least on arm/arm64/mips/x86) can
+> also require additional banking where it isn't even a single linear map
+> but multiples windows.
+
+Sure, but all of this is just the configuration of the iommu. But I
+think we agree here, and your point remains valid, indeed my proposed
+hack:
+
+>       if ((flags & VIRTIO_F_IOMMU_PLATFORM) || arch_virtio_wants_dma_ops())
+
+Will only work if the IOMMU and non-IOMMU path are completely equivalent.
+
+We can provide that guarantee for our secure VM case, but not generally so if
+we were to go down the route of a quirk in virtio, it might be better to
+make it painfully obvious that it's specific to that one case with a different
+kind of turd:
+
+-	if (xen_domain())
++	if (xen_domain() || pseries_secure_vm())
+		return true;
+
+So to summarize, and make sure I'm not missing something, the two approaches
+at hand are either:
+
+ 1- The above, which is a one liner and contained in the guest, so that's nice, but
+also means another turd in virtio which isn't ...
+
+ 2- We force pseries to always set VIRTIO_F_IOMMU_PLATFORM, but with the current
+architecture on our side that will force virtio to always go through an emulated
+iommu, as pseries doesn't have the concept of a real bypass window, and thus will
+impact performance for both secure and non-secure VMs.
+
+ 3- Invent a property that can be put in selected PCI device tree nodes that
+indicates that for that device specifically, the iommu can be bypassed, along with
+a hypercall to turn that bypass on/off. Virtio would then use VIRTIO_F_IOMMU_PLATFORM
+but its DT nodes would also have that property and Linux would notice it and turn
+bypass on.
+
+The resulting properties of those options are:
+
+1- Is what I want because it's the simplest, provides the best performance now,
+   and works without code changes to qemu or non-secure Linux. However it does
+   add a tiny turd to virtio which is annoying.
+
+2- This works but it puts the iommu in the way always, thus reducing virtio performance
+   accross the board for pseries unless we only do that for secure VMs but that is
+   difficult (as discussed earlier).
+
+3- This would recover the performance lost in -2-, however it requires qemu *and*
+   guest changes. Specifically, existing guests (RHEL 7 etc...) would get the
+   performance hit of -2- unless modified to call that 'enable bypass' call, which
+   isn't great.
+
+So imho we have to chose one of 3 not-great solutions here... Unless I missed
+something in your ideas of course.
+
+Cheers,
+Ben.
+
+
+
