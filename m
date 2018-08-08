@@ -2,120 +2,136 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F9FDC46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 16:01:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAEC3C46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 16:01:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DDB921771
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 16:01:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DDB921771
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=windriver.com
+	by mail.kernel.org (Postfix) with ESMTP id 9AE6A2175F
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 16:01:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9AE6A2175F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727787AbeHHSVx (ORCPT
+        id S1728068AbeHHSWK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 14:21:53 -0400
-Received: from mail5.windriver.com ([192.103.53.11]:52520 "EHLO mail5.wrs.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727526AbeHHSVx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 14:21:53 -0400
-Received: from ALA-HCB.corp.ad.wrs.com (ala-hcb.corp.ad.wrs.com [147.11.189.41])
-        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id w78FxvJM014063
-        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
-        Wed, 8 Aug 2018 09:00:07 -0700
-Received: from pek-lpg-core2.corp.ad.wrs.com (128.224.153.41) by
- ALA-HCB.corp.ad.wrs.com (147.11.189.41) with Microsoft SMTP Server id
- 14.3.399.0; Wed, 8 Aug 2018 08:59:46 -0700
-From:   <zhe.he@windriver.com>
-To:     <jason.wessel@windriver.com>, <daniel.thompson@linaro.org>,
-        <gregkh@linuxfoundation.org>, <jslaby@suse.com>,
-        <kgdb-bugreport@lists.sourceforge.net>,
-        <linux-serial@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     <zhe.he@windriver.com>
-Subject: [PATCH] kgdboc: Passing ekgdboc to command line causes panic
-Date:   Wed, 8 Aug 2018 23:59:44 +0800
-Message-ID: <1533743984-426660-1-git-send-email-zhe.he@windriver.com>
-X-Mailer: git-send-email 2.7.4
+        Wed, 8 Aug 2018 14:22:10 -0400
+Received: from mail-qk0-f172.google.com ([209.85.220.172]:43702 "EHLO
+        mail-qk0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727480AbeHHSWJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 14:22:09 -0400
+Received: by mail-qk0-f172.google.com with SMTP id z74-v6so1847867qkb.10;
+        Wed, 08 Aug 2018 09:01:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=y9v/itfTDh1VWtBC0ExiB+0Qvk6wMkAVtOQeluJuN0E=;
+        b=s8WifD19vY570tAcDH5T10LJDDGWjH8q7ilQrLh0KSeaRrxf2Anq3OKAqVhEIcKrVy
+         omZQpwqISyLx+4NHCmcHglrV8PXHY4q9ailc2JQcjUT9ESWS5nv9zBod0Io+tHc9KL69
+         pU4QTxuNibZOBCApp5pi+kP9Gsc9QPHLsQ04tGI+PwOT9wAkk0ykMaCkMRFPjZ4BfQBP
+         joo/wYC/UVxl+cWQF8oRhK1tHNJQ72/TmGnhEdAPHtPTlnPw024UgqRYgGsSw3jRmmRr
+         /3YZfUs52apArbBWkBJX03uJWlLleAkIk6lgP2xFfhUvRcFZImSuRFSO5MFYfkF4OgqT
+         u+Pw==
+X-Gm-Message-State: AOUpUlF5n9//kgdEWEUdKxYIVSJDznw3CxPi4Z1xY0Ko5RouXJ0lN8wu
+        rCoiA+UEtw7oefaj92RihRtt6IYj/TR/BrTwrbE=
+X-Google-Smtp-Source: AA+uWPzz4gG73omJL6cGyj3yPQP2Mi295cQQEiA8ou9571120n9b5AC3dyI4IS8eibBTG7lnL5AhRaEYGmSJUuRhcaU=
+X-Received: by 2002:a37:7946:: with SMTP id u67-v6mr2907626qkc.283.1533744109911;
+ Wed, 08 Aug 2018 09:01:49 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <alpine.LRH.2.02.1808021242320.31834@file01.intranet.prod.int.rdu2.redhat.com>
+ <CAHCPf3tFGqkYEcWNN4LaWThw_rVqT316pzLv6T7RfxwO-eZ0EA@mail.gmail.com>
+ <alpine.LRH.2.02.1808030212340.17672@file01.intranet.prod.int.rdu2.redhat.com>
+ <CAKv+Gu8DeuksZhk1g3q_msSKV_hSY_2e1uzVten9-oGO3j9Sqg@mail.gmail.com>
+ <20180803094129.GB17798@arm.com> <alpine.LRH.2.02.1808031235410.31584@file01.intranet.prod.int.rdu2.redhat.com>
+ <20180808113927.GA24736@iMac.local> <alpine.LRH.2.02.1808081011110.9997@file01.intranet.prod.int.rdu2.redhat.com>
+ <b1a0dac5-3cf2-1a7f-ac7f-649126eb7873@arm.com> <20180808151444.GF24736@iMac.local>
+In-Reply-To: <20180808151444.GF24736@iMac.local>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Wed, 8 Aug 2018 18:01:31 +0200
+Message-ID: <CAK8P3a2=rVvvW8bBcrPm3nXNNP56Ygxchu4ThD2ZgZ_cVcd8wQ@mail.gmail.com>
+Subject: Re: framebuffer corruption due to overlapping stp instructions on arm64
+To:     Catalin Marinas <catalin.marinas@arm.com>
+Cc:     Richard.Earnshaw@arm.com, Mikulas Patocka <mpatocka@redhat.com>,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        Joao Pinto <Joao.Pinto@synopsys.com>,
+        GNU C Library <libc-alpha@sourceware.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        neko@bakuhatsu.net, linux-pci <linux-pci@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: He Zhe <zhe.he@windriver.com>
+On Wed, Aug 8, 2018 at 5:15 PM Catalin Marinas <catalin.marinas@arm.com> wrote:
+>
+> On Wed, Aug 08, 2018 at 04:01:12PM +0100, Richard Earnshaw wrote:
+> > On 08/08/18 15:12, Mikulas Patocka wrote:
+> > > On Wed, 8 Aug 2018, Catalin Marinas wrote:
+> > >> On Fri, Aug 03, 2018 at 01:09:02PM -0400, Mikulas Patocka wrote:
+> - failing to write a few bytes
+> - writing a few bytes that were written 16 bytes before
+> - writing a few bytes that were written 16 bytes after
+>
+> > The overlapping writes in memcpy never write different values to the
+> > same location, so I still feel this must be some sort of HW issue, not a
+> > SW one.
+>
+> So do I (my interpretation is that it combines or rather skips some of
+> the writes to the same 16-byte address as it ignores the data strobes).
 
-kgdboc_option_setup does not check input argument before passing it
-to strlen. The argument would be a NULL pointer if "ekgdboc", without
-its value, is set in command line and thus cause the following panic.
+Maybe it just always writes to the wrong location, 16 bytes apart for one of
+the stp instructions. Since we are usually dealing with a pair of overlapping
+'stp', both unaligned, that could explain both the missing bytes (we write
+data to the wrong place, but overwrite it with the correct data right away)
+and the extra copy (we write it to the wrong place, but then write the correct
+data to the correct place as well).
 
-PANIC: early exception 0xe3 IP 10:ffffffff8fbbb620 error 0 cr2 0x0
-[    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 4.18-rc8+ #1
-[    0.000000] RIP: 0010:strlen+0x0/0x20
-...
-[    0.000000] Call Trace
-[    0.000000]  ? kgdboc_option_setup+0x9/0xa0
-[    0.000000]  ? kgdboc_early_init+0x6/0x1b
-[    0.000000]  ? do_early_param+0x4d/0x82
-[    0.000000]  ? parse_args+0x212/0x330
-[    0.000000]  ? rdinit_setup+0x26/0x26
-[    0.000000]  ? parse_early_options+0x20/0x23
-[    0.000000]  ? rdinit_setup+0x26/0x26
-[    0.000000]  ? parse_early_param+0x2d/0x39
-[    0.000000]  ? setup_arch+0x2f7/0xbf4
-[    0.000000]  ? start_kernel+0x5e/0x4c2
-[    0.000000]  ? load_ucode_bsp+0x113/0x12f
-[    0.000000]  ? secondary_startup_64+0xa5/0xb0
+This sounds a bit like what the original ARM CPUs did on unaligned
+memory access, where a single aligned 4-byte location was accessed,
+but the bytes swapped around.
 
-This patch adds a check to prevent the panic and changes some printk
-to right fashion.
+There may be a few more things worth trying out or analysing from
+the recorded past failures to understand more about how it goes
+wrong:
 
-Signed-off-by: He Zhe <zhe.he@windriver.com>
----
- drivers/tty/serial/kgdboc.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+- For which data lengths does it fail? Having two overlapping
+  unaligned stp is something that only happens for 16..96 byte
+  memcpy.
 
-diff --git a/drivers/tty/serial/kgdboc.c b/drivers/tty/serial/kgdboc.c
-index b4ba2b1..0003d6c 100644
---- a/drivers/tty/serial/kgdboc.c
-+++ b/drivers/tty/serial/kgdboc.c
-@@ -130,8 +130,13 @@ static void kgdboc_unregister_kbd(void)
- 
- static int kgdboc_option_setup(char *opt)
- {
-+	if (!opt) {
-+		pr_err("kgdboc: null option\n");
-+		return -EINVAL;
-+	}
-+
- 	if (strlen(opt) >= MAX_CONFIG_LEN) {
--		printk(KERN_ERR "kgdboc: config string too long\n");
-+		pr_err("kgdboc: config string too long\n");
- 		return -ENOSPC;
- 	}
- 	strcpy(config, opt);
-@@ -248,7 +253,7 @@ static int param_set_kgdboc_var(const char *kmessage,
- 	int len = strlen(kmessage);
- 
- 	if (len >= MAX_CONFIG_LEN) {
--		printk(KERN_ERR "kgdboc: config string too long\n");
-+		pr_err("kgdboc: config string too long\n");
- 		return -ENOSPC;
- 	}
- 
-@@ -259,8 +264,7 @@ static int param_set_kgdboc_var(const char *kmessage,
- 	}
- 
- 	if (kgdb_connected) {
--		printk(KERN_ERR
--		       "kgdboc: Cannot reconfigure while KGDB is connected.\n");
-+		pr_err("kgdboc: Cannot reconfigure while KGDB is connected.\n");
- 
- 		return -EBUSY;
- 	}
--- 
-2.7.4
+- What if we use a pair of str instructions instead of an stp in
+  a modified memcpy? Does it now write to still write to the
+  wrong place 16 bytes away, just 8 bytes away, or correctly?
 
+- Does it change in any way if we do the overlapping writes
+  in the reverse order? E.g. for the 16..64 byte case:
+
+diff --git a/sysdeps/aarch64/memcpy.S b/sysdeps/aarch64/memcpy.S
+index 7e1163e6a0..09d0160bdf 100644
+--- a/sysdeps/aarch64/memcpy.S
++++ b/sysdeps/aarch64/memcpy.S
+@@ -102,11 +102,11 @@ ENTRY (MEMCPY)
+        tbz     tmp1, 5, 1f
+        ldp     B_l, B_h, [src, 16]
+        ldp     C_l, C_h, [srcend, -32]
+-       stp     B_l, B_h, [dstin, 16]
+        stp     C_l, C_h, [dstend, -32]
++       stp     B_l, B_h, [dstin, 16]
+ 1:
+-       stp     A_l, A_h, [dstin]
+        stp     D_l, D_h, [dstend, -16]
++       stp     A_l, A_h, [dstin]
+        ret
+
+        .p2align 4
+
+        Arnd
