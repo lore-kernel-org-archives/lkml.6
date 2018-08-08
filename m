@@ -2,130 +2,328 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_DIGITS,
+	FROM_LOCAL_HEX,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28914C4646D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 07:38:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0A00C4646D
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 07:39:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6C1F205C9
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 07:38:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6C1F205C9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
+	by mail.kernel.org (Postfix) with ESMTP id 6638F2176D
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 07:39:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6638F2176D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727028AbeHHJ5D (ORCPT
+        id S1727106AbeHHJ5a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 05:57:03 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:37117 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726869AbeHHJ5D (ORCPT
+        Wed, 8 Aug 2018 05:57:30 -0400
+Received: from mail-it0-f69.google.com ([209.85.214.69]:57598 "EHLO
+        mail-it0-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726905AbeHHJ5a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 05:57:03 -0400
-Received: by mail-wr1-f65.google.com with SMTP id u12-v6so1094608wrr.4
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 00:38:37 -0700 (PDT)
+        Wed, 8 Aug 2018 05:57:30 -0400
+Received: by mail-it0-f69.google.com with SMTP id e6-v6so1630621itc.7
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 00:39:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=QSUkCzv0KmOT0y96k9iexRlheO+mhe9fWp3mCh/VAO8=;
-        b=nsQvDmLKVg5qbDgPz4h2bYJuYDOBaZI7r5jQeMlIOvD1epKj7hejvlvvj1Fp8wu8oS
-         cSRGnZai7BhfB/0pujER59Im5i8WabJw1pyWc2sgdoMQronP0ypc3tsevX4F5HNake+g
-         KWPNe+d6n7gLrgnI4CXOaj7brBAe/OP/vmbucTeQxQD+1XEVkuuN7rGZNeUd/GJWEZ3x
-         mzgYqphwRT4ZH7Z0IQKrA6DhqITSxzh+pjJJHjYk9tNtOYXykIhen5So3noglj89JCFG
-         Ulvbis5KGpF8cayJgWQT5GSbyEyUOe61MJBNqvJWKaJ7dvU6E//2SU7lUob9KBhQZNGq
-         fsqg==
-X-Gm-Message-State: AOUpUlFOk1ybBaVN2S05Pw5ah2yhMveqSHSoKrtZ82dLhOXmeerslJJw
-        hD1WfHWZklTWaizkw0iX1Rg=
-X-Google-Smtp-Source: AA+uWPz8W0yaK9TrkIAp0eIWHAlhor5METjXqT+/F3kzaYVFgwTJUQiHu/zjcfPwZLfHPdzvLG4x+w==
-X-Received: by 2002:adf:84e5:: with SMTP id 92-v6mr1134511wrg.56.1533713916810;
-        Wed, 08 Aug 2018 00:38:36 -0700 (PDT)
-Received: from techadventures.net (techadventures.net. [62.201.165.239])
-        by smtp.gmail.com with ESMTPSA id v65-v6sm4478465wme.22.2018.08.08.00.38.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 08 Aug 2018 00:38:36 -0700 (PDT)
-Received: by techadventures.net (Postfix, from userid 1000)
-        id 42F25124766; Wed,  8 Aug 2018 09:38:35 +0200 (CEST)
-Date:   Wed, 8 Aug 2018 09:38:35 +0200
-From:   Oscar Salvador <osalvador@techadventures.net>
-To:     Jerome Glisse <jglisse@redhat.com>
-Cc:     David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org,
-        mhocko@suse.com, dan.j.williams@intel.com,
-        pasha.tatashin@oracle.com, yasu.isimatu@gmail.com,
-        logang@deltatee.com, dave.jiang@intel.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Oscar Salvador <osalvador@suse.de>
-Subject: Re: [RFC PATCH 2/3] mm/memory_hotplug: Create __shrink_pages and
- move it to offline_pages
-Message-ID: <20180808073835.GA9568@techadventures.net>
-References: <20180807133757.18352-1-osalvador@techadventures.net>
- <20180807133757.18352-3-osalvador@techadventures.net>
- <20180807135221.GA3301@redhat.com>
- <a6e4e654-fc95-497f-16f3-8c1550cf03d6@redhat.com>
- <20180807204834.GA6844@techadventures.net>
- <20180807221345.GD3301@redhat.com>
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=MS7NWVytTt/5b2siUnYwk5PUjT4KlYKngWFkyRXkzBE=;
+        b=kMjdMAKBzRqP0hX4jgUEVEfA4MaexT1LJAvs+5lm6gxyS74Tq5Ag5JukNFLPyRaof/
+         R9yjzkWpid1YFfT8FA1UchtnTnThuG5XiJJRAwbBQCpKbm3cXk4YXP8X5vidNWETUjMM
+         mDhqigPqhtkxiMLfiUTRfUXz9yfL8Z8PNZJWh7Y+tZP/obNHQvK6DEXeWGHEMKvTcOKd
+         7XwYUNDSis4jtI8LXFRvNOcjytjx2gx1zoqEvAhCH2ezzjChnj2PzntMyYx8PYwjBnG/
+         PN2+dCRIioAES31BPtCEgNMHAFpLUOGIAg+zGsbkc4IV05ypVtfKI3zLVWDdRSNcMnOU
+         8BkA==
+X-Gm-Message-State: AOUpUlEUS1iftbu36s6VxGvKqryfyQX6B/BHUVT4idvjEkKezt+9YA+4
+        A3BDSWMaW8rlYDNIeOBPx7Ln5HaxrdXSln5EQI+VzolVtCG2
+X-Google-Smtp-Source: AA+uWPwd//25CfmVnwr71D9+nwLVxlb7fb13JhQSkBGqC5Ws/BqVwmIky8PxepbnVie2sr4GMcwhhUyTx61CdHuvWX27d2+3vNlX
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180807221345.GD3301@redhat.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+X-Received: by 2002:a24:9458:: with SMTP id j85-v6mr701762ite.18.1533713942525;
+ Wed, 08 Aug 2018 00:39:02 -0700 (PDT)
+Date:   Wed, 08 Aug 2018 00:39:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000bb46000572e79a0f@google.com>
+Subject: general protection fault in smc_ioctl (3)
+From:   syzbot <syzbot+19557374321ca3710990@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, ubraun@linux.ibm.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 07, 2018 at 06:13:45PM -0400, Jerome Glisse wrote:
-> > And since we know for sure that memhotplug-code cannot call it with ZONE_DEVICE,
-> > I think this can be done easily.
-> 
-> This might change down road but for now this is correct. They are
-> talks to enumerate device memory through standard platform mechanisms
-> and thus the kernel might see new types of resources down the road and
-> maybe we will want to hotplug them directly from regular hotplug path
-> as ZONE_DEVICE (lot of hypothetical at this point ;)).
+Hello,
 
-Well, I think that if that happens this whole thing will become
-much easier, since we will not have several paths for doing the same thing.
+syzbot found the following crash on:
 
-Another thing that I realized is that while we want to move all operation-pages
-from remove_memory() path to offline_pages(), this can get tricky.
+HEAD commit:    455f05ecd2b2 vsock: split dwork to avoid reinitializations
+git tree:       net
+console output: https://syzkaller.appspot.com/x/log.txt?x=12c50b52400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=152cb8ccd35b1f70
+dashboard link: https://syzkaller.appspot.com/bug?extid=19557374321ca3710990
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=11a37822400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15c5ebb4400000
 
-Unless I am missing something, the devices from HMM and devm are not being registered
-against "memory_subsys" struct, and so, they never get to call memory_subsys_offline()
-and so offline_pages().
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+19557374321ca3710990@syzkaller.appspotmail.com
 
-Which means that we would have to call __remove_zone() from those paths.
-But this alone will not work.
+TCP: request_sock_TCP: Possible SYN flooding on port 20002. Sending  
+cookies.  Check SNMP counters.
+TCP: request_sock_TCP: Possible SYN flooding on port 20002. Sending  
+cookies.  Check SNMP counters.
+TCP: request_sock_TCP: Possible SYN flooding on port 20002. Sending  
+cookies.  Check SNMP counters.
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] SMP KASAN
+TCP: request_sock_TCP: Possible SYN flooding on port 20002. Sending  
+cookies.  Check SNMP counters.
+CPU: 1 PID: 6358 Comm: syz-executor598 Not tainted 4.18.0-rc8+ #47
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:smc_ioctl+0x84c/0xd90 net/smc/af_smc.c:1582
+Code: 48 c1 e9 03 80 3c 11 00 0f 85 e8 04 00 00 4c 8b bb a0 04 00 00 48 ba  
+00 00 00 00 00 fc ff df 49 8d 7f 20 48 89 f9 48 c1 e9 03 <0f> b6 14 11 84  
+d2 74 09 80 fa 03 0f 8e 55 04 00 00 49 8d 7e 02 41
+TCP: request_sock_TCP: Possible SYN flooding on port 20002. Sending  
+cookies.  Check SNMP counters.
+RSP: 0018:ffff8801ca2ef748 EFLAGS: 00010202
+RAX: ffff8801ca2ef7c8 RBX: ffff8801c331d100 RCX: 0000000000000004
+RDX: dffffc0000000000 RSI: 1ffff1003945def9 RDI: 0000000000000020
+RBP: ffff8801ca2ef9b0 R08: ffffed003945defa R09: ffffed003945def9
+R10: ffffed003945def9 R11: ffff8801ca2ef7cf R12: 1ffff1003945deed
+R13: 0000000020000100 R14: ffff8801ca2ef788 R15: 0000000000000000
+FS:  00007f558c065700(0000) GS:ffff8801db100000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f558c085e78 CR3: 00000001aecfe000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+TCP: request_sock_TCP: Possible SYN flooding on port 20002. Sending  
+cookies.  Check SNMP counters.
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+kasan: CONFIG_KASAN_INLINE enabled
+  sock_do_ioctl+0xe4/0x3e0 net/socket.c:970
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+  sock_ioctl+0x30d/0x680 net/socket.c:1094
+  vfs_ioctl fs/ioctl.c:46 [inline]
+  file_ioctl fs/ioctl.c:500 [inline]
+  do_vfs_ioctl+0x1de/0x1720 fs/ioctl.c:684
+  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:701
+  __do_sys_ioctl fs/ioctl.c:708 [inline]
+  __se_sys_ioctl fs/ioctl.c:706 [inline]
+  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:706
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x447099
+Code: e8 ac e7 ff ff 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 bb 02 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f558c064db8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00000000006dcc38 RCX: 0000000000447099
+RDX: 0000000020000100 RSI: 0000000000008905 RDI: 0000000000000004
+RBP: 00000000006dcc30 R08: 00007f558c065700 R09: 0000000000000000
+R10: 00007f558c065700 R11: 0000000000000246 R12: 00000000006dcc3c
+R13: 00007ffd1c69c09f R14: 00007f558c0659c0 R15: 00000000006dcc30
+Modules linked in:
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+general protection fault: 0000 [#2] SMP KASAN
+---[ end trace bd327834dcbd920c ]---
+CPU: 0 PID: 6373 Comm: syz-executor598 Tainted: G      D            
+4.18.0-rc8+ #47
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:smc_ioctl+0x84c/0xd90 net/smc/af_smc.c:1582
+RIP: 0010:smc_ioctl+0x84c/0xd90 net/smc/af_smc.c:1582
+Code: 48 c1 e9 03 80 3c 11 00
+Code:
+0f 85 e8 04 00 00 4c
+48
+8b bb a0 04 00 00
+c1
+48 ba 00 00 00 00 00
+e9
+fc ff df 49 8d 7f 20
+03
+48 89 f9 48 c1 e9 03
+80
+<0f> b6 14 11 84 d2 74
+3c
+09 80 fa 03 0f 8e 55
+11
+04 00 00 49 8d 7e 02
+00
+41
+RSP: 0018:ffff8801ac33f748 EFLAGS: 00010202
+RAX: ffff8801ac33f7c8 RBX: ffff8801c331c8c0 RCX: 0000000000000004
+RDX: dffffc0000000000 RSI: 1ffff10035867ef9 RDI: 0000000000000020
+0f
+RBP: ffff8801ac33f9b0 R08: ffffed0035867efa R09: ffffed0035867ef9
+R10: ffffed0035867ef9 R11: ffff8801ac33f7cf R12: 1ffff10035867eed
+R13: 0000000020000100 R14: ffff8801ac33f788 R15: 0000000000000000
+FS:  00007f558c065700(0000) GS:ffff8801db000000(0000) knlGS:0000000000000000
+85
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000004cd8f0 CR3: 00000001ad8e4000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+e8
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  sock_do_ioctl+0xe4/0x3e0 net/socket.c:970
+04
+00
+00
+  sock_ioctl+0x30d/0x680 net/socket.c:1094
+4c
+  vfs_ioctl fs/ioctl.c:46 [inline]
+  file_ioctl fs/ioctl.c:500 [inline]
+  do_vfs_ioctl+0x1de/0x1720 fs/ioctl.c:684
+8b
+bb
+  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:701
+a0
+  __do_sys_ioctl fs/ioctl.c:708 [inline]
+  __se_sys_ioctl fs/ioctl.c:706 [inline]
+  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:706
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+04
+00
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+00
+RIP: 0033:0x447099
+Code: e8 ac e7
+48
+ff ff 48 83 c4 18 c3 0f 1f 80 00
+ba
+00 00 00 48 89 f8 48
+00
+89 f7 48 89 d6 48 89 ca
+00
+4d 89 c2 4d 89 c8 4c 8b
+00
+4c 24 08 0f 05 <48> 3d 01 f0
+00
+ff ff 0f 83 bb 02 fc ff
+00
+c3 66 2e 0f 1f 84 00 00 00
+fc
+00
+RSP: 002b:00007f558c064db8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00000000006dcc38 RCX: 0000000000447099
+RDX: 0000000020000100 RSI: 0000000000008905 RDI: 0000000000000004
+RBP: 00000000006dcc30 R08: 00007f558c065700 R09: 0000000000000000
+ff
+R10: 00007f558c065700 R11: 0000000000000246 R12: 00000000006dcc3c
+R13: 00007ffd1c69c09f R14: 00007f558c0659c0 R15: 00000000006dcc30
+Modules linked in:
+df
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+---[ end trace bd327834dcbd920d ]---
+49
+RIP: 0010:smc_ioctl+0x84c/0xd90 net/smc/af_smc.c:1582
+8d
+Code:
+7f
+48
+20
+c1
+48
+e9
+89
+03
+f9
+80
+48
+3c
+c1
+11
+e9
+00
+03
+0f
+<0f>
+85
+b6
+e8
+14
+04
+11
+00
+84
+00
+d2
+4c
+74
+8b
+09
+bb
+80
+a0
+fa
+04
+03
+00
+0f
+00
+8e
+48
+55
+ba
+04
+00
+00
+00
+00
+00
+49
+00
+8d
+00
+7e
+fc
+02
+ff
+41
+df
+49
+RSP: 0018:ffff8801ca2ef748 EFLAGS: 00010202
+8d
+7f
+RAX: ffff8801ca2ef7c8 RBX: ffff8801c331d100 RCX: 0000000000000004
+20 48
+RDX: dffffc0000000000 RSI: 1ffff1003945def9 RDI: 0000000000000020
+89
+RBP: ffff8801ca2ef9b0 R08: ffffed003945defa R09: ffffed003945def9
+f9
+R10: ffffed003945def9 R11: ffff8801ca2ef7cf R12: 1ffff1003945deed
+48
+R13: 0000000020000100 R14: ffff8801ca2ef788 R15: 0000000000000000
+c1
+FS:  00007f558c065700(0000) GS:ffff8801db100000(0000) knlGS:0000000000000000
+e9
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+03
+CR2: 00007f558c085e78 CR3: 00000001aecfe000 CR4: 00000000001406e0
+<0f>
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+b6
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+14
 
-find_smallest/biggest_section_pfn are two functions that are being called from
 
-shrink_pgdat_span
-and
-shrink_zone_span
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-to adjust zone_first_pfn/node_first_pfn and the spanned pages.
-
-Currently, find_smallest/biggest_section_pfn checks for the secion to be valid,
-and this is fine since we are removing those sections from the remove_memory path.
-
-But if we want to move __remove_zone() to offline_pages(), we have to use
-online_section() instead of valid_section().
-
-This is all fine from offline_pages because the sections get offlined in:
-
-__offline_pages
- offline_isolated_pages
-  offline_isolated_pages_cb
-   __offline_isolated_pages
-    offline_mem_sections
-
-
-But this does not happen in HMM/devm path.
-
-I am pretty sure this is a dumb question, but why HMM/devm path
-do not call online_pages/offline_pages?
-
-Thanks
--- 
-Oscar Salvador
-SUSE L3
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
