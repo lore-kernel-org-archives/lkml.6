@@ -2,191 +2,205 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B60BC4646D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 21:22:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EADAC46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 21:23:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0E8A21A8F
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 21:22:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0E8A21A8F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id AD42921AA9
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 21:23:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gIoSCbxX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD42921AA9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730816AbeHHXnr (ORCPT
+        id S1731144AbeHHXoy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 19:43:47 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45302 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730151AbeHHXnr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 19:43:47 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Wed, 8 Aug 2018 19:44:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56542 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730151AbeHHXoy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 19:44:54 -0400
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 501A08198B00;
-        Wed,  8 Aug 2018 21:22:17 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 231882027047;
-        Wed,  8 Aug 2018 21:22:17 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id w78LMHff025295;
-        Wed, 8 Aug 2018 17:22:17 -0400
-Received: from localhost (mpatocka@localhost)
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id w78LMGZh025291;
-        Wed, 8 Aug 2018 17:22:16 -0400
-X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
-Date:   Wed, 8 Aug 2018 17:22:16 -0400 (EDT)
-From:   Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To:     Ingo Molnar <mingo@kernel.org>
-cc:     Mike Snitzer <snitzer@redhat.com>,
+        by mail.kernel.org (Postfix) with ESMTPSA id EE53B2151B;
+        Wed,  8 Aug 2018 21:23:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1533763404;
+        bh=G89x0EyaYm5MK8K1ZQH85655WZeIwIyROSNc+A6xLZA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=gIoSCbxXDKOdf6kPrU5My23Mr/23YioF3qf1HGqRI2STbJDPInXg6a9MYrTvx9oM1
+         hGieXVON7iTZzjNENiqF7N+1VkD6p+l4eaHehc9SEdoFVqjRBE+D2FmORYkd48Vdt5
+         bKsn+wBdSurxSYQ+GJEwviCAsrCCgtblJFStVw94=
+Date:   Wed, 8 Aug 2018 16:23:22 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     joeyli <jlee@suse.com>
+Cc:     "Lee, Chun-Yi" <joeyli.kernel@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Dan Williams <dan.j.williams@intel.com>,
-        device-mapper development <dm-devel@redhat.com>,
-        X86 ML <x86@kernel.org>, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 RESEND] x86: optimize memcpy_flushcache
-In-Reply-To: <20180622013049.GA12505@gmail.com>
-Message-ID: <alpine.LRH.2.02.1808081720460.24747@file01.intranet.prod.int.rdu2.redhat.com>
-References: <20180519052503.325953342@debian.vm> <20180519052631.730455475@debian.vm> <CAPcyv4jpY0x7kZtT+afAKnHKy8Uy1AC_N_QM7RrELSj_0iNrRw@mail.gmail.com> <20180524182013.GA59755@redhat.com> <20180618132306.GA25431@redhat.com> <20180621143140.GA14095@gmail.com>
- <alpine.LRH.2.02.1806211224470.19940@file01.intranet.prod.int.rdu2.redhat.com> <20180622013049.GA12505@gmail.com>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+        Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86/PCI: Claim the resources of firmware enabled IOAPIC
+ before children bus
+Message-ID: <20180808212322.GF49411@bhelgaas-glaptop.roam.corp.google.com>
+References: <20180724110144.16442-1-jlee@suse.com>
+ <20180806214807.GE30691@bhelgaas-glaptop.roam.corp.google.com>
+ <20180808155318.GE13767@linux-l9pv.suse>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 08 Aug 2018 21:22:17 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 08 Aug 2018 21:22:17 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mpatocka@redhat.com' RCPT:''
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180808155318.GE13767@linux-l9pv.suse>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On Fri, 22 Jun 2018, Ingo Molnar wrote:
-
+On Wed, Aug 08, 2018 at 11:53:18PM +0800, joeyli wrote:
+> Hi Bjorn,
 > 
-> * Mikulas Patocka <mpatocka@redhat.com> wrote:
+> First, thanks for your review!
 > 
-> > On Thu, 21 Jun 2018, Ingo Molnar wrote:
+> On Mon, Aug 06, 2018 at 04:48:07PM -0500, Bjorn Helgaas wrote:
+> > On Tue, Jul 24, 2018 at 07:01:44PM +0800, Lee, Chun-Yi wrote:
+> > > I got a machine that the resource of firmware enabled IOAPIC conflicts
+> > > with the resource of a children bus when the PCI host bus be hotplug.
+> > > 
+> > > [ 3182.243325] PCI host bridge to bus 0001:40
+> > > [ 3182.243328] pci_bus 0001:40: root bus resource [io  0xc000-0xdfff window]
+> > > [ 3182.243330] pci_bus 0001:40: root bus resource [mem 0xdc000000-0xebffffff window]
+> > > [ 3182.243331] pci_bus 0001:40: root bus resource [mem 0x212400000000-0x2125ffffffff window]
+> > > [ 3182.243334] pci_bus 0001:40: root bus resource [bus 40-7e]
+> > > ...
+> > > [ 3182.244737] pci 0001:40:05.4: [8086:6f2c] type 00 class 0x080020
+> > > [ 3182.244746] pci 0001:40:05.4: reg 0x10: [mem 0xdc000000-0xdc000fff]
+> > > ...
+> > > [ 3182.246697] pci 0001:40:02.0: PCI bridge to [bus 41]
+> > > [ 3182.246702] pci 0001:40:02.0:   bridge window [mem 0xdc000000-0xdc7fffff]
+> > > ...
+> > > pci 0001:40:05.4: can't claim BAR 0 [mem 0xdc000000-0xdc000fff]: address conflict with PCI Bus 0001:41 [mem 0xdc000000-0xdc7fffff]
+> > > 
+> > > The bus topology:
+> > > 
+> > >  +-[0001:40]-+-02.0-[41]--
+> > >  |           +-03.0-[41]--
+> > >  |           +-03.2-[41]--+-00.0  Intel Corporation I350 Gigabit Network Connection
+> > >  |           |            +-00.1  Intel Corporation I350 Gigabit Network Connection
+> > >  |           |            +-00.2  Intel Corporation I350 Gigabit Network Connection
+> > >  |           |            \-00.3  Intel Corporation I350 Gigabit Network Connection
+> > >  |           +-05.0  Intel Corporation Xeon E7 v4/Xeon E5 v4/Xeon E3 v4/Xeon D Map/VTd_Misc/System Management
+> > >  |           +-05.1  Intel Corporation Xeon E7 v4/Xeon E5 v4/Xeon E3 v4/Xeon D IIO Hot Plug
+> > >  |           +-05.2  Intel Corporation Xeon E7 v4/Xeon E5 v4/Xeon E3 v4/Xeon D IIO RAS/Control Status/Global Errors
+> > >  |           \-05.4  Intel Corporation Xeon E7 v4/Xeon E5 v4/Xeon E3 v4/Xeon D I/O APIC
+> > > 
+> > > This problem causes that the NIC behine the child bus was not available
+> > > after PCI host bridge hotpluged.
+> > > 
+> > > Kernel does not want to change resource of firmware enabled IOAPIC, but
+> > > the priority of children bus's resources are higher than any other devices.
+> > > So this conflict can not be handled by the reassigning logic of kernel.
+> 
+> Sorry for my description is not clear. The "priority" is for resources
+> clamining, not for the address decoding.
+> 
+> > I don't understand this paragraph.  AFAIK, if two devices on a bus
+> > both decode the same address, as the IOAPIC and the bridge do here,
+> > the only real "priority" in PCI would be subtractive decode.  But I
+> > don't think that applies here since the bridge is using a positive
+> > decode window.
+> 
+> Sorry for I didn't understand... How could you know the bridge doesn't
+> apply subtractive decode?
+
+A subtractive decode bridge forwards anything appearing on its primary
+bus to its secondary bus.  In conventional PCI, it only does this if
+no other agent on the primary bus asserts DEVSEL# (PCI r3.0, sec
+3.6.1).  In PCIe, the primary "bus" is a link and there's only one
+device on it, so a subtractive decode bridge could forward anything it
+sees.  If the subtractive decode bridge is part of a multi-function
+device, I assume that multi-function device would have to determine
+internally whether the subtractive decode bridge or another function
+should claim the transaction.
+
+Either way, a subtractive decode bridge can forward anything that
+appears on its primary bus, so a subtractive decode window effectively
+contains everything the upstream bridge passes down.  In this case you
+have:
+
+  pci_bus 0001:40: root bus resource [mem 0xdc000000-0xebffffff window]
+  pci_bus 0001:40: root bus resource [mem 0x212400000000-0x2125ffffffff window]
+  pci 0001:40:02.0: PCI bridge to [bus 41]
+  pci 0001:40:02.0:   bridge window [mem 0xdc000000-0xdc7fffff]
+
+The 40:02.0 bridge could see [mem 0xdc000000-0xebffffff] or [mem
+0x212400000000-0x2125ffffffff] on its primary bus, so if it were a
+subtractive decode bridge, its "window" would contain both of those
+regions, and we should label them as "(subtractive decode)" in the
+dmesg log.
+
+Since [mem 0xdc000000-0xdc7fffff] is only part of the first root bus
+resource, I infer that it must be a positively decoded window.
+"lspci -vv" would tell you for sure.
+
+> > I would expect that a read to the [mem 0xdc000000-0xdc000fff] range
+> > would potentially receive two read completions, which would cause an
+> > Unexpected Completion error.
+> 
+> Thanks for your information. The I350 NIC doesn't work after hotplug.
+> So it may causes by Unexpected Completion error as you mentioned.
+>  
+> > Maybe you mean that we don't want to change the IOAPIC resources, but
+> > it's OK if we move the bridge window, so in that sense, the IOAPIC is
+> > "higher priority" than the bridge window?  This is the reverse of what
+> > your paragraph seems to say.
+> 
+> Yes, this is what I mean. Sorry for my paragraph causes confusing. 
+> 
+> The memory decoder bit in the command register of 0001:40:05.4 IOAPIC
+> is raised by firmware after hotplug. So kernel treats it as a
+> _firmware enabled_ IOAPIC. Because kernel don't want to change the IOAPIC
+> resources, so my patch try to claim the IOAPIC resources before all
+> bridges. It can workaround the hotplug problem on issue machine.
+> 
+> But, actually I am not sure that this hacking makes sense. And, I also
+> don't know why the memory decoder bit is raised by firmware when hotplug.
+> Maybe this is a firmware problem.
+
+That's a good point.  It's fine for firmware to enable the IOAPIC
+memory decode.  But the address conflict:
+
+  [ 3906.092119] pci 0001:40:05.4: reg 0x10: [mem 0xdc000000-0xdc000fff]
+  [ 3906.093898] pci 0001:40:02.0: PCI bridge to [bus 41]
+  [ 3906.093902] pci 0001:40:02.0:   bridge window [mem 0xdc000000-0xdc7fffff]
+
+is not so fine.  That looks like a firmware bug to me.  These devices
+should power up with zeroes in their BARs, so the addresses must have
+been assigned by firmware before it sent the ACPI hotplug notification
+to Linux.
+
+In principle, Linux *should* be able to recover from that by moving
+the IOAPIC or the bridge window, but obviously we don't.
+
+What are the chances of getting a firmware fix?  Has this firmware
+already shipped to customers?
+
+> > > This patch claims the resources of firmware enabled IOAPIC before
+> > > children bus. Then kernel gets a chance to reassign the resources of
+> > > children bus to avoid the conflict.
 > > 
-> > > 
-> > > * Mike Snitzer <snitzer@redhat.com> wrote:
-> > > 
-> > > > From: Mikulas Patocka <mpatocka@redhat.com>
-> > > > Subject: [PATCH v2] x86: optimize memcpy_flushcache
-> > > > 
-> > > > In the context of constant short length stores to persistent memory,
-> > > > memcpy_flushcache suffers from a 2% performance degradation compared to
-> > > > explicitly using the "movnti" instruction.
-> > > > 
-> > > > Optimize 4, 8, and 16 byte memcpy_flushcache calls to explicitly use the
-> > > > movnti instruction with inline assembler.
-> > > 
-> > > Linus requested asm optimizations to include actual benchmarks, so it would be 
-> > > nice to describe how this was tested, on what hardware, and what the before/after 
-> > > numbers are.
-> > > 
-> > > Thanks,
-> > > 
-> > > 	Ingo
-> > 
-> > It was tested on 4-core skylake machine with persistent memory being 
-> > emulated using the memmap kernel option. The dm-writecache target used the 
-> > emulated persistent memory as a cache and sata SSD as a backing device. 
-> > The patch results in 2% improved throughput when writing data using dd.
-> > 
-> > I don't have access to the machine anymore.
+> > Can you open a report at https://bugzilla.kernel.org, attach the
+> > before and after dmesg logs, and include the URL in the commit log?
 > 
-> I think this information is enough, but do we know how well memmap emulation 
-> represents true persistent memory speed and cache management characteristics?
-> It might be representative - but I don't know for sure, nor probably most
-> readers of the changelog.
-> 
-> So could you please put all this into an updated changelog, and also add a short 
-> description that outlines exactly which codepaths end up using this method in a 
-> typical persistent memory setup? All filesystem ops - or only reads, etc?
-> 
-> Thanks,
-> 
-> 	Ingo
+> OK, I have filed a bug on kernel bugzilla and also attached dmesg
+> log:
+> 	https://bugzilla.kernel.org/show_bug.cgi?id=200765
 
-Here I resend it:
+Thanks.  Please include this URL in the changelog if you post an
+updated patch.
 
-
-From: Mikulas Patocka <mpatocka@redhat.com>
-Subject: [PATCH] x86: optimize memcpy_flushcache
-
-I use memcpy_flushcache in my persistent memory driver for metadata
-updates, there are many 8-byte and 16-byte updates and it turns out that
-the overhead of memcpy_flushcache causes 2% performance degradation
-compared to "movnti" instruction explicitly coded using inline assembler.
-
-The tests were done on a Skylake processor with persistent memory emulated
-using the "memmap" kernel parameter. dd was used to copy data to the
-dm-writecache target.
-
-This patch recognizes memcpy_flushcache calls with constant short length
-and turns them into inline assembler - so that I don't have to use inline
-assembler in the driver.
-
-Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-
----
- arch/x86/include/asm/string_64.h |   20 +++++++++++++++++++-
- arch/x86/lib/usercopy_64.c       |    4 ++--
- 2 files changed, 21 insertions(+), 3 deletions(-)
-
-Index: linux-2.6/arch/x86/include/asm/string_64.h
-===================================================================
---- linux-2.6.orig/arch/x86/include/asm/string_64.h
-+++ linux-2.6/arch/x86/include/asm/string_64.h
-@@ -149,7 +149,25 @@ memcpy_mcsafe(void *dst, const void *src
- 
- #ifdef CONFIG_ARCH_HAS_UACCESS_FLUSHCACHE
- #define __HAVE_ARCH_MEMCPY_FLUSHCACHE 1
--void memcpy_flushcache(void *dst, const void *src, size_t cnt);
-+void __memcpy_flushcache(void *dst, const void *src, size_t cnt);
-+static __always_inline void memcpy_flushcache(void *dst, const void *src, size_t cnt)
-+{
-+	if (__builtin_constant_p(cnt)) {
-+		switch (cnt) {
-+			case 4:
-+				asm ("movntil %1, %0" : "=m"(*(u32 *)dst) : "r"(*(u32 *)src));
-+				return;
-+			case 8:
-+				asm ("movntiq %1, %0" : "=m"(*(u64 *)dst) : "r"(*(u64 *)src));
-+				return;
-+			case 16:
-+				asm ("movntiq %1, %0" : "=m"(*(u64 *)dst) : "r"(*(u64 *)src));
-+				asm ("movntiq %1, %0" : "=m"(*(u64 *)(dst + 8)) : "r"(*(u64 *)(src + 8)));
-+				return;
-+		}
-+	}
-+	__memcpy_flushcache(dst, src, cnt);
-+}
- #endif
- 
- #endif /* __KERNEL__ */
-Index: linux-2.6/arch/x86/lib/usercopy_64.c
-===================================================================
---- linux-2.6.orig/arch/x86/lib/usercopy_64.c
-+++ linux-2.6/arch/x86/lib/usercopy_64.c
-@@ -153,7 +153,7 @@ long __copy_user_flushcache(void *dst, c
- 	return rc;
- }
- 
--void memcpy_flushcache(void *_dst, const void *_src, size_t size)
-+void __memcpy_flushcache(void *_dst, const void *_src, size_t size)
- {
- 	unsigned long dest = (unsigned long) _dst;
- 	unsigned long source = (unsigned long) _src;
-@@ -216,7 +216,7 @@ void memcpy_flushcache(void *_dst, const
- 		clean_cache_range((void *) dest, size);
- 	}
- }
--EXPORT_SYMBOL_GPL(memcpy_flushcache);
-+EXPORT_SYMBOL_GPL(__memcpy_flushcache);
- 
- void memcpy_page_flushcache(char *to, struct page *page, size_t offset,
- 		size_t len)
+Bjorn
