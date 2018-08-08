@@ -3,208 +3,656 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C78ABC4646D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 11:54:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E751DC4646D
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 11:57:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D97721742
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 11:54:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D97721742
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 808E9216E6
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 11:57:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 808E9216E6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727106AbeHHON5 (ORCPT
+        id S1727055AbeHHORB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 10:13:57 -0400
-Received: from mx2.suse.de ([195.135.220.15]:44990 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726733AbeHHON5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 10:13:57 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D065BB017;
-        Wed,  8 Aug 2018 11:54:32 +0000 (UTC)
-Subject: Re: general protection fault with prefetch_freepointer
-To:     Paul Menzel <pmenzel+linux-mm@molgen.mpg.de>,
-        Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        Alex Deucher <alexander.deucher@amd.com>
-References: <333cfb75-1769-c67f-c56f-c9458368751a@molgen.mpg.de>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
- 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
- cqmP8roqufIAj+Ohhzs=
-Message-ID: <4fcc1694-6c29-8c49-1183-fbfb832bf513@suse.cz>
-Date:   Wed, 8 Aug 2018 13:54:30 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <333cfb75-1769-c67f-c56f-c9458368751a@molgen.mpg.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Wed, 8 Aug 2018 10:17:01 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:57891 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726733AbeHHORA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 10:17:00 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 4C31820794; Wed,  8 Aug 2018 13:57:35 +0200 (CEST)
+Received: from aptenodytes (AAubervilliers-681-1-99-143.w90-88.abo.wanadoo.fr [90.88.4.143])
+        by mail.bootlin.com (Postfix) with ESMTPSA id C4D8420741;
+        Wed,  8 Aug 2018 13:57:24 +0200 (CEST)
+Message-ID: <cc8a91347e03d85ecbb9ff2dcb765cc4e2411284.camel@bootlin.com>
+Subject: Re: [PATCH v6 1/8] media: v4l: Add definitions for MPEG2 slice
+ format and metadata
+From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To:     Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-sunxi@googlegroups.com,
+        Hugues Fruchet <hugues.fruchet@st.com>,
+        Randy Li <ayaka@soulik.info>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>
+Date:   Wed, 08 Aug 2018 13:57:25 +0200
+In-Reply-To: <cf07a5d1-9179-44af-de11-61f02bbcf904@xs4all.nl>
+References: <20180725100256.22833-1-paul.kocialkowski@bootlin.com>
+         <20180725100256.22833-2-paul.kocialkowski@bootlin.com>
+         <cf07a5d1-9179-44af-de11-61f02bbcf904@xs4all.nl>
+Organization: Bootlin
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-D31xMAXsK/g9Q3eW+EJt"
+X-Mailer: Evolution 3.28.4 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/18/2018 04:31 PM, Paul Menzel wrote:
-> Dear Linux,
-> 
-> 
-> Loading the amdgpu module on Ryzen 3 2{2,4}00G (Raven) systems sometimes
-> causes a general protection fault [1]. At least on my system I am unable
-> to reliably reproduce the issue.
-> 
-> ```
-> [   35.265941] kfd kfd: kgd2kfd_probe failed
-> [   35.537445] general protection fault: 0000 [#1] SMP NOPTI
-> [   35.543209] CPU: 0 PID: 367 Comm: systemd-udevd Not tainted 4.18.0-rc5+ #1
-> [   35.550371] Hardware name: MSI MS-7A37/B350M MORTAR (MS-7A37), BIOS 1.G1 05/17/2018
-> [   35.558562] RIP: 0010:prefetch_freepointer+0x10/0x20
-> [   35.563881] Code: 89 d3 e8 c3 fe 4a 00 85 c0 0f 85 31 75 00 00 48 83 c4 08 5b 5d 41 5c 41 5d c3 0f 1f 44 00 00 48 85 f6 74 13 8b 47 20 48 01 c6 <48> 33 36 48 33 b7 38 01 00 00 0f 18 0e c3 66 90 0f 1f 44 00 00 48 
-> [   35.584215] RSP: 0018:ffff9c3181f77560 EFLAGS: 00010202
-> [   35.589849] RAX: 0000000000000000 RBX: 4b2c8be0a60f6ab9 RCX: 0000000000000ccc
-> [   35.597492] RDX: 0000000000000ccb RSI: 4b2c8be0a60f6ab9 RDI: ffff8d5b1e406e80
-> [   35.605166] RBP: ffff8d5b1e406e80 R08: ffff8d5b1e824f00 R09: ffffffffc0a45423
-> [   35.612808] R10: fffff1b60fff64c0 R11: ffff9c3181f77520 R12: 00000000006080c0
-> [   35.620451] R13: 0000000000000230 R14: ffff8d5b1e406e80 R15: ffff8d5b0c304400
-> [   35.628116] FS:  00007fb194e4b8c0(0000) GS:ffff8d5b1e800000(0000) knlGS:0000000000000000
-> [   35.636771] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [   35.642931] CR2: 000055c0661d60d0 CR3: 000000040b9ee000 CR4: 00000000003406f0
-> [   35.650566] Call Trace:
-> [   35.653198]  kmem_cache_alloc_trace+0xb5/0x1c0
-> [   35.658077]  ? dal_ddc_service_create+0x38/0x110 [amdgpu]
-> [   35.663962]  dal_ddc_service_create+0x38/0x110 [amdgpu]
-> ```
 
-./scripts/decodecode:
+--=-D31xMAXsK/g9Q3eW+EJt
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-All code
-========
-   0:   89 d3                   mov    %edx,%ebx
-   2:   e8 c3 fe 4a 00          callq  0x4afeca
-   7:   85 c0                   test   %eax,%eax
-   9:   0f 85 31 75 00 00       jne    0x7540
-   f:   48 83 c4 08             add    $0x8,%rsp
-  13:   5b                      pop    %rbx
-  14:   5d                      pop    %rbp
-  15:   41 5c                   pop    %r12
-  17:   41 5d                   pop    %r13
-  19:   c3                      retq   
-  1a:   0f 1f 44 00 00          nopl   0x0(%rax,%rax,1)
-  1f:   48 85 f6                test   %rsi,%rsi
-  22:   74 13                   je     0x37
-  24:   8b 47 20                mov    0x20(%rdi),%eax
-  27:   48 01 c6                add    %rax,%rsi
-  2a:*  48 33 36                xor    (%rsi),%rsi <- HERE
-  2d:   48 33 b7 38 01 00 00    xor    0x138(%rdi),%rsi
-  34:   0f 18 0e                prefetcht0 (%rsi)
-  37:   c3                      retq   
-  38:   66 90                   xchg   %ax,%ax
-  3a:   0f 1f 44 00 00          nopl   0x0(%rax,%rax,1)
-  3f:   48                      rex.W
+Hi Hans,
 
-rsi contains 4b2c8be0a60f6ab9, so reading from that clearly bogus
-address faults. Dunno though why CR2 is 000055c0661d60d0 as that
-should contain the same value. The XORs suggests you have
-CONFIG_SLAB_FREELIST_HARDENED enabled, I wonder does the bug
-reproduce with that disabled?
+On Sat, 2018-08-04 at 13:35 +0200, Hans Verkuil wrote:
+> Hi Paul,
+>=20
+> Some comments below. It looks pretty good, it's mostly small things that =
+I
+> commented upon.
 
-mov    0x20(%rdi),%eax is reading s->offset, so RDI=ffff8d5b1e406e80
-is kmem_cache pointer, RAX=0 means offset was 0. This means
-RSI=4b2c8be0a60f6ab9 is "object" parameter of prefetch_freepointer(),
-i.e. the "next_object" variable in slab_alloc_node(), obtained from
-the previous object. But I don't know much about SLUB internals to be
-honest.
+And thanks for the review!
 
-> Do you have more ideas, how to debug that? The progress in bug report
-> kind of stalled as people have run out of ideas.
-> 
-> I thought about a hardware/firmware problem, but then searching for the
-> error, I found the stack trace with Linux 4.17.2 from Fedora [2][3].
-> This looks a little similar, but can of course be something totally
-> different.
- 
-Hmm I have looked at the splats in all the bugs you referenced and the
-Code part always has the de-obfuscation XORs. Then in comment 36 of
-[1] jian-hong says the problem disappeared, and in comment 40 posts
-a config that has CONFIG_SLAB_FREELIST_HARDENED disabled. Earlier
-posting of his config has it enabled and confirms the disassembly.
-Very suspicious, huh.
+> On 07/25/2018 12:02 PM, Paul Kocialkowski wrote:
+> > Stateless video decoding engines require both the MPEG slices and
+> > associated metadata from the video stream in order to decode frames.
+> >=20
+> > This introduces definitions for a new pixel format, describing buffers
+> > with MPEG2 slice data, as well as a control structure for passing the
+> > frame metadata to drivers.
+> >=20
+> > This is based on work from both Florent Revest and Hugues Fruchet.
+> >=20
+> > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> > ---
+> >  .../media/uapi/v4l/extended-controls.rst      | 122 ++++++++++++++++++
+> >  .../media/uapi/v4l/pixfmt-compressed.rst      |   5 +
+> >  drivers/media/v4l2-core/v4l2-ctrls.c          |  54 ++++++++
+> >  drivers/media/v4l2-core/v4l2-ioctl.c          |   1 +
+> >  include/media/v4l2-ctrls.h                    |  18 ++-
+> >  include/uapi/linux/v4l2-controls.h            |  43 ++++++
+> >  include/uapi/linux/videodev2.h                |   5 +
+> >  7 files changed, 241 insertions(+), 7 deletions(-)
+> >=20
+> > diff --git a/Documentation/media/uapi/v4l/extended-controls.rst b/Docum=
+entation/media/uapi/v4l/extended-controls.rst
+> > index 9f7312bf3365..4a29d89fd9ac 100644
+> > --- a/Documentation/media/uapi/v4l/extended-controls.rst
+> > +++ b/Documentation/media/uapi/v4l/extended-controls.rst
+> > @@ -1497,6 +1497,128 @@ enum v4l2_mpeg_video_h264_hierarchical_coding_t=
+ype -
+> > =20
+> > =20
+> > =20
+> > +.. _v4l2-mpeg-mpeg2:
+> > +
+> > +``V4L2_CID_MPEG_VIDEO_MPEG2_SLICE_PARAMS (struct)``
+> > +    Specifies the slice parameters (also known as slice header) for th=
+e
+> > +    associated MPEG-2 slice data. This includes all the necessary
+> > +    parameters for configuring a hardware decoder pipeline for MPEG-2.
+>=20
+> This seems to be mostly a representation of the MPEG-2 "Picture coding
+> extension" (6.2.3.1 in ISO/IEC 13818-2: 1995).
+> ISO/IEC 13818-2
+> Is that correct? I think some references to the standard should be added
+> were appropriate.
 
-> general protection fault: 0000 [#1] SMP PTI
-> Modules linked in: sctp netlink_diag nfsv3 nfnetlink_queue nfnetlink_log nfnetlink cfg80211 rpcsec_gss_krb5 nfsv4 dns_resolver nfs fscache rfcomm fuse hidp xt_CHECKSUM iptable_mangle ipt_MASQUERADE nf_nat_masquerade_ipv4 xt_conntrack tun devlink ebtable_filter ebtables ip6table_filter ip6_tables iptable_nat nf_conntrack_ipv4 nf_defrag_ipv4 nf_nat_ipv4 nf_nat nf_conntrack bridge stp llc bnep it87 hwmon_vid btrfs xor zstd_compress raid6_pq libcrc32c zstd_decompress xxhash intel_rapl x86_pkg_temp_thermal intel_powerclamp coretemp kvm_intel kvm gpio_ich iTCO_wdt iTCO_vendor_support ppdev irqbypass crct10dif_pclmul crc32_pclmul ghash_clmulni_intel intel_cstate intel_uncore intel_rapl_perf btusb btrtl btbcm btintel bluetooth snd_hda_codec_realtek snd_hda_codec_generic snd_hda_codec_hdmi snd_hda_intel
->  snd_hda_codec ecdh_generic rfkill snd_hda_core snd_hwdep snd_seq snd_seq_device snd_pcm snd_timer i2c_i801 lpc_ich mei_me mei shpchp snd soundcore parport_pc parport nfsd binfmt_misc nfs_acl lockd auth_rpcgss grace sunrpc i915 crc32c_intel i2c_algo_bit drm_kms_helper serio_raw drm r8169 sata_via mii video
-> CPU: 0 PID: 2690 Comm: nfsd Not tainted 4.17.2-200.fc28.x86_64 #1
-> Hardware name: Gigabyte Technology Co., Ltd. H81M-S2PV/H81M-S2PV, BIOS F8 06/19/2014
-> RIP: 0010:prefetch_freepointer+0x10/0x20
-> RSP: 0018:ffffa33fca4ebc58 EFLAGS: 00010202
-> RAX: 0000000000000000 RBX: 49f929d076783c7f RCX: 0000000000000f2a
-> RDX: 0000000000000f29 RSI: 49f929d076783c7f RDI: ffff8da88c9ffe00
-> RBP: ffff8da88c9ffe00 R08: ffff8da89ee2b100 R09: 0000000000000004
-> R10: 0000000000000000 R11: 000000000000002c R12: 00000000014080c0
-> R13: ffffffffc07e0ac1 R14: ffff8da4bc958ae1 R15: ffff8da88c9ffe00
-> FS:  0000000000000000(0000) GS:ffff8da89ee00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00002001a1783000 CR3: 000000012920a001 CR4: 00000000000606f0
-> Call Trace:
->  kmem_cache_alloc+0xb4/0x1d0
->  ? nfsd4_free_file_rcu+0x20/0x20 [nfsd]
-> ```
-> 
-> Help on how to debug this is appreciated.
-> 
-> 
-> Kind regards,
-> 
-> Paul
-> 
-> 
-> [1]: https://bugs.freedesktop.org/show_bug.cgi?id=105684
-> [2]: https://bugzilla.redhat.com/show_bug.cgi?id=1600482
-> [3]: https://retrace.fedoraproject.org/faf/reports/2243945/
-> 
+The structure does contain fields from the picture coding extension, but
+also takes some bits from other parts of the bitstream. I have added
+references to the specs and split out the different parts of the
+structure for the next revision. I also took the occasion to add/rename
+some fields to stick closer to the bitstream fields.
+
+> > +
+> > +.. tabularcolumns:: |p{2.0cm}|p{4.0cm}|p{11.0cm}|
+> > +
+> > +.. c:type:: v4l2_ctrl_mpeg2_slice_params
+> > +
+> > +.. cssclass:: longtable
+> > +
+> > +.. flat-table:: struct v4l2_ctrl_mpeg2_slice_params
+> > +    :header-rows:  0
+> > +    :stub-columns: 0
+> > +    :widths:       1 1 2
+> > +
+> > +    * - __u32
+> > +      - ``slice_len``
+> > +      - Length (in bits) of the current slice data.
+> > +    * - __u32
+> > +      - ``slice_pos``
+> > +      - Position (in bits) of the current slice data, relative to the
+> > +        frame start.
+> > +    * - __u16
+> > +      - ``width``
+> > +      - Width of the corresponding output frame for the current slice.
+> > +    * - __u16
+> > +      - ``height``
+> > +      - Height of the corresponding output frame for the current slice=
+.
+> > +    * - __u8
+> > +      - ``slice_type``
+> > +      - Picture coding type for the frame covered by the current slice
+> > +        (V4L2_MPEG2_SLICE_TYPE_I, V4L2_MPEG2_SLICE_TYPE_P or
+> > +        V4L2_MPEG2_SLICE_PCT_B).
+> > +    * - __u8
+> > +      - ``f_code[2][2]``
+> > +      - Motion vector codes.
+> > +    * - __u8
+> > +      - ``intra_dc_precision``
+> > +      - Precision of Discrete Cosine transform (0: 8 bits precision,
+> > +        1: 9 bits precision, 2: 10 bits precision, 11: 11 bits precisi=
+on).
+> > +    * - __u8
+> > +      - ``picture_structure``
+> > +      - Picture structure (1: interlaced top field,
+> > +        2: interlaced bottom field, 3: progressive frame).
+> > +    * - __u8
+> > +      - ``top_field_first``
+> > +      - If set to 1 and interlaced stream, top field is output first.
+> > +    * - __u8
+> > +      - ``frame_pred_frame_dct``
+> > +      - If set to 1, only frame-DCT and frame prediction are used.
+> > +    * - __u8
+> > +      - ``concealment_motion_vectors``
+> > +      -  If set to 1, motion vectors are coded for intra macroblocks.
+> > +    * - __u8
+> > +      - ``q_scale_type``
+> > +      - This flag affects the inverse quantisation process.
+>=20
+> quantization
+>=20
+> The american spelling appears to be the standard in our documentation, so
+> let's stick to that.
+
+I see, that makes sense.
+
+> > +    * - __u8
+> > +      - ``intra_vlc_format``
+> > +      - This flag affects the decoding of transform coefficient data.
+> > +    * - __u8
+> > +      - ``alternate_scan``
+> > +      - This flag affects the decoding of transform coefficient data.
+> > +    * - __u8
+> > +      - ``backward_ref_index``
+> > +      - Index for the V4L2 buffer to use as backward reference, used w=
+ith
+> > +        B-coded and P-coded frames.
+> > +    * - __u8
+> > +      - ``forward_ref_index``
+> > +      - Index for the V4L2 buffer to use as forward reference, used wi=
+th
+> > +        P-coded frames.
+> > +    * - :cspan:`2`
+> > +
+> > +``V4L2_CID_MPEG_VIDEO_MPEG2_QUANTIZATION (struct)``
+> > +    Specifies quantization matrices for the associated MPEG-2 slice da=
+ta.
+> > +
+> > +.. tabularcolumns:: |p{2.0cm}|p{4.0cm}|p{11.0cm}|
+> > +
+> > +.. c:type:: v4l2_ctrl_mpeg2_quantization
+> > +
+> > +.. cssclass:: longtable
+> > +
+> > +.. flat-table:: struct v4l2_ctrl_mpeg2_quantization
+> > +    :header-rows:  0
+> > +    :stub-columns: 0
+> > +    :widths:       1 1 2
+> > +
+> > +    * - __u8
+> > +      - ``load_intra_quantiser_matrix``
+> > +      - One bit to indicate whether to load the intra quantiser matrix=
+.
+>=20
+> So the MPEG-2 spec appears to follow the British spelling, so for consist=
+ency
+> with that spec we should stick to that for the field name.
+>=20
+> I'm not sure what is better in the description: stick to quantiser or cha=
+nge
+> it to the US quantizer. I think we should keep quantiser since it looks w=
+eird
+> otherwise.
+
+Or I could just reformulate it to mention the ``intra_quantiser_matrix``
+field directly, instead of breaking it down into words.
+
+> > +    * - __u32
+> > +      - ``load_non_intra_quantiser_matrix``
+> > +      - One bit to indicate whether to load the non-intra quantiser ma=
+trix.
+> > +    * - __u32
+> > +      - ``load_chroma_intra_quantiser_matrix``
+> > +      - One bit to indicate whether to load the chroma intra quantiser=
+ matrix,
+> > +        only relevant for non-4:2:0 YUV formats.
+> > +    * - __u32
+> > +      - ``load_chroma_non_intra_quantiser_matrix``
+> > +      - One bit to indicate whether to load the non-chroma intra quant=
+iser
+> > +        matrix, only relevant for non-4:2:0 YUV formats.
+> > +    * - __u32
+> > +      - ``intra_quantiser_matrix[64]``
+> > +      - The intra quantiser matrix coefficients, in zigzag scanning or=
+der.
+> > +        It is relevant for both luma and chroma components, although i=
+t can be
+> > +        superseded by the chroma-specific matrix for non-4:2:0 YUV for=
+mats.
+> > +    * - __u32
+> > +      - ``non_intra_quantiser_matrix[64]``
+> > +      - The non-intra quantiser matrix coefficients, in zigzag scannin=
+g order.
+> > +        It is relevant for both luma and chroma components, although i=
+t can be
+> > +        superseded by the chroma-specific matrix for non-4:2:0 YUV for=
+mats.
+> > +    * - __u32
+> > +      - ``chroma_intra_quantiser_matrix[64]``
+> > +      - The intra quantiser matrix coefficients for the chroma YUV com=
+ponent,
+> > +        in zigzag scanning order. Only relevant for non-4:2:0 YUV form=
+ats.
+> > +    * - __u32
+> > +      - ``chroma_non_intra_quantiser_matrix[64]``
+> > +      - The non-intra quantiser matrix coefficients for the chroma YUV=
+ component,
+> > +        in zigzag scanning order. Only relevant for non-4:2:0 YUV form=
+ats.
+>=20
+> According to the MPEG-2 spec (6.3.11) these are all unsigned 8 bit values=
+, so why
+> use __u32?
+
+Woops, that was purely a mistake. It's all __u8 indeed.
+
+> > +    * - :cspan:`2`
+> > =20
+> >  MFC 5.1 MPEG Controls
+> >  ---------------------
+> > diff --git a/Documentation/media/uapi/v4l/pixfmt-compressed.rst b/Docum=
+entation/media/uapi/v4l/pixfmt-compressed.rst
+> > index abec03937bb3..4e73f62b5163 100644
+> > --- a/Documentation/media/uapi/v4l/pixfmt-compressed.rst
+> > +++ b/Documentation/media/uapi/v4l/pixfmt-compressed.rst
+> > @@ -60,6 +60,11 @@ Compressed Formats
+> >        - ``V4L2_PIX_FMT_MPEG2``
+> >        - 'MPG2'
+> >        - MPEG2 video elementary stream.
+> > +    * .. _V4L2-PIX-FMT-MPEG2-SLICE:
+> > +
+> > +      - ``V4L2_PIX_FMT_MPEG2_SLICE``
+> > +      - 'MG2S'
+> > +      - MPEG2 parsed slice data, as extracted from the MPEG2 bitstream=
+.
+> >      * .. _V4L2-PIX-FMT-MPEG4:
+> > =20
+> >        - ``V4L2_PIX_FMT_MPEG4``
+> > diff --git a/drivers/media/v4l2-core/v4l2-ctrls.c b/drivers/media/v4l2-=
+core/v4l2-ctrls.c
+> > index 3610dce3a4f8..22483d894259 100644
+> > --- a/drivers/media/v4l2-core/v4l2-ctrls.c
+> > +++ b/drivers/media/v4l2-core/v4l2-ctrls.c
+> > @@ -844,6 +844,8 @@ const char *v4l2_ctrl_get_name(u32 id)
+> >  	case V4L2_CID_MPEG_VIDEO_MV_V_SEARCH_RANGE:		return "Vertical MV Sear=
+ch Range";
+> >  	case V4L2_CID_MPEG_VIDEO_REPEAT_SEQ_HEADER:		return "Repeat Sequence =
+Header";
+> >  	case V4L2_CID_MPEG_VIDEO_FORCE_KEY_FRAME:		return "Force Key Frame";
+> > +	case V4L2_CID_MPEG_VIDEO_MPEG2_SLICE_PARAMS:		return "MPEG2 Slice Hea=
+der";
+> > +	case V4L2_CID_MPEG_VIDEO_MPEG2_QUANTIZATION:		return "MPEG2 Quantizat=
+ion Matrices";
+> > =20
+> >  	/* VPX controls */
+> >  	case V4L2_CID_MPEG_VIDEO_VPX_NUM_PARTITIONS:		return "VPX Number of P=
+artitions";
+> > @@ -1292,6 +1294,12 @@ void v4l2_ctrl_fill(u32 id, const char **name, e=
+num v4l2_ctrl_type *type,
+> >  	case V4L2_CID_RDS_TX_ALT_FREQS:
+> >  		*type =3D V4L2_CTRL_TYPE_U32;
+> >  		break;
+> > +	case V4L2_CID_MPEG_VIDEO_MPEG2_SLICE_PARAMS:
+> > +		*type =3D V4L2_CTRL_TYPE_MPEG2_SLICE_PARAMS;
+> > +		break;
+> > +	case V4L2_CID_MPEG_VIDEO_MPEG2_QUANTIZATION:
+> > +		*type =3D V4L2_CTRL_TYPE_MPEG2_QUANTIZATION;
+> > +		break;
+> >  	default:
+> >  		*type =3D V4L2_CTRL_TYPE_INTEGER;
+> >  		break;
+> > @@ -1550,6 +1558,7 @@ static void std_log(const struct v4l2_ctrl *ctrl)
+> >  static int std_validate(const struct v4l2_ctrl *ctrl, u32 idx,
+> >  			union v4l2_ctrl_ptr ptr)
+> >  {
+> > +	struct v4l2_ctrl_mpeg2_slice_params *p_mpeg2_slice_params;
+> >  	size_t len;
+> >  	u64 offset;
+> >  	s64 val;
+> > @@ -1612,6 +1621,45 @@ static int std_validate(const struct v4l2_ctrl *=
+ctrl, u32 idx,
+> >  			return -ERANGE;
+> >  		return 0;
+> > =20
+> > +	case V4L2_CTRL_TYPE_MPEG2_SLICE_PARAMS:
+> > +		p_mpeg2_slice_params =3D ptr.p;
+> > +
+> > +		switch (p_mpeg2_slice_params->intra_dc_precision) {
+> > +		case 0: /* 8 bits */
+> > +		case 1: /* 9 bits */
+> > +		case 11: /* 11 bits */
+> > +			break;
+> > +		default:
+> > +			return -EINVAL;
+> > +		}
+> > +
+> > +		switch (p_mpeg2_slice_params->picture_structure) {
+> > +		case 1: /* interlaced top field */
+> > +		case 2: /* interlaced bottom field */
+> > +		case 3: /* progressive */
+> > +			break;
+> > +		default:
+> > +			return -EINVAL;
+> > +		}
+> > +
+> > +		switch (p_mpeg2_slice_params->slice_type) {
+> > +		case V4L2_MPEG2_SLICE_TYPE_I:
+> > +		case V4L2_MPEG2_SLICE_TYPE_P:
+> > +		case V4L2_MPEG2_SLICE_TYPE_B:
+> > +			break;
+> > +		default:
+> > +			return -EINVAL;
+> > +		}
+> > +
+> > +		if (p_mpeg2_slice_params->backward_ref_index > VIDEO_MAX_FRAME ||
+> > +		    p_mpeg2_slice_params->forward_ref_index > VIDEO_MAX_FRAME)
+>=20
+> Should be >=3D
+
+Noted, thanks.
+
+> > +			return -EINVAL;
+> > +
+> > +		return 0;
+> > +
+> > +	case V4L2_CTRL_TYPE_MPEG2_QUANTIZATION:
+> > +		return 0;
+> > +
+> >  	default:
+> >  		return -EINVAL;
+> >  	}
+> > @@ -2186,6 +2234,12 @@ static struct v4l2_ctrl *v4l2_ctrl_new(struct v4=
+l2_ctrl_handler *hdl,
+> >  	case V4L2_CTRL_TYPE_U32:
+> >  		elem_size =3D sizeof(u32);
+> >  		break;
+> > +	case V4L2_CTRL_TYPE_MPEG2_SLICE_PARAMS:
+> > +		elem_size =3D sizeof(struct v4l2_ctrl_mpeg2_slice_params);
+> > +		break;
+> > +	case V4L2_CTRL_TYPE_MPEG2_QUANTIZATION:
+> > +		elem_size =3D sizeof(struct v4l2_ctrl_mpeg2_quantization);
+> > +		break;
+> >  	default:
+> >  		if (type < V4L2_CTRL_COMPOUND_TYPES)
+> >  			elem_size =3D sizeof(s32);
+> > diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-=
+core/v4l2-ioctl.c
+> > index 44fc0102221f..68e914b83a03 100644
+> > --- a/drivers/media/v4l2-core/v4l2-ioctl.c
+> > +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
+> > @@ -1304,6 +1304,7 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc =
+*fmt)
+> >  		case V4L2_PIX_FMT_H263:		descr =3D "H.263"; break;
+> >  		case V4L2_PIX_FMT_MPEG1:	descr =3D "MPEG-1 ES"; break;
+> >  		case V4L2_PIX_FMT_MPEG2:	descr =3D "MPEG-2 ES"; break;
+> > +		case V4L2_PIX_FMT_MPEG2_SLICE:	descr =3D "MPEG-2 parsed slice data";=
+ break;
+>=20
+> "MPEG-2 Parsed Slice Data"
+
+Will do.
+
+> >  		case V4L2_PIX_FMT_MPEG4:	descr =3D "MPEG-4 part 2 ES"; break;
+> >  		case V4L2_PIX_FMT_XVID:		descr =3D "Xvid"; break;
+> >  		case V4L2_PIX_FMT_VC1_ANNEX_G:	descr =3D "VC-1 (SMPTE 412M Annex G)"=
+; break;
+> > diff --git a/include/media/v4l2-ctrls.h b/include/media/v4l2-ctrls.h
+> > index 34ee3167d7dd..83eff6f91ed2 100644
+> > --- a/include/media/v4l2-ctrls.h
+> > +++ b/include/media/v4l2-ctrls.h
+> > @@ -35,13 +35,15 @@ struct poll_table_struct;
+> > =20
+> >  /**
+> >   * union v4l2_ctrl_ptr - A pointer to a control value.
+> > - * @p_s32:	Pointer to a 32-bit signed value.
+> > - * @p_s64:	Pointer to a 64-bit signed value.
+> > - * @p_u8:	Pointer to a 8-bit unsigned value.
+> > - * @p_u16:	Pointer to a 16-bit unsigned value.
+> > - * @p_u32:	Pointer to a 32-bit unsigned value.
+> > - * @p_char:	Pointer to a string.
+> > - * @p:		Pointer to a compound value.
+> > + * @p_s32:			Pointer to a 32-bit signed value.
+> > + * @p_s64:			Pointer to a 64-bit signed value.
+> > + * @p_u8:			Pointer to a 8-bit unsigned value.
+> > + * @p_u16:			Pointer to a 16-bit unsigned value.
+> > + * @p_u32:			Pointer to a 32-bit unsigned value.
+> > + * @p_char:			Pointer to a string.
+> > + * @p_mpeg2_slice_params:	Pointer to a MPEG2 slice parameters structur=
+e.
+> > + * @p_mpeg2_quantization:	Pointer to a MPEG2 quantization data structu=
+re.
+> > + * @p:				Pointer to a compound value.
+> >   */
+> >  union v4l2_ctrl_ptr {
+> >  	s32 *p_s32;
+> > @@ -50,6 +52,8 @@ union v4l2_ctrl_ptr {
+> >  	u16 *p_u16;
+> >  	u32 *p_u32;
+> >  	char *p_char;
+> > +	struct v4l2_ctrl_mpeg2_slice_params *p_mpeg2_slice_params;
+> > +	struct v4l2_ctrl_mpeg2_quantization *p_mpeg2_quantization;
+> >  	void *p;
+> >  };
+> > =20
+> > diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4=
+l2-controls.h
+> > index e4ee10ee917d..ce6de781037a 100644
+> > --- a/include/uapi/linux/v4l2-controls.h
+> > +++ b/include/uapi/linux/v4l2-controls.h
+> > @@ -557,6 +557,9 @@ enum v4l2_mpeg_video_mpeg4_profile {
+> >  };
+> >  #define V4L2_CID_MPEG_VIDEO_MPEG4_QPEL		(V4L2_CID_MPEG_BASE+407)
+> > =20
+> > +#define V4L2_CID_MPEG_VIDEO_MPEG2_SLICE_PARAMS	(V4L2_CID_MPEG_BASE+450=
+)
+>=20
+> I would insert this at V4L2_CID_MPEG_BASE+250
+>=20
+> That is close to the existing MPEG2 controls, which makes sense.
+
+Agreed, will change for the next version.
+
+> > +#define V4L2_CID_MPEG_VIDEO_MPEG2_QUANTIZATION	(V4L2_CID_MPEG_BASE+451=
+)
+>=20
+> and this becomes +251 of course.
+>=20
+> > +
+> >  /*  Control IDs for VP8 streams
+> >   *  Although VP8 is not part of MPEG we add these controls to the MPEG=
+ class
+> >   *  as that class is already handling other video compression standard=
+s
+> > @@ -1092,4 +1095,44 @@ enum v4l2_detect_md_mode {
+> >  #define V4L2_CID_DETECT_MD_THRESHOLD_GRID	(V4L2_CID_DETECT_CLASS_BASE =
++ 3)
+> >  #define V4L2_CID_DETECT_MD_REGION_GRID		(V4L2_CID_DETECT_CLASS_BASE + =
+4)
+> > =20
+> > +#define V4L2_MPEG2_SLICE_TYPE_I			1
+> > +#define V4L2_MPEG2_SLICE_TYPE_P			2
+> > +#define V4L2_MPEG2_SLICE_TYPE_B			3
+> > +#define V4L2_MPEG2_SLICE_TYPE_D			4
+> > +
+> > +struct v4l2_ctrl_mpeg2_slice_params {
+> > +	__u32	slice_len;
+> > +	__u32	slice_pos;
+> > +
+> > +	__u16	width;
+> > +	__u16	height;
+> > +
+> > +	__u8	slice_type;
+> > +	__u8	f_code[2][2];
+> > +
+> > +	__u8	intra_dc_precision;
+> > +	__u8	picture_structure;
+> > +	__u8	top_field_first;
+> > +	__u8	frame_pred_frame_dct;
+> > +	__u8	concealment_motion_vectors;
+> > +	__u8	q_scale_type;
+> > +	__u8	intra_vlc_format;
+> > +	__u8	alternate_scan;
+> > +
+> > +	__u8	backward_ref_index;
+> > +	__u8	forward_ref_index;
+>=20
+> How certain are you that this is all that's needed? Should we add
+> a reserved field?
+
+There is a limited number of parameters that the bitstream offers and
+only a subset of these parameters affects the decoding process.
+
+VAAPI defines such a subset, so we used it as a base to figure out what
+fields from the bitstream are involved. I also went through the
+specification in detail to check whether we missed some relevant fields
+(and I found a few while preparing the next revision of this series).
+
+Still, I doubt that the result is perfect and it's hard to know whether
+a future decoder driver will require some specific field not required by
+Cedrus and that we missed, so adding reserved fields seems like the
+safest approach.
+
+On the other hand, I think that specific extensions should be added as
+separate controls, like it's done for the quantization matrices, so this
+should limit the relevant number of reserved fields to add. Something
+like 4-6 __u8 values seems reasonable IMO.
+
+> > +};
+> > +
+> > +struct v4l2_ctrl_mpeg2_quantization {
+> > +	__u8	load_intra_quantiser_matrix : 1;
+> > +	__u8	load_non_intra_quantiser_matrix : 1;
+> > +	__u8	load_chroma_intra_quantiser_matrix : 1;
+> > +	__u8	load_chroma_non_intra_quantiser_matrix : 1;
+>=20
+> I wouldn't use bitfields here. It doesn't add anything.
+
+Okay, then I'll drop bitfields from future patches as well.
+
+Cheers,
+
+Paul
+
+> > +
+> > +	__u8	intra_quantiser_matrix[64];
+> > +	__u8	non_intra_quantiser_matrix[64];
+> > +	__u8	chroma_intra_quantiser_matrix[64];
+> > +	__u8	chroma_non_intra_quantiser_matrix[64];
+> > +};
+> > +
+> >  #endif
+> > diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videod=
+ev2.h
+> > index 1f6c4b52baae..d171361ed9b3 100644
+> > --- a/include/uapi/linux/videodev2.h
+> > +++ b/include/uapi/linux/videodev2.h
+> > @@ -629,6 +629,7 @@ struct v4l2_pix_format {
+> >  #define V4L2_PIX_FMT_H263     v4l2_fourcc('H', '2', '6', '3') /* H263 =
+         */
+> >  #define V4L2_PIX_FMT_MPEG1    v4l2_fourcc('M', 'P', 'G', '1') /* MPEG-=
+1 ES     */
+> >  #define V4L2_PIX_FMT_MPEG2    v4l2_fourcc('M', 'P', 'G', '2') /* MPEG-=
+2 ES     */
+> > +#define V4L2_PIX_FMT_MPEG2_SLICE v4l2_fourcc('M', 'G', '2', 'S') /* MP=
+EG-2 parsed slice data */
+> >  #define V4L2_PIX_FMT_MPEG4    v4l2_fourcc('M', 'P', 'G', '4') /* MPEG-=
+4 part 2 ES */
+> >  #define V4L2_PIX_FMT_XVID     v4l2_fourcc('X', 'V', 'I', 'D') /* Xvid =
+          */
+> >  #define V4L2_PIX_FMT_VC1_ANNEX_G v4l2_fourcc('V', 'C', '1', 'G') /* SM=
+PTE 421M Annex G compliant stream */
+> > @@ -1587,6 +1588,8 @@ struct v4l2_ext_control {
+> >  		__u8 __user *p_u8;
+> >  		__u16 __user *p_u16;
+> >  		__u32 __user *p_u32;
+> > +		struct v4l2_ctrl_mpeg2_slice_params __user *p_mpeg2_slice_params;
+> > +		struct v4l2_ctrl_mpeg2_quantization __user *p_mpeg2_quantization;
+> >  		void __user *ptr;
+> >  	};
+> >  } __attribute__ ((packed));
+> > @@ -1632,6 +1635,8 @@ enum v4l2_ctrl_type {
+> >  	V4L2_CTRL_TYPE_U8	     =3D 0x0100,
+> >  	V4L2_CTRL_TYPE_U16	     =3D 0x0101,
+> >  	V4L2_CTRL_TYPE_U32	     =3D 0x0102,
+> > +	V4L2_CTRL_TYPE_MPEG2_SLICE_PARAMS =3D 0x0103,
+> > +	V4L2_CTRL_TYPE_MPEG2_QUANTIZATION =3D 0x0104,
+> >  };
+> > =20
+> >=20
+
+> Regards,
+>=20
+> 	Hans
+--=20
+Paul Kocialkowski, Bootlin (formerly Free Electrons)
+Embedded Linux and kernel engineering
+https://bootlin.com
+
+--=-D31xMAXsK/g9Q3eW+EJt
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEJZpWjZeIetVBefti3cLmz3+fv9EFAltq2qUACgkQ3cLmz3+f
+v9EfUgf7B8T73oWHPJUPAweoLWOZfNrqlhsdLvxvpp4s9LwcOgsR19V2IVGUfXGZ
+9tKd9IaQ8Lketv0XEbSGl/JgWPfFJwYptdeBXWSo4PKMPmbnttsH9e9R6gMiZ1vS
+6QDnQJhASji9zPo2YZRjN1kGgMGdHCjSOyty600CmWD/PsxLXTAqPWBH/P3xHHmS
+AJ+xgCRsXFXbbSAqhM7JEfwSfAYt45UcFbeB/VWNP4Tp11ZNkyAOTjUxo/CXQ9Ie
+JFWgoRl76JvIBDpHLCiGOxYWSviQ/dOroYzVHZo28A931bYFVRWSHMzaR0ocmaB+
+d4p3DUcEG8tQFgkfJ0kLMf7XqYs3bA==
+=NO3U
+-----END PGP SIGNATURE-----
+
+--=-D31xMAXsK/g9Q3eW+EJt--
 
