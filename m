@@ -2,84 +2,100 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF1BEC4646D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 12:40:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1840C46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 12:40:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E72B219E6
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 12:40:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="aj2XOI5l"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E72B219E6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 953A3219E6
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 12:40:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 953A3219E6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727026AbeHHPAE (ORCPT
+        id S1727123AbeHHPAK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 11:00:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35268 "EHLO mail.kernel.org"
+        Wed, 8 Aug 2018 11:00:10 -0400
+Received: from mga06.intel.com ([134.134.136.31]:19078 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726680AbeHHPAE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 11:00:04 -0400
-Received: from jouet.infradead.org (unknown [179.97.41.186])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D659321742;
-        Wed,  8 Aug 2018 12:40:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1533732033;
-        bh=oNQHkXgsiwP5sqeeX/drnrB9cIwyFRMdJHtHJUSaL3k=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=aj2XOI5lmbhlnlavS4NQfS7WFI6lEQnd/pC6mDKfJZTwUCxIYuKDGDWEMel7kHXwC
-         0tnxErB5a+y9lWQtPG/2DSoLqOht4g6CvQ93Y/sVc9KHr77UtacozMjaOhvC3NjIlP
-         XjPjcURIDKeLTTALHj4Oi4gGkvcsyEa6sJmC4IPg=
-Received: by jouet.infradead.org (Postfix, from userid 1000)
-        id A673C140A1C; Wed,  8 Aug 2018 09:40:30 -0300 (-03)
-Date:   Wed, 8 Aug 2018 09:40:30 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        linux-kernel@vger.kernel.org,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>
-Subject: Re: [PATCH v2] perf map: optimize maps__fixup_overlappings()
-Message-ID: <20180808124030.GA1727@kernel.org>
-References: <153363294565.396323.4605638589903548668.stgit@buzz>
- <153365189407.435244.7234821822450484712.stgit@buzz>
- <20180807200237.GA5395@kernel.org>
- <20180807230301.GA20320@krava>
+        id S1726680AbeHHPAK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 11:00:10 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Aug 2018 05:40:38 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,457,1526367600"; 
+   d="scan'208";a="222943267"
+Received: from sofia.sh.intel.com (HELO sofia) ([10.239.147.112])
+  by orsmga004.jf.intel.com with ESMTP; 08 Aug 2018 05:40:12 -0700
+Date:   Wed, 8 Aug 2018 20:39:22 +0800
+From:   "Liu, Changcheng" <changcheng.liu@intel.com>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     broonie@opensource.wolfsonmicro.com, mingo@redhat.com,
+        linux-kernel@vger.kernel.org, akpm@linux-foundation.org
+Subject: Re: [PATCH] ASoC: trace: track dapm type in snd_soc_dapm_widget
+Message-ID: <20180808123921.GA145536@sofia>
+References: <20180808092927.GA144203@sofia>
+ <20180808082412.20f7bd92@gandalf.local.home>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180807230301.GA20320@krava>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180808082412.20f7bd92@gandalf.local.home>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Wed, Aug 08, 2018 at 01:03:01AM +0200, Jiri Olsa escreveu:
-> On Tue, Aug 07, 2018 at 05:02:37PM -0300, Arnaldo Carvalho de Melo wrote:
-> > Em Tue, Aug 07, 2018 at 05:24:54PM +0300, Konstantin Khlebnikov escreveu:
-> > > This function splits and removes overlapping areas.
+On 08:24 Wed 08 Aug, Steven Rostedt wrote:
+> On Wed, 8 Aug 2018 17:29:27 +0800
+> "Liu, Changcheng" <changcheng.liu@intel.com> wrote:
+> 
+> > Track snd_soc_dapm_widget:id which is used as dapm
+> > sequence index in dapm_down_seq/dapm_up_seq. It's
+> > useful for checking dapm seq after tracking it.
+> > 
+> > Signed-off-by: Liu Changcheng <changcheng.liu@intel.com>
+> > 
+> > diff --git a/include/trace/events/asoc.h b/include/trace/events/asoc.h
+> > index 40c300f..0bc935b 100644
+> > --- a/include/trace/events/asoc.h
+> > +++ b/include/trace/events/asoc.h
+> > @@ -92,16 +92,18 @@ DECLARE_EVENT_CLASS(snd_soc_dapm_widget,
+> >  
+> >  	TP_STRUCT__entry(
+> >  		__string(	name,	w->name		)
+> > +		__field(	int,	id		)
+> >  		__field(	int,	val		)
+> >  	),
+> >  
+> >  	TP_fast_assign(
+> >  		__assign_str(name, w->name);
+> > +		__entry->id = w->id;
+> >  		__entry->val = val;
+> >  	),
+> >  
+> > -	TP_printk("widget=%s val=%d", __get_str(name),
+> > -		  (int)__entry->val)
+> > +	TP_printk("widget=%s dapm_id=%d val=%d", __get_str(name),
+> > +		  (int)__entry->id, (int)__entry->val)
+> 
+> Not sure why it was there before, but the (int) typecast isn't needed
+> in either case. __field(int, val) makes __entry->val of type int. Same
+> for id.
+> 
+> -- Steve
 
-> > > Maps in tree are ordered by start address thus we could find
+@Steve: This patch aims at tracking the dapm up/down sequence. For the
+(int) typecast format problem, what do you think of using another
+seperate patch to resolve it?
 
-> > > 
-> > > Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-
-> > Jiri, I'm applying this one with your Acked-by, ok?
-
-> yep, sry.. overlooked this
-
-> Acked-by: Jiri Olsa <jolsa@kernel.org>
-
-Thanks!
-
-- Arnaldo
+-- Changcheng
+> 
+> >  );
+> >  
+> >  DEFINE_EVENT(snd_soc_dapm_widget, snd_soc_dapm_widget_power,
+> 
