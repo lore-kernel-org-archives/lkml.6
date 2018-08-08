@@ -3,102 +3,191 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF9BDC46471
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 01:52:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99C1CC46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 01:52:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74FCD2174B
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 01:52:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74FCD2174B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
+	by mail.kernel.org (Postfix) with ESMTP id 5E94A21723
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 01:52:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E94A21723
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727143AbeHHEJa (ORCPT
+        id S1727177AbeHHEJe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 00:09:30 -0400
-Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:37822 "EHLO
-        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726245AbeHHEJ3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 00:09:29 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01451;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0T6ELMru_1533693108;
-Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0T6ELMru_1533693108)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 08 Aug 2018 09:51:55 +0800
-Subject: Re: [RFC v6 PATCH 2/2] mm: mmap: zap pages with read mmap_sem in
- munmap
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     willy@infradead.org, ldufour@linux.vnet.ibm.com,
-        kirill@shutemov.name, akpm@linux-foundation.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <1532628614-111702-1-git-send-email-yang.shi@linux.alibaba.com>
- <1532628614-111702-3-git-send-email-yang.shi@linux.alibaba.com>
- <20180803090759.GI27245@dhcp22.suse.cz>
- <aff7e86d-2e48-ff58-5d5d-9c67deb68674@linux.alibaba.com>
- <20180806094005.GG19540@dhcp22.suse.cz>
- <76c0fc2b-fca7-9f22-214a-920ee2537898@linux.alibaba.com>
- <20180806204119.GL10003@dhcp22.suse.cz>
- <28de768b-c740-37b3-ea5a-8e2cb07d2bdc@linux.alibaba.com>
- <20180806205232.GN10003@dhcp22.suse.cz>
- <0cdff13a-2713-c5be-a33e-28c07e093bcc@linux.alibaba.com>
- <20180807054524.GQ10003@dhcp22.suse.cz>
-From:   Yang Shi <yang.shi@linux.alibaba.com>
-Message-ID: <04a22c49-fe30-63ac-c1b7-46a405c810e2@linux.alibaba.com>
-Date:   Tue, 7 Aug 2018 18:51:45 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.7.0
+        Wed, 8 Aug 2018 00:09:34 -0400
+Received: from mx2.suse.de ([195.135.220.15]:59186 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726245AbeHHEJd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 00:09:33 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+X-Amavis-Alert: BAD HEADER SECTION, Duplicate header field: "Cc"
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 155A8AEE1;
+        Wed,  8 Aug 2018 01:52:19 +0000 (UTC)
+From:   NeilBrown <neilb@suse.com>
+To:     Jeff Layton <jlayton@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Date:   Wed, 08 Aug 2018 11:51:07 +1000
+Subject: [PATCH 2/4] fs/locks: allow a lock request to block other requests.
+Cc:     "J. Bruce Fields" <bfields@fieldses.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Martin Wilck <mwilck@suse.de>
+Message-ID: <153369306792.12605.8354776272905495741.stgit@noble>
+In-Reply-To: <153369219467.12605.13472423449508444601.stgit@noble>
+References: <153369219467.12605.13472423449508444601.stgit@noble>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-In-Reply-To: <20180807054524.GQ10003@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Currently, a lock can block pending requests, but all pending
+requests are equal.  If lots of pending requests are
+mutually exclusive, this means they will all be woken up
+and all but one will fail.  This can hurt performance.
 
+So we will allow pending requests to block other requests.
+Only the first request will be woken, and it will wake the others.
 
-On 8/6/18 10:45 PM, Michal Hocko wrote:
-> On Mon 06-08-18 15:19:06, Yang Shi wrote:
->>
->> On 8/6/18 1:52 PM, Michal Hocko wrote:
->>> On Mon 06-08-18 13:48:35, Yang Shi wrote:
->>>> On 8/6/18 1:41 PM, Michal Hocko wrote:
->>>>> On Mon 06-08-18 09:46:30, Yang Shi wrote:
->>>>>> On 8/6/18 2:40 AM, Michal Hocko wrote:
->>>>>>> On Fri 03-08-18 14:01:58, Yang Shi wrote:
->>>>>>>> On 8/3/18 2:07 AM, Michal Hocko wrote:
->>>>>>>>> On Fri 27-07-18 02:10:14, Yang Shi wrote:
->>>>> [...]
->>>>>>>>>> If the vma has VM_LOCKED | VM_HUGETLB | VM_PFNMAP or uprobe, they are
->>>>>>>>>> considered as special mappings. They will be dealt with before zapping
->>>>>>>>>> pages with write mmap_sem held. Basically, just update vm_flags.
->>>>>>>>> Well, I think it would be safer to simply fallback to the current
->>>>>>>>> implementation with these mappings and deal with them on top. This would
->>>>>>>>> make potential issues easier to bisect and partial reverts as well.
->>>>>>>> Do you mean just call do_munmap()? It sounds ok. Although we may waste some
->>>>>>>> cycles to repeat what has done, it sounds not too bad since those special
->>>>>>>> mappings should be not very common.
->>>>>>> VM_HUGETLB is quite spread. Especially for DB workloads.
->>>>>> Wait a minute. In this way, it sounds we go back to my old implementation
->>>>>> with special handling for those mappings with write mmap_sem held, right?
->>>>> Yes, I would really start simple and add further enhacements on top.
->>>> If updating vm_flags with read lock is safe in this case, we don't have to
->>>> do this. The only reason for this special handling is about vm_flags update.
->>> Yes, maybe you are right that this is safe. I would still argue to have
->>> it in a separate patch for easier review, bisectability etc...
->> Sorry, I'm a little bit confused. Do you mean I should have the patch
->> *without* handling the special case (just like to assume it is safe to
->> update vm_flags with read lock), then have the other patch on top of it,
->> which simply calls do_munmap() to deal with the special cases?
-> Just skip those special cases in the initial implementation and handle
-> each special case in its own patch on top.
+This patch doesn't implement this fully, but prepares the way.
 
-Thanks. VM_LOCKED area will not be handled specially since it is easy to 
-handle it, just follow what do_munmap does. The special cases will just 
-handle VM_HUGETLB, VM_PFNMAP and uprobe mappings.
+- It acknowledges that a request might be blocking other requests,
+  and when the request is converted to a lock, those blocked
+  requests are moved across.
+- When a request is removed, all blocked requests are woken.
+- When deadlock-detection looks for the lock which blocks a
+  given request, we follow the chain of ->fl_blocker all
+  the way to the top.
+
+Signed-off-by: NeilBrown <neilb@suse.com>
+---
+ fs/locks.c |   58 ++++++++++++++++++++++++++++++++++++++++------------------
+ 1 file changed, 40 insertions(+), 18 deletions(-)
+
+diff --git a/fs/locks.c b/fs/locks.c
+index 322491e70e41..b4812da2a374 100644
+--- a/fs/locks.c
++++ b/fs/locks.c
+@@ -408,9 +408,19 @@ void locks_copy_lock(struct file_lock *new, struct file_lock *fl)
+ 			fl->fl_ops->fl_copy_lock(new, fl);
+ 	}
+ }
+-
+ EXPORT_SYMBOL(locks_copy_lock);
+ 
++static void locks_move_blocks(struct file_lock *new, struct file_lock *fl)
++{
++	struct file_lock *f;
++
++	spin_lock(&blocked_lock_lock);
++	list_splice_init(&fl->fl_blocked, &new->fl_blocked);
++	list_for_each_entry(f, &fl->fl_blocked, fl_block)
++		f->fl_blocker = new;
++	spin_unlock(&blocked_lock_lock);
++}
++
+ static inline int flock_translate_cmd(int cmd) {
+ 	if (cmd & LOCK_MAND)
+ 		return cmd & (LOCK_MAND | LOCK_RW);
+@@ -681,9 +691,25 @@ static void __locks_delete_block(struct file_lock *waiter)
+ 	waiter->fl_blocker = NULL;
+ }
+ 
++static void __locks_wake_up_blocks(struct file_lock *blocker)
++{
++	while (!list_empty(&blocker->fl_blocked)) {
++		struct file_lock *waiter;
++
++		waiter = list_first_entry(&blocker->fl_blocked,
++				struct file_lock, fl_block);
++		__locks_delete_block(waiter);
++		if (waiter->fl_lmops && waiter->fl_lmops->lm_notify)
++			waiter->fl_lmops->lm_notify(waiter);
++		else
++			wake_up(&waiter->fl_wait);
++	}
++}
++
+ static void locks_delete_block(struct file_lock *waiter)
+ {
+ 	spin_lock(&blocked_lock_lock);
++	__locks_wake_up_blocks(waiter);
+ 	__locks_delete_block(waiter);
+ 	spin_unlock(&blocked_lock_lock);
+ }
+@@ -735,17 +761,7 @@ static void locks_wake_up_blocks(struct file_lock *blocker)
+ 		return;
+ 
+ 	spin_lock(&blocked_lock_lock);
+-	while (!list_empty(&blocker->fl_blocked)) {
+-		struct file_lock *waiter;
+-
+-		waiter = list_first_entry(&blocker->fl_blocked,
+-				struct file_lock, fl_block);
+-		__locks_delete_block(waiter);
+-		if (waiter->fl_lmops && waiter->fl_lmops->lm_notify)
+-			waiter->fl_lmops->lm_notify(waiter);
+-		else
+-			wake_up(&waiter->fl_wait);
+-	}
++	__locks_wake_up_blocks(blocker);
+ 	spin_unlock(&blocked_lock_lock);
+ }
+ 
+@@ -888,8 +904,11 @@ static struct file_lock *what_owner_is_waiting_for(struct file_lock *block_fl)
+ 	struct file_lock *fl;
+ 
+ 	hash_for_each_possible(blocked_hash, fl, fl_link, posix_owner_key(block_fl)) {
+-		if (posix_same_owner(fl, block_fl))
+-			return fl->fl_blocker;
++		if (posix_same_owner(fl, block_fl)) {
++			while (fl->fl_blocker)
++				fl = fl->fl_blocker;
++			return fl;
++		}
+ 	}
+ 	return NULL;
+ }
+@@ -982,6 +1001,7 @@ static int flock_lock_inode(struct inode *inode, struct file_lock *request)
+ 	if (request->fl_flags & FL_ACCESS)
+ 		goto out;
+ 	locks_copy_lock(new_fl, request);
++	locks_move_blocks(new_fl, request);
+ 	locks_insert_lock_ctx(new_fl, &ctx->flc_flock);
+ 	new_fl = NULL;
+ 	error = 0;
+@@ -1174,6 +1194,7 @@ static int posix_lock_inode(struct inode *inode, struct file_lock *request,
+ 			goto out;
+ 		}
+ 		locks_copy_lock(new_fl, request);
++		locks_move_blocks(new_fl, request);
+ 		locks_insert_lock_ctx(new_fl, &fl->fl_list);
+ 		fl = new_fl;
+ 		new_fl = NULL;
+@@ -2582,13 +2603,14 @@ void locks_remove_file(struct file *filp)
+ int
+ posix_unblock_lock(struct file_lock *waiter)
+ {
+-	int status = 0;
++	int status = -ENOENT;
+ 
+ 	spin_lock(&blocked_lock_lock);
+-	if (waiter->fl_blocker)
++	if (waiter->fl_blocker) {
++		__locks_wake_up_blocks(waiter);
+ 		__locks_delete_block(waiter);
+-	else
+-		status = -ENOENT;
++		status = 0;
++	}
+ 	spin_unlock(&blocked_lock_lock);
+ 	return status;
+ }
 
 
