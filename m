@@ -2,284 +2,210 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64600C46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 15:37:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B2AAC46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 15:40:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 155ED21700
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 15:37:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EBE0C21765
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 15:40:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="iykSHf10"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 155ED21700
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="EyzOds8/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBE0C21765
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727722AbeHHRxk (ORCPT
+        id S1727634AbeHHSAR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 13:53:40 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:33658 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727534AbeHHRxj (ORCPT
+        Wed, 8 Aug 2018 14:00:17 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:46054 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726954AbeHHSAR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 13:53:39 -0400
-Received: by mail-wr1-f67.google.com with SMTP id g6-v6so2425276wrp.0
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 08:33:27 -0700 (PDT)
+        Wed, 8 Aug 2018 14:00:17 -0400
+Received: by mail-lj1-f196.google.com with SMTP id w16-v6so2055475ljh.12
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 08:40:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=C6+lAOCD7xYYjqAwsyLpdNynP10DYfCMxlDsoPITD5U=;
-        b=iykSHf10yMyrpl8DK+aj/cdwz2SbHXCRaXdZtNJe3p9PGb0iT0ftaNi1BzDboHGfvL
-         G3dWHCHn8XwpuDBz53tc9Uk2kF6ycWEx2FEYl4G717TBKqdwtAZqHBhv6uOVOsPiFJEt
-         mVFxZJ4VCikZF1nUhGerB1dWPWmufG/76nwSjUsAqsxbVYqPJaMc/BpaMiZkILRXCpxN
-         yu1OqSK0Fg9hQIYw9vajzfamUNX9DwCNwRit9wZ68R23C1HRR04gqcmclSxcjTzXRsy7
-         JSJGWwex37E0QsHA00GfTcbUp53L4Tl3mh7nggMqpO6SMW2tGtkN0kuea23oBM3t+4Gq
-         zeaw==
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=+4hhiODN7cTyFLH5gTWk+jd1FEZsBWmZzCgpV/3+Ag8=;
+        b=EyzOds8/AF9WChl5eQ4sEZJ90utn7x60C/4bhvAzVv5cI5PgaqfLZyDfIkd+6KGKDQ
+         39w8idSZbSRj3p50b46NklZ9aalV8qgYpTT97kelcT66zK2cojEANbqPECbAq1KP/WHe
+         /nVsYvVLSsEK8L8MJvXGvdxJODBHByJ9v/cOWL/LtMOEFB/L3GmjxAN1+bS9IHsO8dsu
+         TYTIARNj0TEVSWUPVc3f0uG1eENLn4EgazrbLSTpbvYWIl/DgnhQh9f3RL/QI0m2EUlE
+         kFGl/UGFngwJ4cPl+06p3rYi5M83vUYqOBv6qU2bl2PyPuRswvaUb8tdwJszfkg+1tAw
+         RP7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=C6+lAOCD7xYYjqAwsyLpdNynP10DYfCMxlDsoPITD5U=;
-        b=Iaok7KYgsEr2HUW5A7H1J5XbZ4PpfWV2DmIV2k0h8iNEnI/+KpwwzDVF1676Bl19Xj
-         PI3RNLu0BZRyytwsOvo2mj1hT9jzI+BlRihaQjqQXFRLlRo7p0CKt6d6Kb2qgUPGyJ+N
-         qAxsvaYs6pnzp27CijdAYtEQqBzGVtD5kK6JjMBf2j8pVwwgrtA7nLtYQCMBPv+lzA0K
-         06uvqdhXkg4jsNsbTgDjGDYbf8qPLMfCgL0+7g0eRPnovSKgQXjXdhpIqKSrDpnpT1ZD
-         baecNp+5TIbZO1uUjFX/q6n9+V1D7rT1X6LSAGGrtSj/AyYeY15Ul/MBKbXm09hN7v+2
-         bFJw==
-X-Gm-Message-State: AOUpUlF+ba0gycmVJjlwkBXH/pnROmAVrhuqLsTCw/3FJ3a1keVMvyVD
-        Zmd/rVFZPEjjscLBAw2Im23Lqw==
-X-Google-Smtp-Source: AA+uWPz5Aatwx8UH6q7o1lWq/4CPfRcqcA4mDFTckUaPyDCUE913fsWSNL+wnTxCUDaZ2EtZk0r2rQ==
-X-Received: by 2002:a5d:5088:: with SMTP id a8-v6mr2289235wrt.37.1533742407252;
-        Wed, 08 Aug 2018 08:33:27 -0700 (PDT)
-Received: from brgl-bgdev.lan (LFbn-MAR-1-609-89.w90-118.abo.wanadoo.fr. [90.118.185.89])
-        by smtp.gmail.com with ESMTPSA id s2-v6sm5240915wrw.52.2018.08.08.08.33.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 08 Aug 2018 08:33:26 -0700 (PDT)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Jonathan Corbet <corbet@lwn.net>, Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Naren <naren.kernel@gmail.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Lukas Wunner <lukas@wunner.de>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
-        Sven Van Asbroeck <svendev@arcx.com>,
-        Paolo Abeni <pabeni@redhat.com>, Alban Bedel <albeu@free.fr>,
-        Rob Herring <robh@kernel.org>,
-        David Lechner <david@lechnology.com>,
-        Andrew Lunn <andrew@lunn.ch>
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-omap@vger.kernel.org,
-        netdev@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 01/28] nvmem: add support for cell lookups
-Date:   Wed,  8 Aug 2018 17:31:23 +0200
-Message-Id: <20180808153150.23444-2-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180808153150.23444-1-brgl@bgdev.pl>
-References: <20180808153150.23444-1-brgl@bgdev.pl>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+4hhiODN7cTyFLH5gTWk+jd1FEZsBWmZzCgpV/3+Ag8=;
+        b=Vds6Zi/Z2+TqZYw2t23ujy4N0zlLh3tCvcLJTevyevBBwOALWGq/zv6pRXEFUmZbzm
+         BWzx74zWET2HBIgXumMercdco6GVs08VJEG7h+iHUle1JVSbmJdXqdtAdfwVeFz69R2J
+         xwUr1elfhhLI+rObrF+xRPz+9NlJqzFJlMML+waPwN0UW8w017Uw+EZmh3hmt283oHQr
+         h9fGGDXyXD5JxdLHIQt3T9p5w4IlbSYm1MhKqxk7TiaRkSa4/hbWt4B9EC/RRIM6pWdY
+         FY48fRNRl7BkbDhHTli7lN2/b0igHe9F/7xBXhgwx8re4YkUt3ysw2K1q+t3dfdLRR76
+         ELYg==
+X-Gm-Message-State: AOUpUlGO+5RZS0G3FBfBLXt/Zr7N47BIXDIN57hdr1yhM9CMojq2hxZ6
+        qMOPV0csGFDcGEc+mFI2Sno5SdorLbL6nHc363BB
+X-Google-Smtp-Source: AA+uWPw25lV32wFoD+QizgxYHngwHv+x7xz5e0j93aRn8RjfrQoYE8UIprel1/Te8ZE1tkBRw+b21VGXeAhitCckhwo=
+X-Received: by 2002:a2e:8743:: with SMTP id q3-v6mr2385773ljj.139.1533742801874;
+ Wed, 08 Aug 2018 08:40:01 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180805091036.30035-1-nixiaoming@huawei.com> <CAHC9VhQKBphcPi3Oya58f4-tfK6GYkufotstduhkTaQw8NTw2Q@mail.gmail.com>
+In-Reply-To: <CAHC9VhQKBphcPi3Oya58f4-tfK6GYkufotstduhkTaQw8NTw2Q@mail.gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 8 Aug 2018 11:39:50 -0400
+Message-ID: <CAHC9VhREuOwOKODWuh06mGmLYMhCdrzB+kv-2GegAsixz8GL2Q@mail.gmail.com>
+Subject: Re: [PATCH] selinuxfs: Fix the resource leak in the failed branch of sel_make_inode
+To:     nixiaoming@huawei.com
+Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
+        Eric Paris <eparis@parisplace.org>,
+        James Morris <jmorris@namei.org>, serge@hallyn.com,
+        selinux@tycho.nsa.gov, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Tue, Aug 7, 2018 at 5:35 PM Paul Moore <paul@paul-moore.com> wrote:
+>
+> On Sun, Aug 5, 2018 at 5:48 AM nixiaoming <nixiaoming@huawei.com> wrote:
+> > If the resource requested by d_alloc_name is not added to the linked
+> > list through d_add, then dput needs to be called to release the
+> > subsequent abnormal branch to avoid resource leakage.
+> >
+> > Add missing dput to selinuxfs.c
+> >
+> > Signed-off-by: nixiaoming <nixiaoming@huawei.com>
+> > ---
+> >  security/selinux/selinuxfs.c | 33 +++++++++++++++++++++++++--------
+> >  1 file changed, 25 insertions(+), 8 deletions(-)
+>
+> Thanks for the quick follow-up on this patch.  It looks okay to me,
+> assuming my test kernel works correctly (it's building now) I'll merge
+> this into selinux/next.
 
-We can currently only register nvmem cells from device tree or by
-manually calling nvmem_add_cells(). The latter options however forces
-users to make sure that the nvmem provider with which the cells are
-associated is registered before the call.
+Merged into selinux/next, thanks!
 
-This patch proposes a new solution inspired by other frameworks that
-offer resource lookups (GPIO, PWM etc.). It adds functions that allow
-machine code to register nvmem lookup which are later lazily used to
-add corresponding nvmem cells and remove them if no longer needed.
+> > diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
+> > index 79d3709..0b66d728 100644
+> > --- a/security/selinux/selinuxfs.c
+> > +++ b/security/selinux/selinuxfs.c
+> > @@ -1365,13 +1365,18 @@ static int sel_make_bools(struct selinux_fs_info *fsi)
+> >
+> >                 ret = -ENOMEM;
+> >                 inode = sel_make_inode(dir->d_sb, S_IFREG | S_IRUGO | S_IWUSR);
+> > -               if (!inode)
+> > +               if (!inode) {
+> > +                       dput(dentry);
+> >                         goto out;
+> > +               }
+> >
+> >                 ret = -ENAMETOOLONG;
+> >                 len = snprintf(page, PAGE_SIZE, "/%s/%s", BOOL_DIR_NAME, names[i]);
+> > -               if (len >= PAGE_SIZE)
+> > +               if (len >= PAGE_SIZE) {
+> > +                       dput(dentry);
+> > +                       iput(inode);
+> >                         goto out;
+> > +               }
+> >
+> >                 isec = (struct inode_security_struct *)inode->i_security;
+> >                 ret = security_genfs_sid(fsi->state, "selinuxfs", page,
+> > @@ -1586,8 +1591,10 @@ static int sel_make_avc_files(struct dentry *dir)
+> >                         return -ENOMEM;
+> >
+> >                 inode = sel_make_inode(dir->d_sb, S_IFREG|files[i].mode);
+> > -               if (!inode)
+> > +               if (!inode) {
+> > +                       dput(dentry);
+> >                         return -ENOMEM;
+> > +               }
+> >
+> >                 inode->i_fop = files[i].ops;
+> >                 inode->i_ino = ++fsi->last_ino;
+> > @@ -1632,8 +1639,10 @@ static int sel_make_initcon_files(struct dentry *dir)
+> >                         return -ENOMEM;
+> >
+> >                 inode = sel_make_inode(dir->d_sb, S_IFREG|S_IRUGO);
+> > -               if (!inode)
+> > +               if (!inode) {
+> > +                       dput(dentry);
+> >                         return -ENOMEM;
+> > +               }
+> >
+> >                 inode->i_fop = &sel_initcon_ops;
+> >                 inode->i_ino = i|SEL_INITCON_INO_OFFSET;
+> > @@ -1733,8 +1742,10 @@ static int sel_make_perm_files(char *objclass, int classvalue,
+> >
+> >                 rc = -ENOMEM;
+> >                 inode = sel_make_inode(dir->d_sb, S_IFREG|S_IRUGO);
+> > -               if (!inode)
+> > +               if (!inode) {
+> > +                       dput(dentry);
+> >                         goto out;
+> > +               }
+> >
+> >                 inode->i_fop = &sel_perm_ops;
+> >                 /* i+1 since perm values are 1-indexed */
+> > @@ -1763,8 +1774,10 @@ static int sel_make_class_dir_entries(char *classname, int index,
+> >                 return -ENOMEM;
+> >
+> >         inode = sel_make_inode(dir->d_sb, S_IFREG|S_IRUGO);
+> > -       if (!inode)
+> > +       if (!inode) {
+> > +               dput(dentry);
+> >                 return -ENOMEM;
+> > +       }
+> >
+> >         inode->i_fop = &sel_class_ops;
+> >         inode->i_ino = sel_class_to_ino(index);
+> > @@ -1838,8 +1851,10 @@ static int sel_make_policycap(struct selinux_fs_info *fsi)
+> >                         return -ENOMEM;
+> >
+> >                 inode = sel_make_inode(fsi->sb, S_IFREG | 0444);
+> > -               if (inode == NULL)
+> > +               if (inode == NULL) {
+> > +                       dput(dentry);
+> >                         return -ENOMEM;
+> > +               }
+> >
+> >                 inode->i_fop = &sel_policycap_ops;
+> >                 inode->i_ino = iter | SEL_POLICYCAP_INO_OFFSET;
+> > @@ -1932,8 +1947,10 @@ static int sel_fill_super(struct super_block *sb, void *data, int silent)
+> >
+> >         ret = -ENOMEM;
+> >         inode = sel_make_inode(sb, S_IFCHR | S_IRUGO | S_IWUGO);
+> > -       if (!inode)
+> > +       if (!inode) {
+> > +               dput(dentry);
+> >                 goto err;
+> > +       }
+> >
+> >         inode->i_ino = ++fsi->last_ino;
+> >         isec = (struct inode_security_struct *)inode->i_security;
+> > --
+> > 2.10.1
+> >
+> > --
+> > To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+> > the body of a message to majordomo@vger.kernel.org
+> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+>
+>
+> --
+> paul moore
+> www.paul-moore.com
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Acked-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
----
- drivers/nvmem/core.c           | 77 +++++++++++++++++++++++++++++++++-
- include/linux/nvmem-consumer.h |  6 +++
- include/linux/nvmem-provider.h | 10 +++++
- 3 files changed, 92 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-index 514d1dfc5630..329ea5b8f809 100644
---- a/drivers/nvmem/core.c
-+++ b/drivers/nvmem/core.c
-@@ -62,6 +62,9 @@ static DEFINE_IDA(nvmem_ida);
- static LIST_HEAD(nvmem_cells);
- static DEFINE_MUTEX(nvmem_cells_mutex);
- 
-+static LIST_HEAD(nvmem_cell_lookups);
-+static DEFINE_MUTEX(nvmem_lookup_mutex);
-+
- #ifdef CONFIG_DEBUG_LOCK_ALLOC
- static struct lock_class_key eeprom_lock_key;
- #endif
-@@ -247,6 +250,41 @@ static const struct attribute_group *nvmem_ro_root_dev_groups[] = {
- 	NULL,
- };
- 
-+/**
-+ * nvmem_add_lookup_table() - register a number of nvmem cell lookup entries
-+ *
-+ * @lookup: array of nvmem cell lookup entries
-+ * @nentries: number of lookup entries in the array
-+ */
-+void nvmem_add_lookup_table(struct nvmem_cell_lookup *lookup, size_t nentries)
-+{
-+	int i;
-+
-+	mutex_lock(&nvmem_lookup_mutex);
-+	for (i = 0; i < nentries; i++)
-+		list_add_tail(&lookup[i].list, &nvmem_cell_lookups);
-+	mutex_unlock(&nvmem_lookup_mutex);
-+}
-+EXPORT_SYMBOL_GPL(nvmem_add_lookup_table);
-+
-+/**
-+ * nvmem_del_lookup_table() - unregister a set of previously added nvmem cell
-+ *                            lookup entries
-+ *
-+ * @lookup: array of nvmem cell lookup entries
-+ * @nentries: number of lookup entries in the array
-+ */
-+void nvmem_del_lookup_table(struct nvmem_cell_lookup *lookup, size_t nentries)
-+{
-+	int i;
-+
-+	mutex_lock(&nvmem_lookup_mutex);
-+	for (i = 0; i < nentries; i++)
-+		list_del(&lookup[i].list);
-+	mutex_unlock(&nvmem_lookup_mutex);
-+}
-+EXPORT_SYMBOL_GPL(nvmem_del_lookup_table);
-+
- static void nvmem_release(struct device *dev)
- {
- 	struct nvmem_device *nvmem = to_nvmem_device(dev);
-@@ -916,6 +954,39 @@ struct nvmem_cell *of_nvmem_cell_get(struct device_node *np,
- EXPORT_SYMBOL_GPL(of_nvmem_cell_get);
- #endif
- 
-+static struct nvmem_cell *nvmem_cell_from_lookup(const char *cell_id)
-+{
-+	struct nvmem_cell *cell = ERR_PTR(-ENOENT);
-+	struct nvmem_cell_lookup *lookup;
-+	struct nvmem_device *nvmem;
-+	int rc;
-+
-+	mutex_lock(&nvmem_lookup_mutex);
-+
-+	list_for_each_entry(lookup, &nvmem_cell_lookups, list) {
-+		if (strcmp(cell_id, lookup->info.name) == 0) {
-+			nvmem = nvmem_find(lookup->nvmem_name);
-+			if (!nvmem) {
-+				cell = ERR_PTR(-EPROBE_DEFER);
-+				goto out;
-+			}
-+
-+			rc = nvmem_add_cells(nvmem, &lookup->info, 1);
-+			if (rc) {
-+				cell = ERR_PTR(rc);
-+				goto out;
-+			}
-+
-+			cell = nvmem_cell_get_from_list(cell_id);
-+			break;
-+		}
-+	}
-+
-+out:
-+	mutex_unlock(&nvmem_lookup_mutex);
-+	return cell;
-+}
-+
- /**
-  * nvmem_cell_get() - Get nvmem cell of device form a given cell name
-  *
-@@ -940,7 +1011,11 @@ struct nvmem_cell *nvmem_cell_get(struct device *dev, const char *cell_id)
- 	if (!cell_id)
- 		return ERR_PTR(-EINVAL);
- 
--	return nvmem_cell_get_from_list(cell_id);
-+	cell = nvmem_cell_get_from_list(cell_id);
-+	if (!IS_ERR(cell) || PTR_ERR(cell) == -EPROBE_DEFER)
-+		return cell;
-+
-+	return nvmem_cell_from_lookup(cell_id);
- }
- EXPORT_SYMBOL_GPL(nvmem_cell_get);
- 
-diff --git a/include/linux/nvmem-consumer.h b/include/linux/nvmem-consumer.h
-index 4e85447f7860..f4b5d3186e94 100644
---- a/include/linux/nvmem-consumer.h
-+++ b/include/linux/nvmem-consumer.h
-@@ -29,6 +29,12 @@ struct nvmem_cell_info {
- 	unsigned int		nbits;
- };
- 
-+struct nvmem_cell_lookup {
-+	struct nvmem_cell_info	info;
-+	struct list_head	list;
-+	const char		*nvmem_name;
-+};
-+
- #if IS_ENABLED(CONFIG_NVMEM)
- 
- /* Cell based interface */
-diff --git a/include/linux/nvmem-provider.h b/include/linux/nvmem-provider.h
-index 24def6ad09bb..6a17d722062b 100644
---- a/include/linux/nvmem-provider.h
-+++ b/include/linux/nvmem-provider.h
-@@ -17,6 +17,7 @@
- 
- struct nvmem_device;
- struct nvmem_cell_info;
-+struct nvmem_cell_lookup;
- typedef int (*nvmem_reg_read_t)(void *priv, unsigned int offset,
- 				void *val, size_t bytes);
- typedef int (*nvmem_reg_write_t)(void *priv, unsigned int offset,
-@@ -72,6 +73,9 @@ struct nvmem_config {
- struct nvmem_device *nvmem_register(const struct nvmem_config *cfg);
- int nvmem_unregister(struct nvmem_device *nvmem);
- 
-+void nvmem_add_lookup_table(struct nvmem_cell_lookup *lookup, size_t nentries);
-+void nvmem_del_lookup_table(struct nvmem_cell_lookup *lookup, size_t nentries);
-+
- struct nvmem_device *devm_nvmem_register(struct device *dev,
- 					 const struct nvmem_config *cfg);
- 
-@@ -92,6 +96,12 @@ static inline int nvmem_unregister(struct nvmem_device *nvmem)
- 	return -ENOSYS;
- }
- 
-+static inline void
-+nvmem_add_lookup_table(struct nvmem_cell_lookup *lookup, size_t nentries) {}
-+
-+static inline void
-+nvmem_del_lookup_table(struct nvmem_cell_lookup *lookup, size_t nentries) {}
-+
- static inline struct nvmem_device *
- devm_nvmem_register(struct device *dev, const struct nvmem_config *c)
- {
+
 -- 
-2.18.0
-
+paul moore
+www.paul-moore.com
