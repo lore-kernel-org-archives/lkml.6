@@ -2,326 +2,252 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5144EC46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 07:08:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACC26C46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 07:09:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE4BA208CC
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 07:08:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bCwMejHF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE4BA208CC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 64B6221708
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 07:09:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64B6221708
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727041AbeHHJ0u (ORCPT
+        id S1726944AbeHHJ2I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 05:26:50 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:42489 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726986AbeHHJ0u (ORCPT
+        Wed, 8 Aug 2018 05:28:08 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:34502 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726721AbeHHJ2I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 05:26:50 -0400
-Received: by mail-pl0-f67.google.com with SMTP id g6-v6so613276plq.9
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 00:08:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=gm9pLZvgHT14Zk0drMD8vpxnkk6DbI5R03/WpG4qYKs=;
-        b=bCwMejHFXQ4lYtRT2SHjB7CvnPeB8qFrZq7HNK1SeoUB40TDLyxGPkQgW0VlvhlJlW
-         ghm5MTKi6ddH/TnMEunBkqawf+Q/EJvKY6c545FE4ue2mBOuw5qJsqPShr+xT40PqGL2
-         K3P2f29vxo0m8t6AuPYWp8uMFshPh0j7Bll9c=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=gm9pLZvgHT14Zk0drMD8vpxnkk6DbI5R03/WpG4qYKs=;
-        b=ku0U194N7q5g4ArtiK04emKPLtT8R3sxkFGfdhk27LzQ4U7cPW6J88SRJD6bUkEkOP
-         Weis5tXCsBa9kmoip79A6OkMwGbEFF0705hLoVUnKW0XHJiwffckCszAqGB2XFhXFx/9
-         95VyU93XPzNBKBi9vfRPp+PRrvpRvd2ZPQFv8ppWM3Q1/LDD6eRyv3b4TygxGSz1jOTb
-         AbK8r3HYE4b4Zns21mi1WOtG8aSCF/xvfw9QUVGnWLVuLFt6xlQp49tBKB8VB5UKEzjS
-         Wo9VE1yJiy0+X+SDb26mPzbGpGzPl1FkZsjsz4VFkaGUq+ZJn4rwTNPnLJ/Oad7Vlgdw
-         wpUQ==
-X-Gm-Message-State: AOUpUlGwzRZ4pWxz2D0PJiuNzUyWUlpTCesOcK1JsFAeRZ3IappdDrhg
-        /k1j2qtqY4mOxdLMZssceKKrRChXwWw=
-X-Google-Smtp-Source: AA+uWPxVZajtmUsIVJtQZpr+i3o0+NGYJngFkyxv+Offb9uEvbL8bYiAtfJvfCpAnS2QndbEpkUY6g==
-X-Received: by 2002:a17:902:8303:: with SMTP id bd3-v6mr1413214plb.329.1533712109890;
-        Wed, 08 Aug 2018 00:08:29 -0700 (PDT)
-Received: from localhost ([122.172.42.13])
-        by smtp.gmail.com with ESMTPSA id w13-v6sm3147084pgs.89.2018.08.08.00.08.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 08 Aug 2018 00:08:28 -0700 (PDT)
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH V2] of: thermal: Allow multiple devices to share cooling map
-Date:   Wed,  8 Aug 2018 12:38:14 +0530
-Message-Id: <438c3792a41b31629fb702c919ad244db97c0283.1533711976.git.viresh.kumar@linaro.org>
-X-Mailer: git-send-email 2.18.0.rc1.242.g61856ae69a2c
-In-Reply-To: <b5555967e713fd601bc74de0cab8ab45608399c4.1531824436.git.viresh.kumar@linaro.org>
-References: <b5555967e713fd601bc74de0cab8ab45608399c4.1531824436.git.viresh.kumar@linaro.org>
+        Wed, 8 Aug 2018 05:28:08 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7874MIR085164
+        for <linux-kernel@vger.kernel.org>; Wed, 8 Aug 2018 03:09:48 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2kqtq5aksj-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 03:09:47 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <srikar@linux.vnet.ibm.com>;
+        Wed, 8 Aug 2018 08:09:45 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 8 Aug 2018 08:09:42 +0100
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7879fMw41549966
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 8 Aug 2018 07:09:41 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 25BE7AE051;
+        Wed,  8 Aug 2018 10:09:35 +0100 (BST)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0E088AE053;
+        Wed,  8 Aug 2018 10:09:33 +0100 (BST)
+Received: from srikart450.in.ibm.com (unknown [9.77.127.181])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed,  8 Aug 2018 10:09:32 +0100 (BST)
+From:   Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+To:     Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Rik van Riel <riel@surriel.com>,
+        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+        Andre Wild <wild@linux.vnet.ibm.com>
+Subject: [PATCH] sched/topology: Use Identity node only if required
+Date:   Wed,  8 Aug 2018 12:39:31 +0530
+X-Mailer: git-send-email 2.7.4
+X-TM-AS-GCONF: 00
+x-cbid: 18080807-0012-0000-0000-00000296CA63
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18080807-0013-0000-0000-000020C9D399
+Message-Id: <1533712172-11428-1-git-send-email-srikar@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-08_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808080075
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A cooling map entry may now contain a list of phandles and their
-arguments representing multiple devices which share the trip point.
+With Commit 051f3ca02e46 ("sched/topology: Introduce NUMA identity node
+sched domain") scheduler introduces an extra numa level. However that
+leads to
 
-This patch updates the thermal OF core to parse them properly. The trip
-point and contribution value is shared by multiple cooling devices now
-and so a new structure is created, struct __thermal_cooling_bind_param,
-which represents a cooling device and its min/max states and the
-existing struct __thermal_bind_params now contains an array of this new
-cooling device structure.
+ - numa topology on 2 node systems no more marked as NUMA_DIRECT.  After
+   this commit, it gets reported as NUMA_BACKPLANE. This is because
+   sched_domains_numa_level now equals 2 on 2 node systems.
 
-Tested on Hikey960.
+ - Extra numa sched domain that gets added and degenerated on most
+   machines.  The Identity node is only needed on very few systems.
+   Also all non-numa systems will end up populating
+   sched_domains_numa_distance and sched_domains_numa_masks tables.
 
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+ - On shared lpars like powerpc, this extra sched domain creation can
+   lead to repeated rcu stalls, sometimes even causing unresponsive
+   systems on boot. On such stalls, it was noticed that
+   init_sched_groups_capacity() (sg != sd->groups is always true).
+
+INFO: rcu_sched self-detected stall on CPU
+ 1-....: (240039 ticks this GP) idle=c32/1/4611686018427387906 softirq=782/782 fqs=80012
+  (t=240039 jiffies g=6272 c=6271 q=263040)
+NMI backtrace for cpu 1
+CPU: 1 PID: 1576 Comm: kworker/1:1 Kdump: loaded Tainted: G            E     4.18.0-rc7-master+ #42
+Workqueue: events topology_work_fn
+Call Trace:
+[c00000832132f190] [c0000000009557ac] dump_stack+0xb0/0xf4 (unreliable)
+[c00000832132f1d0] [c00000000095ed54] nmi_cpu_backtrace+0x1b4/0x230
+[c00000832132f270] [c00000000095efac] nmi_trigger_cpumask_backtrace+0x1dc/0x220
+[c00000832132f310] [c00000000005f77c] arch_trigger_cpumask_backtrace+0x2c/0x40
+[c00000832132f330] [c0000000001a32d4] rcu_dump_cpu_stacks+0x100/0x15c
+[c00000832132f380] [c0000000001a2024] rcu_check_callbacks+0x894/0xaa0
+[c00000832132f4a0] [c0000000001ace9c] update_process_times+0x4c/0xa0
+[c00000832132f4d0] [c0000000001c5400] tick_sched_handle.isra.13+0x50/0x80
+[c00000832132f4f0] [c0000000001c549c] tick_sched_timer+0x6c/0xd0
+[c00000832132f530] [c0000000001ae044] __hrtimer_run_queues+0x134/0x360
+[c00000832132f5b0] [c0000000001aeea4] hrtimer_interrupt+0x124/0x300
+[c00000832132f660] [c000000000024a04] timer_interrupt+0x114/0x2f0
+[c00000832132f6c0] [c0000000000090f4] decrementer_common+0x114/0x120
+--- interrupt: 901 at __bitmap_weight+0x70/0x100
+    LR = __bitmap_weight+0x78/0x100
+[c00000832132f9b0] [c0000000009bb738] __func__.61127+0x0/0x20 (unreliable)
+[c00000832132fa00] [c00000000016c178] build_sched_domains+0xf98/0x13f0
+[c00000832132fb30] [c00000000016d73c] partition_sched_domains+0x26c/0x440
+[c00000832132fc20] [c0000000001ee284] rebuild_sched_domains_locked+0x64/0x80
+[c00000832132fc50] [c0000000001f11ec] rebuild_sched_domains+0x3c/0x60
+[c00000832132fc80] [c00000000007e1c4] topology_work_fn+0x24/0x40
+[c00000832132fca0] [c000000000126704] process_one_work+0x1a4/0x470
+[c00000832132fd30] [c000000000126a68] worker_thread+0x98/0x540
+[c00000832132fdc0] [c00000000012f078] kthread+0x168/0x1b0
+[c00000832132fe30] [c00000000000b65c]
+ret_from_kernel_thread+0x5c/0x80
+
+Similar problem was earlier also reported at
+https://lwn.net/ml/linux-kernel/20180512100233.GB3738@osiris/
+
+One easy alternative would be to use a hint from architectures that have
+a liking for identity node.
+
+Fixes: 051f3ca02e46 "Introduce NUMA identity node sched domain"
+Signed-off-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
 ---
-V2:
-- Updated commit log to include new structures information
-- Updated two error messages to give better error log
+ arch/x86/include/asm/topology.h |  2 ++
+ arch/x86/kernel/smpboot.c       |  5 +++++
+ kernel/sched/topology.c         | 34 ++++++++++++++++++++++++----------
+ 3 files changed, 31 insertions(+), 10 deletions(-)
 
- drivers/thermal/of-thermal.c | 142 +++++++++++++++++++++++++----------
- 1 file changed, 103 insertions(+), 39 deletions(-)
-
-diff --git a/drivers/thermal/of-thermal.c b/drivers/thermal/of-thermal.c
-index 977a8307fbb1..16b890a4fb50 100644
---- a/drivers/thermal/of-thermal.c
-+++ b/drivers/thermal/of-thermal.c
-@@ -19,22 +19,33 @@
- /***   Private data structures to represent thermal device tree data ***/
+diff --git a/arch/x86/include/asm/topology.h b/arch/x86/include/asm/topology.h
+index c1d2a9892352..524cb900e273 100644
+--- a/arch/x86/include/asm/topology.h
++++ b/arch/x86/include/asm/topology.h
+@@ -79,7 +79,9 @@ extern void setup_node_to_cpumask_map(void);
  
- /**
-- * struct __thermal_bind_param - a match between trip and cooling device
-+ * struct __thermal_cooling_bind_param - a cooling device for a trip point
-  * @cooling_device: a pointer to identify the referred cooling device
-- * @trip_id: the trip point index
-- * @usage: the percentage (from 0 to 100) of cooling contribution
-  * @min: minimum cooling state used at this trip point
-  * @max: maximum cooling state used at this trip point
-  */
+ extern int __node_distance(int, int);
+ #define node_distance(a, b) __node_distance(a, b)
++#define arch_supports_identity_node arch_supports_identity_node
  
--struct __thermal_bind_params {
-+struct __thermal_cooling_bind_param {
- 	struct device_node *cooling_device;
--	unsigned int trip_id;
--	unsigned int usage;
- 	unsigned long min;
- 	unsigned long max;
- };
++extern int arch_supports_identity_node(void);
+ #else /* !CONFIG_NUMA */
  
-+/**
-+ * struct __thermal_bind_param - a match between trip and cooling device
-+ * @tcbp: a pointer to an array of cooling devices
-+ * @count: number of elements in array
-+ * @trip_id: the trip point index
-+ * @usage: the percentage (from 0 to 100) of cooling contribution
-+ */
+ static inline int numa_node_id(void)
+diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
+index db9656e13ea0..08de8ca06232 100644
+--- a/arch/x86/kernel/smpboot.c
++++ b/arch/x86/kernel/smpboot.c
+@@ -1346,6 +1346,11 @@ void __init native_smp_cpus_done(unsigned int max_cpus)
+ 	mtrr_aps_init();
+ }
+ 
++int arch_supports_identity_node(void)
++{
++	return x86_has_numa_in_package;
++}
 +
-+struct __thermal_bind_params {
-+	struct __thermal_cooling_bind_param *tcbp;
-+	unsigned int count;
-+	unsigned int trip_id;
-+	unsigned int usage;
-+};
-+
- /**
-  * struct __thermal_zone - internal representation of a thermal zone
-  * @mode: current thermal zone device mode (enabled/disabled)
-@@ -192,25 +203,31 @@ static int of_thermal_bind(struct thermal_zone_device *thermal,
- 			   struct thermal_cooling_device *cdev)
+ static int __initdata setup_possible_cpus = -1;
+ static int __init _setup_possible_cpus(char *str)
  {
- 	struct __thermal_zone *data = thermal->devdata;
--	int i;
-+	struct __thermal_bind_params *tbp;
-+	struct __thermal_cooling_bind_param *tcbp;
-+	int i, j;
- 
- 	if (!data || IS_ERR(data))
- 		return -ENODEV;
- 
- 	/* find where to bind */
- 	for (i = 0; i < data->num_tbps; i++) {
--		struct __thermal_bind_params *tbp = data->tbps + i;
-+		tbp = data->tbps + i;
- 
--		if (tbp->cooling_device == cdev->np) {
--			int ret;
-+		for (j = 0; j < tbp->count; j++) {
-+			tcbp = tbp->tcbp + j;
- 
--			ret = thermal_zone_bind_cooling_device(thermal,
-+			if (tcbp->cooling_device == cdev->np) {
-+				int ret;
-+
-+				ret = thermal_zone_bind_cooling_device(thermal,
- 						tbp->trip_id, cdev,
--						tbp->max,
--						tbp->min,
-+						tcbp->max,
-+						tcbp->min,
- 						tbp->usage);
--			if (ret)
--				return ret;
-+				if (ret)
-+					return ret;
-+			}
- 		}
+diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+index 56a0fed30c0a..8f61df23948a 100644
+--- a/kernel/sched/topology.c
++++ b/kernel/sched/topology.c
+@@ -1322,20 +1322,30 @@ static void init_numa_topology_type(void)
  	}
+ }
  
-@@ -221,22 +238,28 @@ static int of_thermal_unbind(struct thermal_zone_device *thermal,
- 			     struct thermal_cooling_device *cdev)
++#ifndef arch_supports_identity_node
++static inline int arch_supports_identity_node(void)
++{
++	return 0;
++}
++#endif
++
+ void sched_init_numa(void)
  {
- 	struct __thermal_zone *data = thermal->devdata;
--	int i;
-+	struct __thermal_bind_params *tbp;
-+	struct __thermal_cooling_bind_param *tcbp;
-+	int i, j;
+ 	int next_distance, curr_distance = node_distance(0, 0);
+ 	struct sched_domain_topology_level *tl;
+-	int level = 0;
++	int numa_in_package, level = 0;
+ 	int i, j, k;
  
- 	if (!data || IS_ERR(data))
- 		return -ENODEV;
+ 	sched_domains_numa_distance = kzalloc(sizeof(int) * nr_node_ids, GFP_KERNEL);
+ 	if (!sched_domains_numa_distance)
+ 		return;
  
- 	/* find where to unbind */
- 	for (i = 0; i < data->num_tbps; i++) {
--		struct __thermal_bind_params *tbp = data->tbps + i;
-+		tbp = data->tbps + i;
-+
-+		for (j = 0; j < tbp->count; j++) {
-+			tcbp = tbp->tcbp + j;
- 
--		if (tbp->cooling_device == cdev->np) {
--			int ret;
-+			if (tcbp->cooling_device == cdev->np) {
-+				int ret;
- 
--			ret = thermal_zone_unbind_cooling_device(thermal,
--						tbp->trip_id, cdev);
--			if (ret)
--				return ret;
-+				ret = thermal_zone_unbind_cooling_device(thermal,
-+							tbp->trip_id, cdev);
-+				if (ret)
-+					return ret;
-+			}
- 		}
- 	}
- 
-@@ -652,8 +675,9 @@ static int thermal_of_populate_bind_params(struct device_node *np,
- 					   int ntrips)
- {
- 	struct of_phandle_args cooling_spec;
-+	struct __thermal_cooling_bind_param *__tcbp;
- 	struct device_node *trip;
--	int ret, i;
-+	int ret, i, count;
- 	u32 prop;
- 
- 	/* Default weight. Usage is optional */
-@@ -680,20 +704,44 @@ static int thermal_of_populate_bind_params(struct device_node *np,
- 		goto end;
- 	}
- 
--	ret = of_parse_phandle_with_args(np, "cooling-device", "#cooling-cells",
--					 0, &cooling_spec);
--	if (ret < 0) {
--		pr_err("missing cooling_device property\n");
-+	count = of_count_phandle_with_args(np, "cooling-device",
-+					   "#cooling-cells");
-+	if (!count) {
-+		pr_err("Add a cooling_device property with at least one device\n");
- 		goto end;
- 	}
--	__tbp->cooling_device = cooling_spec.np;
--	if (cooling_spec.args_count >= 2) { /* at least min and max */
--		__tbp->min = cooling_spec.args[0];
--		__tbp->max = cooling_spec.args[1];
--	} else {
--		pr_err("wrong reference to cooling device, missing limits\n");
-+
-+	__tcbp = kcalloc(count, sizeof(*__tcbp), GFP_KERNEL);
-+	if (!__tcbp)
-+		goto end;
-+
-+	for (i = 0; i < count; i++) {
-+		ret = of_parse_phandle_with_args(np, "cooling-device",
-+				"#cooling-cells", i, &cooling_spec);
-+		if (ret < 0) {
-+			pr_err("Invalid cooling-device entry\n");
-+			goto free_tcbp;
-+		}
-+
-+		__tcbp[i].cooling_device = cooling_spec.np;
-+
-+		if (cooling_spec.args_count >= 2) { /* at least min and max */
-+			__tcbp[i].min = cooling_spec.args[0];
-+			__tcbp[i].max = cooling_spec.args[1];
-+		} else {
-+			pr_err("wrong reference to cooling device, missing limits\n");
-+		}
- 	}
- 
-+	__tbp->tcbp= __tcbp;
-+	__tbp->count = count;
-+
-+	goto end;
-+
-+free_tcbp:
-+	for (i = i - 1; i >= 0; i--)
-+		of_node_put(__tcbp[i].cooling_device);
-+	kfree(__tcbp);
- end:
- 	of_node_put(trip);
- 
-@@ -900,8 +948,16 @@ __init *thermal_of_build_thermal_zone(struct device_node *np)
- 	return tz;
- 
- free_tbps:
--	for (i = i - 1; i >= 0; i--)
--		of_node_put(tz->tbps[i].cooling_device);
-+	for (i = i - 1; i >= 0; i--) {
-+		struct __thermal_bind_params *tbp = tz->tbps + i;
-+		int j;
-+
-+		for (j = 0; j < tbp->count; j++)
-+			of_node_put(tbp->tcbp[j].cooling_device);
-+
-+		kfree(tbp->tcbp);
-+	}
-+
- 	kfree(tz->tbps);
- free_trips:
- 	for (i = 0; i < tz->ntrips; i++)
-@@ -917,10 +973,18 @@ __init *thermal_of_build_thermal_zone(struct device_node *np)
- 
- static inline void of_thermal_free_zone(struct __thermal_zone *tz)
- {
--	int i;
-+	struct __thermal_bind_params *tbp;
-+	int i, j;
-+
-+	for (i = 0; i < tz->num_tbps; i++) {
-+		tbp = tz->tbps + i;
-+
-+		for (j = 0; j < tbp->count; j++)
-+			of_node_put(tbp->tcbp[j].cooling_device);
-+
-+		kfree(tbp->tcbp);
+-	/* Includes NUMA identity node at level 0. */
+-	sched_domains_numa_distance[level++] = curr_distance;
+-	sched_domains_numa_levels = level;
++	numa_in_package = arch_supports_identity_node();
++	if (numa_in_package) {
++		/* Includes NUMA identity node at level 0. */
++		sched_domains_numa_distance[level++] = curr_distance;
++		sched_domains_numa_levels = level;
 +	}
  
--	for (i = 0; i < tz->num_tbps; i++)
--		of_node_put(tz->tbps[i].cooling_device);
- 	kfree(tz->tbps);
- 	for (i = 0; i < tz->ntrips; i++)
- 		of_node_put(tz->trips[i].np);
+ 	/*
+ 	 * O(nr_nodes^2) deduplicating selection sort -- in order to find the
+@@ -1445,19 +1455,23 @@ void sched_init_numa(void)
+ 	for (i = 0; sched_domain_topology[i].mask; i++)
+ 		tl[i] = sched_domain_topology[i];
+ 
++	j  = 0;
+ 	/*
+ 	 * Add the NUMA identity distance, aka single NODE.
+ 	 */
+-	tl[i++] = (struct sched_domain_topology_level){
+-		.mask = sd_numa_mask,
+-		.numa_level = 0,
+-		SD_INIT_NAME(NODE)
+-	};
++	if (numa_in_package) {
++		tl[i++] = (struct sched_domain_topology_level){
++			.mask = sd_numa_mask,
++			.numa_level = 0,
++			SD_INIT_NAME(NODE)
++		};
++		j++;
++	}
+ 
+ 	/*
+ 	 * .. and append 'j' levels of NUMA goodness.
+ 	 */
+-	for (j = 1; j < level; i++, j++) {
++	for (; j < level; i++, j++) {
+ 		tl[i] = (struct sched_domain_topology_level){
+ 			.mask = sd_numa_mask,
+ 			.sd_flags = cpu_numa_flags,
 -- 
-2.18.0.rc1.242.g61856ae69a2c
+2.12.3
 
