@@ -2,105 +2,114 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EF9AC46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 16:21:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE299C46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 16:21:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6101921A28
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 16:21:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6101921A28
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 6BA2721A28
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 16:21:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="q7QtVpAE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BA2721A28
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728124AbeHHSl6 (ORCPT
+        id S1728238AbeHHSmA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 14:41:58 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52898 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727062AbeHHSl6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 14:41:58 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 02E1B402316D;
-        Wed,  8 Aug 2018 16:21:33 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B4E091C73B;
-        Wed,  8 Aug 2018 16:21:32 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id w78GLWpm002695;
-        Wed, 8 Aug 2018 12:21:32 -0400
-Received: from localhost (mpatocka@localhost)
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id w78GLVoR002682;
-        Wed, 8 Aug 2018 12:21:31 -0400
-X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
-Date:   Wed, 8 Aug 2018 12:21:31 -0400 (EDT)
-From:   Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To:     Catalin Marinas <catalin.marinas@arm.com>
-cc:     David Laight <David.Laight@ACULAB.COM>,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        Joao Pinto <Joao.Pinto@synopsys.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
+        Wed, 8 Aug 2018 14:42:00 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:33252 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727062AbeHHSl7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 14:41:59 -0400
+Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0A25557;
+        Wed,  8 Aug 2018 18:21:32 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1533745293;
+        bh=/3myg5xUrmSFzG9a/oPesvPjvFr3ieIotKsfToqE6xw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=q7QtVpAEIw96gKYk348XdEpXNEbTPGk3qI4MtJ2iRYLEqU0cFgrMcj38H0x45ricN
+         zlExzU5a97xF6rVAhbZRmtpYJ+S/cZxjp+kwtTgyumvZ9Yow2KO2EktDg0RNGigNJk
+         5g1UB5Ke3xmpUV4jqJby8S6tSLoezPdtzZw1+aDk=
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Alan Stern <stern@rowland.harvard.edu>
+Cc:     Keiichi Watanabe <keiichiw@chromium.org>,
+        Tomasz Figa <tfiga@chromium.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Matt Sealey <neko@bakuhatsu.net>,
-        linux-pci <linux-pci@vger.kernel.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Subject: Re: framebuffer corruption due to overlapping stp instructions on
- arm64
-In-Reply-To: <20180808145017.GE24736@iMac.local>
-Message-ID: <alpine.LRH.2.02.1808081215120.31259@file01.intranet.prod.int.rdu2.redhat.com>
-References: <CAKv+Gu8DeuksZhk1g3q_msSKV_hSY_2e1uzVten9-oGO3j9Sqg@mail.gmail.com> <20180803094129.GB17798@arm.com> <alpine.LRH.2.02.1808031235410.31584@file01.intranet.prod.int.rdu2.redhat.com> <CAKv+Gu-aNFh1fsr_05SEwDp99n3pLrguP7=tEcFQPNY53=K7Fw@mail.gmail.com>
- <alpine.LRH.2.02.1808031424140.14030@file01.intranet.prod.int.rdu2.redhat.com> <CAHCPf3s-+Qf=WBZz1KpisDMG3520jCUh8PLAO3PHa4jdt8kCTw@mail.gmail.com> <20180808121641.GB24736@iMac.local> <b1de49af14d941979977af07dc81e1c2@AcuMS.aculab.com>
- <alpine.LRH.2.02.1808080939180.3325@file01.intranet.prod.int.rdu2.redhat.com> <19c70d2a0b224db78f72dd316ad006b8@AcuMS.aculab.com> <20180808145017.GE24736@iMac.local>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        kieran.bingham@ideasonboard.com,
+        Douglas Anderson <dianders@chromium.org>,
+        ezequiel@collabora.com, matwey@sai.msu.ru
+Subject: Re: [RFC PATCH v1] media: uvcvideo: Cache URB header data before processing
+Date:   Wed, 08 Aug 2018 19:22:16 +0300
+Message-ID: <1959555.Z0pJAWgXVZ@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <Pine.LNX.4.44L0.1808081015110.1466-100000@iolanthe.rowland.org>
+References: <Pine.LNX.4.44L0.1808081015110.1466-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Wed, 08 Aug 2018 16:21:33 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Wed, 08 Aug 2018 16:21:33 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mpatocka@redhat.com' RCPT:''
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello,
 
-
-On Wed, 8 Aug 2018, Catalin Marinas wrote:
-
-> On Wed, Aug 08, 2018 at 02:26:11PM +0000, David Laight wrote:
-> > From: Mikulas Patocka
-> > > Sent: 08 August 2018 14:47
-> > ...
-> > > The problem on ARM is that I see data corruption when the overlapping
-> > > unaligned writes are done just by a single core.
+On Wednesday, 8 August 2018 17:20:21 EEST Alan Stern wrote:
+> On Wed, 8 Aug 2018, Keiichi Watanabe wrote:
+> > Hi Laurent, Kieran, Tomasz,
 > > 
-> > Is this a sequence of unaligned writes (that shouldn't modify the
-> > same physical locations) or an aligned write followed by an
-> > unaligned one that updates part of the earlier write.
-> > (Or the opposite order?)
+> > Thank you for reviews and suggestions.
+> > I want to do additional measurements for improving the performance.
+> > 
+> > Let me clarify my understanding:
+> > Currently, if the platform doesn't support coherent-DMA (e.g. ARM),
+> > urb_buffer is allocated by usb_alloc_coherent with
+> > URB_NO_TRANSFER_DMA_MAP flag instead of using kmalloc.
 > 
-> In the memcpy() case, there can be a sequence of unaligned writes but
-> they would not modify the same byte (so no overlapping address at the
-> byte level).
+> Not exactly.  You are mixing up allocation with mapping.  The speed of
+> the allocation doesn't matter; all that matters is whether the memory
+> is cached and when it gets mapped/unmapped.
+> 
+> > This is because we want to avoid frequent DMA mappings, which are
+> > generally expensive. However, memories allocated in this way are not
+> > cached.
+> > 
+> > So, we wonder if using usb_alloc_coherent is really fast.
+> > In other words, we want to know which is better:
+> > "No DMA mapping/Uncached memory" v.s. "Frequent DMA mapping/Cached
+> > memory".
 
-They do modify the same byte, but with the same value. Suppose that you 
-want to copy a piece of data that is between 8 and 16 bytes long. You can 
-do this:
+The second option should also be split in two:
 
-add src_end, src, len
-add dst_end, dst, len
-ldr x0, [src]
-ldr x1, [src_end - 8]
-str x0, [dst]
-str x1, [dst_end - 8]
+- cached memory with DMA mapping/unmapping around each transfer
+- cached memory with DMA mapping/unmapping at allocation/free time, and DMA 
+sync around each transfer
 
-The ARM64 memcpy uses this trick heavily in order to reduce branching, and 
-this is what makes the PCIe controller choke.
+The second option should in theory lead to at least slightly better 
+performances, but tests with the pwc driver have reported contradictory 
+results. I'd like to know whether that's also the case with the uvcvideo 
+driver, and if so, why.
 
-Mikulas
+> There is no need to wonder.  "Frequent DMA mapping/Cached memory" is
+> always faster than "No DMA mapping/Uncached memory".
+
+Is it really, doesn't it depend on the CPU access pattern ?
+
+> The only issue is that on some platform (such as x86) but not others,
+> there is a third option: "No DMA mapping/Cached memory".  On platforms
+> which support it, this is the fastest option.
+
+-- 
+Regards,
+
+Laurent Pinchart
+
+
+
