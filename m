@@ -2,55 +2,55 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A4FCC4646D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:46:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 273B3C4646D
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:46:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0863F21718
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:46:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0863F21718
+	by mail.kernel.org (Postfix) with ESMTP id D73E421718
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:46:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D73E421718
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728226AbeHHRFC (ORCPT
+        id S1728158AbeHHRFC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 8 Aug 2018 13:05:02 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58932 "EHLO
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:50718 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728012AbeHHRFB (ORCPT
+        by vger.kernel.org with ESMTP id S1728029AbeHHRFB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 8 Aug 2018 13:05:01 -0400
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w78EiPbi065988
-        for <linux-kernel@vger.kernel.org>; Wed, 8 Aug 2018 10:45:02 -0400
-Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2kr1evkd4b-1
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w78EikNo099787
+        for <linux-kernel@vger.kernel.org>; Wed, 8 Aug 2018 10:45:03 -0400
+Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2kqyb81286-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
         for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 10:45:02 -0400
 Received: from localhost
-        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <akrowiak@linux.vnet.ibm.com>;
-        Wed, 8 Aug 2018 10:45:00 -0400
-Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
-        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Wed, 8 Aug 2018 10:45:01 -0400
+Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
+        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 8 Aug 2018 10:44:57 -0400
+        Wed, 8 Aug 2018 10:44:58 -0400
 Received: from b01ledav001.gho.pok.ibm.com (b01ledav001.gho.pok.ibm.com [9.57.199.106])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w78EitTp5439804
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w78EiuRi66584780
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 8 Aug 2018 14:44:55 GMT
+        Wed, 8 Aug 2018 14:44:56 GMT
 Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4CEDD28058;
+        by IMSVA (Postfix) with ESMTP id 7E8A728059;
+        Wed,  8 Aug 2018 10:43:44 -0400 (EDT)
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 61EA92805C;
         Wed,  8 Aug 2018 10:43:43 -0400 (EDT)
-Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3A2F528059;
-        Wed,  8 Aug 2018 10:43:42 -0400 (EDT)
 Received: from localhost.localdomain (unknown [9.85.187.56])
         by b01ledav001.gho.pok.ibm.com (Postfix) with ESMTPS;
-        Wed,  8 Aug 2018 10:43:42 -0400 (EDT)
+        Wed,  8 Aug 2018 10:43:43 -0400 (EDT)
 From:   Tony Krowiak <akrowiak@linux.vnet.ibm.com>
 To:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
         kvm@vger.kernel.org
@@ -65,26 +65,26 @@ Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
         fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
         akrowiak@linux.vnet.ibm.com, frankja@linux.ibm.com,
         Tony Krowiak <akrowiak@linux.ibm.com>
-Subject: [PATCH v8 13/22] s390: vfio-ap: sysfs interface to view matrix mdev matrix
-Date:   Wed,  8 Aug 2018 10:44:23 -0400
+Subject: [PATCH v8 14/22] KVM: s390: interfaces to clear CRYCB masks
+Date:   Wed,  8 Aug 2018 10:44:24 -0400
 X-Mailer: git-send-email 1.7.1
 In-Reply-To: <1533739472-7172-1-git-send-email-akrowiak@linux.vnet.ibm.com>
 References: <1533739472-7172-1-git-send-email-akrowiak@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18080814-0040-0000-0000-0000045B73F1
+x-cbid: 18080814-0060-0000-0000-0000029A75C7
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00009507; HX=3.00000242; KW=3.00000007;
  PH=3.00000004; SC=3.00000266; SDB=6.01070983; UDB=6.00551366; IPR=6.00850514;
- MB=3.00022589; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-08 14:44:59
+ MB=3.00022589; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-08 14:45:01
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18080814-0041-0000-0000-0000086275D9
-Message-Id: <1533739472-7172-14-git-send-email-akrowiak@linux.vnet.ibm.com>
+x-cbparentid: 18080814-0061-0000-0000-000046196FF5
+Message-Id: <1533739472-7172-15-git-send-email-akrowiak@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-08_05:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ mlxlogscore=936 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1807170000 definitions=main-1808080153
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -93,132 +93,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Tony Krowiak <akrowiak@linux.ibm.com>
 
-Provides a sysfs interface to view the AP matrix configured for the
-mediated matrix device.
-
-The relevant sysfs structures are:
-
-/sys/devices/virtual/misc/vfio_ap/
-...... [mdev_supported_types]
-......... [vfio_ap-passthrough]
-............ [devices]
-...............[$uuid]
-.................. matrix
-
-To view the matrix configured for the mediated matrix device,
-print the matrix file:
-
-	cat matrix
-
-Below are examples of the output from the above command:
-
-Example 1: Adapters and domains assigned
-	Assignments:
-		Adapters 5 and 6
-		Domains 4 and 71 (0x47)
-
-	Output
-		05.0004
-		05.0047
-		06.0004
-	06.0047
-
-Examples 2: Only adapters assigned
-	Assignments:
-		Adapters 5 and 6
-
-	Output:
-		05.
-		06.
-
-Examples 3: Only domains assigned
-	Assignments:
-		Domains 4 and 71 (0x47)
-
-	Output:
-		.0004
-		.0047
+Introduces two new KVM interface to clear the APM, AQM and ADM masks in
+the guest's CRYCB.  The VCPUs are taken out of SIE to ensure the VCPUs do
+not get out of sync.
 
 Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
-Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
+Acked-by: Halil Pasic <pasic@linux.ibm.com>
 Tested-by: Michael Mueller <mimu@linux.ibm.com>
 Tested-by: Farhan Ali <alifm@linux.ibm.com>
 Tested-by: Pierre Morel <pmorel@linux.ibm.com>
 Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
 ---
- drivers/s390/crypto/vfio_ap_ops.c |   52 +++++++++++++++++++++++++++++++++++++
- 1 files changed, 52 insertions(+), 0 deletions(-)
+ arch/s390/include/asm/kvm_host.h |    3 +++
+ arch/s390/kvm/kvm-s390.c         |   15 +++++++++++++++
+ 2 files changed, 18 insertions(+), 0 deletions(-)
 
-diff --git a/drivers/s390/crypto/vfio_ap_ops.c b/drivers/s390/crypto/vfio_ap_ops.c
-index a48676a..61a25d4 100644
---- a/drivers/s390/crypto/vfio_ap_ops.c
-+++ b/drivers/s390/crypto/vfio_ap_ops.c
-@@ -552,6 +552,57 @@ static ssize_t control_domains_show(struct device *dev,
+diff --git a/arch/s390/include/asm/kvm_host.h b/arch/s390/include/asm/kvm_host.h
+index 0c13f61..d7e19e1 100644
+--- a/arch/s390/include/asm/kvm_host.h
++++ b/arch/s390/include/asm/kvm_host.h
+@@ -258,6 +258,7 @@ struct kvm_s390_sie_block {
+ 	__u64	tecmc;			/* 0x00e8 */
+ 	__u8	reservedf0[12];		/* 0x00f0 */
+ #define CRYCB_FORMAT_MASK 0x00000003
++#define CRYCB_FORMAT0 0x00000000
+ #define CRYCB_FORMAT1 0x00000001
+ #define CRYCB_FORMAT2 0x00000003
+ 	__u32	crycbd;			/* 0x00fc */
+@@ -862,6 +863,8 @@ void kvm_arch_async_page_not_present(struct kvm_vcpu *vcpu,
+ void kvm_arch_async_page_present(struct kvm_vcpu *vcpu,
+ 				 struct kvm_async_pf *work);
+ 
++void kvm_arch_crypto_clear_masks(struct kvm *kvm);
++
+ extern int sie64a(struct kvm_s390_sie_block *, u64 *);
+ extern char sie_exit;
+ 
+diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
+index f96a443..0d03249 100644
+--- a/arch/s390/kvm/kvm-s390.c
++++ b/arch/s390/kvm/kvm-s390.c
+@@ -1919,6 +1919,21 @@ static void kvm_s390_set_crycb_format(struct kvm *kvm)
+ 		kvm->arch.crypto.crycbd |= CRYCB_FORMAT1;
  }
- DEVICE_ATTR_RO(control_domains);
  
-+static ssize_t matrix_show(struct device *dev, struct device_attribute *attr,
-+			   char *buf)
++void kvm_arch_crypto_clear_masks(struct kvm *kvm)
 +{
-+	struct mdev_device *mdev = mdev_from_dev(dev);
-+	struct ap_matrix_mdev *matrix_mdev = mdev_get_drvdata(mdev);
-+	char *bufpos = buf;
-+	unsigned long apid;
-+	unsigned long apqi;
-+	unsigned long apid1;
-+	unsigned long apqi1;
-+	unsigned long napm_bits = matrix_mdev->matrix.apm_max + 1;
-+	unsigned long naqm_bits = matrix_mdev->matrix.aqm_max + 1;
-+	int nchars = 0;
-+	int n;
++	mutex_lock(&kvm->lock);
++	kvm_s390_vcpu_block_all(kvm);
 +
-+	apid1 = find_first_bit_inv(matrix_mdev->matrix.apm, napm_bits);
-+	apqi1 = find_first_bit_inv(matrix_mdev->matrix.aqm, naqm_bits);
++	memset(&kvm->arch.crypto.crycb->apcb0, 0,
++	       sizeof(kvm->arch.crypto.crycb->apcb0));
++	memset(&kvm->arch.crypto.crycb->apcb1, 0,
++	       sizeof(kvm->arch.crypto.crycb->apcb1));
 +
-+	mutex_lock(&matrix_dev.lock);
-+
-+	if ((apid1 < napm_bits) && (apqi1 < naqm_bits)) {
-+		for_each_set_bit_inv(apid, matrix_mdev->matrix.apm, napm_bits) {
-+			for_each_set_bit_inv(apqi, matrix_mdev->matrix.aqm,
-+					     naqm_bits) {
-+				n = sprintf(bufpos, "%02lx.%04lx\n", apid,
-+					    apqi);
-+				bufpos += n;
-+				nchars += n;
-+			}
-+		}
-+	} else if (apid1 < napm_bits) {
-+		for_each_set_bit_inv(apid, matrix_mdev->matrix.apm, napm_bits) {
-+			n = sprintf(bufpos, "%02lx.\n", apid);
-+			bufpos += n;
-+			nchars += n;
-+		}
-+	} else if (apqi1 < naqm_bits) {
-+		for_each_set_bit_inv(apqi, matrix_mdev->matrix.aqm, naqm_bits) {
-+			n = sprintf(bufpos, ".%04lx\n", apqi);
-+			bufpos += n;
-+			nchars += n;
-+		}
-+	}
-+
-+	mutex_unlock(&matrix_dev.lock);
-+
-+	return nchars;
++	kvm_s390_vcpu_unblock_all(kvm);
++	mutex_unlock(&kvm->lock);
 +}
-+DEVICE_ATTR_RO(matrix);
++EXPORT_SYMBOL(kvm_arch_crypto_clear_masks);
 +
-+
- static struct attribute *vfio_ap_mdev_attrs[] = {
- 	&dev_attr_assign_adapter.attr,
- 	&dev_attr_unassign_adapter.attr,
-@@ -560,6 +611,7 @@ static ssize_t control_domains_show(struct device *dev,
- 	&dev_attr_assign_control_domain.attr,
- 	&dev_attr_unassign_control_domain.attr,
- 	&dev_attr_control_domains.attr,
-+	&dev_attr_matrix.attr,
- 	NULL,
- };
- 
+ static u64 kvm_s390_get_initial_cpuid(void)
+ {
+ 	struct cpuid cpuid;
 -- 
 1.7.1
 
