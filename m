@@ -2,229 +2,116 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF0B4C46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 02:46:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B98DC46464
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 02:52:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8EF3D216F6
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 02:46:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ROb0WP+q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EF3D216F6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 51EF0216F6
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 02:52:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51EF0216F6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726953AbeHHFEQ (ORCPT
+        id S1726756AbeHHFJj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 01:04:16 -0400
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:42653 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726697AbeHHFEP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 01:04:15 -0400
-Received: by mail-yw1-f66.google.com with SMTP id y203-v6so507741ywd.9
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 19:46:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=GnT4SNAIMYcDVD4ag0hqUdD5QqsAPSIRI5+RpszpjfQ=;
-        b=ROb0WP+qEw8maCE6tsp9wI7tBxBAk/RIAJwIokliXwHBKBt7rhH3W4drbrvwzDaj+L
-         cQ+xsutBtr6MWfs09dUFBkZ2BxMrIVtwT+iai6KOBN37vwA6ZnUtsQCVhV0HxtnZxE0J
-         190WigJrbLEKrUpEDTQhaflYm1ilaQF0Kx0Do=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=GnT4SNAIMYcDVD4ag0hqUdD5QqsAPSIRI5+RpszpjfQ=;
-        b=B87AZilevB0kqjqInlsEaL/VTMCRWXsQucQLoWENsk/BQIViKeCbmTsHuH6REqBdy9
-         nb9b68ie7S05GU2J8Hec1ya06Hk+V6CiTYkrgGIQX8+7w/kx0YLoUmB8/QVus6/NsnXK
-         QS6zcASYmW/0KDvUZbPyy5Vybmkt039E+lQIuwejhS+fpVSZ0WM8AYYhwe4kFKzlucNh
-         vZ1nJxNldtlQap6p6vuWFhyv7O31U5QK1dGO5Ub0k4yNohMHVzydQvQjBc9eFcjTELxl
-         HeTSgoH0y+3azznOTmBEw9L2W4S3XNzVYGcv11cQP8P+Z4EXb+sixpx/ditF8LvVLbHP
-         9KaA==
-X-Gm-Message-State: AOUpUlELtq6Rn3PTrFygWa6T8m7pK2NbaJnkhmuCEbAKetyxffZWEY1Z
-        EfjGY2a4yQhNkd4iAcYW9ygJZRuMzvs=
-X-Google-Smtp-Source: AA+uWPwPNa6sZkXPchCtwmBzWNnGTlA0w0iRPLbXqUlfGDYn5T0MkOVtVfd6/k2pOMauUtg6bzU2Cw==
-X-Received: by 2002:a0d:fc41:: with SMTP id m62-v6mr514777ywf.210.1533696411651;
-        Tue, 07 Aug 2018 19:46:51 -0700 (PDT)
-Received: from mail-yw1-f52.google.com (mail-yw1-f52.google.com. [209.85.161.52])
-        by smtp.gmail.com with ESMTPSA id f82-v6sm3711118ywf.58.2018.08.07.19.46.50
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 07 Aug 2018 19:46:50 -0700 (PDT)
-Received: by mail-yw1-f52.google.com with SMTP id z143-v6so510342ywa.7
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 19:46:50 -0700 (PDT)
-X-Received: by 2002:a25:4b01:: with SMTP id y1-v6mr476013yba.344.1533696409570;
- Tue, 07 Aug 2018 19:46:49 -0700 (PDT)
+        Wed, 8 Aug 2018 01:09:39 -0400
+Received: from mga03.intel.com ([134.134.136.65]:15831 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726317AbeHHFJj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 01:09:39 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Aug 2018 19:52:15 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,456,1526367600"; 
+   d="scan'208";a="79454475"
+Received: from zhuyixin-mobl1.gar.corp.intel.com (HELO [10.226.38.39]) ([10.226.38.39])
+  by fmsmga001.fm.intel.com with ESMTP; 07 Aug 2018 19:51:52 -0700
+Subject: Re: [PATCH v2 02/18] clk: intel: Add clock driver for Intel MIPS SoCs
+To:     Rob Herring <robh+dt@kernel.org>,
+        Songjun Wu <songjun.wu@linux.intel.com>
+Cc:     hua.ma@linux.intel.com, chuanhua.lei@linux.intel.com,
+        qi-ming.wu@intel.com, Linux-MIPS <linux-mips@linux-mips.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+References: <20180803030237.3366-1-songjun.wu@linux.intel.com>
+ <20180803030237.3366-3-songjun.wu@linux.intel.com>
+ <CAL_JsqK5pFNKyAhTTmNpaSnKa_beY3kS8FGtYim8oTgw6oO9Rw@mail.gmail.com>
+From:   yixin zhu <yixin.zhu@linux.intel.com>
+Message-ID: <57bea045-628b-2dad-2492-dadd9947cbe9@linux.intel.com>
+Date:   Wed, 8 Aug 2018 10:51:50 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-References: <20180724140621.59624-1-tfiga@chromium.org> <20180724140621.59624-2-tfiga@chromium.org>
-In-Reply-To: <20180724140621.59624-2-tfiga@chromium.org>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Wed, 8 Aug 2018 11:46:38 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5Ays_3EEDNDrNn2JFzVA7f7+hOzxFNBdYYKMw+uHZvqog@mail.gmail.com>
-Message-ID: <CAAFQd5Ays_3EEDNDrNn2JFzVA7f7+hOzxFNBdYYKMw+uHZvqog@mail.gmail.com>
-Subject: Re: [PATCH 1/2] media: docs-rst: Document memory-to-memory video
- decoder interface
-To:     Maxime Jourdan <maxi.jourdan@wanadoo.fr>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Pawel Osciak <posciak@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>, kamil@wypas.org,
-        a.hajda@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>,
-        jtp.park@samsung.com, Philipp Zabel <p.zabel@pengutronix.de>,
-        =?UTF-8?B?VGlmZmFueSBMaW4gKOael+aFp+ePiik=?= 
-        <tiffany.lin@mediatek.com>,
-        =?UTF-8?B?QW5kcmV3LUNUIENoZW4gKOmZs+aZuui/qik=?= 
-        <andrew-ct.chen@mediatek.com>, todor.tomov@linaro.org,
-        nicolas@ndufresne.ca,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        dave.stevenson@raspberrypi.org,
-        Ezequiel Garcia <ezequiel@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAL_JsqK5pFNKyAhTTmNpaSnKa_beY3kS8FGtYim8oTgw6oO9Rw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Maxime,
 
-On Tue, Aug 7, 2018 at 5:32 AM Maxime Jourdan <maxi.jourdan@wanadoo.fr> wro=
-te:
->
-> Hi Tomasz,
->
-> Sorry for sending this email only to you, I subscribed to linux-media
-> after you posted this and I'm not sure how to respond to everybody.
->
 
-No worries. Let me reply with other recipients added back. Thanks for
-your comments.
-
-> I'm currently developing a V4L2 M2M decoder driver for Amlogic SoCs so
-> my comments are somewhat biased towards it
-> (https://github.com/Elyotna/linux)
+On 8/6/2018 11:19 PM, Rob Herring wrote:
+> On Thu, Aug 2, 2018 at 9:03 PM Songjun Wu <songjun.wu@linux.intel.com> wrote:
+>> From: Yixin Zhu <yixin.zhu@linux.intel.com>
+>>
+>> This driver provides PLL clock registration as well as various clock
+>> branches, e.g. MUX clock, gate clock, divider clock and so on.
+>>
+>> PLLs that provide clock to DDR, CPU and peripherals are shown below:
+>>
+>>                   +---------+
+>>              |--->| LCPLL3 0|--PCIe clk-->
+>>     XO       |    +---------+
+>> +-----------|
+>>              |    +---------+
+>>              |    |        3|--PAE clk-->
+>>              |--->| PLL0B  2|--GSWIP clk-->
+>>              |    |        1|--DDR clk-->DDR PHY clk-->
+>>              |    |        0|--CPU1 clk--+   +-----+
+>>              |    +---------+            |--->0    |
+>>              |                               | MUX |--CPU clk-->
+>>              |    +---------+            |--->1    |
+>>              |    |        0|--CPU0 clk--+   +-----+
+>>              |--->| PLLOA  1|--SSX4 clk-->
+>>                   |        2|--NGI clk-->
+>>                   |        3|--CBM clk-->
+>>                   +---------+
+>>
+>> Signed-off-by: Yixin Zhu <yixin.zhu@linux.intel.com>
+>> Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
+>> ---
+>>
+>> Changes in v2:
+>> - Rewrite clock driver, add platform clock description details in
+>>    clock driver.
+>>
+>>   drivers/clk/Kconfig                          |   1 +
+>>   drivers/clk/Makefile                         |   3 +
+>>   drivers/clk/intel/Kconfig                    |  20 ++
+>>   drivers/clk/intel/Makefile                   |   7 +
+>>   drivers/clk/intel/clk-cgu-pll.c              | 166 ++++++++++
+>>   drivers/clk/intel/clk-cgu-pll.h              |  34 ++
+>>   drivers/clk/intel/clk-cgu.c                  | 470 +++++++++++++++++++++++++++
+>>   drivers/clk/intel/clk-cgu.h                  | 259 +++++++++++++++
+>>   drivers/clk/intel/clk-grx500.c               | 168 ++++++++++
+>>   include/dt-bindings/clock/intel,grx500-clk.h |  69 ++++
+> This belongs with the clk binding patch.
 >
-> > +Seek
-> > +=3D=3D=3D=3D
-> > +
-> > +Seek is controlled by the ``OUTPUT`` queue, as it is the source of
-> > +bitstream data. ``CAPTURE`` queue remains unchanged/unaffected.
-> > +
-> > +1. Stop the ``OUTPUT`` queue to begin the seek sequence via
-> > +   :c:func:`VIDIOC_STREAMOFF`.
-> > +
-> > +   * **Required fields:**
-> > +
-> > +     ``type``
-> > +         a ``V4L2_BUF_TYPE_*`` enum appropriate for ``OUTPUT``
-> > +
-> > +   * The driver must drop all the pending ``OUTPUT`` buffers and they =
-are
-> > +     treated as returned to the client (following standard semantics).
-> > +
-> > +2. Restart the ``OUTPUT`` queue via :c:func:`VIDIOC_STREAMON`
-> > +
-> > +   * **Required fields:**
-> > +
-> > +     ``type``
-> > +         a ``V4L2_BUF_TYPE_*`` enum appropriate for ``OUTPUT``
-> > +
-> > +   * The driver must be put in a state after seek and be ready to
-> > +     accept new source bitstream buffers.
-> > +
-> > +3. Start queuing buffers to ``OUTPUT`` queue containing stream data af=
-ter
-> > +   the seek until a suitable resume point is found.
-> > +
-> > +   .. note::
-> > +
-> > +      There is no requirement to begin queuing stream starting exactly=
- from
-> > +      a resume point (e.g. SPS or a keyframe). The driver must handle =
-any
-> > +      data queued and must keep processing the queued buffers until it
-> > +      finds a suitable resume point. While looking for a resume point,=
- the
-> > +      driver processes ``OUTPUT`` buffers and returns them to the clie=
-nt
-> > +      without producing any decoded frames.
-> > +
-> > +      For hardware known to be mishandling seeks to a non-resume point=
-,
-> > +      e.g. by returning corrupted decoded frames, the driver must be a=
-ble
-> > +      to handle such seeks without a crash or any fatal decode error.
->
-> This is unfortunately my case, apart from parsing the bitstream
-> manually - which is a no-no -, there is no way to know when I'll be
-> writing in an IDR frame to the HW bitstream parser. I think it would
-> be much preferable that the client starts sending in an IDR frame for
-> sure.
-
-Most of the hardware, which have upstream drivers, deal with this
-correctly and there is existing user space that relies on this, so we
-cannot simply add such requirement. However, when sending your driver
-upstream, feel free to include a patch that adds a read-only control
-that tells the user space that it needs to do seeks to resume points.
-Obviously this will work only with user space aware of this
-requirement, but I don't think we can do anything better here.
+> Rob
+Thanks for review.
+Will move it to clock binding patch.
 
 >
-> > +4. After a resume point is found, the driver will start returning
-> > +   ``CAPTURE`` buffers with decoded frames.
-> > +
-> > +   * There is no precise specification for ``CAPTURE`` queue of when i=
-t
-> > +     will start producing buffers containing decoded data from buffers
-> > +     queued after the seek, as it operates independently
-> > +     from ``OUTPUT`` queue.
-> > +
-> > +     * The driver is allowed to and may return a number of remaining
-> > +       ``CAPTURE`` buffers containing decoded frames from before the s=
-eek
-> > +       after the seek sequence (STREAMOFF-STREAMON) is performed.
-> > +
-> > +     * The driver is also allowed to and may not return all decoded fr=
-ames
-> > +       queued but not decode before the seek sequence was initiated. F=
-or
-> > +       example, given an ``OUTPUT`` queue sequence: QBUF(A), QBUF(B),
-> > +       STREAMOFF(OUT), STREAMON(OUT), QBUF(G), QBUF(H), any of the
-> > +       following results on the ``CAPTURE`` queue is allowed: {A=E2=80=
-=99, B=E2=80=99, G=E2=80=99,
-> > +       H=E2=80=99}, {A=E2=80=99, G=E2=80=99, H=E2=80=99}, {G=E2=80=99,=
- H=E2=80=99}.
-> > +
-> > +   .. note::
-> > +
-> > +      To achieve instantaneous seek, the client may restart streaming =
-on
-> > +      ``CAPTURE`` queue to discard decoded, but not yet dequeued buffe=
-rs.
->
-> Overall, I think Drain followed by V4L2_DEC_CMD_START is a more
-> applicable scenario for seeking.
-> Heck, simply starting to queue buffers at the seek - starting with an
-> IDR - without doing any kind of streamon/off or cmd_start(stop) will
-> do the trick.
 
-Why do you think so?
-
-For a seek, as expected by a typical device user, the result should be
-discarding anything already queued and just start decoding new frames
-as soon as possible.
-
-Actually, this section doesn't describe any specific sequence, just
-possible ways to do a seek using existing primitives.
-
-Best regards,
-Tomasz
