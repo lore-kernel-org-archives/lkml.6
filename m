@@ -6,51 +6,51 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDA1EC46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:46:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B431EC4646D
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:46:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A627D21718
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:46:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A627D21718
+	by mail.kernel.org (Postfix) with ESMTP id 6655621737
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:46:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6655621737
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727771AbeHHREy (ORCPT
+        id S1729185AbeHHRGz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 13:04:54 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:39082 "EHLO
+        Wed, 8 Aug 2018 13:06:55 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60980 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727141AbeHHREx (ORCPT
+        by vger.kernel.org with ESMTP id S1727367AbeHHREy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 13:04:53 -0400
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w78Ei89M021229
-        for <linux-kernel@vger.kernel.org>; Wed, 8 Aug 2018 10:44:53 -0400
-Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2kr1gfk8y6-1
+        Wed, 8 Aug 2018 13:04:54 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w78EiZYR099231
+        for <linux-kernel@vger.kernel.org>; Wed, 8 Aug 2018 10:44:55 -0400
+Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2kqym6qu0g-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 10:44:53 -0400
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 10:44:55 -0400
 Received: from localhost
-        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <akrowiak@linux.vnet.ibm.com>;
-        Wed, 8 Aug 2018 10:44:52 -0400
-Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
-        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Wed, 8 Aug 2018 10:44:54 -0400
+Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
+        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 8 Aug 2018 10:44:48 -0400
+        Wed, 8 Aug 2018 10:44:51 -0400
 Received: from b01ledav001.gho.pok.ibm.com (b01ledav001.gho.pok.ibm.com [9.57.199.106])
-        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w78Eikld11600216
+        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w78EinUM328296
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 8 Aug 2018 14:44:46 GMT
+        Wed, 8 Aug 2018 14:44:49 GMT
 Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0A57D28058;
-        Wed,  8 Aug 2018 10:43:35 -0400 (EDT)
+        by IMSVA (Postfix) with ESMTP id 7088E28058;
+        Wed,  8 Aug 2018 10:43:37 -0400 (EDT)
 Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DFD2728059;
-        Wed,  8 Aug 2018 10:43:33 -0400 (EDT)
+        by IMSVA (Postfix) with ESMTP id 5458428059;
+        Wed,  8 Aug 2018 10:43:36 -0400 (EDT)
 Received: from localhost.localdomain (unknown [9.85.187.56])
         by b01ledav001.gho.pok.ibm.com (Postfix) with ESMTPS;
-        Wed,  8 Aug 2018 10:43:33 -0400 (EDT)
+        Wed,  8 Aug 2018 10:43:36 -0400 (EDT)
 From:   Tony Krowiak <akrowiak@linux.vnet.ibm.com>
 To:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
         kvm@vger.kernel.org
@@ -64,93 +64,301 @@ Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
         pasic@linux.vnet.ibm.com, berrange@redhat.com,
         fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
         akrowiak@linux.vnet.ibm.com, frankja@linux.ibm.com,
-        David Hildenbrand <david@redhat.com>
-Subject: [PATCH v8 06/22] KVM: s390: introduce and use KVM_REQ_VSIE_RESTART
-Date:   Wed,  8 Aug 2018 10:44:16 -0400
+        Tony Krowiak <akrowiak@linux.ibm.com>
+Subject: [PATCH v8 08/22] s390: vfio-ap: base implementation of VFIO AP device driver
+Date:   Wed,  8 Aug 2018 10:44:18 -0400
 X-Mailer: git-send-email 1.7.1
 In-Reply-To: <1533739472-7172-1-git-send-email-akrowiak@linux.vnet.ibm.com>
 References: <1533739472-7172-1-git-send-email-akrowiak@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18080814-0064-0000-0000-000003377476
+x-cbid: 18080814-0040-0000-0000-0000045B73F0
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00009507; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01070983; UDB=6.00551365; IPR=6.00850513;
- MB=3.00022589; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-08 14:44:51
+ PH=3.00000004; SC=3.00000266; SDB=6.01070983; UDB=6.00551366; IPR=6.00850514;
+ MB=3.00022589; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-08 14:44:53
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18080814-0065-0000-0000-00003A3B66BD
-Message-Id: <1533739472-7172-7-git-send-email-akrowiak@linux.vnet.ibm.com>
+x-cbparentid: 18080814-0041-0000-0000-0000086275D8
+Message-Id: <1533739472-7172-9-git-send-email-akrowiak@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-08_05:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=797 adultscore=0 classifier=spam adjust=0 reason=mlx
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1807170000 definitions=main-1808080153
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Hildenbrand <david@redhat.com>
+From: Tony Krowiak <akrowiak@linux.ibm.com>
 
-When we change the crycb (or execution controls), we also have to make sure
-that the vSIE shadow datastructures properly consider the changed
-values before rerunning the vSIE. We can achieve that by simply using a
-VCPU request now.
+Introduces a new AP device driver. This device driver
+is built on the VFIO mediated device framework. The framework
+provides sysfs interfaces that facilitate passthrough
+access by guests to devices installed on the linux host.
 
-This has to be a synchronous request (== handled before entering the
-(v)SIE again).
+The VFIO AP device driver will serve two purposes:
 
-The request will make sure that the vSIE handler is left, and that the
-request will be processed (NOP), therefore forcing a reload of all
-vSIE data (including rebuilding the crycb) when re-entering the vSIE
-interception handler the next time.
+1. Provide the interfaces to reserve AP devices for exclusive
+   use by KVM guests. This is accomplished by unbinding the
+   devices to be reserved for guest usage from the zcrypt
+   device driver and binding them to the VFIO AP device driver.
 
-Signed-off-by: David Hildenbrand <david@redhat.com>
-Reviewed-by: Pierre Morel<pmorel@linux.ibm.com>
+2. Implements the functions, callbacks and sysfs attribute
+   interfaces required to create one or more VFIO mediated
+   devices each of which will be used to configure the AP
+   matrix for a guest and serve as a file descriptor
+   for facilitating communication between QEMU and the
+   VFIO AP device driver.
+
+When the VFIO AP device driver is initialized:
+
+* It registers with the AP bus for control of type 10 (CEX4
+  and newer) AP queue devices. This limitation was imposed
+  due to:
+
+  1. A desire to keep the code as simple as possible;
+
+  2. Some older models are no longer supported by the kernel
+     and others are getting close to end of service.
+
+  The probe and remove callbacks will be provided to support
+  the binding/unbinding of AP queue devices to/from the VFIO
+  AP device driver.
+
+* Creates a virtual misc device, /sys/devices/virtual/misc/vfio_ap,
+  device to serve as the parent of the mediated devices created, one
+  for each guest, and to hold the APQNs of the AP devices bound to
+  the VFIO AP device driver.
+
+Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
+Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
+Tested-by: Michael Mueller <mimu@linux.ibm.com>
+Tested-by: Farhan Ali <alifm@linux.ibm.com>
+Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
 ---
- arch/s390/include/asm/kvm_host.h |    1 +
- arch/s390/kvm/kvm-s390.c         |    7 ++++++-
- 2 files changed, 7 insertions(+), 1 deletions(-)
+ MAINTAINERS                           |   10 +++
+ arch/s390/Kconfig                     |   11 +++
+ drivers/s390/crypto/Makefile          |    4 +
+ drivers/s390/crypto/vfio_ap_drv.c     |  115 +++++++++++++++++++++++++++++++++
+ drivers/s390/crypto/vfio_ap_private.h |   30 +++++++++
+ 5 files changed, 170 insertions(+), 0 deletions(-)
+ create mode 100644 drivers/s390/crypto/vfio_ap_drv.c
+ create mode 100644 drivers/s390/crypto/vfio_ap_private.h
 
-diff --git a/arch/s390/include/asm/kvm_host.h b/arch/s390/include/asm/kvm_host.h
-index a2188e3..af39561 100644
---- a/arch/s390/include/asm/kvm_host.h
-+++ b/arch/s390/include/asm/kvm_host.h
-@@ -44,6 +44,7 @@
- #define KVM_REQ_ICPT_OPEREXC	KVM_ARCH_REQ(2)
- #define KVM_REQ_START_MIGRATION KVM_ARCH_REQ(3)
- #define KVM_REQ_STOP_MIGRATION  KVM_ARCH_REQ(4)
-+#define KVM_REQ_VSIE_RESTART	KVM_ARCH_REQ(5)
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 7cebd5b..0e0792a 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -12418,6 +12418,16 @@ W:	http://www.ibm.com/developerworks/linux/linux390/
+ S:	Supported
+ F:	drivers/s390/crypto/
  
- #define SIGP_CTRL_C		0x80
- #define SIGP_CTRL_SCN_MASK	0x3f
-diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
-index 6df2d12..19f4f44 100644
---- a/arch/s390/kvm/kvm-s390.c
-+++ b/arch/s390/kvm/kvm-s390.c
-@@ -798,8 +798,11 @@ void kvm_s390_vcpu_crypto_reset_all(struct kvm *kvm)
++S390 VFIO AP DRIVER
++M:	Tony Krowiak <akrowiak@linux.ibm.com>
++M:	Pierre Morel <pmorel@linux.ibm.com>
++M:	Halil Pasic <pasic@linux.ibm.com>
++L:	linux-s390@vger.kernel.org
++W:	http://www.ibm.com/developerworks/linux/linux390/
++S:	Supported
++F:	drivers/s390/crypto/vfio_ap_drv.c
++F:	drivers/s390/crypto/vfio_ap_private.h
++
+ S390 ZFCP DRIVER
+ M:	Steffen Maier <maier@linux.ibm.com>
+ M:	Benjamin Block <bblock@linux.ibm.com>
+diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
+index 8a1863d..35e9640 100644
+--- a/arch/s390/Kconfig
++++ b/arch/s390/Kconfig
+@@ -779,6 +779,17 @@ config VFIO_CCW
+ 	  To compile this driver as a module, choose M here: the
+ 	  module will be called vfio_ccw.
  
- 	kvm_s390_vcpu_block_all(kvm);
++config VFIO_AP
++	def_tristate n
++	prompt "VFIO support for AP devices"
++	depends on ZCRYPT && VFIO_MDEV_DEVICE && KVM
++	help
++		This driver grants access to Adjunct Processor (AP) devices
++		via the VFIO mediated device interface.
++
++		To compile this driver as a module, choose M here: the module
++		will be called vfio_ap.
++
+ endmenu
  
--	kvm_for_each_vcpu(i, vcpu, kvm)
-+	kvm_for_each_vcpu(i, vcpu, kvm) {
- 		kvm_s390_vcpu_crypto_setup(vcpu);
-+		/* recreate the shadow crycb by leaving the VSIE handler */
-+		kvm_s390_sync_request(KVM_REQ_VSIE_RESTART, vcpu);
+ menu "Dump support"
+diff --git a/drivers/s390/crypto/Makefile b/drivers/s390/crypto/Makefile
+index b59af54..48e466e 100644
+--- a/drivers/s390/crypto/Makefile
++++ b/drivers/s390/crypto/Makefile
+@@ -15,3 +15,7 @@ obj-$(CONFIG_ZCRYPT) += zcrypt_pcixcc.o zcrypt_cex2a.o zcrypt_cex4.o
+ # pkey kernel module
+ pkey-objs := pkey_api.o
+ obj-$(CONFIG_PKEY) += pkey.o
++
++# adjunct processor matrix
++vfio_ap-objs := vfio_ap_drv.o
++obj-$(CONFIG_VFIO_AP) += vfio_ap.o
+diff --git a/drivers/s390/crypto/vfio_ap_drv.c b/drivers/s390/crypto/vfio_ap_drv.c
+new file mode 100644
+index 0000000..d7e39ad
+--- /dev/null
++++ b/drivers/s390/crypto/vfio_ap_drv.c
+@@ -0,0 +1,115 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * VFIO based AP device driver
++ *
++ * Copyright IBM Corp. 2018
++ *
++ * Author(s): Tony Krowiak <akrowiak@linux.ibm.com>
++ *	      Halil Pasic <pasic@linux.ibm.com>
++ */
++
++#include <linux/module.h>
++#include <linux/mod_devicetable.h>
++#include <linux/slab.h>
++#include <linux/string.h>
++#include "vfio_ap_private.h"
++
++#define VFIO_AP_ROOT_NAME "vfio_ap"
++#define VFIO_AP_DEV_TYPE_NAME "ap_matrix"
++#define VFIO_AP_DEV_NAME "vfio_ap"
++
++MODULE_AUTHOR("IBM Corporation");
++MODULE_DESCRIPTION("VFIO AP device driver, Copyright IBM Corp. 2018");
++MODULE_LICENSE("GPL v2");
++
++static struct ap_driver vfio_ap_drv;
++
++static struct device_type vfio_ap_dev_type = {
++	.name = VFIO_AP_DEV_TYPE_NAME,
++};
++
++struct ap_matrix_dev matrix_dev = {
++	/*
++	 * We may add some fops later to implement a more program friendly
++	 * management interface for vfio_ap_mdev devices.
++	 */
++	.misc_dev = {
++		MISC_DYNAMIC_MINOR,
++		VFIO_AP_DEV_NAME,
 +	}
- 
- 	kvm_s390_vcpu_unblock_all(kvm);
- }
-@@ -3090,6 +3093,8 @@ static int kvm_s390_handle_requests(struct kvm_vcpu *vcpu)
- 
- 	/* nothing to do, just clear the request */
- 	kvm_clear_request(KVM_REQ_UNHALT, vcpu);
-+	/* we left the vsie handler, nothing to do, just clear the request */
-+	kvm_clear_request(KVM_REQ_VSIE_RESTART, vcpu);
- 
- 	return 0;
- }
++};
++
++/* Only type 10 adapters (CEX4 and later) are supported
++ * by the AP matrix device driver
++ */
++static struct ap_device_id ap_queue_ids[] = {
++	{ .dev_type = AP_DEVICE_TYPE_CEX4,
++	  .match_flags = AP_DEVICE_ID_MATCH_QUEUE_TYPE },
++	{ .dev_type = AP_DEVICE_TYPE_CEX5,
++	  .match_flags = AP_DEVICE_ID_MATCH_QUEUE_TYPE },
++	{ .dev_type = AP_DEVICE_TYPE_CEX6,
++	  .match_flags = AP_DEVICE_ID_MATCH_QUEUE_TYPE },
++	{ /* end of sibling */ },
++};
++
++MODULE_DEVICE_TABLE(vfio_ap, ap_queue_ids);
++
++static int vfio_ap_queue_dev_probe(struct ap_device *apdev)
++{
++	return 0;
++}
++
++static void vfio_ap_queue_dev_remove(struct ap_device *apdev)
++{
++	/* Nothing to do yet */
++}
++
++static int vfio_ap_matrix_dev_create(void)
++{
++	int ret;
++
++	ret = misc_register(&matrix_dev.misc_dev);
++	if (ret)
++		return ret;
++
++	to_device(&matrix_dev)->type = &vfio_ap_dev_type;
++	to_device(&matrix_dev)->driver = &vfio_ap_drv.driver;
++
++	return ret;
++}
++
++static void vfio_ap_matrix_dev_destroy(void)
++{
++	misc_deregister(&matrix_dev.misc_dev);
++}
++
++int __init vfio_ap_init(void)
++{
++	int ret;
++
++	ret = vfio_ap_matrix_dev_create();
++	if (ret)
++		return ret;
++
++	memset(&vfio_ap_drv, 0, sizeof(vfio_ap_drv));
++	vfio_ap_drv.probe = vfio_ap_queue_dev_probe;
++	vfio_ap_drv.remove = vfio_ap_queue_dev_remove;
++	vfio_ap_drv.ids = ap_queue_ids;
++
++	ret = ap_driver_register(&vfio_ap_drv, THIS_MODULE, VFIO_AP_DRV_NAME);
++	if (ret) {
++		vfio_ap_matrix_dev_destroy();
++		return ret;
++	}
++
++	return 0;
++}
++
++void __exit vfio_ap_exit(void)
++{
++	ap_driver_unregister(&vfio_ap_drv);
++	vfio_ap_matrix_dev_destroy();
++}
++
++module_init(vfio_ap_init);
++module_exit(vfio_ap_exit);
+diff --git a/drivers/s390/crypto/vfio_ap_private.h b/drivers/s390/crypto/vfio_ap_private.h
+new file mode 100644
+index 0000000..02c878c
+--- /dev/null
++++ b/drivers/s390/crypto/vfio_ap_private.h
+@@ -0,0 +1,30 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Private data and functions for adjunct processor VFIO matrix driver.
++ *
++ * Copyright IBM Corp. 2018
++ */
++
++#ifndef _VFIO_AP_PRIVATE_H_
++#define _VFIO_AP_PRIVATE_H_
++
++#include <linux/types.h>
++#include <linux/miscdevice.h>
++
++#include "ap_bus.h"
++
++#define VFIO_AP_MODULE_NAME "vfio_ap"
++#define VFIO_AP_DRV_NAME "vfio_ap"
++
++struct ap_matrix_dev {
++	struct miscdevice misc_dev;
++};
++
++extern struct ap_matrix_dev matrix_dev;
++
++static inline struct device *to_device(struct ap_matrix_dev *matrix_dev)
++{
++	return matrix_dev->misc_dev.this_device;
++}
++
++#endif /* _VFIO_AP_PRIVATE_H_ */
 -- 
 1.7.1
 
