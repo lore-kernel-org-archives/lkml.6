@@ -2,167 +2,229 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D18DFC46464
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 02:46:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF0B4C46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 02:46:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89741216FA
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 02:46:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8EF3D216F6
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 02:46:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="jLbcfAF7";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ihbnSr6q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89741216FA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ROb0WP+q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EF3D216F6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726875AbeHHFDb (ORCPT
+        id S1726953AbeHHFEQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 01:03:31 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:54722 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726371AbeHHFDb (ORCPT
+        Wed, 8 Aug 2018 01:04:16 -0400
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:42653 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726697AbeHHFEP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 01:03:31 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 1F55060B19; Wed,  8 Aug 2018 02:46:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533696368;
-        bh=wHiwpsXVXS0l93Zck5Brv0rHIz3ERN+sz3uCIuUlTYc=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=jLbcfAF7zIOYRKmSN7upO2zEdNkl+36PvVycoRE/PSzmJN17psJ+bsHWn2bbCNQl3
-         79wA+cz/ekA8PzqKVM/U5N6B1K1ajWbrTF3pgIQFeqYLA7570qwmpJxVDQ8KlNz02b
-         z4BXyxEOprS3jYJZDWkxkJJJKKikKVoJ3B3eCqws=
-Received: from [10.4.34.47] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: tdas@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 9CCE860AD8;
-        Wed,  8 Aug 2018 02:46:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533696367;
-        bh=wHiwpsXVXS0l93Zck5Brv0rHIz3ERN+sz3uCIuUlTYc=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=ihbnSr6q/dNO3wmXTlS+mq3GJsxJQvia6HBO2/Aodqs8FKg9vkGAsw2ChAPvNYfkJ
-         vb0IW7Hwp3vHNheh3tMh8dYU2Ov4lykLrjPIKKewXUAbVJV9UIxNbeM3Lv/NMVD4BX
-         9wG28nkUFbEQ/w5X/r09fQAYhR6Unh0c7ad+bhrc=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9CCE860AD8
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-Subject: Re: [PATCH v7 1/2] dt-bindings: cpufreq: Introduce QCOM CPUFREQ
- Firmware bindings
-To:     skannan@codeaurora.org, Sudeep Holla <sudeep.holla@arm.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Amit Nischal <anischal@codeaurora.org>,
-        devicetree@vger.kernel.org, robh@kernel.org,
-        amit.kucheria@linaro.org, evgreen@google.com
-References: <1532428970-18122-1-git-send-email-tdas@codeaurora.org>
- <1532428970-18122-2-git-send-email-tdas@codeaurora.org>
- <153334001055.10763.8002698033760154254@swboyd.mtv.corp.google.com>
- <b362d9f769fde3ce1a2dcd89f20eb476@codeaurora.org>
- <20180807111237.GA1588@e107155-lin>
- <74d27daca2bb03716fc84f9c57118af0@codeaurora.org>
-From:   Taniya Das <tdas@codeaurora.org>
-Message-ID: <1aa8b42d-721f-1f5b-b1be-a6b4f220d023@codeaurora.org>
-Date:   Wed, 8 Aug 2018 08:16:01 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 8 Aug 2018 01:04:15 -0400
+Received: by mail-yw1-f66.google.com with SMTP id y203-v6so507741ywd.9
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 19:46:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=GnT4SNAIMYcDVD4ag0hqUdD5QqsAPSIRI5+RpszpjfQ=;
+        b=ROb0WP+qEw8maCE6tsp9wI7tBxBAk/RIAJwIokliXwHBKBt7rhH3W4drbrvwzDaj+L
+         cQ+xsutBtr6MWfs09dUFBkZ2BxMrIVtwT+iai6KOBN37vwA6ZnUtsQCVhV0HxtnZxE0J
+         190WigJrbLEKrUpEDTQhaflYm1ilaQF0Kx0Do=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=GnT4SNAIMYcDVD4ag0hqUdD5QqsAPSIRI5+RpszpjfQ=;
+        b=B87AZilevB0kqjqInlsEaL/VTMCRWXsQucQLoWENsk/BQIViKeCbmTsHuH6REqBdy9
+         nb9b68ie7S05GU2J8Hec1ya06Hk+V6CiTYkrgGIQX8+7w/kx0YLoUmB8/QVus6/NsnXK
+         QS6zcASYmW/0KDvUZbPyy5Vybmkt039E+lQIuwejhS+fpVSZ0WM8AYYhwe4kFKzlucNh
+         vZ1nJxNldtlQap6p6vuWFhyv7O31U5QK1dGO5Ub0k4yNohMHVzydQvQjBc9eFcjTELxl
+         HeTSgoH0y+3azznOTmBEw9L2W4S3XNzVYGcv11cQP8P+Z4EXb+sixpx/ditF8LvVLbHP
+         9KaA==
+X-Gm-Message-State: AOUpUlELtq6Rn3PTrFygWa6T8m7pK2NbaJnkhmuCEbAKetyxffZWEY1Z
+        EfjGY2a4yQhNkd4iAcYW9ygJZRuMzvs=
+X-Google-Smtp-Source: AA+uWPwPNa6sZkXPchCtwmBzWNnGTlA0w0iRPLbXqUlfGDYn5T0MkOVtVfd6/k2pOMauUtg6bzU2Cw==
+X-Received: by 2002:a0d:fc41:: with SMTP id m62-v6mr514777ywf.210.1533696411651;
+        Tue, 07 Aug 2018 19:46:51 -0700 (PDT)
+Received: from mail-yw1-f52.google.com (mail-yw1-f52.google.com. [209.85.161.52])
+        by smtp.gmail.com with ESMTPSA id f82-v6sm3711118ywf.58.2018.08.07.19.46.50
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 07 Aug 2018 19:46:50 -0700 (PDT)
+Received: by mail-yw1-f52.google.com with SMTP id z143-v6so510342ywa.7
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 19:46:50 -0700 (PDT)
+X-Received: by 2002:a25:4b01:: with SMTP id y1-v6mr476013yba.344.1533696409570;
+ Tue, 07 Aug 2018 19:46:49 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <74d27daca2bb03716fc84f9c57118af0@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20180724140621.59624-1-tfiga@chromium.org> <20180724140621.59624-2-tfiga@chromium.org>
+In-Reply-To: <20180724140621.59624-2-tfiga@chromium.org>
+From:   Tomasz Figa <tfiga@chromium.org>
+Date:   Wed, 8 Aug 2018 11:46:38 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5Ays_3EEDNDrNn2JFzVA7f7+hOzxFNBdYYKMw+uHZvqog@mail.gmail.com>
+Message-ID: <CAAFQd5Ays_3EEDNDrNn2JFzVA7f7+hOzxFNBdYYKMw+uHZvqog@mail.gmail.com>
+Subject: Re: [PATCH 1/2] media: docs-rst: Document memory-to-memory video
+ decoder interface
+To:     Maxime Jourdan <maxi.jourdan@wanadoo.fr>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Pawel Osciak <posciak@chromium.org>,
+        Alexandre Courbot <acourbot@chromium.org>, kamil@wypas.org,
+        a.hajda@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>,
+        jtp.park@samsung.com, Philipp Zabel <p.zabel@pengutronix.de>,
+        =?UTF-8?B?VGlmZmFueSBMaW4gKOael+aFp+ePiik=?= 
+        <tiffany.lin@mediatek.com>,
+        =?UTF-8?B?QW5kcmV3LUNUIENoZW4gKOmZs+aZuui/qik=?= 
+        <andrew-ct.chen@mediatek.com>, todor.tomov@linaro.org,
+        nicolas@ndufresne.ca,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        dave.stevenson@raspberrypi.org,
+        Ezequiel Garcia <ezequiel@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Maxime,
 
+On Tue, Aug 7, 2018 at 5:32 AM Maxime Jourdan <maxi.jourdan@wanadoo.fr> wro=
+te:
+>
+> Hi Tomasz,
+>
+> Sorry for sending this email only to you, I subscribed to linux-media
+> after you posted this and I'm not sure how to respond to everybody.
+>
 
-On 8/8/2018 12:54 AM, skannan@codeaurora.org wrote:
-> On 2018-08-07 04:12, Sudeep Holla wrote:
->> On Mon, Aug 06, 2018 at 01:54:24PM -0700, skannan@codeaurora.org wrote:
->>> On 2018-08-03 16:46, Stephen Boyd wrote:
->>> >Quoting Taniya Das (2018-07-24 03:42:49)
->>> >>diff --git
->>> >>a/Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-hw.txt
->>> >>b/Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-hw.txt
->>> >>new file mode 100644
->>> >>index 0000000..22d4355
->>> >>--- /dev/null
->>> >>+++ b/Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-hw.txt
->>> >>@@ -0,0 +1,172 @@
->>> >[...]
->>> >>+
->>> >>+               CPU7: cpu@700 {
->>> >>+                       device_type = "cpu";
->>> >>+                       compatible = "qcom,kryo385";
->>> >>+                       reg = <0x0 0x700>;
->>> >>+                       enable-method = "psci";
->>> >>+                       next-level-cache = <&L2_700>;
->>> >>+                       qcom,freq-domain = <&freq_domain_table1>;
->>> >>+                       L2_700: l2-cache {
->>> >>+                               compatible = "cache";
->>> >>+                               next-level-cache = <&L3_0>;
->>> >>+                       };
->>> >>+               };
->>> >>+       };
->>> >>+
->>> >>+       qcom,cpufreq-hw {
->>> >>+               compatible = "qcom,cpufreq-hw";
->>> >>+
->>> >>+               clocks = <&rpmhcc RPMH_CXO_CLK>;
->>> >>+               clock-names = "xo";
->>> >>+
->>> >>+               #address-cells = <2>;
->>> >>+               #size-cells = <2>;
->>> >>+               ranges;
->>> >>+               freq_domain_table0: freq_table0 {
->>> >>+                       reg = <0 0x17d43000 0 0x1400>;
->>> >>+               };
->>> >>+
->>> >>+               freq_domain_table1: freq_table1 {
->>> >>+                       reg = <0 0x17d45800 0 0x1400>;
->>> >>+               };
->>> >
->>> >Sorry, this is just not proper DT design. The whole node should have a
->>> >reg property, and it should contain two (or three if we're handling the
->>> >L3 clk domain?) different offsets for the different power clusters. The
->>> >problem seems to still be that we don't have a way to map the CPUs to
->>> >the clk domains they're in provided by this hardware block. Making
->>> >subnodes is not the solution.
->>>
->>> The problem is mapping clock domains to logical CPUs that CPUfreq 
->>> uses. The
->>> physical CPU to logical CPU mapping can be changed by the kernel (even
->>> through DT if I'm not mistaken). So we need to have a way to tell in DT
->>> which physical CPUs are connected to which CPU freq clock domain.
->>>
->>
->> How about passing CPU freq clock domain id as along with phandle in
->> qcom,freq-domain ?
-> 
-> Now sure what you mean here. There's no such this as CPUfreq clock 
-> domain id. It has policies that are made up of logical CPU numbers. 
-> Logical CPU is not something that you can fix in DT.
-> 
-> -Saravana
+No worries. Let me reply with other recipients added back. Thanks for
+your comments.
 
-Sudeep,
+> I'm currently developing a V4L2 M2M decoder driver for Amlogic SoCs so
+> my comments are somewhat biased towards it
+> (https://github.com/Elyotna/linux)
+>
+> > +Seek
+> > +=3D=3D=3D=3D
+> > +
+> > +Seek is controlled by the ``OUTPUT`` queue, as it is the source of
+> > +bitstream data. ``CAPTURE`` queue remains unchanged/unaffected.
+> > +
+> > +1. Stop the ``OUTPUT`` queue to begin the seek sequence via
+> > +   :c:func:`VIDIOC_STREAMOFF`.
+> > +
+> > +   * **Required fields:**
+> > +
+> > +     ``type``
+> > +         a ``V4L2_BUF_TYPE_*`` enum appropriate for ``OUTPUT``
+> > +
+> > +   * The driver must drop all the pending ``OUTPUT`` buffers and they =
+are
+> > +     treated as returned to the client (following standard semantics).
+> > +
+> > +2. Restart the ``OUTPUT`` queue via :c:func:`VIDIOC_STREAMON`
+> > +
+> > +   * **Required fields:**
+> > +
+> > +     ``type``
+> > +         a ``V4L2_BUF_TYPE_*`` enum appropriate for ``OUTPUT``
+> > +
+> > +   * The driver must be put in a state after seek and be ready to
+> > +     accept new source bitstream buffers.
+> > +
+> > +3. Start queuing buffers to ``OUTPUT`` queue containing stream data af=
+ter
+> > +   the seek until a suitable resume point is found.
+> > +
+> > +   .. note::
+> > +
+> > +      There is no requirement to begin queuing stream starting exactly=
+ from
+> > +      a resume point (e.g. SPS or a keyframe). The driver must handle =
+any
+> > +      data queued and must keep processing the queued buffers until it
+> > +      finds a suitable resume point. While looking for a resume point,=
+ the
+> > +      driver processes ``OUTPUT`` buffers and returns them to the clie=
+nt
+> > +      without producing any decoded frames.
+> > +
+> > +      For hardware known to be mishandling seeks to a non-resume point=
+,
+> > +      e.g. by returning corrupted decoded frames, the driver must be a=
+ble
+> > +      to handle such seeks without a crash or any fatal decode error.
+>
+> This is unfortunately my case, apart from parsing the bitstream
+> manually - which is a no-no -, there is no way to know when I'll be
+> writing in an IDR frame to the HW bitstream parser. I think it would
+> be much preferable that the client starts sending in an IDR frame for
+> sure.
 
-Earlier the design was the freq_domain would take the CPU phandles
+Most of the hardware, which have upstream drivers, deal with this
+correctly and there is existing user space that relies on this, so we
+cannot simply add such requirement. However, when sending your driver
+upstream, feel free to include a patch that adds a read-only control
+that tells the user space that it needs to do seeks to resume points.
+Obviously this will work only with user space aware of this
+requirement, but I don't think we can do anything better here.
 
-freq_domain:
-   cpus = <&cpu0 &cpu1....>;
+>
+> > +4. After a resume point is found, the driver will start returning
+> > +   ``CAPTURE`` buffers with decoded frames.
+> > +
+> > +   * There is no precise specification for ``CAPTURE`` queue of when i=
+t
+> > +     will start producing buffers containing decoded data from buffers
+> > +     queued after the seek, as it operates independently
+> > +     from ``OUTPUT`` queue.
+> > +
+> > +     * The driver is allowed to and may return a number of remaining
+> > +       ``CAPTURE`` buffers containing decoded frames from before the s=
+eek
+> > +       after the seek sequence (STREAMOFF-STREAMON) is performed.
+> > +
+> > +     * The driver is also allowed to and may not return all decoded fr=
+ames
+> > +       queued but not decode before the seek sequence was initiated. F=
+or
+> > +       example, given an ``OUTPUT`` queue sequence: QBUF(A), QBUF(B),
+> > +       STREAMOFF(OUT), STREAMON(OUT), QBUF(G), QBUF(H), any of the
+> > +       following results on the ``CAPTURE`` queue is allowed: {A=E2=80=
+=99, B=E2=80=99, G=E2=80=99,
+> > +       H=E2=80=99}, {A=E2=80=99, G=E2=80=99, H=E2=80=99}, {G=E2=80=99,=
+ H=E2=80=99}.
+> > +
+> > +   .. note::
+> > +
+> > +      To achieve instantaneous seek, the client may restart streaming =
+on
+> > +      ``CAPTURE`` queue to discard decoded, but not yet dequeued buffe=
+rs.
+>
+> Overall, I think Drain followed by V4L2_DEC_CMD_START is a more
+> applicable scenario for seeking.
+> Heck, simply starting to queue buffers at the seek - starting with an
+> IDR - without doing any kind of streamon/off or cmd_start(stop) will
+> do the trick.
 
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
+Why do you think so?
 
---
+For a seek, as expected by a typical device user, the result should be
+discarding anything already queued and just start decoding new frames
+as soon as possible.
+
+Actually, this section doesn't describe any specific sequence, just
+possible ways to do a seek using existing primitives.
+
+Best regards,
+Tomasz
