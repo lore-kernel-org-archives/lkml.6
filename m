@@ -2,148 +2,134 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2964C46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:33:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA562C46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:34:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64D6B219E6
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:33:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64D6B219E6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 6FD5A219E6
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:34:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="Wb1RNV9O"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FD5A219E6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kapsi.fi
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727441AbeHHQxN (ORCPT
+        id S1727486AbeHHQyR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 12:53:13 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:35452 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726875AbeHHQxN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 12:53:13 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w78ESouk104146
-        for <linux-kernel@vger.kernel.org>; Wed, 8 Aug 2018 10:33:16 -0400
-Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2kr26r0j9j-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 10:33:15 -0400
-Received: from localhost
-        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Wed, 8 Aug 2018 10:33:15 -0400
-Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
-        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 8 Aug 2018 10:33:10 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w78EX9Y012517798
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 8 Aug 2018 14:33:09 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4F683B2064;
-        Wed,  8 Aug 2018 10:32:33 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2F53DB205F;
-        Wed,  8 Aug 2018 10:32:33 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Wed,  8 Aug 2018 10:32:33 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 287B516C0727; Wed,  8 Aug 2018 07:33:10 -0700 (PDT)
-Date:   Wed, 8 Aug 2018 07:33:10 -0700
-From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Joel Fernandes <joelaf@google.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Cc: Android Kernel" <kernel-team@android.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Byungchul Park <byungchul.park@lge.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Glexiner <tglx@linutronix.de>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>
-Subject: Re: [PATCH v12 3/3] tracing: Centralize preemptirq tracepoints and
- unify their usage
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20180807204820.50b83c6d@vmware.local.home>
- <CAJWu+oqBOEJicepLaUG=JpmtDTgxjRdMyJAgOEUkdk4NzX0esw@mail.gmail.com>
- <20180807215522.04114097@vmware.local.home>
- <CAJWu+opjqKgZj30PYpyvip=EtP8CuqaEy65++nuvj37QMT6GCw@mail.gmail.com>
- <20180807222856.3ede96e7@vmware.local.home>
- <CAJWu+oqcM_-rtuUe7hhMHyZ2UKZ5J4rBZO7UoHxxd2DAs=aHdA@mail.gmail.com>
- <CAJWu+oqPUuF4rFOQ8=G3+ZxXJxiiNRBYE8C=zZ93A8qA+muHEg@mail.gmail.com>
- <20180808084629.3290d1d6@gandalf.local.home>
- <20180808130302.GJ24813@linux.vnet.ibm.com>
- <20180808090724.41677176@gandalf.local.home>
+        Wed, 8 Aug 2018 12:54:17 -0400
+Received: from mail.kapsi.fi ([91.232.154.25]:46295 "EHLO mail.kapsi.fi"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726875AbeHHQyR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 12:54:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
+         s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+        MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=+myTo8sLqxqGwKs1eUQ4YR5kkQ05FSrsKFWFS6EVby4=; b=Wb1RNV9Ovaf4IG7x/9rFh3AE56
+        fJcqYm5JQHz0f2oe7t78HwpBybQrAJwClX+qldixnJwqRNYggUDYzY8gLiN2QjQa2eAA5szsFreg3
+        QYQETqWeNBRmukImyfSiA14NuQ3PRBwj+EpnbKH8gdGYYFsGGtMWGb2BRQw9NgJoCrWJeuJO9OMXl
+        tX125ZxuxHv9urXr9dthGH+PbytXwMtH4yIcYjs8KpYzh21g5NESeKrq53B9UmoyiZLBJmZtIWSVB
+        h46WC6N0/8frVLgX9dHKFGA4bgIj8Q8OpGivAx85r9KJO69zQi+c8/w2IOwe2D96PiFhhdyuAsLIi
+        xJTwzWiw==;
+Received: from dsl-hkibng22-54faa2-250.dhcp.inet.fi ([84.250.162.250])
+        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <cyndis@kapsi.fi>)
+        id 1fnPXQ-0006MO-Dp; Wed, 08 Aug 2018 17:34:12 +0300
+Subject: Re: [PATCH v3 3/8] mailbox: Add transmit done by blocking option
+To:     Jassi Brar <jassisinghbrar@gmail.com>
+Cc:     Mikko Perttunen <mperttunen@nvidia.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Devicetree List <devicetree@vger.kernel.org>,
+        linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org,
+        ", linux-arm-kernel"@lists.infradead.org,
+        ", linux-arm-kernel"@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        srv_heupstream <linux-mediatek@lists.infradead.org>,
+        srv_heupstream <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20180702114033.15654-1-mperttunen@nvidia.com>
+ <20180702114033.15654-4-mperttunen@nvidia.com>
+ <CABb+yY0_dKC_cYFwwb-aeRgrx=sjv=8VLP=C6DJEecFf=v+mkQ@mail.gmail.com>
+ <907bac36-0c54-8f38-0f5e-f59196d414c6@kapsi.fi>
+ <afc8a305-79ea-2194-0af0-919bbb8f675e@kapsi.fi>
+ <CABb+yY2mpNV186=M2anmZANgMOra4JM7ybyUT4yCxhqAG6-AZg@mail.gmail.com>
+From:   Mikko Perttunen <cyndis@kapsi.fi>
+Message-ID: <b5a91f9e-c3ff-371c-d355-4a5e8a147796@kapsi.fi>
+Date:   Wed, 8 Aug 2018 17:34:12 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180808090724.41677176@gandalf.local.home>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18080814-0072-0000-0000-0000038D73C8
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009507; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01070981; UDB=6.00551364; IPR=6.00850510;
- MB=3.00022589; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-08 14:33:13
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18080814-0073-0000-0000-00004902630E
-Message-Id: <20180808143310.GL24813@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-08_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=482 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808080150
+In-Reply-To: <CABb+yY2mpNV186=M2anmZANgMOra4JM7ybyUT4yCxhqAG6-AZg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 84.250.162.250
+X-SA-Exim-Mail-From: cyndis@kapsi.fi
+X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 08, 2018 at 09:07:24AM -0400, Steven Rostedt wrote:
-> On Wed, 8 Aug 2018 06:03:02 -0700
-> "Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
+
+
+On 08/08/2018 05:10 PM, Jassi Brar wrote:
+> On Wed, Aug 8, 2018 at 5:08 PM, Mikko Perttunen <cyndis@kapsi.fi> wrote:
+>>
+>>
+>> On 04.08.2018 13:45, Mikko Perttunen wrote:
+>>>
+>>> On 08/03/2018 03:54 PM, Jassi Brar wrote:
+>>>>
+>>>> On Mon, Jul 2, 2018 at 5:10 PM, Mikko Perttunen <mperttunen@nvidia.com>
+>>>> wrote:
+>>>>>
+>>>>> Add a new TXDONE option, TXDONE_BY_BLOCK. With this option, the
+>>>>> send_data function of the mailbox driver is expected to block until
+>>>>> the message has been sent. The new option is used with the Tegra
+>>>>> Combined UART driver to minimize unnecessary overhead when transmitting
+>>>>> data.
+>>>>>
+>>>> 1) TXDONE_BY_BLOCK flag :-
+>>>>           Have you tried setting the flag mbox_chan->mbox_client->tx_block
+>>>> ?
+>>>
+>>>
+>>> No - I suppose I should have done that. I'm a bit concerned about overhead
+>>> as send_data may be called thousands of times per second, so I tried to make
+>>> it as close as possible to the downstream driver that just pokes the mailbox
+>>> register directly.
+>>
+>>
+>> I tried using polling in the mailbox framework. Some printing is done from
+>> atomic context so it seems tx_block cannot be used -
+>> wait_for_completion_timeout understandably does not work in atomic context.
+>> I also tried without tx_block, in which case I got some horribly garbled
+>> output, but "Try increasing MBOX_TX_QUEUE_LEN" was readable there.
+>>
+>> Any opinions?
+>>
+> The problems arise because your hardware (SM) supports TXDONE_BY_POLL,
+> but your client drives it by TXDONE_BY_ACK because the older DB
+> channels are so.
 > 
-> >  What's wrong with a this_cpu_inc()? It's atomic for the CPU. Although
-> > > it wont be atomic for the capture of the idx. But I also don't see
-> > > interrupts being disabled, thus an NMI is no different than any
-> > > interrupt doing the same thing, right?  
-> > 
-> > On architectures without increment-memory instructions, if you take an NMI
-> > between the load from sp->sda->srcu_lock_count and the later store, you
-> > lose a count.  Note that both __srcu_read_lock() and __srcu_read_unlock()
-> > do increments of different locations, so you cannot rely on the usual
-> > "NMI fixes up before exit" semantics you get when incrementing and
-> > decrementing the same location.
+> Please populate SM channels as a separate controller than DB.
+> The DB controller, as is, run by ACK method.
+> The SM controller should be run by polling, i.e, set txdone_poll =
+> true and the poll period small enough. The virtual tty client driver
+> should be able to safely set tx_block from appropriate context.
 > 
-> And how is this handled in the interrupt case? Interrupts are not
-> disabled here.
 
-Actually, on most architectures interrupts are in fact disabled:
+Sorry, I should have clarified that I already split up the controllers. 
+The SM controller has txdone_poll = true. I didn't adjust txpoll_period 
+so I guess it's zero.
 
-#define this_cpu_generic_to_op(pcp, val, op)				\
-do {									\
-	unsigned long __flags;						\
-	raw_local_irq_save(__flags);					\
-	raw_cpu_generic_to_op(pcp, val, op);				\
-	raw_local_irq_restore(__flags);					\
-} while (0)
-
-NMIs, not so much.
-
-> I would also argue that architectures without increment-memory
-> instructions shouldn't have NMIs ;-)
-
-I would also argue a lot of things, but objective reality does not take my
-opinions into account all that often.  Which might be a good thing.  ;-)
-
-							Thanx, Paul
-
+Mikko
