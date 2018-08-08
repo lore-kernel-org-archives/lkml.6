@@ -6,148 +6,311 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0B8EC46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 06:00:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 502CBC46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 06:01:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B31521719
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 06:00:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E23EB21718
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 06:01:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="SlSpT9Or"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B31521719
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="OXBzA1Ep"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E23EB21718
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726945AbeHHIS5 (ORCPT
+        id S1727069AbeHHIT2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 04:18:57 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:46615 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726721AbeHHIS5 (ORCPT
+        Wed, 8 Aug 2018 04:19:28 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:34085 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726643AbeHHIT2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 04:18:57 -0400
-Received: by mail-pg1-f196.google.com with SMTP id f14-v6so545116pgv.13
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 23:00:53 -0700 (PDT)
+        Wed, 8 Aug 2018 04:19:28 -0400
+Received: by mail-oi0-f66.google.com with SMTP id 13-v6so1837473ois.1
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 23:01:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:content-transfer-encoding:to:from:in-reply-to:cc
-         :references:message-id:user-agent:subject:date;
-        bh=HHKUgbQr+sh7nNguZKCtu9miLX8X8JVfjwsfiUG37ko=;
-        b=SlSpT9Orgieat3P/qBlNG+7Xoj1ZedER+EN/BlbijJ4/MeH1NSsy8RiHNU0RUb8IGk
-         0DUZQ9zgpI/lW4nKB1qjYC9uJWw8Ov9CYP0T797LOY+YHsRREEwd203pK3IEMJllkGvr
-         jp8Pj9t1y8egMDTlmwP/h4ON3txtWhF0zQ7yw=
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=xf2/T00uNO4vMsHG1mxAdBklJzVT4xW0puts5XgG7vI=;
+        b=OXBzA1EpzGJc/jxJaYyAMuYMSbVA4ZxH7yoNw56dWU7ufnvnA4HYSjLPb+jDx+gRkF
+         pIPaRTEXpzCJ9ud2Afj7SDU8kAcLrgwNbT29CapYPz8IaMrUjZnhf1wgcrHsWnUBS3ji
+         Um+rP/mniH6m1VglGowvJ4o5JvWChJdnCdbB4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:content-transfer-encoding:to:from
-         :in-reply-to:cc:references:message-id:user-agent:subject:date;
-        bh=HHKUgbQr+sh7nNguZKCtu9miLX8X8JVfjwsfiUG37ko=;
-        b=SEstAXizYRh7pLxPLl55kqHwQDKALvbzoRTpuCd5YLbXZpB/oERewg6xZeGRbC6Tm8
-         DnemAbdXLsD1oko0dd5JcvkDfRKooI3FmqeacapnQEHSYlPikg10I6HqE8Jzq39yzBkP
-         r5PSi5PGefQvf1NfX+CnL9D6wK22rglNS/tOOremAS3SIZxj9ugccmcYiSV8xfaxqOvG
-         FwxEyXy91meRLoLCWMnTT86RzXq4AfW0mYRxGOi7RQXNNPymWf370tUrEwbs7NScdDpp
-         jlIKefEC7T22SJFXvfiGpJeEfCOuAWDoxDyvMR/7Axx3muw4Ql5Qv5TUjddagP4aO3Hy
-         AUMQ==
-X-Gm-Message-State: AOUpUlGDCAVrNuwSScJJiTijovsJ9yUvZ9ifXKggp9GVYuhAvmTTgqsM
-        co47IG74+GXGMOR5S2p2zGEFuA==
-X-Google-Smtp-Source: AA+uWPx2PwU6sc8FaxAYknF0Pc6Ym2451jUH1iBROMng1Ucz4uEYpLlqnF7Ged1p/osuVQQOySVy/g==
-X-Received: by 2002:a63:4d06:: with SMTP id a6-v6mr1175899pgb.408.1533708052485;
-        Tue, 07 Aug 2018 23:00:52 -0700 (PDT)
-Received: from localhost ([2620:15c:202:201:7e28:b9f3:6afc:5326])
-        by smtp.gmail.com with ESMTPSA id p17-v6sm3031059pgv.26.2018.08.07.23.00.51
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 07 Aug 2018 23:00:51 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=xf2/T00uNO4vMsHG1mxAdBklJzVT4xW0puts5XgG7vI=;
+        b=t+N6DDgqhUzF8fBlHHmD/hZoozSdCyhCB7rR37ylWZoOSiSHsJwllNv9p/RFh2uvj4
+         3SzH9IVXLmbtnb0yxOlnowHM8/ts1CH5sE978rnR5m4CMVZGbUrUmvdzodK4FVNvvSNq
+         Hwna0Oo4LY4vFXBjDSRm93m/vtxpQOWjzFJQw7vVX9x7oB10Dj2iw6FWRcVa3f+9XcJ9
+         60micNRvUmL+4kQSroGqjHJqPSPGmLus5HJndux25wfCzElDH1QW8mYG7BoVlYUnYsO9
+         sZ+pb6dbh2RFRGrk/0gYPVItmOnMS1z2ZkNdvweXfS4rOmw33S1dI+gDXFAaEvjCaJ/A
+         ZfVg==
+X-Gm-Message-State: AOUpUlFg9v8pUsRZjn26OCh6ftWa0d9psiwui2dIGf96dMmb4ITH0WRK
+        0sJWWlWSB9c0tXUtN48f8E6/W0e+281DR+9wfTI3ZA==
+X-Google-Smtp-Source: AA+uWPxKFzW8GVeHsGS2Az/TGica4RdzI1MI8hCmyuDVrjxkJVs+0MkI+DdLOEqOOZB8Li/diLvcdPIX4LB3gLN8AuA=
+X-Received: by 2002:aca:a94c:: with SMTP id s73-v6mr1465236oie.68.1533708083525;
+ Tue, 07 Aug 2018 23:01:23 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Brian Norris <briannorris@chromium.org>
-From:   Stephen Boyd <swboyd@chromium.org>
-In-Reply-To: <20180807214102.GA218251@ban.mtv.corp.google.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org,
-        Wei-Ning Huang <wnhuang@chromium.org>,
-        Julius Werner <jwerner@chromium.org>,
-        Samuel Holland <samuel@sholland.org>,
-        Thierry Escande <thierry.escande@collabora.com>
-References: <20180806171047.227835-1-swboyd@chromium.org>
- <20180807214102.GA218251@ban.mtv.corp.google.com>
-Message-ID: <153370805099.220756.5343483987100252246@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH] firmware: coreboot: Let OF core populate platform device
-Date:   Tue, 07 Aug 2018 23:00:50 -0700
+Received: by 2002:a9d:237a:0:0:0:0:0 with HTTP; Tue, 7 Aug 2018 23:01:22 -0700 (PDT)
+In-Reply-To: <c18fd41f-831c-ab74-57e5-d4151f4b47cc@gmail.com>
+References: <1dc5d394324b2bf1ffe229b8e42691fab6d749e0.1533556992.git.baolin.wang@linaro.org>
+ <c18fd41f-831c-ab74-57e5-d4151f4b47cc@gmail.com>
+From:   Baolin Wang <baolin.wang@linaro.org>
+Date:   Wed, 8 Aug 2018 14:01:22 +0800
+Message-ID: <CAMz4kuL8ufCqbqgegozJt3P7JON0AzA9KrbvcvOB15McA5S=zA@mail.gmail.com>
+Subject: Re: [PATCH v5 1/2] leds: core: Introduce LED pattern trigger
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc:     Pavel Machek <pavel@ucw.cz>, rteysseyre@gmail.com,
+        Mark Brown <broonie@kernel.org>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Brian Norris (2018-08-07 14:41:04)
-> On Mon, Aug 06, 2018 at 10:10:47AM -0700, Stephen Boyd wrote:
-> > diff --git a/drivers/firmware/google/coreboot_table-of.c b/drivers/firm=
-ware/google/coreboot_table-of.c
-> > index f15bf404c579..270f112bdc54 100644
-> > --- a/drivers/firmware/google/coreboot_table-of.c
-> > +++ b/drivers/firmware/google/coreboot_table-of.c
-> > @@ -18,21 +18,20 @@
-> >  #include <linux/device.h>
-> >  #include <linux/io.h>
-> >  #include <linux/module.h>
-> > -#include <linux/of_address.h>
-> > -#include <linux/of_platform.h>
-> > +#include <linux/mod_devicetable.h>
-> >  #include <linux/platform_device.h>
-> >  =
+Hi Jacek,
 
-> >  #include "coreboot_table.h"
-> >  =
+On 8 August 2018 at 05:54, Jacek Anaszewski <jacek.anaszewski@gmail.com> wrote:
+> Hi Baolin,
+>
+> Thank you for addressing the review remarks.
+> Since the patch set is targeted for 4.19, then we have three weeks
+> before it will be merged to the for-next anyway. That said, I propose
+> one more modification, please take a look below.
 
-> >  static int coreboot_table_of_probe(struct platform_device *pdev)
-> >  {
-> > -     struct device_node *fw_dn =3D pdev->dev.of_node;
-> >       void __iomem *ptr;
-> > +     struct resource *res;
-> >  =
+Sure.
 
-> > -     ptr =3D of_iomap(fw_dn, 0);
-> > -     of_node_put(fw_dn);
-> > -     if (!ptr)
-> > -             return -ENOMEM;
-> > +     res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> > +     ptr =3D devm_ioremap_resource(&pdev->dev, res);
-> =
+>
+> On 08/06/2018 02:05 PM, Baolin Wang wrote:
+>> Some LED controllers have support for autonomously controlling
+>> brightness over time, according to some preprogrammed pattern or
+>> function.
+>>
+>> This patch adds pattern trigger that LED device can configure the
+>> pattern and trigger it.
+>>
+>> Signed-off-by: Raphael Teysseyre <rteysseyre@gmail.com>
+>> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+>> ---
+>> Changes from v4:
+>>  - Change the repeat file to return the originally written number.
+>>  - Improve comments.
+>>  - Fix some build warnings.
+>>
+>> Changes from v3:
+>>  - Reset pattern number to 0 if user provides incorrect pattern string.
+>>  - Support one pattern.
+>>
+>> Changes from v2:
+>>  - Remove hardware_pattern boolen.
+>>  - Chnage the pattern string format.
+>>
+>> Changes from v1:
+>>  - Use ATTRIBUTE_GROUPS() to define attributes.
+>>  - Introduce hardware_pattern flag to determine if software pattern
+>>  or hardware pattern.
+>>  - Re-implement pattern_trig_store_pattern() function.
+>>  - Remove pattern_get() interface.
+>>  - Improve comments.
+>>  - Other small optimization.
+>> ---
+>>  .../ABI/testing/sysfs-class-led-trigger-pattern    |   24 ++
+>>  drivers/leds/trigger/Kconfig                       |    7 +
+>>  drivers/leds/trigger/Makefile                      |    1 +
+>>  drivers/leds/trigger/ledtrig-pattern.c             |  266 ++++++++++++++++++++
+>>  include/linux/leds.h                               |   16 ++
+>>  5 files changed, 314 insertions(+)
+>>  create mode 100644 Documentation/ABI/testing/sysfs-class-led-trigger-pattern
+>>  create mode 100644 drivers/leds/trigger/ledtrig-pattern.c
+>>
+>> diff --git a/Documentation/ABI/testing/sysfs-class-led-trigger-pattern b/Documentation/ABI/testing/sysfs-class-led-trigger-pattern
+>> new file mode 100644
+>> index 0000000..bc7475f
+>> --- /dev/null
+>> +++ b/Documentation/ABI/testing/sysfs-class-led-trigger-pattern
+>> @@ -0,0 +1,24 @@
+>> +What:                /sys/class/leds/<led>/pattern
+>> +Date:                August 2018
+>> +KernelVersion:       4.19
+>> +Description:
+>> +             Specify a pattern for the LED, for LED hardware that support
+>> +             altering the brightness as a function of time.
+>> +
+>> +             The pattern is given by a series of tuples, of brightness and
+>> +             duration (ms). The LED is expected to traverse the series and
+>> +             each brightness value for the specified duration. Duration of
+>> +             0 means brightness should immediately change to new value.
+>> +
+>> +             The format of the pattern values should be:
+>> +             "brightness_1 duration_1 brightness_2 duration_2 brightness_3
+>> +             duration_3 ...".
+>> +
+>> +What:                /sys/class/leds/<led>/repeat
+>> +Date:                August 2018
+>> +KernelVersion:       4.19
+>> +Description:
+>> +             Specify a pattern repeat number. 0 means repeat indefinitely.
+>> +
+>> +             This file will always return the originally written repeat
+>> +             number.
+>> diff --git a/drivers/leds/trigger/Kconfig b/drivers/leds/trigger/Kconfig
+>> index 4018af7..b76fc3c 100644
+>> --- a/drivers/leds/trigger/Kconfig
+>> +++ b/drivers/leds/trigger/Kconfig
+>> @@ -129,4 +129,11 @@ config LEDS_TRIGGER_NETDEV
+>>         This allows LEDs to be controlled by network device activity.
+>>         If unsure, say Y.
+>>
+>> +config LEDS_TRIGGER_PATTERN
+>> +     tristate "LED Pattern Trigger"
+>> +     help
+>> +       This allows LEDs to be controlled by a software or hardware pattern
+>> +       which is a series of tuples, of brightness and duration (ms).
+>> +       If unsure, say N
+>> +
+>>  endif # LEDS_TRIGGERS
+>> diff --git a/drivers/leds/trigger/Makefile b/drivers/leds/trigger/Makefile
+>> index f3cfe19..9bcb64e 100644
+>> --- a/drivers/leds/trigger/Makefile
+>> +++ b/drivers/leds/trigger/Makefile
+>> @@ -13,3 +13,4 @@ obj-$(CONFIG_LEDS_TRIGGER_TRANSIENT)        += ledtrig-transient.o
+>>  obj-$(CONFIG_LEDS_TRIGGER_CAMERA)    += ledtrig-camera.o
+>>  obj-$(CONFIG_LEDS_TRIGGER_PANIC)     += ledtrig-panic.o
+>>  obj-$(CONFIG_LEDS_TRIGGER_NETDEV)    += ledtrig-netdev.o
+>> +obj-$(CONFIG_LEDS_TRIGGER_PATTERN)   += ledtrig-pattern.o
+>> diff --git a/drivers/leds/trigger/ledtrig-pattern.c b/drivers/leds/trigger/ledtrig-pattern.c
+>> new file mode 100644
+>> index 0000000..63b94a2
+>> --- /dev/null
+>> +++ b/drivers/leds/trigger/ledtrig-pattern.c
+>> @@ -0,0 +1,266 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +
+>> +/*
+>> + * LED pattern trigger
+>> + *
+>> + * Idea discussed with Pavel Machek. Raphael Teysseyre implemented
+>> + * the first version, Baolin Wang simplified and improved the approach.
+>> + */
+>> +
+>> +#include <linux/kernel.h>
+>> +#include <linux/leds.h>
+>> +#include <linux/module.h>
+>> +#include <linux/mutex.h>
+>> +#include <linux/slab.h>
+>> +#include <linux/timer.h>
+>> +
+>> +#define MAX_PATTERNS         1024
+>> +
+>> +struct pattern_trig_data {
+>> +     struct led_classdev *led_cdev;
+>> +     struct led_pattern patterns[MAX_PATTERNS];
+>> +     struct led_pattern *curr;
+>> +     struct led_pattern *next;
+>> +     struct mutex lock;
+>> +     u32 npatterns;
+>> +     u32 repeat;
+>> +     u32 last_repeat;
+>> +     bool is_indefinite;
+>> +     struct timer_list timer;
+>> +};
+>> +
+>> +static void pattern_trig_update_patterns(struct pattern_trig_data *data)
+>> +{
+>> +     data->curr = data->next;
+>> +     if (!data->is_indefinite && data->curr == data->patterns)
+>> +             data->repeat--;
+>> +
+>> +     if (data->next == data->patterns + data->npatterns - 1)
+>> +             data->next = data->patterns;
+>> +     else
+>> +             data->next++;
+>> +}
+>> +
+>> +static void pattern_trig_timer_function(struct timer_list *t)
+>> +{
+>> +     struct pattern_trig_data *data = from_timer(data, t, timer);
+>> +
+>> +     mutex_lock(&data->lock);
+>> +
+>> +     if (!data->is_indefinite && !data->repeat) {
+>> +             mutex_unlock(&data->lock);
+>> +             return;
+>> +     }
+>> +
+>> +     led_set_brightness(data->led_cdev, data->curr->brightness);
+>> +     mod_timer(&data->timer, jiffies + msecs_to_jiffies(data->curr->delta_t));
+>> +     pattern_trig_update_patterns(data);
+>> +
+>> +     mutex_unlock(&data->lock);
+>> +}
+>> +
+>> +static int pattern_trig_start_pattern(struct pattern_trig_data *data,
+>> +                                   struct led_classdev *led_cdev)
+>> +{
+>> +     if (!data->npatterns)
+>> +             return 0;
+>> +
+>> +     if (led_cdev->pattern_set) {
+>> +             return led_cdev->pattern_set(led_cdev, data->patterns,
+>> +                                          data->npatterns, data->repeat);
+>
+> I think that it would be more flexible if software pattern fallback
+> was applied in case of pattern_set failure. Otherwise, it would
+> lead to the situation where LED class devices that support hardware
+> blinking couldn't be applied the same set of patterns as LED class
+> devices that don't implement pattern_set. The latter will always have to
+> resort to using software pattern engine which will accept far greater
+> amount of pattern combinations.
 
-> You're making this a devm_* ioremap, but coreboot_table_exit() will
-> handle unmapping this for you already. So you're introducing a potential
-> double-unmap.
+Hmmm, I am not sure this is useful for hardware pattern, since the LED
+hardware can be diverse which is hard to be compatible with software
+pattern.
 
-Thanks! I'll split this patch into essential and non-essential pieces
-then and layer shortening patches on top.
+For example, for our SC27XX LED, it only supports 4 hardware patterns
+setting (low time, rising time, high time and falling time) to make it
+work at breathing mode. If user provides 3 or 5 patterns values, it
+will failed to issue pattern_set(). But at this time, we don't want to
+use software pattern instead since it will be not the breathing mode
+expected by user. I don't know if there are other special LED
+hardware.
 
-> =
+So I think we should let LED driver to handle this case, if failed to
+issue pattern_set(), the LED driver can set one group default hardware
+patterns, or turn off the LED hardware pattern or other error handling
+method supplied by LED driver. That will not combine software pattern
+and hardware pattern together to make things complicated.
 
-> > +     if (IS_ERR(ptr))
-> > +             return PTR_ERR(ptr);
-> >  =
+So what do you think?
 
-> >       return coreboot_table_init(&pdev->dev, ptr);
-> >  }
-> > @@ -44,8 +43,9 @@ static int coreboot_table_of_remove(struct platform_d=
-evice *pdev)
-> >  =
+> In this case we need to discuss on what basis the decision will be
+> made on whether hardware or software engine will be used.
+>
+> Possible options coming to mind:
+> - an interface will be provided to determine max difference between
+>   the settings supported by the hardware and the settings requested by
+>   the user, that will result in aligning user's setting to the hardware
+>   capabilities
+> - the above alignment rate will be predefined instead
+> - hardware engine will be used only if user requests supported settings
+>   on the whole span of the requested pattern
+> - in each of the above cases it would be worth to think of the
+>   interface to show the scope of the settings supported by hardware
+>
+> The same issue applies to the already available timer trigger.
+> So far the policy implemented by the drivers implementing blink_set
+> op varies.
+>
+> --
+> Best regards,
+> Jacek Anaszewski
 
-> >  static const struct of_device_id coreboot_of_match[] =3D {
-> >       { .compatible =3D "coreboot" },
-> > -     {},
-> > +     {}
-> =
-
-> ...and since I had a *real* comment, I'll mention this bit I noticed
-> previously...this diff seems a bit superfluous. I understand we don't
-> really want to extend this list beyond the NULL terminator, but
-> normally, I'd expect we leave it alone.
-> =
 
 
-I was adding MODULE_DEVICE_TABLE nearby. I'll leave the removal here
-unless you really hate the style cleanup.
-
-> >  };
-> > +MODULE_DEVICE_TABLE(of, coreboot_of_match);
-> > =20
+-- 
+Baolin Wang
+Best Regards
