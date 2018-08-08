@@ -2,112 +2,156 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 787E6C46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 02:26:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36036C46464
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 02:29:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 235D1216E3
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 02:26:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="CyWBzjcM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 235D1216E3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id D1F20216F6
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 02:29:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1F20216F6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726726AbeHHEoD (ORCPT
+        id S1726745AbeHHEqU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 00:44:03 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:34486 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726371AbeHHEoC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 00:44:02 -0400
-Received: by mail-oi0-f68.google.com with SMTP id 13-v6so1228996ois.1
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 19:26:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=cSc4EtuWpc5bOc4mie4iSGss6C/bj229jdqbOePm1Ro=;
-        b=CyWBzjcMxEHciRKySy3gYzu4hpPbrScS47KIv2m9JVqwmZOt9af6k4hz8fTPEWbHjI
-         4kGE/yFvYLjg2YSs1VAtdQBSc8N8bjMvDb3KWouYshDZoLj5eZmmj16tConFebvcxy5+
-         y5zZy4VyEW8CdDbpThU615gDBq5ArTzZ8Hzbs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=cSc4EtuWpc5bOc4mie4iSGss6C/bj229jdqbOePm1Ro=;
-        b=VvTwAyf4AUDjcJ573nWwsPjxSEZChfJgUoxXKK8YEjwInQ2+QNpBEQZ7om8TOXp3lY
-         VUlhXR45DJpyuuFHk1CL/xsMapK5gKpvP8tWA9zpdHQXJPX9Zbnr6Ag9EgqweNBdhQgu
-         z8TA7R8HA//K1RI2SC6vwIK4SHibU1Nc+ALpDikmi7WiitgT7dW/S2m9iNxjO/QjtGRr
-         SrK7cT1NZAe4GG1Xak5CXFXe0iRvu1tkgmuKskm5RXkNLR7f5KCSh4DGX4B6tOrcdMgk
-         ITZ0ezeOnOhSJGuhJdFhc9FI5Mn5qyaXOaZourA13cYm/q1v4ydRiPd1eVaIFxSrSBoa
-         GM5Q==
-X-Gm-Message-State: AOUpUlHfernUgfrJs43KiTwXNSmbGLoXKslYt7OL5CJ1k9OVbGzhdOTk
-        xG4+ALIk8e6UJvZVETBLL2IRpyAVQ/+mpOSfJl+Iuw==
-X-Google-Smtp-Source: AA+uWPw0R8OsnMNl09E6PRNHKztYjL9J1MaT8SjQPvjllj6U77NbtpipFUgoFaJjTfqgAn+CQ3iB+SBpRSrAmv93pDI=
-X-Received: by 2002:aca:dd07:: with SMTP id u7-v6mr900815oig.177.1533695203021;
- Tue, 07 Aug 2018 19:26:43 -0700 (PDT)
+        Wed, 8 Aug 2018 00:46:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52128 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726258AbeHHEqU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 00:46:20 -0400
+Received: from vmware.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2158E216E3;
+        Wed,  8 Aug 2018 02:28:58 +0000 (UTC)
+Date:   Tue, 7 Aug 2018 22:28:56 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Joel Fernandes <joelaf@google.com>
+Cc:     Joel Fernandes <joel@joelfernandes.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Cc: Android Kernel" <kernel-team@android.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Byungchul Park <byungchul.park@lge.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Glexiner <tglx@linutronix.de>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>
+Subject: Re: [PATCH v12 3/3] tracing: Centralize preemptirq tracepoints and
+ unify their usage
+Message-ID: <20180807222856.3ede96e7@vmware.local.home>
+In-Reply-To: <CAJWu+opjqKgZj30PYpyvip=EtP8CuqaEy65++nuvj37QMT6GCw@mail.gmail.com>
+References: <20180730222423.196630-1-joel@joelfernandes.org>
+        <20180730222423.196630-4-joel@joelfernandes.org>
+        <20180806155058.5ee875f4@gandalf.local.home>
+        <CAJWu+oqvpev_EZC38_mi+UNRCxS8GqNVagHyGM4dUjruzKgwgQ@mail.gmail.com>
+        <20180806214300.13e63523@gandalf.local.home>
+        <CAJWu+oqZi2W9OYAn2xu17fdrBitQs4Gti4LxWmtx5B-EYtNMmA@mail.gmail.com>
+        <20180807094954.5137972d@gandalf.local.home>
+        <446AE5F2-39E0-46B6-8E0B-207E003DBF20@google.com>
+        <20180807103410.4fe203cb@gandalf.local.home>
+        <C1CB990F-8232-4168-89A8-E8C13B660B0B@google.com>
+        <20180807110906.3a1b0ac4@gandalf.local.home>
+        <6B9E5DC9-0859-41B4-9B72-A7D85E9EA2AD@google.com>
+        <20180807194515.4e549c1a@gandalf.local.home>
+        <6D0A3FD6-2190-4CC0-A3C0-7B3759E73243@google.com>
+        <20180807204820.50b83c6d@vmware.local.home>
+        <CAJWu+oqBOEJicepLaUG=JpmtDTgxjRdMyJAgOEUkdk4NzX0esw@mail.gmail.com>
+        <20180807215522.04114097@vmware.local.home>
+        <CAJWu+opjqKgZj30PYpyvip=EtP8CuqaEy65++nuvj37QMT6GCw@mail.gmail.com>
+X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Received: by 2002:a9d:237a:0:0:0:0:0 with HTTP; Tue, 7 Aug 2018 19:26:42 -0700 (PDT)
-In-Reply-To: <20180807134121.GA7958@sirena.org.uk>
-References: <64681bf903104c8a02f118294e616e2a12a5ebe4.1533638405.git.baolin.wang@linaro.org>
- <20180807134121.GA7958@sirena.org.uk>
-From:   Baolin Wang <baolin.wang@linaro.org>
-Date:   Wed, 8 Aug 2018 10:26:42 +0800
-Message-ID: <CAMz4kuJsyKv_fvrqRR3pdfKsLVy53Uj0KX+m_9jLxpcVcMvs9g@mail.gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: spi: Add Spreadtrum SPI controller documentation
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        lanqing.liu@spreadtrum.com, linux-spi@vger.kernel.org,
-        DTML <devicetree@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mark,
+On Tue, 7 Aug 2018 19:13:32 -0700
+Joel Fernandes <joelaf@google.com> wrote:
 
-On 7 August 2018 at 21:41, Mark Brown <broonie@kernel.org> wrote:
-> On Tue, Aug 07, 2018 at 06:43:37PM +0800, Baolin Wang wrote:
->
->> +Optional properties:
->> +- sprd,spi-interval: Specify the intervals of two SPI frames, which can be
->> +     converted to the delay clock cycles = interval number * 4 + 10.
->
-> What's a frame here, and does it overlap with any of the existing delay
-> configuration we have?  In general it's better for this stuff to be
-> configured at runtime by the device rather than at DT time by the
-> controller since that way if the device needs the delays we always do
-> them if we can and if they are only needed some of the time (eg, for
-> only one device on the bus or for only some operations) then we don't
-> take the performance hit when we don't need to.
+> On Tue, Aug 7, 2018 at 6:55 PM, Steven Rostedt <rostedt@goodmis.org> wrote:
+> > On Tue, 7 Aug 2018 18:17:42 -0700
+> > Joel Fernandes <joelaf@google.com> wrote:
+> >  
+> >> From 6986af946ceb04fc9ddc6d5b45fc559b6807e465 Mon Sep 17 00:00:00 2001
+> >> From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
+> >> Date: Sun, 5 Aug 2018 20:17:41 -0700
+> >> Subject: [PATCH] tracepoint: Run tracepoints even after CPU is offline
+> >>
+> >> Commit f37755490fe9 ("tracepoints: Do not trace when cpu is offline")
+> >> causes a problem for lockdep using tracepoint code. Once a CPU is
+> >> offline, tracepoints donot get called, however this causes a big problem
+> >> for lockdep probes that need to run so that IRQ annotations are marked
+> >> correctly.
+> >>
+> >> A race is possible where while the CPU is going offline, an interrupt
+> >> can come in and then a lockdep assert causes an annotation warning:
+> >>
+> >> [  106.551354] IRQs not enabled as expected
+> >> [  106.551785] WARNING: CPU: 1 PID: 0 at kernel/time/tick-sched.c:982
+> >>                                          tick_nohz_idle_enter+0x99/0xb0
+> >> [  106.552964] Modules linked in:
+> >> [  106.553299] CPU: 1 PID: 0 Comm: swapper/1 Tainted: G        W
+> >>
+> >> We need tracepoints to run as late as possible. This commit fixes the
+> >> issue by removing the cpu_online check in tracepoint code that was
+> >> introduced in the mentioned commit, however we now switch to using SRCU
+> >> for all tracepoints and special handle calling tracepoints from NMI so
+> >> that we don't run into issues that result from using sched-RCU when the
+> >> CPUs are marked to be offline.
+> >>
+> >> Fixes: c3bc8fd637a9 ("tracing: Centralize preemptirq tracepoints and
+> >>                       unify their usage")
+> >> Reported-by: Masami Hiramatsu <mhiramat@kernel.org>
+> >> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>  
+> >
+> >
+> > The above change log doesn't look like it matches the NMI patch.
+> >
+> > Can you resend with just the NMI changes? I already handled the cpu
+> > offline ones.  
+> 
+> Ok, sent with "cpu offline" changes dropped, here it is:
+> https://lore.kernel.org/patchwork/patch/972657/
+> 
+> If you could add your Reported-by to it, that would be great as well.
+> 
+> >
+> > But I may still have concerns with this patch.  
+> 
+> Ok let me know what you think.
+> 
 
-Sorry for confusing. Let me try to explain it explicitly.
-We can set the word size (bits_per_word) for each transmission, for
-our SPI controller,  after every word size transmission, we need one
-interval time (hardware automatically) to make sure the slave has
-enough time to receive the whole data.
+Not sure you saw this part of my reply:
 
-Yes, I agree we should configure it at runtime by the device, but we
-did not find one member to use in 'struct spi_transfer', we just find
-one similar 'delay_usecs' member in 'struct spi_transfer' but not
-same. We can use  'delay_usecs' to set our hardware interval value,
-but we should clean it when transfer is done, since we do not need to
-delay after the transfer in spi_transfer_one _message(). Or can we add
-one new member maybe named 'word_interval' to indicate the interval
-time between word size transmission?
+> @@ -171,8 +174,7 @@ extern void syscall_unregfunc(void);
+>  			} while ((++it_func_ptr)->func);		\
+>  		}							\
+>  									\
+> -		if (rcuidle)						\
+> -			srcu_read_unlock_notrace(&tracepoint_srcu, idx);\
+> +		srcu_read_unlock_notrace(ss, idx);			\  
 
-What do you prefer or other better solution? Thanks.
+Hmm, why do we have the two different srcu handles?
 
--- 
-Baolin Wang
-Best Regards
+Thinking about this, if this can be called by the "thunk" code, then
+there might be an issue. I think the "thunk" code can be called before
+in_nmi() is set, so we don't know if we are in an NMI or not. I need to
+look at that code to make sure. If in_nmi() still works, then we should
+use the _nmi srcu handle (if that's required).
+
+But I'm not sure using SRCU for all tracepoints is needed at this
+moment. I'll have to look deeper into this tomorrow. But it's getting
+close to the merge window, and this needs to be settled quick. Another
+"partial revert" may be needed until this gets settled.
+
+
+-- Steve
