@@ -5,137 +5,170 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83207C46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 07:44:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8536CC4646D
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 07:45:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39B48216FB
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 07:44:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39B48216FB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id 3CB57216FB
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 07:45:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CB57216FB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727062AbeHHKC6 (ORCPT
+        id S1727121AbeHHKEJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 06:02:58 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:24431 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726939AbeHHKC6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 06:02:58 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 41lk180Yfxz9ttkl;
-        Wed,  8 Aug 2018 09:44:28 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id l5mw1hmyJXPx; Wed,  8 Aug 2018 09:44:28 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 41lk1802tpz9ttkf;
-        Wed,  8 Aug 2018 09:44:28 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 911F38B7AC;
-        Wed,  8 Aug 2018 09:44:28 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id v053WW6SXfc0; Wed,  8 Aug 2018 09:44:28 +0200 (CEST)
-Received: from PO15451 (po15451.idsi0.si.c-s.fr [172.25.231.4])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 4C5AC8B752;
-        Wed,  8 Aug 2018 09:44:28 +0200 (CEST)
-Subject: Re: [PATCH] lib/test_hexdump: fix failure on big endian cpu
-To:     Michael Ellerman <mpe@ellerman.id.au>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-References: <f3112437f62c2f48300535510918e8be1dceacfb.1533610877.git.christophe.leroy@c-s.fr>
- <87mutxb9qy.fsf@concordia.ellerman.id.au>
-From:   Christophe LEROY <christophe.leroy@c-s.fr>
-Message-ID: <1690d8af-3e67-e82b-ef2a-8adee6eaa497@c-s.fr>
-Date:   Wed, 8 Aug 2018 09:44:28 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+        Wed, 8 Aug 2018 06:04:09 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45934 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726905AbeHHKEI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 06:04:08 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6537640216E8;
+        Wed,  8 Aug 2018 07:45:40 +0000 (UTC)
+Received: from [10.36.117.71] (ovpn-117-71.ams2.redhat.com [10.36.117.71])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 23F182026DE8;
+        Wed,  8 Aug 2018 07:45:38 +0000 (UTC)
+Subject: Re: [RFC PATCH 2/3] mm/memory_hotplug: Create __shrink_pages and move
+ it to offline_pages
+To:     Oscar Salvador <osalvador@techadventures.net>,
+        Jerome Glisse <jglisse@redhat.com>
+Cc:     akpm@linux-foundation.org, mhocko@suse.com,
+        dan.j.williams@intel.com, pasha.tatashin@oracle.com,
+        yasu.isimatu@gmail.com, logang@deltatee.com, dave.jiang@intel.com,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Oscar Salvador <osalvador@suse.de>
+References: <20180807133757.18352-1-osalvador@techadventures.net>
+ <20180807133757.18352-3-osalvador@techadventures.net>
+ <20180807135221.GA3301@redhat.com>
+ <a6e4e654-fc95-497f-16f3-8c1550cf03d6@redhat.com>
+ <20180807204834.GA6844@techadventures.net> <20180807221345.GD3301@redhat.com>
+ <20180808073835.GA9568@techadventures.net>
+From:   David Hildenbrand <david@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
+ dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
+ QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
+ XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
+ Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
+ PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
+ WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
+ UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
+ jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
+ B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
+ ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwX4EEwECACgFAljj9eoCGwMFCQlmAYAGCwkI
+ BwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEE3eEPcA/4Na5IIP/3T/FIQMxIfNzZshIq687qgG
+ 8UbspuE/YSUDdv7r5szYTK6KPTlqN8NAcSfheywbuYD9A4ZeSBWD3/NAVUdrCaRP2IvFyELj
+ xoMvfJccbq45BxzgEspg/bVahNbyuBpLBVjVWwRtFCUEXkyazksSv8pdTMAs9IucChvFmmq3
+ jJ2vlaz9lYt/lxN246fIVceckPMiUveimngvXZw21VOAhfQ+/sofXF8JCFv2mFcBDoa7eYob
+ s0FLpmqFaeNRHAlzMWgSsP80qx5nWWEvRLdKWi533N2vC/EyunN3HcBwVrXH4hxRBMco3jvM
+ m8VKLKao9wKj82qSivUnkPIwsAGNPdFoPbgghCQiBjBe6A75Z2xHFrzo7t1jg7nQfIyNC7ez
+ MZBJ59sqA9EDMEJPlLNIeJmqslXPjmMFnE7Mby/+335WJYDulsRybN+W5rLT5aMvhC6x6POK
+ z55fMNKrMASCzBJum2Fwjf/VnuGRYkhKCqqZ8gJ3OvmR50tInDV2jZ1DQgc3i550T5JDpToh
+ dPBxZocIhzg+MBSRDXcJmHOx/7nQm3iQ6iLuwmXsRC6f5FbFefk9EjuTKcLMvBsEx+2DEx0E
+ UnmJ4hVg7u1PQ+2Oy+Lh/opK/BDiqlQ8Pz2jiXv5xkECvr/3Sv59hlOCZMOaiLTTjtOIU7Tq
+ 7ut6OL64oAq+zsFNBFXLn5EBEADn1959INH2cwYJv0tsxf5MUCghCj/CA/lc/LMthqQ773ga
+ uB9mN+F1rE9cyyXb6jyOGn+GUjMbnq1o121Vm0+neKHUCBtHyseBfDXHA6m4B3mUTWo13nid
+ 0e4AM71r0DS8+KYh6zvweLX/LL5kQS9GQeT+QNroXcC1NzWbitts6TZ+IrPOwT1hfB4WNC+X
+ 2n4AzDqp3+ILiVST2DT4VBc11Gz6jijpC/KI5Al8ZDhRwG47LUiuQmt3yqrmN63V9wzaPhC+
+ xbwIsNZlLUvuRnmBPkTJwwrFRZvwu5GPHNndBjVpAfaSTOfppyKBTccu2AXJXWAE1Xjh6GOC
+ 8mlFjZwLxWFqdPHR1n2aPVgoiTLk34LR/bXO+e0GpzFXT7enwyvFFFyAS0Nk1q/7EChPcbRb
+ hJqEBpRNZemxmg55zC3GLvgLKd5A09MOM2BrMea+l0FUR+PuTenh2YmnmLRTro6eZ/qYwWkC
+ u8FFIw4pT0OUDMyLgi+GI1aMpVogTZJ70FgV0pUAlpmrzk/bLbRkF3TwgucpyPtcpmQtTkWS
+ gDS50QG9DR/1As3LLLcNkwJBZzBG6PWbvcOyrwMQUF1nl4SSPV0LLH63+BrrHasfJzxKXzqg
+ rW28CTAE2x8qi7e/6M/+XXhrsMYG+uaViM7n2je3qKe7ofum3s4vq7oFCPsOgwARAQABwsFl
+ BBgBAgAPBQJVy5+RAhsMBQkJZgGAAAoJEE3eEPcA/4NagOsP/jPoIBb/iXVbM+fmSHOjEshl
+ KMwEl/m5iLj3iHnHPVLBUWrXPdS7iQijJA/VLxjnFknhaS60hkUNWexDMxVVP/6lbOrs4bDZ
+ NEWDMktAeqJaFtxackPszlcpRVkAs6Msn9tu8hlvB517pyUgvuD7ZS9gGOMmYwFQDyytpepo
+ YApVV00P0u3AaE0Cj/o71STqGJKZxcVhPaZ+LR+UCBZOyKfEyq+ZN311VpOJZ1IvTExf+S/5
+ lqnciDtbO3I4Wq0ArLX1gs1q1XlXLaVaA3yVqeC8E7kOchDNinD3hJS4OX0e1gdsx/e6COvy
+ qNg5aL5n0Kl4fcVqM0LdIhsubVs4eiNCa5XMSYpXmVi3HAuFyg9dN+x8thSwI836FoMASwOl
+ C7tHsTjnSGufB+D7F7ZBT61BffNBBIm1KdMxcxqLUVXpBQHHlGkbwI+3Ye+nE6HmZH7IwLwV
+ W+Ajl7oYF+jeKaH4DZFtgLYGLtZ1LDwKPjX7VAsa4Yx7S5+EBAaZGxK510MjIx6SGrZWBrrV
+ TEvdV00F2MnQoeXKzD7O4WFbL55hhyGgfWTHwZ457iN9SgYi1JLPqWkZB0JRXIEtjd4JEQcx
+ +8Umfre0Xt4713VxMygW0PnQt5aSQdMD58jHFxTk092mU+yIHj5LeYgvwSgZN4airXk5yRXl
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <44f74b58-aae0-a44c-3b98-7b1aac186f8e@redhat.com>
+Date:   Wed, 8 Aug 2018 09:45:37 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <87mutxb9qy.fsf@concordia.ellerman.id.au>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180808073835.GA9568@techadventures.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 08 Aug 2018 07:45:40 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 08 Aug 2018 07:45:40 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'david@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-Le 08/08/2018 à 09:25, Michael Ellerman a écrit :
-> Christophe Leroy <christophe.leroy@c-s.fr> writes:
->> diff --git a/lib/test_hexdump.c b/lib/test_hexdump.c
->> index 3f415d8101f3..626f580b4ff7 100644
->> --- a/lib/test_hexdump.c
->> +++ b/lib/test_hexdump.c
->> @@ -32,16 +32,33 @@ static const char * const test_data_2_le[] __initconst = {
->>   	"d14c", "9919", "b143", "0caf",
->>   };
->>   
->> +static const char * const test_data_2_be[] __initconst = {
->> +	"be32", "db7b", "0a18", "93b2",
->> +	"70ba", "c424", "7d83", "349b",
->> +	"a69c", "31ad", "9c0f", "ace9",
->> +	"4cd1", "1999", "43b1", "af0c",
->> +};
->> +
->>   static const char * const test_data_4_le[] __initconst = {
->>   	"7bdb32be", "b293180a", "24c4ba70", "9b34837d",
->>   	"ad319ca6", "e9ac0f9c", "9919d14c", "0cafb143",
->>   };
->>   
->> +static const char * const test_data_4_be[] __initconst = {
->> +	"be32db7b", "0a1893b2", "70bac424", "7d83349b",
->> +	"a69c31ad", "9c0face9", "4cd11999", "43b1af0c",
->> +};
->> +
+On 08.08.2018 09:38, Oscar Salvador wrote:
+> On Tue, Aug 07, 2018 at 06:13:45PM -0400, Jerome Glisse wrote:
+>>> And since we know for sure that memhotplug-code cannot call it with ZONE_DEVICE,
+>>> I think this can be done easily.
+>>
+>> This might change down road but for now this is correct. They are
+>> talks to enumerate device memory through standard platform mechanisms
+>> and thus the kernel might see new types of resources down the road and
+>> maybe we will want to hotplug them directly from regular hotplug path
+>> as ZONE_DEVICE (lot of hypothetical at this point ;)).
 > 
-> Is there a reason we can't do it all at compile time?
+> Well, I think that if that happens this whole thing will become
+> much easier, since we will not have several paths for doing the same thing.
+> 
+> Another thing that I realized is that while we want to move all operation-pages
+> from remove_memory() path to offline_pages(), this can get tricky.
+> 
+> Unless I am missing something, the devices from HMM and devm are not being registered
+> against "memory_subsys" struct, and so, they never get to call memory_subsys_offline()
+> and so offline_pages().
+> 
+> Which means that we would have to call __remove_zone() from those paths.
+> But this alone will not work.
 
-Codyingstyle suggests to use IS_ENABLED() as much as possible.
-I checked symbols inside resulting vmlinux, only the BE ones are there 
-so it has
-the same effect as an #ifdef
-
-Extract from Documentation/process/codying-style.rst:
-
-Within code, where possible, use the IS_ENABLED macro to convert a Kconfig
-symbol into a C boolean expression, and use it in a normal C conditional:
-
-.. code-block:: c
-
-	if (IS_ENABLED(CONFIG_SOMETHING)) {
-		...
-	}
-
-The compiler will constant-fold the conditional away, and include or exclude
-the block of code just as with an #ifdef, so this will not add any runtime
-overhead.  However, this approach still allows the C compiler to see the 
-code
-inside the block, and check it for correctness (syntax, types, symbol
-references, etc).  Thus, you still have to use an #ifdef if the code 
-inside the
-block references symbols that will not exist if the condition is not met.
-
-Christophe
+I mean, they move it to the zone ("replacing online/offlining code"), so
+they should take of removing it again.
 
 > 
-> eg:
+> find_smallest/biggest_section_pfn are two functions that are being called from
 > 
-> static const char * const test_data_4[] __initconst = {
-> #ifdef CONFIG_CPU_LITTLE_ENDIAN
-> 	"7bdb32be", "b293180a", "24c4ba70", "9b34837d",
-> 	"ad319ca6", "e9ac0f9c", "9919d14c", "0cafb143",
-> #else
-> 	"be32db7b", "0a1893b2", "70bac424", "7d83349b",
-> 	"a69c31ad", "9c0face9", "4cd11999", "43b1af0c",
-> #endif
-> };
+> shrink_pgdat_span
+> and
+> shrink_zone_span
+> 
+> to adjust zone_first_pfn/node_first_pfn and the spanned pages.
+> 
+> Currently, find_smallest/biggest_section_pfn checks for the secion to be valid,
+> and this is fine since we are removing those sections from the remove_memory path.
+> 
+> But if we want to move __remove_zone() to offline_pages(), we have to use
+> online_section() instead of valid_section().
+> 
+> This is all fine from offline_pages because the sections get offlined in:
+> 
+> __offline_pages
+>  offline_isolated_pages
+>   offline_isolated_pages_cb
+>    __offline_isolated_pages
+>     offline_mem_sections
 > 
 > 
-> cheers
+> But this does not happen in HMM/devm path.
 > 
+> I am pretty sure this is a dumb question, but why HMM/devm path
+> do not call online_pages/offline_pages?
+> 
+> Thanks
+> 
+
+
+-- 
+
+Thanks,
+
+David / dhildenb
