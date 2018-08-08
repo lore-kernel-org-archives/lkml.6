@@ -2,302 +2,157 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B17ABC4646D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:46:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABAFCC46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:46:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6006421718
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:46:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6006421718
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 5468F21718
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:46:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="mXmcQMXr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5468F21718
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kapsi.fi
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728083AbeHHRGU (ORCPT
+        id S1729599AbeHHRGa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 13:06:20 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:36634 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727736AbeHHRE7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 13:04:59 -0400
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w78Ei8bm077802
-        for <linux-kernel@vger.kernel.org>; Wed, 8 Aug 2018 10:45:00 -0400
-Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2kr08c6qr7-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 10:45:00 -0400
-Received: from localhost
-        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.vnet.ibm.com>;
-        Wed, 8 Aug 2018 10:44:58 -0400
-Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
-        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 8 Aug 2018 10:44:55 -0400
-Received: from b01ledav001.gho.pok.ibm.com (b01ledav001.gho.pok.ibm.com [9.57.199.106])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w78EirMZ7209646
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 8 Aug 2018 14:44:53 GMT
-Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2690128058;
-        Wed,  8 Aug 2018 10:43:42 -0400 (EDT)
-Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 12C8D28060;
-        Wed,  8 Aug 2018 10:43:41 -0400 (EDT)
-Received: from localhost.localdomain (unknown [9.85.187.56])
-        by b01ledav001.gho.pok.ibm.com (Postfix) with ESMTPS;
-        Wed,  8 Aug 2018 10:43:40 -0400 (EDT)
-From:   Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-To:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
-        pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        akrowiak@linux.vnet.ibm.com, frankja@linux.ibm.com,
-        Tony Krowiak <akrowiak@linux.ibm.com>
-Subject: [PATCH v8 12/22] s390: vfio-ap: sysfs interfaces to configure control domains
-Date:   Wed,  8 Aug 2018 10:44:22 -0400
-X-Mailer: git-send-email 1.7.1
-In-Reply-To: <1533739472-7172-1-git-send-email-akrowiak@linux.vnet.ibm.com>
-References: <1533739472-7172-1-git-send-email-akrowiak@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18080814-0064-0000-0000-00000337747D
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009507; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01070983; UDB=6.00551365; IPR=6.00850513;
- MB=3.00022589; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-08 14:44:58
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18080814-0065-0000-0000-00003A3B66CA
-Message-Id: <1533739472-7172-13-git-send-email-akrowiak@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-08_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808080153
+        Wed, 8 Aug 2018 13:06:30 -0400
+Received: from mail.kapsi.fi ([91.232.154.25]:45317 "EHLO mail.kapsi.fi"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728297AbeHHRG3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 13:06:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
+         s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+        MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=7/0++2HKQ320Gf21vzV3aHGcewmPX1Ay2LZXtLOe/to=; b=mXmcQMXrCGvTS0ZH1IaJu1UsbM
+        0CST/4UqgQg308dXMOMZJLCWnlneuQ8leAmiw8gE+mtzTr84uKePx6CG8GhwkBIHb0bGfE5uQ75j2
+        4j+ZcUpMPLwRTVGPHAmH9ZNBDDSnhiUXKyAC0ljY+jdc3uZSPnebXyoCmzi1A2d6HKICnomfSAAlB
+        BXd+EBdbGv8N+RVf/RBXvCfswKTA3km6Ghbuc6X9E0j6tCB3jBE6+ivxXyT6A9xzfIo9zxVrvbSBd
+        ka0aUgZwS+aikaWXWVwds+mSws1pVJU2gjrcGLMpuBpiX7b8LjAi/tgZzschNs6SEvuZW7kHzTtjW
+        cYz61Mmg==;
+Received: from dsl-hkibng22-54faa2-250.dhcp.inet.fi ([84.250.162.250])
+        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <cyndis@kapsi.fi>)
+        id 1fnPjI-0002xn-1r; Wed, 08 Aug 2018 17:46:28 +0300
+Subject: Re: [PATCH v3 3/8] mailbox: Add transmit done by blocking option
+To:     Jassi Brar <jassisinghbrar@gmail.com>
+Cc:     Mikko Perttunen <mperttunen@nvidia.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Devicetree List <devicetree@vger.kernel.org>,
+        linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org,
+        ", linux-arm-kernel"@lists.infradead.org,
+        srv_heupstream <linux-mediatek@lists.infradead.org>,
+        srv_heupstream <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20180702114033.15654-1-mperttunen@nvidia.com>
+ <20180702114033.15654-4-mperttunen@nvidia.com>
+ <CABb+yY0_dKC_cYFwwb-aeRgrx=sjv=8VLP=C6DJEecFf=v+mkQ@mail.gmail.com>
+ <907bac36-0c54-8f38-0f5e-f59196d414c6@kapsi.fi>
+ <afc8a305-79ea-2194-0af0-919bbb8f675e@kapsi.fi>
+ <CABb+yY2mpNV186=M2anmZANgMOra4JM7ybyUT4yCxhqAG6-AZg@mail.gmail.com>
+ <b5a91f9e-c3ff-371c-d355-4a5e8a147796@kapsi.fi>
+ <CABb+yY3Ng+rbKRYXTncfHKv6HXBW5hHjMKDpepz31MxpE9bwRQ@mail.gmail.com>
+From:   Mikko Perttunen <cyndis@kapsi.fi>
+Message-ID: <a57fccaa-fcfe-6611-45a5-8c224f4ee2b6@kapsi.fi>
+Date:   Wed, 8 Aug 2018 17:46:27 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <CABb+yY3Ng+rbKRYXTncfHKv6HXBW5hHjMKDpepz31MxpE9bwRQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 84.250.162.250
+X-SA-Exim-Mail-From: cyndis@kapsi.fi
+X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tony Krowiak <akrowiak@linux.ibm.com>
+On 08/08/2018 05:39 PM, Jassi Brar wrote:
+> On Wed, Aug 8, 2018 at 8:04 PM, Mikko Perttunen <cyndis@kapsi.fi> wrote:
+>>
+>>
+>> On 08/08/2018 05:10 PM, Jassi Brar wrote:
+>>>
+>>> On Wed, Aug 8, 2018 at 5:08 PM, Mikko Perttunen <cyndis@kapsi.fi> wrote:
+>>>>
+>>>>
+>>>>
+>>>> On 04.08.2018 13:45, Mikko Perttunen wrote:
+>>>>>
+>>>>>
+>>>>> On 08/03/2018 03:54 PM, Jassi Brar wrote:
+>>>>>>
+>>>>>>
+>>>>>> On Mon, Jul 2, 2018 at 5:10 PM, Mikko Perttunen <mperttunen@nvidia.com>
+>>>>>> wrote:
+>>>>>>>
+>>>>>>>
+>>>>>>> Add a new TXDONE option, TXDONE_BY_BLOCK. With this option, the
+>>>>>>> send_data function of the mailbox driver is expected to block until
+>>>>>>> the message has been sent. The new option is used with the Tegra
+>>>>>>> Combined UART driver to minimize unnecessary overhead when
+>>>>>>> transmitting
+>>>>>>> data.
+>>>>>>>
+>>>>>> 1) TXDONE_BY_BLOCK flag :-
+>>>>>>            Have you tried setting the flag
+>>>>>> mbox_chan->mbox_client->tx_block
+>>>>>> ?
+>>>>>
+>>>>>
+>>>>>
+>>>>> No - I suppose I should have done that. I'm a bit concerned about
+>>>>> overhead
+>>>>> as send_data may be called thousands of times per second, so I tried to
+>>>>> make
+>>>>> it as close as possible to the downstream driver that just pokes the
+>>>>> mailbox
+>>>>> register directly.
+>>>>
+>>>>
+>>>>
+>>>> I tried using polling in the mailbox framework. Some printing is done
+>>>> from
+>>>> atomic context so it seems tx_block cannot be used -
+>>>> wait_for_completion_timeout understandably does not work in atomic
+>>>> context.
+>>>> I also tried without tx_block, in which case I got some horribly garbled
+>>>> output, but "Try increasing MBOX_TX_QUEUE_LEN" was readable there.
+>>>>
+>>>> Any opinions?
+>>>>
+>>> The problems arise because your hardware (SM) supports TXDONE_BY_POLL,
+>>> but your client drives it by TXDONE_BY_ACK because the older DB
+>>> channels are so.
+>>>
+>>> Please populate SM channels as a separate controller than DB.
+>>> The DB controller, as is, run by ACK method.
+>>> The SM controller should be run by polling, i.e, set txdone_poll =
+>>> true and the poll period small enough. The virtual tty client driver
+>>> should be able to safely set tx_block from appropriate context.
+>>>
+>>
+>> Sorry, I should have clarified that I already split up the controllers. The
+>> SM controller has txdone_poll = true. I didn't adjust txpoll_period so I
+>> guess it's zero.
+>>
+> Can you please share your code (controller and client) ? Maybe offline
+> if you wish.
+> 
 
-Provides the sysfs interfaces for:
+I'll upload a git branch tomorrow -- I'm not at the machine with the 
+code now.
 
-1. Assigning AP control domains to the mediated matrix device
-
-2. Unassigning AP control domains from a mediated matrix device
-
-3. Displaying the control domains assigned to a mediated matrix
-   device
-
-The IDs of the AP control domains assigned to the mediated matrix
-device are stored in an AP domain mask (ADM). The bits in the ADM,
-from most significant to least significant bit, correspond to
-AP domain numbers 0 to 255. On some systems, the maximum allowable
-domain number may be less than 255 - depending upon the host's
-AP configuration - and assignment may be rejected if the input
-domain ID exceeds the limit.
-
-When a control domain is assigned, the bit corresponding its domain
-ID will be set in the ADM. Likewise, when a domain is unassigned,
-the bit corresponding to its domain ID will be cleared in the ADM.
-
-The relevant sysfs structures are:
-
-/sys/devices/virtual/misc/vfio_ap/
-...... [mdev_supported_types]
-......... [vfio_ap-passthrough]
-............ [devices]
-...............[$uuid]
-.................. assign_control_domain
-.................. unassign_control_domain
-
-To assign a control domain to the $uuid mediated matrix device's
-ADM, write its domain number to the assign_control_domain file.
-To unassign a domain, write its domain number to the
-unassign_control_domain file. The domain number is specified
-using conventional semantics: If it begins with 0x the number
-will be parsed as a hexadecimal (case insensitive) number;
-if it begins with 0, it is parsed as an octal number;
-otherwise, it will be parsed as a decimal number.
-
-For example, to assign control domain 173 (0xad) to the mediated
-matrix device $uuid:
-
-	echo 173 > assign_control_domain
-
-	or
-
-	echo 0255 > assign_control_domain
-
-	or
-
-	echo 0xad > assign_control_domain
-
-To unassign control domain 173 (0xad):
-
-	echo 173 > unassign_control_domain
-
-	or
-
-	echo 0255 > unassign_control_domain
-
-	or
-
-	echo 0xad > unassign_control_domain
-
-The assignment will be rejected if the APQI exceeds the maximum
-value for an AP domain:
-  * If the AP Extended Addressing (APXA) facility is installed,
-    the max value is 255
-  * Else the max value is 15
-
-Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
-Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
-Tested-by: Michael Mueller <mimu@linux.ibm.com>
-Tested-by: Farhan Ali <alifm@linux.ibm.com>
-Tested-by: Pierre Morel <pmorel@linux.ibm.com>
-Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
----
- drivers/s390/crypto/vfio_ap_ops.c |  108 +++++++++++++++++++++++++++++++++++++
- 1 files changed, 108 insertions(+), 0 deletions(-)
-
-diff --git a/drivers/s390/crypto/vfio_ap_ops.c b/drivers/s390/crypto/vfio_ap_ops.c
-index 36b8f47..a48676a 100644
---- a/drivers/s390/crypto/vfio_ap_ops.c
-+++ b/drivers/s390/crypto/vfio_ap_ops.c
-@@ -447,11 +447,119 @@ static ssize_t unassign_domain_store(struct device *dev,
- }
- DEVICE_ATTR_WO(unassign_domain);
- 
-+/**
-+ * assign_control_domain_store
-+ *
-+ * @dev: the matrix device
-+ * @attr: the mediated matrix device's assign_control_domain attribute
-+ * @buf: a buffer containing the domain ID to be assigned
-+ * @count: the number of bytes in @buf
-+ *
-+ * Parses the domain ID from @buf and assigns it to the mediated matrix device.
-+ *
-+ * Returns the number of bytes processed if the domain ID is valid; otherwise
-+ * returns an error.
-+ */
-+static ssize_t assign_control_domain_store(struct device *dev,
-+					   struct device_attribute *attr,
-+					   const char *buf, size_t count)
-+{
-+	int ret;
-+	unsigned long id;
-+	struct mdev_device *mdev = mdev_from_dev(dev);
-+	struct ap_matrix_mdev *matrix_mdev = mdev_get_drvdata(mdev);
-+	unsigned long maxid = matrix_mdev->matrix.adm_max;
-+
-+	ret = kstrtoul(buf, 0, &id);
-+	if (ret)
-+		return ret;
-+
-+	if (id > maxid)
-+		ret = -EINVAL;
-+
-+	/* Set the bit in the ADM (bitmask) corresponding to the AP control
-+	 * domain number (id). The bits in the mask, from most significant to
-+	 * least significant, correspond to IDs 0 up to the one less than the
-+	 * number of control domains that can be assigned.
-+	 */
-+	mutex_lock(&matrix_dev.lock);
-+	set_bit_inv(id, matrix_mdev->matrix.adm);
-+	mutex_unlock(&matrix_dev.lock);
-+
-+	return count;
-+}
-+DEVICE_ATTR_WO(assign_control_domain);
-+
-+/**
-+ * unassign_control_domain_store
-+ *
-+ * @dev: the matrix device
-+ * @attr: the mediated matrix device's unassign_control_domain attribute
-+ * @buf: a buffer containing the domain ID to be assigned
-+ * @count: the number of bytes in @buf
-+ *
-+ * Parses the domain ID from @buf and unassigns it from the mediated matrix
-+ * device.
-+ *
-+ * Returns the number of bytes processed if the domain ID is valid; otherwise
-+ * returns an error.
-+ */
-+static ssize_t unassign_control_domain_store(struct device *dev,
-+					     struct device_attribute *attr,
-+					     const char *buf, size_t count)
-+{
-+	int ret;
-+	unsigned long domid;
-+	struct mdev_device *mdev = mdev_from_dev(dev);
-+	struct ap_matrix_mdev *matrix_mdev = mdev_get_drvdata(mdev);
-+	unsigned long max_domid =  matrix_mdev->matrix.adm_max;
-+
-+	ret = kstrtoul(buf, 0, &domid);
-+	if (ret)
-+		return ret;
-+	if (domid > max_domid)
-+		return -EINVAL;
-+
-+	mutex_lock(&matrix_dev.lock);
-+	clear_bit_inv(domid, matrix_mdev->matrix.adm);
-+	mutex_unlock(&matrix_dev.lock);
-+
-+	return count;
-+}
-+DEVICE_ATTR_WO(unassign_control_domain);
-+
-+static ssize_t control_domains_show(struct device *dev,
-+				    struct device_attribute *dev_attr,
-+				    char *buf)
-+{
-+	unsigned long id;
-+	int nchars = 0;
-+	int n;
-+	char *bufpos = buf;
-+	struct mdev_device *mdev = mdev_from_dev(dev);
-+	struct ap_matrix_mdev *matrix_mdev = mdev_get_drvdata(mdev);
-+	unsigned long max_domid = matrix_mdev->matrix.adm_max;
-+
-+	mutex_lock(&matrix_dev.lock);
-+	for_each_set_bit_inv(id, matrix_mdev->matrix.adm, max_domid + 1) {
-+		n = sprintf(bufpos, "%04lx\n", id);
-+		bufpos += n;
-+		nchars += n;
-+	}
-+	mutex_unlock(&matrix_dev.lock);
-+
-+	return nchars;
-+}
-+DEVICE_ATTR_RO(control_domains);
-+
- static struct attribute *vfio_ap_mdev_attrs[] = {
- 	&dev_attr_assign_adapter.attr,
- 	&dev_attr_unassign_adapter.attr,
- 	&dev_attr_assign_domain.attr,
- 	&dev_attr_unassign_domain.attr,
-+	&dev_attr_assign_control_domain.attr,
-+	&dev_attr_unassign_control_domain.attr,
-+	&dev_attr_control_domains.attr,
- 	NULL,
- };
- 
--- 
-1.7.1
-
+Mikko
