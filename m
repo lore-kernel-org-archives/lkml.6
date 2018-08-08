@@ -2,247 +2,1353 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A34EC4646D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 08:49:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2669C4646D
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 08:52:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A330721536
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 08:49:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="Fu/i9Wex"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A330721536
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id CE8F22154C
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 08:52:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE8F22154C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727378AbeHHLHq (ORCPT
+        id S1727358AbeHHLLL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 07:07:46 -0400
-Received: from mail-db5eur01on0058.outbound.protection.outlook.com ([104.47.2.58]:26880
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727174AbeHHLHq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 07:07:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Tg1ik+mnc7ew/akfJS/Vk80T8/y3oyAY9PQKcl4O2uw=;
- b=Fu/i9WexedmQwfVsykC6beCk21drSd6OTW8Qo2rfv0anSOSnGTtIdEQBAsgdIBXb1+wHPSxhvBhunCQEZQZZlWLt9V/jmpGr91gLw/eI3Ez96mCPXSW0tuVfiKBN1rl0eDL6gneBcwuz+xRc+R+CwchBcgPQ1CGZURbpyIu2eRI=
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.148.143) by
- AM0PR04MB4961.eurprd04.prod.outlook.com (20.176.215.222) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1017.18; Wed, 8 Aug 2018 08:48:58 +0000
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::24f6:1060:bcdb:e416]) by AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::24f6:1060:bcdb:e416%3]) with mapi id 15.20.1017.019; Wed, 8 Aug 2018
- 08:48:58 +0000
-From:   Peng Fan <peng.fan@nxp.com>
-To:     Anson Huang <anson.huang@nxp.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh@kernel.org>
-CC:     dl-linux-imx <linux-imx@nxp.com>
-Subject: RE: [PATCH 2/2] clk: imx: imx7d: remove clks_init_on array
-Thread-Topic: [PATCH 2/2] clk: imx: imx7d: remove clks_init_on array
-Thread-Index: AQHULtJlHE29QYC0R0qaJlrb0ys7BaS1it1g
-Date:   Wed, 8 Aug 2018 08:48:57 +0000
-Message-ID: <AM0PR04MB4481FC2BAD71B75D7BE84C0788260@AM0PR04MB4481.eurprd04.prod.outlook.com>
-References: <1533703167-26583-1-git-send-email-Anson.Huang@nxp.com>
- <1533703167-26583-2-git-send-email-Anson.Huang@nxp.com>
-In-Reply-To: <1533703167-26583-2-git-send-email-Anson.Huang@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=peng.fan@nxp.com; 
-x-originating-ip: [114.217.250.96]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM0PR04MB4961;6:MVLNwRWnzdBlZRfcKQn/09F5vVTG0Ra00g+DQ4UBznYK18kb2M7YRHhFZXzDRHIb7EKbojaZjTQM4AMt9RgRwCsxhBNj1jlvuTmGiUsa3uQGlaFwpPR7c5GCZlqwcV4kVZuFfXW+Lkwh7omAp4eXw8GHADojtHmTehRMgspNgHI3vbi3/ZXViFBLNsfDD3GDMPDEHcxYButwnAL+IaSd0YW0E0hifcd7f5OCisxXx2Co/j+j7BImSpPn/fs2ddSecqrXYcfttHTyjHipT5O4+TgZBclEQ6rKDHrB0kIsKMWjAQshlVtFQU4DntyilTAJIOecVTiw49rQOOgSyys8NosImxqkeI9PNRT2VPZOHbHXPDeip8tDla1iGzuVWu7Vl0gZF4V/F97P8Gdm9f/F9fMnET59+VQhn261BX79D/LcZy2/FSClJPz55oI33Hmjotyfmt3uaPu32DX5TySzYg==;5:+s3P+LmNxwIgZmez/YsLPsNrjaDaPOw4TQMxus6V+I7DyEaSRzQOzTMOEgZWFhjTyaG2ZVsRnMDnrQro29zUzPvUyfJzvUgUC3ia5kEXUm5l9Bm16Vz+9JrwRCWSTqItqjCHemeGmJ19XXQnEFMIBXUVOSfPkilJVtHJwhR+kuk=;7:Jcp6QRgpOU7Ztvn4HT6BDD8Bv9jjJa4R9dTtTQ6U8TcWBcAqrmKMf8f19OrEDl9IwO8GANXyPs/4SIz1otijzqfLhWbne0zA+eylmeNMnxbc0KBXHFf9IiygD9j2fCEq6IthFXvzde1xm6KgkT84WvEYIoxMp8w37sQsjLWu8eDUNtWXDOhK8PRZtG50fz7ZSmB6WT4UGFFkxUs5UToP8sO5drjc+BZEe7UwQ4sRc2L+vL8NKoyemvVUrn/CexVH
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 229383c3-8765-461c-7010-08d5fd0bc7bd
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB4961;
-x-ms-traffictypediagnostic: AM0PR04MB4961:
-x-microsoft-antispam-prvs: <AM0PR04MB4961DFF420A0A14B63725E4188260@AM0PR04MB4961.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055)(185117386973197)(258649278758335);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3002001)(3231311)(944501410)(52105095)(10201501046)(6055026)(149027)(150027)(6041310)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(6072148)(201708071742011)(7699016);SRVR:AM0PR04MB4961;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB4961;
-x-forefront-prvs: 07584EDBCD
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(366004)(376002)(346002)(39860400002)(136003)(199004)(189003)(13464003)(7736002)(6246003)(81166006)(8676002)(74316002)(305945005)(478600001)(5250100002)(2900100001)(9686003)(53936002)(55016002)(6436002)(81156014)(97736004)(14454004)(229853002)(2501003)(25786009)(4326008)(26005)(5660300001)(6506007)(102836004)(53546011)(3846002)(99286004)(106356001)(14444005)(68736007)(256004)(86362001)(33656002)(76176011)(8936002)(486006)(2201001)(446003)(11346002)(476003)(2906002)(44832011)(66066001)(7696005)(110136005)(6116002)(105586002)(316002)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4961;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: wMHKygzygtVDAPd/ZS7mnwyUMDuqfqrxhsxJudczXzWsPup8fS4Wgo1AoM+zl4HfJng1kvAnVulU0zCw0GCk4FcFLvVr3JOHHtsTXUgEsOE7cGcApRCJ6rhWRTx73pjfBs3856EQmgUPtmdUCiiuM1GSl4CclCteiYJphSz86bXwXC6o2QJJciZEmIpUfz6SvOcIUfgrayiIswWIhtqGjWFQeU6AkDrclPgMtDbxpw84WzWERHZjcnJIdIyqlLUX+t7561+CNNvVS8EWla7WE9afueImAyDUnOnoNzaIERF/RNyjhp8Ex3YMsRZZBgFQlZIQam/oAqw8jUWbLOSsV6mg4p/A+V3u4lUtMmEggy8=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+        Wed, 8 Aug 2018 07:11:11 -0400
+Received: from mga17.intel.com ([192.55.52.151]:17977 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726979AbeHHLLL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 07:11:11 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Aug 2018 01:52:26 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,456,1526367600"; 
+   d="scan'208";a="79912435"
+Received: from zhuyixin-mobl1.gar.corp.intel.com (HELO [10.226.38.39]) ([10.226.38.39])
+  by orsmga001.jf.intel.com with ESMTP; 08 Aug 2018 01:52:22 -0700
+Subject: Re: [PATCH v2 02/18] clk: intel: Add clock driver for Intel MIPS SoCs
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Songjun Wu <songjun.wu@linux.intel.com>,
+        chuanhua.lei@linux.intel.com, hua.ma@linux.intel.com,
+        qi-ming.wu@intel.com
+Cc:     linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
+        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+References: <20180803030237.3366-1-songjun.wu@linux.intel.com>
+ <20180803030237.3366-3-songjun.wu@linux.intel.com>
+ <153370742214.220756.2039365625963765922@swboyd.mtv.corp.google.com>
+From:   yixin zhu <yixin.zhu@linux.intel.com>
+Message-ID: <571d2d40-8728-fa7c-5d89-73d2a7b6293b@linux.intel.com>
+Date:   Wed, 8 Aug 2018 16:52:20 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 229383c3-8765-461c-7010-08d5fd0bc7bd
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Aug 2018 08:48:57.9248
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4961
+In-Reply-To: <153370742214.220756.2039365625963765922@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQW5zb24gSHVhbmcNCj4g
-U2VudDogMjAxOMTqONTCOMjVIDEyOjM5DQo+IFRvOiBzaGF3bmd1b0BrZXJuZWwub3JnOyBzLmhh
-dWVyQHBlbmd1dHJvbml4LmRlOyBrZXJuZWxAcGVuZ3V0cm9uaXguZGU7DQo+IEZhYmlvIEVzdGV2
-YW0gPGZhYmlvLmVzdGV2YW1AbnhwLmNvbT47IG10dXJxdWV0dGVAYmF5bGlicmUuY29tOw0KPiBz
-Ym95ZEBrZXJuZWwub3JnOyBsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmc7DQo+
-IGxpbnV4LWNsa0B2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcN
-Cj4gQ2M6IGRsLWxpbnV4LWlteCA8bGludXgtaW14QG54cC5jb20+DQo+IFN1YmplY3Q6IFtQQVRD
-SCAyLzJdIGNsazogaW14OiBpbXg3ZDogcmVtb3ZlIGNsa3NfaW5pdF9vbiBhcnJheQ0KPiANCj4g
-Q2xvY2sgZnJhbWV3b3JrIHdpbGwgZW5hYmxlIHRob3NlIGNsb2NrcyByZWdpc3RlcmVkIHdpdGgg
-Q0xLX0lTX0NSSVRJQ0FMIGZsYWcsDQo+IHNvIG5vIG5lZWQgdG8gaGF2ZSBjbGtzX2luaXRfb24g
-YXJyYXkgZHVyaW5nIGNsb2NrIGluaXRpYWxpemF0aW9uIG5vdy4NCg0KV2lsbCBpdCBiZSBtb3Jl
-IGZsZXhpYmxlIHRvIHBhcnNlIGR0cyBzYXlpbmcgImNyaXRpY2FsLWNsb2NrcyA9IDx4eHg+IiBv
-ciAiaW5pdC1vbi1hcnJhcnk9PHh4eD4iDQphbmQgZW5hYmxlIHRob3NlIGNsb2Nrcz8NCg0KUmVn
-YXJkcywNClBlbmcuDQoNCj4gDQo+IFNpZ25lZC1vZmYtYnk6IEFuc29uIEh1YW5nIDxBbnNvbi5I
-dWFuZ0BueHAuY29tPg0KPiAtLS0NCj4gIGRyaXZlcnMvY2xrL2lteC9jbGstaW14N2QuYyB8IDI3
-ICsrKysrKysrLS0tLS0tLS0tLS0tLS0tLS0tLQ0KPiAgZHJpdmVycy9jbGsvaW14L2Nsay5oICAg
-ICAgIHwgIDcgKysrKysrKw0KPiAgMiBmaWxlcyBjaGFuZ2VkLCAxNSBpbnNlcnRpb25zKCspLCAx
-OSBkZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2Nsay9pbXgvY2xrLWlt
-eDdkLmMgYi9kcml2ZXJzL2Nsay9pbXgvY2xrLWlteDdkLmMgaW5kZXgNCj4gYzQ1MThkNy4uMDc2
-NDYwYiAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9jbGsvaW14L2Nsay1pbXg3ZC5jDQo+ICsrKyBi
-L2RyaXZlcnMvY2xrL2lteC9jbGstaW14N2QuYw0KPiBAQCAtMzc5LDEzICszNzksNiBAQCBzdGF0
-aWMgY29uc3QgY2hhciAqcGxsX2VuZXRfYnlwYXNzX3NlbFtdID0NCj4geyAicGxsX2VuZXRfbWFp
-biIsICJwbGxfZW5ldF9tYWluX3NyYyAgc3RhdGljIGNvbnN0IGNoYXINCj4gKnBsbF9hdWRpb19i
-eXBhc3Nfc2VsW10gPSB7ICJwbGxfYXVkaW9fbWFpbiIsICJwbGxfYXVkaW9fbWFpbl9zcmMiLCB9
-OyAgc3RhdGljDQo+IGNvbnN0IGNoYXIgKnBsbF92aWRlb19ieXBhc3Nfc2VsW10gPSB7ICJwbGxf
-dmlkZW9fbWFpbiIsICJwbGxfdmlkZW9fbWFpbl9zcmMiLCB9Ow0KPiANCj4gLXN0YXRpYyBpbnQg
-Y29uc3QgY2xrc19pbml0X29uW10gX19pbml0Y29uc3QgPSB7DQo+IC0JSU1YN0RfQVJNX0E3X1JP
-T1RfQ0xLLCBJTVg3RF9NQUlOX0FYSV9ST09UX0NMSywNCj4gLQlJTVg3RF9QTExfU1lTX01BSU5f
-NDgwTV9DTEssIElNWDdEX0lQR19ST09UX0NMSywNCj4gLQlJTVg3RF9EUkFNX1BIWU1fUk9PVF9D
-TEssIElNWDdEX0RSQU1fUk9PVF9DTEssDQo+IC0JSU1YN0RfRFJBTV9QSFlNX0FMVF9ST09UX0NM
-SywgSU1YN0RfRFJBTV9BTFRfUk9PVF9DTEssDQo+IC19Ow0KPiAtDQo+ICBzdGF0aWMgc3RydWN0
-IGNsa19vbmVjZWxsX2RhdGEgY2xrX2RhdGE7DQo+IA0KPiAgc3RhdGljIHN0cnVjdCBjbGsgKiog
-Y29uc3QgdWFydF9jbGtzW10gX19pbml0Y29uc3QgPSB7IEBAIC00MDMsNyArMzk2LDYgQEANCj4g
-c3RhdGljIHZvaWQgX19pbml0IGlteDdkX2Nsb2Nrc19pbml0KHN0cnVjdCBkZXZpY2Vfbm9kZSAq
-Y2NtX25vZGUpICB7DQo+ICAJc3RydWN0IGRldmljZV9ub2RlICpucDsNCj4gIAl2b2lkIF9faW9t
-ZW0gKmJhc2U7DQo+IC0JaW50IGk7DQo+IA0KPiAgCWNsa3NbSU1YN0RfQ0xLX0RVTU1ZXSA9IGlt
-eF9jbGtfZml4ZWQoImR1bW15IiwgMCk7DQo+ICAJY2xrc1tJTVg3RF9PU0NfMjRNX0NMS10gPSBv
-Zl9jbGtfZ2V0X2J5X25hbWUoY2NtX25vZGUsICJvc2MiKTsgQEANCj4gLTQ2Niw3ICs0NTgsNyBA
-QCBzdGF0aWMgdm9pZCBfX2luaXQgaW14N2RfY2xvY2tzX2luaXQoc3RydWN0IGRldmljZV9ub2Rl
-DQo+ICpjY21fbm9kZSkNCj4gIAljbGtzW0lNWDdEX1BMTF9TWVNfTUFJTl8xMjBNXSA9DQo+IGlt
-eF9jbGtfZml4ZWRfZmFjdG9yKCJwbGxfc3lzX21haW5fMTIwbSIsICJwbGxfc3lzX21haW5fY2xr
-IiwgMSwgNCk7DQo+ICAJY2xrc1tJTVg3RF9QTExfRFJBTV9NQUlOXzUzM01dID0NCj4gaW14X2Ns
-a19maXhlZF9mYWN0b3IoInBsbF9kcmFtXzUzM20iLCAicGxsX2RyYW1fbWFpbl9jbGsiLCAxLCAy
-KTsNCj4gDQo+IC0JY2xrc1tJTVg3RF9QTExfU1lTX01BSU5fNDgwTV9DTEtdID0NCj4gaW14X2Ns
-a19nYXRlX2RpcygicGxsX3N5c19tYWluXzQ4MG1fY2xrIiwgInBsbF9zeXNfbWFpbl80ODBtIiwg
-YmFzZSArIDB4YjAsDQo+IDQpOw0KPiArCWNsa3NbSU1YN0RfUExMX1NZU19NQUlOXzQ4ME1fQ0xL
-XSA9DQo+ICtpbXhfY2xrX2dhdGVfZGlzX2ZsYWdzKCJwbGxfc3lzX21haW5fNDgwbV9jbGsiLCAi
-cGxsX3N5c19tYWluXzQ4MG0iLA0KPiArYmFzZSArIDB4YjAsIDQsIENMS19JU19DUklUSUNBTCk7
-DQo+ICAJY2xrc1tJTVg3RF9QTExfU1lTX01BSU5fMjQwTV9DTEtdID0NCj4gaW14X2Nsa19nYXRl
-X2RpcygicGxsX3N5c19tYWluXzI0MG1fY2xrIiwgInBsbF9zeXNfbWFpbl8yNDBtIiwgYmFzZSAr
-IDB4YjAsDQo+IDUpOw0KPiAgCWNsa3NbSU1YN0RfUExMX1NZU19NQUlOXzEyME1fQ0xLXSA9DQo+
-IGlteF9jbGtfZ2F0ZV9kaXMoInBsbF9zeXNfbWFpbl8xMjBtX2NsayIsICJwbGxfc3lzX21haW5f
-MTIwbSIsIGJhc2UgKyAweGIwLA0KPiA2KTsNCj4gIAljbGtzW0lNWDdEX1BMTF9EUkFNX01BSU5f
-NTMzTV9DTEtdID0NCj4gaW14X2Nsa19nYXRlKCJwbGxfZHJhbV81MzNtX2NsayIsICJwbGxfZHJh
-bV81MzNtIiwgYmFzZSArIDB4NzAsIDEyKTsgQEANCj4gLTcxOSw3ICs3MTEsNyBAQCBzdGF0aWMg
-dm9pZCBfX2luaXQgaW14N2RfY2xvY2tzX2luaXQoc3RydWN0IGRldmljZV9ub2RlDQo+ICpjY21f
-bm9kZSkNCj4gIAljbGtzW0lNWDdEX0VORVRfQVhJX1JPT1RfRElWXSA9DQo+IGlteF9jbGtfZGl2
-aWRlcjIoImVuZXRfYXhpX3Bvc3RfZGl2IiwgImVuZXRfYXhpX3ByZV9kaXYiLCBiYXNlICsgMHg4
-OTAwLCAwLCA2KTsNCj4gIAljbGtzW0lNWDdEX05BTkRfVVNESENfQlVTX1JPT1RfQ0xLXSA9DQo+
-IGlteF9jbGtfZGl2aWRlcjIoIm5hbmRfdXNkaGNfcm9vdF9jbGsiLCAibmFuZF91c2RoY19wcmVf
-ZGl2IiwgYmFzZSArDQo+IDB4ODk4MCwgMCwgNik7DQo+ICAJY2xrc1tJTVg3RF9BSEJfQ0hBTk5F
-TF9ST09UX0RJVl0gPQ0KPiBpbXhfY2xrX2RpdmlkZXIyKCJhaGJfcm9vdF9jbGsiLCAiYWhiX3By
-ZV9kaXYiLCBiYXNlICsgMHg5MDAwLCAwLCA2KTsNCj4gLQljbGtzW0lNWDdEX0lQR19ST09UX0NM
-S10gPSBpbXhfY2xrX2RpdmlkZXIyKCJpcGdfcm9vdF9jbGsiLA0KPiAiYWhiX3Jvb3RfY2xrIiwg
-YmFzZSArIDB4OTA4MCwgMCwgMik7DQo+ICsJY2xrc1tJTVg3RF9JUEdfUk9PVF9DTEtdID0gaW14
-X2Nsa19kaXZpZGVyX2ZsYWdzKCJpcGdfcm9vdF9jbGsiLA0KPiArImFoYl9yb290X2NsayIsIGJh
-c2UgKyAweDkwODAsIDAsIDIsIENMS19JU19DUklUSUNBTCB8DQo+ICtDTEtfT1BTX1BBUkVOVF9F
-TkFCTEUgfCBDTEtfU0VUX1JBVEVfUEFSRU5UKTsNCj4gIAljbGtzW0lNWDdEX0RSQU1fUk9PVF9E
-SVZdID0gaW14X2Nsa19kaXZpZGVyMigiZHJhbV9wb3N0X2RpdiIsDQo+ICJkcmFtX2NnIiwgYmFz
-ZSArIDB4OTg4MCwgMCwgMyk7DQo+ICAJY2xrc1tJTVg3RF9EUkFNX1BIWU1fQUxUX1JPT1RfRElW
-XSA9DQo+IGlteF9jbGtfZGl2aWRlcjIoImRyYW1fcGh5bV9hbHRfcG9zdF9kaXYiLCAiZHJhbV9w
-aHltX2FsdF9wcmVfZGl2IiwgYmFzZQ0KPiArIDB4YTAwMCwgMCwgMyk7DQo+ICAJY2xrc1tJTVg3
-RF9EUkFNX0FMVF9ST09UX0RJVl0gPQ0KPiBpbXhfY2xrX2RpdmlkZXIyKCJkcmFtX2FsdF9wb3N0
-X2RpdiIsICJkcmFtX2FsdF9wcmVfZGl2IiwgYmFzZSArIDB4YTA4MCwgMCwNCj4gMyk7IEBAIC03
-ODMsMTcgKzc3NSwxNyBAQCBzdGF0aWMgdm9pZCBfX2luaXQgaW14N2RfY2xvY2tzX2luaXQoc3Ry
-dWN0DQo+IGRldmljZV9ub2RlICpjY21fbm9kZSkNCj4gIAljbGtzW0lNWDdEX0NMS08xX1JPT1Rf
-RElWXSA9IGlteF9jbGtfZGl2aWRlcjIoImNsa28xX3Bvc3RfZGl2IiwNCj4gImNsa28xX3ByZV9k
-aXYiLCBiYXNlICsgMHhiZDgwLCAwLCA2KTsNCj4gIAljbGtzW0lNWDdEX0NMS08yX1JPT1RfRElW
-XSA9IGlteF9jbGtfZGl2aWRlcjIoImNsa28yX3Bvc3RfZGl2IiwNCj4gImNsa28yX3ByZV9kaXYi
-LCBiYXNlICsgMHhiZTAwLCAwLCA2KTsNCj4gDQo+IC0JY2xrc1tJTVg3RF9BUk1fQTdfUk9PVF9D
-TEtdID0gaW14X2Nsa19nYXRlNCgiYXJtX2E3X3Jvb3RfY2xrIiwNCj4gImFybV9hN19kaXYiLCBi
-YXNlICsgMHg0MDAwLCAwKTsNCj4gKwljbGtzW0lNWDdEX0FSTV9BN19ST09UX0NMS10gPQ0KPiBp
-bXhfY2xrX2dhdGUyX2ZsYWdzKCJhcm1fYTdfcm9vdF9jbGsiLA0KPiArImFybV9hN19kaXYiLCBi
-YXNlICsgMHg0MDAwLCAwLCBDTEtfSVNfQ1JJVElDQUwgfA0KPiArQ0xLX09QU19QQVJFTlRfRU5B
-QkxFKTsNCj4gIAljbGtzW0lNWDdEX0FSTV9NNF9ST09UX0NMS10gPSBpbXhfY2xrX2dhdGU0KCJh
-cm1fbTRfcm9vdF9jbGsiLA0KPiAiYXJtX200X2RpdiIsIGJhc2UgKyAweDQwMTAsIDApOw0KPiAt
-CWNsa3NbSU1YN0RfTUFJTl9BWElfUk9PVF9DTEtdID0gaW14X2Nsa19nYXRlNCgibWFpbl9heGlf
-cm9vdF9jbGsiLA0KPiAiYXhpX3Bvc3RfZGl2IiwgYmFzZSArIDB4NDA0MCwgMCk7DQo+ICsJY2xr
-c1tJTVg3RF9NQUlOX0FYSV9ST09UX0NMS10gPQ0KPiAraW14X2Nsa19nYXRlMl9mbGFncygibWFp
-bl9heGlfcm9vdF9jbGsiLCAiYXhpX3Bvc3RfZGl2IiwgYmFzZSArIDB4NDA0MCwNCj4gKzAsIENM
-S19JU19DUklUSUNBTCB8IENMS19PUFNfUEFSRU5UX0VOQUJMRSk7DQo+ICAJY2xrc1tJTVg3RF9E
-SVNQX0FYSV9ST09UX0NMS10gPSBpbXhfY2xrX2dhdGU0KCJkaXNwX2F4aV9yb290X2NsayIsDQo+
-ICJkaXNwX2F4aV9wb3N0X2RpdiIsIGJhc2UgKyAweDQwNTAsIDApOw0KPiAgCWNsa3NbSU1YN0Rf
-RU5FVF9BWElfUk9PVF9DTEtdID0gaW14X2Nsa19nYXRlNCgiZW5ldF9heGlfcm9vdF9jbGsiLA0K
-PiAiZW5ldF9heGlfcG9zdF9kaXYiLCBiYXNlICsgMHg0MDYwLCAwKTsNCj4gIAljbGtzW0lNWDdE
-X09DUkFNX0NMS10gPSBpbXhfY2xrX2dhdGU0KCJvY3JhbV9jbGsiLA0KPiAibWFpbl9heGlfcm9v
-dF9jbGsiLCBiYXNlICsgMHg0MTEwLCAwKTsNCj4gIAljbGtzW0lNWDdEX09DUkFNX1NfQ0xLXSA9
-IGlteF9jbGtfZ2F0ZTQoIm9jcmFtX3NfY2xrIiwNCj4gImFoYl9yb290X2NsayIsIGJhc2UgKyAw
-eDQxMjAsIDApOw0KPiAtCWNsa3NbSU1YN0RfRFJBTV9ST09UX0NMS10gPSBpbXhfY2xrX2dhdGU0
-KCJkcmFtX3Jvb3RfY2xrIiwNCj4gImRyYW1fcG9zdF9kaXYiLCBiYXNlICsgMHg0MTMwLCAwKTsN
-Cj4gLQljbGtzW0lNWDdEX0RSQU1fUEhZTV9ST09UX0NMS10gPQ0KPiBpbXhfY2xrX2dhdGU0KCJk
-cmFtX3BoeW1fcm9vdF9jbGsiLCAiZHJhbV9waHltX2NnIiwgYmFzZSArIDB4NDEzMCwgMCk7DQo+
-IC0JY2xrc1tJTVg3RF9EUkFNX1BIWU1fQUxUX1JPT1RfQ0xLXSA9DQo+IGlteF9jbGtfZ2F0ZTQo
-ImRyYW1fcGh5bV9hbHRfcm9vdF9jbGsiLCAiZHJhbV9waHltX2FsdF9wb3N0X2RpdiIsIGJhc2Ug
-Kw0KPiAweDQxMzAsIDApOw0KPiAtCWNsa3NbSU1YN0RfRFJBTV9BTFRfUk9PVF9DTEtdID0gaW14
-X2Nsa19nYXRlNCgiZHJhbV9hbHRfcm9vdF9jbGsiLA0KPiAiZHJhbV9hbHRfcG9zdF9kaXYiLCBi
-YXNlICsgMHg0MTMwLCAwKTsNCj4gKwljbGtzW0lNWDdEX0RSQU1fUk9PVF9DTEtdID0gaW14X2Ns
-a19nYXRlMl9mbGFncygiZHJhbV9yb290X2NsayIsDQo+ICJkcmFtX3Bvc3RfZGl2IiwgYmFzZSAr
-IDB4NDEzMCwgMCwgQ0xLX0lTX0NSSVRJQ0FMIHwNCj4gQ0xLX09QU19QQVJFTlRfRU5BQkxFKTsN
-Cj4gKwljbGtzW0lNWDdEX0RSQU1fUEhZTV9ST09UX0NMS10gPQ0KPiBpbXhfY2xrX2dhdGUyX2Zs
-YWdzKCJkcmFtX3BoeW1fcm9vdF9jbGsiLCAiZHJhbV9waHltX2NnIiwgYmFzZSArIDB4NDEzMCwN
-Cj4gMCwgQ0xLX0lTX0NSSVRJQ0FMIHwgQ0xLX09QU19QQVJFTlRfRU5BQkxFKTsNCj4gKwljbGtz
-W0lNWDdEX0RSQU1fUEhZTV9BTFRfUk9PVF9DTEtdID0NCj4gaW14X2Nsa19nYXRlMl9mbGFncygi
-ZHJhbV9waHltX2FsdF9yb290X2NsayIsICJkcmFtX3BoeW1fYWx0X3Bvc3RfZGl2IiwNCj4gYmFz
-ZSArIDB4NDEzMCwgMCwgQ0xLX0lTX0NSSVRJQ0FMIHwgQ0xLX09QU19QQVJFTlRfRU5BQkxFKTsN
-Cj4gKwljbGtzW0lNWDdEX0RSQU1fQUxUX1JPT1RfQ0xLXSA9DQo+ICtpbXhfY2xrX2dhdGUyX2Zs
-YWdzKCJkcmFtX2FsdF9yb290X2NsayIsICJkcmFtX2FsdF9wb3N0X2RpdiIsIGJhc2UgKw0KPiAr
-MHg0MTMwLCAwLCBDTEtfSVNfQ1JJVElDQUwgfCBDTEtfT1BTX1BBUkVOVF9FTkFCTEUpOw0KPiAg
-CWNsa3NbSU1YN0RfT0NPVFBfQ0xLXSA9IGlteF9jbGtfZ2F0ZTQoIm9jb3RwX2NsayIsICJpcGdf
-cm9vdF9jbGsiLA0KPiBiYXNlICsgMHg0MjMwLCAwKTsNCj4gIAljbGtzW0lNWDdEX1NOVlNfQ0xL
-XSA9IGlteF9jbGtfZ2F0ZTQoInNudnNfY2xrIiwgImlwZ19yb290X2NsayIsIGJhc2UgKw0KPiAw
-eDQyNTAsIDApOw0KPiAgCWNsa3NbSU1YN0RfTVVfUk9PVF9DTEtdID0gaW14X2Nsa19nYXRlNCgi
-bXVfcm9vdF9jbGsiLA0KPiAiaXBnX3Jvb3RfY2xrIiwgYmFzZSArIDB4NDI3MCwgMCk7IEBAIC04
-ODIsOSArODc0LDYgQEAgc3RhdGljIHZvaWQgX19pbml0DQo+IGlteDdkX2Nsb2Nrc19pbml0KHN0
-cnVjdCBkZXZpY2Vfbm9kZSAqY2NtX25vZGUpDQo+ICAJY2xrX2RhdGEuY2xrX251bSA9IEFSUkFZ
-X1NJWkUoY2xrcyk7DQo+ICAJb2ZfY2xrX2FkZF9wcm92aWRlcihucCwgb2ZfY2xrX3NyY19vbmVj
-ZWxsX2dldCwgJmNsa19kYXRhKTsNCj4gDQo+IC0JZm9yIChpID0gMDsgaSA8IEFSUkFZX1NJWkUo
-Y2xrc19pbml0X29uKTsgaSsrKQ0KPiAtCQljbGtfcHJlcGFyZV9lbmFibGUoY2xrc1tjbGtzX2lu
-aXRfb25baV1dKTsNCj4gLQ0KPiAgCWNsa19zZXRfcGFyZW50KGNsa3NbSU1YN0RfUExMX0FSTV9N
-QUlOX0JZUEFTU10sDQo+IGNsa3NbSU1YN0RfUExMX0FSTV9NQUlOXSk7DQo+ICAJY2xrX3NldF9w
-YXJlbnQoY2xrc1tJTVg3RF9QTExfRFJBTV9NQUlOX0JZUEFTU10sDQo+IGNsa3NbSU1YN0RfUExM
-X0RSQU1fTUFJTl0pOw0KPiAgCWNsa19zZXRfcGFyZW50KGNsa3NbSU1YN0RfUExMX1NZU19NQUlO
-X0JZUEFTU10sDQo+IGNsa3NbSU1YN0RfUExMX1NZU19NQUlOXSk7IGRpZmYgLS1naXQgYS9kcml2
-ZXJzL2Nsay9pbXgvY2xrLmgNCj4gYi9kcml2ZXJzL2Nsay9pbXgvY2xrLmggaW5kZXggODA3NmVj
-MC4uNTg5NWUyMjMgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvY2xrL2lteC9jbGsuaA0KPiArKysg
-Yi9kcml2ZXJzL2Nsay9pbXgvY2xrLmgNCj4gQEAgLTEzNyw2ICsxMzcsMTMgQEAgc3RhdGljIGlu
-bGluZSBzdHJ1Y3QgY2xrICppbXhfY2xrX2dhdGVfZGlzKGNvbnN0IGNoYXINCj4gKm5hbWUsIGNv
-bnN0IGNoYXIgKnBhcmVudCwNCj4gIAkJCXNoaWZ0LCBDTEtfR0FURV9TRVRfVE9fRElTQUJMRSwg
-JmlteF9jY21fbG9jayk7ICB9DQo+IA0KPiArc3RhdGljIGlubGluZSBzdHJ1Y3QgY2xrICppbXhf
-Y2xrX2dhdGVfZGlzX2ZsYWdzKGNvbnN0IGNoYXIgKm5hbWUsIGNvbnN0IGNoYXINCj4gKnBhcmVu
-dCwNCj4gKwkJdm9pZCBfX2lvbWVtICpyZWcsIHU4IHNoaWZ0LCB1bnNpZ25lZCBsb25nIGZsYWdz
-KSB7DQo+ICsJcmV0dXJuIGNsa19yZWdpc3Rlcl9nYXRlKE5VTEwsIG5hbWUsIHBhcmVudCwgZmxh
-Z3MgfA0KPiBDTEtfU0VUX1JBVEVfUEFSRU5ULCByZWcsDQo+ICsJCQlzaGlmdCwgQ0xLX0dBVEVf
-U0VUX1RPX0RJU0FCTEUsICZpbXhfY2NtX2xvY2spOyB9DQo+ICsNCj4gIHN0YXRpYyBpbmxpbmUg
-c3RydWN0IGNsayAqaW14X2Nsa19nYXRlMihjb25zdCBjaGFyICpuYW1lLCBjb25zdCBjaGFyICpw
-YXJlbnQsDQo+ICAJCXZvaWQgX19pb21lbSAqcmVnLCB1OCBzaGlmdCkNCj4gIHsNCj4gLS0NCj4g
-Mi43LjQNCg0K
+
+
+On 8/8/2018 1:50 PM, Stephen Boyd wrote:
+> Quoting Songjun Wu (2018-08-02 20:02:21)
+>> From: Yixin Zhu <yixin.zhu@linux.intel.com>
+>>
+>> This driver provides PLL clock registration as well as various clock
+>> branches, e.g. MUX clock, gate clock, divider clock and so on.
+>>
+>> PLLs that provide clock to DDR, CPU and peripherals are shown below:
+>>
+>>                   +---------+
+>>              |--->| LCPLL3 0|--PCIe clk-->
+>>     XO       |    +---------+
+>> +-----------|
+>>              |    +---------+
+>>              |    |        3|--PAE clk-->
+>>              |--->| PLL0B  2|--GSWIP clk-->
+>>              |    |        1|--DDR clk-->DDR PHY clk-->
+>>              |    |        0|--CPU1 clk--+   +-----+
+>>              |    +---------+            |--->0    |
+>>              |                               | MUX |--CPU clk-->
+>>              |    +---------+            |--->1    |
+>>              |    |        0|--CPU0 clk--+   +-----+
+>>              |--->| PLLOA  1|--SSX4 clk-->
+>>                   |        2|--NGI clk-->
+>>                   |        3|--CBM clk-->
+>>                   +---------+
+> Thanks for the picture!
+Thanks for the review.
+
+>
+>> Signed-off-by: Yixin Zhu <yixin.zhu@linux.intel.com>
+>> Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
+>> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+>> index 0bb25dd009d1..d929ca4607cf 100644
+>> --- a/drivers/clk/Makefile
+>> +++ b/drivers/clk/Makefile
+>> @@ -72,6 +72,9 @@ obj-$(CONFIG_ARCH_HISI)                       += hisilicon/
+>>   obj-y                                  += imgtec/
+>>   obj-$(CONFIG_ARCH_MXC)                 += imx/
+>>   obj-$(CONFIG_MACH_INGENIC)             += ingenic/
+>> +ifeq ($(CONFIG_COMMON_CLK), y)
+>> +obj-y                                                  +=intel/
+>> +endif
+> Why not obj-$(CONFIG_INTEL_CCF) or something like that?
+Will use obj-$(CONFIG_INTEL_CCF)
+
+>>   obj-$(CONFIG_ARCH_KEYSTONE)            += keystone/
+>>   obj-$(CONFIG_MACH_LOONGSON32)          += loongson1/
+>>   obj-y                                  += mediatek/
+>> diff --git a/drivers/clk/intel/Kconfig b/drivers/clk/intel/Kconfig
+>> new file mode 100644
+>> index 000000000000..c7d3fb1721fa
+>> --- /dev/null
+>> +++ b/drivers/clk/intel/Kconfig
+>> @@ -0,0 +1,20 @@
+>> +# SPDX-License-Identifier: GPL-2.0
+>> +config INTEL_CGU_CLK
+>> +       depends on COMMON_CLK
+>> +       depends on INTEL_MIPS || COMPILE_TEST
+>> +       select MFD_SYSCON
+>> +       bool "Intel clock controller support"
+>> +       help
+>> +         This driver support Intel CGU (Clock Generation Unit).
+> Is it really called a clock generation unit? Or that's just copied from
+> sunxi driver?
+Yes,  It's called clock generation unit(CGU) in our HW chip spec.
+
+>> +
+>> +choice
+>> +       prompt "SoC platform selection"
+>> +       depends on INTEL_CGU_CLK
+>> +       default INTEL_GRX500_CGU_CLK
+>> +
+>> +config INTEL_GRX500_CGU_CLK
+>> +       bool "GRX500 CLK"
+>> +       help
+>> +         Clock driver of GRX500 platform.
+>> +
+>> +endchoice
+>> diff --git a/drivers/clk/intel/Makefile b/drivers/clk/intel/Makefile
+>> new file mode 100644
+>> index 000000000000..16a0138e52c2
+>> --- /dev/null
+>> +++ b/drivers/clk/intel/Makefile
+>> @@ -0,0 +1,7 @@
+>> +# SPDX-License-Identifier: GPL-2.0
+>> +# Makefile for intel specific clk
+>> +
+>> +obj-$(CONFIG_INTEL_CGU_CLK) += clk-cgu.o clk-cgu-pll.o
+>> +ifneq ($(CONFIG_INTEL_GRX500_CGU_CLK),)
+>> +       obj-y += clk-grx500.o
+>> +endif
+>> diff --git a/drivers/clk/intel/clk-cgu-pll.c b/drivers/clk/intel/clk-cgu-pll.c
+>> new file mode 100644
+>> index 000000000000..20759bc27e95
+>> --- /dev/null
+>> +++ b/drivers/clk/intel/clk-cgu-pll.c
+>> @@ -0,0 +1,166 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + *  Copyright (C) 2018 Intel Corporation.
+>> + *  Zhu YiXin <Yixin.zhu@intel.com>
+>> + */
+>> +
+>> +#include <linux/clk.h>
+> Is this include used?
+Not used. Will remove it.
+
+>> +#include <linux/clk-provider.h>
+>> +#include <linux/clkdev.h>
+>> +#include <linux/mfd/syscon.h>
+>> +#include <linux/of.h>
+>> +#include <linux/of_address.h>
+>> +#include <linux/regmap.h>
+>> +#include <linux/slab.h>
+>> +
+>> +#include "clk-cgu-pll.h"
+>> +#include "clk-cgu.h"
+>> +
+>> +#define to_intel_clk_pll(_hw)  container_of(_hw, struct intel_clk_pll, hw)
+>> +
+>> +/*
+>> + * Calculate formula:
+>> + * rate = (prate * mult + (prate * frac) / frac_div) / div
+>> + */
+>> +static unsigned long
+>> +intel_pll_calc_rate(unsigned long prate, unsigned int mult,
+>> +                   unsigned int div, unsigned int frac,
+>> +                   unsigned int frac_div)
+>> +{
+>> +       u64 crate, frate, rate64;
+>> +
+>> +       rate64 = prate;
+>> +       crate = rate64 * mult;
+>> +
+>> +       if (frac) {
+>> +               frate = rate64 * frac;
+>> +               do_div(frate, frac_div);
+>> +               crate += frate;
+>> +       }
+>> +       do_div(crate, div);
+>> +
+>> +       return (unsigned long)crate;
+>> +}
+>> +
+>> +static void
+>> +grx500_pll_get_params(struct intel_clk_pll *pll, unsigned int *mult,
+>> +                     unsigned int *frac)
+>> +{
+>> +       *mult = intel_get_clk_val(pll->map, pll->reg, 2, 7);
+>> +       *frac = intel_get_clk_val(pll->map, pll->reg, 9, 21);
+>> +}
+>> +
+>> +static int intel_wait_pll_lock(struct intel_clk_pll *pll, int bit_idx)
+>> +{
+>> +       unsigned int val;
+>> +
+>> +       return regmap_read_poll_timeout(pll->map, pll->reg, val,
+>> +                                       val & BIT(bit_idx), 10, 1000);
+>> +}
+>> +
+>> +static unsigned long
+>> +intel_grx500_pll_recalc_rate(struct clk_hw *hw, unsigned long prate)
+>> +{
+>> +       struct intel_clk_pll *pll = to_intel_clk_pll(hw);
+>> +       unsigned int mult, frac;
+>> +
+>> +       grx500_pll_get_params(pll, &mult, &frac);
+>> +
+>> +       return intel_pll_calc_rate(prate, mult, 1, frac, BIT(20));
+>> +}
+>> +
+>> +static int intel_grx500_pll_is_enabled(struct clk_hw *hw)
+>> +{
+>> +       struct intel_clk_pll *pll = to_intel_clk_pll(hw);
+>> +
+>> +       if (intel_wait_pll_lock(pll, 1)) {
+>> +               pr_err("%s: pll: %s is not locked!\n",
+>> +                      __func__, clk_hw_get_name(hw));
+>> +               return 0;
+>> +       }
+>> +
+>> +       return intel_get_clk_val(pll->map, pll->reg, 1, 1);
+>> +}
+>> +
+>> +const static struct clk_ops intel_grx500_pll_ops = {
+> Should be static const struct ...
+Will update it.
+
+>> +       .recalc_rate = intel_grx500_pll_recalc_rate,
+>> +       .is_enabled = intel_grx500_pll_is_enabled,
+>> +};
+>> +
+>> +static struct clk
+>> +*intel_clk_register_pll(struct intel_clk_provider *ctx,
+>> +                       enum intel_pll_type type, const char *cname,
+>> +                       const char *const *pname, u8 num_parents,
+>> +                       unsigned long flags, unsigned int reg,
+>> +                       const struct intel_pll_rate_table *table,
+>> +                       unsigned int mult, unsigned int div, unsigned int frac)
+>> +{
+>> +       struct clk_init_data init;
+>> +       struct intel_clk_pll *pll;
+>> +       struct clk_hw *hw;
+>> +       int ret, i;
+>> +
+>> +       if (type != pll_grx500) {
+>> +               pr_err("%s: pll type %d not supported!\n",
+>> +                      __func__, type);
+>> +               return ERR_PTR(-EINVAL);
+>> +       }
+>> +       init.name = cname;
+>> +       init.ops = &intel_grx500_pll_ops;
+>> +       init.flags = CLK_IS_BASIC;
+> Don't use this flag unless you have some reason to need it.
+Will remove it.
+
+>> +       init.parent_names = pname;
+>> +       init.num_parents = num_parents;
+>> +
+>> +       pll = kzalloc(sizeof(*pll), GFP_KERNEL);
+>> +       if (!pll)
+>> +               return ERR_PTR(-ENOMEM);
+>> +       pll->map = ctx->map;
+>> +       pll->reg = reg;
+>> +       pll->flags = flags;
+>> +       pll->mult = mult;
+>> +       pll->div = div;
+>> +       pll->frac = frac;
+>> +       pll->hw.init = &init;
+>> +       if (table) {
+>> +               for (i = 0; table[i].rate != 0; i++)
+>> +                       ;
+>> +               pll->table_sz = i;
+>> +               pll->rate_table = kmemdup(table, i * sizeof(table[0]),
+>> +                                         GFP_KERNEL);
+>> +               if (!pll->rate_table) {
+>> +                       ret = -ENOMEM;
+>> +                       goto err_free_pll;
+>> +               }
+>> +       }
+>> +       hw = &pll->hw;
+>> +       ret = clk_hw_register(NULL, hw);
+>> +       if (ret)
+>> +               goto err_free_pll;
+>> +
+>> +       return hw->clk;
+>> +
+>> +err_free_pll:
+>> +       kfree(pll);
+>> +       return ERR_PTR(ret);
+>> +}
+>> +
+>> +void intel_clk_register_plls(struct intel_clk_provider *ctx,
+>> +                            struct intel_pll_clk *list, unsigned int nr_clk)
+>> +{
+>> +       struct clk *clk;
+>> +       int i;
+>> +
+>> +       for (i = 0; i < nr_clk; i++, list++) {
+>> +               clk = intel_clk_register_pll(ctx, list->type, list->name,
+>> +                               list->parent_names, list->num_parents,
+>> +                               list->flags, list->reg, list->rate_table,
+>> +                               list->mult, list->div, list->frac);
+>> +               if (IS_ERR(clk)) {
+>> +                       pr_err("%s: failed to register pll: %s\n",
+>> +                              __func__, list->name);
+>> +                       continue;
+>> +               }
+>> +
+>> +               intel_clk_add_lookup(ctx, clk, list->id);
+>> +       }
+>> +}
+>> diff --git a/drivers/clk/intel/clk-cgu-pll.h b/drivers/clk/intel/clk-cgu-pll.h
+>> new file mode 100644
+>> index 000000000000..3e7cff1d5e16
+>> --- /dev/null
+>> +++ b/drivers/clk/intel/clk-cgu-pll.h
+>> @@ -0,0 +1,34 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +/*
+>> + *  Copyright(c) 2018 Intel Corporation.
+>> + *  Zhu YiXin <Yixin.zhu@intel.com>
+>> + */
+>> +
+>> +#ifndef __INTEL_CLK_PLL_H
+>> +#define __INTEL_CLK_PLL_H
+>> +
+>> +enum intel_pll_type {
+>> +       pll_grx500,
+>> +};
+>> +
+>> +struct intel_pll_rate_table {
+>> +       unsigned long   prate;
+>> +       unsigned long   rate;
+>> +       unsigned int    mult;
+>> +       unsigned int    div;
+>> +       unsigned int    frac;
+>> +};
+>> +
+>> +struct intel_clk_pll {
+>> +       struct clk_hw   hw;
+>> +       struct regmap   *map;
+>> +       unsigned int    reg;
+>> +       unsigned long   flags;
+>> +       unsigned int    mult;
+>> +       unsigned int    div;
+>> +       unsigned int    frac;
+>> +       unsigned int    table_sz;
+>> +       const struct intel_pll_rate_table *rate_table;
+>> +};
+>> +
+>> +#endif /* __INTEL_CLK_PLL_H */
+>> diff --git a/drivers/clk/intel/clk-cgu.c b/drivers/clk/intel/clk-cgu.c
+>> new file mode 100644
+>> index 000000000000..10cacbe0fbcd
+>> --- /dev/null
+>> +++ b/drivers/clk/intel/clk-cgu.c
+>> @@ -0,0 +1,470 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + *  Copyright (C) 2018 Intel Corporation.
+>> + *  Zhu YiXin <Yixin.zhu@intel.com>
+>> + */
+>> +
+>> +#include <linux/clk.h>
+>> +#include <linux/clk-provider.h>
+>> +#include <linux/clkdev.h>
+>> +#include <linux/mfd/syscon.h>
+>> +#include <linux/of.h>
+>> +#include <linux/of_address.h>
+>> +#include <linux/regmap.h>
+>> +#include <linux/slab.h>
+>> +
+>> +#include "clk-cgu-pll.h"
+>> +#include "clk-cgu.h"
+>> +
+>> +#define GATE_HW_REG_STAT(reg)  (reg)
+>> +#define GATE_HW_REG_EN(reg)    ((reg) + 0x4)
+>> +#define GATE_HW_REG_DIS(reg)   ((reg) + 0x8)
+>> +
+>> +#define to_intel_clk_mux(_hw) container_of(_hw, struct intel_clk_mux, hw)
+>> +#define to_intel_clk_divider(_hw) \
+>> +               container_of(_hw, struct intel_clk_divider, hw)
+>> +#define to_intel_clk_gate(_hw) container_of(_hw, struct intel_clk_gate, hw)
+>> +
+>> +void intel_set_clk_val(struct regmap *map, u32 reg, u8 shift,
+>> +                      u8 width, u32 set_val)
+>> +{
+>> +       u32 mask = GENMASK(width + shift, shift);
+>> +
+>> +       regmap_update_bits(map, reg, mask, set_val << shift);
+>> +}
+>> +
+>> +u32 intel_get_clk_val(struct regmap *map, u32 reg, u8 shift,
+>> +                     u8 width)
+>> +{
+>> +       u32 val;
+>> +
+>> +       if (regmap_read(map, reg, &val)) {
+>> +               WARN_ONCE(1, "Failed to read clk reg: 0x%x\n", reg);
+>> +               return 0;
+>> +       }
+>> +       val >>= shift;
+>> +       val &= BIT(width) - 1;
+>> +
+>> +       return val;
+>> +}
+>> +
+>> +void intel_clk_add_lookup(struct intel_clk_provider *ctx,
+>> +                         struct clk *clk, unsigned int id)
+>> +{
+>> +       pr_debug("Add clk: %s, id: %u\n", __clk_get_name(clk), id);
+>> +       if (ctx->clk_data.clks && id)
+>> +               ctx->clk_data.clks[id] = clk;
+>> +}
+>> +
+>> +static struct clk
+>> +*intel_clk_register_fixed(struct intel_clk_provider *ctx,
+>> +                         struct intel_clk_branch *list)
+>> +{
+>> +       if (list->div_flags & CLOCK_FLAG_VAL_INIT)
+>> +               intel_set_clk_val(ctx->map, list->div_off, list->div_shift,
+>> +                                 list->div_width, list->div_val);
+>> +
+>> +       return clk_register_fixed_rate(NULL, list->name, list->parent_names[0],
+>> +                                      list->flags, list->mux_flags);
+>> +}
+>> +
+>> +static u8 intel_clk_mux_get_parent(struct clk_hw *hw)
+>> +{
+>> +       struct intel_clk_mux *mux = to_intel_clk_mux(hw);
+>> +       u32 val;
+>> +
+>> +       val = intel_get_clk_val(mux->map, mux->reg, mux->shift, mux->width);
+>> +       return clk_mux_val_to_index(hw, NULL, mux->flags, val);
+>> +}
+>> +
+>> +static int intel_clk_mux_set_parent(struct clk_hw *hw, u8 index)
+>> +{
+>> +       struct intel_clk_mux *mux = to_intel_clk_mux(hw);
+>> +       u32 val;
+>> +
+>> +       val = clk_mux_index_to_val(NULL, mux->flags, index);
+>> +       intel_set_clk_val(mux->map, mux->reg, mux->shift, mux->width, val);
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static int intel_clk_mux_determine_rate(struct clk_hw *hw,
+>> +                                       struct clk_rate_request *req)
+>> +{
+>> +       struct intel_clk_mux *mux = to_intel_clk_mux(hw);
+>> +
+>> +       return clk_mux_determine_rate_flags(hw, req, mux->flags);
+>> +}
+>> +
+>> +const static struct clk_ops intel_clk_mux_ops = {
+>> +       .get_parent = intel_clk_mux_get_parent,
+>> +       .set_parent = intel_clk_mux_set_parent,
+>> +       .determine_rate = intel_clk_mux_determine_rate,
+>> +};
+>> +
+>> +static struct clk
+>> +*intel_clk_register_mux(struct intel_clk_provider *ctx,
+>> +                       struct intel_clk_branch *list)
+>> +{
+>> +       struct clk_init_data init;
+>> +       struct clk_hw *hw;
+>> +       struct intel_clk_mux *mux;
+>> +       u32 reg = list->mux_off;
+>> +       u8 shift = list->mux_shift;
+>> +       u8 width = list->mux_width;
+>> +       unsigned long cflags = list->mux_flags;
+>> +       int ret;
+>> +
+>> +       mux = kzalloc(sizeof(*mux), GFP_KERNEL);
+>> +       if (!mux)
+>> +               return ERR_PTR(-ENOMEM);
+>> +
+>> +       init.name = list->name;
+>> +       init.ops = &intel_clk_mux_ops;
+>> +       init.flags = list->flags | CLK_IS_BASIC;
+>> +       init.parent_names = list->parent_names;
+>> +       init.num_parents = list->num_parents;
+>> +
+>> +       mux->map = ctx->map;
+>> +       mux->reg = reg;
+>> +       mux->shift = shift;
+>> +       mux->width = width;
+>> +       mux->flags = cflags;
+>> +       mux->hw.init = &init;
+>> +
+>> +       hw = &mux->hw;
+>> +       ret = clk_hw_register(NULL, hw);
+>> +       if (ret) {
+>> +               kfree(mux);
+>> +               return ERR_PTR(ret);
+>> +       }
+>> +
+>> +       if (cflags & CLOCK_FLAG_VAL_INIT)
+>> +               intel_set_clk_val(ctx->map, reg, shift, width, list->mux_val);
+>> +
+>> +       return hw->clk;
+>> +}
+>> +
+>> +static unsigned long
+>> +intel_clk_divider_recalc_rate(struct clk_hw *hw,
+>> +                             unsigned long parent_rate)
+>> +{
+>> +       struct intel_clk_divider *divider = to_intel_clk_divider(hw);
+>> +       unsigned int val;
+>> +
+>> +       val = intel_get_clk_val(divider->map, divider->reg,
+>> +                               divider->shift, divider->width);
+>> +       return divider_recalc_rate(hw, parent_rate, val, divider->table,
+>> +                                  divider->flags, divider->width);
+>> +}
+>> +
+>> +static long
+>> +intel_clk_divider_round_rate(struct clk_hw *hw, unsigned long rate,
+>> +                            unsigned long *prate)
+>> +{
+>> +       struct intel_clk_divider *divider = to_intel_clk_divider(hw);
+>> +
+>> +       return divider_round_rate(hw, rate, prate, divider->table,
+>> +                                 divider->width, divider->flags);
+>> +}
+>> +
+>> +static int
+>> +intel_clk_divider_set_rate(struct clk_hw *hw, unsigned long rate,
+>> +                          unsigned long prate)
+>> +{
+>> +       struct intel_clk_divider *divider = to_intel_clk_divider(hw);
+>> +       int value;
+>> +
+>> +       value = divider_get_val(rate, prate, divider->table,
+>> +                               divider->width, divider->flags);
+>> +       if (value < 0)
+>> +               return value;
+>> +
+>> +       intel_set_clk_val(divider->map, divider->reg,
+>> +                         divider->shift, divider->width, value);
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +const static struct clk_ops intel_clk_divider_ops = {
+>> +       .recalc_rate = intel_clk_divider_recalc_rate,
+>> +       .round_rate = intel_clk_divider_round_rate,
+>> +       .set_rate = intel_clk_divider_set_rate,
+>> +};
+>> +
+>> +static struct clk
+>> +*intel_clk_register_divider(struct intel_clk_provider *ctx,
+>> +                           struct intel_clk_branch *list)
+>> +{
+>> +       struct clk_init_data init;
+>> +       struct clk_hw *hw;
+>> +       struct intel_clk_divider *div;
+>> +       u32 reg = list->div_off;
+>> +       u8 shift = list->div_shift;
+>> +       u8 width = list->div_width;
+>> +       unsigned long cflags = list->div_flags;
+>> +       int ret;
+>> +
+>> +       div = kzalloc(sizeof(*div), GFP_KERNEL);
+>> +       if (!div)
+>> +               return ERR_PTR(-ENOMEM);
+>> +
+>> +       init.name = list->name;
+>> +       init.ops = &intel_clk_divider_ops;
+>> +       init.flags = list->flags | CLK_IS_BASIC;
+>> +       init.parent_names = &list->parent_names[0];
+>> +       init.num_parents = 1;
+>> +
+>> +       div->map = ctx->map;
+>> +       div->reg = reg;
+>> +       div->shift = shift;
+>> +       div->width = width;
+>> +       div->flags = cflags;
+>> +       div->table = list->div_table;
+>> +       div->hw.init = &init;
+>> +
+>> +       hw = &div->hw;
+>> +       ret = clk_hw_register(NULL, hw);
+>> +       if (ret) {
+>> +               pr_err("%s: register clk: %s failed!\n",
+>> +                      __func__, list->name);
+>> +               kfree(div);
+>> +               return ERR_PTR(ret);
+>> +       }
+>> +
+>> +       if (cflags & CLOCK_FLAG_VAL_INIT)
+>> +               intel_set_clk_val(ctx->map, reg, shift, width, list->div_val);
+>> +
+>> +       return hw->clk;
+>> +}
+>> +
+>> +static struct clk
+>> +*intel_clk_register_fixed_factor(struct intel_clk_provider *ctx,
+>> +                                struct intel_clk_branch *list)
+>> +{
+>> +       struct clk_hw *hw;
+>> +
+>> +       hw = clk_hw_register_fixed_factor(NULL, list->name,
+>> +                                         list->parent_names[0], list->flags,
+>> +                                         list->mult, list->div);
+>> +       if (IS_ERR(hw))
+>> +               return ERR_CAST(hw);
+>> +
+>> +       if (list->div_flags & CLOCK_FLAG_VAL_INIT)
+>> +               intel_set_clk_val(ctx->map, list->div_off, list->div_shift,
+>> +                                 list->div_width, list->div_val);
+>> +
+>> +       return hw->clk;
+>> +}
+>> +
+>> +static int
+>> +intel_clk_gate_enable(struct clk_hw *hw)
+>> +{
+>> +       struct intel_clk_gate *gate = to_intel_clk_gate(hw);
+>> +       unsigned int reg;
+>> +
+>> +       if (gate->flags & GATE_CLK_VT) {
+>> +               gate->reg = 1;
+>> +               return 0;
+>> +       }
+>> +
+>> +       if (gate->flags & GATE_CLK_HW) {
+>> +               reg = GATE_HW_REG_EN(gate->reg);
+>> +       } else if (gate->flags & GATE_CLK_SW) {
+>> +               reg = gate->reg;
+>> +       } else {
+>> +               pr_err("%s: gate clk: %s: flag 0x%lx not supported!\n",
+>> +                      __func__, clk_hw_get_name(hw), gate->flags);
+>> +               return 0;
+>> +       }
+>> +
+>> +       intel_set_clk_val(gate->map, reg, gate->shift, 1, 1);
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static void
+>> +intel_clk_gate_disable(struct clk_hw *hw)
+>> +{
+>> +       struct intel_clk_gate *gate = to_intel_clk_gate(hw);
+>> +       unsigned int reg;
+>> +       unsigned int set;
+>> +
+>> +       if (gate->flags & GATE_CLK_VT) {
+>> +               gate->reg = 0;
+>> +               return;
+>> +       }
+>> +
+>> +       if (gate->flags & GATE_CLK_HW) {
+>> +               reg = GATE_HW_REG_DIS(gate->reg);
+>> +               set = 1;
+>> +       } else if (gate->flags & GATE_CLK_SW) {
+>> +               reg = gate->reg;
+>> +               set = 0;
+>> +       } else {
+>> +               pr_err("%s: gate clk: %s: flag 0x%lx not supported!\n",
+>> +                      __func__, clk_hw_get_name(hw), gate->flags);
+>> +               return;
+>> +       }
+>> +
+>> +       intel_set_clk_val(gate->map, reg, gate->shift, 1, set);
+>> +}
+>> +
+>> +static int
+>> +intel_clk_gate_is_enabled(struct clk_hw *hw)
+>> +{
+>> +       struct intel_clk_gate *gate = to_intel_clk_gate(hw);
+>> +       unsigned int reg;
+>> +
+>> +       if (gate->flags & GATE_CLK_VT)
+>> +               return gate->reg;
+>> +
+>> +       if (gate->flags & GATE_CLK_HW) {
+>> +               reg = GATE_HW_REG_STAT(gate->reg);
+>> +       } else if (gate->flags & GATE_CLK_SW) {
+>> +               reg = gate->reg;
+>> +       } else {
+>> +               pr_err("%s: gate clk: %s: flag 0x%lx not supported!\n",
+>> +                      __func__, clk_hw_get_name(hw), gate->flags);
+>> +               return 0;
+>> +       }
+>> +
+>> +       return intel_get_clk_val(gate->map, reg, gate->shift, 1);
+>> +}
+>> +
+>> +const static struct clk_ops intel_clk_gate_ops = {
+>> +       .enable = intel_clk_gate_enable,
+>> +       .disable = intel_clk_gate_disable,
+>> +       .is_enabled = intel_clk_gate_is_enabled,
+>> +};
+>> +
+>> +static struct clk
+>> +*intel_clk_register_gate(struct intel_clk_provider *ctx,
+>> +                        struct intel_clk_branch *list)
+>> +{
+>> +       struct clk_init_data init;
+> Please init the init struct with { } so that future possible additions
+> to the structure don't require us to hunt this silent corruption down
+> later.
+Will update it.
+
+>> +       struct clk_hw *hw;
+>> +       struct intel_clk_gate *gate;
+>> +       u32 reg = list->gate_off;
+>> +       u8 shift = list->gate_shift;
+>> +       unsigned long cflags = list->gate_flags;
+>> +       const char *pname = list->parent_names[0];
+>> +       int ret;
+>> +
+>> +       gate = kzalloc(sizeof(*gate), GFP_KERNEL);
+>> +       if (!gate)
+>> +               return ERR_PTR(-ENOMEM);
+>> +
+>> +       init.name = list->name;
+>> +       init.ops = &intel_clk_gate_ops;
+>> +       init.flags = list->flags | CLK_IS_BASIC;
+>> +       init.parent_names = pname ? &pname : NULL;
+>> +       init.num_parents = pname ? 1 : 0;
+>> +
+>> +       gate->map       = ctx->map;
+>> +       gate->reg       = reg;
+>> +       gate->shift     = shift;
+>> +       gate->flags     = cflags;
+>> +       gate->hw.init   = &init;
+>> +
+>> +       hw = &gate->hw;
+>> +       ret = clk_hw_register(NULL, hw);
+>> +       if (ret) {
+>> +               kfree(gate);
+>> +               return ERR_PTR(ret);
+>> +       }
+>> +
+>> +       if (cflags & CLOCK_FLAG_VAL_INIT)
+>> +               intel_set_clk_val(ctx->map, reg, shift, 1, list->gate_val);
+>> +
+>> +       return hw->clk;
+>> +}
+>> +
+>> +void intel_clk_register_branches(struct intel_clk_provider *ctx,
+>> +                                struct intel_clk_branch *list,
+>> +                                unsigned int nr_clk)
+>> +{
+>> +       struct clk *clk;
+>> +       unsigned int idx;
+>> +
+>> +       for (idx = 0; idx < nr_clk; idx++, list++) {
+>> +               switch (list->type) {
+>> +               case intel_clk_fixed:
+> Please use uppercase for enums.
+Will update.
+
+>
+>> +                       clk = intel_clk_register_fixed(ctx, list);
+>> +                       break;
+>> +               case intel_clk_mux:
+>> +                       clk = intel_clk_register_mux(ctx, list);
+>> +                       break;
+>> +               case intel_clk_divider:
+>> +                       clk = intel_clk_register_divider(ctx, list);
+>> +                       break;
+>> +               case intel_clk_fixed_factor:
+>> +                       clk = intel_clk_register_fixed_factor(ctx, list);
+>> +                       break;
+>> +               case intel_clk_gate:
+>> +                       clk = intel_clk_register_gate(ctx, list);
+>> +                       break;
+>> +               default:
+>> +                       pr_err("%s: type: %u not supported!\n",
+>> +                              __func__, list->type);
+>> +                       return;
+>> +               }
+>> +
+>> +               if (IS_ERR(clk)) {
+>> +                       pr_err("%s: register clk: %s, type: %u failed!\n",
+>> +                              __func__, list->name, list->type);
+>> +                       return;
+>> +               }
+>> +
+>> +               intel_clk_add_lookup(ctx, clk, list->id);
+>> +       }
+>> +}
+>> +
+>> +struct intel_clk_provider * __init
+>> +intel_clk_init(struct device_node *np, struct regmap *map, unsigned int nr_clks)
+>> +{
+>> +       struct intel_clk_provider *ctx;
+>> +       struct clk **clks;
+>> +
+>> +       ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
+>> +       if (!ctx)
+>> +               return ERR_PTR(-ENOMEM);
+>> +
+>> +       clks = kcalloc(nr_clks, sizeof(*clks), GFP_KERNEL);
+>> +       if (!clks) {
+>> +               kfree(ctx);
+>> +               return ERR_PTR(-ENOMEM);
+>> +       }
+>> +
+>> +       memset_p((void **)clks, ERR_PTR(-ENOENT), nr_clks);
+>> +       ctx->map = map;
+>> +       ctx->clk_data.clks = clks;
+>> +       ctx->clk_data.clk_num = nr_clks;
+>> +       ctx->np = np;
+>> +
+>> +       return ctx;
+>> +}
+>> +
+>> +void __init intel_clk_register_osc(struct intel_clk_provider *ctx,
+>> +                                  struct intel_osc_clk *osc,
+>> +                                  unsigned int nr_clks)
+>> +{
+>> +       u32 freq;
+>> +       struct clk *clk;
+>> +       int idx;
+>> +
+>> +       for (idx = 0; idx < nr_clks; idx++, osc++) {
+>> +               if (!osc->dt_freq ||
+>> +                   of_property_read_u32(ctx->np, osc->dt_freq, &freq))
+>> +                       freq = osc->def_rate;
+>> +
+>> +               clk = clk_register_fixed_rate(NULL, osc->name, NULL, 0, freq);
+> Should come from DT itself.
+Yes. It can be defined as fixed-clock node in device tree.
+Do you mean it should be defined in device tree and driver reference it 
+via device tree?
+
+>> +               iS_ERR(clk)) {
+>> +                       pr_err("%s: Failed to register clock: %s\n",
+>> +                              __func__, osc->name);
+>> +                       return;
+>> +               }
+>> +
+>> +               intel_clk_add_lookup(ctx, clk, osc->id);
+>> +       }
+>> +}
+>> diff --git a/drivers/clk/intel/clk-cgu.h b/drivers/clk/intel/clk-cgu.h
+>> new file mode 100644
+>> index 000000000000..6dc4e45fc499
+>> --- /dev/null
+>> +++ b/drivers/clk/intel/clk-cgu.h
+>> @@ -0,0 +1,259 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +/*
+>> + *  Copyright(c) 2018 Intel Corporation.
+>> + *  Zhu YiXin <Yixin.zhu@intel.com>
+>> + */
+>> +
+>> +#ifndef __INTEL_CLK_H
+>> +#define __INTEL_CLK_H
+>> +
+>> +#define PNAME(x) static const char *const x[] __initconst
+>> +
+>> +struct intel_clk_mux {
+>> +       struct clk_hw   hw;
+>> +       struct regmap   *map;
+>> +       unsigned int    reg;
+>> +       u8              shift;
+>> +       u8              width;
+>> +       unsigned long   flags;
+>> +};
+>> +
+>> +struct intel_clk_divider {
+>> +       struct clk_hw   hw;
+>> +       struct regmap   *map;
+>> +       unsigned int    reg;
+>> +       u8              shift;
+>> +       u8              width;
+>> +       unsigned long   flags;
+>> +       const struct clk_div_table      *table;
+>> +};
+>> +
+>> +struct intel_clk_gate {
+>> +       struct clk_hw   hw;
+>> +       struct regmap   *map;
+>> +       unsigned int    reg;
+>> +       u8              shift;
+>> +       unsigned long   flags;
+>> +};
+>> +
+>> +enum intel_clk_type {
+>> +       intel_clk_fixed,
+>> +       intel_clk_mux,
+>> +       intel_clk_divider,
+>> +       intel_clk_fixed_factor,
+>> +       intel_clk_gate,
+>> +};
+>> +
+>> +/**
+>> + * struct intel_clk_provider
+>> + * @map: regmap type base address for register.
+>> + * @np: device node
+>> + * @clk_data: array of hw clocks and clk number.
+>> + */
+>> +struct intel_clk_provider {
+>> +       struct regmap           *map;
+>> +       struct device_node      *np;
+>> +       struct clk_onecell_data clk_data;
+> Please register clk_hw pointers instead of clk pointers with the of
+> provider APIs.
+Sorry.  I'm not sure I understand you correctly.
+If only registering clk_hw pointer,  not registering of_provider API, then
+how to reference it in the user drivers ?
+Could you please give me more hints ?
+
+>> +};
+>> +
+>> +/**
+>> + * struct intel_pll_clk
+>> + * @id: plaform specific id of the clock.
+>> + * @name: name of this pll clock.
+>> + * @parent_names: name of the parent clock.
+>> + * @num_parents: number of parents.
+>> + * @flags: optional flags for basic clock.
+>> + * @type: platform type of pll.
+>> + * @reg: offset of the register.
+>> + * @mult: init value of mulitplier.
+>> + * @div: init value of divider.
+>> + * @frac: init value of fraction.
+>> + * @rate_table: table of pll clock rate.
+> Please drop the full-stop on kernel doc one-liners like this.
+Will update it.
+
+>
+>> + */
+>> +struct intel_pll_clk {
+>> +       unsigned int            id;
+>> +       const char              *name;
+>> +       const char              *const *parent_names;
+>> +       u8                      num_parents;
+> Can the PLL have multiple parents?
+Yes. But not in this platform.
+The define here make it easy to expand to support new platform.
+
+>> +       unsigned long           flags;
+>> +       enum intel_pll_type     type;
+>> +       int                     reg;
+>> +       unsigned int            mult;
+>> +       unsigned int            div;
+>> +       unsigned int            frac;
+>> +       const struct intel_pll_rate_table *rate_table;
+>> +};
+>> +
+>> +#define INTEL_PLL(_id, _type, _name, _pnames, _flags,  \
+>> +           _reg, _rtable, _mult, _div, _frac)          \
+>> +       {                                               \
+>> +               .id             = _id,                  \
+>> +               .type           = _type,                \
+>> +               .name           = _name,                \
+>> +               .parent_names   = _pnames,              \
+>> +               .num_parents    = ARRAY_SIZE(_pnames),  \
+>> +               .flags          = _flags,               \
+>> +               .reg            = _reg,                 \
+>> +               .rate_table     = _rtable,              \
+>> +               .mult           = _mult,                \
+>> +               .div            = _div,                 \
+>> +               .frac           = _frac                 \
+>> +       }
+>> +
+>> +/**
+>> + * struct intel_osc_clk
+>> + * @id: platform specific id of the clock.
+>> + * @name: name of the osc clock.
+>> + * @dt_freq: frequency node name in device tree.
+>> + * @def_rate: default rate of the osc clock.
+>> + * @flags: optional flags for basic clock.
+> There aren't flags though. I'm very confused by this kernel-doc too.
+> Looks like something that should be done with a fixed rate clk in DT.
+Will remove the flags comments.
+
+>> + */
+>> +struct intel_osc_clk {
+>> +       unsigned int            id;
+>> +       const char              *name;
+>> +       const char              *dt_freq;
+>> +       const u32               def_rate;
+>> +};
+>> +
+>> +#define INTEL_OSC(_id, _name, _freq, _rate)                    \
+>> +       {                                               \
+>> +               .id             = _id,                  \
+>> +               .name           = _name,                \
+>> +               .dt_freq        = _freq,                \
+>> +               .def_rate       = _rate,                \
+>> +       }
+>> +
+>> +struct intel_clk_branch {
+> Seems to be more like intel_clk instead of intel_clk_branch because it
+> does lots of stuff.
+Will update.
+
+>> +       unsigned int                    id;
+>> +       enum intel_clk_type             type;
+>> +       const char                      *name;
+>> +       const char                      *const *parent_names;
+>> +       u8                              num_parents;
+>> +       unsigned long                   flags;
+>> +       unsigned int                    mux_off;
+>> +       u8                              mux_shift;
+>> +       u8                              mux_width;
+>> +       unsigned long                   mux_flags;
+>> +       unsigned int                    mux_val;
+>> +       unsigned int                    div_off;
+>> +       u8                              div_shift;
+>> +       u8                              div_width;
+>> +       unsigned long                   div_flags;
+>> +       unsigned int                    div_val;
+>> +       const struct clk_div_table      *div_table;
+>> +       unsigned int                    gate_off;
+>> +       u8                              gate_shift;
+>> +       unsigned long                   gate_flags;
+>> +       unsigned int                    gate_val;
+>> +       unsigned int                    mult;
+>> +       unsigned int                    div;
+>> +};
+>> +
+>> +/* clock flags definition */
+>> +#define CLOCK_FLAG_VAL_INIT    BIT(16)
+>> +#define GATE_CLK_HW            BIT(17)
+>> +#define GATE_CLK_SW            BIT(18)
+>> +#define GATE_CLK_VT            BIT(19)
+> What does VT mean? Virtual?
+Yes. VT means virtual here.
+Will change to GATE_CLK_VIRT.
+
+>> +
+>> +#define INTEL_MUX(_id, _name, _pname, _f, _reg,                        \
+>> +           _shift, _width, _cf, _v)                            \
+>> +       {                                                       \
+>> +               .id             = _id,                          \
+>> +               .type           = intel_clk_mux,                \
+>> +               .name           = _name,                        \
+>> +               .parent_names   = _pname,                       \
+>> +               .num_parents    = ARRAY_SIZE(_pname),           \
+>> +               .flags          = _f,                           \
+>> +               .mux_off        = _reg,                         \
+>> +               .mux_shift      = _shift,                       \
+>> +               .mux_width      = _width,                       \
+>> +               .mux_flags      = _cf,                          \
+>> +               .mux_val        = _v,                           \
+>> +       }
+>> +
+>> +#define INTEL_DIV(_id, _name, _pname, _f, _reg,                        \
+>> +           _shift, _width, _cf, _v, _dtable)                   \
+>> +       {                                                       \
+>> +               .id             = _id,                          \
+>> +               .type           = intel_clk_divider,            \
+>> +               .name           = _name,                        \
+>> +               .parent_names   = (const char *[]) { _pname },  \
+>> +               .num_parents    = 1,                            \
+>> +               .flags          = _f,                           \
+>> +               .div_off        = _reg,                         \
+>> +               .div_shift      = _shift,                       \
+>> +               .div_width      = _width,                       \
+>> +               .div_flags      = _cf,                          \
+>> +               .div_val        = _v,                           \
+>> +               .div_table      = _dtable,                      \
+>> +       }
+>> +
+>> +#define INTEL_GATE(_id, _name, _pname, _f, _reg,               \
+>> +            _shift, _cf, _v)                                   \
+>> +       {                                                       \
+>> +               .id             = _id,                          \
+>> +               .type           = intel_clk_gate,               \
+>> +               .name           = _name,                        \
+>> +               .parent_names   = (const char *[]) { _pname },  \
+>> +               .num_parents    = !_pname ? 0 : 1,              \
+>> +               .flags          = _f,                           \
+>> +               .gate_off       = _reg,                         \
+>> +               .gate_shift     = _shift,                       \
+>> +               .gate_flags     = _cf,                          \
+>> +               .gate_val       = _v,                           \
+>> +       }
+>> +
+>> +#define INTEL_FIXED(_id, _name, _pname, _f, _reg,              \
+>> +             _shift, _width, _cf, _freq, _v)                   \
+>> +       {                                                       \
+>> +               .id             = _id,                          \
+>> +               .type           = intel_clk_fixed,              \
+>> +               .name           = _name,                        \
+>> +               .parent_names   = (const char *[]) { _pname },  \
+>> +               .num_parents    = !_pname ? 0 : 1,              \
+>> +               .flags          = _f,                           \
+>> +               .div_off        = _reg,                         \
+>> +               .div_shift      = _shift,                       \
+>> +               .div_width      = _width,                       \
+>> +               .div_flags      = _cf,                          \
+>> +               .div_val        = _v,                           \
+>> +               .mux_flags      = _freq,                        \
+>> +       }
+>> +
+>> +#define INTEL_FIXED_FACTOR(_id, _name, _pname, _f, _reg,       \
+>> +              _shift, _width, _cf, _v, _m, _d)                 \
+>> +       {                                                       \
+>> +               .id             = _id,                          \
+>> +               .type           = intel_clk_fixed_factor,       \
+>> +               .name           = _name,                        \
+>> +               .parent_names   = (const char *[]) { _pname },  \
+>> +               .num_parents    = 1,                            \
+>> +               .flags          = _f,                           \
+>> +               .div_off        = _reg,                         \
+>> +               .div_shift      = _shift,                       \
+>> +               .div_width      = _width,                       \
+>> +               .div_flags      = _cf,                          \
+>> +               .div_val        = _v,                           \
+>> +               .mult           = _m,                           \
+>> +               .div            = _d,                           \
+>> +       }
+>> +
+>> +void intel_set_clk_val(struct regmap *map, u32 reg, u8 shift,
+>> +                      u8 width, u32 set_val);
+>> +u32 intel_get_clk_val(struct regmap *map, u32 reg, u8 shift, u8 width);
+>> +void intel_clk_add_lookup(struct intel_clk_provider *ctx,
+>> +                         struct clk *clk, unsigned int id);
+>> +void __init intel_clk_of_add_provider(struct device_node *np,
+>> +                                     struct intel_clk_provider *ctx);
+>> +struct intel_clk_provider * __init
+>> +intel_clk_init(struct device_node *np, struct regmap *map,
+>> +              unsigned int nr_clks);
+>> +void __init intel_clk_register_osc(struct intel_clk_provider *ctx,
+>> +                                  struct intel_osc_clk *osc,
+>> +                                  unsigned int nr_clks);
+> Remove __init from headers files. It does nothing.
+Will remove it.
+
+>
+>> +void intel_clk_register_branches(struct intel_clk_provider *ctx,
+>> +                                struct intel_clk_branch *list,
+>> +                                unsigned int nr_clk);
+>> +void intel_clk_register_plls(struct intel_clk_provider *ctx,
+>> +                            struct intel_pll_clk *list, unsigned int nr_clk);
+>> +#endif /* __INTEL_CLK_H */
+>> diff --git a/drivers/clk/intel/clk-grx500.c b/drivers/clk/intel/clk-grx500.c
+>> new file mode 100644
+>> index 000000000000..5c2546f82579
+>> --- /dev/null
+>> +++ b/drivers/clk/intel/clk-grx500.c
+>> @@ -0,0 +1,168 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + *  Copyright (C) 2018 Intel Corporation.
+>> + *  Zhu YiXin <Yixin.zhu@intel.com>
+>> + */
+>> +
+>> +#include <linux/clk-provider.h>
+>> +#include <linux/mfd/syscon.h>
+>> +#include <linux/of.h>
+>> +#include <linux/of_address.h>
+>> +#include <linux/regmap.h>
+>> +#include <linux/spinlock.h>
+> Used?
+Will remove it
+
+>> +#include <dt-bindings/clock/intel,grx500-clk.h>
+>> +
+>> +#include "clk-cgu-pll.h"
+>> +#include "clk-cgu.h"
+>> +
+>> +#define PLL_DIV_WIDTH          4
+>> +
+>> +/* Gate1 clock shift */
+>> +#define G_VCODEC_SHIFT         2
+>> +#define G_DMA0_SHIFT           5
+>> +#define G_USB0_SHIFT           6
+>> +#define G_SPI1_SHIFT           7
+>> +#define G_SPI0_SHIFT           8
+>> +#define G_CBM_SHIFT            9
+>> +#define G_EBU_SHIFT            10
+>> +#define G_SSO_SHIFT            11
+>> +#define G_GPTC0_SHIFT          12
+>> +#define G_GPTC1_SHIFT          13
+>> +#define G_GPTC2_SHIFT          14
+>> +#define G_UART_SHIFT           17
+>> +#define G_CPYTO_SHIFT          20
+>> +#define G_SECPT_SHIFT          21
+>> +#define G_TOE_SHIFT            22
+>> +#define G_MPE_SHIFT            23
+>> +#define G_TDM_SHIFT            25
+>> +#define G_PAE_SHIFT            26
+>> +#define G_USB1_SHIFT           27
+>> +#define G_SWITCH_SHIFT         28
+>> +
+>> +/* Gate2 clock shift */
+>> +#define G_PCIE0_SHIFT          1
+>> +#define G_PCIE1_SHIFT          17
+>> +#define G_PCIE2_SHIFT          25
+>> +
+>> +/* Register definition */
+>> +#define GRX500_PLL0A_CFG0      0x0004
+>> +#define GRX500_PLL0A_CFG1      0x0008
+>> +#define GRX500_PLL0B_CFG0      0x0034
+>> +#define GRX500_PLL0B_CFG1      0x0038
+>> +#define GRX500_LCPLL_CFG0      0x0094
+>> +#define GRX500_LCPLL_CFG1      0x0098
+>> +#define GRX500_IF_CLK          0x00c4
+>> +#define GRX500_CLK_GSR1                0x0120
+>> +#define GRX500_CLK_GSR2                0x0130
+>> +
+>> +static const struct clk_div_table pll_div[] = {
+>> +       {1,     2},
+> Please write it like
+>
+> 	  { 1,    2 },
+>
+> instead.
+Will update.
+
+>> +       {2,     3},
+>> +       {3,     4},
+>> +       {4,     5},
+>> +       {5,     6},
+>> +       {6,     8},
+>> +       {7,     10},
+>> +       {8,     12},
+>> +       {9,     16},
+>> +       {10,    20},
+>> +       {11,    24},
+>> +       {12,    32},
+>> +       {13,    40},
+>> +       {14,    48},
+>> +       {15,    64}
+>> +};
+>> +
+>> +enum grx500_plls {
+>> +       pll0a, pll0b, pll3,
+>> +};
+> What's the point of the enum?
+Will remove it.
+
+>> +
+>> +PNAME(pll_p)   = { "osc" };
+>> +PNAME(cpu_p)   = { "cpu0", "cpu1" };
+>> +
+>> +static struct intel_osc_clk grx500_osc_clks[] __initdata = {
+>> +       INTEL_OSC(CLK_OSC, "osc", "intel,osc-frequency", 40000000),
+>> +};
+>> +
+>> +static struct intel_pll_clk grx500_pll_clks[] __initdata = {
+>> +       [pll0a] = INTEL_PLL(CLK_PLL0A, pll_grx500, "pll0a",
+>> +                     pll_p, 0, GRX500_PLL0A_CFG0, NULL, 0, 0, 0),
+>> +       [pll0b] = INTEL_PLL(CLK_PLL0B, pll_grx500, "pll0b",
+>> +                     pll_p, 0, GRX500_PLL0B_CFG0, NULL, 0, 0, 0),
+>> +       [pll3] = INTEL_PLL(CLK_PLL3, pll_grx500, "pll3",
+>> +                    pll_p, 0, GRX500_LCPLL_CFG0, NULL, 0, 0, 0),
+>> +};
+>> +
+>> +static struct intel_clk_branch grx500_branch_clks[] __initdata = {
+>> +       INTEL_DIV(CLK_CBM, "cbm", "pll0a", 0, GRX500_PLL0A_CFG1,
+>> +                 0, PLL_DIV_WIDTH, 0, 0, pll_div),
+>> +       INTEL_DIV(CLK_NGI, "ngi", "pll0a", 0, GRX500_PLL0A_CFG1,
+>> +                 4, PLL_DIV_WIDTH, 0, 0, pll_div),
+>> +       INTEL_DIV(CLK_SSX4, "ssx4", "pll0a", 0, GRX500_PLL0A_CFG1,
+>> +                 8, PLL_DIV_WIDTH, 0, 0, pll_div),
+>> +       INTEL_DIV(CLK_CPU0, "cpu0", "pll0a", 0, GRX500_PLL0A_CFG1,
+>> +                 12, PLL_DIV_WIDTH, 0, 0, pll_div),
+>> +       INTEL_DIV(CLK_PAE, "pae", "pll0b", 0, GRX500_PLL0B_CFG1,
+>> +                 0, PLL_DIV_WIDTH, 0, 0, pll_div),
+>> +       INTEL_DIV(CLK_GSWIP, "gswip", "pll0b", 0, GRX500_PLL0B_CFG1,
+>> +                 4, PLL_DIV_WIDTH, 0, 0, pll_div),
+>> +       INTEL_DIV(CLK_DDR, "ddr", "pll0b", 0, GRX500_PLL0B_CFG1,
+>> +                 8, PLL_DIV_WIDTH, 0, 0, pll_div),
+>> +       INTEL_DIV(CLK_CPU1, "cpu1", "pll0b", 0, GRX500_PLL0B_CFG1,
+>> +                 12, PLL_DIV_WIDTH, 0, 0, pll_div),
+>> +       INTEL_MUX(CLK_CPU, "cpu", cpu_p, CLK_SET_RATE_PARENT,
+>> +                 GRX500_PLL0A_CFG1, 29, 1, 0, 0),
+>> +       INTEL_GATE(GCLK_DMA0, "g_dma0", NULL, 0, GRX500_CLK_GSR1,
+>> +                  G_DMA0_SHIFT, GATE_CLK_HW, 0),
+>> +       INTEL_GATE(GCLK_USB0, "g_usb0", NULL, 0, GRX500_CLK_GSR1,
+>> +                  G_USB0_SHIFT, GATE_CLK_HW, 0),
+>> +       INTEL_GATE(GCLK_GPTC0, "g_gptc0", NULL, 0, GRX500_CLK_GSR1,
+>> +                  G_GPTC0_SHIFT, GATE_CLK_HW, 0),
+>> +       INTEL_GATE(GCLK_GPTC1, "g_gptc1", NULL, 0, GRX500_CLK_GSR1,
+>> +                  G_GPTC1_SHIFT, GATE_CLK_HW, 0),
+>> +       INTEL_GATE(GCLK_GPTC2, "g_gptc2", NULL, 0, GRX500_CLK_GSR1,
+>> +                  G_GPTC2_SHIFT, GATE_CLK_HW, 0),
+>> +       INTEL_GATE(GCLK_UART, "g_uart", NULL, 0, GRX500_CLK_GSR1,
+>> +                  G_UART_SHIFT, GATE_CLK_HW, 0),
+>> +       INTEL_GATE(GCLK_PCIE0, "g_pcie0", NULL, 0, GRX500_CLK_GSR2,
+>> +                  G_PCIE0_SHIFT, GATE_CLK_HW, 0),
+>> +       INTEL_GATE(GCLK_PCIE1, "g_pcie1", NULL, 0, GRX500_CLK_GSR2,
+>> +                  G_PCIE1_SHIFT, GATE_CLK_HW, 0),
+>> +       INTEL_GATE(GCLK_PCIE2, "g_pcie2", NULL, 0, GRX500_CLK_GSR2,
+>> +                  G_PCIE2_SHIFT, GATE_CLK_HW, 0),
+>> +       INTEL_GATE(GCLK_I2C, "g_i2c", NULL, 0, 0, 0, GATE_CLK_VT, 0),
+>> +       INTEL_FIXED(CLK_VOICE, "voice", NULL, 0, GRX500_IF_CLK, 14, 2,
+>> +                   CLOCK_FLAG_VAL_INIT, 8192000, 2),
+>> +       INTEL_FIXED_FACTOR(CLK_DDRPHY, "ddrphy", "ddr", 0, 0, 0,
+>> +                          0, 0, 0, 2, 1),
+>> +       INTEL_FIXED_FACTOR(CLK_PCIE, "pcie", "pll3", 0, 0, 0,
+>> +                          0, 0, 0, 1, 40),
+>> +};
+>> +
+>> +static void __init grx500_clk_init(struct device_node *np)
+>> +{
+>> +       struct intel_clk_provider *ctx;
+>> +       struct regmap *map;
+>> +
+>> +       map = syscon_node_to_regmap(np);
+>> +       if (IS_ERR(map))
+>> +               return;
+>> +
+>> +       ctx = intel_clk_init(np, map, CLK_NR_CLKS);
+>> +       if (IS_ERR(ctx)) {
+>> +               regmap_exit(map);
+>> +               return;
+>> +       }
+>> +
+>> +       intel_clk_register_osc(ctx, grx500_osc_clks,
+>> +                              ARRAY_SIZE(grx500_osc_clks));
+>> +       intel_clk_register_plls(ctx, grx500_pll_clks,
+>> +                               ARRAY_SIZE(grx500_pll_clks));
+>> +       intel_clk_register_branches(ctx, grx500_branch_clks,
+>> +                                   ARRAY_SIZE(grx500_branch_clks));
+>> +       of_clk_add_provider(np, of_clk_src_onecell_get, &ctx->clk_data);
+>> +
+>> +       pr_debug("%s clk init done!\n", __func__);
+> Yay!!!
+>
+>> +}
+>> +
+>> +CLK_OF_DECLARE(intel_grx500_cgu, "intel,grx500-cgu", grx500_clk_init);
+> Any reason a platform driver can't be used instead of CLK_OF_DECLARE()?
+It provides CPU clock which is used in early boot stage.
+
