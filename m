@@ -2,73 +2,90 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18046C46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 07:20:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE376C46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 07:25:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC8A82170A
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 07:20:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC8A82170A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id C01F321700
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 07:25:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C01F321700
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726976AbeHHJjH (ORCPT
+        id S1726997AbeHHJny (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 05:39:07 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50064 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726721AbeHHJjH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 05:39:07 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 2AF85AC1F;
-        Wed,  8 Aug 2018 07:20:43 +0000 (UTC)
-Date:   Wed, 8 Aug 2018 09:20:40 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Kirill Tkhai <ktkhai@virtuozzo.com>
-Cc:     akpm@linux-foundation.org, gregkh@linuxfoundation.org,
-        rafael@kernel.org, viro@zeniv.linux.org.uk,
-        darrick.wong@oracle.com, paulmck@linux.vnet.ibm.com,
-        josh@joshtriplett.org, rostedt@goodmis.org,
-        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
-        hughd@google.com, shuah@kernel.org, robh@kernel.org,
-        ulf.hansson@linaro.org, aspriel@gmail.com,
-        vivek.gautam@codeaurora.org, robin.murphy@arm.com, joe@perches.com,
-        heikki.krogerus@linux.intel.com, sfr@canb.auug.org.au,
-        vdavydov.dev@gmail.com, chris@chris-wilson.co.uk,
-        penguin-kernel@I-love.SAKURA.ne.jp, aryabinin@virtuozzo.com,
-        willy@infradead.org, ying.huang@intel.com, shakeelb@google.com,
-        jbacik@fb.com, mingo@kernel.org, mhiramat@kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH RFC 01/10] rcu: Make CONFIG_SRCU unconditionally enabled
-Message-ID: <20180808072040.GC27972@dhcp22.suse.cz>
-References: <153365347929.19074.12509495712735843805.stgit@localhost.localdomain>
- <153365625652.19074.8434946780002619802.stgit@localhost.localdomain>
+        Wed, 8 Aug 2018 05:43:54 -0400
+Received: from ozlabs.org ([203.11.71.1]:38465 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726779AbeHHJny (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 05:43:54 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 41ljbD4Zxgz9ryt;
+        Wed,  8 Aug 2018 17:25:27 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH] lib/test_hexdump: fix failure on big endian cpu
+In-Reply-To: <f3112437f62c2f48300535510918e8be1dceacfb.1533610877.git.christophe.leroy@c-s.fr>
+References: <f3112437f62c2f48300535510918e8be1dceacfb.1533610877.git.christophe.leroy@c-s.fr>
+Date:   Wed, 08 Aug 2018 17:25:25 +1000
+Message-ID: <87mutxb9qy.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <153365625652.19074.8434946780002619802.stgit@localhost.localdomain>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 07-08-18 18:37:36, Kirill Tkhai wrote:
-> This patch kills all CONFIG_SRCU defines and
-> the code under !CONFIG_SRCU.
+Christophe Leroy <christophe.leroy@c-s.fr> writes:
+> diff --git a/lib/test_hexdump.c b/lib/test_hexdump.c
+> index 3f415d8101f3..626f580b4ff7 100644
+> --- a/lib/test_hexdump.c
+> +++ b/lib/test_hexdump.c
+> @@ -32,16 +32,33 @@ static const char * const test_data_2_le[] __initconst = {
+>  	"d14c", "9919", "b143", "0caf",
+>  };
+>  
+> +static const char * const test_data_2_be[] __initconst = {
+> +	"be32", "db7b", "0a18", "93b2",
+> +	"70ba", "c424", "7d83", "349b",
+> +	"a69c", "31ad", "9c0f", "ace9",
+> +	"4cd1", "1999", "43b1", "af0c",
+> +};
+> +
+>  static const char * const test_data_4_le[] __initconst = {
+>  	"7bdb32be", "b293180a", "24c4ba70", "9b34837d",
+>  	"ad319ca6", "e9ac0f9c", "9919d14c", "0cafb143",
+>  };
+>  
+> +static const char * const test_data_4_be[] __initconst = {
+> +	"be32db7b", "0a1893b2", "70bac424", "7d83349b",
+> +	"a69c31ad", "9c0face9", "4cd11999", "43b1af0c",
+> +};
+> +
 
-The last time somebody tried to do this there was a pushback due to
-kernel tinyfication. So this should really give some numbers about the
-code size increase. Also why can't we make this depend on MMU. Is
-anybody else than the reclaim asking for unconditional SRCU usage?
+Is there a reason we can't do it all at compile time?
 
-Btw. I totaly agree with Steven. This is a very poor changelog. It is
-trivial to see what the patch does but it is far from clear why it is
-doing that and why we cannot go other ways.
--- 
-Michal Hocko
-SUSE Labs
+eg:
+
+static const char * const test_data_4[] __initconst = {
+#ifdef CONFIG_CPU_LITTLE_ENDIAN
+	"7bdb32be", "b293180a", "24c4ba70", "9b34837d",
+	"ad319ca6", "e9ac0f9c", "9919d14c", "0cafb143",
+#else
+	"be32db7b", "0a1893b2", "70bac424", "7d83349b",
+	"a69c31ad", "9c0face9", "4cd11999", "43b1af0c",
+#endif
+};
+
+
+cheers
