@@ -1,193 +1,106 @@
 Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 609BFC4646D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 15:25:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01717C46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 15:27:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DEEA21990
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 15:25:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=embeddedgreg-com.20150623.gappssmtp.com header.i=@embeddedgreg-com.20150623.gappssmtp.com header.b="EhMUmAXf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DEEA21990
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedgreg.com
+	by mail.kernel.org (Postfix) with ESMTP id A1A0521A14
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 15:27:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1A0521A14
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727710AbeHHRpb (ORCPT
+        id S1727489AbeHHRrS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 13:45:31 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:54390 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727069AbeHHRpb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 13:45:31 -0400
-Received: by mail-it0-f67.google.com with SMTP id s7-v6so3969710itb.4
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 08:25:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=embeddedgreg-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:cc:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-transfer-encoding:content-language;
-        bh=SpU3aME/3tE0sR9q/UkJWEwooAmdyayoqtYE11bRstU=;
-        b=EhMUmAXfPk9Frm4/BWgxvkOnmixoz7Y+FlMX1hjW93oLQWVYY/GBnm6zxBy666579x
-         20qxyxSNIOI4+gjMwL5l5DGaFaCCo4hZaAMkKA7vsxpxy6vxLtCcf3VdyWRHPaV1jy4C
-         1yh6F1wqxmOkCPhFG6fw9k29oTN65mZZSuE6KLlOLegRwFLWHWHEwIFYGVHYwHYiq1vy
-         FB4KRkqDjVb/fJekq+KD/AoBiQVkm37eToSl/IHUs+q9J2k8NGO9zlXB7k6QEEYqmM7o
-         h39wH7BAFY+i4ZmlAGgVbkAF0KD0VgHqNYxisW5jmpn6VVIMveGCn5HdwPDdrc5GCwfk
-         WJ7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=SpU3aME/3tE0sR9q/UkJWEwooAmdyayoqtYE11bRstU=;
-        b=sBQasKSjZtWlJ9iZSAxjDMAiZMbk2rsSEKvJ7iRqyTWLzm7+z6sSkv0sYBETsLan+O
-         73epOCHnbfNQJnDAruWa45bE+93pfkoDaxdXnjtb3uD/ll9UcPA1CIuRL9NdaTzIq6Ds
-         QAxPE/y095SXHcyTfZiDAYJ8y0gepyAGEr3S0ykLaWTvJH6XgouE8m5XSllkmWlJlXXQ
-         0jGd+qDY7Pzo3w3sYyANeQc6D+25i0MSf1HVJWLf/s62w6thnfJ5jNODNMcRIdxYTlXn
-         x2B2Lide9dyQADNFDBdDY97aBiU0t7Z7Ka2Ueq6zmephjg128/3855m0QdqjV3YSuikV
-         ZFhA==
-X-Gm-Message-State: AOUpUlEJDUxX7pT52CMOEG8IjXkh3nGEJxPrDz+gB6tDeKKZVs8IlIhi
-        XOskAgLBmGHb8B9EajPuZtqF0A8jFUalpRuGGqx9pkbrhzbZiMLtA2DfqPOLaIOIZCtZLZLCK2e
-        IWK4fOOmgm4KwUoTw8S28o3+3BrGlVhGp2r4ymZtQV13PgZprhZ0XgS39au+w+jh6pWnhZvN6W6
-        C2vdUzfew=
-X-Google-Smtp-Source: AA+uWPzAW8kBxXu8mpcQ/TWn425e93suLNsEKOWC/26yuvZkbl4WaZOqkJ0g2az7tBWg5MqMZ6F9mw==
-X-Received: by 2002:a24:9197:: with SMTP id i145-v6mr2750018ite.39.1533741921357;
-        Wed, 08 Aug 2018 08:25:21 -0700 (PDT)
-Received: from [10.6.40.45] ([24.137.218.3])
-        by smtp.gmail.com with ESMTPSA id b1-v6sm1303256ioh.43.2018.08.08.08.25.20
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 08 Aug 2018 08:25:20 -0700 (PDT)
-Subject: Re: [PATCH v2] staging/vc04_services: Fix alignment of function
- arguments
-Cc:     Eric Anholt <eric@anholt.net>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-References: <20180808013455.18037-1-greg@embeddedgreg.com>
-From:   greg gallagher <greg@embeddedgreg.com>
-Message-ID: <78576030-1fdd-6e40-b6d8-8035b57df9e4@embeddedgreg.com>
-Date:   Wed, 8 Aug 2018 11:25:19 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 8 Aug 2018 13:47:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55854 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727069AbeHHRrS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 13:47:18 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 545E721990;
+        Wed,  8 Aug 2018 15:27:07 +0000 (UTC)
+Date:   Wed, 8 Aug 2018 11:27:05 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc:     Joel Fernandes <joelaf@google.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Cc: Android Kernel" <kernel-team@android.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Byungchul Park <byungchul.park@lge.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Glexiner <tglx@linutronix.de>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>
+Subject: Re: [PATCH v12 3/3] tracing: Centralize preemptirq tracepoints and
+ unify their usage
+Message-ID: <20180808112705.22e6a96d@gandalf.local.home>
+In-Reply-To: <20180808144200.GM24813@linux.vnet.ibm.com>
+References: <6D0A3FD6-2190-4CC0-A3C0-7B3759E73243@google.com>
+        <20180807204820.50b83c6d@vmware.local.home>
+        <CAJWu+oqBOEJicepLaUG=JpmtDTgxjRdMyJAgOEUkdk4NzX0esw@mail.gmail.com>
+        <20180807215522.04114097@vmware.local.home>
+        <CAJWu+opjqKgZj30PYpyvip=EtP8CuqaEy65++nuvj37QMT6GCw@mail.gmail.com>
+        <20180807222856.3ede96e7@vmware.local.home>
+        <CAJWu+oqcM_-rtuUe7hhMHyZ2UKZ5J4rBZO7UoHxxd2DAs=aHdA@mail.gmail.com>
+        <CAJWu+oqPUuF4rFOQ8=G3+ZxXJxiiNRBYE8C=zZ93A8qA+muHEg@mail.gmail.com>
+        <20180808130041.GI24813@linux.vnet.ibm.com>
+        <20180808102700.38c4169d@gandalf.local.home>
+        <20180808144200.GM24813@linux.vnet.ibm.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180808013455.18037-1-greg@embeddedgreg.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, 8 Aug 2018 07:42:00 -0700
+"Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
 
+> > There's also a local_inc() if you are using per cpu pointers, that is
+> > suppose to guarantee atomicity for single cpu operations. That's what
+> > the ftrace ring buffer uses.  
+> 
+> Good point, that becomes atomic_long_inc() or equivalent on most
+> architectures, but an incl instruction (not locked) on x86.  So updating
+> my earlier still-untested thought:
+> 
+> int __srcu_read_lock_nmi(struct srcu_struct *sp)  /* UNTESTED. */
+> {
+> 	int idx;
+> 
+> 	idx = READ_ONCE(sp->srcu_idx) & 0x1;
+> 	local_inc(&sp->sda->srcu_lock_count[idx]);
+> 	smp_mb__after_atomic(); /* B */  /* Avoid leaking critical section. */
+> 	return idx;
+> }
+> 
+> void __srcu_read_unlock_nmi(struct srcu_struct *sp, int idx)
+> {
+> 	smp_mb__before_atomic(); /* C */  /* Avoid leaking critical section. */
+> 	local_inc(&sp->sda->srcu_unlock_count[idx]);
+> }
+> 
+> Would that work, or is there a better way to handle this?
 
-On 2018-08-07 09:34 PM, Greg Gallagher wrote:
-> Fix warnings generated by checkpatch.pl for alignment should match open
-> parenthesis.  This is a coding style change only.
->
-> Signed-off-by: Greg Gallagher <greg@embeddedgreg.com>
-> ---
->   .../staging/vc04_services/bcm2835-audio/bcm2835-ctl.c  | 18 +++++++++---------
->   1 file changed, 9 insertions(+), 9 deletions(-)
->
-> diff --git a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-ctl.c b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-ctl.c
-> index ec468d5719b1..8af303e25036 100644
-> --- a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-ctl.c
-> +++ b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-ctl.c
-> @@ -94,7 +94,7 @@ static int snd_bcm2835_ctl_get(struct snd_kcontrol *kcontrol,
->   }
->   
->   static int snd_bcm2835_ctl_put(struct snd_kcontrol *kcontrol,
-> -				struct snd_ctl_elem_value *ucontrol)
-> +			       struct snd_ctl_elem_value *ucontrol)
->   {
->   	struct bcm2835_chip *chip = snd_kcontrol_chip(kcontrol);
->   	int changed = 0;
-> @@ -174,7 +174,7 @@ static struct snd_kcontrol_new snd_bcm2835_ctl[] = {
->   };
->   
->   static int snd_bcm2835_spdif_default_info(struct snd_kcontrol *kcontrol,
-> -	struct snd_ctl_elem_info *uinfo)
-> +					  struct snd_ctl_elem_info *uinfo)
->   {
->   	uinfo->type = SNDRV_CTL_ELEM_TYPE_IEC958;
->   	uinfo->count = 1;
-> @@ -182,7 +182,7 @@ static int snd_bcm2835_spdif_default_info(struct snd_kcontrol *kcontrol,
->   }
->   
->   static int snd_bcm2835_spdif_default_get(struct snd_kcontrol *kcontrol,
-> -	struct snd_ctl_elem_value *ucontrol)
-> +					 struct snd_ctl_elem_value *ucontrol)
->   {
->   	struct bcm2835_chip *chip = snd_kcontrol_chip(kcontrol);
->   	int i;
-> @@ -199,7 +199,7 @@ static int snd_bcm2835_spdif_default_get(struct snd_kcontrol *kcontrol,
->   }
->   
->   static int snd_bcm2835_spdif_default_put(struct snd_kcontrol *kcontrol,
-> -	struct snd_ctl_elem_value *ucontrol)
-> +					 struct snd_ctl_elem_value *ucontrol)
->   {
->   	struct bcm2835_chip *chip = snd_kcontrol_chip(kcontrol);
->   	unsigned int val = 0;
-> @@ -219,7 +219,7 @@ static int snd_bcm2835_spdif_default_put(struct snd_kcontrol *kcontrol,
->   }
->   
->   static int snd_bcm2835_spdif_mask_info(struct snd_kcontrol *kcontrol,
-> -	struct snd_ctl_elem_info *uinfo)
-> +				       struct snd_ctl_elem_info *uinfo)
->   {
->   	uinfo->type = SNDRV_CTL_ELEM_TYPE_IEC958;
->   	uinfo->count = 1;
-> @@ -227,7 +227,7 @@ static int snd_bcm2835_spdif_mask_info(struct snd_kcontrol *kcontrol,
->   }
->   
->   static int snd_bcm2835_spdif_mask_get(struct snd_kcontrol *kcontrol,
-> -	struct snd_ctl_elem_value *ucontrol)
-> +				      struct snd_ctl_elem_value *ucontrol)
->   {
->   	/*
->   	 * bcm2835 supports only consumer mode and sets all other format flags
-> @@ -238,7 +238,7 @@ static int snd_bcm2835_spdif_mask_get(struct snd_kcontrol *kcontrol,
->   }
->   
->   static int snd_bcm2835_spdif_stream_info(struct snd_kcontrol *kcontrol,
-> -	struct snd_ctl_elem_info *uinfo)
-> +					 struct snd_ctl_elem_info *uinfo)
->   {
->   	uinfo->type = SNDRV_CTL_ELEM_TYPE_IEC958;
->   	uinfo->count = 1;
-> @@ -246,7 +246,7 @@ static int snd_bcm2835_spdif_stream_info(struct snd_kcontrol *kcontrol,
->   }
->   
->   static int snd_bcm2835_spdif_stream_get(struct snd_kcontrol *kcontrol,
-> -	struct snd_ctl_elem_value *ucontrol)
-> +					struct snd_ctl_elem_value *ucontrol)
->   {
->   	struct bcm2835_chip *chip = snd_kcontrol_chip(kcontrol);
->   	int i;
-> @@ -263,7 +263,7 @@ static int snd_bcm2835_spdif_stream_get(struct snd_kcontrol *kcontrol,
->   }
->   
->   static int snd_bcm2835_spdif_stream_put(struct snd_kcontrol *kcontrol,
-> -	struct snd_ctl_elem_value *ucontrol)
-> +					struct snd_ctl_elem_value *ucontrol)
->   {
->   	struct bcm2835_chip *chip = snd_kcontrol_chip(kcontrol);
->   	unsigned int val = 0;
-Please ignore this patch, a new patch with the correct subject line and 
-v2 description has been submitted.
+This would work much better than using the atomic ops, and I think it
+would be doable.
 
--Greg
+I may need to revert the srcu for trace_*_rcidle() for now, as I want
+most of the other changes in this merge window, and it's getting too
+late to do it with these updates.
+
+-- Steve
+
