@@ -2,179 +2,96 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 602E2C4646D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 08:27:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44A85C4646D
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 08:30:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 207B8216FB
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 08:27:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 207B8216FB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=citrix.com
+	by mail.kernel.org (Postfix) with ESMTP id EE993216F6
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 08:30:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE993216F6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727285AbeHHKqD (ORCPT
+        id S1727191AbeHHKsu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 06:46:03 -0400
-Received: from smtp.ctxuk.citrix.com ([185.25.65.24]:6841 "EHLO
-        SMTP.EU.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727026AbeHHKqD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 06:46:03 -0400
-X-IronPort-AV: E=Sophos;i="5.51,456,1526342400"; 
-   d="scan'208";a="77334652"
-Date:   Wed, 8 Aug 2018 10:27:16 +0200
-From:   Roger Pau =?utf-8?B?TW9ubsOp?= <roger.pau@citrix.com>
-To:     Juergen Gross <jgross@suse.com>
-CC:     <linux-kernel@vger.kernel.org>, <xen-devel@lists.xenproject.org>,
-        <linux-block@vger.kernel.org>, <konrad.wilk@oracle.com>,
-        <axboe@kernel.dk>, <boris.ostrovsky@oracle.com>
-Subject: Re: [PATCH 2/4] xen/blkfront: cleanup stale persistent grants
-Message-ID: <20180808082716.y4nwqz4y2gzp3yok@mac>
-References: <20180806113403.24728-1-jgross@suse.com>
- <20180806113403.24728-4-jgross@suse.com>
- <20180806161638.nmjamflckekeuyzb@mac>
- <e28d3e77-2c6b-fc30-37e6-646ee1cfbdab@suse.com>
- <20180807141404.lzsqtdd2seqgwtgx@mac>
- <bba40203-ff97-aba6-cbb6-d3e57387778a@suse.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <bba40203-ff97-aba6-cbb6-d3e57387778a@suse.com>
-User-Agent: NeoMutt/20180716
-X-ClientProxiedBy: AMSPEX02CAS01.citrite.net (10.69.22.112) To
- AMSPEX02CL02.citrite.net (10.69.22.126)
+        Wed, 8 Aug 2018 06:48:50 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50072 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726979AbeHHKst (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 06:48:49 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5442A40241E7;
+        Wed,  8 Aug 2018 08:30:11 +0000 (UTC)
+Received: from shalem.localdomain.com (ovpn-117-222.ams2.redhat.com [10.36.117.222])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C53642027047;
+        Wed,  8 Aug 2018 08:30:08 +0000 (UTC)
+From:   Hans de Goede <hdegoede@redhat.com>
+To:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Wolfram Sang <wsa@the-dreams.de>
+Cc:     Hans de Goede <hdegoede@redhat.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        linux-acpi@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        John Garry <john.garry@huawei.com>, linux-i2c@vger.kernel.org
+Subject: [PATCH v4 0/4] i2c-multi-instantiate pseudo driver
+Date:   Wed,  8 Aug 2018 10:30:02 +0200
+Message-Id: <20180808083006.31919-1-hdegoede@redhat.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 08 Aug 2018 08:30:11 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 08 Aug 2018 08:30:11 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'hdegoede@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 07, 2018 at 05:56:38PM +0200, Juergen Gross wrote:
-> On 07/08/18 16:14, Roger Pau Monné wrote:
-> > On Tue, Aug 07, 2018 at 08:31:31AM +0200, Juergen Gross wrote:
-> >> On 06/08/18 18:16, Roger Pau Monné wrote:
-> >>> On Mon, Aug 06, 2018 at 01:34:01PM +0200, Juergen Gross wrote:
-> >>>> Add a periodic cleanup function to remove old persistent grants which
-> >>>> are no longer in use on the backend side. This avoids starvation in
-> >>>> case there are lots of persistent grants for a device which no longer
-> >>>> is involved in I/O business.
-> >>>>
-> >>>> Signed-off-by: Juergen Gross <jgross@suse.com>
-> >>>> ---
-> >>>>  drivers/block/xen-blkfront.c | 99 ++++++++++++++++++++++++++++++++++++++++++--
-> >>>>  1 file changed, 95 insertions(+), 4 deletions(-)
-> >>>>
-> >>>> diff --git a/drivers/block/xen-blkfront.c b/drivers/block/xen-blkfront.c
-> >>>> index b5cedccb5d7d..19feb8835fc4 100644
-> >>>> --- a/drivers/block/xen-blkfront.c
-> >>>> +++ b/drivers/block/xen-blkfront.c
-> >>>> @@ -46,6 +46,7 @@
-> >>>>  #include <linux/scatterlist.h>
-> >>>>  #include <linux/bitmap.h>
-> >>>>  #include <linux/list.h>
-> >>>> +#include <linux/workqueue.h>
-> >>>>  
-> >>>>  #include <xen/xen.h>
-> >>>>  #include <xen/xenbus.h>
-> >>>> @@ -121,6 +122,9 @@ static inline struct blkif_req *blkif_req(struct request *rq)
-> >>>>  
-> >>>>  static DEFINE_MUTEX(blkfront_mutex);
-> >>>>  static const struct block_device_operations xlvbd_block_fops;
-> >>>> +static struct delayed_work blkfront_work;
-> >>>> +static LIST_HEAD(info_list);
-> >>>> +static bool blkfront_work_active;
-> >>>>  
-> >>>>  /*
-> >>>>   * Maximum number of segments in indirect requests, the actual value used by
-> >>>> @@ -216,6 +220,7 @@ struct blkfront_info
-> >>>>  	/* Save uncomplete reqs and bios for migration. */
-> >>>>  	struct list_head requests;
-> >>>>  	struct bio_list bio_list;
-> >>>> +	struct list_head info_list;
-> >>>>  };
-> >>>>  
-> >>>>  static unsigned int nr_minors;
-> >>>> @@ -1764,6 +1769,12 @@ static int write_per_ring_nodes(struct xenbus_transaction xbt,
-> >>>>  	return err;
-> >>>>  }
-> >>>>  
-> >>>> +static void free_info(struct blkfront_info *info)
-> >>>> +{
-> >>>> +	list_del(&info->info_list);
-> >>>> +	kfree(info);
-> >>>> +}
-> >>>> +
-> >>>>  /* Common code used when first setting up, and when resuming. */
-> >>>>  static int talk_to_blkback(struct xenbus_device *dev,
-> >>>>  			   struct blkfront_info *info)
-> >>>> @@ -1885,7 +1896,10 @@ static int talk_to_blkback(struct xenbus_device *dev,
-> >>>>   destroy_blkring:
-> >>>>  	blkif_free(info, 0);
-> >>>>  
-> >>>> -	kfree(info);
-> >>>> +	mutex_lock(&blkfront_mutex);
-> >>>> +	free_info(info);
-> >>>> +	mutex_unlock(&blkfront_mutex);
-> >>>> +
-> >>>>  	dev_set_drvdata(&dev->dev, NULL);
-> >>>>  
-> >>>>  	return err;
-> >>>> @@ -1996,6 +2010,10 @@ static int blkfront_probe(struct xenbus_device *dev,
-> >>>>  	info->handle = simple_strtoul(strrchr(dev->nodename, '/')+1, NULL, 0);
-> >>>>  	dev_set_drvdata(&dev->dev, info);
-> >>>>  
-> >>>> +	mutex_lock(&blkfront_mutex);
-> >>>> +	list_add(&info->info_list, &info_list);
-> >>>> +	mutex_unlock(&blkfront_mutex);
-> >>>> +
-> >>>>  	return 0;
-> >>>>  }
-> >>>>  
-> >>>> @@ -2306,6 +2324,15 @@ static void blkfront_gather_backend_features(struct blkfront_info *info)
-> >>>>  	if (indirect_segments <= BLKIF_MAX_SEGMENTS_PER_REQUEST)
-> >>>>  		indirect_segments = 0;
-> >>>>  	info->max_indirect_segments = indirect_segments;
-> >>>> +
-> >>>> +	if (info->feature_persistent) {
-> >>>> +		mutex_lock(&blkfront_mutex);
-> >>>> +		if (!blkfront_work_active) {
-> >>>> +			blkfront_work_active = true;
-> >>>> +			schedule_delayed_work(&blkfront_work, HZ * 10);
-> >>>
-> >>> Does it make sense to provide a module parameter to rune the schedule
-> >>> of the cleanup routine?
-> >>
-> >> I don't think this is something anyone would like to tune.
-> >>
-> >> In case you think it should be tunable I can add a parameter, of course.
-> > 
-> > We can always add it later if required. I'm fine as-is now.
-> > 
-> >>>
-> >>>> +		}
-> >>>> +		mutex_unlock(&blkfront_mutex);
-> >>>
-> >>> Is it really necessary to have the blkfront_work_active boolean? What
-> >>> happens if you queue the same delayed work more than once?
-> >>
-> >> In case there is already work queued later calls of
-> >> schedule_delayed_work() will be ignored.
-> >>
-> >> So yes, I can drop the global boolean (I still need a local flag in
-> >> blkfront_delay_work() for controlling the need to call
-> >> schedule_delayed_work() again).
-> > 
-> > Can't you just call schedule_delayed_work if info->feature_persistent
-> > is set, even if that means calling it multiple times if multiple
-> > blkfront instances are using persistent grants?
-> 
-> I don't like that. With mq we have a high chance for multiple instances
-> to use persistent grants and a local bool is much cheaper than unneeded
-> calls of schedule_delayed_work().
+Hi All,
 
-OK, I'm convinced with the local bool.
+Here is v4 of my patch-series for dealing with multiple independent i2c
+devices being described in a single ACPI fwnode.
 
-Thanks, Roger.
+Changes in v4:
+-Rewrite commit message of first patch as this is NOT a bug fix for
+ acpi_is_indirect_io_slave() as I thought at first, it is still necessary
+ as a preperation patch for the rest of the series
+-MAINTAINER and Kconfig entry fixes
+-Some minor coding style fixes
+
+Changes in v3:
+-Drop the patch adding the I2C_CLIENT_IGNORE_BUSY flag/hack
+-Add patches to make ACPI fwnode-s with affected acpi_ids get enumerated as
+ platform device instead of i2c-client
+-Change the i2c-multi-instantiate driver to a platform driver
+
+Changes in v2:
+-Rebase on 4.18-rc2
+
+Changes in v1:
+-Second attempt at dealing with this using a new design where a separate
+ driver (which can be build as a module) is used to instantiate the
+ i2c-clients instead of modifying the i2c core
+-Add an I2C_CLIENT_IGNORE_BUSY flag to make it possible for this driver to bind
+ to the client instantiated for the first i2c resource and still create a new
+ client using the i2c_client_id for the actual driver for the first resource,
+ resulting in 2 clients at the same address (of which one is inactive)
+
+About merging this series, the platform-driver and ACPI patches can be
+merged independently of each other, they platform driver relies on the ACPI
+changes to gets its platform device instantiated, but if those changes are
+not in place yet, nothing bad happens.
+
+So if everyone is happy with this series I suggest that each part gets
+merged separately through the relevant trees.
+
+Regards,
+
+Hans
+
