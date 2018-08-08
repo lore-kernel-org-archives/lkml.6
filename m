@@ -5,77 +5,55 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AF06C4646D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 10:29:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B76C2C4646D
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 10:29:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B19F215FA
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 10:29:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B19F215FA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hisilicon.com
+	by mail.kernel.org (Postfix) with ESMTP id 76BCC215FA
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 10:29:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76BCC215FA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726971AbeHHMsP (ORCPT
+        id S1727062AbeHHMsz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 08:48:15 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:53384 "EHLO huawei.com"
+        Wed, 8 Aug 2018 08:48:55 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53924 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726680AbeHHMsP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 08:48:15 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id A887A2B91FEBC;
-        Wed,  8 Aug 2018 18:29:08 +0800 (CST)
-Received: from [127.0.0.1] (10.202.226.42) by DGGEMS413-HUB.china.huawei.com
- (10.3.19.213) with Microsoft SMTP Server id 14.3.399.0; Wed, 8 Aug 2018
- 18:29:04 +0800
-Subject: Re: [PATCH] arm64: dts: hisilicon: Add missing clocks property for
- CPUs
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-References: <6de0dde994326b3fdc2b746e22fdf1afe18067d2.1532315177.git.viresh.kumar@linaro.org>
- <20180731072414.vymng6k5uamgmyhi@vireshk-i7>
-CC:     Vincent Guittot <vincent.guittot@linaro.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-From:   Wei Xu <xuwei5@hisilicon.com>
-Message-ID: <5B6AC5EB.3030808@hisilicon.com>
-Date:   Wed, 8 Aug 2018 11:28:59 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.6.0
+        id S1726680AbeHHMsz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 08:48:55 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id A949C40241C3;
+        Wed,  8 Aug 2018 10:29:50 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-78.rdu2.redhat.com [10.10.120.78])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 295902027047;
+        Wed,  8 Aug 2018 10:29:50 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <153372399484.18036.6826078666491635563.stgit@warthog.procyon.org.uk>
+References: <153372399484.18036.6826078666491635563.stgit@warthog.procyon.org.uk>
+Cc:     dhowells@redhat.com, netdev@vger.kernel.org,
+        linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net] rxrpc: Fix the keepalive generator
 MIME-Version: 1.0
-In-Reply-To: <20180731072414.vymng6k5uamgmyhi@vireshk-i7>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.42]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <18674.1533724189.1@warthog.procyon.org.uk>
+Date:   Wed, 08 Aug 2018 11:29:49 +0100
+Message-ID: <18675.1533724189@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 08 Aug 2018 10:29:50 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 08 Aug 2018 10:29:50 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Viresh,
+Please ignore this version.  I forgot to commit the removal of the debugging
+changes to the patch.  I will repost.
 
-On 2018/7/31 8:24, Viresh Kumar wrote:
-> On 23-07-18, 08:36, Viresh Kumar wrote:
->> The clocks property should either be present for all the CPUs of a
->> cluster or none. If these are present only for a subset of CPUs of a
->> cluster then things will start falling apart as soon as the CPUs are
->> brought online in a different order. For example, this will happen
->> because the operating system looks for such properties in the CPU node
->> it is trying to bring up, so that it can register a cooling device.
->>
->> Add missing clocks property.
->>
->> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
->> ---
->>  arch/arm64/boot/dts/hisilicon/hi6220.dtsi | 7 +++++++
->>  1 file changed, 7 insertions(+)
-> 
-> @Wei: Can you please apply this one as well ?
-
-Sorry for the late reply!
-I will apply it after 4.19-rc1 released.
-Thanks!
-
-Best Regards,
-Wei
-
+David
