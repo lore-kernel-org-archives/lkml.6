@@ -2,105 +2,170 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB6B1C4646D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:10:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E91FC4646D
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:10:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B17DD21767
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:10:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B17DD21767
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id CC8DF21767
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:10:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XD+/ldJ5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC8DF21767
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727445AbeHHQal (ORCPT
+        id S1727484AbeHHQaq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 12:30:41 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47852 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727050AbeHHQal (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 12:30:41 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 853BA402315B;
-        Wed,  8 Aug 2018 14:10:49 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 344E21C735;
-        Wed,  8 Aug 2018 14:10:49 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id w78EAnls010030;
-        Wed, 8 Aug 2018 10:10:49 -0400
-Received: from localhost (mpatocka@localhost)
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id w78EAmFn010025;
-        Wed, 8 Aug 2018 10:10:48 -0400
-X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
-Date:   Wed, 8 Aug 2018 10:10:48 -0400 (EDT)
-From:   Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To:     Marcin Wojtas <mw@semihalf.com>
-cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        Joao Pinto <Joao.Pinto@synopsys.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        linux-pci@vger.kernel.org, Will Deacon <will.deacon@arm.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Matt Sealey <neko@bakuhatsu.net>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: framebuffer corruption due to overlapping stp instructions on
- arm64
-In-Reply-To: <CAPv3WKcKoEe=Qysp6Oac2C=G9bUhUQf1twSRCY+_qJ6XEC-iag@mail.gmail.com>
-Message-ID: <alpine.LRH.2.02.1808081010130.9997@file01.intranet.prod.int.rdu2.redhat.com>
-References: <alpine.LRH.2.02.1808021242320.31834@file01.intranet.prod.int.rdu2.redhat.com> <CAHCPf3s-+Qf=WBZz1KpisDMG3520jCUh8PLAO3PHa4jdt8kCTw@mail.gmail.com> <CAKv+Gu9_h-WFi1j4+DWUN_dMj75SKKHxWoDH8WQ9P7S7MNpZQg@mail.gmail.com>
- <alpine.LRH.2.02.1808060553130.30832@file01.intranet.prod.int.rdu2.redhat.com> <99fff4fe-afa9-f12f-a518-472a9dd1c530@arm.com> <CAKv+Gu_C2g=C=gMpk4a5jpDORnxZY6t1v=HDoy59m5vwNBxBBg@mail.gmail.com> <alpine.LRH.2.02.1808061306490.12989@file01.intranet.prod.int.rdu2.redhat.com>
- <CAKv+Gu_8Rq6X24ZOYvG7+kQQGSGYAZuu_co4k1nJS8K7rkrWMA@mail.gmail.com> <alpine.LRH.2.02.1808061552090.11930@file01.intranet.prod.int.rdu2.redhat.com> <CAKv+Gu_iCgAeGmrajZ_euMcFLntWG1a51HF_HQ1TO=fV_v__AQ@mail.gmail.com> <CAPv3WKdCMpy6KarducQEtSYP35zdELhparkmPPMKGMUhsdk1Qw@mail.gmail.com>
- <alpine.LRH.2.02.1808071331260.16565@file01.intranet.prod.int.rdu2.redhat.com> <CAPv3WKcKoEe=Qysp6Oac2C=G9bUhUQf1twSRCY+_qJ6XEC-iag@mail.gmail.com>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+        Wed, 8 Aug 2018 12:30:46 -0400
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:33152 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727050AbeHHQap (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 12:30:45 -0400
+Received: by mail-yw1-f67.google.com with SMTP id c135-v6so1630558ywa.0
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 07:10:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=8pkWMBqJTcNIUxPxTYVwZRhv6bvcVMIt3FN+d6l1SwM=;
+        b=XD+/ldJ5v/Qz4zRzGCSIb1e7dnf1X6SvbHUjTwhvg550uePa2Ek5kGmpZyMBCIjjRx
+         EazgVacg6wZTHIYxMsvYbo9yTFxLvKwKeIQu/yhv5G9ycAWv/JF+ptGgUbVKCBktGsvH
+         SeMiL23wm/+yg+k8/zi0ePPIMXec+tbA46oZx9AtqA0sRPc4BhZtEhiQb5gGfz+ZM/3g
+         Jqjfy0KRTSVm9xVP0OyNUDUEDO/fRic8/px1ESoNwIkOvV9PDRBfhL/1c4p1B80lqz9C
+         dNO51Q2kE/qag15Pa3oZu6Isf2UG1UbFuBUiDZDa0UQOOI8zrHU99NdV/w3/XV1BUn24
+         K6ig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=8pkWMBqJTcNIUxPxTYVwZRhv6bvcVMIt3FN+d6l1SwM=;
+        b=Lf9r+ekV8BX18A92bsmY/fBdzap6aRQ+2JqI2283QFCHbewVtHoEKLgWBpJS45oH00
+         vvkcvCQrK8SHgEDU7dYBAQJvndR1eEWysPCC+JHrWBIMu07x5lVDrwhxD69WTs2fBiEC
+         YHkusSFXMq4d9gJb+v4z1A983ZaloQRK94Y8MMsjWblgmdZKOKrzpUTRxiGcbRnDgMbO
+         BSzMtQ9ISgAXlpKIvS3ca6sF7XUf1IQPLHvBqTF3ZzwLxQV3hG6iyYyMmM+7HTjfAcvf
+         LN+T2pFL48S+/Y+VI4e+mA9IRGxNEzTHGmh1e7bNIYH3T0jLWlmGaEcC09gsWMIhmQkg
+         pwDQ==
+X-Gm-Message-State: AOUpUlGUitVATJ5hZgZdMYCRS+QAeVTA7Mn+7WO2z+COUVK0xstzLMCu
+        Esw0Biuuz1M4T+YUvK2M6j3wceijja8o303cwy71LQ==
+X-Google-Smtp-Source: AA+uWPzuEJtkk98Cpx/FhfZfC57tH1JyCHLzX+T6ZPJ1f0sGAJ2T2Vl3j8b8ny7XvNDm9qgFf/9WsV8wzCTwvpoh2Qw=
+X-Received: by 2002:a81:5c8b:: with SMTP id q133-v6mr1576987ywb.2.1533737454028;
+ Wed, 08 Aug 2018 07:10:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Wed, 08 Aug 2018 14:10:49 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Wed, 08 Aug 2018 14:10:49 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mpatocka@redhat.com' RCPT:''
+Received: by 2002:a25:bfce:0:0:0:0:0 with HTTP; Wed, 8 Aug 2018 07:10:53 -0700 (PDT)
+In-Reply-To: <20180808130041.GI24813@linux.vnet.ibm.com>
+References: <6B9E5DC9-0859-41B4-9B72-A7D85E9EA2AD@google.com>
+ <20180807194515.4e549c1a@gandalf.local.home> <6D0A3FD6-2190-4CC0-A3C0-7B3759E73243@google.com>
+ <20180807204820.50b83c6d@vmware.local.home> <CAJWu+oqBOEJicepLaUG=JpmtDTgxjRdMyJAgOEUkdk4NzX0esw@mail.gmail.com>
+ <20180807215522.04114097@vmware.local.home> <CAJWu+opjqKgZj30PYpyvip=EtP8CuqaEy65++nuvj37QMT6GCw@mail.gmail.com>
+ <20180807222856.3ede96e7@vmware.local.home> <CAJWu+oqcM_-rtuUe7hhMHyZ2UKZ5J4rBZO7UoHxxd2DAs=aHdA@mail.gmail.com>
+ <CAJWu+oqPUuF4rFOQ8=G3+ZxXJxiiNRBYE8C=zZ93A8qA+muHEg@mail.gmail.com> <20180808130041.GI24813@linux.vnet.ibm.com>
+From:   Joel Fernandes <joelaf@google.com>
+Date:   Wed, 8 Aug 2018 07:10:53 -0700
+Message-ID: <CAJWu+oopkDMe9AtuiRqAubuPk_H=NSifTDpWLdgCTEvR6zZiMw@mail.gmail.com>
+Subject: Re: [PATCH v12 3/3] tracing: Centralize preemptirq tracepoints and
+ unify their usage
+To:     Paul McKenney <paulmck@linux.vnet.ibm.com>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Cc: Android Kernel" <kernel-team@android.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Byungchul Park <byungchul.park@lge.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Glexiner <tglx@linutronix.de>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Aug 8, 2018 at 6:00 AM, Paul E. McKenney
+<paulmck@linux.vnet.ibm.com> wrote:
+> On Tue, Aug 07, 2018 at 08:53:54PM -0700, Joel Fernandes wrote:
+>> On Tue, Aug 7, 2018 at 8:44 PM, Joel Fernandes <joelaf@google.com> wrote:
+>> > Hi Steve,
+>> >
+>> > On Tue, Aug 7, 2018 at 7:28 PM, Steven Rostedt <rostedt@goodmis.org> wrote:
+>> [...]
+>> >>> @@ -171,8 +174,7 @@ extern void syscall_unregfunc(void);
+>> >>>                       } while ((++it_func_ptr)->func);                \
+>> >>>               }                                                       \
+>> >>>                                                                       \
+>> >>> -             if (rcuidle)                                            \
+>> >>> -                     srcu_read_unlock_notrace(&tracepoint_srcu, idx);\
+>> >>> +             srcu_read_unlock_notrace(ss, idx);                      \
+>> >>
+>> >> Hmm, why do we have the two different srcu handles?
+>> >
+>> > Because if the memory operations happening on the normal SRCU handle
+>> > (during srcu_read_lock) is interrupted by NMI, then the other handle
+>> > (devoted to NMI) could be used instead and not bother the interrupted
+>> > handle. Does that makes sense?
+>> >
+>> > When I talked to Paul few months ago about SRCU from NMI context, he
+>> > mentioned the per-cpu memory operations during srcu_read_lock can be
+>> > NMI interrupted, that's why we added that warning.
+>>
+>> So I looked more closely, __srcu_read_lock on 2 different handles may
+>> still be doing a this_cpu_inc on the same location..
+>> (sp->sda->srcu_lock_count). :-(
+>>
+>> Paul any ideas on how to solve this?
+>
+> You lost me on this one.  When you said "2 different handles", I assumed
+> that you meant two different values of "sp", which would have two
+> different addresses for &sp->sda->srcu_lock_count.  What am I missing?
 
+Thanks a lot for the reply.
+I thought "sda" is the same for different srcu_struct(s). May be it
+was too late for me in the night, that's why I thought so? Which makes
+no sense now that I think of it.
 
-On Wed, 8 Aug 2018, Marcin Wojtas wrote:
+In that case based on what you're saying, the patch I sent to using
+different srcu_struct for NMI is still good I guess...
 
-> Hi Mikulas,
-> 
-> wt., 7 sie 2018 o 19:39 Mikulas Patocka <mpatocka@redhat.com> napisa?(a):
-> >
-> >
-> >
-> > On Tue, 7 Aug 2018, Marcin Wojtas wrote:
-> >
-> > > Ard, Mikulas,
-> > >
-> > > After some self-caused setup issues I was able to run the test on my
-> > > MacchiatoBin with the kernel v4.18-rc8. It's been running for 1h+ now,
-> > > loading the CPU to 100% and no single error event...
-> > >
-> > > I built the binary file with:
-> > > gcc-linaro-7.2.1-2017.11-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-gcc -O2
-> > >
-> > > Maybe it's the older firmware issue?
-> >
-> > I have downloaded and built the firmware recently (it has timestamp Jul 30
-> > 2018).
-> >
-> > Do you still have your firmware file "flash-image.bin" that you used, so
-> > that I could try it?
-> 
-> Attached. Please let know if you see any difference.
+>> It does start to seem like a show stopper :-(
+>
+> I suppose that an srcu_read_lock_nmi() and srcu_read_unlock_nmi() could
+> be added, which would do atomic ops on sp->sda->srcu_lock_count.  Not sure
+> whether this would be fast enough to be useful, but easy to provide:
+>
+> int __srcu_read_lock_nmi(struct srcu_struct *sp)  /* UNTESTED. */
+> {
+>         int idx;
+>
+>         idx = READ_ONCE(sp->srcu_idx) & 0x1;
+>         atomic_inc(&sp->sda->srcu_lock_count[idx]);
+>         smp_mb__after_atomic(); /* B */  /* Avoid leaking critical section. */
+>         return idx;
+> }
+>
+> void __srcu_read_unlock_nmi(struct srcu_struct *sp, int idx)
+> {
+>         smp_mb__before_atomic(); /* C */  /* Avoid leaking critical section. */
+>         atomic_inc(&sp->sda->srcu_unlock_count[idx]);
+> }
+>
+> With appropriate adjustments to also allow Tiny RCU to also work.
+>
+> Note that you have to use _nmi() everywhere, not just in NMI handlers.
+> In fact, the NMI handlers are the one place you -don't- need to use
+> _nmi(), strangely enough.
+>
+> Might be worth a try -- smp_mb__{before,after}_atomic() is a no-op on
+> some architectures, for example.
 
-I booted this image, but the same corruption happens.
+Continuing Steve's question on regular interrupts, do we need to use
+this atomic_inc API for regular interrupts as well?
 
-Mikulas
+Thanks!
