@@ -6,86 +6,134 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E5C8C4646D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 21:29:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E375C46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 21:31:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3821B21AA8
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 21:29:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3821B21AA8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
+	by mail.kernel.org (Postfix) with ESMTP id C92DA21ADC
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 21:31:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C92DA21ADC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fromorbit.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730911AbeHHXum (ORCPT
+        id S1729753AbeHHXxB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 19:50:42 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:37118 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728159AbeHHXum (ORCPT
+        Wed, 8 Aug 2018 19:53:01 -0400
+Received: from ipmail07.adl2.internode.on.net ([150.101.137.131]:48267 "EHLO
+        ipmail07.adl2.internode.on.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727480AbeHHXxB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 19:50:42 -0400
-Received: by mail-wm0-f67.google.com with SMTP id n11-v6so4215180wmc.2
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 14:29:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=bTngNLrRBdKeTCbueq811VrJPw7R1sVkBpJWR8WXYhQ=;
-        b=N7+u4qXB+LpXkI9SKxG2OAeqkEa27UUwTASSO6+0wQQ++TlqT58wIABte1WL08T9yK
-         /3tP3CA7MNkllT4hRpIOe5gm4qhzGQcMic6y1p6dozJMBzukF2IRwC1ns/UTv1rxWkJi
-         Yqy+vVIXZOEhPyUX10j79ge1T9nS3UWJUB8dpHw2jTVGIyElmv6y6xFPhOYzRAPwRe7/
-         eOXPn4SRaB8af9Qmw+yBXz9VpYFHIWAcUnpAVAXw1LE0NZNYnjl+kF8QVkCi5CsTMxNk
-         FNZZDRKpLZGFz/NsjS2uZ84PokaOlOVkTj7EDgGPcxT4QZ139QzKrSUuF7owEiGCWDZL
-         ufXg==
-X-Gm-Message-State: AOUpUlFLuTFFvS8YK68yb7hI8AL/scJgnf6M5zmb8z2nX0pvjA6VJ4ZG
-        vEkTWdBYjYdEOzrGQ7axzjc=
-X-Google-Smtp-Source: AA+uWPw2hhEWKpKmd4p5gHJPdtC1lqlEyDhM07QdtsFef1WVtBgoDFLo7Ykrxc+8+nEpgtnuet+HKg==
-X-Received: by 2002:a1c:3314:: with SMTP id z20-v6mr2750812wmz.95.1533763750179;
-        Wed, 08 Aug 2018 14:29:10 -0700 (PDT)
-Received: from techadventures.net (techadventures.net. [62.201.165.239])
-        by smtp.gmail.com with ESMTPSA id 66-v6sm11158629wmw.34.2018.08.08.14.29.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 08 Aug 2018 14:29:09 -0700 (PDT)
-Received: by techadventures.net (Postfix, from userid 1000)
-        id F2EB31247A9; Wed,  8 Aug 2018 23:29:08 +0200 (CEST)
-Date:   Wed, 8 Aug 2018 23:29:08 +0200
-From:   Oscar Salvador <osalvador@techadventures.net>
-To:     Jerome Glisse <jglisse@redhat.com>
-Cc:     David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org,
-        mhocko@suse.com, dan.j.williams@intel.com, yasu.isimatu@gmail.com,
-        logang@deltatee.com, dave.jiang@intel.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Oscar Salvador <osalvador@suse.de>
-Subject: Re: [RFC PATCH 2/3] mm/memory_hotplug: Create __shrink_pages and
- move it to offline_pages
-Message-ID: <20180808212908.GB12363@techadventures.net>
-References: <20180807135221.GA3301@redhat.com>
- <a6e4e654-fc95-497f-16f3-8c1550cf03d6@redhat.com>
- <20180807204834.GA6844@techadventures.net>
- <20180807221345.GD3301@redhat.com>
- <20180808073835.GA9568@techadventures.net>
- <44f74b58-aae0-a44c-3b98-7b1aac186f8e@redhat.com>
- <20180808075614.GB9568@techadventures.net>
- <7a64e67d-1df9-04ab-cc49-99a39aa90798@redhat.com>
- <20180808134233.GA10946@techadventures.net>
- <20180808175558.GD3429@redhat.com>
+        Wed, 8 Aug 2018 19:53:01 -0400
+Received: from ppp59-167-129-252.static.internode.on.net (HELO dastard) ([59.167.129.252])
+  by ipmail07.adl2.internode.on.net with ESMTP; 09 Aug 2018 07:01:26 +0930
+Received: from dave by dastard with local (Exim 4.80)
+        (envelope-from <david@fromorbit.com>)
+        id 1fnW3B-00086w-Bw; Thu, 09 Aug 2018 07:31:25 +1000
+Date:   Thu, 9 Aug 2018 07:31:25 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Kirill Tkhai <ktkhai@virtuozzo.com>, akpm@linux-foundation.org,
+        gregkh@linuxfoundation.org, rafael@kernel.org,
+        viro@zeniv.linux.org.uk, darrick.wong@oracle.com,
+        paulmck@linux.vnet.ibm.com, josh@joshtriplett.org,
+        rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
+        jiangshanlai@gmail.com, hughd@google.com, shuah@kernel.org,
+        robh@kernel.org, ulf.hansson@linaro.org, aspriel@gmail.com,
+        vivek.gautam@codeaurora.org, robin.murphy@arm.com, joe@perches.com,
+        heikki.krogerus@linux.intel.com, sfr@canb.auug.org.au,
+        vdavydov.dev@gmail.com, chris@chris-wilson.co.uk,
+        penguin-kernel@I-love.SAKURA.ne.jp, aryabinin@virtuozzo.com,
+        willy@infradead.org, ying.huang@intel.com, shakeelb@google.com,
+        jbacik@fb.com, mingo@kernel.org, mhiramat@kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH RFC 01/10] rcu: Make CONFIG_SRCU unconditionally enabled
+Message-ID: <20180808213125.GM2234@dastard>
+References: <153365347929.19074.12509495712735843805.stgit@localhost.localdomain>
+ <153365625652.19074.8434946780002619802.stgit@localhost.localdomain>
+ <20180808072040.GC27972@dhcp22.suse.cz>
+ <d17e65bb-c114-55de-fb4e-e2f538779b92@virtuozzo.com>
+ <20180808102734.GH27972@dhcp22.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180808175558.GD3429@redhat.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180808102734.GH27972@dhcp22.suse.cz>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 08, 2018 at 01:55:59PM -0400, Jerome Glisse wrote:
-> Note that Dan did post patches that already go in that direction (unifying
-> code between devm and HMM). I think they are in Andrew queue, looks for
+On Wed, Aug 08, 2018 at 12:27:34PM +0200, Michal Hocko wrote:
+> [CC Josh - the whole series is
+> http://lkml.kernel.org/r/153365347929.19074.12509495712735843805.stgit@localhost.localdomain]
 > 
-> mm: Rework hmm to use devm_memremap_pages and other fixes
+> On Wed 08-08-18 13:17:44, Kirill Tkhai wrote:
+> > On 08.08.2018 10:20, Michal Hocko wrote:
+> > > On Tue 07-08-18 18:37:36, Kirill Tkhai wrote:
+> > >> This patch kills all CONFIG_SRCU defines and
+> > >> the code under !CONFIG_SRCU.
+> > > 
+> > > The last time somebody tried to do this there was a pushback due to
+> > > kernel tinyfication. So this should really give some numbers about the
+> > > code size increase. Also why can't we make this depend on MMU. Is
+> > > anybody else than the reclaim asking for unconditional SRCU usage?
+> > 
+> > I don't know one. The size numbers (sparc64) are:
+> > 
+> > $ size image.srcu.disabled 
+> >    text	   data	    bss	    dec	    hex	filename
+> > 5117546	8030506	1968104	15116156	 e6a77c	image.srcu.disabled
+> > $ size image.srcu.enabled
+> >    text	   data	    bss	    dec	    hex	filename
+> > 5126175	8064346	1968104	15158625	 e74d61	image.srcu.enabled
+> > The difference is: 15158625-15116156 = 42469 ~41Kb
+> > 
+> > Please, see the measurement details to my answer to Stephen.
+> > 
+> > > Btw. I totaly agree with Steven. This is a very poor changelog. It is
+> > > trivial to see what the patch does but it is far from clear why it is
+> > > doing that and why we cannot go other ways.
+> > We possibly can go another way, and there is comment to [2/10] about this.
+> > Percpu rwsem may be used instead, the only thing, it is worse, is it will
+> > make shrink_slab() wait unregistering shrinkers, while srcu-based
+> > implementation does not require this.
+> 
+> Well, if unregisterring doesn't do anything subtle - e.g. an allocation
+> or take locks which depend on allocation - and we can guarantee that
+> then blocking shrink_slab shouldn't be a big deal.
 
-Thanks for pointing that out.
-I will take a look at that work.
+unregister_shrinker() already blocks shrink_slab - taking a rwsem in
+write mode blocks all readers - so using a per-cpu rwsem doesn't
+introduce anything new or unexpected. I'd like to see numbers of the
+different methods before anything else.
 
+IMO, the big deal is that the split unregister mechanism seems to
+imply superblock shrinkers can be called during sb teardown or
+/after/ the filesystem has been torn down in memory (i.e. after
+->put_super() is called). That's a change of behaviour, but it's
+left to the filesystem to detect and handle that condition. That's
+exceedingly subtle and looks like a recipe for disaster to me. I
+note that XFS hasn't been updated to detect and avoid this landmine.
+
+And, FWIW, filesystems with multiple shrinkers (e.g. XFS as 3 per
+mount) will take the SCRU penalty multiple times during unmount, and
+potentially be exposed to multiple different "use during/after
+teardown" race conditions.
+
+> It is subtle though.
+> Maybe subtle enough to make unconditional SRCU worth it. This all should
+> be in the changelog though.
+
+IMO, we've had enough recent bugs to deal with from shrinkers being
+called before the filesystem is set up and from trying to handle
+allocation errors during setup. Do we really want to make shrinker
+shutdown just as prone to mismanagement and subtle, hard to hit
+bugs? I don't think we do - unmount is simply not a critical
+performance path.
+
+Cheers,
+
+Dave.
 -- 
-Oscar Salvador
-SUSE L3
+Dave Chinner
+david@fromorbit.com
