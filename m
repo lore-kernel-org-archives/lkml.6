@@ -2,145 +2,111 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0675FC4646D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 03:54:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DFB8C46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 04:05:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE16621708
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 03:54:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="VKW0G4Ak"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE16621708
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id C53342170F
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 04:05:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C53342170F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726953AbeHHGM1 (ORCPT
+        id S1726779AbeHHGWt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 02:12:27 -0400
-Received: from ozlabs.org ([203.11.71.1]:54407 "EHLO ozlabs.org"
+        Wed, 8 Aug 2018 02:22:49 -0400
+Received: from mga03.intel.com ([134.134.136.65]:22661 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726373AbeHHGM1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 02:12:27 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41lcw56280z9s2g;
-        Wed,  8 Aug 2018 13:54:45 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1533700489;
-        bh=v8pwCsVkBvIfxRl/JyTFpJLh4ws6XImOngUVrUbLBvM=;
-        h=Date:From:To:Cc:Subject:From;
-        b=VKW0G4AkinCTXEfejtz6xjEfC7zRPmUjackhizWYfc0/b3grmorcOV+Dp1SNQw55+
-         3qrqjeV3mkb2uaHLDFLn5yP2DFYvwAzws4wcAla/DXZeS2I8Qz5S4kF0N1zu2izBZD
-         ed0ipDdUdnxYFjR3Q5CfsjSfNJrjiDTH2RrKeZAAW3F+Qxxu+k1SGaqt17GXlCB6zy
-         UZzlYoBBY9p44jRfo7BmvMWM0SW/h65+gf1lUMBRKdCfBtSfqIepapF+aqJUqFrvco
-         jyMU1Mx5W9R0o3VdK+TBFrSIRoZZTIp+pJJlntRHwDY96JVJtKBxaHkdPM4tFWczhH
-         /dGErnMAyxuPg==
-Date:   Wed, 8 Aug 2018 13:54:45 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        KVM <kvm@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        id S1726373AbeHHGWt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 02:22:49 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Aug 2018 21:05:11 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,456,1526367600"; 
+   d="scan'208";a="79467487"
+Received: from songjunw-mobl1.ger.corp.intel.com (HELO [10.226.39.42]) ([10.226.39.42])
+  by fmsmga001.fm.intel.com with ESMTP; 07 Aug 2018 21:05:08 -0700
+Subject: Re: [PATCH v2 08/18] serial: intel: Get serial id from dts
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     hua.ma@linux.intel.com, yixin.zhu@linux.intel.com,
+        chuanhua.lei@linux.intel.com, qi-ming.wu@intel.com,
+        Linux MIPS Mailing List <linux-mips@linux-mips.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Greg KH <gregkh@linuxfoundation.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Wanpeng Li <wanpengli@tencent.com>
-Subject: linux-next: manual merge of the kvm tree with the tip tree
-Message-ID: <20180808135445.1a85f9b5@canb.auug.org.au>
+        Jiri Slaby <jslaby@suse.com>
+References: <20180803030237.3366-1-songjun.wu@linux.intel.com>
+ <20180803030237.3366-9-songjun.wu@linux.intel.com>
+ <CAMuHMdXkGchPN337dXbBVOFsb1o-Tkh8S_z=uCm3Z0sDjPVMKA@mail.gmail.com>
+From:   "Wu, Songjun" <songjun.wu@linux.intel.com>
+Message-ID: <734bddbc-a5aa-d50d-0e7b-d8adc4d1afb2@linux.intel.com>
+Date:   Wed, 8 Aug 2018 12:05:07 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/SkhUMoQV0vcZ4iq.LZ7CQ=u"; protocol="application/pgp-signature"
+In-Reply-To: <CAMuHMdXkGchPN337dXbBVOFsb1o-Tkh8S_z=uCm3Z0sDjPVMKA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/SkhUMoQV0vcZ4iq.LZ7CQ=u
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
 
-Paolo pointed out a semantic conflict between the kvm tree and the tip
-tree in
+On 8/7/2018 3:33 PM, Geert Uytterhoeven wrote:
+> Hi Songjun,
+>
+> On Fri, Aug 3, 2018 at 5:04 AM Songjun Wu <songjun.wu@linux.intel.com> wrote:
+>> Get serial id from dts.
+>>
+>> "#ifdef CONFIG_LANTIQ" preprocessor is used because LTQ_EARLY_ASC
+>> macro is defined in lantiq_soc.h.
+>> lantiq_soc.h is in arch path for legacy product support.
+>>
+>> arch/mips/include/asm/mach-lantiq/xway/lantiq_soc.h
+>>
+>> If "#ifdef preprocessor" is changed to
+>> "if (IS_ENABLED(CONFIG_LANTIQ))", when CONFIG_LANTIQ is not enabled,
+>> code using LTQ_EARLY_ASC is compiled.
+>> Compilation will fail for no LTQ_EARLY_ASC defined.
+>>
+>> Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
+> Thanks for your patch!
+>
+>> @@ -699,9 +700,19 @@ lqasc_probe(struct platform_device *pdev)
+>>                  return -ENODEV;
+>>          }
+>>
+>> -       /* check if this is the console port */
+>> -       if (mmres->start != CPHYSADDR(LTQ_EARLY_ASC))
+>> -               line = 1;
+>> +       /* get serial id */
+>> +       line = of_alias_get_id(node, "serial");
+>> +       if (line < 0) {
+>> +#ifdef CONFIG_LANTIQ
+>> +               if (mmres->start == CPHYSADDR(LTQ_EARLY_ASC))
+>> +                       line = 0;
+>> +               else
+>> +                       line = 1;
+>> +#else
+>> +               dev_err(&pdev->dev, "failed to get alias id, errno %d\n", line);
+>> +               return line;
+> Please note that not providing a fallback here makes life harder when using
+> DT overlays.
+> See the description of commit 7678f4c20fa7670f ("serial: sh-sci: Add support
+> for dynamic instances") for background info.
+Thanks for your comment.
+The logic in commit 7678f4c20fa7670f is not suitable here.
+We need to know which serial instance is used for console.
+We cannot use dynamic serial instance here.
 
-  arch/x86/kernel/kvm.c
 
-between commit:
-
-  368a540e0232 ("x86/kvmclock: Remove memblock dependency")
-
-from the tip tree and commit:
-
-  d63bae079b64 ("KVM: X86: Add kvm hypervisor init time platform setup call=
-back")
-
-from the kvm tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-I applied the following (as suggested) after the automatic merge:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 8 Aug 2018 13:48:34 +1000
-Subject: [PATCH] kvm: x86: fix semantic conflict in platform init
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- arch/x86/kernel/kvm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
-index 0906b8731393..e2499bad3209 100644
---- a/arch/x86/kernel/kvm.c
-+++ b/arch/x86/kernel/kvm.c
-@@ -714,13 +714,13 @@ static void __init kvm_apic_init(void)
- static void __init kvm_init_platform(void)
- {
- 	x86_platform.apic_post_init =3D kvm_apic_init;
-+	kvmclock_init();
- }
-=20
- const __initconst struct hypervisor_x86 x86_hyper_kvm =3D {
- 	.name			=3D "KVM",
- 	.detect			=3D kvm_detect,
- 	.type			=3D X86_HYPER_KVM,
--	.init.init_platform	=3D kvmclock_init,
- 	.init.guest_late_init	=3D kvm_guest_init,
- 	.init.x2apic_available	=3D kvm_para_available,
- 	.init.init_platform	=3D kvm_init_platform,
---=20
-2.18.0
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/SkhUMoQV0vcZ4iq.LZ7CQ=u
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltqaYUACgkQAVBC80lX
-0GwqEgf9EI6wYOYduAAdxG+AZxIyRL7ueVEb0tgPJFHB6skFqub62SE0Yz+to9GQ
-IzV9vQiI0PnibR5M042K/IwrdqCic8UatGR4QVHOWKJQ70PnMRPxxfblzbXV1yPK
-jsV+xBGIHmMYbEgiSObxle/4g3SQHhFTCeU5qbgEgxhBz8NI1QO0H1xmOtsszujE
-dkybl6d9hlAl1tfIZj2cTuusAPVcEzcbQ9YOTQ4umXK9YepFfBAdDfDPm7i0DwTq
-4HAlxXDCNVYwq4/UjafWoeDtSce5a+pZiWxpGJ2ZkXsfz+Nc0W+ZnMLCU3U+wNKX
-6AunO8P9rfkLjBT1fWeXgMyf62x81A==
-=XOqN
------END PGP SIGNATURE-----
-
---Sig_/SkhUMoQV0vcZ4iq.LZ7CQ=u--
