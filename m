@@ -2,119 +2,192 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BE61C46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:43:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43BA4C46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:44:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54E90214FE
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:43:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Knc+7JY+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54E90214FE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 0896E21718
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:44:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0896E21718
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727507AbeHHRDN (ORCPT
+        id S1727513AbeHHREF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 13:03:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42332 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727198AbeHHRDM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 13:03:12 -0400
-Received: from mail-qk0-f182.google.com (mail-qk0-f182.google.com [209.85.220.182])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1A609219F5;
-        Wed,  8 Aug 2018 14:43:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1533739394;
-        bh=WyTPmcLf26uVa54updGaaJ/g97kqbywaz6/9IZnrHDU=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Knc+7JY+lwU/eKFLkGM/BqweuGo6Nl61zRQEtfnOQLvrmSLhlVkZYAbSMAZKvmto/
-         nhJElWu7YiuXWDS1dwwae7c/TevYsnElqt8rz2PD/Bi/SWHNemDjISLcLDVJ7U34T2
-         YSZPWJ5RHwfJ45lCE9hv/ksyp7MWBoi9UBMeC/cY=
-Received: by mail-qk0-f182.google.com with SMTP id c126-v6so1662130qkd.7;
-        Wed, 08 Aug 2018 07:43:14 -0700 (PDT)
-X-Gm-Message-State: AOUpUlH/yC+/td8qgrctkSjTkzeH1uq4zIM/BsiHDmsT8MzA0Tej+C9F
-        ROIujxTLcef0S9OKBAsNcxe/KbegToV3EcdORA==
-X-Google-Smtp-Source: AA+uWPwQh1/LKxtw7wT32cBwdR08CqQyxCAljsHyY9Yd5o0hZ3GFAHP3neLoHhgnAUAb3B4IWgnmTEapW6wMXjBYzUo=
-X-Received: by 2002:a37:a0c8:: with SMTP id j191-v6mr2621286qke.375.1533739393265;
- Wed, 08 Aug 2018 07:43:13 -0700 (PDT)
+        Wed, 8 Aug 2018 13:04:05 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39960 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726954AbeHHREE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 13:04:04 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D9C1718A;
+        Wed,  8 Aug 2018 07:44:05 -0700 (PDT)
+Received: from localhost (e105922-lin.Emea.Arm.com [10.4.13.28])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5AD5B3F5D4;
+        Wed,  8 Aug 2018 07:44:05 -0700 (PDT)
+From:   Punit Agrawal <punit.agrawal@arm.com>
+To:     Bjorn Helgaas <bhelgaas@google.com>
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Jeremy Linton <jeremy.linton@arm.com>,
+        linux-arm <linux-arm-kernel@lists.infradead.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Jiang Liu <jiang.liu@linux.intel.com>,
+        linux-pci@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-acpi@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH] arm64: PCI: Remove node-local allocations when initialising host controller
+References: <20180801173132.19739-1-punit.agrawal@arm.com>
+        <38ad03ba-2658-98c8-1888-0aa3bfb59bd4@arm.com>
+        <20180802143319.GA13512@red-moon>
+        <CAErSpo5i7AAXq4vmfsH2WjheXpzzM1iaehdeM24eQZjzYY39Rg@mail.gmail.com>
+Date:   Wed, 08 Aug 2018 15:44:03 +0100
+In-Reply-To: <CAErSpo5i7AAXq4vmfsH2WjheXpzzM1iaehdeM24eQZjzYY39Rg@mail.gmail.com>
+        (Bjorn Helgaas's message of "Wed, 8 Aug 2018 08:54:28 -0500")
+Message-ID: <87eff85364.fsf@e105922-lin.cambridge.arm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
 MIME-Version: 1.0
-References: <20180802115008.4031-1-hch@lst.de> <20180802115008.4031-3-hch@lst.de>
-In-Reply-To: <20180802115008.4031-3-hch@lst.de>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Wed, 8 Aug 2018 08:43:02 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqKZXo7JKszrvAwCzAgysKrwdwb1oZX9K8+FxO4ZitNh_A@mail.gmail.com>
-Message-ID: <CAL_JsqKZXo7JKszrvAwCzAgysKrwdwb1oZX9K8+FxO4ZitNh_A@mail.gmail.com>
-Subject: Re: [PATCH 02/11] dt-bindings: Add an enable method to RISC-V
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Anup Patel <anup@brainfault.org>, atish.patra@wdc.com,
-        devicetree@vger.kernel.org, Albert Ou <aou@eecs.berkeley.edu>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-riscv@lists.infradead.org, Stafford Horne <shorne@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 2, 2018 at 5:50 AM Christoph Hellwig <hch@lst.de> wrote:
+[+cc linux-acpi, linux-mm]
+
+Bjorn Helgaas <bhelgaas@google.com> writes:
+
+> [+cc linux-pci, linux-kernel]
 >
-> From: Palmer Dabbelt <palmer@sifive.com>
+> On Thu, Aug 2, 2018 at 9:33 AM Lorenzo Pieralisi
+> <lorenzo.pieralisi@arm.com> wrote:
+>>
+>> On Wed, Aug 01, 2018 at 02:38:51PM -0500, Jeremy Linton wrote:
+>> > Hi,
+>> >
+>> > +CC Jiang Lui
+>>
+>> Jiang Liu does not work on the kernel anymore so we won't know
+>> anytime soon the reasoning behind commit 965cd0e4a5e5
+>>
+>> > On 08/01/2018 12:31 PM, Punit Agrawal wrote:
+>> > >Memory for host controller data structures is allocated local to the
+>> > >node to which the controller is associated with. This has been the
+>> > >behaviour since support for ACPI was added in
+>> > >commit 0cb0786bac15 ("ARM64: PCI: Support ACPI-based PCI host controller").
+>> >
+>> > Which was apparently influenced by:
+>> >
+>> > 965cd0e4a5e5 x86, PCI, ACPI: Use kmalloc_node() to optimize for performance
+>> >
+>> > Was there an actual use-case behind that change?
+>> >
+>> > I think this fixes the immediate boot problem, but if there is any
+>> > perf advantage it seems wise to keep it... Particularly since x86
+>> > seems to be doing the node sanitation in pci_acpi_root_get_node().
+>>
+>> I am struggling to see the perf advantage of allocating a struct
+>> that the PCI controller will never read/write from a NUMA node that
+>> is local to the PCI controller, happy to be corrected if there is
+>> a sound rationale behind that.
 >
-> RISC-V doesn't currently specify a mechanism for enabling or disabling
-> CPUs.  Instead, we assume that all CPUs are enabled on boot, and if
-> someone wants to save power we instead put a CPU to sleep via a WFI
-> loop.  Future systems may have an explicit mechanism for putting a CPU
-> to sleep, so we're standardizing the device tree entry for when that
-> happens.
+> If there is no reason to use kzalloc_node() here, we shouldn't use it.
 >
-> We're not defining a spin-table based interface to the firmware, as the
-> plan is to handle this entirely within the kernel instead.
+> But we should use it (or not use it) consistently across arches.  I do
+> not believe there is an arch-specific reason to be different.
+> Currently, pci_acpi_scan_root() uses kzalloc_node() on x86 and arm64,
+> but kzalloc() on ia64.  They all ought to be the same.
+
+From my understanding, arm64 use of kzalloc_node() was derived from the
+x86 version. Maybe somebody familiar with behaviour on x86 can provide
+input here.
+
 >
-> Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  Documentation/devicetree/bindings/riscv/cpus.txt | 9 +++++++++
->  1 file changed, 9 insertions(+)
+>> > >Drop the node local allocation as there is no benefit from doing so -
+>> > >the usage of these structures is independent from where the controller
+>> > >is located. It also causes problem during probe if the associated numa
+>> > >node hasn't been initialised due to booting with restricted cpus via
+>> > >kernel command line or where the node doesn't have cpus or memory
+>> > >associated with it.
 >
-> diff --git a/Documentation/devicetree/bindings/riscv/cpus.txt b/Documentation/devicetree/bindings/riscv/cpus.txt
-> index b0b038d6c406..6aa9cd075a5b 100644
-> --- a/Documentation/devicetree/bindings/riscv/cpus.txt
-> +++ b/Documentation/devicetree/bindings/riscv/cpus.txt
-> @@ -82,6 +82,15 @@ described below.
->                  Value type: <string>
->                  Definition: Contains the RISC-V ISA string of this hart.  These
->                              ISA strings are defined by the RISC-V ISA manual.
-> +        - cpu-enable-method:
+> I do not support the avoidance of kzalloc_node() as a means of working
+> around the problem of a NUMA node not being initialized correctly.
 
-Something wrong with "enable-method" as defined in the DT spec[1]?
+Agreed.
 
-> +                Usage: optional
-> +                Value type: <stringlist>
-> +                Definition: When absent, default is either "always-disabled"
-> +                            "always-enabled", depending on the current state
-> +                            of the CPU.
-> +                            Must be one of:
-> +                                * "always-disabled": This CPU cannot be enabled.
-> +                                * "always-enabled": This CPU cannot be disabled.
+The patch is not meant as a work around for uninitialised NUMA nodes. I
+mention it in the commit log as the context where this was
+discovered. It seems to cause conflation of the issue addressed by the
+patch - I'll drop it in future postings.
 
-To follow the spec, 'enable-method' should simply not be present in
-the always-enabled case. I think the always disabled case should be
-handled with:
+> We got that node number from acpi_get_node().  I think we should be
+> able to pass it to kzalloc_node() and expect something reasonable,
+> i.e., either a successful allocation from the desired node (or from a
+> node that is present) or an error return.  I don't think the caller is
+> in a position to figure out whether it's safe to use kzalloc_node() or
+> not.
 
-status = "disabled";
-enable-method = "none";
+The problem is that acpi_get_node() just maps the proximity domain to a
+node id, without initialising the node pglist_data or setting up the
+zonelists. This happens in the case when the proximity domain is not
+present in the SRAT (proximity domain has no attached cpus or memory)
+but first encountered as part of _PXM() method for a device.
 
-With "none" needing to be added to the spec.
+One approach to solve this problem would be to create
+acpi_get_online_node() which attempts to online a NUMA node if it isn't
+already or at the least return NUMA_NO_NODE.
 
-[1] https://github.com/devicetree-org/devicetree-specification/blob/master/source/devicenodes.rst#general-properties-of-cpuscpu-nodes
+Another would be to have kzalloc_node() perform the checks for online
+node and return error if not.
+
+It's not clear what the preferred approach is.
+
+>
+>> > >Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
+>> > >Cc: Catalin Marinas <catalin.marinas@arm.com>
+>> > >Cc: Will Deacon <will.deacon@arm.com>
+>> > >Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+>> > >---
+>> > >Hi,
+>> > >
+>> > >This came up in the context of investigating the boot issues reported
+>> > >due to restricted cpus or buggy firmware. Part of the problem is fixed
+>> > >by Lorenzo's rework of NUMA initialisation[0].
+>> > >
+>> > >But there also doesn't seem to be any justification for using
+>> > >node-local allocation to begin with.
+>> > >
+>> > >Thanks,
+>> > >Punit
+>> > >
+>> > >[0] https://patchwork.kernel.org/patch/10486001/
+>> > >
+>> > >  arch/arm64/kernel/pci.c | 5 ++---
+>> > >  1 file changed, 2 insertions(+), 3 deletions(-)
+>> > >
+>> > >diff --git a/arch/arm64/kernel/pci.c b/arch/arm64/kernel/pci.c
+>> > >index 0e2ea1c78542..bb85e2f4603f 100644
+>> > >--- a/arch/arm64/kernel/pci.c
+>> > >+++ b/arch/arm64/kernel/pci.c
+>> > >@@ -165,16 +165,15 @@ static void pci_acpi_generic_release_info(struct acpi_pci_root_info *ci)
+>> > >  /* Interface called from ACPI code to setup PCI host controller */
+>> > >  struct pci_bus *pci_acpi_scan_root(struct acpi_pci_root *root)
+>> > >  {
+>> > >-    int node = acpi_get_node(root->device->handle);
+>> > >     struct acpi_pci_generic_root_info *ri;
+>> > >     struct pci_bus *bus, *child;
+>> > >     struct acpi_pci_root_ops *root_ops;
+>> > >-    ri = kzalloc_node(sizeof(*ri), GFP_KERNEL, node);
+>> > >+    ri = kzalloc(sizeof(*ri), GFP_KERNEL);
+>> > >     if (!ri)
+>> > >             return NULL;
+>> > >-    root_ops = kzalloc_node(sizeof(*root_ops), GFP_KERNEL, node);
+>> > >+    root_ops = kzalloc(sizeof(*root_ops), GFP_KERNEL);
+>> > >     if (!root_ops) {
+>> > >             kfree(ri);
+>> > >             return NULL;
+>> > >
+>> >
