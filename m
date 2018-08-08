@@ -2,117 +2,126 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3842BC46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 03:50:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E701DC4646D
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 03:53:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D804021716
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 03:50:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 946302170F
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 03:53:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="M81zTK/m"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D804021716
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="j1JJdkbE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 946302170F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726921AbeHHGI2 (ORCPT
+        id S1726793AbeHHGLc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 02:08:28 -0400
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:35308 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726503AbeHHGI2 (ORCPT
+        Wed, 8 Aug 2018 02:11:32 -0400
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:38951 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726373AbeHHGLc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 02:08:28 -0400
-Received: by mail-yw1-f66.google.com with SMTP id s68-v6so601441ywg.2
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 20:50:53 -0700 (PDT)
+        Wed, 8 Aug 2018 02:11:32 -0400
+Received: by mail-yw1-f67.google.com with SMTP id r184-v6so595243ywg.6
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 20:53:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=sA0iGr8g1qqk1B4znxVI54L4La5Qk/9XYIdTm9Zmgkw=;
-        b=M81zTK/mt3MWlxmRROhydVAxcGa+mXkTJBnvoFXpQPRX2E2+9buBgU9VhcXFo7olUE
-         T06InwaY3rgeAnBtGPjRVbBHbCy72Jc6En1rzQtAQdmWUpiJekDiIsOU+JMaD7/OjIMB
-         KL38HfeJziY06zS+pj0XvMfSN4K2QOrCkdrXg=
+        bh=BS6WlbTaECIGx5LnbrbJairhkbQOawkR8Q2uTo/eDCI=;
+        b=j1JJdkbEt4jshYkl8kyIScpzw+0GwguhfZ3jvx8UFKop6Y22ulKSvzaSL/hiVvU1Vt
+         0RvwSkBm76/XjTVPizkLKK1RLW/6a9T1KONMXC4Qqgyqs17yBOrlYtUUgC47FQeHaB2+
+         NOwNd8HXyHyzDmQ5HkyXCnJ21XSRecBVvQy23st4QXDSmNiDqpkGJwjG+xCdgyttcbgz
+         DvOObTlEkp+CGd3TjCQA1uwXfa3m5h1X+2ziKy8IgPdARVGOh1cXPOV64jCsOeLSDKK6
+         oINKcdfP0kL/QshKYwj+JDnzwG4wL9yfzfqDHJs8iK5a6qT9nNBgZHBin4GL8qmaka01
+         70ig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=sA0iGr8g1qqk1B4znxVI54L4La5Qk/9XYIdTm9Zmgkw=;
-        b=DaXnX32YP1iSIlE+jP6lOLOdfRVwLPqZUHjV2UqXuwVZQOcHVwttH8N62IVbGnyn3J
-         JrSnYghqjWmG98g4Ju6u4DQ/gAJbCo4lJEEA69HWSWgQ+Yq6nCzG3+DPmhegzlbqKjgt
-         I34hBiLdm3ImFpFiICMUlyxojZ1f/WTXTYIiB2G3PsHu9+ShqZMJ/sTEsaGHupxLJVnn
-         dnuGboS0e3fXGS3uTi/x3C4vQtA/joH5bqex3eyRFRQiauQ2BE/35Y2+BeSPyc8vFRi+
-         1mSk9x8NP/28qM7Ex8ZnzMo9DlKsqGTQp8jgbthOoQg/0wQw5jAhntH6SEXFIERbno9V
-         1nIw==
-X-Gm-Message-State: AOUpUlGCIKGKD2V17ND5xqG5LTYuCN7yOwLnbrhYM6TvpIuNpoSw6c9m
-        A84skxnngh5bha1IazR8NBaQznPJi14=
-X-Google-Smtp-Source: AA+uWPwKtv5zq4Ddi7OdqNJV/A63x5Ogj4IGIRjzGlE0W0O3LjdYpPYCS55LMVggB1r5J504QqxJeQ==
-X-Received: by 2002:a25:31d7:: with SMTP id x206-v6mr554021ybx.440.1533700252319;
-        Tue, 07 Aug 2018 20:50:52 -0700 (PDT)
-Received: from mail-yw1-f52.google.com (mail-yw1-f52.google.com. [209.85.161.52])
-        by smtp.gmail.com with ESMTPSA id o204-v6sm1325153ywd.16.2018.08.07.20.50.50
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 07 Aug 2018 20:50:51 -0700 (PDT)
-Received: by mail-yw1-f52.google.com with SMTP id y203-v6so586077ywd.9
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 20:50:50 -0700 (PDT)
-X-Received: by 2002:a0d:ddc8:: with SMTP id g191-v6mr597307ywe.145.1533700250360;
- Tue, 07 Aug 2018 20:50:50 -0700 (PDT)
+        bh=BS6WlbTaECIGx5LnbrbJairhkbQOawkR8Q2uTo/eDCI=;
+        b=Brx3wvyoX+9SWZk+rKzjCPy+5WAExkjDyjef8xg2mHq5WiqaAF1PRGHSmlPlb/ZahC
+         ha/fL6QmI+3vPLG+AKrjC09Hpi7sDD0uuDc6KnRDuir3bGe/2qJsDGkxVG6zsz7sBkM2
+         gkqfGgoS+HSeRVg67CNKwSDmFEBXQVoDHXF6IL06n9/5lUbPvEY6cS1mvSi2235CuX7f
+         MX1BnubOkLfL/e8i66nJzHGYd4tDr5Tq2ypXgBjwGVXSlnt8Z8mElhijnmbyKyRluBGV
+         9F1LSw5W+qYntcXg3V+Rel+lLZkt4KEgsvO9jSvPuKWsr099tvqSMziPjfgY6gYzI/Qh
+         GjOQ==
+X-Gm-Message-State: AOUpUlHVkdfuFwlAtkFv7aOqxJu8dbs7DAkssKHVt466jFD6/egRzG6v
+        U+ABDnSAQC8fPGSoNSQKOVhXZ1DxSq1WoONgtZu7pWI6Ylw=
+X-Google-Smtp-Source: AA+uWPwN5eMwcXzKgsR8Kck22+eTGY6oZBWQnkb/jrx+gyVseAnBpNw4ebRHyliDXIpKnxrIn2cWjS3Hq2tG/YCsqK0=
+X-Received: by 2002:a0d:c143:: with SMTP id c64-v6mr609028ywd.408.1533700435415;
+ Tue, 07 Aug 2018 20:53:55 -0700 (PDT)
 MIME-Version: 1.0
-References: <cover.3cb9065dabdf5d455da508fb4109201e626d5ee7.1522168131.git-series.kieran.bingham@ideasonboard.com>
- <cae511f90085701e7093ce39dc8dabf8fc16b844.1522168131.git-series.kieran.bingham@ideasonboard.com>
- <CAAFQd5CQEhmuLbs0dmGfu66x1Xq1V_kOT0bV_DoPitkkOX5Q4A@mail.gmail.com> <15196240.O2E9MK7q6s@avalon>
-In-Reply-To: <15196240.O2E9MK7q6s@avalon>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Wed, 8 Aug 2018 12:50:37 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5B613JJLK4drTRYT=qP+wZriMt4afAgXKvBgEU4H0vtOA@mail.gmail.com>
-Message-ID: <CAAFQd5B613JJLK4drTRYT=qP+wZriMt4afAgXKvBgEU4H0vtOA@mail.gmail.com>
-Subject: Re: [PATCH v4 6/6] media: uvcvideo: Move decode processing to process context
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Guennadi Liakhovetski <g.liakhovetski@gmx.de>,
-        olivier.braun@stereolabs.com, troy.kisky@boundarydevices.com,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Philipp Zabel <philipp.zabel@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Received: by 2002:a25:bfce:0:0:0:0:0 with HTTP; Tue, 7 Aug 2018 20:53:54 -0700 (PDT)
+In-Reply-To: <CAJWu+oqcM_-rtuUe7hhMHyZ2UKZ5J4rBZO7UoHxxd2DAs=aHdA@mail.gmail.com>
+References: <20180730222423.196630-1-joel@joelfernandes.org>
+ <20180730222423.196630-4-joel@joelfernandes.org> <20180806155058.5ee875f4@gandalf.local.home>
+ <CAJWu+oqvpev_EZC38_mi+UNRCxS8GqNVagHyGM4dUjruzKgwgQ@mail.gmail.com>
+ <20180806214300.13e63523@gandalf.local.home> <CAJWu+oqZi2W9OYAn2xu17fdrBitQs4Gti4LxWmtx5B-EYtNMmA@mail.gmail.com>
+ <20180807094954.5137972d@gandalf.local.home> <446AE5F2-39E0-46B6-8E0B-207E003DBF20@google.com>
+ <20180807103410.4fe203cb@gandalf.local.home> <C1CB990F-8232-4168-89A8-E8C13B660B0B@google.com>
+ <20180807110906.3a1b0ac4@gandalf.local.home> <6B9E5DC9-0859-41B4-9B72-A7D85E9EA2AD@google.com>
+ <20180807194515.4e549c1a@gandalf.local.home> <6D0A3FD6-2190-4CC0-A3C0-7B3759E73243@google.com>
+ <20180807204820.50b83c6d@vmware.local.home> <CAJWu+oqBOEJicepLaUG=JpmtDTgxjRdMyJAgOEUkdk4NzX0esw@mail.gmail.com>
+ <20180807215522.04114097@vmware.local.home> <CAJWu+opjqKgZj30PYpyvip=EtP8CuqaEy65++nuvj37QMT6GCw@mail.gmail.com>
+ <20180807222856.3ede96e7@vmware.local.home> <CAJWu+oqcM_-rtuUe7hhMHyZ2UKZ5J4rBZO7UoHxxd2DAs=aHdA@mail.gmail.com>
+From:   Joel Fernandes <joelaf@google.com>
+Date:   Tue, 7 Aug 2018 20:53:54 -0700
+Message-ID: <CAJWu+oqPUuF4rFOQ8=G3+ZxXJxiiNRBYE8C=zZ93A8qA+muHEg@mail.gmail.com>
+Subject: Re: [PATCH v12 3/3] tracing: Centralize preemptirq tracepoints and
+ unify their usage
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Joel Fernandes <joel@joelfernandes.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Cc: Android Kernel" <kernel-team@android.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Byungchul Park <byungchul.park@lge.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Glexiner <tglx@linutronix.de>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Laurent,
+On Tue, Aug 7, 2018 at 8:44 PM, Joel Fernandes <joelaf@google.com> wrote:
+> Hi Steve,
+>
+> On Tue, Aug 7, 2018 at 7:28 PM, Steven Rostedt <rostedt@goodmis.org> wrote:
+[...]
+>>> @@ -171,8 +174,7 @@ extern void syscall_unregfunc(void);
+>>>                       } while ((++it_func_ptr)->func);                \
+>>>               }                                                       \
+>>>                                                                       \
+>>> -             if (rcuidle)                                            \
+>>> -                     srcu_read_unlock_notrace(&tracepoint_srcu, idx);\
+>>> +             srcu_read_unlock_notrace(ss, idx);                      \
+>>
+>> Hmm, why do we have the two different srcu handles?
+>
+> Because if the memory operations happening on the normal SRCU handle
+> (during srcu_read_lock) is interrupted by NMI, then the other handle
+> (devoted to NMI) could be used instead and not bother the interrupted
+> handle. Does that makes sense?
+>
+> When I talked to Paul few months ago about SRCU from NMI context, he
+> mentioned the per-cpu memory operations during srcu_read_lock can be
+> NMI interrupted, that's why we added that warning.
 
-On Wed, Aug 8, 2018 at 8:12 AM Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
->
-> Hi Tomasz,
->
-> On Tuesday, 7 August 2018 12:54:02 EEST Tomasz Figa wrote:
-> > On Wed, Mar 28, 2018 at 1:47 AM Kieran Bingham wrote:
->
-> [snip]
->
-> > In our testing, this function ends up being called twice
->
-> In your testing, has this patch series brought noticeable performance
-> improvements ? Is there a particular reason you tested it, beside general
-> support of UVC devices in ChromeOS ?
+So I looked more closely, __srcu_read_lock on 2 different handles may
+still be doing a this_cpu_inc on the same location..
+(sp->sda->srcu_lock_count). :-(
 
-Some of our older ARM devices have external USB ports wired to a low
-end dwc2 controller, which puts quite strict timing requirements on
-interrupt handling. For some cameras that produce bigger payloads (in
-our testing that was Logitech BRIO, running at 1080p), almost half of
-every frame would be dropped, due to the memcpy from uncached memory
-taking too much time. With this series, it goes down to bottom ~10% of
-only a part of the frames. With one more optimization from Keiichi
-[1], the problem disappears almost completely.
+Paul any ideas on how to solve this?
 
-[1] https://lore.kernel.org/patchwork/patch/956388/
-
-Best regards,
-Tomasz
+It does start to seem like a show stopper :-(
