@@ -2,305 +2,149 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC01CC46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:56:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FC96C4646D
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:58:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B69A21990
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:56:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B69A21990
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 0590821A0D
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:58:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="UqaATGCN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0590821A0D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727571AbeHHRQ6 (ORCPT
+        id S1727544AbeHHRSX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 13:16:58 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:39121 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727062AbeHHRQ6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 13:16:58 -0400
-Received: by mail-wr1-f65.google.com with SMTP id h10-v6so2295389wre.6
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 07:56:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=9vhfNAgdj5W8QZ1VKpMcCJdWyXP5EC18tA1bq4tqvEY=;
-        b=MKpq0Hq8/1vIrn/xf6Hfgke9haWhKChTEfmXfH6taCSQmk30strOmamLiHgwhq/m+h
-         WTCDsa+5CceHmSqAia14HW14yh/HCK4OFZKli0kR7cb/qJ9xz28RaKTlxBqpaexn8pKL
-         MuKgVqiGeHxQ0bm23fLmuWgBw/cyvPxtvUT5Ktyv8W102/40zhCm49zMrmiJuM4HDQqW
-         y/B6Nnn3ZXlvv3kKNsJDfYdhd7IkzCL5dlWAMffOYbZd6yGKi0MW1lh3HKCVHT/unWC9
-         7vL4+mEcwOE+m6ikNVKkNLUJ5YS0zMuWLo+tA0td+cHra+5TfY7bN568DWnDkB6z1khj
-         7J2Q==
-X-Gm-Message-State: AOUpUlEeNnsX5etFxy1zE9wzIgMa+fPI/7TYOdCoeIZOEuXUMqntA2+n
-        NUg0ssDNzYTLpuzsDVgISWKEpA==
-X-Google-Smtp-Source: AA+uWPyd2cro7DytL+XLKJiaF9nRfhQCloT2YFgvoHQmDJzHFmO3ynwUCLjD8GUzVkfjSOu1mj/s2w==
-X-Received: by 2002:adf:ae5a:: with SMTP id u26-v6mr2005466wrd.246.1533740214551;
-        Wed, 08 Aug 2018 07:56:54 -0700 (PDT)
-Received: from dhcp-44-202.space.revspace.nl (53547DC9.cm-6-5b.dynamic.ziggo.nl. [83.84.125.201])
-        by smtp.gmail.com with ESMTPSA id y184-v6sm5390921wmg.17.2018.08.08.07.56.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 08 Aug 2018 07:56:53 -0700 (PDT)
-Subject: Re: [PATCH v4 4/4] i2c: Add multi-instantiate pseudo driver
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        John Garry <john.garry@huawei.com>,
-        linux-i2c <linux-i2c@vger.kernel.org>
-References: <20180808083006.31919-1-hdegoede@redhat.com>
- <20180808083006.31919-5-hdegoede@redhat.com>
- <CAHp75Vchow81kAaJ-b5Fr2ZjG7huasvM7HOfaKQzso7jaG2xXg@mail.gmail.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <e7a065f8-7ded-c5f8-4d9c-abf27fc248b4@redhat.com>
-Date:   Wed, 8 Aug 2018 16:56:52 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <CAHp75Vchow81kAaJ-b5Fr2ZjG7huasvM7HOfaKQzso7jaG2xXg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        Wed, 8 Aug 2018 13:18:23 -0400
+Received: from mail-eopbgr70057.outbound.protection.outlook.com ([40.107.7.57]:32288
+        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727108AbeHHRSX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 13:18:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Ll2ekcpz3g+xvRT2tx9qgL+yMxwDoJ9CmrgfjHffKgQ=;
+ b=UqaATGCNWEbwCmU2KY3QY3nzuT8je92RNbmlofyn3wP59ONd0gvv/HsI+e8fIAo+aJYK1xOMuBtSPR9kb94J9m9yK67WXFEMCwSDejIc6yWI3bm0t3VSYm9AO70Pv4UM4OYDCg7mqUPUZ95iCU9p48/Q10uVZhb2inscl6Tvols=
+Received: from AM0PR04MB4290.eurprd04.prod.outlook.com (52.134.126.145) by
+ AM0PR04MB3954.eurprd04.prod.outlook.com (52.134.90.11) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1017.15; Wed, 8 Aug 2018 14:58:15 +0000
+Received: from AM0PR04MB4290.eurprd04.prod.outlook.com
+ ([fe80::c96b:d6f5:db75:1273]) by AM0PR04MB4290.eurprd04.prod.outlook.com
+ ([fe80::c96b:d6f5:db75:1273%5]) with mapi id 15.20.1038.019; Wed, 8 Aug 2018
+ 14:58:15 +0000
+From:   Leonard Crestez <leonard.crestez@nxp.com>
+To:     "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>
+CC:     dl-linux-imx <linux-imx@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
+        "A.s. Dong" <aisheng.dong@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "andrew.smirnov@gmail.com" <andrew.smirnov@gmail.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>
+Subject: Re: [PATCH v3 0/2] PCI: imx: Initial imx7d pm support
+Thread-Topic: [PATCH v3 0/2] PCI: imx: Initial imx7d pm support
+Thread-Index: AQHUI2mAdxFCdwbsIEW0mCMYIbqjI6S1xVuAgAAFxICAAAZagIAALWEAgAAKyQA=
+Date:   Wed, 8 Aug 2018 14:58:15 +0000
+Message-ID: <efd9c1d560cae84e2a4ee7585a4c61d5d40ba755.camel@nxp.com>
+References: <cover.1532448745.git.leonard.crestez@nxp.com>
+         <bac2cb70b16d81f589915fc0900126b516414243.camel@nxp.com>
+         <20180808111429.GC25150@e107981-ln.cambridge.arm.com>
+         <a5556be9a5f62ea0472a1a2336bce8d71df0dcaa.camel@nxp.com>
+         <20180808141938.GA30428@e107981-ln.cambridge.arm.com>
+In-Reply-To: <20180808141938.GA30428@e107981-ln.cambridge.arm.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Evolution 3.28.1-2 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=leonard.crestez@nxp.com; 
+x-originating-ip: [95.76.156.53]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM0PR04MB3954;6:q9YHQmteK4SxMZmrkrvJMZKErRTBAK/8GIG3HehbqXOozfKFM+F3NPDgy3LOeh8XOpVS/K/g3Mt65VmaNXV7vHy+hsiyerCfZIejsAekP/ypU33dUqmiQkzvDZBMyDF5ghacmvHydDv/CDB5QeOz7Ai0ddTZYkN9zHFFUiYqKG05hz+lzqpvj6QadKl8/fuR7JXgFIIYJe4/eBaWgYjzSmXfBXVyU+1Bw0fR5UF+kfBTQyz54lTZGrK1LuFTl7d8evfRpDhrFh+ym+ejYuDCn64NZeIAxecEpBAddNsG986trWtMlPad9236OGDXK0wJwHMaMRED5dG78G8M37UZffB5+90o+1/yWGsNclt9zndMP/xJlD0F+bLcP2AdCrnXPNXy8OV6FwFQdjNOxYSm++0rayzXMOs0DAiYidMWoHCQejSetMLTd88KjdRIs/+stdtI9vUMVT0M28fIo5a5Fw==;5:+AKlTVoSPz7277BjBQAd5Py2mKrKWccdXH3hDO+A0SGusbsIlsDX5Jj2obPk2Tj7EtUPVVHIB5/v0eiIVAhPE2ic6NTcRJHG6tcTkq4jXdMYYE6rsW3GRschNaf/Wxem4N3L7g+FdY1+CjgwnejYcEBirLCavtVrYhF3MDKUwGE=;7:Q+9LrN8bGVwOyGQWJhHTcBot93VKSBkhAOTuaCirPNupTeaypj5MKBUYEUoR+GZ1rCHAbfUG4DmPIHVSjfuqc3SBzrhAUe+zvOSlV1u8CjLOwtvx+1zOwJ+mjzkZ3anA83INa8IG3KHU6zX/jCdGAD8TIrk4DzhPCmQr2FZu9oheb9wYIvrOePhjqQtcFssl9BKbAME/U7AyFW/mz9Ut2ZRG9JiIIsD+8oVlcKfkbz52Xwo6ZaYC+naJKniLH9cN
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: df37170b-94f4-4bb1-89ec-08d5fd3f5ea8
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB3954;
+x-ms-traffictypediagnostic: AM0PR04MB3954:
+x-microsoft-antispam-prvs: <AM0PR04MB39545D358BE4178487258E53EE260@AM0PR04MB3954.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231311)(944501410)(52105095)(3002001)(10201501046)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(6072148)(201708071742011)(7699016);SRVR:AM0PR04MB3954;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB3954;
+x-forefront-prvs: 07584EDBCD
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(39860400002)(366004)(346002)(136003)(376002)(199004)(189003)(106356001)(6506007)(54906003)(8676002)(44832011)(305945005)(446003)(2501003)(99286004)(76176011)(7736002)(110136005)(8936002)(6512007)(316002)(256004)(81166006)(3846002)(118296001)(53936002)(86362001)(14444005)(105586002)(2906002)(81156014)(6116002)(50226002)(93886005)(68736007)(14454004)(229853002)(5660300001)(66066001)(6486002)(4326008)(11346002)(7416002)(6436002)(2900100001)(186003)(25786009)(97736004)(102836004)(5250100002)(476003)(2616005)(478600001)(36756003)(26005)(39060400002)(486006)(6246003)(99106002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB3954;H:AM0PR04MB4290.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: f50ElS+uxWgOqQxsCFZc9YYQKH7FM+Qq0/7nKDl00RIAedUKU50L1jIy9Le76SFjm5+qrXWZH9aMSht9o9YkDpC/lK5b6EYGJjJ106OqG6Zu+f4JmvzeehqVooi9z/QC+sX77HWhGbv/jRBpVjbAQacPA4pERrMtQokYSKtM8cbY4G8f6tospZW5a3ZnJFuzMkMbxJJ4moLRa1Nup7ewTFaR6NNlH9zcEAiS8r9Phcc8BL2kbQAAYnzvy1Kq2ASdC8/G6DikOxuMyeXcLMI8jENhYG0pfdxpNXRVXRxs9cfEzqcj3aX/8b7v+Jwi1p9UxXXor0zEspxU0veey9fQa208LvOBEtZ9FokWyNE7SEs=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <C538179C67ACF54AA9CF6898CCEC8B07@eurprd04.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: df37170b-94f4-4bb1-89ec-08d5fd3f5ea8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Aug 2018 14:58:15.2141
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB3954
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 08/08/2018 11:08 AM, Andy Shevchenko wrote:
-> On Wed, Aug 8, 2018 at 11:30 AM, Hans de Goede <hdegoede@redhat.com> wrote:
->> On systems with ACPI instantiated i2c-clients, normally there is 1 fw_node
->> per i2c-device and that fw-node contains 1 I2cSerialBus resource for that 1
->> i2c-device.
->>
->> But in some rare cases the manufacturer has decided to describe multiple
->> i2c-devices in a single ACPI fwnode with multiple I2cSerialBus resources.
->>
->> An earlier attempt to fix this in the i2c-core resulted in a lot of extra
->> code to support this corner-case.
->>
->> This commit introduces a new i2c-multi-instantiate driver which fixes this
->> in a different way. This new driver can be built as a module which will
->> only loaded on affected systems.
->>
->> This driver will instantiate a new i2c-client per I2cSerialBus resource,
->> using the driver_data from the acpi_device_id it is binding to to tell it
->> which chip-type (and optional irq-resource) to use when instantiating.
->>
->> Note this driver depends on a platform device being instantiated for the
->> ACPI fwnode, see the i2c_multi_instantiate_ids list of ACPI device-ids in
->> drivers/acpi/scan.c: acpi_device_enumeration_by_parent().
-> 
-> Thanks for an update! My comments below.
-> 
->> +struct i2c_inst_data {
->> +       const char *type;
->> +       int irq_idx;
->> +};
-> 
->> +struct i2c_multi_inst_data {
-> 
->> +       int no_clients;
-> 
-> Name a bit confusing. What about num_clients?
-
-no is often used as abbreviation for "number of" so this is a quite
-normal naming scheme. But if you really want me to I can do a v5
-renaming this to num_clients.
-
-> 
->> +       struct i2c_client *clients[0];
->> +};
->> +
->> +static int i2c_multi_inst_probe(struct platform_device *pdev)
->> +{
->> +       struct i2c_multi_inst_data *multi;
->> +       const struct acpi_device_id *match;
->> +       const struct i2c_inst_data *inst_data;
->> +       struct i2c_board_info board_info = {};
->> +       struct device *dev = &pdev->dev;
->> +       struct acpi_device *adev;
->> +       char name[32];
->> +       int i, ret;
->> +
->> +       match = acpi_match_device(dev->driver->acpi_match_table, dev);
->> +       if (!match) {
->> +               dev_err(dev, "Error ACPI match data is missing\n");
->> +               return -ENODEV;
->> +       }
->> +       inst_data = (const struct i2c_inst_data *)match->driver_data;
->> +
->> +       adev = ACPI_COMPANION(dev);
->> +
-> 
->> +       /* Count number of clients to instantiate */
->> +       for (i = 0; inst_data[i].type; i++) {}
->> +
->> +       multi = devm_kmalloc(dev,
->> +                       offsetof(struct i2c_multi_inst_data, clients[i]),
->> +                       GFP_KERNEL);
->> +       if (!multi)
->> +               return -ENOMEM;
-> 
-> Here I see the following:
->   - it's kinda unusual use of offsetof()
-
-There are actually plenty of places doing this, this is the normal way
-to get the size of a struct which ends with a variable sized array.
-
-I would prefer to keep this as is.
-
-, perhaps i*sizeof() + sizeof()
-> would be more understandable
->   - there is no guard against i == 0
-
-i depends on the driver_data, defining a driver_data
-where i == 0 is silly, still if this happens nothing bad
-will happen, so I see no need for a check for this.
-
-> 
-> To solve both, it might be like
-> 
-> struct i2c_multi_inst_data {
->         int num_clients;
->         struct i2c_client *clients;
-> };
-> 
-> ...
-> multi = devm_kmalloc(sizeof(*multi), GFP_KERNEL);
-> if (!multi)
->   return -ENOMEM;
-> 
-> multi->clients = devm_kcalloc(i, sizeof(*multi->clients), GFP_KERNEL);
-> if (ZERO_PTR_OR_NULL(multi->clients))
->   return -ENOMEM;
-> 
-> But I would like to hear your (other's) opinion(s).
-
-Nack for this option, this just makes the code more
-complicated and uses allocs instead of 1 for no good
-reason IMHO.
-
-Regards,
-
-Hans
-
-
-> 
->> +
->> +       multi->no_clients = i;
->> +
->> +       for (i = 0; i < multi->no_clients; i++) {
->> +               memset(&board_info, 0, sizeof(board_info));
->> +               strlcpy(board_info.type, inst_data[i].type, I2C_NAME_SIZE);
->> +               snprintf(name, sizeof(name), "%s-%s", match->id,
->> +                        inst_data[i].type);
->> +               board_info.dev_name = name;
->> +               board_info.irq = 0;
-> 
->> +               if (inst_data[i].irq_idx != -1) {
-> 
->> = 0 sounds more robust
-> 
->> +                       ret = acpi_dev_gpio_irq_get(adev, inst_data[i].irq_idx);
->> +                       if (ret < 0) {
-> 
->> +                               dev_err(dev, "Error requesting irq at index %d: %d\n",
->> +                                       inst_data[i].irq_idx, ret);
-> 
-> irq -> IRQ in the message.
-> 
->> +                               goto error;
->> +                       }
->> +                       board_info.irq = ret;
->> +               }
->> +               multi->clients[i] = i2c_acpi_new_device(dev, i, &board_info);
->> +               if (!multi->clients[i]) {
->> +                       dev_err(dev, "Error creating i2c-client, idx %d\n", i);
->> +                       ret = -ENODEV;
->> +                       goto error;
->> +               }
->> +       }
->> +
->> +       platform_set_drvdata(pdev, multi);
->> +       return 0;
->> +
->> +error:
-> 
->> +       while (--i >= 0)
-> 
-> It can be simple
-> 
-> while (i--)
-> 
->> +               i2c_unregister_device(multi->clients[i]);
->> +
->> +       return ret;
->> +}
->> +
->> +static int i2c_multi_inst_remove(struct platform_device *pdev)
->> +{
->> +       struct i2c_multi_inst_data *multi = platform_get_drvdata(pdev);
->> +       int i;
->> +
->> +       for (i = 0; i < multi->no_clients; i++)
->> +               i2c_unregister_device(multi->clients[i]);
->> +
->> +       return 0;
->> +}
->> +
->> +static const struct i2c_inst_data bsg1160_data[]  = {
->> +       { "bmc150_accel", 0 },
->> +       { "bmc150_magn", -1 },
->> +       { "bmg160", -1 },
->> +       {}
->> +};
->> +
->> +/*
->> + * Note new device-ids must also be added to i2c_multi_instantiate_ids in
->> + * drivers/acpi/scan.c: acpi_device_enumeration_by_parent().
->> + */
->> +static const struct acpi_device_id i2c_multi_inst_acpi_ids[] = {
->> +       { "BSG1160", (unsigned long)bsg1160_data },
->> +       { }
->> +};
->> +MODULE_DEVICE_TABLE(acpi, i2c_multi_inst_acpi_ids);
->> +
->> +static struct platform_driver i2c_multi_inst_driver = {
->> +       .driver = {
->> +               .name = "I2C multi instantiate pseudo device driver",
-> 
->> +               .acpi_match_table = ACPI_PTR(i2c_multi_inst_acpi_ids),
-> 
-> We don't need ACPI_PTR for the driver which depends on ACPI.
-> In the general case we have an inconsistency with variable definition
-> (might be unused).
-> 
->> +       },
->> +       .probe = i2c_multi_inst_probe,
->> +       .remove = i2c_multi_inst_remove,
->> +};
->> +module_platform_driver(i2c_multi_inst_driver);
->> +
->> +MODULE_DESCRIPTION("I2C multi instantiate pseudo device driver");
->> +MODULE_AUTHOR("Hans de Goede <hdegoede@redhat.com>");
->> +MODULE_LICENSE("GPL");
->> --
->> 2.18.0
->>
-> 
-> 
-> 
+T24gV2VkLCAyMDE4LTA4LTA4IGF0IDE1OjE5ICswMTAwLCBMb3JlbnpvIFBpZXJhbGlzaSB3cm90
+ZToNCj4gT24gV2VkLCBBdWcgMDgsIDIwMTggYXQgMTE6Mzc6MTRBTSArMDAwMCwgTGVvbmFyZCBD
+cmVzdGV6IHdyb3RlOg0KPiA+IE9uIFdlZCwgMjAxOC0wOC0wOCBhdCAxMjoxNCArMDEwMCwgTG9y
+ZW56byBQaWVyYWxpc2kgd3JvdGU6DQo+ID4gPiBPbiBXZWQsIEF1ZyAwOCwgMjAxOCBhdCAxMDo1
+Mzo1MkFNICswMDAwLCBMZW9uYXJkIENyZXN0ZXogd3JvdGU6DQo+ID4gPiA+IE9uIFR1ZSwgMjAx
+OC0wNy0yNCBhdCAxOToxNCArMDMwMCwgTGVvbmFyZCBDcmVzdGV6IHdyb3RlOg0KPiA+ID4gPiA+
+IENoYW5nZXMgc2luY2UgdjI6DQo+ID4gPiA+ID4gICogUHJpbnQgd2l0aCBkZXZfaW5mbyBpZiBs
+aW5rIGZhaWxzIG9uIHJlc3VtZSAoTHVjYXMpDQo+ID4gPiA+ID4gICogQWRkIGEgY29tbWVudCBv
+biBpbXg3ZCBwY2kgaXJxIG1hcHBpbmdzIChBbmRyZXkpDQo+ID4gPiA+ID4gICogTWFrZSBpbXg2
+X3BjaWVfbHRzc21fZGlzYWJsZSBwcmludCBhbiBlcnJvciBvbiBJTVg2USAoTHVjYXMpDQo+ID4g
+PiA+ID4gDQo+ID4gPiA+ID4gVGhlIGx0c3NtX2Rpc2FibGUgZG9lcyBub3QgcmV0dXJuIGFuIGVy
+cm9yIGJlY2F1c2UgaXQgY2FuJ3QgYmUgdXNlZnVsbHkNCj4gPiA+ID4gPiBoYW5kbGVkLCByZXZl
+cnNpbmcgcGFydGlhbCBzdXNwZW5kIGlzIGEgbmlnaHRtYXJlIGFuZCB1bmxpa2VseSB0byB3b3Jr
+Lg0KPiA+ID4gPiA+IA0KPiA+ID4gPiA+ICAqIERyb3AgInJlc2V0OiBpbXg3OiBGaXggYWx3YXlz
+IHdyaXRpbmcgYml0cyBhcyAwIChhY2NlcHRlZCBieSBQaGlsaXBwKQ0KPiA+ID4gPiA+IA0KPiA+
+ID4gPiA+IFNlcmllcyBpcyBhZ2FpbnN0IGxpbnV4LW5leHQgdGFnIG5leHQtMjAxODA3MjQgd2hl
+cmUgdGhlIHJlc2V0IHBhdGNoIHdhcw0KPiA+ID4gPiA+IGFscmVhZHkgYWNjZXB0ZWQuIFRoZSBp
+bXg3ZC5kdHNpIHBhdGNoIGlzIGFsc28gdXNlZnVsIHN0YW5kYWxvbmUuDQo+ID4gPiA+IA0KPiA+
+ID4gPiBUaGlzIGlzIGEgZ2VudGxlIHJlbWluZGVyIHRoYXQgdGhpcyBzZXJpZXMgd2FzIHJldmll
+d2VkIGJ5IEx1Y2FzIHR3bw0KPiA+ID4gPiB3ZWVrcyBhZ28gYnV0IG5vdCB5ZXQgaW5jbHVkZWQu
+DQo+ID4gPiANCj4gPiA+IERvZXMgdGhpcyBzZXJpZXMgaGF2ZSBhIGZ1bmN0aW9uYWwgZGVwZW5k
+ZW5jeSBvbiB0aGUgcmVzZXQgZml4ID8gSWYgeWVzDQo+ID4gPiB3ZSBjYW4gaGF2ZSBhIGJpc2Vj
+dGlvbiBwcm9wbGVtIGRlcGVuZGluZyBvbiB3aGljaCB0cmVlIGdldHMgbWVyZ2VkDQo+ID4gPiBm
+aXJzdC4NCj4gPiANCj4gPiBZZXMsIHdpdGhvdXQgdGhlIHJlc2V0IGZpeCBJIGV4cGVjdCBoYW5n
+cy4NCj4gPiANCj4gPiBNYXliZSB0aGUgcmVzZXQgZml4IHNob3VsZCBiZSBwdWxsZWQgaW4gdGhl
+IHBjaSB0cmVlPyBJIGRvbid0IGtub3cgaG93DQo+ID4gdGhlc2UgaXNzdWVzIGFyZSBzb3J0ZWQg
+b3V0Lg0KPiANCj4gV2VsbCBlaXRoZXIgSSBwdWxsIHRoYXQgZml4IGludG8gdGhlIFBDSSB0cmVl
+IChidXQgaXQgaXMgYWxyZWFkeSAtcmM4DQo+IGFuZCBJIGNhbid0IGd1YXJhbnRlZSB2NC4xOSBp
+bmNsdXNpb24gLSBJIHNoYWxsIHRyeSkgb3IgSSBjYW4gYWNrIHRoZXNlDQo+IHBhdGNoZXMgYW5k
+IFBoaWxpcHBlIHdpbGwgc2VuZCB0aGVtIHVwc3RyZWFtIG9uIG15IGJlaGFsZiwgYXRvcCB0aGUN
+Cj4gcmVzZXQgZml4IGFib3ZlLg0KPiANCj4gV2hlbiB3aWxsIHRoZSByZXNldCBmaXggd2lsbCBi
+ZSBzZW50IHRvIExpbnVzID8gUGxlYXNlIGxldCBtZSBrbm93DQo+IGhvdyB5b3Ugd2FudCB0byBw
+cm9jZWVkLg0KDQpJIGhhdmUgc29tZSBvdGhlciB1bnNlbnQgY2hhbmdlcyBmb3IgaW14IHBjaStk
+dHMrcmVzZXQgc3RhbmRpbmcgYnkuDQpTaW5jZSB0aGVzZSBjaGFuZ2VzIHF1YWxpZnkgbW9yZSBh
+cyAicG0gZmVhdHVyZXMiIHRoYW4gZml4ZXMgSSBkb24ndA0KcmVhbGx5IG1pbmQgc2tpcHBpbmcg
+NC4xOS4NCg0KUHVsbGluZyBwY2kgZmVhdHVyZXMgaW50byB0aGUgcmVzZXQgdHJlZSBkb2Vzbid0
+IG1ha2UgbXVjaCBzZW5zZSB0byBtZS4NCg0KTWF5YmUgdGhpcyBraW5kIG9mIHN0dWZmIGNvdWxk
+IGdvIHRocm91Z2ggU2hhd24ncyB0cmVlPyBUaGVyZSBzaG91bGRuJ3QNCmJlIGFueSBpbnRlcmFj
+dGlvbiB3aXRoIG5vbi1pbXggc3R1ZmYu
