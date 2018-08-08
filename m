@@ -2,170 +2,351 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 748A6C4646D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 18:58:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04BDBC4646D
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 19:07:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2652D208B9
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 18:58:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gACIb7mw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2652D208B9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 9EEA221990
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 19:07:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EEA221990
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fieldses.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730349AbeHHVTe (ORCPT
+        id S1730113AbeHHV2m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 17:19:34 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:34152 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729679AbeHHVTe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 17:19:34 -0400
-Received: by mail-pf1-f195.google.com with SMTP id k19-v6so1597284pfi.1
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 11:58:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=Nh7pAW00BDoO8puO5mMd6HOzAj+IsnADYNAdnVcvido=;
-        b=gACIb7mwxG9IsOmijYX9MoaV+QaFOFBv3My/VwCcKwi/HMZMCPUlHweDzB/bGzG4Yf
-         D8tdrRxCz4uVWpWwhbrCBCOsUAccm04zEZos2HuA4KLelq3IZyedzd+GrkexXWFG32WM
-         jgLuCea/pV+tpohYiB7EjtAflEBNHlV9Pzux6Wi4ScIZIiBAcEQZr4QIO4xmrPuMHJaC
-         NRwxLE8MkSeEtAZpUK3IbFOlaiJN+vkXIHMLFWFWkRzphwQAINZZy1zw1LtJZZpFs8+7
-         m8PmDtw4lKl/Nshz+8nhhZ+kCx8nGYnHixjqkM5G8tQtby06OaCpEfj9dWLurwWwTEyH
-         ANhg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=Nh7pAW00BDoO8puO5mMd6HOzAj+IsnADYNAdnVcvido=;
-        b=VN2wSaP5zxtqbuKAuLTJgg93XFd0WFJvVgrla1fJGzEVaBjNwPEFWZQy1wqjUiV4kS
-         zTCQ1MSnlM1EYzJOSsfPhKeWMQ4uEfJx+LBdCBAmaU4dYIHXKkkEV3VJx9QHyMEH0ePj
-         sAVDyrbtCa6yw1HYven8K+awzq1wXFUaymiLbMrVPg/hk+wO5U2ZATxymRIO0mlXe/U9
-         vyPBAxx8eI8pdoCE9H/knB6r1FOL/GjGPgnS7Pli4YM752tHykJixLLd7VsNLRMgNH9E
-         wQgqSrqTDJ6MzqfLeVDFQW+x6pq7MmUZ4jvc+Ry17br4kUJngnCPdfEX21+HrOG+1bD1
-         wjdw==
-X-Gm-Message-State: AOUpUlHrD6vgry/CaDAn18e8GZgsikTN7uacJMhBSXCP236fXL8gIesr
-        ACUn+EOSc24uB9Pp93Ta+i8TOga1gawi769FOk+u3Q==
-X-Google-Smtp-Source: AA+uWPw04BVPakGnKV2MI3m3ayf59Lb97BoGZprLC+PgqIxlIqB+UyBptAoh4jINM4To37VqEgjlG0CEQd+Vydf00gs=
-X-Received: by 2002:a65:40cd:: with SMTP id u13-v6mr3730225pgp.334.1533754713405;
- Wed, 08 Aug 2018 11:58:33 -0700 (PDT)
+        Wed, 8 Aug 2018 17:28:42 -0400
+Received: from fieldses.org ([173.255.197.46]:47008 "EHLO fieldses.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727337AbeHHV2m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 17:28:42 -0400
+Received: by fieldses.org (Postfix, from userid 2815)
+        id 4F3B43F4; Wed,  8 Aug 2018 15:07:39 -0400 (EDT)
+Date:   Wed, 8 Aug 2018 15:07:39 -0400
+From:   "J. Bruce Fields" <bfields@fieldses.org>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     NeilBrown <neilb@suse.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Martin Wilck <mwilck@suse.de>
+Subject: Re: [PATCH 1/4] fs/locks: rename some lists and pointers.
+Message-ID: <20180808190739.GC23873@fieldses.org>
+References: <153369219467.12605.13472423449508444601.stgit@noble>
+ <153369306787.12605.16231760173840187602.stgit@noble>
+ <dc727d1a2b4f09e70145b2c6eb581ef96adab106.camel@kernel.org>
 MIME-Version: 1.0
-Received: by 2002:a17:90a:ac14:0:0:0:0 with HTTP; Wed, 8 Aug 2018 11:58:12
- -0700 (PDT)
-In-Reply-To: <CAAHj5qiQNOfD2c_xHw4sqQOGR3BNvYGncdg2fdgogcFz9u5peA@mail.gmail.com>
-References: <000000000000c242e90570aa0062@google.com> <CA+55aFyEZR=v2GySzWWF3uh9ZB53CFFv460Wzg4n8DGze8GFfw@mail.gmail.com>
- <CACT4Y+bOJx+SnkMqzDDUTU1iztQ7DpMBG7Z-oV5wArRaSEzh+Q@mail.gmail.com>
- <CA+55aFz1GVHUGiX1SE_5C-e9LdXdx3pBB10zwga1LOy6axk5Ww@mail.gmail.com>
- <CACT4Y+bvGNmjP+3z3uzm=SvnngkbtEx-JeT6iVWg4gwYvoKyLQ@mail.gmail.com>
- <bcbcb69b-5d46-4e3d-852a-73e1345586e8@googlegroups.com> <CACT4Y+aHEqv+-4YbNWAHX53U+54T+fzMyVxjWB_iF1EDZBZXjQ@mail.gmail.com>
- <CAAHj5qiQNOfD2c_xHw4sqQOGR3BNvYGncdg2fdgogcFz9u5peA@mail.gmail.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Wed, 8 Aug 2018 20:58:12 +0200
-Message-ID: <CACT4Y+a2uLxm=iSt7FX_N7PBDunZ+fr=kxPMKeW+JLCjWSynkA@mail.gmail.com>
-Subject: Re: general protection fault in in_aton
-To:     Tomas Bortoli <tomasbortoli@gmail.com>
-Cc:     randy.dunlap@gmail.com,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        Ron Minnich <rminnich@sandia.gov>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        v9fs-developer@lists.sourceforge.net,
-        LKML <linux-kernel@vger.kernel.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        syzbot+2a831e062bb4aebd8755@syzkaller.appspotmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <dc727d1a2b4f09e70145b2c6eb581ef96adab106.camel@kernel.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 8, 2018 at 8:36 PM, Tomas Bortoli <tomasbortoli@gmail.com> wrote:
-> Hi Dmitry,
->
-> This patch has already rdma in:
->
-> https://lkml.org/lkml/2018/7/27/484
->
-> Sorry I forgot to flag the v2.
+On Wed, Aug 08, 2018 at 06:47:34AM -0400, Jeff Layton wrote:
+> On Wed, 2018-08-08 at 11:51 +1000, NeilBrown wrote:
+> > struct file lock contains an 'fl_next' pointer which
+> > is used to point to the lock that this request is blocked
+> > waiting for.  So rename it to fl_blocker.
+> > 
+> > The fl_blocked list_head in an active lock is the head of a list of
+> > blocked requests.  In a request it is a node in that list.
+> > These are two distinct uses, so replace with two list_heads
+> > with different names.
+> > fl_blocked is the head of a list of blocked requests
+> > fl_block is a node on that list.
+> > 
+> > This separation will be used in the next patch.
+> > 
+> > Note that a tracepoint is changed to report fl_blocker instead
+> > of fl_next.  Might this be an ABI breakage?
+> > 
+> 
+> My understanding (possibly wrong) is that because tracepoints are
+> exposed via debugfs, they aren't considered part of the ABI.
 
-Ah, great!
+Wasn't there an incident where tracepoint changes had to be reverted for
+powertop?
 
-Then let's mark this bug as a dup of that one:
+The chances of breaking an equivalent utility in this case are small, I
+think, I'm fine with trying it.
 
-#syz dup: general protection fault in p9_fd_create_unix
+--b.
 
-
-> 2018-08-08 17:56 GMT+02:00 Dmitry Vyukov <dvyukov@google.com>:
->>
->> On Wed, Aug 8, 2018 at 12:43 AM,  <randy.dunlap@gmail.com> wrote:
->> >
->> >
->> > On Wednesday, July 11, 2018 at 9:48:02 AM UTC-7, Dmitry Vyukov wrote:
->> >>
->> >> On Tue, Jul 10, 2018 at 10:15 PM, Linus Torvalds
->> >> <torv...@linux-foundation.org> wrote:
->> >> > On Tue, Jul 10, 2018 at 12:57 PM Dmitry Vyukov <dvy...@google.com>
->> >> > wrote:
->> >> >>
->> >> >> Is it really hard to get fault address? I know that userspace
->> >> >> generally receives fault address in siginfo.
->> >> >
->> >> > For an actual page fault it's trivial.
->> >> >
->> >> > However, for invalid addresses (aka "non-canonical"), you don't even
->> >> > get a page fault, you get a GP like in this case. And then the actual
->> >> > address is not available.
->> >>
->> >>
->> >> I see. Then I don't have any great ideas. Running without KASAN would
->> >> result in more, much more cryptic crashes.
->> >>
->> >> FWIW for these "GPF could be caused by NULL-ptr deref" I first just
->> >> assume that it's in fact a NULL deref. And in this case it all pretty
->> >> quickly forms a consistent picture that it's indeed just a missing a
->> >> NULL pointer check. That dffffc0000000000 in a register also a good
->> >> hint.
->> >
->> >
->> > The second mount syscall in loop() has a pointer parameter of 0 (null):
->> >       syscall(__NR_mount, 0, 0x200000c0, 0x20000340, 0, 0x20000180);
->> > and that NULL is passed from do_mount() to do_new_mount() to
->> > vfs_kern_mount()
->> > on to mount_fs() to v9fs_mount() to v9fs_session_init() to
->> > p9_client_create() to
->> > rdma_create_trans() and then to in_aton().  Are all of those valid up
->> > until
->> > the
->> > call to in_aton()?
->>
->> Hi Randy,
->>
->> +kernel mailing lists again
->>
->> Please keep kernel lists and developers and CC, there are no kernel
->> developers on syzkaller-bugs@ list.
->>
->> This is almost the same as "general protection fault in
->> p9_fd_create_unix" just for rdma:
->> https://syzkaller.appspot.com/bug?extid=1a262da37d3bead15c39
->> Yes, this function needs to check for NULL.
->>
->> Tomas, I think it makes sense to include rdma into your "9p: fix NULL
->> pointer dereferences" patch.
->
->
-> --
-> You received this message because you are subscribed to the Google Groups
-> "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an
-> email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit
-> https://groups.google.com/d/msgid/syzkaller-bugs/CAAHj5qiQNOfD2c_xHw4sqQOGR3BNvYGncdg2fdgogcFz9u5peA%40mail.gmail.com.
->
-> For more options, visit https://groups.google.com/d/optout.
+> 
+> Thanks for the patches, Neil. I'll go over them in detail soon.
+> 
+> > Signed-off-by: NeilBrown <neilb@suse.com>
+> > ---
+> >  fs/cifs/file.c                  |    2 +-
+> >  fs/locks.c                      |   40 ++++++++++++++++++++-------------------
+> >  include/linux/fs.h              |    5 +++--
+> >  include/trace/events/filelock.h |   16 ++++++++--------
+> >  4 files changed, 33 insertions(+), 30 deletions(-)
+> > 
+> > diff --git a/fs/cifs/file.c b/fs/cifs/file.c
+> > index 8d41ca7bfcf1..066ed2e4ba96 100644
+> > --- a/fs/cifs/file.c
+> > +++ b/fs/cifs/file.c
+> > @@ -1092,7 +1092,7 @@ cifs_posix_lock_set(struct file *file, struct file_lock *flock)
+> >  	rc = posix_lock_file(file, flock, NULL);
+> >  	up_write(&cinode->lock_sem);
+> >  	if (rc == FILE_LOCK_DEFERRED) {
+> > -		rc = wait_event_interruptible(flock->fl_wait, !flock->fl_next);
+> > +		rc = wait_event_interruptible(flock->fl_wait, !flock->fl_blocker);
+> >  		if (!rc)
+> >  			goto try_again;
+> >  		posix_unblock_lock(flock);
+> > diff --git a/fs/locks.c b/fs/locks.c
+> > index db7b6917d9c5..322491e70e41 100644
+> > --- a/fs/locks.c
+> > +++ b/fs/locks.c
+> > @@ -194,7 +194,7 @@ static DEFINE_HASHTABLE(blocked_hash, BLOCKED_HASH_BITS);
+> >   * This lock protects the blocked_hash. Generally, if you're accessing it, you
+> >   * want to be holding this lock.
+> >   *
+> > - * In addition, it also protects the fl->fl_block list, and the fl->fl_next
+> > + * In addition, it also protects the fl->fl_blocked list, and the fl->fl_blocker
+> >   * pointer for file_lock structures that are acting as lock requests (in
+> >   * contrast to those that are acting as records of acquired locks).
+> >   *
+> > @@ -203,7 +203,7 @@ static DEFINE_HASHTABLE(blocked_hash, BLOCKED_HASH_BITS);
+> >   * protected by this lock, we can skip acquiring it iff we already hold the
+> >   * flc_lock.
+> >   *
+> > - * In particular, adding an entry to the fl_block list requires that you hold
+> > + * In particular, adding an entry to the fl_blocked list requires that you hold
+> >   * both the flc_lock and the blocked_lock_lock (acquired in that order).
+> >   * Deleting an entry from the list however only requires the file_lock_lock.
+> >   */
+> > @@ -302,6 +302,7 @@ static void locks_init_lock_heads(struct file_lock *fl)
+> >  {
+> >  	INIT_HLIST_NODE(&fl->fl_link);
+> >  	INIT_LIST_HEAD(&fl->fl_list);
+> > +	INIT_LIST_HEAD(&fl->fl_blocked);
+> >  	INIT_LIST_HEAD(&fl->fl_block);
+> >  	init_waitqueue_head(&fl->fl_wait);
+> >  }
+> > @@ -341,6 +342,7 @@ void locks_free_lock(struct file_lock *fl)
+> >  {
+> >  	BUG_ON(waitqueue_active(&fl->fl_wait));
+> >  	BUG_ON(!list_empty(&fl->fl_list));
+> > +	BUG_ON(!list_empty(&fl->fl_blocked));
+> >  	BUG_ON(!list_empty(&fl->fl_block));
+> >  	BUG_ON(!hlist_unhashed(&fl->fl_link));
+> >  
+> > @@ -676,7 +678,7 @@ static void __locks_delete_block(struct file_lock *waiter)
+> >  {
+> >  	locks_delete_global_blocked(waiter);
+> >  	list_del_init(&waiter->fl_block);
+> > -	waiter->fl_next = NULL;
+> > +	waiter->fl_blocker = NULL;
+> >  }
+> >  
+> >  static void locks_delete_block(struct file_lock *waiter)
+> > @@ -692,16 +694,16 @@ static void locks_delete_block(struct file_lock *waiter)
+> >   * it seems like the reasonable thing to do.
+> >   *
+> >   * Must be called with both the flc_lock and blocked_lock_lock held. The
+> > - * fl_block list itself is protected by the blocked_lock_lock, but by ensuring
+> > + * fl_blocked list itself is protected by the blocked_lock_lock, but by ensuring
+> >   * that the flc_lock is also held on insertions we can avoid taking the
+> > - * blocked_lock_lock in some cases when we see that the fl_block list is empty.
+> > + * blocked_lock_lock in some cases when we see that the fl_blocked list is empty.
+> >   */
+> >  static void __locks_insert_block(struct file_lock *blocker,
+> >  					struct file_lock *waiter)
+> >  {
+> >  	BUG_ON(!list_empty(&waiter->fl_block));
+> > -	waiter->fl_next = blocker;
+> > -	list_add_tail(&waiter->fl_block, &blocker->fl_block);
+> > +	waiter->fl_blocker = blocker;
+> > +	list_add_tail(&waiter->fl_block, &blocker->fl_blocked);
+> >  	if (IS_POSIX(blocker) && !IS_OFDLCK(blocker))
+> >  		locks_insert_global_blocked(waiter);
+> >  }
+> > @@ -725,18 +727,18 @@ static void locks_wake_up_blocks(struct file_lock *blocker)
+> >  	/*
+> >  	 * Avoid taking global lock if list is empty. This is safe since new
+> >  	 * blocked requests are only added to the list under the flc_lock, and
+> > -	 * the flc_lock is always held here. Note that removal from the fl_block
+> > +	 * the flc_lock is always held here. Note that removal from the fl_blocked
+> >  	 * list does not require the flc_lock, so we must recheck list_empty()
+> >  	 * after acquiring the blocked_lock_lock.
+> >  	 */
+> > -	if (list_empty(&blocker->fl_block))
+> > +	if (list_empty(&blocker->fl_blocked))
+> >  		return;
+> >  
+> >  	spin_lock(&blocked_lock_lock);
+> > -	while (!list_empty(&blocker->fl_block)) {
+> > +	while (!list_empty(&blocker->fl_blocked)) {
+> >  		struct file_lock *waiter;
+> >  
+> > -		waiter = list_first_entry(&blocker->fl_block,
+> > +		waiter = list_first_entry(&blocker->fl_blocked,
+> >  				struct file_lock, fl_block);
+> >  		__locks_delete_block(waiter);
+> >  		if (waiter->fl_lmops && waiter->fl_lmops->lm_notify)
+> > @@ -887,7 +889,7 @@ static struct file_lock *what_owner_is_waiting_for(struct file_lock *block_fl)
+> >  
+> >  	hash_for_each_possible(blocked_hash, fl, fl_link, posix_owner_key(block_fl)) {
+> >  		if (posix_same_owner(fl, block_fl))
+> > -			return fl->fl_next;
+> > +			return fl->fl_blocker;
+> >  	}
+> >  	return NULL;
+> >  }
+> > @@ -1245,7 +1247,7 @@ static int posix_lock_inode_wait(struct inode *inode, struct file_lock *fl)
+> >  		error = posix_lock_inode(inode, fl, NULL);
+> >  		if (error != FILE_LOCK_DEFERRED)
+> >  			break;
+> > -		error = wait_event_interruptible(fl->fl_wait, !fl->fl_next);
+> > +		error = wait_event_interruptible(fl->fl_wait, !fl->fl_blocker);
+> >  		if (!error)
+> >  			continue;
+> >  
+> > @@ -1332,7 +1334,7 @@ int locks_mandatory_area(struct inode *inode, struct file *filp, loff_t start,
+> >  		error = posix_lock_inode(inode, &fl, NULL);
+> >  		if (error != FILE_LOCK_DEFERRED)
+> >  			break;
+> > -		error = wait_event_interruptible(fl.fl_wait, !fl.fl_next);
+> > +		error = wait_event_interruptible(fl.fl_wait, !fl.fl_blocker);
+> >  		if (!error) {
+> >  			/*
+> >  			 * If we've been sleeping someone might have
+> > @@ -1526,7 +1528,7 @@ int __break_lease(struct inode *inode, unsigned int mode, unsigned int type)
+> >  
+> >  	locks_dispose_list(&dispose);
+> >  	error = wait_event_interruptible_timeout(new_fl->fl_wait,
+> > -						!new_fl->fl_next, break_time);
+> > +						!new_fl->fl_blocker, break_time);
+> >  
+> >  	percpu_down_read_preempt_disable(&file_rwsem);
+> >  	spin_lock(&ctx->flc_lock);
+> > @@ -1940,7 +1942,7 @@ static int flock_lock_inode_wait(struct inode *inode, struct file_lock *fl)
+> >  		error = flock_lock_inode(inode, fl);
+> >  		if (error != FILE_LOCK_DEFERRED)
+> >  			break;
+> > -		error = wait_event_interruptible(fl->fl_wait, !fl->fl_next);
+> > +		error = wait_event_interruptible(fl->fl_wait, !fl->fl_blocker);
+> >  		if (!error)
+> >  			continue;
+> >  
+> > @@ -2212,7 +2214,7 @@ static int do_lock_file_wait(struct file *filp, unsigned int cmd,
+> >  		error = vfs_lock_file(filp, cmd, fl, NULL);
+> >  		if (error != FILE_LOCK_DEFERRED)
+> >  			break;
+> > -		error = wait_event_interruptible(fl->fl_wait, !fl->fl_next);
+> > +		error = wait_event_interruptible(fl->fl_wait, !fl->fl_blocker);
+> >  		if (!error)
+> >  			continue;
+> >  
+> > @@ -2583,7 +2585,7 @@ posix_unblock_lock(struct file_lock *waiter)
+> >  	int status = 0;
+> >  
+> >  	spin_lock(&blocked_lock_lock);
+> > -	if (waiter->fl_next)
+> > +	if (waiter->fl_blocker)
+> >  		__locks_delete_block(waiter);
+> >  	else
+> >  		status = -ENOENT;
+> > @@ -2711,7 +2713,7 @@ static int locks_show(struct seq_file *f, void *v)
+> >  
+> >  	lock_get_status(f, fl, iter->li_pos, "");
+> >  
+> > -	list_for_each_entry(bfl, &fl->fl_block, fl_block)
+> > +	list_for_each_entry(bfl, &fl->fl_blocked, fl_block)
+> >  		lock_get_status(f, bfl, iter->li_pos, " ->");
+> >  
+> >  	return 0;
+> > diff --git a/include/linux/fs.h b/include/linux/fs.h
+> > index 805bf22898cf..48f7f36c3772 100644
+> > --- a/include/linux/fs.h
+> > +++ b/include/linux/fs.h
+> > @@ -1002,10 +1002,11 @@ bool opens_in_grace(struct net *);
+> >   * Obviously, the last two criteria only matter for POSIX locks.
+> >   */
+> >  struct file_lock {
+> > -	struct file_lock *fl_next;	/* singly linked list for this inode  */
+> > +	struct file_lock *fl_blocker;	/* The lock, that is blocking us */
+> >  	struct list_head fl_list;	/* link into file_lock_context */
+> >  	struct hlist_node fl_link;	/* node in global lists */
+> > -	struct list_head fl_block;	/* circular list of blocked processes */
+> > +	struct list_head fl_blocked;	/* list of requests with ->fl_blocker pointing here */
+> > +	struct list_head fl_block;	/* node in ->fl_blocker->fl_blocked */
+> >  	fl_owner_t fl_owner;
+> >  	unsigned int fl_flags;
+> >  	unsigned char fl_type;
+> > diff --git a/include/trace/events/filelock.h b/include/trace/events/filelock.h
+> > index d1faf3597b9d..0e50f985a390 100644
+> > --- a/include/trace/events/filelock.h
+> > +++ b/include/trace/events/filelock.h
+> > @@ -68,7 +68,7 @@ DECLARE_EVENT_CLASS(filelock_lock,
+> >  		__field(struct file_lock *, fl)
+> >  		__field(unsigned long, i_ino)
+> >  		__field(dev_t, s_dev)
+> > -		__field(struct file_lock *, fl_next)
+> > +		__field(struct file_lock *, fl_blocker)
+> >  		__field(fl_owner_t, fl_owner)
+> >  		__field(unsigned int, fl_pid)
+> >  		__field(unsigned int, fl_flags)
+> > @@ -82,7 +82,7 @@ DECLARE_EVENT_CLASS(filelock_lock,
+> >  		__entry->fl = fl ? fl : NULL;
+> >  		__entry->s_dev = inode->i_sb->s_dev;
+> >  		__entry->i_ino = inode->i_ino;
+> > -		__entry->fl_next = fl ? fl->fl_next : NULL;
+> > +		__entry->fl_blocker = fl ? fl->fl_blocker : NULL;
+> >  		__entry->fl_owner = fl ? fl->fl_owner : NULL;
+> >  		__entry->fl_pid = fl ? fl->fl_pid : 0;
+> >  		__entry->fl_flags = fl ? fl->fl_flags : 0;
+> > @@ -92,9 +92,9 @@ DECLARE_EVENT_CLASS(filelock_lock,
+> >  		__entry->ret = ret;
+> >  	),
+> >  
+> > -	TP_printk("fl=0x%p dev=0x%x:0x%x ino=0x%lx fl_next=0x%p fl_owner=0x%p fl_pid=%u fl_flags=%s fl_type=%s fl_start=%lld fl_end=%lld ret=%d",
+> > +	TP_printk("fl=0x%p dev=0x%x:0x%x ino=0x%lx fl_blocker=0x%p fl_owner=0x%p fl_pid=%u fl_flags=%s fl_type=%s fl_start=%lld fl_end=%lld ret=%d",
+> >  		__entry->fl, MAJOR(__entry->s_dev), MINOR(__entry->s_dev),
+> > -		__entry->i_ino, __entry->fl_next, __entry->fl_owner,
+> > +		__entry->i_ino, __entry->fl_blocker, __entry->fl_owner,
+> >  		__entry->fl_pid, show_fl_flags(__entry->fl_flags),
+> >  		show_fl_type(__entry->fl_type),
+> >  		__entry->fl_start, __entry->fl_end, __entry->ret)
+> > @@ -122,7 +122,7 @@ DECLARE_EVENT_CLASS(filelock_lease,
+> >  		__field(struct file_lock *, fl)
+> >  		__field(unsigned long, i_ino)
+> >  		__field(dev_t, s_dev)
+> > -		__field(struct file_lock *, fl_next)
+> > +		__field(struct file_lock *, fl_blocker)
+> >  		__field(fl_owner_t, fl_owner)
+> >  		__field(unsigned int, fl_flags)
+> >  		__field(unsigned char, fl_type)
+> > @@ -134,7 +134,7 @@ DECLARE_EVENT_CLASS(filelock_lease,
+> >  		__entry->fl = fl ? fl : NULL;
+> >  		__entry->s_dev = inode->i_sb->s_dev;
+> >  		__entry->i_ino = inode->i_ino;
+> > -		__entry->fl_next = fl ? fl->fl_next : NULL;
+> > +		__entry->fl_blocker = fl ? fl->fl_blocker : NULL;
+> >  		__entry->fl_owner = fl ? fl->fl_owner : NULL;
+> >  		__entry->fl_flags = fl ? fl->fl_flags : 0;
+> >  		__entry->fl_type = fl ? fl->fl_type : 0;
+> > @@ -142,9 +142,9 @@ DECLARE_EVENT_CLASS(filelock_lease,
+> >  		__entry->fl_downgrade_time = fl ? fl->fl_downgrade_time : 0;
+> >  	),
+> >  
+> > -	TP_printk("fl=0x%p dev=0x%x:0x%x ino=0x%lx fl_next=0x%p fl_owner=0x%p fl_flags=%s fl_type=%s fl_break_time=%lu fl_downgrade_time=%lu",
+> > +	TP_printk("fl=0x%p dev=0x%x:0x%x ino=0x%lx fl_blocker=0x%p fl_owner=0x%p fl_flags=%s fl_type=%s fl_break_time=%lu fl_downgrade_time=%lu",
+> >  		__entry->fl, MAJOR(__entry->s_dev), MINOR(__entry->s_dev),
+> > -		__entry->i_ino, __entry->fl_next, __entry->fl_owner,
+> > +		__entry->i_ino, __entry->fl_blocker, __entry->fl_owner,
+> >  		show_fl_flags(__entry->fl_flags),
+> >  		show_fl_type(__entry->fl_type),
+> >  		__entry->fl_break_time, __entry->fl_downgrade_time)
+> > 
+> > 
+> 
+> -- 
+> Jeff Layton <jlayton@kernel.org>
