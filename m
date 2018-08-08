@@ -2,253 +2,429 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08B22C46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 16:14:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEB1DC46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 16:14:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0DE521723
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 16:14:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0DE521723
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
+	by mail.kernel.org (Postfix) with ESMTP id 8B56421723
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 16:14:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B56421723
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729973AbeHHSe3 (ORCPT
+        id S1730039AbeHHSeg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 14:34:29 -0400
-Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:44354 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727295AbeHHSe3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 14:34:29 -0400
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-        by mx0a-001ae601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w78G9Rui017649;
-        Wed, 8 Aug 2018 11:14:01 -0500
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=rf@opensource.cirrus.com
-Received: from mail3.cirrus.com ([87.246.76.56])
-        by mx0a-001ae601.pphosted.com with ESMTP id 2kr0u60djk-1;
-        Wed, 08 Aug 2018 11:14:00 -0500
-Received: from EX17.ad.cirrus.com (ex17.ad.cirrus.com [172.20.9.81])
-        by mail3.cirrus.com (Postfix) with ESMTP id 8CAB4611C8AF;
-        Wed,  8 Aug 2018 11:15:24 -0500 (CDT)
-Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
- (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Wed, 8 Aug 2018
- 17:13:59 +0100
-Received: from edi-sw-dsktp006.ad.cirrus.com (edi-sw-dsktp006.ad.cirrus.com
- [198.90.251.121])      by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id
- w78GDoeP017811;        Wed, 8 Aug 2018 17:13:51 +0100
-From:   Richard Fitzgerald <rf@opensource.cirrus.com>
-To:     <broonie@kernel.org>
-CC:     <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
-        <patches@opensource.cirrus.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>
-Subject: [PATCH 2/2] ASoC: wm_adsp: Make DSP name configurable by codec driver
-Date:   Wed, 8 Aug 2018 17:13:39 +0100
-Message-ID: <20180808161339.17402-2-rf@opensource.cirrus.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180808161339.17402-1-rf@opensource.cirrus.com>
-References: <20180808161339.17402-1-rf@opensource.cirrus.com>
+        Wed, 8 Aug 2018 14:34:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42046 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728711AbeHHSdc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 14:33:32 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D950B21A6A;
+        Wed,  8 Aug 2018 16:13:10 +0000 (UTC)
+Received: from rostedt by gandalf.local.home with local (Exim 4.91)
+        (envelope-from <rostedt@goodmis.org>)
+        id 1fnR5B-0002ac-TP; Wed, 08 Aug 2018 12:13:09 -0400
+Message-Id: <20180808161309.806293827@goodmis.org>
+User-Agent: quilt/0.65
+Date:   Wed, 08 Aug 2018 11:56:07 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     linux-kernel@vger.kernel.org, linux-trace-devel@vger.kernel.org
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Yordan Karadzhov <y.karadz@gmail.com>,
+        Tzvetomir Stoyanov <tz.stoyanov@gmail.com>
+Subject: [RFC][PATCH 19/24] tools/lib/traceevent: Rename pevent field APIs
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=897 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1807170000
- definitions=main-1808080165
+Content-Type: text/plain; charset=ISO-8859-15
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Instead of harcoding that a core must always be called "DSPn"
-add a name member to struct wm_adsp so that the owning codec
-driver can provide a custom name. This allows for re-use of
-the wm_adsp driver with parts where the processing cores are
-named differently.
+From: "Tzvetomir Stoyanov (VMware)" <tz.stoyanov@gmail.com>
 
-If no name is provided the default DSPn name is used.
+In order to make libtraceevent into a proper library, variables, data
+structures and functions require a unique prefix to prevent name space
+conflicts. That prefix will be "tep_" and not "pevent_". This changes
+APIs: pevent_free_format, pevent_free_format_field, pevent_get_field_raw,
+pevent_get_field_val, pevent_get_common_field_val, pevent_get_any_field_val
 
-Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
+Signed-off-by: Tzvetomir Stoyanov (VMware) <tz.stoyanov@gmail.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- sound/soc/codecs/wm_adsp.c | 69 ++++++++++++++++++++++++++++++++--------------
- sound/soc/codecs/wm_adsp.h |  2 ++
- 2 files changed, 50 insertions(+), 21 deletions(-)
+ tools/lib/traceevent/event-parse.c         | 42 +++++++++++-----------
+ tools/lib/traceevent/event-parse.h         | 28 +++++++--------
+ tools/lib/traceevent/plugin_function.c     |  4 +--
+ tools/lib/traceevent/plugin_kvm.c          | 28 +++++++--------
+ tools/lib/traceevent/plugin_sched_switch.c | 18 +++++-----
+ 5 files changed, 60 insertions(+), 60 deletions(-)
 
-diff --git a/sound/soc/codecs/wm_adsp.c b/sound/soc/codecs/wm_adsp.c
-index 1c12c78dbcce..f61656070225 100644
---- a/sound/soc/codecs/wm_adsp.c
-+++ b/sound/soc/codecs/wm_adsp.c
-@@ -10,6 +10,7 @@
-  * published by the Free Software Foundation.
-  */
+diff --git a/tools/lib/traceevent/event-parse.c b/tools/lib/traceevent/event-parse.c
+index 4f924bf42b92..652b8ef6f4c7 100644
+--- a/tools/lib/traceevent/event-parse.c
++++ b/tools/lib/traceevent/event-parse.c
+@@ -6166,7 +6166,7 @@ __pevent_parse_event(struct tep_handle *pevent,
+ 	return 0;
  
-+#include <linux/ctype.h>
- #include <linux/module.h>
- #include <linux/moduleparam.h>
- #include <linux/init.h>
-@@ -35,15 +36,15 @@
- #include "wm_adsp.h"
- 
- #define adsp_crit(_dsp, fmt, ...) \
--	dev_crit(_dsp->dev, "DSP%d: " fmt, _dsp->num, ##__VA_ARGS__)
-+	dev_crit(_dsp->dev, "%s: " fmt, _dsp->name, ##__VA_ARGS__)
- #define adsp_err(_dsp, fmt, ...) \
--	dev_err(_dsp->dev, "DSP%d: " fmt, _dsp->num, ##__VA_ARGS__)
-+	dev_err(_dsp->dev, "%s: " fmt, _dsp->name, ##__VA_ARGS__)
- #define adsp_warn(_dsp, fmt, ...) \
--	dev_warn(_dsp->dev, "DSP%d: " fmt, _dsp->num, ##__VA_ARGS__)
-+	dev_warn(_dsp->dev, "%s: " fmt, _dsp->name, ##__VA_ARGS__)
- #define adsp_info(_dsp, fmt, ...) \
--	dev_info(_dsp->dev, "DSP%d: " fmt, _dsp->num, ##__VA_ARGS__)
-+	dev_info(_dsp->dev, "%s: " fmt, _dsp->name, ##__VA_ARGS__)
- #define adsp_dbg(_dsp, fmt, ...) \
--	dev_dbg(_dsp->dev, "DSP%d: " fmt, _dsp->num, ##__VA_ARGS__)
-+	dev_dbg(_dsp->dev, "%s: " fmt, _dsp->name, ##__VA_ARGS__)
- 
- #define ADSP1_CONTROL_1                   0x00
- #define ADSP1_CONTROL_2                   0x02
-@@ -608,7 +609,6 @@ static void wm_adsp2_init_debugfs(struct wm_adsp *dsp,
- 				  struct snd_soc_component *component)
- {
- 	struct dentry *root = NULL;
--	char *root_name;
- 	int i;
- 
- 	if (!component->debugfs_root) {
-@@ -616,13 +616,7 @@ static void wm_adsp2_init_debugfs(struct wm_adsp *dsp,
- 		goto err;
- 	}
- 
--	root_name = kmalloc(PAGE_SIZE, GFP_KERNEL);
--	if (!root_name)
--		goto err;
--
--	snprintf(root_name, PAGE_SIZE, "dsp%d", dsp->num);
--	root = debugfs_create_dir(root_name, component->debugfs_root);
--	kfree(root_name);
-+	root = debugfs_create_dir(dsp->name, component->debugfs_root);
- 
- 	if (!root)
- 		goto err;
-@@ -1315,12 +1309,12 @@ static int wm_adsp_create_control(struct wm_adsp *dsp,
- 	switch (dsp->fw_ver) {
- 	case 0:
- 	case 1:
--		snprintf(name, SNDRV_CTL_ELEM_ID_NAME_MAXLEN, "DSP%d %s %x",
--			 dsp->num, region_name, alg_region->alg);
-+		snprintf(name, SNDRV_CTL_ELEM_ID_NAME_MAXLEN, "%s %s %x",
-+			 dsp->name, region_name, alg_region->alg);
- 		break;
- 	default:
- 		ret = snprintf(name, SNDRV_CTL_ELEM_ID_NAME_MAXLEN,
--				"DSP%d%c %.12s %x", dsp->num, *region_name,
-+				"%s%c %.12s %x", dsp->name, *region_name,
- 				wm_adsp_fw_text[dsp->fw], alg_region->alg);
- 
- 		/* Truncate the subname from the start if it is too long */
-@@ -1648,7 +1642,7 @@ static int wm_adsp_load(struct wm_adsp *dsp)
- 	if (file == NULL)
- 		return -ENOMEM;
- 
--	snprintf(file, PAGE_SIZE, "%s-dsp%d-%s.wmfw", dsp->part, dsp->num,
-+	snprintf(file, PAGE_SIZE, "%s-%s-%s.wmfw", dsp->part, dsp->fwf_name,
- 		 wm_adsp_fw[dsp->fw].file);
- 	file[PAGE_SIZE - 1] = '\0';
- 
-@@ -2226,7 +2220,7 @@ static int wm_adsp_load_coeff(struct wm_adsp *dsp)
- 	if (file == NULL)
- 		return -ENOMEM;
- 
--	snprintf(file, PAGE_SIZE, "%s-dsp%d-%s.bin", dsp->part, dsp->num,
-+	snprintf(file, PAGE_SIZE, "%s-%s-%s.bin", dsp->part, dsp->fwf_name,
- 		 wm_adsp_fw[dsp->fw].file);
- 	file[PAGE_SIZE - 1] = '\0';
- 
-@@ -2398,8 +2392,38 @@ static int wm_adsp_load_coeff(struct wm_adsp *dsp)
+ event_add_failed:
+-	pevent_free_format(event);
++	tep_free_format(event);
  	return ret;
  }
  
-+static int wm_adsp_create_name(struct wm_adsp *dsp)
-+{
-+	char *p;
-+
-+	if (!dsp->name) {
-+		dsp->name = devm_kasprintf(dsp->dev, GFP_KERNEL, "DSP%d",
-+					   dsp->num);
-+		if (!dsp->name)
-+			return -ENOMEM;
-+	}
-+
-+	if (!dsp->fwf_name) {
-+		p = devm_kstrdup(dsp->dev, dsp->name, GFP_KERNEL);
-+		if (!p)
-+			return -ENOMEM;
-+
-+		dsp->fwf_name = p;
-+		for (; *p != 0; ++p)
-+			*p = tolower(*p);
-+	}
-+
-+	return 0;
-+}
-+
- int wm_adsp1_init(struct wm_adsp *dsp)
+@@ -6263,7 +6263,7 @@ int get_field_val(struct trace_seq *s, struct format_field *field,
+ }
+ 
+ /**
+- * pevent_get_field_raw - return the raw pointer into the data field
++ * tep_get_field_raw - return the raw pointer into the data field
+  * @s: The seq to print to on error
+  * @event: the event that the field is for
+  * @name: The name of the field
+@@ -6276,9 +6276,9 @@ int get_field_val(struct trace_seq *s, struct format_field *field,
+  *
+  * On failure, it returns NULL.
+  */
+-void *pevent_get_field_raw(struct trace_seq *s, struct event_format *event,
+-			   const char *name, struct tep_record *record,
+-			   int *len, int err)
++void *tep_get_field_raw(struct trace_seq *s, struct event_format *event,
++			const char *name, struct tep_record *record,
++			int *len, int err)
  {
-+	int ret;
-+
-+	ret = wm_adsp_create_name(dsp);
-+	if (ret)
-+		return ret;
-+
- 	INIT_LIST_HEAD(&dsp->alg_regions);
+ 	struct format_field *field;
+ 	void *data = record->data;
+@@ -6313,7 +6313,7 @@ void *pevent_get_field_raw(struct trace_seq *s, struct event_format *event,
+ }
  
- 	mutex_init(&dsp->pwr_lock);
-@@ -2672,7 +2696,7 @@ int wm_adsp2_preloader_put(struct snd_kcontrol *kcontrol,
- 	struct wm_adsp *dsp = &dsps[mc->shift - 1];
- 	char preload[32];
- 
--	snprintf(preload, ARRAY_SIZE(preload), "DSP%u Preload", mc->shift);
-+	snprintf(preload, ARRAY_SIZE(preload), "%s Preload", dsp->name);
- 
- 	dsp->preloaded = ucontrol->value.integer.value[0];
- 
-@@ -2867,8 +2891,7 @@ int wm_adsp2_component_probe(struct wm_adsp *dsp, struct snd_soc_component *comp
+ /**
+- * pevent_get_field_val - find a field and return its value
++ * tep_get_field_val - find a field and return its value
+  * @s: The seq to print to on error
+  * @event: the event that the field is for
+  * @name: The name of the field
+@@ -6323,9 +6323,9 @@ void *pevent_get_field_raw(struct trace_seq *s, struct event_format *event,
+  *
+  * Returns 0 on success -1 on field not found.
+  */
+-int pevent_get_field_val(struct trace_seq *s, struct event_format *event,
+-			 const char *name, struct tep_record *record,
+-			 unsigned long long *val, int err)
++int tep_get_field_val(struct trace_seq *s, struct event_format *event,
++		      const char *name, struct tep_record *record,
++		      unsigned long long *val, int err)
  {
- 	char preload[32];
+ 	struct format_field *field;
  
--	snprintf(preload, ARRAY_SIZE(preload), "DSP%d Preload", dsp->num);
+@@ -6338,7 +6338,7 @@ int pevent_get_field_val(struct trace_seq *s, struct event_format *event,
+ }
+ 
+ /**
+- * pevent_get_common_field_val - find a common field and return its value
++ * tep_get_common_field_val - find a common field and return its value
+  * @s: The seq to print to on error
+  * @event: the event that the field is for
+  * @name: The name of the field
+@@ -6348,9 +6348,9 @@ int pevent_get_field_val(struct trace_seq *s, struct event_format *event,
+  *
+  * Returns 0 on success -1 on field not found.
+  */
+-int pevent_get_common_field_val(struct trace_seq *s, struct event_format *event,
+-				const char *name, struct tep_record *record,
+-				unsigned long long *val, int err)
++int tep_get_common_field_val(struct trace_seq *s, struct event_format *event,
++			     const char *name, struct tep_record *record,
++			     unsigned long long *val, int err)
+ {
+ 	struct format_field *field;
+ 
+@@ -6363,7 +6363,7 @@ int pevent_get_common_field_val(struct trace_seq *s, struct event_format *event,
+ }
+ 
+ /**
+- * pevent_get_any_field_val - find a any field and return its value
++ * tep_get_any_field_val - find a any field and return its value
+  * @s: The seq to print to on error
+  * @event: the event that the field is for
+  * @name: The name of the field
+@@ -6373,9 +6373,9 @@ int pevent_get_common_field_val(struct trace_seq *s, struct event_format *event,
+  *
+  * Returns 0 on success -1 on field not found.
+  */
+-int pevent_get_any_field_val(struct trace_seq *s, struct event_format *event,
+-			     const char *name, struct tep_record *record,
+-			     unsigned long long *val, int err)
++int tep_get_any_field_val(struct trace_seq *s, struct event_format *event,
++			  const char *name, struct tep_record *record,
++			  unsigned long long *val, int err)
+ {
+ 	struct format_field *field;
+ 
+@@ -6771,7 +6771,7 @@ void pevent_ref(struct tep_handle *pevent)
+ 	pevent->ref_count++;
+ }
+ 
+-void pevent_free_format_field(struct format_field *field)
++void tep_free_format_field(struct format_field *field)
+ {
+ 	free(field->type);
+ 	if (field->alias != field->name)
+@@ -6786,7 +6786,7 @@ static void free_format_fields(struct format_field *field)
+ 
+ 	while (field) {
+ 		next = field->next;
+-		pevent_free_format_field(field);
++		tep_free_format_field(field);
+ 		field = next;
+ 	}
+ }
+@@ -6797,7 +6797,7 @@ static void free_formats(struct format *format)
+ 	free_format_fields(format->fields);
+ }
+ 
+-void pevent_free_format(struct event_format *event)
++void tep_free_format(struct event_format *event)
+ {
+ 	free(event->name);
+ 	free(event->system);
+@@ -6883,7 +6883,7 @@ void tep_free(struct tep_handle *pevent)
+ 	}
+ 
+ 	for (i = 0; i < pevent->nr_events; i++)
+-		pevent_free_format(pevent->events[i]);
++		tep_free_format(pevent->events[i]);
+ 
+ 	while (pevent->handlers) {
+ 		handle = pevent->handlers;
+diff --git a/tools/lib/traceevent/event-parse.h b/tools/lib/traceevent/event-parse.h
+index 2c4da2f1d4ed..04ffc6e508cf 100644
+--- a/tools/lib/traceevent/event-parse.h
++++ b/tools/lib/traceevent/event-parse.h
+@@ -648,22 +648,22 @@ enum tep_errno tep_parse_format(struct tep_handle *pevent,
+ 				struct event_format **eventp,
+ 				const char *buf,
+ 				unsigned long size, const char *sys);
+-void pevent_free_format(struct event_format *event);
+-void pevent_free_format_field(struct format_field *field);
 -
-+	snprintf(preload, ARRAY_SIZE(preload), "%s Preload", dsp->name);
- 	snd_soc_component_disable_pin(component, preload);
- 
- 	wm_adsp2_init_debugfs(dsp, component);
-@@ -2891,6 +2914,10 @@ int wm_adsp2_init(struct wm_adsp *dsp)
- {
- 	int ret;
- 
-+	ret = wm_adsp_create_name(dsp);
-+	if (ret)
-+		return ret;
+-void *pevent_get_field_raw(struct trace_seq *s, struct event_format *event,
+-			   const char *name, struct tep_record *record,
+-			   int *len, int err);
+-
+-int pevent_get_field_val(struct trace_seq *s, struct event_format *event,
+-			 const char *name, struct tep_record *record,
+-			 unsigned long long *val, int err);
+-int pevent_get_common_field_val(struct trace_seq *s, struct event_format *event,
+-				const char *name, struct tep_record *record,
+-				unsigned long long *val, int err);
+-int pevent_get_any_field_val(struct trace_seq *s, struct event_format *event,
++void tep_free_format(struct event_format *event);
++void tep_free_format_field(struct format_field *field);
 +
- 	switch (dsp->rev) {
- 	case 0:
- 		/*
-diff --git a/sound/soc/codecs/wm_adsp.h b/sound/soc/codecs/wm_adsp.h
-index 8d58cb9d9bb9..4b8778b0b06c 100644
---- a/sound/soc/codecs/wm_adsp.h
-+++ b/sound/soc/codecs/wm_adsp.h
-@@ -57,6 +57,8 @@ struct wm_adsp_compr_buf;
++void *tep_get_field_raw(struct trace_seq *s, struct event_format *event,
++			const char *name, struct tep_record *record,
++			int *len, int err);
++
++int tep_get_field_val(struct trace_seq *s, struct event_format *event,
++		      const char *name, struct tep_record *record,
++		      unsigned long long *val, int err);
++int tep_get_common_field_val(struct trace_seq *s, struct event_format *event,
+ 			     const char *name, struct tep_record *record,
+ 			     unsigned long long *val, int err);
++int tep_get_any_field_val(struct trace_seq *s, struct event_format *event,
++			  const char *name, struct tep_record *record,
++			  unsigned long long *val, int err);
  
- struct wm_adsp {
- 	const char *part;
-+	const char *name;
-+	const char *fwf_name;
- 	int rev;
- 	int num;
- 	int type;
+ int tep_print_num_field(struct trace_seq *s, const char *fmt,
+ 			   struct event_format *event, const char *name,
+diff --git a/tools/lib/traceevent/plugin_function.c b/tools/lib/traceevent/plugin_function.c
+index 50cc356124f6..0962120960eb 100644
+--- a/tools/lib/traceevent/plugin_function.c
++++ b/tools/lib/traceevent/plugin_function.c
+@@ -132,12 +132,12 @@ static int function_handler(struct trace_seq *s, struct tep_record *record,
+ 	const char *parent;
+ 	int index = 0;
+ 
+-	if (pevent_get_field_val(s, event, "ip", record, &function, 1))
++	if (tep_get_field_val(s, event, "ip", record, &function, 1))
+ 		return trace_seq_putc(s, '!');
+ 
+ 	func = pevent_find_function(pevent, function);
+ 
+-	if (pevent_get_field_val(s, event, "parent_ip", record, &pfunction, 1))
++	if (tep_get_field_val(s, event, "parent_ip", record, &pfunction, 1))
+ 		return trace_seq_putc(s, '!');
+ 
+ 	parent = pevent_find_function(pevent, pfunction);
+diff --git a/tools/lib/traceevent/plugin_kvm.c b/tools/lib/traceevent/plugin_kvm.c
+index 4b3433763340..7ebe82bf19ce 100644
+--- a/tools/lib/traceevent/plugin_kvm.c
++++ b/tools/lib/traceevent/plugin_kvm.c
+@@ -254,10 +254,10 @@ static int print_exit_reason(struct trace_seq *s, struct tep_record *record,
+ 	unsigned long long val;
+ 	const char *reason;
+ 
+-	if (pevent_get_field_val(s, event, field, record, &val, 1) < 0)
++	if (tep_get_field_val(s, event, field, record, &val, 1) < 0)
+ 		return -1;
+ 
+-	if (pevent_get_field_val(s, event, "isa", record, &isa, 0) < 0)
++	if (tep_get_field_val(s, event, "isa", record, &isa, 0) < 0)
+ 		isa = 1;
+ 
+ 	reason = find_exit_reason(isa, val);
+@@ -278,8 +278,8 @@ static int kvm_exit_handler(struct trace_seq *s, struct tep_record *record,
+ 
+ 	tep_print_num_field(s, " rip 0x%lx", event, "guest_rip", record, 1);
+ 
+-	if (pevent_get_field_val(s, event, "info1", record, &info1, 0) >= 0
+-	    && pevent_get_field_val(s, event, "info2", record, &info2, 0) >= 0)
++	if (tep_get_field_val(s, event, "info1", record, &info1, 0) >= 0
++	    && tep_get_field_val(s, event, "info2", record, &info2, 0) >= 0)
+ 		trace_seq_printf(s, " info %llx %llx", info1, info2);
+ 
+ 	return 0;
+@@ -299,22 +299,22 @@ static int kvm_emulate_insn_handler(struct trace_seq *s,
+ 	uint8_t *insn;
+ 	const char *disasm;
+ 
+-	if (pevent_get_field_val(s, event, "rip", record, &rip, 1) < 0)
++	if (tep_get_field_val(s, event, "rip", record, &rip, 1) < 0)
+ 		return -1;
+ 
+-	if (pevent_get_field_val(s, event, "csbase", record, &csbase, 1) < 0)
++	if (tep_get_field_val(s, event, "csbase", record, &csbase, 1) < 0)
+ 		return -1;
+ 
+-	if (pevent_get_field_val(s, event, "len", record, &len, 1) < 0)
++	if (tep_get_field_val(s, event, "len", record, &len, 1) < 0)
+ 		return -1;
+ 
+-	if (pevent_get_field_val(s, event, "flags", record, &flags, 1) < 0)
++	if (tep_get_field_val(s, event, "flags", record, &flags, 1) < 0)
+ 		return -1;
+ 
+-	if (pevent_get_field_val(s, event, "failed", record, &failed, 1) < 0)
++	if (tep_get_field_val(s, event, "failed", record, &failed, 1) < 0)
+ 		return -1;
+ 
+-	insn = pevent_get_field_raw(s, event, "insn", record, &llen, 1);
++	insn = tep_get_field_raw(s, event, "insn", record, &llen, 1);
+ 	if (!insn)
+ 		return -1;
+ 
+@@ -379,7 +379,7 @@ static int kvm_mmu_print_role(struct trace_seq *s, struct tep_record *record,
+ 	};
+ 	union kvm_mmu_page_role role;
+ 
+-	if (pevent_get_field_val(s, event, "role", record, &val, 1) < 0)
++	if (tep_get_field_val(s, event, "role", record, &val, 1) < 0)
+ 		return -1;
+ 
+ 	role.word = (int)val;
+@@ -409,7 +409,7 @@ static int kvm_mmu_print_role(struct trace_seq *s, struct tep_record *record,
+ 	tep_print_num_field(s, " root %u ",  event,
+ 			    "root_count", record, 1);
+ 
+-	if (pevent_get_field_val(s, event, "unsync", record, &val, 1) < 0)
++	if (tep_get_field_val(s, event, "unsync", record, &val, 1) < 0)
+ 		return -1;
+ 
+ 	trace_seq_printf(s, "%s%c",  val ? "unsync" : "sync", 0);
+@@ -422,12 +422,12 @@ static int kvm_mmu_get_page_handler(struct trace_seq *s,
+ {
+ 	unsigned long long val;
+ 
+-	if (pevent_get_field_val(s, event, "created", record, &val, 1) < 0)
++	if (tep_get_field_val(s, event, "created", record, &val, 1) < 0)
+ 		return -1;
+ 
+ 	trace_seq_printf(s, "%s ", val ? "new" : "existing");
+ 
+-	if (pevent_get_field_val(s, event, "gfn", record, &val, 1) < 0)
++	if (tep_get_field_val(s, event, "gfn", record, &val, 1) < 0)
+ 		return -1;
+ 
+ 	trace_seq_printf(s, "sp gfn %llx ", val);
+diff --git a/tools/lib/traceevent/plugin_sched_switch.c b/tools/lib/traceevent/plugin_sched_switch.c
+index 3f3a89c3d041..eecb4bd95c11 100644
+--- a/tools/lib/traceevent/plugin_sched_switch.c
++++ b/tools/lib/traceevent/plugin_sched_switch.c
+@@ -71,7 +71,7 @@ static int sched_wakeup_handler(struct trace_seq *s,
+ 	struct format_field *field;
+ 	unsigned long long val;
+ 
+-	if (pevent_get_field_val(s, event, "pid", record, &val, 1))
++	if (tep_get_field_val(s, event, "pid", record, &val, 1))
+ 		return trace_seq_putc(s, '!');
+ 
+ 	field = tep_find_any_field(event, "comm");
+@@ -81,13 +81,13 @@ static int sched_wakeup_handler(struct trace_seq *s,
+ 	}
+ 	trace_seq_printf(s, "%lld", val);
+ 
+-	if (pevent_get_field_val(s, event, "prio", record, &val, 0) == 0)
++	if (tep_get_field_val(s, event, "prio", record, &val, 0) == 0)
+ 		trace_seq_printf(s, " [%lld]", val);
+ 
+-	if (pevent_get_field_val(s, event, "success", record, &val, 1) == 0)
++	if (tep_get_field_val(s, event, "success", record, &val, 1) == 0)
+ 		trace_seq_printf(s, " success=%lld", val);
+ 
+-	if (pevent_get_field_val(s, event, "target_cpu", record, &val, 0) == 0)
++	if (tep_get_field_val(s, event, "target_cpu", record, &val, 0) == 0)
+ 		trace_seq_printf(s, " CPU:%03llu", val);
+ 
+ 	return 0;
+@@ -100,7 +100,7 @@ static int sched_switch_handler(struct trace_seq *s,
+ 	struct format_field *field;
+ 	unsigned long long val;
+ 
+-	if (pevent_get_field_val(s, event, "prev_pid", record, &val, 1))
++	if (tep_get_field_val(s, event, "prev_pid", record, &val, 1))
+ 		return trace_seq_putc(s, '!');
+ 
+ 	field = tep_find_any_field(event, "prev_comm");
+@@ -110,15 +110,15 @@ static int sched_switch_handler(struct trace_seq *s,
+ 	}
+ 	trace_seq_printf(s, "%lld ", val);
+ 
+-	if (pevent_get_field_val(s, event, "prev_prio", record, &val, 0) == 0)
++	if (tep_get_field_val(s, event, "prev_prio", record, &val, 0) == 0)
+ 		trace_seq_printf(s, "[%d] ", (int) val);
+ 
+-	if (pevent_get_field_val(s,  event, "prev_state", record, &val, 0) == 0)
++	if (tep_get_field_val(s,  event, "prev_state", record, &val, 0) == 0)
+ 		write_state(s, val);
+ 
+ 	trace_seq_puts(s, " ==> ");
+ 
+-	if (pevent_get_field_val(s, event, "next_pid", record, &val, 1))
++	if (tep_get_field_val(s, event, "next_pid", record, &val, 1))
+ 		return trace_seq_putc(s, '!');
+ 
+ 	field = tep_find_any_field(event, "next_comm");
+@@ -128,7 +128,7 @@ static int sched_switch_handler(struct trace_seq *s,
+ 	}
+ 	trace_seq_printf(s, "%lld", val);
+ 
+-	if (pevent_get_field_val(s, event, "next_prio", record, &val, 0) == 0)
++	if (tep_get_field_val(s, event, "next_prio", record, &val, 0) == 0)
+ 		trace_seq_printf(s, " [%d]", (int) val);
+ 
+ 	return 0;
 -- 
-2.11.0
+2.18.0
+
 
