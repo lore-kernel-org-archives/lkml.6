@@ -2,315 +2,235 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 502CBC46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 06:01:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F323AC46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 06:02:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E23EB21718
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 06:01:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="OXBzA1Ep"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E23EB21718
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id AB94D21718
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 06:02:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB94D21718
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727069AbeHHIT2 (ORCPT
+        id S1727115AbeHHIUO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 04:19:28 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:34085 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726643AbeHHIT2 (ORCPT
+        Wed, 8 Aug 2018 04:20:14 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:49458 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726643AbeHHIUO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 04:19:28 -0400
-Received: by mail-oi0-f66.google.com with SMTP id 13-v6so1837473ois.1
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 23:01:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=xf2/T00uNO4vMsHG1mxAdBklJzVT4xW0puts5XgG7vI=;
-        b=OXBzA1EpzGJc/jxJaYyAMuYMSbVA4ZxH7yoNw56dWU7ufnvnA4HYSjLPb+jDx+gRkF
-         pIPaRTEXpzCJ9ud2Afj7SDU8kAcLrgwNbT29CapYPz8IaMrUjZnhf1wgcrHsWnUBS3ji
-         Um+rP/mniH6m1VglGowvJ4o5JvWChJdnCdbB4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=xf2/T00uNO4vMsHG1mxAdBklJzVT4xW0puts5XgG7vI=;
-        b=t+N6DDgqhUzF8fBlHHmD/hZoozSdCyhCB7rR37ylWZoOSiSHsJwllNv9p/RFh2uvj4
-         3SzH9IVXLmbtnb0yxOlnowHM8/ts1CH5sE978rnR5m4CMVZGbUrUmvdzodK4FVNvvSNq
-         Hwna0Oo4LY4vFXBjDSRm93m/vtxpQOWjzFJQw7vVX9x7oB10Dj2iw6FWRcVa3f+9XcJ9
-         60micNRvUmL+4kQSroGqjHJqPSPGmLus5HJndux25wfCzElDH1QW8mYG7BoVlYUnYsO9
-         sZ+pb6dbh2RFRGrk/0gYPVItmOnMS1z2ZkNdvweXfS4rOmw33S1dI+gDXFAaEvjCaJ/A
-         ZfVg==
-X-Gm-Message-State: AOUpUlFg9v8pUsRZjn26OCh6ftWa0d9psiwui2dIGf96dMmb4ITH0WRK
-        0sJWWlWSB9c0tXUtN48f8E6/W0e+281DR+9wfTI3ZA==
-X-Google-Smtp-Source: AA+uWPxKFzW8GVeHsGS2Az/TGica4RdzI1MI8hCmyuDVrjxkJVs+0MkI+DdLOEqOOZB8Li/diLvcdPIX4LB3gLN8AuA=
-X-Received: by 2002:aca:a94c:: with SMTP id s73-v6mr1465236oie.68.1533708083525;
- Tue, 07 Aug 2018 23:01:23 -0700 (PDT)
+        Wed, 8 Aug 2018 04:20:14 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w785sMYf074404
+        for <linux-kernel@vger.kernel.org>; Wed, 8 Aug 2018 02:02:09 -0400
+Received: from e34.co.us.ibm.com (e34.co.us.ibm.com [32.97.110.152])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2kqnvnsevc-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 02:02:08 -0400
+Received: from localhost
+        by e34.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <ego@linux.vnet.ibm.com>;
+        Wed, 8 Aug 2018 00:02:07 -0600
+Received: from b03cxnp08026.gho.boulder.ibm.com (9.17.130.18)
+        by e34.co.us.ibm.com (192.168.1.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 8 Aug 2018 00:02:05 -0600
+Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
+        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w78624Tv28967068
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 7 Aug 2018 23:02:04 -0700
+Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 35BDFC6059;
+        Wed,  8 Aug 2018 00:02:04 -0600 (MDT)
+Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BC6EAC605A;
+        Wed,  8 Aug 2018 00:02:03 -0600 (MDT)
+Received: from sofia.ibm.com (unknown [9.79.219.101])
+        by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Wed,  8 Aug 2018 00:02:03 -0600 (MDT)
+Received: by sofia.ibm.com (Postfix, from userid 1000)
+        id 5C3BC2E2F75; Wed,  8 Aug 2018 11:32:00 +0530 (IST)
+Date:   Wed, 8 Aug 2018 11:32:00 +0530
+From:   Gautham R Shenoy <ego@linux.vnet.ibm.com>
+To:     Michael Ellerman <mpe@ellerman.id.au>
+Cc:     Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        npiggin@gmail.com, benh@kernel.crashing.org,
+        ego@linux.vnet.ibm.com, huntbag@linux.vnet.ibm.com
+Subject: Re: [RFC PATCH 0/3] New device-tree format  and Opal based idle
+ save-restore
+Reply-To: ego@linux.vnet.ibm.com
+References: <20180802045132.12432-1-akshay.adiga@linux.vnet.ibm.com>
+ <87zhxybceu.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Received: by 2002:a9d:237a:0:0:0:0:0 with HTTP; Tue, 7 Aug 2018 23:01:22 -0700 (PDT)
-In-Reply-To: <c18fd41f-831c-ab74-57e5-d4151f4b47cc@gmail.com>
-References: <1dc5d394324b2bf1ffe229b8e42691fab6d749e0.1533556992.git.baolin.wang@linaro.org>
- <c18fd41f-831c-ab74-57e5-d4151f4b47cc@gmail.com>
-From:   Baolin Wang <baolin.wang@linaro.org>
-Date:   Wed, 8 Aug 2018 14:01:22 +0800
-Message-ID: <CAMz4kuL8ufCqbqgegozJt3P7JON0AzA9KrbvcvOB15McA5S=zA@mail.gmail.com>
-Subject: Re: [PATCH v5 1/2] leds: core: Introduce LED pattern trigger
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc:     Pavel Machek <pavel@ucw.cz>, rteysseyre@gmail.com,
-        Mark Brown <broonie@kernel.org>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87zhxybceu.fsf@concordia.ellerman.id.au>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-TM-AS-GCONF: 00
+x-cbid: 18080806-0016-0000-0000-000009163CC5
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009505; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01070868; UDB=6.00551265; IPR=6.00850339;
+ MB=3.00022577; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-08 06:02:06
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18080806-0017-0000-0000-00003FEC677C
+Message-Id: <20180808060200.GA17634@in.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-08_01:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808080063
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jacek,
+Hello Michael,
 
-On 8 August 2018 at 05:54, Jacek Anaszewski <jacek.anaszewski@gmail.com> wrote:
-> Hi Baolin,
+On Tue, Aug 07, 2018 at 10:15:37PM +1000, Michael Ellerman wrote:
+> > Skiboot patch-set for device-tree is posted here :
+> > https://patchwork.ozlabs.org/project/skiboot/list/?series=58934
+> 
+> I don't see a device tree binding documented anywhere?
+> 
+> There is an existing binding defined for ARM chips, presumably it
+> doesn't do everything we need. But are there good reasons why we are not
+> using it as a base?
+> 
+> See: Documentation/devicetree/bindings/arm/idle-states.txt
 >
-> Thank you for addressing the review remarks.
-> Since the patch set is targeted for 4.19, then we have three weeks
-> before it will be merged to the for-next anyway. That said, I propose
-> one more modification, please take a look below.
 
-Sure.
+In case of ARM, the idle-states node is a child of cpus node. Each
+child of the idle-states node is a node describing that particular
+idle state.
 
->
-> On 08/06/2018 02:05 PM, Baolin Wang wrote:
->> Some LED controllers have support for autonomously controlling
->> brightness over time, according to some preprogrammed pattern or
->> function.
->>
->> This patch adds pattern trigger that LED device can configure the
->> pattern and trigger it.
->>
->> Signed-off-by: Raphael Teysseyre <rteysseyre@gmail.com>
->> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
->> ---
->> Changes from v4:
->>  - Change the repeat file to return the originally written number.
->>  - Improve comments.
->>  - Fix some build warnings.
->>
->> Changes from v3:
->>  - Reset pattern number to 0 if user provides incorrect pattern string.
->>  - Support one pattern.
->>
->> Changes from v2:
->>  - Remove hardware_pattern boolen.
->>  - Chnage the pattern string format.
->>
->> Changes from v1:
->>  - Use ATTRIBUTE_GROUPS() to define attributes.
->>  - Introduce hardware_pattern flag to determine if software pattern
->>  or hardware pattern.
->>  - Re-implement pattern_trig_store_pattern() function.
->>  - Remove pattern_get() interface.
->>  - Improve comments.
->>  - Other small optimization.
->> ---
->>  .../ABI/testing/sysfs-class-led-trigger-pattern    |   24 ++
->>  drivers/leds/trigger/Kconfig                       |    7 +
->>  drivers/leds/trigger/Makefile                      |    1 +
->>  drivers/leds/trigger/ledtrig-pattern.c             |  266 ++++++++++++++++++++
->>  include/linux/leds.h                               |   16 ++
->>  5 files changed, 314 insertions(+)
->>  create mode 100644 Documentation/ABI/testing/sysfs-class-led-trigger-pattern
->>  create mode 100644 drivers/leds/trigger/ledtrig-pattern.c
->>
->> diff --git a/Documentation/ABI/testing/sysfs-class-led-trigger-pattern b/Documentation/ABI/testing/sysfs-class-led-trigger-pattern
->> new file mode 100644
->> index 0000000..bc7475f
->> --- /dev/null
->> +++ b/Documentation/ABI/testing/sysfs-class-led-trigger-pattern
->> @@ -0,0 +1,24 @@
->> +What:                /sys/class/leds/<led>/pattern
->> +Date:                August 2018
->> +KernelVersion:       4.19
->> +Description:
->> +             Specify a pattern for the LED, for LED hardware that support
->> +             altering the brightness as a function of time.
->> +
->> +             The pattern is given by a series of tuples, of brightness and
->> +             duration (ms). The LED is expected to traverse the series and
->> +             each brightness value for the specified duration. Duration of
->> +             0 means brightness should immediately change to new value.
->> +
->> +             The format of the pattern values should be:
->> +             "brightness_1 duration_1 brightness_2 duration_2 brightness_3
->> +             duration_3 ...".
->> +
->> +What:                /sys/class/leds/<led>/repeat
->> +Date:                August 2018
->> +KernelVersion:       4.19
->> +Description:
->> +             Specify a pattern repeat number. 0 means repeat indefinitely.
->> +
->> +             This file will always return the originally written repeat
->> +             number.
->> diff --git a/drivers/leds/trigger/Kconfig b/drivers/leds/trigger/Kconfig
->> index 4018af7..b76fc3c 100644
->> --- a/drivers/leds/trigger/Kconfig
->> +++ b/drivers/leds/trigger/Kconfig
->> @@ -129,4 +129,11 @@ config LEDS_TRIGGER_NETDEV
->>         This allows LEDs to be controlled by network device activity.
->>         If unsure, say Y.
->>
->> +config LEDS_TRIGGER_PATTERN
->> +     tristate "LED Pattern Trigger"
->> +     help
->> +       This allows LEDs to be controlled by a software or hardware pattern
->> +       which is a series of tuples, of brightness and duration (ms).
->> +       If unsure, say N
->> +
->>  endif # LEDS_TRIGGERS
->> diff --git a/drivers/leds/trigger/Makefile b/drivers/leds/trigger/Makefile
->> index f3cfe19..9bcb64e 100644
->> --- a/drivers/leds/trigger/Makefile
->> +++ b/drivers/leds/trigger/Makefile
->> @@ -13,3 +13,4 @@ obj-$(CONFIG_LEDS_TRIGGER_TRANSIENT)        += ledtrig-transient.o
->>  obj-$(CONFIG_LEDS_TRIGGER_CAMERA)    += ledtrig-camera.o
->>  obj-$(CONFIG_LEDS_TRIGGER_PANIC)     += ledtrig-panic.o
->>  obj-$(CONFIG_LEDS_TRIGGER_NETDEV)    += ledtrig-netdev.o
->> +obj-$(CONFIG_LEDS_TRIGGER_PATTERN)   += ledtrig-pattern.o
->> diff --git a/drivers/leds/trigger/ledtrig-pattern.c b/drivers/leds/trigger/ledtrig-pattern.c
->> new file mode 100644
->> index 0000000..63b94a2
->> --- /dev/null
->> +++ b/drivers/leds/trigger/ledtrig-pattern.c
->> @@ -0,0 +1,266 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +
->> +/*
->> + * LED pattern trigger
->> + *
->> + * Idea discussed with Pavel Machek. Raphael Teysseyre implemented
->> + * the first version, Baolin Wang simplified and improved the approach.
->> + */
->> +
->> +#include <linux/kernel.h>
->> +#include <linux/leds.h>
->> +#include <linux/module.h>
->> +#include <linux/mutex.h>
->> +#include <linux/slab.h>
->> +#include <linux/timer.h>
->> +
->> +#define MAX_PATTERNS         1024
->> +
->> +struct pattern_trig_data {
->> +     struct led_classdev *led_cdev;
->> +     struct led_pattern patterns[MAX_PATTERNS];
->> +     struct led_pattern *curr;
->> +     struct led_pattern *next;
->> +     struct mutex lock;
->> +     u32 npatterns;
->> +     u32 repeat;
->> +     u32 last_repeat;
->> +     bool is_indefinite;
->> +     struct timer_list timer;
->> +};
->> +
->> +static void pattern_trig_update_patterns(struct pattern_trig_data *data)
->> +{
->> +     data->curr = data->next;
->> +     if (!data->is_indefinite && data->curr == data->patterns)
->> +             data->repeat--;
->> +
->> +     if (data->next == data->patterns + data->npatterns - 1)
->> +             data->next = data->patterns;
->> +     else
->> +             data->next++;
->> +}
->> +
->> +static void pattern_trig_timer_function(struct timer_list *t)
->> +{
->> +     struct pattern_trig_data *data = from_timer(data, t, timer);
->> +
->> +     mutex_lock(&data->lock);
->> +
->> +     if (!data->is_indefinite && !data->repeat) {
->> +             mutex_unlock(&data->lock);
->> +             return;
->> +     }
->> +
->> +     led_set_brightness(data->led_cdev, data->curr->brightness);
->> +     mod_timer(&data->timer, jiffies + msecs_to_jiffies(data->curr->delta_t));
->> +     pattern_trig_update_patterns(data);
->> +
->> +     mutex_unlock(&data->lock);
->> +}
->> +
->> +static int pattern_trig_start_pattern(struct pattern_trig_data *data,
->> +                                   struct led_classdev *led_cdev)
->> +{
->> +     if (!data->npatterns)
->> +             return 0;
->> +
->> +     if (led_cdev->pattern_set) {
->> +             return led_cdev->pattern_set(led_cdev, data->patterns,
->> +                                          data->npatterns, data->repeat);
->
-> I think that it would be more flexible if software pattern fallback
-> was applied in case of pattern_set failure. Otherwise, it would
-> lead to the situation where LED class devices that support hardware
-> blinking couldn't be applied the same set of patterns as LED class
-> devices that don't implement pattern_set. The latter will always have to
-> resort to using software pattern engine which will accept far greater
-> amount of pattern combinations.
+	idle-states {
+		entry-method = "psci";
 
-Hmmm, I am not sure this is useful for hardware pattern, since the LED
-hardware can be diverse which is hard to be compatible with software
-pattern.
-
-For example, for our SC27XX LED, it only supports 4 hardware patterns
-setting (low time, rising time, high time and falling time) to make it
-work at breathing mode. If user provides 3 or 5 patterns values, it
-will failed to issue pattern_set(). But at this time, we don't want to
-use software pattern instead since it will be not the breathing mode
-expected by user. I don't know if there are other special LED
-hardware.
-
-So I think we should let LED driver to handle this case, if failed to
-issue pattern_set(), the LED driver can set one group default hardware
-patterns, or turn off the LED hardware pattern or other error handling
-method supplied by LED driver. That will not combine software pattern
-and hardware pattern together to make things complicated.
-
-So what do you think?
-
-> In this case we need to discuss on what basis the decision will be
-> made on whether hardware or software engine will be used.
->
-> Possible options coming to mind:
-> - an interface will be provided to determine max difference between
->   the settings supported by the hardware and the settings requested by
->   the user, that will result in aligning user's setting to the hardware
->   capabilities
-> - the above alignment rate will be predefined instead
-> - hardware engine will be used only if user requests supported settings
->   on the whole span of the requested pattern
-> - in each of the above cases it would be worth to think of the
->   interface to show the scope of the settings supported by hardware
->
-> The same issue applies to the already available timer trigger.
-> So far the policy implemented by the drivers implementing blink_set
-> op varies.
->
-> --
-> Best regards,
-> Jacek Anaszewski
+		CPU_RETENTION_0_0: cpu-retention-0-0 {
+			compatible = "arm,idle-state";
+			arm,psci-suspend-param = <0x0010000>;
+			entry-latency-us = <20>;
+			exit-latency-us = <40>;
+			min-residency-us = <80>;
+			status = "disabled"
+		};
 
 
+		CPU_SLEEP_0_0: cpu-sleep-0-0 {
+			compatible = "arm,idle-state";
+			local-timer-stop;
+			arm,psci-suspend-param = <0x0010000>;
+			entry-latency-us = <250>;
+			exit-latency-us = <500>;
+			min-residency-us = <950>;
+			status = "okay"
+		};
 
--- 
-Baolin Wang
-Best Regards
+		.
+		.
+		.
+	}
+
+
+Furthermore, each CPU can have a different set of cpu-idle states
+due to the asymmetric nature of the processors units on the board.
+Thus, there is an additional property for each cpu called
+cpu-idle-states which points to the containers of the idle states
+themselves.
+
+
+cpus {
+	#size-cells = <0>;
+	#address-cells = <2>;
+
+	CPU0: cpu@0 {
+		device_type = "cpu";
+		compatible = "arm,cortex-a57";
+		reg = <0x0 0x0>;
+		enable-method = "psci";
+		cpu-idle-states = <&CPU_RETENTION_0_0 &CPU_SLEEP_0_0
+				   &CLUSTER_RETENTION_0 &CLUSTER_SLEEP_0>;
+	};
+
+	. . .
+	. . .
+	. . .
+	. . .
+
+	CPU8: cpu@100000000 {
+		device_type = "cpu";
+		compatible = "arm,cortex-a53";
+		reg = <0x1 0x0>;
+		enable-method = "psci";
+		cpu-idle-states = <&CPU_RETENTION_1_0 &CPU_SLEEP_1_0
+				   &CLUSTER_RETENTION_1 &CLUSTER_SLEEP_1>;
+	};
+
+
+In our case, we already have an "ibm,opal/power-mgt/" node in the
+device tree where we have defined the idle state so far. This was the
+reason to stick the new device tree format under this existing node
+that has been specially earmarked for power management related bits,
+instead of defining the new format under the cpus node.
+
+Also, in our case, since all the CPU nodes are symmetric they will
+have the same set of idle states. Hence, we wouldn't need the
+"cpu-idle-states" property for each CPU.
+
+As for the properties of idle states themselves, the only common
+things between the ARM idle-states and our case are the compatible,
+exit-latency-us, min-residency-us. In addition to this we need the
+flags which indicate the nature of the resource loss (Hypervisors
+state loss, Timebase loss, etc..) , the psscr_val and the psscr_mask
+corresponding to the stop states which the ARM device-tree doesn't
+provide.
+
+For this reason we have opted for a new bindings since the overlap
+between these two platforms is minimal.
+
+> 
+> The way you're using compatible is not really consistent with its
+> traditional meaning.
+> 
+> eg, you have multiple states with:
+> 
+>                 compatible = "ibm,state-v1",
+>                             "cpuoffline",
+>                             "opal-supported";
+> 
+> 
+> This would typically mean that all those state are all "compatible" with
+> some semantics defined by the name "ibm,state-v1". What you're trying to
+> say (I think) is that each state is "version 1" of *that state*. And
+> only kernels that understand version 1 should use the state.
+
+Ok, I see what you mean here. Perhaps, we should have had something
+like "ibm,stop0-v1" , "ibm,stop1-v2", "ibm,stop2-v2" etc, where
+version1, version2 etc, pertains to the versions of those specific
+states.
+
+Thus a kernel that knows about "version 1" of stop0 and stop2 and
+"version 2" of stop1 will end up using only stop0 and stop1 since it
+doesn't know "version 2" of stop2. 
+
+In such a case, kernel should fallback to OPAL for stop2. Does this
+make sense ?
+
+> 
+> And "cpuoffline" and "opal-supported" definitely don't belong in
+> compatible AFAICS, they should simply be boolean properties of the
+> node.
+
+I agree. These should be flags.
+
+> 
+> cheers
+> 
+
