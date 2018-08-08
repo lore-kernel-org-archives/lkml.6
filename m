@@ -2,177 +2,173 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD817C46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 07:51:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D642C4646D
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 07:52:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56C8C216FB
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 07:51:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56C8C216FB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id CC04A21719
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 07:52:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dx44y9b4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC04A21719
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727039AbeHHKKX (ORCPT
+        id S1727102AbeHHKK2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 06:10:23 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53074 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726902AbeHHKKX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 06:10:23 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A15B67A7E8;
-        Wed,  8 Aug 2018 07:51:53 +0000 (UTC)
-Received: from [10.36.117.71] (ovpn-117-71.ams2.redhat.com [10.36.117.71])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8C0CF10EE77E;
-        Wed,  8 Aug 2018 07:51:51 +0000 (UTC)
-Subject: Re: [RFC PATCH 2/3] mm/memory_hotplug: Create __shrink_pages and move
- it to offline_pages
-To:     Oscar Salvador <osalvador@techadventures.net>,
-        Jerome Glisse <jglisse@redhat.com>
-Cc:     akpm@linux-foundation.org, mhocko@suse.com,
-        dan.j.williams@intel.com, pasha.tatashin@oracle.com,
-        yasu.isimatu@gmail.com, logang@deltatee.com, dave.jiang@intel.com,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Oscar Salvador <osalvador@suse.de>
-References: <20180807133757.18352-1-osalvador@techadventures.net>
- <20180807133757.18352-3-osalvador@techadventures.net>
- <20180807135221.GA3301@redhat.com>
- <a6e4e654-fc95-497f-16f3-8c1550cf03d6@redhat.com>
- <20180807204834.GA6844@techadventures.net> <20180807221345.GD3301@redhat.com>
- <20180808073835.GA9568@techadventures.net>
-From:   David Hildenbrand <david@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- SE+xAvmumFBY
-Organization: Red Hat GmbH
-Message-ID: <24da07b9-5e06-af1d-42d3-c663eade16ea@redhat.com>
-Date:   Wed, 8 Aug 2018 09:51:50 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 8 Aug 2018 06:10:28 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:39902 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726902AbeHHKK2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 06:10:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=/q2/4T+CGaQK9BqUsgCCY2Twi01mcXQ6Qjq7DyFqy9M=; b=dx44y9b45Hz73ZJjRfMSfwrqH
+        VExQfvj/SmRkx3ybp41RA163Lu9uOhw1vWiUhuQ/0cHryRMAYDgzeJpf06vRhuSeEaUTOFxq7aoti
+        2d9nD5DWBqK9DfUxo1Un7JSw2s37TA/SRJtSXIeZDEvmKUrRLkWfs5ARYWGMpLTBlQzfBUBFbnFIS
+        udZppYurv990ChLw8vZCfByWqmA2joIcq1Do6dfS9VSi9EmP9hLxSRpFnMcffl13JFlRABKNmdiXa
+        i2lH1FGMCADuPXzVb1So7LrM6fd2KkRje4ijijOF6N62yGaICD1WsDS/FhWLSIqBWwE+4EnXac5mt
+        YP7HjelVw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fnJG8-0000ZV-Fu; Wed, 08 Aug 2018 07:51:56 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id ED9F320163EBC; Wed,  8 Aug 2018 09:51:54 +0200 (CEST)
+Date:   Wed, 8 Aug 2018 09:51:54 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Reinette Chatre <reinette.chatre@intel.com>
+Cc:     Dave Hansen <dave.hansen@intel.com>, tglx@linutronix.de,
+        mingo@redhat.com, fenghua.yu@intel.com, tony.luck@intel.com,
+        vikas.shivappa@linux.intel.com, gavin.hindman@intel.com,
+        jithu.joseph@intel.com, hpa@zytor.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] x86/intel_rdt and perf/x86: Fix lack of coordination
+ with perf
+Message-ID: <20180808075154.GN2494@hirez.programming.kicks-ass.net>
+References: <086b93f5-da5b-b5e5-148a-cef25117b963@intel.com>
+ <20180803104956.GU2494@hirez.programming.kicks-ass.net>
+ <1eece033-fbae-c904-13ad-1904be91c049@intel.com>
+ <20180803152523.GY2476@hirez.programming.kicks-ass.net>
+ <d6df8a8a-f0f2-48f7-1c1d-c8893e1583c9@intel.com>
+ <57c011e1-113d-c38f-c318-defbad085843@intel.com>
+ <20180806221225.GO2458@hirez.programming.kicks-ass.net>
+ <08d51131-7802-5bfe-2cae-d116807183d1@intel.com>
+ <20180807093615.GY2494@hirez.programming.kicks-ass.net>
+ <ace0bebb-91ab-5d40-e7d7-d72d48302fa8@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20180808073835.GA9568@techadventures.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 08 Aug 2018 07:51:53 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 08 Aug 2018 07:51:53 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'david@redhat.com' RCPT:''
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ace0bebb-91ab-5d40-e7d7-d72d48302fa8@intel.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08.08.2018 09:38, Oscar Salvador wrote:
-> On Tue, Aug 07, 2018 at 06:13:45PM -0400, Jerome Glisse wrote:
->>> And since we know for sure that memhotplug-code cannot call it with ZONE_DEVICE,
->>> I think this can be done easily.
->>
->> This might change down road but for now this is correct. They are
->> talks to enumerate device memory through standard platform mechanisms
->> and thus the kernel might see new types of resources down the road and
->> maybe we will want to hotplug them directly from regular hotplug path
->> as ZONE_DEVICE (lot of hypothetical at this point ;)).
+On Tue, Aug 07, 2018 at 03:47:15PM -0700, Reinette Chatre wrote:
+> > FWIW, how long is that IRQ disabled section? It looks like something
+> > that could be taking a bit of time. We have these people that care about
+> > IRQ latency.
 > 
-> Well, I think that if that happens this whole thing will become
-> much easier, since we will not have several paths for doing the same thing.
+> We work closely with customers needing low latency as well as customers
+> needing deterministic behavior.
 > 
-> Another thing that I realized is that while we want to move all operation-pages
-> from remove_memory() path to offline_pages(), this can get tricky.
+> This measurement is triggered by the user as a validation mechanism of
+> the pseudo-locked memory region after it has been created as part of
+> system setup as well as during runtime if there are any concerns with
+> the performance of an application that uses it.
 > 
-> Unless I am missing something, the devices from HMM and devm are not being registered
-> against "memory_subsys" struct, and so, they never get to call memory_subsys_offline()
-> and so offline_pages().
-> 
-> Which means that we would have to call __remove_zone() from those paths.
-> But this alone will not work.
-> 
-> find_smallest/biggest_section_pfn are two functions that are being called from
-> 
-> shrink_pgdat_span
-> and
-> shrink_zone_span
-> 
-> to adjust zone_first_pfn/node_first_pfn and the spanned pages.
-> 
-> Currently, find_smallest/biggest_section_pfn checks for the secion to be valid,
-> and this is fine since we are removing those sections from the remove_memory path.
-> 
-> But if we want to move __remove_zone() to offline_pages(), we have to use
-> online_section() instead of valid_section().
-> 
-> This is all fine from offline_pages because the sections get offlined in:
-> 
-> __offline_pages
->  offline_isolated_pages
->   offline_isolated_pages_cb
->    __offline_isolated_pages
->     offline_mem_sections
-> 
-> 
-> But this does not happen in HMM/devm path.
-> 
-> I am pretty sure this is a dumb question, but why HMM/devm path
-> do not call online_pages/offline_pages?
+> This measurement would thus be triggered before the sensitive workloads
+> start - during system setup, or if an issue is already present. In
+> either case the measurement is triggered by the administrator via debugfs.
 
-I think mainly because onlining/offlining (wild guesses)
+That does not in fact include the answer to the question. Also, it
+assumes a competent operator (something I've found is not always true).
 
-- calls memory notifiers
-- works with memory blocks
-
-(and does some more things not applicable to ZONE_DEVICE memory)
-
+> >  - I don't much fancy people accessing the guts of events like that;
+> >    would not an inline function like:
+> > 
+> >    static inline u64 x86_perf_rdpmc(struct perf_event *event)
+> >    {
+> > 	u64 val;
+> > 
+> > 	lockdep_assert_irqs_disabled();
+> > 
+> > 	rdpmcl(event->hw.event_base_rdpmc, val);
+> > 	return val;
+> >    }
+> > 
+> >    Work for you?
 > 
-> Thanks
+> No. This does not provide accurate results. Implementing the above produces:
+> pseudo_lock_mea-366   [002] ....    34.950740: pseudo_lock_l2: hits=4096
+> miss=4
+
+But it being an inline function should allow the compiler to optimize
+and lift the event->hw.event_base_rdpmc load like you now do manually.
+Also, like Tony already suggested, you can prime that load just fine by
+doing an extra invocation.
+
+(and note that the above function is _much_ simpler than
+perf_event_read_local())
+
+> >  - native_read_pmc(); are you 100% sure this code only ever runs on
+> >    native and not in some dodgy virt environment?
 > 
+> My understanding is that a virtual environment would be a customer of a
+> RDT allocation (cache or memory bandwidth). I do not see if/where this
+> is restricted though - I'll move to rdpmcl() but the usage of a cache
+> allocation feature like this from a virtual machine needs more
+> investigation.
 
+I can imagine that hypervisors that allow physical partitioning could
+allow delegating the rdt crud to their guests when they 'own' a full
+socket or whatever the domain is for this.
 
--- 
+> Will do. I created the following helper function that can be used after
+> interrupts are disabled:
+> 
+> static inline int perf_event_error_state(struct perf_event *event)
+> {
+>         int ret = 0;
+>         u64 tmp;
+> 
+>         ret = perf_event_read_local(event, &tmp, NULL, NULL);
+>         if (ret < 0)
+>                 return ret;
+> 
+>         if (event->attr.pinned && event->oncpu != smp_processor_id())
+>                 return -EBUSY;
+> 
+>         return ret;
+> }
 
-Thanks,
+Nah, stick the test in perf_event_read_local(), that actually needs it.
 
-David / dhildenb
+> > Also, while you disable IRQs, your fancy pants loop is still subject to
+> > NMIs that can/will perturb your measurements, how do you deal with
+> > those?
+
+> Customers interested in this feature are familiar with dealing with them
+> (and also SMIs). The user space counterpart is able to detect such an
+> occurrence.
+
+You're very optimistic about your customers capabilities. And this might
+be true for the current people you're talking to, but once this is
+available and public, joe monkey will have access and he _will_ screw it
+up.
+
+> Please note that if an NMI arrives it would be handled with the
+> currently active cache capacity bitmask so none of the pseudo-locked
+> memory will be evicted since no capacity bitmask overlaps with the
+> pseudo-locked region.
+
+So exceptions change / have their own bitmask?
