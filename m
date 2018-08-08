@@ -2,117 +2,105 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A319C4646D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 15:55:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2348BC46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 15:56:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DDAD21A13
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 15:55:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DDAD21A13
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
+	by mail.kernel.org (Postfix) with ESMTP id DC9DB21473
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 15:55:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC9DB21473
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727743AbeHHSQJ (ORCPT
+        id S1728147AbeHHSQO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 14:16:09 -0400
-Received: from sauhun.de ([88.99.104.3]:35564 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727108AbeHHSQJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 14:16:09 -0400
-Received: from localhost (p54B334CC.dip0.t-ipconnect.de [84.179.52.204])
-        by pokefinder.org (Postfix) with ESMTPSA id 699F66DB565;
-        Wed,  8 Aug 2018 17:55:49 +0200 (CEST)
-Date:   Wed, 8 Aug 2018 17:55:49 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Jonathan Corbet <corbet@lwn.net>, Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Naren <naren.kernel@gmail.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Lukas Wunner <lukas@wunner.de>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
-        Sven Van Asbroeck <svendev@arcx.com>,
-        Paolo Abeni <pabeni@redhat.com>, Alban Bedel <albeu@free.fr>,
-        Rob Herring <robh@kernel.org>,
-        David Lechner <david@lechnology.com>,
-        Andrew Lunn <andrew@lunn.ch>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-i2c@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-omap@vger.kernel.org, netdev@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH 00/28] at24: remove at24_platform_data
-Message-ID: <20180808155548.s7p4xqsjywz3psrj@ninjato>
-References: <20180808153150.23444-1-brgl@bgdev.pl>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="lailtggovp2weizg"
-Content-Disposition: inline
-In-Reply-To: <20180808153150.23444-1-brgl@bgdev.pl>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Wed, 8 Aug 2018 14:16:14 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:32816 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727108AbeHHSQO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 14:16:14 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C7D0640216E7;
+        Wed,  8 Aug 2018 15:55:56 +0000 (UTC)
+Received: from vitty.brq.redhat.com (unknown [10.43.2.155])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4F4EC2166BA0;
+        Wed,  8 Aug 2018 15:55:54 +0000 (UTC)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     kvm@vger.kernel.org
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Roman Kagan <rkagan@virtuozzo.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
+        Mohammed Gamal <mmorsy@redhat.com>,
+        Cathy Avery <cavery@redhat.com>, linux-kernel@vger.kernel.org,
+        Jim Mattson <jmattson@google.com>,
+        Liran Alon <liran.alon@oracle.com>
+Subject: [PATCH v4 00/12] KVM: nVMX: Enlightened VMCS for Hyper-V on KVM
+Date:   Wed,  8 Aug 2018 17:55:40 +0200
+Message-Id: <20180808155552.4836-1-vkuznets@redhat.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 08 Aug 2018 15:55:56 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 08 Aug 2018 15:55:56 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'vkuznets@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Changes since v3:
+- Rebase to the current kvm/queue.
+- Add nested state migration support [Paolo Bonzini]
+- Add a selftest [Paolo Bonzini]
 
---lailtggovp2weizg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Patches 7-12 are new in v4.
 
-On Wed, Aug 08, 2018 at 05:31:22PM +0200, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->=20
-> This is a follow-up to the previously rejected series[1] which partially
-> removed the at24_platform_data structure. After further development and
-> taking reviews into account, this series finally removes that struct
-> completely but not without touching many different parts of the code
-> base.
->=20
-> Since I took over maintainership of the at24 driver I've been working
-> towards removing at24_platform_data in favor for device properties.
+Description:
 
-Wooha, nice work. I can't really comment on it but wondered how you want
-to upstream it (after reviews)? Pull request of an immutable branch for
-nvmem-tree sounds best to me. Then I could also pull it in if i2c needs
-it. Probably same situation for arm-soc...
+This is an initial implementation of Enlightened VMCS for nested Hyper-V on
+KVM. Using it helps to spare 1500 cpu cycles for nested vmexit (tight cpuid
+loop in WS2016 with Hyper-V role on KVM: 15200 cycles -> 13700 cycles).
 
+Ladi Prosek (1):
+  KVM: hyperv: define VP assist page helpers
 
---lailtggovp2weizg
-Content-Type: application/pgp-signature; name="signature.asc"
+Vitaly Kuznetsov (11):
+  KVM: VMX: refactor evmcs_sanitize_exec_ctrls()
+  KVM: nVMX: add KVM_CAP_HYPERV_ENLIGHTENED_VMCS capability
+  KVM: nVMX: add enlightened VMCS state
+  KVM: nVMX: implement enlightened VMPTRLD and VMCLEAR
+  KVM: nVMX: optimize prepare_vmcs02{,_full} for Enlightened VMCS case
+  x86/kvm/hyperv: don't clear VP assist pages on init
+  x86/kvm/lapic: preserve gfn_to_hva_cache len on cache reinit
+  x86/kvm/nVMX: allow bare VMXON state migration
+  x86/kvm/nVMX: nested state migration for Enlightened VMCS
+  KVM: selftests: compile against local uapi headers
+  KVM: selftests: add Enlightened VMCS test
 
------BEGIN PGP SIGNATURE-----
+ arch/x86/include/asm/kvm_host.h             |    3 +
+ arch/x86/include/uapi/asm/kvm.h             |    1 +
+ arch/x86/kvm/hyperv.c                       |   31 +-
+ arch/x86/kvm/hyperv.h                       |    4 +
+ arch/x86/kvm/lapic.c                        |   14 +-
+ arch/x86/kvm/lapic.h                        |    2 +-
+ arch/x86/kvm/svm.c                          |    9 +
+ arch/x86/kvm/vmx.c                          |  886 +++++++++++++++++----
+ arch/x86/kvm/x86.c                          |   23 +-
+ include/uapi/linux/kvm.h                    |    1 +
+ tools/testing/selftests/kvm/Makefile        |    3 +-
+ tools/testing/selftests/kvm/evmcs_test.c    |  181 +++++
+ tools/testing/selftests/kvm/include/evmcs.h | 1099 +++++++++++++++++++++++++++
+ tools/testing/selftests/kvm/include/vmx.h   |   28 +
+ tools/testing/selftests/kvm/lib/vmx.c       |   48 +-
+ 15 files changed, 2151 insertions(+), 182 deletions(-)
+ create mode 100644 tools/testing/selftests/kvm/evmcs_test.c
+ create mode 100644 tools/testing/selftests/kvm/include/evmcs.h
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAltrEoEACgkQFA3kzBSg
-KbYbig/+IfP/OzJkJkFg3F1HAr1mBXaWGw4BAZ/b9fFp/VcIEJRZ5B1GZl9uXRts
-TRoRnNM+JcJik9Lm4hdCNbsIB50QyqiChTwv+8C4zeMJ8RpN8KkhfHUpZ3C1rsV3
-bNoCWk5ShWUUSPbiI6R+vEl3dTmfF2p+jybUVbu3dXD14z4fTKEA41yh2GsiKJ4I
-9R1x6T4H9Vz0K1acONTk2ynfy3by8t+avkH5T2BdNtSQHHZ4tGOdRZ/uwV3LY8JK
-/29JoqfvTjpzqldZaeu8L70VOLSNlgqEOHQAKa/1BcPT5jL4zGUvKtL0yxvrP7IL
-YDP8NEs88p7gZmEL6WBPEZoDANygEu3Aka1ibvN0mj+9Vka7756tonRbYw7w1bMM
-O4sqgFeZmx4UL3EfDnnyNe+9C74mY5CoK6XEOe9iRjxPY3HzkEKxDaCmogNLsqQC
-9wGACEF7mJqcVykQ4eo+MZXdJ1svL0CUaPg+YmHBLRSzsmhfHh4aww/aFzvUFYNM
-1mkZYgbAITrGO3qi7xChbSFcGiOxy3zrgM0IrKE448jM8qDj19hwP6O1Dcsu5B6X
-lTq/DDSD+PrscM585jz1ORP3Us/Gr9t/5H+u4dNmshMcHGYyNhxft3KJh39HdqXB
-l3L0WaE24LfQSwBt6sVnZQPSQn/9fpT6K8M/IMiepm2/SR7x/s0=
-=hiI/
------END PGP SIGNATURE-----
+-- 
+2.14.4
 
---lailtggovp2weizg--
