@@ -2,185 +2,247 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7465DC46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 08:48:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A34EC4646D
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 08:49:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FF2B2089F
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 08:48:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FF2B2089F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id A330721536
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 08:49:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="Fu/i9Wex"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A330721536
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727431AbeHHLGm (ORCPT
+        id S1727378AbeHHLHq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 07:06:42 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:35890 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727169AbeHHLGl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 07:06:41 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 940C118A;
-        Wed,  8 Aug 2018 01:47:59 -0700 (PDT)
-Received: from e107155-lin (e107155-lin.emea.arm.com [10.4.12.116])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3C1F73F2EA;
-        Wed,  8 Aug 2018 01:47:57 -0700 (PDT)
-Date:   Wed, 8 Aug 2018 09:47:54 +0100
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     skannan@codeaurora.org
-Cc:     Rob Herring <robh@kernel.org>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Mark Rutland <mark.rutland@arm.com>, georgi.djakov@linaro.org,
-        vincent.guittot@linaro.org, daidavid1@codeaurora.org,
-        bjorn.andersson@linaro.org, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [PATCH v3 1/2] PM / devfreq: Generic CPU frequency to device
- frequency mapping governor
-Message-ID: <20180808084754.GB25416@e107155-lin>
-References: <1533171465-25508-1-git-send-email-skannan@codeaurora.org>
- <20180807164114.GA12587@rob-hp-laptop>
- <496ac47a3c78f37655b60841fba7494c@codeaurora.org>
+        Wed, 8 Aug 2018 07:07:46 -0400
+Received: from mail-db5eur01on0058.outbound.protection.outlook.com ([104.47.2.58]:26880
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727174AbeHHLHq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 07:07:46 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Tg1ik+mnc7ew/akfJS/Vk80T8/y3oyAY9PQKcl4O2uw=;
+ b=Fu/i9WexedmQwfVsykC6beCk21drSd6OTW8Qo2rfv0anSOSnGTtIdEQBAsgdIBXb1+wHPSxhvBhunCQEZQZZlWLt9V/jmpGr91gLw/eI3Ez96mCPXSW0tuVfiKBN1rl0eDL6gneBcwuz+xRc+R+CwchBcgPQ1CGZURbpyIu2eRI=
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.148.143) by
+ AM0PR04MB4961.eurprd04.prod.outlook.com (20.176.215.222) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1017.18; Wed, 8 Aug 2018 08:48:58 +0000
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::24f6:1060:bcdb:e416]) by AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::24f6:1060:bcdb:e416%3]) with mapi id 15.20.1017.019; Wed, 8 Aug 2018
+ 08:48:58 +0000
+From:   Peng Fan <peng.fan@nxp.com>
+To:     Anson Huang <anson.huang@nxp.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh@kernel.org>
+CC:     dl-linux-imx <linux-imx@nxp.com>
+Subject: RE: [PATCH 2/2] clk: imx: imx7d: remove clks_init_on array
+Thread-Topic: [PATCH 2/2] clk: imx: imx7d: remove clks_init_on array
+Thread-Index: AQHULtJlHE29QYC0R0qaJlrb0ys7BaS1it1g
+Date:   Wed, 8 Aug 2018 08:48:57 +0000
+Message-ID: <AM0PR04MB4481FC2BAD71B75D7BE84C0788260@AM0PR04MB4481.eurprd04.prod.outlook.com>
+References: <1533703167-26583-1-git-send-email-Anson.Huang@nxp.com>
+ <1533703167-26583-2-git-send-email-Anson.Huang@nxp.com>
+In-Reply-To: <1533703167-26583-2-git-send-email-Anson.Huang@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=peng.fan@nxp.com; 
+x-originating-ip: [114.217.250.96]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM0PR04MB4961;6:MVLNwRWnzdBlZRfcKQn/09F5vVTG0Ra00g+DQ4UBznYK18kb2M7YRHhFZXzDRHIb7EKbojaZjTQM4AMt9RgRwCsxhBNj1jlvuTmGiUsa3uQGlaFwpPR7c5GCZlqwcV4kVZuFfXW+Lkwh7omAp4eXw8GHADojtHmTehRMgspNgHI3vbi3/ZXViFBLNsfDD3GDMPDEHcxYButwnAL+IaSd0YW0E0hifcd7f5OCisxXx2Co/j+j7BImSpPn/fs2ddSecqrXYcfttHTyjHipT5O4+TgZBclEQ6rKDHrB0kIsKMWjAQshlVtFQU4DntyilTAJIOecVTiw49rQOOgSyys8NosImxqkeI9PNRT2VPZOHbHXPDeip8tDla1iGzuVWu7Vl0gZF4V/F97P8Gdm9f/F9fMnET59+VQhn261BX79D/LcZy2/FSClJPz55oI33Hmjotyfmt3uaPu32DX5TySzYg==;5:+s3P+LmNxwIgZmez/YsLPsNrjaDaPOw4TQMxus6V+I7DyEaSRzQOzTMOEgZWFhjTyaG2ZVsRnMDnrQro29zUzPvUyfJzvUgUC3ia5kEXUm5l9Bm16Vz+9JrwRCWSTqItqjCHemeGmJ19XXQnEFMIBXUVOSfPkilJVtHJwhR+kuk=;7:Jcp6QRgpOU7Ztvn4HT6BDD8Bv9jjJa4R9dTtTQ6U8TcWBcAqrmKMf8f19OrEDl9IwO8GANXyPs/4SIz1otijzqfLhWbne0zA+eylmeNMnxbc0KBXHFf9IiygD9j2fCEq6IthFXvzde1xm6KgkT84WvEYIoxMp8w37sQsjLWu8eDUNtWXDOhK8PRZtG50fz7ZSmB6WT4UGFFkxUs5UToP8sO5drjc+BZEe7UwQ4sRc2L+vL8NKoyemvVUrn/CexVH
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 229383c3-8765-461c-7010-08d5fd0bc7bd
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB4961;
+x-ms-traffictypediagnostic: AM0PR04MB4961:
+x-microsoft-antispam-prvs: <AM0PR04MB4961DFF420A0A14B63725E4188260@AM0PR04MB4961.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(9452136761055)(185117386973197)(258649278758335);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3002001)(3231311)(944501410)(52105095)(10201501046)(6055026)(149027)(150027)(6041310)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(6072148)(201708071742011)(7699016);SRVR:AM0PR04MB4961;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB4961;
+x-forefront-prvs: 07584EDBCD
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(366004)(376002)(346002)(39860400002)(136003)(199004)(189003)(13464003)(7736002)(6246003)(81166006)(8676002)(74316002)(305945005)(478600001)(5250100002)(2900100001)(9686003)(53936002)(55016002)(6436002)(81156014)(97736004)(14454004)(229853002)(2501003)(25786009)(4326008)(26005)(5660300001)(6506007)(102836004)(53546011)(3846002)(99286004)(106356001)(14444005)(68736007)(256004)(86362001)(33656002)(76176011)(8936002)(486006)(2201001)(446003)(11346002)(476003)(2906002)(44832011)(66066001)(7696005)(110136005)(6116002)(105586002)(316002)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4961;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: wMHKygzygtVDAPd/ZS7mnwyUMDuqfqrxhsxJudczXzWsPup8fS4Wgo1AoM+zl4HfJng1kvAnVulU0zCw0GCk4FcFLvVr3JOHHtsTXUgEsOE7cGcApRCJ6rhWRTx73pjfBs3856EQmgUPtmdUCiiuM1GSl4CclCteiYJphSz86bXwXC6o2QJJciZEmIpUfz6SvOcIUfgrayiIswWIhtqGjWFQeU6AkDrclPgMtDbxpw84WzWERHZjcnJIdIyqlLUX+t7561+CNNvVS8EWla7WE9afueImAyDUnOnoNzaIERF/RNyjhp8Ex3YMsRZZBgFQlZIQam/oAqw8jUWbLOSsV6mg4p/A+V3u4lUtMmEggy8=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <496ac47a3c78f37655b60841fba7494c@codeaurora.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 229383c3-8765-461c-7010-08d5fd0bc7bd
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Aug 2018 08:48:57.9248
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4961
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 07, 2018 at 12:37:07PM -0700, skannan@codeaurora.org wrote:
-> On 2018-08-07 09:41, Rob Herring wrote:
-> >On Wed, Aug 01, 2018 at 05:57:41PM -0700, Saravana Kannan wrote:
-> >>Many CPU architectures have caches that can scale independent of the
-> >>CPUs.
-> >>Frequency scaling of the caches is necessary to make sure the cache is
-> >>not
-> >>a performance bottleneck that leads to poor performance and power. The
-> >>same
-> >>idea applies for RAM/DDR.
-> >>
-> >>To achieve this, this patch adds a generic devfreq governor that takes
-> >>the
-> >>current frequency of each CPU frequency domain and then adjusts the
-> >>frequency of the cache (or any devfreq device) based on the frequency of
-> >>the CPUs. It listens to CPU frequency transition notifiers to keep
-> >>itself
-> >>up to date on the current CPU frequency.
-> >>
-> >>To decide the frequency of the device, the governor does one of the
-> >>following:
-> >>
-> >>* Uses a CPU frequency to device frequency mapping table
-> >>  - Either one mapping table used for all CPU freq policies (typically
-> >>used
-> >>    for system with homogeneous cores/clusters that have the same OPPs).
-> >>  - One mapping table per CPU freq policy (typically used for ASMP
-> >>systems
-> >>    with heterogeneous CPUs with different OPPs)
-> >>
-> >>OR
-> >>
-> >>* Scales the device frequency in proportion to the CPU frequency. So, if
-> >>  the CPUs are running at their max frequency, the device runs at its
-> >>max
-> >>  frequency.  If the CPUs are running at their min frequency, the device
-> >>  runs at its min frequency. And interpolated for frequencies in
-> >>between.
-> >>
-> >>Signed-off-by: Saravana Kannan <skannan@codeaurora.org>
-> >>---
-> >> .../bindings/devfreq/devfreq-cpufreq-map.txt       |  53 ++
-> >
-> >Bindings should be a separate patch.
-> >
-> >> drivers/devfreq/Kconfig                            |   8 +
-> >> drivers/devfreq/Makefile                           |   1 +
-> >> drivers/devfreq/governor_cpufreq_map.c             | 583
-> >>+++++++++++++++++++++
-> >> 4 files changed, 645 insertions(+)
-> >> create mode 100644
-> >>Documentation/devicetree/bindings/devfreq/devfreq-cpufreq-map.txt
-> >> create mode 100644 drivers/devfreq/governor_cpufreq_map.c
-> >>
-> >>diff --git
-> >>a/Documentation/devicetree/bindings/devfreq/devfreq-cpufreq-map.txt
-> >>b/Documentation/devicetree/bindings/devfreq/devfreq-cpufreq-map.txt
-> >>new file mode 100644
-> >>index 0000000..982a30b
-> >>--- /dev/null
-> >>+++ b/Documentation/devicetree/bindings/devfreq/devfreq-cpufreq-map.txt
-> >>@@ -0,0 +1,53 @@
-> >>+Devfreq CPUfreq governor
-> >>+
-> >>+devfreq-cpufreq-map is a parent device that contains one or more child
-> >>devices.
-> >>+Each child device provides CPU frequency to device frequency mapping
-> >>for a
-> >>+specific device. Examples of devices that could use this are: DDR,
-> >>cache and
-> >>+CCI.
-> >>+
-> >>+Parent device name shall be "devfreq-cpufreq-map".
-> >>+
-> >>+Required child device properties:
-> >>+- cpu-to-dev-map, or cpu-to-dev-map-<X>:
-> >>+			A list of tuples where each tuple consists of a
-> >>+			CPU frequency (KHz) and the corresponding device
-> >>+			frequency. CPU frequencies not listed in the table
-> >>+			will use the device frequency that corresponds to the
-> >>+			next rounded up CPU frequency.
-> >>+			Use "cpu-to-dev-map" if all CPUs in the system should
-> >>+			share same mapping.
-> >>+			Use cpu-to-dev-map-<cpuid> to describe different
-> >>+			mappings for different CPUs. The property should be
-> >>+			listed only for the first CPU if multiple CPUs are
-> >>+			synchronous.
-> >>+- target-dev:		Phandle to device that this mapping applies to.
-> >>+
-> >>+Example:
-> >>+	devfreq-cpufreq-map {
-> >>+		cpubw-cpufreq {
-> >>+			target-dev = <&cpubw>;
-> >>+			cpu-to-dev-map =
-> >>+				<  300000  1144000 >,
-> >>+				<  422400  2288000 >,
-> >>+				<  652800  3051000 >,
-> >>+				<  883200  5996000 >,
-> >>+				< 1190400  8056000 >,
-> >>+				< 1497600 10101000 >,
-> >>+				< 1728000 12145000 >,
-> >>+				< 2649600 16250000 >;
-> >
-> >Now we have frequencies listed in multiple places, the OPP tables and
-> >here? Perhaps it is grouping OPPs that should be done.
-> 
-> This doesn't list all OPPs (it can if necessary). This is listing the
-> minimum frequency needed to give good performance/power for a
-> device/product.
->
-
-Shouldn't the "status" property be used to disable OPPs you don't need
-on a particular platform ?
-
-Duplicating values is highly prone to errors and should be avoided.
-
-> AFAIK, OPP grouping isn't something that's supported in OPP framework or in
-> DT. Is there something specific you had in mind? Also, I'd like for this to
-> work even with devices that don't have OPPs listed in DT.
->
-Also what's the solution you have for platforms with new *QCom FW Cpufreq* ?
-IIUC the frequency is obtained from the firmware. TBH this should ideally
-be handled in firmware if cpufreq is also handled by the firmware. I guess
-this platform doesn't have that ?
-
---
-Regards,
-Sudeep
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQW5zb24gSHVhbmcNCj4g
+U2VudDogMjAxOMTqONTCOMjVIDEyOjM5DQo+IFRvOiBzaGF3bmd1b0BrZXJuZWwub3JnOyBzLmhh
+dWVyQHBlbmd1dHJvbml4LmRlOyBrZXJuZWxAcGVuZ3V0cm9uaXguZGU7DQo+IEZhYmlvIEVzdGV2
+YW0gPGZhYmlvLmVzdGV2YW1AbnhwLmNvbT47IG10dXJxdWV0dGVAYmF5bGlicmUuY29tOw0KPiBz
+Ym95ZEBrZXJuZWwub3JnOyBsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmc7DQo+
+IGxpbnV4LWNsa0B2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcN
+Cj4gQ2M6IGRsLWxpbnV4LWlteCA8bGludXgtaW14QG54cC5jb20+DQo+IFN1YmplY3Q6IFtQQVRD
+SCAyLzJdIGNsazogaW14OiBpbXg3ZDogcmVtb3ZlIGNsa3NfaW5pdF9vbiBhcnJheQ0KPiANCj4g
+Q2xvY2sgZnJhbWV3b3JrIHdpbGwgZW5hYmxlIHRob3NlIGNsb2NrcyByZWdpc3RlcmVkIHdpdGgg
+Q0xLX0lTX0NSSVRJQ0FMIGZsYWcsDQo+IHNvIG5vIG5lZWQgdG8gaGF2ZSBjbGtzX2luaXRfb24g
+YXJyYXkgZHVyaW5nIGNsb2NrIGluaXRpYWxpemF0aW9uIG5vdy4NCg0KV2lsbCBpdCBiZSBtb3Jl
+IGZsZXhpYmxlIHRvIHBhcnNlIGR0cyBzYXlpbmcgImNyaXRpY2FsLWNsb2NrcyA9IDx4eHg+IiBv
+ciAiaW5pdC1vbi1hcnJhcnk9PHh4eD4iDQphbmQgZW5hYmxlIHRob3NlIGNsb2Nrcz8NCg0KUmVn
+YXJkcywNClBlbmcuDQoNCj4gDQo+IFNpZ25lZC1vZmYtYnk6IEFuc29uIEh1YW5nIDxBbnNvbi5I
+dWFuZ0BueHAuY29tPg0KPiAtLS0NCj4gIGRyaXZlcnMvY2xrL2lteC9jbGstaW14N2QuYyB8IDI3
+ICsrKysrKysrLS0tLS0tLS0tLS0tLS0tLS0tLQ0KPiAgZHJpdmVycy9jbGsvaW14L2Nsay5oICAg
+ICAgIHwgIDcgKysrKysrKw0KPiAgMiBmaWxlcyBjaGFuZ2VkLCAxNSBpbnNlcnRpb25zKCspLCAx
+OSBkZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2Nsay9pbXgvY2xrLWlt
+eDdkLmMgYi9kcml2ZXJzL2Nsay9pbXgvY2xrLWlteDdkLmMgaW5kZXgNCj4gYzQ1MThkNy4uMDc2
+NDYwYiAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9jbGsvaW14L2Nsay1pbXg3ZC5jDQo+ICsrKyBi
+L2RyaXZlcnMvY2xrL2lteC9jbGstaW14N2QuYw0KPiBAQCAtMzc5LDEzICszNzksNiBAQCBzdGF0
+aWMgY29uc3QgY2hhciAqcGxsX2VuZXRfYnlwYXNzX3NlbFtdID0NCj4geyAicGxsX2VuZXRfbWFp
+biIsICJwbGxfZW5ldF9tYWluX3NyYyAgc3RhdGljIGNvbnN0IGNoYXINCj4gKnBsbF9hdWRpb19i
+eXBhc3Nfc2VsW10gPSB7ICJwbGxfYXVkaW9fbWFpbiIsICJwbGxfYXVkaW9fbWFpbl9zcmMiLCB9
+OyAgc3RhdGljDQo+IGNvbnN0IGNoYXIgKnBsbF92aWRlb19ieXBhc3Nfc2VsW10gPSB7ICJwbGxf
+dmlkZW9fbWFpbiIsICJwbGxfdmlkZW9fbWFpbl9zcmMiLCB9Ow0KPiANCj4gLXN0YXRpYyBpbnQg
+Y29uc3QgY2xrc19pbml0X29uW10gX19pbml0Y29uc3QgPSB7DQo+IC0JSU1YN0RfQVJNX0E3X1JP
+T1RfQ0xLLCBJTVg3RF9NQUlOX0FYSV9ST09UX0NMSywNCj4gLQlJTVg3RF9QTExfU1lTX01BSU5f
+NDgwTV9DTEssIElNWDdEX0lQR19ST09UX0NMSywNCj4gLQlJTVg3RF9EUkFNX1BIWU1fUk9PVF9D
+TEssIElNWDdEX0RSQU1fUk9PVF9DTEssDQo+IC0JSU1YN0RfRFJBTV9QSFlNX0FMVF9ST09UX0NM
+SywgSU1YN0RfRFJBTV9BTFRfUk9PVF9DTEssDQo+IC19Ow0KPiAtDQo+ICBzdGF0aWMgc3RydWN0
+IGNsa19vbmVjZWxsX2RhdGEgY2xrX2RhdGE7DQo+IA0KPiAgc3RhdGljIHN0cnVjdCBjbGsgKiog
+Y29uc3QgdWFydF9jbGtzW10gX19pbml0Y29uc3QgPSB7IEBAIC00MDMsNyArMzk2LDYgQEANCj4g
+c3RhdGljIHZvaWQgX19pbml0IGlteDdkX2Nsb2Nrc19pbml0KHN0cnVjdCBkZXZpY2Vfbm9kZSAq
+Y2NtX25vZGUpICB7DQo+ICAJc3RydWN0IGRldmljZV9ub2RlICpucDsNCj4gIAl2b2lkIF9faW9t
+ZW0gKmJhc2U7DQo+IC0JaW50IGk7DQo+IA0KPiAgCWNsa3NbSU1YN0RfQ0xLX0RVTU1ZXSA9IGlt
+eF9jbGtfZml4ZWQoImR1bW15IiwgMCk7DQo+ICAJY2xrc1tJTVg3RF9PU0NfMjRNX0NMS10gPSBv
+Zl9jbGtfZ2V0X2J5X25hbWUoY2NtX25vZGUsICJvc2MiKTsgQEANCj4gLTQ2Niw3ICs0NTgsNyBA
+QCBzdGF0aWMgdm9pZCBfX2luaXQgaW14N2RfY2xvY2tzX2luaXQoc3RydWN0IGRldmljZV9ub2Rl
+DQo+ICpjY21fbm9kZSkNCj4gIAljbGtzW0lNWDdEX1BMTF9TWVNfTUFJTl8xMjBNXSA9DQo+IGlt
+eF9jbGtfZml4ZWRfZmFjdG9yKCJwbGxfc3lzX21haW5fMTIwbSIsICJwbGxfc3lzX21haW5fY2xr
+IiwgMSwgNCk7DQo+ICAJY2xrc1tJTVg3RF9QTExfRFJBTV9NQUlOXzUzM01dID0NCj4gaW14X2Ns
+a19maXhlZF9mYWN0b3IoInBsbF9kcmFtXzUzM20iLCAicGxsX2RyYW1fbWFpbl9jbGsiLCAxLCAy
+KTsNCj4gDQo+IC0JY2xrc1tJTVg3RF9QTExfU1lTX01BSU5fNDgwTV9DTEtdID0NCj4gaW14X2Ns
+a19nYXRlX2RpcygicGxsX3N5c19tYWluXzQ4MG1fY2xrIiwgInBsbF9zeXNfbWFpbl80ODBtIiwg
+YmFzZSArIDB4YjAsDQo+IDQpOw0KPiArCWNsa3NbSU1YN0RfUExMX1NZU19NQUlOXzQ4ME1fQ0xL
+XSA9DQo+ICtpbXhfY2xrX2dhdGVfZGlzX2ZsYWdzKCJwbGxfc3lzX21haW5fNDgwbV9jbGsiLCAi
+cGxsX3N5c19tYWluXzQ4MG0iLA0KPiArYmFzZSArIDB4YjAsIDQsIENMS19JU19DUklUSUNBTCk7
+DQo+ICAJY2xrc1tJTVg3RF9QTExfU1lTX01BSU5fMjQwTV9DTEtdID0NCj4gaW14X2Nsa19nYXRl
+X2RpcygicGxsX3N5c19tYWluXzI0MG1fY2xrIiwgInBsbF9zeXNfbWFpbl8yNDBtIiwgYmFzZSAr
+IDB4YjAsDQo+IDUpOw0KPiAgCWNsa3NbSU1YN0RfUExMX1NZU19NQUlOXzEyME1fQ0xLXSA9DQo+
+IGlteF9jbGtfZ2F0ZV9kaXMoInBsbF9zeXNfbWFpbl8xMjBtX2NsayIsICJwbGxfc3lzX21haW5f
+MTIwbSIsIGJhc2UgKyAweGIwLA0KPiA2KTsNCj4gIAljbGtzW0lNWDdEX1BMTF9EUkFNX01BSU5f
+NTMzTV9DTEtdID0NCj4gaW14X2Nsa19nYXRlKCJwbGxfZHJhbV81MzNtX2NsayIsICJwbGxfZHJh
+bV81MzNtIiwgYmFzZSArIDB4NzAsIDEyKTsgQEANCj4gLTcxOSw3ICs3MTEsNyBAQCBzdGF0aWMg
+dm9pZCBfX2luaXQgaW14N2RfY2xvY2tzX2luaXQoc3RydWN0IGRldmljZV9ub2RlDQo+ICpjY21f
+bm9kZSkNCj4gIAljbGtzW0lNWDdEX0VORVRfQVhJX1JPT1RfRElWXSA9DQo+IGlteF9jbGtfZGl2
+aWRlcjIoImVuZXRfYXhpX3Bvc3RfZGl2IiwgImVuZXRfYXhpX3ByZV9kaXYiLCBiYXNlICsgMHg4
+OTAwLCAwLCA2KTsNCj4gIAljbGtzW0lNWDdEX05BTkRfVVNESENfQlVTX1JPT1RfQ0xLXSA9DQo+
+IGlteF9jbGtfZGl2aWRlcjIoIm5hbmRfdXNkaGNfcm9vdF9jbGsiLCAibmFuZF91c2RoY19wcmVf
+ZGl2IiwgYmFzZSArDQo+IDB4ODk4MCwgMCwgNik7DQo+ICAJY2xrc1tJTVg3RF9BSEJfQ0hBTk5F
+TF9ST09UX0RJVl0gPQ0KPiBpbXhfY2xrX2RpdmlkZXIyKCJhaGJfcm9vdF9jbGsiLCAiYWhiX3By
+ZV9kaXYiLCBiYXNlICsgMHg5MDAwLCAwLCA2KTsNCj4gLQljbGtzW0lNWDdEX0lQR19ST09UX0NM
+S10gPSBpbXhfY2xrX2RpdmlkZXIyKCJpcGdfcm9vdF9jbGsiLA0KPiAiYWhiX3Jvb3RfY2xrIiwg
+YmFzZSArIDB4OTA4MCwgMCwgMik7DQo+ICsJY2xrc1tJTVg3RF9JUEdfUk9PVF9DTEtdID0gaW14
+X2Nsa19kaXZpZGVyX2ZsYWdzKCJpcGdfcm9vdF9jbGsiLA0KPiArImFoYl9yb290X2NsayIsIGJh
+c2UgKyAweDkwODAsIDAsIDIsIENMS19JU19DUklUSUNBTCB8DQo+ICtDTEtfT1BTX1BBUkVOVF9F
+TkFCTEUgfCBDTEtfU0VUX1JBVEVfUEFSRU5UKTsNCj4gIAljbGtzW0lNWDdEX0RSQU1fUk9PVF9E
+SVZdID0gaW14X2Nsa19kaXZpZGVyMigiZHJhbV9wb3N0X2RpdiIsDQo+ICJkcmFtX2NnIiwgYmFz
+ZSArIDB4OTg4MCwgMCwgMyk7DQo+ICAJY2xrc1tJTVg3RF9EUkFNX1BIWU1fQUxUX1JPT1RfRElW
+XSA9DQo+IGlteF9jbGtfZGl2aWRlcjIoImRyYW1fcGh5bV9hbHRfcG9zdF9kaXYiLCAiZHJhbV9w
+aHltX2FsdF9wcmVfZGl2IiwgYmFzZQ0KPiArIDB4YTAwMCwgMCwgMyk7DQo+ICAJY2xrc1tJTVg3
+RF9EUkFNX0FMVF9ST09UX0RJVl0gPQ0KPiBpbXhfY2xrX2RpdmlkZXIyKCJkcmFtX2FsdF9wb3N0
+X2RpdiIsICJkcmFtX2FsdF9wcmVfZGl2IiwgYmFzZSArIDB4YTA4MCwgMCwNCj4gMyk7IEBAIC03
+ODMsMTcgKzc3NSwxNyBAQCBzdGF0aWMgdm9pZCBfX2luaXQgaW14N2RfY2xvY2tzX2luaXQoc3Ry
+dWN0DQo+IGRldmljZV9ub2RlICpjY21fbm9kZSkNCj4gIAljbGtzW0lNWDdEX0NMS08xX1JPT1Rf
+RElWXSA9IGlteF9jbGtfZGl2aWRlcjIoImNsa28xX3Bvc3RfZGl2IiwNCj4gImNsa28xX3ByZV9k
+aXYiLCBiYXNlICsgMHhiZDgwLCAwLCA2KTsNCj4gIAljbGtzW0lNWDdEX0NMS08yX1JPT1RfRElW
+XSA9IGlteF9jbGtfZGl2aWRlcjIoImNsa28yX3Bvc3RfZGl2IiwNCj4gImNsa28yX3ByZV9kaXYi
+LCBiYXNlICsgMHhiZTAwLCAwLCA2KTsNCj4gDQo+IC0JY2xrc1tJTVg3RF9BUk1fQTdfUk9PVF9D
+TEtdID0gaW14X2Nsa19nYXRlNCgiYXJtX2E3X3Jvb3RfY2xrIiwNCj4gImFybV9hN19kaXYiLCBi
+YXNlICsgMHg0MDAwLCAwKTsNCj4gKwljbGtzW0lNWDdEX0FSTV9BN19ST09UX0NMS10gPQ0KPiBp
+bXhfY2xrX2dhdGUyX2ZsYWdzKCJhcm1fYTdfcm9vdF9jbGsiLA0KPiArImFybV9hN19kaXYiLCBi
+YXNlICsgMHg0MDAwLCAwLCBDTEtfSVNfQ1JJVElDQUwgfA0KPiArQ0xLX09QU19QQVJFTlRfRU5B
+QkxFKTsNCj4gIAljbGtzW0lNWDdEX0FSTV9NNF9ST09UX0NMS10gPSBpbXhfY2xrX2dhdGU0KCJh
+cm1fbTRfcm9vdF9jbGsiLA0KPiAiYXJtX200X2RpdiIsIGJhc2UgKyAweDQwMTAsIDApOw0KPiAt
+CWNsa3NbSU1YN0RfTUFJTl9BWElfUk9PVF9DTEtdID0gaW14X2Nsa19nYXRlNCgibWFpbl9heGlf
+cm9vdF9jbGsiLA0KPiAiYXhpX3Bvc3RfZGl2IiwgYmFzZSArIDB4NDA0MCwgMCk7DQo+ICsJY2xr
+c1tJTVg3RF9NQUlOX0FYSV9ST09UX0NMS10gPQ0KPiAraW14X2Nsa19nYXRlMl9mbGFncygibWFp
+bl9heGlfcm9vdF9jbGsiLCAiYXhpX3Bvc3RfZGl2IiwgYmFzZSArIDB4NDA0MCwNCj4gKzAsIENM
+S19JU19DUklUSUNBTCB8IENMS19PUFNfUEFSRU5UX0VOQUJMRSk7DQo+ICAJY2xrc1tJTVg3RF9E
+SVNQX0FYSV9ST09UX0NMS10gPSBpbXhfY2xrX2dhdGU0KCJkaXNwX2F4aV9yb290X2NsayIsDQo+
+ICJkaXNwX2F4aV9wb3N0X2RpdiIsIGJhc2UgKyAweDQwNTAsIDApOw0KPiAgCWNsa3NbSU1YN0Rf
+RU5FVF9BWElfUk9PVF9DTEtdID0gaW14X2Nsa19nYXRlNCgiZW5ldF9heGlfcm9vdF9jbGsiLA0K
+PiAiZW5ldF9heGlfcG9zdF9kaXYiLCBiYXNlICsgMHg0MDYwLCAwKTsNCj4gIAljbGtzW0lNWDdE
+X09DUkFNX0NMS10gPSBpbXhfY2xrX2dhdGU0KCJvY3JhbV9jbGsiLA0KPiAibWFpbl9heGlfcm9v
+dF9jbGsiLCBiYXNlICsgMHg0MTEwLCAwKTsNCj4gIAljbGtzW0lNWDdEX09DUkFNX1NfQ0xLXSA9
+IGlteF9jbGtfZ2F0ZTQoIm9jcmFtX3NfY2xrIiwNCj4gImFoYl9yb290X2NsayIsIGJhc2UgKyAw
+eDQxMjAsIDApOw0KPiAtCWNsa3NbSU1YN0RfRFJBTV9ST09UX0NMS10gPSBpbXhfY2xrX2dhdGU0
+KCJkcmFtX3Jvb3RfY2xrIiwNCj4gImRyYW1fcG9zdF9kaXYiLCBiYXNlICsgMHg0MTMwLCAwKTsN
+Cj4gLQljbGtzW0lNWDdEX0RSQU1fUEhZTV9ST09UX0NMS10gPQ0KPiBpbXhfY2xrX2dhdGU0KCJk
+cmFtX3BoeW1fcm9vdF9jbGsiLCAiZHJhbV9waHltX2NnIiwgYmFzZSArIDB4NDEzMCwgMCk7DQo+
+IC0JY2xrc1tJTVg3RF9EUkFNX1BIWU1fQUxUX1JPT1RfQ0xLXSA9DQo+IGlteF9jbGtfZ2F0ZTQo
+ImRyYW1fcGh5bV9hbHRfcm9vdF9jbGsiLCAiZHJhbV9waHltX2FsdF9wb3N0X2RpdiIsIGJhc2Ug
+Kw0KPiAweDQxMzAsIDApOw0KPiAtCWNsa3NbSU1YN0RfRFJBTV9BTFRfUk9PVF9DTEtdID0gaW14
+X2Nsa19nYXRlNCgiZHJhbV9hbHRfcm9vdF9jbGsiLA0KPiAiZHJhbV9hbHRfcG9zdF9kaXYiLCBi
+YXNlICsgMHg0MTMwLCAwKTsNCj4gKwljbGtzW0lNWDdEX0RSQU1fUk9PVF9DTEtdID0gaW14X2Ns
+a19nYXRlMl9mbGFncygiZHJhbV9yb290X2NsayIsDQo+ICJkcmFtX3Bvc3RfZGl2IiwgYmFzZSAr
+IDB4NDEzMCwgMCwgQ0xLX0lTX0NSSVRJQ0FMIHwNCj4gQ0xLX09QU19QQVJFTlRfRU5BQkxFKTsN
+Cj4gKwljbGtzW0lNWDdEX0RSQU1fUEhZTV9ST09UX0NMS10gPQ0KPiBpbXhfY2xrX2dhdGUyX2Zs
+YWdzKCJkcmFtX3BoeW1fcm9vdF9jbGsiLCAiZHJhbV9waHltX2NnIiwgYmFzZSArIDB4NDEzMCwN
+Cj4gMCwgQ0xLX0lTX0NSSVRJQ0FMIHwgQ0xLX09QU19QQVJFTlRfRU5BQkxFKTsNCj4gKwljbGtz
+W0lNWDdEX0RSQU1fUEhZTV9BTFRfUk9PVF9DTEtdID0NCj4gaW14X2Nsa19nYXRlMl9mbGFncygi
+ZHJhbV9waHltX2FsdF9yb290X2NsayIsICJkcmFtX3BoeW1fYWx0X3Bvc3RfZGl2IiwNCj4gYmFz
+ZSArIDB4NDEzMCwgMCwgQ0xLX0lTX0NSSVRJQ0FMIHwgQ0xLX09QU19QQVJFTlRfRU5BQkxFKTsN
+Cj4gKwljbGtzW0lNWDdEX0RSQU1fQUxUX1JPT1RfQ0xLXSA9DQo+ICtpbXhfY2xrX2dhdGUyX2Zs
+YWdzKCJkcmFtX2FsdF9yb290X2NsayIsICJkcmFtX2FsdF9wb3N0X2RpdiIsIGJhc2UgKw0KPiAr
+MHg0MTMwLCAwLCBDTEtfSVNfQ1JJVElDQUwgfCBDTEtfT1BTX1BBUkVOVF9FTkFCTEUpOw0KPiAg
+CWNsa3NbSU1YN0RfT0NPVFBfQ0xLXSA9IGlteF9jbGtfZ2F0ZTQoIm9jb3RwX2NsayIsICJpcGdf
+cm9vdF9jbGsiLA0KPiBiYXNlICsgMHg0MjMwLCAwKTsNCj4gIAljbGtzW0lNWDdEX1NOVlNfQ0xL
+XSA9IGlteF9jbGtfZ2F0ZTQoInNudnNfY2xrIiwgImlwZ19yb290X2NsayIsIGJhc2UgKw0KPiAw
+eDQyNTAsIDApOw0KPiAgCWNsa3NbSU1YN0RfTVVfUk9PVF9DTEtdID0gaW14X2Nsa19nYXRlNCgi
+bXVfcm9vdF9jbGsiLA0KPiAiaXBnX3Jvb3RfY2xrIiwgYmFzZSArIDB4NDI3MCwgMCk7IEBAIC04
+ODIsOSArODc0LDYgQEAgc3RhdGljIHZvaWQgX19pbml0DQo+IGlteDdkX2Nsb2Nrc19pbml0KHN0
+cnVjdCBkZXZpY2Vfbm9kZSAqY2NtX25vZGUpDQo+ICAJY2xrX2RhdGEuY2xrX251bSA9IEFSUkFZ
+X1NJWkUoY2xrcyk7DQo+ICAJb2ZfY2xrX2FkZF9wcm92aWRlcihucCwgb2ZfY2xrX3NyY19vbmVj
+ZWxsX2dldCwgJmNsa19kYXRhKTsNCj4gDQo+IC0JZm9yIChpID0gMDsgaSA8IEFSUkFZX1NJWkUo
+Y2xrc19pbml0X29uKTsgaSsrKQ0KPiAtCQljbGtfcHJlcGFyZV9lbmFibGUoY2xrc1tjbGtzX2lu
+aXRfb25baV1dKTsNCj4gLQ0KPiAgCWNsa19zZXRfcGFyZW50KGNsa3NbSU1YN0RfUExMX0FSTV9N
+QUlOX0JZUEFTU10sDQo+IGNsa3NbSU1YN0RfUExMX0FSTV9NQUlOXSk7DQo+ICAJY2xrX3NldF9w
+YXJlbnQoY2xrc1tJTVg3RF9QTExfRFJBTV9NQUlOX0JZUEFTU10sDQo+IGNsa3NbSU1YN0RfUExM
+X0RSQU1fTUFJTl0pOw0KPiAgCWNsa19zZXRfcGFyZW50KGNsa3NbSU1YN0RfUExMX1NZU19NQUlO
+X0JZUEFTU10sDQo+IGNsa3NbSU1YN0RfUExMX1NZU19NQUlOXSk7IGRpZmYgLS1naXQgYS9kcml2
+ZXJzL2Nsay9pbXgvY2xrLmgNCj4gYi9kcml2ZXJzL2Nsay9pbXgvY2xrLmggaW5kZXggODA3NmVj
+MC4uNTg5NWUyMjMgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvY2xrL2lteC9jbGsuaA0KPiArKysg
+Yi9kcml2ZXJzL2Nsay9pbXgvY2xrLmgNCj4gQEAgLTEzNyw2ICsxMzcsMTMgQEAgc3RhdGljIGlu
+bGluZSBzdHJ1Y3QgY2xrICppbXhfY2xrX2dhdGVfZGlzKGNvbnN0IGNoYXINCj4gKm5hbWUsIGNv
+bnN0IGNoYXIgKnBhcmVudCwNCj4gIAkJCXNoaWZ0LCBDTEtfR0FURV9TRVRfVE9fRElTQUJMRSwg
+JmlteF9jY21fbG9jayk7ICB9DQo+IA0KPiArc3RhdGljIGlubGluZSBzdHJ1Y3QgY2xrICppbXhf
+Y2xrX2dhdGVfZGlzX2ZsYWdzKGNvbnN0IGNoYXIgKm5hbWUsIGNvbnN0IGNoYXINCj4gKnBhcmVu
+dCwNCj4gKwkJdm9pZCBfX2lvbWVtICpyZWcsIHU4IHNoaWZ0LCB1bnNpZ25lZCBsb25nIGZsYWdz
+KSB7DQo+ICsJcmV0dXJuIGNsa19yZWdpc3Rlcl9nYXRlKE5VTEwsIG5hbWUsIHBhcmVudCwgZmxh
+Z3MgfA0KPiBDTEtfU0VUX1JBVEVfUEFSRU5ULCByZWcsDQo+ICsJCQlzaGlmdCwgQ0xLX0dBVEVf
+U0VUX1RPX0RJU0FCTEUsICZpbXhfY2NtX2xvY2spOyB9DQo+ICsNCj4gIHN0YXRpYyBpbmxpbmUg
+c3RydWN0IGNsayAqaW14X2Nsa19nYXRlMihjb25zdCBjaGFyICpuYW1lLCBjb25zdCBjaGFyICpw
+YXJlbnQsDQo+ICAJCXZvaWQgX19pb21lbSAqcmVnLCB1OCBzaGlmdCkNCj4gIHsNCj4gLS0NCj4g
+Mi43LjQNCg0K
