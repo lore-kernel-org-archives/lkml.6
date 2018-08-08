@@ -1,122 +1,179 @@
 Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.4 required=3.0 tests=DATE_IN_FUTURE_03_06,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF920C46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 01:38:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16AD9C46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 01:40:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4983621566
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 01:38:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4983621566
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id A46DB216FD
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 01:40:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=embeddedgreg-com.20150623.gappssmtp.com header.i=@embeddedgreg-com.20150623.gappssmtp.com header.b="xg808RmX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A46DB216FD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedgreg.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726975AbeHHDzt (ORCPT
+        id S1726954AbeHHD6C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 23:55:49 -0400
-Received: from mga07.intel.com ([134.134.136.100]:46499 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726245AbeHHDzs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 23:55:48 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Aug 2018 18:38:38 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,456,1526367600"; 
-   d="scan'208";a="74635618"
-Received: from unknown (HELO [10.239.13.128]) ([10.239.13.128])
-  by fmsmga002.fm.intel.com with ESMTP; 07 Aug 2018 18:38:36 -0700
-Subject: Re: [PATCH V2 2/4] mm: introduce memory type MEMORY_DEVICE_DEV_DAX
-To:     Jan Kara <jack@suse.cz>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, pbonzini@redhat.com,
-        dan.j.williams@intel.com, hch@lst.de, yu.c.zhang@intel.com,
-        linux-mm@kvack.org, rkrcmar@redhat.com, yi.z.zhang@intel.com
-References: <cover.1531241281.git.yi.z.zhang@linux.intel.com>
- <7e20d862f96662e1a7736dbb747a71949933dcd4.1531241281.git.yi.z.zhang@linux.intel.com>
- <20180807091120.ybne44o2fy2mxcch@quack2.suse.cz>
-From:   "Zhang,Yi" <yi.z.zhang@linux.intel.com>
-Message-ID: <60a42f73-1772-24eb-26f0-efd892b0487c@linux.intel.com>
-Date:   Wed, 8 Aug 2018 17:22:42 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
-MIME-Version: 1.0
-In-Reply-To: <20180807091120.ybne44o2fy2mxcch@quack2.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+        Tue, 7 Aug 2018 23:58:02 -0400
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:46162 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726245AbeHHD6C (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 23:58:02 -0400
+Received: by mail-qk0-f193.google.com with SMTP id 191-v6so409761qki.13
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 18:40:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=embeddedgreg-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=tm32q43bY8KqckBiq1p3WTwfcZm/33l5S7Iop15qQ54=;
+        b=xg808RmXI9NJadaqDxdlZuWJ3D8uzgFmvW6BYaA4gU2BN1J05T51RpKLizYlpj9PsW
+         RG7vVpT/b3olb2AcrjDQB8Iks0YEx069qiGdAgiDdOTWNivutDcPNIoTPuhIt8l/DCvI
+         PeKR+G5r82xWiUU3znpKQbC69N+fP4NwFIp2w60ockvexe0/xPPcIqIDSFzJXgH3jNQR
+         YG/2Sz+G9eCY2BYSfcFfxUk4DmV8L9IW0iy/AzpctZao4rsj3XIH02z+dCkrKhfqGYeE
+         nI3McMnSaR8Bsq6M8bwM2TQHfO5wafzOfTUlj7McOcMUeRwNi5hbh7lL5IlP3nVoJwyF
+         z0Fw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=tm32q43bY8KqckBiq1p3WTwfcZm/33l5S7Iop15qQ54=;
+        b=XoKP4YWz/WRIanhJENFeOIeZc0uCzw3FMnDd++fCWYMbiVjHg+MMkTImKQKVKZDFjN
+         y7O2WpyohYIKWP5ctxEQEaVM2f+ZN7z1fC9cJB8cNpwy+NpfdOmwgCZSkPwAEFdI1VD0
+         ZIci7OhCeN21ggEuyNPVOXByRp541HNzBPpz95/EiMQGX80r6W6FRR6jn6IQyygYBjdL
+         QcWC3DWUH1Skv8obToo3vZoYoJAzzrw2eC6NNEeQQxoeldVWr8PIBHKY2WrXbr3M7/IX
+         psIVV7y06Vu4jiUrKS3TfXyggeSt5EbnsWR5FXtqmUh2nd3cb+SeM01m6jouwsBN2Xn6
+         BBlw==
+X-Gm-Message-State: AOUpUlG61AS4hmC5wUOrryUiO6BO5Qh3z38qW6T5x60CVmVhP8qk/uFt
+        0mxjlHtn3ztKXiplIiLgRlVNzw==
+X-Google-Smtp-Source: AA+uWPwIv2zKBgdh8WreVuqMTCmP25gNjBBiZNQTx/UW+kzmGQKkueAj7aMOThnaI7qqKXYqsb+ADw==
+X-Received: by 2002:a37:21e6:: with SMTP id f99-v6mr726351qki.206.1533692451390;
+        Tue, 07 Aug 2018 18:40:51 -0700 (PDT)
+Received: from yavin4.lan ([97.107.227.14])
+        by smtp.gmail.com with ESMTPSA id l18-v6sm1360056qtp.56.2018.08.07.18.40.49
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 07 Aug 2018 18:40:50 -0700 (PDT)
+From:   Greg Gallagher <greg@embeddedgreg.com>
+To:     greg@embeddedgreg.com
+Cc:     Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2] staging/bcm2835-audio: Fix alignment of function arguments - Style
+Date:   Tue,  7 Aug 2018 21:40:47 -0400
+Message-Id: <20180808014048.18456-1-greg@embeddedgreg.com>
+X-Mailer: git-send-email 2.14.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Fix warnings generated by checkpatch.pl for alignment should match open
+parenthesis.  This is a coding style change only.
 
+Signed-off-by: Greg Gallagher <greg@embeddedgreg.com>
+---
+Changes in v2:
+    - Clean up all the alignment warnings in the file
+---
+ .../staging/vc04_services/bcm2835-audio/bcm2835-ctl.c  | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-On 2018年08月07日 17:11, Jan Kara wrote:
-> On Wed 11-07-18 01:01:59, Zhang Yi wrote:
->> Currently, NVDIMM pages will be marked 'PageReserved'. However, unlike
->> other reserved PFNs, pages on NVDIMM shall still behave like normal ones
->> in many cases, i.e. when used as backend memory of KVM guest. This patch
->> introduces a new memory type, MEMORY_DEVICE_DEV_DAX. And set this flag
->> while dax driver hotplug the device memory.
->>
->> Signed-off-by: Zhang Yi <yi.z.zhang@linux.intel.com>
->> Signed-off-by: Zhang Yu <yu.c.zhang@linux.intel.com>
->> ---
->>  drivers/dax/pmem.c       | 1 +
->>  include/linux/memremap.h | 9 +++++++++
->>  2 files changed, 10 insertions(+)
->>
->> diff --git a/drivers/dax/pmem.c b/drivers/dax/pmem.c
->> index fd49b24..fb3f363 100644
->> --- a/drivers/dax/pmem.c
->> +++ b/drivers/dax/pmem.c
->> @@ -111,6 +111,7 @@ static int dax_pmem_probe(struct device *dev)
->>  		return rc;
->>  
->>  	dax_pmem->pgmap.ref = &dax_pmem->ref;
->> +	dax_pmem->pgmap.type = MEMORY_DEVICE_DEV_DAX;
->>  	addr = devm_memremap_pages(dev, &dax_pmem->pgmap);
->>  	if (IS_ERR(addr))
->>  		return PTR_ERR(addr);
->> diff --git a/include/linux/memremap.h b/include/linux/memremap.h
->> index 5ebfff6..a36bce8 100644
->> --- a/include/linux/memremap.h
->> +++ b/include/linux/memremap.h
->> @@ -53,11 +53,20 @@ struct vmem_altmap {
->>   * wakeup event whenever a page is unpinned and becomes idle. This
->>   * wakeup is used to coordinate physical address space management (ex:
->>   * fs truncate/hole punch) vs pinned pages (ex: device dma).
->> + *
->> + * MEMORY_DEVICE_DEV_DAX:
->> + * DAX driver hotplug the device memory and move it to memory zone, these
->> + * pages will be marked reserved flag. However, some other kernel componet
->> + * will misconceive these pages are reserved mmio (ex: we map these dev_dax
->> + * or fs_dax pages to kvm for DIMM/NVDIMM backend). Together with the type
->> + * MEMORY_DEVICE_FS_DAX, we can differentiate the pages on NVDIMM with the
->> + * normal reserved pages.
-> So I believe the description should be in terms of what kind of memory is
-> the MEMORY_DEVICE_DEV_DAX type, not how users use this type. See comments
-> for other memory types...
->
-> 								Honza
-Yes, agree, thanks for your kindly review. Jan.
->
->>   */
->>  enum memory_type {
->>  	MEMORY_DEVICE_PRIVATE = 1,
->>  	MEMORY_DEVICE_PUBLIC,
->>  	MEMORY_DEVICE_FS_DAX,
->> +	MEMORY_DEVICE_DEV_DAX,
->>  };
->>  
->>  /*
->> -- 
->> 2.7.4
->>
+diff --git a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-ctl.c b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-ctl.c
+index ec468d5719b1..8af303e25036 100644
+--- a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-ctl.c
++++ b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-ctl.c
+@@ -94,7 +94,7 @@ static int snd_bcm2835_ctl_get(struct snd_kcontrol *kcontrol,
+ }
+ 
+ static int snd_bcm2835_ctl_put(struct snd_kcontrol *kcontrol,
+-				struct snd_ctl_elem_value *ucontrol)
++			       struct snd_ctl_elem_value *ucontrol)
+ {
+ 	struct bcm2835_chip *chip = snd_kcontrol_chip(kcontrol);
+ 	int changed = 0;
+@@ -174,7 +174,7 @@ static struct snd_kcontrol_new snd_bcm2835_ctl[] = {
+ };
+ 
+ static int snd_bcm2835_spdif_default_info(struct snd_kcontrol *kcontrol,
+-	struct snd_ctl_elem_info *uinfo)
++					  struct snd_ctl_elem_info *uinfo)
+ {
+ 	uinfo->type = SNDRV_CTL_ELEM_TYPE_IEC958;
+ 	uinfo->count = 1;
+@@ -182,7 +182,7 @@ static int snd_bcm2835_spdif_default_info(struct snd_kcontrol *kcontrol,
+ }
+ 
+ static int snd_bcm2835_spdif_default_get(struct snd_kcontrol *kcontrol,
+-	struct snd_ctl_elem_value *ucontrol)
++					 struct snd_ctl_elem_value *ucontrol)
+ {
+ 	struct bcm2835_chip *chip = snd_kcontrol_chip(kcontrol);
+ 	int i;
+@@ -199,7 +199,7 @@ static int snd_bcm2835_spdif_default_get(struct snd_kcontrol *kcontrol,
+ }
+ 
+ static int snd_bcm2835_spdif_default_put(struct snd_kcontrol *kcontrol,
+-	struct snd_ctl_elem_value *ucontrol)
++					 struct snd_ctl_elem_value *ucontrol)
+ {
+ 	struct bcm2835_chip *chip = snd_kcontrol_chip(kcontrol);
+ 	unsigned int val = 0;
+@@ -219,7 +219,7 @@ static int snd_bcm2835_spdif_default_put(struct snd_kcontrol *kcontrol,
+ }
+ 
+ static int snd_bcm2835_spdif_mask_info(struct snd_kcontrol *kcontrol,
+-	struct snd_ctl_elem_info *uinfo)
++				       struct snd_ctl_elem_info *uinfo)
+ {
+ 	uinfo->type = SNDRV_CTL_ELEM_TYPE_IEC958;
+ 	uinfo->count = 1;
+@@ -227,7 +227,7 @@ static int snd_bcm2835_spdif_mask_info(struct snd_kcontrol *kcontrol,
+ }
+ 
+ static int snd_bcm2835_spdif_mask_get(struct snd_kcontrol *kcontrol,
+-	struct snd_ctl_elem_value *ucontrol)
++				      struct snd_ctl_elem_value *ucontrol)
+ {
+ 	/*
+ 	 * bcm2835 supports only consumer mode and sets all other format flags
+@@ -238,7 +238,7 @@ static int snd_bcm2835_spdif_mask_get(struct snd_kcontrol *kcontrol,
+ }
+ 
+ static int snd_bcm2835_spdif_stream_info(struct snd_kcontrol *kcontrol,
+-	struct snd_ctl_elem_info *uinfo)
++					 struct snd_ctl_elem_info *uinfo)
+ {
+ 	uinfo->type = SNDRV_CTL_ELEM_TYPE_IEC958;
+ 	uinfo->count = 1;
+@@ -246,7 +246,7 @@ static int snd_bcm2835_spdif_stream_info(struct snd_kcontrol *kcontrol,
+ }
+ 
+ static int snd_bcm2835_spdif_stream_get(struct snd_kcontrol *kcontrol,
+-	struct snd_ctl_elem_value *ucontrol)
++					struct snd_ctl_elem_value *ucontrol)
+ {
+ 	struct bcm2835_chip *chip = snd_kcontrol_chip(kcontrol);
+ 	int i;
+@@ -263,7 +263,7 @@ static int snd_bcm2835_spdif_stream_get(struct snd_kcontrol *kcontrol,
+ }
+ 
+ static int snd_bcm2835_spdif_stream_put(struct snd_kcontrol *kcontrol,
+-	struct snd_ctl_elem_value *ucontrol)
++					struct snd_ctl_elem_value *ucontrol)
+ {
+ 	struct bcm2835_chip *chip = snd_kcontrol_chip(kcontrol);
+ 	unsigned int val = 0;
+-- 
+2.14.1
 
