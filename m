@@ -5,107 +5,196 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E203C46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 11:32:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B299C46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 11:35:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D090E216EE
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 11:32:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D090E216EE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=denx.de
+	by mail.kernel.org (Postfix) with ESMTP id 0334121737
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 11:35:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0334121737
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726976AbeHHNv0 (ORCPT
+        id S1726998AbeHHNy0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 09:51:26 -0400
-Received: from mail-out.m-online.net ([212.18.0.9]:60424 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726744AbeHHNv0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 09:51:26 -0400
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-        by mail-out.m-online.net (Postfix) with ESMTP id 41lq3p4Xtvz1qwCD;
-        Wed,  8 Aug 2018 13:32:06 +0200 (CEST)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
-        by mail.m-online.net (Postfix) with ESMTP id 41lq3p3q62z1qrVg;
-        Wed,  8 Aug 2018 13:32:06 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
-        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
-        with ESMTP id gnQIRd5rTfdv; Wed,  8 Aug 2018 13:32:05 +0200 (CEST)
-X-Auth-Info: wI8MH6nR0wOK5IZwaFNkgd/f2yueOeH0+8ttNPIes9E=
-Received: from [IPv6:::1] (unknown [195.140.253.167])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Wed, 8 Aug 2018 09:54:26 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52226 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726733AbeHHNyZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 09:54:25 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.mnet-online.de (Postfix) with ESMTPSA;
-        Wed,  8 Aug 2018 13:32:05 +0200 (CEST)
-Subject: Re: [PATCH] ARM: dts: socfpga: use stdout-path for chosen node
-To:     Simon Goldschmidt <simon.k.r.goldschmidt@gmail.com>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180808090944.861-1-simon.k.r.goldschmidt@gmail.com>
-From:   Marek Vasut <marex@denx.de>
-Message-ID: <f27a5e90-9783-761e-a87b-9b8a2d46d2a4@denx.de>
-Date:   Wed, 8 Aug 2018 12:00:50 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180808090944.861-1-simon.k.r.goldschmidt@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        by mx1.redhat.com (Postfix) with ESMTPS id 87C8240216E6;
+        Wed,  8 Aug 2018 11:35:07 +0000 (UTC)
+Received: from hive.brq.redhat.com (unknown [10.43.2.4])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1E1981C723;
+        Wed,  8 Aug 2018 11:35:05 +0000 (UTC)
+From:   Petr Oros <poros@redhat.com>
+To:     netdev@vger.kernel.org
+Cc:     ivecera@redhat.com, Sathya Perla <sathya.perla@broadcom.com>,
+        Ajit Khaparde <ajit.khaparde@broadcom.com>,
+        Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>,
+        Somnath Kotur <somnath.kotur@broadcom.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH net-next] be2net: Use Kconfig flag to support for enabling/disabling adapters
+Date:   Wed,  8 Aug 2018 13:35:01 +0200
+Message-Id: <20180808113505.550-1-poros@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 08 Aug 2018 11:35:07 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 08 Aug 2018 11:35:07 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'poros@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/08/2018 11:09 AM, Simon Goldschmidt wrote:
-> Use stdout-path dts property for kernel console.
-> 
-> There were two socfpga boards left not using stdout-path:
-> socrates and vining. Make sure they match the other boards.
-> 
-> Signed-off-by: Simon Goldschmidt <simon.k.r.goldschmidt@gmail.com>
-> ---
->  arch/arm/boot/dts/socfpga_cyclone5_socrates.dts    | 3 ++-
->  arch/arm/boot/dts/socfpga_cyclone5_vining_fpga.dts | 3 ++-
->  2 files changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/socfpga_cyclone5_socrates.dts b/arch/arm/boot/dts/socfpga_cyclone5_socrates.dts
-> index 53bf99eef66d..6f5255a7d192 100644
-> --- a/arch/arm/boot/dts/socfpga_cyclone5_socrates.dts
-> +++ b/arch/arm/boot/dts/socfpga_cyclone5_socrates.dts
-> @@ -22,7 +22,8 @@
->  	compatible = "ebv,socrates", "altr,socfpga-cyclone5", "altr,socfpga";
->  
->  	chosen {
-> -		bootargs = "console=ttyS0,115200";
-> +		bootargs = "earlyprintk";
-> +		stdout-path = "serial0:115200n8";
->  	};
->  
->  	memory@0 {
-> diff --git a/arch/arm/boot/dts/socfpga_cyclone5_vining_fpga.dts b/arch/arm/boot/dts/socfpga_cyclone5_vining_fpga.dts
-> index f50b19447de6..e61efe16e79c 100644
-> --- a/arch/arm/boot/dts/socfpga_cyclone5_vining_fpga.dts
-> +++ b/arch/arm/boot/dts/socfpga_cyclone5_vining_fpga.dts
-> @@ -54,7 +54,8 @@
->  	compatible = "samtec,vining", "altr,socfpga-cyclone5", "altr,socfpga";
->  
->  	chosen {
-> -		bootargs = "console=ttyS0,115200";
-> +		bootargs = "earlyprintk";
+Add flags to enable/disable supported chips in be2net.
 
-Why this earlyprintk ?
+With disable support are removed coresponding PCI IDs and
+also codepaths with [BE2|BE3|BEx|lancer|skyhawk]_chip checks.
 
-> +		stdout-path = "serial0:115200n8";
->  	};
->  
->  	memory@0 {
-> 
+Disable chip will reduce module size by:
+BE2 ~2kb
+BE3 ~3kb
+Lancer ~10kb
+Skyhawk ~9kb
 
+When enable skyhawk only it will reduce module size by ~20kb
 
+New help style in Kconfig
+
+Reviewed-by: Ivan Vecera <ivecera@redhat.com>
+Signed-off-by: Petr Oros <poros@redhat.com>
+---
+ drivers/net/ethernet/emulex/benet/Kconfig   | 41 +++++++++++++++++++++++++++--
+ drivers/net/ethernet/emulex/benet/be.h      | 16 +++++++++++
+ drivers/net/ethernet/emulex/benet/be_main.c | 10 ++++++-
+ 3 files changed, 64 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/net/ethernet/emulex/benet/Kconfig b/drivers/net/ethernet/emulex/benet/Kconfig
+index b4853ec9de8d..2c2629771165 100644
+--- a/drivers/net/ethernet/emulex/benet/Kconfig
++++ b/drivers/net/ethernet/emulex/benet/Kconfig
+@@ -1,7 +1,7 @@
+ config BE2NET
+ 	tristate "ServerEngines' 10Gbps NIC - BladeEngine"
+ 	depends on PCI
+-	---help---
++	help
+ 	  This driver implements the NIC functionality for ServerEngines'
+ 	  10Gbps network adapter - BladeEngine.
+ 
+@@ -10,6 +10,43 @@ config BE2NET_HWMON
+ 	depends on BE2NET && HWMON
+ 	depends on !(BE2NET=y && HWMON=m)
+ 	default y
+-	---help---
++	help
+ 	  Say Y here if you want to expose thermal sensor data on
+ 	  be2net network adapter.
++
++config BE2NET_BE2
++	bool "Support for BE2 chipsets"
++	depends on BE2NET
++	default y
++	help
++	  Say Y here if you want to use devices based on BE2
++	  chipsets. (e.g. OneConnect OCe10xxx)
++
++config BE2NET_BE3
++	bool "Support for BE3 chipsets"
++	depends on BE2NET
++	default y
++	help
++	  Say Y here if you want to use devices based on BE3
++	  chipsets. (e.g. OneConnect OCe11xxx)
++
++config BE2NET_LANCER
++	bool "Support for Lancer chipsets"
++	depends on BE2NET
++	default y
++	help
++	  Say Y here if you want to use devices based on Lancer
++	  chipsets. (e.g LightPulse LPe12xxx)
++
++config BE2NET_SKYHAWK
++	bool "Support for Skyhawk chipsets"
++	depends on BE2NET
++	default y
++	help
++	  Say Y here if you want to use devices based on Skyhawk
++	  chipsets. (e.g. OneConnect OCe14xxx)
++
++comment "WARNING: be2net is useless without any enabled chip"
++        depends on BE2NET_BE2=n && BE2NET_BE3=n && BE2NET_LANCER=n && \
++	BE2NET_SKYHAWK=n && BE2NET
++
+diff --git a/drivers/net/ethernet/emulex/benet/be.h b/drivers/net/ethernet/emulex/benet/be.h
+index 382891f81e09..405e9729d425 100644
+--- a/drivers/net/ethernet/emulex/benet/be.h
++++ b/drivers/net/ethernet/emulex/benet/be.h
+@@ -773,17 +773,33 @@ static inline u16 be_max_any_irqs(struct be_adapter *adapter)
+ /* Is BE in QNQ multi-channel mode */
+ #define be_is_qnq_mode(adapter)		(adapter->function_mode & QNQ_MODE)
+ 
++#ifdef CONFIG_BE2NET_LANCER
+ #define lancer_chip(adapter)	(adapter->pdev->device == OC_DEVICE_ID3 || \
+ 				 adapter->pdev->device == OC_DEVICE_ID4)
++#else
++#define lancer_chip(adapter)	(0)
++#endif /* CONFIG_BE2NET_LANCER */
+ 
++#ifdef CONFIG_BE2NET_SKYHAWK
+ #define skyhawk_chip(adapter)	(adapter->pdev->device == OC_DEVICE_ID5 || \
+ 				 adapter->pdev->device == OC_DEVICE_ID6)
++#else
++#define skyhawk_chip(adapter)	(0)
++#endif /* CONFIG_BE2NET_SKYHAWK */
+ 
++#ifdef CONFIG_BE2NET_BE3
+ #define BE3_chip(adapter)	(adapter->pdev->device == BE_DEVICE_ID2 || \
+ 				 adapter->pdev->device == OC_DEVICE_ID2)
++#else
++#define BE3_chip(adapter)	(0)
++#endif /* CONFIG_BE2NET_BE3 */
+ 
++#ifdef CONFIG_BE2NET_BE2
+ #define BE2_chip(adapter)	(adapter->pdev->device == BE_DEVICE_ID1 || \
+ 				 adapter->pdev->device == OC_DEVICE_ID1)
++#else
++#define BE2_chip(adapter)	(0)
++#endif /* CONFIG_BE2NET_BE2 */
+ 
+ #define BEx_chip(adapter)	(BE3_chip(adapter) || BE2_chip(adapter))
+ 
+diff --git a/drivers/net/ethernet/emulex/benet/be_main.c b/drivers/net/ethernet/emulex/benet/be_main.c
+index 8f755009ff38..d08eefce7c64 100644
+--- a/drivers/net/ethernet/emulex/benet/be_main.c
++++ b/drivers/net/ethernet/emulex/benet/be_main.c
+@@ -47,14 +47,22 @@ MODULE_PARM_DESC(rx_frag_size, "Size of a fragment that holds rcvd data.");
+ static struct workqueue_struct *be_err_recovery_workq;
+ 
+ static const struct pci_device_id be_dev_ids[] = {
++#ifdef CONFIG_BE2NET_BE2
+ 	{ PCI_DEVICE(BE_VENDOR_ID, BE_DEVICE_ID1) },
+-	{ PCI_DEVICE(BE_VENDOR_ID, BE_DEVICE_ID2) },
+ 	{ PCI_DEVICE(BE_VENDOR_ID, OC_DEVICE_ID1) },
++#endif /* CONFIG_BE2NET_BE2 */
++#ifdef CONFIG_BE2NET_BE3
++	{ PCI_DEVICE(BE_VENDOR_ID, BE_DEVICE_ID2) },
+ 	{ PCI_DEVICE(BE_VENDOR_ID, OC_DEVICE_ID2) },
++#endif /* CONFIG_BE2NET_BE3 */
++#ifdef CONFIG_BE2NET_LANCER
+ 	{ PCI_DEVICE(EMULEX_VENDOR_ID, OC_DEVICE_ID3)},
+ 	{ PCI_DEVICE(EMULEX_VENDOR_ID, OC_DEVICE_ID4)},
++#endif /* CONFIG_BE2NET_LANCER */
++#ifdef CONFIG_BE2NET_SKYHAWK
+ 	{ PCI_DEVICE(EMULEX_VENDOR_ID, OC_DEVICE_ID5)},
+ 	{ PCI_DEVICE(EMULEX_VENDOR_ID, OC_DEVICE_ID6)},
++#endif /* CONFIG_BE2NET_SKYHAWK */
+ 	{ 0 }
+ };
+ MODULE_DEVICE_TABLE(pci, be_dev_ids);
 -- 
-Best regards,
-Marek Vasut
+2.16.4
+
