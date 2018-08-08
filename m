@@ -2,136 +2,171 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DA4EC46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 01:12:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD9A7C46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 01:14:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6E072174B
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 01:12:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 740002168B
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 01:14:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="camr7Lxh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6E072174B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="sSYF9w2v"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 740002168B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726893AbeHHD3e (ORCPT
+        id S1726745AbeHHDbh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 7 Aug 2018 23:29:34 -0400
-Received: from ozlabs.org ([203.11.71.1]:48277 "EHLO ozlabs.org"
+        Tue, 7 Aug 2018 23:31:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33380 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726254AbeHHD3e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 7 Aug 2018 23:29:34 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        id S1726111AbeHHDbg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 7 Aug 2018 23:31:36 -0400
+Received: from localhost (unknown [69.71.4.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41lYJn0sz1z9s4V;
-        Wed,  8 Aug 2018 11:12:25 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1533690745;
-        bh=GA6M2+hINIWaVbN/sXCBEASmIt/43LJCpNAYz86BW/M=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=camr7LxhesFe8DPj6nAxpTlZLKUw9Lp7BMRf1PIVW1Ss1X40kH55YYT1QZqu8ZNDG
-         SjEsFu+1xyjqcT3juwZ8W099A1OpUTFS1Rmh9kWwRLV9bAAQw05PleYigJIF5Wlu+B
-         Aen2FQrqn55a8J7tkrxvJwjrTZCeOgfF/MIE9g+wnMGwNbLSzuUK2ctqgtjW9YMhXb
-         8Jw/w9voXiMYVPF2PvM6W+qJwwS+hzY6vYwJwUo6Am9CiLAKFa2EvV63E9s3WcNtJU
-         tizF83MbK1Mjv2xfRHIVt9EYFLTpqvjzwBB5RF8IBvE3CZhQc8sNYNEEBr0r8/vt5x
-         HdIlnTFllLB5A==
-Date:   Wed, 8 Aug 2018 11:12:24 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Kirill Tkhai <ktkhai@virtuozzo.com>
-Cc:     akpm@linux-foundation.org, gregkh@linuxfoundation.org,
-        rafael@kernel.org, viro@zeniv.linux.org.uk,
-        darrick.wong@oracle.com, paulmck@linux.vnet.ibm.com,
-        josh@joshtriplett.org, rostedt@goodmis.org,
-        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
-        hughd@google.com, shuah@kernel.org, robh@kernel.org,
-        ulf.hansson@linaro.org, aspriel@gmail.com,
-        vivek.gautam@codeaurora.org, robin.murphy@arm.com, joe@perches.com,
-        heikki.krogerus@linux.intel.com, vdavydov.dev@gmail.com,
-        mhocko@suse.com, chris@chris-wilson.co.uk,
-        penguin-kernel@I-love.SAKURA.ne.jp, aryabinin@virtuozzo.com,
-        willy@infradead.org, ying.huang@intel.com, shakeelb@google.com,
-        jbacik@fb.com, mingo@kernel.org, mhiramat@kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH RFC 00/10] Introduce lockless shrink_slab()
-Message-ID: <20180808111224.52a451d9@canb.auug.org.au>
-In-Reply-To: <153365347929.19074.12509495712735843805.stgit@localhost.localdomain>
-References: <153365347929.19074.12509495712735843805.stgit@localhost.localdomain>
+        by mail.kernel.org (Postfix) with ESMTPSA id A25832168B;
+        Wed,  8 Aug 2018 01:14:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1533690870;
+        bh=7lQQKi+DEODWXJCOHeYDdZiJpt9LdoCYbhTml0OnXr0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=sSYF9w2v+t384ZG8wQqVgbK+DGKFYhr5Wg/WerK7H5Gn+M7cNG4sERrZAML5f+C0k
+         eRZ6n/ilrhwlFVuTBh0DEaCFJDyReKGhMSeXcQImRGzcVtVIjY+sqkpQFPWlv5QFEs
+         1kbHRu06xztivGMTM8oEAXJ2zLR4nRkUbj2TE8iI=
+Date:   Tue, 7 Aug 2018 20:14:29 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Alexandru Gagniuc <mr.nuke.me@gmail.com>
+Cc:     linux-pci@vger.kernel.org, bhelgaas@google.com,
+        keith.busch@intel.com, alex_gagniuc@dellteam.com,
+        austin_bolen@dell.com, shyam_iyer@dell.com,
+        Frederick Lawler <fred@fredlawl.com>,
+        Oza Pawandeep <poza@codeaurora.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] PCI/AER: Do not clear AER bits if we don't own AER
+Message-ID: <20180808011429.GB49411@bhelgaas-glaptop.roam.corp.google.com>
+References: <3d05f662-2c29-90cd-9c74-6456939a0e6b@gmail.com>
+ <20180730233547.1238-1-mr.nuke.me@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/yFMBaxGy2JljibeAimkhX54"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180730233547.1238-1-mr.nuke.me@gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/yFMBaxGy2JljibeAimkhX54
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, Jul 30, 2018 at 06:35:31PM -0500, Alexandru Gagniuc wrote:
+> When we don't own AER, we shouldn't touch the AER error bits. Clearing
+> error bits willy-nilly might cause firmware to miss some errors. In
+> theory, these bits get cleared by FFS, or via ACPI _HPX method. These
+> mechanisms are not subject to the problem.
 
-Hi Kirill,
+What's FFS?
 
-On Tue, 07 Aug 2018 18:37:19 +0300 Kirill Tkhai <ktkhai@virtuozzo.com> wrot=
-e:
->
-> After bitmaps of not-empty memcg shrinkers were implemented
-> (see "[PATCH v9 00/17] Improve shrink_slab() scalability..."
-> series, which is already in mm tree), all the evil in perf
-> trace has moved from shrink_slab() to down_read_trylock().
-> As reported by Shakeel Butt:
->=20
->      > I created 255 memcgs, 255 ext4 mounts and made each memcg create a
->      > file containing few KiBs on corresponding mount. Then in a separate
->      > memcg of 200 MiB limit ran a fork-bomb.
->      >
->      > I ran the "perf record -ag -- sleep 60" and below are the results:
->      > +  47.49%            fb.sh  [kernel.kallsyms]    [k] down_read_try=
-lock
->      > +  30.72%            fb.sh  [kernel.kallsyms]    [k] up_read
->      > +   9.51%            fb.sh  [kernel.kallsyms]    [k] mem_cgroup_it=
-er
->      > +   1.69%            fb.sh  [kernel.kallsyms]    [k] shrink_node_m=
-emcg
->      > +   1.35%            fb.sh  [kernel.kallsyms]    [k] mem_cgroup_pr=
-otected
->      > +   1.05%            fb.sh  [kernel.kallsyms]    [k] queued_spin_l=
-ock_slowpath
->      > +   0.85%            fb.sh  [kernel.kallsyms]    [k] _raw_spin_lock
->      > +   0.78%            fb.sh  [kernel.kallsyms]    [k] lruvec_lru_si=
-ze
->      > +   0.57%            fb.sh  [kernel.kallsyms]    [k] shrink_node
->      > +   0.54%            fb.sh  [kernel.kallsyms]    [k] queue_work_on
->      > +   0.46%            fb.sh  [kernel.kallsyms]    [k] shrink_slab_m=
-emcg =20
->=20
-> The patchset continues to improve shrink_slab() scalability and makes
-> it lockless completely. Here are several steps for that:
+I guess you mean FFS and _HPX are not subject to the problem because
+they're supplied by firmware, so firmware would be responsible for
+looking at the bits before clearing them?
 
-So do you have any numbers for after theses changes?
+> This race is mostly of theoretical significance, since I can't
+> reasonably demonstrate this race in the lab.
+> 
+> On a side-note, pcie_aer_is_kernel_first() is created to alleviate the
+> need for two checks: aer_cap and get_firmware_first().
+> 
+> Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+> ---
+> 
+> Changes since v2:
+>   - Added missing negation in pci_cleanup_aer_error_status_regs()
+> 
+>  drivers/pci/pcie/aer.c | 17 ++++++++++-------
+>  1 file changed, 10 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
+> index a2e88386af28..40e5c86271d1 100644
+> --- a/drivers/pci/pcie/aer.c
+> +++ b/drivers/pci/pcie/aer.c
+> @@ -307,6 +307,12 @@ int pcie_aer_get_firmware_first(struct pci_dev *dev)
+>  		aer_set_firmware_first(dev);
+>  	return dev->__aer_firmware_first;
+>  }
+> +
+> +static bool pcie_aer_is_kernel_first(struct pci_dev *dev)
+> +{
+> +	return !!dev->aer_cap && !pcie_aer_get_firmware_first(dev);
+> +}
 
---=20
-Cheers,
-Stephen Rothwell
+I think it complicates things to have both "firmware_first" and
+"kernel_first" interfaces, so I would prefer to stick with the
+existing "firmware_first" style.
 
---Sig_/yFMBaxGy2JljibeAimkhX54
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+>  #define	PCI_EXP_AER_FLAGS	(PCI_EXP_DEVCTL_CERE | PCI_EXP_DEVCTL_NFERE | \
+>  				 PCI_EXP_DEVCTL_FERE | PCI_EXP_DEVCTL_URRE)
+>  
+> @@ -337,10 +343,7 @@ bool aer_acpi_firmware_first(void)
+>  
+>  int pci_enable_pcie_error_reporting(struct pci_dev *dev)
+>  {
+> -	if (pcie_aer_get_firmware_first(dev))
+> -		return -EIO;
+> -
+> -	if (!dev->aer_cap)
+> +	if (!pcie_aer_is_kernel_first(dev))
+>  		return -EIO;
+>  
+>  	return pcie_capability_set_word(dev, PCI_EXP_DEVCTL, PCI_EXP_AER_FLAGS);
 
------BEGIN PGP SIGNATURE-----
+This change doesn't actually fix anything, does it?  It looks like a
+cleanup that doesn't change the behavior.
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltqQ3gACgkQAVBC80lX
-0GxavQf9EKFejil3+n6vL60fNlHSHDQnmX05ed6HsGTXza/1bbyxBdOOk6PkbbkR
-Am2K5yPPUShKvsfwpy8pwJCzt8xxPcGSwtEg17G/JKGTEnd4zs8zEC8+z1RtZgzn
-XtytDz87/XRfM9dX7thRhY2z6tUpNu5ZcuKOgJ912XJ8riurODEOb212V+vc/G9G
-8g0Q4J1Pb99/sgoEljl+iQL5ZsFqCADCBaFwmYL0zLfNgs9zrUimflnNWOBQUYbQ
-bzxrY5qbdaWRCmVh6f5FSrzXoxoOk+WJ+Ekoq//mTTceZWFuZdNvh9qXWy8S+dN2
-KqisepOQ0+Dh+0GGXSanG+jFbPyFzg==
-=26Fb
------END PGP SIGNATURE-----
+> @@ -349,7 +352,7 @@ EXPORT_SYMBOL_GPL(pci_enable_pcie_error_reporting);
+>  
+>  int pci_disable_pcie_error_reporting(struct pci_dev *dev)
+>  {
+> -	if (pcie_aer_get_firmware_first(dev))
+> +	if (!pcie_aer_is_kernel_first(dev))
+>  		return -EIO;
 
---Sig_/yFMBaxGy2JljibeAimkhX54--
+This change does effectively add a test for dev->aer_cap.  That makes
+sense in terms of symmetry with pci_enable_pcie_error_reporting(),
+but I think it should be a separate patch because it's conceptually
+separate from the change below.
+
+We should keep the existing behavior (but add the symmetry) here for
+now, but it's not clear to me that these paths should care about AER
+or firmware-first at all.  PCI_EXP_DEVCTL is not an AER register and
+we have the _HPX mechanism for firmware to influence it (which these
+paths currently ignore).  I suspect we should program these reporting
+enable bits in the core enumeration path instead of having drivers
+call these interfaces.
+
+If/when we make changes along these lines, the history will be easier
+to follow if *this* change is not connected with the change below to
+pci_cleanup_aer_error_status_regs().
+
+>  	return pcie_capability_clear_word(dev, PCI_EXP_DEVCTL,
+> @@ -383,10 +386,10 @@ int pci_cleanup_aer_error_status_regs(struct pci_dev *dev)
+>  	if (!pci_is_pcie(dev))
+>  		return -ENODEV;
+>  
+> -	pos = dev->aer_cap;
+> -	if (!pos)
+> +	if (!pcie_aer_is_kernel_first(dev))
+>  		return -EIO;
+
+This part makes sense to me, but I think I would rather have it match
+the existing style in pci_enable_pcie_error_reporting(), i.e., keep
+the test for dev->aer_cap and add a test for
+pcie_aer_get_firmware_first().
+
+> +	pos = dev->aer_cap;
+>  	port_type = pci_pcie_type(dev);
+>  	if (port_type == PCI_EXP_TYPE_ROOT_PORT) {
+>  		pci_read_config_dword(dev, pos + PCI_ERR_ROOT_STATUS, &status);
+> -- 
+> 2.17.1
+> 
