@@ -6,51 +6,51 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A76B7C46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:47:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68327C46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:47:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5500421718
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:47:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5500421718
+	by mail.kernel.org (Postfix) with ESMTP id 224DF21737
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:47:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 224DF21737
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729280AbeHHRHG (ORCPT
+        id S1728843AbeHHRHT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 13:07:06 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35518 "EHLO
+        Wed, 8 Aug 2018 13:07:19 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35324 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727710AbeHHREw (ORCPT
+        by vger.kernel.org with ESMTP id S1727629AbeHHREu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 13:04:52 -0400
+        Wed, 8 Aug 2018 13:04:50 -0400
 Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w78EiKnQ016391
-        for <linux-kernel@vger.kernel.org>; Wed, 8 Aug 2018 10:44:53 -0400
-Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2kr1ew3b81-1
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w78EiLpY016410
+        for <linux-kernel@vger.kernel.org>; Wed, 8 Aug 2018 10:44:52 -0400
+Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2kr1ew3b6w-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 10:44:53 -0400
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 10:44:51 -0400
 Received: from localhost
-        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <akrowiak@linux.vnet.ibm.com>;
-        Wed, 8 Aug 2018 10:44:52 -0400
-Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
-        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Wed, 8 Aug 2018 10:44:50 -0400
+Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
+        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 8 Aug 2018 10:44:49 -0400
+        Wed, 8 Aug 2018 10:44:47 -0400
 Received: from b01ledav001.gho.pok.ibm.com (b01ledav001.gho.pok.ibm.com [9.57.199.106])
-        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w78EilvA52363400
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w78EijYV5898680
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 8 Aug 2018 14:44:47 GMT
+        Wed, 8 Aug 2018 14:44:45 GMT
 Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3E2C028058;
-        Wed,  8 Aug 2018 10:43:36 -0400 (EDT)
+        by IMSVA (Postfix) with ESMTP id CB8BA28058;
+        Wed,  8 Aug 2018 10:43:33 -0400 (EDT)
 Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1F75528059;
-        Wed,  8 Aug 2018 10:43:35 -0400 (EDT)
+        by IMSVA (Postfix) with ESMTP id AF76528059;
+        Wed,  8 Aug 2018 10:43:32 -0400 (EDT)
 Received: from localhost.localdomain (unknown [9.85.187.56])
         by b01ledav001.gho.pok.ibm.com (Postfix) with ESMTPS;
-        Wed,  8 Aug 2018 10:43:35 -0400 (EDT)
+        Wed,  8 Aug 2018 10:43:32 -0400 (EDT)
 From:   Tony Krowiak <akrowiak@linux.vnet.ibm.com>
 To:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
         kvm@vger.kernel.org
@@ -64,21 +64,21 @@ Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
         pasic@linux.vnet.ibm.com, berrange@redhat.com,
         fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
         akrowiak@linux.vnet.ibm.com, frankja@linux.ibm.com,
-        Tony Krowiak <akrowiak@linux.ibm.com>
-Subject: [PATCH v8 07/22] KVM: s390: refactor crypto initialization
-Date:   Wed,  8 Aug 2018 10:44:17 -0400
+        David Hildenbrand <david@redhat.com>
+Subject: [PATCH v8 05/22] KVM: s390: vsie: simulate VCPU SIE entry/exit
+Date:   Wed,  8 Aug 2018 10:44:15 -0400
 X-Mailer: git-send-email 1.7.1
 In-Reply-To: <1533739472-7172-1-git-send-email-akrowiak@linux.vnet.ibm.com>
 References: <1533739472-7172-1-git-send-email-akrowiak@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18080814-0072-0000-0000-0000038D7541
+x-cbid: 18080814-0064-0000-0000-000003377475
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00009507; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01070983; UDB=6.00551366; IPR=6.00850513;
- MB=3.00022589; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-08 14:44:52
+ PH=3.00000004; SC=3.00000266; SDB=6.01070983; UDB=6.00551365; IPR=6.00850513;
+ MB=3.00022589; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-08 14:44:49
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18080814-0073-0000-0000-0000490268CB
-Message-Id: <1533739472-7172-8-git-send-email-akrowiak@linux.vnet.ibm.com>
+x-cbparentid: 18080814-0065-0000-0000-00003A3B66BB
+Message-Id: <1533739472-7172-6-git-send-email-akrowiak@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-08_05:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -91,214 +91,124 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tony Krowiak <akrowiak@linux.ibm.com>
+From: David Hildenbrand <david@redhat.com>
 
-This patch refactors the code that initializes and sets up the
-crypto configuration for a guest. The following changes are
-implemented via this patch:
+VCPU requests and VCPU blocking right now don't take care of the vSIE
+(as it was not necessary until now). But we want to have VCPU requests
+that will also be handled before running the vSIE again.
 
-1. Prior to the introduction of AP device virtualization, it
-   was not necessary to provide guest access to the CRYCB
-   unless the MSA extension 3 (MSAX3) facility was installed
-   on the host system. With the introduction of AP device
-   virtualization, the CRYCB must be made accessible to the
-   guest if the AP instructions are installed on the host
-   and are to be provided to the guest.
+So let's simulate a SIE entry when entering the vSIE loop and check
+for PROG_ flags. The existing infrastructure (e.g. exit_sie()) will then
+detect that the SIE (in form of the vSIE execution loop) is running and
+properly kick the vSIE CPU, resulting in it leaving the vSIE loop and
+therefore the vSIE interception handler, allowing it to handle VCPU
+requests.
 
-2. Introduces a flag indicating AP instructions executed on
-   the guest shall be interpreted by the firmware. It is
-   initialized to indicate AP instructions are to be
-   to be interpreted and is used to set the SIE bit for
-   each vcpu during vcpu setup.
+E.g. if we want to modify the crycb of the VCPU and make sure that any
+masks also get applied to the VSIE crycb shadow (which uses masks from the
+VCPU crycb), we will need a way to hinder the vSIE from running and make
+sure to process the updated crycb before reentering the vSIE again.
 
-Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
-Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
-Acked-by: Christian Borntraeger <borntraeger@de.ibm.com>
-Tested-by: Michael Mueller <mimu@linux.ibm.com>
-Tested-by: Farhan Ali <alifm@linux.ibm.com>
-Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+Signed-off-by: David Hildenbrand <david@redhat.com>
+
+Reviewed-by: Pierre Morel<pmorel@linux.ibm.com>
 ---
- arch/s390/include/asm/kvm_host.h |    3 +
- arch/s390/include/uapi/asm/kvm.h |    1 +
- arch/s390/kvm/kvm-s390.c         |   86 ++++++++++++++++++++------------------
- 3 files changed, 49 insertions(+), 41 deletions(-)
+ arch/s390/kvm/kvm-s390.c |    9 ++++++++-
+ arch/s390/kvm/kvm-s390.h |    1 +
+ arch/s390/kvm/vsie.c     |   20 ++++++++++++++++++--
+ 3 files changed, 27 insertions(+), 3 deletions(-)
 
-diff --git a/arch/s390/include/asm/kvm_host.h b/arch/s390/include/asm/kvm_host.h
-index af39561..0c13f61 100644
---- a/arch/s390/include/asm/kvm_host.h
-+++ b/arch/s390/include/asm/kvm_host.h
-@@ -187,6 +187,7 @@ struct kvm_s390_sie_block {
- #define ECA_AIV		0x00200000
- #define ECA_VX		0x00020000
- #define ECA_PROTEXCI	0x00002000
-+#define ECA_APIE	0x00000008
- #define ECA_SII		0x00000001
- 	__u32	eca;			/* 0x004c */
- #define ICPT_INST	0x04
-@@ -256,6 +257,7 @@ struct kvm_s390_sie_block {
- 	__u8	reservede4[4];		/* 0x00e4 */
- 	__u64	tecmc;			/* 0x00e8 */
- 	__u8	reservedf0[12];		/* 0x00f0 */
-+#define CRYCB_FORMAT_MASK 0x00000003
- #define CRYCB_FORMAT1 0x00000001
- #define CRYCB_FORMAT2 0x00000003
- 	__u32	crycbd;			/* 0x00fc */
-@@ -714,6 +716,7 @@ struct kvm_s390_crypto {
- 	__u32 crycbd;
- 	__u8 aes_kw;
- 	__u8 dea_kw;
-+	__u8 apie;
- };
- 
- #define APCB0_MASK_SIZE 1
-diff --git a/arch/s390/include/uapi/asm/kvm.h b/arch/s390/include/uapi/asm/kvm.h
-index 4cdaa55..a580dec 100644
---- a/arch/s390/include/uapi/asm/kvm.h
-+++ b/arch/s390/include/uapi/asm/kvm.h
-@@ -130,6 +130,7 @@ struct kvm_s390_vm_cpu_machine {
- #define KVM_S390_VM_CPU_FEAT_PFMFI	11
- #define KVM_S390_VM_CPU_FEAT_SIGPIF	12
- #define KVM_S390_VM_CPU_FEAT_KSS	13
-+#define KVM_S390_VM_CPU_FEAT_AP		14
- struct kvm_s390_vm_cpu_feat {
- 	__u64 feat[16];
- };
 diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
-index 19f4f44..f96a443 100644
+index 3b7a515..6df2d12 100644
 --- a/arch/s390/kvm/kvm-s390.c
 +++ b/arch/s390/kvm/kvm-s390.c
-@@ -40,6 +40,7 @@
- #include <asm/sclp.h>
- #include <asm/cpacf.h>
- #include <asm/timex.h>
-+#include <asm/ap.h>
- #include "kvm-s390.h"
- #include "gaccess.h"
- 
-@@ -1881,49 +1882,37 @@ long kvm_arch_vm_ioctl(struct file *filp,
- 	return r;
+@@ -2655,18 +2655,25 @@ static void kvm_s390_vcpu_request(struct kvm_vcpu *vcpu)
+ 	exit_sie(vcpu);
  }
  
--static int kvm_s390_query_ap_config(u8 *config)
--{
--	u32 fcn_code = 0x04000000UL;
--	u32 cc = 0;
--
--	memset(config, 0, 128);
--	asm volatile(
--		"lgr 0,%1\n"
--		"lgr 2,%2\n"
--		".long 0xb2af0000\n"		/* PQAP(QCI) */
--		"0: ipm %0\n"
--		"srl %0,28\n"
--		"1:\n"
--		EX_TABLE(0b, 1b)
--		: "+r" (cc)
--		: "r" (fcn_code), "r" (config)
--		: "cc", "0", "2", "memory"
--	);
--
--	return cc;
--}
--
- static int kvm_s390_apxa_installed(void)
++bool kvm_s390_vcpu_sie_inhibited(struct kvm_vcpu *vcpu)
++{
++	return atomic_read(&vcpu->arch.sie_block->prog20) &
++	       (PROG_BLOCK_SIE | PROG_REQUEST);
++}
++
+ static void kvm_s390_vcpu_request_handled(struct kvm_vcpu *vcpu)
  {
--	u8 config[128];
--	int cc;
-+	struct ap_config_info info;
+ 	atomic_andnot(PROG_REQUEST, &vcpu->arch.sie_block->prog20);
+ }
  
--	if (test_facility(12)) {
--		cc = kvm_s390_query_ap_config(config);
--
--		if (cc)
--			pr_err("PQAP(QCI) failed with cc=%d", cc);
--		else
--			return config[0] & 0x40;
-+	if (ap_instructions_available() == 0) {
-+		if (ap_qci(&info) == 0)
-+			return info.apxa;
+ /*
+- * Kick a guest cpu out of SIE and wait until SIE is not running.
++ * Kick a guest cpu out of (v)SIE and wait until (v)SIE is not running.
+  * If the CPU is not running (e.g. waiting as idle) the function will
+  * return immediately. */
+ void exit_sie(struct kvm_vcpu *vcpu)
+ {
+ 	kvm_s390_set_cpuflags(vcpu, CPUSTAT_STOP_INT);
++	kvm_s390_vsie_kick(vcpu);
+ 	while (vcpu->arch.sie_block->prog0c & PROG_IN_SIE)
+ 		cpu_relax();
+ }
+diff --git a/arch/s390/kvm/kvm-s390.h b/arch/s390/kvm/kvm-s390.h
+index 981e3ba..1f6e36c 100644
+--- a/arch/s390/kvm/kvm-s390.h
++++ b/arch/s390/kvm/kvm-s390.h
+@@ -290,6 +290,7 @@ void kvm_s390_set_tod_clock(struct kvm *kvm,
+ void kvm_s390_vcpu_stop(struct kvm_vcpu *vcpu);
+ void kvm_s390_vcpu_block(struct kvm_vcpu *vcpu);
+ void kvm_s390_vcpu_unblock(struct kvm_vcpu *vcpu);
++bool kvm_s390_vcpu_sie_inhibited(struct kvm_vcpu *vcpu);
+ void exit_sie(struct kvm_vcpu *vcpu);
+ void kvm_s390_sync_request(int req, struct kvm_vcpu *vcpu);
+ int kvm_s390_vcpu_setup_cmma(struct kvm_vcpu *vcpu);
+diff --git a/arch/s390/kvm/vsie.c b/arch/s390/kvm/vsie.c
+index 84c89cb..aa30b48 100644
+--- a/arch/s390/kvm/vsie.c
++++ b/arch/s390/kvm/vsie.c
+@@ -982,6 +982,17 @@ static int vsie_run(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
+ 	struct kvm_s390_sie_block *scb_s = &vsie_page->scb_s;
+ 	int rc = 0;
+ 
++	/*
++	 * Simulate a SIE entry of the VCPU (see sie64a), so VCPU blocking
++	 * and VCPU requests can hinder the whole vSIE loop from running
++	 * and lead to an immediate exit. We do it at this point (not
++	 * earlier), so kvm_s390_vsie_kick() works correctly already.
++	 */
++	vcpu->arch.sie_block->prog0c |= PROG_IN_SIE;
++	barrier();
++	if (kvm_s390_vcpu_sie_inhibited(vcpu))
++		return 0;
++
+ 	while (1) {
+ 		rc = acquire_gmap_shadow(vcpu, vsie_page);
+ 		if (!rc)
+@@ -997,10 +1008,14 @@ static int vsie_run(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
+ 		if (rc == -EAGAIN)
+ 			rc = 0;
+ 		if (rc || scb_s->icptcode || signal_pending(current) ||
+-		    kvm_s390_vcpu_has_irq(vcpu, 0))
++		    kvm_s390_vcpu_has_irq(vcpu, 0) ||
++		    kvm_s390_vcpu_sie_inhibited(vcpu))
+ 			break;
  	}
  
- 	return 0;
- }
- 
-+/*
-+ * The format of the crypto control block (CRYCB) is specified in the 3 low
-+ * order bits of the CRYCB designation (CRYCBD) field as follows:
-+ * Format 0: Neither the message security assist extension 3 (MSAX3) nor the
-+ *	     AP extended addressing (APXA) facility are installed.
-+ * Format 1: The APXA facility is not installed but the MSAX3 facility is.
-+ * Format 2: Both the APXA and MSAX3 facilities are installed
-+ */
- static void kvm_s390_set_crycb_format(struct kvm *kvm)
- {
- 	kvm->arch.crypto.crycbd = (__u32)(unsigned long) kvm->arch.crypto.crycb;
- 
-+	/* Clear the CRYCB format bits - i.e., set format 0 by default */
-+	kvm->arch.crypto.crycbd &= ~(CRYCB_FORMAT_MASK);
++	barrier();
++	vcpu->arch.sie_block->prog0c &= ~PROG_IN_SIE;
 +
-+	/* Check whether MSAX3 is installed */
-+	if (!test_kvm_facility(kvm, 76))
-+		return;
-+
- 	if (kvm_s390_apxa_installed())
- 		kvm->arch.crypto.crycbd |= CRYCB_FORMAT2;
- 	else
-@@ -1941,11 +1930,13 @@ static u64 kvm_s390_get_initial_cpuid(void)
+ 	if (rc == -EFAULT) {
+ 		/*
+ 		 * Addressing exceptions are always presentes as intercepts.
+@@ -1114,7 +1129,8 @@ int kvm_s390_handle_vsie(struct kvm_vcpu *vcpu)
+ 	if (unlikely(scb_addr & 0x1ffUL))
+ 		return kvm_s390_inject_program_int(vcpu, PGM_SPECIFICATION);
  
- static void kvm_s390_crypto_init(struct kvm *kvm)
- {
--	if (!test_kvm_facility(kvm, 76))
--		return;
--
- 	kvm->arch.crypto.crycb = &kvm->arch.sie_page2->crycb;
- 	kvm_s390_set_crycb_format(kvm);
-+	/* Default setting indicating SIE shall interpret AP instructions */
-+	kvm->arch.crypto.apie = 1;
-+
-+	if (!test_kvm_facility(kvm, 76))
-+		return;
+-	if (signal_pending(current) || kvm_s390_vcpu_has_irq(vcpu, 0))
++	if (signal_pending(current) || kvm_s390_vcpu_has_irq(vcpu, 0) ||
++	    kvm_s390_vcpu_sie_inhibited(vcpu))
+ 		return 0;
  
- 	/* Enable AES/DEA protected key functions by default */
- 	kvm->arch.crypto.aes_kw = 1;
-@@ -2474,17 +2465,30 @@ void kvm_arch_vcpu_postcreate(struct kvm_vcpu *vcpu)
- 
- static void kvm_s390_vcpu_crypto_setup(struct kvm_vcpu *vcpu)
- {
--	if (!test_kvm_facility(vcpu->kvm, 76))
-+	/*
-+	 * If neither the AP instructions nor the MSAX3 facility are installed
-+	 * on the host, then there is no need for a CRYCB in SIE because the
-+	 * they will not be installed on the guest either.
-+	 */
-+	if (ap_instructions_available() && !test_facility(76))
- 		return;
- 
--	vcpu->arch.sie_block->ecb3 &= ~(ECB3_AES | ECB3_DEA);
-+	vcpu->arch.sie_block->crycbd = vcpu->kvm->arch.crypto.crycbd;
-+
-+	vcpu->arch.sie_block->eca &= ~ECA_APIE;
-+	if (vcpu->kvm->arch.crypto.apie &&
-+	    test_kvm_cpu_feat(vcpu->kvm, KVM_S390_VM_CPU_FEAT_AP))
-+		vcpu->arch.sie_block->eca |= ECA_APIE;
- 
--	if (vcpu->kvm->arch.crypto.aes_kw)
--		vcpu->arch.sie_block->ecb3 |= ECB3_AES;
--	if (vcpu->kvm->arch.crypto.dea_kw)
--		vcpu->arch.sie_block->ecb3 |= ECB3_DEA;
-+	/* If MSAX3 is installed on the guest, set up protected key support */
-+	if (test_kvm_facility(vcpu->kvm, 76)) {
-+		vcpu->arch.sie_block->ecb3 &= ~(ECB3_AES | ECB3_DEA);
- 
--	vcpu->arch.sie_block->crycbd = vcpu->kvm->arch.crypto.crycbd;
-+		if (vcpu->kvm->arch.crypto.aes_kw)
-+			vcpu->arch.sie_block->ecb3 |= ECB3_AES;
-+		if (vcpu->kvm->arch.crypto.dea_kw)
-+			vcpu->arch.sie_block->ecb3 |= ECB3_DEA;
-+	}
- }
- 
- void kvm_s390_vcpu_unsetup_cmma(struct kvm_vcpu *vcpu)
+ 	vsie_page = get_vsie_page(vcpu->kvm, scb_addr);
 -- 
 1.7.1
 
