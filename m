@@ -3,223 +3,116 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06C82C46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 03:46:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3842BC46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 03:50:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4F08216F3
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 03:46:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D804021716
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 03:50:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="izAVgHyu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4F08216F3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="M81zTK/m"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D804021716
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727009AbeHHGD4 (ORCPT
+        id S1726921AbeHHGI2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 02:03:56 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:36186 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726625AbeHHGDz (ORCPT
+        Wed, 8 Aug 2018 02:08:28 -0400
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:35308 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726503AbeHHGI2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 02:03:55 -0400
-Received: by mail-oi0-f67.google.com with SMTP id n21-v6so1437470oig.3;
-        Tue, 07 Aug 2018 20:46:21 -0700 (PDT)
+        Wed, 8 Aug 2018 02:08:28 -0400
+Received: by mail-yw1-f66.google.com with SMTP id s68-v6so601441ywg.2
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 20:50:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=hHiPegLw5NXSxdODhlFZz5yBUol/u2qGPf/XjIht54g=;
-        b=izAVgHyupDFGMn1dgHIbZ6AAsz8n6d88Xp1ZT06uz1BzKnr4gpJ9VtdVcORudZmZ1C
-         S2mE0Q7XYlSyldAeWnUO4vktCHam/ERQE6+5sbdBXKIThPqEo6Zb839fiSAE7VPVHABP
-         a+bC2di0NW0XKD8phEOQDKQgFombwovV++nRP60LYKRo2tem8FFRaIh6hY/WLhdfku07
-         +nWD7vS6WBEvNaE9l1dP+T4THIH/xxiPSNZtUg1vUPAohuPyFJ31eBDoFU4ljZlREDbQ
-         oNnZqbN2hjWSB0n5NEDl/ytNNFcXtZun0+ijyBiGoB6xDXOWRNn5V9eLEKq29DxI2n4v
-         oFiQ==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=sA0iGr8g1qqk1B4znxVI54L4La5Qk/9XYIdTm9Zmgkw=;
+        b=M81zTK/mt3MWlxmRROhydVAxcGa+mXkTJBnvoFXpQPRX2E2+9buBgU9VhcXFo7olUE
+         T06InwaY3rgeAnBtGPjRVbBHbCy72Jc6En1rzQtAQdmWUpiJekDiIsOU+JMaD7/OjIMB
+         KL38HfeJziY06zS+pj0XvMfSN4K2QOrCkdrXg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=hHiPegLw5NXSxdODhlFZz5yBUol/u2qGPf/XjIht54g=;
-        b=b5+bZxuDmJPdV6/mfiyJlLkDpRAMiS67VRH4gQPkk/jFq0rBZmzrR1nzJkGUF59FYa
-         dbW2/QtXcz7JxR9uM+XZkFrLG5vU6Y2xsj1OMlyJtVQ+1Mn+PnNdt4kinJ68gf7IVwLQ
-         7FQf0Do2NPqZuIsLq7G9XFdBy0wKdqtGOqxSBNK0J3H7F8dlHzHO8X3wpEgUATlSu7x/
-         H6UwnSKmPuuzonbq/N8bmirTXBkt69AHaQLTsNmwyDT+syvLjQYNDnvAY6+vd9IRluu4
-         5FQh4VaK1ycy+HmPGWYfXfyWTZ7pqBHYNGAVpVXPviFY/8P7W3d59FhLF1+RuLEjzXKw
-         VKow==
-X-Gm-Message-State: AOUpUlFd22c/rAnUgMP9ieeAI1ZEAGm/lywjKthbvpXdj+VwlP24eu7q
-        zKbcrigN+jYYnkt+imtYWKBSgEp54jg=
-X-Google-Smtp-Source: AA+uWPyZlmd2y8Ip69kd7N3E575T0IKtMfl05h4aVAQ6psZF6L2dqsCBU6wOGri3pf1o9qSP5sb9FA==
-X-Received: by 2002:aca:ab0c:: with SMTP id u12-v6mr1100133oie.143.1533699980686;
-        Tue, 07 Aug 2018 20:46:20 -0700 (PDT)
-Received: from nukespec.gtech (c-98-195-139-126.hsd1.tx.comcast.net. [98.195.139.126])
-        by smtp.gmail.com with ESMTPSA id e204-v6sm6925240oif.21.2018.08.07.20.46.19
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=sA0iGr8g1qqk1B4znxVI54L4La5Qk/9XYIdTm9Zmgkw=;
+        b=DaXnX32YP1iSIlE+jP6lOLOdfRVwLPqZUHjV2UqXuwVZQOcHVwttH8N62IVbGnyn3J
+         JrSnYghqjWmG98g4Ju6u4DQ/gAJbCo4lJEEA69HWSWgQ+Yq6nCzG3+DPmhegzlbqKjgt
+         I34hBiLdm3ImFpFiICMUlyxojZ1f/WTXTYIiB2G3PsHu9+ShqZMJ/sTEsaGHupxLJVnn
+         dnuGboS0e3fXGS3uTi/x3C4vQtA/joH5bqex3eyRFRQiauQ2BE/35Y2+BeSPyc8vFRi+
+         1mSk9x8NP/28qM7Ex8ZnzMo9DlKsqGTQp8jgbthOoQg/0wQw5jAhntH6SEXFIERbno9V
+         1nIw==
+X-Gm-Message-State: AOUpUlGCIKGKD2V17ND5xqG5LTYuCN7yOwLnbrhYM6TvpIuNpoSw6c9m
+        A84skxnngh5bha1IazR8NBaQznPJi14=
+X-Google-Smtp-Source: AA+uWPwKtv5zq4Ddi7OdqNJV/A63x5Ogj4IGIRjzGlE0W0O3LjdYpPYCS55LMVggB1r5J504QqxJeQ==
+X-Received: by 2002:a25:31d7:: with SMTP id x206-v6mr554021ybx.440.1533700252319;
+        Tue, 07 Aug 2018 20:50:52 -0700 (PDT)
+Received: from mail-yw1-f52.google.com (mail-yw1-f52.google.com. [209.85.161.52])
+        by smtp.gmail.com with ESMTPSA id o204-v6sm1325153ywd.16.2018.08.07.20.50.50
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 07 Aug 2018 20:46:20 -0700 (PDT)
-Subject: Re: [PATCH v3] PCI/AER: Do not clear AER bits if we don't own AER
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     linux-pci@vger.kernel.org, bhelgaas@google.com,
-        keith.busch@intel.com, alex_gagniuc@dellteam.com,
-        austin_bolen@dell.com, shyam_iyer@dell.com,
-        Frederick Lawler <fred@fredlawl.com>,
-        Oza Pawandeep <poza@codeaurora.org>,
-        linux-kernel@vger.kernel.org
-References: <3d05f662-2c29-90cd-9c74-6456939a0e6b@gmail.com>
- <20180730233547.1238-1-mr.nuke.me@gmail.com>
- <20180808011429.GB49411@bhelgaas-glaptop.roam.corp.google.com>
-From:   "Alex G." <mr.nuke.me@gmail.com>
-Message-ID: <56a5722e-d102-554d-cbea-44af3383f7e3@gmail.com>
-Date:   Tue, 7 Aug 2018 22:46:19 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 07 Aug 2018 20:50:51 -0700 (PDT)
+Received: by mail-yw1-f52.google.com with SMTP id y203-v6so586077ywd.9
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 20:50:50 -0700 (PDT)
+X-Received: by 2002:a0d:ddc8:: with SMTP id g191-v6mr597307ywe.145.1533700250360;
+ Tue, 07 Aug 2018 20:50:50 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180808011429.GB49411@bhelgaas-glaptop.roam.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <cover.3cb9065dabdf5d455da508fb4109201e626d5ee7.1522168131.git-series.kieran.bingham@ideasonboard.com>
+ <cae511f90085701e7093ce39dc8dabf8fc16b844.1522168131.git-series.kieran.bingham@ideasonboard.com>
+ <CAAFQd5CQEhmuLbs0dmGfu66x1Xq1V_kOT0bV_DoPitkkOX5Q4A@mail.gmail.com> <15196240.O2E9MK7q6s@avalon>
+In-Reply-To: <15196240.O2E9MK7q6s@avalon>
+From:   Tomasz Figa <tfiga@chromium.org>
+Date:   Wed, 8 Aug 2018 12:50:37 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5B613JJLK4drTRYT=qP+wZriMt4afAgXKvBgEU4H0vtOA@mail.gmail.com>
+Message-ID: <CAAFQd5B613JJLK4drTRYT=qP+wZriMt4afAgXKvBgEU4H0vtOA@mail.gmail.com>
+Subject: Re: [PATCH v4 6/6] media: uvcvideo: Move decode processing to process context
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Guennadi Liakhovetski <g.liakhovetski@gmx.de>,
+        olivier.braun@stereolabs.com, troy.kisky@boundarydevices.com,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Philipp Zabel <philipp.zabel@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Laurent,
 
+On Wed, Aug 8, 2018 at 8:12 AM Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+>
+> Hi Tomasz,
+>
+> On Tuesday, 7 August 2018 12:54:02 EEST Tomasz Figa wrote:
+> > On Wed, Mar 28, 2018 at 1:47 AM Kieran Bingham wrote:
+>
+> [snip]
+>
+> > In our testing, this function ends up being called twice
+>
+> In your testing, has this patch series brought noticeable performance
+> improvements ? Is there a particular reason you tested it, beside general
+> support of UVC devices in ChromeOS ?
 
-On 08/07/2018 08:14 PM, Bjorn Helgaas wrote:
-> On Mon, Jul 30, 2018 at 06:35:31PM -0500, Alexandru Gagniuc wrote:
->> When we don't own AER, we shouldn't touch the AER error bits. Clearing
->> error bits willy-nilly might cause firmware to miss some errors. In
->> theory, these bits get cleared by FFS, or via ACPI _HPX method. These
->> mechanisms are not subject to the problem.
-> 
-> What's FFS?
+Some of our older ARM devices have external USB ports wired to a low
+end dwc2 controller, which puts quite strict timing requirements on
+interrupt handling. For some cameras that produce bigger payloads (in
+our testing that was Logitech BRIO, running at 1080p), almost half of
+every frame would be dropped, due to the memcpy from uncached memory
+taking too much time. With this series, it goes down to bottom ~10% of
+only a part of the frames. With one more optimization from Keiichi
+[1], the problem disappears almost completely.
 
-Firmware-first. Nobody likes spelling it out, and all other proposed 
-acronyms are insanely tong-twisting. So, FFS.
+[1] https://lore.kernel.org/patchwork/patch/956388/
 
-> I guess you mean FFS and _HPX are not subject to the problem because
-> they're supplied by firmware, so firmware would be responsible for
-> looking at the bits before clearing them?
-
-Exactly.
-
->> This race is mostly of theoretical significance, since I can't
->> reasonably demonstrate this race in the lab.
->>
->> On a side-note, pcie_aer_is_kernel_first() is created to alleviate the
->> need for two checks: aer_cap and get_firmware_first().
->>
->> Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
->> ---
->>
->> Changes since v2:
->>    - Added missing negation in pci_cleanup_aer_error_status_regs()
->>
->>   drivers/pci/pcie/aer.c | 17 ++++++++++-------
->>   1 file changed, 10 insertions(+), 7 deletions(-)
->>
->> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
->> index a2e88386af28..40e5c86271d1 100644
->> --- a/drivers/pci/pcie/aer.c
->> +++ b/drivers/pci/pcie/aer.c
->> @@ -307,6 +307,12 @@ int pcie_aer_get_firmware_first(struct pci_dev *dev)
->>   		aer_set_firmware_first(dev);
->>   	return dev->__aer_firmware_first;
->>   }
->> +
->> +static bool pcie_aer_is_kernel_first(struct pci_dev *dev)
->> +{
->> +	return !!dev->aer_cap && !pcie_aer_get_firmware_first(dev);
->> +}
-> 
-> I think it complicates things to have both "firmware_first" and
-> "kernel_first" interfaces, so I would prefer to stick with the
-> existing "firmware_first" style.
-> 
->>   #define	PCI_EXP_AER_FLAGS	(PCI_EXP_DEVCTL_CERE | PCI_EXP_DEVCTL_NFERE | \
->>   				 PCI_EXP_DEVCTL_FERE | PCI_EXP_DEVCTL_URRE)
->>   
->> @@ -337,10 +343,7 @@ bool aer_acpi_firmware_first(void)
->>   
->>   int pci_enable_pcie_error_reporting(struct pci_dev *dev)
->>   {
->> -	if (pcie_aer_get_firmware_first(dev))
->> -		return -EIO;
->> -
->> -	if (!dev->aer_cap)
->> +	if (!pcie_aer_is_kernel_first(dev))
->>   		return -EIO;
->>   
->>   	return pcie_capability_set_word(dev, PCI_EXP_DEVCTL, PCI_EXP_AER_FLAGS);
-> 
-> This change doesn't actually fix anything, does it?  It looks like a
-> cleanup that doesn't change the behavior.
-
-Initially (v1), this was a one-liner, but someone had a complaint about 
-having pcie_aer_get_firmware_first() boilerplate all over the place. 
-That's why I added the "kernel_first" function (previous comment), and 
-then updated this here for completeness. I'm also fine with v1.
-
->> @@ -349,7 +352,7 @@ EXPORT_SYMBOL_GPL(pci_enable_pcie_error_reporting);
->>   
->>   int pci_disable_pcie_error_reporting(struct pci_dev *dev)
->>   {
->> -	if (pcie_aer_get_firmware_first(dev))
->> +	if (!pcie_aer_is_kernel_first(dev))
->>   		return -EIO;
-> 
-> This change does effectively add a test for dev->aer_cap.  That makes
-> sense in terms of symmetry with pci_enable_pcie_error_reporting(),
-> but I think it should be a separate patch because it's conceptually
-> separate from the change below.
-> 
-> We should keep the existing behavior (but add the symmetry) here for
-> now, but it's not clear to me that these paths should care about AER
-> or firmware-first at all.  PCI_EXP_DEVCTL is not an AER register and
-> we have the _HPX mechanism for firmware to influence it (which these
-> paths currently ignore).  I suspect we should program these reporting
-> enable bits in the core enumeration path instead of having drivers
-> call these interfaces.
-
-The headache is that FFS needs the reporting bit to stay enabled in 
-order to get AER notifications. Disabling things here could really break 
-firmware. Of course, that's a cyclical argument, since FW is broken by 
-definition.
-
-> If/when we make changes along these lines, the history will be easier
-> to follow if *this* change is not connected with the change below to
-> pci_cleanup_aer_error_status_regs().
-
-I agree. I think it might be preferred then to go with v1, and leave the 
-refactoring to a later time, since the extra changes are cosmetical and 
-social.
-
->>   	return pcie_capability_clear_word(dev, PCI_EXP_DEVCTL,
->> @@ -383,10 +386,10 @@ int pci_cleanup_aer_error_status_regs(struct pci_dev *dev)
->>   	if (!pci_is_pcie(dev))
->>   		return -ENODEV;
->>   
->> -	pos = dev->aer_cap;
->> -	if (!pos)
->> +	if (!pcie_aer_is_kernel_first(dev))
->>   		return -EIO;
-> 
-> This part makes sense to me, but I think I would rather have it match
-> the existing style in pci_enable_pcie_error_reporting(), i.e., keep
-> the test for dev->aer_cap and add a test for
-> pcie_aer_get_firmware_first().
-
-Had it that way in v1.
-
-Alex
-
->> +	pos = dev->aer_cap;
->>   	port_type = pci_pcie_type(dev);
->>   	if (port_type == PCI_EXP_TYPE_ROOT_PORT) {
->>   		pci_read_config_dword(dev, pos + PCI_ERR_ROOT_STATUS, &status);
->> -- 
->> 2.17.1
->>
+Best regards,
+Tomasz
