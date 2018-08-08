@@ -6,59 +6,59 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9CDCC46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 05:20:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1E47C4646D
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 05:22:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 734B22171F
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 05:20:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F2FB21725
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 05:22:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="AqHPsqmv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 734B22171F
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="PH8sNjWy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F2FB21725
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726931AbeHHHiO (ORCPT
+        id S1726954AbeHHHka (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 03:38:14 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:46809 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726538AbeHHHiN (ORCPT
+        Wed, 8 Aug 2018 03:40:30 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:34735 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726724AbeHHHka (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 03:38:13 -0400
-Received: by mail-lf1-f68.google.com with SMTP id l16-v6so629061lfc.13
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 22:20:22 -0700 (PDT)
+        Wed, 8 Aug 2018 03:40:30 -0400
+Received: by mail-lf1-f65.google.com with SMTP id n96-v6so675203lfi.1
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Aug 2018 22:22:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc:content-transfer-encoding;
-        bh=0xttizLKs0wtWmEnfTGUR3uY1+NCy3x43RVDppWKndU=;
-        b=AqHPsqmvdnLF3NVNnPZuOEifVEt50dnoWRLPVkm2mRuwq9+VEig81HwGji3ORK3HcE
-         1mghMyAj4SHvLHoPrrTDRtqy2BZux40U/BEc5fq64ekN1hJWJ5/Tou8KpY4/FJqAoito
-         n3diCo1Q58ZWDEPI0zsfyuu03dqiLuyGak7Vc=
+        bh=sFtoYo6T+B/vIhMqevif7hpyI5R10eENAwNyD81AgHc=;
+        b=PH8sNjWyqhjzZ3z3pXmBuzGbdJQbGxYpr4pm4kLSvbcKGzddEg3c4vALnz1p0KhfIy
+         pUb2wEOi5Vsn15AQq7gijBh/lGQZcrjj5QUpkae4e4vEhymCVCr6x4HbqRMwm0WR2zsD
+         xYR+LSxfl8CNZWPbkHao6X8SR1+b+ukiZFHTY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=0xttizLKs0wtWmEnfTGUR3uY1+NCy3x43RVDppWKndU=;
-        b=Najd3FQ/V9TFAxdqnfPIWjE5q9aDt75heinOc7BV5yNyY7ITUoX9B+LDxjHLf7Mosc
-         VcLRk7b0VqoZAk6xYmXrSTyqK3p4/XOdehzLRKes+F3Qb+y0omEtnQb+Et7Pwfcea8W1
-         c3EP5RH4HWU7ssETp8JLN+BDdAtNaitA7z0PzJgeMyuekFvtxIwLQRqzzSHJuglRmetf
-         7PX6fPYRn2mU3Cc+UXzVUEW2wPj7OYQYO9EThnBHFZ2sxFGW+PVurArcMrB/xsJJrPXM
-         W7dmPEhd4Y1XbTwTCBM862UkY1L+HexCHIvuNf0+l2OKwxMzVMbyLqJz6f1auqDM69kj
-         Y4xw==
-X-Gm-Message-State: AOUpUlGruBPtygn2tHWU6Iic4CTJFtXdRTiJoalE/6lojC2Lq/Yuu0Zr
-        iwuMzh5WPLgqdfFOLQVvIaEyX+d7+WL//9Dw3F6aog==
-X-Google-Smtp-Source: AA+uWPxnXf4vc5mcJEsi8fhSS8+D3uE/TgHAYdqDAuzMfbr/QSbltoXl631mGrhGGS+PTopluKouA4HwYMVOHX6caOw=
-X-Received: by 2002:a19:10c4:: with SMTP id 65-v6mr791271lfq.113.1533705621355;
- Tue, 07 Aug 2018 22:20:21 -0700 (PDT)
+        bh=sFtoYo6T+B/vIhMqevif7hpyI5R10eENAwNyD81AgHc=;
+        b=KiY4ISFEcd73OcyoZtoShf+uq3104E8Gahb5rsG7VDpg7e1BAXDVTluecSgVxnU8Sh
+         aSlbtRDxVA+cQH4MyBALtYwYyOYEuVcRlRr7NNNkIBGJIWIyGY5RIr1dTnzMRJyr45A+
+         PAXuMM/3Sg3JqWTi1koZCSvA9JcXM8T5di8NsFPAjRjyKSAQ8aj4S3hZfzO79SeIiPb5
+         kpiwTcJqcVQvuUdl6whrA5X9DGZl+IMrFXUBgoyVdsd+KWrKOOl7Jep3Xtg7EXnbbdyM
+         M0XyKLFt+7gc7WYJswDliCBOei3GvGTZaaXZThPPb4c8278QzNXjVKdpm16ZGU/R/hyf
+         K72w==
+X-Gm-Message-State: AOUpUlEPYvtoS4rFp5XSmp3gpSsuSXJiykuMlAzFmV3k7tl358/YP5w8
+        YPIBVCVOW2GyYN4OG+Gm/aNIQqpvd7/A7V7H7+UFww==
+X-Google-Smtp-Source: AA+uWPxsdreG+Q7mCZc2ZWUI0ujVfYEy1J1AjF9qmryRUM5LBtKrHQimHej3Ov9Asz76EY7xv/IMJXNiQI0jri6U6JE=
+X-Received: by 2002:a19:ca09:: with SMTP id a9-v6mr723595lfg.142.1533705757402;
+ Tue, 07 Aug 2018 22:22:37 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a19:169b:0:0:0:0:0 with HTTP; Tue, 7 Aug 2018 22:20:20 -0700 (PDT)
-In-Reply-To: <20180807172312.964272530@linuxfoundation.org>
-References: <20180807172312.964272530@linuxfoundation.org>
+Received: by 2002:a19:169b:0:0:0:0:0 with HTTP; Tue, 7 Aug 2018 22:22:36 -0700 (PDT)
+In-Reply-To: <20180807172330.953888701@linuxfoundation.org>
+References: <20180807172330.953888701@linuxfoundation.org>
 From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Wed, 8 Aug 2018 10:50:20 +0530
-Message-ID: <CA+G9fYs9xDrM-V5=TqU7dYKTtNDwORjr50L5K5cAmJjf8YpHCQ@mail.gmail.com>
-Subject: Re: [PATCH 4.17 00/18] 4.17.14-stable review
+Date:   Wed, 8 Aug 2018 10:52:36 +0530
+Message-ID: <CA+G9fYvxO9LJVBhEEvDU5gxdheVEKzqxCg62E_ptp8PjSFgoxA@mail.gmail.com>
+Subject: Re: [PATCH 4.14 00/21] 4.14.62-stable review
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     open list <linux-kernel@vger.kernel.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
@@ -77,47 +77,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On 8 August 2018 at 00:21, Greg Kroah-Hartman
 <gregkh@linuxfoundation.org> wrote:
-> This is the start of the stable review cycle for the 4.17.14 release.
-> There are 18 patches in this series, all will be posted as a response
+> This is the start of the stable review cycle for the 4.14.62 release.
+> There are 21 patches in this series, all will be posted as a response
 > to this one.  If anyone has any issues with these being applied, please
 > let me know.
 >
-> Responses should be made by Thu Aug  9 17:23:05 UTC 2018.
+> Responses should be made by Thu Aug  9 17:23:22 UTC 2018.
 > Anything received after that time might be too late.
 >
 > The whole patch series can be found in one patch at:
 >         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
-4.17.14-rc1.gz
+4.14.62-rc1.gz
 > or in the git tree and branch at:
 >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-4.17.y
+-rc.git linux-4.14.y
 > and the diffstat can be found below.
 >
 > thanks,
 >
 > greg k-h
 
-
 Results from Linaro=E2=80=99s test farm.
 No regressions on arm64, arm and x86_64.
-
 
 Summary
 ------------------------------------------------------------------------
 
-kernel: 4.17.14-rc1
+kernel: 4.14.62-rc1
 git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
 le-rc.git
-git branch: linux-4.17.y
-git commit: 53b91e019709af31eaf31b16123585f05c00a411
-git describe: v4.17.13-19-g53b91e019709
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.17-oe/bu=
-ild/v4.17.13-19-g53b91e019709
+git branch: linux-4.14.y
+git commit: 5a43290b0403cc685cb30f8b65843e03980e9499
+git describe: v4.14.61-22-g5a43290b0403
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.14-oe/bu=
+ild/v4.14.61-22-g5a43290b0403
 
-No regressions (compared to build v4.17.13)
+No regressions (compared to build v4.14.61-21-g24cbd55fcf52)
 
 
-Ran 13918 total tests in the following environments and test suites.
+Ran 16631 total tests in the following environments and test suites.
 
 Environments
 --------------
@@ -151,9 +149,9 @@ Test Suites
 * ltp-nptl-tests
 * ltp-pty-tests
 * ltp-sched-tests
-* ltp-securebits-tests
 * ltp-syscalls-tests
 * ltp-timers-tests
+* ltp-securebits-tests
 * ltp-open-posix-tests
 * kselftest-vsyscall-mode-native
 * kselftest-vsyscall-mode-none
