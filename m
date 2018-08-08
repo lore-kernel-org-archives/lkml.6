@@ -2,159 +2,116 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1C16C46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 18:02:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BCB5C4646D
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 18:02:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F17021798
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 18:02:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F17021798
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=buserror.net
+	by mail.kernel.org (Postfix) with ESMTP id C83ED219EF
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 18:02:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C83ED219EF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joshtriplett.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729710AbeHHUWx (ORCPT
+        id S1729759AbeHHUXR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 16:22:53 -0400
-Received: from baldur.buserror.net ([165.227.176.147]:57954 "EHLO
-        baldur.buserror.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727748AbeHHUWx (ORCPT
+        Wed, 8 Aug 2018 16:23:17 -0400
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:55885 "EHLO
+        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727748AbeHHUXR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 16:22:53 -0400
-Received: from [2601:449:8400:7293:12bf:48ff:fe84:c9a0]
-        by baldur.buserror.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <oss@buserror.net>)
-        id 1fnSi9-0001xp-Bj; Wed, 08 Aug 2018 12:57:30 -0500
-Message-ID: <bef421feea16da2fdab333e63a6828741bd59055.camel@buserror.net>
-From:   Scott Wood <oss@buserror.net>
-To:     Bharat Bhushan <bharat.bhushan@nxp.com>,
-        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
-        "paulus@samba.org" <paulus@samba.org>,
-        "mpe@ellerman.id.au" <mpe@ellerman.id.au>,
-        "galak@kernel.crashing.org" <galak@kernel.crashing.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc:     "robh@kernel.org" <robh@kernel.org>,
-        "keescook@chromium.org" <keescook@chromium.org>,
-        "tyreld@linux.vnet.ibm.com" <tyreld@linux.vnet.ibm.com>,
-        "joe@perches.com" <joe@perches.com>
-Date:   Wed, 08 Aug 2018 12:57:27 -0500
-In-Reply-To: <AM5PR0401MB2545041D99EEDC3136B201719A260@AM5PR0401MB2545.eurprd04.prod.outlook.com>
-References: <1532684881-19310-1-git-send-email-Bharat.Bhushan@nxp.com>
-         <1532684881-19310-6-git-send-email-Bharat.Bhushan@nxp.com>
-         <ab2a113620123cb71364b6ae89328ae2fca49821.camel@buserror.net>
-         <AM5PR0401MB254592DC0E917FD292B323BA9A260@AM5PR0401MB2545.eurprd04.prod.outlook.com>
-         <aeff83355ee5235cfd6107dba06a5f7957b45c92.camel@buserror.net>
-         <AM5PR0401MB2545041D99EEDC3136B201719A260@AM5PR0401MB2545.eurprd04.prod.outlook.com>
-Organization: Red Hat
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2601:449:8400:7293:12bf:48ff:fe84:c9a0
-X-SA-Exim-Rcpt-To: bharat.bhushan@nxp.com, benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au, galak@kernel.crashing.org, mark.rutland@arm.com, kstewart@linuxfoundation.org, gregkh@linuxfoundation.org, devicetree@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, robh@kernel.org, keescook@chromium.org, tyreld@linux.vnet.ibm.com, joe@perches.com
-X-SA-Exim-Mail-From: oss@buserror.net
-Subject: Re: [RFC 5/5] powerpc/fsl: Add supported-irq-ranges for P2020
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on baldur.buserror.net)
+        Wed, 8 Aug 2018 16:23:17 -0400
+X-Originating-IP: 134.134.139.76
+Received: from localhost (unknown [134.134.139.76])
+        (Authenticated sender: josh@joshtriplett.org)
+        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id D46264000D;
+        Wed,  8 Aug 2018 18:02:10 +0000 (UTC)
+Date:   Wed, 8 Aug 2018 11:01:55 -0700
+From:   Josh Triplett <josh@joshtriplett.org>
+To:     Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc:     Michal Hocko <mhocko@kernel.org>, akpm@linux-foundation.org,
+        gregkh@linuxfoundation.org, rafael@kernel.org,
+        viro@zeniv.linux.org.uk, darrick.wong@oracle.com,
+        paulmck@linux.vnet.ibm.com, rostedt@goodmis.org,
+        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
+        hughd@google.com, shuah@kernel.org, robh@kernel.org,
+        ulf.hansson@linaro.org, aspriel@gmail.com,
+        vivek.gautam@codeaurora.org, robin.murphy@arm.com, joe@perches.com,
+        heikki.krogerus@linux.intel.com, sfr@canb.auug.org.au,
+        vdavydov.dev@gmail.com, chris@chris-wilson.co.uk,
+        penguin-kernel@I-love.SAKURA.ne.jp, aryabinin@virtuozzo.com,
+        willy@infradead.org, ying.huang@intel.com, shakeelb@google.com,
+        jbacik@fb.com, mingo@kernel.org, mhiramat@kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH RFC 01/10] rcu: Make CONFIG_SRCU unconditionally enabled
+Message-ID: <20180808180152.GA2480@localhost>
+References: <153365347929.19074.12509495712735843805.stgit@localhost.localdomain>
+ <153365625652.19074.8434946780002619802.stgit@localhost.localdomain>
+ <20180808072040.GC27972@dhcp22.suse.cz>
+ <d17e65bb-c114-55de-fb4e-e2f538779b92@virtuozzo.com>
+ <20180808161330.GA22863@localhost>
+ <f32ab99a-de28-b140-a7d0-027073055728@virtuozzo.com>
+ <b4b58edd-b317-6319-1306-7345aa0062b8@virtuozzo.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b4b58edd-b317-6319-1306-7345aa0062b8@virtuozzo.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-08-08 at 06:28 +0000, Bharat Bhushan wrote:
-> > -----Original Message-----
-> > From: Scott Wood [mailto:oss@buserror.net]
-> > Sent: Wednesday, August 8, 2018 11:26 AM
-> > To: Bharat Bhushan <bharat.bhushan@nxp.com>;
-> > benh@kernel.crashing.org; paulus@samba.org; mpe@ellerman.id.au;
-> > galak@kernel.crashing.org; mark.rutland@arm.com;
-> > kstewart@linuxfoundation.org; gregkh@linuxfoundation.org;
-> > devicetree@vger.kernel.org; linuxppc-dev@lists.ozlabs.org; linux-
-> > kernel@vger.kernel.org
-> > Cc: robh@kernel.org; keescook@chromium.org; tyreld@linux.vnet.ibm.com;
-> > joe@perches.com
-> > Subject: Re: [RFC 5/5] powerpc/fsl: Add supported-irq-ranges for P2020
+On Wed, Aug 08, 2018 at 07:30:13PM +0300, Kirill Tkhai wrote:
+> On 08.08.2018 19:23, Kirill Tkhai wrote:
+> > On 08.08.2018 19:13, Josh Triplett wrote:
+> >> On Wed, Aug 08, 2018 at 01:17:44PM +0300, Kirill Tkhai wrote:
+> >>> On 08.08.2018 10:20, Michal Hocko wrote:
+> >>>> On Tue 07-08-18 18:37:36, Kirill Tkhai wrote:
+> >>>>> This patch kills all CONFIG_SRCU defines and
+> >>>>> the code under !CONFIG_SRCU.
+> >>>>
+> >>>> The last time somebody tried to do this there was a pushback due to
+> >>>> kernel tinyfication. So this should really give some numbers about the
+> >>>> code size increase. Also why can't we make this depend on MMU. Is
+> >>>> anybody else than the reclaim asking for unconditional SRCU usage?
+> >>>
+> >>> I don't know one. The size numbers (sparc64) are:
+> >>>
+> >>> $ size image.srcu.disabled 
+> >>>    text	   data	    bss	    dec	    hex	filename
+> >>> 5117546	8030506	1968104	15116156	 e6a77c	image.srcu.disabled
+> >>> $ size image.srcu.enabled
+> >>>    text	   data	    bss	    dec	    hex	filename
+> >>> 5126175	8064346	1968104	15158625	 e74d61	image.srcu.enabled
+> >>> The difference is: 15158625-15116156 = 42469 ~41Kb
+> >>
+> >> 41k is a *substantial* size increase. However, can you compare
+> >> tinyconfig with and without this patch? That may have a smaller change.
 > > 
-> > On Wed, 2018-08-08 at 03:44 +0000, Bharat Bhushan wrote:
-> > > > -----Original Message-----
-> > > > From: Scott Wood [mailto:oss@buserror.net]
-> > > > Sent: Wednesday, August 8, 2018 2:44 AM
-> > > > To: Bharat Bhushan <bharat.bhushan@nxp.com>;
-> > > > benh@kernel.crashing.org; paulus@samba.org; mpe@ellerman.id.au;
-> > > > galak@kernel.crashing.org; mark.rutland@arm.com;
-> > > > kstewart@linuxfoundation.org; gregkh@linuxfoundation.org;
-> > > > devicetree@vger.kernel.org; linuxppc-dev@lists.ozlabs.org; linux-
-> > > > kernel@vger.kernel.org
-> > > > Cc: robh@kernel.org; keescook@chromium.org;
-> > > > tyreld@linux.vnet.ibm.com; joe@perches.com
-> > > > Subject: Re: [RFC 5/5] powerpc/fsl: Add supported-irq-ranges for
-> > > > P2020
-> > > > 
-> > > > On Fri, 2018-07-27 at 15:18 +0530, Bharat Bhushan wrote:
-> > > > > MPIC on NXP (Freescale) P2020 supports following irq
-> > > > > ranges:
-> > > > >   > 0 - 11      (External interrupt)
-> > > > >   > 16 - 79     (Internal interrupt)
-> > > > >   > 176 - 183   (Messaging interrupt)
-> > > > >   > 224 - 231   (Shared message signaled interrupt)
-> > > > 
-> > > > Why don't you convert to the 4-cell interrupt specifiers that make
-> > > > dealing with these ranges less error-prone?
-> > > 
-> > > Ok , will do if we agree to have this series as per comment on other
-> > > patch.
+> > $ size image.srcu.disabled
+> >    text	   data	    bss	    dec	    hex	filename
+> > 1105900	 195456	  63232	1364588	 14d26c	image.srcu.disabled
 > > 
-> > If you're concerned with errors, this would be a good things to do
-> > regardless.
-> >  Actually, it seems that p2020si-post.dtsi already uses 4-cell interrupts.
+> > $ size image.srcu.enabled
+> >    text	   data	    bss	    dec	    hex	filename
+> > 1106960	 195528	  63232	1365720	 14d6d8	image.srcu.enabled
 > > 
-> > What is motivating this patchset?  Is there something wrong in the
-> > existing
-> > dts files?
-> 
-> There is no error in device tree. Main motivation is to improve code for
-> following reasons: 
->   - While code study it was found that if a reserved irq-number used then
-> there are no check in driver. irq will be configured as correct and
-> interrupt will never fire.
+> > 1365720-1364588 = 1132 ~ 1Kb
+>  
+> 1Kb is not huge size. It looks as not a big price for writing generic code
+> for only case (now some places have CONFIG_SRCU and !CONFIG_SRCU variants,
+> e.g. drivers/base/core.c). What do you think?
 
-Again, a wrong interrupt number won't fire, whether an interrupt by that
-number exists or not.  I wouldn't mind a sanity check in the driver if the
-programming model made it properly discoverable, but I don't think it's worth
-messing with device trees just for this (and even less so given that there
-don't seem to be new chips coming out that this would be relevant for).
-
-> > > One other confusing observation I have is that "irq_count" from
-> > > platform code is given precedence over "last-interrupt-source" in
-> > > device-
-> > 
-> > tree.
-> > > Should not device-tree should have precedence otherwise there is no
-> > > point using " last-interrupt-source" if platform code passes
-> > > "irq_count" in mpic_alloc().
-> > 
-> > Maybe, though I don't think it matters much given that last-interrupt-
-> > source
-> > was only added to avoid having to pass irq_count in platform code.
-> 
-> Thanks for clarifying;
-> 
-> My understanding was that "last-interrupt-source" added to ensure that we
-> can over-ride value passed from platform code. In that case we do not need
-> to change code and can control from device tree.
-
-The changelog says, "To avoid needing to write custom board-specific code to
-detect that scenario, allow it to be easily overridden in the device-tree,"
-where "it" means the value provided by hardware.  The goal was to pass in 256
-without board code in the kernel, not to override the 256.
-
--Scott
-
+That's a little more reasonable than 41k, likely because of
+CONFIG_TINY_SRCU. That's still not ideal, though. And as far as I can
+tell, the *only* two pieces of core code that use SRCU are
+drivers/base/core.c and kernel/notifier.c, and the latter is exclusively
+code to use notifiers with SRCU, not notifiers wanting to use SRCU
+themselves. So, as far as I can tell, this would really just save a
+couple of small #ifdef sections in drivers/base/core.c, and I think
+those #ifdef sections could be simplified even further. That doesn't
+seem worth it at all.
