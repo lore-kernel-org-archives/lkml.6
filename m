@@ -2,112 +2,135 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6B70C4646D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 17:20:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BE43C4646D
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 17:20:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88AEB216F2
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 17:20:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=landley-net.20150623.gappssmtp.com header.i=@landley-net.20150623.gappssmtp.com header.b="guICrf1L"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88AEB216F2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=landley.net
+	by mail.kernel.org (Postfix) with ESMTP id 4706F216F4
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 17:20:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4706F216F4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729036AbeHHTko (ORCPT
+        id S1729338AbeHHTlB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 15:40:44 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:34301 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727723AbeHHTko (ORCPT
+        Wed, 8 Aug 2018 15:41:01 -0400
+Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:36647 "EHLO
+        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727706AbeHHTlB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 15:40:44 -0400
-Received: by mail-io0-f195.google.com with SMTP id l7-v6so2484417ioj.1
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 10:20:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=landley-net.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Lla3gIIplMXLwofZXx2roSBkh0znGATqerEuEHgpNqA=;
-        b=guICrf1LeIZ3lrdDfqmoih8Hgpd07DbcuV1/JsFcf+I9QVDXKpxFy1yTiT69cGtsBp
-         Z1IvU4xACEFLuIDHZH73pni8rLlAF53hNr3M6GFGMtrSiOeeoP5Rxr4nJ+wAqbjcjk1q
-         DlVUuwWVfGlHkCWuk11fM/RFgbAuRjYQHc3lWM5kpYu/Fw6Ln733quUVHkhXdM1OGd5i
-         KCsMcwLYQwBks3I+mhgy/Xa/rwKlNfS4/vXan5Kifd1yIMZ495i9R+scZOkfdi8fn4j2
-         CBSvNUfiyhktPoa8aTxJMhzPRelpPDoy/KHjolA4VFJs/x+4xYIYjYc47hNKvNVEvbfw
-         tqfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Lla3gIIplMXLwofZXx2roSBkh0znGATqerEuEHgpNqA=;
-        b=TzdBYYXP6wf3Xn46cP8DamPx4RpmD6P561EUbJicEe9WprQiCaY7wgdeaP+fIHP/In
-         M+J4ytBQ9N7aSp4tW9FqLMZPN4RFQTk5MRIx9lK29kZUbsX0Ey81YX+3qXVNZtI+lacJ
-         tLhGCvsB9npIFmE/J2Z5zfSw0mTRvELcPkp6K5Tl8H6EPBBOL0b0wtXV+chhMUxWAFIu
-         fz+1M1/BaqqsSSgCbSUQloWwQKmPfxyrMOdjGa8girpqLmhNH+/fTIBWwwvsPvA+5gyk
-         azJ0WZ3LkGUA2UYixO+xikSQiCsfNH+CSF6MzwP1qELobxLPoyC1tIJPH6xhWm2/1frQ
-         kjtQ==
-X-Gm-Message-State: AOUpUlEnNQrU9fnBqbPeMmnnVqxcFiWJxHzBVbTZ1k9sThbe6qF0h14f
-        qRlYfvY/v5ToOM2PqfjIAQ68bA==
-X-Google-Smtp-Source: AA+uWPzpddWAtA+QHlYrrkJg0ka7VkE/tkJcBD1nOX0QWqNNp1dyYxqIdF4mE3AVfrSgnaReK8zbIg==
-X-Received: by 2002:a6b:8fd4:: with SMTP id r203-v6mr3270615iod.24.1533748806049;
-        Wed, 08 Aug 2018 10:20:06 -0700 (PDT)
-Received: from [192.168.42.110] ([172.58.139.144])
-        by smtp.googlemail.com with ESMTPSA id n142-v6sm17466itb.3.2018.08.08.10.19.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 08 Aug 2018 10:20:05 -0700 (PDT)
-Subject: Re: [RESEND PATCH] init/Kconfig: Use short unix-style option instead
- of --longname
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kbuild@vger.kernel.org
-Cc:     Ulf Magnusson <ulfalizer@gmail.com>,
-        Jiri Kosina <trivial@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-References: <1533701203-31019-1-git-send-email-yamada.masahiro@socionext.com>
-From:   Rob Landley <rob@landley.net>
-Message-ID: <7c415401-8732-9cdd-44f7-1878e711b440@landley.net>
-Date:   Wed, 8 Aug 2018 12:19:18 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Wed, 8 Aug 2018 15:41:01 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R501e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04452;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0T6Gr7pI_1533748797;
+Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0T6Gr7pI_1533748797)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 09 Aug 2018 01:20:00 +0800
+Subject: Re: [RFC v6 PATCH 2/2] mm: mmap: zap pages with read mmap_sem in
+ munmap
+To:     Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@kernel.org>
+Cc:     willy@infradead.org, ldufour@linux.vnet.ibm.com,
+        kirill@shutemov.name, akpm@linux-foundation.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <1532628614-111702-1-git-send-email-yang.shi@linux.alibaba.com>
+ <1532628614-111702-3-git-send-email-yang.shi@linux.alibaba.com>
+ <20180803090759.GI27245@dhcp22.suse.cz>
+ <aff7e86d-2e48-ff58-5d5d-9c67deb68674@linux.alibaba.com>
+ <20180806094005.GG19540@dhcp22.suse.cz>
+ <76c0fc2b-fca7-9f22-214a-920ee2537898@linux.alibaba.com>
+ <20180806204119.GL10003@dhcp22.suse.cz>
+ <28de768b-c740-37b3-ea5a-8e2cb07d2bdc@linux.alibaba.com>
+ <20180806205232.GN10003@dhcp22.suse.cz>
+ <0cdff13a-2713-c5be-a33e-28c07e093bcc@linux.alibaba.com>
+ <20180807054524.GQ10003@dhcp22.suse.cz>
+ <04a22c49-fe30-63ac-c1b7-46a405c810e2@linux.alibaba.com>
+ <3f960117-1485-9a61-8468-cb1590494e3c@suse.cz>
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <907e441d-43e2-9a57-a3fd-deb533046b6c@linux.alibaba.com>
+Date:   Wed, 8 Aug 2018 10:19:54 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <1533701203-31019-1-git-send-email-yamada.masahiro@socionext.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <3f960117-1485-9a61-8468-cb1590494e3c@suse.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/07/2018 11:06 PM, Masahiro Yamada wrote:
-> From: Rob Landley <rob@landley.net>
-> 
-> Avoids warning messages with the latest release of toybox, which never
-> bothered to implement the --longopts nothing was using.
-> 
-> Signed-off-by: Rob Landley <rob@landley.net>
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
-> 
-> This was sent to the trivial ML some time ago,
-> but not applied yet.
-> 
-> I will apply this to kbuild tree for v4.19
 
-Thank you.
 
-(I have a pile of small kernel fixes but haven't had time+energy to follow up on
-them recently.)
+On 8/8/18 2:22 AM, Vlastimil Babka wrote:
+> On 08/08/2018 03:51 AM, Yang Shi wrote:
+>> On 8/6/18 10:45 PM, Michal Hocko wrote:
+>>> On Mon 06-08-18 15:19:06, Yang Shi wrote:
+>>>> On 8/6/18 1:52 PM, Michal Hocko wrote:
+>>>>> On Mon 06-08-18 13:48:35, Yang Shi wrote:
+>>>>>> On 8/6/18 1:41 PM, Michal Hocko wrote:
+>>>>>>> On Mon 06-08-18 09:46:30, Yang Shi wrote:
+>>>>>>>> On 8/6/18 2:40 AM, Michal Hocko wrote:
+>>>>>>>>> On Fri 03-08-18 14:01:58, Yang Shi wrote:
+>>>>>>>>>> On 8/3/18 2:07 AM, Michal Hocko wrote:
+>>>>>>>>>>> On Fri 27-07-18 02:10:14, Yang Shi wrote:
+>>>>>>> [...]
+>>>>>>>>>>>> If the vma has VM_LOCKED | VM_HUGETLB | VM_PFNMAP or uprobe, they are
+>>>>>>>>>>>> considered as special mappings. They will be dealt with before zapping
+>>>>>>>>>>>> pages with write mmap_sem held. Basically, just update vm_flags.
+>>>>>>>>>>> Well, I think it would be safer to simply fallback to the current
+>>>>>>>>>>> implementation with these mappings and deal with them on top. This would
+>>>>>>>>>>> make potential issues easier to bisect and partial reverts as well.
+>>>>>>>>>> Do you mean just call do_munmap()? It sounds ok. Although we may waste some
+>>>>>>>>>> cycles to repeat what has done, it sounds not too bad since those special
+>>>>>>>>>> mappings should be not very common.
+>>>>>>>>> VM_HUGETLB is quite spread. Especially for DB workloads.
+>>>>>>>> Wait a minute. In this way, it sounds we go back to my old implementation
+>>>>>>>> with special handling for those mappings with write mmap_sem held, right?
+>>>>>>> Yes, I would really start simple and add further enhacements on top.
+>>>>>> If updating vm_flags with read lock is safe in this case, we don't have to
+>>>>>> do this. The only reason for this special handling is about vm_flags update.
+>>>>> Yes, maybe you are right that this is safe. I would still argue to have
+>>>>> it in a separate patch for easier review, bisectability etc...
+>>>> Sorry, I'm a little bit confused. Do you mean I should have the patch
+>>>> *without* handling the special case (just like to assume it is safe to
+>>>> update vm_flags with read lock), then have the other patch on top of it,
+>>>> which simply calls do_munmap() to deal with the special cases?
+>>> Just skip those special cases in the initial implementation and handle
+>>> each special case in its own patch on top.
+>> Thanks. VM_LOCKED area will not be handled specially since it is easy to
+>> handle it, just follow what do_munmap does. The special cases will just
+>> handle VM_HUGETLB, VM_PFNMAP and uprobe mappings.
+> So I think you could maybe structure code like this: instead of
+> introducing do_munmap_zap_rlock() and all those "bool skip_vm_flags"
+> additions, add a boolean parameter in do_munmap() to use the new
+> behavior, with only the first user SYSCALL_DEFINE2(munmap) setting it to
+> true. If true, do_munmap() will do the
+> - down_write_killable() itself instead of assuming it's already locked
+> - munmap_lookup_vma()
+> - check if any of the vma's in the range is "special", if yes, change
+> the boolean param to "false", and continue like previously, e.g. no mmap
+> sem downgrade etc.
 
-Rob
+Thanks for the suggestion. Actually, I did the similar thing in v1 
+patches, which added a bool parameter in vm_munmap() to tell if 
+releasing mmap_sem is acceptable for some code paths. But, it got pushed 
+back by tglx since vm_munmap() is called by x86 specific code too (and 
+some other architectures). He suggested to define a new function to do 
+the optimization. So, I followed this approach in the later versions.
+
+Yang
+
+>
+> That would be a basis for further optimizing the special vma cases in
+> subsequent patches (maybe it's really ok to touch the vma flags with
+> mmap sem for read as vma's are detached), and to eventually convert more
+> do_munmap() callers to the new mode.
+>
+> HTH,
+> Vlastimil
+>
+>
+>
+
