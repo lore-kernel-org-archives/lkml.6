@@ -2,190 +2,159 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0986CC46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 18:00:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1C16C46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 18:02:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AFBB22178B
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 18:00:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SVVrQBLD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFBB22178B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 9F17021798
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 18:02:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F17021798
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=buserror.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730248AbeHHUVV (ORCPT
+        id S1729710AbeHHUWx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 16:21:21 -0400
-Received: from mail-ua0-f195.google.com ([209.85.217.195]:37025 "EHLO
-        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727748AbeHHUVV (ORCPT
+        Wed, 8 Aug 2018 16:22:53 -0400
+Received: from baldur.buserror.net ([165.227.176.147]:57954 "EHLO
+        baldur.buserror.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727748AbeHHUWx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 16:21:21 -0400
-Received: by mail-ua0-f195.google.com with SMTP id y10-v6so3365229uao.4;
-        Wed, 08 Aug 2018 11:00:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=4vqmyB4c+FSQSvgyW1IRCwyeON37+EKfaHb/P+YrR4I=;
-        b=SVVrQBLDB+ax5gj6USvNODKGNe+pJWVPX/T4wcSL5OnaxXt/4evWB8U1CKyD8ljb2o
-         TIy5k0fUMLsx44C4Cx57f7tjDV1yZcMJBlvjbtBoXLx+KiTyhBdYrLZXZKlht0jmwgk3
-         O2H6u402GqNjBz1GFBveeTS5X03/ZhnLx667N8x0janbLxBrq6lXIo2+CmKY4nLQYFul
-         KheKwc2CYwr3IG4LmVAvh8GJCPpEjNcSDAr30IRvxIoSeeZMSS48ap/LgF9gaDMWkEb6
-         qc4qPMC+dFO0jxkDatqg61eNxlQruqMyFXx91nXUdp093eZPW3fTlPka4KDnbFRKv73u
-         lovQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=4vqmyB4c+FSQSvgyW1IRCwyeON37+EKfaHb/P+YrR4I=;
-        b=iQaa4ffNp1GdAkaDLPa93wAuQeLraHuVGPMviBoQpdkcBtwbdcWx8PuskP1HyY2Uys
-         cmEntYXeeBfxc2hye5s87Idl8XvfDtvUZ6DDf05ls97yPItbndbqIKK8Ni8K8D7J5FEA
-         1RUn+C4+If9JrHaD4JTy3u1mqx5R3PxeLOwzr3uzsQ0+bbeNX7E/mbcWam9ZQoL586Fm
-         tU11d5QHsMvD7zjC8L1EqVBAvXBPRY3c7Zfyg+qbYyDw2uwqgiMNlfhVUx4DBDCPwKa4
-         96VKjOBFwJtTdaikM/jAfGlcMbeVNs2OBR2MlEFXnxWa62eUqn8SjeZB9dZJt9VzZZzA
-         9cNA==
-X-Gm-Message-State: AOUpUlFFqIrAezAWWJoS22+SIDWQjl8LT1//XH5ZqpOoRdso36Ds9GOz
-        tWrb1RC35cfaJjvYNqHpZErBr95MoexoanXa8ZI=
-X-Google-Smtp-Source: AA+uWPx+vMzu8JfiCkXsavHX4kXI7kSbIUeI7dOt4c3GIaz1amxHzJyE6iI46a/X8uAGlJ0k8S3MTo7LQ+TxMf7XCEs=
-X-Received: by 2002:a1f:c884:: with SMTP id y126-v6mr2452520vkf.76.1533751232571;
- Wed, 08 Aug 2018 11:00:32 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a67:2149:0:0:0:0:0 with HTTP; Wed, 8 Aug 2018 11:00:31 -0700 (PDT)
-In-Reply-To: <CAHp75VdBkSHtqXkzRJgOHwaL5UhgV+TgySjEs57bisbKTpO4SQ@mail.gmail.com>
-References: <20180808153150.23444-1-brgl@bgdev.pl> <20180808153150.23444-28-brgl@bgdev.pl>
- <CAHp75VdBkSHtqXkzRJgOHwaL5UhgV+TgySjEs57bisbKTpO4SQ@mail.gmail.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Wed, 8 Aug 2018 21:00:31 +0300
-Message-ID: <CAHp75VejMix_CVETOiMMZsrOyMh+o=OGx4-A24QpBAYf_ka=FA@mail.gmail.com>
-Subject: Re: [PATCH 27/28] ARM: davinci: mityomapl138: use device properties
- for at24 eeprom
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Jonathan Corbet <corbet@lwn.net>, Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Naren <naren.kernel@gmail.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Lukas Wunner <lukas@wunner.de>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
-        Sven Van Asbroeck <svendev@arcx.com>,
-        Paolo Abeni <pabeni@redhat.com>, Alban Bedel <albeu@free.fr>,
-        Rob Herring <robh@kernel.org>,
-        David Lechner <david@lechnology.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Linux Documentation List <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        linux-i2c <linux-i2c@vger.kernel.org>,
-        "open list:MEMORY TECHNOLOGY..." <linux-mtd@lists.infradead.org>,
-        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+        Wed, 8 Aug 2018 16:22:53 -0400
+Received: from [2601:449:8400:7293:12bf:48ff:fe84:c9a0]
+        by baldur.buserror.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <oss@buserror.net>)
+        id 1fnSi9-0001xp-Bj; Wed, 08 Aug 2018 12:57:30 -0500
+Message-ID: <bef421feea16da2fdab333e63a6828741bd59055.camel@buserror.net>
+From:   Scott Wood <oss@buserror.net>
+To:     Bharat Bhushan <bharat.bhushan@nxp.com>,
+        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
+        "paulus@samba.org" <paulus@samba.org>,
+        "mpe@ellerman.id.au" <mpe@ellerman.id.au>,
+        "galak@kernel.crashing.org" <galak@kernel.crashing.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc:     "robh@kernel.org" <robh@kernel.org>,
+        "keescook@chromium.org" <keescook@chromium.org>,
+        "tyreld@linux.vnet.ibm.com" <tyreld@linux.vnet.ibm.com>,
+        "joe@perches.com" <joe@perches.com>
+Date:   Wed, 08 Aug 2018 12:57:27 -0500
+In-Reply-To: <AM5PR0401MB2545041D99EEDC3136B201719A260@AM5PR0401MB2545.eurprd04.prod.outlook.com>
+References: <1532684881-19310-1-git-send-email-Bharat.Bhushan@nxp.com>
+         <1532684881-19310-6-git-send-email-Bharat.Bhushan@nxp.com>
+         <ab2a113620123cb71364b6ae89328ae2fca49821.camel@buserror.net>
+         <AM5PR0401MB254592DC0E917FD292B323BA9A260@AM5PR0401MB2545.eurprd04.prod.outlook.com>
+         <aeff83355ee5235cfd6107dba06a5f7957b45c92.camel@buserror.net>
+         <AM5PR0401MB2545041D99EEDC3136B201719A260@AM5PR0401MB2545.eurprd04.prod.outlook.com>
+Organization: Red Hat
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2601:449:8400:7293:12bf:48ff:fe84:c9a0
+X-SA-Exim-Rcpt-To: bharat.bhushan@nxp.com, benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au, galak@kernel.crashing.org, mark.rutland@arm.com, kstewart@linuxfoundation.org, gregkh@linuxfoundation.org, devicetree@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, robh@kernel.org, keescook@chromium.org, tyreld@linux.vnet.ibm.com, joe@perches.com
+X-SA-Exim-Mail-From: oss@buserror.net
+Subject: Re: [RFC 5/5] powerpc/fsl: Add supported-irq-ranges for P2020
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on baldur.buserror.net)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 8, 2018 at 8:58 PM, Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
-> On Wed, Aug 8, 2018 at 6:31 PM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
->> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->>
->> We want to work towards phasing out the at24_platform_data structure.
->> There are few users and its contents can be represented using generic
->> device properties. Using device properties only will allow us to
->> significantly simplify the at24 configuration code.
->>
->> Remove the at24_platform_data structure and replace it with an array
->> of property entries. Drop the byte_len/size property, as the model name
->> already implies the EEPROM's size.
->>
->
-> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
->
->> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->> ---
->>  arch/arm/mach-davinci/board-mityomapl138.c | 11 +++++------
->>  1 file changed, 5 insertions(+), 6 deletions(-)
->>
->> diff --git a/arch/arm/mach-davinci/board-mityomapl138.c b/arch/arm/mach-davinci/board-mityomapl138.c
->> index 17b67e26bc0e..be0fb7d17e25 100644
->> --- a/arch/arm/mach-davinci/board-mityomapl138.c
->> +++ b/arch/arm/mach-davinci/board-mityomapl138.c
->> @@ -14,11 +14,11 @@
->>  #include <linux/init.h>
->>  #include <linux/console.h>
->>  #include <linux/platform_device.h>
->> +#include <linux/property.h>
->>  #include <linux/mtd/partitions.h>
->>  #include <linux/notifier.h>
->>  #include <linux/regulator/machine.h>
->>  #include <linux/i2c.h>
->> -#include <linux/platform_data/at24.h>
->>  #include <linux/etherdevice.h>
->>  #include <linux/spi/spi.h>
->>  #include <linux/spi/flash.h>
->> @@ -185,10 +185,9 @@ static struct nvmem_cell_lookup mityomapl138_nvmem_cells[] = {
->>         }
->>  };
->>
->> -static struct at24_platform_data mityomapl138_fd_chip = {
->> -       .byte_len       = 256,
->> -       .page_size      = 8,
->> -       .flags          = AT24_FLAG_READONLY | AT24_FLAG_IRUGO,
->> +static const struct property_entry mityomapl138_fd_chip_properties[] = {
->> +       PROPERTY_ENTRY_U32("pagesize", 8),
->> +       PROPERTY_ENTRY_BOOL("read-only"),
+On Wed, 2018-08-08 at 06:28 +0000, Bharat Bhushan wrote:
+> > -----Original Message-----
+> > From: Scott Wood [mailto:oss@buserror.net]
+> > Sent: Wednesday, August 8, 2018 11:26 AM
+> > To: Bharat Bhushan <bharat.bhushan@nxp.com>;
+> > benh@kernel.crashing.org; paulus@samba.org; mpe@ellerman.id.au;
+> > galak@kernel.crashing.org; mark.rutland@arm.com;
+> > kstewart@linuxfoundation.org; gregkh@linuxfoundation.org;
+> > devicetree@vger.kernel.org; linuxppc-dev@lists.ozlabs.org; linux-
+> > kernel@vger.kernel.org
+> > Cc: robh@kernel.org; keescook@chromium.org; tyreld@linux.vnet.ibm.com;
+> > joe@perches.com
+> > Subject: Re: [RFC 5/5] powerpc/fsl: Add supported-irq-ranges for P2020
+> > 
+> > On Wed, 2018-08-08 at 03:44 +0000, Bharat Bhushan wrote:
+> > > > -----Original Message-----
+> > > > From: Scott Wood [mailto:oss@buserror.net]
+> > > > Sent: Wednesday, August 8, 2018 2:44 AM
+> > > > To: Bharat Bhushan <bharat.bhushan@nxp.com>;
+> > > > benh@kernel.crashing.org; paulus@samba.org; mpe@ellerman.id.au;
+> > > > galak@kernel.crashing.org; mark.rutland@arm.com;
+> > > > kstewart@linuxfoundation.org; gregkh@linuxfoundation.org;
+> > > > devicetree@vger.kernel.org; linuxppc-dev@lists.ozlabs.org; linux-
+> > > > kernel@vger.kernel.org
+> > > > Cc: robh@kernel.org; keescook@chromium.org;
+> > > > tyreld@linux.vnet.ibm.com; joe@perches.com
+> > > > Subject: Re: [RFC 5/5] powerpc/fsl: Add supported-irq-ranges for
+> > > > P2020
+> > > > 
+> > > > On Fri, 2018-07-27 at 15:18 +0530, Bharat Bhushan wrote:
+> > > > > MPIC on NXP (Freescale) P2020 supports following irq
+> > > > > ranges:
+> > > > >   > 0 - 11      (External interrupt)
+> > > > >   > 16 - 79     (Internal interrupt)
+> > > > >   > 176 - 183   (Messaging interrupt)
+> > > > >   > 224 - 231   (Shared message signaled interrupt)
+> > > > 
+> > > > Why don't you convert to the 4-cell interrupt specifiers that make
+> > > > dealing with these ranges less error-prone?
+> > > 
+> > > Ok , will do if we agree to have this series as per comment on other
+> > > patch.
+> > 
+> > If you're concerned with errors, this would be a good things to do
+> > regardless.
+> >  Actually, it seems that p2020si-post.dtsi already uses 4-cell interrupts.
+> > 
+> > What is motivating this patchset?  Is there something wrong in the
+> > existing
+> > dts files?
+> 
+> There is no error in device tree. Main motivation is to improve code for
+> following reasons: 
+>   - While code study it was found that if a reserved irq-number used then
+> there are no check in driver. irq will be configured as correct and
+> interrupt will never fire.
 
-Missed terminator
+Again, a wrong interrupt number won't fire, whether an interrupt by that
+number exists or not.  I wouldn't mind a sanity check in the driver if the
+programming model made it properly discoverable, but I don't think it's worth
+messing with device trees just for this (and even less so given that there
+don't seem to be new chips coming out that this would be relevant for).
 
->>  };
->>
->>  static struct davinci_i2c_platform_data mityomap_i2c_0_pdata = {
->> @@ -317,7 +316,7 @@ static struct i2c_board_info __initdata mityomap_tps65023_info[] = {
->>         },
->>         {
->>                 I2C_BOARD_INFO("24c02", 0x50),
->> -               .platform_data = &mityomapl138_fd_chip,
->> +               .properties = mityomapl138_fd_chip_properties,
->>         },
->>  };
->>
->> --
->> 2.18.0
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-omap" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
->
->
-> --
-> With Best Regards,
-> Andy Shevchenko
+> > > One other confusing observation I have is that "irq_count" from
+> > > platform code is given precedence over "last-interrupt-source" in
+> > > device-
+> > 
+> > tree.
+> > > Should not device-tree should have precedence otherwise there is no
+> > > point using " last-interrupt-source" if platform code passes
+> > > "irq_count" in mpic_alloc().
+> > 
+> > Maybe, though I don't think it matters much given that last-interrupt-
+> > source
+> > was only added to avoid having to pass irq_count in platform code.
+> 
+> Thanks for clarifying;
+> 
+> My understanding was that "last-interrupt-source" added to ensure that we
+> can over-ride value passed from platform code. In that case we do not need
+> to change code and can control from device tree.
 
+The changelog says, "To avoid needing to write custom board-specific code to
+detect that scenario, allow it to be easily overridden in the device-tree,"
+where "it" means the value provided by hardware.  The goal was to pass in 256
+without board code in the kernel, not to override the 256.
 
+-Scott
 
--- 
-With Best Regards,
-Andy Shevchenko
