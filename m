@@ -2,144 +2,169 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16FFDC46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 10:40:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E170C46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 10:44:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0E6221725
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 10:40:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A208021737
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 10:44:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pmLe1pRD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0E6221725
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ACoIEqUD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A208021737
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727050AbeHHM7x (ORCPT
+        id S1727038AbeHHNDu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 08:59:53 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:36648 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726793AbeHHM7w (ORCPT
+        Wed, 8 Aug 2018 09:03:50 -0400
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:46031 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726869AbeHHNDu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 08:59:52 -0400
-Received: by mail-pl0-f68.google.com with SMTP id e11-v6so862562plb.3;
-        Wed, 08 Aug 2018 03:40:45 -0700 (PDT)
+        Wed, 8 Aug 2018 09:03:50 -0400
+Received: by mail-yw1-f68.google.com with SMTP id 139-v6so1164121ywg.12
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 03:44:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=k6K+nIoUbB83TGdr0CeIi0FM/px8QlHt/X78oIJnFKU=;
-        b=pmLe1pRDeg0whNHCkmPpcZu2qglH3hGqlpVSRn1CdCbhn5XyMt5gYMkn2egtzr5dlz
-         JXAQKpLygJdKd3X5+Br3m7ZwXBSZ4BfBQ9r9lF81H214zduZN7V0ZDS0yQ0nsqNJdTOx
-         Ys5TUFcWXDcJ4ogzkndSKjgCWzRZp5qyvbY6XQM+2rzbelCM4ZqvN1/iaIgc8zQC35u2
-         Ku2UXbbklsoeK9Ya/FxX+UMmk2/NeH3eRX5Hh8eV4SWM3j5+8hqU+lG+6YtDU3JrPbYY
-         q32jDc06/1gwtOd8Iwl04S5JuDfjQUosYpeUdj/+KKf+lSqcOovByOZ7k6OiYhyQ8MCh
-         tY/g==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=wu2MRrcrGcbgt6W0pjTJsNIix2PeEglsbFDD6rFfkbw=;
+        b=ACoIEqUDsJvG3NeAJKwBDjCVxoN8jBJIkTm331xnJ5jxweqySWrCTxnALM0PKtRdbO
+         Dk4CcF6dWbCjXSXhSsUzfOF6rSphWj4q29idPzyLM29WnQF3sEErunrg/HKqM3PDuyYm
+         HlDFCMdXVg9Etavk/8cdMqS5qXYOYRPE4thAE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=k6K+nIoUbB83TGdr0CeIi0FM/px8QlHt/X78oIJnFKU=;
-        b=kb09AZW/yZclvbDYP72bcI4Dt2yU1nW/TIb8ghVMlLus4K6ekAnnm/0fh2OlOC8g9y
-         +zu/GoxpsG9op30qIDjvvnD2GdsvVX05EYExDTr+z/ToFRiZAtAyyinKupJZVr4pjorO
-         /ZHnQcGXe80LWC0DWS6LFFigoAVfIuh3+GQaZ8hWPLwh4GCw7WYarJQJWkVvcPVjMX8I
-         S/Rtsw3mvg++sE6Jr/xIjEczWw+lNTFPArL1jjzIUY6S0URll1a/hdX9bGJU5ydB4L/I
-         1fVPW/xMHqtZLEVhC6y+D5wgIadqGxkRKZsHmXcX7N3fkpjX6KSF9pRLBmvEpHhwplc4
-         8ITQ==
-X-Gm-Message-State: AOUpUlFAEKHZpBMF0rt9ZwADuQR3CwT6tk2tq5yjCDNiLS0/0AxuWl4f
-        YS9T8zgVrDZ2oLWzkvJN/UQ=
-X-Google-Smtp-Source: AA+uWPwOUlbKNShLImp63yjYerE1ys3l8BQkH3+bYb8U6UfuPf12oGLpAVXae42YQYsK5c3zrUOpFQ==
-X-Received: by 2002:a17:902:b709:: with SMTP id d9-v6mr2092976pls.138.1533724845650;
-        Wed, 08 Aug 2018 03:40:45 -0700 (PDT)
-Received: from localhost ([175.223.10.126])
-        by smtp.gmail.com with ESMTPSA id s3-v6sm12929080pgj.84.2018.08.08.03.40.43
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 08 Aug 2018 03:40:44 -0700 (PDT)
-Date:   Wed, 8 Aug 2018 19:40:41 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To:     Vlastimil Babka <vbabka@suse.cz>, Jiri Slaby <jslaby@suse.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc:     Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>,
-        linux-mm@kvack.org, Petr Mladek <pmladek@suse.cz>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [4.18 rc7] BUG: sleeping function called from invalid context at
- mm/slab.h:421
-Message-ID: <20180808104041.GA873@jagdpanzerIV>
-References: <CABXGCsNAjrwat-Fv6GQXq8uSC6uj=ke87RJt42syrfFi0vQUmg@mail.gmail.com>
- <bd7f3ea4-d9a8-e437-9936-ee4513b47ac1@suse.cz>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wu2MRrcrGcbgt6W0pjTJsNIix2PeEglsbFDD6rFfkbw=;
+        b=RkBCarwEF5CUuVZFP+rnABHC704Ca7GVZzrbuv9ClexUCmdjCaYRaA8PKtxqVzsCkd
+         8WHFJ8vpAP0blS7DyNOHol5D/8jVViZEQl99Ma1hp5rNBgsFxy4qza+UB48BISkDrt6x
+         zb8Kc9UYXAvztDtb68iuJLcw3WESS8gA1CFbetzwhLajZ2vWw3sV4bPwHkmQPhu6UVuh
+         eWL3oh9LlXYYkYBwfMYGxm349FcBYJwg392Mzg1DBLbrudLIs9QpfhmfEXuzwoBEY0rg
+         k8KpArEvrJegKefIyKfl/f13f710uQ9F2NdRcctw/mstMbsY2AuoHEuym8nRpYBijveK
+         A3Gg==
+X-Gm-Message-State: AOUpUlFzsJ7msD+G+iRhYnPW3kMmVB2T1V2nbeAC/7SuYfxjuxd/lKFl
+        59W216ZNJP3iChp1TkxBiyo0vy6y4+qE2JUwFVoOOw==
+X-Google-Smtp-Source: AA+uWPwkwq4gpqLteI2L4G2RqGfnNd1Hmo/r2U/+gHCb4dhgMQYK51WIV4niZbKmxtzxfXrfNX5ByJkxzTrfu/ifmhc=
+X-Received: by 2002:a81:ae61:: with SMTP id g33-v6mr1114942ywk.74.1533725082354;
+ Wed, 08 Aug 2018 03:44:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bd7f3ea4-d9a8-e437-9936-ee4513b47ac1@suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20180413090351.25662-1-anders.roxell@linaro.org>
+ <20180607110911.12252-1-anders.roxell@linaro.org> <CADYN=9J=hSFb2wCZ1+dXL=023p9y05MEGUPvH48WfPX7XDZvwQ@mail.gmail.com>
+ <f222aa8d-88b8-140c-30ed-83fd908bfd09@kernel.org> <CADYN=9LSA60E4mFwrbeY-RGi4kZV6hO0ygz0-C6QB3+KKaoxQg@mail.gmail.com>
+ <3f332e65-0b33-9952-6aba-f9c8953a1f26@kernel.org> <CAK7LNAQ6hNmjmZc8J54KWCtR6x4Megn3mbdzprGgSZL5Zk9GCg@mail.gmail.com>
+In-Reply-To: <CAK7LNAQ6hNmjmZc8J54KWCtR6x4Megn3mbdzprGgSZL5Zk9GCg@mail.gmail.com>
+From:   Anders Roxell <anders.roxell@linaro.org>
+Date:   Wed, 8 Aug 2018 12:44:31 +0200
+Message-ID: <CADYN=9+mrrNN3m5FNCfiNC1ENe-aViYuGvmKsFOYdqMC2hMfAg@mail.gmail.com>
+Subject: Re: [PATCH v4] selftests: add headers_install to lib.mk
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Shuah Khan <shuah@kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Bamvor Zhang <bamv2005@gmail.com>, brgl@bgdev.pl,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>, aarcange@redhat.com,
+        linux-kbuild@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Networking <netdev@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Tue, 7 Aug 2018 at 04:33, Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+>
+> 2018-08-07 2:03 GMT+09:00 Shuah Khan <shuah@kernel.org>:
+> > Hi Anders,
+> >
+> > On 07/25/2018 10:08 AM, Anders Roxell wrote:
+> >> On Tue, 24 Jul 2018 at 19:11, Shuah Khan <shuah@kernel.org> wrote:
+> >>>
+> >>> On 07/23/2018 02:49 PM, Anders Roxell wrote:
+> >>>> On Thu, 7 Jun 2018 at 13:09, Anders Roxell <anders.roxell@linaro.org> wrote:
+> >>>>>
+> >>>>> If the kernel headers aren't installed we can't build all the tests.
+> >>>>> Add a new make target rule 'khdr' in the file lib.mk to generate the
+> >>>>> kernel headers and that gets include for every test-dir Makefile that
+> >>>>> includes lib.mk If the testdir in turn have its own sub-dirs the
+> >>>>> top_srcdir needs to be set to the linux-rootdir to be able to generate
+> >>>>> the kernel headers.
+> >>>>>
+> >>>>> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+> >>>>> Reviewed-by: Fathi Boudra <fathi.boudra@linaro.org>
+> >>>>> ---
+> >>>>>  Makefile                                           | 14 +-------------
+> >>>>>  scripts/subarch.include                            | 13 +++++++++++++
+> >>>>>  tools/testing/selftests/android/Makefile           |  2 +-
+> >>>>>  tools/testing/selftests/android/ion/Makefile       |  2 ++
+> >>>>>  tools/testing/selftests/futex/functional/Makefile  |  1 +
+> >>>>>  tools/testing/selftests/gpio/Makefile              |  7 ++-----
+> >>>>>  tools/testing/selftests/kvm/Makefile               |  7 ++-----
+> >>>>>  tools/testing/selftests/lib.mk                     | 12 ++++++++++++
+> >>>>>  tools/testing/selftests/net/Makefile               |  1 +
+> >>>>>  .../selftests/networking/timestamping/Makefile     |  1 +
+> >>>>>  tools/testing/selftests/vm/Makefile                |  4 ----
+> >>>>>  11 files changed, 36 insertions(+), 28 deletions(-)
+> >>>>>  create mode 100644 scripts/subarch.include
+> >>>>>
+> >>>>> diff --git a/Makefile b/Makefile
+> >>>>> index 6b9aea95ae3a..8050072300fa 100644
+> >>>>> --- a/Makefile
+> >>>>> +++ b/Makefile
+> >>>>> @@ -286,19 +286,7 @@ KERNELRELEASE = $(shell cat include/config/kernel.release 2> /dev/null)
+> >>>>>  KERNELVERSION = $(VERSION)$(if $(PATCHLEVEL),.$(PATCHLEVEL)$(if $(SUBLEVEL),.$(SUBLEVEL)))$(EXTRAVERSION)
+> >>>>>  export VERSION PATCHLEVEL SUBLEVEL KERNELRELEASE KERNELVERSION
+> >>>>>
+> >>>>> -# SUBARCH tells the usermode build what the underlying arch is.  That is set
+> >>>>> -# first, and if a usermode build is happening, the "ARCH=um" on the command
+> >>>>> -# line overrides the setting of ARCH below.  If a native build is happening,
+> >>>>> -# then ARCH is assigned, getting whatever value it gets normally, and
+> >>>>> -# SUBARCH is subsequently ignored.
+> >>>>> -
+> >>>>> -SUBARCH := $(shell uname -m | sed -e s/i.86/x86/ -e s/x86_64/x86/ \
+> >>>>> -                                 -e s/sun4u/sparc64/ \
+> >>>>> -                                 -e s/arm.*/arm/ -e s/sa110/arm/ \
+> >>>>> -                                 -e s/s390x/s390/ -e s/parisc64/parisc/ \
+> >>>>> -                                 -e s/ppc.*/powerpc/ -e s/mips.*/mips/ \
+> >>>>> -                                 -e s/sh[234].*/sh/ -e s/aarch64.*/arm64/ \
+> >>>>> -                                 -e s/riscv.*/riscv/)
+> >>>>> +include scripts/subarch.include
+> >>>
+> >>> What is the reason for this SUBARCH block move to to scripts/subarch.include?
+> >>> Is this necessary for adding headers install dependency to lib.mk?
+> >>
+> >> This is needed to create headers for cross build.
+> >>
+> >
+> > I am sorry for the delay on this patch. I am going to get this into 4.19.
+> > If anybody has objections, please let me.
+> >
+> > Anders! Will be able to rebase the patch and send me the latest. I think
+> > I have Acks from kvm, android, and vm so far.
+> >
+>
+>
+> I may be missing something about the tools/ directory,
+> but why isn't it like this?
+>
+>
+> kselftest: headers_install
+>         $(Q)$(MAKE) -C $(srctree)/tools/testing/selftests run_tests
 
-On (08/08/18 11:01), Vlastimil Babka wrote:
-> On 08/08/2018 05:50 AM, Mikhail Gavrilov wrote:
-> > Hi guys.
-> > I am catched new bug.
-> > Can anyone look?
-> 
-> fbcon_startup() calls kzalloc(sizeof(struct fbcon_ops), GFP_KERNEL) so
-> it tells slab it can sleep. The problem must be higher in the stack,
-> CCing printk people.
+That wont work if you cross compile, since you wont run the tests
+where you build them.
+Then you can argue that we should break it up in a build and run rule.
+However, my understanding how people just build and run the the tests
+for that particular subsystem that they develop for, like:
+make -C tools/testing/selftests/<subsystem>/
 
-Cc-ing fbcon/vt people. I'm not sure I know how exactly console
-takeover is expected to work.
-
-printk must be atomic, we can't sleep in console drivers [e.g. printk
-from IRQs, etc.]
-
-> > [226995.988988] BUG: sleeping function called from invalid context at
-> > mm/slab.h:421
-> > [226995.988988] in_atomic(): 1, irqs_disabled(): 1, pid: 22658, name: gsd-rfkill
-> > [226995.988989] INFO: lockdep is turned off.
-> > [226995.988989] irq event stamp: 0
-> > [226995.988990] hardirqs last  enabled at (0): [<0000000000000000>]
-> >        (null)
-> > [226995.988991] hardirqs last disabled at (0): [<ffffffffa00b6b4a>]
-> > copy_process.part.32+0x72a/0x1e60
-> > [226995.988991] softirqs last  enabled at (0): [<ffffffffa00b6b4a>]
-> > copy_process.part.32+0x72a/0x1e60
-> > [226995.988992] softirqs last disabled at (0): [<0000000000000000>]
-> >        (null)
-> > [226995.988993] CPU: 6 PID: 22658 Comm: gsd-rfkill Tainted: G        W
-> >         4.18.0-0.rc7.git1.1.fc29.x86_64 #1
-> > [226995.988993] Hardware name: Gigabyte Technology Co., Ltd.
-> > Z87M-D3H/Z87M-D3H, BIOS F11 08/12/2014
-> > [226995.988994] Call Trace:
-> > [226995.988994]  dump_stack+0x85/0xc0
-> > [226995.988995]  ___might_sleep.cold.72+0xac/0xbc
-> > [226995.988995]  kmem_cache_alloc_trace+0x202/0x2f0
-> > [226995.988996]  ? fbcon_startup+0xae/0x300
-> > [226995.988996]  fbcon_startup+0xae/0x300
-> > [226995.988997]  do_take_over_console+0x6d/0x180
-> > [226995.988997]  do_fbcon_takeover+0x58/0xb0
-> > [226995.988997]  fbcon_output_notifier.cold.35+0x5/0x23
-> > [226995.988998]  notifier_call_chain+0x39/0x90
-> > [226995.988999]  vt_console_print+0x363/0x420
-> > [226995.988999]  console_unlock+0x422/0x610
-> > [226995.988999]  vprintk_emit+0x268/0x540
-> > [226995.989000]  printk+0x58/0x6f
-> > [226995.989000]  rfkill_fop_release.cold.16+0xc/0x11 [rfkill]
-> > [226995.989001]  __fput+0xc7/0x250
-> > [226995.989001]  task_work_run+0xa1/0xd0
-> > [226995.989002]  exit_to_usermode_loop+0xd8/0xe0
-> > [226995.989002]  do_syscall_64+0x1df/0x1f0
-> > [226995.989003]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-	-ss
+Cheers,
+Anders
