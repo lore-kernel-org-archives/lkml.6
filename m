@@ -3,36 +3,35 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF29EC46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 16:13:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BE15C4646D
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 16:13:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A04F0216EE
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 16:13:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A04F0216EE
+	by mail.kernel.org (Postfix) with ESMTP id DB5E921723
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 16:13:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB5E921723
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729701AbeHHSeC (ORCPT
+        id S1729138AbeHHSdd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 14:34:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42562 "EHLO mail.kernel.org"
+        Wed, 8 Aug 2018 14:33:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42044 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728400AbeHHSde (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 14:33:34 -0400
+        id S1728400AbeHHSdc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 14:33:32 -0400
 Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A4F4621A82;
-        Wed,  8 Aug 2018 16:13:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3CFA221A35;
+        Wed,  8 Aug 2018 16:13:10 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.91)
         (envelope-from <rostedt@goodmis.org>)
-        id 1fnR5C-0002dJ-MB; Wed, 08 Aug 2018 12:13:10 -0400
-Message-Id: <20180808161310.577410495@goodmis.org>
+        id 1fnR5B-0002YR-93; Wed, 08 Aug 2018 12:13:09 -0400
+Message-Id: <20180808161309.182490125@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Wed, 08 Aug 2018 11:56:12 -0400
+Date:   Wed, 08 Aug 2018 11:56:03 -0400
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org, linux-trace-devel@vger.kernel.org
 Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
@@ -45,8 +44,7 @@ Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Yordan Karadzhov <y.karadz@gmail.com>,
         Tzvetomir Stoyanov <tz.stoyanov@gmail.com>
-Subject: [RFC][PATCH 24/24] tools/lib/traceevent: Rename static variables and functions in
- event-parse.c
+Subject: [RFC][PATCH 15/24] tools/lib/traceevent, tools/perf: Rename traceevent_plugin_* APIs
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
 Sender: linux-kernel-owner@vger.kernel.org
@@ -58,184 +56,156 @@ From: "Tzvetomir Stoyanov (VMware)" <tz.stoyanov@gmail.com>
 
 In order to make libtraceevent into a proper library, variables, data
 structures and functions require a unique prefix to prevent name space
-conflicts. That prefix will be "tep_" and not "pevent_". This changes
-static variables and functions in event-parse.c: pevent_func_params,
-__pevent_parse_format, __pevent_parse_event, pevent_error_str, pevent_search_event
+conflicts. That prefix will be "tep_" and not "traceevent_". This changes
+APIs: traceevent_plugin_list_options, traceevent_plugin_free_options_list,
+traceevent_plugin_add_options, traceevent_plugin_remove_options,
+traceevent_print_plugins
 
 Signed-off-by: Tzvetomir Stoyanov (VMware) <tz.stoyanov@gmail.com>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- tools/lib/traceevent/event-parse.c | 54 +++++++++++++++---------------
- 1 file changed, 27 insertions(+), 27 deletions(-)
+ tools/lib/traceevent/event-parse.h     | 16 +++++++--------
+ tools/lib/traceevent/event-plugin.c    | 28 +++++++++++++-------------
+ tools/lib/traceevent/plugin_function.c |  4 ++--
+ 3 files changed, 24 insertions(+), 24 deletions(-)
 
-diff --git a/tools/lib/traceevent/event-parse.c b/tools/lib/traceevent/event-parse.c
-index f723c088acca..6313e32680ff 100644
---- a/tools/lib/traceevent/event-parse.c
-+++ b/tools/lib/traceevent/event-parse.c
-@@ -92,9 +92,9 @@ struct event_handler {
- 	void				*context;
- };
+diff --git a/tools/lib/traceevent/event-parse.h b/tools/lib/traceevent/event-parse.h
+index 81f34132fc47..ec327849a7dc 100644
+--- a/tools/lib/traceevent/event-parse.h
++++ b/tools/lib/traceevent/event-parse.h
+@@ -438,14 +438,14 @@ struct plugin_list;
+ struct plugin_list *tep_load_plugins(struct tep_handle *pevent);
+ void tep_unload_plugins(struct plugin_list *plugin_list,
+ 			struct tep_handle *pevent);
+-char **traceevent_plugin_list_options(void);
+-void traceevent_plugin_free_options_list(char **list);
+-int traceevent_plugin_add_options(const char *name,
+-				  struct tep_plugin_option *options);
+-void traceevent_plugin_remove_options(struct tep_plugin_option *options);
+-void traceevent_print_plugins(struct trace_seq *s,
+-			      const char *prefix, const char *suffix,
+-			      const struct plugin_list *list);
++char **tep_plugin_list_options(void);
++void tep_plugin_free_options_list(char **list);
++int tep_plugin_add_options(const char *name,
++			   struct tep_plugin_option *options);
++void tep_plugin_remove_options(struct tep_plugin_option *options);
++void tep_print_plugins(struct trace_seq *s,
++			const char *prefix, const char *suffix,
++			const struct plugin_list *list);
  
--struct pevent_func_params {
--	struct pevent_func_params	*next;
--	enum tep_func_arg_type		type;
-+struct func_params {
-+	struct func_params	*next;
-+	enum tep_func_arg_type	type;
- };
- 
- struct tep_function_handler {
-@@ -102,7 +102,7 @@ struct tep_function_handler {
- 	enum tep_func_arg_type		ret_type;
- 	char				*name;
- 	tep_func_handler		func;
--	struct pevent_func_params	*params;
-+	struct func_params		*params;
- 	int				nr_args;
- };
- 
-@@ -1161,7 +1161,7 @@ static enum event_type read_token(char **tok)
-  * @tok: The token to return
-  *
-  * This will parse tokens from the string given by
-- * pevent_init_data().
-+ * tep_init_data().
-  *
-  * Returns the token type.
-  */
-@@ -4133,7 +4133,7 @@ process_defined_func(struct trace_seq *s, void *data, int size,
- 		     struct event_format *event, struct print_arg *arg)
- {
- 	struct tep_function_handler *func_handle = arg->func.func;
--	struct pevent_func_params *param;
-+	struct func_params *param;
- 	unsigned long long *args;
- 	unsigned long long ret;
- 	struct print_arg *farg;
-@@ -6023,7 +6023,7 @@ static int find_event_handle(struct tep_handle *pevent, struct event_format *eve
+ struct cmdline;
+ struct cmdline_list;
+diff --git a/tools/lib/traceevent/event-plugin.c b/tools/lib/traceevent/event-plugin.c
+index c837a73c03e6..8e324ed46547 100644
+--- a/tools/lib/traceevent/event-plugin.c
++++ b/tools/lib/traceevent/event-plugin.c
+@@ -97,7 +97,7 @@ static int update_option_value(struct tep_plugin_option *op, const char *val)
  }
  
  /**
-- * __pevent_parse_format - parse the event format
-+ * __tep_parse_format - parse the event format
-  * @buf: the buffer storing the event format string
-  * @size: the size of @buf
-  * @sys: the system the event belongs to
-@@ -6035,9 +6035,9 @@ static int find_event_handle(struct tep_handle *pevent, struct event_format *eve
+- * traceevent_plugin_list_options - get list of plugin options
++ * tep_plugin_list_options - get list of plugin options
   *
-  * /sys/kernel/debug/tracing/events/.../.../format
+  * Returns an array of char strings that list the currently registered
+  * plugin options in the format of <plugin>:<option>. This list can be
+@@ -106,9 +106,9 @@ static int update_option_value(struct tep_plugin_option *op, const char *val)
+  * Returns NULL if there's no options registered. On error it returns
+  * INVALID_PLUGIN_LIST_OPTION
+  *
+- * Must be freed with traceevent_plugin_free_options_list().
++ * Must be freed with tep_plugin_free_options_list().
   */
--enum tep_errno __pevent_parse_format(struct event_format **eventp,
--				     struct tep_handle *pevent, const char *buf,
--				     unsigned long size, const char *sys)
-+enum tep_errno __tep_parse_format(struct event_format **eventp,
-+				  struct tep_handle *pevent, const char *buf,
-+				  unsigned long size, const char *sys)
+-char **traceevent_plugin_list_options(void)
++char **tep_plugin_list_options(void)
  {
- 	struct event_format *event;
- 	int ret;
-@@ -6143,12 +6143,12 @@ enum tep_errno __pevent_parse_format(struct event_format **eventp,
+ 	struct registered_plugin_options *reg;
+ 	struct tep_plugin_option *op;
+@@ -146,7 +146,7 @@ char **traceevent_plugin_list_options(void)
+ 	return INVALID_PLUGIN_LIST_OPTION;
  }
  
- static enum tep_errno
--__pevent_parse_event(struct tep_handle *pevent,
--		     struct event_format **eventp,
--		     const char *buf, unsigned long size,
--		     const char *sys)
-+__parse_event(struct tep_handle *pevent,
-+	      struct event_format **eventp,
-+	      const char *buf, unsigned long size,
-+	      const char *sys)
+-void traceevent_plugin_free_options_list(char **list)
++void tep_plugin_free_options_list(char **list)
  {
--	int ret = __pevent_parse_format(eventp, pevent, buf, size, sys);
-+	int ret = __tep_parse_format(eventp, pevent, buf, size, sys);
- 	struct event_format *event = *eventp;
+ 	int i;
  
- 	if (event == NULL)
-@@ -6190,7 +6190,7 @@ enum tep_errno tep_parse_format(struct tep_handle *pevent,
- 				const char *buf,
- 				unsigned long size, const char *sys)
- {
--	return __pevent_parse_event(pevent, eventp, buf, size, sys);
-+	return __parse_event(pevent, eventp, buf, size, sys);
+@@ -215,14 +215,14 @@ update_option(const char *file, struct tep_plugin_option *option)
  }
  
  /**
-@@ -6211,12 +6211,12 @@ enum tep_errno tep_parse_event(struct tep_handle *pevent, const char *buf,
- 			       unsigned long size, const char *sys)
+- * traceevent_plugin_add_options - Add a set of options by a plugin
++ * tep_plugin_add_options - Add a set of options by a plugin
+  * @name: The name of the plugin adding the options
+  * @options: The set of options being loaded
+  *
+  * Sets the options with the values that have been added by user.
+  */
+-int traceevent_plugin_add_options(const char *name,
+-				  struct tep_plugin_option *options)
++int tep_plugin_add_options(const char *name,
++			   struct tep_plugin_option *options)
  {
- 	struct event_format *event = NULL;
--	return __pevent_parse_event(pevent, &event, buf, size, sys);
-+	return __parse_event(pevent, &event, buf, size, sys);
+ 	struct registered_plugin_options *reg;
+ 
+@@ -241,10 +241,10 @@ int traceevent_plugin_add_options(const char *name,
  }
  
- #undef _PE
- #define _PE(code, str) str
--static const char * const pevent_error_str[] = {
-+static const char * const tep_error_str[] = {
- 	TEP_ERRORS
- };
- #undef _PE
-@@ -6237,7 +6237,7 @@ int tep_strerror(struct tep_handle *pevent __maybe_unused,
- 		return -1;
+ /**
+- * traceevent_plugin_remove_options - remove plugin options that were registered
+- * @options: Options to removed that were registered with traceevent_plugin_add_options
++ * tep_plugin_remove_options - remove plugin options that were registered
++ * @options: Options to removed that were registered with tep_plugin_add_options
+  */
+-void traceevent_plugin_remove_options(struct tep_plugin_option *options)
++void tep_plugin_remove_options(struct tep_plugin_option *options)
+ {
+ 	struct registered_plugin_options **last;
+ 	struct registered_plugin_options *reg;
+@@ -260,7 +260,7 @@ void traceevent_plugin_remove_options(struct tep_plugin_option *options)
+ }
  
- 	idx = errnum - __TEP_ERRNO__START - 1;
--	msg = pevent_error_str[idx];
-+	msg = tep_error_str[idx];
- 	snprintf(buf, buflen, "%s", msg);
+ /**
+- * traceevent_print_plugins - print out the list of plugins loaded
++ * tep_print_plugins - print out the list of plugins loaded
+  * @s: the trace_seq descripter to write to
+  * @prefix: The prefix string to add before listing the option name
+  * @suffix: The suffix string ot append after the option name
+@@ -270,9 +270,9 @@ void traceevent_plugin_remove_options(struct tep_plugin_option *options)
+  * returned by tep_load_plugins(). Use @prefix and @suffix for formating:
+  * @prefix = "  ", @suffix = "\n".
+  */
+-void traceevent_print_plugins(struct trace_seq *s,
+-			      const char *prefix, const char *suffix,
+-			      const struct plugin_list *list)
++void tep_print_plugins(struct trace_seq *s,
++		       const char *prefix, const char *suffix,
++		       const struct plugin_list *list)
+ {
+ 	while (list) {
+ 		trace_seq_printf(s, "%s%s%s", prefix, list->name, suffix);
+diff --git a/tools/lib/traceevent/plugin_function.c b/tools/lib/traceevent/plugin_function.c
+index 342be570ee8c..57165da1bd51 100644
+--- a/tools/lib/traceevent/plugin_function.c
++++ b/tools/lib/traceevent/plugin_function.c
+@@ -168,7 +168,7 @@ int TEP_PLUGIN_LOADER(struct tep_handle *pevent)
+ 	pevent_register_event_handler(pevent, -1, "ftrace", "function",
+ 				      function_handler, NULL);
+ 
+-	traceevent_plugin_add_options("ftrace", plugin_options);
++	tep_plugin_add_options("ftrace", plugin_options);
  
  	return 0;
-@@ -6463,7 +6463,7 @@ int tep_print_func_field(struct trace_seq *s, const char *fmt,
- 
- static void free_func_handle(struct tep_function_handler *func)
- {
--	struct pevent_func_params *params;
-+	struct func_params *params;
- 
- 	free(func->name);
- 
-@@ -6497,8 +6497,8 @@ int tep_register_print_function(struct tep_handle *pevent,
- 				char *name, ...)
- {
- 	struct tep_function_handler *func_handle;
--	struct pevent_func_params **next_param;
--	struct pevent_func_params *param;
-+	struct func_params **next_param;
-+	struct func_params *param;
- 	enum tep_func_arg_type type;
- 	va_list ap;
- 	int ret;
-@@ -6591,9 +6591,9 @@ int tep_unregister_print_function(struct tep_handle *pevent,
- 	return -1;
  }
+@@ -186,7 +186,7 @@ void TEP_PLUGIN_UNLOADER(struct tep_handle *pevent)
+ 		free(fstack[i].stack);
+ 	}
  
--static struct event_format *pevent_search_event(struct tep_handle *pevent, int id,
--						const char *sys_name,
--						const char *event_name)
-+static struct event_format *search_event(struct tep_handle *pevent, int id,
-+					 const char *sys_name,
-+					 const char *event_name)
- {
- 	struct event_format *event;
+-	traceevent_plugin_remove_options(plugin_options);
++	tep_plugin_remove_options(plugin_options);
  
-@@ -6638,7 +6638,7 @@ int tep_register_event_handler(struct tep_handle *pevent, int id,
- 	struct event_format *event;
- 	struct event_handler *handle;
- 
--	event = pevent_search_event(pevent, id, sys_name, event_name);
-+	event = search_event(pevent, id, sys_name, event_name);
- 	if (event == NULL)
- 		goto not_found;
- 
-@@ -6723,7 +6723,7 @@ int tep_unregister_event_handler(struct tep_handle *pevent, int id,
- 	struct event_handler *handle;
- 	struct event_handler **next;
- 
--	event = pevent_search_event(pevent, id, sys_name, event_name);
-+	event = search_event(pevent, id, sys_name, event_name);
- 	if (event == NULL)
- 		goto not_found;
- 
+ 	free(fstack);
+ 	fstack = NULL;
 -- 
 2.18.0
 
