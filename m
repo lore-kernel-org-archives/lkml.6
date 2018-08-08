@@ -2,82 +2,103 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88E56C46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 09:52:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 111C9C4646D
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 09:54:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4277B21725
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 09:52:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="MFcN4X5c"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4277B21725
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=8bytes.org
+	by mail.kernel.org (Postfix) with ESMTP id C1EEB21708
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 09:54:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1EEB21708
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727108AbeHHMLZ (ORCPT
+        id S1726945AbeHHMNq convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 08:11:25 -0400
-Received: from 8bytes.org ([81.169.241.247]:33040 "EHLO theia.8bytes.org"
+        Wed, 8 Aug 2018 08:13:46 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:54711 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727058AbeHHMLZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 08:11:25 -0400
-Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 2EFF42EA; Wed,  8 Aug 2018 11:52:28 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=8bytes.org; s=mail-1;
-        t=1533721948; bh=hX1ZEh0C5EEcQZfr1NQZhjEEY9mKSGEJeFhfzduasy0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=MFcN4X5cZ4KlRG1X7f+75Fe3JAhFcFwjy1van3PKoC/Tv+HoPAtURx+o3PzWjpCbu
-         QshiyMWCSRhGBjBlLo2L0ZbNVNog3cNvAcaGmwqANdFm/Veu9Cl0GAwKS8Hfx/0FGJ
-         7X6niHLd4kdw9+ddnPk8/gN2TBbmBxBtoYyJ3PsmBBB3lJb5UJKBvplYzUUG+EHqZO
-         6RlDEELFZzh0kR+CjKvgbVH1dozuG9pUDcLmKoJpK4VCriHsONjU6R2saifpa1AjOe
-         NxXweQSV1cVRdev5CQLe8zIhISX1WHJmsoHMIq/+j3PiTDfbIrbsTDhdYPHGb8VTTE
-         IE0DJFUu4/hOg==
-Date:   Wed, 8 Aug 2018 11:52:27 +0200
-From:   Joerg Roedel <joro@8bytes.org>
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc:     Robin Murphy <robin.murphy@arm.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        iommu@lists.linux-foundation.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/8] Tegra GART driver clean up and optimization
-Message-ID: <20180808095227.ll723ibwtyclih32@8bytes.org>
-References: <20180804143003.15817-1-digetx@gmail.com>
+        id S1726542AbeHHMNq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 08:13:46 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 531E820739; Wed,  8 Aug 2018 11:54:46 +0200 (CEST)
+Received: from xps13 (AAubervilliers-681-1-99-143.w90-88.abo.wanadoo.fr [90.88.4.143])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 162E4206A6;
+        Wed,  8 Aug 2018 11:54:36 +0200 (CEST)
+Date:   Wed, 8 Aug 2018 11:54:37 +0200
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Stefan Agner <stefan@agner.ch>
+Cc:     boris.brezillon@bootlin.com, computersforpeace@gmail.com,
+        dwmw2@infradead.org, marek.vasut@gmail.com, richard@nod.at,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] mtd: rawnand: vf610_nfc: explicitly disable
+ interrupts first
+Message-ID: <20180808115437.34365451@xps13>
+In-Reply-To: <20180806092909.28980-2-stefan@agner.ch>
+References: <20180806092909.28980-1-stefan@agner.ch>
+        <20180806092909.28980-2-stefan@agner.ch>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180804143003.15817-1-digetx@gmail.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hey Thierry,
+Hi Stefan,
 
-On Sat, Aug 04, 2018 at 05:29:55PM +0300, Dmitry Osipenko wrote:
-> Dmitry Osipenko (8):
->   memory: tegra: Provide facility for integration with the GART driver
->   iommu/tegra: gart: Provide access to Memory Controller driver
->   iommu/tegra: gart: Clean up drivers module code
->   iommu/tegra: gart: Remove pr_fmt and clean up includes
->   iommu/tegra: gart: Clean up driver probe errors handling
->   iommu/tegra: gart: Ignore devices without IOMMU phandle in DT
->   iommu: Introduce iotlb_sync_map callback
->   iommu/tegra: gart: Optimize mapping / unmapping performance
+Stefan Agner <stefan@agner.ch> wrote on Mon,  6 Aug 2018 11:29:08 +0200:
+
+> Explicitly disable all interrupts on probe. This should be the
+> default state, but the bootloader could leave the device in any
+> state. No issues have been observed so far, but it is still worth
+> fixing it.
 > 
->  drivers/iommu/iommu.c      |  8 ++-
->  drivers/iommu/tegra-gart.c | 99 +++++++++++++++++++++++---------------
->  drivers/memory/tegra/mc.c  | 26 ++++++++--
->  include/linux/iommu.h      |  1 +
->  include/soc/tegra/mc.h     | 13 +++++
->  5 files changed, 103 insertions(+), 44 deletions(-)
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> ---
+>  drivers/mtd/nand/raw/vf610_nfc.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/drivers/mtd/nand/raw/vf610_nfc.c b/drivers/mtd/nand/raw/vf610_nfc.c
+> index 740a91c5c86e..52e7811c0bde 100644
+> --- a/drivers/mtd/nand/raw/vf610_nfc.c
+> +++ b/drivers/mtd/nand/raw/vf610_nfc.c
+> @@ -130,8 +130,13 @@
+>  #define CONFIG_PAGE_CNT_SHIFT			0
+>  
+>  /* NFC_IRQ_STATUS Field */
+> +#define WERR_IRQ_BIT				BIT(31)
+> +#define DONE_IRQ_BIT				BIT(30)
+>  #define IDLE_IRQ_BIT				BIT(29)
+> +#define WERR_EN_BIT				BIT(22)
+> +#define DONE_EN_BIT				BIT(21)
+>  #define IDLE_EN_BIT				BIT(20)
+> +#define WERR_CLEAR_BIT				BIT(19)
+>  #define DONE_CLEAR_BIT				BIT(18)
+>  #define IDLE_CLEAR_BIT				BIT(17)
+>  
+> @@ -819,6 +824,10 @@ static int vf610_nfc_probe(struct platform_device *pdev)
+>  
+>  	init_completion(&nfc->cmd_done);
+>  
+> +	vf610_nfc_clear(nfc, NFC_IRQ_STATUS, WERR_EN_BIT);
+> +	vf610_nfc_clear(nfc, NFC_IRQ_STATUS, DONE_EN_BIT);
+> +	vf610_nfc_clear(nfc, NFC_IRQ_STATUS, IDLE_EN_BIT);
+> +
 
-Can you have a look please whether this is safe to go upstream?
+Why not just one call with:
+
+	vf610_nfc_clear(nfc, NFC_IRQ_STATUS, WERR_EN_BIT | DONE_EN_BIT | IDLE_EN_BIT);
+
+The comment applies for the next patch as well.
+
+>  	err = devm_request_irq(nfc->dev, irq, vf610_nfc_irq, 0, DRV_NAME, mtd);
+>  	if (err) {
+>  		dev_err(nfc->dev, "Error requesting IRQ!\n");
 
 Thanks,
-
-	Joerg
+Miquèl
