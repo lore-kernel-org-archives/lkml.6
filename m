@@ -2,148 +2,79 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABE11C4646D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 15:41:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EE26C46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 15:42:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66A8A21A37
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 15:41:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DBD0721772
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 15:42:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FhDrfNx9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66A8A21A37
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="AabjQK2U"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBD0721772
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727851AbeHHSB6 (ORCPT
+        id S1727602AbeHHSC7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 14:01:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33428 "EHLO mail.kernel.org"
+        Wed, 8 Aug 2018 14:02:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33742 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727202AbeHHSB5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 14:01:57 -0400
-Received: from localhost (unknown [213.57.183.250])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1727081AbeHHSC7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 14:02:59 -0400
+Received: from localhost.localdomain (user-0ccsrjt.cable.mindspring.com [24.206.110.125])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5981B21765;
-        Wed,  8 Aug 2018 15:41:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 409D821765;
+        Wed,  8 Aug 2018 15:42:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1533742904;
-        bh=xc6jUcLjvOd5tfG/pkYktVc8BPgWMWadei/XnkXR1T8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FhDrfNx93d0ystHQ9RE7W5ymffPwnmnnsJ6gw7xaTXPklCSKfLpcbeOnjhqJX2jE0
-         xjbgQM0EFOqmcWOmxMTKkBHlwTWq9h6bCDlR3COJA+/OmYiPHwi9CqW4mkxaZriQT5
-         Lgggt8LUiWilXOJ9hH3MPSjGi4NdY4ZPwR2k16qs=
-Date:   Wed, 8 Aug 2018 18:41:42 +0300
-From:   Leon Romanovsky <leon@kernel.org>
-To:     Tal Gilboa <talgi@mellanox.com>
-Cc:     Alexandru Gagniuc <mr.nuke.me@gmail.com>,
-        linux-pci@vger.kernel.org, bhelgaas@google.com,
-        jakub.kicinski@netronome.com, keith.busch@intel.com,
-        alex_gagniuc@dellteam.com, austin_bolen@dell.com,
-        shyam_iyer@dell.com, Ariel Elior <ariel.elior@cavium.com>,
-        everest-linux-l2@cavium.com,
-        "David S. Miller" <davem@davemloft.net>,
-        Michael Chan <michael.chan@broadcom.com>,
-        Ganesh Goudar <ganeshgr@chelsio.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        Tariq Toukan <tariqt@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>,
-        Dirk van der Merwe <dirk.vandermerwe@netronome.com>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        intel-wired-lan@lists.osuosl.org, linux-rdma@vger.kernel.org,
-        oss-drivers@netronome.com
-Subject: Re: [PATCH v6 8/9] net/mlx5: Do not call pcie_print_link_status()
-Message-ID: <20180808154142.GZ13378@mtr-leonro.mtl.com>
-References: <CAErSpo4PK+SQLNfdkLNt9eLc7bpbxbkZCsa8T-tQpid601n0SQ@mail.gmail.com>
- <20180806232600.25694-1-mr.nuke.me@gmail.com>
- <20180806232600.25694-8-mr.nuke.me@gmail.com>
- <20180808060848.GQ13378@mtr-leonro.mtl.com>
- <05056a70-ee78-ea3c-0b9b-6d64a8663b11@mellanox.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="cfJ13FhsvNR/yOpm"
-Content-Disposition: inline
-In-Reply-To: <05056a70-ee78-ea3c-0b9b-6d64a8663b11@mellanox.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        s=default; t=1533742966;
+        bh=x4HpyP6A2oo/rNzLC/EYx2jn1KWMCAsTBzHcosQKYpU=;
+        h=From:To:Cc:Subject:Date:From;
+        b=AabjQK2U/EQ7xVboKhylMPDSqcnq8GbidmUWXhE041EqHGhbOzGO7cGvj8axmsFuV
+         An8OxUgyXxgoRnRi0wRRyogfxxP4zUX+TLNPu0hHLeBuXf68b5jXoCAvxoC5q37Z11
+         1wnRYJPEsO4qWTl5y8YL5jb7/02/IhPaS2emhm1E=
+From:   Alan Tull <atull@kernel.org>
+To:     Dinh Nguyen <dinguyen@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Cc:     Alan Tull <atull@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] arm64: dts: stratix10: i2c clock running out of spec
+Date:   Wed,  8 Aug 2018 10:42:41 -0500
+Message-Id: <20180808154241.3760-1-atull@kernel.org>
+X-Mailer: git-send-email 2.16.2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+DesignWare I2C controller was observed running at 105.93kHz rather
+than the specified 100kHz.  Adjust device tree settings to bring it
+within spec (a slightly conservative 98 MHz).
 
---cfJ13FhsvNR/yOpm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Alan Tull <atull@kernel.org>
+---
+ arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts | 2 ++
+ 1 file changed, 2 insertions(+)
 
-On Wed, Aug 08, 2018 at 05:23:12PM +0300, Tal Gilboa wrote:
-> On 8/8/2018 9:08 AM, Leon Romanovsky wrote:
-> > On Mon, Aug 06, 2018 at 06:25:42PM -0500, Alexandru Gagniuc wrote:
-> > > This is now done by the PCI core to warn of sub-optimal bandwidth.
-> > >
-> > > Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
-> > > ---
-> > >   drivers/net/ethernet/mellanox/mlx5/core/main.c | 4 ----
-> > >   1 file changed, 4 deletions(-)
-> > >
-> >
-> > Thanks,
-> > Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
-> >
->
-> Alex,
-> I loaded mlx5 driver with and without these series. The report in dmesg is
-> now missing. From what I understood, the status should be reported at least
-> once, even if everything is in order.
+diff --git a/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts b/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts
+index 6edc4fa..53cf195 100644
+--- a/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts
++++ b/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts
+@@ -124,6 +124,8 @@
+ &i2c1 {
+ 	status = "okay";
+ 	clock-frequency = <100000>;
++	i2c-sda-falling-time-ns = <890>;  /* hcnt */
++	i2c-sdl-falling-time-ns = <890>;  /* lcnt */
+ 
+ 	adc@14 {
+ 		compatible = "lltc,ltc2497";
+-- 
+2.7.4
 
-It is not what this series is doing and it removes prints completely if
-fabric can deliver more than card is capable.
-
-> We need this functionality to stay.
-
-I'm not sure that you need this information in driver's dmesg output,
-but most probably something globally visible and accessible per-pci
-device.
-
->
-> net-next (dmesg output for 07:00.0):
-> [270498.625351] mlx5_core 0000:07:00.0: firmware version: 14.22.4020
-> [270498.632130] mlx5_core 0000:07:00.0: 63.008 Gb/s available PCIe bandwidth
-> (8 GT/s x8 link)
-> [270499.169533] (0000:07:00.0): E-Switch: Total vports 9, per vport: max
-> uc(1024) max mc(16384)
-> [270499.182358] mlx5_core 0000:07:00.0: Port module event: module 0, Cable
-> plugged
->
-> net-next + patches (dmesg output for 07:00.0):
-> [  331.608472] mlx5_core 0000:07:00.0: firmware version: 14.22.4020
-> [  332.564938] (0000:07:00.0): E-Switch: Total vports 9, per vport: max
-> uc(1024) max mc(16384)
-> [  332.616271] mlx5_core 0000:07:00.0: Port module event: module 0, Cable
-> plugged
->
->
-
---cfJ13FhsvNR/yOpm
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJbaw82AAoJEORje4g2clinSrcQAIG8XlaVMnqmX9ZIn10cfkoz
-lngbzsg4KBPfVjhswO/NwYTa6S9Q0E8rMqGZJ1oWW9lPkiNJHxf6eK82lRerJmER
-Le5Bx6uUWDXPUg5UV1cpSlC6VwOW3oBrlo0EnHJRYK7mmLNnQJ7yLAGleWTNySpk
-S6ZkX3nO4x1a2CjUIxg4d1Jl9m9iP8enQyPsBPTIdgYlH39xFh8NwaQ3fjytErEV
-kW/C1K2mKryiSs9ss+xLfS4c7v2BT552DrnwMsOpdVF6zUWt8a2yA0vrQP4G+b+s
-q1s1i1SCHVGiDXT62T8lAL3p/sTf1k8ERwJHhxNuVlPc+cuC1rUt8MJ8my+DACbk
-JqPhwo+HSKDGphsUTbrJ0Hc9f7PW9fv+nRDrciE/9Q/0tBj5zVR+kh+53EJzJcEW
-q1wXpbh26dYdeo93Ki48a9kmJJ/mjlRn6ma1TfAgaab6Ct//rIBhpkDt1eOUn773
-xoiXVNdwRWzQTFgeeWiA8pebyUU+e08gZSvhHyQjT0d1WWpZQMmVpUJ2MKCdaHF9
-8kNsjww4h/F9PozSYlvQwduxp+3F+D/K656TC0rtAUvCRKsfynZWfRIb3KlBIWnE
-7uTCDmvmLLf6W+8tVWY0u9obmtVHkcyvkUEPElyhfVazdw1dLue2UigdNN2SN7Y+
-YY+vEw9UQ/ez/RY9zQD6
-=/LzE
------END PGP SIGNATURE-----
-
---cfJ13FhsvNR/yOpm--
