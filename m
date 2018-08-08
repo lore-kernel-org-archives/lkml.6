@@ -2,136 +2,512 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44C98C4646D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 10:25:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CCECC4646D
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 10:26:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0893208C3
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 10:25:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Ln3tHto3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0893208C3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+	by mail.kernel.org (Postfix) with ESMTP id 2D98F208C3
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 10:26:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D98F208C3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726931AbeHHMoP (ORCPT
+        id S1726990AbeHHMpm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 08:44:15 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:52778 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726643AbeHHMoO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 08:44:14 -0400
-Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id E9E3757;
-        Wed,  8 Aug 2018 12:25:08 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1533723909;
-        bh=KM2mEHXm8a0+NPwW6IGoVbhF4VJy35aIEDrFBua5vyM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ln3tHto3EKlKPl0DGBAoC0GiqVM6hay4Ak2gDGF8c80ze57+xrsdi4sfj5Us3wlyv
-         fKL4jKJYkJ5KVp3mdaMKi4dJFUHfJCbJky0wA/2UPED2O4K9lyFQIgA7LCgasmne0r
-         CNLI4atqDSdIwhTMcRmzrts/edI5a2OKiEYVkq4k=
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     kieran.bingham@ideasonboard.com
-Cc:     Michal =?utf-8?B?Vm9rw6HEjQ==?= <michal.vokac@ysoft.com>,
-        mchehab@kernel.org, linux-media@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] media: dt: adv7604: Fix slave map documentation
-Date:   Wed, 08 Aug 2018 13:25:53 +0300
-Message-ID: <5273911.bCJl0SVgzf@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <b5b25641-f898-577b-7762-d72dd64272cf@ideasonboard.com>
-References: <20180807155452.797-1-kieran.bingham@ideasonboard.com> <505904fb-7bfc-c455-740e-b72a14731eb9@ysoft.com> <b5b25641-f898-577b-7762-d72dd64272cf@ideasonboard.com>
+        Wed, 8 Aug 2018 08:45:42 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41422 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726643AbeHHMpm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 08:45:42 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 2FB35402315B;
+        Wed,  8 Aug 2018 10:26:36 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-78.rdu2.redhat.com [10.10.120.78])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 5109510075DA;
+        Wed,  8 Aug 2018 10:26:35 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+ Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+ Kingdom.
+ Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH net] rxrpc: Fix the keepalive generator
+From:   David Howells <dhowells@redhat.com>
+To:     netdev@vger.kernel.org
+Cc:     dhowells@redhat.com, linux-afs@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Date:   Wed, 08 Aug 2018 11:26:34 +0100
+Message-ID: <153372399484.18036.6826078666491635563.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Wed, 08 Aug 2018 10:26:36 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Wed, 08 Aug 2018 10:26:36 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kieran,
+AF_RXRPC has a keepalive message generator that generates a message for a
+peer ~20s after the last transmission to that peer to keep firewall ports
+open.  The implementation is incorrect in the following ways:
 
-On Wednesday, 8 August 2018 13:23:32 EEST Kieran Bingham wrote:
-> Hi Michal,
->=20
-> Thank you for your review.
->=20
-> +Rob, +Mark, +Laurent asking for opinions if anyone has any on prefixes
-> through media tree.
->=20
-> On 08/08/18 08:48, Michal Vok=C3=A1=C4=8D wrote:
-> > On 7.8.2018 17:54, Kieran Bingham wrote:
-> > Hi Kieran,
-> >=20
-> >> The reg-names property in the documentation is missing an '=3D'. Add i=
-t.
-> >>=20
-> >> Fixes: 9feb786876c7 ("media: dt-bindings: media: adv7604: Extend
-> >> bindings to allow specifying slave map addresses")
-> >=20
-> > "dt-bindings: media: " is preferred for the subject.
->=20
-> This patch will go through the media-tree as far as I am aware, and
-> Mauro prefixes all commits through the media tree with "media:" if they
-> are not already prefixed.
->=20
-> Thus this would then become "media: dt-bindings: media: adv7604: ...."
-> as per my commit: 9feb786876c7 which seems a bit redundant.
->=20
-> Is it still desired ? If so I'll send a V2. (perhaps needed anyway, as I
-> seem to have erroneously shortened dt-bindings: to just dt: which wasn't
-> intentional.
->=20
-> > I think you should also add device tree maintainers to the recipients.
->=20
-> Added to this mail to ask opinions on patch prefixes above.
->=20
-> Originally, I believed the list was sufficient as this is a trivial
-> patch, and it goes through the media tree.
->=20
-> But, it turned out to be more controversial :)
->=20
-> Rob, Mark, should I add you to all patches affecting DT? Or is the list
-> sufficient?
+ (1) It mixes up ktime_t and time64_t types.
 
-Given the insane amount of patches received by DT maintainers, I personally=
-=20
-try to use common sense and only disturb them when needed. Such a typo fix=
-=20
-doesn't qualify for a full CC list in my opinion.
+ (2) It uses ktime_get_real(), the output of which may jump forward or
+     backward due to adjustments to the time of day.
 
-> >> Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
-> >> ---
-> >>   Documentation/devicetree/bindings/media/i2c/adv7604.txt | 2 +-
-> >>   1 file changed, 1 insertion(+), 1 deletion(-)
-> >>=20
-> >> diff --git a/Documentation/devicetree/bindings/media/i2c/adv7604.txt
-> >> b/Documentation/devicetree/bindings/media/i2c/adv7604.txt
-> >> index dcf57e7c60eb..b3e688b77a38 100644
-> >> --- a/Documentation/devicetree/bindings/media/i2c/adv7604.txt
-> >> +++ b/Documentation/devicetree/bindings/media/i2c/adv7604.txt
-> >> @@ -66,7 +66,7 @@ Example:
-> >>            * other maps will retain their default addresses.
-> >>            */
-> >>           reg =3D <0x4c>, <0x66>;
-> >> -        reg-names "main", "edid";
-> >> +        reg-names =3D "main", "edid";
-> >>             reset-gpios =3D <&ioexp 0 GPIO_ACTIVE_LOW>;
-> >>           hpd-gpios =3D <&ioexp 2 GPIO_ACTIVE_HIGH>;
+ (3) If the current time jumps forward too much or jumps backwards, the
+     generator function will crank the base of the time ring round one slot
+     at a time (ie. a 1s period) until it catches up, spewing out VERSION
+     packets as it goes.
 
-=2D-=20
-Regards,
+Fix the problem by:
 
-Laurent Pinchart
+ (1) Only using time64_t.  There's no need for sub-second resolution.
 
+ (2) Use ktime_get_seconds() rather than ktime_get_real() so that time
+     isn't perceived to go backwards.
 
+ (3) Simplifying rxrpc_peer_keepalive_worker() by splitting it into two
+     parts:
+
+     (a) The "worker" function that manages the buckets and the timer.
+
+     (b) The "dispatch" function that takes the pending peers and
+     	 potentially transmits a keepalive packet before putting them back
+     	 in the ring into the slot appropriate to the revised last-Tx time.
+
+ (4) Taking everything that's pending out of the ring and splicing it into
+     a temporary collector list for processing.
+
+     In the case that there's been a significant jump forward, the ring
+     gets entirely emptied and then the time base can be warped forward
+     before the peers are processed.
+
+     The warping can't happen if the ring isn't empty because the slot a
+     peer is in is keepalive-time dependent, relative to the base time.
+
+ (5) Limit the number of iterations of the bucket array when scanning it.
+
+ (6) Set the timer to skip any empty slots as there's no point waking up if
+     there's nothing to do yet.
+
+This can be triggered by an incoming call from a server after a reboot with
+AF_RXRPC and AFS built into the kernel causing a peer record to be set up
+before userspace is started.  The system clock is then adjusted by
+userspace, thereby potentially causing the keepalive generator to have a
+meltdown - which leads to a message like:
+
+	watchdog: BUG: soft lockup - CPU#0 stuck for 23s! [kworker/0:1:23]
+	...
+	Workqueue: krxrpcd rxrpc_peer_keepalive_worker
+	EIP: lock_acquire+0x69/0x80
+	...
+	Call Trace:
+	 ? rxrpc_peer_keepalive_worker+0x5e/0x350
+	 ? _raw_spin_lock_bh+0x29/0x60
+	 ? rxrpc_peer_keepalive_worker+0x5e/0x350
+	 ? rxrpc_peer_keepalive_worker+0x5e/0x350
+	 ? __lock_acquire+0x3d3/0x870
+	 ? process_one_work+0x110/0x340
+	 ? process_one_work+0x166/0x340
+	 ? process_one_work+0x110/0x340
+	 ? worker_thread+0x39/0x3c0
+	 ? kthread+0xdb/0x110
+	 ? cancel_delayed_work+0x90/0x90
+	 ? kthread_stop+0x70/0x70
+	 ? ret_from_fork+0x19/0x24
+
+Fixes: ace45bec6d77 ("rxrpc: Fix firewall route keepalive")
+Reported-by: kernel test robot <lkp@intel.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
+---
+
+ net/rxrpc/ar-internal.h |    8 +-
+ net/rxrpc/conn_event.c  |    4 +
+ net/rxrpc/net_ns.c      |    6 +-
+ net/rxrpc/output.c      |   12 ++--
+ net/rxrpc/peer_event.c  |  158 +++++++++++++++++++++++++++--------------------
+ net/rxrpc/peer_object.c |    8 +-
+ net/rxrpc/rxkad.c       |    4 +
+ 7 files changed, 111 insertions(+), 89 deletions(-)
+
+diff --git a/net/rxrpc/ar-internal.h b/net/rxrpc/ar-internal.h
+index 5fb7d3254d9e..707630ab4713 100644
+--- a/net/rxrpc/ar-internal.h
++++ b/net/rxrpc/ar-internal.h
+@@ -104,9 +104,9 @@ struct rxrpc_net {
+ 
+ #define RXRPC_KEEPALIVE_TIME 20 /* NAT keepalive time in seconds */
+ 	u8			peer_keepalive_cursor;
+-	ktime_t			peer_keepalive_base;
+-	struct hlist_head	peer_keepalive[RXRPC_KEEPALIVE_TIME + 1];
+-	struct hlist_head	peer_keepalive_new;
++	time64_t		peer_keepalive_base;
++	struct list_head	peer_keepalive[32];
++	struct list_head	peer_keepalive_new;
+ 	struct timer_list	peer_keepalive_timer;
+ 	struct work_struct	peer_keepalive_work;
+ };
+@@ -295,7 +295,7 @@ struct rxrpc_peer {
+ 	struct hlist_head	error_targets;	/* targets for net error distribution */
+ 	struct work_struct	error_distributor;
+ 	struct rb_root		service_conns;	/* Service connections */
+-	struct hlist_node	keepalive_link;	/* Link in net->peer_keepalive[] */
++	struct list_head	keepalive_link;	/* Link in net->peer_keepalive[] */
+ 	time64_t		last_tx_at;	/* Last time packet sent here */
+ 	seqlock_t		service_conn_lock;
+ 	spinlock_t		lock;		/* access lock */
+diff --git a/net/rxrpc/conn_event.c b/net/rxrpc/conn_event.c
+index 8229a52c2acd..3fde001fcc39 100644
+--- a/net/rxrpc/conn_event.c
++++ b/net/rxrpc/conn_event.c
+@@ -136,7 +136,7 @@ static void rxrpc_conn_retransmit_call(struct rxrpc_connection *conn,
+ 	}
+ 
+ 	ret = kernel_sendmsg(conn->params.local->socket, &msg, iov, ioc, len);
+-	conn->params.peer->last_tx_at = ktime_get_real();
++	conn->params.peer->last_tx_at = ktime_get_seconds();
+ 	if (ret < 0)
+ 		trace_rxrpc_tx_fail(conn->debug_id, serial, ret,
+ 				    rxrpc_tx_fail_call_final_resend);
+@@ -245,7 +245,7 @@ static int rxrpc_abort_connection(struct rxrpc_connection *conn,
+ 		return -EAGAIN;
+ 	}
+ 
+-	conn->params.peer->last_tx_at = ktime_get_real();
++	conn->params.peer->last_tx_at = ktime_get_seconds();
+ 
+ 	_leave(" = 0");
+ 	return 0;
+diff --git a/net/rxrpc/net_ns.c b/net/rxrpc/net_ns.c
+index 5d6a773db973..417d80867c4f 100644
+--- a/net/rxrpc/net_ns.c
++++ b/net/rxrpc/net_ns.c
+@@ -85,12 +85,12 @@ static __net_init int rxrpc_init_net(struct net *net)
+ 	hash_init(rxnet->peer_hash);
+ 	spin_lock_init(&rxnet->peer_hash_lock);
+ 	for (i = 0; i < ARRAY_SIZE(rxnet->peer_keepalive); i++)
+-		INIT_HLIST_HEAD(&rxnet->peer_keepalive[i]);
+-	INIT_HLIST_HEAD(&rxnet->peer_keepalive_new);
++		INIT_LIST_HEAD(&rxnet->peer_keepalive[i]);
++	INIT_LIST_HEAD(&rxnet->peer_keepalive_new);
+ 	timer_setup(&rxnet->peer_keepalive_timer,
+ 		    rxrpc_peer_keepalive_timeout, 0);
+ 	INIT_WORK(&rxnet->peer_keepalive_work, rxrpc_peer_keepalive_worker);
+-	rxnet->peer_keepalive_base = ktime_add(ktime_get_real(), NSEC_PER_SEC);
++	rxnet->peer_keepalive_base = ktime_get_seconds();
+ 
+ 	ret = -ENOMEM;
+ 	rxnet->proc_net = proc_net_mkdir(net, "rxrpc", net->proc_net);
+diff --git a/net/rxrpc/output.c b/net/rxrpc/output.c
+index f03de1c59ba3..4774c8f5634d 100644
+--- a/net/rxrpc/output.c
++++ b/net/rxrpc/output.c
+@@ -209,7 +209,7 @@ int rxrpc_send_ack_packet(struct rxrpc_call *call, bool ping,
+ 	now = ktime_get_real();
+ 	if (ping)
+ 		call->ping_time = now;
+-	conn->params.peer->last_tx_at = ktime_get_real();
++	conn->params.peer->last_tx_at = ktime_get_seconds();
+ 	if (ret < 0)
+ 		trace_rxrpc_tx_fail(call->debug_id, serial, ret,
+ 				    rxrpc_tx_fail_call_ack);
+@@ -296,7 +296,7 @@ int rxrpc_send_abort_packet(struct rxrpc_call *call)
+ 
+ 	ret = kernel_sendmsg(conn->params.local->socket,
+ 			     &msg, iov, 1, sizeof(pkt));
+-	conn->params.peer->last_tx_at = ktime_get_real();
++	conn->params.peer->last_tx_at = ktime_get_seconds();
+ 	if (ret < 0)
+ 		trace_rxrpc_tx_fail(call->debug_id, serial, ret,
+ 				    rxrpc_tx_fail_call_abort);
+@@ -391,7 +391,7 @@ int rxrpc_send_data_packet(struct rxrpc_call *call, struct sk_buff *skb,
+ 	 *     message and update the peer record
+ 	 */
+ 	ret = kernel_sendmsg(conn->params.local->socket, &msg, iov, 2, len);
+-	conn->params.peer->last_tx_at = ktime_get_real();
++	conn->params.peer->last_tx_at = ktime_get_seconds();
+ 
+ 	up_read(&conn->params.local->defrag_sem);
+ 	if (ret < 0)
+@@ -457,7 +457,7 @@ int rxrpc_send_data_packet(struct rxrpc_call *call, struct sk_buff *skb,
+ 		if (ret == 0) {
+ 			ret = kernel_sendmsg(conn->params.local->socket, &msg,
+ 					     iov, 2, len);
+-			conn->params.peer->last_tx_at = ktime_get_real();
++			conn->params.peer->last_tx_at = ktime_get_seconds();
+ 
+ 			opt = IP_PMTUDISC_DO;
+ 			kernel_setsockopt(conn->params.local->socket, SOL_IP,
+@@ -475,7 +475,7 @@ int rxrpc_send_data_packet(struct rxrpc_call *call, struct sk_buff *skb,
+ 		if (ret == 0) {
+ 			ret = kernel_sendmsg(conn->params.local->socket, &msg,
+ 					     iov, 2, len);
+-			conn->params.peer->last_tx_at = ktime_get_real();
++			conn->params.peer->last_tx_at = ktime_get_seconds();
+ 
+ 			opt = IPV6_PMTUDISC_DO;
+ 			kernel_setsockopt(conn->params.local->socket,
+@@ -599,6 +599,6 @@ void rxrpc_send_keepalive(struct rxrpc_peer *peer)
+ 		trace_rxrpc_tx_fail(peer->debug_id, 0, ret,
+ 				    rxrpc_tx_fail_version_keepalive);
+ 
+-	peer->last_tx_at = ktime_get_real();
++	peer->last_tx_at = ktime_get_seconds();
+ 	_leave("");
+ }
+diff --git a/net/rxrpc/peer_event.c b/net/rxrpc/peer_event.c
+index 0ed8b651cec2..091b9f48ebdd 100644
+--- a/net/rxrpc/peer_event.c
++++ b/net/rxrpc/peer_event.c
+@@ -350,97 +350,119 @@ void rxrpc_peer_add_rtt(struct rxrpc_call *call, enum rxrpc_rtt_rx_trace why,
+ }
+ 
+ /*
+- * Perform keep-alive pings with VERSION packets to keep any NAT alive.
++ * Perform keep-alive pings.
+  */
+-void rxrpc_peer_keepalive_worker(struct work_struct *work)
++static void rxrpc_peer_keepalive_dispatch(struct rxrpc_net *rxnet,
++					  struct list_head *collector,
++					  time64_t base,
++					  u8 cursor)
+ {
+-	struct rxrpc_net *rxnet =
+-		container_of(work, struct rxrpc_net, peer_keepalive_work);
+ 	struct rxrpc_peer *peer;
+-	unsigned long delay;
+-	ktime_t base, now = ktime_get_real();
+-	s64 diff;
+-	u8 cursor, slot;
++	const u8 mask = ARRAY_SIZE(rxnet->peer_keepalive) - 1;
++	time64_t keepalive_at;
++	int slot;
+ 
+-	base = rxnet->peer_keepalive_base;
+-	cursor = rxnet->peer_keepalive_cursor;
++	spin_lock_bh(&rxnet->peer_hash_lock);
+ 
+-	_enter("%u,%lld", cursor, ktime_sub(now, base));
++	while (!list_empty(collector)) {
++		/* Everything in the bucket at the cursor is processed this
++		 * second; the bucket at cursor + 1 goes at now + 1s and so
++		 * on...
++		 */
++		peer = list_entry(collector->next,
++				  struct rxrpc_peer, keepalive_link);
+ 
+-next_bucket:
+-	diff = ktime_to_ns(ktime_sub(now, base));
+-	if (diff < 0)
+-		goto resched;
++		list_del_init(&peer->keepalive_link);
++		if (!rxrpc_get_peer_maybe(peer))
++			continue;
+ 
+-	_debug("at %u", cursor);
+-	spin_lock_bh(&rxnet->peer_hash_lock);
+-next_peer:
+-	if (!rxnet->live) {
+ 		spin_unlock_bh(&rxnet->peer_hash_lock);
+-		goto out;
+-	}
+ 
+-	/* Everything in the bucket at the cursor is processed this second; the
+-	 * bucket at cursor + 1 goes now + 1s and so on...
+-	 */
+-	if (hlist_empty(&rxnet->peer_keepalive[cursor])) {
+-		if (hlist_empty(&rxnet->peer_keepalive_new)) {
+-			spin_unlock_bh(&rxnet->peer_hash_lock);
+-			goto emptied_bucket;
++		keepalive_at = peer->last_tx_at + RXRPC_KEEPALIVE_TIME;
++		slot = keepalive_at - base;
++		kdebug("%02x peer %u t=%d {%pISp}",
++		       cursor, peer->debug_id, slot, &peer->srx.transport);
++
++		if (keepalive_at <= base ||
++		    keepalive_at > base + RXRPC_KEEPALIVE_TIME) {
++			rxrpc_send_keepalive(peer);
++			slot = RXRPC_KEEPALIVE_TIME;
+ 		}
+ 
+-		hlist_move_list(&rxnet->peer_keepalive_new,
+-				&rxnet->peer_keepalive[cursor]);
++		/* A transmission to this peer occurred since last we examined
++		 * it so put it into the appropriate future bucket.
++		 */
++		slot += cursor;
++		slot &= mask;
++		ASSERTCMP(slot, >=, 0);
++		ASSERTCMP(slot, <=, mask);
++		spin_lock_bh(&rxnet->peer_hash_lock);
++		list_add_tail(&peer->keepalive_link,
++			      &rxnet->peer_keepalive[slot & mask]);
++		rxrpc_put_peer(peer);
+ 	}
+ 
+-	peer = hlist_entry(rxnet->peer_keepalive[cursor].first,
+-			   struct rxrpc_peer, keepalive_link);
+-	hlist_del_init(&peer->keepalive_link);
+-	if (!rxrpc_get_peer_maybe(peer))
+-		goto next_peer;
+-
+ 	spin_unlock_bh(&rxnet->peer_hash_lock);
++}
+ 
+-	_debug("peer %u {%pISp}", peer->debug_id, &peer->srx.transport);
++/*
++ * Perform keep-alive pings with VERSION packets to keep any NAT alive.
++ */
++void rxrpc_peer_keepalive_worker(struct work_struct *work)
++{
++	struct rxrpc_net *rxnet =
++		container_of(work, struct rxrpc_net, peer_keepalive_work);
++	const u8 mask = ARRAY_SIZE(rxnet->peer_keepalive) - 1;
++	time64_t base, now, delay;
++	u8 cursor, stop;
++	LIST_HEAD(collector);
+ 
+-recalc:
+-	diff = ktime_divns(ktime_sub(peer->last_tx_at, base), NSEC_PER_SEC);
+-	if (diff < -30 || diff > 30)
+-		goto send; /* LSW of 64-bit time probably wrapped on 32-bit */
+-	diff += RXRPC_KEEPALIVE_TIME - 1;
+-	if (diff < 0)
+-		goto send;
++	now = ktime_get_seconds();
++	base = rxnet->peer_keepalive_base;
++	cursor = rxnet->peer_keepalive_cursor;
++	_enter("%lld,%u", base - now, cursor);
+ 
+-	slot = (diff > RXRPC_KEEPALIVE_TIME - 1) ? RXRPC_KEEPALIVE_TIME - 1 : diff;
+-	if (slot == 0)
+-		goto send;
++	if (!rxnet->live)
++		return;
+ 
+-	/* A transmission to this peer occurred since last we examined it so
+-	 * put it into the appropriate future bucket.
++	/* Remove to a temporary list all the peers that are currently lodged
++	 * in expired buckets plus all new peers.
+ 	 */
+-	slot = (slot + cursor) % ARRAY_SIZE(rxnet->peer_keepalive);
+ 	spin_lock_bh(&rxnet->peer_hash_lock);
+-	hlist_add_head(&peer->keepalive_link, &rxnet->peer_keepalive[slot]);
+-	rxrpc_put_peer(peer);
+-	goto next_peer;
+-
+-send:
+-	rxrpc_send_keepalive(peer);
+-	now = ktime_get_real();
+-	goto recalc;
++	list_splice_init(&rxnet->peer_keepalive_new, &collector);
++
++	stop = cursor + ARRAY_SIZE(rxnet->peer_keepalive);
++	while (base <= now && (s8)(cursor - stop) < 0) {
++		list_splice_tail_init(&rxnet->peer_keepalive[cursor & mask],
++				      &collector);
++		base++;
++		cursor++;
++	}
+ 
+-emptied_bucket:
+-	cursor++;
+-	if (cursor >= ARRAY_SIZE(rxnet->peer_keepalive))
+-		cursor = 0;
+-	base = ktime_add_ns(base, NSEC_PER_SEC);
+-	goto next_bucket;
++	base = now;
++	spin_unlock_bh(&rxnet->peer_hash_lock);
+ 
+-resched:
+ 	rxnet->peer_keepalive_base = base;
+ 	rxnet->peer_keepalive_cursor = cursor;
+-	delay = nsecs_to_jiffies(-diff) + 1;
+-	timer_reduce(&rxnet->peer_keepalive_timer, jiffies + delay);
+-out:
++	rxrpc_peer_keepalive_dispatch(rxnet, &collector, base, cursor);
++	ASSERT(list_empty(&collector));
++
++	/* Schedule the timer for the next occupied timeslot. */
++	cursor = rxnet->peer_keepalive_cursor;
++	stop = cursor + RXRPC_KEEPALIVE_TIME - 1;
++	for (; (s8)(cursor - stop) < 0; cursor++) {
++		if (!list_empty(&rxnet->peer_keepalive[cursor & mask]))
++			break;
++		base++;
++	}
++
++	now = ktime_get_seconds();
++	delay = base - now;
++	if (delay < 1)
++		delay = 1;
++	delay *= HZ;
++	if (rxnet->live)
++		timer_reduce(&rxnet->peer_keepalive_timer, jiffies + delay);
++
+ 	_leave("");
+ }
+diff --git a/net/rxrpc/peer_object.c b/net/rxrpc/peer_object.c
+index 1b7e8107b3ae..24ec7cdcf332 100644
+--- a/net/rxrpc/peer_object.c
++++ b/net/rxrpc/peer_object.c
+@@ -322,7 +322,7 @@ struct rxrpc_peer *rxrpc_lookup_incoming_peer(struct rxrpc_local *local,
+ 	if (!peer) {
+ 		peer = prealloc;
+ 		hash_add_rcu(rxnet->peer_hash, &peer->hash_link, hash_key);
+-		hlist_add_head(&peer->keepalive_link, &rxnet->peer_keepalive_new);
++		list_add_tail(&peer->keepalive_link, &rxnet->peer_keepalive_new);
+ 	}
+ 
+ 	spin_unlock(&rxnet->peer_hash_lock);
+@@ -367,8 +367,8 @@ struct rxrpc_peer *rxrpc_lookup_peer(struct rxrpc_local *local,
+ 		if (!peer) {
+ 			hash_add_rcu(rxnet->peer_hash,
+ 				     &candidate->hash_link, hash_key);
+-			hlist_add_head(&candidate->keepalive_link,
+-				       &rxnet->peer_keepalive_new);
++			list_add_tail(&candidate->keepalive_link,
++				      &rxnet->peer_keepalive_new);
+ 		}
+ 
+ 		spin_unlock_bh(&rxnet->peer_hash_lock);
+@@ -441,7 +441,7 @@ static void __rxrpc_put_peer(struct rxrpc_peer *peer)
+ 
+ 	spin_lock_bh(&rxnet->peer_hash_lock);
+ 	hash_del_rcu(&peer->hash_link);
+-	hlist_del_init(&peer->keepalive_link);
++	list_del_init(&peer->keepalive_link);
+ 	spin_unlock_bh(&rxnet->peer_hash_lock);
+ 
+ 	kfree_rcu(peer, rcu);
+diff --git a/net/rxrpc/rxkad.c b/net/rxrpc/rxkad.c
+index 278ac0807a60..47cb019c521a 100644
+--- a/net/rxrpc/rxkad.c
++++ b/net/rxrpc/rxkad.c
+@@ -669,7 +669,7 @@ static int rxkad_issue_challenge(struct rxrpc_connection *conn)
+ 		return -EAGAIN;
+ 	}
+ 
+-	conn->params.peer->last_tx_at = ktime_get_real();
++	conn->params.peer->last_tx_at = ktime_get_seconds();
+ 	_leave(" = 0");
+ 	return 0;
+ }
+@@ -725,7 +725,7 @@ static int rxkad_send_response(struct rxrpc_connection *conn,
+ 		return -EAGAIN;
+ 	}
+ 
+-	conn->params.peer->last_tx_at = ktime_get_real();
++	conn->params.peer->last_tx_at = ktime_get_seconds();
+ 	_leave(" = 0");
+ 	return 0;
+ }
 
