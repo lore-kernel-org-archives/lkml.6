@@ -2,84 +2,83 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41B09C4646D
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:11:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98243C4646D
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:12:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3ABB21767
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:11:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3ABB21767
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 5E8D421767
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 14:12:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E8D421767
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727514AbeHHQbL (ORCPT
+        id S1727425AbeHHQbv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 12:31:11 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:10680 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727050AbeHHQbK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 12:31:10 -0400
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 93C1C598E538D;
-        Wed,  8 Aug 2018 22:11:13 +0800 (CST)
-Received: from [127.0.0.1] (10.177.29.68) by DGGEMS405-HUB.china.huawei.com
- (10.3.19.205) with Microsoft SMTP Server id 14.3.399.0; Wed, 8 Aug 2018
- 22:11:10 +0800
-Message-ID: <5B6AF9FB.10701@huawei.com>
-Date:   Wed, 8 Aug 2018 22:11:07 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20120428 Thunderbird/12.0.1
+        Wed, 8 Aug 2018 12:31:51 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56772 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727146AbeHHQbv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 12:31:51 -0400
+Received: from localhost (unknown [194.244.16.108])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CC119D33;
+        Wed,  8 Aug 2018 14:11:59 +0000 (UTC)
+Date:   Wed, 8 Aug 2018 16:10:47 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Greg Gallagner <greg@embeddedgreg.com>
+Cc:     Stefan Wahren <stefan.wahren@i2se.com>, devel@driverdev.osuosl.org,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Ray Jui <rjui@broadcom.com>, linux-kernel@vger.kernel.org,
+        Eric Anholt <eric@anholt.net>,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2] staging/bcm2835-audio: Fix alignment of function
+ arguments - Style
+Message-ID: <20180808141047.GA7080@kroah.com>
+References: <20180808014048.18456-1-greg@embeddedgreg.com>
+ <20180808122604.GA27932@kroah.com>
+ <872dfe2f-59cf-baf9-490b-8b489c44ba5f@embeddedgreg.com>
 MIME-Version: 1.0
-To:     <dsterba@suse.cz>, <clm@fb.com>, <jbacik@fb.com>,
-        <dsterba@suse.com>, <linux-btrfs@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] fs/btrfs: remove the unneeded variable "err" and change
- the function to be void function
-References: <1533523978-50321-1-git-send-email-zhongjiang@huawei.com> <20180807152500.GJ3218@twin.jikos.cz>
-In-Reply-To: <20180807152500.GJ3218@twin.jikos.cz>
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.29.68]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <872dfe2f-59cf-baf9-490b-8b489c44ba5f@embeddedgreg.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/8/7 23:25, David Sterba wrote:
-> On Mon, Aug 06, 2018 at 10:52:58AM +0800, zhong jiang wrote:
->> The err is not modified after initalization, So just remove it and make
->> the function to be void function.
->>
->> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
->> ---
->> v1->v2:
->>  - Merge v1 series into a patch to void same changelog.
-> Please do one patch per function. If the change follows the same logic,
-> it's not a problem to use the same changelog, but the patch should be
-> revieweable and not doing unrelated things.
->
-> If the function prototype or return values is changed it's easier from
-> the reviewer's perspective to focus on just one function and the
-> surrounding code. Even if it looks straightforward to you to merge them
-> together.
->
-> When the return value changes from int -> void, it's necessary to check
-> wheter any of the callees is not hiding a BUG_ON that should be really
-> turned into proper error handling in the caller. In that case the return
-> type should stay and error handling added.
->
-> After a brief look I think all functions are safe here, but that's
-> something that should be mentioned in the changelog. Please update the
-> patches and resend. Thanks.
->
-> .
->
-I will repost the patches with detailed changlog. Thank you for explaination.
+On Wed, Aug 08, 2018 at 08:54:49AM -0400, Greg Gallagner wrote:
+> On 08/08/2018 08:26 AM, Greg Kroah-Hartman wrote:
+> > On Tue, Aug 07, 2018 at 09:40:47PM -0400, Greg Gallagher wrote:
+> >> Fix warnings generated by checkpatch.pl for alignment should match open
+> >> parenthesis.  This is a coding style change only.
+> >>
+> >> Signed-off-by: Greg Gallagher <greg@embeddedgreg.com>
+> >> ---
+> >> Changes in v2:
+> >>     - Clean up all the alignment warnings in the file
+> >> ---
+> >>  .../staging/vc04_services/bcm2835-audio/bcm2835-ctl.c  | 18 +++++++++---------
+> >>  1 file changed, 9 insertions(+), 9 deletions(-)
+> > You sent 2 patches that did the same thing, with different subjects :(
+> >
+> > Please fix up and send only the "correct" one.
+> >
+> > greg k-h
+> Sorry, the first one was a mistake and I should have sent something saying
+> to ignore it.  I will double check the second one is correct.  Is there
+> a best
+> practice when I'd like a patch ignored?
 
-Thanks
-zhong jiang
+Just respond to the email and say "please ignore this patch" or
+something like that.
 
+thanks,
+greg k-h
