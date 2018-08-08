@@ -2,112 +2,90 @@ Return-Path: <SRS0=X6pY=KX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71A84C46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 15:14:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64DB7C46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 15:16:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27D48219E6
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 15:14:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27D48219E6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 1E19B219F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 15:16:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="jQD4/SbY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E19B219F5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727500AbeHHRe4 (ORCPT
+        id S1727519AbeHHRhC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 13:34:56 -0400
-Received: from foss.arm.com ([217.140.101.70]:40534 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726875AbeHHRe4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 13:34:56 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 59A3C18A;
-        Wed,  8 Aug 2018 08:14:50 -0700 (PDT)
-Received: from iMac.local (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 180543F5D4;
-        Wed,  8 Aug 2018 08:14:47 -0700 (PDT)
-Date:   Wed, 8 Aug 2018 16:14:45 +0100
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     "Richard Earnshaw (lists)" <Richard.Earnshaw@arm.com>
-Cc:     Mikulas Patocka <mpatocka@redhat.com>,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        Joao Pinto <Joao.Pinto@synopsys.com>,
-        libc-alpha@sourceware.org,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Matt Sealey <neko@bakuhatsu.net>, linux-pci@vger.kernel.org,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Subject: Re: framebuffer corruption due to overlapping stp instructions on
- arm64
-Message-ID: <20180808151444.GF24736@iMac.local>
-References: <alpine.LRH.2.02.1808021242320.31834@file01.intranet.prod.int.rdu2.redhat.com>
- <CAHCPf3tFGqkYEcWNN4LaWThw_rVqT316pzLv6T7RfxwO-eZ0EA@mail.gmail.com>
- <alpine.LRH.2.02.1808030212340.17672@file01.intranet.prod.int.rdu2.redhat.com>
- <CAKv+Gu8DeuksZhk1g3q_msSKV_hSY_2e1uzVten9-oGO3j9Sqg@mail.gmail.com>
- <20180803094129.GB17798@arm.com>
- <alpine.LRH.2.02.1808031235410.31584@file01.intranet.prod.int.rdu2.redhat.com>
- <20180808113927.GA24736@iMac.local>
- <alpine.LRH.2.02.1808081011110.9997@file01.intranet.prod.int.rdu2.redhat.com>
- <b1a0dac5-3cf2-1a7f-ac7f-649126eb7873@arm.com>
+        Wed, 8 Aug 2018 13:37:02 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:53076 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727081AbeHHRhC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 13:37:02 -0400
+Received: by mail-it0-f67.google.com with SMTP id d9-v6so3950520itf.2
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 08:16:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=X7DWBcxQ3dg/kAzLTqAGXgHx+yLDtJdPTHYNmGO0asw=;
+        b=jQD4/SbYLvVbqgRGS/nyVgQdo98deefD/wlJqULPXLNHC2d413Bzn81S1wACD3yCmR
+         s0uPbe5Es9nS7lCXQeE1x6DB+0HehGglYFAw13gDp1JUPr+oLzmL415V2Uj5a8r9TQ3v
+         S27yUBH1Lbu+olcDsu++GHSwYIDA1FcBEL/dbYgo0OcMuzqib3rz+L7eNZmWRoeuU377
+         bs2n/xEfZHAZPEztuzfGbx4KgM5GEc/gZ7mrq7/MvZTIl8cZAkKvFUFDRjEZTThl9mK3
+         kmp0tDtAqAH4Y/nuYHdk+HEiYVBKgDkgPzDEuO6ifOaotT3G8x/qB4FITcp5Kx8HG6Yg
+         MzWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=X7DWBcxQ3dg/kAzLTqAGXgHx+yLDtJdPTHYNmGO0asw=;
+        b=YGCjJA8kv/BOBDOg569P4cJWK0enGA5n/IEnk8LXGSu9m0hcUTOTWyMue8SO9APmG4
+         F5DqF604tWa/+adFiUUBOKoCTyQmpp96Pjjn/CLrmvgjoUN/nQcqscjesqp1zH+7QCRu
+         u2JfhqrT6sU8f7CYbUg2iiSYi4tV4xyQKn2te4xkLRQuXV2CJVzpb3A6Ayfeo+qDtJbL
+         0DSnRL0+xg1HGGx2ZkRN5s78D4ycmIuXXUE046L4zY1Y4F3n6+fAofVkBl1ILFxmmu0w
+         B9/s+mx0zQf+5ZoqQAwgX1rdUWw1pbvfem+JjZvlpjt/yuu8aY2kB63ulcj3/0mgMRiH
+         0wQQ==
+X-Gm-Message-State: AOUpUlGoSJyoLHcckxtwtqxbKxh6WluJRelnj7BdMDLrslXATmDOEeUk
+        A0vh5GEx8Jt3mGb5/cZ5fDLXI1pqX9k=
+X-Google-Smtp-Source: AA+uWPwYdZd2pEGlJR8rRVX32f2NYskXOALz0X/yasC8dz5HzcAKPH8yLAMaa4TlXVZOFjRpWpzlAQ==
+X-Received: by 2002:a24:493:: with SMTP id 141-v6mr2499215itb.22.1533741414976;
+        Wed, 08 Aug 2018 08:16:54 -0700 (PDT)
+Received: from [192.168.1.212] (107.191.0.158.static.utbb.net. [107.191.0.158])
+        by smtp.gmail.com with ESMTPSA id v3-v6sm2604880ita.6.2018.08.08.08.16.53
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 08 Aug 2018 08:16:53 -0700 (PDT)
+Subject: Re: [PATCH] drivers/block/mtip32xx: remove the null check for
+ debugfs_remove_recursive
+To:     zhong jiang <zhongjiang@huawei.com>, jthumshirn@suse.de,
+        martin.petersen@oracle.com
+Cc:     linux-kernel@vger.kernel.org
+References: <1533740313-11906-1-git-send-email-zhongjiang@huawei.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <b8f1e208-8681-ca99-7ed6-2b5bedc66004@kernel.dk>
+Date:   Wed, 8 Aug 2018 09:16:52 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b1a0dac5-3cf2-1a7f-ac7f-649126eb7873@arm.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <1533740313-11906-1-git-send-email-zhongjiang@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 08, 2018 at 04:01:12PM +0100, Richard Earnshaw wrote:
-> On 08/08/18 15:12, Mikulas Patocka wrote:
-> > On Wed, 8 Aug 2018, Catalin Marinas wrote:
-> >> On Fri, Aug 03, 2018 at 01:09:02PM -0400, Mikulas Patocka wrote:
-> >>> 	while (1) {
-> >>> 		start = (unsigned)random() % (LEN + 1);
-> >>> 		end = (unsigned)random() % (LEN + 1);
-> >>> 		if (start > end)
-> >>> 			continue;
-> >>> 		for (i = start; i < end; i++)
-> >>> 			data[i] = val++;
-> >>> 		memcpy(map + start, data + start, end - start);
-> >>> 		if (memcmp(map, data, LEN)) {
-> >>
-> >> It may be worth trying to do a memcmp(map+start, data+start, end-start)
-> >> here to see whether the hazard logic fails when the writes are unaligned
-> >> but the reads are not.
-> >>
-> >> This problem may as well appear if you do byte writes and read longs
-> >> back (and I consider this a hardware problem on this specific board).
-> > 
-> > I triad to insert usleep(10000) between the memcpy and memcmp, but the 
-> > same corruption occurs. So, it can't be read-after-write hazard. It is 
-> > caused by the improper handling of hazard between the overlapping writes 
-> > inside memcpy.
-> 
-> I don't think you've told us what form the corruption takes.  Does it
-> lose some bytes?  Modify values beyond the copy range?  Write completely
-> arbitrary values?
+On 8/8/18 8:58 AM, zhong jiang wrote:
+> debugfs_remove_recursive has taken null pointer into account. So it is
+> safe to drop the null check before calling the funtion.
 
-From this message:
-
-https://lore.kernel.org/lkml/alpine.LRH.2.02.1808060553130.30832@file01.intranet.prod.int.rdu2.redhat.com/
-
-- failing to write a few bytes
-- writing a few bytes that were written 16 bytes before
-- writing a few bytes that were written 16 bytes after
-
-> The overlapping writes in memcpy never write different values to the
-> same location, so I still feel this must be some sort of HW issue, not a
-> SW one.
-
-So do I (my interpretation is that it combines or rather skips some of
-the writes to the same 16-byte address as it ignores the data strobes).
+Applied, thanks.
 
 -- 
-Catalin
+Jens Axboe
+
