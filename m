@@ -4,112 +4,157 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FED3C46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 21:01:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 376D6C4646D
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 21:01:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B44A21A28
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 21:01:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD15321A28
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 21:01:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NoOcF2c4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B44A21A28
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XjpkgNj7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD15321A28
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731533AbeHHXWW (ORCPT
+        id S1731628AbeHHXWY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 19:22:22 -0400
-Received: from mail-ed1-f42.google.com ([209.85.208.42]:43258 "EHLO
-        mail-ed1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727530AbeHHXWW (ORCPT
+        Wed, 8 Aug 2018 19:22:24 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:45394 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727530AbeHHXWX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 19:22:22 -0400
-Received: by mail-ed1-f42.google.com with SMTP id j21-v6so1879735edp.10
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 14:00:56 -0700 (PDT)
+        Wed, 8 Aug 2018 19:22:23 -0400
+Received: by mail-ed1-f67.google.com with SMTP id s16-v6so1873158edq.12
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 14:00:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=bHZ/LA96KBlOzsMK/48YGclkFZJjPl1YiC4tIgCYiCU=;
-        b=NoOcF2c4ipj+VZGNKIEInGg04uvbwlG6QU+IPKHi4Lj8W5Uk+J5DngVnGeCNGtnbiE
-         H56vYgCqcPSU68OW229XkRRrG22gAtlB/i988tuwg7LRLGQ0llH57sp2kan0+xoA9Hw/
-         W6YFqswsKCNzgN05vCEAZoPbH9bw+ObY62xew6G1ZI5YtzgjTIlA7pFxc7BMg9bd2D0F
-         bp1oDsYM3QVpTX5/tzg3uKwU2CT1e+rD/F4Q0sGoT7SnRgiwogWB4SgqvbSfWt0Kdy3L
-         7H3ylcNbvM4NAa//h1DjgCzFCetXfJiHM2idP+AZa5SGkH4VSorPs5v1Av9y8HpRl6xP
-         ZkTQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=fHmMz6xQpBCRfn3/gMvZnhyvcv1ZxV7Wh/CxeVhf/co=;
+        b=XjpkgNj7ziigDVM8gto7B/9Y/5V61+L+VgyJMpdpk0cblXwugxRF/jEdR3vDneHDGo
+         2IDHkIk8W1XhiLE3EMVsXAads6hSTM5dP7irOnIbYOZVISIwcmu28gakAoG0XKGvTh2H
+         UqB1h+Sx4/6w9Gg+tYctpTxhGzfMtx2cuoKvAfporT7yic4jmEbptO+XQxktREnEnBI4
+         4tTK8MveAMjX+NUNSSRmHeIQ91PNZkFp7yRLqIfY+twvIDgm+BsBYkms1Dtm3x6uucYO
+         Tx+dZYzXkC+lX7A6+c/jQUhTMvq9/r8SRvHOnaTLQFxj7HxiGNX2N5tndd0UsxsJUk3w
+         iObg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=bHZ/LA96KBlOzsMK/48YGclkFZJjPl1YiC4tIgCYiCU=;
-        b=iiZzt3AD2bwAvicxoOsP5cTn8kpauqsXpp+ZakP/i5gqwHf2iDNK/cAfX35TSIIvky
-         wMY2dbHthbzIFuqC7AFbRasJRVQ5IQkQzxLyVAFsTNFTZ7TTVEpk+mIvxEYmh30FyGrF
-         VqRaRNjNQQR7uPgFP44GQefIvplF+thl1Ll0GfcGm9XCWK8/wEnABwCuAEut2nJ8x12R
-         KhhjQLPnFvZCe+GJAj91nmN9lEUuWcAV+v+um6oqR+0aRbwZrOalXlfmCFGYVSWY7noZ
-         Md8Bwn8bsep9zcaun3Gb9VwLCtZYGEkMq8kOPgBqn3Dmr5VHLE841Unafstkcu0xWsXq
-         aM5g==
-X-Gm-Message-State: AOUpUlFXvvTNBEuYAYW53SxlsGY+gSPOFK17KThkTGdE9eJ1Ms9YF6gM
-        ve1xSqRd1ISrcQ7D7sA2G408uf3uBec=
-X-Google-Smtp-Source: AA+uWPx3TWjWeb7DC9Ueh4URia0xSjRRGAZpKdnbNziBKydn7wN4FtOAbMzGozh0oopMyUtVSch07A==
-X-Received: by 2002:a50:adaa:: with SMTP id a39-v6mr5077594edd.194.1533762055780;
-        Wed, 08 Aug 2018 14:00:55 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=fHmMz6xQpBCRfn3/gMvZnhyvcv1ZxV7Wh/CxeVhf/co=;
+        b=gdZ62Wo3cAdQjerl7Smf7Ef0dCfHVw8nN3vf0nw5DpsKoglnIJqN66d/M0kTBYRcSH
+         edHKqk9L/zfrWtS5TrXUzOKccUxqDbyDaLIBZTIjnTw9XVbsoSiudkga1PtdJSbtx/af
+         WxmgsFsSkNCXgATPy7ATCydeeFmr/r4lC39lP4usbuJI3YTsGjKFZJvQt9jjDNBZynWd
+         OCXAB2B3n8ujCCCDjMqiNfZun2XF9sd7QfkIHrjosJW4S2GnNgxzb5fZB9u25o1aTOBi
+         Q8AD9JWUGxjd52m9k8HxnLWW/pZm4goitqIIGQqnAXb4q2erHqygYuF0EGQYEPfVe8y1
+         877A==
+X-Gm-Message-State: AOUpUlGNFLa08m1gloAIxAa3M9a6AKOP2JNHcJDRM6Zr/gzCbqmSa4Qe
+        P/LdkuP1vXRdq9URhevk+FgSV9XtR2c=
+X-Google-Smtp-Source: AA+uWPxD32/K4gaUCFFEj3MEf2YBjJaLoRVaPi39+z8RK7vhddhofF09jezIG60lM+z+I2OvOGt8Hg==
+X-Received: by 2002:aa7:c4cf:: with SMTP id p15-v6mr5135863edr.240.1533762057321;
+        Wed, 08 Aug 2018 14:00:57 -0700 (PDT)
 Received: from localhost.localdomain ([109.76.213.36])
-        by smtp.gmail.com with ESMTPSA id g6-v6sm1883847edn.28.2018.08.08.14.00.53
+        by smtp.gmail.com with ESMTPSA id g6-v6sm1883847edn.28.2018.08.08.14.00.55
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 08 Aug 2018 14:00:54 -0700 (PDT)
+        Wed, 08 Aug 2018 14:00:56 -0700 (PDT)
 From:   John Whitmore <johnfwhitmore@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
         John Whitmore <johnfwhitmore@gmail.com>
-Subject: [PATCH v2 00/15] staging:rtl8192u: Coding style
-Date:   Wed,  8 Aug 2018 22:00:21 +0100
-Message-Id: <20180808210036.22580-1-johnfwhitmore@gmail.com>
+Subject: [PATCH v2 01/15] staging:rtl8192u: Remove macro eqMacAddr - Style
+Date:   Wed,  8 Aug 2018 22:00:22 +0100
+Message-Id: <20180808210036.22580-2-johnfwhitmore@gmail.com>
 X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180808210036.22580-1-johnfwhitmore@gmail.com>
+References: <20180808210036.22580-1-johnfwhitmore@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In this second version of the series I've replaced the macros
-eqMacAddr and cpMacAddr with functions suggested by Joe Perches
-<joe@perches.com>
+The macro eqMacAddr implements the same functionality as the
+ether_addr_equal function defined in etherdevice.h, as a result the
+macro has been removed from the code, and its use replaced with the
+function call.
 
-One issue with this change is that both of the functions now
-used, defined in etherdevice.h, rely on the parameters being
-u16 aligned. To achieve this I've re-ordered member variables
-in two structures. This strikes me as being a bit shaky as
-any change to a structure might upset that alignment.
+Note that to use the ether_addr_equal function the data array
+containing the MAC Address has to be u16 aligned. Because of this the
+struct rt_dot11d_info has had it's member variables re-ordered.
 
-Apart from that my only concern is renaming functions
-which are exported symbols. As far as I can see they are
-exported using EXPORT_SYMBOL but are not used anywhere.
+This is a coding style change which should have no impact on runtime
+code execution.
 
-John Whitmore (15):
-  staging:rtl8192u: Remove macro eqMacAddr - Style
-  staging:rtl8192u: Remove macro cpMacAddr - Style
-  staging:rtl8192u: Replace magic number 6 with ETH_ALEN - Style
-  staging:rtl8192u: Rename macro parameter __pIeeeDev - Style
-  staging:rtl8192u: Rename __pTa - Style
-  staging:rtl8192u: Lines should not end with a '(' - Style
-  staging:rtl8192u: Rename Dot11d_Init - Style
-  staging:rtl8192u: Rename Dot11d_Reset - Style
-  staging:rtl8192u: Rename Dot11d_UpdateCountryIe - Style
-  staging:rtl8192u: Rename dot11d_update_country_ie() parameters - Style
-  staging:rtl8192u: Rename DOT11D_GetMaxTxPwrInDbm -  Style
-  staging:rtl8192u: Rename Channel - Style
-  staging:rtl8192u: Rename DOT11D_ScanComplete - Style
-  staging:rtl8192u: Rename IsLegalChannel - Style
-  staging:rtl8192u: Rename ToLegalChannel - Style
+Suggested-by: Joe Perches <joe@perches.com>
+Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
+---
+ drivers/staging/rtl8192u/ieee80211/dot11d.h | 12 +++++-------
+ drivers/staging/rtl8192u/r8192U_core.c      |  6 +++---
+ 2 files changed, 8 insertions(+), 10 deletions(-)
 
- drivers/staging/rtl8192u/ieee80211/dot11d.c   | 42 +++++-----
- drivers/staging/rtl8192u/ieee80211/dot11d.h   | 77 ++++++-------------
- .../staging/rtl8192u/ieee80211/ieee80211.h    | 11 +--
- .../staging/rtl8192u/ieee80211/ieee80211_rx.c | 10 +--
- .../rtl8192u/ieee80211/ieee80211_softmac.c    |  6 +-
- drivers/staging/rtl8192u/r8192U_core.c        | 10 +--
- drivers/staging/rtl8192u/r819xU_phy.c         |  2 +-
- 7 files changed, 63 insertions(+), 95 deletions(-)
-
+diff --git a/drivers/staging/rtl8192u/ieee80211/dot11d.h b/drivers/staging/rtl8192u/ieee80211/dot11d.h
+index 363a6bed18dd..3bfd7efe05a0 100644
+--- a/drivers/staging/rtl8192u/ieee80211/dot11d.h
++++ b/drivers/staging/rtl8192u/ieee80211/dot11d.h
+@@ -17,22 +17,20 @@ enum dot11d_state {
+ };
+ 
+ struct rt_dot11d_info {
+-	bool enabled; /* dot11MultiDomainCapabilityEnabled */
+-
+ 	u16 country_ie_len; /* > 0 if country_ie_buf[] contains valid country information element. */
+-	u8  country_ie_buf[MAX_IE_LEN];
++
++	/*  country_ie_src_addr u16 aligned for comparison and copy */
+ 	u8  country_ie_src_addr[6]; /* Source AP of the country IE. */
++	u8  country_ie_buf[MAX_IE_LEN];
+ 	u8  country_ie_watchdog;
+ 
+ 	u8  channel_map[MAX_CHANNEL_NUMBER + 1];  /* !Value 0: Invalid, 1: Valid (active scan), 2: Valid (passive scan) */
+ 	u8  max_tx_pwr_dbm_list[MAX_CHANNEL_NUMBER + 1];
+ 
+ 	enum dot11d_state state;
++	bool enabled; /* dot11MultiDomainCapabilityEnabled */
+ };
+ 
+-#define eqMacAddr(a, b)		(((a)[0] == (b)[0] &&		    \
+-	(a)[1] == (b)[1] && (a)[2] == (b)[2] && (a)[3] == (b)[3] && \
+-	(a)[4] == (b)[4] && (a)[5] == (b)[5]) ? 1 : 0)
+ #define cpMacAddr(des, src)	      ((des)[0] = (src)[0], \
+ 	(des)[1] = (src)[1], (des)[2] = (src)[2], \
+ 	(des)[3] = (src)[3], (des)[4] = (src)[4], \
+@@ -42,7 +40,7 @@ struct rt_dot11d_info {
+ #define IS_DOT11D_ENABLE(__pIeeeDev) (GET_DOT11D_INFO(__pIeeeDev)->enabled)
+ #define IS_COUNTRY_IE_VALID(__pIeeeDev) (GET_DOT11D_INFO(__pIeeeDev)->country_ie_len > 0)
+ 
+-#define IS_EQUAL_CIE_SRC(__pIeeeDev, __pTa) eqMacAddr(GET_DOT11D_INFO(__pIeeeDev)->country_ie_src_addr, __pTa)
++#define IS_EQUAL_CIE_SRC(__pIeeeDev, __pTa) ether_addr_equal(GET_DOT11D_INFO(__pIeeeDev)->country_ie_src_addr, __pTa)
+ #define UPDATE_CIE_SRC(__pIeeeDev, __pTa) cpMacAddr(GET_DOT11D_INFO(__pIeeeDev)->country_ie_src_addr, __pTa)
+ 
+ #define GET_CIE_WATCHDOG(__pIeeeDev) (GET_DOT11D_INFO(__pIeeeDev)->country_ie_watchdog)
+diff --git a/drivers/staging/rtl8192u/r8192U_core.c b/drivers/staging/rtl8192u/r8192U_core.c
+index e218b5c20642..b2be09fcd43b 100644
+--- a/drivers/staging/rtl8192u/r8192U_core.c
++++ b/drivers/staging/rtl8192u/r8192U_core.c
+@@ -4460,15 +4460,15 @@ static void TranslateRxSignalStuff819xUsb(struct sk_buff *skb,
+ 
+ 	/* Check if the received packet is acceptable. */
+ 	bpacket_match_bssid = (type != IEEE80211_FTYPE_CTL) &&
+-			       (eqMacAddr(priv->ieee80211->current_network.bssid,  (fc & IEEE80211_FCTL_TODS) ? hdr->addr1 : (fc & IEEE80211_FCTL_FROMDS) ? hdr->addr2 : hdr->addr3))
++			       (ether_addr_equal(priv->ieee80211->current_network.bssid,  (fc & IEEE80211_FCTL_TODS) ? hdr->addr1 : (fc & IEEE80211_FCTL_FROMDS) ? hdr->addr2 : hdr->addr3))
+ 			       && (!pstats->bHwError) && (!pstats->bCRC) && (!pstats->bICV);
+ 	bpacket_toself =  bpacket_match_bssid &
+-			  (eqMacAddr(praddr, priv->ieee80211->dev->dev_addr));
++			  (ether_addr_equal(praddr, priv->ieee80211->dev->dev_addr));
+ 
+ 	if (WLAN_FC_GET_FRAMETYPE(fc) == IEEE80211_STYPE_BEACON)
+ 		bPacketBeacon = true;
+ 	if (WLAN_FC_GET_FRAMETYPE(fc) == IEEE80211_STYPE_BLOCKACK) {
+-		if ((eqMacAddr(praddr, dev->dev_addr)))
++		if ((ether_addr_equal(praddr, dev->dev_addr)))
+ 			bToSelfBA = true;
+ 	}
+ 
 -- 
 2.18.0
 
