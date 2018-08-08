@@ -3,35 +3,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBD8DC46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 18:07:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ECADC46470
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 18:07:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7853D21A27
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 18:07:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7853D21A27
+	by mail.kernel.org (Postfix) with ESMTP id 3E52F21A27
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 18:07:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E52F21A27
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730818AbeHHU2K (ORCPT
+        id S1730460AbeHHU1y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 16:28:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51200 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730384AbeHHU1y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 8 Aug 2018 16:27:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50984 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727337AbeHHU1x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 8 Aug 2018 16:27:53 -0400
 Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 54DEB21A82;
-        Wed,  8 Aug 2018 18:07:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 60FC921A52;
+        Wed,  8 Aug 2018 18:07:02 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.91)
         (envelope-from <rostedt@goodmis.org>)
-        id 1fnSrP-0002Vh-CH; Wed, 08 Aug 2018 14:07:03 -0400
-Message-Id: <20180808180703.275281085@goodmis.org>
+        id 1fnSrN-0002PC-BY; Wed, 08 Aug 2018 14:07:01 -0400
+Message-Id: <20180808180701.256265951@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Wed, 08 Aug 2018 14:03:07 -0400
+Date:   Wed, 08 Aug 2018 14:02:55 -0400
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org, linux-trace-devel@vger.kernel.org
 Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
@@ -40,7 +41,7 @@ Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
         "Yordan Karadzhov (VMware)" <y.karadz@gmail.com>,
         "Tzvetomir Stoyanov (VMware)" <tz.stoyanov@gmail.com>
-Subject: [RFC][PATCH v2 22/24] tools/lib/traceevent: Rename internal parser related APIs
+Subject: [RFC][PATCH v2 10/24] tools/lib/traceevent, tools/perf: Rename pevent_set_* APIs
 References: <20180808180245.352784763@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
@@ -54,188 +55,228 @@ From: "Tzvetomir Stoyanov (VMware)" <tz.stoyanov@gmail.com>
 In order to make libtraceevent into a proper library, variables, data
 structures and functions require a unique prefix to prevent name space
 conflicts. That prefix will be "tep_" and not "pevent_". This changes
-APIs: pevent_buffer_init, pevent_read_token, pevent_free_token,
-pevent_peek_char, pevent_get_input_buf, pevent_get_input_buf_ptr
+APIs: pevent_set_file_bigendian, pevent_set_flag,
+pevent_set_function_resolver, pevent_set_host_bigendian, pevent_set_long_size,
+pevent_set_page_size and pevent_get_long_size
 
 Signed-off-by: Tzvetomir Stoyanov (VMware) <tz.stoyanov@gmail.com>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- tools/lib/traceevent/event-parse.c  | 24 ++++++++++++------------
- tools/lib/traceevent/event-parse.h  | 12 ++++++------
- tools/lib/traceevent/parse-filter.c | 16 ++++++++--------
- 3 files changed, 26 insertions(+), 26 deletions(-)
+ tools/lib/traceevent/event-parse.c |  6 +++---
+ tools/lib/traceevent/event-parse.h | 16 ++++++++--------
+ tools/perf/builtin-report.c        |  6 +++---
+ tools/perf/builtin-script.c        |  6 +++---
+ tools/perf/util/machine.h          |  2 +-
+ tools/perf/util/trace-event-read.c | 14 +++++++-------
+ tools/perf/util/trace-event.c      |  8 ++++----
+ 7 files changed, 29 insertions(+), 29 deletions(-)
 
 diff --git a/tools/lib/traceevent/event-parse.c b/tools/lib/traceevent/event-parse.c
-index d367f7f2f2fc..8215e6ff36eb 100644
+index cab411b99087..2667c18db27c 100644
 --- a/tools/lib/traceevent/event-parse.c
 +++ b/tools/lib/traceevent/event-parse.c
-@@ -73,12 +73,12 @@ static void init_input_buf(const char *buf, unsigned long long size)
- 	input_buf_ptr = 0;
- }
- 
--const char *pevent_get_input_buf(void)
-+const char *tep_get_input_buf(void)
- {
- 	return input_buf;
- }
- 
--unsigned long long pevent_get_input_buf_ptr(void)
-+unsigned long long tep_get_input_buf_ptr(void)
- {
- 	return input_buf_ptr;
- }
-@@ -113,14 +113,14 @@ process_defined_func(struct trace_seq *s, void *data, int size,
- static void free_func_handle(struct tep_function_handler *func);
+@@ -444,7 +444,7 @@ struct func_resolver {
+ };
  
  /**
-- * pevent_buffer_init - init buffer for parsing
-+ * tep_buffer_init - init buffer for parsing
-  * @buf: buffer to parse
-  * @size: the size of the buffer
-  *
-- * For use with pevent_read_token(), this initializes the internal
-- * buffer that pevent_read_token() will parse.
-+ * For use with tep_read_token(), this initializes the internal
-+ * buffer that tep_read_token() will parse.
+- * pevent_set_function_resolver - set an alternative function resolver
++ * tep_set_function_resolver - set an alternative function resolver
+  * @pevent: handle for the pevent
+  * @resolver: function to be used
+  * @priv: resolver function private state.
+@@ -453,8 +453,8 @@ struct func_resolver {
+  * keep using it instead of duplicating all the entries inside
+  * pevent->funclist.
   */
--void pevent_buffer_init(const char *buf, unsigned long long size)
-+void tep_buffer_init(const char *buf, unsigned long long size)
+-int pevent_set_function_resolver(struct tep_handle *pevent,
+-				 tep_func_resolver_t *func, void *priv)
++int tep_set_function_resolver(struct tep_handle *pevent,
++			      tep_func_resolver_t *func, void *priv)
  {
- 	init_input_buf(buf, size);
- }
-@@ -913,11 +913,11 @@ static int __peek_char(void)
- }
+ 	struct func_resolver *resolver = malloc(sizeof(*resolver));
  
- /**
-- * pevent_peek_char - peek at the next character that will be read
-+ * tep_peek_char - peek at the next character that will be read
-  *
-  * Returns the next character read, or -1 if end of buffer.
-  */
--int pevent_peek_char(void)
-+int tep_peek_char(void)
- {
- 	return __peek_char();
- }
-@@ -1157,7 +1157,7 @@ static enum event_type read_token(char **tok)
- }
- 
- /**
-- * pevent_read_token - access to utilites to use the pevent parser
-+ * tep_read_token - access to utilites to use the pevent parser
-  * @tok: The token to return
-  *
-  * This will parse tokens from the string given by
-@@ -1165,16 +1165,16 @@ static enum event_type read_token(char **tok)
-  *
-  * Returns the token type.
-  */
--enum event_type pevent_read_token(char **tok)
-+enum event_type tep_read_token(char **tok)
- {
- 	return read_token(tok);
- }
- 
- /**
-- * pevent_free_token - free a token returned by pevent_read_token
-+ * tep_free_token - free a token returned by tep_read_token
-  * @token: the token to free
-  */
--void pevent_free_token(char *token)
-+void tep_free_token(char *token)
- {
- 	free_token(token);
- }
 diff --git a/tools/lib/traceevent/event-parse.h b/tools/lib/traceevent/event-parse.h
-index 7f8921431cf1..c41547353b4c 100644
+index 399dea66b80e..a68591c8dec3 100644
 --- a/tools/lib/traceevent/event-parse.h
 +++ b/tools/lib/traceevent/event-parse.h
-@@ -797,12 +797,12 @@ void pevent_ref(struct tep_handle *pevent);
- void pevent_unref(struct tep_handle *pevent);
+@@ -532,7 +532,7 @@ struct tep_handle {
+ 	char *trace_clock;
+ };
  
- /* access to the internal parser */
--void pevent_buffer_init(const char *buf, unsigned long long size);
--enum event_type pevent_read_token(char **tok);
--void pevent_free_token(char *token);
--int pevent_peek_char(void);
--const char *pevent_get_input_buf(void);
--unsigned long long pevent_get_input_buf_ptr(void);
-+void tep_buffer_init(const char *buf, unsigned long long size);
-+enum event_type tep_read_token(char **tok);
-+void tep_free_token(char *token);
-+int tep_peek_char(void);
-+const char *tep_get_input_buf(void);
-+unsigned long long tep_get_input_buf_ptr(void);
- 
- /* for debugging */
- void tep_print_funcs(struct tep_handle *pevent);
-diff --git a/tools/lib/traceevent/parse-filter.c b/tools/lib/traceevent/parse-filter.c
-index 3efab9b4298f..5e3f29736a25 100644
---- a/tools/lib/traceevent/parse-filter.c
-+++ b/tools/lib/traceevent/parse-filter.c
-@@ -51,8 +51,8 @@ static void show_error(char *error_buf, const char *fmt, ...)
- 	int len;
- 	int i;
- 
--	input = pevent_get_input_buf();
--	index = pevent_get_input_buf_ptr();
-+	input = tep_get_input_buf();
-+	index = tep_get_input_buf_ptr();
- 	len = input ? strlen(input) : 0;
- 
- 	if (len) {
-@@ -72,7 +72,7 @@ static void show_error(char *error_buf, const char *fmt, ...)
- 
- static void free_token(char *token)
+-static inline void pevent_set_flag(struct tep_handle *pevent, int flag)
++static inline void tep_set_flag(struct tep_handle *pevent, int flag)
  {
--	pevent_free_token(token);
-+	tep_free_token(token);
+ 	pevent->flags |= flag;
+ }
+@@ -615,8 +615,8 @@ enum trace_flag_type {
+ 	TRACE_FLAG_SOFTIRQ		= 0x10,
+ };
+ 
+-int pevent_set_function_resolver(struct tep_handle *pevent,
+-				 tep_func_resolver_t *func, void *priv);
++int tep_set_function_resolver(struct tep_handle *pevent,
++			      tep_func_resolver_t *func, void *priv);
+ void pevent_reset_function_resolver(struct tep_handle *pevent);
+ int tep_register_comm(struct tep_handle *pevent, const char *comm, int pid);
+ int pevent_register_trace_clock(struct tep_handle *pevent, const char *trace_clock);
+@@ -741,12 +741,12 @@ static inline void pevent_set_cpus(struct tep_handle *pevent, int cpus)
+ 	pevent->cpus = cpus;
  }
  
- static enum event_type read_token(char **tok)
-@@ -82,13 +82,13 @@ static enum event_type read_token(char **tok)
- 
- 	do {
- 		free_token(token);
--		type = pevent_read_token(&token);
-+		type = tep_read_token(&token);
- 	} while (type == EVENT_NEWLINE || type == EVENT_SPACE);
- 
- 	/* If token is = or ! check to see if the next char is ~ */
- 	if (token &&
- 	    (strcmp(token, "=") == 0 || strcmp(token, "!") == 0) &&
--	    pevent_peek_char() == '~') {
-+	    tep_peek_char() == '~') {
- 		/* append it */
- 		*tok = malloc(3);
- 		if (*tok == NULL) {
-@@ -98,7 +98,7 @@ static enum event_type read_token(char **tok)
- 		sprintf(*tok, "%c%c", *token, '~');
- 		free_token(token);
- 		/* Now remove the '~' from the buffer */
--		pevent_read_token(&token);
-+		tep_read_token(&token);
- 		free_token(token);
- 	} else
- 		*tok = token;
-@@ -1198,7 +1198,7 @@ process_event(struct event_format *event, const char *filter_str,
+-static inline int pevent_get_long_size(struct tep_handle *pevent)
++static inline int tep_get_long_size(struct tep_handle *pevent)
  {
- 	int ret;
- 
--	pevent_buffer_init(filter_str, strlen(filter_str));
-+	tep_buffer_init(filter_str, strlen(filter_str));
- 
- 	ret = process_filter(event, parg, error_str, 0);
- 	if (ret < 0)
-@@ -1254,7 +1254,7 @@ filter_event(struct event_filter *filter, struct event_format *event,
- static void filter_init_error_buf(struct event_filter *filter)
- {
- 	/* clear buffer to reset show error */
--	pevent_buffer_init("", 0);
-+	tep_buffer_init("", 0);
- 	filter->error_buffer[0] = '\0';
+ 	return pevent->long_size;
  }
  
+-static inline void pevent_set_long_size(struct tep_handle *pevent, int long_size)
++static inline void tep_set_long_size(struct tep_handle *pevent, int long_size)
+ {
+ 	pevent->long_size = long_size;
+ }
+@@ -756,7 +756,7 @@ static inline int pevent_get_page_size(struct tep_handle *pevent)
+ 	return pevent->page_size;
+ }
+ 
+-static inline void pevent_set_page_size(struct tep_handle *pevent, int _page_size)
++static inline void tep_set_page_size(struct tep_handle *pevent, int _page_size)
+ {
+ 	pevent->page_size = _page_size;
+ }
+@@ -766,7 +766,7 @@ static inline int pevent_is_file_bigendian(struct tep_handle *pevent)
+ 	return pevent->file_bigendian;
+ }
+ 
+-static inline void pevent_set_file_bigendian(struct tep_handle *pevent, int endian)
++static inline void tep_set_file_bigendian(struct tep_handle *pevent, int endian)
+ {
+ 	pevent->file_bigendian = endian;
+ }
+@@ -776,7 +776,7 @@ static inline int pevent_is_host_bigendian(struct tep_handle *pevent)
+ 	return pevent->host_bigendian;
+ }
+ 
+-static inline void pevent_set_host_bigendian(struct tep_handle *pevent, int endian)
++static inline void tep_set_host_bigendian(struct tep_handle *pevent, int endian)
+ {
+ 	pevent->host_bigendian = endian;
+ }
+diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
+index 02f7a3c27761..cb5d8c534ddb 100644
+--- a/tools/perf/builtin-report.c
++++ b/tools/perf/builtin-report.c
+@@ -1366,9 +1366,9 @@ int cmd_report(int argc, const char **argv)
+ 	}
+ 
+ 	if (session->tevent.pevent &&
+-	    pevent_set_function_resolver(session->tevent.pevent,
+-					 machine__resolve_kernel_addr,
+-					 &session->machines.host) < 0) {
++	    tep_set_function_resolver(session->tevent.pevent,
++				      machine__resolve_kernel_addr,
++				      &session->machines.host) < 0) {
+ 		pr_err("%s: failed to set libtraceevent function resolver\n",
+ 		       __func__);
+ 		return -1;
+diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
+index 568ddfac3213..ba481d73f910 100644
+--- a/tools/perf/builtin-script.c
++++ b/tools/perf/builtin-script.c
+@@ -3429,9 +3429,9 @@ int cmd_script(int argc, const char **argv)
+ 		symbol_conf.use_callchain = false;
+ 
+ 	if (session->tevent.pevent &&
+-	    pevent_set_function_resolver(session->tevent.pevent,
+-					 machine__resolve_kernel_addr,
+-					 &session->machines.host) < 0) {
++	    tep_set_function_resolver(session->tevent.pevent,
++				      machine__resolve_kernel_addr,
++				      &session->machines.host) < 0) {
+ 		pr_err("%s: failed to set libtraceevent function resolver\n", __func__);
+ 		err = -1;
+ 		goto out_delete;
+diff --git a/tools/perf/util/machine.h b/tools/perf/util/machine.h
+index 1de7660d93e9..d856b85862e2 100644
+--- a/tools/perf/util/machine.h
++++ b/tools/perf/util/machine.h
+@@ -265,7 +265,7 @@ pid_t machine__get_current_tid(struct machine *machine, int cpu);
+ int machine__set_current_tid(struct machine *machine, int cpu, pid_t pid,
+ 			     pid_t tid);
+ /*
+- * For use with libtraceevent's pevent_set_function_resolver()
++ * For use with libtraceevent's tep_set_function_resolver()
+  */
+ char *machine__resolve_kernel_addr(void *vmachine, unsigned long long *addrp, char **modp);
+ 
+diff --git a/tools/perf/util/trace-event-read.c b/tools/perf/util/trace-event-read.c
+index 850f7bf0eced..d970163f0145 100644
+--- a/tools/perf/util/trace-event-read.c
++++ b/tools/perf/util/trace-event-read.c
+@@ -236,12 +236,12 @@ static int read_header_files(struct tep_handle *pevent)
+ 	}
+ 
+ 	if (!tep_parse_header_page(pevent, header_page, size,
+-				   pevent_get_long_size(pevent))) {
++				   tep_get_long_size(pevent))) {
+ 		/*
+ 		 * The commit field in the page is of type long,
+ 		 * use that instead, since it represents the kernel.
+ 		 */
+-		pevent_set_long_size(pevent, pevent->header_page_size_size);
++		tep_set_long_size(pevent, pevent->header_page_size_size);
+ 	}
+ 	free(header_page);
+ 
+@@ -439,9 +439,9 @@ ssize_t trace_report(int fd, struct trace_event *tevent, bool __repipe)
+ 
+ 	pevent = tevent->pevent;
+ 
+-	pevent_set_flag(pevent, PEVENT_NSEC_OUTPUT);
+-	pevent_set_file_bigendian(pevent, file_bigendian);
+-	pevent_set_host_bigendian(pevent, host_bigendian);
++	tep_set_flag(pevent, PEVENT_NSEC_OUTPUT);
++	tep_set_file_bigendian(pevent, file_bigendian);
++	tep_set_host_bigendian(pevent, host_bigendian);
+ 
+ 	if (do_read(buf, 1) < 0)
+ 		goto out;
+@@ -451,8 +451,8 @@ ssize_t trace_report(int fd, struct trace_event *tevent, bool __repipe)
+ 	if (!file_page_size)
+ 		goto out;
+ 
+-	pevent_set_long_size(pevent, file_long_size);
+-	pevent_set_page_size(pevent, file_page_size);
++	tep_set_long_size(pevent, file_long_size);
++	tep_set_page_size(pevent, file_page_size);
+ 
+ 	err = read_header_files(pevent);
+ 	if (err)
+diff --git a/tools/perf/util/trace-event.c b/tools/perf/util/trace-event.c
+index eed1c11c1915..679c93644a08 100644
+--- a/tools/perf/util/trace-event.c
++++ b/tools/perf/util/trace-event.c
+@@ -47,9 +47,9 @@ static int trace_event__init2(void)
+ 		return -1;
+ 
+ 	pevent = tevent.pevent;
+-	pevent_set_flag(pevent, PEVENT_NSEC_OUTPUT);
+-	pevent_set_file_bigendian(pevent, be);
+-	pevent_set_host_bigendian(pevent, be);
++	tep_set_flag(pevent, PEVENT_NSEC_OUTPUT);
++	tep_set_file_bigendian(pevent, be);
++	tep_set_host_bigendian(pevent, be);
+ 	tevent_initialized = true;
+ 	return 0;
+ }
+@@ -60,7 +60,7 @@ int trace_event__register_resolver(struct machine *machine,
+ 	if (!tevent_initialized && trace_event__init2())
+ 		return -1;
+ 
+-	return pevent_set_function_resolver(tevent.pevent, func, machine);
++	return tep_set_function_resolver(tevent.pevent, func, machine);
+ }
+ 
+ void trace_event__cleanup(struct trace_event *t)
 -- 
 2.18.0
 
