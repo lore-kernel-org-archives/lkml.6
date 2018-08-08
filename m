@@ -6,57 +6,57 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6331C46470
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 15:33:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2EACC4646D
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 15:33:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 585C620847
-	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 15:33:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B06020C01
+	for <linux-kernel@archiver.kernel.org>; Wed,  8 Aug 2018 15:33:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="e77HNEXQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 585C620847
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="AcuLJY17"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B06020C01
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727989AbeHHRxq (ORCPT
+        id S1728102AbeHHRxt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 8 Aug 2018 13:53:46 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:42742 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727534AbeHHRxn (ORCPT
+        Wed, 8 Aug 2018 13:53:49 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:33474 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727838AbeHHRxr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 8 Aug 2018 13:53:43 -0400
-Received: by mail-wr1-f68.google.com with SMTP id e7-v6so2389075wrs.9
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 08:33:32 -0700 (PDT)
+        Wed, 8 Aug 2018 13:53:47 -0400
+Received: by mail-wm0-f68.google.com with SMTP id r24-v6so956640wmh.0
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Aug 2018 08:33:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=0/AcFQWG5GWA8z8qElGqK0mK/sub6hcCVMsKNMHf7yU=;
-        b=e77HNEXQK7pu4RBRZeCmNPrKeduXRuP9S9cTxoYQ3X+TxcPsLBof2AMUE0NxymJprz
-         aSLozu5Jg/24ZnLaT7WNNLjUfTHXGAedexjwjMe1wVI4m9+SEruVZc0IY4c+44KPWLMw
-         N7LsTQ/H39KweZ99N/07jtuj3+IlYRuGMjFuDMHDmu115wheS5SrCmYOFrCVbLhBIvrS
-         jNM/6Mj281twAPkZvxS8Fb+Tzq815NdY+ScQKrRVooXrSmWto1y4CbrvU2t+rGzouMF9
-         nScHpKlfurLk468ZkktF3JWjS8MjJGTzcJ/A5CfGeTTOVauyWnKRr1nksHOZ3swBB1bQ
-         G/dA==
+        bh=DW0C9V3JvjZMYtKc8VK2o7U2J9FYgSOIQQygiNDbrgo=;
+        b=AcuLJY17W5Clw2yPL5HLD6Zj836DwoaBCJaGP+qN0/Y43HV50mrYYtYYqk2g0jc5dI
+         wd6kpW8QSnFeZCA+aTIDvicCoF/3c9f1s8FlRMEhisMjdBLYNAx95XuE0Os2yGdjIaI3
+         +SCJ70xWZUGUsGafHrxPQjv4OaFwaD2CElfJhalZ7uds3s8VdEfbm/Ppl8w0xUc9G/m9
+         tB0sdr/1VtZs+OShiP45q9K0juxDsN9SLMKZBOYHkYKCBt90SdbENcs2DIl+r+Iz2vg+
+         p4skoT8ny2aLmTgtM/kuyX8zj0UHZBvtyh/N+/pcdzAOu8GGShyguIP5OHLOwI3bblhH
+         NiKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=0/AcFQWG5GWA8z8qElGqK0mK/sub6hcCVMsKNMHf7yU=;
-        b=IYlgAoDNv/7/l/0jKYYb+PkD+xSJZwxX7T4tFdDBswUBxOjTlRXSgvbY4mrTHidxqn
-         lfN0M6EQYh5ME0vOn6o8d1Nssry9YBZgkDt+Pu/+UTi7/xVvqux2Sw0SRemaPKB2HF3H
-         1Tg4eCoyxyv9Nd7j/4eCyEPNEoUUN/x1M+o4vOl8DD58T+1xvSXhdlw6H2vqcMDYzJRk
-         DlAJm/Kso/acSz6WOqSRuJ8pD/KC+C2iwqEg9y/6pQi5+HvH8/3azwHuI0qNok1LeVOV
-         mrz1NnMkkWPCC6ufTg9ppvgtVgHWziDLbxbtjOempu4RbCI8kKqS1MNi5LbQGmUzI0Hy
-         +RnQ==
-X-Gm-Message-State: AOUpUlG2K1WACTnx6XR7jeuVGp2TEwwFC+XqZGX8R1eGyuBR9E/onLQ6
-        dCzZ6vXPpq033TjYeAfFV+lA4g==
-X-Google-Smtp-Source: AA+uWPxR5HmEXh9KfDK+gx6BHy1jALE7ffWZSAb4PHIBslPHrDIi5/8Bk3oEBQxwnC4JQKq67Hijdw==
-X-Received: by 2002:adf:d842:: with SMTP id k2-v6mr2256361wrl.26.1533742411481;
-        Wed, 08 Aug 2018 08:33:31 -0700 (PDT)
+        bh=DW0C9V3JvjZMYtKc8VK2o7U2J9FYgSOIQQygiNDbrgo=;
+        b=O9ChEZcciZq6iSCCMTcWvxyq9m9wf3dijKbnBd9nysdpC61f4J5xhDr4K5/5lWuW8A
+         +bfj9oLIVq8b70iqwxdJmDRIep/eGJje5WMRbUsm5eNwzEfrOr+tcvjPGUdJgbirN9Ps
+         BKJWVHu7fGjvMqWpIR4ichT+DNR0//vvgniluQdqOUoSuFga+oVtW9AUKWv9DcwbQSxP
+         LWzYwt1wkRTQX6rpYJdIzV0BLLgro7R4xneoDHclgJGW49X1JDeJoizXu/VmunoYWw98
+         kSqcoH7CGFc3343hrlRB4JezGyLa+ncvC2IZCLM6rKm5ODrggRDZXndX0/LgDC2qPbMJ
+         yqoQ==
+X-Gm-Message-State: AOUpUlHaDiUpYxzFmcZ0sy7d7Ewj5JxDxp4G5cJrOfADjf3mLOTWM+y2
+        pLROq/+gbSVdsjoYT0K+4OeQPw==
+X-Google-Smtp-Source: AA+uWPxd1LO/WvVi1GIoWBanTKcpOlXMsLtYBnwvackLfen0yF3M6D0EYdVb2dOx9LyK7QBoUTIHag==
+X-Received: by 2002:a1c:8587:: with SMTP id h129-v6mr2050951wmd.105.1533742416039;
+        Wed, 08 Aug 2018 08:33:36 -0700 (PDT)
 Received: from brgl-bgdev.lan (LFbn-MAR-1-609-89.w90-118.abo.wanadoo.fr. [90.118.185.89])
-        by smtp.gmail.com with ESMTPSA id s2-v6sm5240915wrw.52.2018.08.08.08.33.29
+        by smtp.gmail.com with ESMTPSA id s2-v6sm5240915wrw.52.2018.08.08.08.33.33
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 08 Aug 2018 08:33:30 -0700 (PDT)
+        Wed, 08 Aug 2018 08:33:35 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Jonathan Corbet <corbet@lwn.net>, Sekhar Nori <nsekhar@ti.com>,
         Kevin Hilman <khilman@kernel.org>,
@@ -88,9 +88,9 @@ Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mtd@lists.infradead.org, linux-omap@vger.kernel.org,
         netdev@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 03/28] nvmem: add a notifier chain
-Date:   Wed,  8 Aug 2018 17:31:25 +0200
-Message-Id: <20180808153150.23444-4-brgl@bgdev.pl>
+Subject: [PATCH 05/28] nvmem: remove the name field from struct nvmem_device
+Date:   Wed,  8 Aug 2018 17:31:27 +0200
+Message-Id: <20180808153150.23444-6-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180808153150.23444-1-brgl@bgdev.pl>
 References: <20180808153150.23444-1-brgl@bgdev.pl>
@@ -101,121 +101,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Add a blocking notifier chain with two events (add and remove) so that
-users can get notified about the addition of nvmem devices they're
-waiting for.
-
-We'll use this instead of the at24 setup callback in the mityomapl138
-board file.
+This field is never set and is only used in a single error message.
+Remove the field and use nvmem_device_name() instead.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/nvmem/core.c           | 20 ++++++++++++++++++++
- include/linux/nvmem-consumer.h | 18 ++++++++++++++++++
- 2 files changed, 38 insertions(+)
+ drivers/nvmem/core.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
 diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-index 329ea5b8f809..128c8e51bff2 100644
+index b040370292a7..6c825ce866b6 100644
 --- a/drivers/nvmem/core.c
 +++ b/drivers/nvmem/core.c
-@@ -65,6 +65,8 @@ static DEFINE_MUTEX(nvmem_cells_mutex);
- static LIST_HEAD(nvmem_cell_lookups);
- static DEFINE_MUTEX(nvmem_lookup_mutex);
+@@ -26,7 +26,6 @@
+ #include <linux/slab.h>
  
-+static BLOCKING_NOTIFIER_HEAD(nvmem_notifier);
-+
- #ifdef CONFIG_DEBUG_LOCK_ALLOC
- static struct lock_class_key eeprom_lock_key;
- #endif
-@@ -479,6 +481,18 @@ static int nvmem_setup_compat(struct nvmem_device *nvmem,
- 	return 0;
- }
+ struct nvmem_device {
+-	const char		*name;
+ 	struct module		*owner;
+ 	struct device		dev;
+ 	int			stride;
+@@ -712,7 +711,7 @@ static struct nvmem_device *__nvmem_device_get(struct device_node *np,
+ 	if (!try_module_get(nvmem->owner)) {
+ 		dev_err(&nvmem->dev,
+ 			"could not increase module refcount for cell %s\n",
+-			nvmem->name);
++			nvmem_device_name(nvmem));
  
-+int nvmem_register_notifier(struct notifier_block *nb)
-+{
-+	return blocking_notifier_chain_register(&nvmem_notifier, nb);
-+}
-+EXPORT_SYMBOL_GPL(nvmem_register_notifier);
-+
-+int nvmem_unregister_notifier(struct notifier_block *nb)
-+{
-+	return blocking_notifier_chain_unregister(&nvmem_notifier, nb);
-+}
-+EXPORT_SYMBOL_GPL(nvmem_unregister_notifier);
-+
- /**
-  * nvmem_register() - Register a nvmem device for given nvmem_config.
-  * Also creates an binary entry in /sys/bus/nvmem/devices/dev-name/nvmem
-@@ -559,6 +573,10 @@ struct nvmem_device *nvmem_register(const struct nvmem_config *config)
- 	if (config->cells)
- 		nvmem_add_cells(nvmem, config->cells, config->ncells);
- 
-+	rval = blocking_notifier_call_chain(&nvmem_notifier, NVMEM_ADD, nvmem);
-+	if (rval)
-+		goto err_device_del;
-+
- 	return nvmem;
- 
- err_device_del:
-@@ -586,6 +604,8 @@ int nvmem_unregister(struct nvmem_device *nvmem)
- 	}
- 	mutex_unlock(&nvmem_mutex);
- 
-+	blocking_notifier_call_chain(&nvmem_notifier, NVMEM_REMOVE, nvmem);
-+
- 	if (nvmem->flags & FLAG_COMPAT)
- 		device_remove_bin_file(nvmem->base_dev, &nvmem->eeprom);
- 
-diff --git a/include/linux/nvmem-consumer.h b/include/linux/nvmem-consumer.h
-index f4b5d3186e94..ae4d30347602 100644
---- a/include/linux/nvmem-consumer.h
-+++ b/include/linux/nvmem-consumer.h
-@@ -14,6 +14,7 @@
- 
- #include <linux/err.h>
- #include <linux/errno.h>
-+#include <linux/notifier.h>
- 
- struct device;
- struct device_node;
-@@ -35,6 +36,11 @@ struct nvmem_cell_lookup {
- 	const char		*nvmem_name;
- };
- 
-+enum {
-+	NVMEM_ADD = 1,
-+	NVMEM_REMOVE,
-+};
-+
- #if IS_ENABLED(CONFIG_NVMEM)
- 
- /* Cell based interface */
-@@ -61,6 +67,8 @@ ssize_t nvmem_device_cell_read(struct nvmem_device *nvmem,
- int nvmem_device_cell_write(struct nvmem_device *nvmem,
- 			    struct nvmem_cell_info *info, void *buf);
- 
-+int nvmem_register_notifier(struct notifier_block *nb);
-+int nvmem_unregister_notifier(struct notifier_block *nb);
- #else
- 
- static inline struct nvmem_cell *nvmem_cell_get(struct device *dev,
-@@ -149,6 +157,16 @@ static inline int nvmem_device_write(struct nvmem_device *nvmem,
- {
- 	return -ENOSYS;
- }
-+
-+static inline int nvmem_register_notifier(struct notifier_block *nb)
-+{
-+	return -ENOSYS;
-+}
-+
-+static inline int int nvmem_unregister_notifier(struct notifier_block *nb)
-+{
-+	return -ENOSYS;
-+}
- #endif /* CONFIG_NVMEM */
- 
- #if IS_ENABLED(CONFIG_NVMEM) && IS_ENABLED(CONFIG_OF)
+ 		mutex_lock(&nvmem_mutex);
+ 		nvmem->users--;
 -- 
 2.18.0
 
